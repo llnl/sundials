@@ -26,6 +26,7 @@
 #include <string.h>
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_types.h>
+#include <sundials/sundials_nvector.h>
 
 /* width of name field in sunfprintf_<type> for aligning table output */
 #define SUN_TABLE_WIDTH 29
@@ -141,6 +142,96 @@ static inline void sunfprintf_long_array(FILE* fp, SUNOutputFormat fmt,
       fprintf(fp, "%s %zu,%ld", name, i, value[i]);
     }
   }
+}
+
+/* ------------ *
+ * Vector stack *
+ * ------------ */
+
+struct SUNVecStack_
+{
+  int max;        /* maximum size of the stack */
+  int top;        /* index of top of the stack, -1 = empty */
+  N_Vector tmpl;  /* template vector to clone from */
+  N_Vector* vecs; /* stack of temporary vectors */
+};
+
+static inline SUNErrCode SUNVecStack_Create(N_Vector tmpl,
+                                            SUNVecStack* stack_out)
+{
+  /* SUNAssert(tmpl, SUN_ERR_ARG_CORRUPT); */
+  /* SUNAssert(stack_out, SUN_ERR_ARG_CORRUPT); */
+
+  SUNVecStack stack = (SUNVecStack)malloc(sizeof(struct SUNVecStack_));
+  /* SUNAssert(stack, SUN_ERR_MALLOC_FAIL); */
+
+  stack->max  = 0;
+  stack->top  = -1;
+  stack->tmpl = tmpl;
+  stack->vecs = NULL;
+
+  *stack_out = stack;
+
+  return SUN_SUCCESS;
+}
+
+static inline SUNErrCode SUNVecStack_Destroy(SUNVecStack* stack_in)
+{
+  if (stack_in == NULL) { return SUN_SUCCESS; }
+  if (*stack_in == NULL) { return SUN_SUCCESS; }
+
+  for (int i = 0; i < (*stack_in)->max; i++)
+  {
+    N_VDestroy((*stack_in)->vecs[i]);
+  }
+  free(*stack_in);
+  *stack_in = NULL;
+
+  return SUN_SUCCESS;
+}
+
+static inline SUNErrCode SUNVecStack_Pop(SUNVecStack stack, N_Vector* vec_out)
+{
+  /* SUNAssert(stack, SUN_ERR_ARG_CORRUPT); */
+  /* SUNAssert(vec_out, SUN_ERR_ARG_CORRUPT); */
+  /* SUNAssert(stack->top >= -1, SUN_ERR_OUTOFRANGE); */
+  /* SUNAssert(stack->top < stack->max, SUN_ERR_OUTOFRANGE); */
+
+  if (stack->top < 0)
+  {
+    /* create new stack of vectors */
+    if (stack->vecs) { free(stack->vecs); }
+    stack->vecs = (N_Vector*)malloc((stack->max + 1) * sizeof(N_Vector));
+    /* SUNAssert(stack->vecs, SUN_ERR_MALLOC_FAIL); */
+    stack->max++;
+
+    /* create new vector on the bottom of the stack */
+    stack->vecs[0] = N_VClone(stack->tmpl);
+    stack->top++;
+  }
+
+  /* remove vector from top of stack */
+  *vec_out = stack->vecs[stack->top];
+  stack->top--;
+
+  return SUN_SUCCESS;
+}
+
+static inline SUNErrCode SUNVecStack_Push(SUNVecStack stack, N_Vector* vec_in)
+{
+  /* SUNAssert(stack, SUN_ERR_ARG_CORRUPT); */
+  /* SUNAssert(vec_in, SUN_ERR_ARG_CORRUPT); */
+  /* SUNAssert(stack->top >= -1, SUN_ERR_OUTOFRANGE); */
+  /* SUNAssert(stack->top + 1 < stack->max, SUN_ERR_OUTOFRANGE); /\* full stack *\/ */
+
+  /* add vector to the top of the stack */
+  stack->top++;
+  stack->vecs[stack->top] = *vec_in;
+
+  /* user has released the vector, nullify input vector */
+  *vec_in = NULL;
+
+  return SUN_SUCCESS;
 }
 
 #endif /* _SUNDIALS_UTILS_H */

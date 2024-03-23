@@ -223,6 +223,9 @@ typedef struct SUNProfiler_* SUNProfiler;
 /* SUNDIALS logger */
 typedef struct SUNLogger_* SUNLogger;
 
+/* Stack of SUNDIALS vectors */
+typedef struct SUNVecStack_* SUNVecStack;
+
 /* -----------------------------------------------------------------------------
  * SUNDIALS function types
  * ---------------------------------------------------------------------------*/

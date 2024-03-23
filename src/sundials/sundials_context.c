@@ -259,6 +259,28 @@ SUNErrCode SUNContext_SetLogger(SUNContext sunctx, SUNLogger logger)
   return SUN_SUCCESS;
 }
 
+SUNErrCode SUNContext_SetVecStack(SUNContext sunctx, SUNVecStack stack)
+{
+  if (!sunctx) { return SUN_ERR_SUNCTX_CORRUPT; }
+  SUNFunctionBegin(sunctx);
+
+  /* Check if any vectors are checked out before overwriting the current stack */
+  if (sunctx->temp_vec_stack) { return SUN_ERR_MEM_FAIL; }
+  sunctx->temp_vec_stack = stack;
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNContext_GetVecStack(SUNContext sunctx, SUNVecStack* stack)
+{
+  if (!sunctx) { return SUN_ERR_SUNCTX_CORRUPT; }
+  SUNFunctionBegin(sunctx);
+
+  *stack = sunctx->temp_vec_stack;
+
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNContext_Free(SUNContext* sunctx)
 {
 #ifdef SUNDIALS_ADIAK_ENABLED

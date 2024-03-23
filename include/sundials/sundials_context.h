@@ -62,6 +62,12 @@ SUNDIALS_EXPORT
 SUNErrCode SUNContext_SetLogger(SUNContext sunctx, SUNLogger logger);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNContext_SetVecStack(SUNContext sunctx, SUNVecStack stack);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNContext_GetVecStack(SUNContext sunctx, SUNVecStack* stack);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNContext_Free(SUNContext* ctx);
 
 #ifdef __cplusplus
