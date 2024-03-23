@@ -75,11 +75,16 @@ static inline SUNStlVectorTtype MAKE_NAME(SUNStlVectorTtype,
   if (init_capacity < 0 || !destroyValue) { return NULL; }
   SUNStlVectorTtype self = (SUNStlVectorTtype)malloc(sizeof(*self));
   if (!self) { return NULL; }
-  self->values = (TTYPE*)malloc(sizeof(TTYPE) * init_capacity);
-  if (!(self->values))
+
+  self->values = NULL;
+  if (init_capacity > 0)
   {
-    free(self);
-    return NULL;
+    self->values = (TTYPE*)malloc(sizeof(TTYPE) * init_capacity);
+    if (!(self->values))
+    {
+      free(self);
+      return NULL;
+    }
   }
   self->size         = 0;
   self->capacity     = init_capacity;
@@ -176,6 +181,18 @@ static inline TTYPE* MAKE_NAME(SUNStlVectorTtype, At)(SUNStlVectorTtype self,
     return NULL;
   }
   return &(self->values[index]);
+}
+
+/**
+ * Returns a pointer to the last element in the vector.
+ *
+ * :param self: Pointer to the vector.
+ * :return: Pointer to the last element or NULL if the vector is empty.
+ */
+static inline TTYPE* MAKE_NAME(SUNStlVectorTtype, Back)(SUNStlVectorTtype self)
+{
+  if (!self || self->size == 0) { return NULL; }
+  return &(self->values[self->size - 1]);
 }
 
 /**
