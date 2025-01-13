@@ -1,5 +1,6 @@
 /*---------------------------------------------------------------
  * Programmer(s): Daniel R. Reynolds @ UMBC
+                  Steven B. Roberts @ LLNL
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -24,7 +25,7 @@
 
 #include "arkode_impl.h"
 
-#define ORDER_CONDITION_TOL (100 * SUN_UNIT_ROUNDOFF)
+#define TOL (100 * SUN_UNIT_ROUNDOFF)
 
 /*---------------------------------------------------------------
   Routine to allocate an empty Butcher table structure
@@ -302,21 +303,17 @@ sunbooleantype ARKodeButcherTable_IsStifflyAccurate(ARKodeButcherTable B)
   int i;
   for (i = 0; i < B->stages; i++)
   {
-    if (SUNRabs(B->b[i] - B->A[B->stages - 1][i]) > 100 * SUN_UNIT_ROUNDOFF)
-    {
-      return SUNFALSE;
-    }
+    if (SUNRabs(B->b[i] - B->A[B->stages - 1][i]) > TOL) { return SUNFALSE; }
   }
   return SUNTRUE;
 }
 
 /* Grafts a branch onto a base tree while maintaining a lexicographic ordering
  * of the children */
-static void butcher_product(const int* const base, const int branch,
-                            int* const tree)
+static void butcher_product(int* base, int branch, int* tree)
 {
-  const int base_children = base[0];
-  tree[0]                 = base_children + 1;
+  int base_children = base[0];
+  tree[0]           = base_children + 1;
   int i;
   for (i = 1; i <= base_children && base[i] < branch; i++)
   {
@@ -328,11 +325,12 @@ static void butcher_product(const int* const base, const int branch,
   for (; i <= base_children; i++) { tree[i + 1] = base[i]; }
 }
 
-/* Returns true if the trees are equal and false otherwise */
-static sunbooleantype tree_equal(const int* const tree1, const int* const tree2)
+/* Returns true if the trees (lexicographically ordered) are equal and false
+ * otherwise. */
+static sunbooleantype tree_equal(int* tree1, int* tree2)
 {
-  const int children1 = tree1[0];
-  const int children2 = tree2[0];
+  int children1 = tree1[0];
+  int children2 = tree2[0];
 
   return children1 == children2 &&
          memcmp(&tree1[1], &tree2[1], children1 * sizeof(*tree1)) == 0;
@@ -340,17 +338,31 @@ static sunbooleantype tree_equal(const int* const tree1, const int* const tree2)
 
 typedef struct
 {
-  int* list;         /* A flattened array of all trees generated so far */
+  int* list;         /* A flattened array of all trees generated so far. A tree
+                      * with n children is stored as n+1 integers in this list
+                      * in the format {n, child_idx1, ..., child_idxn}. Children
+                      * are represented by indices pointing to their position in
+                      * this list. For example, the trees up to order 3 are
+                      * {
+                      * 1,
+                      * 1, 0,
+                      * 1, 1,
+                      * 2, 0, 0
+                      * } */
   int* current;      /* A memory buffer for constructing the next tree */
   int* order_offset; /* The indices into list at which each order starts */
   int length;        /* The number of ints used in list */
   int capacity;      /* The number of ints list can store */
   int order;         /* The current order */
   int root_order;    /* The current order of tree to use as a root */
-  int root_offset; /* The index offset for the current root tree for the root_order */
-  int branch_offset; /* The index offset for the current branch tree to graft on the root */
+  int root_offset;   /* The index offset for the current root tree for the
+                      * root_order */
+  int branch_offset; /* The index offset for the current branch tree to graft on
+                      * the root */
 } tree_generator;
 
+/* A "constructor" for a tree_generator object which can produce rooted trees
+ * one at a time */
 static tree_generator tree_generator_create()
 {
   return (tree_generator){.list          = NULL,
@@ -364,15 +376,19 @@ static tree_generator tree_generator_create()
                           .branch_offset = 0};
 }
 
-static void tree_generator_free(tree_generator* const gen)
+/* Frees resources used by a tree_generator */
+static void tree_generator_free(tree_generator* gen)
 {
   free(gen->list);
   free(gen->current);
   free(gen->order_offset);
 }
 
-static int tree_generator_push(tree_generator* const gen)
+/* Adds gen->current to the list of trees if not already present. This may
+ * require increasing the storage capacity of the generator list. */
+static int tree_generator_push(tree_generator* gen)
 {
+  /* Loop over all trees of current order */
   for (int offset = gen->order_offset[gen->order - 1]; offset < gen->length;
        offset += gen->list[offset] + 1)
   {
@@ -380,8 +396,9 @@ static int tree_generator_push(tree_generator* const gen)
     if (tree_equal(gen->current, &gen->list[offset])) { return ARK_WARNING; }
   }
 
-  const int tree_length = gen->current[0] + 1;
-  const int new_length  = gen->length + tree_length;
+  /* Check if additional capacity is needed */
+  int tree_length = gen->current[0] + 1;
+  int new_length  = gen->length + tree_length;
   if (new_length > gen->capacity)
   {
     gen->capacity = 2 * new_length;
@@ -389,15 +406,17 @@ static int tree_generator_push(tree_generator* const gen)
     if (gen->list == NULL) { return ARK_MEM_FAIL; }
   }
 
+  /* Copy the tree from the current buffer to the list */
   memcpy(&gen->list[gen->length], gen->current, tree_length * sizeof(*gen->list));
   gen->length = new_length;
   return ARK_SUCCESS;
 }
 
-static void tree_print(const int* const tree, const tree_generator* const gen,
-                       FILE* const outfile)
+/* A utility function to write a tree in text for with t representing a leaf and
+ * [...] representing joining of subtrees to a shared root */
+static void tree_print(int* tree, tree_generator* gen, FILE* outfile)
 {
-  const int children = tree[0];
+  int children = tree[0];
   if (children == 0) { fprintf(outfile, "t"); }
   else
   {
@@ -410,6 +429,7 @@ static void tree_print(const int* const tree, const tree_generator* const gen,
   }
 }
 
+/* Generates the next rooted tree and places it into gen->current */
 static int generate_tree(tree_generator* const gen)
 {
   /* Loop over orders */
@@ -440,6 +460,7 @@ static int generate_tree(tree_generator* const gen)
           butcher_product(&gen->list[root], branch, gen->current);
           gen->branch_offset += gen->list[branch] + 1;
 
+          /* Add the tree if not already generated */
           const int retval = tree_generator_push(gen);
           if (retval <= ARK_SUCCESS) { return retval; }
         }
@@ -470,12 +491,12 @@ static int generate_tree(tree_generator* const gen)
 
 typedef struct
 {
-  sunrealtype* Phi;
-  sunrealtype phi;
-  sunrealtype phi_hat;
-  int gamma;
-  int sigma;
-  int order;
+  sunrealtype* Phi;    /* Elementary weights for the stages */
+  sunrealtype phi;     /* Elementary weight */
+  sunrealtype phi_hat; /* Elementary weight for embedding */
+  int gamma;           /* Density */
+  int sigma;           /* Symmetry */
+  int order;           /* Number of vertices */
 } tree_props;
 
 static void vec_set(sunrealtype* const vec, const sunrealtype value,
@@ -512,7 +533,7 @@ static sunbooleantype rowsum(const ARKodeButcherTable table)
   {
     sunrealtype rsum = SUN_RCONST(0.0);
     for (int j = 0; j < table->stages; j++) { rsum += table->A[i][j]; }
-    if (SUNRabs(rsum - table->c[i]) > ORDER_CONDITION_TOL)
+    if (SUNRabs(rsum - table->c[i]) > TOL)
     {
       printf("ROWSUM ERR: %" RSYM "\n", SUNRabs(rsum - table->c[i]));
       return SUNFALSE;
@@ -521,6 +542,8 @@ static sunbooleantype rowsum(const ARKodeButcherTable table)
   return SUNTRUE;
 }
 
+/* Recursively computes the properties of a tree with the color of each vertex
+ * given by the bits of color */
 static tree_props get_tree_props(const int* const tree,
                                  const tree_generator* const gen, int color,
                                  const ARKodeButcherTable* const tables,
@@ -530,6 +553,7 @@ static tree_props get_tree_props(const int* const tree,
   const ARKodeButcherTable table = tables[color & 1];
   const int children             = tree[0];
 
+  /* A leaf vertex corresponds to c coefficients */
   if (children == 0 && !root)
   {
     props.Phi = table->c;
@@ -540,6 +564,7 @@ static tree_props get_tree_props(const int* const tree,
   props.Phi   = buf;
   vec_set(props.Phi, ONE, s);
 
+  /* Keep track of previous child color since sigma is color dependent */
   int prev_color    = -1;
   int num_duplicate = 1;
   for (int i = 1; i <= children; i++)
@@ -552,7 +577,8 @@ static tree_props get_tree_props(const int* const tree,
     props.gamma *= child_props.gamma;
     props.sigma *= child_props.sigma;
     const int masked_child_color = child_color & ((1 << child_props.order) - 1);
-    // This check relies on trees being in lexicographic order so duplicate subtrees are consecutive
+    /* This check relies on trees being in lexicographic order so duplicate
+     * subtrees are consecutive */
     if (prev_color == masked_child_color && tree[i] == tree[i - 1])
     {
       num_duplicate++;
@@ -612,7 +638,7 @@ static int check_order(const ARKodeButcherTable* const tables,
       {
         const sunrealtype residual = SUNRabs(props.phi - ONE / props.gamma) /
                                      props.sigma;
-        if (residual > ORDER_CONDITION_TOL)
+        if (residual > TOL)
         {
           *q = props.order - 1;
           if (outfile != NULL)
@@ -629,7 +655,7 @@ static int check_order(const ARKodeButcherTable* const tables,
       {
         const sunrealtype embedded_residual =
           SUNRabs(props.phi_hat - ONE / props.gamma) / props.sigma;
-        if (embedded_residual > ORDER_CONDITION_TOL)
+        if (embedded_residual > TOL)
         {
           *p = props.order - 1;
           if (outfile != NULL)
