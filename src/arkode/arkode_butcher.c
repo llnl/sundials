@@ -366,7 +366,7 @@ typedef struct
 
 /* A "constructor" for a tree_generator object which can produce rooted trees
  * one at a time */
-static tree_generator tree_generator_create()
+static tree_generator tree_generator_create(void)
 {
   return (tree_generator){.list          = NULL,
                           .current       = NULL,
