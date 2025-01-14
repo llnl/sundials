@@ -25,7 +25,7 @@
 
 #include "arkode_impl.h"
 
-#define TOL (100 * SUN_UNIT_ROUNDOFF)
+#define MAX_ORDER 10
 
 /*---------------------------------------------------------------
   Routine to allocate an empty Butcher table structure
@@ -237,7 +237,7 @@ void ARKodeButcherTable_Free(ARKodeButcherTable B)
   }
 }
 
-static sunbooleantype is_valid_table(const ARKodeButcherTable table)
+static sunbooleantype is_valid_table(ARKodeButcherTable table)
 {
   if (table == NULL || table->stages < 1 || table->A == NULL ||
       table->b == NULL || table->c == NULL)
@@ -303,7 +303,10 @@ sunbooleantype ARKodeButcherTable_IsStifflyAccurate(ARKodeButcherTable B)
   int i;
   for (i = 0; i < B->stages; i++)
   {
-    if (SUNRabs(B->b[i] - B->A[B->stages - 1][i]) > TOL) { return SUNFALSE; }
+    if (SUNRabs(B->b[i] - B->A[B->stages - 1][i]) > SUN_UNIT_ROUNDOFF)
+    {
+      return SUNFALSE;
+    }
   }
   return SUNTRUE;
 }
@@ -430,7 +433,7 @@ static void tree_print(int* tree, tree_generator* gen, FILE* outfile)
 }
 
 /* Generates the next rooted tree and places it into gen->current */
-static int generate_tree(tree_generator* const gen)
+static int generate_tree(tree_generator* gen)
 {
   /* Loop over orders */
   for (;;)
@@ -438,30 +441,30 @@ static int generate_tree(tree_generator* const gen)
     /* Loop over order of root tree */
     for (; gen->root_order < gen->order; gen->root_order++)
     {
-      const int root_min = gen->order_offset[gen->root_order - 1];
-      const int root_max = gen->order_offset[gen->root_order];
+      int root_min = gen->order_offset[gen->root_order - 1];
+      int root_max = gen->order_offset[gen->root_order];
 
       /* Loop over trees of current root order */
       for (;;)
       {
-        const int root = root_min + gen->root_offset;
+        int root = root_min + gen->root_offset;
         if (root == root_max) { break; }
 
-        const int branch_order = gen->order - gen->root_order;
-        const int branch_min   = gen->order_offset[branch_order - 1];
-        const int branch_max   = gen->order_offset[branch_order];
+        int branch_order = gen->order - gen->root_order;
+        int branch_min   = gen->order_offset[branch_order - 1];
+        int branch_max   = gen->order_offset[branch_order];
 
         /* Loop over branches to graft to the root */
         for (;;)
         {
-          const int branch = branch_min + gen->branch_offset;
+          int branch = branch_min + gen->branch_offset;
           if (branch == branch_max) { break; }
 
           butcher_product(&gen->list[root], branch, gen->current);
           gen->branch_offset += gen->list[branch] + 1;
 
           /* Add the tree if not already generated */
-          const int retval = tree_generator_push(gen);
+          int retval = tree_generator_push(gen);
           if (retval <= ARK_SUCCESS) { return retval; }
         }
 
@@ -499,43 +502,62 @@ typedef struct
   int order;           /* Number of vertices */
 } tree_props;
 
-static void vec_set(sunrealtype* const vec, const sunrealtype value,
-                    const int stages)
+static void vec_set(sunrealtype* vec, sunrealtype value, int stages)
 {
   for (int i = 0; i < stages; i++) { vec[i] = value; }
 }
 
-static void vec_times(sunrealtype* const vec1, const sunrealtype* const vec2,
-                      int stages)
+static void vec_times(sunrealtype* vec1, sunrealtype* vec2, int stages)
 {
   for (int i = 0; i < stages; i++) { vec1[i] *= vec2[i]; }
 }
 
-static sunrealtype dot_prod(const sunrealtype* const vec1,
-                            const sunrealtype* const vec2, const int stages)
+static sunrealtype dot_prod(sunrealtype* vec1, sunrealtype* vec2, int stages)
 {
   sunrealtype total = ZERO;
-  for (int i = 0; i < stages; i++) { total += vec1[i] * vec2[i]; }
+  sunrealtype err   = ZERO;
+  for (int i = 0; i < stages; i++)
+  {
+    sunCompensatedSum(total, vec1[i] * vec2[i], &total, &err);
+  }
   return total;
 }
 
-static sunrealtype* mat_vec(sunrealtype* const* const mat,
-                            const sunrealtype* const vec,
-                            sunrealtype* const prod, const int stages)
+static sunrealtype* mat_vec(sunrealtype** mat, sunrealtype* vec,
+                            sunrealtype* prod, int stages)
 {
   for (int i = 0; i < stages; i++) { prod[i] = dot_prod(mat[i], vec, stages); }
   return prod;
 }
 
-static sunbooleantype rowsum(const ARKodeButcherTable table)
+static sunbooleantype rowsum(ARKodeButcherTable table, sunrealtype* inf_norm,
+                             FILE* outfile)
 {
   for (int i = 0; i < table->stages; i++)
   {
-    sunrealtype rsum = SUN_RCONST(0.0);
-    for (int j = 0; j < table->stages; j++) { rsum += table->A[i][j]; }
-    if (SUNRabs(rsum - table->c[i]) > TOL)
+    sunrealtype row_sum     = ZERO;
+    sunrealtype err         = ZERO;
+    sunrealtype row_abs_sum = ZERO;
+    for (int j = 0; j < table->stages; j++)
     {
-      printf("ROWSUM ERR: %" RSYM "\n", SUNRabs(rsum - table->c[i]));
+      sunrealtype aij = table->A[i][j];
+      sunCompensatedSum(row_sum, aij, &row_sum, &err);
+      row_abs_sum += SUNRabs(aij);
+    }
+
+    if (row_abs_sum > *inf_norm) { *inf_norm = row_abs_sum; }
+
+    /* Compensated summation has leading roundoff error of
+     * 2 * epsilon * \sum_j |A_{i,j}|, so we use that to decide if row sum is
+     * sufficiently close to c_i */
+    sunrealtype residual = SUNRabs(row_sum - table->c[i]);
+    if (residual > 2 * row_abs_sum * SUN_UNIT_ROUNDOFF)
+    {
+      if (outfile != NULL)
+      {
+        fprintf(outfile, "  row %i sum fails with residual %" RSYM "\n", i,
+                residual);
+      }
       return SUNFALSE;
     }
   }
@@ -544,14 +566,13 @@ static sunbooleantype rowsum(const ARKodeButcherTable table)
 
 /* Recursively computes the properties of a tree with the color of each vertex
  * given by the bits of color */
-static tree_props get_tree_props(const int* const tree,
-                                 const tree_generator* const gen, int color,
-                                 const ARKodeButcherTable* const tables,
-                                 sunrealtype* const buf, sunbooleantype root)
+static tree_props get_tree_props(int* tree, tree_generator* gen, int color,
+                                 ARKodeButcherTable* tables, sunrealtype* buf,
+                                 sunbooleantype root)
 {
-  tree_props props               = {.gamma = 1, .sigma = 1, .order = 1};
-  const ARKodeButcherTable table = tables[color & 1];
-  const int children             = tree[0];
+  tree_props props         = {.gamma = 1, .sigma = 1, .order = 1};
+  ARKodeButcherTable table = tables[color & 1];
+  int children             = tree[0];
 
   /* A leaf vertex corresponds to c coefficients */
   if (children == 0 && !root)
@@ -560,8 +581,8 @@ static tree_props get_tree_props(const int* const tree,
     return props;
   }
 
-  const int s = table->stages;
-  props.Phi   = buf;
+  int s     = table->stages;
+  props.Phi = buf;
   vec_set(props.Phi, ONE, s);
 
   /* Keep track of previous child color since sigma is color dependent */
@@ -569,14 +590,14 @@ static tree_props get_tree_props(const int* const tree,
   int num_duplicate = 1;
   for (int i = 1; i <= children; i++)
   {
-    const int* const child       = &gen->list[tree[i]];
-    const int child_color        = color >> props.order;
-    sunrealtype* const child_buf = &buf[props.order * s];
-    const tree_props child_props = get_tree_props(child, gen, child_color,
-                                                  tables, child_buf, SUNFALSE);
+    int* child             = &gen->list[tree[i]];
+    int child_color        = color >> props.order;
+    sunrealtype* child_buf = &buf[props.order * s];
+    tree_props child_props = get_tree_props(child, gen, child_color, tables,
+                                            child_buf, SUNFALSE);
     props.gamma *= child_props.gamma;
     props.sigma *= child_props.sigma;
-    const int masked_child_color = child_color & ((1 << child_props.order) - 1);
+    int masked_child_color = child_color & ((1 << child_props.order) - 1);
     /* This check relies on trees being in lexicographic order so duplicate
      * subtrees are consecutive */
     if (prev_color == masked_child_color && tree[i] == tree[i - 1])
@@ -601,25 +622,39 @@ static tree_props get_tree_props(const int* const tree,
   return props;
 }
 
-static int compare_orders(const int given, const int computed, const int retval)
+static int compare_orders(int given, int computed, int retval)
 {
   if (given > computed || retval == 1) { return 1; }
   else if (given < computed || retval == -1) { return -1; }
   else { return 0; }
 }
 
-static int check_order(const ARKodeButcherTable* const tables,
-                       const sunbooleantype ark, int* const q, int* const p,
-                       FILE* const outfile)
+/* Iterates of trees and computes order condition residuals to determine the
+ * order of a method and its embedding */
+static int check_order(ARKodeButcherTable* tables, sunbooleantype ark, int* q,
+                       int* p, sunrealtype inf_norm, FILE* outfile)
 {
   tree_generator gen = tree_generator_create();
   sunrealtype* buf   = NULL;
   int retval         = ARK_SUCCESS;
+  sunrealtype tol    = tables[0]->stages * inf_norm * SUN_UNIT_ROUNDOFF;
 
-  while (SUNMIN(*p, *q) < 0)
+  while (*p < 0 || *q < 0)
   {
     retval = generate_tree(&gen);
     if (retval != ARK_SUCCESS) { break; }
+
+    if (gen.order > MAX_ORDER)
+    {
+      if (outfile)
+      {
+        fprintf(outfile, "  reached maximum order of %d\n", MAX_ORDER);
+      }
+
+      if (*p < 0) { *p = MAX_ORDER; }
+      if (*q < 0) { *q = MAX_ORDER; }
+      break;
+    }
 
     buf = realloc(buf, tables[0]->stages * gen.order * sizeof(*buf));
     if (buf == NULL)
@@ -628,17 +663,17 @@ static int check_order(const ARKodeButcherTable* const tables,
       break;
     }
 
-    const int max_color = ark ? (1 << gen.order) : 1;
+    int max_color = ark ? (1 << gen.order) : 1;
     for (int color = 0; color < max_color; color++)
     {
-      const tree_props props = get_tree_props(gen.current, &gen, color, tables,
-                                              buf, SUNTRUE);
+      tree_props props = get_tree_props(gen.current, &gen, color, tables, buf,
+                                        SUNTRUE);
 
       if (*q < 0)
       {
-        const sunrealtype residual = SUNRabs(props.phi - ONE / props.gamma) /
-                                     props.sigma;
-        if (residual > TOL)
+        sunrealtype residual = SUNRabs(props.phi - ONE / props.gamma) /
+                               props.sigma;
+        if (residual > tol)
         {
           *q = props.order - 1;
           if (outfile != NULL)
@@ -653,9 +688,9 @@ static int check_order(const ARKodeButcherTable* const tables,
 
       if (*p < 0)
       {
-        const sunrealtype embedded_residual =
+        sunrealtype embedded_residual =
           SUNRabs(props.phi_hat - ONE / props.gamma) / props.sigma;
-        if (embedded_residual > TOL)
+        if (embedded_residual > tol)
         {
           *p = props.order - 1;
           if (outfile != NULL)
@@ -675,9 +710,8 @@ static int check_order(const ARKodeButcherTable* const tables,
   return retval;
 }
 
-static int check_tables(const ARKodeButcherTable* const tables,
-                        const sunbooleantype ark, int* const q, int* const p,
-                        FILE* const outfile)
+static int check_tables(ARKodeButcherTable* tables, sunbooleantype ark, int* q,
+                        int* p, FILE* outfile)
 {
   if (!is_valid_table(tables[0]) || (ark && !is_valid_table(tables[1])))
   {
@@ -686,13 +720,14 @@ static int check_tables(const ARKodeButcherTable* const tables,
 
   if (outfile) { fprintf(outfile, "Order Conditions Check:\n"); }
 
-  *q = *p = -1;
-  if (rowsum(tables[0]) && (!ark || rowsum(tables[1])))
+  *q = *p              = -1;
+  sunrealtype inf_norm = ZERO;
+  if (rowsum(tables[0], &inf_norm, outfile) &&
+      (!ark || rowsum(tables[1], &inf_norm, outfile)))
   {
-    const int retval = check_order(tables, ark, q, p, outfile);
+    int retval = check_order(tables, ark, q, p, inf_norm, outfile);
     if (retval != ARK_SUCCESS) { return -2; }
   }
-  else if (outfile) { fprintf(outfile, "  method fails row sum condition\n"); }
 
   int retval = 0;
   for (int i = 0; i < (ark ? 2 : 1); i++)
@@ -765,6 +800,6 @@ int ARKodeButcherTable_CheckOrder(ARKodeButcherTable B, int* q, int* p,
 int ARKodeButcherTable_CheckARKOrder(ARKodeButcherTable B1, ARKodeButcherTable B2,
                                      int* q, int* p, FILE* outfile)
 {
-  const ARKodeButcherTable tables[] = {B1, B2};
+  ARKodeButcherTable tables[] = {B1, B2};
   return check_tables(tables, SUNTRUE, q, p, outfile);
 }
