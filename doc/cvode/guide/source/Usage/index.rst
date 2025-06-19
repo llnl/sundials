@@ -1800,7 +1800,7 @@ step size adaptivity.
 
    .. versionadded:: 6.2.0
 
-   .. versionchanged:: x.y.z
+   .. versionchanged:: 7.4.0
 
       Updated the allowable values for ``eta_min_fx`` in include 1.
 

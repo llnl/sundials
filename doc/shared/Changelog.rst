@@ -21,7 +21,7 @@ Changelog
 
 .. SED_REPLACEMENT_KEY
 
-Changes to SUNDIALS in release X.Y.Z
+Changes to SUNDIALS in release 7.4.0
 ====================================
 
 .. include:: RecentChanges_link.rst

@@ -69,7 +69,7 @@ they are using rather than the combined SUNDIALS online guide:
   author = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward and Cody J. Balos},
   title  = {User Documentation for ARKODE},
   year   = {2025},
-  note   = {v6.3.0}
+  note   = {v6.4.0}
 }
 ```
 
@@ -78,7 +78,7 @@ they are using rather than the combined SUNDIALS online guide:
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for CVODE},
   year   = {2025},
-  note   = {v7.3.0}
+  note   = {v7.4.0}
 }
 ```
 
@@ -87,7 +87,7 @@ they are using rather than the combined SUNDIALS online guide:
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for CVODES},
   year   = {2025},
-  note   = {v7.3.0}
+  note   = {v7.4.0}
 }
 ```
 
@@ -96,7 +96,7 @@ they are using rather than the combined SUNDIALS online guide:
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for IDA},
   year   = {2025},
-  note   = {v7.3.0}
+  note   = {v7.4.0}
 }
 ```
 
@@ -105,7 +105,7 @@ they are using rather than the combined SUNDIALS online guide:
   author = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for IDAS},
   year   = {2025},
-  note   = {v6.3.0}
+  note   = {v6.4.0}
 }
 ```
 
@@ -114,6 +114,6 @@ they are using rather than the combined SUNDIALS online guide:
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for KINSOL},
   year   = {2025},
-  note   = {v7.3.0}
+  note   = {v7.4.0}
 }
 ```

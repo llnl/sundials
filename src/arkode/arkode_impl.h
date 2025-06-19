@@ -663,7 +663,7 @@ int arkPredict_Bootstrap(ARKodeMem ark_mem, sunrealtype hj, sunrealtype tau,
                          int nvec, sunrealtype* cvals, N_Vector* Xvecs,
                          N_Vector yguess);
 int arkCheckConvergence(ARKodeMem ark_mem, int* nflagPtr, int* ncfPtr);
-int arkCheckConstraints(ARKodeMem ark_mem, int* nflag, int* constrfails);
+int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag);
 int arkCheckTemporalError(ARKodeMem ark_mem, int* nflagPtr, int* nefPtr,
                           sunrealtype dsm);
 int arkAccessHAdaptMem(void* arkode_mem, const char* fname, ARKodeMem* ark_mem,

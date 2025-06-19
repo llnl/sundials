@@ -1638,7 +1638,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
 
    .. versionadded:: 6.1.0
 
-   .. versionchanged:: X.Y.Z
+   .. versionchanged:: 6.4.0
 
       The restriction that ``cfl_frac`` is less than one has been removed.
 

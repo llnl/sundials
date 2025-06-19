@@ -84,7 +84,8 @@ web pages.
    in doc directory.
 
 #. Open a pull request from the release branch to ``develop`` with the title
-   "Release: vX.Y.Z" and description "SUNDIALS Release vX.Y.Z".
+   "Release: vX.Y.Z" and description "SUNDIALS Release vX.Y.Z". Add the pull
+   request to the "SUNDIALS Next" milestone.
 
 Release Procedure
 =================
@@ -131,6 +132,10 @@ Release Procedure
    as well as the example documentation PDFs. The description of the release is just a
    copy of the ``CHANGELOG.md`` notes for the release with hard line-wraps removed.
 
+#. On the GitHub [milestones](https://github.com/LLNL/sundials/milestones) page
+   rename the "SUNDIALS Next" milestone "SUNDIALS X.Y.Z", close the renamed
+   milestone, and create a new "SUNDIALS Next" milestone.
+
 #. Now prepare SUNDIALS for the next release cycle using the following steps:
 
    .. code-block:: shell
@@ -168,4 +173,3 @@ Release Procedure
 
 #. After final push, ensure web content and behavior is as expected on the main
    page: http://computing.llnl.gov/projects/sundials
-

@@ -1,5 +1,5 @@
 # IDAS
-### Version 6.3.0 (Apr 2025)
+### Version 6.4.0 (Jun 2025)
 
 **Radu Serban, Cosmin Petra, Alan C. Hindmarsh, Cody J. Balos, David J. Gardner,
   and Carol S. Woodward, Center for Applied Scientific Computing, LLNL**
@@ -43,11 +43,11 @@ the "SUNDIALS Release History" appendix of the IDAS User Guide.
 ## References
 
 * R. Serban, C. Petra, A. C. Hindmarsh, C. J. Balos, D. J. Gardner,
-  D. R. Reynolds and C. S. Woodward, "User Documentation for IDAS v6.3.0,"
-  LLNL technical report UCRL-SM-234051, Apr 2025.
+  D. R. Reynolds and C. S. Woodward, "User Documentation for IDAS v6.4.0,"
+  LLNL technical report UCRL-SM-234051, Jun 2025.
 
-* R. Serban and A.C. Hindmarsh, "Example Programs for IDAS v6.3.0,"
-  LLNL technical report LLNL-TR-437091, Apr 2025.
+* R. Serban and A.C. Hindmarsh, "Example Programs for IDAS v6.4.0,"
+  LLNL technical report LLNL-TR-437091, Jun 2025.
 
 * A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban,
   D. E. Shumaker, and C. S. Woodward, "SUNDIALS, Suite of Nonlinear and
