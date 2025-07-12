@@ -19,9 +19,9 @@ if(BUILD_ARKODE)
   list(APPEND unit_tests "test_constraints_arkode.cpp")
 endif()
 
-# if(BUILD_CVODE)
-#   list(APPEND unit_tests "test_constraints_cvode.cpp")
-# endif()
+if(BUILD_CVODE)
+  list(APPEND unit_tests "test_constraints_cvode.cpp")
+endif()
 
 # if(BUILD_CVODES)
 #   list(APPEND unit_tests "test_constraints_cvodes.cpp")
