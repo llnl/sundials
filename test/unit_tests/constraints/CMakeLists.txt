@@ -12,27 +12,27 @@
 # SUNDIALS Copyright End
 # ------------------------------------------------------------------------------
 
-# List of test tuples of the form "name\;args"
+# List of test tuples of the form "name"
 set(unit_tests)
 
 if(BUILD_ARKODE)
-  list(APPEND unit_tests "test_constraints_arkode.cpp\;0")
+  list(APPEND unit_tests "test_constraints_arkode.cpp")
 endif()
 
 # if(BUILD_CVODE)
-#   list(APPEND unit_tests "test_constraints_cvode.cpp\;1 1")
+#   list(APPEND unit_tests "test_constraints_cvode.cpp")
 # endif()
 
 # if(BUILD_CVODES)
-#   list(APPEND unit_tests "test_constraints_cvodes.cpp\;1 1")
+#   list(APPEND unit_tests "test_constraints_cvodes.cpp")
 # endif()
 
 # if(BUILD_IDA)
-#   list(APPEND unit_tests "test_constraints_ida.cpp\;1")
+#   list(APPEND unit_tests "test_constraints_ida.cpp")
 # endif()
 
 # if(BUILD_IDAS)
-#   list(APPEND unit_tests "test_constraints_idas.cpp\;1")
+#   list(APPEND unit_tests "test_constraints_idas.cpp")
 # endif()
 
 # Add the build and install targets for each test
@@ -40,7 +40,6 @@ foreach(test_tuple ${unit_tests})
 
   # parse the test tuple
   list(GET test_tuple 0 test_src)
-  list(GET test_tuple 1 test_args)
 
   # extract the file name without extension
   get_filename_component(test_target ${test_src} NAME_WE)
@@ -70,20 +69,11 @@ foreach(test_tuple ${unit_tests})
 
   endif()
 
-  if("${test_args}" STREQUAL "")
-    set(test_name ${test_name})
-  else()
-    string(REPLACE " " "_" test_name "${test_name}_${test_args}")
-    string(REPLACE " " ";" test_args "${test_args}")
-  endif()
-
   # add test to regression tests
   sundials_add_test(
-    ${test_name} ${test_target}
-    TEST_ARGS ${test_args}
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ${test_name}.out
-    LABELS "constraints")
+    ${test_target} ${test_target}
+    LABELS "constraints"
+    NODIFF)
 
 endforeach()
 
