@@ -51,6 +51,8 @@ if(BUILD_KINSOL)
   add_subdirectory(kinsol)
 endif()
 
+add_subdirectory(constraints)
+
 add_subdirectory(nvector)
 
 add_subdirectory(sunmatrix)
