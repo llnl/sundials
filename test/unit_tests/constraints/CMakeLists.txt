@@ -27,9 +27,9 @@ endif()
 #   list(APPEND unit_tests "test_constraints_cvodes.cpp")
 # endif()
 
-# if(BUILD_IDA)
-#   list(APPEND unit_tests "test_constraints_ida.cpp")
-# endif()
+if(BUILD_IDA)
+  list(APPEND unit_tests "test_constraints_ida.cpp")
+endif()
 
 # if(BUILD_IDAS)
 #   list(APPEND unit_tests "test_constraints_idas.cpp")
