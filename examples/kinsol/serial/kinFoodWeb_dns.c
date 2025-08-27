@@ -91,7 +91,8 @@
 #include <sundials/sundials_dense.h> /* use generic dense solver in precond. */
 #include <sundials/sundials_math.h>  /* access to SUNMAX, SUNRabs, SUNRsqrt  */
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
-#include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
+#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver */
+
 
 /* Problem Constants */
 
@@ -99,8 +100,8 @@
   6 /* must equal 2*(number of prey or predators)
                               number of prey = number of predators       */
 
-#define MX       20 /* MX = number of x mesh points */
-#define MY       20 /* MY = number of y mesh points */
+#define MX       8 /* MX = number of x mesh points */
+#define MY       8 /* MY = number of y mesh points */
 #define NSMX     (NUM_SPECIES * MX)
 #define NEQ      (NSMX * MY)        /* number of equations in the system */
 #define AA       SUN_RCONST(1.0)    /* value of coefficient AA in above eqns */
@@ -112,14 +113,13 @@
 #define ALPHA    SUN_RCONST(1.0)    /* value of coefficient alpha above */
 #define AX       SUN_RCONST(1.0)    /* total range of x variable */
 #define AY       SUN_RCONST(1.0)    /* total range of y variable */
-#define FTOL     SUN_RCONST(1.e-7)  /* ftol tolerance */
-#define STOL     SUN_RCONST(1.e-13) /* stol tolerance */
-#define THOUSAND SUN_RCONST(1000.0) /* one thousand */
+#define FTOL     SUN_RCONST(1.e-15)  /* ftol tolerance */
+#define STOL     SUN_RCONST(1.e-15) /* stol tolerance */
 #define ZERO     SUN_RCONST(0.0)    /* 0. */
 #define ONE      SUN_RCONST(1.0)    /* 1. */
 #define TWO      SUN_RCONST(2.0)    /* 2. */
-#define PREYIN   SUN_RCONST(1.0)    /* initial guess for prey concentrations. */
-#define PREDIN   SUN_RCONST(30000.0) /* initial guess for predator concs.      */
+#define PREYIN   SUN_RCONST(1.2)    /* initial guess for prey concentrations. */
+#define PREDIN   SUN_RCONST(33000.0) /* initial guess for predator concs.      */
 
 /* User-defined vector access macro: IJ_Vptr */
 
@@ -149,19 +149,13 @@ typedef struct
 
 static int func(N_Vector cc, N_Vector fval, void* user_data);
 
-static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
-                       N_Vector fscale, void* user_data);
-
-static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
-                       N_Vector fscale, N_Vector vv, void* user_data);
-
 /* Private Helper Functions */
 
 static UserData AllocUserData(void);
 static void InitUserData(UserData data);
 static void FreeUserData(UserData data);
 static void SetInitialProfiles(N_Vector cc, N_Vector sc);
-static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
+static void PrintHeader(int globalstrategy,
                         sunrealtype fnormtol, sunrealtype scsteptol);
 static void PrintOutput(N_Vector cc);
 static void PrintFinalStats(void* kmem);
@@ -181,13 +175,14 @@ int main(void)
   SUNContext sunctx;
   int globalstrategy;
   sunrealtype fnormtol, scsteptol;
-  N_Vector cc, sc, fval, constraints;
+  N_Vector cc, sc, fval;
   UserData data;
   int retval, maxl, maxlrst;
   void* kmem;
+  SUNMatrix J;
   SUNLinearSolver LS;
 
-  cc = sc = constraints = NULL;
+  cc = sc               = NULL;
   kmem                  = NULL;
   LS                    = NULL;
   data                  = NULL;
@@ -214,12 +209,10 @@ int main(void)
   data->rates = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)data->rates, "N_VNew_Serial", 0)) { return (1); }
 
-  constraints = N_VNew_Serial(NEQ, sunctx);
-  if (check_retval((void*)constraints, "N_VNew_Serial", 0)) { return (1); }
-  N_VConst(TWO, constraints);
+
 
   SetInitialProfiles(cc, sc);
-
+  //N_VConst(ONE, sc); /* no scaling */
   fnormtol  = FTOL;
   scsteptol = STOL;
 
@@ -234,38 +227,28 @@ int main(void)
 
   retval = KINSetUserData(kmem, data);
   if (check_retval(&retval, "KINSetUserData", 1)) { return (1); }
-  retval = KINSetConstraints(kmem, constraints);
-  if (check_retval(&retval, "KINSetConstraints", 1)) { return (1); }
+
   retval = KINSetFuncNormTol(kmem, fnormtol);
   if (check_retval(&retval, "KINSetFuncNormTol", 1)) { return (1); }
   retval = KINSetScaledStepTol(kmem, scsteptol);
   if (check_retval(&retval, "KINSetScaledStepTol", 1)) { return (1); }
 
-  /* We no longer need the constraints vector since KINSetConstraints
-     creates a private copy for KINSOL to use. */
-  N_VDestroy(constraints);
 
-  /* Create SUNLinSol_SPGMR object with right preconditioning and the
-     maximum Krylov dimension maxl */
-  maxl = 15;
-  LS   = SUNLinSol_SPGMR(cc, SUN_PREC_RIGHT, maxl, sunctx);
-  if (check_retval((void*)LS, "SUNLinSol_SPGMR", 0)) { return (1); }
 
-  /* Attach the linear solver to KINSOL */
-  retval = KINSetLinearSolver(kmem, LS, NULL);
-  if (check_retval(&retval, "KINSetLinearSolver", 1)) { return 1; }
+  /* Create dense SUNMatrix */
+  J = SUNDenseMatrix(NEQ, NEQ, sunctx);
+  if (check_retval((void*)J, "SUNDenseMatrix", 0)) { return (1); }
 
-  /* Set the maximum number of restarts */
-  maxlrst = 2;
-  retval  = SUNLinSol_SPGMRSetMaxRestarts(LS, maxlrst);
-  if (check_retval(&retval, "SUNLinSol_SPGMRSetMaxRestarts", 1)) { return (1); }
+  /* Create dense SUNLinearSolver object */
+  LS = SUNLinSol_Dense(cc, J, sunctx);
+  if (check_retval((void*)LS, "SUNLinSol_Dense", 0)) { return (1); }
 
-  /* Specify the preconditioner setup and solve routines */
-  retval = KINSetPreconditioner(kmem, PrecSetupBD, PrecSolveBD);
-  if (check_retval(&retval, "KINSetPreconditioner", 1)) { return (1); }
+  /* Attach the matrix and linear solver to KINSOL */
+  retval = KINSetLinearSolver(kmem, LS, J);
+  if (check_retval(&retval, "KINSetLinearSolver", 1)) { return (1); }
 
   /* Print out the problem size, solution parameters, initial guess. */
-  PrintHeader(globalstrategy, maxl, maxlrst, fnormtol, scsteptol);
+  PrintHeader(globalstrategy, fnormtol, scsteptol);
 
   retval = func(cc, fval, data);
 
@@ -277,6 +260,7 @@ int main(void)
                   sc);            /* scaling vector for function values fval */
   if (check_retval(&retval, "KINSol", 1)) { return (1); }
 
+  retval = func(cc, fval, data);
   printf("\n\nComputed equilibrium species concentrations:\n");
   PrintOutput(cc);
 
@@ -347,17 +331,13 @@ static int func(N_Vector cc, N_Vector fval, void* user_data)
       for (is = 0; is < NUM_SPECIES; is++)
       {
         /* Differencing in x direction */
-
           dcyli = *(cxy + is) - *(cxy - idyl + is);
           dcyui = *(cxy + idyu + is) - *(cxy + is);
 
 
-
         /* Differencing in y direction */
-
           dcxli = *(cxy + is) - *(cxy - idxl + is);
           dcxri = *(cxy + idxr + is) - *(cxy + is);
-
 
         /* Compute the total rate value at (xx,yy) */
         fxy[is] = (coy)[is] * (dcyui - dcyli) + (cox)[is] * (dcxri - dcxli) +
@@ -371,109 +351,6 @@ static int func(N_Vector cc, N_Vector fval, void* user_data)
 
   return (0);
 }
-
-/*
- * Preconditioner setup routine. Generate and preprocess P.
- */
-
-static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
-                       N_Vector fscale, void* user_data)
-{
-  sunrealtype r, r0, uround, sqruround, xx, yy, delx, dely, csave, fac;
-  sunrealtype *cxy, *scxy, **Pxy, *ratesxy, *Pxycol, perturb_rates[NUM_SPECIES];
-  sunindextype i, j, jx, jy, ret;
-  UserData data;
-
-  data = (UserData)user_data;
-  delx = data->dx;
-  dely = data->dy;
-
-  uround    = data->uround;
-  sqruround = data->sqruround;
-  fac       = N_VWL2Norm(fval, fscale);
-  r0        = THOUSAND * uround * fac * NEQ;
-  if (r0 == ZERO) { r0 = ONE; }
-
-  /* Loop over spatial points; get size NUM_SPECIES Jacobian block at each */
-  for (jy = 0; jy < MY; jy++)
-  {
-    yy = jy * dely;
-
-    for (jx = 0; jx < MX; jx++)
-    {
-      xx      = jx * delx;
-      Pxy     = (data->P)[jx][jy];
-      cxy     = IJ_Vptr(cc, jx, jy);
-      scxy    = IJ_Vptr(cscale, jx, jy);
-      ratesxy = IJ_Vptr((data->rates), jx, jy);
-
-      /* Compute difference quotients of interaction rate fn. */
-      for (j = 0; j < NUM_SPECIES; j++)
-      {
-        csave = cxy[j]; /* Save the j,jx,jy element of cc */
-        r     = SUNMAX(sqruround * SUNRabs(csave), r0 / scxy[j]);
-        cxy[j] += r; /* Perturb the j,jx,jy element of cc */
-        fac = ONE / r;
-
-        WebRate(xx, yy, cxy, perturb_rates, data);
-
-        /* Restore j,jx,jy element of cc */
-        cxy[j] = csave;
-
-        /* Load the j-th column of difference quotients */
-        Pxycol = Pxy[j];
-        for (i = 0; i < NUM_SPECIES; i++)
-        {
-          Pxycol[i] = (perturb_rates[i] - ratesxy[i]) * fac;
-        }
-
-      } /* end of j loop */
-
-      /* Do LU decomposition of size NUM_SPECIES preconditioner block */
-      ret = SUNDlsMat_denseGETRF(Pxy, NUM_SPECIES, NUM_SPECIES,
-                                 (data->pivot)[jx][jy]);
-      if (ret != 0) { return (1); }
-
-    } /* end of jx loop */
-
-  } /* end of jy loop */
-
-  return (0);
-}
-
-/*
- * Preconditioner solve routine
- */
-
-static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
-                       N_Vector fscale, N_Vector vv, void* user_data)
-{
-  sunrealtype **Pxy, *vxy;
-  sunindextype *piv, jx, jy;
-  UserData data;
-
-  data = (UserData)user_data;
-
-  for (jx = 0; jx < MX; jx++)
-  {
-    for (jy = 0; jy < MY; jy++)
-    {
-      /* For each (jx,jy), solve a linear system of size NUM_SPECIES.
-         vxy is the address of the corresponding portion of the vector vv;
-         Pxy is the address of the corresponding block of the matrix P;
-         piv is the address of the corresponding block of the array pivot. */
-      vxy = IJ_Vptr(vv, jx, jy);
-      Pxy = (data->P)[jx][jy];
-      piv = (data->pivot)[jx][jy];
-      SUNDlsMat_denseGETRS(Pxy, NUM_SPECIES, piv, vxy);
-
-    } /* end of jy loop */
-
-  } /* end of jx loop */
-
-  return (0);
-}
-
 /*
  * Interaction rate function routine
  */
@@ -651,7 +528,7 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   for (i = NUM_SPECIES / 2; i < NUM_SPECIES; i++)
   {
     ctemp[i] = PREDIN;
-    stemp[i] = SUN_RCONST(0.00001);
+    stemp[i] = SUN_RCONST(1.0);
   }
 
   /* Load initial profiles into cc and sc vector from ctemp and stemp. */
@@ -674,7 +551,7 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
  * Print first lines of output (problem description)
  */
 
-static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
+static void PrintHeader(int globalstrategy,
                         sunrealtype fnormtol, sunrealtype scsteptol)
 {
   printf("\nPredator-prey test problem --  KINSol (serial version)\n\n");
@@ -682,7 +559,6 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
   printf("Number of species = %d\n", NUM_SPECIES);
   printf("Total system size = %d\n\n", NEQ);
   printf("Flag globalstrategy = %d (0 = None, 1 = Linesearch)\n", globalstrategy);
-  printf("Linear solver is SPGMR with maxl = %d, maxlrst = %d\n", maxl, maxlrst);
   printf("Preconditioning uses interaction-only block-diagonal matrix\n");
   printf("Positivity constraints imposed on all components \n");
 #if defined(SUNDIALS_FLOAT128_PRECISION)

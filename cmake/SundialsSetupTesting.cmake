@@ -162,7 +162,7 @@ if(SUNDIALS_TEST_ENABLE_GTEST)
     include(FetchContent)
     FetchContent_Declare(
       googletest
-      URL /home/wuzhiqiao/Downloads/googletest-03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+      URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
       GIT_TAG v1.14.0)
     if(WIN32)
       # For Windows: Prevent overriding the parent project's compiler/linker

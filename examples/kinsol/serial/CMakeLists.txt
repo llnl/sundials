@@ -32,8 +32,10 @@ set(KINSOL_examples
     "kinAnalytic_fp\;--m_aa 2 --orth_aa 2\;"
     "kinAnalytic_fp\;--m_aa 2 --orth_aa 3\;"
     "kinFerTron_dns\;\;"
-#    "kinHimmelblau_dns\;\;"
-#    "kinEquilibriumCombustion_dns\;\;"
+    "kinHimmelblau_dns\;\;"
+    "kinEquilibriumCombustion_dns\;\;"
+    "kinBullardBiegler_dns\;\;"
+    "kinFoodWeb_dns\;\;"
     "kinFoodWeb_kry\;\;exclude-single"
     "kinKrylovDemo_ls\;\;exclude-single"
     "kinLaplace_bnd\;\;exclude-single"
@@ -41,6 +43,20 @@ set(KINSOL_examples
     "kinLaplace_picard_kry\;\;exclude-single"
     "kinRoberts_fp\;\;develop"
     "kinRoboKin_dns\;\;exclude-single")
+
+find_package(Matlab REQUIRED)
+
+message(STATUS "Matlab is FOUND? ${Matlab_FOUND} Matlab_VERSION = ${Matlab_VERSION}")
+
+message(STATUS "Matlab_INCLUDE_DIRS =  ${Matlab_INCLUDE_DIRS}")
+
+message(STATUS "Matlab_MEX_LIBRARY =  ${Matlab_MEX_LIBRARY}")
+
+message(STATUS "Matlab_MX_LIBRARY =  ${Matlab_MEX_LIBRARY}")
+
+message(STATUS "Matlab_LIBRARIES =  ${Matlab_LIBRARIES}")
+
+
 
 # Examples using LAPACK linear solvers
 set(KINSOL_examples_BL)

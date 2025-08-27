@@ -18,48 +18,31 @@
  * Source: "Handbook of Test Problems in Local and Global Optimization",
  *             C.A. Floudas, P.M. Pardalos et al.
  *             Kluwer Academic Publishers, 1999.
- * Test problem 2 from Section 14.1, Chapter 14: Equilibrium Combustion
+ * Test problem 3 from Section 14.1, Chapter 14, taken from Bullard and Biegler
  *
- * This problem aims to identify the concentrations of the products of a
- * hydrocarbon combustion process at equilibrium (Meintjes and Morgan, 1990).
- *    x1*x2+x1-SUN_RCONST(3.0)*x5=0
- *    SUN_RCONST(2.0)*x1*x2+x1+SUN_RCONST(3.0)*R10*SUNRpowerI(x2,2)
- *       +x2*SUNRpowerI(x3,2)+R7*x2*x3+R9*x2*x4+R8*x2-R*x5=0
- *    SUN_RCONST(2.0)*x2*x3+R7*x2*x3+SUN_RCONST(2.0)*x5*SUNRpowerI(x3,2)
- *       +R6*x3-8*x5=0
- *    R9*x2*x4+SUN_RCONST(2.0)*SUNRpowerI(x4,2)-SUN_RCONST(4.0)*R*x5=0
- *    x1*x2+x1+R10*SUNRpowerI(x2,2)+x2*SUNRpowerI(x3,2)+R7*x2*x3
- *       +R9*x2*x4+R8*x2+R5*SUNRpowerI(x3,2)+R6*x3+SUNRpowerI(x4,2)
- *       -SUN_RCONST(1.0)=0
+ * This problem involves a blend of trigonometric and exponential terms.
+ *    1e4x1*x2-1.0 = 0
+ *    exp(-x1)+exp(-x2)-1.001 = 0
  * such that
- *    0.0001 <= xi <= 100 i=1,2,...,5
- * coefficient:
- *    R=SUN_RCONST(10.0);
- *    R5 = SUN_RCONST(0.193);
- *    R6 = SUN_RCONST(4.10622e-4);
- *    R7 = SUN_RCONST(5.45177e-4);
- *    R8 = SUN_RCONST(4.4975e-7);
- *    R9 = SUN_RCONST(3.40735e-5);
- *    R10 = SUN_RCONST(9.615e-7);
+ *    5.49e-6 <= x1 <= 4.553
+ *    2.196e-3 <= x2 <= 18.21
  *
- * The treatment of the bound constraints on x1, x2, x3, x4 and x5 is done using
+ * The treatment of the bound constraints on x1 and x2 is done using
  * the additional variables
  *    l1 = x1 - x1_min >= 0
  *    L1 = x1 - x1_max <= 0
  *    l2 = x2 - x2_min >= 0
  *    L2 = x2 - x2_max >= 0
- *    ...
- *    l5 = x5 - x5_min >= 0
- *    L5 = x5 - x5_max >= 0
  *
  * and using the constraint feature in KINSOL to impose
- *    l1 >= 0    l2 >= 0   ...   l5 >= 0
- *    L1 <= 0    L2 <= 0   ...   L5 >= 0
+ *    l1 >= 0    l2 >= 0
+ *    L1 <= 0    L2 <= 0
  *
- * The Equilibrium Combustion test problem has one known solutions.
+ * The Bullard-Biegler test problem has two known solutions.
  * The nonlinear system is solved by KINSOL using different
  * combinations of globalization and Jacobian update strategies
- * and with different initial guesses (leading to the known solutions).
+ * and with different initial guesses (leading to
+ * the known solutions).
  *
  * Constraints are imposed to make all components of the solution
  * positive.
@@ -77,22 +60,17 @@
 
 /* Problem Constants */
 
-#define NVAR 5
+#define NVAR 2
 #define NEQ  3 * NVAR
 
 #define FTOL SUN_RCONST(1.e-10) /* function tolerance */
 #define STOL SUN_RCONST(1.e-10) /* step tolerance     */
-#define R    SUN_RCONST(10.0)
-#define R5   SUN_RCONST(0.193)
-#define R6   SUN_RCONST(4.10622e-4)
-#define R7   SUN_RCONST(5.45177e-4)
-#define R8   SUN_RCONST(4.4975e-7)
-#define R9   SUN_RCONST(3.40735e-5)
-#define R10  SUN_RCONST(9.615e-7)
 
-#define XMIN  SUN_RCONST(1.0e-4)
-#define XMAX  SUN_RCONST(1.0e+2)
-#define ONE   SUN_RCONST(1.0)
+
+#define ONE              SUN_RCONST(1.0)
+#define ONEPTZEROZEROONE SUN_RCONST(1.001)
+#define TENTHOUSANDS     SUN_RCONST(1e4)
+#define ZERO             SUN_RCONST(0.0)
 
 typedef struct
 {
@@ -125,13 +103,13 @@ int main(void)
   SUNContext sunctx;
   UserData data;
   sunrealtype fnormtol, scsteptol;
-  N_Vector u1, u, s, c;
+  N_Vector u1, u2, u, s, c;
   int glstr, mset, retval;
   void* kmem;
   SUNMatrix J;
   SUNLinearSolver LS;
 
-  u1 = u = NULL;
+  u = NULL;
   s = c = NULL;
   kmem  = NULL;
   J     = NULL;
@@ -145,20 +123,17 @@ int main(void)
   /* User data */
 
   data        = (UserData)malloc(sizeof *data);
-  data->lb[0] = XMIN;
-  data->ub[0] = XMAX;
-  data->lb[1] = XMIN;
-  data->ub[1] = XMAX;
-  data->lb[2] = XMIN;
-  data->ub[2] = XMAX;
-  data->lb[3] = XMIN;
-  data->ub[3] = XMAX;
-  data->lb[4] = XMIN;
-  data->ub[4] = XMAX;
+  data->lb[0] = SUN_RCONST(5.49e-6);
+  data->ub[0] = SUN_RCONST(4.553);
+  data->lb[1] = SUN_RCONST(2.196e-3);
+  data->ub[1] = SUN_RCONST(18.21);
 
   /* Create serial vectors of length NEQ */
   u1 = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)u1, "N_VNew_Serial", 0)) { return (1); }
+
+  u2 = N_VNew_Serial(NEQ, sunctx);
+  if (check_retval((void*)u2, "N_VNew_Serial", 0)) { return (1); }
 
   u = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)u, "N_VNew_Serial", 0)) { return (1); }
@@ -169,23 +144,16 @@ int main(void)
   c = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)c, "N_VNew_Serial", 0)) { return (1); }
 
+
+
   N_VConst(ONE, s); /* no scaling */
 
-  Ith(c, 1) = SUN_RCONST(0.0); /* no constraint on x1 */
-  Ith(c, 2) = SUN_RCONST(0.0); /* no constraint on x2 */
-  Ith(c, 3) = SUN_RCONST(0.0); /* no constraint on x3 */
-  Ith(c, 4) = SUN_RCONST(0.0); /* no constraint on x4 */
-  Ith(c, 5) = SUN_RCONST(0.0); /* no constraint on x5 */
-  Ith(c, 6) = SUN_RCONST(1.0);  /* l1 = x1 - XMIN >= 0 */
-  Ith(c, 7) = SUN_RCONST(-1.0); /* L1 = x1 - XMAX <= 0 */
-  Ith(c, 8) = SUN_RCONST(1.0);  /* l2 = x2 - XMIN >= 0 */
-  Ith(c, 9) = SUN_RCONST(-1.0); /* L2 = x2 - XMAX <= 0 */
-  Ith(c, 10) = SUN_RCONST(1.0);  /* l3 = x3 - XMIN >= 0 */
-  Ith(c, 11) = SUN_RCONST(-1.0); /* L3 = x3 - XMAX <= 0 */
-  Ith(c, 12) = SUN_RCONST(1.0);  /* l4 = x4 - XMIN >= 0 */
-  Ith(c, 13) = SUN_RCONST(-1.0); /* L4 = x4 - XMAX <= 0 */
-  Ith(c, 14) = SUN_RCONST(1.0);  /* l5 = x5 - XMIN >= 0 */
-  Ith(c, 15) = SUN_RCONST(-1.0); /* L5 = x5 - XMAX <= 0 */
+  Ith(c, 1) = ZERO; /* no constraint on x1 */
+  Ith(c, 2) = ZERO; /* no constraint on x2 */
+  Ith(c, 3) = ONE;  /* l1 = x1 - x1_min >= 0 */
+  Ith(c, 4) = -ONE; /* L1 = x1 - x1_max <= 0 */
+  Ith(c, 5) = ONE;  /* l2 = x2 - x2_min >= 0 */
+  Ith(c, 6) = -ONE; /* L2 = x2 - x22_min <= 0 */
 
   fnormtol  = FTOL;
   scsteptol = STOL;
@@ -201,9 +169,6 @@ int main(void)
   if (check_retval(&retval, "KINSetFuncNormTol", 1)) { return (1); }
   retval = KINSetScaledStepTol(kmem, scsteptol);
   if (check_retval(&retval, "KINSetScaledStepTol", 1)) { return (1); }
-
-  retval = KINSetMaxNewtonStep(kmem, SUN_RCONST(100000));
-  if (check_retval(&retval, "KINSetMaxNewtonStep", 1)) { return (1); }
 
   retval = KINInit(kmem, func, u);
   if (check_retval(&retval, "KINInit", 1)) { return (1); }
@@ -224,7 +189,7 @@ int main(void)
   PrintHeader(fnormtol, scsteptol);
 
   /* --------------------------- */
-  for (sunindextype solutionIndex=1; solutionIndex<=3; solutionIndex++)
+  for (sunindextype solutionIndex=1; solutionIndex<=9; solutionIndex++)
   {
     SetInitialGuess(u1, data, solutionIndex);
     printf("\n------------------------------------------\n");
@@ -234,13 +199,13 @@ int main(void)
 
     N_VScale(ONE, u1, u);
     glstr = KIN_NONE;
-    mset  = 10;
+    mset  = 1;
     SolveIt(kmem, u, s, glstr, mset);
 
     /* --------------------------- */
     N_VScale(ONE, u1, u);
     glstr = KIN_LINESEARCH;
-    mset  = 10;
+    mset  = 1;
     SolveIt(kmem, u, s, glstr, mset);
 
     /* --------------------------- */
@@ -257,7 +222,6 @@ int main(void)
   }
 
   /* Free memory */
-  N_VDestroy(u1);
   N_VDestroy(u);
   N_VDestroy(s);
   N_VDestroy(c);
@@ -309,7 +273,7 @@ static int SolveIt(void* kmem, N_Vector u, N_Vector s, int glstr, int mset)
 static int func(N_Vector u, N_Vector f, void* user_data)
 {
   sunrealtype *udata, *fdata;
-  sunrealtype x1, l1, L1, x2, l2, L2, x3, l3, L3, x4, l4, L4, x5, l5, L5;
+  sunrealtype x1, l1, L1, x2, l2, L2;
   sunrealtype *lb, *ub;
   UserData data;
 
@@ -322,50 +286,16 @@ static int func(N_Vector u, N_Vector f, void* user_data)
 
   x1 = udata[0];
   x2 = udata[1];
-  x3 = udata[2];
-  x4 = udata[3];
-  x5 = udata[4];
-
-  l1 = udata[5];
-  L1 = udata[6];
-  l2 = udata[7];
-  L2 = udata[8];
-  l3 = udata[9];
-  L3 = udata[10];
-  l4 = udata[11];
-  L4 = udata[12];
-  l5 = udata[13];
-  L5 = udata[14];
-
- /*    x1*x2+x1-SUN_RCONST(3.0)*x5=0
-  *    SUN_RCONST(2.0)*x1*x2+x1+SUN_RCONST(3.0)*R10*SUNRpowerI(x2,2)
-  *       +x2*SUNRpowerI(x3,2)+R7*x2*x3+R9*x2*x4+R8*x2-R*x5=0
-  *    SUN_RCONST(2.0)*x2*SUNRpowerI(x3,2)+R7*x2*x3+SUN_RCONST(2.0)*R5*SUNRpowerI(x3,2)
-  *       +R6*x3-SUN_RCONST(8.0)*x5=0
-  *    R9*x2*x4+SUN_RCONST(2.0)*SUNRpowerI(x4,2)-SUN_RCONST(4.0)*R*x5=0
-  *    x1*x2+x1+R10*SUNRpowerI(x2,2)+x2*SUNRpowerI(x3,2)+R7*x2*x3
-  *       +R9*x2*x4+R8*x2+R5*SUNRpowerI(x3,2)+R6*x3+SUNRpowerI(x4,2)
-  *       -SUN_RCONST(1.0)=0
-*/
-  fdata[0] = x1*x2+x1-SUN_RCONST(3.0)*x5;
-  fdata[1] = SUN_RCONST(2.0)*x1*x2+x1+SUN_RCONST(3.0)*R10*SUNRpowerI(x2,2)
-            +x2*SUNRpowerI(x3,2)+R7*x2*x3+R9*x2*x4+R8*x2-R*x5;
-  fdata[2] = SUN_RCONST(2.0)*x2*SUNRpowerI(x3,2)+R7*x2*x3+SUN_RCONST(2.0)*R5*SUNRpowerI(x3,2)
-            +R6*x3-SUN_RCONST(8.0)*x5;
-  fdata[3] = R9*x2*x4+SUN_RCONST(2.0)*SUNRpowerI(x4,2)-SUN_RCONST(4.0)*R*x5;
-  fdata[4] = x1*x2+x1+R10*SUNRpowerI(x2,2)+x2*SUNRpowerI(x3,2)+R7*x2*x3
-            +R9*x2*x4+R8*x2+R5*SUNRpowerI(x3,2)+R6*x3+SUNRpowerI(x4,2)
-            -SUN_RCONST(1.0);
-  fdata[5] = l1 - x1 + lb[0];
-  fdata[6] = L1 - x1 + ub[0];
-  fdata[7] = l2 - x2 + lb[1];
-  fdata[8] = L2 - x2 + ub[1];
-  fdata[9] = l3 - x3 + lb[2];
-  fdata[10] = L3 - x3 + ub[2];
-  fdata[11] = l4 - x4 + lb[3];
-  fdata[12] = L4 - x4 + ub[3];
-  fdata[13] = l5 - x5 + lb[4];
-  fdata[14] = L5 - x5 + ub[4];
+  l1 = udata[2];
+  L1 = udata[3];
+  l2 = udata[4];
+  L2 = udata[5];
+  fdata[0] = TENTHOUSANDS*x1*x2-ONE;
+  fdata[1] = SUNRexp(-x1)+SUNRexp(-x2)-ONEPTZEROZEROONE;
+  fdata[2] = l1 - x1 + lb[0];
+  fdata[3] = L1 - x1 + ub[0];
+  fdata[4] = l2 - x2 + lb[1];
+  fdata[5] = L2 - x2 + ub[1];
 
   return (0);
 }
@@ -380,9 +310,8 @@ static int func(N_Vector u, N_Vector f, void* user_data)
  * Initial guesses
  */
 
-static void SetInitialGuess(N_Vector u, UserData data, sunindextype n)
-{
-  sunrealtype x1, x2, x3, x4, x5;
+static void SetInitialGuess(N_Vector u, UserData data, sunindextype n) {
+  sunrealtype x1, x2;
   sunrealtype* udata;
   sunrealtype *lb, *ub;
 
@@ -395,55 +324,63 @@ static void SetInitialGuess(N_Vector u, UserData data, sunindextype n)
   switch (n) {
     case 1:
       /* this init. guess should take us to (-5; -5) */
-      x1 = ONE;
-      x2 = ONE*SUN_RCONST(15);
-      x3 = ONE;
-      x4 = ONE;
-      x5 = ONE;
+      x1 = lb[0];
+      x2 = lb[1];
       break;
     case 2:
       /* this init. guess should take us to (-5; -3) */
-      x1 = XMAX*SUN_RCONST(0.90);
-      x2 = XMAX*SUN_RCONST(0.90);
-      x3 = XMAX*SUN_RCONST(0.90);
-      x4 = XMAX*SUN_RCONST(0.90);
-      x5 = XMAX*SUN_RCONST(0.90);
+      x1 = lb[0];
+      x2 = (lb[1]+ub[1])*SUN_RCONST(0.5);
+      break;
+    case 3:
+      /* this init. guess should take us to (-5; 5) */
+      x1 = lb[0];
+      x2 = ub[1];;
+      break;
+    case 4:
+      /* this init. guess should take us to (0; -5) */
+      x1 = (lb[0]+ub[0])*SUN_RCONST(0.5);
+      x2 = lb[1];
+      break;
+    case 5:
+      /* this init. guess should take us to (0; -5) */
+      x1 = (lb[0]+ub[0])*SUN_RCONST(0.5);
+      x2 = (lb[1]+ub[1])*SUN_RCONST(0.5);
+      break;
+    case 6:
+      /* this init. guess should take us to (0; 3) */
+      x1 = (lb[0]+ub[0])*SUN_RCONST(0.5);
+      x2 = ub[1];;
+      break;
+    case 7:
+      /* this init. guess should take us to (0; 3) */
+      x1 = ub[0];
+      x2 = lb[1];
+      break;
+    case 8:
+      /* this init. guess should take us to (0; 3) */
+      x1 = ub[0];
+      x2 = (lb[1]+ub[1])*SUN_RCONST(0.5);
       break;
     default:
-      /* this init. guess should take us to (-5; 5) */
-      x1 = (XMIN+XMAX)/SUN_RCONST(2.0);
-      x2 = (XMIN+XMAX)/SUN_RCONST(2.0);
-      x3 = (XMIN+XMAX)/SUN_RCONST(2.0);
-      x4 = (XMIN+XMAX)/SUN_RCONST(2.0);
-      x5 = (XMIN+XMAX)/SUN_RCONST(2.0);
+      x1 = ub[0];
+      x2 = ub[1];
       break;
   }
-
-
   udata[0] = x1;
   udata[1] = x2;
-  udata[2] = x3;
-  udata[3] = x4;
-  udata[4] = x5;
-  udata[5] = x1 - lb[0];
-  udata[6] = x1 - ub[0];
-  udata[7] = x2 - lb[1];
-  udata[8] = x2 - ub[1];
-  udata[9] = x3 - lb[2];
-  udata[10] = x3 - ub[2];
-  udata[11] = x4 - lb[3];
-  udata[12] = x4 - ub[3];
-  udata[13] = x5 - lb[4];
-  udata[14] = x5 - ub[4];
+  udata[2] = x1 - lb[0];
+  udata[3] = x1 - ub[0];
+  udata[4] = x2 - lb[1];
+  udata[5] = x2 - ub[1];
 }
-
 /*
  * Print first lines of output (problem description)
  */
 
 static void PrintHeader(sunrealtype fnormtol, sunrealtype scsteptol)
 {
-  printf("\nHimmelblau function problem\n");
+  printf("\nFerraris and Tronconi test problem\n");
   printf("Tolerance parameters:\n");
 #if defined(SUNDIALS_FLOAT128_PRECISION)
   printf("  fnormtol  = %10.6Qg\n  scsteptol = %10.6Qg\n", fnormtol, scsteptol);
@@ -463,13 +400,13 @@ static void PrintHeader(sunrealtype fnormtol, sunrealtype scsteptol)
 static void PrintOutput(N_Vector u)
 {
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-  printf(" %8.6Qg  %8.6Qg  %8.6Qg  %8.6Qg  %8.6Qg\n", Ith(u, 1), Ith(u, 2), Ith(u, 3), Ith(u, 4), Ith(u, 5));
+  printf(" %8.6Qg  %8.6Qg\n", Ith(u, 1), Ith(u, 2));
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-  printf(" %8.6Lg  %8.6Lg  %8.6Lg  %8.6Lg  %8.6Lg\n", Ith(u, 1), Ith(u, 2), Ith(u, 3), Ith(u, 4), Ith(u, 5));
+  printf(" %8.6Lg  %8.6Lg\n", Ith(u, 1), Ith(u, 2));
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" %8.6g  %8.6g  %8.6g  %8.6g  %8.6g\n", Ith(u, 1), Ith(u, 2), Ith(u, 3), Ith(u, 4), Ith(u, 5));
+  printf(" %8.6g  %8.6g\n", Ith(u, 1), Ith(u, 2));
 #else
-  printf(" %8.6g  %8.6g  %8.6g  %8.6g  %8.6g\n", Ith(u, 1), Ith(u, 2), Ith(u, 3), Ith(u, 4), Ith(u, 5));
+  printf(" %8.6g  %8.6g\n", Ith(u, 1), Ith(u, 2));
 #endif
 }
 
