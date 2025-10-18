@@ -134,7 +134,7 @@
  *      cvQuadNls
  *      cvStgrNls
  *      cvStgr1Nls
- *      cvQuadSensNlsyes
+ *      cvQuadSensNls
  *      cvHandleNFlag
  *      cvRestore
  *
