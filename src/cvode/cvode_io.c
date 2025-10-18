@@ -1025,7 +1025,7 @@ int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
  * Setup for constraint handling feature
  */
 
-int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails)
+int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
 {
   if (cvode_mem == NULL)
   {
@@ -1034,7 +1034,7 @@ int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails)
   }
   CVodeMem cv_mem = (CVodeMem)cvode_mem;
 
-  *num_fails = cv_mem->constraint_fails;
+  *num_fails_out = cv_mem->constraint_fails;
 
   return CV_SUCCESS;
 }
