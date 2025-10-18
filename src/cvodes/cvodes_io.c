@@ -697,7 +697,8 @@ int CVodeSetStopTime(void* cvode_mem, sunrealtype tstop)
 /*
  * CVodeSetInterpolateStopTime
  *
- * Specifies to use interpolation to fill the returned solution at the stop time (instead of a copy).
+ * Specifies to use interpolation to fill the output solution at
+ * the stop time (instead of a copy).
  */
 
 int CVodeSetInterpolateStopTime(void* cvode_mem, sunbooleantype interp)
@@ -711,6 +712,7 @@ int CVodeSetInterpolateStopTime(void* cvode_mem, sunbooleantype interp)
   }
   cv_mem                 = (CVodeMem)cvode_mem;
   cv_mem->cv_tstopinterp = interp;
+
   return (CV_SUCCESS);
 }
 
@@ -968,22 +970,19 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-  /* If there are no constraints, destroy data structures */
+  /* Disable constraints */
   if (constraints == NULL)
   {
-    if (cv_mem->cv_constraintsMallocDone)
+    if (cv_mem->cv_constraints)
     {
       N_VDestroy(cv_mem->cv_constraints);
       cv_mem->cv_lrw -= cv_mem->cv_lrw1;
       cv_mem->cv_liw -= cv_mem->cv_liw1;
     }
-    cv_mem->cv_constraintsMallocDone = SUNFALSE;
-    cv_mem->cv_constraintsSet        = SUNFALSE;
     return (CV_SUCCESS);
   }
 
   /* Test if required vector ops. are defined */
-
   if (constraints->ops->nvdiv == NULL || constraints->ops->nvmaxnorm == NULL ||
       constraints->ops->nvcompare == NULL ||
       constraints->ops->nvconstrmask == NULL ||
@@ -1003,20 +1002,65 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
     return (CV_ILL_INPUT);
   }
 
-  if (!(cv_mem->cv_constraintsMallocDone))
+  /* Enable constraints */
+  if (cv_mem->cv_constraints == NULL)
   {
     cv_mem->cv_constraints = N_VClone(constraints);
+    if (cv_mem->cv_constraints == NULL)
+    {
+      cvProcessError(NULL, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
+                     MSGCV_MEM_FAIL);
+      return (CV_MEM_FAIL);
+    }
     cv_mem->cv_lrw += cv_mem->cv_lrw1;
     cv_mem->cv_liw += cv_mem->cv_liw1;
-    cv_mem->cv_constraintsMallocDone = SUNTRUE;
   }
 
   /* Load the constraints vector */
   N_VScale(ONE, constraints, cv_mem->cv_constraints);
 
-  cv_mem->cv_constraintsSet = SUNTRUE;
-
   return (CV_SUCCESS);
+}
+
+/*
+ * CVodeGetNumConstraintFails
+ *
+ * Setup for constraint handling feature
+ */
+
+int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
+{
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  if (max_fails <= 0) { cv_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS; }
+  else { cv_mem->max_constraint_fails = max_fails; }
+
+  return CV_SUCCESS;
+}
+
+/*
+ * CVodeSetMaxNumConstraintFails
+ *
+ * Setup for constraint handling feature
+ */
+
+int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails)
+{
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  *num_fails = cv_mem->constraint_fails;
+
+  return CV_SUCCESS;
 }
 
 /*
@@ -2543,6 +2587,7 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
     return (CV_ILL_INPUT);
   }
 
+  /* step and method stats */
   sunfprintf_real(outfile, fmt, SUNTRUE, "Current time", cv_mem->cv_tn);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Steps", cv_mem->cv_nst);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Error test fails", cv_mem->cv_netf);
@@ -2555,14 +2600,11 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
                   cv_mem->cv_next_q);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Stab. lim. order reductions",
                   cv_mem->cv_nor);
-
   /* function evaluations */
   sunfprintf_long(outfile, fmt, SUNFALSE, "RHS fn evals", cv_mem->cv_nfe);
-
   /* nonlinear solver stats */
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS iters", cv_mem->cv_nni);
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS fails", cv_mem->cv_nnf);
-
   if (cv_mem->cv_nst > 0)
   {
     sunfprintf_real(outfile, fmt, SUNFALSE, "NLS iters per step",
@@ -2717,6 +2759,8 @@ char* CVodeGetReturnFlagName(long int flag)
   case CV_REPTD_SRHSFUNC_ERR: sprintf(name, "CV_REPTD_SRHSFUNC_ERR"); break;
   case CV_UNREC_SRHSFUNC_ERR: sprintf(name, "CV_UNREC_SRHSFUNC_ERR"); break;
   case CV_TOO_CLOSE: sprintf(name, "CV_TOO_CLOSE"); break;
+  case CV_NLS_INIT_FAIL: sprintf(name, "CV_NLS_INIT_FAIL"); break;
+  case CV_NLS_SETUP_FAIL: sprintf(name, "CV_NLS_SETUPT_FAIL"); break;
   case CV_NO_ADJ: sprintf(name, "CV_NO_ADJ"); break;
   case CV_NO_FWD: sprintf(name, "CV_NO_FWD"); break;
   case CV_NO_BCK: sprintf(name, "CV_NO_BCK"); break;
@@ -2725,6 +2769,9 @@ char* CVodeGetReturnFlagName(long int flag)
   case CV_FWD_FAIL: sprintf(name, "CV_FWD_FAIL"); break;
   case CV_GETY_BADT: sprintf(name, "CV_GETY_BADT"); break;
   case CV_NLS_FAIL: sprintf(name, "CV_NLS_FAIL"); break;
+  case CV_PROJ_MEM_NULL: sprintf(name, "CV_PROJ_MEM_NULL"); break;
+  case CV_PROJFUNC_FAIL: sprintf(name, "CV_PROJFUNC_FAIL"); break;
+  case CV_REPTD_PROJFUNC_ERR: sprintf(name, "CV_REPTD_PROJFUNC_ERR"); break;
   default: sprintf(name, "NONE");
   }
 

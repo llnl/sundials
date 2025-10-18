@@ -15,7 +15,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ----------------------------------------------------------------
- * Implementation file for CVode's linear solver interface.
+ * Implementation file for CVODE's linear solver interface.
  * ---------------------------------------------------------------- */
 
 #include <stdio.h>

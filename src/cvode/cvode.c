@@ -29,6 +29,7 @@
 
 #include <cvode/cvode.h>
 #include <sundials/priv/sundials_errors_impl.h>
+#include <sundials/sundials_context.h>
 #include <sundials/sundials_types.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
@@ -2375,7 +2376,8 @@ static int cvStep(CVodeMem cv_mem)
   int eflag;                   /* error test return flag                   */
   sunbooleantype doProjection; /* flag to apply projection in this step    */
 
-  /* Failure counters in this step attempt */
+  /* Initialize failure counters for this step attempt */
+
   int ncf = 0;  /* corrector failures  */
   int npf = 0;  /* projection failures */
   int nef = 0;  /* error test failures */
@@ -4921,7 +4923,7 @@ void cvProcessError(CVodeMem cv_mem, int error_code, int line, const char* func,
     /* Call the SUNDIALS main error handler */
     SUNHandleErrWithMsg(line, func, file, msg, error_code, cv_mem->cv_sunctx);
 
-    /* Clear the error now */
+    /* Clear the last error value */
     (void)SUNContext_GetLastError(cv_mem->cv_sunctx);
   }
   while (0);

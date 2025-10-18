@@ -893,7 +893,7 @@ int CVodeSetRootDirection(void* cvode_mem, int* rootdir)
   nrt = cv_mem->cv_nrtfn;
   if (nrt == 0)
   {
-    cvProcessError(NULL, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_NO_ROOT);
     return (CV_ILL_INPUT);
   }
@@ -1710,6 +1710,8 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
     sunfprintf_real(outfile, fmt, SUNFALSE, "NLS iters per step",
                     (sunrealtype)cv_mem->cv_nni / (sunrealtype)cv_mem->cv_nst);
   }
+
+  /* linear solver stats */
   sunfprintf_long(outfile, fmt, SUNFALSE, "LS setups", cv_mem->cv_nsetups);
   if (cv_mem->cv_lmem)
   {
@@ -1733,8 +1735,10 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
                       (sunrealtype)cvls_mem->npe / (sunrealtype)cv_mem->cv_nni);
     }
   }
+
   /* rootfinding stats */
   sunfprintf_long(outfile, fmt, SUNFALSE, "Root fn evals", cv_mem->cv_nge);
+
   /* projection stats */
   if (cv_mem->proj_mem)
   {

@@ -22,6 +22,8 @@
 #ifndef _CVODE_IMPL_H
 #define _CVODE_IMPL_H
 
+#include <stdarg.h>
+
 #include <cvode/cvode.h>
 #include <sundials/priv/sundials_context_impl.h>
 #include <sundials/priv/sundials_errors_impl.h>

@@ -26,9 +26,9 @@ if(BUILD_CVODE)
   list(APPEND unit_tests "test_constraints_cvode.cpp")
 endif()
 
-# if(BUILD_CVODES)
-#   list(APPEND unit_tests "test_constraints_cvodes.cpp")
-# endif()
+if(BUILD_CVODES)
+  list(APPEND unit_tests "test_constraints_cvodes.cpp")
+endif()
 
 if(BUILD_IDA)
   list(APPEND unit_tests "test_constraints_ida.cpp")

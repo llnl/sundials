@@ -14,14 +14,14 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
- * Test inequality constraints in CVODE
+ * Test inequality constraints in CVODES
  * ---------------------------------------------------------------------------*/
 
 #include <cstdio>
 #include <iostream>
 
 // Include desired integrators, vectors, linear solvers, and nonlinear solvers
-#include "cvode/cvode.h"
+#include "cvodes/cvodes.h"
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_context.hpp"
 #include "sundials/sundials_math.h"
@@ -39,7 +39,7 @@ using namespace problems::constant;
 
 int main(int argc, char* argv[])
 {
-  cout << "Start CVODE inequality constraints test" << endl;
+  cout << "Start CVODES inequality constraints test" << endl;
 
   // SUNDIALS context object for this simulation
   sundials::Context sunctx;
@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
   SUNLinSolFree(LS);
   CVodeFree(&cvode_mem);
 
-  cout << endl << "End CVODE inequality constraints test" << endl;
+  cout << endl << "End CVODES inequality constraints test" << endl;
 
   return 0;
 }
