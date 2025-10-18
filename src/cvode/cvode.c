@@ -3171,6 +3171,15 @@ static int cvCheckConstraints(CVodeMem cv_mem)
   constraintsPassed = N_VConstrMask(cv_mem->cv_constraints, cv_mem->cv_y, mm);
   if (constraintsPassed) { return (CV_SUCCESS); }
 
+  printf("tn = %Lg\n", cv_mem->cv_tn);
+  printf("hn = %Lg\n", cv_mem->cv_h);
+  printf("constraints:\n");
+  N_VPrint(cv_mem->cv_constraints);
+  printf("y:\n");
+  N_VPrint(cv_mem->cv_y);
+  printf("mm:\n");
+  N_VPrint(mm);
+
   /* Constraints not met */
 
   /* Compute correction to satisfy constraints */
@@ -3192,10 +3201,16 @@ static int cvCheckConstraints(CVodeMem cv_mem)
 
   vnorm = N_VWrmsNorm(tmp, cv_mem->cv_ewt); /* ||v|| */
 
+  printf("correction:\n");
+  N_VPrint(tmp);
+  printf("correction norm = %Lg:\n", vnorm);
+  printf("threshold = %Lg:\n", cv_mem->cv_tq[4]);
+
   /* If vector v of constraint corrections is small in norm, correct and
      accept this step */
   if (vnorm <= cv_mem->cv_tq[4])
   {
+    printf("<<<<< Correct\n\n");
     N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp,
                  cv_mem->cv_acor); /* acor <- acor - v */
     return (CV_SUCCESS);
@@ -3210,10 +3225,21 @@ static int cvCheckConstraints(CVodeMem cv_mem)
   /* Constraint correction is too large, reduce h by computing eta = h'/h */
   N_VLinearSum(ONE, cv_mem->cv_zn[0], -ONE, cv_mem->cv_y, tmp);
   N_VProd(mm, tmp, tmp);
+
+  printf("tmp to compute eta:\n");
+  N_VPrint(tmp);
+  printf("z[0]:\n");
+  N_VPrint(cv_mem->cv_zn[0]);
+
   cv_mem->cv_eta = PT9 * N_VMinQuotient(cv_mem->cv_zn[0], tmp);
+  printf("eta1 = %Lg\n", cv_mem->cv_eta);
   cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta, PT1);
+  printf("eta2 = %Lg\n", cv_mem->cv_eta);
   cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta,
                           cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
+  printf("eta3 = %Lg\n", cv_mem->cv_eta);
+
+  printf(">>>>> Constraint limited step, eta = %Lg\n\n", cv_mem->cv_eta);
 
   /* Reattempt step with new step size */
   return (CONSTR_RECVR);
