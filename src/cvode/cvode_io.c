@@ -999,7 +999,7 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
 }
 
 /*
- * CVodeSetMaxNumConstraintFails
+ * CVodeGetNumConstraintFails
  *
  * Setup for constraint handling feature
  */
