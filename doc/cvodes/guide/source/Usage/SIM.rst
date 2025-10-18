@@ -918,7 +918,7 @@ Main solver optional input functions
 
    .. code-block:: console
 
-      $ ./a.out cvode.max_order 3 cvodes.max_num_steps 10000
+      $ ./a.out cvodes.max_order 3 cvodes.max_num_steps 10000
 
    .. note::
 
