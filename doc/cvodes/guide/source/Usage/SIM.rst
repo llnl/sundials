@@ -1272,6 +1272,9 @@ Main solver optional input functions
      * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized through a
        previous call to :c:func:`CVodeCreate`
 
+   .. versionadded:: x.y.z
+
+
 .. _CVODES.Usage.SIM.optional_input.optin_ls:
 
 Linear solver interface optional input functions
@@ -2708,6 +2711,11 @@ described next.
       * ``CV_SUCCESS`` -- The optional output value has been successfully set.
       * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
+   .. versionchnaged:: x.y.z
+
+      In prior versions, inequality constraint failures were included with the
+      number of step failures due to a nonlinear solver failure. These failures
+      are now counted separately, see :c:func:`CVodeGetNumConstraintfails`.
 
 .. c:function:: int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
 
@@ -2722,6 +2730,7 @@ described next.
       * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized through a
         previous call to :c:func:`CVodeCreate`.
 
+   .. versionadded:: x.y.z
 
 .. c:function:: int CVodeGetLastOrder(void* cvode_mem, int *qlast)
 

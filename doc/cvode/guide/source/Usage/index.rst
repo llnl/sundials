@@ -1262,6 +1262,8 @@ Main solver optional input functions
      * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a
        previous call to :c:func:`CVodeCreate`
 
+   .. versionadded:: x.y.z
+
 .. c:function:: int CVodeSetUseIntegratorFusedKernels(void* cvode_mem, sunbooleantype onoff)
 
    The function ``CVodeSetUseIntegratorFusedKernels`` informs CVODE that it should  use specialized fused kernels internally, if available. The specialized  kernels may offer performance improvements for small problem sizes. Users  should beware that these kernels can cause changes in the behavior of the  integrator. By default, these kernels are not used.  Must be called after :c:func:`CVodeInit`.
@@ -2714,6 +2716,11 @@ described next.
       * ``CV_SUCCESS`` -- The optional output value has been successfully set.
       * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
+   .. versionchnaged:: x.y.z
+
+      In prior versions, inequality constraint failures were included with the
+      number of step failures due to a nonlinear solver failure. These failures
+      are now counted separately, see :c:func:`CVodeGetNumConstraintfails`.
 
 .. c:function:: int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
 
@@ -2728,6 +2735,7 @@ described next.
       * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a
         previous call to :c:func:`CVodeCreate`.
 
+   .. versionadded:: x.y.z
 
 .. c:function:: int CVodeGetLastOrder(void* cvode_mem, int *qlast)
 
