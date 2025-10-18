@@ -216,9 +216,6 @@ typedef struct CVodeMemRec
   CVEwtFn cv_efun; /* function to set ewt                           */
   void* cv_e_data; /* user pointer passed to efun                   */
 
-  sunbooleantype cv_constraintsSet; /* constraints vector present:
-                                    do constraints calc                       */
-
   /*-----------------------
     Nordsieck History Array
     -----------------------*/
@@ -244,8 +241,6 @@ typedef struct CVodeMemRec
   N_Vector cv_vtemp1; /* temporary storage vector                            */
   N_Vector cv_vtemp2; /* temporary storage vector                            */
   N_Vector cv_vtemp3; /* temporary storage vector                            */
-
-  N_Vector cv_constraints; /* vector of inequality constraint options         */
 
   /*-----------------
     Tstop information
@@ -405,7 +400,6 @@ typedef struct CVodeMemRec
 
   sunbooleantype cv_VabstolMallocDone;
   sunbooleantype cv_MallocDone;
-  sunbooleantype cv_constraintsMallocDone;
 
   /*-------------------------------------------
     User access function
@@ -443,6 +437,14 @@ typedef struct CVodeMemRec
   long int cv_nge;       /* counter for g evaluations                       */
   sunbooleantype* cv_gactive; /* array with active/inactive event functions      */
   int cv_mxgnull; /* number of warning messages about possible g==0  */
+
+  /*---------------------------
+    Inequality Constraints Data
+    ---------------------------*/
+
+  N_Vector cv_constraints;
+  long int constraint_fails;
+  int max_local_constraint_fails;
 
   /*---------------
     Projection Data

@@ -310,7 +310,6 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->cv_dgmax_lsetup     = DGMAX_LSETUP_DEFAULT;
   cv_mem->convfail            = CV_NO_FAILURES;
   cv_mem->cv_constraints      = NULL;
-  cv_mem->cv_constraintsSet   = SUNFALSE;
 
   /* Initialize root finding variables */
 
@@ -343,9 +342,8 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
 
   /* No mallocs have been done yet */
 
-  cv_mem->cv_VabstolMallocDone     = SUNFALSE;
-  cv_mem->cv_MallocDone            = SUNFALSE;
-  cv_mem->cv_constraintsMallocDone = SUNFALSE;
+  cv_mem->cv_VabstolMallocDone = SUNFALSE;
+  cv_mem->cv_MallocDone        = SUNFALSE;
 
   /* Initialize nonlinear solver variables */
   cv_mem->NLS    = NULL;
@@ -1237,7 +1235,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
   else if (cv_mem->first_step_after_resize)
   {
     /* Check if the resized y satisfies the constraints */
-    if (cv_mem->cv_constraintsSet)
+    if (cv_mem->cv_constraints)
     {
       sunbooleantype conOK = N_VConstrMask(cv_mem->cv_constraints,
                                            cv_mem->cv_zn[0], cv_mem->cv_tempv);
@@ -1993,7 +1991,7 @@ static void cvFreeVectors(CVodeMem cv_mem)
     cv_mem->cv_liw -= cv_mem->cv_liw1;
   }
 
-  if (cv_mem->cv_constraintsMallocDone)
+  if (cv_mem->cv_constraints)
   {
     N_VDestroy(cv_mem->cv_constraints);
     cv_mem->cv_lrw -= cv_mem->cv_lrw1;
@@ -2043,7 +2041,7 @@ static int cvInitialSetup(CVodeMem cv_mem)
   else { cv_mem->cv_e_data = cv_mem; }
 
   /* Check to see if y0 satisfies constraints */
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     conOK = N_VConstrMask(cv_mem->cv_constraints, cv_mem->cv_zn[0],
                           cv_mem->cv_tempv);
@@ -3142,7 +3140,7 @@ static int cvNls(CVodeMem cv_mem, int nflag)
   cv_mem->cv_jcur = SUNFALSE;
 
   /* check inequality constraints */
-  if (cv_mem->cv_constraintsSet) { flag = cvCheckConstraints(cv_mem); }
+  if (cv_mem->cv_constraints) { flag = cvCheckConstraints(cv_mem); }
 
   return (flag);
 }

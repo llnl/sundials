@@ -662,7 +662,7 @@ static int CVBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
   ewt_data   = N_VGetArrayPointer(cv_mem->cv_ewt);
   ytemp_data = N_VGetArrayPointer(ytemp);
   gtemp_data = N_VGetArrayPointer(gtemp);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -687,7 +687,7 @@ static int CVBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
       yj  = y_data[j];
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -717,7 +717,7 @@ static int CVBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
       inc = SUNMAX(pdata->dqrely * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) as before. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)

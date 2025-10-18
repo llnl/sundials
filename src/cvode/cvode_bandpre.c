@@ -511,7 +511,7 @@ static int CVBandPDQJac(CVBandPrecData pdata, sunrealtype t, N_Vector y,
   ftemp_data = N_VGetArrayPointer(ftemp);
   y_data     = N_VGetArrayPointer(y);
   ytemp_data = N_VGetArrayPointer(ytemp);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -539,7 +539,7 @@ static int CVBandPDQJac(CVBandPrecData pdata, sunrealtype t, N_Vector y,
       yj  = y_data[j];
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -569,7 +569,7 @@ static int CVBandPDQJac(CVBandPrecData pdata, sunrealtype t, N_Vector y,
       inc           = SUNMAX(srur * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) as before. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)

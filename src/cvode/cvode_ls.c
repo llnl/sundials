@@ -1075,7 +1075,7 @@ int cvLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   /* Obtain pointers to the data for ewt, y */
   ewt_data = N_VGetArrayPointer(cv_mem->cv_ewt);
   y_data   = N_VGetArrayPointer(y);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -1096,7 +1096,7 @@ int cvLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
     inc     = SUNMAX(srur * SUNRabs(yjsaved), minInc / ewt_data[j]);
 
     /* Adjust sign(inc) if y_j has an inequality constraint. */
-    if (cv_mem->cv_constraintsSet)
+    if (cv_mem->cv_constraints)
     {
       conj = cns_data[j];
       if (SUNRabs(conj) == ONE)
@@ -1172,7 +1172,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   ftemp_data = N_VGetArrayPointer(ftemp);
   y_data     = N_VGetArrayPointer(y);
   ytemp_data = N_VGetArrayPointer(ytemp);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -1200,7 +1200,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       inc = SUNMAX(srur * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) if yj has an inequality constraint. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -1229,7 +1229,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       inc           = SUNMAX(srur * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) as before. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)

@@ -345,11 +345,10 @@ int CVodeResizeHistory(void* cvode_mem, sunrealtype* t_hist, N_Vector* y_hist,
   }
 
   /* User will need to set a new constraints vector */
-  if (cv_mem->cv_constraintsMallocDone)
+  if (cv_mem->cv_constraints)
   {
     N_VDestroy(cv_mem->cv_constraints);
-    cv_mem->cv_constraintsMallocDone = SUNFALSE;
-    cv_mem->cv_constraintsSet        = SUNFALSE;
+    cv_mem->cv_constraints = NULL;
   }
 
   for (int j = 0; j <= cv_mem->cv_qmax_alloc; j++)

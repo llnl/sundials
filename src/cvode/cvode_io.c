@@ -946,22 +946,19 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-  /* If there are no constraints, destroy data structures */
+  /* Disable constraints */
   if (constraints == NULL)
   {
-    if (cv_mem->cv_constraintsMallocDone)
+    if (cv_mem->cv_constraints)
     {
       N_VDestroy(cv_mem->cv_constraints);
       cv_mem->cv_lrw -= cv_mem->cv_lrw1;
       cv_mem->cv_liw -= cv_mem->cv_liw1;
     }
-    cv_mem->cv_constraintsMallocDone = SUNFALSE;
-    cv_mem->cv_constraintsSet        = SUNFALSE;
     return (CV_SUCCESS);
   }
 
   /* Test if required vector ops. are defined */
-
   if (constraints->ops->nvdiv == NULL || constraints->ops->nvmaxnorm == NULL ||
       constraints->ops->nvcompare == NULL ||
       constraints->ops->nvconstrmask == NULL ||
@@ -981,18 +978,22 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
     return (CV_ILL_INPUT);
   }
 
-  if (!(cv_mem->cv_constraintsMallocDone))
+  /* Enable constraints */
+  if (cv_mem->cv_constraints == NULL)
   {
     cv_mem->cv_constraints = N_VClone(constraints);
+    if (cv_mem->cv_constraints == NULL)
+    {
+      cvProcessError(NULL, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
+                     MSGCV_MEM_FAIL);
+      return (CV_MEM_FAIL);
+    }
     cv_mem->cv_lrw += cv_mem->cv_lrw1;
     cv_mem->cv_liw += cv_mem->cv_liw1;
-    cv_mem->cv_constraintsMallocDone = SUNTRUE;
   }
 
   /* Load the constraints vector */
   N_VScale(ONE, constraints, cv_mem->cv_constraints);
-
-  cv_mem->cv_constraintsSet = SUNTRUE;
 
   return (CV_SUCCESS);
 }
