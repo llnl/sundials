@@ -176,7 +176,8 @@ static void cvSetTqBDF(CVodeMem cv_mem, sunrealtype hsum, sunrealtype alpha0,
 
 static int cvNls(CVodeMem cv_mem, int nflag);
 
-static int cvCheckConstraints(CVodeMem cv_mem);
+static int cvCheckConstraints(CVodeMem cv_mem, sunrealtype saved_t,
+                              int* local_constraint_fails);
 
 static int cvHandleNFlag(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
                          int* ncfPtr);
@@ -2366,17 +2367,16 @@ static int cvStep(CVodeMem cv_mem)
 {
   sunrealtype saved_t;         /* time to restore to if a failure occurs   */
   sunrealtype dsm;             /* local truncation error estimate          */
-  int ncf;                     /* corrector failures in this step attempt  */
-  int npf;                     /* projection failures in this step attempt */
-  int nef;                     /* error test failures in this step attempt */
   int nflag, kflag;            /* nonlinear solver flags                   */
   int pflag;                   /* projection return flag                   */
   int eflag;                   /* error test return flag                   */
   sunbooleantype doProjection; /* flag to apply projection in this step    */
 
-  /* Initialize local counters for convergence and error test failures */
-
-  ncf = npf = nef = 0;
+  /* Failure counters in this step attempt */
+  int ncf = 0;  /* corrector failures  */
+  int npf = 0;  /* projection failures */
+  int nef = 0;  /* error test failures */
+  int local_constraint_fails = 0;
 
   /* If the step size has changed, update the history array */
   if ((cv_mem->cv_nst > 0) && (cv_mem->cv_hprime != cv_mem->cv_h))
@@ -2396,7 +2396,7 @@ static int cvStep(CVodeMem cv_mem)
 
   /* Looping point for attempts to take a step */
 
-  saved_t = cv_mem->cv_tn;
+  saved_t = cv_mem->cv_tn; /* tn is updated in cvPredict */
   nflag   = FIRST_CALL;
 
   for (;;)
@@ -2410,6 +2410,20 @@ static int cvStep(CVodeMem cv_mem)
     cvSet(cv_mem);
 
     nflag = cvNls(cv_mem, nflag);
+
+    /* check inequality constraints */
+    if (nflag == CV_SUCCESS && cv_mem->cv_constraints)
+    {
+      int cflag = cvCheckConstraints(cv_mem, saved_t, &local_constraint_fails);
+      if (cflag == CV_CONSTR_FAIL) { return CV_CONSTR_FAIL; }
+      else if (cflag == CONSTR_RECVR)
+      {
+        nflag = PREV_CONV_FAIL;
+        kflag = PREDICT_AGAIN;
+        continue;
+      }
+    }
+
     kflag = cvHandleNFlag(cv_mem, &nflag, saved_t, &ncf);
 
     SUNLogInfoIf(kflag == PREDICT_AGAIN || kflag != DO_ERROR_TEST, CV_LOGGER,
@@ -3139,9 +3153,6 @@ static int cvNls(CVodeMem cv_mem, int nflag)
   /* update Jacobian status */
   cv_mem->cv_jcur = SUNFALSE;
 
-  /* check inequality constraints */
-  if (cv_mem->cv_constraints) { flag = cvCheckConstraints(cv_mem); }
-
   return (flag);
 }
 
@@ -3160,7 +3171,8 @@ static int cvNls(CVodeMem cv_mem, int nflag)
  *   CV_CONSTR_FAIL ---> values failed to satisfy constraints with hmin
  */
 
-static int cvCheckConstraints(CVodeMem cv_mem)
+static int cvCheckConstraints(CVodeMem cv_mem, sunrealtype saved_t,
+                              int* local_constraint_fails)
 {
   sunbooleantype constraintsPassed;
   sunrealtype vnorm;
@@ -3216,8 +3228,16 @@ static int cvCheckConstraints(CVodeMem cv_mem)
     return (CV_SUCCESS);
   }
 
-  /* Return with error if |h| == hmin */
-  if (SUNRabs(cv_mem->cv_h) <= cv_mem->cv_hmin * ONEPSM)
+  /* update failure counts */
+  (*local_constraint_fails)++;
+  cv_mem->constraint_fails++;
+
+  /* restore zn */
+  cvRestore(cv_mem, saved_t);
+
+  /* Check for |h| == hmin or max local failures */
+  if ((SUNRabs(cv_mem->cv_h) <= cv_mem->cv_hmin * ONEPSM) ||
+      (*local_constraint_fails == cv_mem->max_local_constraint_fails))
   {
     return (CV_CONSTR_FAIL);
   }
@@ -3240,6 +3260,8 @@ static int cvCheckConstraints(CVodeMem cv_mem)
   printf("eta3 = %Lg\n", cv_mem->cv_eta);
 
   printf(">>>>> Constraint limited step, eta = %Lg\n\n", cv_mem->cv_eta);
+
+  cvRescale(cv_mem);
 
   /* Reattempt step with new step size */
   return (CONSTR_RECVR);
@@ -3311,17 +3333,12 @@ static int cvHandleNFlag(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
       (*ncfPtr == cv_mem->cv_maxncf))
   {
     if (nflag == SUN_NLS_CONV_RECVR) { return (CV_CONV_FAILURE); }
-    if (nflag == CONSTR_RECVR) { return (CV_CONSTR_FAIL); }
     if (nflag == RHSFUNC_RECVR) { return (CV_REPTD_RHSFUNC_ERR); }
   }
 
-  /* Reduce step size; return to reattempt the step
-     Note that if nflag = CONSTR_RECVR, then eta was already set in cvCheckConstraints */
-  if (nflag != CONSTR_RECVR)
-  {
-    cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta_cf,
-                            cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
-  }
+  /* Reduce step size; return to reattempt the step */
+  cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta_cf,
+                          cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
   *nflagPtr = PREV_CONV_FAIL;
   cvRescale(cv_mem);
 
