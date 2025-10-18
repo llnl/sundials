@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
   // Should only have one constraint failure
   if (num_constraint_fails != 1)
   {
-    cout << "FAILED: More than one constraint failure!" << endl;
+    cout << "FAILED: Expected one constraint failure!" << endl;
     return 1;
   }
 
