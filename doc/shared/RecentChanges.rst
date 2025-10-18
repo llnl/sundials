@@ -8,7 +8,10 @@
 Added the functions :c:func:`CVodeSetMaxNumConstraintFails` and
 :c:func:`CVodeGetNumConstraintFails` to set maximum number of inequality
 constraint failures in a step attempt and the total number of failed step
-attempts due to an inequality constraint violation, respectively.
+attempts due to an inequality constraint violation, respectively. As a result,
+constraint failures are no longer included in the number of step failures due to
+a solver failure (i.e., the value returned by
+:c:func:`CVodeGetNUmStepSolveFails`).
 
 **Bug Fixes**
 
