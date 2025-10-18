@@ -26,6 +26,8 @@ eliminating extraneous function evaluations.
 A bug preventing a user supplied `SUNStepper_ResetCheckpointIndex` function from
 being called was fixed.
 
+In CVODES, added missing return flag names to `CVodeGetReturnFlagName`.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.5.0

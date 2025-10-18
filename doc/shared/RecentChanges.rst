@@ -26,4 +26,6 @@ eliminating extraneous function evaluations.
 A bug preventing a user supplied :c:func:`SUNStepper_ResetCheckpointIndex`
 function from being called was fixed.
 
+In CVODES, added missing return flag names to :c:func:`CVodeGetReturnFlagName`.
+
 **Deprecation Notices**
