@@ -2434,8 +2434,11 @@ static int cvStep(CVodeMem cv_mem)
       SUNLogInfoIf(cflag != CV_SUCCESS, CV_LOGGER, "end-step-attempt",
                    "status = failed inequality constraints, cflag = %i", cflag);
 
-      if (cflag == CV_CONSTR_FAIL) { return CV_CONSTR_FAIL; }
-      else if (cflag == PREDICT_AGAIN) { continue; }
+      /* Go back in loop if we need to predict again (nflag=PREV_CONV_FAIL) */
+      if (cflag == PREDICT_AGAIN) { continue; }
+
+      /* Return if the check failed and recovery is not possible. */
+      if (cflag != CV_SUCCESS) { return cflag; }
     }
 
     /* Check if a projection needs to be performed */
