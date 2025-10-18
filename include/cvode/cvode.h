@@ -126,6 +126,7 @@ SUNDIALS_EXPORT int CVodeSetOptions(void* cvode_mem, const char* cvid,
                                     const char* file_name, int argc,
                                     char* argv[]);
 SUNDIALS_EXPORT int CVodeSetConstraints(void* cvode_mem, N_Vector constraints);
+SUNDIALS_EXPORT int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails);
 SUNDIALS_EXPORT int CVodeSetDeltaGammaMaxLSetup(void* cvode_mem,
                                                 sunrealtype dgmax_lsetup);
 SUNDIALS_EXPORT int CVodeSetInitStep(void* cvode_mem, sunrealtype hin);
@@ -236,6 +237,8 @@ SUNDIALS_EXPORT int CVodeGetNonlinSolvStats(void* cvode_mem, long int* nniters,
                                             long int* nnfails);
 SUNDIALS_EXPORT int CVodeGetNumStepSolveFails(void* cvode_mem,
                                               long int* nncfails);
+SUNDIALS_EXPORT int CVodeGetNumConstraintFails(void* cvode_mem,
+                                               long int* num_fails_out);
 SUNDIALS_EXPORT int CVodeGetUserData(void* cvode_mem, void** user_data);
 SUNDIALS_EXPORT int CVodePrintAllStats(void* cvode_mem, FILE* outfile,
                                        SUNOutputFormat fmt);

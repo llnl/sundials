@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "CVodeGetLastStep")) { return 1; }
 
   long int num_constraint_fails = 0;
-  // flag = CVodeGetNumConstrFails(cvode_mem, &num_constraint_fails);
+  flag = CVodeGetNumConstraintFails(cvode_mem, &num_constraint_fails);
 
   cout << endl;
   cout << "y[0]          = " << y_data[0] << endl;

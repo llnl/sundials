@@ -125,6 +125,7 @@ extern "C" {
 #define MXNCF  10
 #define MXNEF  7
 #define MXNEF1 3
+#define MAX_CONSTRAINT_FAILS 10
 
 /* Control constants for lower-level functions used by cvStep
  * ----------------------------------------------------------
@@ -174,9 +175,8 @@ extern "C" {
 #define PREV_ERR_FAIL  +9
 
 #define RHSFUNC_RECVR    +10
-#define CONSTR_RECVR     +11
-#define CONSTRFUNC_RECVR +12
-#define PROJFUNC_RECVR   +13
+#define CONSTRFUNC_RECVR +11
+#define PROJFUNC_RECVR   +12
 
 /*
  * =================================================================
@@ -442,9 +442,9 @@ typedef struct CVodeMemRec
     Inequality Constraints Data
     ---------------------------*/
 
-  N_Vector cv_constraints;
-  long int constraint_fails;
-  int max_local_constraint_fails;
+  N_Vector cv_constraints;    /* vector of constraint flags     */
+  long int constraint_fails;  /* total constraint failures      */
+  int max_constraint_fails;   /* max failures allowed in a step */
 
   /*---------------
     Projection Data

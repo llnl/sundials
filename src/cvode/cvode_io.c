@@ -999,6 +999,48 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
 }
 
 /*
+ * CVodeSetMaxNumConstraintFails
+ *
+ * Setup for constraint handling feature
+ */
+
+int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
+{
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  if (max_fails <= 0) { cv_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS; }
+  else { cv_mem->max_constraint_fails = max_fails; }
+
+  return CV_SUCCESS;
+}
+
+/*
+ * CVodeSetMaxNumConstraintFails
+ *
+ * Setup for constraint handling feature
+ */
+
+int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails)
+{
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  *num_fails = cv_mem->constraint_fails;
+
+  return CV_SUCCESS;
+}
+
+
+/*
  * CVodeSetUseIntegratorFusedKernels
  *
  * Enable or disable integrator specific fused kernels

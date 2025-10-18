@@ -176,11 +176,11 @@ static void cvSetTqBDF(CVodeMem cv_mem, sunrealtype hsum, sunrealtype alpha0,
 
 static int cvNls(CVodeMem cv_mem, int nflag);
 
-static int cvCheckConstraints(CVodeMem cv_mem, sunrealtype saved_t,
-                              int* local_constraint_fails);
-
 static int cvHandleNFlag(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
                          int* ncfPtr);
+
+static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
+                              int* step_constraint_fails);
 
 /* Error Test */
 
@@ -310,7 +310,10 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->cv_msbp             = MSBP_DEFAULT;
   cv_mem->cv_dgmax_lsetup     = DGMAX_LSETUP_DEFAULT;
   cv_mem->convfail            = CV_NO_FAILURES;
-  cv_mem->cv_constraints      = NULL;
+
+  /* Initialize inequality constraint variables */
+  cv_mem->cv_constraints       = NULL;
+  cv_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS;
 
   /* Initialize root finding variables */
 
@@ -2376,7 +2379,7 @@ static int cvStep(CVodeMem cv_mem)
   int ncf = 0;  /* corrector failures  */
   int npf = 0;  /* projection failures */
   int nef = 0;  /* error test failures */
-  int local_constraint_fails = 0;
+  int step_constraint_fails = 0;
 
   /* If the step size has changed, update the history array */
   if ((cv_mem->cv_nst > 0) && (cv_mem->cv_hprime != cv_mem->cv_h))
@@ -2410,20 +2413,6 @@ static int cvStep(CVodeMem cv_mem)
     cvSet(cv_mem);
 
     nflag = cvNls(cv_mem, nflag);
-
-    /* check inequality constraints */
-    if (nflag == CV_SUCCESS && cv_mem->cv_constraints)
-    {
-      int cflag = cvCheckConstraints(cv_mem, saved_t, &local_constraint_fails);
-      if (cflag == CV_CONSTR_FAIL) { return CV_CONSTR_FAIL; }
-      else if (cflag == CONSTR_RECVR)
-      {
-        nflag = PREV_CONV_FAIL;
-        kflag = PREDICT_AGAIN;
-        continue;
-      }
-    }
-
     kflag = cvHandleNFlag(cv_mem, &nflag, saved_t, &ncf);
 
     SUNLogInfoIf(kflag == PREDICT_AGAIN || kflag != DO_ERROR_TEST, CV_LOGGER,
@@ -2434,6 +2423,18 @@ static int cvStep(CVodeMem cv_mem)
 
     /* Return if nonlinear solve failed and recovery is not possible. */
     if (kflag != DO_ERROR_TEST) { return (kflag); }
+
+    /* Check inequality constraints */
+    if (cv_mem->cv_constraints)
+    {
+      int cflag = cvCheckConstraints(cv_mem, &nflag, saved_t, &step_constraint_fails);
+
+      SUNLogInfoIf(cflag != CV_SUCCESS, CV_LOGGER, "end-step-attempt",
+                   "status = failed inequality constraints, cflag = %i", cflag);
+
+      if (cflag == CV_CONSTR_FAIL) { return CV_CONSTR_FAIL; }
+      else if (cflag == PREDICT_AGAIN) { continue; }
+    }
 
     /* Check if a projection needs to be performed */
     cv_mem->proj_applied = SUNFALSE;
@@ -3166,13 +3167,13 @@ static int cvNls(CVodeMem cv_mem, int nflag)
  *
  *   CV_SUCCESS     ---> allows stepping forward
  *
- *   CONSTR_RECVR   ---> values failed to satisfy constraints
+ *   PREDICT_AGAIN  ---> values failed to satisfy constraints
  *
  *   CV_CONSTR_FAIL ---> values failed to satisfy constraints with hmin
  */
 
-static int cvCheckConstraints(CVodeMem cv_mem, sunrealtype saved_t,
-                              int* local_constraint_fails)
+static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
+                              int* step_constraint_fails)
 {
   sunbooleantype constraintsPassed;
   sunrealtype vnorm;
@@ -3182,15 +3183,6 @@ static int cvCheckConstraints(CVodeMem cv_mem, sunrealtype saved_t,
   /* Get mask vector mm, set where constraints failed */
   constraintsPassed = N_VConstrMask(cv_mem->cv_constraints, cv_mem->cv_y, mm);
   if (constraintsPassed) { return (CV_SUCCESS); }
-
-  printf("tn = %Lg\n", cv_mem->cv_tn);
-  printf("hn = %Lg\n", cv_mem->cv_h);
-  printf("constraints:\n");
-  N_VPrint(cv_mem->cv_constraints);
-  printf("y:\n");
-  N_VPrint(cv_mem->cv_y);
-  printf("mm:\n");
-  N_VPrint(mm);
 
   /* Constraints not met */
 
@@ -3213,31 +3205,25 @@ static int cvCheckConstraints(CVodeMem cv_mem, sunrealtype saved_t,
 
   vnorm = N_VWrmsNorm(tmp, cv_mem->cv_ewt); /* ||v|| */
 
-  printf("correction:\n");
-  N_VPrint(tmp);
-  printf("correction norm = %Lg:\n", vnorm);
-  printf("threshold = %Lg:\n", cv_mem->cv_tq[4]);
-
   /* If vector v of constraint corrections is small in norm, correct and
      accept this step */
   if (vnorm <= cv_mem->cv_tq[4])
   {
-    printf("<<<<< Correct\n\n");
     N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp,
                  cv_mem->cv_acor); /* acor <- acor - v */
     return (CV_SUCCESS);
   }
 
   /* update failure counts */
-  (*local_constraint_fails)++;
+  (*step_constraint_fails)++;
   cv_mem->constraint_fails++;
 
   /* restore zn */
   cvRestore(cv_mem, saved_t);
 
-  /* Check for |h| == hmin or max local failures */
+  /* Check for |h| == hmin or max step attempt failures */
   if ((SUNRabs(cv_mem->cv_h) <= cv_mem->cv_hmin * ONEPSM) ||
-      (*local_constraint_fails == cv_mem->max_local_constraint_fails))
+      (*step_constraint_fails == cv_mem->max_constraint_fails))
   {
     return (CV_CONSTR_FAIL);
   }
@@ -3246,25 +3232,15 @@ static int cvCheckConstraints(CVodeMem cv_mem, sunrealtype saved_t,
   N_VLinearSum(ONE, cv_mem->cv_zn[0], -ONE, cv_mem->cv_y, tmp);
   N_VProd(mm, tmp, tmp);
 
-  printf("tmp to compute eta:\n");
-  N_VPrint(tmp);
-  printf("z[0]:\n");
-  N_VPrint(cv_mem->cv_zn[0]);
-
+  /* Reduce step size; return to reattempt the step */
   cv_mem->cv_eta = PT9 * N_VMinQuotient(cv_mem->cv_zn[0], tmp);
-  printf("eta1 = %Lg\n", cv_mem->cv_eta);
   cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta, PT1);
-  printf("eta2 = %Lg\n", cv_mem->cv_eta);
   cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta,
                           cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
-  printf("eta3 = %Lg\n", cv_mem->cv_eta);
-
-  printf(">>>>> Constraint limited step, eta = %Lg\n\n", cv_mem->cv_eta);
-
   cvRescale(cv_mem);
+  *nflagPtr = PREV_CONV_FAIL;
 
-  /* Reattempt step with new step size */
-  return (CONSTR_RECVR);
+  return PREDICT_AGAIN;
 }
 
 /*
