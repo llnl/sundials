@@ -550,6 +550,7 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
 
   /* Initialize inequality constraint variables */
   cv_mem->cv_constraints       = NULL;
+  cv_mem->constraint_fails     = 0;
   cv_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS;
 
   /* Initialize root finding variables */
