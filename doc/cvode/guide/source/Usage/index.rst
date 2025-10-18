@@ -867,8 +867,11 @@ Main solver optional input functions
    | Maximum no. of error test     | :c:func:`CVodeSetMaxErrTestFails`           | 7              |
    | failures                      |                                             |                |
    +-------------------------------+---------------------------------------------+----------------+
-   | Inequality constraints on     | :c:func:`CVodeSetConstraints`               |                |
+   | Inequality constraints on     | :c:func:`CVodeSetConstraints`               | disabled       |
    | solution                      |                                             |                |
+   +-------------------------------+---------------------------------------------+----------------+
+   | Maximum number of inequality  | :c:func:`CVodeSetMaxNumConstraintFails`     | 10             |
+   | constraint fails in a step    |                                             |                |
    +-------------------------------+---------------------------------------------+----------------+
    | Flag to activate specialized  | :c:func:`CVodeSetUseIntegratorFusedKernels` | ``SUNFALSE``   |
    | fused kernels                 |                                             |                |
@@ -1240,6 +1243,21 @@ Main solver optional input functions
 
    **Notes:**
       The presence of a non-``NULL`` constraints vector that is not 0.0 in  all components will cause constraint checking to be performed.  However, a call with 0.0 in all components of ``constraints`` will  result in an illegal input return. A ``NULL`` constraints vector will disable  constraint checking.
+
+.. c:function:: int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
+
+   Sets the maximum number of inequality constraint failures allowed in a step
+   attempt (default 10).
+
+   **Arguments:**
+      * ``cvode_mem`` -- pointer to the CVODE memory block.
+      * ``max_fail`` -- the maximum number of failures. Passing a value
+        :math:`\leq 0` will restore the default value.
+
+   **Return value:**
+     * ``CV_SUCCESS`` -- The optional value has been successfully set.
+     * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a
+       previous call to :c:func:`CVodeCreate`
 
 .. c:function:: int CVodeSetUseIntegratorFusedKernels(void* cvode_mem, sunbooleantype onoff)
 
@@ -2469,6 +2487,9 @@ the preconditioner.
    | No. of failed steps due to a nonlinear solver   | :c:func:`CVodeGetNumStepSolveFails`      |
    | failure                                         |                                          |
    +-------------------------------------------------+------------------------------------------+
+   | No. of failed steps due to an inequality        | :c:func:`CVodeGetNumConstraintFails`     |
+   | constraint failure                              |                                          |
+   +-------------------------------------------------+------------------------------------------+
    | Order used during the last step                 | :c:func:`CVodeGetLastOrder`              |
    +-------------------------------------------------+------------------------------------------+
    | Order to be attempted on the next step          | :c:func:`CVodeGetCurrentOrder`           |
@@ -2687,6 +2708,19 @@ described next.
       * ``CV_SUCCESS`` -- The optional output value has been successfully set.
       * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
+
+.. c:function:: int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
+
+   Returns the number of failed steps due to an inequality constraint failure.
+
+   **Arguments:**
+      * ``cvode_mem`` -- pointer to the CVODE memory block.
+      * ``num_fails_out`` -- number of step failures.
+
+   **Return value:**
+      * ``CV_SUCCESS`` -- The optional output value has been successfully set.
+      * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a
+        previous call to :c:func:`CVodeCreate`.
 
 
 .. c:function:: int CVodeGetLastOrder(void* cvode_mem, int *qlast)
