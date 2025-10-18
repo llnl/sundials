@@ -832,8 +832,8 @@ Main solver optional input functions
    +-------------------------------+---------------------------------------------+----------------+
    |      **Optional input**       |              **Function name**              |  **Default**   |
    +===============================+=============================================+================+
-   | Set CVODE options from the    | :c:func:`CVodeSetOptions`.                  |                |
-   | command line or file          |                                             |                |
+   | Set CVODE options from the    | :c:func:`CVodeSetOptions`                   |                |
+   | command line or a file        |                                             |                |
    +-------------------------------+---------------------------------------------+----------------+
    | User data                     | :c:func:`CVodeSetUserData`                  | ``NULL``       |
    +-------------------------------+---------------------------------------------+----------------+
@@ -1181,7 +1181,6 @@ Main solver optional input functions
       This routine will be called by :c:func:`CVodeSetOptions`
       when using the key "cvid.interpolate_stop_time".
 
-
    .. versionadded:: 6.6.0
 
 .. c:function:: int CVodeClearStopTime(void* cvode_mem)
@@ -1242,7 +1241,11 @@ Main solver optional input functions
      * ``CV_ILL_INPUT`` -- The constraints vector contains illegal values.
 
    **Notes:**
-      The presence of a non-``NULL`` constraints vector that is not 0.0 in  all components will cause constraint checking to be performed.  However, a call with 0.0 in all components of ``constraints`` will  result in an illegal input return. A ``NULL`` constraints vector will disable  constraint checking.
+      The presence of a non-``NULL`` constraints vector that is not 0.0 in  all
+      components will cause constraint checking to be performed. However, a call
+      with 0.0 in all components of ``constraints`` will  result in an illegal
+      input return. A ``NULL`` constraints vector will disable  constraint
+      checking.
 
 .. c:function:: int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
 
@@ -2272,11 +2275,15 @@ the rootfinding algorithm.
      * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
    **Notes:**
-      CVODE will not report the initial conditions as a possible zero-crossing  (assuming that one or more components :math:`g_i` are zero at the initial time).  However, if it appears that some :math:`g_i` is identically zero at the initial  time (i.e., :math:`g_i` is zero at the initial time and after the first step),  CVODE will issue a warning which can be disabled with this optional input  function.
+      CVODES will not report the initial conditions as a possible zero-crossing
+      (assuming that one or more components :math:`g_i` are zero at the initial time).
+      However, if it appears that some :math:`g_i` is identically zero at the initial
+      time (i.e., :math:`g_i` is zero at the initial time and after the first step),
+      CVODES will issue a warning which can be disabled with this optional input
+      function.
 
       This routine will be called by :c:func:`CVodeSetOptions`
       when using the key "cvid.no_inactive_root_warn".
-
 
 .. _CVODE.Usage.CC.optional_input.optin_proj:
 
@@ -2634,7 +2641,6 @@ described next.
    .. deprecated:: 7.3.0
 
       Work space functions will be removed in version 8.0.0.
-
 
 
 .. c:function:: int CVodeGetNumSteps(void* cvode_mem, long int *nsteps)
@@ -3006,7 +3012,6 @@ described next.
    .. warning::
 
       The user is responsible for freeing the returned string.
-
 
 
 .. _CVODE.Usage.CC.optional_output.optout_root:
