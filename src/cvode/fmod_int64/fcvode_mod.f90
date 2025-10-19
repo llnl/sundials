@@ -74,6 +74,7 @@ module fcvode_mod
  public :: FCVodeSVtolerances
  public :: FCVodeWFtolerances
  public :: FCVodeSetConstraints
+ public :: FCVodeSetMaxNumConstraintFails
  public :: FCVodeSetDeltaGammaMaxLSetup
  public :: FCVodeSetInitStep
  public :: FCVodeSetLSetupFrequency
@@ -137,6 +138,7 @@ module fcvode_mod
  public :: FCVodeGetNumNonlinSolvConvFails
  public :: FCVodeGetNonlinSolvStats
  public :: FCVodeGetNumStepSolveFails
+ public :: FCVodeGetNumConstraintFails
  public :: FCVodeGetUserData
  public :: FCVodePrintAllStats
  type, bind(C) :: SwigArrayWrapper
@@ -290,6 +292,15 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FCVodeSetMaxNumConstraintFails(farg1, farg2) &
+bind(C, name="_wrap_FCVodeSetMaxNumConstraintFails") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -877,6 +888,15 @@ end function
 
 function swigc_FCVodeGetNumStepSolveFails(farg1, farg2) &
 bind(C, name="_wrap_FCVodeGetNumStepSolveFails") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FCVodeGetNumConstraintFails(farg1, farg2) &
+bind(C, name="_wrap_FCVodeGetNumConstraintFails") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -1518,6 +1538,22 @@ type(C_PTR) :: farg2
 farg1 = cvode_mem
 farg2 = c_loc(constraints)
 fresult = swigc_FCVodeSetConstraints(farg1, farg2)
+swig_result = fresult
+end function
+
+function FCVodeSetMaxNumConstraintFails(cvode_mem, max_fails) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: cvode_mem
+integer(C_INT), intent(in) :: max_fails
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = cvode_mem
+farg2 = max_fails
+fresult = swigc_FCVodeSetMaxNumConstraintFails(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -2598,6 +2634,22 @@ type(C_PTR) :: farg2
 farg1 = cvode_mem
 farg2 = c_loc(nncfails(1))
 fresult = swigc_FCVodeGetNumStepSolveFails(farg1, farg2)
+swig_result = fresult
+end function
+
+function FCVodeGetNumConstraintFails(cvode_mem, num_fails_out) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: cvode_mem
+integer(C_LONG), dimension(*), target, intent(inout) :: num_fails_out
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = cvode_mem
+farg2 = c_loc(num_fails_out(1))
+fresult = swigc_FCVodeGetNumConstraintFails(farg1, farg2)
 swig_result = fresult
 end function
 

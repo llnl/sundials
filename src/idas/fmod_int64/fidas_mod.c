@@ -703,6 +703,20 @@ SWIGEXPORT int _wrap_FIDASetConstraints(void *farg1, N_Vector farg2) {
 }
 
 
+SWIGEXPORT int _wrap_FIDASetMaxNumConstraintFails(void *farg1, int const *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int arg2 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (int)(*farg2);
+  result = (int)IDASetMaxNumConstraintFails(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FIDASetEtaFixedStepBounds(void *farg1, double const *farg2, double const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -1298,6 +1312,20 @@ SWIGEXPORT int _wrap_FIDAGetEstLocalErrors(void *farg1, N_Vector farg2) {
   arg1 = (void *)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (int)IDAGetEstLocalErrors(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FIDAGetNumConstraintFails(void *farg1, long *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  long *arg2 = (long *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (long *)(farg2);
+  result = (int)IDAGetNumConstraintFails(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
