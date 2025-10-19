@@ -68,14 +68,15 @@ extern "C" {
 #define DCJ_DEFAULT \
   SUN_RCONST(0.25) /* constant for updating Jacobian/preconditioner */
 
+#define MAX_CONSTRAINT_FAILS 10
+
 /* Return values for lower level routines used by IDASolve and functions
    provided to the nonlinear solver */
 
 #define IDA_RES_RECVR       +1
 #define IDA_LSETUP_RECVR    +2
 #define IDA_LSOLVE_RECVR    +3
-#define IDA_CONSTR_RECVR    +5
-#define IDA_NLS_SETUP_RECVR +6
+#define IDA_NLS_SETUP_RECVR +4
 
 #define IDA_QRHS_RECVR  +10
 #define IDA_SRES_RECVR  +11
@@ -119,8 +120,6 @@ typedef struct IDAMemRec
   IDAEwtFn ida_efun;            /* function to set ewt                   */
   void* ida_edata;              /* user pointer passed to efun           */
 
-  sunbooleantype ida_constraintsSet; /* constraints vector present:
-                                        do constraints calc                   */
   sunbooleantype ida_suppressalg;    /* SUNTRUE means suppress algebraic vars
                                         in local error tests                  */
 
@@ -208,7 +207,6 @@ typedef struct IDAMemRec
   N_Vector ida_yppredict;   /* predicted y' vector                            */
   N_Vector ida_delta;       /* residual vector                                */
   N_Vector ida_id;          /* bit vector for diff./algebraic components      */
-  N_Vector ida_constraints; /* vector of inequality constraint options        */
   N_Vector ida_savres;      /* saved residual vector                          */
   N_Vector ida_ee;          /* accumulated corrections to y vector, but
                                set equal to estimated local errors upon
@@ -395,7 +393,6 @@ typedef struct IDAMemRec
                                  set to SUNTRUE by IDACalcIC or IDASolve      */
 
   sunbooleantype ida_VatolMallocDone;
-  sunbooleantype ida_constraintsMallocDone;
   sunbooleantype ida_idMallocDone;
 
   sunbooleantype ida_MallocDone; /* set to SUNFALSE by IDACreate
@@ -504,6 +501,14 @@ typedef struct IDAMemRec
   long int ida_nge;       /* counter for g evaluations                       */
   sunbooleantype* ida_gactive; /* array with active/inactive event functions      */
   int ida_mxgnull; /* number of warning messages about possible g==0  */
+
+  /*---------------------------
+    Inequality Constraints Data
+    ---------------------------*/
+
+  N_Vector ida_constraints;  /* vector of inequality constraint flags */
+  long int constraint_fails; /* total constraint failures             */
+  int max_constraint_fails;  /* max failures allowed in a step        */
 
   /* Arrays for Fused Vector Operations */
 

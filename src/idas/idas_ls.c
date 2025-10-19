@@ -1024,7 +1024,7 @@ int idaLsDenseDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
   ewt_data = N_VGetArrayPointer(IDA_mem->ida_ewt);
   y_data   = N_VGetArrayPointer(yy);
   yp_data  = N_VGetArrayPointer(yp);
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     cns_data = N_VGetArrayPointer(IDA_mem->ida_constraints);
   }
@@ -1051,7 +1051,7 @@ int idaLsDenseDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
     inc = (yj + inc) - yj;
 
     /* Adjust sign(inc) again if y_j has an inequality constraint. */
-    if (IDA_mem->ida_constraintsSet)
+    if (IDA_mem->ida_constraints)
     {
       conj = cns_data[j];
       if (SUNRabs(conj) == ONE)
@@ -1135,7 +1135,7 @@ int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
   rtemp_data  = N_VGetArrayPointer(rtemp);
   ytemp_data  = N_VGetArrayPointer(ytemp);
   yptemp_data = N_VGetArrayPointer(yptemp);
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     cns_data = N_VGetArrayPointer(IDA_mem->ida_constraints);
   }
@@ -1168,7 +1168,7 @@ int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
       inc = (yj + inc) - yj;
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -1205,7 +1205,7 @@ int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
                    ONE / ewtj);
       if (IDA_mem->ida_hh * ypj < ZERO) { inc = -inc; }
       inc = (yj + inc) - yj;
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)

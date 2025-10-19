@@ -34,9 +34,9 @@ if(BUILD_IDA)
   list(APPEND unit_tests "test_constraints_ida.cpp")
 endif()
 
-# if(BUILD_IDAS)
-#   list(APPEND unit_tests "test_constraints_idas.cpp")
-# endif()
+if(BUILD_IDAS)
+  list(APPEND unit_tests "test_constraints_idas.cpp")
+endif()
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
