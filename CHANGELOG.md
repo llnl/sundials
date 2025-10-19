@@ -6,12 +6,13 @@
 
 ### New Features and Enhancements
 
-Added the functions `CVodeSetMaxNumConstraintFails` and
-`CVodeGetNumConstraintFails` to set maximum number of inequality constraint
-failures in a step attempt and the total number of failed step attempts due to
-an inequality constraint violation, respectively. As a result, constraint
-failures are no longer included in the number of step failures due to a solver
-failure (i.e., the value returned by `CVodeGetNUmStepSolveFails`).
+Added functions to CVODE(S) and IDA(S) to set the maximum number of inequality
+constraint failures in a step attempt (`CVodeSetMaxNumConstraintFails` and
+`IDASetMaxNumConstraintFails`) and to retrieve the total number of failed step
+attempts due to an inequality constraint violation (`CVodeGetNumConstraintFails`
+and `IDAGetNumConstraintFails`). As a result, constraint failures are no longer
+included in the number of step failures due to a solver failure (i.e., the
+values returned by `CVodeGetNumStepSolveFails` and `IDAGetNumStepSolveFails`).
 
 ### Bug Fixes
 
@@ -26,7 +27,8 @@ eliminating extraneous function evaluations.
 A bug preventing a user supplied `SUNStepper_ResetCheckpointIndex` function from
 being called was fixed.
 
-In CVODES, added missing return flag names to `CVodeGetReturnFlagName`.
+In CVODES and IDA, added missing return flag names to `CVodeGetReturnFlagName`
+and `IDAGetReturnFlagName`, respectively.
 
 ### Deprecation Notices
 

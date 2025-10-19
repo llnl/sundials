@@ -5,13 +5,15 @@
 
 **New Features and Enhancements**
 
-Added the functions :c:func:`CVodeSetMaxNumConstraintFails` and
-:c:func:`CVodeGetNumConstraintFails` to set maximum number of inequality
-constraint failures in a step attempt and the total number of failed step
-attempts due to an inequality constraint violation, respectively. As a result,
-constraint failures are no longer included in the number of step failures due to
-a solver failure (i.e., the value returned by
-:c:func:`CVodeGetNUmStepSolveFails`).
+Added functions to CVODE(S) and IDA(S) to set the maximum number of inequality
+constraint failures in a step attempt (:c:func:`CVodeSetMaxNumConstraintFails`
+and :c:func:`IDASetMaxNumConstraintFails`) and to retrieve the total number of
+failed step attempts due to an inequality constraint violation
+(:c:func:`CVodeGetNumConstraintFails` and
+:c:func:`IDAGetNumConstraintFails`). As a result, constraint failures are no
+longer included in the number of step failures due to a solver failure (i.e.,
+the values returned by :c:func:`CVodeGetNumStepSolveFails` and
+:c:func:`IDAGetNumStepSolveFails`).
 
 **Bug Fixes**
 
@@ -26,6 +28,8 @@ eliminating extraneous function evaluations.
 A bug preventing a user supplied :c:func:`SUNStepper_ResetCheckpointIndex`
 function from being called was fixed.
 
-In CVODES, added missing return flag names to :c:func:`CVodeGetReturnFlagName`.
+In CVODES and IDA, added missing return flag names to
+:c:func:`CVodeGetReturnFlagName` and :c:func:`IDAGetReturnFlagName`,
+respectively.
 
 **Deprecation Notices**
