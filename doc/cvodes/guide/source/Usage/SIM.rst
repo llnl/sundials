@@ -2711,11 +2711,11 @@ described next.
       * ``CV_SUCCESS`` -- The optional output value has been successfully set.
       * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
-   .. versionchnaged:: x.y.z
+   .. versionchanged:: x.y.z
 
       In prior versions, inequality constraint failures were included with the
       number of step failures due to a nonlinear solver failure. These failures
-      are now counted separately, see :c:func:`CVodeGetNumConstraintfails`.
+      are now counted separately, see :c:func:`CVodeGetNumConstraintFails`.
 
 .. c:function:: int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
 
