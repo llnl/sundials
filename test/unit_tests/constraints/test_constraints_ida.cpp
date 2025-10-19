@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "IDAGetLastStep")) { return 1; }
 
   long int num_constraint_fails = 0;
-  // flag = IDAGetNumConstrFails(ida_mem, &num_constraint_fails);
+  flag = IDAGetNumConstraintFails(ida_mem, &num_constraint_fails);
 
   cout << endl;
   cout << "y[0]          = " << y_data[0] << endl;

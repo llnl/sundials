@@ -577,14 +577,12 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
 
   if (constraints == NULL)
   {
-    if (IDA_mem->ida_constraintsMallocDone)
+    if (IDA_mem->ida_constraints)
     {
       N_VDestroy(IDA_mem->ida_constraints);
       IDA_mem->ida_lrw -= IDA_mem->ida_lrw1;
       IDA_mem->ida_liw -= IDA_mem->ida_liw1;
     }
-    IDA_mem->ida_constraintsMallocDone = SUNFALSE;
-    IDA_mem->ida_constraintsSet        = SUNFALSE;
     return (IDA_SUCCESS);
   }
 
@@ -610,21 +608,64 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
     return (IDA_ILL_INPUT);
   }
 
-  if (!(IDA_mem->ida_constraintsMallocDone))
+  if (!(IDA_mem->ida_constraints))
   {
     IDA_mem->ida_constraints = N_VClone(constraints);
+    if (IDA_mem->ida_constraints == NULL)
+    {
+      IDAProcessError(IDA_mem, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_MEM_FAIL);
+      return (IDA_MEM_NULL);
+    }
     IDA_mem->ida_lrw += IDA_mem->ida_lrw1;
     IDA_mem->ida_liw += IDA_mem->ida_liw1;
-    IDA_mem->ida_constraintsMallocDone = SUNTRUE;
   }
 
   /* Load the constraints vector */
 
   N_VScale(ONE, constraints, IDA_mem->ida_constraints);
 
-  IDA_mem->ida_constraintsSet = SUNTRUE;
-
   return (IDA_SUCCESS);
+}
+
+/*
+ * IDAGetNumConstraintFails
+ *
+ * Setup for constraint handling feature
+ */
+
+int IDASetMaxNumConstraintFails(void* ida_mem, int max_fails)
+{
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+  IDAMem IDA_mem = (IDAMem)ida_mem;
+
+  if (max_fails <= 0) { IDA_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS; }
+  else { IDA_mem->max_constraint_fails = max_fails; }
+
+  return IDA_SUCCESS;
+}
+
+/*
+ * IDASetMaxNumConstraintFails
+ *
+ * Setup for constraint handling feature
+ */
+
+int IDAGetNumConstraintFails(void* ida_mem, long int* num_fails_out)
+{
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+  IDAMem IDA_mem = (IDAMem)ida_mem;
+
+  *num_fails_out = IDA_mem->constraint_fails;
+
+  return IDA_SUCCESS;
 }
 
 /*
@@ -1430,6 +1471,7 @@ int IDAPrintAllStats(void* ida_mem, FILE* outfile, SUNOutputFormat fmt)
   sunfprintf_long(outfile, fmt, SUNFALSE, "Steps", IDA_mem->ida_nst);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Error test fails", IDA_mem->ida_netf);
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS step fails", IDA_mem->ida_ncfn);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails", IDA_mem->constraint_fails);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Initial step size", IDA_mem->ida_h0u);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Last step size", IDA_mem->ida_hused);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Current step size", IDA_mem->ida_hh);

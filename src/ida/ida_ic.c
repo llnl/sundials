@@ -494,7 +494,7 @@ static int IDALineSrch(IDAMem IDA_mem, sunrealtype* delnorm, sunrealtype* fnorm)
   ratio              = ONE;
 
   /* If there are constraints, check and reduce step if necessary. */
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     /* Update y and check constraints. */
     IDANewy(IDA_mem);

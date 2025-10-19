@@ -602,7 +602,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
   ypdata    = N_VGetArrayPointer(yp);
   gtempdata = N_VGetArrayPointer(gtemp);
   ewtdata   = N_VGetArrayPointer(IDA_mem->ida_ewt);
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     cnsdata = N_VGetArrayPointer(IDA_mem->ida_constraints);
   }
@@ -646,7 +646,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
       inc = (yj + inc) - yj;
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = cnsdata[j];
         if (SUNRabs(conj) == ONE)
@@ -683,7 +683,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
                    SUNMAX(SUNRabs(IDA_mem->ida_hh * ypj), ONE / ewtj));
       if (IDA_mem->ida_hh * ypj < ZERO) { inc = -inc; }
       inc = (yj + inc) - yj;
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = cnsdata[j];
         if (SUNRabs(conj) == ONE)
