@@ -2731,7 +2731,7 @@ static int IDANls(IDAMem IDA_mem)
 {
   int retval;
   sunbooleantype callLSetup;
-  sunrealtype temp1, temp2, vnorm;
+  sunrealtype temp1, temp2;
   long int nni_inc = 0;
   long int nnf_inc = 0;
 

@@ -18,7 +18,7 @@
  * -----------------------------------------------------------------
  * This file contains implementations of routines for a
  * band-block-diagonal preconditioner, i.e. a block-diagonal
- * matrix with banded blocks, for use with IDA, the IDASPILS
+ * matrix with banded blocks, for use with IDA, the IDASLS
  * linear solver interface.
  *
  * NOTE: With only one processor in use, a banded matrix results
@@ -40,7 +40,7 @@
 #define ONE  SUN_RCONST(1.0)
 #define TWO  SUN_RCONST(2.0)
 
-/* Prototypes of functions IDABBDPrecSetup and IDABBDPrecSolve */
+/* Prototypes of IDABBDPrecSetup and IDABBDPrecSolve */
 static int IDABBDPrecSetup(sunrealtype tt, N_Vector yy, N_Vector yp,
                            N_Vector rr, sunrealtype c_j, void* prec_data);
 static int IDABBDPrecSolve(sunrealtype tt, N_Vector yy, N_Vector yp,

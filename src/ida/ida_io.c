@@ -1467,6 +1467,7 @@ int IDAPrintAllStats(void* ida_mem, FILE* outfile, SUNOutputFormat fmt)
     return (IDA_ILL_INPUT);
   }
 
+  /* step and method stats */
   sunfprintf_real(outfile, fmt, SUNTRUE, "Current time", IDA_mem->ida_tn);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Steps", IDA_mem->ida_nst);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Error test fails", IDA_mem->ida_netf);
@@ -1559,6 +1560,8 @@ char* IDAGetReturnFlagName(long int flag)
   case IDA_ILL_INPUT: sprintf(name, "IDA_ILL_INPUT"); break;
   case IDA_NO_MALLOC: sprintf(name, "IDA_NO_MALLOC"); break;
   case IDA_BAD_T: sprintf(name, "IDA_BAD_T"); break;
+  case IDA_BAD_K: sprintf(name, "IDA_BAD_K"); break;
+  case IDA_BAD_DKY: sprintf(name, "IDA_BAD_DKY"); break;
   case IDA_BAD_EWT: sprintf(name, "IDA_BAD_EWT"); break;
   case IDA_NO_RECOVERY: sprintf(name, "IDA_NO_RECOVERY"); break;
   case IDA_LINESEARCH_FAIL: sprintf(name, "IDA_LINESEARCH_FAIL"); break;
