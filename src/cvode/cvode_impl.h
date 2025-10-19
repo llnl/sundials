@@ -124,9 +124,9 @@ extern "C" {
  * MXNEF1  max no. of error test failures before forcing a reduction of order
  */
 
-#define MXNCF  10
-#define MXNEF  7
-#define MXNEF1 3
+#define MXNCF                10
+#define MXNEF                7
+#define MXNEF1               3
 #define MAX_CONSTRAINT_FAILS 10
 
 /* Control constants for lower-level functions used by cvStep
@@ -444,9 +444,9 @@ typedef struct CVodeMemRec
     Inequality Constraints Data
     ---------------------------*/
 
-  N_Vector cv_constraints;    /* vector of constraint flags     */
-  long int constraint_fails;  /* total constraint failures      */
-  int max_constraint_fails;   /* max failures allowed in a step */
+  N_Vector cv_constraints;   /* vector of constraint flags     */
+  long int constraint_fails; /* total constraint failures      */
+  int max_constraint_fails;  /* max failures allowed in a step */
 
   /*---------------
     Projection Data

@@ -122,9 +122,9 @@ extern "C" {
  * MXNEF1  max no. of error test failures before forcing a reduction of order
  */
 
-#define MXNCF  10
-#define MXNEF  7
-#define MXNEF1 3
+#define MXNCF                10
+#define MXNEF                7
+#define MXNEF1               3
 #define MAX_CONSTRAINT_FAILS 10
 
 /* Control constants for lower-level functions used by cvStep
@@ -569,9 +569,9 @@ typedef struct CVodeMemRec
 
   /* Linear Solver specific memory */
 
-  void* cv_lmem;               /* linear solver interface memory structure */
-  long int cv_msbp;            /* max number of steps between lsetip calls */
-  sunrealtype cv_dgmax_lsetup; /* gamma ratio threshold to signal for a linear
+  void* cv_lmem;                /* linear solver interface memory structure */
+  long int cv_msbp;             /* max number of steps between lsetip calls */
+  sunrealtype cv_dgmax_lsetup;  /* gamma ratio threshold to signal for a linear
                               * solver setup */
   sunbooleantype cv_forceSetup; /* flag to request a call to the setup routine */
 
@@ -654,9 +654,9 @@ typedef struct CVodeMemRec
     Inequality Constraints Data
     ---------------------------*/
 
-  N_Vector cv_constraints;    /* vector of constraint flags     */
-  long int constraint_fails;  /* total constraint failures      */
-  int max_constraint_fails;   /* max failures allowed in a step */
+  N_Vector cv_constraints;   /* vector of constraint flags     */
+  long int constraint_fails; /* total constraint failures      */
+  int max_constraint_fails;  /* max failures allowed in a step */
 
   /*---------------
     Projection Data
@@ -1225,15 +1225,15 @@ int cvSensRhs1InternalDQ(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
 #define MSGCV_BAD_ISM_CONSTR                                                \
   "Constraints can not be enforced while forward sensitivity is used with " \
   "simultaneous method"
-#define MSGCV_NULL_F         "f = NULL illegal."
-#define MSGCV_NULL_G         "g = NULL illegal."
-#define MSGCV_BAD_NVECTOR    "A required vector operation is not implemented."
-#define MSGCV_BAD_CONSTR     "Illegal values in constraints vector."
-#define MSGCV_BAD_K          "Illegal value for k."
-#define MSGCV_NULL_DKY       "dky = NULL illegal."
-#define MSGCV_BAD_T          "Illegal value for t." MSG_TIME_INT
-#define MSGCV_NO_ROOT        "Rootfinding was not initialized."
-#define MSGCV_NLS_INIT_FAIL  "The nonlinear solver's init routine failed."
+#define MSGCV_NULL_F        "f = NULL illegal."
+#define MSGCV_NULL_G        "g = NULL illegal."
+#define MSGCV_BAD_NVECTOR   "A required vector operation is not implemented."
+#define MSGCV_BAD_CONSTR    "Illegal values in constraints vector."
+#define MSGCV_BAD_K         "Illegal value for k."
+#define MSGCV_NULL_DKY      "dky = NULL illegal."
+#define MSGCV_BAD_T         "Illegal value for t." MSG_TIME_INT
+#define MSGCV_NO_ROOT       "Rootfinding was not initialized."
+#define MSGCV_NLS_INIT_FAIL "The nonlinear solver's init routine failed."
 
 #define MSGCV_NO_QUAD "Quadrature integration not activated."
 #define MSGCV_BAD_ITOLQ \

@@ -613,7 +613,8 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
     IDA_mem->ida_constraints = N_VClone(constraints);
     if (IDA_mem->ida_constraints == NULL)
     {
-      IDAProcessError(IDA_mem, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_MEM_FAIL);
+      IDAProcessError(IDA_mem, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
+                      MSG_MEM_FAIL);
       return (IDA_MEM_NULL);
     }
     IDA_mem->ida_lrw += IDA_mem->ida_lrw1;
@@ -1472,7 +1473,8 @@ int IDAPrintAllStats(void* ida_mem, FILE* outfile, SUNOutputFormat fmt)
   sunfprintf_long(outfile, fmt, SUNFALSE, "Steps", IDA_mem->ida_nst);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Error test fails", IDA_mem->ida_netf);
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS step fails", IDA_mem->ida_ncfn);
-  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails", IDA_mem->constraint_fails);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails",
+                  IDA_mem->constraint_fails);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Initial step size", IDA_mem->ida_h0u);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Last step size", IDA_mem->ida_hused);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Current step size", IDA_mem->ida_hh);

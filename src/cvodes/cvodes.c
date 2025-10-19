@@ -396,8 +396,8 @@ static int cvQuadSensNls(CVodeMem cv_mem);
 static int cvHandleNFlag(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
                          int* ncfPtr, long int* ncfnPtr);
 
-static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
-                              int* step_constraint_fails);
+static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
+                              sunrealtype saved_t, int* step_constraint_fails);
 
 /* Error Test */
 
@@ -5875,15 +5875,15 @@ static int cvStep(CVodeMem cv_mem)
 
   /* Initialize failure counters for this step attempt */
 
-  int ncf = 0;  /* corrector failures  */
-  int npf = 0;  /* projection failures */
-  int nef = 0;  /* error test failures */
+  int ncf                   = 0; /* corrector failures  */
+  int npf                   = 0; /* projection failures */
+  int nef                   = 0; /* error test failures */
   int step_constraint_fails = 0;
 
-  int ncfS  = 0;  /* sensitivity corrector failures           */
-  int nefS  = 0;  /* sensitivity error test fails             */
-  int nefQ  = 0;  /* quadrature error test fails              */
-  int nefQS = 0;  /* quadrature sensitivity error test fails  */
+  int ncfS  = 0; /* sensitivity corrector failures           */
+  int nefS  = 0; /* sensitivity error test fails             */
+  int nefQ  = 0; /* quadrature error test fails              */
+  int nefQS = 0; /* quadrature sensitivity error test fails  */
 
   if (do_sensi_stg1)
   {
@@ -5938,7 +5938,8 @@ static int cvStep(CVodeMem cv_mem)
     /* Check inequality constraints */
     if (cv_mem->cv_constraints)
     {
-      int cflag = cvCheckConstraints(cv_mem, &nflag, saved_t, &step_constraint_fails);
+      int cflag = cvCheckConstraints(cv_mem, &nflag, saved_t,
+                                     &step_constraint_fails);
 
       SUNLogInfoIf(cflag != CV_SUCCESS, CV_LOGGER, "end-step-attempt",
                    "status = failed inequality constraints, cflag = %i", cflag);
@@ -7124,8 +7125,8 @@ static int cvNls(CVodeMem cv_mem, int nflag)
  *   CV_CONSTR_FAIL ---> values failed to satisfy constraints with hmin
  */
 
-static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
-                              int* step_constraint_fails)
+static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
+                              sunrealtype saved_t, int* step_constraint_fails)
 {
   sunbooleantype constraintsPassed;
   sunrealtype vnorm;
@@ -7466,7 +7467,7 @@ static int cvHandleNFlag(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
   /* Reduce step size; return to reattempt the step */
   cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta_cf,
                           cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
-  *nflagPtr = PREV_CONV_FAIL;
+  *nflagPtr      = PREV_CONV_FAIL;
   cvRescale(cv_mem);
 
   return (PREDICT_AGAIN);

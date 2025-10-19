@@ -1039,7 +1039,6 @@ int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
   return CV_SUCCESS;
 }
 
-
 /*
  * CVodeSetUseIntegratorFusedKernels
  *
@@ -1692,7 +1691,8 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
   sunfprintf_long(outfile, fmt, SUNFALSE, "Steps", cv_mem->cv_nst);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Error test fails", cv_mem->cv_netf);
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS step fails", cv_mem->cv_ncfn);
-  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails", cv_mem->constraint_fails);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails",
+                  cv_mem->constraint_fails);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Initial step size", cv_mem->cv_h0u);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Last step size", cv_mem->cv_hu);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Current step size", cv_mem->cv_next_h);

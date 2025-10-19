@@ -355,9 +355,9 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_liw = 38;
 
   /* No mallocs have been done yet */
-  IDA_mem->ida_VatolMallocDone       = SUNFALSE;
-  IDA_mem->ida_idMallocDone          = SUNFALSE;
-  IDA_mem->ida_MallocDone            = SUNFALSE;
+  IDA_mem->ida_VatolMallocDone = SUNFALSE;
+  IDA_mem->ida_idMallocDone    = SUNFALSE;
+  IDA_mem->ida_MallocDone      = SUNFALSE;
 
   /* Initialize nonlinear solver variables */
   IDA_mem->NLS    = NULL;
@@ -2492,8 +2492,8 @@ static int IDAStep(IDAMem IDA_mem)
 
   /* Initialize failure counters for this step attempt */
 
-  int ncf = 0; /* corrector failures  */
-  int nef = 0; /* error test failures */
+  int ncf                   = 0; /* corrector failures  */
+  int nef                   = 0; /* error test failures */
   int step_constraint_fails = 0;
 
   if (IDA_mem->ida_nst == 0)
@@ -2555,8 +2555,7 @@ static int IDAStep(IDAMem IDA_mem)
     /* Check and enforce inequality constraints */
     if (nflag == IDA_SUCCESS && IDA_mem->ida_constraints)
     {
-      nflag = IDACheckConstraints(IDA_mem, saved_t,
-                                  &step_constraint_fails);
+      nflag = IDACheckConstraints(IDA_mem, saved_t, &step_constraint_fails);
 
       /* Constraint check failed, predict again */
       if (nflag == PREDICT_AGAIN) { continue; }
@@ -2815,8 +2814,7 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
 
   /* Get mask vector mm, set where constraints failed */
   sunbooleantype constraintsPassed = N_VConstrMask(IDA_mem->ida_constraints,
-                                                   IDA_mem->ida_yy,
-                                                   mm);
+                                                   IDA_mem->ida_yy, mm);
   if (constraintsPassed) { return (IDA_SUCCESS); }
 
   /* Constraints not met */
@@ -2828,7 +2826,8 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   N_VLinearSum(ONE, IDA_mem->ida_yy, -PT1, tmp, tmp); /* y - 0.1 * a * c * wt    */
   N_VProd(tmp, mm, tmp); /* v = mm*(y-.1*a*c*wt)    */
 
-  sunrealtype vnorm = IDAWrmsNorm(IDA_mem, tmp, IDA_mem->ida_ewt, SUNFALSE); /* ||v|| */
+  sunrealtype vnorm = IDAWrmsNorm(IDA_mem, tmp, IDA_mem->ida_ewt,
+                                  SUNFALSE); /* ||v|| */
 
   /* If vector v of constraint corrections is small in norm, correct and
      accept this step */
@@ -2844,7 +2843,7 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   IDA_mem->constraint_fails++;
 
   /* Return with error if |h| == hmin or max step attempt failures */
-  if ((SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM)||
+  if ((SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM) ||
       (*step_constraint_fails == IDA_mem->max_constraint_fails))
   {
     return (IDA_CONSTR_FAIL);

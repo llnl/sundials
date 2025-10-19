@@ -49,17 +49,17 @@ int main(int argc, char* argv[])
   if (check_ptr(rhs, "N_VNew_Serial")) { return 1; }
 
   sunrealtype* rhs_data = N_VGetArrayPointer(rhs);
-  rhs_data[0] = SUN_RCONST(-2.0);
-  rhs_data[1] = SUN_RCONST(1.0);
+  rhs_data[0]           = SUN_RCONST(-2.0);
+  rhs_data[1]           = SUN_RCONST(1.0);
 
   // Create initial condition
   sunrealtype t0 = SUN_RCONST(0.0);
-  N_Vector y = N_VClone(rhs);
+  N_Vector y     = N_VClone(rhs);
   if (check_ptr(y, "N_VClone")) { return 1; }
 
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0] = SUN_RCONST(1.0);
-  y_data[1] = SUN_RCONST(-1.0);
+  y_data[0]           = SUN_RCONST(1.0);
+  y_data[1]           = SUN_RCONST(-1.0);
 
   N_Vector yp = N_VClone(rhs);
   if (check_ptr(y, "N_VClone")) { return 1; }
@@ -104,8 +104,8 @@ int main(int argc, char* argv[])
   if (check_ptr(y, "N_VClone")) { return 1; }
 
   sunrealtype* c_data = N_VGetArrayPointer(constraints);
-  c_data[0] = SUN_RCONST(1.0);  // >= 0.0
-  c_data[1] = SUN_RCONST(-1.0); // <= 0.0
+  c_data[0]           = SUN_RCONST(1.0);  // >= 0.0
+  c_data[1]           = SUN_RCONST(-1.0); // <= 0.0
 
   flag = IDASetConstraints(ida_mem, constraints);
   if (check_flag(flag, "IDASetConstraints")) { return 1; }

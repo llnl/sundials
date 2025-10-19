@@ -31,9 +31,9 @@
 #ifndef CONSTANT_HPP_
 #define CONSTANT_HPP_
 
-#include <sundials/sundials_types.h>
-#include <sundials/sundials_nvector.h>
 #include <sundials/sundials_matrix.h>
+#include <sundials/sundials_nvector.h>
+#include <sundials/sundials_types.h>
 #include <sunmatrix/sunmatrix_dense.h>
 
 namespace problems {
@@ -46,7 +46,7 @@ struct UserData
   N_Vector rhs_;
 
   UserData(sunrealtype t0, N_Vector y0, N_Vector rhs)
-    : t0_(t0), y0_(y0), rhs_(rhs) {};
+    : t0_(t0), y0_(y0), rhs_(rhs){};
 };
 
 // -----------------------------------------------------------------------------
@@ -94,20 +94,16 @@ inline int dae_res(sunrealtype t, N_Vector y, N_Vector yp, N_Vector rr,
   return 0;
 }
 
-
 // DAE residual Jacobian, J = dF/dy + alpha dF/dy' = alpha I
 inline int dae_res_jac(sunrealtype t, sunrealtype cj, N_Vector y, N_Vector yp,
                        N_Vector rr, SUNMatrix J, void* user_data,
                        N_Vector tempv1, N_Vector tempv2, N_Vector tempv3)
 {
   const sunindextype length = N_VGetLength(y);
-  sunrealtype* jac_data = SUNDenseMatrix_Data(J);
+  sunrealtype* jac_data     = SUNDenseMatrix_Data(J);
 
   SUNMatZero(J);
-  for (sunindextype i = 0; i < length; ++i)
-  {
-    jac_data[i * length + i] = cj;
-  }
+  for (sunindextype i = 0; i < length; ++i) { jac_data[i * length + i] = cj; }
 
   return 0;
 }
