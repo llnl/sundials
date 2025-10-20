@@ -2554,24 +2554,25 @@ static int IDAStep(IDAMem IDA_mem)
     /* Nonlinear system solution */
     nflag = IDANls(IDA_mem);
 
-    /* Check and enforce inequality constraints */
-    if (nflag == IDA_SUCCESS && IDA_mem->ida_constraints)
-    {
-      nflag = IDACheckConstraints(IDA_mem, saved_t, &step_constraint_fails);
-
-      SUNLogInfoIf(nflag != IDA_SUCCESS, IDA_LOGGER, "end-step-attempt",
-                   "status = failed inequality constraints, nflag = %i", nflag);
-
-      /* Constraint check failed, predict again */
-      if (nflag == PREDICT_AGAIN) { continue; }
-
-      /* Exit on nonrecoverable failure */
-      if (nflag != IDA_SUCCESS) { return nflag; }
-    }
-
-    /* If NLS was successful, perform error test */
+    /* Nonlinear solve was successful */
     if (nflag == IDA_SUCCESS)
     {
+      /* Check and enforce inequality constraints */
+      if (IDA_mem->ida_constraints)
+      {
+        nflag = IDACheckConstraints(IDA_mem, saved_t, &step_constraint_fails);
+
+        SUNLogInfoIf(nflag != IDA_SUCCESS, IDA_LOGGER, "end-step-attempt",
+                     "status = failed inequality constraints, nflag = %i", nflag);
+
+        /* Constraint check failed, predict again */
+        if (nflag == PREDICT_AGAIN) { continue; }
+
+        /* Exit on nonrecoverable failure */
+        if (nflag != IDA_SUCCESS) { return nflag; }
+      }
+
+      /* Perform error test */
       nflag = IDATestError(IDA_mem, ck, &err_k, &err_km1);
     }
 
