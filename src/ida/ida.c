@@ -2861,11 +2861,11 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta, PT1);
   IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta,
                             IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
-  IDA_mem->ida_hh *= IDA_mem->ida_eta;
 
   /* Reattempt step with new step size */
   IDARestore(IDA_mem, saved_t);
   IDA_mem->ida_phase = 1;
+  IDA_mem->ida_hh *= IDA_mem->ida_eta;
   if (IDA_mem->ida_nst == 0) { IDAReset(IDA_mem); }
 
   return PREDICT_AGAIN;
