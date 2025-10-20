@@ -5971,6 +5971,9 @@ static int IDAStep(IDAMem IDA_mem)
     {
       nflag = IDACheckConstraints(IDA_mem, saved_t, &step_constraint_fails);
 
+      SUNLogInfoIf(nflag != IDA_SUCCESS, IDA_LOGGER, "end-step-attempt",
+                   "status = failed inequality constraints, nflag = %i", nflag);
+
       /* Constraint check failed, predict again */
       if (nflag == PREDICT_AGAIN) { continue; }
 
@@ -6502,10 +6505,11 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta, PT1);
   IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta,
                             IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
-  IDA_mem->ida_hh *= IDA_mem->ida_eta;
 
   /* Reattempt step with new step size */
   IDARestore(IDA_mem, saved_t);
+  IDA_mem->ida_phase = 1;
+  IDA_mem->ida_hh *= IDA_mem->ida_eta;
   if (IDA_mem->ida_nst == 0) { IDAReset(IDA_mem); }
 
   return PREDICT_AGAIN;
