@@ -2865,6 +2865,7 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
 
   /* Reattempt step with new step size */
   IDARestore(IDA_mem, saved_t);
+  IDA_mem->ida_phase = 1;
   if (IDA_mem->ida_nst == 0) { IDAReset(IDA_mem); }
 
   return PREDICT_AGAIN;
