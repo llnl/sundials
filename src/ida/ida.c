@@ -2559,6 +2559,9 @@ static int IDAStep(IDAMem IDA_mem)
     {
       nflag = IDACheckConstraints(IDA_mem, saved_t, &step_constraint_fails);
 
+      SUNLogInfoIf(nflag != IDA_SUCCESS, IDA_LOGGER, "end-step-attempt",
+                   "status = failed inequality constraints, nflag = %i", nflag);
+
       /* Constraint check failed, predict again */
       if (nflag == PREDICT_AGAIN) { continue; }
 
