@@ -972,6 +972,8 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
 
   cv_mem->cv_irfnd = 0;
 
+  cv_mem->constraint_fails = 0;
+
   /* Initialize other integrator optional outputs */
 
   cv_mem->cv_h0u    = ZERO;

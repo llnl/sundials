@@ -639,6 +639,8 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
 
   IDA_mem->ida_irfnd = 0;
 
+  IDA_mem->constraint_fails = 0;
+
   /* Initial setup not done yet */
 
   IDA_mem->ida_SetupDone = SUNFALSE;
