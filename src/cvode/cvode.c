@@ -3151,6 +3151,8 @@ static int cvNls(CVodeMem cv_mem, int nflag)
   /* update the state based on the final correction from the nonlinear solver */
   N_VLinearSum(ONE, cv_mem->cv_zn[0], ONE, cv_mem->cv_acor, cv_mem->cv_y);
 
+  SUNLogExtraDebugVec(CV_LOGGER, "y-corrected", cv_mem->cv_y, "y(:) =");
+
   /* compute acnrm if is was not already done by the nonlinear solver */
   if (!cv_mem->cv_acnrmcur)
   {
@@ -3390,9 +3392,7 @@ static int cvDoErrorTest(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
 
   dsm = cv_mem->cv_acnrm * cv_mem->cv_tq[2];
 
-  SUNLogDebug(CV_LOGGER, "error-test",
-              "step = %li, h = " SUN_FORMAT_G ", dsm = " SUN_FORMAT_G,
-              cv_mem->cv_nst, cv_mem->cv_h, dsm);
+  SUNLogDebug(CV_LOGGER, "error-test", "dsm = " SUN_FORMAT_G, dsm);
 
   /* If est. local error norm dsm passes test, return CV_SUCCESS */
   *dsmPtr = dsm;
@@ -3540,8 +3540,7 @@ static void cvCompleteStep(CVodeMem cv_mem)
   }
 #endif
 
-  SUNLogDebug(CV_LOGGER, "return", "nst = %d, nscon = %d", cv_mem->cv_nst,
-              cv_mem->cv_nscon);
+  SUNLogExtraDebugVec(CV_LOGGER, "return", cv_mem->cv_zn[0], "zn_0(:) =");
 }
 
 /*
