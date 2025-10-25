@@ -5,208 +5,208 @@ Using fixed-point nonlinear solver
 ------------------------------------------------------------------------------------------------------------------------------
  0.000000000000000e+00    1.224744871391589e+00    1.732050807568877e+00    0.000000000000000e+00    0.000000000000000e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 1, tn = 0, h = 0.000102986025609508
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 1, tcur = 5.14930128047542e-05
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 1, tcur = 5.14930128047542e-05
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 0.06249535103583782
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 1
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 1, tcur = 1.50819542667868e-05
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 1, tcur = 1.50819542667868e-05
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 0.005361255358247282
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 1
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 1, tcur = 6.43662660059428e-05
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 1, tcur = 6.43662660059428e-05
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 0.09764898308268008
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 1
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 1, tcur = 0.000107105466633889
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 1, tcur = 0.000107105466633889
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 0.2703798217317151
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 8.460243801243654e-06
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 5, implicit = 1, tcur = 0.000102986025609508
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 5, implicit = 1, tcur = 0.000102986025609508
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 0.2499813597902462
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 7.823414356077108e-06
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.05238430477809e-09
  1.029860256095084e-04    1.224744870309105e+00    1.732050195224278e+00    1.332267629550188e-15    8.881784197001252e-16
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 0.000102986025609508, h = 0.0162733594447025
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.000102986025609508
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 1, tcur = 0.00823966574796075
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.000102986025609508
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 1, tcur = 0.00823966574796075
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 1599.236997298152
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 5.455824104666703
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.04738495365023451
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 1, tcur = 0.00248616433994311
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 1, tcur = 0.00248616433994311
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 146.5647359914231
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.6523492851366673
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.005378409984764867
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 1, tcur = 0.0102738356785486
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 1, tcur = 0.0102738356785486
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 2484.608648891791
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 7.823010010533562
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.06876265539645
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 1, tcur = 0.0170272798481001
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 1, tcur = 0.0170272798481001
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 6789.247425523472
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 19.77734449541828
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.1508334698748655
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 5, implicit = 1, tcur = 0.016376345470312
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 5, implicit = 1, tcur = 0.016376345470312
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 6290.025917919329
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 18.16556977243054
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.1426876719714273
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.667492475255838
  1.637634547031199e-02    1.224717498232488e+00    1.716636482604026e+00    1.979558073017529e-09    6.987524781010279e-09
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 3, tn = 0.016376345470312, h = 0.0162034738694536
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.016376345470312
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 1, tcur = 0.0244780824050388
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.016376345470312
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 1, tcur = 0.0244780824050388
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 7728.625148855824
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 29.1923843863051
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.1461351177194987
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 1, tcur = 0.018749289279104
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 1, tcur = 0.018749289279104
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 1963.165227189449
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 5.908240063045395
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.04072630619770828
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 1, tcur = 0.0265035166387205
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 1, tcur = 0.0265035166387205
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 10123.44605625383
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 41.90083186621374
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.1981967146644521
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 1, tcur = 0.0332279582945437
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 1, tcur = 0.0332279582945437
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 19319.2954515257
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 106.0487593039537
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.5555252222520111
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 5, implicit = 1, tcur = 0.0325798193397656
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 5, implicit = 1, tcur = 0.0325798193397656
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 18358.69180659645
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 98.28490048285548
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 3, update-norm = 0.5036165592159765
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][arkStep_Nls][end-nonlinear-solve] status = success, iters = 3
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.690142942535631

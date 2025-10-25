@@ -6,406 +6,406 @@ Using GMRES iterative linear solver
 ------------------------------------------------------------------------------------------------------------------------------
  0.000000000000000e+00    1.224744871391589e+00    1.732050807568877e+00    0.000000000000000e+00    0.000000000000000e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 1, tn = 0, h = 0.001
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 0, stage type = -2, tcur = 0
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 1, stage type = 0, tcur = 0.0006
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 0, stage type = -2, tcur = 0
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 1, stage type = 0, tcur = 0.0006
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 1, tn = 0, h = 2.0593554389295e-08
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 8.237421755718e-09
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 1.2356132633577e-08
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 2.0593554389295e-08
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 2.0593554389295e-08
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 8.237421755718e-09
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 1.2356132633577e-08
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 2.0593554389295e-08
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 2.0593554389295e-08
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 8.6026480174681e-20
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 2.0593554389295e-08, h = 0.00020593554389295
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 2.0593554389295e-08
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 8.23948111115693e-05
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.000123581919890159
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.000205956137447339
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.000205956137447339
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 2.0593554389295e-08
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 8.23948111115693e-05
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.000123581919890159
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.000205956137447339
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.000205956137447339
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 2.56879426676962e-08
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 3, tn = 0.000205956137447339, h = 0.00039404386255266
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.000205956137447339
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.000363573682468403
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.000442382454978936
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.0006
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.0006
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.000205956137447339
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.000363573682468403
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.000442382454978936
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.0006
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.0006
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 3.45361489978498e-07
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 8.484795603497425, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 11.99931301642967, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 11.99931301642967, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.004015866840387505
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 3.415499053513501e-16
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 3.415499053513501e-16
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 8.484806431585707
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 1.518415982741362e-08, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 2, stage type = 0, tcur = 0.000266666666666667
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 2, stage type = 0, tcur = 0.000266666666666667
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 4, tn = 0, h = 0.000266666666666666
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.000106666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.00016
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.000266666666666666
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.000266666666666666
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.000106666666666667
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.00016
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.000266666666666666
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.000266666666666666
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 7.22545459166775e-08
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 1.676008618767759, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 2.370234119315564, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 2.370234119315564, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.0007981043352221213
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 7.468861811575715e-17
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 7.468861811575715e-17
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 1.676009569834354
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 2.704949831822065e-10, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 3, stage type = 0, tcur = 0.001
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 3, stage type = 0, tcur = 0.001
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 5, tn = 0, h = 0.000999999999999999
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.0004
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.0006
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.000999999999999999
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.000999999999999999
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.0004
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.0006
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.000999999999999999
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.000999999999999999
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.43603697932686e-05
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 23.56853110609861, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 33.33093633545681, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 33.33093633545681, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.01120221279883581
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 3.585147871537139e-15
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 3.585147871537139e-15
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 23.56854956580876
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 1.271876514977771e-07, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success
  1.000000000000000e-03    1.224744769306441e+00    1.731993073495865e+00    2.307976032511760e-11    8.350431457415652e-12
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 0.001, h = 0.001
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 0, stage type = -2, tcur = 0.001
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 1, stage type = 0, tcur = 0.0016
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 0, stage type = -2, tcur = 0.001
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 1, stage type = 0, tcur = 0.0016
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 6, tn = 0.001, h = 0.000599999999999999
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.001
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.00124
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.00136
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.0016
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.0016
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.001
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.00124
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.00136
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.0016
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.0016
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.87006264992971e-06
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 36.76658771020207, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 51.99580698194772, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 51.99580698194772, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.01745737857156434
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 8.623403319602931e-15
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 8.623403319602931e-15
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 36.76662068831623
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 3.144284135360003e-07, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 2, stage type = 0, tcur = 0.00126666666666667
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 2, stage type = 0, tcur = 0.00126666666666667
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 7, tn = 0.001, h = 0.000266666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.001
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.00110666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.00116
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.00126666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.00126666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.001
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.00110666666666667
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.00116
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.00126666666666667
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.00126666666666667
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 7.28155541509163e-08
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 14.24595765877606, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 20.14682653003396, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 20.14682653003396, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.006772498770677782
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 2.348150295133058e-15
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 2.348150295133058e-15
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 14.24596845298967
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 4.511951135472139e-08, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 3, stage type = 0, tcur = 0.002
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 3, stage type = 0, tcur = 0.002
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 8, tn = 0.001, h = 0.000999999999999999
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.001
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.0014
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.0016
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.002
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.002
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.001
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.0014
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.0016
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.002
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.002
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.44643738465467e-05
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 70.70322912357391, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 99.98946553013062, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 99.98946553013062, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.03360218033646804
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 1.100990070857298e-14
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 1.100990070857298e-14
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 70.70328448842176
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 1.178327909150219e-06, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success
  2.000000000000000e-03    1.224744463099111e+00    1.731819882840901e+00    4.425571020760799e-11    1.671773830480561e-11
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 3, tn = 0.002, h = 0.001
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 0, stage type = -2, tcur = 0.002
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 1, stage type = 0, tcur = 0.0026
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 0, stage type = -2, tcur = 0.002
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 1, stage type = 0, tcur = 0.0026
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 9, tn = 0.002, h = 0.000599999999999999
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.002
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.00224
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.00236
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.0026
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.0026
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.002
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.00224
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.00236
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.0026
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.0026
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.88230943917548e-06
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 65.04725306854765, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 91.990707484655, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 91.990707484655, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.03089427150626882
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 1.597479629532536e-14
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 1.597479629532536e-14
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 65.04730818669684
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 9.9601642340589e-07, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 2, stage type = 0, tcur = 0.00226666666666667
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 2, stage type = 0, tcur = 0.00226666666666667
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 10, tn = 0.002, h = 0.000266666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.002
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.00210666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.00216
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.00226666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.00226666666666667
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.002
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.00210666666666667
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.00216
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.00226666666666667
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.00226666666666667
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 7.33093867454364e-08
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 26.81568291921132, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 37.9231024686452, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 37.9231024686452, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.01274532455050816
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 4.786327393552385e-15
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 4.786327393552385e-15
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 26.81570355380015
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 1.65509081442218e-07, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
-[INFO][rank 0][mriStep_TakeStepMRISR][begin-stage] stage = 3, stage type = 0, tcur = 0.003
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][begin-stages-list] stage = 3, stage type = 0, tcur = 0.003
 [INFO][rank 0][mriStep_StageERKFast][begin-fast-steps] 
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 11, tn = 0.002, h = 0.000999999999999999
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 0, implicit = 0, tcur = 0.002
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 1, implicit = 0, tcur = 0.0024
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 2, implicit = 0, tcur = 0.0026
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 3, implicit = 0, tcur = 0.003
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stage] stage = 4, implicit = 0, tcur = 0.003
-[INFO][rank 0][arkStep_TakeStep_Z][end-stage] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.002
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 0, tcur = 0.0024
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 0, tcur = 0.0026
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 0, tcur = 0.003
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 0, tcur = 0.003
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.45550747709005e-05
 [INFO][rank 0][mriStep_StageERKFast][end-fast-steps] status = success
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 117.8347805538854, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] cur-iter = 0, total-iters = 0, res-norm = 166.6435447785622, status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 166.6435447785622, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.05599240897985592
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = continue
-[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-linear-iterate] 
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 2.370211446295708e-14
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-linear-iterate] status = success
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, resnorm = 2.370211446295708e-14
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 117.8348728110946
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 1, b-norm = 3.291182083993899e-06, b-tol = 0.0005000000000000001, res-tol = 0.0007071067811865477
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success small rhs
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
-[INFO][rank 0][mriStep_TakeStepMRISR][end-stage] status = success
+[INFO][rank 0][mriStep_TakeStepMRISR][end-stages-list] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success
  3.000000000000000e-03    1.224743952771547e+00    1.731531270248468e+00    6.173306310586213e-11    2.510236463137971e-11
 ------------------------------------------------------------------------------------------------------------------------------

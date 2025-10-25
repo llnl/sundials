@@ -555,7 +555,7 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* store current stage index */
     step_mem->istage = is;
 
-    SUNLogInfo(ARK_LOGGER, "begin-stage",
+    SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, t = " SUN_FORMAT_G ", that = " SUN_FORMAT_G, is,
                ark_mem->tn + ci * ark_mem->h, ark_mem->tn + chati * ark_mem->h);
     SUNLogExtraDebugVec(ARK_LOGGER, "stage", prev_stage, "z2_%i(:) =", is);
@@ -574,7 +574,7 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed rhs eval, retval = %i", retval);
         return ARK_RHSFUNC_FAIL;
       }
@@ -603,7 +603,7 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed rhs eval, retval = %i", retval);
         return ARK_RHSFUNC_FAIL;
       }
@@ -619,7 +619,7 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                      ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
@@ -630,7 +630,7 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     prev_stage = curr_stage;
 
-    SUNLogInfo(ARK_LOGGER, "end-stage", "status = success");
+    SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   }
 
   *nflagPtr = 0;
@@ -682,7 +682,7 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
     /* store current stage index */
     step_mem->istage = is;
 
-    SUNLogInfo(ARK_LOGGER, "begin-stage",
+    SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, t = " SUN_FORMAT_G ", that = " SUN_FORMAT_G, is,
                ark_mem->tn + ci * ark_mem->h, ark_mem->tn + chati * ark_mem->h);
 
@@ -705,7 +705,7 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed rhs eval, retval = %i", retval);
         return (ARK_RHSFUNC_FAIL);
       }
@@ -738,7 +738,7 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed rhs eval, retval = %i", retval);
         return (ARK_RHSFUNC_FAIL);
       }
@@ -753,7 +753,7 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
      * won't work with the increment form */
     if (ark_mem->ProcessStage != NULL)
     {
-      SUNLogInfo(ARK_LOGGER, "end-stage",
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
       arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
                       __FILE__,
@@ -762,7 +762,7 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
       return (ARK_POSTPROCESS_STAGE_FAIL);
     }
 
-    SUNLogInfo(ARK_LOGGER, "end-stage", "status = success");
+    SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   }
 
   /*
