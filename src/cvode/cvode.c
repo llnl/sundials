@@ -3228,7 +3228,8 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
   {
     N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp,
                  cv_mem->cv_acor); /* acor <- acor - v */
-    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
+    SUNLogInfo(CV_LOGGER, "end-constraint-check",
+               "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
     return (CV_SUCCESS);
   }
 
@@ -3259,7 +3260,8 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
   cvRescale(cv_mem);
   *nflagPtr = PREV_CONV_FAIL;
 
-  SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = failed, eta = " SUN_FORMAT_G, cv_mem->cv_eta);
+  SUNLogInfo(CV_LOGGER, "end-constraint-check",
+             "status = failed, eta = " SUN_FORMAT_G, cv_mem->cv_eta);
 
   return PREDICT_AGAIN;
 }
