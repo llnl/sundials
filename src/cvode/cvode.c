@@ -3186,6 +3186,8 @@ static int cvNls(CVodeMem cv_mem, int nflag)
 static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
                               sunrealtype saved_t, int* step_constraint_fails)
 {
+  SUNLogInfo(CV_LOGGER, "begin-constraint-check", "");
+
   sunbooleantype constraintsPassed;
   sunrealtype vnorm;
   N_Vector mm  = cv_mem->cv_ftemp;
@@ -3193,7 +3195,11 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
 
   /* Get mask vector mm, set where constraints failed */
   constraintsPassed = N_VConstrMask(cv_mem->cv_constraints, cv_mem->cv_y, mm);
-  if (constraintsPassed) { return (CV_SUCCESS); }
+  if (constraintsPassed)
+  {
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = success");
+    return (CV_SUCCESS);
+  }
 
   /* Constraints not met */
 
@@ -3222,6 +3228,7 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
   {
     N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp,
                  cv_mem->cv_acor); /* acor <- acor - v */
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
     return (CV_SUCCESS);
   }
 
@@ -3236,6 +3243,7 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
   if ((SUNRabs(cv_mem->cv_h) <= cv_mem->cv_hmin * ONEPSM) ||
       (*step_constraint_fails == cv_mem->max_constraint_fails))
   {
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = failed max attempts");
     return (CV_CONSTR_FAIL);
   }
 
@@ -3250,6 +3258,8 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
                           cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
   cvRescale(cv_mem);
   *nflagPtr = PREV_CONV_FAIL;
+
+  SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = failed, eta = " SUN_FORMAT_G, cv_mem->cv_eta);
 
   return PREDICT_AGAIN;
 }
