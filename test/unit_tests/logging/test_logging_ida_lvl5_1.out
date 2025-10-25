@@ -7,16 +7,16 @@ Using dense direct linear solver
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 1, tn = 0, h = 0.001, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 47.11440249313684
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 1.752418576295284e-06
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 23.557200568782, terr_k = 47.1144011375639
 [DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
@@ -26,16 +26,16 @@ Using dense direct linear solver
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 1, tn = 0, h = 0.00025, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 2.945750201857205
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 1.836388936391201e-09
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 1.47287510018879, terr_k = 2.94575020037758
 [DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
@@ -45,16 +45,16 @@ Using dense direct linear solver
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 1, tn = 0, h = 6.25e-05, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.1841265970416357
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 1.814364670808554e-12
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 0.0920632985200791, terr_k = 0.184126597040158
 [DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
@@ -65,16 +65,16 @@ Using dense direct linear solver
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 2, tn = 6.25e-05, h = 0.000125, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.7364830565025812
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = continue
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 5.772592627786376e-11
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 0.490988704303955, terr_k = 0.981977408607911
 [DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
@@ -85,11 +85,11 @@ Using dense direct linear solver
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 3, tn = 0.0001875, h = 0.000125, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
-[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-nonlinear-iterate] 
+[INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.7364807617858526
-[INFO][rank 0][SUNNonlinSolSolve_Newton][end-nonlinear-iterate] status = success
+[INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 1
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 0.368240380892926, terr_k = 0.736480761785853
 [DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
