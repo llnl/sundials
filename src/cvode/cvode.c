@@ -313,9 +313,10 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->convfail            = CV_NO_FAILURES;
 
   /* Initialize inequality constraint variables */
-  cv_mem->cv_constraints       = NULL;
-  cv_mem->constraint_fails     = 0;
-  cv_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS;
+  cv_mem->cv_constraints         = NULL;
+  cv_mem->constraint_corrections = 0;
+  cv_mem->constraint_fails       = 0;
+  cv_mem->max_constraint_fails   = MAX_CONSTRAINT_FAILS;
 
   /* Initialize root finding variables */
 
@@ -631,7 +632,8 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
 
   cv_mem->cv_irfnd = 0;
 
-  cv_mem->constraint_fails = 0;
+  cv_mem->constraint_corrections = 0;
+  cv_mem->constraint_fails       = 0;
 
   /* Initialize other integrator optional outputs */
 
@@ -2789,7 +2791,7 @@ static void cvPredict(CVodeMem cv_mem)
     }
   }
 
-  SUNLogExtraDebugVec(CV_LOGGER, "return", cv_mem->cv_zn[0], "zn_0(:) =");
+  SUNLogExtraDebugVec(CV_LOGGER, "predictor", cv_mem->cv_zn[0], "y_predicted(:) =");
 }
 
 /*
@@ -3151,7 +3153,7 @@ static int cvNls(CVodeMem cv_mem, int nflag)
   /* update the state based on the final correction from the nonlinear solver */
   N_VLinearSum(ONE, cv_mem->cv_zn[0], ONE, cv_mem->cv_acor, cv_mem->cv_y);
 
-  SUNLogExtraDebugVec(CV_LOGGER, "y-corrected", cv_mem->cv_y, "y(:) =");
+  SUNLogExtraDebugVec(CV_LOGGER, "corrector", cv_mem->cv_y, "y_corrected(:) =");
 
   /* compute acnrm if is was not already done by the nonlinear solver */
   if (!cv_mem->cv_acnrmcur)
@@ -3188,13 +3190,12 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
 {
   SUNLogInfo(CV_LOGGER, "begin-constraint-check", "");
 
-  sunbooleantype constraintsPassed;
-  sunrealtype vnorm;
-  N_Vector mm  = cv_mem->cv_ftemp;
-  N_Vector tmp = cv_mem->cv_tempv;
+  N_Vector mm  = cv_mem->cv_ftemp; /* mask      */
+  N_Vector tmp = cv_mem->cv_tempv; /* workspace */
 
-  /* Get mask vector mm, set where constraints failed */
-  constraintsPassed = N_VConstrMask(cv_mem->cv_constraints, cv_mem->cv_y, mm);
+  /* Get mask vector mm, 1 where constraints failed and 0 otherwise */
+  sunbooleantype constraintsPassed = N_VConstrMask(cv_mem->cv_constraints,
+                                                   cv_mem->cv_y, mm);
   if (constraintsPassed)
   {
     SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = success");
@@ -3203,7 +3204,25 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
 
   /* Constraints not met */
 
-  /* Compute correction to satisfy constraints */
+  /* Compute correction v such that y - v will satisfy the constraints
+   *
+   * 1. Create a mask array that is +1 where constraints are strictly greater
+   *    than or less than zero (|c[i]| = 2) and 0 otherwise
+   *
+   * 2. Create a mask array that is +/- 2 where constraints are strictly greater
+   *    than (+) or less than (-) zero and 0 otherwise
+   *
+   * 3. Use error weights to compute an adjustment vector for values with strict
+   *    constraints, a[i] = +/- 2 * w[i] = +/- 2 * (atol * |y[i]| + rtol[i]),
+   *    and is 0 otherwise
+   *
+   * 4. Save the adjustment vector for possible use later
+   *
+   * 5. Compute correction vector for all values, v[i] = y[i] - 0.1 * a[i] for
+   *    strict constraints and v[i] = y[i] otherwise
+   *
+   * 6. Zero out entries where the constraints passed, v = mask * v
+   */
 #ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
@@ -3213,23 +3232,42 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
   else
 #endif
   {
-    N_VCompare(ONEPT5, cv_mem->cv_constraints, tmp); /* a[i]=1 when |c[i]|=2  */
-    N_VProd(tmp, cv_mem->cv_constraints, tmp);       /* a * c                 */
-    N_VDiv(tmp, cv_mem->cv_ewt, tmp);                /* a * c * wt            */
-    N_VLinearSum(ONE, cv_mem->cv_y, -PT1, tmp, tmp); /* y - 0.1 * a * c * wt  */
-    N_VProd(tmp, mm, tmp);                           /* v = mm*(y-0.1*a*c*wt) */
+    N_VCompare(ONEPT5, cv_mem->cv_constraints, tmp);
+    N_VProd(tmp, cv_mem->cv_constraints, tmp);
+    N_VDiv(tmp, cv_mem->cv_ewt, tmp);
+    N_VScale(-PT1, tmp, cv_mem->cv_vtemp1);
+    N_VLinearSum(ONE, cv_mem->cv_y, -PT1, tmp, tmp);
+    N_VProd(tmp, mm, tmp);
   }
 
-  vnorm = N_VWrmsNorm(tmp, cv_mem->cv_ewt); /* ||v|| */
+  sunrealtype vnorm = N_VWrmsNorm(tmp, cv_mem->cv_ewt); /* ||v|| */
 
-  /* If vector v of constraint corrections is small in norm, correct and
-     accept this step */
+  /* If constraint correction vector is small in norm (satisfies the nonlinear
+     solver convergence condition with R = 1), correct and accept this step */
   if (vnorm <= cv_mem->cv_tq[4])
   {
-    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp,
-                 cv_mem->cv_acor); /* acor <- acor - v */
+    /* Update constraint correction count */
+    cv_mem->constraint_corrections++;
+
+    /* To reduce roundoff errors that can violate the constraints, split the
+     * correction update, acor = acor - v, into three steps */
+
+    /* Zero out the correction where any constraint failed */
+    N_VProd(mm, cv_mem->cv_acor, tmp);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp, cv_mem->cv_acor);
+
+    /* Set correction to zero out the predictor where any constraint failed */
+    N_VProd(mm, cv_mem->cv_zn[0], tmp);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp, cv_mem->cv_acor);
+
+    /* Update the correction where constraints failed and are strictly greater
+       or less than zero to shift the state with the adjustment saved above */
+    N_VProd(mm, cv_mem->cv_vtemp1, cv_mem->cv_vtemp1);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, cv_mem->cv_vtemp1, cv_mem->cv_acor);
+
     SUNLogInfo(CV_LOGGER, "end-constraint-check",
                "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
+
     return (CV_SUCCESS);
   }
 
@@ -3552,7 +3590,7 @@ static void cvCompleteStep(CVodeMem cv_mem)
   }
 #endif
 
-  SUNLogExtraDebugVec(CV_LOGGER, "return", cv_mem->cv_zn[0], "zn_0(:) =");
+  SUNLogExtraDebugVec(CV_LOGGER, "new solution", cv_mem->cv_zn[0], "y_new(:) =");
 }
 
 /*

@@ -444,9 +444,10 @@ typedef struct CVodeMemRec
     Inequality Constraints Data
     ---------------------------*/
 
-  N_Vector cv_constraints;   /* vector of constraint flags     */
-  long int constraint_fails; /* total constraint failures      */
-  int max_constraint_fails;  /* max failures allowed in a step */
+  N_Vector cv_constraints;         /* vector of constraint flags     */
+  long int constraint_corrections; /* total constraint corrections   */
+  long int constraint_fails;       /* total constraint failures      */
+  int max_constraint_fails;        /* max failures allowed in a step */
 
   /*---------------
     Projection Data
