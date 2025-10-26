@@ -85,7 +85,8 @@ static int cvSetFromCommandLine(void* cvode_mem, const char* cvid, int argc,
      {"num_fails_eta_max_err_fail", CVodeSetNumFailsEtaMaxErrFail},
      {"linear_solution_scaling", CVodeSetLinearSolutionScaling},
      {"proj_err_est", CVodeSetProjErrEst},
-     {"max_num_proj_fails", CVodeSetMaxNumProjFails}};
+     {"max_num_proj_fails", CVodeSetMaxNumProjFails},
+     {"max_num_constraint_fails", CVodeSetMaxNumConstraintFails}};
   static const int num_int_keys = sizeof(int_pairs) / sizeof(*int_pairs);
 
   static const struct sunKeyLongPair long_pairs[] =

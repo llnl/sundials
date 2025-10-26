@@ -1262,6 +1262,9 @@ Main solver optional input functions
    Sets the maximum number of inequality constraint failures allowed in a step
    attempt (default 10).
 
+   Use the key "cvid.max_num_constraint_fails" to set this option with
+   :c:func:`CVodeSetOptions`.
+
    **Arguments:**
       * ``cvode_mem`` -- pointer to the CVODES memory block.
       * ``max_fail`` -- the maximum number of failures. Passing a value
