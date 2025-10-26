@@ -148,6 +148,10 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
   ark_mem->lrw1 = lrw1;
   ark_mem->liw1 = liw1;
 
+  /* Disable constraints, the user will need to set a new constraint vector for
+     the updated problem size */
+  arkFreeVec(ark_mem, &ark_mem->constraints);
+
   /* Resize the solver vectors (using y0 as a template) */
   resizeOK = arkResizeVectors(ark_mem, resize, resize_data, lrw_diff, liw_diff,
                               y0);
@@ -174,9 +178,6 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
   /* Copy y0 into ark_yn to set the current solution */
   N_VScale(ONE, y0, ark_mem->yn);
   ark_mem->fn_is_current = SUNFALSE;
-
-  /* Disable constraints */
-  ark_mem->constraintsSet = SUNFALSE;
 
   /* Indicate that problem needs to be initialized */
   ark_mem->initsetup  = SUNTRUE;
@@ -947,7 +948,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       }
 
       /* perform constraint-handling (if selected, and if solver check passed) */
-      if (ark_mem->constraintsSet && (kflag == ARK_SUCCESS))
+      if (ark_mem->constraints && (kflag == ARK_SUCCESS))
       {
         kflag = arkCheckConstraints(ark_mem, &constrfails, &nflag);
 
@@ -1360,7 +1361,6 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
   arkPrintAdaptMem(ark_mem->hadapt_mem, outfile);
 
   /* output inequality constraints quantities */
-  fprintf(outfile, "constraintsSet = %i\n", ark_mem->constraintsSet);
   fprintf(outfile, "maxconstrfails = %i\n", ark_mem->maxconstrfails);
 
   /* output root-finding quantities */
@@ -1571,8 +1571,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->root_mem = NULL;
 
   /* Initialize inequality constraints variables */
-  ark_mem->constraintsSet = SUNFALSE;
-  ark_mem->constraints    = NULL;
+  ark_mem->constraints = NULL;
 
   /* Initialize relaxation variables */
   ark_mem->relax_enabled = SUNFALSE;
@@ -2011,7 +2010,7 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
   }
 
   /* Check to see if y0 satisfies constraints */
-  if (ark_mem->constraintsSet)
+  if (ark_mem->constraints)
   {
     conOK = N_VConstrMask(ark_mem->constraints, ark_mem->yn, ark_mem->tempv1);
     if (!conOK)
@@ -3275,13 +3274,19 @@ int arkCheckConvergence(ARKodeMem ark_mem, int* nflagPtr, int* ncfPtr)
   --------------------------------------------------------------*/
 int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
 {
+  SUNLogInfo(ARK_LOGGER, "begin-constraint-check", "");
+
   sunbooleantype constraintsPassed;
   N_Vector mm  = ark_mem->tempv4;
   N_Vector tmp = ark_mem->tempv3;
 
   /* Check constraints and get mask vector mm for where constraints failed */
   constraintsPassed = N_VConstrMask(ark_mem->constraints, ark_mem->ycur, mm);
-  if (constraintsPassed) { return (ARK_SUCCESS); }
+  if (constraintsPassed)
+  {
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = success");
+    return (ARK_SUCCESS);
+  }
 
   /* Constraints not met */
 
@@ -3290,14 +3295,23 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   (*constrfails)++;
 
   /* Return with error if reached max fails in a step */
-  if (*constrfails == ark_mem->maxconstrfails) { return (ARK_CONSTR_FAIL); }
+  if (*constrfails == ark_mem->maxconstrfails)
+  {
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = failed max attempts");
+    return (ARK_CONSTR_FAIL);
+  }
 
   /* Return with error if using fixed step sizes */
-  if (ark_mem->fixedstep) { return (ARK_CONSTR_FAIL); }
+  if (ark_mem->fixedstep)
+  {
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = failed fixed step");
+    return (ARK_CONSTR_FAIL);
+  }
 
   /* Return with error if |h| == hmin */
   if (SUNRabs(ark_mem->h) <= ark_mem->hmin * ONEPSM)
   {
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = failed min step");
     return (ARK_CONSTR_FAIL);
   }
 
@@ -3309,6 +3323,9 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
 
   /* Signal for Jacobian/preconditioner setup */
   *nflag = PREV_CONV_FAIL;
+
+  SUNLogInfo(ARK_LOGGER, "end-constraint-check",
+             "status = failed, eta = " SUN_FORMAT_G, ark_mem->eta);
 
   /* Return to reattempt the step */
   return (CONSTR_RECVR);
@@ -3686,13 +3703,6 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
 
   if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
                     &ark_mem->tempv5))
-  {
-    return (SUNFALSE);
-  }
-
-  /* constraints */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->constraints))
   {
     return (SUNFALSE);
   }

@@ -1582,7 +1582,6 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
   if (constraints == NULL)
   {
     arkFreeVec(ark_mem, &ark_mem->constraints);
-    ark_mem->constraintsSet = SUNFALSE;
     return (ARK_SUCCESS);
   }
 
@@ -1614,7 +1613,6 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
 
   /* Load the constraints vector */
   N_VScale(ONE, constraints, ark_mem->constraints);
-  ark_mem->constraintsSet = SUNTRUE;
 
   return (ARK_SUCCESS);
 }

@@ -401,7 +401,6 @@ struct ARKodeMemRec
   sunbooleantype user_rfun;      /* SUNTRUE if user sets rfun             */
   ARKRwtFn rfun;                 /* function to set rwt                   */
   void* r_data;                  /* user pointer passed to rfun           */
-  sunbooleantype constraintsSet; /* check inequality constraints          */
 
   /* Time stepper module -- general */
   void* step_mem;
@@ -486,8 +485,6 @@ struct ARKodeMemRec
   N_Vector tempv4;
   N_Vector tempv5;
 
-  N_Vector constraints; /* vector of inequality constraint options         */
-
   /* Temporal interpolation module */
   ARKInterp interp;
   int interp_type;
@@ -518,7 +515,6 @@ struct ARKodeMemRec
   long int mxstep;    /* max number of internal steps for one user call */
   int mxhnil;         /* max number of warning messages issued to the
                               user that t+h == t for the next internal step  */
-  int maxconstrfails; /* max number of constraint check failures        */
   int maxnef;         /* max error test fails in one step               */
   int maxncf;         /* max num alg. solver conv. fails in one step    */
 
@@ -529,7 +525,6 @@ struct ARKodeMemRec
                              t+h == t for the next iternal step         */
   long int ncfn;         /* num corrector convergence failures         */
   long int netf;         /* num error test failures                    */
-  long int nconstrfails; /* number of constraint failures              */
 
   /* Space requirements for ARKODE */
   sunindextype lrw1; /* no. of sunrealtype words in 1 N_Vector          */
@@ -557,6 +552,11 @@ struct ARKodeMemRec
 
   /* Rootfinding Data */
   ARKodeRootMem root_mem; /* root-finding structure */
+
+  /* Inequality Constraints Data */
+  N_Vector constraints;  /* vector of constraint flags     */
+  long int nconstrfails; /* total constraint failures      */
+  int maxconstrfails;    /* max failures allowed in a step */
 
   /* Relaxation Data */
   sunbooleantype relax_enabled; /* is relaxation enabled?    */
