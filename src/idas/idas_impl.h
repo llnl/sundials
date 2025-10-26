@@ -506,9 +506,10 @@ typedef struct IDAMemRec
     Inequality Constraints Data
     ---------------------------*/
 
-  N_Vector ida_constraints;  /* vector of inequality constraint flags */
-  long int constraint_fails; /* total constraint failures             */
-  int max_constraint_fails;  /* max failures allowed in a step        */
+  N_Vector ida_constraints;        /* vector of inequality constraint flags */
+  long int constraint_corrections; /* total constraint corrections   */
+  long int constraint_fails;       /* total constraint failures             */
+  int max_constraint_fails;        /* max failures allowed in a step        */
 
   /* Arrays for Fused Vector Operations */
 

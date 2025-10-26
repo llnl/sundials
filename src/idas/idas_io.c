@@ -647,9 +647,9 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
 }
 
 /*
- * IDAGetNumConstraintFails
+ * IDASetMaxNumConstraintFails
  *
- * Setup for constraint handling feature
+ * Set the maximum number of constraint failure allowed in a step
  */
 
 int IDASetMaxNumConstraintFails(void* ida_mem, int max_fails)
@@ -668,9 +668,9 @@ int IDASetMaxNumConstraintFails(void* ida_mem, int max_fails)
 }
 
 /*
- * IDASetMaxNumConstraintFails
+ * IDAGetNumConstraintFails
  *
- * Setup for constraint handling feature
+ * Get the number of failed steps due to constraint violation
  */
 
 int IDAGetNumConstraintFails(void* ida_mem, long int* num_fails_out)
@@ -683,6 +683,26 @@ int IDAGetNumConstraintFails(void* ida_mem, long int* num_fails_out)
   IDAMem IDA_mem = (IDAMem)ida_mem;
 
   *num_fails_out = IDA_mem->constraint_fails;
+
+  return IDA_SUCCESS;
+}
+
+/*
+ * IDAGetNumConstraintCorrections
+ *
+ * Get the number of constraint corrections
+ */
+
+int IDAGetNumConstraintCorrections(void* ida_mem, long int* num_corrections_out)
+{
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+  IDAMem IDA_mem = (IDAMem)ida_mem;
+
+  *num_corrections_out = IDA_mem->constraint_corrections;
 
   return IDA_SUCCESS;
 }
@@ -2302,6 +2322,8 @@ int IDAPrintAllStats(void* ida_mem, FILE* outfile, SUNOutputFormat fmt)
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS step fails", IDA_mem->ida_ncfn);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails",
                   IDA_mem->constraint_fails);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint corrections",
+                  IDA_mem->constraint_corrections);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Initial step size", IDA_mem->ida_h0u);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Last step size", IDA_mem->ida_hused);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Current step size", IDA_mem->ida_hh);
