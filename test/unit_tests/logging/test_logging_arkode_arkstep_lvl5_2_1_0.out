@@ -6,7 +6,7 @@ Using GMRES iterative linear solver
 ------------------------------------------------------------------------------------------------------------------------------
  0.000000000000000e+00    1.224744871391589e+00    1.732050807568877e+00    0.000000000000000e+00    0.000000000000000e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 1, tn = 0, h = 0.000102986025609508
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 0, implicit = 0, tcur = 0
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit stage] z_0(:) =
  1.224744871391589e+00
  1.732050807568877e+00
@@ -16,8 +16,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_0(:) =
 -0.000000000000000e+00
 -0.000000000000000e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 1, implicit = 1, tcur = 2.54375483255486e-05
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 1, tcur = 2.54375483255486e-05
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744871391589e+00
  1.732050807568877e+00
@@ -44,8 +44,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_1(:) =
 -5.192417808187580e-06
 -2.937274947948774e-03
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 2, implicit = 1, tcur = 4.34246112433045e-05
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 1, tcur = 4.34246112433045e-05
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744871391589e+00
  1.732050807568877e+00
@@ -78,8 +78,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_2(:) =
 -8.864011650668493e-06
 -5.014241882978969e-03
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 3, implicit = 1, tcur = 3.45003185791853e-05
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 1, tcur = 3.45003185791853e-05
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744871391589e+00
  1.732050807568877e+00
@@ -112,8 +112,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_3(:) =
 -7.042348039503128e-06
 -3.983753485706856e-03
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 4, implicit = 1, tcur = 7.72395192071313e-06
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 1, tcur = 7.72395192071313e-06
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744871391589e+00
  1.732050807568877e+00
@@ -146,8 +146,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_4(:) =
 -1.576645083620417e-06
 -8.918851423525020e-04
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 5, implicit = 1, tcur = 7.20902179266559e-05
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 5, implicit = 1, tcur = 7.20902179266559e-05
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744871391589e+00
  1.732050807568877e+00
@@ -185,8 +185,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_5(:) =
 -1.471535410746999e-05
 -8.324259903136431e-03
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 6, implicit = 1, tcur = 0.000102986025609508
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 6, implicit = 1, tcur = 0.000102986025609508
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744871391589e+00
  1.732050807568877e+00
@@ -224,7 +224,7 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_6(:) =
 -2.102193442972801e-05
 -1.189179771748703e-02
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [DEBUG][rank 0][arkStep_TakeStep_Z][updated solution] ycur(:) =
  1.224744870309106e+00
@@ -236,7 +236,7 @@ Using GMRES iterative linear solver
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 4.9626087705981e-11
  1.029860256095084e-04    1.224744870309106e+00    1.732050195224277e+00    2.220446049250313e-16    0.000000000000000e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 0.000102986025609508, h = 0.0349215328254922
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 0, implicit = 0, tcur = 0.000102986025609508
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.000102986025609508
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit stage] z_0(:) =
  1.224744870309106e+00
  1.732050195224277e+00
@@ -246,8 +246,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_0(:) =
 -2.102193442979462e-05
 -1.189179771748691e-02
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 1, implicit = 1, tcur = 0.00872860463350609
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 1, tcur = 0.00872860463350609
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744870309106e+00
  1.732050195224277e+00
@@ -288,8 +288,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_1(:) =
 -1.781683426277172e-03
 -1.002851295756151e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 2, implicit = 1, tcur = 0.0148278380430786
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 1, tcur = 0.0148278380430786
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744870309106e+00
  1.732050195224277e+00
@@ -336,8 +336,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_2(:) =
 -3.026637554004218e-03
 -1.699600583670126e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 3, implicit = 1, tcur = 0.0118016995221494
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 1, tcur = 0.0118016995221494
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744870309106e+00
  1.732050195224277e+00
@@ -384,8 +384,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_3(:) =
 -2.408965985088148e-03
 -1.356413519743798e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 4, implicit = 1, tcur = 0.00272210098752143
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 1, tcur = 0.00272210098752143
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744870309106e+00
  1.732050195224277e+00
@@ -426,8 +426,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_4(:) =
 -5.556486492306076e-04
 -3.142473281358668e-01
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 5, implicit = 1, tcur = 0.0245480590034541
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 5, implicit = 1, tcur = 0.0245480590034541
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744870309106e+00
  1.732050195224277e+00
@@ -482,8 +482,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_5(:) =
 -5.010646597138715e-03
 -2.777218098864242e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 6, implicit = 1, tcur = 0.0350245188511017
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 6, implicit = 1, tcur = 0.0350245188511017
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224744870309106e+00
  1.732050195224277e+00
@@ -538,7 +538,7 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_6(:) =
 -7.148619511116752e-03
 -3.876964085854691e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [DEBUG][rank 0][arkStep_TakeStep_Z][updated solution] ycur(:) =
  1.224619609700343e+00
@@ -550,7 +550,7 @@ Using GMRES iterative linear solver
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.675091934590672
  3.502451885110175e-02    1.224619609700343e+00    1.662687091654167e+00    6.681937003705229e-08    6.552550830818404e-07
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 3, tn = 0.0350245188511017, h = 0.0346732920553526
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 0, implicit = 0, tcur = 0.0350245188511017
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.0350245188511017
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit stage] z_0(:) =
  1.224619609700343e+00
  1.662687091654167e+00
@@ -560,8 +560,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_0(:) =
 -7.148619487895984e-03
 -3.876812865360650e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 1, implicit = 1, tcur = 0.0435888219887738
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 1, tcur = 0.0435888219887738
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224619609700343e+00
  1.662687091654167e+00
@@ -616,8 +616,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_1(:) =
 -8.896013380020981e-03
 -4.697683546638332e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 2, implicit = 1, tcur = 0.049644698813559
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 2, implicit = 1, tcur = 0.049644698813559
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224619609700343e+00
  1.662687091654167e+00
@@ -672,8 +672,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_2(:) =
 -1.013152520794374e-02
 -5.249024034990760e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 3, implicit = 1, tcur = 0.0466400716896449
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 3, implicit = 1, tcur = 0.0466400716896449
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224619609700343e+00
  1.662687091654167e+00
@@ -728,8 +728,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_3(:) =
 -9.518580264935510e-03
 -4.985994248953996e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 4, implicit = 1, tcur = 0.0376250157552532
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 4, implicit = 1, tcur = 0.0376250157552532
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224619609700343e+00
  1.662687091654167e+00
@@ -776,8 +776,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_4(:) =
 -7.679298684015962e-03
 -4.136837734758436e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 5, implicit = 1, tcur = 0.0592958232898486
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 5, implicit = 1, tcur = 0.0592958232898486
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224619609700343e+00
  1.662687091654167e+00
@@ -832,8 +832,8 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_5(:) =
 -1.210025474803729e-02
 -6.012069889329905e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-lists-list] stage = 6, implicit = 1, tcur = 0.0696978109064544
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 6, implicit = 1, tcur = 0.0696978109064544
 [DEBUG][rank 0][arkStep_TakeStep_Z][predictor] zpred(:) =
  1.224619609700343e+00
  1.662687091654167e+00
@@ -888,7 +888,7 @@ Using GMRES iterative linear solver
 [DEBUG][rank 0][arkStep_TakeStep_Z][explicit RHS] Fe_6(:) =
 -1.422124590542546e-02
 -6.676867575010927e+00
-[INFO][rank 0][arkStep_TakeStep_Z][end-stages-lists-list] status = success
+[INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [DEBUG][rank 0][arkStep_TakeStep_Z][updated solution] ycur(:) =
  1.224249198384828e+00
