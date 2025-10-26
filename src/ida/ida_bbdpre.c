@@ -18,7 +18,7 @@
  * -----------------------------------------------------------------
  * This file contains implementations of routines for a
  * band-block-diagonal preconditioner, i.e. a block-diagonal
- * matrix with banded blocks, for use with IDA, the IDASLS
+ * matrix with banded blocks, for use with IDA, the IDALS
  * linear solver interface.
  *
  * NOTE: With only one processor in use, a banded matrix results
