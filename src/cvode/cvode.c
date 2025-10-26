@@ -3228,7 +3228,7 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
   if (cv_mem->cv_usefused)
   {
     cvCheckConstraints_fused(cv_mem->cv_constraints, cv_mem->cv_ewt,
-                             cv_mem->cv_y, mm, tmp);
+                             cv_mem->cv_y, mm, tmp, cv_mem->cv_vtemp1);
   }
   else
 #endif

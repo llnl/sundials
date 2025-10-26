@@ -78,11 +78,13 @@ int cvEwtSetSV_fused(const sunbooleantype atolmin0, const sunrealtype reltol,
  */
 
 int cvCheckConstraints_fused(const N_Vector c, const N_Vector ewt,
-                             const N_Vector y, const N_Vector mm, N_Vector tmp)
+                             const N_Vector y, const N_Vector mm, N_Vector tmp,
+                             N_Vector save)
 {
   N_VCompare(ONEPT5, c, tmp);           /* a[i]=1 when |c[i]|=2  */
   N_VProd(tmp, c, tmp);                 /* a * c                 */
   N_VDiv(tmp, ewt, tmp);                /* a * c * wt            */
+  N_VScale(-PT1, tmp, save);
   N_VLinearSum(ONE, y, -PT1, tmp, tmp); /* y - 0.1 * a * c * wt  */
   N_VProd(tmp, mm, tmp);                /* v = mm*(y-0.1*a*c*wt) */
   return 0;
