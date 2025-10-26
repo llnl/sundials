@@ -1170,12 +1170,12 @@ Main solver optional input functions
    merely copying the internal solution :math:`y_n`).
 
    **Arguments:**
-     * ``cvode_mem`` -- pointer to the CVODES memory block.
+     * ``cvode_mem`` -- pointer to the CVODE memory block.
      * ``interp`` -- flag indicating to use interpolation (1) or copy (0).
 
    **Return value:**
      * ``CV_SUCCESS`` -- The optional value has been successfully set.
-     * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
+     * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
    **Notes:**
       This routine will be called by :c:func:`CVodeSetOptions`
@@ -2277,11 +2277,11 @@ the rootfinding algorithm.
      * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
    **Notes:**
-      CVODES will not report the initial conditions as a possible zero-crossing
+      CVODE will not report the initial conditions as a possible zero-crossing
       (assuming that one or more components :math:`g_i` are zero at the initial time).
       However, if it appears that some :math:`g_i` is identically zero at the initial
       time (i.e., :math:`g_i` is zero at the initial time and after the first step),
-      CVODES will issue a warning which can be disabled with this optional input
+      CVODE will issue a warning which can be disabled with this optional input
       function.
 
       This routine will be called by :c:func:`CVodeSetOptions`
