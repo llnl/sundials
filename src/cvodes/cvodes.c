@@ -549,9 +549,10 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->convfail            = CV_NO_FAILURES;
 
   /* Initialize inequality constraint variables */
-  cv_mem->cv_constraints       = NULL;
-  cv_mem->constraint_fails     = 0;
-  cv_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS;
+  cv_mem->cv_constraints         = NULL;
+  cv_mem->constraint_corrections = 0;
+  cv_mem->constraint_fails       = 0;
+  cv_mem->max_constraint_fails   = MAX_CONSTRAINT_FAILS;
 
   /* Initialize root finding variables */
 
@@ -972,7 +973,8 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
 
   cv_mem->cv_irfnd = 0;
 
-  cv_mem->constraint_fails = 0;
+  cv_mem->constraint_corrections = 0;
+  cv_mem->constraint_fails       = 0;
 
   /* Initialize other integrator optional outputs */
 
@@ -7130,32 +7132,76 @@ static int cvNls(CVodeMem cv_mem, int nflag)
 static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
                               sunrealtype saved_t, int* step_constraint_fails)
 {
-  sunbooleantype constraintsPassed;
-  sunrealtype vnorm;
-  N_Vector mm  = cv_mem->cv_ftemp;
-  N_Vector tmp = cv_mem->cv_tempv;
+  SUNLogInfo(CV_LOGGER, "begin-constraint-check", "");
 
-  /* Get mask vector mm, set where constraints failed */
-  constraintsPassed = N_VConstrMask(cv_mem->cv_constraints, cv_mem->cv_y, mm);
-  if (constraintsPassed) { return (CV_SUCCESS); }
+  N_Vector mm  = cv_mem->cv_ftemp; /* mask      */
+  N_Vector tmp = cv_mem->cv_tempv; /* workspace */
+
+  /* Get mask vector mm, 1 where constraints failed and 0 otherwise */
+  sunbooleantype constraintsPassed = N_VConstrMask(cv_mem->cv_constraints,
+                                                   cv_mem->cv_y, mm);
+  if (constraintsPassed)
+  {
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = success");
+    return (CV_SUCCESS);
+  }
 
   /* Constraints not met */
 
-  /* Compute correction to satisfy constraints */
-  N_VCompare(ONEPT5, cv_mem->cv_constraints, tmp); /* a[i]=1 when |c[i]|=2  */
-  N_VProd(tmp, cv_mem->cv_constraints, tmp);       /* a * c                 */
-  N_VDiv(tmp, cv_mem->cv_ewt, tmp);                /* a * c * wt            */
-  N_VLinearSum(ONE, cv_mem->cv_y, -PT1, tmp, tmp); /* y - 0.1 * a * c * wt  */
-  N_VProd(tmp, mm, tmp);                           /* v = mm*(y-0.1*a*c*wt) */
+  /* Compute correction v such that y - v will satisfy the constraints
+   *
+   * 1. Create a mask array that is +1 where constraints are strictly greater
+   *    than or less than zero (|c[i]| = 2) and 0 otherwise
+   *
+   * 2. Create a mask array that is +/- 2 where constraints are strictly greater
+   *    than (+) or less than (-) zero and 0 otherwise
+   *
+   * 3. Use error weights to compute an adjustment vector for values with strict
+   *    constraints, a[i] = +/- 2 * w[i] = +/- 2 * (atol * |y[i]| + rtol[i]),
+   *    and is 0 otherwise
+   *
+   * 4. Save the adjustment vector for possible use later
+   *
+   * 5. Compute correction vector for all values, v[i] = y[i] - 0.1 * a[i] for
+   *    strict constraints and v[i] = y[i] otherwise
+   *
+   * 6. Zero out entries where the constraints passed, v = mask * v
+   */
+  N_VCompare(ONEPT5, cv_mem->cv_constraints, tmp);
+  N_VProd(tmp, cv_mem->cv_constraints, tmp);
+  N_VDiv(tmp, cv_mem->cv_ewt, tmp);
+  N_VScale(-PT1, tmp, cv_mem->cv_vtemp1);
+  N_VLinearSum(ONE, cv_mem->cv_y, -PT1, tmp, tmp);
+  N_VProd(tmp, mm, tmp);
 
-  vnorm = N_VWrmsNorm(tmp, cv_mem->cv_ewt); /* ||v|| */
+  sunrealtype vnorm = N_VWrmsNorm(tmp, cv_mem->cv_ewt); /* ||v|| */
 
-  /* If vector v of constraint corrections is small in norm, correct and
-     accept this step */
+  /* If constraint correction vector is small in norm (satisfies the nonlinear
+     solver convergence condition with R = 1), correct and accept this step */
   if (vnorm <= cv_mem->cv_tq[4])
   {
-    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp,
-                 cv_mem->cv_acor); /* acor <- acor - v */
+    /* Update constraint correction count */
+    cv_mem->constraint_corrections++;
+
+    /* To reduce roundoff errors that can violate the constraints, split the
+     * correction update, acor = acor - v, into three steps */
+
+    /* Zero out the correction where any constraint failed */
+    N_VProd(mm, cv_mem->cv_acor, tmp);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp, cv_mem->cv_acor);
+
+    /* Set correction to zero out the predictor where any constraint failed */
+    N_VProd(mm, cv_mem->cv_zn[0], tmp);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp, cv_mem->cv_acor);
+
+    /* Update the correction where constraints failed and are strictly greater
+       or less than zero to shift the state with the adjustment saved above */
+    N_VProd(mm, cv_mem->cv_vtemp1, cv_mem->cv_vtemp1);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, cv_mem->cv_vtemp1, cv_mem->cv_acor);
+
+    SUNLogInfo(CV_LOGGER, "end-constraint-check",
+               "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
+
     return (CV_SUCCESS);
   }
 
@@ -7170,6 +7216,7 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
   if ((SUNRabs(cv_mem->cv_h) <= cv_mem->cv_hmin * ONEPSM) ||
       (*step_constraint_fails == cv_mem->max_constraint_fails))
   {
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = failed max attempts");
     return (CV_CONSTR_FAIL);
   }
 
@@ -7184,6 +7231,9 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
                           cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
   cvRescale(cv_mem);
   *nflagPtr = PREV_CONV_FAIL;
+
+  SUNLogInfo(CV_LOGGER, "end-constraint-check",
+             "status = failed, eta = " SUN_FORMAT_G, cv_mem->cv_eta);
 
   return PREDICT_AGAIN;
 }

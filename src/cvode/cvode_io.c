@@ -999,9 +999,9 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
 }
 
 /*
- * CVodeGetNumConstraintFails
+ * CVodeSetMaxNumConstraintFails
  *
- * Setup for constraint handling feature
+ * Set the maximum number of constraint failure allowed in a step
  */
 
 int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
@@ -1020,9 +1020,9 @@ int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
 }
 
 /*
- * CVodeSetMaxNumConstraintFails
+ * CVodeGetNumConstraintFails
  *
- * Setup for constraint handling feature
+ * Get the number of failed steps due to constraint violation
  */
 
 int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
@@ -1040,9 +1040,9 @@ int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
 }
 
 /*
- * CVodeSetMaxNumConstraintFails
+ * CVodeGetNumConstraintCorrections
  *
- * Setup for constraint handling feature
+ * Get the number of constraint corrections
  */
 
 int CVodeGetNumConstraintCorrections(void* cvode_mem, long int* num_corrections_out)

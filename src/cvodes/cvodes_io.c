@@ -1023,9 +1023,9 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
 }
 
 /*
- * CVodeGetNumConstraintFails
+ * CVodeSetMaxNumConstraintFails
  *
- * Setup for constraint handling feature
+ * Set the maximum number of constraint failure allowed in a step
  */
 
 int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
@@ -1044,9 +1044,9 @@ int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
 }
 
 /*
- * CVodeSetMaxNumConstraintFails
+ * CVodeGetNumConstraintFails
  *
- * Setup for constraint handling feature
+ * Get the number of failed steps due to constraint violation
  */
 
 int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
@@ -1059,6 +1059,26 @@ int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
   CVodeMem cv_mem = (CVodeMem)cvode_mem;
 
   *num_fails_out = cv_mem->constraint_fails;
+
+  return CV_SUCCESS;
+}
+
+/*
+ * CVodeGetNumConstraintCorrections
+ *
+ * Get the number of constraint corrections
+ */
+
+int CVodeGetNumConstraintCorrections(void* cvode_mem, long int* num_corrections_out)
+{
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  *num_corrections_out = cv_mem->constraint_corrections;
 
   return CV_SUCCESS;
 }
@@ -2594,6 +2614,8 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS step fails", cv_mem->cv_ncfn);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails",
                   cv_mem->constraint_fails);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint corrections",
+                  cv_mem->constraint_corrections);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Initial step size", cv_mem->cv_h0u);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Last step size", cv_mem->cv_hu);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Current step size", cv_mem->cv_next_h);

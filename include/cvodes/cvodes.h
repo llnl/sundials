@@ -317,6 +317,8 @@ SUNDIALS_EXPORT int CVodeGetNumStepSolveFails(void* cvode_mem,
                                               long int* nncfails);
 SUNDIALS_EXPORT int CVodeGetNumConstraintFails(void* cvode_mem,
                                                long int* num_fails_out);
+SUNDIALS_EXPORT int CVodeGetNumConstraintCorrections(void* cvode_mem,
+                                                     long int* num_corrections_out);
 SUNDIALS_EXPORT int CVodeGetUserData(void* cvode_mem, void** user_data);
 SUNDIALS_EXPORT int CVodePrintAllStats(void* cvode_mem, FILE* outfile,
                                        SUNOutputFormat fmt);
