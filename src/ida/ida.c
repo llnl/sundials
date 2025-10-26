@@ -334,9 +334,10 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_dcj         = DCJ_DEFAULT;
 
   /* Initialize inequality constraint variables */
-  IDA_mem->ida_constraints      = NULL;
-  IDA_mem->constraint_fails     = 0;
-  IDA_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS;
+  IDA_mem->ida_constraints        = NULL;
+  IDA_mem->constraint_corrections = 0;
+  IDA_mem->constraint_fails       = 0;
+  IDA_mem->max_constraint_fails   = MAX_CONSTRAINT_FAILS;
 
   /* set the saved value maxord_alloc */
   IDA_mem->ida_maxord_alloc = MAXORD_DEFAULT;
@@ -639,7 +640,8 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
 
   IDA_mem->ida_irfnd = 0;
 
-  IDA_mem->constraint_fails = 0;
+  IDA_mem->constraint_corrections = 0;
+  IDA_mem->constraint_fails       = 0;
 
   /* Initial setup not done yet */
 
@@ -2814,33 +2816,77 @@ static int IDANls(IDAMem IDA_mem)
 static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
                                int* step_constraint_fails)
 {
-  /* shortcut names for temporary work vectors */
-  N_Vector mm  = IDA_mem->ida_tempv2;
-  N_Vector tmp = IDA_mem->ida_tempv1;
+  SUNLogInfo(IDA_LOGGER, "begin-constraint-check", "");
 
-  /* Get mask vector mm, set where constraints failed */
+  N_Vector mm  = IDA_mem->ida_tempv2; /* mask      */
+  N_Vector tmp = IDA_mem->ida_tempv1; /* workspace */
+
+  /* Get mask vector mm, 1 where constraints failed and 0 otherwise */
   sunbooleantype constraintsPassed = N_VConstrMask(IDA_mem->ida_constraints,
                                                    IDA_mem->ida_yy, mm);
-  if (constraintsPassed) { return (IDA_SUCCESS); }
+  if (constraintsPassed)
+  {
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check", "status = success");
+    return (IDA_SUCCESS);
+  }
 
   /* Constraints not met */
 
-  /* Compute correction to satisfy constraints */
-  N_VCompare(ONEPT5, IDA_mem->ida_constraints, tmp); /* a[i] =1 when |c[i]| = 2 */
-  N_VProd(tmp, IDA_mem->ida_constraints, tmp); /* a * c                   */
-  N_VDiv(tmp, IDA_mem->ida_ewt, tmp);          /* a * c * wt              */
-  N_VLinearSum(ONE, IDA_mem->ida_yy, -PT1, tmp, tmp); /* y - 0.1 * a * c * wt    */
-  N_VProd(tmp, mm, tmp); /* v = mm*(y-.1*a*c*wt)    */
+  /* Compute correction v such that y - v will satisfy the constraints
+   *
+   * 1. Create a mask array that is +1 where constraints are strictly greater
+   *    than or less than zero (|c[i]| = 2) and 0 otherwise
+   *
+   * 2. Create a mask array that is +/- 2 where constraints are strictly greater
+   *    than (+) or less than (-) zero and 0 otherwise
+   *
+   * 3. Use error weights to compute an adjustment vector for values with strict
+   *    constraints, a[i] = +/- 2 * w[i] = +/- 2 * (atol * |y[i]| + rtol[i]),
+   *    and is 0 otherwise
+   *
+   * 4. Save the adjustment vector for possible use later
+   *
+   * 5. Compute correction vector for all values, v[i] = y[i] - 0.1 * a[i] for
+   *    strict constraints and v[i] = y[i] otherwise
+   *
+   * 6. Zero out entries where the constraints passed, v = mask * v
+   */
+  N_VCompare(ONEPT5, IDA_mem->ida_constraints, tmp);
+  N_VProd(tmp, IDA_mem->ida_constraints, tmp);
+  N_VDiv(tmp, IDA_mem->ida_ewt, tmp);
+  N_VScale(-PT1, tmp, IDA_mem->ida_tempv3);
+  N_VLinearSum(ONE, IDA_mem->ida_yy, -PT1, tmp, tmp);
+  N_VProd(tmp, mm, tmp);
 
   sunrealtype vnorm = IDAWrmsNorm(IDA_mem, tmp, IDA_mem->ida_ewt,
                                   SUNFALSE); /* ||v|| */
 
-  /* If vector v of constraint corrections is small in norm, correct and
-     accept this step */
+  /* If constraint correction vector is small in norm (satisfies the nonlinear
+     solver convergence condition with R = 1), correct and accept this step */
   if (vnorm <= IDA_mem->ida_epsNewt)
   {
-    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, tmp,
-                 IDA_mem->ida_ee); /* ee <- ee - v */
+    /* Update constraint correction count */
+    IDA_mem->constraint_corrections++;
+
+    /* To reduce roundoff errors that can violate the constraints, split the
+     * correction update, ee = ee - v, into three steps */
+
+    /* Zero out the correction where any constraint failed */
+    N_VProd(mm, IDA_mem->ida_ee, tmp);
+    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, tmp, IDA_mem->ida_ee);
+
+    /* Set correction to zero out the predictor where any constraint failed */
+    N_VProd(mm, IDA_mem->ida_yypredict, tmp);
+    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, tmp, IDA_mem->ida_ee);
+
+    /* Update the correction where constraints failed and are strictly greater
+       or less than zero to shift the state with the adjustment saved above */
+    N_VProd(mm, IDA_mem->ida_tempv3, IDA_mem->ida_tempv3);
+    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, IDA_mem->ida_tempv3, IDA_mem->ida_ee);
+
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check",
+               "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
+
     return (IDA_SUCCESS);
   }
 
@@ -2852,6 +2898,7 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   if ((SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM) ||
       (*step_constraint_fails == IDA_mem->max_constraint_fails))
   {
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check", "status = failed max attempts");
     return (IDA_CONSTR_FAIL);
   }
 
@@ -2868,6 +2915,9 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   IDA_mem->ida_phase = 1;
   IDA_mem->ida_hh *= IDA_mem->ida_eta;
   if (IDA_mem->ida_nst == 0) { IDAReset(IDA_mem); }
+
+  SUNLogInfo(IDA_LOGGER, "end-constraint-check",
+             "status = failed, eta = " SUN_FORMAT_G, IDA_mem->ida_eta);
 
   return PREDICT_AGAIN;
 }
