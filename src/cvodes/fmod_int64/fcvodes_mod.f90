@@ -174,6 +174,7 @@ module fcvodes_mod
  public :: FCVodeGetNonlinSolvStats
  public :: FCVodeGetNumStepSolveFails
  public :: FCVodeGetNumConstraintFails
+ public :: FCVodeGetNumConstraintCorrections
  public :: FCVodeGetUserData
  public :: FCVodePrintAllStats
  type, bind(C) :: SwigArrayWrapper
@@ -1117,6 +1118,15 @@ end function
 
 function swigc_FCVodeGetNumConstraintFails(farg1, farg2) &
 bind(C, name="_wrap_FCVodeGetNumConstraintFails") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FCVodeGetNumConstraintCorrections(farg1, farg2) &
+bind(C, name="_wrap_FCVodeGetNumConstraintCorrections") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -4148,6 +4158,22 @@ type(C_PTR) :: farg2
 farg1 = cvode_mem
 farg2 = c_loc(num_fails_out(1))
 fresult = swigc_FCVodeGetNumConstraintFails(farg1, farg2)
+swig_result = fresult
+end function
+
+function FCVodeGetNumConstraintCorrections(cvode_mem, num_corrections_out) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: cvode_mem
+integer(C_LONG), dimension(*), target, intent(inout) :: num_corrections_out
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = cvode_mem
+farg2 = c_loc(num_corrections_out(1))
+fresult = swigc_FCVodeGetNumConstraintCorrections(farg1, farg2)
 swig_result = fresult
 end function
 
