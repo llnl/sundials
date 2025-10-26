@@ -2791,7 +2791,8 @@ static void cvPredict(CVodeMem cv_mem)
     }
   }
 
-  SUNLogExtraDebugVec(CV_LOGGER, "predictor", cv_mem->cv_zn[0], "y_predicted(:) =");
+  SUNLogExtraDebugVec(CV_LOGGER, "predictor", cv_mem->cv_zn[0],
+                      "y_predicted(:) =");
 }
 
 /*

@@ -1069,7 +1069,8 @@ int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
  * Get the number of constraint corrections
  */
 
-int CVodeGetNumConstraintCorrections(void* cvode_mem, long int* num_corrections_out)
+int CVodeGetNumConstraintCorrections(void* cvode_mem,
+                                     long int* num_corrections_out)
 {
   if (cvode_mem == NULL)
   {

@@ -6526,7 +6526,8 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
     /* Update the correction where constraints failed and are strictly greater
        or less than zero to shift the state with the adjustment saved above */
     N_VProd(mm, IDA_mem->ida_tempv3, IDA_mem->ida_tempv3);
-    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, IDA_mem->ida_tempv3, IDA_mem->ida_ee);
+    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, IDA_mem->ida_tempv3,
+                 IDA_mem->ida_ee);
 
     SUNLogInfo(IDA_LOGGER, "end-constraint-check",
                "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
@@ -6542,7 +6543,8 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   if ((SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM) ||
       (*step_constraint_fails == IDA_mem->max_constraint_fails))
   {
-    SUNLogInfo(IDA_LOGGER, "end-constraint-check", "status = failed max attempts");
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check",
+               "status = failed max attempts");
     return (IDA_CONSTR_FAIL);
   }
 
