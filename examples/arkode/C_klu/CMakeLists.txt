@@ -55,7 +55,8 @@ foreach(example_tuple ${examples_list})
     TEST_ARGS ${example_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     ANSWER_FILE ${test_name}.out
-    EXAMPLE_TYPE ${example_type})
+    EXAMPLE_TYPE ${example_type}
+    LABELS c arkode dirk)
 
 endforeach()
 
