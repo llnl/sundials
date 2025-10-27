@@ -651,7 +651,8 @@ int cvEwtSetSV_fused(const sunbooleantype atolmin0, const sunrealtype reltol,
                      N_Vector tempv, N_Vector weight);
 
 int cvCheckConstraints_fused(const N_Vector c, const N_Vector ewt,
-                             const N_Vector y, const N_Vector mm, N_Vector tempv);
+                             const N_Vector y, const N_Vector mm,
+                             N_Vector tempv, N_Vector save);
 
 int cvNlsResid_fused(const sunrealtype rl1, const sunrealtype ngamma,
                      const N_Vector zn1, const N_Vector ycor,
