@@ -161,9 +161,12 @@ extern "C" int cvEwtSetSV_fused(const sunbooleantype atolMin0,
  * -----------------------------------------------------------------
  */
 
-__global__ void cvCheckConstraints_kernel(
-  const sunindextype length, const sunrealtype* c, const sunrealtype* ewt,
-  const sunrealtype* y, const sunrealtype* mm, sunrealtype* tempv, sunrealtype* save)
+__global__ void cvCheckConstraints_kernel(const sunindextype length,
+                                          const sunrealtype* c,
+                                          const sunrealtype* ewt,
+                                          const sunrealtype* y,
+                                          const sunrealtype* mm,
+                                          sunrealtype* tempv, sunrealtype* save)
 {
   static const sunrealtype zero   = 0.0;
   static const sunrealtype pt1    = 0.1;
@@ -201,7 +204,7 @@ extern "C" int cvCheckConstraints_fused(const N_Vector c, const N_Vector ewt,
                                                 N_VGetDeviceArrayPointer(ewt),
                                                 N_VGetDeviceArrayPointer(y),
                                                 N_VGetDeviceArrayPointer(mm),
-                                                N_VGetDeviceArrayPointer(tempv)
+                                                N_VGetDeviceArrayPointer(tempv),
                                                 N_VGetDeviceArrayPointer(save));
 
 #ifdef SUNDIALS_DEBUG_GPU_LASTERROR

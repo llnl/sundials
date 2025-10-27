@@ -3297,7 +3297,8 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   /* Return with error if reached max fails in a step */
   if (*constrfails == ark_mem->maxconstrfails)
   {
-    SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = failed max attempts");
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check",
+               "status = failed max attempts");
     return (ARK_CONSTR_FAIL);
   }
 

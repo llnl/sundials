@@ -625,8 +625,8 @@ static int ARKBBDDQJac(ARKBBDPrecData pdata, sunrealtype t, N_Vector y,
   ewt_data   = N_VGetArrayPointer(ark_mem->ewt);
   ytemp_data = N_VGetArrayPointer(ytemp);
   gtemp_data = N_VGetArrayPointer(gtemp);
-  cns_data = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
-                                    : NULL;
+  cns_data   = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
+                                      : NULL;
 
   /* Set minimum increment based on uround and norm of g */
   gnorm  = N_VWrmsNorm(gy, ark_mem->rwt);
