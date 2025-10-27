@@ -240,7 +240,7 @@ regions to the code without needing to update the logging parser. There are also
 three special region markers that are handled separately:
 
 * ``begin|end-step-attempt`` -- opens/closes step attempt dictionaries and
-  opens/closes lists with in the current step to hold logging output for
+  opens/closes lists within the current step to hold logging output for
   different time levels (i.e., with MRI methods) or problem partitions (i.e.,
   with splitting methods) based on the current time level and partition
   counters.
@@ -356,7 +356,7 @@ adds information to the active iterations dictionary:
      }
    }
 
-As the end of each nonlinear iteration, logging output such as
+At the end of each nonlinear iteration, logging output such as
 
 .. code-block:: C
 
@@ -364,16 +364,16 @@ As the end of each nonlinear iteration, logging output such as
                 NLS->sunctx->logger, "end-iterations-list",
                 "status = continue");
 
-if the iteration has not converged yet and can continue or
+if the iteration should continue or
 
 .. code-block:: C
 
    SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = success");
 
-if the solve was successful will close the active output dictionary of the
-iterations and reactivate the output dictionary for the enclosing scope (i.e.,
-the nonlinear solve region). If additional iterations are necessary, the logging
-line
+if the solve was successful will close the active output dictionary in the
+iterations list and reactivate the output dictionary for the enclosing scope
+(i.e., the nonlinear solve region). If additional iterations are necessary, the
+logging line
 
 .. code-block:: C
 
@@ -455,7 +455,7 @@ closes the step attempt dictionary:
      dsm : 1.0e-3
    }
 
-The processes then repeats for the next step attempt.
+This processes then repeats for the next step attempt.
 
 .. _Style.Logging.Macros:
 
