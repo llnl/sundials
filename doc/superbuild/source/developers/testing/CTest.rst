@@ -199,12 +199,16 @@ arkode    ARKODE package
 Module labels
 ^^^^^^^^^^^^^
 
-========  ========================================
-Labels    Coverage
-========  ========================================
-linsol    Linear solver
-logging   Logging
-========  ========================================
+================  ========================================
+Labels            Coverage
+================  ========================================
+linsol            Linear solver
+linsol_klu        Linear solver with KLU backend
+logging           Logging
+matrix            Matrix
+matrix_sparse     Sparse matrix
+nvector           NVector
+================  ========================================
 
 Method labels
 ^^^^^^^^^^^^^
@@ -214,6 +218,14 @@ Labels    Coverage
 ========  ========================================
 dirk      Diagonally implicit Runge-Kutta methods
 ========  ========================================
+
+Parallelism labels
+^^^^^^^^^^^^^^^^^^
+================  ========================================
+Labels            Coverage
+================  ========================================
+nvector_serial    NVector with serial backend
+================  ========================================
 
 Language labels
 ^^^^^^^^^^^^^^^
