@@ -47,7 +47,7 @@ jobs:
         run: cd doc/install_guide && make latexpdf
 
       - name: Archive files from failed build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: latex_build_files
@@ -55,7 +55,7 @@ jobs:
             ${{github.workspace}}/doc/install_guide/build/latex
 
       - name: Archive PDF from successful build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: install_guide
@@ -105,7 +105,7 @@ jobs:
         # run: cd doc/${{matrix.package}}/${{matrix.type}} && make latexpdf
 
       - name: Archive files from failed build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: latex_build_files
@@ -115,7 +115,7 @@ jobs:
           # ${{github.workspace}}/doc/${{matrix.package}}/${{matrix.type}}/build/latex
 
       - name: Archive PDFs from successful build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: ${{matrix.package}}_user_guide
@@ -157,7 +157,7 @@ jobs:
         run: cd doc/${{matrix.package}}/examples && make latexpdf
 
       - name: Archive files from failed build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: latex_build_files
@@ -165,7 +165,7 @@ jobs:
             ${{github.workspace}}/doc/${{matrix.package}}/examples/build/latex
 
       - name: Archive PDFs from successful build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: ${{matrix.package}}_examples_docs
@@ -200,7 +200,7 @@ jobs:
         run: cd doc/${{matrix.package}} && make ex
 
       - name: Archive files from failed build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: latex_build_files
@@ -209,7 +209,7 @@ jobs:
             !${{github.workspace}}/doc/${{matrix.package}}/guide
 
       - name: Archive PDFs from successful build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: ${{matrix.package}}_examples_docs
