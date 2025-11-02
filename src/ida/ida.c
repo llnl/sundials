@@ -1161,19 +1161,19 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
     tdist = SUNRabs(tout - IDA_mem->ida_tn);
     if (tdist == ZERO)
     {
-      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+      IDAProcessError(IDA_mem, IDA_TOO_CLOSE, __LINE__, __func__, __FILE__,
                       MSG_TOO_CLOSE);
       SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
-      return (IDA_ILL_INPUT);
+      return (IDA_TOO_CLOSE);
     }
     troundoff = TWO * IDA_mem->ida_uround *
                 (SUNRabs(IDA_mem->ida_tn) + SUNRabs(tout));
     if (tdist < troundoff)
     {
-      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+      IDAProcessError(IDA_mem, IDA_TOO_CLOSE, __LINE__, __func__, __FILE__,
                       MSG_TOO_CLOSE);
       SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
-      return (IDA_ILL_INPUT);
+      return (IDA_TOO_CLOSE);
     }
 
     /* Set initial h */
