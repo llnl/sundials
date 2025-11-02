@@ -716,13 +716,6 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
   /* start profiler */
   SUNDIALS_MARK_FUNCTION_BEGIN(ARK_PROFILER);
 
-  /* store copy of itask if using root-finding */
-  if (ark_mem->root_mem != NULL)
-  {
-    if (itask == ARK_NORMAL) { ark_mem->root_mem->toutc = tout; }
-    ark_mem->root_mem->taskc = itask;
-  }
-
   /* perform first-step-specific initializations:
      - initialize tret values to initialization time
      - perform initial integrator setup  */
@@ -1030,7 +1023,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     {
       if (ark_mem->root_mem->nrtfn > 0)
       {
-        retval = arkRootCheck3((void*)ark_mem);
+        retval = arkRootCheck3((void*)ark_mem, tout, itask);
         if (retval == RTFOUND)
         { /* A new root was found */
           ark_mem->root_mem->irfnd = 1;
@@ -2346,7 +2339,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
          check remaining interval for roots */
       if (SUNRabs(ark_mem->tcur - ark_mem->tretlast) > troundoff)
       {
-        retval = arkRootCheck3((void*)ark_mem);
+        retval = arkRootCheck3((void*)ark_mem, tout, itask);
 
         if (retval == ARK_SUCCESS)
         { /* no root found */
