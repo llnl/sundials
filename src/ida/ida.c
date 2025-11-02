@@ -250,7 +250,7 @@ static int IDAHandleFailure(IDAMem IDA_mem, int sflag);
 
 static int IDARcheck1(IDAMem IDA_mem);
 static int IDARcheck2(IDAMem IDA_mem);
-static int IDARcheck3(IDAMem IDA_mem);
+static int IDARcheck3(IDAMem IDA_mem, sunrealtype tout, int itask);
 static int IDARootfind(IDAMem IDA_mem);
 
 /*
@@ -1135,9 +1135,6 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
     return (IDA_ILL_INPUT);
   }
 
-  IDA_mem->ida_toutc = tout;
-  IDA_mem->ida_taskc = itask;
-
   if (IDA_mem->ida_nst == 0)
   { /* This is the first call */
 
@@ -1298,7 +1295,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
                   (SUNRabs(IDA_mem->ida_tn) + SUNRabs(IDA_mem->ida_hh));
       if (SUNRabs(IDA_mem->ida_tn - IDA_mem->ida_tretlast) > troundoff)
       {
-        ier = IDARcheck3(IDA_mem);
+        ier = IDARcheck3(IDA_mem, tout, itask);
         if (ier == IDA_SUCCESS)
         { /* no root found */
           IDA_mem->ida_irfnd = 0;
@@ -1436,7 +1433,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
 
     if (IDA_mem->ida_nrtfn > 0)
     {
-      ier = IDARcheck3(IDA_mem);
+      ier = IDARcheck3(IDA_mem, tout, itask);
 
       if (ier == RTFOUND)
       { /* A new root was found */
@@ -3632,21 +3629,21 @@ static int IDARcheck2(IDAMem IDA_mem)
  *     IDA_SUCCESS     = 0 otherwise.
  */
 
-static int IDARcheck3(IDAMem IDA_mem)
+static int IDARcheck3(IDAMem IDA_mem, sunrealtype tout, int itask)
 {
   int i, ier, retval;
 
   /* Set thi = tn or tout, whichever comes first. */
-  if (IDA_mem->ida_taskc == IDA_ONE_STEP)
+  if (itask == IDA_ONE_STEP)
   {
     IDA_mem->ida_thi = IDA_mem->ida_tn;
   }
-  if (IDA_mem->ida_taskc == IDA_NORMAL)
+  if (itask == IDA_NORMAL)
   {
     IDA_mem->ida_thi =
-      ((IDA_mem->ida_toutc - IDA_mem->ida_tn) * IDA_mem->ida_hh >= ZERO)
+      ((tout - IDA_mem->ida_tn) * IDA_mem->ida_hh >= ZERO)
         ? IDA_mem->ida_tn
-        : IDA_mem->ida_toutc;
+        : tout;
   }
 
   /* Get y and y' at thi. */
