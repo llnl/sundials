@@ -1976,7 +1976,8 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
 
   /* Is tout is too close to tn? */
   sunrealtype tdist  = SUNRabs(tout - ark_mem->tcur);
-  sunrealtype tround = ark_mem->uround * SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
+  sunrealtype tround = ark_mem->uround *
+                       SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
 
   if (tdist == ZERO || tdist < TWO * tround)
   {

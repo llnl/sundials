@@ -635,10 +635,7 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
 
   IDA_mem->ida_irfnd = 0;
 
-  if (IDA_mem->ida_lmem)
-  {
-    idaLsInitializeCounters(IDA_mem->ida_lmem);
-  }
+  if (IDA_mem->ida_lmem) { idaLsInitializeCounters(IDA_mem->ida_lmem); }
 
   /* Initial setup not done yet */
 
@@ -3627,16 +3624,12 @@ static int IDARcheck3(IDAMem IDA_mem, sunrealtype tout, int itask)
   int i, ier, retval;
 
   /* Set thi = tn or tout, whichever comes first. */
-  if (itask == IDA_ONE_STEP)
-  {
-    IDA_mem->ida_thi = IDA_mem->ida_tn;
-  }
+  if (itask == IDA_ONE_STEP) { IDA_mem->ida_thi = IDA_mem->ida_tn; }
   if (itask == IDA_NORMAL)
   {
-    IDA_mem->ida_thi =
-      ((tout - IDA_mem->ida_tn) * IDA_mem->ida_hh >= ZERO)
-        ? IDA_mem->ida_tn
-        : tout;
+    IDA_mem->ida_thi = ((tout - IDA_mem->ida_tn) * IDA_mem->ida_hh >= ZERO)
+                         ? IDA_mem->ida_tn
+                         : tout;
   }
 
   /* Get y and y' at thi. */

@@ -629,10 +629,7 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
 
   cv_mem->cv_irfnd = 0;
 
-  if (cv_mem->cv_lmem)
-  {
-    cvLsInitializeCounters(cv_mem->cv_lmem);
-  }
+  if (cv_mem->cv_lmem) { cvLsInitializeCounters(cv_mem->cv_lmem); }
 
   /* Initialize other integrator optional outputs */
 
@@ -2026,7 +2023,8 @@ static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout)
 
   /* Is tout is too close to tn? */
   sunrealtype tdist  = SUNRabs(tout - cv_mem->cv_tn);
-  sunrealtype tround = cv_mem->cv_uround * SUNMAX(SUNRabs(cv_mem->cv_tn), SUNRabs(tout));
+  sunrealtype tround = cv_mem->cv_uround *
+                       SUNMAX(SUNRabs(cv_mem->cv_tn), SUNRabs(tout));
 
   if (tdist == ZERO || tdist < TWO * tround)
   {
