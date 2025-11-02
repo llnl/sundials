@@ -10,7 +10,9 @@
 
 On the initial time step, ARKODE and CVODE(S) will now return ``ARK_TOO_CLOSE``
 or ``CV_TOO_COLSE``, respectively, when the requested output time is the same as
-the initial time (or within numerical roundoff of the initial time).
+the initial time (or within numerical roundoff of the initial time) with a
+user-supplied initial step size. Before a ``TOO_CLOSE`` error would only be
+returned when internally estimating the initial step size.
 
 Fixed a bug in ARKODE, CVODE(S), and IDA(S) where the linear solver counters
 were not reinitialized until the next call to advance the system. As such,
