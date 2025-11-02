@@ -134,7 +134,7 @@ static sunbooleantype cvCheckNvector(N_Vector tmpl);
 
 /* Initial setup */
 
-static int cvInitialSetup(CVodeMem cv_mem);
+static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout);
 
 /* Memory allocation/deallocation */
 
@@ -210,7 +210,7 @@ static int cvSLdet(CVodeMem cv_mem);
 
 static int cvRcheck1(CVodeMem cv_mem);
 static int cvRcheck2(CVodeMem cv_mem);
-static int cvRcheck3(CVodeMem cv_mem);
+static int cvRcheck3(CVodeMem cv_mem, sunrealtype tout, int itask);
 static int cvRootfind(CVodeMem cv_mem);
 
 /*
@@ -1103,9 +1103,6 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     return (CV_ILL_INPUT);
   }
 
-  cv_mem->cv_toutc = tout;
-  cv_mem->cv_taskc = itask;
-
   /*
    * ----------------------------------------
    * 2. Initializations performed only at
@@ -1129,7 +1126,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
 
     /* Check inputs for correctness */
 
-    ier = cvInitialSetup(cv_mem);
+    ier = cvInitialSetup(cv_mem, tout);
     if (ier != CV_SUCCESS)
     {
       SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
@@ -1333,7 +1330,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
          check remaining interval for roots */
       if (SUNRabs(cv_mem->cv_tn - cv_mem->cv_tretlast) > troundoff)
       {
-        retval = cvRcheck3(cv_mem);
+        retval = cvRcheck3(cv_mem, tout, itask);
 
         if (retval == CV_SUCCESS)
         { /* no root found */
@@ -1549,7 +1546,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     /* Check for root in last step taken. */
     if (cv_mem->cv_nrtfn > 0)
     {
-      retval = cvRcheck3(cv_mem);
+      retval = cvRcheck3(cv_mem, tout, itask);
 
       if (retval == RTFOUND)
       { /* A new root was found */
@@ -2022,13 +2019,13 @@ static void cvFreeVectors(CVodeMem cv_mem)
  * linear solver initialization routine.
  */
 
-static int cvInitialSetup(CVodeMem cv_mem)
+static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout)
 {
   int ier;
   sunbooleantype conOK;
 
   /* Is tout is too close to tn? */
-  if ((cv_mem->cv_toutc - cv_mem->cv_tn) == ZERO)
+  if ((tout - cv_mem->cv_tn) == ZERO)
   {
     cvProcessError(cv_mem, CV_TOO_CLOSE, __LINE__, __func__, __FILE__,
                    MSGCV_TOO_CLOSE);
@@ -4409,26 +4406,26 @@ static int cvRcheck2(CVodeMem cv_mem)
  *     CV_SUCCESS      = 0 otherwise.
  */
 
-static int cvRcheck3(CVodeMem cv_mem)
+static int cvRcheck3(CVodeMem cv_mem, sunrealtype tout, int itask)
 {
   int i, ier, retval;
 
   /* Set thi = tn or tout, whichever comes first; set y = y(thi). */
-  if (cv_mem->cv_taskc == CV_ONE_STEP)
+  if (itask == CV_ONE_STEP)
   {
     cv_mem->cv_thi = cv_mem->cv_tn;
     N_VScale(ONE, cv_mem->cv_zn[0], cv_mem->cv_y);
   }
-  if (cv_mem->cv_taskc == CV_NORMAL)
+  if (itask == CV_NORMAL)
   {
-    if ((cv_mem->cv_toutc - cv_mem->cv_tn) * cv_mem->cv_h >= ZERO)
+    if ((tout - cv_mem->cv_tn) * cv_mem->cv_h >= ZERO)
     {
       cv_mem->cv_thi = cv_mem->cv_tn;
       N_VScale(ONE, cv_mem->cv_zn[0], cv_mem->cv_y);
     }
     else
     {
-      cv_mem->cv_thi = cv_mem->cv_toutc;
+      cv_mem->cv_thi = tout;
       (void)CVodeGetDky(cv_mem, cv_mem->cv_thi, 0, cv_mem->cv_y);
     }
   }

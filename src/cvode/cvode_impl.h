@@ -436,9 +436,7 @@ typedef struct CVodeMemRec
   sunrealtype* cv_glo;   /* saved array of g values at t = tlo              */
   sunrealtype* cv_ghi;   /* saved array of g values at t = thi              */
   sunrealtype* cv_grout; /* array of g values at t = trout                  */
-  sunrealtype cv_toutc;  /* copy of tout (if NORMAL mode)                   */
   sunrealtype cv_ttol;   /* tolerance on root location trout                */
-  int cv_taskc;          /* copy of parameter itask                         */
   int cv_irfnd;          /* flag showing whether last step had a root       */
   long int cv_nge;       /* counter for g evaluations                       */
   sunbooleantype* cv_gactive; /* array with active/inactive event functions      */
