@@ -77,7 +77,8 @@ int CVDiag(void* cvode_mem)
   cv_mem = (CVodeMem)cvode_mem;
 
   /* Check if N_VCompare and N_VInvTest are present */
-  if (cv_mem->cv_tempv->ops->nvcompare == NULL || cv_mem->cv_tempv->ops->nvinvtest == NULL)
+  if (cv_mem->cv_tempv->ops->nvcompare == NULL ||
+      cv_mem->cv_tempv->ops->nvinvtest == NULL)
   {
     cvProcessError(cv_mem, CVDIAG_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGDG_BAD_NVECTOR);
@@ -347,13 +348,16 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
 #ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
-    cvDiagSetup_buildM(FRACT, cv_mem->cv_uround, h, ftemp, fpred, cv_mem->cv_ewt, cvdiag_mem->di_bit, cvdiag_mem->di_bitcomp, y, cvdiag_mem->di_M);
+    cvDiagSetup_buildM(FRACT, cv_mem->cv_uround, h, ftemp, fpred,
+                       cv_mem->cv_ewt, cvdiag_mem->di_bit,
+                       cvdiag_mem->di_bitcomp, y, cvdiag_mem->di_M);
   }
   else
 #endif
   {
     N_VLinearSum(ONE, cvdiag_mem->di_M, -ONE, fpred, cvdiag_mem->di_M);
-    N_VLinearSum(FRACT, ftemp, -(cv_mem->cv_h), cvdiag_mem->di_M, cvdiag_mem->di_M);
+    N_VLinearSum(FRACT, ftemp, -(cv_mem->cv_h), cvdiag_mem->di_M,
+                 cvdiag_mem->di_M);
     N_VProd(ftemp, cv_mem->cv_ewt, y);
     /* Protect against deltay_i being at roundoff level */
     N_VCompare(cv_mem->cv_uround, y, cvdiag_mem->di_bit);
@@ -362,7 +366,8 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
     N_VLinearSum(FRACT, y, -ONE, cvdiag_mem->di_bitcomp, y);
     N_VDiv(cvdiag_mem->di_M, y, cvdiag_mem->di_M);
     N_VProd(cvdiag_mem->di_M, cvdiag_mem->di_bit, cvdiag_mem->di_M);
-    N_VLinearSum(ONE, cvdiag_mem->di_M, -ONE, cvdiag_mem->di_bitcomp, cvdiag_mem->di_M);
+    N_VLinearSum(ONE, cvdiag_mem->di_M, -ONE, cvdiag_mem->di_bitcomp,
+                 cvdiag_mem->di_M);
   }
 
   /* Invert M with test for zero components */
@@ -374,7 +379,7 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
   }
 
   /* Set jcur = SUNTRUE, save gamma in gammasv, and return */
-  *jcurPtr  = SUNTRUE;
+  *jcurPtr                 = SUNTRUE;
   cvdiag_mem->di_gammasv   = cv_mem->cv_gamma;
   cvdiag_mem->di_last_flag = CVDIAG_SUCCESS;
   return (0);
