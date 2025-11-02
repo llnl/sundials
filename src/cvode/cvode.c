@@ -497,11 +497,12 @@ int CVodeInit(void* cvode_mem, CVRhsFn f, sunrealtype t0, N_Vector y0)
   /* Set the linear solver addresses to NULL.
      (We check != NULL later, in CVode) */
 
-  cv_mem->cv_linit  = NULL;
-  cv_mem->cv_lsetup = NULL;
-  cv_mem->cv_lsolve = NULL;
-  cv_mem->cv_lfree  = NULL;
-  cv_mem->cv_lmem   = NULL;
+  cv_mem->cv_linit   = NULL;
+  cv_mem->cv_lreinit = NULL;
+  cv_mem->cv_lsetup  = NULL;
+  cv_mem->cv_lsolve  = NULL;
+  cv_mem->cv_lfree   = NULL;
+  cv_mem->cv_lmem    = NULL;
 
   /* Initialize all the counters */
 
@@ -629,7 +630,7 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
 
   cv_mem->cv_irfnd = 0;
 
-  if (cv_mem->cv_lmem) { cvLsInitializeCounters(cv_mem->cv_lmem); }
+  if (cv_mem->cv_lreinit) { cv_mem->cv_lreinit(cv_mem); }
 
   /* Initialize other integrator optional outputs */
 

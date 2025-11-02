@@ -562,6 +562,8 @@ typedef struct CVodeMemRec
 
   int (*cv_linit)(struct CVodeMemRec* cv_mem);
 
+  int (*cv_lreinit)(struct CVodeMemRec* cv_mem);
+
   int (*cv_lsetup)(struct CVodeMemRec* cv_mem, int convfail, N_Vector ypred,
                    N_Vector fpred, sunbooleantype* jcurPtr, N_Vector vtemp1,
                    N_Vector vtemp2, N_Vector vtemp3);
