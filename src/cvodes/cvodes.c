@@ -5504,7 +5504,7 @@ static int cvHin(CVodeMem cv_mem, sunrealtype tout)
   sunrealtype hg, hgs, hs, hnew, hrat, h0, yddnrm;
   sunbooleantype hgOK;
 
-  /* cvInitialSetup checks for tdiff = 0 or < troundoff */
+  /* cvInitialSetup checks for tdiff = 0 or < 2 * troundoff */
   tdiff  = tout - cv_mem->cv_tn;
   sign   = (tdiff > ZERO) ? 1 : -1;
   tdist  = SUNRabs(tdiff);

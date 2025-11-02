@@ -2491,7 +2491,8 @@ int arkHin(ARKodeMem ark_mem, sunrealtype tout)
   sunrealtype hg, hgs, hs, hnew, hrat, h0, yddnrm;
   sunbooleantype hgOK;
 
-  tdiff  = tout - ark_mem->tcur; /* arkInitialSetup checks for tdiff = 0 */
+  /* arkInitialSetup checks for tdiff = 0 or < 2 * troundoff */
+  tdiff  = tout - ark_mem->tcur;
   sign   = (tdiff > ZERO) ? 1 : -1;
   tdist  = SUNRabs(tdiff);
   tround = ark_mem->uround * SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
