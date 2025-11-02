@@ -193,12 +193,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <cvodes/cvodes.h>
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_context.h>
 #include <sundials/sundials_types.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
 #include "cvodes_impl.h"
+#include "cvodes_ls_impl.h"
 #include "sundials_utils.h"
 
 /*=================================================================*/
@@ -966,6 +968,11 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
   cv_mem->cv_nge     = 0;
 
   cv_mem->cv_irfnd = 0;
+
+  if (cv_mem->cv_lmem)
+  {
+    cvLsInitializeCounters(cv_mem->cv_lmem);
+  }
 
   /* Initialize other integrator optional outputs */
 
@@ -2956,7 +2963,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     return (CV_ILL_INPUT);
   }
 
-  if (itask == CV_NORMAL) { cv_mem->cv_toutc = tout; }
+  cv_mem->cv_toutc = tout;
   cv_mem->cv_taskc = itask;
 
   /*
@@ -5193,6 +5200,14 @@ static int cvInitialSetup(CVodeMem cv_mem)
   int ier;
   sunbooleantype conOK;
 
+  /* Is tout is too close to tn? */
+  if ((cv_mem->cv_toutc - cv_mem->cv_tn) == ZERO)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   MSGCV_TOO_CLOSE);
+    return (CV_TOO_CLOSE);
+  }
+
   /* Did the user specify tolerances? */
   if (cv_mem->cv_itol == CV_NN)
   {
@@ -5491,10 +5506,7 @@ static int cvHin(CVodeMem cv_mem, sunrealtype tout)
   sunrealtype hg, hgs, hs, hnew, hrat, h0, yddnrm;
   sunbooleantype hgOK;
 
-  /* If tout is too close to tn, give up */
-
-  if ((tdiff = tout - cv_mem->cv_tn) == ZERO) { return (CV_TOO_CLOSE); }
-
+  tdiff  = tout - cv_mem->cv_tn; /* cvInitialSetup checks for tdiff = 0 */
   sign   = (tdiff > ZERO) ? 1 : -1;
   tdist  = SUNRabs(tdiff);
   tround = cv_mem->cv_uround * SUNMAX(SUNRabs(cv_mem->cv_tn), SUNRabs(tout));

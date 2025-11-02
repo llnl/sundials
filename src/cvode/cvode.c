@@ -29,6 +29,7 @@
 
 #include <cvode/cvode.h>
 #include <sundials/priv/sundials_errors_impl.h>
+#include <sundials/sundials_context.h>
 #include <sundials/sundials_types.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
