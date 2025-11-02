@@ -2030,7 +2030,7 @@ static int cvInitialSetup(CVodeMem cv_mem)
   /* Is tout is too close to tn? */
   if ((cv_mem->cv_toutc - cv_mem->cv_tn) == ZERO)
   {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+    cvProcessError(cv_mem, CV_TOO_CLOSE, __LINE__, __func__, __FILE__,
                    MSGCV_TOO_CLOSE);
     return (CV_TOO_CLOSE);
   }
