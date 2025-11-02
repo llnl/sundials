@@ -151,6 +151,7 @@
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
 #include "idas_impl.h"
+#include "idas_ls_impl.h"
 #include "sundials_utils.h"
 
 /*
@@ -852,6 +853,11 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
   IDA_mem->ida_nge = 0;
 
   IDA_mem->ida_irfnd = 0;
+
+  if (IDA_mem->ida_lmem)
+  {
+    idaLsInitialize(IDA_mem->ida_lmem);
+  }
 
   /* Initial setup not done yet */
 
@@ -2571,7 +2577,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
     return (IDA_ILL_INPUT);
   }
 
-  if (itask == IDA_NORMAL) { IDA_mem->ida_toutc = tout; }
+  IDA_mem->ida_toutc = tout;
   IDA_mem->ida_taskc = itask;
 
   /* Sensitivity-specific tests (if using internal DQ functions) */
