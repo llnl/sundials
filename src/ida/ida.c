@@ -1155,17 +1155,10 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
        check for approach to tstop, and scale phi[1] by hh.
        Also check for zeros of root function g at and near t0.    */
 
-    tdist = SUNRabs(tout - IDA_mem->ida_tn);
-    if (tdist == ZERO)
-    {
-      IDAProcessError(IDA_mem, IDA_TOO_CLOSE, __LINE__, __func__, __FILE__,
-                      MSG_TOO_CLOSE);
-      SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
-      return (IDA_TOO_CLOSE);
-    }
+    tdist     = SUNRabs(tout - IDA_mem->ida_tn);
     troundoff = TWO * IDA_mem->ida_uround *
                 (SUNRabs(IDA_mem->ida_tn) + SUNRabs(tout));
-    if (tdist < troundoff)
+    if (tdist == ZERO || tdist < troundoff)
     {
       IDAProcessError(IDA_mem, IDA_TOO_CLOSE, __LINE__, __func__, __FILE__,
                       MSG_TOO_CLOSE);

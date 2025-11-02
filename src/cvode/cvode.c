@@ -2025,7 +2025,10 @@ static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout)
   sunbooleantype conOK;
 
   /* Is tout is too close to tn? */
-  if ((tout - cv_mem->cv_tn) == ZERO)
+  sunrealtype tdist  = SUNRabs(tout - cv_mem->cv_tn);
+  sunrealtype tround = cv_mem->cv_uround * SUNMAX(SUNRabs(cv_mem->cv_tn), SUNRabs(tout));
+
+  if (tdist == ZERO || tdist < TWO * tround)
   {
     cvProcessError(cv_mem, CV_TOO_CLOSE, __LINE__, __func__, __FILE__,
                    MSGCV_TOO_CLOSE);
@@ -2139,15 +2142,13 @@ static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout)
 /*
  * cvHin
  *
- * This routine computes a tentative initial step size h0.
- * If tout is too close to tn (= t0), then cvHin returns CV_TOO_CLOSE
- * and h remains uninitialized. Note that here tout is either the value
- * passed to CVode at the first call or the value of tstop (if tstop is
- * enabled and it is closer to t0=tn than tout).
- * If the RHS function fails unrecoverably, cvHin returns CV_RHSFUNC_FAIL.
- * If the RHS function fails recoverably too many times and recovery is
- * not possible, cvHin returns CV_REPTD_RHSFUNC_ERR.
- * Otherwise, cvHin sets h to the chosen value h0 and returns CV_SUCCESS.
+ * This routine computes a tentative initial step size h0. Note that here tout
+ * is either the value passed to CVode at the first call or the value of tstop
+ * (if tstop is enabled and it is closer to t0=tn than tout). If the RHS
+ * function fails unrecoverably, cvHin returns CV_RHSFUNC_FAIL. If the RHS
+ * function fails recoverably too many times and recovery is not possible, cvHin
+ * returns CV_REPTD_RHSFUNC_ERR. Otherwise, cvHin sets h to the chosen value h0
+ * and returns CV_SUCCESS.
  *
  * The algorithm used seeks to find h0 as a solution of
  *       (WRMS norm of (h0^2 ydd / 2)) = 1,
@@ -2177,12 +2178,11 @@ static int cvHin(CVodeMem cv_mem, sunrealtype tout)
   sunrealtype hg, hgs, hs, hnew, hrat, h0, yddnrm;
   sunbooleantype hgOK;
 
-  tdiff  = tout - cv_mem->cv_tn; /* cvInitialSetup checks for tdiff = 0 */
+  /* cvInitialSetup checks for tdiff = 0 or < troundoff */
+  tdiff  = tout - cv_mem->cv_tn;
   sign   = (tdiff > ZERO) ? 1 : -1;
   tdist  = SUNRabs(tdiff);
   tround = cv_mem->cv_uround * SUNMAX(SUNRabs(cv_mem->cv_tn), SUNRabs(tout));
-
-  if (tdist < TWO * tround) { return (CV_TOO_CLOSE); }
 
   /*
      Set lower and upper bounds on h0, and take geometric mean

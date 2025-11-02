@@ -1981,6 +1981,17 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
   sunrealtype tout_hin, rh, htmp;
   sunbooleantype conOK;
 
+  /* Is tout is too close to tn? */
+  sunrealtype tdist  = SUNRabs(tout - ark_mem->tcur);
+  sunrealtype tround = ark_mem->uround * SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
+
+  if (tdist == ZERO || tdist < TWO * tround)
+  {
+    arkProcessError(ark_mem, ARK_TOO_CLOSE, __LINE__, __func__, __FILE__,
+                    MSG_ARK_TOO_CLOSE);
+    return (ARK_TOO_CLOSE);
+  }
+
   /* Check that user has supplied an initial step size if fixedstep mode is on */
   if ((ark_mem->fixedstep) && (ark_mem->hin == ZERO))
   {
@@ -2445,15 +2456,13 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
   arkHin
 
   This routine computes a tentative initial step size h0.
-  If tout is too close to tn (= t0), then arkHin returns
-  ARK_TOO_CLOSE and h remains uninitialized. Note that here tout
-  is either the value passed to ARKodeEvolve at the first call or the
-  value of tstop (if tstop is enabled and it is closer to t0=tn
-  than tout). If the RHS function fails unrecoverably, arkHin
-  returns ARK_RHSFUNC_FAIL. If the RHS function fails recoverably
-  too many times and recovery is not possible, arkHin returns
-  ARK_REPTD_RHSFUNC_ERR. Otherwise, arkHin sets h to the chosen
-  value h0 and returns ARK_SUCCESS.
+  Note that here tout is either the value passed to ARKodeEvolve
+  at the first call or the value of tstop (if tstop is enabled and
+  it is closer to t0=tn than tout). If the RHS function fails
+  unrecoverably, arkHin returns ARK_RHSFUNC_FAIL. If the RHS
+  function fails recoverably too many times and recovery is not
+  possible, arkHin returns ARK_REPTD_RHSFUNC_ERR. Otherwise, arkHin
+  sets h to the chosen value h0 and returns ARK_SUCCESS.
 
   The algorithm used seeks to find h0 as a solution of
   (WRMS norm of (h0^2 ydd / 2)) = 1,
@@ -2489,14 +2498,10 @@ int arkHin(ARKodeMem ark_mem, sunrealtype tout)
   sunrealtype hg, hgs, hs, hnew, hrat, h0, yddnrm;
   sunbooleantype hgOK;
 
-  /* If tout is too close to tn, give up */
-  if ((tdiff = tout - ark_mem->tcur) == ZERO) { return (ARK_TOO_CLOSE); }
-
+  tdiff  = tout - ark_mem->tcur; /* arkInitialSetup checks for tdiff = 0 */
   sign   = (tdiff > ZERO) ? 1 : -1;
   tdist  = SUNRabs(tdiff);
   tround = ark_mem->uround * SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
-
-  if (tdist < TWO * tround) { return (ARK_TOO_CLOSE); }
 
   /* call full RHS if needed */
   if (!(ark_mem->fn_is_current))
