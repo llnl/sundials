@@ -75,6 +75,7 @@ with support by the `US Department of Energy <http://www.doe.gov>`_,
    sundials/Install_link.rst
    Constants
    Butcher
+   Fortran/index.rst
    History_link.rst
    Changelog_link.rst
    References

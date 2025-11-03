@@ -47,6 +47,7 @@ extensions = [
     "sphinx_sundials",
     "sphinx_toolbox.collapse",
     "sphinx.ext.autodoc",
+    "sphinx_multitoc_numbering",
 ]
 
 extlinks = {
@@ -87,8 +88,12 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "User Documentation for SUNDIALS"
-copyright = """2002-{year}, Lawrence Livermore National Security and Southern Methodist University""".format(
+project = "Documentation for SUNDIALS"
+# RTD adds the first Copyright (c), so we leave it out.
+copyright = """\
+    2025-{year}, Lawrence Livermore National Security, University of Maryland Baltimore County, and the SUNDIALS contributors.
+    Copyright (c) 2013-2025, Lawrence Livermore National Security and Southern Methodist University.
+    Copyright (c) 2002-2013, Lawrence Livermore National Security""".format(
     year=year
 )
 

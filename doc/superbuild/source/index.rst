@@ -202,6 +202,14 @@ SUNDIALS License and Notices
    FAQ_link.rst
 
 .. toctree::
+   :caption: INTERFACES
+   :maxdepth: 1
+   :numbered:
+   :hidden:
+
+   Fortran/index.rst
+
+.. toctree::
    :caption: EXAMPLES
    :maxdepth: 1
    :hidden:
