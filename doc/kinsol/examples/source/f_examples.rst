@@ -21,7 +21,7 @@ Fortran Example Problems
 
 The Fortran example problem programs supplied with the KINSOL package are all
 written using the Fortran 2003 standard, use double precision arithmetic, and
-32- or 64-bit integers for indexing. See the :ref:`SUNDIALS.Fortran` section in
+32- or 64-bit integers for indexing. See the :ref:`Fortran` section in
 the KINSOL User Documentation for details.
 
 A serial example: kinDiagon_kry_f2003

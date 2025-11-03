@@ -28,7 +28,7 @@ also be helpful. Those codes may be used as templates (with the removal of some
 lines used in testing) and are included in the CVODES package.
 
 Users with applications written in Fortran should see
-:numref:`SUNDIALS.Fortran`, which describes interfacing with CVODES from
+:numref:`Fortran`, which describes interfacing with CVODES from
 Fortran.
 
 The user should be aware that not all ``SUNLinearSolver`` and ``SUNMatrix``
