@@ -319,7 +319,7 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
 #ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
-    cvDiagSetup_formY(h, r, fpred, cv_mem->cv_zn[1], ypred, ftemp, y);
+    cvDiagSetup_formY(cv_mem->cv_h, r, fpred, cv_mem->cv_zn[1], ypred, ftemp, y);
   }
   else
 #endif
@@ -348,7 +348,7 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
 #ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
-    cvDiagSetup_buildM(FRACT, cv_mem->cv_uround, h, ftemp, fpred,
+    cvDiagSetup_buildM(FRACT, cv_mem->cv_uround, cv_mem->cv_h, ftemp, fpred,
                        cv_mem->cv_ewt, cvdiag_mem->di_bit,
                        cvdiag_mem->di_bitcomp, y, cvdiag_mem->di_M);
   }
