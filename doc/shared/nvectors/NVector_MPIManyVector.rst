@@ -161,7 +161,7 @@ the following additional user-callable routines:
    Users of the Fortran 2003 interface to this function will first need to use
    the generic ``N_Vector`` utility functions :c:func:`N_VNewVectorArray`, and
    :c:func:`N_VSetVecAtIndexVectorArray` to create the ``N_Vector*`` argument.  This is
-   further explained in :numref:`SUNDIALS.Fortran.Differences.NVectorArrays`,
+   further explained in :numref:`Fortran.Differences.NVectorArrays`,
    and the functions are documented in :numref:`NVectors.Description.utilities`.
 
 

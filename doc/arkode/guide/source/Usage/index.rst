@@ -54,7 +54,7 @@ separately in :numref:`ARKODE.Constants`.
 The example programs for ARKODE are located in the source code ``examples/arkode``
 folder.  We note that these may be helpful as templates for new codes.  Users
 with applications written in Fortran should see the chapter
-:numref:`SUNDIALS.Fortran`, which describes the Fortran interfaces for
+:numref:`Fortran`, which describes the Fortran interfaces for
 SUNDIALS, and we additionally include multiple Fortran example programs
 in the ARKODE ``examples`` directory.
 

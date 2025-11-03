@@ -41,5 +41,4 @@ other common infrastructure, which we discuss in this section.
    Profiling_link
    Logging_link
    version_information_link
-   Fortran_link.rst
    GPU_link.rst

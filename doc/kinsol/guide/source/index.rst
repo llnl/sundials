@@ -39,6 +39,7 @@ KINSOL Documentation
    sunmemory/index.rst
    sundials/Install_link.rst
    Constants
+   Fortran/index.rst
    History_link.rst
    Changelog_link.rst
    References
