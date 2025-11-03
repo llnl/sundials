@@ -180,10 +180,10 @@ team.
 Installation
 ------------
 
-The installation procedure for the Fortran interfaces is the same as for the C/C++ core of SUNDIALS, refer
-to :numref:`Installation`.
-The CMake option to turn on the Fortran interfaces in a SUNDIALS build is :cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE`.\
-The Spack variant is ``+fortran``.
+The installation procedure for the Fortran interfaces is the same as for the
+C/C++ core of SUNDIALS, refer to :numref:`Installation`.  The CMake option to
+turn on the Fortran interfaces in a SUNDIALS build is
+:cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE`.  The Spack variant is ``+fortran``.
 
 .. _Fortran.Portability:
 
@@ -197,4 +197,3 @@ Upon compilation of SUNDIALS, Fortran module (``.mod``) files are generated for
 each Fortran 2003 interface. These files are highly compiler specific, and thus
 it is almost always necessary to compile a consuming application with the same
 compiler that was used to generate the modules.
-
