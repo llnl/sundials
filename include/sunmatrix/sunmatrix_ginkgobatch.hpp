@@ -34,9 +34,10 @@ namespace sundials {
 namespace ginkgo {
 
 using GkoBatchDenseMat = gko::batch::matrix::Dense<sunrealtype>;
-using GkoBatchCsrMat   = gko::batch::matrix::Csr<sunrealtype, sunindextype>;
 #ifdef SUNDIALS_INT32_T
-// Ginkgo currently (v1.10) supports only 32-bit index types with batch Ell
+// Ginkgo currently (v1.10) supports only 32-bit index types with the batch Ell
+// and CSR matrix
+using GkoBatchCsrMat   = gko::batch::matrix::Csr<sunrealtype, sunindextype>;
 using GkoBatchEllMat   = gko::batch::matrix::Ell<sunrealtype, sunindextype>;
 #endif
 using GkoBatchVecType  = gko::batch::MultiVector<sunrealtype>;
@@ -61,10 +62,10 @@ void Matvec(BatchMatrix<GkoBatchMatType>& A, N_Vector x, N_Vector y);
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
               BatchMatrix<GkoBatchDenseMat>& B);
 
+#ifdef SUNDIALS_INT32_T
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
               BatchMatrix<GkoBatchCsrMat>& B);
 
-#ifdef SUNDIALS_INT32_T
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
               BatchMatrix<GkoBatchEllMat>& B);
 #endif
@@ -247,6 +248,7 @@ inline BatchMatrix<GkoBatchDenseMat>::BatchMatrix(
   initSUNMatrix();
 }
 
+#ifdef SUNDIALS_INT32_T
 template<>
 inline BatchMatrix<GkoBatchCsrMat>::BatchMatrix(
   gko::size_type num_batches, sunindextype M, sunindextype N,
@@ -261,7 +263,6 @@ inline BatchMatrix<GkoBatchCsrMat>::BatchMatrix(
   initSUNMatrix();
 }
 
-#ifdef SUNDIALS_INT32_T
 template<>
 inline BatchMatrix<GkoBatchEllMat>::BatchMatrix(
   gko::size_type num_batches, sunindextype M, sunindextype N,
@@ -353,6 +354,7 @@ void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
   A.GkoMtx()->scale_add(cmat.get(), B.GkoMtx().get());
 }
 
+#ifdef SUNDIALS_INT32_T
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
               BatchMatrix<GkoBatchCsrMat>& B)
 {
@@ -360,7 +362,6 @@ void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
   throw("scale_add not implemented for gko::batch::matrix::Csr");
 }
 
-#ifdef SUNDIALS_INT32_T
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
               BatchMatrix<GkoBatchEllMat>& B)
 {
