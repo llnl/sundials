@@ -23,6 +23,7 @@
 #include <ginkgo/core/base/batch_multi_vector.hpp>
 #include <ginkgo/ginkgo.hpp>
 
+#include <sundials/sundials_config.h>
 #include <sundials/sundials_matrix.hpp>
 
 #if (GKO_VERSION_MAJOR < 1) || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR < 9)
@@ -34,7 +35,10 @@ namespace ginkgo {
 
 using GkoBatchDenseMat = gko::batch::matrix::Dense<sunrealtype>;
 using GkoBatchCsrMat   = gko::batch::matrix::Csr<sunrealtype, sunindextype>;
+#ifdef SUNDIALS_INT32_T
+// Ginkgo currently (v1.10) supports only 32-bit index types with batch Ell
 using GkoBatchEllMat   = gko::batch::matrix::Ell<sunrealtype, sunindextype>;
+#endif
 using GkoBatchVecType  = gko::batch::MultiVector<sunrealtype>;
 
 // Forward declare BatchMatrix class
@@ -60,8 +64,10 @@ void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
               BatchMatrix<GkoBatchCsrMat>& B);
 
+#ifdef SUNDIALS_INT32_T
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
               BatchMatrix<GkoBatchEllMat>& B);
+#endif
 
 template<class GkoBatchMatType>
 void ScaleAddI(const sunrealtype c, BatchMatrix<GkoBatchMatType>& A);
@@ -255,6 +261,7 @@ inline BatchMatrix<GkoBatchCsrMat>::BatchMatrix(
   initSUNMatrix();
 }
 
+#ifdef SUNDIALS_INT32_T
 template<>
 inline BatchMatrix<GkoBatchEllMat>::BatchMatrix(
   gko::size_type num_batches, sunindextype M, sunindextype N,
@@ -268,6 +275,7 @@ inline BatchMatrix<GkoBatchEllMat>::BatchMatrix(
 {
   initSUNMatrix();
 }
+#endif
 
 // =============================================================================
 // Everything in the implementation (impl) namespace is private and should not
@@ -352,12 +360,14 @@ void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
   throw("scale_add not implemented for gko::batch::matrix::Csr");
 }
 
+#ifdef SUNDIALS_INT32_T
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
               BatchMatrix<GkoBatchEllMat>& B)
 {
   // NOTE: This is not implemented by Ginkgo for BatchEll yet
   throw("scale_add not implemented for gko::batch::matrix::Ell");
 }
+#endif
 
 template<class GkoBatchMatType>
 void ScaleAddI(const sunrealtype c, BatchMatrix<GkoBatchMatType>& A)
