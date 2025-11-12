@@ -1796,7 +1796,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                          step_mem->autonomous &&
                          step_mem->mass_type != MASS_TIMEDEP;
 
-  SUNLogInfoIf(is_start == 1, ARK_LOGGER, "begin-stage",
+  SUNLogInfoIf(is_start == 1, ARK_LOGGER, "begin-stages-list",
                "stage = %i, implicit = %i, tcur = " SUN_FORMAT_G, 0,
                implicit_stage, ark_mem->tcur);
   SUNLogExtraDebugVecIf(is_start == 1, ARK_LOGGER, "explicit stage",
@@ -1826,7 +1826,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                      ark_mem->fn, mode);
       if (retval)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed full rhs eval, retval = %i", retval);
         return ARK_RHSFUNC_FAIL;
       }
@@ -1847,7 +1847,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                               ark_mem->user_data);
         step_mem->nfi++;
 
-        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stage",
+        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                      "status = failed implicit rhs eval, retval = %i", retval);
 
         if (retval < 0) { return ARK_RHSFUNC_FAIL; }
@@ -1886,7 +1886,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                         "implicit RHS", step_mem->Fi[0], "Fi_0(:) =");
   SUNLogExtraDebugVecIf(is_start == 1 && step_mem->explicit, ARK_LOGGER,
                         "explicit RHS", step_mem->Fe[0], "Fe_0(:) =");
-  SUNLogInfoIf(is_start == 1, ARK_LOGGER, "end-stage", "status = success");
+  SUNLogInfoIf(is_start == 1, ARK_LOGGER, "end-stages-list", "status = success");
 
   /* loop over internal stages to the step */
   for (is = is_start; is < step_mem->stages; is++)
@@ -1911,7 +1911,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else { ark_mem->tcur = ark_mem->tn + step_mem->Be->c[is] * ark_mem->h; }
 
-    SUNLogInfo(ARK_LOGGER, "begin-stage",
+    SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, implicit = %i, tcur = " SUN_FORMAT_G, is,
                implicit_stage, ark_mem->tcur);
 
@@ -1922,7 +1922,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                 ark_mem->tempv2, ark_mem->tempv3);
       if (retval != ARK_SUCCESS)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed mass setup, retval = %i", retval);
         return (ARK_MASSSETUP_FAIL);
       }
@@ -1935,7 +1935,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       retval = arkStep_Predict(ark_mem, is, step_mem->zpred);
       if (retval != ARK_SUCCESS)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed predict, retval = %i", retval);
         return (retval);
       }
@@ -1948,7 +1948,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         retval = step_mem->stage_predict(ark_mem->tcur, step_mem->zpred,
                                          ark_mem->user_data);
 
-        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stage",
+        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                      "status = failed predict, retval = %i", retval);
         if (retval < 0) { return (ARK_USER_PREDICT_FAIL); }
         if (retval > 0) { return (TRY_AGAIN); }
@@ -1961,7 +1961,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     retval = arkStep_StageSetup(ark_mem, implicit_stage);
     if (retval != ARK_SUCCESS)
     {
-      SUNLogInfo(ARK_LOGGER, "end-stage",
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed stage setup, retval = %i", retval);
       return (retval);
     }
@@ -1976,8 +1976,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       *nflagPtr = arkStep_Nls(ark_mem, *nflagPtr);
       if (*nflagPtr != ARK_SUCCESS)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage", "status = failed solve, nflag = %i",
-                   *nflagPtr);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed solve, nflag = %i", *nflagPtr);
         return (TRY_AGAIN);
       }
 
@@ -1996,7 +1996,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                      step_mem->nlscoef);
         if (*nflagPtr != ARK_SUCCESS)
         {
-          SUNLogInfo(ARK_LOGGER, "end-stage",
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed mass solve, nflag = %i", *nflagPtr);
           return (TRY_AGAIN);
         }
@@ -2019,7 +2019,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                      ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
@@ -2077,7 +2077,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
         SUNLogExtraDebugVec(ARK_LOGGER, "implicit RHS", step_mem->Fi[is],
                             "Fi_%i(:) =", is);
-        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stage",
+        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                      "status = failed implicit rhs eval, retval = %i", retval);
 
         if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
@@ -2091,7 +2091,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                    ark_mem->tempv1);
           if (retval != ARK_SUCCESS)
           {
-            SUNLogInfo(ARK_LOGGER, "end-stage",
+            SUNLogInfo(ARK_LOGGER, "end-stages-list",
                        "status = failed mass mult, retval = %i", retval);
             return (ARK_MASSMULT_FAIL);
           }
@@ -2119,7 +2119,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
       SUNLogExtraDebugVec(ARK_LOGGER, "explicit RHS", step_mem->Fe[is],
                           "Fe_%i(:) =", is);
-      SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stage",
+      SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                    "status = failed explicit rhs eval, retval = %i", retval);
 
       if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
@@ -2140,7 +2140,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
         if (*nflagPtr != ARK_SUCCESS)
         {
-          SUNLogInfo(ARK_LOGGER, "end-stage",
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed mass solve, nflag = %i", *nflagPtr);
           return (TRY_AGAIN);
         }
@@ -2153,14 +2153,14 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                             "Fe_%i(:) =", is);
         if (*nflagPtr != ARK_SUCCESS)
         {
-          SUNLogInfo(ARK_LOGGER, "end-stage",
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed mass solve, nflag = %i", *nflagPtr);
           return (TRY_AGAIN);
         }
       }
     }
 
-    SUNLogInfo(ARK_LOGGER, "end-stage", "status = success");
+    SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   } /* loop over stages */
 
