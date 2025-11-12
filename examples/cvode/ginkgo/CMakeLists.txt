@@ -18,8 +18,11 @@
 # Example lists are tuples "name\;args\;type"
 
 # Examples that support CPU and GPU Ginkgo backends
-set(cpu_gpu_examples "cv_heat2D_ginkgo.cpp\;\;develop"
-                     "cv_bruss_batched_ginkgo.cpp\;\;develop")
+set(cpu_gpu_examples "cv_heat2D_ginkgo.cpp\;\;develop")
+
+if(SUNDIALS_INDEX_SIZE STREQUAL "32")
+  list(APPEND cpu_gpu_examples "cv_bruss_batched_ginkgo.cpp\;\;develop")
+endif()
 
 sundials_add_examples_ginkgo(
   cpu_gpu_examples
