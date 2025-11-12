@@ -409,8 +409,8 @@ public:
                                        iter_count_array_.get_data());
     auto iter_count = iter_count_array_.get_data();
 
-    sunindextype max_iter_count{0};
-    sunindextype min_iter_count{max_iters_};
+    int max_iter_count{0};
+    int min_iter_count{max_iters_};
     avg_iter_count_ = sunrealtype{0.0};
     for (gko::size_type i = 0; i < num_batches_; i++)
     {
@@ -468,7 +468,7 @@ private:
   gko::size_type num_batches_;
   int max_iters_;
   gko::array<sunrealtype> res_norm_array_;
-  gko::array<sunindextype> iter_count_array_;
+  gko::array<int> iter_count_array_;
   sunrealtype avg_iter_count_;
   sunrealtype sum_of_avg_iters_;
   sunrealtype stddev_iter_count_;
