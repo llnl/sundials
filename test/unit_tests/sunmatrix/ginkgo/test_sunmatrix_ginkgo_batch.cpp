@@ -112,7 +112,6 @@ int main(int argc, char* argv[])
                                                         gko::OmpExecutor::create()))};
 
   /* check input and set vector length */
-#ifdef SUNDIALS_INT32_T
   if (argc < 5)
   {
     std::cerr << "ERROR: FOUR (4) Input required: matrix rows, matrix cols, "
@@ -120,15 +119,6 @@ int main(int argc, char* argv[])
                  "(0 = csr, 1 = dense)\n";
     return 1;
   }
-#else
-  if (argc < 4)
-  {
-    // Currently (Ginkgo v1.10) only the dense matrix supports 64-bit index types
-    std::cerr << "ERROR: FOUR (4) Input required: matrix rows, matrix cols, "
-                 "number of batches (batch entries)\n";
-    return 1;
-  }
-#endif
 
   int argi{0};
 
@@ -148,16 +138,21 @@ int main(int argc, char* argv[])
 
   auto num_batches{static_cast<gko::size_type>(atol(argv[++argi]))};
 
-#ifdef SUNDIALS_INT32_T
   auto format{static_cast<int>(atoi(argv[++argi]))};
-#else
-  auto format{1};
-#endif
+#ifdef SUNDIALS_INT32_T
   if (format != 0 && format != 1)
   {
     std::cerr << "ERROR: format must be 0 (csr) or 1 (dense) \n";
     return 1;
   }
+#else
+  if (format != 1)
+  {
+    std::cerr << "ERROR: format must be 1 (dense) with 64-bit index types\n";
+    return 1;
+  }
+#endif
+
 
   if (format == 0) { using_csr_matrix_type = true; }
   else if (format == 1) { using_dense_matrix_type = true; }
