@@ -155,7 +155,8 @@ int main(int argc, char* argv[])
 #ifdef SUNDIALS_INT64_T
   if (matrix_type == "csr")
   {
-    std::cerr << "ERROR: the CSR matrix type is not compatible with 64-bit index types\n";
+    std::cerr << "ERROR: the CSR matrix type is not compatible with 64-bit "
+                 "index types\n";
     return 1;
   }
 #endif

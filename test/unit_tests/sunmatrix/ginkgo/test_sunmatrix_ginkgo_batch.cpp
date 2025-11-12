@@ -51,9 +51,9 @@ using namespace sundials::ginkgo;
 
 using GkoDenseMat = gko::matrix::Dense<sunrealtype>;
 #ifdef SUNDIALS_INT32_T
-using GkoCsrMat   = gko::matrix::Csr<sunrealtype, sunindextype>;
+using GkoCsrMat = gko::matrix::Csr<sunrealtype, sunindextype>;
 #endif
-using GkoVecType  = GkoDenseMat;
+using GkoVecType = GkoDenseMat;
 
 bool using_csr_matrix_type   = false;
 bool using_dense_matrix_type = false;
@@ -152,7 +152,6 @@ int main(int argc, char* argv[])
     return 1;
   }
 #endif
-
 
   if (format == 0) { using_csr_matrix_type = true; }
   else if (format == 1) { using_dense_matrix_type = true; }

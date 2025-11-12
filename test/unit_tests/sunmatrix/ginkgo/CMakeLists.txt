@@ -28,9 +28,8 @@ set(examples
     "test_sunmatrix_ginkgo_batch.cpp\;10 100 10 1\;")
 
 if(SUNDIALS_INDEX_SIZE STREQUAL "32")
-  list(APPEND examples
-      "test_sunmatrix_ginkgo_batch.cpp\;10 10 10 0\;"
-      "test_sunmatrix_ginkgo_batch.cpp\;10 100 10 0\;")
+  list(APPEND examples "test_sunmatrix_ginkgo_batch.cpp\;10 10 10 0\;"
+       "test_sunmatrix_ginkgo_batch.cpp\;10 100 10 0\;")
 endif()
 
 # Add source directory to include directories

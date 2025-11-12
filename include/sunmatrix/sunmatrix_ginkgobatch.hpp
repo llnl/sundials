@@ -36,10 +36,10 @@ namespace ginkgo {
 using GkoBatchDenseMat = gko::batch::matrix::Dense<sunrealtype>;
 #ifdef SUNDIALS_INT32_T
 // Currently (Ginkgo v1.10) only the dense matrix supports 64-bit index types
-using GkoBatchCsrMat   = gko::batch::matrix::Csr<sunrealtype, sunindextype>;
-using GkoBatchEllMat   = gko::batch::matrix::Ell<sunrealtype, sunindextype>;
+using GkoBatchCsrMat = gko::batch::matrix::Csr<sunrealtype, sunindextype>;
+using GkoBatchEllMat = gko::batch::matrix::Ell<sunrealtype, sunindextype>;
 #endif
-using GkoBatchVecType  = gko::batch::MultiVector<sunrealtype>;
+using GkoBatchVecType = gko::batch::MultiVector<sunrealtype>;
 
 // Forward declare BatchMatrix class
 template<class GkoBatchMatType>
