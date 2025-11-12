@@ -535,7 +535,7 @@ extern "C" sunbooleantype has_data(SUNMatrix A)
 #ifdef SUNDIALS_INT32_T
     auto Amat{static_cast<BatchMatrix<GkoBatchCsrMat>*>(A->content)->GkoMtx()};
     return !(Amat->get_values() == NULL || Amat->get_num_batch_items() == 0);
-#endif
+#else
     return SUNFALSE;
 #endif
   }
