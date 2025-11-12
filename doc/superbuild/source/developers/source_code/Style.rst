@@ -192,18 +192,19 @@ the following utility functions are available.
 Logging
 -------
 
-Use the macros below to add informational and debugging messages to SUNDIALS
-code rather than adding ``#ifdef SUNDIALS_LOGGING_<level>`` / ``#endif`` blocks
-containing calls to :c:func:`SUNLogger_QueueMsg`. Error and warning messages are
-handled through package-specific ``ProcessError`` functions or the ``SUNAssert``
-and ``SUNCheck`` macros.
+Use the :ref:`macros below <Style.Logging.Macros>` to add informational and
+debugging messages to SUNDIALS code rather than adding ``#ifdef
+SUNDIALS_LOGGING_<level>`` / ``#endif`` blocks containing calls to
+:c:func:`SUNLogger_QueueMsg`. Error and warning messages are handled through
+package-specific ``ProcessError`` functions or the ``SUNAssert`` and
+``SUNCheck`` macros.
 
-The logging macros help ensure messages follow the required format presented in
-:numref:`SUNDIALS.Logging.Enabling` and used by the ``suntools`` Python module
-for parsing logging output. For informational and debugging output the log
-message payload (the part after the brackets) must be either be a
-comma-separated list of key-value pairs with the key and value separated by an
-equals sign with a space on either side e.g.,
+The logging macros help ensure messages follow the required format (see
+:numref:`SUNDIALS.Logging.Output`) used by the ``suntools`` Python module to
+parse logging output (see :numref:`SUNDIALS.Logging.Tools`). For informational
+and debugging output the log message payload (the part after the brackets) must
+be either be a comma-separated list of key-value pairs with the key and value
+separated by an equals sign with a space on either side e.g.,
 
 .. code-block:: C
 
@@ -227,35 +228,236 @@ vectors you may use
 
 .. code-block:: C
 
-   SUNLogExtraDebugVec(sunctx->logger, "new-solution", Fe[i], "Fe_%d(:) =", i);
+   SUNLogExtraDebugVec(sunctx->logger, "stage-explicit-rhs", Fe[i], "Fe_%d(:) =", i);
 
-To assist in parsing logging messages, ``begin-`` and ``end-`` markers are used
-in the log message ``label`` field to denote where particular regions begin and
-end. When adding a new ``begin-`` / ``end-`` label the ``logs.py`` script will
-need to be updated accordingly. The region markers currently supported by the
-Python module for parsing log files are as follows:
+The log parser organizes the logging output into Python dictionaries and lists
+of dictionaries. To denote different logging regions, ``begin-`` and ``end-``
+message labels of the form ``<begin|end>-<region-name>[-list]`` are used. The
+log parsing tool will automatically open/close the dictionary (default) or list
+of dictionaries (as indicated by the optional ``-list`` suffix) for the region
+corresponding to ``region-name``. This convention enables adding new logging
+regions to the code without needing to update the logging parser. There are also
+three special region markers that are handled separately:
 
-* ``begin-step-attempt`` / ``end-step-attempt``
+* ``begin|end-step-attempt`` -- opens/closes step attempt dictionaries and
+  opens/closes lists within the current step to hold logging output for
+  different time levels (i.e., with MRI methods) or problem partitions (i.e.,
+  with splitting methods) based on the current time level and partition
+  counters.
 
-* ``begin-nonlinear-solve`` / ``end-nonlinear-solve``
+* ``begin|end-fast-steps`` -- increments/decrements the current time level
+  counter.
 
-* ``begin-nonlinear-iterate`` / ``end-nonlinear-iterate``
+* ``begin|end-partition-list`` -- increments/decrements the current partition
+  counter and opens/closes the ``partitions`` list.
 
-* ``begin-linear-solve`` / ``end-linear-solve``
+Logging messages that do not start with ``begin-`` or ``end-`` correspond to
+output for the active region and are added to the open output dictionary.
 
-* ``begin-linear-iterate`` / ``end-linear-iterate``
+.. _Style.Logging.Example:
 
-* ``begin-group`` / ``end-group``
+Logging Example
+^^^^^^^^^^^^^^^
 
-* ``begin-stage`` / ``end-stage``
+As an example consider the information logging output from a CVODE time
+step using a fixed-point iteration for the nonlinear solve. The logging line
 
-* ``begin-fast-steps`` / ``end-fast-steps``
+.. code-block:: C
 
-* ``begin-mass-linear-solve`` / ``end-mass-linear-solve``
+   SUNLogInfo(CV_LOGGER, "begin-step-attempt", "step = %li, tn = " SUN_FORMAT_G ",
+              h = " SUN_FORMAT_G ", q = %d", cv_mem->cv_nst + 1, cv_mem->cv_tn,
+              cv_mem->cv_h, cv_mem->cv_q);
 
-* ``begin-compute-solution`` / ``end-compute-solution``
+creates a new step attempt dictionary and adds the data in the payload to the
+dictionary:
 
-* ``begin-compute-embedding`` / ``end-compute-embedding``
+.. code-block:: text
+
+   {
+     step : 1
+     tn : 0.0
+     h : 0.002
+   }
+
+Inside the step attempt, the logging line
+
+.. code-block:: C
+
+   SUNLogInfo(CV_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G,
+              cv_mem->cv_tq[4]);
+
+adds the ``nonlinear-solve`` key to the step attempt dictionary, activates
+the nonlinear solver output dictionary, and adds the data in the payload to the
+dictionary:
+
+.. code-block:: text
+
+   {
+     step : 1
+     tn : 0.0
+     h : 0.002
+     nonlinear-solve :
+     {
+       tol : 0.01
+     }
+   }
+
+In the nonlinear solver, the logging line
+
+.. code-block:: C
+
+    SUNLogInfo(NLS->sunctx->logger, "begin-iterations-list", "");
+
+adds the ``iterations`` key to the ``nonlinear-solve`` dictionary and activates
+a new output dictionary in the iterations list:
+
+.. code-block:: text
+
+   {
+     step : 1
+     tn : 0.0
+     h : 0.002
+     nonlinear-solve :
+     {
+       tol : 0.01
+       iterations :
+       [
+         { }
+       ]
+     }
+   }
+
+Within the nonlinear solver iteration loop, the logging line
+
+.. code-block:: C
+
+   SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
+              "cur-iter = %d, update-norm = " SUN_FORMAT_G,
+              FP_CONTENT(NLS)->niters, N_VWrmsNorm(delta, w));
+
+adds information to the active iterations dictionary:
+
+.. code-block:: text
+
+   {
+     step : 1
+     tn : 0.0
+     h : 0.002
+     nonlinear-solve :
+     {
+       tol : 0.01
+       iterations :
+       [
+         {
+           cur-iter : 1
+           update-norm : 0.02
+         }
+       ]
+     }
+   }
+
+At the end of each nonlinear iteration, logging output such as
+
+.. code-block:: C
+
+   SUNLogInfoIf(FP_CONTENT(NLS)->curiter < FP_CONTENT(NLS)->maxiters - 1,
+                NLS->sunctx->logger, "end-iterations-list",
+                "status = continue");
+
+if the iteration should continue or
+
+.. code-block:: C
+
+   SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = success");
+
+if the solve was successful will close the active output dictionary in the
+iterations list and reactivate the output dictionary for the enclosing scope
+(i.e., the nonlinear solve region). If additional iterations are necessary, the
+logging line
+
+.. code-block:: C
+
+    SUNLogInfo(NLS->sunctx->logger, "begin-iterations-list", "");
+
+will append and activate a new output dictionary to the iterations list. This
+continues until the nonlinear solve is complete and a logging line such as
+
+.. code-block:: C
+
+   SUNLogInfo(CV_LOGGER, "end-nonlinear-solve", "status = success, iters = %li",
+              nni_inc);
+
+updates and closes the nonlinear solver output dictionary which reactivates the
+step attempt dictionary:
+
+.. code-block:: text
+
+   {
+     step : 1
+     tn : 0.0
+     h : 0.002
+     nonlinear-solve :
+     {
+       tol : 0.01
+       iterations :
+       [
+         {
+           cur-iter : 1
+           update-norm : 0.02
+           status : continue
+         }
+         {
+           cur-iter : 2
+           update-norm : 0.002
+           status : success
+         }
+       ]
+       status : success
+       iters : 2
+     }
+   }
+
+Finally, a logging call such as
+
+.. code-block:: C
+
+   SUNLogInfo(CV_LOGGER, "end-step-attempt",
+              "status = success, dsm = " SUN_FORMAT_G, dsm);
+
+closes the step attempt dictionary:
+
+.. code-block:: text
+
+   {
+     step : 1
+     tn : 0.0
+     h : 0.002
+     nonlinear-solve :
+     {
+       tol : 0.01
+       iterations :
+       [
+         {
+           cur-iter : 1
+           update-norm : 0.02
+           status : continue
+         }
+         {
+           cur-iter : 2
+           update-norm : 0.002
+           status : success
+         }
+       ]
+       status : success
+       iters : 2
+     }
+     status : success
+     dsm : 1.0e-3
+   }
+
+This processes then repeats for the next step attempt.
+
+.. _Style.Logging.Macros:
 
 Logging Macros
 ^^^^^^^^^^^^^^

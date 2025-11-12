@@ -410,7 +410,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
 
   SUNLogInfo(S->sunctx->logger, "linear-solver", "solver = pcg");
 
-  SUNLogInfo(S->sunctx->logger, "begin-linear-iterate", "");
+  SUNLogInfo(S->sunctx->logger, "begin-iterations-list", "");
 
   /* Set r to initial residual r_0 = b - A*x_0 */
   if (*zeroguess)
@@ -427,7 +427,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
       LASTFLAG(S) = (status < 0) ? SUNLS_ATIMES_FAIL_UNREC
                                  : SUNLS_ATIMES_FAIL_REC;
 
-      SUNLogInfo(S->sunctx->logger, "end-linear-iterate",
+      SUNLogInfo(S->sunctx->logger, "end-iterations-list",
                  "status = failed matvec");
 
       return (LASTFLAG(S));
@@ -457,7 +457,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
     LASTFLAG(S) = SUN_SUCCESS;
 
     SUNLogInfo(S->sunctx->logger,
-               "end-linear-iterate", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = success",
+               "end-iterations-list", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = success",
                *res_norm);
 
     return (LASTFLAG(S));
@@ -474,7 +474,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
                                  : SUNLS_PSOLVE_FAIL_REC;
 
       SUNLogInfo(S->sunctx->logger,
-                 "end-linear-iterate", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = failed preconditioner solve",
+                 "end-iterations-list", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = failed preconditioner solve",
                  *res_norm);
 
       return (LASTFLAG(S));
@@ -495,13 +495,13 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
   SUNCheckLastErr();
 
   SUNLogInfo(S->sunctx->logger,
-             "end-linear-iterate", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = continue",
+             "end-iterations-list", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = continue",
              *res_norm);
 
   /* Begin main iteration loop */
   for (l = 0; l < l_max; l++)
   {
-    SUNLogInfo(S->sunctx->logger, "begin-linear-iterate", "");
+    SUNLogInfo(S->sunctx->logger, "begin-iterations-list", "");
 
     /* increment counter */
     (*nli)++;
@@ -514,7 +514,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
       LASTFLAG(S) = (status < 0) ? SUNLS_ATIMES_FAIL_UNREC
                                  : SUNLS_ATIMES_FAIL_REC;
 
-      SUNLogInfo(S->sunctx->logger, "end-linear-iterate",
+      SUNLogInfo(S->sunctx->logger, "end-iterations-list",
                  "status = failed matvec");
 
       return (LASTFLAG(S));
@@ -578,7 +578,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
         LASTFLAG(S) = (status < 0) ? SUNLS_PSOLVE_FAIL_UNREC
                                    : SUNLS_PSOLVE_FAIL_REC;
 
-        SUNLogInfo(S->sunctx->logger, "end-linear-iterate",
+        SUNLogInfo(S->sunctx->logger, "end-iterations-list",
                    "status = failed preconditioner solve");
 
         return (LASTFLAG(S));
@@ -602,27 +602,27 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
     N_VLinearSum(ONE, z, beta, p, p);
     SUNCheckLastErr();
 
-    SUNLogInfo(S->sunctx->logger, "end-linear-iterate", "status = continue");
+    SUNLogInfo(S->sunctx->logger, "end-iterations-list", "status = continue");
   }
 
   /* Main loop finished, return with result */
   *zeroguess = SUNFALSE;
   if (converged == SUNTRUE)
   {
-    SUNLogInfo(S->sunctx->logger, "end-linear-iterate", "status = success");
+    SUNLogInfo(S->sunctx->logger, "end-iterations-list", "status = success");
 
     LASTFLAG(S) = SUN_SUCCESS;
   }
   else if (rho < r0_norm)
   {
-    SUNLogInfo(S->sunctx->logger, "end-linear-iterate",
+    SUNLogInfo(S->sunctx->logger, "end-iterations-list",
                "status = failed residual reduced");
 
     LASTFLAG(S) = SUNLS_RES_REDUCED;
   }
   else
   {
-    SUNLogInfo(S->sunctx->logger, "end-linear-iterate",
+    SUNLogInfo(S->sunctx->logger, "end-iterations-list",
                "status = failed max iterations");
 
     LASTFLAG(S) = SUNLS_CONV_FAIL;

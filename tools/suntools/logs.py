@@ -152,7 +152,7 @@ class StepData:
         self.parent_keys.append(key)
 
     def close_list(self):
-        """Deactivate a the active list"""
+        """Deactivate the active list"""
         tmp = self.container[-1].maps[0]
         self.container[-2][self.parent_keys[-1]].append(tmp)
         self.parent_keys.pop()
@@ -204,6 +204,12 @@ def log_file_to_list(filename):
                 continue
 
             label = line_dict["label"]
+            label_split = label.split("-")
+            list_or_dict = label_split[-1]
+            if list_or_dict == "list":
+                region_name = "-".join(label_split[1:-1])
+            else:
+                region_name = "-".join(label_split[1:])
 
             if label == "begin-step-attempt":
                 line_dict["payload"]["level"] = level
@@ -221,80 +227,6 @@ def log_file_to_list(filename):
                     step_attempts.append(s.get_step())
                 continue
 
-            if label == "begin-sequential-method":
-                s.open_list("sequential methods")
-                s.update(line_dict["payload"])
-                continue
-            elif label == "end-sequential-method":
-                s.update(line_dict["payload"])
-                s.close_list()
-                continue
-
-            if label == "begin-partition":
-                s.open_list("partitions")
-                s.update(line_dict["payload"])
-                partition += 1
-                continue
-            elif label == "end-partition":
-                s.update(line_dict["payload"])
-                s.close_list()
-                partition -= 1
-                continue
-
-            if label == "begin-nonlinear-solve":
-                s.open_dict("nonlinear-solve")
-                s.update(line_dict["payload"])
-                continue
-            elif label == "end-nonlinear-solve":
-                s.update(line_dict["payload"])
-                s.close_dict()
-                continue
-
-            if label == "begin-nonlinear-iterate":
-                s.open_list("iterations")
-                s.update(line_dict["payload"])
-                continue
-            elif label == "end-nonlinear-iterate":
-                s.update(line_dict["payload"])
-                s.close_list()
-                continue
-
-            if label == "begin-linear-solve":
-                s.open_dict("linear-solve")
-                s.update(line_dict["payload"])
-                continue
-            elif label == "end-linear-solve":
-                s.update(line_dict["payload"])
-                s.close_dict()
-                continue
-
-            if label == "begin-linear-iterate":
-                s.open_list("iterations")
-                s.update(line_dict["payload"])
-                continue
-            elif label == "end-linear-iterate":
-                s.update(line_dict["payload"])
-                s.close_list()
-                continue
-
-            if label == "begin-group":
-                s.open_list("groups")
-                s.update(line_dict["payload"])
-                continue
-            elif label == "end-group":
-                s.update(line_dict["payload"])
-                s.close_list()
-                continue
-
-            if label == "begin-stage":
-                s.open_list("stages")
-                s.update(line_dict["payload"])
-                continue
-            elif label == "end-stage":
-                s.update(line_dict["payload"])
-                s.close_list()
-                continue
-
             if label == "begin-fast-steps":
                 level += 1
                 continue
@@ -302,31 +234,30 @@ def log_file_to_list(filename):
                 level -= 1
                 continue
 
-            if label == "begin-mass-linear-solve":
-                s.open_dict("mass-linear-solve")
+            if label == "begin-partitions-list":
+                s.open_list("partitions")
                 s.update(line_dict["payload"])
+                partition += 1
                 continue
-            elif label == "end-mass-linear-solve":
+            elif label == "end-partitions-list":
                 s.update(line_dict["payload"])
-                s.close_dict()
-                continue
-
-            if label == "begin-compute-solution":
-                s.open_dict("compute-solution")
-                s.update(line_dict["payload"])
-                continue
-            elif label == "end-compute-solution":
-                s.update(line_dict["payload"])
-                s.close_dict()
+                s.close_list()
+                partition -= 1
                 continue
 
-            if label == "begin-compute-embedding":
-                s.open_dict("compute-embedding")
+            if label_split[0] == "begin":
+                if list_or_dict == "list":
+                    s.open_list(region_name)
+                else:
+                    s.open_dict(region_name)
                 s.update(line_dict["payload"])
                 continue
-            elif label == "end-compute-embedding":
+            elif label_split[0] == "end":
                 s.update(line_dict["payload"])
-                s.close_dict()
+                if list_or_dict == "list":
+                    s.close_list()
+                else:
+                    s.close_dict()
                 continue
 
             s.update(line_dict["payload"])
