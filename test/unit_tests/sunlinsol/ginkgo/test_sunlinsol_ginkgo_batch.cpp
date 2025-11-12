@@ -71,7 +71,7 @@ const std::unordered_map<std::string, int> matrix_types{{"csr", 0}, {"dense", 1}
 constexpr sunrealtype solve_tolerance =
   1000 * std::numeric_limits<sunrealtype>::epsilon();
 
-static void fill_matrix_data(gko::matrix_data<sunrealtype>& data)
+static void fill_matrix_data(gko::matrix_data<sunrealtype, sunindextype>& data)
 {
   auto num_rows = data.size[0];
   for (gko::size_type row = 0; row < num_rows; ++row)
@@ -243,7 +243,7 @@ int main(int argc, char* argv[])
                                              gko::remove_complex<sunrealtype>{
                                                matcond},
                                              distribution_real, engine)
-      : gko::matrix_data<sunrealtype>(matrix_dim);
+      : gko::matrix_data<sunrealtype, sunindextype>(matrix_dim);
 
   if (matcond <= 0) { fill_matrix_data(gko_matdata); }
 
