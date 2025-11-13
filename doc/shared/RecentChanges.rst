@@ -22,14 +22,18 @@ state was used to compute the step size reduction factor which could lead to an
 insufficient reduction in the step size or, when the prediction violates the
 constraints, an infinitely large step size in the next step attempt.
 
+In CVODES and IDA, added missing return flag names to
+:c:func:`CVodeGetReturnFlagName` and :c:func:`IDAGetReturnFlagName`,
+respectively.
+
+The interface to Ginkgo batched linear solvers has been updated to fix build
+errors when using 64-bit index types. Note, only the batched dense matrix in
+Ginkgo is currently compatible with 64-bit indexing (as of Ginkgo 1.10).
+
 The SPRKStep module now accounts for zero coefficients in the SPRK tables,
 eliminating extraneous function evaluations.
 
 A bug preventing a user supplied :c:func:`SUNStepper_ResetCheckpointIndex`
 function from being called was fixed.
-
-In CVODES and IDA, added missing return flag names to
-:c:func:`CVodeGetReturnFlagName` and :c:func:`IDAGetReturnFlagName`,
-respectively.
 
 **Deprecation Notices**
