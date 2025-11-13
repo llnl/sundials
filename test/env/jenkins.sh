@@ -219,15 +219,9 @@ fi
 
 if [ "$SUNDIALS_PRECISION" != "extended" ]; then
     if [ "$SUNDIALS_CUDA" == "ON" ]; then
-        if [ "$SUNDIALS_INDEX_SIZE" == "32" ]; then
-            export SUNDIALS_GINKGO=ON
-            export GINKGO_ROOT="$(spack location -i ginkgo@master +cuda)"
-            export GINKGO_BACKENDS="REF;OMP;CUDA"
-        else
-            export SUNDIALS_GINKGO=OFF
-            unset GINKGO_ROOT
-            unset GINKGO_BACKENDS
-        fi
+        export SUNDIALS_GINKGO=ON
+        export GINKGO_ROOT="$(spack location -i ginkgo@master +cuda)"
+        export GINKGO_BACKENDS="REF;OMP;CUDA"
     else
         export SUNDIALS_GINKGO=ON
         export GINKGO_ROOT="$(spack location -i ginkgo@master ~cuda)"

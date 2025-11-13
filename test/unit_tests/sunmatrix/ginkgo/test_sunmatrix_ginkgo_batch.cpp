@@ -50,8 +50,10 @@ using namespace sundials;
 using namespace sundials::ginkgo;
 
 using GkoDenseMat = gko::matrix::Dense<sunrealtype>;
-using GkoCsrMat   = gko::matrix::Csr<sunrealtype, sunindextype>;
-using GkoVecType  = GkoDenseMat;
+#ifdef SUNDIALS_INT32_T
+using GkoCsrMat = gko::matrix::Csr<sunrealtype, sunindextype>;
+#endif
+using GkoVecType = GkoDenseMat;
 
 bool using_csr_matrix_type   = false;
 bool using_dense_matrix_type = false;
@@ -137,11 +139,19 @@ int main(int argc, char* argv[])
   auto num_batches{static_cast<gko::size_type>(atol(argv[++argi]))};
 
   auto format{static_cast<int>(atoi(argv[++argi]))};
+#ifdef SUNDIALS_INT32_T
   if (format != 0 && format != 1)
   {
     std::cerr << "ERROR: format must be 0 (csr) or 1 (dense) \n";
     return 1;
   }
+#else
+  if (format != 1)
+  {
+    std::cerr << "ERROR: format must be 1 (dense) with 64-bit index types\n";
+    return 1;
+  }
+#endif
 
   if (format == 0) { using_csr_matrix_type = true; }
   else if (format == 1) { using_dense_matrix_type = true; }
@@ -200,6 +210,7 @@ int main(int argc, char* argv[])
   SUNMatrix Aref{SUNDenseMatrix(tot_rows, tot_cols, sunctx)};
   if (using_csr_matrix_type)
   {
+#ifdef SUNDIALS_INT32_T
     auto gko_matrix{GkoCsrMat::create(gko_exec, matrix_dim)};
     gko_matrix->read(gko_matdata);
     auto num_nnz     = gko_matrix->get_num_stored_elements();
@@ -252,6 +263,9 @@ int main(int argc, char* argv[])
                                                       sunctx);
     I = std::make_unique<BatchMatrix<GkoBatchCsrMat>>(std::move(gko_batch_ident),
                                                       sunctx);
+#else
+    return 1;
+#endif
   }
   else if (using_dense_matrix_type)
   {
@@ -338,6 +352,7 @@ int main(int argc, char* argv[])
  * --------------------------------------------------------------------*/
 static int check_matrix_csr(SUNMatrix A, SUNMatrix B, sunrealtype tol)
 {
+#ifdef SUNDIALS_INT32_T
   int failure{0};
   auto Amat{static_cast<BatchMatrix<GkoBatchCsrMat>*>(A->content)->GkoMtx()};
   auto Bmat{static_cast<BatchMatrix<GkoBatchCsrMat>*>(B->content)->GkoMtx()};
@@ -362,6 +377,9 @@ static int check_matrix_csr(SUNMatrix A, SUNMatrix B, sunrealtype tol)
   }
 
   return failure > 0;
+#else
+  return 1;
+#endif
 }
 
 static int check_matrix_dense(SUNMatrix A, SUNMatrix B, sunrealtype tol)
@@ -408,6 +426,7 @@ extern "C" int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
 
 static int check_matrix_entry_csr(SUNMatrix A, sunrealtype val, sunrealtype tol)
 {
+#ifdef SUNDIALS_INT32_T
   int failure{0};
   auto Amat{static_cast<BatchMatrix<GkoBatchCsrMat>*>(A->content)->GkoMtx()};
   auto Amat_ref = Amat->clone(Amat->get_executor()->get_master());
@@ -422,6 +441,9 @@ static int check_matrix_entry_csr(SUNMatrix A, sunrealtype val, sunrealtype tol)
   }
 
   return failure > 0;
+#else
+  return 1;
+#endif
 }
 
 static int check_matrix_entry_dense(SUNMatrix A, sunrealtype val, sunrealtype tol)
@@ -504,8 +526,12 @@ extern "C" sunbooleantype has_data(SUNMatrix A)
 {
   if (using_csr_matrix_type)
   {
+#ifdef SUNDIALS_INT32_T
     auto Amat{static_cast<BatchMatrix<GkoBatchCsrMat>*>(A->content)->GkoMtx()};
     return !(Amat->get_values() == NULL || Amat->get_num_batch_items() == 0);
+#else
+    return SUNFALSE;
+#endif
   }
   else if (using_dense_matrix_type)
   {
@@ -519,6 +545,7 @@ extern "C" sunbooleantype is_square(SUNMatrix A)
 {
   if (using_csr_matrix_type)
   {
+#ifdef SUNDIALS_INT32_T
     auto Amat{static_cast<BatchMatrix<GkoBatchCsrMat>*>(A->content)->GkoMtx()};
     if (Amat->get_size().get_common_size()[0] !=
         Amat->get_size().get_common_size()[1])
@@ -526,6 +553,9 @@ extern "C" sunbooleantype is_square(SUNMatrix A)
       return SUNFALSE;
     }
     return SUNTRUE;
+#else
+    return SUNFALSE;
+#endif
   }
   else if (using_dense_matrix_type)
   {
