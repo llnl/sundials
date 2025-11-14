@@ -579,15 +579,19 @@ public:
   // Static routines to create clones of the vector that are always managed
 
   static Vector<exec_space, memory_space, Kokkos::MemoryManaged>* Clone(
-    const Vector<exec_space, memory_space, Kokkos::MemoryManaged>& that_vector, SUNContext sunctx)
+    const Vector<exec_space, memory_space, Kokkos::MemoryManaged>& that_vector,
+    SUNContext sunctx)
   {
-    return new Vector<exec_space, memory_space, Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
+    return new Vector<exec_space, memory_space,
+                      Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
   }
 
-  static Vector<exec_space, memory_space, Kokkos::MemoryManaged> *Clone(
-    const Vector<exec_space, memory_space, Kokkos::MemoryUnmanaged>& that_vector, SUNContext sunctx)
+  static Vector<exec_space, memory_space, Kokkos::MemoryManaged>* Clone(
+    const Vector<exec_space, memory_space, Kokkos::MemoryUnmanaged>& that_vector,
+    SUNContext sunctx)
   {
-    return new Vector<exec_space, memory_space, Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
+    return new Vector<exec_space, memory_space,
+                      Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
   }
 
 private:
