@@ -334,9 +334,12 @@ SUNErrCode SUNAdaptController_Write_MRIHTol(SUNAdaptController C, FILE* fptr)
   SUNFunctionBegin(C->sunctx);
   SUNAssert(fptr, SUN_ERR_ARG_CORRUPT);
   fprintf(fptr, "Multirate H-Tol SUNAdaptController module:\n");
-  fprintf(fptr, "  inner_max_relch  = " SUN_FORMAT_G "\n", MRIHTOL_INNER_MAX_RELCH(C));
-  fprintf(fptr, "  inner_min_tolfac = " SUN_FORMAT_G "\n", MRIHTOL_INNER_MIN_TOLFAC(C));
-  fprintf(fptr, "  inner_max_tolfac = " SUN_FORMAT_G "\n", MRIHTOL_INNER_MAX_TOLFAC(C));
+  fprintf(fptr, "  inner_max_relch  = " SUN_FORMAT_G "\n",
+          MRIHTOL_INNER_MAX_RELCH(C));
+  fprintf(fptr, "  inner_min_tolfac = " SUN_FORMAT_G "\n",
+          MRIHTOL_INNER_MIN_TOLFAC(C));
+  fprintf(fptr, "  inner_max_tolfac = " SUN_FORMAT_G "\n",
+          MRIHTOL_INNER_MAX_TOLFAC(C));
   fprintf(fptr, "\nSlow step controller:\n");
   SUNCheckCall(SUNAdaptController_Write(MRIHTOL_CSLOW(C), fptr));
   fprintf(fptr, "\nFast tolerance controller:\n");

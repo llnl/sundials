@@ -1590,11 +1590,12 @@ int idaLsSolve(IDAMem IDA_mem, N_Vector b, N_Vector weight, N_Vector ycur,
   /* Interpret solver return value  */
   idals_mem->last_flag = retval;
 
-  SUNLogInfoIf(retval == SUN_SUCCESS, IDA_LOGGER, "end-linear-solve",
-               "status = success, iters = %i, p-solves = %i, res-norm = " SUN_FORMAT_G,
+  SUNLogInfoIf(retval == SUN_SUCCESS, IDA_LOGGER,
+               "end-linear-solve", "status = success, iters = %i, p-solves = %i, res-norm = " SUN_FORMAT_G,
                nli_inc, (int)(idals_mem->nps - nps_inc), resnorm);
-  SUNLogInfoIf(retval != SUN_SUCCESS, IDA_LOGGER,
-               "end-linear-solve", "status = failed, retval = %i, iters = %i, p-solves = %i, res-norm = " SUN_FORMAT_G,
+  SUNLogInfoIf(retval != SUN_SUCCESS, IDA_LOGGER, "end-linear-solve",
+               "status = failed, retval = %i, iters = %i, p-solves = %i, "
+               "res-norm = " SUN_FORMAT_G,
                retval, nli_inc, (int)(idals_mem->nps - nps_inc), resnorm);
 
   switch (retval)

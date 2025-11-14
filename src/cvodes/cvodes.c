@@ -7021,7 +7021,8 @@ static int cvNls(CVodeMem cv_mem, int nflag)
     if (flag > 0) { return (SUN_NLS_CONV_RECVR); }
   }
 
-  SUNLogInfo(CV_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G, cv_mem->cv_tq[4]);
+  SUNLogInfo(CV_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G,
+             cv_mem->cv_tq[4]);
 
   /* solve the nonlinear system */
   if (do_sensi_sim)
