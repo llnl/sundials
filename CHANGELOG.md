@@ -21,6 +21,8 @@ eliminating extraneous function evaluations.
 A bug preventing a user supplied `SUNStepper_ResetCheckpointIndex` function from
 being called was fixed.
 
+The Kokkos N_Vector now properly handles unmanaged views.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.5.0
