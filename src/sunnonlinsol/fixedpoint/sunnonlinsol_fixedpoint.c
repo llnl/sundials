@@ -247,8 +247,8 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
                                     FP_CONTENT(NLS)->ctest_data);
 
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
-               "cur-iter = %d, update-norm = %.16g", FP_CONTENT(NLS)->niters,
-               N_VWrmsNorm(delta, w));
+               "cur-iter = %d, update-norm = " SUN_FORMAT_G,
+               FP_CONTENT(NLS)->niters, N_VWrmsNorm(delta, w));
 
     /* return if successful */
     if (retval == 0)

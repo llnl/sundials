@@ -137,7 +137,7 @@ SUNErrCode SUNAdjointCheckpointScheme_InsertVector_Fixed(
   SUNCheckCall(SUNDataNode_SetDataNvector(solution_node, y, t));
 
   SUNLogExtraDebug(SUNCTX_->logger, "insert-stage",
-                   "step_num = %d, stage_num = %d, t = %g", step_num, stage_num,
+                   "step_num = %d, stage_num = %d, t = " SUN_FORMAT_G, step_num, stage_num,
                    t);
   SUNCheckCall(SUNDataNode_AddChild(step_data_node, solution_node));
 
@@ -237,7 +237,7 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector_Fixed(
 
   SUNCheckCall(SUNDataNode_GetDataNvector(solution_node, *yout, tout));
   SUNLogExtraDebug(SUNCTX_->logger, "stage-loaded",
-                   "step_num = %d, stage_num = %d, t = %g", step_num, stage_num,
+                   "step_num = %d, stage_num = %d, t = " SUN_FORMAT_G, step_num, stage_num,
                    *tout);
 
   /* Cleanup the checkpoint memory if need be */
