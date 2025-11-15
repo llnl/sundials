@@ -489,13 +489,13 @@ void KINFreeOrth(KINMem kin_mem);
 #define INFO_FNORM  "fnorm(L2) = " SUN_FORMAT_E
 #define INFO_LAM                                                  \
   "min_lam = " SUN_FORMAT_E ", f1norm = " SUN_FORMAT_E ", pnorm " \
-                                                       "= " SUN_FORMAT_E
+  "= " SUN_FORMAT_E
 #define INFO_ALPHA                                   \
   "fnorm = " SUN_FORMAT_E ", f1norm = " SUN_FORMAT_E \
   ", alpha_cond = " SUN_FORMAT_E ", lam = " SUN_FORMAT_E
 #define INFO_BETA                                                 \
   "f1norm = " SUN_FORMAT_E ", beta_cond = " SUN_FORMAT_E ", lam " \
-                                                         "= " SUN_FORMAT_E
+  "= " SUN_FORMAT_E
 #define INFO_ALPHABETA                                    \
   "f1norm = " SUN_FORMAT_E ", alpha_cond = " SUN_FORMAT_E \
   ", beta_cond = " SUN_FORMAT_E ", lam = " SUN_FORMAT_E
