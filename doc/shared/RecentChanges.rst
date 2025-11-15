@@ -7,11 +7,11 @@
 
 **Bug Fixes**
 
-On the initial time step, ARKODE and CVODE(S) will now return ``ARK_TOO_CLOSE``
-or ``CV_TOO_COLSE``, respectively, when the requested output time is the same as
-the initial time (or within numerical roundoff of the initial time) with a
-user-supplied initial step size. Before a ``TOO_CLOSE`` error would only be
-returned when internally estimating the initial step size. In IDA(S), added a
+On the initial time step with a user-supplied initial step size, ARKODE and
+CVODE(S) will now return ``ARK_TOO_CLOSE`` or ``CV_TOO_CLOSE``, respectively,
+when the requested output time is the same as the initial time (or within
+numerical roundoff of the initial time). Before a ``TOO_CLOSE`` error would only
+be returned when internally estimating the initial step size. In IDA(S), added a
 ``IDA_TOO_CLOSE`` return value for when the initial and output time are too
 close. Previously, IDA(S) would return ``IDA_ILL_INPUT``.
 
