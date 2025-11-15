@@ -36,4 +36,8 @@ eliminating extraneous function evaluations.
 A bug preventing a user supplied :c:func:`SUNStepper_ResetCheckpointIndex`
 function from being called was fixed.
 
+The Kokkos N_Vector now properly handles unmanaged views. Previously, if a
+Kokkos ``N_Vector`` was created from an unmanaged view, the view would become a
+managed view and the data would be freed unexpectedly.
+
 **Deprecation Notices**
