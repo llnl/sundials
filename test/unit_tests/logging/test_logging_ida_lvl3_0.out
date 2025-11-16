@@ -8,26 +8,26 @@ Using GMRES iterative linear solver
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
-[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.02333452377915607
+[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.0233345237791561
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 66691.82847592614, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 66691.8284759261, status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 46.95867102658294
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 46.9586710265829
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 1.616555100562898e-11
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 1.6165551005629e-11
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
-[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 1.616555100562898e-11
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 47.11440252190049
+[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 1.6165551005629e-11
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 47.1144025219005
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
-[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.02333452377915607
+[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.0233345237791561
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 0.002535603149750046, status = success
-[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0.002535603149750046
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.001792942181586226
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 0.00253560314975005, status = success
+[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 0.00253560314975005
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.00179294218158623
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [INFO][rank 0][IDAStep][end-step-attempt] status = failed error test, dsm = 23.5578942788034, kflag = 20
@@ -35,26 +35,26 @@ Using GMRES iterative linear solver
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
-[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.02333452377915607
+[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.0233345237791561
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 16667.76487850195, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 16667.7648785019, status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 2.935430959038331
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 2.93543095903833
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 4.927495525463239e-12
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 4.92749552546324e-12
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
-[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 4.927495525463239e-12
+[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 4.92749552546324e-12
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 2.94575020235945
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
-[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.02333452377915607
+[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.0233345237791561
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 1.392019618041086e-05, status = success
-[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 1.392019618041086e-05
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 9.843065114615596e-06
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 1.39201961804109e-05, status = success
+[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 1.39201961804109e-05
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 9.8430651146156e-06
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [INFO][rank 0][IDAStep][end-step-attempt] status = failed error test, dsm = 1.47287906618417, kflag = 20
@@ -62,26 +62,26 @@ Using GMRES iterative linear solver
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
-[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.02333452377915607
+[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.0233345237791561
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 4166.567910172532, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 4166.56791017253, status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.1834724280998176
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.183472428099818
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 1.928892842056602e-14
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 1.9288928420566e-14
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
-[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 1.928892842056602e-14
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.1841265970496903
+[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 1.9288928420566e-14
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.18412659704969
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
-[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.02333452377915607
+[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.0233345237791561
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 2.652857600555803e-07, status = success
-[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 2.652857600555803e-07
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 1.875853598875282e-07
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 2.6528576005558e-07, status = success
+[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, res-norm = 2.6528576005558e-07
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 1.87585359887528e-07
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.0920633747821273
@@ -90,18 +90,18 @@ Using GMRES iterative linear solver
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
-[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.02333452377915607
+[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.0233345237791561
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 8333.376916946092, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 8333.37691694609, status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.7338673377551882
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.733867337755188
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 3.189342023043572e-12
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 3.18934202304357e-12
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
-[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 3.189342023043572e-12
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.7364827514991518
+[INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 3.18934202304357e-12
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.736482751499152
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 1
 [INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.490988500999434
@@ -110,18 +110,18 @@ Using GMRES iterative linear solver
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
 [INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-solver] solver = Newton
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
-[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.02333452377915607
+[INFO][rank 0][idaLsSolve][begin-linear-solve] iterative = 1, res-tol = 0.0233345237791561
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-solver] solver = spgmr
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 8333.354402951227, status = continue
+[INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] cur-iter = 0, total-iters = 0, res-norm = 8333.35440295123, status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
-[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.7338444173105051
+[INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 1, total-iters = 1, res-norm = 0.733844417310505
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = continue
 [INFO][rank 0][SUNLinSolSolve_SPGMR][begin-iterations-list] 
 [INFO][rank 0][SUNLinSolSolve_SPGMR][linear-iterate] cur-iter = 2, total-iters = 2, res-norm = 2.21216303720036e-12
 [INFO][rank 0][SUNLinSolSolve_SPGMR][end-iterations-list] status = success
 [INFO][rank 0][idaLsSolve][end-linear-solve] status = success, iters = 2, p-solves = 0, res-norm = 2.21216303720036e-12
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.7364815287607778
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 0.736481528760778
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 1
 [INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.368240764380389
