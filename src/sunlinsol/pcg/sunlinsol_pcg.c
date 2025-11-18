@@ -456,8 +456,9 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
     *zeroguess  = SUNFALSE;
     LASTFLAG(S) = SUN_SUCCESS;
 
-    SUNLogInfo(S->sunctx->logger,
-               "end-iterations-list", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = success",
+    SUNLogInfo(S->sunctx->logger, "end-iterations-list",
+               "cur-iter = 0, total-iters = 0, res-norm = " SUN_FORMAT_G
+               ", status = success",
                *res_norm);
 
     return (LASTFLAG(S));
@@ -473,8 +474,9 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
       LASTFLAG(S) = (status < 0) ? SUNLS_PSOLVE_FAIL_UNREC
                                  : SUNLS_PSOLVE_FAIL_REC;
 
-      SUNLogInfo(S->sunctx->logger,
-                 "end-iterations-list", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = failed preconditioner solve",
+      SUNLogInfo(S->sunctx->logger, "end-iterations-list",
+                 "cur-iter = 0, total-iters = 0, res-norm = " SUN_FORMAT_G
+                 ", status = failed preconditioner solve",
                  *res_norm);
 
       return (LASTFLAG(S));
@@ -494,8 +496,9 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
   N_VScale(ONE, z, p);
   SUNCheckLastErr();
 
-  SUNLogInfo(S->sunctx->logger,
-             "end-iterations-list", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = continue",
+  SUNLogInfo(S->sunctx->logger, "end-iterations-list",
+             "cur-iter = 0, total-iters = 0, res-norm = " SUN_FORMAT_G
+             ", status = continue",
              *res_norm);
 
   /* Begin main iteration loop */
@@ -557,7 +560,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
     *res_norm = rho = SUNRsqrt(rho);
 
     SUNLogInfo(S->sunctx->logger, "linear-iterate",
-               "cur-iter = %i, res-norm = %.16g", *nli, *res_norm);
+               "cur-iter = %i, res-norm = " SUN_FORMAT_G, *nli, *res_norm);
 
     if (rho <= delta)
     {

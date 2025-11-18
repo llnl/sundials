@@ -588,15 +588,17 @@ int SUNLinSolSolve_SPFGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     *zeroguess  = SUNFALSE;
     LASTFLAG(S) = SUN_SUCCESS;
 
-    SUNLogInfo(S->sunctx->logger,
-               "end-iterations-list", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = success",
+    SUNLogInfo(S->sunctx->logger, "end-iterations-list",
+               "cur-iter = 0, total-iters = 0, res-norm = " SUN_FORMAT_G
+               ", status = success",
                *res_norm);
 
     return (LASTFLAG(S));
   }
 
-  SUNLogInfo(S->sunctx->logger,
-             "end-iterations-list", "cur-iter = 0, total-iters = 0, res-norm = %.16g, status = continue",
+  SUNLogInfo(S->sunctx->logger, "end-iterations-list",
+             "cur-iter = 0, total-iters = 0, res-norm = " SUN_FORMAT_G
+             ", status = continue",
              *res_norm);
 
   /* Initialize rho to avoid compiler warning message */
@@ -712,8 +714,8 @@ int SUNLinSolSolve_SPFGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
       *res_norm = rho = SUNRabs(rotation_product * r_norm);
 
       SUNLogInfo(S->sunctx->logger, "linear-iterate",
-                 "cur-iter = %i, total-iters = %i, res-norm = %.16g", l + 1,
-                 *nli, *res_norm);
+                 "cur-iter = %i, total-iters = %i, res-norm = " SUN_FORMAT_G,
+                 l + 1, *nli, *res_norm);
 
       if (rho <= delta)
       {

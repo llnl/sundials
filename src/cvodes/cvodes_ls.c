@@ -1771,7 +1771,8 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
     bnorm  = N_VWrmsNorm(b, weight);
 
     SUNLogInfo(CV_LOGGER, "begin-linear-solve",
-               "iterative = 1, b-norm = %.16g, b-tol = %.16g, res-tol = %.16g",
+               "iterative = 1, b-norm = " SUN_FORMAT_G ", b-tol = " SUN_FORMAT_G
+               ", res-tol = " SUN_FORMAT_G,
                bnorm, deltar, deltar * cvls_mem->nrmfac);
 
     if (bnorm <= deltar)
@@ -1898,11 +1899,12 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
   /* Interpret solver return value  */
   cvls_mem->last_flag = retval;
 
-  SUNLogInfoIf(retval == SUN_SUCCESS, CV_LOGGER, "end-linear-solve",
-               "status = success, iters = %i, p-solves = %i, res-norm = %.16g",
+  SUNLogInfoIf(retval == SUN_SUCCESS, CV_LOGGER,
+               "end-linear-solve", "status = success, iters = %i, p-solves = %i, res-norm = " SUN_FORMAT_G,
                nli_inc, (int)(cvls_mem->nps - nps_inc), resnorm);
-  SUNLogInfoIf(retval != SUN_SUCCESS, CV_LOGGER,
-               "end-linear-solve", "status = failed, retval = %i, iters = %i, p-solves = %i, res-norm = %.16g",
+  SUNLogInfoIf(retval != SUN_SUCCESS, CV_LOGGER, "end-linear-solve",
+               "status = failed, retval = %i, iters = %i, p-solves = %i, "
+               "res-norm = " SUN_FORMAT_G,
                retval, nli_inc, (int)(cvls_mem->nps - nps_inc), resnorm);
 
   switch (retval)

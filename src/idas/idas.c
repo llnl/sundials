@@ -6037,8 +6037,9 @@ static int IDAStep(IDAMem IDA_mem)
                                &(IDA_mem->ida_ncfnQ), &ncf,
                                &(IDA_mem->ida_netfQ), &nef);
 
-        SUNLogInfoIf(nflag == ERROR_TEST_FAIL, IDA_LOGGER,
-                     "end-step-attempt", "status = failed quad error test, dsmQ = %.16g, kflag = %i",
+        SUNLogInfoIf(nflag == ERROR_TEST_FAIL, IDA_LOGGER, "end-step-attempt",
+                     "status = failed quad error test, dsmQ = " SUN_FORMAT_G
+                     ", kflag = %i",
                      ck * err_k / IDA_mem->ida_sigma[IDA_mem->ida_kk], kflag);
 
         SUNLogInfoIf(nflag != ERROR_TEST_FAIL && kflag != IDA_SUCCESS,
@@ -6093,8 +6094,9 @@ static int IDAStep(IDAMem IDA_mem)
                                &(IDA_mem->ida_ncfnQ), &ncf,
                                &(IDA_mem->ida_netfQ), &nef);
 
-        SUNLogInfoIf(nflag == ERROR_TEST_FAIL, IDA_LOGGER,
-                     "end-step-attempt", "status = failed sens error test, dsmS = %.16g, kflag = %i",
+        SUNLogInfoIf(nflag == ERROR_TEST_FAIL, IDA_LOGGER, "end-step-attempt",
+                     "status = failed sens error test, dsmS = " SUN_FORMAT_G
+                     ", kflag = %i",
                      ck * err_k / IDA_mem->ida_sigma[IDA_mem->ida_kk], kflag);
 
         SUNLogInfoIf(nflag != ERROR_TEST_FAIL && kflag != IDA_SUCCESS,
@@ -6132,8 +6134,9 @@ static int IDAStep(IDAMem IDA_mem)
                                &(IDA_mem->ida_ncfnQ), &ncf,
                                &(IDA_mem->ida_netfQ), &nef);
 
-        SUNLogInfoIf(nflag == ERROR_TEST_FAIL, IDA_LOGGER,
-                     "end-step-attempt", "status = failed quad sens error test, dsmQS = %.16g, kflag = %i",
+        SUNLogInfoIf(nflag == ERROR_TEST_FAIL, IDA_LOGGER, "end-step-attempt",
+                     "status = failed quad sens error test, dsmQS "
+                     "= " SUN_FORMAT_G ", kflag = %i",
                      ck * err_k / IDA_mem->ida_sigma[IDA_mem->ida_kk], kflag);
 
         SUNLogInfoIf(nflag != ERROR_TEST_FAIL && kflag != IDA_SUCCESS,
@@ -6398,7 +6401,7 @@ static int IDANls(IDAMem IDA_mem)
     if (retval > 0) { return (IDA_NLS_SETUP_RECVR); }
   }
 
-  SUNLogInfo(IDA_LOGGER, "begin-nonlinear-solve", "tol = %.16g",
+  SUNLogInfo(IDA_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G,
              IDA_mem->ida_epsNewt);
 
   /* solve the nonlinear system */
