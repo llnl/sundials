@@ -5195,7 +5195,7 @@ static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout)
   int ier;
   sunbooleantype conOK;
 
-  /* Is tout is too close to tn? */
+  /* Is tout too close to tn? */
   sunrealtype tdist  = SUNRabs(tout - cv_mem->cv_tn);
   sunrealtype tround = cv_mem->cv_uround *
                        SUNMAX(SUNRabs(cv_mem->cv_tn), SUNRabs(tout));
