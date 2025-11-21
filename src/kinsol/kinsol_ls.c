@@ -1249,6 +1249,13 @@ int kinLsSolve(KINMem kin_mem, N_Vector xx, N_Vector bb, sunrealtype* sJpnorm,
   if (kinls_mem->iterative)
   {
     KINPrintInfo(kin_mem, PRNT_NLI, "KINLS", __func__, INFO_NLI, nli_inc);
+
+    if (kinls_mem->LS->ops->resnorm)
+    {
+      sunrealtype res_norm = SUNLinSolResNorm(kinls_mem->LS);
+      KINPrintInfo(kin_mem, PRNT_EPS, "KINLS", __func__, INFO_EPS, res_norm,
+                   kin_mem->kin_eps);
+    }
   }
 #endif
 
@@ -1328,19 +1335,6 @@ int kinLsSolve(KINMem kin_mem, N_Vector xx, N_Vector bb, sunrealtype* sJpnorm,
       *sFdotJp = N_VDotProd(kin_mem->kin_fval, bb);
     }
   }
-
-#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
-  if (kin_mem->kin_inexact_ls)
-  {
-    sunrealtype res_norm = ZERO;
-    if (kinls_mem->LS->ops->resnorm)
-    {
-      res_norm = SUNLinSolResNorm(kinls_mem->LS);
-    }
-    KINPrintInfo(kin_mem, PRNT_EPS, "KINLS", __func__, INFO_EPS, res_norm,
-                 kin_mem->kin_eps);
-  }
-#endif
 
   return (0);
 }
