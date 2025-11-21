@@ -234,7 +234,7 @@ int main(void)
 
   /* Initialize sparse matrix data structure and KLU solver */
   NNZ = 5 * NEQ;
-  A   = SUNSparseMatrix(NEQ, NEQ, NNZ, CSC_MAT, ctx);
+  A   = SUNSparseMatrix(NEQ, NEQ, NNZ, SUN_CSC_MAT, ctx);
   if (check_flag((void*)A, "SUNSparseMatrix", 0)) { return 1; }
 
   LS = SUNLinSol_KLU(y, A, ctx);
@@ -445,7 +445,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   {
     udata->R = SUNSparseMatrix(SUNSparseMatrix_Rows(J),
                                SUNSparseMatrix_Columns(J),
-                               SUNSparseMatrix_NNZ(J), CSC_MAT, J->sunctx);
+                               SUNSparseMatrix_NNZ(J), SUN_CSC_MAT, J->sunctx);
     if (udata->R == NULL)
     {
       printf("Jacobian calculation error in allocating R matrix!\n");

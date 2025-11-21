@@ -29,7 +29,7 @@ module farkode_lsrkstep_mod
  private
 
  ! DECLARATION CONSTRUCTS
- ! typedef enum ARKODE_LSRKMethodType
+ ! enum ARKODE_LSRKMethodType
  enum, bind(c)
   enumerator :: ARKODE_LSRK_RKC_2
   enumerator :: ARKODE_LSRK_RKL_2

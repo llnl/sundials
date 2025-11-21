@@ -56,7 +56,7 @@ contains
     !===== Calls to interface =====
 
     ! constructor
-    A => FSUNSparseMatrix(N, N, N*N, CSR_MAT, sunctx)
+    A => FSUNSparseMatrix(N, N, N*N, SUN_CSR_MAT, sunctx)
     if (.not. associated(A)) then
       print *, '>>> FAILED - ERROR in FSUNSparseMatrix; halting'
       stop 1
@@ -130,8 +130,8 @@ contains
     end do
 
     ! create sparse versions of A and I
-    A => FSUNSparseFromDenseMatrix(DA, ZERO, CSR_MAT)
-    I => FSUNSparseFromDenseMatrix(DI, ZERO, CSR_MAT)
+    A => FSUNSparseFromDenseMatrix(DA, ZERO, SUN_CSR_MAT)
+    I => FSUNSparseFromDenseMatrix(DI, ZERO, SUN_CSR_MAT)
 
     ! create vectors
     x => FN_VNew_Serial(N, sunctx)

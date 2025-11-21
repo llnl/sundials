@@ -236,6 +236,7 @@ enum {
 
 
 #include "arkode/arkode_mristep.h"
+#include "arkode/arkode_mristep_deprecated.h"
 
 
 typedef struct {

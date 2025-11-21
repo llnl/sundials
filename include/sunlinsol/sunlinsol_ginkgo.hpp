@@ -248,16 +248,19 @@ public:
   ~LinearSolver() override = default;
 
   /// Implicit conversion to a :c:type:`SUNLinearSolver`
-  operator SUNLinearSolver() override { return sunlinsol_.get(); }
+  operator SUNLinearSolver() noexcept override { return sunlinsol_.get(); }
 
   /// Implicit conversion to a :c:type:`SUNLinearSolver`
-  operator SUNLinearSolver() const override { return sunlinsol_.get(); }
+  operator SUNLinearSolver() const noexcept override
+  {
+    return sunlinsol_.get();
+  }
 
   /// Explicit conversion to a :c:type:`SUNLinearSolver`
-  SUNLinearSolver Convert() override { return sunlinsol_.get(); }
+  SUNLinearSolver get() noexcept override { return sunlinsol_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNLinearSolver`
-  SUNLinearSolver Convert() const override { return sunlinsol_.get(); }
+  SUNLinearSolver get() const noexcept override { return sunlinsol_.get(); }
 
   /// Get the ``gko::Executor`` associated with the Ginkgo solver
   std::shared_ptr<const gko::Executor> GkoExec() const

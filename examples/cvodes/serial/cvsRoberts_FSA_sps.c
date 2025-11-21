@@ -207,7 +207,7 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeSetUserData", 1)) { return (1); }
 
   /* Create sparse SUNMatrix for use in linear solves */
-  A = SUNSparseMatrix(NEQ, NEQ, NNZ, CSC_MAT, sunctx);
+  A = SUNSparseMatrix(NEQ, NEQ, NNZ, SUN_CSC_MAT, sunctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create SuperLUMT solver object for use by CVode (one thread) */

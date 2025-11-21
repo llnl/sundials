@@ -270,6 +270,7 @@ module fcvodes_mod
  public :: FCVodeSetNonlinearSolverB
  public :: FCVodeGetB
  public :: FCVodeGetQuadB
+ public :: FCVodeGetUserDataB
  public :: FCVodeGetAdjCVodeBmem
  public :: FCVodeGetAdjY
 
@@ -2022,6 +2023,16 @@ type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
 end function
 
+function swigc_FCVodeGetUserDataB(farg1, farg2, farg3) &
+bind(C, name="_wrap_FCVodeGetUserDataB") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT), intent(in) :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
 function swigc_FCVodeGetAdjCVodeBmem(farg1, farg2) &
 bind(C, name="_wrap_FCVodeGetAdjCVodeBmem") &
 result(fresult)
@@ -2830,14 +2841,14 @@ fresult = swigc_FCVodeReInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeResizeHistory(cvode_mem, t_hist, y_hist, f_hist, num_y_hist, num_f_hist) &
+function FCVodeResizeHistory(cvode_mem, t_hist_1d, y_hist_1d, f_hist_1d, num_y_hist, num_f_hist) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-real(C_DOUBLE), dimension(*), target, intent(inout) :: t_hist
-type(C_PTR) :: y_hist
-type(C_PTR) :: f_hist
+real(C_DOUBLE), dimension(*), target, intent(inout) :: t_hist_1d
+type(C_PTR) :: y_hist_1d
+type(C_PTR) :: f_hist_1d
 integer(C_INT), intent(in) :: num_y_hist
 integer(C_INT), intent(in) :: num_f_hist
 integer(C_INT) :: fresult 
@@ -2849,9 +2860,9 @@ integer(C_INT) :: farg5
 integer(C_INT) :: farg6 
 
 farg1 = cvode_mem
-farg2 = c_loc(t_hist(1))
-farg3 = y_hist
-farg4 = f_hist
+farg2 = c_loc(t_hist_1d(1))
+farg3 = y_hist_1d
+farg4 = f_hist_1d
 farg5 = num_y_hist
 farg6 = num_f_hist
 fresult = swigc_FCVodeResizeHistory(farg1, farg2, farg3, farg4, farg5, farg6)
@@ -3516,21 +3527,21 @@ fresult = swigc_FCVodeComputeState(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeComputeStateSens(cvode_mem, yscor, ys) &
+function FCVodeComputeStateSens(cvode_mem, yscor_1d, ys_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(C_PTR) :: yscor
-type(C_PTR) :: ys
+type(C_PTR) :: yscor_1d
+type(C_PTR) :: ys_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = cvode_mem
-farg2 = yscor
-farg3 = ys
+farg2 = yscor_1d
+farg3 = ys_1d
 fresult = swigc_FCVodeComputeStateSens(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -3790,18 +3801,18 @@ fresult = swigc_FCVodeGetCurrentState(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetCurrentStateSens(cvode_mem, ys) &
+function FCVodeGetCurrentStateSens(cvode_mem, ys_1d_out) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(C_PTR), target, intent(inout) :: ys
+type(C_PTR), target, intent(inout) :: ys_1d_out
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(ys)
+farg2 = c_loc(ys_1d_out)
 fresult = swigc_FCVodeGetCurrentStateSens(farg1, farg2)
 swig_result = fresult
 end function
@@ -3998,17 +4009,17 @@ fresult = swigc_FCVodeGetNonlinearSystemData(farg1, farg2, farg3, farg4, farg5, 
 swig_result = fresult
 end function
 
-function FCVodeGetNonlinearSystemDataSens(cvode_mem, tcur, yspred, ysn, gamma, rl1, zn1, user_data) &
+function FCVodeGetNonlinearSystemDataSens(cvode_mem, tcur, yspred_1d_out, ysn_1d_out, gamma, rl1, zn1_1d_out, user_data) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tcur
-type(C_PTR), target, intent(inout) :: yspred
-type(C_PTR), target, intent(inout) :: ysn
+type(C_PTR), target, intent(inout) :: yspred_1d_out
+type(C_PTR), target, intent(inout) :: ysn_1d_out
 real(C_DOUBLE), dimension(*), target, intent(inout) :: gamma
 real(C_DOUBLE), dimension(*), target, intent(inout) :: rl1
-type(C_PTR), target, intent(inout) :: zn1
+type(C_PTR), target, intent(inout) :: zn1_1d_out
 type(C_PTR), target, intent(inout) :: user_data
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
@@ -4022,11 +4033,11 @@ type(C_PTR) :: farg8
 
 farg1 = cvode_mem
 farg2 = c_loc(tcur(1))
-farg3 = c_loc(yspred)
-farg4 = c_loc(ysn)
+farg3 = c_loc(yspred_1d_out)
+farg4 = c_loc(ysn_1d_out)
 farg5 = c_loc(gamma(1))
 farg6 = c_loc(rl1(1))
-farg7 = c_loc(zn1)
+farg7 = c_loc(zn1_1d_out)
 farg8 = c_loc(user_data)
 fresult = swigc_FCVodeGetNonlinearSystemDataSens(farg1, farg2, farg3, farg4, farg5, farg6, farg7, farg8)
 swig_result = fresult
@@ -4393,7 +4404,7 @@ farg1 = cvode_mem
 call swigc_FCVodeQuadFree(farg1)
 end subroutine
 
-function FCVodeSensInit(cvode_mem, ns, ism, fs, ys0) &
+function FCVodeSensInit(cvode_mem, ns, ism, fs, ys0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -4401,7 +4412,7 @@ type(C_PTR) :: cvode_mem
 integer(C_INT), intent(in) :: ns
 integer(C_INT), intent(in) :: ism
 type(C_FUNPTR), intent(in), value :: fs
-type(C_PTR) :: ys0
+type(C_PTR) :: ys0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
@@ -4413,12 +4424,12 @@ farg1 = cvode_mem
 farg2 = ns
 farg3 = ism
 farg4 = fs
-farg5 = ys0
+farg5 = ys0_1d
 fresult = swigc_FCVodeSensInit(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
 
-function FCVodeSensInit1(cvode_mem, ns, ism, fs1, ys0) &
+function FCVodeSensInit1(cvode_mem, ns, ism, fs1, ys0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -4426,7 +4437,7 @@ type(C_PTR) :: cvode_mem
 integer(C_INT), intent(in) :: ns
 integer(C_INT), intent(in) :: ism
 type(C_FUNPTR), intent(in), value :: fs1
-type(C_PTR) :: ys0
+type(C_PTR) :: ys0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
@@ -4438,18 +4449,18 @@ farg1 = cvode_mem
 farg2 = ns
 farg3 = ism
 farg4 = fs1
-farg5 = ys0
+farg5 = ys0_1d
 fresult = swigc_FCVodeSensInit1(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
 
-function FCVodeSensReInit(cvode_mem, ism, ys0) &
+function FCVodeSensReInit(cvode_mem, ism, ys0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 integer(C_INT), intent(in) :: ism
-type(C_PTR) :: ys0
+type(C_PTR) :: ys0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
@@ -4457,18 +4468,18 @@ type(C_PTR) :: farg3
 
 farg1 = cvode_mem
 farg2 = ism
-farg3 = ys0
+farg3 = ys0_1d
 fresult = swigc_FCVodeSensReInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeSensSStolerances(cvode_mem, reltols, abstols) &
+function FCVodeSensSStolerances(cvode_mem, reltols, abstols_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: reltols
-real(C_DOUBLE), dimension(*), target, intent(inout) :: abstols
+real(C_DOUBLE), dimension(*), target, intent(inout) :: abstols_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4476,18 +4487,18 @@ type(C_PTR) :: farg3
 
 farg1 = cvode_mem
 farg2 = reltols
-farg3 = c_loc(abstols(1))
+farg3 = c_loc(abstols_1d(1))
 fresult = swigc_FCVodeSensSStolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeSensSVtolerances(cvode_mem, reltols, abstols) &
+function FCVodeSensSVtolerances(cvode_mem, reltols, abstols_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: reltols
-type(C_PTR) :: abstols
+type(C_PTR) :: abstols_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4495,7 +4506,7 @@ type(C_PTR) :: farg3
 
 farg1 = cvode_mem
 farg2 = reltols
-farg3 = abstols
+farg3 = abstols_1d
 fresult = swigc_FCVodeSensSVtolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4564,14 +4575,14 @@ fresult = swigc_FCVodeSetSensMaxNonlinIters(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeSetSensParams(cvode_mem, p, pbar, plist) &
+function FCVodeSetSensParams(cvode_mem, p_1d, pbar_1d, plist_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-real(C_DOUBLE), dimension(*), target, intent(inout) :: p
-real(C_DOUBLE), dimension(*), target, intent(inout) :: pbar
-integer(C_INT), dimension(*), target, intent(inout) :: plist
+real(C_DOUBLE), dimension(*), target, intent(inout) :: p_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: pbar_1d
+integer(C_INT), dimension(*), target, intent(inout) :: plist_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4579,9 +4590,9 @@ type(C_PTR) :: farg3
 type(C_PTR) :: farg4 
 
 farg1 = cvode_mem
-farg2 = c_loc(p(1))
-farg3 = c_loc(pbar(1))
-farg4 = c_loc(plist(1))
+farg2 = c_loc(p_1d(1))
+farg3 = c_loc(pbar_1d(1))
+farg4 = c_loc(plist_1d(1))
 fresult = swigc_FCVodeSetSensParams(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -4647,13 +4658,13 @@ fresult = swigc_FCVodeSensToggleOff(farg1)
 swig_result = fresult
 end function
 
-function FCVodeGetSens(cvode_mem, tret, ysout) &
+function FCVodeGetSens(cvode_mem, tret, ysout_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
-type(C_PTR) :: ysout
+type(C_PTR) :: ysout_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4661,7 +4672,7 @@ type(C_PTR) :: farg3
 
 farg1 = cvode_mem
 farg2 = c_loc(tret(1))
-farg3 = ysout
+farg3 = ysout_1d
 fresult = swigc_FCVodeGetSens(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4688,14 +4699,14 @@ fresult = swigc_FCVodeGetSens1(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FCVodeGetSensDky(cvode_mem, t, k, dkya) &
+function FCVodeGetSensDky(cvode_mem, t, k, dkya_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: t
 integer(C_INT), intent(in) :: k
-type(C_PTR) :: dkya
+type(C_PTR) :: dkya_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4705,7 +4716,7 @@ type(C_PTR) :: farg4
 farg1 = cvode_mem
 farg2 = t
 farg3 = k
-farg4 = dkya
+farg4 = dkya_1d
 fresult = swigc_FCVodeGetSensDky(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -4799,18 +4810,18 @@ fresult = swigc_FCVodeGetSensNumLinSolvSetups(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetSensErrWeights(cvode_mem, esweight) &
+function FCVodeGetSensErrWeights(cvode_mem, esweight_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(C_PTR) :: esweight
+type(C_PTR) :: esweight_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = esweight
+farg2 = esweight_1d
 fresult = swigc_FCVodeGetSensErrWeights(farg1, farg2)
 swig_result = fresult
 end function
@@ -4983,13 +4994,13 @@ farg1 = cvode_mem
 call swigc_FCVodeSensFree(farg1)
 end subroutine
 
-function FCVodeQuadSensInit(cvode_mem, fqs, yqs0) &
+function FCVodeQuadSensInit(cvode_mem, fqs, yqs0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 type(C_FUNPTR), intent(in), value :: fqs
-type(C_PTR) :: yqs0
+type(C_PTR) :: yqs0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
@@ -4997,34 +5008,34 @@ type(C_PTR) :: farg3
 
 farg1 = cvode_mem
 farg2 = fqs
-farg3 = yqs0
+farg3 = yqs0_1d
 fresult = swigc_FCVodeQuadSensInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeQuadSensReInit(cvode_mem, yqs0) &
+function FCVodeQuadSensReInit(cvode_mem, yqs0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(C_PTR) :: yqs0
+type(C_PTR) :: yqs0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = yqs0
+farg2 = yqs0_1d
 fresult = swigc_FCVodeQuadSensReInit(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeQuadSensSStolerances(cvode_mem, reltolqs, abstolqs) &
+function FCVodeQuadSensSStolerances(cvode_mem, reltolqs, abstolqs_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: reltolqs
-real(C_DOUBLE), dimension(*), target, intent(inout) :: abstolqs
+real(C_DOUBLE), dimension(*), target, intent(inout) :: abstolqs_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -5032,18 +5043,18 @@ type(C_PTR) :: farg3
 
 farg1 = cvode_mem
 farg2 = reltolqs
-farg3 = c_loc(abstolqs(1))
+farg3 = c_loc(abstolqs_1d(1))
 fresult = swigc_FCVodeQuadSensSStolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeQuadSensSVtolerances(cvode_mem, reltolqs, abstolqs) &
+function FCVodeQuadSensSVtolerances(cvode_mem, reltolqs, abstolqs_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: reltolqs
-type(C_PTR) :: abstolqs
+type(C_PTR) :: abstolqs_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -5051,7 +5062,7 @@ type(C_PTR) :: farg3
 
 farg1 = cvode_mem
 farg2 = reltolqs
-farg3 = abstolqs
+farg3 = abstolqs_1d
 fresult = swigc_FCVodeQuadSensSVtolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -5085,13 +5096,13 @@ fresult = swigc_FCVodeSetQuadSensErrCon(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetQuadSens(cvode_mem, tret, yqsout) &
+function FCVodeGetQuadSens(cvode_mem, tret, yqsout_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
-type(C_PTR) :: yqsout
+type(C_PTR) :: yqsout_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -5099,7 +5110,7 @@ type(C_PTR) :: farg3
 
 farg1 = cvode_mem
 farg2 = c_loc(tret(1))
-farg3 = yqsout
+farg3 = yqsout_1d
 fresult = swigc_FCVodeGetQuadSens(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -5126,14 +5137,14 @@ fresult = swigc_FCVodeGetQuadSens1(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FCVodeGetQuadSensDky(cvode_mem, t, k, dkyqs_all) &
+function FCVodeGetQuadSensDky(cvode_mem, t, k, dkyqs_all_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: t
 integer(C_INT), intent(in) :: k
-type(C_PTR) :: dkyqs_all
+type(C_PTR) :: dkyqs_all_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -5143,7 +5154,7 @@ type(C_PTR) :: farg4
 farg1 = cvode_mem
 farg2 = t
 farg3 = k
-farg4 = dkyqs_all
+farg4 = dkyqs_all_1d
 fresult = swigc_FCVodeGetQuadSensDky(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -5205,18 +5216,18 @@ fresult = swigc_FCVodeGetQuadSensNumErrTestFails(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetQuadSensErrWeights(cvode_mem, eqsweight) &
+function FCVodeGetQuadSensErrWeights(cvode_mem, eqsweight_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(C_PTR) :: eqsweight
+type(C_PTR) :: eqsweight_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = eqsweight
+farg2 = eqsweight_1d
 fresult = swigc_FCVodeGetQuadSensErrWeights(farg1, farg2)
 swig_result = fresult
 end function
@@ -5823,6 +5834,25 @@ farg2 = which
 farg3 = c_loc(tbret(1))
 farg4 = c_loc(qb)
 fresult = swigc_FCVodeGetQuadB(farg1, farg2, farg3, farg4)
+swig_result = fresult
+end function
+
+function FCVodeGetUserDataB(cvode_mem, which, user_datab) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: cvode_mem
+integer(C_INT), intent(in) :: which
+type(C_PTR), target, intent(inout) :: user_datab
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+integer(C_INT) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = cvode_mem
+farg2 = which
+farg3 = c_loc(user_datab)
+fresult = swigc_FCVodeGetUserDataB(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

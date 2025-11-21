@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
   /* Call CVodeSetLinearSolver to attach the matrix and linear solver to CVode */
   if (solver_type == 0)
   {
-    retval = CVodeSetLinearSolver(cvode_mem, LS.Convert(), A.Convert());
+    retval = CVodeSetLinearSolver(cvode_mem, LS.get(), A.get());
     if (check_retval(&retval, "CVodeSetLinearSolver", 1)) { return 1; }
 
     /* Set the user-supplied Jacobian routine Jac */

@@ -1280,6 +1280,9 @@ void ARKodeFree(void** arkode_mem)
     ark_mem->relax_mem = NULL;
   }
 
+  free(ark_mem->python);
+  ark_mem->python = NULL;
+
   free(*arkode_mem);
   *arkode_mem = NULL;
 }
@@ -1507,6 +1510,9 @@ ARKodeMem arkCreate(SUNContext sunctx)
 
   /* Set the context */
   ark_mem->sunctx = sunctx;
+
+  /* Set the Python context to NULL */
+  ark_mem->python = NULL;
 
   /* Set uround */
   ark_mem->uround = SUN_UNIT_ROUNDOFF;

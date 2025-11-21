@@ -19,6 +19,9 @@
 #define _SUNDIALS_PROFILER_HPP
 
 #include <cstring>
+#include <utility>
+
+#include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_profiler.h>
 
@@ -50,6 +53,15 @@ private:
   SUNProfiler prof_;
   const char* name_;
 };
+
+namespace experimental {
+
+struct SUNProfilerDeleter
+{
+  void operator()(SUNProfiler profiler) { SUNProfiler_Free(&profiler); }
+};
+
+} // namespace experimental
 } // namespace sundials
 
 #endif /* SUNDIALS_PROFILER_HPP */

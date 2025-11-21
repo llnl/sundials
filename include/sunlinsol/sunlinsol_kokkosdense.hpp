@@ -203,16 +203,16 @@ public:
   // Override the ConvertibleTo methods
 
   // Implicit conversion to a SUNLinearSolver
-  operator SUNLinearSolver() override { return object_.get(); }
+  operator SUNLinearSolver() noexcept override { return object_.get(); }
 
   // Implicit conversion to SUNLinearSolver
-  operator SUNLinearSolver() const override { return object_.get(); }
+  operator SUNLinearSolver() const noexcept override { return object_.get(); }
 
   // Explicit conversion to a SUNLinearSolver
-  SUNLinearSolver Convert() override { return object_.get(); }
+  SUNLinearSolver get() noexcept override { return object_.get(); }
 
   // Explicit conversion to a SUNLinearSolver
-  SUNLinearSolver Convert() const override { return object_.get(); }
+  SUNLinearSolver get() const noexcept override { return object_.get(); }
 
 private:
   void initSUNLinearSolver()

@@ -74,6 +74,7 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   /* attach ops and initialize content and context to NULL */
   DEE->ops     = ops;
   DEE->content = NULL;
+  DEE->python  = NULL;
   DEE->sunctx  = sunctx;
 
   return (DEE);
@@ -90,6 +91,9 @@ void SUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator DEE)
   /* free non-NULL ops structure */
   if (DEE->ops) { free(DEE->ops); }
   DEE->ops = NULL;
+
+  free(DEE->python);
+  DEE->python = NULL;
 
   /* free overall SUNDomEigEstimator object and return */
   free(DEE);

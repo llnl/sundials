@@ -78,12 +78,12 @@ and then fill the diagonal of the matrix with ones to make an identity matrix:
 
 After we have a Ginkgo matrix object, we wrap it in an instance of the ``sundials::ginkgo::Matrix``
 class. This object can be provided to other SUNDIALS functions that expect a ``SUNMatrix`` object
-via implicit conversion, or the ``Convert()`` method:
+via implicit conversion, or the ``get()`` method:
 
 .. code-block:: cpp
 
   sundials::ginkgo::Matrix<gko::matrix::Csr> matrix{gko_matrix, sunctx};
-  SUNMatrix I1 = matrix.Convert(); // explicit conversion to SUNMatrix
+  SUNMatrix I1 = matrix.get(); // explicit conversion to SUNMatrix
   SUNMatrix I2 = matrix;  // implicit conversion to SUNMatrix
 
 No further interaction with ``matrix`` is required from this point, and it is possible to
@@ -159,10 +159,18 @@ In this section we list the public API of the ``sundials::ginkgo::Matrix`` class
 
       Implicit conversion to a :c:type:`SUNMatrix`.
 
-  .. cpp:function:: SUNMatrix Convert() override
+  .. cpp:function:: SUNMatrix get() override
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-  .. cpp:function:: SUNMatrix Convert() const override
+      .. versionadded:: x.y.z
+      
+         Replaces the ``Convert`` method which was deprecated.
+
+  .. cpp:function:: SUNMatrix get() const override
 
       Explicit conversion to a :c:type:`SUNMatrix`.
+
+      .. versionadded:: x.y.z
+      
+         Replaces the ``Convert`` method which was deprecated.

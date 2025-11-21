@@ -31,7 +31,7 @@ set(ida_SOURCES
     ida_nls.c)
 
 # Add variable ida_HEADERS with the exported IDA header files
-set(ida_HEADERS ida.h ida_bbdpre.h ida_ls.h)
+set(ida_HEADERS ida.h ida.hpp ida_bbdpre.h ida_ls.h)
 
 # Add prefix with complete path to the IDA header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/ida/ ida_HEADERS)

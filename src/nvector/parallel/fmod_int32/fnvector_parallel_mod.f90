@@ -742,14 +742,14 @@ fresult = swigc_FN_VNewEmpty_Parallel(farg1, farg2, farg3, farg4)
 call c_f_pointer(fresult, swig_result)
 end function
 
-function FN_VMake_Parallel(comm, local_length, global_length, v_data, sunctx) &
+function FN_VMake_Parallel(comm, local_length, global_length, v_data_1d, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(N_Vector), pointer :: swig_result
 integer :: comm
 integer(C_INT32_T), intent(in) :: local_length
 integer(C_INT32_T), intent(in) :: global_length
-real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data
+real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 integer(C_INT) :: farg1 
@@ -761,7 +761,7 @@ type(C_PTR) :: farg5
 farg1 = int(comm, C_INT)
 farg2 = local_length
 farg3 = global_length
-farg4 = c_loc(v_data(1))
+farg4 = c_loc(v_data_1d(1))
 farg5 = sunctx
 fresult = swigc_FN_VMake_Parallel(farg1, farg2, farg3, farg4, farg5)
 call c_f_pointer(fresult, swig_result)

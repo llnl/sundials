@@ -229,7 +229,7 @@ int main(int argc, char* argv[])
 
   /* Create sparse SUNMatrix for use in linear solves */
   nnz = NEQ * NEQ;
-  A   = SUNSparseMatrix(NEQ, NEQ, nnz, CSC_MAT, ctx);
+  A   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, ctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create SuperLUMT SUNLinearSolver object (one thread) */
@@ -374,7 +374,7 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "IDASetMaxNumStepsB", 1)) { return (1); }
 
   /* Create sparse SUNMatrix for use in linear solves */
-  AB = SUNSparseMatrix(NEQ, NEQ, nnz, CSC_MAT, ctx);
+  AB = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, ctx);
   if (check_retval((void*)AB, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create SuperLUMT SUNLinearSolver object (one thread) */

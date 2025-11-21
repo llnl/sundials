@@ -92,7 +92,7 @@ extern "C" {
 
 typedef int (*CVRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
 
-typedef int (*CVRootFn)(sunrealtype t, N_Vector y, sunrealtype* gout,
+typedef int (*CVRootFn)(sunrealtype t, N_Vector y, sunrealtype* gout_1d,
                         void* user_data);
 
 typedef int (*CVEwtFn)(N_Vector y, N_Vector ewt, void* user_data);
@@ -109,8 +109,8 @@ SUNDIALS_EXPORT void* CVodeCreate(int lmm, SUNContext sunctx);
 SUNDIALS_EXPORT int CVodeInit(void* cvode_mem, CVRhsFn f, sunrealtype t0,
                               N_Vector y0);
 SUNDIALS_EXPORT int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0);
-SUNDIALS_EXPORT int CVodeResizeHistory(void* cvode_mem, sunrealtype* t_hist,
-                                       N_Vector* y_hist, N_Vector* f_hist,
+SUNDIALS_EXPORT int CVodeResizeHistory(void* cvode_mem, sunrealtype* t_hist_1d,
+                                       N_Vector* y_hist_1d, N_Vector* f_hist_1d,
                                        int num_y_hist, int num_f_hist);
 
 /* Tolerance input functions */
@@ -211,7 +211,8 @@ SUNDIALS_EXPORT int CVodeGetNumStabLimOrderReds(void* cvode_mem,
 SUNDIALS_EXPORT int CVodeGetActualInitStep(void* cvode_mem, sunrealtype* hinused);
 SUNDIALS_EXPORT int CVodeGetLastStep(void* cvode_mem, sunrealtype* hlast);
 SUNDIALS_EXPORT int CVodeGetCurrentStep(void* cvode_mem, sunrealtype* hcur);
-SUNDIALS_EXPORT int CVodeGetCurrentState(void* cvode_mem, N_Vector* y);
+SUNDIALS_EXPORT int CVodeGetCurrentState(void* cvode_mem,
+                                         N_Vector* y); // nb::rv_policy::reference
 SUNDIALS_EXPORT int CVodeGetCurrentTime(void* cvode_mem, sunrealtype* tcur);
 SUNDIALS_EXPORT int CVodeGetTolScaleFactor(void* cvode_mem, sunrealtype* tolsfac);
 SUNDIALS_EXPORT int CVodeGetErrWeights(void* cvode_mem, N_Vector eweight);
@@ -222,12 +223,10 @@ SUNDIALS_EXPORT int CVodeGetIntegratorStats(
   void* cvode_mem, long int* nsteps, long int* nfevals, long int* nlinsetups,
   long int* netfails, int* qlast, int* qcur, sunrealtype* hinused,
   sunrealtype* hlast, sunrealtype* hcur, sunrealtype* tcur);
-SUNDIALS_EXPORT int CVodeGetNonlinearSystemData(void* cvode_mem,
-                                                sunrealtype* tcur,
-                                                N_Vector* ypred, N_Vector* yn,
-                                                N_Vector* fn, sunrealtype* gamma,
-                                                sunrealtype* rl1, N_Vector* zn1,
-                                                void** user_data);
+SUNDIALS_EXPORT int CVodeGetNonlinearSystemData(
+  void* cvode_mem, sunrealtype* tcur, N_Vector* ypred, N_Vector* yn,
+  N_Vector* fn, sunrealtype* gamma, sunrealtype* rl1, N_Vector* zn1,
+  void** user_data); // nb::rv_policy::reference
 SUNDIALS_EXPORT int CVodeGetNumNonlinSolvIters(void* cvode_mem,
                                                long int* nniters);
 SUNDIALS_EXPORT int CVodeGetNumNonlinSolvConvFails(void* cvode_mem,

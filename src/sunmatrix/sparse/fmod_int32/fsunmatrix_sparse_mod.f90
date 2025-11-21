@@ -28,6 +28,8 @@ module fsunmatrix_sparse_mod
  private
 
  ! DECLARATION CONSTRUCTS
+ integer(C_INT), parameter, public :: SUN_CSC_MAT = 0_C_INT
+ integer(C_INT), parameter, public :: SUN_CSR_MAT = 1_C_INT
  integer(C_INT), parameter, public :: CSC_MAT = 0_C_INT
  integer(C_INT), parameter, public :: CSR_MAT = 1_C_INT
  public :: FSUNSparseMatrix

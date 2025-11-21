@@ -45,11 +45,16 @@ typedef _SUNDIALS_STRUCT_ SplittingStepCoefficientsMem* SplittingStepCoefficient
 
 /* Splitting names use the convention
  * ARKODE_SPLITTING_<name>_<stages>_<order>_<partitions> */
-typedef enum
+enum ARKODE_SplittingCoefficientsID
 {
-  ARKODE_SPLITTING_NONE              = -1, /* ensure enum is signed int */
+  ARKODE_SPLITTING_NONE = -1, /* ensure enum is signed int */
+  /* WARNING:  ARKODE_MIN_SPLITTING_NUM must come after the first entry, ARKODE_SPLITTING_LIE_TROTTER_1_1_2,
+     because Python enums will only expose the member that is defined first. Due to
+     this and how pybind/nanobind handle the enums, if we defined ARKODE_MRI_NUM first,
+     then ARKODE_SPLITTING_LIE_TROTTER_1_1_2 would not be usable from the module scope (the MIN/MAX) entries
+     will still be usable when accessing through the IntEnum object, but not from module scope. */
+  ARKODE_SPLITTING_LIE_TROTTER_1_1_2 = 0,
   ARKODE_MIN_SPLITTING_NUM           = 0,
-  ARKODE_SPLITTING_LIE_TROTTER_1_1_2 = ARKODE_MIN_SPLITTING_NUM,
   ARKODE_SPLITTING_STRANG_2_2_2,
   ARKODE_SPLITTING_BEST_2_2_2,
   ARKODE_SPLITTING_SUZUKI_3_3_2,
@@ -57,14 +62,18 @@ typedef enum
   ARKODE_SPLITTING_YOSHIDA_4_4_2,
   ARKODE_SPLITTING_YOSHIDA_8_6_2,
   ARKODE_MAX_SPLITTING_NUM = ARKODE_SPLITTING_YOSHIDA_8_6_2
-} ARKODE_SplittingCoefficientsID;
+};
+
+#ifndef SWIG
+typedef enum ARKODE_SplittingCoefficientsID ARKODE_SplittingCoefficientsID;
+#endif
 
 /* Coefficient memory management */
 SUNDIALS_EXPORT SplittingStepCoefficients SplittingStepCoefficients_Alloc(
   int sequential_methods, int stages, int partitions);
 SUNDIALS_EXPORT SplittingStepCoefficients SplittingStepCoefficients_Create(
   int sequential_methods, int stages, int partitions, int order,
-  sunrealtype* alpha, sunrealtype* beta);
+  sunrealtype* alpha_1d, sunrealtype* beta_1d);
 SUNDIALS_EXPORT void SplittingStepCoefficients_Destroy(
   SplittingStepCoefficients* coefficients);
 SUNDIALS_EXPORT SplittingStepCoefficients

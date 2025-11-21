@@ -2898,6 +2898,22 @@ SWIGEXPORT int _wrap_FCVodeGetQuadB(void *farg1, int const *farg2, double *farg3
 }
 
 
+SWIGEXPORT int _wrap_FCVodeGetUserDataB(void *farg1, int const *farg2, void *farg3) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int arg2 ;
+  void **arg3 = (void **) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (int)(*farg2);
+  arg3 = (void **)(farg3);
+  result = (int)CVodeGetUserDataB(arg1,arg2,arg3);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT void * _wrap_FCVodeGetAdjCVodeBmem(void *farg1, int const *farg2) {
   void * fresult ;
   void *arg1 = (void *) 0 ;

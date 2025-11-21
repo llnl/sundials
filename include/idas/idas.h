@@ -127,7 +127,7 @@ typedef int (*IDAResFn)(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector rr,
                         void* user_data);
 
 typedef int (*IDARootFn)(sunrealtype t, N_Vector y, N_Vector yp,
-                         sunrealtype* gout, void* user_data);
+                         sunrealtype* gout_1d, void* user_data);
 
 typedef int (*IDAEwtFn)(N_Vector y, N_Vector ewt, void* user_data);
 
@@ -135,20 +135,20 @@ typedef int (*IDAQuadRhsFn)(sunrealtype tres, N_Vector yy, N_Vector yp,
                             N_Vector rrQ, void* user_data);
 
 typedef int (*IDASensResFn)(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
-                            N_Vector resval, N_Vector* yyS, N_Vector* ypS,
-                            N_Vector* resvalS, void* user_data, N_Vector tmp1,
-                            N_Vector tmp2, N_Vector tmp3);
+                            N_Vector resval, N_Vector* yyS_1d, N_Vector* ypS_1d,
+                            N_Vector* resvalS_1d, void* user_data,
+                            N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
 typedef int (*IDAQuadSensRhsFn)(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
-                                N_Vector* yyS, N_Vector* ypS, N_Vector rrQ,
-                                N_Vector* rhsvalQS, void* user_data,
+                                N_Vector* yyS_1d, N_Vector* ypS_1d, N_Vector rrQ,
+                                N_Vector* rhsvalQS_1d, void* user_data,
                                 N_Vector yytmp, N_Vector yptmp, N_Vector tmpQS);
 
 typedef int (*IDAResFnB)(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector yyB,
                          N_Vector ypB, N_Vector rrB, void* user_dataB);
 
 typedef int (*IDAResFnBS)(sunrealtype t, N_Vector yy, N_Vector yp,
-                          N_Vector* yyS, N_Vector* ypS, N_Vector yyB,
+                          N_Vector* yyS_1d, N_Vector* ypS_1d, N_Vector yyB,
                           N_Vector ypB, N_Vector rrBS, void* user_dataB);
 
 typedef int (*IDAQuadRhsFnB)(sunrealtype tt, N_Vector yy, N_Vector yp,
@@ -156,7 +156,7 @@ typedef int (*IDAQuadRhsFnB)(sunrealtype tt, N_Vector yy, N_Vector yp,
                              void* user_dataB);
 
 typedef int (*IDAQuadRhsFnBS)(sunrealtype t, N_Vector yy, N_Vector yp,
-                              N_Vector* yyS, N_Vector* ypS, N_Vector yyB,
+                              N_Vector* yyS_1d, N_Vector* ypS_1d, N_Vector yyB,
                               N_Vector ypB, N_Vector rhsvalBQS, void* user_dataB);
 
 /* ---------------------------------------
@@ -245,9 +245,10 @@ SUNDIALS_EXPORT int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret,
 /* Utility functions to update/compute y and yp based on ycor */
 SUNDIALS_EXPORT int IDAComputeY(void* ida_mem, N_Vector ycor, N_Vector y);
 SUNDIALS_EXPORT int IDAComputeYp(void* ida_mem, N_Vector ycor, N_Vector yp);
-SUNDIALS_EXPORT int IDAComputeYSens(void* ida_mem, N_Vector* ycor, N_Vector* yyS);
-SUNDIALS_EXPORT int IDAComputeYpSens(void* ida_mem, N_Vector* ycor,
-                                     N_Vector* ypS);
+SUNDIALS_EXPORT int IDAComputeYSens(void* ida_mem, N_Vector* ycor_1d,
+                                    N_Vector* yyS_1d);
+SUNDIALS_EXPORT int IDAComputeYpSens(void* ida_mem, N_Vector* ycor_1d,
+                                     N_Vector* ypS_1d);
 
 /* Dense output function */
 SUNDIALS_EXPORT int IDAGetDky(void* ida_mem, sunrealtype t, int k, N_Vector dky);
@@ -266,10 +267,14 @@ SUNDIALS_EXPORT int IDAGetConsistentIC(void* ida_mem, N_Vector yy0_mod,
 SUNDIALS_EXPORT int IDAGetLastOrder(void* ida_mem, int* klast);
 SUNDIALS_EXPORT int IDAGetCurrentOrder(void* ida_mem, int* kcur);
 SUNDIALS_EXPORT int IDAGetCurrentCj(void* ida_mem, sunrealtype* cj);
-SUNDIALS_EXPORT int IDAGetCurrentY(void* ida_mem, N_Vector* ycur);
-SUNDIALS_EXPORT int IDAGetCurrentYSens(void* ida_mem, N_Vector** yS);
-SUNDIALS_EXPORT int IDAGetCurrentYp(void* ida_mem, N_Vector* ypcur);
-SUNDIALS_EXPORT int IDAGetCurrentYpSens(void* ida_mem, N_Vector** ypS);
+SUNDIALS_EXPORT int IDAGetCurrentY(void* ida_mem,
+                                   N_Vector* ycur); // nb::rv_policy::reference
+SUNDIALS_EXPORT int IDAGetCurrentYSens(void* ida_mem,
+                                       N_Vector** yS_1d_out); // nb::rv_policy::reference
+SUNDIALS_EXPORT int IDAGetCurrentYp(void* ida_mem,
+                                    N_Vector* ypcur); // nb::rv_policy::reference
+SUNDIALS_EXPORT int IDAGetCurrentYpSens(
+  void* ida_mem, N_Vector** ypS_1d_out); // nb::rv_policy::reference
 SUNDIALS_EXPORT int IDAGetActualInitStep(void* ida_mem, sunrealtype* hinused);
 SUNDIALS_EXPORT int IDAGetLastStep(void* ida_mem, sunrealtype* hlast);
 SUNDIALS_EXPORT int IDAGetCurrentStep(void* ida_mem, sunrealtype* hcur);
@@ -285,14 +290,14 @@ SUNDIALS_EXPORT int IDAGetIntegratorStats(void* ida_mem, long int* nsteps,
                                           int* qcur, sunrealtype* hinused,
                                           sunrealtype* hlast, sunrealtype* hcur,
                                           sunrealtype* tcur);
-SUNDIALS_EXPORT int IDAGetNonlinearSystemData(void* ida_mem, sunrealtype* tcur,
-                                              N_Vector* yypred,
-                                              N_Vector* yppred, N_Vector* yyn,
-                                              N_Vector* ypn, N_Vector* res,
-                                              sunrealtype* cj, void** user_data);
+SUNDIALS_EXPORT int IDAGetNonlinearSystemData(
+  void* ida_mem, sunrealtype* tcur, N_Vector* yypred, N_Vector* yppred,
+  N_Vector* yyn, N_Vector* ypn, N_Vector* res, sunrealtype* cj,
+  void** user_data); // nb::rv_policy::reference
 SUNDIALS_EXPORT int IDAGetNonlinearSystemDataSens(
-  void* ida_mem, sunrealtype* tcur, N_Vector** yySpred, N_Vector** ypSpred,
-  N_Vector** yySn, N_Vector** ypSn, sunrealtype* cj, void** user_data);
+  void* ida_mem, sunrealtype* tcur, N_Vector** yySpred_1d_out,
+  N_Vector** ypSpred_1d_out, N_Vector** yySn_1d_out, N_Vector** ypSn_1d_out,
+  sunrealtype* cj, void** user_data); // nb::rv_policy::reference
 SUNDIALS_EXPORT int IDAGetNumNonlinSolvIters(void* ida_mem, long int* nniters);
 SUNDIALS_EXPORT int IDAGetNumNonlinSolvConvFails(void* ida_mem,
                                                  long int* nnfails);
@@ -347,29 +352,29 @@ SUNDIALS_EXPORT void IDAQuadFree(void* ida_mem);
  * ------------------------------------ */
 
 /* Initialization functions */
-SUNDIALS_EXPORT int IDASensInit(void* ida_mem, int Ns, int ism,
-                                IDASensResFn resS, N_Vector* yS0, N_Vector* ypS0);
-SUNDIALS_EXPORT int IDASensReInit(void* ida_mem, int ism, N_Vector* yS0,
-                                  N_Vector* ypS0);
+SUNDIALS_EXPORT int IDASensInit(void* ida_mem, int Ns, int ism, IDASensResFn resS,
+                                N_Vector* yS0_1d, N_Vector* ypS0_1d);
+SUNDIALS_EXPORT int IDASensReInit(void* ida_mem, int ism, N_Vector* yS0_1d,
+                                  N_Vector* ypS0_1d);
 
 /* Tolerance input functions */
 SUNDIALS_EXPORT int IDASensSStolerances(void* ida_mem, sunrealtype reltolS,
-                                        sunrealtype* abstolS);
+                                        sunrealtype* abstolS_1d);
 SUNDIALS_EXPORT int IDASensSVtolerances(void* ida_mem, sunrealtype reltolS,
-                                        N_Vector* abstolS);
+                                        N_Vector* abstolS_1d);
 SUNDIALS_EXPORT int IDASensEEtolerances(void* ida_mem);
 
 /* Initial condition calculation function */
-SUNDIALS_EXPORT int IDAGetSensConsistentIC(void* ida_mem, N_Vector* yyS0,
-                                           N_Vector* ypS0);
+SUNDIALS_EXPORT int IDAGetSensConsistentIC(void* ida_mem, N_Vector* yyS0_1d,
+                                           N_Vector* ypS0_1d);
 
 /* Optional input specification functions */
 SUNDIALS_EXPORT int IDASetSensDQMethod(void* ida_mem, int DQtype,
                                        sunrealtype DQrhomax);
 SUNDIALS_EXPORT int IDASetSensErrCon(void* ida_mem, sunbooleantype errconS);
 SUNDIALS_EXPORT int IDASetSensMaxNonlinIters(void* ida_mem, int maxcorS);
-SUNDIALS_EXPORT int IDASetSensParams(void* ida_mem, sunrealtype* p,
-                                     sunrealtype* pbar, int* plist);
+SUNDIALS_EXPORT int IDASetSensParams(void* ida_mem, sunrealtype* p_1d,
+                                     sunrealtype* pbar_1d, int* plist_1d);
 
 /* Integrator nonlinear solver specification functions */
 SUNDIALS_EXPORT int IDASetNonlinearSolverSensSim(void* ida_mem,
@@ -382,12 +387,12 @@ SUNDIALS_EXPORT int IDASensToggleOff(void* ida_mem);
 
 /* Extraction and dense output functions */
 SUNDIALS_EXPORT int IDAGetSens(void* ida_mem, sunrealtype* tret,
-                               N_Vector* yySout);
+                               N_Vector* yySout_1d);
 SUNDIALS_EXPORT int IDAGetSens1(void* ida_mem, sunrealtype* tret, int is,
                                 N_Vector yySret);
 
 SUNDIALS_EXPORT int IDAGetSensDky(void* ida_mem, sunrealtype t, int k,
-                                  N_Vector* dkyS);
+                                  N_Vector* dkyS_1d);
 SUNDIALS_EXPORT int IDAGetSensDky1(void* ida_mem, sunrealtype t, int k, int is,
                                    N_Vector dkyS);
 
@@ -397,7 +402,7 @@ SUNDIALS_EXPORT int IDAGetNumResEvalsSens(void* ida_mem, long int* nresevalsS);
 SUNDIALS_EXPORT int IDAGetSensNumErrTestFails(void* ida_mem, long int* nSetfails);
 SUNDIALS_EXPORT int IDAGetSensNumLinSolvSetups(void* ida_mem,
                                                long int* nlinsetupsS);
-SUNDIALS_EXPORT int IDAGetSensErrWeights(void* ida_mem, N_Vector_S eSweight);
+SUNDIALS_EXPORT int IDAGetSensErrWeights(void* ida_mem, N_Vector* eSweight_1d);
 SUNDIALS_EXPORT int IDAGetSensStats(void* ida_mem, long int* nresSevals,
                                     long int* nresevalsS, long int* nSetfails,
                                     long int* nlinsetupsS);
@@ -419,14 +424,14 @@ SUNDIALS_EXPORT void IDASensFree(void* ida_mem);
 
 /* Initialization functions */
 SUNDIALS_EXPORT int IDAQuadSensInit(void* ida_mem, IDAQuadSensRhsFn resQS,
-                                    N_Vector* yQS0);
-SUNDIALS_EXPORT int IDAQuadSensReInit(void* ida_mem, N_Vector* yQS0);
+                                    N_Vector* yQS0_1d);
+SUNDIALS_EXPORT int IDAQuadSensReInit(void* ida_mem, N_Vector* yQS0_1d);
 
 /* Tolerance input functions */
 SUNDIALS_EXPORT int IDAQuadSensSStolerances(void* ida_mem, sunrealtype reltolQS,
                                             sunrealtype* abstolQS);
 SUNDIALS_EXPORT int IDAQuadSensSVtolerances(void* ida_mem, sunrealtype reltolQS,
-                                            N_Vector* abstolQS);
+                                            N_Vector* abstolQS_1d);
 SUNDIALS_EXPORT int IDAQuadSensEEtolerances(void* ida_mem);
 
 /* Optional input specification functions */
@@ -434,11 +439,11 @@ SUNDIALS_EXPORT int IDASetQuadSensErrCon(void* ida_mem, sunbooleantype errconQS)
 
 /* Extraction and dense output functions */
 SUNDIALS_EXPORT int IDAGetQuadSens(void* ida_mem, sunrealtype* tret,
-                                   N_Vector* yyQSout);
+                                   N_Vector* yyQSout_1d);
 SUNDIALS_EXPORT int IDAGetQuadSens1(void* ida_mem, sunrealtype* tret, int is,
                                     N_Vector yyQSret);
 SUNDIALS_EXPORT int IDAGetQuadSensDky(void* ida_mem, sunrealtype t, int k,
-                                      N_Vector* dkyQS);
+                                      N_Vector* dkyQS_1d);
 SUNDIALS_EXPORT int IDAGetQuadSensDky1(void* ida_mem, sunrealtype t, int k,
                                        int is, N_Vector dkyQS);
 
@@ -447,7 +452,8 @@ SUNDIALS_EXPORT int IDAGetQuadSensNumRhsEvals(void* ida_mem,
                                               long int* nrhsQSevals);
 SUNDIALS_EXPORT int IDAGetQuadSensNumErrTestFails(void* ida_mem,
                                                   long int* nQSetfails);
-SUNDIALS_EXPORT int IDAGetQuadSensErrWeights(void* ida_mem, N_Vector* eQSweight);
+SUNDIALS_EXPORT int IDAGetQuadSensErrWeights(void* ida_mem,
+                                             N_Vector* eQSweight_1d);
 SUNDIALS_EXPORT int IDAGetQuadSensStats(void* ida_mem, long int* nrhsQSevals,
                                         long int* nQSetfails);
 
@@ -504,8 +510,8 @@ SUNDIALS_EXPORT int IDACalcICB(void* ida_mem, int which, sunrealtype tout1,
                                N_Vector yy0, N_Vector yp0);
 
 SUNDIALS_EXPORT int IDACalcICBS(void* ida_mem, int which, sunrealtype tout1,
-                                N_Vector yy0, N_Vector yp0, N_Vector* yyS0,
-                                N_Vector* ypS0);
+                                N_Vector yy0, N_Vector yp0, N_Vector* yyS0_1d,
+                                N_Vector* ypS0_1d);
 
 /* Solver Function For Forward Problems */
 
@@ -545,6 +551,8 @@ SUNDIALS_EXPORT int IDAGetQuadB(void* ida_mem, int which, sunrealtype* tret,
                                 N_Vector qB);
 
 /* Optional Output Functions For Backward Problems */
+
+SUNDIALS_EXPORT int IDAGetUserDataB(void* ida_mem, int which, void** user_data);
 
 SUNDIALS_EXPORT void* IDAGetAdjIDABmem(void* ida_mem, int which);
 

@@ -187,7 +187,7 @@ int main(void)
   if (check_retval(&retval, "KINInit", 1)) { return (1); }
 
   /* Create sparse SUNMatrix */
-  SUNMatrix J = SUNSparseMatrix(NEQ, NEQ, data->nnz, CSR_MAT, sunctx);
+  SUNMatrix J = SUNSparseMatrix(NEQ, NEQ, data->nnz, SUN_CSR_MAT, sunctx);
   if (check_retval((void*)J, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create KLU solver object */

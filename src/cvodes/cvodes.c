@@ -502,6 +502,8 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
 
   maxord = (lmm == CV_ADAMS) ? ADAMS_Q_MAX : BDF_Q_MAX;
 
+  cv_mem->python = NULL;
+
   /* Copy input parameters into cv_mem */
   cv_mem->cv_sunctx = sunctx;
   cv_mem->cv_lmm    = lmm;
@@ -4457,6 +4459,9 @@ void CVodeFree(void** cvode_mem)
   cv_mem->cv_Zvecs = NULL;
 
   if (cv_mem->proj_mem) { cvProjFree(&(cv_mem->proj_mem)); }
+
+  free(cv_mem->python);
+  cv_mem->python = NULL;
 
   free(*cvode_mem);
   *cvode_mem = NULL;

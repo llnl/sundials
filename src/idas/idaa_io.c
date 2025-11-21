@@ -729,6 +729,53 @@ int IDAGetConsistentICB(void* ida_mem, int which, N_Vector yyB0_mod,
   return (flag);
 }
 
+/*-----------------------------------------------------------------*/
+
+int IDAGetUserDataB(void* ida_mem, int which, void** user_dataB)
+{
+  IDAMem IDA_mem;
+  IDAadjMem IDAa_mem;
+  IDABMem IDAB_mem;
+
+  /* Check if IDA_mem exists */
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSGAM_NULL_IDAMEM);
+    return (IDA_MEM_NULL);
+  }
+  IDA_mem = (IDAMem)ida_mem;
+
+  /* Was ASA initialized? */
+  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
+  {
+    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
+                    MSGAM_NO_ADJ);
+    return (IDA_NO_ADJ);
+  }
+  IDAa_mem = IDA_mem->ida_adj_mem;
+
+  /* Check which */
+  if (which >= IDAa_mem->ia_nbckpbs)
+  {
+    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    MSGAM_BAD_WHICH);
+    return (IDA_ILL_INPUT);
+  }
+
+  /* Find the IDABMem entry in the linked list corresponding to which */
+  IDAB_mem = IDAa_mem->IDAB_mem;
+  while (IDAB_mem != NULL)
+  {
+    if (which == IDAB_mem->ida_index) { break; }
+    IDAB_mem = IDAB_mem->ida_next;
+  }
+
+  *user_dataB = IDAB_mem->ida_user_data;
+
+  return (IDA_SUCCESS);
+}
+
 /*
  * -----------------------------------------------------------------
  * Undocumented development user-callable functions

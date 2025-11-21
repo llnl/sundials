@@ -94,6 +94,7 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
     SUNCheckCallNoRet(err);
     if (err) { break; }
 
+    sunctx->python       = NULL;
     sunctx->logger       = logger;
     sunctx->own_logger   = logger != NULL;
     sunctx->profiler     = profiler;
@@ -294,6 +295,9 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
   }
 
   SUNContext_ClearErrHandlers(*sunctx);
+
+  free((*sunctx)->python);
+  (*sunctx)->python = NULL;
 
   free(*sunctx);
   *sunctx = NULL;

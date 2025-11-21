@@ -98,8 +98,8 @@ SUNDIALS_EXPORT N_Vector N_VNewEmpty_OpenMPDEV(sunindextype vec_length,
                                                SUNContext sunctx);
 
 SUNDIALS_EXPORT N_Vector N_VMake_OpenMPDEV(sunindextype vec_length,
-                                           sunrealtype* h_data,
-                                           sunrealtype* v_data,
+                                           sunrealtype* h_data_1d,
+                                           sunrealtype* v_data_1d,
                                            SUNContext sunctx);
 
 SUNDIALS_EXPORT sunindextype N_VGetLength_OpenMPDEV(N_Vector v);

@@ -66,14 +66,15 @@ SUNDIALS_EXPORT N_Vector N_VNewWithMemHelp_Cuda(sunindextype length,
                                                 sunbooleantype use_managed_mem,
                                                 SUNMemoryHelper helper,
                                                 SUNContext sunctx);
-SUNDIALS_EXPORT N_Vector N_VMake_Cuda(sunindextype length, sunrealtype* h_vdata,
-                                      sunrealtype* d_vdata, SUNContext sunctx);
+SUNDIALS_EXPORT N_Vector N_VMake_Cuda(sunindextype length,
+                                      sunrealtype* h_vdata_1d,
+                                      sunrealtype* d_vdata_1d, SUNContext sunctx);
 SUNDIALS_EXPORT N_Vector N_VMakeManaged_Cuda(sunindextype length,
-                                             sunrealtype* vdata,
+                                             sunrealtype* vdata_1d,
                                              SUNContext sunctx);
-SUNDIALS_EXPORT void N_VSetHostArrayPointer_Cuda(sunrealtype* h_vdata,
+SUNDIALS_EXPORT void N_VSetHostArrayPointer_Cuda(sunrealtype* h_vdata_1d,
                                                  N_Vector v);
-SUNDIALS_EXPORT void N_VSetDeviceArrayPointer_Cuda(sunrealtype* d_vdata,
+SUNDIALS_EXPORT void N_VSetDeviceArrayPointer_Cuda(sunrealtype* d_vdata_1d,
                                                    N_Vector v);
 SUNDIALS_EXPORT sunbooleantype N_VIsManagedMemory_Cuda(N_Vector x);
 SUNDIALS_EXPORT

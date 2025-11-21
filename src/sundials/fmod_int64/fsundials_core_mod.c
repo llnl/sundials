@@ -808,6 +808,22 @@ SWIGEXPORT int _wrap_FSUNLogger_Destroy(void *farg1) {
 }
 
 
+SWIGEXPORT int _wrap_FSUNFileOpen(SwigArrayWrapper *farg1, SwigArrayWrapper *farg2, void *farg3) {
+  int fresult ;
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  FILE **arg3 = (FILE **) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (char *)(farg1->data);
+  arg2 = (char *)(farg2->data);
+  arg3 = (FILE **)(farg3);
+  result = (SUNErrCode)SUNFileOpen((char const *)arg1,(char const *)arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNDIALSFileOpen(SwigArrayWrapper *farg1, SwigArrayWrapper *farg2, void *farg3) {
   int fresult ;
   char *arg1 = (char *) 0 ;
@@ -819,6 +835,18 @@ SWIGEXPORT int _wrap_FSUNDIALSFileOpen(SwigArrayWrapper *farg1, SwigArrayWrapper
   arg2 = (char *)(farg2->data);
   arg3 = (FILE **)(farg3);
   result = (SUNErrCode)SUNDIALSFileOpen((char const *)arg1,(char const *)arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNFileClose(void *farg1) {
+  int fresult ;
+  FILE **arg1 = (FILE **) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (FILE **)(farg1);
+  result = (SUNErrCode)SUNFileClose(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

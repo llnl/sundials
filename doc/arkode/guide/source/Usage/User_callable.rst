@@ -914,7 +914,6 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 =================================================  ==========================================  =======================
 
 
-
 .. c:function:: int ARKodeSetOptions(void* arkode_mem, const char* arkid, const char* file_name, int argc, char* argv[])
 
    Sets ARKODE options from an array of strings or a file.

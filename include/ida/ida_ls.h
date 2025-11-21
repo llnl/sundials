@@ -98,7 +98,8 @@ SUNDIALS_EXPORT int IDASetIncrementFactor(void* ida_mem, sunrealtype dqincfac);
   Optional outputs from the IDALS linear solver interface
   -----------------------------------------------------------------*/
 
-SUNDIALS_EXPORT int IDAGetJac(void* ida_mem, SUNMatrix* J);
+SUNDIALS_EXPORT int IDAGetJac(void* ida_mem,
+                              SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int IDAGetJacCj(void* ida_mem, sunrealtype* cj_J);
 SUNDIALS_EXPORT int IDAGetJacTime(void* ida_mem, sunrealtype* t_J);
 SUNDIALS_EXPORT int IDAGetJacNumSteps(void* ida_mem, long int* nst_J);

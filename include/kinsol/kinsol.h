@@ -84,17 +84,15 @@ extern "C" {
 
 typedef int (*KINSysFn)(N_Vector uu, N_Vector fval, void* user_data);
 
-typedef void (*KINInfoHandlerFn)(const char* module, const char* function,
-                                 char* msg, void* user_data);
-
 typedef int (*KINDampingFn)(long int iter, N_Vector u_val, N_Vector g_val,
-                            sunrealtype* qt_fn, long int depth, void* user_data,
-                            sunrealtype* damping_factor);
+                            sunrealtype* qt_fn_1d, long int depth,
+                            void* user_data, sunrealtype* damping_factor_ptr);
 
 typedef int (*KINDepthFn)(long int iter, N_Vector u_val, N_Vector g_val,
-                          N_Vector f_val, N_Vector* df, sunrealtype* R_mat,
-                          long int depth, void* user_data, long int* new_depth,
-                          sunbooleantype* remove_indices);
+                          N_Vector f_val, N_Vector* df_1d,
+                          sunrealtype* R_mat_1d, long int depth,
+                          void* user_data, long int* new_depth_ptr,
+                          sunbooleantype* remove_indices_1d);
 
 /* -------------------
  * Exported Functions

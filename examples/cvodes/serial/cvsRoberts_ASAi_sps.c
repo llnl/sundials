@@ -229,7 +229,7 @@ int main(int argc, char* argv[])
 
   /* Create sparse SUNMatrix for use in linear solves */
   nnz = NEQ * NEQ; /* max no. of nonzeros entries in the Jac */
-  A   = SUNSparseMatrix(NEQ, NEQ, nnz, CSC_MAT, sunctx);
+  A   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create SuperLUMT SUNLinearSolver object */
@@ -373,7 +373,7 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeSetUserDataB", 1)) { return (1); }
 
   /* Create sparse SUNMatrix for use in linear solves */
-  AB = SUNSparseMatrix(NEQ, NEQ, nnz, CSC_MAT, sunctx);
+  AB = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create SuperLUMT SUNLinearSolver object */

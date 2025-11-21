@@ -80,6 +80,7 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   NLS->sunctx  = sunctx;
   NLS->ops     = ops;
   NLS->content = NULL;
+  NLS->python  = NULL;
 
   return (NLS);
 }
@@ -93,8 +94,11 @@ void SUNNonlinSolFreeEmpty(SUNNonlinearSolver NLS)
   if (NLS == NULL) { return; }
 
   /* free non-NULL ops structure */
-  if (NLS->ops) { free(NLS->ops); }
+  free(NLS->ops);
   NLS->ops = NULL;
+
+  free(NLS->python);
+  NLS->python = NULL;
 
   /* free overall N_Vector object and return */
   free(NLS);
@@ -152,16 +156,12 @@ SUNErrCode SUNNonlinSolFree(SUNNonlinearSolver NLS)
 
   /* if we reach this point, either ops == NULL or free == NULL,
      try to cleanup by freeing the content, ops, and solver */
-  if (NLS->content)
-  {
-    free(NLS->content);
-    NLS->content = NULL;
-  }
-  if (NLS->ops)
-  {
-    free(NLS->ops);
-    NLS->ops = NULL;
-  }
+  free(NLS->content);
+  NLS->content = NULL;
+  free(NLS->ops);
+  NLS->ops = NULL;
+  free(NLS->python);
+  NLS->python = NULL;
   free(NLS);
   NLS = NULL;
 

@@ -130,7 +130,7 @@ int main(void)
 
   /* Create sparse SUNMatrix */
   nnz = 56; /* number of nonzeros in the Jacobian */
-  J   = SUNSparseMatrix(NEQ, NEQ, nnz, CSC_MAT, sunctx);
+  J   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
   if (check_retval((void*)J, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create SuperLUMT solver object */

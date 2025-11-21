@@ -89,7 +89,7 @@ SUNMatrix SUNMatClone_GinkgoBatch(SUNMatrix A)
 {
   auto Amat{static_cast<BatchMatrix<GkoBatchMatType>*>(A->content)};
   auto new_mat{new BatchMatrix<GkoBatchMatType>(*Amat)};
-  return new_mat->Convert();
+  return new_mat->get();
 }
 
 template<class GkoBatchMatType>
@@ -203,13 +203,13 @@ public:
   using sundials::impl::BaseMatrix::sunctx;
 
   // Override the ConvertibleTo methods
-  operator SUNMatrix() override { return object_.get(); }
+  operator SUNMatrix() noexcept override { return object_.get(); }
 
-  operator SUNMatrix() const override { return object_.get(); }
+  operator SUNMatrix() const noexcept override { return object_.get(); }
 
-  SUNMatrix Convert() override { return object_.get(); }
+  SUNMatrix get() noexcept override { return object_.get(); }
 
-  SUNMatrix Convert() const override { return object_.get(); }
+  SUNMatrix get() const noexcept override { return object_.get(); }
 
 private:
   std::shared_ptr<GkoBatchMatType> gkomtx_;

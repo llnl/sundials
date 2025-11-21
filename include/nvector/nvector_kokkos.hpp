@@ -78,7 +78,7 @@ N_Vector N_VClone_Kokkos(N_Vector w)
 {
   auto vec{GetVec<VectorType>(w)};
   auto new_vec = VectorType::Clone(*vec, w->sunctx);
-  return new_vec->Convert();
+  return new_vec->get();
 }
 
 template<class VectorType>
@@ -568,13 +568,13 @@ public:
 
   // Override ConvertibleTo operations
 
-  operator N_Vector() override { return object_.get(); }
+  operator N_Vector() noexcept override { return object_.get(); }
 
-  operator N_Vector() const override { return object_.get(); }
+  operator N_Vector() const noexcept override { return object_.get(); }
 
-  N_Vector Convert() override { return object_.get(); }
+  N_Vector get() noexcept override { return object_.get(); }
 
-  N_Vector Convert() const override { return object_.get(); }
+  N_Vector get() const noexcept override { return object_.get(); }
 
   // Static routines to create clones of the vector that are always managed
 

@@ -257,6 +257,13 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
 
 .. c:function:: SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp)
 
+   .. deprecated:: x.y.z
+
+      See :c:func:`SUNFileOpen`.
+
+
+.. c:function:: SUNErrCode SUNFileOpen(const char* filename, const char* mode, FILE** fp)
+
    The function allocates a ``FILE*`` by calling the C function ``fopen`` with
    the provided filename and I/O mode.
 
@@ -291,7 +298,7 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
       type(c_ptr) :: fp
 
       ! Open up the file output.log for writing
-      ierr = FSUNDIALSFileOpen("output.log", "w+", fp)
+      ierr = FSUNFileOpen("output.log", "w+", fp)
 
       ! The C function ARKStepPrintMem takes void* arkode_mem and FILE* fp as arguments
       call FARKStepPrintMem(arkode_mem, fp)
@@ -299,22 +306,29 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
       ! Close the file
       ierr = FSUNDIALSFileClose(fp)
 
-   .. versionchanged:: 7.0.0
+   .. versionadded:: X.Y.Z
+   
+      Replaces ``SUNDIALSFileOpen``
 
-      The function signature was updated to return a `SUNErrCode` and take a `FILE**` as the last input parameter rather then return a `FILE*`.
 
 .. c:function:: SUNErrCode SUNDIALSFileClose(FILE** fp)
+
+   .. deprecated:: X.Y.Z
+
+      See :c:func:`SUNFileClose`
+
+
+.. c:function:: SUNErrCode SUNFileClose(FILE** fp)
 
    The function deallocates a C ``FILE*`` by calling the C function ``fclose``
    with the provided pointer.
 
    :param fp: the C ``FILE*`` that was previously obtained from ``fopen``.
         This should have the Fortran type ``type(c_ptr)``.  Note that if either
-        ``stdout`` or ``stderr`` were opened using :c:func:`SUNDIALSFileOpen()`
+        ``stdout`` or ``stderr`` were opened using :c:func:`SUNFileOpen()`
 
    :return: A :c:type:`SUNErrCode`
-
-   .. versionchanged:: 7.0.0
-
-      The function signature was updated to return a `SUNErrCode` and the `fp` parameter was changed from `FILE*` to `FILE**`.
-
+   
+   .. versionadded:: X.Y.Z
+   
+      Replaces ``SUNDIALSFileClose``

@@ -35,7 +35,7 @@ set(idas_SOURCES
     idas_nls_stg.c)
 
 # Add variable idas_HEADERS with the exported IDAS header files
-set(idas_HEADERS idas.h idas_bbdpre.h idas_ls.h)
+set(idas_HEADERS idas.h idas.hpp idas_bbdpre.h idas_ls.h)
 
 # Add prefix with complete path to the IDAS header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/idas/ idas_HEADERS)

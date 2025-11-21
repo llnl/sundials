@@ -261,6 +261,7 @@ module fidas_mod
  public :: FIDASetNonlinearSolverB
  public :: FIDAGetB
  public :: FIDAGetQuadB
+ public :: FIDAGetUserDataB
  public :: FIDAGetAdjIDABmem
  public :: FIDAGetConsistentICB
  public :: FIDAGetAdjY
@@ -1994,6 +1995,16 @@ type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
 end function
 
+function swigc_FIDAGetUserDataB(farg1, farg2, farg3) &
+bind(C, name="_wrap_FIDAGetUserDataB") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT), intent(in) :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
 function swigc_FIDAGetAdjIDABmem(farg1, farg2) &
 bind(C, name="_wrap_FIDAGetAdjIDABmem") &
 result(fresult)
@@ -3369,40 +3380,40 @@ fresult = swigc_FIDAComputeYp(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FIDAComputeYSens(ida_mem, ycor, yys) &
+function FIDAComputeYSens(ida_mem, ycor_1d, yys_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(C_PTR) :: ycor
-type(C_PTR) :: yys
+type(C_PTR) :: ycor_1d
+type(C_PTR) :: yys_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = ida_mem
-farg2 = ycor
-farg3 = yys
+farg2 = ycor_1d
+farg3 = yys_1d
 fresult = swigc_FIDAComputeYSens(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FIDAComputeYpSens(ida_mem, ycor, yps) &
+function FIDAComputeYpSens(ida_mem, ycor_1d, yps_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(C_PTR) :: ycor
-type(C_PTR) :: yps
+type(C_PTR) :: ycor_1d
+type(C_PTR) :: yps_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = ida_mem
-farg2 = ycor
-farg3 = yps
+farg2 = ycor_1d
+farg3 = yps_1d
 fresult = swigc_FIDAComputeYpSens(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -3611,18 +3622,18 @@ fresult = swigc_FIDAGetCurrentY(farg1, farg2)
 swig_result = fresult
 end function
 
-function FIDAGetCurrentYSens(ida_mem, ys) &
+function FIDAGetCurrentYSens(ida_mem, ys_1d_out) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(C_PTR), target, intent(inout) :: ys
+type(C_PTR), target, intent(inout) :: ys_1d_out
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(ys)
+farg2 = c_loc(ys_1d_out)
 fresult = swigc_FIDAGetCurrentYSens(farg1, farg2)
 swig_result = fresult
 end function
@@ -3643,18 +3654,18 @@ fresult = swigc_FIDAGetCurrentYp(farg1, farg2)
 swig_result = fresult
 end function
 
-function FIDAGetCurrentYpSens(ida_mem, yps) &
+function FIDAGetCurrentYpSens(ida_mem, yps_1d_out) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(C_PTR), target, intent(inout) :: yps
+type(C_PTR), target, intent(inout) :: yps_1d_out
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(yps)
+farg2 = c_loc(yps_1d_out)
 fresult = swigc_FIDAGetCurrentYpSens(farg1, farg2)
 swig_result = fresult
 end function
@@ -3883,16 +3894,17 @@ fresult = swigc_FIDAGetNonlinearSystemData(farg1, farg2, farg3, farg4, farg5, fa
 swig_result = fresult
 end function
 
-function FIDAGetNonlinearSystemDataSens(ida_mem, tcur, yyspred, ypspred, yysn, ypsn, cj, user_data) &
+function FIDAGetNonlinearSystemDataSens(ida_mem, tcur, yyspred_1d_out, ypspred_1d_out, yysn_1d_out, ypsn_1d_out, cj, &
+  user_data) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tcur
-type(C_PTR), target, intent(inout) :: yyspred
-type(C_PTR), target, intent(inout) :: ypspred
-type(C_PTR), target, intent(inout) :: yysn
-type(C_PTR), target, intent(inout) :: ypsn
+type(C_PTR), target, intent(inout) :: yyspred_1d_out
+type(C_PTR), target, intent(inout) :: ypspred_1d_out
+type(C_PTR), target, intent(inout) :: yysn_1d_out
+type(C_PTR), target, intent(inout) :: ypsn_1d_out
 real(C_DOUBLE), dimension(*), target, intent(inout) :: cj
 type(C_PTR), target, intent(inout) :: user_data
 integer(C_INT) :: fresult 
@@ -3907,10 +3919,10 @@ type(C_PTR) :: farg8
 
 farg1 = ida_mem
 farg2 = c_loc(tcur(1))
-farg3 = c_loc(yyspred)
-farg4 = c_loc(ypspred)
-farg5 = c_loc(yysn)
-farg6 = c_loc(ypsn)
+farg3 = c_loc(yyspred_1d_out)
+farg4 = c_loc(ypspred_1d_out)
+farg5 = c_loc(yysn_1d_out)
+farg6 = c_loc(ypsn_1d_out)
 farg7 = c_loc(cj(1))
 farg8 = c_loc(user_data)
 fresult = swigc_FIDAGetNonlinearSystemDataSens(farg1, farg2, farg3, farg4, farg5, farg6, farg7, farg8)
@@ -4278,7 +4290,7 @@ farg1 = ida_mem
 call swigc_FIDAQuadFree(farg1)
 end subroutine
 
-function FIDASensInit(ida_mem, ns, ism, ress, ys0, yps0) &
+function FIDASensInit(ida_mem, ns, ism, ress, ys0_1d, yps0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -4286,8 +4298,8 @@ type(C_PTR) :: ida_mem
 integer(C_INT), intent(in) :: ns
 integer(C_INT), intent(in) :: ism
 type(C_FUNPTR), intent(in), value :: ress
-type(C_PTR) :: ys0
-type(C_PTR) :: yps0
+type(C_PTR) :: ys0_1d
+type(C_PTR) :: yps0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
@@ -4300,20 +4312,20 @@ farg1 = ida_mem
 farg2 = ns
 farg3 = ism
 farg4 = ress
-farg5 = ys0
-farg6 = yps0
+farg5 = ys0_1d
+farg6 = yps0_1d
 fresult = swigc_FIDASensInit(farg1, farg2, farg3, farg4, farg5, farg6)
 swig_result = fresult
 end function
 
-function FIDASensReInit(ida_mem, ism, ys0, yps0) &
+function FIDASensReInit(ida_mem, ism, ys0_1d, yps0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 integer(C_INT), intent(in) :: ism
-type(C_PTR) :: ys0
-type(C_PTR) :: yps0
+type(C_PTR) :: ys0_1d
+type(C_PTR) :: yps0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
@@ -4322,19 +4334,19 @@ type(C_PTR) :: farg4
 
 farg1 = ida_mem
 farg2 = ism
-farg3 = ys0
-farg4 = yps0
+farg3 = ys0_1d
+farg4 = yps0_1d
 fresult = swigc_FIDASensReInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FIDASensSStolerances(ida_mem, reltols, abstols) &
+function FIDASensSStolerances(ida_mem, reltols, abstols_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: reltols
-real(C_DOUBLE), dimension(*), target, intent(inout) :: abstols
+real(C_DOUBLE), dimension(*), target, intent(inout) :: abstols_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4342,18 +4354,18 @@ type(C_PTR) :: farg3
 
 farg1 = ida_mem
 farg2 = reltols
-farg3 = c_loc(abstols(1))
+farg3 = c_loc(abstols_1d(1))
 fresult = swigc_FIDASensSStolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FIDASensSVtolerances(ida_mem, reltols, abstols) &
+function FIDASensSVtolerances(ida_mem, reltols, abstols_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: reltols
-type(C_PTR) :: abstols
+type(C_PTR) :: abstols_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4361,7 +4373,7 @@ type(C_PTR) :: farg3
 
 farg1 = ida_mem
 farg2 = reltols
-farg3 = abstols
+farg3 = abstols_1d
 fresult = swigc_FIDASensSVtolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4379,21 +4391,21 @@ fresult = swigc_FIDASensEEtolerances(farg1)
 swig_result = fresult
 end function
 
-function FIDAGetSensConsistentIC(ida_mem, yys0, yps0) &
+function FIDAGetSensConsistentIC(ida_mem, yys0_1d, yps0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(C_PTR) :: yys0
-type(C_PTR) :: yps0
+type(C_PTR) :: yys0_1d
+type(C_PTR) :: yps0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = ida_mem
-farg2 = yys0
-farg3 = yps0
+farg2 = yys0_1d
+farg3 = yps0_1d
 fresult = swigc_FIDAGetSensConsistentIC(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4449,14 +4461,14 @@ fresult = swigc_FIDASetSensMaxNonlinIters(farg1, farg2)
 swig_result = fresult
 end function
 
-function FIDASetSensParams(ida_mem, p, pbar, plist) &
+function FIDASetSensParams(ida_mem, p_1d, pbar_1d, plist_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-real(C_DOUBLE), dimension(*), target, intent(inout) :: p
-real(C_DOUBLE), dimension(*), target, intent(inout) :: pbar
-integer(C_INT), dimension(*), target, intent(inout) :: plist
+real(C_DOUBLE), dimension(*), target, intent(inout) :: p_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: pbar_1d
+integer(C_INT), dimension(*), target, intent(inout) :: plist_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4464,9 +4476,9 @@ type(C_PTR) :: farg3
 type(C_PTR) :: farg4 
 
 farg1 = ida_mem
-farg2 = c_loc(p(1))
-farg3 = c_loc(pbar(1))
-farg4 = c_loc(plist(1))
+farg2 = c_loc(p_1d(1))
+farg3 = c_loc(pbar_1d(1))
+farg4 = c_loc(plist_1d(1))
 fresult = swigc_FIDASetSensParams(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -4516,13 +4528,13 @@ fresult = swigc_FIDASensToggleOff(farg1)
 swig_result = fresult
 end function
 
-function FIDAGetSens(ida_mem, tret, yysout) &
+function FIDAGetSens(ida_mem, tret, yysout_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
-type(C_PTR) :: yysout
+type(C_PTR) :: yysout_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4530,7 +4542,7 @@ type(C_PTR) :: farg3
 
 farg1 = ida_mem
 farg2 = c_loc(tret(1))
-farg3 = yysout
+farg3 = yysout_1d
 fresult = swigc_FIDAGetSens(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4557,14 +4569,14 @@ fresult = swigc_FIDAGetSens1(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FIDAGetSensDky(ida_mem, t, k, dkys) &
+function FIDAGetSensDky(ida_mem, t, k, dkys_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: t
 integer(C_INT), intent(in) :: k
-type(C_PTR) :: dkys
+type(C_PTR) :: dkys_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4574,7 +4586,7 @@ type(C_PTR) :: farg4
 farg1 = ida_mem
 farg2 = t
 farg3 = k
-farg4 = dkys
+farg4 = dkys_1d
 fresult = swigc_FIDAGetSensDky(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -4668,18 +4680,18 @@ fresult = swigc_FIDAGetSensNumLinSolvSetups(farg1, farg2)
 swig_result = fresult
 end function
 
-function FIDAGetSensErrWeights(ida_mem, esweight) &
+function FIDAGetSensErrWeights(ida_mem, esweight_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(C_PTR) :: esweight
+type(C_PTR) :: esweight_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = ida_mem
-farg2 = esweight
+farg2 = esweight_1d
 fresult = swigc_FIDAGetSensErrWeights(farg1, farg2)
 swig_result = fresult
 end function
@@ -4785,13 +4797,13 @@ farg1 = ida_mem
 call swigc_FIDASensFree(farg1)
 end subroutine
 
-function FIDAQuadSensInit(ida_mem, resqs, yqs0) &
+function FIDAQuadSensInit(ida_mem, resqs, yqs0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 type(C_FUNPTR), intent(in), value :: resqs
-type(C_PTR) :: yqs0
+type(C_PTR) :: yqs0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
@@ -4799,23 +4811,23 @@ type(C_PTR) :: farg3
 
 farg1 = ida_mem
 farg2 = resqs
-farg3 = yqs0
+farg3 = yqs0_1d
 fresult = swigc_FIDAQuadSensInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FIDAQuadSensReInit(ida_mem, yqs0) &
+function FIDAQuadSensReInit(ida_mem, yqs0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(C_PTR) :: yqs0
+type(C_PTR) :: yqs0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = ida_mem
-farg2 = yqs0
+farg2 = yqs0_1d
 fresult = swigc_FIDAQuadSensReInit(farg1, farg2)
 swig_result = fresult
 end function
@@ -4839,13 +4851,13 @@ fresult = swigc_FIDAQuadSensSStolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FIDAQuadSensSVtolerances(ida_mem, reltolqs, abstolqs) &
+function FIDAQuadSensSVtolerances(ida_mem, reltolqs, abstolqs_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: reltolqs
-type(C_PTR) :: abstolqs
+type(C_PTR) :: abstolqs_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4853,7 +4865,7 @@ type(C_PTR) :: farg3
 
 farg1 = ida_mem
 farg2 = reltolqs
-farg3 = abstolqs
+farg3 = abstolqs_1d
 fresult = swigc_FIDAQuadSensSVtolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4887,13 +4899,13 @@ fresult = swigc_FIDASetQuadSensErrCon(farg1, farg2)
 swig_result = fresult
 end function
 
-function FIDAGetQuadSens(ida_mem, tret, yyqsout) &
+function FIDAGetQuadSens(ida_mem, tret, yyqsout_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
-type(C_PTR) :: yyqsout
+type(C_PTR) :: yyqsout_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4901,7 +4913,7 @@ type(C_PTR) :: farg3
 
 farg1 = ida_mem
 farg2 = c_loc(tret(1))
-farg3 = yyqsout
+farg3 = yyqsout_1d
 fresult = swigc_FIDAGetQuadSens(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4928,14 +4940,14 @@ fresult = swigc_FIDAGetQuadSens1(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FIDAGetQuadSensDky(ida_mem, t, k, dkyqs) &
+function FIDAGetQuadSensDky(ida_mem, t, k, dkyqs_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: t
 integer(C_INT), intent(in) :: k
-type(C_PTR) :: dkyqs
+type(C_PTR) :: dkyqs_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4945,7 +4957,7 @@ type(C_PTR) :: farg4
 farg1 = ida_mem
 farg2 = t
 farg3 = k
-farg4 = dkyqs
+farg4 = dkyqs_1d
 fresult = swigc_FIDAGetQuadSensDky(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -5007,18 +5019,18 @@ fresult = swigc_FIDAGetQuadSensNumErrTestFails(farg1, farg2)
 swig_result = fresult
 end function
 
-function FIDAGetQuadSensErrWeights(ida_mem, eqsweight) &
+function FIDAGetQuadSensErrWeights(ida_mem, eqsweight_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(C_PTR) :: eqsweight
+type(C_PTR) :: eqsweight_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = ida_mem
-farg2 = eqsweight
+farg2 = eqsweight_1d
 fresult = swigc_FIDAGetQuadSensErrWeights(farg1, farg2)
 swig_result = fresult
 end function
@@ -5365,7 +5377,7 @@ fresult = swigc_FIDACalcICB(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
 
-function FIDACalcICBS(ida_mem, which, tout1, yy0, yp0, yys0, yps0) &
+function FIDACalcICBS(ida_mem, which, tout1, yy0, yp0, yys0_1d, yps0_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -5374,8 +5386,8 @@ integer(C_INT), intent(in) :: which
 real(C_DOUBLE), intent(in) :: tout1
 type(N_Vector), target, intent(inout) :: yy0
 type(N_Vector), target, intent(inout) :: yp0
-type(C_PTR) :: yys0
-type(C_PTR) :: yps0
+type(C_PTR) :: yys0_1d
+type(C_PTR) :: yps0_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
@@ -5390,8 +5402,8 @@ farg2 = which
 farg3 = tout1
 farg4 = c_loc(yy0)
 farg5 = c_loc(yp0)
-farg6 = yys0
-farg7 = yps0
+farg6 = yys0_1d
+farg7 = yps0_1d
 fresult = swigc_FIDACalcICBS(farg1, farg2, farg3, farg4, farg5, farg6, farg7)
 swig_result = fresult
 end function
@@ -5693,6 +5705,25 @@ farg2 = which
 farg3 = c_loc(tret(1))
 farg4 = c_loc(qb)
 fresult = swigc_FIDAGetQuadB(farg1, farg2, farg3, farg4)
+swig_result = fresult
+end function
+
+function FIDAGetUserDataB(ida_mem, which, user_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: ida_mem
+integer(C_INT), intent(in) :: which
+type(C_PTR), target, intent(inout) :: user_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+integer(C_INT) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = ida_mem
+farg2 = which
+farg3 = c_loc(user_data)
+fresult = swigc_FIDAGetUserDataB(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

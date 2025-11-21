@@ -1423,14 +1423,14 @@ fresult = swigc_FCVodeReInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeResizeHistory(cvode_mem, t_hist, y_hist, f_hist, num_y_hist, num_f_hist) &
+function FCVodeResizeHistory(cvode_mem, t_hist_1d, y_hist_1d, f_hist_1d, num_y_hist, num_f_hist) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-real(C_DOUBLE), dimension(*), target, intent(inout) :: t_hist
-type(C_PTR) :: y_hist
-type(C_PTR) :: f_hist
+real(C_DOUBLE), dimension(*), target, intent(inout) :: t_hist_1d
+type(C_PTR) :: y_hist_1d
+type(C_PTR) :: f_hist_1d
 integer(C_INT), intent(in) :: num_y_hist
 integer(C_INT), intent(in) :: num_f_hist
 integer(C_INT) :: fresult 
@@ -1442,9 +1442,9 @@ integer(C_INT) :: farg5
 integer(C_INT) :: farg6 
 
 farg1 = cvode_mem
-farg2 = c_loc(t_hist(1))
-farg3 = y_hist
-farg4 = f_hist
+farg2 = c_loc(t_hist_1d(1))
+farg3 = y_hist_1d
+farg4 = f_hist_1d
 farg5 = num_y_hist
 farg6 = num_f_hist
 fresult = swigc_FCVodeResizeHistory(farg1, farg2, farg3, farg4, farg5, farg6)
