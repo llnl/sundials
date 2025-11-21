@@ -92,6 +92,7 @@ if(ENABLE_ALL_WARNINGS)
 -Wunused-local-typedefs")
   # TODO(SBR): Try to add -Wredundant-decls once SuperLU version is updated in
   # CI tests
+  # TODO(DJG): To add -Wundef need to workaround __cplusplus and GTest warnings
 
   # Avoid numerous warnings from printf
   if(SUNDIALS_PRECISION MATCHES "EXTENDED")
