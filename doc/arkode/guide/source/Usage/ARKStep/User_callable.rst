@@ -1807,7 +1807,7 @@ Optional inputs for time step adaptivity
    .. deprecated:: 6.1.0
 
       Use :c:func:`ARKodeSetSafetyFactor` instead.
-
+      
    .. versionchanged:: 6.3.0
 
       The default default was changed from 0.96 to 0.9. The maximum value is now

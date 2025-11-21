@@ -246,7 +246,7 @@ int main(int argc, char* argv[])
       LS = std::make_unique<LSType>(sunctx);
 
       // Attach the matrix and linear solver to CVODE
-      retval = CVodeSetLinearSolver(cvode_mem, LS->Convert(), A->Convert());
+      retval = CVodeSetLinearSolver(cvode_mem, LS->get(), A->get());
       if (check_flag(retval, "CVodeSetLinearSolver")) { return 1; }
 
       // Set the user-supplied Jacobian function
@@ -260,7 +260,7 @@ int main(int argc, char* argv[])
         SUNLinSol_SPGMR(y, SUN_PREC_NONE, 0, sunctx));
 
       // Attach the linear solver to CVODE
-      retval = CVodeSetLinearSolver(cvode_mem, LS->Convert(), nullptr);
+      retval = CVodeSetLinearSolver(cvode_mem, LS->get(), nullptr);
       if (check_flag(retval, "CVodeSetLinearSolver")) { return 1; }
     }
 

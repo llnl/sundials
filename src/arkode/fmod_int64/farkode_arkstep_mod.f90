@@ -65,6 +65,7 @@ module farkode_arkstep_mod
  public :: FARKStepSetTableName
  public :: FARKStepGetCurrentButcherTables
  public :: FARKStepGetTimestepperStats
+ public :: FARKStepCreateAdjointStepper
  public :: FARKStepCreateMRIStepInnerStepper
  public :: FARKStepResize
  public :: FARKStepReset
@@ -205,7 +206,6 @@ module farkode_arkstep_mod
  public :: FARKStepGetLinReturnFlagName
  public :: FARKStepFree
  public :: FARKStepPrintMem
- public :: FARKStepCreateAdjointStepper
  public :: FARKStepSetRelaxFn
  public :: FARKStepSetRelaxEtaFail
  public :: FARKStepSetRelaxLowerBound
@@ -328,6 +328,20 @@ type(C_PTR), value :: farg5
 type(C_PTR), value :: farg6
 type(C_PTR), value :: farg7
 type(C_PTR), value :: farg8
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKStepCreateAdjointStepper(farg1, farg2, farg3, farg4, farg5, farg6, farg7) &
+bind(C, name="_wrap_FARKStepCreateAdjointStepper") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_FUNPTR), value :: farg3
+real(C_DOUBLE), intent(in) :: farg4
+type(C_PTR), value :: farg5
+type(C_PTR), value :: farg6
+type(C_PTR), value :: farg7
 integer(C_INT) :: fresult
 end function
 
@@ -1629,20 +1643,6 @@ type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 end subroutine
 
-function swigc_FARKStepCreateAdjointStepper(farg1, farg2, farg3, farg4, farg5, farg6, farg7) &
-bind(C, name="_wrap_FARKStepCreateAdjointStepper") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_FUNPTR), value :: farg3
-real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
-type(C_PTR), value :: farg6
-type(C_PTR), value :: farg7
-integer(C_INT) :: fresult
-end function
-
 function swigc_FARKStepSetRelaxFn(farg1, farg2, farg3) &
 bind(C, name="_wrap_FARKStepSetRelaxFn") &
 result(fresult)
@@ -2018,6 +2018,37 @@ farg6 = c_loc(nfi_evals(1))
 farg7 = c_loc(nlinsetups(1))
 farg8 = c_loc(netfails(1))
 fresult = swigc_FARKStepGetTimestepperStats(farg1, farg2, farg3, farg4, farg5, farg6, farg7, farg8)
+swig_result = fresult
+end function
+
+function FARKStepCreateAdjointStepper(arkode_mem, adj_fe, adj_fi, tf, sf, sunctx, adj_stepper_ptr) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_FUNPTR), intent(in), value :: adj_fe
+type(C_FUNPTR), intent(in), value :: adj_fi
+real(C_DOUBLE), intent(in) :: tf
+type(N_Vector), target, intent(inout) :: sf
+type(C_PTR) :: sunctx
+type(C_PTR), target, intent(inout) :: adj_stepper_ptr
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_FUNPTR) :: farg3 
+real(C_DOUBLE) :: farg4 
+type(C_PTR) :: farg5 
+type(C_PTR) :: farg6 
+type(C_PTR) :: farg7 
+
+farg1 = arkode_mem
+farg2 = adj_fe
+farg3 = adj_fi
+farg4 = tf
+farg5 = c_loc(sf)
+farg6 = sunctx
+farg7 = c_loc(adj_stepper_ptr)
+fresult = swigc_FARKStepCreateAdjointStepper(farg1, farg2, farg3, farg4, farg5, farg6, farg7)
 swig_result = fresult
 end function
 
@@ -4373,37 +4404,6 @@ farg1 = arkode_mem
 farg2 = outfile
 call swigc_FARKStepPrintMem(farg1, farg2)
 end subroutine
-
-function FARKStepCreateAdjointStepper(arkode_mem, adj_fe, adj_fi, tf, sf, sunctx, adj_stepper_ptr) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-type(C_FUNPTR), intent(in), value :: adj_fe
-type(C_FUNPTR), intent(in), value :: adj_fi
-real(C_DOUBLE), intent(in) :: tf
-type(N_Vector), target, intent(inout) :: sf
-type(C_PTR) :: sunctx
-type(C_PTR), target, intent(inout) :: adj_stepper_ptr
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_FUNPTR) :: farg3 
-real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
-type(C_PTR) :: farg6 
-type(C_PTR) :: farg7 
-
-farg1 = arkode_mem
-farg2 = adj_fe
-farg3 = adj_fi
-farg4 = tf
-farg5 = c_loc(sf)
-farg6 = sunctx
-farg7 = c_loc(adj_stepper_ptr)
-fresult = swigc_FARKStepCreateAdjointStepper(farg1, farg2, farg3, farg4, farg5, farg6, farg7)
-swig_result = fresult
-end function
 
 function FARKStepSetRelaxFn(arkode_mem, rfn, rjac) &
 result(swig_result)

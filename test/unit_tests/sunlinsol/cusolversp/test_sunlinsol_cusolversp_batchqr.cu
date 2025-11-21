@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
   }
 
   /* Create sparse matrix from dense, and destroy B */
-  A = SUNSparseFromDenseMatrix(B, ZERO, CSR_MAT);
+  A = SUNSparseFromDenseMatrix(B, ZERO, SUN_CSR_MAT);
   SUNMatDestroy(B);
 
   /* Calculate actual number of nonzeros per block */

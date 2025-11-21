@@ -354,7 +354,7 @@ int SUNLinSolSetup_SuperLUMT(SUNLinearSolver S, SUNMatrix A)
   panel_size = sp_ienv(1);
   relax      = sp_ienv(2);
   fact       = EQUILIBRATE;
-  trans      = (SUNSparseMatrix_SparseType(A) == CSC_MAT) ? NOTRANS : TRANS;
+  trans      = (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT) ? NOTRANS : TRANS;
   usepr      = NO;
   drop_tol   = ZERO;
   lwork      = 0;
@@ -430,7 +430,7 @@ int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   Bstore->nzval = xdata;
 
   /* Call SuperLUMT to solve the linear system using L and U */
-  trans = (SUNSparseMatrix_SparseType(A) == CSC_MAT) ? NOTRANS : TRANS;
+  trans = (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT) ? NOTRANS : TRANS;
   xgstrs(trans, SM_L(S), SM_U(S), (int_t*)PERMR(S), (int_t*)PERMC(S), SM_B(S),
          GSTAT(S), &retval);
   if (retval != 0)

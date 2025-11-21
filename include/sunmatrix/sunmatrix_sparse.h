@@ -50,6 +50,11 @@ extern "C" {
  * Matrix Type Definitions
  * ------------------------ */
 
+#define SUN_CSC_MAT 0
+#define SUN_CSR_MAT 1
+
+/* DEPRECATION NOTICE: CSC_MAT and CSR_MAT will be removed in the next major release.
+    use SUN_CSC_MAT and SUN_CSR_MAT instead. */
 #define CSC_MAT 0
 #define CSR_MAT 1
 

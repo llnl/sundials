@@ -34,8 +34,14 @@ set(cvode_SOURCES
     cvode_resize.c)
 
 # Add variable cvode_HEADERS with the exported CVODE header files
-set(cvode_HEADERS cvode.h cvode_bandpre.h cvode_bbdpre.h cvode_diag.h
-                  cvode_ls.h cvode_proj.h)
+set(cvode_HEADERS
+    cvode.h
+    cvode.hpp
+    cvode_bandpre.h
+    cvode_bbdpre.h
+    cvode_diag.h
+    cvode_ls.h
+    cvode_proj.h)
 
 # Add prefix with complete path to the CVODE header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/cvode/ cvode_HEADERS)

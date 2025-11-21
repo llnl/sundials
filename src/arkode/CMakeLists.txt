@@ -58,20 +58,32 @@ set(arkode_SOURCES
 # Add variable arkode_HEADERS with the exported ARKODE header files
 set(arkode_HEADERS
     arkode.h
+    arkode.hpp
     arkode_arkstep.h
+    arkode_arkstep.hpp
+    arkode_arkstep_deprecated.h
     arkode_bandpre.h
     arkode_bbdpre.h
     arkode_butcher.h
     arkode_butcher_dirk.h
     arkode_butcher_erk.h
     arkode_erkstep.h
+    arkode_erkstep.hpp
+    arkode_erkstep_deprecated.h
     arkode_forcingstep.h
+    arkode_forcingstep.hpp
     arkode_ls.h
     arkode_lsrkstep.h
+    arkode_lsrkstep.hpp
     arkode_mristep.h
+    arkode_mristep.hpp
+    arkode_mristep_deprecated.h
     arkode_splittingstep.h
+    arkode_splittingstep.hpp
     arkode_sprk.h
-    arkode_sprkstep.h)
+    arkode_sprkstep.h
+    arkode_sprkstep.hpp
+    arkode_sprkstep_deprecated.h)
 
 # Add prefix with complete path to the ARKODE header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/arkode/ arkode_HEADERS)

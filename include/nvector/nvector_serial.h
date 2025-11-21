@@ -93,7 +93,7 @@ SUNDIALS_EXPORT
 N_Vector N_VNew_Serial(sunindextype vec_length, SUNContext sunctx);
 
 SUNDIALS_EXPORT
-N_Vector N_VMake_Serial(sunindextype vec_length, sunrealtype* v_data,
+N_Vector N_VMake_Serial(sunindextype vec_length, sunrealtype* v_data_1d,
                         SUNContext sunctx);
 
 SUNDIALS_EXPORT

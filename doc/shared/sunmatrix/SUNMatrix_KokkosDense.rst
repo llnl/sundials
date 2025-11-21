@@ -72,14 +72,14 @@ the Kokkos dense matrix e.g.,
                                                       sunctx};
 
 Instances of the ``DenseMatrix`` class are implicitly or explicitly (using the
-:cpp:func:`~DenseMatrix::Convert` method) convertible to a :c:type:`SUNMatrix`
+:cpp:func:`~DenseMatrix::get` method) convertible to a :c:type:`SUNMatrix`
 e.g.,
 
 .. code-block:: cpp
 
    sundials::kokkos::DenseMatrix<> A{rows, cols, sunctx};
    SUNMatrix B = A;           // implicit conversion to SUNMatrix
-   SUNMatrix C = A.Convert(); // explicit conversion to SUNMatrix
+   SUNMatrix C = A.get(); // explicit conversion to SUNMatrix
 
 No further interaction with a ``DenseMatrix`` is required from this point, and
 it is possible to use the :c:type:`SUNMatrix` API to operate on ``B`` or ``C``.
@@ -235,13 +235,21 @@ class.
 
       Implicit conversion to a :c:type:`SUNMatrix`.
 
-   .. cpp:function:: SUNMatrix Convert() override
+   .. cpp:function:: SUNMatrix get() override
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-   .. cpp:function:: SUNMatrix Convert() const override
+      .. versionadded:: x.y.z
+      
+         Replaces the ``Convert`` method which was deprecated.
+
+   .. cpp:function:: SUNMatrix get() const override
 
       Explicit conversion to a :c:type:`SUNMatrix`.
+
+      .. versionadded:: x.y.z
+      
+         Replaces the ``Convert`` method which was deprecated.
 
 .. cpp:function:: template<class ExecutionSpace = Kokkos::DefaultExecutionSpace, \
                            class MemorySpace = typename ExecutionSpace::memory_space> \

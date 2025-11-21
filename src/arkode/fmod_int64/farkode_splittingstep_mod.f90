@@ -60,11 +60,11 @@ module farkode_splittingstep_mod
  interface SplittingStepCoefficientsMem
   module procedure swigf_create_SplittingStepCoefficientsMem
  end interface
- ! typedef enum ARKODE_SplittingCoefficientsID
+ ! enum ARKODE_SplittingCoefficientsID
  enum, bind(c)
   enumerator :: ARKODE_SPLITTING_NONE = -1
+  enumerator :: ARKODE_SPLITTING_LIE_TROTTER_1_1_2 = 0
   enumerator :: ARKODE_MIN_SPLITTING_NUM = 0
-  enumerator :: ARKODE_SPLITTING_LIE_TROTTER_1_1_2 = ARKODE_MIN_SPLITTING_NUM
   enumerator :: ARKODE_SPLITTING_STRANG_2_2_2
   enumerator :: ARKODE_SPLITTING_BEST_2_2_2
   enumerator :: ARKODE_SPLITTING_SUZUKI_3_3_2
@@ -74,7 +74,7 @@ module farkode_splittingstep_mod
   enumerator :: ARKODE_MAX_SPLITTING_NUM = ARKODE_SPLITTING_YOSHIDA_8_6_2
  end enum
  integer, parameter, public :: ARKODE_SplittingCoefficientsID = kind(ARKODE_SPLITTING_NONE)
- public :: ARKODE_SPLITTING_NONE, ARKODE_MIN_SPLITTING_NUM, ARKODE_SPLITTING_LIE_TROTTER_1_1_2, ARKODE_SPLITTING_STRANG_2_2_2, &
+ public :: ARKODE_SPLITTING_NONE, ARKODE_SPLITTING_LIE_TROTTER_1_1_2, ARKODE_MIN_SPLITTING_NUM, ARKODE_SPLITTING_STRANG_2_2_2, &
     ARKODE_SPLITTING_BEST_2_2_2, ARKODE_SPLITTING_SUZUKI_3_3_2, ARKODE_SPLITTING_RUTH_3_3_2, ARKODE_SPLITTING_YOSHIDA_4_4_2, &
     ARKODE_SPLITTING_YOSHIDA_8_6_2, ARKODE_MAX_SPLITTING_NUM
  public :: FSplittingStepCoefficients_Alloc
@@ -629,7 +629,7 @@ fresult = swigc_FSplittingStepCoefficients_Alloc(farg1, farg2, farg3)
 swig_result%swigdata = fresult
 end function
 
-function FSplittingStepCoefficients_Create(sequential_methods, stages, partitions, order, alpha, beta) &
+function FSplittingStepCoefficients_Create(sequential_methods, stages, partitions, order, alpha_1d, beta_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(SplittingStepCoefficientsMem) :: swig_result
@@ -637,8 +637,8 @@ integer(C_INT), intent(in) :: sequential_methods
 integer(C_INT), intent(in) :: stages
 integer(C_INT), intent(in) :: partitions
 integer(C_INT), intent(in) :: order
-real(C_DOUBLE), dimension(*), target, intent(inout) :: alpha
-real(C_DOUBLE), dimension(*), target, intent(inout) :: beta
+real(C_DOUBLE), dimension(*), target, intent(inout) :: alpha_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: beta_1d
 type(SwigClassWrapper) :: fresult 
 integer(C_INT) :: farg1 
 integer(C_INT) :: farg2 
@@ -651,8 +651,8 @@ farg1 = sequential_methods
 farg2 = stages
 farg3 = partitions
 farg4 = order
-farg5 = c_loc(alpha(1))
-farg6 = c_loc(beta(1))
+farg5 = c_loc(alpha_1d(1))
+farg6 = c_loc(beta_1d(1))
 fresult = swigc_FSplittingStepCoefficients_Create(farg1, farg2, farg3, farg4, farg5, farg6)
 swig_result%swigdata = fresult
 end function

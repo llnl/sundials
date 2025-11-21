@@ -2049,11 +2049,11 @@ SWIGEXPORT int _wrap_FIDAGetSensNumLinSolvSetups(void *farg1, long *farg2) {
 SWIGEXPORT int _wrap_FIDAGetSensErrWeights(void *farg1, void *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
-  N_Vector_S arg2 = (N_Vector_S) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector_S)(farg2);
+  arg2 = (N_Vector *)(farg2);
   result = (int)IDAGetSensErrWeights(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -2899,6 +2899,22 @@ SWIGEXPORT int _wrap_FIDAGetQuadB(void *farg1, int const *farg2, double *farg3, 
   arg3 = (sunrealtype *)(farg3);
   arg4 = (N_Vector)(farg4);
   result = (int)IDAGetQuadB(arg1,arg2,arg3,arg4);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FIDAGetUserDataB(void *farg1, int const *farg2, void *farg3) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int arg2 ;
+  void **arg3 = (void **) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (int)(*farg2);
+  arg3 = (void **)(farg3);
+  result = (int)IDAGetUserDataB(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }

@@ -40,12 +40,16 @@ extern "C" {
  *    MRI_H_TOL - controls slow step and fast relative tolerances
  * ----------------------------------------------------------------- */
 
-typedef enum
+enum SUNAdaptController_Type
 {
   SUN_ADAPTCONTROLLER_NONE,
   SUN_ADAPTCONTROLLER_H,
   SUN_ADAPTCONTROLLER_MRI_H_TOL
-} SUNAdaptController_Type;
+};
+
+#ifndef SWIG
+typedef enum SUNAdaptController_Type SUNAdaptController_Type;
+#endif
 
 /* -----------------------------------------------------------------
  * Generic definition of SUNAdaptController

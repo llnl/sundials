@@ -65,7 +65,7 @@ complete description of the parts of this *content* field is given below:
   variables (of length ``NNZ``), containing the values of the
   nonzero entries in the matrix
 
-* ``sparsetype`` - type of the sparse matrix (``CSC_MAT`` or ``CSR_MAT``)
+* ``sparsetype`` - type of the sparse matrix (``SUN_CSC_MAT`` or ``SUN_CSR_MAT``)
 
 * ``indexvals`` - pointer to a contiguous block of ``int`` variables
   (of length ``NNZ``), containing the row indices (if CSC) or column
@@ -90,16 +90,16 @@ automatically when creating a sparse ``SUNMatrix``, based on the
 sparse matrix storage type.
 
 * ``rowvals`` - pointer to ``indexvals`` when ``sparsetype`` is
-  ``CSC_MAT``, otherwise set to ``NULL``.
+  ``SUN_CSC_MAT``, otherwise set to ``NULL``.
 
 * ``colptrs`` - pointer to ``indexptrs`` when ``sparsetype`` is
-  ``CSC_MAT``, otherwise set to ``NULL``.
+  ``SUN_CSC_MAT``, otherwise set to ``NULL``.
 
 * ``colvals`` - pointer to ``indexvals`` when ``sparsetype`` is
-  ``CSR_MAT``, otherwise set to ``NULL``.
+  ``SUN_CSR_MAT``, otherwise set to ``NULL``.
 
 * ``rowptrs`` - pointer to ``indexptrs`` when ``sparsetype`` is
-  ``CSR_MAT``, otherwise set to ``NULL``.
+  ``SUN_CSR_MAT``, otherwise set to ``NULL``.
 
 For example, the :math:`5\times 4` matrix
 
@@ -121,7 +121,7 @@ could be stored as a CSC matrix in this structure as either
    NNZ = 8;
    NP = N;
    data = {3.0, 1.0, 3.0, 7.0, 1.0, 2.0, 9.0, 5.0};
-   sparsetype = CSC_MAT;
+   sparsetype = SUN_CSC_MAT;
    indexvals = {1, 3, 0, 2, 0, 1, 3, 4};
    indexptrs = {0, 2, 4, 5, 8};
 
@@ -134,7 +134,7 @@ or
    NNZ = 10;
    NP = N;
    data = {3.0, 1.0, 3.0, 7.0, 1.0, 2.0, 9.0, 5.0, *, *};
-   sparsetype = CSC_MAT;
+   sparsetype = SUN_CSC_MAT;
    indexvals = {1, 3, 0, 2, 0, 1, 3, 4, *, *};
    indexptrs = {0, 2, 4, 5, 8};
 
@@ -152,7 +152,7 @@ Similarly, in CSR format, the same matrix could be stored as
    NNZ = 8;
    NP = M;
    data = {3.0, 1.0, 3.0, 2.0, 7.0, 1.0, 9.0, 5.0};
-   sparsetype = CSR_MAT;
+   sparsetype = SUN_CSR_MAT;
    indexvals = {1, 2, 0, 3, 1, 0, 3, 3};
    indexptrs = {0, 2, 4, 5, 7, 8};
 
@@ -335,8 +335,8 @@ following additional user-callable routines:
    ``SUNMatrix``.  Its arguments are the number of rows and columns of
    the matrix, *M* and *N*, the maximum number of nonzeros to be
    stored in the matrix, *NNZ*, and a flag *sparsetype* indicating
-   whether to use CSR or CSC format (valid choices are ``CSR_MAT`` or
-   ``CSC_MAT``).
+   whether to use CSR or CSC format (valid choices are ``SUN_CSR_MAT`` or
+   ``SUN_CSC_MAT``).
 
 
 
@@ -352,7 +352,7 @@ following additional user-callable routines:
 
    * *droptol* must be non-negative
 
-   * *sparsetype* must be either ``CSC_MAT`` or ``CSR_MAT``
+   * *sparsetype* must be either ``SUN_CSC_MAT`` or ``SUN_CSR_MAT``
 
    The function returns ``NULL`` if any requirements are violated, or if
    the matrix storage request cannot be satisfied.
@@ -371,7 +371,7 @@ following additional user-callable routines:
 
    * *droptol* must be non-negative
 
-   * *sparsetype* must be either ``CSC_MAT`` or ``CSR_MAT``.
+   * *sparsetype* must be either ``SUN_CSC_MAT`` or ``SUN_CSR_MAT``.
 
    The function returns ``NULL`` if any requirements are violated, or if
    the matrix storage request cannot be satisfied.
@@ -424,8 +424,8 @@ following additional user-callable routines:
 
 .. c:function:: int SUNSparseMatrix_SparseType(SUNMatrix A)
 
-   This function returns the storage type (``CSR_MAT``
-   or ``CSC_MAT``) for the sparse  ``SUNMatrix``.
+   This function returns the storage type (``SUN_CSR_MAT``
+   or ``SUN_CSC_MAT``) for the sparse  ``SUNMatrix``.
 
 
 .. c:function:: sunrealtype* SUNSparseMatrix_Data(SUNMatrix A)

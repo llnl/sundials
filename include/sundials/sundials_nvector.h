@@ -63,7 +63,7 @@ extern "C" {
  * Implemented N_Vector types
  * ----------------------------------------------------------------- */
 
-typedef enum
+enum N_Vector_ID
 {
   SUNDIALS_NVEC_SERIAL,
   SUNDIALS_NVEC_PARALLEL,
@@ -82,7 +82,11 @@ typedef enum
   SUNDIALS_NVEC_MPIMANYVECTOR,
   SUNDIALS_NVEC_MPIPLUSX,
   SUNDIALS_NVEC_CUSTOM
-} N_Vector_ID;
+};
+
+#ifndef SWIG
+typedef enum N_Vector_ID N_Vector_ID;
+#endif
 
 /* -----------------------------------------------------------------
  * Generic definition of N_Vector
@@ -95,6 +99,7 @@ typedef _SUNDIALS_STRUCT_ _generic_N_Vector_Ops* N_Vector_Ops;
 typedef _SUNDIALS_STRUCT_ _generic_N_Vector* N_Vector;
 
 /* Define array of N_Vectors */
+/* DEPRECATION NOTICE: N_Vector_S will be removed in the next major release */
 typedef N_Vector* N_Vector_S;
 
 /* Structure containing function pointers to vector operations  */
@@ -225,7 +230,7 @@ SUNDIALS_DEPRECATED_EXPORT_MSG(
 void N_VSpace(N_Vector v, sunindextype* lrw, sunindextype* liw);
 SUNDIALS_EXPORT sunrealtype* N_VGetArrayPointer(N_Vector v);
 SUNDIALS_EXPORT sunrealtype* N_VGetDeviceArrayPointer(N_Vector v);
-SUNDIALS_EXPORT void N_VSetArrayPointer(sunrealtype* v_data, N_Vector v);
+SUNDIALS_EXPORT void N_VSetArrayPointer(sunrealtype* v_data_1d, N_Vector v);
 SUNDIALS_EXPORT SUNComm N_VGetCommunicator(N_Vector v);
 SUNDIALS_EXPORT sunindextype N_VGetLength(N_Vector v);
 SUNDIALS_EXPORT sunindextype N_VGetLocalLength(N_Vector v);
@@ -258,44 +263,45 @@ SUNDIALS_EXPORT sunrealtype N_VMinQuotient(N_Vector num, N_Vector denom);
 
 /* fused vector operations */
 SUNDIALS_EXPORT
-SUNErrCode N_VLinearCombination(int nvec, sunrealtype* c, N_Vector* X,
+SUNErrCode N_VLinearCombination(int nvec, sunrealtype* c_1d, N_Vector* X_1d,
                                 N_Vector z);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VScaleAddMulti(int nvec, sunrealtype* a, N_Vector x, N_Vector* Y,
-                            N_Vector* Z);
+SUNErrCode N_VScaleAddMulti(int nvec, sunrealtype* a_1d, N_Vector x,
+                            N_Vector* Y_1d, N_Vector* Z_1d);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VDotProdMulti(int nvec, N_Vector x, N_Vector* Y,
-                           sunrealtype* dotprods);
+SUNErrCode N_VDotProdMulti(int nvec, N_Vector x, N_Vector* Y_1d,
+                           sunrealtype* dotprods_1d);
 
 /* vector array operations */
 SUNDIALS_EXPORT
-SUNErrCode N_VLinearSumVectorArray(int nvec, sunrealtype a, N_Vector* X,
-                                   sunrealtype b, N_Vector* Y, N_Vector* Z);
+SUNErrCode N_VLinearSumVectorArray(int nvec, sunrealtype a, N_Vector* X_1d,
+                                   sunrealtype b, N_Vector* Y_1d, N_Vector* Z_1d);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VScaleVectorArray(int nvec, sunrealtype* c, N_Vector* X,
-                               N_Vector* Z);
+SUNErrCode N_VScaleVectorArray(int nvec, sunrealtype* c_1d, N_Vector* X_1d,
+                               N_Vector* Z_1d);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VConstVectorArray(int nvec, sunrealtype c, N_Vector* Z);
+SUNErrCode N_VConstVectorArray(int nvec, sunrealtype c, N_Vector* Z_1d);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VWrmsNormVectorArray(int nvec, N_Vector* X, N_Vector* W,
-                                  sunrealtype* nrm);
+SUNErrCode N_VWrmsNormVectorArray(int nvec, N_Vector* X_1d, N_Vector* W_1d,
+                                  sunrealtype* nrm_1d);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VWrmsNormMaskVectorArray(int nvec, N_Vector* X, N_Vector* W,
-                                      N_Vector id, sunrealtype* nrm);
+SUNErrCode N_VWrmsNormMaskVectorArray(int nvec, N_Vector* X_1d, N_Vector* W_1d,
+                                      N_Vector id, sunrealtype* nrm_1d);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VScaleAddMultiVectorArray(int nvec, int nsum, sunrealtype* a,
-                                       N_Vector* X, N_Vector** Y, N_Vector** Z);
+SUNErrCode N_VScaleAddMultiVectorArray(int nvec, int nsum, sunrealtype* a_1d,
+                                       N_Vector* X_1d, N_Vector** Y_2d,
+                                       N_Vector** Z_2d);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VLinearCombinationVectorArray(int nvec, int nsum, sunrealtype* c,
-                                           N_Vector** X, N_Vector* Z);
+SUNErrCode N_VLinearCombinationVectorArray(int nvec, int nsum, sunrealtype* c_1d,
+                                           N_Vector** X_2d, N_Vector* Z_1d);
 
 /*
  * OPTIONAL operations with no default implementation.
@@ -315,10 +321,11 @@ SUNDIALS_EXPORT sunbooleantype N_VConstrMaskLocal(N_Vector c, N_Vector x,
 SUNDIALS_EXPORT sunrealtype N_VMinQuotientLocal(N_Vector num, N_Vector denom);
 
 /* single buffer reduction operations */
-SUNDIALS_EXPORT SUNErrCode N_VDotProdMultiLocal(int nvec, N_Vector x, N_Vector* Y,
-                                                sunrealtype* dotprods);
+SUNDIALS_EXPORT SUNErrCode N_VDotProdMultiLocal(int nvec, N_Vector x,
+                                                N_Vector* Y_1d,
+                                                sunrealtype* dotprods_1d);
 SUNDIALS_EXPORT SUNErrCode N_VDotProdMultiAllReduce(int nvec_total, N_Vector x,
-                                                    sunrealtype* sum);
+                                                    sunrealtype* sum_1d);
 
 /* XBraid interface operations */
 SUNDIALS_EXPORT SUNErrCode N_VBufSize(N_Vector x, sunindextype* size);
@@ -332,11 +339,11 @@ SUNDIALS_EXPORT SUNErrCode N_VBufUnpack(N_Vector x, void* buf);
 SUNDIALS_EXPORT N_Vector* N_VNewVectorArray(int count, SUNContext sunctx);
 SUNDIALS_EXPORT N_Vector* N_VCloneEmptyVectorArray(int count, N_Vector w);
 SUNDIALS_EXPORT N_Vector* N_VCloneVectorArray(int count, N_Vector w);
-SUNDIALS_EXPORT void N_VDestroyVectorArray(N_Vector* vs, int count);
+SUNDIALS_EXPORT void N_VDestroyVectorArray(N_Vector* vs_1d, int count);
 
 /* These function are really only for users of the Fortran interface */
-SUNDIALS_EXPORT N_Vector N_VGetVecAtIndexVectorArray(N_Vector* vs, int index);
-SUNDIALS_EXPORT void N_VSetVecAtIndexVectorArray(N_Vector* vs, int index,
+SUNDIALS_EXPORT N_Vector N_VGetVecAtIndexVectorArray(N_Vector* vs_1d, int index);
+SUNDIALS_EXPORT void N_VSetVecAtIndexVectorArray(N_Vector* vs_1d, int index,
                                                  N_Vector w);
 
 /* -----------------------------------------------------------------

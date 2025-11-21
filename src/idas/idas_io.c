@@ -2055,7 +2055,7 @@ int IDAGetSensNumLinSolvSetups(void* ida_mem, long int* nlinsetupsS)
 
 /*-----------------------------------------------------------------*/
 
-int IDAGetSensErrWeights(void* ida_mem, N_Vector_S eSweight)
+int IDAGetSensErrWeights(void* ida_mem, N_Vector* eSweight)
 {
   IDAMem IDA_mem;
   int is;

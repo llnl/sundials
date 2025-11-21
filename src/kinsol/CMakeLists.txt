@@ -31,7 +31,7 @@ set(kinsol_SOURCES
     kinsol.c)
 
 # Add variable kinsol_HEADERS with the exported KINSOL header files
-set(kinsol_HEADERS kinsol.h kinsol_bbdpre.h kinsol_ls.h)
+set(kinsol_HEADERS kinsol.h kinsol.hpp kinsol_bbdpre.h kinsol_ls.h)
 
 # Add prefix with complete path to the KINSOL header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/kinsol/ kinsol_HEADERS)

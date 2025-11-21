@@ -25,10 +25,14 @@ install(CODE "MESSAGE(\"\nInstall shared components\n\")")
 # Add variable sundials_HEADERS with the exported SUNDIALS header files
 set(sundials_HEADERS
     sundials_adaptcontroller.h
+    sundials_adaptcontroller.hpp
     sundials_adjointcheckpointscheme.h
+    sundials_adjointcheckpointscheme.hpp
     sundials_adjointstepper.h
+    sundials_adjointstepper.hpp
     sundials_band.h
     sundials_base.hpp
+    sundials_classview.hpp
     sundials_context.h
     sundials_context.hpp
     sundials_convertibleto.hpp
@@ -37,12 +41,14 @@ set(sundials_HEADERS
     sundials_dense.h
     sundials_direct.h
     sundials_domeigestimator.h
+    sundials_domeigestimator.hpp
     sundials_errors.h
     sundials_futils.h
     sundials_iterative.h
     sundials_linearsolver.h
     sundials_linearsolver.hpp
     sundials_logger.h
+    sundials_logger.hpp
     sundials_math.h
     sundials_matrix.h
     sundials_matrix.hpp
@@ -56,6 +62,7 @@ set(sundials_HEADERS
     sundials_profiler.h
     sundials_profiler.hpp
     sundials_stepper.h
+    sundials_stepper.hpp
     sundials_types_deprecated.h
     sundials_types.h
     sundials_version.h)

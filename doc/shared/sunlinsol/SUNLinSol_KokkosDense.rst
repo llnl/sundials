@@ -58,14 +58,14 @@ instance of a dense linear solver e.g.,
     sundials::kokkos::DenseLinearSolver<> LS{sunctx};
 
 Instances of the ``DenseLinearSolver`` class are implicitly or explicitly (using
-the :cpp:func:`~DenseLinearSolver::Convert` method) convertible to a
+the :cpp:func:`~DenseLinearSolver::get` method) convertible to a
 :c:type:`SUNLinearSolver` e.g.,
 
 .. code-block:: cpp
 
    sundials::kokkos::DenseLinearSolver<> LS{sunctx};
    SUNLinearSolver LSA = LS;           // implicit conversion to SUNLinearSolver
-   SUNLinearSolver LSB = LS.Convert(); // explicit conversion to SUNLinearSolver
+   SUNLinearSolver LSB = LS.get(); // explicit conversion to SUNLinearSolver
 
 .. warning::
 
@@ -121,10 +121,18 @@ In this section we list the public API of the
 
       Implicit conversion to a :c:type:`SUNLinearSolver`.
 
-   .. cpp:function:: SUNLinearSolver Convert() override
+   .. cpp:function:: SUNLinearSolver get() override
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
 
-   .. cpp:function:: SUNLinearSolver Convert() const override
+      .. versionadded:: x.y.z
+      
+         Replaces the ``Convert`` method which was deprecated.
+
+   .. cpp:function:: SUNLinearSolver get() const override
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
+
+      .. versionadded:: x.y.z
+      
+         Replaces the ``Convert`` method which was deprecated.

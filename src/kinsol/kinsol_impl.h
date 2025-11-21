@@ -74,6 +74,8 @@ typedef struct KINMemRec
 {
   SUNContext kin_sunctx;
 
+  void* python;
+
   sunrealtype kin_uround; /* machine epsilon (or unit roundoff error)
                                  (defined in sundials_types.h)                */
 

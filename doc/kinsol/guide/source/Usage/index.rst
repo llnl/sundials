@@ -1281,14 +1281,15 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    fixed-point or Picard iterations.
 
    :param kin_mem: pointer to the KINSOL memory block.
-   :param damping_fn: the function to compute the depth parameter or ``NULL``
-                      to disable using a depth function. See
-                      :c:type:`KINDepthFn` for more information.
+   :param depth_fn: the function to compute the depth parameter or ``NULL``
+                    to disable using a depth function. See
+                    :c:type:`KINDepthFn` for more information.
 
    :retval KIN_SUCCESS: The depth function has been successfully set.
    :retval KIN_MEM_NULL: The ``kin_mem`` pointer is ``NULL``.
 
    .. versionadded:: 7.3.0
+
 
 .. _KINSOL.Usage.CC.optional_inputs.optin_ls:
 

@@ -153,7 +153,7 @@ int main(void)
 
   /* Create sparse SUNMatrix for use in linear solves */
   nnz = NEQ * NEQ;
-  A   = SUNSparseMatrix(NEQ, NEQ, nnz, CSR_MAT, ctx);
+  A   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSR_MAT, ctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create KLU SUNLinearSolver object */

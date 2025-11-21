@@ -207,6 +207,7 @@
 
 
 #include "arkode/arkode_sprkstep.h"
+#include "arkode/arkode_sprkstep_deprecated.h"
 
 
 #include <stdlib.h>
@@ -271,20 +272,6 @@ SWIGEXPORT int _wrap_FSPRKStepReInit(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3
   arg4 = (sunrealtype)(*farg4);
   arg5 = (N_Vector)(farg5);
   result = (int)SPRKStepReInit(arg1,arg2,arg3,arg4,arg5);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSPRKStepSetUseCompensatedSums(void *farg1, int const *farg2) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  int arg2 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (int)(*farg2);
-  result = (int)SPRKStepSetUseCompensatedSums(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
@@ -762,6 +749,20 @@ SWIGEXPORT int _wrap_FSPRKStepGetNumRhsEvals(void *farg1, long *farg2, long *far
   arg2 = (long *)(farg2);
   arg3 = (long *)(farg3);
   result = (int)SPRKStepGetNumRhsEvals(arg1,arg2,arg3);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSPRKStepSetUseCompensatedSums(void *farg1, int const *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int arg2 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (int)(*farg2);
+  result = (int)SPRKStepSetUseCompensatedSums(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }

@@ -66,18 +66,20 @@ typedef struct _N_VectorContent_ManyVector* N_VectorContent_ManyVector;
    ----------------------------------------------------------------- */
 
 SUNDIALS_EXPORT
-N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array,
+N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array_1d,
                            SUNContext sunctx);
 
 SUNDIALS_EXPORT
-N_Vector N_VGetSubvector_ManyVector(N_Vector v, sunindextype vec_num);
+N_Vector N_VGetSubvector_ManyVector(N_Vector v,
+                                    sunindextype vec_num); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 sunrealtype* N_VGetSubvectorArrayPointer_ManyVector(N_Vector v,
                                                     sunindextype vec_num);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VSetSubvectorArrayPointer_ManyVector(sunrealtype* v_data, N_Vector v,
+SUNErrCode N_VSetSubvectorArrayPointer_ManyVector(sunrealtype* v_data_1d,
+                                                  N_Vector v,
                                                   sunindextype vec_num);
 
 SUNDIALS_EXPORT

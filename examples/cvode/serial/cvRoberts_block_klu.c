@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
 
   /* Create sparse SUNMatrix for use in linear solves */
   nnz = GROUPSIZE * GROUPSIZE * ngroups;
-  A   = SUNSparseMatrix(neq, neq, nnz, CSR_MAT, sunctx);
+  A   = SUNSparseMatrix(neq, neq, nnz, SUN_CSR_MAT, sunctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create KLU solver object for use by CVode */

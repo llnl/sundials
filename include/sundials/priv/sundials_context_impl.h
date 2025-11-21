@@ -33,6 +33,7 @@ extern "C" {
 
 struct SUNContext_
 {
+  void* python;
   SUNProfiler profiler;
   sunbooleantype own_profiler;
   SUNLogger logger;

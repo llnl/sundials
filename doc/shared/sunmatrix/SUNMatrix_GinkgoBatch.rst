@@ -121,10 +121,18 @@ In this section we list the public API of the
 
       Implicit conversion to a :c:type:`SUNMatrix`.
 
-   .. cpp:function:: SUNMatrix Convert() override
+   .. cpp:function:: SUNMatrix get() override
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-   .. cpp:function:: SUNMatrix Convert() const override
+      .. versionadded:: x.y.z
+      
+         Replaces the ``Convert`` method which was deprecated.
+
+   .. cpp:function:: SUNMatrix get() const override
 
       Explicit conversion to a :c:type:`SUNMatrix`.
+
+      .. versionadded:: x.y.z
+      
+         Replaces the ``Convert`` method which was deprecated.

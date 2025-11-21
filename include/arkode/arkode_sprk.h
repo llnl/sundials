@@ -27,11 +27,16 @@
 extern "C" {
 #endif
 
-typedef enum
+enum ARKODE_SPRKMethodID
 {
-  ARKODE_SPRK_NONE      = -1, /* ensure enum is signed int */
+  ARKODE_SPRK_NONE = -1, /* ensure enum is signed int */
+  /* WARNING:  ARKODE_MIN_SPRK_NUM must come after the first entry, ARKODE_SPRK_EULER_1_1,
+     because Python enums will only expose the member that is defined first. Due to
+     this and how pybind/nanobind handle the enums, if we defined ARKODE_MRI_NUM first,
+     then ARKODE_SPRK_EULER_1_1 would not be usable from the module scope (the MIN/MAX) entries
+     will still be usable when accessing through the IntEnum object, but not from module scope. */
+  ARKODE_SPRK_EULER_1_1 = 0,
   ARKODE_MIN_SPRK_NUM   = 0,
-  ARKODE_SPRK_EULER_1_1 = ARKODE_MIN_SPRK_NUM,
   ARKODE_SPRK_LEAPFROG_2_2,
   ARKODE_SPRK_PSEUDO_LEAPFROG_2_2,
   ARKODE_SPRK_RUTH_3_3,
@@ -44,7 +49,11 @@ typedef enum
   ARKODE_SPRK_SUZUKI_UMENO_8_16,
   ARKODE_SPRK_SOFRONIOU_10_36,
   ARKODE_MAX_SPRK_NUM = ARKODE_SPRK_SOFRONIOU_10_36
-} ARKODE_SPRKMethodID;
+};
+
+#ifndef SWIG
+typedef enum ARKODE_SPRKMethodID ARKODE_SPRKMethodID;
+#endif
 
 struct ARKodeSPRKTableMem
 {
@@ -62,8 +71,8 @@ typedef _SUNDIALS_STRUCT_ ARKodeSPRKTableMem* ARKodeSPRKTable;
 
 /* Utility routines to allocate/free/output SPRK structures */
 SUNDIALS_EXPORT
-ARKodeSPRKTable ARKodeSPRKTable_Create(int s, int q, const sunrealtype* a,
-                                       const sunrealtype* ahat);
+ARKodeSPRKTable ARKodeSPRKTable_Create(int s, int q, const sunrealtype* a_1d,
+                                       const sunrealtype* ahat_1d);
 
 SUNDIALS_EXPORT
 ARKodeSPRKTable ARKodeSPRKTable_Alloc(int stages);

@@ -612,12 +612,12 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
-function FN_VNew_ManyVector(num_subvectors, vec_array, sunctx) &
+function FN_VNew_ManyVector(num_subvectors, vec_array_1d, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(N_Vector), pointer :: swig_result
 integer(C_INT32_T), intent(in) :: num_subvectors
-type(C_PTR) :: vec_array
+type(C_PTR) :: vec_array_1d
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 integer(C_INT32_T) :: farg1 
@@ -625,7 +625,7 @@ type(C_PTR) :: farg2
 type(C_PTR) :: farg3 
 
 farg1 = num_subvectors
-farg2 = vec_array
+farg2 = vec_array_1d
 farg3 = sunctx
 fresult = swigc_FN_VNew_ManyVector(farg1, farg2, farg3)
 call c_f_pointer(fresult, swig_result)
@@ -647,11 +647,11 @@ fresult = swigc_FN_VGetSubvector_ManyVector(farg1, farg2)
 call c_f_pointer(fresult, swig_result)
 end function
 
-function FN_VSetSubvectorArrayPointer_ManyVector(v_data, v, vec_num) &
+function FN_VSetSubvectorArrayPointer_ManyVector(v_data_1d, v, vec_num) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data
+real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
 type(N_Vector), target, intent(inout) :: v
 integer(C_INT32_T), intent(in) :: vec_num
 integer(C_INT) :: fresult 
@@ -659,7 +659,7 @@ type(C_PTR) :: farg1
 type(C_PTR) :: farg2 
 integer(C_INT32_T) :: farg3 
 
-farg1 = c_loc(v_data(1))
+farg1 = c_loc(v_data_1d(1))
 farg2 = c_loc(v)
 farg3 = vec_num
 fresult = swigc_FN_VSetSubvectorArrayPointer_ManyVector(farg1, farg2, farg3)

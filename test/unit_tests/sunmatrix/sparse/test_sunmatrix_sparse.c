@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
     printf("ERROR: matrix type must be 0 or 1\n");
     return (-1);
   }
-  mattype = (k == 0) ? CSC_MAT : CSR_MAT;
+  mattype = (k == 0) ? SUN_CSC_MAT : SUN_CSR_MAT;
 
   print_timing = atoi(argv[4]);
   SetTiming(print_timing);
@@ -124,10 +124,10 @@ int main(int argc, char* argv[])
   matdata[21] = SUN_RCONST(8.0);
   matdata[29] = SUN_RCONST(9.0);
 
-  if (mattype == CSR_MAT)
+  if (mattype == SUN_CSR_MAT)
   {
     /* Check CSR */
-    C             = SUNSparseMatrix(5, 6, 9, CSR_MAT, sunctx);
+    C             = SUNSparseMatrix(5, 6, 9, SUN_CSR_MAT, sunctx);
     rowptrs       = SUNSparseMatrix_IndexPointers(C);
     colindices    = SUNSparseMatrix_IndexValues(C);
     matdata       = SUNSparseMatrix_Data(C);
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
     colindices[8] = 5;
     rowptrs[5]    = 9;
 
-    A = SUNSparseFromDenseMatrix(B, ZERO, CSR_MAT);
+    A = SUNSparseFromDenseMatrix(B, ZERO, SUN_CSR_MAT);
     fails += check_matrix(A, C, 1e-15);
 
     if (fails)
@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
   else
   {
     /* Check CSC */
-    D             = SUNSparseMatrix(5, 6, 9, CSC_MAT, sunctx);
+    D             = SUNSparseMatrix(5, 6, 9, SUN_CSC_MAT, sunctx);
     colptrs       = SUNSparseMatrix_IndexPointers(D);
     rowindices    = SUNSparseMatrix_IndexValues(D);
     matdata       = SUNSparseMatrix_Data(D);
@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
     rowindices[8] = 4;
     colptrs[6]    = 9;
 
-    A = SUNSparseFromDenseMatrix(B, 1e-15, CSC_MAT);
+    A = SUNSparseFromDenseMatrix(B, 1e-15, SUN_CSC_MAT);
     fails += check_matrix(A, D, 1e-15);
 
     if (fails)
@@ -232,10 +232,10 @@ int main(int argc, char* argv[])
     }
   }
 
-  if (mattype == CSR_MAT)
+  if (mattype == SUN_CSR_MAT)
   {
     /* CSR */
-    C              = SUNSparseMatrix(7, 7, 21, CSR_MAT, sunctx);
+    C              = SUNSparseMatrix(7, 7, 21, SUN_CSR_MAT, sunctx);
     rowptrs        = SUNSparseMatrix_IndexPointers(C);
     colindices     = SUNSparseMatrix_IndexValues(C);
     matdata        = SUNSparseMatrix_Data(C);
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
     colindices[20] = 6;
     rowptrs[7]     = 21;
 
-    A = SUNSparseFromBandMatrix(B, ZERO, CSR_MAT);
+    A = SUNSparseFromBandMatrix(B, ZERO, SUN_CSR_MAT);
     fails += check_matrix(A, C, 1e-15);
 
     if (fails)
@@ -305,7 +305,7 @@ int main(int argc, char* argv[])
   else
   {
     /* Check CSC */
-    D              = SUNSparseMatrix(7, 7, 21, CSC_MAT, sunctx);
+    D              = SUNSparseMatrix(7, 7, 21, SUN_CSC_MAT, sunctx);
     colptrs        = SUNSparseMatrix_IndexPointers(D);
     rowindices     = SUNSparseMatrix_IndexValues(D);
     matdata        = SUNSparseMatrix_Data(D);
@@ -360,7 +360,7 @@ int main(int argc, char* argv[])
     rowindices[20] = 6;
     colptrs[7]     = 21;
 
-    A = SUNSparseFromBandMatrix(B, 1e-15, CSC_MAT);
+    A = SUNSparseFromBandMatrix(B, 1e-15, SUN_CSC_MAT);
     fails += check_matrix(A, D, 1e-15);
 
     if (fails)
@@ -475,7 +475,7 @@ int main(int argc, char* argv[])
   fails += Test_SUNMatMatvec(A, x, y, 0);
   fails += Test_SUNMatHermitianTransposeVec(A, AT, x, y, 0);
   fails += Test_SUNMatSpace(A, 0);
-  if (mattype == CSR_MAT) { fails += Test_SUNSparseMatrixToCSC(A); }
+  if (mattype == SUN_CSR_MAT) { fails += Test_SUNSparseMatrixToCSC(A); }
   else { fails += Test_SUNSparseMatrixToCSR(A); }
 
   /* Print result */

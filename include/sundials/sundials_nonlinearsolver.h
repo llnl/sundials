@@ -89,11 +89,15 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
  * SUNNonlinearSolver types
  * ---------------------------------------------------------------------------*/
 
-typedef enum
+enum SUNNonlinearSolver_Type
 {
   SUNNONLINEARSOLVER_ROOTFIND,
   SUNNONLINEARSOLVER_FIXEDPOINT
-} SUNNonlinearSolver_Type;
+};
+
+#ifndef SWIG
+typedef enum SUNNonlinearSolver_Type SUNNonlinearSolver_Type;
+#endif
 
 /* -----------------------------------------------------------------------------
  * Generic definition of SUNNonlinearSolver
@@ -126,6 +130,7 @@ struct _generic_SUNNonlinearSolver_Ops
 struct _generic_SUNNonlinearSolver
 {
   void* content;
+  void* python;
   SUNNonlinearSolver_Ops ops;
   SUNContext sunctx;
 };
