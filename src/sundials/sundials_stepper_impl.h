@@ -42,6 +42,9 @@ struct SUNStepper_Ops_
 
 struct SUNStepper_
 {
+  /* python interface specific content */
+  void* python;
+
   /* stepper specific content and operations */
   void* content;
   SUNStepper_Ops ops;

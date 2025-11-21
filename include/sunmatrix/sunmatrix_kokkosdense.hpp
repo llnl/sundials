@@ -59,7 +59,7 @@ SUNMatrix SUNMatClone_KokkosDense(SUNMatrix A)
 {
   auto A_mat{GetDenseMat<MatrixType>(A)};
   auto new_mat{new MatrixType(*A_mat)};
-  return new_mat->Convert();
+  return new_mat->get();
 }
 
 template<class MatrixType>
@@ -370,16 +370,16 @@ public:
   // Override the ConvertibleTo methods
 
   // Implicit conversion to a SUNMatrix
-  operator SUNMatrix() override { return object_.get(); }
+  operator SUNMatrix() noexcept override { return object_.get(); }
 
   // Implicit conversion to SUNMatrix
-  operator SUNMatrix() const override { return object_.get(); }
+  operator SUNMatrix() const noexcept override { return object_.get(); }
 
   // Explicit conversion to a SUNMatrix
-  SUNMatrix Convert() override { return object_.get(); }
+  SUNMatrix get() noexcept override { return object_.get(); }
 
   // Explicit conversion to a SUNMatrix
-  SUNMatrix Convert() const override { return object_.get(); }
+  SUNMatrix get() const noexcept override { return object_.get(); }
 
 private:
   exec_space exec_space_; // Kokkos execution space

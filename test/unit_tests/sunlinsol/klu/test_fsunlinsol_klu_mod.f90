@@ -81,7 +81,7 @@ contains
     end do
 
     ! Create sprae matrix from dense, and and destroy D
-    A => FSUNSparseFromDenseMatrix(D, ZERO, CSC_MAT)
+    A => FSUNSparseFromDenseMatrix(D, ZERO, SUN_CSC_MAT)
     call FSUNMatDestroy(D)
 
     ! create RHS vector for linear solve

@@ -32,6 +32,7 @@ extern "C" {
 
 SUNDIALS_EXPORT
 SUNErrCode SUNProfiler_Create(SUNComm comm, const char* title, SUNProfiler* p);
+
 SUNDIALS_EXPORT
 SUNErrCode SUNProfiler_Free(SUNProfiler* p);
 

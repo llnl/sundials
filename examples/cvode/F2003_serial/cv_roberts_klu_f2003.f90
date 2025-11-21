@@ -318,7 +318,7 @@ program main
   end if
 
   ! Create sparse SUNMatrix for use in linear solves
-  sunmat_A => FSUNSparseMatrix(neq, neq, nnz, CSC_MAT, sunctx)
+  sunmat_A => FSUNSparseMatrix(neq, neq, nnz, SUN_CSC_MAT, sunctx)
   if (.not. associated(sunmat_A)) then
     print *, 'ERROR: sunmat = NULL'
     stop 1

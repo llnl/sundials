@@ -420,7 +420,7 @@ void dreadrb_dist(int iam, FILE* fp, SUNMatrix* Aout, SUNContext sunctx)
   }
 #endif
 
-  A = SUNSparseMatrix(nrow, ncol, nonz, CSC_MAT, sunctx);
+  A = SUNSparseMatrix(nrow, ncol, nonz, SUN_CSC_MAT, sunctx);
   if (A == NULL) DREADRB_ABORT("SUNSparseMatrix returned NULL!\n");
 
   /* Grab storage for the three arrays ( nzval, rowind, colptr ) */

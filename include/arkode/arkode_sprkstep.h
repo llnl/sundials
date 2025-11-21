@@ -22,6 +22,7 @@
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_sprk.h>
+#include <arkode/arkode_sprkstep_deprecated.h>
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
@@ -51,84 +52,14 @@ SUNDIALS_EXPORT int SPRKStepReInit(void* arkode_mem, ARKRhsFn f1, ARKRhsFn f2,
                                    sunrealtype t0, N_Vector y0);
 
 /* Optional input functions -- must be called AFTER SPRKStepCreate */
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetUseCompensatedSums instead")
-int SPRKStepSetUseCompensatedSums(void* arkode_mem, sunbooleantype onoff);
 SUNDIALS_EXPORT int SPRKStepSetMethod(void* arkode_mem,
                                       ARKodeSPRKTable sprk_storage);
 SUNDIALS_EXPORT int SPRKStepSetMethodName(void* arkode_mem, const char* method);
 
 /* Optional output functions */
-SUNDIALS_EXPORT int SPRKStepGetCurrentMethod(void* arkode_mem,
-                                             ARKodeSPRKTable* sprk_storage);
-
-/* --------------------------------------------------------------------------
- * Deprecated Functions -- all are superseded by shared ARKODE-level routines
- * -------------------------------------------------------------------------- */
-
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeReset instead")
-int SPRKStepReset(void* arkode_mem, sunrealtype tR, N_Vector yR);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeRootInit instead")
-int SPRKStepRootInit(void* arkode_mem, int nrtfn, ARKRootFn g);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetRootDirection instead")
-int SPRKStepSetRootDirection(void* arkode_mem, int* rootdir);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetNoInactiveRootWarn instead")
-int SPRKStepSetNoInactiveRootWarn(void* arkode_mem);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetDefaults instead")
-int SPRKStepSetDefaults(void* arkode_mem);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetOrder instead")
-int SPRKStepSetOrder(void* arkode_mem, int maxord);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetInterpolantType instead")
-int SPRKStepSetInterpolantType(void* arkode_mem, int itype);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetInterpolantDegree instead")
-int SPRKStepSetInterpolantDegree(void* arkode_mem, int degree);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetMaxNumSteps instead")
-int SPRKStepSetMaxNumSteps(void* arkode_mem, long int mxsteps);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetStopTime instead")
-int SPRKStepSetStopTime(void* arkode_mem, sunrealtype tstop);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetFixedStep instead")
-int SPRKStepSetFixedStep(void* arkode_mem, sunrealtype hfixed);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetUserData instead")
-int SPRKStepSetUserData(void* arkode_mem, void* user_data);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetPostprocessStepFn instead")
-int SPRKStepSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeSetPostprocessStageFn instead")
-int SPRKStepSetPostprocessStageFn(void* arkode_mem,
-                                  ARKPostProcessFn ProcessStage);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeEvolve instead")
-int SPRKStepEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
-                   sunrealtype* tret, int itask);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetDky instead")
-int SPRKStepGetDky(void* arkode_mem, sunrealtype t, int k, N_Vector dky);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetReturnFlagName instead")
-char* SPRKStepGetReturnFlagName(long int flag);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetCurrentState instead")
-int SPRKStepGetCurrentState(void* arkode_mem, N_Vector* state);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetCurrentStep instead")
-int SPRKStepGetCurrentStep(void* arkode_mem, sunrealtype* hcur);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetCurrentTime instead")
-int SPRKStepGetCurrentTime(void* arkode_mem, sunrealtype* tcur);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetLastStep instead")
-int SPRKStepGetLastStep(void* arkode_mem, sunrealtype* hlast);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetNumStepAttempts instead")
-int SPRKStepGetNumStepAttempts(void* arkode_mem, long int* step_attempts);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetNumSteps instead")
-int SPRKStepGetNumSteps(void* arkode_mem, long int* nsteps);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetRootInfo instead")
-int SPRKStepGetRootInfo(void* arkode_mem, int* rootsfound);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetUserData instead")
-int SPRKStepGetUserData(void* arkode_mem, void** user_data);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodePrintAllStats instead")
-int SPRKStepPrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeWriteParameters instead")
-int SPRKStepWriteParameters(void* arkode_mem, FILE* fp);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetStepStats instead")
-int SPRKStepGetStepStats(void* arkode_mem, long int* nsteps,
-                         sunrealtype* hinused, sunrealtype* hlast,
-                         sunrealtype* hcur, sunrealtype* tcur);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeFree instead")
-void SPRKStepFree(void** arkode_mem);
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetNumRhsEvals instead")
-int SPRKStepGetNumRhsEvals(void* arkode_mem, long int* nf1, long int* nf2);
+SUNDIALS_EXPORT int SPRKStepGetCurrentMethod(
+  void* arkode_mem,
+  ARKodeSPRKTable* sprk_storage); // nb::rv_policy::reference
 
 #ifdef __cplusplus
 }

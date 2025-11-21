@@ -61,7 +61,7 @@ typedef int (*KINLsPrecSolveFn)(N_Vector uu, N_Vector uscale, N_Vector fval,
                                 N_Vector fscale, N_Vector vv, void* user_data);
 
 typedef int (*KINLsJacTimesVecFn)(N_Vector v, N_Vector Jv, N_Vector uu,
-                                  sunbooleantype* new_uu, void* J_data);
+                                  sunbooleantype* new_uu, void* user_data);
 
 /*==================================================================
   KINLS Exported functions
@@ -83,7 +83,8 @@ SUNDIALS_EXPORT int KINSetJacTimesVecFn(void* kinmem, KINLsJacTimesVecFn jtv);
   Optional outputs from the KINLS linear solver interface
   -----------------------------------------------------------------*/
 
-SUNDIALS_EXPORT int KINGetJac(void* kinmem, SUNMatrix* J);
+SUNDIALS_EXPORT int KINGetJac(void* kinmem,
+                              SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int KINGetJacNumIters(void* kinmem, long int* nni_J);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")

@@ -510,8 +510,8 @@ int main(int argc, char* argv[])
   }
 
   /* Create right-hand side vector for linear solve */
-  fails += SUNMatMatvecSetup(A->Convert());
-  fails += SUNMatMatvec(A->Convert(), x, b);
+  fails += SUNMatMatvecSetup(A->get());
+  fails += SUNMatMatvec(A->get(), x, b);
   if (fails)
   {
     std::cerr << "FAIL: SUNLinSol SUNMatMatvec failure\n";
@@ -706,12 +706,11 @@ int main(int argc, char* argv[])
   }
 
   /* Run Tests */
-  fails += Test_SUNLinSolGetID(LS->Convert(), SUNLINEARSOLVER_GINKGO, 0);
-  fails += Test_SUNLinSolGetType(LS->Convert(),
-                                 SUNLINEARSOLVER_MATRIX_ITERATIVE, 0);
-  fails += Test_SUNLinSolInitialize(LS->Convert(), 0);
-  fails += Test_SUNLinSolSetup(LS->Convert(), A->Convert(), 0);
-  fails += Test_SUNLinSolSolve(LS->Convert(), A->Convert(), x, b,
+  fails += Test_SUNLinSolGetID(LS->get(), SUNLINEARSOLVER_GINKGO, 0);
+  fails += Test_SUNLinSolGetType(LS->get(), SUNLINEARSOLVER_MATRIX_ITERATIVE, 0);
+  fails += Test_SUNLinSolInitialize(LS->get(), 0);
+  fails += Test_SUNLinSolSetup(LS->get(), A->get(), 0);
+  fails += Test_SUNLinSolSolve(LS->get(), A->get(), x, b,
                                1e4 * SUN_UNIT_ROUNDOFF, SUNTRUE, 0);
 
   /* Print result */
@@ -723,9 +722,8 @@ int main(int argc, char* argv[])
 
   /* Print solve information */
   std::cout << "Number of linear solver iterations: "
-            << static_cast<long int>(SUNLinSolNumIters(LS->Convert()))
-            << std::endl;
-  std::cout << "Final residual norm: " << SUNLinSolResNorm(LS->Convert())
+            << static_cast<long int>(SUNLinSolNumIters(LS->get())) << std::endl;
+  std::cout << "Final residual norm: " << SUNLinSolResNorm(LS->get())
             << std::endl;
 
   // clear global_exec

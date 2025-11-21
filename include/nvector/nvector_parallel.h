@@ -105,7 +105,7 @@ N_Vector N_VNewEmpty_Parallel(MPI_Comm comm, sunindextype local_length,
 
 SUNDIALS_EXPORT
 N_Vector N_VMake_Parallel(MPI_Comm comm, sunindextype local_length,
-                          sunindextype global_length, sunrealtype* v_data,
+                          sunindextype global_length, sunrealtype* v_data_1d,
                           SUNContext sunctx);
 
 SUNDIALS_EXPORT

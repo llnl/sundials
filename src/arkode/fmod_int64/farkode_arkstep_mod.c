@@ -207,6 +207,7 @@
 
 
 #include "arkode/arkode_arkstep.h"
+#include "arkode/arkode_arkstep_deprecated.h"
 
 
 #include <stdlib.h>
@@ -401,6 +402,30 @@ SWIGEXPORT int _wrap_FARKStepGetTimestepperStats(void *farg1, long *farg2, long 
   arg7 = (long *)(farg7);
   arg8 = (long *)(farg8);
   result = (int)ARKStepGetTimestepperStats(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKStepCreateAdjointStepper(void *farg1, SUNAdjRhsFn farg2, SUNAdjRhsFn farg3, double const *farg4, N_Vector farg5, void *farg6, void *farg7) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  SUNAdjRhsFn arg2 = (SUNAdjRhsFn) 0 ;
+  SUNAdjRhsFn arg3 = (SUNAdjRhsFn) 0 ;
+  sunrealtype arg4 ;
+  N_Vector arg5 = (N_Vector) 0 ;
+  SUNContext arg6 = (SUNContext) 0 ;
+  SUNAdjointStepper *arg7 = (SUNAdjointStepper *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (SUNAdjRhsFn)(farg2);
+  arg3 = (SUNAdjRhsFn)(farg3);
+  arg4 = (sunrealtype)(*farg4);
+  arg5 = (N_Vector)(farg5);
+  arg6 = (SUNContext)(farg6);
+  arg7 = (SUNAdjointStepper *)(farg7);
+  result = (int)ARKStepCreateAdjointStepper(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
   fresult = (int)(result);
   return fresult;
 }
@@ -2427,30 +2452,6 @@ SWIGEXPORT void _wrap_FARKStepPrintMem(void *farg1, void *farg2) {
   arg1 = (void *)(farg1);
   arg2 = (FILE *)(farg2);
   ARKStepPrintMem(arg1,arg2);
-}
-
-
-SWIGEXPORT int _wrap_FARKStepCreateAdjointStepper(void *farg1, SUNAdjRhsFn farg2, SUNAdjRhsFn farg3, double const *farg4, N_Vector farg5, void *farg6, void *farg7) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  SUNAdjRhsFn arg2 = (SUNAdjRhsFn) 0 ;
-  SUNAdjRhsFn arg3 = (SUNAdjRhsFn) 0 ;
-  sunrealtype arg4 ;
-  N_Vector arg5 = (N_Vector) 0 ;
-  SUNContext arg6 = (SUNContext) 0 ;
-  SUNAdjointStepper *arg7 = (SUNAdjointStepper *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (SUNAdjRhsFn)(farg2);
-  arg3 = (SUNAdjRhsFn)(farg3);
-  arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
-  arg6 = (SUNContext)(farg6);
-  arg7 = (SUNAdjointStepper *)(farg7);
-  result = (int)ARKStepCreateAdjointStepper(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  fresult = (int)(result);
-  return fresult;
 }
 
 

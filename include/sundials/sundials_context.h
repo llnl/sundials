@@ -48,13 +48,15 @@ SUNDIALS_EXPORT
 SUNErrCode SUNContext_ClearErrHandlers(SUNContext sunctx);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNContext_GetProfiler(SUNContext sunctx, SUNProfiler* profiler);
+SUNErrCode SUNContext_GetProfiler(SUNContext sunctx,
+                                  SUNProfiler* profiler); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNContext_SetProfiler(SUNContext sunctx, SUNProfiler profiler);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNContext_GetLogger(SUNContext sunctx, SUNLogger* logger);
+SUNErrCode SUNContext_GetLogger(SUNContext sunctx,
+                                SUNLogger* logger); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNContext_SetLogger(SUNContext sunctx, SUNLogger logger);

@@ -102,7 +102,7 @@ N_Vector N_VNewEmpty_OpenMP(sunindextype vec_length, int num_threads,
                             SUNContext sunctx);
 
 SUNDIALS_EXPORT
-N_Vector N_VMake_OpenMP(sunindextype vec_length, sunrealtype* v_data,
+N_Vector N_VMake_OpenMP(sunindextype vec_length, sunrealtype* v_data_1d,
                         int num_threads, SUNContext sunctx);
 
 SUNDIALS_EXPORT

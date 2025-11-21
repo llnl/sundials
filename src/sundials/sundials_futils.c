@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
- * SUNDIALS Fortran 2003 interface utility implementations.
+ * SUNDIALS FILE interface utility implementations.
  * -----------------------------------------------------------------*/
 
 #include <string.h>
@@ -23,7 +23,7 @@
 #include <sundials/sundials_futils.h>
 
 /* Create a file pointer with the given file name and mode. */
-SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp_out)
+SUNErrCode SUNFileOpen(const char* filename, const char* mode, FILE** fp_out)
 {
   SUNErrCode err = SUN_SUCCESS;
   FILE* fp       = *fp_out;
@@ -41,11 +41,18 @@ SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp_ou
   return err;
 }
 
+SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp_out)
+{
+  return SUNFileOpen(filename, mode, fp_out);
+}
+
 /* Close a file pointer with the given file name. */
-SUNErrCode SUNDIALSFileClose(FILE** fp_ptr)
+SUNErrCode SUNFileClose(FILE** fp_ptr)
 {
   if (!fp_ptr) { return SUN_SUCCESS; }
   FILE* fp = *fp_ptr;
   if (fp && (fp != stdout) && (fp != stderr)) { fclose(fp); }
   return SUN_SUCCESS;
 }
+
+SUNErrCode SUNDIALSFileClose(FILE** fp_ptr) { return SUNFileClose(fp_ptr); }

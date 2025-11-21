@@ -378,6 +378,8 @@ struct ARKodeMemRec
 {
   SUNContext sunctx;
 
+  void* python;
+
   sunrealtype uround; /* machine unit roundoff */
 
   /* Problem specification data */

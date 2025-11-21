@@ -310,8 +310,8 @@ int main(int argc, char* argv[])
   N_VConst(sunrealtype{3.0}, s2);
 
   /* Create right-hand side vector for linear solve */
-  fails += SUNMatMatvecSetup(A->Convert());
-  fails += SUNMatMatvec(A->Convert(), x, b);
+  fails += SUNMatMatvecSetup(A->get());
+  fails += SUNMatMatvec(A->get(), x, b);
   if (fails)
   {
     printf("FAIL: SUNLinSol SUNMatMatvec failure\n");
@@ -364,19 +364,18 @@ int main(int argc, char* argv[])
   }
 
   /* Run Tests */
-  fails += Test_SUNLinSolGetID(LS->Convert(), SUNLINEARSOLVER_GINKGOBATCH, 0);
-  fails += Test_SUNLinSolGetType(LS->Convert(),
-                                 SUNLINEARSOLVER_MATRIX_ITERATIVE, 0);
-  fails += Test_SUNLinSolInitialize(LS->Convert(), 0);
-  fails += Test_SUNLinSolSetup(LS->Convert(), A->Convert(), 0);
-  fails += Test_SUNLinSolSolve(LS->Convert(), A->Convert(), x, b,
-                               solve_tolerance, SUNTRUE, 0);
+  fails += Test_SUNLinSolGetID(LS->get(), SUNLINEARSOLVER_GINKGOBATCH, 0);
+  fails += Test_SUNLinSolGetType(LS->get(), SUNLINEARSOLVER_MATRIX_ITERATIVE, 0);
+  fails += Test_SUNLinSolInitialize(LS->get(), 0);
+  fails += Test_SUNLinSolSetup(LS->get(), A->get(), 0);
+  fails += Test_SUNLinSolSolve(LS->get(), A->get(), x, b, solve_tolerance,
+                               SUNTRUE, 0);
 
   /* Try with scaling */
-  fails += Test_SUNLinSolSetScalingVectors(LS->Convert(), s1, s2, 0);
-  fails += Test_SUNLinSolSetup(LS->Convert(), A->Convert(), 0);
-  fails += Test_SUNLinSolSolve(LS->Convert(), A->Convert(), x, b,
-                               solve_tolerance, SUNTRUE, 0);
+  fails += Test_SUNLinSolSetScalingVectors(LS->get(), s1, s2, 0);
+  fails += Test_SUNLinSolSetup(LS->get(), A->get(), 0);
+  fails += Test_SUNLinSolSolve(LS->get(), A->get(), x, b, solve_tolerance,
+                               SUNTRUE, 0);
 
   /* Print result */
   if (fails)

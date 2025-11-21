@@ -126,15 +126,15 @@
  * of 0.5 and run statistics are printed at the end.
  * ----------------------------------------------------------------*/
 
-// Header files
-#include <arkode/arkode_erkstep.h> // prototypes for ERKStep fcts., consts
-#include <arkode/arkode_mristep.h> // prototypes for MRIStep fcts., consts
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
-#include <example_utilities.hpp> // common utility functions
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+
+#include <arkode/arkode_erkstep.h>  // prototypes for ERKStep fcts., consts
+#include <arkode/arkode_mristep.h>  // prototypes for MRIStep fcts., consts
 #include <nvector/nvector_serial.h> // serial N_Vector type, fcts., macros
 #include <sunadaptcontroller/sunadaptcontroller_imexgus.h>
 #include <sunadaptcontroller/sunadaptcontroller_mrihtol.h>
@@ -142,6 +142,8 @@
 #include <sundials/sundials_core.hpp>
 #include <sunlinsol/sunlinsol_dense.h> // dense linear solver
 #include <sunmatrix/sunmatrix_dense.h> // dense matrix type, fcts., macros
+
+#include <example_utilities.hpp> // common utility functions
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"

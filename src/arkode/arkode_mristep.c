@@ -4289,6 +4289,7 @@ int MRIStepInnerStepper_Create(SUNContext sunctx, MRIStepInnerStepper* stepper)
   /* initialize stepper data */
   (*stepper)->last_flag = ARK_SUCCESS;
   (*stepper)->sunctx    = sunctx;
+  (*stepper)->python    = NULL;
 
   return (ARK_SUCCESS);
 }
@@ -4326,6 +4327,10 @@ int MRIStepInnerStepper_Free(MRIStepInnerStepper* stepper)
 
   /* free operations structure */
   free((*stepper)->ops);
+
+  /* free python data */
+  free((*stepper)->python);
+  (*stepper)->python = NULL;
 
   /* free inner stepper mem */
   free(*stepper);

@@ -700,6 +700,10 @@ int IDACreateB(void* ida_mem, int* which)
     return (IDA_MEM_FAIL);
   }
 
+  /* We need to ensure Ns is set in the new IDAS object so that Ns is accessible 
+     in the Python callbacks which only have access to ida_memB, not the original cvode_mem */
+  ((IDAMem)ida_memB)->ida_Ns = IDA_mem->ida_Ns;
+
   /* Save ida_mem in ida_memB as user data. */
   IDASetUserData(ida_memB, ida_mem);
 

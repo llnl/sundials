@@ -308,7 +308,7 @@ void N_VDestroy(N_Vector v)
   if (v == NULL) { return; }
 
   /* if the destroy operation exists use it */
-  if (v->ops->nvdestroy) { v->ops->nvdestroy(v); }
+  if (v->ops && v->ops->nvdestroy) { v->ops->nvdestroy(v); }
   else
   {
     /* if we reach this point, either ops == NULL or nvdestroy == NULL,
@@ -338,7 +338,7 @@ void N_VSpace(N_Vector v, sunindextype* lrw, sunindextype* liw)
 
 sunrealtype* N_VGetArrayPointer(N_Vector v)
 {
-  if (v->ops->nvgetarraypointer)
+  if (v->ops && v->ops->nvgetarraypointer)
   {
     return (sunrealtype*)v->ops->nvgetarraypointer(v);
   }

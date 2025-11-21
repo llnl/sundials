@@ -14,6 +14,9 @@ and `IDAGetNumConstraintFails`). As a result, constraint failures are no longer
 included in the number of step failures due to a solver failure (i.e., the
 values returned by `CVodeGetNumStepSolveFails` and `IDAGetNumStepSolveFails`).
 
+The functions `CVodeGetUserDataB` and `IDAGetUserDataB` were added to CVODES
+and IDAS, respectively.
+
 ### Bug Fixes
 
 Fixed a bug in the CVODE(S) inequality constraint handling where the predicted
@@ -39,6 +42,20 @@ Kokkos `N_Vector` was created from an unmanaged view, the view would become a
 managed view and the data would be freed unexpectedly.
 
 ### Deprecation Notices
+
+`SUNDIALSFileOpen` and `SUNDIALSFileClose` will be removed in the next major release. 
+Use `SUNFileOpen` and `SUNFileClose` instead.
+
+The `Convert` methods on the `sundials::kokkos:Vector`, `sundials::kokkos::DenseMatrix`,
+`sundials::ginkgo::Matrix`, `sundials::ginkgo::BatchMatrix`, `sundials::kokkos::DenseLinearSolver`,
+`sundials::ginkgo::LinearSolver`, and `sundials::ginkgo::BatchLinearSolver` classes have
+been deprecated and will be removed in the next major release. The method `get`, should
+be used instead.
+
+The `CSC_MAT` and `CSR_MAT` macros defined in `sunmatrix_sparse.h` will be removed in
+the next major release. Use `SUN_CSC_MAT` and `SUN_CSR_MAT` instead.
+
+The `N_Vector_S` typedef to `N_Vector*` is deprecated and will be removed in the next major release.
 
 ## Changes to SUNDIALS in release 7.5.0
 

@@ -106,14 +106,14 @@ module farkode_mod
  integer(C_INT), parameter, public :: ARK_SUNADJSTEPPER_ERR = -55_C_INT
  integer(C_INT), parameter, public :: ARK_DEE_FAIL = -56_C_INT
  integer(C_INT), parameter, public :: ARK_UNRECOGNIZED_ERROR = -99_C_INT
- ! typedef enum ARKRelaxSolver
+ ! enum ARKRelaxSolver
  enum, bind(c)
   enumerator :: ARK_RELAX_BRENT
   enumerator :: ARK_RELAX_NEWTON
  end enum
  integer, parameter, public :: ARKRelaxSolver = kind(ARK_RELAX_BRENT)
  public :: ARK_RELAX_BRENT, ARK_RELAX_NEWTON
- ! typedef enum ARKAccumError
+ ! enum ARKAccumError
  enum, bind(c)
   enumerator :: ARK_ACCUMERROR_NONE
   enumerator :: ARK_ACCUMERROR_MAX
@@ -321,11 +321,11 @@ module farkode_mod
  public :: FARKodeButcherTable_IsStifflyAccurate
  public :: FARKodeButcherTable_CheckOrder
  public :: FARKodeButcherTable_CheckARKOrder
- ! typedef enum ARKODE_DIRKTableID
+ ! enum ARKODE_DIRKTableID
  enum, bind(c)
   enumerator :: ARKODE_DIRK_NONE = -1
+  enumerator :: ARKODE_SDIRK_2_1_2 = 100
   enumerator :: ARKODE_MIN_DIRK_NUM = 100
-  enumerator :: ARKODE_SDIRK_2_1_2 = ARKODE_MIN_DIRK_NUM
   enumerator :: ARKODE_BILLINGTON_3_3_2
   enumerator :: ARKODE_TRBDF2_3_3_2
   enumerator :: ARKODE_KVAERNO_4_2_3
@@ -355,7 +355,7 @@ module farkode_mod
   enumerator :: ARKODE_MAX_DIRK_NUM = ARKODE_IMPLICIT_TRAPEZOIDAL_2_2
  end enum
  integer, parameter, public :: ARKODE_DIRKTableID = kind(ARKODE_DIRK_NONE)
- public :: ARKODE_DIRK_NONE, ARKODE_MIN_DIRK_NUM, ARKODE_SDIRK_2_1_2, ARKODE_BILLINGTON_3_3_2, ARKODE_TRBDF2_3_3_2, &
+ public :: ARKODE_DIRK_NONE, ARKODE_SDIRK_2_1_2, ARKODE_MIN_DIRK_NUM, ARKODE_BILLINGTON_3_3_2, ARKODE_TRBDF2_3_3_2, &
     ARKODE_KVAERNO_4_2_3, ARKODE_ARK324L2SA_DIRK_4_2_3, ARKODE_CASH_5_2_4, ARKODE_CASH_5_3_4, ARKODE_SDIRK_5_3_4, &
     ARKODE_KVAERNO_5_3_4, ARKODE_ARK436L2SA_DIRK_6_3_4, ARKODE_KVAERNO_7_4_5, ARKODE_ARK548L2SA_DIRK_8_4_5, &
     ARKODE_ARK437L2SA_DIRK_7_3_4, ARKODE_ARK548L2SAb_DIRK_8_4_5, ARKODE_ESDIRK324L2SA_4_2_3, ARKODE_ESDIRK325L2SA_5_2_3, &
@@ -365,11 +365,11 @@ module farkode_mod
  public :: FARKodeButcherTable_LoadDIRK
  public :: FARKodeButcherTable_LoadDIRKByName
  public :: FARKodeButcherTable_DIRKIDToName
- ! typedef enum ARKODE_ERKTableID
+ ! enum ARKODE_ERKTableID
  enum, bind(c)
   enumerator :: ARKODE_ERK_NONE = -1
+  enumerator :: ARKODE_HEUN_EULER_2_1_2 = 0
   enumerator :: ARKODE_MIN_ERK_NUM = 0
-  enumerator :: ARKODE_HEUN_EULER_2_1_2 = ARKODE_MIN_ERK_NUM
   enumerator :: ARKODE_BOGACKI_SHAMPINE_4_2_3
   enumerator :: ARKODE_ARK324L2SA_ERK_4_2_3
   enumerator :: ARKODE_ZONNEVELD_5_3_4
@@ -399,7 +399,7 @@ module farkode_mod
   enumerator :: ARKODE_MAX_ERK_NUM = ARKODE_TSITOURAS_7_4_5
  end enum
  integer, parameter, public :: ARKODE_ERKTableID = kind(ARKODE_ERK_NONE)
- public :: ARKODE_ERK_NONE, ARKODE_MIN_ERK_NUM, ARKODE_HEUN_EULER_2_1_2, ARKODE_BOGACKI_SHAMPINE_4_2_3, &
+ public :: ARKODE_ERK_NONE, ARKODE_HEUN_EULER_2_1_2, ARKODE_MIN_ERK_NUM, ARKODE_BOGACKI_SHAMPINE_4_2_3, &
     ARKODE_ARK324L2SA_ERK_4_2_3, ARKODE_ZONNEVELD_5_3_4, ARKODE_ARK436L2SA_ERK_6_3_4, ARKODE_SAYFY_ABURUB_6_3_4, &
     ARKODE_CASH_KARP_6_4_5, ARKODE_FEHLBERG_6_4_5, ARKODE_DORMAND_PRINCE_7_4_5, ARKODE_ARK548L2SA_ERK_8_4_5, &
     ARKODE_VERNER_8_5_6, ARKODE_FEHLBERG_13_7_8, ARKODE_KNOTH_WOLKE_3_3, ARKODE_ARK437L2SA_ERK_7_3_4, &
@@ -410,11 +410,11 @@ module farkode_mod
  public :: FARKodeButcherTable_LoadERK
  public :: FARKodeButcherTable_LoadERKByName
  public :: FARKodeButcherTable_ERKIDToName
- ! typedef enum ARKODE_SPRKMethodID
+ ! enum ARKODE_SPRKMethodID
  enum, bind(c)
   enumerator :: ARKODE_SPRK_NONE = -1
+  enumerator :: ARKODE_SPRK_EULER_1_1 = 0
   enumerator :: ARKODE_MIN_SPRK_NUM = 0
-  enumerator :: ARKODE_SPRK_EULER_1_1 = ARKODE_MIN_SPRK_NUM
   enumerator :: ARKODE_SPRK_LEAPFROG_2_2
   enumerator :: ARKODE_SPRK_PSEUDO_LEAPFROG_2_2
   enumerator :: ARKODE_SPRK_RUTH_3_3
@@ -429,7 +429,7 @@ module farkode_mod
   enumerator :: ARKODE_MAX_SPRK_NUM = ARKODE_SPRK_SOFRONIOU_10_36
  end enum
  integer, parameter, public :: ARKODE_SPRKMethodID = kind(ARKODE_SPRK_NONE)
- public :: ARKODE_SPRK_NONE, ARKODE_MIN_SPRK_NUM, ARKODE_SPRK_EULER_1_1, ARKODE_SPRK_LEAPFROG_2_2, &
+ public :: ARKODE_SPRK_NONE, ARKODE_SPRK_EULER_1_1, ARKODE_MIN_SPRK_NUM, ARKODE_SPRK_LEAPFROG_2_2, &
     ARKODE_SPRK_PSEUDO_LEAPFROG_2_2, ARKODE_SPRK_RUTH_3_3, ARKODE_SPRK_MCLACHLAN_2_2, ARKODE_SPRK_MCLACHLAN_3_3, &
     ARKODE_SPRK_CANDY_ROZMUS_4_4, ARKODE_SPRK_MCLACHLAN_4_4, ARKODE_SPRK_MCLACHLAN_5_6, ARKODE_SPRK_YOSHIDA_6_8, &
     ARKODE_SPRK_SUZUKI_UMENO_8_16, ARKODE_SPRK_SOFRONIOU_10_36, ARKODE_MAX_SPRK_NUM
@@ -5333,17 +5333,17 @@ fresult = swigc_FARKodeButcherTable_Alloc(farg1, farg2)
 swig_result = fresult
 end function
 
-function FARKodeButcherTable_Create(s, q, p, c, a, b, d) &
+function FARKodeButcherTable_Create(s, q, p, c_1d, a_1d, b_1d, d_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
 integer(C_INT), intent(in) :: s
 integer(C_INT), intent(in) :: q
 integer(C_INT), intent(in) :: p
-real(C_DOUBLE), dimension(*), target, intent(inout) :: c
-real(C_DOUBLE), dimension(*), target, intent(inout) :: a
-real(C_DOUBLE), dimension(*), target, intent(inout) :: b
-real(C_DOUBLE), dimension(*), target, intent(inout) :: d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: c_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: a_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: b_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: d_1d
 type(C_PTR) :: fresult 
 integer(C_INT) :: farg1 
 integer(C_INT) :: farg2 
@@ -5356,10 +5356,10 @@ type(C_PTR) :: farg7
 farg1 = s
 farg2 = q
 farg3 = p
-farg4 = c_loc(c(1))
-farg5 = c_loc(a(1))
-farg6 = c_loc(b(1))
-farg7 = c_loc(d(1))
+farg4 = c_loc(c_1d(1))
+farg5 = c_loc(a_1d(1))
+farg6 = c_loc(b_1d(1))
+farg7 = c_loc(d_1d(1))
 fresult = swigc_FARKodeButcherTable_Create(farg1, farg2, farg3, farg4, farg5, farg6, farg7)
 swig_result = fresult
 end function
@@ -5692,14 +5692,14 @@ call swigc_ARKodeSPRKTableMem_op_assign__(farg1, farg2)
 self%swigdata = farg1
 end subroutine
 
-function FARKodeSPRKTable_Create(s, q, a, ahat) &
+function FARKodeSPRKTable_Create(s, q, a_1d, ahat_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
 integer(C_INT), intent(in) :: s
 integer(C_INT), intent(in) :: q
-real(C_DOUBLE), dimension(*), target, intent(inout) :: a
-real(C_DOUBLE), dimension(*), target, intent(inout) :: ahat
+real(C_DOUBLE), dimension(*), target, intent(inout) :: a_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: ahat_1d
 type(C_PTR) :: fresult 
 integer(C_INT) :: farg1 
 integer(C_INT) :: farg2 
@@ -5708,8 +5708,8 @@ type(C_PTR) :: farg4
 
 farg1 = s
 farg2 = q
-farg3 = c_loc(a(1))
-farg4 = c_loc(ahat(1))
+farg3 = c_loc(a_1d(1))
+farg4 = c_loc(ahat_1d(1))
 fresult = swigc_FARKodeSPRKTable_Create(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function

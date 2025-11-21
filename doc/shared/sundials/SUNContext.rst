@@ -305,11 +305,11 @@ For C++ users a RAII safe class, ``sundials::Context``, is provided:
    Context& operator=(const Context&) = delete;
    Context& operator=(Context&&) = default;
 
-   SUNContext Convert() override
+   SUNContext get() override
    {
       return *sunctx_.get();
    }
-   SUNContext Convert() const override
+   SUNContext get() const override
    {
       return *sunctx_.get();
    }

@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     printf("ERROR: matrix type must be 0 or 1 \n");
     return (-1);
   }
-  mattype = (mattype == 0) ? CSC_MAT : CSR_MAT;
+  mattype = (mattype == 0) ? SUN_CSC_MAT : SUN_CSR_MAT;
 
   num_threads = atoi(argv[3]);
   if (num_threads <= 0)

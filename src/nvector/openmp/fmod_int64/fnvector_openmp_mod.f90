@@ -614,12 +614,12 @@ fresult = swigc_FN_VNewEmpty_OpenMP(farg1, farg2, farg3)
 call c_f_pointer(fresult, swig_result)
 end function
 
-function FN_VMake_OpenMP(vec_length, v_data, num_threads, sunctx) &
+function FN_VMake_OpenMP(vec_length, v_data_1d, num_threads, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(N_Vector), pointer :: swig_result
 integer(C_INT64_T), intent(in) :: vec_length
-real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data
+real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
 integer(C_INT), intent(in) :: num_threads
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
@@ -629,7 +629,7 @@ integer(C_INT) :: farg3
 type(C_PTR) :: farg4 
 
 farg1 = vec_length
-farg2 = c_loc(v_data(1))
+farg2 = c_loc(v_data_1d(1))
 farg3 = num_threads
 farg4 = sunctx
 fresult = swigc_FN_VMake_OpenMP(farg1, farg2, farg3, farg4)

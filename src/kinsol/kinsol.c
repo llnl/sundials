@@ -238,6 +238,7 @@ void* KINCreate(SUNContext sunctx)
   memset(kin_mem, 0, sizeof(struct KINMemRec));
 
   kin_mem->kin_sunctx = sunctx;
+  kin_mem->python     = NULL;
 
   /* set uround (unit roundoff) */
 
@@ -795,6 +796,9 @@ void KINFree(void** kinmem)
 
   /* free orthogonalization workspace */
   KINFreeOrth(kin_mem);
+
+  free(kin_mem->python);
+  kin_mem->python = NULL;
 
   free(*kinmem);
   *kinmem = NULL;

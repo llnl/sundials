@@ -258,13 +258,13 @@ int main(int argc, char* argv[])
     free(rows);
 
     /* Create sparse matrices from dense */
-    A = SUNSparseFromDenseMatrix(C, ZERO, CSR_MAT);
+    A = SUNSparseFromDenseMatrix(C, ZERO, SUN_CSR_MAT);
     if (A == NULL)
     {
       printf("ERROR: SUNSparseFromDenseMatrix returned NULL for A\n");
       return (-1);
     }
-    B = SUNSparseFromDenseMatrix(D, ZERO, CSR_MAT);
+    B = SUNSparseFromDenseMatrix(D, ZERO, SUN_CSR_MAT);
     if (B == NULL)
     {
       printf("ERROR: SUNSparseFromDenseMatrix returned NULL B\n");
@@ -292,13 +292,13 @@ int main(int argc, char* argv[])
     }
 
     /* Create sparse matrices from dense */
-    A = SUNSparseFromDenseMatrix(C, ZERO, CSR_MAT);
+    A = SUNSparseFromDenseMatrix(C, ZERO, SUN_CSR_MAT);
     if (A == NULL)
     {
       printf("ERROR: SUNSparseFromDenseMatrix returned NULL for A\n");
       return (-1);
     }
-    B = SUNSparseFromDenseMatrix(D, ZERO, CSR_MAT);
+    B = SUNSparseFromDenseMatrix(D, ZERO, SUN_CSR_MAT);
     if (B == NULL)
     {
       printf("ERROR: SUNSparseFromDenseMatrix returned NULL B\n");
@@ -603,9 +603,9 @@ int check_matrix(SUNMatrix dA, SUNMatrix dB, sunrealtype tol)
 
   /* copy matrix data to host for the checks */
   A = SUNSparseMatrix(SUNMatrix_cuSparse_Rows(dA), SUNMatrix_cuSparse_Columns(dA),
-                      SUNMatrix_cuSparse_NNZ(dA), CSR_MAT, sunctx);
+                      SUNMatrix_cuSparse_NNZ(dA), SUN_CSR_MAT, sunctx);
   B = SUNSparseMatrix(SUNMatrix_cuSparse_Rows(dB), SUNMatrix_cuSparse_Columns(dB),
-                      SUNMatrix_cuSparse_NNZ(dB), CSR_MAT, sunctx);
+                      SUNMatrix_cuSparse_NNZ(dB), SUN_CSR_MAT, sunctx);
 
   failure = SUNMatrix_cuSparse_CopyFromDevice(dA, SM_DATA_S(A), SM_INDEXPTRS_S(A),
                                               SM_INDEXVALS_S(A));

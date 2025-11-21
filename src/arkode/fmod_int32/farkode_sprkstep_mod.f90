@@ -39,7 +39,6 @@ module farkode_sprkstep_mod
  integer(C_INT), parameter, public :: SPRKSTEP_DEFAULT_10 = ARKODE_SPRK_SOFRONIOU_10_36
  public :: FSPRKStepCreate
  public :: FSPRKStepReInit
- public :: FSPRKStepSetUseCompensatedSums
  public :: FSPRKStepSetMethod
  type, bind(C) :: SwigArrayWrapper
   type(C_PTR), public :: data = C_NULL_PTR
@@ -77,6 +76,7 @@ module farkode_sprkstep_mod
  public :: FSPRKStepGetStepStats
  public :: FSPRKStepFree
  public :: FSPRKStepGetNumRhsEvals
+ public :: FSPRKStepSetUseCompensatedSums
 
 ! WRAPPER DECLARATIONS
 interface
@@ -101,15 +101,6 @@ type(C_FUNPTR), value :: farg2
 type(C_FUNPTR), value :: farg3
 real(C_DOUBLE), intent(in) :: farg4
 type(C_PTR), value :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSPRKStepSetUseCompensatedSums(farg1, farg2) &
-bind(C, name="_wrap_FSPRKStepSetUseCompensatedSums") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -424,6 +415,15 @@ type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSPRKStepSetUseCompensatedSums(farg1, farg2) &
+bind(C, name="_wrap_FSPRKStepSetUseCompensatedSums") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT), intent(in) :: farg2
+integer(C_INT) :: fresult
+end function
+
 end interface
 
 
@@ -476,22 +476,6 @@ farg3 = f2
 farg4 = t0
 farg5 = c_loc(y0)
 fresult = swigc_FSPRKStepReInit(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSPRKStepSetUseCompensatedSums(arkode_mem, onoff) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-integer(C_INT), intent(in) :: onoff
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
-
-farg1 = arkode_mem
-farg2 = onoff
-fresult = swigc_FSPRKStepSetUseCompensatedSums(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -1077,6 +1061,22 @@ farg1 = arkode_mem
 farg2 = c_loc(nf1(1))
 farg3 = c_loc(nf2(1))
 fresult = swigc_FSPRKStepGetNumRhsEvals(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSPRKStepSetUseCompensatedSums(arkode_mem, onoff) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+integer(C_INT), intent(in) :: onoff
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = arkode_mem
+farg2 = onoff
+fresult = swigc_FSPRKStepSetUseCompensatedSums(farg1, farg2)
 swig_result = fresult
 end function
 

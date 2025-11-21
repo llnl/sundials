@@ -29,7 +29,7 @@ module farkode_mristep_mod
  private
 
  ! DECLARATION CONSTRUCTS
- ! typedef enum MRISTEP_METHOD_TYPE
+ ! enum MRISTEP_METHOD_TYPE
  enum, bind(c)
   enumerator :: MRISTEP_EXPLICIT
   enumerator :: MRISTEP_IMPLICIT
@@ -39,11 +39,11 @@ module farkode_mristep_mod
  end enum
  integer, parameter, public :: MRISTEP_METHOD_TYPE = kind(MRISTEP_EXPLICIT)
  public :: MRISTEP_EXPLICIT, MRISTEP_IMPLICIT, MRISTEP_IMEX, MRISTEP_MERK, MRISTEP_SR
- ! typedef enum ARKODE_MRITableID
+ ! enum ARKODE_MRITableID
  enum, bind(c)
   enumerator :: ARKODE_MRI_NONE = -1
+  enumerator :: ARKODE_MIS_KW3 = 200
   enumerator :: ARKODE_MIN_MRI_NUM = 200
-  enumerator :: ARKODE_MIS_KW3 = ARKODE_MIN_MRI_NUM
   enumerator :: ARKODE_MRI_GARK_ERK33a
   enumerator :: ARKODE_MRI_GARK_ERK45a
   enumerator :: ARKODE_MRI_GARK_IRK21a
@@ -72,7 +72,7 @@ module farkode_mristep_mod
   enumerator :: ARKODE_MAX_MRI_NUM = ARKODE_IMEX_MRI_SR43
  end enum
  integer, parameter, public :: ARKODE_MRITableID = kind(ARKODE_MRI_NONE)
- public :: ARKODE_MRI_NONE, ARKODE_MIN_MRI_NUM, ARKODE_MIS_KW3, ARKODE_MRI_GARK_ERK33a, ARKODE_MRI_GARK_ERK45a, &
+ public :: ARKODE_MRI_NONE, ARKODE_MIS_KW3, ARKODE_MIN_MRI_NUM, ARKODE_MRI_GARK_ERK33a, ARKODE_MRI_GARK_ERK45a, &
     ARKODE_MRI_GARK_IRK21a, ARKODE_MRI_GARK_ESDIRK34a, ARKODE_MRI_GARK_ESDIRK46a, ARKODE_IMEX_MRI_GARK3a, &
     ARKODE_IMEX_MRI_GARK3b, ARKODE_IMEX_MRI_GARK4, ARKODE_MRI_GARK_FORWARD_EULER, ARKODE_MRI_GARK_RALSTON2, &
     ARKODE_MRI_GARK_ERK22a, ARKODE_MRI_GARK_ERK22b, ARKODE_MRI_GARK_RALSTON3, ARKODE_MRI_GARK_BACKWARD_EULER, &
@@ -1885,7 +1885,7 @@ fresult = swigc_FMRIStepCoupling_Alloc(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FMRIStepCoupling_Create(nmat, stages, q, p, w, g, c) &
+function FMRIStepCoupling_Create(nmat, stages, q, p, w_1d, g_1d, c_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
@@ -1893,9 +1893,9 @@ integer(C_INT), intent(in) :: nmat
 integer(C_INT), intent(in) :: stages
 integer(C_INT), intent(in) :: q
 integer(C_INT), intent(in) :: p
-real(C_DOUBLE), dimension(*), target, intent(inout) :: w
-real(C_DOUBLE), dimension(*), target, intent(inout) :: g
-real(C_DOUBLE), dimension(*), target, intent(inout) :: c
+real(C_DOUBLE), dimension(*), target, intent(inout) :: w_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: g_1d
+real(C_DOUBLE), dimension(*), target, intent(inout) :: c_1d
 type(C_PTR) :: fresult 
 integer(C_INT) :: farg1 
 integer(C_INT) :: farg2 
@@ -1909,9 +1909,9 @@ farg1 = nmat
 farg2 = stages
 farg3 = q
 farg4 = p
-farg5 = c_loc(w(1))
-farg6 = c_loc(g(1))
-farg7 = c_loc(c(1))
+farg5 = c_loc(w_1d(1))
+farg6 = c_loc(g_1d(1))
+farg7 = c_loc(c_1d(1))
 fresult = swigc_FMRIStepCoupling_Create(farg1, farg2, farg3, farg4, farg5, farg6, farg7)
 swig_result = fresult
 end function

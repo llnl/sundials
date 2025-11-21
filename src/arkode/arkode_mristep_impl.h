@@ -186,6 +186,7 @@ struct _MRIStepInnerStepper
 {
   /* stepper specific content and operations */
   void* content;
+  void* python;
   MRIStepInnerStepper_Ops ops;
 
   /* stepper context */

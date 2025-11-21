@@ -605,12 +605,12 @@ fresult = swigc_FN_VNew_Serial(farg1, farg2)
 call c_f_pointer(fresult, swig_result)
 end function
 
-function FN_VMake_Serial(vec_length, v_data, sunctx) &
+function FN_VMake_Serial(vec_length, v_data_1d, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(N_Vector), pointer :: swig_result
 integer(C_INT32_T), intent(in) :: vec_length
-real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data
+real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 integer(C_INT32_T) :: farg1 
@@ -618,7 +618,7 @@ type(C_PTR) :: farg2
 type(C_PTR) :: farg3 
 
 farg1 = vec_length
-farg2 = c_loc(v_data(1))
+farg2 = c_loc(v_data_1d(1))
 farg3 = sunctx
 fresult = swigc_FN_VMake_Serial(farg1, farg2, farg3)
 call c_f_pointer(fresult, swig_result)

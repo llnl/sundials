@@ -24,12 +24,16 @@
 extern "C" {
 #endif
 
-typedef enum
+enum SUNFullRhsMode
 {
   SUN_FULLRHS_START,
   SUN_FULLRHS_END,
   SUN_FULLRHS_OTHER
-} SUNFullRhsMode;
+};
+
+#ifndef SWIG
+typedef enum SUNFullRhsMode SUNFullRhsMode;
+#endif
 
 typedef int (*SUNRhsJacFn)(sunrealtype t, N_Vector y, N_Vector fy,
                            SUNMatrix Jac, void* user_data, N_Vector tmp1,
@@ -69,7 +73,7 @@ typedef SUNErrCode (*SUNStepperSetStepDirectionFn)(SUNStepper stepper,
 typedef SUNErrCode (*SUNStepperSetForcingFn)(SUNStepper stepper,
                                              sunrealtype tshift,
                                              sunrealtype tscale,
-                                             N_Vector* forcing, int nforcing);
+                                             N_Vector* forcing_1d, int nforcing);
 
 typedef SUNErrCode (*SUNStepperGetNumStepsFn)(SUNStepper stepper,
                                               suncountertype* nst);
@@ -112,7 +116,7 @@ SUNErrCode SUNStepper_SetStepDirection(SUNStepper stepper, sunrealtype stepdir);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNStepper_SetForcing(SUNStepper stepper, sunrealtype tshift,
-                                 sunrealtype tscale, N_Vector* forcing,
+                                 sunrealtype tscale, N_Vector* forcing_1d,
                                  int nforcing);
 
 SUNDIALS_EXPORT

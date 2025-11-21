@@ -102,6 +102,8 @@ typedef struct IDAMemRec
 {
   SUNContext ida_sunctx;
 
+  void* python;
+
   sunrealtype ida_uround; /* machine unit roundoff */
 
   /*--------------------------
