@@ -140,7 +140,7 @@
  * ---------------------
  */
 
-#define PRNT_RETVAL    1
+#define PRNT_RETVAL 1
 #if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
 #define PRNT_NNI       2
 #define PRNT_TOL       3
