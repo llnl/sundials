@@ -21,4 +21,7 @@ The Kokkos N_Vector now properly handles unmanaged views. Previously, if a
 Kokkos ``N_Vector`` was created from an unmanaged view, the view would become a
 managed view and the data would be freed unexpectedly.
 
+A bug was fixed in KINSOL where the information logging function would always be
+called even when informational logging was disabled.
+
 **Deprecation Notices**
