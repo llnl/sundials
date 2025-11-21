@@ -141,6 +141,7 @@
  */
 
 #define PRNT_RETVAL    1
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
 #define PRNT_NNI       2
 #define PRNT_TOL       3
 #define PRNT_FMAX      4
@@ -153,6 +154,7 @@
 #define PRNT_ALPHABETA 11
 #define PRNT_ADJ       12
 #define PRNT_OTHER     13
+#endif
 
 /*=================================================================*/
 /* Shortcuts                                                       */
