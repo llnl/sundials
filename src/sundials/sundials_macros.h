@@ -31,7 +31,9 @@
  * checks or profiling is enabled.
  * ---------------------------------------------------------------------------*/
 
-#if __cplusplus >= 201703L || __STDC_VERSION__ > 201710L
+#if defined(__cplusplus) && __cplusplus >= 201703L
+#define SUNDIALS_MAYBE_UNUSED [[maybe_unused]]
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ > 201710L
 #define SUNDIALS_MAYBE_UNUSED [[maybe_unused]]
 #elif defined(SUNDIALS_C_COMPILER_HAS_ATTRIBUTE_UNUSED)
 #define SUNDIALS_MAYBE_UNUSED __attribute__((unused))

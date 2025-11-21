@@ -70,7 +70,7 @@ extern "C" {
  * the condition being an opaque function call, which we have a lot of).
  * -----------------------------------------------------------------*/
 
-#if __cplusplus >= 202302L
+#if defined(__cplusplus) && __cplusplus >= 202302L
 #define SUNAssume(...) [[assume(__VA_ARGS__)]]
 #elif defined(SUNDIALS_C_COMPILER_HAS_ATTRIBUTE_ASSUME)
 #define SUNAssume(...) __attribute__((assume(__VA_ARGS__)))
