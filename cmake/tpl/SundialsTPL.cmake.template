@@ -83,8 +83,5 @@ if(NOT <TPL>_WORKS)
   endif()
 
 else()
-  message(
-    STATUS
-      "Skipped <TPL> test. Set <TPL>_WORKS=FALSE to test."
-  )
+  message(STATUS "Skipped <TPL> test. Set <TPL>_WORKS=FALSE to test.")
 endif()

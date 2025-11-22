@@ -96,8 +96,5 @@ if(NOT SUPERLUMT_WORKS)
   endif()
 
 else()
-  message(
-    STATUS
-      "Skipped SuperLU_MT test. Set SUPERLUMT_WORKS=FALSE to test."
-  )
+  message(STATUS "Skipped SuperLU_MT test. Set SUPERLUMT_WORKS=FALSE to test.")
 endif()
