@@ -535,7 +535,7 @@ SWIGEXPORT double * _wrap_FSUNSparseMatrix_Data(SUNMatrix farg1) {
   return fresult;
 }
 
-#if SUNDIALS_INT32_T
+#ifdef SUNDIALS_INT32_T
 SWIGEXPORT int32_t * _wrap_FSUNSparseMatrix_IndexValues(SUNMatrix farg1) {
   int32_t * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
