@@ -166,7 +166,8 @@ if(SUNDIALS_TEST_ENABLE_GTEST)
     FetchContent_Declare(
       googletest
       URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
-      URL_HASH SHA256=a9607c9215866bd425a725610c5e0f739eeb50887a57903df48891446ce6fb3c)
+      URL_HASH
+        SHA256=a9607c9215866bd425a725610c5e0f739eeb50887a57903df48891446ce6fb3c)
     if(WIN32)
       # For Windows: Prevent overriding the parent project's compiler/linker
       # settings
