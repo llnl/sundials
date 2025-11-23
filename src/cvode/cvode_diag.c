@@ -44,32 +44,6 @@ static int CVDiagSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight,
 
 static int CVDiagFree(CVodeMem cv_mem);
 
-/* Readability Replacements */
-
-#define lrw1     (cv_mem->cv_lrw1)
-#define liw1     (cv_mem->cv_liw1)
-#define f        (cv_mem->cv_f)
-#define uround   (cv_mem->cv_uround)
-#define tn       (cv_mem->cv_tn)
-#define h        (cv_mem->cv_h)
-#define rl1      (cv_mem->cv_rl1)
-#define gamma    (cv_mem->cv_gamma)
-#define ewt      (cv_mem->cv_ewt)
-#define zn       (cv_mem->cv_zn)
-#define linit    (cv_mem->cv_linit)
-#define lsetup   (cv_mem->cv_lsetup)
-#define lsolve   (cv_mem->cv_lsolve)
-#define lfree    (cv_mem->cv_lfree)
-#define lmem     (cv_mem->cv_lmem)
-#define vec_tmpl (cv_mem->cv_tempv)
-
-#define gammasv   (cvdiag_mem->di_gammasv)
-#define M         (cvdiag_mem->di_M)
-#define bit       (cvdiag_mem->di_bit)
-#define bitcomp   (cvdiag_mem->di_bitcomp)
-#define nfeDI     (cvdiag_mem->di_nfeDI)
-#define last_flag (cvdiag_mem->di_last_flag)
-
 /*
  * -----------------------------------------------------------------
  * CVDiag
@@ -103,20 +77,22 @@ int CVDiag(void* cvode_mem)
   cv_mem = (CVodeMem)cvode_mem;
 
   /* Check if N_VCompare and N_VInvTest are present */
-  if (vec_tmpl->ops->nvcompare == NULL || vec_tmpl->ops->nvinvtest == NULL)
+  if (cv_mem->cv_tempv->ops->nvcompare == NULL ||
+      cv_mem->cv_tempv->ops->nvinvtest == NULL)
   {
     cvProcessError(cv_mem, CVDIAG_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGDG_BAD_NVECTOR);
     return (CVDIAG_ILL_INPUT);
   }
 
-  if (lfree != NULL) { lfree(cv_mem); }
+  if (cv_mem->cv_lfree != NULL) { cv_mem->cv_lfree(cv_mem); }
 
   /* Set four main function fields in cv_mem */
-  linit  = CVDiagInit;
-  lsetup = CVDiagSetup;
-  lsolve = CVDiagSolve;
-  lfree  = CVDiagFree;
+  cv_mem->cv_linit   = CVDiagInit;
+  cv_mem->cv_lreinit = CVDiagInit;
+  cv_mem->cv_lsetup  = CVDiagSetup;
+  cv_mem->cv_lsolve  = CVDiagSolve;
+  cv_mem->cv_lfree   = CVDiagFree;
 
   /* Get memory for CVDiagMemRec */
   cvdiag_mem = NULL;
@@ -128,12 +104,12 @@ int CVDiag(void* cvode_mem)
     return (CVDIAG_MEM_FAIL);
   }
 
-  last_flag = CVDIAG_SUCCESS;
+  cvdiag_mem->di_last_flag = CVDIAG_SUCCESS;
 
   /* Allocate memory for M, bit, and bitcomp */
 
-  M = N_VClone(vec_tmpl);
-  if (M == NULL)
+  cvdiag_mem->di_M = N_VClone(cv_mem->cv_tempv);
+  if (cvdiag_mem->di_M == NULL)
   {
     cvProcessError(cv_mem, CVDIAG_MEM_FAIL, __LINE__, __func__, __FILE__,
                    MSGDG_MEM_FAIL);
@@ -142,31 +118,31 @@ int CVDiag(void* cvode_mem)
     return (CVDIAG_MEM_FAIL);
   }
 
-  bit = N_VClone(vec_tmpl);
-  if (bit == NULL)
+  cvdiag_mem->di_bit = N_VClone(cv_mem->cv_tempv);
+  if (cvdiag_mem->di_bit == NULL)
   {
     cvProcessError(cv_mem, CVDIAG_MEM_FAIL, __LINE__, __func__, __FILE__,
                    MSGDG_MEM_FAIL);
-    N_VDestroy(M);
+    N_VDestroy(cvdiag_mem->di_M);
     free(cvdiag_mem);
     cvdiag_mem = NULL;
     return (CVDIAG_MEM_FAIL);
   }
 
-  bitcomp = N_VClone(vec_tmpl);
-  if (bitcomp == NULL)
+  cvdiag_mem->di_bitcomp = N_VClone(cv_mem->cv_tempv);
+  if (cvdiag_mem->di_bitcomp == NULL)
   {
     cvProcessError(cv_mem, CVDIAG_MEM_FAIL, __LINE__, __func__, __FILE__,
                    MSGDG_MEM_FAIL);
-    N_VDestroy(M);
-    N_VDestroy(bit);
+    N_VDestroy(cvdiag_mem->di_M);
+    N_VDestroy(cvdiag_mem->di_bit);
     free(cvdiag_mem);
     cvdiag_mem = NULL;
     return (CVDIAG_MEM_FAIL);
   }
 
   /* Attach linear solver memory to integrator memory */
-  lmem = cvdiag_mem;
+  cv_mem->cv_lmem = cvdiag_mem;
 
   return (CVDIAG_SUCCESS);
 }
@@ -190,8 +166,8 @@ int CVDiagGetWorkSpace(void* cvode_mem, long int* lenrwLS, long int* leniwLS)
   }
   cv_mem = (CVodeMem)cvode_mem;
 
-  *lenrwLS = 3 * lrw1;
-  *leniwLS = 3 * liw1;
+  *lenrwLS = 3 * cv_mem->cv_lrw1;
+  *leniwLS = 3 * cv_mem->cv_liw1;
 
   return (CVDIAG_SUCCESS);
 }
@@ -216,15 +192,15 @@ int CVDiagGetNumRhsEvals(void* cvode_mem, long int* nfevalsLS)
   }
   cv_mem = (CVodeMem)cvode_mem;
 
-  if (lmem == NULL)
+  if (cv_mem->cv_lmem == NULL)
   {
     cvProcessError(cv_mem, CVDIAG_LMEM_NULL, __LINE__, __func__, __FILE__,
                    MSGDG_LMEM_NULL);
     return (CVDIAG_LMEM_NULL);
   }
-  cvdiag_mem = (CVDiagMem)lmem;
+  cvdiag_mem = (CVDiagMem)cv_mem->cv_lmem;
 
-  *nfevalsLS = nfeDI;
+  *nfevalsLS = cvdiag_mem->di_nfeDI;
 
   return (CVDIAG_SUCCESS);
 }
@@ -249,15 +225,15 @@ int CVDiagGetLastFlag(void* cvode_mem, long int* flag)
   }
   cv_mem = (CVodeMem)cvode_mem;
 
-  if (lmem == NULL)
+  if (cv_mem->cv_lmem == NULL)
   {
     cvProcessError(cv_mem, CVDIAG_LMEM_NULL, __LINE__, __func__, __FILE__,
                    MSGDG_LMEM_NULL);
     return (CVDIAG_LMEM_NULL);
   }
-  cvdiag_mem = (CVDiagMem)lmem;
+  cvdiag_mem = (CVDiagMem)cv_mem->cv_lmem;
 
-  *flag = last_flag;
+  *flag = cvdiag_mem->di_last_flag;
 
   return (CVDIAG_SUCCESS);
 }
@@ -303,11 +279,11 @@ static int CVDiagInit(CVodeMem cv_mem)
 {
   CVDiagMem cvdiag_mem;
 
-  cvdiag_mem = (CVDiagMem)lmem;
+  cvdiag_mem = (CVDiagMem)cv_mem->cv_lmem;
 
-  nfeDI = 0;
+  cvdiag_mem->di_nfeDI = 0;
 
-  last_flag = CVDIAG_SUCCESS;
+  cvdiag_mem->di_last_flag = CVDIAG_SUCCESS;
   return (0);
 }
 
@@ -332,39 +308,39 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
   CVDiagMem cvdiag_mem;
   int retval;
 
-  cvdiag_mem = (CVDiagMem)lmem;
+  cvdiag_mem = (CVDiagMem)cv_mem->cv_lmem;
 
   /* Rename work vectors for use as temporary values of y and f */
   ftemp = vtemp1;
   y     = vtemp2;
 
   /* Form y with perturbation = FRACT*(func. iter. correction) */
-  r = FRACT * rl1;
+  r = FRACT * cv_mem->cv_rl1;
 #ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
-    cvDiagSetup_formY(h, r, fpred, zn[1], ypred, ftemp, y);
+    cvDiagSetup_formY(cv_mem->cv_h, r, fpred, cv_mem->cv_zn[1], ypred, ftemp, y);
   }
   else
 #endif
   {
-    N_VLinearSum(h, fpred, -ONE, zn[1], ftemp);
+    N_VLinearSum(cv_mem->cv_h, fpred, -ONE, cv_mem->cv_zn[1], ftemp);
     N_VLinearSum(r, ftemp, ONE, ypred, y);
   }
 
   /* Evaluate f at perturbed y */
-  retval = f(tn, y, M, cv_mem->cv_user_data);
-  nfeDI++;
+  retval = cv_mem->cv_f(cv_mem->cv_tn, y, cvdiag_mem->di_M, cv_mem->cv_user_data);
+  cvdiag_mem->di_nfeDI++;
   if (retval < 0)
   {
     cvProcessError(cv_mem, CVDIAG_RHSFUNC_UNRECVR, __LINE__, __func__, __FILE__,
                    MSGDG_RHSFUNC_FAILED);
-    last_flag = CVDIAG_RHSFUNC_UNRECVR;
+    cvdiag_mem->di_last_flag = CVDIAG_RHSFUNC_UNRECVR;
     return (-1);
   }
   if (retval > 0)
   {
-    last_flag = CVDIAG_RHSFUNC_RECVR;
+    cvdiag_mem->di_last_flag = CVDIAG_RHSFUNC_RECVR;
     return (1);
   }
 
@@ -372,36 +348,40 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
 #ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
-    cvDiagSetup_buildM(FRACT, uround, h, ftemp, fpred, ewt, bit, bitcomp, y, M);
+    cvDiagSetup_buildM(FRACT, cv_mem->cv_uround, cv_mem->cv_h, ftemp, fpred,
+                       cv_mem->cv_ewt, cvdiag_mem->di_bit,
+                       cvdiag_mem->di_bitcomp, y, cvdiag_mem->di_M);
   }
   else
 #endif
   {
-    N_VLinearSum(ONE, M, -ONE, fpred, M);
-    N_VLinearSum(FRACT, ftemp, -h, M, M);
-    N_VProd(ftemp, ewt, y);
+    N_VLinearSum(ONE, cvdiag_mem->di_M, -ONE, fpred, cvdiag_mem->di_M);
+    N_VLinearSum(FRACT, ftemp, -(cv_mem->cv_h), cvdiag_mem->di_M,
+                 cvdiag_mem->di_M);
+    N_VProd(ftemp, cv_mem->cv_ewt, y);
     /* Protect against deltay_i being at roundoff level */
-    N_VCompare(uround, y, bit);
-    N_VAddConst(bit, -ONE, bitcomp);
-    N_VProd(ftemp, bit, y);
-    N_VLinearSum(FRACT, y, -ONE, bitcomp, y);
-    N_VDiv(M, y, M);
-    N_VProd(M, bit, M);
-    N_VLinearSum(ONE, M, -ONE, bitcomp, M);
+    N_VCompare(cv_mem->cv_uround, y, cvdiag_mem->di_bit);
+    N_VAddConst(cvdiag_mem->di_bit, -ONE, cvdiag_mem->di_bitcomp);
+    N_VProd(ftemp, cvdiag_mem->di_bit, y);
+    N_VLinearSum(FRACT, y, -ONE, cvdiag_mem->di_bitcomp, y);
+    N_VDiv(cvdiag_mem->di_M, y, cvdiag_mem->di_M);
+    N_VProd(cvdiag_mem->di_M, cvdiag_mem->di_bit, cvdiag_mem->di_M);
+    N_VLinearSum(ONE, cvdiag_mem->di_M, -ONE, cvdiag_mem->di_bitcomp,
+                 cvdiag_mem->di_M);
   }
 
   /* Invert M with test for zero components */
-  invOK = N_VInvTest(M, M);
+  invOK = N_VInvTest(cvdiag_mem->di_M, cvdiag_mem->di_M);
   if (!invOK)
   {
-    last_flag = CVDIAG_INV_FAIL;
+    cvdiag_mem->di_last_flag = CVDIAG_INV_FAIL;
     return (1);
   }
 
   /* Set jcur = SUNTRUE, save gamma in gammasv, and return */
-  *jcurPtr  = SUNTRUE;
-  gammasv   = gamma;
-  last_flag = CVDIAG_SUCCESS;
+  *jcurPtr                 = SUNTRUE;
+  cvdiag_mem->di_gammasv   = cv_mem->cv_gamma;
+  cvdiag_mem->di_last_flag = CVDIAG_SUCCESS;
   return (0);
 }
 
@@ -423,36 +403,36 @@ static int CVDiagSolve(CVodeMem cv_mem, N_Vector b,
   sunrealtype r;
   CVDiagMem cvdiag_mem;
 
-  cvdiag_mem = (CVDiagMem)lmem;
+  cvdiag_mem = (CVDiagMem)cv_mem->cv_lmem;
 
   /* If gamma has changed, update factor in M, and save gamma value */
 
-  if (gammasv != gamma)
+  if (cvdiag_mem->di_gammasv != cv_mem->cv_gamma)
   {
-    r = gamma / gammasv;
+    r = cv_mem->cv_gamma / cvdiag_mem->di_gammasv;
 #ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
-    if (cv_mem->cv_usefused) { cvDiagSolve_updateM(r, M); }
+    if (cv_mem->cv_usefused) { cvDiagSolve_updateM(r, cvdiag_mem->di_M); }
     else
 #endif
     {
-      N_VInv(M, M);
-      N_VAddConst(M, -ONE, M);
-      N_VScale(r, M, M);
-      N_VAddConst(M, ONE, M);
+      N_VInv(cvdiag_mem->di_M, cvdiag_mem->di_M);
+      N_VAddConst(cvdiag_mem->di_M, -ONE, cvdiag_mem->di_M);
+      N_VScale(r, cvdiag_mem->di_M, cvdiag_mem->di_M);
+      N_VAddConst(cvdiag_mem->di_M, ONE, cvdiag_mem->di_M);
     }
-    invOK = N_VInvTest(M, M);
+    invOK = N_VInvTest(cvdiag_mem->di_M, cvdiag_mem->di_M);
     if (!invOK)
     {
-      last_flag = CVDIAG_INV_FAIL;
+      cvdiag_mem->di_last_flag = CVDIAG_INV_FAIL;
       return (1);
     }
-    gammasv = gamma;
+    cvdiag_mem->di_gammasv = cv_mem->cv_gamma;
   }
 
   /* Apply M-inverse to b */
-  N_VProd(b, M, b);
+  N_VProd(b, cvdiag_mem->di_M, b);
 
-  last_flag = CVDIAG_SUCCESS;
+  cvdiag_mem->di_last_flag = CVDIAG_SUCCESS;
   return (0);
 }
 
@@ -468,11 +448,11 @@ static int CVDiagFree(CVodeMem cv_mem)
 {
   CVDiagMem cvdiag_mem;
 
-  cvdiag_mem = (CVDiagMem)lmem;
+  cvdiag_mem = (CVDiagMem)cv_mem->cv_lmem;
 
-  N_VDestroy(M);
-  N_VDestroy(bit);
-  N_VDestroy(bitcomp);
+  N_VDestroy(cvdiag_mem->di_M);
+  N_VDestroy(cvdiag_mem->di_bit);
+  N_VDestroy(cvdiag_mem->di_bitcomp);
   free(cvdiag_mem);
   cv_mem->cv_lmem = NULL;
 

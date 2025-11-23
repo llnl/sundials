@@ -81,6 +81,8 @@ extern "C" {
 
 #define IDA_CONTEXT_ERR -29
 
+#define IDA_TOO_CLOSE -60
+
 #define IDA_UNRECOGNIZED_ERROR -99
 
 /* ------------------------------

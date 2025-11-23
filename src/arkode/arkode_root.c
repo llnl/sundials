@@ -357,7 +357,6 @@ int arkPrintRootMem(void* arkode_mem, FILE* outfile)
                 ark_mem->root_mem->rootdir[i]);
       }
     }
-    fprintf(outfile, "ark_taskc = %i\n", ark_mem->root_mem->taskc);
     fprintf(outfile, "ark_irfnd = %i\n", ark_mem->root_mem->irfnd);
     fprintf(outfile, "ark_mxgnull = %i\n", ark_mem->root_mem->mxgnull);
     if (ark_mem->root_mem->gactive != NULL)
@@ -395,7 +394,6 @@ int arkPrintRootMem(void* arkode_mem, FILE* outfile)
                 ark_mem->root_mem->grout[i]);
       }
     }
-    fprintf(outfile, "ark_toutc = " SUN_FORMAT_G "\n", ark_mem->root_mem->toutc);
     fprintf(outfile, "ark_ttol = " SUN_FORMAT_G "\n", ark_mem->root_mem->ttol);
   }
   return (ARK_SUCCESS);
@@ -616,7 +614,7 @@ int arkRootCheck2(void* arkode_mem)
     RTFOUND         = 1 if a root of g was found, or
     ARK_SUCCESS     = 0 otherwise.
   ---------------------------------------------------------------*/
-int arkRootCheck3(void* arkode_mem)
+int arkRootCheck3(void* arkode_mem, sunrealtype tout, int itask)
 {
   int i, retval, ier;
   ARKodeMem ark_mem;
@@ -631,21 +629,21 @@ int arkRootCheck3(void* arkode_mem)
   rootmem = ark_mem->root_mem;
 
   /* Set thi = tn or tout, whichever comes first; set y = y(thi). */
-  if (rootmem->taskc == ARK_ONE_STEP)
+  if (itask == ARK_ONE_STEP)
   {
     rootmem->thi = ark_mem->tcur;
     N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
   }
-  if (rootmem->taskc == ARK_NORMAL)
+  if (itask == ARK_NORMAL)
   {
-    if ((rootmem->toutc - ark_mem->tcur) * ark_mem->h >= ZERO)
+    if ((tout - ark_mem->tcur) * ark_mem->h >= ZERO)
     {
       rootmem->thi = ark_mem->tcur;
       N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
     }
     else
     {
-      rootmem->thi = rootmem->toutc;
+      rootmem->thi = tout;
       (void)ARKodeGetDky(ark_mem, rootmem->thi, 0, ark_mem->ycur);
     }
   }

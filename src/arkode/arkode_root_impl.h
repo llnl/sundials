@@ -61,9 +61,7 @@ typedef struct ARKodeRootMemRec
   sunrealtype* glo;        /* saved array of g values at t = tlo           */
   sunrealtype* ghi;        /* saved array of g values at t = thi           */
   sunrealtype* grout;      /* array of g values at t = trout               */
-  sunrealtype toutc;       /* copy of tout (if NORMAL mode)                */
   sunrealtype ttol;        /* tolerance on root location                   */
-  int taskc;               /* copy of parameter itask                      */
   int irfnd;               /* flag showing whether last step had a root    */
   long int nge;            /* counter for g evaluations                    */
   sunbooleantype* gactive; /* array with active/inactive event functions   */
@@ -80,7 +78,7 @@ int arkRootFree(void* arkode_mem);
 int arkPrintRootMem(void* arkode_mem, FILE* outfile);
 int arkRootCheck1(void* arkode_mem);
 int arkRootCheck2(void* arkode_mem);
-int arkRootCheck3(void* arkode_mem);
+int arkRootCheck3(void* arkode_mem, sunrealtype tout, int itask);
 int arkRootfind(void* arkode_mem);
 
 #ifdef __cplusplus

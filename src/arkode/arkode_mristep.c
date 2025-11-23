@@ -30,6 +30,7 @@
 #include "arkode/arkode.h"
 #include "arkode_impl.h"
 #include "arkode_interp_impl.h"
+#include "arkode_ls_impl.h"
 #include "arkode_mristep_impl.h"
 
 /*===============================================================
@@ -380,6 +381,8 @@ int MRIStepReInit(void* arkode_mem, ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0,
   step_mem->nls_iters   = 0;
   step_mem->nls_fails   = 0;
   step_mem->inner_fails = 0;
+
+  if (step_mem->lmem) { arkLsInitializeCounters(step_mem->lmem); }
 
   return (ARK_SUCCESS);
 }

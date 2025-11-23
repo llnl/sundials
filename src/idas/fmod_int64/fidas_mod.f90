@@ -81,6 +81,7 @@ module fidas_mod
  integer(C_INT), parameter, public :: IDA_QSRHS_FAIL = -51_C_INT
  integer(C_INT), parameter, public :: IDA_FIRST_QSRHS_ERR = -52_C_INT
  integer(C_INT), parameter, public :: IDA_REP_QSRHS_ERR = -53_C_INT
+ integer(C_INT), parameter, public :: IDA_TOO_CLOSE = -60_C_INT
  integer(C_INT), parameter, public :: IDA_UNRECOGNIZED_ERROR = -99_C_INT
  integer(C_INT), parameter, public :: IDA_NO_ADJ = -101_C_INT
  integer(C_INT), parameter, public :: IDA_NO_FWD = -102_C_INT

@@ -107,6 +107,8 @@ extern "C" {
 #define IDA_FIRST_QSRHS_ERR -52
 #define IDA_REP_QSRHS_ERR   -53
 
+#define IDA_TOO_CLOSE -60
+
 #define IDA_UNRECOGNIZED_ERROR -99
 
 /* adjoint return values */
