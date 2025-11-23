@@ -156,6 +156,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
 
 /* Generic linit/lsetup/lsolve/lfree interface routines for CVode to call */
 int cvLsInitialize(CVodeMem cv_mem);
+int cvLsReInitialize(CVodeMem cv_mem);
 int cvLsSetup(CVodeMem cv_mem, int convfail, N_Vector ypred, N_Vector fpred,
               sunbooleantype* jcurPtr, N_Vector vtemp1, N_Vector vtemp2,
               N_Vector vtemp3);

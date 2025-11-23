@@ -63,6 +63,7 @@ module fida_mod
  integer(C_INT), parameter, public :: IDA_BAD_DKY = -27_C_INT
  integer(C_INT), parameter, public :: IDA_VECTOROP_ERR = -28_C_INT
  integer(C_INT), parameter, public :: IDA_CONTEXT_ERR = -29_C_INT
+ integer(C_INT), parameter, public :: IDA_TOO_CLOSE = -60_C_INT
  integer(C_INT), parameter, public :: IDA_UNRECOGNIZED_ERROR = -99_C_INT
  public :: FIDACreate
  public :: FIDAInit

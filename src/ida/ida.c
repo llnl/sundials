@@ -93,6 +93,7 @@
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
 #include "ida_impl.h"
+#include "ida_ls_impl.h"
 #include "sundials_utils.h"
 
 /*
@@ -249,7 +250,7 @@ static int IDAHandleFailure(IDAMem IDA_mem, int sflag);
 
 static int IDARcheck1(IDAMem IDA_mem);
 static int IDARcheck2(IDAMem IDA_mem);
-static int IDARcheck3(IDAMem IDA_mem);
+static int IDARcheck3(IDAMem IDA_mem, sunrealtype tout, int itask);
 static int IDARootfind(IDAMem IDA_mem);
 
 /*
@@ -634,6 +635,8 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
   IDA_mem->ida_nge = 0;
 
   IDA_mem->ida_irfnd = 0;
+
+  if (IDA_mem->ida_lmem) { idaLsInitializeCounters(IDA_mem->ida_lmem); }
 
   /* Initial setup not done yet */
 
@@ -1130,9 +1133,6 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
     return (IDA_ILL_INPUT);
   }
 
-  if (itask == IDA_NORMAL) { IDA_mem->ida_toutc = tout; }
-  IDA_mem->ida_taskc = itask;
-
   if (IDA_mem->ida_nst == 0)
   { /* This is the first call */
 
@@ -1153,22 +1153,15 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
        check for approach to tstop, and scale phi[1] by hh.
        Also check for zeros of root function g at and near t0.    */
 
-    tdist = SUNRabs(tout - IDA_mem->ida_tn);
-    if (tdist == ZERO)
-    {
-      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                      MSG_TOO_CLOSE);
-      SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
-      return (IDA_ILL_INPUT);
-    }
+    tdist     = SUNRabs(tout - IDA_mem->ida_tn);
     troundoff = TWO * IDA_mem->ida_uround *
                 (SUNRabs(IDA_mem->ida_tn) + SUNRabs(tout));
-    if (tdist < troundoff)
+    if (tdist == ZERO || tdist < troundoff)
     {
-      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+      IDAProcessError(IDA_mem, IDA_TOO_CLOSE, __LINE__, __func__, __FILE__,
                       MSG_TOO_CLOSE);
       SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
-      return (IDA_ILL_INPUT);
+      return (IDA_TOO_CLOSE);
     }
 
     /* Set initial h */
@@ -1293,7 +1286,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
                   (SUNRabs(IDA_mem->ida_tn) + SUNRabs(IDA_mem->ida_hh));
       if (SUNRabs(IDA_mem->ida_tn - IDA_mem->ida_tretlast) > troundoff)
       {
-        ier = IDARcheck3(IDA_mem);
+        ier = IDARcheck3(IDA_mem, tout, itask);
         if (ier == IDA_SUCCESS)
         { /* no root found */
           IDA_mem->ida_irfnd = 0;
@@ -1431,7 +1424,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
 
     if (IDA_mem->ida_nrtfn > 0)
     {
-      ier = IDARcheck3(IDA_mem);
+      ier = IDARcheck3(IDA_mem, tout, itask);
 
       if (ier == RTFOUND)
       { /* A new root was found */
@@ -3630,21 +3623,17 @@ static int IDARcheck2(IDAMem IDA_mem)
  *     IDA_SUCCESS     = 0 otherwise.
  */
 
-static int IDARcheck3(IDAMem IDA_mem)
+static int IDARcheck3(IDAMem IDA_mem, sunrealtype tout, int itask)
 {
   int i, ier, retval;
 
   /* Set thi = tn or tout, whichever comes first. */
-  if (IDA_mem->ida_taskc == IDA_ONE_STEP)
+  if (itask == IDA_ONE_STEP) { IDA_mem->ida_thi = IDA_mem->ida_tn; }
+  if (itask == IDA_NORMAL)
   {
-    IDA_mem->ida_thi = IDA_mem->ida_tn;
-  }
-  if (IDA_mem->ida_taskc == IDA_NORMAL)
-  {
-    IDA_mem->ida_thi =
-      ((IDA_mem->ida_toutc - IDA_mem->ida_tn) * IDA_mem->ida_hh >= ZERO)
-        ? IDA_mem->ida_tn
-        : IDA_mem->ida_toutc;
+    IDA_mem->ida_thi = ((tout - IDA_mem->ida_tn) * IDA_mem->ida_hh >= ZERO)
+                         ? IDA_mem->ida_tn
+                         : tout;
   }
 
   /* Get y and y' at thi. */

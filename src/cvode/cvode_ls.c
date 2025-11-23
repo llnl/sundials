@@ -145,10 +145,11 @@ int CVodeSetLinearSolver(void* cvode_mem, SUNLinearSolver LS, SUNMatrix A)
   if (cv_mem->cv_lfree) { cv_mem->cv_lfree(cv_mem); }
 
   /* Set four main system linear solver function fields in cv_mem */
-  cv_mem->cv_linit  = cvLsInitialize;
-  cv_mem->cv_lsetup = cvLsSetup;
-  cv_mem->cv_lsolve = cvLsSolve;
-  cv_mem->cv_lfree  = cvLsFree;
+  cv_mem->cv_linit   = cvLsInitialize;
+  cv_mem->cv_lreinit = cvLsReInitialize;
+  cv_mem->cv_lsetup  = cvLsSetup;
+  cv_mem->cv_lsolve  = cvLsSolve;
+  cv_mem->cv_lfree   = cvLsFree;
 
   /* Allocate memory for CVLsMemRec */
   cvls_mem = NULL;
@@ -1517,6 +1518,25 @@ int cvLsInitialize(CVodeMem cv_mem)
   /* Call LS initialize routine, and return result */
   cvls_mem->last_flag = SUNLinSolInitialize(cvls_mem->LS);
   return (cvls_mem->last_flag);
+}
+
+int cvLsReInitialize(CVodeMem cv_mem)
+{
+  CVLsMem cvls_mem;
+
+  /* access CVLsMem structure */
+  if (cv_mem->cv_lmem == NULL)
+  {
+    cvProcessError(cv_mem, CVLS_LMEM_NULL, __LINE__, __func__, __FILE__,
+                   MSG_LS_LMEM_NULL);
+    return (CVLS_LMEM_NULL);
+  }
+  cvls_mem = (CVLsMem)cv_mem->cv_lmem;
+
+  /* Initialize counters */
+  cvLsInitializeCounters(cvls_mem);
+
+  return CVLS_SUCCESS;
 }
 
 /*-----------------------------------------------------------------

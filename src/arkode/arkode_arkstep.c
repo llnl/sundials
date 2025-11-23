@@ -343,6 +343,8 @@ int ARKStepReInit(void* arkode_mem, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   step_mem->nsetups = 0;
   step_mem->nstlp   = 0;
 
+  if (step_mem->lmem) { arkLsInitializeCounters(step_mem->lmem); }
+
   return (ARK_SUCCESS);
 }
 

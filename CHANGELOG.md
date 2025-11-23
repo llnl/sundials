@@ -11,12 +11,23 @@ and IDAS, respectively.
 
 ### Bug Fixes
 
+On the initial time step with a user-supplied initial step size, ARKODE and
+CVODE(S) will now return `ARK_TOO_CLOSE` or `CV_TOO_CLOSE`, respectively,
+when the requested output time is the same as the initial time (or within
+numerical roundoff of the initial time). Before a `TOO_CLOSE` error would only
+be returned when internally estimating the initial step size. In IDA(S), added a
+`IDA_TOO_CLOSE` return value for when the initial and output time are too
+close. Previously, IDA(S) would return `IDA_ILL_INPUT`.
+
+Fixed a bug in ARKODE, CVODE(S), and IDA(S) where the linear solver counters
+were not reinitialized until the next call to advance the system. As such,
+non-zero linear solver statistics could be returned if retrieving or printing
+linear solver counters between the initialization and the next call to advance
+the system.
+
 The interface to Ginkgo batched linear solvers has been updated to fix build
 errors when using 64-bit index types. Note, only the batched dense matrix in
 Ginkgo is currently compatible with 64-bit indexing (as of Ginkgo 1.10).
-
-The interface to Ginkgo batched linear solvers has been updated to fix build
-errors when using 64-bit index types.
 
 The SPRKStep module now accounts for zero coefficients in the SPRK tables,
 eliminating extraneous function evaluations.
