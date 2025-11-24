@@ -24,7 +24,7 @@ jobs:
         run: codespell --version
 
       - name: Check out repository code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Run codespell
         run: |

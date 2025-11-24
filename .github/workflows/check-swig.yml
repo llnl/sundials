@@ -27,7 +27,7 @@ jobs:
           swig -version
 
       - name: Check out repository code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Add safe directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
