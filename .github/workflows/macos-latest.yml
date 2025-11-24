@@ -22,7 +22,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory.
