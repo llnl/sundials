@@ -26,7 +26,7 @@ jobs:
         logging_level: [0, 1, 2, 3, 4, 5]
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory.
@@ -82,7 +82,7 @@ jobs:
         profiling: ['OFF', 'ON']
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory.

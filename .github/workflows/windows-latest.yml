@@ -17,7 +17,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Configure CMake
       run: cmake -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=ON -DEXAMPLES_ENABLE_CXX=ON
