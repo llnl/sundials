@@ -53,26 +53,33 @@ if(NOT <TPL>_WORKS)
   message(CHECK_START "Testing <TPL>")
 
   # Create the test directory
-  set(<TPL>_TEST_DIR ${PROJECT_BINARY_DIR}/<TPL>_TEST)
+  set(TEST_DIR ${PROJECT_BINARY_DIR}/<TPL>_TEST)
 
   # Create a C source file
-  file(WRITE ${<TPL>_TEST_DIR}/test.c
+  file(
+    WRITE ${TEST_DIR}/test.c
     "int main(void) {\n"
     "return 0;\n"
     "}\n")
 
   # Attempt to build and link the test executable, pass --debug-trycompile to
   # the cmake command to save build files for debugging
-  try_compile(COMPILE_OK ${<TPL>_TEST_DIR} ${<TPL>_TEST_DIR}/test.c
-    LINK_LIBRARIES <TPL target> OUTPUT_VARIABLE COMPILE_OUTPUT)
+  try_compile(
+    COMPILE_OK ${TEST_DIR}
+    ${TEST_DIR}/test.c
+    LINK_LIBRARIES <TPL target>
+    OUTPUT_VARIABLE COMPILE_OUTPUT)
 
   # Check the result
   if(COMPILE_OK)
     message(CHECK_PASS "success")
   else()
     message(CHECK_FAIL "failed")
-    file(WRITE ${<TPL>_TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
-    message(FATAL_ERROR "Could not compile <TPL> test. Check output in ${<TPL>_TEST_DIR}/compile.out")
+    file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
+    message(
+      FATAL_ERROR
+        "Could not compile <TPL> test. Check output in ${TEST_DIR}/compile.out"
+    )
   endif()
 
 else()
