@@ -13,7 +13,7 @@ attempts due to an inequality constraint violation (`CVodeGetNumConstraintFails`
 and `IDAGetNumConstraintFails`). As a result, constraint failures are no longer
 included in the number of step failures due to a solver failure (i.e., the
 values returned by `CVodeGetNumStepSolveFails` and `IDAGetNumStepSolveFails`).
-The functions `CVodeGetNumConstrainCorrections` and
+The functions `CVodeGetNumConstraintCorrections` and
 `IDAGetNumConstraintCorrections` were also added to retrieve the number of steps
 where the corrector was modified to satisfy an inequality constraint without
 failing the step.
