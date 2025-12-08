@@ -2740,7 +2740,8 @@ described next.
 
 .. c:function:: int CVodeGetNumConstraintCorrections(void* cvode_mem, long int* num_corrections_out)
 
-   Returns the number of steps modified to satisfy an inequality constraint.
+   Returns the number of steps where the corrector was modified to satisfy an
+   inequality constraint without failing the step.
 
    **Arguments:**
       * ``cvode_mem`` -- pointer to the CVODES memory block.

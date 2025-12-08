@@ -2602,7 +2602,8 @@ described next.
 
 .. c:function:: int IDAGetNumConstraintCorrections(void* ida_mem, long int* num_corrections_out)
 
-   Returns the number of steps modified to satisfy an inequality constraint.
+   Returns the number of steps where the corrector was modified to satisfy an
+   inequality constraint without failing the step.
 
    **Arguments:**
       * ``ida_mem`` -- pointer to the IDAS memory block.
