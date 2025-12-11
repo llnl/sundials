@@ -20,6 +20,7 @@
 # required modules
 add_subdirectory(newton)
 add_subdirectory(fixedpoint)
+add_subdirectory(auto)
 
 if(BUILD_SUNNONLINSOL_PETSCSNES)
   add_subdirectory(petscsnes)

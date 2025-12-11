@@ -111,6 +111,7 @@ set(sundials_SOURCES
     sunmatrix/sunmatrix_dense.cpp
     sunmatrix/sunmatrix_sparse.cpp
     sunmemory/sunmemory_system.cpp
+    sunnonlinsol/sunnonlinsol_auto.cpp
     sunnonlinsol/sunnonlinsol_fixedpoint.cpp
     sunnonlinsol/sunnonlinsol_newton.cpp
     test/sundials4py_test.cpp)
@@ -140,6 +141,9 @@ target_link_libraries(
           sundials_sunlinsolspfgmr
           sundials_sunlinsolsptfqmr
           sundials_sunlinsolpcg
+          sundials_sunnonlinsolauto
+          sundials_sunnonlinsolfixedpoint
+          sundials_sunnonlinsolnewton
           sundials_sunmatrixband
           sundials_sunmatrixdense
           sundials_sunmatrixsparse

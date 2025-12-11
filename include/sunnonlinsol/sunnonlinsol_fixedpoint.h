@@ -47,10 +47,12 @@ struct _SUNNonlinearSolverContent_FixedPoint
   int m;                  /* number of acceleration vectors to use          */
   int* imap;              /* array of length m                              */
   sunbooleantype damping; /* flag to apply dampling in acceleration         */
-  sunrealtype beta;       /* damping parameter                               */
+  sunrealtype beta;       /* damping parameter                              */
   sunrealtype* R;         /* array of length m*m                            */
   sunrealtype* gamma;     /* array of length m                              */
   sunrealtype* cvals;     /* array of length m+1 for fused vector op        */
+  sunrealtype norm_delta; /* wrms norm of delta                             */
+  sunrealtype crate;      /* convergence rate                               */
   N_Vector* df;           /* vector array of length m                       */
   N_Vector* dg;           /* vector array of length m                       */
   N_Vector* q;            /* vector array of length m                       */

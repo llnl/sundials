@@ -242,13 +242,26 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     N_VLinearSum(ONE, ycor, -ONE, yprev, delta);
     SUNCheckLastErr();
 
+    /* compute the norm of delta, but save the previous value for computing a rate of convergence */
+    sunrealtype norm_delta_p    = FP_CONTENT(NLS)->norm_delta;
+    FP_CONTENT(NLS)->norm_delta = N_VWrmsNorm(delta, w);
+
+    /* compute the convergence rate. TODO(CJB): CRDOWN is a factor in CVODE we need to understand */
+    const sunrealtype CRDOWN = SUN_RCONST(0.3);
+    if (FP_CONTENT(NLS)->curiter > 1)
+    {
+      FP_CONTENT(NLS)->crate = SUNMAX(CRDOWN * FP_CONTENT(NLS)->crate,
+                                      FP_CONTENT(NLS)->norm_delta / norm_delta_p);
+    }
+    else { FP_CONTENT(NLS)->crate = SUN_RCONST(0.0); }
+
     /* test for convergence */
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
 
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
                "cur-iter = %d, update-norm = " SUN_FORMAT_G,
-               FP_CONTENT(NLS)->niters, N_VWrmsNorm(delta, w));
+               FP_CONTENT(NLS)->niters, FP_CONTENT(NLS)->norm_delta);
 
     /* return if successful */
     if (retval == 0)
