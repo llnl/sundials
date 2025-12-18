@@ -58,7 +58,7 @@ jobs:
         --verbose
 
     - name: Archive build files from failed build
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: failure()
       with:
         name: build_files_logging_level_${{ matrix.logging_level }}
@@ -67,7 +67,7 @@ jobs:
           !${{ github.workspace }}/build/Testing/output
 
     - name: Archive output files from failed build
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: failure()
       with:
         name: output_files_logging_level_${{ matrix.logging_level }}
@@ -101,7 +101,7 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Archive build files from failed build
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: failure()
       with:
         name: build_files_profiling_${{ matrix.profiling }}
@@ -110,7 +110,7 @@ jobs:
           !${{ github.workspace }}/build/Testing/output
 
     - name: Archive output files from failed build
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: failure()
       with:
         name: output_files_profiling_${{ matrix.profiling }}

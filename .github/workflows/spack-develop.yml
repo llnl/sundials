@@ -33,7 +33,7 @@ jobs:
           indexsize: ${{ matrix.indexsize }}
           precision: ${{ matrix.precision }}
       - name: Archive build files from failed build
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: build_files
@@ -41,7 +41,7 @@ jobs:
             ${{ github.workspace }}/test/build_*
             !${{ github.workspace }}/test/build_*/Testing/output
       - name: Archive output files from failed build
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: output_files

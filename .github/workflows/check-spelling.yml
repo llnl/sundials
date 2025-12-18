@@ -38,7 +38,7 @@ jobs:
         run: /usr/bin/git diff > spelling.patch
 
       - name: Archive diff as a patch if we failed
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: spelling.patch
