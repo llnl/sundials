@@ -6542,8 +6542,7 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   /* Return with error if |h| == hmin */
   if (SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM)
   {
-    SUNLogInfo(IDA_LOGGER, "end-constraint-check",
-               "status = failed min step");
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check", "status = failed min step");
     return (IDA_CONSTR_FAIL);
   }
 
