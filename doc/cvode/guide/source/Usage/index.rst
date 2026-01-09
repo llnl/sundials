@@ -929,7 +929,7 @@ Main solver optional input functions
       CVODE options set via :c:func:`CVodeSetOptions` will overwrite
       any previously-set values.  Options are set in the order they are given in
       ``argv`` and, if an option with the same prefix appears multiple times in
-      ``argv``, the value of the last occurrence will used.
+      ``argv``, the value of the last occurrence will be used.
 
       The supported option names are noted within the documentation for the
       corresponding CVODE "set" function.  For options that take a

@@ -935,7 +935,7 @@ Main solver optional input functions
       CVODES options set via :c:func:`CVodeSetOptions` will overwrite
       any previously-set values.  Options are set in the order they are given in
       ``argv`` and, if an option with the same prefix appears multiple times in
-      ``argv``, the value of the last occurrence will used.
+      ``argv``, the value of the last occurrence will be used.
 
       The supported option names are noted within the documentation for the
       corresponding CVODES "set" function.  For options that take a
@@ -2474,9 +2474,9 @@ the preconditioner.
    +-------------------------------------------------+--------------------------------------------+
    |              **Optional output**                |            **Function name**               |
    +=================================================+============================================+
-   | **CVODE main solver**                           |                                            |
+   | **CVODES main solver**                          |                                            |
    +-------------------------------------------------+--------------------------------------------+
-   | Size of CVODE real and integer workspaces       | :c:func:`CVodeGetWorkSpace`                |
+   | Size of CVODES real and integer workspaces      | :c:func:`CVodeGetWorkSpace`                |
    +-------------------------------------------------+--------------------------------------------+
    | Cumulative number of internal steps             | :c:func:`CVodeGetNumSteps`                 |
    +-------------------------------------------------+--------------------------------------------+
@@ -2521,9 +2521,9 @@ the preconditioner.
    +-------------------------------------------------+--------------------------------------------+
    | No. of nonlinear convergence failures           | :c:func:`CVodeGetNumNonlinSolvConvFails`   |
    +-------------------------------------------------+--------------------------------------------+
-   | All CVODE integrator statistics                 | :c:func:`CVodeGetIntegratorStats`          |
+   | All CVODES integrator statistics                | :c:func:`CVodeGetIntegratorStats`          |
    +-------------------------------------------------+--------------------------------------------+
-   | CVODE nonlinear solver statistics               | :c:func:`CVodeGetNonlinSolvStats`          |
+   | CVODES nonlinear solver statistics              | :c:func:`CVodeGetNonlinSolvStats`          |
    +-------------------------------------------------+--------------------------------------------+
    | User data pointer                               | :c:func:`CVodeGetUserData`                 |
    +-------------------------------------------------+--------------------------------------------+
