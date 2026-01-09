@@ -2892,9 +2892,16 @@ static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
   (*step_constraint_fails)++;
   IDA_mem->constraint_fails++;
 
-  /* Return with error if |h| == hmin or max step attempt failures */
-  if ((SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM) ||
-      (*step_constraint_fails == IDA_mem->max_constraint_fails))
+  /* Return with error if |h| == hmin */
+  if (SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM)
+  {
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check",
+               "status = failed min step");
+    return (IDA_CONSTR_FAIL);
+  }
+
+  /* Return with error if max step attempt failures */
+  if (*step_constraint_fails == IDA_mem->max_constraint_fails)
   {
     SUNLogInfo(IDA_LOGGER, "end-constraint-check",
                "status = failed max attempts");

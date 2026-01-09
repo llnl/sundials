@@ -3291,9 +3291,15 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
   /* restore zn */
   cvRestore(cv_mem, saved_t);
 
-  /* Check for |h| == hmin or max step attempt failures */
-  if ((SUNRabs(cv_mem->cv_h) <= cv_mem->cv_hmin * ONEPSM) ||
-      (*step_constraint_fails == cv_mem->max_constraint_fails))
+  /* Check for |h| == hmin */
+  if (SUNRabs(cv_mem->cv_h) <= cv_mem->cv_hmin * ONEPSM)
+  {
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = failed min step");
+    return (CV_CONSTR_FAIL);
+  }
+
+  /* Check for max step attempt failures */
+  if (*step_constraint_fails == cv_mem->max_constraint_fails)
   {
     SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = failed max attempts");
     return (CV_CONSTR_FAIL);
