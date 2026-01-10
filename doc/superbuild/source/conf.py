@@ -274,3 +274,5 @@ else:
     open("../../shared/Python/sundials4py-cvodes-functions.rst", "a").close()
     open("../../shared/Python/sundials4py-idas-functions.rst", "a").close()
     open("../../shared/Python/sundials4py-kinsol-functions.rst", "a").close()
+    open("../../shared/Python/sundials4py-core-functions.rst", "a").close()
+

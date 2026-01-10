@@ -348,6 +348,5 @@ if not os.getenv("JENKINS_HOME"):
 else:
     # Generate empty files so that there is no warning about missing files
     open("../../../shared/Python/sundials4py-arkode-functions.rst", "a").close()
-    open("../../../shared/Python/sundials4py-cvodes-functions.rst", "a").close()
-    open("../../../shared/Python/sundials4py-idas-functions.rst", "a").close()
-    open("../../../shared/Python/sundials4py-kinsol-functions.rst", "a").close()
+    open("../../../shared/Python/sundials4py-core-functions.rst", "a").close()
+
