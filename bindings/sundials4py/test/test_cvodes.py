@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python3
 # -----------------------------------------------------------------
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------
@@ -79,8 +79,6 @@ def test_cvodes_fsa(sunctx):
 
     cvode = CVodeCreate(CV_BDF, sunctx)
 
-    # This problem requires tighter tolerances in order to get the forward
-    # sensitivity to converge to the expected solution within a reasonable tolerance
     atol = 10 * SUNREALTYPE_ATOL
     rtol = 10 * SUNREALTYPE_RTOL
 
@@ -210,8 +208,6 @@ def test_cvodes_adjoint_quad(sunctx):
     ode_problem = AnalyticODE()
     ode_problem.set_init_cond(y)
 
-    # This problem requires tighter tolerances in order to get the forward
-    # sensitivity to converge to the expected solution within a reasonable tolerance
     atol = 10 * SUNREALTYPE_ATOL
     rtol = 10 * SUNREALTYPE_RTOL
 

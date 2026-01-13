@@ -102,6 +102,7 @@ def main():
     assert sunctx is not None
 
     y = N_VNew_Serial(N, sunctx)
+    assert y is not None
 
     problem = Heat1DProblem(N, k)
     problem.set_init_cond(y)

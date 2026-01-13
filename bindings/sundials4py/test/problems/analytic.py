@@ -76,6 +76,12 @@ class AnalyticODE(ODEProblem):
         lamdbaI = 0.0
         return 0, lamdbaR, lamdbaI
 
+    def jac_fn(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3, _):
+        # For this scalar problem, dF/dy = lambda
+        Jdata = SUNDenseMatrix_Data(J)
+        Jdata[0, 0] = self.lamb
+        return 0
+
     def solution(self, y0vec, yvec, t):
         y = N_VGetArrayPointer(yvec)
         y[0] = np.atan(t)

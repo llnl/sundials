@@ -104,16 +104,13 @@ def test_scale_add_identity(sunctx):
     dataA = SUNSparseMatrix_Data(A)
     idx_vals = SUNSparseMatrix_IndexValues(A)
     idx_ptrs = SUNSparseMatrix_IndexPointers(A)
-    # CSR: row 0: col 0 (2.0), row 1: col 1 (2.0), row 2: col 2 (2.0), row 2: col 0 (2.0)
     dataA[:] = [2.0, 2.0, 2.0, 2.0]
     idx_vals[:] = [0, 1, 2, 0]
     idx_ptrs[:] = [0, 1, 2, 4]
     ret = SUNMatScaleAddI(3.0, A)
     assert ret == SUN_SUCCESS
-    # Diagonal elements should be 3*2+1=7, off-diagonal unchanged
-    # So dataA = [7.0, 7.0, 7.0, 2.0] (assuming diagonal at idx_vals[0:3])
-    # But since idx_vals = [0,1,2,0], diagonal is at positions 0,1,2
-    assert_allclose(dataA[:3], [7.0, 7.0, 7.0])
+    # Diagonal elements should be 3*2+1=7, off-diagonal should be 3*2=6
+    assert_allclose(dataA, [7.0, 7.0, 7.0, 6.0])
 
 
 def test_matvec(sunctx):

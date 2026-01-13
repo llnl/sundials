@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python3
 # -----------------------------------------------------------------
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------
@@ -41,6 +41,7 @@ def test_lsrkstep_sts(sunctx):
     assert status == ARK_SUCCESS
 
     status = ARKodeSetMaxNumSteps(lsrk.get(), 100000)
+    assert status == ARK_SUCCESS
 
     tout = 10.0
     status, tret = ARKodeEvolve(lsrk.get(), tout, y, ARK_NORMAL)
@@ -67,6 +68,7 @@ def test_lsrkstep_ssp(sunctx):
     assert status == ARK_SUCCESS
 
     status = ARKodeSetMaxNumSteps(lsrk.get(), 100000)
+    assert status == ARK_SUCCESS
 
     tout = 10.0
     status, tret = ARKodeEvolve(lsrk.get(), tout, y, ARK_NORMAL)

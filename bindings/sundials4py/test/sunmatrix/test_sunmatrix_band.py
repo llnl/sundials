@@ -45,6 +45,8 @@ def test_zero_matrix(sunctx):
     rows, mu, ml = 4, 1, 1
     A = SUNBandMatrix(rows, mu, ml, sunctx)
     assert A is not None
+    ret = SUNMatZero(A)
+    assert ret == SUN_SUCCESS
     dataA = SUNBandMatrix_Data(A)
     assert_array_equal(dataA, np.zeros_like(dataA))
 

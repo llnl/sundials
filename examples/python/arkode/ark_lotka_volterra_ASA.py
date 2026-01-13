@@ -169,6 +169,7 @@ def main():
     uB_arr = sun.N_VGetArrayPointer(uB)
     uB_arr[:] = arr_uB
     qB = sun.N_VNew_Serial(NP, sunctx)
+    assert qB is not None
     qB_arr = sun.N_VGetArrayPointer(qB)
     qB_arr[:] = ode.dgdp(y)
 

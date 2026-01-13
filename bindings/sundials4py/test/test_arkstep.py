@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python3
 # -----------------------------------------------------------------
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------
@@ -109,13 +109,7 @@ def test_implicit_with_dense_ls_and_jac(sunctx):
     status = ARKodeSetLinearSolver(ark.get(), ls, A)
     assert status == ARK_SUCCESS
 
-    def jac_fn(t, yvec, fyvec, J, tmp1, tmp2, tmp3, _):
-        # For this scalar problem, dF/dy = lambda
-        Jdata = SUNDenseMatrix_Data(J)
-        Jdata[0, 0] = ode_problem.lamb
-        return 0
-
-    status = ARKodeSetJacFn(ark.get(), jac_fn)
+    status = ARKodeSetJacFn(ark.get(), ode_problem.jac_fn)
     assert status == ARK_SUCCESS
 
     tout = 10.0
