@@ -128,6 +128,10 @@ export SUNDIALS_LOGGING_LEVEL=3
 export SUNDIALS_TEST_FLOAT_PRECISION=0
 export SUNDIALS_TEST_INTEGER_PRECISION=0
 
+# The Python version on the test machine is currently too old to install
+# sundials4py so use a mock module when building the Sphinx docs
+export SPHINX_MOCK_SUNDIALS4PY=ON
+
 # ------------------------------------------------------------------------------
 # Third party libraries
 # ------------------------------------------------------------------------------
