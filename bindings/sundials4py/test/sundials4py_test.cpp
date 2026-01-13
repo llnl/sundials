@@ -14,10 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
- * This file is the entrypoint for the Python binding code for the
- * SUNDIALS SUNContext class. It contains hand-written code for
- * functions that require special treatment, and includes the generated
- * code produced with the generate.py script.
+ * This file defines the sundials4py test module, which contains
+ * utility functions for testing purposes.
  * -----------------------------------------------------------------*/
 
 #include "sundials4py.hpp"

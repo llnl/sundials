@@ -168,7 +168,7 @@ void bind_cvodes(nb::module_& m)
       if (fn)
       {
         fn_table->rootfn = nb::cast(fn);
-        return CVodeRootInit(cv_mem, nrtfn, &cvode_rootfn_wrapper);
+        return CVodeRootInit(cv_mem, nrtfn, cvode_rootfn_wrapper);
       }
       else { return CVodeRootInit(cv_mem, nrtfn, nullptr); }
     },
@@ -183,7 +183,7 @@ void bind_cvodes(nb::module_& m)
       if (fQ)
       {
         fn_table->fQ = nb::cast(fQ);
-        return CVodeQuadInit(cv_mem, &cvode_fQ_wrapper, yQ0);
+        return CVodeQuadInit(cv_mem, cvode_fQ_wrapper, yQ0);
       }
       else { return CVodeQuadInit(cv_mem, nullptr, yQ0); }
     },

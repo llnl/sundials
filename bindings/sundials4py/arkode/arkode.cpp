@@ -53,7 +53,7 @@ void bind_arkode_splittingstep(nb::module_& m);
     {                                                                   \
       auto fn_table    = get_arkode_fn_table(ark_mem);                  \
       fn_table->MEMBER = nb::cast(fn);                                  \
-      if (fn) { return NAME(ark_mem, &WRAPPER); }                       \
+      if (fn) { return NAME(ark_mem, WRAPPER); }                        \
       else { return NAME(ark_mem, nullptr); }                           \
     },                                                                  \
     __VA_ARGS__)
@@ -68,9 +68,9 @@ void bind_arkode_splittingstep(nb::module_& m);
       auto fn_table     = get_arkode_fn_table(ark_mem);                    \
       fn_table->MEMBER1 = nb::cast(fn1);                                   \
       fn_table->MEMBER2 = nb::cast(fn2);                                   \
-      if (fn1 && fn2) { return NAME(ark_mem, &WRAPPER1, &WRAPPER2); }      \
-      else if (fn1) { return NAME(ark_mem, &WRAPPER1, nullptr); }          \
-      else if (fn2) { return NAME(ark_mem, nullptr, &WRAPPER2); }          \
+      if (fn1 && fn2) { return NAME(ark_mem, WRAPPER1, WRAPPER2); }        \
+      else if (fn1) { return NAME(ark_mem, WRAPPER1, nullptr); }           \
+      else if (fn2) { return NAME(ark_mem, nullptr, WRAPPER2); }           \
       else { return NAME(ark_mem, nullptr, nullptr); }                     \
     },                                                                     \
     __VA_ARGS__)
@@ -115,8 +115,15 @@ void bind_arkode(nb::module_& m)
     {
       auto fn_table         = get_arkode_fn_table(ark_mem);
       fn_table->vecresizefn = nb::cast(fn);
-      return ARKodeResize(ark_mem, y_new, h_scale, t0,
-                          arkode_vecresizefn_wrapper, ark_mem);
+      if (fn)
+      {
+        return ARKodeResize(ark_mem, y_new, h_scale, t0,
+                            arkode_vecresizefn_wrapper, ark_mem);
+      }
+      else
+      {
+        return ARKodeResize(ark_mem, y_new, h_scale, t0, nullptr, ark_mem);
+      }
     },
     nb::arg("arkode_mem"), nb::arg("y_new"), nb::arg("h_scale"), nb::arg("t0"),
     nb::arg("resize_fn").none());

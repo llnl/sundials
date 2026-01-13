@@ -368,7 +368,7 @@ SUNDIALS_EXPORT int ARKodeGetStepDirection(void* arkode_mem,
                                            sunrealtype* stepdir);
 SUNDIALS_EXPORT int ARKodeGetErrWeights(void* arkode_mem, N_Vector eweight);
 SUNDIALS_EXPORT int ARKodeGetNumGEvals(void* arkode_mem, long int* ngevals);
-SUNDIALS_EXPORT int ARKodeGetRootInfo(void* arkode_mem, int* rootsfound);
+SUNDIALS_EXPORT int ARKodeGetRootInfo(void* arkode_mem, int* rootsfound_1d);
 SUNDIALS_EXPORT int ARKodeGetUserData(void* arkode_mem, void** user_data);
 SUNDIALS_EXPORT int ARKodePrintAllStats(void* arkode_mem, FILE* outfile,
                                         SUNOutputFormat fmt);

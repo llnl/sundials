@@ -37,7 +37,7 @@ using namespace sundials::experimental;
     {                                                                   \
       auto fn_table    = get_idas_fn_table(ida_mem);                    \
       fn_table->MEMBER = nb::cast(fn);                                  \
-      if (fn) { return NAME(ida_mem, &WRAPPER); }                       \
+      if (fn) { return NAME(ida_mem, WRAPPER); }                        \
       else { return NAME(ida_mem, nullptr); }                           \
     },                                                                  \
     __VA_ARGS__)
@@ -67,7 +67,7 @@ using namespace sundials::experimental;
       void* user_data  = nullptr;                                                  \
       auto fn_table    = get_idas_fn_table(ida_mem, which);                        \
       fn_table->MEMBER = nb::cast(fn);                                             \
-      if (fn) { return NAME(ida_mem, which, &WRAPPER); }                           \
+      if (fn) { return NAME(ida_mem, which, WRAPPER); }                            \
       else { return NAME(ida_mem, which, nullptr); }                               \
     },                                                                             \
     __VA_ARGS__)
@@ -82,6 +82,8 @@ using namespace sundials::experimental;
     {                                                                      \
       void* user_data = nullptr;                                           \
       auto fn_table   = get_idas_fn_table(ida_mem, which);                 \
+      fn_table->MEMBER1 = nb::cast(fn1);                                   \
+      fn_table->MEMBER2 = nb::cast(fn2);                                   \
       if (fn1 && fn2) { return NAME(ida_mem, which, WRAPPER1, WRAPPER2); } \
       else if (fn1) { return NAME(ida_mem, which, WRAPPER1, nullptr); }    \
       else if (fn2) { return NAME(ida_mem, which, nullptr, WRAPPER2); }    \
@@ -122,10 +124,9 @@ void bind_idas(nb::module_& m)
     nb::arg("args"));
 
   m.def(
-    "IDACreate",
-    [](SUNContext sunctx)
-    { return std::make_shared<IDAView>(IDACreate(sunctx)); },
-    nb::arg("sunctx"), nb::keep_alive<0, 1>());
+    "IDACreate", [](SUNContext sunctx)
+    { return std::make_shared<IDAView>(IDACreate(sunctx)); }, nb::arg("sunctx"),
+    nb::keep_alive<0, 1>());
 
   m.def(
     "IDAInit",
@@ -164,7 +165,7 @@ void bind_idas(nb::module_& m)
       if (fn)
       {
         fn_table->rootfn = nb::cast(fn);
-        return IDARootInit(ida_mem, nrtfn, &idas_rootfn_wrapper);
+        return IDARootInit(ida_mem, nrtfn, idas_rootfn_wrapper);
       }
       else { return IDARootInit(ida_mem, nrtfn, nullptr); }
     },
@@ -180,7 +181,7 @@ void bind_idas(nb::module_& m)
       if (resQ)
       {
         fn_table->resQ = nb::cast(resQ);
-        return IDAQuadInit(ida_mem, &idas_resQ_wrapper, yQ0);
+        return IDAQuadInit(ida_mem, idas_resQ_wrapper, yQ0);
       }
       else { return IDAQuadInit(ida_mem, nullptr, yQ0); }
     },
@@ -276,7 +277,7 @@ void bind_idas(nb::module_& m)
         return ida_status;
       }
 
-      if (resB) { fn_table->resB = nb::cast(resB); }
+      fn_table->resB = nb::cast(resB);
       return ida_status;
     },
     nb::arg("ida_mem"), nb::arg("which"), nb::arg("resB").none(),
@@ -335,7 +336,7 @@ void bind_idas(nb::module_& m)
         return ida_status;
       }
 
-      if (resBS) { fn_table->resBS = nb::cast(resBS); }
+      fn_table->resBS = nb::cast(resBS);
       return ida_status;
     },
     nb::arg("ida_mem"), nb::arg("which"), nb::arg("resBS").none(),

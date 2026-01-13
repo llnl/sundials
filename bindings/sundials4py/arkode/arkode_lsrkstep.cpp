@@ -103,7 +103,8 @@ void bind_arkode_lsrkstep(nb::module_& m)
     {
       auto fn_table             = get_arkode_fn_table(ark_mem);
       fn_table->lsrkstep_domeig = nb::cast(fn);
-      return LSRKStepSetDomEigFn(ark_mem, &lsrkstep_domeig_wrapper);
+      if (fn) { return LSRKStepSetDomEigFn(ark_mem, lsrkstep_domeig_wrapper); }  
+      else { return LSRKStepSetDomEigFn(ark_mem, nullptr); }  
     },
     nb::arg("arkode_mem"), nb::arg("eig_fn"));
 }
