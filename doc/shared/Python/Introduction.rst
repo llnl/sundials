@@ -55,7 +55,7 @@ Or, you can install from git:
 The default build of sundials4py that is distributed as a binary wheel uses double precision real types and 64-bit indices. 
 To install SUNDIALS with different precisions and index sizes, you can build from source wheels instead of using the pre-built 
 binary wheels. When building from source wheels instead of binary wheels, you can customize the SUNDIALS precision (real type)
-and index type at build time by passing the CMake arguments in environment variables when running pip. For example:
+and index type at build time by passing the CMake arguments in an environment variable when running pip. For example:
 
 .. code-block:: bash
 
@@ -68,13 +68,13 @@ Other SUNDIALS options can also be accessed in this way. Review :numref:`Install
 
    Not all SUNDIALS options are supported by the Python interfaces. In particular, third-party libraries are not yet supported.
 
-After installation, you can import sundials4py in your Python scripts:
+After installation, you can import sundials4py with:
 
 .. code-block:: python
 
    import sundials4py
 
-The modules available are:
+sundials4py is comprised of the following submodules:
 
 - ``sundials4py.core``: contains all the shared SUNDIALS classes and functions
 - ``sundials4py.arkode``: contains all of the ARKODE specific classes and functions

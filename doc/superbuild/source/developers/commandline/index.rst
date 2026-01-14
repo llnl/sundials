@@ -1,5 +1,5 @@
 ..
-   Author(s): Daniel R. Reynolds @ UMBC and David J. Gardner @ LLNL
+   Author(s): Daniel R. Reynolds @ UMBC
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
    Copyright (c) 2025, Lawrence Livermore National Security,
