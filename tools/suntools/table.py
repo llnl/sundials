@@ -23,7 +23,7 @@ import re
 
 def parse_table(data):
     """
-    Parses "table" formatted SUNDIALS stats output. I.e., data is in key-value format, 
+    Parses "table" formatted SUNDIALS stats output. I.e., data is in key-value format,
     and this converts it into the same dictionary format as csv.py.
     Args:
         data (str): Multiline string containing repeated key-value tables.
