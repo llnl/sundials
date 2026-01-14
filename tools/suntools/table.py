@@ -32,27 +32,26 @@ def parse_table(data):
     """
 
     stats = {}
-    for block in table_blocks:
-        lines = block.splitlines()
-        for line in lines:
-            # Extract key-value pairs
-            match = re.match(r"^(.*?)\s+=\s+(.*)$", line)
-            if match:
-                key = match.group(1).strip()
-                value = match.group(2).strip()
+    lines = data.splitlines()
+    for line in lines:
+        # Extract key-value pairs
+        match = re.match(r"^(.*?)\s+=\s+(.*)$", line)
+        if match:
+            key = match.group(1).strip()
+            value = match.group(2).strip()
 
-                # Attempt to convert value to a float or int if numeric
-                try:
-                    if "." in value:
-                        value = float(value)
-                    else:
-                        value = int(value)
-                except ValueError:
-                    pass  # Keep value as string if conversion fails
-
-                if key in stats:
-                    stats[key].append(value)
+            # Attempt to convert value to a float or int if numeric
+            try:
+                if "." in value:
+                    value = float(value)
                 else:
-                    stats[key] = [value]
+                    value = int(value)
+            except ValueError:
+                pass  # Keep value as string if conversion fails
+
+            if key in stats:
+                stats[key].append(value)
+            else:
+                stats[key] = [value]
 
     return stats
