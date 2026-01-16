@@ -220,26 +220,46 @@ jobs:
           fi
           echo "Build and test check passed (result: $RESULT)"
 
+  # Status aggregation job for branch protection
   all-checks:
     runs-on: ubuntu-latest
-    needs: [format-status, docs-status, fortran-status, build-and-test-status]
+    needs: [detect-changes, check-format, build-docs, check-fortran, build-and-test]
     if: always()
     steps:
       - name: Aggregate all checks
         run: |
-          FORMAT_RESULT="${{ needs.format-status.result }}"
-          FORTRAN_RESULT="${{ needs.fortran-status.result }}"
-          # PYTHON_RESULT="${{ needs.python-status.result }}"
-          DOCS_RESULT="${{ needs.docs-status.result }}"
-          BUILD_AND_TEST_RESULT="${{ needs.build-and-test-status.result }}"
+          FORMAT_RESULT="${{ needs.check-format.result }}"
+          FORTRAN_RESULT="${{ needs.check-fortran.result }}"
+          # PYTHON_RESULT="${{ needs.check-python.result }}"
+          DOCS_RESULT="${{ needs.build-docs.result }}"
+          TEST_RESULT="${{ needs.build-and-test.result }}"
 
-          if [ "$FORMAT_RESULT" != "success" ] || [ "$DOCS_RESULT" != "success" ] || [ "$FORTRAN_RESULT" != "success" ] || [ "$BUILD_AND_TESET_RESULT" != "success" ]; then
-            echo "One or more checks failed"
-            echo "  format-status: $FORMAT_RESULT"
-            echo "  fortran-status: $FORTRAN_RESULT"
-            # echo "  python-status: $PYTHON_RESULT"
-            echo "  docs-status: $DOCS_RESULT"
-            echo "  build-and-test-status: $BUILD_AND_TEST_RESULT"
+          echo "Check results:"
+          echo "  check-format: $FORMAT_RESULT"
+          echo "  build-docs: $DOCS_RESULT"
+          echo "  check-fortran: $FORTRAN_RESULT"
+          # echo "  check-fortran: $PYTHON_RESULT"
+          echo "  build-and-test: $TEST_RESULT"
+
+          # Fail if any required job failed (not skipped or success)
+          if [ "$FORMAT_RESULT" != "success" ] && [ "$FORMAT_RESULT" != "skipped" ]; then
+            echo "Format check failed"
             exit 1
           fi
+
+          if [ "$DOCS_RESULT" != "success" ] && [ "$DOCS_RESULT" != "skipped" ]; then
+            echo "Documentation check failed"
+            exit 1
+          fi
+
+          if [ "$FORTRAN_RESULT" != "success" ] && [ "$FORTRAN_RESULT" != "skipped" ]; then
+            echo "Fortran check failed"
+            exit 1
+          fi
+
+          if [ "$TEST_RESULT" != "success" ] && [ "$TEST_RESULT" != "skipped" ]; then
+            echo "Build and test failed"
+            exit 1
+          fi
+
           echo "All checks passed"
