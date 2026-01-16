@@ -18,9 +18,9 @@ on:
         type: boolean
         default: false
 
-# Cancel any in-progress workflow runs for the same PR or branch
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
