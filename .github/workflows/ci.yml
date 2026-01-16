@@ -2,6 +2,8 @@ name: ci
 
 # Workflow triggers
 on:
+  # Run on push for testing
+  push:
   # Runs on PRs targeting main or develop branches
   pull_request:
     branches: [main, develop]
