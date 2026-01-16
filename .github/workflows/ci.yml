@@ -117,7 +117,7 @@ jobs:
   check-fortran:
     needs: [detect-changes, check-format]
     if: |
-      always() &&
+      !cancelled() &&
       needs.detect-changes.outputs.fortran == 'true' &&
       needs.check-format.result == 'success'
     uses: ./.github/workflows/check-swig.yml
@@ -125,7 +125,7 @@ jobs:
   # check-python:
   #   needs: [detect-changes, check-format]
   #   if: |
-  #     always() &&
+  #     !cancelled() &&
   #     needs.detect-changes.outputs.python == 'true' &&
   #     needs.check-format.result == 'success'
   #   uses: ./.github/workflows/check-litgen.yml
@@ -133,7 +133,7 @@ jobs:
   build-docs:
     needs: [detect-changes, check-format, check-fortran]
     if: |
-      always() &&
+      !cancelled() &&
       needs.detect-changes.outputs.docs == 'true' &&
       needs.check-format.result == 'success' &&
       (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped')
@@ -142,7 +142,7 @@ jobs:
   build-and-test:
     needs: [detect-changes, check-format, check-fortran, build-docs]
     if: |
-      always() &&
+      !cancelled() &&
       needs.detect-changes.outputs.src == 'true' &&
       needs.check-format.result == 'success' &&
       (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped') &&
@@ -167,7 +167,7 @@ jobs:
           echo "  check-format: $FORMAT_RESULT"
           echo "  build-docs: $DOCS_RESULT"
           echo "  check-fortran: $FORTRAN_RESULT"
-          # echo "  check-fortran: $PYTHON_RESULT"
+          # echo "  check-python: $PYTHON_RESULT"
           echo "  build-and-test: $TEST_RESULT"
 
           # Fail if any required job failed (not skipped or success)
