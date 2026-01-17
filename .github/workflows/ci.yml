@@ -38,6 +38,8 @@ jobs:
 
       - name: Detect changes
         id: changes
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           # If manually triggered with skip flag, run everything
           if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.skip-change-detection }}" == "true" ]; then
@@ -51,7 +53,7 @@ jobs:
           # If release PR, run everything
           BRANCH_NAME=""
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            BRANCH_NAME="${{ github.head_ref }}"
+            BRANCH_NAME="$HEAD_REF"
           fi
 
           if [[ "$BRANCH_NAME" == release/* ]]; then
