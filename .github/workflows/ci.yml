@@ -128,14 +128,6 @@ jobs:
       needs.check-format.result == 'success'
     uses: ./.github/workflows/check-swig.yml
 
-  # check-python:
-  #   needs: [detect-changes, check-format]
-  #   if: |
-  #     !cancelled() &&
-  #     needs.detect-changes.outputs.python == 'true' &&
-  #     needs.check-format.result == 'success'
-  #   uses: ./.github/workflows/check-litgen.yml
-
   build-docs:
     needs: [detect-changes, check-format, check-fortran]
     if: |
@@ -165,7 +157,6 @@ jobs:
         run: |
           FORMAT_RESULT="${{ needs.check-format.result }}"
           FORTRAN_RESULT="${{ needs.check-fortran.result }}"
-          # PYTHON_RESULT="${{ needs.check-python.result }}"
           DOCS_RESULT="${{ needs.build-docs.result }}"
           TEST_RESULT="${{ needs.build-and-test.result }}"
 
@@ -173,7 +164,6 @@ jobs:
           echo "  check-format: $FORMAT_RESULT"
           echo "  build-docs: $DOCS_RESULT"
           echo "  check-fortran: $FORTRAN_RESULT"
-          # echo "  check-python: $PYTHON_RESULT"
           echo "  build-and-test: $TEST_RESULT"
 
           # Fail if any required job failed (not skipped or success)
