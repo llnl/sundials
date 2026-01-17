@@ -2,9 +2,8 @@ name: ci
 
 # Workflow triggers
 on:
-  # Runs on PRs targeting main or develop branches
+  # Runs on all PRs
   pull_request:
-    branches: [main, develop]
   # Runs when PRs enter the merge queue
   merge_group:
   # Allows manual triggering (runs all jobs)
