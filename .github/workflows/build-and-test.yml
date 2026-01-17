@@ -11,6 +11,9 @@ concurrency:
   group: build-and-test-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   macos-latest:
     uses: ./.github/workflows/macos-latest.yml

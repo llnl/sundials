@@ -11,6 +11,9 @@ concurrency:
   group: swig-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   swig_check:
     runs-on: ubuntu-latest

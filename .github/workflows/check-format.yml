@@ -11,6 +11,9 @@ concurrency:
   group: format-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   format_check:
     runs-on: ubuntu-latest

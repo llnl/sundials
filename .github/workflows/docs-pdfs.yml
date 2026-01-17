@@ -11,6 +11,9 @@ concurrency:
   group: docs-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   docs_install_guide_pdf:
     runs-on: ubuntu-latest
