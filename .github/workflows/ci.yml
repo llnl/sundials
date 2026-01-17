@@ -88,7 +88,7 @@ jobs:
 
           # Check for changes to trigger build and test jobs
           # Updates to CMakeLists.txt or include, src, cmake, examples, benchmarks, or test directories
-          if git diff --name-only "$BASE" "$HEAD" | grep -qE '^(include/|src/|CMakeLists\.txt$|cmake/|examples/|benchmarks/|test/)'; then
+          if git diff --name-only "$BASE" "$HEAD" | grep -qE '^(CMakeLists\.txt$|include/|src/|cmake/|examples/|benchmarks/|test/)'; then
             echo "src=true" >> "$GITHUB_OUTPUT"
           else
             echo "src=false" >> "$GITHUB_OUTPUT"
