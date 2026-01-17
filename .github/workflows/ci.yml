@@ -144,7 +144,7 @@ jobs:
   # Status aggregation job for branch protection
   all-checks:
     runs-on: ubuntu-latest
-    needs: [detect-changes, check-format, build-docs, check-fortran, build-and-test]
+    needs: [detect-changes, check-format, check-fortran, build-docs, build-and-test]
     if: always()
     steps:
       - name: Aggregate all checks
