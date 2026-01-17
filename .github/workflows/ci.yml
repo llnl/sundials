@@ -156,8 +156,8 @@ jobs:
 
           echo "Check results:"
           echo "  check-format: $FORMAT_RESULT"
-          echo "  build-docs: $DOCS_RESULT"
           echo "  check-fortran: $FORTRAN_RESULT"
+          echo "  build-docs: $DOCS_RESULT"
           echo "  build-and-test: $TEST_RESULT"
 
           # Fail if any required job failed (not skipped or success)
@@ -166,13 +166,13 @@ jobs:
             exit 1
           fi
 
-          if [ "$DOCS_RESULT" != "success" ] && [ "$DOCS_RESULT" != "skipped" ]; then
-            echo "Documentation check failed"
+          if [ "$FORTRAN_RESULT" != "success" ] && [ "$FORTRAN_RESULT" != "skipped" ]; then
+            echo "Fortran check failed"
             exit 1
           fi
 
-          if [ "$FORTRAN_RESULT" != "success" ] && [ "$FORTRAN_RESULT" != "skipped" ]; then
-            echo "Fortran check failed"
+          if [ "$DOCS_RESULT" != "success" ] && [ "$DOCS_RESULT" != "skipped" ]; then
+            echo "Documentation check failed"
             exit 1
           fi
 
