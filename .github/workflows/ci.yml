@@ -7,14 +7,8 @@ on:
     branches: [main, develop]
   # Runs when PRs enter the merge queue
   merge_group:
-  # Allows manual triggering with option to skip change detection
+  # Allows manual triggering (runs all jobs)
   workflow_dispatch:
-    inputs:
-      skip-change-detection:
-        description: 'Skip change detection and run all jobs'
-        required: false
-        type: boolean
-        default: false
 
 # Cancel any in-progress workflow runs
 concurrency:
@@ -43,8 +37,9 @@ jobs:
         env:
           HEAD_REF: ${{ github.head_ref }}
         run: |
-          # If manually triggered with skip flag, run everything
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.skip-change-detection }}" == "true" ]; then
+          # If manually triggered, run everything
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Manual trigger detected, running all jobs"
             {
               echo "docs=true"
               echo "src=true"
@@ -78,9 +73,6 @@ jobs:
           elif [ "${{ github.event_name }}" == "merge_group" ]; then
             BASE=${{ github.event.merge_group.base_sha }}
             HEAD=${{ github.event.merge_group.head_sha }}
-          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            BASE=${{ github.event.before }}
-            HEAD=${{ github.sha }}
           else
             BASE=${{ github.event.before }}
             HEAD=${{ github.sha }}
