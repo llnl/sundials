@@ -36,8 +36,8 @@ jobs:
         cmake \
         -B ${{github.workspace}}/build \
         -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-        -D CMAKE_C_COMPILER=$(which clang) \
-        -D CMAKE_CXX_COMPILER=$(which clang++) \
+        -D CMAKE_C_COMPILER="$(which clang)" \
+        -D CMAKE_CXX_COMPILER="$(which clang++)" \
         -D SUNDIALS_LOGGING_LEVEL=${{matrix.logging_level}} \
         -D ENABLE_ALL_WARNINGS=ON \
         -D ENABLE_WARNINGS_AS_ERRORS=ON \
@@ -92,8 +92,8 @@ jobs:
         cmake \
         -B ${{github.workspace}}/build \
         -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-        -D CMAKE_C_COMPILER=$(which clang) \
-        -D CMAKE_CXX_COMPILER=$(which clang++) \
+        -D CMAKE_C_COMPILER="$(which clang)" \
+        -D CMAKE_CXX_COMPILER="$(which clang++)" \
         -D SUNDIALS_BUILD_WITH_PROFILING=${{matrix.profiling}} \
         -D ENABLE_ALL_WARNINGS=ON \
         -D ENABLE_WARNINGS_AS_ERRORS=ON

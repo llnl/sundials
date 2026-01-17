@@ -35,8 +35,8 @@ jobs:
         cmake \
         -B ${{github.workspace}}/build \
         -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-        -D CMAKE_C_COMPILER=$(which icx) \
-        -D CMAKE_CXX_COMPILER=$(which icpx) \
+        -D CMAKE_C_COMPILER="$(which icx)" \
+        -D CMAKE_CXX_COMPILER="$(which icpx)" \
         -D CMAKE_CXX_FLAGS="-fsycl" \
         -D SUNDIALS_BUILD_WITH_PROFILING=ON \
         -D ENABLE_ALL_WARNINGS=ON \
