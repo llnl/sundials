@@ -1,0 +1,183 @@
+name: ci
+
+# Workflow triggers
+on:
+  # Runs on all PRs
+  pull_request:
+  # Runs when PRs enter the merge queue
+  merge_group:
+  # Allows manual triggering (runs all jobs)
+  workflow_dispatch:
+
+# Cancel any in-progress workflow runs
+concurrency:
+  group: ci-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      docs: ${{ steps.changes.outputs.docs }}
+      src: ${{ steps.changes.outputs.src }}
+      python: ${{ steps.changes.outputs.python }}
+      fortran: ${{ steps.changes.outputs.fortran }}
+    steps:
+      - uses: actions/checkout@v6
+        # Get full history for git diff
+        with:
+          fetch-depth: 0
+
+      - name: Detect changes
+        id: changes
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          # If manually triggered, run everything
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Manual trigger detected, running all jobs"
+            {
+              echo "docs=true"
+              echo "src=true"
+              echo "python=true"
+              echo "fortran=true"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # If release PR, run everything
+          BRANCH_NAME=""
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BRANCH_NAME="$HEAD_REF"
+          fi
+
+          if [[ "$BRANCH_NAME" == release/* ]]; then
+            echo "Release branch detected ($BRANCH_NAME), running all jobs"
+            {
+              echo "docs=true"
+              echo "src=true"
+              echo "python=true"
+              echo "fortran=true"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Determine the base and head commits for git diff
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE=${{ github.event.pull_request.base.sha }}
+            HEAD=${{ github.event.pull_request.head.sha }}
+          elif [ "${{ github.event_name }}" == "merge_group" ]; then
+            BASE=${{ github.event.merge_group.base_sha }}
+            HEAD=${{ github.event.merge_group.head_sha }}
+          else
+            BASE=${{ github.event.before }}
+            HEAD=${{ github.sha }}
+          fi
+
+          # Check for changes to trigger documentation build checks
+          # Updates in doc, bindings/sundials4py, or tools directories
+          if git diff --name-only "$BASE" "$HEAD" | grep -qE '^(doc/|bindings/sundials4py/|tools/)'; then
+            echo "docs=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Check for changes to trigger build and test jobs
+          # Updates to CMakeLists.txt or include, src, cmake, examples, benchmarks, or test directories
+          if git diff --name-only "$BASE" "$HEAD" | grep -qE '^(CMakeLists\.txt$|include/|src/|cmake/|examples/|benchmarks/|test/)'; then
+            echo "src=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "src=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Check for changes to trigger python interface checks
+          # Updates in include or bindings/sundials4py directories
+          if git diff --name-only "$BASE" "$HEAD" | grep -qE '^(include/|bindings/sundials4py/)'; then
+            echo "python=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "python=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Check for changes to trigger Fortran interface checks
+          # Updates in include or swig directories
+          if git diff --name-only "$BASE" "$HEAD" | grep -qE '^(include/|swig/)'; then
+            echo "fortran=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "fortran=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  check-format:
+    needs: detect-changes
+    uses: ./.github/workflows/check-format.yml
+
+  check-fortran:
+    needs: [detect-changes, check-format]
+    if: |
+      !cancelled() &&
+      needs.detect-changes.outputs.fortran == 'true' &&
+      needs.check-format.result == 'success'
+    uses: ./.github/workflows/check-swig.yml
+
+  build-docs:
+    needs: [detect-changes, check-format, check-fortran]
+    if: |
+      !cancelled() &&
+      needs.detect-changes.outputs.docs == 'true' &&
+      needs.check-format.result == 'success' &&
+      (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped')
+    uses: ./.github/workflows/docs-pdfs.yml
+
+  build-and-test:
+    needs: [detect-changes, check-format, check-fortran, build-docs]
+    if: |
+      !cancelled() &&
+      needs.detect-changes.outputs.src == 'true' &&
+      needs.check-format.result == 'success' &&
+      (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped') &&
+      (needs.build-docs.result == 'success' || needs.build-docs.result == 'skipped')
+    uses: ./.github/workflows/build-and-test.yml
+
+  # Status aggregation job for branch protection
+  all-checks:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, check-format, check-fortran, build-docs, build-and-test]
+    if: always()
+    steps:
+      - name: Aggregate all checks
+        run: |
+          FORMAT_RESULT="${{ needs.check-format.result }}"
+          FORTRAN_RESULT="${{ needs.check-fortran.result }}"
+          DOCS_RESULT="${{ needs.build-docs.result }}"
+          TEST_RESULT="${{ needs.build-and-test.result }}"
+
+          echo "Check results:"
+          echo "  check-format: $FORMAT_RESULT"
+          echo "  check-fortran: $FORTRAN_RESULT"
+          echo "  build-docs: $DOCS_RESULT"
+          echo "  build-and-test: $TEST_RESULT"
+
+          # Fail if any required job failed (not skipped or success)
+          if [ "$FORMAT_RESULT" != "success" ] && [ "$FORMAT_RESULT" != "skipped" ]; then
+            echo "Format check failed"
+            exit 1
+          fi
+
+          if [ "$FORTRAN_RESULT" != "success" ] && [ "$FORTRAN_RESULT" != "skipped" ]; then
+            echo "Fortran check failed"
+            exit 1
+          fi
+
+          if [ "$DOCS_RESULT" != "success" ] && [ "$DOCS_RESULT" != "skipped" ]; then
+            echo "Documentation check failed"
+            exit 1
+          fi
+
+          if [ "$TEST_RESULT" != "success" ] && [ "$TEST_RESULT" != "skipped" ]; then
+            echo "Build and test failed"
+            exit 1
+          fi
+
+          echo "All checks passed"
