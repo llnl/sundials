@@ -24,10 +24,8 @@ def main():
 
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="""Create a SUNDIALS CMake
-                                     cache file"""
-    )
+    parser = argparse.ArgumentParser(description="""Create a SUNDIALS CMake
+                                     cache file""")
 
     parser.add_argument(
         "--filetype",
