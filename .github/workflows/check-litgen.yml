@@ -1,15 +1,18 @@
 name: Checks - litgen
 
-permissions:
-  contents: read
-
 on:
-  pull_request:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
   workflow_dispatch:
 
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: litgen-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   litgen_check:
