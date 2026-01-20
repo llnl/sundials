@@ -26,7 +26,7 @@ set(nvector_sycl_examples
     "test_nvector_sycl.cpp\;1000 0 0\;")
 
 # Add source directory to include directories
-include_directories(. .. ${PROJECT_SOURCE_DIR}/examples/utilities)
+include_directories(. .. ${PROJECT_SOURCE_DIR}/test/utilities)
 
 # Add the build and install targets for each example
 foreach(example_tuple ${nvector_sycl_examples})

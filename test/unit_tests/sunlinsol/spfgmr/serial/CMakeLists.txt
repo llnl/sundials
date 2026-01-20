@@ -100,7 +100,7 @@ foreach(example_tuple ${sunlinsol_spfgmr_fortran_examples})
     # example source files
     sundials_add_executable(
       ${example} ${example}.f90
-      ${SUNDIALS_SOURCE_DIR}/test/unit_tests/utilities/test_utilities.f90
+      ${SUNDIALS_SOURCE_DIR}/test/utilities/test_utilities.f90
       ${SUNDIALS_SOURCE_DIR}/test/unit_tests/sunlinsol/test_sunlinsol.f90)
 
     # folder to organize targets in an IDE

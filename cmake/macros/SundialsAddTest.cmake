@@ -97,181 +97,173 @@ function(SUNDIALS_ADD_TEST NAME EXECUTABLE)
   # check if the test should be added
   # ---------------------------------
 
-  set(_add_test TRUE)
+  if(NOT SUNDIALS_ENABLE_TESTING)
+    return()
+  endif()
 
   # exclude development tests (non-empty example type)
   # TODO(DJG): When examples and development tests are separated this check can
   # be removed
   if(NOT SUNDIALS_TEST_ENABLE_DEV_TESTS AND arg_EXAMPLE_TYPE)
-    set(_add_test FALSE)
+    return()
   endif()
 
   # always excluded
   if("${arg_EXAMPLE_TYPE}" STREQUAL "exclude")
-    set(_add_test FALSE)
+    return()
   endif()
 
   # precision-specific exclusions
   string(TOLOWER "exclude-${SUNDIALS_PRECISION}" _exclude_precision)
   if("${arg_EXAMPLE_TYPE}" STREQUAL _exclude_precision)
-    set(_add_test FALSE)
+    return()
   endif()
 
-  # --------
-  # add test
-  # --------
+  # ---------------------------------------
+  # commands or flags before the executable
+  # ---------------------------------------
 
-  if(_add_test)
+  set(_pre_exe "")
+  if(arg_MPI_NPROCS)
+    if(SUNDIALS_TEST_MPIRUN_COMMAND)
+      set(_pre_exe "${SUNDIALS_TEST_MPIRUN_COMMAND}")
+    else()
+      set(_pre_exe "${MPIEXEC_EXECUTABLE}")
+    endif()
+    if(MPIEXEC_PREFLAGS)
+      set(_pre_exe "${_pre_exe} ${MPIEXEC_PREFLAGS}")
+    endif()
+    set(_pre_exe "${_pre_exe} ${MPIEXEC_NUMPROC_FLAG} ${arg_MPI_NPROCS}")
+  endif()
+  # Remove leading and trailing white space as it can cause erroneous test
+  # failures with some MPI implementations
+  string(STRIP "${_pre_exe}" _pre_exe)
 
-    # ---------------------------------------
-    # commands or flags before the executable
-    # ---------------------------------------
+  # ------------------------------------
+  # flags or inputs after the executable
+  # ------------------------------------
 
-    set(_pre_exe "")
-    if(arg_MPI_NPROCS)
-      if(SUNDIALS_TEST_MPIRUN_COMMAND)
-        set(_pre_exe "${SUNDIALS_TEST_MPIRUN_COMMAND}")
+  # When checking if test command line args have been provided we compare
+  # against an empty string (here and elsewhere below when checking _post_exe)
+  # to avoid not adding the command line arg when it is also a false constant in
+  # CMake (0, FALSE, OFF, etc.) e.g., "test_foo 0"
+  set(_post_exe "")
+  if(NOT "${arg_TEST_ARGS}" STREQUAL "")
+    set(_post_exe "${arg_TEST_ARGS}")
+  endif()
+  if(NOT "${arg_EXTRA_ARGS}" STREQUAL "")
+    if(NOT "${_post_exe}" STREQUAL "")
+      set(_post_exe "${_post_exe} ${arg_EXTRA_ARGS}")
+    else()
+      set(_post_exe "${arg_EXTRA_ARGS}")
+    endif()
+  endif()
+  if(arg_MPI_NPROCS AND MPIEXEC_POSTFLAGS)
+    if(NOT "${_post_exe}" STREQUAL "")
+      set(_post_exe "${MPIEXEC_POSTFLAGS} ${_post_exe}")
+    else()
+      set(_post_exe "${MPIEXEC_POSTFLAGS}")
+    endif()
+  endif()
+  string(STRIP "${_post_exe}" _post_exe)
+
+  # -------------------
+  # create test command
+  # -------------------
+
+  # When using the test runner _pre_exe and _post_exe must be a string so we
+  # replace semicolons with spaces below. Otherwise, _pre_exe and _post_exe must
+  # be a semicolon separated list so we replace spaces with semicolons below.
+
+  if(SUNDIALS_TEST_USE_RUNNER)
+
+    # command line arguments for the test runner script
+    set(TEST_ARGS
+        "--verbose" "--testname=${NAME}"
+        "--executablename=$<TARGET_FILE:${EXECUTABLE}>"
+        "--outputdir=${SUNDIALS_TEST_OUTPUT_DIR}")
+
+    # set the test runcommand
+    if(_pre_exe)
+      string(REPLACE ";" " " _pre_exe "${_pre_exe}")
+      list(APPEND TEST_ARGS "--runcommand=\"${_pre_exe}\"")
+    endif()
+
+    # set the test input args
+    if(NOT "${_post_exe}" STREQUAL "")
+      string(REPLACE ";" " " _post_exe "${_post_exe}")
+      list(APPEND TEST_ARGS "--runargs=\"${_post_exe}\"")
+    endif()
+
+    if(SUNDIALS_TEST_ENABLE_PROFILING AND SUNDIALS_ENABLE_CALIPER)
+      list(APPEND TEST_ARGS "--profile")
+      list(APPEND TEST_ARGS "--calidir=${SUNDIALS_TEST_CALIPER_OUTPUT_DIR}")
+    endif()
+
+    # set comparison precisions or do not diff the output and answer files
+    if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT arg_NODIFF)
+
+      # set answer directory
+      if(SUNDIALS_TEST_ANSWER_DIR)
+        list(APPEND TEST_ARGS "--answerdir=${SUNDIALS_TEST_ANSWER_DIR}")
+      elseif(arg_ANSWER_DIR)
+        list(APPEND TEST_ARGS "--answerdir=${arg_ANSWER_DIR}")
+      endif()
+
+      # set the test answer file name
+      if(arg_ANSWER_FILE)
+        list(APPEND TEST_ARGS "--answerfile=${arg_ANSWER_FILE}")
+      endif()
+
+      # set floating point precision
+      if(arg_FLOAT_PRECISION AND (NOT arg_FLOAT_PRECISION MATCHES
+                                  "DEFAULT|default"))
+        list(APPEND TEST_ARGS "--floatprecision=${arg_FLOAT_PRECISION}")
       else()
-        set(_pre_exe "${MPIEXEC_EXECUTABLE}")
-      endif()
-      if(MPIEXEC_PREFLAGS)
-        set(_pre_exe "${_pre_exe} ${MPIEXEC_PREFLAGS}")
-      endif()
-      set(_pre_exe "${_pre_exe} ${MPIEXEC_NUMPROC_FLAG} ${arg_MPI_NPROCS}")
-    endif()
-    # Remove leading and trailing white space as it can cause erroneous test
-    # failures with some MPI implementations
-    string(STRIP "${_pre_exe}" _pre_exe)
-
-    # ------------------------------------
-    # flags or inputs after the executable
-    # ------------------------------------
-
-    # When checking if test command line args have been provided we compare
-    # against an empty string (here and elsewhere below when checking _post_exe)
-    # to avoid not adding the command line arg when it is also a false constant
-    # in CMake (0, FALSE, OFF, etc.) e.g., "test_foo 0"
-    set(_post_exe "")
-    if(NOT "${arg_TEST_ARGS}" STREQUAL "")
-      set(_post_exe "${arg_TEST_ARGS}")
-    endif()
-    if(NOT "${arg_EXTRA_ARGS}" STREQUAL "")
-      if(NOT "${_post_exe}" STREQUAL "")
-        set(_post_exe "${_post_exe} ${arg_EXTRA_ARGS}")
-      else()
-        set(_post_exe "${arg_EXTRA_ARGS}")
-      endif()
-    endif()
-    if(arg_MPI_NPROCS AND MPIEXEC_POSTFLAGS)
-      if(NOT "${_post_exe}" STREQUAL "")
-        set(_post_exe "${MPIEXEC_POSTFLAGS} ${_post_exe}")
-      else()
-        set(_post_exe "${MPIEXEC_POSTFLAGS}")
-      endif()
-    endif()
-    string(STRIP "${_post_exe}" _post_exe)
-
-    # -------------------
-    # create test command
-    # -------------------
-
-    # When using the test runner _pre_exe and _post_exe must be a string so we
-    # replace semicolons with spaces below. Otherwise, _pre_exe and _post_exe
-    # must be a semicolon separated list so we replace spaces with semicolons
-    # below.
-
-    if(SUNDIALS_TEST_USE_RUNNER)
-
-      # command line arguments for the test runner script
-      set(TEST_ARGS
-          "--verbose" "--testname=${NAME}"
-          "--executablename=$<TARGET_FILE:${EXECUTABLE}>"
-          "--outputdir=${SUNDIALS_TEST_OUTPUT_DIR}")
-
-      # set the test runcommand
-      if(_pre_exe)
-        string(REPLACE ";" " " _pre_exe "${_pre_exe}")
-        list(APPEND TEST_ARGS "--runcommand=\"${_pre_exe}\"")
+        list(APPEND TEST_ARGS
+             "--floatprecision=${SUNDIALS_TEST_FLOAT_PRECISION}")
       endif()
 
-      # set the test input args
-      if(NOT "${_post_exe}" STREQUAL "")
-        string(REPLACE ";" " " _post_exe "${_post_exe}")
-        list(APPEND TEST_ARGS "--runargs=\"${_post_exe}\"")
-      endif()
-
-      if(SUNDIALS_TEST_ENABLE_PROFILING AND SUNDIALS_ENABLE_CALIPER)
-        list(APPEND TEST_ARGS "--profile")
-        list(APPEND TEST_ARGS "--calidir=${SUNDIALS_TEST_CALIPER_OUTPUT_DIR}")
-      endif()
-
-      # set comparison precisions or do not diff the output and answer files
-      if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT arg_NODIFF)
-
-        # set answer directory
-        if(SUNDIALS_TEST_ANSWER_DIR)
-          list(APPEND TEST_ARGS "--answerdir=${SUNDIALS_TEST_ANSWER_DIR}")
-        elseif(arg_ANSWER_DIR)
-          list(APPEND TEST_ARGS "--answerdir=${arg_ANSWER_DIR}")
-        endif()
-
-        # set the test answer file name
-        if(arg_ANSWER_FILE)
-          list(APPEND TEST_ARGS "--answerfile=${arg_ANSWER_FILE}")
-        endif()
-
-        # set floating point precision
-        if(arg_FLOAT_PRECISION AND (NOT arg_FLOAT_PRECISION MATCHES
+      # set integer precision
+      if(arg_INTEGER_PRECISION AND (NOT arg_INTEGER_PRECISION MATCHES
                                     "DEFAULT|default"))
-          list(APPEND TEST_ARGS "--floatprecision=${arg_FLOAT_PRECISION}")
-        else()
-          list(APPEND TEST_ARGS
-               "--floatprecision=${SUNDIALS_TEST_FLOAT_PRECISION}")
-        endif()
-
-        # set integer precision
-        if(arg_INTEGER_PRECISION AND (NOT arg_INTEGER_PRECISION MATCHES
-                                      "DEFAULT|default"))
-          list(APPEND TEST_ARGS "--integerpercentage=${arg_INTEGER_PRECISION}")
-        else()
-          list(APPEND TEST_ARGS
-               "--integerpercentage=${SUNDIALS_TEST_INTEGER_PRECISION}")
-        endif()
-
+        list(APPEND TEST_ARGS "--integerpercentage=${arg_INTEGER_PRECISION}")
       else()
-
-        list(APPEND TEST_ARGS "--nodiff")
-
+        list(APPEND TEST_ARGS
+             "--integerpercentage=${SUNDIALS_TEST_INTEGER_PRECISION}")
       endif()
-
-      add_test(NAME ${NAME} COMMAND ${Python3_EXECUTABLE} ${TESTRUNNER}
-                                    ${TEST_ARGS})
 
     else()
 
-      # set the test runcommand
-      if(_pre_exe)
-        string(REPLACE " " ";" _pre_exe "${_pre_exe}")
-      endif()
-
-      # set the test input args
-      if(NOT "${_post_exe}" STREQUAL "")
-        string(REPLACE " " ";" _post_exe "${_post_exe}")
-      endif()
-
-      add_test(NAME ${NAME} COMMAND ${_pre_exe} $<TARGET_FILE:${EXECUTABLE}>
-                                    ${_post_exe})
+      list(APPEND TEST_ARGS "--nodiff")
 
     endif()
 
-    # set any labels (must quote arg_LABELS)
-    if(arg_LABELS)
-      set_tests_properties(${NAME} PROPERTIES LABELS "${arg_LABELS}")
+    add_test(NAME ${NAME} COMMAND ${Python3_EXECUTABLE} ${TESTRUNNER}
+                                  ${TEST_ARGS})
+
+  else()
+
+    # set the test runcommand
+    if(_pre_exe)
+      string(REPLACE " " ";" _pre_exe "${_pre_exe}")
     endif()
+
+    # set the test input args
+    if(NOT "${_post_exe}" STREQUAL "")
+      string(REPLACE " " ";" _post_exe "${_post_exe}")
+    endif()
+
+    add_test(NAME ${NAME} COMMAND ${_pre_exe} $<TARGET_FILE:${EXECUTABLE}>
+                                  ${_post_exe})
 
   endif()
 
-  unset(_add_test)
+  # set any labels (must quote arg_LABELS)
+  if(arg_LABELS)
+    set_tests_properties(${NAME} PROPERTIES LABELS "${arg_LABELS}")
+  endif()
+
   unset(_pre_exe)
   unset(_post_exe)
 

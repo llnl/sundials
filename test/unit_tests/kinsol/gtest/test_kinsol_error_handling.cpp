@@ -18,9 +18,9 @@
 #include <kinsol/kinsol.h>
 #include <sundials/sundials_core.hpp>
 
-#include "../../utilities/dumpstderr.hpp"
 #include "kinsol/kinsol_impl.h"
 #include "sundials/sundials_context.hpp"
+#include "utilities/dumpstderr.hpp"
 
 static const std::string errfile{"test_error_handling.err"};
 

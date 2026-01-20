@@ -69,7 +69,7 @@ foreach(test_tuple ${unit_tests})
       ${test_target}
       PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
               ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src
-              ${CMAKE_SOURCE_DIR}/test/unit_tests)
+              ${CMAKE_SOURCE_DIR}/test)
 
     # Libraries to link against
     target_link_libraries(${test_target} sundials_cvodes sundials_nvecserial

@@ -19,7 +19,8 @@ sundials_add_executable(test_cvode_error_handling test_cvode_error_handling.cpp)
 target_include_directories(
   test_cvode_error_handling
   PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-          ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
+          ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src
+          ${CMAKE_SOURCE_DIR}/test)
 
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(_fused_link_lib sundials_cvode_fused_stubs_obj)

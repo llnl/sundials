@@ -29,7 +29,7 @@ set(nvector_cuda_examples
 set(nvector_examples_dependencies test_nvector)
 
 # Add source directory to include directories
-include_directories(. .. ${PROJECT_SOURCE_DIR}/examples/utilities)
+include_directories(. .. ${PROJECT_SOURCE_DIR}/test/utilities)
 
 # Specify libraries to link against
 set(NVECS_LIB sundials_nveccuda sundials_nvecserial)

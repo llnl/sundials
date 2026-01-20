@@ -18,11 +18,11 @@
 #include <gtest/gtest.h>
 #include <sundials/sundials_core.hpp>
 
-#include "../../utilities/dumpstderr.hpp"
 #include "arkode/arkode_arkstep.h"
 #include "arkode/arkode_impl.h"
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_context.hpp"
+#include "utilities/dumpstderr.hpp"
 
 static const std::string errfile{"test_arkode_error_handling.err"};
 

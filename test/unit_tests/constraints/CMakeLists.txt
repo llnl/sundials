@@ -64,7 +64,7 @@ foreach(test_tuple ${unit_tests})
     # include location of public and private header files
     target_include_directories(
       ${test_target} PRIVATE ${CMAKE_SOURCE_DIR}/include
-                             ${CMAKE_SOURCE_DIR}/test/unit_tests)
+                             ${CMAKE_SOURCE_DIR}/test)
 
     # libraries to link against
     target_link_libraries(${test_target} sundials_${_pkg} sundials_nvecserial
