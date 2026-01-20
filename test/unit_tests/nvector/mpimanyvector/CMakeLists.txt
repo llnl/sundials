@@ -147,7 +147,7 @@ foreach(example_tuple ${nvector_mpimanyvector_fortran_examples})
     # example source files
     sundials_add_executable(
       ${example} ${example}.f90
-      ${SUNDIALS_SOURCE_DIR}/test/unit_tests/utilities/test_utilities.f90
+      ${SUNDIALS_SOURCE_DIR}/test/utilities/test_utilities.f90
       ${SUNDIALS_SOURCE_DIR}/test/unit_tests/nvector/test_nvector.f90)
 
     # folder to organize targets in an IDE

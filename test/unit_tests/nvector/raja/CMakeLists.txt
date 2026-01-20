@@ -22,7 +22,7 @@
 set(examples_list "test_nvector_raja.cpp\;1000 0\;")
 
 # Add source directory to include directories
-include_directories(. .. ${SUNDIALS_SOURCE_DIR}/examples/utilities)
+include_directories(. .. ${SUNDIALS_SOURCE_DIR}/test/utilities)
 
 if(SUNDIALS_RAJA_BACKENDS MATCHES "CUDA")
   set(_lang CUDA)

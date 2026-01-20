@@ -127,9 +127,9 @@
 #include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
 #include <sundials/sundials_core.hpp>
 #include <sundials/sundials_logger.h>
-#include <sunlinsol/sunlinsol_dense.h> // dense linear solver
-#include <sunmatrix/sunmatrix_dense.h> // dense matrix type, fcts., macros
-#include "../../utilities/test_utilities.hpp" // common utility functions
+#include <sunlinsol/sunlinsol_dense.h>  // dense linear solver
+#include <sunmatrix/sunmatrix_dense.h>  // dense matrix type, fcts., macros
+#include "utilities/test_utilities.hpp" // common utility functions
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"

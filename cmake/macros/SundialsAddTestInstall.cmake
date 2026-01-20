@@ -29,17 +29,21 @@
 #
 # The input EXECUTABLE is the executable to add to make test_install target
 
-macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
+function(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
 
   set(options)
   set(oneValueArgs EXECUTABLE)
   set(multiValueArgs)
 
   # parse inputs and create variables SUNDIALS_ADD_TEST_<keyword>
-  cmake_parse_arguments(SUNDIALS_ADD_TEST_INSTALL "${options}"
-                        "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}"
+                        ${ARGN})
 
-  if(SUNDIALS_ADD_TEST_INSTALL_EXECUTABLE)
+  if(NOT SUNDIALS_ENABLE_TESTING)
+    return()
+  endif()
+
+  if(arg_EXECUTABLE)
 
     # create testing directory if necessary
     if(NOT EXISTS ${TEST_INSTALL_DIR}/${PACKAGE}/${TESTDIR})
@@ -56,9 +60,8 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
         ${CMAKE_COMMAND} ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${PACKAGE}/${TESTDIR}
         > cmake.out
       COMMAND ${CMAKE_COMMAND} --build ${TEST_INSTALL_DIR}/${PACKAGE}/${TESTDIR}
-              --target ${SUNDIALS_ADD_TEST_INSTALL_EXECUTABLE} > make.out
-      COMMAND ${CMAKE_CTEST_COMMAND} -R
-              ^${SUNDIALS_ADD_TEST_INSTALL_EXECUTABLE}$)
+              --target ${arg_EXECUTABLE} > make.out
+      COMMAND ${CMAKE_CTEST_COMMAND} -R ^${arg_EXECUTABLE}$)
 
     # make test_install depend on test_install_package
     add_dependencies(test_install test_install_${PACKAGE}_${TESTDIR})
@@ -91,4 +94,4 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
   # make test_install_all depend on test_install_all_package
   add_dependencies(test_install_all test_install_all_${PACKAGE}_${TESTDIR})
 
-endmacro()
+endfunction()

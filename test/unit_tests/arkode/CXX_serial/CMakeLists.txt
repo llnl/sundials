@@ -97,7 +97,7 @@ foreach(test_tuple ${unit_tests})
       ${test_target}
       PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
               ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src
-              ${CMAKE_SOURCE_DIR}/test/unit_tests)
+              ${CMAKE_SOURCE_DIR}/test)
 
     # We explicitly choose which object libraries to link to and link in the
     # arkode objects so that we have access to private functions w/o changing

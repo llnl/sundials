@@ -33,7 +33,7 @@ set(nvector_hip_examples
     "test_nvector_hip.cpp\;1000 0 0\;\;\;")
 
 # Add source directory to include directories
-include_directories(. .. ${PROJECT_SOURCE_DIR}/examples/utilities)
+include_directories(. .. ${PROJECT_SOURCE_DIR}/test/utilities)
 
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvechip)

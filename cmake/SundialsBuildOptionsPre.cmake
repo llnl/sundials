@@ -388,23 +388,17 @@ endif()
 # Options for SUNDIALS testing
 # ---------------------------------------------------------------
 
-sundials_option(
-  SUNDIALS_TEST_ENABLE_DEV_TESTS
-  BOOL
-  "Enable development tests"
-  OFF
-  ADVANCED
-  DEPRECATED_NAMES
-  SUNDIALS_TEST_DEVTESTS)
+sundials_option(SUNDIALS_ENABLE_TESTING BOOL "Enable SUNDIALS testing" ON)
 
 sundials_option(
-  SUNDIALS_TEST_ENABLE_UNIT_TESTS
-  BOOL
-  "Enable unit tests"
-  OFF
-  ADVANCED
-  DEPRECATED_NAMES
-  SUNDIALS_TEST_UNITTESTS)
+  SUNDIALS_TEST_ENABLE_DEV_TESTS BOOL "Enable development tests" OFF
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_DEVTESTS)
+
+sundials_option(
+  SUNDIALS_TEST_ENABLE_UNIT_TESTS BOOL "Enable unit tests" OFF
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_UNITTESTS)
 
 if(SUNDIALS_TEST_ENABLE_UNIT_TESTS)
   set(_default_gtest ON)
@@ -412,8 +406,10 @@ else()
   set(_default_gtest OFF)
 endif()
 
-sundials_option(SUNDIALS_TEST_ENABLE_GTEST BOOL "Include GTest unit tests"
-                ${_default_gtest} ADVANCED)
+sundials_option(
+  SUNDIALS_TEST_ENABLE_GTEST BOOL "Include GTest unit tests" ${_default_gtest}
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED)
 
 if(SUNDIALS_TEST_ENABLE_GTEST AND NOT SUNDIALS_TEST_ENABLE_UNIT_TESTS)
   message(
@@ -435,14 +431,10 @@ else()
 endif()
 
 sundials_option(
-  SUNDIALS_TEST_ENABLE_DIFF_OUTPUT
-  BOOL
-  "Compare test output with saved answer files"
-  ${_default_diff_output}
-  ADVANCED
-  DEPRECATED_NAMES
-  SUNDIALS_TEST_NODIFF
-  NEGATE_DEPRECATED)
+  SUNDIALS_TEST_ENABLE_DIFF_OUTPUT BOOL
+  "Compare test output with saved answer files" ${_default_diff_output}
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_NODIFF NEGATE_DEPRECATED)
 
 if((SUNDIALS_TEST_ENABLE_DEV_TESTS OR SUNDIALS_TEST_ENABLE_UNIT_TESTS)
    AND NOT SUNDIALS_TEST_ENABLE_DIFF_OUTPUT)
@@ -453,18 +445,26 @@ endif()
 
 sundials_option(
   SUNDIALS_TEST_FLOAT_PRECISION STRING
-  "Precision for floating point comparisons (number of digits)" "4" ADVANCED)
+  "Precision for floating point comparisons (number of digits)" "4"
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED)
 
 sundials_option(
   SUNDIALS_TEST_INTEGER_PRECISION STRING
-  "Precision for integer comparisons (percent difference)" "10" ADVANCED)
+  "Precision for integer comparisons (percent difference)" "10"
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED)
 
 sundials_option(
   SUNDIALS_TEST_OUTPUT_DIR PATH "Location to write test output files"
-  "${PROJECT_BINARY_DIR}/Testing/output" ADVANCED)
+  "${PROJECT_BINARY_DIR}/Testing/output"
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED)
 
-sundials_option(SUNDIALS_TEST_ANSWER_DIR PATH "Location of test answer files"
-                "" ADVANCED)
+sundials_option(
+  SUNDIALS_TEST_ANSWER_DIR PATH "Location of test answer files" ""
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED)
 
 if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT SUNDIALS_TEST_ANSWER_DIR)
   message(
@@ -475,33 +475,36 @@ if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT SUNDIALS_TEST_ANSWER_DIR)
 endif()
 
 sundials_option(
-  SUNDIALS_TEST_ENABLE_PROFILING
-  BOOL
-  "Profile tests"
-  OFF
-  ADVANCED
-  DEPRECATED_NAMES
-  SUNDIALS_TEST_PROFILE)
+  SUNDIALS_TEST_ENABLE_PROFILING BOOL "Profile tests" OFF
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_PROFILE)
 
 sundials_option(
   SUNDIALS_TEST_CALIPER_OUTPUT_DIR PATH "Location to write test Caliper files"
-  "${PROJECT_BINARY_DIR}/Testing/caliper" ADVANCED)
+  "${PROJECT_BINARY_DIR}/Testing/caliper"
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED)
 
 # ---------------------------------------------------------------
 # Options for SUNDIALS testing with containers
 # ---------------------------------------------------------------
 
-sundials_option(SUNDIALS_TEST_CONTAINER_EXE PATH "Path to docker or podman" ""
-                ADVANCED)
+sundials_option(
+  SUNDIALS_TEST_CONTAINER_EXE PATH "Path to docker or podman" ""
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED)
 
 sundials_option(
   SUNDIALS_TEST_CONTAINER_RUN_EXTRA_ARGS STRING
   "Extra arguments to pass to docker/podman run command" "--tls-verify=false"
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
   ADVANCED)
 
 sundials_option(
-  SUNDIALS_TEST_CONTAINER_MNT STRING
-  "Path to project root inside the container" "/sundials" ADVANCED)
+  SUNDIALS_TEST_CONTAINER_MNT STRING "Path to project root inside the container"
+  "/sundials"
+  DEPENDS_ON SUNDIALS_ENABLE_TESTING
+  ADVANCED)
 
 # ---------------------------------------------------------------
 # Options for SUNDIALS development

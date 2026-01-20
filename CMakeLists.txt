@@ -214,10 +214,13 @@ include(SundialsSetupConfig)
 # Setup testing
 # ===============================================================
 
-include(SundialsSetupTesting)
+if(SUNDIALS_ENABLE_TESTING)
+  include(SundialsSetupTesting)
+  message(STATUS "Enabled SUNDIALS testing")
+endif()
 
 # ===============================================================
-# Add src and tests; optionally add examples and unit tests.
+# Add src, optionally add examples and tests.
 # ===============================================================
 
 # Add selected packages and modules to the build
@@ -234,9 +237,9 @@ if(SUNDIALS_ENABLE_BENCHMARKS)
   add_subdirectory(benchmarks)
 endif()
 
-# Add unit tests to the build
-if(SUNDIALS_TEST_ENABLE_UNIT_TESTS)
-  add_subdirectory(test/unit_tests)
+# Add tests to the build
+if(SUNDIALS_ENABLE_TESTING)
+  add_subdirectory(test)
 endif()
 
 if(SUNDIALS_ENABLE_EXTERNAL_ADDONS)

@@ -20,7 +20,8 @@ sundials_add_executable(test_arkode_error_handling
 target_include_directories(
   test_arkode_error_handling
   PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-          ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
+          ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src
+          ${CMAKE_SOURCE_DIR}/test)
 
 # We explicitly choose which object libraries to link to and link in the ARKODE
 # objects so that we have access to private functions w/o changing their
