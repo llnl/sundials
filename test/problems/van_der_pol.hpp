@@ -54,7 +54,7 @@ public:
   }
 
   // Jacobian function (instance method)
-  int computeJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J)
+  int computeJac(sunrealtype t, N_Vector y, SUNMatrix J)
   {
     sunrealtype* ydata = N_VGetArrayPointer(y);
     sunrealtype y1     = ydata[0];
@@ -88,7 +88,7 @@ public:
                         N_Vector tmp3)
   {
     ODEProblem* problem = static_cast<ODEProblem*>(user_data);
-    return problem->computeJac(t, y, fy, J);
+    return problem->computeJac(t, y, J);
   }
 };
 
