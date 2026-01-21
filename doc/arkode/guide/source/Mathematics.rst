@@ -2762,14 +2762,14 @@ The discrete adjoint variables represent the gradients of the discrete cost func
 
 
 Given an s-stage explicit Runge--Kutta method (as in :eq:`ARKODE_ERK`, but without the embedding), the discrete adjoint
-to compute :math:`\lambda_n` and :math:`\mu_n` starting from :math:`\lambda_{n+1}` and
-:math:`\mu_{n+1}` is given by
+to compute :math:`\lambda_k` and :math:`\mu_k` starting from :math:`\lambda_{k+1}` and
+:math:`\mu_{k+1}` is given by
 
 .. math::
-   \Lambda_i &= h_n f_y^*(t_{n,i}, z_i, p) \left(b_i \lambda_{n+1} + \sum_{j=i+1}^s a_{j,i} \Lambda_j \right), \quad \quad i = s, \dots, 1,\\
-   \lambda_n &= \lambda_{n+1} + \sum_{j=1}^{s} \Lambda_j, \\
-   \nu_i     &= h_n f_p^*(t_{n,i}, z_i, p) \left(b_i \lambda_{n+1} + \sum_{j=i+1}^{s} a_{j,i} \Lambda_j \right), \\
-   \mu_n     &= \mu_{n+1} + \sum_{j=1}^{s} \nu_j.
+   \Lambda_i &= h_k f_y^*(t_{k,i}, z_i, p) \left(b_i \lambda_{k+1} + \sum_{j=i+1}^s a_{j,i} \Lambda_j \right), \quad \quad i = s, \dots, 1,\\
+   \lambda_k &= \lambda_{k+1} + \sum_{j=1}^{s} \Lambda_j, \\
+   \nu_i     &= h_k f_p^*(t_{k,i}, z_i, p) \left(b_i \lambda_{k+1} + \sum_{j=i+1}^{s} a_{j,i} \Lambda_j \right), \\
+   \mu_k     &= \mu_{k+1} + \sum_{j=1}^{s} \nu_j.
    :label: ARKODE_ERK_ADJOINT
 
 For more information on performing discrete adjoint sensitivity analysis using ARKODE see,
