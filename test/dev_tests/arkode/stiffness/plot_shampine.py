@@ -56,23 +56,14 @@ mag_lambda_3 = np.abs(lambda_3)
 max_lambda = np.maximum(mag_lambda_1, mag_lambda_3)
 min_lambda = np.minimum(mag_lambda_1, mag_lambda_3)
 
-fig1, axes = plt.subplots(2, figsize=(12, 8))
+fig1, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
 
 axes[0].plot(data["t"], data["y1"], label="y1")
 axes[0].plot(data["t"], data["y2"], label="y2")
 axes[0].plot(data["t"], data["y3"], label="y3")
 axes[0].legend(loc="best")
 axes[0].set_xlabel("time")
-# title = (
-#     "Solution ("
-#     + r"$\lambda_{{1,2}}$"
-#     + f" = {lambda_1.real}"
-#     + r"$\pm$"
-#     + f"{lambda_1.imag}, "
-#     + r"$\lambda_{{3}}$"
-#     + f" = {lambda_3.real}, "
-#     + f"Stiffness Ratio = {max_lambda:.2f} / {min_lambda:.2f} = {stiffness_ratio:.2f})"
-# )
+axes[0].tick_params(labelbottom=True)
 title = (
     "Solution ("
     + r"$|\lambda_{{1,2}}|$ = "

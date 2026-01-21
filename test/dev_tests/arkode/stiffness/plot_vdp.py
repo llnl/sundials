@@ -45,38 +45,53 @@ except Exception as e:
     print(f"Error reading file '{args.data_file}': {e}")
     sys.exit(1)
 
-fig1, axes = plt.subplots(3, figsize=(12, 8))
+fig1, axes = plt.subplots(4, sharex=True, figsize=(18, 12))
 
-axes[0].plot(data["t"], data["y1"], label="y1")
-axes[0].plot(data["t"], data["y2"], label="y2")
+axes[0].plot(data["t"], data["y1"], label="y1", linewidth=2)
+axes[0].plot(data["t"], data["y2"], label="y2", linewidth=2, alpha=0.7)
+axes[0].set_yscale('symlog') # symmetric logarithmic
 axes[0].legend(loc="best")
 axes[0].set_xlabel("time")
+axes[0].tick_params(labelbottom=True)
 if args.title:
     axes[0].set_title(f"{args.title} Solution")
 else:
     axes[0].set_title(f"Solution")
 axes[0].grid(True, which="both", linestyle=":", alpha=0.5)
 
-axes[1].plot(data["t"], data["stiffness ratio"])
+axes[1].plot(data["t"], np.abs(data["lambda1"]), label=r"$\lambda_1$", linewidth=2)
+axes[1].plot(data["t"], np.abs(data["lambda2"]), label=r"$\lambda_2$", linewidth=2, alpha=0.7)
 axes[1].set_yscale("log")
+axes[1].legend(loc="best")
 axes[1].set_xlabel("time")
+axes[1].tick_params(labelbottom=True)
 if args.title:
-    axes[1].set_title(f"{args.title} Stiffness Ratio")
+    axes[1].set_title(f"{args.title} Eigenvalue Magnitudes")
 else:
-    axes[1].set_title(f"Stiffness Ratio")
+    axes[1].set_title(f"Eigenvalue Magnitudes")
 axes[1].grid(True, which="major", linestyle=":", alpha=0.5)
 
-clip = np.finfo(np.float64).eps
-axes[2].plot(data["t"], np.clip(np.abs(data["loc err est1"]), clip, None), label="y1")
-axes[2].plot(data["t"], np.clip(np.abs(data["loc err est2"]), clip, None), label="y2")
+axes[2].plot(data["t"], data["stiffness ratio"])
 axes[2].set_yscale("log")
-axes[2].legend(loc="best")
 axes[2].set_xlabel("time")
+axes[2].tick_params(labelbottom=True)
 if args.title:
-    axes[2].set_title(f"{args.title} Local Error Estimates")
+    axes[2].set_title(f"{args.title} Stiffness Ratio")
 else:
-    axes[2].set_title(f"Local Error Estimates")
+    axes[2].set_title(f"Stiffness Ratio")
 axes[2].grid(True, which="major", linestyle=":", alpha=0.5)
+
+clip = np.finfo(np.float64).eps
+axes[3].plot(data["t"], np.clip(np.abs(data["loc err est1"]), clip, None), label="y1", linewidth=2)
+axes[3].plot(data["t"], np.clip(np.abs(data["loc err est2"]), clip, None), label="y2", linewidth=2, alpha=0.7)
+axes[3].set_yscale("log")
+axes[3].legend(loc="best")
+axes[3].set_xlabel("time")
+if args.title:
+    axes[3].set_title(f"{args.title} Local Error Estimates")
+else:
+    axes[3].set_title(f"Local Error Estimates")
+axes[3].grid(True, which="major", linestyle=":", alpha=0.5)
 
 plt.tight_layout()
 
