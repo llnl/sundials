@@ -2712,7 +2712,7 @@ Now, suppose we have a functional :math:`g(t_f, y(t_f), p)` for which we would l
 gradients
 
 .. math::
-   \frac{dg(t_f,y(t_N),p)}{dy}, \quad \text{and optionally}, \quad \frac{dg(t_f,y(t_N),p)}{dp}.
+   \frac{dg(t_f,y(t_f),p)}{dy}, \quad \text{and optionally}, \quad \frac{dg(t_f,y(t_f),p)}{dp}.
 
 This most often arises in the form of an optimization problem such as
 
