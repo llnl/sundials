@@ -93,9 +93,7 @@ project = "Documentation for SUNDIALS"
 copyright = """\
     2025-{year}, Lawrence Livermore National Security, University of Maryland Baltimore County, and the SUNDIALS contributors.
     Copyright (c) 2013-2025, Lawrence Livermore National Security and Southern Methodist University.
-    Copyright (c) 2002-2013, Lawrence Livermore National Security""".format(
-    year=year
-)
+    Copyright (c) 2002-2013, Lawrence Livermore National Security""".format(year=year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
