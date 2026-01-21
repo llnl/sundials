@@ -177,12 +177,19 @@ int main(int argc, char* argv[])
   // Open file for writing data
   ofstream datafile(output_file);
   datafile << setprecision(17) << scientific;
-  datafile << "# t, y1, y2\n";
+  datafile << "# t, y1, y2, lambda1, lambda2, stiffness ratio\n";
 
-  // Output initial condition
+  // Initial output
   sunrealtype* ydata = N_VGetArrayPointer(y);
-  datafile << setw(22) << t0 << setw(25) << ydata[0] << setw(25) << ydata[1]
-           << endl;
+
+  complex<sunrealtype> lambda1, lambda2;
+  problem.computeEigenvalues(y, lambda1, lambda2);
+  auto stiffness_ratio = problem.computeStiffnessRatio(y);
+
+  datafile << setw(25) << t0 << setw(25) << ydata[0] << setw(25) << ydata[1]
+           << setw(25) << lambda1.real() << showpos << lambda1.imag() << noshowpos
+           << "j" << setw(25) << lambda2.real() << showpos << lambda2.imag()
+           << noshowpos << "j" << setw(25) << stiffness_ratio << endl;
 
   // Time integration loop
   sunrealtype t    = t0;
@@ -198,9 +205,15 @@ int main(int argc, char* argv[])
       break;
     }
 
-    // Print solution
-    datafile << setw(22) << t << setw(25) << ydata[0] << setw(25) << ydata[1]
-             << endl;
+    // Step output
+    problem.computeEigenvalues(y, lambda1, lambda2);
+    stiffness_ratio = problem.computeStiffnessRatio(y);
+
+    datafile << setw(25) << t << setw(25) << ydata[0] << setw(25) << ydata[1]
+             << setw(25) << lambda1.real() << showpos << lambda1.imag()
+             << noshowpos << "j" << setw(25) << lambda2.real() << showpos
+             << lambda2.imag() << noshowpos << "j" << setw(25)
+             << stiffness_ratio << endl;
 
     tout += dt_out;
     if (tout > tf) tout = tf;

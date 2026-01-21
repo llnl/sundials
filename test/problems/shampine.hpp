@@ -1,6 +1,9 @@
 #ifndef SHAMPINE_HPP_
 #define SHAMPINE_HPP_
 
+#include <complex>
+#include <limits>
+
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -17,14 +20,16 @@ private:
 
 public:
   // Constructor
-  ODEProblem(sunrealtype beta_val = SUN_RCONST(10.0),
+  ODEProblem(sunrealtype beta_val  = SUN_RCONST(10.0),
              sunrealtype gamma_val = SUN_RCONST(10.0))
     : beta(beta_val), gamma(gamma_val)
   {}
 
   // Get number of equations
   sunrealtype getBeta() const { return beta; }
+
   sunrealtype getGamma() const { return gamma; }
+
   int getNumEquations() const { return NEQ; }
 
   // Set initial conditions
@@ -101,6 +106,41 @@ public:
   {
     ODEProblem* problem = static_cast<ODEProblem*>(user_data);
     return problem->computeJac(t, y, J);
+  }
+
+  // Return the eigenvalues of the Jacobian
+  void computeEigenvalues(std::complex<sunrealtype>& lambda1,
+                          std::complex<sunrealtype>& lambda2,
+                          std::complex<sunrealtype>& lambda3) const
+  {
+    lambda1 = std::complex<sunrealtype>(-10, beta);   // -10 + beta i
+    lambda2 = std::complex<sunrealtype>(-10, -beta);  // -10 - beta i
+    lambda3 = std::complex<sunrealtype>(-gamma, 0.0); // -gamma
+  }
+
+  sunrealtype computeStiffnessRatio() const
+  {
+    std::complex<sunrealtype> lambda1, lambda2, lambda3;
+    computeEigenvalues(lambda1, lambda2, lambda3);
+
+    auto mag1 = std::abs(lambda1); // mag1 = mag2
+    auto mag3 = std::abs(lambda3);
+
+    auto min_mag = std::min(mag1, mag3);
+    auto max_mag = std::max(mag1, mag3);
+
+    if (min_mag > 0.0) { return max_mag / min_mag; }
+    else
+    {
+      if (max_mag > 0.0)
+      {
+        return std::numeric_limits<sunrealtype>::infinity();
+      }
+      else
+      {
+        return 1.0;
+      }
+    }
   }
 };
 

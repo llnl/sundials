@@ -1,8 +1,11 @@
 #ifndef VAN_DER_POL_HPP_
 #define VAN_DER_POL_HPP_
 
-#include <sundials/sundials_types.h>
+#include <complex>
+#include <limits>
+
 #include <sundials/sundials_nvector.h>
+#include <sundials/sundials_types.h>
 #include <sunmatrix/sunmatrix_dense.h>
 
 namespace problems {
@@ -16,11 +19,11 @@ private:
 
 public:
   // Constructor
-  ODEProblem(sunrealtype mu_val = SUN_RCONST(10.0))
-  : mu(mu_val) {}
+  ODEProblem(sunrealtype mu_val = SUN_RCONST(10.0)) : mu(mu_val) {}
 
   // Get parameters
   sunrealtype getMu() const { return mu; }
+
   int getNumEquations() const { return NEQ; }
 
   // Set initial conditions
@@ -89,6 +92,75 @@ public:
   {
     ODEProblem* problem = static_cast<ODEProblem*>(user_data);
     return problem->computeJac(t, y, J);
+  }
+
+  // Compute eigenvalues of the Jacobian at a given state
+  // For a 2x2 matrix: [a  b]
+  //                   [c  d]
+  // Eigenvalues are: lambda = (trace +/- sqrt(trace^2 - 4*det)) / 2
+  void computeEigenvalues(N_Vector y, std::complex<sunrealtype>& lambda1,
+                          std::complex<sunrealtype>& lambda2) const
+  {
+    sunrealtype* ydata = N_VGetArrayPointer(y);
+    sunrealtype y1     = ydata[0];
+    sunrealtype y2     = ydata[1];
+
+    // Jacobian matrix elements:
+    // J = [0                    1              ]
+    //     [-2*mu*y1*y2 - 1      mu*(1 - y1^2)  ]
+
+    sunrealtype a = 0.0;
+    sunrealtype b = 1.0;
+    sunrealtype c = -2.0 * mu * y1 * y2 - 1.0;
+    sunrealtype d = mu * (1.0 - y1 * y1);
+
+    // Compute trace and determinant
+    sunrealtype trace = a + d;
+    sunrealtype det   = a * d - b * c;
+
+    // Compute discriminant
+    sunrealtype discriminant = trace * trace - 4.0 * det;
+
+    if (discriminant >= 0.0)
+    {
+      // Real eigenvalues
+      sunrealtype sqrt_disc = std::sqrt(discriminant);
+      lambda1 = std::complex<sunrealtype>((trace + sqrt_disc) / 2.0, 0.0);
+      lambda2 = std::complex<sunrealtype>((trace - sqrt_disc) / 2.0, 0.0);
+    }
+    else
+    {
+      // Complex conjugate eigenvalues
+      sunrealtype real_part = trace / 2.0;
+      sunrealtype imag_part = std::sqrt(-discriminant) / 2.0;
+      lambda1               = std::complex<sunrealtype>(real_part, imag_part);
+      lambda2               = std::complex<sunrealtype>(real_part, -imag_part);
+    }
+  }
+
+  sunrealtype computeStiffnessRatio(N_Vector y) const
+  {
+    std::complex<sunrealtype> lambda1, lambda2;
+    computeEigenvalues(y, lambda1, lambda2);
+
+    auto mag1 = std::abs(lambda1);
+    auto mag2 = std::abs(lambda2);
+
+    auto min_mag = std::min(mag1, mag2);
+    auto max_mag = std::max(mag1, mag2);
+
+    if (min_mag > 0.0) { return max_mag / min_mag; }
+    else
+    {
+      if (max_mag > 0.0)
+      {
+        return std::numeric_limits<sunrealtype>::infinity();
+      }
+      else
+      {
+        return 1.0;
+      }
+    }
   }
 };
 
