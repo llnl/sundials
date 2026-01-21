@@ -2757,7 +2757,7 @@ and :math:`\mu_n, \mu_{n-1}, \cdots, \mu_0`, where
 The discrete adjoint variables represent the gradients of the discrete cost function
 
 .. math::
-   \frac{dg}{dy_n} = \lambda_n^* , \quad \frac{dg}{dp} = \mu_n^* + \lambda_n^* \left(\frac{\partial y_0}{\partial p} \right).
+   \frac{dg}{dy_0} = \lambda_0^* , \quad \frac{dg}{dp} = \mu_0^* + \lambda_0^* \left(\frac{\partial y_0}{\partial p} \right).
    :label: ARKODE_DISCRETE_ADJOINT_GRADIENTS
 
 
