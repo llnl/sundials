@@ -58,6 +58,13 @@ public:
     return 0; // Success
   }
 
+  // Static wrapper for RHS (to pass to SUNDIALS)
+  static int rhsWrapper(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
+  {
+    ODEProblem* problem = static_cast<ODEProblem*>(user_data);
+    return problem->computeRHS(t, y, ydot);
+  }
+
   // Jacobian function (instance method)
   int computeJac(sunrealtype t, N_Vector y, SUNMatrix J)
   {
@@ -85,13 +92,6 @@ public:
     SM_ELEMENT_D(J, 2, 2) = -gamma;
 
     return 0; // Success
-  }
-
-  // Static wrapper for RHS (to pass to SUNDIALS)
-  static int rhsWrapper(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
-  {
-    ODEProblem* problem = static_cast<ODEProblem*>(user_data);
-    return problem->computeRHS(t, y, ydot);
   }
 
   // Static wrapper for Jacobian (to pass to SUNDIALS)
