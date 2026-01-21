@@ -31,6 +31,8 @@ try:
             ("t", float),
             ("y1", float),
             ("y2", float),
+            ("loc err est1", float),
+            ("loc err est2", float),
             ("lambda1", complex),
             ("lambda2", complex),
             ("stiffness ratio", float),
@@ -43,7 +45,7 @@ except Exception as e:
     print(f"Error reading file '{args.data_file}': {e}")
     sys.exit(1)
 
-fig1, axes = plt.subplots(2, figsize=(12, 8))
+fig1, axes = plt.subplots(3, figsize=(12, 8))
 
 axes[0].plot(data["t"], data["y1"], label="y1")
 axes[0].plot(data["t"], data["y2"], label="y2")
@@ -63,6 +65,18 @@ if args.title:
 else:
     axes[1].set_title(f"Stiffness Ratio")
 axes[1].grid(True, which="major", linestyle=":", alpha=0.5)
+
+clip = np.finfo(np.float64).eps
+axes[2].plot(data["t"], np.clip(np.abs(data["loc err est1"]), clip, None), label="y1")
+axes[2].plot(data["t"], np.clip(np.abs(data["loc err est2"]), clip, None), label="y2")
+axes[2].set_yscale("log")
+axes[2].legend(loc="best")
+axes[2].set_xlabel("time")
+if args.title:
+    axes[2].set_title(f"{args.title} Local Error Estimates")
+else:
+    axes[2].set_title(f"Local Error Estimates")
+axes[2].grid(True, which="major", linestyle=":", alpha=0.5)
 
 plt.tight_layout()
 

@@ -177,7 +177,8 @@ int main(int argc, char* argv[])
   // Open file for writing data
   ofstream datafile(output_file);
   datafile << setprecision(17) << scientific;
-  datafile << "# t, y1, y2, lambda1, lambda2, stiffness ratio\n";
+  datafile
+    << "# t, y1, y2, est err1, est err2, lambda1, lambda2, stiffness ratio\n";
 
   // Initial output
   sunrealtype* ydata = N_VGetArrayPointer(y);
@@ -187,9 +188,21 @@ int main(int argc, char* argv[])
   auto stiffness_ratio = problem.computeStiffnessRatio(y);
 
   datafile << setw(25) << t0 << setw(25) << ydata[0] << setw(25) << ydata[1]
-           << setw(25) << lambda1.real() << showpos << lambda1.imag() << noshowpos
-           << "j" << setw(25) << lambda2.real() << showpos << lambda2.imag()
-           << noshowpos << "j" << setw(25) << stiffness_ratio << endl;
+           << setw(25) << 0.0 << setw(25) << 0.0 << setw(25) << lambda1.real()
+           << showpos << lambda1.imag() << noshowpos << "j" << setw(25)
+           << lambda2.real() << showpos << lambda2.imag() << noshowpos << "j"
+           << setw(25) << stiffness_ratio << endl;
+
+  // Vector for local error estimate
+  N_Vector loc_err_est = N_VClone(y);
+  if (loc_err_est == nullptr)
+  {
+    cerr << "Error creating N_Vector" << endl;
+    SUNMatDestroy(A);
+    ARKodeFree(&arkode_mem);
+    N_VDestroy(y);
+    return 1;
+  }
 
   // Time integration loop
   sunrealtype t    = t0;
@@ -206,14 +219,22 @@ int main(int argc, char* argv[])
     }
 
     // Step output
+    flag = ARKodeGetEstLocalErrors(arkode_mem, loc_err_est);
+    if (flag < 0)
+    {
+      cerr << "ARKODE error, flag = " << flag << endl;
+      break;
+    }
+    sunrealtype* lee_data = N_VGetArrayPointer(loc_err_est);
+
     problem.computeEigenvalues(y, lambda1, lambda2);
     stiffness_ratio = problem.computeStiffnessRatio(y);
 
     datafile << setw(25) << t << setw(25) << ydata[0] << setw(25) << ydata[1]
-             << setw(25) << lambda1.real() << showpos << lambda1.imag()
-             << noshowpos << "j" << setw(25) << lambda2.real() << showpos
-             << lambda2.imag() << noshowpos << "j" << setw(25)
-             << stiffness_ratio << endl;
+             << setw(25) << lee_data[0] << setw(25) << lee_data[1] << setw(25)
+             << lambda1.real() << showpos << lambda1.imag() << noshowpos << "j"
+             << setw(25) << lambda2.real() << showpos << lambda2.imag()
+             << noshowpos << "j" << setw(25) << stiffness_ratio << endl;
 
     tout += dt_out;
     if (tout > tf) tout = tf;
@@ -229,6 +250,7 @@ int main(int argc, char* argv[])
   SUNLinSolFree(LS);
   SUNMatDestroy(A);
   N_VDestroy(y);
+  N_VDestroy(loc_err_est);
 
   return 0;
 }
