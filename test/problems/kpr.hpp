@@ -27,7 +27,7 @@
  * where, in this test, we use the functions
  *
  *   rho(t) = 0.5 * cos(t)
- *   sigma(t) = cos(2t)
+ *   sigma(t) = cos(20 t)
  *
  * For ImEx methods, the first term is treated implicitly while the second term
  * is the treated explicitly.

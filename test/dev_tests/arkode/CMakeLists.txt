@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# Copyright (c) 2025, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -15,8 +15,4 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-message("Adding development tests")
-
-if(SUNDIALS_ENABLE_ARKODE)
-  add_subdirectory(arkode)
-endif()
+add_subdirectory(stiffness)
