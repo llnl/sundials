@@ -2735,16 +2735,17 @@ done with a one-step time integration scheme :math:`\varphi` so that
 Reformulating the optimization problem for the discrete case, we have
 
 .. math::
-   \min_{y_0, p} g(t_f, y_N, p).
+   \min_{y_0, p} g(t_N, y_N, p),
    :label: ARKODE_DISCRETE_OPTIMIZATION_PROBLEM
 
+where :math:`N` is the index of the final time step so that :math:`t_N = t_f` and :math:`y_N \approx y(t_f)`.
 The gradients of :eq:`ARKODE_DISCRETE_OPTIMIZATION_PROBLEM` can be computed using the transposed chain
 rule backwards in time to obtain the discete adjoint variables :math:`\lambda_N, \lambda_{N-1}, \cdots, \lambda_0`
 and :math:`\mu_N, \mu_{N-1}, \cdots, \mu_0`, where
 
 .. math::
-   \lambda_N &= g_y^*(t_f, y_N, p), \quad \lambda_n = \left(\frac{\partial \varphi}{\partial y_k}(y_n, p)\right)^* \lambda_{n+1} \\
-   \mu_N     &= g_p^*(t_f, y_N, p), \quad \mu_n     = \left(\frac{\partial \varphi}{\partial p}(y_n, p)\right)^* \lambda_{n+1},
+   \lambda_N &= g_y^*(t_N, y_N, p), \quad \lambda_n = \left(\frac{\partial \varphi}{\partial y_k}(y_n, p)\right)^* \lambda_{n+1} \\
+   \mu_N     &= g_p^*(t_N, y_N, p), \quad \mu_n     = \left(\frac{\partial \varphi}{\partial p}(y_n, p)\right)^* \lambda_{n+1},
     \quad n = N - 1, \cdots, 0.
    :label: ARKODE_DISCRETE_ADJOINT
 
