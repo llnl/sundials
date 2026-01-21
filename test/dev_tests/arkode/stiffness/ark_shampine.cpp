@@ -25,17 +25,14 @@ void printUsage(const char* progname)
   cout << "Options:\n";
   cout << "  -b, --beta <value>     Set beta parameter (default: 5.0)\n";
   cout << "  -g, --gamma <value>    Set gamma parameter (default: 2.0)\n";
-  cout << "  -o, --output <file>    Output file name (default: output to "
-          "console)\n";
+  cout << "  -e, --explicit         Use ERK method (default: DIRK)\n";
+  cout << "  -o, --output <file>    Output file name (default: data.txt)\n";
   cout << "  -h, --help             Print this help message\n";
-  cout << "\nExample:\n";
-  cout << "  " << progname << " --beta 3.5 --gamma 1.5 --output results.txt\n";
-  cout << "  " << progname << " -b 10 -g 5 -o data.dat\n";
 }
 
 // Function to parse command line arguments
 bool parseArguments(int argc, char* argv[], sunrealtype& beta,
-                    sunrealtype& gamma, string& outputFile)
+                    sunrealtype& gamma, string& outputFile, bool& use_explicit)
 {
   for (int i = 1; i < argc; i++)
   {
@@ -56,6 +53,10 @@ bool parseArguments(int argc, char* argv[], sunrealtype& beta,
         cerr << "Error: --gamma requires a value\n";
         return false;
       }
+    }
+    else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "--explicit") == 0)
+    {
+      use_explicit = true;
     }
     else if (strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "--output") == 0)
     {
@@ -94,9 +95,10 @@ int main(int argc, char* argv[])
   sunrealtype dt_out = 0.1;
 
   string output_file = "data.txt";
+  bool use_explicit  = false;
 
   // Parse command line arguments
-  if (!parseArguments(argc, argv, beta, gamma, output_file))
+  if (!parseArguments(argc, argv, beta, gamma, output_file, use_explicit))
   {
     return (argc > 1 &&
             (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0))
@@ -118,9 +120,19 @@ int main(int argc, char* argv[])
   // Set initial conditions
   problem.setInitialConditions(y);
 
-  // Create ARKODE memory structure
-  void* arkode_mem = ARKStepCreate(nullptr, ODEProblem::rhsWrapper, t0, y,
-                                   sunctx);
+  // Create ARKODE memory structure based on method choice
+  void* arkode_mem = nullptr;
+  if (use_explicit)
+  {
+    cout << "Using ERK method" << endl;
+    arkode_mem = ARKStepCreate(ODEProblem::rhsWrapper, nullptr, t0, y, sunctx);
+  }
+  else
+  {
+    cout << "Using DIRK method" << endl;
+    arkode_mem = ARKStepCreate(nullptr, ODEProblem::rhsWrapper, t0, y, sunctx);
+  }
+
   if (arkode_mem == nullptr)
   {
     cerr << "Error creating ARKODE memory" << endl;
@@ -136,32 +148,39 @@ int main(int argc, char* argv[])
   sunrealtype abstol = 1e-8;
   ARKodeSStolerances(arkode_mem, reltol, abstol);
 
-  // Create dense matrix and linear solver
-  SUNMatrix A = SUNDenseMatrix(problem.getNumEquations(),
-                               problem.getNumEquations(), sunctx);
-  if (A == nullptr)
+  // Only set up linear solver and Jacobian for implicit method
+  SUNMatrix A        = nullptr;
+  SUNLinearSolver LS = nullptr;
+
+  if (!use_explicit)
   {
-    cerr << "Error creating matrix" << endl;
-    ARKodeFree(&arkode_mem);
-    N_VDestroy(y);
-    return 1;
+    // Create dense matrix and linear solver
+    A = SUNDenseMatrix(problem.getNumEquations(), problem.getNumEquations(),
+                       sunctx);
+    if (A == nullptr)
+    {
+      cerr << "Error creating matrix" << endl;
+      ARKodeFree(&arkode_mem);
+      N_VDestroy(y);
+      return 1;
+    }
+
+    LS = SUNLinSol_Dense(y, A, sunctx);
+    if (LS == nullptr)
+    {
+      cerr << "Error creating linear solver" << endl;
+      SUNMatDestroy(A);
+      ARKodeFree(&arkode_mem);
+      N_VDestroy(y);
+      return 1;
+    }
+
+    // Attach linear solver
+    ARKodeSetLinearSolver(arkode_mem, LS, A);
+
+    // Set Jacobian function
+    ARKodeSetJacFn(arkode_mem, ODEProblem::jacWrapper);
   }
-
-  SUNLinearSolver LS = SUNLinSol_Dense(y, A, sunctx);
-  if (LS == nullptr)
-  {
-    cerr << "Error creating linear solver" << endl;
-    SUNMatDestroy(A);
-    ARKodeFree(&arkode_mem);
-    N_VDestroy(y);
-    return 1;
-  }
-
-  // Attach linear solver
-  ARKodeSetLinearSolver(arkode_mem, LS, A);
-
-  // Set Jacobian function
-  ARKodeSetJacFn(arkode_mem, ODEProblem::jacWrapper);
 
   // Open file for writing data
   ofstream datafile(output_file);
