@@ -3,11 +3,18 @@
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 import sys
+
+# Location of suntools directory
+sys.path.append(os.path.join(os.environ['SUNDIALS_REPO'], "tools"))
+from suntools import logs as sunlog
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument("data_file", type=str, help="File to plot")
+
+parser.add_argument("log_file", type=str, help="Log file to plot")
 
 parser.add_argument("--title", type=str, default=None, help="Plot title")
 
@@ -45,7 +52,15 @@ except Exception as e:
     print(f"Error reading file '{args.data_file}': {e}")
     sys.exit(1)
 
-fig1, axes = plt.subplots(4, sharex=True, figsize=(18, 12))
+# parse log file
+log = sunlog.log_file_to_list(args.log_file)
+
+# get step data
+_, times_s, vals_s = sunlog.get_history(log, 'h', "success")
+_, times_etf, vals_etf = sunlog.get_history(log, 'h', "failed error test")
+_, times_sf, vals_sf = sunlog.get_history(log, 'h', "failed solve")
+
+fig1, axes = plt.subplots(5, sharex=True, figsize=(18, 12))
 
 axes[0].plot(data["t"], data["y1"], label="y1", linewidth=2)
 axes[0].plot(data["t"], data["y2"], label="y2", linewidth=2, alpha=0.7)
@@ -59,8 +74,8 @@ else:
     axes[0].set_title(f"Solution")
 axes[0].grid(True, which="both", linestyle=":", alpha=0.5)
 
-axes[1].plot(data["t"], np.abs(data["lambda1"]), label=r"$\lambda_1$", linewidth=2)
-axes[1].plot(data["t"], np.abs(data["lambda2"]), label=r"$\lambda_2$", linewidth=2, alpha=0.7)
+axes[1].plot(data["t"], np.abs(data["lambda1"]), label=r"$|\lambda_1|$", linewidth=2)
+axes[1].plot(data["t"], np.abs(data["lambda2"]), label=r"$|\lambda_2|$", linewidth=2, alpha=0.7)
 axes[1].set_yscale("log")
 axes[1].legend(loc="best")
 axes[1].set_xlabel("time")
@@ -92,6 +107,18 @@ if args.title:
 else:
     axes[3].set_title(f"Local Error Estimates")
 axes[3].grid(True, which="major", linestyle=":", alpha=0.5)
+
+axes[4].scatter(times_s, vals_s, label="success")
+axes[4].scatter(times_etf, vals_etf, label="error test fail")
+axes[4].scatter(times_sf, vals_sf, label="solver fail") # need to get solver fail in successful step
+#axes[4].set_yscale("log")
+axes[4].legend(loc="best")
+axes[4].set_xlabel("time")
+if args.title:
+    axes[4].set_title(f"{args.title} Step History")
+else:
+    axes[4].set_title(f"Step History")
+axes[4].grid(True, which="major", linestyle=":", alpha=0.5)
 
 plt.tight_layout()
 
