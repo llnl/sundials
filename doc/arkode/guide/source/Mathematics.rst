@@ -2738,7 +2738,7 @@ Reformulating the optimization problem for the discrete case, we have
    \min_{y_0, p} g(t_f, y_N, p).
    :label: ARKODE_DISCRETE_OPTIMIZATION_PROBLEM
 
-The gradient of :eq:`ARKODE_DISCRETE_OPTIMIZATION_PROBLEM` can be computed using the transposed chain
+The gradients of :eq:`ARKODE_DISCRETE_OPTIMIZATION_PROBLEM` can be computed using the transposed chain
 rule backwards in time to obtain the discete adjoint variables :math:`\lambda_N, \lambda_{N-1}, \cdots, \lambda_0`
 and :math:`\mu_N, \mu_{N-1}, \cdots, \mu_0`, where
 
