@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
   // Default problem parameters
   sunrealtype mu     = 100.0;
   sunrealtype t0     = 0.0;
-  sunrealtype tf     = 1000.0;
+  sunrealtype tf     = 200.0;
   sunrealtype dt_out = 0.1;
 
   string output_file = "data.txt";
