@@ -187,11 +187,11 @@ int main(int argc, char* argv[])
   problem.computeEigenvalues(y, lambda1, lambda2);
   auto stiffness_ratio = problem.computeStiffnessRatio(y);
 
-  datafile << setw(25) << t0 << setw(25) << ydata[0] << setw(25) << ydata[1]
-           << setw(25) << 0.0 << setw(25) << 0.0 << setw(25) << lambda1.real()
-           << showpos << lambda1.imag() << noshowpos << "j" << setw(25)
+  datafile << setw(26) << t0 << setw(26) << ydata[0] << setw(26) << ydata[1]
+           << setw(26) << 0.0 << setw(26) << 0.0 << setw(26) << lambda1.real()
+           << showpos << lambda1.imag() << noshowpos << "j" << setw(26)
            << lambda2.real() << showpos << lambda2.imag() << noshowpos << "j"
-           << setw(25) << stiffness_ratio << endl;
+           << setw(26) << stiffness_ratio << endl;
 
   // Vector for local error estimate
   N_Vector loc_err_est = N_VClone(y);
@@ -230,11 +230,11 @@ int main(int argc, char* argv[])
     problem.computeEigenvalues(y, lambda1, lambda2);
     stiffness_ratio = problem.computeStiffnessRatio(y);
 
-    datafile << setw(25) << t << setw(25) << ydata[0] << setw(25) << ydata[1]
-             << setw(25) << lee_data[0] << setw(25) << lee_data[1] << setw(25)
+    datafile << setw(26) << t << setw(26) << ydata[0] << setw(26) << ydata[1]
+             << setw(26) << lee_data[0] << setw(26) << lee_data[1] << setw(26)
              << lambda1.real() << showpos << lambda1.imag() << noshowpos << "j"
-             << setw(25) << lambda2.real() << showpos << lambda2.imag()
-             << noshowpos << "j" << setw(25) << stiffness_ratio << endl;
+             << setw(26) << lambda2.real() << showpos << lambda2.imag()
+             << noshowpos << "j" << setw(26) << stiffness_ratio << endl;
 
     tout += dt_out;
     if (tout > tf) tout = tf;
