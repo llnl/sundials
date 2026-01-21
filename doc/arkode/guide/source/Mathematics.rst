@@ -2712,12 +2712,12 @@ Now, suppose we have a functional :math:`g(t_f, y(t_f), p)` for which we would l
 gradients
 
 .. math::
-   \frac{dg(t_f,y(t_n),p)}{dy}, \quad \text{and optionally}, \quad \frac{dg(t_f,y(t_n),p)}{dp}.
+   \frac{dg(t_f,y(t_N),p)}{dy}, \quad \text{and optionally}, \quad \frac{dg(t_f,y(t_N),p)}{dp}.
 
 This most often arises in the form of an optimization problem such as
 
 .. math::
-   \min_{y(t_0), p} g(t_f, y(t_n), p).
+   \min_{y(t_0), p} g(t_f, y(t_f), p).
    :label: ARKODE_OPTIMIZATION_PROBLEM
 
 The adjoint method is one approach to obtaining the gradients that is particularly efficient when
@@ -2735,17 +2735,17 @@ done with a one-step time integration scheme :math:`\varphi` so that
 Reformulating the optimization problem for the discrete case, we have
 
 .. math::
-   \min_{y_0, p} g(t_f, y_n, p).
+   \min_{y_0, p} g(t_f, y_N, p).
    :label: ARKODE_DISCRETE_OPTIMIZATION_PROBLEM
 
-The gradients of :eq:`ARKODE_DISCRETE_OPTIMIZATION_PROBLEM` can be computed using the transposed chain
-rule backwards in time to obtain the discete adjoint variables :math:`\lambda_n, \lambda_{n-1}, \cdots, \lambda_0`
-and :math:`\mu_n, \mu_{n-1}, \cdots, \mu_0`, where
+The gradient of :eq:`ARKODE_DISCRETE_OPTIMIZATION_PROBLEM` can be computed using the transposed chain
+rule backwards in time to obtain the discete adjoint variables :math:`\lambda_N, \lambda_{N-1}, \cdots, \lambda_0`
+and :math:`\mu_N, \mu_{N-1}, \cdots, \mu_0`, where
 
 .. math::
-   \lambda_n &= g_y^*(t_f, y_n, p), \quad \lambda_k = \left(\frac{\partial \varphi}{\partial y_k}(y_k, p)\right)^* \lambda_{k+1} \\
-   \mu_n     &= g_p^*(t_f, y_n, p), \quad \mu_k     = \left(\frac{\partial \varphi}{\partial p}(y_k, p)\right)^* \lambda_{k+1},
-    \quad k = n - 1, \cdots, 0.
+   \lambda_N &= g_y^*(t_f, y_N, p), \quad \lambda_n = \left(\frac{\partial \varphi}{\partial y_k}(y_n, p)\right)^* \lambda_{n+1} \\
+   \mu_N     &= g_p^*(t_f, y_N, p), \quad \mu_n     = \left(\frac{\partial \varphi}{\partial p}(y_n, p)\right)^* \lambda_{n+1},
+    \quad n = N - 1, \cdots, 0.
    :label: ARKODE_DISCRETE_ADJOINT
 
 .. warning::
@@ -2762,14 +2762,14 @@ The discrete adjoint variables represent the gradients of the discrete cost func
 
 
 Given an s-stage explicit Runge--Kutta method (as in :eq:`ARKODE_ERK`, but without the embedding), the discrete adjoint
-to compute :math:`\lambda_k` and :math:`\mu_k` starting from :math:`\lambda_{k+1}` and
-:math:`\mu_{k+1}` is given by
+to compute :math:`\lambda_n` and :math:`\mu_n` starting from :math:`\lambda_{n+1}` and
+:math:`\mu_{n+1}` is given by
 
 .. math::
-   \Lambda_i &= h_k f_y^*(t_{k,i}, z_i, p) \left(b_i \lambda_{k+1} + \sum_{j=i+1}^s a_{j,i} \Lambda_j \right), \quad \quad i = s, \dots, 1,\\
-   \lambda_k &= \lambda_{k+1} + \sum_{j=1}^{s} \Lambda_j, \\
-   \nu_i     &= h_k f_p^*(t_{k,i}, z_i, p) \left(b_i \lambda_{k+1} + \sum_{j=i+1}^{s} a_{j,i} \Lambda_j \right), \\
-   \mu_k     &= \mu_{k+1} + \sum_{j=1}^{s} \nu_j.
+   \Lambda_i &= h_n f_y^*(t_{n,i}, z_i, p) \left(b_i \lambda_{n+1} + \sum_{j=i+1}^s a_{j,i} \Lambda_j \right), \quad \quad i = s, \dots, 1,\\
+   \lambda_n &= \lambda_{n+1} + \sum_{j=1}^{s} \Lambda_j, \\
+   \nu_i     &= h_n f_p^*(t_{n,i}, z_i, p) \left(b_i \lambda_{n+1} + \sum_{j=i+1}^{s} a_{j,i} \Lambda_j \right), \\
+   \mu_n     &= \mu_{n+1} + \sum_{j=1}^{s} \nu_j.
    :label: ARKODE_ERK_ADJOINT
 
 For more information on performing discrete adjoint sensitivity analysis using ARKODE see,
