@@ -176,6 +176,13 @@ Most callback signatures include a ``void* user_data`` argument. In Python, this
    The ``user_data`` argument should always be ``None`` or ``_`` on the Python side. If it is listed otherwise, then it should be ignored to avoid causing catastrophic errors.
 
 
+Error Codes
+-----------
+
+The named ``SUN_ERR_*`` code constants are not available in Python. However, all negative values of ``SUNErrCode``
+are still errors, zero is success, and positive values are warnings. As such, users  Users can call ``SUNGetErrMsg``
+from Python with the returned ``SUNErrCode`` to get further information about an error.
+
 Examples
 --------
 
