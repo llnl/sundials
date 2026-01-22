@@ -22,7 +22,7 @@ jobs:
   sundials4py-deploy-build-and-test:
     name: Build and test
     if: github.event_name == 'release' && github.event.action == 'published'
-    uses: /.github/workflows/sundials4py-build-and-test.yml
+    uses: ./.github/workflows/sundials4py-build-and-test.yml
 
   sundials4py-deploy-to-gh-release:
     name: Attach sundials4py wheels to GitHub release
