@@ -85,3 +85,119 @@ sundials4py is comprised of the following submodules:
 CVODE and IDA dot not have modules because CVODES and IDAS provide all of the same capabilities plus continuous forward and adjoint sensitivity analysis.
 
 For more information on usage, differences from the C/C++ API and examples, continue to the next sections of this documentation.
+
+.. _Python.Table:
+
+.. list-table:: List of SUNDIALS Modules Available from Python
+   :align: center
+   :header-rows: 1
+   :widths: 30 40
+
+   * - **Class/Module**
+     - **Python Module Name**
+   * - SUNDIALS core
+     - ``sundials4py.core``
+   * - ARKODE
+     - ``sundials4py.arkode``
+   * - ARKODE::ARKSTEP
+     - ``sundials4py.arkode``
+   * - ARKODE::ERKSTEP
+     - ``sundials4py.arkode``
+   * - ARKODE::MRISTEP
+     - ``sundials4py.arkode``
+   * - ARKODE::SPRKSTEP
+     - ``sundials4py.arkode``
+   * - ARKODE::LSRKSTEP
+     - ``sundials4py.arkode``
+   * - ARKODE::SPLITTINGSTEP
+     - ``sundials4py.arkode``
+   * - ARKODE::FORCINGSTEP
+     - ``sundials4py.arkode``
+   * - CVODE
+     - ``sundials4py.cvode``
+   * - CVODES
+     - ``sundials4py.cvodes``
+   * - IDA
+     - ``sundials4py.ida``
+   * - IDAS
+     - ``sundials4py.idas``
+   * - KINSOL
+     - ``sundials4py.kinsol``
+   * - NVECTOR_CUDA
+     - Not interfaced
+   * - NVECTOR_MANVECTOR
+     - ``sundials4py.core``
+   * - NVECTOR_MPIMANVECTOR
+     - Not interfaced
+   * - NVECTOR_MPIPLUSX
+     - Not interfaced
+   * - NVECTOR_OPENMP
+     - Not interfaced
+   * - NVECTOR_PARALLEL
+     - Not interfaced
+   * - NVECTOR_PARHYP
+     - Not interfaced
+   * - NVECTOR_PETSC
+     - Not interfaced
+   * - NVECTOR_RAJA
+     - Not interfaced
+   * - NVECTOR_SERIAL
+     - ``sundials4py.core``
+   * - NVECTOR_SYCL
+     - Not interfaced
+   * - SUNADAPTCONTROLLER_IMEXGUS
+     - ``sundials4py.core``
+   * - SUNADAPTCONTROLLER_SODERLIND
+     - ``sundials4py.core``
+   * - SUNADAPTCONTROLLER_MRIHTOL
+     - ``sundials4py.core``
+   * - SUNADJOINTCHECKPOINTSCHEME_FIXED
+     - ``sundials4py.core``
+   * - SUNDOMEIGEST_ARNOLDI
+     - Not interfaced
+   * - SUNDOMEIGEST_POWER
+     - ``sundials4py.core``
+   * - SUNLINSOL_BAND
+     - ``sundials4py.core``
+   * - SUNLINSOL_DENSE
+     - ``sundials4py.core``
+   * - SUNLINSOL_KLU
+     - ``sundials4py.core``
+   * - SUNLINSOL_LAPACKBAND
+     - Not interfaced
+   * - SUNLINSOL_LAPACKDENSE
+     - Not interfaced
+   * - SUNLINSOL_MAGMADENSE
+     - Not interfaced
+   * - SUNLINSOL_ONEMKLDENSE
+     - Not interfaced
+   * - SUNLINSOL_PCG
+     - ``sundials4py.core``
+   * - SUNLINSOL_SLUDIST
+     - Not interfaced
+   * - SUNLINSOL_SLUMT
+     - Not interfaced
+   * - SUNLINSOL_SPBCGS
+     - ``sundials4py.core``
+   * - SUNLINSOL_SPFGMR
+     - ``sundials4py.core``
+   * - SUNLINSOL_SPGMR
+     - ``sundials4py.core``
+   * - SUNLINSOL_SPTFQMR
+     - ``sundials4py.core``
+   * - SUNMATRIX_BAND
+     - ``sundials4py.core``
+   * - SUNMATRIX_DENSE
+     - ``sundials4py.core``
+   * - SUNMATRIX_MAGMADENSE
+     - Not interfaced
+   * - SUNMATRIX_ONEMKLDENSE
+     - Not interfaced
+   * - SUNMATRIX_SPARSE
+     - ``sundials4py.core``
+   * - SUNNONLINSOL_FIXEDPOINT
+     - ``sundials4py.core``
+   * - SUNNONLINSOL_NEWTON
+     - ``sundials4py.core``
+   * - SUNNONLINSOL_PETSCSNES
+     - Not interfaced
