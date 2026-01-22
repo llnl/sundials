@@ -101,7 +101,7 @@ The recommended method for development is to use a typical Python development wo
    cd sundials_root_directory
    python -m venv .venv  # create python virtual environment
    . .venv/bin/activate  # activate the python virtual environment
-   pip install scikit-build-core[pyproject] hatchling nanobind # this is a prerequisite for the next step
+   pip install scikit-build-core[pyproject] hatchling nanobind setuptools scikit-build pybind11 # this is a prerequisite for the next step
    MAKEFLAGS="-j$(nproc)" pip install --no-build-isolation -Ceditable.rebuild=true -ve .[dev] # install sundials4py into the virtual environment
 
 The last ``pip install`` command will allow automatic incremental builds. It will invoke the SUNDIALS ``CMake`` build system with the
@@ -140,7 +140,8 @@ User-supplied functions
 -----------------------
 
 All user-supplied Python functions have to be wrapped with functions that convert between a ``std::function`` and a raw C function pointer.
-This is done by smuggling in a "function table" -- a struct of ``std::function`` members -- in a ``python`` member inside each integrator memory structure, and then storing the integrator memory structure in the ``user_data`` pointer. For the objects which are
+This is done by smuggling in a "function table" -- a struct of ``std::function`` members -- in a ``python`` member inside each integrator memory structure,
+and then storing the integrator memory structure in the ``user_data`` pointer. For the objects which are
 not the integrator, we still stuff the function table in the ``python`` member of the struct so it will be available in all of the module/class methods.
 As a result, every time we add a user-supplied function, we need to add a new member to the function table struct,
 and add a wrapper for it. We also have to add a wrapper for the "Set" function that takes the user-supplied function.
@@ -299,3 +300,51 @@ example, consider the wrapper below from
 
      return std::get<0>(result);
    }
+
+Generated vs Handwritten Wrappers
+---------------------------------
+
+We try to use litgen to autogenerate as many of the nanobind wrapper functions as possible.
+However, some functions cannot be automatically wrapped. Generally, these fall into the following
+categories:
+
+1. Functions which take a function pointer (discussed in previous sections)
+2. Functions which take 2D or higher dimensional arrays
+3. Functions which have optional (nullable) arguments followed by non-optional arguments
+4. Functions which return objects that have lifetimes connected to an arguments
+
+
+Nullable arguments
+------------------
+
+Arguments which can be ``NULL``, or ``None`` in Python, need ``.none()`` appended to their
+``nb::arg`` "object". In the example below, a Python user could pass ``None`` for the ``fn`` argument
+of ``CVodeRootInit`` since the ``.none()`` call is made.
+
+.. code-block:: cpp
+
+   m.def(
+    "CVodeRootInit",
+    [](void* cv_mem, int nrtfn, std::function<std::remove_pointer_t<CVRootFn>> fn)
+    {
+      auto fn_table = get_cvode_fn_table(cv_mem);
+      if (fn)
+      {
+        fn_table->rootfn = nb::cast(fn);
+        return CVodeRootInit(cv_mem, nrtfn, &cvode_rootfn_wrapper);
+      }
+      else { return CVodeRootInit(cv_mem, nrtfn, nullptr); }
+    },
+    nb::arg("cv_mem"), nb::arg("nrtfn"), nb::arg("fn").none());
+
+
+Managing Dependent Object Lifetimes
+-----------------------------------
+
+Some objects depend on another object existing and being in a valid state. The best
+example of this is that all SUNDIALS objects depend on a ``SUNContext`` object. 
+We must tell nanobind about these relationships using the ``nb::keep_alive`` function, or in
+more complex cases, ``nb::call_policy`` function and ``sundials4py::returns_references_to``
+object. Please refer to `https://nanobind.readthedocs.io/en/latest/functions.html#lifetime-annotations`__
+for more information as well as the source file ``bindings/sundials4py/sundials4py_helpers.hpp``.
+

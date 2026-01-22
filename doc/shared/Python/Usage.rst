@@ -163,7 +163,7 @@ Most callback signatures include a ``void* user_data`` argument. In Python, this
    #     sunrealtype* lambdaR, sunrealtype* lambdaI,
    #     void* user_data,
    #     N_Vector temp1, N_Vector temp2, N_Vector temp3)
-   def dom_eig(t, yvec, fnvec, temp1, temp2, temp3, _): # note the _ in place of user_data
+   def dom_eig(t, yvec, fnvec, _, temp1, temp2, temp3): # note the _ in place of user_data
         lamdbaR = L
         lamdbaI = 0.0
         # lambdaR and lambdaI should be returned in the order that they appear
