@@ -19,7 +19,7 @@
 # -----------------------------------------------------------------------------
 
 import re
-
+from .utils import str2num
 
 def parse_table(data):
     """
@@ -42,13 +42,7 @@ def parse_table(data):
             value = match.group(2).strip()
 
             # Attempt to convert value to a float or int if numeric
-            try:
-                if "." in value:
-                    value = float(value)
-                else:
-                    value = int(value)
-            except ValueError:
-                pass  # Keep value as string if conversion fails
+            value = str2num(value)
 
             if key in stats:
                 stats[key].append(value)
