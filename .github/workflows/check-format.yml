@@ -1,12 +1,18 @@
 name: Checks - formatting
 
 on:
-  pull_request:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
   workflow_dispatch:
 
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: format-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   format_check:
@@ -18,6 +24,12 @@ jobs:
         run: |
           apt update
           apt install -y git python3-pip
+
+      - name: Install codespell
+        run: pip install codespell
+
+      - name: Print codespell version
+        run: codespell --version
 
       - name: Install black
         run: pip install black
@@ -46,7 +58,11 @@ jobs:
       - name: Add safe directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Run checker on code
+      - name: Run spelling checks
+        run: |
+          ./scripts/spelling.sh
+
+      - name: Run formatting checks
         run: |
           ./scripts/format.sh .
 

@@ -1,0 +1,40 @@
+name: Build and Test
+
+on:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
+  workflow_dispatch:
+
+# Cancel any in-progress workflow runs
+concurrency:
+  group: build-and-test-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  macos-latest:
+    uses: ./.github/workflows/macos-latest.yml
+
+  address-sanitizer:
+    uses: ./.github/workflows/test-address-sanitizer.yml
+
+  ubuntu-latest-clang:
+    uses: ./.github/workflows/ubuntu-latest-clang.yml
+
+  ubuntu-latest-oneapi:
+    uses: ./.github/workflows/ubuntu-latest-oneapi.yml
+
+  ubuntu-latest-gcc:
+    uses: ./.github/workflows/ubuntu-latest.yml
+
+  windows-latest-intel:
+    uses: ./.github/workflows/windows-latest-intel.yml
+
+  windows-latest-mingw:
+    uses: ./.github/workflows/windows-latest-mingw.yml
+
+  windows-latest-msvc:
+    uses: ./.github/workflows/windows-latest.yml
