@@ -28,14 +28,15 @@ def parse_table(data):
     Args:
         data (str): Multiline string containing repeated key-value tables.
     Returns:
-        list: A dictionary, where each key is a list of the values.
+        stats: A dictionary, where each key is a list of the values.
     """
 
     stats = {}
     lines = data.splitlines()
+    regexp = re.compile(r"^(.*?)\s+=\s+(.*)$")
     for line in lines:
         # Extract key-value pairs
-        match = re.match(r"^(.*?)\s+=\s+(.*)$", line)
+        match = regexp.match(line)
         if match:
             key = match.group(1).strip()
             value = match.group(2).strip()
