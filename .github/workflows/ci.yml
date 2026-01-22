@@ -164,7 +164,7 @@ jobs:
   all-checks:
     runs-on: ubuntu-latest
     needs: [detect-changes, check-format, check-fortran, check-python, build-docs, build-and-test, sundials4py-build-and-test]
-    if: always()
+    if: !cancelled()
     steps:
       - name: Aggregate all checks
         run: |
