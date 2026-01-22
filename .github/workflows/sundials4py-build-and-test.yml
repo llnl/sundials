@@ -1,24 +1,21 @@
-name: sundials4py wheels
+name: sundials4py build-and-test
+
+on:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
+  workflow_dispatch:
+
+# Cancel any in-progress workflow runs
+concurrency:
+  group: sundials4py-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
-on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    paths:
-      - bindings/sundials4py/**
-  merge_group:
-  workflow_dispatch:
-  release:
-    types:
-      - published
-
 jobs:
-  build_sdist:
+  sundials4py-build-sdist:
     name: Build SDist
     runs-on: ubuntu-latest
     steps:
@@ -37,9 +34,8 @@ jobs:
         name: dist-sdist
         path: dist/*.tar.gz
 
-
-  build_wheels:
-    name: Wheels on ${{ matrix.os }}
+  sundials4py-build-wheels:
+    name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -65,7 +61,8 @@ jobs:
         path: wheelhouse/*.whl
         name: dist-${{ matrix.os }}
 
-  build_wheels_extra:
+
+  sundials4py-build-wheels-extra:
     name: Build extra wheels on ${{ matrix.os }} (${{ matrix.precision }}/${{ matrix.index }})
     runs-on: ${{ matrix.os }}
     strategy:
@@ -102,43 +99,3 @@ jobs:
       with:
         path: wheelhouse/*.whl
         name: dist-extra-${{ matrix.os }}-${{ matrix.precision }}-${{ matrix.index }}
-
-  attach_wheels_to_release:
-    name: Attach wheels to GitHub release
-    needs: [build_wheels, build_wheels_extra]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
-
-    steps:
-    - name: Download wheel artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: dist
-        pattern: dist-*
-        merge-multiple: true
-
-    - name: Upload wheels to release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: dist/**/*.whl
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  pypi_publish:
-    name: Publish to pypi if release
-    needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
-
-    steps:
-    - uses: actions/setup-python@v5
-    - uses: actions/download-artifact@v4
-      with:
-        path: dist
-        pattern: dist-*
-        merge-multiple: true
-
-    - uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        user: __token__
-        password: ${{ secrets.pypi_password }}
