@@ -80,8 +80,8 @@ using namespace sundials::experimental;
        std::function<std::remove_pointer_t<FN_TYPE1>> fn1,                 \
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
     {                                                                      \
-      void* user_data = nullptr;                                           \
-      auto fn_table   = get_idas_fn_table(ida_mem, which);                 \
+      void* user_data   = nullptr;                                         \
+      auto fn_table     = get_idas_fn_table(ida_mem, which);               \
       fn_table->MEMBER1 = nb::cast(fn1);                                   \
       fn_table->MEMBER2 = nb::cast(fn2);                                   \
       if (fn1 && fn2) { return NAME(ida_mem, which, WRAPPER1, WRAPPER2); } \
@@ -124,9 +124,10 @@ void bind_idas(nb::module_& m)
     nb::arg("args"));
 
   m.def(
-    "IDACreate", [](SUNContext sunctx)
-    { return std::make_shared<IDAView>(IDACreate(sunctx)); }, nb::arg("sunctx"),
-    nb::keep_alive<0, 1>());
+    "IDACreate",
+    [](SUNContext sunctx)
+    { return std::make_shared<IDAView>(IDACreate(sunctx)); },
+    nb::arg("sunctx"), nb::keep_alive<0, 1>());
 
   m.def(
     "IDAInit",
