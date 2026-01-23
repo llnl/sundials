@@ -130,27 +130,35 @@ jobs:
     uses: ./.github/workflows/check-litgen.yml
 
   build-and-test:
-    needs: [detect-changes, check-fortran, check-python]
+    needs: [detect-changes, check-format, check-fortran, check-python]
     if: |
       !cancelled() &&
       needs.detect-changes.outputs.src == 'true' &&
+      needs.check-format.result == 'success' &&
       (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped') &&
       (needs.check-python.result == 'success' || needs.check-python.result == 'skipped')
     uses: ./.github/workflows/build-and-test.yml
 
   sundials4py-build-and-test:
-    needs: [detect-changes, build-and-test]
+    needs: [detect-changes, check-format, check-fortran, check-python, build-and-test]
     if: |
       !cancelled() &&
       needs.detect-changes.outputs.python == 'true' &&
+      needs.check-format.result == 'success' &&
+      (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped') &&
+      (needs.check-python.result == 'success' || needs.check-python.result == 'skipped') &&
       (needs.build-and-test.result == 'success' || needs.build-and-test.result == 'skipped')
     uses: ./.github/workflows/sundials4py-build-and-test.yml
 
   build-docs:
-    needs: [detect-changes, sundials4py-build-and-test]
+    needs: [detect-changes, check-format, check-fortran, check-python, build-and-test, sundials4py-build-and-test]
     if: |
       !cancelled() &&
       needs.detect-changes.outputs.docs == 'true' &&
+      needs.check-format.result == 'success' &&
+      (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped') &&
+      (needs.check-python.result == 'success' || needs.check-python.result == 'skipped') &&
+      (needs.build-and-test.result == 'success' || needs.build-and-test.result == 'skipped') &&
       (needs.sundials4py-build-and-test.result == 'success' || needs.sundials4py-build-and-test.result == 'skipped')
     uses: ./.github/workflows/docs-pdfs.yml
 
