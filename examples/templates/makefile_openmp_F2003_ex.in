@@ -36,7 +36,7 @@ F90LIBS  = @LIBS@
 
 INCLUDES  = -I${includedir}
 LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ -lsundials_nvecopenmp \
-            -lsundials_fnvecopenmp_mod ${F90LIBS}
+            -lsundials_fnvecopenmp_mod -lsundials_fcore_mod -lsundials_core ${F90LIBS}
 LINKFLAGS = -Wl,-rpath,@libdir@
 
 # -----------------------------------------------------------------------------------------
