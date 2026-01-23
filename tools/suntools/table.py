@@ -21,6 +21,7 @@
 import re
 from .utils import str2num
 
+
 def parse_table(data):
     """
     Parses "table" formatted SUNDIALS stats output. I.e., data is in key-value format,

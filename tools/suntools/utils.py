@@ -18,6 +18,7 @@
 # Shared suntools utilities.
 # -----------------------------------------------------------------------------
 
+
 def str2num(s):
     """Try to convert a string to an int or float"""
 

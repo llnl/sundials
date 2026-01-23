@@ -20,6 +20,7 @@
 
 from .utils import str2num
 
+
 def keys(filename):
     """Extracts keys from a SUNDIALS CSV file
 
@@ -35,7 +36,7 @@ def keys(filename):
     """
 
     # Get keys from the first row
-    with open(filename, mode='r') as csvfile:
+    with open(filename, mode="r") as csvfile:
         keys = csvfile.readline().split(",")[::2]
 
     return keys
@@ -66,7 +67,7 @@ def read(filename):
         csv_dict[k] = []
 
     # Get values from each row
-    with open(filename, mode='r') as csvfile:
+    with open(filename, mode="r") as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             values = row[1::2]
