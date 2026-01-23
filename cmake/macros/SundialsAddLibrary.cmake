@@ -307,7 +307,9 @@ macro(sundials_add_library target)
       endif()
       if(sundials_add_library_LINK_LIBRARIES)
         # replace alias libraries with proper library (static or shared)
-        dealias_libraries(sundials_add_library_LINK_LIBRARIES dealiased_sundials_add_library_LINK_LIBRARIES ${_lib_suffix})
+        dealias_libraries(
+          sundials_add_library_LINK_LIBRARIES
+          dealiased_sundials_add_library_LINK_LIBRARIES ${_lib_suffix})
         target_link_libraries(${_actual_target_name}
                               ${dealiased_sundials_add_library_LINK_LIBRARIES})
       endif()
@@ -567,4 +569,3 @@ macro(dealias_libraries libs_in libs_out lib_suffix)
     endif()
   endforeach()
 endmacro()
-
