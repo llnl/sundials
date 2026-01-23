@@ -15,6 +15,9 @@ Fixed a CMake bug which resulted in static targets depending on shared targets
 when building both types of libraries in the same build
 ([Issue #692](https://github.com/LLNL/sundials/issues/692)).
 
+Some installed Fortran example makefiles were not linking to `sundials_fcore_mod`
+and `sundials_core` libraries as they should be. This is now fixed.
+
 On the initial time step with a user-supplied initial step size, ARKODE and
 CVODE(S) will now return `ARK_TOO_CLOSE` or `CV_TOO_CLOSE`, respectively,
 when the requested output time is the same as the initial time (or within
