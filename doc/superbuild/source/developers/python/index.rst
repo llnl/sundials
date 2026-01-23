@@ -344,7 +344,7 @@ Managing Dependent Object Lifetimes
 Some objects depend on another object existing and being in a valid state. The best
 example of this is that all SUNDIALS objects depend on a ``SUNContext`` object. 
 We must tell nanobind about these relationships using the ``nb::keep_alive`` function, or in
-more complex cases, ``nb::call_policy`` function and ``sundials4py::returns_references_to``
-object. Please refer to `https://nanobind.readthedocs.io/en/latest/functions.html#lifetime-annotations`__
+more complex cases, the ``nb::call_policy`` function and ``sundials4py::returns_references_to``
+object. Refer to `the nanobind documentation <https://nanobind.readthedocs.io/en/latest/functions.html#lifetime-annotations>`__
 for more information as well as the source file ``bindings/sundials4py/sundials4py_helpers.hpp``.
 

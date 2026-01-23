@@ -123,28 +123,10 @@ For more information on usage, differences from the C/C++ API and examples, cont
      - ``sundials4py.idas``
    * - KINSOL
      - ``sundials4py.kinsol``
-   * - NVECTOR_CUDA
-     - Not interfaced
    * - NVECTOR_MANVECTOR
      - ``sundials4py.core``
-   * - NVECTOR_MPIMANVECTOR
-     - Not interfaced
-   * - NVECTOR_MPIPLUSX
-     - Not interfaced
-   * - NVECTOR_OPENMP
-     - Not interfaced
-   * - NVECTOR_PARALLEL
-     - Not interfaced
-   * - NVECTOR_PARHYP
-     - Not interfaced
-   * - NVECTOR_PETSC
-     - Not interfaced
-   * - NVECTOR_RAJA
-     - Not interfaced
    * - NVECTOR_SERIAL
      - ``sundials4py.core``
-   * - NVECTOR_SYCL
-     - Not interfaced
    * - SUNADAPTCONTROLLER_IMEXGUS
      - ``sundials4py.core``
    * - SUNADAPTCONTROLLER_SODERLIND
@@ -153,30 +135,14 @@ For more information on usage, differences from the C/C++ API and examples, cont
      - ``sundials4py.core``
    * - SUNADJOINTCHECKPOINTSCHEME_FIXED
      - ``sundials4py.core``
-   * - SUNDOMEIGEST_ARNOLDI
-     - Not interfaced
    * - SUNDOMEIGEST_POWER
      - ``sundials4py.core``
    * - SUNLINSOL_BAND
      - ``sundials4py.core``
    * - SUNLINSOL_DENSE
      - ``sundials4py.core``
-   * - SUNLINSOL_KLU
-     - ``sundials4py.core``
-   * - SUNLINSOL_LAPACKBAND
-     - Not interfaced
-   * - SUNLINSOL_LAPACKDENSE
-     - Not interfaced
-   * - SUNLINSOL_MAGMADENSE
-     - Not interfaced
-   * - SUNLINSOL_ONEMKLDENSE
-     - Not interfaced
    * - SUNLINSOL_PCG
      - ``sundials4py.core``
-   * - SUNLINSOL_SLUDIST
-     - Not interfaced
-   * - SUNLINSOL_SLUMT
-     - Not interfaced
    * - SUNLINSOL_SPBCGS
      - ``sundials4py.core``
    * - SUNLINSOL_SPFGMR
@@ -189,15 +155,9 @@ For more information on usage, differences from the C/C++ API and examples, cont
      - ``sundials4py.core``
    * - SUNMATRIX_DENSE
      - ``sundials4py.core``
-   * - SUNMATRIX_MAGMADENSE
-     - Not interfaced
-   * - SUNMATRIX_ONEMKLDENSE
-     - Not interfaced
    * - SUNMATRIX_SPARSE
      - ``sundials4py.core``
    * - SUNNONLINSOL_FIXEDPOINT
      - ``sundials4py.core``
    * - SUNNONLINSOL_NEWTON
      - ``sundials4py.core``
-   * - SUNNONLINSOL_PETSCSNES
-     - Not interfaced

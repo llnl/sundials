@@ -258,18 +258,6 @@ htmlhelp_basename = "SUNDIALSdoc"
 # This prevents numpydoc from showing too much detail of the Enum classes
 numpydoc_show_class_members = False
 
-# Skip generation of autofunctions in Jenkins builds because we do not want
-# to have to build the sundials4py module during the doc generation.
-if not os.getenv("JENKINS_HOME"):
-    sys.path.append(os.path.dirname(os.path.abspath("../../shared/generate_autofunctions.py")))
-    from generate_autofunctions import generate_autofunctions_for_sundials4py
-
-    # Generate rst files with autofunction directives for sundials4py functions
-    generate_autofunctions_for_sundials4py()
-else:
-    # Generate empty files so that there is no warning about missing files
-    open("../../shared/Python/sundials4py-arkode-functions.rst", "a").close()
-    open("../../shared/Python/sundials4py-cvodes-functions.rst", "a").close()
-    open("../../shared/Python/sundials4py-idas-functions.rst", "a").close()
-    open("../../shared/Python/sundials4py-kinsol-functions.rst", "a").close()
-    open("../../shared/Python/sundials4py-core-functions.rst", "a").close()
+# Generate rst files with autofunction directives for sundials4py functions
+from generate_autofunctions import generate_autofunctions_for_sundials4py
+generate_autofunctions_for_sundials4py()
