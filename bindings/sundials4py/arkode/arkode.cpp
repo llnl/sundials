@@ -101,11 +101,8 @@ void bind_arkode(nb::module_& m)
       {
         fn_table->rootfn = nb::cast(fn);
         return ARKodeRootInit(ark_mem, nrtfn, arkode_rootfn_wrapper);
-      } 
-      else
-      {
-        return ARKodeRootInit(ark_mem, nrtfn, nullptr);
       }
+      else { return ARKodeRootInit(ark_mem, nrtfn, nullptr); }
     },
     nb::arg("arkode_mem"), nb::arg("nrtfn"), nb::arg("root_fn").none());
 

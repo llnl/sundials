@@ -260,4 +260,5 @@ numpydoc_show_class_members = False
 
 # Generate rst files with autofunction directives for sundials4py functions
 from generate_autofunctions import generate_autofunctions_for_sundials4py
+
 generate_autofunctions_for_sundials4py()
