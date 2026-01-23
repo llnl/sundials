@@ -20,7 +20,7 @@ from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../../shared")))
 
-# Add suntools directory to import python function docstings with autodoc
+# Add suntools directory to import python function docstrings with autodoc
 sys.path.append(os.path.abspath("../../../../tools/suntools"))
 
 # -- General configuration ----------------------------------------------------

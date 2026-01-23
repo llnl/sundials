@@ -176,7 +176,7 @@ SUNDIALS License and Notices
 
 
 .. toctree::
-   :caption: GENERAL USER GUIDE
+   :caption: USAGE
    :maxdepth: 1
    :numbered:
    :hidden:

@@ -20,7 +20,52 @@
 
 import os
 import importlib
-import sundials4py
+from sphinx.util import logging
+
+logger = logging.getLogger(__name__)
+
+if os.getenv("SPHINX_MOCK_SUNDIALS4PY", "").lower() in ("true", "1", "yes", "on"):
+    import sys
+    from unittest.mock import MagicMock
+
+    logger.info("Using mock sundials4py module.")
+
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+            if name == "__all__":
+                return []  # Return empty list for __all__
+            return MagicMock()
+
+    # Mock sundials4py and submodules
+    mock_module = Mock()
+    mock_module.__all__ = []
+
+    sys.modules["sundials4py"] = mock_module
+    sys.modules["sundials4py.core"] = Mock()
+    sys.modules["sundials4py.core"].__all__ = []
+    sys.modules["sundials4py.kinsol"] = Mock()
+    sys.modules["sundials4py.kinsol"].__all__ = []
+    sys.modules["sundials4py.cvode"] = Mock()
+    sys.modules["sundials4py.cvode"].__all__ = []
+    sys.modules["sundials4py.cvodes"] = Mock()
+    sys.modules["sundials4py.cvodes"].__all__ = []
+    sys.modules["sundials4py.arkode"] = Mock()
+    sys.modules["sundials4py.arkode"].__all__ = []
+    sys.modules["sundials4py.ida"] = Mock()
+    sys.modules["sundials4py.ida"].__all__ = []
+    sys.modules["sundials4py.idas"] = Mock()
+    sys.modules["sundials4py.idas"].__all__ = []
+
+else:
+
+    try:
+        import sundials4py
+    except ModuleNotFoundError as e:
+        logger.error(
+            f"{e}. Either install sundials4py or set the environment variable SPHINX_MOCK_SUNDIALS4PY to ON."
+        )
+        raise  # Re-raises the same exception
 
 
 def generate_autofunctions_for_submodule(module_name: str):
