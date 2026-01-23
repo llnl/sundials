@@ -86,12 +86,11 @@ void bind_arkode_mristep(nb::module_& m)
 
       int status = MRIStepInnerStepper_GetForcingData(stepper, &tshift, &tscale,
                                                       &forcing_1d, &nforcing);
+      std::vector<N_Vector> forcing(nforcing);
       if (status == ARK_SUCCESS)
       {
-        std::vector<N_Vector> forcing(nforcing);
         for (int i = 0; i < nforcing; i++) { forcing[i] = forcing_1d[i]; }
       }
-
       return std::make_tuple(status, tshift, tscale, forcing, nforcing);
     },
     nb::rv_policy::reference);
