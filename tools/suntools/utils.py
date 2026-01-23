@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -----------------------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
 # Copyright (c) 2025, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -13,14 +15,17 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
+# Shared suntools utilities.
+# -----------------------------------------------------------------------------
 
-"""
-This is a Python library of utilities SUNDIALS developer may find useful.
-Right now it consists of the following modules:
 
-- `logs`: this module has functions for parsing logs produced by `SUNLogger`.
-- `table`: this module has functions for parsing stats output by SUNDIALS
-           integrators in the table format.
-- `csv`: this module has functions for parsing stats output by SUNDIALS
-         integrators in the CSV format.
-"""
+def str2num(s):
+    """Try to convert a string to an int or float"""
+
+    try:
+        return int(s)
+    except ValueError:
+        try:
+            return float(s)
+        except ValueError:
+            return s
