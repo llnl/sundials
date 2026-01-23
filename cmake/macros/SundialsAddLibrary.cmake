@@ -184,11 +184,8 @@ macro(sundials_add_library target)
       target_link_libraries(${obj_target} PRIVATE "${SUNDIALS_RT_LIBRARY}")
     endif()
     if(sundials_add_library_LINK_LIBRARIES)
-      if(${_libtype} MATCHES "STATIC")
-        append_static_suffix(sundials_add_library_LINK_LIBRARIES _all_libs)
-      else()
-        set(_all_libs ${sundials_add_library_LINK_LIBRARIES})
-      endif()
+      dealias_libraries(sundials_add_library_LINK_LIBRARIES _all_libs
+                        ${_lib_suffix})
       # Due to various issues in CMake, particularly
       # https://gitlab.kitware.com/cmake/cmake/-/issues/25365, we create a fake
       # custom target to enforce a build order. Without this, parallel builds
@@ -280,9 +277,8 @@ macro(sundials_add_library target)
       if(sundials_add_library_OBJECT_LIBRARIES)
         if(${_libtype} MATCHES "STATIC")
           # replace alias libraries with proper library (static or shared)
-          dealias_libraries(
-            sundials_add_library_OBJECT_LIBRARIES
-            dealiased_sundials_add_library_OBJECT_LIBRARIES ${_lib_suffix})
+          dealias_libraries(sundials_add_library_OBJECT_LIBRARIES _all_objs
+                            ${_lib_suffix})
         else()
           set(_all_objs ${sundials_add_library_OBJECT_LIBRARIES})
         endif()
