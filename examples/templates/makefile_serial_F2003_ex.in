@@ -35,7 +35,7 @@ F90LIBS  = @LIBS@
 # ------------------------------------------------------------------------------
 
 INCLUDES  = -I${includedir}
-LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ ${F90LIBS}
+LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ -lsundials_fcore_mod -lsundials_core ${F90LIBS}
 LINKFLAGS = -Wl,-rpath,@libdir@
 
 INCLUDES_KLU  = ${INCLUDES} -I@KLU_INCLUDE_DIR@
