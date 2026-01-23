@@ -27,9 +27,7 @@ m.def(
     return SPRKStepGetCurrentMethod_adapt_modifiable_immutable_to_return(
       arkode_mem);
   },
-  nb::arg("arkode_mem"),
-  " Optional output functions\n\n nb::rv_policy::reference",
-  nb::rv_policy::reference);
+  nb::arg("arkode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 // #ifdef __cplusplus
 //
 // #endif

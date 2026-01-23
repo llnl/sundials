@@ -472,20 +472,22 @@ m.def(
 
 m.def(
   "ARKodeGetRootInfo",
-  [](void* arkode_mem) -> std::tuple<int, int>
+  [](void* arkode_mem, std::vector<int> rootsfound_1d) -> int
   {
-    auto ARKodeGetRootInfo_adapt_modifiable_immutable_to_return =
-      [](void* arkode_mem) -> std::tuple<int, int>
+    auto ARKodeGetRootInfo_adapt_arr_ptr_to_std_vector =
+      [](void* arkode_mem, std::vector<int> rootsfound_1d) -> int
     {
-      int rootsfound_adapt_modifiable;
+      int* rootsfound_1d_ptr = rootsfound_1d.empty() ? nullptr
+                                                     : rootsfound_1d.data();
 
-      int r = ARKodeGetRootInfo(arkode_mem, &rootsfound_adapt_modifiable);
-      return std::make_tuple(r, rootsfound_adapt_modifiable);
+      auto lambda_result = ARKodeGetRootInfo(arkode_mem, rootsfound_1d_ptr);
+      return lambda_result;
     };
 
-    return ARKodeGetRootInfo_adapt_modifiable_immutable_to_return(arkode_mem);
+    return ARKodeGetRootInfo_adapt_arr_ptr_to_std_vector(arkode_mem,
+                                                         rootsfound_1d);
   },
-  nb::arg("arkode_mem"));
+  nb::arg("arkode_mem"), nb::arg("rootsfound_1d"));
 
 m.def("ARKodePrintAllStats", ARKodePrintAllStats, nb::arg("arkode_mem"),
       nb::arg("outfile"), nb::arg("fmt"));
