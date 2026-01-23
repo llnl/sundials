@@ -23,12 +23,15 @@ Python
 sundials4py provides official (supported by the SUNDIALS team) Python bindings to much of the 
 SUNDIALS library, allowing you to use SUNDIALS directly from Python.
 
+.. warning::
+
+   sundials4py is in beta and is subject to breaking changes. We welcome feedback on this new feature of SUNDIALS.
+
 .. note::
 
    New SUNDIALS users should first read the :ref:`General User Guide <SUNDIALS>`. 
    The Python User Guide focuses on specific aspects of using SUNDIALS from Python and assumes 
    the user is familiar with SUNDIALS. 
-
 
 .. toctree::
    :maxdepth: 1
