@@ -275,13 +275,9 @@ macro(sundials_add_library target)
 
       set(_object_sources $<TARGET_OBJECTS:${obj_target}>)
       if(sundials_add_library_OBJECT_LIBRARIES)
-        if(${_libtype} MATCHES "STATIC")
-          # replace alias libraries with proper library (static or shared)
-          dealias_libraries(sundials_add_library_OBJECT_LIBRARIES _all_objs
-                            ${_lib_suffix})
-        else()
-          set(_all_objs ${sundials_add_library_OBJECT_LIBRARIES})
-        endif()
+        # replace alias libraries with proper library (static or shared)
+        dealias_libraries(sundials_add_library_OBJECT_LIBRARIES _all_objs
+                          ${_lib_suffix})
         foreach(_tmp ${_all_objs})
           list(APPEND _object_sources $<TARGET_OBJECTS:${_tmp}>)
         endforeach()
