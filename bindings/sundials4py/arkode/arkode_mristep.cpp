@@ -46,12 +46,11 @@ void bind_arkode_mristep(nb::module_& m)
       MRIStepInnerStepper stepper = nullptr;
 
       int status = MRIStepInnerStepper_Create(sunctx, &stepper);
-      if (status)
+      if (status == ARK_SUCCESS)
       {
-        throw sundials4py::error_returned("MRIStepInnerStepper_Create failed");
+        auto fn_table   = new mristepinnerstepper_user_supplied_fn_table;
+        stepper->python = static_cast<void*>(fn_table);
       }
-      auto fn_table   = new mristepinnerstepper_user_supplied_fn_table;
-      stepper->python = static_cast<void*>(fn_table);
 
       return std::make_tuple(status,
                              our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
@@ -67,11 +66,6 @@ void bind_arkode_mristep(nb::module_& m)
 
       int status = MRIStepInnerStepper_CreateFromSUNStepper(stepper,
                                                             &inner_stepper);
-      if (status)
-      {
-        throw sundials4py::error_returned(
-          "MRIStepInnerStepper_CreateFromSUNStepper failed");
-      }
 
       return std::make_tuple(status,
                              our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
@@ -92,15 +86,11 @@ void bind_arkode_mristep(nb::module_& m)
 
       int status = MRIStepInnerStepper_GetForcingData(stepper, &tshift, &tscale,
                                                       &forcing_1d, &nforcing);
-      if (status)
+      if (status == ARK_SUCCESS)
       {
-        printf("status = %d\n", status);
-        throw sundials4py::error_returned(
-          "MRIStepInnerStepper_GetForcingData failed");
+        std::vector<N_Vector> forcing(nforcing);
+        for (int i = 0; i < nforcing; i++) { forcing[i] = forcing_1d[i]; }
       }
-
-      std::vector<N_Vector> forcing(nforcing);
-      for (int i = 0; i < nforcing; i++) { forcing[i] = forcing_1d[i]; }
 
       return std::make_tuple(status, tshift, tscale, forcing, nforcing);
     },
@@ -113,10 +103,6 @@ void bind_arkode_mristep(nb::module_& m)
       MRIStepInnerStepper stepper = nullptr;
 
       int status = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &stepper);
-      if (status)
-      {
-        sundials4py::error_returned("ARKodeCreateMRIStepInnerStepper failed");
-      }
 
       return std::make_tuple(status,
                              our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
