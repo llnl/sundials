@@ -10,6 +10,10 @@ and IDAS, respectively.
 
 **Bug Fixes**
 
+Fixed a CMake bug which resulted in static targets depending on shared targets
+when building both types of libraries in the same build
+(`Issue #692 <https://github.com/LLNL/sundials/issues/692>`__).
+
 On the initial time step with a user-supplied initial step size, ARKODE and
 CVODE(S) will now return ``ARK_TOO_CLOSE`` or ``CV_TOO_CLOSE``, respectively,
 when the requested output time is the same as the initial time (or within
