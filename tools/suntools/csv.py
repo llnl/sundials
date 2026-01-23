@@ -18,17 +18,7 @@
 # Function to parse SUNDIALS CSV output files
 # -----------------------------------------------------------------------------
 
-
-def num(s):
-    """Try to convert a string to an int or float"""
-
-    try:
-        return int(s)
-    except ValueError:
-        try:
-            return float(s)
-        except ValueError:
-            return s
+from .utils import str2num
 
 
 def keys(filename):
@@ -82,7 +72,7 @@ def read(filename):
         for row in reader:
             values = row[1::2]
             for k, v in zip(fields, values):
-                csv_dict[k].append(num(v))
+                csv_dict[k].append(str2num(v))
 
     return csv_dict
 
