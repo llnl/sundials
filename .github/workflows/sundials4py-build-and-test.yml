@@ -45,7 +45,7 @@ jobs:
     steps:
     - name: Set macOS deployment target
       if: contains(matrix.os, 'macos')
-      run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> $GITHUB_ENV
+      run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> "$GITHUB_ENV"
 
     - uses: actions/checkout@v5
       with:
@@ -75,7 +75,7 @@ jobs:
     steps:
     - name: Set macOS deployment target
       if: contains(matrix.os, 'macos')
-      run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> $GITHUB_ENV
+      run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> "$GITHUB_ENV"
 
     - uses: actions/checkout@v5
       with:
@@ -89,7 +89,7 @@ jobs:
     - name: Rename wheels to include config
       run: |
         for whl in wheelhouse/*.whl; do
-          mv "$whl" "$(echo $whl | sed 's/\.whl$/-${{ matrix.precision }}-${{ matrix.index }}.whl/')"
+          mv "$whl" "${whl%.whl}-${{ matrix.precision }}-${{ matrix.index }}.whl"
         done
         ls -al wheelhouse/
       shell: bash
