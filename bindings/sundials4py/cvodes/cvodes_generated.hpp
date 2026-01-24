@@ -114,6 +114,9 @@ m.def("CVodeSVtolerances", CVodeSVtolerances, nb::arg("cvode_mem"),
 m.def("CVodeSetConstraints", CVodeSetConstraints, nb::arg("cvode_mem"),
       nb::arg("constraints"));
 
+m.def("CVodeSetMaxNumConstraintFails", CVodeSetMaxNumConstraintFails,
+      nb::arg("cvode_mem"), nb::arg("max_fails"));
+
 m.def("CVodeSetDeltaGammaMaxLSetup", CVodeSetDeltaGammaMaxLSetup,
       nb::arg("cvode_mem"), nb::arg("dgmax_lsetup"));
 
@@ -677,6 +680,45 @@ m.def(
     };
 
     return CVodeGetNumStepSolveFails_adapt_modifiable_immutable_to_return(
+      cvode_mem);
+  },
+  nb::arg("cvode_mem"));
+
+m.def(
+  "CVodeGetNumConstraintFails",
+  [](void* cvode_mem) -> std::tuple<int, long>
+  {
+    auto CVodeGetNumConstraintFails_adapt_modifiable_immutable_to_return =
+      [](void* cvode_mem) -> std::tuple<int, long>
+    {
+      long num_fails_out_adapt_modifiable;
+
+      int r = CVodeGetNumConstraintFails(cvode_mem,
+                                         &num_fails_out_adapt_modifiable);
+      return std::make_tuple(r, num_fails_out_adapt_modifiable);
+    };
+
+    return CVodeGetNumConstraintFails_adapt_modifiable_immutable_to_return(
+      cvode_mem);
+  },
+  nb::arg("cvode_mem"));
+
+m.def(
+  "CVodeGetNumConstraintCorrections",
+  [](void* cvode_mem) -> std::tuple<int, long>
+  {
+    auto CVodeGetNumConstraintCorrections_adapt_modifiable_immutable_to_return =
+      [](void* cvode_mem) -> std::tuple<int, long>
+    {
+      long num_corrections_out_adapt_modifiable;
+
+      int r =
+        CVodeGetNumConstraintCorrections(cvode_mem,
+                                         &num_corrections_out_adapt_modifiable);
+      return std::make_tuple(r, num_corrections_out_adapt_modifiable);
+    };
+
+    return CVodeGetNumConstraintCorrections_adapt_modifiable_immutable_to_return(
       cvode_mem);
   },
   nb::arg("cvode_mem"));

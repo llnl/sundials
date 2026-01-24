@@ -128,6 +128,9 @@ m.def("IDASetId", IDASetId, nb::arg("ida_mem"), nb::arg("id"));
 m.def("IDASetConstraints", IDASetConstraints, nb::arg("ida_mem"),
       nb::arg("constraints"));
 
+m.def("IDASetMaxNumConstraintFails", IDASetMaxNumConstraintFails,
+      nb::arg("ida_mem"), nb::arg("max_fails"));
+
 m.def("IDASetEtaFixedStepBounds", IDASetEtaFixedStepBounds, nb::arg("ida_mem"),
       nb::arg("eta_min_fx"), nb::arg("eta_max_fx"));
 
@@ -507,6 +510,43 @@ m.def("IDAGetErrWeights", IDAGetErrWeights, nb::arg("ida_mem"),
 
 m.def("IDAGetEstLocalErrors", IDAGetEstLocalErrors, nb::arg("ida_mem"),
       nb::arg("ele"));
+
+m.def(
+  "IDAGetNumConstraintFails",
+  [](void* ida_mem) -> std::tuple<int, long>
+  {
+    auto IDAGetNumConstraintFails_adapt_modifiable_immutable_to_return =
+      [](void* ida_mem) -> std::tuple<int, long>
+    {
+      long num_fails_out_adapt_modifiable;
+
+      int r = IDAGetNumConstraintFails(ida_mem, &num_fails_out_adapt_modifiable);
+      return std::make_tuple(r, num_fails_out_adapt_modifiable);
+    };
+
+    return IDAGetNumConstraintFails_adapt_modifiable_immutable_to_return(ida_mem);
+  },
+  nb::arg("ida_mem"));
+
+m.def(
+  "IDAGetNumConstraintCorrections",
+  [](void* ida_mem) -> std::tuple<int, long>
+  {
+    auto IDAGetNumConstraintCorrections_adapt_modifiable_immutable_to_return =
+      [](void* ida_mem) -> std::tuple<int, long>
+    {
+      long num_corrections_out_adapt_modifiable;
+
+      int r =
+        IDAGetNumConstraintCorrections(ida_mem,
+                                       &num_corrections_out_adapt_modifiable);
+      return std::make_tuple(r, num_corrections_out_adapt_modifiable);
+    };
+
+    return IDAGetNumConstraintCorrections_adapt_modifiable_immutable_to_return(
+      ida_mem);
+  },
+  nb::arg("ida_mem"));
 
 m.def(
   "IDAGetNumGEvals",
