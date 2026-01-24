@@ -3,6 +3,10 @@
 
 **Major Features**
 
+SUNDIALS now has official Python interfaces! With this release, we are shipping a **beta version** of
+the sundials4py Python module (created with nanobind and litgen). sundials4py provides explicit
+interfaces to most features of SUNDIALS. 
+
 **New Features and Enhancements**
 
 Added functions to CVODE(S) and IDA(S) to set the maximum number of inequality
@@ -32,6 +36,13 @@ constraints, an infinitely large step size in the next step attempt.
 In CVODES and IDA, added missing return flag names to
 :c:func:`CVodeGetReturnFlagName` and :c:func:`IDAGetReturnFlagName`,
 respectively.
+
+Fixed a CMake bug which resulted in static targets depending on shared targets
+when building both types of libraries in the same build
+(`Issue #692 <https://github.com/LLNL/sundials/issues/692>`__).
+
+Some installed Fortran example makefiles were not linking to ``sundials_fcore_mod``
+and ``sundials_core`` libraries as they should be. This is now fixed.
 
 On the initial time step with a user-supplied initial step size, ARKODE and
 CVODE(S) will now return ``ARK_TOO_CLOSE`` or ``CV_TOO_CLOSE``, respectively,

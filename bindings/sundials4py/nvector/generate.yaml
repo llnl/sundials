@@ -1,0 +1,106 @@
+# -----------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# This YAML file is used to instruct the generate.py script on
+# how to generate some of the nanobind code needed for the
+# core module of sundials4py.
+# -----------------------------------------------------------------
+
+modules:
+  all:
+    macro_define_include_by_name__regex:
+      - "^SUN_"
+    fn_exclude_by_name__regex:
+      # Don't interface the implementation specific overrides of the generic routines
+      - "^N_VGetVectorID_.*"
+      - "^N_VCloneEmpty_.*"
+      - "^N_VClone_.*"
+      - "^N_VDestroy_.*"
+      - "^N_VAbs_.*"
+      - "^N_VAddConst_.*"
+      - "^N_VBufPack_.*"
+      - "^N_VBufSize_.*"
+      - "^N_VBufUnpack_.*"
+      - "^N_VCloneEmptyVectorArray_.*"
+      - "^N_VCloneVectorArray_.*"
+      - "^N_VCompare_.*"
+      - "^N_VConst_.*"
+      - "^N_VConstrMask_.*"
+      - "^N_VConstrMaskLocal_.*"
+      - "^N_VConstVectorArray_.*"
+      - "^N_VDestroyVectorArray_.*"
+      - "^N_VDiv_.*"
+      - "^N_VDotProd_.*"
+      - "^N_VDotProdLocal_.*"
+      - "^N_VDotProdMulti_.*"
+      - "^N_VDotProdMultiAllReduce_.*"
+      - "^N_VDotProdMultiLocal_.*"
+      - "^N_VGetArrayPointer_.*"
+      - "^N_VGetCommunicator_.*"
+      - "^N_VGetDeviceArrayPointer_.*"
+      - "^N_VGetLength_.*"
+      - "^N_VGetLocalLength_.*"
+      - "^N_VGetVecAtIndexVectorArray_.*"
+      - "^N_VInv_.*"
+      - "^N_VInvTest_.*"
+      - "^N_VInvTestLocal_.*"
+      - "^N_VL1Norm_.*"
+      - "^N_VL1NormLocal_.*"
+      - "^N_VLinearCombination_.*"
+      - "^N_VLinearCombinationVectorArray_.*"
+      - "^N_VLinearSum_.*"
+      - "^N_VLinearSumVectorArray_.*"
+      - "^N_VMaxNorm_.*"
+      - "^N_VMaxNormLocal_.*"
+      - "^N_VMin_.*"
+      - "^N_VMinLocal_.*"
+      - "^N_VMinQuotient_.*"
+      - "^N_VMinQuotientLocal_.*"
+      - "^N_VNewVectorArray_.*"
+      - "^N_VPrint_.*"
+      - "^N_VPrintFile_.*"
+      - "^N_VProd_.*"
+      - "^N_VScale_.*"
+      - "^N_VScaleAddMulti_.*"
+      - "^N_VScaleAddMultiVectorArray_.*"
+      - "^N_VScaleVectorArray_.*"
+      - "^N_VSetArrayPointer_.*"
+      - "^N_VSetVecAtIndexVectorArray_.*"
+      - "^N_VSpace_.*"
+      - "^N_VWL2Norm_.*"
+      - "^N_VWrmsNorm_.*"
+      - "^N_VWrmsNormMask_.*"
+      - "^N_VWrmsNormMaskVectorArray_.*"
+      - "^N_VWrmsNormVectorArray_.*"
+      - "^N_VWSqrSumLocal_.*"
+      - "^N_VWSqrSumMaskLocal_.*"
+  nvector_serial:
+    path: nvector/nvector_serial_generated.hpp
+    headers:
+    - ../../include/nvector/nvector_serial.h
+  nvector_manyvector:
+    path: nvector/nvector_manyvector_generated.hpp
+    headers:
+    - ../../include/nvector/nvector_manyvector.h
+    fn_exclude_by_name__regex:
+    # N_VNew_ManyVector takes an array of N_Vectors for the subvectors. We need to keep
+    # the subvectors alive as long as the ManyVector exists. Since we also need to keep 
+    # the SUNContext alive, this case falls outside what our litgen extension adapt_sundials_types_returns.py
+    # can currently handle, so we manually bind to it.
+    - "^N_VNew_ManyVector$"
+    # Getting and setting array pointers requires us to do something custom
+    - "^N_VGetSubvectorArrayPointer_ManyVector$"
+    - "^N_VSetSubvectorArrayPointer_ManyVector$"

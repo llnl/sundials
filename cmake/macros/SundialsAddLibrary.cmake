@@ -184,11 +184,8 @@ macro(sundials_add_library target)
       target_link_libraries(${obj_target} PRIVATE "${SUNDIALS_RT_LIBRARY}")
     endif()
     if(sundials_add_library_LINK_LIBRARIES)
-      if(${_libtype} MATCHES "STATIC")
-        append_static_suffix(sundials_add_library_LINK_LIBRARIES _all_libs)
-      else()
-        set(_all_libs ${sundials_add_library_LINK_LIBRARIES})
-      endif()
+      dealias_libraries(sundials_add_library_LINK_LIBRARIES _all_libs
+                        ${_lib_suffix})
       # Due to various issues in CMake, particularly
       # https://gitlab.kitware.com/cmake/cmake/-/issues/25365, we create a fake
       # custom target to enforce a build order. Without this, parallel builds
@@ -278,11 +275,9 @@ macro(sundials_add_library target)
 
       set(_object_sources $<TARGET_OBJECTS:${obj_target}>)
       if(sundials_add_library_OBJECT_LIBRARIES)
-        if(${_libtype} MATCHES "STATIC")
-          append_static_suffix(sundials_add_library_OBJECT_LIBRARIES _all_objs)
-        else()
-          set(_all_objs ${sundials_add_library_OBJECT_LIBRARIES})
-        endif()
+        # replace alias libraries with proper library (static or shared)
+        dealias_libraries(sundials_add_library_OBJECT_LIBRARIES _all_objs
+                          ${_lib_suffix})
         foreach(_tmp ${_all_objs})
           list(APPEND _object_sources $<TARGET_OBJECTS:${_tmp}>)
         endforeach()
@@ -304,8 +299,12 @@ macro(sundials_add_library target)
                               PRIVATE "${SUNDIALS_RT_LIBRARY}")
       endif()
       if(sundials_add_library_LINK_LIBRARIES)
+        # replace alias libraries with proper library (static or shared)
+        dealias_libraries(
+          sundials_add_library_LINK_LIBRARIES
+          dealiased_sundials_add_library_LINK_LIBRARIES ${_lib_suffix})
         target_link_libraries(${_actual_target_name}
-                              ${sundials_add_library_LINK_LIBRARIES})
+                              ${dealiased_sundials_add_library_LINK_LIBRARIES})
       endif()
 
       if(SUNDIALS_BUILD_WITH_PROFILING)
@@ -538,12 +537,14 @@ macro(sundials_add_f2003_library target)
               ${sundials_add_f2003_library_UNPARSED_ARGUMENTS})
 endmacro()
 
-macro(append_static_suffix libs_in libs_out)
+macro(dealias_libraries libs_in libs_out lib_suffix)
   set(${libs_out} "")
   foreach(_lib ${${libs_in}})
-    if(TARGET ${_lib}${_STATIC_LIB_SUFFIX})
-      list(APPEND ${libs_out} ${_lib}${_STATIC_LIB_SUFFIX})
+    if(TARGET ${_lib}${lib_suffix})
+      list(APPEND ${libs_out} ${_lib}${lib_suffix})
     else()
+      # handle imported targets (e.g., LAPACK::LAPACK, BLAS::BLAS, etc.) and
+      # visibility modifiers (PUBLIC, PRIVATE etc.)
       list(APPEND ${libs_out} ${_lib})
     endif()
   endforeach()

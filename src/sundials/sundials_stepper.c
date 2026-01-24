@@ -23,6 +23,11 @@
 #include "sundials/sundials_types.h"
 #include "sundials_stepper_impl.h"
 
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNStepperFunctionTable_Destroy(void* ptr);
+#endif
+
 SUNErrCode SUNStepper_Create(SUNContext sunctx, SUNStepper* stepper_ptr)
 {
   SUNFunctionBegin(sunctx);
@@ -60,7 +65,9 @@ SUNErrCode SUNStepper_Destroy(SUNStepper* stepper_ptr)
     const SUNStepper_Ops ops = (*stepper_ptr)->ops;
     if (ops && ops->destroy) { ops->destroy(*stepper_ptr); }
     free(ops);
-    free((*stepper_ptr)->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+    SUNStepperFunctionTable_Destroy((*stepper_ptr)->python);
+#endif
     (*stepper_ptr)->python = NULL;
     free(*stepper_ptr);
     *stepper_ptr = NULL;

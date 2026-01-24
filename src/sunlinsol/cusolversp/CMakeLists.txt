@@ -27,8 +27,15 @@ sundials_add_library(
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES
-  LINK_LIBRARIES PUBLIC sundials_sunmatrixcusparse CUDA::cusolver PRIVATE
-                 CUDA::cusparse
+  LINK_LIBRARIES
+    PUBLIC
+    sundials_sunmatrixcusparse
+    CUDA::cusolver
+    PRIVATE
+    CUDA::cusparse
+    CUDA::cublas
+    CUDA::cublasLt
+    CUDA::culibos
   OUTPUT_NAME sundials_sunlinsolcusolversp
   VERSION ${sunlinsollib_VERSION}
   SOVERSION ${sunlinsollib_SOVERSION})

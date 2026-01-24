@@ -243,6 +243,10 @@ if(SUNDIALS_ENABLE_EXTERNAL_ADDONS)
   add_subdirectory(external)
 endif()
 
+if(SUNDIALS_ENABLE_PYTHON)
+  add_subdirectory(bindings/sundials4py)
+endif()
+
 # ===============================================================
 # Install configuration header files and license file.
 # ===============================================================

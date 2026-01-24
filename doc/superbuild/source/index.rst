@@ -208,6 +208,7 @@ SUNDIALS License and Notices
    :hidden:
 
    Fortran/index.rst
+   Python/index.rst
 
 .. toctree::
    :caption: EXAMPLES

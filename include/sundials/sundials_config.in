@@ -276,6 +276,9 @@
 /* SYCL options */
 #cmakedefine SUNDIALS_SYCL_2020_UNSUPPORTED
 
+/* Python options */
+#cmakedefine SUNDIALS_ENABLE_PYTHON
+
 
 /* ------------------------------------------------------------------
  * SUNDIALS modules enabled

@@ -1,8 +1,10 @@
-sphinx >=4.0.0
-sphinx-fortran
+numpydoc
+sphinx >=6.0.0
 sphinx_rtd_theme
-sphinxcontrib.bibtex
 sphinx-copybutton
+sphinx-fortran
+sphinx-multitoc-numbering
 sphinx-toolbox
 sphinxcontrib-googleanalytics
-sphinx-multitoc-numbering
+sphinxcontrib.bibtex
+

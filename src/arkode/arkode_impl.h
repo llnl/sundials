@@ -699,6 +699,11 @@ SUNErrCode arkSUNStepperSelfDestruct(SUNStepper stepper);
 int arkSetForcePass(void* arkode_mem, sunbooleantype force_pass);
 int arkGetLastKFlag(void* arkode_mem, int* last_kflag);
 
+/* function used to free the python user supplied function table  */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void arkode_user_supplied_fn_table_destroy(void* ptr);
+#endif
+
 /*===============================================================
   Reusable ARKODE Error Messages
   ===============================================================*/

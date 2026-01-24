@@ -76,6 +76,7 @@ with support by the `US Department of Energy <http://www.doe.gov>`_,
    Constants
    Butcher
    Fortran/index.rst
+   Python/index.rst
    History_link.rst
    Changelog_link.rst
    References

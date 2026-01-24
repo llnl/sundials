@@ -799,7 +799,9 @@ void KINFree(void** kinmem)
   /* free orthogonalization workspace */
   KINFreeOrth(kin_mem);
 
-  free(kin_mem->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  kinsol_user_supplied_fn_table_destroy(kin_mem->python);
+#endif
   kin_mem->python = NULL;
 
   free(*kinmem);

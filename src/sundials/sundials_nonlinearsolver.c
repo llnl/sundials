@@ -34,6 +34,11 @@ static SUNProfiler getSUNProfiler(SUNNonlinearSolver NLS)
 }
 #endif
 
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNNonlinearSolverFunctionTable_Destroy(void* ptr);
+#endif
+
 /* internal function prototypes */
 SUNErrCode sunnlsSetFromCommandLine(SUNNonlinearSolver NLS, const char* NLSid,
                                     int argc, char* argv[]);
@@ -97,7 +102,9 @@ void SUNNonlinSolFreeEmpty(SUNNonlinearSolver NLS)
   free(NLS->ops);
   NLS->ops = NULL;
 
-  free(NLS->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNNonlinearSolverFunctionTable_Destroy(NLS->python);
+#endif
   NLS->python = NULL;
 
   /* free overall N_Vector object and return */
@@ -160,7 +167,9 @@ SUNErrCode SUNNonlinSolFree(SUNNonlinearSolver NLS)
   NLS->content = NULL;
   free(NLS->ops);
   NLS->ops = NULL;
-  free(NLS->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNNonlinearSolverFunctionTable_Destroy(NLS->python);
+#endif
   NLS->python = NULL;
   free(NLS);
   NLS = NULL;

@@ -1,0 +1,101 @@
+name: sundials4py build-and-test
+
+on:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
+  workflow_dispatch:
+
+# Cancel any in-progress workflow runs
+concurrency:
+  group: sundials4py-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  sundials4py-build-sdist:
+    name: Build SDist
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+      with:
+        submodules: true
+
+    - name: Build SDist
+      run: pipx run build --sdist
+
+    - name: Check metadata
+      run: pipx run twine check dist/*
+
+    - uses: actions/upload-artifact@v5
+      with:
+        name: dist-sdist
+        path: dist/*.tar.gz
+
+  sundials4py-build-wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-15-intel, windows-latest]
+
+    steps:
+    - name: Set macOS deployment target
+      if: contains(matrix.os, 'macos')
+      run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> "$GITHUB_ENV"
+
+    - uses: actions/checkout@v5
+      with:
+        submodules: true
+
+    - uses: pypa/cibuildwheel@v2.22
+      env:
+        CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v5
+      with:
+        path: wheelhouse/*.whl
+        name: dist-${{ matrix.os }}
+
+
+  sundials4py-build-wheels-extra:
+    name: Build extra wheels on ${{ matrix.os }} (${{ matrix.precision }}/${{ matrix.index }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        precision: [single, double]
+        index: [32, 64]
+
+    steps:
+    - name: Set macOS deployment target
+      if: contains(matrix.os, 'macos')
+      run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> "$GITHUB_ENV"
+
+    - uses: actions/checkout@v5
+      with:
+        submodules: true
+
+    - uses: pypa/cibuildwheel@v2.22
+      env:
+        CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
+        CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
+
+    - name: Rename wheels to include config
+      run: |
+        for whl in wheelhouse/*.whl; do
+          mv "$whl" "${whl%.whl}-${{ matrix.precision }}-${{ matrix.index }}.whl"
+        done
+        ls -al wheelhouse/
+      shell: bash
+
+    - name: Upload wheels as artifacts
+      uses: actions/upload-artifact@v5
+      with:
+        path: wheelhouse/*.whl
+        name: dist-extra-${{ matrix.os }}-${{ matrix.precision }}-${{ matrix.index }}
