@@ -350,6 +350,10 @@ int mriStep_ComputeInnerForcing(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
 int mriStep_RKCoeffs(MRIStepCoupling MRIC, int is, int* stage_map,
                      sunrealtype* Ae_row, sunrealtype* Ai_row);
 
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void mristepinnerstepper_user_supplied_fn_table_destroy(void* ptr);
+#endif
+
 /*===============================================================
   MRIStep SUNAdaptController wrapper module -- this is used to
   insert MRIStep in-between ARKODE at the "slow" time scale, and

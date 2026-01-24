@@ -41,6 +41,7 @@ CVODES Documentation
    sundials/Install_link.rst
    Constants
    Fortran/index.rst
+   Python/index.rst
    History_link.rst
    Changelog_link.rst
    References

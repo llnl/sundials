@@ -4462,7 +4462,9 @@ void CVodeFree(void** cvode_mem)
 
   if (cv_mem->proj_mem) { cvProjFree(&(cv_mem->proj_mem)); }
 
-  free(cv_mem->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  cvode_user_supplied_fn_table_destroy(cv_mem->python);
+#endif
   cv_mem->python = NULL;
 
   free(*cvode_mem);

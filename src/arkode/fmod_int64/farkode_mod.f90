@@ -2697,18 +2697,18 @@ fresult = swigc_FARKodeRootInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FARKodeSetRootDirection(arkode_mem, rootdir) &
+function FARKodeSetRootDirection(arkode_mem, rootdir_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-integer(C_INT), dimension(*), target, intent(inout) :: rootdir
+integer(C_INT), dimension(*), target, intent(inout) :: rootdir_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(rootdir(1))
+farg2 = c_loc(rootdir_1d(1))
 fresult = swigc_FARKodeSetRootDirection(farg1, farg2)
 swig_result = fresult
 end function
@@ -3819,18 +3819,18 @@ fresult = swigc_FARKodeGetNumGEvals(farg1, farg2)
 swig_result = fresult
 end function
 
-function FARKodeGetRootInfo(arkode_mem, rootsfound) &
+function FARKodeGetRootInfo(arkode_mem, rootsfound_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-integer(C_INT), dimension(*), target, intent(inout) :: rootsfound
+integer(C_INT), dimension(*), target, intent(inout) :: rootsfound_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(rootsfound(1))
+farg2 = c_loc(rootsfound_1d(1))
 fresult = swigc_FARKodeGetRootInfo(farg1, farg2)
 swig_result = fresult
 end function

@@ -1273,7 +1273,9 @@ void ARKodeFree(void** arkode_mem)
     ark_mem->relax_mem = NULL;
   }
 
-  free(ark_mem->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  arkode_user_supplied_fn_table_destroy(ark_mem->python);
+#endif
   ark_mem->python = NULL;
 
   free(*arkode_mem);

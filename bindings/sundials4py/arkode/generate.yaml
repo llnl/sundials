@@ -1,0 +1,150 @@
+# -----------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# This YAML file is used to instruct the generate.py script on
+# how to generate some of the nanobind code needed for the
+# ARKODE module of sundials4py.
+# -----------------------------------------------------------------
+
+modules:
+  all:
+    fn_exclude_by_name__regex:
+    - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII
+    - "Destroy"
+    - "Space" # Space functions are deprecated, so don't expose them in Python
+    # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
+    - "SetOptions" 
+    macro_define_include_by_name__regex:
+    - "^SUN_"
+    - "^ARK_"
+    - "^ARKLS_"
+    - "^ARKODE_"
+    fn_params_optional_with_default_null:
+      "SetLinearSolver":
+      - "A" 
+  arkode:
+    path: arkode/arkode_generated.hpp
+    headers:
+    - ../../include/arkode/arkode.h
+    - ../../include/arkode/arkode_ls.h
+    - ../../include/arkode/arkode_butcher.h
+    - ../../include/arkode/arkode_butcher_erk.h
+    - ../../include/arkode/arkode_butcher_dirk.h
+    - ../../include/arkode/arkode_sprk.h
+    sundials_pointer_types:
+    - "ARKodeButcherTable"
+    - "ARKodeSPRKTable"
+    fn_exclude_by_name__regex:
+    # we dont interface the Alloc functions as they are not needed from Python
+    - "^ARKodeButcherTable_Alloc$"
+    - "^ARKodeSPRKTable_Alloc$"
+    # we use user_data for sneaking in python contexts, so we don't interface these
+    - "^ARKodeGetUserData$" 
+    - "^ARKodeSetUserData$" 
+    # generator cannot handle setting of function pointers, so we do something custom
+    - "^ARKodeSet.*Fn$" 
+    - "^ARKodeSetWFtolerances$"
+    - "^ARKodeSet.*Preconditioner$"
+    - "^ARKodeSet.*Times$"
+    - "^ARKodeWFtolerances$"
+    - "^ARKodeResFtolerance$"
+    - "^ARKodeRootInit$"
+    - "^ARKodeResize$"
+    # generator cannot handle functions with optional (i.e. NULLable) parameters that is not 
+    # followed by only optional parameters, so we have to do something custom
+    - "^ARKodeSetMassLinearSolver$"
+    # TODO(CJB): interface this (in the future?)
+    # generator cannot yet handle mixing pointer outputs and ** in the same function
+    - "^ARKodeGetNonlinearSystemData$"
+  arkstep:
+    path: arkode/arkode_arkstep_generated.hpp
+    headers:
+    - ../../include/arkode/arkode_arkstep.h
+    fn_exclude_by_name__regex:
+    # we dont bind the ARKStepCreate function as we need to do something custom
+    - "^ARKStepCreate$"
+    - "^ARKStepCreateAdjointStepper$"
+    - "^ARKStepReInit$"
+  erkstep:
+    path: arkode/arkode_erkstep_generated.hpp
+    headers:
+    - ../../include/arkode/arkode_erkstep.h
+    fn_exclude_by_name__regex:
+    # we dont bind the ERKStepCreate function as we need to do something custom
+    - "^ERKStepCreate$"
+    - "^ERKStepCreateAdjointStepper$"
+    # reinit also requires custom handling due to function pointers
+    - "^ERKStepReInit$"
+  sprkstep:
+    path: arkode/arkode_sprkstep_generated.hpp
+    headers:
+    - ../../include/arkode/arkode_sprkstep.h
+    fn_exclude_by_name__regex:
+    - "^SPRKStepCreate$"
+    # reinit also requires custom handling due to function pointers
+    - "^SPRKStepReInit$"
+  lsrkstep:
+    path: arkode/arkode_lsrkstep_generated.hpp
+    headers:
+    - ../../include/arkode/arkode_lsrkstep.h
+    fn_exclude_by_name__regex:
+    # these functions take function pointers, so we have to do something custom
+    - "^LSRKStepCreate.*$"
+    - "^LSRKStepReInit.*$"
+    - "^LSRKStepSetDomEigFn$"
+  mristep:
+    path: arkode/arkode_mristep_generated.hpp
+    headers:
+    - ../../include/arkode/arkode_mristep.h
+    sundials_pointer_types:
+    - "MRIStepCoupling"
+    - "MRIStepInnerStepper"
+    fn_exclude_by_name__regex:
+    # we don't allow alloc to be used from Python
+    - "^MRIStepCoupling_Alloc$"
+    # we do custom handling of Create routines
+    - "^MRIStepCreate$"
+    - "^MRIStepInnerStepper_Create$"
+    - "^MRIStepInnerStepper_CreateFromSUNStepper$"
+    # reinit also requires custom handling due to function pointers
+    - "^MRIStepReInit$"
+    # We steal the MRIStepInnerStepper content for the callback table, so don't interface the set/get
+    - "^MRIStepInnerStepper_GetContent$"
+    - "^MRIStepInnerStepper_SetContent$"
+    # we have to do custom things to handle setting function pointers
+    - "^MRIStepInnerStepper_Set.*Fn$"
+    - "^MRIStepSetPreInnerFn$"
+    - "^MRIStepSetPostInnerFn$"
+    # This function takes a pointer to a pointer which the generator cannot yet handle, so we do custom handling
+    - "^MRIStepInnerStepper_GetForcingData$"
+  forcingstep:
+    path: arkode/arkode_forcingstep_generated.hpp
+    headers:
+    - ../../include/arkode/arkode_forcingstep.h
+    fn_exclude_by_name__regex:
+    - "^ForcingStepCreate$"
+  splittingstep:
+    path: arkode/arkode_splittingstep_generated.hpp
+    headers:
+    - ../../include/arkode/arkode_splittingstep.h
+    sundials_pointer_types:
+    - "SplittingStepCoefficients"
+    fn_exclude_by_name__regex:
+    # we don't allow alloc to be used from Python
+    - "^SplittingStepCoefficients_Alloc$"
+    # we do custom handling of the stepper create/reinit
+    - "^SplittingStepCreate$"
+    - "^SplittingStepReInit$"

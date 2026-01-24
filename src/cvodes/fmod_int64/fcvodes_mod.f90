@@ -3454,18 +3454,18 @@ fresult = swigc_FCVodeRootInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeSetRootDirection(cvode_mem, rootdir) &
+function FCVodeSetRootDirection(cvode_mem, rootdir_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-integer(C_INT), dimension(*), target, intent(inout) :: rootdir
+integer(C_INT), dimension(*), target, intent(inout) :: rootdir_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(rootdir(1))
+farg2 = c_loc(rootdir_1d(1))
 fresult = swigc_FCVodeSetRootDirection(farg1, farg2)
 swig_result = fresult
 end function
@@ -3913,18 +3913,18 @@ fresult = swigc_FCVodeGetNumGEvals(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetRootInfo(cvode_mem, rootsfound) &
+function FCVodeGetRootInfo(cvode_mem, rootsfound_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-integer(C_INT), dimension(*), target, intent(inout) :: rootsfound
+integer(C_INT), dimension(*), target, intent(inout) :: rootsfound_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(rootsfound(1))
+farg2 = c_loc(rootsfound_1d(1))
 fresult = swigc_FCVodeGetRootInfo(farg1, farg2)
 swig_result = fresult
 end function
@@ -4918,69 +4918,69 @@ fresult = swigc_FCVodeGetNumStepSensSolveFails(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetStgrSensNumNonlinSolvIters(cvode_mem, nstgr1niters) &
+function FCVodeGetStgrSensNumNonlinSolvIters(cvode_mem, nstgr1niters_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1niters
+integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1niters_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(nstgr1niters(1))
+farg2 = c_loc(nstgr1niters_1d(1))
 fresult = swigc_FCVodeGetStgrSensNumNonlinSolvIters(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetStgrSensNumNonlinSolvConvFails(cvode_mem, nstgr1nfails) &
+function FCVodeGetStgrSensNumNonlinSolvConvFails(cvode_mem, nstgr1nfails_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1nfails
+integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1nfails_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(nstgr1nfails(1))
+farg2 = c_loc(nstgr1nfails_1d(1))
 fresult = swigc_FCVodeGetStgrSensNumNonlinSolvConvFails(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetStgrSensNonlinSolvStats(cvode_mem, nstgr1niters, nstgr1nfails) &
+function FCVodeGetStgrSensNonlinSolvStats(cvode_mem, nstgr1niters_1d, nstgr1nfails_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1niters
-integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1nfails
+integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1niters_1d
+integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1nfails_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = cvode_mem
-farg2 = c_loc(nstgr1niters(1))
-farg3 = c_loc(nstgr1nfails(1))
+farg2 = c_loc(nstgr1niters_1d(1))
+farg3 = c_loc(nstgr1nfails_1d(1))
 fresult = swigc_FCVodeGetStgrSensNonlinSolvStats(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeGetNumStepStgrSensSolveFails(cvode_mem, nstgr1ncfails) &
+function FCVodeGetNumStepStgrSensSolveFails(cvode_mem, nstgr1ncfails_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1ncfails
+integer(C_LONG), dimension(*), target, intent(inout) :: nstgr1ncfails_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(nstgr1ncfails(1))
+farg2 = c_loc(nstgr1ncfails_1d(1))
 fresult = swigc_FCVodeGetNumStepStgrSensSolveFails(farg1, farg2)
 swig_result = fresult
 end function

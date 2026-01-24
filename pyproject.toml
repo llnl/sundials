@@ -1,3 +1,85 @@
+[build-system]
+requires = ["scikit-build-core[pyproject] >=0.4.3", "nanobind"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "sundials4py"
+version = "7.6.0"
+description = "Official Python bindings for the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
+authors = [
+    { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Mathematics"
+]
+dependencies = [
+    "nanobind >= 2.9.2",
+    "numpy >= 2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "isort",
+    "litgen@git+https://github.com/sundials-codes/litgen.git",
+    "pytest",
+    "pytest-random-order",
+    "pyyaml",
+]
+
+[project.urls]
+Homepage = "https://computing.llnl.gov/projects/sundials"
+Documentation = "https://sundials.readthedocs.io/"
+Source = "https://github.com/LLNL/sundials"
+
+[tool.scikit-build]
+# Protect the configuration against future changes in scikit-build-core
+minimum-version = "0.4"
+
+# Setuptools-style build caching in a local directory
+build-dir = "build/{wheel_tag}"
+
+# Build stable ABI wheels for CPython 3.12+
+wheel.py-api = "cp312"
+
+cmake.args = [
+    "-DBUILD_SHARED_LIBS:BOOL=OFF",
+    "-DBUILD_CVODE:BOOL=OFF",
+    "-DBUILD_IDA:BOOL=OFF",
+    "-DEXAMPLES_ENABLE_C:BOOL=OFF",
+    "-DEXAMPLES_ENABLE_CXX:BOOL=OFF",
+    "-DSUNDIALS_ENABLE_PYTHON:BOOL=ON"
+]
+
+cmake.build-type = "RelWithDebInfo"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib"
+]
+pythonpath = [
+  ".", "bindings/sundials4py/test"
+]
+
+[tool.cibuildwheel]
+# Necessary to see build output from the actual compilation
+build-verbosity = 1
+
+# Optional: run pytest to ensure that the package was correctly built
+test-command = "pytest --random-order bindings/sundials4py/test"
+test-requires = "pytest"
+
+# Needed for full C++17 support on macOS
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "10.15"
+
 [tool.black]
 line-length = 99
 skip_magic_trailing_comma = true

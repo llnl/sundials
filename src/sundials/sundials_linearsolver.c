@@ -36,6 +36,11 @@ static SUNProfiler getSUNProfiler(SUNLinearSolver S)
 }
 #endif
 
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNLinearSolverFunctionTable_Destroy(void* ptr);
+#endif
+
 /* internal function prototypes */
 SUNErrCode sunlsSetFromCommandLine(SUNLinearSolver S, const char* LSid,
                                    int argc, char* argv[]);
@@ -101,7 +106,9 @@ void SUNLinSolFreeEmpty(SUNLinearSolver S)
   free(S->ops);
   S->ops = NULL;
 
-  free(S->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNLinearSolverFunctionTable_Destroy(S->python);
+#endif
   S->python = NULL;
 
   free(S);
@@ -326,7 +333,9 @@ SUNErrCode SUNLinSolFree(SUNLinearSolver S)
   free(S->ops);
   S->ops = NULL;
 
-  free(S->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNLinearSolverFunctionTable_Destroy(S->python);
+#endif
   S->python = NULL;
 
   free(S);

@@ -338,3 +338,9 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+# Generate rst files with autofunction directives for sundials4py functions
+from generate_autofunctions import generate_autofunctions_for_submodule
+
+generate_autofunctions_for_submodule("core")
+generate_autofunctions_for_submodule("idas")

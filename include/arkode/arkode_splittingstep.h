@@ -31,6 +31,7 @@ extern "C" {
 /*---------------------------------------------------------------
   Types : struct SplittingStepCoefficientsMem, SplittingStepCoefficients
   ---------------------------------------------------------------*/
+
 struct SplittingStepCoefficientsMem
 {
   sunrealtype* alpha;  /* weights for sum over sequential splitting methods */
@@ -45,6 +46,7 @@ typedef _SUNDIALS_STRUCT_ SplittingStepCoefficientsMem* SplittingStepCoefficient
 
 /* Splitting names use the convention
  * ARKODE_SPLITTING_<name>_<stages>_<order>_<partitions> */
+
 enum ARKODE_SplittingCoefficientsID
 {
   ARKODE_SPLITTING_NONE = -1, /* ensure enum is signed int */

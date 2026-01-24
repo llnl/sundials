@@ -43,6 +43,7 @@ meant for SUNDIALS developers.
    testing/index
    benchmarks/index
    pull_requests/index
+   python/index
    releases/index
    packages/index
    appendix/index

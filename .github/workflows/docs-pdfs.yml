@@ -33,9 +33,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Install sphinx
+      - name: Install python dependencies
         run: |
           pip install -r doc/requirements.txt
+          pip install . # sundials4py
 
       # Build the combined html docs first to create a local objects.inv file
       # for intersphinx to resolve cross references between package guides e.g.,
@@ -90,9 +91,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Install sphinx
+      - name: Install python dependencies
         run: |
           pip install -r doc/requirements.txt
+          pip install . # sundials4py
 
       # Build the combined html docs first to create a local objects.inv file
       # for intersphinx to resolve cross references between package guides e.g.,

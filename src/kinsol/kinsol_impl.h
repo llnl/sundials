@@ -401,6 +401,12 @@ void KINFreeAA(KINMem kin_mem);
 int KINInitOrth(KINMem kin_mem);
 void KINFreeOrth(KINMem kin_mem);
 
+/* Function to destroy function table allocated by the Python binding code */
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void kinsol_user_supplied_fn_table_destroy(void* ptr);
+#endif
+
 /*
  * =================================================================
  *   K I N S O L    E R R O R    M E S S A G E S

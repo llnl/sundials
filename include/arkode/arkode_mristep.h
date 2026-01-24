@@ -38,6 +38,7 @@ extern "C" {
  * ----------------- */
 
 /* MRIStep method types */
+
 enum MRISTEP_METHOD_TYPE
 {
   MRISTEP_EXPLICIT,
@@ -142,6 +143,7 @@ typedef int (*MRIStepInnerSetRTol)(MRIStepInnerStepper stepper, sunrealtype rtol
 /*---------------------------------------------------------------
   MRI coupling data structure and associated utility routines
   ---------------------------------------------------------------*/
+
 struct MRIStepCouplingMem
 {
   MRISTEP_METHOD_TYPE type; /* flag to encode the MRI method type                  */

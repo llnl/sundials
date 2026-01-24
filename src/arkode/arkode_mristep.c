@@ -4332,7 +4332,9 @@ int MRIStepInnerStepper_Free(MRIStepInnerStepper* stepper)
   free((*stepper)->ops);
 
   /* free python data */
-  free((*stepper)->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  mristepinnerstepper_user_supplied_fn_table_destroy((*stepper)->python);
+#endif
   (*stepper)->python = NULL;
 
   /* free inner stepper mem */

@@ -4092,7 +4092,9 @@ void IDAFree(void** ida_mem)
   free(IDA_mem->ida_Zvecs);
   IDA_mem->ida_Zvecs = NULL;
 
-  free(IDA_mem->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  idas_user_supplied_fn_table_destroy(IDA_mem->python);
+#endif
   IDA_mem->python = NULL;
 
   free(*ida_mem);

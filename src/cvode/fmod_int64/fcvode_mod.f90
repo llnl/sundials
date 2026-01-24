@@ -2052,18 +2052,18 @@ fresult = swigc_FCVodeRootInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FCVodeSetRootDirection(cvode_mem, rootdir) &
+function FCVodeSetRootDirection(cvode_mem, rootdir_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-integer(C_INT), dimension(*), target, intent(inout) :: rootdir
+integer(C_INT), dimension(*), target, intent(inout) :: rootdir_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(rootdir(1))
+farg2 = c_loc(rootdir_1d(1))
 fresult = swigc_FCVodeSetRootDirection(farg1, farg2)
 swig_result = fresult
 end function
@@ -2438,18 +2438,18 @@ fresult = swigc_FCVodeGetNumGEvals(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeGetRootInfo(cvode_mem, rootsfound) &
+function FCVodeGetRootInfo(cvode_mem, rootsfound_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-integer(C_INT), dimension(*), target, intent(inout) :: rootsfound
+integer(C_INT), dimension(*), target, intent(inout) :: rootsfound_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(rootsfound(1))
+farg2 = c_loc(rootsfound_1d(1))
 fresult = swigc_FCVodeGetRootInfo(farg1, farg2)
 swig_result = fresult
 end function

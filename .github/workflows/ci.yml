@@ -121,41 +121,68 @@ jobs:
       needs.check-format.result == 'success'
     uses: ./.github/workflows/check-swig.yml
 
-  build-docs:
-    needs: [detect-changes, check-format, check-fortran]
+  check-python:
+    needs: [detect-changes, check-format]
     if: |
       !cancelled() &&
-      needs.detect-changes.outputs.docs == 'true' &&
-      needs.check-format.result == 'success' &&
-      (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped')
-    uses: ./.github/workflows/docs-pdfs.yml
+      needs.detect-changes.outputs.python == 'true' &&
+      needs.check-format.result == 'success'
+    uses: ./.github/workflows/check-litgen.yml
 
   build-and-test:
-    needs: [detect-changes, check-format, check-fortran, build-docs]
+    needs: [detect-changes, check-format, check-fortran, check-python]
     if: |
       !cancelled() &&
       needs.detect-changes.outputs.src == 'true' &&
       needs.check-format.result == 'success' &&
       (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped') &&
-      (needs.build-docs.result == 'success' || needs.build-docs.result == 'skipped')
+      (needs.check-python.result == 'success' || needs.check-python.result == 'skipped')
     uses: ./.github/workflows/build-and-test.yml
+
+  sundials4py-build-and-test:
+    needs: [detect-changes, check-format, check-fortran, check-python, build-and-test]
+    if: |
+      !cancelled() &&
+      needs.detect-changes.outputs.python == 'true' &&
+      needs.check-format.result == 'success' &&
+      (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped') &&
+      (needs.check-python.result == 'success' || needs.check-python.result == 'skipped') &&
+      (needs.build-and-test.result == 'success' || needs.build-and-test.result == 'skipped')
+    uses: ./.github/workflows/sundials4py-build-and-test.yml
+
+  build-docs:
+    needs: [detect-changes, check-format, check-fortran, check-python, build-and-test, sundials4py-build-and-test]
+    if: |
+      !cancelled() &&
+      needs.detect-changes.outputs.docs == 'true' &&
+      needs.check-format.result == 'success' &&
+      (needs.check-fortran.result == 'success' || needs.check-fortran.result == 'skipped') &&
+      (needs.check-python.result == 'success' || needs.check-python.result == 'skipped') &&
+      (needs.build-and-test.result == 'success' || needs.build-and-test.result == 'skipped') &&
+      (needs.sundials4py-build-and-test.result == 'success' || needs.sundials4py-build-and-test.result == 'skipped')
+    uses: ./.github/workflows/docs-pdfs.yml
 
   # Status aggregation job for branch protection
   all-checks:
     runs-on: ubuntu-latest
-    needs: [detect-changes, check-format, check-fortran, build-docs, build-and-test]
-    if: always()
+    needs: [detect-changes, check-format, check-fortran, check-python, build-and-test, sundials4py-build-and-test, build-docs]
+    if: |
+      !cancelled()
     steps:
       - name: Aggregate all checks
         run: |
           FORMAT_RESULT="${{ needs.check-format.result }}"
           FORTRAN_RESULT="${{ needs.check-fortran.result }}"
+          CHECK_PYTHON_RESULT="${{ needs.check-python.result }}"
+          TEST_PYTHON_RESULT="${{ needs.sundials4py-build-and-test.result }}"
           DOCS_RESULT="${{ needs.build-docs.result }}"
           TEST_RESULT="${{ needs.build-and-test.result }}"
 
           echo "Check results:"
           echo "  check-format: $FORMAT_RESULT"
           echo "  check-fortran: $FORTRAN_RESULT"
+          echo "  check-python: $CHECK_PYTHON_RESULT"
+          echo "  sundials4py-build-and-test: $TEST_PYTHON_RESULT"
           echo "  build-docs: $DOCS_RESULT"
           echo "  build-and-test: $TEST_RESULT"
 
@@ -170,6 +197,15 @@ jobs:
             exit 1
           fi
 
+          if [ "$CHECK_PYTHON_RESULT" != "success" ] && [ "$CHECK_PYTHON_RESULT" != "skipped" ]; then
+            echo "Python check failed"
+            exit 1
+          fi
+
+          if [ "$TEST_PYTHON_RESULT" != "success" ] && [ "$TEST_PYTHON_RESULT" != "skipped" ]; then
+            echo "Python test failed"
+            exit 1
+          fi
           if [ "$DOCS_RESULT" != "success" ] && [ "$DOCS_RESULT" != "skipped" ]; then
             echo "Documentation check failed"
             exit 1

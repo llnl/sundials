@@ -20,7 +20,7 @@ from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../shared")))
 
-# Add suntools directory to import python function docstings with autodoc
+# Add suntools directory to import python function docstrings with autodoc
 sys.path.append(os.path.abspath("../../../tools/suntools"))
 
 # -- General configuration ----------------------------------------------------
@@ -35,19 +35,20 @@ needs_sphinx = "4.0"
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    "sphinx_rtd_theme",
-    "sphinx.ext.extlinks",
-    "sphinx.ext.ifconfig",
-    "sphinx.ext.mathjax",
-    "sphinx.ext.intersphinx",
-    "sphinxfortran.fortran_domain",
-    "sphinxcontrib.bibtex",
+    "numpydoc",
     "sphinx_copybutton",
-    "sphinx.ext.graphviz",
+    "sphinx_multitoc_numbering",
+    "sphinx_rtd_theme",
     "sphinx_sundials",
     "sphinx_toolbox.collapse",
     "sphinx.ext.autodoc",
-    "sphinx_multitoc_numbering",
+    "sphinx.ext.extlinks",
+    "sphinx.ext.graphviz",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "sphinxcontrib.bibtex",
+    "sphinxfortran.fortran_domain",
 ]
 
 extlinks = {
@@ -59,7 +60,10 @@ extlinks = {
 
 # Where to find cross-references to the Sphinx documentation.
 intersphinx_mapping = {
-    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects.inv", None))
+    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects.inv", None)),
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
 }
 
 # Only setup Google analytics for the readthedocs being deployed (not local).
@@ -250,3 +254,11 @@ html_show_sourcelink = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "SUNDIALSdoc"
+
+# This prevents numpydoc from showing too much detail of the Enum classes
+numpydoc_show_class_members = False
+
+# Generate rst files with autofunction directives for sundials4py functions
+from generate_autofunctions import generate_autofunctions_for_sundials4py
+
+generate_autofunctions_for_sundials4py()

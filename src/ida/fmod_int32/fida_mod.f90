@@ -1826,18 +1826,18 @@ fresult = swigc_FIDARootInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FIDASetRootDirection(ida_mem, rootdir) &
+function FIDASetRootDirection(ida_mem, rootdir_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-integer(C_INT), dimension(*), target, intent(inout) :: rootdir
+integer(C_INT), dimension(*), target, intent(inout) :: rootdir_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(rootdir(1))
+farg2 = c_loc(rootdir_1d(1))
 fresult = swigc_FIDASetRootDirection(farg1, farg2)
 swig_result = fresult
 end function
@@ -2269,18 +2269,18 @@ fresult = swigc_FIDAGetNumGEvals(farg1, farg2)
 swig_result = fresult
 end function
 
-function FIDAGetRootInfo(ida_mem, rootsfound) &
+function FIDAGetRootInfo(ida_mem, rootsfound_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-integer(C_INT), dimension(*), target, intent(inout) :: rootsfound
+integer(C_INT), dimension(*), target, intent(inout) :: rootsfound_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(rootsfound(1))
+farg2 = c_loc(rootsfound_1d(1))
 fresult = swigc_FIDAGetRootInfo(farg1, farg2)
 swig_result = fresult
 end function

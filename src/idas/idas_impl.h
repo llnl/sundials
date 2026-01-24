@@ -977,6 +977,12 @@ int IDASensResDQ(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
                  N_Vector* resvalS, void* user_dataS, N_Vector ytemp,
                  N_Vector yptemp, N_Vector restemp);
 
+/* Function to destroy function table allocated by the Python binding code */
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void idas_user_supplied_fn_table_destroy(void* ptr);
+#endif
+
 /*
  * =================================================================
  *    E R R O R    M E S S A G E S

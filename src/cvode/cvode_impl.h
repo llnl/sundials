@@ -197,8 +197,6 @@ typedef struct CVodeMemRec
 {
   SUNContext cv_sunctx;
 
-  void* python;
-
   sunrealtype cv_uround; /* machine unit roundoff */
 
   /*--------------------------

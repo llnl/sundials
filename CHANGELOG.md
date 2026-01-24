@@ -4,6 +4,10 @@
 
 ### Major Features
 
+SUNDIALS now has official Python interfaces! With this release, we are shipping a **beta version** of
+the sundials4py Python module (created with nanobind and litgen). sundials4py provides explicit
+interfaces to most features of SUNDIALS. 
+
 ### New Features and Enhancements
 
 The functions `CVodeGetUserDataB` and `IDAGetUserDataB` were added to CVODES
