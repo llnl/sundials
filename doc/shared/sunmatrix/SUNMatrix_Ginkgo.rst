@@ -163,7 +163,7 @@ In this section we list the public API of the ``sundials::ginkgo::Matrix`` class
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 
@@ -171,6 +171,6 @@ In this section we list the public API of the ``sundials::ginkgo::Matrix`` class
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.

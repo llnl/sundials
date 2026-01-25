@@ -239,7 +239,7 @@ class.
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 
@@ -247,7 +247,7 @@ class.
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 

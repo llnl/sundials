@@ -1265,7 +1265,7 @@ Main solver optional input functions
      * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a
        previous call to :c:func:`CVodeCreate`
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.6.0
 
 .. c:function:: int CVodeSetUseIntegratorFusedKernels(void* cvode_mem, sunbooleantype onoff)
 
@@ -2722,7 +2722,7 @@ described next.
       * ``CV_SUCCESS`` -- The optional output value has been successfully set.
       * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
-   .. versionchanged:: x.y.z
+   .. versionchanged:: 7.6.0
 
       In prior versions, inequality constraint failures were included with the
       number of step failures due to a nonlinear solver failure. These failures
@@ -2741,7 +2741,7 @@ described next.
       * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a
         previous call to :c:func:`CVodeCreate`.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.6.0
 
 .. c:function:: int CVodeGetNumConstraintCorrections(void* cvode_mem, long int* num_corrections_out)
 
@@ -2757,7 +2757,7 @@ described next.
       * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a
         previous call to :c:func:`CVodeCreate`.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.6.0
 
 .. c:function:: int CVodeGetLastOrder(void* cvode_mem, int *qlast)
 

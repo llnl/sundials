@@ -146,7 +146,7 @@ In this section we list the public API of the :cpp:type:`sundials::ginkgo::Linea
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 
@@ -154,7 +154,7 @@ In this section we list the public API of the :cpp:type:`sundials::ginkgo::Linea
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 

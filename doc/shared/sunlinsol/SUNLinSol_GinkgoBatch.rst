@@ -226,7 +226,7 @@ The public API of the :cpp:type:`sundials::ginkgo::BatchLinearSolver` class is a
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 
@@ -234,7 +234,7 @@ The public API of the :cpp:type:`sundials::ginkgo::BatchLinearSolver` class is a
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 

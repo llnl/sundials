@@ -191,7 +191,7 @@ class.
 
       Explicit conversion to a :c:type:`N_Vector`.
       
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 
@@ -199,7 +199,7 @@ class.
 
       Explicit conversion to a :c:type:`N_Vector`.
       
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
 
          Replaces the ``Convert`` method which was deprecated.
 

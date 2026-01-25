@@ -12,15 +12,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # ----------------------------------------------------------------
-doc_version = "develop"
-sundials_version = "v7.5.0"
-arkode_version = "v6.5.0"
-cvode_version = "v7.5.0"
-cvodes_version = "v7.5.0"
-ida_version = "v7.5.0"
-idas_version = "v6.5.0"
-kinsol_version = "v7.5.0"
-year = "2025"
+doc_version = "v7.6.0"
+sundials_version = "v7.6.0"
+arkode_version = "v6.6.0"
+cvode_version = "v7.6.0"
+cvodes_version = "v7.6.0"
+ida_version = "v7.6.0"
+idas_version = "v6.6.0"
+kinsol_version = "v7.6.0"
+year = "2026"
 
 # Warn about all references where the target cannot be found
 nitpicky = True

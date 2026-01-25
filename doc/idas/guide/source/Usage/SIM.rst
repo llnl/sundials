@@ -1308,7 +1308,7 @@ Main solver optional input functions
      * ``IDA_SUCCESS`` -- The optional value has been successfully set.
      * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.6.0
 
 
 .. _IDAS.Usage.SIM.user_callable.optional_input.ls:
@@ -2580,7 +2580,7 @@ described next.
       * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
       * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionchanged:: x.y.z
+   .. versionchanged:: 6.6.0
 
       In prior versions, inequality constraint failures were included with the
       number of step failures due to a nonlinear solver failure. These failures
@@ -2598,7 +2598,7 @@ described next.
       * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
       * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.6.0
 
 .. c:function:: int IDAGetNumConstraintCorrections(void* ida_mem, long int* num_corrections_out)
 
@@ -2613,7 +2613,7 @@ described next.
       * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
       * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.6.0
 
 .. c:function:: int IDAGetLastOrder(void * ida_mem, int * klast)
 
