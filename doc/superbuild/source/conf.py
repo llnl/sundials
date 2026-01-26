@@ -60,10 +60,10 @@ extlinks = {
 
 # Where to find cross-references to the Sphinx documentation.
 intersphinx_mapping = {
-    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects.inv", None)),
-    "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects-sphinx.inv", None)),
+    "python": ("https://docs.python.org/3", ("../objects-python.inv", None)),
+    "numpy": ("https://numpy.org/doc/stable/", ("../objects-numpy.inv", None)),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", ("../objects-scipy.inv", None)),
 }
 
 # Only setup Google analytics for the readthedocs being deployed (not local).
