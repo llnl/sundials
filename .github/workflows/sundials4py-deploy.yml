@@ -50,6 +50,8 @@ jobs:
 
   sundials4py-deploy-to-pypi:
     name: Publish sundials4py to pypi if release
+    permissions:
+      id-token: write
     needs: [sundials4py-deploy-build-and-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
