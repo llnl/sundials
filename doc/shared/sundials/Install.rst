@@ -83,14 +83,14 @@ individual packages. The name of the distribution archive is of the form
 ``cvodes``, ``arkode``, ``ida``, ``idas``, or ``kinsol``, and ``a.b.c``
 represents the version number of the SUNDIALS suite or of the individual
 package. After downloading the relevant archives, uncompress and expand the
-sources. For example, if you downloaded ``sundials-7.6.0.tar.gz``, running the
+sources. For example, if you downloaded ``sundials-x.y.z.tar.gz``, running the
 command
 
 .. code-block:: bash
 
-   tar -zxf sundials-7.6.0.tar.gz
+   tar -zxf sundials-x.y.z.tar.gz
 
-will extract the source files under the ``sundials-7.6.0`` directory.
+will extract the source files under the ``sundials-x.y.z`` directory.
 
 In the installation steps below we will refer to the following directories:
 
