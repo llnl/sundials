@@ -113,12 +113,8 @@ For more information on usage, differences from the C/C++ API and examples, cont
      - ``sundials4py.arkode``
    * - ARKODE::FORCINGSTEP
      - ``sundials4py.arkode``
-   * - CVODE
-     - ``sundials4py.cvode``
    * - CVODES
      - ``sundials4py.cvodes``
-   * - IDA
-     - ``sundials4py.ida``
    * - IDAS
      - ``sundials4py.idas``
    * - KINSOL
