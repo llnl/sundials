@@ -51,7 +51,7 @@ jobs:
       with:
         submodules: true
 
-    - uses: pypa/cibuildwheel@v2.22
+    - uses: pypa/cibuildwheel@v3.3
       env:
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
 
@@ -81,7 +81,7 @@ jobs:
       with:
         submodules: true
 
-    - uses: pypa/cibuildwheel@v2.22
+    - uses: pypa/cibuildwheel@v3.3
       env:
         CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
