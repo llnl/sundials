@@ -1,5 +1,7 @@
 # SUNDIALS: SUite of Nonlinear and DIfferential/ALgebraic equation Solvers #
 
+[![GitHub Release](https://img.shields.io/github/v/release/llnl/sundials)](https://github.com/llnl/sundials/releases/latest)
+[![PyPI - Version](https://img.shields.io/pypi/v/sundials4py?label=sundials4py)](https://pypi.org/project/sundials4py/)
 [![track SUNDIALS downloads](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml/badge.svg)](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml)
 
 ### Version 7.6.0 (Jan 2026) ###
@@ -42,6 +44,10 @@ nonlinear algebraic systems:
 * KINSOL - for solving nonlinear algebraic systems of the form
 
   $$F(u) = 0 \quad \text{or} \quad G(u) = u$$
+
+SUNDIALS is a C library with interfaces to C++,
+[Fortran](https://sundials.readthedocs.io/en/latest/Fortran/index.html), and
+[Python](https://sundials.readthedocs.io/en/latest/Python/index.html) (beta version).
 
 ## Installation ##
 
