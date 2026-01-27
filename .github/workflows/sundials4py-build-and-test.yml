@@ -29,7 +29,7 @@ jobs:
     - name: Check metadata
       run: pipx run twine check dist/*
 
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v6
       with:
         name: dist-sdist
         path: dist/*.tar.gz
@@ -56,7 +56,7 @@ jobs:
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
 
     - name: Upload wheels
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: wheelhouse/*.whl
         name: dist-${{ matrix.os }}
@@ -95,7 +95,7 @@ jobs:
       shell: bash
 
     - name: Upload wheels as artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: wheelhouse/*.whl
         name: dist-extra-${{ matrix.os }}-${{ matrix.precision }}-${{ matrix.index }}
