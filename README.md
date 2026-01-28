@@ -54,10 +54,6 @@ nonlinear algebraic systems:
 
   $$F(u) = 0 \quad \text{or} \quad G(u) = u$$
 
-SUNDIALS is a C library with interfaces to C++,
-[Fortran](https://sundials.readthedocs.io/en/latest/Fortran/index.html), and
-[Python](https://sundials.readthedocs.io/en/latest/Python/index.html) (beta version).
-
 ## Installation ##
 
 For installation directions, see the [getting started](https://sundials.readthedocs.io/en/latest/sundials/index.html#getting-started)
