@@ -258,7 +258,8 @@ if(SUPERLUMT_LIBRARIES AND examples_slumt)
 
     # directories to include
     target_include_directories(${example} PRIVATE ${SUNDIALS_INCLUDE_DIR})
-    target_include_directories(${example} PRIVATE ${SUPERLUMT_INCLUDE_DIR})
+    # use SYSTEM to suppress warnings from slu_mt_util.h about MACH not defined
+    target_include_directories(${example} SYSTEM PRIVATE ${SUPERLUMT_INCLUDE_DIR})
 
     # libraries to link against
     target_link_libraries(${example} ${SUNDIALS_LIBRARIES})
