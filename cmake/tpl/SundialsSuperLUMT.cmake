@@ -86,6 +86,9 @@ if(NOT SUPERLUMT_WORKS)
   # Check the result
   if(COMPILE_OK)
     message(CHECK_PASS "success")
+    set(SUPERLUMT_WORKS
+        TRUE
+        CACHE BOOL "SUPERLUMT works with SUNDIALS as configured" FORCE)
   else()
     message(CHECK_FAIL "failed")
     file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
