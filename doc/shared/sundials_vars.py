@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # ----------------------------------------------------------------
-doc_version = "v7.6.0"
+doc_version = "develop"
 sundials_version = "v7.6.0"
 arkode_version = "v6.6.0"
 cvode_version = "v7.6.0"

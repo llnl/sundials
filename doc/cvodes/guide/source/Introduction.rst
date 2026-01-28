@@ -112,7 +112,7 @@ greater ease of interfacing the solver to applications written in extended
 Fortran.
 
 
-Changes to SUNDIALS in release 7.6.0
+Changes to SUNDIALS in release X.Y.Z
 ====================================
 
 .. include:: ../../../shared/RecentChanges.rst
