@@ -22,7 +22,14 @@ jobs:
   sundials4py-deploy-build-and-test:
     name: Build and test
     if: github.event_name == 'release' && github.event.action == 'published'
-    uses: ./.github/workflows/sundials4py-build-and-test.yml
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v5
+      with:
+        submodules: true
+
+    - name: Build and test
+      uses: ./.github/workflows/sundials4py-build-and-test.yml
 
   sundials4py-deploy-to-gh-release:
     name: Attach sundials4py wheels to GitHub release
@@ -31,9 +38,6 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
 
     steps:
-    - name: Build and test
-      uses: ./.github/workflows/sundials4py-build-and-test.yml
-
     - name: Download wheel artifacts
       uses: actions/download-artifact@v7
       with:
@@ -50,6 +54,8 @@ jobs:
 
   sundials4py-deploy-to-pypi:
     name: Publish sundials4py to pypi if release
+    permissions:
+      id-token: write
     needs: [sundials4py-deploy-build-and-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
