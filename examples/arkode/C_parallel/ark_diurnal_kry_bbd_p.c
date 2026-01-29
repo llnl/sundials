@@ -473,15 +473,10 @@ static void PrintOutput(void* arkode_mem, int my_pe, MPI_Comm comm, N_Vector u,
 /* Print final statistics contained in iopt */
 static void PrintFinalStats(void* arkode_mem)
 {
-  long int lenrw, leniw;
-  long int lenrwLS, leniwLS;
-  long int lenrwBBDP, leniwBBDP;
   long int nst, nfe, nfi, nsetups, nni, ncfn, netf;
   long int nli, npe, nps, ncfl, nfeLS, ngevalsBBDP;
   int flag;
 
-  flag = ARKodeGetWorkSpace(arkode_mem, &lenrw, &leniw);
-  check_flag(&flag, "ARKodeGetWorkSpace", 1, 0);
   flag = ARKodeGetNumSteps(arkode_mem, &nst);
   check_flag(&flag, "ARKodeGetNumSteps", 1, 0);
   flag = ARKodeGetNumRhsEvals(arkode_mem, 0, &nfe);
@@ -497,8 +492,6 @@ static void PrintFinalStats(void* arkode_mem)
   flag = ARKodeGetNumNonlinSolvConvFails(arkode_mem, &ncfn);
   check_flag(&flag, "ARKodeGetNumNonlinSolvConvFails", 1, 0);
 
-  flag = ARKodeGetLinWorkSpace(arkode_mem, &lenrwLS, &leniwLS);
-  check_flag(&flag, "ARKodeGetLinWorkSpace", 1, 0);
   flag = ARKodeGetNumLinIters(arkode_mem, &nli);
   check_flag(&flag, "ARKodeGetNumLinIters", 1, 0);
   flag = ARKodeGetNumPrecEvals(arkode_mem, &npe);
@@ -511,8 +504,6 @@ static void PrintFinalStats(void* arkode_mem)
   check_flag(&flag, "ARKodeGetNumLinRhsEvals", 1, 0);
 
   printf("\nFinal Statistics: \n\n");
-  printf("lenrw   = %5ld     leniw   = %5ld\n", lenrw, leniw);
-  printf("lenrwls = %5ld     leniwls = %5ld\n", lenrwLS, leniwLS);
   printf("nst     = %5ld     nfe     = %5ld\n", nst, nfe);
   printf("nfe     = %5ld     nfels   = %5ld\n", nfi, nfeLS);
   printf("nni     = %5ld     nli     = %5ld\n", nni, nli);
@@ -520,13 +511,9 @@ static void PrintFinalStats(void* arkode_mem)
   printf("npe     = %5ld     nps     = %5ld\n", npe, nps);
   printf("ncfn    = %5ld     ncfl    = %5ld\n\n", ncfn, ncfl);
 
-  flag = ARKBBDPrecGetWorkSpace(arkode_mem, &lenrwBBDP, &leniwBBDP);
-  check_flag(&flag, "ARKBBDPrecGetWorkSpace", 1, 0);
   flag = ARKBBDPrecGetNumGfnEvals(arkode_mem, &ngevalsBBDP);
   check_flag(&flag, "ARKBBDPrecGetNumGfnEvals", 1, 0);
-  printf("In ARKBBDPRE: real/integer local work space sizes = %ld, %ld\n",
-         lenrwBBDP, leniwBBDP);
-  printf("             no. flocal evals. = %ld\n", ngevalsBBDP);
+  printf("In ARKBBDPRE: no. flocal evals. = %ld\n", ngevalsBBDP);
 }
 
 /* Routine to send boundary data to neighboring PEs */
