@@ -24,8 +24,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sundials/sundials_config.h>
-#include <sundials/sundials_types.h>
+#include <sundials/sundials_core.h>
+
+#include "sundials/priv/sundials_errors_impl.h"
+#include "sundials/sundials_allocator.h"
+#include "sundials/sundials_errors.h"
+
+/* ----------------------------------------- *
+ * Allocator malloc and free utilities       *
+ * ----------------------------------------- */
+
+static inline void* sunMalloc(SUNContext sunctx, size_t mem_size)
+{
+  return SUNAllocator_Allocate(sunctx->host_allocator, mem_size);
+}
+
+static inline void sunFree(SUNContext sunctx, void* mem_ptr)
+{
+  SUNAllocator_Deallocate(sunctx->host_allocator, mem_ptr);
+}
+
+/* ------------------ *
+ * Printing utilities *
+ * ------------------ */
 
 /* width of name field in sunfprintf_<type> for aligning table output */
 #define SUN_TABLE_WIDTH 29
@@ -140,6 +161,21 @@ static inline void sunfprintf_long_array(FILE* fp, SUNOutputFormat fmt,
     {
       fprintf(fp, "%s %zu,%ld", name, i, value[i]);
     }
+  }
+}
+
+static inline void sunfprintf_size_t(FILE* fp, SUNOutputFormat fmt,
+                                     sunbooleantype start, const char* name,
+                                     size_t value)
+{
+  if (fmt == SUN_OUTPUTFORMAT_TABLE)
+  {
+    fprintf(fp, "%-*s = %zu\n", SUN_TABLE_WIDTH, name, value);
+  }
+  else
+  {
+    if (!start) { fprintf(fp, ","); }
+    fprintf(fp, "%s,%zu", name, value);
   }
 }
 

@@ -30,8 +30,11 @@
 #include <sundials/sundials_profiler.h>
 #include <sundials/sundials_types.h>
 
+#include "sundials/sundials_allocator.h"
+#include "sundials/sundials_memory.h"
 #include "sundials_adiak_metadata.h"
 #include "sundials_macros.h"
+#include "sundials_allocator_system.h"
 
 /* Forward declaration of function used to destroy any data allocated for Python */
 #if defined(SUNDIALS_ENABLE_PYTHON)
@@ -40,18 +43,21 @@ void SUNContextFunctionTable_Destroy(void* ptr);
 
 SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
 {
-  SUNErrCode err       = SUN_SUCCESS;
-  SUNProfiler profiler = NULL;
-  SUNLogger logger     = NULL;
-  SUNContext sunctx    = NULL;
-  SUNErrHandler eh     = NULL;
+  SUNErrCode err              = SUN_SUCCESS;
+  SUNProfiler profiler        = NULL;
+  SUNLogger logger            = NULL;
+  SUNContext sunctx           = NULL;
+  SUNErrHandler eh            = NULL;
+  SUNAllocator host_allocator = NULL;
 
+  /* Initialize output */
   *sunctx_out = NULL;
   sunctx      = (SUNContext)malloc(sizeof(struct SUNContext_));
 
-  /* SUNContext_Create cannot assert or log since the SUNContext is not yet
-   * created */
+  /* Cannot assert or log since the SUNContext is not yet created */
   if (!sunctx) { return SUN_ERR_MALLOC_FAIL; }
+
+  /* Now we can assert and log errors */
 
   SUNFunctionBegin(sunctx);
 
@@ -99,14 +105,20 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
     SUNCheckCallNoRet(err);
     if (err) { break; }
 
-    sunctx->python       = NULL;
-    sunctx->logger       = logger;
-    sunctx->own_logger   = logger != NULL;
-    sunctx->profiler     = profiler;
-    sunctx->own_profiler = profiler != NULL;
-    sunctx->last_err     = SUN_SUCCESS;
-    sunctx->err_handler  = eh;
-    sunctx->comm         = comm;
+    err = SUNAllocator_Create_System(&host_allocator);
+    SUNCheckCallNoRet(err);
+    if (err) { break; }
+
+    sunctx->python             = NULL;
+    sunctx->logger             = logger;
+    sunctx->own_logger         = logger != NULL;
+    sunctx->profiler           = profiler;
+    sunctx->own_profiler       = profiler != NULL;
+    sunctx->last_err           = SUN_SUCCESS;
+    sunctx->err_handler        = eh;
+    sunctx->host_allocator     = host_allocator;
+    sunctx->own_host_allocator = SUNTRUE;
+    sunctx->comm               = comm;
   }
   while (0);
 
@@ -116,6 +128,7 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
     SUNCheckCallNoRet(SUNProfiler_Free(&profiler));
 #endif
     SUNCheckCallNoRet(SUNLogger_Destroy(&logger));
+    SUNCheckCallNoRet(SUNAllocator_Destroy(&host_allocator));
     free(sunctx);
   }
   else { *sunctx_out = sunctx; }
@@ -259,6 +272,90 @@ SUNErrCode SUNContext_SetLogger(SUNContext sunctx, SUNLogger logger)
   return SUN_SUCCESS;
 }
 
+SUNErrCode SUNContext_SetAllocator(SUNContext sunctx, SUNMemoryType type,
+                                   SUNAllocator allocator)
+{
+  if (!sunctx) { return SUN_ERR_SUNCTX_CORRUPT; }
+  SUNFunctionBegin(sunctx);
+
+  SUNAssert(allocator, SUN_ERR_SUNCTX_CORRUPT);
+
+  switch (type)
+  {
+    case SUNMEMTYPE_HOST:
+      sunctx->host_allocator = allocator;
+      break;
+    case SUNMEMTYPE_DEVICE:
+      sunctx->device_allocator = allocator;
+      break;
+    case SUNMEMTYPE_UVM:
+      sunctx->uvm_allocator = allocator;
+      break;
+    case SUNMEMTYPE_PINNED:
+      sunctx->pinned_allocator = allocator;
+      break;
+    default:
+      return SUN_ERR_ARG_OUTOFRANGE;
+  }
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNContext_GetAllocator(SUNContext sunctx, SUNMemoryType type,
+                                   SUNAllocator* allocator)
+{
+  if (!sunctx) { return SUN_ERR_SUNCTX_CORRUPT; }
+  SUNFunctionBegin(sunctx);
+
+  SUNAssert(allocator, SUN_ERR_SUNCTX_CORRUPT);
+
+  switch (type)
+  {
+    case SUNMEMTYPE_HOST:
+      *allocator = sunctx->host_allocator;
+      break;
+    case SUNMEMTYPE_DEVICE:
+      *allocator = sunctx->device_allocator;
+      break;
+    case SUNMEMTYPE_UVM:
+      *allocator = sunctx->uvm_allocator;
+      break;
+    case SUNMEMTYPE_PINNED:
+      *allocator = sunctx->pinned_allocator;
+      break;
+    default:
+      return SUN_ERR_ARG_OUTOFRANGE;
+  }
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNContext_PrintAllocatorStats(SUNContext sunctx, FILE* outfile,
+                                          SUNOutputFormat fmt)
+{
+  if (!sunctx) { return SUN_ERR_SUNCTX_CORRUPT; }
+  if (!outfile) { return SUN_ERR_ARG_CORRUPT; }
+
+  SUNFunctionBegin(sunctx);
+
+  SUNCheckCall(SUNAllocator_PrintStats(sunctx->host_allocator, outfile, fmt));
+
+  if (sunctx->device_allocator)
+  {
+    SUNCheckCall(SUNAllocator_PrintStats(sunctx->host_allocator, outfile, fmt));
+  }
+  if (sunctx->uvm_allocator)
+  {
+    SUNCheckCall(SUNAllocator_PrintStats(sunctx->uvm_allocator, outfile, fmt));
+  }
+  if (sunctx->pinned_allocator)
+  {
+    SUNCheckCall(SUNAllocator_PrintStats(sunctx->pinned_allocator, outfile, fmt));
+  }
+
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNContext_Free(SUNContext* sunctx)
 {
 #ifdef SUNDIALS_ADIAK_ENABLED
@@ -297,6 +394,23 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
   if ((*sunctx)->logger && (*sunctx)->own_logger)
   {
     SUNLogger_Destroy(&(*sunctx)->logger);
+  }
+
+  if ((*sunctx)->own_host_allocator)
+  {
+    SUNAllocator_Destroy(&(*sunctx)->host_allocator);
+  }
+  if ((*sunctx)->own_device_allocator)
+  {
+    SUNAllocator_Destroy(&(*sunctx)->device_allocator);
+  }
+  if ((*sunctx)->own_uvm_allocator)
+  {
+    SUNAllocator_Destroy(&(*sunctx)->uvm_allocator);
+  }
+  if ((*sunctx)->own_pinned_allocator)
+  {
+    SUNAllocator_Destroy(&(*sunctx)->pinned_allocator);
   }
 
   SUNContext_ClearErrHandlers(*sunctx);

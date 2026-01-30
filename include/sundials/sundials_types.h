@@ -181,6 +181,26 @@ typedef SUNDIALS_COUNTER_TYPE suncountertype;
 
 /*
  *------------------------------------------------------------------
+ * Type : SUNMemoryType
+ *------------------------------------------------------------------
+ * Constants for different memory types
+ *------------------------------------------------------------------
+ */
+
+enum SUNMemoryType
+{
+  SUNMEMTYPE_HOST,   /* pageable memory accessible on the host     */
+  SUNMEMTYPE_PINNED, /* page-locked memory accessible on the host   */
+  SUNMEMTYPE_DEVICE, /* memory accessible from the device          */
+  SUNMEMTYPE_UVM     /* memory accessible from the host or device  */
+};
+
+#ifndef SWIG
+typedef enum SUNMemoryType SUNMemoryType;
+#endif
+
+/*
+ *------------------------------------------------------------------
  * Type : SUNOutputFormat
  *------------------------------------------------------------------
  * Constants for different output formats
@@ -222,6 +242,9 @@ typedef struct SUNProfiler_* SUNProfiler;
 
 /* SUNDIALS logger */
 typedef struct SUNLogger_* SUNLogger;
+
+/* SUNDIALS allocator */
+typedef _SUNDIALS_STRUCT_ SUNAllocator_* SUNAllocator;
 
 /* -----------------------------------------------------------------------------
  * SUNDIALS function types

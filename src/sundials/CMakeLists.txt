@@ -30,6 +30,8 @@ set(sundials_HEADERS
     sundials_adjointcheckpointscheme.hpp
     sundials_adjointstepper.h
     sundials_adjointstepper.hpp
+    sundials_allocator.h
+    sundials_allocator_system.h
     sundials_band.h
     sundials_base.hpp
     sundials_classview.hpp
@@ -96,6 +98,8 @@ set(sundials_SOURCES
     sundials_adaptcontroller.c
     sundials_adjointcheckpointscheme.c
     sundials_adjointstepper.c
+    sundials_allocator.c
+    sundials_allocator_system.c
     sundials_band.c
     sundials_cli.c
     sundials_context.c

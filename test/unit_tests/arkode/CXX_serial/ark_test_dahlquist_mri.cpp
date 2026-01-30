@@ -35,6 +35,8 @@
 #include <sunmatrix/sunmatrix_dense.h>
 
 #include "arkode/arkode_mri_tables_impl.h"
+#include "sundials/sundials_context.h"
+#include "sundials/sundials_types.h"
 
 enum class interp_type
 {
@@ -154,6 +156,9 @@ int main(int argc, char* argv[])
 
   if (numfails) { std::cout << "\n\nFailed " << numfails << " tests!\n"; }
   else { std::cout << "\n\nAll tests passed!\n"; }
+
+  std::cout << std::endl;
+  SUNContext_PrintAllocatorStats(sunctx, stdout, SUN_OUTPUTFORMAT_TABLE);
 
   // Return test status
   return numfails;
@@ -395,9 +400,9 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
     flag = MRIStepSetCoupling(mristep_mem, C);
     if (check_flag(&flag, "MRIStepSetCoupling", 1)) { return 1; }
 
-    // -----------------
-    // Output statistics
-    // -----------------
+    // ---------------
+    // Evolve in time
+    // ---------------
 
     sunrealtype t  = prob_opts.t0;
     sunrealtype tf = prob_opts.nsteps * prob_opts.hs;
@@ -509,6 +514,9 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
     else { std::cout << "All checks passed\n"; }
     numfails += methodfails;
 
+    std::cout << std::endl;
+    SUNContext_PrintAllocatorStats(sunctx, stdout, SUN_OUTPUTFORMAT_TABLE);
+
     // -------------------
     // Setup for next test
     // -------------------
@@ -550,6 +558,9 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
     SUNMatDestroy(A);
   }
   N_VDestroy(y);
+
+  std::cout << std::endl;
+  SUNContext_PrintAllocatorStats(sunctx, stdout, SUN_OUTPUTFORMAT_TABLE);
 
   return numfails;
 }

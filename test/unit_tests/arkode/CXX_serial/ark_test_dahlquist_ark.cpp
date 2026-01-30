@@ -378,6 +378,9 @@ int main(int argc, char* argv[])
   if (numfails) { std::cout << "\n\nFailed " << numfails << " tests!\n"; }
   else { std::cout << "\n\nAll tests passed!\n"; }
 
+  std::cout << std::endl;
+  SUNContext_PrintAllocatorStats(sunctx, stdout, SUN_OUTPUTFORMAT_TABLE);
+
   // Return test status
   return numfails;
 }
@@ -653,6 +656,9 @@ int run_tests(ARKodeButcherTable Be, ARKodeButcherTable Bi,
     std::cout << "--------------------" << std::endl;
   }
 
+  std::cout << std::endl;
+  SUNContext_PrintAllocatorStats(sunctx, stdout, SUN_OUTPUTFORMAT_TABLE);
+
   // --------
   // Clean up
   // --------
@@ -663,6 +669,9 @@ int run_tests(ARKodeButcherTable Be, ARKodeButcherTable Bi,
   SUNLinSolFree(MLS);
   SUNMatDestroy(M);
   N_VDestroy(y);
+
+  std::cout << std::endl;
+  SUNContext_PrintAllocatorStats(sunctx, stdout, SUN_OUTPUTFORMAT_TABLE);
 
   return numfails;
 }

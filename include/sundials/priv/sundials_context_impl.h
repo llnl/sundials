@@ -40,6 +40,14 @@ struct SUNContext_
   sunbooleantype own_logger;
   SUNErrCode last_err;
   SUNErrHandler err_handler;
+  SUNAllocator host_allocator;
+  sunbooleantype own_host_allocator;
+  SUNAllocator device_allocator;
+  sunbooleantype own_device_allocator;
+  SUNAllocator uvm_allocator;
+  sunbooleantype own_uvm_allocator;
+  SUNAllocator pinned_allocator;
+  sunbooleantype own_pinned_allocator;
   SUNComm comm;
 };
 
