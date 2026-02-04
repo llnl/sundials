@@ -31,6 +31,9 @@ def _convert_to_num(s):
     :returns: If the string is a numerical value, an integer (long long) or floating
               point (double) value, otherwise the input string.
     """
+    if isinstance(s, list):
+        return s
+
     try:
         return int(s)
     except ValueError:
@@ -505,6 +508,28 @@ def get_history(
     else:
         return steps, times, values
 
+def _get_nested_value(data, key_path):
+    """Get a value from a nested dictionary using dot notation.
+
+    :param dict data: The dictionary to search
+    :param str key_path: Either a simple key like "h" or nested like "compute-solution.err(:)"
+    :returns: The value if found, None otherwise
+    """
+    if '.' not in key_path:
+        # Simple key
+        return data.get(key_path)
+
+    # Nested key path
+    keys = key_path.split('.')
+    current = data
+
+    for k in keys:
+        if isinstance(current, dict) and k in current:
+            current = current[k]
+        else:
+            return None
+
+    return current
 
 def _get_history(log, key, step_status, time_range, step_range):
     """Extract the step/time series of the requested value."""
@@ -535,7 +560,10 @@ def _get_history(log, key, step_status, time_range, step_range):
             if step_status not in entry["status"]:
                 save_data = False
 
-        if key in entry and save_data:
+        # Handle nested keys using dot notation
+        value = _get_nested_value(entry, key)
+
+        if value is not None and save_data:
             steps.append(step)
             times.append(time)
             values.append(entry[key])
