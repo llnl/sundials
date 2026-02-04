@@ -19,20 +19,22 @@ using namespace std;
 using namespace problems::shampine;
 
 // Function to print usage information
-void printUsage(const char* progname)
+static void printUsage(const char* progname)
 {
   cout << "Usage: " << progname << " [options]\n\n";
   cout << "Options:\n";
   cout << "  -b, --beta <value>     Set beta parameter (default: 5.0)\n";
   cout << "  -g, --gamma <value>    Set gamma parameter (default: 2.0)\n";
   cout << "  -e, --explicit         Use ERK method (default: DIRK)\n";
+  cout << "  -c, --comparison       Use comparison method (default: false)\n";
   cout << "  -o, --output <file>    Output file name (default: data.txt)\n";
   cout << "  -h, --help             Print this help message\n";
 }
 
 // Function to parse command line arguments
-bool parseArguments(int argc, char* argv[], sunrealtype& beta,
-                    sunrealtype& gamma, string& outputFile, bool& use_explicit)
+static bool parseArguments(int argc, char* argv[], sunrealtype& beta,
+                           sunrealtype& gamma, string& outputFile,
+                           bool& use_explicit, bool& use_comparison)
 {
   for (int i = 1; i < argc; i++)
   {
@@ -57,6 +59,10 @@ bool parseArguments(int argc, char* argv[], sunrealtype& beta,
     else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "--explicit") == 0)
     {
       use_explicit = true;
+    }
+    else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--comparison") == 0)
+    {
+      use_comparison = true;
     }
     else if (strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "--output") == 0)
     {
@@ -94,16 +100,26 @@ int main(int argc, char* argv[])
   sunrealtype tf     = 1.0;
   sunrealtype dt_out = 0.1;
 
-  string output_file = "data.txt";
-  bool use_explicit  = false;
+  string output_file  = "data.txt";
+  bool use_explicit   = false;
+  bool use_comparison = false;
+
+  int ierr = 0;
 
   // Parse command line arguments
-  if (!parseArguments(argc, argv, beta, gamma, output_file, use_explicit))
+  if (!parseArguments(argc, argv, beta, gamma, output_file, use_explicit,
+                      use_comparison))
   {
     return (argc > 1 &&
             (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0))
              ? 0
              : 1;
+  }
+
+  if (use_comparison && !use_explicit)
+  {
+    cerr << "Error use comparison requires use explicit" << endl;
+    return 1;
   }
 
   // Create problem instance
@@ -138,6 +154,16 @@ int main(int argc, char* argv[])
     cerr << "Error creating ARKODE memory" << endl;
     N_VDestroy(y);
     return 1;
+  }
+
+  if (use_comparison)
+  {
+    ierr = ARKStepSetTableName(arkode_mem, "ARKODE_DIRK_NONE", "ARKODE_FEHLBERG_SHAMPINE_HIEBERT_6_4_5");
+    if (ierr)
+    {
+      cerr << "Error setting method table" << endl;
+      return 1;
+    }
   }
 
   // Set user data (pointer to problem instance)
@@ -195,13 +221,22 @@ int main(int argc, char* argv[])
   problem.computeEigenvalues(lambda1, lambda2, lambda3);
   auto stiffness_ratio = problem.computeStiffnessRatio();
 
-  datafile << setw(26) << t0 << setw(26) << ydata[0] << setw(26) << ydata[1]
-           << setw(26) << ydata[2] << setw(26) << 0.0 << setw(26) << 0.0
-           << setw(26) << 0.0 << setw(26) << lambda1.real() << showpos
-           << lambda1.imag() << noshowpos << "j" << setw(26) << lambda2.real()
-           << showpos << lambda2.imag() << noshowpos << "j" << setw(26)
-           << lambda3.real() << showpos << lambda3.imag() << noshowpos << "j"
-           << setw(26) << stiffness_ratio << endl;
+  datafile
+  << setw(26) << t0
+  << setw(26) << ydata[0]
+  << setw(26) << ydata[1]
+  << setw(26) << ydata[2]
+  << setw(26) << 0.0
+  << setw(26) << 0.0
+  << setw(26) << 0.0
+  << setw(26) << 0.0
+  << setw(26) << 0.0
+  << setw(26) << 0.0
+  << setw(26) << lambda1.real() << showpos << lambda1.imag() << noshowpos << "j"
+  << setw(26) << lambda2.real() << showpos << lambda2.imag() << noshowpos << "j"
+  << setw(26) << lambda3.real() << showpos << lambda3.imag() << noshowpos << "j"
+  << setw(26) << stiffness_ratio
+  << endl;
 
   // Vector for local error estimate
   N_Vector loc_err_est = N_VClone(y);
@@ -211,6 +246,29 @@ int main(int argc, char* argv[])
     SUNMatDestroy(A);
     ARKodeFree(&arkode_mem);
     N_VDestroy(y);
+    return 1;
+  }
+
+  N_Vector companion_loc_err_est = N_VClone(y);
+  if (companion_loc_err_est == nullptr)
+  {
+    cerr << "Error creating N_Vector" << endl;
+    SUNMatDestroy(A);
+    ARKodeFree(&arkode_mem);
+    N_VDestroy(y);
+    N_VDestroy(loc_err_est);
+    return 1;
+  }
+
+  N_Vector err_weights = N_VClone(y);
+  if (err_weights == nullptr)
+  {
+    cerr << "Error creating N_Vector" << endl;
+    SUNMatDestroy(A);
+    ARKodeFree(&arkode_mem);
+    N_VDestroy(y);
+    N_VDestroy(loc_err_est);
+    N_VDestroy(companion_loc_err_est);
     return 1;
   }
 
@@ -237,17 +295,41 @@ int main(int argc, char* argv[])
     }
     sunrealtype* lee_data = N_VGetArrayPointer(loc_err_est);
 
+    flag = ARKodeGetEstLocalErrors2(arkode_mem, companion_loc_err_est);
+    if (flag < 0)
+    {
+      cerr << "ARKODE error, flag = " << flag << endl;
+      break;
+    }
+    sunrealtype* clee_data = N_VGetArrayPointer(companion_loc_err_est);
+
+    flag = ARKodeGetErrWeights(arkode_mem, err_weights);
+    if (flag < 0)
+    {
+      cerr << "ARKODE error, flag = " << flag << endl;
+      break;
+    }
+    sunrealtype* weights_data = N_VGetArrayPointer(err_weights);
+
     problem.computeEigenvalues(lambda1, lambda2, lambda3);
     stiffness_ratio = problem.computeStiffnessRatio();
 
-    datafile << setw(26) << t << setw(26) << ydata[0] << setw(26) << ydata[1]
-             << setw(26) << ydata[2] << setw(26) << lee_data[0] << setw(26)
-             << lee_data[1] << setw(26) << lee_data[2] << setw(26)
-             << lambda1.real() << showpos << lambda1.imag() << noshowpos << "j"
-             << setw(26) << lambda2.real() << showpos << lambda2.imag()
-             << noshowpos << "j" << setw(26) << lambda3.real() << showpos
-             << lambda3.imag() << noshowpos << "j" << setw(26)
-             << stiffness_ratio << endl;
+    datafile
+    << setw(26) << t
+    << setw(26) << ydata[0]
+    << setw(26) << ydata[1]
+    << setw(26) << ydata[2]
+    << setw(26) << lee_data[0] * weights_data[0]
+    << setw(26) << lee_data[1] * weights_data[1]
+    << setw(26) << lee_data[2] * weights_data[2]
+    << setw(26) << clee_data[0] * weights_data[0]
+    << setw(26) << clee_data[1] * weights_data[1]
+    << setw(26) << clee_data[2] * weights_data[2]
+    << setw(26) << lambda1.real() << showpos << lambda1.imag() << noshowpos << "j"
+    << setw(26) << lambda2.real() << showpos << lambda2.imag() << noshowpos << "j"
+    << setw(26) << lambda3.real() << showpos << lambda3.imag() << noshowpos << "j"
+    << setw(26) << stiffness_ratio
+    << endl;
 
     tout += dt_out;
     if (tout > tf) tout = tf;
@@ -270,6 +352,8 @@ int main(int argc, char* argv[])
   SUNMatDestroy(A);
   N_VDestroy(y);
   N_VDestroy(loc_err_est);
+  N_VDestroy(companion_loc_err_est);
+  N_VDestroy(err_weights);
 
   return 0;
 }

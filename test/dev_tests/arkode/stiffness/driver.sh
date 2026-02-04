@@ -39,6 +39,7 @@ FIXED_GAMMA=10
 BETA_START=10
 BETA_END=50
 BETA_STEP=5
+OPTIONS=(-e -c)
 
 echo "Fixed gamma = $FIXED_GAMMA"
 echo "Beta range: $BETA_START to $BETA_END (step $BETA_STEP)"
@@ -50,14 +51,15 @@ mkdir -p "$OUTPUT_DIR/fixed_gamma"
 for beta in $(seq $BETA_START $BETA_STEP $BETA_END); do
     test_case="beta_${beta}_gamma_${FIXED_GAMMA}"
     output_file="${OUTPUT_DIR}/fixed_gamma/${test_case}.dat"
+    log_file="${OUTPUT_DIR}/fixed_gamma/${test_case}.log"
     echo -e "Running: beta=${beta}, gamma=${FIXED_GAMMA} -> ${output_file}"
-    export SUNLOGGER_INFO_FILENAME="${OUTPUT_DIR}/fixed_gamma/${test_case}.log"
+    export SUNLOGGER_INFO_FILENAME="${log_file}"
 
-    $EXECUTABLE -b $beta -g $FIXED_GAMMA -o "${output_file}"
+    $EXECUTABLE -b $beta -g $FIXED_GAMMA -o "${output_file}" "${OPTIONS[@]}"
 
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}Success${NC}"
-        ./plot_shampine.py "${output_file}" --save "${OUTPUT_DIR}/fixed_gamma/${test_case}.pdf" --title "\$\beta\$=${beta}, \$\gamma\$=${FIXED_GAMMA}"
+        ./plot_shampine.py "${output_file}" "${log_file}" --save "${OUTPUT_DIR}/fixed_gamma/${test_case}.pdf" --title "\$\beta\$=${beta}, \$\gamma\$=${FIXED_GAMMA}"
     else
         echo -e "${RED}Failed${NC}"
     fi
@@ -75,6 +77,7 @@ FIXED_BETA=100
 GAMMA_START=60
 GAMMA_END=130
 GAMMA_STEP=10
+OPTIONS=(-e -c)
 
 echo "Fixed beta = $FIXED_BETA"
 echo "Gamma range: $GAMMA_START to $GAMMA_END (step $GAMMA_STEP)"
@@ -86,14 +89,15 @@ mkdir -p "$OUTPUT_DIR/fixed_beta"
 for gamma in $(seq $GAMMA_START $GAMMA_STEP $GAMMA_END); do
     test_case="beta_${FIXED_BETA}_gamma_${gamma}"
     output_file="${OUTPUT_DIR}/fixed_beta/${test_case}.dat"
+    log_file="${OUTPUT_DIR}/fixed_beta/${test_case}.log"
     echo -e "Running: beta=${FIXED_BETA}, gamma=${gamma} -> ${output_file}"
-    export SUNLOGGER_INFO_FILENAME="${OUTPUT_DIR}/fixed_beta/${test_case}.log"
+    export SUNLOGGER_INFO_FILENAME="${log_file}"
 
-    $EXECUTABLE -b $FIXED_BETA -g $gamma -o "${output_file}"
+    $EXECUTABLE -b $FIXED_BETA -g $gamma -o "${output_file}" "${OPTIONS[@]}"
 
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}Success${NC}"
-        ./plot_shampine.py "${output_file}" --save "${OUTPUT_DIR}/fixed_beta/${test_case}.pdf" --title "\$\beta\$=${FIXED_BETA}, \$\gamma\$=${gamma}"
+        ./plot_shampine.py "${output_file}" "${log_file}" --save "${OUTPUT_DIR}/fixed_beta/${test_case}.pdf" --title "\$\beta\$=${FIXED_BETA}, \$\gamma\$=${gamma}"
     else
         echo -e "${RED}Failed${NC}"
     fi

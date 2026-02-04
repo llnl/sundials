@@ -183,6 +183,8 @@ ARKodeButcherTable ARKodeButcherTable_Alloc(int stages, sunbooleantype embedded)
   B->b = NULL;
   B->c = NULL;
   B->d = NULL;
+  B->embedding_hi = NULL;
+  B->embedding_lo = NULL;
 
   /* set stages into B structure */
   B->stages = stages;
@@ -231,6 +233,20 @@ ARKodeButcherTable ARKodeButcherTable_Alloc(int stages, sunbooleantype embedded)
   {
     B->d = (sunrealtype*)calloc(stages, sizeof(sunrealtype));
     if (B->d == NULL)
+    {
+      ARKodeButcherTable_Free(B);
+      return (NULL);
+    }
+
+    B->embedding_hi = (sunrealtype*)calloc(stages, sizeof(sunrealtype));
+    if (B->embedding_hi == NULL)
+    {
+      ARKodeButcherTable_Free(B);
+      return (NULL);
+    }
+
+    B->embedding_lo = (sunrealtype*)calloc(stages, sizeof(sunrealtype));
+    if (B->embedding_lo == NULL)
     {
       ARKodeButcherTable_Free(B);
       return (NULL);
@@ -323,6 +339,8 @@ ARKodeButcherTable ARKodeButcherTable_Copy(ARKodeButcherTable B)
   if (embedded)
   {
     for (i = 0; i < s; i++) { Bcopy->d[i] = B->d[i]; }
+    for (i = 0; i < s; i++) { Bcopy->embedding_hi[i] = B->embedding_hi[i]; }
+    for (i = 0; i < s; i++) { Bcopy->embedding_lo[i] = B->embedding_lo[i]; }
   }
 
   return (Bcopy);
@@ -359,6 +377,8 @@ void ARKodeButcherTable_Free(ARKodeButcherTable B)
     if (B->d != NULL) { free(B->d); }
     if (B->c != NULL) { free(B->c); }
     if (B->b != NULL) { free(B->b); }
+    if (B->embedding_hi != NULL) { free(B->embedding_hi); }
+    if (B->embedding_lo != NULL) { free(B->embedding_lo); }
     if (B->A != NULL)
     {
       for (i = 0; i < B->stages; i++)

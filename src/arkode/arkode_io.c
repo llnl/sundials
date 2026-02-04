@@ -2559,6 +2559,30 @@ int ARKodeGetEstLocalErrors(void* arkode_mem, N_Vector ele)
   }
 }
 
+int ARKodeGetEstLocalErrors2(void* arkode_mem, N_Vector ele)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* Call stepper-specific routine (if provided); otherwise return an error */
+  if (ark_mem->step_getestlocalerrors)
+  {
+    return (ark_mem->step_getestlocalerrors2(ark_mem, ele));
+  }
+  else
+  {
+    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
+                    __FILE__, "time-stepping module does provide a temporal error estimate");
+    return (ARK_STEPPER_UNSUPPORTED);
+  }
+}
+
 /*---------------------------------------------------------------
   ARKodeGetLastTime:
 

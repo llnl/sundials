@@ -40,6 +40,9 @@ struct ARKodeButcherTableMem
   sunrealtype* c;  /* canopy node coefficients       */
   sunrealtype* b;  /* root node coefficients         */
   sunrealtype* d;  /* embedding coefficients         */
+
+  sunrealtype* embedding_hi;
+  sunrealtype* embedding_lo;
 };
 
 typedef _SUNDIALS_STRUCT_ ARKodeButcherTableMem* ARKodeButcherTable;

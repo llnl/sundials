@@ -403,6 +403,7 @@ SUNDIALS_EXPORT int ARKodeGetNumAccSteps(void* arkode_mem, long int* accsteps);
 SUNDIALS_EXPORT int ARKodeGetNumErrTestFails(void* arkode_mem,
                                              long int* netfails);
 SUNDIALS_EXPORT int ARKodeGetEstLocalErrors(void* arkode_mem, N_Vector ele);
+SUNDIALS_EXPORT int ARKodeGetEstLocalErrors2(void* arkode_mem, N_Vector ele);
 SUNDIALS_EXPORT int ARKodeGetActualInitStep(void* arkode_mem,
                                             sunrealtype* hinused);
 SUNDIALS_EXPORT int ARKodeGetTolScaleFactor(void* arkode_mem,

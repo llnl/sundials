@@ -755,6 +755,63 @@ ARK_BUTCHER_TABLE(ARKODE_FEHLBERG_6_4_5, { /* Fehlberg-ERK */
     return B;
   })
 
+ARK_BUTCHER_TABLE(ARKODE_FEHLBERG_SHAMPINE_HIEBERT_6_4_5, { /* Fehlberg-Shampine-Hiebert-ERK */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(6, SUNTRUE);
+    B->q = 5;
+    B->p = 4;
+    B->A[1][0] = SUN_RCONST(1.0)/SUN_RCONST(4.0);
+    B->A[2][0] = SUN_RCONST(3.0)/SUN_RCONST(32.0);
+    B->A[2][1] = SUN_RCONST(9.0)/SUN_RCONST(32.0);
+    B->A[3][0] = SUN_RCONST(1932.0)/SUN_RCONST(2197.0);
+    B->A[3][1] = SUN_RCONST(-7200.0)/SUN_RCONST(2197.0);
+    B->A[3][2] = SUN_RCONST(7296.0)/SUN_RCONST(2197.0);
+    B->A[4][0] = SUN_RCONST(439.0)/SUN_RCONST(216.0);
+    B->A[4][1] = SUN_RCONST(-8.0);
+    B->A[4][2] = SUN_RCONST(3680.0)/SUN_RCONST(513.0);
+    B->A[4][3] = SUN_RCONST(-845.0)/SUN_RCONST(4104.0);
+    B->A[5][0] = SUN_RCONST(-8.0)/SUN_RCONST(27.0);
+    B->A[5][1] = SUN_RCONST(2.0);
+    B->A[5][2] = SUN_RCONST(-3544.0)/SUN_RCONST(2565.0);
+    B->A[5][3] = SUN_RCONST(1859.0)/SUN_RCONST(4104.0);
+    B->A[5][4] = SUN_RCONST(-11.0)/SUN_RCONST(40.0);
+
+    B->b[0] = SUN_RCONST(16.0)/SUN_RCONST(135.0);
+    B->b[2] = SUN_RCONST(6656.0)/SUN_RCONST(12825.0);
+    B->b[3] = SUN_RCONST(28561.0)/SUN_RCONST(56430.0);
+    B->b[4] = SUN_RCONST(-9.0)/SUN_RCONST(50.0);
+    B->b[5] = SUN_RCONST(2.0)/SUN_RCONST(55.0);
+
+    B->d[0] = SUN_RCONST(25.0)/SUN_RCONST(216.0);
+    B->d[2] = SUN_RCONST(1408.0)/SUN_RCONST(2565.0);
+    B->d[3] = SUN_RCONST(2197.0)/SUN_RCONST(4104.0);
+    B->d[4] = SUN_RCONST(-1.0)/SUN_RCONST(5.0);
+
+    B->c[1] = SUN_RCONST(1.0)/SUN_RCONST(4.0);
+    B->c[2] = SUN_RCONST(3.0)/SUN_RCONST(8.0);
+    B->c[3] = SUN_RCONST(12.0)/SUN_RCONST(13.0);
+    B->c[4] = SUN_RCONST(1.0);
+    B->c[5] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
+
+    /* second order (\hat{c}_i in Shampine and Hibert) */
+    B->embedding_hi[0] = SUN_RCONST(0.139682);
+    B->embedding_hi[1] = SUN_RCONST(-0.198633);
+    B->embedding_hi[2] = SUN_RCONST(0.724442);
+    B->embedding_hi[3] = SUN_RCONST(0.428953);
+    B->embedding_hi[4] = SUN_RCONST(-0.141485);
+    B->embedding_hi[5] = SUN_RCONST(0.047041);
+
+    /* first order (c_i in Shampine and Hibert) */
+    B->embedding_lo[0] = SUN_RCONST(0.084227);
+    B->embedding_lo[1] = SUN_RCONST(-0.163140);
+    B->embedding_lo[2] = SUN_RCONST(0.761013);
+    B->embedding_lo[3] = SUN_RCONST(0.405846);
+    B->embedding_lo[4] = SUN_RCONST(-0.131970);
+    B->embedding_lo[5] = SUN_RCONST(0.044024);
+
+    return B;
+  })
+
+
 ARK_BUTCHER_TABLE(ARKODE_DORMAND_PRINCE_7_4_5, { /* Dormand-Prince-ERK */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(7, SUNTRUE);
     B->q = 5;

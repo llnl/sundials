@@ -138,6 +138,7 @@ void* ARKStepCreate(ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0,
   ark_mem->step_getnumlinsolvsetups       = arkStep_GetNumLinSolvSetups;
   ark_mem->step_getcurrentgamma           = arkStep_GetCurrentGamma;
   ark_mem->step_getestlocalerrors         = arkStep_GetEstLocalErrors;
+  ark_mem->step_getestlocalerrors2        = arkStep_GetEstLocalErrors2;
   ark_mem->step_getnonlinearsystemdata    = arkStep_GetNonlinearSystemData;
   ark_mem->step_getnumnonlinsolviters     = arkStep_GetNumNonlinSolvIters;
   ark_mem->step_getnumnonlinsolvconvfails = arkStep_GetNumNonlinSolvConvFails;
@@ -3387,6 +3388,30 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
 
     /* fill error norm */
     *dsmPtr = N_VWrmsNorm(yerr, ark_mem->ewt);
+
+    /* Additional Error Estimate For Stiffness Detection */
+
+    /* set arrays for fused vector operation */
+    nvec = 0;
+    for (j = 0; j < step_mem->stages; j++)
+    {
+      if (step_mem->explicit)
+      { /* Explicit pieces */
+        cvals[nvec] = ark_mem->h * (step_mem->Be->embedding_hi[j] - step_mem->Be->embedding_lo[j]);
+        Xvecs[nvec] = step_mem->Fe[j];
+        nvec += 1;
+      }
+      if (step_mem->implicit)
+      { /* Implicit pieces */
+        cvals[nvec] = ark_mem->h * (step_mem->Bi->embedding_hi[j] - step_mem->Bi->embedding_lo[j]);
+        Xvecs[nvec] = step_mem->Fi[j];
+        nvec += 1;
+      }
+    }
+
+    /* call fused vector operation to do the work */
+    retval = N_VLinearCombination(nvec, cvals, Xvecs, ark_mem->tempv4);
+    if (retval != 0) { return (ARK_VECTOROP_ERR); }
   }
 
   return (ARK_SUCCESS);

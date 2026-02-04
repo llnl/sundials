@@ -1225,6 +1225,25 @@ int arkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele)
   return (ARK_SUCCESS);
 }
 
+int arkStep_GetEstLocalErrors2(ARKodeMem ark_mem, N_Vector ele)
+{
+  int retval;
+  ARKodeARKStepMem step_mem;
+  retval = arkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  /* return an error if local truncation error is not computed */
+  if ((ark_mem->fixedstep && (ark_mem->AccumErrorType == ARK_ACCUMERROR_NONE)) ||
+      (step_mem->p <= 0))
+  {
+    return (ARK_STEPPER_UNSUPPORTED);
+  }
+
+  /* otherwise, copy local truncation error vector to output */
+  N_VScale(ONE, ark_mem->tempv4, ele);
+  return (ARK_SUCCESS);
+}
+
 /*---------------------------------------------------------------
   arkStep_GetNumLinSolvSetups:
 

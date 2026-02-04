@@ -42,6 +42,9 @@ try:
             ("loc err est1", float),
             ("loc err est2", float),
             ("loc err est3", float),
+            ("com loc err est1", float),
+            ("com loc err est2", float),
+            ("com loc err est3", float),
             ("lambda1", complex),
             ("lambda2", complex),
             ("lambda3", complex),
@@ -97,6 +100,10 @@ clip = np.finfo(np.float64).eps
 axes[1].plot(data["t"], np.clip(np.abs(data["loc err est1"]), clip, None), label="y1")
 axes[1].plot(data["t"], np.clip(np.abs(data["loc err est2"]), clip, None), label="y2")
 axes[1].plot(data["t"], np.clip(np.abs(data["loc err est3"]), clip, None), label="y3")
+axes[1].plot(data["t"], np.clip(np.abs(data["com loc err est1"]), clip, None), linestyle="--", label="x1")
+axes[1].plot(data["t"], np.clip(np.abs(data["com loc err est2"]), clip, None), linestyle="--", label="x2")
+axes[1].plot(data["t"], np.clip(np.abs(data["com loc err est3"]), clip, None), linestyle="--", label="x3")
+axes[1].axhline(1, color="gray", linestyle='--', alpha=0.7)
 axes[1].set_yscale("log")
 axes[1].legend(loc="best")
 axes[1].set_xlabel("time")

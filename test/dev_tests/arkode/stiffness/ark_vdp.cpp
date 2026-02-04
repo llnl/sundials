@@ -20,7 +20,7 @@ using namespace std;
 using namespace problems::van_der_pol;
 
 // Function to print usage information
-void printUsage(const char* progname)
+static void printUsage(const char* progname)
 {
   cout << "Usage: " << progname << " [options]\n\n";
   cout << "Solves the Van der Pol equation:\n";
@@ -33,8 +33,8 @@ void printUsage(const char* progname)
 }
 
 // Function to parse command line arguments
-bool parseArguments(int argc, char* argv[], sunrealtype& mu, string& outputFile,
-                    bool& use_explicit)
+static bool parseArguments(int argc, char* argv[], sunrealtype& mu,
+                           string& outputFile, bool& use_explicit)
 {
   for (int i = 1; i < argc; i++)
   {
