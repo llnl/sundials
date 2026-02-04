@@ -3386,6 +3386,8 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     retval = N_VLinearCombination(nvec, cvals, Xvecs, yerr);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
+    SUNLogInfoVec(ARK_LOGGER, "error", yerr, "err(:) =");
+
     /* fill error norm */
     *dsmPtr = N_VWrmsNorm(yerr, ark_mem->ewt);
 
@@ -3412,6 +3414,8 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     /* call fused vector operation to do the work */
     retval = N_VLinearCombination(nvec, cvals, Xvecs, ark_mem->tempv4);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
+
+    SUNLogInfoVec(ARK_LOGGER, "error2", ark_mem->tempv4, "err2(:) =");
   }
 
   return (ARK_SUCCESS);

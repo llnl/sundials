@@ -67,9 +67,17 @@
     }                                                                \
   }                                                                  \
   while (0)
+#define SUNLogInfoVec(logger, label, vec, /*msg_txt, */...)   \
+  do {                                                             \
+    SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_INFO, __func__, label, \
+                       /* msg_txt, */ __VA_ARGS__);                \
+    N_VPrintFile(vec, logger->info_fp);                            \
+  }                                                                \
+  while (0)
 #else
 #define SUNLogInfo(logger, label, /* msg_txt, */...)
 #define SUNLogInfoIf(condition, logger, label, /* msg_txt, */...)
+#define SUNLogInfoVec(logger, label, vec, /*msg_txt, */...)
 #endif
 
 #if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_DEBUG
