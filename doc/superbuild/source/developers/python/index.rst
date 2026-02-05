@@ -104,7 +104,7 @@ The recommended method for development is to use a typical Python development wo
    cd sundials_root_directory
    python -m venv .venv  # create python virtual environment
    . .venv/bin/activate  # activate the python virtual environment
-   pip install scikit-build-core[pyproject] hatchling nanobind setuptools scikit-build pybind11 # this is a prerequisite for the next step
+   pip install scikit-build-core[pyproject] hatchling nanobind setuptools scikit-build pybind11 litgen@git+https://github.com/sundials-codes/litgen.git # this is a prerequisite for the next step
    MAKEFLAGS="-j$(nproc)" pip install --no-build-isolation -Ceditable.rebuild=true -ve .[dev] # install sundials4py into the virtual environment
 
 The last ``pip install`` command will allow automatic incremental builds. It will invoke the SUNDIALS ``CMake`` build system with the

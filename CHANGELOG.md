@@ -1,5 +1,15 @@
 # SUNDIALS Changelog
 
+## Changes to SUNDIALS in release X.Y.Z
+
+### Major Features
+
+### New Features and Enhancements
+
+### Bug Fixes
+
+### Deprecation Notices
+
 ## Changes to SUNDIALS in release 7.6.0
 
 ### Major Features

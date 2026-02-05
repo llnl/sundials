@@ -384,7 +384,7 @@ if [ $do_arkode = "T" ]; then
     filename="arkode-"$ARK_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/arkode.sh $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -398,7 +398,7 @@ if [ $do_cvode = "T" ]; then
     filename="cvode-"$CV_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/cvode.sh  $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -412,7 +412,7 @@ if [ $do_cvodes = "T" ]; then
     filename="cvodes-"$CVS_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/cvodes.sh $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -426,7 +426,7 @@ if [ $do_ida = "T" ]; then
     filename="ida-"$IDA_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/ida.sh    $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -440,7 +440,7 @@ if [ $do_idas = "T" ]; then
     filename="idas-"$IDAS_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/idas.sh   $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -454,7 +454,7 @@ if [ $do_kinsol = "T" ]; then
     filename="kinsol-"$KIN_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/kinsol.sh $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi

@@ -1,5 +1,7 @@
 # SUNDIALS: SUite of Nonlinear and DIfferential/ALgebraic equation Solvers #
 
+[![GitHub Release](https://img.shields.io/github/v/release/llnl/sundials)](https://github.com/llnl/sundials/releases/latest)
+[![PyPI - Version](https://img.shields.io/pypi/v/sundials4py?label=sundials4py)](https://pypi.org/project/sundials4py/)
 [![track SUNDIALS downloads](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml/badge.svg)](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml)
 
 ### Version 7.6.0 (Jan 2026) ###
@@ -8,8 +10,12 @@
 
 SUNDIALS is a family of software packages providing robust and efficient time
 integrators and nonlinear solvers that can easily be incorporated into existing
-simulation codes. The packages are designed to require minimal information from
-the user, allow users to supply their own data structures underneath the
+simulation codes. The library is primarily written in C with interfaces to C++,
+[Fortran](https://sundials.readthedocs.io/en/latest/Fortran/index.html), and
+[Python](https://sundials.readthedocs.io/en/latest/Python/index.html) (beta
+version) and provides support for serial, threaded, distributed, and GPU
+accelerated computing. The packages are designed to require minimal information
+from the user, allow users to supply their own data structures underneath the
 packages, and enable interfacing with user-supplied or third-party algebraic
 solvers and preconditioners.
 

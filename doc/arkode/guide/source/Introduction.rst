@@ -129,7 +129,7 @@ require a linear solver, ARKODE may use a variety of SUNLinearSolver modules
 provided with SUNDIALS, or again may utilize a user-supplied module.
 
 
-Changes to SUNDIALS in release 6.6.0
+Changes to SUNDIALS in release X.Y.Z
 ====================================
 
 .. include:: ../../../shared/RecentChanges.rst

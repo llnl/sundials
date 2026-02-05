@@ -72,6 +72,9 @@ compile_commands.json
 /doc/shared/__pycache__
 /doc/shared/Python/sundials4py-*-functions.rst
 
+# external reference mapping files
+/doc/superbuild/*.inv
+
 # PDFs of user guides and example docs
 /doc/*/*_guide.pdf
 /doc/*/*_examples.pdf
