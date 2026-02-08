@@ -301,7 +301,7 @@ def log_file_to_list(filename):
 
     :param str filename: The name of the log file to parse.
     :returns: A list of dictionaries, one per step attempt.
-    :rtype: list
+    :rtype: list[dict]
 
     The list returned for a time integrator log file will contain a dictionary for each
     step attempt:
