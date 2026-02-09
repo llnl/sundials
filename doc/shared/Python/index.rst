@@ -20,23 +20,37 @@
 Python
 ******
 
-sundials4py provides official (supported by the SUNDIALS team) Python bindings to much of the 
-SUNDIALS library, allowing you to use SUNDIALS directly from Python.
-
 .. warning::
 
-   sundials4py is in beta and is subject to breaking changes. We welcome feedback on this new feature of SUNDIALS.
+   sundials4py is in beta and is subject to breaking changes. We welcome
+   feedback on this new feature of SUNDIALS.
+
+sundials4py provides official (supported by the SUNDIALS team) Python bindings
+to much of the SUNDIALS library, allowing you to use SUNDIALS directly from
+Python.
+
+The bindings are built using `nanobind <https://nanobind.readthedocs.io/>`__ and
+`litgen <https://pthom.github.io/litgen>`__ and are designed to be easy to use
+from Python in conjunction with ubiquitous libraries in the Python scientific
+computing and machine learning ecosystems. To that end, sundials4py supports:
+
+- Python's automatic memory management
+- Python definitions of user-supplied callback functions
+- Zero-copy exchange of arrays (CPU and Device) through DLPack protocol and
+  numpy's ndarray
 
 .. note::
 
-   New SUNDIALS users should first read the :ref:`General User Guide <SUNDIALS>`. 
-   The Python User Guide focuses on specific aspects of using SUNDIALS from Python and assumes 
-   the user is familiar with SUNDIALS. 
+   sundials4py requires Python 3.12+
+
+The Python User Guide focuses on specific aspects of using SUNDIALS from Python
+and assumes the user is familiar with SUNDIALS. New SUNDIALS users should first
+read the :ref:`General User Guide <SUNDIALS>` to understand the features and
+usage of SUNDIALS packages.
 
 .. toctree::
    :maxdepth: 1
 
-   Introduction.rst
    Usage.rst
    sundials4py-core-functions.rst
    sundials4py-arkode-functions.rst

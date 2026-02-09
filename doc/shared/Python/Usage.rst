@@ -21,31 +21,132 @@ Using sundials4py
 At a high level, using SUNDIALS from Python via sundials4py looks a lot like
 using SUNDIALS from C or C++. The few notable differences are discussed below.
 
-View Classes and Memory Management
-----------------------------------
+Installation
+------------
 
-sundials4py provides natural usage of SUNDIALS objects with object lifetimes managed by the Python garbage collection as with any other Python object.
-There is only one caveat, the SUNDIALS integrator/solver ``void*`` objects are wrapped in "View" classes (behind the scenes) for compatibility with nanobind.
-These view objects cannot be implicitly converted to the underlying ``void*``. As such, when calling a function which operates on these ``void*`` objects, one must
-extract the ``void*`` "capsule" from the view object by calling the view's ``get`` method.
+You can install sundials4py directly from `PyPI
+<https://pypi.org/project/sundials4py/>`__ using pip:
+
+.. code-block:: bash
+
+   pip install sundials4py
+
+You can also install sundials4py from git:
+
+.. code-block:: bash
+
+   pip install git+https://github.com/LLNL/sundials.git
+
+The default build of sundials4py that is distributed as a binary wheel uses
+double precision real types and 64-bit indices. To install SUNDIALS with
+different precisions and index sizes, you can build from source wheels instead
+of using the pre-built binary wheels. When building from source wheels instead
+of binary wheels, you can customize the SUNDIALS precision (real type) and index
+type at build time by passing the CMake arguments in an environment variable
+when running pip. For example:
+
+.. code-block:: bash
+
+   export CMAKE_ARGS="-DSUNDIALS_PRECISION=SINGLE -DSUNDIALS_INDEX_SIZE=64"
+   pip install sundials4py --no-binary=sundials4py
+
+Other SUNDIALS options can also be accessed in this way. Review
+:numref:`Installation.Options` for more information on the available options.
+
+Modules
+-------
+
+After installation, you can import the sundials4py module with
 
 .. code-block:: python
-   
-   from sundials4py.core import *
-   from sundials4py.cvode import *
 
-   ode_problem = MyODEProblemClass()
+   import sundials4py
 
-   sunctx = SUNContext_Create(SUN_COMM_NULL)
-   
-   cvode = CVodeCreate(CV_BDF, sunctx)
+which includes the following submodules (which may also be individually
+imported) for accessing specific SUNDIALS features:
+
+- ``sundials4py.core`` contains all the shared SUNDIALS classes and functions as
+  well as many of the native SUNDIALS class implementations:
+
+  - NVector: serial and many-vector
+
+  - SUNMatix: band, dense, and sparse
+
+  - SUNLinearSover: band, dense, PCG, SPBCGS, SPFGMR, SPGMR, and SPTFQMR
+
+  - SUNNonlinearSolver: fixed-point and Newton
+
+  - SUNAdaptController: Soderlind, ImEx-Gus, and MRI H-Tol
+
+  - SUNDomEigEstimator: Power
+
+  - SUNAdjonitCheckPointScheme: Fixed
+
+- ``sundials4py.arkode`` contains all of the ARKODE specific classes and
+  functions
+
+- ``sundials4py.cvodes`` contains all of the CVODES specific classes and
+  functions
+
+- ``sundials4py.idas`` contains all of the IDAS specific classes and functions
+
+- ``sundials4py.kinsol`` contains all of the KINSOL specific classes and
+  functions
+
+CVODE and IDA dot not have modules because CVODES and IDAS provide all of the
+same capabilities plus continuous forward and adjoint sensitivity analysis.
+
+.. note::
+
+   Not all SUNDIALS features are supported by the Python interfaces. In
+   particular, third-party libraries are not yet supported.
+
+Example Usage
+-------------
+
+We now consider a simple example to illustrate using CVODE through
+sundials4py. Additional examples can be found in the ``examples/python``
+directory of the :examples:`SUNDIALS GitHub repository <python>`.
+
+.. literalinclude:: ../../../examples/python/cvodes/cvs_brusselator.py
+   :language: python
+   :linenos:
+   :emphasize-lines: 77
+   :start-at: import sys
+   :end-at: Total RHS evals for
+
+For more information on usage, differences from the C/C++ API and examples,
+continue to the next section of this documentation.
+
+Usage Differences
+-----------------
+
+While sundials4py closely follows the C API, some differences are inevitable due
+to the differences between Python and C as well as the requirements of the code
+generation tool used to create the bindings. In this section, we note the most
+critical differences.
+
+
+View Classes and Memory Management
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+sundials4py provides natural usage of SUNDIALS objects with object lifetimes
+managed by the Python garbage collection as with any other Python object.  There
+is only one caveat, the SUNDIALS integrator/solver ``void*`` objects are wrapped
+in "View" classes (behind the scenes) for compatibility with nanobind.  These
+view objects cannot be implicitly converted to the underlying ``void*``. As
+such, when calling a function which operates on these ``void*`` objects, one
+must extract the ``void*`` "capsule" from the view object by calling the view's
+``get`` method.
+
+.. code-block:: python
 
    # notice we need to call cvode.get()
    status = CVodeInit(cvode.get(), ode_problem.f, T0, y)
 
 
 Return-by-Pointer Parameters
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Functions that return values via pointer arguments in the C API are mapped to
 Python functions that return a tuple where the **first element** is the
@@ -85,14 +186,19 @@ Python:
 
 
 Arrays
-------
+^^^^^^
 
-``N_Vector`` objects in sundials4py are compatible with numpy's ``ndarray``. Each ``N_Vector`` can work on a numpy arrays without copies, and you can access
-and modify the underlying data directly using ``N_VGetArrayPointer``, which returns a numpy ``ndarray`` view of the data.
+``N_Vector`` objects in sundials4py are compatible with numpy's
+``ndarray``. Each ``N_Vector`` can work on a numpy arrays without copies, and
+you can access and modify the underlying data directly using
+``N_VGetArrayPointer``, which returns a numpy ``ndarray`` view of the data.
 
-SUNDIALS matrix types (dense, banded, sparse) are also exposed as Python objects that provide access to their underlying data as numpy arrays (e.g., via ``SUNDenseMatrix_Data``).
+SUNDIALS matrix types (dense, banded, sparse) are also exposed as Python objects
+that provide access to their underlying data as numpy arrays (e.g., via
+``SUNDenseMatrix_Data``).
 
-Arrays of scalars (e.g., scaling factors passed to ``N_VLinearCombination``) are also represented as numpy arrays.
+Arrays of scalars (e.g., scaling factors passed to ``N_VLinearCombination``) are
+also represented as numpy arrays.
 
 **Example: Accessing and modifying an N_Vector**
 
@@ -110,18 +216,27 @@ Arrays of scalars (e.g., scaling factors passed to ``N_VLinearCombination``) are
    arr = SUNDenseMatrix_Data(mat)
    arr[:] = np.eye(3)  # Set to identity matrix
 
-This allows you to use numpy operations for vector and matrix data, and to pass numpy arrays to and from SUNDIALS routines efficiently and without unnecessary copies.
+This allows you to use numpy operations for vector and matrix data, and to pass
+numpy arrays to and from SUNDIALS routines efficiently and without unnecessary
+copies.
 
 
 User-Supplied Callback Functions
---------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-SUNDIALS packages and several modules/classes require user-supplied callback functions to define problem-specific behavior, 
-such as the right-hand side of an ODE or a nonlinear system function. In sundials4py, you can provide these as standard Python functions or lambdas.
+SUNDIALS packages and several modules/classes require user-supplied callback
+functions to define problem-specific behavior, such as the right-hand side of an
+ODE or a nonlinear system function. In sundials4py, you can provide these as
+standard Python functions or lambdas.
 
-The callback signatures follow the C API. As such, ``N_Vector`` arguments are passed as ``N_Vector`` objects and the underlying ndarray must be extracted in the user code. The only caveat is that return-by-pointer parameters are removed from the signature, and instead become return values (mirroring how return-by-pointer parameters for other functions are handled)
+The callback signatures follow the C API. As such, ``N_Vector`` arguments are
+passed as ``N_Vector`` objects and the underlying ndarray must be extracted in
+the user code. The only caveat is that return-by-pointer parameters are removed
+from the signature, and instead become return values (mirroring how
+return-by-pointer parameters for other functions are handled)
 
-Most callback signatures include a ``void* user_data`` argument. In Python, this argument must be present in the signature, but it should be ignored.
+Most callback signatures include a ``void* user_data`` argument. In Python, this
+argument must be present in the signature, but it should be ignored.
 
 **Example: ODE right-hand side for ARKStep**
 
@@ -132,7 +247,7 @@ Most callback signatures include a ``void* user_data`` argument. In Python, this
    def rhs(t, y_nvector, ydot_nvector, _): # note _ in place of user_data
       # Compute ydot = f(t, y)
       y = N_VGetArrayPointer(y_nvector)
-      ydot = N_VGetArrayPointer(ydot_nvector) 
+      ydot = N_VGetArrayPointer(ydot_nvector)
       ydot[:] = -y
       return 0
 
@@ -173,17 +288,16 @@ Most callback signatures include a ``void* user_data`` argument. In Python, this
 
 .. warning::
 
-   The ``user_data`` argument should always be ``None`` or ``_`` on the Python side. If it is listed otherwise, then it should be ignored to avoid causing catastrophic errors.
+   The ``user_data`` argument should always be ``None`` or ``_`` on the Python
+   side. If it is listed otherwise, then it should be ignored to avoid causing
+   catastrophic errors.
 
 
 Error Codes
------------
+^^^^^^^^^^^
 
-The named ``SUN_ERR_*`` code constants are not available in Python. However, all negative values of ``SUNErrCode``
-are still errors, zero is success, and positive values are warnings. As such, users  Users can call ``SUNGetErrMsg``
-from Python with the returned ``SUNErrCode`` to get further information about an error.
-
-Examples
---------
-
-Examples can be found in ``examples/python``.
+The named ``SUN_ERR_*`` code constants are not available in Python. However, all
+negative values of ``SUNErrCode`` are still errors, zero is success, and
+positive values are warnings. As such, users Users can call ``SUNGetErrMsg``
+from Python with the returned ``SUNErrCode`` to get further information about an
+error.

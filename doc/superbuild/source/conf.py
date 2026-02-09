@@ -55,6 +55,10 @@ extlinks = {
     "pdfdoc": (
         f"https://github.com/LLNL/sundials/releases/download/{sundials_version}/%s.pdf",
         None,
+    ),
+    "examples": (
+        f"https://github.com/LLNL/sundials/tree/{sundials_version}/examples/%s",
+        None,
     )
 }
 
