@@ -19,7 +19,10 @@ Using sundials4py
 =================
 
 At a high level, using SUNDIALS from Python via sundials4py looks a lot like
-using SUNDIALS from C or C++. The few notable differences are discussed below.
+using SUNDIALS from C or C++. Below we overview using sundials4py and discuss
+the few notable differences.
+
+.. _Python.Usage.Installation:
 
 Installation
 ------------
@@ -52,6 +55,8 @@ when running pip. For example:
 
 Other SUNDIALS options can also be accessed in this way. Review
 :numref:`Installation.Options` for more information on the available options.
+
+.. _Python.Usage.Modules:
 
 Modules
 -------
@@ -101,22 +106,26 @@ same capabilities plus continuous forward and adjoint sensitivity analysis.
    Not all SUNDIALS features are supported by the Python interfaces. In
    particular, third-party libraries are not yet supported.
 
+.. _Python.Usage.Example:
+
 Example Usage
 -------------
 
-We now consider a simple example to illustrate using CVODE through
-sundials4py. Additional examples can be found in the ``examples/python``
-directory of the :examples:`SUNDIALS GitHub repository <python>`.
+We now consider a simple example to illustrate using CVODE through sundials4py
+and highlight some of the differences to using SUNDIALS from C/C++. For more
+information on usage differences, continue to the :ref:`next section
+<Python.Usage.Differences>`. Additional examples can be found in the
+``examples/python`` directory of the :examples:`SUNDIALS GitHub repository
+<python>`.
 
-.. literalinclude:: ../../../examples/python/cvodes/cvs_brusselator.py
+.. literalinclude:: ../../../examples/python/cvodes/cvs_lotkavolterra.py
    :language: python
+   :start-at: import numpy as np
+   :end-at:  Number of nonlinear convergence failures
    :linenos:
-   :emphasize-lines: 77
-   :start-at: import sys
-   :end-at: Total RHS evals for
+   :emphasize-lines: 3-4,35,48,74,107,144,230-231
 
-For more information on usage, differences from the C/C++ API and examples,
-continue to the next section of this documentation.
+.. _Python.Usage.Differences:
 
 Usage Differences
 -----------------
@@ -131,17 +140,21 @@ View Classes and Memory Management
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 sundials4py provides natural usage of SUNDIALS objects with object lifetimes
-managed by the Python garbage collection as with any other Python object.  There
-is only one caveat, the SUNDIALS integrator/solver ``void*`` objects are wrapped
-in "View" classes (behind the scenes) for compatibility with nanobind.  These
-view objects cannot be implicitly converted to the underlying ``void*``. As
-such, when calling a function which operates on these ``void*`` objects, one
-must extract the ``void*`` "capsule" from the view object by calling the view's
-``get`` method.
+managed by the Python garbage collection as with any other Python object. There
+is only one caveat, the SUNDIALS integrator/solver ``void*`` objects (those
+returned by ARKODE, CVODES, IDAS, and KINSOL ``Create`` constructors) are
+wrapped in "View" classes (behind the scenes) for compatibility with
+nanobind. These view objects cannot be implicitly converted to the underlying
+``void*``. As such, when calling a function which operates on these ``void*``
+objects, one must extract the ``void*`` "capsule" from the view object by
+calling the view's ``get`` method.
 
 .. code-block:: python
 
-   # notice we need to call cvode.get()
+   # Create CVODE object (returns void* in C)
+   cvode = CVodeCreate(CV_BDF, sunctx)
+
+   # Notice we need to call cvode.get()
    status = CVodeInit(cvode.get(), ode_problem.f, T0, y)
 
 
