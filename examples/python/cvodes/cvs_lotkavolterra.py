@@ -68,7 +68,7 @@ class LotkaVolterraODE:
         Set the initial conditions in the solution vector.
 
         Args:
-            yvec: SUNDIALS N_Vector to store initial values
+            yvec: N_Vector to store initial values
 
         Returns:
             0 on success
@@ -84,8 +84,8 @@ class LotkaVolterraODE:
 
         Args:
             t: current time (not used in this autonomous system)
-            yvec: current solution vector y = [u, v]
-            ydotvec: output vector for time derivatives f = [du/dt, dv/dt]
+            yvec: N_Vector with the current solution values y = [u, v]
+            ydotvec: N_Vector output vector for time derivatives f = [du/dt, dv/dt]
             _: user data pointer MUST NOT be used in Python
 
         Returns:
@@ -99,7 +99,7 @@ class LotkaVolterraODE:
 
         # Compute the derivatives
         ydot[0] = p[0] * y[0] - p[1] * y[0] * y[1]  # du/dt: prey dynamics
-        ydot[1] = -p[2] * y[1] + p[3] * y[0] * y[1]  # dy/dt: predator dynamics
+        ydot[1] = -p[2] * y[1] + p[3] * y[0] * y[1]  # dv/dt: predator dynamics
         return 0
 
     def jac(self, t, yvec, fyvec, J, _, tmp1, tmp2, tmp3):
@@ -108,11 +108,11 @@ class LotkaVolterraODE:
 
         Args:
             t: current time
-            yvec: current solution vector
-            fyvec: current RHS values (not used here)
-            J: output Jacobian matrix
+            yvec: N_Vector with the current solution values
+            fyvec: N_Vector with the current RHS values (not used here)
+            J: SUNmatrix to store the output Jacobian matrix
             _: user data pointer MUST NOT be used in Python
-            tmp1, tmp2, tmp3: temporary work vectors (not used here)
+            tmp1, tmp2, tmp3: temporary workspace N_Vectors (not used here)
 
         Returns:
             0 on success
