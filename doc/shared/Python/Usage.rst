@@ -111,19 +111,37 @@ same capabilities plus continuous forward and adjoint sensitivity analysis.
 Example Usage
 -------------
 
-We now consider a simple example to illustrate using CVODE through sundials4py
-and highlight some of the differences to using SUNDIALS from C/C++. For more
+We now consider a simple CVODE example to illustrate using sundials4py and
+highlight some of the differences to using SUNDIALS from C/C++. The items
+highlighted below, similarly apply to using other SUNDIALS packages. For more
 information on usage differences, continue to the :ref:`next section
 <Python.Usage.Differences>`. Additional examples can be found in the
 ``examples/python`` directory of the :examples:`SUNDIALS GitHub repository
 <python>`.
 
-.. literalinclude:: ../../../examples/python/cvodes/cvs_lotkavolterra.py
+This example demonstrates how to use CVODES to solve Lotka-Volterra equations, a
+model of predator-prey dynamics in ecology, given by
+
+.. math::
+
+   u' &=  p_0 u - p_1 u v \\
+   v' &= -p_2 v + p_3 u v
+
+where :math:`u` is the prey population, :math:`v` is the predator population,
+:math:`p_0` is prey birth rate, :math:`p_1` is the predation rate, :math:`p_2`
+is the predator death rate, and :math:`p_3` is predator growth rate from
+predation. We use the parameters :math:`p = [1.5, 1.0, 3.0, 1.0]`, initial
+condition :math:`y(0) = [1.0, 1.0]`, and integration interval :math:`t \in [0,
+10]`.
+
+
+
+.. literalinclude:: cvs_lotkavolterra.py
    :language: python
    :start-at: import numpy as np
    :end-at:  Number of nonlinear convergence failures
    :linenos:
-   :emphasize-lines: 3-4,35,48,74,107,144,230-231
+   :emphasize-lines: 3-4,35,48,73,107,118-121,148,249-253
 
 .. _Python.Usage.Differences:
 
@@ -172,6 +190,7 @@ order as the C function signature.
 C:
    .. code-block:: C
 
+      int retval;
       long int numsteps;
       retval = CVodeGetNumSteps(cvode_mem, &numsteps);
       printf("Number of steps: %ld\n", numsteps);
@@ -187,15 +206,16 @@ Python:
 C:
    .. code-block:: C
 
-      long int nsteps, nfevals, nlinsetups, netfails;
-      retval = CVodeGetIntegratorStats(cvode_mem, &nsteps, &nfevals, &nlinsetups, &netfails);
-      printf("Steps: %ld, Function evals: %ld, Linear setups: %ld, Error test fails: %ld\n", numsteps, nfevals, nlinsetups, netfails);
+      int retval;
+      long int nni, ncfn;
+      retval = CVodeGetNonlinSolvStats(cvode_mem, &nni, &ncfn)
+      printf("Nonlinear iterations: %ld, Nonlinear convergence fails: %ld\n", nni, ncfn);
 
 Python:
    .. code-block:: python
 
-      retval, nsteps, nfevals, nlinsetups, netfails = CVodeGetIntegratorStats(cvode_mem.get())
-      print(f"Steps: {nsteps}, Function evals: {nfevals}, Linear setups: {nlinsetups}, Error test fails: {netfails}")
+      retval, nni, ncfn = CVodeGetNonlinSolvStats(cvode_mem.get())
+      print(f"Nonlinear iterations: {nni}, Nonlinear convergence fails: {ncnf}");
 
 
 Arrays

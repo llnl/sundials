@@ -102,7 +102,7 @@ class LotkaVolterraODE:
         ydot[1] = -p[2] * y[1] + p[3] * y[0] * y[1]  # dy/dt: predator dynamics
         return 0
 
-    def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3, _):
+    def jac(self, t, yvec, fyvec, J, _, tmp1, tmp2, tmp3,):
         """
         Jacobian function: computes J = df/dy.
 
@@ -111,8 +111,8 @@ class LotkaVolterraODE:
             yvec: current solution vector
             fyvec: current RHS values (not used here)
             J: output Jacobian matrix
-            tmp1, tmp2, tmp3: temporary work vectors (not used here)
             _: user data pointer MUST NOT be used in Python
+            tmp1, tmp2, tmp3: temporary work vectors (not used here)
 
         Returns:
             0 on success
@@ -155,6 +155,10 @@ def main():
     # The context provides support for features such as error handling, logging, and
     # profiling and is required to construct all SUNDIALS objects. SUN_COMM_NULL is used
     # for serial (non-parallel) problems.
+
+    # In C, sunctx is an output parameter (return-by-pointer):
+    # SUNContext_Create(SUN_COMM_NULL, &sunctx). In Python, it is returned in a tuple
+    # where the first entry is the function return value and the second is the context.
     status, sunctx = SUNContext_Create(SUN_COMM_NULL)
     assert status == SUN_SUCCESS
 
@@ -241,12 +245,12 @@ def main():
 
     # Integrate from t=0 to t=10, outputting every 0.1 time units using CV_NORMAL mode.
     # In normal mode, CVODE will take internal steps until it has reached or just passed
-    # the output time and then return a time interpolated value of y(tout).
+    # the output time and then return a time interpolated solution at the output time.
     dtout = 0.1
     iout = 0
     while tret < 10.0:
-        tout = tret + dtout
-        status, tret = CVode(cvode.get(), tout, y, CV_NORMAL)
+        # Advance the system and return the solution at requested output time
+        status, tret = CVode(cvode.get(), tret + dtout, y, CV_NORMAL)
         assert status == CV_SUCCESS
 
         # Store solution for plotting (every output)
@@ -268,8 +272,10 @@ def main():
     # performance and diagnose issues. These include values such as the step counts,
     # function evaluations, and information about the linear solver.
 
-    # Values returned by pointer arguments in C are returned in a tuple in Python
     status, nst = CVodeGetNumSteps(cvode.get())
+    assert status == CV_SUCCESS
+
+    status, netf = CVodeGetNumErrTestFails(cvode.get())
     assert status == CV_SUCCESS
 
     status, nfe = CVodeGetNumRhsEvals(cvode.get())
@@ -281,14 +287,16 @@ def main():
     status, nje = CVodeGetNumJacEvals(cvode.get())
     assert status == CV_SUCCESS
 
-    status, nni = CVodeGetNumNonlinSolvIters(cvode.get())
-    assert status == CV_SUCCESS
-
-    status, ncfn = CVodeGetNumNonlinSolvConvFails(cvode.get())
+    # For C functions with multiple output parameters (return-by-pointer),
+    # CVodeGetNonlinSolvStats(cvode_mem, &nni, &ncfn), the first element is always the
+    # function return value (error code) and the subsequent elements follow the same
+    # ordering as in the C function signature.
+    status, nni, ncfn = CVodeGetNonlinSolvStats(cvode.get())
     assert status == CV_SUCCESS
 
     print("\nIntegrator Statistics:")
     print(f"  Number of steps taken                    = {nst}")
+    print(f"  Number of error test fails               = {netf}")
     print(f"  Number of RHS evaluations                = {nfe}")
     print(f"  Number of linear solver setups           = {nsetups}")
     print(f"  Number of Jacobian evaluations           = {nje}")

@@ -14,12 +14,6 @@
    SUNDIALS Copyright End
    -----------------------------------------------------------------------------
 
-.. _Python:
-
-******
-Python
-******
-
 .. warning::
 
    sundials4py is in beta and is subject to breaking changes. We welcome
@@ -47,13 +41,3 @@ The Python User Guide focuses on specific aspects of using SUNDIALS from Python
 and assumes the user is familiar with SUNDIALS. New SUNDIALS users should first
 read the :ref:`General User Guide <SUNDIALS>` to understand the features and
 usage of SUNDIALS packages.
-
-.. toctree::
-   :maxdepth: 1
-
-   Usage.rst
-   sundials4py-core-functions.rst
-   sundials4py-arkode-functions.rst
-   sundials4py-cvodes-functions.rst
-   sundials4py-idas-functions.rst
-   sundials4py-kinsol-functions.rst

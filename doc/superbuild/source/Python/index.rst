@@ -28,3 +28,6 @@ Python
    Usage.rst
    sundials4py-core-functions.rst
    sundials4py-arkode-functions.rst
+   sundials4py-cvodes-functions.rst
+   sundials4py-idas-functions.rst
+   sundials4py-kinsol-functions.rst
