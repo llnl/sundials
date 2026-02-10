@@ -85,7 +85,7 @@ imported) for accessing specific SUNDIALS features:
 
   - SUNDomEigEstimator: Power
 
-  - SUNAdjonitCheckPointScheme: Fixed
+  - SUNAdjointCheckPointScheme: Fixed
 
 - ``sundials4py.arkode`` contains all of the ARKODE specific classes and
   functions
@@ -113,7 +113,7 @@ Example Usage
 
 We now consider a simple CVODE example to illustrate using sundials4py and
 highlight some of the differences to using SUNDIALS from C/C++. The items
-highlighted below, similarly apply to using other SUNDIALS packages. For more
+highlighted below similarly apply to using other SUNDIALS packages. For more
 information on usage differences, continue to the :ref:`next section
 <Python.Usage.Differences>`. Additional examples can be found in the
 ``examples/python`` directory of the :examples:`SUNDIALS GitHub repository
