@@ -48,6 +48,7 @@ extensions = [
 ]
 
 extlinks = {
+    "github": (f"https://github.com/LLNL/sundials/%s", None),
     "examples": (f"https://github.com/LLNL/sundials/tree/{sundials_version}/examples/%s", None)
 }
 

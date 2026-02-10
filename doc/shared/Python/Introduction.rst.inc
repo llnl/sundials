@@ -17,7 +17,8 @@
 .. warning::
 
    sundials4py is in beta and is subject to breaking changes. We welcome
-   feedback on this new feature of SUNDIALS.
+   feedback on this new feature of SUNDIALS. Please report issues via the
+   :github:`SUNDIALS GitHub repository <issues>`.
 
 sundials4py provides official (supported by the SUNDIALS team) Python bindings
 to much of the SUNDIALS library, allowing you to use SUNDIALS directly from

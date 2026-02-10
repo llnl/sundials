@@ -119,8 +119,8 @@ information on usage differences, continue to the :ref:`next section
 ``examples/python`` directory of the :examples:`SUNDIALS GitHub repository
 <python>`.
 
-This example demonstrates how to use CVODES to solve Lotka-Volterra equations, a
-model of predator-prey dynamics in ecology, given by
+This example demonstrates how to use CVODES to solve the Lotka-Volterra
+equations, a model of predator-prey dynamics in ecology, given by
 
 .. math::
 
@@ -133,8 +133,6 @@ is the predator death rate, and :math:`p_3` is predator growth rate from
 predation. We use the parameters :math:`p = [1.5, 1.0, 3.0, 1.0]`, initial
 condition :math:`y(0) = [1.0, 1.0]`, and integration interval :math:`t \in [0,
 10]`.
-
-
 
 .. literalinclude:: cvs_lotkavolterra.py
    :language: python
