@@ -803,7 +803,7 @@ time and, if successful, takes effect immediately.
      * ``IDA_MEM_FAIL`` -- The SUNNONLINSOL module is ``NULL``.
 
    **Notes:**
-      The default value is 3.
+      The default value is 4.
 
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idas.sens_max_nonlin_iters".
