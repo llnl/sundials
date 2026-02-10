@@ -48,10 +48,7 @@ extensions = [
 ]
 
 extlinks = {
-    "examples": (
-        f"https://github.com/LLNL/sundials/tree/{sundials_version}/examples/%s",
-        None,
-    )
+    "examples": (f"https://github.com/LLNL/sundials/tree/{sundials_version}/examples/%s", None)
 }
 
 intersphinx_mapping = {

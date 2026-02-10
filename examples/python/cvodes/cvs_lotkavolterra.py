@@ -102,7 +102,7 @@ class LotkaVolterraODE:
         ydot[1] = -p[2] * y[1] + p[3] * y[0] * y[1]  # dy/dt: predator dynamics
         return 0
 
-    def jac(self, t, yvec, fyvec, J, _, tmp1, tmp2, tmp3,):
+    def jac(self, t, yvec, fyvec, J, _, tmp1, tmp2, tmp3):
         """
         Jacobian function: computes J = df/dy.
 
