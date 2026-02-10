@@ -7,4 +7,7 @@
 
 **Bug Fixes**
 
+Fixed a CMake bug where the SuperLU_MT interface would not be built and
+installed without setting the ``SUPERLUMT_WORKS`` option to ``TRUE``.
+
 **Deprecation Notices**
