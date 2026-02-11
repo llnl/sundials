@@ -197,8 +197,8 @@ def main():
 
     # CVODE will adapt the step size and method order so the estimated local error meets
     # the user defined tolerances.
-    reltol = 1e-10  # Relative tolerance
-    abstol = 1e-14  # Absolute tolerance
+    reltol = 1e-6  # Relative tolerance
+    abstol = 1e-10  # Absolute tolerance
     status = CVodeSStolerances(cvode.get(), reltol, abstol)
     assert status == CV_SUCCESS
 
@@ -245,10 +245,10 @@ def main():
     u_vals = [yarr[0]]
     v_vals = [yarr[1]]
 
-    # Integrate from t=0 to t=10, outputting every 0.1 time units using CV_NORMAL mode.
+    # Integrate from t=0 to t=10, outputting every 0.05 time units using CV_NORMAL mode.
     # In normal mode, CVODE will take internal steps until it has reached or just passed
     # the output time and then return a time interpolated solution at the output time.
-    dtout = 0.1
+    dtout = 0.05
     iout = 0
     while tret < 10.0:
         # Advance the system and return the solution at requested output time
@@ -312,23 +312,23 @@ def main():
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
     # Left plot: Time series of prey and predator populations
-    ax1.plot(t_vals, u_vals, "b-", label="Prey (u)", linewidth=2)
-    ax1.plot(t_vals, v_vals, "r--", label="Predator (v)", linewidth=2)
-    ax1.set_xlabel("Time", fontsize=12)
-    ax1.set_ylabel("Population", fontsize=12)
-    ax1.set_title("Lotka-Volterra: Population vs Time", fontsize=14)
-    ax1.legend(fontsize=11)
-    ax1.grid(True, alpha=0.3)
+    ax1.plot(t_vals, u_vals, "b-", label="Prey (u)")
+    ax1.plot(t_vals, v_vals, "r--", label="Predator (v)")
+    ax1.set_xlabel("Time")
+    ax1.set_ylabel("Population")
+    ax1.set_title("Lotka-Volterra: Population vs Time")
+    ax1.legend()
+    ax1.grid(alpha=0.3)
 
     # Right plot: Phase portrait (predator vs prey)
-    ax2.plot(u_vals, v_vals, "g-", linewidth=2)
-    ax2.plot(u_vals[0], v_vals[0], "ko", markersize=8, label="Start")
-    ax2.plot(u_vals[-1], v_vals[-1], "ks", markersize=8, label="End")
-    ax2.set_xlabel("Prey (u)", fontsize=12)
-    ax2.set_ylabel("Predator (v)", fontsize=12)
-    ax2.set_title("Phase Portrait", fontsize=14)
-    ax2.legend(fontsize=11)
-    ax2.grid(True, alpha=0.3)
+    ax2.plot(u_vals, v_vals, "g-")
+    ax2.plot(u_vals[0], v_vals[0], "ko", label="Start")
+    ax2.plot(u_vals[-1], v_vals[-1], "ks", label="End")
+    ax2.set_xlabel("Prey (u)")
+    ax2.set_ylabel("Predator (v)")
+    ax2.set_title("Phase Portrait")
+    ax2.legend()
+    ax2.grid(alpha=0.3)
 
     # Display the plot if not running in test mode
     if "pytest" not in sys.modules:
