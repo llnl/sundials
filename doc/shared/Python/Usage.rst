@@ -270,9 +270,9 @@ return-by-pointer parameters for other functions are handled)
 
    The C function signatures for most callbacks include a ``void* user_data``
    argument. In Python, this argument must be present in the signature, but it
-   should be ignored i.e., use ``_`` as the parameter name in your callback
-   signature to indicate this argument is unused and should be ignored to avoid
-   causing catastrophic errors.
+   should be ignored to avoid catastrophic errors. We recommend using ``_``
+   as the parameter name in the callback signature to indicate this argument
+   is unused.
 
 **Example: ODE right-hand side for ARKStep**
 
