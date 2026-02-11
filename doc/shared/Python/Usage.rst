@@ -266,8 +266,13 @@ the user code. The only caveat is that return-by-pointer parameters are removed
 from the signature, and instead become return values (mirroring how
 return-by-pointer parameters for other functions are handled)
 
-Most callback signatures include a ``void* user_data`` argument. In Python, this
-argument must be present in the signature, but it should be ignored.
+.. warning::
+
+   The C function signatures for most callbacks include a ``void* user_data``
+   argument. In Python, this argument must be present in the signature, but it
+   should be ignored i.e., use ``_`` as the parameter name in your callback
+   signature to indicate this argument is unused and should be ignored to avoid
+   causing catastrophic errors.
 
 **Example: ODE right-hand side for ARKStep**
 
@@ -315,13 +320,6 @@ argument must be present in the signature, but it should be ignored.
         # lambdaR and lambdaI should be returned in the order that they appear
         # as parameters in the C API and follow the error code to return
         return 0, lamdbaR, lamdbaI
-
-
-.. warning::
-
-   The ``user_data`` argument should always be ``None`` or ``_`` on the Python
-   side. If it is listed otherwise, then it should be ignored to avoid causing
-   catastrophic errors.
 
 
 Error Codes
