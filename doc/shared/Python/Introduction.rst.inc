@@ -20,9 +20,9 @@
    feedback on this new feature of SUNDIALS. Please report issues via the
    :github:`SUNDIALS GitHub repository <issues>`.
 
-sundials4py provides official (supported by the SUNDIALS team) Python bindings
-to much of the SUNDIALS library, allowing you to use SUNDIALS directly from
-Python.
+`sundials4py <https://pypi.org/project/sundials4py/>`__ provides official
+(supported by the SUNDIALS team) Python bindings to much of the SUNDIALS
+library, allowing you to use SUNDIALS directly from Python.
 
 The bindings are built using `nanobind <https://nanobind.readthedocs.io/>`__ and
 `litgen <https://pthom.github.io/litgen>`__ and are designed to be easy to use
