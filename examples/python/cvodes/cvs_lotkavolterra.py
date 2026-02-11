@@ -39,7 +39,9 @@
 # update documentation as needed e.g., line highlight numbers. !!!
 # --------------------------------------------------------------------------------------
 
+# --- start example ---
 import numpy as np
+import sys
 import matplotlib.pyplot as plt
 from sundials4py.core import *  # Always import the core submodule
 from sundials4py.cvodes import *  # Import the desired SUNDIALS package
@@ -328,21 +330,19 @@ def main():
     ax2.legend(fontsize=11)
     ax2.grid(True, alpha=0.3)
 
-    plt.tight_layout()
-    plt.savefig("cvs_lotkavolterra_solution.png", dpi=150, bbox_inches="tight")
-    print("Plot saved to 'cvs_lotkavolterra_solution.png'")
-
-    # Display the plot
-    try:
+    # Display the plot if not running in test mode
+    if "pytest" not in sys.modules:
+        plt.tight_layout()
         plt.show()
-    except:
-        pass  # Silently skip if display is not available
-
-
-# This function allows pytest to discover the example as a test
-def test_cvs_lotkavolterra_ASA():
-    main()
+    else:
+        plt.close("all")
 
 
 if __name__ == "__main__":
+    main()
+# --- end example ---
+
+
+def test_cvs_lotkavolterra():
+    """Function for pytest to discover the example as a test"""
     main()

@@ -136,10 +136,10 @@ condition :math:`y(0) = [1.0, 1.0]`, and integration interval :math:`t \in [0,
 
 .. literalinclude:: cvs_lotkavolterra.py
    :language: python
-   :start-at: import numpy as np
-   :end-at:  Number of nonlinear convergence failures
+   :start-after: # --- start example ---
+   :end-before: # --- end example ---
    :linenos:
-   :emphasize-lines: 3-4,35,48,73,107,118-121,148,249-253
+   :emphasize-lines: 4-5,36,49,74,108,119-122,149,250-254
 
 .. _Python.Usage.Differences:
 
