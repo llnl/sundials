@@ -36,7 +36,6 @@ needs_sphinx = "4.0"
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     "sphinx_rtd_theme",
-    "sphinx.ext.extlinks",
     "sphinx.ext.ifconfig",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
@@ -46,13 +45,6 @@ extensions = [
     "sphinx_sundials",
     "sphinx.ext.autodoc",
 ]
-
-extlinks = {
-    "pdfdoc": (
-        f"https://github.com/LLNL/sundials/releases/download/{sundials_version}/%s.pdf",
-        None,
-    )
-}
 
 intersphinx_mapping = {
     "sundials": (
@@ -174,6 +166,10 @@ html_logo = "figs/sundials_logo_blue.png"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["../../../shared/_static"]
+
+# Images used by the converted example pages are kept in doc/cvodes. Add a
+# relative path variable for convenience in templates if needed.
+cvodes_image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "figs"))
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)

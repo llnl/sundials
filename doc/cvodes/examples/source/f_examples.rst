@@ -14,28 +14,21 @@
    SUNDIALS Copyright End
    -----------------------------------------------------------------------------
 
-.. _CVODES.Examples:
+.. _CVODES.Examples.Fortran:
 
-***************
-CVODES Examples
-***************
+Fortran Example Problems
+========================
 
-.. only:: html
+This section lists examples provided in Fortran that use the SUNDIALS Fortran
+interface modules.  For details and code listings, refer to the example source
+files in the distribution.
 
-   The CVODES examples documentation is intended to serve as a companion
-   document to the CVODES User Documentation. These example programs demonstrate
-   a large variety (but not exhaustive set) of CVODES options and can be used as
-   templates for new problems. Further information on the CVODES package itself
-   may be found in the CVODES user guide.
+Examples include:
 
-.. toctree::
-   :maxdepth: 1
+- ``cvs_analytic_fp_f2003``
+- ``cvsAdvDiff_FSA_non_f2003``
 
-   introduction.rst
-   cvs_ex_adj_pandoc.rst
-   cvs_ex_fwd_pandoc.rst
-   cvs_ex_tests_pandoc.rst
-   c_examples.rst
-   adj_examples.rst
-   f_examples.rst
-   references.rst
+.. note::
+
+   Fortran example outputs are included in the examples folder but are not
+   reproduced here.
