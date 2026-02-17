@@ -1799,7 +1799,7 @@ Accessible via the string ``"ARKODE_SSP_DIRK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 The original method is the "IMEX-SSP2(3,3,2)" stiffly accurate method from
-:cite:p:`PR2005`, with an embedding invented specifically for ARKODE.  The method
+:cite:p:`PR:2005`, with an embedding invented specifically for ARKODE.  The method
 is both A- and L-stable, while the embedding is A-stable.  Both the method and
 embedding have SSP coefficient equal to 2.4.
 
@@ -2006,7 +2006,7 @@ Accessible via the string ``"ARKODE_SSP_ESDIRK_4_2_3"`` to
 :c:func:`ARKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 This method was invented specifically for ARKODE as an implicit method to
-pair with :numref:`Butcher.SSP-ERK-4-2-3` for an embedded additive
+pair with ``ARKODE_SSP_ERK_4_2_3`` for an embedded additive
 Runge--Kutta method.  The method is both A- and L-stable, and the
 embedding is A-stable.  Neither the ESDIRK method or its embedding are SSP.
 
@@ -2042,7 +2042,7 @@ Accessible via the string ``"ARKODE_SSP_ESDIRK_9_2_3"`` to
 :c:func:`ARKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 This method was invented specifically for ARKODE as an implicit method to
-pair with :numref:`Butcher.SSP-ERK-9-2-3` for an embedded additive
+pair with ``ARKODE_SSP_ERK_9_2_3`` for an embedded additive
 Runge--Kutta method.  The method and embedding are both A/L-stable.
 Neither the ESDIRK method or its embedding are SSP.
 
@@ -2719,7 +2719,7 @@ are as follows.
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_2_1_2`         | :c:enumerator:`ARKODE_SSP_SDIRK_2_1_2`        | 2      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`         | :c:enumerator:`ARKODE_SSP_SDIRK_3_1_2`        | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`         | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`         | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2`   | :c:enumerator:`ARKODE_SSP_LSPUM_SDIRK_3_1_2`  | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
@@ -2807,7 +2807,7 @@ ARKODE_SSP_ARK_3_1_2
 .. index:: ARKODE_SSP_ARK_3_1_2 ARK method
 
 2nd-order method that combines :c:enumerator:`ARKODE_SSP_ERK_3_1_2` with
-:c:enumerator:`ARKODE_SSP_SDIRK_3_1_2`.
+:c:enumerator:`ARKODE_SSP_DIRK_3_1_2`.
 
 .. figure:: /figs/arkode/ARKODE_SSP_ARK_3_1_2_joint_stab_region.png
    :width: 50 %
