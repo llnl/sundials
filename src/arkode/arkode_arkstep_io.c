@@ -473,7 +473,9 @@ int ARKStepSetTableNum(void* arkode_mem, ARKODE_DIRKTableID itable,
         !((etable == ARKODE_SSP_LSPUM_ERK_3_1_2) &&
           (itable == ARKODE_SSP_LSPUM_SDIRK_3_1_2)) &&
         !((etable == ARKODE_SSP_ERK_4_2_3) &&
-          (itable == ARKODE_SSP_ESDIRK_4_2_3)))
+          (itable == ARKODE_SSP_ESDIRK_4_2_3)) &&
+        !((etable == ARKODE_SSP_ERK_9_2_3) &&
+          (itable == ARKODE_SSP_ESDIRK_9_2_3)))
     {
       arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                       "Incompatible Butcher tables for ARK method");
