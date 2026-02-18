@@ -470,6 +470,57 @@ def print_log(log, indent=2):
     """
     print(json.dumps(log, indent=indent))
 
+def extract(log, keys):
+    """
+    Extract history with automatic list expansion.
+    Lists are always treated as if they have a wildcard - all items are processed.
+
+    Args:
+        data: List of dictionaries
+        key_path: String like "stages.tcur" or list ["stages", "tcur"]
+                  When encountering a list, automatically extracts from all items
+
+    Returns:
+        List of values (nested lists if multiple list levels encountered)
+    """
+    if isinstance(keys, list):
+        keys_list = keys
+    else:
+        keys_list = [keys]
+
+    result = {}
+    for k in keys_list:
+        result[k.split(".")[-1]] = []
+
+    for l in log:
+        for k in keys_list:
+            result[k.split(".")[-1]].append(_extract_with_auto_wildcard(l, k.split(".")))
+
+    return result
+
+
+def _extract_with_auto_wildcard(obj, nested_keys_list):
+    """Recursively extract key values."""
+
+    current_key = nested_keys_list[0]
+    remaining_keys = nested_keys_list[1:]
+
+    print(f"obj = {obj}")
+    print(f"keys = {nested_keys_list}")
+    print(f"key = {current_key}")
+    print(f"remaining = {remaining_keys}")
+
+    if isinstance(obj, dict):
+        next_val = obj.get(current_key)
+        if len(remaining_keys) == 0:
+            return next_val
+        else:
+            return _extract_with_auto_wildcard(next_val, remaining_keys)
+    elif isinstance(obj, list):
+        return [_extract_with_auto_wildcard(item, nested_keys_list) for item in obj]
+    else:
+        return None
+
 
 def get_history(
     log, key, step_status=None, time_range=None, step_range=None, group_by_level=False
