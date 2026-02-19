@@ -60,11 +60,16 @@ cmake.args = [
 cmake.build-type = "RelWithDebInfo"
 
 [tool.pytest.ini_options]
+python_files = ["*.py"]
 addopts = [
     "--import-mode=importlib"
 ]
 pythonpath = [
-  ".", "bindings/sundials4py/test"
+  "bindings/sundials4py", "bindings/sundials4py/test"
+]
+testpaths = [
+    "bindings/sundials4py/test",
+    "examples/python"
 ]
 
 [tool.cibuildwheel]
