@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -257,7 +257,7 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
 
 .. c:function:: SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp)
 
-   .. deprecated:: x.y.z
+   .. deprecated:: 7.6.0
 
       See :c:func:`SUNFileOpen`.
 
@@ -306,14 +306,14 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
       ! Close the file
       ierr = FSUNDIALSFileClose(fp)
 
-   .. versionadded:: X.Y.Z
+   .. versionadded:: 7.6.0
    
       Replaces ``SUNDIALSFileOpen``
 
 
 .. c:function:: SUNErrCode SUNDIALSFileClose(FILE** fp)
 
-   .. deprecated:: X.Y.Z
+   .. deprecated:: 7.6.0
 
       See :c:func:`SUNFileClose`
 
@@ -329,6 +329,6 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
 
    :return: A :c:type:`SUNErrCode`
    
-   .. versionadded:: X.Y.Z
+   .. versionadded:: 7.6.0
    
       Replaces ``SUNDIALSFileClose``

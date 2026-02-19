@@ -22,6 +22,7 @@ jobs:
       matrix:
         indexsize: [32, 64]
         precision: ['double']
+        tpls: ['ON']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -32,6 +33,7 @@ jobs:
         with:
           indexsize: ${{ matrix.indexsize }}
           precision: ${{ matrix.precision }}
+          tpls: ${{ matrix.tpls }}
       - name: Archive build files from failed build
         uses: actions/upload-artifact@v6
         if: failure()

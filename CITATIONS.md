@@ -68,8 +68,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{arkodeDocumentation,
   author = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward and Cody J. Balos},
   title  = {User Documentation for ARKODE},
-  year   = {2025},
-  note   = {v6.5.0}
+  year   = {2026},
+  note   = {v6.6.0}
 }
 ```
 
@@ -77,8 +77,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{cvodeDocumentation,
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for CVODE},
-  year   = {2025},
-  note   = {v7.5.0}
+  year   = {2026},
+  note   = {v7.6.0}
 }
 ```
 
@@ -86,8 +86,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{cvodesDocumentation,
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for CVODES},
-  year   = {2025},
-  note   = {v7.5.0}
+  year   = {2026},
+  note   = {v7.6.0}
 }
 ```
 
@@ -95,8 +95,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{idaDocumentation,
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for IDA},
-  year   = {2025},
-  note   = {v7.5.0}
+  year   = {2026},
+  note   = {v7.6.0}
 }
 ```
 
@@ -104,8 +104,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{idasDocumentation,
   author = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for IDAS},
-  year   = {2025},
-  note   = {v6.5.0}
+  year   = {2026},
+  note   = {v6.6.0}
 }
 ```
 
@@ -113,7 +113,7 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{kinsolDocumentation,
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for KINSOL},
-  year   = {2025},
-  note   = {v7.5.0}
+  year   = {2026},
+  note   = {v7.6.0}
 }
 ```

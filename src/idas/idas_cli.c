@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ SMU
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -87,7 +87,8 @@ static int idaSetFromCommandLine(void* ida_mem, const char* idaid, int argc,
      {"sens_err_con", IDASetSensErrCon},
      {"sens_max_nonlin_iters", IDASetSensMaxNonlinIters},
      {"quad_sens_err_con", IDASetQuadSensErrCon},
-     {"linear_solution_scaling", IDASetLinearSolutionScaling}};
+     {"linear_solution_scaling", IDASetLinearSolutionScaling},
+     {"max_num_constraint_fails", IDASetMaxNumConstraintFails}};
   static const int num_int_keys = sizeof(int_pairs) / sizeof(*int_pairs);
 
   static const struct sunKeyLongPair long_pairs[] = {

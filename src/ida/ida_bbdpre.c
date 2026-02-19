@@ -4,7 +4,7 @@
  *        Alan C. Hindmarsh and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -18,7 +18,7 @@
  * -----------------------------------------------------------------
  * This file contains implementations of routines for a
  * band-block-diagonal preconditioner, i.e. a block-diagonal
- * matrix with banded blocks, for use with IDA, the IDASPILS
+ * matrix with banded blocks, for use with IDA, the IDALS
  * linear solver interface.
  *
  * NOTE: With only one processor in use, a banded matrix results
@@ -40,7 +40,7 @@
 #define ONE  SUN_RCONST(1.0)
 #define TWO  SUN_RCONST(2.0)
 
-/* Prototypes of functions IDABBDPrecSetup and IDABBDPrecSolve */
+/* Prototypes of IDABBDPrecSetup and IDABBDPrecSolve */
 static int IDABBDPrecSetup(sunrealtype tt, N_Vector yy, N_Vector yp,
                            N_Vector rr, sunrealtype c_j, void* prec_data);
 static int IDABBDPrecSolve(sunrealtype tt, N_Vector yy, N_Vector yp,
@@ -602,7 +602,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
   ypdata    = N_VGetArrayPointer(yp);
   gtempdata = N_VGetArrayPointer(gtemp);
   ewtdata   = N_VGetArrayPointer(IDA_mem->ida_ewt);
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     cnsdata = N_VGetArrayPointer(IDA_mem->ida_constraints);
   }
@@ -646,7 +646,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
       inc = (yj + inc) - yj;
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = cnsdata[j];
         if (SUNRabs(conj) == ONE)
@@ -683,7 +683,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
                    SUNMAX(SUNRabs(IDA_mem->ida_hh * ypj), ONE / ewtj));
       if (IDA_mem->ida_hh * ypj < ZERO) { inc = -inc; }
       inc = (yj + inc) - yj;
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = cnsdata[j];
         if (SUNRabs(conj) == ONE)

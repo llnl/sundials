@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -46,17 +46,20 @@ static const int SPRKSTEP_DEFAULT_10 = ARKODE_SPRK_SOFRONIOU_10_36;
  * ------------------- */
 
 /* Creation and Reinitialization functions */
+
 SUNDIALS_EXPORT void* SPRKStepCreate(ARKRhsFn f1, ARKRhsFn f2, sunrealtype t0,
                                      N_Vector y0, SUNContext sunctx);
 SUNDIALS_EXPORT int SPRKStepReInit(void* arkode_mem, ARKRhsFn f1, ARKRhsFn f2,
                                    sunrealtype t0, N_Vector y0);
 
 /* Optional input functions -- must be called AFTER SPRKStepCreate */
+
 SUNDIALS_EXPORT int SPRKStepSetMethod(void* arkode_mem,
                                       ARKodeSPRKTable sprk_storage);
 SUNDIALS_EXPORT int SPRKStepSetMethodName(void* arkode_mem, const char* method);
 
 /* Optional output functions */
+
 SUNDIALS_EXPORT int SPRKStepGetCurrentMethod(
   void* arkode_mem,
   ARKodeSPRKTable* sprk_storage); // nb::rv_policy::reference

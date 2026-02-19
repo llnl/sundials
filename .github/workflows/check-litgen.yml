@@ -1,0 +1,82 @@
+name: Checks - litgen
+
+on:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
+  workflow_dispatch:
+
+# Cancel any in-progress workflow runs
+concurrency:
+  group: litgen-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  litgen_check:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/llnl/sundials_spack_cache:llvm-17.0.4-h4lflucc3v2vage45opbo2didtcuigsn.spack
+    steps:
+      - name: Install dependencies with apt
+        run: |
+          apt update
+          apt install -y git python3 python3-pip
+
+      - name: Install black
+        run: pip install black
+
+      - name: Print black version
+        run: black --version
+
+      - name: Install cmake-format
+        run: pip install cmakelang
+
+      - name: Print cmake-format version
+        run: cmake-format --version
+
+      - name: Install fprettify
+        run: pip install fprettify
+
+      - name: Print fprettify version
+        run: fprettify --version
+
+      - name: Print clang-format version
+        run: clang-format --version
+
+      - name: Install sundials generator+litgen
+        run: |
+          pip install black isort pyyaml litgen@git+https://github.com/sundials-codes/litgen.git
+
+      - name: Check out repository code
+        uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - name: Add safe directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Run generator on code
+        run: |
+          cd bindings/sundials4py
+          python3 sundials4py-generate/generate.py .
+
+      - name: Run formatter on code
+        run: ./scripts/format.sh bindings/sundials4py
+
+      - name: Run git diff to see if anything changed
+        run: /usr/bin/git diff --exit-code
+
+      - name: Run git diff if we failed
+        if: failure()
+        run:  /usr/bin/git diff > litgen.patch
+
+      - name: Archive diff as a patch if we failed
+        uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: litgen.patch
+          path: |
+            ${{ github.workspace }}/litgen.patch

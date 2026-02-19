@@ -2,7 +2,7 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -24,6 +24,7 @@
 
 #include <cvodes/cvodes.h>
 #include <sundials/priv/sundials_context_impl.h>
+#include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_math.h>
 
 #include "cvodes_proj_impl.h"
@@ -34,9 +35,9 @@
 extern "C" {
 #endif
 
-/*=================================================================*/
-/* Shortcuts                                                       */
-/*=================================================================*/
+/*===============================================================
+  SHORTCUTS
+  ===============================================================*/
 
 #define CV_PROFILER cv_mem->cv_sunctx->profiler
 #define CV_LOGGER   cv_mem->cv_sunctx->logger
@@ -121,9 +122,10 @@ extern "C" {
  * MXNEF1  max no. of error test failures before forcing a reduction of order
  */
 
-#define MXNCF  10
-#define MXNEF  7
-#define MXNEF1 3
+#define MXNCF                10
+#define MXNEF                7
+#define MXNEF1               3
+#define MAX_CONSTRAINT_FAILS 10
 
 /* Control constants for lower-level functions used by cvStep
  * ----------------------------------------------------------
@@ -180,13 +182,12 @@ extern "C" {
 #define PREV_ERR_FAIL  +9
 
 #define RHSFUNC_RECVR    +10
-#define CONSTR_RECVR     +11
-#define CONSTRFUNC_RECVR +12
-#define PROJFUNC_RECVR   +13
+#define CONSTRFUNC_RECVR +11
+#define PROJFUNC_RECVR   +12
 
-#define QRHSFUNC_RECVR  +14
-#define SRHSFUNC_RECVR  +15
-#define QSRHSFUNC_RECVR +16
+#define QRHSFUNC_RECVR  +13
+#define SRHSFUNC_RECVR  +14
+#define QSRHSFUNC_RECVR +15
 
 /* nonlinear solver constants
    NLS_MAXCOR  maximum no. of corrector iterations for the nonlinear solver
@@ -248,9 +249,6 @@ typedef struct CVodeMemRec
   sunbooleantype cv_user_efun; /* SUNTRUE if user sets efun                     */
   CVEwtFn cv_efun; /* function to set ewt                           */
   void* cv_e_data; /* user pointer passed to efun                   */
-
-  sunbooleantype cv_constraintsSet; /* constraints vector present:
-                                    do constraints calc                       */
 
   /*-----------------------
     Quadrature Related Data
@@ -341,8 +339,6 @@ typedef struct CVodeMemRec
   N_Vector cv_vtemp1; /* temporary storage vector                            */
   N_Vector cv_vtemp2; /* temporary storage vector                            */
   N_Vector cv_vtemp3; /* temporary storage vector                            */
-
-  N_Vector cv_constraints; /* vector of inequality constraint options         */
 
   /*--------------------------
     Quadrature Related Vectors
@@ -479,7 +475,7 @@ typedef struct CVodeMemRec
   long int cv_nniS;   /* number of total sensi. nonlinear iterations     */
   long int* cv_nniS1; /* number of sensi. nonlinear iterations           */
 
-  long int cv_nnf;    /* number of nonlinear convergence fails           */
+  long int cv_nnf;    /* number of nonlinear convergence failures        */
   long int cv_nnfS;   /* number of total sensi. nonlinear conv. fails    */
   long int* cv_nnfS1; /* number of sensi. nonlinear conv. fails          */
 
@@ -655,6 +651,15 @@ typedef struct CVodeMemRec
   long int cv_nge;       /* counter for g evaluations                       */
   sunbooleantype* cv_gactive; /* array with active/inactive event functions      */
   int cv_mxgnull; /* number of warning messages about possible g==0  */
+
+  /*---------------------------
+    Inequality Constraints Data
+    ---------------------------*/
+
+  N_Vector cv_constraints;         /* vector of constraint flags     */
+  long int constraint_corrections; /* total constraint corrections   */
+  long int constraint_fails;       /* total constraint failures      */
+  int max_constraint_fails;        /* max failures allowed in a step */
 
   /*---------------
     Projection Data
@@ -1184,6 +1189,12 @@ int cvSensRhsInternalDQ(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
 int cvSensRhs1InternalDQ(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
                          int is, N_Vector yS, N_Vector ySdot, void* fS_data,
                          N_Vector tempv, N_Vector ftemp);
+
+/* Function to destroy function table allocated by the Python binding code */
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void cvode_user_supplied_fn_table_destroy(void* ptr);
+#endif
 
 /*
  * =================================================================

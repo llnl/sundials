@@ -3,7 +3,7 @@
 #                Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -31,7 +31,9 @@ set(CXX_FOUND TRUE)
 sundials_option(CMAKE_CXX_STANDARD_REQUIRED BOOL "Require C++ standard version"
                 ON)
 
-if(ENABLE_SYCL OR ENABLE_GINKGO)
+if(SUNDIALS_ENABLE_PYTHON
+   OR ENABLE_SYCL
+   OR ENABLE_GINKGO)
   set(DOCSTR "The C++ standard to use if C++ is enabled (17, 20, 23)")
   sundials_option(CMAKE_CXX_STANDARD STRING "${DOCSTR}" "17" OPTIONS "17;20;23")
 else()
@@ -45,7 +47,20 @@ set(DOCSTR "Enable C++ compiler specific extensions")
 sundials_option(CMAKE_CXX_EXTENSIONS BOOL "${DOCSTR}" ON)
 message(STATUS "C++ extensions set to ${CMAKE_CXX_EXTENSIONS}")
 
+# Python interface code requires C++17
+if(SUNDIALS_ENABLE_PYTHON AND (CMAKE_CXX_STANDARD LESS "17"))
+  message(
+    SEND_ERROR
+      "CMAKE_CXX_STANDARD must be >= 17 because SUNDIALS_ENABLE_PYTHON=ON")
+endif()
+
 # SYCL requires C++17
 if(ENABLE_SYCL AND (CMAKE_CXX_STANDARD LESS "17"))
   message(FATAL_ERROR "CMAKE_CXX_STANDARD must be >= 17 because ENABLE_SYCL=ON")
+endif()
+
+# Ginkgo requires C++17
+if(ENABLE_GINKGO AND (CMAKE_CXX_STANDARD LESS "17"))
+  message(
+    FATAL_ERROR "CMAKE_CXX_STANDARD must be >= 17 because ENABLE_GINKGO=ON")
 endif()

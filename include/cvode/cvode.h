@@ -3,7 +3,7 @@
  *                and Dan Shumaker @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -104,6 +104,7 @@ typedef int (*CVMonitorFn)(void* cvode_mem, void* user_data);
  * ------------------- */
 
 /* Initialization functions */
+
 SUNDIALS_EXPORT void* CVodeCreate(int lmm, SUNContext sunctx);
 
 SUNDIALS_EXPORT int CVodeInit(void* cvode_mem, CVRhsFn f, sunrealtype t0,
@@ -114,6 +115,7 @@ SUNDIALS_EXPORT int CVodeResizeHistory(void* cvode_mem, sunrealtype* t_hist_1d,
                                        int num_y_hist, int num_f_hist);
 
 /* Tolerance input functions */
+
 SUNDIALS_EXPORT int CVodeSStolerances(void* cvode_mem, sunrealtype reltol,
                                       sunrealtype abstol);
 SUNDIALS_EXPORT int CVodeSVtolerances(void* cvode_mem, sunrealtype reltol,
@@ -126,6 +128,7 @@ SUNDIALS_EXPORT int CVodeSetOptions(void* cvode_mem, const char* cvid,
                                     const char* file_name, int argc,
                                     char* argv[]);
 SUNDIALS_EXPORT int CVodeSetConstraints(void* cvode_mem, N_Vector constraints);
+SUNDIALS_EXPORT int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails);
 SUNDIALS_EXPORT int CVodeSetDeltaGammaMaxLSetup(void* cvode_mem,
                                                 sunrealtype dgmax_lsetup);
 SUNDIALS_EXPORT int CVodeSetInitStep(void* cvode_mem, sunrealtype hin);
@@ -154,6 +157,7 @@ SUNDIALS_EXPORT int CVodeSetUseIntegratorFusedKernels(void* cvode_mem,
 SUNDIALS_EXPORT int CVodeSetUserData(void* cvode_mem, void* user_data);
 
 /* Optional step adaptivity input functions */
+
 SUNDIALS_EXPORT
 int CVodeSetEtaFixedStepBounds(void* cvode_mem, sunrealtype eta_min_fx,
                                sunrealtype eta_max_fx);
@@ -180,7 +184,8 @@ int CVodeSetEtaConvFail(void* cvode_mem, sunrealtype eta_cf);
 SUNDIALS_EXPORT int CVodeRootInit(void* cvode_mem, int nrtfn, CVRootFn g);
 
 /* Rootfinding optional input functions */
-SUNDIALS_EXPORT int CVodeSetRootDirection(void* cvode_mem, int* rootdir);
+
+SUNDIALS_EXPORT int CVodeSetRootDirection(void* cvode_mem, int* rootdir_1d);
 SUNDIALS_EXPORT int CVodeSetNoInactiveRootWarn(void* cvode_mem);
 
 /* Solver function */
@@ -188,6 +193,7 @@ SUNDIALS_EXPORT int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout,
                           sunrealtype* tret, int itask);
 
 /* Utility functions to update/compute y based on ycor */
+
 SUNDIALS_EXPORT int CVodeComputeState(void* cvode_mem, N_Vector ycor, N_Vector y);
 
 /* Dense output function */
@@ -195,6 +201,7 @@ SUNDIALS_EXPORT int CVodeGetDky(void* cvode_mem, sunrealtype t, int k,
                                 N_Vector dky);
 
 /* Optional output functions */
+
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")
 int CVodeGetWorkSpace(void* cvode_mem, long int* lenrw, long int* leniw);
@@ -218,7 +225,7 @@ SUNDIALS_EXPORT int CVodeGetTolScaleFactor(void* cvode_mem, sunrealtype* tolsfac
 SUNDIALS_EXPORT int CVodeGetErrWeights(void* cvode_mem, N_Vector eweight);
 SUNDIALS_EXPORT int CVodeGetEstLocalErrors(void* cvode_mem, N_Vector ele);
 SUNDIALS_EXPORT int CVodeGetNumGEvals(void* cvode_mem, long int* ngevals);
-SUNDIALS_EXPORT int CVodeGetRootInfo(void* cvode_mem, int* rootsfound);
+SUNDIALS_EXPORT int CVodeGetRootInfo(void* cvode_mem, int* rootsfound_1d);
 SUNDIALS_EXPORT int CVodeGetIntegratorStats(
   void* cvode_mem, long int* nsteps, long int* nfevals, long int* nlinsetups,
   long int* netfails, int* qlast, int* qcur, sunrealtype* hinused,
@@ -235,6 +242,10 @@ SUNDIALS_EXPORT int CVodeGetNonlinSolvStats(void* cvode_mem, long int* nniters,
                                             long int* nnfails);
 SUNDIALS_EXPORT int CVodeGetNumStepSolveFails(void* cvode_mem,
                                               long int* nncfails);
+SUNDIALS_EXPORT int CVodeGetNumConstraintFails(void* cvode_mem,
+                                               long int* num_fails_out);
+SUNDIALS_EXPORT int CVodeGetNumConstraintCorrections(void* cvode_mem,
+                                                     long int* num_corrections_out);
 SUNDIALS_EXPORT int CVodeGetUserData(void* cvode_mem, void** user_data);
 SUNDIALS_EXPORT int CVodePrintAllStats(void* cvode_mem, FILE* outfile,
                                        SUNOutputFormat fmt);

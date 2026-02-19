@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -31,6 +31,11 @@ static SUNProfiler getSUNProfiler(SUNDomEigEstimator DEE)
 {
   return (DEE->sunctx->profiler);
 }
+#endif
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNDomEigEstimatorFunctionTable_Destroy(void* ptr);
 #endif
 
 /* internal function prototypes */
@@ -92,7 +97,9 @@ void SUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator DEE)
   if (DEE->ops) { free(DEE->ops); }
   DEE->ops = NULL;
 
-  free(DEE->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNDomEigEstimatorFunctionTable_Destroy(DEE->python);
+#endif
   DEE->python = NULL;
 
   /* free overall SUNDomEigEstimator object and return */

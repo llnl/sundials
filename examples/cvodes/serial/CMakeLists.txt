@@ -3,7 +3,7 @@
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -49,16 +49,10 @@ set(CVODES_examples
     "cvsRoberts_FSA_dns\;-sensi sim t\;exclude-single"
     "cvsRoberts_FSA_dns\;-sensi stg1 t\;exclude-single"
     "cvsRoberts_FSA_dns_Switch\;\;exclude-single"
+    "cvsRoberts_FSA_dns_constraints\;-sensi stg1 t\;exclude-single"
     "cvsRoberts_dns\;\;"
     "cvsRoberts_dns_constraints\;\;develop"
     "cvsRoberts_dns_uw\;\;develop")
-
-# This example doesn't succeed with extended precision due to a bug in the
-# constraint handling See https://github.com/LLNL/sundials/issues/702.
-if(NOT SUNDIALS_PRECISION STREQUAL "EXTENDED")
-  list(APPEND CVODE_examples
-       "cvsRoberts_FSA_dns_constraints\;-sensi stg1 t\;exclude-single")
-endif()
 
 if(SUNDIALS_BUILD_WITH_MONITORING)
   list(APPEND CVODE_examples "cvsKrylovDemo_ls\;0 1\;develop")

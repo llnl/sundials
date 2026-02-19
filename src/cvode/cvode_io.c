@@ -2,7 +2,7 @@
  * Programmer(s): Alan C. Hindmarsh and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -893,7 +893,7 @@ int CVodeSetRootDirection(void* cvode_mem, int* rootdir)
   nrt = cv_mem->cv_nrtfn;
   if (nrt == 0)
   {
-    cvProcessError(NULL, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_NO_ROOT);
     return (CV_ILL_INPUT);
   }
@@ -946,22 +946,19 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-  /* If there are no constraints, destroy data structures */
+  /* Disable constraints */
   if (constraints == NULL)
   {
-    if (cv_mem->cv_constraintsMallocDone)
+    if (cv_mem->cv_constraints)
     {
       N_VDestroy(cv_mem->cv_constraints);
       cv_mem->cv_lrw -= cv_mem->cv_lrw1;
       cv_mem->cv_liw -= cv_mem->cv_liw1;
     }
-    cv_mem->cv_constraintsMallocDone = SUNFALSE;
-    cv_mem->cv_constraintsSet        = SUNFALSE;
     return (CV_SUCCESS);
   }
 
   /* Test if required vector ops. are defined */
-
   if (constraints->ops->nvdiv == NULL || constraints->ops->nvmaxnorm == NULL ||
       constraints->ops->nvcompare == NULL ||
       constraints->ops->nvconstrmask == NULL ||
@@ -981,20 +978,86 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
     return (CV_ILL_INPUT);
   }
 
-  if (!(cv_mem->cv_constraintsMallocDone))
+  /* Enable constraints */
+  if (cv_mem->cv_constraints == NULL)
   {
     cv_mem->cv_constraints = N_VClone(constraints);
+    if (cv_mem->cv_constraints == NULL)
+    {
+      cvProcessError(NULL, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
+                     MSGCV_MEM_FAIL);
+      return (CV_MEM_FAIL);
+    }
     cv_mem->cv_lrw += cv_mem->cv_lrw1;
     cv_mem->cv_liw += cv_mem->cv_liw1;
-    cv_mem->cv_constraintsMallocDone = SUNTRUE;
   }
 
   /* Load the constraints vector */
   N_VScale(ONE, constraints, cv_mem->cv_constraints);
 
-  cv_mem->cv_constraintsSet = SUNTRUE;
-
   return (CV_SUCCESS);
+}
+
+/*
+ * CVodeSetMaxNumConstraintFails
+ *
+ * Set the maximum number of constraint failure allowed in a step
+ */
+
+int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
+{
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  if (max_fails <= 0) { cv_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS; }
+  else { cv_mem->max_constraint_fails = max_fails; }
+
+  return CV_SUCCESS;
+}
+
+/*
+ * CVodeGetNumConstraintFails
+ *
+ * Get the number of failed steps due to constraint violation
+ */
+
+int CVodeGetNumConstraintFails(void* cvode_mem, long int* num_fails_out)
+{
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  *num_fails_out = cv_mem->constraint_fails;
+
+  return CV_SUCCESS;
+}
+
+/*
+ * CVodeGetNumConstraintCorrections
+ *
+ * Get the number of constraint corrections
+ */
+
+int CVodeGetNumConstraintCorrections(void* cvode_mem,
+                                     long int* num_corrections_out)
+{
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  *num_corrections_out = cv_mem->constraint_corrections;
+
+  return CV_SUCCESS;
 }
 
 /*
@@ -1649,6 +1712,10 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
   sunfprintf_long(outfile, fmt, SUNFALSE, "Steps", cv_mem->cv_nst);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Error test fails", cv_mem->cv_netf);
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS step fails", cv_mem->cv_ncfn);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails",
+                  cv_mem->constraint_fails);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint corrections",
+                  cv_mem->constraint_corrections);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Initial step size", cv_mem->cv_h0u);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Last step size", cv_mem->cv_hu);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Current step size", cv_mem->cv_next_h);
@@ -1667,6 +1734,8 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
     sunfprintf_real(outfile, fmt, SUNFALSE, "NLS iters per step",
                     (sunrealtype)cv_mem->cv_nni / (sunrealtype)cv_mem->cv_nst);
   }
+
+  /* linear solver stats */
   sunfprintf_long(outfile, fmt, SUNFALSE, "LS setups", cv_mem->cv_nsetups);
   if (cv_mem->cv_lmem)
   {
@@ -1690,8 +1759,10 @@ int CVodePrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
                       (sunrealtype)cvls_mem->npe / (sunrealtype)cv_mem->cv_nni);
     }
   }
+
   /* rootfinding stats */
   sunfprintf_long(outfile, fmt, SUNFALSE, "Root fn evals", cv_mem->cv_nge);
+
   /* projection stats */
   if (cv_mem->proj_mem)
   {

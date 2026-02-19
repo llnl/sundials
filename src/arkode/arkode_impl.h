@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -383,27 +383,26 @@ struct ARKodeMemRec
   sunrealtype uround; /* machine unit roundoff */
 
   /* Problem specification data */
-  void* user_data;               /* user ptr passed to supplied functions */
-  int itol;                      /* itol = ARK_SS (scalar, default),
+  void* user_data;          /* user ptr passed to supplied functions */
+  int itol;                 /* itol = ARK_SS (scalar, default),
                                          ARK_SV (vector),
                                          ARK_WF (user weight function)  */
-  int ritol;                     /* itol = ARK_SS (scalar, default),
+  int ritol;                /* itol = ARK_SS (scalar, default),
                                          ARK_SV (vector),
                                          ARK_WF (user weight function)  */
-  sunrealtype reltol;            /* relative tolerance                    */
-  sunrealtype Sabstol;           /* scalar absolute solution tolerance    */
-  N_Vector Vabstol;              /* vector absolute solution tolerance    */
-  sunbooleantype atolmin0;       /* flag indicating that min(abstol) = 0  */
-  sunrealtype SRabstol;          /* scalar absolute residual tolerance    */
-  N_Vector VRabstol;             /* vector absolute residual tolerance    */
-  sunbooleantype Ratolmin0;      /* flag indicating that min(Rabstol) = 0 */
-  sunbooleantype user_efun;      /* SUNTRUE if user sets efun             */
-  ARKEwtFn efun;                 /* function to set ewt                   */
-  void* e_data;                  /* user pointer passed to efun           */
-  sunbooleantype user_rfun;      /* SUNTRUE if user sets rfun             */
-  ARKRwtFn rfun;                 /* function to set rwt                   */
-  void* r_data;                  /* user pointer passed to rfun           */
-  sunbooleantype constraintsSet; /* check inequality constraints          */
+  sunrealtype reltol;       /* relative tolerance                    */
+  sunrealtype Sabstol;      /* scalar absolute solution tolerance    */
+  N_Vector Vabstol;         /* vector absolute solution tolerance    */
+  sunbooleantype atolmin0;  /* flag indicating that min(abstol) = 0  */
+  sunrealtype SRabstol;     /* scalar absolute residual tolerance    */
+  N_Vector VRabstol;        /* vector absolute residual tolerance    */
+  sunbooleantype Ratolmin0; /* flag indicating that min(Rabstol) = 0 */
+  sunbooleantype user_efun; /* SUNTRUE if user sets efun             */
+  ARKEwtFn efun;            /* function to set ewt                   */
+  void* e_data;             /* user pointer passed to efun           */
+  sunbooleantype user_rfun; /* SUNTRUE if user sets rfun             */
+  ARKRwtFn rfun;            /* function to set rwt                   */
+  void* r_data;             /* user pointer passed to rfun           */
 
   /* Time stepper module -- general */
   void* step_mem;
@@ -488,8 +487,6 @@ struct ARKodeMemRec
   N_Vector tempv4;
   N_Vector tempv5;
 
-  N_Vector constraints; /* vector of inequality constraint options         */
-
   /* Temporal interpolation module */
   ARKInterp interp;
   int interp_type;
@@ -517,12 +514,11 @@ struct ARKodeMemRec
   ARKodeHAdaptMem hadapt_mem; /* time step adaptivity structure           */
 
   /* Limits and various solver parameters */
-  long int mxstep;    /* max number of internal steps for one user call */
-  int mxhnil;         /* max number of warning messages issued to the
+  long int mxstep; /* max number of internal steps for one user call */
+  int mxhnil;      /* max number of warning messages issued to the
                               user that t+h == t for the next internal step  */
-  int maxconstrfails; /* max number of constraint check failures        */
-  int maxnef;         /* max error test fails in one step               */
-  int maxncf;         /* max num alg. solver conv. fails in one step    */
+  int maxnef;      /* max error test fails in one step               */
+  int maxncf;      /* max num alg. solver conv. fails in one step    */
 
   /* Counters */
   long int nst_attempts; /* number of attempted steps                  */
@@ -531,7 +527,6 @@ struct ARKodeMemRec
                              t+h == t for the next iternal step         */
   long int ncfn;         /* num corrector convergence failures         */
   long int netf;         /* num error test failures                    */
-  long int nconstrfails; /* number of constraint failures              */
 
   /* Space requirements for ARKODE */
   sunindextype lrw1; /* no. of sunrealtype words in 1 N_Vector          */
@@ -559,6 +554,11 @@ struct ARKodeMemRec
 
   /* Rootfinding Data */
   ARKodeRootMem root_mem; /* root-finding structure */
+
+  /* Inequality Constraints Data */
+  N_Vector constraints;  /* vector of constraint flags     */
+  long int nconstrfails; /* total constraint failures      */
+  int maxconstrfails;    /* max failures allowed in a step */
 
   /* Relaxation Data */
   sunbooleantype relax_enabled; /* is relaxation enabled?    */
@@ -698,6 +698,11 @@ SUNErrCode arkSUNStepperSelfDestruct(SUNStepper stepper);
 /* XBraid interface functions */
 int arkSetForcePass(void* arkode_mem, sunbooleantype force_pass);
 int arkGetLastKFlag(void* arkode_mem, int* last_kflag);
+
+/* function used to free the python user supplied function table  */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void arkode_user_supplied_fn_table_destroy(void* ptr);
+#endif
 
 /*===============================================================
   Reusable ARKODE Error Messages

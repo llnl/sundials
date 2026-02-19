@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -22,6 +22,11 @@
 #include "sundials/sundials_nvector.h"
 #include "sundials/sundials_types.h"
 #include "sundials_stepper_impl.h"
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNStepperFunctionTable_Destroy(void* ptr);
+#endif
 
 SUNErrCode SUNStepper_Create(SUNContext sunctx, SUNStepper* stepper_ptr)
 {
@@ -60,7 +65,9 @@ SUNErrCode SUNStepper_Destroy(SUNStepper* stepper_ptr)
     const SUNStepper_Ops ops = (*stepper_ptr)->ops;
     if (ops && ops->destroy) { ops->destroy(*stepper_ptr); }
     free(ops);
-    free((*stepper_ptr)->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+    SUNStepperFunctionTable_Destroy((*stepper_ptr)->python);
+#endif
     (*stepper_ptr)->python = NULL;
     free(*stepper_ptr);
     *stepper_ptr = NULL;

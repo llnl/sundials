@@ -2,7 +2,7 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -327,6 +327,9 @@ static void IDARestore(IDAMem IDA_mem, sunrealtype saved_t);
 static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
                           sunrealtype err_km1, long int* ncfnPtr, int* ncfPtr,
                           long int* netfPtr, int* nefPtr);
+static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
+                               int* step_constraint_fails);
+
 static void IDAReset(IDAMem IDA_mem);
 
 /* Function called after a successful step */
@@ -434,34 +437,38 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_uround = SUN_UNIT_ROUNDOFF;
 
   /* Set default values for integrator optional inputs */
-  IDA_mem->ida_res            = NULL;
-  IDA_mem->ida_user_data      = NULL;
-  IDA_mem->ida_itol           = IDA_NN;
-  IDA_mem->ida_atolmin0       = SUNTRUE;
-  IDA_mem->ida_user_efun      = SUNFALSE;
-  IDA_mem->ida_efun           = NULL;
-  IDA_mem->ida_edata          = NULL;
-  IDA_mem->ida_maxord         = MAXORD_DEFAULT;
-  IDA_mem->ida_mxstep         = MXSTEP_DEFAULT;
-  IDA_mem->ida_hmax_inv       = HMAX_INV_DEFAULT;
-  IDA_mem->ida_hmin           = HMIN_DEFAULT;
-  IDA_mem->ida_eta_max_fx     = ETA_MAX_FX_DEFAULT;
-  IDA_mem->ida_eta_min_fx     = ETA_MIN_FX_DEFAULT;
-  IDA_mem->ida_eta_max        = ETA_MAX_DEFAULT;
-  IDA_mem->ida_eta_low        = ETA_LOW_DEFAULT;
-  IDA_mem->ida_eta_min        = ETA_MIN_DEFAULT;
-  IDA_mem->ida_eta_min_ef     = ETA_MIN_EF_DEFAULT;
-  IDA_mem->ida_eta_cf         = ETA_CF_DEFAULT;
-  IDA_mem->ida_hin            = ZERO;
-  IDA_mem->ida_epcon          = EPCON;
-  IDA_mem->ida_maxnef         = MXNEF;
-  IDA_mem->ida_maxncf         = MXNCF;
-  IDA_mem->ida_suppressalg    = SUNFALSE;
-  IDA_mem->ida_id             = NULL;
-  IDA_mem->ida_constraints    = NULL;
-  IDA_mem->ida_constraintsSet = SUNFALSE;
-  IDA_mem->ida_tstopset       = SUNFALSE;
-  IDA_mem->ida_dcj            = DCJ_DEFAULT;
+  IDA_mem->ida_res         = NULL;
+  IDA_mem->ida_user_data   = NULL;
+  IDA_mem->ida_itol        = IDA_NN;
+  IDA_mem->ida_atolmin0    = SUNTRUE;
+  IDA_mem->ida_user_efun   = SUNFALSE;
+  IDA_mem->ida_efun        = NULL;
+  IDA_mem->ida_edata       = NULL;
+  IDA_mem->ida_maxord      = MAXORD_DEFAULT;
+  IDA_mem->ida_mxstep      = MXSTEP_DEFAULT;
+  IDA_mem->ida_hmax_inv    = HMAX_INV_DEFAULT;
+  IDA_mem->ida_hmin        = HMIN_DEFAULT;
+  IDA_mem->ida_eta_max_fx  = ETA_MAX_FX_DEFAULT;
+  IDA_mem->ida_eta_min_fx  = ETA_MIN_FX_DEFAULT;
+  IDA_mem->ida_eta_max     = ETA_MAX_DEFAULT;
+  IDA_mem->ida_eta_low     = ETA_LOW_DEFAULT;
+  IDA_mem->ida_eta_min     = ETA_MIN_DEFAULT;
+  IDA_mem->ida_eta_min_ef  = ETA_MIN_EF_DEFAULT;
+  IDA_mem->ida_eta_cf      = ETA_CF_DEFAULT;
+  IDA_mem->ida_hin         = ZERO;
+  IDA_mem->ida_epcon       = EPCON;
+  IDA_mem->ida_maxnef      = MXNEF;
+  IDA_mem->ida_maxncf      = MXNCF;
+  IDA_mem->ida_suppressalg = SUNFALSE;
+  IDA_mem->ida_id          = NULL;
+  IDA_mem->ida_tstopset    = SUNFALSE;
+  IDA_mem->ida_dcj         = DCJ_DEFAULT;
+
+  /* Initialize inequality constraint variables */
+  IDA_mem->ida_constraints        = NULL;
+  IDA_mem->constraint_corrections = 0;
+  IDA_mem->constraint_fails       = 0;
+  IDA_mem->max_constraint_fails   = MAX_CONSTRAINT_FAILS;
 
   /* set the saved value maxord_alloc */
   IDA_mem->ida_maxord_alloc = MAXORD_DEFAULT;
@@ -515,10 +522,9 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_liw = 38;
 
   /* No mallocs have been done yet */
-  IDA_mem->ida_VatolMallocDone       = SUNFALSE;
-  IDA_mem->ida_constraintsMallocDone = SUNFALSE;
-  IDA_mem->ida_idMallocDone          = SUNFALSE;
-  IDA_mem->ida_MallocDone            = SUNFALSE;
+  IDA_mem->ida_VatolMallocDone = SUNFALSE;
+  IDA_mem->ida_idMallocDone    = SUNFALSE;
+  IDA_mem->ida_MallocDone      = SUNFALSE;
 
   IDA_mem->ida_VatolQMallocDone = SUNFALSE;
   IDA_mem->ida_quadMallocDone   = SUNFALSE;
@@ -854,6 +860,9 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
   IDA_mem->ida_nge = 0;
 
   IDA_mem->ida_irfnd = 0;
+
+  IDA_mem->constraint_corrections = 0;
+  IDA_mem->constraint_fails       = 0;
 
   if (IDA_mem->ida_lmem) { idaLsInitializeCounters(IDA_mem->ida_lmem); }
 
@@ -4092,7 +4101,9 @@ void IDAFree(void** ida_mem)
   free(IDA_mem->ida_Zvecs);
   IDA_mem->ida_Zvecs = NULL;
 
-  free(IDA_mem->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  idas_user_supplied_fn_table_destroy(IDA_mem->python);
+#endif
   IDA_mem->python = NULL;
 
   free(*ida_mem);
@@ -4436,7 +4447,7 @@ static void IDAFreeVectors(IDAMem IDA_mem)
     IDA_mem->ida_liw -= IDA_mem->ida_liw1;
   }
 
-  if (IDA_mem->ida_constraintsMallocDone)
+  if (IDA_mem->ida_constraints)
   {
     N_VDestroy(IDA_mem->ida_constraints);
     IDA_mem->ida_constraints = NULL;
@@ -5105,7 +5116,7 @@ int IDAInitialSetup(IDAMem IDA_mem)
   else { IDA_mem->ida_errconQS = SUNFALSE; }
 
   /* Check to see if y0 satisfies constraints. */
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     if (IDA_mem->ida_sensi && (IDA_mem->ida_ism == IDA_SIMULTANEOUS))
     {
@@ -5877,7 +5888,6 @@ static int IDAStep(IDAMem IDA_mem)
 {
   sunrealtype saved_t, ck;
   sunrealtype err_k, err_km1, err_km2;
-  int ncf, nef;
   int nflag, kflag;
   int retval;
   sunbooleantype sensi_stg, sensi_sim;
@@ -5887,7 +5897,12 @@ static int IDAStep(IDAMem IDA_mem)
   sensi_sim = (IDA_mem->ida_sensi && (IDA_mem->ida_ism == IDA_SIMULTANEOUS));
 
   saved_t = IDA_mem->ida_tn;
-  ncf = nef = 0;
+
+  /* Initialize failure counters for this step attempt */
+
+  int ncf                   = 0; /* corrector failures  */
+  int nef                   = 0; /* error test failures */
+  int step_constraint_fails = 0;
 
   if (IDA_mem->ida_nst == 0)
   {
@@ -5952,9 +5967,25 @@ static int IDAStep(IDAMem IDA_mem)
     /* Nonlinear system solution */
     nflag = IDANls(IDA_mem);
 
-    /* If NLS was successful, perform error test */
+    /* Nonlinear solve was successful */
     if (nflag == IDA_SUCCESS)
     {
+      /* Check and enforce inequality constraints */
+      if (IDA_mem->ida_constraints)
+      {
+        nflag = IDACheckConstraints(IDA_mem, saved_t, &step_constraint_fails);
+
+        SUNLogInfoIf(nflag != IDA_SUCCESS, IDA_LOGGER, "end-step-attempt",
+                     "status = failed inequality constraints, nflag = %i", nflag);
+
+        /* Constraint check failed, predict again */
+        if (nflag == PREDICT_AGAIN) { continue; }
+
+        /* Exit on nonrecoverable failure */
+        if (nflag != IDA_SUCCESS) { return nflag; }
+      }
+
+      /* Perform error test */
       nflag = IDATestError(IDA_mem, ck, &err_k, &err_km1, &err_km2);
     }
 
@@ -6306,7 +6337,6 @@ static void IDASetCoeffs(IDAMem IDA_mem, sunrealtype* ck)
  *  IDA_LSETUP_RECVR    IDA_LSETUP_FAIL
  *  IDA_LSOLVE_RECVR    IDA_LSOLVE_FAIL
  *
- *  IDA_CONSTR_RECVR
  *  SUN_NLS_CONV_RECVR
  *  IDA_MEM_NULL
  */
@@ -6314,9 +6344,8 @@ static void IDASetCoeffs(IDAMem IDA_mem, sunrealtype* ck)
 static int IDANls(IDAMem IDA_mem)
 {
   int retval;
-  sunbooleantype constraintsPassed, callLSetup, sensi_sim;
-  sunrealtype temp1, temp2, vnorm;
-  N_Vector mm, tmp;
+  sunbooleantype callLSetup, sensi_sim;
+  sunrealtype temp1, temp2;
   long int nni_inc = 0;
   long int nnf_inc = 0;
 
@@ -6427,58 +6456,124 @@ static int IDANls(IDAMem IDA_mem)
   SUNLogInfo(IDA_LOGGER, "end-nonlinear-solve", "status = success, iters = %li",
              nni_inc);
 
-  /* If otherwise successful, check and enforce inequality constraints. */
+  return (IDA_SUCCESS);
+}
 
-  if (IDA_mem->ida_constraintsSet)
+static int IDACheckConstraints(IDAMem IDA_mem, sunrealtype saved_t,
+                               int* step_constraint_fails)
+{
+  SUNLogInfo(IDA_LOGGER, "begin-constraint-check", "");
+
+  N_Vector mm  = IDA_mem->ida_tempv2; /* mask      */
+  N_Vector tmp = IDA_mem->ida_tempv1; /* workspace */
+
+  /* Get mask vector mm, 1 where constraints failed and 0 otherwise */
+  sunbooleantype constraintsPassed = N_VConstrMask(IDA_mem->ida_constraints,
+                                                   IDA_mem->ida_yy, mm);
+  if (constraintsPassed)
   {
-    /* shortcut names for temporary work vectors */
-    mm  = IDA_mem->ida_tempv2;
-    tmp = IDA_mem->ida_tempv1;
-
-    /* Get mask vector mm, set where constraints failed */
-    constraintsPassed = N_VConstrMask(IDA_mem->ida_constraints, IDA_mem->ida_yy,
-                                      mm);
-    if (constraintsPassed) { return (IDA_SUCCESS); }
-
-    /* Constraints not met */
-
-    /* Compute correction to satisfy constraints */
-    N_VCompare(ONEPT5, IDA_mem->ida_constraints, tmp); /* a[i] =1 when |c[i]| = 2 */
-    N_VProd(tmp, IDA_mem->ida_constraints, tmp); /* a * c                   */
-    N_VDiv(tmp, IDA_mem->ida_ewt, tmp);          /* a * c * wt              */
-    N_VLinearSum(ONE, IDA_mem->ida_yy, -PT1, tmp, tmp); /* y - 0.1 * a * c * wt    */
-    N_VProd(tmp, mm, tmp); /* v = mm*(y-.1*a*c*wt)    */
-
-    vnorm = IDAWrmsNorm(IDA_mem, tmp, IDA_mem->ida_ewt, SUNFALSE); /* ||v|| */
-
-    /* If vector v of constraint corrections is small in norm, correct and
-       accept this step */
-    if (vnorm <= IDA_mem->ida_epsNewt)
-    {
-      N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, tmp,
-                   IDA_mem->ida_ee); /* ee <- ee - v */
-      return (IDA_SUCCESS);
-    }
-
-    /* Return with error if |h| == hmin */
-    if (SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM)
-    {
-      return (IDA_CONSTR_FAIL);
-    }
-
-    /* Constraints correction is too large, reduce h by computing rr = h'/h */
-    N_VLinearSum(ONE, IDA_mem->ida_phi[0], -ONE, IDA_mem->ida_yy, tmp);
-    N_VProd(mm, tmp, tmp);
-    IDA_mem->ida_eta = PT9 * N_VMinQuotient(IDA_mem->ida_phi[0], tmp);
-    IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta, PT1);
-    IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta,
-                              IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
-
-    /* Reattempt step with new step size */
-    return (IDA_CONSTR_RECVR);
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check", "status = success");
+    return (IDA_SUCCESS);
   }
 
-  return (IDA_SUCCESS);
+  /* Constraints not met */
+
+  /* Compute correction v such that y - v will satisfy the constraints
+   *
+   * 1. Create a mask array that is +1 where constraints are strictly greater
+   *    than or less than zero (|c[i]| = 2) and 0 otherwise
+   *
+   * 2. Create a mask array that is +/- 2 where constraints are strictly greater
+   *    than (+) or less than (-) zero and 0 otherwise
+   *
+   * 3. Use error weights to compute an adjustment vector for values with strict
+   *    constraints, a[i] = +/- 2 * w[i] = +/- 2 * (atol * |y[i]| + rtol[i]),
+   *    and is 0 otherwise
+   *
+   * 4. Save the adjustment vector for possible use later
+   *
+   * 5. Compute correction vector for all values, v[i] = y[i] - 0.1 * a[i] for
+   *    strict constraints and v[i] = y[i] otherwise
+   *
+   * 6. Zero out entries where the constraints passed, v = mask * v
+   */
+  N_VCompare(ONEPT5, IDA_mem->ida_constraints, tmp);
+  N_VProd(tmp, IDA_mem->ida_constraints, tmp);
+  N_VDiv(tmp, IDA_mem->ida_ewt, tmp);
+  N_VScale(-PT1, tmp, IDA_mem->ida_tempv3);
+  N_VLinearSum(ONE, IDA_mem->ida_yy, -PT1, tmp, tmp);
+  N_VProd(tmp, mm, tmp);
+
+  sunrealtype vnorm = IDAWrmsNorm(IDA_mem, tmp, IDA_mem->ida_ewt,
+                                  SUNFALSE); /* ||v|| */
+
+  /* If constraint correction vector is small in norm (satisfies the nonlinear
+     solver convergence condition with R = 1), correct and accept this step */
+  if (vnorm <= IDA_mem->ida_epsNewt)
+  {
+    /* Update constraint correction count */
+    IDA_mem->constraint_corrections++;
+
+    /* To reduce roundoff errors that can violate the constraints, split the
+     * correction update, ee = ee - v, into three steps */
+
+    /* Zero out the correction where any constraint failed */
+    N_VProd(mm, IDA_mem->ida_ee, tmp);
+    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, tmp, IDA_mem->ida_ee);
+
+    /* Set correction to zero out the predictor where any constraint failed */
+    N_VProd(mm, IDA_mem->ida_yypredict, tmp);
+    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, tmp, IDA_mem->ida_ee);
+
+    /* Update the correction where constraints failed and are strictly greater
+       or less than zero to shift the state with the adjustment saved above */
+    N_VProd(mm, IDA_mem->ida_tempv3, IDA_mem->ida_tempv3);
+    N_VLinearSum(ONE, IDA_mem->ida_ee, -ONE, IDA_mem->ida_tempv3,
+                 IDA_mem->ida_ee);
+
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check",
+               "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
+
+    return (IDA_SUCCESS);
+  }
+
+  /* update failure counts */
+  (*step_constraint_fails)++;
+  IDA_mem->constraint_fails++;
+
+  /* Return with error if |h| == hmin */
+  if (SUNRabs(IDA_mem->ida_hh) <= IDA_mem->ida_hmin * ONEPSM)
+  {
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check", "status = failed min step");
+    return (IDA_CONSTR_FAIL);
+  }
+
+  /* Return with error if max step attempt failures */
+  if (*step_constraint_fails == IDA_mem->max_constraint_fails)
+  {
+    SUNLogInfo(IDA_LOGGER, "end-constraint-check",
+               "status = failed max attempts");
+    return (IDA_CONSTR_FAIL);
+  }
+
+  /* Constraints correction is too large, reduce h by computing rr = h'/h */
+  N_VLinearSum(ONE, IDA_mem->ida_phi[0], -ONE, IDA_mem->ida_yy, tmp);
+  N_VProd(mm, tmp, tmp);
+  IDA_mem->ida_eta = PT9 * N_VMinQuotient(IDA_mem->ida_phi[0], tmp);
+  IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta, PT1);
+  IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta,
+                            IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
+
+  /* Reattempt step with new step size */
+  IDARestore(IDA_mem, saved_t);
+  IDA_mem->ida_phase = 1;
+  IDA_mem->ida_hh *= IDA_mem->ida_eta;
+  if (IDA_mem->ida_nst == 0) { IDAReset(IDA_mem); }
+
+  SUNLogInfo(IDA_LOGGER, "end-constraint-check",
+             "status = failed, eta = " SUN_FORMAT_G, IDA_mem->ida_eta);
+
+  return PREDICT_AGAIN;
 }
 
 /*
@@ -7194,7 +7289,6 @@ static void IDARestore(IDAMem IDA_mem, sunrealtype saved_t)
  *   PREDICT_AGAIN
  *
  *   --nonrecoverable--
- *   IDA_CONSTR_FAIL
  *   IDA_REP_RES_ERR
  *   IDA_ERR_FAIL
  *   IDA_CONV_FAIL
@@ -7228,7 +7322,6 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
       if (nflag == IDA_LSOLVE_FAIL) { return (IDA_LSOLVE_FAIL); }
       else if (nflag == IDA_LSETUP_FAIL) { return (IDA_LSETUP_FAIL); }
       else if (nflag == IDA_RES_FAIL) { return (IDA_RES_FAIL); }
-      else if (nflag == IDA_CONSTR_FAIL) { return (IDA_CONSTR_FAIL); }
       else if (nflag == IDA_QRHS_FAIL) { return (IDA_QRHS_FAIL); }
       else if (nflag == IDA_SRES_FAIL) { return (IDA_SRES_FAIL); }
       else if (nflag == IDA_QSRHS_FAIL) { return (IDA_QSRHS_FAIL); }
@@ -7245,17 +7338,12 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
         if (nflag == IDA_QRHS_RECVR) { return (IDA_REP_QRHS_ERR); }
         if (nflag == IDA_SRES_RECVR) { return (IDA_REP_SRES_ERR); }
         if (nflag == IDA_QSRHS_RECVR) { return (IDA_REP_QSRHS_ERR); }
-        if (nflag == IDA_CONSTR_RECVR) { return (IDA_CONSTR_FAIL); }
         return (IDA_CONV_FAIL);
       }
 
-      /* Reduce step size for a new prediction
-         Note that if nflag=IDA_CONSTR_RECVR then rr was already set in IDANls */
-      if (nflag != IDA_CONSTR_RECVR)
-      {
-        IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta_cf,
-                                  IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
-      }
+      /* Reduce step size for a new prediction */
+      IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta_cf,
+                                IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
       IDA_mem->ida_hh *= IDA_mem->ida_eta;
 
       return (PREDICT_AGAIN);

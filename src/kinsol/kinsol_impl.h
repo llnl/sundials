@@ -4,7 +4,7 @@
  *                Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -400,6 +400,12 @@ void KINFreeAA(KINMem kin_mem);
 /* Orthogonalization utilities */
 int KINInitOrth(KINMem kin_mem);
 void KINFreeOrth(KINMem kin_mem);
+
+/* Function to destroy function table allocated by the Python binding code */
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void kinsol_user_supplied_fn_table_destroy(void* ptr);
+#endif
 
 /*
  * =================================================================

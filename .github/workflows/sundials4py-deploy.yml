@@ -1,0 +1,75 @@
+name: sundials4py-deploy
+
+on:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
+  workflow_dispatch:
+  # Trigger deployment of wheels upon release
+  release:
+    types:
+      - published
+
+# Cancel any in-progress workflow runs
+concurrency:
+  group: sundials4py-deploy-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  sundials4py-deploy-build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v6
+      with:
+        submodules: true
+
+    - name: Build and test
+      uses: ./.github/workflows/sundials4py-build-and-test.yml
+
+  sundials4py-deploy-to-gh-release:
+    name: Attach sundials4py wheels to GitHub release
+    needs: [sundials4py-deploy-build-and-test]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+
+    steps:
+    - name: Download wheel artifacts
+      uses: actions/download-artifact@v7
+      with:
+        path: dist
+        pattern: dist-*
+        merge-multiple: true
+
+    - name: Upload wheels to release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: dist/**/*.whl
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sundials4py-deploy-to-pypi:
+    name: Publish sundials4py to pypi if release
+    permissions:
+      id-token: write
+    needs: [sundials4py-deploy-build-and-test]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+
+    steps:
+    - uses: actions/setup-python@v6
+    - uses: actions/download-artifact@v7
+      with:
+        path: dist
+        pattern: dist-*
+        merge-multiple: true
+
+    - uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}

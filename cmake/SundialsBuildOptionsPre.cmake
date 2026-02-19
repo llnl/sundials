@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -232,6 +232,13 @@ if(BUILD_FORTRAN_MODULE_INTERFACE)
   set(DOCSTR "Directory where Fortran module files are installed")
   sundials_option(Fortran_INSTALL_MODDIR STRING "${DOCSTR}" "fortran")
 endif()
+
+# ---------------------------------------------------------------
+# Options to enable Python interfaces.
+# ---------------------------------------------------------------
+
+set(DOCSTR "Enable Python interfaces")
+sundials_option(SUNDIALS_ENABLE_PYTHON BOOL "${DOCSTR}" OFF)
 
 # ---------------------------------------------------------------
 # Options for benchmark suite

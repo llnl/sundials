@@ -1,17 +1,18 @@
 name: Docs - PDFs
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-  merge_group:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
   workflow_dispatch:
 
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: docs-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   docs_install_guide_pdf:
@@ -32,9 +33,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Install sphinx
+      - name: Install python dependencies
         run: |
           pip install -r doc/requirements.txt
+          pip install . # sundials4py
 
       # Build the combined html docs first to create a local objects.inv file
       # for intersphinx to resolve cross references between package guides e.g.,
@@ -89,9 +91,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Install sphinx
+      - name: Install python dependencies
         run: |
           pip install -r doc/requirements.txt
+          pip install . # sundials4py
 
       # Build the combined html docs first to create a local objects.inv file
       # for intersphinx to resolve cross references between package guides e.g.,

@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -32,6 +32,11 @@
 
 #include "sundials_adiak_metadata.h"
 #include "sundials_macros.h"
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNContextFunctionTable_Destroy(void* ptr);
+#endif
 
 SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
 {
@@ -296,7 +301,9 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
 
   SUNContext_ClearErrHandlers(*sunctx);
 
-  free((*sunctx)->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNContextFunctionTable_Destroy((*sunctx)->python);
+#endif
   (*sunctx)->python = NULL;
 
   free(*sunctx);
