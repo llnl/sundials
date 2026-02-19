@@ -20,20 +20,11 @@
 Python
 ******
 
-sundials4py provides official (supported by the SUNDIALS team) Python bindings to much of the 
-SUNDIALS library, allowing you to use SUNDIALS directly from Python.
-
-.. note::
-
-   New SUNDIALS users should first read the :ref:`General User Guide <SUNDIALS>`. 
-   The Python User Guide focuses on specific aspects of using SUNDIALS from Python and assumes 
-   the user is familiar with SUNDIALS. 
-
+.. include:: Introduction.rst.inc
 
 .. toctree::
    :maxdepth: 1
 
-   Introduction.rst
    Usage.rst
    sundials4py-core-functions.rst
    sundials4py-arkode-functions.rst
