@@ -55,7 +55,9 @@ extlinks = {
     "pdfdoc": (
         f"https://github.com/LLNL/sundials/releases/download/{sundials_version}/%s.pdf",
         None,
-    )
+    ),
+    "github": (f"https://github.com/LLNL/sundials/%s", None),
+    "examples": (f"https://github.com/LLNL/sundials/tree/{doc_version}/examples/%s", None),
 }
 
 # Where to find cross-references to the Sphinx documentation.
