@@ -36,6 +36,7 @@ needs_sphinx = "4.0"
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     "sphinx_rtd_theme",
+    "sphinx.ext.extlinks",
     "sphinx.ext.ifconfig",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
@@ -45,6 +46,11 @@ extensions = [
     "sphinx_sundials",
     "sphinx.ext.autodoc",
 ]
+
+extlinks = {
+    "github": (f"https://github.com/LLNL/sundials/%s", None),
+    "examples": (f"https://github.com/LLNL/sundials/tree/{sundials_version}/examples/%s", None),
+}
 
 intersphinx_mapping = {
     "sundials": (
