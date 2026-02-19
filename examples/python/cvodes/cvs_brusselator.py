@@ -74,7 +74,7 @@ class BrusselatorODE:
         ydot[2] = (b - w) / ep - w * u
         return 0
 
-    def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3, user_data):
+    def jac(self, t, yvec, fyvec, J, user_data, tmp1, tmp2, tmp3):
         y = N_VGetArrayPointer(yvec)
         a, b, ep = self.a, self.b, self.ep
         u, v, w = y[0], y[1], y[2]
