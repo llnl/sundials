@@ -124,8 +124,7 @@ extern "C" {
 #define ARK_INNERTOOUTER_FAIL    -36
 
 /* ARK_POSTPROCESS_FAIL equals ARK_POSTPROCESS_STEP_FAIL
-   for backwards compatibility. Note that we use these
-   same constants for step and stage preprocessing errors */
+   for backwards compatibility. */
 #define ARK_POSTPROCESS_FAIL             -37
 #define ARK_POSTPROCESS_STEP_FAIL        -37
 #define ARK_POSTPROCESS_STAGE_FAIL       -38
