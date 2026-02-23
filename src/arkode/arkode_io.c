@@ -1599,6 +1599,7 @@ int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 
   /* NULL argument sets default, otherwise set inputs */
   ark_mem->PostProcessStage = ProcessStage;
+  ark_mem->ps_data          = ark_mem->user_data;
 
   return (ARK_SUCCESS);
 }
@@ -1632,6 +1633,7 @@ int ARKodeSetPreprocessRHSFn(void* arkode_mem, ARKPostProcessFn PreprocessRHS)
 
   /* NULL argument sets default, otherwise set inputs */
   ark_mem->PreProcessRHS = PreprocessRHS;
+  ark_mem->ps_data       = ark_mem->user_data;
 
   return (ARK_SUCCESS);
 }
