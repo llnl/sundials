@@ -742,6 +742,10 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     }
   }
 
+  /* fill (tcur,ycur) with current stored solution */
+  ark_mem->tcur = ark_mem->tn;
+  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+
   /*--------------------------------------------------
     Looping point for successful internal steps
 
@@ -906,9 +910,8 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
                  "step = %li, tn = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
                  ark_mem->nst + 1, ark_mem->tn, ark_mem->h);
 
-      /* fill (tcur,ycur) with the last accepted step solution */
+      /* fill tcur with the last accepted step time */
       ark_mem->tcur = ark_mem->tn;
-      N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
       /* call the user-supplied step preprocessing function (if it exists) */
       if (ark_mem->PreProcessStep != NULL && !skip_preprocess)
@@ -1025,6 +1028,10 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
         if (retval != 0) { return (ARK_POSTPROCESS_FAILED_STEP_FAIL); }
         skip_preprocess = SUNTRUE;
       }
+
+      /* reset (tcur,ycur) to last saved state before reattempting step */
+      ark_mem->tcur = ark_mem->tn;
+      N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
     } /* end looping for step attempts */
 
