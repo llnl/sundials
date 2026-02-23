@@ -2108,7 +2108,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         if (retval != 0)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                     "status = failed preprocess stage, retval = %i", retval);
+                     "status = failed preprocess rhs, retval = %i", retval);
           return (ARK_PREPROCESS_RHS_FAIL);
         }
       }

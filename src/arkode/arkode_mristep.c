@@ -2031,7 +2031,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
           if (retval != 0)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                       "status = failed preprocess stage, retval = %i", retval);
+                       "status = failed preprocess rhs, retval = %i", retval);
             return (ARK_PREPROCESS_RHS_FAIL);
           }
         }
@@ -2691,7 +2691,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           if (retval != 0)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                       "status = failed preprocess stage, retval = %i", retval);
+                       "status = failed preprocess rhs, retval = %i", retval);
             return (ARK_PREPROCESS_RHS_FAIL);
           }
         }
@@ -3100,7 +3100,9 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           if (retval != 0)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                       "status = failed preprocess stage, retval = %i", retval);
+                       "status = failed preprocess rhs, retval = %i", retval);
+            SUNLogInfo(ARK_LOGGER, "end-groups-list",
+                       "status = failed stage computation, retval = %i", retval);
             return (ARK_PREPROCESS_RHS_FAIL);
           }
         }
