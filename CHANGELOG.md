@@ -20,6 +20,9 @@ solution accuracy and stability will be lost.
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
 installed without setting the `SUPERLUMT_WORKS` option to `TRUE`.
 
+Fixed a bug in logging output from ARKODE, where for some time stepping modules, the
+the current "time" output in the logger was incorrect.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.6.0
