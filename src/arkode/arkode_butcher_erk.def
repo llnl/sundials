@@ -488,7 +488,7 @@ ARK_BUTCHER_TABLE(ARKODE_TSITOURAS_7_4_5, { /* Tsitouras-ERK */
 
     /* Table 1 and the Mathematica code to generate the coefficients in
      * https://doi.org/10.1016/j.camwa.2011.06.002 have several errors. Table 1
-     * lists bHat coefficients but actually reports (bHat - b) with a sign error
+     * lists bHat coefficients but actually reports (b - bHat) with a sign error
      * in the last coefficient. The Mathematica code uses bHat_7 = 1/40 when it
      * should be 1/66. This is why these values do not match the paper. */
     B->d[0] = SUN_RCONST(0.09468075576583945807478876255758922856118);
