@@ -16,7 +16,7 @@
 # ---------------------------------------------------------------
 
 # ---------------------------------------------------------------
-# Option for testing CI deprecated options
+# Option for testing deprecated options
 # ---------------------------------------------------------------
 
 if(DEFINED ENV{SUNDIALS_ENABLE_UNSET_DEPRECATED})
@@ -35,8 +35,7 @@ if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
 endif()
 
 # ---------------------------------------------------------------
-# Deprecated options that can not use the DEPRECATED_NAMES option to
-# sundials_option
+# Deprecated options not handled by DEPRECATED_NAMES
 # ---------------------------------------------------------------
 
 # Deprecated with SUNDIALS 6.4.0

@@ -216,11 +216,10 @@ endif()
 # ---------------------------------------------------------------
 
 # Fortran 2003 interface is disabled by default
-set(DOCSTR "Enable Fortran 2003 modules")
 sundials_option(
   SUNDIALS_ENABLE_FORTRAN
   BOOL
-  "${DOCSTR}"
+  "Enable Fortran 2003 modules"
   OFF
   DEPRECATED_NAMES
   F2003_INTERFACE_ENABLE
