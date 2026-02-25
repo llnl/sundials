@@ -742,6 +742,14 @@ This is the default 5th order explicit method (from :cite:p:`Tsitouras:11`).
          4 & 0.09468075576583946 & 0.009183565540343253 & 0.4877705284247616 & 1.234297566930479 & -2.707712349983525 & 1.866628418170587 & 0.01515151515151515
       \end{array}
 
+   .. warning::
+
+      The embedded coefficients do not match Table 1 in :cite:p:`Tsitouras:11`
+      due to typographical errors in the paper. The correct coefficients are
+      derived using the Mathematica code provided in the appendix of
+      :cite:p:`Tsitouras:11` after correcting the last embedded coefficient from
+      :math:`\frac{1}{40}` to :math:`\frac{1}{66}`.
+
 .. only:: latex
 
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
