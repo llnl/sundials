@@ -817,9 +817,9 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
 
   /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0)
     {
