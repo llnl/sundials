@@ -17,9 +17,9 @@ will be lost.
 
 Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP`` mode.
 
-The default numbers of stages for the SSP Runge--Kutta methods :c:enumerator:`ARKODE_LSRK_SSP_S_2`
+The default number of stages for the SSP Runge-Kutta methods :c:enumerator:`ARKODE_LSRK_SSP_S_2`
 and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to
-their minimum allowable values of 2 and 4.  Users may revert to the previous values by calling
+their minimum allowable values of 2 and 4. Users may revert to the previous values by calling
 :c:func:`LSRKStepSetNumSSPStages`.
 
 **Bug Fixes**
@@ -29,5 +29,8 @@ installed without setting the ``SUPERLUMT_WORKS`` option to ``TRUE``.
 
 Fixed a bug in logging output from ARKODE, where for some time stepping modules, the
 the current "time" output in the logger was incorrect.
+
+Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method, where a real
+number was used instead of an integer, potentially resulting in a rounding error.
 
 **Deprecation Notices**
