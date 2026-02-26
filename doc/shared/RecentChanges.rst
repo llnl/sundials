@@ -15,6 +15,8 @@ These are considered **advanced** functions, as they should treat the state vect
 read-only, otherwise all theoretical guarantees of solution accuracy and stability
 will be lost.
 
+Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP`` mode.
+
 **Bug Fixes**
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
