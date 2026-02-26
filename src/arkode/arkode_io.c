@@ -1605,13 +1605,13 @@ int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 }
 
 /*---------------------------------------------------------------
-  ARKodeSetPreprocessRHSFn:
+  ARKodeSetPreRHSProcessFn:
 
   Specifies user-provided pre-processing function having type
   ARKPostProcessFn.  A NULL input function disables pre-RHS
   processing.
 
-  The "PreprocessRHS" function is called on a state vector
+  The "PreRHSProcess" function is called on a state vector
   just prior to computing the RHS.  For problems with partitioned
   RHS functions that are called with identical inputs, this is
   only called before the first RHS evaluation.
@@ -1620,7 +1620,7 @@ int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
   THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
   STABILITY ARE LOST.
   ---------------------------------------------------------------*/
-int ARKodeSetPreprocessRHSFn(void* arkode_mem, ARKPostProcessFn PreprocessRHS)
+int ARKodeSetPreRHSProcessFn(void* arkode_mem, ARKPostProcessFn PreRHSProcess)
 {
   ARKodeMem ark_mem;
   if (arkode_mem == NULL)
@@ -1632,7 +1632,7 @@ int ARKodeSetPreprocessRHSFn(void* arkode_mem, ARKPostProcessFn PreprocessRHS)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* NULL argument sets default, otherwise set inputs */
-  ark_mem->PreProcessRHS = PreprocessRHS;
+  ark_mem->PreRHSProcess = PreRHSProcess;
   ark_mem->ps_data       = ark_mem->user_data;
 
   return (ARK_SUCCESS);

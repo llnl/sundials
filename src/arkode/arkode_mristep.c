@@ -1477,9 +1477,9 @@ int mriStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     nvec++;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessRHS != NULL)
+    if (ark_mem->PreRHSProcess != NULL)
     {
-      retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
+      retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
       if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
     }
 
@@ -1605,11 +1605,11 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
     /* update the RHS components */
 
     /* apply user-supplied stage preprocessing function (if supplied) */
-    if ((ark_mem->PreProcessRHS != NULL) &&
+    if ((ark_mem->PreRHSProcess != NULL) &&
         ((!step_mem->fse_is_current || !ark_mem->fn_is_current) ||
          (!step_mem->fsi_is_current || !ark_mem->fn_is_current)))
     {
-      retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
+      retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
       if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
     }
 
@@ -1679,9 +1679,9 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
     if (!(ark_mem->fn_is_current))
     {
       /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreProcessRHS != NULL)
+      if (ark_mem->PreRHSProcess != NULL)
       {
-        retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
+        retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
         if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
       }
 
@@ -2019,14 +2019,14 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     if (calc_fslow)
     {
       /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreProcessRHS != NULL)
+      if (ark_mem->PreRHSProcess != NULL)
       {
         if (step_mem->explicit_rhs ||
             (step_mem->implicit_rhs &&
              (!step_mem->deduce_rhs ||
               (step_mem->stagetypes[is] != MRISTAGE_DIRK_NOFAST))))
         {
-          retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+          retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                           ark_mem->user_data);
           if (retval != 0)
           {
@@ -2681,12 +2681,12 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     if ((!solution) && (!embedding))
     {
       /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreProcessRHS != NULL)
+      if (ark_mem->PreRHSProcess != NULL)
       {
         if (step_mem->explicit_rhs ||
             (step_mem->implicit_rhs && (!step_mem->deduce_rhs || !impl_corr)))
         {
-          retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+          retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                           ark_mem->user_data);
           if (retval != 0)
           {
@@ -3093,9 +3093,9 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       if ((!solution) && (!embedding))
       {
         /* apply user-supplied stage preprocessing function (if supplied) */
-        if (ark_mem->PreProcessRHS != NULL)
+        if (ark_mem->PreRHSProcess != NULL)
         {
-          retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+          retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                           ark_mem->user_data);
           if (retval != 0)
           {
@@ -4254,9 +4254,9 @@ int mriStep_SlowRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
+    retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }
 

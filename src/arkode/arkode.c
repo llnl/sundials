@@ -1023,7 +1023,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
          step failure postprocessing function (if it exists) */
       if (ark_mem->PostProcessStepFail != NULL)
       {
-        retval = ark_mem->PostProcessStepFail(ark_mem->tcur, ark_mem->ycur,
+        retval = ark_mem->PostProcessStepFail(ark_mem->tn, ark_mem->yn,
                                               ark_mem->ps_data);
         if (retval != 0) { return (ARK_POSTPROCESS_FAILED_STEP_FAIL); }
         skip_preprocess = SUNTRUE;
@@ -1626,7 +1626,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->ps_data             = NULL;
 
   /* No user-supplied stage pre- or post-processing functions yet */
-  ark_mem->PreProcessRHS    = NULL;
+  ark_mem->PreRHSProcess    = NULL;
   ark_mem->PostProcessStage = NULL;
 
   /* No user_data pointer yet */
