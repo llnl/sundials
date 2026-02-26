@@ -3514,7 +3514,7 @@ step:
   reattempted (:c:func:`ARKodeSetPostprocessStepFailFn`),
 
 * just prior to evaluating user-provided right-hand side (RHS)
-  functions (:c:func:`ARKodeSetPreprocessRHSFn`)
+  functions (:c:func:`ARKodeSetPreRHSProcessFn`)
 
 * immediately after each stage is completed within a time step
   (:c:func:`ARKodeSetPostprocessStageFn`)
@@ -3523,69 +3523,130 @@ For users who wish to perform different actions at individual internal
 stages within an ARKODE method, they may obtain the current stage index by
 calling :c:func:`ARKodeGetStageIndex`
 in their stage-level callback routines provided to
-:c:func:`ARKodeSetPreprocessRHSFn` and :c:func:`ARKodeSetPostprocessStageFn`.
+:c:func:`ARKodeSetPreRHSProcessFn` and :c:func:`ARKodeSetPostprocessStageFn`.
 
 The specific ordering of these functions within a given step depends on
 whether each stage is explicit (as in ERKStep) or implicit (as in ARKStep or
 MRIStep).  Denoting the last "saved" time step as :math:`(t_n,y_n)`, the
 time-evolving state within a step as :math:`(t_{cur},y_{cur})`, the functions
 provided to the five above functions as ``PreprocessStep``, ``PostprocessStep``,
-``PostprocessFailedStep``, ``PreprocessRHS``, and ``PostprocessStage``, and
+``PostprocessFailedStep``, ``PreRHSProcess``, and ``PostprocessStage``, and
 denoting the IVP right hand side function as ``RHS``, then
 the flow of a 3-stage explicit method would proceed as:
 
-1. Update :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`
-2. Call ``PreprocessStep`` with :math:`(t_{cur},y_{cur})`
-3. Stage 0
-   a. Call ``PreprocessRHS`` with :math:`(t_{cur},y_{cur})`
+1. Call ``PreprocessStep`` with :math:`(t_{cur},y_{cur})`
+
+2. Stage 0
+
+   a. Call ``PreRHSProcess`` with :math:`(t_{cur},y_{cur})`
+
    b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+
    c. Update :math:`(t_{cur},y_{cur})` with the next stage solution
+
    d. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
-4. Stage 1
-   a. Call ``PreprocessRHS`` with :math:`(t_{cur},y_{cur})`
+
+3. Stage 1
+
+   a. Call ``PreRHSProcess`` with :math:`(t_{cur},y_{cur})`
+
    b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+
    c. Update :math:`(t_{cur},y_{cur})` with the next stage solution
+
    d. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
-5. Stage 2
-   a. Call ``PreprocessRHS`` with :math:`(t_{cur},y_{cur})`
+
+4. Stage 2
+
+   a. Call ``PreRHSProcess`` with :math:`(t_{cur},y_{cur})`
+
    b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+
    c. Update :math:`(t_{cur},y_{cur})` with the new time step solution
+
    d. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
-6. Check the local error.
-   a. If the step is successful then call ``PostProcessStep`` with  :math:`(t_{cur},y_{cur})`, determine the next internal step size :math:`h_n`, and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
-   b. Else call ``PostProcessFailedStep`` with  :math:`(t_{cur},y_{cur})`, determine the next internal step size :math:`h_n`, and return to step 3.
+
+5. Check the local error.
+
+   a. If the step is successful then call ``PostProcessStep`` with
+      :math:`(t_{cur},y_{cur})`, determine the next internal step size :math:`h_n`,
+      and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
+
+   b. Else call ``PostProcessFailedStep`` with  :math:`(t_{cur},y_{cur})`,
+      determine the next internal step size :math:`h_n`, and return to step 2.
 
 
-Alternately, the flow of a 3-stage method that must perform a solve of some sort for each stage (i.e., a DIRK or ARK method in ARKStep, or a multirate method with MRIstep) would proceed as follows.  Here, we show the implicit-explicit approach since that also shows the relationship between both the implicit right-hand side function ``RHS_i`` and the explicit right-hand side function ``RHS_e``:
+Alternately, the flow of a 3-stage method that must perform a solve of some sort
+for each stage (i.e., a DIRK or ARK method in ARKStep, or a multirate method with
+MRIstep) would proceed as follows.  Here, we show the implicit-explicit approach
+since that also shows the relationship between both the implicit right-hand side
+function ``RHS_i`` and the explicit right-hand side function ``RHS_e``:
 
-1. Update :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`
-2. Call ``PreprocessStep`` with :math:`(t_{cur},y_{cur})`
-3. Stage 0
-   a. Solve implicit system, calling ``PreprocessRHS`` and then ``RHS_i`` with :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+1. Call ``PreprocessStep`` with :math:`(t_{cur},y_{cur})`
+
+2. Stage 0
+
+   a. Solve implicit system, calling ``PreRHSProcess`` and then ``RHS_i`` with
+      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
    b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
-   c. Call ``PreprocessRHS`` with :math:`(t_{cur},y_{cur})`
+
+   c. Call ``PreRHSProcess`` with :math:`(t_{cur},y_{cur})`
+
    d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
-4. Stage 1
-   a. Solve implicit system, calling ``PreprocessRHS`` and then ``RHS_i`` with :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+3. Stage 1
+
+   a. Solve implicit system, calling ``PreRHSProcess`` and then ``RHS_i`` with
+      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
    b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
-   c. Call ``PreprocessRHS`` with :math:`(t_{cur},y_{cur})`
+
+   c. Call ``PreRHSProcess`` with :math:`(t_{cur},y_{cur})`
+
    d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
-5. Stage 2
-   a. Solve implicit system, calling ``PreprocessRHS`` and then ``RHS_i`` with :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+4. Stage 2
+
+   a. Solve implicit system, calling ``PreRHSProcess`` and then ``RHS_i`` with
+      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
    b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
-   c. Call ``PreprocessRHS`` with :math:`(t_{cur},y_{cur})`
+
+   c. Call ``PreRHSProcess`` with :math:`(t_{cur},y_{cur})`
+
    d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
-6. Update :math:`(t_{cur},y_{cur})` with the new time step solution
-7. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
-8. Check the local error.
-   a. If the step is successful then call ``PostProcessStep`` with  :math:`(t_{cur},y_{cur})`, determine the next internal step size :math:`h_n`, and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
-   b. Else call ``PostProcessFailedStep`` with  :math:`(t_{cur},y_{cur})`, determine the next internal step size :math:`h_n`, and return to step 3.
+
+5. Update :math:`(t_{cur},y_{cur})` with the new time step solution
+
+6. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+7. Check the local error.
+
+   a. If the step is successful then call ``PostProcessStep`` with
+      :math:`(t_{cur},y_{cur})`, determine the next internal step size
+      :math:`h_n`, and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
+
+   b. Else call ``PostProcessFailedStep`` with  :math:`(t_{n},y_{n})`,
+      update :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`, determine the next
+      internal step size :math:`h_n`, and return to step 2.
 
 We consider these as "advanced" because of their danger, although the
 callback functions are provided with the internally-evolving state,
 users should **not** adjust entries of this state vector, since doing
 so will destroy all theoretical guarantees of solution accuracy and
-numerical stability.
+numerical stability.  The only "supported" approach for user modifications
+to the state vector is if this occurs between calls to :c:func:`ARKodeEvolve`,
+and if the user calls :c:func:`ARKodeReset` after every modification to
+the state vector so that ARKODE can reset its saved solution.
+
+Additionally, these functions are currently incompatible with discrete
+adjoint capabilities in ARKODE (:c:func:`ARKodeSetAdjointCheckpointScheme`
+and :c:func:`ARKodeSetAdjointCheckpointIndex`).
+
 
 
 .. cssclass:: table-bordered
@@ -3596,7 +3657,7 @@ Optional input                                     Function name                
 Set time step preprocessing function               :c:func:`ARKodeSetPreprocessStepFn`         ``NULL``
 Set time step postprocessing function              :c:func:`ARKodeSetPostprocessStepFn`        ``NULL``
 Set failed time step postrocessing function        :c:func:`ARKodeSetPostprocessStepFailFn`    ``NULL``
-Set right-hand side preprocessing function         :c:func:`ARKodeSetPreprocessRHSFn`          ``NULL``
+Set right-hand side preprocessing function         :c:func:`ARKodeSetPreRHSProcessFn`          ``NULL``
 Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocessStageFn`       ``NULL``
 =================================================  ==========================================  =======================
 
@@ -3669,7 +3730,7 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    .. versionadded:: x.y.z
 
 
-.. c:function:: int ARKodeSetPreprocessRHSFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
+.. c:function:: int ARKodeSetPreRHSProcessFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 
    [ADVANCED] Provides a function to be called prior to evaluating user-provided right-hand
    side (RHS) functions.  For partitioned methods (e.g., ARKStep or MRIStep), that will call

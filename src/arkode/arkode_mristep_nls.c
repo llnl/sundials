@@ -475,9 +475,9 @@ int mriStep_NlsResidual(N_Vector zcor, N_Vector r, void* arkode_mem)
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
   /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }
@@ -536,9 +536,9 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
   /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }

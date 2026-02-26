@@ -539,9 +539,9 @@ static int ARKBandPDQJac(ARKBandPrecData pdata, sunrealtype t, N_Vector y,
     }
 
     /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-    if (ark_mem->PreProcessRHS != NULL)
+    if (ark_mem->PreRHSProcess != NULL)
     {
-      retval = ark_mem->PreProcessRHS(t, ytemp, ark_mem->user_data);
+      retval = ark_mem->PreRHSProcess(t, ytemp, ark_mem->user_data);
       if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
     }
     retval = fi(t, ytemp, ftemp, ark_mem->user_data);

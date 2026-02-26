@@ -124,8 +124,7 @@ extern "C" {
 #define ARK_INNERTOOUTER_FAIL    -36
 
 /* ARK_POSTPROCESS_FAIL equals ARK_POSTPROCESS_STEP_FAIL
-   for backwards compatibility. Note that we use these
-   same constants for step and stage preprocessing errors */
+   for backwards compatibility. */
 #define ARK_POSTPROCESS_FAIL             -37
 #define ARK_POSTPROCESS_STEP_FAIL        -37
 #define ARK_POSTPROCESS_STAGE_FAIL       -38
@@ -286,8 +285,8 @@ SUNDIALS_EXPORT int ARKodeSetPostprocessStepFn(void* arkode_mem,
                                                ARKPostProcessFn ProcessStep);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStepFailFn(void* arkode_mem,
                                                    ARKPostProcessFn ProcessStep);
-SUNDIALS_EXPORT int ARKodeSetPreprocessRHSFn(void* arkode_mem,
-                                             ARKPostProcessFn ProcessRHS);
+SUNDIALS_EXPORT int ARKodeSetPreRHSProcessFn(void* arkode_mem,
+                                             ARKPostProcessFn PreRHSProcess);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStageFn(void* arkode_mem,
                                                 ARKPostProcessFn ProcessStage);
 SUNDIALS_EXPORT int ARKodeAllocateInternalData(void* arkode_mem);
