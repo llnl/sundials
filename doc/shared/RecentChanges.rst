@@ -15,6 +15,8 @@ These are considered **advanced** functions, as they should treat the state vect
 read-only, otherwise all theoretical guarantees of solution accuracy and stability
 will be lost.
 
+Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP`` mode.
+
 The default numbers of stages for the SSP Runge--Kutta methods :c:enumerator:`ARKODE_LSRK_SSP_S_2`
 and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to
 their minimum allowable values of 2 and 4.  Users may revert to the previous values by calling
