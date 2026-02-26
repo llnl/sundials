@@ -1115,7 +1115,7 @@ The user may supply functions of type :c:type:`ARKPostProcessFn` that will be
 called before each internal time step (:c:func:`ARKodeSetPreprocessStepFn`), after
 each successful internal time step (:c:func:`ARKodeSetPostprocessStepFn`), after each
 failed internal time step (:c:func:`ARKodeSetPostprocessStepFailFn`), before user-supplied
-right-hand side function(s) are called on an updated state (:c:func:`ARKodeSetPreprocessRHSFn`),
+right-hand side function(s) are called on an updated state (:c:func:`ARKodeSetPreRHSProcessFn`),
 or after each internal stage is computed (:c:func:`ARKodeSetPostprocessStageFn`).
 
 
@@ -1131,6 +1131,9 @@ or after each internal stage is computed (:c:func:`ARKodeSetPostprocessStageFn`)
              unrecoverable error occurred.
 
    .. warning::
+
+      These functions are currently incompatible with discrete adjoint capabilities in ARKODE
+      (:c:func:`ARKodeSetAdjointCheckpointScheme` and :c:func:`ARKodeSetAdjointCheckpointIndex`).
 
       IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA IN *y*, THEN ALL
       THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
