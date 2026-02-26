@@ -915,7 +915,7 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
 Set time step preprocessing function               :c:func:`ARKodeSetPreprocessStepFn`         ``NULL``
 Set time step postprocessing function              :c:func:`ARKodeSetPostprocessStepFn`        ``NULL``
 Set failed time step postrocessing function        :c:func:`ARKodeSetPostprocessStepFailFn`    ``NULL``
-Set right-hand side preprocessing function         :c:func:`ARKodeSetPreprocessRHSFn`          ``NULL``
+Set pre right-hand side processing function        :c:func:`ARKodeSetPreRHSProcessFn`          ``NULL``
 Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocessStageFn`       ``NULL``
 =================================================  ==========================================  =======================
 
@@ -1681,7 +1681,9 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
 .. c:function:: int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 
    [ADVANCED] Provides a function to be called following each failed time step.  A ``NULL``
-   input function disables failed step postprocessing.
+   input function disables failed step postprocessing.  The ``ProcessStep`` function will be called
+   with the :math:`(t,y)` that corresponds with the saved state to be used as the initial condition
+   for the upcoming step attempt.
 
    This should **not** adjust the state vector itself.  It is designed to allow users to reset
    any relevant diagnostic information they may have accumulated within a rejected time step.
@@ -1700,7 +1702,7 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    .. versionadded:: x.y.z
 
 
-.. c:function:: int ARKodeSetPreprocessRHSFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
+.. c:function:: int ARKodeSetPreRHSProcessFn(void* arkode_mem, ARKPostProcessFn PreRHSProcess)
 
    [ADVANCED] Provides a function to be called prior to evaluating user-provided right-hand
    side (RHS) functions.  For partitioned methods (e.g., ARKStep or MRIStep), that will call
@@ -1712,7 +1714,7 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    to fill and send exchange buffers).
 
    :param arkode_mem: pointer to the ARKODE memory block.
-   :param ProcessStep: the user-supplied function to call.
+   :param PreRHSProcess: the user-supplied function to call.
 
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
@@ -1725,7 +1727,7 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    .. versionadded:: x.y.z
 
 
-.. c:function:: int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
+.. c:function:: int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 
    [ADVANCED] Provides a function to be called immediately after each stage is completed within
    ARKODE's multi-stage methods.  A ``NULL`` input function disables stage postprocessing.
@@ -1734,7 +1736,7 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    relevant diagnostic information within each step.
 
    :param arkode_mem: pointer to the ARKODE memory block.
-   :param ProcessStep: the user-supplied function to call.
+   :param ProcessStage: the user-supplied function to call.
 
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.

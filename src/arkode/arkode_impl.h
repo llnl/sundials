@@ -575,7 +575,7 @@ struct ARKodeMemRec
   ARKPostProcessFn PostProcessStage;
 
   /* User-supplied RHS function pre-processing function */
-  ARKPostProcessFn PreProcessRHS;
+  ARKPostProcessFn PreRHSProcess;
 
   sunbooleantype use_compensated_sums;
 

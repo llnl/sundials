@@ -496,9 +496,9 @@ int sprkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   case ARK_FULLRHS_OTHER:
 
     /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessRHS != NULL)
+    if (ark_mem->PreRHSProcess != NULL)
     {
-      retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
+      retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
       if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
     }
 
@@ -577,14 +577,14 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                           set other outputs to zero */
 
       /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreProcessRHS != NULL)
+      if (ark_mem->PreRHSProcess != NULL)
       {
-        retval = ark_mem->PreProcessRHS(ark_mem->tn + chati * ark_mem->h,
+        retval = ark_mem->PreRHSProcess(ark_mem->tn + chati * ark_mem->h,
                                         prev_stage, ark_mem->user_data);
         if (retval != 0)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                     "status = failed preprocess stage, retval = %i", retval);
+                     "status = failed preprocess rhs, retval = %i", retval);
           return (ARK_PREPROCESS_RHS_FAIL);
         }
       }
@@ -620,14 +620,14 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                         set other outputs to zero */
 
       /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreProcessRHS != NULL)
+      if (ark_mem->PreRHSProcess != NULL)
       {
-        retval = ark_mem->PreProcessRHS(ark_mem->tn + ci * ark_mem->h,
+        retval = ark_mem->PreRHSProcess(ark_mem->tn + ci * ark_mem->h,
                                         curr_stage, ark_mem->user_data);
         if (retval != 0)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                     "status = failed preprocess stage, retval = %i", retval);
+                     "status = failed preprocess rhs, retval = %i", retval);
           return (ARK_PREPROCESS_RHS_FAIL);
         }
       }
@@ -709,7 +709,7 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 
   /* if user-supplied stage preprocessing or postprocessing functions,
     * we error out since those won't work with the increment form */
-  if ((ark_mem->PreProcessRHS != NULL) || (ark_mem->PostProcessStage != NULL))
+  if ((ark_mem->PreRHSProcess != NULL) || (ark_mem->PostProcessStage != NULL))
   {
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "status = failed stage stage processing, retval = %i",
