@@ -202,7 +202,7 @@ int main(void)
   retval = KINSetScaledStepTol(kmem, scsteptol);
   if (check_retval(&retval, "KINSetScaledStepTol", 1)) { return (1); }
 
-  retval = KINSetMaxNewtonStep(kmem, SUN_RCONST(100000));
+  retval = KINSetMaxNewtonStep(kmem, SUN_RCONST(100000.0));
   if (check_retval(&retval, "KINSetMaxNewtonStep", 1)) { return (1); }
 
   retval = KINInit(kmem, func, u);
@@ -396,7 +396,7 @@ static void SetInitialGuess(N_Vector u, UserData data, sunindextype n)
     case 1:
       /* this init. guess should take us to (-5; -5) */
       x1 = ONE;
-      x2 = ONE*SUN_RCONST(15);
+      x2 = ONE*SUN_RCONST(15.0);
       x3 = ONE;
       x4 = ONE;
       x5 = ONE;

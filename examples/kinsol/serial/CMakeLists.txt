@@ -44,17 +44,20 @@ set(KINSOL_examples
     "kinRoberts_fp\;\;develop"
     "kinRoboKin_dns\;\;exclude-single")
 
-find_package(Matlab REQUIRED)
 
-message(STATUS "Matlab is FOUND? ${Matlab_FOUND} Matlab_VERSION = ${Matlab_VERSION}")
+if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
+    find_package(Matlab REQUIRED)
 
-message(STATUS "Matlab_INCLUDE_DIRS =  ${Matlab_INCLUDE_DIRS}")
+    message(STATUS "Matlab is FOUND? ${Matlab_FOUND} Matlab_VERSION = ${Matlab_VERSION}")
 
-message(STATUS "Matlab_MEX_LIBRARY =  ${Matlab_MEX_LIBRARY}")
+    message(STATUS "Matlab_INCLUDE_DIRS =  ${Matlab_INCLUDE_DIRS}")
 
-message(STATUS "Matlab_MX_LIBRARY =  ${Matlab_MEX_LIBRARY}")
+    message(STATUS "Matlab_MEX_LIBRARY =  ${Matlab_MEX_LIBRARY}")
 
-message(STATUS "Matlab_LIBRARIES =  ${Matlab_LIBRARIES}")
+    message(STATUS "Matlab_MX_LIBRARY =  ${Matlab_MEX_LIBRARY}")
+
+    message(STATUS "Matlab_LIBRARIES =  ${Matlab_LIBRARIES}")
+endif()
 
 
 

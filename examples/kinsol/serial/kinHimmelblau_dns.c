@@ -351,7 +351,7 @@ static void SetInitialGuess(N_Vector u, UserData data, sunindextype n)
     case 7:
       /* this init. guess should take us to (0; 3) */
       x1 = SUN_RCONST(5.0);
-      x2 = SUN_RCONST(0);;
+      x2 = SUN_RCONST(0.0);;
       break;
     case 8:
       /* this init. guess should take us to (0; 3) */
@@ -359,8 +359,8 @@ static void SetInitialGuess(N_Vector u, UserData data, sunindextype n)
       x2 = SUN_RCONST(-5.0);;
       break;
     default:
-      x1 = SUN_RCONST(0);
-      x2 = SUN_RCONST(0);;
+      x1 = SUN_RCONST(0.0);
+      x2 = SUN_RCONST(0.0);;
       break;
   }
 
