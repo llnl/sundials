@@ -28,6 +28,12 @@ set_target_properties(${target} PROPERTIES FOLDER "${target}")
 target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/test)
 target_link_libraries(${target} sundials_arkode sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 
+set(target "ark_vdp_multi")
+sundials_add_executable(${target} ${target}.cpp)
+set_target_properties(${target} PROPERTIES FOLDER "${target}")
+target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/test)
+target_link_libraries(${target} sundials_arkode sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
+
 # Create symlink to plot.py in the build directory
 file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/plot_shampine.py" "${CMAKE_CURRENT_BINARY_DIR}/plot_shampine.py" SYMBOLIC)
 file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/plot_vdp.py" "${CMAKE_CURRENT_BINARY_DIR}/plot_vdp.py" SYMBOLIC)
