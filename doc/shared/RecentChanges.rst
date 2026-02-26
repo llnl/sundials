@@ -10,7 +10,7 @@ time step, after each successful time step, after each failed time step, before
 right-hand side routines are called on an updated state, and/or once each internal
 stage is computed (:c:func:`ARKodeSetPreprocessStepFn`,
 :c:func:`ARKodeSetPostprocessStepFn`, :c:func:`ARKodeSetPostprocessStepFailFn`,
-:c:func:`ARKodeSetPreprocessRHSFn`, and :c:func:`ARKodeSetPostprocessStageFn`).
+:c:func:`ARKodeSetPreRHSProcessFn`, and :c:func:`ARKodeSetPostprocessStageFn`).
 These are considered **advanced** functions, as they should treat the state vector as
 read-only, otherwise all theoretical guarantees of solution accuracy and stability
 will be lost.
