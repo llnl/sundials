@@ -585,9 +585,9 @@ int arkStep_NlsResidual_MassIdent(N_Vector zcor, N_Vector r, void* arkode_mem)
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
   /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }
@@ -638,9 +638,9 @@ int arkStep_NlsResidual_MassIdent_TrivialPredAutonomous(N_Vector zcor, N_Vector 
   else
   {
     /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-    if (ark_mem->PreProcessRHS != NULL)
+    if (ark_mem->PreRHSProcess != NULL)
     {
-      retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+      retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                       ark_mem->user_data);
       if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
     }
@@ -712,9 +712,9 @@ int arkStep_NlsResidual_MassFixed(N_Vector zcor, N_Vector r, void* arkode_mem)
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
   /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }
@@ -768,9 +768,9 @@ int arkStep_NlsResidual_MassFixed_TrivialPredAutonomous(N_Vector zcor, N_Vector 
   else
   {
     /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-    if (ark_mem->PreProcessRHS != NULL)
+    if (ark_mem->PreRHSProcess != NULL)
     {
-      retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+      retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                       ark_mem->user_data);
       if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
     }
@@ -848,9 +848,9 @@ int arkStep_NlsResidual_MassTDep(N_Vector zcor, N_Vector r, void* arkode_mem)
   if (retval != ARK_SUCCESS) { return (ARK_MASSMULT_FAIL); }
 
   /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }
@@ -919,9 +919,9 @@ int arkStep_NlsFPFunction_MassIdent(N_Vector zcor, N_Vector g, void* arkode_mem)
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
   /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }
@@ -965,9 +965,9 @@ int arkStep_NlsFPFunction_MassIdent_TrivialPredAutonomous(N_Vector zcor,
   else
   {
     /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-    if (ark_mem->PreProcessRHS != NULL)
+    if (ark_mem->PreRHSProcess != NULL)
     {
-      retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+      retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                       ark_mem->user_data);
       if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
     }
@@ -1040,9 +1040,9 @@ int arkStep_NlsFPFunction_MassFixed(N_Vector zcor, N_Vector g, void* arkode_mem)
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
   /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }
@@ -1091,9 +1091,9 @@ int arkStep_NlsFPFunction_MassFixed_TrivialPredAutonomous(N_Vector zcor,
   else
   {
     /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-    if (ark_mem->PreProcessRHS != NULL)
+    if (ark_mem->PreRHSProcess != NULL)
     {
-      retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+      retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                       ark_mem->user_data);
       if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
     }
@@ -1167,9 +1167,9 @@ int arkStep_NlsFPFunction_MassTDep(N_Vector zcor, N_Vector g, void* arkode_mem)
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
   /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
-  if (ark_mem->PreProcessRHS != NULL)
+  if (ark_mem->PreRHSProcess != NULL)
   {
-    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+    retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
     if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
   }
