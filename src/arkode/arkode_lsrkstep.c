@@ -2201,24 +2201,24 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     N_VLinearSum(ONE, ark_mem->yn, hfifth, ark_mem->fn, ark_mem->tempv1);
   }
 
-  /* apply user-supplied stage postprocessing function (if supplied) */
-  if (ark_mem->PostProcessStage != NULL)
-  {
-    retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                       ark_mem->user_data);
-    if (retval != 0)
-    {
-      SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                 "status = failed postprocess stage, retval = %i", retval);
-      return ARK_POSTPROCESS_STAGE_FAIL;
-    }
-  }
-
   /* Evaluate stages j = 2,...,5 */
   for (int j = 2; j <= 5; j++)
   {
     /* Complete previous stage by evaluating RHS and storing in tempv3 */
     ark_mem->tcur = ark_mem->tn + (j - 1) * hsixth;
+
+    /* apply user-supplied stage postprocessing function (if supplied) */
+    if (ark_mem->PostProcessStage != NULL)
+    {
+      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed postprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreRHSProcess != NULL)
@@ -2257,19 +2257,6 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     {
       N_VLinearSum(ONE, ark_mem->tempv1, SUN_RCONST(0.3) * ark_mem->h,
                    ark_mem->tempv3, ark_mem->tempv1);
-    }
-
-    /* apply user-supplied stage postprocessing function (if supplied) */
-    if (ark_mem->PostProcessStage != NULL)
-    {
-      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                   "status = failed postprocess stage, retval = %i", retval);
-        return ARK_POSTPROCESS_STAGE_FAIL;
-      }
     }
   }
 
