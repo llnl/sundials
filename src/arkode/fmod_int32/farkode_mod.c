@@ -692,7 +692,7 @@ SWIGEXPORT int _wrap_FARKodeSetPostprocessStepFailFn(void *farg1, ARKPostProcess
 }
 
 
-SWIGEXPORT int _wrap_FARKodeSetPreprocessRHSFn(void *farg1, ARKPostProcessFn farg2) {
+SWIGEXPORT int _wrap_FARKodeSetPreRHSProcessFn(void *farg1, ARKPostProcessFn farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   ARKPostProcessFn arg2 = (ARKPostProcessFn) 0 ;
@@ -700,7 +700,7 @@ SWIGEXPORT int _wrap_FARKodeSetPreprocessRHSFn(void *farg1, ARKPostProcessFn far
   
   arg1 = (void *)(farg1);
   arg2 = (ARKPostProcessFn)(farg2);
-  result = (int)ARKodeSetPreprocessRHSFn(arg1,arg2);
+  result = (int)ARKodeSetPreRHSProcessFn(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
