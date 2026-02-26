@@ -484,13 +484,13 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       }
       retval = step_mem->fe(t, y, ark_mem->fn, ark_mem->user_data);
       step_mem->nfe++;
-      ark_mem->fn_is_current = SUNTRUE;
       if (retval != 0)
       {
         arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                         MSG_ARK_RHSFUNC_FAILED, t);
         return ARK_RHSFUNC_FAIL;
       }
+      ark_mem->fn_is_current = SUNTRUE;
     }
     N_VScale(ONE, ark_mem->fn, f);
 
