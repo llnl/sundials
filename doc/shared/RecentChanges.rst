@@ -14,15 +14,15 @@ stages and not others (e.g., in all but the first or last stage). We added the
 function :c:func:`ARKodeAllocateInternalData` to ARKODE to enable stage-related
 data allocation before the first call to :c:func:`ARKodeEvolve` (but after all other
 optional input routines have been called), to support users who measure memory
-usage before beginning a simulation.  Finally, we standardized calls to the user-supplied
+usage before beginning a simulation.  We standardized calls to the user-supplied
 right-hand-side functions so that these are provided the user-supplied solution vector
 passed to :c:func:`ARKodeEvolve` whenever possible -- the notable exceptions are the
 Hermite temporal interpolation module, the provided preconditioners ARKBANDPRE and
 ARKBBDPRE, banded or dense linear solvers with automatically-approximated Jacobian
 matrices, iterative linear solvers with automatically-approximated Jacobian-times-vector
 product, temporal root-finding, discrete adjoint modules in ARKStep or ERKStep, the
-SPRKStep stepper, and LSRKStep's use of the automated dominant eigenvalue estimation module.
-The default numbers of stages for the SSP Runge--Kutta methods
+SPRKStep stepper, and LSRKStep's use of the automated dominant eigenvalue estimation
+module.  The default number of stages for the SSP Runge-Kutta methods
 :c:enumerator:`ARKODE_LSRK_SSP_S_2` and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in LSRKStep
 were changed from 10 and 9, respectively, to their minimum allowable values of 2 and 4.
 Users may revert to the previous values by calling :c:func:`LSRKStepSetNumSSPStages`.
@@ -48,5 +48,8 @@ installed without setting the ``SUPERLUMT_WORKS`` option to ``TRUE``.
 
 Fixed a bug in logging output from ARKODE, where for some time stepping modules, the
 the current "time" output in the logger was incorrect.
+
+Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method, where a real
+number was used instead of an integer, potentially resulting in a rounding error.
 
 **Deprecation Notices**
