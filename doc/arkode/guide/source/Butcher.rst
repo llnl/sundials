@@ -739,8 +739,16 @@ This is the default 5th order explicit method (from :cite:p:`Tsitouras:11`).
          1 & 0.09646076681806523 & 0.01 & 0.4798896504144996 & 1.379008574103742 & -3.290069515436081 & 2.324710524099774 & 0 \\
          \hline
          5 & 0.09646076681806523 & 0.01 & 0.4798896504144996 & 1.379008574103742 & -3.290069515436081 & 2.324710524099774 & 0 \\
-         4 & 0.09352374858189271 & 0.008652883141566368 & 0.4928930991314319 & 1.140235412267858 & -2.329180192439365 & 1.568875049316616 & 0.025
+         4 & 0.09468075576583946 & 0.009183565540343253 & 0.4877705284247616 & 1.234297566930479 & -2.707712349983525 & 1.866628418170587 & 0.01515151515151515
       \end{array}
+
+   .. warning::
+
+      The embedded coefficients do not match Table 1 in :cite:p:`Tsitouras:11`
+      due to typographical errors in the paper. The correct coefficients are
+      derived using the Mathematica code provided in the appendix of
+      :cite:p:`Tsitouras:11` after correcting the last embedded coefficient from
+      :math:`\frac{1}{40}` to :math:`\frac{1}{66}`.
 
 .. only:: latex
 
