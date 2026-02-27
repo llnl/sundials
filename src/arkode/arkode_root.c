@@ -472,7 +472,8 @@ int arkRootCheck1(void* arkode_mem)
   smallh = hratio * ark_mem->h;
   tplus  = rootmem->tlo + smallh;
   N_VLinearSum(ONE, ark_mem->yn, smallh, ark_mem->fn, ark_mem->tempv4);
-  retval = rootmem->gfun(tplus, ark_mem->tempv4, rootmem->ghi, rootmem->root_data);
+  retval = rootmem->gfun(tplus, ark_mem->tempv4, rootmem->ghi,
+                         rootmem->root_data);
   rootmem->nge++;
   if (retval != 0)
   {
