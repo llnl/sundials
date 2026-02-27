@@ -7,4 +7,4 @@ sphinx-multitoc-numbering
 sphinx-toolbox
 sphinxcontrib-googleanalytics
 sphinxcontrib.bibtex
-
+sphinxcontrib-moderncmakedomain
