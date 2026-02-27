@@ -104,8 +104,8 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "ARKodeSetPostprocessStepFn")) { return 1; }
   flag = ARKodeSetPostprocessStepFailFn(arkode_mem, postprocess_step_fail);
   if (check_flag(flag, "ARKodeSetPostprocessStepFailFn")) { return 1; }
-  flag = ARKodeSetPreprocessRHSFn(arkode_mem, preprocess_stage);
-  if (check_flag(flag, "ARKodeSetPreprocessRHSFn")) { return 1; }
+  flag = ARKodeSetPreRHSProcessFn(arkode_mem, preprocess_stage);
+  if (check_flag(flag, "ARKodeSetPreRHSProcessFn")) { return 1; }
   flag = ARKodeSetPostprocessStageFn(arkode_mem, postprocess_stage);
   if (check_flag(flag, "ARKodeSetPostprocessStageFn")) { return 1; }
 
