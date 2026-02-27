@@ -86,6 +86,9 @@ export CUDAFLAGS="-O0"
 # SUNDIALS Options
 # ------------------------------------------------------------------------------
 
+# Unset deprecated CMake options after copying the value to the new option
+export SUNDIALS_ENABLE_UNSET_DEPRECATED=ON
+
 # Verbose build
 export CMAKE_VERBOSE_MAKEFILE=OFF
 

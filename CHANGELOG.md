@@ -46,6 +46,8 @@ will be used instead.
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
 installed without setting the `SUPERLUMT_WORKS` option to `TRUE`.
 
+Fixed the embedded coefficients for the `ARKODE_TSITOURAS_7_4_5` Butcher table.
+
 Fixed a bug in logging output from ARKODE, where for some time stepping modules, the
 the current "time" output in the logger was incorrect.
 
