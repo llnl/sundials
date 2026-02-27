@@ -872,7 +872,10 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
     lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv3);
   }
-  else { lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv3); }
+  else
+  {
+    lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv3);
+  }
 
   SUNLogInfo(ARK_LOGGER, "end-compute-embedding", "status = success");
 
@@ -1199,7 +1202,10 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
     lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv3);
   }
-  else { lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv3); }
+  else
+  {
+    lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv3);
+  }
 
   SUNLogInfo(ARK_LOGGER, "end-compute-embedding", "status = success");
 
@@ -2120,8 +2126,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   /* Compute the time step solution and embedding */
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
-  SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
-             4, ark_mem->tcur);
+  SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+             "stage = %i, tcur = " SUN_FORMAT_G, 4, ark_mem->tcur);
   N_VLinearSum(ONE, ark_mem->ycur, hp5, ark_mem->tempv3, ark_mem->ycur);
 
   /* apply user-supplied stage postprocessing function (if supplied) */
@@ -2266,11 +2272,11 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     if (ark_mem->PostProcessStage != NULL)
     {
       retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                        ark_mem->user_data);
+                                         ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                  "status = failed postprocess stage, retval = %i", retval);
+                   "status = failed postprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
