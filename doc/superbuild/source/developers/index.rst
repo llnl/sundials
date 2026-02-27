@@ -37,6 +37,7 @@ meant for SUNDIALS developers.
 
    History
    getting_started/index
+   cmake/index
    source_code/index
    commandline/index
    documentation/index
