@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -112,7 +115,7 @@ the definition of functions supplied to a linear solver implementation in
 :numref:`SUNLinSol.SUNSuppliedFn`. The linear solver return
 codes are described in :numref:`SUNLinSol.ErrorCodes`. The
 ``SUNLinearSolver`` type and the generic SUNLinSol module are defined in
-:numref:`SUNLininSol.Generic`.  :numref:`SUNLinSol.API.Custom` lists the
+:numref:`SUNLinSol.API.Generic`.  :numref:`SUNLinSol.API.Custom` lists the
 requirements for supplying a custom SUNLinSol module and discusses some
 intended use cases. Users wishing to supply their own SUNLinSol module are
 encouraged to use the SUNLinSol implementations provided with SUNDIALS as a

@@ -20,6 +20,7 @@
 /.pydevproject
 .vscode
 compile_commands.json
+.venv
 .clangd
 .idea
 
@@ -71,6 +72,10 @@ compile_commands.json
 /doc/build/
 /doc/*/build/
 /doc/shared/__pycache__
+/doc/shared/Python/sundials4py-*-functions.rst
+
+# external reference mapping files
+/doc/superbuild/*.inv
 
 # PDFs of user guides and example docs
 /doc/*/*_guide.pdf
@@ -84,3 +89,7 @@ uberenv_libs
 
 # tools
 /tools/suntools/__pycache__
+
+# python
+.pytest_cache
+__pycache__

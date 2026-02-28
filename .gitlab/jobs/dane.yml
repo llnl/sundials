@@ -6,8 +6,11 @@
 ##############################################################################
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -42,7 +45,7 @@ dane_clang_tpls:
         INDEX_SPEC: [~int64]
         PRECISION_SPEC: [double]
   variables:
-    SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=14 ${INDEX_SPEC} precision=${PRECISION_SPEC} +f2003+mpi+openmp+hypre+superlu-dist+lapack+klu+petsc+ginkgo+kokkos+kokkos-kernels~trilinos ^openblas"
+    SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=17 ${INDEX_SPEC} precision=${PRECISION_SPEC} +f2003+mpi+openmp+hypre+superlu-dist+lapack+klu+petsc+ginkgo+kokkos+kokkos-kernels~trilinos  ^ginkgo@1.9.0^openblas"
   extends: .sundials_job_on_dane
 
 dane_gcc_tpls:
@@ -52,7 +55,7 @@ dane_gcc_tpls:
         INDEX_SPEC: [~int64]
         PRECISION_SPEC: [double]
   variables:
-    SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=14 ${INDEX_SPEC} precision=${PRECISION_SPEC} +f2003+mpi+openmp+hypre+superlu-dist+lapack+klu+petsc+ginkgo+kokkos+kokkos-kernels~trilinos ^netlib-lapack"
+    SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=17 ${INDEX_SPEC} precision=${PRECISION_SPEC} +f2003+mpi+openmp+hypre+superlu-dist+lapack+klu+petsc+ginkgo+kokkos+kokkos-kernels~trilinos  ^ginkgo@1.9.0 ^netlib-lapack"
   extends: .sundials_job_on_dane
 
 dane_intel_tpls:
@@ -62,5 +65,5 @@ dane_intel_tpls:
         INDEX_SPEC: [~int64]
         PRECISION_SPEC: [double]
   variables:
-    SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=14 ${INDEX_SPEC} precision=${PRECISION_SPEC} ~f2003+mpi+openmp+hypre+superlu-dist+lapack~klu+petsc+ginkgo+kokkos+kokkos-kernels~trilinos ^intel-oneapi-mkl"
+    SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=17 ${INDEX_SPEC} precision=${PRECISION_SPEC} ~f2003+mpi+openmp+hypre+superlu-dist+lapack~klu+petsc+ginkgo+kokkos+kokkos-kernels~trilinos  ^ginkgo@1.9.0 ^intel-oneapi-mkl"
   extends: .sundials_job_on_dane

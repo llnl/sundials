@@ -75,10 +75,10 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     variant("cxxstd", default="14", description="C++ language standard", values=("14", "17"))
 
-    # Logging
+    # Logging (default=0 when "@6.2.0:6.7.0", default=2 when "@7.0.0:")
     variant(
         "logging-level",
-        default="0",
+        default="2",
         description="logging level\n 0 = no logging,\n 1 = errors,\n "
         "2 = errors + warnings,\n 3 = errors + "
         "warnings + info,\n 4 = errors + warnings + info + debugging, "
@@ -88,12 +88,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         when="@6.2.0:",
     )
 
-    # MPI logging
+    # MPI logging (option removed in 7.0)
     variant(
         "logging-mpi",
         default="OFF",
         description="enable MPI support in the logger",
-        when="@6.2.0:",
+        when="@6.2.0:6.7.0",
     )
 
     # Real type
@@ -221,7 +221,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     # External libraries
     depends_on("adiak", when="+adiak")
     depends_on("caliper", when="+caliper")
-    depends_on("ginkgo@1.5.0:", when="+ginkgo")
+    depends_on("ginkgo@1.9.0:", when="+ginkgo")
     depends_on("kokkos", when="+kokkos")
     depends_on("kokkos-kernels", when="+kokkos-kernels")
     for cuda_arch in CudaPackage.cuda_arch_values:
@@ -299,6 +299,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     # rocm+examples and cstd do not work together in 6.0.0
     conflicts("+rocm+examples", when="@6.0.0")
+
+    # Ginkgo requires at least C++17 starting with 1.9.0
+    conflicts("cxxstd=14", when="+ginkgo@1.9.0:")
+
+    # SYCL requires at least C++17
+    conflicts("cxxstd=14", when="+sycl")
 
     # ==========================================================================
     # Patches

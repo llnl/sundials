@@ -11,6 +11,9 @@ The {\idas} distribution contains examples of the following types:
 serial and parallel examples of Initial Value Problem (IVP) integration, 
 serial and parallel examples of forward sensitivity analysis (FSA), and 
 serial and parallel examples of adjoint sensitivity analysis (ASA).
+In addition, there are two example using OpenMP, and there are two examples
+in Fortran using the {\sundials} Fortran interface modules.
+
 The names of all the examples are given in the following table.
 
 \newlength{\colone}
@@ -26,6 +29,8 @@ The names of all the examples are given in the following table.
     {}  & \id{idasHeat2D\_bnd}  \id{idasHeat2D\_kry}         & \id{idasFoodWeb\_kry\_bbd\_p} \\
     {}  & \id{idasFoodWeb\_bnd} \id{idasFoodWeb\_bnd\_omp}   & \id{idasBruss\_kry\_bbd\_p}   \\
     {}  & \id{idasFoodWeb\_kry\_omp} \id{idasKrylovDemo\_ls} & \\
+    {}  & \id{idasAnalytic\_mels}                            & \\
+    {}  & \id{idasHeat2D\_kry\_f2003}                        & \\
     \hline
 
     FSA & \id{idasRoberts\_FSA\_dns}                            & \id{idasBruss\_FSA\_kry\_bbd\_p} \\
@@ -35,7 +40,9 @@ The names of all the examples are given in the following table.
     
     ASA & \id{idasRoberts\_ASAi\_dns}                             & \id{idasBruss\_ASAp\_kry\_bbd\_p} \\
     {}  & \id{idasRoberts\_ASAi\_klu} \id{idasRoberts\_ASAi\_sps} & \\
-    {}  & \id{idasAkzoNob\_ASAi\_dns} \id{idasHessian\_ASA\_FSA}  & \\
+    {}  & \id{idasAkzoNob\_ASAi\_dns}                             & \\
+    {}  & \id{idasAkzoNob\_ASAi\_dns\_f2003}                      & \\
+    {}  &  \id{idasHessian\_ASA\_FSA}                             & \\
     \hline
 
   \end{tabular}
@@ -137,6 +144,9 @@ following serial examples (using the {\nvecs} module):
   {\sunlinsolspgmr}, {\sunlinsolspbcgs}, and {\sunlinsolsptfqmr}.  The preconditioner uses only
   the diagonal elements of the Jacobian.
 
+\item \id{idasAnalytic\_mels} solves a problem having a simple analytic
+  solution, using a custom matrix-embedded linear solver.  
+  
 %% FSA examples
 
 \item \id{idasRoberts\_FSA\_dns}
@@ -278,6 +288,24 @@ the following examples, using the OpenMP NVECTOR module:
 
 \item \id{idasFoodWeb\_kry\_omp} solves the same problem as in
 \id{idasFoodWeb\_kry} but uses the OpenMP module. 
+
+\end{itemize}
+
+%%
+%%--------------------------------------------------------------------------------
+%%
+
+\vspace{0.2in}\noindent Supplied in the
+{\em srcdir}\id{/examples/idas/F2003\_serial} directory are the
+following examples, both in Fortran90 and using the {\sundials} Fortran
+interface modules:
+
+\begin{itemize}
+
+\item \id{idasHeat2D\_kry\_f2003} solves the same problem as \id{idasHeat2D\_kry}.
+
+\item \id{idasAkzoNob\_ASAi\_dns\_f2003} solves the same problem as
+  \id{idasAkzoNob\_ASAi\_dns}.
 
 \end{itemize}
 

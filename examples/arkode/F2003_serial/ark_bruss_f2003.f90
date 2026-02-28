@@ -1,10 +1,13 @@
 ! ------------------------------------------------------------------
-! Programmer(s): Daniel R. Reynolds @ SMU
-!                modified by Daniel M. Margolis @ SMU
+! Programmer(s): Daniel R. Reynolds @ UMBC
+!                modified by Daniel M. Margolis @ UMBC
 ! ------------------------------------------------------------------
 ! SUNDIALS Copyright Start
-! Copyright (c) 2002-2025, Lawrence Livermore National Security
+! Copyright (c) 2025-2026, Lawrence Livermore National Security,
+! University of Maryland Baltimore County, and the SUNDIALS contributors.
+! Copyright (c) 2013-2025, Lawrence Livermore National Security
 ! and Southern Methodist University.
+! Copyright (c) 2002-2013, Lawrence Livermore National Security.
 ! All rights reserved.
 !
 ! See the top-level LICENSE and NOTICE files for details.
@@ -302,13 +305,6 @@ program main
   sunmat_A => FSUNDenseMatrix(neq, neq, sunctx)
   if (.not. associated(sunmat_A)) then
     print *, 'ERROR: sunmat = NULL'
-    stop 1
-  end if
-
-  ! TODO(SBR): temporary fix until https://github.com/LLNL/sundials/pull/565 merged
-  ierr = FARKodeSetAdaptivityAdjustment(arkode_mem, 0)
-  if (ierr /= 0) then
-    print *, 'Error in FARKodeSetJacFn'
     stop 1
   end if
 

@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -584,6 +587,10 @@ call to :c:func:`CVodeInitB` or :c:func:`CVodeInitBS`.
      * ``CV_NO_ADJ`` -- The function :c:func:`CVodeAdjInit` has not been previously called.
      * ``CV_ILL_INPUT`` -- One of the input tolerances was negative.
 
+   **Notes:**
+      This routine will be called by :c:func:`CVodeSetOptions`
+      when using the key "cvid.scalar_tolerances_b".
+
 
 .. c:function:: int CVodeSVtolerancesB(void * cvode_mem, int which, sunrealtype reltolB, N_Vector abstolB)
 
@@ -819,9 +826,9 @@ At any time during the integration of the forward problem, the user can disable
 the checkpointing of the forward sensitivities by calling the following
 function:
 
-.. c:function:: int CVodeAdjSetNoSensi(void * cvode_mem)
+.. c:function:: int CVodeSetAdjNoSensi(void * cvode_mem)
 
-   The function :c:func:`CVodeAdjSetNoSensi` instructs :c:func:`CVodeF` not  to
+   The function :c:func:`CVodeSetAdjNoSensi` instructs :c:func:`CVodeF` not  to
    save checkpointing data for forward sensitivities anymore.
 
    **Arguments:**
@@ -831,6 +838,10 @@ function:
      * ``CV_SUCCESS`` -- The call to :c:func:`CVodeCreateB` was successful.
      * ``CV_MEM_NULL`` -- ``cvode_mem`` was ``NULL``.
      * ``CV_NO_ADJ`` -- The function :c:func:`CVodeAdjInit` has not been previously called.
+
+   **Notes:**
+      This routine will be called by :c:func:`CVodeSetOptions`
+      when using the key "cvid.adj_no_sensi".
 
 
 .. _CVODES.Usage.ADJ.user_callable.optional_input_b:
@@ -877,7 +888,9 @@ The optional input functions defined for the backward problem are:
 Their return value ``flag`` (of type ``int``) can have any of the return values
 of their counterparts, but it can also be ``CV_NO_ADJ`` if
 :c:func:`CVodeAdjInit` has not been called, or ``CV_ILL_INPUT`` if ``which`` was
-an invalid identifier.
+an invalid identifier.  The above routines may be controlled using
+:c:func:`CVodeSetOptions`, where the keys are appended with the suffix "_b",
+e.g., ``CVodeSetMaxOrdB`` can be controlled by the key "cvid.max_order_b".
 
 Linear solver interface optional input functions
 """"""""""""""""""""""""""""""""""""""""""""""""
@@ -996,6 +1009,8 @@ disable solution scaling when using a matrix-based linear solver.
       By default scaling is enabled with matrix-based linear solvers when using
       BDF  methods.
 
+      This routine will be called by :c:func:`CVodeSetOptions`
+      when using the key "cvid.linear_solution_scaling_b".
 
 .. c:function:: int CVodeSetJacTimesB(void * cvode_mem, int which, CVLsJacTimesSetupFnB jsetupB, CVLsJacTimesVecFnB jtvB)
 
@@ -1160,6 +1175,9 @@ potentially non-differentiable factor.
       The default value is :math:`0.05`.  Passing a value ``eplifacB = 0.0``
       also indicates using the default value.
 
+      This routine will be called by :c:func:`CVodeSetOptions`
+      when using the key "cvid.eps_lin_b".
+
    .. versionadded:: 4.0.0
 
       Replaces the deprecated function ``CVSpilsSetEpsLinB``.
@@ -1191,6 +1209,9 @@ potentially non-differentiable factor.
       Prior to the introduction of ``N_VGetLength`` in SUNDIALS v5.0.0  (CVODES
       v5.0.0) the value of ``nrmfac`` was computed using the vector  dot product
       i.e., the ``nrmfac < 0`` case.
+
+      This routine will be called by :c:func:`CVodeSetOptions`
+      when using the key "cvid.ls_norm_factor_b".
 
 
 .. _CVODES.Usage.ADJ.user_callable.optional_output_b:
@@ -1439,7 +1460,9 @@ optional values are specified.
 Their return value ``flag`` (of type ``int``) can have any of the return values
 of its counterparts, but it can also be ``CV_NO_ADJ`` if the function
 :c:func:`CVodeAdjInit` has not been previously called or ``CV_ILL_INPUT`` if the
-parameter ``which`` was an invalid identifier.
+parameter ``which`` was an invalid identifier.  The first two routines above may
+be controlled using the keys "cvid.quad_err_con_b" and
+"cvid.quad_scalar_tolerances_b" when using :c:func:`CVodeSetOptions`.
 
 Access to optional outputs related to backward quadrature integration can be
 obtained by calling the corresponding ``CVodeGetQuad*`` functions (see

@@ -1,10 +1,13 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -21,89 +24,86 @@
 # Examples using SUNDIALS linear solvers
 set(ARKODE_examples
     # tests that are always run
-    "ark_analytic\;\;"
+    "ark_analytic.c\;\;"
     # develop tests
-    "ark_advection_diffusion_reaction_splitting\;\;develop"
-    "ark_analytic_lsrk\;\;develop"
-    "ark_analytic_lsrk_varjac\;\;develop"
-    "ark_analytic_mels\;\;develop"
-    "ark_analytic_nonlin\;\;develop"
-    "ark_analytic_partitioned\;forcing\;develop"
-    "ark_analytic_partitioned\;splitting\;develop"
-    "ark_analytic_partitioned\;splitting ARKODE_SPLITTING_BEST_2_2_2\;develop"
-    "ark_analytic_partitioned\;splitting ARKODE_SPLITTING_RUTH_3_3_2\;exclude-single"
-    "ark_analytic_partitioned\;splitting ARKODE_SPLITTING_YOSHIDA_8_6_2\;exclude-single"
-    "ark_analytic_ssprk\;\;develop"
-    "ark_brusselator_1D_mri\;\;develop"
-    "ark_brusselator_fp\;\;exclude-single"
-    "ark_brusselator_mri\;\;develop"
-    "ark_brusselator\;\;develop"
-    "ark_brusselator1D_imexmri\;0 0.001\;exclude-single"
-    "ark_brusselator1D_imexmri\;2 0.001\;exclude-single"
-    "ark_brusselator1D_imexmri\;3 0.001\;exclude-single"
-    "ark_brusselator1D_imexmri\;4 0.001\;exclude-single"
-    "ark_brusselator1D_imexmri\;5 0.001\;exclude-single"
-    "ark_brusselator1D_imexmri\;6 0.001\;exclude-single"
-    "ark_brusselator1D_imexmri\;7 0.001\;exclude-single"
-    "ark_brusselator1D\;\;exclude-single"
-    "ark_conserved_exp_entropy_ark\;1 0\;develop"
-    "ark_conserved_exp_entropy_ark\;1 1\;develop"
-    "ark_conserved_exp_entropy_erk\;1\;develop"
-    "ark_damped_harmonic_symplectic\;\;exclude-single"
-    "ark_dissipated_exp_entropy\;1 0\;develop"
-    "ark_dissipated_exp_entropy\;1 1\;develop"
-    "ark_harmonic_symplectic\;\;exclude-single"
-    "ark_heat1D_adapt\;\;develop"
-    "ark_heat1D\;\;develop"
-    "ark_kepler\;--stepper ERK --step-mode adapt\;develop"
-    "ark_kepler\;--stepper ERK --step-mode fixed --count-orbits\;develop"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --count-orbits --use-compensated-sums\;develop"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_EULER_1_1 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_LEAPFROG_2_2 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_MCLACHLAN_2_2 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_MCLACHLAN_3_3 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_MCLACHLAN_4_4 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_MCLACHLAN_5_6 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_PSEUDO_LEAPFROG_2_2 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_RUTH_3_3 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_YOSHIDA_6_8 --tf 50 --check-order --nout 1\;exclude-single"
-    "ark_kepler\;\;develop"
-    "ark_kpr_mri\;0 1 0.005\;develop"
-    "ark_kpr_mri\;1 0 0.01\;develop"
-    "ark_kpr_mri\;1 1 0.002\;exclude-single"
-    "ark_kpr_mri\;2 4 0.002\;develop"
-    "ark_kpr_mri\;3 2 0.001\;develop"
-    "ark_kpr_mri\;4 3 0.001\;develop"
-    "ark_kpr_mri\;5 4 0.001\;develop"
-    "ark_kpr_mri\;6 5 0.001\;develop"
-    "ark_kpr_mri\;7 2 0.002\;develop"
-    "ark_kpr_mri\;8 3 0.001 -100 100 0.5 1\;exclude-single"
-    "ark_kpr_mri\;9 3 0.001 -100 100 0.5 1\;exclude-single"
-    "ark_kpr_mri\;10 4 0.001 -100 100 0.5 1\;exclude-single"
-    "ark_kpr_mri\;11 2 0.001\;develop"
-    "ark_kpr_mri\;12 3 0.005\;develop"
-    "ark_kpr_mri\;13 4 0.01\;exclude-single"
-    "ark_KrylovDemo_prec\;\;exclude-single"
-    "ark_KrylovDemo_prec\;1\;exclude-single"
-    "ark_KrylovDemo_prec\;2\;exclude-single"
-    "ark_lotka_volterra_ASA\;--check-freq 1\;develop"
-    "ark_lotka_volterra_ASA\;--check-freq 5\;develop"
-    "ark_onewaycouple_mri\;\;develop"
-    "ark_reaction_diffusion_mri\;\;develop"
-    "ark_robertson_constraints\;\;exclude-single"
-    "ark_robertson_root\;\;exclude-single"
-    "ark_robertson\;\;exclude-single"
-    "ark_twowaycouple_mri\;\;develop")
+    "ark_analytic.c\;arkode.scalar_tolerances 1e-6 1e-8 arkode.table_names ARKODE_ESDIRK547L2SA_7_4_5 ARKODE_ERK_NONE\;"
+    "ark_advection_diffusion_reaction_splitting.c\;\;develop"
+    "ark_analytic_lsrk.c\;\;develop"
+    "ark_analytic_lsrk_varjac.c\;\;develop"
+    "ark_analytic_lsrk_domeigest.c\;\;develop"
+    "ark_analytic_lsrk_domeigest.c\;arkid.dom_eig_est_init_preprocess_iters 1 sundomeigestimator.max_iters 1\;develop"
+    "ark_analytic_mels.c\;\;develop"
+    "ark_analytic_nonlin.c\;\;develop"
+    "ark_analytic_partitioned.c\;forcing\;develop"
+    "ark_analytic_partitioned.c\;splitting\;develop"
+    "ark_analytic_partitioned.c\;splitting ARKODE_SPLITTING_BEST_2_2_2\;develop"
+    "ark_analytic_partitioned.c\;splitting ARKODE_SPLITTING_RUTH_3_3_2\;exclude-single"
+    "ark_analytic_partitioned.c\;splitting ARKODE_SPLITTING_YOSHIDA_8_6_2\;exclude-single"
+    "ark_analytic_ssprk.c\;\;develop"
+    "ark_brusselator_1D_mri.c\;\;develop"
+    "ark_brusselator_fp.c\;\;exclude-single"
+    "ark_brusselator_mri.c\;\;develop"
+    "ark_brusselator.c\;\;develop"
+    "ark_brusselator1D_imexmri.c\;0 0.001\;exclude-single"
+    "ark_brusselator1D_imexmri.c\;2 0.001\;exclude-single"
+    "ark_brusselator1D_imexmri.c\;3 0.001\;exclude-single"
+    "ark_brusselator1D_imexmri.c\;4 0.001\;exclude-single"
+    "ark_brusselator1D_imexmri.c\;5 0.001\;exclude-single"
+    "ark_brusselator1D_imexmri.c\;6 0.001\;exclude-single"
+    "ark_brusselator1D_imexmri.c\;7 0.001\;exclude-single"
+    "ark_brusselator1D.c\;\;exclude-single"
+    "ark_conserved_exp_entropy_ark.c\;1 0\;develop"
+    "ark_conserved_exp_entropy_ark.c\;1 1\;develop"
+    "ark_conserved_exp_entropy_erk.c\;1\;develop"
+    "ark_damped_harmonic_symplectic.c\;\;exclude-single"
+    "ark_dissipated_exp_entropy.c\;1 0\;develop"
+    "ark_dissipated_exp_entropy.c\;1 1\;develop"
+    "ark_harmonic_symplectic.c\;\;exclude-single"
+    "ark_heat1D_adapt.c\;\;develop"
+    "ark_heat1D.c\;\;develop"
+    "ark_kepler.c\;--stepper ERK --step-mode adapt\;develop"
+    "ark_kepler.c\;--stepper ERK --step-mode fixed --count-orbits\;develop"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --count-orbits --use-compensated-sums\;develop"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_EULER_1_1 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_LEAPFROG_2_2 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_MCLACHLAN_2_2 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_MCLACHLAN_3_3 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_MCLACHLAN_4_4 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_MCLACHLAN_5_6 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_PSEUDO_LEAPFROG_2_2 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_RUTH_3_3 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;--stepper SPRK --step-mode fixed --method ARKODE_SPRK_YOSHIDA_6_8 --tf 50 --check-order --nout 1\;exclude-single"
+    "ark_kepler.c\;\;develop"
+    "ark_kpr_mri.c\;0 1 0.005\;develop"
+    "ark_kpr_mri.c\;1 0 0.01\;develop"
+    "ark_kpr_mri.c\;1 1 0.002\;exclude-single"
+    "ark_kpr_mri.c\;2 4 0.002\;develop"
+    "ark_kpr_mri.c\;3 2 0.001\;develop"
+    "ark_kpr_mri.c\;4 3 0.001\;develop"
+    "ark_kpr_mri.c\;5 4 0.001\;develop"
+    "ark_kpr_mri.c\;6 5 0.001\;develop"
+    "ark_kpr_mri.c\;7 2 0.002\;develop"
+    "ark_kpr_mri.c\;8 3 0.001 -100 100 0.5 1\;exclude-single"
+    "ark_kpr_mri.c\;9 3 0.001 -100 100 0.5 1\;exclude-single"
+    "ark_kpr_mri.c\;10 4 0.001 -100 100 0.5 1\;exclude-single"
+    "ark_kpr_mri.c\;11 2 0.001\;develop"
+    "ark_kpr_mri.c\;12 3 0.005\;develop"
+    "ark_kpr_mri.c\;13 4 0.01\;exclude-single"
+    "ark_KrylovDemo_prec.c\;\;exclude-single"
+    "ark_KrylovDemo_prec.c\;1\;exclude-single"
+    "ark_KrylovDemo_prec.c\;2\;exclude-single"
+    "ark_lotka_volterra_ASA.c\;--check-freq 1\;develop"
+    "ark_lotka_volterra_ASA.c\;--check-freq 5\;develop"
+    "ark_onewaycouple_mri.c\;\;develop"
+    "ark_reaction_diffusion_mri.c\;\;develop"
+    "ark_robertson_constraints.c\;\;exclude-single"
+    "ark_robertson_root.c\;\;exclude-single"
+    "ark_robertson.c\;\;exclude-single"
+    "ark_twowaycouple_mri.c\;\;develop")
 
 if(SUNDIALS_BUILD_WITH_MONITORING)
-  list(APPEND ARKODE_examples "ark_brusselator_fp\;1\;exclude-single")
+  list(APPEND ARKODE_examples "ark_brusselator_fp.c\;1\;exclude-single")
 endif()
-
-# Examples using KLU linear solver
-set(ARKODE_examples_KLU "ark_brusselator1D_klu\;develop")
-
-# Examples using SuperLU_MT linear solver
-set(ARKODE_examples_SUPERLUMT "ark_brusselator1D_FEM_slu\;exclude-single")
 
 # Auxiliary files to install
 set(ARKODE_extras
@@ -115,7 +115,6 @@ set(ARKODE_extras
     ark_reaction_diffusion_mri_fast_stats.csv
     ark_reaction_diffusion_mri_slow_stats.csv
     ark_robertson_stats.csv
-    plot_brusselator1D_FEM.py
     plot_brusselator1D.py
     plot_heat1D_adapt.py
     plot_heat1D.py
@@ -130,28 +129,32 @@ foreach(example_tuple ${ARKODE_examples})
   list(GET example_tuple 1 example_args)
   list(GET example_tuple 2 example_type)
 
-  if(NOT TARGET ${example})
+  # extract the file name without extension
+  get_filename_component(example_target ${example} NAME_WE)
+
+  if(NOT TARGET ${example_target})
     # example source files
-    sundials_add_executable(${example} ${example}.c)
+    sundials_add_executable(${example_target} ${example})
 
     # folder for IDEs
-    set_target_properties(${example} PROPERTIES FOLDER "Examples")
+    set_target_properties(${example_target} PROPERTIES FOLDER "Examples")
 
     # libraries to link against
-    target_link_libraries(${example} sundials_arkode sundials_nvecserial
-                          ${EXE_EXTRA_LINK_LIBS})
+    target_link_libraries(
+      ${example_target} sundials_arkode sundials_nvecserial
+      sundials_sundomeigestpower ${EXE_EXTRA_LINK_LIBS} ${DOMEIG_LIBRARIES})
   endif()
 
   # check if example args are provided and set the test name
   if("${example_args}" STREQUAL "")
-    set(test_name ${example})
+    set(test_name ${example_target})
   else()
-    string(REGEX REPLACE " " "_" test_name ${example}_${example_args})
+    string(REGEX REPLACE " " "_" test_name ${example_target}_${example_args})
   endif()
 
   # add example to regression tests
   sundials_add_test(
-    ${test_name} ${example}
+    ${test_name} ${example_target}
     TEST_ARGS ${example_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     ANSWER_FILE ${test_name}.out
@@ -159,148 +162,19 @@ foreach(example_tuple ${ARKODE_examples})
 
   # install example source and out files
   if(EXAMPLES_INSTALL)
-    install(FILES ${example}.c ${test_name}.out
+    install(FILES ${example} ${test_name}.out
             DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_serial)
   endif()
 
 endforeach(example_tuple ${ARKODE_examples})
 
-# Add the build and install targets for each KLU example (if needed)
-if(BUILD_SUNLINSOL_KLU)
-
-  foreach(example_tuple ${ARKODE_examples_KLU})
-
-    # parse the example tuple
-    list(GET example_tuple 0 example)
-    list(GET example_tuple 1 example_type)
-
-    # example source files
-    sundials_add_executable(${example} ${example}.c)
-
-    set_target_properties(${example} PROPERTIES FOLDER "Examples")
-
-    # add example to regression tests
-    sundials_add_test(
-      ${example} ${example}
-      ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-      ANSWER_FILE ${example}.out
-      EXAMPLE_TYPE ${example_type})
-
-    # libraries to link against
-    target_link_libraries(${example} sundials_arkode sundials_nvecserial
-                          sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
-
-    # install example source and out files
-    if(EXAMPLES_INSTALL)
-      install(FILES ${example}.c ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_serial)
-    endif()
-
-  endforeach(example_tuple ${ARKODE_examples_KLU})
-
-endif()
-
-# Add the build and install targets for each SuperLU_MT example (if needed)
-if(BUILD_SUNLINSOL_SUPERLUMT)
-
-  foreach(example_tuple ${ARKODE_examples_SUPERLUMT})
-
-    # parse the example tuple
-    list(GET example_tuple 0 example)
-    list(GET example_tuple 1 example_type)
-
-    # example source files
-    sundials_add_executable(${example} ${example}.c)
-
-    set_target_properties(${example} PROPERTIES FOLDER "Examples")
-
-    # add example to regression tests
-    sundials_add_test(
-      ${example} ${example}
-      ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-      ANSWER_FILE ${example}.out
-      EXAMPLE_TYPE ${example_type})
-
-    # libraries to link against
-    target_link_libraries(${example} sundials_arkode sundials_nvecserial
-                          sundials_sunlinsolsuperlumt ${EXE_EXTRA_LINK_LIBS})
-
-    # install example source and out files
-    if(EXAMPLES_INSTALL)
-      install(FILES ${example}.c ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_serial)
-    endif()
-
-  endforeach(example_tuple ${ARKODE_examples_SUPERLUMT})
-
-endif()
-
-# create Makefile and CMakeLists.txt for examples
 if(EXAMPLES_INSTALL)
-
-  # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_serial)
-
-  # Install the extra files
-  foreach(extrafile ${ARKODE_extras})
-    install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_serial)
-  endforeach(extrafile ${ARKODE_extras})
-
-  # Prepare substitution variables for Makefile and/or CMakeLists templates
-  set(SOLVER "ARKODE")
-  set(SOLVER_LIB "sundials_arkode")
-
-  examples2string(ARKODE_examples EXAMPLES)
-
-  if(BUILD_SUNLINSOL_KLU)
-    examples2string(ARKODE_examples_KLU EXAMPLES_KLU)
-  else()
-    set(EXAMPLES_KLU "")
-  endif()
-
-  if(BUILD_SUNLINSOL_SUPERLUMT)
-    examples2string(ARKODE_examples_SUPERLUMT EXAMPLES_SLUMT)
-    if(SUNDIALS_SUPERLUMT_THREAD_TYPE STREQUAL "PTHREAD")
-      set(THREAD_LIBRARY_SLUMT ${CMAKE_THREAD_LIBS_INIT})
-    else()
-      set(THREAD_LIBRARY_SLUMT "")
-    endif()
-  else()
-    set(EXAMPLES_SLUMT "")
-    set(THREAD_LIBRARY_SLUMT "")
-  endif()
-
-  # Regardless of the platform we're on, we will generate and install
-  # CMakeLists.txt file for building the examples. This file  can then be used
-  # as a template for the user's own programs.
-
-  # generate CMakelists.txt in the binary directory
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_serial_C_ex.in
-    ${PROJECT_BINARY_DIR}/examples/arkode/C_serial/CMakeLists.txt @ONLY)
-
-  # install CMakelists.txt
-  install(FILES ${PROJECT_BINARY_DIR}/examples/arkode/C_serial/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_serial)
-
-  # On UNIX-type platforms, we also  generate and install a makefile for
-  # building the examples. This makefile can then be used as a template for the
-  # user's own programs.
-
-  if(UNIX)
-    # generate Makefile and place it in the binary dir
-    configure_file(
-      ${PROJECT_SOURCE_DIR}/examples/templates/makefile_serial_C_ex.in
-      ${PROJECT_BINARY_DIR}/examples/arkode/C_serial/Makefile_ex @ONLY)
-    # install the configured Makefile_ex as Makefile
-    install(
-      FILES ${PROJECT_BINARY_DIR}/examples/arkode/C_serial/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_serial
-      RENAME Makefile)
-  endif()
-
-  # add test_install target
-  sundials_add_test_install(arkode C_serial EXECUTABLE ark_analytic)
-
+  sundials_install_examples(
+    arkode ARKODE_examples
+    CMAKE_TEMPLATE cmakelists_C_ex.in
+    MAKE_TEMPLATE makefile_serial_C_ex.in
+    SUNDIALS_TARGETS nvecserial arkode sundomeigestpower
+    DESTINATION arkode/C_serial
+    EXTRA_FILES README ${ARKODE_extras}
+    TEST_INSTALL C_serial)
 endif()

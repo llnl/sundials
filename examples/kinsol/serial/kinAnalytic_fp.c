@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -117,7 +120,6 @@ int main(int argc, char* argv[])
   UserOpt uopt   = NULL; /* user options struct */
   N_Vector u     = NULL; /* solution vector     */
   N_Vector scale = NULL; /* scaling vector      */
-  FILE* infofp   = NULL; /* KINSOL log file     */
   long int nni, nfe;     /* solver outputs      */
   sunrealtype* data;     /* vector data array   */
   void* kmem;            /* KINSOL memory       */
@@ -230,10 +232,6 @@ int main(int argc, char* argv[])
     if (check_retval(&retval, "KINSetDepthFn", 1)) { return (1); }
   }
 
-  /* Set info log file and print level */
-  infofp = fopen("kinsol.log", "w");
-  if (check_retval((void*)infofp, "fopen", 0)) { return (1); }
-
   /* -------------
    * Initial guess
    * ------------- */
@@ -287,7 +285,6 @@ int main(int argc, char* argv[])
    * Free memory
    * ----------- */
 
-  fclose(infofp);
   N_VDestroy(u);
   N_VDestroy(scale);
   KINFree(&kmem);
@@ -339,7 +336,7 @@ static int DampingFn(long int iter, N_Vector u_val, N_Vector g_val,
                      sunrealtype* qt_fn, long int depth, void* user_data,
                      sunrealtype* damping_factor)
 {
-  if (depth == 0) { *damping_factor = 0.5; }
+  if (depth == 0) { *damping_factor = SUN_RCONST(0.5); }
   else
   {
     /* Compute ||Q^T fn||^2 */
@@ -428,7 +425,7 @@ static int SetDefaults(UserOpt* uopt)
   if (*uopt == NULL) { return (-1); }
 
   /* Set default options values */
-  (*uopt)->tol            = SUN_RCONST(100.0) * SUNRsqrt(SUN_UNIT_ROUNDOFF);
+  (*uopt)->tol            = 100 * SUNRsqrt(SUN_UNIT_ROUNDOFF);
   (*uopt)->maxiter        = 30;
   (*uopt)->m_aa           = 0;               /* no acceleration */
   (*uopt)->delay_aa       = 0;               /* no delay        */

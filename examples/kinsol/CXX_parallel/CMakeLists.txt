@@ -2,8 +2,11 @@
 # Programmer(s): Shelby Lockhart @ UIUC/LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -19,8 +22,7 @@
 
 # Examples to build
 set(KINSOL_examples "kin_heat2D_nonlin_p.cpp\;--np 2 2\;1\;4\;exclude-single"
-                    "kin_em_p.cpp\;\;1\;2\;exclude-single"
-)
+                    "kin_em_p.cpp\;\;1\;2\;exclude-single")
 
 # Add the build target for each example
 foreach(example_tuple ${KINSOL_examples})

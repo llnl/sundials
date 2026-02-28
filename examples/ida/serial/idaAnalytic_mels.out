@@ -1,8 +1,6 @@
 
 Analytical DAE test problem:
     alpha = 10
-   reltol = 1.0e-04
-   abstol = 1.0e-09
 
         t          x1         x2
    ----------------------------------

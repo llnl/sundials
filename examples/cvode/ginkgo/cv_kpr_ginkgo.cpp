@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -31,7 +34,11 @@
 
 // Include integrator, matrix, linear solver, and vector headers
 #include <cvode/cvode.h>
+#if defined(USE_OMP)
+#include <nvector/nvector_openmp.h>
+#else
 #include <nvector/nvector_serial.h>
+#endif
 #include <sundials/sundials_core.hpp>
 #include <sunlinsol/sunlinsol_ginkgo.hpp>
 #include <sunmatrix/sunmatrix_ginkgo.hpp>
@@ -71,8 +78,15 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "ReadInputs")) { return 1; }
 
   // Create initial condition vector
+#if defined(USE_OMP)
+  auto omp_num_threads_var{std::getenv("OMP_NUM_THREADS")};
+  int num_threads = omp_num_threads_var ? std::atoi(omp_num_threads_var) : 1;
+  N_Vector y      = N_VNew_OpenMP(2, num_threads, sunctx);
+  if (check_ptr(y, "N_VNew_OpenMP")) { return 1; }
+#else
   N_Vector y = N_VNew_Serial(2, sunctx);
   if (check_ptr(y, "N_VNew_Serial")) { return 1; }
+#endif
 
   sunrealtype utrue, vtrue;
   flag = true_sol(ZERO, &utrue, &vtrue);

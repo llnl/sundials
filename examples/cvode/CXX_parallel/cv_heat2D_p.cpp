@@ -1,10 +1,13 @@
 /* -----------------------------------------------------------------------------
  * Programmer(s): David J. Gardner @ LLNL
- *                Daniel R. Reynolds @ SMU
+ *                Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -475,7 +478,7 @@ int main(int argc, char* argv[])
       if (outproc)
       {
         cout << scientific;
-        cout << setprecision(numeric_limits<double>::digits10);
+        cout << setprecision(SUN_DIGITS10);
         cout << "  Max error = " << maxerr << endl;
       }
     }
@@ -1547,7 +1550,7 @@ static int OpenOutput(UserData* udata)
   if (udata->output > 0 && outproc)
   {
     cout << scientific;
-    cout << setprecision(numeric_limits<double>::digits10);
+    cout << setprecision(SUN_DIGITS10);
     if (udata->forcing)
     {
       cout << "          t           ";
@@ -1597,7 +1600,7 @@ static int OpenOutput(UserData* udata)
     udata->uout.open(fname.str());
 
     udata->uout << scientific;
-    udata->uout << setprecision(numeric_limits<double>::digits10);
+    udata->uout << setprecision(SUN_DIGITS10);
 
     if (udata->forcing)
     {
@@ -1608,7 +1611,7 @@ static int OpenOutput(UserData* udata)
       udata->eout.open(fname.str());
 
       udata->eout << scientific;
-      udata->eout << setprecision(numeric_limits<double>::digits10);
+      udata->eout << setprecision(SUN_DIGITS10);
     }
   }
 

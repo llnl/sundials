@@ -4,8 +4,11 @@
  *                Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -126,6 +129,10 @@ extern "C" {
  *
  * SUNRacos calls the appropriate version of acos
  *
+ * SUNRsinh calls the appropriate version of sinh
+ *
+ * SUNRcosh calls the appropriate version of cosh
+
  * SUNRatan calls the appropriate version of atan
  *
  * SUNRpower calls the appropriate version of power
@@ -328,6 +335,38 @@ extern "C" {
 #endif
 
 /*
+* -----------------------------------------------------------------
+* Function : SUNRsamesign
+* -----------------------------------------------------------------
+* Usage : sunrealtype z;
+*         z = SUNRsamesign(x, y);
+* -----------------------------------------------------------------
+* SUNRsamesign(x, y) returns true if x and y share the same sign,
+* false otherwise
+* -----------------------------------------------------------------
+*/
+
+#ifndef SUNRsamesign
+#define SUNRsamesign(x, y) (signbit((x)) == signbit((y)))
+#endif
+
+/*
+* -----------------------------------------------------------------
+* Function : SUNRdifferentsign
+* -----------------------------------------------------------------
+* Usage : sunrealtype z;
+*         z = SUNRdifferentsign(x, y);
+* -----------------------------------------------------------------
+* SUNRdifferentsign(x) returns true if x and y have different
+* signs, false otherwise
+* -----------------------------------------------------------------
+*/
+
+#ifndef SUNRdifferentsign
+#define SUNRdifferentsign(x, y) (!SUNRsamesign((x), (y)))
+#endif
+
+/*
  * -----------------------------------------------------------------
  * Function : SUNRpowerR
  * -----------------------------------------------------------------
@@ -482,6 +521,59 @@ extern "C" {
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
 #endif
 #endif
+
+/*
+* -----------------------------------------------------------------
+* Function : SUNRsinh
+* -----------------------------------------------------------------
+* Usage : sunrealtype sinh_x;
+*         sinh_x = SUNRsinh(x);
+* -----------------------------------------------------------------
+* SUNRsinh(x) returns sinh(x) (the hyperbolic sine of x).
+* -----------------------------------------------------------------
+*/
+
+#ifndef SUNRsinh
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRsinh(x) (sinh((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRsinh(x) (sinhf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRsinh(x) (sinhl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRsinh(x) (sinhq((x)))
+#else
+#error \
+"SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+    /*
+     * -----------------------------------------------------------------
+     * Function : SUNRcosh
+     * -----------------------------------------------------------------
+     * Usage : sunrealtype cosh_x;
+     *         cosh_x = SUNRcosh(x);
+     * -----------------------------------------------------------------
+     * SUNRcosh(x) returns cosh(x) (the hyperbolic cosine of x).
+     * -----------------------------------------------------------------
+     */
+
+#ifndef SUNRcosh
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRcosh(x) (cosh((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRcosh(x) (coshf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRcosh(x) (coshl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRcosh(x) (coshq((x)))
+#else
+#error \
+"SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
 
 /*
  * -----------------------------------------------------------------

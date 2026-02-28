@@ -2,8 +2,11 @@
 # Programmer(s): Slaven Peles and Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -97,31 +100,3 @@ foreach(example_tuple ${nvector_raja_examples})
     NODIFF)
 
 endforeach()
-
-if(EXAMPLES_INSTALL)
-
-  if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"
-                                                ))
-    set(EXAMPLES_FIND_PACKAGE "find_package(OpenMP REQUIRED)\n")
-    set(_openmp_target OpenMP::OpenMP_CXX)
-  endif()
-
-  if(RAJA_NEEDS_THREADS)
-    set(EXAMPLES_FIND_PACKAGE
-        "${EXAMPLES_FIND_PACKAGE}find_package(Threads REQUIRED)\n")
-  endif()
-
-  sundials_install_examples(
-    nvec_mpiraja examples_list
-    EXAMPLES_DEPENDENCIES test_nvector.c test_mpinvector.c
-    EXTRA_FILES
-      ${SUNDIALS_SOURCE_DIR}/test/unit_tests/nvector/test_nvector.c
-      ${SUNDIALS_SOURCE_DIR}/test/unit_tests/nvector/test_nvector.h
-      ${SUNDIALS_SOURCE_DIR}/test/unit_tests/nvector/test_mpinvector.c
-    CMAKE_TEMPLATE cmakelists_${_lang}_MPI_ex.in
-    SOLVER_LIBRARY sundials_ida
-    SUNDIALS_TARGETS generic nvecmpiplusx nvecraja
-    OTHER_TARGETS ${_openmp_target}
-    DESTINATION nvector/mpiraja)
-
-endif()

@@ -1,7 +1,10 @@
 /* -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -21,12 +24,16 @@
 extern "C" {
 #endif
 
-typedef enum
+enum SUNFullRhsMode
 {
   SUN_FULLRHS_START,
   SUN_FULLRHS_END,
   SUN_FULLRHS_OTHER
-} SUNFullRhsMode;
+};
+
+#ifndef SWIG
+typedef enum SUNFullRhsMode SUNFullRhsMode;
+#endif
 
 typedef int (*SUNRhsJacFn)(sunrealtype t, N_Vector y, N_Vector fy,
                            SUNMatrix Jac, void* user_data, N_Vector tmp1,
@@ -66,7 +73,7 @@ typedef SUNErrCode (*SUNStepperSetStepDirectionFn)(SUNStepper stepper,
 typedef SUNErrCode (*SUNStepperSetForcingFn)(SUNStepper stepper,
                                              sunrealtype tshift,
                                              sunrealtype tscale,
-                                             N_Vector* forcing, int nforcing);
+                                             N_Vector* forcing_1d, int nforcing);
 
 typedef SUNErrCode (*SUNStepperGetNumStepsFn)(SUNStepper stepper,
                                               suncountertype* nst);
@@ -109,7 +116,7 @@ SUNErrCode SUNStepper_SetStepDirection(SUNStepper stepper, sunrealtype stepdir);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNStepper_SetForcing(SUNStepper stepper, sunrealtype tshift,
-                                 sunrealtype tscale, N_Vector* forcing,
+                                 sunrealtype tscale, N_Vector* forcing_1d,
                                  int nforcing);
 
 SUNDIALS_EXPORT

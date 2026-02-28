@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -301,8 +304,6 @@ static void PrintOutput(N_Vector u)
     printf("%-8.5Qf ", x);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("%-8.5Lf ", x);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%-8.5f ", x);
 #else
     printf("%-8.5f ", x);
 #endif
@@ -316,8 +317,6 @@ static void PrintOutput(N_Vector u)
     printf("%-8.5Qf    ", y);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("%-8.5Lf    ", y);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%-8.5f    ", y);
 #else
     printf("%-8.5f    ", y);
 #endif
@@ -327,8 +326,6 @@ static void PrintOutput(N_Vector u)
       printf("%-8.5Qf ", IJth(udata, i, j));
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
       printf("%-8.5Lf ", IJth(udata, i, j));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-      printf("%-8.5f ", IJth(udata, i, j));
 #else
       printf("%-8.5f ", IJth(udata, i, j));
 #endif

@@ -3,8 +3,11 @@
  *                Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -350,8 +353,6 @@ static void PrintIntro1(void)
   printf(" neq = %d,  reltol = %.2Qg,  abstol = %.2Qg", P1_NEQ, RTOL, ATOL);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf(" neq = %d,  reltol = %.2Lg,  abstol = %.2Lg", P1_NEQ, RTOL, ATOL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" neq = %d,  reltol = %.2g,  abstol = %.2g", P1_NEQ, RTOL, ATOL);
 #else
   printf(" neq = %d,  reltol = %.2g,  abstol = %.2g", P1_NEQ, RTOL, ATOL);
 #endif
@@ -371,8 +372,6 @@ static void PrintOutput1(sunrealtype t, sunrealtype y0, sunrealtype y1, int qu,
   printf("%10.5Qf    %12.5Qe   %12.5Qe   %2d    %6.4Qe\n", t, y0, y1, qu, hu);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%10.5Lf    %12.5Le   %12.5Le   %2d    %6.4Le\n", t, y0, y1, qu, hu);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%10.5f    %12.5e   %12.5e   %2d    %6.4e\n", t, y0, y1, qu, hu);
 #else
   printf("%10.5f    %12.5e   %12.5e   %2d    %6.4e\n", t, y0, y1, qu, hu);
 #endif
@@ -587,8 +586,6 @@ static void PrintIntro2(void)
   printf(" itol = %s, reltol = %.2Qg, abstol = %.2Qg", "CV_SS", RTOL, ATOL);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf(" itol = %s, reltol = %.2Lg, abstol = %.2Lg", "CV_SS", RTOL, ATOL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" itol = %s, reltol = %.2g, abstol = %.2g", "CV_SS", RTOL, ATOL);
 #else
   printf(" itol = %s, reltol = %.2g, abstol = %.2g", "CV_SS", RTOL, ATOL);
 #endif
@@ -598,6 +595,8 @@ static void PrintIntro2(void)
 static void PrintHeader2(void)
 {
   printf("\n      t        max.err      qu     hu \n");
+
+  return;
 }
 
 static void PrintOutput2(sunrealtype t, sunrealtype erm, int qu, sunrealtype hu)
@@ -606,11 +605,11 @@ static void PrintOutput2(sunrealtype t, sunrealtype erm, int qu, sunrealtype hu)
   printf("%10.3Qf  %12.4Qe   %2d   %12.4Qe\n", t, erm, qu, hu);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%10.3Lf  %12.4Le   %2d   %12.4Le\n", t, erm, qu, hu);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%10.3f  %12.4e   %2d   %12.4e\n", t, erm, qu, hu);
 #else
   printf("%10.3f  %12.4e   %2d   %12.4e\n", t, erm, qu, hu);
 #endif
+
+  return;
 }
 
 static int f2(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
@@ -858,11 +857,11 @@ static void PrintErrOutput(sunrealtype tol_factor)
   printf("\n\n Error exceeds %Qg * tolerance \n\n", tol_factor);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("\n\n Error exceeds %Lg * tolerance \n\n", tol_factor);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("\n\n Error exceeds %g * tolerance \n\n", tol_factor);
 #else
   printf("\n\n Error exceeds %g * tolerance \n\n", tol_factor);
 #endif
+
+  return;
 }
 
 static void PrintFinalStats(void* cvode_mem, int miter, sunrealtype ero)
@@ -920,6 +919,7 @@ static void PrintFinalStats(void* cvode_mem, int miter, sunrealtype ero)
     printf(" Number of Jacobian evaluations           = %4ld \n", nje);
     printf(" Number of f evals. in linear solver      = %4ld \n\n", nfeLS);
   }
+
 #if defined(SUNDIALS_FLOAT128_PRECISION)
   printf(" Error overrun = %.3Qf \n", ero);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
@@ -934,6 +934,8 @@ static void PrintErrInfo(int nerr)
   printf("\n\n-------------------------------------------------------------");
   printf("\n-------------------------------------------------------------");
   printf("\n\n Number of errors encountered = %d \n", nerr);
+
+  return;
 }
 
 /* Check function return value...

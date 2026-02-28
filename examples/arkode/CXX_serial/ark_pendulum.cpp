@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -225,20 +228,12 @@ int main(int argc, char* argv[])
 
   // Output the initial condition and energy
   int swidth = 8;
-#if defined(SUNDIALS_FLOAT128_PRECISION)
-  int rwidth = FLT128_DIG + 8;
-#else
-  int rwidth = std::numeric_limits<sunrealtype>::digits10 + 8;
-#endif
+  int rwidth = SUN_DIGITS10 + 8;
 
   std::ofstream outfile("ark_pendulum.txt");
   outfile << "# vars: t u v energy energy_err\n";
   outfile << std::scientific;
-#if defined(SUNDIALS_FLOAT128_PRECISION)
-  outfile << std::setprecision(FLT128_DIG);
-#else
-  outfile << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
-#endif
+  outfile << std::setprecision(SUN_DIGITS10);
   outfile << t << " " << ydata[0] << " " << ydata[1] << " " << eng0 << " "
           << SUN_RCONST(0.0) << std::endl;
 
@@ -250,11 +245,7 @@ int main(int argc, char* argv[])
 
   std::cout << std::endl;
   std::cout << std::scientific;
-#if defined(SUNDIALS_FLOAT128_PRECISION)
-  std::cout << std::setprecision(FLT128_DIG);
-#else
-  std::cout << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
-#endif
+  std::cout << std::setprecision(SUN_DIGITS10);
   std::cout << std::setw(swidth) << 0 << std::setw(rwidth) << t
             << std::setw(rwidth) << ydata[0] << std::setw(rwidth) << ydata[1]
             << std::setw(rwidth) << eng0 << std::setw(rwidth) << SUN_RCONST(0.0);

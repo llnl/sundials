@@ -3,8 +3,11 @@
  *                Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -83,24 +86,27 @@
  * -----------------------------------------------------------------
  */
 
-#include <kinsol/kinsol.h> /* access to KINSOL func., consts.      */
 #include <math.h>
-#include <nvector/nvector_serial.h> /* access to serial N_Vector            */
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <kinsol/kinsol.h>           /* access to KINSOL func., consts.      */
+#include <nvector/nvector_serial.h>  /* access to serial N_Vector            */
 #include <sundials/sundials_dense.h> /* use generic dense solver in precond. */
-#include <sundials/sundials_math.h>  /* access to SUNMAX, SUNRabs, SUNRsqrt  */
-#include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
+#include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype   */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
+
+/* Math function macros */
+#define MAX(A, B) ((A) > (B) ? (A) : (B))
 
 /* Problem Constants */
 
-#define NUM_SPECIES \
-  6 /* must equal 2*(number of prey or predators)
-                              number of prey = number of predators       */
+/* must equal 2*(number of prey or predators)
+   number of prey = number of predators       */
+#define NUM_SPECIES 6
 
-#define MX       20 /* MX = number of x mesh points */
-#define MY       20 /* MY = number of y mesh points */
+#define MX       8 /* MX = number of x mesh points */
+#define MY       8 /* MY = number of y mesh points */
 #define NSMX     (NUM_SPECIES * MX)
 #define NEQ      (NSMX * MY)        /* number of equations in the system */
 #define AA       SUN_RCONST(1.0)    /* value of coefficient AA in above eqns */
@@ -123,12 +129,12 @@
 
 /* User-defined vector access macro: IJ_Vptr */
 
-/* IJ_Vptr is defined in order to translate from the underlying 3D structure
-   of the dependent variable vector to the 1D storage scheme for an N-vector.
-   IJ_Vptr(vv,i,j) returns a pointer to the location in vv corresponding to
-   indices is = 0, jx = i, jy = j.    */
+/* IJ_Vptr is defined in order to translate from the underlying 3D structure of
+   the dependent variable vector to the 1D storage scheme for an N_Vector.
+   IJ_Vptr(vptr,i,j) returns a pointer to the location in vptr corresponding to
+   indices is = 0, jx = i, jy = j. */
 
-#define IJ_Vptr(vv, i, j) (&NV_Ith_S(vv, i * NUM_SPECIES + j * NSMX))
+#define IJ_Vptr(vptr, i, j) ((vptr) + (i) * NUM_SPECIES + (j) * NSMX)
 
 /* Type : UserData
    contains preconditioner blocks, pivot arrays, and problem constants */
@@ -145,7 +151,7 @@ typedef struct
   sunindextype mx, my, ns, np;
 }* UserData;
 
-/* Functions Called by the KINSOL Solver */
+/* Functions called by the KINSOL Solver */
 
 static int func(N_Vector cc, N_Vector fval, void* user_data);
 
@@ -178,54 +184,46 @@ static int check_retval(void* retvalvalue, const char* funcname, int opt);
 
 int main(void)
 {
-  SUNContext sunctx;
-  int globalstrategy;
-  sunrealtype fnormtol, scsteptol;
-  N_Vector cc, sc, fval, constraints;
-  UserData data;
-  int retval, maxl, maxlrst;
-  void* kmem;
-  SUNLinearSolver LS;
-
-  cc = sc = constraints = NULL;
-  kmem                  = NULL;
-  LS                    = NULL;
-  data                  = NULL;
+  /* Reusable return flag */
+  int retval = 0;
 
   /* Create the SUNDIALS context that all SUNDIALS objects require */
+  SUNContext sunctx;
   retval = SUNContext_Create(SUN_COMM_NULL, &sunctx);
   if (check_retval(&retval, "SUNContext_Create", 1)) { return (1); }
 
   /* Allocate memory, and set problem data, initial values, tolerances */
-  globalstrategy = KIN_NONE;
 
-  data = AllocUserData();
+  /* Allocate and initialize user data block */
+  UserData data = AllocUserData();
   if (check_retval((void*)data, "AllocUserData", 2)) { return (1); }
   InitUserData(data);
 
-  /* Create serial vectors of length NEQ */
-  /* Create serial vectors of length NEQ */
-  fval = N_VNew_Serial(NEQ, sunctx);
-  if (check_retval((void*)fval, "N_VNew_Serial", 0)) { return (1); }
-  cc = N_VNew_Serial(NEQ, sunctx);
+  /* Set global strategy retval */
+  int globalstrategy = KIN_NONE;
+
+  /* Allocate and initialize vectors */
+  N_Vector cc = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)cc, "N_VNew_Serial", 0)) { return (1); }
-  sc = N_VNew_Serial(NEQ, sunctx);
+
+  N_Vector sc = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)sc, "N_VNew_Serial", 0)) { return (1); }
+
   data->rates = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)data->rates, "N_VNew_Serial", 0)) { return (1); }
 
-  constraints = N_VNew_Serial(NEQ, sunctx);
+  N_Vector constraints = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)constraints, "N_VNew_Serial", 0)) { return (1); }
   N_VConst(TWO, constraints);
 
   SetInitialProfiles(cc, sc);
 
-  fnormtol  = FTOL;
-  scsteptol = STOL;
+  sunrealtype fnormtol  = FTOL;
+  sunrealtype scsteptol = STOL;
 
   /* Call KINCreate/KINInit to initialize KINSOL.
      A pointer to KINSOL problem memory is returned and stored in kmem. */
-  kmem = KINCreate(sunctx);
+  void* kmem = KINCreate(sunctx);
   if (check_retval((void*)kmem, "KINCreate", 0)) { return (1); }
 
   /* Vector cc passed as template vector. */
@@ -234,10 +232,13 @@ int main(void)
 
   retval = KINSetUserData(kmem, data);
   if (check_retval(&retval, "KINSetUserData", 1)) { return (1); }
+
   retval = KINSetConstraints(kmem, constraints);
   if (check_retval(&retval, "KINSetConstraints", 1)) { return (1); }
+
   retval = KINSetFuncNormTol(kmem, fnormtol);
   if (check_retval(&retval, "KINSetFuncNormTol", 1)) { return (1); }
+
   retval = KINSetScaledStepTol(kmem, scsteptol);
   if (check_retval(&retval, "KINSetScaledStepTol", 1)) { return (1); }
 
@@ -247,8 +248,9 @@ int main(void)
 
   /* Create SUNLinSol_SPGMR object with right preconditioning and the
      maximum Krylov dimension maxl */
-  maxl = 15;
-  LS   = SUNLinSol_SPGMR(cc, SUN_PREC_RIGHT, maxl, sunctx);
+  int maxl = 15;
+
+  SUNLinearSolver LS = SUNLinSol_SPGMR(cc, SUN_PREC_RIGHT, maxl, sunctx);
   if (check_retval((void*)LS, "SUNLinSol_SPGMR", 0)) { return (1); }
 
   /* Attach the linear solver to KINSOL */
@@ -256,8 +258,9 @@ int main(void)
   if (check_retval(&retval, "KINSetLinearSolver", 1)) { return 1; }
 
   /* Set the maximum number of restarts */
-  maxlrst = 2;
-  retval  = SUNLinSol_SPGMRSetMaxRestarts(LS, maxlrst);
+  int maxlrst = 2;
+
+  retval = SUNLinSol_SPGMRSetMaxRestarts(LS, maxlrst);
   if (check_retval(&retval, "SUNLinSol_SPGMRSetMaxRestarts", 1)) { return (1); }
 
   /* Specify the preconditioner setup and solve routines */
@@ -266,8 +269,6 @@ int main(void)
 
   /* Print out the problem size, solution parameters, initial guess. */
   PrintHeader(globalstrategy, maxl, maxlrst, fnormtol, scsteptol);
-
-  retval = func(cc, fval, data);
 
   /* Call KINSol and print output concentration profile */
   retval = KINSol(kmem,           /* KINSol memory block */
@@ -293,13 +294,6 @@ int main(void)
   return (0);
 }
 
-/* Readability definitions used in other routines below */
-
-#define acoef (data->acoef)
-#define bcoef (data->bcoef)
-#define cox   (data->cox)
-#define coy   (data->coy)
-
 /*
  *--------------------------------------------------------------------
  * FUNCTIONS CALLED BY KINSOL
@@ -320,6 +314,10 @@ static int func(N_Vector cc, N_Vector fval, void* user_data)
   delx = data->dx;
   dely = data->dy;
 
+  sunrealtype* ccdata = N_VGetArrayPointer(cc);
+  sunrealtype* rdata  = N_VGetArrayPointer(data->rates);
+  sunrealtype* fdata  = N_VGetArrayPointer(fval);
+
   /* Loop over all mesh points, evaluating rate array at each point*/
   for (jy = 0; jy < MY; jy++)
   {
@@ -337,9 +335,9 @@ static int func(N_Vector cc, N_Vector fval, void* user_data)
       idxl = (jx != 0) ? NUM_SPECIES : -NUM_SPECIES;
       idxr = (jx != MX - 1) ? NUM_SPECIES : -NUM_SPECIES;
 
-      cxy = IJ_Vptr(cc, jx, jy);
-      rxy = IJ_Vptr(data->rates, jx, jy);
-      fxy = IJ_Vptr(fval, jx, jy);
+      cxy = IJ_Vptr(ccdata, jx, jy);
+      rxy = IJ_Vptr(rdata, jx, jy);
+      fxy = IJ_Vptr(fdata, jx, jy);
 
       /* Get species interaction rate array at (xx,yy) */
       WebRate(xx, yy, cxy, rxy, user_data);
@@ -347,21 +345,16 @@ static int func(N_Vector cc, N_Vector fval, void* user_data)
       for (is = 0; is < NUM_SPECIES; is++)
       {
         /* Differencing in x direction */
-
-          dcyli = *(cxy + is) - *(cxy - idyl + is);
-          dcyui = *(cxy + idyu + is) - *(cxy + is);
-
-
+        dcyli = *(cxy + is) - *(cxy - idyl + is);
+        dcyui = *(cxy + idyu + is) - *(cxy + is);
 
         /* Differencing in y direction */
-
-          dcxli = *(cxy + is) - *(cxy - idxl + is);
-          dcxri = *(cxy + idxr + is) - *(cxy + is);
-
+        dcxli = *(cxy + is) - *(cxy - idxl + is);
+        dcxri = *(cxy + idxr + is) - *(cxy + is);
 
         /* Compute the total rate value at (xx,yy) */
-        fxy[is] = (coy)[is] * (dcyui - dcyli) + (cox)[is] * (dcxri - dcxli) +
-                  rxy[is];
+        fxy[is] = (data->coy)[is] * (dcyui - dcyli) +
+                  (data->cox)[is] * (dcxri - dcxli) + rxy[is];
 
       } /* end of is loop */
 
@@ -394,6 +387,10 @@ static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
   r0        = THOUSAND * uround * fac * NEQ;
   if (r0 == ZERO) { r0 = ONE; }
 
+  sunrealtype* ccdata = N_VGetArrayPointer(cc);
+  sunrealtype* csdata = N_VGetArrayPointer(cscale);
+  sunrealtype* rdata  = N_VGetArrayPointer(data->rates);
+
   /* Loop over spatial points; get size NUM_SPECIES Jacobian block at each */
   for (jy = 0; jy < MY; jy++)
   {
@@ -403,15 +400,15 @@ static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
     {
       xx      = jx * delx;
       Pxy     = (data->P)[jx][jy];
-      cxy     = IJ_Vptr(cc, jx, jy);
-      scxy    = IJ_Vptr(cscale, jx, jy);
-      ratesxy = IJ_Vptr((data->rates), jx, jy);
+      cxy     = IJ_Vptr(ccdata, jx, jy);
+      scxy    = IJ_Vptr(csdata, jx, jy);
+      ratesxy = IJ_Vptr(rdata, jx, jy);
 
       /* Compute difference quotients of interaction rate fn. */
       for (j = 0; j < NUM_SPECIES; j++)
       {
         csave = cxy[j]; /* Save the j,jx,jy element of cc */
-        r     = SUNMAX(sqruround * SUNRabs(csave), r0 / scxy[j]);
+        r     = MAX(sqruround * SUNRabs(csave), r0 / scxy[j]);
         cxy[j] += r; /* Perturb the j,jx,jy element of cc */
         fac = ONE / r;
 
@@ -454,6 +451,8 @@ static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
 
   data = (UserData)user_data;
 
+  sunrealtype* vdata = N_VGetArrayPointer(vv);
+
   for (jx = 0; jx < MX; jx++)
   {
     for (jy = 0; jy < MY; jy++)
@@ -462,7 +461,7 @@ static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
          vxy is the address of the corresponding portion of the vector vv;
          Pxy is the address of the corresponding block of the matrix P;
          piv is the address of the corresponding block of the array pivot. */
-      vxy = IJ_Vptr(vv, jx, jy);
+      vxy = IJ_Vptr(vdata, jx, jy);
       Pxy = (data->P)[jx][jy];
       piv = (data->pivot)[jx][jy];
       SUNDlsMat_denseGETRS(Pxy, NUM_SPECIES, piv, vxy);
@@ -489,14 +488,14 @@ static void WebRate(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
 
   for (i = 0; i < NUM_SPECIES; i++)
   {
-    ratesxy[i] = DotProd(NUM_SPECIES, cxy, acoef[i]);
+    ratesxy[i] = DotProd(NUM_SPECIES, cxy, data->acoef[i]);
   }
 
   fac = ONE + ALPHA * xx * yy;
 
   for (i = 0; i < NUM_SPECIES; i++)
   {
-    ratesxy[i] = cxy[i] * (bcoef[i] * fac + ratesxy[i]);
+    ratesxy[i] = cxy[i] * (data->bcoef[i] * fac + ratesxy[i]);
   }
 }
 
@@ -542,10 +541,10 @@ static UserData AllocUserData(void)
     }
   }
 
-  acoef = SUNDlsMat_newDenseMat(NUM_SPECIES, NUM_SPECIES);
-  bcoef = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
-  cox   = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
-  coy   = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
+  data->acoef = SUNDlsMat_newDenseMat(NUM_SPECIES, NUM_SPECIES);
+  data->bcoef = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
+  data->cox   = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
+  data->coy   = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
 
   return (data);
 }
@@ -578,10 +577,10 @@ static void InitUserData(UserData data)
 
   for (i = 0; i < np; i++)
   {
-    a1 = &(acoef[i][np]);
-    a2 = &(acoef[i + np][0]);
-    a3 = &(acoef[i][0]);
-    a4 = &(acoef[i + np][np]);
+    a1 = &(data->acoef[i][np]);
+    a2 = &(data->acoef[i + np][0]);
+    a3 = &(data->acoef[i][0]);
+    a4 = &(data->acoef[i + np][np]);
 
     /*  Fill in the portion of acoef in the four quadrants, row by row */
     for (j = 0; j < np; j++)
@@ -593,17 +592,17 @@ static void InitUserData(UserData data)
     }
 
     /* and then change the diagonal elements of acoef to -AA */
-    acoef[i][i]           = -AA;
-    acoef[i + np][i + np] = -AA;
+    data->acoef[i][i]           = -AA;
+    data->acoef[i + np][i + np] = -AA;
 
-    bcoef[i]      = BB;
-    bcoef[i + np] = -BB;
+    data->bcoef[i]      = BB;
+    data->bcoef[i + np] = -BB;
 
-    cox[i]      = DPREY / dx2;
-    cox[i + np] = DPRED / dx2;
+    data->cox[i]      = DPREY / dx2;
+    data->cox[i + np] = DPRED / dx2;
 
-    coy[i]      = DPREY / dy2;
-    coy[i + np] = DPRED / dy2;
+    data->coy[i]      = DPREY / dy2;
+    data->coy[i + np] = DPRED / dy2;
   }
 }
 
@@ -624,10 +623,10 @@ static void FreeUserData(UserData data)
     }
   }
 
-  SUNDlsMat_destroyMat(acoef);
-  free(bcoef);
-  free(cox);
-  free(coy);
+  SUNDlsMat_destroyMat(data->acoef);
+  free(data->bcoef);
+  free(data->cox);
+  free(data->coy);
   N_VDestroy(data->rates);
   free(data);
 }
@@ -641,6 +640,9 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   int i, jx, jy;
   sunrealtype *cloc, *sloc;
   sunrealtype ctemp[NUM_SPECIES], stemp[NUM_SPECIES];
+
+  sunrealtype* ccdata = N_VGetArrayPointer(cc);
+  sunrealtype* scdata = N_VGetArrayPointer(sc);
 
   /* Initialize arrays ctemp and stemp used in the loading process */
   for (i = 0; i < NUM_SPECIES / 2; i++)
@@ -659,8 +661,8 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   {
     for (jx = 0; jx < MX; jx++)
     {
-      cloc = IJ_Vptr(cc, jx, jy);
-      sloc = IJ_Vptr(sc, jx, jy);
+      cloc = IJ_Vptr(ccdata, jx, jy);
+      sloc = IJ_Vptr(scdata, jx, jy);
       for (i = 0; i < NUM_SPECIES; i++)
       {
         cloc[i] = ctemp[i];
@@ -677,7 +679,7 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
 static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
                         sunrealtype fnormtol, sunrealtype scsteptol)
 {
-  printf("\nPredator-prey test problem --  KINSol (serial version)\n\n");
+  printf("Predator-prey test problem -- KINSol (serial version)\n\n");
   printf("Mesh dimensions = %d X %d\n", MX, MY);
   printf("Number of species = %d\n", NUM_SPECIES);
   printf("Total system size = %d\n\n", NEQ);
@@ -691,9 +693,6 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  fnormtol = %Lg   scsteptol = %Lg\n", fnormtol,
          scsteptol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  fnormtol = %g   scsteptol = %g\n", fnormtol,
-         scsteptol);
 #else
   printf("Tolerance parameters:  fnormtol = %g   scsteptol = %g\n", fnormtol,
          scsteptol);
@@ -706,9 +705,6 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("At all mesh points:  %Lg %Lg %Lg   %Lg %Lg %Lg\n", PREYIN, PREYIN,
          PREYIN, PREDIN, PREDIN, PREDIN);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At all mesh points:  %g %g %g   %g %g %g\n", PREYIN, PREYIN, PREYIN,
-         PREDIN, PREDIN, PREDIN);
 #else
   printf("At all mesh points:  %g %g %g   %g %g %g\n", PREYIN, PREYIN, PREYIN,
          PREDIN, PREDIN, PREDIN);
@@ -724,9 +720,11 @@ static void PrintOutput(N_Vector cc)
   int is, jx, jy;
   sunrealtype* ct;
 
+  sunrealtype* ccdata = N_VGetArrayPointer(cc);
+
   jy = 0;
   jx = 0;
-  ct = IJ_Vptr(cc, jx, jy);
+  ct = IJ_Vptr(ccdata, jx, jy);
   printf("\nAt bottom left:");
 
   /* Print out lines with up to 6 values per line */
@@ -737,8 +735,6 @@ static void PrintOutput(N_Vector cc)
     printf(" %Qg", ct[is]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf(" %Lg", ct[is]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %g", ct[is]);
 #else
     printf(" %g", ct[is]);
 #endif
@@ -746,7 +742,7 @@ static void PrintOutput(N_Vector cc)
 
   jy = MY - 1;
   jx = MX - 1;
-  ct = IJ_Vptr(cc, jx, jy);
+  ct = IJ_Vptr(ccdata, jx, jy);
   printf("\n\nAt top right:");
 
   /* Print out lines with up to 6 values per line */
@@ -757,8 +753,6 @@ static void PrintOutput(N_Vector cc)
     printf(" %Qg", ct[is]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf(" %Lg", ct[is]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %g", ct[is]);
 #else
     printf(" %g", ct[is]);
 #endif
@@ -790,7 +784,7 @@ static void PrintFinalStats(void* kmem)
   retval = KINGetNumLinFuncEvals(kmem, &nfeSG);
   check_retval(&retval, "KINGetNumLinFuncEvals", 1);
 
-  printf("Final Statistics.. \n");
+  printf("Final Statistics..\n");
   printf("nni    = %5ld    nli   = %5ld\n", nni, nli);
   printf("nfe    = %5ld    nfeSG = %5ld\n", nfe, nfeSG);
   printf("nps    = %5ld    npe   = %5ld     ncfl  = %5ld\n", nps, npe, ncfl);

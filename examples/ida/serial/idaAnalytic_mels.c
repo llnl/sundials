@@ -1,9 +1,12 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -36,15 +39,12 @@
 
 #if defined(SUNDIALS_FLOAT128_PRECISION)
 #define GSYM "Qg"
-#define ESYM "Qe"
 #define FSYM "Qf"
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
-#define ESYM "Le"
 #define FSYM "Lf"
 #else
 #define GSYM "g"
-#define ESYM "e"
 #define FSYM "f"
 #endif
 
@@ -68,7 +68,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol,
                      sunrealtype atol);
 
 /* Main Program */
-int main(void)
+int main(int argc, char* argv[])
 {
   /* SUNDIALS context object */
   SUNContext ctx;
@@ -93,9 +93,7 @@ int main(void)
 
   /* Initial diagnostics output */
   printf("\nAnalytical DAE test problem:\n");
-  printf("    alpha = %" GSYM "\n", alpha);
-  printf("   reltol = %.1" ESYM "\n", reltol);
-  printf("   abstol = %.1" ESYM "\n\n", abstol);
+  printf("    alpha = %" GSYM "\n\n", alpha);
 
   /* Create the SUNDIALS context object for this simulation */
   retval = SUNContext_Create(SUN_COMM_NULL, &ctx);
@@ -128,9 +126,9 @@ int main(void)
   retval = IDASetLinearSolver(ida_mem, LS, NULL);
   if (check_retval(&retval, "IDASetLinearSolver", 1)) { return (1); }
 
-  /* specifies the maximum number of steps */
-  retval = IDASetMaxNumSteps(ida_mem, 10000000000);
-  if (check_retval(&retval, "IDASetMaxNumSteps", 1)) { return (1); }
+  /* Override any current settings with command-line options */
+  retval = IDASetOptions(ida_mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "IDASetOptions", 1)) { return 1; }
 
   /* In loop, call IDASolve, print results, and test for error.
      Stops when the final time has been reached. */

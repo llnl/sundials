@@ -1,11 +1,14 @@
 /* ----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *                Scott D. Cohen, Alan C. Hindmarsh and
  *                Radu Serban @ LLNL
  * ----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -101,7 +104,8 @@ SUNDIALS_EXPORT int CVodeSetLinSysFn(void* cvode_mem, CVLsLinSysFn linsys);
   Optional outputs from the CVLS linear solver interface
   -----------------------------------------------------------------*/
 
-SUNDIALS_EXPORT int CVodeGetJac(void* cvode_mem, SUNMatrix* J);
+SUNDIALS_EXPORT int CVodeGetJac(void* cvode_mem,
+                                SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int CVodeGetJacTime(void* cvode_mem, sunrealtype* t_J);
 SUNDIALS_EXPORT int CVodeGetJacNumSteps(void* cvode_mem, long int* nst_J);
 SUNDIALS_DEPRECATED_EXPORT_MSG(

@@ -1,9 +1,12 @@
 ..
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -39,7 +42,7 @@ install with the command
 
    spack install sundials
 
-Additional options can be enabled through various Spack package variants. For
+Additional options can be enabled through Spack package variants. For
 information on the available variants visit the `SUNDIALS Spack package
 <https://packages.spack.io/package.html?name=sundials>`__ web page or use the
 command
@@ -60,7 +63,7 @@ available allowing for an interactive build and installation process.
 
 At a minimum, building SUNDIALS requires CMake version 3.18.0 or higher and a
 working C compiler. If a compatible version of CMake is not already installed on
-you system, source files or pre-built binary files can be obtained from the
+your system, source files or pre-built binary files can be obtained from the
 `CMake Download website <https://cmake.org/download/>`__.
 
 When building with CMake, you will need to obtain the SUNDIALS source code. You
@@ -76,22 +79,23 @@ or by downloading release compressed archives (``.tar.gz`` files) from the
 <https://computing.llnl.gov/projects/sundials/sundials-software>`__. The
 compressed archives allow for downloading the entire SUNDIALS suite or
 individual packages. The name of the distribution archive is of the form
-``SOLVER-7.4.0.tar.gz``, where ``SOLVER`` is one of: ``sundials``, ``cvode``,
-``cvodes``, ``arkode``, ``ida``, ``idas``, or ``kinsol``, and ``7.4.0``
+``SOLVER-a.b.c.tar.gz``, where ``SOLVER`` is one of: ``sundials``, ``cvode``,
+``cvodes``, ``arkode``, ``ida``, ``idas``, or ``kinsol``, and ``a.b.c``
 represents the version number of the SUNDIALS suite or of the individual
 package. After downloading the relevant archives, uncompress and expand the
-sources. For example, by running
+sources. For example, if you downloaded ``sundials-x.y.z.tar.gz``, running the
+command
 
 .. code-block:: bash
 
-   tar -zxf SOLVER-7.4.0.tar.gz
+   tar -zxf sundials-x.y.z.tar.gz
 
-the extracted source files will be under the ``SOLVER-7.4.0`` directory.
+will extract the source files under the ``sundials-x.y.z`` directory.
 
 In the installation steps below we will refer to the following directories:
 
 * ``SOLVER_DIR`` is the ``sundials`` directory created when cloning from GitHub
-  or the ``SOLVER-7.4.0`` directory created after uncompressing the release
+  or the ``SOLVER-a.b.c`` directory created after uncompressing the release
   archive.
 
 * ``BUILD_DIR`` is the (temporary) directory under which SUNDIALS is built.
@@ -384,7 +388,7 @@ C Compiler
 
    Default: ``99``
 
-   Options: ``99``, ``11``, or ``17``
+   Options: ``99``, ``11``, ``17``, or ``23``
 
 .. cmakeoption:: CMAKE_C_EXTENSIONS
 
@@ -441,9 +445,10 @@ C++ Compiler
 
    The C++ standard used when building SUNDIALS C++ source files.
 
-   Default: ``14``
+   Default: ``14`` or ``17`` if :cmakeop:`ENABLE_GINKGO` or
+   :cmakeop:`ENABLE_SYCL` are ``ON``
 
-   Options: ``14``, ``17``, or ``20``
+   Options: ``14``, ``17``, ``20``, or ``23``
 
 .. cmakeoption:: CMAKE_CXX_EXTENSIONS
 
@@ -607,7 +612,7 @@ Precision
 .. cmakeoption:: SUNDIALS_PRECISION
 
    The floating-point precision used in SUNDIALS packages and class
-   implementations, options are: ``single``, ``double``, ``extended`` or ``float128``
+   implementations, options are: ``single``, ``double``, or ``extended``
 
    Default: ``double``
 
@@ -618,7 +623,7 @@ Math Library
 
 .. cmakeoption:: SUNDIALS_MATH_LIBRARY
 
-   The standard C math library (e.g., ``libm``, ``libquadmath``) to link with.
+   The standard C math library (e.g., ``libm``) to link with.
 
    Default: ``-lm`` on Unix systems, none otherwise
 
@@ -782,6 +787,10 @@ For more information on logging in SUNDIALS, see :ref:`SUNDIALS.Logging`.
       understanding algorithm performance. The higher the logging level, the
       more output that may be logged, and the more performance may degrade.
 
+   .. versionchanged:: 7.0.0
+
+      Enabling MPI in SUNDIALS enables MPI-aware logging.
+
 .. _Installation.Options.Monitoring:
 
 Monitoring
@@ -871,11 +880,11 @@ Caliper support:
 
 .. cmakeoption:: ENABLE_CALIPER
 
-   Enable CALIPER support
+   Enable Caliper support
 
    Default: ``OFF``
 
-   .. note::
+ .. note::
 
       Using Caliper requires setting :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` to
       ``ON``.
@@ -958,19 +967,22 @@ Building with Ginkgo
 
 `Ginkgo <https://ginkgo-project.github.io/>`__ is a high-performance linear
 algebra library with a focus on solving sparse linear systems. It is implemented
-using modern C++ (you will need at least a C++14 compliant compiler to build
+using modern C++ (you will need at least a C++17 compliant compiler to build
 it), with GPU kernels implemented in CUDA (for NVIDIA devices), HIP (for AMD
 devices), and SYCL/DPC++ (for Intel devices and other supported
 hardware). Ginkgo can be obtained from the `Ginkgo GitHub repository
-<https://github.com/ginkgo-project/ginkgo>`__. SUNDIALS is regularly tested with
-the latest versions of Ginkgo, specifically up to version 1.8.0.
+<https://github.com/ginkgo-project/ginkgo>`__. SUNDIALS requires using Ginkgo
+version 1.9.0 or newer and is regularly tested with the latest versions of
+Ginkgo, specifically versions 1.9.0 and 1.10.0.
 
 When Ginkgo support is enabled, the :ref:`Ginkgo SUNMatrix <SUNMatrix.Ginkgo>`
-and the :ref:`Ginkgo SUNLinearSolver <SUNLinSol.Ginkgo>` header files will be
-installed (see sections :numref:`Installation.LibrariesAndHeaders.Matrix.Ginkgo`
-and :numref:`Installation.LibrariesAndHeaders.LinearSolver.Ginkgo`,
-respectively, for the corresponding header files). For more information on using
-SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
+and :ref:`SUNLinearSolver <SUNLinSol.Ginkgo>` as well as the :ref:`Ginkgo
+Batch SUNMatrix <SUNMatrix.GinkgoBatch>` and :ref:`SUNLinearSolver
+<SUNLinSol.GinkgoBatch>` header files will be installed (see sections
+:numref:`Installation.LibrariesAndHeaders.Matrix.Ginkgo` and
+:numref:`Installation.LibrariesAndHeaders.LinearSolver.Ginkgo`, respectively,
+for the corresponding header files). For more information on using SUNDIALS with
+GPUs, see :ref:`SUNDIALS.GPU`.
 
 To enable Ginkgo support, set :cmakeop:`ENABLE_GINKGO` to ``ON`` and set
 :cmakeop:`Ginkgo_DIR` to the root path of the Ginkgo installation. Additionally,
@@ -995,7 +1007,7 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
 .. note::
 
    The SUNDIALS interfaces to Ginkgo are not compatible with extended precision
-   (i.e., when :cmakeop:`SUNDIALS_PRECISION` is set to ``extended`` or ``float128``).
+   (i.e., when :cmakeop:`SUNDIALS_PRECISION` is set to ``extended``).
 
 .. cmakeoption:: ENABLE_GINKGO
 
@@ -1116,7 +1128,7 @@ SUNDIALS with *hypre* support:
 
    Path to the *hypre* installation
 
-   Default: none
+   Default: None
 
 .. _Installation.Options.KLU:
 
@@ -1163,19 +1175,19 @@ following command will configure SUNDIALS with KLU support:
 
    Path to the SuiteSparse installation
 
-   Default: ``OFF``
+   Default: None
 
 .. cmakeoption:: KLU_INCLUDE_DIR
 
    Path to SuiteSparse header files
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: KLU_LIBRARY_DIR
 
    Path to SuiteSparse installed library files
 
-   Default: none
+   Default: None
 
 .. _Installation.Options.Kokkos:
 
@@ -1290,25 +1302,31 @@ When LAPACK support is enabled, the :ref:`LAPACK banded SUNLinearSolver
 <SUNLinSol_LapackDense>` will be built (see sections
 :numref:`Installation.LibrariesAndHeaders.LinearSolver.LAPACKBand` and
 :numref:`Installation.LibrariesAndHeaders.LinearSolver.LAPACKDense`,
-respectively, for the corresponding header files and libraries).
+respectively, for the corresponding header files and libraries). Additionally,
+the :ref:`Arnoldi iteration SUNDomEigEstimator <SUNDomEigEst.Arnoldi>` will be
+build (see :numref:`Installation.LibrariesAndHeaders.DomEigEst.Arnoldi`).
 
 To enable LAPACK support, set :cmakeop:`ENABLE_LAPACK` to ``ON``. CMake will
 attempt to find BLAS and LAPACK installations on the system and set the
 variables :cmakeop:`BLAS_LIBRARIES`, :cmakeop:`BLAS_LINKER_FLAGS`,
-:cmakeop:`LAPACK_LIBRARIES`, and :cmakeop:`LAPACK_LINKER_FLAGS`. To explicitly
-specify the LAPACK library to build with, manually set the aforementioned
-variables to the desired values when configuring the build. For example, the
-following command will configure SUNDIALS with LAPACK support:
+:cmakeop:`LAPACK_LIBRARIES`, and :cmakeop:`LAPACK_LINKER_FLAGS`.  You can set
+the :cmakeop:`LAPACK_ROOT` CMake variable to the path of a desired LAPACK
+installation, and/or set the option :cmakeop:`BLA_VENDOR` to tell CMake to only
+look for LAPACK from a specified vendor (see the `CMake documentation
+<https://cmake.org/cmake/help/latest/module/FindLAPACK.html#input-variables>`__).
+If necessary, to explicitly override the LAPACK library to build with, manually
+set the aforementioned variables to the desired values when configuring the
+build. For example, this is sometimes needed when using OpenBLAS:
 
 .. code-block:: bash
 
-   cmake \
+  cmake \
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D ENABLE_LAPACK=ON \
-     -D BLAS_LIBRARIES=/path/to/lapack/installation/lib/libblas.so \
-     -D LAPACK_LIBRARIES=/path/to/lapack/installation/lib/liblapack.so
+     -D BLAS_LIBRARIES=/path/to/lapack/installation/lib/libopenblas.so \
+     -D LAPACK_LIBRARIES=/path/to/lapack/installation/lib/libopenblas.so
 
 .. note::
 
@@ -1325,29 +1343,41 @@ following command will configure SUNDIALS with LAPACK support:
 
    Default: ``OFF``
 
+.. cmakeoption:: LAPACK_ROOT
+
+   Path to the LAPACK installation
+
+   Default: None
+
+.. cmakeoption:: BLA_VENDOR
+
+   The LAPACK vendor to search for.
+
+   Default: All vendors
+
 .. cmakeoption:: BLAS_LIBRARIES
 
    BLAS libraries
 
-   Default: none (CMake will try to find a BLAS installation)
+   Default: None (CMake will try to find a BLAS installation)
 
 .. cmakeoption:: BLAS_LINKER_FLAGS
 
    BLAS required linker flags
 
-   Default: none (CMake will try to determine the necessary flags)
+   Default: None (CMake will try to determine the necessary flags)
 
 .. cmakeoption:: LAPACK_LIBRARIES
 
    LAPACK libraries
 
-   Default: none (CMake will try to find a LAPACK installation)
+   Default: None (CMake will try to find a LAPACK installation)
 
 .. cmakeoption:: LAPACK_LINKER_FLAGS
 
    LAPACK required linker flags
 
-   Default: none (CMake will try to determine the necessary flags)
+   Default: None (CMake will try to determine the necessary flags)
 
 .. cmakeoption:: SUNDIALS_LAPACK_CASE
 
@@ -1427,7 +1457,7 @@ the CUDA backend (targeting Ampere GPUs):
 
    Path to the MAGMA installation
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: SUNDIALS_MAGMA_BACKENDS
 
@@ -1533,14 +1563,14 @@ configure SUNDIALS with MPI support:
    Specifies flags that come directly after ``MPIEXEC_EXECUTABLE`` and before
    ``MPIEXEC_NUMPROC_FLAG`` and ``MPIEXEC_MAX_NUMPROCS``.
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: MPIEXEC_POSTFLAGS
 
    Specifies flags that come after the executable to run but before any other
    program arguments.
 
-   Default: none
+   Default: None
 
 .. _Installation.Options.OneMKL:
 
@@ -1586,7 +1616,7 @@ the following command will configure SUNDIALS with oneMKL support:
 
    Path to oneMKL installation.
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: SUNDIALS_ONEMKL_USE_GETRF_LOOP
 
@@ -1707,7 +1737,7 @@ configure SUNDIALS with PETSc support:
 
    Path to PETSc installation
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: PETSC_LIBRARIES
 
@@ -1715,7 +1745,7 @@ configure SUNDIALS with PETSc support:
    user, this is autopopulated based on the PETSc installation found in
    :cmakeop:`PETSC_DIR`.
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: PETSC_INCLUDES
 
@@ -1723,7 +1753,7 @@ configure SUNDIALS with PETSc support:
    the user, this is autopopulated based on the PETSc installation found in
    :cmakeop:`PETSC_DIR`.
 
-   Default: none
+   Default: None
 
 .. _Installation.Options.PThreads:
 
@@ -1800,7 +1830,7 @@ the CUDA backend (targeting Ampere GPUs):
 
    Path to the RAJA installation
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: SUNDIALS_RAJA_BACKENDS
 
@@ -1855,13 +1885,13 @@ SuperLU_DIST support:
 
    Path to SuperLU_DIST installation.
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: SUPERLUDIST_OpenMP
 
    Enable SUNDIALS support for SuperLU_DIST built with OpenMP
 
-   Default: none
+   Default: None
 
    .. note::
 
@@ -1874,7 +1904,7 @@ SuperLU_DIST support:
    List of include paths for SuperLU_DIST (under a typical SuperLU_DIST
    install, this is typically the SuperLU_DIST ``SRC`` directory)
 
-   Default: none
+   Default: None
 
    .. note::
 
@@ -1884,7 +1914,7 @@ SuperLU_DIST support:
 
    Semi-colon separated list of libraries needed for SuperLU_DIST
 
-   Default: none
+   Default: None
 
    .. note::
 
@@ -1895,7 +1925,7 @@ SuperLU_DIST support:
    Path to SuperLU_DIST header files (under a typical SuperLU_DIST
    install, this is typically the SuperLU_DIST ``SRC`` directory)
 
-   Default: none
+   Default: None
 
    .. note::
 
@@ -1906,7 +1936,7 @@ SuperLU_DIST support:
 
    Path to SuperLU_DIST installed library files
 
-   Default: none
+   Default: None
 
    .. note::
 
@@ -1969,19 +1999,19 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
    Path to SuperLU_MT header files (under a typical SuperLU_MT
    install, this is typically the SuperLU_MT ``SRC`` directory)
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: SUPERLUMT_LIBRARY_DIR
 
    Path to SuperLU_MT installed library files
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: SUPERLUMT_LIBRARIES
 
    Semi-colon separated list of libraries needed for SuperLU_MT
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: SUPERLUMT_THREAD_TYPE
 
@@ -2137,7 +2167,7 @@ SUNDIALS with XBraid support:
    the user, this is autopopulated based on the XBraid installation found in
    :cmakeop:`XBRAID_DIR`.
 
-   Default: none
+   Default: None
 
 .. cmakeoption:: XBRAID_LIBRARIES
 
@@ -2145,7 +2175,8 @@ SUNDIALS with XBraid support:
    the user, this is autopopulated based on the XBraid installation found in
    :cmakeop:`XBRAID_DIR`.
 
-   Default: none
+   Default: None
+
 
 .. _Installation.Options.xSDK:
 
@@ -2421,6 +2452,8 @@ make up the SUNDIALS core infrastructure.
    |              | ``sundials/sundials_config.h``                  |
    |              +-------------------------------------------------+
    |              | ``sundials/sundials_context.h``                 |
+   |              +-------------------------------------------------+
+   |              | ``sundials/sundials_domeigestimator.h``         |
    |              +-------------------------------------------------+
    |              | ``sundials/sundials_errors.h``                  |
    |              +-------------------------------------------------+
@@ -3240,14 +3273,17 @@ the library below when using those packages.
 Ginkgo
 """"""
 
-To use the :ref:`Ginkgo SUNMatrix <SUNMatrix.Ginkgo>`, include the header file
-given below.
+To use the :ref:`Ginkgo SUNMatrix <SUNMatrix.Ginkgo>` or :ref:`Ginkgo Batch
+SUNMatrix <SUNMatrix.GinkgoBatch>`, include the corresponding header file given
+below.
 
-.. table:: The Ginkgo SUNMatrix library, header file, and CMake target
+.. table:: The Ginkgo and Ginkgo Batch SUNMatrix header files and CMake target
    :align: center
 
    +--------------+----------------------------------------------+
    | Headers      | ``sunmatrix/sunmatrix_ginkgo.hpp``           |
+   |              +----------------------------------------------+
+   |              | ``sunmatrix/sunmatrix_ginkgobatch.hpp``      |
    +--------------+----------------------------------------------+
    | CMake target | ``SUNDIALS::sunmatrixginkgo``                |
    +--------------+----------------------------------------------+
@@ -3427,14 +3463,18 @@ link to the library below when using those packages.
 Ginkgo
 """"""
 
-To use the :ref:`Ginkgo SUNLinearSolver <SUNLinSol.Ginkgo>`, include the header
-file given below.
+To use the :ref:`Ginkgo SUNLinearSolver <SUNLinSol.Ginkgo>` or :ref:`Ginkgo
+Batch SUNLinearSolver <SUNLinSol.Ginkgo>`, include the corresponding header file
+given below.
 
-.. table:: The Ginkgo SUNLinearSolver header file and CMake target
+.. table:: The Ginkgo and Ginkgo Batch SUNLinearSolver header files and CMake
+           target
    :align: center
 
    +--------------+----------------------------------------------+
    | Headers      | ``sunlinsol/sunlinsol_ginkgo.hpp``           |
+   |              +----------------------------------------------+
+   |              | ``sunlinsol/sunlinsol_ginkgobatch.hpp``      |
    +--------------+----------------------------------------------+
    | CMake target | ``SUNDIALS::sunlinsolginkgo``                |
    +--------------+----------------------------------------------+
@@ -3883,10 +3923,14 @@ access the SYCL execution policy C++ classes.
    | Headers      | ``sundials/sundials_sycl_policies.hpp``      |
    +--------------+----------------------------------------------+
 
+.. _Installation.LibrariesAndHeaders.AdjointSensitivityCheckpointing:
+
 Adjoint Sensitivity Checkpointing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Fixed ASA checkpointing
+.. _Installation.LibrariesAndHeaders.ASACheckpointing.Fixed:
+
+Fixed ASA Checkpointing
 """""""""""""""""""""""
 
 For fixed-interval adjoint checkpointing, include the header file below:
@@ -3897,3 +3941,48 @@ For fixed-interval adjoint checkpointing, include the header file below:
    +--------------+---------------------------------------------------------------------+
    | Headers      | ``sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed.h``   |
    +--------------+---------------------------------------------------------------------+
+
+.. _Installation.LibrariesAndHeaders.DomEigEst:
+
+Dominant Eigenvalue Estimation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _Installation.LibrariesAndHeaders.DomEigEst.Power:
+
+Power Iteration
+"""""""""""""""
+
+To use the :ref:`Power iteration SUNDomEigEstimator <SUNDomEigEst.Power>`,
+include the header file and link to the library given below.
+
+.. table:: The SUNDIALS Power iteration SUNDomEigEstimator library, header file,
+           and CMake target
+   :align: center
+
+   +--------------+---------------------------------------+
+   | Libraries    | ``libsundials_sundomeigestpower.LIB`` |
+   +--------------+---------------------------------------+
+   | Headers      | ``sundomeigest/sundomeigest_power.h`` |
+   +--------------+---------------------------------------+
+   | CMake target | ``SUNDIALS::sundomeigestpower``       |
+   +--------------+---------------------------------------+
+
+.. _Installation.LibrariesAndHeaders.DomEigEst.Arnoldi:
+
+Arnoldi Iteration
+"""""""""""""""""
+
+To use the :ref:`Arnoldi iteration SUNDomEigEstimator <SUNDomEigEst.Arnoldi>`,
+include the header file and link to the library given below.
+
+.. table:: The SUNDIALS Arnoldi iteration SUNDomEigEstimator library, header
+           file, and CMake target
+   :align: center
+
+   +--------------+-----------------------------------------+
+   | Libraries    | ``libsundials_sundomeigestarnoldi.LIB`` |
+   +--------------+-----------------------------------------+
+   | Headers      | ``sundomeigest/sundomeigest_arnoldi.h`` |
+   +--------------+-----------------------------------------+
+   | CMake target | ``SUNDIALS::sundomeigestarnoldi``       |
+   +--------------+-----------------------------------------+

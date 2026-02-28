@@ -1,9 +1,12 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -70,7 +73,7 @@ static int check_retval(void* returnvalue, const char* funcname, int opt);
 static SUNContext sunctx;
 
 /* Main Program */
-int main(void)
+int main(int argc, char* argv[])
 {
   /* general problem parameters */
   sunrealtype T0     = SUN_RCONST(0.0);    /* initial time */
@@ -130,6 +133,10 @@ int main(void)
   /* Call CVodeSetLinearSolver to attach the linear solver to CVode */
   retval = CVodeSetLinearSolver(cvode_mem, LS, NULL);
   if (check_retval(&retval, "CVodeSetLinearSolver", 1)) { return 1; }
+
+  /* Override any current settings with command-line options */
+  retval = CVodeSetOptions(cvode_mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "CVodeSetOptions", 1)) { return (1); }
 
   /* In loop, call CVode, print results, and test for error.
      Break out of loop when NOUT preset output times have been reached.  */

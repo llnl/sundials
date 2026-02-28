@@ -1,9 +1,12 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -17,10 +20,16 @@
  * -----------------------------------------------------------------*/
 
 #include <math.h>
+#include <string.h>
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_adaptcontroller.h>
+#include <sundials/sundials_core.h>
 
 #include "sundials/sundials_errors.h"
+
+/* internal function prototypes */
+SUNErrCode sunadctrlSetFromCommandLine(SUNAdaptController C, const char* Cid,
+                                       int argc, char* argv[]);
 
 /* -----------------------------------------------------------------
  * Create a new empty SUNAdaptController object
@@ -52,6 +61,7 @@ SUNAdaptController SUNAdaptController_NewEmpty(SUNContext sunctx)
   ops->reset           = NULL;
   ops->estimatestep    = NULL;
   ops->estimatesteptol = NULL;
+  ops->setoptions      = NULL;
   ops->setdefaults     = NULL;
   ops->write           = NULL;
   ops->seterrorbias    = NULL;
@@ -93,6 +103,65 @@ SUNAdaptController_Type SUNAdaptController_GetType(SUNAdaptController C)
   if (C == NULL) { return SUN_ADAPTCONTROLLER_NONE; }
   if (C->ops->gettype) { return C->ops->gettype(C); }
   return SUN_ADAPTCONTROLLER_NONE;
+}
+
+/* -----------------------------------------------------------------
+ * internal utility routines
+ * ----------------------------------------------------------------- */
+
+SUNErrCode sunadctrlSetFromCommandLine(SUNAdaptController C, const char* Cid,
+                                       int argc, char* argv[])
+{
+  SUNFunctionBegin(C->sunctx);
+
+  /* Prefix for options to set */
+  const char* default_id = "sunadaptcontroller";
+  size_t offset          = strlen(default_id) + 1;
+  if (Cid != NULL && strlen(Cid) > 0) { offset = strlen(Cid) + 1; }
+  char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
+  if (Cid != NULL && strlen(Cid) > 0) { strcpy(prefix, Cid); }
+  else { strcpy(prefix, default_id); }
+  strcat(prefix, ".");
+
+  int retval;
+  for (int idx = 1; idx < argc; idx++)
+  {
+    /* skip command-line arguments that do not begin with correct prefix */
+    if (strncmp(argv[idx], prefix, strlen(prefix)) != 0) { continue; }
+
+    /* control over SetDefaults function */
+    if (strcmp(argv[idx] + offset, "defaults") == 0)
+    {
+      retval = SUNAdaptController_SetDefaults(C);
+      if (retval != SUN_SUCCESS)
+      {
+        free(prefix);
+        return retval;
+      }
+      continue;
+    }
+
+    /* control over SetErrorBias function */
+    if (strcmp(argv[idx] + offset, "error_bias") == 0)
+    {
+      idx += 1;
+      sunrealtype rarg = SUNStrToReal(argv[idx]);
+      retval           = SUNAdaptController_SetErrorBias(C, rarg);
+      if (retval != SUN_SUCCESS)
+      {
+        free(prefix);
+        return retval;
+      }
+      continue;
+    }
+
+    /* Note that although SUNAdaptController_Write is part of the base class,
+       it should NOT be called until all options have been set, so we process
+       that in the implementations instead of here. */
+  }
+
+  free(prefix);
+  return SUN_SUCCESS;
 }
 
 /* -----------------------------------------------------------------
@@ -170,6 +239,31 @@ SUNErrCode SUNAdaptController_Reset(SUNAdaptController C)
   SUNFunctionBegin(C->sunctx);
   if (C->ops->reset) { ier = C->ops->reset(C); }
   return (ier);
+}
+
+SUNErrCode SUNAdaptController_SetOptions(SUNAdaptController C, const char* Cid,
+                                         const char* file_name, int argc,
+                                         char* argv[])
+{
+  if (C == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(C->sunctx);
+
+  /* File-based option control is currently unimplemented */
+  SUNAssert((file_name == NULL || strlen(file_name) == 0),
+            SUN_ERR_ARG_INCOMPATIBLE);
+
+  /* First, process all base-class options */
+  if (argc > 0 && argv != NULL)
+  {
+    SUNCheckCall(sunadctrlSetFromCommandLine(C, Cid, argc, argv));
+  }
+
+  /* Second, ask the implementation to process any remaining options */
+  if (C->ops->setoptions)
+  {
+    return (C->ops->setoptions(C, Cid, file_name, argc, argv));
+  }
+  else { return (SUN_SUCCESS); }
 }
 
 SUNErrCode SUNAdaptController_SetDefaults(SUNAdaptController C)

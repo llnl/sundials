@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -47,8 +50,7 @@ constexpr auto N_VNew = N_VNew_Sycl;
 auto N_VNew = [](sunindextype length, SUNContext sunctx)
 {
   auto omp_num_threads_var{std::getenv("OMP_NUM_THREADS")};
-  int num_threads{1};
-  if (omp_num_threads_var) { num_threads = std::atoi(omp_num_threads_var); }
+  int num_threads = omp_num_threads_var ? std::atoi(omp_num_threads_var) : 1;
   return N_VNew_OpenMP(length, num_threads, sunctx);
 };
 #else
@@ -143,12 +145,8 @@ __global__ void fill_kernel(sunindextype mat_rows, sunindextype mat_cols,
 }
 #endif
 
-#if (GKO_VERSION_MAJOR == 1) && (GKO_VERSION_MINOR < 6)
-static void fill_matrix(gko::matrix::Csr<sunrealtype, sunindextype>* matrix)
-#else
 static void fill_matrix(
   std::shared_ptr<gko::matrix::Csr<sunrealtype, sunindextype>> matrix)
-#endif
 {
   sunindextype mat_rows  = static_cast<sunindextype>(matrix->get_size()[0]);
   sunindextype mat_cols  = static_cast<sunindextype>(matrix->get_size()[1]);
@@ -234,11 +232,7 @@ static void fill_matrix(
 #endif
 }
 
-#if (GKO_VERSION_MAJOR == 1) && (GKO_VERSION_MINOR < 6)
-static void fill_matrix(gko::matrix::Dense<sunrealtype>* matrix)
-#else
 static void fill_matrix(std::shared_ptr<gko::matrix::Dense<sunrealtype>> matrix)
-#endif
 {
   sunindextype mat_rows = static_cast<sunindextype>(matrix->get_size()[0]);
   sunindextype mat_cols = static_cast<sunindextype>(matrix->get_size()[1]);
@@ -350,19 +344,9 @@ int main(int argc, char* argv[])
   sundials::Context sunctx;
 
 #if defined(USE_HIP)
-#if GKO_VERSION_MAJOR > 1 || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR >= 7)
   auto gko_exec{gko::HipExecutor::create(0, gko::OmpExecutor::create())};
-#else
-  auto gko_exec{gko::HipExecutor::create(0, gko::OmpExecutor::create(), false,
-                                         gko::allocation_mode::device)};
-#endif
 #elif defined(USE_CUDA)
-#if GKO_VERSION_MAJOR > 1 || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR >= 7)
   auto gko_exec{gko::CudaExecutor::create(0, gko::OmpExecutor::create())};
-#else
-  auto gko_exec{gko::CudaExecutor::create(0, gko::OmpExecutor::create(), false,
-                                          gko::allocation_mode::device)};
-#endif
 #elif defined(USE_SYCL)
   auto gko_exec{gko::DpcppExecutor::create(0, gko::ReferenceExecutor::create())};
 #elif defined(USE_OMP)
@@ -422,7 +406,7 @@ int main(int argc, char* argv[])
   }
   const auto matrows{matcols};
 
-  const auto matcond{static_cast<sunrealtype>(atof(argv[++argi]))};
+  const auto matcond{SUNStrToReal(argv[++argi])};
   if (matcond < 0)
   {
     std::cerr << "ERROR: matrix condition number must be positive or 0 "
@@ -497,14 +481,7 @@ int main(int argc, char* argv[])
       gko_matdata.remove_zeros();
       gko_matrix->read(gko_matdata);
     }
-    else
-    {
-#if (GKO_VERSION_MAJOR == 1) && (GKO_VERSION_MINOR < 6)
-      fill_matrix(gko::lend(gko_matrix));
-#else
-      fill_matrix(gko_matrix);
-#endif
-    }
+    else { fill_matrix(gko_matrix); }
     A = std::make_unique<sundials::ginkgo::Matrix<GkoMatrixType>>(std::move(
                                                                     gko_matrix),
                                                                   sunctx);
@@ -525,11 +502,7 @@ int main(int argc, char* argv[])
     else
     {
       gko_matrix->fill(0.0);
-#if (GKO_VERSION_MAJOR == 1) && (GKO_VERSION_MINOR < 6)
-      fill_matrix(gko::lend(gko_matrix));
-#else
       fill_matrix(gko_matrix);
-#endif
     }
     A = std::make_unique<sundials::ginkgo::Matrix<GkoMatrixType>>(std::move(
                                                                     gko_matrix),
@@ -537,8 +510,8 @@ int main(int argc, char* argv[])
   }
 
   /* Create right-hand side vector for linear solve */
-  fails += SUNMatMatvecSetup(A->Convert());
-  fails += SUNMatMatvec(A->Convert(), x, b);
+  fails += SUNMatMatvecSetup(A->get());
+  fails += SUNMatMatvec(A->get(), x, b);
   if (fails)
   {
     std::cerr << "FAIL: SUNLinSol SUNMatMatvec failure\n";
@@ -733,12 +706,11 @@ int main(int argc, char* argv[])
   }
 
   /* Run Tests */
-  fails += Test_SUNLinSolGetID(LS->Convert(), SUNLINEARSOLVER_GINKGO, 0);
-  fails += Test_SUNLinSolGetType(LS->Convert(),
-                                 SUNLINEARSOLVER_MATRIX_ITERATIVE, 0);
-  fails += Test_SUNLinSolInitialize(LS->Convert(), 0);
-  fails += Test_SUNLinSolSetup(LS->Convert(), A->Convert(), 0);
-  fails += Test_SUNLinSolSolve(LS->Convert(), A->Convert(), x, b,
+  fails += Test_SUNLinSolGetID(LS->get(), SUNLINEARSOLVER_GINKGO, 0);
+  fails += Test_SUNLinSolGetType(LS->get(), SUNLINEARSOLVER_MATRIX_ITERATIVE, 0);
+  fails += Test_SUNLinSolInitialize(LS->get(), 0);
+  fails += Test_SUNLinSolSetup(LS->get(), A->get(), 0);
+  fails += Test_SUNLinSolSolve(LS->get(), A->get(), x, b,
                                1e4 * SUN_UNIT_ROUNDOFF, SUNTRUE, 0);
 
   /* Print result */
@@ -750,9 +722,8 @@ int main(int argc, char* argv[])
 
   /* Print solve information */
   std::cout << "Number of linear solver iterations: "
-            << static_cast<long int>(SUNLinSolNumIters(LS->Convert()))
-            << std::endl;
-  std::cout << "Final residual norm: " << SUNLinSolResNorm(LS->Convert())
+            << static_cast<long int>(SUNLinSolNumIters(LS->get())) << std::endl;
+  std::cout << "Final residual norm: " << SUNLinSolResNorm(LS->get())
             << std::endl;
 
   // clear global_exec
@@ -769,7 +740,8 @@ int main(int argc, char* argv[])
  * Implementation-specific 'check' routines                                   *
  * -------------------------------------------------------------------------- */
 
-int check_vector(N_Vector expected, N_Vector actual, sunrealtype check_tol)
+extern "C" int check_vector(N_Vector expected, N_Vector actual,
+                            sunrealtype check_tol)
 {
   int failure{0};
 
@@ -817,7 +789,7 @@ int check_vector(N_Vector expected, N_Vector actual, sunrealtype check_tol)
   return failure > 0;
 }
 
-void sync_device()
+extern "C" void sync_device()
 {
   HIP_OR_CUDA_OR_SYCL(hipDeviceSynchronize(), cudaDeviceSynchronize(),
                       global_exec->synchronize());

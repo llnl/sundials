@@ -2,8 +2,11 @@
  * Programmer: Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -54,11 +57,13 @@ extern "C" {
 #define dgbtrs_f77 SUNDIALS_LAPACK_FUNC(dgbtrs, DGBTRS)
 #define dgetrf_f77 SUNDIALS_LAPACK_FUNC(dgetrf, DGETRF)
 #define dgetrs_f77 SUNDIALS_LAPACK_FUNC(dgetrs, DGETRS)
+#define dgeev_f77  SUNDIALS_LAPACK_FUNC(dgeev, DGEEV)
 
 #define sgbtrf_f77 SUNDIALS_LAPACK_FUNC(sgbtrf, SGBTRF)
 #define sgbtrs_f77 SUNDIALS_LAPACK_FUNC(sgbtrs, SGBTRS)
 #define sgetrf_f77 SUNDIALS_LAPACK_FUNC(sgetrf, SGETRF)
 #define sgetrs_f77 SUNDIALS_LAPACK_FUNC(sgetrs, SGETRS)
+#define sgeev_f77  SUNDIALS_LAPACK_FUNC(sgeev, SGEEV)
 
 #else
 #define qgbtrf_f77 qgbtrf_
@@ -70,11 +75,13 @@ extern "C" {
 #define dgbtrs_f77 dgbtrs_
 #define dgetrf_f77 dgetrf_
 #define dgetrs_f77 dgetrs_
+#define dgeev_f77  dgeev_
 
 #define sgbtrf_f77 sgbtrf_
 #define sgbtrs_f77 sgbtrs_
 #define sgetrf_f77 sgetrf_
 #define sgetrs_f77 sgetrs_
+#define sgeev_f77  sgeev_
 
 #endif
 
@@ -99,6 +106,12 @@ extern void dgetrs_f77(const char* trans, const sunindextype* n,
                        const sunindextype* lda, sunindextype* ipiv, double* b,
                        const sunindextype* ldb, sunindextype* info);
 
+extern void dgeev_f77(const char* jobvl, const char* jobvr, const sunindextype* n,
+                      double* a, const sunindextype* lda, double* wr, double* wi,
+                      double* vl, const sunindextype* ldvl, double* vr,
+                      const sunindextype* ldvr, double* work,
+                      const sunindextype* lwork, sunindextype* info);
+
 extern void sgbtrf_f77(const sunindextype* m, const sunindextype* n,
                        const sunindextype* kl, const sunindextype* ku,
                        float* ab, sunindextype* ldab, sunindextype* ipiv,
@@ -117,6 +130,12 @@ extern void sgetrs_f77(const char* trans, const sunindextype* n,
                        const sunindextype* nrhs, float* a,
                        const sunindextype* lda, sunindextype* ipiv, float* b,
                        const sunindextype* ldb, sunindextype* info);
+
+extern void sgeev_f77(const char* jobvl, const char* jobvr, const sunindextype* n,
+                      float* a, const sunindextype* lda, float* wr, float* wi,
+                      float* vl, const sunindextype* ldvl, float* vr,
+                      const sunindextype* ldvr, float* work,
+                      const sunindextype* lwork, sunindextype* info);
 
 #ifdef __cplusplus
 }

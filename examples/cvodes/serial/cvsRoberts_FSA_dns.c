@@ -3,8 +3,11 @@
  *                Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -543,8 +546,6 @@ static void PrintOutput(void* cvode_mem, sunrealtype t, N_Vector u)
   printf("%8.3Qe %2d  %8.3Qe %5ld\n", t, qu, hu, nst);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%8.3Le %2d  %8.3Le %5ld\n", t, qu, hu, nst);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%8.3e %2d  %8.3e %5ld\n", t, qu, hu, nst);
 #else
   printf("%8.3e %2d  %8.3e %5ld\n", t, qu, hu, nst);
 #endif
@@ -555,8 +556,6 @@ static void PrintOutput(void* cvode_mem, sunrealtype t, N_Vector u)
   printf("%12.4Qe %12.4Qe %12.4Qe \n", udata[0], udata[1], udata[2]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%12.4Le %12.4Le %12.4Le \n", udata[0], udata[1], udata[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e %12.4e \n", udata[0], udata[1], udata[2]);
 #else
   printf("%12.4e %12.4e %12.4e \n", udata[0], udata[1], udata[2]);
 #endif
@@ -577,8 +576,6 @@ static void PrintOutputS(N_Vector* uS)
   printf("%12.4Qe %12.4Qe %12.4Qe \n", sdata[0], sdata[1], sdata[2]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%12.4Le %12.4Le %12.4Le \n", sdata[0], sdata[1], sdata[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
 #else
   printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
 #endif
@@ -590,8 +587,6 @@ static void PrintOutputS(N_Vector* uS)
   printf("%12.4Qe %12.4Qe %12.4Qe \n", sdata[0], sdata[1], sdata[2]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%12.4Le %12.4Le %12.4Le \n", sdata[0], sdata[1], sdata[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
 #else
   printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
 #endif
@@ -603,8 +598,6 @@ static void PrintOutputS(N_Vector* uS)
   printf("%12.4Qe %12.4Qe %12.4Qe \n", sdata[0], sdata[1], sdata[2]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%12.4Le %12.4Le %12.4Le \n", sdata[0], sdata[1], sdata[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
 #else
   printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
 #endif

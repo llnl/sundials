@@ -1,9 +1,12 @@
 /*---------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -12,14 +15,13 @@
  * SUNDIALS Copyright End
  *---------------------------------------------------------------
  * This is the implementation file for the optional input and
- * output functions for the ARKODE infrastructure; these routines
- * should not be called directly by the user; instead they are
- * provided as utility routines for ARKODE time-step modules
- * to use.
+ * output functions for the ARKODE infrastructure.
  *--------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include <sunadaptcontroller/sunadaptcontroller_imexgus.h>
 #include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
 #include <sundials/sundials_math.h>
@@ -29,6 +31,7 @@
 #include "arkode_impl.h"
 #include "arkode_interp_impl.h"
 #include "arkode_user_controller.h"
+#include "sundials_utils.h"
 
 /*===============================================================
   ARKODE optional input functions
@@ -1478,7 +1481,7 @@ int ARKodeSetNoInactiveRootWarn(void* arkode_mem)
   if (ark_mem->root_mem == NULL)
   {
     arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
+                    MSG_ARK_NO_ROOT);
     return (ARK_MEM_NULL);
   }
   ark_root_mem          = (ARKodeRootMem)ark_mem->root_mem;
@@ -1579,7 +1582,6 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
   if (constraints == NULL)
   {
     arkFreeVec(ark_mem, &ark_mem->constraints);
-    ark_mem->constraintsSet = SUNFALSE;
     return (ARK_SUCCESS);
   }
 
@@ -1611,7 +1613,6 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
 
   /* Load the constraints vector */
   N_VScale(ONE, constraints, ark_mem->constraints);
-  ark_mem->constraintsSet = SUNTRUE;
 
   return (ARK_SUCCESS);
 }

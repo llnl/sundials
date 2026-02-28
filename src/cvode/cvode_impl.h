@@ -1,11 +1,14 @@
 /* -----------------------------------------------------------------
  * Programmer(s): Scott D. Cohen, Alan C. Hindmarsh, Radu Serban and
  *                Dan Shumaker @ LLNL
- *                Daniel Reynolds @ SMU
+ *                Daniel Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -18,6 +21,8 @@
 
 #ifndef _CVODE_IMPL_H
 #define _CVODE_IMPL_H
+
+#include <stdarg.h>
 
 #include <cvode/cvode.h>
 #include <sundials/priv/sundials_context_impl.h>
@@ -119,9 +124,10 @@ extern "C" {
  * MXNEF1  max no. of error test failures before forcing a reduction of order
  */
 
-#define MXNCF  10
-#define MXNEF  7
-#define MXNEF1 3
+#define MXNCF                10
+#define MXNEF                7
+#define MXNEF1               3
+#define MAX_CONSTRAINT_FAILS 10
 
 /* Control constants for lower-level functions used by cvStep
  * ----------------------------------------------------------
@@ -171,9 +177,8 @@ extern "C" {
 #define PREV_ERR_FAIL  +9
 
 #define RHSFUNC_RECVR    +10
-#define CONSTR_RECVR     +11
-#define CONSTRFUNC_RECVR +12
-#define PROJFUNC_RECVR   +13
+#define CONSTRFUNC_RECVR +11
+#define PROJFUNC_RECVR   +12
 
 /*
  * =================================================================
@@ -213,9 +218,6 @@ typedef struct CVodeMemRec
   CVEwtFn cv_efun; /* function to set ewt                           */
   void* cv_e_data; /* user pointer passed to efun                   */
 
-  sunbooleantype cv_constraintsSet; /* constraints vector present:
-                                    do constraints calc                       */
-
   /*-----------------------
     Nordsieck History Array
     -----------------------*/
@@ -241,8 +243,6 @@ typedef struct CVodeMemRec
   N_Vector cv_vtemp1; /* temporary storage vector                            */
   N_Vector cv_vtemp2; /* temporary storage vector                            */
   N_Vector cv_vtemp3; /* temporary storage vector                            */
-
-  N_Vector cv_constraints; /* vector of inequality constraint options         */
 
   /*-----------------
     Tstop information
@@ -366,6 +366,8 @@ typedef struct CVodeMemRec
 
   int (*cv_linit)(struct CVodeMemRec* cv_mem);
 
+  int (*cv_lreinit)(struct CVodeMemRec* cv_mem);
+
   int (*cv_lsetup)(struct CVodeMemRec* cv_mem, int convfail, N_Vector ypred,
                    N_Vector fpred, sunbooleantype* jcurPtr, N_Vector vtemp1,
                    N_Vector vtemp2, N_Vector vtemp3);
@@ -402,7 +404,6 @@ typedef struct CVodeMemRec
 
   sunbooleantype cv_VabstolMallocDone;
   sunbooleantype cv_MallocDone;
-  sunbooleantype cv_constraintsMallocDone;
 
   /*-------------------------------------------
     User access function
@@ -433,13 +434,20 @@ typedef struct CVodeMemRec
   sunrealtype* cv_glo;   /* saved array of g values at t = tlo              */
   sunrealtype* cv_ghi;   /* saved array of g values at t = thi              */
   sunrealtype* cv_grout; /* array of g values at t = trout                  */
-  sunrealtype cv_toutc;  /* copy of tout (if NORMAL mode)                   */
   sunrealtype cv_ttol;   /* tolerance on root location trout                */
-  int cv_taskc;          /* copy of parameter itask                         */
   int cv_irfnd;          /* flag showing whether last step had a root       */
   long int cv_nge;       /* counter for g evaluations                       */
   sunbooleantype* cv_gactive; /* array with active/inactive event functions      */
   int cv_mxgnull; /* number of warning messages about possible g==0  */
+
+  /*---------------------------
+    Inequality Constraints Data
+    ---------------------------*/
+
+  N_Vector cv_constraints;         /* vector of constraint flags     */
+  long int constraint_corrections; /* total constraint corrections   */
+  long int constraint_fails;       /* total constraint failures      */
+  int max_constraint_fails;        /* max failures allowed in a step */
 
   /*---------------
     Projection Data
@@ -643,7 +651,8 @@ int cvEwtSetSV_fused(const sunbooleantype atolmin0, const sunrealtype reltol,
                      N_Vector tempv, N_Vector weight);
 
 int cvCheckConstraints_fused(const N_Vector c, const N_Vector ewt,
-                             const N_Vector y, const N_Vector mm, N_Vector tempv);
+                             const N_Vector y, const N_Vector mm,
+                             N_Vector tempv, N_Vector save);
 
 int cvNlsResid_fused(const sunrealtype rl1, const sunrealtype ngamma,
                      const N_Vector zn1, const N_Vector ycor,

@@ -1,8 +1,11 @@
 ..
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -64,14 +67,14 @@ To use the NVECTOR_KOKKOS module, we construct an instance of the ``Vector`` cla
 
 
 Instances of the ``Vector`` class are implicitly or explicitly (using the
-:cpp:func:`~Vector::Convert` method) convertible to a :c:type:`N_Vector`
+:cpp:func:`~Vector::get` method) convertible to a :c:type:`N_Vector`
 e.g.,
 
 .. code-block:: cpp
 
    sundials::kokkos::Vector<> x{length, sunctx};
-   N_Vector x2 = x;           // implicit conversion to N_Vector
-   N_Vector x3 = x.Convert(); // explicit conversion to N_Vector
+   N_Vector x2 = x;       // implicit conversion to N_Vector
+   N_Vector x3 = x.get(); // explicit conversion to N_Vector
 
 No further interaction with a ``Vector`` is required from this point, and
 it is possible to use the :c:type:`N_Vector` API to operate on ``x2`` or ``x3``.
@@ -184,13 +187,21 @@ class.
 
       Implicit conversion to a :c:type:`N_Vector`.
 
-   .. cpp:function:: N_Vector Convert() override
+   .. cpp:function:: N_Vector get() override
 
       Explicit conversion to a :c:type:`N_Vector`.
+      
+      .. versionadded:: 7.6.0
+      
+         Replaces the ``Convert`` method which was deprecated.
 
-   .. cpp:function:: N_Vector Convert() const override
+   .. cpp:function:: N_Vector get() const override
 
       Explicit conversion to a :c:type:`N_Vector`.
+      
+      .. versionadded:: 7.6.0
+
+         Replaces the ``Convert`` method which was deprecated.
 
 
 .. cpp:function:: template<class VectorType> inline VectorType* GetVec(N_Vector v)

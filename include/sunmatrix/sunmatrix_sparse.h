@@ -1,13 +1,16 @@
 /*
  * -----------------------------------------------------------------
- * Programmer(s): Daniel Reynolds @ SMU
+ * Programmer(s): Daniel Reynolds @ UMBC
  *                David Gardner @ LLNL
  * Based on code sundials_sparse.h by: Carol Woodward and
- *     Slaven Peles @ LLNL, and Daniel R. Reynolds @ SMU
+ *     Slaven Peles @ LLNL, and Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -47,6 +50,11 @@ extern "C" {
  * Matrix Type Definitions
  * ------------------------ */
 
+#define SUN_CSC_MAT 0
+#define SUN_CSR_MAT 1
+
+/* DEPRECATION NOTICE: CSC_MAT and CSR_MAT will be removed in the next major release.
+    use SUN_CSC_MAT and SUN_CSR_MAT instead. */
 #define CSC_MAT 0
 #define CSR_MAT 1
 

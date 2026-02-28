@@ -2,8 +2,11 @@
 ! Programmer(s): Cody J. Balos @ LLNL
 ! -----------------------------------------------------------------
 ! SUNDIALS Copyright Start
-! Copyright (c) 2002-2025, Lawrence Livermore National Security
+! Copyright (c) 2025-2026, Lawrence Livermore National Security,
+! University of Maryland Baltimore County, and the SUNDIALS contributors.
+! Copyright (c) 2013-2025, Lawrence Livermore National Security
 ! and Southern Methodist University.
+! Copyright (c) 2002-2013, Lawrence Livermore National Security.
 ! All rights reserved.
 !
 ! See the top-level LICENSE and NOTICE files for details.
@@ -53,7 +56,7 @@ contains
     !===== Calls to interface =====
 
     ! constructor
-    A => FSUNSparseMatrix(N, N, N*N, CSR_MAT, sunctx)
+    A => FSUNSparseMatrix(N, N, N*N, SUN_CSR_MAT, sunctx)
     if (.not. associated(A)) then
       print *, '>>> FAILED - ERROR in FSUNSparseMatrix; halting'
       stop 1
@@ -127,8 +130,8 @@ contains
     end do
 
     ! create sparse versions of A and I
-    A => FSUNSparseFromDenseMatrix(DA, ZERO, CSR_MAT)
-    I => FSUNSparseFromDenseMatrix(DI, ZERO, CSR_MAT)
+    A => FSUNSparseFromDenseMatrix(DA, ZERO, SUN_CSR_MAT)
+    I => FSUNSparseFromDenseMatrix(DI, ZERO, SUN_CSR_MAT)
 
     ! create vectors
     x => FN_VNew_Serial(N, sunctx)

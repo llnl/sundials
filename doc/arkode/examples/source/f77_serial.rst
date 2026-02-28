@@ -1,9 +1,12 @@
 ..
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -28,8 +31,8 @@ Serial Fortran 77 example problems
 fark_diurnal_kry_bp
 ===================================================
 
-This problem is an ARKode clone of the CVODE problem,
-``fcv_diurnal_kry_bp``.  As described in [HSR2017]_, this problem
+This problem is an ARKODE clone of the CVODE problem,
+``fcv_diurnal_kry_bp``.  As described in :cite:p:`cvode_ug`, this problem
 models a two-species diurnal kinetics advection-diffusion PDE system
 in two spatial dimensions,
 
@@ -76,7 +79,7 @@ We employ a method of lines approach, wherein we first semi-discretize
 in space to convert the system of 2 PDEs into a larger system of ODEs.
 To this end, the spatial derivatives are computed using second-order
 centered differences, with the data distributed over :math:`Mx*My`
-points on a uniform spatial grid.  As a result, ARKode approaches the
+points on a uniform spatial grid.  As a result, ARKODE approaches the
 problem as one involving :math:`2*Mx*My` coupled ODEs. In this
 problem, we use a relatively coarse uniform mesh with
 :math:`Mx=My=10`.
@@ -103,8 +106,8 @@ on completion.
 fark_roberts_dnsL
 ===================================================
 
-This problem is an ARKode clone of the CVODE problem,
-``fcv_roberts_dnsL``.  As described in [HSR2017]_, this problem models
+This problem is an ARKODE clone of the CVODE problem,
+``fcv_roberts_dnsL``.  As described in :cite:p:`cvode_ug`, this problem models
 the kinetics of a three-species autocatalytic reaction.  This is an
 ODE system with 3 components, :math:`Y = [y_1,\, y_2,\, y_3]^T`,
 satisfying the equations,
@@ -137,13 +140,10 @@ This program solves the problem with a DIRK method, using a Newton
 iteration with the SUNLINSOL_LAPACKDENSE linear solver module and
 ARKDLS interface.
 
-As with the :ref:`ark_robertson_root` problem, we enable ARKode's
+As with the :ref:`ark_robertson_root` problem, we enable ARKODE's
 rootfinding module to find the times at which either :math:`u=10^{-4}`
 or :math:`w=10^{-2}`.
 
 Performance data and solution values are printed at
 selected output times, along with additional output at rootfinding
 events.  All performance counters are printed on completion.
-
-
-

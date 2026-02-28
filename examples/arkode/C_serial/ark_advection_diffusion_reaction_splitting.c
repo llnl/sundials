@@ -2,8 +2,11 @@
  * Programmer(s): Steven B. Roberts @ LLNL
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -43,12 +46,12 @@
 #include <sunlinsol/sunlinsol_band.h>
 #include <sunmatrix/sunmatrix_band.h>
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-#define GSYM "Lg"
-#define FSYM "Lf"
-#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
 #define GSYM "Qg"
 #define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define GSYM "Lg"
+#define FSYM "Lf"
 #else
 #define GSYM "g"
 #define FSYM "f"

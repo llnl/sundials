@@ -4,8 +4,11 @@
  *                Radu Serban  @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -474,11 +477,6 @@ static void PrintOutput(void* cvode_mem, int my_pe, MPI_Comm comm, N_Vector u,
            nst, qu, hu);
     printf("At bottom left:  c1, c2 = %12.3Le %12.3Le \n", udata[0], udata[1]);
     printf("At top right:    c1, c2 = %12.3Le %12.3Le \n\n", tempu[0], tempu[1]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("t = %.2e   no. steps = %ld   order = %d   stepsize = %.2e\n", t,
-           nst, qu, hu);
-    printf("At bottom left:  c1, c2 = %12.3e %12.3e \n", udata[0], udata[1]);
-    printf("At top right:    c1, c2 = %12.3e %12.3e \n\n", tempu[0], tempu[1]);
 #else
     printf("t = %.2e   no. steps = %ld   order = %d   stepsize = %.2e\n", t,
            nst, qu, hu);

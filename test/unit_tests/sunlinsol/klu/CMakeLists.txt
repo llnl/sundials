@@ -1,9 +1,12 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -22,7 +25,7 @@ set(sunlinsol_klu_examples
     "test_sunlinsol_klu\;300 0 0\;" "test_sunlinsol_klu\;300 1 0\;"
     "test_sunlinsol_klu\;1000 0 0\;" "test_sunlinsol_klu\;1000 1 0\;")
 
-# Dependencies for nvector examples
+# Dependencies for sunlinsol examples
 set(sunlinsol_klu_dependencies test_sunlinsol)
 
 # If building F2003 tests
@@ -69,12 +72,6 @@ foreach(example_tuple ${sunlinsol_klu_examples})
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
     NODIFF)
-
-  # install example source files
-  if(EXAMPLES_INSTALL)
-    install(FILES ${example}.c ../test_sunlinsol.h ../test_sunlinsol.c
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/klu)
-  endif()
 
 endforeach(example_tuple ${sunlinsol_klu_examples})
 
@@ -129,51 +126,3 @@ foreach(example_tuple ${sunlinsol_klu_fortran_examples})
   endif()
 
 endforeach(example_tuple ${sunlinsol_klu_fortran_examples})
-
-if(EXAMPLES_INSTALL)
-
-  # Install the README file
-  install(FILES DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/klu)
-
-  # Prepare substitution variables for Makefile and/or CMakeLists templates
-  set(SOLVER_LIB "sundials_sunlinsolklu")
-  set(LIBS "${LIBS} -lsundials_sunmatrixsparse -lsundials_sunmatrixdense")
-
-  # Set the link directory for the sparse and dense sunmatrix libraries The
-  # generated CMakeLists.txt does not use find_library() locate them
-  set(EXTRA_LIBS_DIR "${libdir}")
-
-  examples2string(sunlinsol_klu_examples EXAMPLES_KLU)
-  examples2string(sunlinsol_klu_dependencies EXAMPLES_DEPENDENCIES_KLU)
-
-  # Regardless of the platform we're on, we will generate and install
-  # CMakeLists.txt file for building the examples. This file  can then be used
-  # as a template for the user's own programs.
-
-  # generate CMakelists.txt in the binary directory
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_serial_C_ex.in
-    ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/klu/CMakeLists.txt @ONLY)
-
-  # install CMakelists.txt
-  install(
-    FILES ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/klu/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/klu)
-
-  # On UNIX-type platforms, we also  generate and install a makefile for
-  # building the examples. This makefile can then be used as a template for the
-  # user's own programs.
-
-  if(UNIX)
-    # generate Makefile and place it in the binary dir
-    configure_file(
-      ${PROJECT_SOURCE_DIR}/examples/templates/makefile_serial_C_ex.in
-      ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/klu/Makefile_ex @ONLY)
-    # install the configured Makefile_ex as Makefile
-    install(
-      FILES ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/klu/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/klu
-      RENAME Makefile)
-  endif()
-
-endif()

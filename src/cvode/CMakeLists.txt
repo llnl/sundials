@@ -1,10 +1,13 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 #                Radu Serban, and Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -22,6 +25,7 @@ set(cvode_SOURCES
     cvode.c
     cvode_bandpre.c
     cvode_bbdpre.c
+    cvode_cli.c
     cvode_diag.c
     cvode_io.c
     cvode_ls.c
@@ -30,8 +34,14 @@ set(cvode_SOURCES
     cvode_resize.c)
 
 # Add variable cvode_HEADERS with the exported CVODE header files
-set(cvode_HEADERS cvode.h cvode_bandpre.h cvode_bbdpre.h cvode_diag.h
-                  cvode_ls.h cvode_proj.h)
+set(cvode_HEADERS
+    cvode.h
+    cvode.hpp
+    cvode_bandpre.h
+    cvode_bbdpre.h
+    cvode_diag.h
+    cvode_ls.h
+    cvode_proj.h)
 
 # Add prefix with complete path to the CVODE header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/cvode/ cvode_HEADERS)

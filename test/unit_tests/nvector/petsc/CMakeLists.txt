@@ -2,8 +2,11 @@
 # Programmer(s): Steven Smith @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -99,54 +102,4 @@ foreach(example_tuple ${nvector_petsc_examples})
     EXAMPLE_TYPE ${example_type}
     NODIFF)
 
-  # install example source files
-  if(EXAMPLES_INSTALL)
-    install(FILES ${example}.c ../test_nvector.c ../test_mpinvector.c
-                  ../test_nvector.h
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/petsc)
-  endif()
-
 endforeach(example_tuple ${nvector_petsc_examples})
-
-if(EXAMPLES_INSTALL)
-
-  # Install the README file
-  install(FILES DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/petsc)
-
-  # Prepare substitution variables for Makefile and/or CMakeLists templates
-  set(SOLVER_LIB "sundials_nvecpetsc")
-
-  examples2string(nvector_petsc_examples EXAMPLES)
-  examples2string(nvector_examples_dependencies EXAMPLES_DEPENDENCIES)
-
-  # Regardless of the platform we're on, we will generate and install
-  # CMakeLists.txt file for building the examples. This file  can then be used
-  # as a template for the user's own programs.
-
-  # generate CMakelists.txt in the binary directory
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_petsc_C_ex.in
-    ${PROJECT_BINARY_DIR}/test/unit_tests/nvector/petsc/CMakeLists.txt @ONLY)
-
-  # install CMakelists.txt
-  install(
-    FILES ${PROJECT_BINARY_DIR}/test/unit_tests/nvector/petsc/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/petsc)
-
-  # On UNIX-type platforms, we also  generate and install a makefile for
-  # building the examples. This makefile can then be used as a template for the
-  # user's own programs.
-
-  if(UNIX)
-    # generate Makefile and place it in the binary dir
-    configure_file(
-      ${PROJECT_SOURCE_DIR}/examples/templates/makefile_petsc_C_ex.in
-      ${PROJECT_BINARY_DIR}/test/unit_tests/nvector/petsc/Makefile_ex @ONLY)
-    # install the configured Makefile_ex as Makefile
-    install(
-      FILES ${PROJECT_BINARY_DIR}/test/unit_tests/nvector/petsc/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/petsc
-      RENAME Makefile)
-  endif()
-
-endif()

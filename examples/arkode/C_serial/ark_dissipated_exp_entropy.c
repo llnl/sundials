@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -37,26 +40,11 @@
 #include <sunlinsol/sunlinsol_dense.h>
 #include <sunmatrix/sunmatrix_dense.h>
 
-/* Convince macros for calling precision-specific math functions */
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define EXP(x) (exp((x)))
-#define LOG(x) (log((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define EXP(x) (expf((x)))
-#define LOG(x) (logf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define EXP(x) (expl((x)))
-#define LOG(x) (logl((x)))
-#elif defined(SUNDIALS_FLOAT128_PRECISION)
-#define EXP(x) (expq((x)))
-#define LOG(x) (logq((x)))
-#endif
-
 /* Convince macros for using precision-specific format specifiers */
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-#define ESYM "Le"
-#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
 #define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
 #else
 #define ESYM "e"
 #endif
@@ -402,7 +390,7 @@ int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
   sunrealtype* fdata = N_VGetArrayPointer(ydot);
-  fdata[0]           = -EXP(ydata[0]);
+  fdata[0]           = -SUNRexp(ydata[0]);
   return 0;
 }
 
@@ -412,7 +400,7 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
   sunrealtype* Jdata = SUNDenseMatrix_Data(J);
-  Jdata[0]           = -EXP(ydata[0]);
+  Jdata[0]           = -SUNRexp(ydata[0]);
   return 0;
 }
 
@@ -420,7 +408,7 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
 int Ent(N_Vector y, sunrealtype* e, void* user_data)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
-  *e                 = EXP(ydata[0]);
+  *e                 = SUNRexp(ydata[0]);
   return 0;
 }
 
@@ -429,7 +417,7 @@ int JacEnt(N_Vector y, N_Vector J, void* user_data)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
   sunrealtype* jdata = N_VGetArrayPointer(J);
-  jdata[0]           = EXP(ydata[0]);
+  jdata[0]           = SUNRexp(ydata[0]);
   return 0;
 }
 
@@ -441,7 +429,7 @@ int JacEnt(N_Vector y, N_Vector J, void* user_data)
 int ans(sunrealtype t, N_Vector y)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
-  ydata[0]           = -LOG(EXP(SUN_RCONST(-0.5)) + t);
+  ydata[0]           = -SUNRlog(SUNRexp(SUN_RCONST(-0.5)) + t);
   return 0;
 }
 

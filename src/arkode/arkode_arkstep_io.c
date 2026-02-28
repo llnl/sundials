@@ -1,9 +1,12 @@
 /*---------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -21,10 +24,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <sundials/sundials_math.h>
 #include <sundials/sundials_types.h>
 
 #include "arkode_arkstep_impl.h"
+
+#include "sundials_cli.h"
+#include "sundials_utils.h"
 
 /*===============================================================
   Exported optional input functions.
@@ -627,6 +634,54 @@ int ARKStepGetTimestepperStats(void* arkode_mem, long int* expsteps,
 /*===============================================================
   Private functions attached to ARKODE
   ===============================================================*/
+
+/*---------------------------------------------------------------
+  arkStep_SetOption:
+
+  Provides string-based control over ARKStep-specific "set" routines.
+  ---------------------------------------------------------------*/
+int arkStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
+                       size_t offset, sunbooleantype* arg_used)
+{
+  /* Set lists of keys, and the corresponding set routines */
+  static const struct sunKeyTwoCharPair twochar_pairs[] = {
+    {"table_names", ARKStepSetTableName}};
+  static const int num_twochar_keys = sizeof(twochar_pairs) /
+                                      sizeof(*twochar_pairs);
+
+  static const struct sunKeyActionPair action_pairs[] =
+    {{"explicit", ARKStepSetExplicit},
+     {"implicit", ARKStepSetImplicit},
+     {"imex", ARKStepSetImEx}};
+  static const int num_action_keys = sizeof(action_pairs) / sizeof(*action_pairs);
+
+  /* check all "twochar" keys */
+  int j, retval;
+  retval = sunCheckAndSetTwoCharArgs((void*)ark_mem, argidx, argv, offset,
+                                     twochar_pairs, num_twochar_keys, arg_used,
+                                     &j);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "error setting command-line argument: %s",
+                    twochar_pairs[j].key);
+    return retval;
+  }
+  if (*arg_used) { return ARK_SUCCESS; }
+
+  /* check all action keys */
+  retval = sunCheckAndSetActionArgs((void*)ark_mem, argidx, argv, offset,
+                                    action_pairs, num_action_keys, arg_used, &j);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "error setting command-line argument: %s",
+                    action_pairs[j].key);
+    return retval;
+  }
+
+  return (ARK_SUCCESS);
+}
 
 /*---------------------------------------------------------------
   arkStep_SetRelaxFn:

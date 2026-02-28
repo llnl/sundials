@@ -3,8 +3,11 @@
  *                and Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -66,14 +69,15 @@ extern "C" {
 #define DCJ_DEFAULT \
   SUN_RCONST(0.25) /* constant for updating Jacobian/preconditioner */
 
+#define MAX_CONSTRAINT_FAILS 10
+
 /* Return values for lower level routines used by IDASolve and functions
    provided to the nonlinear solver */
 
 #define IDA_RES_RECVR       +1
 #define IDA_LSETUP_RECVR    +2
 #define IDA_LSOLVE_RECVR    +3
-#define IDA_CONSTR_RECVR    +5
-#define IDA_NLS_SETUP_RECVR +6
+#define IDA_NLS_SETUP_RECVR +4
 
 /*
  * ----------------------------------------------------------------
@@ -106,9 +110,7 @@ typedef struct IDAMemRec
   IDAEwtFn ida_efun;            /* function to set ewt                   */
   void* ida_edata;              /* user pointer passed to efun           */
 
-  sunbooleantype ida_constraintsSet; /* constraints vector present:
-                                        do constraints calc                   */
-  sunbooleantype ida_suppressalg;    /* SUNTRUE means suppress algebraic vars
+  sunbooleantype ida_suppressalg; /* SUNTRUE means suppress algebraic vars
                                         in local error tests                  */
 
   /*-----------------------------------------------
@@ -127,25 +129,24 @@ typedef struct IDAMemRec
     N_Vectors for integration
     -------------------------*/
 
-  N_Vector ida_ewt;         /* error weight vector                            */
-  N_Vector ida_yy;          /* work space for y vector (= user's yret)        */
-  N_Vector ida_yp;          /* work space for y' vector (= user's ypret)      */
-  N_Vector ida_yypredict;   /* predicted y vector                             */
-  N_Vector ida_yppredict;   /* predicted y' vector                            */
-  N_Vector ida_delta;       /* residual vector                                */
-  N_Vector ida_id;          /* bit vector for diff./algebraic components      */
-  N_Vector ida_constraints; /* vector of inequality constraint options        */
-  N_Vector ida_savres;      /* saved residual vector                          */
-  N_Vector ida_ee;          /* accumulated corrections to y vector, but
+  N_Vector ida_ewt;       /* error weight vector                            */
+  N_Vector ida_yy;        /* work space for y vector (= user's yret)        */
+  N_Vector ida_yp;        /* work space for y' vector (= user's ypret)      */
+  N_Vector ida_yypredict; /* predicted y vector                             */
+  N_Vector ida_yppredict; /* predicted y' vector                            */
+  N_Vector ida_delta;     /* residual vector                                */
+  N_Vector ida_id;        /* bit vector for diff./algebraic components      */
+  N_Vector ida_savres;    /* saved residual vector                          */
+  N_Vector ida_ee;        /* accumulated corrections to y vector, but
                                set equal to estimated local errors upon
                                successful return                              */
-  N_Vector ida_tempv1;      /* work space vector                              */
-  N_Vector ida_tempv2;      /* work space vector                              */
-  N_Vector ida_tempv3;      /* work space vector                              */
-  N_Vector ida_ynew;        /* work vector for y in IDACalcIC (= tempv2)      */
-  N_Vector ida_ypnew;       /* work vector for yp in IDACalcIC (= ee)         */
-  N_Vector ida_delnew;      /* work vector for delta in IDACalcIC (= phi[2])  */
-  N_Vector ida_dtemp;       /* work vector in IDACalcIC (= phi[3])            */
+  N_Vector ida_tempv1;    /* work space vector                              */
+  N_Vector ida_tempv2;    /* work space vector                              */
+  N_Vector ida_tempv3;    /* work space vector                              */
+  N_Vector ida_ynew;      /* work vector for y in IDACalcIC (= tempv2)      */
+  N_Vector ida_ypnew;     /* work vector for yp in IDACalcIC (= ee)         */
+  N_Vector ida_delnew;    /* work vector for delta in IDACalcIC (= phi[2])  */
+  N_Vector ida_dtemp;     /* work vector in IDACalcIC (= phi[3])            */
 
   /*------------------------------
     Variables for use by IDACalcIC
@@ -247,7 +248,6 @@ typedef struct IDAMemRec
                                  set to SUNTRUE by IDACalcIC or IDASolve      */
 
   sunbooleantype ida_VatolMallocDone;
-  sunbooleantype ida_constraintsMallocDone;
   sunbooleantype ida_idMallocDone;
 
   sunbooleantype ida_MallocDone; /* set to SUNFALSE by IDACreate
@@ -306,13 +306,20 @@ typedef struct IDAMemRec
   sunrealtype* ida_glo;   /* saved array of g values at t = tlo              */
   sunrealtype* ida_ghi;   /* saved array of g values at t = thi              */
   sunrealtype* ida_grout; /* array of g values at t = trout                  */
-  sunrealtype ida_toutc;  /* copy of tout (if NORMAL mode)                   */
   sunrealtype ida_ttol;   /* tolerance on root location                      */
-  int ida_taskc;          /* copy of parameter itask                         */
   int ida_irfnd;          /* flag showing whether last step had a root       */
   long int ida_nge;       /* counter for g evaluations                       */
   sunbooleantype* ida_gactive; /* array with active/inactive event functions      */
   int ida_mxgnull; /* number of warning messages about possible g==0  */
+
+  /*---------------------------
+    Inequality Constraints Data
+    ---------------------------*/
+
+  N_Vector ida_constraints;        /* vector of inequality constraint flags */
+  long int constraint_corrections; /* total constraint corrections   */
+  long int constraint_fails;       /* total constraint failures             */
+  int max_constraint_fails;        /* max failures allowed in a step        */
 
   /* Arrays for Fused Vector Operations */
 

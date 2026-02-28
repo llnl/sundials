@@ -1,8 +1,11 @@
 ..
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -90,7 +93,7 @@ Take for example, this Tioga job:
      variables:
        # have to use ginkgo@master because our spack version does not have ginkgo@1.8.0: yet (which seems to be needed)
        # similarly, we need a newer magma than available to compile with 'rocm@6:' so we turn it off
-       SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=14 precision=double amdgpu_target=${AMDGPU_TARGET} +rocm+mpi~magma+ginkgo+kokkos ^ginkgo@master+rocm amdgpu_target=${AMDGPU_TARGET} ^kokkos+rocm amdgpu_target=${AMDGPU_TARGET}"
+       SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=17 precision=double amdgpu_target=${AMDGPU_TARGET} +rocm+mpi~magma+ginkgo+kokkos ^ginkgo@master+rocm amdgpu_target=${AMDGPU_TARGET} ^kokkos+rocm amdgpu_target=${AMDGPU_TARGET}"
      before_script:
        - module load rocmcc/6.2.0-magic
      extends: [.sundials_job_on_tioga]
@@ -119,7 +122,7 @@ section of the job, e.g.,
            AMDGPU_TARGET: [gfx90a]
      variables:
        ON_TIOGA: "OFF" # disable this job
-       SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=14 precision=double amdgpu_target=${AMDGPU_TARGET} +rocm+mpi~magma+ginkgo+kokkos ^ginkgo@master+rocm amdgpu_target=${AMDGPU_TARGET} ^kokkos+rocm amdgpu_target=${AMDGPU_TARGET}"
+       SPEC: "%${COMPILER_SPEC} cstd=99 cxxstd=17 precision=double amdgpu_target=${AMDGPU_TARGET} +rocm+mpi~magma+ginkgo+kokkos ^ginkgo@master+rocm amdgpu_target=${AMDGPU_TARGET} ^kokkos+rocm amdgpu_target=${AMDGPU_TARGET}"
      before_script:
        - module load rocmcc/6.2.0-magic
      extends: [.sundials_job_on_tioga]

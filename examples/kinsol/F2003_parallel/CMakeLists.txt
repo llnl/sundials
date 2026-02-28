@@ -1,10 +1,13 @@
 # ---------------------------------------------------------------
 # Programmer(s): David J. Gardner @ LLNL
-#                modified by Daniel M. Margolis @ SMU
+#                modified by Daniel M. Margolis @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -17,9 +20,7 @@
 
 # Example lists are tuples "name\;nodes\;tasks\;type" where the type is develop
 # for examples excluded from 'make test' in releases
-if(SUNDIALS_INDEX_SIZE MATCHES "64")
-  set(FKINSOL_examples "kin_diagon_kry_f2003\;\;1\;4\;develop\;2")
-endif()
+set(FKINSOL_examples "kin_diagon_kry_f2003\;\;1\;4\;develop\;2")
 
 # Specify libraries to link against
 set(KINSOL_LIBS sundials_kinsol sundials_fkinsol_mod sundials_nvecparallel

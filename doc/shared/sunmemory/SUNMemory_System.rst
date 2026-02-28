@@ -1,8 +1,11 @@
 ..
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -40,3 +43,10 @@ The implementation provides the following operations defined by the
 * :c:func:`SUNMemoryHelper_Clone`
 * :c:func:`SUNMemoryHelper_GetAllocStats`
 * :c:func:`SUNMemoryHelper_Destroy`
+
+
+.. note:: 
+
+   The SUNMemoryHelper_Sys always supports ``SUNMEMTYPE_HOST``. If your system also
+   supports allocating unified/coherent memory between CPU and GPU device with ``malloc``,
+   then ``SUNMEMTYPE_UVM`` is also supported. 

@@ -1,9 +1,12 @@
 .. ----------------------------------------------------------------
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -132,6 +135,11 @@ Alternatively, the user may supply a custom function to supply the
    :retval ARK_MEM_NULL:  ``arkode_mem`` was ``NULL``.
    :retval ARK_NO_MALLOC:  ``arkode_mem`` was not allocated.
    :retval ARK_ILL_INPUT: an argument had an illegal value (e.g. a negative tolerance).
+
+   .. note::
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.scalar_tolerances".
 
    .. versionadded:: 6.1.0
 
@@ -882,6 +890,7 @@ Optional inputs for ARKODE
 =================================================  ==========================================  =======================
 Optional input                                     Function name                               Default
 =================================================  ==========================================  =======================
+Set ARKODE options from the command line or file   :c:func:`ARKodeSetOptions`                  internal
 Return ARKODE parameters to their defaults         :c:func:`ARKodeSetDefaults`                 internal
 Set integrator method order                        :c:func:`ARKodeSetOrder`                    4
 Set dense output interpolation type                :c:func:`ARKodeSetInterpolantType`          stepper-specific
@@ -904,6 +913,82 @@ Set the checkpointing scheme to use (for adjoint)  :c:func:`ARKodeSetAdjointChec
 Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointCheckpointIndex`   0
 =================================================  ==========================================  =======================
 
+
+.. c:function:: int ARKodeSetOptions(void* arkode_mem, const char* arkid, const char* file_name, int argc, char* argv[])
+
+   Sets ARKODE options from an array of strings or a file.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param arkid: the prefix for options to read. The default is "arkode".
+   :param file_name: the name of a file containing options to read. If this is
+                     ``NULL`` or an empty string, ``""``, then no file is read.
+   :param argc: length of the ``argv`` array.
+   :param argv: an array of strings containing the options to set and their values.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+   :retval other: error return value from relevant ARKODE "set" routine.
+
+   **Example usage:**
+
+   In a C or C++ program, the following will enable command-line processing:
+
+   .. code-block:: C
+
+      /* Create ARKODE memory block */
+      void* arkode_mem = ARKStepCreate(fe, fi, T0, y, ctx);
+
+      /* Configure ARKODE as normal */
+      ...
+
+      /* Override settings with command-line options using default "arkode" prefix */
+      flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
+
+   Then when running the program, the user can specify desired options, e.g.,
+
+   .. code-block:: console
+
+      $ ./a.out arkode.order 3 arkode.interpolant_type ARK_INTERP_LAGRANGE
+
+   .. note::
+
+      The ``argc`` and ``argv`` arguments are typically those supplied to the user's
+      ``main`` routine however, this is not required. The inputs are left unchanged by
+      :c:func:`ARKodeSetOptions`.
+
+      If the ``arkid`` argument is ``NULL``, then the default prefix, ``arkode``, must
+      be used for all ARKODE options. Whether ``arkid`` is supplied or not, a ``"."``
+      must be used to separate an option key from the prefix.  For example, when
+      using the default ``arkid``, the option ``arkode.order`` followed by the value
+      can be used to set the method order of accuracy.
+
+      When using a combination of ARKODE integrators (e.g., via MRIStep, SplittingStep,
+      or ForcingStep), it is recommended that users call
+      :c:func:`ARKodeSetOptions` for each ARKODE integrator using a distinct
+      ``arkid`` so they can be controlled separately. For example, "fast" and "slow"
+      option prefixes can be used to differentiate between options for the slow and
+      fast integrators in an MRI method (i.e., ``fast.order`` and ``slow.order``
+      followed by the desired values to set the method order for the fast and slow time
+      scales, respectively).
+
+      ARKODE options set via :c:func:`ARKodeSetOptions` will overwrite any previously
+      set values. Options are set in the order they are given in ``argv`` and, if an
+      option with the same prefix appears multiple times in ``argv``, the value of the
+      last occurrence will used.
+
+      The supported option names are noted within the documentation for the
+      corresponding ARKODE "set" function. For options that take a
+      :c:type:`sunbooleantype` as input, use ``1`` to indicate ``true`` and
+      ``0`` for ``false``.
+
+   .. warning::
+
+      This function is not available in the Fortran interface.
+
+      File-based options are not yet supported, so the ``file_name`` argument
+      should be set to either ``NULL`` or the empty string ``""``.
+
+   .. versionadded:: 6.5.0
 
 
 .. c:function:: int ARKodeSetDefaults(void* arkode_mem)
@@ -952,6 +1037,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       ARKODE memory block, it cannot be changed after the first call to
       :c:func:`ARKodeEvolve`, unless ``*StepReInit`` is called.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.order".
+
    .. versionadded:: 6.1.0
 
 
@@ -999,6 +1087,11 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
    :retval ARK_ILL_INPUT: the *itype* argument is not recognized or the
                           interpolation module has already been initialized.
 
+   .. note::
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.interpolant_type".
+
    .. versionchanged:: 6.1.0
 
       This function replaces stepper specific versions in ARKStep, ERKStep,
@@ -1045,6 +1138,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       When :math:`q=1`, a linear interpolant is the default to ensure values
       obtained by the integrator are returned at the ends of the time
       interval.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.interpolant_degree".
 
    .. versionadded:: 6.1.0
 
@@ -1103,6 +1199,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       routines will provide no useful information to the solver, and at
       worst they may interfere with the desired fixed step size.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.fixed_step".
+
    .. versionadded:: 6.1.0
 
 
@@ -1132,6 +1231,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       estimated at the next call to :c:func:`ARKodeEvolve` or can be specified
       with :c:func:`ARKodeSetInitStep`.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.step_direction".
+
    .. versionadded:: 6.2.0
 
 
@@ -1159,6 +1261,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       at :math:`t_0`.
 
       This routine will also reset the step size and error history.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.init_step".
 
    .. versionadded:: 6.1.0
 
@@ -1188,6 +1293,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
       A negative value indicates that no warning messages should be issued.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_hnil_warns".
+
    .. versionadded:: 6.1.0
 
 
@@ -1212,6 +1320,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
       Passing *mxsteps* < 0 disables the test (not recommended).
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_num_steps".
+
    .. versionadded:: 6.1.0
 
 
@@ -1234,6 +1345,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
       Pass *hmax* :math:`\le 0.0` to set the default value of :math:`\infty`.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_step".
+
    .. versionadded:: 6.1.0
 
 
@@ -1255,6 +1369,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This is only compatible with time-stepping modules that support temporal adaptivity.
 
       Pass *hmin* :math:`\le 0.0` to set the default value of 0.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.min_step".
 
    .. versionadded:: 6.1.0
 
@@ -1283,6 +1400,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       :c:func:`ARKodeReset` will remain active but can be disabled by calling
       :c:func:`ARKodeClearStopTime`.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.stop_time".
+
    .. versionadded:: 6.1.0
 
 
@@ -1297,6 +1417,11 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. note::
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.interpolate_stop_time".
 
    .. versionadded:: 6.1.0
 
@@ -1314,6 +1439,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
       The stop time can be re-enabled though a new call to
       :c:func:`ARKodeSetStopTime`.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.clear_stop_time".
 
    .. versionadded:: 6.1.0
 
@@ -1363,6 +1491,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
       The default value is 7; set *maxnef* :math:`\le 0`
       to specify this default.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_err_test_fails".
 
    .. versionadded:: 6.1.0
 
@@ -1435,6 +1566,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       Passing *maxfails* <= 0 results in ARKODE using the
       default value (10).
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_num_constr_fails".
+
    .. versionadded:: 6.1.0
 
 
@@ -1475,8 +1609,8 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
    Currently, all ARKODE modules support compensated summation for accumulating time.
 
    SPRKStep also supports an alternative stepping algorithm based on compensated
-   summation which will be enabled/disabled by this function. This increases the 
-   computational cost by 2 extra vector operations per stage and an additional 
+   summation which will be enabled/disabled by this function. This increases the
+   computational cost by 2 extra vector operations per stage and an additional
    5 per time step. It also requires one extra vector to be stored. However, it
    is significantly more robust to roundoff error accumulation.
 
@@ -1487,6 +1621,10 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
    :retval ARK_MEM_NULL: if the ARKODE memory is ``NULL``
    :retval ARK_ILL_INPUT: if an argument had an illegal value
 
+   .. note::
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.use_compensated_sums".
 
 .. _ARKODE.Usage.ARKodeAdaptivityInputTable:
 
@@ -1609,6 +1747,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This should be called prior to calling :c:func:`ARKodeEvolve`, and can only be
       reset following a call to ``*StepReInit``.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.adaptivity_adjustment".
+
    .. versionadded:: 6.1.0
 
    .. versionchanged:: 6.3.0
@@ -1635,6 +1776,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
 
       Any non-positive parameter will imply a reset to the default
       value.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.cfl_fraction".
 
    .. versionadded:: 6.1.0
 
@@ -1668,6 +1812,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       :c:func:`ARKodeSetAdaptController` will be called, then this routine must be called
       *second*.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.error_bias".
+
    .. versionadded:: 6.1.0
 
    .. versionchanged:: 6.3.0
@@ -1694,6 +1841,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This is only compatible with time-stepping modules that support temporal adaptivity.
 
       Any interval *not* containing 1.0 will imply a reset to the default values.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.fixed_step_bounds".
 
    .. versionadded:: 6.1.0
 
@@ -1724,6 +1874,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
 
       Any value outside the interval :math:`(0,1]` will imply a reset to the default value.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_cfail_growth".
+
    .. versionadded:: 6.1.0
 
 
@@ -1746,6 +1899,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This is only compatible with time-stepping modules that support temporal adaptivity.
 
       Any value outside the interval :math:`(0,1]` will imply a reset to the default value.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_efail_growth".
 
    .. versionadded:: 6.1.0
 
@@ -1771,6 +1927,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
 
       Any value :math:`\le 1.0` will imply a reset to the default value.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_first_growth".
+
    .. versionadded:: 6.1.0
 
 
@@ -1794,6 +1953,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
 
       Any value :math:`\le 1.0` will imply a reset to the default
       value.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_growth".
 
    .. versionadded:: 6.1.0
 
@@ -1821,6 +1983,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       Any value outside the interval :math:`(0,1)` will imply a reset to
       the default value.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.min_reduction".
+
    .. versionadded:: 6.1.0
 
 
@@ -1844,6 +2009,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
 
       Any value :math:`\le 0` will imply a reset to the default
       value.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.safety_factor".
 
    .. versionadded:: 6.1.0
 
@@ -1873,6 +2041,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This is only compatible with time-stepping modules that support temporal adaptivity.
 
       Any value :math:`\le 0` will imply a reset to the default value.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.small_num_efails".
 
    .. versionadded:: 6.1.0
 
@@ -1958,6 +2129,10 @@ tolerance.
    A non-default error accumulation strategy can be disabled by calling
    :c:func:`ARKodeSetAccumulatedErrorType` with the argument ``ARK_ACCUMERROR_NONE``.
 
+   .. note::
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.accumulated_error_type".
 
    :param arkode_mem: pointer to the ARKODE memory block.
    :param accum_type: accumulation strategy.
@@ -1981,6 +2156,11 @@ tolerance.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``
    :retval ARK_STEPPER_UNSUPPORTED: temporal error estimation is not supported
                                     by the current time-stepping module.
+
+   .. note::
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.reset_accumulated_error".
 
    .. versionadded:: 6.2.0
 
@@ -2075,6 +2255,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       :c:func:`ARKodeSetDeltaGammaMax` to reset the step size ratio
       threshold to the default value.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.nonlinear".
+
    .. versionadded:: 6.1.0
 
 
@@ -2127,6 +2310,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       evaluation but instead evaluate the necessary quantities within the
       preconditioner setup function using the input values.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.autonomous".
+
    .. versionadded:: 6.1.0
 
 
@@ -2161,6 +2347,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
 
       The default value is 0.  If *method* is set to an
       undefined value, this default predictor will be used.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.predictor_method".
 
    .. versionadded:: 6.1.0
 
@@ -2240,6 +2429,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       The default value is 3; set *maxcor* :math:`\le 0`
       to specify this default.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_nonlin_iters".
+
    .. versionadded:: 6.1.0
 
 
@@ -2264,6 +2456,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       The default value is 0.1; set *nlscoef* :math:`\le 0`
       to specify this default.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.nonlin_conv_coef".
+
    .. versionadded:: 6.1.0
 
 
@@ -2285,6 +2480,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This is only compatible with time-stepping modules that support implicit algebraic solvers.
 
       Any non-positive parameter will imply a reset to the default value.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.nonlin_crdown".
 
    .. versionadded:: 6.1.0
 
@@ -2309,6 +2507,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This is only compatible with time-stepping modules that support implicit algebraic solvers.
 
       Any non-positive parameter will imply a reset to the default value.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.nonlin_rdiv".
 
    .. versionadded:: 6.1.0
 
@@ -2342,6 +2543,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       convergence failure still occurs, the time step size is reduced by
       the factor *etacf* (set within :c:func:`ARKodeSetMaxCFailGrowth`).
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.max_conv_fails".
+
    .. versionadded:: 6.1.0
 
 
@@ -2364,6 +2568,9 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
    .. note::
 
       This is only compatible with time-stepping modules that support implicit algebraic solvers.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.deduce_implicit_rhs".
 
    .. versionadded:: 6.1.0
 
@@ -2472,6 +2679,9 @@ is recomputed using the current :math:`\gamma` value.
 
       Any non-positive parameter will imply a reset to the default value.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.delta_gamma_max".
+
    .. versionadded:: 6.1.0
 
 .. index::
@@ -2499,6 +2709,9 @@ is recomputed using the current :math:`\gamma` value.
       step while an input of 2 means it will be called called every other time
       step. If **msbp** is 0, the default value of 20 will be used. A negative
       value forces a linear solver step at each implicit stage.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.lsetup_frequency".
 
    .. versionadded:: 6.1.0
 
@@ -2541,6 +2754,9 @@ is recomputed using the current :math:`\gamma` value.
 
       This function must be called *after* the ARKLS system solver interface has
       been initialized through a call to :c:func:`ARKodeSetLinearSolver`.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.jac_eval_frequency".
 
    .. versionadded:: 6.1.0
 
@@ -2728,6 +2944,9 @@ data in the program. The user data pointer may be specified through
 
       Linear solution scaling is enabled by default when a matrix-based
       linear solver is attached.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.linear_solution_scaling".
 
    .. versionadded:: 6.1.0
 
@@ -3066,6 +3285,9 @@ the user through the :c:func:`ARKodeSetEpsLin` function.
       interface has been initialized through a call to
       :c:func:`ARKodeSetLinearSolver`.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.eps_lin".
+
    .. versionadded:: 6.1.0
 
 
@@ -3095,6 +3317,9 @@ the user through the :c:func:`ARKodeSetEpsLin` function.
 
       Passing a value *eplifac* :math:`\le 0` indicates to use the default value
       of 0.05.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.mass_eps_lin".
 
    .. versionadded:: 6.1.0
 
@@ -3144,6 +3369,9 @@ allow for additional user control over these conversion factors.
       This function must be called *after* the ARKLS system solver interface has
       been initialized through a call to :c:func:`ARKodeSetLinearSolver`.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.ls_norm_factor".
+
    .. versionadded:: 6.1.0
 
 
@@ -3176,6 +3404,9 @@ allow for additional user control over these conversion factors.
 
       This function must be called *after* the ARKLS mass matrix solver interface
       has been initialized through a call to :c:func:`ARKodeSetMassLinearSolver`.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.mass_ls_norm_factor".
 
    .. versionadded:: 6.1.0
 
@@ -3246,6 +3477,9 @@ Disable inactive root warnings          :c:func:`ARKodeSetNoInactiveRootWarn`  e
       (i.e., :math:`g_i` is zero at the initial time *and* after the
       first step), ARKODE will issue a warning which can be disabled with
       this optional input function.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.no_inactive_root_warn".
 
    .. versionadded:: 6.1.0
 
@@ -4828,6 +5062,9 @@ Output all ARKODE solver parameters   :c:func:`ARKodeWriteParameters`
       When run in parallel, only one process should set a non-NULL value
       for this pointer, since parameters for all processes would be
       identical.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.write_parameters".
 
    .. versionadded:: 6.1.0
 

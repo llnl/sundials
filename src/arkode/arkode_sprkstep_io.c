@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -21,6 +24,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <sundials/sundials_math.h>
 #include <sundials/sundials_types.h>
 
@@ -28,6 +32,9 @@
 #include "arkode/arkode_sprk.h"
 #include "arkode_sprkstep_impl.h"
 #include "arkode_types_impl.h"
+
+#include "sundials_cli.h"
+#include "sundials_utils.h"
 
 /*===============================================================
   Exported optional input functions.
@@ -193,6 +200,35 @@ int SPRKStepGetNumRhsEvals(void* arkode_mem, long int* nf1, long int* nf2)
 /*===============================================================
   Private functions attached to ARKODE
   ===============================================================*/
+
+/*---------------------------------------------------------------
+  sprkStep_SetOption:
+
+  Provides string-based control over SPRKStep-specific "set"
+  routines.
+  ---------------------------------------------------------------*/
+int sprkStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
+                        size_t offset, sunbooleantype* arg_used)
+{
+  /* Set lists of keys, and the corresponding set routines */
+  static const struct sunKeyCharPair char_pairs[] = {
+    {"method_name", SPRKStepSetMethodName}};
+  static const int num_char_keys = sizeof(char_pairs) / sizeof(*char_pairs);
+
+  /* check all "char" keys */
+  int j, retval;
+  retval = sunCheckAndSetCharArgs((void*)ark_mem, argidx, argv, offset,
+                                  char_pairs, num_char_keys, arg_used, &j);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "error setting key: %s", char_pairs[j].key);
+    return retval;
+  }
+  if (*arg_used) { return ARK_SUCCESS; }
+
+  return (ARK_SUCCESS);
+}
 
 /*---------------------------------------------------------------
   sprkStep_SetDefaults:

@@ -1,11 +1,14 @@
 /*
  * -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *                Radu Serban and Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -299,7 +302,7 @@ int CVBBDPrecInit(void* cvode_mem, sunindextype Nlocal, sunindextype mudq,
   }
   pdata->nge = 0;
 
-  /* make sure s_P_data is free from any previous allocations */
+  /* make sure P_data is free from any previous allocations */
   if (cvls_mem->pfree) { cvls_mem->pfree(cv_mem); }
 
   /* Point to the new P_data field in the LS memory */
@@ -458,7 +461,7 @@ int CVBBDPrecGetNumGfnEvals(void* cvode_mem, long int* ngevalsBBDP)
             jok == SUNFALSE means recompute Jacobian-related data
                    from scratch.
             jok == SUNTRUE  means that Jacobian data from the
-                   previous CVBBDPrecon call can be reused
+                   previous cvBBDPrecSetup call can be reused
                    (with the current value of gamma).
           A cvBBDPrecSetup call with jok == SUNTRUE should only occur
           after a call with jok == SUNFALSE.
@@ -671,7 +674,7 @@ static int cvBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
   ewt_data   = N_VGetArrayPointer(cv_mem->cv_ewt);
   ytemp_data = N_VGetArrayPointer(ytemp);
   gtemp_data = N_VGetArrayPointer(gtemp);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -696,7 +699,7 @@ static int cvBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
       yj  = y_data[j];
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -720,12 +723,13 @@ static int cvBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
     /* Restore ytemp, then form and load difference quotients */
     for (j = group - 1; j < pdata->n_local; j += width)
     {
-      yj = ytemp_data[j] = y_data[j];
-      col_j              = SUNBandMatrix_Column(pdata->savedJ, j);
+      yj            = y_data[j];
+      ytemp_data[j] = y_data[j];
+      col_j         = SUNBandMatrix_Column(pdata->savedJ, j);
       inc = SUNMAX(pdata->dqrely * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) as before. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)

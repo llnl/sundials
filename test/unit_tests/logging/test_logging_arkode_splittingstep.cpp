@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -106,11 +109,11 @@ int main(int argc, char* argv[])
   sunrealtype tret        = zero;
   sunrealtype tout        = tret + dtout;
 
-  const int width = numeric_limits<double>::digits10 + 8;
+  const int width = SUN_DIGITS10 + 8;
 
   // Output initial contion
   cout << scientific;
-  cout << setprecision(numeric_limits<double>::digits10);
+  cout << setprecision(SUN_DIGITS10);
   cout << setw(width) << " t";
   cout << setw(width) << " y";
   cout << setw(width) << " y err" << endl;

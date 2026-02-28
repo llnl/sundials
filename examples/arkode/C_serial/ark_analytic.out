@@ -1,8 +1,47 @@
 
 Analytical ODE test problem:
    lambda = -100
-   reltol = 1.0e-05
-   abstol = 1.0e-10
+
+ARKODE solver parameters:
+  Solver relative tolerance = 1e-05
+  Solver absolute tolerance = 1e-10
+
+  Maximum step increase (first step) = 10000
+  Step reduction factor on multiple error fails = 0.3
+  Minimum error fails before above factor is used = 2
+  Step reduction factor on nonlinear convergence failure = 0.25
+  Explicit safety factor = 0.5
+  Safety factor = 0.9
+  Growth factor = 20
+  Step growth lower bound = 1
+  Step growth upper bound = 1
+  No explicit stability function supplied
+Soderlind SUNAdaptController module:
+  k1 = 1
+  k2 = 0
+  k3 = 0
+  k4 = 0
+  k5 = 0
+  bias factor = 1
+  previous error = 1
+  previous-previous error = 1
+  previous step = 1
+  previous-previous step = 1
+  firststeps = 0
+  historysize = 0
+  Maximum number of error test failures = 7
+  Maximum number of convergence test failures = 10
+ARKStep time step module parameters:
+  Method order 4
+  Linear implicit problem (time-independent Jacobian)
+  Implicit integrator
+  Implicit predictor method = 0
+  Implicit solver tolerance coefficient = 0.1
+  Maximum number of nonlinear corrections = 3
+  Nonlinear convergence rate constant = 0.3
+  Nonlinear divergence tolerance = 2.3
+  Gamma factor LSetup tolerance = 2.22044604925031e-14
+  Number of steps between LSetup calls = 20
 
         t           u
    ---------------------

@@ -1,9 +1,12 @@
 /* -----------------------------------------------------------------
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
- * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+* SUNDIALS Copyright Start
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -385,8 +388,6 @@ static void PrintHeader(sunrealtype fnormtol, sunrealtype scsteptol)
   printf("  fnormtol  = %10.6Qg\n  scsteptol = %10.6Qg\n", fnormtol, scsteptol);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  fnormtol  = %10.6Lg\n  scsteptol = %10.6Lg\n", fnormtol, scsteptol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("  fnormtol  = %10.6g\n  scsteptol = %10.6g\n", fnormtol, scsteptol);
 #else
   printf("  fnormtol  = %10.6g\n  scsteptol = %10.6g\n", fnormtol, scsteptol);
 #endif
@@ -402,8 +403,6 @@ static void PrintOutput(N_Vector u)
   printf(" %8.6Qg  %8.6Qg\n", Ith(u, 1), Ith(u, 2));
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf(" %8.6Lg  %8.6Lg\n", Ith(u, 1), Ith(u, 2));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" %8.6g  %8.6g\n", Ith(u, 1), Ith(u, 2));
 #else
   printf(" %8.6g  %8.6g\n", Ith(u, 1), Ith(u, 2));
 #endif

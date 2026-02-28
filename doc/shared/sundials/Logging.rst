@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -34,10 +37,6 @@ corresponding to errors, warnings, info output, and debug output where errors <
 warnings < info output < debug output < extra debug output. By default only
 warning and error messages are logged.
 
-.. note::
-
-   As of version 7.0.0, enabling MPI in SUNDIALS enables MPI-aware logging.
-
 When SUNDIALS is built with logging enabled, then the default logger (stored in
 the :c:type:`SUNContext` object) may be configured through environment variables
 without any changes to user code. The available environment variables are:
@@ -50,47 +49,57 @@ without any changes to user code. The available environment variables are:
    SUNLOGGER_DEBUG_FILENAME
 
 These environment variables may be set to a filename string. There are two
-special filenames: ``stdout`` and ``stderr``. These two filenames will
-result in output going to the standard output file and standard error file.
-The different variables may all be set to the same file, or to distinct files,
-or some combination there of. To disable output for one of the streams, then
-do not set the environment variable, or set it to an empty string.
+special filenames: ``stdout`` and ``stderr``. These two filenames will result in
+output going to the standard output file and standard error file. For example,
+consider the CVODE Roberts example, where we can direct the informational output
+to the file ``sun.log`` as follows
 
+.. code-block::
+
+   SUNLOGGER_INFO_FILENAME=sun.log ./examples/cvode/serial/cvRoberts_dns
+
+The different environment variables may all be set to the same file, or to
+distinct files, or some combination there of. To disable output for one of the
+streams, then do not set the environment variable, or set it to an empty string.
 If :cmakeop:`SUNDIALS_LOGGING_LEVEL` was set at build-time to a level lower than
 the corresponding environment variable, then setting the environment variable
 will do nothing. For example, if the logging level is set to ``2`` (errors and
 warnings), setting ``SUNLOGGER_INFO_FILENAME`` will do nothing.
 
+Alternatively, the default logger can be accessed with
+:c:func:`SUNContext_GetLogger` and configured using the
+:ref:`SUNDIALS.Logging.API` or a user may create, configure, and attach a
+non-default logger using the :ref:`SUNDIALS.Logging.API`.
+
 .. warning::
 
-   A non-default logger should be created and attached to the context object prior
-   to any other SUNDIALS calls in order to capture all log events.
+   A non-default logger should be created and attached to the context object
+   prior to any other SUNDIALS calls in order to capture all log events.
+
+The following examples demonstrate how to use the logging interface via the C
+API:
+
+.. code-block::
+
+   examples/arkode/CXX_serial/ark_analytic_sys.cpp
+   examples/cvode/serial/cvAdvDiff_bnd.c
+   examples/cvode/parallel/cvAdvDiff_diag_p.c
+   examples/kinsol/CXX_parallel/kin_em_p.cpp
+   examples/kinsol/CUDA_mpi/kin_em_mpicuda.cpp
+
+.. _SUNDIALS.Logging.Output:
+
+Logging Output
+--------------
 
 Error or warning logs are a single line output with an error or warning message
+of the form
 
 .. code-block:: text
 
    [level][rank][scope][label] message describing the error or warning
 
-Informational or debugging logs are either a single line output with a
-comma-separated list of key-value pairs of the form
-
-.. code-block:: text
-
-   [level][rank][scope][label] key1 = value, key2 = value
-
-or multiline output with one value per line for keys corresponding to a vector
-or array e.g.,
-
-.. code-block:: text
-
-   [level][rank][scope][label] y(:) =
-   y[0]
-   y[1]
-   ...
-
-In the example log outputs above, the values in brackets have the following
-meaning:
+where the values in brackets have the following meaning:
 
 * ``level`` is the log level of the message and will be ``ERROR``, ``WARNING``,
   ``INFO``, or ``DEBUG``
@@ -104,11 +113,61 @@ meaning:
 * ``label`` provides additional context or information about the logging
   output e.g., ``begin-step``, ``end-linear-solve``, etc.
 
+Informational or debugging logs are either a single line output with a
+comma-separated list of key-value pairs of the form
+
+.. code-block:: text
+
+   [level][rank][scope][label] key1 = value1, key2 = value2
+
+or multiline output with one value per line for keys corresponding to a vector
+or array e.g.,
+
+.. code-block:: text
+
+   [level][rank][scope][label] y(:) =
+   y[0]
+   y[1]
+   ...
+
 .. note::
 
    When extra debugging output is enabled, the output will include vector values
    (so long as the :c:type:`N_Vector` used supports printing). Depending on the
    problem size, this may result in very large logging files.
+
+.. _SUNDIALS.Logging.Tools:
+
+Logging Tools
+-------------
+
+.. versionadded:: 7.2.0
+
+To assist with extracting data from logging output files, the ``tools``
+directory contains the ``suntools`` Python module which provides utilities for
+parsing log files in the ``logs`` sub-module.
+
+.. autofunction:: logs.log_file_to_list
+
+.. autofunction:: logs.print_log
+
+.. autofunction:: logs.get_history
+
+The ``tools`` directory also contains example scripts demonstrating how to use
+the log parsing functions to extract and plot data.
+
+* ``log_example_print.py`` -- parses a log file and prints the log file list.
+
+* ``log_example.py`` -- plots the step size, order, or error estimate history
+  from an ARKODE, CVODE(S), or IDA(S) log file.
+
+* ``log_example_mri.py`` -- plots the step size history from an ARKODE MRIStep
+  log file.
+
+For more details on using an example script, run the script with the ``--help``
+flag.
+
+.. _SUNDIALS.Logging.API:
 
 Logger API
 ----------
@@ -259,15 +318,6 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
-   .. warning::
-
-      When compiling for ANSI C / C89 / C90 (and without compiler extensions),
-      it is dangerous to pass any user input to this function because it falls
-      back to using ``sprintf`` with a fixed buffer size.
-
-      It is **highly recommended** to compile with C99 or newer if your compiler
-      does not support ``snprintf`` through extensions.
-
 
 .. c:function:: int SUNLogger_Flush(SUNLogger logger, SUNLogLevel lvl)
 
@@ -304,42 +354,3 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occur.
-
-
-.. _SUNDIALS.Logging.Example:
-
-Example Usage
--------------
-
-As noted above, enabling logging must be done when configuring SUNDIALS by
-setting the CMake option :cmakeop:`SUNDIALS_LOGGING_LEVEL` to the desired
-logging level. When running a program with SUNDIALS logging enabled, a default
-logger is created and attached to the :c:type:`SUNContext` instance at creation.
-Environment variables or run-time functions can be used to determine where the
-logging output is written. For example, consider the CVODE Roberts example, where
-we can direct the informational output to the file ``sun.log`` as follows
-
-.. code-block::
-
-   SUNDIALS_INFO_FILENAME=sun.log ./examples/cvode/serial/cvRoberts_dns
-
-Alternatively, the following examples demonstrate how to use the logging
-interface via the C API:
-
-.. code-block::
-
-   examples/arkode/CXX_serial/ark_analytic_sys.cpp
-   examples/cvode/serial/cvAdvDiff_bnd.c
-   examples/cvode/parallel/cvAdvDiff_diag_p.c
-   examples/kinsol/CXX_parallel/kin_em_p.cpp
-   examples/kinsol/CUDA_mpi/kin_em_mpicuda.cpp
-
-To assist with extracting informational logging data from output files the
-``tools`` directory contains a Python module, ``suntools``, that provides
-utilities for parsing log files. Some example scripts using the ``suntools``
-module are included in the ``tools`` directory. For example, we can plot the
-step size history from the CVODE Roberts problem with
-
-.. code-block::
-
-   ./log_example.py sun.log

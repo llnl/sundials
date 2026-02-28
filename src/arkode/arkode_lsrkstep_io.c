@@ -1,9 +1,12 @@
 /*---------------------------------------------------------------
- * Programmer(s): Mustafa Aggul @ SMU
+ * Programmer(s): Mustafa Aggul @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -17,11 +20,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
 #include <sundials/sundials_math.h>
 #include <sundials/sundials_types.h>
 
-#include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
 #include "arkode_lsrkstep_impl.h"
+
+#include "sundials_cli.h"
+#include "sundials_utils.h"
 
 /*===============================================================
   Exported optional input functions.
@@ -208,20 +216,9 @@ int LSRKStepSetDomEigFn(void* arkode_mem, ARKDomEigFn dom_eig)
   if (retval != ARK_SUCCESS) { return retval; }
 
   /* set the dom_eig routine pointer, and update relevant flags */
-  if (dom_eig != NULL)
-  {
-    step_mem->dom_eig_fn = dom_eig;
+  step_mem->dom_eig_fn = dom_eig;
 
-    return ARK_SUCCESS;
-  }
-  else
-  {
-    step_mem->dom_eig_fn = NULL;
-
-    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "Internal dom_eig is not supported yet!");
-    return ARK_ILL_INPUT;
-  }
+  return ARK_SUCCESS;
 }
 
 /*---------------------------------------------------------------
@@ -264,10 +261,10 @@ int LSRKStepSetDomEigFrequency(void* arkode_mem, long int nsteps)
 
 /*---------------------------------------------------------------
   LSRKStepSetMaxNumStages sets the maximum number of stages allowed.
-  If the combination of the maximum number of stages and the current 
-  time step size in the LSRKStep module does not allow for a stable 
-  step, the step routine returns to ARKODE for an updated (refined) 
-  step size. The number of such returns is tracked in a counter, 
+  If the combination of the maximum number of stages and the current
+  time step size in the LSRKStep module does not allow for a stable
+  step, the step routine returns to ARKODE for an updated (refined)
+  step size. The number of such returns is tracked in a counter,
   which can be accessed using ARKodeGetNumExpSteps.
   ---------------------------------------------------------------*/
 int LSRKStepSetMaxNumStages(void* arkode_mem, int stage_max_limit)
@@ -315,6 +312,73 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
     step_mem->dom_eig_safety = DOM_EIG_SAFETY_DEFAULT;
   }
   else { step_mem->dom_eig_safety = dom_eig_safety; }
+
+  return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
+  LSRKStepSetNumDomEigEstInitPreprocessIters sets the number of the preprocessing
+  iterations before the very first estimate call.
+  ---------------------------------------------------------------*/
+int LSRKStepSetNumDomEigEstInitPreprocessIters(void* arkode_mem, int num_iters)
+{
+  ARKodeMem ark_mem;
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeMem and ARKodeLSRKStepMem structures */
+  retval = lsrkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                        &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  /* This value will be used in lsrkStep_Init to set the number of preprocessing
+     iterations for the first dominant eigenvalue estimate. If num_iters < 0,
+     then the DEE's default will be used. */
+  step_mem->num_init_warmups = num_iters;
+
+  return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
+  LSRKStepSetNumDomEigEstPreprocessIters sets the number of the preprocessing
+  iterations before each estimate call after the initial estimate call.
+  ---------------------------------------------------------------*/
+int LSRKStepSetNumDomEigEstPreprocessIters(void* arkode_mem, int num_iters)
+{
+  ARKodeMem ark_mem;
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeMem and ARKodeLSRKStepMem structures */
+  retval = lsrkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                        &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  if (num_iters < 0) { step_mem->num_warmups = DOM_EIG_NUM_WARMUPS_DEFAULT; }
+  else { step_mem->num_warmups = num_iters; }
+
+  /* Set the number of iterations immediately (if possible) to allow the user to
+     can change the value at any time during the integration. This value will be
+     overridden for the first estimate by the value set with InitPreprocessIters
+     above then reset to the supplied value afterward.
+
+     A (perhaps pathological) corner case can occur where this value is not
+     applied if a user detaches the DEE, calls this function then attaches a new
+     DEE (or reattached the same DEE), and reinit is not called before
+     evolve. In that case, whatever value the DEE has will be used. This could
+     be avoided (with additional overhead) by calling SetNumPreprocessIters
+     before every Estimate call. */
+  if (step_mem->DEE)
+  {
+    retval = SUNDomEigEstimator_SetNumPreprocessIters(step_mem->DEE,
+                                                      step_mem->num_init_warmups);
+    if (retval != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                      "SUNDomeEigEstimator_SetNumPreprocessIters failed");
+      return ARK_DEE_FAIL;
+    }
+  }
 
   return ARK_SUCCESS;
 }
@@ -385,8 +449,8 @@ int LSRKStepSetNumSSPStages(void* arkode_mem, int num_of_stages)
       break;
 
     case ARKODE_LSRK_SSP_S_3:
-      /* The SSP3 method differs significantly when s = 4. Therefore, the case 
-      where num_of_stages = 4 is considered separately to avoid unnecessary 
+      /* The SSP3 method differs significantly when s = 4. Therefore, the case
+      where num_of_stages = 4 is considered separately to avoid unnecessary
       boolean checks and improve computational efficiency. */
 
       /* We check that num_of_stages is a perfect square. Note the call to sqrt
@@ -420,6 +484,58 @@ int LSRKStepSetNumSSPStages(void* arkode_mem, int num_of_stages)
       break;
     }
     step_mem->req_stages = num_of_stages;
+  }
+
+  return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
+  LSRKStepSetDomEigEstimator:
+
+  This routine sets the dominant eigenvalue estimator DEE.
+  ---------------------------------------------------------------*/
+int LSRKStepSetDomEigEstimator(void* arkode_mem, SUNDomEigEstimator DEE)
+{
+  ARKodeMem ark_mem;
+  ARKodeLSRKStepMem step_mem;
+
+  int retval;
+
+  /* access ARKodeMem and ARKodeLSRKStepMem structures */
+  retval = lsrkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                        &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  if (DEE == NULL)
+  {
+    step_mem->DEE = DEE;
+    return ARK_SUCCESS;
+  }
+
+  if (DEE->ops == NULL)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Null SUNDomEigEstimator operations structure");
+    return ARK_ILL_INPUT;
+  }
+
+  if (DEE->ops->estimate == NULL)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Null SUNDomEigEstimator estimate operation");
+    return ARK_ILL_INPUT;
+  }
+
+  /* Attach the DEE pointer to the step memory */
+  step_mem->DEE = DEE;
+
+  /* Set the ATimes function for the DEE with A_data = arkode_mem */
+  retval = SUNDomEigEstimator_SetATimes(DEE, arkode_mem, lsrkStep_DQJtimes);
+  if (retval != SUN_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                    "SUNDomEigEstimator_SetATimes failed");
+    return ARK_DEE_FAIL;
   }
 
   return ARK_SUCCESS;
@@ -487,9 +603,139 @@ int LSRKStepGetMaxNumStages(void* arkode_mem, int* stage_max)
   return ARK_SUCCESS;
 }
 
+/*---------------------------------------------------------------
+  LSRKStepGetNumDomEigEstRhsEvals:
+
+  Returns the number of RHS evals in DQ Jacobian computations
+  ---------------------------------------------------------------*/
+int LSRKStepGetNumDomEigEstRhsEvals(void* arkode_mem, long int* nfeDQ)
+{
+  ARKodeMem ark_mem;
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeMem and ARKodeLSRKStepMem structures */
+  retval = lsrkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                        &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  if (nfeDQ == NULL)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "nfeDQ cannot be NULL");
+    return ARK_ILL_INPUT;
+  }
+
+  /* get values from step_mem */
+  *nfeDQ = step_mem->nfeDQ;
+
+  return ARK_SUCCESS;
+}
+
+int LSRKStepGetNumDomEigEstIters(void* arkode_mem, long int* num_iters)
+{
+  ARKodeMem ark_mem;
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeMem and ARKodeLSRKStepMem structures */
+  retval = lsrkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                        &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  if (num_iters == NULL)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "num_iters cannot be NULL");
+    return ARK_ILL_INPUT;
+  }
+
+  /* get values from step_mem */
+  *num_iters = step_mem->num_dee_iters;
+
+  return ARK_SUCCESS;
+}
+
 /*===============================================================
   Private functions attached to ARKODE
   ===============================================================*/
+
+/*---------------------------------------------------------------
+  lsrkStep_SetOption:
+
+  Provides string-based control over LSRKStep-specific "set" routines.
+  ---------------------------------------------------------------*/
+int lsrkStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
+                        size_t offset, sunbooleantype* arg_used)
+{
+  /* Set lists of keys, and the corresponding set routines */
+  static const struct sunKeyCharPair char_pairs[] =
+    {{"sts_method_name", LSRKStepSetSTSMethodByName},
+     {"ssp_method_name", LSRKStepSetSSPMethodByName}};
+  static const int num_char_keys = sizeof(char_pairs) / sizeof(*char_pairs);
+
+  static const struct sunKeyLongPair long_pairs[] = {
+    {"dom_eig_frequency", LSRKStepSetDomEigFrequency}};
+  static const int num_long_keys = sizeof(long_pairs) / sizeof(*long_pairs);
+
+  static const struct sunKeyIntPair int_pairs[] =
+    {{"max_num_stages", LSRKStepSetMaxNumStages},
+     {"num_ssp_stages", LSRKStepSetNumSSPStages},
+     {"num_dom_eig_est_init_preprocess_iters",
+      LSRKStepSetNumDomEigEstInitPreprocessIters},
+     {"num_dom_eig_est_preprocess_iters", LSRKStepSetNumDomEigEstPreprocessIters}};
+  static const int num_int_keys = sizeof(int_pairs) / sizeof(*int_pairs);
+
+  static const struct sunKeyRealPair real_pairs[] = {
+    {"dom_eig_safety_factor", LSRKStepSetDomEigSafetyFactor}};
+  static const int num_real_keys = sizeof(real_pairs) / sizeof(*real_pairs);
+
+  /* check all "char" keys */
+  int j, retval;
+  retval = sunCheckAndSetCharArgs((void*)ark_mem, argidx, argv, offset,
+                                  char_pairs, num_char_keys, arg_used, &j);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "error setting key: %s", char_pairs[j].key);
+    return retval;
+  }
+  if (*arg_used) { return ARK_SUCCESS; }
+
+  /* check all "long int" keys */
+  retval = sunCheckAndSetLongArgs((void*)ark_mem, argidx, argv, offset,
+                                  long_pairs, num_long_keys, arg_used, &j);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "error setting key: %s", long_pairs[j].key);
+    return retval;
+  }
+  if (*arg_used) { return ARK_SUCCESS; }
+
+  /* check all "int" keys */
+  retval = sunCheckAndSetIntArgs((void*)ark_mem, argidx, argv, offset,
+                                 int_pairs, num_int_keys, arg_used, &j);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "error setting key: %s", int_pairs[j].key);
+    return retval;
+  }
+  if (*arg_used) { return ARK_SUCCESS; }
+
+  /* check all "real" keys */
+  retval = sunCheckAndSetRealArgs((void*)ark_mem, argidx, argv, offset,
+                                  real_pairs, num_real_keys, arg_used, &j);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "error setting key: %s", real_pairs[j].key);
+    return retval;
+  }
+
+  return (ARK_SUCCESS);
+}
 
 /*---------------------------------------------------------------
   lsrkStep_SetDefaults:
@@ -512,19 +758,11 @@ int lsrkStep_SetDefaults(ARKodeMem ark_mem)
   step_mem->req_stages = 0; /* no stages */
 
   /* Spectral info */
-  step_mem->lambdaR             = ZERO;
-  step_mem->lambdaI             = ZERO;
-  step_mem->spectral_radius     = ZERO;
-  step_mem->spectral_radius_max = ZERO;
-  step_mem->spectral_radius_min = ZERO;
-  step_mem->dom_eig_safety      = DOM_EIG_SAFETY_DEFAULT;
-  step_mem->dom_eig_freq        = DOM_EIG_FREQ_DEFAULT;
-
-  /* Flags */
-  step_mem->dom_eig_update     = SUNTRUE;
-  step_mem->const_Jac          = SUNFALSE;
-  step_mem->dom_eig_is_current = SUNFALSE;
-  step_mem->is_SSP             = SUNFALSE;
+  step_mem->dom_eig_safety   = DOM_EIG_SAFETY_DEFAULT;
+  step_mem->dom_eig_freq     = DOM_EIG_FREQ_DEFAULT;
+  step_mem->const_Jac        = SUNFALSE;
+  step_mem->num_init_warmups = DOM_EIG_NUM_INIT_WARMUPS_DEFAULT;
+  step_mem->num_warmups      = DOM_EIG_NUM_WARMUPS_DEFAULT;
 
   /* Load the default SUNAdaptController */
   retval = arkReplaceAdaptController(ark_mem, NULL, SUNTRUE);
@@ -557,6 +795,13 @@ int lsrkStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt
   {
     sunfprintf_long(outfile, fmt, SUNFALSE, "Number of dom_eig updates",
                     step_mem->dom_eig_num_evals);
+    if (step_mem->DEE != NULL)
+    {
+      sunfprintf_long(outfile, fmt, SUNFALSE, "Number of fe calls for DEE",
+                      step_mem->nfeDQ);
+      sunfprintf_long(outfile, fmt, SUNFALSE, "Number of iterations for DEE",
+                      step_mem->num_dee_iters);
+    }
     sunfprintf_long(outfile, fmt, SUNFALSE, "Max. num. of stages used",
                     step_mem->stage_max);
     sunfprintf_long(outfile, fmt, SUNFALSE, "Max. num. of stages allowed",
@@ -621,12 +866,20 @@ int lsrkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp)
   case SUNFALSE:
     fprintf(fp, "  Maximum number of stages allowed = %i\n",
             step_mem->stage_max_limit);
+    if (step_mem->DEE != NULL)
+    {
+      fprintf(fp, "  Number of fe calls for DEE = %li\n", step_mem->nfeDQ);
+    }
     fprintf(fp, "  Current spectral radius = " SUN_FORMAT_G "\n",
             step_mem->spectral_radius);
     fprintf(fp, "  Safety factor for the dom eig = " SUN_FORMAT_G "\n",
             step_mem->dom_eig_safety);
     fprintf(fp, "  Max num of successful steps before new dom eig update = %li\n",
             step_mem->dom_eig_freq);
+    fprintf(fp, "  Number of first preprocessing warmups = %i\n",
+            step_mem->num_init_warmups);
+    fprintf(fp, "  Number of subsequent preprocessing warmups = %i\n",
+            step_mem->num_warmups);
     fprintf(fp, "  Flag to indicate Jacobian is constant = %d\n",
             step_mem->const_Jac);
     break;

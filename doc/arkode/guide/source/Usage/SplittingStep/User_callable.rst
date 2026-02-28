@@ -2,8 +2,11 @@
    Programmer(s): Steven B. Roberts @ LLNL
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -82,7 +85,7 @@ SplittingStep initialization functions
    **Example codes:**
       * ``examples/arkode/C_serial/ark_advection_diffusion_reaction_splitting.c``
       * ``examples/arkode/C_serial/ark_analytic_partitioned.c``
-   
+
    .. versionadded:: 6.2.0
 
 
@@ -106,10 +109,15 @@ Optional inputs for IVP method selection
       related functions for creating splitting coefficients see
       :numref:`ARKODE.Usage.SplittingStep.SplittingStepCoefficients`.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.splitting_coefficients_name", where ``coefficients``
+      is itself constructed by passing the command-line option to
+      :c:func:`SplittingStepCoefficients_LoadCoefficientsByName`.
+
    .. warning::
 
       This should not be used with :c:func:`ARKodeSetOrder`.
-   
+
    .. versionadded:: 6.2.0
 
 
@@ -133,7 +141,7 @@ Optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the SplittingStep memory was ``NULL``
    :retval ARK_ILL_INPUT: if *partition* was out of bounds
-   
+
    .. versionadded:: 6.2.0
 
 
@@ -208,5 +216,5 @@ the ODE and the :c:type:`SUNStepper` objects used to evolve each partition.
       will be reset since they are no longer compatible. Otherwise, all
       previously set options are retained but may be updated by calling the
       appropriate "Set" functions.
-   
+
    .. versionadded:: 6.2.0

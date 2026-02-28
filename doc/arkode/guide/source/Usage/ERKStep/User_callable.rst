@@ -1,9 +1,12 @@
 .. ----------------------------------------------------------------
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -934,7 +937,10 @@ Optional inputs for IVP method selection
    **Warning:**
       This should not be used with :c:func:`ARKodeSetOrder`.
 
+   .. note::
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.table_name".
 
 
 .. _ARKODE.Usage.ERKStep.ERKStepAdaptivityInput:
@@ -1122,7 +1128,7 @@ the code, is provided in :numref:`ARKODE.Mathematics.Adaptivity`.
    .. deprecated:: 5.7.0
 
       Use the SUNAdaptController infrastructure instead (see :numref:`SUNAdaptController.Description`).
-      
+
    .. versionchanged:: 6.3.0
 
       The default value was changed from 1.5 to 1.0
@@ -1149,7 +1155,7 @@ the code, is provided in :numref:`ARKODE.Mathematics.Adaptivity`.
    .. deprecated:: 6.1.0
 
       Use :c:func:`ARKodeSetFixedStepBounds` instead.
-      
+
    .. versionchanged:: 6.3.0
 
       The default upper bound was changed from 1.5 to 1.0
@@ -1274,7 +1280,7 @@ the code, is provided in :numref:`ARKODE.Mathematics.Adaptivity`.
    .. deprecated:: 6.1.0
 
       Use :c:func:`ARKodeSetSafetyFactor` instead.
-      
+
    .. versionchanged:: 6.3.0
 
       The default default was changed from 0.96 to 0.9. The maximum value is now

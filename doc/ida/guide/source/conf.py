@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -16,6 +19,9 @@ sys.path.append(os.path.dirname(os.path.abspath("../../../shared/sundials_vars.p
 from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../../shared")))
+
+# Add suntools directory to import python function docstings with autodoc
+sys.path.append(os.path.abspath("../../../../tools/suntools"))
 
 # -- General configuration ----------------------------------------------------
 
@@ -37,6 +43,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinx_copybutton",
     "sphinx_sundials",
+    "sphinx.ext.autodoc",
 ]
 
 intersphinx_mapping = {

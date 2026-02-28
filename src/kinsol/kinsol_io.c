@@ -3,8 +3,11 @@
  *                Aaron Collier, Shelby Lockhart @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -19,11 +22,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <sundials/sundials_math.h>
 #include <sundials/sundials_types.h>
 
 #include "kinsol_impl.h"
 #include "kinsol_ls_impl.h"
+#include "sundials_utils.h"
 
 #define ZERO      SUN_RCONST(0.0)
 #define POINT1    SUN_RCONST(0.1)
@@ -129,8 +134,9 @@ int KINSetMAA(void* kinmem, long int maa)
     return (KIN_ILL_INPUT);
   }
 
-  if (maa > kin_mem->kin_mxiter) { maa = kin_mem->kin_mxiter; }
-
+  // To allow for setting the depth and max number of iterations in any order we
+  // do not limit maa here and instead enforce maa < mxiter in the AA
+  // initialization function (KINInitAA)
   kin_mem->kin_m_aa = maa;
 
   return (KIN_SUCCESS);

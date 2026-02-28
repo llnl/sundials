@@ -1,9 +1,12 @@
 .. ----------------------------------------------------------------
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -410,6 +413,8 @@ contains the ARKODE output constants.
    |                                     |      | integration.                                               |
    +-------------------------------------+------+------------------------------------------------------------+
    | :index:`ARK_SUNADJSTEPPER_ERR`      | -55  | An error occurred in the SUNAdjStepper module.             |
+   +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_DEE_FAIL`               | -56  | An error occurred in the SUNDomEigEstimator module.        |
    +-------------------------------------+------+------------------------------------------------------------+
    | :index:`ARK_UNRECOGNIZED_ERROR`     | -99  | An unknown error was encountered.                          |
    +-------------------------------------+------+------------------------------------------------------------+

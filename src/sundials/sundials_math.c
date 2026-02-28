@@ -3,8 +3,11 @@
  *                Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -68,7 +71,7 @@ sunbooleantype SUNRCompareTol(sunrealtype a, sunrealtype b, sunrealtype tol)
    *    |a - b| < tol * |a + b|
    * The choice to use |a + b| over max(a, b) is arbitrary, as is the choice to
    * use 10*SUN_UNIT_ROUNDOFF.
-   * 
+   *
    * In order to handle NANs correctly without explicit checks of isnan or
    * isunordered (which throw warnings for some compilers and flags), we use
    * !isless. The seemingly equivalent >= can have undefined behavior for NANs.

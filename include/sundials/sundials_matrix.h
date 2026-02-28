@@ -1,11 +1,14 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel Reynolds @ SMU
+ * Programmer(s): Daniel Reynolds @ UMBC
  *                David Gardner, Carol Woodward, Slaven Peles,
  *                Cody Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -57,7 +60,7 @@ extern "C" {
  * Implemented SUNMatrix types
  * ----------------------------------------------------------------- */
 
-typedef enum
+enum SUNMatrix_ID
 {
   SUNMATRIX_DENSE,
   SUNMATRIX_MAGMADENSE,
@@ -67,9 +70,14 @@ typedef enum
   SUNMATRIX_SLUNRLOC,
   SUNMATRIX_CUSPARSE,
   SUNMATRIX_GINKGO,
+  SUNMATRIX_GINKGOBATCH,
   SUNMATRIX_KOKKOSDENSE,
   SUNMATRIX_CUSTOM
-} SUNMatrix_ID;
+};
+
+#ifndef SWIG
+typedef enum SUNMatrix_ID SUNMatrix_ID;
+#endif
 
 /* -----------------------------------------------------------------
  * Generic definition of SUNMatrix

@@ -1,9 +1,12 @@
 ..
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -27,7 +30,7 @@ Serial C++ example problems
 ark_analytic_sys
 ===============================================
 
-This example demonstrates the use of ARKode's fully implicit solver on
+This example demonstrates the use of ARKODE's fully implicit solver on
 a stiff ODE system that has a simple analytical solution.  The problem
 is that of a linear ODE system,
 
@@ -83,7 +86,7 @@ Solutions
 ---------
 
 This problem is included both as a simple example to test systems of
-ODE within ARKode on a problem having an analytical solution,
+ODE within ARKODE on a problem having an analytical solution,
 :math:`Y(t) = V e^{Dt} V^{-1} Y(0)`.  As seen in the plots below, the
 computed solution tracks the analytical solution quite well (left),
 and results in errors with exactly the magnitude as specified by the

@@ -1,9 +1,12 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -22,7 +25,7 @@ set(sunlinsol_spfgmr_examples
     "test_sunlinsol_spfgmr_parallel\;100 1 50 1e-3 0\;1\;4\;"
     "test_sunlinsol_spfgmr_parallel\;100 2 50 1e-3 0\;1\;4\;")
 
-# Dependencies for nvector examples
+# Dependencies for sunlinsol examples
 set(sunlinsol_spfgmr_dependencies test_sunlinsol)
 
 # Add source directory to include directories
@@ -79,57 +82,4 @@ foreach(example_tuple ${sunlinsol_spfgmr_examples})
     EXAMPLE_TYPE ${example_type}
     NODIFF)
 
-  # add example to regression tests
-  if(EXAMPLES_INSTALL)
-    install(FILES ${example}.c ../../test_sunlinsol.h ../../test_sunlinsol.c
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/spfgmr/parallel)
-  endif()
-
 endforeach(example_tuple ${sunlinsol_spfgmr_examples})
-
-if(EXAMPLES_INSTALL)
-
-  # Install the README file
-  install(FILES DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/spfgmr/parallel)
-
-  # Prepare substitution variables for Makefile and/or CMakeLists templates
-  set(SOLVER_LIB "sundials_sunlinsolspfgmr")
-
-  examples2string(sunlinsol_spfgmr_examples EXAMPLES)
-  examples2string(sunlinsol_spfgmr_dependencies EXAMPLES_DEPENDENCIES)
-
-  # Regardless of the platform we're on, we will generate and install
-  # CMakeLists.txt file for building the examples. This file  can then be used
-  # as a template for the user's own programs.
-
-  # generate CMakelists.txt in the binary directory
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_parallel_C_ex.in
-    ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/spfgmr/parallel/CMakeLists.txt
-    @ONLY)
-
-  # install CMakelists.txt
-  install(
-    FILES
-      ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/spfgmr/parallel/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/spfgmr/parallel)
-
-  # On UNIX-type platforms, we also  generate and install a makefile for
-  # building the examples. This makefile can then be used as a template for the
-  # user's own programs.
-
-  if(UNIX)
-    # generate Makefile and place it in the binary dir
-    configure_file(
-      ${PROJECT_SOURCE_DIR}/examples/templates/makefile_parallel_C_ex.in
-      ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/spfgmr/parallel/Makefile_ex
-      @ONLY)
-    # install the configured Makefile_ex as Makefile
-    install(
-      FILES
-        ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/spfgmr/parallel/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/spfgmr/parallel
-      RENAME Makefile)
-  endif()
-
-endif()

@@ -1,10 +1,13 @@
 ! ------------------------------------------------------------------
-! Programmer(s): Daniel R. Reynolds @ SMU
-!                modified by Daniel M. Margolis @ SMU
+! Programmer(s): Daniel R. Reynolds @ UMBC
+!                modified by Daniel M. Margolis @ UMBC
 ! ------------------------------------------------------------------
 ! SUNDIALS Copyright Start
-! Copyright (c) 2002-2025, Lawrence Livermore National Security
+! Copyright (c) 2025-2026, Lawrence Livermore National Security,
+! University of Maryland Baltimore County, and the SUNDIALS contributors.
+! Copyright (c) 2013-2025, Lawrence Livermore National Security
 ! and Southern Methodist University.
+! Copyright (c) 2002-2013, Lawrence Livermore National Security.
 ! All rights reserved.
 !
 ! See the top-level LICENSE and NOTICE files for details.
@@ -29,7 +32,7 @@ module kinDiagonKry_mod
 
   !======= Inclusions ===========
   use, intrinsic :: iso_c_binding
-  use fsundials_core_mod
+  use fsundials_core_mod ! access sundials types
 
   !======= Declarations =========
   implicit none
@@ -44,18 +47,11 @@ module kinDiagonKry_mod
   integer, parameter :: myindextype = selected_int_kind(16)
 #endif
 
+  ! number of equations
   integer(kind=myindextype), parameter :: neq = 128
 
-  integer(c_int)  :: ierr, retval
-  integer(c_int64_t) :: i
-  real(c_double), pointer, dimension(neq) :: u(:), scale(:), constr(:)
-  real(c_double)             :: p(neq)
-  integer(c_int), parameter :: prectype = 2
-  integer(c_int), parameter :: maxl = 10
-  integer(c_int), parameter :: maxlrst = 2
-  integer(c_long), parameter :: msbpre = 5
-  real(c_double), parameter :: fnormtol = 1.0d-5
-  real(c_double), parameter :: scsteptol = 1.0d-4
+  ! reciprocal of the Jacobian diagonal
+  real(c_double) :: p(neq)
 
 contains
 
@@ -72,13 +68,17 @@ contains
     type(N_Vector) :: sunvec_s  ! scaling N_Vector
     type(N_Vector) :: sunvec_c  ! constraint N_Vector
 
+    ! local variables
+    integer(c_int64_t) :: i
+
+    ! pointers to data arrays in SUNDIALS vectors
+    real(c_double), pointer, dimension(neq) :: u(:), scale(:), constr(:)
+
     u(1:neq) => FN_VGetArrayPointer(sunvec_u)
     scale(1:neq) => FN_VGetArrayPointer(sunvec_s)
     constr(1:neq) => FN_VGetArrayPointer(sunvec_c)
 
-    ! -------------------------
-    ! Set initial guess, and disable scaling
-
+    ! Set initial guess, disable scaling and constraints
     do i = 1, neq
       u(i) = 2.0d0*dble(i)
     end do
@@ -86,7 +86,6 @@ contains
     constr = 0.0d0
 
   end subroutine init
-  ! ----------------------------------------------------------------
 
   ! ----------------------------------------------------------------
   ! func: The nonlinear residual function
@@ -107,6 +106,9 @@ contains
     type(N_Vector)     :: sunvec_f  ! LHS N_Vector
     type(c_ptr), value :: user_data ! user-defined data
 
+    ! local variables
+    integer(c_int64_t) :: i
+
     ! pointers to data in SUNDIALS vectors
     real(c_double), pointer, dimension(neq) :: uu(:), ff(:)
 
@@ -118,8 +120,6 @@ contains
 
     ! loop over domain, computing our system f(u) = 0
     do i = 1, neq
-
-      ! applying the constraint f(u) = u(i)^2 - i^2
       ff(i) = uu(i)*uu(i) - dble(i*i)
     end do
 
@@ -128,7 +128,6 @@ contains
     return
 
   end function func
-  ! ----------------------------------------------------------------
 
   ! ----------------------------------------------------------------
   ! kpsetup: The KINSOL Preconditioner setup function
@@ -151,18 +150,19 @@ contains
     type(N_Vector)     :: sunvec_fs ! LHS scaling N_Vector
     type(c_ptr), value :: user_data ! user-defined data
 
+    ! loop counter
+    integer(c_int64_t) :: i
+
     ! pointers to data in SUNDIALS vectors
     real(c_double), pointer, dimension(neq) :: udata(:)
 
     !======= Internals ============
 
-    ! get data arrays from SUNDIALS vectors
+    ! get the data array from the SUNDIALS vector
     udata(1:neq) => FN_VGetArrayPointer(sunvec_u)
 
-    ! loop over domain
+    ! setup preconditioner
     do i = 1, neq
-
-      ! setup preconditioner
       p(i) = 0.5d0/(udata(i) + 5.0d0)
     end do
 
@@ -171,7 +171,6 @@ contains
     return
 
   end function kpsetup
-  ! ----------------------------------------------------------------
 
   ! ----------------------------------------------------------------
   ! kpsolve: The KINSOL Preconditioner solve function
@@ -195,6 +194,9 @@ contains
     type(N_Vector)     :: sunvec_v  ! LHS scaling N_Vector
     type(c_ptr), value :: user_data ! user-defined data
 
+    ! loop counter
+    integer(c_int64_t) :: i
+
     ! pointers to data in SUNDIALS vectors
     real(c_double), pointer, dimension(neq) :: v(:)
 
@@ -202,10 +204,8 @@ contains
     ! get data arrays from SUNDIALS vectors
     v(1:neq) => FN_VGetArrayPointer(sunvec_v)
 
-    ! loop over domain
+    ! preconditioner solver
     do i = 1, neq
-
-      ! preconditioner solver
       v(i) = v(i)*p(i)
     end do
 
@@ -214,10 +214,8 @@ contains
     return
 
   end function kpsolve
-  ! ----------------------------------------------------------------
 
 end module kinDiagonKry_mod
-! ------------------------------------------------------------------
 
 ! ------------------------------------------------------------------
 ! Main driver program
@@ -233,36 +231,40 @@ program main
   !======= Declarations =========
   implicit none
 
+  integer(c_int), parameter :: prectype = SUN_PREC_RIGHT ! right precondition
+  integer(c_int), parameter :: maxl = 10                 ! Krylov space size
+  integer(c_int), parameter :: maxlrst = 2               ! number of restarts
+  integer(c_long), parameter :: msbpre = 5               ! iters between setups
+  real(c_double), parameter :: fnormtol = 1.0d-5         ! residual tol
+  real(c_double), parameter :: scsteptol = 1.0d-4        ! scaled step tol
+
   ! local variables
-  real(c_double)  :: ftol
-
-  type(c_ptr)                    :: sunctx        ! sundials context
-  type(N_Vector), pointer :: sunvec_u      ! sundials vectors
-  type(N_Vector), pointer :: sunvec_s      ! sundials vectors
-  type(N_Vector), pointer :: sunvec_c      ! sundials vectors
-  type(SUNMatrix), pointer :: sunmat_J      ! sundials matrix
-  type(SUNLinearSolver), pointer :: sunlinsol_LS  ! sundials linear solver
-
-  type(c_ptr) :: kmem ! KINSOL memory
+  integer(c_int)          :: retval
+  type(c_ptr)             :: sunctx               ! sundials context
+  type(N_Vector), pointer :: sunvec_u             ! solution vector
+  type(N_Vector), pointer :: sunvec_s             ! scaling vector
+  type(N_Vector), pointer :: sunvec_c             ! constraint vector
+  type(SUNMatrix), pointer :: sunmat_J            ! Jacobian matrix
+  type(SUNLinearSolver), pointer :: sunlinsol_LS  ! linear solver
+  type(c_ptr) :: kmem                             ! KINSOL memory
 
   !======= Internals ============
 
   ! -------------------------
   ! Print problem description
 
-  print *, " "
-  print *, "Example program fkinDiagon_kry:"
-  print *, "   This FKINSOL example solves a 128 eqn diagonal algebraic system."
-  print *, " Its purpose is to demonstrate the use of the Fortran interface in"
-  print *, " a serial environment."
-  print *, " "
-  print *, "Solution method: KIN_none"
-  print '(a,i3)', "Problem size: neq = ", neq
+  print '(a)', "Example program kinDiagon_kry_f2003:"
+  print '(a)', ""
+  print '(a)', "This example demonstrates using the KINSOL Fortran interface to"
+  print '(a)', "solve a diagonal algebraic system using a Newton-Krylov method"
+  print '(a)', "with a diagonal preconditioner in a serial environment."
+  print '(a)', ""
+  print '(a,i3)', "Problem size: ", neq
 
   ! -------------------------
   retval = FSUNContext_Create(SUN_COMM_NULL, sunctx)
   if (retval /= 0) then
-    print *, 'ERROR in FSUNContext_Create'
+    print *, 'Error in FSUNContext_Create'
     stop 1
   end if
 
@@ -280,7 +282,7 @@ program main
 
   kmem = FKINCreate(sunctx)
   if (.not. c_associated(kmem)) then
-    print *, 'ERROR: kmem = NULL'
+    print *, 'Error kmem = NULL'
     stop 1
   end if
 
@@ -301,8 +303,7 @@ program main
     stop 1
   end if
 
-  ftol = fnormtol
-  retval = FKINSetFuncNormTol(kmem, ftol)
+  retval = FKINSetFuncNormTol(kmem, fnormtol)
   if (retval /= 0) then
     print *, 'Error in FKINSetFuncNormTol, retval = ', retval, '; halting'
     stop 1
@@ -325,7 +326,7 @@ program main
 
   sunlinsol_LS => FSUNLinSol_SPGMR(sunvec_u, prectype, maxl, sunctx)
   if (.not. associated(sunlinsol_LS)) then
-    print *, 'ERROR: sunlinsol = NULL'
+    print *, 'Error sunlinsol = NULL'
     stop 1
   end if
 
@@ -376,8 +377,8 @@ program main
   ! -------------------------
   ! Print solution and solver statistics
 
-  print *, " "
-  call PrintOutput(u)
+  print '(a)', ""
+  call PrintOutput(sunvec_u)
   call PrintFinalStats(kmem)
 
   ! clean up
@@ -389,12 +390,11 @@ program main
   retval = FSUNContext_Free(sunctx)
 
 end program main
-! ----------------------------------------------------------------
 
 ! ----------------------------------------------------------------
-! PrintOutput: prints solution at selected points
+! Print solution at selected points
 ! ----------------------------------------------------------------
-subroutine PrintOutput(uu)
+subroutine PrintOutput(sunvec_u)
 
   !======= Inclusions ===========
   use kinDiagonKry_mod
@@ -402,10 +402,16 @@ subroutine PrintOutput(uu)
   !======= Declarations =========
   implicit none
 
-  ! calling variable
-  real(c_double), dimension(neq) :: uu
+  ! calling variables
+  type(N_Vector) :: sunvec_u
+
+  ! local variables
+  real(c_double), pointer, dimension(neq) :: uu(:)
+  integer(c_int64_t) :: i
 
   !======= Internals ============
+
+  uu(1:neq) => FN_VGetArrayPointer(sunvec_u)
 
   do i = 1, neq, 4
     print '(i4, 4(1x, f10.6))', i, uu(i), uu(i + 1), uu(i + 2), uu(i + 3)
@@ -414,11 +420,8 @@ subroutine PrintOutput(uu)
   return
 
 end subroutine PrintOutput
-! ----------------------------------------------------------------
 
 ! ----------------------------------------------------------------
-! PrintFinalStats
-!
 ! Print KINSOL statstics to standard out
 ! ----------------------------------------------------------------
 subroutine PrintFinalStats(kmemo)
@@ -475,9 +478,9 @@ subroutine PrintFinalStats(kmemo)
     stop 1
   end if
 
-  print *, ' '
-  print *, 'Final Statistics..'
-  print *, ' '
+  print '(a)', ''
+  print '(a)', 'Final Statistics..'
+  print '(a)', ''
   print '(2(A,i6))', 'nni      =', nni, '    nli     =', nli
   print '(2(A,i6))', 'nfe      =', nfe, '    npe     =', npe
   print '(2(A,i6))', 'nps      =', nps, '    nlcf    =', ncfl
@@ -485,4 +488,3 @@ subroutine PrintFinalStats(kmemo)
   return
 
 end subroutine PrintFinalStats
-! ----------------------------------------------------------------

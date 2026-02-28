@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner, and Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -86,11 +89,15 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
  * SUNNonlinearSolver types
  * ---------------------------------------------------------------------------*/
 
-typedef enum
+enum SUNNonlinearSolver_Type
 {
   SUNNONLINEARSOLVER_ROOTFIND,
   SUNNONLINEARSOLVER_FIXEDPOINT
-} SUNNonlinearSolver_Type;
+};
+
+#ifndef SWIG
+typedef enum SUNNonlinearSolver_Type SUNNonlinearSolver_Type;
+#endif
 
 /* -----------------------------------------------------------------------------
  * Generic definition of SUNNonlinearSolver
@@ -109,6 +116,8 @@ struct _generic_SUNNonlinearSolver_Ops
   SUNErrCode (*setlsetupfn)(SUNNonlinearSolver, SUNNonlinSolLSetupFn);
   SUNErrCode (*setlsolvefn)(SUNNonlinearSolver, SUNNonlinSolLSolveFn);
   SUNErrCode (*setctestfn)(SUNNonlinearSolver, SUNNonlinSolConvTestFn, void*);
+  SUNErrCode (*setoptions)(SUNNonlinearSolver NLS, const char* NLSid,
+                           const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNNonlinearSolver, int);
   SUNErrCode (*getnumiters)(SUNNonlinearSolver, long int*);
   SUNErrCode (*getcuriter)(SUNNonlinearSolver, int*);
@@ -121,6 +130,7 @@ struct _generic_SUNNonlinearSolver_Ops
 struct _generic_SUNNonlinearSolver
 {
   void* content;
+  void* python;
   SUNNonlinearSolver_Ops ops;
   SUNContext sunctx;
 };
@@ -169,6 +179,10 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetConvTestFn(SUNNonlinearSolver NLS,
                                      SUNNonlinSolConvTestFn CTestFn,
                                      void* ctest_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,
+                                  const char* file_name, int argc, char* argv[]);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetMaxIters(SUNNonlinearSolver NLS, int maxiters);

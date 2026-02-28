@@ -1,9 +1,12 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -101,19 +104,19 @@ foreach(test_tuple ${unit_tests})
     # their visibility in the installed libraries.
     target_link_libraries(
       ${test_target}
-      $<TARGET_OBJECTS:sundials_arkode_obj>
-      sundials_sunmemsys_obj
-      sundials_nvecserial_obj
-      sundials_nvecmanyvector_obj
-      sundials_sunlinsolband_obj
-      sundials_sunlinsoldense_obj
-      sundials_sunnonlinsolnewton_obj
-      sundials_sunnonlinsolfixedpoint_obj
-      sundials_sunadaptcontrollerimexgus_obj
-      sundials_sunadaptcontrollersoderlind_obj
-      sundials_sunadaptcontrollermrihtol_obj
-      sundials_adjointcheckpointscheme_fixed_obj
-      ${EXE_EXTRA_LINK_LIBS})
+      PRIVATE $<TARGET_OBJECTS:sundials_arkode_obj>
+              sundials_sunmemsys_obj
+              sundials_nvecserial_obj
+              sundials_nvecmanyvector_obj
+              sundials_sunlinsolband_obj
+              sundials_sunlinsoldense_obj
+              sundials_sunnonlinsolnewton_obj
+              sundials_sunnonlinsolfixedpoint_obj
+              sundials_sunadaptcontrollerimexgus_obj
+              sundials_sunadaptcontrollersoderlind_obj
+              sundials_sunadaptcontrollermrihtol_obj
+              sundials_adjointcheckpointscheme_fixed_obj
+              ${EXE_EXTRA_LINK_LIBS})
 
     # Tell CMake that we depend on the ARKODE library since it does not pick
     # that up from $<TARGET_OBJECTS:sundials_arkode_obj>.

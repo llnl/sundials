@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -479,6 +482,11 @@ Optional inputs for IVP method selection
    :retval ARK_MEM_NULL: if the SPRKStep memory is ``NULL``
    :retval ARK_ILL_INPUT: if an argument had an illegal value
 
+   .. note::
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.method_name".
+
    .. warning::
 
       This should not be used with :c:func:`ARKodeSetOrder`.
@@ -504,7 +512,6 @@ Optional inputs for IVP method selection
    .. deprecated:: 6.4.0
 
       Use :c:func:`ARKodeSetUseCompensatedSums` instead.
-
 
 
 .. _ARKODE.Usage.SPRKStep.SPRKStepRootfindingInput:

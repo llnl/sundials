@@ -3,8 +3,11 @@
  *                David Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -155,6 +158,10 @@ int main(int argc, char* argv[])
     void* kin_mem = KINCreate(sunctx);
     if (check_retval((void*)kin_mem, "KINCreate", 0)) { return 1; }
 
+    // Set Fixed Point Function
+    retval = KINInit(kin_mem, FPFunction, u);
+    if (check_retval(&retval, "KINInit", 1)) { return 1; }
+
     // Set number of prior residuals used in Anderson Acceleration
     retval = KINSetMAA(kin_mem, udata->maa);
     if (check_retval(&retval, "KINSetMAA", 0)) { return 1; }
@@ -162,10 +169,6 @@ int main(int argc, char* argv[])
     // Set orthogonlization routine used in Anderson Acceleration
     retval = KINSetOrthAA(kin_mem, udata->orthaa);
     if (check_retval(&retval, "KINSetOrthAA", 0)) { return 1; }
-
-    // Set Fixed Point Function
-    retval = KINInit(kin_mem, FPFunction, u);
-    if (check_retval(&retval, "KINInit", 1)) { return 1; }
 
     // Specify tolerances
     retval = KINSetFuncNormTol(kin_mem, udata->rtol);
@@ -244,7 +247,7 @@ int main(int argc, char* argv[])
     if (outproc)
     {
       cout << scientific;
-      cout << setprecision(numeric_limits<double>::digits10);
+      cout << setprecision(SUN_DIGITS10);
       cout << "  Max error = " << maxerr << endl;
       cout << endl;
     }
@@ -1445,7 +1448,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   udata->uout.open(fname.str());
 
   udata->uout << scientific;
-  udata->uout << setprecision(numeric_limits<double>::digits10);
+  udata->uout << setprecision(SUN_DIGITS10);
 
   // Write solution and error to disk
   sunrealtype* uarray = N_VGetArrayPointer(u);
@@ -1479,7 +1482,7 @@ static int OpenOutput(UserData* udata)
     udata->rout.open(fname.str());
 
     udata->rout << scientific;
-    udata->rout << setprecision(numeric_limits<double>::digits10);
+    udata->rout << setprecision(SUN_DIGITS10);
 
     // Open output stream for error
     fname.str("");
@@ -1488,7 +1491,7 @@ static int OpenOutput(UserData* udata)
     udata->eout.open(fname.str());
 
     udata->eout << scientific;
-    udata->eout << setprecision(numeric_limits<double>::digits10);
+    udata->eout << setprecision(SUN_DIGITS10);
   }
 
   return 0;

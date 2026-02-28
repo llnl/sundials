@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -209,7 +212,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
        Perform Newton iteration */
   for (;;)
   {
-    SUNLogInfo(NLS->sunctx->logger, "begin-nonlinear-iterate", "");
+    SUNLogInfo(NLS->sunctx->logger, "begin-iterations-list", "");
 
     /* initialize current iteration counter for this solve attempt */
     NEWTON_CONTENT(NLS)->curiter = 0;
@@ -250,15 +253,15 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
 
       NEWTON_CONTENT(NLS)->curiter++;
 
-      SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
-                 "cur-iter = %i, total-iters = %li, update-norm = " SUN_FORMAT_G ,
+      SUNLogInfo(NLS->sunctx->logger,
+                 "nonlinear-iterate", "cur-iter = %i, total-iters = %li, update-norm = " SUN_FORMAT_G,
                  NEWTON_CONTENT(NLS)->curiter, NEWTON_CONTENT(NLS)->niters,
                  N_VWrmsNorm(delta, w));
 
       /* if successful update Jacobian status and return */
       if (retval == SUN_SUCCESS)
       {
-        SUNLogInfo(NLS->sunctx->logger, "end-nonlinear-iterate",
+        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
                    "status = success");
         NEWTON_CONTENT(NLS)->jcur = SUNFALSE;
         return SUN_SUCCESS;
@@ -274,9 +277,8 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
         break;
       }
 
-      SUNLogInfo(NLS->sunctx->logger, "end-nonlinear-iterate",
-                 "status = continue");
-      SUNLogInfo(NLS->sunctx->logger, "begin-nonlinear-iterate", "");
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = continue");
+      SUNLogInfo(NLS->sunctx->logger, "begin-iterations-list", "");
 
       /* compute the nonlinear residual, store in delta */
       retval = NEWTON_CONTENT(NLS)->Sys(ycor, delta, mem);
@@ -299,14 +301,13 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       N_VConst(ZERO, ycor);
       SUNCheckLastErr();
 
-      SUNLogInfo(NLS->sunctx->logger, "end-nonlinear-iterate",
-                 "status = continue");
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = continue");
 
       continue;
     }
     else
     {
-      SUNLogInfo(NLS->sunctx->logger, "end-nonlinear-iterate",
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
                  "status = failure, retval = %i", retval);
       break;
     }

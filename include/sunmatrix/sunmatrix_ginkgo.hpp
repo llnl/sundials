@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -28,6 +31,10 @@
 namespace sundials {
 namespace ginkgo {
 
+using GkoDenseMat = gko::matrix::Dense<sunrealtype>;
+using GkoCsrMat   = gko::matrix::Csr<sunrealtype, sunindextype>;
+using GkoVecType  = GkoDenseMat;
+
 // Forward declaration of regular Matrix class
 template<typename GkoMatType>
 class Matrix;
@@ -38,10 +45,6 @@ class Matrix;
 // =============================================================================
 
 namespace impl {
-
-using GkoDenseMat = gko::matrix::Dense<sunrealtype>;
-using GkoCsrMat   = gko::matrix::Csr<sunrealtype, sunindextype>;
-using GkoVecType  = GkoDenseMat;
 
 //
 // Prototypes for non-class methods that operate on Matrix
@@ -92,7 +95,7 @@ SUNMatrix SUNMatClone_Ginkgo(SUNMatrix A)
 {
   auto A_mat{static_cast<Matrix<GkoMatType>*>(A->content)};
   auto new_mat{new Matrix<GkoMatType>(*A_mat)}; // NOLINT
-  return new_mat->Convert();
+  return new_mat->get();
 }
 
 template<typename GkoMatType>
@@ -223,16 +226,16 @@ public:
   // Override the ConvertibleTo methods
 
   /// Implicit conversion to a :c:type:`SUNMatrix`
-  operator SUNMatrix() override { return object_.get(); }
+  operator SUNMatrix() noexcept override { return object_.get(); }
 
   /// Implicit conversion to a :c:type:`SUNMatrix`
-  operator SUNMatrix() const override { return object_.get(); }
+  operator SUNMatrix() const noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNMatrix`
-  SUNMatrix Convert() override { return object_.get(); }
+  SUNMatrix get() noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNMatrix`
-  SUNMatrix Convert() const override { return object_.get(); }
+  SUNMatrix get() const noexcept override { return object_.get(); }
 
 private:
   std::shared_ptr<GkoMatType> gkomtx_;
@@ -260,7 +263,7 @@ private:
 namespace impl {
 
 //
-// Non-class methods that operate on Matrix
+// Non-class methods
 //
 
 inline std::unique_ptr<GkoVecType> WrapVector(
@@ -324,14 +327,9 @@ void Matvec(Matrix<GkoMatType>& A, N_Vector x, N_Vector y)
 template<typename GkoMatType>
 void ScaleAdd(const sunrealtype c, Matrix<GkoMatType>& A, Matrix<GkoMatType>& B)
 {
-#if GKO_VERSION_MAJOR > 1 || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR >= 8)
   // Identity constructor always creates a square matrix
   const auto I{
     gko::matrix::Identity<sunrealtype>::create(A.GkoExec(), A.GkoSize()[1])};
-#else
-  const auto I{
-    gko::matrix::Identity<sunrealtype>::create(A.GkoExec(), A.GkoSize())};
-#endif
   const auto one{gko::initialize<GkoDenseMat>({1.0}, A.GkoExec())};
   const auto cmat{gko::initialize<GkoDenseMat>({c}, A.GkoExec())};
   // A = B + cA

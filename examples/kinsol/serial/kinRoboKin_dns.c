@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -418,9 +421,6 @@ static void PrintOutput(N_Vector y)
            Ith(y, i + 2 * NVAR));
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf(" %10.6Lg   %10.6Lg   %10.6Lg\n", Ith(y, i + NVAR), Ith(y, i),
-           Ith(y, i + 2 * NVAR));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %10.6g   %10.6g   %10.6g\n", Ith(y, i + NVAR), Ith(y, i),
            Ith(y, i + 2 * NVAR));
 #else
     printf(" %10.6g   %10.6g   %10.6g\n", Ith(y, i + NVAR), Ith(y, i),

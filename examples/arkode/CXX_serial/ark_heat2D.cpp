@@ -1,10 +1,13 @@
 /* -----------------------------------------------------------------------------
  * Programmer(s): David J. Gardner @ LLNL
- *                Daniel R. Reynolds @ SMU
+ *                Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -455,9 +458,7 @@ int main(int argc, char* argv[])
     sunrealtype maxerr = N_VMaxNorm(udata->e);
 
     cout << scientific;
-
     cout << setprecision(SUN_DIGITS10);
-
     cout << "  Max error = " << maxerr << endl;
   }
 
@@ -914,38 +915,27 @@ static int PrintUserData(UserData* udata)
   cout << "2D Heat PDE test problem:" << endl;
   cout << " --------------------------------- " << endl;
   cout << "  kx             = " << udata->kx << endl;
-  //printf( "  kx             = " SUN_FORMAT_E "\n",udata->kx);
   cout << "  ky             = " << udata->ky << endl;
-  //printf( "  kx             = " SUN_FORMAT_E "\n",udata->ky);
   cout << "  forcing        = " << udata->forcing << endl;
   cout << "  tf             = " << udata->tf << endl;
-  //printf( "  tf             = " SUN_FORMAT_E "\n",udata->tf);
   cout << "  xu             = " << udata->xu << endl;
-  //printf( "  xu             = " SUN_FORMAT_E "\n",udata->xu);
   cout << "  yu             = " << udata->yu << endl;
-  //printf( "  yu             = " SUN_FORMAT_E "\n",udata->yu);
   cout << "  nx             = " << udata->nx << endl;
   cout << "  ny             = " << udata->ny << endl;
   cout << "  dx             = " << udata->dx << endl;
-  //printf( "  dx             = " SUN_FORMAT_E "\n",udata->dx);
   cout << "  dy             = " << udata->dy << endl;
-  //printf( "  dy             = " SUN_FORMAT_E "\n",udata->dy);
   cout << " --------------------------------- " << endl;
   cout << "  rtol           = " << udata->rtol << endl;
-  //printf( "  rtol           = " SUN_FORMAT_E "\n",udata->rtol);
   cout << "  atol           = " << udata->atol << endl;
-  //printf( "  atol           = " SUN_FORMAT_E "\n",udata->atol);
   cout << "  order          = " << udata->order << endl;
   cout << "  fixed h        = " << udata->hfixed << endl;
-  //printf( "  fixed h        =  " SUN_FORMAT_E "\n",udata->hfixed);
   cout << "  controller     = " << udata->controller << endl;
   cout << "  linear         = " << udata->linear << endl;
   cout << " --------------------------------- " << endl;
   if (udata->pcg) { cout << "  linear solver  = PCG" << endl; }
   else { cout << "  linear solver  = GMRES" << endl; }
   cout << "  lin iters      = " << udata->liniters << endl;
-  cout << "  eps lin        = " << udata->epslin   << endl;
-  //printf( "  eps lin        = " SUN_FORMAT_E "\n",udata->epslin);
+  cout << "  eps lin        = " << udata->epslin << endl;
   cout << "  prec           = " << udata->prec << endl;
   cout << "  msbp           = " << udata->msbp << endl;
   cout << " --------------------------------- " << endl;
@@ -1031,7 +1021,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, UserData* udata)
       // Compute max error
       sunrealtype max = N_VMaxNorm(udata->e);
 
-      cout << setw(22) << t << setw(25) << urms << setw(25) << double(max) << endl;
+      cout << setw(22) << t << setw(25) << urms << setw(25) << max << endl;
     }
     else { cout << setw(22) << t << setw(25) << urms << endl; }
 

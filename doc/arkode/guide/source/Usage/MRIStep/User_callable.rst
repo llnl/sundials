@@ -1,10 +1,13 @@
 .. ----------------------------------------------------------------
    Programmer(s): David J. Gardner @ LLNL
-                  Daniel R. Reynolds @ SMU
+                  Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -799,6 +802,11 @@ Optional inputs for IVP method selection
 
       For a description of the :c:type:`MRIStepCoupling` type and related
       functions for creating Butcher tables see :numref:`ARKODE.Usage.MRIStep.MRIStepCoupling`.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.coupling_table_name", where ``C``
+      is itself constructed by passing the command-line option to
+      :c:func:`MRIStepCoupling_LoadTableByName`.
 
    .. warning::
 

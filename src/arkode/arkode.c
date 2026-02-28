@@ -1,9 +1,12 @@
 /*---------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -145,6 +148,10 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
   ark_mem->lrw1 = lrw1;
   ark_mem->liw1 = liw1;
 
+  /* Disable constraints, the user will need to set a new constraint vector for
+     the updated problem size */
+  arkFreeVec(ark_mem, &ark_mem->constraints);
+
   /* Resize the solver vectors (using y0 as a template) */
   resizeOK = arkResizeVectors(ark_mem, resize, resize_data, lrw_diff, liw_diff,
                               y0);
@@ -171,9 +178,6 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
   /* Copy y0 into ark_yn to set the current solution */
   N_VScale(ONE, y0, ark_mem->yn);
   ark_mem->fn_is_current = SUNFALSE;
-
-  /* Disable constraints */
-  ark_mem->constraintsSet = SUNFALSE;
 
   /* Indicate that problem needs to be initialized */
   ark_mem->initsetup  = SUNTRUE;
@@ -713,13 +717,6 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
   /* start profiler */
   SUNDIALS_MARK_FUNCTION_BEGIN(ARK_PROFILER);
 
-  /* store copy of itask if using root-finding */
-  if (ark_mem->root_mem != NULL)
-  {
-    if (itask == ARK_NORMAL) { ark_mem->root_mem->toutc = tout; }
-    ark_mem->root_mem->taskc = itask;
-  }
-
   /* perform first-step-specific initializations:
      - initialize tret values to initialization time
      - perform initial integrator setup  */
@@ -944,7 +941,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       }
 
       /* perform constraint-handling (if selected, and if solver check passed) */
-      if (ark_mem->constraintsSet && (kflag == ARK_SUCCESS))
+      if (ark_mem->constraints && (kflag == ARK_SUCCESS))
       {
         kflag = arkCheckConstraints(ark_mem, &constrfails, &nflag);
 
@@ -1027,7 +1024,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     {
       if (ark_mem->root_mem->nrtfn > 0)
       {
-        retval = arkRootCheck3((void*)ark_mem);
+        retval = arkRootCheck3((void*)ark_mem, tout, itask);
         if (retval == RTFOUND)
         { /* A new root was found */
           ark_mem->root_mem->irfnd = 1;
@@ -1277,6 +1274,11 @@ void ARKodeFree(void** arkode_mem)
     ark_mem->relax_mem = NULL;
   }
 
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  arkode_user_supplied_fn_table_destroy(ark_mem->python);
+#endif
+  ark_mem->python = NULL;
+
   free(*arkode_mem);
   *arkode_mem = NULL;
 }
@@ -1357,7 +1359,6 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
   arkPrintAdaptMem(ark_mem->hadapt_mem, outfile);
 
   /* output inequality constraints quantities */
-  fprintf(outfile, "constraintsSet = %i\n", ark_mem->constraintsSet);
   fprintf(outfile, "maxconstrfails = %i\n", ark_mem->maxconstrfails);
 
   /* output root-finding quantities */
@@ -1505,6 +1506,9 @@ ARKodeMem arkCreate(SUNContext sunctx)
   /* Set the context */
   ark_mem->sunctx = sunctx;
 
+  /* Set the Python context to NULL */
+  ark_mem->python = NULL;
+
   /* Set uround */
   ark_mem->uround = SUN_UNIT_ROUNDOFF;
 
@@ -1548,6 +1552,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->step_setstagepredictfn         = NULL;
   ark_mem->step_getnumrhsevals            = NULL;
   ark_mem->step_setstepdirection          = NULL;
+  ark_mem->step_setoptions                = NULL;
   ark_mem->step_getnumlinsolvsetups       = NULL;
   ark_mem->step_setadaptcontroller        = NULL;
   ark_mem->step_getestlocalerrors         = NULL;
@@ -1567,8 +1572,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->root_mem = NULL;
 
   /* Initialize inequality constraints variables */
-  ark_mem->constraintsSet = SUNFALSE;
-  ark_mem->constraints    = NULL;
+  ark_mem->constraints = NULL;
 
   /* Initialize relaxation variables */
   ark_mem->relax_enabled = SUNFALSE;
@@ -1977,6 +1981,18 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
   sunrealtype tout_hin, rh, htmp;
   sunbooleantype conOK;
 
+  /* Is tout too close to tn? */
+  sunrealtype tdist  = SUNRabs(tout - ark_mem->tcur);
+  sunrealtype tround = ark_mem->uround *
+                       SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
+
+  if (tdist == ZERO || tdist < TWO * tround)
+  {
+    arkProcessError(ark_mem, ARK_TOO_CLOSE, __LINE__, __func__, __FILE__,
+                    MSG_ARK_TOO_CLOSE);
+    return (ARK_TOO_CLOSE);
+  }
+
   /* Check that user has supplied an initial step size if fixedstep mode is on */
   if ((ark_mem->fixedstep) && (ark_mem->hin == ZERO))
   {
@@ -2007,7 +2023,7 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
   }
 
   /* Check to see if y0 satisfies constraints */
-  if (ark_mem->constraintsSet)
+  if (ark_mem->constraints)
   {
     conOK = N_VConstrMask(ark_mem->constraints, ark_mem->yn, ark_mem->tempv1);
     if (!conOK)
@@ -2331,7 +2347,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
          check remaining interval for roots */
       if (SUNRabs(ark_mem->tcur - ark_mem->tretlast) > troundoff)
       {
-        retval = arkRootCheck3((void*)ark_mem);
+        retval = arkRootCheck3((void*)ark_mem, tout, itask);
 
         if (retval == ARK_SUCCESS)
         { /* no root found */
@@ -2441,15 +2457,13 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
   arkHin
 
   This routine computes a tentative initial step size h0.
-  If tout is too close to tn (= t0), then arkHin returns
-  ARK_TOO_CLOSE and h remains uninitialized. Note that here tout
-  is either the value passed to ARKodeEvolve at the first call or the
-  value of tstop (if tstop is enabled and it is closer to t0=tn
-  than tout). If the RHS function fails unrecoverably, arkHin
-  returns ARK_RHSFUNC_FAIL. If the RHS function fails recoverably
-  too many times and recovery is not possible, arkHin returns
-  ARK_REPTD_RHSFUNC_ERR. Otherwise, arkHin sets h to the chosen
-  value h0 and returns ARK_SUCCESS.
+  Note that here tout is either the value passed to ARKodeEvolve
+  at the first call or the value of tstop (if tstop is enabled and
+  it is closer to t0=tn than tout). If the RHS function fails
+  unrecoverably, arkHin returns ARK_RHSFUNC_FAIL. If the RHS
+  function fails recoverably too many times and recovery is not
+  possible, arkHin returns ARK_REPTD_RHSFUNC_ERR. Otherwise, arkHin
+  sets h to the chosen value h0 and returns ARK_SUCCESS.
 
   The algorithm used seeks to find h0 as a solution of
   (WRMS norm of (h0^2 ydd / 2)) = 1,
@@ -2485,14 +2499,11 @@ int arkHin(ARKodeMem ark_mem, sunrealtype tout)
   sunrealtype hg, hgs, hs, hnew, hrat, h0, yddnrm;
   sunbooleantype hgOK;
 
-  /* If tout is too close to tn, give up */
-  if ((tdiff = tout - ark_mem->tcur) == ZERO) { return (ARK_TOO_CLOSE); }
-
+  /* arkInitialSetup checks for tdiff = 0 or < 2 * troundoff */
+  tdiff  = tout - ark_mem->tcur;
   sign   = (tdiff > ZERO) ? 1 : -1;
   tdist  = SUNRabs(tdiff);
   tround = ark_mem->uround * SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
-
-  if (tdist < TWO * tround) { return (ARK_TOO_CLOSE); }
 
   /* call full RHS if needed */
   if (!(ark_mem->fn_is_current))
@@ -3271,13 +3282,19 @@ int arkCheckConvergence(ARKodeMem ark_mem, int* nflagPtr, int* ncfPtr)
   --------------------------------------------------------------*/
 int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
 {
+  SUNLogInfo(ARK_LOGGER, "begin-constraint-check", "");
+
   sunbooleantype constraintsPassed;
   N_Vector mm  = ark_mem->tempv4;
   N_Vector tmp = ark_mem->tempv3;
 
   /* Check constraints and get mask vector mm for where constraints failed */
   constraintsPassed = N_VConstrMask(ark_mem->constraints, ark_mem->ycur, mm);
-  if (constraintsPassed) { return (ARK_SUCCESS); }
+  if (constraintsPassed)
+  {
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = success");
+    return (ARK_SUCCESS);
+  }
 
   /* Constraints not met */
 
@@ -3286,14 +3303,24 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   (*constrfails)++;
 
   /* Return with error if reached max fails in a step */
-  if (*constrfails == ark_mem->maxconstrfails) { return (ARK_CONSTR_FAIL); }
+  if (*constrfails == ark_mem->maxconstrfails)
+  {
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check",
+               "status = failed max attempts");
+    return (ARK_CONSTR_FAIL);
+  }
 
   /* Return with error if using fixed step sizes */
-  if (ark_mem->fixedstep) { return (ARK_CONSTR_FAIL); }
+  if (ark_mem->fixedstep)
+  {
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = failed fixed step");
+    return (ARK_CONSTR_FAIL);
+  }
 
   /* Return with error if |h| == hmin */
   if (SUNRabs(ark_mem->h) <= ark_mem->hmin * ONEPSM)
   {
+    SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = failed min step");
     return (ARK_CONSTR_FAIL);
   }
 
@@ -3305,6 +3332,9 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
 
   /* Signal for Jacobian/preconditioner setup */
   *nflag = PREV_CONV_FAIL;
+
+  SUNLogInfo(ARK_LOGGER, "end-constraint-check",
+             "status = failed, eta = " SUN_FORMAT_G, ark_mem->eta);
 
   /* Return to reattempt the step */
   return (CONSTR_RECVR);
@@ -3682,13 +3712,6 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
 
   if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
                     &ark_mem->tempv5))
-  {
-    return (SUNFALSE);
-  }
-
-  /* constraints */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->constraints))
   {
     return (SUNFALSE);
   }

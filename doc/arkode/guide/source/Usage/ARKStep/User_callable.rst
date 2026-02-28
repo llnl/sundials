@@ -1,9 +1,12 @@
 .. ----------------------------------------------------------------
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -1255,6 +1258,8 @@ Set additive RK tables via their names    :c:func:`ARKStepSetTableName()`    int
       pointers *fe* or *fi* passed to :c:func:`ARKStepCreate` are
       ``NULL``, but may be set directly by the user if desired.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.imex".
 
 
 .. c:function:: int ARKStepSetExplicit(void* arkode_mem)
@@ -1279,6 +1284,8 @@ Set additive RK tables via their names    :c:func:`ARKStepSetTableName()`    int
       f(t,y)`, then we recommend that the ERKStep time-stepper module be
       used instead.
 
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.explicit".
 
 .. c:function:: int ARKStepSetImplicit(void* arkode_mem)
 
@@ -1297,6 +1304,9 @@ Set additive RK tables via their names    :c:func:`ARKStepSetTableName()`    int
       This is automatically deduced when the function pointer `fe`
       passed to :c:func:`ARKStepCreate` is ``NULL``, but may be set
       directly by the user if desired.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.implicit".
 
 
 
@@ -1436,6 +1446,10 @@ Set additive RK tables via their names    :c:func:`ARKStepSetTableName()`    int
 
       In all cases, error-checking is performed to ensure that the tables
       exist.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.table_names".
+
 
    **Warning:**
       This should not be used with :c:func:`ARKodeSetOrder`.
@@ -1623,7 +1637,7 @@ Optional inputs for time step adaptivity
    .. deprecated:: 5.7.0
 
       Use the SUNAdaptController infrastructure instead (see :numref:`SUNAdaptController.Description`).
-      
+
    .. versionchanged:: 6.3.0
 
       The default value was changed from 1.5 to 1.0
@@ -1649,7 +1663,7 @@ Optional inputs for time step adaptivity
    .. deprecated:: 6.1.0
 
       Use :c:func:`ARKodeSetFixedStepBounds` instead.
-      
+
    .. versionchanged:: 6.3.0
 
       The default upper bound was changed from 1.5 to 1.0

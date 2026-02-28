@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -11,8 +14,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
- * Base classes for C++ implementations of SUNDIALS objects and wrappers (views)
- * of SUNDIALS objects
+ * Base classes for C++ implementations of SUNDIALS objects.
  * ---------------------------------------------------------------------------*/
 
 #ifndef _SUNDIALS_BASE_HPP
@@ -21,6 +23,7 @@
 #include <memory>
 #include <sundials/sundials_context.hpp>
 #include <sundials/sundials_convertibleto.hpp>
+#include <utility>
 
 namespace sundials {
 namespace impl {
@@ -110,42 +113,6 @@ template<class ObjectStruct, class ObjectOps>
 BaseObject<ObjectStruct, ObjectOps>::~BaseObject() = default;
 
 } // namespace impl
-
-namespace experimental {
-
-template<class T, class Deleter>
-class ClassView : public sundials::ConvertibleTo<T>
-{
-public:
-  ClassView() : object_(nullptr) {}
-
-  ClassView(T&& object) : object_(std::make_unique<T>(object)) {}
-
-  ClassView(const ClassView&)  = delete;
-  ClassView(ClassView&& other) = default;
-
-  ClassView& operator=(const ClassView&) = delete;
-  ClassView& operator=(ClassView&& rhs)  = default;
-
-  ~ClassView()
-  {
-    if (object_) { Deleter{}(this->Convert()); }
-  };
-
-  // Override ConvertibleTo functions
-  T Convert() override { return *object_.get(); }
-
-  T Convert() const override { return *object_.get(); }
-
-  operator T() override { return *object_.get(); }
-
-  operator T() const override { return *object_.get(); }
-
-private:
-  std::unique_ptr<T> object_;
-};
-
-} // namespace experimental
 } // namespace sundials
 
 #endif

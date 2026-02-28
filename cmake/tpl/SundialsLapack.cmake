@@ -2,8 +2,11 @@
 # Programmer(s): Radu Serban and Cody J. Balos @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -296,11 +299,11 @@ if(NOT LAPACK_WORKS)
   message(CHECK_START "Testing LAPACK")
 
   # Create the test directory
-  set(LAPACK_TEST_DIR ${PROJECT_BINARY_DIR}/LAPACK_TEST)
+  set(TEST_DIR ${PROJECT_BINARY_DIR}/LAPACK_TEST)
 
   # Create a C source file calling a BLAS (dcopy) and LAPACK (dgetrf) function
   file(
-    WRITE ${LAPACK_TEST_DIR}/test.c
+    WRITE ${TEST_DIR}/test.c
     "${LAPACK_MANGLE_MACRO1}\n"
     "#define dcopy_f77 SUNDIALS_LAPACK_FUNC(dcopy, DCOPY)\n"
     "#define dgetrf_f77 SUNDIALS_LAPACK_FUNC(dgetrf, DGETRF)\n"
@@ -317,7 +320,7 @@ if(NOT LAPACK_WORKS)
 
   # Workaround bug in older versions of CMake where the BLAS::BLAS target, which
   # LAPACK::LAPACK depends on, is not defined in the file
-  # ${LAPACK_TEST_DIR}/CMakeFiles/CMakeTmp/<random_name>Targets.cmake created by
+  # ${TEST_DIR}/CMakeFiles/CMakeTmp/<random_name>Targets.cmake created by
   # try_compile
   set(_lapack_targets LAPACK::LAPACK)
   if(CMAKE_VERSION VERSION_LESS 3.20)
@@ -327,8 +330,8 @@ if(NOT LAPACK_WORKS)
   # Attempt to build and link the test executable, pass --debug-trycompile to
   # the cmake command to save build files for debugging
   try_compile(
-    COMPILE_OK ${LAPACK_TEST_DIR}
-    ${LAPACK_TEST_DIR}/test.c
+    COMPILE_OK ${TEST_DIR}
+    ${TEST_DIR}/test.c
     LINK_LIBRARIES ${_lapack_targets}
     OUTPUT_VARIABLE COMPILE_OUTPUT)
 
@@ -337,10 +340,10 @@ if(NOT LAPACK_WORKS)
     message(CHECK_PASS "success")
   else()
     message(CHECK_FAIL "failed")
-    file(WRITE ${LAPACK_TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
+    file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
     message(
       FATAL_ERROR
-        "Could not compile LAPACK test. Check output in ${LAPACK_TEST_DIR}/compile.out"
+        "Could not compile LAPACK test. Check output in ${TEST_DIR}/compile.out"
     )
   endif()
 

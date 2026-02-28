@@ -3,8 +3,11 @@
  *                Aaron Collier, Shelby Lockhart @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -81,17 +84,15 @@ extern "C" {
 
 typedef int (*KINSysFn)(N_Vector uu, N_Vector fval, void* user_data);
 
-typedef void (*KINInfoHandlerFn)(const char* module, const char* function,
-                                 char* msg, void* user_data);
-
 typedef int (*KINDampingFn)(long int iter, N_Vector u_val, N_Vector g_val,
-                            sunrealtype* qt_fn, long int depth, void* user_data,
-                            sunrealtype* damping_factor);
+                            sunrealtype* qt_fn_1d, long int depth,
+                            void* user_data, sunrealtype* damping_factor_ptr);
 
 typedef int (*KINDepthFn)(long int iter, N_Vector u_val, N_Vector g_val,
-                          N_Vector f_val, N_Vector* df, sunrealtype* R_mat,
-                          long int depth, void* user_data, long int* new_depth,
-                          sunbooleantype* remove_indices);
+                          N_Vector f_val, N_Vector* df_1d,
+                          sunrealtype* R_mat_1d, long int depth,
+                          void* user_data, long int* new_depth_ptr,
+                          sunbooleantype* remove_indices_1d);
 
 /* -------------------
  * Exported Functions
@@ -108,6 +109,8 @@ SUNDIALS_EXPORT int KINSol(void* kinmem, N_Vector uu, int strategy,
                            N_Vector u_scale, N_Vector f_scale);
 
 /* Optional input functions */
+SUNDIALS_EXPORT int KINSetOptions(void* kinmem, const char* kinid,
+                                  const char* file_name, int argc, char* argv[]);
 SUNDIALS_EXPORT int KINSetUserData(void* kinmem, void* user_data);
 SUNDIALS_EXPORT int KINSetDamping(void* kinmem, sunrealtype beta);
 SUNDIALS_EXPORT int KINSetMAA(void* kinmem, long int maa);

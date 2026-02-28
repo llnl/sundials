@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -18,46 +21,39 @@
 #define _SUNDIALS_CONTEXT_HPP
 
 #include <memory>
+#include <type_traits>
+
+#include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_context.h>
 #include <sundials/sundials_convertibleto.hpp>
-
-#include "sundials/sundials_types.h"
+#include <sundials/sundials_types.h>
 
 namespace sundials {
 
-class Context : public sundials::ConvertibleTo<SUNContext>
+struct SUNContextDeleter
+{
+  void operator()(SUNContext sunctx) { SUNContext_Free(&sunctx); }
+};
+
+class SUNContextView
+  : public sundials::experimental::ClassView<SUNContext, SUNContextDeleter>
 {
 public:
-  explicit Context(SUNComm comm = SUN_COMM_NULL)
-  {
-    sunctx_ = std::make_unique<SUNContext>();
-    SUNContext_Create(comm, sunctx_.get());
-  }
+  using ClassView<SUNContext, SUNContextDeleter>::ClassView;
 
-  /* disallow copy, but allow move construction */
-  Context(const Context&) = delete;
-  Context(Context&&)      = default;
-
-  /* disallow copy, but allow move operators */
-  Context& operator=(const Context&) = delete;
-  Context& operator=(Context&&)      = default;
-
-  SUNContext Convert() override { return *sunctx_.get(); }
-
-  SUNContext Convert() const override { return *sunctx_.get(); }
-
-  operator SUNContext() override { return *sunctx_.get(); }
-
-  operator SUNContext() const override { return *sunctx_.get(); }
-
-  ~Context()
-  {
-    if (sunctx_) { SUNContext_Free(sunctx_.get()); }
-  }
+  SUNContextView(SUNComm comm = SUN_COMM_NULL) : SUNContextView(create(comm)) {}
 
 private:
-  std::unique_ptr<SUNContext> sunctx_;
+  static SUNContext create(SUNComm comm) noexcept
+  {
+    SUNContext sunctx = nullptr;
+    SUNContext_Create(comm, &sunctx);
+    return sunctx;
+  }
 };
+
+// We provide this for backwards compatibility
+using Context = SUNContextView;
 
 } // namespace sundials
 

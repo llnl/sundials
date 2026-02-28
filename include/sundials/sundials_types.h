@@ -3,8 +3,11 @@
  *                Aaron Collier, and Slaven Peles @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -95,10 +98,10 @@ typedef float sunrealtype;
 #define SUN_SMALL_REAL    FLT_MIN
 #define SUN_UNIT_ROUNDOFF FLT_EPSILON
 #define SUN_DIGITS10      FLT_DIG
-// TODO(SBR): In C11, FLT_DECIMAL_DIG may be a better choice
+ // TODO(SBR): In C11, FLT_DECIMAL_DIG may be a better choice
 #define SUN_FORMAT_E "% ." SUN_STRING(FLT_DIG) "e"
 #define SUN_FORMAT_G "%." SUN_STRING(FLT_DIG) "g"
-// TODO(SBR): This can probably be removed once a complex format macro is added
+ // TODO(SBR): This can probably be removed once a complex format macro is added
 #define SUN_FORMAT_SG "%+." SUN_STRING(FLT_DIG) "g"
 
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
@@ -200,11 +203,15 @@ typedef SUNDIALS_COUNTER_TYPE suncountertype;
  *------------------------------------------------------------------
  */
 
-typedef enum
+enum SUNOutputFormat
 {
   SUN_OUTPUTFORMAT_TABLE,
   SUN_OUTPUTFORMAT_CSV
-} SUNOutputFormat;
+};
+
+#ifndef SWIG
+typedef enum SUNOutputFormat SUNOutputFormat;
+#endif
 
 /*
  *------------------------------------------------------------------
@@ -254,15 +261,17 @@ typedef void (*SUNErrHandlerFn)(int line, const char* func, const char* file,
     because we manually insert the wrapper code for SUN_COMM_NULL
     (and %ignoring it in the SWIG code doesn't seem to work). */
 
+#ifndef SWIG
+#define SUN_COMM_NULL 0
+#endif
+
 #if SUNDIALS_MPI_ENABLED
 #ifndef SWIG
+#undef SUN_COMM_NULL
 #define SUN_COMM_NULL MPI_COMM_NULL
 #endif
 typedef MPI_Comm SUNComm;
 #else
-#ifndef SWIG
-#define SUN_COMM_NULL 0
-#endif
 typedef int SUNComm;
 #endif
 
@@ -279,9 +288,13 @@ typedef int SUNComm;
  *------------------------------------------------------------------
  */
 
-typedef enum
+enum SUNDataIOMode
 {
   SUNDATAIOMODE_INMEM,
-} SUNDataIOMode;
+};
+
+#ifndef SWIG
+typedef enum SUNDataIOMode SUNDataIOMode;
+#endif
 
 #endif /* _SUNDIALS_TYPES_H */

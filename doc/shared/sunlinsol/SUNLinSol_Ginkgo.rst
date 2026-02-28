@@ -1,8 +1,11 @@
 ..
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -89,7 +92,7 @@ expecting a ``SUNLinearSolver`` object through the implicit conversion operator 
 
    // Alternatively with explicit conversion of LS to a SUNLinearSolver
    // and A to a SUNMatrix:
-   CVodeSetLinearSolver(cvode_mem, LS->Convert(), A->Convert());
+   CVodeSetLinearSolver(cvode_mem, LS->get(), A->get());
 
 
 .. warning::
@@ -139,13 +142,21 @@ In this section we list the public API of the :cpp:type:`sundials::ginkgo::Linea
 
       Implicit conversion to a :c:type:`SUNLinearSolver`.
 
-   .. cpp:function:: SUNLinearSolver Convert() override
+   .. cpp:function:: SUNLinearSolver get() override
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
 
-   .. cpp:function:: SUNLinearSolver Convert() const override
+      .. versionadded:: 7.6.0
+      
+         Replaces the ``Convert`` method which was deprecated.
+
+   .. cpp:function:: SUNLinearSolver get() const override
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
+
+      .. versionadded:: 7.6.0
+      
+         Replaces the ``Convert`` method which was deprecated.
 
    .. cpp:function:: std::shared_ptr<const gko::Executor> GkoExec() const
 

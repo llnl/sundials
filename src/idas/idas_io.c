@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban and Cosmin Petra @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -18,10 +21,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <sundials/sundials_math.h>
+#include <sundials/sundials_types.h>
+
 #include "idas_impl.h"
 #include "idas_ls_impl.h"
-#include "sundials/sundials_math.h"
-#include "sundials/sundials_types.h"
+#include "sundials_utils.h"
 
 #define ZERO   SUN_RCONST(0.0)
 #define HALF   SUN_RCONST(0.5)
@@ -590,14 +595,12 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
 
   if (constraints == NULL)
   {
-    if (IDA_mem->ida_constraintsMallocDone)
+    if (IDA_mem->ida_constraints)
     {
       N_VDestroy(IDA_mem->ida_constraints);
       IDA_mem->ida_lrw -= IDA_mem->ida_lrw1;
       IDA_mem->ida_liw -= IDA_mem->ida_liw1;
     }
-    IDA_mem->ida_constraintsMallocDone = SUNFALSE;
-    IDA_mem->ida_constraintsSet        = SUNFALSE;
     return (IDA_SUCCESS);
   }
 
@@ -623,21 +626,85 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
     return (IDA_ILL_INPUT);
   }
 
-  if (!(IDA_mem->ida_constraintsMallocDone))
+  if (!(IDA_mem->ida_constraints))
   {
     IDA_mem->ida_constraints = N_VClone(constraints);
+    if (IDA_mem->ida_constraints == NULL)
+    {
+      IDAProcessError(IDA_mem, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
+                      MSG_MEM_FAIL);
+      return (IDA_MEM_NULL);
+    }
     IDA_mem->ida_lrw += IDA_mem->ida_lrw1;
     IDA_mem->ida_liw += IDA_mem->ida_liw1;
-    IDA_mem->ida_constraintsMallocDone = SUNTRUE;
   }
 
   /* Load the constraints vector */
 
   N_VScale(ONE, constraints, IDA_mem->ida_constraints);
 
-  IDA_mem->ida_constraintsSet = SUNTRUE;
-
   return (IDA_SUCCESS);
+}
+
+/*
+ * IDASetMaxNumConstraintFails
+ *
+ * Set the maximum number of constraint failure allowed in a step
+ */
+
+int IDASetMaxNumConstraintFails(void* ida_mem, int max_fails)
+{
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+  IDAMem IDA_mem = (IDAMem)ida_mem;
+
+  if (max_fails <= 0) { IDA_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS; }
+  else { IDA_mem->max_constraint_fails = max_fails; }
+
+  return IDA_SUCCESS;
+}
+
+/*
+ * IDAGetNumConstraintFails
+ *
+ * Get the number of failed steps due to constraint violation
+ */
+
+int IDAGetNumConstraintFails(void* ida_mem, long int* num_fails_out)
+{
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+  IDAMem IDA_mem = (IDAMem)ida_mem;
+
+  *num_fails_out = IDA_mem->constraint_fails;
+
+  return IDA_SUCCESS;
+}
+
+/*
+ * IDAGetNumConstraintCorrections
+ *
+ * Get the number of constraint corrections
+ */
+
+int IDAGetNumConstraintCorrections(void* ida_mem, long int* num_corrections_out)
+{
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+  IDAMem IDA_mem = (IDAMem)ida_mem;
+
+  *num_corrections_out = IDA_mem->constraint_corrections;
+
+  return IDA_SUCCESS;
 }
 
 /*
@@ -2050,7 +2117,7 @@ int IDAGetSensNumLinSolvSetups(void* ida_mem, long int* nlinsetupsS)
 
 /*-----------------------------------------------------------------*/
 
-int IDAGetSensErrWeights(void* ida_mem, N_Vector_S eSweight)
+int IDAGetSensErrWeights(void* ida_mem, N_Vector* eSweight)
 {
   IDAMem IDA_mem;
   int is;
@@ -2243,7 +2310,7 @@ int IDAPrintAllStats(void* ida_mem, FILE* outfile, SUNOutputFormat fmt)
 
   if (fmt != SUN_OUTPUTFORMAT_TABLE && fmt != SUN_OUTPUTFORMAT_CSV)
   {
-    IDAProcessError(ida_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "Invalid formatting option.");
     return (IDA_ILL_INPUT);
   }
@@ -2253,6 +2320,10 @@ int IDAPrintAllStats(void* ida_mem, FILE* outfile, SUNOutputFormat fmt)
   sunfprintf_long(outfile, fmt, SUNFALSE, "Steps", IDA_mem->ida_nst);
   sunfprintf_long(outfile, fmt, SUNFALSE, "Error test fails", IDA_mem->ida_netf);
   sunfprintf_long(outfile, fmt, SUNFALSE, "NLS step fails", IDA_mem->ida_ncfn);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint fails",
+                  IDA_mem->constraint_fails);
+  sunfprintf_long(outfile, fmt, SUNFALSE, "Constraint corrections",
+                  IDA_mem->constraint_corrections);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Initial step size", IDA_mem->ida_h0u);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Last step size", IDA_mem->ida_hused);
   sunfprintf_real(outfile, fmt, SUNFALSE, "Current step size", IDA_mem->ida_hh);

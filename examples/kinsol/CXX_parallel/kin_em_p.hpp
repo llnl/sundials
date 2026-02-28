@@ -2,8 +2,11 @@
  * Programmer(s): Shelby Lockhart @ UIUC/LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -76,11 +79,11 @@ struct UserData
   int myid;      // process ID in communicator
 
   // Fixed Point Solver settings
-  sunrealtype rtol; // relative tolerance
-  int maa;          // m for Anderson Acceleration
-  sunrealtype damping;   // damping for Anderson Acceleration
-  int orthaa;       // orthogonalization routine for AA
-  int maxits;       // max number of fixed point iterations
+  sunrealtype rtol;    // relative tolerance
+  int maa;             // m for Anderson Acceleration
+  sunrealtype damping; // damping for Anderson Acceleration
+  int orthaa;          // orthogonalization routine for AA
+  int maxits;          // max number of fixed point iterations
 
   // Vectors to help with FPFunction definition and execution
   N_Vector samples_local; // vector containing distribution samples

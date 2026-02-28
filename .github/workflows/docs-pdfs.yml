@@ -1,17 +1,18 @@
 name: Docs - PDFs
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-  merge_group:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
   workflow_dispatch:
 
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: docs-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   docs_install_guide_pdf:
@@ -30,11 +31,12 @@ jobs:
             texlive-plain-generic
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Install sphinx
+      - name: Install python dependencies
         run: |
           pip install -r doc/requirements.txt
+          pip install . # sundials4py
 
       # Build the combined html docs first to create a local objects.inv file
       # for intersphinx to resolve cross references between package guides e.g.,
@@ -47,7 +49,7 @@ jobs:
         run: cd doc/install_guide && make latexpdf
 
       - name: Archive files from failed build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: latex_build_files
@@ -55,7 +57,7 @@ jobs:
             ${{github.workspace}}/doc/install_guide/build/latex
 
       - name: Archive PDF from successful build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: install_guide
@@ -87,11 +89,12 @@ jobs:
             texlive-plain-generic
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Install sphinx
+      - name: Install python dependencies
         run: |
           pip install -r doc/requirements.txt
+          pip install . # sundials4py
 
       # Build the combined html docs first to create a local objects.inv file
       # for intersphinx to resolve cross references between package guides e.g.,
@@ -105,7 +108,7 @@ jobs:
         # run: cd doc/${{matrix.package}}/${{matrix.type}} && make latexpdf
 
       - name: Archive files from failed build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: latex_build_files
@@ -115,7 +118,7 @@ jobs:
           # ${{github.workspace}}/doc/${{matrix.package}}/${{matrix.type}}/build/latex
 
       - name: Archive PDFs from successful build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: ${{matrix.package}}_user_guide
@@ -132,7 +135,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        package: [arkode]
+        package: [arkode, kinsol]
 
     steps:
       - name: Install latex
@@ -147,7 +150,7 @@ jobs:
             texlive-plain-generic
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install sphinx
         run: |
@@ -157,7 +160,7 @@ jobs:
         run: cd doc/${{matrix.package}}/examples && make latexpdf
 
       - name: Archive files from failed build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: latex_build_files
@@ -165,7 +168,7 @@ jobs:
             ${{github.workspace}}/doc/${{matrix.package}}/examples/build/latex
 
       - name: Archive PDFs from successful build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: ${{matrix.package}}_examples_docs
@@ -179,7 +182,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        package: [cvode, cvodes, ida, idas, kinsol]
+        package: [cvode, cvodes, ida, idas]
 
     steps:
       - name: Install latex
@@ -194,13 +197,13 @@ jobs:
             texlive-plain-generic
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build docs
         run: cd doc/${{matrix.package}} && make ex
 
       - name: Archive files from failed build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: latex_build_files
@@ -209,7 +212,7 @@ jobs:
             !${{github.workspace}}/doc/${{matrix.package}}/guide
 
       - name: Archive PDFs from successful build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: ${{matrix.package}}_examples_docs

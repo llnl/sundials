@@ -1,9 +1,12 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -33,6 +36,7 @@
 #include <stdio.h>
 #include <sundials/sundials_math.h> /* defs. of SUNRabs, SUNRexp, etc.      */
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
+
 #if defined(SUNDIALS_FLOAT128_PRECISION)
 #define GSYM "Qg"
 #define ESYM "Qe"
@@ -67,7 +71,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol,
                      sunrealtype atol);
 
 /* Main Program */
-int main(void)
+int main(int argc, char* argv[])
 {
   /* SUNDIALS context object */
   SUNContext ctx;
@@ -87,7 +91,7 @@ int main(void)
   N_Vector yp        = NULL; /* empty vector for storing solution derivative */
   SUNLinearSolver LS = NULL; /* empty linear solver object */
   void* ida_mem      = NULL; /* empty IDA memory structure */
-  sunrealtype t, tout;
+  sunrealtype t, tout, h0;
   long int nst, nre, nni, netf, ncfn, nreLS;
 
   /* Initial diagnostics output */
@@ -127,6 +131,10 @@ int main(void)
   retval = IDASetLinearSolver(ida_mem, LS, NULL);
   if (check_retval(&retval, "IDASetLinearSolver", 1)) { return (1); }
 
+  /* Override any current settings with command-line options */
+  retval = IDASetOptions(ida_mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "IDASetOptions", 1)) { return 1; }
+
   /* In loop, call IDASolve, print results, and test for error.
      Stops when the final time has been reached. */
   t    = T0;
@@ -153,6 +161,8 @@ int main(void)
   printf("   ----------------------------------\n");
 
   /* Get/print some final statistics on how the solve progressed */
+  retval = IDAGetActualInitStep(ida_mem, &h0);
+  check_retval(&retval, "IDAGetActualInitStep", 1);
   retval = IDAGetNumSteps(ida_mem, &nst);
   check_retval(&retval, "IDAGetNumSteps", 1);
   retval = IDAGetNumResEvals(ida_mem, &nre);
@@ -167,6 +177,7 @@ int main(void)
   check_retval(&retval, "IDAGetNumLinResEvals", 1);
 
   printf("\nFinal Solver Statistics: \n\n");
+  printf("Initial time step                  = %8.6" FSYM "\n", h0);
   printf("Number of steps                    = %ld\n", nst);
   printf("Number of residual evaluations     = %ld\n", nre + nreLS);
   printf("Number of nonlinear iterations     = %ld\n", nni);

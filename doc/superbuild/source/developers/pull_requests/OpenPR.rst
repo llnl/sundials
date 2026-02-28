@@ -2,8 +2,11 @@
    Author(s): David J. Gardner @ LLNL
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -49,10 +52,8 @@ merged, delete the local copy the branch:
 
    When you open a PR, various "checks" will run on your code. You can see the status of these
    checks at the bottom of the PR page on GitHub. Any fixes needed to pass the checks for
-   formatting, spelling, and SWIG updates can be automatically addressed by leaving a comment
-   ``/autofix``. Checks that build the code, run more extensive tests, etc., will not automatically
-   be fixed.
-
+   formatting, spelling, and SWIG updates can be downloaded as git patches under "artifacts".
+   These patches can be applied to your branch using ``git apply <patch>`` and then committed.
 
 .. warning::
 

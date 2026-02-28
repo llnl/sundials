@@ -2,8 +2,11 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -162,8 +165,9 @@ if(SUNDIALS_TEST_ENABLE_GTEST)
     include(FetchContent)
     FetchContent_Declare(
       googletest
-      URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-      GIT_TAG v1.14.0)
+      URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
+      URL_HASH
+        SHA256=a9607c9215866bd425a725610c5e0f739eeb50887a57903df48891446ce6fb3c)
     if(WIN32)
       # For Windows: Prevent overriding the parent project's compiler/linker
       # settings

@@ -1,9 +1,12 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -152,6 +155,8 @@ extern "C" {
 #define ARK_ADJ_RECOMPUTE_FAIL  -54
 #define ARK_SUNADJSTEPPER_ERR   -55
 
+#define ARK_DEE_FAIL -56
+
 #define ARK_UNRECOGNIZED_ERROR -99
 
 /* ------------------------------
@@ -161,7 +166,7 @@ extern "C" {
 typedef int (*ARKRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot,
                         void* user_data);
 
-typedef int (*ARKRootFn)(sunrealtype t, N_Vector y, sunrealtype* gout,
+typedef int (*ARKRootFn)(sunrealtype t, N_Vector y, sunrealtype* gout_1d,
                          void* user_data);
 
 typedef int (*ARKEwtFn)(N_Vector y, N_Vector ewt, void* user_data);
@@ -196,27 +201,40 @@ typedef _SUNDIALS_STRUCT_ _MRIStepInnerStepper* MRIStepInnerStepper;
  * Relaxation Solver Options
  * -------------------------- */
 
-typedef enum
+enum ARKRelaxSolver
 {
   ARK_RELAX_BRENT,
   ARK_RELAX_NEWTON
-} ARKRelaxSolver;
+};
+
+#ifndef SWIG
+typedef enum ARKRelaxSolver ARKRelaxSolver;
+#endif
 
 /* --------------------------
  * Error Accumulation Options
  * -------------------------- */
 
-typedef enum
+enum ARKAccumError
 {
   ARK_ACCUMERROR_NONE,
   ARK_ACCUMERROR_MAX,
   ARK_ACCUMERROR_SUM,
   ARK_ACCUMERROR_AVG
-} ARKAccumError;
+};
+
+#ifndef SWIG
+typedef enum ARKAccumError ARKAccumError;
+#endif
 
 /* --------------------------
  * Shared API routines
  * -------------------------- */
+
+/* Command-line control over ARKODE options */
+SUNDIALS_EXPORT int ARKodeSetOptions(void* arkode_mem, const char* arkid,
+                                     const char* file_name, int argc,
+                                     char* argv[]);
 
 /* Resize and Reset functions */
 SUNDIALS_EXPORT int ARKodeResize(void* arkode_mem, N_Vector ynew,
@@ -242,7 +260,7 @@ SUNDIALS_EXPORT int ARKodeResFtolerance(void* arkode_mem, ARKRwtFn rfun);
 
 /* Rootfinding */
 SUNDIALS_EXPORT int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g);
-SUNDIALS_EXPORT int ARKodeSetRootDirection(void* arkode_mem, int* rootdir);
+SUNDIALS_EXPORT int ARKodeSetRootDirection(void* arkode_mem, int* rootdir_1d);
 SUNDIALS_EXPORT int ARKodeSetNoInactiveRootWarn(void* arkode_mem);
 
 /* Optional input functions (general) */
@@ -350,7 +368,7 @@ SUNDIALS_EXPORT int ARKodeGetStepDirection(void* arkode_mem,
                                            sunrealtype* stepdir);
 SUNDIALS_EXPORT int ARKodeGetErrWeights(void* arkode_mem, N_Vector eweight);
 SUNDIALS_EXPORT int ARKodeGetNumGEvals(void* arkode_mem, long int* ngevals);
-SUNDIALS_EXPORT int ARKodeGetRootInfo(void* arkode_mem, int* rootsfound);
+SUNDIALS_EXPORT int ARKodeGetRootInfo(void* arkode_mem, int* rootsfound_1d);
 SUNDIALS_EXPORT int ARKodeGetUserData(void* arkode_mem, void** user_data);
 SUNDIALS_EXPORT int ARKodePrintAllStats(void* arkode_mem, FILE* outfile,
                                         SUNOutputFormat fmt);
@@ -379,7 +397,8 @@ SUNDIALS_EXPORT int ARKodeGetAccumulatedError(void* arkode_mem,
 SUNDIALS_EXPORT int ARKodeGetNumLinSolvSetups(void* arkode_mem,
                                               long int* nlinsetups);
 SUNDIALS_EXPORT int ARKodeGetCurrentTime(void* arkode_mem, sunrealtype* tcur);
-SUNDIALS_EXPORT int ARKodeGetCurrentState(void* arkode_mem, N_Vector* state);
+SUNDIALS_EXPORT int ARKodeGetCurrentState(void* arkode_mem,
+                                          N_Vector* state); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetCurrentGamma(void* arkode_mem, sunrealtype* gamma);
 SUNDIALS_EXPORT int ARKodeGetNonlinearSystemData(
   void* arkode_mem, sunrealtype* tcur, N_Vector* zpred, N_Vector* z,
@@ -392,7 +411,8 @@ SUNDIALS_EXPORT int ARKodeGetNonlinSolvStats(void* arkode_mem, long int* nniters
                                              long int* nnfails);
 SUNDIALS_EXPORT int ARKodeGetNumStepSolveFails(void* arkode_mem,
                                                long int* nncfails);
-SUNDIALS_EXPORT int ARKodeGetJac(void* arkode_mem, SUNMatrix* J);
+SUNDIALS_EXPORT int ARKodeGetJac(void* arkode_mem,
+                                 SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetJacTime(void* arkode_mem, sunrealtype* t_J);
 SUNDIALS_EXPORT int ARKodeGetJacNumSteps(void* arkode_mem, long int* nst_J);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
@@ -413,7 +433,8 @@ SUNDIALS_EXPORT int ARKodeGetLastLinFlag(void* arkode_mem, long int* flag);
 SUNDIALS_EXPORT char* ARKodeGetLinReturnFlagName(long int flag);
 
 /* Optional output functions (non-identity mass matrices) */
-SUNDIALS_EXPORT int ARKodeGetCurrentMassMatrix(void* arkode_mem, SUNMatrix* M);
+SUNDIALS_EXPORT int ARKodeGetCurrentMassMatrix(void* arkode_mem,
+                                               SUNMatrix* M); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetResWeights(void* arkode_mem, N_Vector rweight);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")

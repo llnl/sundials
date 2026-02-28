@@ -3,8 +3,11 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -32,7 +35,7 @@ sedi() {
 # ------------------------------------------------------------------------------
 
 fn="../doc/shared/sundials_vars.py"
-sedi "s/doc_version =.*/doc_version = \'develop\'/" $fn
+sedi "s/doc_version =.*/doc_version = \"develop\"/" $fn
 
 # ------------------------------------------------------------------------------
 # Update Markdown changelog
@@ -95,6 +98,8 @@ HEREDOC
 cat > tmp.txt <<HEREDOC
 .. SED_REPLACEMENT_KEY
 
+.. _Changelog.X.Y.Z:
+
 Changes to SUNDIALS in release X.Y.Z
 ====================================
 
@@ -125,11 +130,5 @@ done
 # Update install guide
 # ------------------------------------------------------------------------------
 
-sedi "s/SOLVER-.*.gz/SOLVER-x.y.z.tar.gz/g" \
-     ../doc/shared/sundials/Install.rst
-
-sedi "s/SOLVER-[0-9]\.[0-9]\.[0-9]/SOLVER-x.y.z/g" \
-     ../doc/shared/sundials/Install.rst
-
-sedi "s/\`\`[0-9]\.[0-9]\.[0-9]\`\`/\`\`x.y.z\`\`/g" \
+sedi "s/sundials-[0-9]\.[0-9]\.[0-9]/sundials-x.y.z/g" \
      ../doc/shared/sundials/Install.rst

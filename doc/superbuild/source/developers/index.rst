@@ -2,8 +2,11 @@
    Author(s): David J. Gardner @ LLNL
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -34,11 +37,14 @@ meant for SUNDIALS developers.
 
    History
    getting_started/index
+   cmake/index
    source_code/index
+   commandline/index
    documentation/index
    testing/index
    benchmarks/index
    pull_requests/index
+   python/index
    releases/index
    packages/index
    appendix/index

@@ -1,9 +1,12 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -24,7 +27,7 @@ set(sunlinsol_lapackband_examples
     "test_sunlinsol_lapackband\;1000 8 8 0 0\;"
     "test_sunlinsol_lapackband\;5000 3 100 0 0\;")
 
-# Dependencies for nvector examples
+# Dependencies for sunlinsol examples
 set(sunlinsol_lapackband_dependencies test_sunlinsol)
 
 # Add source directory to include directories
@@ -66,62 +69,4 @@ foreach(example_tuple ${sunlinsol_lapackband_examples})
     EXAMPLE_TYPE ${example_type}
     NODIFF)
 
-  # install example source files
-  if(EXAMPLES_INSTALL)
-    install(FILES ${example}.c ../test_sunlinsol.h ../test_sunlinsol.c
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/lapackband)
-  endif()
-
 endforeach(example_tuple ${sunlinsol_lapackband_examples})
-
-if(EXAMPLES_INSTALL)
-
-  # Install the README file
-  install(FILES DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/lapackband)
-
-  # Prepare substitution variables for Makefile and/or CMakeLists templates
-  set(SOLVER_LIB "sundials_sunlinsollapackband")
-  set(LIBS "${LIBS} -lsundials_sunmatrixband -lsundials_sunmatrixdense")
-
-  # Set the link directory for the band and dense sunmatrix libraries The
-  # generated CMakeLists.txt does not use find_library() locate them
-  set(EXTRA_LIBS_DIR "${libdir}")
-
-  examples2string(sunlinsol_lapackband_examples EXAMPLES_BL)
-  examples2string(sunlinsol_lapackband_dependencies EXAMPLES_DEPENDENCIES_BL)
-
-  # Regardless of the platform we're on, we will generate and install
-  # CMakeLists.txt file for building the examples. This file  can then be used
-  # as a template for the user's own programs.
-
-  # generate CMakelists.txt in the binary directory
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_serial_C_ex.in
-    ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/lapackband/CMakeLists.txt
-    @ONLY)
-
-  # install CMakelists.txt
-  install(
-    FILES
-      ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/lapackband/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/lapackband)
-
-  # On UNIX-type platforms, we also  generate and install a makefile for
-  # building the examples. This makefile can then be used as a template for the
-  # user's own programs.
-
-  if(UNIX)
-    # generate Makefile and place it in the binary dir
-    configure_file(
-      ${PROJECT_SOURCE_DIR}/examples/templates/makefile_serial_C_ex.in
-      ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/lapackband/Makefile_ex
-      @ONLY)
-    # install the configured Makefile_ex as Makefile
-    install(
-      FILES
-        ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/lapackband/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/lapackband
-      RENAME Makefile)
-  endif()
-
-endif()

@@ -1,12 +1,11 @@
-  
- Example program fkinDiagon_kry:
-    This FKINSOL example solves a 128 eqn diagonal algebraic system.
-  Its purpose is to demonstrate the use of the Fortran interface in
-  a serial environment.
-  
- Solution method: KIN_none
-Problem size: neq = 128
-  
+Example program kinDiagon_kry_f2003:
+
+This example demonstrates using the KINSOL Fortran interface to
+solve a diagonal algebraic system using a Newton-Krylov method
+with a diagonal preconditioner in a serial environment.
+
+Problem size: 128
+
    1   1.000000   2.000000   3.000000   4.000000
    5   5.000000   6.000000   7.000000   8.000000
    9   9.000000  10.000000  11.000000  12.000000
@@ -39,9 +38,9 @@ Problem size: neq = 128
  117 117.000000 118.000000 119.000000 120.000000
  121 121.000000 122.000000 123.000000 124.000000
  125 125.000000 126.000000 127.000000 128.000000
-  
- Final Statistics..
-  
+
+Final Statistics..
+
 nni      =     7    nli     =    21
 nfe      =     8    npe     =     2
 nps      =    28    nlcf    =     0

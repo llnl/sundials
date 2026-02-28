@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -352,6 +355,9 @@ function is provided:
    **Notes:**
       Since sensitivity-related memory is not deallocated, sensitivities can  be
       reactivated at a later time (using :c:func:`IDASensReInit`).
+
+      This routine will be called by :c:func:`IDASetOptions`
+      when using the key "idaid.sens_toggle_off".
 
 
 Forward sensitivity tolerance specification functions
@@ -742,17 +748,20 @@ time and, if successful, takes effect immediately.
 
    **Notes:**
 
-   If ``DQrhomax`` :math:`= 0.0`, then no switching is performed. The
-   approximation is done simultaneously using either centered or forward finite
-   differences, depending on the value of ``DQtype``.  For values of
-   ``DQrhomax`` :math:`\ge 1.0`, the simultaneous approximation is used whenever
-   the estimated finite difference perturbations for states and parameters are
-   within a factor of ``DQrhomax``, and the separate approximation is used
-   otherwise. Note that a value ``DQrhomax`` :math:`<1.0` will effectively
-   disable switching.  See :numref:`IDAS.Mathematics.FSA` for more details.
+      If ``DQrhomax`` :math:`= 0.0`, then no switching is performed. The
+      approximation is done simultaneously using either centered or forward finite
+      differences, depending on the value of ``DQtype``.  For values of
+      ``DQrhomax`` :math:`\ge 1.0`, the simultaneous approximation is used whenever
+      the estimated finite difference perturbations for states and parameters are
+      within a factor of ``DQrhomax``, and the separate approximation is used
+      otherwise. Note that a value ``DQrhomax`` :math:`<1.0` will effectively
+      disable switching.  See :numref:`IDAS.Mathematics.FSA` for more details.
 
-   The default value are ``DQtype == IDA_CENTERED`` and
-   ``DQrhomax``:math:`=0.0`.
+      The default value are ``DQtype == IDA_CENTERED`` and
+      ``DQrhomax``:math:`=0.0`.
+
+      This routine will be called by :c:func:`IDASetOptions`
+      when using the key "idaid.sens_dq_method".
 
 
 .. c:function:: int IDASetSensErrCon(void * ida_mem, sunbooleantype errconS)
@@ -775,6 +784,9 @@ time and, if successful, takes effect immediately.
       variables are excluded from the  error tests. Note that, in any event, all
       variables are considered in the convergence  tests.
 
+      This routine will be called by :c:func:`IDASetOptions`
+      when using the key "idas.sens_err_con".
+
 
 .. c:function:: int IDASetSensMaxNonlinIters(void * ida_mem, int maxcorS)
 
@@ -791,7 +803,10 @@ time and, if successful, takes effect immediately.
      * ``IDA_MEM_FAIL`` -- The SUNNONLINSOL module is ``NULL``.
 
    **Notes:**
-      The default value is 3.
+      The default value is 4.
+
+      This routine will be called by :c:func:`IDASetOptions`
+      when using the key "idas.sens_max_nonlin_iters".
 
 
 .. _IDAS.Usage.FSA.user_callable.optional_output:
@@ -1428,6 +1443,9 @@ of sensitivity-dependent quadrature equations.
 
    **Notes:**
       By default, ``errconQS`` is set to ``SUNFALSE``.
+
+      This routine will be called by :c:func:`IDASetOptions`
+      when using the key "idas.quad_sens_err_con".
 
       .. warning::
          It is illegal to call :c:func:`IDASetQuadSensErrCon` before a call  to :c:func:`IDAQuadSensInit`.

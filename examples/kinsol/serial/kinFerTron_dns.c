@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -49,14 +52,15 @@
  * -----------------------------------------------------------------
  */
 
-#include <kinsol/kinsol.h> /* access to KINSOL func., consts. */
 #include <math.h>
-#include <nvector/nvector_serial.h> /* access to serial N_Vector       */
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <kinsol/kinsol.h>             /* access to KINSOL func., consts.    */
+#include <nvector/nvector_serial.h>    /* access to serial N_Vector          */
 #include <sundials/sundials_types.h>   /* defs. of sunrealtype, sunindextype */
-#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver */
-#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix       */
+#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver    */
+#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix          */
 
 /* Problem Constants */
 
@@ -82,9 +86,6 @@ typedef struct
   sunrealtype ub[NVAR];
 }* UserData;
 
-/* Accessor macro */
-#define Ith(v, i) NV_Ith_S(v, i - 1)
-
 /* Functions Called by the KINSOL Solver */
 static int func(N_Vector u, N_Vector f, void* user_data);
 
@@ -105,48 +106,36 @@ static int check_retval(void* retvalvalue, const char* funcname, int opt);
 
 int main(void)
 {
-  SUNContext sunctx;
-  UserData data;
-  sunrealtype fnormtol, scsteptol;
-  N_Vector u1, u2, u, s, c;
-  int glstr, mset, retval;
-  void* kmem;
-  SUNMatrix J;
-  SUNLinearSolver LS;
-
-  u1 = u2 = u = NULL;
-  s = c = NULL;
-  kmem  = NULL;
-  J     = NULL;
-  LS    = NULL;
-  data  = NULL;
+  /* Reusable return flag */
+  int retval = 0;
 
   /* Create the SUNDIALS context that all SUNDIALS objects require */
+  SUNContext sunctx;
   retval = SUNContext_Create(SUN_COMM_NULL, &sunctx);
   if (check_retval(&retval, "SUNContext_Create", 1)) { return (1); }
 
   /* User data */
-
-  data        = (UserData)malloc(sizeof *data);
+  UserData data = (UserData)malloc(sizeof *data);
+  if (data == NULL) { return 1; }
   data->lb[0] = PT25;
   data->ub[0] = ONE;
   data->lb[1] = ONEPT5;
   data->ub[1] = TWO * PI;
 
   /* Create serial vectors of length NEQ */
-  u1 = N_VNew_Serial(NEQ, sunctx);
+  N_Vector u1 = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)u1, "N_VNew_Serial", 0)) { return (1); }
 
-  u2 = N_VNew_Serial(NEQ, sunctx);
+  N_Vector u2 = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)u2, "N_VNew_Serial", 0)) { return (1); }
 
-  u = N_VNew_Serial(NEQ, sunctx);
+  N_Vector u = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)u, "N_VNew_Serial", 0)) { return (1); }
 
-  s = N_VNew_Serial(NEQ, sunctx);
+  N_Vector s = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)s, "N_VNew_Serial", 0)) { return (1); }
 
-  c = N_VNew_Serial(NEQ, sunctx);
+  N_Vector c = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)c, "N_VNew_Serial", 0)) { return (1); }
 
   SetInitialGuess1(u1, data);
@@ -154,25 +143,29 @@ int main(void)
 
   N_VConst(ONE, s); /* no scaling */
 
-  Ith(c, 1) = ZERO; /* no constraint on x1 */
-  Ith(c, 2) = ZERO; /* no constraint on x2 */
-  Ith(c, 3) = ONE;  /* l1 = x1 - x1_min >= 0 */
-  Ith(c, 4) = -ONE; /* L1 = x1 - x1_max <= 0 */
-  Ith(c, 5) = ONE;  /* l2 = x2 - x2_min >= 0 */
-  Ith(c, 6) = -ONE; /* L2 = x2 - x22_min <= 0 */
+  sunrealtype* cdata = N_VGetArrayPointer(c);
+  cdata[0]           = ZERO; /* no constraint on x1 */
+  cdata[1]           = ZERO; /* no constraint on x2 */
+  cdata[2]           = ONE;  /* l1 = x1 - x1_min >= 0 */
+  cdata[3]           = -ONE; /* L1 = x1 - x1_max <= 0 */
+  cdata[4]           = ONE;  /* l2 = x2 - x2_min >= 0 */
+  cdata[5]           = -ONE; /* L2 = x2 - x22_min <= 0 */
 
-  fnormtol  = FTOL;
-  scsteptol = STOL;
+  sunrealtype fnormtol  = FTOL; /* residual tolerance    */
+  sunrealtype scsteptol = STOL; /* scaled step tolerance */
 
-  kmem = KINCreate(sunctx);
+  void* kmem = KINCreate(sunctx);
   if (check_retval((void*)kmem, "KINCreate", 0)) { return (1); }
 
   retval = KINSetUserData(kmem, data);
   if (check_retval(&retval, "KINSetUserData", 1)) { return (1); }
+
   retval = KINSetConstraints(kmem, c);
   if (check_retval(&retval, "KINSetConstraints", 1)) { return (1); }
+
   retval = KINSetFuncNormTol(kmem, fnormtol);
   if (check_retval(&retval, "KINSetFuncNormTol", 1)) { return (1); }
+
   retval = KINSetScaledStepTol(kmem, scsteptol);
   if (check_retval(&retval, "KINSetScaledStepTol", 1)) { return (1); }
 
@@ -180,11 +173,11 @@ int main(void)
   if (check_retval(&retval, "KINInit", 1)) { return (1); }
 
   /* Create dense SUNMatrix */
-  J = SUNDenseMatrix(NEQ, NEQ, sunctx);
+  SUNMatrix J = SUNDenseMatrix(NEQ, NEQ, sunctx);
   if (check_retval((void*)J, "SUNDenseMatrix", 0)) { return (1); }
 
   /* Create dense SUNLinearSolver object */
-  LS = SUNLinSol_Dense(u, J, sunctx);
+  SUNLinearSolver LS = SUNLinSol_Dense(u, J, sunctx);
   if (check_retval((void*)LS, "SUNLinSol_Dense", 0)) { return (1); }
 
   /* Attach the matrix and linear solver to KINSOL */
@@ -195,6 +188,9 @@ int main(void)
   PrintHeader(fnormtol, scsteptol);
 
   /* --------------------------- */
+
+  int glstr; /* KINSOL globalization strategy flag */
+  int mset;  /* KINSOL method selection flag */
 
   printf("\n------------------------------------------\n");
   printf("\nInitial guess on lower bounds\n");
@@ -415,8 +411,6 @@ static void PrintHeader(sunrealtype fnormtol, sunrealtype scsteptol)
   printf("  fnormtol  = %10.6Qg\n  scsteptol = %10.6Qg\n", fnormtol, scsteptol);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  fnormtol  = %10.6Lg\n  scsteptol = %10.6Lg\n", fnormtol, scsteptol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("  fnormtol  = %10.6g\n  scsteptol = %10.6g\n", fnormtol, scsteptol);
 #else
   printf("  fnormtol  = %10.6g\n  scsteptol = %10.6g\n", fnormtol, scsteptol);
 #endif
@@ -428,14 +422,13 @@ static void PrintHeader(sunrealtype fnormtol, sunrealtype scsteptol)
 
 static void PrintOutput(N_Vector u)
 {
+  sunrealtype* udata = N_VGetArrayPointer(u);
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-  printf(" %8.6Qg  %8.6Qg\n", Ith(u, 1), Ith(u, 2));
+  printf(" %8.6Qg  %8.6Qg\n", udata[0], udata[1]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-  printf(" %8.6Lg  %8.6Lg\n", Ith(u, 1), Ith(u, 2));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" %8.6g  %8.6g\n", Ith(u, 1), Ith(u, 2));
+  printf(" %8.6Lg  %8.6Lg\n", udata[0], udata[1]);
 #else
-  printf(" %8.6g  %8.6g\n", Ith(u, 1), Ith(u, 2));
+  printf(" %8.6g  %8.6g\n", udata[0], udata[1]);
 #endif
 }
 
@@ -452,7 +445,6 @@ static void PrintFinalStats(void* kmem)
   check_retval(&retval, "KINGetNumNonlinSolvIters", 1);
   retval = KINGetNumFuncEvals(kmem, &nfe);
   check_retval(&retval, "KINGetNumFuncEvals", 1);
-
   retval = KINGetNumJacEvals(kmem, &nje);
   check_retval(&retval, "KINGetNumJacEvals", 1);
   retval = KINGetNumLinFuncEvals(kmem, &nfeD);
