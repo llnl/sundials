@@ -45,7 +45,7 @@ if(ENABLE_PETSC AND NOT ENABLE_MPI)
     FATAL_ERROR "MPI is required for PETSc support. Set ENABLE_MPI to ON.")
 endif()
 
-if(SUNDIALS_PRECISION MATCHES "EXTENDED")
+if(SUNDIALS_PRECISION MATCHES "EXTENDED|FLOAT128")
   message(
     FATAL_ERROR
       "SUNDIALS is not compatible with PETSc when using ${SUNDIALS_PRECISION} precision"

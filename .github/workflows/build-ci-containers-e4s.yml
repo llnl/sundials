@@ -40,7 +40,7 @@ jobs:
     strategy:
       matrix:
         indexsize: [32, 64]
-        precision: ['single', 'double', 'extended']
+        precision: ['single', 'double', 'extended', 'float128']
     runs-on: ubuntu-latest
     needs: build_e4s_base
     steps:

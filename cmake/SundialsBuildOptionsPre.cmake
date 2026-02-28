@@ -33,7 +33,7 @@ endif()
 # Option to specify precision (sunrealtype)
 # ---------------------------------------------------------------
 
-set(DOCSTR "single, double, or extended")
+set(DOCSTR "single, double, extended or float128")
 sundials_option(SUNDIALS_PRECISION STRING "${DOCSTR}" "DOUBLE")
 string(TOUPPER ${SUNDIALS_PRECISION} _upper_SUNDIALS_PRECISION)
 set(SUNDIALS_PRECISION

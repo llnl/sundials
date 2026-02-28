@@ -72,6 +72,7 @@ help ()
             double   -- (default) use double precision
             single   -- use single precision
             extended -- use extended precision
+            float128 -- use float128 precision
 
         --indexsize SIZE
             Index size to use in a custom test. SIZE must be one of:
@@ -233,6 +234,9 @@ while [[ $# -gt 0 ]]; do
                     ;;
                 EXTENDED|Extended|extended)
                     sunrealtype=extended
+                    ;;
+                FLOAT128|Float128|float128)
+                    sunrealtype=float128
                     ;;
                 *)
                     echo "ERROR: Invalid real type option $sunrealtype"
@@ -433,7 +437,7 @@ case "$testtype" in
         done
 
         # Test configs
-        for rt in single double extended; do
+        for rt in single double extended float128; do
             for is in 32 64; do
                 for lt in static shared; do
                     args_realtypes+=("${rt}")

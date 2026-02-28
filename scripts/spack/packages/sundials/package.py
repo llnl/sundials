@@ -101,7 +101,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         "precision",
         default="double",
         description="real type precision",
-        values=("single", "double", "extended"),
+        values=("single", "double", "extended", "float128"),
         multi=False,
     )
 
@@ -288,6 +288,14 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     # External libraries incompatible with extended (quad) precision
     with when("precision=extended"):
+        conflicts("+hypre", when="+hypre@:2.12.0")
+        conflicts("+klu")
+        conflicts("+lapack")
+        conflicts("+superlu-dist")
+        conflicts("+superlu-mt")
+
+    # External libraries incompatible with quadruple precision
+    with when("precision=float128"):
         conflicts("+hypre", when="+hypre@:2.12.0")
         conflicts("+klu")
         conflicts("+lapack")

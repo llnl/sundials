@@ -57,12 +57,12 @@ if((CMAKE_CXX_COMPILER_ID MATCHES GNU)
 endif()
 
 # ===============================================================
-# Prohibit CUDA interface when using extended precision.
+# Prohibit CUDA interface when using extended or float128 precision.
 # ===============================================================
 
-if(SUNDIALS_PRECISION MATCHES "EXTENDED")
+if(SUNDIALS_PRECISION MATCHES "EXTENDED|FLOAT128")
   message(
-    FATAL_ERROR "CUDA interfaces are incompatible with extended precision.")
+    FATAL_ERROR "CUDA interfaces are incompatible with ${SUNDIALS_PRECISION} precision.")
 endif()
 
 # ===============================================================

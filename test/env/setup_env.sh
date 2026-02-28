@@ -24,6 +24,7 @@
 #                single   : single (32-bit) precision
 #                double   : double (64-bit) precision
 #                extended : extended (80-bit) precision
+#                float128 : quadruple (128-bit) precision
 # index size = SUNDIALS index size to build/test with:
 #                32       : 32-bit indices
 #                64       : 64-bit indices
@@ -45,7 +46,7 @@ echo "./setup_env.sh $*" | tee -a setup_env.log
 # Check number of inputs
 if [ "$#" -lt 5 ]; then
     echo "ERROR: missing required inputs"
-    echo "  1) real type    : [single|double|extended]"
+    echo "  1) real type    : [single|double|extended|float128]"
     echo "  2) index size   : [32|64]"
     echo "  3) library type : [static|shared|both]"
     echo "  4) TPL status   : [ON|OFF]"

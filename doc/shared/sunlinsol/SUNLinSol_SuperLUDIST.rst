@@ -199,8 +199,8 @@ that SUNDIALS has been configured appropriately to link with SuperLU_DIST
 (see :numref:`Installation.Options.SuperLU_DIST` for details).
 Additionally, the wrapper only
 supports double-precision calculations, and therefore cannot be compiled if SUNDIALS
-is configured to use single or extended precision. Moreover, since the SuperLU_DIST
-library may be installed to support either 32-bit or 64-bit integers,
+is configured to use single, extended or float128 precision. Moreover, since the
+SuperLU_DIST library may be installed to support either 32-bit or 64-bit integers,
 it is assumed that the SuperLU_DIST library is installed using the same
 integer size as SUNDIALS.
 

@@ -25,7 +25,7 @@ echo "./jenkins.sh $*" | tee -a setup_env.log
 # ------------------------------------------------------------------------------
 
 case "$SUNDIALS_PRECISION" in
-    single|double|extended) ;;
+    single|double|extended|float128) ;;
     *)
         echo "ERROR: Unknown real type option: $SUNDIALS_PRECISION"
         return 1
@@ -163,7 +163,8 @@ export SUNDIALS_OPENMP_OFFLOAD=OFF
 # CUDA
 # ----
 
-if [ "$SUNDIALS_PRECISION" != "extended" ]; then
+if [ "$SUNDIALS_PRECISION" != "extended" ] && \
+   [ "$SUNDIALS_PRECISION" != "float128" ]; then
     export SUNDIALS_CUDA=ON
     export SUNDIALS_FUSED_KERNELS=ON
 else
@@ -187,7 +188,8 @@ export MPIEXEC="${MPI_ROOT}/bin/mpirun"
 # LAPACK / BLAS
 # -------------
 
-if [ "$SUNDIALS_PRECISION" != "extended" ]; then
+if [ "$SUNDIALS_PRECISION" != "extended" ] && \
+    [ "$SUNDIALS_PRECISION" != "float128" ]; then
     export SUNDIALS_LAPACK=ON
     if [ "$SUNDIALS_INDEX_SIZE" == "32" ]; then
         LAPACK_ROOT="$(spack location -i openblas@0.3.27 ~ilp64)"
@@ -224,7 +226,8 @@ fi
 # Ginkgo
 # ------
 
-if [ "$SUNDIALS_PRECISION" != "extended" ]; then
+if [ "$SUNDIALS_PRECISION" != "extended" ] && \
+    [ "$SUNDIALS_PRECISION" != "float128" ]; then
     if [ "$SUNDIALS_CUDA" == "ON" ]; then
         export SUNDIALS_GINKGO=ON
         export GINKGO_ROOT="$(spack location -i ginkgo@master +cuda)"
@@ -269,6 +272,7 @@ fi
 # -----
 
 if [ "$SUNDIALS_PRECISION" != "extended" ] && \
+    [ "$SUNDIALS_PRECISION" != "float128" ] && \
     [ "$SUNDIALS_INDEX_SIZE" == "32" ] && \
     [ "$SUNDIALS_CUDA" == "ON" ]; then
     export SUNDIALS_MAGMA=ON
@@ -284,7 +288,8 @@ fi
 # SuperLU_MT
 # ----------
 
-if [ "$SUNDIALS_PRECISION" != "extended" ]; then
+if [ "$SUNDIALS_PRECISION" != "extended" ]&& \
+    [ "$SUNDIALS_PRECISION" != "float128" ]; then
     export SUNDIALS_SUPERLU_MT=ON
     # Using @master (sha 9e23fe72652afc28c97829e69e7c6966050541a7) as it
     # additional fixes necessary for building with newer versions of GCC

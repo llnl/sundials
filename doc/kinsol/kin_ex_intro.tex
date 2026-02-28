@@ -168,6 +168,7 @@ to compile and run for any combination of configuration options used during
 the installation of {\sundials} (see Appendix \ref{c:install} in the User Guide).
 As a consequence, they contain portions of code that will not be typically present in a
 user program. For example, all {\CC} example programs make use of the
-variables \id{SUNDIALS\_EXTENDED\_PRECISION} and \id{SUNDIALS\_DOUBLE\_PRECISION}
-to test if the solver libraries were built in extended or double precision,
-and use the appropriate conversion specifiers in \id{printf} functions.
+variables  \id{SUNDIALS\_FLAOT128\_PRECISION}, \id{SUNDIALS\_EXTENDED\_PRECISION} and
+\id{SUNDIALS\_DOUBLE\_PRECISION} to test if the solver libraries were built in
+float128, extended or double precision,and use the appropriate conversion specifiers
+in \id{printf} functions.

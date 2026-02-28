@@ -100,10 +100,10 @@ endif()
 # -----------------------------------------------------------------------------
 
 if(Ginkgo_FOUND AND (NOT GINKGO_WORKS))
-  if(SUNDIALS_PRECISION MATCHES "extended|EXTENDED")
+  if(SUNDIALS_PRECISION MATCHES "extended|EXTENDED|float128|FLOAT128")
     message(
       FATAL_ERROR
-        "SUNDIALS GINKGO interface is not compatible with extended precision")
+        "SUNDIALS GINKGO interface is not compatible with extended or float128 precision")
   endif()
 
   if(SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA" AND NOT ENABLE_CUDA)

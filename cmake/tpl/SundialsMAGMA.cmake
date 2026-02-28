@@ -39,10 +39,10 @@ endif()
 # Section 2: Check to make sure options are compatible
 # -----------------------------------------------------------------------------
 
-if(SUNDIALS_PRECISION MATCHES "extended")
+if(SUNDIALS_PRECISION MATCHES "extended|float128")
   message(
     FATAL_ERROR
-      "SUNDIALS MAGMA interface is not compatible with extended precision")
+      "SUNDIALS MAGMA interface is not compatible with ${SUNDIALS_PRECISION} precision")
 endif()
 
 # -----------------------------------------------------------------------------

@@ -91,7 +91,7 @@ Automated building of new containers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We currently have six different containers, one for each combination of {int32, int64} and {single,
-double, extended} precision. These containers are pinned to an E4S release. When E4S does a release,
+double, extended, float128} precision. These containers are pinned to an E4S release. When E4S does a release,
 we can rebuild these containers to use the packages from it. We add E4S as a mirror in the Spack
 environment so that its buildcache can be leveraged.
 

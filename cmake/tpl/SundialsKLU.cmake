@@ -39,8 +39,8 @@ endif()
 # Section 2: Check to make sure options are compatible
 # -----------------------------------------------------------------------------
 
-# KLU does not support single or extended precision
-if(SUNDIALS_PRECISION MATCHES "SINGLE" OR SUNDIALS_PRECISION MATCHES "EXTENDED")
+# KLU does not support single, extended or float128 precision
+if(SUNDIALS_PRECISION MATCHES "SINGLE|EXTENDED|FLOAT128")
   message(
     FATAL_ERROR "KLU is not compatible with ${SUNDIALS_PRECISION} precision")
 endif()

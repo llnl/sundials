@@ -111,8 +111,8 @@ link with LAPACK (see
 :numref:`Installation.Options.LAPACK` for details).  We note
 that since there do not exist 128-bit floating-point factorization and
 solve routines in LAPACK, this interface cannot be compiled when
-using ``extended`` precision for :c:type:`sunrealtype`.  Similarly, since
-there do not exist 64-bit integer LAPACK routines, the
+using ``float128`` or ``extended`` precision for :c:type:`sunrealtype`.
+Similarly, since there do not exist 64-bit integer LAPACK routines, the
 SUNLinSol_LapackBand module also cannot be compiled when using
 ``int64_t`` for the :c:type:`sunindextype`.
 

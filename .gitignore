@@ -19,6 +19,8 @@
 *.directory
 /.pydevproject
 .vscode
+.vs
+/out
 compile_commands.json
 .venv
 .clangd

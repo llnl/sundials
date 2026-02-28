@@ -89,6 +89,8 @@ void bind_core(nb::module_& m)
   m.attr("sunrealtype") = np.attr("float64");
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   m.attr("sunrealtype") = np.attr("longdouble");
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+  m.attr("sunrealtype") = np.attr("float128");
 #else
 #error Unknown sunrealtype, email sundials-users@llnl.gov
 #endif
