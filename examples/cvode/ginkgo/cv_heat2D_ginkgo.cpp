@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -67,11 +70,9 @@ constexpr auto N_VNew = N_VNew_Hip;
 constexpr auto N_VNew = N_VNew_Sycl;
 #elif defined(USE_OMP)
 #include <nvector/nvector_serial.h>
-#define HIP_OR_CUDA_OR_SYCL(a, b, c)
 constexpr auto N_VNew = N_VNew_Serial;
 #else
 #include <nvector/nvector_serial.h>
-#define HIP_OR_CUDA_OR_SYCL(a, b, c)
 constexpr auto N_VNew = N_VNew_Serial;
 #endif
 
@@ -117,19 +118,9 @@ int main(int argc, char* argv[])
   // ---------------------------------------
 
 #if defined(USE_CUDA)
-#if GKO_VERSION_MAJOR > 1 || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR >= 7)
   auto gko_exec{gko::CudaExecutor::create(0, gko::OmpExecutor::create())};
-#else
-  auto gko_exec{gko::CudaExecutor::create(0, gko::OmpExecutor::create(), false,
-                                          gko::allocation_mode::device)};
-#endif
 #elif defined(USE_HIP)
-#if GKO_VERSION_MAJOR > 1 || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR >= 7)
   auto gko_exec{gko::HipExecutor::create(0, gko::OmpExecutor::create())};
-#else
-  auto gko_exec{gko::HipExecutor::create(0, gko::OmpExecutor::create(), false,
-                                         gko::allocation_mode::device)};
-#endif
 #elif defined(USE_SYCL)
   auto gko_exec{gko::DpcppExecutor::create(0, gko::ReferenceExecutor::create())};
 #elif defined(USE_OMP)
@@ -310,11 +301,11 @@ __global__ void f_kernel(const sunindextype nx, const sunindextype ny,
     auto x = i * dx;
     auto y = j * dy;
 
-    auto sin_sqr_x = SUNRsin(PI * x) * SUNRsin(PI * x);
-    auto sin_sqr_y = SUNRsin(PI * y) * SUNRsin(PI * y);
+    auto sin_sqr_x = sin(PI * x) * sin(PI * x);
+    auto sin_sqr_y = sin(PI * y) * sin(PI * y);
 
-    auto cos_sqr_x = SUNRcos(PI * x) * SUNRcos(PI * x);
-    auto cos_sqr_y = SUNRcos(PI * y) * SUNRcos(PI * y);
+    auto cos_sqr_x = cos(PI * x) * cos(PI * x);
+    auto cos_sqr_y = cos(PI * y) * cos(PI * y);
 
     // center, north, south, east, and west indices
     auto idx_c = i + j * nx;
@@ -352,8 +343,8 @@ int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
   const auto bx = kx * TWO * PI * PI;
   const auto by = ky * TWO * PI * PI;
 
-  const auto sin_t_cos_t = SUNRsin(PI * t) * SUNRcos(PI * t);
-  const auto cos_sqr_t   = SUNRcos(PI * t) * SUNRcos(PI * t);
+  const auto sin_t_cos_t = sin(PI * t) * cos(PI * t);
+  const auto cos_sqr_t   = cos(PI * t) * cos(PI * t);
 
   // Initialize RHS vector to zero (handles boundary conditions)
   N_VConst(ZERO, f);
@@ -446,11 +437,11 @@ int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
       auto x = i * dx;
       auto y = j * dy;
 
-      auto sin_sqr_x = SUNRsin(PI * x) * SUNRsin(PI * x);
-      auto sin_sqr_y = SUNRsin(PI * y) * SUNRsin(PI * y);
+      auto sin_sqr_x = sin(PI * x) * sin(PI * x);
+      auto sin_sqr_y = sin(PI * y) * sin(PI * y);
 
-      auto cos_sqr_x = SUNRcos(PI * x) * SUNRcos(PI * x);
-      auto cos_sqr_y = SUNRcos(PI * y) * SUNRcos(PI * y);
+      auto cos_sqr_x = cos(PI * x) * cos(PI * x);
+      auto cos_sqr_y = cos(PI * y) * cos(PI * y);
 
       // center, north, south, east, and west indices
       auto idx_c = i + j * nx;

@@ -3,8 +3,11 @@
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -21,6 +24,8 @@
 # Examples using SUNDIALS linear solvers
 set(IDA_examples
     "idaAnalytic_mels\;\;exclude-single"
+    "idaAnalytic_mels\;ida.scalar_tolerances 1e-3 1e-8\;exclude-single"
+    "idaFoodWeb_bnd\;\;develop"
     "idaFoodWeb_kry\;\;develop"
     "idaHeat2D_bnd\;\;develop"
     "idaHeat2D_kry\;\;develop"
@@ -31,7 +36,7 @@ set(IDA_examples
     "idaSlCrank_dns\;\;exclude-single")
 
 # Examples using LAPACK linear solvers
-set(IDA_examples_BL "idaFoodWeb_bnd\;\;develop")
+set(IDA_examples_BL)
 
 # Examples using KLU linear solver
 set(IDA_examples_KLU "idaHeat2D_klu\;\;develop" "idaRoberts_klu\;\;develop")

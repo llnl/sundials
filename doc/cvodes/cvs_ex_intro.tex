@@ -12,7 +12,8 @@ serial and parallel examples of Initial Value Problem (IVP) integration,
 serial and parallel examples of forward sensitivity analysis (FSA), and 
 serial and parallel examples of adjoint sensitivity analysis (ASA).
 The names of all these examples are given in the following table.
-In addition, there is an example using OpenMP.
+In addition, there is an example using OpenMP.  There are two examples
+in Fortran using the {\sundials} Fortran interface modules.
 
 \newlength{\colone}
 
@@ -29,11 +30,17 @@ In addition, there is an example using OpenMP.
     {}  & \id{cvsDirunal\_kry}     \id{cvsDiurnal\_kry\_bp}          & {}                           \\
     {}  & \id{cvsDirectDemo\_ls}   \id{cvsKrylovDemo\_ls}            & {}                           \\
     {}  & \id{cvsKrylovDemo\_prec}                                   & {}                           \\
+    {}  & \id{cvsParticle\_dns}                                      & {}                           \\
+    {}  & \id{cvsPendulum\_dns}                                      & {}                           \\
+    {}  & \id{cvsAnalytic\_mels}                                     & {}                           \\
+    {}  & \id{cvs\_analytic\_fp\_f2003}                              & {}                           \\
     \hline
     
     FSA & \id{cvsRoberts\_FSA\_dns} \id{cvsRoberts\_FSA\_dns\_constraints} & \id{cvsAdvDiff\_FSA\_non\_p} \\
     {}  & \id{cvsRoberts\_FSA\_klu} \id{cvsRoberts\_FSA\_sps}              & \id{cvsDiurnal\_FSA\_kry\_p} \\
     {}  & \id{cvsAdvDiff\_FSA\_non} \id{cvsDiurnal\_FSA\_kry}              & {}                           \\
+    {}  & \id{cvsRoberts\_FSA\_dns\_Switch}                                & {}                           \\
+    {}  & \id{cvsAdvDiff\_FSA\_non\_f2003}                                 & {}                           \\
     \hline
     
     ASA & \id{cvsRoberts\_ASAi\_dns} \id{cvsRoberts\_ASAi\_dns\_constraints} & \id{cvsAdvDiff\_ASAp\_non\_p}      \\
@@ -170,6 +177,14 @@ following serial examples (using the {\nvecs} module):
   The product preconditioner is applied on the left and on the right.    
   In each case, both the modified and classical Gram-Schmidt options    
   are tested.
+\item \id{cvsParticle\_dns} solves a simple particle motion problem
+  with a solution constraint and a user-supplied projection function
+  onto the constraint.
+\item \id{cvsPendulum\_dns} solves a pendulum motion problem with and
+  without constraints on the solution, and with various tolerances.  In the
+  runs with constraints, a user-supplied projection function is applied.
+\item \id{cvsAnalytic\_mels} solves a problem having a simple analytic
+  solution, using a custom matrix-embedded linear solver.
 
 %% FSA examples
 
@@ -207,6 +222,8 @@ following serial examples (using the {\nvecs} module):
   The problem is solved with the BDF/GMRES method (i.e. using the {\sunlinsolspgmr}
   linear solver) and the block-diagonal part of the  
   Newton matrix as a left preconditioner.
+\item \id{cvsRoberts\_FSA\_dns\_Switch} is the same as \id{cvsRoberts\_FSA\_dns}
+  but with sensitivity options switched on and off.
 
 %% ASA examples
 
@@ -323,6 +340,21 @@ the following seven parallel examples (using the {\nvecp} module):
 Supplied in {\em srcdir}\id{/examples/cvodes/C\_openmp} is
 an example, \id{cvsAdvDiff\_bnd\_omp}, which solves the same problem as
 \id{cvsAdvDiff\_bnd} but using the OpenMP NVECTOR module.
+
+%%
+%%--------------------------------------------------------------------------------
+%%
+
+\vspace{0.2in}\noindent Supplied in the
+{\em srcdir}\id{/examples/cvodes/F2003\_serial} directory are the
+following examples, both in Fortran and using the {\sundials} Fortran
+interface modules:
+\begin{itemize}
+\item \id{cvs\_analytic\_fp\_f2003} solves the same problem as
+  \id{cvsAnalytic\_mels}, but using the fixed-point nonlinear solver.
+\item \id{cvsAdvDiff\_FSA\_non\_f2003} solves the same problem as
+  \id{cvsAdvDiff\_FSA\_non}.
+\end{itemize}
 
 %%
 %%--------------------------------------------------------------------------------

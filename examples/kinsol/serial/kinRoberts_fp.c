@@ -2,8 +2,11 @@
  * Programmer(s): Carol Woodward @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -84,7 +87,7 @@ static int check_ans(N_Vector u, sunrealtype rtol, sunrealtype atol);
  *--------------------------------------------------------------------
  */
 
-int main(void)
+int main(int argc, char* argv[])
 {
   SUNContext sunctx;
   sunrealtype fnormtol, fnorm;
@@ -148,6 +151,11 @@ int main(void)
   fnormtol = TOL;
   retval   = KINSetFuncNormTol(kmem, fnormtol);
   if (check_retval(&retval, "KINSetFuncNormTol", 1)) { return (1); }
+
+  /* Override any current settings with command-line options */
+
+  retval = KINSetOptions(kmem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "KINSetOptions", 1)) { return (1); }
 
   /* -------------
    * Initial guess
@@ -251,8 +259,6 @@ static void PrintOutput(N_Vector y)
   printf("y =%14.6Qe  %14.6Qe  %14.6Qe\n", y1, y2, y3);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("y =%14.6Le  %14.6Le  %14.6Le\n", y1, y2, y3);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("y =%14.6e  %14.6e  %14.6e\n", y1, y2, y3);
 #else
   printf("y =%14.6e  %14.6e  %14.6e\n", y1, y2, y3);
 #endif

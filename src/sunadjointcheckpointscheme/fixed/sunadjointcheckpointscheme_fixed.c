@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -134,8 +137,8 @@ SUNErrCode SUNAdjointCheckpointScheme_InsertVector_Fixed(
   SUNCheckCall(SUNDataNode_SetDataNvector(solution_node, y, t));
 
   SUNLogExtraDebug(SUNCTX_->logger, "insert-stage",
-                   "step_num = %d, stage_num = %d, t = %g", step_num, stage_num,
-                   t);
+                   "step_num = %d, stage_num = %d, t = " SUN_FORMAT_G, step_num,
+                   stage_num, t);
   SUNCheckCall(SUNDataNode_AddChild(step_data_node, solution_node));
 
   return SUN_SUCCESS;
@@ -234,8 +237,8 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector_Fixed(
 
   SUNCheckCall(SUNDataNode_GetDataNvector(solution_node, *yout, tout));
   SUNLogExtraDebug(SUNCTX_->logger, "stage-loaded",
-                   "step_num = %d, stage_num = %d, t = %g", step_num, stage_num,
-                   *tout);
+                   "step_num = %d, stage_num = %d, t = " SUN_FORMAT_G, step_num,
+                   stage_num, *tout);
 
   /* Cleanup the checkpoint memory if need be */
   if (!(IMPL_MEMBER(self, keep) || peek))

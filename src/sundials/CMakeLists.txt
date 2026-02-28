@@ -2,8 +2,11 @@
 # Programmer(s): Radu Serban and Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -22,10 +25,14 @@ install(CODE "MESSAGE(\"\nInstall shared components\n\")")
 # Add variable sundials_HEADERS with the exported SUNDIALS header files
 set(sundials_HEADERS
     sundials_adaptcontroller.h
+    sundials_adaptcontroller.hpp
     sundials_adjointcheckpointscheme.h
+    sundials_adjointcheckpointscheme.hpp
     sundials_adjointstepper.h
+    sundials_adjointstepper.hpp
     sundials_band.h
     sundials_base.hpp
+    sundials_classview.hpp
     sundials_context.h
     sundials_context.hpp
     sundials_convertibleto.hpp
@@ -33,12 +40,15 @@ set(sundials_HEADERS
     sundials_core.hpp
     sundials_dense.h
     sundials_direct.h
+    sundials_domeigestimator.h
+    sundials_domeigestimator.hpp
     sundials_errors.h
     sundials_futils.h
     sundials_iterative.h
     sundials_linearsolver.h
     sundials_linearsolver.hpp
     sundials_logger.h
+    sundials_logger.hpp
     sundials_math.h
     sundials_matrix.h
     sundials_matrix.hpp
@@ -52,6 +62,7 @@ set(sundials_HEADERS
     sundials_profiler.h
     sundials_profiler.hpp
     sundials_stepper.h
+    sundials_stepper.hpp
     sundials_types_deprecated.h
     sundials_types.h
     sundials_version.h)
@@ -86,11 +97,13 @@ set(sundials_SOURCES
     sundials_adjointcheckpointscheme.c
     sundials_adjointstepper.c
     sundials_band.c
+    sundials_cli.c
     sundials_context.c
     sundials_dense.c
     sundials_datanode.c
     sundials_direct.c
     sundials_errors.c
+    sundials_domeigestimator.c
     sundials_futils.c
     sundials_hashmap.c
     sundials_iterative.c
@@ -142,6 +155,7 @@ sundials_add_library(
 install(
   FILES ${SUNDIALS_SOURCE_DIR}/include/sundials/priv/sundials_context_impl.h
         ${SUNDIALS_SOURCE_DIR}/include/sundials/priv/sundials_errors_impl.h
+        ${SUNDIALS_SOURCE_DIR}/include/sundials/priv/sundials_logger_macros.h
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sundials/priv")
 
 if(ENABLE_MPI)

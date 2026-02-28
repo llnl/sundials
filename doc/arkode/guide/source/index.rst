@@ -1,9 +1,12 @@
 .. ----------------------------------------------------------------
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -64,6 +67,7 @@ with support by the `US Department of Energy <http://www.doe.gov>`_,
    sunmatrix/index.rst
    sunlinsol/index.rst
    sunnonlinsol/index.rst
+   sundomeigest/index.rst
    sunadaptcontroller/index.rst
    sunstepper/index.rst
    sunadjoint/index.rst
@@ -71,6 +75,8 @@ with support by the `US Department of Energy <http://www.doe.gov>`_,
    sundials/Install_link.rst
    Constants
    Butcher
+   Fortran/index.rst
+   Python/index.rst
    History_link.rst
    Changelog_link.rst
    References

@@ -2,8 +2,11 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -30,7 +33,7 @@ endif()
 # Option to specify precision (sunrealtype)
 # ---------------------------------------------------------------
 
-set(DOCSTR "single, double, extended, or float128")
+set(DOCSTR "single, double, or extended")
 sundials_option(SUNDIALS_PRECISION STRING "${DOCSTR}" "DOUBLE")
 string(TOUPPER ${SUNDIALS_PRECISION} _upper_SUNDIALS_PRECISION)
 set(SUNDIALS_PRECISION
@@ -129,11 +132,11 @@ endif()
 # ---------------------------------------------------------------
 
 if(UNIX)
-  sundials_option(SUNDIALS_MATH_LIBRARY STRING
-                  "Which math library (e.g., libm libquadmath) to link to" "-lm" ADVANCED)
+  sundials_option(SUNDIALS_MATH_LIBRARY PATH
+                  "Which math library (e.g., libm) to link to" "-lm" ADVANCED)
 else()
-  sundials_option(SUNDIALS_MATH_LIBRARY STRING
-                  "Which math library (e.g., libm libquadmath) to link to" "" ADVANCED)
+  sundials_option(SUNDIALS_MATH_LIBRARY PATH
+                  "Which math library (e.g., libm) to link to" "" ADVANCED)
 endif()
 # all executables will be linked against the math library
 set(EXE_EXTRA_LINK_LIBS "${SUNDIALS_MATH_LIBRARY}")
@@ -205,8 +208,9 @@ endif()
 # ---------------------------------------------------------------
 
 # Fortran 2003 interface is disabled by default
-set(DOCSTR "Enable Fortran 2003 modules")
-sundials_option(BUILD_FORTRAN_MODULE_INTERFACE BOOL "${DOCSTR}" OFF)
+sundials_option(
+  BUILD_FORTRAN_MODULE_INTERFACE BOOL "Enable Fortran 2003 modules" OFF
+  DEPRECATED_NAMES F2003_INTERFACE_ENABLE)
 
 if(BUILD_FORTRAN_MODULE_INTERFACE)
   # F2003 interface only supports double precision
@@ -229,6 +233,13 @@ if(BUILD_FORTRAN_MODULE_INTERFACE)
   set(DOCSTR "Directory where Fortran module files are installed")
   sundials_option(Fortran_INSTALL_MODDIR STRING "${DOCSTR}" "fortran")
 endif()
+
+# ---------------------------------------------------------------
+# Options to enable Python interfaces.
+# ---------------------------------------------------------------
+
+set(DOCSTR "Enable Python interfaces")
+sundials_option(SUNDIALS_ENABLE_PYTHON BOOL "${DOCSTR}" OFF)
 
 # ---------------------------------------------------------------
 # Options for benchmark suite
@@ -330,8 +341,23 @@ endif()
 # Options for SUNDIALS testing
 # ---------------------------------------------------------------
 
-sundials_option(SUNDIALS_TEST_ENABLE_DEV_TESTS BOOL "Include development tests"
-                OFF ADVANCED)
+sundials_option(
+  SUNDIALS_TEST_ENABLE_DEV_TESTS
+  BOOL
+  "Enable development tests"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_TEST_DEVTESTS)
+
+sundials_option(
+  SUNDIALS_TEST_ENABLE_UNIT_TESTS
+  BOOL
+  "Enable unit tests"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_TEST_UNITTESTS)
 
 sundials_option(SUNDIALS_TEST_ENABLE_UNIT_TESTS BOOL "Include unit tests" OFF
                 ADVANCED)
@@ -365,9 +391,14 @@ else()
 endif()
 
 sundials_option(
-  SUNDIALS_TEST_ENABLE_DIFF_OUTPUT BOOL
-  "Compare test output with saved answer files" ${_default_diff_output}
-  ADVANCED)
+  SUNDIALS_TEST_ENABLE_DIFF_OUTPUT
+  BOOL
+  "Compare test output with saved answer files"
+  ${_default_diff_output}
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_TEST_NODIFF
+  NEGATE_DEPRECATED)
 
 if((SUNDIALS_TEST_ENABLE_DEV_TESTS OR SUNDIALS_TEST_ENABLE_UNIT_TESTS)
    AND NOT SUNDIALS_TEST_ENABLE_DIFF_OUTPUT)
@@ -399,8 +430,14 @@ if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT SUNDIALS_TEST_ANSWER_DIR)
       "failures due to hardware or round-off differences.")
 endif()
 
-sundials_option(SUNDIALS_TEST_ENABLE_PROFILING BOOL "Profile tests" OFF
-                ADVANCED)
+sundials_option(
+  SUNDIALS_TEST_ENABLE_PROFILING
+  BOOL
+  "Profile tests"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_TEST_PROFILE)
 
 sundials_option(
   SUNDIALS_TEST_CALIPER_OUTPUT_DIR PATH "Location to write test Caliper files"

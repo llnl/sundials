@@ -1,11 +1,14 @@
 /* ----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *                Scott Cohen, Alan Hindmarsh, Radu Serban, and
  *                Aaron Collier @ LLNL
  * ----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -58,7 +61,7 @@ typedef int (*KINLsPrecSolveFn)(N_Vector uu, N_Vector uscale, N_Vector fval,
                                 N_Vector fscale, N_Vector vv, void* user_data);
 
 typedef int (*KINLsJacTimesVecFn)(N_Vector v, N_Vector Jv, N_Vector uu,
-                                  sunbooleantype* new_uu, void* J_data);
+                                  sunbooleantype* new_uu, void* user_data);
 
 /*==================================================================
   KINLS Exported functions
@@ -80,7 +83,8 @@ SUNDIALS_EXPORT int KINSetJacTimesVecFn(void* kinmem, KINLsJacTimesVecFn jtv);
   Optional outputs from the KINLS linear solver interface
   -----------------------------------------------------------------*/
 
-SUNDIALS_EXPORT int KINGetJac(void* kinmem, SUNMatrix* J);
+SUNDIALS_EXPORT int KINGetJac(void* kinmem,
+                              SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int KINGetJacNumIters(void* kinmem, long int* nni_J);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")

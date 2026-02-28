@@ -3,8 +3,11 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -69,7 +72,6 @@ help ()
             double   -- (default) use double precision
             single   -- use single precision
             extended -- use extended precision
-            float128 -- use float128 precision
 
         --indexsize SIZE
             Index size to use in a custom test. SIZE must be one of:
@@ -231,9 +233,6 @@ while [[ $# -gt 0 ]]; do
                     ;;
                 EXTENDED|Extended|extended)
                     sunrealtype=extended
-                    ;;
-                FLOAT128|Float128|flaot128)
-                    sunrealtype=flaot128
                     ;;
                 *)
                     echo "ERROR: Invalid real type option $sunrealtype"
@@ -409,20 +408,13 @@ case "$testtype" in
         tarball=sundials
 
         # Test configs
-        for rt in single double extended; do
-            for is in 32 64; do
-                args_realtypes+=("${rt}")
-                args_indexsizes+=("${is}")
-                args_libtypes+=("static")
-                args_tpls+=("ON")
-                # Development test output files created with double
-                if [[ "${rt}" == "double" ]]; then
-                    args_suntests+=("DEV")
-                else
-                    args_suntests+=("STD")
-                fi
-                args_phase+=("")
-            done
+        for is in 32 64; do
+            args_realtypes+=("double")
+            args_indexsizes+=("${is}")
+            args_libtypes+=("static")
+            args_tpls+=("ON")
+            args_suntests+=("DEV")
+            args_phase+=("")
         done
         ;;
 

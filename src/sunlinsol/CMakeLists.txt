@@ -2,8 +2,11 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -39,8 +42,10 @@ if(BUILD_SUNLINSOL_GINKGO)
               $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
               $<BUILD_INTERFACE:${SUNDIALS_SOURCE_DIR}/src/sundials>
               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-  install(FILES ${PROJECT_SOURCE_DIR}/include/sunlinsol/sunlinsol_ginkgo.hpp
-          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sunlinsol")
+  install(
+    FILES ${PROJECT_SOURCE_DIR}/include/sunlinsol/sunlinsol_ginkgo.hpp
+          ${PROJECT_SOURCE_DIR}/include/sunlinsol/sunlinsol_ginkgobatch.hpp
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sunlinsol")
   set(_SUNDIALS_INSTALLED_COMPONENTS
       "sunlinsolginkgo;${_SUNDIALS_INSTALLED_COMPONENTS}"
       CACHE INTERNAL "" FORCE)

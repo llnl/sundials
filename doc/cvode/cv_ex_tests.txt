@@ -1,0 +1,113 @@
+%===============================================================================
+\section{Parallel tests}\label{s:ex_tests}
+%===============================================================================
+
+The stiff example problem \id{cvDiurnal\_kry} described above, or rather its parallel
+version \id{cvDiurnal\_kry\_p}, has been modified and expanded to form a test problem for
+the parallel version of {\cvode}.  This work was largely carried out
+by M. Wittman and reported in \cite{Wit:96}.
+
+To start with, in order to add realistic complexity to the solution, the
+initial profile for this problem was altered to include a rather steep front
+in the vertical direction. Specifically, the function $\beta(y)$ in
+Eq. (\ref{cvDiurnalic}) has been replaced by: 
+\begin{equation}
+\beta(y) = .75 + .25 \tanh(10 y - 400) ~.
+\end{equation}
+This function rises from about .5 to about 1.0 over a $y$ interval of about
+.2 (i.e. 1/100 of the total span in $y$). This vertical variation, together
+with the horizonatal advection and diffusion in the problem, demands a
+fairly fine spatial mesh to achieve acceptable resolution.
+
+In addition, an alternate choice of differencing is used in order to control
+spurious oscillations resulting from the horizontal advection. In place of
+central differencing for that term, a biased upwind approximation is applied
+to each of the terms $\partial c^i/\partial x$, namely: 
+\begin{equation}
+\left. \partial c/\partial x\right| _{x_j}\approx \left[ \frac
+32c_{j+1}-c_j-\frac 12c_{j-1}\right] /(2\Delta x) ~.
+\end{equation}
+
+With this modified form of the problem, we performed tests similar to those
+described above for the example. Here we fix the subgrid dimensions at
+{\tt MXSUB = MYSUB =} 50, so that the local (per-processor) problem size is 5000,
+while the processor array dimensions, {\tt NPEX} and {\tt NPEY}, are varied.
+In one (typical) sequence of tests, we fix {\tt NPEY} = 8 (for a vertical
+mesh size of {\tt MY} = 400), and set {\tt NPEX} = 8 ({\tt MX} = 400),
+{\tt NPEX} = 16 ({\tt MX} = 800), and {\tt NPEX} = 32 ({\tt MX} = 1600). 
+Thus the largest problem size $N$ is $2 \cdot 400 \cdot 1600 = 1,280,000$. 
+For these tests, we also raise the maximum Krylov dimension, {\tt maxl},
+to 10 (from its default value of 5).
+
+For each of the three test cases, the test program was run on a Cray-T3D
+(256 processors) with each of three different message-passing libraries:
+
+\begin{itemize}
+\item  MPICH: an implementation of MPI on top of the Chameleon library
+
+\item  EPCC: an implementation of MPI by the Edinburgh Parallel Computer
+Centre
+
+\item  SHMEM: Cray's Shared Memory Library
+\end{itemize}
+
+The following table gives the run time and selected performance counters for
+these 9 runs. In all cases, the solutions agreed well with each other,
+showing expected small variations with grid size. In the table, M-P denotes
+the message-passing library, RT is the reported run time in CPU seconds, 
+{\tt nst} is the number of time steps, {\tt nfe} is the number of $f$
+evaluations, {\tt nni} is the number of nonlinear (Newton) iterations,
+{\tt nli} is the number of linear (Krylov) iterations, and {\tt npe} is the
+number of evaluations of the preconditioner.
+
+\begin{table}[htb]
+\begin{center}
+\begin{tabular}{|c|c|c|r|r|r|r|r|}
+\hline
+{\tt NPEX} & M-P & RT & {\tt nst} & {\tt nfe} & {\tt nni} & {\tt nli} & 
+{\tt npe} \\ \hline\hline
+8 & MPICH & 436. & 1391 & 9907 & 1512 & 8392 & 24 \\ \hline
+8 & EPCC & 355. & 1391 & 9907 & 1512 & 8392 & 24 \\ \hline
+8 & SHMEM & 349. & 1999 & 10,326 & 2096 & 8227 & 34 \\ \hline\hline
+16 & MPICH & 676. & 2513 & 14,159 & 2583 & 11,573 & 42 \\ \hline
+16 & EPCC & 494. & 2513 & 14,159 & 2583 & 11,573 & 42 \\ \hline
+16 & SHMEM & 471. & 2513 & 14,160 & 2581 & 11,576 & 42 \\ \hline\hline
+32 & MPICH & 1367. & 2536 & 20,153 & 2696 & 17,454 & 43 \\ \hline
+32 & EPCC & 737. & 2536 & 20,153 & 2696 & 17,454 & 43 \\ \hline
+32 & SHMEM & 695. & 2536 & 20,121 & 2694 & 17,424 & 43 \\ \hline
+\end{tabular}
+\label{testtable}
+\end{center}
+\caption{Parallel {\cvode} test results vs problem size and message-passing library}
+\end{table}
+
+Some of the results were as expected, and some were surprising. For a given
+mesh size, variations in performance counts were small or absent, except for
+moderate (but still acceptable) variations for SHMEM in the smallest case.
+The increase in costs with mesh size can be attributed to a decline in the
+quality of the preconditioner, which neglects most of the spatial coupling.
+The preconditioner quality can be inferred from the ratio {\tt nli/nni},
+which is the average number of Krylov iterations per Newton iteration. The
+most interesting (and unexpected) result is the variation of run time with
+library: SHMEM is the most efficient, but EPCC is a very close second, and
+MPICH loses considerable efficiency by comparison, as the problem size
+grows. This means that the highly portable MPI version of {\cvode}, with an
+appropriate choice of MPI implementation, is fully competitive with the
+Cray-specific version using the SHMEM library. While the overall costs do
+not represent a well-scaled parallel algorithm (because of the
+preconditioner choice), the cost per function evaluation is quite flat for
+EPCC and SHMEM, at .033 to .037 (for MPICH it ranges from .044 to .068).
+
+For tests that demonstrate speedup from parallelism, we consider runs with
+fixed problem size: {\tt MX =} 800, {\tt MY =} 400. Here we also fix the
+vertical subgrid dimension at {\tt MYSUB =} 50 and the vertical processor
+array dimension at {\tt NPEY =} 8, but vary the corresponding horizontal
+sizes. We take {\tt NPEX =} 8, 16, and 32, with {\tt MXSUB =} 100, 50, and
+25, respectively. The runs for the three cases and three message-passing
+libraries all show very good agreement in solution values and performance
+counts. The run times for EPCC are 947, 494, and 278, showing speedups of
+1.92 and 1.78 as the number of processors is doubled (twice). For the SHMEM
+runs, the times were slightly lower and the ratios were 1.98 and 1.91. For
+MPICH, consistent with the earlier runs, the run times were considerably
+higher, and in fact show speedup ratios of only 1.54 and 1.03.
+

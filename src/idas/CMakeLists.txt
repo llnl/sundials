@@ -1,10 +1,13 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 #                Radu Serban, Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -21,6 +24,7 @@ install(CODE "MESSAGE(\"\nInstall IDAS\n\")")
 set(idas_SOURCES
     idas.c
     idaa.c
+    idas_cli.c
     idas_io.c
     idas_ic.c
     idaa_io.c
@@ -31,7 +35,7 @@ set(idas_SOURCES
     idas_nls_stg.c)
 
 # Add variable idas_HEADERS with the exported IDAS header files
-set(idas_HEADERS idas.h idas_bbdpre.h idas_ls.h)
+set(idas_HEADERS idas.h idas.hpp idas_bbdpre.h idas_ls.h)
 
 # Add prefix with complete path to the IDAS header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/idas/ idas_HEADERS)

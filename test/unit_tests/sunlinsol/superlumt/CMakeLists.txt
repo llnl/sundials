@@ -1,9 +1,12 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -25,7 +28,7 @@ set(sunlinsol_superlumt_examples
     "test_sunlinsol_superlumt\;1000 0 3 0\;exclude"
     "test_sunlinsol_superlumt\;1000 1 3 0\;exclude")
 
-# Dependencies for nvector examples
+# Dependencies for sunlinsol examples
 set(sunlinsol_superlumt_dependencies test_sunlinsol)
 
 # Add source directory to include directories
@@ -69,67 +72,4 @@ foreach(example_tuple ${sunlinsol_superlumt_examples})
     EXAMPLE_TYPE ${example_type}
     NODIFF)
 
-  if(EXAMPLES_INSTALL)
-    install(FILES ${example}.c ../test_sunlinsol.h ../test_sunlinsol.c
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/superlumt)
-  endif()
-
 endforeach(example_tuple ${sunlinsol_superlumt_examples})
-
-if(EXAMPLES_INSTALL)
-
-  # Install the README file
-  install(FILES DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/superlumt)
-
-  # Prepare substitution variables for Makefile and/or CMakeLists templates
-  set(SOLVER_LIB "sundials_sunlinsolsuperlumt")
-  set(LIBS "${LIBS} -lsundials_sunmatrixdense -lsundials_sunmatrixsparse")
-
-  # Set the link directory for the dense and sparse sunmatrix libraries The
-  # generated CMakeLists.txt does not use find_library() locate them
-  set(EXTRA_LIBS_DIR "${libdir}")
-
-  examples2string(sunlinsol_superlumt_examples EXAMPLES_SLUMT)
-  examples2string(sunlinsol_superlumt_dependencies EXAMPLES_DEPENDENCIES_SLUMT)
-
-  if(SUNDIALS_SUPERLUMT_THREAD_TYPE STREQUAL "PTHREAD")
-    set(THREAD_LIBRARY_SLUMT ${CMAKE_THREAD_LIBS_INIT})
-  else()
-    set(THREAD_LIBRARY_SLUMT "")
-  endif()
-
-  # Regardless of the platform we're on, we will generate and install
-  # CMakeLists.txt file for building the examples. This file  can then be used
-  # as a template for the user's own programs.
-
-  # generate CMakelists.txt in the binary directory
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_serial_C_ex.in
-    ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/superlumt/CMakeLists.txt
-    @ONLY)
-
-  # install CMakelists.txt
-  install(
-    FILES
-      ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/superlumt/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/superlumt)
-
-  # On UNIX-type platforms, we also  generate and install a makefile for
-  # building the examples. This makefile can then be used as a template for the
-  # user's own programs.
-
-  if(UNIX)
-    # generate Makefile and place it in the binary dir
-    configure_file(
-      ${PROJECT_SOURCE_DIR}/examples/templates/makefile_serial_C_ex.in
-      ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/superlumt/Makefile_ex
-      @ONLY)
-    # install the configured Makefile_ex as Makefile
-    install(
-      FILES
-        ${PROJECT_BINARY_DIR}/test/unit_tests/sunlinsol/superlumt/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/sunlinsol/superlumt
-      RENAME Makefile)
-  endif()
-
-endif()

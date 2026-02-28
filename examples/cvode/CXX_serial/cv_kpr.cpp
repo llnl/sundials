@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -110,13 +113,17 @@ int main(int argc, char* argv[])
   flag                 = CVodeSetUserData(cvode_mem, udata);
   if (check_flag(flag, "CVodeSetUserData")) { return 1; }
 
+  // Override any current settings with command-line options
+  flag = CVodeSetOptions(cvode_mem, NULL, NULL, argc, argv);
+  if (check_flag(flag, "CVodeSetOptions")) { return 1; }
+
   // Initial time and fist output time
   sunrealtype tret = ZERO;
   sunrealtype tout = tret + opts.dtout;
 
   // Output initial contion
   std::cout << std::scientific;
-  std::cout << std::setprecision(std::numeric_limits<double>::digits10);
+  std::cout << std::setprecision(SUN_DIGITS10);
   std::cout << "           t              ";
   std::cout << "          u              ";
   std::cout << "          v              ";

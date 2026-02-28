@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -456,6 +459,8 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
   +========================================================+==================================+==============================+
   | **KINSOL main solver**                                 |                                  |                              |
   +--------------------------------------------------------+----------------------------------+------------------------------+
+  | Set KINSOL options from the command line or file       | :c:func:`KINSetOptions`          |                              |
+  +--------------------------------------------------------+----------------------------------+------------------------------+
   | Data for problem-defining function                     | :c:func:`KINSetUserData`         | ``NULL``                     |
   +--------------------------------------------------------+----------------------------------+------------------------------+
   | Max. number of nonlinear iterations                    | :c:func:`KINSetNumMaxIters`      | 200                          |
@@ -523,6 +528,72 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
   +--------------------------------------------------------+----------------------------------+------------------------------+
 
 
+.. c:function:: int KINSetOptions(void* kin_mem, const char* kinid, const char* file_name, int argc, char* argv[])
+
+   Sets KINSOL options from an array of strings or a file.
+
+   :param kin_mem: pointer to the KINSOL memory block.
+   :param kinid: the prefix for options to read. The default is "kinsol".
+   :param file_name: the name of a file containing options to read. If this is
+                     ``NULL`` or an empty string, ``""``, then no file is read.
+   :param argc: number of command-line arguments passed to executable.
+   :param argv: an array of strings containing the options to set and their values.
+
+   :retval KIN_SUCCESS: the function exited successfully.
+   :retval KIN_MEM_NULL: ``kin_mem`` was ``NULL``.
+   :retval other: error return value from relevant KINSOL "set" routine.
+
+   **Example usage:**
+
+   In a C or C++ program, the following will enable command-line processing:
+
+   .. code-block:: C
+
+      /* Create KINSOL memory block */
+      void* kin_mem = KINCreate(sunctx);
+
+      /* Configure KINSOL as normal */
+      ...
+
+      /* Override settings with command-line options using default "kinsol" prefix */
+      flag = KINSetOptions(kin_mem, NULL, NULL, argc, argv);
+
+   Then when running the program, the user can specify desired options, e.g.,
+
+   .. code-block:: console
+
+      $ ./a.out kinsol.num_max_iters 100 kinsol.kinid.eta_const_value 0.01
+
+   .. note::
+
+      The ``argc`` and ``argv`` arguments are typically those supplied to the user's
+      ``main`` routine however, this is not required. The inputs are left unchanged by
+      :c:func:`KINSetOptions`.
+
+      If the ``kinid`` argument is ``NULL``, then the default prefix, ``kinsol``, must
+      be used for all KINSOL options. Whether ``kinid`` is supplied or not, a ``"."``
+      must be used to separate an option key from the prefix.  For example, when
+      using the default ``kinsol``, the option ``kinsol.num_max_iters`` followed
+      by the value can be used to set the maximum number of nonlinear solver iterations.
+
+      KINSOL options set via :c:func:`KINSetOptions` will
+      overwrite any previously-set values.  Options are set in the order they are given
+      in ``argv`` and, if an option with the same prefix appears multiple times in
+      ``argv``, the value of the last occurrence will used.
+
+      The supported command-line options are documented within each KINSOL "set" routine.
+      For options that take a :c:type:`sunbooleantype` as input, use ``1`` to indicate
+      ``true`` and ``0`` for ``false``.
+
+   .. warning::
+
+      This function is not available in the Fortran interface.
+
+      File-based options are not yet supported, so the ``file_name`` argument
+      should be set to either ``NULL`` or the empty string ``""``.
+
+   .. versionadded:: 7.5.0
+
 .. c:function:: int KINSetUserData(void * kin_mem, void * user_data)
 
    The function :c:func:`KINSetUserData` specifies the pointer to user-defined
@@ -564,6 +635,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    **Notes:**
       The default value for ``mxiter`` is ``MXITER_DEFAULT`` :math:`=200`.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.num_max_iters".
+
 
 .. c:function:: int KINSetNoInitSetup(void * kin_mem, sunbooleantype noInitSetup)
 
@@ -587,6 +661,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       problems, in which  the final preconditioner or Jacobian value from one
       problem is to be used initially  for the next problem.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.no_init_setup".
+
 
 .. c:function:: int KINSetNoResMon(void * kin_mem, sunbooleantype noNNIResMon)
 
@@ -605,6 +682,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    **Notes:**
       When using a direct solver, the default value for ``noNNIResMon`` is
       ``SUNFALSE``,  meaning that the nonlinear residual will be monitored.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.no_res_mon".
 
    .. warning::
       Residual monitoring is only available for use with  matrix-based linear
@@ -631,6 +711,8 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       value of ``msbset`` should be a multiple of ``msbsetsub`` (see
       :c:func:`KINSetMaxSubSetupCalls`).
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.max_setup_calls".
 
 .. c:function:: int KINSetMaxSubSetupCalls(void * kin_mem, long int msbsetsub)
 
@@ -650,6 +732,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       The default value for ``msbsetsub`` is ``MSBSET_SUB_DEFAULT`` :math:`=5`.
       The value of ``msbset`` (see :c:func:`KINSetMaxSetupCalls`) should be a
       multiple  of ``msbsetsub``.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.max_sub_setup_calls".
 
    .. warning::
       Residual monitoring is only available for use with  matrix-based linear
@@ -703,6 +788,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
 
       where :math:`\eta_{\text{min}} = 10^{-4}` and :math:`\eta_{\text{max}} = 0.9`.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.eta_form".
+
 
 .. c:function:: int KINSetEtaConstValue(void * kin_mem, sunrealtype eta)
 
@@ -721,6 +809,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    **Notes:**
       The default value for ``eta`` is :math:`0.1`.  The legal values are
       :math:`0.0 <` ``eta`` :math:`\le 1.0`.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.eta_const_value".
 
 
 .. c:function:: int KINSetEtaParams(void * kin_mem, sunrealtype egamma, sunrealtype ealpha)
@@ -744,6 +835,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       :math:`2.0`, respectively.  The legal values are :math:`0.0 <` ``egamma``
       :math:`\le 1.0` and  :math:`1.0<` ``ealpha`` :math:`\le 2.0`.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.eta_params".
+
 
 .. c:function:: int KINSetResMonConstValue(void * kin_mem, sunrealtype omegaconst)
 
@@ -762,6 +856,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    **Notes:**
       The default value for ``omegaconst`` is :math:`0.9`.  The legal values are
       :math:`0.0 <` ``omegaconst`` :math:`< 1.0`.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.res_mon_const_value".
 
 
 .. c:function:: int KINSetResMonParams(void * kin_mem, sunrealtype omegamin, sunrealtype omegamax)
@@ -784,6 +881,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       The default values for ``omegamin`` and ``omegamax`` are :math:`0.00001`
       and :math:`0.9`,  respectively.  The legal values are :math:`0.0 <`
       ``omegamin`` :math:`<` ``omegamax`` :math:`< 1.0`.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.res_mon_params".
 
    .. warning::
       Residual monitoring is only available for use with  matrix-based linear
@@ -809,6 +909,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       positive minimum value, equal to :math:`0.01`*``fnormtol``, is applied to
       :math:`\epsilon` (see :c:func:`KINSetFuncNormTol` below).
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.no_min_eps".
+
 
 .. c:function:: int KINSetMaxNewtonStep(void * kin_mem, sunrealtype mxnewtstep)
 
@@ -829,6 +932,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       The default value of ``mxnewtstep`` is :math:`1000\, \| u_0 \|_{D_u}`,
       where :math:`u_0` is the initial guess.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.max_newton_step".
+
 
 .. c:function:: int KINSetMaxBetaFails(void * kin_mem, sunrealtype mxnbcf)
 
@@ -847,6 +953,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
 
    **Notes:**
       The default value of ``mxnbcf`` is ``MXNBCF_DEFAULT`` :math:`=10`.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.max_beta_fails".
 
 
 .. c:function:: int KINSetRelErrFunc(void * kin_mem, sunrealtype relfunc)
@@ -870,6 +979,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    **Notes:**
       The default value for ``relfunc`` is :math:`U` = unit roundoff.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.rel_err_func".
+
 
 .. c:function:: int KINSetFuncNormTol(void * kin_mem, sunrealtype fnormtol)
 
@@ -890,6 +1002,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    **Notes:**
       The default value for ``fnormtol`` is (unit roundoff) :math:`^{1/3}`.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.func_norm_tol".
+
 
 .. c:function:: int KINSetScaledStepTol(void * kin_mem, sunrealtype scsteptol)
 
@@ -908,6 +1023,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
 
    **Notes:**
       The default value for ``scsteptol`` is (unit roundoff) :math:`^{2/3}`.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.scaled_step_tol".
 
 
 .. c:function:: int KINSetConstraints(void * kin_mem, N_Vector constraints)
@@ -978,6 +1096,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    **Notes:**
       The default value of ``ret_newest`` is ``SUNFALSE``.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.return_newest".
+
 
 .. c:function:: int KINSetDamping(void * kin_mem, sunrealtype beta)
 
@@ -1005,31 +1126,49 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       ``beta`` is extremely small (close to zero), this  can lead to an
       excessively tight tolerance.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.damping".
+
 
 .. c:function:: int KINSetMAA(void * kin_mem, long int maa)
 
-   The function :c:func:`KINSetMAA` specifies the size of the subspace used with
-   Anderson acceleration in conjunction with Picard or fixed-point iteration.
+   The function :c:func:`KINSetMAA` specifies the Anderson acceleration subspace
+   size (depth) in the Picard or fixed-point iteration.
+
+   The default depth is 0, indicating no acceleration. Providing a value
+   :math:`> 0` will enable acceleration. The input ``maa`` must be less than the
+   maximum number of iterations allowed, ``mxiter`` (see
+   :c:func:`KINSetNumMaxIters`). This limit is enforced within :c:func:`KINSol`,
+   so :c:func:`KINSetMAA` and :c:func:`KINSetNumMaxIters` may be called in any
+   order. If ``maa`` is greater than or equal to ``mxiter``, it is set to the
+   maximum possible depth, ``maa = mxiter - 1``.
 
    **Arguments:**
      * ``kin_mem`` -- pointer to the KINSOL memory block.
-     * ``maa`` -- subspace size for various methods. A value of 0 means no acceleration, while a positive value means acceleration will be done.
+     * ``maa`` -- subspace size for various methods. A value of 0 means no
+       acceleration, while a positive value means acceleration will be done.
 
    **Return value:**
      * ``KIN_SUCCESS`` -- The optional value has been successfully set.
      * ``KIN_MEM_NULL`` -- The ``kin_mem`` pointer is ``NULL``.
      * ``KIN_ILL_INPUT`` -- The argument ``maa`` was negative.
 
-   **Notes:**
-      This function sets the subspace size, which needs to be :math:`> 0` if
-      Anderson  Acceleration is to be used.  It also allocates additional memory
-      necessary for Anderson Acceleration.  The default value of ``maa`` is 0,
-      indicating no acceleration.  The value of ``maa``  should always be less
-      than ``mxiter``.  This function MUST be called before calling
-      :c:func:`KINInit`.  If the user calls the function KINSetNumMaxIters, that
-      call should be made  before the call to KINSetMAA, as the latter uses the
-      value of ``mxiter``.
+   .. note::
 
+      Users solving a series of problems with the same KINSOL instance and
+      changing the maximum number of iterations between :c:func:`KINSol` calls
+      may need to also call :c:func:`KINSetMAA` to adjust the depth as its value
+      may have been limited in the last :c:func:`KINSol` call to enforce ``maa <
+      mxiter``.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.m_aa".
+
+   .. versionchanged:: 7.5.0
+
+      This function can now be called any time after :c:func:`KINCreate` (i.e.,
+      it no longer needs to be call before :c:func:`KINInit`) and may be called
+      before or after :c:func:`KINSetNumMaxIters`.
 
 .. c:function:: int KINSetDampingAA(void * kin_mem, sunrealtype beta)
 
@@ -1056,6 +1195,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       value provided to :c:func:`KINSetDampingAA` is  applied to all iterations
       and any value provided to :c:func:`KINSetDamping` is  ignored.
 
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.damping_aa".
+
 
 .. c:function:: int KINSetDelayAA(void * kin_mem, long int delay)
 
@@ -1073,6 +1215,9 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
 
    **Notes:**
       The default value of ``delay`` is 0, indicating no delay.
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.delay_aa".
 
 
 .. c:function:: int KINSetOrthAA(void* kin_mem, int orthaa)
@@ -1098,13 +1243,17 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
      * ``KIN_ILL_INPUT`` -- The argument ``orthaa`` was not one of the predefined
        orthogonalization routines defined in KINSOL.
 
-   .. note::
+   **Examples codes:**
 
-      This function *must* be called before calling :c:func:`KINInit`.
+   * ``examples/kinsol/serial/kinAnalytic_fp.c``
 
-      An example of how to use this function can be found in
-      ``examples/kinsol/serial/kinAnalytic_fp.c``
+   .. versionchanged:: 7.5.0
 
+      This function can now be called any time after :c:func:`KINCreate` (i.e.,
+      it no longer needs to be call before :c:func:`KINInit`).
+
+      This routine will be called by :c:func:`KINSetOptions`
+      when using the key "kinid.orth_aa".
 
 .. c:function:: int KINSetDampingFn(void* kin_mem, KINDampingFn damping_fn)
 
@@ -1132,14 +1281,15 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
    fixed-point or Picard iterations.
 
    :param kin_mem: pointer to the KINSOL memory block.
-   :param damping_fn: the function to compute the depth parameter or ``NULL``
-                      to disable using a depth function. See
-                      :c:type:`KINDepthFn` for more information.
+   :param depth_fn: the function to compute the depth parameter or ``NULL``
+                    to disable using a depth function. See
+                    :c:type:`KINDepthFn` for more information.
 
    :retval KIN_SUCCESS: The depth function has been successfully set.
    :retval KIN_MEM_NULL: The ``kin_mem`` pointer is ``NULL``.
 
    .. versionadded:: 7.3.0
+
 
 .. _KINSOL.Usage.CC.optional_inputs.optin_ls:
 
@@ -1496,7 +1646,7 @@ functions are described next.
    .. versionadded:: 6.3.0
 
 
-.. c:function:: int KINPrintAllStats(void* cvode_mem, FILE* outfile, SUNOutputFormat fmt)
+.. c:function:: int KINPrintAllStats(void* kin_mem, FILE* outfile, SUNOutputFormat fmt)
 
    The function :c:func:`KINPrintAllStats` outputs all of the nonlinear solver,
    linear solver, and other statistics.
@@ -2011,6 +2161,15 @@ supplied, the default is a difference quotient approximation to these products.
       * ``v`` -- is the vector by which the Jacobian must be multiplied to the right.
       * ``Jv`` -- is the computed output vector.
       * ``u`` -- is the current value of the dependent variable vector.
+      * ``new_u`` -- is a flag, input from KINSOL and possibly reset by this
+        function, indicating whether the iterate vector ``u`` has been updated
+        since the last call to this function. This is useful if this function
+        computes and saves Jacobian data that depends on ``u`` for use in
+        computing :math:`J(u) v`. The input value of ``new_u`` is ``SUNTRUE``
+        following an update by KINSOL, and in that case any saved Jacobian data
+        depending on ``u`` should be recomputed. This function should then set
+        ``new_u`` to ``SUNFALSE``, so that on subsequent calls with the same
+        ``u``, the saved data can be reused.
       * ``user_data`` -- is a pointer to user data, the same as the ``user_data``
         parameter passed to :c:func:`KINSetUserData`.
 

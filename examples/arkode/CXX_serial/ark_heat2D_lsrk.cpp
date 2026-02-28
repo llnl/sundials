@@ -1,12 +1,15 @@
 /* -----------------------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *
  * (adapted from ark_heat2D.cpp, co-authored by Daniel Reynolds and David
  * Gardner (LLNL))
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -19,9 +22,6 @@
  * The following test simulates a simple anisotropic 2D heat equation,
  *
  *   u_t = kx u_xx + ky u_yy + b,
- *
- * TO-DO: update this to kx(t) and ky(t), and determine the corresponding
- * changes required for b to ensure the same analytical solution.
  *
  * for t in [0, 1] and (x,y) in [0, 1]^2, with initial condition
  *
@@ -61,6 +61,7 @@
 #include "nvector/nvector_serial.h" // access to the serial N_Vector
 #include "sunadaptcontroller/sunadaptcontroller_imexgus.h"
 #include "sunadaptcontroller/sunadaptcontroller_soderlind.h"
+#include "sundials/sundials_adaptcontroller.h"
 
 // Macros for problem constants
 #define PI   SUN_RCONST(3.141592653589793238462643383279502884197169)
@@ -542,7 +543,7 @@ static int InitUserData(UserData* udata)
 
   // LSRKStep options
   udata->method          = ARKODE_LSRK_RKC_2; // RKC
-  udata->eigfrequency    = 25;   // update eigenvalue at least every 20 steps
+  udata->eigfrequency    = 25;   // update eigenvalue at least every 25 steps
   udata->stage_max_limit = 1000; // allow up to 1000 stages/step
   udata->eigsafety       = SUN_RCONST(1.01); // 1% safety factor
 
@@ -639,13 +640,6 @@ static int ReadInputs(int* argc, char*** argv, UserData* udata)
     // Help
     else if (arg == "--help")
     {
-      InputHelp();
-      return -1;
-    }
-    // Unknown input
-    else
-    {
-      cerr << "ERROR: Invalid input " << arg << endl;
       InputHelp();
       return -1;
     }
@@ -785,7 +779,7 @@ static int OpenOutput(UserData* udata)
   if (udata->output > 0)
   {
     cout << scientific;
-    cout << setprecision(numeric_limits<double>::digits10);
+    cout << setprecision(SUN_DIGITS10);
     if (udata->forcing)
     {
       cout << "          t           ";
@@ -820,13 +814,13 @@ static int OpenOutput(UserData* udata)
     // Open output streams for solution and error
     udata->uout.open("heat2d_solution.txt");
     udata->uout << scientific;
-    udata->uout << setprecision(numeric_limits<double>::digits10);
+    udata->uout << setprecision(SUN_DIGITS10;
 
     if (udata->forcing)
     {
       udata->eout.open("heat2d_error.txt");
       udata->eout << scientific;
-      udata->eout << setprecision(numeric_limits<double>::digits10);
+      udata->eout << setprecision(SUN_DIGITS10);
     }
   }
 

@@ -2,8 +2,11 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -50,26 +53,33 @@ if(NOT <TPL>_WORKS)
   message(CHECK_START "Testing <TPL>")
 
   # Create the test directory
-  set(<TPL>_TEST_DIR ${PROJECT_BINARY_DIR}/<TPL>_TEST)
+  set(TEST_DIR ${PROJECT_BINARY_DIR}/<TPL>_TEST)
 
   # Create a C source file
-  file(WRITE ${<TPL>_TEST_DIR}/test.c
+  file(
+    WRITE ${TEST_DIR}/test.c
     "int main(void) {\n"
     "return 0;\n"
     "}\n")
 
   # Attempt to build and link the test executable, pass --debug-trycompile to
   # the cmake command to save build files for debugging
-  try_compile(COMPILE_OK ${<TPL>_TEST_DIR} ${<TPL>_TEST_DIR}/test.c
-    LINK_LIBRARIES <TPL target> OUTPUT_VARIABLE COMPILE_OUTPUT)
+  try_compile(
+    COMPILE_OK ${TEST_DIR}
+    ${TEST_DIR}/test.c
+    LINK_LIBRARIES <TPL target>
+    OUTPUT_VARIABLE COMPILE_OUTPUT)
 
   # Check the result
   if(COMPILE_OK)
     message(CHECK_PASS "success")
   else()
     message(CHECK_FAIL "failed")
-    file(WRITE ${<TPL>_TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
-    message(FATAL_ERROR "Could not compile <TPL> test. Check output in ${<TPL>_TEST_DIR}/compile.out")
+    file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
+    message(
+      FATAL_ERROR
+        "Could not compile <TPL> test. Check output in ${TEST_DIR}/compile.out"
+    )
   endif()
 
 else()

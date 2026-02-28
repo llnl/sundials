@@ -7,15 +7,15 @@ Documentation of {\kinsol} \cite{kinsol_ug}.  It provides details, with
 listings, on the example programs supplied with the {\kinsol} distribution
 package.
 
-The {\kinsol} distribution contains examples of the following types: serial
-{\CC} examples, parallel {\CC} examples, and an OpenMP example.
+The {\kinsol} distribution contains examples of many types, so as to
+illustrate the use of various integrator options, various linear solver
+options, and various {\nvector} kernels.
 %%
-With the exception of ''demo''-type example files, the names of all the examples
+With the exception of ''demo''-type example files, the names of all the examples 
 distributed with {\sundials} are of the form
 \verb![slv][PbName]_[strat]_[ls]_[prec]_[p]!, where
 \begin{description}
-\item [{[slv]}] identifies the solver (for {\kinsol} examples this is \id{kin},
-  while for {\fkinsol} examples, this is \id{fkin});
+\item [{[slv]}] identifies the solver (in this case \id{kin});
 \item [{[PbName]}] identifies the problem;
 \item [{[strat]}] identifies the strategy (absent if ``none'' or ``linesearch'');
 \item [{[ls]}] identifies the linear solver module used;
@@ -62,6 +62,8 @@ following serial examples (using the {\nvecs} module):
   This program solves the problem with the {\sunlinsolband} linear solver.
 \item \id{kinLaplace\_picard\_bnd}
   is the same as \id{kinLaplace\_bnd} but uses the Picard strategy.
+\item \id{kinLaplace\_picard\_kry}
+  is the same as \id{kinLaplace\_picard\_bnd} but uses the SPGMR linear solver.
 
 \item \id{kinFoodWeb\_kry}
   solves a food web model.
@@ -77,6 +79,9 @@ following serial examples (using the {\nvecs} module):
 \item \id{kinKrylovDemo\_ls}
   solves the same problem as \id{kinFoodWeb\_kry}, but with three Krylov
   linear solvers: {\sunlinsolspgmr}, {\sunlinsolspbcgs}, and {\sunlinsolsptfqmr}.
+
+\item \id{kinAnalytic\_fp.c} solves a small nonlinear system with known solution.
+  
 \end{itemize}
 
 \vspace{0.2in}\noindent
@@ -91,51 +96,55 @@ the following parallel examples (using the {\nvecp} module):
   using the {\kinbbdpre} module.
 \end{itemize}
 
-%% \vspace{0.2in}\noindent
-%% As part of the {\fkinsol} module, in the directories
-%% {\em srcdir}\id{/examples/kinsol/fcmix\_serial} and
-%% {\em srcdir}\id{/examples/kinsol/fcmix\_parallel}, respectively, are the
-%% following examples for the {\F}-{\CC} interface:
-%% \begin{itemize}
-%% \item \id{fkinDiagon\_kry}
-%%   is a serial example, which solves a nonlinear system of the form
-%%   $u_i^2 = i^2$ using an approximate diagonal preconditioner.
-%% \item \id{fkinDiagon\_kry\_p}
-%%   is a parallel implementation of \id{fkinDiagon\_kry}.
-%% \end{itemize}
+\vspace{0.2in}\noindent
+Supplied in the {\em srcdir}\id{/examples/kinsol/C\_openmp} directory
+is an example \id{kinFoodweb\_kry\_omp}, which solves the same problem
+as \id{kinFoodweb\_kry}, but using the OpenMP {\nvector} module.
 
 \vspace{0.2in}\noindent
-Supplied in directory {\em srcdir}\id{/examples/kinsol/C\_openmp}
-is an example using the OpenMP NVECTOR module.
-\id{kin\_FoodWeb\_kry\_omp} solves the same problem as
-\id{kin\_FoodWeb\_kry} but uses the OpenMP module.
+Supplied in the {\em srcdir}\id{/examples/kinsol/CUDA\_mpi} directory
+is an example \id{kin\_em\_mpicuda}, which solves an
+expectation-maximization problem for mixture densities, using the
+\id{cuda} {\nvector} module and MPI.
 
-\vspace{0.2in}\noindent
-Supplied in directory {\em srcdir}\id{/examples/kinsol/CXX\_parallel}
-is an example using the {\nvecp} module.
-\id{kin\_heat2D\_nonlin\_p} solves a steady-state 2D heat
-equation with an additional nonlinear term.
-This problem is solved via fixed point iteration with
-Anderson acceleration. This example highlights the availability
-of various orthogonalization methods for use within Anderson
-acceleration.
-
-\vspace{0.2in}\noindent
-Supplied in directory {\em srcdir}\id{/examples/kinsol/CXX\_parhyp}
-are examples using the {\nvecp} module and incorporating use
-of {\hypre} preconditioners and solvers.
-These example problems are solved via fixed point iteration with
-Anderson acceleration. They highlight the availability
-of various orthogonalization methods for use within
-Anderson acceleration.
+\vspace{0.2in}\noindent 
+The following are examples written in C++:
 \begin{itemize}
-\item \id{kin\_heat2D\_nonlin\_hypre\_pfmg}
-  solves the same problem as \id{kin\_heat2D\_nonlin\_p}
-  but with a different fixed point iteration setup requiring
-  a linear solve that uses {\hypre}'s PFMG preconditioner.
-\item \id{kin\_bratu2D\_hypre\_pfmg}
-  solves a 2D Bratu equation \cite{Frank-Kam:55} requiring a linear solve
-  that uses {\hypre}'s PFMG preconditioner.
+
+\item The directory {\em srcdir}\id{/examples/kinsol/CXX\_parallel}
+  contains two examples. \id{kin\_heat2D\_nonlin\_p} solves a
+  steady state 2D heat equation with an additional nonlinear term.
+  This example is solved with fixed point iteration and illustrates
+  the use of various orthogonalization methods with Anderson
+  acceleration.
+  \id{kin\_em\_p} solves the same problem as \id{kin\_em\_mpicuda}
+  listed above.
+
+\item The directory {\em srcdir}\id{/examples/kinsol/CXX\_parhyp}
+  contains two examples, \id{kin\_heat2D\_nonlin\_hypre\_pfmg} and
+  \id{kin\_bratu2D\_hyper\_pfmg}.  These use the \id{hypre}
+  \id{PFMG} preconditioner, fixed point iteration, and Anderson
+  acceleration.
+
+\end{itemize}
+  
+\vspace{0.2in}\noindent
+The following are examples in Fortran, using the {\sundials}
+Fortran interface modules, and based on examples listed earlier:
+
+\begin{itemize}
+
+\item The directory {\em srcdir}\id{/examples/kinsol/F2003\_serial}
+  contains four examples:
+  \id{kinDiagon\_kry\_f2003} solves a simple diagonal test problem.
+  \id{kinLaplace\_bnd\_f2003} solves the same problem as \id{kinLaplace\_bnd}.
+  \id{kinLaplace\_picard\_kry\_f2003} solves the same problem as
+  \id{kinLaplace\_picard\_kry}.
+  \id{kinRoboKin\_dns\_f2003} solves the same problem as \id{kinRoboKin\_dns}.
+
+\item The directory {\em srcdir}\id{/examples/kinsol/F2003\_parallel}
+contains one example, \id{kin\_diagon\_kry\_f2003}, which solves
+the same problem as \id{kinDiagon\_kry\_f2003}, but using MPI.
 \end{itemize}
 
 

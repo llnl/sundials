@@ -3,8 +3,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * ----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -155,7 +158,7 @@ int main(int argc, char* argv[])
 
     /* Compute L2 error */
     N_VLinearSum(SUN_RCONST(1.0), y, -SUN_RCONST(1.0), solution, solution);
-    sunrealtype err = sqrt(N_VDotProd(solution, solution));
+    sunrealtype err = SUNRsqrt(N_VDotProd(solution, solution));
 
     /* Output current integration status */
     fprintf(stdout, "t = %.6Lf, x(t) = %.6Lf, E = %.6Lf, sol. err = %.16Le\n",
@@ -197,8 +200,8 @@ void Solution(sunrealtype t, N_Vector y, N_Vector solvec, UserData* udata)
   sunrealtype* sol = N_VGetArrayPointer(solvec);
 
   /* compute solution */
-  sol[0] = udata->A * cos(udata->omega * t + udata->phi);
-  sol[1] = -udata->A * udata->omega * sin(udata->omega * t + udata->phi);
+  sol[0] = udata->A * SUNRcos(udata->omega * t + udata->phi);
+  sol[1] = -udata->A * udata->omega * SUNRsin(udata->omega * t + udata->phi);
 }
 
 sunrealtype Energy(N_Vector yvec, sunrealtype dt, UserData* udata)

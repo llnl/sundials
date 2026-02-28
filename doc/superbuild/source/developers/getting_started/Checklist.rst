@@ -2,8 +2,11 @@
    Author(s): David J. Gardner @ LLNL
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -43,6 +46,12 @@ system, etc. developers should adhere to the following checklist.
    ``make install``, and ``make test_install`` to ensure that everything
    functions smoothly when external libraries are supplied.
 
+#. When developing new code, configure your build with ``CMAKE_BUILD_TYPE=Debug``
+   as this will enable internal SUNDIALS error-checking.  Run ``make`` and
+   ``make test`` to ensure that none of the internal error checking fails.  Only
+   once these run smoothly should you reset your ``CMAKE_BUILD_TYPE`` to
+   ``RelWithDebInfo`` or ``Release``.
+
 #. When implementing a bug-fix to an existing package/solver:
 
    * If this change affects the user interface, update the documentation to
@@ -60,6 +69,10 @@ system, etc. developers should adhere to the following checklist.
    * For any problems that now fail when running ``make test``, verify that your
      updates either made only cosmetic changes or improved the results, and
      update test output in the ``examples/`` directory.
+   * Add command-line options to control any scalar-valued parameters that you
+     introduced (e.g., tolerances, maximum number of iterations, etc.).
+     Information on how to do this can be found in the
+     :ref:`CommandLineOptions` section of the developer guide.
 
 #. When adding new test or example problems to the ``examples/`` directory:
 
@@ -68,7 +81,7 @@ system, etc. developers should adhere to the following checklist.
      directory and ensure that ``make`` succeeds, since the CMake-generated
      Makefile system differs from how the examples are built within SUNDIALS.
    * Ensure that the reference output is included e.g., if a file ``foo.c`` is
-     added, also add ``foo.out``. 
+     added, also add ``foo.out``.
    * Update the example problem documentation for to include a description of
      the new problem.
 
@@ -77,7 +90,7 @@ system, etc. developers should adhere to the following checklist.
 
 #. If answer files changed, and it is expected/desired, then update the `.out` files
    that are embedded in the `examples/` directory AND the
-   `"answers" repository <https://github.com/sundials-codes/answers>`_. 
+   `"answers" repository <https://github.com/sundials-codes/answers>`_.
 
 #. If you changed any header files, re-run SWIG to generate updated fortran interfaces.
    This is done by navigating to the `swig/` directory and running `make all32 all64`.
@@ -85,3 +98,15 @@ system, etc. developers should adhere to the following checklist.
    from the SWIG GitHub action that we run on all pull requests. The patch can be found
    under the job artifacts (if there were in fact changes that required updates
    to the Fortran).
+
+#. Similarly, re-run the Python interface generator (sundials4py-generate) to generate 
+   updated Python interfaces. This is done by navigating to the ``bindings/sundials4py/``
+   directory and running ``python sundials4py-generate/generate.py``. 
+
+   * If you added a new user-supplied function, or new module, then there will be manual
+     changes to make in the ``bindings/sundials4py/`` directory. See the
+     :ref:`Python` section for more details.
+   
+   * There is a 'litgen' GitHub action that we run on all pull requests. This action will,
+     like with the SWIG action, run the generator and create a git patch file that you
+     can apply locally. This is helpful if you are unable to setup sundials4py-generate locally.

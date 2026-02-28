@@ -1,9 +1,12 @@
 ..
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -100,6 +103,7 @@ also provides the following additional user-callable routines:
 
       SUNAdaptController C = SUNAdaptController_Soderlind(sunctx);
 
+
 .. c:function:: SUNErrCode SUNAdaptController_SetParams_Soderlind(SUNAdaptController C, sunrealtype k1, sunrealtype k2, sunrealtype k3, sunrealtype k4, sunrealtype k5)
 
    This user-callable function provides control over the relevant parameters
@@ -121,6 +125,11 @@ also provides the following additional user-callable routines:
       /* Specify parameters for Soderlind's H_{0}312 controller */
       retval = SUNAdaptController_SetParams_Soderlind(C, 0.25, 0.5, 0.25, -0.75, -0.25);
 
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.params_soderlind".
+
 
 .. c:function:: SUNAdaptController SUNAdaptController_PID(SUNContext sunctx)
 
@@ -137,6 +146,7 @@ also provides the following additional user-callable routines:
    .. code-block:: c
 
       SUNAdaptController C = SUNAdaptController_PID(sunctx);
+
 
 .. c:function:: SUNErrCode SUNAdaptController_SetParams_PID(SUNAdaptController C, sunrealtype k1, sunrealtype k2, sunrealtype k3)
 
@@ -156,6 +166,11 @@ also provides the following additional user-callable routines:
 
       retval = SUNAdaptController_SetParams_PID(C, 0.58, -0.21, 0.1);
 
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.params_pid".
+
 
 .. c:function:: SUNAdaptController SUNAdaptController_PI(SUNContext sunctx)
 
@@ -172,6 +187,7 @@ also provides the following additional user-callable routines:
    .. code-block:: c
 
       SUNAdaptController C = SUNAdaptController_PI(sunctx);
+
 
 .. c:function:: SUNErrCode SUNAdaptController_SetParams_PI(SUNAdaptController C, sunrealtype k1, sunrealtype k2)
 
@@ -190,6 +206,11 @@ also provides the following additional user-callable routines:
 
       retval = SUNAdaptController_SetParams_PI(C, 0.8, -0.31);
 
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.params_pi".
+
 
 .. c:function:: SUNAdaptController SUNAdaptController_I(SUNContext sunctx)
 
@@ -207,6 +228,7 @@ also provides the following additional user-callable routines:
 
       SUNAdaptController C = SUNAdaptController_I(sunctx);
 
+
 .. c:function:: SUNErrCode SUNAdaptController_SetParams_I(SUNAdaptController C, sunrealtype k1)
 
    This user-callable function provides control over the relevant parameters
@@ -222,6 +244,11 @@ also provides the following additional user-callable routines:
    .. code-block:: c
 
       retval = SUNAdaptController_SetParams_I(C, 1.0);
+
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.params_i".
 
 
 .. c:function:: SUNAdaptController SUNAdaptController_ExpGus(SUNContext sunctx)
@@ -240,6 +267,7 @@ also provides the following additional user-callable routines:
    .. code-block:: c
 
       SUNAdaptController C = SUNAdaptController_ExpGus(sunctx);
+
 
 .. c:function:: SUNErrCode SUNAdaptController_SetParams_ExpGus(SUNAdaptController C, sunrealtype k1_hat, sunrealtype k2_hat)
 
@@ -269,6 +297,11 @@ also provides the following additional user-callable routines:
 
       retval = SUNAdaptController_SetParams_ExpGus(C, 0.367, 0.268);
 
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.params_expgus".
+
 
 .. c:function:: SUNAdaptController SUNAdaptController_ImpGus(SUNContext sunctx)
 
@@ -287,10 +320,11 @@ also provides the following additional user-callable routines:
 
       SUNAdaptController C = SUNAdaptController_ImpGus(sunctx);
 
+
 .. c:function:: SUNErrCode SUNAdaptController_SetParams_ImpGus(SUNAdaptController C, sunrealtype k1_hat, sunrealtype k2_hat)
 
    This user-callable function provides control over the relevant parameters
-   above for the implicit Gustafsson controller, setting :math:`k_3 = k_4 = k_5 = 0`.
+   above for the implicit Gustafsson controller, setting :math:`k_4 = 1` and :math:`k_3 = k_5 = 0`.
    This should be called *before* the time integrator is called to evolve the problem.
 
    .. note::
@@ -314,6 +348,11 @@ also provides the following additional user-callable routines:
    .. code-block:: c
 
       retval = SUNAdaptController_SetParams_ImpGus(C, 0.98, 0.95);
+
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.params_impgus".
 
 .. c:function:: SUNAdaptController SUNAdaptController_H0211(SUNContext sunctx)
 

@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban and David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -70,13 +73,9 @@
 #define ESYM "Qe"
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"
-#elif defined(SUNDIALS_FLOAT128_PRECISION)
-#define ESYM "Qe"
 #else
 #define ESYM "e"
 #endif
-
-
 
 /* Problem Constants */
 #define ZERO SUN_RCONST(0.0)

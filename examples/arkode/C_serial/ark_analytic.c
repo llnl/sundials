@@ -1,9 +1,12 @@
 /*-----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -66,7 +69,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol,
                      sunrealtype atol);
 
 /* Main Program */
-int main(void)
+int main(int argc, char* argv[])
 {
   /* general problem parameters */
   sunrealtype T0     = SUN_RCONST(0.0);    /* initial time */
@@ -94,9 +97,7 @@ int main(void)
 
   /* Initial diagnostics output */
   printf("\nAnalytical ODE test problem:\n");
-  printf("   lambda = %" GSYM "\n", lambda);
-  printf("   reltol = %.1" ESYM "\n", reltol);
-  printf("   abstol = %.1" ESYM "\n\n", abstol);
+  printf("   lambda = %" GSYM "\n\n", lambda);
 
   /* Initialize data structures */
   y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
@@ -133,6 +134,14 @@ int main(void)
   /* Specify linearly implicit RHS, with non-time-dependent Jacobian */
   flag = ARKodeSetLinear(arkode_mem, 0);
   if (check_flag(&flag, "ARKodeSetLinear", 1)) { return 1; }
+
+  /* Override any current settings with command-line options */
+  flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
+  if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
+
+  /* Output current ARKODE options */
+  flag = ARKodeWriteParameters(arkode_mem, stdout);
+  if (check_flag(&flag, "ARKodeWriteParameters", 1)) { return 1; }
 
   /* Open output stream for results, output comment line */
   UFID = fopen("solution.txt", "w");

@@ -1,10 +1,13 @@
 /* ----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
- *                Rujeko Chinomona @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
+ *                Rujeko Chinomona @ UMBC
  * ----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -145,7 +148,7 @@ int main(int argc, char* argv[])
   sunrealtype Tf     = SUN_RCONST(5.0);       /* final time */
   sunrealtype dTout  = SUN_RCONST(0.1);       /* time between outputs */
   sunindextype NEQ   = 2;                     /* number of dependent vars. */
-  int Nt             = (int)ceil(Tf / dTout); /* number of output times */
+  int Nt             = (int)SUNRceil(Tf / dTout); /* number of output times */
   int slow_type      = 0;                     /* problem configuration type */
   int fast_type      = 0;                     /* problem configuration type */
   sunrealtype hs     = SUN_RCONST(0.01);      /* slow step size */
@@ -153,7 +156,7 @@ int main(int argc, char* argv[])
   sunrealtype G      = SUN_RCONST(-100.0);    /* stiffness at slow time scale */
   sunrealtype w      = SUN_RCONST(100.0);     /* time-scale separation factor */
   sunrealtype reltol = SUN_RCONST(0.01);
-  sunrealtype abstol = SUN_RCONST(1e-11);
+  sunrealtype abstol = SUN_RCONST(1.0e-11);
 
   /* general problem variables */
   int retval;                               /* reusable error-checking flag */
@@ -296,50 +299,50 @@ int main(int argc, char* argv[])
   case (7):
     printf("    slow solver: ARKODE_MRI_GARK_IRK21a\n");
     implicit_slow = SUNTRUE;
-    reltol        = SUNMAX(hs * hs, SUN_RCONST(1e-10));
-    abstol        = SUN_RCONST(1e-11);
+    reltol        = SUNMAX(hs * hs, SUN_RCONST(1.0e-10));
+    abstol        = SUN_RCONST(1.0e-11);
     printf("      reltol = %.2" ESYM ",  abstol = %.2" ESYM "\n", reltol, abstol);
     break;
   case (8):
     printf("    slow solver: ARKODE_MRI_GARK_ESDIRK34a\n");
     implicit_slow = SUNTRUE;
-    reltol        = SUNMAX(hs * hs * hs, SUN_RCONST(1e-10));
-    abstol        = SUN_RCONST(1e-11);
+    reltol        = SUNMAX(hs * hs * hs, SUN_RCONST(1.0e-10));
+    abstol        = SUN_RCONST(1.0e-11);
     printf("      reltol = %.2" ESYM ",  abstol = %.2" ESYM "\n", reltol, abstol);
     break;
   case (9):
     printf("    slow solver: ARKODE_IMEX_MRI_GARK3b\n");
     imex_slow = SUNTRUE;
-    reltol    = SUNMAX(hs * hs * hs, SUN_RCONST(1e-10));
-    abstol    = SUN_RCONST(1e-11);
+    reltol    = SUNMAX(hs * hs * hs, SUN_RCONST(1.0e-10));
+    abstol    = SUN_RCONST(1.0e-11);
     printf("      reltol = %.2" ESYM ",  abstol = %.2" ESYM "\n", reltol, abstol);
     break;
   case (10):
     printf("    slow solver: ARKODE_IMEX_MRI_GARK4\n");
     imex_slow = SUNTRUE;
-    reltol    = SUNMAX(hs * hs * hs * hs, SUN_RCONST(1e-14));
-    abstol    = SUN_RCONST(1e-14);
+    reltol    = SUNMAX(hs * hs * hs * hs, SUN_RCONST(1.0e-14));
+    abstol    = SUN_RCONST(1.0e-14);
     printf("      reltol = %.2" ESYM ",  abstol = %.2" ESYM "\n", reltol, abstol);
     break;
   case (11):
     printf("    slow solver: ARKODE_IMEX_MRI_SR21\n");
     imex_slow = SUNTRUE;
-    reltol    = SUNMAX(hs * hs, SUN_RCONST(1e-10));
-    abstol    = SUN_RCONST(1e-11);
+    reltol    = SUNMAX(hs * hs, SUN_RCONST(1.0e-10));
+    abstol    = SUN_RCONST(1.0e-11);
     printf("      reltol = %.2" ESYM ",  abstol = %.2" ESYM "\n", reltol, abstol);
     break;
   case (12):
     printf("    slow solver: ARKODE_IMEX_MRI_SR32\n");
     imex_slow = SUNTRUE;
-    reltol    = SUNMAX(hs * hs * hs, SUN_RCONST(1e-10));
-    abstol    = SUN_RCONST(1e-11);
+    reltol    = SUNMAX(hs * hs * hs, SUN_RCONST(1.0e-10));
+    abstol    = SUN_RCONST(1.0e-11);
     printf("      reltol = %.2" ESYM ",  abstol = %.2" ESYM "\n", reltol, abstol);
     break;
   case (13):
     printf("    slow solver: ARKODE_IMEX_MRI_SR43\n");
     imex_slow = SUNTRUE;
-    reltol    = SUNMAX(hs * hs * hs * hs, SUN_RCONST(1e-14));
-    abstol    = SUN_RCONST(1e-14);
+    reltol    = SUNMAX(hs * hs * hs * hs, SUN_RCONST(1.0e-14));
+    abstol    = SUN_RCONST(1.0e-14);
     printf("      reltol = %.2" ESYM ",  abstol = %.2" ESYM "\n", reltol, abstol);
     break;
   }
@@ -352,8 +355,8 @@ int main(int argc, char* argv[])
   case (1):
     printf("    fast solver: esdirk-3-3\n");
     implicit_fast = SUNTRUE;
-    reltol        = SUNMAX(hs * hs * hs, SUN_RCONST(1e-10));
-    abstol        = SUN_RCONST(1e-11);
+    reltol        = SUNMAX(hs * hs * hs, SUN_RCONST(1.0e-10));
+    abstol        = SUN_RCONST(1.0e-11);
     printf("      reltol = %.2" ESYM ",  abstol = %.2" ESYM "\n", reltol, abstol);
     break;
   case (2):
@@ -456,8 +459,8 @@ int main(int argc, char* argv[])
   case (1):
     B = ARKodeButcherTable_Alloc(3, SUNFALSE);
     if (check_retval((void*)B, "ARKodeButcherTable_Alloc", 0)) { return 1; }
-    beta       = SUNRsqrt(SUN_RCONST(3.0)) / SUN_RCONST(6.0) + SUN_RCONST(0.5);
-    gamma      = (-ONE / SUN_RCONST(8.0)) * (SUNRsqrt(SUN_RCONST(3.0)) + ONE);
+    beta       = SQRT(SUN_RCONST(3.0)) / SUN_RCONST(6.0) + SUN_RCONST(0.5);
+    gamma      = (-ONE / SUN_RCONST(8.0)) * (SQRT(SUN_RCONST(3.0)) + ONE);
     B->A[1][0] = SUN_RCONST(4.0) * gamma + TWO * beta;
     B->A[1][1] = ONE - SUN_RCONST(4.0) * gamma - TWO * beta;
     B->A[2][0] = SUN_RCONST(0.5) - beta - gamma;
@@ -533,9 +536,17 @@ int main(int argc, char* argv[])
   retval = ARKodeSetFixedStep(inner_arkode_mem, hf);
   if (check_retval(&retval, "ARKodeSetFixedStep", 1)) { return 1; }
 
+  /* Override any current settings with command-line options -- enforce
+     the prefix "inner" */
+  retval = ARKodeSetOptions(inner_arkode_mem, "inner", "", argc, argv);
+  if (check_retval(&retval, "ARKodeSetOptions", 1)) { return 1; }
+
   /* Create inner stepper */
-  retval = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-  if (check_retval(&retval, "ARKodeCreateMRIStepInnerStepper", 1)) { return 1; }
+  retval = ARKStepCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
+  if (check_retval(&retval, "ARKStepCreateMRIStepInnerStepper", 1))
+  {
+    return 1;
+  }
 
   /*
    * Create the slow integrator and set options
@@ -682,6 +693,11 @@ int main(int argc, char* argv[])
   /* Set the slow step size */
   retval = ARKodeSetFixedStep(arkode_mem, hs);
   if (check_retval(&retval, "ARKodeSetFixedStep", 1)) { return 1; }
+
+  /* Override any current settings with command-line options -- enforce
+     the prefix "outer" */
+  retval = ARKodeSetOptions(arkode_mem, "outer", "", argc, argv);
+  if (check_retval(&retval, "ARKodeSetOptions", 1)) { return 1; }
 
   /*
    * Integrate ODE

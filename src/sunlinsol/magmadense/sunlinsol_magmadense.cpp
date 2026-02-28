@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -14,9 +17,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_math.h>
 #include <sunlinsol/sunlinsol_magmadense.h>
 #include <sunmatrix/sunmatrix_magmadense.h>
+
+#include "sundials_cli.h"
+#include "sundials_macros.h"
 
 /* Interfaces to match 'sunrealtype' with the correct MAGMA functions */
 #if defined(SUNDIALS_DOUBLE_PRECISION)
@@ -53,6 +62,20 @@
 #define INFOARRAY(S)          ((sunindextype*)MAGMADENSE_CONTENT(S)->infoarr->ptr)
 #define LASTFLAG(S)           (MAGMADENSE_CONTENT(S)->last_flag)
 #define ASYNCHRONOUS(S)       (MAGMADENSE_CONTENT(S)->async)
+
+/*
+ * ----------------------------------------------------------------------------
+ * Un-exported implementation specific routines
+ * ----------------------------------------------------------------------------
+ */
+
+static SUNErrCode setFromCommandLine_MagmaDense(SUNLinearSolver S,
+                                                const char* LSid, int argc,
+                                                char* argv[]);
+
+SUNErrCode SUNLinSolSetOptions_MagmaDense(SUNLinearSolver S, const char* LSid,
+                                          const char* file_name, int argc,
+                                          char* argv[]);
 
 /*
  * ----------------------------------------------------------------------------
@@ -108,6 +131,7 @@ SUNLinearSolver SUNLinSol_MagmaDense(N_Vector y, SUNMatrix Amat, SUNContext sunc
   S->ops->gettype    = SUNLinSolGetType_MagmaDense;
   S->ops->getid      = SUNLinSolGetID_MagmaDense;
   S->ops->initialize = SUNLinSolInitialize_MagmaDense;
+  S->ops->setoptions = SUNLinSolSetOptions_MagmaDense;
   S->ops->setup      = SUNLinSolSetup_MagmaDense;
   S->ops->solve      = SUNLinSolSolve_MagmaDense;
   S->ops->lastflag   = SUNLinSolLastFlag_MagmaDense;
@@ -228,6 +252,62 @@ SUNErrCode SUNLinSolInitialize_MagmaDense(SUNLinearSolver S)
 {
   /* All solver-specific memory has already been allocated */
   LASTFLAG(S) = SUN_SUCCESS;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNLinSolSetOptions_MagmaDense(SUNLinearSolver S, const char* LSid,
+                                          SUNDIALS_MAYBE_UNUSED const char* file_name,
+                                          int argc, char* argv[])
+{
+  SUNFunctionBegin(S->sunctx);
+
+  /* File-based option control is currently unimplemented */
+  SUNAssert((file_name == NULL || strlen(file_name) == 0),
+            SUN_ERR_ARG_INCOMPATIBLE);
+
+  if (argc > 0 && argv != NULL)
+  {
+    SUNCheckCall(setFromCommandLine_MagmaDense(S, LSid, argc, argv));
+  }
+
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode setFromCommandLine_MagmaDense(SUNLinearSolver S,
+                                                const char* LSid, int argc,
+                                                char* argv[])
+{
+  /* Prefix for options to set */
+  const char* default_id = "sunlinearsolver";
+  size_t offset          = strlen(default_id) + 1;
+  if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
+  char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
+  if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
+  else { strcpy(prefix, default_id); }
+  strcat(prefix, ".");
+
+  for (int idx = 1; idx < argc; idx++)
+  {
+    int retval;
+
+    /* skip command-line arguments that do not begin with correct prefix */
+    if (strncmp(argv[idx], prefix, strlen(prefix)) != 0) { continue; }
+
+    /* control over SetAsync function */
+    if (strcmp(argv[idx] + offset, "async") == 0)
+    {
+      idx += 1;
+      int iarg = atoi(argv[idx]);
+      retval   = SUNLinSol_MagmaDense_SetAsync(S, iarg);
+      if (retval != SUN_SUCCESS)
+      {
+        free(prefix);
+        return retval;
+      }
+      continue;
+    }
+  }
+  free(prefix);
   return SUN_SUCCESS;
 }
 

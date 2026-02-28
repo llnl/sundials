@@ -1,9 +1,12 @@
 .. ----------------------------------------------------------------
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -126,7 +129,7 @@ require a linear solver, ARKODE may use a variety of SUNLinearSolver modules
 provided with SUNDIALS, or again may utilize a user-supplied module.
 
 
-Changes to SUNDIALS in release 6.4.0
+Changes to SUNDIALS in release X.Y.Z
 ====================================
 
 .. include:: ../../../shared/RecentChanges.rst
@@ -157,7 +160,7 @@ The structure of this document is as follows:
   specific to a given time-stepping modules, :ref:`ARKStep <ARKODE.Usage.ARKStep>`,
   :ref:`ERKStep <ARKODE.Usage.ERKStep>`, or :ref:`MRIStep <ARKODE.Usage.MRIStep>`.
   This section then includes additional information on how to use ARKODE from
-  applications written in :ref:`Fortran <SUNDIALS.Fortran>`, as well as information
+  applications written in :ref:`Fortran <Fortran>`, as well as information
   on how to leverage :ref:`GPU accelerators within ARKODE <SUNDIALS.GPU>`.
 
 * A much smaller section follows, describing ARKODE's

@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban and Cosmin Petra @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -289,8 +292,6 @@ int main(int argc, char* argv[])
   printf("G:          %12.4Qe \n", Ith(q, 1));
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("G:          %12.4Le \n", Ith(q, 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("G:          %12.4e \n", Ith(q, 1));
 #else
   printf("G:          %12.4e \n", Ith(q, 1));
 #endif
@@ -761,12 +762,6 @@ static void PrintOutput(sunrealtype tfinal, N_Vector yB, N_Vector ypB, N_Vector 
   printf("dG/dp:      %12.4Le %12.4Le %12.4Le\n", -Ith(qB, 1), -Ith(qB, 2),
          -Ith(qB, 3));
   printf("lambda(t0): %12.4Le %12.4Le %12.4Le\n", Ith(yB, 1), Ith(yB, 2),
-         Ith(yB, 3));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("tB0:        %12.4e\n", tfinal);
-  printf("dG/dp:      %12.4e %12.4e %12.4e\n", -Ith(qB, 1), -Ith(qB, 2),
-         -Ith(qB, 3));
-  printf("lambda(t0): %12.4e %12.4e %12.4e\n", Ith(yB, 1), Ith(yB, 2),
          Ith(yB, 3));
 #else
   printf("tB0:        %12.4e\n", tfinal);

@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -54,7 +57,8 @@ Within SUNDIALS, real constants are set by way of a macro called ``SUN_RCONST``.
 is this macro that needs the ability to branch on the definition of
 ``sunrealtype``. In ANSI C, a floating-point constant with no suffix is stored as a
 ``double``. Placing the suffix "``F``" at the end of a floating point constant
-makes it a ``float``, and using the suffix "``L``" makes it a ``long double``, whereas using the suffix "``Q``" makes it a ``__float128``. For example,
+makes it a ``float``, whereas using the suffix "``L``" makes it a ``long double``,
+whereas using the suffix "``Q``" makes it a ``__float128``.  For example,
 
 .. code-block:: c
 

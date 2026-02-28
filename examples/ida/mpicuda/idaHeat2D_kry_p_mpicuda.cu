@@ -2,7 +2,7 @@
  * -----------------------------------------------------------------
  * Programmer(s): Slaven Peles, Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
- * Based on work by Daniel R. Reynolds @ SMU
+ * Based on work by Daniel R. Reynolds @ UMBC
  *         Allan Taylor, Alan Hindmarsh and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * Example problem for IDA: 2D heat equation, parallel, GMRES.

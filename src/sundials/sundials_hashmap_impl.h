@@ -2,8 +2,11 @@
  * Programmer: Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -31,25 +34,25 @@ extern "C" {
 #define SUNHASHMAP_KEYNOTFOUND -1
 #define SUNHASHMAP_DUPLICATE   -2
 
-typedef struct SUNHashMapKeyValue_* SUNHashMapKeyValue;
-
 struct SUNHashMapKeyValue_
 {
   char* key;
   void* value;
 };
 
+typedef struct SUNHashMapKeyValue_* SUNHashMapKeyValue;
+
 #define TTYPE SUNHashMapKeyValue
 #include "stl/sunstl_vector.h"
 #undef TTYPE
-
-typedef struct SUNHashMap_* SUNHashMap;
 
 struct SUNHashMap_
 {
   SUNErrCode (*destroyKeyValue)(SUNHashMapKeyValue*);
   SUNStlVector_SUNHashMapKeyValue buckets;
 };
+
+typedef struct SUNHashMap_* SUNHashMap;
 
 SUNErrCode SUNHashMap_New(int64_t capacity,
                           SUNErrCode (*destroyValue)(SUNHashMapKeyValue* value_ptr),

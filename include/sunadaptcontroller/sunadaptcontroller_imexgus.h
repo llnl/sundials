@@ -1,9 +1,12 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -55,6 +58,7 @@ SUNDIALS_EXPORT
 SUNErrCode SUNAdaptController_SetParams_ImExGus(SUNAdaptController C,
                                                 sunrealtype k1e, sunrealtype k2e,
                                                 sunrealtype k1i, sunrealtype k2i);
+
 SUNDIALS_EXPORT
 SUNAdaptController_Type SUNAdaptController_GetType_ImExGus(SUNAdaptController C);
 
@@ -63,6 +67,7 @@ SUNErrCode SUNAdaptController_EstimateStep_ImExGus(SUNAdaptController C,
                                                    sunrealtype h, int p,
                                                    sunrealtype dsm,
                                                    sunrealtype* hnew);
+
 SUNDIALS_EXPORT
 SUNErrCode SUNAdaptController_Reset_ImExGus(SUNAdaptController C);
 

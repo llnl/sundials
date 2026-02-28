@@ -1,8 +1,11 @@
 ..
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -92,6 +95,12 @@ The virtual table structure is defined as
    .. c:member:: SUNErrCode (*reset)(SUNAdaptController C)
 
       The function implementing :c:func:`SUNAdaptController_Reset`
+
+   .. c:member:: SUNErrCode (*setoptions)(SUNAdaptController C, const char* Cid, const char* file_name, int argc, char* argv[])
+
+      The function implementing :c:func:`SUNAdaptController_SetOptions`
+
+      .. versionadded:: 7.5.0
 
    .. c:member:: SUNErrCode (*setdefaults)(SUNAdaptController C)
 
@@ -261,12 +270,65 @@ note these requirements below. Additionally, we note the behavior of the base SU
    :return: :c:type:`SUNErrCode` indicating success or failure.
 
 
+.. c:function:: SUNErrCode SUNAdaptController_SetOptions(SUNAdaptController C, const char* Cid, const char* file_name, int argc, char* argv[])
+
+   Sets SUNAdaptController options from an array of strings or a file.
+
+   :param C: the :c:type:`SUNAdaptController` object.
+   :param Cid: the prefix for options to read. The default is "sunadaptcontroller".
+   :param file_name: the name of a file containing options to read. If this is
+                     ``NULL`` or an empty string, ``""``, then no file is read.
+   :param argc: number of command-line arguments passed to executable.
+   :param argv: an array of strings containing the options to set and their values.
+
+   :return: :c:type:`SUNErrCode` indicating success or failure.
+
+   .. note::
+
+      The ``argc`` and ``argv`` arguments are typically those supplied to the user's
+      ``main`` routine however, this is not required.  The inputs are left unchanged by
+      :c:func:`SUNAdaptController_SetOptions`.
+
+      If the ``Cid`` argument is ``NULL`` then the default prefix, ``sunadaptcontroller``, must
+      be used for all SUNAdaptController options.  Whether ``Cid`` is supplied or not, a ``"."``
+      must be used to separate an option key from the prefix.  For example, when
+      using the default ``Cid``, the option ``sunadaptcontroller.error_bias`` followed by the value
+      can be used to set the error bias factor.  When using a combination of SUNAdaptController
+      objects (e.g., within MRIStep, SplittingStep or ForcingStep), it is recommended that users
+      call :c:func:`SUNAdaptController_SetOptions` for each controller using distinct ``Cid`` inputs,
+      so that each controller can be configured separately.
+
+      SUNAdaptController options set via :c:func:`SUNAdaptController_SetOptions` will overwrite
+      any previously-set values.  Options are set in the order they are given in ``argv`` and,
+      if an option with the same prefix appears multiple times in ``argv``, the value of the
+      last occurrence will used.
+
+      The supported option names are noted within the documentation for the
+      corresponding SUNAdaptController functions.  For options that take a
+      :c:type:`sunbooleantype` as input, use ``1`` to indicate ``true`` and
+      ``0`` for ``false``.
+
+   .. warning::
+
+      This function is not available in the Fortran interface.
+
+      File-based options are not yet supported, so the ``file_name`` argument
+      should be set to either ``NULL`` or the empty string ``""``.
+
+   .. versionadded:: 7.5.0
+
+
 .. c:function:: SUNErrCode SUNAdaptController_SetDefaults(SUNAdaptController C)
 
    Sets the controller parameters to their default values.
 
    :param C:  the :c:type:`SUNAdaptController` object.
    :return: :c:type:`SUNErrCode` indicating success or failure.
+
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.defaults".
 
 
 .. c:function:: SUNErrCode SUNAdaptController_Write(SUNAdaptController C, FILE* fptr)
@@ -276,6 +338,11 @@ note these requirements below. Additionally, we note the behavior of the base SU
    :param C:  the :c:type:`SUNAdaptController` object.
    :param fptr:  the output stream to write the parameters to.
    :return: :c:type:`SUNErrCode` indicating success or failure.
+
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.write_parameters".
 
 
 .. c:function:: SUNErrCode SUNAdaptController_SetErrorBias(SUNAdaptController C, sunrealtype bias)
@@ -288,6 +355,11 @@ note these requirements below. Additionally, we note the behavior of the base SU
    :param bias:  the error bias factor -- an input :math:`\leq 0` indicates to use
                  the default value for the controller.
    :return: :c:type:`SUNErrCode` indicating success or failure.
+
+   .. note::
+
+      This routine will be called by :c:func:`SUNAdaptController_SetOptions`
+      when using the key "Cid.error_bias".
 
 
 .. c:function:: SUNErrCode SUNAdaptController_UpdateH(SUNAdaptController C, sunrealtype h, sunrealtype dsm)

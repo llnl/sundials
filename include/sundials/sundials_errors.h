@@ -1,7 +1,10 @@
 /* -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -88,7 +91,7 @@
    codes, and old/deprecated codes for matrix and (non)linear solvers. */
 
 /* clang-format off */
-enum
+enum SUNErrCode_
 {
   SUN_ERR_MINIMUM                                       = -10000,
   SUN_ERR_CODE_LIST(SUN_EXPAND_TO_ENUM)

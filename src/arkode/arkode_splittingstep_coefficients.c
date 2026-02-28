@@ -2,8 +2,11 @@
  * Programmer(s): Steven B. Roberts @ LLNL
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -14,8 +17,10 @@
  * This is the implementation file for splitting coefficients
  *--------------------------------------------------------------*/
 
-#include <arkode/arkode_splittingstep.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include <arkode/arkode_splittingstep.h>
 
 #include "arkode_impl.h"
 
@@ -445,7 +450,6 @@ SplittingStepCoefficients SplittingStepCoefficients_SuzukiFractal(
 void SplittingStepCoefficients_Write(const SplittingStepCoefficients coefficients,
                                      FILE* const outfile)
 {
-  // TODO(SBR): update when https://github.com/LLNL/sundials/pull/517 merged
   if (outfile == NULL || coefficients == NULL || coefficients->alpha == NULL ||
       coefficients->beta == NULL || coefficients->beta[0] == NULL ||
       coefficients->beta[0][0] == NULL)

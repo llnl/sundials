@@ -3,8 +3,11 @@
  *                Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -16,9 +19,9 @@
  *
  * This example solves a nonlinear system that arises from a system
  * of partial differential equations. The PDE system is a food web
- * population model, with predator-prey interaction and diffusion on
- * the unit square in two dimensions. The dependent variable vector
- * is the following:
+ * population model, with predator-prey interaction and diffusion
+ * on the unit square in two dimensions. The dependent variable
+ * vector is the following:
  *
  *       1   2         ns
  * c = (c , c ,  ..., c  )     (denoted by the variable cc)
@@ -36,8 +39,8 @@
  *    i                           j=1
  *
  * The number of species is ns = 2 * np, with the first np being
- * prey and the last np being predators. The number np is both
- * the number of prey and predator species. The coefficients a(i,j),
+ * prey and the last np being predators. The number np is both the
+ * number of prey and predator species. The coefficients a(i,j),
  * b(i), d(i) are:
  *
  *   a(i,i) = -AA   (all i)
@@ -83,14 +86,16 @@
  * ----------------------------------------------------------------------
  */
 
-#include <kinsol/kinsol.h> /* access to KINSOL func., consts.      */
 #include <math.h>
-#include <mpi.h>
-#include <nvector/nvector_parallel.h> /* access to MPI parallel N_Vector      */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sundials/sundials_dense.h> /* use generic dense solver in precond. */
-#include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
+
+#include <mpi.h>
+
+#include <kinsol/kinsol.h>             /* access to KINSOL func., consts.      */
+#include <nvector/nvector_parallel.h>  /* access to MPI parallel N_Vector      */
+#include <sundials/sundials_dense.h>   /* use generic dense solver in precond. */
+#include <sundials/sundials_types.h>   /* defs. of sunrealtype, sunindextype   */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
 /* helpful macros */
@@ -101,9 +106,9 @@
 
 /* Problem Constants */
 
-#define NUM_SPECIES \
-  6 /* must equal 2*(number of prey or predators)
-                              number of prey = number of predators       */
+/* must equal 2*(number of prey or predators)
+   number of prey = number of predators       */
+#define NUM_SPECIES 6
 
 #define NPEX     2              /* number of processors in the x-direction  */
 #define NPEY     2              /* number of processors in the y-direction  */
@@ -133,12 +138,12 @@
 
 /* User-defined vector access macro: IJ_Vptr */
 
-/* IJ_Vptr is defined in order to translate from the underlying 3D structure
-   of the dependent variable vector to the 1D storage scheme for an N-vector.
-   IJ_Vptr(vv,i,j) returns a pointer to the location in vv corresponding to
-   indices is = 0, jx = i, jy = j.    */
+/* IJ_Vptr is defined in order to translate from the underlying 3D structure of
+   the dependent variable vector to the 1D storage scheme for an N_Vector.
+   IJ_Vptr(vptr,i,j) returns a pointer to the location in vptr corresponding to
+   indices is = 0, jx = i, jy = j. */
 
-#define IJ_Vptr(vv, i, j) (&NV_Ith_P(vv, i * NUM_SPECIES + j * NSMXSUB))
+#define IJ_Vptr(vptr, i, j) ((vptr) + (i) * NUM_SPECIES + (j) * NSMXSUB)
 
 /* Type : UserData
    contains preconditioner blocks, pivot arrays, and problem constants */
@@ -152,7 +157,7 @@ typedef struct
   sunrealtype *cox, *coy;
   sunrealtype ax, ay, dx, dy;
   sunrealtype uround, sqruround;
-  int mx, my, ns, np;
+  sunindextype mx, my, ns, np;
   sunrealtype cext[NUM_SPECIES * (MXSUB + 2) * (MYSUB + 2)];
   int my_pe, isubx, isuby, nsmxsub, nsmxsub2;
   MPI_Comm comm;
@@ -162,11 +167,11 @@ typedef struct
 
 static int funcprpr(N_Vector cc, N_Vector fval, void* user_data);
 
-static int Precondbd(N_Vector cc, N_Vector cscale, N_Vector fval,
-                     N_Vector fscale, void* user_data);
+static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
+                       N_Vector fscale, void* user_data);
 
-static int PSolvebd(N_Vector cc, N_Vector cscale, N_Vector fval,
-                    N_Vector fscale, N_Vector vv, void* user_data);
+static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
+                       N_Vector fscale, N_Vector vv, void* user_data);
 
 /* Private Helper Functions */
 
@@ -180,7 +185,7 @@ static void PrintOutput(int my_pe, MPI_Comm comm, N_Vector cc);
 static void PrintFinalStats(void* kmem);
 static void WebRate(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
                     sunrealtype* ratesxy, void* user_data);
-static sunrealtype DotProd(int size, sunrealtype* x1, sunrealtype* x2);
+static sunrealtype DotProd(sunindextype size, sunrealtype* x1, sunrealtype* x2);
 static void BSend(MPI_Comm comm, int my_pe, int isubx, int isuby, int dsizex,
                   int dsizey, sunrealtype* cdata);
 static void BRecvPost(MPI_Comm comm, MPI_Request request[], int my_pe,
@@ -200,28 +205,20 @@ static int check_retval(void* retvalvalue, const char* funcname, int opt, int id
 
 int main(int argc, char* argv[])
 {
-  SUNContext sunctx;
-  int globalstrategy;
-  sunindextype local_N;
-  sunrealtype fnormtol, scsteptol;
-  N_Vector cc, sc, constraints;
-  UserData data;
-  int retval, maxl, maxlrst;
-  int my_pe, npes, npelast = NPEX * NPEY - 1;
-  void* kmem;
-  SUNLinearSolver LS;
-  MPI_Comm comm;
-
-  cc = sc = constraints = NULL;
-  kmem                  = NULL;
-  LS                    = NULL;
-  data                  = NULL;
+  /* Reusable return flag */
+  int retval = 0;
 
   /* Get processor number and total number of pe's */
   MPI_Init(&argc, &argv);
-  comm = MPI_COMM_WORLD;
+  MPI_Comm comm = MPI_COMM_WORLD;
+
+  int npes;
   MPI_Comm_size(comm, &npes);
+
+  int my_pe;
   MPI_Comm_rank(comm, &my_pe);
+
+  int npelast = NPEX * NPEY - 1;
 
   if (npes != NPEX * NPEY)
   {
@@ -236,6 +233,7 @@ int main(int argc, char* argv[])
   }
 
   /* Create the SUNDIALS context that all SUNDIALS objects require */
+  SUNContext sunctx;
   retval = SUNContext_Create(comm, &sunctx);
   if (check_retval(&retval, "SUNContext_Create", 1, my_pe))
   {
@@ -245,26 +243,26 @@ int main(int argc, char* argv[])
   /* Allocate memory, and set problem data, initial values, tolerances */
 
   /* Set local vector length */
-  local_N = NUM_SPECIES * MXSUB * MYSUB;
+  sunindextype local_N = NUM_SPECIES * MXSUB * MYSUB;
 
   /* Allocate and initialize user data block */
-  data = AllocUserData();
-  if (check_retval((void*)data, "AllocUserData", 0, my_pe))
+  UserData data = AllocUserData();
+  if (check_retval((void*)data, "AllocUserData", 2, my_pe))
   {
     MPI_Abort(comm, 1);
   }
   InitUserData(my_pe, comm, data);
 
   /* Set global strategy retval */
-  globalstrategy = KIN_NONE;
+  int globalstrategy = KIN_NONE;
 
   /* Allocate and initialize vectors */
-  cc = N_VNew_Parallel(comm, local_N, NEQ, sunctx);
+  N_Vector cc = N_VNew_Parallel(comm, local_N, NEQ, sunctx);
   if (check_retval((void*)cc, "N_VNew_Parallel", 0, my_pe))
   {
     MPI_Abort(comm, 1);
   }
-  sc = N_VNew_Parallel(comm, local_N, NEQ, sunctx);
+  N_Vector sc = N_VNew_Parallel(comm, local_N, NEQ, sunctx);
   if (check_retval((void*)sc, "N_VNew_Parallel", 0, my_pe))
   {
     MPI_Abort(comm, 1);
@@ -274,7 +272,7 @@ int main(int argc, char* argv[])
   {
     MPI_Abort(comm, 1);
   }
-  constraints = N_VNew_Parallel(comm, local_N, NEQ, sunctx);
+  N_Vector constraints = N_VNew_Parallel(comm, local_N, NEQ, sunctx);
   if (check_retval((void*)constraints, "N_VNew_Parallel", 0, my_pe))
   {
     MPI_Abort(comm, 1);
@@ -283,35 +281,39 @@ int main(int argc, char* argv[])
 
   SetInitialProfiles(cc, sc);
 
-  fnormtol  = FTOL;
-  scsteptol = STOL;
+  sunrealtype fnormtol  = FTOL;
+  sunrealtype scsteptol = STOL;
 
-  /* Call KINCreate/KINInit to initialize KINSOL:
-     nvSpec is the nvSpec pointer used in the parallel version
+  /* Call KINCreate/KINInit to initialize KINSOL.
      A pointer to KINSOL problem memory is returned and stored in kmem. */
-  kmem = KINCreate(sunctx);
+  void* kmem = KINCreate(sunctx);
   if (check_retval((void*)kmem, "KINCreate", 0, my_pe)) { MPI_Abort(comm, 1); }
 
   /* Vector cc passed as template vector. */
   retval = KINInit(kmem, funcprpr, cc);
   if (check_retval(&retval, "KINInit", 1, my_pe)) { MPI_Abort(comm, 1); }
+
   retval = KINSetNumMaxIters(kmem, 250);
   if (check_retval(&retval, "KINSetNumMaxIters", 1, my_pe))
   {
     MPI_Abort(comm, 1);
   }
+
   retval = KINSetUserData(kmem, data);
   if (check_retval(&retval, "KINSetUserData", 1, my_pe)) { MPI_Abort(comm, 1); }
+
   retval = KINSetConstraints(kmem, constraints);
   if (check_retval(&retval, "KINSetConstraints", 1, my_pe))
   {
     MPI_Abort(comm, 1);
   }
+
   retval = KINSetFuncNormTol(kmem, fnormtol);
   if (check_retval(&retval, "KINSetFuncNormTol", 1, my_pe))
   {
     MPI_Abort(comm, 1);
   }
+
   retval = KINSetScaledStepTol(kmem, scsteptol);
   if (check_retval(&retval, "KINSetScaledStepTol", 1, my_pe))
   {
@@ -324,8 +326,9 @@ int main(int argc, char* argv[])
 
   /* Create SUNLinSol_SPGMR object with right preconditioning and the
      maximum Krylov dimension maxl */
-  maxl = 20;
-  LS   = SUNLinSol_SPGMR(cc, SUN_PREC_RIGHT, maxl, sunctx);
+  int maxl = 20;
+
+  SUNLinearSolver LS = SUNLinSol_SPGMR(cc, SUN_PREC_RIGHT, maxl, sunctx);
   if (check_retval((void*)LS, "SUNLinSol_SPGMR", 0, my_pe))
   {
     MPI_Abort(comm, 1);
@@ -339,15 +342,16 @@ int main(int argc, char* argv[])
   }
 
   /* Set the maximum number of restarts */
-  maxlrst = 2;
-  retval  = SUNLinSol_SPGMRSetMaxRestarts(LS, maxlrst);
+  int maxlrst = 2;
+
+  retval = SUNLinSol_SPGMRSetMaxRestarts(LS, maxlrst);
   if (check_retval(&retval, "SUNLinSol_SPGMRSetMaxRestarts", 1, my_pe))
   {
     MPI_Abort(comm, 1);
   }
 
   /* Specify the preconditioner setup and solve routines */
-  retval = KINSetPreconditioner(kmem, Precondbd, PSolvebd);
+  retval = KINSetPreconditioner(kmem, PrecSetupBD, PrecSolveBD);
   if (check_retval(&retval, "KINSetPreconditioner", 1, my_pe))
   {
     MPI_Abort(comm, 1);
@@ -388,13 +392,6 @@ int main(int argc, char* argv[])
   return (0);
 }
 
-/* Readability definitions used in other routines below */
-
-#define acoef (data->acoef)
-#define bcoef (data->bcoef)
-#define cox   (data->cox)
-#define coy   (data->coy)
-
 /*
  *--------------------------------------------------------------------
  * FUNCTIONS CALLED BY KINSOL
@@ -428,13 +425,12 @@ static int funcprpr(N_Vector cc, N_Vector fval, void* user_data)
  * Preconditioner setup routine. Generate and preprocess P.
  */
 
-static int Precondbd(N_Vector cc, N_Vector cscale, N_Vector fval,
-                     N_Vector fscale, void* user_data)
+static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
+                       N_Vector fscale, void* user_data)
 {
   sunrealtype r, r0, uround, sqruround, xx, yy, delx, dely, csave, fac;
   sunrealtype *cxy, *scxy, **Pxy, *ratesxy, *Pxycol, perturb_rates[NUM_SPECIES];
-  int i, j, jx, jy;
-  sunindextype ret;
+  sunindextype i, j, jx, jy, ret;
   UserData data;
 
   data = (UserData)user_data;
@@ -447,18 +443,22 @@ static int Precondbd(N_Vector cc, N_Vector cscale, N_Vector fval,
   r0        = THOUSAND * uround * fac * NEQ;
   if (r0 == ZERO) { r0 = ONE; }
 
+  sunrealtype* ccdata = N_VGetArrayPointer(cc);
+  sunrealtype* csdata = N_VGetArrayPointer(cscale);
+  sunrealtype* rdata  = N_VGetArrayPointer(data->rates);
+
   /* Loop over spatial points; get size NUM_SPECIES Jacobian block at each */
   for (jy = 0; jy < MYSUB; jy++)
   {
-    yy = dely * (jy + data->isuby * MYSUB);
+    yy = (jy + data->isuby * MYSUB) * dely;
 
     for (jx = 0; jx < MXSUB; jx++)
     {
-      xx      = delx * (jx + data->isubx * MXSUB);
+      xx      = (jx + data->isubx * MXSUB) * delx;
       Pxy     = (data->P)[jx][jy];
-      cxy     = IJ_Vptr(cc, jx, jy);
-      scxy    = IJ_Vptr(cscale, jx, jy);
-      ratesxy = IJ_Vptr((data->rates), jx, jy);
+      cxy     = IJ_Vptr(ccdata, jx, jy);
+      scxy    = IJ_Vptr(csdata, jx, jy);
+      ratesxy = IJ_Vptr(rdata, jx, jy);
 
       /* Compute difference quotients of interaction rate fn. */
       for (j = 0; j < NUM_SPECIES; j++)
@@ -498,14 +498,16 @@ static int Precondbd(N_Vector cc, N_Vector cscale, N_Vector fval,
  * Preconditioner solve routine
  */
 
-static int PSolvebd(N_Vector cc, N_Vector cscale, N_Vector fval,
-                    N_Vector fscale, N_Vector vv, void* user_data)
+static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
+                       N_Vector fscale, N_Vector vv, void* user_data)
 {
   sunrealtype **Pxy, *vxy;
   sunindextype *piv, jx, jy;
   UserData data;
 
   data = (UserData)user_data;
+
+  sunrealtype* vdata = N_VGetArrayPointer(vv);
 
   for (jx = 0; jx < MXSUB; jx++)
   {
@@ -515,7 +517,7 @@ static int PSolvebd(N_Vector cc, N_Vector cscale, N_Vector fval,
          vxy is the address of the corresponding portion of the vector vv;
          Pxy is the address of the corresponding block of the matrix P;
          piv is the address of the corresponding block of the array pivot. */
-      vxy = IJ_Vptr(vv, jx, jy);
+      vxy = IJ_Vptr(vdata, jx, jy);
       Pxy = (data->P)[jx][jy];
       piv = (data->pivot)[jx][jy];
       SUNDlsMat_denseGETRS(Pxy, NUM_SPECIES, piv, vxy);
@@ -534,7 +536,7 @@ static int PSolvebd(N_Vector cc, N_Vector cscale, N_Vector fval,
 static void WebRate(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
                     sunrealtype* ratesxy, void* user_data)
 {
-  int i;
+  sunindextype i;
   sunrealtype fac;
   UserData data;
 
@@ -542,14 +544,14 @@ static void WebRate(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
 
   for (i = 0; i < NUM_SPECIES; i++)
   {
-    ratesxy[i] = DotProd(NUM_SPECIES, cxy, acoef[i]);
+    ratesxy[i] = DotProd(NUM_SPECIES, cxy, data->acoef[i]);
   }
 
   fac = ONE + ALPHA * xx * yy;
 
   for (i = 0; i < NUM_SPECIES; i++)
   {
-    ratesxy[i] = cxy[i] * (bcoef[i] * fac + ratesxy[i]);
+    ratesxy[i] = cxy[i] * (data->bcoef[i] * fac + ratesxy[i]);
   }
 }
 
@@ -557,9 +559,9 @@ static void WebRate(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
  * Dot product routine for sunrealtype arrays
  */
 
-static sunrealtype DotProd(int size, sunrealtype* x1, sunrealtype* x2)
+static sunrealtype DotProd(sunindextype size, sunrealtype* x1, sunrealtype* x2)
 {
-  int i;
+  sunindextype i;
   sunrealtype *xx1, *xx2, temp = ZERO;
 
   xx1 = x1;
@@ -595,10 +597,10 @@ static UserData AllocUserData(void)
     }
   }
 
-  acoef = SUNDlsMat_newDenseMat(NUM_SPECIES, NUM_SPECIES);
-  bcoef = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
-  cox   = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
-  coy   = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
+  data->acoef = SUNDlsMat_newDenseMat(NUM_SPECIES, NUM_SPECIES);
+  data->bcoef = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
+  data->cox   = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
+  data->coy   = (sunrealtype*)malloc(NUM_SPECIES * sizeof(sunrealtype));
 
   return (data);
 }
@@ -609,7 +611,7 @@ static UserData AllocUserData(void)
 
 static void InitUserData(int my_pe, MPI_Comm comm, UserData data)
 {
-  int i, j, np;
+  sunindextype i, j, np;
   sunrealtype *a1, *a2, *a3, *a4, dx2, dy2;
 
   data->mx        = MX;
@@ -621,7 +623,7 @@ static void InitUserData(int my_pe, MPI_Comm comm, UserData data)
   data->dx        = (data->ax) / (MX - 1);
   data->dy        = (data->ay) / (MY - 1);
   data->uround    = SUN_UNIT_ROUNDOFF;
-  data->sqruround = sqrt(data->uround);
+  data->sqruround = SUNRsqrt(data->uround);
   data->my_pe     = my_pe;
   data->comm      = comm;
   data->isuby     = my_pe / NPEX;
@@ -637,10 +639,10 @@ static void InitUserData(int my_pe, MPI_Comm comm, UserData data)
 
   for (i = 0; i < np; i++)
   {
-    a1 = &(acoef[i][np]);
-    a2 = &(acoef[i + np][0]);
-    a3 = &(acoef[i][0]);
-    a4 = &(acoef[i + np][np]);
+    a1 = &(data->acoef[i][np]);
+    a2 = &(data->acoef[i + np][0]);
+    a3 = &(data->acoef[i][0]);
+    a4 = &(data->acoef[i + np][np]);
 
     /*  Fill in the portion of acoef in the four quadrants, row by row */
     for (j = 0; j < np; j++)
@@ -652,17 +654,17 @@ static void InitUserData(int my_pe, MPI_Comm comm, UserData data)
     }
 
     /* and then change the diagonal elements of acoef to -AA */
-    acoef[i][i]           = -AA;
-    acoef[i + np][i + np] = -AA;
+    data->acoef[i][i]           = -AA;
+    data->acoef[i + np][i + np] = -AA;
 
-    bcoef[i]      = BB;
-    bcoef[i + np] = -BB;
+    data->bcoef[i]      = BB;
+    data->bcoef[i + np] = -BB;
 
-    cox[i]      = DPREY / dx2;
-    cox[i + np] = DPRED / dx2;
+    data->cox[i]      = DPREY / dx2;
+    data->cox[i + np] = DPRED / dx2;
 
-    coy[i]      = DPREY / dy2;
-    coy[i + np] = DPRED / dy2;
+    data->coy[i]      = DPREY / dy2;
+    data->coy[i + np] = DPRED / dy2;
   }
 }
 
@@ -683,10 +685,10 @@ static void FreeUserData(UserData data)
     }
   }
 
-  SUNDlsMat_destroyMat(acoef);
-  free(bcoef);
-  free(cox);
-  free(coy);
+  SUNDlsMat_destroyMat(data->acoef);
+  free(data->bcoef);
+  free(data->cox);
+  free(data->coy);
   N_VDestroy(data->rates);
   free(data);
 }
@@ -700,6 +702,9 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   int i, jx, jy;
   sunrealtype *cloc, *sloc;
   sunrealtype ctemp[NUM_SPECIES], stemp[NUM_SPECIES];
+
+  sunrealtype* ccdata = N_VGetArrayPointer(cc);
+  sunrealtype* scdata = N_VGetArrayPointer(sc);
 
   /* Initialize arrays ctemp and stemp used in the loading process */
   for (i = 0; i < NUM_SPECIES / 2; i++)
@@ -718,8 +723,8 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   {
     for (jx = 0; jx < MXSUB; jx++)
     {
-      cloc = IJ_Vptr(cc, jx, jy);
-      sloc = IJ_Vptr(sc, jx, jy);
+      cloc = IJ_Vptr(ccdata, jx, jy);
+      sloc = IJ_Vptr(scdata, jx, jy);
       for (i = 0; i < NUM_SPECIES; i++)
       {
         cloc[i] = ctemp[i];
@@ -736,8 +741,7 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
 static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
                         sunrealtype fnormtol, sunrealtype scsteptol)
 {
-  printf("\nPredator-prey test problem --  KINSol (parallel version)\n\n");
-
+  printf("Predator-prey test problem -- KINSol (parallel version)\n\n");
   printf("Mesh dimensions = %d X %d\n", MX, MY);
   printf("Number of species = %d\n", NUM_SPECIES);
   printf("Total system size = %d\n\n", NEQ);
@@ -752,9 +756,6 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  fnormtol = %Lg   scsteptol = %Lg\n", fnormtol,
          scsteptol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  fnormtol = %g   scsteptol = %g\n", fnormtol,
-         scsteptol);
 #else
   printf("Tolerance parameters:  fnormtol = %g   scsteptol = %g\n", fnormtol,
          scsteptol);
@@ -767,9 +768,6 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("At all mesh points:  %Lg %Lg %Lg   %Lg %Lg %Lg\n", PREYIN, PREYIN,
          PREYIN, PREDIN, PREDIN, PREDIN);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At all mesh points:  %g %g %g   %g %g %g\n", PREYIN, PREYIN, PREYIN,
-         PREDIN, PREDIN, PREDIN);
 #else
   printf("At all mesh points:  %g %g %g   %g %g %g\n", PREYIN, PREYIN, PREYIN,
          PREDIN, PREDIN, PREDIN);
@@ -822,8 +820,6 @@ static void PrintOutput(int my_pe, MPI_Comm comm, N_Vector cc)
       printf(" %Qg", ct[is]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
       printf(" %Lg", ct[is]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-      printf(" %g", ct[is]);
 #else
       printf(" %g", ct[is]);
 #endif
@@ -837,8 +833,6 @@ static void PrintOutput(int my_pe, MPI_Comm comm, N_Vector cc)
       printf(" %Qg", tempc[is]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
       printf(" %Lg", tempc[is]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-      printf(" %g", tempc[is]);
 #else
       printf(" %g", tempc[is]);
 #endif
@@ -985,7 +979,7 @@ static void BRecvPost(MPI_Comm comm, MPI_Request request[], int my_pe,
  *  Notes:
  *  1) buffer should be able to hold 2*NUM_SPECIES*MYSUB sunrealtype entries,
  *     should be passed to both the BRecvPost and BRecvWait functions, and
- *  should not be manipulated between the two calls.
+ *     should not be manipulated between the two calls.
  *  2) request should have 4 entries, and should be passed in both calls also.
  */
 
@@ -1157,6 +1151,10 @@ static void fcalcprpr(N_Vector cc, N_Vector fval, void* user_data)
   dely   = data->dy;
   shifty = (MXSUB + 2) * NUM_SPECIES;
 
+  sunrealtype* ccdata = N_VGetArrayPointer(cc);
+  sunrealtype* rdata  = N_VGetArrayPointer(data->rates);
+  sunrealtype* fdata  = N_VGetArrayPointer(fval);
+
   for (jy = 0; jy < MYSUB; jy++)
   {
     yy = dely * (jy + isuby * MYSUB);
@@ -1164,9 +1162,9 @@ static void fcalcprpr(N_Vector cc, N_Vector fval, void* user_data)
     for (jx = 0; jx < MXSUB; jx++)
     {
       xx  = delx * (jx + isubx * MXSUB);
-      cxy = IJ_Vptr(cc, jx, jy);
-      rxy = IJ_Vptr(data->rates, jx, jy);
-      fxy = IJ_Vptr(fval, jx, jy);
+      cxy = IJ_Vptr(ccdata, jx, jy);
+      rxy = IJ_Vptr(rdata, jx, jy);
+      fxy = IJ_Vptr(fdata, jx, jy);
 
       WebRate(xx, yy, cxy, rxy, user_data);
 
@@ -1187,8 +1185,8 @@ static void fcalcprpr(N_Vector cc, N_Vector fval, void* user_data)
         dcxri = cext[offsetcr + is] - cext[offsetc + is];
 
         /* compute the value at xx , yy */
-        fxy[is] = (coy)[is] * (dcyui - dcydi) + (cox)[is] * (dcxri - dcxli) +
-                  rxy[is];
+        fxy[is] = (data->coy)[is] * (dcyui - dcydi) +
+                  (data->cox)[is] * (dcxri - dcxli) + rxy[is];
 
       } /* end of is loop */
 

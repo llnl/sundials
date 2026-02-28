@@ -1,0 +1,25 @@
+
+Analytical DAE test problem:
+    alpha = 10
+
+        t          x1         x2
+   ----------------------------------
+    0.100000    1.105172   -0.582138
+    0.200000    1.221414   -0.679309
+    0.300000    1.349860   -0.795050
+    0.400000    1.491840   -0.932619
+    0.500000    1.648742   -1.100248
+    0.600000    1.822120   -1.302063
+    0.700000    2.013753   -1.549072
+    0.800000    2.225550   -1.854848
+    0.900000    2.459613   -2.236265
+    1.000000    2.718282   -2.718347
+   ----------------------------------
+
+Final Solver Statistics: 
+
+Number of steps                    = 62
+Number of residual evaluations     = 71
+Number of nonlinear iterations     = 71
+Number of error test failures      = 8
+Number of nonlinear conv. failures = 0

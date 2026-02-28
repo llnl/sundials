@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -1312,8 +1315,6 @@ static void PrintOutput(N_Vector cB, int ns, int mxns, WebData wdata)
     printf("  mu max = %Qe\n", cmax);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("  mu max = %Le\n", cmax);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("  mu max = %e\n", cmax);
 #else
     printf("  mu max = %e\n", cmax);
 #endif
@@ -1322,8 +1323,6 @@ static void PrintOutput(N_Vector cB, int ns, int mxns, WebData wdata)
     printf("  x = %Qe\n  y = %Qe\n", x, y);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("  x = %Le\n  y = %Le\n", x, y);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("  x = %e\n  y = %e\n", x, y);
 #else
     printf("  x = %e\n  y = %e\n", x, y);
 #endif

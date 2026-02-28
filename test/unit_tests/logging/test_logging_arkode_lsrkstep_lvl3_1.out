@@ -4,36 +4,36 @@ Start LSRKStep Logging test
   0.000000000000000e+00  0.000000000000000e+00  0.000000000000000e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 1, tn = 0, h = 6.103515625e-12
 [INFO][rank 0][lsrkStep_TakeStepRKL][compute-num-stages] spectral radius = 999.9, num stages = 2, max stages = 2, max stage limit = 200
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 0, tcur = 0
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 1, tcur = 2.03450520833333e-12
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 2, tcur = 6.103515625e-12
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 0, tcur = 0
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 1, tcur = 2.03450520833333e-12
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 2, tcur = 6.103515625e-12
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepRKL][begin-compute-embedding] 
 [INFO][rank 0][lsrkStep_TakeStepRKL][end-compute-embedding] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0
   6.103515625000001e-12  6.103515625000001e-12  0.000000000000000e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 6.103515625e-12, h = 6.103515625e-08
 [INFO][rank 0][lsrkStep_TakeStepRKL][compute-num-stages] spectral radius = 999.9, num stages = 2, max stages = 2, max stage limit = 200
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 0, tcur = 6.103515625e-12
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 1, tcur = 2.03511555989583e-08
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 2, tcur = 6.1041259765625e-08
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 0, tcur = 6.103515625e-12
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 1, tcur = 2.03511555989583e-08
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 2, tcur = 6.1041259765625e-08
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepRKL][begin-compute-embedding] 
 [INFO][rank 0][lsrkStep_TakeStepRKL][end-compute-embedding] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 6.61744449652746e-13
   6.104125976562500e-08  6.104125976562497e-08  3.970466940254533e-23
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 3, tn = 6.1041259765625e-08, h = 1.220703125e-06
 [INFO][rank 0][lsrkStep_TakeStepRKL][compute-num-stages] spectral radius = 999.9, num stages = 2, max stages = 2, max stage limit = 200
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 0, tcur = 6.1041259765625e-08
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 1, tcur = 4.67942301432292e-07
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
-[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stage] stage = 2, tcur = 1.28174438476563e-06
-[INFO][rank 0][lsrkStep_TakeStepRKL][end-stage] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 0, tcur = 6.1041259765625e-08
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 1, tcur = 4.67942301432292e-07
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepRKL][begin-stages-list] stage = 2, tcur = 1.28174438476563e-06
+[INFO][rank 0][lsrkStep_TakeStepRKL][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepRKL][begin-compute-embedding] 
 [INFO][rank 0][lsrkStep_TakeStepRKL][end-compute-embedding] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 4.84947981301313e-09

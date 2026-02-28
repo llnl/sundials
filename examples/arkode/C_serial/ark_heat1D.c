@@ -1,9 +1,12 @@
 /*---------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -20,7 +23,7 @@
  * Dirichlet boundary conditions, i.e.
  *    u_t(t,0) = u_t(t,1) = 0,
  * and a point-source heating term,
- *    f = 1 for x=0.5.
+ *    f = 0.01 for x=0.5.
  *
  * The spatial derivatives are computed using second-order
  * centered differences, with the data distributed over N points
@@ -75,7 +78,7 @@ static int Jac(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y, N_Vector fy,
 static int check_flag(void* flagvalue, const char* funcname, int opt);
 
 /* Main Program */
-int main(void)
+int main(int argc, char* argv[])
 {
   /* general problem parameters */
   sunrealtype T0   = SUN_RCONST(0.0); /* initial time */
@@ -140,7 +143,7 @@ int main(void)
   if (check_flag(&flag, "ARKodeSStolerances", 1)) { return 1; }
 
   /* Initialize PCG solver -- no preconditioning, with up to N iterations  */
-  LS = SUNLinSol_PCG(y, 0, (int)N, ctx);
+  LS = SUNLinSol_PCG(y, SUN_PREC_NONE, (int)N, ctx);
   if (check_flag((void*)LS, "SUNLinSol_PCG", 0)) { return 1; }
 
   /* Linear solver interface -- set user-supplied J*v routine (no 'jtsetup' required) */
@@ -153,6 +156,12 @@ int main(void)
   /* Specify linearly implicit RHS, with non-time-dependent Jacobian */
   flag = ARKodeSetLinear(arkode_mem, 0);
   if (check_flag(&flag, "ARKodeSetLinear", 1)) { return 1; }
+
+  /* Override any current settings with command-line options */
+  flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
+  if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
+  flag = SUNLinSolSetOptions(LS, NULL, NULL, argc, argv);
+  if (check_flag(&flag, "SUNLinSolSetOptions", 1)) { return 1; }
 
   /* output mesh to disk */
   FID = fopen("heat_mesh.txt", "w");

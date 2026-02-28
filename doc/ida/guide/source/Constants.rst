@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -115,7 +118,11 @@ IDA output constants
   +---------------------------+-------+------------------------------------------------------------------------------------------------------------------------------------------------------+
   | ``IDA_BAD_DKY``           | -27   | The vector argument where derivative should be stored is ``NULL``.                                                                                   |
   +---------------------------+-------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-  | ``IDALS_SUCCESS``         | 0     | Successful function return.                                                                                                                          |
+  | ``IDA_VECTOROP_ERR``      | -28   | A vector operation fail                                                                                                                              |
+  +---------------------------+-------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+  | ``IDA_CONTEXT_ERR``       | -29   | An error occurred in the SUNDIALS context object                                                                                                     |
+  +---------------------------+-------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+  | ``IDA_TOO_CLOSE``         | -60   | On the first step, the output time is too close to the initial time                                                                                  |
   +---------------------------+-------+------------------------------------------------------------------------------------------------------------------------------------------------------+
   | ``IDALS_MEM_NULL``        | -1    | The ``ida_mem`` argument was ``NULL``.                                                                                                               |
   +---------------------------+-------+------------------------------------------------------------------------------------------------------------------------------------------------------+

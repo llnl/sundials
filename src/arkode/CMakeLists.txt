@@ -1,9 +1,12 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU, Cody J. Balos @ LLNL
+# Programmer(s): Daniel R. Reynolds @ UMBC, Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -27,6 +30,7 @@ set(arkode_SOURCES
     arkode_butcher_dirk.c
     arkode_butcher_erk.c
     arkode_butcher.c
+    arkode_cli.c
     arkode_erkstep_io.c
     arkode_erkstep.c
     arkode_forcingstep.c
@@ -54,20 +58,32 @@ set(arkode_SOURCES
 # Add variable arkode_HEADERS with the exported ARKODE header files
 set(arkode_HEADERS
     arkode.h
+    arkode.hpp
     arkode_arkstep.h
+    arkode_arkstep.hpp
+    arkode_arkstep_deprecated.h
     arkode_bandpre.h
     arkode_bbdpre.h
     arkode_butcher.h
     arkode_butcher_dirk.h
     arkode_butcher_erk.h
     arkode_erkstep.h
+    arkode_erkstep.hpp
+    arkode_erkstep_deprecated.h
     arkode_forcingstep.h
+    arkode_forcingstep.hpp
     arkode_ls.h
     arkode_lsrkstep.h
+    arkode_lsrkstep.hpp
     arkode_mristep.h
+    arkode_mristep.hpp
+    arkode_mristep_deprecated.h
     arkode_splittingstep.h
+    arkode_splittingstep.hpp
     arkode_sprk.h
-    arkode_sprkstep.h)
+    arkode_sprkstep.h
+    arkode_sprkstep.hpp
+    arkode_sprkstep_deprecated.h)
 
 # Add prefix with complete path to the ARKODE header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/arkode/ arkode_HEADERS)

@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -290,8 +293,6 @@ int main(int argc, char* argv[])
   printf("G:          %12.4Qe \n", Ith(q, 1));
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("G:          %12.4Le \n", Ith(q, 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("G:          %12.4e \n", Ith(q, 1));
 #else
   printf("G:          %12.4e \n", Ith(q, 1));
 #endif
@@ -759,8 +760,6 @@ static void PrintHead(sunrealtype tB0)
   printf("Backward integration from tB0 = %12.4Qe\n\n", tB0);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Backward integration from tB0 = %12.4Le\n\n", tB0);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Backward integration from tB0 = %12.4e\n\n", tB0);
 #else
   printf("Backward integration from tB0 = %12.4e\n\n", tB0);
 #endif
@@ -787,12 +786,6 @@ static void PrintOutput1(sunrealtype time, sunrealtype t, N_Vector y, N_Vector y
          Ith(yB, 3));
   printf("y(t):       %12.4Le %12.4Le %12.4Le\n", Ith(y, 1), Ith(y, 2),
          Ith(y, 3));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("returned t: %12.4e\n", time);
-  printf("tout:       %12.4e\n", t);
-  printf("lambda(t):  %12.4e %12.4e %12.4e\n", Ith(yB, 1), Ith(yB, 2),
-         Ith(yB, 3));
-  printf("y(t):       %12.4e %12.4e %12.4e\n", Ith(y, 1), Ith(y, 2), Ith(y, 3));
 #else
   printf("returned t: %12.4e\n", time);
   printf("tout:       %12.4e\n", t);
@@ -825,13 +818,6 @@ static void PrintOutput(sunrealtype tfinal, N_Vector y, N_Vector yB, N_Vector qB
   printf("y(t0):      %12.4Le %12.4Le %12.4Le\n", Ith(y, 1), Ith(y, 2),
          Ith(y, 3));
   printf("dG/dp:      %12.4Le %12.4Le %12.4Le\n", -Ith(qB, 1), -Ith(qB, 2),
-         -Ith(qB, 3));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("returned t: %12.4e\n", tfinal);
-  printf("lambda(t0): %12.4e %12.4e %12.4e\n", Ith(yB, 1), Ith(yB, 2),
-         Ith(yB, 3));
-  printf("y(t0):      %12.4e %12.4e %12.4e\n", Ith(y, 1), Ith(y, 2), Ith(y, 3));
-  printf("dG/dp:      %12.4e %12.4e %12.4e\n", -Ith(qB, 1), -Ith(qB, 2),
          -Ith(qB, 3));
 #else
   printf("returned t: %12.4e\n", tfinal);

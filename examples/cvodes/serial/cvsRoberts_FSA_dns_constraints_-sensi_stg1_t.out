@@ -65,23 +65,23 @@ Sensitivity: YES ( STAGGERED1 + FULL ERROR CONTROL )
                   Sensitivity 2    1.0579e-09   2.1593e-15  -1.0579e-09 
                   Sensitivity 3   -1.7315e-13  -6.9261e-19   1.7315e-13 
 -----------------------------------------------------------------------
-4.000e+09  1  1.312e+09   775
-                  Solution         4.0287e-07   1.6115e-12   1.0000e+00 
-                  Sensitivity 1   -6.0170e-05  -2.0039e-10   6.0170e-05 
-                  Sensitivity 2    1.5483e-10   4.5817e-16  -1.5483e-10 
-                  Sensitivity 3   -1.3176e-15  -5.2706e-21   1.3176e-15 
+4.000e+09  1  1.036e+09   775
+                  Solution         4.2606e-07   1.7042e-12   1.0000e+00 
+                  Sensitivity 1   -5.3169e-05  -1.7007e-10   5.3169e-05 
+                  Sensitivity 2    1.6832e-10   5.0286e-16  -1.6832e-10 
+                  Sensitivity 3   -4.5154e-15  -1.8061e-20   4.5154e-15 
 -----------------------------------------------------------------------
-4.000e+10  2  3.888e+09   785
-                  Solution         3.8703e-08   1.5481e-13   1.0000e+00 
-                  Sensitivity 1   -1.1234e-07   3.4209e-12   1.1234e-07 
-                  Sensitivity 2    2.8598e-11   9.8909e-17  -2.8598e-11 
-                  Sensitivity 3   -1.3904e-15  -5.5617e-21   1.3904e-15 
+4.000e+10  1  2.182e+10   783
+                  Solution         7.5745e-08   3.0298e-13   1.0000e+00 
+                  Sensitivity 1   -4.4284e-06  -1.0139e-11   4.4284e-06 
+                  Sensitivity 2    2.0111e-11   5.0145e-17  -2.0111e-11 
+                  Sensitivity 3   -2.0597e-15  -8.2387e-21   2.0597e-15 
 -----------------------------------------------------------------------
 
 Final Statistics:
-nst = 785    nfe = 1823   nsetups = 181    nfeLS = 0      nje = 18
-nni = 964    nnf = 2      netf = 0         ncfn = 4     
+nst = 783    nfe = 1812   nsetups = 184    nfeLS = 0      nje = 15
+nni = 955    nnf = 0      netf = 0         ncfn = 0     
 
-nfSe = 3153   nfeS = 0      nsetupsS = 0     
-nniS = 3144   nnfS = 0      netfS = 71     ncfnS = 0     
+nfSe = 3144   nfeS = 0      nsetupsS = 0     
+nniS = 3135   nnfS = 0      netfS = 71     ncfnS = 0     
 

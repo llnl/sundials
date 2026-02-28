@@ -10,3 +10,6 @@
 [submodule "external/sundials-addon-example"]
 	path = external/sundials-addon-example
 	url = https://github.com/sundials-codes/sundials-addon-example.git
+[submodule "bindings/sundials4py/sundials4py-generate"]
+	path = bindings/sundials4py/sundials4py-generate
+	url = https://github.com/sundials-codes/sundials4py-generate.git

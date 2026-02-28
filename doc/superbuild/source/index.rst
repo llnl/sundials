@@ -2,8 +2,11 @@
    Programmer(s): Cody J. Balos @ LLNL
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -189,6 +192,7 @@ SUNDIALS License and Notices
    sunmatrix/index.rst
    sunlinsol/index.rst
    sunnonlinsol/index.rst
+   sundomeigest/index.rst
    sunadaptcontroller/index.rst
    sunstepper/index.rst
    sunadjoint/index.rst
@@ -196,6 +200,27 @@ SUNDIALS License and Notices
    History_link.rst
    Changelog_link.rst
    FAQ_link.rst
+
+.. toctree::
+   :caption: INTERFACES
+   :maxdepth: 1
+   :numbered:
+   :hidden:
+
+   Fortran/index.rst
+   Python/index.rst
+
+.. toctree::
+   :caption: EXAMPLES
+   :maxdepth: 1
+   :hidden:
+
+   examples/arkode/index-superbuild.rst
+   examples/cvode/index-superbuild.rst
+   examples/cvodes/index-superbuild.rst
+   examples/ida/index-superbuild.rst
+   examples/idas/index-superbuild.rst
+   examples/kinsol/index-superbuild.rst
 
 .. toctree::
    :caption: DEVELOPMENT

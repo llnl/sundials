@@ -1,9 +1,12 @@
 ! ----------------------------------------------------------------
-! Programmer(s): Daniel R. Reynolds @ SMU
+! Programmer(s): Daniel R. Reynolds @ UMBC
 ! ----------------------------------------------------------------
 ! SUNDIALS Copyright Start
-! Copyright (c) 2002-2025, Lawrence Livermore National Security
+! Copyright (c) 2025-2026, Lawrence Livermore National Security,
+! University of Maryland Baltimore County, and the SUNDIALS contributors.
+! Copyright (c) 2013-2025, Lawrence Livermore National Security
 ! and Southern Methodist University.
+! Copyright (c) 2002-2013, Lawrence Livermore National Security.
 ! All rights reserved.
 !
 ! See the top-level LICENSE and NOTICE files for details.
@@ -646,7 +649,7 @@ program driver
 
   ! Declarations
   ! general problem parameters
-  real(c_double), parameter :: pi = 3.141592653589793238462643383279502884197169d0
+  real(c_double), parameter :: pi = 3.1415926535897932d0
   integer, parameter :: Nt = 20           ! total number of output times
   integer, parameter :: nx_ = 60          ! spatial mesh size
   integer, parameter :: ny_ = 120

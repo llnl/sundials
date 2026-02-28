@@ -3,8 +3,11 @@
 # Programmer(s): David J. Gardner @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -15,17 +18,7 @@
 # Function to parse SUNDIALS CSV output files
 # -----------------------------------------------------------------------------
 
-
-def num(s):
-    """Try to convert a string to an int or float"""
-
-    try:
-        return int(s)
-    except ValueError:
-        try:
-            return float(s)
-        except ValueError:
-            return s
+from .utils import str2num
 
 
 def keys(filename):
@@ -79,7 +72,7 @@ def read(filename):
         for row in reader:
             values = row[1::2]
             for k, v in zip(fields, values):
-                csv_dict[k].append(num(v))
+                csv_dict[k].append(str2num(v))
 
     return csv_dict
 

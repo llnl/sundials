@@ -1,11 +1,14 @@
 /*
  * -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *         Allan Taylor, Alan Hindmarsh and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -645,8 +648,6 @@ static void PrintHeader(sunindextype SystemSize, int maxl, sunrealtype rtol,
   printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, atol);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #endif
@@ -724,13 +725,6 @@ static void PrintOutput(void* ida_mem, N_Vector cc, sunrealtype tt,
            clast[0], nst, kused, hused);
     for (i = 1; i < NUM_SPECIES; i++)
       printf("         %12.4Le %12.4Le   |\n", cdata[i], clast[i]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%8.2e %12.4e %12.4e   | %3ld  %1d %12.4e\n", tt, cdata[0], clast[0],
-           nst, kused, hused);
-    for (i = 1; i < NUM_SPECIES; i++)
-    {
-      printf("         %12.4e %12.4e   |\n", cdata[i], clast[i]);
-    }
 #else
     printf("%8.2e %12.4e %12.4e   | %3ld  %1d %12.4e\n", tt, cdata[0], clast[0],
            nst, kused, hused);

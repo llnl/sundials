@@ -3,8 +3,11 @@
 # Programmer(s): Cody J. Balos and David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -42,7 +45,7 @@ compilerversion="${compiler##*@}"
 # ------------------------------------------------------------------------------
 
 case "$SUNDIALS_PRECISION" in
-    single|double|extended|float128) ;;
+    single|double|extended) ;;
     *)
         echo "ERROR: Unknown real type option: $SUNDIALS_PRECISION"
         return 1
@@ -163,12 +166,9 @@ fi
 # Uncomment to override the default output file comparison precisions. The float
 # precision is number of digits to compare (0 = all digits) and the integer
 # precision is allowed percentage difference (0 = no difference).
-if [ "$SUNDIALS_PRECISION" == "float128" ]; then
-       export SUNDIALS_TEST_FLOAT_PRECISION=7
-       export SUNDIALS_TEST_INTEGER_PRECISION=3
-elif[ "$SUNDIALS_PRECISION" == "extended" ]; then
+if [ "$SUNDIALS_PRECISION" == "extended" ]; then
     export SUNDIALS_TEST_FLOAT_PRECISION=7
-    export SUNDIALS_TEST_INTEGER_PRECISION=3
+    export SUNDIALS_TEST_INTEGER_PRECISION=10
 elif [ "$SUNDIALS_PRECISION" == "double" ]; then
     export SUNDIALS_TEST_FLOAT_PRECISION=5
     export SUNDIALS_TEST_INTEGER_PRECISION=5

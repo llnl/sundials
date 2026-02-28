@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -39,24 +42,24 @@
 
 /* Convince macros for calling precision-specific math functions */
 #if defined(SUNDIALS_DOUBLE_PRECISION)
-#define EXP(x) (exp((x)))
-#define LOG(x) (log((x)))
+#define EXP(x)  (exp((x)))
+#define SQRT(x) (sqrt((x)))
+#define LOG(x)  (log((x)))
 #elif defined(SUNDIALS_SINGLE_PRECISION)
-#define EXP(x) (expf((x)))
-#define LOG(x) (logf((x)))
+#define EXP(x)  (expf((x)))
+#define SQRT(x) (sqrtf((x)))
+#define LOG(x)  (logf((x)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define EXP(x) (expl((x)))
-#define LOG(x) (logl((x)))
-#elif defined(SUNDIALS_FLOAT128_PRECISION)
-#define EXP(x) (expq((x)))
-#define LOG(x) (logq((x)))
+#define EXP(x)  (expl((x)))
+#define SQRT(x) (sqrtl((x)))
+#define LOG(x)  (logl((x)))
 #endif
 
 /* Convince macros for using precision-specific format specifiers */
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-#define ESYM "Le"
-#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
 #define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
 #else
 #define ESYM "e"
 #endif

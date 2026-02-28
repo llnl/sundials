@@ -3,8 +3,11 @@
  *                Radu Serban @ LLNL
  * --------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -512,11 +515,6 @@ static void PrintIntro(void)
   printf("b parameter = %.2Lg\n", BB);
   printf("Diffusion coefficients: Dprey = %.2Lg   Dpred = %.2Lg\n", DPREY, DPRED);
   printf("Rate parameter alpha = %.2Lg\n\n", ALPHA);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Matrix parameters: a = %.2g   e = %.2g   g = %.2g\n", AA, EE, GG);
-  printf("b parameter = %.2g\n", BB);
-  printf("Diffusion coefficients: Dprey = %.2g   Dpred = %.2g\n", DPREY, DPRED);
-  printf("Rate parameter alpha = %.2g\n\n", ALPHA);
 #else
   printf("Matrix parameters: a = %.2g   e = %.2g   g = %.2g\n", AA, EE, GG);
   printf("b parameter = %.2g\n", BB);
@@ -529,8 +527,6 @@ static void PrintIntro(void)
   printf("Tolerances: reltol = %.2Qg, abstol = %.2Qg \n\n", RTOL, ATOL);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerances: reltol = %.2Lg, abstol = %.2Lg \n\n", RTOL, ATOL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerances: reltol = %.2g, abstol = %.2g \n\n", RTOL, ATOL);
 #else
   printf("Tolerances: reltol = %.2g, abstol = %.2g \n\n", RTOL, ATOL);
 #endif
@@ -579,8 +575,6 @@ static void PrintAllSpecies(N_Vector c, int ns, int mxns, sunrealtype t)
   printf("c values at t = %Qg:\n\n", t);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("c values at t = %Lg:\n\n", t);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("c values at t = %g:\n\n", t);
 #else
   printf("c values at t = %g:\n\n", t);
 #endif
@@ -595,8 +589,6 @@ static void PrintAllSpecies(N_Vector c, int ns, int mxns, sunrealtype t)
         printf("%-10.6Qg", cdata[(i - 1) + jx * ns + jy * mxns]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
         printf("%-10.6Lg", cdata[(i - 1) + jx * ns + jy * mxns]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-        printf("%-10.6g", cdata[(i - 1) + jx * ns + jy * mxns]);
 #else
         printf("%-10.6g", cdata[(i - 1) + jx * ns + jy * mxns]);
 #endif
@@ -630,9 +622,6 @@ static void PrintOutput(void* cvode_mem, sunrealtype t)
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("t = %10.2Le  nst = %ld  nfe = %ld  nni = %ld", t, nst, nfe, nni);
   printf("  qu = %d  hu = %11.2Le\n\n", qu, hu);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("t = %10.2e  nst = %ld  nfe = %ld  nni = %ld", t, nst, nfe, nni);
-  printf("  qu = %d  hu = %11.2e\n\n", qu, hu);
 #else
   printf("t = %10.2e  nst = %ld  nfe = %ld  nni = %ld", t, nst, nfe, nni);
   printf("  qu = %d  hu = %11.2e\n\n", qu, hu);

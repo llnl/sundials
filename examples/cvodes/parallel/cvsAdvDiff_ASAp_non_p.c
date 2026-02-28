@@ -3,8 +3,11 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -734,9 +737,6 @@ static void PrintOutput(sunrealtype g_val, N_Vector uB, UserData data)
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("\ng(tf) = %8Le\n\n", g_val);
     printf("dgdp(tf)\n  [ 1]: %8Le\n  [ 2]: %8Le\n\n", -uBdata[0], -uBdata[1]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("\ng(tf) = %8e\n\n", g_val);
-    printf("dgdp(tf)\n  [ 1]: %8e\n  [ 2]: %8e\n\n", -uBdata[0], -uBdata[1]);
 #else
     printf("\ng(tf) = %8e\n\n", g_val);
     printf("dgdp(tf)\n  [ 1]: %8e\n  [ 2]: %8e\n\n", -uBdata[0], -uBdata[1]);
@@ -761,13 +761,9 @@ static void PrintOutput(sunrealtype g_val, N_Vector uB, UserData data)
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     for (i = 0; i < NEQ; i++)
       printf("  [%2ld]: %8Le\n", (long int)i + 1, mu[i]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    for (i = 0; i < NEQ; i++)
-    {
-      printf("  [%2ld]: %8e\n", (long int)i + 1, mu[i]);
-    }
 #else
-    for (i = 0; i < NEQ; i++) printf("  [%2ld]: %8e\n", (long int)i + 1, mu[i]);
+    for (i = 0; i < NEQ; i++)
+      printf("  [%2ld]: %8e\n", (long int)i + 1, mu[i]);
 #endif
 
     free(mu);

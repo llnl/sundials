@@ -1,9 +1,12 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -21,23 +24,21 @@
 set(ARKODE_examples "ark_diurnal_kry_p\;\;1\;4\;exclude-single\;default"
                     "ark_diurnal_kry_bbd_p\;\;1\;4\;exclude-single\;default")
 
-#if(SUNDIALS_PRECISION MATCHES "DOUBLE" AND SUNDIALS_INDEX_SIZE MATCHES "64")
+list(APPEND ARKODE_examples
+  "ark_brusselator1D_task_local_nls\;--monitor\;1\;4\;develop\;2")
+list(
+  APPEND ARKODE_examples
+  "ark_brusselator1D_task_local_nls\;--monitor --global-nls\;1\;4\;develop\;2"
+)
+list(
+  APPEND
+  ARKODE_examples
+  "ark_brusselator1D_task_local_nls\;--monitor --explicit --tf 3\;1\;4\;develop\;2"
+)
 
-  list(APPEND ARKODE_examples
-       "ark_brusselator1D_task_local_nls\;--monitor\;1\;4\;develop\;2")
-  list(
-    APPEND ARKODE_examples
-    "ark_brusselator1D_task_local_nls\;--monitor --global-nls\;1\;4\;develop\;2"
-  )
-  list(
-    APPEND
-    ARKODE_examples
-    "ark_brusselator1D_task_local_nls\;--monitor --explicit --tf 3\;1\;4\;develop\;2"
-  )
+# Auxiliary files to install
+set(ARKODE_extras "plot_brusselator1D.py")
 
-  # Auxiliary files to install
-  set(ARKODE_extras "plot_brusselator1D.py")
-#endif()
 
 if(MPI_C_COMPILER)
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})

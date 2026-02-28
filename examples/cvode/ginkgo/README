@@ -1,0 +1,5 @@
+List of Ginkgo CVODE examples
+
+  cv_bruss_batched_ginkgo.cpp : batch diagonal example with Ginkgo batched solvers
+  cv_heat2D_ginkgo.cpp : 2D heat equation example using Ginkgo solvers
+  cv_kpr_ginkgo.cpp : KPR example using Ginkgo solvers

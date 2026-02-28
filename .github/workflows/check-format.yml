@@ -1,18 +1,21 @@
 name: Checks - formatting
 
 on:
-  pull_request:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
   workflow_dispatch:
-  issue_comment:
-    types: [created]
 
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: format-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   format_check:
-    if: ${{ github.event_name != 'issue_comment' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/autofix')) }}
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/llnl/sundials_spack_cache:llvm-17.0.4-h4lflucc3v2vage45opbo2didtcuigsn.spack
@@ -21,6 +24,12 @@ jobs:
         run: |
           apt update
           apt install -y git python3-pip
+
+      - name: Install codespell
+        run: pip install codespell
+
+      - name: Print codespell version
+        run: codespell --version
 
       - name: Install black
         run: pip install black
@@ -44,20 +53,16 @@ jobs:
         run: clang-format --version
 
       - name: Check out repository code
-        if: github.event_name != 'issue_comment'
-        uses: actions/checkout@v4
-
-      - name: Check out repository code
-        if: github.event_name == 'issue_comment'
-        uses: actions/checkout@v4
-        with:
-          ref: refs/pull/${{ github.event.issue.number }}/head
-          fetch-depth: 0
+        uses: actions/checkout@v6
 
       - name: Add safe directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Run checker on code
+      - name: Run spelling checks
+        run: |
+          ./scripts/spelling.sh
+
+      - name: Run formatting checks
         run: |
           ./scripts/format.sh .
 
@@ -69,52 +74,9 @@ jobs:
         run:  /usr/bin/git diff > format.patch
 
       - name: Archive diff as a patch if we failed
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: format.patch
           path: |
             ${{ github.workspace }}/format.patch
-
-  apply_format:
-    if: ${{ always() && contains(join(needs.*.result, ','), 'failure') && (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/autofix')) }}
-    needs: format_check
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      # Checkout the GitHub created reference for the PR.
-      # The only way to do this is by using the "issue" number
-      # but that is really the PR number in this context.
-      # This is due to using an `issue_comment` event which
-      # is due to the GitHub Actions API that does not have
-      # a `pull_request_comment` event or something similar.
-      # This leaves us in a detached head state which is corrected
-      # in `apply-style/checkout.sh`
-      - name: Checkout repository code
-        uses: actions/checkout@v4
-        with:
-          ref: refs/pull/${{ github.event.issue.number }}/head
-          fetch-depth: 0
-
-      - name: Checkout the right git ref
-        run: ./.github/actions/apply-style/checkout.sh
-
-      - name: Download the git diff from format_check
-        uses: actions/download-artifact@v4
-        with:
-          name: format.patch
-
-      - name: Apply patch
-        run: |
-          git apply format.patch
-          rm format.patch
-
-      - name: Commit fixes
-        run: |
-          git config user.name "format-robot"
-          git config user.email "no-reply@llnl.gov"
-          if [ -n "$(git status --porcelain)" ]; then
-            git commit -am 'apply format updates'
-            git push
-          fi

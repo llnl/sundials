@@ -1,10 +1,13 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Ting Yan @ SMU
+ * Programmer(s): Ting Yan @ UMBC
  *      Based on kinFoodWeb_kry.c and parallelized with OpenMP
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -729,9 +732,6 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  fnormtol = %Lg   scsteptol = %Lg\n", fnormtol,
          scsteptol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  fnormtol = %g   scsteptol = %g\n", fnormtol,
-         scsteptol);
 #else
   printf("Tolerance parameters:  fnormtol = %g   scsteptol = %g\n", fnormtol,
          scsteptol);
@@ -744,9 +744,6 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("At all mesh points:  %Lg %Lg %Lg   %Lg %Lg %Lg\n", PREYIN, PREYIN,
          PREYIN, PREDIN, PREDIN, PREDIN);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At all mesh points:  %g %g %g   %g %g %g\n", PREYIN, PREYIN, PREYIN,
-         PREDIN, PREDIN, PREDIN);
 #else
   printf("At all mesh points:  %g %g %g   %g %g %g\n", PREYIN, PREYIN, PREYIN,
          PREDIN, PREDIN, PREDIN);
@@ -775,8 +772,6 @@ static void PrintOutput(N_Vector cc)
     printf(" %Qg", ct[is]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf(" %Lg", ct[is]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %g", ct[is]);
 #else
     printf(" %g", ct[is]);
 #endif
@@ -795,8 +790,6 @@ static void PrintOutput(N_Vector cc)
     printf(" %Qg", ct[is]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf(" %Lg", ct[is]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %g", ct[is]);
 #else
     printf(" %g", ct[is]);
 #endif

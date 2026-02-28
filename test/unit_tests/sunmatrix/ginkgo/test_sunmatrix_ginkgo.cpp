@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -97,17 +100,9 @@ int main(int argc, char* argv[])
   sundials::Context sunctx;
 
 #if defined(USE_CUDA)
-#if GKO_VERSION_MAJOR > 1 || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR >= 7)
   auto gko_exec{gko::CudaExecutor::create(0, gko::OmpExecutor::create())};
-#else
-  auto gko_exec{gko::CudaExecutor::create(0, gko::OmpExecutor::create(), true)};
-#endif
 #elif defined(USE_HIP)
-#if GKO_VERSION_MAJOR > 1 || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR >= 7)
   auto gko_exec{gko::HipExecutor::create(0, gko::OmpExecutor::create())};
-#else
-  auto gko_exec{gko::HipExecutor::create(0, gko::OmpExecutor::create(), true)};
-#endif
 #elif defined(USE_SYCL)
   auto gko_exec{gko::DpcppExecutor::create(0, gko::ReferenceExecutor::create())};
 #elif defined(USE_OMP)
@@ -526,7 +521,9 @@ extern "C" sunbooleantype is_square(SUNMatrix A)
       static_cast<sundials::ginkgo::Matrix<GkoDenseMat>*>(A->content)->GkoMtx()};
     return Amat->get_size()[0] == Amat->get_size()[1];
   }
-  else { return SUNTRUE; }
+
+  // unknown matrix type
+  return SUNFALSE;
 }
 
 extern "C" void sync_device(SUNMatrix A)

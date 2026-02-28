@@ -1,10 +1,13 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel Reynolds and Ting Yan @ SMU
+ * Programmer(s): Daniel Reynolds and Ting Yan @ UMBC
  *     Based on cvAdvDiff_bnd.c and parallelized with OpenMP
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -405,6 +408,8 @@ static void PrintHeader(sunrealtype reltol, sunrealtype abstol, sunrealtype umax
   printf("Tolerance parameters: reltol = %g   abstol = %g\n\n", reltol, abstol);
   printf("At t = %g      max.norm(u) =%14.6e \n", T0, umax);
 #endif
+
+  return;
 }
 
 /* Print current value */
@@ -453,6 +458,8 @@ static void PrintFinalStats(void* cvode_mem)
   printf("nst = %-6ld nfe  = %-6ld nsetups = %-6ld nfeLS = %-6ld nje = %ld\n",
          nst, nfe, nsetups, nfeLS, nje);
   printf("nni = %-6ld ncfn = %-6ld netf = %ld\n", nni, ncfn, netf);
+
+  return;
 }
 
 /* Check function return value...

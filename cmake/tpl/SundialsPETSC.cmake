@@ -2,8 +2,11 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -42,7 +45,7 @@ if(ENABLE_PETSC AND NOT ENABLE_MPI)
     FATAL_ERROR "MPI is required for PETSc support. Set ENABLE_MPI to ON.")
 endif()
 
-if((SUNDIALS_PRECISION MATCHES "EXTENDED") OR (SUNDIALS_PRECISION MATCHES "FLOAT128"))
+if(SUNDIALS_PRECISION MATCHES "EXTENDED")
   message(
     FATAL_ERROR
       "SUNDIALS is not compatible with PETSc when using ${SUNDIALS_PRECISION} precision"

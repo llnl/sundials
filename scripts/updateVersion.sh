@@ -3,8 +3,11 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -19,7 +22,7 @@
 # development releases the label string is of the form "-dev.#" and for full
 # releases the label string is "".
 sun_major=${1:-7}
-sun_minor=${2:-4}
+sun_minor=${2:-6}
 sun_patch=${3:-0}
 sun_label=${4:-""}
 month=${5:-$(date +"%b")}
@@ -164,6 +167,19 @@ else
     nls_ver="${nls_major}.${nls_minor}.${nls_patch}-${nls_label}"
 fi
 
+# Set the SUNDomEigEstimator version values. Assume the major version is six
+# less than the SUNDIALS major version.
+dee_major=$(( sun_major - 6 ))
+dee_minor=$(( sun_minor - 5 )) # TODO(DJG): Will need to remove this at the next major release
+dee_patch=$sun_patch
+dee_label=$sun_label
+
+if [ "${dee_label}" == "" ]; then
+    dee_ver="${dee_major}.${dee_minor}.${dee_patch}"
+else
+    dee_ver="${dee_major}.${dee_minor}.${dee_patch}-${dee_label}"
+fi
+
 # ------------------------------------------------------------------------------
 # Wrapper for editing inplace with different sed implementations
 # ------------------------------------------------------------------------------
@@ -175,6 +191,12 @@ sedi() {
     esac
     sed "${sedi[@]}" "$@"
 }
+
+# ------------------------------------------------------------------------------
+# Update the pyproject.toml file
+# ------------------------------------------------------------------------------
+fn="../pyproject.toml"
+sedi "/^version =/ s/version = \".*\"/version = \"${sun_ver}\"/" $fn
 
 # ------------------------------------------------------------------------------
 # Update the main CMakeLists.txt file
@@ -216,6 +238,9 @@ sedi "/sunlinsollib_SOVERSION.*/ s/SOVERSION.*/SOVERSION \"${ls_major}\")/" $fn
 
 sedi "/sunnonlinsollib_VERSION.*/   s/VERSION.*/VERSION \"${nls_ver}\")/" $fn
 sedi "/sunnonlinsollib_SOVERSION.*/ s/SOVERSION.*/SOVERSION \"${nls_major}\")/" $fn
+
+sedi "/sundomeigestlib_VERSION.*/   s/VERSION.*/VERSION \"${dee_ver}\")/" $fn
+sedi "/sundomeigestlib_SOVERSION.*/ s/SOVERSION.*/SOVERSION \"${dee_major}\")/" $fn
 
 # ------------------------------------------------------------------------------
 # Update README files
@@ -340,15 +365,15 @@ sedi "s/year =.*/year = \"${year}\"/" $fn
 
 # release history table
 fn="../doc/shared/History.rst"
-new_entry=$(printf "| %-3s %-4s | %-17s | %-17s | %-17s | %-17s | %-17s | %-17s | %-17s |" \
-    ${month} ${year} ${sun_ver} ${ark_ver} ${cv_ver} ${cvs_ver} ${ida_ver} \
+new_entry=$(printf "| %-3s %-4s | %-30s | %-17s | %-17s | %-17s | %-17s | %-17s | %-17s |" \
+    ${month} ${year} ":ref:\`${sun_ver} <Changelog.${sun_ver}>\`" ${ark_ver} ${cv_ver} ${cvs_ver} ${ida_ver} \
     ${idas_ver} ${kin_ver})
-divider="+----------+-------------------+-------------------+-------------------+-------------------+-------------------+-------------------+-------------------+"
+divider="+----------+--------------------------------+-------------------+-------------------+-------------------+-------------------+-------------------+-------------------+"
 
-# insert new release history row after line 23
-sedi '23 a\
+# insert new release history row after line 26
+sedi '26 a\
 '"${divider}"''$'\n' $fn
-sedi '23 a\
+sedi '26 a\
 '"${new_entry}"''$'\n' $fn
 
 # Update CITATIONS.md

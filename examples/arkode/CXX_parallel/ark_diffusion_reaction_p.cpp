@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -87,7 +90,7 @@
 
 #define NSPECIES 2
 
-#define WIDTH (10 + numeric_limits<double>::digits10)
+#define WIDTH (10 + SUN_DIGITS10)
 
 // Macro to access each species at an (x,y) location in a 1D array
 #define UIDX(x, y, nx) (NSPECIES * ((nx) * (y) + (x)))
@@ -2428,7 +2431,7 @@ static int OpenOutput(UserData* udata)
   if (udata->output > 0 && udata->outproc)
   {
     cout << scientific;
-    cout << setprecision(numeric_limits<double>::digits10);
+    cout << setprecision(SUN_DIGITS10);
     cout << "          t           ";
     cout << "          ||u||_rms      " << endl;
     cout << " ---------------------";
@@ -2445,7 +2448,7 @@ static int OpenOutput(UserData* udata)
     udata->uout.open(fname.str());
 
     udata->uout << scientific;
-    udata->uout << setprecision(numeric_limits<double>::digits10);
+    udata->uout << setprecision(SUN_DIGITS10);
 
     // Add 1 to the total number of nodes in the x and y directions and to the
     // end indices in the x and y direction at the North and East boundary to

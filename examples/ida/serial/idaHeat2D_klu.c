@@ -3,8 +3,11 @@
  *                based on idaHeat2D_bnd.c and idaRoberts_klu.c
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -174,7 +177,7 @@ int main(void)
 
   /* Create sparse SUNMatrix for use in linear solves */
   nnz = NEQ * NEQ;
-  A   = SUNSparseMatrix(NEQ, NEQ, nnz, CSC_MAT, ctx);
+  A   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, ctx);
   if (check_retval((void*)A, "SUNSparseMtarix", 0)) { return (1); }
 
   /* Create KLU SUNLinearSolver object */
@@ -785,8 +788,6 @@ static void PrintHeader(sunrealtype rtol, sunrealtype atol)
   printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, atol);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #endif
@@ -797,8 +798,6 @@ static void PrintHeader(sunrealtype rtol, sunrealtype atol)
   printf("IDACalcIC called with input boundary values = %Qg \n", BVAL);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("IDACalcIC called with input boundary values = %Lg \n", BVAL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("IDACalcIC called with input boundary values = %g \n", BVAL);
 #else
   printf("IDACalcIC called with input boundary values = %g \n", BVAL);
 #endif
@@ -840,9 +839,6 @@ static void PrintOutput(void* mem, sunrealtype t, N_Vector uu)
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf(" %5.2Lf %13.5Le  %d  %3ld  %3ld  %3ld  %4ld  %9.2Le \n", t, umax,
          kused, nst, nni, nje, nre, hused);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" %5.2f %13.5e  %d  %3ld  %3ld  %3ld  %4ld  %9.2e \n", t, umax, kused,
-         nst, nni, nje, nre, hused);
 #else
   printf(" %5.2f %13.5e  %d  %3ld  %3ld  %3ld  %4ld  %9.2e \n", t, umax, kused,
          nst, nni, nje, nre, hused);

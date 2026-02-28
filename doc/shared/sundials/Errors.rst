@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -37,7 +40,8 @@ Thus, in user code, SUNDIALS core API functions can be checked for errors in one
   sunrealtype dotprod;
 
   // Every code that uses SUNDIALS must create a SUNContext.
-  sunctx = SUNContext_Create(...);
+  sunerr = SUNContext_Create(comm, &sunctx)
+  if (sunerr) { /* an error occurred, do something */ }
 
   // Create a SUNDIALS serial vector.
   // Some functions do not return an error code.

@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -20,14 +23,13 @@
  *   tempv4 - holds J_relax, the Jacobian of the relaxation function
  * ---------------------------------------------------------------------------*/
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "arkode_impl.h"
 #include "arkode_relaxation_impl.h"
-#include "sundials/sundials_types.h"
+#include "sundials_utils.h"
 
 /* =============================================================================
  * Private Functions
@@ -230,7 +232,7 @@ static int arkRelaxBrentSolve(ARKodeMem ark_mem)
   for (i = 0; i < ark_mem->relax_mem->max_iters; i++)
   {
     /* Ensure xc and xb bracket zero */
-    if (SAME_SIGN(fc, fb))
+    if (SUNRsamesign(fc, fb))
     {
       xc         = xa;
       fc         = fa;
@@ -316,12 +318,7 @@ static int arkRelaxBrentSolve(ARKodeMem ark_mem)
 
     /* If update is small, use tolerance in bisection direction */
     if (SUNRabs(new_update) > tol) { xb += new_update; }
-    else
-    {
-      /* TODO(DJG): Replace with copysign when C99+ required */
-      if (xm > ZERO) { xb += tol; }
-      else { xb -= tol; }
-    }
+    else { xb += SUNRcopysign(tol, xm); }
 
     /* Compute relaxation residual */
     retval = arkRelaxResidual(xb, &fb, ark_mem);

@@ -1,11 +1,14 @@
 ! ------------------------------------------------------------------
-! Programmer(s): Daniel M. Margolis @ SMU
+! Programmer(s): Daniel M. Margolis @ UMBC
 !                based off the previous Fortran-77 example program,
 !                cvode/fcmix_serial/fcvDiurnal_kry_bp.f
 ! ------------------------------------------------------------------
 ! SUNDIALS Copyright Start
-! Copyright (c) 2002-2025, Lawrence Livermore National Security
+! Copyright (c) 2025-2026, Lawrence Livermore National Security,
+! University of Maryland Baltimore County, and the SUNDIALS contributors.
+! Copyright (c) 2013-2025, Lawrence Livermore National Security
 ! and Southern Methodist University.
+! Copyright (c) 2002-2013, Lawrence Livermore National Security.
 ! All rights reserved.
 !
 ! See the top-level LICENSE and NOTICE files for details.
@@ -65,7 +68,7 @@ module diurnal_bp_mod
   real(c_double), parameter :: q1 = 1.63d-16
   real(c_double), parameter :: q2 = 4.66d-16
   real(c_double), parameter :: c3 = 3.7d16
-  real(c_double), parameter :: pi = 3.141592653589793238462643383279502884197169d0
+  real(c_double), parameter :: pi = 3.1415926535898d0
   real(c_double), parameter :: halft = 4.32d4
   real(c_double), parameter :: om = pi/halft
   real(c_double), parameter :: dx = 20.0d0/(mx - 1.0d0)

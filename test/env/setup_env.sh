@@ -3,8 +3,11 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -21,7 +24,6 @@
 #                single   : single (32-bit) precision
 #                double   : double (64-bit) precision
 #                extended : extended (80-bit) precision
-#                float128 : float128 (128-bit) precision
 # index size = SUNDIALS index size to build/test with:
 #                32       : 32-bit indices
 #                64       : 64-bit indices
@@ -43,7 +45,7 @@ echo "./setup_env.sh $*" | tee -a setup_env.log
 # Check number of inputs
 if [ "$#" -lt 5 ]; then
     echo "ERROR: missing required inputs"
-    echo "  1) real type    : [single|double|extended|float128]"
+    echo "  1) real type    : [single|double|extended]"
     echo "  2) index size   : [32|64]"
     echo "  3) library type : [static|shared|both]"
     echo "  4) TPL status   : [ON|OFF]"
@@ -112,10 +114,6 @@ export SUNDIALS_TEST_ENABLE_GTEST=OFF
 
 # Build Type
 export CMAKE_BUILD_TYPE="Debug"
-
-# C and C++ standards.
-export CMAKE_C_STANDARD="99"
-export CMAKE_CXX_STANDARD="14"
 
 # Disable compiler extensions by default. The user's environment script may
 # override this setting if necessary.

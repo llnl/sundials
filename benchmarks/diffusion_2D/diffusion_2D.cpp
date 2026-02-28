@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -797,7 +800,7 @@ int UserOutput::write(sunrealtype t, N_Vector u, UserData* udata)
       {
         cout << setw(SUN_DIGITS10+7) << t << setw(SUN_DIGITS10+10) << urms << setw(SUN_DIGITS10+10) << max << endl;
       }
-      else { cout << setw(22) << t << setw(SUN_DIGITS10+10) << urms << endl; }
+      else { cout << setw(SUN_DIGITS10+7) << t << setw(SUN_DIGITS10+10) << urms << endl; }
     }
 
     // Write solution and error to disk

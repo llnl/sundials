@@ -1,12 +1,15 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel Reynolds @ SMU
+ * Programmer(s): Daniel Reynolds @ UMBC
  * -----------------------------------------------------------------
  * Based on codes <solver>_superlumt.c, written by
  * Carol S. Woodward @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -20,11 +23,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+#include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_math.h>
 #include <sunlinsol/sunlinsol_superlumt.h>
 
+#include "sundials_cli.h"
 #include "sundials_macros.h"
 
 #define ZERO SUN_RCONST(0.0)
@@ -52,6 +58,20 @@
 #define DIAGPIVOTTHRESH(S) (SLUMT_CONTENT(S)->diag_pivot_thresh)
 #define ORDERING(S)        (SLUMT_CONTENT(S)->ordering)
 #define OPTIONS(S)         (SLUMT_CONTENT(S)->options)
+
+/*
+ * ----------------------------------------------------------------------------
+ * Un-exported implementation specific routines
+ * ----------------------------------------------------------------------------
+ */
+
+static SUNErrCode setFromCommandLine_SuperLUMT(SUNLinearSolver S,
+                                               const char* LSid, int argc,
+                                               char* argv[]);
+
+SUNErrCode SUNLinSolSetOptions_SuperLUMT(SUNLinearSolver S, const char* LSid,
+                                         const char* file_name, int argc,
+                                         char* argv[]);
 
 /*
  * -----------------------------------------------------------------
@@ -94,6 +114,7 @@ SUNLinearSolver SUNLinSol_SuperLUMT(N_Vector y, SUNMatrix A, int num_threads,
   S->ops->gettype    = SUNLinSolGetType_SuperLUMT;
   S->ops->getid      = SUNLinSolGetID_SuperLUMT;
   S->ops->initialize = SUNLinSolInitialize_SuperLUMT;
+  S->ops->setoptions = SUNLinSolSetOptions_SuperLUMT;
   S->ops->setup      = SUNLinSolSetup_SuperLUMT;
   S->ops->solve      = SUNLinSolSolve_SuperLUMT;
   S->ops->lastflag   = SUNLinSolLastFlag_SuperLUMT;
@@ -204,6 +225,72 @@ SUNLinearSolver SUNLinSol_SuperLUMT(N_Vector y, SUNMatrix A, int num_threads,
 }
 
 /* ----------------------------------------------------------------------------
+ * Function to control set routines via the command line or file
+ */
+
+SUNErrCode SUNLinSolSetOptions_SuperLUMT(SUNLinearSolver S, const char* LSid,
+                                         SUNDIALS_MAYBE_UNUSED const char* file_name,
+                                         int argc, char* argv[])
+{
+  SUNFunctionBegin(S->sunctx);
+
+  /* File-based option control is currently unimplemented */
+  SUNAssert((file_name == NULL || strlen(file_name) == 0),
+            SUN_ERR_ARG_INCOMPATIBLE);
+
+  if (argc > 0 && argv != NULL)
+  {
+    SUNCheckCall(setFromCommandLine_SuperLUMT(S, LSid, argc, argv));
+  }
+
+  return SUN_SUCCESS;
+}
+
+/* ----------------------------------------------------------------------------
+ * Function to control set routines via the command line
+ */
+
+static SUNErrCode setFromCommandLine_SuperLUMT(SUNLinearSolver S,
+                                               const char* LSid, int argc,
+                                               char* argv[])
+{
+  SUNFunctionBegin(S->sunctx);
+
+  /* Prefix for options to set */
+  const char* default_id = "sunlinearsolver";
+  size_t offset          = strlen(default_id) + 1;
+  if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
+  char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
+  if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
+  else { strcpy(prefix, default_id); }
+  strcat(prefix, ".");
+
+  for (int idx = 1; idx < argc; idx++)
+  {
+    int retval;
+
+    /* skip command-line arguments that do not begin with correct prefix */
+    if (strncmp(argv[idx], prefix, strlen(prefix)) != 0) { continue; }
+
+    /* control over SetOrdering function */
+    if (strcmp(argv[idx] + offset, "ordering") == 0)
+    {
+      idx += 1;
+      int iarg = atoi(argv[idx]);
+      retval   = SUNLinSol_SuperLUMTSetOrdering(S, iarg);
+      if (retval != SUN_SUCCESS)
+      {
+        free(prefix);
+        return retval;
+      }
+      continue;
+    }
+  }
+  free(prefix);
+  return SUN_SUCCESS;
+}
+
+/* ----------------------------------------------------------------------------
  * Function to set the ordering type for a SuperLUMT linear solver
  */
 
@@ -267,7 +354,7 @@ int SUNLinSolSetup_SuperLUMT(SUNLinearSolver S, SUNMatrix A)
   panel_size = sp_ienv(1);
   relax      = sp_ienv(2);
   fact       = EQUILIBRATE;
-  trans      = (SUNSparseMatrix_SparseType(A) == CSC_MAT) ? NOTRANS : TRANS;
+  trans      = (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT) ? NOTRANS : TRANS;
   usepr      = NO;
   drop_tol   = ZERO;
   lwork      = 0;
@@ -343,7 +430,7 @@ int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   Bstore->nzval = xdata;
 
   /* Call SuperLUMT to solve the linear system using L and U */
-  trans = (SUNSparseMatrix_SparseType(A) == CSC_MAT) ? NOTRANS : TRANS;
+  trans = (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT) ? NOTRANS : TRANS;
   xgstrs(trans, SM_L(S), SM_U(S), (int_t*)PERMR(S), (int_t*)PERMC(S), SM_B(S),
          GSTAT(S), &retval);
   if (retval != 0)

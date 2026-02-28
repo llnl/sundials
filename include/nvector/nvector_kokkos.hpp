@@ -2,8 +2,11 @@
  * Programmer(s): Daniel McGreer, Cody Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -25,7 +28,7 @@ namespace sundials {
 namespace kokkos {
 
 // Forward declaration
-template<class ExecutionSpace, class MemorySpace>
+template<class ExecutionSpace, class MemorySpace, class MemoryTraits>
 class Vector;
 
 // Get the Kokkos vector wrapped by an N_Vector
@@ -74,8 +77,8 @@ template<class VectorType>
 N_Vector N_VClone_Kokkos(N_Vector w)
 {
   auto vec{GetVec<VectorType>(w)};
-  auto new_vec{new VectorType(*vec)};
-  return new_vec->Convert();
+  auto new_vec = VectorType::Clone(*vec, w->sunctx);
+  return new_vec->get();
 }
 
 template<class VectorType>
@@ -470,17 +473,19 @@ sunrealtype N_VWrmsNormMask_Kokkos(N_Vector x, N_Vector w, N_Vector id)
 // =============================================================================
 
 template<class ExecutionSpace = Kokkos::DefaultExecutionSpace,
-         class MemorySpace    = typename ExecutionSpace::memory_space>
+         class MemorySpace    = typename ExecutionSpace::memory_space,
+         class MemoryTraits   = Kokkos::MemoryManaged>
 class Vector : public sundials::impl::BaseNVector,
                public sundials::ConvertibleTo<N_Vector>
 {
 public:
-  using view_type      = Kokkos::View<sunrealtype*, MemorySpace>;
-  using size_type      = typename view_type::size_type;
+  using view_type      = Kokkos::View<sunrealtype*, MemorySpace, MemoryTraits>;
   using host_view_type = typename view_type::HostMirror;
   using memory_space   = MemorySpace;
+  using memory_traits  = MemoryTraits;
   using exec_space     = typename MemorySpace::execution_space;
   using range_policy   = Kokkos::RangePolicy<exec_space>;
+  using size_type      = typename view_type::size_type;
 
   // Default constructor
   Vector() = default;
@@ -563,13 +568,31 @@ public:
 
   // Override ConvertibleTo operations
 
-  operator N_Vector() override { return object_.get(); }
+  operator N_Vector() noexcept override { return object_.get(); }
 
-  operator N_Vector() const override { return object_.get(); }
+  operator N_Vector() const noexcept override { return object_.get(); }
 
-  N_Vector Convert() override { return object_.get(); }
+  N_Vector get() noexcept override { return object_.get(); }
 
-  N_Vector Convert() const override { return object_.get(); }
+  N_Vector get() const noexcept override { return object_.get(); }
+
+  // Static routines to create clones of the vector that are always managed
+
+  static Vector<exec_space, memory_space, Kokkos::MemoryManaged>* Clone(
+    const Vector<exec_space, memory_space, Kokkos::MemoryManaged>& that_vector,
+    SUNContext sunctx)
+  {
+    return new Vector<exec_space, memory_space,
+                      Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
+  }
+
+  static Vector<exec_space, memory_space, Kokkos::MemoryManaged>* Clone(
+    const Vector<exec_space, memory_space, Kokkos::MemoryUnmanaged>& that_vector,
+    SUNContext sunctx)
+  {
+    return new Vector<exec_space, memory_space,
+                      Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
+  }
 
 private:
   view_type view_;
@@ -577,7 +600,7 @@ private:
 
   void initNvector()
   {
-    using this_type = Vector<ExecutionSpace, MemorySpace>;
+    using this_type = Vector<ExecutionSpace, MemorySpace, MemoryTraits>;
 
     this->object_->content = this;
 

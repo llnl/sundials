@@ -1,10 +1,13 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Ting Yan @ SMU
+ * Programmer(s): Ting Yan @ UMBC
  *      Based on idasRoberts_FSA_dns.c and modified to use KLU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -209,7 +212,7 @@ int main(int argc, char* argv[])
 
   /* Create sparse SUNMatrix for use in linear solves */
   nnz = NEQ * NEQ;
-  A   = SUNSparseMatrix(NEQ, NEQ, nnz, CSC_MAT, ctx);
+  A   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, ctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create KLU SUNLinearSolver object (one thread) */

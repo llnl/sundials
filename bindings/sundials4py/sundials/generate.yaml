@@ -1,0 +1,160 @@
+# -----------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# This YAML file is used to instruct the generate.py script on
+# how to generate some of the nanobind code needed for the
+# core module of sundials4py.
+# -----------------------------------------------------------------
+
+modules:
+  all:
+    fn_exclude_by_name__regex:
+    - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII objects
+    - "Destroy"
+    - "NewEmpty" # No need to call NewEmpty functions in Python
+    - "CopyOps" # No need to call CopyOps functions in Python
+    - "Space" # Space functions are deprecated, so dont expose them in Python
+    # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
+    - "SetOptions" 
+    macro_define_include_by_name__regex:
+    - "^SUN_"
+    - "^SUNDIALS_"
+  sundials_adaptcontroller:
+    path: sundials/sundials_adaptcontroller_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_adaptcontroller.h
+  sundials_adjointcheckpointscheme:
+    path: sundials/sundials_adjointcheckpointscheme_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_adjointcheckpointscheme.h
+    fn_exclude_by_name__regex:
+    - "Set.*Fn" # nanobind cannot bind to functions which take a function pointer, so we do something custom
+    - "SetContent" # no need to set content from Python, so we don't interface it
+    - "GetContent" # content should not be accessible from Python, so we don't interface it
+    - "^SUNAdjointCheckpointScheme_LoadVector$" # we have to do a custom wrap of this due to needing a template vector for an out vector
+  sundials_adjointstepper:
+    path: sundials/sundials_adjointstepper_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_adjointstepper.h
+  sundials_context:
+    path: sundials/sundials_context_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_context.h
+    fn_exclude_by_name__regex:
+    # nanobind cannot bind to functions which take functions points, so we do do something custom 
+    - "^SUNContext_PushErrHandler$"
+    - "^SUNContext_PopErrHandler$"
+  sundials_domeigestimator:
+    path: sundials/sundials_domeigestimator_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_domeigestimator.h
+    fn_exclude_by_name__regex:
+    - "SUNDomEigEstimator_SetATimes" # nanobind cannot bind to functions which take a function pointer, so we do something custom
+  sundials_errors:
+    path: sundials/sundials_errors_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_errors.h
+    enum_exclude_by_name__regex:
+    - "SUNErrCode_" # not needed in Python
+  sundials_linearsolver:
+    path: sundials/sundials_linearsolver_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_iterative.h
+    - ../../include/sundials/sundials_linearsolver.h
+    fn_exclude_by_name__regex:
+    # SUNLinSolSolve has an optional argument, A, followed by non-optional. Litgen can't handle this yet, so we just manually wrap it.
+    - "^SUNLinSolSolve$" 
+    # need to do custom handling of functions which take a function pointer
+    - "^SUNLinSolSetATimes$"
+    - "^SUNLinSolSetPreconditioner$"
+    fn_params_optional_with_default_null:
+      "SUNLinSolSetup":
+      - "A" 
+  sundials_logger:
+    path: sundials/sundials_logger_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_logger.h
+  sundials_matrix:
+    path: sundials/sundials_matrix_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_matrix.h
+  sundials_memory:
+    path: sundials/sundials_memory_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_memory.h
+    fn_exclude_by_name__regex:
+    # these functions are not needed in a Python code, so we don't interface them
+    - "Alias" 
+    - "Wrap" 
+    - "Alloc*"
+    - "Dealloc" 
+    - "Copy*" 
+    class_exclude_by_name__regex:
+    - "SUNMemory_" # not needed in Python
+  sundials_nonlinearsolver:
+    path: sundials/sundials_nonlinearsolver_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_nonlinearsolver.h
+    fn_exclude_by_name__regex:
+    # nanobind cannot bind to functions with the nullable void* mem argument through std::optional
+    # (which is what litgen produces for these) so we have to instead bind to it manually
+    - "^SUNNonlinSolSetup$"
+    - "^SUNNonlinSolSolve$"
+    # nanobind cannot bind to functions which take a function pointer.
+    # Furthermore, several of the callback functions for the SUNNonlinearSolver module
+    # do not pass back user_data, instead they pass back the integrator memory. This makes
+    # it to where we cannot access our python function table stored in user_data in generic way
+    # (you'd have to call the integrator's GetUserData function, but we don't know which integrator is being used).
+    - "Set.*Fn"
+  sundials_nvector:
+    path: sundials/sundials_nvector_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_nvector.h
+    fn_exclude_by_name__regex:
+    # we have to have custom handling for the following to get the proper dimensions set for the numpy array
+    - "^N_VGetArrayPointer$"
+    - "^N_VSetArrayPointer$"
+    - "^N_VGetDeviceArrayPointer$"
+    # these operations for supporting xbraid are not yet available via Python, we will have to evaluate if they are useful/needed
+    - "^N_VBufPack$"
+    - "^N_VBufUnpack$"
+    - "^N_VBufSize$"
+    # vector arrays do not need to be allocated through these in Python, so we do not interface them
+    - "^N_VNewVectorArray$"
+    - "^N_VCloneVectorArray$"
+    - "^N_VCloneEmptyVectorArray$"
+    - "^N_VGetVecAtIndexVectorArray$"
+    - "^N_VSetVecAtIndexVectorArray$"
+    # ** parameters are not yet supported by litgen yet, so we do something custom
+    - "^N_VLinearCombinationVectorArray$"
+    - "^N_VScaleAddMultiVectorArray$"
+  sundials_profiler:
+    path: sundials/sundials_profiler_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_profiler.h
+  sundials_stepper:
+    path: sundials/sundials_stepper_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_stepper.h
+    fn_exclude_by_name__regex:
+    - "Set.*Fn" # nanobind cannot bind to functions which take a function pointer, so we do something custom
+    # we dont allow access to content from Python
+    - "SetContent" 
+    - "GetContent"
+  sundials_types:
+    path: sundials/sundials_types_generated.hpp
+    headers:
+    - ../../include/sundials/sundials_types.h

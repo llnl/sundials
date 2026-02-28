@@ -1,10 +1,194 @@
 # SUNDIALS Changelog
 
-## Changes to SUNDIALS in release 7.4.0
+## Changes to SUNDIALS in release X.Y.Z
+
+### Major Features
 
 ### New Features and Enhancements
 
-Add `__float128` support with quadmath dependency and ostream integration.
+### Bug Fixes
+
+Fixed a CMake bug where the SuperLU_MT interface would not be built and
+installed without setting the `SUPERLUMT_WORKS` option to `TRUE`.
+
+### Deprecation Notices
+
+## Changes to SUNDIALS in release 7.6.0
+
+### Major Features
+
+SUNDIALS now has official Python interfaces! With this release, we are shipping
+a **beta version** of the sundials4py Python module (created with nanobind and
+litgen). sundials4py provides explicit interfaces to most features of SUNDIALS.
+See the Python section of the user guide for more information.
+
+### New Features and Enhancements
+
+Added functions to CVODE(S) and IDA(S) to set the maximum number of inequality
+constraint failures in a step attempt (`CVodeSetMaxNumConstraintFails` and
+`IDASetMaxNumConstraintFails`) and to retrieve the total number of failed step
+attempts due to an inequality constraint violation (`CVodeGetNumConstraintFails`
+and `IDAGetNumConstraintFails`). As a result, constraint failures are no longer
+included in the number of step failures due to a solver failure (i.e., the
+values returned by `CVodeGetNumStepSolveFails` and `IDAGetNumStepSolveFails`).
+The functions `CVodeGetNumConstraintCorrections` and
+`IDAGetNumConstraintCorrections` were also added to retrieve the number of steps
+where the corrector was modified to satisfy an inequality constraint without
+failing the step.
+
+The functions `CVodeGetUserDataB` and `IDAGetUserDataB` were added to CVODES and
+IDAS, respectively.
+
+### Bug Fixes
+
+Fixed a bug in the CVODE(S) inequality constraint handling where the predicted
+state was used to compute the step size reduction factor which could lead to an
+insufficient reduction in the step size or, when the prediction violates the
+constraints, an infinitely large step size in the next step attempt ([Issue
+#702](https://github.com/LLNL/sundials/issues/702)).
+
+On the initial time step with a user-supplied initial step size, ARKODE and
+CVODE(S) will now return `ARK_TOO_CLOSE` or `CV_TOO_CLOSE`, respectively, when
+the requested output time is the same as, or within numerical roundoff of, the
+initial time ([Issue #722](https://github.com/llnl/sundials/issues/722)). Before
+a `TOO_CLOSE` error would only be returned when internally estimating the
+initial step size. In IDA(S), added a `IDA_TOO_CLOSE` return value for when the
+initial and output time are too close. Previously, IDA(S) would return
+`IDA_ILL_INPUT`.
+
+Fixed a bug in ARKODE, CVODE(S), and IDA(S) where the linear solver counters
+were not reset on reinitialization until the next call to advance the system. As
+such, non-zero linear solver statistics could be returned if retrieving or
+printing linear solver counters between reinitialization and the next call to
+advance the system.
+
+In CVODES and IDA, added missing return flag names to `CVodeGetReturnFlagName`
+and `IDAGetReturnFlagName`, respectively.
+
+The SPRKStep module now accounts for zero coefficients in the SPRK tables,
+eliminating extraneous function evaluations.
+
+A bug was fixed in KINSOL where the information logging function would always be
+called even when informational logging was disabled ([Issue
+#801](https://github.com/llnl/sundials/issues/801)).
+
+A bug preventing a user supplied `SUNStepper_ResetCheckpointIndex` function from
+being called was fixed.
+
+The interface to Ginkgo batched linear solvers has been updated to fix build
+errors when using 64-bit index types ([Issue
+#797](https://github.com/llnl/sundials/issues/797)). Note, only the batched
+dense matrix in Ginkgo is currently compatible with 64-bit indexing (as of
+Ginkgo 1.10).
+
+The Kokkos N_Vector now properly handles unmanaged views. Previously, if a
+Kokkos `N_Vector` was created from an unmanaged view, the view would become a
+managed view and the data would be freed unexpectedly.
+
+Fixed a CMake bug which resulted in static targets depending on shared targets
+when building both types of libraries in the same build ([Issue
+#692](https://github.com/LLNL/sundials/issues/692)).
+
+Some installed Fortran example makefiles were not linking to
+`sundials_fcore_mod` and `sundials_core` libraries as they should be. This is
+now fixed.
+
+### Deprecation Notices
+
+The `N_Vector_S` typedef to `N_Vector*` is deprecated and will be removed in the
+next major release.
+
+The `CSC_MAT` and `CSR_MAT` macros defined in `sunmatrix_sparse.h` will be
+removed in the next major release. Use `SUN_CSC_MAT` and `SUN_CSR_MAT` instead.
+
+`SUNDIALSFileOpen` and `SUNDIALSFileClose` will be removed in the next major
+release.  Use `SUNFileOpen` and `SUNFileClose` instead.
+
+The `Convert` methods on the `sundials::kokkos:Vector`,
+`sundials::kokkos::DenseMatrix`, `sundials::ginkgo::Matrix`,
+`sundials::ginkgo::BatchMatrix`, `sundials::kokkos::DenseLinearSolver`,
+`sundials::ginkgo::LinearSolver`, and `sundials::ginkgo::BatchLinearSolver`
+classes have been deprecated and will be removed in the next major release. The
+method `get`, should be used instead.
+
+## Changes to SUNDIALS in release 7.5.0
+
+### Major Features
+
+Added the `SUNDomEigEstimator` interface for estimating the dominant eigenvalue value
+of a system. Two implementations are provided: Power Iteration and Arnoldi Iteration.
+The latter method requires building with LAPACK support enabled.
+
+Added the function `LSRKStepSetDomEigEstimator` in LSRKStep to attach a
+`SUNDomEigEstimator`, when using Runge-Kutta-Chebyshev or Runge-Kutta-Legendre
+methods, as an alternative to supplying a user-defined function to compute the dominant
+eigenvalue.
+
+Added `SetOptions` functions all SUNDIALS packages and the classes for
+adaptivity controllers, dominant eigenvalue estimators, linear solvers, and
+nonlinear solvers to support setting options with command line inputs.
+
+### New Features and Enhancements
+
+A new SUNLinearSolver, SUNLINEARSOLVER_GINKGOBATCH, and corresponding SUNMatrix,
+SUNMATRIX_GINKGOBATCH, were added for solving block/batched linear systems with
+the [Ginkgo linear solver library](https://ginkgo-project.github.io/). As a
+result, Ginkgo 1.9.0 or newer is now required when enabling Ginkgo support.
+
+The functions `KINSetMAA` and `KINSetOrthAA` have been updated to allow for
+setting the Anderson acceleration depth and orthogonalization method after
+`KINInit`. Additionally, `KINSetMAA` and `KINSetNumMaxIters` may now be called
+in any order.
+
+### Bug Fixes
+
+Fixed a bug in how MRIStep interacts with an MRIHTol SUNAdaptController object
+(the previous version essentially just reverted to a decoupled multirate
+controller). Removed the upper limit on `inner_max_tolfac` in
+`SUNAdaptController_SetParams_MRIHTol`.
+
+The shared library version numbers for the oneMKL dense linear solver and
+matrix as well as the PETSc SNES nonlinear solver have been corrected.
+
+Fixed a CMake bug where the MRI H-Tol controller was not included in the ARKODE
+Fortran module.
+
+Fixed a bug in the CUDA and HIP implementations of `SUNMemoryHelper_CopyAsync`
+where the execution stream is not extracted correctly from the helper when a
+stream is not provided to `SUNMemoryHelper_CopyAsync`.
+
+Fixed a bug in MRIStep where a segfault would occur when an MRI coupling table
+is not explicitly set and an MRI integrator is nested inside another MRI
+integrator.
+
+Fixed a bug in MRIStep where MERK methods with unordered stage groups (MERK43
+and MERK54) would include stage right-hand side vectors that had not been
+computed yet in fast time scale forcing computations. These vectors were scaled
+by zero, so in most cases the extraneous computations would not impact results.
+However, in cases where these vectors contain `inf` or `nan`, this would lead to
+erroneous forcing terms.
+
+Fixed a bug in `ARKodeSetDefaults` with LSRKStep where the stored spectral
+radius data was reset to zero, flags to update the dominant eigenvalue were
+reset to true, and a flag indicating if an SSP is being used was reset to false.
+
+Fixed a bug introduced in v7.3.0 in KINSOL when using Anderson acceleration and
+solving a problem multiple times with the same KINSOL instance. In this use
+case, the current Anderson acceleration depth from the initial solve was not
+reinitialized on subsequent solves.
+
+Fixed a logging bug in KINSOL where logging messages would not be output.
+
+Fixed a bug in the `suntools.logs` Python module where the `get_history`
+function, when given a `step_status` for filtering output from a multirate
+method, would only extract values from the fast time scale if the slow time
+scale step matched the given status filter. Fixed an additional bug in
+`get_history` with MRI-GARK methods where values would not be extracted from a
+fast time scale integration associated with an embedding.
+
+## Changes to SUNDIALS in release 7.4.0
+
+### New Features and Enhancements
 
 `ARKodeSetCFLFraction` now allows `cfl_frac` to be greater than or equal to one.
 

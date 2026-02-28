@@ -1,9 +1,12 @@
 ..
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -135,6 +138,7 @@ The module SUNLinSol_PCG provides the following user-callable routines:
       preconditioning should work appropriately even for packages
       designed with one-sided preconditioning in mind.
 
+
 .. c:function:: SUNErrCode SUNLinSol_PCGSetPrecType(SUNLinearSolver S, int pretype)
 
    This function updates the flag indicating use of preconditioning.
@@ -156,6 +160,8 @@ The module SUNLinSol_PCG provides the following user-callable routines:
       ``SUN_PREC_RIGHT``, or ``SUN_PREC_BOTH`` will enable
       preconditioning; ``SUN_PREC_NONE`` disables preconditioning.
 
+      This routine will be called by :c:func:`SUNLinSolSetOptions`
+      when using the key "LSid.prec_type".
 
 
 .. c:function:: SUNErrCode SUNLinSol_PCGSetMaxl(SUNLinearSolver S, int maxl)
@@ -169,6 +175,11 @@ The module SUNLinSol_PCG provides the following user-callable routines:
 
    **Return value:**
       * A :c:type:`SUNErrCode`
+
+   **Notes:**
+
+      This routine will be called by :c:func:`SUNLinSolSetOptions`
+      when using the key "LSid.maxl".
 
 
 .. _SUNLinSol.PCG.Description:

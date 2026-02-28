@@ -2,8 +2,11 @@
  * Programmer(s): Cody J. Balos, Aaron Collier and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -68,7 +71,7 @@
  *     #define SUNDIALS_SINGLE_PRECISION 1
  *     #define SUNDIALS_DOUBLE_PRECISION 1
  *     #define SUNDIALS_EXTENDED_PRECISION 1
- *     #define SUNDIALS_EXTENDED_PRECISION 1
+ *     #define SUNDIALS_FLOAT128_PRECISION 1
  */
 @PRECISION_LEVEL@
 
@@ -273,6 +276,9 @@
 
 /* SYCL options */
 #cmakedefine SUNDIALS_SYCL_2020_UNSUPPORTED
+
+/* Python options */
+#cmakedefine SUNDIALS_ENABLE_PYTHON
 
 
 /* ------------------------------------------------------------------

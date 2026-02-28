@@ -3,8 +3,11 @@
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -31,7 +34,7 @@ set(KINSOL_examples
     "kinAnalytic_fp\;--m_aa 2 --orth_aa 1\;"
     "kinAnalytic_fp\;--m_aa 2 --orth_aa 2\;"
     "kinAnalytic_fp\;--m_aa 2 --orth_aa 3\;"
-    "kinFerTron_dns\;\;"
+    "kinFerTron_dns\;\;develop"
     "kinHimmelblau_dns\;\;"
     "kinEquilibriumCombustion_dns\;\;"
     "kinBullardBiegler_dns\;\;"
@@ -42,24 +45,8 @@ set(KINSOL_examples
     "kinLaplace_picard_bnd\;\;exclude-single"
     "kinLaplace_picard_kry\;\;exclude-single"
     "kinRoberts_fp\;\;develop"
+    "kinRoberts_fp\;kinsol.m_aa 1\;develop"
     "kinRoboKin_dns\;\;exclude-single")
-
-
-if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
-    find_package(Matlab REQUIRED)
-
-    message(STATUS "Matlab is FOUND? ${Matlab_FOUND} Matlab_VERSION = ${Matlab_VERSION}")
-
-    message(STATUS "Matlab_INCLUDE_DIRS =  ${Matlab_INCLUDE_DIRS}")
-
-    message(STATUS "Matlab_MEX_LIBRARY =  ${Matlab_MEX_LIBRARY}")
-
-    message(STATUS "Matlab_MX_LIBRARY =  ${Matlab_MEX_LIBRARY}")
-
-    message(STATUS "Matlab_LIBRARIES =  ${Matlab_LIBRARIES}")
-endif()
-
-
 
 # Examples using LAPACK linear solvers
 set(KINSOL_examples_BL)

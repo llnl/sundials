@@ -3,8 +3,11 @@
  *                Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -537,8 +540,6 @@ static void PrintHeader(sunrealtype rtol, sunrealtype atol, int linsolver)
   printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, atol);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #endif
@@ -594,16 +595,14 @@ static void PrintOutput(void* mem, sunrealtype t, N_Vector uu, int linsolver)
   check_retval(&retval, "IDAGetNumPrecEvals", 1);
   retval = IDAGetNumPrecSolves(mem, &nps);
   check_retval(&retval, "IDAGetNumPrecSolves", 1);
-#if defined(SUNDIALS_FLOAT128_PRECISION)
+
+  #if defined(SUNDIALS_FLOAT128_PRECISION)
   printf(" %5.2Qf %13.5Qe  %d  %3ld  %3ld  %3ld  %4ld  %4ld  %9.2Qe  %3ld "
          "%3ld\n",
          t, umax, kused, nst, nni, nje, nre, nreLS, hused, npe, nps);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf(" %5.2Lf %13.5Le  %d  %3ld  %3ld  %3ld  %4ld  %4ld  %9.2Le  %3ld "
          "%3ld\n",
-         t, umax, kused, nst, nni, nje, nre, nreLS, hused, npe, nps);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" %5.2f %13.5e  %d  %3ld  %3ld  %3ld  %4ld  %4ld  %9.2e  %3ld %3ld\n",
          t, umax, kused, nst, nni, nje, nre, nreLS, hused, npe, nps);
 #else
   printf(" %5.2f %13.5e  %d  %3ld  %3ld  %3ld  %4ld  %4ld  %9.2e  %3ld %3ld\n",

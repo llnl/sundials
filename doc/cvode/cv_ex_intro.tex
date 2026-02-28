@@ -7,9 +7,9 @@ Documentation of {\cvode} \cite{cvode_ug}.  It provides details, with
 listings, on the example programs supplied with the {\cvode} distribution
 package.
 
-The {\cvode} distribution contains examples of the following types: serial
-{\CC} examples, parallel {\CC} examples, an OpenMP example, and a {\hypre}
-example.
+The {\cvode} distribution contains examples of many types, so as to
+illustrate the use of various integrator options, various linear solver
+options, and various {\nvector} modules.
 %%
 With the exception of ''demo''-type example files, the names of all the examples
 distributed with {\sundials} are of the form \verb![slv][PbName]_[ls]_[prec]_[p]!,
@@ -51,9 +51,19 @@ following serial examples (using the {\nvecs} module):
 \item \id{cvRoberts\_dns\_uw}
   is the same as \id{cvRoberts\_dns} but demonstrates the user-supplied error
   weight function feature of {\cvode}.
+\item \id{cvRoberts\_dns\_negsol}
+  is the same as \id{cvRoberts\_dns} but demonstrates the treatment of
+  negative (unphysical) solution values through the RHS function
+  return flag.
+\item \id{cvRocket\_dns}
+  is a simplified model of a rocket, demonstrating the
+  preferred way to stop and restart at a root-defined discontinuity.
 \item \id{cvRoberts\_klu}
   is the same as \id{cvRoberts\_dns} but uses the {\klu} sparse direct
   linear solver, {\sunlinsolklu}.
+\item \id{cvRoberts\_block\_klu}
+  solves multiple copies of the \id{cvRoberts\_dns} problem, using the
+  {\klu} sparse direct linear solver, {\sunlinsolklu}.
 \item \id{cvRoberts\_sps}
   is the same as \id{cvRoberts\_dns} but uses the {\superlumt} sparse
   direct linear solver, {\sunlinsolslumt} (with one thread).
@@ -124,8 +134,17 @@ following serial examples (using the {\nvecs} module):
   The product preconditioner is applied on the left and on the right.
   In each case, both the modified and classical Gram-Schmidt options
   are tested.
-\item \id{cvHeat2D\_klu} solves a discretized 2D heat equation using
-  the {\klu} sparse-direct linear solver, {\sunlinsolklu}.
+\item \id{cvDisc\_dns} solves two simple problems, one with with a
+  discontinuity in the solution, and one with a discontinuity in the
+  RHS function.
+\item \id{cvAnalytic\_mels} solves a problem having a simple analytic
+  solution, using a custom matrix-imbedded linear solver.
+\item \id{cvParticle\_dns} solves a simple particle motion problem
+  with a solution constraint and a user-supplied projection function
+  onto the constraint.
+\item \id{cvPendulum\_dns} solves a pendulum motion problem with and
+  without constraints on the solution, and with various tolerances.  In the
+  runs with constraints, a user-supplied projection function is applied.
 \end{itemize}
 
 \vspace{0.2in}\noindent Supplied in the
@@ -149,9 +168,14 @@ four parallel examples (using the {\nvecp} module):
 \end{itemize}
 
 \vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/C\_openmp} directory is
-\id{cvAdvDiff\_bnd\_omp}, an example which solves the same problem as
+{\em srcdir}\id{/examples/cvode/C\_openmp} directory is an example
+\id{cvAdvDiff\_bnd\_omp}, which solves the same problem as
 \id{cvAdvDiff\_bnd} but with the OpenMP {\nvector} module.
+
+\vspace{0.2in}\noindent Supplied in the
+{\em srcdir}\id{/examples/cvode/C\_mpimanyvector} directory is an example
+\id{cvDiurnal\_kry\_mpimanyvec}, which solves the same problem as
+\id{cvDiurnal\_kry\_p}, but with the MPIManyVector module.
 
 \vspace{0.2in}\noindent Supplied in the
 {\em srcdir}\id{/examples/cvode/parhyp} directory is an example
@@ -159,28 +183,106 @@ four parallel examples (using the {\nvecp} module):
 \id{cvAdvDiff\_non\_p} but with {\hypre} vectors instead of
 {\sundials} parallel vectors.
 
-%% \vspace{0.2in}\noindent
-%% As part of the {\fcvode} module, in the directories
-%% {\em srcdir}\id{/examples/cvode/fcmix\_serial} and
-%% {\em srcdir}\id{/examples/cvode/fcmix\_parallel}, are the following examples for
-%% the {\F}-{\CC} interface.  The first five of these are serial, while
-%% the last three are parallel.
-%% \begin{itemize}
-%% \item \id{fcvRoberts\_dns} is a serial chemical kinetics example (\id{BDF}/{\sunlinsoldense})
-%%   with rootfinding.
-%% \item \id{fcvRoberts\_dns\_constraints} is the same as \id{fcvRoberts\_dns} but
-%%   but imposes the constraint $u \geq 0.0$ for all components.
-%% \item \id{fcvRoberts\_dnsL} is the same as \id{fcvRoberts\_dns} but uses the Lapack
-%%   implementation of {\sunlinsollapdense}.
-%% \item \id{fcvAdvDiff\_bnd} is a serial advection-diffusion example (\id{BDF}/{\sunlinsolband}).
-%% \item \id{fcvDiurnal\_kry} is a serial kinetics-transport example (\id{BDF}/{\sunlinsolspgmr}).
-%% \item \id{fcvDiurnal\_kry\_bp} is the \id{fcvDiurnal\_kry} example with {\fcvbp}.
-%% \item \id{fcvDiag\_non\_p} is a nonstiff parallel diagonal ODE example
-%%   (\id{ADAMS}/\id{FIXEDPOINT}).
-%% \item \id{fcvDiag\_kry\_p} is a stiff parallel diagonal ODE example (\id{BDF}/{\sunlinsolspgmr}).
-%% \item \id{fcvDiag\_kry\_bbd\_p} is the same as the \id{fcvDiag\_kry\_p} example
-%%        but using the {\fcvbbd} module.
-%% \end{itemize}
+\vspace{0.2in}\noindent Supplied in the
+{\em srcdir}\id{/examples/cvode/cuda} directory are the following
+examples, all using the \id{cuda} {\nvector} module:
+\begin{itemize}
+\item \id{cvAdvDiff\_diag\_cuda} solves the same problem as
+  \id{cvAdvDiff\_non\_p}, but with the Diagonal linear solver.
+\item \id{cvAdvDiff\_kry\_cuda} solves the same problem as
+  \id{cvAdvDiff\_non\_p}, but with the GMRES linear solver.
+\item \id{cvAdvDiff\_kry\_cuda\_managed} is the same as
+  \id{cvAdvDiff\_kry\_cuda} but uses managed memory for the vector data.
+\end{itemize}
+
+\vspace{0.2in}\noindent Supplied in the
+{\em srcdir}\id{/examples/cvode/petsc} directory are the following
+examples, using the Petsc SNES module:
+\begin{itemize}
+\item \id{cvAdvDiff\_petsc} solves the same problem as
+  \id{cvAdvDiff\_non\_p}.
+\item \id{cv\_petsc\_ex7} solves a problem based on PETSc TS ex7.c, a
+  nonlinear system derived from a time-dependent PDE in 2D.
+\end{itemize}
+
+\vspace{0.2in}\noindent Supplied in the
+{\em srcdir}\id{/examples/cvode/F2003\_serial} directory are the
+following examples, all in Fortran90 and using the {\sundials} Fortran
+interface modules:
+\begin{itemize}
+\item \id{cv\_analytic\_fp\_f2003} solves the same problem as
+  \id{cvAnalytic\_mels}, using the fixed-point nonlinear solver.
+\item \id{cv\_analytic\_sys\_dns\_f2003} solves a 3x3 system, also
+  having an analytic solution, using the {\sunlinsoldense} linear solver.
+\item \id{cv\_analytic\_sys\_dns\_jac\_f2003} solves the same problem as
+  \id{cv\_analytic\_sys\_dns\_f2003}, but with a user-supplied Jacobian.
+\item \id{cv\_analytic\_sys\_klu\_f2003} solves the same problem but
+  with the {\sunlinsolklu} linear solver.
+\item \id{cv\_brusselator\_dns\_f2003} solves the Brusselator problem,
+  a 3x3 nonlinear system, using the {\sunlinsoldense} linear solver.
+\item \id{cv\_diurnal\_kry\_f2003} solves the same problem as
+  \id{cv\_Diurnal\_kry}
+\item \id{cv\_diurnal\_kry\_bp\_f2003} solves the same problem as
+  \id{cv\_Diurnal\_kry\_bp}
+\item \id{cv\_advdiff\_bnd\_f2003} solves the same problem as
+  \id{cv\_AdvDiff\_bnd}.
+\item \id{cv\_roberts\_dns\_f2003} solves the same problem as
+  \id{cv\_roberts\_dns}.
+\item \id{cv\_roberts\_dnsL\_f2003} solves the same problem as
+  \id{cv\_roberts\_dns}, using the LAPACK dense solver.
+\item \id{cv\_roberts\_dns\_constraints\_f2003} solves the same problem as
+  \id{cv\_roberts\_dns\_constraints}.
+\item \id{cv\_roberts\_klu\_f2003} solves the same problem as
+  \id{cv\_roberts\_klu}.
+\end{itemize}
+
+\vspace{0.2in}\noindent Supplied in the
+{\em srcdir}\id{/examples/cvode/F2003\_parallel} directory are the
+following examples, all in Fortran90 and using the {\sundials} Fortran
+interface modules, and solved in parallel using MPI:
+\begin{itemize}
+\item \id{cv\_diag\_non\_p\_f2003} solves a simple diagonal nonstiff
+  ODE system.
+\item \id{cv\_diag\_kry\_f2003} solves a simple diagonal stiff
+  ODE system using the SPGMR linear solver.
+\item \id{cv\_diag\_kry\_bbd\_f2003} solves the same problem
+  using the BBD preconditioner.
+\end{itemize}
+
+The following is a list of directories and example names that
+are written in C++.  Each is based on an example listed earlier,
+except where noted.
+
+\begin{itemize}
+\item The directory {\em srcdir}\id{/examples/cvode/raja}
+  contains an example \id{cvAdvDiff\_kry\_raja}.
+\item The directory {\em srcdir}\id{/examples/cvode/superludist}
+  contains an example \item \id{cvAdvDiff\_sludist}.
+\item The directory {\em srcdir}\id{/examples/cvode/CXX\_serial}
+  contains two examples -- \id{cv\_heat2D} and \id{cv\_kpr}.  The latter
+  solves a size-2 system, the Kvaerno-Prothero-Robinson test.
+\item The directory {\em srcdir}\id{/examples/cvode/CXX\_parallel}
+contains an example \id{cv\_heat2D\_p}.
+\item The directory {\em srcdir}\id{/examples/cvode/CXX\_parhyp}
+  contains two examples -- \id{cv\_heat2D\_hypre\_ls} and
+  \id{cv\_heat2D\_hypre\_pfmg}.
+\item The directory {\em srcdir}\id{/examples/cvode/CXX\_sycl}
+  contains an example \id{cvAdvDiff\_kry\_sycl}.
+\item The directory {\em srcdir}\id{/examples/cvode/CXX\_onemkl}
+  contains an example \id{cvRoberts\_blockdiag\_onemkl}.
+\item The directory {\em srcdir}\id{/examples/cvode/ginkgo}
+  contains two examples -- \id{cv\_heat2D\_ginkgo} and
+  \id{cv\_kpr\_ginkgo}.
+\item The directory {\em srcdir}\id{/examples/cvode/hip}
+  contains two examples -- \id{cvAdvDiff\_diag\_hip} and
+  \id{cvAdvDiff\_kry\_hip}.
+\item The directory {\em srcdir}\id{/examples/cvode/kokkos}
+  contains two examples -- \id{cv\_bruss\_batched\_kokkos} and
+  \id{cv\_bruss\_batched\_kokkos\_2D}.
+\item The directory {\em srcdir}\id{/examples/cvode/magma}
+contains an example \id{cv\_bruss\_batched\_magma}.
+
+\end{itemize}
 
 \vspace{0.2in}\noindent
 In the following sections, we give detailed descriptions of some (but
@@ -204,8 +306,8 @@ explicitly stated otherwise.
 The examples in the {\cvode} distribution are written in such a way as
 to compile and run for any combination of configuration options during
 the installation of {\sundials} (see Appendix \ref{c:install} in the User Guide).
-As a consequence, they contain portions of code that will not be typically present in a
-user program. For example, all {\CC} example programs make use of the
+As a consequence, they contain portions of code that will not be typically present
+in a user program. For example, all {\CC} example programs make use of the
 variables \id{SUNDIALS\_EXTENDED\_PRECISION} and \id{SUNDIALS\_DOUBLE\_PRECISION}
 to test if the solver libraries were built in extended or double precision,
 and use the appropriate conversion specifiers in \id{printf} functions.

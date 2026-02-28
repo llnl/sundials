@@ -1,9 +1,12 @@
 /* -----------------------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -201,7 +204,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
        FP_CONTENT(NLS)->curiter < FP_CONTENT(NLS)->maxiters;
        FP_CONTENT(NLS)->curiter++)
   {
-    SUNLogInfo(NLS->sunctx->logger, "begin-nonlinear-iterate", "");
+    SUNLogInfo(NLS->sunctx->logger, "begin-iterations-list", "");
 
     /* update previous solution guess */
     N_VScale(ONE, ycor, yprev);
@@ -214,7 +217,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     retval = FP_CONTENT(NLS)->Sys(ycor, gy, mem);
     if (retval != 0)
     {
-      SUNLogInfo(NLS->sunctx->logger, "end-nonlinear-iterate",
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
                  "status = failed nonlinear system evaluation, retval = %d",
                  retval);
       return retval;
@@ -244,14 +247,13 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
                                     FP_CONTENT(NLS)->ctest_data);
 
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
-               "cur-iter = %d, update-norm = " SUN_FORMAT_G, FP_CONTENT(NLS)->niters,
-               N_VWrmsNorm(delta, w));
+               "cur-iter = %d, update-norm = " SUN_FORMAT_G,
+               FP_CONTENT(NLS)->niters, N_VWrmsNorm(delta, w));
 
     /* return if successful */
     if (retval == 0)
     {
-      SUNLogInfo(NLS->sunctx->logger, "end-nonlinear-iterate",
-                 "status = success");
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = success");
       return SUN_SUCCESS;
     }
 
@@ -259,18 +261,17 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
        convergence failure count and return error flag */
     if (retval != SUN_NLS_CONTINUE)
     {
-      SUNLogInfo(NLS->sunctx->logger, "end-nonlinear-iterate",
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
                  "status = failed, retval = %i", retval);
       FP_CONTENT(NLS)->nconvfails++;
       return (retval);
     }
 
     SUNLogInfoIf(FP_CONTENT(NLS)->curiter < FP_CONTENT(NLS)->maxiters - 1,
-                 NLS->sunctx->logger, "end-nonlinear-iterate",
-                 "status = continue");
+                 NLS->sunctx->logger, "end-iterations-list", "status = continue");
   }
 
-  SUNLogInfo(NLS->sunctx->logger, "end-nonlinear-iterate",
+  SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
              "status = failed max iterations");
 
   /* if we've reached this point, then we exhausted the iteration limit;

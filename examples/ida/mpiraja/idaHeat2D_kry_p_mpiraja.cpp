@@ -2,7 +2,7 @@
  * Programmer(s): Slaven Peles @ LLNL
  * -----------------------------------------------------------------
  * Acknowledgements: This example is based on idaHeat2D_kry_p
- *                   example by Daniel R. Reynolds @ SMU and
+ *                   example by Daniel R. Reynolds @ UMBC and
  *                   Allan Taylor, Alan Hindmarsh and
  *                   Radu Serban @ LLNL
  * -----------------------------------------------------------------

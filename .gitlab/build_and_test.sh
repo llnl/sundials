@@ -175,6 +175,8 @@ then
         $cmake_exe \
             -C "${hostconfig_path}" \
             -DCMAKE_INSTALL_PREFIX=${install_dir} \
+            -DSUNDIALS_TEST_ENABLE_DIFF_OUTPUT=OFF \
+            -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=ON \
             -DMPIEXEC_EXECUTABLE=$(which $MPIEXEC_EXECUTABLE) \
             -DMPIEXEC_PREFLAGS=${MPIEXEC_PREFLAGS} \
             -DMPIEXEC_POSTFLAGS=${MPIEXEC_POSTFLAGS} \
@@ -186,6 +188,8 @@ then
         $cmake_exe \
             -C "${hostconfig_path}" \
             -DCMAKE_INSTALL_PREFIX=${install_dir} \
+            -DSUNDIALS_TEST_ENABLE_DIFF_OUTPUT=OFF \
+            -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=ON \
             -DMPIEXEC_EXECUTABLE=$(which $MPIEXEC_EXECUTABLE) \
             -DMPIEXEC_PREFLAGS=${MPIEXEC_PREFLAGS} \
             -DMPIEXEC_POSTFLAGS=${MPIEXEC_POSTFLAGS} \

@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner, Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -155,10 +158,10 @@ typedef struct
   N_Vector wmask;
 
   /* problem parameters */
-  sunindextype nvar; /* number of species            */
-  sunindextype nx;   /* number of intervals globally */
-  sunindextype nxl;  /* number of intervals locally  */
-  sunindextype NEQ;  /* number of equations locally  */
+  sunindextype nvar;   /* number of species            */
+  sunindextype nx;     /* number of intervals globally */
+  sunindextype nxl;    /* number of intervals locally  */
+  sunindextype NEQ;    /* number of equations locally  */
   sunrealtype dx;      /* mesh spacing                 */
   sunrealtype xmax;    /* maximum x value              */
   sunrealtype A;       /* concentration of species A   */
@@ -255,7 +258,7 @@ int main(int argc, char* argv[])
   UserData udata;    /* user data                    */
   UserOptions uopt;  /* user options                 */
   int retval;        /* reusable error-checking flag */
-  sunindextype i;       /* loop counter                 */
+  sunindextype i;    /* loop counter                 */
   FILE* MFID;        /* mesh output file pointer     */
   char fname[MXSTR];
   MPI_Comm comm;

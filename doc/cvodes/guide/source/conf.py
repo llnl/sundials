@@ -1,7 +1,10 @@
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -17,6 +20,9 @@ from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../../shared")))
 
+# Add suntools directory to import python function docstings with autodoc
+sys.path.append(os.path.abspath("../../../../tools/suntools"))
+
 # -- General configuration ----------------------------------------------------
 
 # Set variable used to determine which package documentation this is
@@ -30,6 +36,7 @@ needs_sphinx = "4.0"
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     "sphinx_rtd_theme",
+    "sphinx.ext.extlinks",
     "sphinx.ext.ifconfig",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
@@ -37,7 +44,13 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinx_copybutton",
     "sphinx_sundials",
+    "sphinx.ext.autodoc",
 ]
+
+extlinks = {
+    "github": (f"https://github.com/LLNL/sundials/%s", None),
+    "examples": (f"https://github.com/LLNL/sundials/tree/{sundials_version}/examples/%s", None),
+}
 
 intersphinx_mapping = {
     "sundials": (
@@ -330,3 +343,9 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+# Generate rst files with autofunction directives for sundials4py functions
+from generate_autofunctions import generate_autofunctions_for_submodule
+
+generate_autofunctions_for_submodule("core")
+generate_autofunctions_for_submodule("cvodes")

@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban and Cosmin Petra @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -300,8 +303,6 @@ static void PrintHeader(sunrealtype rtol, sunrealtype avtol, N_Vector y)
   printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, avtol);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, avtol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, avtol);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, avtol);
 #endif
@@ -338,9 +339,6 @@ static void PrintOutput(void* mem, sunrealtype t, N_Vector y)
          "%8.2Le\n",
          t, yval[0], yval[1], yval[2], yval[3], yval[4], yval[5], nst, kused,
          hused);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%8.2e %8.2e %8.2e %8.2e %8.2e %8.2e %8.2e | %3ld  %1d %8.2e\n", t,
-         yval[0], yval[1], yval[2], yval[3], yval[4], yval[5], nst, kused, hused);
 #else
   printf("%8.2e %8.2e %8.2e %8.2e %8.2e %8.2e %8.2e | %3ld  %1d %8.2e\n", t,
          yval[0], yval[1], yval[2], yval[3], yval[4], yval[5], nst, kused, hused);

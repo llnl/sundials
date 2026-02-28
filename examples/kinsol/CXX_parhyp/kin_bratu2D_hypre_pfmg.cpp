@@ -2,8 +2,11 @@
  * Programmer(s): Shelby Lockhart @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -164,6 +167,10 @@ int main(int argc, char* argv[])
     void* kin_mem = KINCreate(sunctx);
     if (check_retval((void*)kin_mem, "KINCreate", 0)) { return 1; }
 
+    // Set Fixed Point Function
+    retval = KINInit(kin_mem, FPFunction, u);
+    if (check_retval(&retval, "KINInit", 1)) { return 1; }
+
     // Set number of prior residuals used in Anderson Acceleration
     retval = KINSetMAA(kin_mem, udata->maa);
     if (check_retval(&retval, "KINSetMAA", 1)) { return 1; }
@@ -171,10 +178,6 @@ int main(int argc, char* argv[])
     // Set orthogonalization routine used in Anderson Acceleration
     retval = KINSetOrthAA(kin_mem, udata->orthaa);
     if (check_retval(&retval, "KINSetOrthAA", 1)) { return 1; }
-
-    // Set Fixed Point Function
-    retval = KINInit(kin_mem, FPFunction, u);
-    if (check_retval(&retval, "KINInit", 1)) { return 1; }
 
     // Specify tolerances
     retval = KINSetFuncNormTol(kin_mem, udata->rtol);
