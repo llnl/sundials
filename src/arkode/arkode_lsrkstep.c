@@ -711,7 +711,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Evaluate stages j = 2,...,step_mem->req_stages */
   for (int j = 2; j <= step_mem->req_stages; j++)
   {
-    /* Evaluate RHS and store in tempv3 */
+    /* Evaluate RHS and store in ycur */
     ark_mem->tcur = ark_mem->tn + ark_mem->h * thjm1;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
@@ -726,7 +726,6 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    /* store the rhs in ycur */
     retval = step_mem->fe(ark_mem->tcur, tmp2, ark_mem->ycur, ark_mem->user_data);
     step_mem->nfe++;
 
@@ -1043,7 +1042,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Evaluate stages j = 2,...,step_mem->req_stages */
   for (int j = 2; j <= step_mem->req_stages; j++)
   {
-    /* Evaluate RHS and store in tempv3 */
+    /* Evaluate RHS and store in ycur */
     ark_mem->tcur = ark_mem->tn + ark_mem->h * cjm1;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
@@ -1058,7 +1057,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    /* Use the ycur array for temporary storage here */
     retval = step_mem->fe(ark_mem->tcur, tmp2, ark_mem->ycur, ark_mem->user_data);
     step_mem->nfe++;
 
