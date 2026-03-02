@@ -4,6 +4,9 @@
 [submodule "uberenv"]
 	path = .gitlab/uberenv
 	url = https://github.com/sundials-codes/uberenv.git
+[submodule "test/answers"]
+	path = test/answers
+	url = https://github.com/sundials-codes/answers.git
 [submodule "external/sundials-addon-example"]
 	path = external/sundials-addon-example
 	url = https://github.com/sundials-codes/sundials-addon-example.git
