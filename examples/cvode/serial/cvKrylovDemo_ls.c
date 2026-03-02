@@ -699,8 +699,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
 
     ydn  = YMIN + (jy - SUN_RCONST(0.5)) * dely;
     yup  = ydn + dely;
-    cydn = verdco * exp(SUN_RCONST(0.2) * ydn);
-    cyup = verdco * exp(SUN_RCONST(0.2) * yup);
+    cydn = verdco * SUNRexp(SUN_RCONST(0.2) * ydn);
+    cyup = verdco * SUNRexp(SUN_RCONST(0.2) * yup);
     idn  = (jy == 0) ? 1 : -1;
     iup  = (jy == MY - 1) ? -1 : 1;
     for (jx = 0; jx < MX; jx++)

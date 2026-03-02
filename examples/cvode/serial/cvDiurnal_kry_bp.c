@@ -48,12 +48,6 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Problem Constants */
 
 #define ZERO SUN_RCONST(0.0)
@@ -276,9 +270,9 @@ static void InitUserData(UserData data)
   data->om   = PI / HALFDAY;
   data->dx   = (XMAX - XMIN) / (MX - 1);
   data->dy   = (YMAX - YMIN) / (MY - 1);
-  data->hdco = KH / SQR(data->dx);
+  data->hdco = KH / SUNSQR(data->dx);
   data->haco = VEL / (TWO * data->dx);
-  data->vdco = (ONE / SQR(data->dy)) * KV0;
+  data->vdco = (ONE / SUNSQR(data->dy)) * KV0;
 }
 
 /* Set initial conditions in u */
@@ -298,13 +292,13 @@ static void SetInitialProfiles(N_Vector u, sunrealtype dx, sunrealtype dy)
   for (jy = 0; jy < MY; jy++)
   {
     y  = YMIN + jy * dy;
-    cy = SQR(SUN_RCONST(0.1) * (y - YMID));
-    cy = ONE - cy + SUN_RCONST(0.5) * SQR(cy);
+    cy = SUNSQR(SUN_RCONST(0.1) * (y - YMID));
+    cy = ONE - cy + SUN_RCONST(0.5) * SUNSQR(cy);
     for (jx = 0; jx < MX; jx++)
     {
       x                       = XMIN + jx * dx;
-      cx                      = SQR(SUN_RCONST(0.1) * (x - XMID));
-      cx                      = ONE - cx + SUN_RCONST(0.5) * SQR(cx);
+      cx                      = SUNSQR(SUN_RCONST(0.1) * (x - XMID));
+      cx                      = ONE - cx + SUN_RCONST(0.5) * SUNSQR(cx);
       IJKth(udata, 1, jx, jy) = C1_SCALE * cx * cy;
       IJKth(udata, 2, jx, jy) = C2_SCALE * cx * cy;
     }

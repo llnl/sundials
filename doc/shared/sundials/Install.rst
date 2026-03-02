@@ -626,7 +626,7 @@ Math Library
 
    The standard C math library (e.g., ``libm``; ``libquadmath`` for float128) to link with.
 
-   Default: ``-lm`` on Unix systems, none otherwise. For example:
+   Default: ``-lm -lquadmath`` on Unix systems, none otherwise. For example:
 
    .. code-block:: bash
 

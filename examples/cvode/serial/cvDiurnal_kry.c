@@ -49,12 +49,6 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Problem Constants */
 
 #define ZERO SUN_RCONST(0.0)
@@ -285,9 +279,9 @@ static void InitUserData(UserData data)
   data->om   = PI / HALFDAY;
   data->dx   = (XMAX - XMIN) / (MX - 1);
   data->dy   = (YMAX - YMIN) / (MY - 1);
-  data->hdco = KH / SQR(data->dx);
+  data->hdco = KH / SUNSQR(data->dx);
   data->haco = VEL / (TWO * data->dx);
-  data->vdco = (ONE / SQR(data->dy)) * KV0;
+  data->vdco = (ONE / SUNSQR(data->dy)) * KV0;
 }
 
 /* Free data memory */
@@ -326,13 +320,13 @@ static void SetInitialProfiles(N_Vector u, sunrealtype dx, sunrealtype dy)
   for (jy = 0; jy < MY; jy++)
   {
     y  = YMIN + jy * dy;
-    cy = SQR(SUN_RCONST(0.1) * (y - YMID));
-    cy = ONE - cy + SUN_RCONST(0.5) * SQR(cy);
+    cy = SUNSQR(SUN_RCONST(0.1) * (y - YMID));
+    cy = ONE - cy + SUN_RCONST(0.5) * SUNSQR(cy);
     for (jx = 0; jx < MX; jx++)
     {
       x                       = XMIN + jx * dx;
-      cx                      = SQR(SUN_RCONST(0.1) * (x - XMID));
-      cx                      = ONE - cx + SUN_RCONST(0.5) * SQR(cx);
+      cx                      = SUNSQR(SUN_RCONST(0.1) * (x - XMID));
+      cx                      = ONE - cx + SUN_RCONST(0.5) * SUNSQR(cx);
       IJKth(udata, 1, jx, jy) = C1_SCALE * cx * cy;
       IJKth(udata, 2, jx, jy) = C2_SCALE * cx * cy;
     }
@@ -503,7 +497,7 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
 
   /* Set diurnal rate coefficients. */
 
-  s = sin(data->om * t);
+  s = SUNRsin(data->om * t);
   if (s > ZERO)
   {
     q3       = SUNRexp(-A3 / s);
@@ -531,8 +525,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
 
     ydn  = YMIN + (jy - SUN_RCONST(0.5)) * dely;
     yup  = ydn + dely;
-    cydn = verdco * exp(SUN_RCONST(0.2) * ydn);
-    cyup = verdco * exp(SUN_RCONST(0.2) * yup);
+    cydn = verdco * SUNRexp(SUN_RCONST(0.2) * ydn);
+    cyup = verdco * SUNRexp(SUN_RCONST(0.2) * yup);
     idn  = (jy == 0) ? 1 : -1;
     iup  = (jy == MY - 1) ? -1 : 1;
     for (jx = 0; jx < MX; jx++)
@@ -624,8 +618,8 @@ static int jtv(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector u, N_Vector fu,
     ydn = YMIN + (jy - SUN_RCONST(0.5)) * dely;
     yup = ydn + dely;
 
-    cydn = verdco * exp(SUN_RCONST(0.2) * ydn);
-    cyup = verdco * exp(SUN_RCONST(0.2) * yup);
+    cydn = verdco * SUNRexp(SUN_RCONST(0.2) * ydn);
+    cyup = verdco * SUNRexp(SUN_RCONST(0.2) * yup);
 
     idn = (jy == 0) ? 1 : -1;
     iup = (jy == MY - 1) ? -1 : 1;
