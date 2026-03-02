@@ -648,7 +648,7 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
-    if (ark_mem->PostProcessStageFn)
+    if (is < step_mem->method->stages - 1 && ark_mem->PostProcessStageFn)
     {
       retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
                                            ark_mem->user_data);
@@ -657,6 +657,17 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
         return (ARK_POSTPROCESS_STAGE_FAIL);
+      }
+    }
+    else if (is == step_mem->method->stages - 1 && ark_mem->PostProcessStepFn)
+    {
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed postprocess step, retval = %i", retval);
+        return (ARK_POSTPROCESS_STEP_FAIL);
       }
     }
 
@@ -706,7 +717,8 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 
   /* if user-supplied stage preprocessing or postprocessing functions,
     * we error out since those won't work with the increment form */
-  if ((ark_mem->PreRhsFn) || (ark_mem->PostProcessStageFn))
+  if ((ark_mem->PreRhsFn) || (ark_mem->PostProcessStageFn) ||
+      (ark_mem->PostProcessStepFn))
   {
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "status = failed stage stage processing, retval = %i",
