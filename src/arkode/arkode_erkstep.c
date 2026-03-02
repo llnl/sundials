@@ -614,11 +614,11 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     /* compute the RHS if needed */
     if (!(ark_mem->fn_is_current))
     {
-      /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreRHSProcess != NULL)
+      /* call the user-supplied pre-RHS function (if supplied) */
+      if (ark_mem->PreRhsFn)
       {
-        retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-        if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+        retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+        if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
       }
 
       /* call f */
@@ -660,11 +660,11 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       /* base RHS call on recomputeRHS argument */
       if (recomputeRHS)
       {
-        /* apply user-supplied stage preprocessing function (if supplied) */
-        if (ark_mem->PreRHSProcess != NULL)
+        /* call the user-supplied pre-RHS function (if supplied) */
+        if (ark_mem->PreRhsFn)
         {
-          retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-          if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+          retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+          if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
         }
 
         /* call f */
@@ -697,11 +697,11 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
 
   case ARK_FULLRHS_OTHER:
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreRHSProcess != NULL)
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-      if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+      retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
     }
 
     /* call f */
@@ -879,10 +879,10 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
-    if (ark_mem->PostProcessStage != NULL)
+    if (ark_mem->PostProcessStageFn)
     {
-      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+      retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
+                                           ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -891,16 +891,15 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreRHSProcess != NULL)
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
-                                      ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess RHS, retval = %i", retval);
-        return (ARK_PREPROCESS_RHS_FAIL);
+        return (ARK_PRERHSFN_FAIL);
       }
     }
 
@@ -969,10 +968,10 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
 
   /* apply user-supplied stage postprocessing function (if supplied) */
-  if (ark_mem->PostProcessStage != NULL)
+  if (ark_mem->PostProcessStageFn)
   {
-    retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                       ark_mem->user_data);
+    retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
+                                         ark_mem->user_data);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",

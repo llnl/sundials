@@ -873,13 +873,6 @@ int ARKodeSetUserData(void* arkode_mem, void* user_data)
   /* Set data for root finding */
   if (ark_mem->root_mem != NULL) { ark_mem->root_mem->root_data = user_data; }
 
-  /* Set data for post-processing a step */
-  if ((ark_mem->PreProcessStep != NULL) || (ark_mem->PostProcessStep != NULL) ||
-      (ark_mem->PostProcessStepFail != NULL))
-  {
-    ark_mem->ps_data = user_data;
-  }
-
   /* Set user data into stepper (if provided) */
   if (ark_mem->step_setuserdata)
   {
@@ -1493,25 +1486,19 @@ int ARKodeSetNoInactiveRootWarn(void* arkode_mem)
   return (ARK_SUCCESS);
 }
 
-/*---------------------------------------------------------------
-  ARKodeSetPreprocessStepFn:
-  ARKodeSetPostprocessStepFn:
-  ARKodeSetPostprocessStepFailFn:
+/*------------------------------------------------------------------------------
+  ARKodeSetPreStepFn:
+  ARKodeSetPostStepFn:
 
-  Specifies user-provided step pre- and post-processing functions
-  having type ARKPostProcessFn.  A NULL input function disables step
-  pre- or post-step processing.
+  Specifies user-provided step pre- and post-step functions.
 
-  The "Preprocess" function is called just prior to taking a step,
-  while the "Postprocess" function is called immediately after
-  a successful step.  The "PostprocessStepFail" function is called
-  immediately after a failed step.
+  The pre-step function is called just prior to taking a step and the post-step
+  function is called immediately after completing a successful step.
 
-  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
-  THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
-  STABILITY ARE LOST.
-  ---------------------------------------------------------------*/
-int ARKodeSetPreprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
+  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
+  THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+  ----------------------------------------------------------------------------*/
+int ARKodeSetPreStepFn(void* arkode_mem, ARKPreStepFn prestep_fn)
 {
   ARKodeMem ark_mem;
   if (arkode_mem == NULL)
@@ -1522,13 +1509,80 @@ int ARKodeSetPreprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  /* NULL argument sets default, otherwise set inputs */
-  ark_mem->PreProcessStep = ProcessStep;
-  ark_mem->ps_data        = ark_mem->user_data;
+  /* NULL argument disables the pre-step function */
+  ark_mem->PreStepFn = prestep_fn;
 
   return (ARK_SUCCESS);
 }
 
+int ARKodeSetPostStepFn(void* arkode_mem, ARKPostStepFn poststep_fn)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument disables the post-step function */
+  ark_mem->PostStepFn = poststep_fn;
+
+  return (ARK_SUCCESS);
+}
+
+
+/*------------------------------------------------------------------------------
+  ARKodeSetPreRhsFn:
+
+  Specifies user-provided pre-RHS function.
+
+  The pre-RHS function is called on a state vector just prior to computing the
+  RHS. For problems with partitioned RHS functions that are called with
+  identical inputs, this is only called before the first RHS evaluation.
+
+  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
+  THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+  ---------------------------------------------------------------*/
+int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn prerhs_fn)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument disables the pre-RHS function */
+  ark_mem->PreRhsFn = prerhs_fn;
+
+  return (ARK_SUCCESS);
+}
+
+
+/*------------------------------------------------------------------------------
+  ARKodeSetPostprocessStepFn:
+  ARKodeSetPostprocessStageFn:
+
+  Specifies user-provided step and stage post-processing functions.
+
+  These functions are called immediately after computing a stage or the new step
+  solution (before error checks or other post-step actions e.g., constraint
+  handling or relaxation).
+
+  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
+  THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+
+  While it is possible to perform stage postprocessing when
+  ARKodeSetDeduceImplicitRhs is enabled, this can cause implicit RHS evaluations
+  to be inconsistent with the postprocessed values (this similarly applies when
+  using step post processing with FSAL methods). It is strongly recommended to
+  disable ARKodeSetDeduceImplicitRhs in order to guarantee postprocessing
+  constraints are enforced.
+  ----------------------------------------------------------------------------*/
 int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 {
   ARKodeMem ark_mem;
@@ -1540,52 +1594,12 @@ int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  /* NULL argument sets default, otherwise set inputs */
-  ark_mem->PostProcessStep = ProcessStep;
-  ark_mem->ps_data         = ark_mem->user_data;
+  /* NULL argument disables the postprocessing function */
+  ark_mem->PostProcessStepFn = ProcessStep;
 
   return (ARK_SUCCESS);
 }
 
-int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
-{
-  ARKodeMem ark_mem;
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ark_mem = (ARKodeMem)arkode_mem;
-
-  /* NULL argument sets default, otherwise set inputs */
-  ark_mem->PostProcessStepFail = ProcessStep;
-  ark_mem->ps_data             = ark_mem->user_data;
-
-  return (ARK_SUCCESS);
-}
-
-/*---------------------------------------------------------------
-  ARKodeSetPostprocessStageFn:
-
-  Specifies user-provided stage post-processing
-  function having type ARKPostProcessFn.  A NULL input function
-  disables post-stage processing.
-
-  The "ProcessStage" function is called immediately after
-  computing a stage.
-
-  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
-  THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
-  STABILITY ARE LOST.
-
-  While it is possible to perform postprocessing when
-  ARKodeSetDeduceImplicitRhs is enabled, this can cause implicit
-  RHS evaluations to be inconsistent with the postprocessed stage
-  values.  It is strongly recommended to disable
-  ARKodeSetDeduceImplicitRhs in order to guarantee
-  postprocessing constraints are enforced.
-  ---------------------------------------------------------------*/
 int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 {
   ARKodeMem ark_mem;
@@ -1597,43 +1611,8 @@ int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  /* NULL argument sets default, otherwise set inputs */
-  ark_mem->PostProcessStage = ProcessStage;
-  ark_mem->ps_data          = ark_mem->user_data;
-
-  return (ARK_SUCCESS);
-}
-
-/*---------------------------------------------------------------
-  ARKodeSetPreRHSProcessFn:
-
-  Specifies user-provided pre-processing function having type
-  ARKPostProcessFn.  A NULL input function disables pre-RHS
-  processing.
-
-  The "PreRHSProcess" function is called on a state vector
-  just prior to computing the RHS.  For problems with partitioned
-  RHS functions that are called with identical inputs, this is
-  only called before the first RHS evaluation.
-
-  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
-  THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
-  STABILITY ARE LOST.
-  ---------------------------------------------------------------*/
-int ARKodeSetPreRHSProcessFn(void* arkode_mem, ARKPostProcessFn PreRHSProcess)
-{
-  ARKodeMem ark_mem;
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ark_mem = (ARKodeMem)arkode_mem;
-
-  /* NULL argument sets default, otherwise set inputs */
-  ark_mem->PreRHSProcess = PreRHSProcess;
-  ark_mem->ps_data       = ark_mem->user_data;
+  /* NULL argument disables the postprocessing function */
+  ark_mem->PostProcessStageFn = ProcessStage;
 
   return (ARK_SUCCESS);
 }
@@ -3255,13 +3234,13 @@ char* ARKodeGetReturnFlagName(long int flag)
   case ARK_POSTPROCESS_STAGE_FAIL:
     sprintf(name, "ARK_POSTPROCESS_STAGE_FAIL");
     break;
-  case ARK_POSTPROCESS_FAILED_STEP_FAIL:
-    sprintf(name, "ARK_POSTPROCESS_FAILED_STEP_FAIL");
+  case ARK_PRESTEPFN_FAIL:
+    sprintf(name, "ARK_PRESTEPFN_FAIL");
     break;
-  case ARK_PREPROCESS_STEP_FAIL:
-    sprintf(name, "ARK_PREPROCESS_STEP_FAIL");
+  case ARK_POSTSTEPFN_FAIL:
+    sprintf(name, "ARK_POSTSTEPFN_FAIL");
     break;
-  case ARK_PREPROCESS_RHS_FAIL: sprintf(name, "ARK_PREPROCESS_RHS_FAIL"); break;
+  case ARK_PRERHSFN_FAIL: sprintf(name, "ARK_PRERHSFN_FAIL"); break;
   case ARK_USER_PREDICT_FAIL: sprintf(name, "ARK_USER_PREDICT_FAIL"); break;
   case ARK_INTERP_FAIL: sprintf(name, "ARK_INTERP_FAIL"); break;
   case ARK_INVALID_TABLE: sprintf(name, "ARK_INVALID_TABLE"); break;

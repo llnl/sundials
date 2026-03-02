@@ -128,9 +128,9 @@ extern "C" {
 #define ARK_POSTPROCESS_FAIL             -37
 #define ARK_POSTPROCESS_STEP_FAIL        -37
 #define ARK_POSTPROCESS_STAGE_FAIL       -38
-#define ARK_POSTPROCESS_FAILED_STEP_FAIL -39
-#define ARK_PREPROCESS_STEP_FAIL         -40
-#define ARK_PREPROCESS_RHS_FAIL          -41
+#define ARK_PRESTEPFN_FAIL               -39
+#define ARK_POSTSTEPFN_FAIL              -40
+#define ARK_PRERHSFN_FAIL                -41
 
 #define ARK_USER_PREDICT_FAIL -42
 #define ARK_INTERP_FAIL       -43
@@ -186,7 +186,13 @@ typedef int (*ARKExpStabFn)(N_Vector y, sunrealtype t, sunrealtype* hstab,
 
 typedef int (*ARKVecResizeFn)(N_Vector y, N_Vector ytemplate, void* user_data);
 
+typedef int (*ARKPreStepFn)(sunrealtype t, N_Vector y, long int step, int attempt, void* user_data);
+
+typedef int (*ARKPostStepFn)(sunrealtype t, N_Vector y, long int step, void* user_data);
+
 typedef int (*ARKPostProcessFn)(sunrealtype t, N_Vector y, void* user_data);
+
+typedef int (*ARKPreRhsFn)(sunrealtype t, N_Vector y, void* user_data);
 
 typedef int (*ARKStagePredictFn)(sunrealtype t, N_Vector zpred, void* user_data);
 
@@ -279,14 +285,14 @@ SUNDIALS_EXPORT int ARKodeClearStopTime(void* arkode_mem);
 SUNDIALS_EXPORT int ARKodeSetFixedStep(void* arkode_mem, sunrealtype hfixed);
 SUNDIALS_EXPORT int ARKodeSetStepDirection(void* arkode_mem, sunrealtype stepdir);
 SUNDIALS_EXPORT int ARKodeSetUserData(void* arkode_mem, void* user_data);
-SUNDIALS_EXPORT int ARKodeSetPreprocessStepFn(void* arkode_mem,
-                                              ARKPostProcessFn ProcessStep);
+SUNDIALS_EXPORT int ARKodeSetPreStepFn(void* arkode_mem,
+                                       ARKPreStepFn prestep_fn);
+SUNDIALS_EXPORT int ARKodeSetPostStepFn(void* arkode_mem,
+                                        ARKPostStepFn poststep_fn);
+SUNDIALS_EXPORT int ARKodeSetPreRhsFn(void* arkode_mem,
+                                      ARKPreRhsFn prerhs_fn);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStepFn(void* arkode_mem,
                                                ARKPostProcessFn ProcessStep);
-SUNDIALS_EXPORT int ARKodeSetPostprocessStepFailFn(void* arkode_mem,
-                                                   ARKPostProcessFn ProcessStep);
-SUNDIALS_EXPORT int ARKodeSetPreRHSProcessFn(void* arkode_mem,
-                                             ARKPostProcessFn PreRHSProcess);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStageFn(void* arkode_mem,
                                                 ARKPostProcessFn ProcessStage);
 
