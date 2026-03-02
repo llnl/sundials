@@ -639,7 +639,8 @@ int arkStep_NlsResidual_MassIdent_TrivialPredAutonomous(N_Vector zcor, N_Vector 
     /* call the user-supplied pre-RHS function (if supplied), then call RHS */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
       if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
     }
     retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
@@ -767,7 +768,8 @@ int arkStep_NlsResidual_MassFixed_TrivialPredAutonomous(N_Vector zcor, N_Vector 
     /* call the user-supplied pre-RHS function (if supplied), then call RHS */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
       if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
     }
     retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
@@ -961,7 +963,8 @@ int arkStep_NlsFPFunction_MassIdent_TrivialPredAutonomous(N_Vector zcor,
     /* call the user-supplied pre-RHS function (if supplied), then call RHS */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
       if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
     }
     retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
@@ -1085,7 +1088,8 @@ int arkStep_NlsFPFunction_MassFixed_TrivialPredAutonomous(N_Vector zcor,
     /* call the user-supplied pre-RHS function (if supplied), then call RHS */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
       if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
     }
     retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,

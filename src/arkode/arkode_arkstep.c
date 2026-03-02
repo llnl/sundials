@@ -1869,7 +1869,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         /* call the user-supplied pre-RHS function (if supplied) */
         if (ark_mem->PreRhsFn)
         {
-          retval = ark_mem->PreRhsFn(ark_mem->tn, ark_mem->yn, ark_mem->user_data);
+          retval = ark_mem->PreRhsFn(ark_mem->tn, ark_mem->yn,
+                                     ark_mem->user_data);
           if (retval != 0)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2049,7 +2050,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
        step postprocessing function instead (if supplied) */
     /* NOTE: with internally inconsistent IMEX methods (c_i^E != c_i^I) the value
        of tcur corresponds to the stage time from the implicit table (c_i^I). */
-    if (is == step_mem->stages - 1 && stiffly_accurate && ark_mem->PostProcessStepFn)
+    if (is == step_mem->stages - 1 && stiffly_accurate &&
+        ark_mem->PostProcessStepFn)
     {
       retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
                                           ark_mem->user_data);
@@ -2120,7 +2122,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       if ((step_mem->implicit && !deduce_stage) || (step_mem->explicit))
       {
-        retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+        retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                   ark_mem->user_data);
         if (retval != 0)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",

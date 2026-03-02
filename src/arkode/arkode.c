@@ -2888,16 +2888,16 @@ int arkHandleFailure(ARKodeMem ark_mem, int flag)
                     __FILE__, MSG_ARK_POSTPROCESS_STAGE_FAIL, ark_mem->tcur);
     break;
   case ARK_PRESTEPFN_FAIL:
-    arkProcessError(ark_mem, ARK_PRESTEPFN_FAIL, __LINE__, __func__,
-                    __FILE__, MSG_ARK_PRESTEPFN_FAIL, ark_mem->tcur);
+    arkProcessError(ark_mem, ARK_PRESTEPFN_FAIL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_PRESTEPFN_FAIL, ark_mem->tcur);
     break;
   case ARK_POSTSTEPFN_FAIL:
-    arkProcessError(ark_mem, ARK_POSTSTEPFN_FAIL, __LINE__, __func__,
-                    __FILE__, MSG_ARK_POSTSTEPFN_FAIL, ark_mem->tcur);
+    arkProcessError(ark_mem, ARK_POSTSTEPFN_FAIL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_POSTSTEPFN_FAIL, ark_mem->tcur);
     break;
   case ARK_PRERHSFN_FAIL:
-    arkProcessError(ark_mem, ARK_PRERHSFN_FAIL, __LINE__, __func__,
-                    __FILE__, MSG_ARK_PRERHSFN_FAIL, ark_mem->tcur);
+    arkProcessError(ark_mem, ARK_PRERHSFN_FAIL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_PRERHSFN_FAIL, ark_mem->tcur);
     break;
   case ARK_INTERP_FAIL:
     arkProcessError(ark_mem, ARK_INTERP_FAIL, __LINE__, __func__, __FILE__,

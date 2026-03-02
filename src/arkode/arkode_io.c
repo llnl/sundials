@@ -1532,7 +1532,6 @@ int ARKodeSetPostStepFn(void* arkode_mem, ARKPostStepFn poststep_fn)
   return (ARK_SUCCESS);
 }
 
-
 /*------------------------------------------------------------------------------
   ARKodeSetPreRhsFn:
 
@@ -1561,7 +1560,6 @@ int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn prerhs_fn)
 
   return (ARK_SUCCESS);
 }
-
 
 /*------------------------------------------------------------------------------
   ARKodeSetPostprocessStepFn:
@@ -3234,12 +3232,8 @@ char* ARKodeGetReturnFlagName(long int flag)
   case ARK_POSTPROCESS_STAGE_FAIL:
     sprintf(name, "ARK_POSTPROCESS_STAGE_FAIL");
     break;
-  case ARK_PRESTEPFN_FAIL:
-    sprintf(name, "ARK_PRESTEPFN_FAIL");
-    break;
-  case ARK_POSTSTEPFN_FAIL:
-    sprintf(name, "ARK_POSTSTEPFN_FAIL");
-    break;
+  case ARK_PRESTEPFN_FAIL: sprintf(name, "ARK_PRESTEPFN_FAIL"); break;
+  case ARK_POSTSTEPFN_FAIL: sprintf(name, "ARK_POSTSTEPFN_FAIL"); break;
   case ARK_PRERHSFN_FAIL: sprintf(name, "ARK_PRERHSFN_FAIL"); break;
   case ARK_USER_PREDICT_FAIL: sprintf(name, "ARK_USER_PREDICT_FAIL"); break;
   case ARK_INTERP_FAIL: sprintf(name, "ARK_INTERP_FAIL"); break;

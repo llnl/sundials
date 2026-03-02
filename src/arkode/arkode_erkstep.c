@@ -910,7 +910,8 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1518,8 +1519,8 @@ int erkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
         step_mem->stage_times[j] = ark_mem->tn + step_mem->B->c[j] * ark_mem->h;
         step_mem->stage_coefs[j] = ark_mem->h * step_mem->B->b[j];
       }
-      erkStep_ApplyForcing(step_mem, step_mem->stage_times, step_mem->stage_coefs,
-                           step_mem->stages, &nvec);
+      erkStep_ApplyForcing(step_mem, step_mem->stage_times,
+                           step_mem->stage_coefs, step_mem->stages, &nvec);
     }
 
     /* call fused vector operation to do the work */

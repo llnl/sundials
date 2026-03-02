@@ -815,11 +815,9 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
 #define MSG_ARK_INNERSTEP_FAILED \
   "At " MSG_TIME ", the inner stepper failed in an unrecoverable manner."
 #define MSG_ARK_PRESTEPFN_FAIL \
-  "At " MSG_TIME                     \
-  ", the pre-step function failed in an unrecoverable manner."
+  "At " MSG_TIME ", the pre-step function failed in an unrecoverable manner."
 #define MSG_ARK_POSTSTEPFN_FAIL \
-  "At " MSG_TIME                     \
-  ", the post-step function failed in an unrecoverable manner."
+  "At " MSG_TIME ", the post-step function failed in an unrecoverable manner."
 #define MSG_ARK_POSTPROCESS_STEP_FAIL \
   "At " MSG_TIME                      \
   ", the step postprocessing routine failed in an unrecoverable manner."
@@ -827,8 +825,7 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
   "At " MSG_TIME                       \
   ", the stage postprocessing routine failed in an unrecoverable manner."
 #define MSG_ARK_PRERHSFN_FAIL \
-  "At " MSG_TIME                    \
-  ", the pre-RHS function failed in an unrecoverable manner."
+  "At " MSG_TIME ", the pre-RHS function failed in an unrecoverable manner."
 #define MSG_ARK_NULL_SUNCTX "sunctx = NULL illegal."
 #define MSG_ARK_CONTEXT_MISMATCH \
   "Outer and inner steppers have different contexts."
