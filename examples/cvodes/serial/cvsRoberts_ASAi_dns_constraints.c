@@ -790,7 +790,7 @@ static void PrintOutput1(sunrealtype time, sunrealtype t, N_Vector y, N_Vector y
   printf("tout:       %12.4e\n", t);
   printf("lambda(t):  %12.4e %12.4e %12.4e\n", Ith(yB, 1), Ith(yB, 2),
          Ith(yB, 3));
-  printf("y(t)      : %12.4e %12.4e %12.4e\n", Ith(y, 1), Ith(y, 2), Ith(y, 3));
+  printf("y(t):       %12.4e %12.4e %12.4e\n", Ith(y, 1), Ith(y, 2), Ith(y, 3));
 #endif
   printf("--------------------------------------------------------\n\n");
 }
@@ -822,7 +822,7 @@ static void PrintOutput(sunrealtype tfinal, N_Vector y, N_Vector yB, N_Vector qB
   printf("returned t: %12.4e\n", tfinal);
   printf("lambda(t0): %12.4e %12.4e %12.4e\n", Ith(yB, 1), Ith(yB, 2),
          Ith(yB, 3));
-  printf("y(t0)     : %12.4e %12.4e %12.4e\n", Ith(y, 1), Ith(y, 2), Ith(y, 3));
+  printf("y(t0):      %12.4e %12.4e %12.4e\n", Ith(y, 1), Ith(y, 2), Ith(y, 3));
   printf("dG/dp:      %12.4e %12.4e %12.4e\n", -Ith(qB, 1), -Ith(qB, 2),
          -Ith(qB, 3));
 #endif

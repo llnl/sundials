@@ -86,12 +86,6 @@
 #include <sundials/sundials_types.h> /* def. of sunrealtype */
 #include <sunlinsol/sunlinsol_spgmr.h> /* defs. for SUNLinSol_SPGMR fcts. and constants */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Problem Constants */
 
 #define NVARS    2                 /* number of species                    */
@@ -102,7 +96,7 @@
 #define NOUT    12                 /* number of output times               */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours       */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day      */
-#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi                        */
+#define PI      SUN_RCONST(3.1415926535898) /* pi                        */
 
 #define XMIN SUN_RCONST(0.0) /* grid boundaries in x                 */
 #define XMAX SUN_RCONST(20.0)
@@ -698,9 +692,9 @@ static void InitUserData(int my_pe, MPI_Comm comm, UserData data)
   data->om   = PI / HALFDAY;
   data->dx   = (XMAX - XMIN) / ((sunrealtype)(MX - 1));
   data->dy   = (YMAX - YMIN) / ((sunrealtype)(MY - 1));
-  data->hdco = KH / SQR(data->dx);
+  data->hdco = KH / SUNSQR(data->dx);
   data->haco = VEL / (SUN_RCONST(2.0) * data->dx);
-  data->vdco = (SUN_RCONST(1.0) / SQR(data->dy)) * KV0;
+  data->vdco = (SUN_RCONST(1.0) / SUNSQR(data->dy)) * KV0;
 
   /* Set machine-related constants */
   data->comm  = comm;
@@ -781,14 +775,14 @@ static void SetInitialProfiles(N_Vector u, UserData data)
   {
     jy = ly + isuby * MYSUB;
     y  = YMIN + jy * dy;
-    cy = SQR(SUN_RCONST(0.1) * (y - ymid));
-    cy = SUN_RCONST(1.0) - cy + SUN_RCONST(0.5) * SQR(cy);
+    cy = SUNSQR(SUN_RCONST(0.1) * (y - ymid));
+    cy = SUN_RCONST(1.0) - cy + SUN_RCONST(0.5) * SUNSQR(cy);
     for (lx = 0; lx < MXSUB; lx++)
     {
       jx                = lx + isubx * MXSUB;
       x                 = XMIN + jx * dx;
-      cx                = SQR(SUN_RCONST(0.1) * (x - xmid));
-      cx                = SUN_RCONST(1.0) - cx + SUN_RCONST(0.5) * SQR(cx);
+      cx                = SUNSQR(SUN_RCONST(0.1) * (x - xmid));
+      cx                = SUN_RCONST(1.0) - cx + SUN_RCONST(0.5) * SUNSQR(cx);
       udata[offset]     = C1_SCALE * cx * cy;
       udata[offset + 1] = C2_SCALE * cx * cy;
       offset            = offset + 2;

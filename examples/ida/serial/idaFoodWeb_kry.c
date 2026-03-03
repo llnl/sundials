@@ -100,18 +100,12 @@
 #include <sundials/sundials_types.h> /* definition of type sunrealtype          */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to spgmr SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef MAX
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-#endif
-
 /* Problem Constants. */
 
 #define NPREY       1 /* No. of prey (= no. of predators). */
 #define NUM_SPECIES 2 * NPREY
 
-#define PI     SUN_RCONST(3.141592653589793238462643383279502884197169)
+#define PI     SUN_RCONST(3.1415926535898)
 #define FOURPI (SUN_RCONST(4.0) * PI)
 
 #define MX    20 /* MX = number of x mesh points      */
@@ -442,8 +436,8 @@ static int Precond(sunrealtype tt, N_Vector cc, N_Vector cp, N_Vector rr,
 
       for (js = 0; js < NUM_SPECIES; js++)
       {
-        inc   = sqru * (MAX(SUNRabs(cxy[js]),
-                            MAX(hh * SUNRabs(cpxy[js]), ONE / ewtxy[js])));
+        inc   = sqru * (SUNMAX(SUNRabs(cxy[js]),
+                            SUNMAX(hh * SUNRabs(cpxy[js]), ONE / ewtxy[js])));
         cctmp = cxy[js];
         cxy[js] += inc;
         fac = -ONE / inc;
@@ -791,7 +785,7 @@ static void WebRates(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
     ratesxy[is] = dotprod(NUM_SPECIES, cxy, acoef[is]);
   }
 
-  fac = ONE + ALPHA * xx * yy + BETA * sin(FOURPI * xx) * sin(FOURPI * yy);
+  fac = ONE + ALPHA * xx * yy + BETA * SUNRsin(FOURPI * xx) * SUNRsin(FOURPI * yy);
 
   for (is = 0; is < NUM_SPECIES; is++)
   {
