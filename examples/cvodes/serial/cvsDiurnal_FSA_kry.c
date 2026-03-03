@@ -65,12 +65,6 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Problem Constants */
 
 #define NUM_SPECIES 2                 /* number of species */
@@ -81,7 +75,7 @@
 #define NOUT    12                 /* number of output times */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours  */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day */
-#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
+#define PI      SUN_RCONST(3.1415926535898) /* pi */
 
 #define XMIN SUN_RCONST(0.0) /* grid boundaries in x  */
 #define XMAX SUN_RCONST(20.0)
@@ -686,9 +680,9 @@ static void InitUserData(UserData data)
   data->om   = PI / HALFDAY;
   data->dx   = (XMAX - XMIN) / (MX - 1);
   data->dz   = (ZMAX - ZMIN) / (MZ - 1);
-  data->hdco = KH / SQR(data->dx);
+  data->hdco = KH / SUNSQR(data->dx);
   data->haco = VEL / (SUN_RCONST(2.0) * data->dx);
-  data->vdco = (ONE / SQR(data->dz)) * KV0;
+  data->vdco = (ONE / SUNSQR(data->dz)) * KV0;
 
   data->p[0] = Q1;
   data->p[1] = Q2;
@@ -742,13 +736,13 @@ static void SetInitialProfiles(N_Vector y, sunrealtype dx, sunrealtype dz)
   for (jz = 0; jz < MZ; jz++)
   {
     z  = ZMIN + jz * dz;
-    cz = SQR(SUN_RCONST(0.1) * (z - ZMID));
-    cz = ONE - cz + SUN_RCONST(0.5) * SQR(cz);
+    cz = SUNSQR(SUN_RCONST(0.1) * (z - ZMID));
+    cz = ONE - cz + SUN_RCONST(0.5) * SUNSQR(cz);
     for (jx = 0; jx < MX; jx++)
     {
       x                       = XMIN + jx * dx;
-      cx                      = SQR(SUN_RCONST(0.1) * (x - XMID));
-      cx                      = ONE - cx + SUN_RCONST(0.5) * SQR(cx);
+      cx                      = SUNSQR(SUN_RCONST(0.1) * (x - XMID));
+      cx                      = ONE - cx + SUN_RCONST(0.5) * SUNSQR(cx);
       IJKth(ydata, 1, jx, jz) = C1_SCALE * cx * cz;
       IJKth(ydata, 2, jx, jz) = C2_SCALE * cx * cz;
     }

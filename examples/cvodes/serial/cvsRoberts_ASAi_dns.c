@@ -702,7 +702,7 @@ static int JacB(sunrealtype t, N_Vector y, N_Vector yB, N_Vector fyB,
   IJth(JB, 1, 2) = -p1;
   IJth(JB, 1, 3) = ZERO;
   IJth(JB, 2, 1) = -p2 * y3;
-  IJth(JB, 2, 2) = p2 * y3 + 2.0 * p3 * y2;
+  IJth(JB, 2, 2) = p2 * y3 + SUN_RCONST(2.0) * p3 * y2;
   IJth(JB, 2, 3) = SUN_RCONST(-2.0) * p3 * y2;
   IJth(JB, 3, 1) = -p2 * y2;
   IJth(JB, 3, 2) = p2 * y2;

@@ -383,7 +383,7 @@ static void SetIC(N_Vector u, UserData data)
     for (i = 1; i <= MX; i++)
     {
       x                 = i * dx;
-      IJth(udata, i, j) = x * (XMAX - x) * y * (YMAX - y) * exp(FIVE * x * y);
+      IJth(udata, i, j) = x * (XMAX - x) * y * (YMAX - y) * SUNRexp(FIVE * x * y);
     }
   }
 }
@@ -401,9 +401,6 @@ static void PrintHeader(sunrealtype reltol, sunrealtype abstol, sunrealtype umax
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters: reltol = %Lg   abstol = %Lg\n\n", reltol, abstol);
   printf("At t = %Lg      max.norm(u) =%14.6Le \n", T0, umax);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters: reltol = %g   abstol = %g\n\n", reltol, abstol);
-  printf("At t = %g      max.norm(u) =%14.6e \n", T0, umax);
 #else
   printf("Tolerance parameters: reltol = %g   abstol = %g\n\n", reltol, abstol);
   printf("At t = %g      max.norm(u) =%14.6e \n", T0, umax);
@@ -420,8 +417,6 @@ static void PrintOutput(sunrealtype t, sunrealtype umax, long int nst)
   printf("At t = %4.2Qf   max.norm(u) =%14.6Qe   nst = %4ld\n", t, umax, nst);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("At t = %4.2Lf   max.norm(u) =%14.6Le   nst = %4ld\n", t, umax, nst);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At t = %4.2f   max.norm(u) =%14.6e   nst = %4ld\n", t, umax, nst);
 #else
   printf("At t = %4.2f   max.norm(u) =%14.6e   nst = %4ld\n", t, umax, nst);
 #endif

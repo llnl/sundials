@@ -64,12 +64,6 @@
 #include <sundials/sundials_types.h>   /* SUNDIALS type definitions        */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver  */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Problem Constants */
 #define NVARS    2                    /* number of species         */
 #define KH       SUN_RCONST(4.0e-6)   /* horizontal diffusivity Kh */
@@ -320,9 +314,9 @@ static void InitUserData(int my_pe, MPI_Comm comm, UserData data)
   data->om   = PI / HALFDAY;
   data->dx   = (XMAX - XMIN) / ((sunrealtype)(MX - 1));
   data->dy   = (YMAX - YMIN) / ((sunrealtype)(MY - 1));
-  data->hdco = KH / SQR(data->dx);
+  data->hdco = KH / SUNSQR(data->dx);
   data->haco = VEL / (SUN_RCONST(2.0) * data->dx);
-  data->vdco = (SUN_RCONST(1.0) / SQR(data->dy)) * KV0;
+  data->vdco = (SUN_RCONST(1.0) / SUNSQR(data->dy)) * KV0;
 
   /* Set machine-related constants */
   data->comm  = comm;
@@ -393,14 +387,14 @@ static void SetInitialProfiles(N_Vector u, UserData data)
   {
     jy = ly + isuby * MYSUB;
     y  = YMIN + jy * dy;
-    cy = SQR(SUN_RCONST(0.1) * (y - ymid));
-    cy = SUN_RCONST(1.0) - cy + SUN_RCONST(0.5) * SQR(cy);
+    cy = SUNSQR(SUN_RCONST(0.1) * (y - ymid));
+    cy = SUN_RCONST(1.0) - cy + SUN_RCONST(0.5) * SUNSQR(cy);
     for (lx = 0; lx < MXSUB; lx++)
     {
       jx                = lx + isubx * MXSUB;
       x                 = XMIN + jx * dx;
-      cx                = SQR(SUN_RCONST(0.1) * (x - xmid));
-      cx                = SUN_RCONST(1.0) - cx + SUN_RCONST(0.5) * SQR(cx);
+      cx                = SUNSQR(SUN_RCONST(0.1) * (x - xmid));
+      cx                = SUN_RCONST(1.0) - cx + SUN_RCONST(0.5) * SUNSQR(cx);
       udata[offset]     = C1_SCALE * cx * cy;
       udata[offset + 1] = C2_SCALE * cx * cy;
       offset            = offset + 2;
@@ -787,11 +781,11 @@ static void fcalc(sunrealtype t, sunrealtype udata[], sunrealtype dudata[],
 
   /* Set diurnal rate coefficients as functions of t, and save q4 in
   data block for use by preconditioner evaluation routine */
-  s = sin((data->om) * t);
+  s = SUNRsin((data->om) * t);
   if (s > SUN_RCONST(0.0))
   {
-    q3     = exp(-A3 / s);
-    q4coef = exp(-A4 / s);
+    q3     = SUNRexp(-A3 / s);
+    q4coef = SUNRexp(-A4 / s);
   }
   else
   {
@@ -808,8 +802,8 @@ static void fcalc(sunrealtype t, sunrealtype udata[], sunrealtype dudata[],
     /* Set vertical diffusion coefficients at jy +- 1/2 */
     ydn  = YMIN + (jy - SUN_RCONST(0.5)) * dely;
     yup  = ydn + dely;
-    cydn = verdco * exp(SUN_RCONST(0.2) * ydn);
-    cyup = verdco * exp(SUN_RCONST(0.2) * yup);
+    cydn = verdco * SUNRexp(SUN_RCONST(0.2) * ydn);
+    cyup = verdco * SUNRexp(SUN_RCONST(0.2) * yup);
     for (lx = 0; lx < MXSUB; lx++)
     {
       /* Extract c1 and c2, and set kinetic rate terms */
@@ -926,8 +920,8 @@ static int Precond(sunrealtype tn, N_Vector u, N_Vector fu, sunbooleantype jok,
       jy   = ly + isuby * MYSUB;
       ydn  = YMIN + (jy - SUN_RCONST(0.5)) * dely;
       yup  = ydn + dely;
-      cydn = verdco * exp(SUN_RCONST(0.2) * ydn);
-      cyup = verdco * exp(SUN_RCONST(0.2) * yup);
+      cydn = verdco * SUNRexp(SUN_RCONST(0.2) * ydn);
+      cyup = verdco * SUNRexp(SUN_RCONST(0.2) * yup);
       diag = -(cydn + cyup + SUN_RCONST(2.0) * hordco);
       for (lx = 0; lx < MXSUB; lx++)
       {

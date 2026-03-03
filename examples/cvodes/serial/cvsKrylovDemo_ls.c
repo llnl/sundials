@@ -56,12 +56,6 @@
 #include <sunlinsol/sunlinsol_sptfqmr.h> /* access to SPTFQMR SUNLinearSolver           */
 #include <sunnonlinsol/sunnonlinsol_newton.h> /* access to Newton SUNNonlinearSolver         */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Problem Constants */
 
 #define ZERO SUN_RCONST(0.0)
@@ -84,7 +78,7 @@
 #define NOUT    12                 /* number of output times */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours  */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day */
-#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
+#define PI      SUN_RCONST(3.1415926535898) /* pi */
 
 #define XMIN ZERO /* grid boundaries in x  */
 #define XMAX SUN_RCONST(20.0)
@@ -434,9 +428,9 @@ static void InitUserData(UserData data)
   data->om   = PI / HALFDAY;
   data->dx   = (XMAX - XMIN) / (MX - 1);
   data->dy   = (YMAX - YMIN) / (MY - 1);
-  data->hdco = KH / SQR(data->dx);
+  data->hdco = KH / SUNSQR(data->dx);
   data->haco = VEL / (TWO * data->dx);
-  data->vdco = (ONE / SQR(data->dy)) * KV0;
+  data->vdco = (ONE / SUNSQR(data->dy)) * KV0;
 }
 
 /* Free data memory */
@@ -475,13 +469,13 @@ static void SetInitialProfiles(N_Vector u, sunrealtype dx, sunrealtype dy)
   for (jy = 0; jy < MY; jy++)
   {
     y  = YMIN + jy * dy;
-    cy = SQR(SUN_RCONST(0.1) * (y - YMID));
-    cy = ONE - cy + SUN_RCONST(0.5) * SQR(cy);
+    cy = SUNSQR(SUN_RCONST(0.1) * (y - YMID));
+    cy = ONE - cy + SUN_RCONST(0.5) * SUNSQR(cy);
     for (jx = 0; jx < MX; jx++)
     {
       x                       = XMIN + jx * dx;
-      cx                      = SQR(SUN_RCONST(0.1) * (x - XMID));
-      cx                      = ONE - cx + SUN_RCONST(0.5) * SQR(cx);
+      cx                      = SUNSQR(SUN_RCONST(0.1) * (x - XMID));
+      cx                      = ONE - cx + SUN_RCONST(0.5) * SUNSQR(cx);
       IJKth(udata, 1, jx, jy) = C1_SCALE * cx * cy;
       IJKth(udata, 2, jx, jy) = C2_SCALE * cx * cy;
     }
