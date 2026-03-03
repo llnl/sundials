@@ -78,12 +78,6 @@
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h" /* access to the fixed point SUNNonlinearSolver */
 #include "sunnonlinsol/sunnonlinsol_newton.h" /* access to the newton SUNNonlinearSolver      */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Shared Problem Constants */
 
 #define ATOL SUN_RCONST(1.0e-6)
@@ -387,7 +381,7 @@ static int f1(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   y1 = NV_Ith_S(y, 1);
 
   NV_Ith_S(ydot, 0) = y1;
-  NV_Ith_S(ydot, 1) = (ONE - SQR(y0)) * P1_ETA * y1 - y0;
+  NV_Ith_S(ydot, 1) = (ONE - SUNSQR(y0)) * P1_ETA * y1 - y0;
 
   return (0);
 }
@@ -402,7 +396,7 @@ static int Jac1(sunrealtype tn, N_Vector y, N_Vector fy, SUNMatrix J,
 
   SM_ELEMENT_D(J, 0, 1) = ONE;
   SM_ELEMENT_D(J, 1, 0) = -TWO * P1_ETA * y0 * y1 - ONE;
-  SM_ELEMENT_D(J, 1, 1) = P1_ETA * (ONE - SQR(y0));
+  SM_ELEMENT_D(J, 1, 1) = P1_ETA * (ONE - SUNSQR(y0));
 
   return (0);
 }

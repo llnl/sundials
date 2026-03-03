@@ -34,6 +34,20 @@
 #include <sunlinsol/sunlinsol_dense.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define FSYM "Qf"
+#define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define GSYM "Lg"
+#define FSYM "Lf"
+#define ESYM "Le"
+#else
+#define GSYM "g"
+#define FSYM "f"
+#define ESYM "e"
+#endif
+
 #define NHVALS 9
 
 /* User-supplied Functions Called by the Solver */
@@ -318,17 +332,17 @@ int main(int argc, char* argv[])
     printf("  "
            "-------------------------------------------------------------------"
            "-----------\n");
-    printf("    h         yerr       dyerr      d2yerr     d3yerr    d4yerr   "
+    printf("    h         yerr       dyerr      d2yerr     d3yerr    d4yerr    "
            "d5yerr\n");
     printf("  "
            "-------------------------------------------------------------------"
            "-----------\n");
     for (ih = 0; ih < NHVALS; ih++)
     {
-      printf("    %.1e   %.2e   %.2e   %.2e   %.2e   %.2e   %.2e\n",
-             (double)hvals[ih], (double)yerrs[ih], (double)dyerrs[ih],
-             (double)d2yerrs[ih], (double)d3yerrs[ih], (double)d4yerrs[ih],
-             (double)d5yerrs[ih]);
+      printf("    %.1" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "\n",
+             hvals[ih], yerrs[ih], dyerrs[ih],
+             d2yerrs[ih], d3yerrs[ih], d4yerrs[ih],
+             d5yerrs[ih]);
     }
     printf("  "
            "-------------------------------------------------------------------"
@@ -337,68 +351,68 @@ int main(int argc, char* argv[])
     printf("  Estimated y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f",
+      printf("  %.3" FSYM,
              SUNRlog(yerrs[ih] / yerrs[ih - 1]) / SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     yrate[ideg] = SUNRlog(yerrs[NHVALS - 1] / yerrs[0]) /
                   SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     yferr[ideg] = yerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)yrate[ideg], (double)yferr[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", yrate[ideg], yferr[ideg]);
 
     printf("  Estimated dy convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f",
+      printf("  %.3" FSYM,
              SUNRlog(dyerrs[ih] / dyerrs[ih - 1]) / SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     dyrate[ideg] = SUNRlog(dyerrs[NHVALS - 1] / dyerrs[0]) /
                    SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     dyferr[ideg] = dyerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)dyrate[ideg], (double)dyferr[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", dyrate[ideg], dyferr[ideg]);
 
     printf("  Estimated d2y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f", SUNRlog(d2yerrs[ih] / d2yerrs[ih - 1]) /
+      printf("  %.3" ESYM, SUNRlog(d2yerrs[ih] / d2yerrs[ih - 1]) /
                          SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d2yrate[ideg] = SUNRlog(d2yerrs[NHVALS - 1] / d2yerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     d2yferr[ideg] = d2yerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)d2yrate[ideg], (double)d2yferr[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", d2yrate[ideg], d2yferr[ideg]);
 
     printf("  Estimated d3y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f", SUNRlog(d3yerrs[ih] / d3yerrs[ih - 1]) /
+      printf("  %.3" FSYM, SUNRlog(d3yerrs[ih] / d3yerrs[ih - 1]) /
                          SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d3yrate[ideg] = SUNRlog(d3yerrs[NHVALS - 1] / d3yerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     d3yferr[ideg] = d3yerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)d3yrate[ideg], (double)d3yferr[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", d3yrate[ideg], d3yferr[ideg]);
 
     printf("  Estimated d4y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f", SUNRlog(d4yerrs[ih] / d4yerrs[ih - 1]) /
+      printf("  %.3" FSYM, SUNRlog(d4yerrs[ih] / d4yerrs[ih - 1]) /
                          SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d4yrate[ideg] = SUNRlog(d4yerrs[NHVALS - 1] / d4yerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     d4yferr[ideg] = d4yerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)d4yrate[ideg], (double)d4yferr[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", d4yrate[ideg], d4yferr[ideg]);
 
     printf("  Estimated d5y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f", SUNRlog(d5yerrs[ih] / d5yerrs[ih - 1]) /
+      printf("  %.3" FSYM, SUNRlog(d5yerrs[ih] / d5yerrs[ih - 1]) /
                          SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d5yrate[ideg] = SUNRlog(d5yerrs[NHVALS - 1] / d5yerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     d5yferr[ideg] = d5yerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)d5yrate[ideg], (double)d5yferr[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", d5yrate[ideg], d5yferr[ideg]);
 
   } /* end ideg loop */
 
@@ -527,43 +541,43 @@ int main(int argc, char* argv[])
     printf("  ------------------------------------------\n");
     for (ih = 0; ih < NHVALS; ih++)
     {
-      printf("    %.1e   %.2e   %.2e   %.2e\n", (double)hvals[ih],
-             (double)yerrs[ih], (double)dyerrs[ih], (double)d2yerrs[ih]);
+      printf("    %.1" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "\n", hvals[ih],
+             yerrs[ih], dyerrs[ih], d2yerrs[ih]);
     }
     printf("  ------------------------------------------\n");
 
     printf("  Estimated y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f",
+      printf("  %.3" FSYM,
              SUNRlog(yerrs[ih] / yerrs[ih - 1]) / SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     yrate2[ideg] = SUNRlog(yerrs[NHVALS - 1] / yerrs[0]) /
                    SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     yferr2[ideg] = yerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)yrate2[ideg], (double)yferr2[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", yrate2[ideg], yferr2[ideg]);
 
     printf("  Estimated dy convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f",
+      printf("  %.3" FSYM,
              SUNRlog(dyerrs[ih] / dyerrs[ih - 1]) / SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     dyrate2[ideg] = SUNRlog(dyerrs[NHVALS - 1] / dyerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     dyferr2[ideg] = dyerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)dyrate2[ideg], (double)dyferr2[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", dyrate2[ideg], dyferr2[ideg]);
 
     printf("  Estimated d2y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3f", SUNRlog(d2yerrs[ih] / d2yerrs[ih - 1]) /
+      printf("  %.3" FSYM, SUNRlog(d2yerrs[ih] / d2yerrs[ih - 1]) /
                          SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d2yrate2[ideg] = SUNRlog(d2yerrs[NHVALS - 1] / d2yerrs[0]) /
                      SUNRlog(hvals[NHVALS - 1] / hvals[0]);
     d2yferr2[ideg] = d2yerrs[NHVALS - 1];
-    printf("  (%.3f, %.0e)\n\n", (double)d2yrate2[ideg], (double)d2yferr2[ideg]);
+    printf("  (%.3" FSYM ", %.0" ESYM ")\n\n", d2yrate2[ideg], d2yferr2[ideg]);
 
   } /* end ideg loop */
 
@@ -581,12 +595,12 @@ int main(int argc, char* argv[])
          "------------------------\n");
   for (ideg = 0; ideg <= ARK_INTERP_MAX_DEGREE; ideg++)
   {
-    printf("      %1d   |  %.1f (%.0e)   %.1f (%.0e)   %.1f (%.0e)   %.1f "
-           "(%.0e)   %.1f (%.0e)   %.1f (%.0e)\n",
-           ideg, (double)yrate[ideg], (double)yferr[ideg], (double)dyrate[ideg],
-           (double)dyferr[ideg], (double)d2yrate[ideg], (double)d2yferr[ideg],
-           (double)d3yrate[ideg], (double)d3yferr[ideg], (double)d4yrate[ideg],
-           (double)d4yferr[ideg], (double)d5yrate[ideg], (double)d5yferr[ideg]);
+    printf("      %1d   |  %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM
+           "(%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")\n",
+           ideg, yrate[ideg], yferr[ideg], dyrate[ideg],
+           dyferr[ideg], d2yrate[ideg], d2yferr[ideg],
+           d3yrate[ideg], d3yferr[ideg], d4yrate[ideg],
+           d4yferr[ideg], d5yrate[ideg], d5yferr[ideg]);
   }
   printf("  "
          "---------------------------------------------------------------------"
@@ -598,9 +612,9 @@ int main(int argc, char* argv[])
   printf("  ---------------------------------------------------\n");
   for (ideg = 0; ideg <= ARK_INTERP_MAX_DEGREE; ideg++)
   {
-    printf("      %1d   |  %.1f (%.0e)   %.1f (%.0e)   %.1f (%.0e)\n", ideg,
-           (double)yrate2[ideg], (double)yferr2[ideg], (double)dyrate2[ideg],
-           (double)dyferr2[ideg], (double)d2yrate2[ideg], (double)d2yferr2[ideg]);
+    printf("      %1d   |  %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")\n", ideg,
+           yrate2[ideg], yferr2[ideg], dyrate2[ideg],
+           dyferr2[ideg], d2yrate2[ideg], d2yferr2[ideg]);
   }
   printf("  ---------------------------------------------------\n");
 

@@ -67,8 +67,6 @@
 #define EIGHTYONE    SUN_RCONST(81.0)
 #define PI           SUN_RCONST(3.141592653589793238462643383279502884197169)
 
-#define SQR(x) ((x) * (x))
-
 // -----------------------------------------------------------------------------
 // Functions provided to the SUNDIALS solver
 // -----------------------------------------------------------------------------
@@ -91,7 +89,7 @@ static int res(N_Vector uu, N_Vector fuu, void* user_data)
   const sunrealtype z = udata[2];
 
   fdata[0] = THREE * x - SUNRcos((y - ONE) * z) - HALF;
-  fdata[1] = SQR(x) - EIGHTYONE * SQR((y - PTNINE)) + SUNRsin(z) + ONEPTZEROSIX;
+  fdata[1] = SUNSQR(x) - EIGHTYONE * SUNSQR((y - PTNINE)) + SUNRsin(z) + ONEPTZEROSIX;
   fdata[2] = SUNRexp(-x * (y - ONE)) + TWENTY * z + (TEN * PI - THREE) / THREE;
 
   return 0;
@@ -299,7 +297,11 @@ int main(int argc, char* argv[])
 
   // Output Jacobian data
   std::cout << std::scientific;
-  std::cout << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  std::cout << std::setprecision(SUN_DIGITS10/2);
+#else
+  std::cout << std::setprecision(SUN_DIGITS10);
+#endif
   std::cout << "nni = " << nni << std::endl;
   std::cout << "Jac nni = " << nni_Jdq << std::endl;
   std::cout << std::endl;
@@ -317,9 +319,9 @@ int main(int argc, char* argv[])
     std::cout << std::setw(8) << std::right << i << std::setw(25) << std::right
               << Jdq_data[i] << std::setw(25) << std::right << Jtrue_data[i]
               << std::setw(25) << std::right
-              << std::abs(Jdq_data[i] - Jtrue_data[i]) << std::setw(25)
+              << SUNRabs(Jdq_data[i] - Jtrue_data[i]) << std::setw(25)
               << std::right
-              << std::abs(Jdq_data[i] - Jtrue_data[i]) / Jtrue_data[i]
+              << SUNRabs(Jdq_data[i] - Jtrue_data[i]) / Jtrue_data[i]
               << std::endl;
     result += SUNRCompareTol(Jdq_data[i], Jtrue_data[i], tol);
   }

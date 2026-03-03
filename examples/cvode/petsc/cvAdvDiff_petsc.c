@@ -49,7 +49,7 @@
 #include <nvector/nvector_petsc.h> /* access to the PETSc N_Vector                 */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sundials/sundials_math.h> /* definition of ABS and EXP                    */
+#include <sundials/sundials_math.h> /* definition of SUNRexp                    */
 #include <sundials/sundials_types.h> /* definition of type sunrealtype                  */
 
 #include "sunnonlinsol/sunnonlinsol_petscsnes.h" /* access to the fixed point SUNNonlinearSolver */

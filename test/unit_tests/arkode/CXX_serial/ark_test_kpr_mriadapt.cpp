@@ -833,15 +833,15 @@ int main(int argc, char* argv[])
     // access/print solution and error
     u    = ydata[0];
     v    = ydata[1];
-    uerr = std::abs(yrefdata[0] - u);
-    verr = std::abs(yrefdata[1] - v);
+    uerr = SUNRabs(yrefdata[0] - u);
+    verr = SUNRabs(yrefdata[1] - v);
     uerrtot += uerr * uerr;
     verrtot += verr * verr;
     errtot += uerr * uerr + verr * verr;
     accuracy = std::max(accuracy,
-                        uerr / std::abs(opts.atol + opts.rtol * yrefdata[0]));
+                        uerr / SUNRabs(opts.atol + opts.rtol * yrefdata[0]));
     accuracy = std::max(accuracy,
-                        verr / std::abs(opts.atol + opts.rtol * yrefdata[1]));
+                        verr / SUNRabs(opts.atol + opts.rtol * yrefdata[1]));
 
     // Periodically output current results to screen
     if (t >= tout)

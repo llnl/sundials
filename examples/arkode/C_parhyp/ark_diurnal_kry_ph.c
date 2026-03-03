@@ -65,7 +65,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sundials/sundials_dense.h> /* prototypes for small dense fcts. */
-#include <sundials/sundials_math.h>  /* definition of macros SUNSQR and EXP */
+#include <sundials/sundials_math.h>  /* definition of macros SUNSQR and SUNRexp */
 #include <sundials/sundials_types.h> /* definitions of sunrealtype, sunbooleantype */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver  */
 

@@ -48,7 +48,11 @@ sunrealtype SUNRpowerI(sunrealtype base, int exponent)
 
 sunbooleantype SUNRCompare(sunrealtype a, sunrealtype b)
 {
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  return (SUNRCompareTol(a, b, 100 * SUN_UNIT_ROUNDOFF));
+#else
   return (SUNRCompareTol(a, b, 10 * SUN_UNIT_ROUNDOFF));
+#endif
 }
 
 sunbooleantype SUNRCompareTol(sunrealtype a, sunrealtype b, sunrealtype tol)

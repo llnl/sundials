@@ -385,7 +385,7 @@ int get_method_properties(ARKodeButcherTable Be, int& stages, int& order,
 
   // Check for explicit first stage
   explicit_first_stage = true;
-  if (std::abs(Be->A[0][0]) > ZERO) { explicit_first_stage = false; }
+  if (SUNRabs(Be->A[0][0]) > ZERO) { explicit_first_stage = false; }
 
   // Check for stiffly accurate method
   stiffly_accurate = ARKodeButcherTable_IsStifflyAccurate(Be);

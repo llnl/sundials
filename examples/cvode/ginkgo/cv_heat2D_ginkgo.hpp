@@ -309,7 +309,7 @@ static int OpenOutput(UserData& udata)
 {
   // Header for status output
   std::cout << std::scientific
-            << std::setprecision(std::numeric_limits<sunrealtype>::digits10)
+            << std::setprecision(SUN_DIGITS10)
             << "          t                     ||u||_rms      "
             << "          max error\n"
             << " ----------------------------------------------"
@@ -331,11 +331,11 @@ static int OpenOutput(UserData& udata)
     // Open output streams for solution and error
     udata.uout.open("heat2d_solution.txt");
     udata.uout << std::scientific
-               << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+               << std::setprecision(SUN_DIGITS10);
 
     udata.eout.open("heat2d_error.txt");
     udata.eout << std::scientific
-               << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+               << std::setprecision(SUN_DIGITS10);
   }
 
   return 0;

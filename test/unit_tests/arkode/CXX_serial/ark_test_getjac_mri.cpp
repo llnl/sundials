@@ -291,14 +291,18 @@ int main(int argc, char* argv[])
 
   // Output Jacobian data
   std::cout << std::scientific;
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  std::cout << std::setprecision(SUN_DIGITS10/2);
+#else
   std::cout << std::setprecision(SUN_DIGITS10);
+#endif
   std::cout << "Jac nst = " << nst_Jdq << std::endl;
   std::cout << "Jac t   = " << t_Jdq << std::endl;
   std::cout << std::endl;
-  std::cout << std::setw(8) << std::right << "Index" << std::setw(SUN_DIGITS10+10)
-            << std::right << "J DQ" << std::setw(SUN_DIGITS10+10) << std::right << "J true"
-            << std::setw(SUN_DIGITS10+10) << std::right << "absolute difference"
-            << std::setw(SUN_DIGITS10+10) << std::right << "relative difference" << std::endl;
+  std::cout << std::setw(8) << std::right << "Index" << std::setw(25)
+            << std::right << "J DQ" << std::setw(25) << std::right << "J true"
+            << std::setw(25) << std::right << "absolute difference"
+            << std::setw(25) << std::right << "relative difference" << std::endl;
   for (int i = 0; i < 4 * 25 + 8; i++) { std::cout << "-"; }
   std::cout << std::endl;
 
@@ -306,12 +310,12 @@ int main(int argc, char* argv[])
   sunindextype ldata = SUNDenseMatrix_LData(Jtrue);
   for (sunindextype i = 0; i < ldata; i++)
   {
-    std::cout << std::setw(8) << std::right << i << std::setw(SUN_DIGITS10+10) << std::right
-              << Jdq_data[i] << std::setw(SUN_DIGITS10+10) << std::right << Jtrue_data[i]
-              << std::setw(SUN_DIGITS10+10) << std::right
-              << std::abs(Jdq_data[i] - Jtrue_data[i]) << std::setw(SUN_DIGITS10+10)
+    std::cout << std::setw(8) << std::right << i << std::setw(25) << std::right
+              << Jdq_data[i] << std::setw(25) << std::right << Jtrue_data[i]
+              << std::setw(25) << std::right
+              << SUNRabs(Jdq_data[i] - Jtrue_data[i]) << std::setw(25)
               << std::right
-              << std::abs(Jdq_data[i] - Jtrue_data[i]) / Jtrue_data[i]
+              << SUNRabs(Jdq_data[i] - Jtrue_data[i]) / Jtrue_data[i]
               << std::endl;
     result += SUNRCompareTol(Jdq_data[i], Jtrue_data[i], tol);
   }

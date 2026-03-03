@@ -46,7 +46,7 @@
 #include <nvector/nvector_openmpdev.h> /* OpenMPDEV N_Vector types, fcts., macros */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sundials/sundials_math.h>    /* definition of ABS and EXP   */
+#include <sundials/sundials_math.h>    /* definition of SUNRexp   */
 #include <sundials/sundials_types.h>   /* definition of type sunrealtype */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver     */
 

@@ -92,16 +92,6 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef MAX
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-#endif
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Constants */
 
 #define ZERO SUN_RCONST(0.0)
@@ -527,7 +517,7 @@ static int Precond(sunrealtype t, N_Vector c, N_Vector fc, sunbooleantype jok,
         /* Generate the jth column as a difference quotient */
         jj   = if0 + j;
         save = cdata[jj];
-        r    = MAX(srur * SUNRabs(save), r0 / rewtdata[jj]);
+        r    = SUNMAX(srur * SUNRabs(save), r0 / rewtdata[jj]);
         cdata[jj] += r;
         fac = -gamma / r;
         fblock(t, cdata, jx, jy, f1, wdata);
@@ -738,7 +728,7 @@ static int PrecondB(sunrealtype t, N_Vector c, N_Vector cB, N_Vector fcB,
         /* Generate the jth column as a difference quotient */
         jj   = if0 + j;
         save = cdata[jj];
-        r    = MAX(srur * SUNRabs(save), r0 / rewtdata[jj]);
+        r    = SUNMAX(srur * SUNRabs(save), r0 / rewtdata[jj]);
         cdata[jj] += r;
         fac = gamma / r;
         fblock(t, cdata, jx, jy, f1, wdata);
@@ -883,8 +873,8 @@ static void InitUserData(WebData wdata)
   dy = wdata->dy = DY;
   for (i = 0; i < ns; i++)
   {
-    cox[i] = diff[i] / SQR(dx);
-    coy[i] = diff[i] / SQR(dy);
+    cox[i] = diff[i] / SUNSQR(dx);
+    coy[i] = diff[i] / SUNSQR(dy);
   }
 
   /* Set remaining method parameters */
@@ -946,17 +936,17 @@ static void CInit(N_Vector c, WebData wdata)
   dx    = wdata->dx;
   dy    = wdata->dy;
 
-  x_factor = SUN_RCONST(4.0) / SQR(AX);
-  y_factor = SUN_RCONST(4.0) / SQR(AY);
+  x_factor = SUN_RCONST(4.0) / SUNSQR(AX);
+  y_factor = SUN_RCONST(4.0) / SUNSQR(AY);
   for (jy = 0; jy < MY; jy++)
   {
     y     = jy * dy;
-    argy  = SQR(y_factor * y * (AY - y));
+    argy  = SUNSQR(y_factor * y * (AY - y));
     iyoff = mxns * jy;
     for (jx = 0; jx < MX; jx++)
     {
       x    = jx * dx;
-      argx = SQR(x_factor * x * (AX - x));
+      argx = SUNSQR(x_factor * x * (AX - x));
       ioff = iyoff + ns * jx;
       for (i = 1; i <= ns; i++)
       {

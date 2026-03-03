@@ -52,7 +52,7 @@
 #define NSPECIES 5
 #define STSIZE   6
 
-#define WIDTH (10 + std::numeric_limits<sunrealtype>::digits10)
+#define WIDTH (10 + SUN_DIGITS10)
 
 // -----------------------------------------------------------------------------
 // Problem options
@@ -435,7 +435,7 @@ static int OpenOutput(EulerData& udata, ARKODEParameters& uopts)
   if (uopts.output)
   {
     std::cout << std::scientific;
-    std::cout << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+    std::cout << std::setprecision(SUN_DIGITS10);
     std::cout << "    t        "
               << " ||rho||     "
               << " ||mx||      "
@@ -457,7 +457,7 @@ static int OpenOutput(EulerData& udata, ARKODEParameters& uopts)
     uopts.uout.open(fname.str());
 
     uopts.uout << std::scientific;
-    uopts.uout << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+    uopts.uout << std::setprecision(SUN_DIGITS10);
     uopts.uout << "# title Sod Shock Tube" << std::endl;
     uopts.uout << "# nvar 5" << std::endl;
     uopts.uout << "# vars rho mx my mz et" << std::endl;
