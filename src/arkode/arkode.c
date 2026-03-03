@@ -1161,7 +1161,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       break;
     }
 
-    /* In ONE_STEP mode, exit loop (arkCompleteStep already copied yn to ycur, an alias to yout) */ 
+    /* In ONE_STEP mode, exit loop (arkCompleteStep already copied yn to ycur, an alias to yout) */
     if (itask == ARK_ONE_STEP)
     {
       istate            = ARK_SUCCESS;
