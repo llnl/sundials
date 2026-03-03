@@ -238,8 +238,8 @@ int main(int argc, char* argv[])
   if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
 
   /* Set real type dominant eigenvalue */
-  flag = SUNDomEigEstimator_SetReal_Power(DEE);
-  if (check_flag(&flag, "SUNDomEigEstimator_SetReal_Power", 1)) { return 1; }
+  flag = SUNDomEigEstimator_SetDEEisReal_Power(DEE, SUNTRUE);
+  if (check_flag(&flag, "SUNDomEigEstimator_SetDEEisReal_Power", 1)) { return 1; }
 
   /* Open output stream for results, output comment line */
   UFID = fopen("solution.txt", "w");

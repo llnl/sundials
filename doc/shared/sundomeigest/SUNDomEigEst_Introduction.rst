@@ -38,15 +38,54 @@ Moreover, advanced users can provide a customized :c:type:`SUNDomEigEstimator`
 implementation to any SUNDIALS package, particularly in cases where they
 provide their own :c:type:`N_Vector`.
 
-While Krylov-based estimators preset the number of Krylov subspace
-dimensions, resulting in a tolerance-free estimation, SUNDIALS requires
-that iterative estimators stop when the residual meets a prescribed
-tolerance, :math:`\tau`,
+The default Power iteration implementation estimates complex-valued dominant
+eigenvalues. After the iteration phase, a postprocessing step is performed
+using the two most recent iterate vectors (approximations of the dominant
+eigenvector). These vectors are used to construct a 2×2 projection of the
+original matrix.
+
+If the two iterates are (numerically) linearly dependent, this indicates
+convergence to a one-dimensional invariant subspace, consistent with a
+real-valued dominant eigenvalue. In this case, the dominant eigenvalue
+estimate is taken as the Rayleigh quotient of the final iterate.
+
+If the iterates are not linearly dependent, they span a two-dimensional
+subspace. A 2×2 projection of the original matrix onto this subspace is
+constructed, and the eigenvalues of this projected matrix are used as the
+dominant eigenvalue estimates. This allows the method to capture complex
+conjugate dominant eigenvalue pairs.
+
+Convergence is determined using a magnitude-based relative tolerance
+criterion. Given successive eigenvalue estimates :math:`\lambda_k` and
+:math:`\lambda_{k-1}`, convergence is achieved when
 
 .. math::
-  :name: pi_rel_tol
+   :name: pi_rel_tol
 
-  \frac{\left|\lambda_k - \lambda_{k-1}\right|}{\left|\lambda_k \right|} < \tau.
+   \frac{\left||\lambda_k| - |\lambda_{k-1}|\right|}{\left|\lambda_k \right|} < \tau.
+
+where :math:`\tau` is a prescribed tolerance.
+
+An option is also provided to estimate only a real-valued dominant
+eigenvalue. In this mode, the 2×2 projection step is skipped and the
+Rayleigh quotient of the final iterate is returned directly.
+
+Krylov-based estimators use a fixed number of Krylov subspace dimensions in
+order to guarantee a bounded memory footprint, which is essential for
+large-scale problems. Unlike the Power iteration, these implementations do
+not perform tolerance-based convergence checks at every Arnoldi step since
+repeating an Arnoldi iteration due to failed convergence would be
+computationally expensive.
+
+Instead, the magnitude-based convergence criterion defined in
+:ref:`relative tolerance <pi_rel_tol>` is used as a preliminary screening
+mechanism before invoking the Krylov-based estimator. While this approach
+is slightly less robust than explicitly monitoring both the real and
+imaginary components of the eigenvalue residual during Arnoldi iteration,
+it significantly reduces computational cost. This trade-off is particularly
+advantageous for large-scale problems, where each Arnoldi cycle may be
+expensive.
+
 
 For users interested in providing their own :c:func:`SUNDomEigEstimator`, the
 following section presents the :c:type:`SUNDomEigEstimator` class and its implementation

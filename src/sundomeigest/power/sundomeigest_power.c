@@ -168,20 +168,20 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetReal_Power(SUNDomEigEstimator DEE)
+SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real)
 {
   SUNFunctionBegin(DEE->sunctx);
 
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
-  /* set the complex flag to false */
-  PI_CONTENT(DEE)->complex = SUNFALSE;
+  /* set the complex flag to the opposite of the real flag */
+  PI_CONTENT(DEE)->complex = !real;
 
   /* q_prev is allocated in SUNDomEigEstimator_Initialize_Power, which is expected to be 
   called after this routine. If the user calls this routine after initialization, we need 
   to free q_prev here. */
-  if (PI_CONTENT(DEE)->q_prev)
+  if (!(PI_CONTENT(DEE)->complex) && PI_CONTENT(DEE)->q_prev)
   {
     N_VDestroy(PI_CONTENT(DEE)->q_prev);
     PI_CONTENT(DEE)->q_prev = NULL;
@@ -314,7 +314,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
   SUNAssert((PI_CONTENT(DEE)->max_iters >= 0), SUN_ERR_ARG_CORRUPT);
-  if (PI_CONTENT(DEE)->complex)
+  if (PI_CONTENT(DEE)->complex && (PI_CONTENT(DEE)->q_prev == NULL))
   {
     /* allocate q_prev vector */
     PI_CONTENT(DEE)->q_prev = N_VClone(PI_CONTENT(DEE)->q);
@@ -474,14 +474,12 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
 
   int retval;
   sunrealtype cos_qs, det_G_inv, h11, h12, h21, h22, p11, p12, p21, p22;
-  sunrealtype proj_cond_inv = SUN_RCONST(1e-2);
+  sunrealtype proj_cond_inv = SUN_RCONST(1e-10);
   cos_qs                    = N_VDotProd(v_prev, v);
   SUNCheckLastErr();
 
   if (SUNRabs(SUNRabs(cos_qs) - ONE) < proj_cond_inv)
   {
-    printf("Warning: Projection matrix is ill-conditioned. Returning "
-           "dominant eigenvalue as real part only.\n");
     /* Dominant eigenvalue is real */
     *lambdaR_out = lambdaR;
     *lambdaI_out = ZERO;

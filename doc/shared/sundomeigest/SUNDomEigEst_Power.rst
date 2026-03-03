@@ -109,6 +109,27 @@ routines:
       :c:func:`SUNDomEigEstimator_SetInitialGuess`.
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real);
+
+   This routine sets the ``real`` flag in the Power iteration dominant eigenvalue estimator object.
+
+   :param DEE: the dominant eigenvalue estimator object.
+   :param real: the value to set the ``real`` flag to.
+
+   :returns: If successful, ``SUN_SUCCESS`` otherwise an appropriate error code.
+
+   .. note::
+
+      If ``real`` is ``SUNTRUE``, then the convergence criterion is based on the relative change 
+      in the magnitude of successive eigenvalue estimates.  If ``real`` is ``SUNFALSE``, then a 
+      postprocessing step is performed to compute the complex-valued dominant eigenvalue estimate, 
+      and the convergence criterion is based on the relative change in the magnitude of successive 
+      eigenvalue estimates. :c:func:`SUNDomEigEstimator_SetRelTol` can be used to set 
+      the relative tolerance for this convergence criterion.
+
+      The default value is ``SUNFALSE``.
+
+
 .. _SUNDomEigEst.Power.Description:
 
 SUNDomEigEstimator_Power Description
@@ -194,6 +215,8 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 * ``SUNDomEigEstimator_SetNumPreprocessIters_Power``
 
 * ``SUNDomEigEstimator_SetRelTol_Power``
+
+* ``SUNDomEigEstimator_SetDEEisReal_Power``
 
 * ``SUNDomEigEstimator_Initialize_Power``
 

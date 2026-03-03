@@ -608,19 +608,11 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
 
   step_mem->req_stages = (int)ss;
-  /* For the linear stability with the test equation, y' = lambda*y, 
-     the stability function of RKC methods is given by the Chebyshev 
-     polynomial of the first kind, T_s(z), where s is the number of 
-     stages and z is related to the eigenvalue and step size. For the 
-     method to be stable, the stability norm |T_s(z)| must be less 
-     than or equal to 1. To check stability norm with the requested 
-     number of stages and z, we evaluate the exact stability function 
-     or an inscribed ellipse approximation of the stability region at 
-     the point z and check if its absolute value is greater than 1.
-     If the stability norm is greater than one, for adaptive stepping, 
-     we reduce step size and return ARK_RETRY_STEP. For fixed step size, 
-     we increase number of stages until stability norm is acceptable or 
-     stage_max_limit is reached. */
+  /* To check stability, we evaluate the analytic stability function or an inscribed 
+     ellipse approximation. If the stability norm is greater than one, 
+     for adaptive stepping, we reduce step size and return ARK_RETRY_STEP. 
+     For fixed step size, we increase number of stages until stability norm is acceptable 
+     or stage_max_limit is reached. */
   retval = lsrkStep_RKC_CheckStabilityNorm(ark_mem, step_mem, &stability_norm);
   if (retval != ARK_SUCCESS) { return retval; }
 
@@ -976,19 +968,11 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
 
   step_mem->req_stages = (int)ss;
-  /* For the linear stability with the test equation, y' = lambda*y, 
-     the stability function of RKL methods is given by the Legendre 
-     polynomial of the first kind, P_s(z), where s is the number of 
-     stages and z is related to the eigenvalue and step size. For the 
-     method to be stable, the stability norm |P_s(z)| must be less 
-     than or equal to 1. To check stability norm with the requested 
-     number of stages and z, we evaluate the exact stability function 
-     or an inscribed ellipse approximation of the stability region at 
-     the point z and check if its absolute value is greater than 1.
-     If the stability norm is greater than one, for adaptive stepping, 
-     we reduce step size and return ARK_RETRY_STEP. For fixed step size, 
-     we increase number of stages until stability norm is acceptable or 
-     stage_max_limit is reached. */
+  /* To check stability, we evaluate the analytic stability function or an inscribed 
+     ellipse approximation. If the stability norm is greater than one, 
+     for adaptive stepping, we reduce step size and return ARK_RETRY_STEP. 
+     For fixed step size, we increase number of stages until stability norm is acceptable 
+     or stage_max_limit is reached. */
   retval = lsrkStep_RKL_CheckStabilityNorm(ark_mem, step_mem, &stability_norm);
   if (retval != ARK_SUCCESS) { return retval; }
 
@@ -2493,16 +2477,10 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
 /*---------------------------------------------------------------
   lsrkStep_RKC_CheckStabilityNorm:
 
-  This routine computes the stability norm for RKC methods. This computation is based on the stability 
-  region of the RKC method, which is determined by the stability function of the method. The stability 
-  function of the RKC method is a rational function of the Chebyshev polynomial of degree s, where s is 
-  the number of stages. The stability region is then determined by the values of z = h*lambda for which
-  the stability function has magnitude less than or equal to 1. In particular, if use_ellipse is SUNTRUE, 
-  we use a heuristic that approximates the stability region by an ellipse with corners at (0,0), 
-  (re_stab_min, 0) and (re_stab_min/2, +/- im_stab_min), where re_stab_min and im_stab_min are determined 
-  by the damping parameter and the number of stages as described in the comments. If use_ellipse is SUNFALSE, 
-  we compute the stability norm directly from the stability function using the Chebyshev polynomial. 
-  The stability norm is then computed as the magnitude of the stability function evaluated at z = h*lambda.
+  This routine computes the stability norm for RKC methods. 
+  If use_ellipse is SUNTRUE, we use a heuristic that approximates the stability region by an ellipse. 
+  If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
+  the Chebyshev polynomial.
   ---------------------------------------------------------------*/
 int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                     sunrealtype* stability_norm)
@@ -2515,19 +2493,14 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
 
   if (step_mem->use_ellipse)
   {
-    /* The stability region of the RKC method with damping is contained in the ellipse
-       with corners at (0,0), (re_stab_min, 0) and (re_stab_min/2, +/- im_stab_min), 
-       where re_stab_min and im_stab_min are the real and imaginary parts of the leftmost point 
-       of the inscribed ellipse. The value of re_stab_min is determined by the damping parameter 
-      and the number of stages by reverting the formula for finding the required number of 
-      stages for a given spectral radius times step size. im_stab_min is then determined by 
-      herustically by dividing re_stab_min by the aspect ratio of the ellipse, which is 
-      approximateted as 3.65*ss, where ss is the number of stages. In particular, if ss=2,
-      the aspect ratio is estimated to be 0.6*ss. This heuristic is based on the observation 
-      that imaginary extend of the stability region grows linearly with the number of stages. 
-      The factors of 3.65 and 0.6 are determined empirically by plotting the stability region for 
-      different number of stages and the default damping parameter. It is subject to change if the 
-      default damping parameter is changed. */
+    /* The stability region of the damped RKC method is approximated by an ellipse with 
+    vertices at (0,0), (re_stab_min,0), and (re_stab_min/2,±im_stab_min). These vertices 
+    depend on the damping parameter. Also, im_stab_min is estimated heuristically from 
+    the ellipse aspect ratio, taken as approximately 3.65s, where s is the number of stages 
+    (for s=2, the ratio is approximated as 0.6s). This heuristic reflects the observed 
+    near-linear growth of the imaginary extent with the number of stages. The numerical 
+    factors (3.65 and 0.6) were obtained empirically from stability-region plots using 
+    the default damping parameter and may change if the damping is modified. */
     re_stab_min = TWO / THREE * (ONE - SUNSQR(ss)) *
                   (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping);
     im_stab_min = -re_stab_min /
@@ -2575,16 +2548,10 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
 /*---------------------------------------------------------------
   lsrkStep_RKL_CheckStabilityNorm:
 
-  This routine computes the stability norm for RKL methods. This computation is based on the stability 
-  region of the RKL method, which is determined by the stability function of the method. The stability 
-  function of the RKL method is a rational function of the Legendre polynomial of degree s, where s is 
-  the number of stages. The stability region is then determined by the values of z = h*lambda for which
-  the stability function has magnitude less than or equal to 1. In particular, if use_ellipse is SUNTRUE, 
-  we use a heuristic that approximates the stability region by an ellipse with corners at (0,0), 
-  (re_stab_min, 0) and (re_stab_min/2, +/- im_stab_min), where re_stab_min and im_stab_min are determined 
-  by the number of stages as described in the comments. If use_ellipse is SUNFALSE, 
-  we compute the stability norm directly from the stability function using the Legendre polynomial. 
-  The stability norm is then computed as the magnitude of the stability function evaluated at z = h*lambda.
+  This routine computes the stability norm for RKL methods. 
+  If use_ellipse is SUNTRUE, we use a heuristic that approximates the stability region by an ellipse. 
+  If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
+  the Chebyshev polynomial.
   ---------------------------------------------------------------*/
 int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                     sunrealtype* stability_norm)
@@ -2597,18 +2564,8 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
 
   if (step_mem->use_ellipse)
   {
-    /* The stability region of the RKL method is contained in the ellipse
-       with corners at (0,0), (re_stab_min, 0) and (re_stab_min/2, +/- im_stab_min), 
-       where re_stab_min and im_stab_min are the real and imaginary parts of the leftmost point 
-       of the inscribed ellipse. The value of re_stab_min is determined by  the number of stages 
-       by reverting the formula for finding the required number of stages for a given spectral 
-       radius times step size. im_stab_min is then determined by herustically by dividing 
-       re_stab_min by the aspect ratio of the ellipse, which is approximated as 
-       imag_extend_factor*ss, where ss is the number of stages and the factor imag_extend_factor 
-       is determined empirically by plotting the stability region for different number of stages. 
-       This factor is as follows: */
-
-    /*s = 2 -> 0.6
+    /*  The inscibed ellipse parameters are estimated heuristically based on s values as follows:
+        s = 2 -> 0.6
         s = 3 -> 1.5
         s = 4 -> 1.33
         s = 5 -> 1.33
@@ -2616,13 +2573,13 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
         s >= 20 and odd -> 1.2
         s >= 20 and even -> 1.06 */
     const sunrealtype imag_extend_factor[7] = {
-      0.6,  /* s = 2 */
-      1.5,  /* s = 3 */
-      1.33, /* s = 4 */
-      1.33, /* s = 5 */
-      1.27, /* s = 6 to 20 */
-      1.2,  /* s >= 20 and odd */
-      1.06  /* s >= 20 and even */
+      SUN_RCONST(0.6),  /* s = 2 */
+      SUN_RCONST(1.5),  /* s = 3 */
+      SUN_RCONST(1.33), /* s = 4 */
+      SUN_RCONST(1.33), /* s = 5 */
+      SUN_RCONST(1.27), /* s = 6 to 20 */
+      SUN_RCONST(1.2),  /* s >= 20 and odd */
+      SUN_RCONST(1.06)  /* s >= 20 and even */
     };
     re_stab_min = -((TWO * ss + ONE) * (TWO * ss + ONE) - SUN_RCONST(9.0)) /
                   SUN_RCONST(8.0);
@@ -2641,7 +2598,7 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
         im_stab_min = -re_stab_min / (imag_extend_factor[6 - (int)ss % 2] * ss);
       }
     }
-    // TODO:get opinon on whether we want to use the heuristic with different factors for different number of stages or
+    // TODO: get opinon on whether we want to use the heuristic with different factors for different number of stages or
     // to use a single global factor for all number of stages. The heuristic with different factors for different number
     // of stages is more accurate, especially for small number of stages, but it is also more complicated.
     // Instead we can use a single global factor of 1.5 for all number of stages as follows:

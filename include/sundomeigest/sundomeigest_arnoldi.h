@@ -82,8 +82,8 @@ SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator D
                                                             int num_iters);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetTolPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,
-                                                            sunrealtype tol);
+SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
+                                                sunrealtype tol);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetInitialGuess_Arnoldi(SUNDomEigEstimator DEE,

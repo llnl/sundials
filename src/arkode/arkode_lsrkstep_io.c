@@ -317,23 +317,10 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
 }
 
 /*---------------------------------------------------------------
-  LSRKStepSetUseEllipseForStability sets whether to use the ellipse or the exact stability region for 
-  stability checks. The stability region check for RKC and RKL methods is performed with the dominant
-  eigenvalue and the current step size to ensure stability. While this is sufficient for a stability
-  region of disk, the stability region of RKC and RKL methods is not a disk but rather a more complicated 
-  region that can be approximated by an inscribed ellipse. By default, the ellipse is used for stability 
-  checks, which is a conservative approximation of the stability region that possibly reduces the step 
-  sizes to ensure stability. Setting use_ellipse to SUNFALSE allows the use of the exact stability region, 
-  which can potentially allow for larger step sizes but possibly cause stability failures for the second 
-  dominant eigenvalue since it might be outside of the stability region even if the dominant eigenvalue 
-  is inside the stability region. Using ellipse for stability checks can be beneficial when two dominant 
-  eigenvalues are close to the stability boundary. Nevertheless, unless the full spectrum is used for
-  stability checks, there is always a risk of stability failures one way or another. Thus, the user should 
-  have the option to choose between the ellipse or the exact stability region for stability checks based 
-  on their problem characteristics and their preference for a more conservative or more aggressive approach 
-  to stability. This input is only used for RKC and RKL methods.
+  LSRKStepSetUseAnalyticStabRegion sets whether to use the ellipse or the exact 
+  stability region for stability checks.
   ---------------------------------------------------------------*/
-int LSRKStepSetUseEllipseForStability(void* arkode_mem, sunbooleantype use_ellipse)
+int LSRKStepSetUseAnalyticStabRegion(void* arkode_mem, sunbooleantype use_analytic_stab_region)
 {
   ARKodeMem ark_mem;
   ARKodeLSRKStepMem step_mem;
@@ -346,7 +333,7 @@ int LSRKStepSetUseEllipseForStability(void* arkode_mem, sunbooleantype use_ellip
 
   step_mem->dom_eig_update     = SUNTRUE;
   step_mem->dom_eig_is_current = SUNFALSE;
-  step_mem->use_ellipse        = use_ellipse;
+  step_mem->use_ellipse        = !use_analytic_stab_region;
 
   return ARK_SUCCESS;
 }

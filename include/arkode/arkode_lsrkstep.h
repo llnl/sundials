@@ -93,8 +93,8 @@ SUNDIALS_EXPORT int LSRKStepSetMaxNumStages(void* arkode_mem,
 SUNDIALS_EXPORT int LSRKStepSetDomEigSafetyFactor(void* arkode_mem,
                                                   sunrealtype dom_eig_safety);
 
-SUNDIALS_EXPORT int LSRKStepSetUseEllipseForStability(void* arkode_mem,
-                                                      sunbooleantype use_ellipse);
+SUNDIALS_EXPORT int LSRKStepSetUseAnalyticStabRegion(void* arkode_mem, 
+                                                     sunbooleantype analytic_stab_region);
 
 SUNDIALS_EXPORT int LSRKStepSetNumDomEigEstInitPreprocessIters(void* arkode_mem,
                                                                int num_iters);

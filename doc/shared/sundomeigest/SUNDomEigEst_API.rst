@@ -259,6 +259,26 @@ instead of supplying a dummy routine.
 
    .. note::
 
+      The relative tolerance is used as a stopping criterion for the Power Iteration method. Specifically, 
+      it defines the acceptable relative change between successive dominant eigenvalue estimates.
+
+      When used in combination with Arnoldi Iteration, this routine sets the stopping criterion for 
+      the preprocessing Power Iteration phase. In this workflow, Power Iteration is first applied to 
+      perform an initial convergence check for the dominant eigenvalue estimate. The convergence
+      criterion is based on the change in magnitude between successive estimates and is defined as
+
+      .. math::
+
+         \left|\,|\lambda_{k}| - |\lambda_{k-1}|\,\right|
+         \le \texttt{rel_tol} \cdot |\lambda_{k}|.
+
+      The implementation performs this inexpensive preprocessing check using only the magnitude of 
+      the eigenvalue estimates. Arnoldi Iteration is executed only after this convergence criterion is 
+      satisfied. This approach ensures that Arnoldi is performed only once, rather than repeatedly 
+      running Arnoldi and checking convergence based on its complex-valued results. By relying on 
+      the cheaper magnitude-based preprocessing step, the routine avoids multiple Arnoldi runs that would
+      yield only marginal improvements in accuracy while incurring significantly higher computational cost.
+
       This routine will be called by :c:func:`SUNDomEigEstimator_SetOptions`
       when using the key "Did.rel_tol".
 

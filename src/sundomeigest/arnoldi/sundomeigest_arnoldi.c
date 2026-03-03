@@ -106,6 +106,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Arnoldi;
   DEE->ops->setnumpreprocessiters =
     SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi;
+  DEE->ops->setreltol         = SUNDomEigEstimator_SetRelTol_Arnoldi;
   DEE->ops->setinitialguess   = SUNDomEigEstimator_SetInitialGuess_Arnoldi;
   DEE->ops->initialize        = SUNDomEigEstimator_Initialize_Arnoldi;
   DEE->ops->estimate          = SUNDomEigEstimator_Estimate_Arnoldi;
@@ -292,8 +293,8 @@ SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator D
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetTolPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,
-                                                            sunrealtype tol)
+SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
+                                                sunrealtype tol)
 {
   SUNFunctionBegin(DEE->sunctx);
 

@@ -88,7 +88,7 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
                                                     N_Vector q);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetReal_Power(SUNDomEigEstimator DEE);
+SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE);
