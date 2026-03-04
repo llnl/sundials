@@ -119,20 +119,20 @@ def main(argv=None):
     status = CVodeSetNonlinearSolver(cvode.get(), NLS)
     assert status == CV_SUCCESS
 
-    if newton:
-        A = SUNDenseMatrix(NEQ, NEQ, sunctx)
-        LS = SUNLinSol_Dense(y, A, sunctx)
+    # if newton:
+    A = SUNDenseMatrix(NEQ, NEQ, sunctx)
+    LS = SUNLinSol_Dense(y, A, sunctx)
 
-        status = CVodeSetLinearSolver(cvode.get(), LS, A)
-        assert status == CV_SUCCESS
+    status = CVodeSetLinearSolver(cvode.get(), LS, A)
+    assert status == CV_SUCCESS
 
-        status = CVodeSetJacFn(
-            cvode.get(),
-            lambda t, yvec, fyvec, J, tmp1, tmp2, tmp3, _: ode.jac(
-                t, yvec, fyvec, J, tmp1, tmp2, tmp3
-            ),
-        )
-        assert status == CV_SUCCESS
+    status = CVodeSetJacFn(
+        cvode.get(),
+        lambda t, yvec, fyvec, J, tmp1, tmp2, tmp3, _: ode.jac(
+            t, yvec, fyvec, J, tmp1, tmp2, tmp3
+        ),
+    )
+    assert status == CV_SUCCESS
 
     cvode_argv = [argv[0]] + sundials_argv
     status = CVodeSetOptions(cvode.get(), "", "", len(cvode_argv), cvode_argv)

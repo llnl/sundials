@@ -20,6 +20,7 @@
 #include "cvodes_impl.h"
 #include "sundials/sundials_math.h"
 #include "sundials/sundials_nvector_senswrapper.h"
+#include "sunnonlinsol/sunnonlinsol_auto.h"
 
 /* constant macros */
 #define ONE SUN_RCONST(1.0)
@@ -89,6 +90,10 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_FIXEDPOINT)
   {
     retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsFPFunction);
+  }
+  else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_HYBRID)
+  {
+    retval = SUNNonlinSolSetSysFns_Auto(cv_mem->NLS, cvNlsResidual, cvNlsFPFunction);
   }
   else
   {

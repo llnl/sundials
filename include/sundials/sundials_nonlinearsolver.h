@@ -92,7 +92,8 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
 enum SUNNonlinearSolver_Type
 {
   SUNNONLINEARSOLVER_ROOTFIND,
-  SUNNONLINEARSOLVER_FIXEDPOINT
+  SUNNONLINEARSOLVER_FIXEDPOINT,
+  SUNNONLINEARSOLVER_HYBRID
 };
 
 #ifndef SWIG
@@ -206,6 +207,7 @@ SUNErrCode SUNNonlinSolGetNumConvFails(SUNNonlinearSolver NLS,
 /* Recoverable */
 #define SUN_NLS_CONTINUE   +901 /* not converged, keep iterating      */
 #define SUN_NLS_CONV_RECVR +902 /* convergece failure, try to recover */
+#define SUN_NLS_SWITCH     +903 /* auto solver decided to switch algorithms */
 
 #ifdef __cplusplus
 }

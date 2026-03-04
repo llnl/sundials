@@ -201,6 +201,7 @@
 
 #include "cvodes_impl.h"
 #include "cvodes_ls_impl.h"
+#include "sundials/sundials_nonlinearsolver.h"
 #include "sundials_utils.h"
 
 /*=================================================================*/
@@ -7090,12 +7091,24 @@ static int cvNls(CVodeMem cv_mem, int nflag)
   }
 
   /* if the solve failed return */
-  if (flag != SUN_SUCCESS)
+  if (flag != SUN_SUCCESS && flag != SUN_NLS_SWITCH)
   {
     SUNLogInfo(CV_LOGGER, "end-nonlinear-solve",
                "status = failed, flag = %i, iters = %li", flag, nni_inc);
 
     return (flag);
+  }
+  else if (flag == SUN_NLS_SWITCH)
+  {
+    /* Reinitialize */
+    int ier = cvNlsInit(cv_mem);
+    if (ier)
+    {
+      cvProcessError(cv_mem, CV_NLS_INIT_FAIL, __LINE__, __func__, __FILE__,
+                     MSGCV_NLS_INIT_FAIL);
+      return CV_NLS_INIT_FAIL;
+    }
+    flag = SUN_SUCCESS;
   }
 
   /* solve successful */

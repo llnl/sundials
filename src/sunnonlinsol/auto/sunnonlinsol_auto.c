@@ -10,6 +10,8 @@
 #include <sunnonlinsol/sunnonlinsol_fixedpoint.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
+#include "sundials/sundials_errors.h"
+#include "sundials/sundials_nonlinearsolver.h"
 #include "sundials_logger_impl.h"
 #include "sundials_macros.h"
 
@@ -57,23 +59,23 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
 
 SUNNonlinearSolver_Type SUNNonlinSolGetType_Auto(SUNNonlinearSolver NLS)
 {
-  if (AUTO_CONTENT(NLS)->type == SUNNONLINSOL_AUTO_FIXEDPOINT)
-  {
-    return SUNNONLINEARSOLVER_FIXEDPOINT;
-  }
-  else { return SUNNONLINEARSOLVER_ROOTFIND; }
+  return SUNNONLINEARSOLVER_HYBRID;
 }
 
 SUNErrCode SUNNonlinSolInitialize_Auto(SUNNonlinearSolver NLS)
 {
   SUNFunctionBegin(NLS->sunctx);
-  SUNErrCode retval = SUN_SUCCESS;
   if (AUTO_CONTENT(NLS)->type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
-    retval = SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->fp_solver);
+    printf(">>>> Initialize Fixed Point\n");
+    SUNCheckCall(SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->fp_solver));
   }
-  else { retval = SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->newton_solver); }
-  return retval;
+  else
+  {
+    printf(">>>> Initialize Newton\n");
+    SUNCheckCall(SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->newton_solver));
+  }
+  return SUN_SUCCESS;
 }
 
 int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
@@ -93,6 +95,9 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
     if (fp_content->crate >= alpha)
     {
       printf(">>>> crate=%g\n", fp_content->crate);
+      /* OK, switch */
+      AUTO_CONTENT(NLS)->type = SUNNONLINSOL_AUTO_NEWTON;
+      return SUN_NLS_SWITCH;
     }
   }
   else
@@ -133,16 +138,26 @@ SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
                                      SUNNonlinSolSysFn SysFn)
 {
   SUNFunctionBegin(NLS->sunctx);
-  SUNErrCode retval = SUN_SUCCESS;
   if (AUTO_CONTENT(NLS)->type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
-    retval = SUNNonlinSolSetSysFn(AUTO_CONTENT(NLS)->fp_solver, SysFn);
+    SUNCheckCall(SUNNonlinSolSetSysFn(AUTO_CONTENT(NLS)->fp_solver, SysFn));
   }
   else
   {
-    retval = SUNNonlinSolSetSysFn(AUTO_CONTENT(NLS)->newton_solver, SysFn);
+    SUNCheckCall(SUNNonlinSolSetSysFn(AUTO_CONTENT(NLS)->newton_solver, SysFn));
   }
-  return retval;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolSetSysFns_Auto(SUNNonlinearSolver NLS,
+                                      SUNNonlinSolSysFn root_sys_fn,
+                                      SUNNonlinSolSysFn fixed_point_fn)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNCheckCall(
+    SUNNonlinSolSetSysFn(AUTO_CONTENT(NLS)->newton_solver, root_sys_fn));
+  SUNCheckCall(SUNNonlinSolSetSysFn(AUTO_CONTENT(NLS)->fp_solver, fixed_point_fn));
+  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNNonlinSolSetConvTestFn_Auto(SUNNonlinearSolver NLS,
@@ -150,25 +165,22 @@ SUNErrCode SUNNonlinSolSetConvTestFn_Auto(SUNNonlinearSolver NLS,
                                           void* ctest_data)
 {
   SUNFunctionBegin(NLS->sunctx);
-  SUNErrCode retval = SUN_SUCCESS;
-  if (AUTO_CONTENT(NLS)->type == SUNNONLINSOL_AUTO_FIXEDPOINT)
-  {
-    retval = SUNNonlinSolSetConvTestFn(AUTO_CONTENT(NLS)->fp_solver, CTestFn,
-                                       ctest_data);
-  }
-  else
-  {
-    retval = SUNNonlinSolSetConvTestFn(AUTO_CONTENT(NLS)->newton_solver,
-                                       CTestFn, ctest_data);
-  }
-  return retval;
+  SUNCheckCall(SUNNonlinSolSetConvTestFn(AUTO_CONTENT(NLS)->fp_solver, CTestFn,
+                                         ctest_data));
+  SUNCheckCall(SUNNonlinSolSetConvTestFn(AUTO_CONTENT(NLS)->newton_solver,
+                                         CTestFn, ctest_data));
+  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNNonlinSolSetLSetupFn_Auto(SUNNonlinearSolver NLS,
                                         SUNNonlinSolLSetupFn LSetupFn)
 {
   SUNFunctionBegin(NLS->sunctx);
-  SUNNonlinSolSetLSetupFn(AUTO_CONTENT(NLS)->newton_solver, LSetupFn);
+  if (AUTO_CONTENT(NLS)->type == SUNNONLINSOL_AUTO_NEWTON)
+  {
+    SUNCheckCall(
+      SUNNonlinSolSetLSetupFn(AUTO_CONTENT(NLS)->newton_solver, LSetupFn));
+  }
   return SUN_SUCCESS;
 }
 
@@ -176,7 +188,11 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
                                         SUNNonlinSolLSolveFn LSolveFn)
 {
   SUNFunctionBegin(NLS->sunctx);
-  SUNNonlinSolSetLSolveFn(AUTO_CONTENT(NLS)->newton_solver, LSolveFn);
+  if (AUTO_CONTENT(NLS)->type == SUNNONLINSOL_AUTO_NEWTON)
+  {
+    SUNCheckCall(
+      SUNNonlinSolSetLSolveFn(AUTO_CONTENT(NLS)->newton_solver, LSolveFn));
+  }
   return SUN_SUCCESS;
 }
 
@@ -226,7 +242,7 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
   SUNCheckCall(
     SUNNonlinSolGetNumConvFails(AUTO_CONTENT(NLS)->fp_solver, &fp_nvconvfails));
   SUNCheckCall(SUNNonlinSolGetNumConvFails(AUTO_CONTENT(NLS)->newton_solver,
-                                       &newt_nconvfails));
+                                           &newt_nconvfails));
   *nconvfails = fp_nvconvfails + newt_nconvfails;
   return SUN_SUCCESS;
 }

@@ -56,6 +56,11 @@ SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
                                      SUNNonlinSolSysFn SysFn);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetSysFns_Auto(SUNNonlinearSolver NLS,
+                                      SUNNonlinSolSysFn root_fn,
+                                      SUNNonlinSolSysFn fixed_point_fn);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetConvTestFn_Auto(SUNNonlinearSolver NLS,
                                           SUNNonlinSolConvTestFn CTestFn,
                                           void* ctest_data);
