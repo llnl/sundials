@@ -896,7 +896,7 @@ static int OpenOutput(UserData* udata)
     udata->rout.open(fname.str());
 
     udata->rout << scientific;
-    udata->rout << setprecision(numeric_limits<sunrealtype>::digits10);
+    udata->rout << setprecision(SUN_DIGITS10);
 
     // Open output stream for error
     fname.str("");
@@ -906,7 +906,7 @@ static int OpenOutput(UserData* udata)
     udata->eout.open(fname.str());
 
     udata->eout << scientific;
-    udata->eout << setprecision(numeric_limits<sunrealtype>::digits10);
+    udata->eout << setprecision(SUN_DIGITS10);
   }
 
   return 0;

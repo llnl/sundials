@@ -1049,7 +1049,7 @@ int MyAccess(braid_App app, braid_Vector u, braid_AccessStatus astatus)
 
         udata->uout.open(fname.str());
         udata->uout << scientific;
-        udata->uout << setprecision(numeric_limits<sunrealtype>::digits10);
+        udata->uout << setprecision(SUN_DIGITS10);
 
         fname.str("");
         fname.clear();
@@ -1058,7 +1058,7 @@ int MyAccess(braid_App app, braid_Vector u, braid_AccessStatus astatus)
 
         udata->eout.open(fname.str());
         udata->eout << scientific;
-        udata->eout << setprecision(numeric_limits<sunrealtype>::digits10);
+        udata->eout << setprecision(SUN_DIGITS10);
 
         // Compute the error
         flag = SolutionError(t, y, udata->e, udata);
@@ -1104,7 +1104,7 @@ int MyAccess(braid_App app, braid_Vector u, braid_AccessStatus astatus)
       if (udata->myid_c == 0)
       {
         cout << scientific;
-        cout << setprecision(numeric_limits<sunrealtype>::digits10);
+        cout << setprecision(SUN_DIGITS10);
         cout << "  Max error = " << maxerr << endl << endl;
       }
     }

@@ -47,11 +47,7 @@
 
 #define NSPECIES 3
 
-#if  defined(SUNDIALS_FLOAT128_PRECISION)
-#define WIDTH (10 + FLT128_DIG)
-#else
-#define WIDTH (10 + numeric_limits<sunrealtype>::digits10)
-#endif
+#define WIDTH (10 + SUN_DIGITS10)
 
 // Macro to access each species at an x location
 #define UIDX(i) (NSPECIES * (i))
@@ -1141,11 +1137,7 @@ static int OpenOutput(UserData& udata, UserOptions& uopts)
   if (uopts.output)
   {
     cout << scientific;
-#if defined(SUNDIALS_FLOAT128_PRECISION)
-    cout << setprecision(FLT128_DIG);
-#else
-    cout << setprecision(numeric_limits<sunrealtype>::digits10);
-#endif
+    cout << setprecision(SUN_DIGITS10);
     cout << "          t           ";
     cout << "          ||y||_rms      " << endl;
     cout << " ---------------------";
@@ -1161,11 +1153,7 @@ static int OpenOutput(UserData& udata, UserOptions& uopts)
     uopts.uout.open(fname.str());
 
     uopts.uout << scientific;
-#if  defined(SUNDIALS_FLOAT128_PRECISION)
-    uopts.uout << setprecision(FLT128_DIG);
-#else
-    uopts.uout << setprecision(numeric_limits<sunrealtype>::digits10);
-#endif
+    uopts.uout << setprecision(SUN_DIGITS10);
     uopts.uout << "# title Advection-Diffusion-Reaction (Brusselator)" << endl;
     uopts.uout << "# nvar 3" << endl;
     uopts.uout << "# vars u v w" << endl;
@@ -1186,11 +1174,7 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData& udata,
   {
     // Compute rms norm of the state
     sunrealtype urms = SUNRsqrt(N_VDotProd(y, y) / udata.nx);
-#if  defined(SUNDIALS_FLOAT128_PRECISION)
-    uopts.uout << setprecision(FLT128_DIG);
-#else
-    uopts.uout << setprecision(numeric_limits<sunrealtype>::digits10);
-#endif
+    uopts.uout << setprecision(SUN_DIGITS10);
     cout << setw(39) << t << setw(42) << urms << endl;
 
     // Write solution to disk
