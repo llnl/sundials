@@ -105,7 +105,7 @@
 #define NPREY       1 /* No. of prey (= no. of predators). */
 #define NUM_SPECIES 2 * NPREY
 
-#define PI     SUN_RCONST(3.1415926535898)
+#define PI     SUN_RCONST(3.141592653589793238462643383279502884197169)
 #define FOURPI (SUN_RCONST(4.0) * PI)
 
 #define MX    20 /* MX = number of x mesh points      */

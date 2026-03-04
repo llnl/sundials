@@ -48,10 +48,6 @@ extern "C" {
  */
 
 #if defined(SUNDIALS_LAPACK_FUNC)
-#define qgbtrf_f77 SUNDIALS_LAPACK_FUNC(qgbtrf, QGBTRF)
-#define qgbtrs_f77 SUNDIALS_LAPACK_FUNC(qgbtrs, QGBTRS)
-#define qgetrf_f77 SUNDIALS_LAPACK_FUNC(qgetrf, QGETRF)
-#define qgetrs_f77 SUNDIALS_LAPACK_FUNC(qgetrs, QGETRS)
 
 #define dgbtrf_f77 SUNDIALS_LAPACK_FUNC(dgbtrf, DGBTRF)
 #define dgbtrs_f77 SUNDIALS_LAPACK_FUNC(dgbtrs, DGBTRS)
@@ -66,10 +62,6 @@ extern "C" {
 #define sgeev_f77  SUNDIALS_LAPACK_FUNC(sgeev, SGEEV)
 
 #else
-#define qgbtrf_f77 qgbtrf_
-#define qgbtrs_f77 qgbtrs_
-#define qgetrf_f77 qgetrf_
-#define qgetrs_f77 qgetrs_
 
 #define dgbtrf_f77 dgbtrf_
 #define dgbtrs_f77 dgbtrs_

@@ -1469,30 +1469,30 @@ int SetupProblem(int argc, char* argv[], UserData* udata, UserOptions* uopt,
       }
       else if (strcmp(argv[i], "--xmax") == 0)
       {
-        udata->xmax = strtod(argv[i + 1], NULL);
+        udata->xmax = SUNStrToReal(argv[i + 1]);
         i++;
       }
       else if (strcmp(argv[i], "--A") == 0)
       {
-        udata->A = strtod(argv[i + 1], NULL);
+        udata->A = SUNStrToReal(argv[i + 1]);
         i++;
       }
       else if (strcmp(argv[i], "--B") == 0)
       {
-        udata->B = strtod(argv[i + 1], NULL);
+        udata->B = SUNStrToReal(argv[i + 1]);
         i++;
       }
       else if (strcmp(argv[i], "--k") == 0)
       {
-        udata->k1 = strtod(argv[i + 1], NULL);
-        udata->k2 = strtod(argv[i + 1], NULL);
-        udata->k3 = strtod(argv[i + 1], NULL);
-        udata->k4 = strtod(argv[i + 1], NULL);
+        udata->k1 = SUNStrToReal(argv[i + 1]L);
+        udata->k2 = SUNStrToReal(argv[i + 1]);
+        udata->k3 = SUNStrToReal(argv[i + 1]);
+        udata->k4 = SUNStrToReal(argv[i + 1]);
         i += 4;
       }
       else if (strcmp(argv[i], "--c") == 0)
       {
-        udata->c = strtod(argv[i + 1], NULL);
+        udata->c = SUNStrToReal(argv[i + 1]);
         i++;
       }
       else if (strcmp(argv[i], "--order") == 0)
@@ -1510,12 +1510,12 @@ int SetupProblem(int argc, char* argv[], UserData* udata, UserOptions* uopt,
       }
       else if (strcmp(argv[i], "--rtol") == 0)
       {
-        uopt->rtol = strtod(argv[i + 1], NULL);
+        uopt->rtol = SUNStrToReal(argv[i + 1]);
         i++;
       }
       else if (strcmp(argv[i], "--atol") == 0)
       {
-        uopt->atol = strtod(argv[i + 1], NULL);
+        uopt->atol = SUNStrToReal(argv[i + 1]);
         i++;
       }
       else

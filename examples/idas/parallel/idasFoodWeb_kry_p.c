@@ -120,7 +120,7 @@
 #define NPREY       1 /* Number of prey (= number of predators). */
 #define NUM_SPECIES 2 * NPREY
 
-#define PI     SUN_RCONST(3.1415926535898) /* pi */
+#define PI     SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
 #define FOURPI (SUN_RCONST(4.0) * PI)      /* 4 pi */
 
 #define MXSUB   10 /* Number of x mesh points per processor subgrid */

@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sundials/sundials_types.h>
-
+#include <sundials/sundials_math.h>
 #define PI SUN_RCONST(3.141592653589793238462643383279502884197169)
 
 typedef struct
@@ -82,24 +82,12 @@ static int ParseArgs(int argc, char* argv[], ProgramArgs* args)
     else if (!strcmp(argv[argi], "--tf"))
     {
       argi++;
-#if defined(SUNDIALS_SINGLE_PRECISION)
-      args->Tf = strtof(argv[argi], NULL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-      args->Tf = strtod(argv[argi], NULL);
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-      args->Tf = strtold(argv[argi], NULL);
-#endif
+      args->Tf = SUNStrToReal(argv[argi]);
     }
     else if (!strcmp(argv[argi], "--dt"))
     {
       argi++;
-#if defined(SUNDIALS_SINGLE_PRECISION)
-      args->dt = strtof(argv[argi], NULL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-      args->dt = strtod(argv[argi], NULL);
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-      args->dt = strtold(argv[argi], NULL);
-#endif
+      args->dt = SUNStrToReal(argv[argi]);
     }
     else if (!strcmp(argv[argi], "--nout"))
     {

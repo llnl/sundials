@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 
   /* if an argument supplied, set lambda (otherwise use -100) */
   lambda = -SUN_RCONST(100.0);
-  if (argc > 1) { lambda = strtod(argv[1], NULL); }
+  if (argc > 1) { lambda = SUNStrToReal(argv[1]); }
 
   /* determine test configuration */
   if (sizeof(sunrealtype) == 4) { rtype = 32; }
