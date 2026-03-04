@@ -2,9 +2,9 @@
 #define SUNDIALS_NONLINSOLAUTO_H_
 
 #include <sundials/sundials_context.h>
+#include <sundials/sundials_nonlinearsolver.h>
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>
-#include <sundials/sundials_nonlinearsolver.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,6 +59,14 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetConvTestFn_Auto(SUNNonlinearSolver NLS,
                                           SUNNonlinSolConvTestFn CTestFn,
                                           void* ctest_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetLSetupFn_Auto(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolLSetupFn LSetupFn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolLSolveFn LSolveFn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters);

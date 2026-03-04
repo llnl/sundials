@@ -91,12 +91,20 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   cv_mem->ownNLS = SUNFALSE;
 
   /* set the nonlinear system function */
+  /* TODO(CJB): it is probably better to have a version of SUNNonlinSolSetSysFn which can either take the residual and fp form or,
+     takes a flag indicating which form is being provided */
   if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_ROOTFIND)
   {
     retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsResidual);
   }
   else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_FIXEDPOINT)
   {
+    retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsFPFunction);
+  }
+  else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_AUTO)
+  {
+    SUNNonlinSolSetType_Auto(NLS, SUNNONLINEARSOLVER_ROOTFIND)
+    retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsResidual);
     retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsFPFunction);
   }
   else

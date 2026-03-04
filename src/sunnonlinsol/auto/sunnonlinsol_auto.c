@@ -32,6 +32,8 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   NLS->ops->free            = SUNNonlinSolFree_Auto;
   NLS->ops->setsysfn        = SUNNonlinSolSetSysFn_Auto;
   NLS->ops->setctestfn      = SUNNonlinSolSetConvTestFn_Auto;
+  NLS->ops->setlsetupfn     = SUNNonlinSolSetLSetupFn_Auto;
+  NLS->ops->setlsolvefn     = SUNNonlinSolSetLSolveFn_Auto;
   NLS->ops->setmaxiters     = SUNNonlinSolSetMaxIters_Auto;
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_Auto;
   NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_Auto;
@@ -160,6 +162,22 @@ SUNErrCode SUNNonlinSolSetConvTestFn_Auto(SUNNonlinearSolver NLS,
                                        CTestFn, ctest_data);
   }
   return retval;
+}
+
+SUNErrCode SUNNonlinSolSetLSetupFn_Auto(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolLSetupFn LSetupFn)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNNonlinSolSetLSetupFn(AUTO_CONTENT(NLS)->newton_solver, LSetupFn);
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolLSolveFn LSolveFn)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNNonlinSolSetLSolveFn(AUTO_CONTENT(NLS)->newton_solver, LSolveFn);
+  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters)
