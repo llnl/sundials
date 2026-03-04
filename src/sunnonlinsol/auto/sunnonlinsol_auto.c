@@ -66,6 +66,8 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   content->nconvfails           = 0;
   content->fp_to_newt_delay     = 0;
   content->newt_to_fp_delay     = 10;
+  content->fp_to_newt_threshold = SUN_RCONST(0.8);
+  content->newt_to_fp_threshold = SUN_RCONST(2.0);
   content->nsolves_since_switch = 0;
   content->switch_count         = 0;
   content->auto_ctest_data      = NULL;
@@ -144,8 +146,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
       (SUNNonlinearSolverContent_FixedPoint)C->fp_solver->content;
 
     /* Check if we are diverging */
-    const sunrealtype alpha   = 0.8;
-    sunbooleantype diverging  = fp_content->crate >= alpha;
+    sunbooleantype diverging  = fp_content->crate >= C->fp_to_newt_threshold;
     sunbooleantype dont_delay = C->nsolves_since_switch >= C->fp_to_newt_delay;
 
     if (diverging && dont_delay)
@@ -161,8 +162,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
     SUNNonlinearSolverContent_Newton newton_content =
       (SUNNonlinearSolverContent_Newton)C->newton_solver->content;
 
-    const sunrealtype threshold = 2.0;
-    sunbooleantype contraction  = newton_content->stiffr < threshold;
+    sunbooleantype contraction = newton_content->stiffr < C->newt_to_fp_threshold;
     sunbooleantype dont_delay = C->nsolves_since_switch >= C->newt_to_fp_delay;
 
     if (contraction && dont_delay)
@@ -302,6 +302,36 @@ SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters)
     retval = SUNNonlinSolSetMaxIters(AUTO_CONTENT(NLS)->newton_solver, maxiters);
   }
   return retval;
+}
+
+SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
+  SUNNonlinearSolver NLS, sunrealtype newt_to_fp_threshold,
+  long int newt_to_fp_delay, sunrealtype fp_to_newt_threshold,
+  long int fp_to_newt_delay)
+{
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (newt_to_fp_threshold < 0.0)
+  {
+    AUTO_CONTENT(NLS)->newt_to_fp_threshold = SUN_RCONST(2.0);
+  }
+  if (newt_to_fp_delay < 0) { AUTO_CONTENT(NLS)->newt_to_fp_delay = 10; }
+  if (fp_to_newt_threshold < 0.0)
+  {
+    AUTO_CONTENT(NLS)->fp_to_newt_threshold = SUN_RCONST(1.0);
+  }
+  if (fp_to_newt_delay < 0) { AUTO_CONTENT(NLS)->fp_to_newt_delay = 0; }
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolSetNewtToFpThreshold_Auto(SUNNonlinearSolver NLS,
+                                                 sunrealtype threshold)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNAssert(threshold > SUN_RCONST(0.0), SUN_ERR_ARG_OUTOFRANGE);
+  AUTO_CONTENT(NLS)->newt_to_fp_threshold = threshold;
+  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters)

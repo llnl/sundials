@@ -29,9 +29,11 @@ struct _SUNNonlinearSolverContent_Auto
   void* user_ctest_data;
   int maxiters;
   int curiter;
-  int fp_to_newt_delay;
-  int newt_to_fp_delay;
+  long int fp_to_newt_delay;
+  long int newt_to_fp_delay;
   long int nsolves_since_switch;
+  sunrealtype newt_to_fp_threshold;
+  sunrealtype fp_to_newt_threshold;
   long int niters;
   long int nconvfails;
   long int switch_count;
@@ -82,6 +84,12 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
+  SUNNonlinearSolver NLS, sunrealtype newt_to_fp_threshold,
+  long int newt_to_fp_delay, sunrealtype fp_to_newt_threshold,
+  long int fp_to_newt_delay);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters);
