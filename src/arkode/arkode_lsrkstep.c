@@ -2255,9 +2255,6 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Evaluate stages j = 2,...,5 */
   for (int j = 2; j <= 5; j++)
   {
-    /* set stage index (0-based) */
-    step_mem->istage = j - 1;
-
     /* Complete previous stage by evaluating RHS and storing in tempv3 */
     ark_mem->tcur = ark_mem->tn + (j - 1) * hsixth;
 
@@ -2273,6 +2270,9 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
+
+    /* update stage index (0-based) */
+    step_mem->istage = j - 1;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreRHSProcess != NULL)
