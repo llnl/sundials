@@ -1484,7 +1484,7 @@ int SetupProblem(int argc, char* argv[], UserData* udata, UserOptions* uopt,
       }
       else if (strcmp(argv[i], "--k") == 0)
       {
-        udata->k1 = SUNStrToReal(argv[i + 1]L);
+        udata->k1 = SUNStrToReal(argv[i + 1]);
         udata->k2 = SUNStrToReal(argv[i + 1]);
         udata->k3 = SUNStrToReal(argv[i + 1]);
         udata->k4 = SUNStrToReal(argv[i + 1]);
