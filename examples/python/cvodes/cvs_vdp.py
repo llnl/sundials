@@ -5,6 +5,7 @@
 # Van der Pol oscillator example using CVODE (Python)
 # -----------------------------------------------------------------
 import sys
+import argparse
 import numpy as np
 from sundials4py.core import *
 from sundials4py.cvodes import *
@@ -53,7 +54,31 @@ class VanDerPolODE:
         return 0
 
 
-def main():
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+
+    parser = argparse.ArgumentParser(
+        prog=argv[0],
+        description="Van der Pol oscillator example using CVODE (Python).",
+    )
+    nls_group = parser.add_mutually_exclusive_group()
+    nls_group.add_argument(
+        "--newton",
+        dest="newton",
+        action="store_true",
+        help="Use a Newton nonlinear solver (default).",
+    )
+    nls_group.add_argument(
+        "--no-newton",
+        "--fixed-point",
+        dest="newton",
+        action="store_false",
+        help="Use a fixed-point nonlinear solver.",
+    )
+    parser.set_defaults(newton=True)
+    args, sundials_argv = parser.parse_known_args(argv[1:])
+
     mu = 100.0
     y10 = 2.0
     y20 = 0.0
@@ -82,7 +107,7 @@ def main():
     status = CVodeSetMaxNumSteps(cvode.get(), 10000)
     assert status == CV_SUCCESS
 
-    newton = True
+    newton = args.newton
 
     if newton:
         # NLS = SUNNonlinSol_Newton(y, sunctx)
@@ -109,13 +134,15 @@ def main():
         )
         assert status == CV_SUCCESS
 
-    status = CVodeSetOptions(cvode.get(), "", "", len(sys.argv), sys.argv)
+    cvode_argv = [argv[0]] + sundials_argv
+    status = CVodeSetOptions(cvode.get(), "", "", len(cvode_argv), cvode_argv)
     assert status == CV_SUCCESS
 
     yarr = N_VGetArrayPointer(y)
     print("\nVan der Pol oscillator (CVODE):")
     print(f"    initial conditions: y1 = {y10}, y2 = {y20}")
     print(f"    mu = {mu}")
+    print(f"    nonlinear solver = {'Newton' if newton else 'Fixed-point'}")
     print(f"    reltol = {reltol}, abstol = {abstol}\n")
     print("        t           y1           y2")
     print("   -----------------------------------")
@@ -142,13 +169,13 @@ def main():
     assert status == CV_SUCCESS
     status, nfe = CVodeGetNumRhsEvals(cvode.get())
     assert status == CV_SUCCESS
-    status, nsetups = CVodeGetNumLinSolvSetups(cvode.get())
-    assert status == CV_SUCCESS
     status, nni = CVodeGetNumNonlinSolvIters(cvode.get())
     assert status == CV_SUCCESS
     status, ncfn = CVodeGetNumNonlinSolvConvFails(cvode.get())
     assert status == CV_SUCCESS
     if newton:
+        status, nsetups = CVodeGetNumLinSolvSetups(cvode.get())
+        assert status == CV_SUCCESS
         status, nje = CVodeGetNumJacEvals(cvode.get())
         assert status == CV_SUCCESS
         status, nfeLS = CVodeGetNumLinRhsEvals(cvode.get())
@@ -166,7 +193,7 @@ def main():
 
 
 def test_cvs_vdp():
-    main()
+    main(argv=["cvs_vdp.py"])
 
 
 if __name__ == "__main__":

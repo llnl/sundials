@@ -224,8 +224,8 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
   long int fp_nvconvfails  = 0;
   long int newt_nconvfails = 0;
   SUNCheckCall(
-    SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->fp_solver, &fp_nvconvfails));
-  SUNCheckCall(SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->newton_solver,
+    SUNNonlinSolGetNumConvFails(AUTO_CONTENT(NLS)->fp_solver, &fp_nvconvfails));
+  SUNCheckCall(SUNNonlinSolGetNumConvFails(AUTO_CONTENT(NLS)->newton_solver,
                                        &newt_nconvfails));
   *nconvfails = fp_nvconvfails + newt_nconvfails;
   return SUN_SUCCESS;
