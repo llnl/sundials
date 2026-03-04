@@ -1245,13 +1245,13 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     // from https://doi.org/10.1016/j.cam.2022.114325 pg 5
     hbt1 = ark_mem->h * SUN_RCONST(0.694021459207626);
     hbt2 = ZERO;
-    hbt3 = ark_mem->h * (ONE - SUN_RCONST(0.694021459207626));
+    hbt3 = ark_mem->h - hbt1;
   }
   else
   {
-    hbt1 = ark_mem->h * (rs + ONE) / (rs * rs);
+    hbt1 = hrsinv * (ONE + rsinv);
     hbt2 = hrsinv;
-    hbt3 = ark_mem->h * (rs - ONE) / (rs * rs);
+    hbt3 = hrsinv * (ONE - rsinv);
   }
 
   /* Begin first stage */
@@ -1493,8 +1493,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   const sunrealtype rs     = (sunrealtype)step_mem->req_stages;
   const sunrealtype rn     = SUNRsqrt(rs);
   const sunrealtype hrat   = ark_mem->h / (rs - rn);
-  const sunrealtype rsinv  = ONE / rs;
-  const sunrealtype hrsinv = ark_mem->h * rsinv;
+  const sunrealtype hrsinv = ark_mem->h / rs;
   const int in             = (int)SUNRround(rn);
 
   /* Begin the first stage */
@@ -1865,8 +1864,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* Initialize method coefficients */
   const sunrealtype rs     = SUN_RCONST(4.0);
   const sunrealtype hp5    = ark_mem->h * SUN_RCONST(0.5);
-  const sunrealtype rsinv  = ONE / rs;
-  const sunrealtype hrsinv = ark_mem->h * rsinv;
+  const sunrealtype hrsinv = ark_mem->h / rs;
 
   /* Begin the first stage */
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2312,7 +2310,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                           ark_mem->user_data);
     step_mem->nfe++;
 
-    SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_%i(:) =", j);
+    SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_%i(:) =", j - 1);
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
@@ -2372,7 +2370,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                         ark_mem->user_data);
   step_mem->nfe++;
 
-  SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_10(:) =", 9);
+  SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_9(:) =", 9);
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                "status = failed rhs eval, retval = %i", retval);
 
