@@ -1401,17 +1401,17 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     }
 
     /* compute M^{-1} f for output but do not store */
-    if (step_mem->mass_type == MASS_FIXED)
-    {
-      retval = step_mem->msolve((void*)ark_mem, f,
-                                step_mem->nlscoef / ark_mem->h);
-      if (retval)
-      {
-        arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
-                        __FILE__, "Mass matrix solver failure");
-        return ARK_MASSSOLVE_FAIL;
-      }
-    }
+    /* if (step_mem->mass_type == MASS_FIXED) */
+    /* { */
+    /*   retval = step_mem->msolve((void*)ark_mem, f, */
+    /*                             step_mem->nlscoef / ark_mem->h); */
+    /*   if (retval) */
+    /*   { */
+    /*     arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__, */
+    /*                     __FILE__, "Mass matrix solver failure"); */
+    /*     return ARK_MASSSOLVE_FAIL; */
+    /*   } */
+    /* } */
 
     /* apply external polynomial (MRI) forcing (M = I required) */
     if (step_mem->expforcing || step_mem->impforcing)
@@ -1538,17 +1538,17 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     }
 
     /* compute M^{-1} f for output but do not store */
-    if (step_mem->mass_type == MASS_FIXED)
-    {
-      retval = step_mem->msolve((void*)ark_mem, f,
-                                step_mem->nlscoef / ark_mem->h);
-      if (retval)
-      {
-        arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
-                        __FILE__, "Mass matrix solver failure");
-        return ARK_MASSSOLVE_FAIL;
-      }
-    }
+    /* if (step_mem->mass_type == MASS_FIXED) */
+    /* { */
+    /*   retval = step_mem->msolve((void*)ark_mem, f, */
+    /*                             step_mem->nlscoef / ark_mem->h); */
+    /*   if (retval) */
+    /*   { */
+    /*     arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__, */
+    /*                     __FILE__, "Mass matrix solver failure"); */
+    /*     return ARK_MASSSOLVE_FAIL; */
+    /*   } */
+    /* } */
 
     /* apply external polynomial (MRI) forcing (M = I required) */
     if (step_mem->expforcing || step_mem->impforcing)
@@ -1605,17 +1605,17 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     }
 
     /* compute M^{-1} f for output but do not store */
-    if (step_mem->mass_type != MASS_IDENTITY)
-    {
-      retval = step_mem->msolve((void*)ark_mem, f,
-                                step_mem->nlscoef / ark_mem->h);
-      if (retval)
-      {
-        arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
-                        __FILE__, "Mass matrix solver failure");
-        return ARK_MASSSOLVE_FAIL;
-      }
-    }
+    /* if (step_mem->mass_type != MASS_IDENTITY) */
+    /* { */
+    /*   retval = step_mem->msolve((void*)ark_mem, f, */
+    /*                             step_mem->nlscoef / ark_mem->h); */
+    /*   if (retval) */
+    /*   { */
+    /*     arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__, */
+    /*                     __FILE__, "Mass matrix solver failure"); */
+    /*     return ARK_MASSSOLVE_FAIL; */
+    /*   } */
+    /* } */
 
     /* apply external polynomial (MRI) forcing (M = I required) */
     if (step_mem->expforcing || step_mem->impforcing)
@@ -3415,6 +3415,12 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
     /* solve for y update (stored in y) */
+    if (step_mem->msolve == NULL)
+    {
+      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "A stiffly accurate method is required!");
+      return ARK_ILL_INPUT;
+    }
     retval = step_mem->msolve((void*)ark_mem, y, step_mem->nlscoef);
     if (retval < 0)
     {

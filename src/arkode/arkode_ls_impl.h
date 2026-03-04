@@ -153,6 +153,7 @@ typedef struct ARKLsMassMemRec
 
   /* Statistics and associated parameters */
   sunbooleantype time_dependent; /* flag whether M depends on t        */
+  sunbooleantype singular;       /* flag whether M is singular         */
   sunrealtype msetuptime;        /* "t" value at last msetup call      */
   long int nmsetups;             /* total # mass matrix-solver setups  */
   long int nmsolves;             /* total # mass matrix-solver solves  */

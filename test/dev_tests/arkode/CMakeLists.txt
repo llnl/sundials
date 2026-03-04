@@ -15,8 +15,4 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-message("Adding development tests")
-
-if(SUNDIALS_ENABLE_ARKODE)
-  add_subdirectory(arkode)
-endif()
+add_subdirectory(dae_fixed_m)

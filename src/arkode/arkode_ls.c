@@ -650,6 +650,123 @@ int ARKodeSetMassFn(void* arkode_mem, ARKLsMassFn mass)
 }
 
 /*---------------------------------------------------------------
+  ARKodeSetMassFn specifies the mass matrix function.
+  ---------------------------------------------------------------*/
+int ARKodeSetMassMatrix(void* arkode_mem, SUNMatrix M, ARKLsMassFn mass_fn,
+                        sunbooleantype time_dep, sunbooleantype singular)
+{
+  ARKodeMem ark_mem;
+  ARKLsMassMem arkls_mem;
+  int retval;
+
+  /* Return immediately if arkode_mem is NULL */
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* return with failure if mass cannot be used */
+  if (M == NULL)
+  {
+    arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__,
+                    __FILE__, "Mass-matrix routine cannot be supplied for NULL SUNMatrix");
+    return (ARKLS_ILL_INPUT);
+  }
+  if (mass_fn == NULL)
+  {
+    arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Mass-matrix routine must be non-NULL");
+    return (ARKLS_ILL_INPUT);
+  }
+  if (time_dep && singular)
+  {
+    arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Mass-matrix cannot be time-dependent and singular");
+    return (ARKLS_ILL_INPUT);
+  }
+
+  /* Guard against use for time steppers that do not support mass matrices */
+  if (!ark_mem->step_supports_massmatrix)
+  {
+    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
+                    __FILE__, "time-stepping module does not support non-identity mass matrices");
+    return (ARK_STEPPER_UNSUPPORTED);
+  }
+
+  /* Test whether time stepper module is supplied, with required routines */
+  if ((ark_mem->step_attachmasssol == NULL) || (ark_mem->step_getmassmem == NULL))
+  {
+    arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Missing time step module or associated routines");
+    return (ARKLS_ILL_INPUT);
+  }
+
+  /* Allocate memory for ARKLsMemRec */
+  arkls_mem = NULL;
+  arkls_mem = (ARKLsMassMem)malloc(sizeof(struct ARKLsMassMemRec));
+  if (arkls_mem == NULL)
+  {
+    arkProcessError(ark_mem, ARKLS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                    MSG_LS_MEM_FAIL);
+    return (ARKLS_MEM_FAIL);
+  }
+  memset(arkls_mem, 0, sizeof(struct ARKLsMassMemRec));
+
+  /* set SUNLinearSolver pointer */
+  arkls_mem->LS = NULL;
+
+  /* Linear solver type information */
+  arkls_mem->iterative   = SUNFALSE;
+  arkls_mem->matrixbased = SUNTRUE;
+
+  /* Set flag indicating time-dependence */
+  arkls_mem->time_dependent = time_dep;
+
+  /* Set flag indicating time-dependence */
+  arkls_mem->singular = singular;
+
+  /* Set mass-matrix routines to NULL */
+  arkls_mem->mass    = mass_fn;
+  arkls_mem->M       = M;
+  arkls_mem->M_data  = ark_mem->user_data;
+  arkls_mem->mtsetup = NULL;
+  arkls_mem->mtimes  = NULL;
+  arkls_mem->mt_data = NULL;
+
+  /* Set defaults for preconditioner-related fields */
+  arkls_mem->pset   = NULL;
+  arkls_mem->psolve = NULL;
+  arkls_mem->pfree  = NULL;
+  arkls_mem->P_data = NULL;
+
+  /* Initialize counters */
+  arkLsInitializeMassCounters(arkls_mem);
+
+  /* Set default values for the rest of the LS parameters */
+  arkls_mem->eplifac   = ARKLS_EPLIN;
+  arkls_mem->last_flag = ARKLS_SUCCESS;
+
+  /* Attach ARKLs interface to time stepper module */
+  retval = ark_mem->step_attachmasssol(ark_mem, NULL,
+                                       arkLsMassSetup, arkLsMTimes,
+                                       NULL, arkLsMassFree, time_dep,
+                                       SUNLINEARSOLVER_DIRECT, arkls_mem);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Failed to attach to time stepper module");
+    free(arkls_mem);
+    arkls_mem = NULL;
+    return (retval);
+  }
+
+  return ARKLS_SUCCESS;
+}
+
+/*---------------------------------------------------------------
   ARKodeSetEpsLin specifies the nonlinear -> linear tolerance
   scale factor.
   ---------------------------------------------------------------*/
@@ -3101,22 +3218,22 @@ int arkLsInitialize(ARKodeMem ark_mem)
     }
 
     /* If either system or mass matrix solver is matrix-embedded, then both must be */
-    if ((SUNLinSolGetType(arkls_mem->LS) == SUNLINEARSOLVER_MATRIX_EMBEDDED) &&
-        (SUNLinSolGetType(arkls_massmem->LS) != SUNLINEARSOLVER_MATRIX_EMBEDDED))
-    {
-      arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__,
-                      __FILE__, "mismatched matrix-embedded LS types (system and mass must match)");
-      arkls_mem->last_flag = ARKLS_ILL_INPUT;
-      return (ARKLS_ILL_INPUT);
-    }
-    if ((SUNLinSolGetType(arkls_mem->LS) != SUNLINEARSOLVER_MATRIX_EMBEDDED) &&
-        (SUNLinSolGetType(arkls_massmem->LS) == SUNLINEARSOLVER_MATRIX_EMBEDDED))
-    {
-      arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__,
-                      __FILE__, "mismatched matrix-embedded LS types (system and mass must match)");
-      arkls_mem->last_flag = ARKLS_ILL_INPUT;
-      return (ARKLS_ILL_INPUT);
-    }
+    /* if ((SUNLinSolGetType(arkls_mem->LS) == SUNLINEARSOLVER_MATRIX_EMBEDDED) && */
+    /*     (SUNLinSolGetType(arkls_massmem->LS) != SUNLINEARSOLVER_MATRIX_EMBEDDED)) */
+    /* { */
+    /*   arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, */
+    /*                   __FILE__, "mismatched matrix-embedded LS types (system and mass must match)"); */
+    /*   arkls_mem->last_flag = ARKLS_ILL_INPUT; */
+    /*   return (ARKLS_ILL_INPUT); */
+    /* } */
+    /* if ((SUNLinSolGetType(arkls_mem->LS) != SUNLINEARSOLVER_MATRIX_EMBEDDED) && */
+    /*     (SUNLinSolGetType(arkls_massmem->LS) == SUNLINEARSOLVER_MATRIX_EMBEDDED)) */
+    /* { */
+    /*   arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, */
+    /*                   __FILE__, "mismatched matrix-embedded LS types (system and mass must match)"); */
+    /*   arkls_mem->last_flag = ARKLS_ILL_INPUT; */
+    /*   return (ARKLS_ILL_INPUT); */
+    /* } */
   }
 
   /* reset counters */
@@ -3139,14 +3256,14 @@ int arkLsInitialize(ARKodeMem ark_mem)
   }
 
   /* When using a matrix-embedded linear solver, disable lsetup call and solution scaling */
-  if (SUNLinSolGetType(arkls_mem->LS) == SUNLINEARSOLVER_MATRIX_EMBEDDED)
-  {
-    ark_mem->step_disablelsetup(ark_mem);
-    arkls_mem->scalesol = SUNFALSE;
-  }
+  /* if (SUNLinSolGetType(arkls_mem->LS) == SUNLINEARSOLVER_MATRIX_EMBEDDED) */
+  /* { */
+  /*   ark_mem->step_disablelsetup(ark_mem); */
+  /*   arkls_mem->scalesol = SUNFALSE; */
+  /* } */
 
   /* Call LS initialize routine, and return result */
-  arkls_mem->last_flag = SUNLinSolInitialize(arkls_mem->LS);
+  /* arkls_mem->last_flag = SUNLinSolInitialize(arkls_mem->LS); */
   return (arkls_mem->last_flag);
 }
 
@@ -3652,7 +3769,7 @@ int arkLsMassSetup(ARKodeMem ark_mem, sunrealtype t, N_Vector vtemp1,
                    N_Vector vtemp2, N_Vector vtemp3)
 {
   ARKLsMassMem arkls_mem;
-  sunbooleantype call_mtsetup, call_mvsetup, call_lssetup;
+  sunbooleantype call_mtsetup, call_mvsetup; // call_lssetup;
   int retval;
 
   /* access ARKLsMassMem structure */
@@ -3660,11 +3777,11 @@ int arkLsMassSetup(ARKodeMem ark_mem, sunrealtype t, N_Vector vtemp1,
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Immediately return when using matrix-embedded linear solver */
-  if (SUNLinSolGetType(arkls_mem->LS) == SUNLINEARSOLVER_MATRIX_EMBEDDED)
-  {
-    arkls_mem->last_flag = ARKLS_SUCCESS;
-    return (arkls_mem->last_flag);
-  }
+  /* if (SUNLinSolGetType(arkls_mem->LS) == SUNLINEARSOLVER_MATRIX_EMBEDDED) */
+  /* { */
+  /*   arkls_mem->last_flag = ARKLS_SUCCESS; */
+  /*   return (arkls_mem->last_flag); */
+  /* } */
 
   /* if the most recent setup essentially matches the current time,
      just return with success */
@@ -3699,8 +3816,8 @@ int arkLsMassSetup(ARKodeMem ark_mem, sunrealtype t, N_Vector vtemp1,
   /* Perform user-facing setup based on whether this is matrix-free */
   if (arkls_mem->M == NULL)
   {
-    /*** matrix-free -- only call LS setup if preconditioner setup exists ***/
-    call_lssetup = (arkls_mem->pset != NULL);
+    /* /\*** matrix-free -- only call LS setup if preconditioner setup exists ***\/ */
+    /* call_lssetup = (arkls_mem->pset != NULL); */
     /*** matrix-free -- dont call matvec setup ***/
     call_mvsetup = SUNFALSE;
   }
@@ -3747,17 +3864,17 @@ int arkLsMassSetup(ARKodeMem ark_mem, sunrealtype t, N_Vector vtemp1,
     }
 
     /* Copy M into M_lu for factorization (direct linear solvers) */
-    if (!(arkls_mem->iterative))
-    {
-      retval = SUNMatCopy(arkls_mem->M, arkls_mem->M_lu);
-      if (retval)
-      {
-        arkProcessError(ark_mem, ARKLS_SUNMAT_FAIL, __LINE__, __func__,
-                        __FILE__, MSG_LS_SUNMAT_FAILED);
-        arkls_mem->last_flag = ARKLS_SUNMAT_FAIL;
-        return (arkls_mem->last_flag);
-      }
-    }
+    /* if (!(arkls_mem->iterative)) */
+    /* { */
+    /*   retval = SUNMatCopy(arkls_mem->M, arkls_mem->M_lu); */
+    /*   if (retval) */
+    /*   { */
+    /*     arkProcessError(ark_mem, ARKLS_SUNMAT_FAIL, __LINE__, __func__, */
+    /*                     __FILE__, MSG_LS_SUNMAT_FAILED); */
+    /*     arkls_mem->last_flag = ARKLS_SUNMAT_FAIL; */
+    /*     return (arkls_mem->last_flag); */
+    /*   } */
+    /* } */
 
     /* signal call to matvec setup routine only if the user didn't provide
        mtimes and the SUNMatrix implements the matvecsetup routine */
@@ -3768,7 +3885,7 @@ int arkLsMassSetup(ARKodeMem ark_mem, sunrealtype t, N_Vector vtemp1,
     else { call_mvsetup = SUNFALSE; }
 
     /* signal call to LS setup routine */
-    call_lssetup = SUNTRUE;
+    /* call_lssetup = SUNTRUE; */
   }
 
   /* Call matvec setup routine if applicable */
@@ -3786,11 +3903,11 @@ int arkLsMassSetup(ARKodeMem ark_mem, sunrealtype t, N_Vector vtemp1,
   }
 
   /* Call LS setup routine if applicable, and return */
-  if (call_lssetup)
-  {
-    arkls_mem->last_flag = SUNLinSolSetup(arkls_mem->LS, arkls_mem->M_lu);
-    arkls_mem->nmsetups++;
-  }
+  /* if (call_lssetup) */
+  /* { */
+  /*   arkls_mem->last_flag = SUNLinSolSetup(arkls_mem->LS, arkls_mem->M_lu); */
+  /*   arkls_mem->nmsetups++; */
+  /* } */
 
   return (arkls_mem->last_flag);
 }
