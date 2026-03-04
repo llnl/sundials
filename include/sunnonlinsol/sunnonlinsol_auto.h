@@ -25,6 +25,8 @@ struct _SUNNonlinearSolverContent_Auto
   SUNNonlinSolAutoType type;
   SUNNonlinearSolver fp_solver;
   SUNNonlinearSolver newton_solver;
+  SUNNonlinSolConvTestFn user_ctest_fn;
+  void* user_ctest_data;
   int maxiters;
   int curiter;
   int fp_to_newt_delay;
@@ -34,6 +36,7 @@ struct _SUNNonlinearSolverContent_Auto
   long int nconvfails;
   int switch_nconsec;
   int switch_consec_count;
+  void* auto_ctest_data;
 };
 
 typedef struct _SUNNonlinearSolverContent_Auto* SUNNonlinearSolverContent_Auto;
@@ -81,8 +84,9 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters);
 
-/* Set number of consecutive times the switch criterion must be met before the
-   automatic solver switches (in addition to any configured switch delay). */
+/* Set number of consecutive nonlinear iterations where the switch criterion
+   must be met before the automatic solver switches (in addition to any
+   configured switch delay). */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetSwitchConsecutive_Auto(SUNNonlinearSolver NLS,
                                                  int nconsecutive);

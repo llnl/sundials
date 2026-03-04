@@ -254,6 +254,8 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       retval = NEWTON_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                           NEWTON_CONTENT(NLS)->ctest_data);
 
+      if (retval == SUN_NLS_SWITCH) { return SUN_NLS_SWITCH; }
+
       NEWTON_CONTENT(NLS)->curiter++;
 
       SUNLogInfo(NLS->sunctx->logger,

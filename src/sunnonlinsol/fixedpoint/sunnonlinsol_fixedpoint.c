@@ -259,6 +259,8 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
 
+    if (retval == SUN_NLS_SWITCH) { return SUN_NLS_SWITCH; }
+
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
                "cur-iter = %d, update-norm = " SUN_FORMAT_G,
                FP_CONTENT(NLS)->niters, FP_CONTENT(NLS)->norm_delta);
