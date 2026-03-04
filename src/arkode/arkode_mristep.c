@@ -1476,11 +1476,11 @@ int mriStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     step_mem->Xvecs[nvec] = f;
     nvec++;
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreRHSProcess != NULL)
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-      if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+      retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
     }
 
     /* compute the implicit component and store in sdata */
@@ -1604,13 +1604,13 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
 
     /* update the RHS components */
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if ((ark_mem->PreRHSProcess != NULL) &&
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if ((ark_mem->PreRhsFn) &&
         ((!step_mem->fse_is_current || !ark_mem->fn_is_current) ||
          (!step_mem->fsi_is_current || !ark_mem->fn_is_current)))
     {
-      retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-      if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+      retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
     }
 
     /*   implicit component */
@@ -1678,11 +1678,11 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
     /* compute the full RHS */
     if (!(ark_mem->fn_is_current))
     {
-      /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreRHSProcess != NULL)
+      /* call the user-supplied pre-RHS function (if supplied) */
+      if (ark_mem->PreRhsFn)
       {
-        retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-        if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+        retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+        if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
       }
 
       /* compute the implicit component */
@@ -1976,11 +1976,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_%i(:) =", is);
 
     /* apply user-supplied stage postprocessing function (if supplied) */
-    if ((ark_mem->PostProcessStage != NULL) &&
+    if ((ark_mem->PostProcessStageFn) &&
         (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC))
     {
-      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+      retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
+                                           ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1993,7 +1993,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     if (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC)
     {
       if ((step_mem->stagetypes[is] != MRISTAGE_ERK_FAST) ||
-          (ark_mem->PostProcessStage != NULL))
+          (ark_mem->PostProcessStageFn))
       {
         retval = mriStepInnerStepper_Reset(step_mem->stepper, tf, ark_mem->ycur);
         if (retval != ARK_SUCCESS)
@@ -2018,21 +2018,21 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
     if (calc_fslow)
     {
-      /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreRHSProcess != NULL)
+      /* call the user-supplied pre-RHS function (if supplied) */
+      if (ark_mem->PreRhsFn)
       {
         if (step_mem->explicit_rhs ||
             (step_mem->implicit_rhs &&
              (!step_mem->deduce_rhs ||
               (step_mem->stagetypes[is] != MRISTAGE_DIRK_NOFAST))))
         {
-          retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
-                                          ark_mem->user_data);
+          retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                     ark_mem->user_data);
           if (retval != 0)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
                        "status = failed preprocess rhs, retval = %i", retval);
-            return (ARK_PREPROCESS_RHS_FAIL);
+            return (ARK_PRERHSFN_FAIL);
           }
         }
       }
@@ -2178,19 +2178,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
     if (retval != ARK_SUCCESS) { return retval; }
 
-    /* apply user-supplied stage postprocessing function (if supplied) */
-    if (ark_mem->PostProcessStage != NULL)
-    {
-      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                   "status = failed postprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
-    }
-
     SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->ycur,
                         "y_embedded(:) =");
 
@@ -2266,17 +2253,17 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
     SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_%i(:) =", is);
 
-    /* apply user-supplied stage postprocessing function (if supplied) */
-    if ((ark_mem->PostProcessStage != NULL) &&
+    /* apply user-supplied step postprocessing function (if supplied) */
+    if ((ark_mem->PostProcessStepFn) &&
         (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC))
     {
-      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                   "status = failed postprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
+                   "status = failed postprocess step, retval = %i", retval);
+        return (ARK_POSTPROCESS_STEP_FAIL);
       }
     }
 
@@ -2284,7 +2271,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     if (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC)
     {
       if ((step_mem->stagetypes[is] != MRISTAGE_ERK_FAST) ||
-          (ark_mem->PostProcessStage != NULL))
+          (ark_mem->PostProcessStepFn))
       {
         retval = mriStepInnerStepper_Reset(step_mem->stepper, tf, ark_mem->ycur);
         if (retval != ARK_SUCCESS)
@@ -2653,12 +2640,12 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur,
                         "z_%i(:) =", stage);
 
-    /* apply user-supplied stage postprocessing function (if supplied),
+    /* apply user-supplied stage or step postprocessing function (if supplied),
        and reset the inner integrator with the modified stage solution */
-    if (ark_mem->PostProcessStage != NULL)
+    if (!solution && !embedding && ark_mem->PostProcessStageFn)
     {
-      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+      retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
+                                           ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2676,23 +2663,44 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         return (ARK_INNERSTEP_FAIL);
       }
     }
+    else if (solution && ark_mem->PostProcessStepFn)
+    {
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed postprocess step, retval = %i", retval);
+        return (ARK_POSTPROCESS_STEP_FAIL);
+      }
+      retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
+                                         ark_mem->ycur);
+      if (retval != ARK_SUCCESS)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed reset, retval = %i", retval);
+        arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__,
+                        __FILE__, "Unable to reset the inner stepper");
+        return (ARK_INNERSTEP_FAIL);
+      }
+    }
 
     /* Compute updated slow RHS (except for final solution or embedding) */
     if ((!solution) && (!embedding))
     {
-      /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreRHSProcess != NULL)
+      /* call the user-supplied pre-RHS function (if supplied) */
+      if (ark_mem->PreRhsFn)
       {
         if (step_mem->explicit_rhs ||
             (step_mem->implicit_rhs && (!step_mem->deduce_rhs || !impl_corr)))
         {
-          retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
-                                          ark_mem->user_data);
+          retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                     ark_mem->user_data);
           if (retval != 0)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
                        "status = failed preprocess rhs, retval = %i", retval);
-            return (ARK_PREPROCESS_RHS_FAIL);
+            return (ARK_PRERHSFN_FAIL);
           }
         }
       }
@@ -3062,10 +3070,10 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
       /* apply user-supplied stage postprocessing function (if supplied),
          and reset the inner integrator with the modified stage solution */
-      if (ark_mem->PostProcessStage != NULL)
+      if (!solution && !embedding && ark_mem->PostProcessStageFn)
       {
-        retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                           ark_mem->user_data);
+        retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
+                                             ark_mem->user_data);
         if (retval != 0)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -3088,22 +3096,48 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           return (ARK_INNERSTEP_FAIL);
         }
       }
+      else if (solution && ark_mem->PostProcessStepFn)
+      {
+        retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                            ark_mem->user_data);
+        if (retval != 0)
+        {
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                     "status = failed postprocess step, retval = %i", retval);
+          SUNLogInfo(ARK_LOGGER, "end-groups-list",
+                     "status = failed stage computation, retval = %i", retval);
+          return (ARK_POSTPROCESS_STEP_FAIL);
+        }
+
+        retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
+                                           ark_mem->ycur);
+        if (retval != ARK_SUCCESS)
+        {
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                     "status = failed reset, retval = %i", retval);
+          SUNLogInfo(ARK_LOGGER, "end-groups-list",
+                     "status = failed stage computation, retval = %i", retval);
+          arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__,
+                          __FILE__, "Unable to reset the inner stepper");
+          return (ARK_INNERSTEP_FAIL);
+        }
+      }
 
       /* Compute updated slow RHS (except for final solution or embedding) */
       if ((!solution) && (!embedding))
       {
-        /* apply user-supplied stage preprocessing function (if supplied) */
-        if (ark_mem->PreRHSProcess != NULL)
+        /* call the user-supplied pre-RHS function (if supplied) */
+        if (ark_mem->PreRhsFn)
         {
-          retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
-                                          ark_mem->user_data);
+          retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                     ark_mem->user_data);
           if (retval != 0)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
                        "status = failed preprocess rhs, retval = %i", retval);
             SUNLogInfo(ARK_LOGGER, "end-groups-list",
                        "status = failed stage computation, retval = %i", retval);
-            return (ARK_PREPROCESS_RHS_FAIL);
+            return (ARK_PRERHSFN_FAIL);
           }
         }
 
@@ -4253,11 +4287,11 @@ int mriStep_SlowRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   retval = mriStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreRHSProcess != NULL)
+  /* call the user-supplied pre-RHS function (if supplied) */
+  if (ark_mem->PreRhsFn)
   {
-    retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-    if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+    retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
   }
 
   /* call fsi if the problem has an implicit component */
