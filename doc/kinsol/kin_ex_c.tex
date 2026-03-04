@@ -1,41 +1,6 @@
 %===================================================================================
 \section{C example problems}\label{s:ex_c}
 %===================================================================================
-\subsection{A serial dense example: kinHimmelblau\_dns}\label{ss:kinHimmelblau_dns}
-As an initial illustration of the use of the {\kinsol} package for the
-solution of nonlinear systems, we give a sample program called \id{kinHimmelblau_dns.c}.
-It uses the {\kinsol} dense linear solver module {\sunlinsoldense}
-and the {\nvecs} module (which provides a serial implementation of {\nvector})
-for the solution of the Himmelblau function test problem~\cite{FlPa:99}.
-
-
-The goal of this example is to find all stationary points of the Himmelblau
-function:
-\begin{equation}
-  \begin{split}
-    & 0 = 4x_{1}^{3}+4x_{1}x_{2}+2x_2^{2}-42x_2-14 \\
-    & 0 = 4x_{2}^{3}+2x_{1}^{2}+x_{2}+4x_{1}x_{2}-26x_2-22  \\
-    &\text{subject to } \\
-    &\qquad x_{1\min} = -5 \le x_1 \le 5 = x_{1\max} \\
-    &\qquad x_{2\min} = -5 \le x_2 \le 5 = x_{2\max} \, .
-  \end{split}
-\end{equation}
-The bounds constraints on $x_1$ and $x_2$ are treated by introducing
-four additional variables and using {\kinsol}'s optional constraints
-feature to enforce non-positivity and non-negativity:
-\begin{equation*}
-  \begin{split}
-    &l_1 = x_1 - x_{1\min} \ge 0\\
-    &L_1 = x_1 - x_{1\max} \le 0\\
-    &l_2 = x_2 - x_{2\min} \ge 0\\
-    &L_2 = x_2 - x_{2\max} \le 0 \, .
-  \end{split}
-\end{equation*}
-The Himmelblau function problem has nine known solutions. We solve it with
-  {\kinsol} using two sets of initial guesses for $x_1$ and $x_2$ (first their
-lower bounds and secondly the middle of their feasible regions), both with
-an exact and modified Newton method, with and without line search.
-
 
 \subsection{A serial dense example: kinFerTron\_dns}\label{ss:kinFerTron_dns}
 

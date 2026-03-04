@@ -268,7 +268,7 @@ int main(int argc, char* argv[])
     if (outproc)
     {
       cout << scientific;
-      cout << setprecision(numeric_limits<sunrealtype>::digits10);
+      cout << setprecision(SUN_DIGITS10);
       cout << "  Max error = " << maxerr << endl;
     }
 
@@ -1945,7 +1945,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   udata->uout.open(fname.str());
 
   udata->uout << scientific;
-  udata->uout << setprecision(numeric_limits<sunrealtype>::digits10);
+  udata->uout << setprecision(SUN_DIGITS10);
 
   // Write solution and error to disk
   sunrealtype* uarray = N_VGetArrayPointer(u);
@@ -1978,7 +1978,7 @@ static int OpenOutput(UserData* udata)
     udata->rout.open(fname.str());
 
     udata->rout << scientific;
-    udata->rout << setprecision(numeric_limits<sunrealtype>::digits10);
+    udata->rout << setprecision(SUN_DIGITS10);
 
     // Open output stream for error
     fname.str("");
@@ -1987,7 +1987,7 @@ static int OpenOutput(UserData* udata)
     udata->eout.open(fname.str());
 
     udata->eout << scientific;
-    udata->eout << setprecision(numeric_limits<sunrealtype>::digits10);
+    udata->eout << setprecision(SUN_DIGITS10);
   }
 
   return 0;

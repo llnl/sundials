@@ -433,7 +433,7 @@ int main(int argc, char* argv[])
     sunrealtype maxerr = N_VMaxNorm(udata->e);
 
     cout << scientific;
-    cout << setprecision(numeric_limits<sunrealtype>::digits10);
+    cout << setprecision(SUN_DIGITS10);
     cout << "  Max error = " << maxerr << endl;
   }
 
@@ -882,7 +882,7 @@ static int OpenOutput(UserData* udata)
   if (udata->output > 0)
   {
     cout << scientific;
-    cout << setprecision(numeric_limits<sunrealtype>::digits10);
+    cout << setprecision(SUN_DIGITS10);
     if (udata->forcing)
     {
       cout << "          t           ";
@@ -917,13 +917,13 @@ static int OpenOutput(UserData* udata)
     // Open output streams for solution and error
     udata->uout.open("heat2d_solution.txt");
     udata->uout << scientific;
-    udata->uout << setprecision(numeric_limits<sunrealtype>::digits10);
+    udata->uout << setprecision(SUN_DIGITS10);
 
     if (udata->forcing)
     {
       udata->eout.open("heat2d_error.txt");
       udata->eout << scientific;
-      udata->eout << setprecision(numeric_limits<sunrealtype>::digits10);
+      udata->eout << setprecision(SUN_DIGITS10);
     }
   }
 

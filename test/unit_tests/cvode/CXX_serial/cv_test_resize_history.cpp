@@ -269,8 +269,7 @@ int main(int argc, char* argv[])
 
   // Set output formatting
   cout << scientific;
-  cout << setprecision(16);
-  // cout << setprecision(numeric_limits<sunrealtype>::digits10);
+  cout << setprecision(SUN_DIGITS10);
   cout << endl;
 
   // Output initial data
