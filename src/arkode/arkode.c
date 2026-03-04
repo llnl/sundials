@@ -915,7 +915,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       if (ark_mem->PreStepFn)
       {
         retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst,
-                                    ark_mem->nst_attempts, ark_mem->user_data);
+                                    attempts, ark_mem->user_data);
         if (retval != 0) { return (ARK_PRESTEPFN_FAIL); }
       }
 

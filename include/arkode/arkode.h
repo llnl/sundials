@@ -187,7 +187,7 @@ typedef int (*ARKExpStabFn)(N_Vector y, sunrealtype t, sunrealtype* hstab,
 typedef int (*ARKVecResizeFn)(N_Vector y, N_Vector ytemplate, void* user_data);
 
 typedef int (*ARKPreStepFn)(sunrealtype t, N_Vector y, long int step,
-                            long int attempt, void* user_data);
+                            int attempt, void* user_data);
 
 typedef int (*ARKPostStepFn)(sunrealtype t, N_Vector y, long int step,
                              void* user_data);
