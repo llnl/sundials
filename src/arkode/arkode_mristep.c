@@ -2178,19 +2178,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
     if (retval != ARK_SUCCESS) { return retval; }
 
-    /* apply user-supplied stage postprocessing function (if supplied) */
-    if (ark_mem->PostProcessStageFn)
-    {
-      retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
-                                           ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                   "status = failed postprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
-    }
-
     SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->ycur,
                         "y_embedded(:) =");
 
@@ -2676,7 +2663,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         return (ARK_INNERSTEP_FAIL);
       }
     }
-    else if ((solution || embedding) && ark_mem->PostProcessStepFn)
+    else if (solution && ark_mem->PostProcessStepFn)
     {
       retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
                                           ark_mem->user_data);
@@ -3109,7 +3096,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           return (ARK_INNERSTEP_FAIL);
         }
       }
-      else if ((solution || embedding) && ark_mem->PostProcessStepFn)
+      else if (solution && ark_mem->PostProcessStepFn)
       {
         retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
                                             ark_mem->user_data);
@@ -3119,7 +3106,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                      "status = failed postprocess step, retval = %i", retval);
           SUNLogInfo(ARK_LOGGER, "end-groups-list",
                      "status = failed stage computation, retval = %i", retval);
-          return (ARK_POSTPROCESS_STAGE_FAIL);
+          return (ARK_POSTPROCESS_STEP_FAIL);
         }
 
         retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
