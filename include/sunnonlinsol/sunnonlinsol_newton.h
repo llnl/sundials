@@ -53,6 +53,7 @@ struct _SUNNonlinearSolverContent_Newton
   long int niters; /* total number of nonlinear iterations across all solves */
   long int nconvfails; /* total number of convergence failures across all solves
                         */
+  sunrealtype beta_k; /* ratio ||F_m|| / || delta_m || to monitor stiffness */
   void* ctest_data; /* data to pass to convergence test function              */
 };
 

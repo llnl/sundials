@@ -46,13 +46,18 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
 
   NLS->content = content;
 
-  content->type          = type;
-  content->maxiters      = 3;
-  content->curiter       = 0;
-  content->niters        = 0;
-  content->nconvfails    = 0;
-  content->fp_solver     = SUNNonlinSol_FixedPoint(y, m, sunctx);
-  content->newton_solver = SUNNonlinSol_Newton(y, sunctx);
+  content->type                 = type;
+  content->maxiters             = 3;
+  content->curiter              = 0;
+  content->niters               = 0;
+  content->nconvfails           = 0;
+  content->fp_to_newt_delay     = 3;
+  content->newt_to_fp_delay     = 10;
+  content->nsolves_since_switch = 0;
+  content->switch_nconsec       = 1;
+  content->switch_consec_count  = 0;
+  content->fp_solver            = SUNNonlinSol_FixedPoint(y, m, sunctx);
+  content->newton_solver        = SUNNonlinSol_Newton(y, sunctx);
 
   return NLS;
 }
@@ -88,22 +93,62 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   {
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->fp_solver, y0, ycor, w, tol,
                                callSetup, mem);
+    AUTO_CONTENT(NLS)->nsolves_since_switch++;
 
     SUNNonlinearSolverContent_FixedPoint fp_content =
       (SUNNonlinearSolverContent_FixedPoint)AUTO_CONTENT(NLS)->fp_solver->content;
     const sunrealtype alpha = 0.8;
-    if (fp_content->crate >= alpha)
+
+    if (AUTO_CONTENT(NLS)->nsolves_since_switch >
+        AUTO_CONTENT(NLS)->fp_to_newt_delay &&
+        fp_content->crate >= alpha)
+    {
+      AUTO_CONTENT(NLS)->switch_consec_count++;
+    }
+    else
+    {
+      AUTO_CONTENT(NLS)->switch_consec_count = 0;
+    }
+
+    if (AUTO_CONTENT(NLS)->switch_consec_count >= AUTO_CONTENT(NLS)->switch_nconsec)
     {
       printf(">>>> crate=%g\n", fp_content->crate);
-      /* OK, switch */
+      AUTO_CONTENT(NLS)->nsolves_since_switch = 0;
+      AUTO_CONTENT(NLS)->switch_consec_count  = 0;
       AUTO_CONTENT(NLS)->type = SUNNONLINSOL_AUTO_NEWTON;
       return SUN_NLS_SWITCH;
     }
   }
   else
   {
+    SUNNonlinearSolverContent_Newton newton_content =
+      (SUNNonlinearSolverContent_Newton)AUTO_CONTENT(NLS)->newton_solver->content;
+
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->newton_solver, y0, ycor, w,
                                tol, callSetup, mem);
+    AUTO_CONTENT(NLS)->nsolves_since_switch++;
+
+    const sunrealtype threshold = 1.5;
+
+    if (AUTO_CONTENT(NLS)->nsolves_since_switch >
+        AUTO_CONTENT(NLS)->newt_to_fp_delay &&
+        newton_content->beta_k < threshold)
+    {
+      AUTO_CONTENT(NLS)->switch_consec_count++;
+    }
+    else
+    {
+      AUTO_CONTENT(NLS)->switch_consec_count = 0;
+    }
+
+    if (AUTO_CONTENT(NLS)->switch_consec_count >= AUTO_CONTENT(NLS)->switch_nconsec)
+    {
+      printf(">>>> beta_k=%g\n", newton_content->beta_k);
+      AUTO_CONTENT(NLS)->nsolves_since_switch = 0;
+      AUTO_CONTENT(NLS)->switch_consec_count  = 0;
+      AUTO_CONTENT(NLS)->type = SUNNONLINSOL_AUTO_FIXEDPOINT;
+      return SUN_NLS_SWITCH;
+    }
   }
   return retval;
 }
@@ -211,8 +256,19 @@ SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters)
   return retval;
 }
 
+SUNErrCode SUNNonlinSolSetSwitchConsecutive_Auto(SUNNonlinearSolver NLS,
+                                                 int nconsecutive)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNAssert(nconsecutive >= 1, SUN_ERR_ARG_OUTOFRANGE);
+  AUTO_CONTENT(NLS)->switch_nconsec      = nconsecutive;
+  AUTO_CONTENT(NLS)->switch_consec_count = 0;
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters)
 {
+  SUNFunctionBegin(NLS->sunctx);
   long int fp_iters   = 0;
   long int newt_iters = 0;
   SUNCheckCall(SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->fp_solver, &fp_iters));
@@ -237,6 +293,7 @@ SUNErrCode SUNNonlinSolGetCurIter_Auto(SUNNonlinearSolver NLS, int* iter)
 SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
                                             long int* nconvfails)
 {
+  SUNFunctionBegin(NLS->sunctx);
   long int fp_nvconvfails  = 0;
   long int newt_nconvfails = 0;
   SUNCheckCall(

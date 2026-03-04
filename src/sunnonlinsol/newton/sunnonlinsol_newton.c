@@ -27,6 +27,8 @@
 #include <sundials/sundials_nvector_senswrapper.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
+#include "sundials/sundials_nvector.h"
+#include "sundials/sundials_types.h"
 #include "sundials_logger_impl.h"
 #include "sundials_macros.h"
 
@@ -91,6 +93,7 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   content->maxiters   = 3;
   content->niters     = 0;
   content->nconvfails = 0;
+  content->beta_k     = SUN_RCONST(0.0);
   content->ctest_data = NULL;
 
   /* Fill allocatable content */
@@ -280,10 +283,16 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = continue");
       SUNLogInfo(NLS->sunctx->logger, "begin-iterations-list", "");
 
+      sunrealtype delnrm = N_VWrmsNorm(delta, w);
+
       /* compute the nonlinear residual, store in delta */
       retval = NEWTON_CONTENT(NLS)->Sys(ycor, delta, mem);
       if (retval != SUN_SUCCESS) { break; }
 
+      sunrealtype resnrm = N_VWrmsNorm(delta, w);
+
+      /* compute stiffness metric */
+      NEWTON_CONTENT(NLS)->beta_k = resnrm / delnrm;
     } /* end of Newton iteration loop */
 
     /* all errors go here */
