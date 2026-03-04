@@ -34,8 +34,7 @@ struct _SUNNonlinearSolverContent_Auto
   long int nsolves_since_switch;
   long int niters;
   long int nconvfails;
-  int switch_nconsec;
-  int switch_consec_count;
+  long int switch_count;
   void* auto_ctest_data;
 };
 
@@ -83,13 +82,6 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters);
-
-/* Set number of consecutive nonlinear iterations where the switch criterion
-   must be met before the automatic solver switches (in addition to any
-   configured switch delay). */
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetSwitchConsecutive_Auto(SUNNonlinearSolver NLS,
-                                                 int nconsecutive);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters);

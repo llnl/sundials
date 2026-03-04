@@ -93,7 +93,7 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   content->maxiters   = 3;
   content->niters     = 0;
   content->nconvfails = 0;
-  content->beta_k     = SUN_RCONST(0.0);
+  content->stiffr     = SUN_RCONST(0.0);
   content->ctest_data = NULL;
 
   /* Fill allocatable content */
@@ -294,7 +294,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       sunrealtype resnrm = N_VWrmsNorm(delta, w);
 
       /* compute stiffness metric */
-      NEWTON_CONTENT(NLS)->beta_k = resnrm / delnrm;
+      NEWTON_CONTENT(NLS)->stiffr = resnrm / delnrm;
     } /* end of Newton iteration loop */
 
     /* all errors go here */

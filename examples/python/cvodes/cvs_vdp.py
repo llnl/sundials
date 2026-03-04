@@ -83,12 +83,12 @@ def main(argv=None):
     y10 = 2.0
     y20 = 0.0
     T0 = 0.0
-    Tf = 250.0
-    dTout = 1.0
+    Tf = 100.0
+    dTout = 10.
     NEQ = 2
     Nt = int(np.ceil(Tf / dTout))
     reltol = 1e-4
-    abstol = 1e-6
+    abstol = 1e-4
 
     status, sunctx = SUNContext_Create(SUN_COMM_NULL)
     y = N_VNew_Serial(NEQ, sunctx)

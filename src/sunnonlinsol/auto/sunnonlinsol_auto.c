@@ -26,8 +26,8 @@ typedef struct
 } SUNNonlinSolAutoConvTestData;
 
 static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
-                                     N_Vector del, sunrealtype tol, N_Vector ewt,
-                                     void* mem);
+                                     N_Vector del, sunrealtype tol,
+                                     N_Vector ewt, void* mem);
 
 SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
                                      SUNNonlinSolAutoType type, SUNContext sunctx)
@@ -58,18 +58,17 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   NLS->content = content;
 
   content->type                 = type;
-  content->user_ctest_fn         = NULL;
-  content->user_ctest_data       = NULL;
+  content->user_ctest_fn        = NULL;
+  content->user_ctest_data      = NULL;
   content->maxiters             = 3;
   content->curiter              = 0;
   content->niters               = 0;
   content->nconvfails           = 0;
-  content->fp_to_newt_delay     = 3;
+  content->fp_to_newt_delay     = 0;
   content->newt_to_fp_delay     = 10;
   content->nsolves_since_switch = 0;
-  content->switch_nconsec       = 1;
-  content->switch_consec_count  = 0;
-  content->auto_ctest_data       = NULL;
+  content->switch_count         = 0;
+  content->auto_ctest_data      = NULL;
   content->fp_solver            = SUNNonlinSol_FixedPoint(y, m, sunctx);
   content->newton_solver        = SUNNonlinSol_Newton(y, sunctx);
 
@@ -86,12 +85,10 @@ SUNErrCode SUNNonlinSolInitialize_Auto(SUNNonlinearSolver NLS)
   SUNFunctionBegin(NLS->sunctx);
   if (AUTO_CONTENT(NLS)->type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
-    printf(">>>> Initialize Fixed Point\n");
     SUNCheckCall(SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->fp_solver));
   }
   else
   {
-    printf(">>>> Initialize Newton\n");
     SUNCheckCall(SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->newton_solver));
   }
   return SUN_SUCCESS;
@@ -104,12 +101,6 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   SUNFunctionBegin(NLS->sunctx);
   int retval;
 
-  /* reset consecutive check counter for this solve attempt */
-  AUTO_CONTENT(NLS)->switch_consec_count = 0;
-
-  /* increment solve counter used for switch-delay gating */
-  AUTO_CONTENT(NLS)->nsolves_since_switch++;
-
   if (AUTO_CONTENT(NLS)->type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->fp_solver, y0, ycor, w, tol,
@@ -120,75 +111,65 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->newton_solver, y0, ycor, w,
                                tol, callSetup, mem);
   }
+
+  /* increment solve counter used for switch-delay gating */
+  AUTO_CONTENT(NLS)->nsolves_since_switch++;
+
   return retval;
 }
 
 static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
-                                     N_Vector del, sunrealtype tol, N_Vector ewt,
-                                     void* mem)
+                                     N_Vector del, sunrealtype tol,
+                                     N_Vector ewt, void* mem)
 {
   SUNNonlinSolAutoConvTestData* data = (SUNNonlinSolAutoConvTestData*)mem;
   SUNNonlinearSolver auto_nls        = data->auto_nls;
   SUNNonlinearSolverContent_Auto C   = AUTO_CONTENT(auto_nls);
 
-  int retval = data->user_ctest_fn(sub_nls, y, del, tol, ewt, data->user_ctest_data);
+  int retval = data->user_ctest_fn(sub_nls, y, del, tol, ewt,
+                                   data->user_ctest_data);
 
-  /* If the user convergence test is not requesting further iterations, respect it. */
-  if (retval != SUN_NLS_CONTINUE) { return retval; }
+  /* We follow the switching strategy outlined in 
+     Nørsett, Syvert P., and Per G. Thomsen. 
+     "Switching between modified Newton and fix-point iteration for implicit ODE-solvers." 
+     BIT Numerical Mathematics 26, no. 3 (1986): 339-348.  */
 
-  /* Only consider switching while iterating, and only when the auto solver's
-     current type matches the active sub-solver. */
   if (C->type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
-    if (sub_nls != C->fp_solver) { return retval; }
+    /* In the unlikely event that we are 'diverging' but the integrator-provided convergence test passed, 
+       then we just exit with success and don't consider any switching. */
+    if (retval == SUN_SUCCESS) { return retval; }
 
     SUNNonlinearSolverContent_FixedPoint fp_content =
       (SUNNonlinearSolverContent_FixedPoint)C->fp_solver->content;
-    const sunrealtype alpha = 0.8;
 
-    if (C->nsolves_since_switch > C->fp_to_newt_delay &&
-        fp_content->crate >= alpha)
-    {
-      C->switch_consec_count++;
-    }
-    else
-    {
-      C->switch_consec_count = 0;
-    }
+    /* Check if we are diverging */
+    const sunrealtype alpha   = 0.8;
+    sunbooleantype diverging  = fp_content->crate >= alpha;
+    sunbooleantype dont_delay = C->nsolves_since_switch >= C->fp_to_newt_delay;
 
-    if (C->switch_consec_count >= C->switch_nconsec)
+    if (diverging && dont_delay)
     {
-      printf(">>>> crate=%g\n", fp_content->crate);
       C->nsolves_since_switch = 0;
-      C->switch_consec_count  = 0;
       C->type                 = SUNNONLINSOL_AUTO_NEWTON;
+      C->switch_count++;
       return SUN_NLS_SWITCH;
     }
   }
   else
   {
-    if (sub_nls != C->newton_solver) { return retval; }
-
     SUNNonlinearSolverContent_Newton newton_content =
       (SUNNonlinearSolverContent_Newton)C->newton_solver->content;
-    const sunrealtype threshold = 1.5;
 
-    if (C->nsolves_since_switch > C->newt_to_fp_delay &&
-        newton_content->beta_k < threshold)
-    {
-      C->switch_consec_count++;
-    }
-    else
-    {
-      C->switch_consec_count = 0;
-    }
+    const sunrealtype threshold = 2.0;
+    sunbooleantype contraction  = newton_content->stiffr < threshold;
+    sunbooleantype dont_delay = C->nsolves_since_switch >= C->newt_to_fp_delay;
 
-    if (C->switch_consec_count >= C->switch_nconsec)
+    if (contraction && dont_delay)
     {
-      printf(">>>> beta_k=%g\n", newton_content->beta_k);
       C->nsolves_since_switch = 0;
-      C->switch_consec_count  = 0;
       C->type                 = SUNNONLINSOL_AUTO_FIXEDPOINT;
+      C->switch_count++;
       return SUN_NLS_SWITCH;
     }
   }
@@ -199,6 +180,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
 SUNErrCode SUNNonlinSolFree_Auto(SUNNonlinearSolver NLS)
 {
   if (NLS == NULL) { return SUN_SUCCESS; }
+
   if (NLS->content)
   {
     if (AUTO_CONTENT(NLS)->auto_ctest_data)
@@ -320,16 +302,6 @@ SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters)
     retval = SUNNonlinSolSetMaxIters(AUTO_CONTENT(NLS)->newton_solver, maxiters);
   }
   return retval;
-}
-
-SUNErrCode SUNNonlinSolSetSwitchConsecutive_Auto(SUNNonlinearSolver NLS,
-                                                 int nconsecutive)
-{
-  SUNFunctionBegin(NLS->sunctx);
-  SUNAssert(nconsecutive >= 1, SUN_ERR_ARG_OUTOFRANGE);
-  AUTO_CONTENT(NLS)->switch_nconsec      = nconsecutive;
-  AUTO_CONTENT(NLS)->switch_consec_count = 0;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters)

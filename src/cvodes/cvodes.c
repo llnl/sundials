@@ -7108,7 +7108,7 @@ static int cvNls(CVodeMem cv_mem, int nflag)
                      MSGCV_NLS_INIT_FAIL);
       return CV_NLS_INIT_FAIL;
     }
-    flag = SUN_SUCCESS;
+    flag = SUN_NLS_CONV_RECVR;
   }
 
   /* solve successful */
