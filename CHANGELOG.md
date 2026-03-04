@@ -63,8 +63,6 @@ failing the step.
 The functions `CVodeGetUserDataB` and `IDAGetUserDataB` were added to CVODES and
 IDAS, respectively.
 
-Removed extraneous copy of output vector when using ARKODE in `ARK_ONE_STEP` mode.
-
 ### Bug Fixes
 
 Fixed a bug in the CVODE(S) inequality constraint handling where the predicted
