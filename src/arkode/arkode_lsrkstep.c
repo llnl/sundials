@@ -2310,7 +2310,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                           ark_mem->user_data);
     step_mem->nfe++;
 
-    SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_%i(:) =", j - 1);
+    SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3,
+                        "F_%i(:) =", j - 1);
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
