@@ -101,10 +101,6 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
                                             long int* nconvfails);
 
-// SUNDIALS_EXPORT
-// SUNErrCode SUNNonlinSolSetType_Auto(SUNNonlinearSolver NLS,
-//                                     SUNNonlinSolAutoType type);
-
 #ifdef __cplusplus
 }
 #endif

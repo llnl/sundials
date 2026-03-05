@@ -12,8 +12,6 @@
 
 #include "sundials/sundials_errors.h"
 #include "sundials/sundials_nonlinearsolver.h"
-#include "sundials_logger_impl.h"
-#include "sundials_macros.h"
 
 /* Content structure accessibility macros */
 #define AUTO_CONTENT(S) ((SUNNonlinearSolverContent_Auto)(S->content))
