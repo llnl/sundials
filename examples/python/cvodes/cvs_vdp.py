@@ -173,23 +173,21 @@ def main(argv=None):
     assert status == CV_SUCCESS
     status, ncfn = CVodeGetNumNonlinSolvConvFails(cvode.get())
     assert status == CV_SUCCESS
-    if newton:
-        status, nsetups = CVodeGetNumLinSolvSetups(cvode.get())
-        assert status == CV_SUCCESS
-        status, nje = CVodeGetNumJacEvals(cvode.get())
-        assert status == CV_SUCCESS
-        status, nfeLS = CVodeGetNumLinRhsEvals(cvode.get())
-        assert status == CV_SUCCESS
+    status, nsetups = CVodeGetNumLinSolvSetups(cvode.get())
+    assert status == CV_SUCCESS
+    status, nje = CVodeGetNumJacEvals(cvode.get())
+    assert status == CV_SUCCESS
+    status, nfeLS = CVodeGetNumLinRhsEvals(cvode.get())
+    assert status == CV_SUCCESS
 
     print("\nFinal Solver Statistics:")
     print(f"   Internal solver steps = {nst}")
     print(f"   Total RHS evals = {nfe}")
     print(f"   Total number of nonlinear solver iterations = {nni}")
     print(f"   Total number of nonlinear solver convergence failures = {ncfn}")
-    if newton:
-        print(f"   Total number of Jacobian evaluations = {nje}")
-        print(f"   Total linear solver setups = {nsetups}")
-        print(f"   Total RHS evals for setting up the linear system = {nfeLS}")
+    print(f"   Total number of Jacobian evaluations = {nje}")
+    print(f"   Total linear solver setups = {nsetups}")
+    print(f"   Total RHS evals for setting up the linear system = {nfeLS}")
 
 
 def test_cvs_vdp():

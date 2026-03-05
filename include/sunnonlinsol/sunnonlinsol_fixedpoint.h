@@ -27,6 +27,7 @@
 
 #include <sundials/sundials_core.h>
 
+#include "sundials/sundials_export.h"
 #include "sundials/sundials_types.h"
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
@@ -44,20 +45,21 @@ struct _SUNNonlinearSolverContent_FixedPoint
   SUNNonlinSolConvTestFn CTest; /* convergence test function      */
 
   /* nonlinear solver variables */
-  int m;                  /* number of acceleration vectors to use          */
-  int* imap;              /* array of length m                              */
-  sunbooleantype damping; /* flag to apply dampling in acceleration         */
-  sunrealtype beta;       /* damping parameter                              */
-  sunrealtype* R;         /* array of length m*m                            */
-  sunrealtype* gamma;     /* array of length m                              */
-  sunrealtype* cvals;     /* array of length m+1 for fused vector op        */
-  sunrealtype norm_delta; /* wrms norm of delta                             */
-  sunrealtype crate;      /* convergence rate                               */
-  N_Vector* df;           /* vector array of length m                       */
-  N_Vector* dg;           /* vector array of length m                       */
-  N_Vector* q;            /* vector array of length m                       */
-  N_Vector* Xvecs;        /* array of length m+1 for fused vector op        */
-  N_Vector yprev;         /* temporary vectors for performing solve         */
+  int m;                   /* number of acceleration vectors to use          */
+  int* imap;               /* array of length m                              */
+  sunbooleantype damping;  /* flag to apply dampling in acceleration         */
+  sunrealtype beta;        /* damping parameter                              */
+  sunrealtype* R;          /* array of length m*m                            */
+  sunrealtype* gamma;      /* array of length m                              */
+  sunrealtype* cvals;      /* array of length m+1 for fused vector op        */
+  sunrealtype delnrm;      /* wrms norm of delta                             */
+  sunrealtype crate;       /* convergence rate                               */
+  sunrealtype crate_const; /* convergence rate constant                      */
+  N_Vector* df;            /* vector array of length m                       */
+  N_Vector* dg;            /* vector array of length m                       */
+  N_Vector* q;             /* vector array of length m                       */
+  N_Vector* Xvecs;         /* array of length m+1 for fused vector op        */
+  N_Vector yprev;          /* temporary vectors for performing solve         */
   N_Vector gy;
   N_Vector fold;
   N_Vector gold;
@@ -116,6 +118,10 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
                                              sunrealtype beta);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS,
+                                                   sunrealtype crate_const);
+
 /* get functions */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_FixedPoint(SUNNonlinearSolver NLS,
@@ -131,6 +137,18 @@ SUNErrCode SUNNonlinSolGetNumConvFails_FixedPoint(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver NLS,
                                            SUNNonlinSolSysFn* SysFn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
+                                              sunrealtype* crate);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetDeltNorm_FixedPoint(SUNNonlinearSolver NLS,
+                                              sunrealtype* deltnorm);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver NLS,
+                                            sunrealtype* delnrm);
 
 #ifdef __cplusplus
 }

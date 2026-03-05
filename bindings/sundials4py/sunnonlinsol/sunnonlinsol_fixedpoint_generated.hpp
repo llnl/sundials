@@ -53,6 +53,67 @@ m.def(
 
 m.def("SUNNonlinSolSetDamping_FixedPoint", SUNNonlinSolSetDamping_FixedPoint,
       nb::arg("NLS"), nb::arg("beta"));
+
+m.def("SUNNonlinSolSetCrateConstant_FixedPoint",
+      SUNNonlinSolSetCrateConstant_FixedPoint, nb::arg("NLS"),
+      nb::arg("crate_const"));
+
+m.def(
+  "SUNNonlinSolGetConvRate_FixedPoint",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetConvRate_FixedPoint_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+    {
+      sunrealtype crate_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNNonlinSolGetConvRate_FixedPoint(NLS, &crate_adapt_modifiable);
+      return std::make_tuple(r, crate_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetConvRate_FixedPoint_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
+
+m.def(
+  "SUNNonlinSolGetDeltNorm_FixedPoint",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetDeltNorm_FixedPoint_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+    {
+      sunrealtype deltnorm_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNNonlinSolGetDeltNorm_FixedPoint(NLS, &deltnorm_adapt_modifiable);
+      return std::make_tuple(r, deltnorm_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetDeltNorm_FixedPoint_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
+
+m.def(
+  "SUNNonlinSolGetDelNrm_FixedPoint",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetDelNrm_FixedPoint_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+    {
+      sunrealtype delnrm_adapt_modifiable;
+
+      SUNErrCode r = SUNNonlinSolGetDelNrm_FixedPoint(NLS,
+                                                      &delnrm_adapt_modifiable);
+      return std::make_tuple(r, delnrm_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetDelNrm_FixedPoint_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
 // #ifdef __cplusplus
 //
 // #endif

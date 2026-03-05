@@ -9,6 +9,7 @@ auto pyEnumSUNNonlinearSolver_Type =
                                      nb::is_arithmetic(), "")
     .value("SUNNONLINEARSOLVER_ROOTFIND", SUNNONLINEARSOLVER_ROOTFIND, "")
     .value("SUNNONLINEARSOLVER_FIXEDPOINT", SUNNONLINEARSOLVER_FIXEDPOINT, "")
+    .value("SUNNONLINEARSOLVER_HYBRID", SUNNONLINEARSOLVER_HYBRID, "")
     .export_values();
 // #ifndef SWIG
 //
@@ -87,8 +88,26 @@ m.def(
     return SUNNonlinSolGetNumConvFails_adapt_modifiable_immutable_to_return(NLS);
   },
   nb::arg("NLS"));
+
+m.def(
+  "SUNNonlinSolGetDelNrm",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetDelNrm_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+    {
+      sunrealtype delnrm_adapt_modifiable;
+
+      SUNErrCode r = SUNNonlinSolGetDelNrm(NLS, &delnrm_adapt_modifiable);
+      return std::make_tuple(r, delnrm_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetDelNrm_adapt_modifiable_immutable_to_return(NLS);
+  },
+  nb::arg("NLS"));
 m.attr("SUN_NLS_CONTINUE")   = +901;
 m.attr("SUN_NLS_CONV_RECVR") = +902;
+m.attr("SUN_NLS_SWITCH")     = +903;
 // #ifdef __cplusplus
 //
 // #endif

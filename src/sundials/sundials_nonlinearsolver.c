@@ -80,6 +80,7 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   ops->getnumiters     = NULL;
   ops->getcuriter      = NULL;
   ops->getnumconvfails = NULL;
+  ops->getdelnrm       = NULL;
 
   /* attach context and ops, initialize content to NULL */
   NLS->sunctx  = sunctx;
@@ -327,4 +328,12 @@ SUNErrCode SUNNonlinSolGetNumConvFails(SUNNonlinearSolver NLS,
     *nconvfails = 0;
     return (SUN_SUCCESS);
   }
+}
+
+SUNErrCode SUNNonlinSolGetDelNrm(SUNNonlinearSolver NLS, sunrealtype* delnrm)
+{
+  if (NLS == NULL || delnrm == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  if (NLS->ops->getdelnrm) { return (NLS->ops->getdelnrm(NLS, delnrm)); }
+  *delnrm = SUN_RCONST(0.0);
+  return SUN_ERR_NOT_IMPLEMENTED;
 }

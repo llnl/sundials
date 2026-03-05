@@ -174,6 +174,33 @@ user-callable functions.
       calls to *SysFn*.
 
 
+.. c:function:: SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS, sunrealtype *crate)
+
+   This returns the fixed-point solver estimate of the nonlinear convergence
+   rate (``crate``) from the most recent nonlinear iteration. It uses the estimate:
+
+   .. math::
+
+      roc_m = \max{crate_const * roc_{m-1}, \|\delta_m\| / \|\delta_{m-1}\|
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *crate* -- the current estimate of the convergence rate.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   **Notes:**
+      This function is intended for users that wish to use ``crate`` in a custom
+      convergence test function and avoid recomputing it. The default value for
+      ``crate_const`` is 0.3.
+
+
+.. c:function:: SUNErrCode SUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver NLS, sunrealtype *delnrm)
+
+   This is an alias for :c:func:`SUNNonlinSolGetDeltNorm_FixedPoint`.
+
+
 .. c:function:: SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS, sunrealtype beta)
 
    This sets the damping parameter :math:`\beta` to use with Anderson
@@ -189,6 +216,23 @@ user-callable functions.
    **Notes:**
       A ``beta`` value should satisfy :math:`0 < \beta < 1` if
       damping is to be used. A value of one or more will disable damping.
+
+.. c:function:: SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS, sunrealtype crate_const)
+
+   This sets the convergence rate constant used in the fixed-point estimate of
+   the nonlinear convergence rate (``crate``). This corresponds to the
+   ``CRDOWN`` constant used in the CVODE(S) convergence test.
+
+   **Arguments:**
+     * *NLS* -- a SUNNonlinSol object.
+     * *crate_const* -- the convergence rate constant. Values must satisfy
+       :math:`crate\\_const \\le 1`. A negative value resets the default.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   **Notes:**
+      By default, ``crate_const`` is ``0.3``.
 
 
 .. _SUNNonlinSol.FixedPoint.Content:
@@ -213,6 +257,9 @@ following structure.
      sunrealtype    beta
      sunrealtype    *gamma;
      sunrealtype    *cvals;
+     sunrealtype     delnrm;
+     sunrealtype     crate;
+     sunrealtype     crate_const;
      N_Vector       *df;
      N_Vector       *dg;
      N_Vector       *q;
@@ -237,6 +284,9 @@ allocated:
 * ``yprev``      -- ``N_Vector`` used to store previous fixed-point iterate,
 * ``gy``         -- ``N_Vector`` used to store :math:`G(y)` in fixed-point algorithm,
 * ``delta``      -- ``N_Vector`` used to store difference between successive fixed-point iterates,
+* ``delnrm``     -- WRMS norm of the most recent fixed-point update,
+* ``crate``      -- estimated nonlinear convergence rate,
+* ``crate_const`` -- convergence rate constant used in the ``crate`` estimate,
 * ``curiter``    -- the current number of iterations in the solve attempt,
 * ``maxiters``   -- the maximum number of fixed-point iterations allowed in
   a solve,

@@ -71,6 +71,7 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_Newton;
   NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_Newton;
   NLS->ops->getnumconvfails = SUNNonlinSolGetNumConvFails_Newton;
+  NLS->ops->getdelnrm       = SUNNonlinSolGetDelNrm_Newton;
 
   /* Create content */
   content = NULL;
@@ -94,6 +95,7 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   content->niters     = 0;
   content->nconvfails = 0;
   content->stiffr     = SUN_RCONST(0.0);
+  content->delnrm     = SUN_RCONST(0.0);
   content->ctest_data = NULL;
 
   /* Fill allocatable content */
@@ -250,6 +252,10 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       N_VLinearSum(ONE, ycor, ONE, delta, ycor);
       SUNCheckLastErr();
 
+      /* compute update/correction norm before calling convergence test 
+         so it can be queried by the test function if desired */
+      NEWTON_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
+
       /* test for convergence */
       retval = NEWTON_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                           NEWTON_CONTENT(NLS)->ctest_data);
@@ -261,7 +267,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       SUNLogInfo(NLS->sunctx->logger,
                  "nonlinear-iterate", "cur-iter = %i, total-iters = %li, update-norm = " SUN_FORMAT_G,
                  NEWTON_CONTENT(NLS)->curiter, NEWTON_CONTENT(NLS)->niters,
-                 N_VWrmsNorm(delta, w));
+                 NEWTON_CONTENT(NLS)->delnrm);
 
       /* if successful update Jacobian status and return */
       if (retval == SUN_SUCCESS)
@@ -285,16 +291,18 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = continue");
       SUNLogInfo(NLS->sunctx->logger, "begin-iterations-list", "");
 
-      sunrealtype delnrm = N_VWrmsNorm(delta, w);
-
       /* compute the nonlinear residual, store in delta */
       retval = NEWTON_CONTENT(NLS)->Sys(ycor, delta, mem);
       if (retval != SUN_SUCCESS) { break; }
 
-      sunrealtype resnrm = N_VWrmsNorm(delta, w);
+      /* compute the residual norm and store it in delnrm (a bit confusing, 
+         but we repurpose delta to save memory), which will be reused by the
+         integrator, but first we need to save the correction norm */
+      sunrealtype delnrm = NEWTON_CONTENT(NLS)->delnrm;
+      NEWTON_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
 
-      /* compute stiffness metric */
-      NEWTON_CONTENT(NLS)->stiffr = resnrm / delnrm;
+      /* compute stiffness metric from https://doi.org/10.1007/BF01933714 */
+      NEWTON_CONTENT(NLS)->stiffr = NEWTON_CONTENT(NLS)->delnrm / delnrm;
     } /* end of Newton iteration loop */
 
     /* all errors go here */
@@ -448,5 +456,13 @@ SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS,
 {
   /* return the nonlinear system defining function */
   *SysFn = NEWTON_CONTENT(NLS)->Sys;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetDelNrm_Newton(SUNNonlinearSolver NLS,
+                                        sunrealtype* delnrm)
+{
+  /* return the update norm ||delta||_{WRMS} */
+  *delnrm = NEWTON_CONTENT(NLS)->delnrm;
   return SUN_SUCCESS;
 }

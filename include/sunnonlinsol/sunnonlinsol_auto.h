@@ -22,7 +22,7 @@ typedef enum SUNNonlinSolAutoType SUNNonlinSolAutoType;
 
 struct _SUNNonlinearSolverContent_Auto
 {
-  SUNNonlinSolAutoType type;
+  SUNNonlinSolAutoType active_solver_type;
   SUNNonlinearSolver fp_solver;
   SUNNonlinearSolver newton_solver;
   SUNNonlinSolConvTestFn user_ctest_fn;
@@ -43,7 +43,8 @@ struct _SUNNonlinearSolverContent_Auto
 typedef struct _SUNNonlinearSolverContent_Auto* SUNNonlinearSolverContent_Auto;
 
 SUNDIALS_EXPORT
-SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m, SUNNonlinSolAutoType type,
+SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
+                                     SUNNonlinSolAutoType active_solver_type,
                                      SUNContext sunctx);
 
 SUNDIALS_EXPORT
@@ -100,6 +101,10 @@ SUNErrCode SUNNonlinSolGetCurIter_Auto(SUNNonlinearSolver NLS, int* iter);
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
                                             long int* nconvfails);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetDelNrm_Auto(SUNNonlinearSolver NLS,
+                                      sunrealtype* delnrm);
 
 #ifdef __cplusplus
 }

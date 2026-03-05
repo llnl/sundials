@@ -334,7 +334,10 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the correction */
-  del = N_VWrmsNorm(delta, ewt);
+  if (SUNNonlinSolGetDelNrm(NLS, &del) != SUN_SUCCESS)
+  {
+    del = N_VWrmsNorm(delta, ewt);
+  }
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);

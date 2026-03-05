@@ -50,6 +50,23 @@ m.def(
   },
   nb::arg("count"), nb::arg("y"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
   nb::keep_alive<0, 3>());
+
+m.def(
+  "SUNNonlinSolGetDelNrm_Newton",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetDelNrm_Newton_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+    {
+      sunrealtype delnrm_adapt_modifiable;
+
+      SUNErrCode r = SUNNonlinSolGetDelNrm_Newton(NLS, &delnrm_adapt_modifiable);
+      return std::make_tuple(r, delnrm_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetDelNrm_Newton_adapt_modifiable_immutable_to_return(NLS);
+  },
+  nb::arg("NLS"));
 // #ifdef __cplusplus
 //
 // #endif

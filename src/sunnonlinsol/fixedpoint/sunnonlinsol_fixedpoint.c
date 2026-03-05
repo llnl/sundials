@@ -73,6 +73,7 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_FixedPoint;
   NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_FixedPoint;
   NLS->ops->getnumconvfails = SUNNonlinSolGetNumConvFails_FixedPoint;
+  NLS->ops->getdelnrm       = SUNNonlinSolGetDelNrm_FixedPoint;
 
   /* Create nonlinear solver content structure */
   content = NULL;
@@ -91,6 +92,7 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   content->m          = m;
   content->damping    = SUNFALSE;
   content->beta       = ONE;
+  content->crate_const = SUN_RCONST(0.3);
   content->curiter    = 0;
   content->maxiters   = 3;
   content->niters     = 0;
@@ -243,15 +245,15 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     SUNCheckLastErr();
 
     /* compute the norm of delta, but save the previous value for computing a rate of convergence */
-    sunrealtype norm_delta_p    = FP_CONTENT(NLS)->norm_delta;
-    FP_CONTENT(NLS)->norm_delta = N_VWrmsNorm(delta, w);
+    sunrealtype delnrmp     = FP_CONTENT(NLS)->delnrm;
+    FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
 
-    /* compute the convergence rate. TODO(CJB): CRDOWN is a factor in CVODE we need to understand */
-    const sunrealtype CRDOWN = SUN_RCONST(0.3);
+    /* compute the convergence rate using the CVODE method */
     if (FP_CONTENT(NLS)->curiter > 1)
     {
-      FP_CONTENT(NLS)->crate = SUNMAX(CRDOWN * FP_CONTENT(NLS)->crate,
-                                      FP_CONTENT(NLS)->norm_delta / norm_delta_p);
+      FP_CONTENT(NLS)->crate = SUNMAX(FP_CONTENT(NLS)->crate_const *
+                                        FP_CONTENT(NLS)->crate,
+                                      FP_CONTENT(NLS)->delnrm / delnrmp);
     }
     else { FP_CONTENT(NLS)->crate = SUN_RCONST(0.0); }
 
@@ -263,7 +265,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
 
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
                "cur-iter = %d, update-norm = " SUN_FORMAT_G,
-               FP_CONTENT(NLS)->niters, FP_CONTENT(NLS)->norm_delta);
+               FP_CONTENT(NLS)->niters, FP_CONTENT(NLS)->delnrm);
 
     /* return if successful */
     if (retval == 0)
@@ -379,6 +381,26 @@ SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
+SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS,
+                                                   sunrealtype crate_const)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNAssert(crate_const <= SUN_RCONST(1.0), SUN_ERR_ARG_OUTOFRANGE);
+
+  if (crate_const < ZERO)
+  {
+    /* This is CRDOWN in CVODE */
+    FP_CONTENT(NLS)->crate_const = SUN_RCONST(0.3); 
+  }
+  else
+  {
+    FP_CONTENT(NLS)->crate_const = crate_const;
+  }
+
+  return SUN_SUCCESS;
+}
+
+
 /*==============================================================================
   Get functions
   ============================================================================*/
@@ -412,6 +434,28 @@ SUNErrCode SUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver NLS,
   /* return the nonlinear system defining function */
   *SysFn = FP_CONTENT(NLS)->Sys;
   return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
+                                              sunrealtype* crate)
+{
+  /* return the current estimated convergence rate */
+  *crate = FP_CONTENT(NLS)->crate;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetDeltNorm_FixedPoint(SUNNonlinearSolver NLS,
+                                              sunrealtype* deltnorm)
+{
+  /* return the current update norm ||delta||_{WRMS} */
+  *deltnorm = FP_CONTENT(NLS)->delnrm;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver NLS,
+                                            sunrealtype* delnrm)
+{
+  return SUNNonlinSolGetDeltNorm_FixedPoint(NLS, delnrm);
 }
 
 /*=============================================================================

@@ -381,6 +381,25 @@ linear solver module; otherwise :c:func:`SUNNonlinSolGetCurIter` is optional.
       * A :c:type:`SUNErrCode`
 
 
+.. c:function:: SUNErrCode SUNNonlinSolGetDelNrm(SUNNonlinearSolver NLS, sunrealtype *delnrm)
+
+   This *optional* function returns the norm of the most recent nonlinear
+   solver update (often denoted :math:`\|\delta\|}`) computed by the
+   nonlinear solver. The norm used is left up to the nonlinear solver implementation,
+   but typically it is the WRMS norm.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *delnrm* -- the update norm.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   **Notes:**
+      If the nonlinear solver does not implement this operation, the return
+      value will be :c:macro:`SUN_ERR_NOT_IMPLEMENTED`.
+
+
 .. _SUNNonlinSol.API.SUNSuppliedFn:
 
 Functions provided by SUNDIALS integrators

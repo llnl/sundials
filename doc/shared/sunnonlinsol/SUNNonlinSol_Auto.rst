@@ -57,7 +57,7 @@ SUNNonlinSol_Auto functions
 The SUNNonlinSol_Auto module provides the following constructor for creating the
 ``SUNNonlinearSolver`` object.
 
-.. c:function:: SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m, SUNNonlinSolAutoType type, SUNContext sunctx)
+.. c:function:: SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m, SUNNonlinSolAutoType active_solver_type, SUNContext sunctx)
 
    This creates a ``SUNNonlinearSolver`` object for use with SUNDIALS integrators.
 
@@ -65,8 +65,8 @@ The SUNNonlinSol_Auto module provides the following constructor for creating the
       * *y* -- a template for cloning vectors needed within the solver.
       * *m* -- the number of acceleration vectors to use with the underlying
         fixed-point solver (passed to :c:func:`SUNNonlinSol_FixedPoint`).
-      * *type* -- the initial solver type (see :c:type:`SUNNonlinSolAutoType`).
-      * *sunctx* -- the :c:type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`)
+      * *active_solver_type* -- the initial solver active_solver_type (see :c:active_solver_type:`SUNNonlinSolAutoType`).
+      * *sunctx* -- the :c:active_solver_type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`)
 
    **Return value:**
       A SUNNonlinSol object if the constructor exits successfully, otherwise it
@@ -103,7 +103,7 @@ to configure the switching criteria:
       * *alpha* -- the criterion parameter (must be positive).
 
    **Return value:**
-      A :c:type:`SUNErrCode`.
+      A :c:active_solver_type:`SUNErrCode`.
 
 .. c:function:: SUNErrCode SUNNonlinSolSetNewtToFpThreshold_Auto(SUNNonlinearSolver NLS, sunrealtype threshold)
 
@@ -115,55 +115,5 @@ to configure the switching criteria:
       * *threshold* -- the criterion parameter (must be positive).
 
    **Return value:**
-      A :c:type:`SUNErrCode`.
+      A :c:active_solver_type:`SUNErrCode`.
 
-
-.. _SUNNonlinSol.Auto.Content:
-
-SUNNonlinSol_Auto content
-----------------------------------------
-
-The *content* field of the SUNNonlinSol_Auto module is the following structure.
-
-.. code-block:: c
-
-   struct _SUNNonlinearSolverContent_Auto
-   {
-     SUNNonlinSolAutoType type;
-     SUNNonlinearSolver fp_solver;
-     SUNNonlinearSolver newton_solver;
-     SUNNonlinSolConvTestFn user_ctest_fn;
-     void* user_ctest_data;
-     int maxiters;
-     int curiter;
-     int fp_to_newt_delay;
-     int newt_to_fp_delay;
-     sunrealtype fp_to_newt_alpha;
-     sunrealtype newt_to_fp_threshold;
-     long int nsolves_since_switch;
-     long int niters;
-     long int nconvfails;
-     long int switch_count;
-     void* auto_ctest_data;
-   };
-
-These entries of the *content* field contain the following information:
-
-* ``type`` -- current solver type (fixed-point or Newton),
-* ``fp_solver`` -- the underlying fixed-point solver object,
-* ``newton_solver`` -- the underlying Newton solver object,
-* ``user_ctest_fn`` -- the convergence test function supplied by the integrator,
-* ``user_ctest_data`` -- the data pointer supplied with the convergence test,
-* ``fp_to_newt_delay`` -- minimum number of nonlinear solves between a switch from
-  fixed-point to Newton,
-* ``newt_to_fp_delay`` -- minimum number of nonlinear solves between a switch from
-  Newton to fixed-point,
-* ``fp_to_newt_alpha`` -- fixed-point criterion parameter (see
-  :c:func:`SUNNonlinSolSetFpToNewtAlpha_Auto`),
-* ``newt_to_fp_threshold`` -- Newton criterion parameter (see
-  :c:func:`SUNNonlinSolSetNewtToFpThreshold_Auto`),
-* ``nsolves_since_switch`` -- number of nonlinear solves since the last switch,
-* ``niters`` -- total nonlinear iterations across all solves,
-* ``nconvfails`` -- total nonlinear convergence failures across all solves,
-* ``switch_count`` -- total number of algorithm switches requested,
-* ``auto_ctest_data`` -- internal data used to wrap the convergence test function.
