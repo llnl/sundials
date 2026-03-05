@@ -1775,6 +1775,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   sunbooleantype need_inner_dsm;
   sunbooleantype do_embedding;
   sunbooleantype nested_mri;
+  sunrealtype slow_dsm;
   int nvec;
 
   /* access the MRIStep mem structure */
@@ -2249,6 +2250,16 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     {
       N_VLinearSum(ONE, ark_mem->tempv4, -ONE, ark_mem->ycur, ark_mem->tempv1);
       *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+
+      /* Also estimate slow-only error, and set dsm to the max of the two */
+      retval = mriStep_SlowError(ark_mem, step_mem, ark_mem->tempv4, &slow_dsm);
+      if (retval != 0)
+      {
+        arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                        "status = failed slow error estimation, retval = %i", retval);
+        return (retval);
+      }
+      *dsmPtr = SUNMAX(*dsmPtr, slow_dsm);
     }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
@@ -2311,6 +2322,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype cstage;                 /* current stage abscissa     */
   sunbooleantype need_inner_dsm;
   sunbooleantype nested_mri;
+  sunrealtype slow_dsm;
   int nvec, max_stages;
   const sunrealtype tol = SUN_RCONST(100.0) * SUN_UNIT_ROUNDOFF;
 
@@ -2715,6 +2727,16 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->tempv1);
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
     N_VScale(ONE, ytilde, ark_mem->ycur);
+
+    /* Also estimate slow-only error, and set dsm to the max of the two */
+    retval = mriStep_SlowError(ark_mem, step_mem, ark_mem->tempv4, &slow_dsm);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed slow error estimation, retval = %i", retval);
+      return (retval);
+    }
+    *dsmPtr = SUNMAX(*dsmPtr, slow_dsm);
   }
 
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
@@ -2775,6 +2797,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype cstage;                 /* current stage abscissa     */
   sunbooleantype need_inner_dsm;
   sunbooleantype nested_mri;
+  sunrealtype slow_dsm;
   int nvec;
 
   /* access the MRIStep mem structure */
@@ -3066,6 +3089,16 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   {
     N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->tempv1);
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+
+    /* Also estimate slow-only error, and set dsm to the max of the two */
+    retval = mriStep_SlowError(ark_mem, step_mem, ark_mem->tempv4, &slow_dsm);
+    if (retval != 0)
+    {
+      arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                      "status = failed slow error estimation, retval = %i", retval);
+      return (retval);
+    }
+    *dsmPtr = SUNMAX(*dsmPtr, slow_dsm);
   }
 
   return (ARK_SUCCESS);
@@ -3578,10 +3611,10 @@ int mriStep_StageERKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
         return (ARK_INNERSTEP_FAIL);
       }
 
-      /* scale the error estimate by 1/rtol to account for different inner/outer tolerances */
-      step_mem->inner_dsm /= ark_mem->reltol;
-      SUNLogInfo(ARK_LOGGER, "accumulated-fast-error", "inner_dsm = %e",
-                 step_mem->inner_dsm);
+      // /* scale the error estimate by 1/rtol to account for different inner/outer tolerances */
+      // step_mem->inner_dsm /= ark_mem->reltol;
+      // SUNLogInfo(ARK_LOGGER, "accumulated-fast-error", "inner_dsm = %e",
+      //            step_mem->inner_dsm);
     }
   }
 
@@ -3711,6 +3744,75 @@ int mriStep_StageDIRKNoFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
 }
 
 /*---------------------------------------------------------------
+  mriStep_SlowError
+
+  This routine estimates the slow error from a computed MRI step
+  with embedding.
+  ---------------------------------------------------------------*/
+int mriStep_SlowError(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                      N_Vector ytemp, sunrealtype* slow_dsm)
+{
+  int retval, j, nvec;
+  *slow_dsm = ZERO;
+
+  /* determine effective slow RK coefficients for method (store in
+     Ae_row and Ai_row) */
+  retval = mriStep_RKCoeffs(step_mem->MRIC, step_mem->stages-1,
+                            step_mem->stage_map, step_mem->Ae_row,
+                            step_mem->Ai_row);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  /* determine effective slow RK coefficients for embedding (store
+     in cvals[0:] and cvals[stages:]) */
+  retval = mriStep_RKCoeffs(step_mem->MRIC, step_mem->stages,
+                            step_mem->stage_map, step_mem->cvals,
+                            &(step_mem->cvals[step_mem->stages]));
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  /* overwrite Ae_row and Ai_row with (method-embedding) coeffs */
+  for (j = 0; j < step_mem->stages; j++)
+  {
+    if (step_mem->explicit_rhs && step_mem->stage_map[j] > -1)
+    {
+      step_mem->Ae_row[step_mem->stage_map[j]] -=
+        step_mem->cvals[step_mem->stage_map[j]];
+    }
+    if (step_mem->implicit_rhs && step_mem->stage_map[j] > -1)
+    {
+      step_mem->Ai_row[step_mem->stage_map[j]] -=
+        step_mem->cvals[step_mem->stages+step_mem->stage_map[j]];
+    }
+  }
+
+  /* call fused vector operation to construct slow error estimate */
+  nvec = 0;
+  for (j = 0; j < step_mem->stages; j++)
+  {
+    if (step_mem->explicit_rhs && step_mem->stage_map[j] > -1)
+    {
+      step_mem->cvals[nvec] = ark_mem->h *
+                              step_mem->Ae_row[step_mem->stage_map[j]];
+      step_mem->Xvecs[nvec] = step_mem->Fse[step_mem->stage_map[j]];
+      nvec += 1;
+    }
+    if (step_mem->implicit_rhs && step_mem->stage_map[j] > -1)
+    {
+      step_mem->cvals[nvec] = ark_mem->h *
+                              step_mem->Ai_row[step_mem->stage_map[j]];
+      step_mem->Xvecs[nvec] = step_mem->Fsi[step_mem->stage_map[j]];
+      nvec += 1;
+    }
+  }
+  retval = N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
+                                ytemp);
+  if (retval != 0) { return (ARK_VECTOROP_ERR); }
+
+  /* compute norm to fill slow_dsm */
+  *slow_dsm = N_VWrmsNorm(ytemp, ark_mem->ewt);
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
   mriStep_ComputeInnerForcing
 
   Constructs the 'coefficient' vectors for the forcing polynomial
@@ -3778,7 +3880,7 @@ int mriStep_StageDIRKNoFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
 
   We may use a similar formula for MRISR methods, so long as we set t0=tn,
   tf=tn+h*ci, stage_map[j]=j (identity map), and implicit_rhs=SUNFALSE.
-  With this configuration: tf-t0=ci*h, theta = (t-tn)/(ci*h), and cdiff=1/ci.
+  With this configuration: tf-t0=ci*h, theta = (t-tn)/(ci*h), and cdiff=ci.
   MRISR methods define the forcing polynomial for each outer stage i > 0 as:
 
   p_i(theta) = w_i,0(theta) * fs_0 + ... + w_i,{i-1}(theta) * fs_{i-1}

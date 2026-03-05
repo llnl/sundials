@@ -292,6 +292,8 @@ int mriStep_StageDIRKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem, int is,
                           int* nflagPtr);
 int mriStep_StageDIRKNoFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
                             int is, int* nflagPtr);
+int mriStep_SlowError(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                      N_Vector ytemp, sunrealtype* slow_dsm);
 int mriStep_Predict(ARKodeMem ark_mem, int istage, N_Vector yguess);
 int mriStep_StageSetup(ARKodeMem ark_mem);
 int mriStep_NlsInit(ARKodeMem ark_mem);
