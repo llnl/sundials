@@ -572,6 +572,7 @@ static void PrintOutput(void* mem, sunrealtype t, N_Vector uu)
   check_flag(&ier, "IDAGetPrecEvals", 1);
   ier = IDAGetNumPrecSolves(mem, &nps);
   check_flag(&ier, "IDAGetNumPrecSolves", 1);
+
 #if defined(SUNDIALS_FLOAT128_PRECISION)
   printf(" %5.2Qf %13.5Qe  %d  %3ld  %3ld  %3ld  %4ld  %4ld  %9.2Qe  %3ld "
          "%3ld\n",

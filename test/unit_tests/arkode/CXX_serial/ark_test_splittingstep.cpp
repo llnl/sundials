@@ -63,7 +63,7 @@ static int test_forward(sundials::Context& ctx, int order, int partitions)
     partition_mem[i] = ERKStepCreate(f, t0, y, ctx);
     /* The lambdas sum up to 1 */
     lambda[i] = SUNRpowerI(SUN_RCONST(2.0), i) /
-                (1 - SUNRpowerI(SUN_RCONST(2.0), partitions));
+                (SUN_RCONST(1.0) - SUNRpowerI(SUN_RCONST(2.0), partitions));
     ARKodeSetUserData(partition_mem[i], &lambda[i]);
     ARKodeSStolerances(partition_mem[i], local_tol, local_tol);
     ARKodeCreateSUNStepper(partition_mem[i], &steppers[i]);

@@ -68,8 +68,8 @@ sunbooleantype SUNRCompareTol(sunrealtype a, sunrealtype b, sunrealtype tol)
   diff = SUNRabs(a - b);
   norm = SUNMIN(SUNRabs(a + b), SUN_BIG_REAL);
 
-  /* When |a + b| is very small (less than 10*SUN_UNIT_ROUNDOFF) or zero, we use
-   * an absolute difference:
+  /* When |a + b| is very small (less than 10* or 100*SUN_UNIT_ROUNDOFF)
+   * or zero, we use an absolute difference:
    *    |a - b| >= 10*SUN_UNIT_ROUNDOFF
    * Otherwise we use a relative difference:
    *    |a - b| < tol * |a + b|

@@ -98,12 +98,6 @@
 #include <sundials/sundials_types.h>   /* defs. of sunrealtype, sunindextype   */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef MAX
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-#endif
-
 /* Problem Constants */
 
 /* must equal 2*(number of prey or predators)
@@ -464,7 +458,7 @@ static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
       for (j = 0; j < NUM_SPECIES; j++)
       {
         csave = cxy[j]; /* Save the j,jx,jy element of cc */
-        r     = MAX(sqruround * SUNRabs(csave), r0 / scxy[j]);
+        r     = SUNMAX(sqruround * SUNRabs(csave), r0 / scxy[j]);
         cxy[j] += r; /* Perturb the j,jx,jy element of cc */
         fac = ONE / r;
 

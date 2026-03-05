@@ -335,15 +335,15 @@ extern "C" {
 #endif
 
 /*
-* -----------------------------------------------------------------
-* Function : SUNRsamesign
-* -----------------------------------------------------------------
-* Usage : sunrealtype z;
-*         z = SUNRsamesign(x, y);
-* -----------------------------------------------------------------
-* SUNRsamesign(x, y) returns true if x and y share the same sign,
-* false otherwise
-* -----------------------------------------------------------------
+ * -----------------------------------------------------------------
+ * Function : SUNRsamesign
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype z;
+ *         z = SUNRsamesign(x, y);
+ * -----------------------------------------------------------------
+ * SUNRsamesign(x, y) returns true if x and y share the same sign,
+ * false otherwise
+ * -----------------------------------------------------------------
 */
 
 #ifndef SUNRsamesign
@@ -351,15 +351,15 @@ extern "C" {
 #endif
 
 /*
-* -----------------------------------------------------------------
-* Function : SUNRdifferentsign
-* -----------------------------------------------------------------
-* Usage : sunrealtype z;
-*         z = SUNRdifferentsign(x, y);
-* -----------------------------------------------------------------
-* SUNRdifferentsign(x) returns true if x and y have different
-* signs, false otherwise
-* -----------------------------------------------------------------
+ * -----------------------------------------------------------------
+ * Function : SUNRdifferentsign
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype z;
+ *         z = SUNRdifferentsign(x, y);
+ * -----------------------------------------------------------------
+ * SUNRdifferentsign(x) returns true if x and y have different
+ * signs, false otherwise
+ * -----------------------------------------------------------------
 */
 
 #ifndef SUNRdifferentsign
@@ -523,14 +523,14 @@ extern "C" {
 #endif
 
 /*
-* -----------------------------------------------------------------
-* Function : SUNRsinh
-* -----------------------------------------------------------------
-* Usage : sunrealtype sinh_x;
-*         sinh_x = SUNRsinh(x);
-* -----------------------------------------------------------------
-* SUNRsinh(x) returns sinh(x) (the hyperbolic sine of x).
-* -----------------------------------------------------------------
+ * -----------------------------------------------------------------
+ * Function : SUNRsinh
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype sinh_x;
+ *         sinh_x = SUNRsinh(x);
+ * -----------------------------------------------------------------
+ * SUNRsinh(x) returns sinh(x) (the hyperbolic sine of x).
+ * -----------------------------------------------------------------
 */
 
 #ifndef SUNRsinh
@@ -548,16 +548,16 @@ extern "C" {
 #endif
 #endif
 
-    /*
-     * -----------------------------------------------------------------
-     * Function : SUNRcosh
-     * -----------------------------------------------------------------
-     * Usage : sunrealtype cosh_x;
-     *         cosh_x = SUNRcosh(x);
-     * -----------------------------------------------------------------
-     * SUNRcosh(x) returns cosh(x) (the hyperbolic cosine of x).
-     * -----------------------------------------------------------------
-     */
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRcosh
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype cosh_x;
+ *         cosh_x = SUNRcosh(x);
+ * -----------------------------------------------------------------
+ * SUNRcosh(x) returns cosh(x) (the hyperbolic cosine of x).
+ * -----------------------------------------------------------------
+ */
 
 #ifndef SUNRcosh
 #if defined(SUNDIALS_DOUBLE_PRECISION)
@@ -600,6 +600,7 @@ extern "C" {
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
 #endif
 #endif
+
 /*
  * -----------------------------------------------------------------
  * Function : SUNIpowerI
@@ -638,10 +639,10 @@ SUNDIALS_EXPORT sunrealtype SUNRpowerI(sunrealtype base, int exponent);
  *         isNotEqual = SUNRCompare(a, b);
  * -----------------------------------------------------------------
  * SUNRCompareTol returns 0 if the relative difference of a and b is
- * less than or equal to 10*machine epsilon. If the relative
- * difference is greater than 10*machine epsilon, it returns 1. The
- * function handles the case where a or b are near zero as well as
- * the case where a or b are inf/nan.
+ * less than or equal to 10* or 100*(for __float128) machine epsilon.
+ * If the relative difference is greater than 10* or 100*machine
+ * epsilon, it returns 1. The function handles the case where a or b
+ * are near zero as well as the case where a or b are inf/nan.
  * -----------------------------------------------------------------
  */
 

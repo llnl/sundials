@@ -122,6 +122,7 @@ int main(void)
   if (check_retval((void*)yp, "N_VClone", 0)) { return (1); }
   avtol = N_VClone(yy);
   if (check_retval((void*)avtol, "N_VClone", 0)) { return (1); }
+
   /* Create and initialize  y, y', and absolute tolerance vectors. */
   yval    = N_VGetArrayPointer(yy);
   yval[0] = ONE;

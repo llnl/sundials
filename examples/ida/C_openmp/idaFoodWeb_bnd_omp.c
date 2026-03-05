@@ -566,6 +566,7 @@ static void PrintOutput(void* ida_mem, N_Vector c, sunrealtype t)
 
   c_bl = IJ_Vptr(c, 0, 0);
   c_tr = IJ_Vptr(c, MX - 1, MY - 1);
+
 #if defined(SUNDIALS_FLOAT128_PRECISION)
   printf("%8.2Qe %12.4Qe %12.4Qe   | %3ld  %1d %12.4Qe\n", t, c_bl[0], c_tr[0],
          nst, kused, hused);
