@@ -30,7 +30,7 @@
 // SUNDIALS types
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>
-#include <sundials/sundials_math.h> //for SUNRcos SUNRsin
+#include <sundials/sundials_math.h> //for macros of SUNRcos, SUNRsin and SUNRabs
 
 // Common utility functions
 #include <example_utilities.hpp>
