@@ -109,9 +109,9 @@ m.def(
       [](int nmat, int stages, int q, int p, sundials4py::Array1d W_1d,
          sundials4py::Array1d G_1d, sundials4py::Array1d c_1d) -> MRIStepCoupling
     {
-      sunrealtype* W_1d_ptr = W_1d.size() == 0 ? nullptr : W_1d.data();
-      sunrealtype* G_1d_ptr = G_1d.size() == 0 ? nullptr : G_1d.data();
-      sunrealtype* c_1d_ptr = c_1d.size() == 0 ? nullptr : c_1d.data();
+      sunrealtype* W_1d_ptr = reinterpret_cast<sunrealtype*>(W_1d.data());
+      sunrealtype* G_1d_ptr = reinterpret_cast<sunrealtype*>(G_1d.data());
+      sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
 
       auto lambda_result = MRIStepCoupling_Create(nmat, stages, q, p, W_1d_ptr,
                                                   G_1d_ptr, c_1d_ptr);

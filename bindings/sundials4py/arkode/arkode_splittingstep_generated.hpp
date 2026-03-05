@@ -41,9 +41,8 @@ m.def(
          sundials4py::Array1d alpha_1d,
          sundials4py::Array1d beta_1d) -> SplittingStepCoefficients
     {
-      sunrealtype* alpha_1d_ptr = alpha_1d.size() == 0 ? nullptr
-                                                       : alpha_1d.data();
-      sunrealtype* beta_1d_ptr = beta_1d.size() == 0 ? nullptr : beta_1d.data();
+      sunrealtype* alpha_1d_ptr = reinterpret_cast<sunrealtype*>(alpha_1d.data());
+      sunrealtype* beta_1d_ptr = reinterpret_cast<sunrealtype*>(beta_1d.data());
 
       auto lambda_result =
         SplittingStepCoefficients_Create(sequential_methods, stages, partitions,
