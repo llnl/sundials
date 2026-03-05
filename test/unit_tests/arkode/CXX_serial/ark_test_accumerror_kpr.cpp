@@ -643,7 +643,7 @@ static sunrealtype pdot(sunrealtype t) { return (-SUNRsin(t)); }
 
 static sunrealtype qdot(sunrealtype t, UserData& udata)
 {
-  return (-SUNRsin(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO2)))) * udata.omega *
+  return (-SUNRsin(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))) * udata.omega *
           (ONE + SUNRexp(-(t - TWO) * (t - TWO)) -
            t * TWO * (t - TWO) * (SUNRexp(-(t - TWO) * (t - TWO)))));
 }
