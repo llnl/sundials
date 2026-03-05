@@ -72,7 +72,7 @@ jobs:
 
       - name: Install sundials generator+litgen
         run: |
-          pip install black isort pyyaml litgen@git+https://github.com/sundials-codes/litgen.git
+          pip install black isort pyyaml pybind11 litgen@git+https://github.com/sundials-codes/litgen.git
 
       - name: Check out repository code
         uses: actions/checkout@v6
