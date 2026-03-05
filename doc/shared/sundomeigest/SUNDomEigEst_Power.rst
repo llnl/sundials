@@ -111,7 +111,9 @@ routines:
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real);
 
-   This routine sets the ``real`` flag in the Power iteration dominant eigenvalue estimator object.
+   This routine informs the Power iteration that the dominant eigenvalue is 
+   real-valued, so that the complex projection described in Section 
+   :numref:`SUNDomEigEst.Introduction` can be omitted.
 
    :param DEE: the dominant eigenvalue estimator object.
    :param real: the value to set the ``real`` flag to.

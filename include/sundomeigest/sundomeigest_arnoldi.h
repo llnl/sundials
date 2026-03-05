@@ -43,7 +43,7 @@ struct SUNDomEigEstimatorContent_Arnoldi_
 
   /* Krylov subspace vectors */
   N_Vector* V;
-  N_Vector q;
+  N_Vector q, rhs_linV, Fv, work;
 
   int kry_dim;                  /* Krylov subspace dimension */
   int num_warmups;              /* Number of preprocessing iterations */
@@ -52,6 +52,10 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   sunrealtype tol_preprocess;   /* Tolerance for preprocessing iterations */
 
   long int num_ATimes; /* Number of ATimes calls */
+
+  DEERhsFn rhsfn;      /* User provided RHS function */
+  void* rhs_data;      /* RHS function data */
+  long int nfevals;    /* Number of RHS evaluations */
 
   sunrealtype* LAPACK_A; /* The vector which holds rows of the Hessenberg matrix in the given order */
   sunrealtype* LAPACK_wr;    /* Real parts of eigenvalues */
@@ -76,6 +80,14 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
                                                 void* A_data, SUNATimesFn ATimes);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
+                                              void* rhs_data, DEERhsFn RHSfn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi(SUNDomEigEstimator DEE, 
+                                                                N_Vector v);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,

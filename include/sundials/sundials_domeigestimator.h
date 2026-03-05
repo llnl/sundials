@@ -32,6 +32,9 @@
 extern "C" {
 #endif
 
+typedef int (*DEERhsFn)(N_Vector y, N_Vector ydot, void* user_data);
+#define MAX_DQITERS 3
+
 /* -----------------------------------------------------------------
  * Generic definition of SUNDomEigEstimator (DEE)
  * ----------------------------------------------------------------- */
@@ -46,6 +49,8 @@ typedef _SUNDIALS_STRUCT_ SUNDomEigEstimator_* SUNDomEigEstimator;
 struct SUNDomEigEstimator_Ops_
 {
   SUNErrCode (*setatimes)(SUNDomEigEstimator, void*, SUNATimesFn);
+  SUNErrCode (*setrhs)(SUNDomEigEstimator, void*, DEERhsFn);
+  SUNErrCode (*setrhslinearizationvector)(SUNDomEigEstimator, N_Vector);
   SUNErrCode (*setoptions)(SUNDomEigEstimator DEE, const char* Did,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNDomEigEstimator, long int);
@@ -85,6 +90,12 @@ void SUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator DEE);
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data,
                                         SUNATimesFn ATimes);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data, DEERhsFn RHSfn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector(SUNDomEigEstimator DEE, N_Vector v);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetOptions(SUNDomEigEstimator DEE,
