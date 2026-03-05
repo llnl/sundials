@@ -298,7 +298,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       /* compute the residual norm and store it in delnrm (a bit confusing, 
          but we repurpose delta to save memory), which will be reused by the
          integrator, but first we need to save the correction norm */
-      sunrealtype delnrm = NEWTON_CONTENT(NLS)->delnrm;
+      sunrealtype delnrm          = NEWTON_CONTENT(NLS)->delnrm;
       NEWTON_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
 
       /* compute stiffness metric from https://doi.org/10.1007/BF01933714 */

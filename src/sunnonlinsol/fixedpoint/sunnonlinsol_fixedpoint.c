@@ -87,17 +87,17 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   NLS->content = content;
 
   /* Fill general content */
-  content->Sys        = NULL;
-  content->CTest      = NULL;
-  content->m          = m;
-  content->damping    = SUNFALSE;
-  content->beta       = ONE;
+  content->Sys         = NULL;
+  content->CTest       = NULL;
+  content->m           = m;
+  content->damping     = SUNFALSE;
+  content->beta        = ONE;
   content->crate_const = SUN_RCONST(0.3);
-  content->curiter    = 0;
-  content->maxiters   = 3;
-  content->niters     = 0;
-  content->nconvfails = 0;
-  content->ctest_data = NULL;
+  content->curiter     = 0;
+  content->maxiters    = 3;
+  content->niters      = 0;
+  content->nconvfails  = 0;
+  content->ctest_data  = NULL;
 
   /* Fill allocatable content */
   SUNCheckCallNull(AllocateContent(NLS, y));
@@ -251,9 +251,9 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     /* compute the convergence rate using the CVODE method */
     if (FP_CONTENT(NLS)->curiter > 1)
     {
-      FP_CONTENT(NLS)->crate = SUNMAX(FP_CONTENT(NLS)->crate_const *
-                                        FP_CONTENT(NLS)->crate,
-                                      FP_CONTENT(NLS)->delnrm / delnrmp);
+      FP_CONTENT(NLS)->crate =
+        SUNMAX(FP_CONTENT(NLS)->crate_const * FP_CONTENT(NLS)->crate,
+               FP_CONTENT(NLS)->delnrm / delnrmp);
     }
     else { FP_CONTENT(NLS)->crate = SUN_RCONST(0.0); }
 
@@ -390,16 +390,12 @@ SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS,
   if (crate_const < ZERO)
   {
     /* This is CRDOWN in CVODE */
-    FP_CONTENT(NLS)->crate_const = SUN_RCONST(0.3); 
+    FP_CONTENT(NLS)->crate_const = SUN_RCONST(0.3);
   }
-  else
-  {
-    FP_CONTENT(NLS)->crate_const = crate_const;
-  }
+  else { FP_CONTENT(NLS)->crate_const = crate_const; }
 
   return SUN_SUCCESS;
 }
-
 
 /*==============================================================================
   Get functions
