@@ -23,7 +23,31 @@ jobs:
       - name: Install dependencies with apt
         run: |
           apt update
-          apt install -y git python3 python3-pip default-jdk
+          apt-get update && apt-get install --no-install-recommends -y \
+            ca-certificates \
+            ccache \
+            cpio \
+            curl \
+            dpkg-dev \
+            default-jdk \
+            file \
+            g++ \
+            git \
+            libarchive-dev \
+            libcurl4-openssl-dev \
+            libxml2-dev \
+            libxml2-utils \
+            libxslt1-dev \
+            make \
+            man \
+            ninja-build \
+            python3 \
+            python3-pip \
+            tree \
+            valgrind \
+            zip \
+            && apt-get clean \
+            && rm -rf /var/lib/apt/lists/*
 
       - name: Install black
         run: pip install black
