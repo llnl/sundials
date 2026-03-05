@@ -49,9 +49,13 @@ Floating point types
 
 Additionally, based on the current precision, ``sundials_types.h`` defines
 ``SUN_BIG_REAL`` to be the largest value representable as a ``sunrealtype``,
-``SUN_SMALL_REAL`` to be the smallest value representable as a ``sunrealtype``, and
+``SUN_SMALL_REAL`` to be the smallest value representable as a ``sunrealtype``,
 ``SUN_UNIT_ROUNDOFF`` to be the difference between :math:`1.0` and the minimum
-``sunrealtype`` greater than :math:`1.0`.
+``sunrealtype`` greater than :math:`1.0`, and ``SUN_DIGITS10`` to be the number
+ of decimal digits, ``q``, such that any floating-point number as a ``sunrealtype``
+ with ``q`` digits and back again without change to the ``q`` decimal digits,
+ same as ``std::numeric_limits<sunrealtype>::digits10``.
+
 
 Within SUNDIALS, real constants are set by way of a macro called ``SUN_RCONST``. It
 is this macro that needs the ability to branch on the definition of
