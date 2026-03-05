@@ -89,6 +89,7 @@ def main(argv=None):
     Nt = int(np.ceil(Tf / dTout))
     reltol = 1e-4
     abstol = 1e-4
+    aa_depth = 0
 
     status, sunctx = SUNContext_Create(SUN_COMM_NULL)
     y = N_VNew_Serial(NEQ, sunctx)
@@ -109,11 +110,12 @@ def main(argv=None):
 
     newton = args.newton
 
+
     if newton:
         # NLS = SUNNonlinSol_Newton(y, sunctx)
-        NLS = SUNNonlinSol_Auto(y, 0, 1, sunctx)
+        NLS = SUNNonlinSol_Auto(y, aa_depth, SUNNONLINSOL_AUTO_NEWTON, sunctx)
     else:
-        NLS = SUNNonlinSol_Auto(y, 0, 0, sunctx)
+        NLS = SUNNonlinSol_Auto(y, aa_depth, SUNNONLINSOL_AUTO_FIXEDPOINT, sunctx)
         # NLS = SUNNonlinSol_FixedPoint(y, 0, sunctx)
 
     status = CVodeSetNonlinearSolver(cvode.get(), NLS)
