@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies with apt
         run: |
           apt update
-          apt install -y git python3 python3-pip
+          apt install -y git python3 python3-pip default-jdk
 
       - name: Install black
         run: pip install black
