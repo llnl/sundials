@@ -19,6 +19,7 @@
 
 #include "cvode_impl.h"
 #include "sundials/sundials_math.h"
+#include "sunnonlinsol/sunnonlinsol_auto.h"
 
 /* constant macros */
 #define ONE SUN_RCONST(1.0) /* real 1.0 */
@@ -91,8 +92,6 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   cv_mem->ownNLS = SUNFALSE;
 
   /* set the nonlinear system function */
-  /* TODO(CJB): it is probably better to have a version of SUNNonlinSolSetSysFn which can either take the residual and fp form or,
-     takes a flag indicating which form is being provided */
   if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_ROOTFIND)
   {
     retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsResidual);
@@ -101,11 +100,10 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   {
     retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsFPFunction);
   }
-  else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_AUTO)
+  else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_HYBRID)
   {
-    SUNNonlinSolSetType_Auto(NLS, SUNNONLINEARSOLVER_ROOTFIND)
-    retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsResidual);
-    retval = SUNNonlinSolSetSysFn(cv_mem->NLS, cvNlsFPFunction);
+    retval = SUNNonlinSolSetSysFns_Auto(cv_mem->NLS, cvNlsResidual,
+                                        cvNlsFPFunction);
   }
   else
   {

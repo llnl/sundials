@@ -39,7 +39,8 @@ set(CVODE_examples
     "cvRoberts_dns_constraints\;\;develop"
     "cvRoberts_dns_negsol\;\;exclude-single"
     "cvRoberts_dns_uw\;\;develop"
-    "cvRocket_dns\;\;develop")
+    "cvRocket_dns\;\;develop"
+    "cvVdp_auto_nls\;\;develop")
 
 if(SUNDIALS_BUILD_WITH_MONITORING)
   list(APPEND CVODE_examples "cvKrylovDemo_ls\;0 1\;develop")
