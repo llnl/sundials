@@ -363,6 +363,20 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver farg1
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver farg1, double const *farg2) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  sunrealtype arg2 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (sunrealtype)(*farg2);
+  result = (SUNErrCode)SUNNonlinSolSetCrateConstant_FixedPoint(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters_FixedPoint(SUNNonlinearSolver farg1, long *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
@@ -414,6 +428,48 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver farg1, 
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolSysFn *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetSysFn_FixedPoint(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver farg1, double *farg2) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (sunrealtype *)(farg2);
+  result = (SUNErrCode)SUNNonlinSolGetConvRate_FixedPoint(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNNonlinSolGetDeltNorm_FixedPoint(SUNNonlinearSolver farg1, double *farg2) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (sunrealtype *)(farg2);
+  result = (SUNErrCode)SUNNonlinSolGetDeltNorm_FixedPoint(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver farg1, double *farg2) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (sunrealtype *)(farg2);
+  result = (SUNErrCode)SUNNonlinSolGetDelNrm_FixedPoint(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

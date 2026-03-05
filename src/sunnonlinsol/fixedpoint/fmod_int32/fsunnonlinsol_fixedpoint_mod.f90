@@ -38,10 +38,14 @@ module fsunnonlinsol_fixedpoint_mod
  public :: FSUNNonlinSolSetConvTestFn_FixedPoint
  public :: FSUNNonlinSolSetMaxIters_FixedPoint
  public :: FSUNNonlinSolSetDamping_FixedPoint
+ public :: FSUNNonlinSolSetCrateConstant_FixedPoint
  public :: FSUNNonlinSolGetNumIters_FixedPoint
  public :: FSUNNonlinSolGetCurIter_FixedPoint
  public :: FSUNNonlinSolGetNumConvFails_FixedPoint
  public :: FSUNNonlinSolGetSysFn_FixedPoint
+ public :: FSUNNonlinSolGetConvRate_FixedPoint
+ public :: FSUNNonlinSolGetDeltNorm_FixedPoint
+ public :: FSUNNonlinSolGetDelNrm_FixedPoint
 
 ! WRAPPER DECLARATIONS
 interface
@@ -141,6 +145,15 @@ real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNNonlinSolSetCrateConstant_FixedPoint(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolSetCrateConstant_FixedPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNNonlinSolGetNumIters_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNumIters_FixedPoint") &
 result(fresult)
@@ -170,6 +183,33 @@ end function
 
 function swigc_FSUNNonlinSolGetSysFn_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetSysFn_FixedPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolGetConvRate_FixedPoint(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetConvRate_FixedPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolGetDeltNorm_FixedPoint(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetDeltNorm_FixedPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolGetDelNrm_FixedPoint(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetDelNrm_FixedPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -360,6 +400,22 @@ fresult = swigc_FSUNNonlinSolSetDamping_FixedPoint(farg1, farg2)
 swig_result = fresult
 end function
 
+function FSUNNonlinSolSetCrateConstant_FixedPoint(nls, crate_const) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+real(C_DOUBLE), intent(in) :: crate_const
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = crate_const
+fresult = swigc_FSUNNonlinSolSetCrateConstant_FixedPoint(farg1, farg2)
+swig_result = fresult
+end function
+
 function FSUNNonlinSolGetNumIters_FixedPoint(nls, niters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -421,6 +477,54 @@ type(C_PTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = c_loc(sysfn)
 fresult = swigc_FSUNNonlinSolGetSysFn_FixedPoint(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolGetConvRate_FixedPoint(nls, crate) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+real(C_DOUBLE), dimension(*), target, intent(inout) :: crate
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = c_loc(crate(1))
+fresult = swigc_FSUNNonlinSolGetConvRate_FixedPoint(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolGetDeltNorm_FixedPoint(nls, deltnorm) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+real(C_DOUBLE), dimension(*), target, intent(inout) :: deltnorm
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = c_loc(deltnorm(1))
+fresult = swigc_FSUNNonlinSolGetDeltNorm_FixedPoint(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolGetDelNrm_FixedPoint(nls, delnrm) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+real(C_DOUBLE), dimension(*), target, intent(inout) :: delnrm
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = c_loc(delnrm(1))
+fresult = swigc_FSUNNonlinSolGetDelNrm_FixedPoint(farg1, farg2)
 swig_result = fresult
 end function
 

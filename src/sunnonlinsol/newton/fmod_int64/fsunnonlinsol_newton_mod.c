@@ -429,4 +429,18 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver farg1, void
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolGetDelNrm_Newton(SUNNonlinearSolver farg1, double *farg2) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (sunrealtype *)(farg2);
+  result = (SUNErrCode)SUNNonlinSolGetDelNrm_Newton(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 

@@ -497,9 +497,10 @@ module fsundials_core_mod
  enum, bind(c)
   enumerator :: SUNNONLINEARSOLVER_ROOTFIND
   enumerator :: SUNNONLINEARSOLVER_FIXEDPOINT
+  enumerator :: SUNNONLINEARSOLVER_HYBRID
  end enum
  integer, parameter, public :: SUNNonlinearSolver_Type = kind(SUNNONLINEARSOLVER_ROOTFIND)
- public :: SUNNONLINEARSOLVER_ROOTFIND, SUNNONLINEARSOLVER_FIXEDPOINT
+ public :: SUNNONLINEARSOLVER_ROOTFIND, SUNNONLINEARSOLVER_FIXEDPOINT, SUNNONLINEARSOLVER_HYBRID
  ! struct struct _generic_SUNNonlinearSolver_Ops
  type, bind(C), public :: SUNNonlinearSolver_Ops
   type(C_FUNPTR), public :: gettype
@@ -516,6 +517,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: getnumiters
   type(C_FUNPTR), public :: getcuriter
   type(C_FUNPTR), public :: getnumconvfails
+  type(C_FUNPTR), public :: getdelnrm
  end type SUNNonlinearSolver_Ops
  ! struct struct _generic_SUNNonlinearSolver
  type, bind(C), public :: SUNNonlinearSolver
@@ -539,8 +541,10 @@ module fsundials_core_mod
  public :: FSUNNonlinSolGetNumIters
  public :: FSUNNonlinSolGetCurIter
  public :: FSUNNonlinSolGetNumConvFails
+ public :: FSUNNonlinSolGetDelNrm
  integer(C_INT), parameter, public :: SUN_NLS_CONTINUE = +901_C_INT
  integer(C_INT), parameter, public :: SUN_NLS_CONV_RECVR = +902_C_INT
+ integer(C_INT), parameter, public :: SUN_NLS_SWITCH = +903_C_INT
  ! enum SUNAdaptController_Type
  enum, bind(c)
   enumerator :: SUN_ADAPTCONTROLLER_NONE
@@ -2144,6 +2148,15 @@ end function
 
 function swigc_FSUNNonlinSolGetNumConvFails(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNumConvFails") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolGetDelNrm(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetDelNrm") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -5655,6 +5668,22 @@ type(C_PTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = c_loc(nconvfails(1))
 fresult = swigc_FSUNNonlinSolGetNumConvFails(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolGetDelNrm(nls, delnrm) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+real(C_DOUBLE), dimension(*), target, intent(inout) :: delnrm
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = c_loc(delnrm(1))
+fresult = swigc_FSUNNonlinSolGetDelNrm(farg1, farg2)
 swig_result = fresult
 end function
 

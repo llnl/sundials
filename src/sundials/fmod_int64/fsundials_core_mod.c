@@ -2556,6 +2556,20 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails(SUNNonlinearSolver farg1, long
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolGetDelNrm(SUNNonlinearSolver farg1, double *farg2) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (sunrealtype *)(farg2);
+  result = (SUNErrCode)SUNNonlinSolGetDelNrm(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_NewEmpty(void *farg1) {
   SUNAdaptController fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
