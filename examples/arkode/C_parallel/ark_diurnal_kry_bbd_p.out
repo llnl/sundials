@@ -19,53 +19,53 @@ t = 2.16e+04   no. steps = 115   stepsize = 6.88e+02
 At bottom left:  c1, c2 =    2.665e+07    2.993e+11 
 At top right:    c1, c2 =    2.931e+07    3.313e+11 
 
-t = 2.88e+04   no. steps = 133   stepsize = 2.55e+02
+t = 2.88e+04   no. steps = 133   stepsize = 2.57e+02
 At bottom left:  c1, c2 =    8.702e+06    3.380e+11 
 At top right:    c1, c2 =    9.650e+06    3.751e+11 
 
-t = 3.60e+04   no. steps = 161   stepsize = 7.55e+01
+t = 3.60e+04   no. steps = 161   stepsize = 7.53e+01
 At bottom left:  c1, c2 =    1.404e+04    3.387e+11 
 At top right:    c1, c2 =    1.561e+04    3.765e+11 
 
-t = 4.32e+04   no. steps = 201   stepsize = 1.77e+03
-At bottom left:  c1, c2 =   -1.994e-07    3.382e+11 
-At top right:    c1, c2 =    4.533e-06    3.804e+11 
+t = 4.32e+04   no. steps = 201   stepsize = 1.78e+03
+At bottom left:  c1, c2 =   -1.339e-07    3.382e+11 
+At top right:    c1, c2 =    4.458e-06    3.804e+11 
 
-t = 5.04e+04   no. steps = 206   stepsize = 7.73e+02
-At bottom left:  c1, c2 =   -2.848e-08    3.358e+11 
-At top right:    c1, c2 =   -1.542e-07    3.864e+11 
+t = 5.04e+04   no. steps = 205   stepsize = 1.30e+03
+At bottom left:  c1, c2 =   -1.120e-06    3.358e+11 
+At top right:    c1, c2 =    5.028e-07    3.864e+11 
 
-t = 5.76e+04   no. steps = 210   stepsize = 1.55e+03
-At bottom left:  c1, c2 =   -8.395e-07    3.320e+11 
-At top right:    c1, c2 =   -4.284e-07    3.909e+11 
+t = 5.76e+04   no. steps = 211   stepsize = 2.61e+02
+At bottom left:  c1, c2 =    2.304e-09    3.320e+11 
+At top right:    c1, c2 =    3.415e-09    3.909e+11 
 
-t = 6.48e+04   no. steps = 215   stepsize = 1.89e+03
-At bottom left:  c1, c2 =    1.234e-08    3.313e+11 
-At top right:    c1, c2 =    9.230e-08    3.963e+11 
+t = 6.48e+04   no. steps = 216   stepsize = 1.94e+03
+At bottom left:  c1, c2 =   -1.762e-07    3.313e+11 
+At top right:    c1, c2 =   -1.956e-06    3.963e+11 
 
-t = 7.20e+04   no. steps = 218   stepsize = 2.21e+03
-At bottom left:  c1, c2 =   -4.001e-08    3.330e+11 
-At top right:    c1, c2 =   -7.099e-06    4.039e+11 
+t = 7.20e+04   no. steps = 220   stepsize = 2.10e+03
+At bottom left:  c1, c2 =   -3.297e-08    3.330e+11 
+At top right:    c1, c2 =    7.118e-07    4.039e+11 
 
-t = 7.92e+04   no. steps = 221   stepsize = 2.32e+03
-At bottom left:  c1, c2 =    3.713e-08    3.334e+11 
-At top right:    c1, c2 =   -3.992e-07    4.120e+11 
+t = 7.92e+04   no. steps = 223   stepsize = 2.32e+03
+At bottom left:  c1, c2 =   -3.113e-07    3.334e+11 
+At top right:    c1, c2 =    3.116e-06    4.120e+11 
 
-t = 8.64e+04   no. steps = 224   stepsize = 2.47e+03
-At bottom left:  c1, c2 =    3.734e-07    3.352e+11 
-At top right:    c1, c2 =    3.748e-07    4.163e+11 
+t = 8.64e+04   no. steps = 226   stepsize = 2.41e+03
+At bottom left:  c1, c2 =    5.520e-07    3.352e+11 
+At top right:    c1, c2 =   -5.018e-06    4.163e+11 
 
 
 Final Statistics: 
 
 lenrw   =  4118     leniw   =   291
 lenrwls =  2455     leniwls =   126
-nst     =   224     nfe     =     0
-nfe     =  3315     nfels   =  6886
-nni     =  2077     nli     =  6886
-nsetups =    73     netf    =    23
-npe     =     4     nps     =  8881
-ncfn    =     0     ncfl    =   530
+nst     =   226     nfe     =     0
+nfe     =  3363     nfels   =  6972
+nni     =  2110     nli     =  6972
+nsetups =    77     netf    =    24
+npe     =     4     nps     =  9000
+ncfn    =     0     ncfl    =   534
 
 In ARKBBDPRE: real/integer local work space sizes = 1300, 192
              no. flocal evals. = 88
@@ -88,7 +88,7 @@ t = 2.16e+04   no. steps = 114   stepsize = 6.89e+02
 At bottom left:  c1, c2 =    2.665e+07    2.993e+11 
 At top right:    c1, c2 =    2.931e+07    3.313e+11 
 
-t = 2.88e+04   no. steps = 131   stepsize = 1.93e+02
+t = 2.88e+04   no. steps = 131   stepsize = 1.94e+02
 At bottom left:  c1, c2 =    8.702e+06    3.380e+11 
 At top right:    c1, c2 =    9.650e+06    3.751e+11 
 
@@ -96,45 +96,45 @@ t = 3.60e+04   no. steps = 159   stepsize = 7.48e+01
 At bottom left:  c1, c2 =    1.404e+04    3.387e+11 
 At top right:    c1, c2 =    1.561e+04    3.765e+11 
 
-t = 4.32e+04   no. steps = 199   stepsize = 1.75e+03
-At bottom left:  c1, c2 =   -1.508e-07    3.382e+11 
-At top right:    c1, c2 =   -1.680e-07    3.804e+11 
+t = 4.32e+04   no. steps = 199   stepsize = 1.76e+03
+At bottom left:  c1, c2 =   -1.411e-07    3.382e+11 
+At top right:    c1, c2 =   -1.598e-07    3.804e+11 
 
-t = 5.04e+04   no. steps = 203   stepsize = 1.28e+03
-At bottom left:  c1, c2 =    8.151e-09    3.358e+11 
-At top right:    c1, c2 =   -1.358e-08    3.864e+11 
+t = 5.04e+04   no. steps = 203   stepsize = 1.29e+03
+At bottom left:  c1, c2 =    1.379e-08    3.358e+11 
+At top right:    c1, c2 =   -1.821e-08    3.864e+11 
 
-t = 5.76e+04   no. steps = 208   stepsize = 9.65e+02
-At bottom left:  c1, c2 =    5.968e-08    3.320e+11 
-At top right:    c1, c2 =    1.041e-08    3.909e+11 
+t = 5.76e+04   no. steps = 210   stepsize = 7.26e+02
+At bottom left:  c1, c2 =    5.031e-15    3.320e+11 
+At top right:    c1, c2 =    2.131e-13    3.909e+11 
 
-t = 6.48e+04   no. steps = 213   stepsize = 1.90e+03
-At bottom left:  c1, c2 =   -4.322e-09    3.313e+11 
-At top right:    c1, c2 =    4.258e-10    3.963e+11 
+t = 6.48e+04   no. steps = 214   stepsize = 2.05e+03
+At bottom left:  c1, c2 =   -4.619e-12    3.313e+11 
+At top right:    c1, c2 =    1.070e-10    3.963e+11 
 
-t = 7.20e+04   no. steps = 216   stepsize = 2.21e+03
-At bottom left:  c1, c2 =    1.431e-07    3.330e+11 
-At top right:    c1, c2 =    1.210e-06    4.039e+11 
+t = 7.20e+04   no. steps = 218   stepsize = 2.19e+03
+At bottom left:  c1, c2 =    6.198e-08    3.330e+11 
+At top right:    c1, c2 =    8.649e-07    4.039e+11 
 
-t = 7.92e+04   no. steps = 219   stepsize = 2.32e+03
-At bottom left:  c1, c2 =    2.679e-08    3.334e+11 
-At top right:    c1, c2 =    1.594e-07    4.120e+11 
+t = 7.92e+04   no. steps = 221   stepsize = 2.32e+03
+At bottom left:  c1, c2 =    5.697e-08    3.334e+11 
+At top right:    c1, c2 =    1.397e-07    4.120e+11 
 
-t = 8.64e+04   no. steps = 222   stepsize = 2.47e+03
-At bottom left:  c1, c2 =    6.003e-08    3.352e+11 
-At top right:    c1, c2 =   -1.811e-07    4.163e+11 
+t = 8.64e+04   no. steps = 224   stepsize = 2.47e+03
+At bottom left:  c1, c2 =   -1.180e-08    3.352e+11 
+At top right:    c1, c2 =    6.919e-08    4.163e+11 
 
 
 Final Statistics: 
 
 lenrw   =  4118     leniw   =   297
 lenrwls =  2455     leniwls =   126
-nst     =   222     nfe     =     0
-nfe     =  3244     nfels   =  7604
-nni     =  2021     nli     =  7604
-nsetups =    77     netf    =    22
-npe     =     8     nps     =  9536
-ncfn    =     4     ncfl    =   950
+nst     =   224     nfe     =     0
+nfe     =  3306     nfels   =  7713
+nni     =  2063     nli     =  7713
+nsetups =    81     netf    =    24
+npe     =     8     nps     =  9687
+ncfn    =     4     ncfl    =   958
 
 In ARKBBDPRE: real/integer local work space sizes = 1300, 192
              no. flocal evals. = 176
