@@ -1,99 +1,122 @@
 // #ifndef _SUNNONLINSOL_FIXEDPOINT_H
-// 
-// #ifdef __cplusplus 
+//
+// #ifdef __cplusplus
 // #endif
-// 
-
+//
 
 auto pyClass_SUNNonlinearSolverContent_FixedPoint =
-    nb::class_<_SUNNonlinearSolverContent_FixedPoint>
-        (m, "_SUNNonlinearSolverContent_FixedPoint", "")
+  nb::class_<_SUNNonlinearSolverContent_FixedPoint>(m, "_SUNNonlinearSolverContent_FixedPoint",
+                                                    "")
     .def(nb::init<>()) // implicit default constructor
-    ;
+  ;
 
-
-m.def("SUNNonlinSol_FixedPoint",
-    [](N_Vector y, int m, SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
+m.def(
+  "SUNNonlinSol_FixedPoint",
+  [](N_Vector y, int m, SUNContext sunctx)
+    -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
+  {
+    auto SUNNonlinSol_FixedPoint_adapt_return_type_to_shared_ptr =
+      [](N_Vector y, int m, SUNContext sunctx)
+      -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
     {
-        auto SUNNonlinSol_FixedPoint_adapt_return_type_to_shared_ptr = [](N_Vector y, int m, SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
-        {
-            auto lambda_result = SUNNonlinSol_FixedPoint(y, m, sunctx);
+      auto lambda_result = SUNNonlinSol_FixedPoint(y, m, sunctx);
 
-            return our_make_shared<std::remove_pointer_t<SUNNonlinearSolver>, SUNNonlinearSolverDeleter>(lambda_result);
-        };
+      return our_make_shared<std::remove_pointer_t<SUNNonlinearSolver>,
+                             SUNNonlinearSolverDeleter>(lambda_result);
+    };
 
-        return SUNNonlinSol_FixedPoint_adapt_return_type_to_shared_ptr(y, m, sunctx);
-    }, 
-    nb::arg("y"), nb::arg("m"), nb::arg("sunctx"), 
-    "nb::keep_alive<0, 3>()", 
-    nb::keep_alive<0, 3>());
+    return SUNNonlinSol_FixedPoint_adapt_return_type_to_shared_ptr(y, m, sunctx);
+  },
+  nb::arg("y"), nb::arg("m"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
+  nb::keep_alive<0, 3>());
 
-m.def("SUNNonlinSol_FixedPointSens",
-    [](int count, N_Vector y, int m, SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
+m.def(
+  "SUNNonlinSol_FixedPointSens",
+  [](int count, N_Vector y, int m, SUNContext sunctx)
+    -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
+  {
+    auto SUNNonlinSol_FixedPointSens_adapt_return_type_to_shared_ptr =
+      [](int count, N_Vector y, int m, SUNContext sunctx)
+      -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
     {
-        auto SUNNonlinSol_FixedPointSens_adapt_return_type_to_shared_ptr = [](int count, N_Vector y, int m, SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
-        {
-            auto lambda_result = SUNNonlinSol_FixedPointSens(count, y, m, sunctx);
+      auto lambda_result = SUNNonlinSol_FixedPointSens(count, y, m, sunctx);
 
-            return our_make_shared<std::remove_pointer_t<SUNNonlinearSolver>, SUNNonlinearSolverDeleter>(lambda_result);
-        };
+      return our_make_shared<std::remove_pointer_t<SUNNonlinearSolver>,
+                             SUNNonlinearSolverDeleter>(lambda_result);
+    };
 
-        return SUNNonlinSol_FixedPointSens_adapt_return_type_to_shared_ptr(count, y, m, sunctx);
-    }, 
-    nb::arg("count"), nb::arg("y"), nb::arg("m"), nb::arg("sunctx"), 
-    "nb::keep_alive<0, 4>()", 
-    nb::keep_alive<0, 4>());
+    return SUNNonlinSol_FixedPointSens_adapt_return_type_to_shared_ptr(count, y,
+                                                                       m, sunctx);
+  },
+  nb::arg("count"), nb::arg("y"), nb::arg("m"), nb::arg("sunctx"),
+  "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
-m.def("SUNNonlinSolSetDamping_FixedPoint",
-    SUNNonlinSolSetDamping_FixedPoint, nb::arg("NLS"), nb::arg("beta"));
+m.def("SUNNonlinSolSetDamping_FixedPoint", SUNNonlinSolSetDamping_FixedPoint,
+      nb::arg("NLS"), nb::arg("beta"));
 
 m.def("SUNNonlinSolSetCrateConstant_FixedPoint",
-    SUNNonlinSolSetCrateConstant_FixedPoint, nb::arg("NLS"), nb::arg("crate_const"));
+      SUNNonlinSolSetCrateConstant_FixedPoint, nb::arg("NLS"),
+      nb::arg("crate_const"));
 
-m.def("SUNNonlinSolGetConvRate_FixedPoint",
-    [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+m.def(
+  "SUNNonlinSolGetConvRate_FixedPoint",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetConvRate_FixedPoint_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
     {
-        auto SUNNonlinSolGetConvRate_FixedPoint_adapt_modifiable_immutable_to_return = [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-        {
-            sunrealtype crate_adapt_modifiable;
+      sunrealtype crate_adapt_modifiable;
 
-            SUNErrCode r = SUNNonlinSolGetConvRate_FixedPoint(NLS, &crate_adapt_modifiable);
-            return std::make_tuple(r, crate_adapt_modifiable);
-        };
+      SUNErrCode r =
+        SUNNonlinSolGetConvRate_FixedPoint(NLS, &crate_adapt_modifiable);
+      return std::make_tuple(r, crate_adapt_modifiable);
+    };
 
-        return SUNNonlinSolGetConvRate_FixedPoint_adapt_modifiable_immutable_to_return(NLS);
-    },     nb::arg("NLS"));
+    return SUNNonlinSolGetConvRate_FixedPoint_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
 
-m.def("SUNNonlinSolGetDeltNorm_FixedPoint",
-    [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+m.def(
+  "SUNNonlinSolGetDeltNorm_FixedPoint",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetDeltNorm_FixedPoint_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
     {
-        auto SUNNonlinSolGetDeltNorm_FixedPoint_adapt_modifiable_immutable_to_return = [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-        {
-            sunrealtype deltnorm_adapt_modifiable;
+      sunrealtype deltnorm_adapt_modifiable;
 
-            SUNErrCode r = SUNNonlinSolGetDeltNorm_FixedPoint(NLS, &deltnorm_adapt_modifiable);
-            return std::make_tuple(r, deltnorm_adapt_modifiable);
-        };
+      SUNErrCode r =
+        SUNNonlinSolGetDeltNorm_FixedPoint(NLS, &deltnorm_adapt_modifiable);
+      return std::make_tuple(r, deltnorm_adapt_modifiable);
+    };
 
-        return SUNNonlinSolGetDeltNorm_FixedPoint_adapt_modifiable_immutable_to_return(NLS);
-    },     nb::arg("NLS"));
+    return SUNNonlinSolGetDeltNorm_FixedPoint_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
 
-m.def("SUNNonlinSolGetDelNrm_FixedPoint",
-    [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+m.def(
+  "SUNNonlinSolGetDelNrm_FixedPoint",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetDelNrm_FixedPoint_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
     {
-        auto SUNNonlinSolGetDelNrm_FixedPoint_adapt_modifiable_immutable_to_return = [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-        {
-            sunrealtype delnrm_adapt_modifiable;
+      sunrealtype delnrm_adapt_modifiable;
 
-            SUNErrCode r = SUNNonlinSolGetDelNrm_FixedPoint(NLS, &delnrm_adapt_modifiable);
-            return std::make_tuple(r, delnrm_adapt_modifiable);
-        };
+      SUNErrCode r = SUNNonlinSolGetDelNrm_FixedPoint(NLS,
+                                                      &delnrm_adapt_modifiable);
+      return std::make_tuple(r, delnrm_adapt_modifiable);
+    };
 
-        return SUNNonlinSolGetDelNrm_FixedPoint_adapt_modifiable_immutable_to_return(NLS);
-    },     nb::arg("NLS"));
+    return SUNNonlinSolGetDelNrm_FixedPoint_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
 // #ifdef __cplusplus
-// 
+//
 // #endif
-// 
+//
 // #endif
-// 
+//
