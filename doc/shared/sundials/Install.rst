@@ -692,7 +692,7 @@ Example Programs
 
    Build the SUNDIALS CUDA examples
 
-   Default: ``ON`` when :cmakeop:`ENABLE_CUDA` is ``ON``, otherwise ``OFF``
+   Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_CUDA` is ``ON``, otherwise ``OFF``
 
 .. cmakeoption:: EXAMPLES_ENABLE_F2003
 
