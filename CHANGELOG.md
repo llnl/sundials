@@ -15,6 +15,51 @@ Fixed the embedded coefficients for the `ARKODE_TSITOURAS_7_4_5` Butcher table.
 
 ### Deprecation Notices
 
+Several CMake options have been deprecated in favor of namespaced versions
+prefixed with `SUNDIALS_` to avoid naming collisions in applications that
+include SUNDIALS directly within their CMake builds. Additionally, a consistent
+naming convention (`SUNDIALS_ENABLE`) is now used for all boolean options. The
+table below lists the old CMake option names and the new replacements.
+
+| Old Option                             | New Option                                     |
+|----------------------------------------|------------------------------------------------|
+| `ENABLE_MPI`                           | `SUNDIALS_ENABLE_MPI`                          |
+| `ENABLE_OPENMP`                        | `SUNDIALS_ENABLE_OPENMP`                       |
+| `ENABLE_OPENMP_DEVICE`                 | `SUNDIALS_ENABLE_OPENMP_DEVICE`                |
+| `OPENMP_DEVICE_WORKS`                  | `SUNDIALS_ENABLE_OPENMP_DEVICE_CHECKS`         |
+| `ENABLE_PTHREAD`                       | `SUNDIALS_ENABLE_PTHREAD`                      |
+| `ENABLE_CUDA`                          | `SUNDIALS_ENABLE_CUDA`                         |
+| `ENABLE_HIP`                           | `SUNDIALS_ENABLE_HIP`                          |
+| `ENABLE_SYCL`                          | `SUNDIALS_ENABLE_SYCL`                         |
+| `ENABLE_LAPACK`                        | `SUNDIALS_ENABLE_LAPACK`                       |
+| `LAPACK_WORKS`                         | `SUNDIALS_ENABLE_LAPACK_CHECKS`                |
+| `ENABLE_GINKGO`                        | `SUNDIALS_ENABLE_GINKGO`                       |
+| `GINKGO_WORKS`                         | `SUNDIALS_ENABLE_GINKGO_CHECKS`                |
+| `ENABLE_MAGMA`                         | `SUNDIALS_ENABLE_MAGMA`                        |
+| `MAGMA_WORKS`                          | `SUNDIALS_ENABLE_MAGMA_CHECKS`                 |
+| `ENABLE_SUPERLUDIST`                   | `SUNDIALS_ENABLE_SUPERLUDIST`                  |
+| `SUPERLUDIST_WORKS`                    | `SUNDIALS_ENABLE_SUPERLUDIST_CHECKS`           |
+| `ENABLE_SUPERLUMT`                     | `SUNDIALS_ENABLE_SUPERLUMT`                    |
+| `SUPERLUMT_WORKS`                      | `SUNDIALS_ENABLE_SUPERLUMT_CHECKS`             |
+| `ENABLE_KLU`                           | `SUNDIALS_ENABLE_KLU`                          |
+| `KLU_WORKS`                            | `SUNDIALS_ENABLE_KLU_CHECKS`                   |
+| `ENABLE_HYPRE`                         | `SUNDIALS_ENABLE_HYPRE`                        |
+| `HYPRE_WORKS`                          | `SUNDIALS_ENABLE_HYPRE_CHECKS`                 |
+| `ENABLE_PETSC`                         | `SUNDIALS_ENABLE_PETSC`                        |
+| `PETSC_WORKS`                          | `SUNDIALS_ENABLE_PETSC_CHECKS`                 |
+| `ENABLE_TRILINOS`                      | `SUNDIALS_ENABLE_TRILINOS`                     |
+| `ENABLE_RAJA`                          | `SUNDIALS_ENABLE_RAJA`                         |
+| `ENABLE_XBRAID`                        | `SUNDIALS_ENABLE_XBRAID`                       |
+| `XBRAID_WORKS`                         | `SUNDIALS_ENABLE_XBRAID_CHECKS`                |
+| `ENABLE_ONEMKL`                        | `SUNDIALS_ENABLE_ONEMKL`                       |
+| `ONEMKL_WORKS`                         | `SUNDIALS_ENABLE_ONEMKL_CHECKS`                |
+| `ENABLE_CALIPER`                       | `SUNDIALS_ENABLE_CALIPER`                      |
+| `ENABLE_ADIAK`                         | `SUNDIALS_ENABLE_ADIAK`                        |
+| `ENABLE_KOKKOS`                        | `SUNDIALS_ENABLE_KOKKOS`                       |
+| `KOKKOS_WORKS`                         | `SUNDIALS_ENABLE_KOKKOS_CHECKS`                |
+| `ENABLE_KOKKOS_KERNELS`                | `SUNDIALS_ENABLE_KOKKOS_KERNELS`               |
+| `KOKKOS_KERNELS_WORKS`                 | `SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
+
 ## Changes to SUNDIALS in release 7.6.0
 
 ### Major Features

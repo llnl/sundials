@@ -24,7 +24,7 @@ include(CTest)
 # Check if the test runner is needed
 #
 if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT OR (SUNDIALS_TEST_ENABLE_PROFILING
-                                        AND ENABLE_CALIPER))
+                                        AND SUNDIALS_ENABLE_CALIPER))
   set(SUNDIALS_TEST_USE_RUNNER TRUE)
   # Python is needed to use the test runner
   find_package(Python3 REQUIRED)
@@ -74,7 +74,7 @@ endif()
 #
 # Print Caliper profiling settings
 #
-if(SUNDIALS_TEST_ENABLE_PROFILING AND ENABLE_CALIPER)
+if(SUNDIALS_TEST_ENABLE_PROFILING AND SUNDIALS_ENABLE_CALIPER)
   message(STATUS "Enabled test profiling with Caliper")
   if(NOT EXISTS ${SUNDIALS_TEST_CALIPER_OUTPUT_DIR})
     file(MAKE_DIRECTORY ${SUNDIALS_TEST_CALIPER_OUTPUT_DIR})
