@@ -481,9 +481,8 @@ sundials_option(
 # Enable Caliper support?
 # ---------------------------------------------------------------
 
-sundials_option(
-  SUNDIALS_ENABLE_CALIPER BOOL "Enable CALIPER support" OFF
-  DEPENDS_ON ENABLE_PROFILING DEPRECATED_NAMES ENABLE_CALIPER)
+sundials_option(SUNDIALS_ENABLE_CALIPER BOOL "Enable CALIPER support" OFF
+                DEPENDS_ON ENABLE_PROFILING DEPRECATED_NAMES ENABLE_CALIPER)
 
 sundials_option(CALIPER_DIR PATH "Path to the root of an CALIPER installation"
                 "${CALIPER_DIR}")
@@ -502,9 +501,8 @@ sundials_option(
 # Enable Adiak support?
 # ---------------------------------------------------------------
 
-sundials_option(
-  SUNDIALS_ENABLE_ADIAK BOOL "Enable Adiak support" OFF
-  DEPENDS_ON ENABLE_PROFILING DEPRECATED_NAMES ENABLE_ADIAK)
+sundials_option(SUNDIALS_ENABLE_ADIAK BOOL "Enable Adiak support" OFF
+                DEPENDS_ON ENABLE_PROFILING DEPRECATED_NAMES ENABLE_ADIAK)
 
 sundials_option(adiak_DIR PATH "Path to the root of an Adiak installation"
                 "${ADIAK_DIR}")
