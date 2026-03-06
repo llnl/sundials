@@ -370,6 +370,9 @@ def _get_history(log, key, step_status, time_range, step_range):
 
     for entry in log:
 
+        if "step" not in entry:
+            continue
+
         step = int(entry["step"])
         time = float(entry["tn"])
         level = entry["level"]

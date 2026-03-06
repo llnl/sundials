@@ -12,6 +12,7 @@
 
 #include "sundials/priv/sundials_errors_impl.h"
 #include "sundials/sundials_errors.h"
+#include "sundials_logger_impl.h"
 #include "sundials/sundials_nonlinearsolver.h"
 
 /* Content structure accessibility macros */
@@ -27,6 +28,16 @@ typedef struct
 static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
                                      N_Vector del, sunrealtype tol,
                                      N_Vector ewt, void* mem);
+
+static const char* SUNNonlinSolAutoType_ToString(SUNNonlinSolAutoType type)
+{
+  switch (type)
+  {
+  case SUNNONLINSOL_AUTO_FIXEDPOINT: return "Fixed-Point";
+  case SUNNONLINSOL_AUTO_NEWTON: return "Newton";
+  default: return "Unknown";
+  }
+}
 
 SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
                                      SUNNonlinSolAutoType active_solver_type,
@@ -71,6 +82,8 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   content->newt_to_fp_threshold = SUN_RCONST(2.0);
   content->nsolves_since_switch = 0;
   content->switch_count         = 0;
+  content->fp_niters_total      = 0;
+  content->newt_niters_total    = 0;
   content->auto_ctest_data      = NULL;
   content->fp_solver            = SUNNonlinSol_FixedPoint(y, m, sunctx);
   content->newton_solver        = SUNNonlinSol_Newton(y, sunctx);
@@ -103,16 +116,33 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
 {
   SUNFunctionBegin(NLS->sunctx);
   int retval;
+  long int iters;
+
+  SUNLogInfo(NLS->sunctx->logger, "nonlinear-solver",
+             "solver = Auto, active = %s",
+             SUNNonlinSolAutoType_ToString(AUTO_CONTENT(NLS)->active_solver_type));
 
   if (AUTO_CONTENT(NLS)->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->fp_solver, y0, ycor, w, tol,
                                callSetup, mem);
+    iters = 0;
+    if (SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->fp_solver, &iters) ==
+        SUN_SUCCESS)
+    {
+      AUTO_CONTENT(NLS)->fp_niters_total += iters;
+    }
   }
   else
   {
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->newton_solver, y0, ycor, w,
                                tol, callSetup, mem);
+    iters = 0;
+    if (SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->newton_solver, &iters) ==
+        SUN_SUCCESS)
+    {
+      AUTO_CONTENT(NLS)->newt_niters_total += iters;
+    }
   }
 
   /* increment solve counter used for switch-delay gating */
@@ -155,6 +185,10 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
       C->nsolves_since_switch = 0;
       C->active_solver_type   = SUNNONLINSOL_AUTO_NEWTON;
       C->switch_count++;
+      SUNLogInfo(auto_nls->sunctx->logger, "auto-nonlinear-solver-switch",
+                 "from = Fixed-Point, to = Newton, crate = " SUN_FORMAT_G
+                 ", threshold = " SUN_FORMAT_G ", delay = %li",
+                 fp_content->crate, C->fp_to_newt_threshold, C->fp_to_newt_delay);
       return SUN_NLS_SWITCH;
     }
   }
@@ -171,6 +205,11 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
       C->nsolves_since_switch = 0;
       C->active_solver_type   = SUNNONLINSOL_AUTO_FIXEDPOINT;
       C->switch_count++;
+      SUNLogInfo(auto_nls->sunctx->logger, "auto-nonlinear-solver-switch",
+                 "from = Newton, to = Fixed-Point, stiffr = " SUN_FORMAT_G
+                 ", threshold = " SUN_FORMAT_G ", delay = %li",
+                 newton_content->stiffr, C->newt_to_fp_threshold,
+                 C->newt_to_fp_delay);
       return SUN_NLS_SWITCH;
     }
   }
@@ -315,16 +354,16 @@ SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
   SUNAssert(newt_to_fp_threshold <= SUN_RCONST(2.0), SUN_ERR_ARG_OUTOFRANGE);
   SUNAssert(fp_to_newt_threshold <= SUN_RCONST(1.0), SUN_ERR_ARG_OUTOFRANGE);
 
-  if (newt_to_fp_threshold < 0.0)
-  {
-    AUTO_CONTENT(NLS)->newt_to_fp_threshold = SUN_RCONST(2.0);
-  }
-  if (newt_to_fp_delay < 0) { AUTO_CONTENT(NLS)->newt_to_fp_delay = 10; }
-  if (fp_to_newt_threshold < 0.0)
-  {
-    AUTO_CONTENT(NLS)->fp_to_newt_threshold = SUN_RCONST(1.0);
-  }
-  if (fp_to_newt_delay < 0) { AUTO_CONTENT(NLS)->fp_to_newt_delay = 0; }
+  AUTO_CONTENT(NLS)->newt_to_fp_threshold =
+    (newt_to_fp_threshold < SUN_RCONST(0.0)) ? SUN_RCONST(2.0)
+                                             : newt_to_fp_threshold;
+  AUTO_CONTENT(NLS)->newt_to_fp_delay = (newt_to_fp_delay < 0) ? 10
+                                                               : newt_to_fp_delay;
+  AUTO_CONTENT(NLS)->fp_to_newt_threshold =
+    (fp_to_newt_threshold < SUN_RCONST(0.0)) ? SUN_RCONST(0.8)
+                                             : fp_to_newt_threshold;
+  AUTO_CONTENT(NLS)->fp_to_newt_delay = (fp_to_newt_delay < 0) ? 0
+                                                               : fp_to_newt_delay;
 
   return SUN_SUCCESS;
 }
@@ -338,6 +377,20 @@ SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters
   SUNCheckCall(
     SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->newton_solver, &newt_iters));
   *niters = fp_iters + newt_iters;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetNumItersByType_Auto(SUNNonlinearSolver NLS,
+                                              long int* fp_iters,
+                                              long int* newt_iters)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNAssert(fp_iters, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(newt_iters, SUN_ERR_ARG_CORRUPT);
+
+  *fp_iters   = AUTO_CONTENT(NLS)->fp_niters_total;
+  *newt_iters = AUTO_CONTENT(NLS)->newt_niters_total;
+
   return SUN_SUCCESS;
 }
 
@@ -379,12 +432,4 @@ SUNErrCode SUNNonlinSolGetDelNrm_Auto(SUNNonlinearSolver NLS, sunrealtype* delnr
   {
     return SUNNonlinSolGetDelNrm(AUTO_CONTENT(NLS)->newton_solver, delnrm);
   }
-}
-
-/* Optionally, add a setter to switch active_solver_type at runtime */
-SUNErrCode SUNNonlinSolSetType_Auto(SUNNonlinearSolver NLS,
-                                    SUNNonlinSolAutoType active_solver_type)
-{
-  AUTO_CONTENT(NLS)->active_solver_type = active_solver_type;
-  return SUN_SUCCESS;
 }

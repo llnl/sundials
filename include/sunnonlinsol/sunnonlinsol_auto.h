@@ -37,6 +37,8 @@ struct _SUNNonlinearSolverContent_Auto
   long int niters;
   long int nconvfails;
   long int switch_count;
+  long int fp_niters_total;
+  long int newt_niters_total;
   void* auto_ctest_data;
 };
 
@@ -94,6 +96,12 @@ SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters);
+
+/* Get the iteration counts for each sub-solver separately. */
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetNumItersByType_Auto(SUNNonlinearSolver NLS,
+                                              long int* fp_iters,
+                                              long int* newt_iters);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetCurIter_Auto(SUNNonlinearSolver NLS, int* iter);
