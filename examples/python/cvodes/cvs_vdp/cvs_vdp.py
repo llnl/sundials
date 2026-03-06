@@ -60,18 +60,10 @@ def main(argv=None):
         prog=argv[0], description="Van der Pol oscillator example using sundials4py.cvodes."
     )
     parser.add_argument(
-        "--mu",
-        type=float,
-        default=100.0,
-        help="Van der Pol stiffness parameter (default: 100.0)",
+        "--mu", type=float, default=100.0, help="Van der Pol stiffness parameter (default: 100.0)"
     )
     parser.add_argument(
-        "--Tf",
-        "--tf",
-        dest="tf",
-        type=float,
-        default=10.0,
-        help="Final time (default: 10.0)",
+        "--Tf", "--tf", dest="tf", type=float, default=10.0, help="Final time (default: 10.0)"
     )
     parser.add_argument(
         "--solver",
@@ -80,9 +72,7 @@ def main(argv=None):
         help="Which nonlinear solver to use",
     )
     parser.add_argument(
-        "--plot",
-        action="store_true",
-        help="Generate a plot of the solution (requires matplotlib)",
+        "--plot", action="store_true", help="Generate a plot of the solution (requires matplotlib)"
     )
     parser.add_argument(
         "--plot-file",
@@ -90,9 +80,7 @@ def main(argv=None):
         help="Output filename for plot (default: cv_vdp_solution.png)",
     )
     parser.add_argument(
-        "--show",
-        action="store_true",
-        help="Display plot window (in addition to saving)",
+        "--show", action="store_true", help="Display plot window (in addition to saving)"
     )
     parser.set_defaults(newton=True)
     args, sundials_argv = parser.parse_known_args(argv[1:])
