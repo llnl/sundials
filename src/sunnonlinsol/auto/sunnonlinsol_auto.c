@@ -1,19 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sundials/sundials_context.h>
-#include <sundials/sundials_nvector.h>
-#include <sundials/sundials_types.h>
 
+#include <sundials/priv/sundials_errors_impl.h>
+#include <sundials/sundials_core.h>
 #include <sunnonlinsol/sunnonlinsol_auto.h>
-
 #include <sunnonlinsol/sunnonlinsol_fixedpoint.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
-#include "sundials/priv/sundials_errors_impl.h"
-#include "sundials/sundials_errors.h"
-#include "sundials/sundials_nonlinearsolver.h"
 #include "sundials_logger_impl.h"
+#include "sundials_macros.h"
 
 /* Content structure accessibility macros */
 #define AUTO_CONTENT(S) ((SUNNonlinearSolverContent_Auto)(S->content))
@@ -91,7 +87,8 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   return NLS;
 }
 
-SUNNonlinearSolver_Type SUNNonlinSolGetType_Auto(SUNNonlinearSolver NLS)
+SUNNonlinearSolver_Type SUNNonlinSolGetType_Auto(
+  SUNDIALS_MAYBE_UNUSED SUNNonlinearSolver NLS)
 {
   return SUNNONLINEARSOLVER_HYBRID;
 }
