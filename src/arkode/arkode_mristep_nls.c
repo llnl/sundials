@@ -84,9 +84,8 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   }
   else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_HYBRID)
   {
-    retval =
-      SUNNonlinSolSetSysFns_Auto(step_mem->NLS, mriStep_NlsResidual,
-                                 mriStep_NlsFPFunction);
+    retval = SUNNonlinSolSetSysFns_Auto(step_mem->NLS, mriStep_NlsResidual,
+                                        mriStep_NlsFPFunction);
   }
   else
   {

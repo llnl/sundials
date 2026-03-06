@@ -117,7 +117,9 @@ def parse_args(argv):
     parser.add_argument("--atol", type=float, default=1.0e-5, help="Absolute tolerance.")
     parser.add_argument("--dtout", type=float, default=1.0, help="Output interval.")
     parser.add_argument("--nout", type=int, default=10, help="Number of outputs.")
-    parser.add_argument("--aa-depth", type=int, default=0, help="Anderson acceleration depth for Auto solver.")
+    parser.add_argument(
+        "--aa-depth", type=int, default=0, help="Anderson acceleration depth for Auto solver."
+    )
     parser.add_argument(
         "--auto-init",
         choices=["newton", "fixedpoint"],
@@ -128,7 +130,9 @@ def parse_args(argv):
     parser.add_argument("--newt-to-fp-delay", type=int, default=-1)
     parser.add_argument("--fp-to-newt-threshold", type=float, default=-1.0)
     parser.add_argument("--fp-to-newt-delay", type=int, default=-1)
-    parser.add_argument("--max-steps", type=int, default=10000, help="Maximum number of internal steps.")
+    parser.add_argument(
+        "--max-steps", type=int, default=10000, help="Maximum number of internal steps."
+    )
     args, sundials_argv = parser.parse_known_args(argv[1:])
     return args, sundials_argv
 
@@ -164,7 +168,9 @@ def main(argv=None):
     assert status == ARK_SUCCESS
 
     active_solver_type = (
-        SUNNONLINSOL_AUTO_FIXEDPOINT if args.auto_init == "fixedpoint" else SUNNONLINSOL_AUTO_NEWTON
+        SUNNONLINSOL_AUTO_FIXEDPOINT
+        if args.auto_init == "fixedpoint"
+        else SUNNONLINSOL_AUTO_NEWTON
     )
     nls = SUNNonlinSol_Auto(y, args.aa_depth, active_solver_type, sunctx)
     nls = SUNNonlinSol_FixedPoint(y, args.aa_depth, sunctx)
@@ -201,10 +207,16 @@ def main(argv=None):
 
     print("\nKvaerno-Prothero-Robinson ODE test problem (sundials4py.arkode, ARKStep implicit):")
     print(f"    a = {problem.a}, b = {problem.b}, c = {problem.c}, d = {problem.d}")
-    print(f"    nonlinear solver = SUNNonlinearSolver_Auto (init={args.auto_init}, aa_depth={args.aa_depth})")
+    print(
+        f"    nonlinear solver = SUNNonlinearSolver_Auto (init={args.auto_init}, aa_depth={args.aa_depth})"
+    )
     print(f"    reltol = {args.rtol:.2e}, abstol = {args.atol:.2e}\n")
-    print("           t                   u                   v             |u - u*|            |v - v*|")
-    print("   -------------------------------------------------------------------------------------------")
+    print(
+        "           t                   u                   v             |u - u*|            |v - v*|"
+    )
+    print(
+        "   -------------------------------------------------------------------------------------------"
+    )
     print(
         f"  {T0:22.15e} {yarr[0]:22.15e} {yarr[1]:22.15e} "
         f"{abs(yarr[0] - utrue0):18.10e} {abs(yarr[1] - vtrue0):18.10e}"
@@ -242,7 +254,9 @@ def main(argv=None):
 
             tout = min(tout + args.dtout, Tf)
 
-    print("   -------------------------------------------------------------------------------------------")
+    print(
+        "   -------------------------------------------------------------------------------------------"
+    )
 
     status, nst = ARKodeGetNumSteps(ark.get())
     assert status == ARK_SUCCESS
@@ -286,4 +300,3 @@ def test_ark_kpr_auto_nls():
 
 if __name__ == "__main__":
     main()
-

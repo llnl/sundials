@@ -12,8 +12,8 @@
 
 #include "sundials/priv/sundials_errors_impl.h"
 #include "sundials/sundials_errors.h"
-#include "sundials_logger_impl.h"
 #include "sundials/sundials_nonlinearsolver.h"
+#include "sundials_logger_impl.h"
 
 /* Content structure accessibility macros */
 #define AUTO_CONTENT(S) ((SUNNonlinearSolverContent_Auto)(S->content))
@@ -126,7 +126,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   {
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->fp_solver, y0, ycor, w, tol,
                                callSetup, mem);
-    iters = 0;
+    iters  = 0;
     if (SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->fp_solver, &iters) ==
         SUN_SUCCESS)
     {
@@ -137,7 +137,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   {
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->newton_solver, y0, ycor, w,
                                tol, callSetup, mem);
-    iters = 0;
+    iters  = 0;
     if (SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->newton_solver, &iters) ==
         SUN_SUCCESS)
     {
@@ -332,16 +332,16 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
 SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters)
 {
   SUNFunctionBegin(NLS->sunctx);
-  SUNErrCode retval = SUN_SUCCESS;
   if (AUTO_CONTENT(NLS)->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
-    retval = SUNNonlinSolSetMaxIters(AUTO_CONTENT(NLS)->fp_solver, maxiters);
+    SUNCheckCall(SUNNonlinSolSetMaxIters(AUTO_CONTENT(NLS)->fp_solver, maxiters));
   }
   else
   {
-    retval = SUNNonlinSolSetMaxIters(AUTO_CONTENT(NLS)->newton_solver, maxiters);
+    SUNCheckCall(
+      SUNNonlinSolSetMaxIters(AUTO_CONTENT(NLS)->newton_solver, maxiters));
   }
-  return retval;
+  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
@@ -357,13 +357,13 @@ SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
   AUTO_CONTENT(NLS)->newt_to_fp_threshold =
     (newt_to_fp_threshold < SUN_RCONST(0.0)) ? SUN_RCONST(2.0)
                                              : newt_to_fp_threshold;
-  AUTO_CONTENT(NLS)->newt_to_fp_delay = (newt_to_fp_delay < 0) ? 10
-                                                               : newt_to_fp_delay;
+  AUTO_CONTENT(NLS)->newt_to_fp_delay =
+    (newt_to_fp_delay < 0) ? 10 : newt_to_fp_delay;
   AUTO_CONTENT(NLS)->fp_to_newt_threshold =
     (fp_to_newt_threshold < SUN_RCONST(0.0)) ? SUN_RCONST(0.8)
                                              : fp_to_newt_threshold;
-  AUTO_CONTENT(NLS)->fp_to_newt_delay = (fp_to_newt_delay < 0) ? 0
-                                                               : fp_to_newt_delay;
+  AUTO_CONTENT(NLS)->fp_to_newt_delay =
+    (fp_to_newt_delay < 0) ? 0 : fp_to_newt_delay;
 
   return SUN_SUCCESS;
 }

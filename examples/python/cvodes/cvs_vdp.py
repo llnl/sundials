@@ -59,8 +59,7 @@ def main(argv=None):
         argv = sys.argv
 
     parser = argparse.ArgumentParser(
-        prog=argv[0],
-        description="Van der Pol oscillator example using CVODE (Python).",
+        prog=argv[0], description="Van der Pol oscillator example using CVODE (Python)."
     )
     nls_group = parser.add_mutually_exclusive_group()
     nls_group.add_argument(
@@ -84,7 +83,7 @@ def main(argv=None):
     y20 = 0.0
     T0 = 0.0
     Tf = 250.0
-    dTout = 10.
+    dTout = 10.0
     NEQ = 2
     Nt = int(np.ceil(Tf / dTout))
     reltol = 1e-4
@@ -109,7 +108,6 @@ def main(argv=None):
     assert status == CV_SUCCESS
 
     newton = args.newton
-
 
     if newton:
         # NLS = SUNNonlinSol_Newton(y, sunctx)

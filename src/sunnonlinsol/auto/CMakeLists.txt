@@ -25,7 +25,8 @@ sundials_add_library(
   SOURCES sunnonlinsol_auto.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_auto.h
   INCLUDE_SUBDIR sunnonlinsol
-  LINK_LIBRARIES PUBLIC sundials_core sundials_sunnonlinsolnewton sundials_sunnonlinsolfixedpoint
+  LINK_LIBRARIES PUBLIC sundials_core sundials_sunnonlinsolnewton
+                 sundials_sunnonlinsolfixedpoint
   OBJECT_LIBRARIES
   OUTPUT_NAME sundials_sunnonlinsolauto
   VERSION ${sunnonlinsollib_VERSION}
@@ -33,7 +34,7 @@ sundials_add_library(
 
 message(STATUS "Added SUNNONLINSOL_AUTO module")
 
-# # Add F2003 module if the interface is enabled
-# if(BUILD_FORTRAN_MODULE_INTERFACE)
-#   add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
-# endif()
+# Add F2003 module if the interface is enabled
+if(BUILD_FORTRAN_MODULE_INTERFACE)
+  add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
+endif()

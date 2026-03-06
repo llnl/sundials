@@ -118,7 +118,9 @@ def parse_args(argv):
     parser.add_argument("--atol", type=float, default=1.0e-5, help="Absolute tolerance.")
     parser.add_argument("--dtout", type=float, default=1.0, help="Output interval.")
     parser.add_argument("--nout", type=int, default=10, help="Number of outputs.")
-    parser.add_argument("--aa-depth", type=int, default=0, help="Anderson acceleration depth for Auto solver.")
+    parser.add_argument(
+        "--aa-depth", type=int, default=0, help="Anderson acceleration depth for Auto solver."
+    )
     parser.add_argument(
         "--auto-init",
         choices=["newton", "fixedpoint"],
@@ -141,10 +143,7 @@ def parse_args(argv):
         help="Disable plot generation (enabled by default if matplotlib is available).",
     )
     parser.add_argument(
-        "--plot-file",
-        type=str,
-        default="cv_kpr_solution.png",
-        help="Plot output filename.",
+        "--plot-file", type=str, default="cv_kpr_solution.png", help="Plot output filename."
     )
     parser.add_argument(
         "--stepsize-plot-file",
@@ -153,9 +152,7 @@ def parse_args(argv):
         help="Step size plot output filename (requires SUNLogger INFO log).",
     )
     parser.add_argument(
-        "--show-plot",
-        action="store_true",
-        help="Show plot in a window (also writes --plot-file).",
+        "--show-plot", action="store_true", help="Show plot in a window (also writes --plot-file)."
     )
     args, sundials_argv = parser.parse_known_args(argv[1:])
 
@@ -232,14 +229,23 @@ def make_plots(args, ts, us, vs):
 
         legend_patches = [
             Patch(facecolor=colors["Newton"], alpha=0.18, edgecolor="none", label="Newton steps"),
-            Patch(facecolor=colors["Fixed-Point"], alpha=0.18, edgecolor="none", label="Fixed-Point steps"),
+            Patch(
+                facecolor=colors["Fixed-Point"],
+                alpha=0.18,
+                edgecolor="none",
+                label="Fixed-Point steps",
+            ),
         ]
         if any(s == "Mixed" for _, _, s in segments):
             legend_patches.append(
-                Patch(facecolor=colors["Mixed"], alpha=0.18, edgecolor="none", label="Mixed/unknown")
+                Patch(
+                    facecolor=colors["Mixed"], alpha=0.18, edgecolor="none", label="Mixed/unknown"
+                )
             )
         handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles + legend_patches, labels + [p.get_label() for p in legend_patches], loc="best")
+        ax.legend(
+            handles + legend_patches, labels + [p.get_label() for p in legend_patches], loc="best"
+        )
 
         ax.set_xlabel("t")
         ax.set_ylabel("solution")
@@ -308,7 +314,9 @@ def main(argv=None):
     assert status == CV_SUCCESS
 
     active_solver_type = (
-        SUNNONLINSOL_AUTO_FIXEDPOINT if args.auto_init == "fixedpoint" else SUNNONLINSOL_AUTO_NEWTON
+        SUNNONLINSOL_AUTO_FIXEDPOINT
+        if args.auto_init == "fixedpoint"
+        else SUNNONLINSOL_AUTO_NEWTON
     )
     nls = SUNNonlinSol_Auto(y, args.aa_depth, active_solver_type, sunctx)
     assert nls is not None
@@ -344,10 +352,16 @@ def main(argv=None):
 
     print("\nKvaerno-Prothero-Robinson ODE test problem (sundials4py.cvodes):")
     print(f"    a = {problem.a}, b = {problem.b}, c = {problem.c}, d = {problem.d}")
-    print(f"    nonlinear solver = SUNNonlinearSolver_Auto (init={args.auto_init}, aa_depth={args.aa_depth})")
+    print(
+        f"    nonlinear solver = SUNNonlinearSolver_Auto (init={args.auto_init}, aa_depth={args.aa_depth})"
+    )
     print(f"    reltol = {args.rtol:.2e}, abstol = {args.atol:.2e}\n")
-    print("           t                   u                   v             |u - u*|            |v - v*|")
-    print("   -------------------------------------------------------------------------------------------")
+    print(
+        "           t                   u                   v             |u - u*|            |v - v*|"
+    )
+    print(
+        "   -------------------------------------------------------------------------------------------"
+    )
     print(
         f"  {T0:22.15e} {yarr[0]:22.15e} {yarr[1]:22.15e} "
         f"{abs(yarr[0] - utrue0):18.10e} {abs(yarr[1] - vtrue0):18.10e}"
@@ -385,7 +399,9 @@ def main(argv=None):
 
             tout = min(tout + args.dtout, Tf)
 
-    print("   -------------------------------------------------------------------------------------------")
+    print(
+        "   -------------------------------------------------------------------------------------------"
+    )
 
     status, nst = CVodeGetNumSteps(cvode.get())
     assert status == CV_SUCCESS
@@ -415,7 +431,7 @@ def main(argv=None):
 
     make_plots(args, ts, us, vs)
 
-    
+
 def test_cvs_kpr_auto_nls():
     main(argv=["cvs_kpr_auto_nls.py", "--no-plot"])
 

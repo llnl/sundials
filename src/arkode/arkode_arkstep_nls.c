@@ -150,9 +150,8 @@ int arkStep_SetNlsSysFn(ARKodeMem ark_mem)
   {
     if (step_mem->predictor == 0 && step_mem->autonomous)
     {
-      root_fn = arkStep_NlsResidual_MassIdent_TrivialPredAutonomous;
-      fixedpoint_fn =
-        arkStep_NlsFPFunction_MassIdent_TrivialPredAutonomous;
+      root_fn       = arkStep_NlsResidual_MassIdent_TrivialPredAutonomous;
+      fixedpoint_fn = arkStep_NlsFPFunction_MassIdent_TrivialPredAutonomous;
     }
     else
     {
@@ -164,9 +163,8 @@ int arkStep_SetNlsSysFn(ARKodeMem ark_mem)
   {
     if (step_mem->predictor == 0 && step_mem->autonomous)
     {
-      root_fn = arkStep_NlsResidual_MassFixed_TrivialPredAutonomous;
-      fixedpoint_fn =
-        arkStep_NlsFPFunction_MassFixed_TrivialPredAutonomous;
+      root_fn       = arkStep_NlsResidual_MassFixed_TrivialPredAutonomous;
+      fixedpoint_fn = arkStep_NlsFPFunction_MassFixed_TrivialPredAutonomous;
     }
     else
     {
