@@ -259,7 +259,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 .. c:function:: SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filename)
 
    Sets the filename for error output.
-   Passing an empty string disables output for this stream.
+   Passing ``NULL`` or an empty string disables output for this stream.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.

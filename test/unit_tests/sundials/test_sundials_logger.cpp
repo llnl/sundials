@@ -24,14 +24,7 @@
 static std::string ReadFile(const std::string& path)
 {
   std::ifstream file(path);
-  std::string line;
-  std::string file_contents;
-  while (std::getline(file, line))
-  {
-    file_contents += line;
-    file_contents.push_back('\n');
-  }
-  return file_contents;
+  return {std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 }
 
 static int CountLines(const std::string& s)
@@ -41,7 +34,7 @@ static int CountLines(const std::string& s)
   {
     if (c == '\n') { count++; }
   }
-  return count;
+  return std::count(s.begin(), s.end(), '\n');
 }
 
 TEST(SUNLoggerTest, EmptyFilenameDisablesWarningOutput)
