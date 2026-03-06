@@ -13,6 +13,10 @@ installed without setting the `SUPERLUMT_WORKS` option to `TRUE`.
 
 Fixed the embedded coefficients for the `ARKODE_TSITOURAS_7_4_5` Butcher table.
 
+Fixed a bug where passing an empty string to `SUNLogger_Set{Error,Warning,Info,Debug}Filename`
+did not disable the corresponding logging stream ([Issue
+#844](https://github.com/llnl/sundials/issues/844)).
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.6.0

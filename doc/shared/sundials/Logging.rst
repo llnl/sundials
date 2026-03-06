@@ -259,6 +259,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 .. c:function:: SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filename)
 
    Sets the filename for error output.
+   Passing an empty string disables output for this stream.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
@@ -271,6 +272,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 .. c:function:: SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger, const char* warning_filename)
 
    Sets the filename for warning output.
+   Passing an empty string disables output for this stream.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
@@ -283,6 +285,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 .. c:function:: SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename)
 
    Sets the filename for info output.
+   Passing an empty string disables output for this stream.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
@@ -295,6 +298,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 .. c:function:: SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
 
    Sets the filename for debug output.
+   Passing an empty string disables output for this stream.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
