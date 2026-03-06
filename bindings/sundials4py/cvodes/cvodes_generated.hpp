@@ -87,12 +87,10 @@ m.def(
          std::vector<N_Vector> y_hist_1d, std::vector<N_Vector> f_hist_1d,
          int num_y_hist, int num_f_hist) -> int
     {
-      sunrealtype* t_hist_1d_ptr =
-        reinterpret_cast<sunrealtype*>(t_hist_1d.data());
-      N_Vector* y_hist_1d_ptr = reinterpret_cast<N_Vector*>(
-        y_hist_1d.empty() ? nullptr : y_hist_1d.data());
-      N_Vector* f_hist_1d_ptr = reinterpret_cast<N_Vector*>(
-        f_hist_1d.empty() ? nullptr : f_hist_1d.data());
+      sunrealtype* t_hist_1d_ptr = t_hist_1d.size() == 0 ? nullptr
+                                                         : t_hist_1d.data();
+      N_Vector* y_hist_1d_ptr = y_hist_1d.empty() ? nullptr : y_hist_1d.data();
+      N_Vector* f_hist_1d_ptr = f_hist_1d.empty() ? nullptr : f_hist_1d.data();
 
       auto lambda_result = CVodeResizeHistory(cvode_mem, t_hist_1d_ptr,
                                               y_hist_1d_ptr, f_hist_1d_ptr,
@@ -204,8 +202,7 @@ m.def(
     auto CVodeSetRootDirection_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, std::vector<int> rootdir_1d) -> int
     {
-      int* rootdir_1d_ptr =
-        reinterpret_cast<int*>(rootdir_1d.empty() ? nullptr : rootdir_1d.data());
+      int* rootdir_1d_ptr = rootdir_1d.empty() ? nullptr : rootdir_1d.data();
 
       auto lambda_result = CVodeSetRootDirection(cvode_mem, rootdir_1d_ptr);
       return lambda_result;
@@ -252,10 +249,8 @@ m.def(
       [](void* cvode_mem, std::vector<N_Vector> yScor_1d,
          std::vector<N_Vector> yS_1d) -> int
     {
-      N_Vector* yScor_1d_ptr = reinterpret_cast<N_Vector*>(
-        yScor_1d.empty() ? nullptr : yScor_1d.data());
-      N_Vector* yS_1d_ptr =
-        reinterpret_cast<N_Vector*>(yS_1d.empty() ? nullptr : yS_1d.data());
+      N_Vector* yScor_1d_ptr = yScor_1d.empty() ? nullptr : yScor_1d.data();
+      N_Vector* yS_1d_ptr    = yS_1d.empty() ? nullptr : yS_1d.data();
 
       auto lambda_result = CVodeComputeStateSens(cvode_mem, yScor_1d_ptr,
                                                  yS_1d_ptr);
@@ -561,8 +556,8 @@ m.def(
     auto CVodeGetRootInfo_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, std::vector<int> rootsfound_1d) -> int
     {
-      int* rootsfound_1d_ptr = reinterpret_cast<int*>(
-        rootsfound_1d.empty() ? nullptr : rootsfound_1d.data());
+      int* rootsfound_1d_ptr = rootsfound_1d.empty() ? nullptr
+                                                     : rootsfound_1d.data();
 
       auto lambda_result = CVodeGetRootInfo(cvode_mem, rootsfound_1d_ptr);
       return lambda_result;
@@ -829,8 +824,7 @@ m.def(
     auto CVodeSensReInit_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, int ism, std::vector<N_Vector> yS0_1d) -> int
     {
-      N_Vector* yS0_1d_ptr =
-        reinterpret_cast<N_Vector*>(yS0_1d.empty() ? nullptr : yS0_1d.data());
+      N_Vector* yS0_1d_ptr = yS0_1d.empty() ? nullptr : yS0_1d.data();
 
       auto lambda_result = CVodeSensReInit(cvode_mem, ism, yS0_1d_ptr);
       return lambda_result;
@@ -848,8 +842,8 @@ m.def(
       [](void* cvode_mem, sunrealtype reltolS,
          sundials4py::Array1d abstolS_1d) -> int
     {
-      sunrealtype* abstolS_1d_ptr =
-        reinterpret_cast<sunrealtype*>(abstolS_1d.data());
+      sunrealtype* abstolS_1d_ptr = abstolS_1d.size() == 0 ? nullptr
+                                                           : abstolS_1d.data();
 
       auto lambda_result = CVodeSensSStolerances(cvode_mem, reltolS,
                                                  abstolS_1d_ptr);
@@ -869,8 +863,7 @@ m.def(
       [](void* cvode_mem, sunrealtype reltolS,
          std::vector<N_Vector> abstolS_1d) -> int
     {
-      N_Vector* abstolS_1d_ptr = reinterpret_cast<N_Vector*>(
-        abstolS_1d.empty() ? nullptr : abstolS_1d.data());
+      N_Vector* abstolS_1d_ptr = abstolS_1d.empty() ? nullptr : abstolS_1d.data();
 
       auto lambda_result = CVodeSensSVtolerances(cvode_mem, reltolS,
                                                  abstolS_1d_ptr);
@@ -902,10 +895,9 @@ m.def(
       [](void* cvode_mem, sundials4py::Array1d p_1d,
          sundials4py::Array1d pbar_1d, std::vector<int> plist_1d) -> int
     {
-      sunrealtype* p_1d_ptr    = reinterpret_cast<sunrealtype*>(p_1d.data());
-      sunrealtype* pbar_1d_ptr = reinterpret_cast<sunrealtype*>(pbar_1d.data());
-      int* plist_1d_ptr =
-        reinterpret_cast<int*>(plist_1d.empty() ? nullptr : plist_1d.data());
+      sunrealtype* p_1d_ptr    = p_1d.size() == 0 ? nullptr : p_1d.data();
+      sunrealtype* pbar_1d_ptr = pbar_1d.size() == 0 ? nullptr : pbar_1d.data();
+      int* plist_1d_ptr        = plist_1d.empty() ? nullptr : plist_1d.data();
 
       auto lambda_result = CVodeSetSensParams(cvode_mem, p_1d_ptr, pbar_1d_ptr,
                                               plist_1d_ptr);
@@ -936,8 +928,7 @@ m.def(
     auto CVodeGetSens_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, sunrealtype* tret, std::vector<N_Vector> ySout_1d) -> int
     {
-      N_Vector* ySout_1d_ptr = reinterpret_cast<N_Vector*>(
-        ySout_1d.empty() ? nullptr : ySout_1d.data());
+      N_Vector* ySout_1d_ptr = ySout_1d.empty() ? nullptr : ySout_1d.data();
 
       auto lambda_result = CVodeGetSens(cvode_mem, tret, ySout_1d_ptr);
       return lambda_result;
@@ -985,8 +976,7 @@ m.def(
       [](void* cvode_mem, sunrealtype t, int k,
          std::vector<N_Vector> dkyA_1d) -> int
     {
-      N_Vector* dkyA_1d_ptr =
-        reinterpret_cast<N_Vector*>(dkyA_1d.empty() ? nullptr : dkyA_1d.data());
+      N_Vector* dkyA_1d_ptr = dkyA_1d.empty() ? nullptr : dkyA_1d.data();
 
       auto lambda_result = CVodeGetSensDky(cvode_mem, t, k, dkyA_1d_ptr);
       return lambda_result;
@@ -1077,8 +1067,8 @@ m.def(
     auto CVodeGetSensErrWeights_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, std::vector<N_Vector> eSweight_1d) -> int
     {
-      N_Vector* eSweight_1d_ptr = reinterpret_cast<N_Vector*>(
-        eSweight_1d.empty() ? nullptr : eSweight_1d.data());
+      N_Vector* eSweight_1d_ptr = eSweight_1d.empty() ? nullptr
+                                                      : eSweight_1d.data();
 
       auto lambda_result = CVodeGetSensErrWeights(cvode_mem, eSweight_1d_ptr);
       return lambda_result;
@@ -1200,8 +1190,8 @@ m.def(
     auto CVodeGetStgrSensNumNonlinSolvIters_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, std::vector<long> nSTGR1niters_1d) -> int
     {
-      long* nSTGR1niters_1d_ptr = reinterpret_cast<long*>(
-        nSTGR1niters_1d.empty() ? nullptr : nSTGR1niters_1d.data());
+      long* nSTGR1niters_1d_ptr =
+        nSTGR1niters_1d.empty() ? nullptr : nSTGR1niters_1d.data();
 
       auto lambda_result =
         CVodeGetStgrSensNumNonlinSolvIters(cvode_mem, nSTGR1niters_1d_ptr);
@@ -1220,8 +1210,8 @@ m.def(
     auto CVodeGetStgrSensNumNonlinSolvConvFails_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, std::vector<long> nSTGR1nfails_1d) -> int
     {
-      long* nSTGR1nfails_1d_ptr = reinterpret_cast<long*>(
-        nSTGR1nfails_1d.empty() ? nullptr : nSTGR1nfails_1d.data());
+      long* nSTGR1nfails_1d_ptr =
+        nSTGR1nfails_1d.empty() ? nullptr : nSTGR1nfails_1d.data();
 
       auto lambda_result =
         CVodeGetStgrSensNumNonlinSolvConvFails(cvode_mem, nSTGR1nfails_1d_ptr);
@@ -1242,10 +1232,10 @@ m.def(
       [](void* cvode_mem, std::vector<long> nSTGR1niters_1d,
          std::vector<long> nSTGR1nfails_1d) -> int
     {
-      long* nSTGR1niters_1d_ptr = reinterpret_cast<long*>(
-        nSTGR1niters_1d.empty() ? nullptr : nSTGR1niters_1d.data());
-      long* nSTGR1nfails_1d_ptr = reinterpret_cast<long*>(
-        nSTGR1nfails_1d.empty() ? nullptr : nSTGR1nfails_1d.data());
+      long* nSTGR1niters_1d_ptr =
+        nSTGR1niters_1d.empty() ? nullptr : nSTGR1niters_1d.data();
+      long* nSTGR1nfails_1d_ptr =
+        nSTGR1nfails_1d.empty() ? nullptr : nSTGR1nfails_1d.data();
 
       auto lambda_result = CVodeGetStgrSensNonlinSolvStats(cvode_mem,
                                                            nSTGR1niters_1d_ptr,
@@ -1266,8 +1256,8 @@ m.def(
     auto CVodeGetNumStepStgrSensSolveFails_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, std::vector<long> nSTGR1ncfails_1d) -> int
     {
-      long* nSTGR1ncfails_1d_ptr = reinterpret_cast<long*>(
-        nSTGR1ncfails_1d.empty() ? nullptr : nSTGR1ncfails_1d.data());
+      long* nSTGR1ncfails_1d_ptr =
+        nSTGR1ncfails_1d.empty() ? nullptr : nSTGR1ncfails_1d.data();
 
       auto lambda_result =
         CVodeGetNumStepStgrSensSolveFails(cvode_mem, nSTGR1ncfails_1d_ptr);
@@ -1286,8 +1276,7 @@ m.def(
     auto CVodeQuadSensReInit_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, std::vector<N_Vector> yQS0_1d) -> int
     {
-      N_Vector* yQS0_1d_ptr =
-        reinterpret_cast<N_Vector*>(yQS0_1d.empty() ? nullptr : yQS0_1d.data());
+      N_Vector* yQS0_1d_ptr = yQS0_1d.empty() ? nullptr : yQS0_1d.data();
 
       auto lambda_result = CVodeQuadSensReInit(cvode_mem, yQS0_1d_ptr);
       return lambda_result;
@@ -1306,7 +1295,7 @@ m.def(
          sundials4py::Array1d abstolQS_1d) -> int
     {
       sunrealtype* abstolQS_1d_ptr =
-        reinterpret_cast<sunrealtype*>(abstolQS_1d.data());
+        abstolQS_1d.size() == 0 ? nullptr : abstolQS_1d.data();
 
       auto lambda_result = CVodeQuadSensSStolerances(cvode_mem, reltolQS,
                                                      abstolQS_1d_ptr);
@@ -1327,8 +1316,8 @@ m.def(
       [](void* cvode_mem, sunrealtype reltolQS,
          std::vector<N_Vector> abstolQS_1d) -> int
     {
-      N_Vector* abstolQS_1d_ptr = reinterpret_cast<N_Vector*>(
-        abstolQS_1d.empty() ? nullptr : abstolQS_1d.data());
+      N_Vector* abstolQS_1d_ptr = abstolQS_1d.empty() ? nullptr
+                                                      : abstolQS_1d.data();
 
       auto lambda_result = CVodeQuadSensSVtolerances(cvode_mem, reltolQS,
                                                      abstolQS_1d_ptr);
@@ -1355,8 +1344,7 @@ m.def(
     auto CVodeGetQuadSens_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, sunrealtype* tret, std::vector<N_Vector> yQSout_1d) -> int
     {
-      N_Vector* yQSout_1d_ptr = reinterpret_cast<N_Vector*>(
-        yQSout_1d.empty() ? nullptr : yQSout_1d.data());
+      N_Vector* yQSout_1d_ptr = yQSout_1d.empty() ? nullptr : yQSout_1d.data();
 
       auto lambda_result = CVodeGetQuadSens(cvode_mem, tret, yQSout_1d_ptr);
       return lambda_result;
@@ -1406,8 +1394,8 @@ m.def(
       [](void* cvode_mem, sunrealtype t, int k,
          std::vector<N_Vector> dkyQS_all_1d) -> int
     {
-      N_Vector* dkyQS_all_1d_ptr = reinterpret_cast<N_Vector*>(
-        dkyQS_all_1d.empty() ? nullptr : dkyQS_all_1d.data());
+      N_Vector* dkyQS_all_1d_ptr = dkyQS_all_1d.empty() ? nullptr
+                                                        : dkyQS_all_1d.data();
 
       auto lambda_result = CVodeGetQuadSensDky(cvode_mem, t, k, dkyQS_all_1d_ptr);
       return lambda_result;
@@ -1465,8 +1453,8 @@ m.def(
     auto CVodeGetQuadSensErrWeights_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, std::vector<N_Vector> eQSweight_1d) -> int
     {
-      N_Vector* eQSweight_1d_ptr = reinterpret_cast<N_Vector*>(
-        eQSweight_1d.empty() ? nullptr : eQSweight_1d.data());
+      N_Vector* eQSweight_1d_ptr = eQSweight_1d.empty() ? nullptr
+                                                        : eQSweight_1d.data();
 
       auto lambda_result = CVodeGetQuadSensErrWeights(cvode_mem,
                                                       eQSweight_1d_ptr);

@@ -58,8 +58,8 @@ m.def(
       [](sunindextype vec_length, sundials4py::Array1d v_data_1d,
          SUNContext sunctx) -> N_Vector
     {
-      sunrealtype* v_data_1d_ptr =
-        reinterpret_cast<sunrealtype*>(v_data_1d.data());
+      sunrealtype* v_data_1d_ptr = v_data_1d.size() == 0 ? nullptr
+                                                         : v_data_1d.data();
 
       auto lambda_result = N_VMake_Serial(vec_length, v_data_1d_ptr, sunctx);
       return lambda_result;

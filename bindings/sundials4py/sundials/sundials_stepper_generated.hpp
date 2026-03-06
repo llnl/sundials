@@ -118,8 +118,7 @@ m.def(
       [](SUNStepper stepper, sunrealtype tshift, sunrealtype tscale,
          std::vector<N_Vector> forcing_1d, int nforcing) -> SUNErrCode
     {
-      N_Vector* forcing_1d_ptr = reinterpret_cast<N_Vector*>(
-        forcing_1d.empty() ? nullptr : forcing_1d.data());
+      N_Vector* forcing_1d_ptr = forcing_1d.empty() ? nullptr : forcing_1d.data();
 
       auto lambda_result = SUNStepper_SetForcing(stepper, tshift, tscale,
                                                  forcing_1d_ptr, nforcing);
