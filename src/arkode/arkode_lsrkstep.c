@@ -2298,7 +2298,7 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
 
     /* After the first call to SUNDomEigEstimator_Estimate, the number of warmups is set to
        num_warmups, this allows the successive calls to
-       SUNDomEigEstimator_Estimate to use a diffirent number of warmups. */
+       SUNDomEigEstimator_Estimate to use a different number of warmups. */
     if (step_mem->init_warmup)
     {
       retval = SUNDomEigEstimator_SetNumPreprocessIters(step_mem->DEE,
