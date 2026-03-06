@@ -173,17 +173,16 @@ def main(argv=None):
         else SUNNONLINSOL_AUTO_NEWTON
     )
     nls = SUNNonlinSol_Auto(y, args.aa_depth, active_solver_type, sunctx)
-    nls = SUNNonlinSol_FixedPoint(y, args.aa_depth, sunctx)
     assert nls is not None
 
-    # status = SUNNonlinSolSetSwitchingParameters_Auto(
-    #     nls,
-    #     args.newt_to_fp_threshold,
-    #     args.newt_to_fp_delay,
-    #     args.fp_to_newt_threshold,
-    #     args.fp_to_newt_delay,
-    # )
-    # assert status == SUN_SUCCESS
+    status = SUNNonlinSolSetSwitchingParameters_Auto(
+        nls,
+        args.newt_to_fp_threshold,
+        args.newt_to_fp_delay,
+        args.fp_to_newt_threshold,
+        args.fp_to_newt_delay,
+    )
+    assert status == SUN_SUCCESS
 
     status = ARKodeSetNonlinearSolver(ark.get(), nls)
     assert status == ARK_SUCCESS
