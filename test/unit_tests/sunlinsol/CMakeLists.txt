@@ -43,7 +43,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 target_link_libraries(test_sunlinsol_obj PRIVATE sundials_sunlinsoldense)
 
-if(SUNDIALS_ENABLE_MPI AND MPI_C_FOUND)
+if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(pcg/parallel)
   add_subdirectory(spgmr/parallel)
   add_subdirectory(spfgmr/parallel)

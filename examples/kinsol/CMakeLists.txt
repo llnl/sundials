@@ -21,32 +21,29 @@
 # C examples
 if(SUNDIALS_EXAMPLES_ENABLE_C)
   add_subdirectory(serial)
-  if(SUNDIALS_ENABLE_OPENMP AND OPENMP_FOUND)
+  if(SUNDIALS_ENABLE_OPENMP)
     # the only example here need special handling from testrunner (not yet
     # implemented)
     add_subdirectory(C_openmp)
   endif()
-  if(SUNDIALS_ENABLE_MPI AND MPI_C_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(parallel)
   endif()
 endif()
 
 # C++ examples
 if(SUNDIALS_EXAMPLES_ENABLE_CXX)
-  if(SUNDIALS_ENABLE_MPI AND MPI_CXX_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(CXX_parallel)
   endif()
-  if(SUNDIALS_ENABLE_MPI
-     AND MPI_CXX_FOUND
-     AND SUNDIALS_ENABLE_HYPRE
-     AND HYPRE_FOUND)
+  if(SUNDIALS_ENABLE_MPI AND SUNDIALS_ENABLE_HYPRE)
     add_subdirectory(CXX_parhyp)
   endif()
 endif()
 
 # CUDA examples
 if(SUNDIALS_EXAMPLES_ENABLE_CUDA)
-  if(SUNDIALS_ENABLE_MPI AND MPI_CXX_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(CUDA_mpi)
   endif()
 endif()

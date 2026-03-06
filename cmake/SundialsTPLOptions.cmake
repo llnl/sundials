@@ -127,7 +127,7 @@ sundials_option(
   BOOL
   "Enable Lapack support"
   OFF
-  DEPRECATED
+  DEPRECATED_NAMES
   ENABLE_LAPACK
   LAPACK_ENABLE)
 
