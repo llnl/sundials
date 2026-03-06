@@ -71,9 +71,9 @@ foreach(example_tuple ${FARKODE_examples})
   target_link_libraries(${example} ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
     install(FILES ${example}.f90 ${example}.out ${FARKODEsources}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_custom)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_custom)
   endif()
 
 endforeach(example_tuple ${FARKODE_examples})
@@ -105,20 +105,20 @@ foreach(example_tuple ${FARKODE_tests})
   target_link_libraries(${example} ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
     install(FILES ${example}.f90 ${FARKODEsources}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_custom)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_custom)
   endif()
 
 endforeach(example_tuple ${FARKODE_tests})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${ARKODE_extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_custom)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_custom)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -145,7 +145,7 @@ if(EXAMPLES_INSTALL)
   # install CMakelists.txt
   install(
     FILES ${PROJECT_BINARY_DIR}/examples/arkode/F2003_custom/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_custom)
+    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_custom)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -162,7 +162,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/arkode/F2003_custom/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_custom
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_custom
       RENAME Makefile)
   endif()
 

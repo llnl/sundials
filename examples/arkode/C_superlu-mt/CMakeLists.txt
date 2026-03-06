@@ -62,12 +62,12 @@ foreach(example_tuple ${examples_list})
 
 endforeach()
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_superlumt)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_superlumt)
   endforeach(extrafile ${extras})
 
   sundials_install_examples(

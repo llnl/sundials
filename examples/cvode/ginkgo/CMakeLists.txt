@@ -38,7 +38,7 @@ sundials_add_examples_ginkgo(
   BACKENDS REF OMP)
 
 # Install the targets
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   if(SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA")
     list(APPEND vectors nveccuda)

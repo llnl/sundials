@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------
 
 # C examples
-if(EXAMPLES_ENABLE_C)
+if(SUNDIALS_EXAMPLES_ENABLE_C)
   add_subdirectory(serial)
   if(SUNDIALS_ENABLE_OPENMP)
     add_subdirectory(C_openmp)
@@ -28,6 +28,6 @@ if(EXAMPLES_ENABLE_C)
   endif()
 endif()
 
-if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_EXAMPLES_ENABLE_FORTRAN)
   add_subdirectory(F2003_serial)
 endif()

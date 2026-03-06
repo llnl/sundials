@@ -89,14 +89,14 @@ macro(build_examples examples_to_build lang)
 
     # Not all examples are added to the generated CMake file installed the
     # output and source files here
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
       # Find all .out files for this example
       file(GLOB example_out ${example_target}*.out)
 
       # Install example source and out files
       install(FILES ${example} ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_parallel)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_parallel)
 
     endif()
 
@@ -242,7 +242,7 @@ if(SUNDIALS_ENABLE_RAJA
   endif()
 endif()
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   set(examples_to_install "${parallel_examples}")
   set(_sundials_targets arkode nvecparallel)

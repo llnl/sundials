@@ -110,9 +110,9 @@ foreach(example_tuple ${CVODE_examples})
   file(GLOB example_out ${example}*.out)
 
   # install example source and .out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
     install(FILES ${example}.c ${example_out}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
   endif()
 
 endforeach(example_tuple ${CVODE_examples})
@@ -163,9 +163,9 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
     file(GLOB example_out ${example}*.out)
 
     # install example source and .out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
       install(FILES ${example}.c ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
     endif()
 
   endforeach(example_tuple ${CVODE_examples_BL})
@@ -220,9 +220,9 @@ if(BUILD_SUNLINSOL_KLU)
     file(GLOB example_out ${example}*.out)
 
     # install example source and .out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
       install(FILES ${example}.c ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
     endif()
 
   endforeach(example_tuple ${CVODE_examples_KLU})
@@ -283,9 +283,9 @@ if(BUILD_SUNLINSOL_SUPERLUMT)
     file(GLOB example_out ${example}*.out)
 
     # install example source and .out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
       install(FILES ${example}.c ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
     endif()
 
   endforeach(example_tuple ${CVODE_examples_SUPERLUMT})
@@ -293,15 +293,16 @@ if(BUILD_SUNLINSOL_SUPERLUMT)
 endif()
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
 
   # Install the extra files
   foreach(extrafile ${CVODE_extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -348,7 +349,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/cvode/serial/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -362,7 +363,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/cvode/serial/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial
       RENAME Makefile)
   endif()
 

@@ -96,17 +96,17 @@ foreach(example_tuple ${IDA_examples})
   file(GLOB example_out ${example}*.out)
 
   # install example
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
     install(FILES ${example}.c ${example_out}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/petsc)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/petsc)
   endif()
 
 endforeach(example_tuple ${IDA_examples})
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/petsc)
+  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/petsc)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "IDA")
@@ -125,7 +125,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/ida/petsc/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/petsc)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/petsc)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -139,7 +139,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/ida/petsc/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/petsc
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/petsc
       RENAME Makefile)
   endif()
 

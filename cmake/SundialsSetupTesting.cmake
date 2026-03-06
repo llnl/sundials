@@ -183,7 +183,7 @@ endif()
 #
 # Create `make test_install` and `make test_install_all`
 #
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Directories for installation testing
   set(TEST_INSTALL_DIR ${PROJECT_BINARY_DIR}/Testing_Install)

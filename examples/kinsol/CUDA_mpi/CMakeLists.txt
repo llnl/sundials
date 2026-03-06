@@ -63,7 +63,7 @@ foreach(example_tuple ${KINSOL_examples})
 endforeach()
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   sundials_install_examples(
     kinsol KINSOL_examples

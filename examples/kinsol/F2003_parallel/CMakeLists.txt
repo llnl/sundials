@@ -75,20 +75,20 @@ foreach(example_tuple ${FKINSOL_examples})
   file(GLOB example_out ${example}*.out)
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
     install(FILES ${example}.f90 ${example_out}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/F2003_parallel)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/F2003_parallel)
   endif()
 
 endforeach(example_tuple ${FKINSOL_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${KINSOL_extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/F2003_parallel)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/F2003_parallel)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -116,7 +116,7 @@ if(EXAMPLES_INSTALL)
   # install CMakelists.txt
   install(
     FILES ${PROJECT_BINARY_DIR}/examples/kinsol/F2003_parallel/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/F2003_parallel)
+    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/F2003_parallel)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -130,7 +130,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/kinsol/F2003_parallel/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/F2003_parallel
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/F2003_parallel
       RENAME Makefile)
   endif()
 

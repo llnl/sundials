@@ -59,6 +59,11 @@ table below lists the old CMake option names and the new replacements.
 | `KOKKOS_WORKS`                         | `SUNDIALS_ENABLE_KOKKOS_CHECKS`                |
 | `ENABLE_KOKKOS_KERNELS`                | `SUNDIALS_ENABLE_KOKKOS_KERNELS`               |
 | `KOKKOS_KERNELS_WORKS`                 | `SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
+| `EXAMPLES_ENABLE_C`                    | `SUNDIALS_EXAMPLES_ENABLE_C`                   |
+| `EXAMPLES_ENABLE_CXX`                  | `SUNDIALS_EXAMPLES_ENABLE_CXX`                 |
+| `EXAMPLES_ENABLE_F2003`                | `SUNDIALS_EXAMPLES_ENABLE_FORTRAN`             |
+| `EXAMPLES_INSTALL`                     | `SUNDIALS_EXAMPLES_ENABLE_INSTALL`             |
+| `EXAMPLES_INSTALL_PATH`                | `SUNDIALS_EXAMPLES_INSTALL_PATH`               |
 
 ## Changes to SUNDIALS in release 7.6.0
 

@@ -60,7 +60,7 @@ foreach(example_tuple ${CVODE_examples})
 endforeach(example_tuple ${CVODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
     set(_fused_stubs_target cvode_fused_stubs)

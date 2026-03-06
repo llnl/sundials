@@ -65,7 +65,7 @@ else()
 endif()
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   sundials_install_examples(
     arkode_superludist ARKODE_examples

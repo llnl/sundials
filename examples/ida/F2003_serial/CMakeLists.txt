@@ -60,14 +60,14 @@ foreach(example_tuple ${FIDA_examples})
   target_link_libraries(${example} ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
     install(FILES ${example}.f90 ${example}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/F2003_serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/F2003_serial)
   endif()
 endforeach(example_tuple ${FIDA_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "IDA")
@@ -87,7 +87,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/ida/F2003_serial/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/F2003_serial)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/F2003_serial)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -101,7 +101,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/ida/F2003_serial/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/F2003_serial
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/F2003_serial
       RENAME Makefile)
   endif()
 

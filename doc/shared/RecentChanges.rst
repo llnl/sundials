@@ -96,3 +96,13 @@ table below lists the old CMake option names and the new replacements.
 +------------------------------------------+---------------------------------------------------------+
 | ``KOKKOS_KERNELS_WORKS``                 | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
 +------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_ENABLE_C``                    | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_C`                   |
++------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_ENABLE_CXX``                  | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_CXX`                 |
++------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_ENABLE_F2003``                | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_FORTRAN`             |
++------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_INSTALL``                     | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_INSTALL`             |
++------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_INSTALL_PATH``                | :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH`               |
++------------------------------------------+---------------------------------------------------------+

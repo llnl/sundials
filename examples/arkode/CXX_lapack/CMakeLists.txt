@@ -61,7 +61,7 @@ foreach(example_tuple ${examples_list})
 
 endforeach()
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   sundials_install_examples(
     arkode examples_list

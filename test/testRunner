@@ -19,7 +19,7 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # Sundials test runner for CTest. Note examples must be enabled
-# to use the test runner (e.g. EXAMPLES_ENABLE_C=ON).
+# to use the test runner (e.g. SUNDIALS_EXAMPLES_ENABLE_C=ON).
 #
 # All output from the test runner output will be collected in
 # <build directory>/Testing/Temporary/LastTest.log
