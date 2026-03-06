@@ -685,7 +685,8 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
     /* Set Jv = f(tn, y+sig*v) */
     retval = PI_CONTENT(DEE)->rhsfn(work, Jv, PI_CONTENT(DEE)->rhs_data);
     PI_CONTENT(DEE)->nfevals++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval == 0) { break; }
+    if (retval < 0) { return (-1); }
 
     /* If f failed recoverably, shrink sig and retry */
     sig *= SUN_RCONST(0.25);
