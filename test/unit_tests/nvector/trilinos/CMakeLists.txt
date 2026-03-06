@@ -33,7 +33,7 @@ else()
 endif()
 
 # Dependencies for nvector examples
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   set(nvector_examples_dependencies test_nvector test_mpinvector)
 else()
   set(nvector_examples_dependencies test_nvector)
@@ -66,7 +66,7 @@ foreach(example_tuple ${nvector_trilinos_examples})
 
     # link vector test utilities
     target_link_libraries(${example} PRIVATE test_nvector_obj)
-    if(ENABLE_MPI)
+    if(SUNDIALS_ENABLE_MPI)
       target_link_libraries(${example} PRIVATE test_nvectormpi_obj)
     endif()
 

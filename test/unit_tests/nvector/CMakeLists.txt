@@ -18,7 +18,7 @@
 # test/unit_tests/nvector level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-if(ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
   include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
@@ -35,7 +35,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 target_link_libraries(test_nvector_obj PRIVATE sundials_nvecserial)
 
-if(ENABLE_MPI AND MPI_C_FOUND)
+if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(parallel)
   if(BUILD_NVECTOR_MPIMANYVECTOR)
     add_subdirectory(mpimanyvector)
@@ -76,7 +76,7 @@ endif()
 
 if(BUILD_NVECTOR_CUDA)
   add_subdirectory(cuda)
-  if(ENABLE_MPI AND MPI_C_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(mpicuda)
   endif()
 endif()
@@ -91,7 +91,7 @@ endif()
 
 if(BUILD_NVECTOR_RAJA)
   add_subdirectory(raja)
-  if(ENABLE_MPI AND MPI_C_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(mpiraja)
   endif()
 endif()

@@ -17,16 +17,16 @@
 # examples level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-# We need this to ensure the installed templates have MPI when ENABLE_MPI=TRUE,
-# at least until we convert all of the templates to use the SUNDIALS CMake
-# target.
+# We need this to ensure the installed templates have MPI when
+# SUNDIALS_ENABLE_MPI=TRUE, at least until we convert all of the templates to
+# use the SUNDIALS CMake target.
 
 # ===================================================================
 # Configure compilers for installed examples
 # ===================================================================
 
 foreach(lang ${_SUNDIALS_ENABLED_LANGS})
-  if(ENABLE_MPI)
+  if(SUNDIALS_ENABLE_MPI)
     if(DEFINED MPI_${lang}_COMPILER)
       set(_EXAMPLES_${lang}_COMPILER
           "${MPI_${lang}_COMPILER}"
