@@ -224,6 +224,13 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filena
 
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
+  /* An empty filename disables output for this stream. */
+  if (error_filename && !strcmp(error_filename, ""))
+  {
+    logger->error_fp = NULL;
+    return SUN_SUCCESS;
+  }
+
   if (error_filename && strcmp(error_filename, ""))
   {
 #if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_ERROR
@@ -255,6 +262,13 @@ SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
 
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
+  /* An empty filename disables output for this stream. */
+  if (warning_filename && !strcmp(warning_filename, ""))
+  {
+    logger->warning_fp = NULL;
+    return SUN_SUCCESS;
+  }
+
   if (warning_filename && strcmp(warning_filename, ""))
   {
 #if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_WARNING
@@ -285,6 +299,13 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
 
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
+  /* An empty filename disables output for this stream. */
+  if (info_filename && !strcmp(info_filename, ""))
+  {
+    logger->info_fp = NULL;
+    return SUN_SUCCESS;
+  }
+
   if (info_filename && strcmp(info_filename, ""))
   {
 #if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
@@ -314,6 +335,13 @@ SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filena
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
+
+  /* An empty filename disables output for this stream. */
+  if (debug_filename && !strcmp(debug_filename, ""))
+  {
+    logger->debug_fp = NULL;
+    return SUN_SUCCESS;
+  }
 
   if (debug_filename && strcmp(debug_filename, ""))
   {

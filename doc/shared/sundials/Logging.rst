@@ -60,7 +60,8 @@ to the file ``sun.log`` as follows
 
 The different environment variables may all be set to the same file, or to
 distinct files, or some combination there of. To disable output for one of the
-streams, then do not set the environment variable, or set it to an empty string.
+streams, set the environment variable to an empty string. To leave the stream
+at its default output, do not set the environment variable.
 If :cmakeop:`SUNDIALS_LOGGING_LEVEL` was set at build-time to a level lower than
 the corresponding environment variable, then setting the environment variable
 will do nothing. For example, if the logging level is set to ``2`` (errors and
