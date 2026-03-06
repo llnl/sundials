@@ -40,7 +40,7 @@ jobs:
 
     steps:
     - name: Download wheel artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         path: dist
         pattern: dist-*
@@ -63,7 +63,7 @@ jobs:
 
     steps:
     - uses: actions/setup-python@v6
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       with:
         path: dist
         pattern: dist-*
