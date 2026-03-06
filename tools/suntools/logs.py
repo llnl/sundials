@@ -20,7 +20,7 @@
 # -----------------------------------------------------------------------------
 
 import re
-from collections import ChainMap
+import json
 
 
 def _convert_to_num(s):
@@ -51,7 +51,7 @@ def _parse_logfile_payload(payload, line_number, all_lines, array_indicator="(:)
     kvpstrs = payload.split(",")
     kvp_dict = {}
     for kvpstr in kvpstrs:
-        kvp = kvpstr.split("=")
+        kvp = kvpstr.split("=", 1)  # only split on first =
         if len(kvp) == 1:
             # Check for empty payload
             if not kvp[0].strip():
@@ -64,10 +64,10 @@ def _parse_logfile_payload(payload, line_number, all_lines, array_indicator="(:)
                 for line in all_lines[line_number + 1 :]:
                     if line.startswith("[") or not line.strip():
                         break
-                    values.append(float(line))
+                    values.append(_convert_to_num(line.strip()))
                 kvp_dict[key.strip()] = values
             else:
-                kvp_dict[key.strip()] = value.strip()
+                kvp_dict[key.strip()] = _convert_to_num(value.strip())
     return kvp_dict
 
 
@@ -99,7 +99,7 @@ def _parse_logfile_line(line, line_number, all_lines):
        y_2
        ...
     """
-    pattern = re.compile(r"\[(\w+)\]\[(rank \d+)\]\[(.*)\]\[(.*)\](.*)")
+    pattern = re.compile(r"\[(\w+)\]\[(rank \d+)\]\[(.*?)\]\[(.*?)\](.*)")
     matches = pattern.findall(line)
     line_dict = {}
     if matches:
@@ -117,67 +117,122 @@ class StepData:
     """
 
     def __init__(self):
-        self.container = [ChainMap()]
-        self.parent_keys = ["main"]
+        self.stack = [{}]
 
     def __repr__(self):
-        tmp = "Container:"
-        for entry in self.container:
-            tmp += f"\n  {entry}"
-        tmp += "\nParent Keys:"
-        for entry in self.parent_keys:
-            tmp += f"\n  {entry}"
-        return tmp
+        return json.dumps(self.stack[0], indent=2)
 
     def update(self, data):
         """Update the active dictionary"""
-        self.container[-1].update(data)
+        conflicts = self.stack[-1].keys() & data.keys()
+        if conflicts:
+            raise KeyError(f"Cannot update: keys already exist: {conflicts}")
+        self.stack[-1].update(data)
 
     def open_dict(self, key):
-        """Activate a dictionary"""
-        self.container[-1][key] = {}
-        self.container[-1] = self.container[-1].new_child(self.container[-1][key])
+        """Activate a nested dictionary"""
+        if key not in self.stack[-1]:
+            self.stack[-1][key] = {}
+        self.stack.append(self.stack[-1][key])
 
     def close_dict(self):
         """Deactivate the active dictionary"""
-        self.container[-1] = self.container[-1].parents
+        self.stack.pop()
 
     def open_list(self, key):
         """Activate a list of dictionaries"""
-        if key in self.container[-1]:
-            self.container.append(ChainMap())
-        else:
-            self.container[-1][key] = []
-            self.container.append(ChainMap())
-        self.parent_keys.append(key)
+        if key not in self.stack[-1]:
+            self.stack[-1][key] = []
+        new_dict = {}
+        self.stack[-1][key].append(new_dict)
+        self.stack.append(new_dict)
 
     def close_list(self):
         """Deactivate the active list"""
-        tmp = self.container[-1].maps[0]
-        self.container[-2][self.parent_keys[-1]].append(tmp)
-        self.parent_keys.pop()
-        self.container.pop()
+        self.stack.pop()
 
     def get_step(self):
         """Get the step dictionary and reset the container"""
-        tmp = self.container.pop().maps[0]
-        self.container = [ChainMap()]
-        self.parent_keys = ["main"]
-        return tmp
+        result = self.stack[0]
+        self.stack = [{}]
+        return result
 
 
 def log_file_to_list(filename):
-    """Parses a log file and returns a list of dictionaries.
+    """Parse a log file and return as a Python list of dictionaries.
+
+    This is the core parsing function that converts SUNDIALS log files into Python
+    data structures. Use this function when you need to work with the data directly
+    in Python (analysis, filtering, custom processing).
 
     :param str filename: The name of the log file to parse.
-    :returns: A list of dictionaries.
+    :returns: A list of dictionaries, one per step attempt.
+    :rtype: list[dict]
 
     The list returned for a time integrator log file will contain a dictionary for each
-    step attempt e.g.,
+    step attempt:
 
-    .. code-block:: none
+    .. code-block:: python
 
-       [ {step : 1, tn : 0.0, h : 0.01, ...}, {step : 2, tn : 0.01, h : 0.10, ...}, ...]
+       [
+         {
+           "step": 1,
+           "tn": 0.0,
+           "h": 0.01,
+           "status": "success",
+           "dsm": 2.6e-13,
+           "level": 0,
+           "stages": [
+             {"stage": 0, "implicit": 0, "tcur": 0.0, "status": "success"},
+             {"stage": 1, "implicit": 0, "tcur": 0.001, "status": "success"},
+             ...
+           ],
+           "compute-solution": {
+             "mass type": 0,
+             "status": "success"
+           }
+         },
+         {
+           "step": 2,
+           "tn": 0.01,
+           "h": 0.02,
+           ...
+         },
+         ...
+       ]
+
+    **Example usage:**
+
+    .. code-block:: python
+
+       from suntools import logs
+       import matplotlib.pyplot as plt
+
+       # Parse the log file
+       data = logs.log_file_to_list("sun.log")
+
+       # Extract lists of passed and failed step data
+       passed = [s for s in data if "success" in s["status"]]
+       failed = [s for s in data if "failed" in s["status"]]
+
+       print("Steps stats: ")
+       print(f"  Attempted:  {len(data)}")
+       print(f"  Successful: {len(passed)}")
+       print(f"  Failed:     {len(failed)}")
+       print(f"  Min Step:   {min(s["h"] for s in passed)}")
+       print(f"  Max Step:   {max(s["h"] for s in passed)}")
+       print(f"  Avg Step:   {sum(s["h"] for s in passed) / len(passed)}")
+
+       # Plot step size history
+       s_steps, s_times, s_steps = logs.get_history(passed, "h")
+       f_steps, f_times, f_steps = logs.get_history(failed, "h")
+
+       fig, ax = plt.subplots()
+       ax.plot(s_times, s_steps, color="b", marker=".", label="passed")
+       ax.scatter(f_times, f_steps, color="r", marker="x", label="failed")
+       ax.legend(loc="best")
+       ax.set(xlabel="time", ylabel="step size", title="Step Size History")
+       plt.show()
     """
     with open(filename, "r") as logfile:
 
@@ -265,64 +320,28 @@ def log_file_to_list(filename):
     return step_attempts
 
 
-def _print_log_list(a_list, indent=0):
-    """Print list value from a log entry dictionary"""
-    spaces = (indent + 2) * " "
-    for entry in a_list:
-        if type(entry) is list:
-            print(f"{spaces}[")
-            _print_log_list(entry, indent + 2)
-            print(f"{spaces}]")
-        elif type(entry) is dict:
-            print(f"{spaces}{{")
-            _print_log_dict(entry, indent + 2)
-            print(f"{spaces}}}")
-        else:
-            print(f"{spaces}{entry}")
+def print_log(log, indent=2):
+    """Print a log file list as formatted JSON.
 
+    This function takes parsed log data and prints it in a human-readable JSON
+    format. Useful for debugging and quick inspection.
 
-def _print_log_dict(a_dict, indent=0):
-    """Print dictionary value from a log entry dictionary"""
-    spaces = (indent + 2) * " "
-    for key in a_dict:
-        if type(a_dict[key]) is list:
-            print(f"{spaces}{key} :")
-            print(f"{spaces}[")
-            _print_log_list(a_dict[key], indent=indent + 2)
-            print(f"{spaces}]")
-        elif type(a_dict[key]) is dict:
-            print(f"{spaces}{key} :")
-            print(f"{spaces}{{")
-            _print_log_dict(a_dict[key], indent=indent + 2)
-            print(f"{spaces}}}")
-        else:
-            print(f"{spaces}{key} : {a_dict[key]}")
+    :param list log: The log file list from :py:func:`log_file_to_list()`.
+    :param int indent: The number of spaces to indent the JSON output (default: 2).
 
+    **Example usage:**
 
-def print_log(log, indent=0):
-    """Print a log file list created by :py:func:`log_file_to_list`.
+    .. code-block:: python
 
-    :param list log: The log file list to print.
-    :param int indent: The number of spaces to indent the output.
+       from suntools import logs
+
+       # Parse the log file
+       data = logs.log_file_to_list("sun.log")
+
+       # Print just the first few steps
+       logs.print_log(data[:5])
     """
-    spaces = indent * " "
-    subspaces = (indent + 2) * " "
-    for entry in log:
-        print(f"{spaces}{{")
-        for key in entry:
-            if type(entry[key]) is list:
-                print(f"{subspaces}{key} :")
-                print(f"{subspaces}[")
-                _print_log_list(entry[key], indent=indent + 2)
-                print(f"{subspaces}]")
-            elif type(entry[key]) is dict:
-                print(f"{subspaces}{key} :")
-                print(f"{subspaces}{{")
-                _print_log_dict(entry[key], indent=indent + 2)
-                print(f"{subspaces}}}")
-            else:
-                print(f"{subspaces}{key} : {entry[key]}")
-        print(f"{spaces}}}")
+    print(json.dumps(log, indent=indent))
 
 
 def get_history(
@@ -390,7 +409,7 @@ def _get_history(log, key, step_status, time_range, step_range):
         if key in entry and save_data:
             steps.append(step)
             times.append(time)
-            values.append(_convert_to_num(entry[key]))
+            values.append(entry[key])
             levels.append(level)
 
         if "stages" in entry:
