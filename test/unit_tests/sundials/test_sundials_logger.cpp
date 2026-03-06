@@ -13,6 +13,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
+#include <algorithm>
 #include <cstdio>
 #include <fstream>
 #include <gtest/gtest.h>
