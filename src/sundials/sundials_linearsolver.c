@@ -4,7 +4,7 @@
  *                Slaven Peles @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -34,6 +34,11 @@ static SUNProfiler getSUNProfiler(SUNLinearSolver S)
 {
   return (S->sunctx->profiler);
 }
+#endif
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNLinearSolverFunctionTable_Destroy(void* ptr);
 #endif
 
 /* internal function prototypes */
@@ -101,7 +106,9 @@ void SUNLinSolFreeEmpty(SUNLinearSolver S)
   free(S->ops);
   S->ops = NULL;
 
-  free(S->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNLinearSolverFunctionTable_Destroy(S->python);
+#endif
   S->python = NULL;
 
   free(S);
@@ -326,7 +333,9 @@ SUNErrCode SUNLinSolFree(SUNLinearSolver S)
   free(S->ops);
   S->ops = NULL;
 
-  free(S->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNLinearSolverFunctionTable_Destroy(S->python);
+#endif
   S->python = NULL;
 
   free(S);

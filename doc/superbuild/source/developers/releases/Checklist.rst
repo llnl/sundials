@@ -2,7 +2,7 @@
    Author(s): David J. Gardner, Cody J. Balos @ LLNL
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -152,13 +152,18 @@ Release Procedure
 
    .. note::
 
-      If you get an error about downloading the Sphinx ``objects.inv`` file
+      If you get an error about downloading the Sphinx ``objects.inv`` files
       during the "superbuild" documentation build, you can manually download the
-      file with the command
+      files with the command
 
       .. code-block:: shell
 
-         pushd doc/superbuild && wget https://www.sphinx-doc.org/en/master/objects.inv && popd
+         pushd doc/superbuild
+         wget -O objects-sphinx.inv https://www.sphinx-doc.org/en/master/objects.inv
+         wget -O objects-python.inv https://docs.python.org/3/objects.inv
+         wget -O objects-numpy.inv https://numpy.org/doc/stable/objects.inv
+         wget -O objects-scipy.inv https://docs.scipy.org/doc/scipy/objects.inv
+         popd
 
 #. Draft the `release on GitHub <https://github.com/LLNL/sundials/releases>`__.
    Select the tag for ``vX.Y.Z`` and use the title "SUNDIALS vX.Y.Z". The

@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -76,6 +76,7 @@ with support by the `US Department of Energy <http://www.doe.gov>`_,
    Constants
    Butcher
    Fortran/index.rst
+   Python/index.rst
    History_link.rst
    Changelog_link.rst
    References

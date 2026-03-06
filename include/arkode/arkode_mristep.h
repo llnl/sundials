@@ -3,7 +3,7 @@
  *                Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -38,6 +38,7 @@ extern "C" {
  * ----------------- */
 
 /* MRIStep method types */
+
 enum MRISTEP_METHOD_TYPE
 {
   MRISTEP_EXPLICIT,
@@ -142,6 +143,7 @@ typedef int (*MRIStepInnerSetRTol)(MRIStepInnerStepper stepper, sunrealtype rtol
 /*---------------------------------------------------------------
   MRI coupling data structure and associated utility routines
   ---------------------------------------------------------------*/
+
 struct MRIStepCouplingMem
 {
   MRISTEP_METHOD_TYPE type; /* flag to encode the MRI method type                  */

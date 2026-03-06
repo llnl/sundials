@@ -4,6 +4,7 @@
 #
 
 use strict;
+use warnings;
 
 use File::Basename;
 use File::Find;
@@ -13,10 +14,14 @@ use Cwd;
 use Text::Wrap;
 use File::Copy;
 use File::stat;
+use Time::Piece;
 
 my $pwd = cwd;
 
 my $debug = 2;
+
+my $time = localtime;
+my $current_year = $time->year;
 
 #
 # File pattern to look for
@@ -92,7 +97,7 @@ $|=1;
 
 my $end_of_line = $/;
 
-my $endyear = '2025';
+my $endyear = $current_year;
 
 my $newCopyright = <<"END";
  # SUNDIALS Copyright Start

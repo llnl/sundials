@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -1582,7 +1582,6 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
   if (constraints == NULL)
   {
     arkFreeVec(ark_mem, &ark_mem->constraints);
-    ark_mem->constraintsSet = SUNFALSE;
     return (ARK_SUCCESS);
   }
 
@@ -1614,7 +1613,6 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
 
   /* Load the constraints vector */
   N_VScale(ONE, constraints, ark_mem->constraints);
-  ark_mem->constraintsSet = SUNTRUE;
 
   return (ARK_SUCCESS);
 }

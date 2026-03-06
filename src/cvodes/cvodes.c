@@ -2,7 +2,7 @@
  * Programmer(s): Alan C. Hindmarsh and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -394,10 +394,11 @@ static int cvStgrNls(CVodeMem cv_mem);
 static int cvStgr1Nls(CVodeMem cv_mem, int is);
 static int cvQuadSensNls(CVodeMem cv_mem);
 
-static int cvCheckConstraints(CVodeMem cv_mem);
-
 static int cvHandleNFlag(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
                          int* ncfPtr, long int* ncfnPtr);
+
+static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
+                              sunrealtype saved_t, int* step_constraint_fails);
 
 /* Error Test */
 
@@ -549,8 +550,12 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->cv_msbp             = MSBP_DEFAULT;
   cv_mem->cv_dgmax_lsetup     = DGMAX_LSETUP_DEFAULT;
   cv_mem->convfail            = CV_NO_FAILURES;
-  cv_mem->cv_constraints      = NULL;
-  cv_mem->cv_constraintsSet   = SUNFALSE;
+
+  /* Initialize inequality constraint variables */
+  cv_mem->cv_constraints         = NULL;
+  cv_mem->constraint_corrections = 0;
+  cv_mem->constraint_fails       = 0;
+  cv_mem->max_constraint_fails   = MAX_CONSTRAINT_FAILS;
 
   /* Initialize root finding variables */
 
@@ -971,6 +976,9 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
   cv_mem->cv_nge     = 0;
 
   cv_mem->cv_irfnd = 0;
+
+  cv_mem->constraint_corrections = 0;
+  cv_mem->constraint_fails       = 0;
 
   if (cv_mem->cv_lreinit) { cv_mem->cv_lreinit(cv_mem); }
 
@@ -3214,7 +3222,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
   else if (cv_mem->first_step_after_resize)
   {
     /* Check if the resized y satisfies the constraints */
-    if (cv_mem->cv_constraintsSet)
+    if (cv_mem->cv_constraints)
     {
       sunbooleantype conOK = N_VConstrMask(cv_mem->cv_constraints,
                                            cv_mem->cv_zn[0], cv_mem->cv_tempv);
@@ -4462,7 +4470,9 @@ void CVodeFree(void** cvode_mem)
 
   if (cv_mem->proj_mem) { cvProjFree(&(cv_mem->proj_mem)); }
 
-  free(cv_mem->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  cvode_user_supplied_fn_table_destroy(cv_mem->python);
+#endif
   cv_mem->python = NULL;
 
   free(*cvode_mem);
@@ -4776,7 +4786,7 @@ static void cvFreeVectors(CVodeMem cv_mem)
     cv_mem->cv_liw -= cv_mem->cv_liw1;
   }
 
-  if (cv_mem->cv_constraintsMallocDone)
+  if (cv_mem->cv_constraints)
   {
     N_VDestroy(cv_mem->cv_constraints);
     cv_mem->cv_lrw -= cv_mem->cv_lrw1;
@@ -5235,7 +5245,7 @@ static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout)
   else { cv_mem->cv_e_data = cv_mem; }
 
   /* Check to see if y0 satisfies constraints */
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     if (cv_mem->cv_sensi && (cv_mem->cv_ism == CV_SIMULTANEOUS))
     {
@@ -5868,13 +5878,6 @@ static int cvStep(CVodeMem cv_mem)
   sunrealtype dsmQ;    /* quadrature error estimate                */
   sunrealtype dsmS;    /* sensitivity error estimate               */
   sunrealtype dsmQS;   /* quadrature sensitivity error estimate    */
-  int ncf;             /* corrector failures in this step attempt  */
-  int ncfS;            /* sensitivity corrector failures           */
-  int npf;             /* projection failures in this step attempt */
-  int nef;             /* error test failures in this step attempt */
-  int nefQ;            /* quadrature error test fails              */
-  int nefS;            /* sensitivity error test fails             */
-  int nefQS;           /* quadrature sensitivity error test fails  */
   int nflag, kflag;    /* nonlinear solver flags                   */
   int pflag;           /* projection return flag                   */
   int eflag;           /* error test return flag                   */
@@ -5888,11 +5891,18 @@ static int cvStep(CVodeMem cv_mem)
   do_sensi_stg  = (cv_mem->cv_sensi && (cv_mem->cv_ism == CV_STAGGERED));
   do_sensi_stg1 = (cv_mem->cv_sensi && (cv_mem->cv_ism == CV_STAGGERED1));
 
-  /* Initialize local counters for convergence and error test failures */
+  /* Initialize failure counters for this step attempt */
 
-  ncf = npf = nef = 0;
-  nefQ = nefQS = 0;
-  ncfS = nefS = 0;
+  int ncf                   = 0; /* corrector failures  */
+  int npf                   = 0; /* projection failures */
+  int nef                   = 0; /* error test failures */
+  int step_constraint_fails = 0;
+
+  int ncfS  = 0; /* sensitivity corrector failures           */
+  int nefS  = 0; /* sensitivity error test fails             */
+  int nefQ  = 0; /* quadrature error test fails              */
+  int nefQS = 0; /* quadrature sensitivity error test fails  */
+
   if (do_sensi_stg1)
   {
     for (is = 0; is < cv_mem->cv_Ns; is++) { cv_mem->cv_ncfS1[is] = 0; }
@@ -5916,7 +5926,7 @@ static int cvStep(CVodeMem cv_mem)
 
   /* Looping point for attempts to take a step */
 
-  saved_t = cv_mem->cv_tn;
+  saved_t = cv_mem->cv_tn; /* tn is updated in cvPredict */
   nflag   = FIRST_CALL;
 
   for (;;)
@@ -5942,6 +5952,22 @@ static int cvStep(CVodeMem cv_mem)
 
     /* Return if nonlinear solve failed and recovery is not possible. */
     if (kflag != DO_ERROR_TEST) { return (kflag); }
+
+    /* Check inequality constraints */
+    if (cv_mem->cv_constraints)
+    {
+      int cflag = cvCheckConstraints(cv_mem, &nflag, saved_t,
+                                     &step_constraint_fails);
+
+      SUNLogInfoIf(cflag != CV_SUCCESS, CV_LOGGER, "end-step-attempt",
+                   "status = failed inequality constraints, cflag = %i", cflag);
+
+      /* Go back in loop if we need to predict again (nflag=PREV_CONV_FAIL) */
+      if (cflag == PREDICT_AGAIN) { continue; }
+
+      /* Return if the check failed and recovery is not possible. */
+      if (cflag != CV_SUCCESS) { return cflag; }
+    }
 
     /* Check if a projection needs to be performed */
     cv_mem->proj_applied = SUNFALSE;
@@ -7100,9 +7126,6 @@ static int cvNls(CVodeMem cv_mem, int nflag)
   /* update Jacobian status */
   cv_mem->cv_jcur = SUNFALSE;
 
-  /* check inequality constraints */
-  if (cv_mem->cv_constraintsSet) { flag = cvCheckConstraints(cv_mem); }
-
   return (flag);
 }
 
@@ -7116,58 +7139,124 @@ static int cvNls(CVodeMem cv_mem, int nflag)
  *
  *   CV_SUCCESS     ---> allows stepping forward
  *
- *   CONSTR_RECVR   ---> values failed to satisfy constraints
+ *   PREDICT_AGAIN  ---> values failed to satisfy constraints
  *
  *   CV_CONSTR_FAIL ---> values failed to satisfy constraints with hmin
  */
 
-static int cvCheckConstraints(CVodeMem cv_mem)
+static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
+                              sunrealtype saved_t, int* step_constraint_fails)
 {
-  sunbooleantype constraintsPassed;
-  sunrealtype vnorm;
-  N_Vector mm  = cv_mem->cv_ftemp;
-  N_Vector tmp = cv_mem->cv_tempv;
+  SUNLogInfo(CV_LOGGER, "begin-constraint-check", "");
 
-  /* Get mask vector mm, set where constraints failed */
-  constraintsPassed = N_VConstrMask(cv_mem->cv_constraints, cv_mem->cv_y, mm);
-  if (constraintsPassed) { return (CV_SUCCESS); }
+  N_Vector mm  = cv_mem->cv_ftemp; /* mask      */
+  N_Vector tmp = cv_mem->cv_tempv; /* workspace */
 
-  /* Constraints not met */
-
-  /* Compute correction to satisfy constraints */
-  N_VCompare(ONEPT5, cv_mem->cv_constraints, tmp); /* a[i]=1 when |c[i]|=2  */
-  N_VProd(tmp, cv_mem->cv_constraints, tmp);       /* a * c                 */
-  N_VDiv(tmp, cv_mem->cv_ewt, tmp);                /* a * c * wt            */
-  N_VLinearSum(ONE, cv_mem->cv_y, -PT1, tmp, tmp); /* y - 0.1 * a * c * wt  */
-  N_VProd(tmp, mm, tmp);                           /* v = mm*(y-0.1*a*c*wt) */
-
-  vnorm = N_VWrmsNorm(tmp, cv_mem->cv_ewt); /* ||v|| */
-
-  /* If vector v of constraint corrections is small in norm, correct and
-     accept this step */
-  if (vnorm <= cv_mem->cv_tq[4])
+  /* Get mask vector mm, 1 where constraints failed and 0 otherwise */
+  sunbooleantype constraintsPassed = N_VConstrMask(cv_mem->cv_constraints,
+                                                   cv_mem->cv_y, mm);
+  if (constraintsPassed)
   {
-    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp,
-                 cv_mem->cv_acor); /* acor <- acor - v */
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = success");
     return (CV_SUCCESS);
   }
 
-  /* Return with error if |h| == hmin */
+  /* Constraints not met */
+
+  /* Compute correction v such that y - v will satisfy the constraints
+   *
+   * 1. Create a mask array that is +1 where constraints are strictly greater
+   *    than or less than zero (|c[i]| = 2) and 0 otherwise
+   *
+   * 2. Create a mask array that is +/- 2 where constraints are strictly greater
+   *    than (+) or less than (-) zero and 0 otherwise
+   *
+   * 3. Use error weights to compute an adjustment vector for values with strict
+   *    constraints, a[i] = +/- 2 * w[i] = +/- 2 * (atol * |y[i]| + rtol[i]),
+   *    and is 0 otherwise
+   *
+   * 4. Save the adjustment vector for possible use later
+   *
+   * 5. Compute correction vector for all values, v[i] = y[i] - 0.1 * a[i] for
+   *    strict constraints and v[i] = y[i] otherwise
+   *
+   * 6. Zero out entries where the constraints passed, v = mask * v
+   */
+  N_VCompare(ONEPT5, cv_mem->cv_constraints, tmp);
+  N_VProd(tmp, cv_mem->cv_constraints, tmp);
+  N_VDiv(tmp, cv_mem->cv_ewt, tmp);
+  N_VScale(-PT1, tmp, cv_mem->cv_vtemp1);
+  N_VLinearSum(ONE, cv_mem->cv_y, -PT1, tmp, tmp);
+  N_VProd(tmp, mm, tmp);
+
+  sunrealtype vnorm = N_VWrmsNorm(tmp, cv_mem->cv_ewt); /* ||v|| */
+
+  /* If constraint correction vector is small in norm (satisfies the nonlinear
+     solver convergence condition with R = 1), correct and accept this step */
+  if (vnorm <= cv_mem->cv_tq[4])
+  {
+    /* Update constraint correction count */
+    cv_mem->constraint_corrections++;
+
+    /* To reduce roundoff errors that can violate the constraints, split the
+     * correction update, acor = acor - v, into three steps */
+
+    /* Zero out the correction where any constraint failed */
+    N_VProd(mm, cv_mem->cv_acor, tmp);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp, cv_mem->cv_acor);
+
+    /* Set correction to zero out the predictor where any constraint failed */
+    N_VProd(mm, cv_mem->cv_zn[0], tmp);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, tmp, cv_mem->cv_acor);
+
+    /* Update the correction where constraints failed and are strictly greater
+       or less than zero to shift the state with the adjustment saved above */
+    N_VProd(mm, cv_mem->cv_vtemp1, cv_mem->cv_vtemp1);
+    N_VLinearSum(ONE, cv_mem->cv_acor, -ONE, cv_mem->cv_vtemp1, cv_mem->cv_acor);
+
+    SUNLogInfo(CV_LOGGER, "end-constraint-check",
+               "status = success corrected, vnorm = " SUN_FORMAT_G, vnorm);
+
+    return (CV_SUCCESS);
+  }
+
+  /* update failure counts */
+  (*step_constraint_fails)++;
+  cv_mem->constraint_fails++;
+
+  /* restore zn */
+  cvRestore(cv_mem, saved_t);
+
+  /* Check for |h| == hmin */
   if (SUNRabs(cv_mem->cv_h) <= cv_mem->cv_hmin * ONEPSM)
   {
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = failed min step");
+    return (CV_CONSTR_FAIL);
+  }
+
+  /* Check for max step attempt failures */
+  if (*step_constraint_fails == cv_mem->max_constraint_fails)
+  {
+    SUNLogInfo(CV_LOGGER, "end-constraint-check", "status = failed max attempts");
     return (CV_CONSTR_FAIL);
   }
 
   /* Constraint correction is too large, reduce h by computing eta = h'/h */
   N_VLinearSum(ONE, cv_mem->cv_zn[0], -ONE, cv_mem->cv_y, tmp);
   N_VProd(mm, tmp, tmp);
+
+  /* Reduce step size; return to reattempt the step */
   cv_mem->cv_eta = PT9 * N_VMinQuotient(cv_mem->cv_zn[0], tmp);
   cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta, PT1);
   cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta,
                           cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
+  cvRescale(cv_mem);
+  *nflagPtr = PREV_CONV_FAIL;
 
-  /* Reattempt step with new step size */
-  return (CONSTR_RECVR);
+  SUNLogInfo(CV_LOGGER, "end-constraint-check",
+             "status = failed, eta = " SUN_FORMAT_G, cv_mem->cv_eta);
+
+  return PREDICT_AGAIN;
 }
 
 /*
@@ -7442,21 +7531,16 @@ static int cvHandleNFlag(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
       (*ncfPtr == cv_mem->cv_maxncf))
   {
     if (nflag == SUN_NLS_CONV_RECVR) { return (CV_CONV_FAILURE); }
-    if (nflag == CONSTR_RECVR) { return (CV_CONSTR_FAIL); }
     if (nflag == RHSFUNC_RECVR) { return (CV_REPTD_RHSFUNC_ERR); }
     if (nflag == QRHSFUNC_RECVR) { return (CV_REPTD_QRHSFUNC_ERR); }
     if (nflag == SRHSFUNC_RECVR) { return (CV_REPTD_SRHSFUNC_ERR); }
     if (nflag == QSRHSFUNC_RECVR) { return (CV_REPTD_QSRHSFUNC_ERR); }
   }
 
-  /* Reduce step size; return to reattempt the step
-     Note that if nflag = CONSTR_RECVR, then eta was already set in cvCheckConstraints */
-  if (nflag != CONSTR_RECVR)
-  {
-    cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta_cf,
-                            cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
-  }
-  *nflagPtr = PREV_CONV_FAIL;
+  /* Reduce step size; return to reattempt the step */
+  cv_mem->cv_eta = SUNMAX(cv_mem->cv_eta_cf,
+                          cv_mem->cv_hmin / SUNRabs(cv_mem->cv_h));
+  *nflagPtr      = PREV_CONV_FAIL;
   cvRescale(cv_mem);
 
   return (PREDICT_AGAIN);

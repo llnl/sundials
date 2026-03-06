@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -426,6 +426,7 @@ endif()
 # ===============================================================
 
 if(BUILD_BENCHMARKS
+   OR SUNDIALS_ENABLE_PYTHON
    OR SUNDIALS_TEST_ENABLE_UNIT_TESTS
    OR EXAMPLES_ENABLE_CXX
    OR ENABLE_CUDA

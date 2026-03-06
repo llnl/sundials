@@ -3,7 +3,7 @@
  *                Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -349,6 +349,10 @@ int mriStep_ComputeInnerForcing(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
 /* Return effective RK coefficients (nofast stage) */
 int mriStep_RKCoeffs(MRIStepCoupling MRIC, int is, int* stage_map,
                      sunrealtype* Ae_row, sunrealtype* Ai_row);
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void mristepinnerstepper_user_supplied_fn_table_destroy(void* ptr);
+#endif
 
 /*===============================================================
   MRIStep SUNAdaptController wrapper module -- this is used to

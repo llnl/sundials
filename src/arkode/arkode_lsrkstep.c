@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -2298,7 +2298,7 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
 
     /* After the first call to SUNDomEigEstimator_Estimate, the number of warmups is set to
        num_warmups, this allows the successive calls to
-       SUNDomEigEstimator_Estimate to use a diffirent number of warmups. */
+       SUNDomEigEstimator_Estimate to use a different number of warmups. */
     if (step_mem->init_warmup)
     {
       retval = SUNDomEigEstimator_SetNumPreprocessIters(step_mem->DEE,

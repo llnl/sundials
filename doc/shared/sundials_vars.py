@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -13,14 +13,14 @@
 # SUNDIALS Copyright End
 # ----------------------------------------------------------------
 doc_version = "develop"
-sundials_version = "v7.5.0"
-arkode_version = "v6.5.0"
-cvode_version = "v7.5.0"
-cvodes_version = "v7.5.0"
-ida_version = "v7.5.0"
-idas_version = "v6.5.0"
-kinsol_version = "v7.5.0"
-year = "2025"
+sundials_version = "v7.6.0"
+arkode_version = "v6.6.0"
+cvode_version = "v7.6.0"
+cvodes_version = "v7.6.0"
+ida_version = "v7.6.0"
+idas_version = "v6.6.0"
+kinsol_version = "v7.6.0"
+year = "2026"
 
 # Warn about all references where the target cannot be found
 nitpicky = True
@@ -136,4 +136,58 @@ nitpick_ignore = [
     # documentation to use .. cpp:function rather than .. c:function
     ("c:identifier", "SUNCudaExecPolicy"),
     ("c:identifier", "SUNHipExecPolicy"),
+    # Python
+    ("py:class", "typing_extensions.CapsuleType"),
+    ("py:class", "types.CapsuleType"),
+    ("py:class", "collections.abc.Callable"),
+    ("py:class", "collections.abc.Sequence"),
+    ("py:class", "numpy.ndarray[dtype=float64, shape=(*), order='C']"),
+    ("py:class", "numpy.ndarray[dtype=float64, shape=(*, *), order='F']"),
+    ("py:class", "numpy.ndarray[dtype=int64, shape=(*), order='C']"),
+    # C functions we don't document explicitly
+    ("c:func", "ARKodePrintMem"),
+    ("c:func", "ARKodeSetPostprocessStageFn"),
+    ("c:func", "ARKodeSetPostprocessStepFn"),
+    ("c:func", "CVodeGetAdjDataPointHermite"),
+    ("c:func", "CVodeGetAdjDataPointPolynomial"),
+    ("c:func", "CVodeQuadSStolerancesB"),
+    ("c:func", "CVodeQuadSVtolerancesB"),
+    ("c:func", "CVodeSetConstraintsB"),
+    ("c:func", "CVodeSetInitStepB"),
+    ("c:func", "CVodeSetMaxNumStepsB"),
+    ("c:func", "CVodeSetMaxOrdB"),
+    ("c:func", "CVodeSetMaxStepB"),
+    ("c:func", "CVodeSetMinStepB"),
+    ("c:func", "CVodeSetQuadErrConB"),
+    ("c:func", "CVodeSetStabLimDetB"),
+    ("c:func", "IDAGetAdjDataPointHermite"),
+    ("c:func", "IDAGetAdjDataPointPolynomial"),
+    ("c:func", "IDAQuadSStolerancesB"),
+    ("c:func", "IDAQuadSVtolerancesB"),
+    ("c:func", "IDASetConstraintsB"),
+    ("c:func", "IDASetIdB"),
+    ("c:func", "IDASetInitStepB"),
+    ("c:func", "IDASetMaxNumStepsB"),
+    ("c:func", "IDASetMaxOrdB"),
+    ("c:func", "IDASetMaxStepB"),
+    ("c:func", "IDASetQuadErrConB"),
+    ("c:func", "IDASetSuppressAlgB"),
+    ("c:func", "N_VEnableDotProdMultiLocal_ManyVector"),
+    ("c:func", "SUNAdaptController_GetFastController_MRIHTol"),
+    ("c:func", "SUNAdaptController_GetSlowController_MRIHTol"),
+    ("c:func", "SUNClassicalGS"),
+    ("c:func", "SUNMemoryHelper_ImplementsRequiredOps"),
+    ("c:func", "SUNModifiedGS"),
+    ("c:func", "SUNNonlinSol_FixedPointSens"),
+    ("c:func", "SUNNonlinSol_NewtonSens"),
+    ("c:func", "SUNQRAdd_CGS2"),
+    ("c:func", "SUNQRAdd_DCGS2_SB"),
+    ("c:func", "SUNQRAdd_DCGS2"),
+    ("c:func", "SUNQRAdd_ICWY_SB"),
+    ("c:func", "SUNQRAdd_ICWY"),
+    ("c:func", "SUNQRAdd_MGS"),
+    ("c:func", "SUNQRfact"),
+    ("c:func", "SUNQRsol"),
+    ("c:func", "SUNSparseMatrix_ToCSC"),
+    ("c:func", "SUNSparseMatrix_ToCSR"),
 ]

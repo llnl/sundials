@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -200,6 +200,7 @@ typedef _SUNDIALS_STRUCT_ _MRIStepInnerStepper* MRIStepInnerStepper;
 /* --------------------------
  * Relaxation Solver Options
  * -------------------------- */
+
 enum ARKRelaxSolver
 {
   ARK_RELAX_BRENT,
@@ -259,7 +260,7 @@ SUNDIALS_EXPORT int ARKodeResFtolerance(void* arkode_mem, ARKRwtFn rfun);
 
 /* Rootfinding */
 SUNDIALS_EXPORT int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g);
-SUNDIALS_EXPORT int ARKodeSetRootDirection(void* arkode_mem, int* rootdir);
+SUNDIALS_EXPORT int ARKodeSetRootDirection(void* arkode_mem, int* rootdir_1d);
 SUNDIALS_EXPORT int ARKodeSetNoInactiveRootWarn(void* arkode_mem);
 
 /* Optional input functions (general) */
@@ -367,7 +368,7 @@ SUNDIALS_EXPORT int ARKodeGetStepDirection(void* arkode_mem,
                                            sunrealtype* stepdir);
 SUNDIALS_EXPORT int ARKodeGetErrWeights(void* arkode_mem, N_Vector eweight);
 SUNDIALS_EXPORT int ARKodeGetNumGEvals(void* arkode_mem, long int* ngevals);
-SUNDIALS_EXPORT int ARKodeGetRootInfo(void* arkode_mem, int* rootsfound);
+SUNDIALS_EXPORT int ARKodeGetRootInfo(void* arkode_mem, int* rootsfound_1d);
 SUNDIALS_EXPORT int ARKodeGetUserData(void* arkode_mem, void** user_data);
 SUNDIALS_EXPORT int ARKodePrintAllStats(void* arkode_mem, FILE* outfile,
                                         SUNOutputFormat fmt);

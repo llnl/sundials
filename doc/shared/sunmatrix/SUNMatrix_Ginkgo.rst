@@ -1,7 +1,7 @@
 ..
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -163,7 +163,7 @@ In this section we list the public API of the ``sundials::ginkgo::Matrix`` class
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 
@@ -171,6 +171,6 @@ In this section we list the public API of the ``sundials::ginkgo::Matrix`` class
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.

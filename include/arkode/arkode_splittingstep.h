@@ -2,7 +2,7 @@
  * Programmer(s): Steven B. Roberts @ LLNL
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -31,6 +31,7 @@ extern "C" {
 /*---------------------------------------------------------------
   Types : struct SplittingStepCoefficientsMem, SplittingStepCoefficients
   ---------------------------------------------------------------*/
+
 struct SplittingStepCoefficientsMem
 {
   sunrealtype* alpha;  /* weights for sum over sequential splitting methods */
@@ -45,6 +46,7 @@ typedef _SUNDIALS_STRUCT_ SplittingStepCoefficientsMem* SplittingStepCoefficient
 
 /* Splitting names use the convention
  * ARKODE_SPLITTING_<name>_<stages>_<order>_<partitions> */
+
 enum ARKODE_SplittingCoefficientsID
 {
   ARKODE_SPLITTING_NONE = -1, /* ensure enum is signed int */

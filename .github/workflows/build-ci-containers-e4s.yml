@@ -20,7 +20,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     - name: Login to container registry
@@ -30,7 +30,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build and push Docker images
-      uses: docker/build-push-action@v6.18.0
+      uses: docker/build-push-action@v6.19.2
       with:
           context: "./docker/sundials-ci/e4s-base"
           build-args: e4s_version=22.05
@@ -50,7 +50,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     - name: Login to container registry
@@ -60,7 +60,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build and push Docker images
-      uses: docker/build-push-action@v6.18.0
+      uses: docker/build-push-action@v6.19.2
       with:
           context: "./docker/sundials-ci/e4s-quarterly"
           build-args: spack_yaml=./int${{ matrix.indexsize }}-${{ matrix.precision }}/spack.yaml

@@ -3,7 +3,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -22,7 +22,7 @@
 # development releases the label string is of the form "-dev.#" and for full
 # releases the label string is "".
 sun_major=${1:-7}
-sun_minor=${2:-5}
+sun_minor=${2:-6}
 sun_patch=${3:-0}
 sun_label=${4:-""}
 month=${5:-$(date +"%b")}
@@ -191,6 +191,12 @@ sedi() {
     esac
     sed "${sedi[@]}" "$@"
 }
+
+# ------------------------------------------------------------------------------
+# Update the pyproject.toml file
+# ------------------------------------------------------------------------------
+fn="../pyproject.toml"
+sedi "/^version =/ s/version = \".*\"/version = \"${sun_ver}\"/" $fn
 
 # ------------------------------------------------------------------------------
 # Update the main CMakeLists.txt file

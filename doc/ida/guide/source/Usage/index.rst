@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -910,36 +910,37 @@ Main solver optional input functions
 
 .. table:: Optional inputs for IDA
 
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | **Optional input**                                                 | **Function name**               | **Default**    |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Set IDA options from the command line or file                      | :c:func:`IDASetOptions`         |                |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | User data                                                          | :c:func:`IDASetUserData`        | NULL           |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Maximum order for BDF method                                       | :c:func:`IDASetMaxOrd`          | 5              |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Maximum no. of internal steps before :math:`t_{{\scriptsize out}}` | :c:func:`IDASetMaxNumSteps`     | 500            |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Initial step size                                                  | :c:func:`IDASetInitStep`        | estimated      |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Minimum absolute step size :math:`h_{\text{min}}`                  | :c:func:`IDASetMinStep`         | 0              |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Maximum absolute step size :math:`h_{\text{max}}`                  | :c:func:`IDASetMaxStep`         | :math:`\infty` |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Value of :math:`t_{stop}`                                          | :c:func:`IDASetStopTime`        | undefined      |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Disable the stop time                                              | :c:func:`IDAClearStopTime`      | N/A            |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Maximum no. of error test failures                                 | :c:func:`IDASetMaxErrTestFails` | 10             |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Suppress alg. vars. from error test                                | :c:func:`IDASetSuppressAlg`     | ``SUNFALSE``   |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Variable types (differential/algebraic)                            | :c:func:`IDASetId`              | NULL           |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-   | Inequality constraints on solution                                 | :c:func:`IDASetConstraints`     | NULL           |
-   +--------------------------------------------------------------------+---------------------------------+----------------+
-
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | **Optional input**                                                 | **Function name**                     | **Default**    |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Set IDA options from the command line or file                      | :c:func:`IDASetOptions`               |                |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | User data                                                          | :c:func:`IDASetUserData`              | NULL           |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Maximum order for BDF method                                       | :c:func:`IDASetMaxOrd`                | 5              |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Maximum no. of internal steps before :math:`t_{{\scriptsize out}}` | :c:func:`IDASetMaxNumSteps`           | 500            |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Initial step size                                                  | :c:func:`IDASetInitStep`              | estimated      |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Minimum absolute step size :math:`h_{\text{min}}`                  | :c:func:`IDASetMinStep`               | 0              |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Maximum absolute step size :math:`h_{\text{max}}`                  | :c:func:`IDASetMaxStep`               | :math:`\infty` |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Value of :math:`t_{stop}`                                          | :c:func:`IDASetStopTime`              | undefined      |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Disable the stop time                                              | :c:func:`IDAClearStopTime`            | N/A            |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Maximum no. of error test failures                                 | :c:func:`IDASetMaxErrTestFails`       | 10             |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Suppress alg. vars. from error test                                | :c:func:`IDASetSuppressAlg`           | ``SUNFALSE``   |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Variable types (differential/algebraic)                            | :c:func:`IDASetId`                    | NULL           |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Inequality constraints on solution                                 | :c:func:`IDASetConstraints`           | disabled       |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Maximum number of inequality constraint failures                   | :c:func:`IDASetMaxNumConstraintFails` | 10             |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
 
 .. c:function:: int IDASetOptions(void* ida_mem, const char* idaid, const char* file_name, int argc, char* argv[])
 
@@ -1280,6 +1281,26 @@ Main solver optional input functions
       input return. A ``NULL`` input will disable constraint checking.
 
 
+.. c:function:: int IDASetMaxNumConstraintFails(void* ida_mem, int max_fails)
+
+   Sets the maximum number of inequality constraint failures allowed in a step
+   attempt (default 10).
+
+   Use the key "idaid.max_num_constraint_fails" to set this option with
+   :c:func:`IDASetOptions`.
+
+   **Arguments:**
+      * ``ida_mem`` -- pointer to the IDA memory block.
+      * ``max_fail`` -- the maximum number of failures. Passing a value
+        :math:`\leq 0` will restore the default value.
+
+   **Return value:**
+     * ``IDA_SUCCESS`` -- The optional value has been successfully set.
+     * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
+
+   .. versionadded:: 7.6.0
+
+
 .. _IDA.Usage.CC.optional_input.optin_ls:
 
 Linear solver interface optional input functions
@@ -1389,8 +1410,8 @@ that updates the matrix using the current :math:`\alpha` as part of the solve.
      * ``dcj`` -- the :math:`c_j` change threshold.
 
    **Return value:**
-      * ``IDA_SUCCESS`` -- The flag value has been successfully set.
-      * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
+     * ``IDA_SUCCESS`` -- The flag value has been successfully set.
+     * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
    **Notes:**
       This routine will be called by :c:func:`IDASetOptions`
@@ -2309,91 +2330,95 @@ preconditioner.
 .. table:: Optional outputs for IDA, IDALS, and IDANLS
   :align: center
 
-  +--------------------------------------------------------------------+----------------------------------------+
-  | **Optional output**                                                | **Function name**                      |
-  +====================================================================+========================================+
-  | Size of IDA real and integer workspace                             | :c:func:`IDAGetWorkSpace`              |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Cumulative number of internal steps                                | :c:func:`IDAGetNumSteps`               |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of calls to residual function                                  | :c:func:`IDAGetNumResEvals`            |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of calls to linear solver setup function                       | :c:func:`IDAGetNumLinSolvSetups`       |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of local error test failures that have occurred                | :c:func:`IDAGetNumErrTestFails`        |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of failed steps due to a nonlinear solver failure              | :c:func:`IDAGetNumStepSolveFails`      |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Order used during the last step                                    | :c:func:`IDAGetLastOrder`              |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Order to be attempted on the next step                             | :c:func:`IDAGetCurrentOrder`           |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Actual initial step size used                                      | :c:func:`IDAGetActualInitStep`         |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Step size used for the last step                                   | :c:func:`IDAGetLastStep`               |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Step size to be attempted on the next step                         | :c:func:`IDAGetCurrentStep`            |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Current internal time reached by the solver                        | :c:func:`IDAGetCurrentTime`            |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Suggested factor for tolerance scaling                             | :c:func:`IDAGetTolScaleFactor`         |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Error weight vector for state variables                            | :c:func:`IDAGetErrWeights`             |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Estimated local errors                                             | :c:func:`IDAGetEstLocalErrors`         |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | All IDA integrator statistics                                      | :c:func:`IDAGetIntegratorStats`        |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of nonlinear solver iterations                                 | :c:func:`IDAGetNumNonlinSolvIters`     |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of nonlinear convergence failures                              | :c:func:`IDAGetNumNonlinSolvConvFails` |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | IDA nonlinear solver statistics                                    | :c:func:`IDAGetNonlinSolvStats`        |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | User data pointer                                                  | :c:func:`IDAGetUserData`               |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Array showing roots found                                          | :c:func:`IDAGetRootInfo`               |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of calls to user root function                                 | :c:func:`IDAGetNumGEvals`              |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Print all statistics                                               | :c:func:`IDAPrintAllStats`             |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Name of constant associated with a return flag                     | :c:func:`IDAGetReturnFlagName`         |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Number of backtrack operations                                     | :c:func:`IDAGetNumBacktrackOps`        |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Corrected initial conditions                                       | :c:func:`IDAGetConsistentIC`           |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Stored Jacobian of the DAE residual function                       | :c:func:`IDAGetJac`                    |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | :math:`c_j` value used in the Jacobian evaluation                  | :c:func:`IDAGetJacCj`                  |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Time at which the Jacobian was evaluated                           | :c:func:`IDAGetJacTime`                |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Step number at which the Jacobian was evaluated                    | :c:func:`IDAGetJacNumSteps`            |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Size of real and integer workspace                                 | :c:func:`IDAGetLinWorkSpace`           |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of Jacobian evaluations                                        | :c:func:`IDAGetNumJacEvals`            |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of residual calls for finite diff. Jacobian-vector evals.      | :c:func:`IDAGetNumLinResEvals`         |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of linear iterations                                           | :c:func:`IDAGetNumLinIters`            |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of linear convergence failures                                 | :c:func:`IDAGetNumLinConvFails`        |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of preconditioner evaluations                                  | :c:func:`IDAGetNumPrecEvals`           |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of preconditioner solves                                       | :c:func:`IDAGetNumPrecSolves`          |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of Jacobian-vector setup evaluations                           | :c:func:`IDAGetNumJTSetupEvals`        |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | No. of Jacobian-vector product evaluations                         | :c:func:`IDAGetNumJtimesEvals`         |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Last return from a linear solver function                          | :c:func:`IDAGetLastLinFlag`            |
-  +--------------------------------------------------------------------+----------------------------------------+
-  | Name of constant associated with a return flag                     | :c:func:`IDAGetLinReturnFlagName`      |
-  +--------------------------------------------------------------------+----------------------------------------+
+  +--------------------------------------------------------------------+------------------------------------------+
+  | **Optional output**                                                | **Function name**                        |
+  +====================================================================+==========================================+
+  | Size of IDA real and integer workspace                             | :c:func:`IDAGetWorkSpace`                |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Cumulative number of internal steps                                | :c:func:`IDAGetNumSteps`                 |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of calls to residual function                                  | :c:func:`IDAGetNumResEvals`              |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of calls to linear solver setup function                       | :c:func:`IDAGetNumLinSolvSetups`         |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of local error test failures that have occurred                | :c:func:`IDAGetNumErrTestFails`          |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of failed steps due to a nonlinear solver failure              | :c:func:`IDAGetNumStepSolveFails`        |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of failed steps due to an inequality constraint failure        | :c:func:`IDAGetNumConstraintFails`       |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of steps modified to satisfy an inequality constraint          | :c:func:`IDAGetNumConstraintCorrections` |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Order used during the last step                                    | :c:func:`IDAGetLastOrder`                |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Order to be attempted on the next step                             | :c:func:`IDAGetCurrentOrder`             |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Actual initial step size used                                      | :c:func:`IDAGetActualInitStep`           |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Step size used for the last step                                   | :c:func:`IDAGetLastStep`                 |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Step size to be attempted on the next step                         | :c:func:`IDAGetCurrentStep`              |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Current internal time reached by the solver                        | :c:func:`IDAGetCurrentTime`              |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Suggested factor for tolerance scaling                             | :c:func:`IDAGetTolScaleFactor`           |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Error weight vector for state variables                            | :c:func:`IDAGetErrWeights`               |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Estimated local errors                                             | :c:func:`IDAGetEstLocalErrors`           |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | All IDA integrator statistics                                      | :c:func:`IDAGetIntegratorStats`          |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of nonlinear solver iterations                                 | :c:func:`IDAGetNumNonlinSolvIters`       |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of nonlinear convergence failures                              | :c:func:`IDAGetNumNonlinSolvConvFails`   |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | IDA nonlinear solver statistics                                    | :c:func:`IDAGetNonlinSolvStats`          |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | User data pointer                                                  | :c:func:`IDAGetUserData`                 |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Array showing roots found                                          | :c:func:`IDAGetRootInfo`                 |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of calls to user root function                                 | :c:func:`IDAGetNumGEvals`                |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Print all statistics                                               | :c:func:`IDAPrintAllStats`               |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Name of constant associated with a return flag                     | :c:func:`IDAGetReturnFlagName`           |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Number of backtrack operations                                     | :c:func:`IDAGetNumBacktrackOps`          |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Corrected initial conditions                                       | :c:func:`IDAGetConsistentIC`             |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Stored Jacobian of the DAE residual function                       | :c:func:`IDAGetJac`                      |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | :math:`c_j` value used in the Jacobian evaluation                  | :c:func:`IDAGetJacCj`                    |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Time at which the Jacobian was evaluated                           | :c:func:`IDAGetJacTime`                  |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Step number at which the Jacobian was evaluated                    | :c:func:`IDAGetJacNumSteps`              |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Size of real and integer workspace                                 | :c:func:`IDAGetLinWorkSpace`             |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of Jacobian evaluations                                        | :c:func:`IDAGetNumJacEvals`              |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of residual calls for finite diff. Jacobian-vector evals.      | :c:func:`IDAGetNumLinResEvals`           |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of linear iterations                                           | :c:func:`IDAGetNumLinIters`              |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of linear convergence failures                                 | :c:func:`IDAGetNumLinConvFails`          |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of preconditioner evaluations                                  | :c:func:`IDAGetNumPrecEvals`             |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of preconditioner solves                                       | :c:func:`IDAGetNumPrecSolves`            |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of Jacobian-vector setup evaluations                           | :c:func:`IDAGetNumJTSetupEvals`          |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | No. of Jacobian-vector product evaluations                         | :c:func:`IDAGetNumJtimesEvals`           |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Last return from a linear solver function                          | :c:func:`IDAGetLastLinFlag`              |
+  +--------------------------------------------------------------------+------------------------------------------+
+  | Name of constant associated with a return flag                     | :c:func:`IDAGetLinReturnFlagName`        |
+  +--------------------------------------------------------------------+------------------------------------------+
 
 
 .. _IDA.Usage.CC.optional_output.optout_main:
@@ -2532,6 +2557,41 @@ described next.
    **Return value:**
       * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
       * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
+
+   .. versionchanged:: 7.6.0
+
+      In prior versions, inequality constraint failures were included with the
+      number of step failures due to a nonlinear solver failure. These failures
+      are now counted separately, see :c:func:`IDAGetNumConstraintFails`.
+
+.. c:function:: int IDAGetNumConstraintFails(void* ida_mem, long int* num_fails_out)
+
+   Returns the number of failed steps due to an inequality constraint failure.
+
+   **Arguments:**
+      * ``ida_mem`` -- pointer to the IDA memory block.
+      * ``num_fails_out`` -- number of step failures.
+
+   **Return value:**
+      * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
+      * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
+
+   .. versionadded:: 7.6.0
+
+.. c:function:: int IDAGetNumConstraintCorrections(void* ida_mem, long int* num_corrections_out)
+
+   Returns the number of steps where the corrector was modified to satisfy an
+   inequality constraint without failing the step.
+
+   **Arguments:**
+      * ``ida_mem`` -- pointer to the IDA memory block.
+      * ``num_corrections_out`` -- number of modified steps.
+
+   **Return value:**
+      * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
+      * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
+
+   .. versionadded:: 7.6.0
 
 .. c:function:: int IDAGetLastOrder(void * ida_mem, int * klast)
 
@@ -3431,7 +3491,7 @@ user may provide a function of type :c:type:`IDALsJacFn` defined as follows:
       * ``user_data`` - is a pointer to user data, the same as the ``user_data``
         parameter passed to :c:func:`IDASetUserData`.
       * ``tmp1``, ``tmp2``, and ``tmp3`` -- are pointers to memory allocated for
-        variables of type ``N_Vector`` which can be used by ``IDALsJacFn`` function
+        variables of type ``N_Vector`` which can be used by :c:func:`IDALsJacFn` function
         as temporary storage or work space.
 
    **Return value:**
@@ -3455,8 +3515,8 @@ user may provide a function of type :c:type:`IDALsJacFn` defined as follows:
       nonzero elements need to be loaded into ``Jac``.
 
       With the default nonlinear solver (the native SUNDIALS Newton method), each
-      call to the user’s ``IDALsJacFn`` function is preceded by a call to the
-      ``IDAResFn`` user function with the same (``tt``, ``yy``, ``yp``)
+      call to the user’s :c:func:`IDALsJacFn` function is preceded by a call to the
+      :c:func:`IDAResFn` user function with the same :math:`(t, y, \dot{y})`
       arguments. Thus the Jacobian function can use any auxiliary data that is
       computed and saved during the evaluation of the DAE residual.  In the case of
       a user-supplied or external nonlinear solver, this is also true if the
@@ -3590,7 +3650,7 @@ the default is a difference quotient approximation to these products.
       to the **current** value of :math:`J`, i.e. as evaluated at the current
       :math:`(t,y,\dot{y})`.
 
-      If the user’s ``IDALsJacTimesVecFn`` function uses difference quotient
+      If the user’s :c:func:`IDALsJacTimesVecFn` function uses difference quotient
       approximations, it may need to access quantities not in the call list. These
       include the current stepsize, the error weights, etc. To obtain these, the
       user will need to add a pointer to ``ida_mem`` to ``user_data`` and then use
@@ -3849,7 +3909,6 @@ Similar block-diagonal preconditioners could be considered with different
 treatment of the blocks :math:`P_m`. For example, incomplete LU factorization or
 an iterative method could be used instead of banded LU factorization.
 
-
 .. _IDA.Usage.CC.precond.idabbdpre:
 
 A parallel band-block-diagonal preconditioner module
@@ -3954,9 +4013,11 @@ user main program presented in :numref:`IDA.Usage.CC.skeleton_sim` are not bold.
 
 #. **Set linear solver optional inputs** (*if appropriate*)
 
-   Note that the user should not overwrite the preconditioner setup function or
-   solve function through calls to :c:func:`IDASetPreconditioner` optional input
-   function.
+   .. warning::
+
+      The user should not overwrite the preconditioner setup function or solve
+      function through calls to :c:func:`IDASetPreconditioner` optional input
+      function.
 
 #. **Initialize the IDABBDPRE preconditioner module**
 
@@ -4022,16 +4083,22 @@ preconditioner module are described next.
         compatible with the block band preconditioner.
 
    **Notes:**
+
       If one of the half-bandwidths ``mudq`` or ``mldq`` to be used in the
       difference-quotient calculation of the approximate Jacobian is negative or
-      exceeds the value ``Nlocal-1``, it is replaced by 0 or
-      ``Nlocal-1`` accordingly.  The half-bandwidths ``mudq`` and ``mldq``
-      need not be the true half-bandwidths of the Jacobian of the local block of
-      :math:`G`, when smaller values may provide a greater efficiency.  Also, the
-      half-bandwidths ``mukeep`` and ``mlkeep`` of the retained banded approximate
-      Jacobian block may be even smaller, to reduce storage and computation costs
-      further.  For all four half-bandwidths, the values need not be the same on
-      every processor.
+      exceeds the value ``Nlocal-1``, it is replaced by 0 or ``Nlocal-1``
+      accordingly.
+
+      The half-bandwidths ``mudq`` and ``mldq`` need not be the true
+      half-bandwidths of the Jacobian of the local block of :math:`G`, when smaller
+      values may provide a greater efficiency.
+
+      Also, the half-bandwidths ``mukeep`` and ``mlkeep`` of the retained banded
+      approximate Jacobian block may be even smaller, to reduce storage and
+      computation costs further.
+
+      For all four half-bandwidths, the values need not be the same on every
+      processor.
 
 
 The IDABBDPRE module also provides a reinitialization function to allow for a
