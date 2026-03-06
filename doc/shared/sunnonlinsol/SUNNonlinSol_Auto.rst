@@ -23,7 +23,7 @@ The SUNNonlinSol_Auto implementation
 
 This section describes the SUNNonlinSol implementation that can automatically
 switch between :numref:`SUNNonlinSol.FixedPoint` and :numref:`SUNNonlinSol.Newton`
-during a solve.
+during a solve. The switching algorithm is based on :cite:p:`norsett1986switching`.
 
 To access the SUNNonlinSol_Auto module, include the header file
 ``sunnonlinsol/sunnonlinsol_auto.h``. The library to link to is

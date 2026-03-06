@@ -6,6 +6,13 @@
 
 ### New Features and Enhancements
 
+We added a new SUNNonlinearSolver implementation, `SUNNonlinearSolver_Auto`,
+which uses an algorithm described in https://doi.org/10.1007/BF01933714 to
+switch between modified Newton iteration and fixed-point iteration based on
+an estimate of stiffness. This solver may be useful to pair with the BDF method
+in CVODE/CVODES for users who are unsure about the stiffness of their problem.
+See the module documentation for more information.
+
 ### Bug Fixes
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
