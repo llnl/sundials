@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sundials/sundials_math.h>
+#include <sunnonlinsol/sunnonlinsol_auto.h>
 
 #include "arkode_arkstep_impl.h"
 #include "arkode_impl.h"
@@ -134,95 +135,69 @@ int arkStep_SetNlsRhsFn(ARKodeMem ark_mem, ARKRhsFn nls_fi)
 int arkStep_SetNlsSysFn(ARKodeMem ark_mem)
 {
   ARKodeARKStepMem step_mem;
+  SUNNonlinSolSysFn root_fn;
+  SUNNonlinSolSysFn fixedpoint_fn;
   int retval;
 
   /* access ARKodeARKStepMem structure */
   retval = arkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
+  /* determine residual/fixed-point functions based on current settings */
+  root_fn       = NULL;
+  fixedpoint_fn = NULL;
+  if (step_mem->mass_type == MASS_IDENTITY)
+  {
+    if (step_mem->predictor == 0 && step_mem->autonomous)
+    {
+      root_fn = arkStep_NlsResidual_MassIdent_TrivialPredAutonomous;
+      fixedpoint_fn =
+        arkStep_NlsFPFunction_MassIdent_TrivialPredAutonomous;
+    }
+    else
+    {
+      root_fn       = arkStep_NlsResidual_MassIdent;
+      fixedpoint_fn = arkStep_NlsFPFunction_MassIdent;
+    }
+  }
+  else if (step_mem->mass_type == MASS_FIXED)
+  {
+    if (step_mem->predictor == 0 && step_mem->autonomous)
+    {
+      root_fn = arkStep_NlsResidual_MassFixed_TrivialPredAutonomous;
+      fixedpoint_fn =
+        arkStep_NlsFPFunction_MassFixed_TrivialPredAutonomous;
+    }
+    else
+    {
+      root_fn       = arkStep_NlsResidual_MassFixed;
+      fixedpoint_fn = arkStep_NlsFPFunction_MassFixed;
+    }
+  }
+  else if (step_mem->mass_type == MASS_TIMEDEP)
+  {
+    root_fn       = arkStep_NlsResidual_MassTDep;
+    fixedpoint_fn = arkStep_NlsFPFunction_MassTDep;
+  }
+  else
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Invalid mass matrix type");
+    return (ARK_ILL_INPUT);
+  }
+
   /* set the nonlinear residual/fixed-point function, based on solver type */
   if (SUNNonlinSolGetType(step_mem->NLS) == SUNNONLINEARSOLVER_ROOTFIND)
   {
-    if (step_mem->mass_type == MASS_IDENTITY)
-    {
-      if (step_mem->predictor == 0 && step_mem->autonomous)
-      {
-        retval =
-          SUNNonlinSolSetSysFn(step_mem->NLS,
-                               arkStep_NlsResidual_MassIdent_TrivialPredAutonomous);
-      }
-      else
-      {
-        retval = SUNNonlinSolSetSysFn(step_mem->NLS,
-                                      arkStep_NlsResidual_MassIdent);
-      }
-    }
-    else if (step_mem->mass_type == MASS_FIXED)
-    {
-      if (step_mem->predictor == 0 && step_mem->autonomous)
-      {
-        retval =
-          SUNNonlinSolSetSysFn(step_mem->NLS,
-                               arkStep_NlsResidual_MassFixed_TrivialPredAutonomous);
-      }
-      else
-      {
-        retval = SUNNonlinSolSetSysFn(step_mem->NLS,
-                                      arkStep_NlsResidual_MassFixed);
-      }
-    }
-    else if (step_mem->mass_type == MASS_TIMEDEP)
-    {
-      retval = SUNNonlinSolSetSysFn(step_mem->NLS, arkStep_NlsResidual_MassTDep);
-    }
-    else
-    {
-      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                      "Invalid mass matrix type");
-      return (ARK_ILL_INPUT);
-    }
+    retval = SUNNonlinSolSetSysFn(step_mem->NLS, root_fn);
   }
   else if (SUNNonlinSolGetType(step_mem->NLS) == SUNNONLINEARSOLVER_FIXEDPOINT)
   {
-    if (step_mem->mass_type == MASS_IDENTITY)
-    {
-      if (step_mem->predictor == 0 && step_mem->autonomous)
-      {
-        retval =
-          SUNNonlinSolSetSysFn(step_mem->NLS,
-                               arkStep_NlsFPFunction_MassIdent_TrivialPredAutonomous);
-      }
-      else
-      {
-        retval = SUNNonlinSolSetSysFn(step_mem->NLS,
-                                      arkStep_NlsFPFunction_MassIdent);
-      }
-    }
-    else if (step_mem->mass_type == MASS_FIXED)
-    {
-      if (step_mem->predictor == 0 && step_mem->autonomous)
-      {
-        retval =
-          SUNNonlinSolSetSysFn(step_mem->NLS,
-                               arkStep_NlsFPFunction_MassFixed_TrivialPredAutonomous);
-      }
-      else
-      {
-        retval = SUNNonlinSolSetSysFn(step_mem->NLS,
-                                      arkStep_NlsFPFunction_MassFixed);
-      }
-    }
-    else if (step_mem->mass_type == MASS_TIMEDEP)
-    {
-      retval = SUNNonlinSolSetSysFn(step_mem->NLS,
-                                    arkStep_NlsFPFunction_MassTDep);
-    }
-    else
-    {
-      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                      "Invalid mass matrix type");
-      return (ARK_ILL_INPUT);
-    }
+    retval = SUNNonlinSolSetSysFn(step_mem->NLS, fixedpoint_fn);
+  }
+  else if (SUNNonlinSolGetType(step_mem->NLS) == SUNNONLINEARSOLVER_HYBRID)
+  {
+    retval = SUNNonlinSolSetSysFns_Auto(step_mem->NLS, root_fn, fixedpoint_fn);
   }
   else
   {
@@ -1167,7 +1142,10 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS,
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  delnrm = N_VWrmsNorm(del, ewt);
+  if (SUNNonlinSolGetDelNrm(NLS, &delnrm) != SUN_SUCCESS)
+  {
+    delnrm = N_VWrmsNorm(del, ewt);
+  }
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);

@@ -18,7 +18,7 @@
 # Kvaerno-Prothero-Robinson (KPR) ODE test problem
 #
 #   [u]' = [ a  b ] [ (-1 + u^2 - r(t)) / (2u) ] + [ r'(t) / (2u) ]
-#   [v]    [ b  a ] [ (-2 + v^2 - s(t)) / (2v) ]   [ s'(t) / (2v) ]
+#   [v]    [ c  d ] [ (-2 + v^2 - s(t)) / (2v) ]   [ s'(t) / (2v) ]
 #
 # with analytic solution
 #
@@ -162,7 +162,7 @@ def parse_args(argv):
     return args, sundials_argv
 
 
-def make_plots(args):
+def make_plots(args, ts, us, vs):
     if not args.no_plot:
         try:
             import matplotlib.pyplot as plt
@@ -218,17 +218,6 @@ def make_plots(args):
             return merged
 
         segments = solver_segments_from_log(args.logfile)
-        if not segments:
-            for i in range(len(ts) - 1):
-                d_fp = nfp_totals[i + 1] - nfp_totals[i]
-                d_newt = nnewt_totals[i + 1] - nnewt_totals[i]
-                if d_newt > d_fp:
-                    solver = "Newton"
-                elif d_fp > d_newt:
-                    solver = "Fixed-Point"
-                else:
-                    solver = "Mixed"
-                segments.append((ts[i], ts[i + 1], solver))
 
         colors = {"Newton": "tab:blue", "Fixed-Point": "tab:orange", "Mixed": "0.75"}
 
@@ -367,10 +356,6 @@ def main(argv=None):
     ts = [T0]
     us = [float(yarr[0])]
     vs = [float(yarr[1])]
-    _, nfp0, nnewt0 = SUNNonlinSolGetNumItersByType_Auto(nls)
-    nfp_totals = [int(nfp0)]
-    nnewt_totals = [int(nnewt0)]
-
     with open("cv_kpr_solution.txt", "w") as out:
         out.write("# t u v uerr verr\n")
         out.write(
@@ -397,9 +382,6 @@ def main(argv=None):
             ts.append(float(tret))
             us.append(float(yarr[0]))
             vs.append(float(yarr[1]))
-            _, nfp, nnewt = SUNNonlinSolGetNumItersByType_Auto(nls)
-            nfp_totals.append(int(nfp))
-            nnewt_totals.append(int(nnewt))
 
             tout = min(tout + args.dtout, Tf)
 
@@ -430,6 +412,8 @@ def main(argv=None):
     print(f"   Total number of Jacobian evaluations = {nje}")
     print(f"   Total linear solver setups = {nsetups}")
     print(f"   Total RHS evals for setting up the linear system = {nfeLS}")
+
+    make_plots(args, ts, us, vs)
 
     
 def test_cvs_kpr_auto_nls():

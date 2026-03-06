@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sundials/sundials_math.h>
+#include <sunnonlinsol/sunnonlinsol_auto.h>
 
 #include "arkode_impl.h"
 #include "arkode_mristep_impl.h"
@@ -80,6 +81,12 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_FIXEDPOINT)
   {
     retval = SUNNonlinSolSetSysFn(step_mem->NLS, mriStep_NlsFPFunction);
+  }
+  else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_HYBRID)
+  {
+    retval =
+      SUNNonlinSolSetSysFns_Auto(step_mem->NLS, mriStep_NlsResidual,
+                                 mriStep_NlsFPFunction);
   }
   else
   {
@@ -582,7 +589,10 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS,
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  delnrm = N_VWrmsNorm(del, ewt);
+  if (SUNNonlinSolGetDelNrm(NLS, &delnrm) != SUN_SUCCESS)
+  {
+    delnrm = N_VWrmsNorm(del, ewt);
+  }
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
