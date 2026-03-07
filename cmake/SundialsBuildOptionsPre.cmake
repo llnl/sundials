@@ -459,7 +459,7 @@ sundials_option(SUNDIALS_DEV_CLANG_TIDY BOOL "Enable clang-tidy" OFF ADVANCED)
 # ---------------------------------------------------------------
 
 sundials_option(
-  SUNDIALS_ENABLE_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF
+  SUNDIALS_ENABLE_BENCHMARKS BOOL "Enable the benchmark suite" OFF
   DEPRECATED_NAMES BUILD_BENCHMARKS)
 
 sundials_option(
@@ -469,7 +469,7 @@ sundials_option(
 
 sundials_option(
   SUNDIALS_SCHEDULER_COMMAND STRING
-  "Job scheduler command to use to launch SUNDIALS MPI tests" "" ADVANCED)
+  "Job scheduler command to use to launch MPI tests" "" ADVANCED)
 
 sundials_option(
   SUNDIALS_BENCHMARKS_OUTPUT_DIR
