@@ -2814,7 +2814,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
     if (ark_mem->PreRhsFn)
     {
       retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
-      if (retval != 0) { return ARK_PREPROCESS_RHS_FAIL; }
+      if (retval != 0) { return ARK_PRERHSFN_FAIL; }
     }
 
     retval = step_mem->fe(t, y, ark_mem->fn, ark_mem->user_data);
