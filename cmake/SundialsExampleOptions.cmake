@@ -45,13 +45,11 @@ endif()
 # -----------------------------------------------------------------------------
 
 if(SUNDIALS_ENABLE_FORTRAN)
-  sundials_option(
-    EXAMPLES_ENABLE_F2003 BOOL "Build SUNDIALS Fortran examples" ON
-    DEPENDS_ON SUNDIALS_ENABLE_FORTRAN)
+  sundials_option(EXAMPLES_ENABLE_F2003 BOOL "Build SUNDIALS Fortran examples"
+                  ON DEPENDS_ON SUNDIALS_ENABLE_FORTRAN)
 else()
-  sundials_option(
-    EXAMPLES_ENABLE_F2003 BOOL "Build SUNDIALS Fortran examples" OFF
-    DEPENDS_ON SUNDIALS_ENABLE_FORTRAN)
+  sundials_option(EXAMPLES_ENABLE_F2003 BOOL "Build SUNDIALS Fortran examples"
+                  OFF DEPENDS_ON SUNDIALS_ENABLE_FORTRAN)
 endif()
 
 # -----------------------------------------------------------------------------
