@@ -53,7 +53,12 @@ jobs:
 
     - uses: pypa/cibuildwheel@v3.3
       env:
+        # Default (Linux/macOS): install matplotlib and run both test suites
+        CIBW_TEST_REQUIRES: "pytest matplotlib"
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test {project}/examples/python"
+        # Windows: DON'T install matplotlib, and skip the examples
+        CIBW_TEST_REQUIRES_WINDOWS: "pytest"
+        CIBW_TEST_COMMAND_WINDOWS: "pytest {project}/bindings/sundials4py/test"
 
     - name: Upload wheels
       uses: actions/upload-artifact@v7
@@ -81,10 +86,21 @@ jobs:
       with:
         submodules: true
 
+    # Double precision - run all tests
     - uses: pypa/cibuildwheel@v3.3
+      if: matrix.precision == 'double'
       env:
         CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
+        CIBW_TEST_REQUIRES: "pytest matplotlib"
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test {project}/examples/python"
+
+    # Single precision - skip examples
+    - uses: pypa/cibuildwheel@v3.3
+      if: matrix.precision == 'single'
+      env:
+        CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
+        CIBW_TEST_REQUIRES: "pytest"
+        CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
 
     - name: Rename wheels to include config
       run: |

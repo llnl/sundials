@@ -67,24 +67,24 @@ set(sundials_HEADERS
     sundials_types.h
     sundials_version.h)
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   list(APPEND sundials_HEADERS sundials_mpi_errors.h)
 endif()
 
-if(ENABLE_CUDA)
+if(SUNDIALS_ENABLE_CUDA)
   list(APPEND sundials_HEADERS sundials_cuda_policies.hpp)
 endif()
 
-if(ENABLE_HIP)
+if(SUNDIALS_ENABLE_HIP)
   list(APPEND sundials_HEADERS sundials_hip_policies.hpp)
 endif()
 
-if(ENABLE_SYCL)
+if(SUNDIALS_ENABLE_SYCL)
   list(APPEND sundials_HEADERS sundials_sycl_policies.hpp)
 endif()
 
 # If enabled, add the XBraid interface header
-if(ENABLE_XBRAID)
+if(SUNDIALS_ENABLE_XBRAID)
   list(APPEND sundials_HEADERS sundials_xbraid.h)
 endif()
 
@@ -119,23 +119,23 @@ set(sundials_SOURCES
     sundials_profiler.c
     sundials_version.c)
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   list(APPEND sundials_SOURCES sundials_mpi_errors.c)
 endif()
 
 # Add prefix with complete path to the source files
 add_prefix(${SUNDIALS_SOURCE_DIR}/src/sundials/ sundials_SOURCES)
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   set(_link_mpi_if_needed PUBLIC MPI::MPI_C
                           $<$<LINK_LANGUAGE:CXX>:MPI::MPI_CXX>)
 endif()
 
 if(SUNDIALS_BUILD_WITH_PROFILING)
-  if(ENABLE_CALIPER)
+  if(SUNDIALS_ENABLE_CALIPER)
     set(_link_caliper_if_needed PUBLIC caliper)
   endif()
-  if(ENABLE_ADIAK)
+  if(SUNDIALS_ENABLE_ADIAK)
     set(_link_adiak_if_needed PUBLIC adiak::adiak ${CMAKE_DL_LIBS})
   endif()
 endif()
@@ -158,7 +158,7 @@ install(
         ${SUNDIALS_SOURCE_DIR}/include/sundials/priv/sundials_logger_macros.h
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sundials/priv")
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   install(
     FILES
       ${SUNDIALS_SOURCE_DIR}/include/sundials/priv/sundials_mpi_errors_impl.h

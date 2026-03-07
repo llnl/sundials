@@ -25,7 +25,7 @@ set(ARKODE_examples
     "ark_heat2D_xbraid\;--x_print_level 0\;1\;4\;develop"
     "ark_heat2D_p_xbraid\;--np 2 1 2 --x_print_level 0\;1\;4\;develop")
 
-if(ENABLE_HYPRE AND HYPRE_FOUND)
+if(SUNDIALS_ENABLE_HYPRE)
   set(ARKODE_examples_hypre
       "ark_heat2D_hypre_pfmg_xbraid\;--np 2 1 2 --x_print_level 0\;1\;4\;develop"
   )
@@ -95,7 +95,7 @@ foreach(example_tuple ${ARKODE_examples})
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(ENABLE_HYPRE AND HYPRE_FOUND)
+if(SUNDIALS_ENABLE_HYPRE)
 
   # Add the build and install targets for each example
   foreach(example_tuple ${ARKODE_examples_hypre})

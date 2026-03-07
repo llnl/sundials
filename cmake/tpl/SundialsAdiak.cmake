@@ -14,26 +14,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup ADIAK correctly.
-# Created from the SundialsTPL.cmake template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup ADIAK.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED SUNDIALS_ADIAK_INCLUDED)
-  set(SUNDIALS_ADIAK_INCLUDED)
-else()
-  return()
-endif()
+include_guard(GLOBAL)
 
 # -----------------------------------------------------------------------------
 # Section 2: Check to make sure options are compatible
@@ -51,16 +39,16 @@ message(STATUS "ADIAK_INCLUDE_DIR: ${adiak_INCLUDE_DIR}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(adiak_FOUND AND (NOT adiak_WORKS))
-  # Do any checks which don't require compilation first.
+if(SUNDIALS_ENABLE_ADIAK_CHECKS)
+
+  message(CHECK_START "Testing Adiak")
 
   # Create the adiak_TEST directory
-  set(adiak_TEST_DIR ${PROJECT_BINARY_DIR}/adiak_TEST)
-  file(MAKE_DIRECTORY ${adiak_TEST_DIR})
+  set(TEST_DIR ${PROJECT_BINARY_DIR}/ADIAK_TEST)
 
   # Create a C source file
   file(
-    WRITE ${adiak_TEST_DIR}/ltest.c
+    WRITE ${TEST_DIR}/test.c
     "\#include <adiak.h>\n"
     "int main(void)\n"
     "{\n"
@@ -69,30 +57,25 @@ if(adiak_FOUND AND (NOT adiak_WORKS))
     "  return 0;\n"
     "}\n")
 
-  # To ensure we do not use stuff from the previous attempts, we must remove the
-  # CMakeFiles directory.
-  file(REMOVE_RECURSE ${adiak_TEST_DIR}/CMakeFiles)
-
-  # Attempt to build and link the "ltest" executable
+  # Attempt to build and link the test executable, pass --debug-trycompile to
+  # the cmake command to save build files for debugging
   try_compile(
-    COMPILE_OK ${adiak_TEST_DIR}
-    ${adiak_TEST_DIR}/ltest.c
-    OUTPUT_VARIABLE COMPILE_OUTPUT
-    LINK_LIBRARIES adiak::adiak ${CMAKE_DL_LIBS})
+    COMPILE_OK ${TEST_DIR}
+    ${TEST_DIR}/test.c
+    LINK_LIBRARIES adiak::adiak ${CMAKE_DL_LIBS}
+    OUTPUT_VARIABLE COMPILE_OUTPUT)
 
-  # Process test result
+  # Check the result
   if(COMPILE_OK)
-    message(STATUS "Checking if adiak works with SUNDIALS... OK")
-    set(adiak_WORKS
-        TRUE
-        CACHE BOOL "adiak works with SUNDIALS as configured" FORCE)
+    message(CHECK_PASS "success")
   else()
-    message(STATUS "Checking if adiak works with SUNDIALS... FAILED")
-    message(STATUS "Check output: ")
-    message("${COMPILE_OUTPUT}")
-    message(FATAL_ERROR "SUNDIALS interface to adiak is not functional.")
+    message(CHECK_FAIL "failed")
+    file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
+    message(
+      FATAL_ERROR
+        "Could not compile Adiak test. Check output in ${TEST_DIR}/compile.out")
   endif()
 
-elseif(adiak_FOUND AND adiak_WORKS)
-  message(STATUS "Skipped adiak tests, assuming adiak works with SUNDIALS.")
+else()
+  message(STATUS "Skipped Adiak checks.")
 endif()

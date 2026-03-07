@@ -14,26 +14,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup Kokkos correctly.
-# Created from the SundialsTPL.cmake template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup Kokkos.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED SUNDIALS_KOKKOS_INCLUDED)
-  set(SUNDIALS_KOKKOS_INCLUDED)
-else()
-  return()
-endif()
+include_guard(GLOBAL)
 
 # -----------------------------------------------------------------------------
 # Section 2: Check to make sure options are compatible
@@ -42,7 +30,7 @@ endif()
 # -----------------------------------------------------------------------------
 # Section 3: Find the TPL
 # -----------------------------------------------------------------------------
-find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}" NO_DEFAULT_PATH)
+find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}")
 
 # We should be able to use Kokkos_DEVICES directly but it seems to get removed
 # or unset in some CMake versions
@@ -56,11 +44,9 @@ message(STATUS "Kokkos VERSION: ${Kokkos_VERSION}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(Kokkos_FOUND AND (NOT KOKKOS_WORKS))
-  message(STATUS "Checking if Kokkos works... OK")
-  set(KOKKOS_WORKS
-      TRUE
-      CACHE BOOL "Kokkos works with SUNDIALS as configured" FORCE)
-elseif(Kokkos_FOUND AND KOKKOS_WORKS)
-  message(STATUS "Skipped Kokkos tests, assuming Kokkos works with SUNDIALS.")
+if(SUNDIALS_ENABLE_KOKKOS_CHECKS)
+  message(CHECK_START "Testing Kokkos")
+  message(CHECK_PASS "success")
+else()
+  message(STATUS "Skipped Kokkos checks.")
 endif()

@@ -72,7 +72,7 @@ function(sundials_add_benchmark NAME EXECUTABLE BASE_BENCHMARK_NAME)
       "--verbose" "--executablename=$<TARGET_FILE:${EXECUTABLE}>"
       "--outputdir=${_output_dir}" "--nodiff")
 
-  if(ENABLE_CALIPER)
+  if(SUNDIALS_ENABLE_CALIPER)
     set(_caliper_dir
         "${SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}"
     )
