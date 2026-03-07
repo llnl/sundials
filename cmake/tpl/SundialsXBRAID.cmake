@@ -14,35 +14,24 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup <TPL> correctly.
-# Created from the SundialsTPL.cmake template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup XBraid.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED SUNDIALS_XBRAID_INCLUDED)
-  set(SUNDIALS_XBRAID_INCLUDED)
-else()
-  return()
-endif()
+include_guard(GLOBAL)
 
 # -----------------------------------------------------------------------------
 # Section 2: Check to make sure options are compatible
 # -----------------------------------------------------------------------------
 
 # Using XBRAID requires building with MPI enabled
-if(NOT ENABLE_MPI)
+if(NOT SUNDIALS_ENABLE_MPI)
   message(
-    FATAL_ERROR "MPI is required for XBraid support. Set ENABLE_MPI to ON.")
+    FATAL_ERROR
+      "MPI is required for XBraid support. Set SUNDIALS_ENABLE_MPI to ON.")
 endif()
 
 # XBraid does not support single or extended precision
@@ -71,36 +60,16 @@ message(STATUS "XBRAID_INCLUDES:  ${XBRAID_INCS}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-# Add works variable
+if(SUNDIALS_ENABLE_XBRAID_CHECKS)
 
-if(XBRAID_FOUND AND (NOT XBRAID_WORKS))
+  message(CHECK_START "Testing XBraid")
 
   # Create the XBRAID_TEST directory
-  set(XBRAID_TEST_DIR ${PROJECT_BINARY_DIR}/XBRAID_TEST)
-  file(MAKE_DIRECTORY ${XBRAID_TEST_DIR})
-
-  # Create a CMakeLists.txt file
-  file(
-    WRITE ${XBRAID_TEST_DIR}/CMakeLists.txt
-    "cmake_minimum_required(VERSION ${CMAKE_VERSION})\n"
-    "project(ltest C)\n"
-    "set(CMAKE_VERBOSE_MAKEFILE ON)\n"
-    "set(CMAKE_BUILD_TYPE \"${CMAKE_BUILD_TYPE}\")\n"
-    "set(CMAKE_C_COMPILER ${MPI_C_COMPILER})\n"
-    "set(CMAKE_C_STANDARD ${CMAKE_C_STANDARD})\n"
-    "set(CMAKE_C_FLAGS \"${CMAKE_C_FLAGS}\")\n"
-    "set(CMAKE_C_FLAGS_RELEASE \"${CMAKE_C_FLAGS_RELEASE}\")\n"
-    "set(CMAKE_C_FLAGS_DEBUG \"${CMAKE_C_FLAGS_DEBUG}\")\n"
-    "set(CMAKE_C_FLAGS_RELWITHDEBUGINFO \"${CMAKE_C_FLAGS_RELWITHDEBUGINFO}\")\n"
-    "set(CMAKE_C_FLAGS_MINSIZE \"${CMAKE_C_FLAGS_MINSIZE}\")\n"
-    "add_executable(ltest ltest.c)\n"
-    "target_include_directories(ltest PRIVATE \"${XBRAID_INCS}\")\n"
-    "target_link_libraries(ltest \"${XBRAID_LIBS}\")\n"
-    "target_link_libraries(ltest m)\n")
+  set(TEST_DIR ${PROJECT_BINARY_DIR}/XBRAID_TEST)
 
   # Create a C source file
   file(
-    WRITE ${XBRAID_TEST_DIR}/ltest.c
+    WRITE ${TEST_DIR}/test.c
     "\#include <stdlib.h>\n"
     "\#include \"braid.h\"\n"
     "int main(void) {\n"
@@ -110,31 +79,26 @@ if(XBRAID_FOUND AND (NOT XBRAID_WORKS))
     "return 0;\n"
     "}\n")
 
-  # To ensure we do not use stuff from the previous attempts, we must remove the
-  # CMakeFiles directory.
-  file(REMOVE_RECURSE ${XBRAID_TEST_DIR}/CMakeFiles)
-
-  # Attempt to build and link the "ltest" executable
+  # Attempt to build and link the test executable, pass --debug-trycompile to
+  # the cmake command to save build files for debugging
   try_compile(
-    COMPILE_OK ${XBRAID_TEST_DIR}
-    ${XBRAID_TEST_DIR} ltest
+    COMPILE_OK ${TEST_DIR}
+    ${TEST_DIR}/test.c
+    LINK_LIBRARIES SUNDIALS::XBRAID MPI::MPI_C ${SUNDIALS_MATH_LIBRARY}
     OUTPUT_VARIABLE COMPILE_OUTPUT)
 
   # Process test result
   if(COMPILE_OK)
-    message(STATUS "Checking if XBRAID works... OK")
-    set(XBRAID_WORKS
-        TRUE
-        CACHE BOOL "XBRAID works as configured" FORCE)
+    message(CHECK_PASS "success")
   else()
-    message(STATUS "Checking if XBRAID works... FAILED")
-    message(STATUS "Check output: ")
-    message("${COMPILE_OUTPUT}")
-    message(FATAL_ERROR "XBRAID compile test failed.")
+    message(CHECK_FAIL "failed")
+    file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
+    message(
+      FATAL_ERROR
+        "Could not compile XBraid test. Check output in ${TEST_DIR}/compile.out"
+    )
   endif()
 
-  message(STATUS "XBRAID tests passed")
-
 else()
-  message(STATUS "Skipped XBRAID tests, assuming XBRAID works with SUNDIALS.")
+  message(STATUS "Skipped XBraid checks.")
 endif()
