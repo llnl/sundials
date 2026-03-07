@@ -320,7 +320,8 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
   LSRKStepSetUseAnalyticStabRegion sets whether to use the ellipse or the exact 
   stability region for stability checks.
   ---------------------------------------------------------------*/
-int LSRKStepSetUseAnalyticStabRegion(void* arkode_mem, sunbooleantype use_analytic_stab_region)
+int LSRKStepSetUseAnalyticStabRegion(void* arkode_mem,
+                                     sunbooleantype use_analytic_stab_region)
 {
   ARKodeMem ark_mem;
   ARKodeLSRKStepMem step_mem;

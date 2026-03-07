@@ -193,7 +193,8 @@ SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data,
   return (ier);
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data, DEERhsFn RHSfn)
+SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data,
+                                     DEERhsFn RHSfn)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
@@ -203,7 +204,8 @@ SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data, DEE
   return (ier);
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector(SUNDomEigEstimator DEE, N_Vector v)
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector(SUNDomEigEstimator DEE,
+                                                        N_Vector v)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));

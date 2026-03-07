@@ -53,9 +53,9 @@ struct SUNDomEigEstimatorContent_Power_
   sunrealtype rel_tol; /* Convergence criteria for the power iteration */
   sunrealtype res;     /* Residual from the last Estimate call */
 
-  DEERhsFn rhsfn;      /* User provided RHS function */
-  void* rhs_data;      /* RHS function data */
-  long int nfevals;    /* Number of RHS evaluations */
+  DEERhsFn rhsfn;   /* User provided RHS function */
+  void* rhs_data;   /* RHS function data */
+  long int nfevals; /* Number of RHS evaluations */
 
   sunbooleantype complex; /* Flag for complex eigenvalue request */
 };
@@ -76,8 +76,8 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
                                               void* A_data, SUNATimesFn ATimes);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE, void* rhs_data, 
-                                           DEERhsFn RHSfn);
+SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE,
+                                           void* rhs_data, DEERhsFn RHSfn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetMaxIters_Power(SUNDomEigEstimator DEE,
@@ -96,11 +96,12 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
                                                     N_Vector q);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Power(SUNDomEigEstimator DEE, 
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Power(SUNDomEigEstimator DEE,
                                                               N_Vector v);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real);
+SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE,
+                                                 sunbooleantype real);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE);

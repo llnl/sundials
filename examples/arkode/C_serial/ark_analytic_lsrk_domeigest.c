@@ -239,7 +239,10 @@ int main(int argc, char* argv[])
 
   /* Set real type dominant eigenvalue */
   flag = SUNDomEigEstimator_SetDEEisReal_Power(DEE, SUNTRUE);
-  if (check_flag(&flag, "SUNDomEigEstimator_SetDEEisReal_Power", 1)) { return 1; }
+  if (check_flag(&flag, "SUNDomEigEstimator_SetDEEisReal_Power", 1))
+  {
+    return 1;
+  }
 
   /* Open output stream for results, output comment line */
   UFID = fopen("solution.txt", "w");

@@ -113,15 +113,15 @@ int main(int argc, char* argv[])
   sunindextype NEQ   = 3;                     /* number of dependent vars. */
   int Nt             = (int)ceil(Tf / dTout); /* number of output times */
   int test           = 2;                     /* test problem to run */
-  sunrealtype reltol = SUN_RCONST(1.0e-6);     /* tolerances */
+  sunrealtype reltol = SUN_RCONST(1.0e-6);    /* tolerances */
   sunrealtype abstol = SUN_RCONST(1.0e-10);
   sunrealtype a, b, ep, u0, v0, w0;
 
   /* general problem variables */
-  int flag;                  /* reusable error-checking flag */
-  N_Vector y         = NULL; /* empty vector for storing solution */
-  void* arkode_mem   = NULL; /* empty ARKode memory structure */
-  UserData ProbData;         /* problem data structure     */
+  int flag;                /* reusable error-checking flag */
+  N_Vector y       = NULL; /* empty vector for storing solution */
+  void* arkode_mem = NULL; /* empty ARKode memory structure */
+  UserData ProbData;       /* problem data structure     */
   FILE* UFID;
   sunrealtype t, tout;
   int iout;
@@ -171,16 +171,16 @@ int main(int argc, char* argv[])
   printf("    reltol = %.1" ESYM ",  abstol = %.1" ESYM "\n\n", reltol, abstol);
 
   /* Initialize data structures */
-  ProbData.ctx = ctx;
-  ProbData.rdata[0] = a; /* set user data  */
-  ProbData.rdata[1] = b;
-  ProbData.rdata[2] = ep;
-  ProbData.DEE      = NULL;
-  ProbData.rel_tol  = SUN_RCONST(5.0e-3);
-  ProbData.max_iters = 100;
-  ProbData.numwarmup = 10;
+  ProbData.ctx         = ctx;
+  ProbData.rdata[0]    = a; /* set user data  */
+  ProbData.rdata[1]    = b;
+  ProbData.rdata[2]    = ep;
+  ProbData.DEE         = NULL;
+  ProbData.rel_tol     = SUN_RCONST(5.0e-3);
+  ProbData.max_iters   = 100;
+  ProbData.numwarmup   = 10;
   ProbData.curent_time = T0;
-  y        = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
+  y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
   NV_Ith_S(y, 0) = u0; /* Set initial conditions */
   NV_Ith_S(y, 1) = v0;
@@ -286,10 +286,10 @@ int main(int argc, char* argv[])
   if (check_flag(&flag, "ARKodePrintAllStats", 1)) { return 1; }
 
   /* Clean up and return with successful completion */
-  N_VDestroy(y);           /* Free y vector */
-  ARKodeFree(&arkode_mem); /* Free integrator memory */
+  N_VDestroy(y);                             /* Free y vector */
+  ARKodeFree(&arkode_mem);                   /* Free integrator memory */
   SUNDomEigEstimator_Destroy(&ProbData.DEE); /* Free DEE object */
-  SUNContext_Free(&ctx);   /* Free context */
+  SUNContext_Free(&ctx);                     /* Free context */
 
   return flag;
 }
@@ -301,14 +301,14 @@ int main(int argc, char* argv[])
 /* f routine to compute the ODE RHS function f(t,y). */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  UserData* data = (UserData*)user_data; /* cast user_data to UserData */
-  sunrealtype* rdata = data->rdata;      /* access rdata from UserData */
-  sunrealtype a  = rdata[0];             /* access data entries */
-  sunrealtype b  = rdata[1];
-  sunrealtype ep = rdata[2];
-  sunrealtype u  = NV_Ith_S(y, 0); /* access solution values */
-  sunrealtype v  = NV_Ith_S(y, 1);
-  sunrealtype w  = NV_Ith_S(y, 2);
+  UserData* data     = (UserData*)user_data; /* cast user_data to UserData */
+  sunrealtype* rdata = data->rdata;          /* access rdata from UserData */
+  sunrealtype a      = rdata[0];             /* access data entries */
+  sunrealtype b      = rdata[1];
+  sunrealtype ep     = rdata[2];
+  sunrealtype u      = NV_Ith_S(y, 0); /* access solution values */
+  sunrealtype v      = NV_Ith_S(y, 1);
+  sunrealtype w      = NV_Ith_S(y, 2);
 
   /* fill in the RHS function */
   NV_Ith_S(ydot, 0) = a - (w + 1.0) * u + v * u * u;
@@ -322,15 +322,12 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fstead(N_Vector y, N_Vector ydot, void* user_data)
 {
   UserData* data = (UserData*)user_data; /* cast user_data to UserData */
-  sunrealtype t = data->curent_time; /* access current time from UserData */
+  sunrealtype t  = data->curent_time;    /* access current time from UserData */
 
   f(t, y, ydot, user_data);
 
   return 0; /* Return with success */
 }
-
-
-
 
 /* dom_eig routine to estimate the dominated eigenvalue */
 static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
@@ -338,16 +335,16 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
                    N_Vector temp2, N_Vector temp3)
 {
   int flag;
-  UserData* data = (UserData*)user_data; /* cast user_data to UserData */
+  UserData* data    = (UserData*)user_data; /* cast user_data to UserData */
   data->curent_time = t; /* update current time in UserData */
 
-  SUNContext ctx = data->ctx; /* access context from UserData */
+  SUNContext ctx         = data->ctx; /* access context from UserData */
   SUNDomEigEstimator DEE = data->DEE; /* access DEE from UserData */
 
   if (DEE == NULL)
   {
     /* Create random initial vector for power iteration */
-    sunrealtype* qd = N_VGetArrayPointer(temp1);
+    sunrealtype* qd  = N_VGetArrayPointer(temp1);
     sunindextype NEQ = N_VGetLength(temp1);
     for (int i = 0; i < NEQ; i++)
     {
@@ -364,10 +361,16 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
 
     /* Set the linearization vector for the Jacobian-vector products */
     flag = SUNDomEigEstimator_SetRHSLinearizationVector(DEE, y);
-    if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationVector", 1)) { return 1; }
+    if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationVector", 1))
+    {
+      return 1;
+    }
 
     flag = SUNDomEigEstimator_SetNumPreprocessIters(DEE, data->numwarmup);
-    if (check_flag(&flag, "SUNDomEigEstimator_SetNumPreprocessIters", 1)) { return 1; }
+    if (check_flag(&flag, "SUNDomEigEstimator_SetNumPreprocessIters", 1))
+    {
+      return 1;
+    }
 
     flag = SUNDomEigEstimator_Initialize(DEE);
     if (check_flag(&flag, "SUNDomEigEstimator_Initialize", 1)) { return 1; }
@@ -375,7 +378,10 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
 
   /* Update the linearization vector for the Jacobian-vector products */
   flag = SUNDomEigEstimator_SetRHSLinearizationVector(DEE, y);
-  if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationVector", 1)) { return 1; }
+  if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationVector", 1))
+  {
+    return 1;
+  }
 
   /* Estimate the dominant eigenvalue with power iteration */
   flag = SUNDomEigEstimator_Estimate(DEE, lambdaR, lambdaI);

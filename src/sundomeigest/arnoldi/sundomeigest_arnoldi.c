@@ -188,7 +188,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
 }
 
 SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
-                                              void* rhs_data, DEERhsFn RHSfn)
+                                             void* rhs_data, DEERhsFn RHSfn)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -197,7 +197,7 @@ SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
 
   /* set function pointers to integrator-supplied RHS routine
      and data, and return with success */
-  Arnoldi_CONTENT(DEE)->rhsfn = RHSfn;
+  Arnoldi_CONTENT(DEE)->rhsfn    = RHSfn;
   Arnoldi_CONTENT(DEE)->rhs_data = rhs_data;
 
   DEE->ops->setatimes(DEE, (void*)DEE, dee_DQJtimes);
@@ -206,7 +206,8 @@ SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi(SUNDomEigEstimator DEE, N_Vector v)
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi(
+  SUNDomEigEstimator DEE, N_Vector v)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -703,7 +704,8 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work = Arnoldi_CONTENT(DEE)->work;
   N_Vector Fv   = Arnoldi_CONTENT(DEE)->Fv;
 
-  retval = Arnoldi_CONTENT(DEE)->rhsfn(y, Arnoldi_CONTENT(DEE)->Fv, Arnoldi_CONTENT(DEE)->rhs_data);
+  retval = Arnoldi_CONTENT(DEE)->rhsfn(y, Arnoldi_CONTENT(DEE)->Fv,
+                                       Arnoldi_CONTENT(DEE)->rhs_data);
   Arnoldi_CONTENT(DEE)->nfevals++;
   if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
@@ -717,7 +719,8 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
     N_VLinearSum(sig, v, ONE, y, work);
 
     /* Set Jv = f(tn, y+sig*v) */
-    retval = Arnoldi_CONTENT(DEE)->rhsfn(work, Jv, Arnoldi_CONTENT(DEE)->rhs_data);
+    retval = Arnoldi_CONTENT(DEE)->rhsfn(work, Jv,
+                                         Arnoldi_CONTENT(DEE)->rhs_data);
     Arnoldi_CONTENT(DEE)->nfevals++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 

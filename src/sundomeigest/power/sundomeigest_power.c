@@ -100,8 +100,8 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  DEE->ops->setatimes   = SUNDomEigEstimator_SetATimes_Power;
-  DEE->ops->setrhs      = SUNDomEigEstimator_SetRHS_Power;
+  DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Power;
+  DEE->ops->setrhs    = SUNDomEigEstimator_SetRHS_Power;
   DEE->ops->setrhslinearizationvector =
     SUNDomEigEstimator_SetRHSLinearizationVector_Power;
   DEE->ops->setmaxiters = SUNDomEigEstimator_SetMaxIters_Power;
@@ -179,7 +179,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE, 
+SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE,
                                            void* rhs_data, DEERhsFn RHSfn)
 {
   SUNFunctionBegin(DEE->sunctx);
@@ -190,16 +190,17 @@ SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE,
 
   /* set function pointers to integrator-supplied RHS routine
      and data, and return with success */
-  PI_CONTENT(DEE)->rhsfn = RHSfn;
+  PI_CONTENT(DEE)->rhsfn    = RHSfn;
   PI_CONTENT(DEE)->rhs_data = rhs_data;
-  
+
   DEE->ops->setatimes(DEE, (void*)DEE, dee_DQJtimes);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Power(SUNDomEigEstimator DEE, N_Vector v)
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Power(SUNDomEigEstimator DEE,
+                                                              N_Vector v)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -219,7 +220,8 @@ SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Power(SUNDomEigEstimator
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real)
+SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE,
+                                                 sunbooleantype real)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -669,7 +671,8 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work = PI_CONTENT(DEE)->work;
   N_Vector Fv   = PI_CONTENT(DEE)->Fv;
 
-  retval = PI_CONTENT(DEE)->rhsfn(y, PI_CONTENT(DEE)->Fv, PI_CONTENT(DEE)->rhs_data);
+  retval = PI_CONTENT(DEE)->rhsfn(y, PI_CONTENT(DEE)->Fv,
+                                  PI_CONTENT(DEE)->rhs_data);
   PI_CONTENT(DEE)->nfevals++;
   if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 

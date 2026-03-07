@@ -92,10 +92,12 @@ SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data,
                                         SUNATimesFn ATimes);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data, DEERhsFn RHSfn);
+SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data,
+                                     DEERhsFn RHSfn);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector(SUNDomEigEstimator DEE, N_Vector v);
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector(SUNDomEigEstimator DEE,
+                                                        N_Vector v);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetOptions(SUNDomEigEstimator DEE,

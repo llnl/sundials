@@ -93,14 +93,14 @@ int main(int argc, char* argv[])
   sunindextype NEQ   = 3;                     /* number of dependent vars. */
   int Nt             = (int)ceil(Tf / dTout); /* number of output times */
   int test           = 2;                     /* test problem to run */
-  sunrealtype reltol = SUN_RCONST(1.0e-6);     /* tolerances */
+  sunrealtype reltol = SUN_RCONST(1.0e-6);    /* tolerances */
   sunrealtype abstol = SUN_RCONST(1.0e-10);
   sunrealtype a, b, ep, u0, v0, w0;
 
   /* general problem variables */
-  int flag;                  /* reusable error-checking flag */
-  N_Vector y         = NULL; /* empty vector for storing solution */
-  void* arkode_mem   = NULL; /* empty ARKode memory structure */
+  int flag;                /* reusable error-checking flag */
+  N_Vector y       = NULL; /* empty vector for storing solution */
+  void* arkode_mem = NULL; /* empty ARKode memory structure */
   sunrealtype rdata[3];
   FILE* UFID;
   sunrealtype t, tout;
@@ -303,10 +303,10 @@ int main(int argc, char* argv[])
   if (check_flag(&flag, "ARKodePrintAllStats", 1)) { return 1; }
 
   /* Clean up and return with successful completion */
-  N_VDestroy(y);           /* Free y vector */
-  ARKodeFree(&arkode_mem); /* Free integrator memory */
+  N_VDestroy(y);                    /* Free y vector */
+  ARKodeFree(&arkode_mem);          /* Free integrator memory */
   SUNDomEigEstimator_Destroy(&DEE); /* Free DEE object */
-  SUNContext_Free(&ctx);   /* Free context */
+  SUNContext_Free(&ctx);            /* Free context */
 
   return flag;
 }
