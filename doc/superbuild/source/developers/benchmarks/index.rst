@@ -20,6 +20,30 @@
 Benchmarks
 ==========
 
+In this chapter we describe performance benchmark programs distributed with
+SUNDIALS. To enable the benchmark programs and set the installation location use
+the following CMake options.
+
+.. cmakeoption:: SUNDIALS_ENABLE_BENCHMARKS
+
+   Enable the benchmark problems
+
+   Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_BENCHMARKS``
+
+.. cmakeoption:: SUNDIALS_BENCHMARKS_INSTALL_PATH
+
+   Full path to where to install the benchmark problems
+
+   Default: ``CMAKE_INSTALL_PREFIX/benchmarks``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BENCHMARKS_INSTALL_PATH``
+
 The following sections describe the SUNDIALS performance benchmark problems.
 
 .. toctree::

@@ -62,7 +62,7 @@ function(sundials_add_benchmark NAME EXECUTABLE BASE_BENCHMARK_NAME)
 
   # make the the output directory if it doesn't exist
   set(_output_dir
-      "${SUNDIALS_BENCHMARK_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}")
+      "${SUNDIALS_BENCHMARKS_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}")
   if(NOT EXISTS ${_output_dir})
     file(MAKE_DIRECTORY ${_output_dir})
   endif()
@@ -74,7 +74,7 @@ function(sundials_add_benchmark NAME EXECUTABLE BASE_BENCHMARK_NAME)
 
   if(SUNDIALS_ENABLE_CALIPER)
     set(_caliper_dir
-        "${SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}"
+        "${SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}"
     )
     if(NOT EXISTS ${_caliper_dir})
       file(MAKE_DIRECTORY ${_caliper_dir})
