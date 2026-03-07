@@ -51,7 +51,7 @@ diff --git a/cmake/tpl/SundialsHypre.cmake b/cmake/tpl/SundialsHypre.cmake
 index 9633f1c11..19d4bf201 100644
 --- a/cmake/tpl/SundialsHypre.cmake
 +++ b/cmake/tpl/SundialsHypre.cmake
-@@ -78,15 +78,14 @@ if(HYPRE_FOUND AND (NOT SUNDIALS_HYPRE_WORKS))
+@@ -78,15 +78,14 @@ if(HYPRE_FOUND AND (NOT HYPRE_WORKS))
    "ADD_EXECUTABLE(ltest ltest.c)\n"
    "TARGET_LINK_LIBRARIES(ltest ${HYPRE_LIBRARIES})\n")
  
