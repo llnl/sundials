@@ -59,6 +59,8 @@ table below lists the old CMake option names and the new replacements.
 | `KOKKOS_WORKS`                         | `SUNDIALS_ENABLE_KOKKOS_CHECKS`                |
 | `ENABLE_KOKKOS_KERNELS`                | `SUNDIALS_ENABLE_KOKKOS_KERNELS`               |
 | `KOKKOS_KERNELS_WORKS`                 | `SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
+| `BUILD_FORTRAN_MODULE_INTERFACE`       | `SUNDIALS_ENABLE_FORTRAN`                      |
+
 
 ## Changes to SUNDIALS in release 7.6.0
 

@@ -207,17 +207,22 @@ endif()
 # Options to enable Fortran interfaces.
 # ---------------------------------------------------------------
 
-# Fortran 2003 interface is disabled by default
+# Fortran interfaces are disabled by default
 sundials_option(
-  BUILD_FORTRAN_MODULE_INTERFACE BOOL "Enable Fortran 2003 modules" OFF
-  DEPRECATED_NAMES F2003_INTERFACE_ENABLE)
+  SUNDIALS_ENABLE_FORTRAN
+  BOOL
+  "Enable Fortran interfaces"
+  OFF
+  DEPRECATED_NAMES
+  F2003_INTERFACE_ENABLE
+  BUILD_FORTRAN_MODULE_INTERFACE)
 
-if(BUILD_FORTRAN_MODULE_INTERFACE)
-  # F2003 interface only supports double precision
+if(SUNDIALS_ENABLE_FORTRAN)
+  # Fortran interfaces only support double precision
   if(NOT (SUNDIALS_PRECISION MATCHES "DOUBLE"))
     message(
       FATAL_ERROR
-        "F2003 interface is not compatible with ${SUNDIALS_PRECISION} precision"
+        "Fortran interfaces are not compatible with ${SUNDIALS_PRECISION} precision"
     )
   endif()
 
@@ -225,7 +230,7 @@ if(BUILD_FORTRAN_MODULE_INTERFACE)
   if(NOT (SUNDIALS_COUNTER_TYPE MATCHES "long int"))
     message(
       FATAL_ERROR
-        "F2003 interface is only compatible with long int SUNDIALS_COUNTER_TYPE"
+        "Fortran interfaces are only compatible with long int SUNDIALS_COUNTER_TYPE"
     )
   endif()
 
