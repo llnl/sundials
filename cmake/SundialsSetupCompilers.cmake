@@ -321,7 +321,7 @@ check_c_source_compiles(
 
 # When LAPACK is enabled we will need a Fortran compiler to infer the
 # name-mangling scheme if it is not set by the user
-if(ENABLE_LAPACK)
+if(SUNDIALS_ENABLE_LAPACK)
   set(NEED_FORTRAN_NAME_MANGLING TRUE)
 endif()
 
@@ -429,16 +429,16 @@ if(BUILD_BENCHMARKS
    OR SUNDIALS_ENABLE_PYTHON
    OR SUNDIALS_TEST_ENABLE_UNIT_TESTS
    OR EXAMPLES_ENABLE_CXX
-   OR ENABLE_CUDA
-   OR ENABLE_HIP
-   OR ENABLE_SYCL
-   OR ENABLE_RAJA
-   OR ENABLE_TRILINOS
-   OR ENABLE_SUPERLUDIST
-   OR ENABLE_MAGMA
-   OR ENABLE_GINKGO
-   OR ENABLE_KOKKOS
-   OR ENABLE_ADIAK)
+   OR SUNDIALS_ENABLE_CUDA
+   OR SUNDIALS_ENABLE_HIP
+   OR SUNDIALS_ENABLE_SYCL
+   OR SUNDIALS_ENABLE_RAJA
+   OR SUNDIALS_ENABLE_TRILINOS
+   OR SUNDIALS_ENABLE_SUPERLUDIST
+   OR SUNDIALS_ENABLE_MAGMA
+   OR SUNDIALS_ENABLE_GINKGO
+   OR SUNDIALS_ENABLE_KOKKOS
+   OR SUNDIALS_ENABLE_ADIAK)
   include(SundialsSetupCXX)
 endif()
 
@@ -446,7 +446,7 @@ endif()
 # CUDA settings
 # ===============================================================
 
-if(ENABLE_CUDA)
+if(SUNDIALS_ENABLE_CUDA)
   include(SundialsSetupCuda)
   # we treat CUDA as both a TPL and a language
   list(APPEND SUNDIALS_TPL_LIST "CUDA")
@@ -456,7 +456,7 @@ endif()
 # HIP settings
 # ===============================================================
 
-if(ENABLE_HIP)
+if(SUNDIALS_ENABLE_HIP)
   include(SundialsSetupHIP)
   # we treat HIP as both a TPL and a language
   list(APPEND SUNDIALS_TPL_LIST "HIP")
@@ -501,7 +501,7 @@ endforeach()
 # ===============================================================
 
 foreach(lang ${_SUNDIALS_ENABLED_LANGS})
-  if(ENABLE_MPI)
+  if(SUNDIALS_ENABLE_MPI)
     if(DEFINED MPI_${lang}_COMPILER)
       set(_EXAMPLES_${lang}_COMPILER
           "${MPI_${lang}_COMPILER}"

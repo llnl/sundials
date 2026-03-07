@@ -17,7 +17,7 @@
 # test/unit_tests/sunlinsol level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-if(ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
   include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
@@ -43,7 +43,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 target_link_libraries(test_sunlinsol_obj PRIVATE sundials_sunlinsoldense)
 
-if(ENABLE_MPI AND MPI_C_FOUND)
+if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(pcg/parallel)
   add_subdirectory(spgmr/parallel)
   add_subdirectory(spfgmr/parallel)

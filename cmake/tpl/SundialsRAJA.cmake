@@ -14,41 +14,32 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup RAJA correctly.
-# Created from the SundialsTPL.cmake template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup RAJA.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED SUNDIALS_RAJA_INCLUDED)
-  set(SUNDIALS_RAJA_INCLUDED)
-else()
-  return()
-endif()
+include_guard(GLOBAL)
 
 # -----------------------------------------------------------------------------
 # Section 2: Check to make sure options are compatible
 # -----------------------------------------------------------------------------
 
-if((SUNDIALS_RAJA_BACKENDS MATCHES "CUDA") AND (NOT ENABLE_CUDA))
-  message(FATAL_ERROR "RAJA with a CUDA backend requires ENABLE_CUDA = ON")
+if((SUNDIALS_RAJA_BACKENDS MATCHES "CUDA") AND (NOT SUNDIALS_ENABLE_CUDA))
+  message(
+    FATAL_ERROR "RAJA with a CUDA backend requires SUNDIALS_ENABLE_CUDA = ON")
 endif()
 
-if((SUNDIALS_RAJA_BACKENDS MATCHES "HIP") AND (NOT ENABLE_HIP))
-  message(FATAL_ERROR "RAJA with a HIP backend requires ENABLE_HIP = ON")
+if((SUNDIALS_RAJA_BACKENDS MATCHES "HIP") AND (NOT SUNDIALS_ENABLE_HIP))
+  message(
+    FATAL_ERROR "RAJA with a HIP backend requires SUNDIALS_ENABLE_HIP = ON")
 endif()
 
-if((SUNDIALS_RAJA_BACKENDS MATCHES "SYCL") AND (NOT ENABLE_SYCL))
-  message(FATAL_ERROR "RAJA with a SYCL backend requires ENABLE_SYCL = ON")
+if((SUNDIALS_RAJA_BACKENDS MATCHES "SYCL") AND (NOT SUNDIALS_ENABLE_SYCL))
+  message(
+    FATAL_ERROR "RAJA with a SYCL backend requires SUNDIALS_ENABLE_SYCL = ON")
 endif()
 
 # -----------------------------------------------------------------------------
@@ -59,8 +50,7 @@ endif()
 find_file(
   RAJA_CONFIGHPP_PATH config.hpp
   HINTS "${RAJA_DIR}"
-  PATH_SUFFIXES include include/RAJA
-  NO_DEFAULT_PATH)
+  PATH_SUFFIXES include include/RAJA)
 mark_as_advanced(FORCE RAJA_CONFIGHPP_PATH)
 
 # Look for CMake configuration file in RAJA installation
@@ -121,17 +111,17 @@ if((SUNDIALS_RAJA_BACKENDS MATCHES "HIP") AND (NOT RAJA_BACKENDS MATCHES "HIP"))
   )
 endif()
 
-if(NOT ENABLE_OPENMP AND RAJA_BACKENDS MATCHES "OPENMP")
+if(NOT SUNDIALS_ENABLE_OPENMP AND RAJA_BACKENDS MATCHES "OPENMP")
   message(
     FATAL_ERROR
-      "RAJA was built with OpenMP, but OpenMP is not enabled. Set ENABLE_OPENMP to ON."
+      "RAJA was built with OpenMP, but OpenMP is not enabled. Set SUNDIALS_ENABLE_OPENMP to ON."
   )
 endif()
 
-if(NOT ENABLE_OPENMP_DEVICE AND RAJA_BACKENDS MATCHES "TARGET_OPENMP")
+if(NOT SUNDIALS_ENABLE_OPENMP_DEVICE AND RAJA_BACKENDS MATCHES "TARGET_OPENMP")
   message(
     FATAL_ERROR
-      "RAJA was built with OpenMP device offloading, but OpenMP with device offloading is not enabled. Set ENABLE_OPENMP_DEVICE to ON."
+      "RAJA was built with OpenMP device offloading, but OpenMP with device offloading is not enabled. Set SUNDIALS_ENABLE_OPENMP_DEVICE to ON."
   )
 endif()
 

@@ -87,9 +87,9 @@ module farkode_mod
  integer(C_INT), parameter, public :: ARK_POSTPROCESS_FAIL = -37_C_INT
  integer(C_INT), parameter, public :: ARK_POSTPROCESS_STEP_FAIL = -37_C_INT
  integer(C_INT), parameter, public :: ARK_POSTPROCESS_STAGE_FAIL = -38_C_INT
- integer(C_INT), parameter, public :: ARK_POSTPROCESS_FAILED_STEP_FAIL = -39_C_INT
- integer(C_INT), parameter, public :: ARK_PREPROCESS_STEP_FAIL = -40_C_INT
- integer(C_INT), parameter, public :: ARK_PREPROCESS_RHS_FAIL = -41_C_INT
+ integer(C_INT), parameter, public :: ARK_PRESTEPFN_FAIL = -39_C_INT
+ integer(C_INT), parameter, public :: ARK_POSTSTEPFN_FAIL = -40_C_INT
+ integer(C_INT), parameter, public :: ARK_PRERHSFN_FAIL = -41_C_INT
  integer(C_INT), parameter, public :: ARK_USER_PREDICT_FAIL = -42_C_INT
  integer(C_INT), parameter, public :: ARK_INTERP_FAIL = -43_C_INT
  integer(C_INT), parameter, public :: ARK_INVALID_TABLE = -44_C_INT
@@ -148,10 +148,10 @@ module farkode_mod
  public :: FARKodeSetFixedStep
  public :: FARKodeSetStepDirection
  public :: FARKodeSetUserData
- public :: FARKodeSetPreprocessStepFn
+ public :: FARKodeSetPreStepFn
+ public :: FARKodeSetPostStepFn
+ public :: FARKodeSetPreRhsFn
  public :: FARKodeSetPostprocessStepFn
- public :: FARKodeSetPostprocessStepFailFn
- public :: FARKodeSetPreRHSProcessFn
  public :: FARKodeSetPostprocessStageFn
  public :: FARKodeSetNonlinearSolver
  public :: FARKodeSetLinear
@@ -711,8 +711,26 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FARKodeSetPreprocessStepFn(farg1, farg2) &
-bind(C, name="_wrap_FARKodeSetPreprocessStepFn") &
+function swigc_FARKodeSetPreStepFn(farg1, farg2) &
+bind(C, name="_wrap_FARKodeSetPreStepFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeSetPostStepFn(farg1, farg2) &
+bind(C, name="_wrap_FARKodeSetPostStepFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeSetPreRhsFn(farg1, farg2) &
+bind(C, name="_wrap_FARKodeSetPreRhsFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -722,24 +740,6 @@ end function
 
 function swigc_FARKodeSetPostprocessStepFn(farg1, farg2) &
 bind(C, name="_wrap_FARKodeSetPostprocessStepFn") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FARKodeSetPostprocessStepFailFn(farg1, farg2) &
-bind(C, name="_wrap_FARKodeSetPostprocessStepFailFn") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FARKodeSetPreRHSProcessFn(farg1, farg2) &
-bind(C, name="_wrap_FARKodeSetPreRHSProcessFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -2929,19 +2929,51 @@ fresult = swigc_FARKodeSetUserData(farg1, farg2)
 swig_result = fresult
 end function
 
-function FARKodeSetPreprocessStepFn(arkode_mem, processstep) &
+function FARKodeSetPreStepFn(arkode_mem, prestep_fn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(C_FUNPTR), intent(in), value :: processstep
+type(C_FUNPTR), intent(in), value :: prestep_fn
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 
 farg1 = arkode_mem
-farg2 = processstep
-fresult = swigc_FARKodeSetPreprocessStepFn(farg1, farg2)
+farg2 = prestep_fn
+fresult = swigc_FARKodeSetPreStepFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeSetPostStepFn(arkode_mem, poststep_fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_FUNPTR), intent(in), value :: poststep_fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = arkode_mem
+farg2 = poststep_fn
+fresult = swigc_FARKodeSetPostStepFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeSetPreRhsFn(arkode_mem, prerhs_fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_FUNPTR), intent(in), value :: prerhs_fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = arkode_mem
+farg2 = prerhs_fn
+fresult = swigc_FARKodeSetPreRhsFn(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -2958,38 +2990,6 @@ type(C_FUNPTR) :: farg2
 farg1 = arkode_mem
 farg2 = processstep
 fresult = swigc_FARKodeSetPostprocessStepFn(farg1, farg2)
-swig_result = fresult
-end function
-
-function FARKodeSetPostprocessStepFailFn(arkode_mem, processstep) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-type(C_FUNPTR), intent(in), value :: processstep
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-
-farg1 = arkode_mem
-farg2 = processstep
-fresult = swigc_FARKodeSetPostprocessStepFailFn(farg1, farg2)
-swig_result = fresult
-end function
-
-function FARKodeSetPreRHSProcessFn(arkode_mem, prerhsprocess) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-type(C_FUNPTR), intent(in), value :: prerhsprocess
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-
-farg1 = arkode_mem
-farg2 = prerhsprocess
-fresult = swigc_FARKodeSetPreRHSProcessFn(farg1, farg2)
 swig_result = fresult
 end function
 

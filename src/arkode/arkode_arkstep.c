@@ -1330,11 +1330,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     /* compute the full RHS */
     if (!(ark_mem->fn_is_current))
     {
-      /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreRHSProcess != NULL)
+      /* call the user-supplied pre-RHS function (if supplied) */
+      if (ark_mem->PreRhsFn)
       {
-        retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-        if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+        retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+        if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
       }
 
       /* compute the implicit component */
@@ -1462,11 +1462,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       /* recompute RHS functions */
       if (recomputeRHS)
       {
-        /* apply user-supplied stage preprocessing function (if supplied) */
-        if (ark_mem->PreRHSProcess != NULL)
+        /* call the user-supplied pre-RHS function (if supplied) */
+        if (ark_mem->PreRhsFn)
         {
-          retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-          if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+          retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+          if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
         }
 
         /* compute the implicit component */
@@ -1578,11 +1578,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
 
   case ARK_FULLRHS_OTHER:
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreRHSProcess != NULL)
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRHSProcess(t, y, ark_mem->user_data);
-      if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
+      retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
     }
 
     /* compute the implicit component and store in sdata */
@@ -1866,16 +1866,16 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
       else
       {
-        /* apply user-supplied stage preprocessing function (if supplied) */
-        if (ark_mem->PreRHSProcess != NULL)
+        /* call the user-supplied pre-RHS function (if supplied) */
+        if (ark_mem->PreRhsFn)
         {
-          retval = ark_mem->PreRHSProcess(ark_mem->tn, ark_mem->yn,
-                                          ark_mem->user_data);
+          retval = ark_mem->PreRhsFn(ark_mem->tn, ark_mem->yn,
+                                     ark_mem->user_data);
           if (retval != 0)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
                        "status = failed preprocess rhs, retval = %i", retval);
-            return (ARK_PREPROCESS_RHS_FAIL);
+            return (ARK_PRERHSFN_FAIL);
           }
         }
         retval = step_mem->fi(ark_mem->tn, ark_mem->ycur, step_mem->Fi[0],
@@ -2045,13 +2045,27 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                           "z_%i(:) =", is);
     }
 
-    /* apply user-supplied stage postprocessing function (if supplied) */
+    /* apply user-supplied stage postprocessing function (if supplied) unless
+       this is the last stage of a FSAL method, then apply the user-supplied
+       step postprocessing function instead (if supplied) */
     /* NOTE: with internally inconsistent IMEX methods (c_i^E != c_i^I) the value
        of tcur corresponds to the stage time from the implicit table (c_i^I). */
-    if (ark_mem->PostProcessStage != NULL)
+    if (is == step_mem->stages - 1 && stiffly_accurate &&
+        ark_mem->PostProcessStepFn)
     {
-      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed postprocess step, retval = %i", retval);
+        return (ARK_POSTPROCESS_STEP_FAIL);
+      }
+    }
+    else if (ark_mem->PostProcessStageFn)
+    {
+      retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
+                                           ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2101,20 +2115,20 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
+    /* call the user-supplied pre-RHS function (if supplied) */
     /* NOTE: with internally inconsistent IMEX methods (c_i^E != c_i^I) the value
        of tcur corresponds to the stage time from the implicit table (c_i^I). */
-    if (ark_mem->PreRHSProcess != NULL)
+    if (ark_mem->PreRhsFn)
     {
       if ((step_mem->implicit && !deduce_stage) || (step_mem->explicit))
       {
-        retval = ark_mem->PreRHSProcess(ark_mem->tcur, ark_mem->ycur,
-                                        ark_mem->user_data);
+        retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                   ark_mem->user_data);
         if (retval != 0)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed preprocess rhs, retval = %i", retval);
-          return (ARK_PREPROCESS_RHS_FAIL);
+          return (ARK_PRERHSFN_FAIL);
         }
       }
     }
@@ -2223,6 +2237,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* compute time-evolved solution (in ark_ycur), error estimate (in dsm).
      This can fail recoverably due to nonconvergence of the mass matrix solve,
      so handle that appropriately. */
+  ark_mem->tcur = ark_mem->tn + ark_mem->h;
+
   if (step_mem->mass_type == MASS_FIXED)
   {
     *nflagPtr = arkStep_ComputeSolutions_MassFixed(ark_mem, dsmPtr);
@@ -2234,19 +2250,6 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   if (*nflagPtr < 0) { return (*nflagPtr); }
   if (*nflagPtr > 0) { return (TRY_AGAIN); }
-
-  /* apply user-supplied stage postprocessing function (if supplied) */
-  if (ark_mem->PostProcessStage != NULL)
-  {
-    retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                       ark_mem->user_data);
-    if (retval != 0)
-    {
-      SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                 "status = failed postprocess stage, retval = %i", retval);
-      return (ARK_POSTPROCESS_STAGE_FAIL);
-    }
-  }
 
   if (ark_mem->checkpoint_scheme)
   {
@@ -3329,6 +3332,13 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     /*   call fused vector operation to do the work */
     retval = N_VLinearCombination(nvec, cvals, Xvecs, y);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
+
+    if (ark_mem->PostProcessStepFn)
+    {
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+      if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
+    }
   }
 
   /* Compute yerr (if temporal error estimation is enabled). */
@@ -3489,6 +3499,13 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
 
     /* compute y = yn + update */
     N_VLinearSum(ONE, ark_mem->yn, ONE, y, y);
+
+    if (ark_mem->PostProcessStepFn)
+    {
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+      if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
+    }
   }
 
   /* compute yerr (if step adaptivity enabled) */

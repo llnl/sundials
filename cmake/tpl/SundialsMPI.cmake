@@ -27,11 +27,7 @@
 # Section 1: Include guard
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED SUNDIALS_MPI_INCLUDED)
-  set(SUNDIALS_MPI_INCLUDED)
-else()
-  return()
-endif()
+include_guard(GLOBAL)
 
 # ---------------------------------------------------------------------------
 # If MPI_<lang>_COMPILER is set, FindMPI will try to set the below variables for
