@@ -86,11 +86,21 @@ jobs:
       with:
         submodules: true
 
+    # Double precision - run all tests
     - uses: pypa/cibuildwheel@v3.3
+      if: matrix.precision == 'double'
       env:
         CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
         CIBW_TEST_REQUIRES: "pytest matplotlib"
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test {project}/examples/python"
+
+    # Single precision - skip examples
+    - uses: pypa/cibuildwheel@v3.3
+      if: matrix.precision == 'single'
+      env:
+        CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
+        CIBW_TEST_REQUIRES: "pytest"
+        CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
 
     - name: Rename wheels to include config
       run: |
