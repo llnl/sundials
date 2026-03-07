@@ -1712,7 +1712,7 @@ namespace.
 *Profiling Capability*
 
 A capability to profile/instrument SUNDIALS library code has been added. This
-can be enabled with the CMake option :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING`. A
+can be enabled with the CMake option ``SUNDIALS_BUILD_WITH_PROFILING``. A
 built-in profiler will be used by default, but the `Caliper
 <https://github.com/LLNL/Caliper>`__ library can also be used instead with the
 CMake option ``ENABLE_CALIPER``. See the documentation section on

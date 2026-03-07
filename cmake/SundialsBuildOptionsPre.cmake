@@ -78,9 +78,10 @@ sundials_option(SUNDIALS_BUILD_WITH_MONITORING BOOL "${DOCSTR}" OFF)
 # ---------------------------------------------------------------
 
 set(DOCSTR "Build with simulation profiling capabilities enabled")
-sundials_option(SUNDIALS_BUILD_WITH_PROFILING BOOL "${DOCSTR}" OFF)
+sundials_option(SUNDIALS_ENABLE_PROFILING BOOL "${DOCSTR}" OFF DEPRECATED_NAMES
+                SUNDIALS_BUILD_WITH_PROFILING)
 
-if(SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_PROFILING)
   message(
     WARNING
       "SUNDIALS built with profiling turned on, performance may be affected.")

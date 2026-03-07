@@ -22,7 +22,7 @@
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_types.h>
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
 #include "caliper/cali.h"
 #endif
 
@@ -55,7 +55,7 @@ SUNErrCode SUNProfiler_Print(SUNProfiler p, FILE* fp);
 SUNDIALS_EXPORT
 SUNErrCode SUNProfiler_Reset(SUNProfiler p);
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
 
 #define SUNDIALS_MARK_FUNCTION_BEGIN(profobj) CALI_MARK_FUNCTION_BEGIN
 
@@ -68,7 +68,7 @@ SUNErrCode SUNProfiler_Reset(SUNProfiler p);
 
 #define SUNDIALS_MARK_END(profobj, name) CALI_MARK_END(name)
 
-#elif defined(SUNDIALS_BUILD_WITH_PROFILING)
+#elif defined(SUNDIALS_ENABLE_PROFILING)
 
 #define SUNDIALS_MARK_FUNCTION_BEGIN(profobj) \
   SUNProfiler_Begin(profobj, __func__)
