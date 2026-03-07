@@ -101,7 +101,7 @@ jobs:
           if echo "$CHANGED" | grep -qE '^(include/|bindings/sundials4py/|examples/python/)'; then
             echo "python=true" >> "$GITHUB_OUTPUT"
           else
-            echo "python=true" >> "$GITHUB_OUTPUT"
+            echo "python=false" >> "$GITHUB_OUTPUT"
           fi
 
           # Check for changes to trigger Fortran interface checks
