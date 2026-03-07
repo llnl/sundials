@@ -96,8 +96,7 @@ jobs:
           # Check for changes to trigger python interface checks
           # Updates in include or bindings/sundials4py directories
           if git diff --name-only "$BASE" "$HEAD" | grep -qE '^(include/|bindings/sundials4py/)'; then
-            #echo "python=true" >> "$GITHUB_OUTPUT"
-            echo "python=false" >> "$GITHUB_OUTPUT"
+            echo "python=true" >> "$GITHUB_OUTPUT"
           else
             echo "python=false" >> "$GITHUB_OUTPUT"
           fi
