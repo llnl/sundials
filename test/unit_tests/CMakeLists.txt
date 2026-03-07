@@ -72,3 +72,7 @@ if(CXX_FOUND)
     add_subdirectory(profiling)
   endif()
 endif()
+
+if(Python3_FOUND)
+  add_subdirectory(suntools)
+endif()

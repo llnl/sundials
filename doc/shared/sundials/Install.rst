@@ -138,7 +138,7 @@ following commands will build and install the default configuration:
 The default configuration will install static and shared libraries for all
 SUNDIALS packages and install the associated example codes. Additional features
 can be enabled by specifying more options in the configuration step. For
-example, to enable MPI add ``-D ENABLE_MPI=ON`` to the ``cmake`` command above:
+example, to enable MPI add ``-D SUNDIALS_ENABLE_MPI=ON`` to the ``cmake`` command above:
 
 .. code-block:: bash
 
@@ -146,7 +146,7 @@ example, to enable MPI add ``-D ENABLE_MPI=ON`` to the ``cmake`` command above:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MPI=ON
+     -D SUNDIALS_ENABLE_MPI=ON
 
 See section :numref:`Installation.Options` below for a complete list of SUNDIALS
 configuration options and additional configuration examples.
@@ -248,8 +248,8 @@ allocation account on Frontier:
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D AMDGPU_TARGETS=gfx90a \
-     -D ENABLE_HIP=ON \
-     -D ENABLE_MPI=ON \
+     -D SUNDIALS_ENABLE_HIP=ON \
+     -D SUNDIALS_ENABLE_MPI=ON \
      -D BUILD_FORTRAN_MODULE_INTERFACE=ON
    cd BUILD_DIR
    make -j8 install
@@ -445,8 +445,8 @@ C++ Compiler
 
    The C++ standard used when building SUNDIALS C++ source files.
 
-   Default: ``14`` or ``17`` if :cmakeop:`ENABLE_GINKGO` or
-   :cmakeop:`ENABLE_SYCL` are ``ON``
+   Default: ``14`` or ``17`` if :cmakeop:`SUNDIALS_ENABLE_GINKGO` or
+   :cmakeop:`SUNDIALS_ENABLE_SYCL` are ``ON``
 
    Options: ``14``, ``17``, ``20``, or ``23``
 
@@ -692,7 +692,7 @@ Example Programs
 
    Build the SUNDIALS CUDA examples
 
-   Default: ``ON`` when :cmakeop:`ENABLE_CUDA` is ``ON``, otherwise ``OFF``
+   Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_CUDA` is ``ON``, otherwise ``OFF``
 
 .. cmakeoption:: EXAMPLES_ENABLE_F2003
 
@@ -819,7 +819,7 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
 
    Build SUNDIALS with capabilities for fine-grained profiling. This requires
    POSIX timers, the Windows ``profileapi.h`` timers, or enabling Caliper with
-   :cmakeop:`ENABLE_CALIPER`.
+   :cmakeop:`SUNDIALS_ENABLE_CALIPER`.
 
    Default: ``OFF``
 
@@ -837,17 +837,31 @@ about HPC simulations. Adiak is developed by Lawrence Livermore National
 Laboratory and can be obtained from the `Adiak GitHub repository
 <https://github.com/LLNL/Adiak>`__.
 
-.. cmakeoption:: ENABLE_ADIAK
+.. cmakeoption:: SUNDIALS_ENABLE_ADIAK
 
    Enable Adiak support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_ADIAK``
 
 .. cmakeoption:: adiak_DIR
 
    Path to the root of an Adiak installation
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_ADIAK_CHECKS
+
+   Perform Adiak compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``adiak_WORKS``
 
 .. _Installation.Options.Caliper:
 
@@ -863,8 +877,8 @@ Laboratory and can be obtained from the `Caliper GitHub repository
 When profiling and Caliper are both enabled, SUNDIALS will utilize Caliper for
 performance profiling.
 
-To enable Caliper support, set the :cmakeop:`ENABLE_CALIPER` to ``ON`` and set
-:cmakeop:`CALIPER_DIR` to the root path of the Caliper installation. For
+To enable Caliper support, set the :cmakeop:`SUNDIALS_ENABLE_CALIPER` to ``ON``
+and set :cmakeop:`CALIPER_DIR` to the root path of the Caliper installation. For
 example, the following command will configure SUNDIALS with profiling and
 Caliper support:
 
@@ -875,10 +889,10 @@ Caliper support:
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D SUNDIALS_BUILD_WITH_PROFILING=ON \
-     -D ENABLE_CALIPER=ON \
+     -D SUNDIALS_ENABLE_CALIPER=ON \
      -D CALIPER_DIR=/path/to/caliper/installation
 
-.. cmakeoption:: ENABLE_CALIPER
+.. cmakeoption:: SUNDIALS_ENABLE_CALIPER
 
    Enable Caliper support
 
@@ -889,11 +903,25 @@ Caliper support:
       Using Caliper requires setting :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` to
       ``ON``.
 
+ .. versionadded:: x.y.z
+
+    Replaces the deprecated option ``ENABLE_CALIPER``
+
 .. cmakeoption:: CALIPER_DIR
 
    Path to the root of a Caliper installation
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_CALIPER_CHECKS
+
+   Perform Caliper compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``CALIPER_WORKS``
 
 .. _Installation.Options.CUDA:
 
@@ -915,7 +943,7 @@ QR SUNLinearSolver <SUNLinSol.cuSolverSp>` will be built (see sections
 for the corresponding header files and libraries). For more information on using
 SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable CUDA support, set :cmakeop:`ENABLE_CUDA` to ``ON``. If CUDA is
+To enable CUDA support, set :cmakeop:`SUNDIALS_ENABLE_CUDA` to ``ON``. If CUDA is
 installed in a nonstandard location, you may need to set
 :cmakeop:`CUDA_TOOLKIT_ROOT_DIR` to your CUDA Toolkit installation path. You
 will also need to set :cmakeop:`CMAKE_CUDA_ARCHITECTURES` to the CUDA
@@ -928,14 +956,18 @@ SUNDIALS with CUDA support for a system with an Ampere GPU:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_CUDA=ON \
+     -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80"
 
-.. cmakeoption:: ENABLE_CUDA
+.. cmakeoption:: SUNDIALS_ENABLE_CUDA
 
    Enable CUDA support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_CUDA``
 
 .. cmakeoption:: CUDA_TOOLKIT_ROOT_DIR
 
@@ -984,7 +1016,7 @@ Batch SUNMatrix <SUNMatrix.GinkgoBatch>` and :ref:`SUNLinearSolver
 for the corresponding header files). For more information on using SUNDIALS with
 GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable Ginkgo support, set :cmakeop:`ENABLE_GINKGO` to ``ON`` and set
+To enable Ginkgo support, set :cmakeop:`SUNDIALS_ENABLE_GINKGO` to ``ON`` and set
 :cmakeop:`Ginkgo_DIR` to the root path of the Ginkgo installation. Additionally,
 set :cmakeop:`SUNDIALS_GINKGO_BACKENDS` to a semicolon-separated list of Ginkgo
 target architectures/executors. For example, the following command will
@@ -997,23 +1029,27 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_GINKGO=ON \
+     -D SUNDIALS_ENABLE_GINKGO=ON \
      -D Ginkgo_DIR=/path/to/ginkgo/installation \
      -D SUNDIALS_GINKGO_BACKENDS="REF;OMP;CUDA" \
-     -D ENABLE_CUDA=ON \
+     -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80" \
-     -D ENABLE_OPENMP=ON
+     -D SUNDIALS_ENABLE_OPENMP=ON
 
 .. note::
 
    The SUNDIALS interfaces to Ginkgo are not compatible with extended precision
    (i.e., when :cmakeop:`SUNDIALS_PRECISION` is set to ``extended``).
 
-.. cmakeoption:: ENABLE_GINKGO
+.. cmakeoption:: SUNDIALS_ENABLE_GINKGO
 
    Enable Ginkgo support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_GINKGO``
 
 .. cmakeoption:: Ginkgo_DIR
 
@@ -1034,6 +1070,16 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
       The ``DPCPP`` option was changed to ``SYCL`` to align with Ginkgo's naming
       convention.
 
+.. cmakeoption:: SUNDIALS_ENABLE_GINKGO_CHECKS
+
+   Perform Ginkgo compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``GINKGO_WORKS``
+
 .. _Installation.Options.HIP:
 
 Building with HIP
@@ -1051,7 +1097,7 @@ When HIP support is enabled, the :ref:`HIP NVector <NVectors.HIP>` will be built
 corresponding header file and library). For more information on using SUNDIALS
 with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable HIP support, set :cmakeop:`ENABLE_HIP` to ``ON`` and set
+To enable HIP support, set :cmakeop:`SUNDIALS_ENABLE_HIP` to ``ON`` and set
 :cmakeop:`AMDGPU_TARGETS` to the desired target (e.g., ``gfx705``). In addition,
 set :cmakeop:`CMAKE_C_COMPILER` and :cmakeop:`CMAKE_CXX_COMPILER` to a HIP
 compatible compiler e.g., ``hipcc``. For example, the following command will
@@ -1065,14 +1111,18 @@ configure SUNDIALS with HIP support for a system with an MI250X GPU:
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D CMAKE_C_COMPILER=hipcc \
      -D CMAKE_CXX_COMPILER=hipcc \
-     -D ENABLE_HIP=ON \
+     -D SUNDIALS_ENABLE_HIP=ON \
      -D AMDGPU_TARGETS="gfx90a"
 
-.. cmakeoption:: ENABLE_HIP
+.. cmakeoption:: SUNDIALS_ENABLE_HIP
 
    Enable HIP Support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_HIP``
 
 .. cmakeoption:: AMDGPU_TARGETS
 
@@ -1098,8 +1148,8 @@ will be built (see section
 :numref:`Installation.LibrariesAndHeaders.Vector.ParHyp` for the corresponding
 header file and library).
 
-To enable *hypre* support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_HYPRE` to ``ON``, and set :cmakeop:`HYPRE_DIR` to the root path
+To enable *hypre* support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
+:cmakeop:`SUNDIALS_ENABLE_HYPRE` to ``ON``, and set :cmakeop:`HYPRE_DIR` to the root path
 of the *hypre* installation. For example, the following command will configure
 SUNDIALS with *hypre* support:
 
@@ -1109,8 +1159,8 @@ SUNDIALS with *hypre* support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MPI=ON \
-     -D ENABLE_HYPRE=ON \
+     -D SUNDIALS_ENABLE_MPI=ON \
+     -D SUNDIALS_ENABLE_HYPRE=ON \
      -D HYPRE_DIR=/path/to/hypre/installation
 
 .. note::
@@ -1118,17 +1168,31 @@ SUNDIALS with *hypre* support:
    SUNDIALS must be configured so that :cmakeop:`SUNDIALS_INDEX_SIZE` is
    compatible with ``HYPRE_BigInt`` in the *hypre* installation.
 
-.. cmakeoption:: ENABLE_HYPRE
+.. cmakeoption:: SUNDIALS_ENABLE_HYPRE
 
    Enable *hypre* support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_HYPRE``
 
 .. cmakeoption:: HYPRE_DIR
 
    Path to the *hypre* installation
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_HYPRE_CHECKS
+
+   Perform *hypre* compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``HYPRE_WORKS``
 
 .. _Installation.Options.KLU:
 
@@ -1149,7 +1213,7 @@ be built (see section
 :numref:`Installation.LibrariesAndHeaders.LinearSolver.KLU` for the
 corresponding header file and library).
 
-To enable KLU support, set :cmakeop:`ENABLE_KLU` to ``ON``. For SuiteSparse
+To enable KLU support, set :cmakeop:`SUNDIALS_ENABLE_KLU` to ``ON``. For SuiteSparse
 7.4.0 and newer, set :cmakeop:`KLU_ROOT` to the root of the SuiteSparse
 installation. Alternatively, set :cmakeop:`KLU_INCLUDE_DIR` and
 :cmakeop:`KLU_LIBRARY_DIR` to the path to the header and library files,
@@ -1162,14 +1226,18 @@ following command will configure SUNDIALS with KLU support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_KLU=ON \
+     -D SUNDIALS_ENABLE_KLU=ON \
      -D KLU_ROOT=/path/to/suitesparse/installation
 
-.. cmakeoption:: ENABLE_KLU
+.. cmakeoption:: SUNDIALS_ENABLE_KLU
 
    Enable KLU support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_KLU``
 
 .. cmakeoption:: KLU_ROOT
 
@@ -1188,6 +1256,16 @@ following command will configure SUNDIALS with KLU support:
    Path to SuiteSparse installed library files
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_KLU_CHECKS
+
+   Perform KLU compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``KLU_WORKS``
 
 .. _Installation.Options.Kokkos:
 
@@ -1208,7 +1286,7 @@ header file will be installed (see section
 header file). For more information on using SUNDIALS with GPUs, see
 :ref:`SUNDIALS.GPU`.
 
-To enable Kokkos support, set the :cmakeop:`ENABLE_KOKKOS` to ``ON`` and set
+To enable Kokkos support, set the :cmakeop:`SUNDIALS_ENABLE_KOKKOS` to ``ON`` and set
 :cmakeop:`Kokkos_DIR` to root path of the Kokkos installation. For example, the
 following command will configure SUNDIALS with Kokkos support:
 
@@ -1218,20 +1296,34 @@ following command will configure SUNDIALS with Kokkos support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_KOKKOS=ON \
+     -D SUNDIALS_ENABLE_KOKKOS=ON \
      -D Kokkos_DIR=/path/to/kokkos/installation
 
-.. cmakeoption:: ENABLE_KOKKOS
+.. cmakeoption:: SUNDIALS_ENABLE_KOKKOS
 
    Enable Kokkos support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_KOKKOS``
 
 .. cmakeoption:: Kokkos_DIR
 
    Path to the Kokkos installation.
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_KOKKOS_CHECKS
+
+   Perform Kokkos compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``KOKKOS_WORKS``
 
 .. _Installation.Options.KokkosKernels:
 
@@ -1254,8 +1346,8 @@ header files will be installed (see sections
 respectively, for the corresponding header files). For more information on using
 SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable KokkosKernels support, set :cmakeop:`ENABLE_KOKKOS` and
-:cmakeop:`ENABLE_KOKKOS_KERNELS` to ``ON`` and set :cmakeop:`Kokkos_DIR` and
+To enable KokkosKernels support, set :cmakeop:`SUNDIALS_ENABLE_KOKKOS` and
+:cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS` to ``ON`` and set :cmakeop:`Kokkos_DIR` and
 :cmakeop:`KokkosKernels_DIR` to the root paths for the Kokkos and KokkosKernels
 installations, respectively. For example, the following command will configure
 SUNDIALS with Kokkos and KokkosKernels support:
@@ -1266,22 +1358,36 @@ SUNDIALS with Kokkos and KokkosKernels support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_KOKKOS=ON \
+     -D SUNDIALS_ENABLE_KOKKOS=ON \
      -D Kokkos_DIR=/path/to/kokkos/installation \
-     -D ENABLE_KOKKOS_KERNELS=ON \
+     -D SUNDIALS_ENABLE_KOKKOS_KERNELS=ON \
      -D KokkosKernels_DIR=/path/to/kokkoskernels/installation
 
-.. cmakeoption:: ENABLE_KOKKOS_KERNELS
+.. cmakeoption:: SUNDIALS_ENABLE_KOKKOS_KERNELS
 
    Enable KokkosKernels support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_KOKKOS_KERNELS``
 
 .. cmakeoption:: KokkosKernels_DIR
 
    Path to the KokkosKernels installation.
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS
+
+   Perform KokkosKernels compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``KOKKOS_KERNELS_WORKS``
 
 .. _Installation.Options.LAPACK:
 
@@ -1306,7 +1412,7 @@ respectively, for the corresponding header files and libraries). Additionally,
 the :ref:`Arnoldi iteration SUNDomEigEstimator <SUNDomEigEst.Arnoldi>` will be
 build (see :numref:`Installation.LibrariesAndHeaders.DomEigEst.Arnoldi`).
 
-To enable LAPACK support, set :cmakeop:`ENABLE_LAPACK` to ``ON``. CMake will
+To enable LAPACK support, set :cmakeop:`SUNDIALS_ENABLE_LAPACK` to ``ON``. CMake will
 attempt to find BLAS and LAPACK installations on the system and set the
 variables :cmakeop:`BLAS_LIBRARIES`, :cmakeop:`BLAS_LINKER_FLAGS`,
 :cmakeop:`LAPACK_LIBRARIES`, and :cmakeop:`LAPACK_LINKER_FLAGS`.  You can set
@@ -1324,7 +1430,7 @@ build. For example, this is sometimes needed when using OpenBLAS:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_LAPACK=ON \
+     -D SUNDIALS_ENABLE_LAPACK=ON \
      -D BLAS_LIBRARIES=/path/to/lapack/installation/lib/libopenblas.so \
      -D LAPACK_LIBRARIES=/path/to/lapack/installation/lib/libopenblas.so
 
@@ -1337,11 +1443,15 @@ build. For example, this is sometimes needed when using OpenBLAS:
    these options in earlier versions of SUNDIALS were ``lower`` and ``one``,
    respectively.
 
-.. cmakeoption:: ENABLE_LAPACK
+.. cmakeoption:: SUNDIALS_ENABLE_LAPACK
 
    Enable LAPACK support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_LAPACK``
 
 .. cmakeoption:: LAPACK_ROOT
 
@@ -1409,6 +1519,16 @@ build. For example, this is sometimes needed when using OpenBLAS:
       scheme if one can not be determined. If used,
       :cmakeop:`SUNDIALS_LAPACK_CASE` must also be set.
 
+.. cmakeoption:: SUNDIALS_ENABLE_LAPACK_CHECKS
+
+   Perform LAPACK compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``LAPACK_WORKS``
+
 .. _Installation.Options.MAGMA:
 
 Building with MAGMA
@@ -1429,7 +1549,7 @@ When MAGMA support is enabled, the :ref:`MAGMA dense SUNMatrix
 respectively, for the corresponding header files and libraries). For more
 information on using SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable MAGMA support, set :cmakeop:`ENABLE_MAGMA` to ``ON``,
+To enable MAGMA support, set :cmakeop:`SUNDIALS_ENABLE_MAGMA` to ``ON``,
 :cmakeop:`MAGMA_DIR` to the root path of MAGMA installation, and
 :cmakeop:`SUNDIALS_MAGMA_BACKENDS` to the desired MAGMA backend to use. For
 example, the following command will configure SUNDIALS with MAGMA support with
@@ -1441,17 +1561,21 @@ the CUDA backend (targeting Ampere GPUs):
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MAGMA=ON \
+     -D SUNDIALS_ENABLE_MAGMA=ON \
      -D MAGMA_DIR=/path/to/magma/installation \
      -D SUNDIALS_MAGMA_BACKEND="CUDA" \
-     -D ENABLE_CUDA=ON \
+     -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80"
 
-.. cmakeoption:: ENABLE_MAGMA
+.. cmakeoption:: SUNDIALS_ENABLE_MAGMA
 
    Enable MAGMA support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_MAGMA``
 
 .. cmakeoption:: MAGMA_DIR
 
@@ -1468,6 +1592,16 @@ the CUDA backend (targeting Ampere GPUs):
 
    .. TODO(DJG): Change this options so it is HIP or SYCL if those options are
       enabled
+
+.. cmakeoption:: SUNDIALS_ENABLE_MAGMA_CHECKS
+
+   Perform MAGMA compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``MAGMA_WORKS``
 
 .. _Installation.Options.MPI:
 
@@ -1501,7 +1635,7 @@ respectively, for the corresponding header files and libraries).
       applications will need to include the path for MPI headers and link against
       the corresponding MPI library.
 
-To enable MPI support, set :cmakeop:`ENABLE_MPI` to ``ON``. If CMake is unable
+To enable MPI support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``. If CMake is unable
 to locate an MPI installation, set the relevant ``MPI_<language>_COMPILER``
 options to the desired MPI compilers. For example, the following command will
 configure SUNDIALS with MPI support:
@@ -1512,13 +1646,17 @@ configure SUNDIALS with MPI support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MPI=ON
+     -D SUNDIALS_ENABLE_MPI=ON
 
-.. cmakeoption:: ENABLE_MPI
+.. cmakeoption:: SUNDIALS_ENABLE_MPI
 
    Enable MPI support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_MPI``
 
 .. cmakeoption:: MPI_C_COMPILER
 
@@ -1534,11 +1672,11 @@ configure SUNDIALS with MPI support:
 
    .. note::
 
-      This option is only needed if MPI is enabled (:cmakeop:`ENABLE_MPI` is
+      This option is only needed if MPI is enabled (:cmakeop:`SUNDIALS_ENABLE_MPI` is
       ``ON``) and C++ examples are enabled (:cmakeop:`EXAMPLES_ENABLE_CXX` is
       ``ON``). All SUNDIALS solvers can be used from C++ MPI applications by
       without setting any additional configuration options other than
-      :cmakeop:`ENABLE_MPI`.
+      :cmakeop:`SUNDIALS_ENABLE_MPI`.
 
 .. cmakeoption:: MPI_Fortran_COMPILER
 
@@ -1549,7 +1687,7 @@ configure SUNDIALS with MPI support:
    .. note::
 
       This option is triggered only needed if MPI is enabled
-      (:cmakeop:`ENABLE_MPI` is ``ON``) and the Fortran interfaces are enabled
+      (:cmakeop:`SUNDIALS_ENABLE_MPI` is ``ON``) and the Fortran interfaces are enabled
       (:cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE` is ``ON``).
 
 .. cmakeoption:: MPIEXEC_EXECUTABLE
@@ -1593,7 +1731,7 @@ When oneMKL support is enabled, the :ref:`oneMLK dense SUNMatrix
 respectively, for the corresponding header files and libraries). For more
 information on using SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable the SUNDIALS oneMKL interface set :cmakeop:`ENABLE_ONEMKL` to ``ON``
+To enable the SUNDIALS oneMKL interface set :cmakeop:`SUNDIALS_ENABLE_ONEMKL` to ``ON``
 and :cmakeop:`ONEMKL_DIR` to the root path of oneMKL installation. For example,
 the following command will configure SUNDIALS with oneMKL support:
 
@@ -1603,14 +1741,18 @@ the following command will configure SUNDIALS with oneMKL support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_ONEMKL=ON \
+     -D SUNDIALS_ENABLE_ONEMKL=ON \
      -D ONEMKL_DIR=/path/to/onemkl/installation \
 
-.. cmakeoption:: ENABLE_ONEMKL
+.. cmakeoption:: SUNDIALS_ENABLE_ONEMKL
 
    Enable oneMKL support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_ONEMKL``
 
 .. cmakeoption:: ONEMKL_DIR
 
@@ -1632,6 +1774,16 @@ the following command will configure SUNDIALS with oneMKL support:
 
    Default: ``OFF``
 
+.. cmakeoption:: SUNDIALS_ENABLE_ONEMKL_CHECKS
+
+   Perform oneMKL compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ONEMKL_WORKS``
+
 .. _Installation.Options.OpenMP:
 
 Building with OpenMP
@@ -1644,7 +1796,7 @@ When OpenMP support is enabled, the :ref:`OpenMP NVector <NVectors.OpenMP>` will
 be built (see section :numref:`Installation.LibrariesAndHeaders.Vector.OpenMP`
 for the corresponding header file and library).
 
-To enable OpenMP support, set the :cmakeop:`ENABLE_OPENMP` to ``ON``. For
+To enable OpenMP support, set the :cmakeop:`SUNDIALS_ENABLE_OPENMP` to ``ON``. For
 example, the following command will configure SUNDIALS with OpenMP support:
 
 .. code-block:: bash
@@ -1653,13 +1805,17 @@ example, the following command will configure SUNDIALS with OpenMP support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_OPENMP=ON
+     -D SUNDIALS_ENABLE_OPENMP=ON
 
-.. cmakeoption:: ENABLE_OPENMP
+.. cmakeoption:: SUNDIALS_ENABLE_OPENMP
 
    Enable OpenMP support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_OPENMP``
 
 Building with OpenMP Device Offloading
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1674,7 +1830,7 @@ When OpenMP offloading support is enabled, the :ref:`OpenMPDEV NVector
 corresponding header file and library).
 
 To enable OpenMP device offloading support, set the
-:cmakeop:`ENABLE_OPENMP_DEVICE` to ``ON``. For example, the following command
+:cmakeop:`SUNDIALS_ENABLE_OPENMP_DEVICE` to ``ON``. For example, the following command
 will configure SUNDIALS with OpenMP device offloading support:
 
 .. code-block:: bash
@@ -1683,13 +1839,27 @@ will configure SUNDIALS with OpenMP device offloading support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_OPENMP_DEVICE=ON
+     -D SUNDIALS_ENABLE_OPENMP_DEVICE=ON
 
-.. cmakeoption:: ENABLE_OPENMP_DEVICE
+.. cmakeoption:: SUNDIALS_ENABLE_OPENMP_DEVICE
 
    Enable OpenMP device offloading support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_OPENMP_DEVICE``
+
+.. cmakeoption:: SUNDIALS_ENABLE_OPENMP_DEVICE_CHECKS
+
+   Perform OpenMP device offloading compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``OPENMP_DEVICE_WORKS``
 
 .. _Installation.Options.PETSc:
 
@@ -1710,8 +1880,8 @@ sections :numref:`Installation.LibrariesAndHeaders.Vector.PETSc` and
 :numref:`Installation.LibrariesAndHeaders.NonlinearSolver.PETScSNES`,
 respectively, for the corresponding header files and libraries).
 
-To enable PETSc support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_PETSC` to ``ON``, and set :cmakeop:`PETSC_DIR` to the path of
+To enable PETSc support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
+:cmakeop:`SUNDIALS_ENABLE_PETSC` to ``ON``, and set :cmakeop:`PETSC_DIR` to the path of
 the PETSc installation. Alternatively, a user can provide a list of include
 paths in :cmakeop:`PETSC_INCLUDES` and a list of complete paths to the PETSc
 libraries in :cmakeop:`PETSC_LIBRARIES`. For example, the following command will
@@ -1723,15 +1893,19 @@ configure SUNDIALS with PETSc support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MPI=ON \
-     -D ENABLE_PETSC=ON \
+     -D SUNDIALS_ENABLE_MPI=ON \
+     -D SUNDIALS_ENABLE_PETSC=ON \
      -D PETSC_DIR=/path/to/petsc/installation
 
-.. cmakeoption:: ENABLE_PETSC
+.. cmakeoption:: SUNDIALS_ENABLE_PETSC
 
    Enable PETSc support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_PETSC``
 
 .. cmakeoption:: PETSC_DIR
 
@@ -1755,6 +1929,16 @@ configure SUNDIALS with PETSc support:
 
    Default: None
 
+.. cmakeoption:: SUNDIALS_ENABLE_PETSC_CHECKS
+
+   Perform PETSc compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``PETSC_WORKS``
+
 .. _Installation.Options.PThreads:
 
 Building with PThreads
@@ -1768,7 +1952,7 @@ When PThreads support is enabled, the :ref:`PThreads NVector
 :numref:`Installation.LibrariesAndHeaders.Vector.PThreads` for the corresponding
 header file and library).
 
-To enable PThreads support, set :cmakeop:`ENABLE_PTHREAD` to ``ON``. For
+To enable PThreads support, set :cmakeop:`SUNDIALS_ENABLE_PTHREAD` to ``ON``. For
 example, the following command will configure SUNDIALS with PThreads support:
 
 .. code-block:: bash
@@ -1777,13 +1961,17 @@ example, the following command will configure SUNDIALS with PThreads support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_PTHREAD=ON
+     -D SUNDIALS_ENABLE_PTHREAD=ON
 
-.. cmakeoption:: ENABLE_PTHREAD
+.. cmakeoption:: SUNDIALS_ENABLE_PTHREAD
 
    Enable PThreads support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_PTHREAD``
 
 .. _Installation.Options.RAJA:
 
@@ -1800,11 +1988,11 @@ When RAJA support is enabled, the :ref:`RAJA NVector <NVectors.RAJA>` will be
 built (see section :numref:`Installation.LibrariesAndHeaders.Vector.RAJA`
 for the corresponding header files and libraries).
 
-To enable RAJA support, set :cmakeop:`ENABLE_RAJA` to ``ON``, set
+To enable RAJA support, set :cmakeop:`SUNDIALS_ENABLE_RAJA` to ``ON``, set
 :cmakeop:`RAJA_DIR` to the path of the RAJA installation, set
 :cmakeop:`SUNDIALS_RAJA_BACKENDS` to the desired backend (``CUDA``, ``HIP``, or
-``SYCL``), and set :cmakeop:`ENABLE_CUDA`, :cmakeop:`ENABLE_HIP`, or
-:cmakeop:`ENABLE_SYCL` to ``ON`` depending on the selected backend. For
+``SYCL``), and set :cmakeop:`SUNDIALS_ENABLE_CUDA`, :cmakeop:`SUNDIALS_ENABLE_HIP`, or
+:cmakeop:`SUNDIALS_ENABLE_SYCL` to ``ON`` depending on the selected backend. For
 example, the following command will configure SUNDIALS with RAJA support using
 the CUDA backend (targeting Ampere GPUs):
 
@@ -1814,17 +2002,21 @@ the CUDA backend (targeting Ampere GPUs):
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_RAJA=ON \
+     -D SUNDIALS_ENABLE_RAJA=ON \
      -D RAJA_DIR=/path/to/raja/installation \
      -D SUNDIALS_RAJA_BACKENDS="CUDA" \
-     -D ENABLE_CUDA=ON \
+     -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80"
 
-.. cmakeoption:: ENABLE_RAJA
+.. cmakeoption:: SUNDIALS_ENABLE_RAJA
 
    Enable RAJA support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_RAJA``
 
 .. cmakeoption:: RAJA_DIR
 
@@ -1859,10 +2051,10 @@ SUNMatrix <SUNMatrix.SLUNRloc>` and :ref:`SuperLU_DIST SUNLinearSolver
 :numref:`Installation.LibrariesAndHeaders.LinearSolver.SuperLU_DIST` for the
 corresponding header files and libraries).
 
-To enable SuperLU_DIST support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_SUPERLUDIST` to ``ON``, and set :cmakeop:`SUPERLUDIST_DIR` to
+To enable SuperLU_DIST support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
+:cmakeop:`SUNDIALS_ENABLE_SUPERLUDIST` to ``ON``, and set :cmakeop:`SUPERLUDIST_DIR` to
 the path where SuperLU_DIST is installed. If SuperLU_DIST was built with OpenMP
-enabled, set :cmakeop:`SUPERLUDIST_OpenMP` and :cmakeop:`ENABLE_OPENMP` to
+enabled, set :cmakeop:`SUPERLUDIST_OpenMP` and :cmakeop:`SUNDIALS_ENABLE_OPENMP` to
 ``ON``. For example, the following command will configure SUNDIALS with
 SuperLU_DIST support:
 
@@ -1872,14 +2064,18 @@ SuperLU_DIST support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_SUPERLUDIST=ON \
+     -D SUNDIALS_ENABLE_SUPERLUDIST=ON \
      -D SUPERLUDIST_DIR=/path/to/superludist/installation
 
-.. cmakeoption:: ENABLE_SUPERLUDIST
+.. cmakeoption:: SUNDIALS_ENABLE_SUPERLUDIST
 
    Enable SuperLU_DIST support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_SUPERLUDIST``
 
 .. cmakeoption:: SUPERLUDIST_DIR
 
@@ -1942,6 +2138,16 @@ SuperLU_DIST support:
 
       This option is deprecated. Use :cmakeop:`SUPERLUDIST_DIR`.
 
+.. cmakeoption:: SUNDIALS_ENABLE_SUPERLUDIST_CHECKS
+
+   Perform SuperLU_DIST compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUPERLUDIST_WORKS``
+
 .. _Installation.Options.SuperLU_MT:
 
 Building with SuperLU_MT
@@ -1960,7 +2166,7 @@ When SuperLU_MT support is enabled, the :ref:`SuperLU_MT SUNLinearSolver
 :numref:`Installation.LibrariesAndHeaders.LinearSolver.SuperLU_MT` for the
 corresponding header file and library).
 
-To enable SuperLU_MT support, set :cmakeop:`ENABLE_SUPERLUMT` to ``ON``, set
+To enable SuperLU_MT support, set :cmakeop:`SUNDIALS_ENABLE_SUPERLUMT` to ``ON``, set
 :cmakeop:`SUPERLUMT_INCLUDE_DIR` and :cmakeop:`SUPERLUMT_LIBRARY_DIR` to the
 location of the header and library files, respectively, of the SuperLU_MT
 installation. Depending on the SuperLU_MT installation, it may also be necessary
@@ -1977,7 +2183,7 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_SUPERLUMT=ON \
+     -D SUNDIALS_ENABLE_SUPERLUMT=ON \
      -D SUPERLUMT_INCLUDE_DIR=/path/to/superlumt/installation/include/dir \
      -D SUPERLUMT_LIBRARY_DIR=/path/to/superlumt/installation/library/dir \
      -D SUPERLUMT_THREAD_TYPE="Pthread"
@@ -1988,11 +2194,15 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
    OpenMP or PThreads NVector then the SuperLU_MT installation should use the same
    threading type.
 
-.. cmakeoption:: ENABLE_SUPERLUMT
+.. cmakeoption:: SUNDIALS_ENABLE_SUPERLUMT
 
    Enable SuperLU_MT support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_SUPERLUMT``
 
 .. cmakeoption:: SUPERLUMT_INCLUDE_DIR
 
@@ -2019,6 +2229,16 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
 
    Default: Pthread
 
+.. cmakeoption:: SUNDIALS_ENABLE_SUPERLUMT_CHECKS
+
+   Perform SuperLU_MT compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUPERLUMT_WORKS``
+
 .. _Installation.Options.SYCL:
 
 Building with SYCL
@@ -2031,7 +2251,7 @@ When SYCL support is enabled, the :ref:`SYCL NVector <NVectors.SYCL>` will
 be built (see section :numref:`Installation.LibrariesAndHeaders.Vector.SYCL`
 for the corresponding header file and library).
 
-To enable SYCL support, set the :cmakeop:`ENABLE_SYCL` to ``ON``. For example,
+To enable SYCL support, set the :cmakeop:`SUNDIALS_ENABLE_SYCL` to ``ON``. For example,
 the following command will configure SUNDIALS with SYCL support using Intel
 compilers:
 
@@ -2044,9 +2264,9 @@ compilers:
      -D CMAKE_C_COMPILER=icx \
      -D CMAKE_CXX_COMPILER=icpx \
      -D CMAKE_CXX_FLAGS="-fsycl" \
-     -D ENABLE_SYCL=ON
+     -D SUNDIALS_ENABLE_SYCL=ON
 
-.. cmakeoption:: ENABLE_SYCL
+.. cmakeoption:: SUNDIALS_ENABLE_SYCL
 
    Enable SYCL support
 
@@ -2064,6 +2284,10 @@ compilers:
       i.e., ``dpcpp`` and ``icpx``. When using ``icpx`` the ``-fsycl`` flag and
       any ahead of time compilation flags must be added to
       :cmakeop:`CMAKE_CXX_FLAGS`.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_SYCL``
 
 .. cmakeoption:: SUNDIALS_SYCL_2020_UNSUPPORTED
 
@@ -2089,7 +2313,7 @@ When Trilinos support is enabled, the :ref:`Trilinos Tpetra NVector
 :numref:`Installation.LibrariesAndHeaders.Vector.Trilinos` for the corresponding
 header file and library).
 
-To enable Trilinos support, set the :cmakeop:`ENABLE_TRILINOS` to ``ON`` and set
+To enable Trilinos support, set the :cmakeop:`SUNDIALS_ENABLE_TRILINOS` to ``ON`` and set
 :cmakeop:`Trilinos_DIR` to root path of the Trilinos installation. For example,
 the following command will configure SUNDIALS with Trilinos support:
 
@@ -2102,11 +2326,15 @@ the following command will configure SUNDIALS with Trilinos support:
      -D ENABLE_TRILONOS=ON \
      -D TRILINOS_DIR=/path/to/trilinos/installation
 
-.. cmakeoption:: ENABLE_TRILINOS
+.. cmakeoption:: SUNDIALS_ENABLE_TRILINOS
 
    Enable Trilinos support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_TRILINOS``
 
 .. cmakeoption:: Trilinos_DIR
 
@@ -2125,8 +2353,8 @@ National Laboratory and is available from the `XBraid GitHub repository
 <https://github.com/XBraid/xbraid>`__. SUNDIALS is regularly tested with the
 latest versions of XBraid, specifically up to version 3.0.0.
 
-To enable XBraid support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_XBRAID` to ``ON``, set :cmakeop:`XBRAID_DIR` to the root path
+To enable XBraid support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
+:cmakeop:`SUNDIALS_ENABLE_XBRAID` to ``ON``, set :cmakeop:`XBRAID_DIR` to the root path
 of the XBraid installation. For example, the following command will configure
 SUNDIALS with XBraid support:
 
@@ -2137,8 +2365,8 @@ SUNDIALS with XBraid support:
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D SUNDIALS_INDEX_SIZE="32" \
-     -D ENABLE_MPI=ON \
-     -D ENABLE_XBRAID=ON \
+     -D SUNDIALS_ENABLE_MPI=ON \
+     -D SUNDIALS_ENABLE_XBRAID=ON \
      -D XBRAID_DIR=/path/to/xbraid/installation
 
 .. note::
@@ -2147,13 +2375,17 @@ SUNDIALS with XBraid support:
    to ``int`` and ``double`` respectively. As such SUNDIALS must be configured
    with :cmakeop:`SUNDIALS_INDEX_SIZE` set to ``32`` and
    :cmakeop:`SUNDIALS_PRECISION` set to ``double``. Additionally, SUNDIALS must
-   be configured with :cmakeop:`ENABLE_MPI` set to ``ON``.
+   be configured with :cmakeop:`SUNDIALS_ENABLE_MPI` set to ``ON``.
 
-.. cmakeoption:: ENABLE_XBRAID
+.. cmakeoption:: SUNDIALS_ENABLE_XBRAID
 
    Enable or disable the ARKStep + XBraid interface.
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_XBRAID``
 
 .. cmakeoption:: XBRAID_DIR
 
@@ -2177,6 +2409,15 @@ SUNDIALS with XBraid support:
 
    Default: None
 
+.. cmakeoption:: SUNDIALS_ENABLE_XBRAID_CHECKS
+
+   Perform XBraid compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``XBRAID_WORKS``
 
 .. _Installation.Options.xSDK:
 
@@ -2520,7 +2761,7 @@ include all the header files for the core C++ classes.
    |              | ``sundials/sundials_profiler.hpp``           |
    +--------------+----------------------------------------------+
 
-When MPI support is enabled (:cmakeop:`ENABLE_MPI` is ``ON``), the following
+When MPI support is enabled (:cmakeop:`SUNDIALS_ENABLE_MPI` is ``ON``), the following
 header file provides aliases between MPI data types and SUNDIALS types. The
 alias ``MPI_SUNREALTYPE`` is one of ``MPI_FLOAT``, ``MPI_DOUBLE``, or
 ``MPI_LONG_DOUBLE`` depending on the value of :cmakeop:`SUNDIALS_PRECISION`. The
@@ -2534,7 +2775,7 @@ depending on the value of :cmakeop:`SUNDIALS_INDEX_SIZE`.
    | Headers      | ``sundials/sundials_mpi_types.h``            |
    +--------------+----------------------------------------------+
 
-When XBraid support is enabled (:cmakeop:`ENABLE_XBRAID` is ``ON``), the
+When XBraid support is enabled (:cmakeop:`SUNDIALS_ENABLE_XBRAID` is ``ON``), the
 following header file defines types and functions for interfacing SUNDIALS with
 XBraid.
 
@@ -2734,7 +2975,7 @@ modules. Include the header files below to access the related functions.
    |              | ``arkode/arkode_bbdpre.h``                   |
    +--------------+----------------------------------------------+
 
-When XBraid support is enabled (:cmakeop:`ENABLE_XBRAID` is ``ON``), include the
+When XBraid support is enabled (:cmakeop:`SUNDIALS_ENABLE_XBRAID` is ``ON``), include the
 ARKODE-XBraid interface header file and link to the interface library given
 below to use ARKODE and XBraid together.
 
