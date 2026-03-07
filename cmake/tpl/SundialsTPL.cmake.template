@@ -14,16 +14,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup <TPL> correctly.
-# Created from the SundialsTPL.cmake template.
+# Module to find and setup <TPL>.
+# -----------------------------------------------------------------------------
+
 # All SUNDIALS modules that find and setup a TPL must:
 #
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
+# 1. Check to make sure the SUNDIALS configuration and the TPL are compatible.
 # 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
-# -----------------------------------------------------------------------------
+# 3. If enabled, perform additional compatibility/compile checks.
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
@@ -48,7 +46,7 @@ find_package(<TPL> REQUIRED)
 # Do any checks which don't require compilation first.
 
 # Try building a simple test
-if(NOT <TPL>_WORKS)
+if(SUNDIALS_ENABLE_<TPL>_CHECKS)
 
   message(CHECK_START "Testing <TPL>")
 
@@ -83,5 +81,5 @@ if(NOT <TPL>_WORKS)
   endif()
 
 else()
-  message(STATUS "Skipped <TPL> test. Set <TPL>_WORKS=FALSE to test.")
+  message(STATUS "Skipped <TPL> checks.")
 endif()

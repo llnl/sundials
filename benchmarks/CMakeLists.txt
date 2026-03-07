@@ -37,7 +37,7 @@ endif()
 # Add specific benchmarks
 # ----------------------------------------
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(diffusion_2D)
   add_subdirectory(advection_reaction_3D)
 endif()
