@@ -3800,6 +3800,36 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetATimes(SUNDomEigEstimator farg1, voi
 }
 
 
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHS(SUNDomEigEstimator farg1, void *farg2, DEERhsFn farg3) {
+  int fresult ;
+  SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
+  void *arg2 = (void *) 0 ;
+  DEERhsFn arg3 = (DEERhsFn) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNDomEigEstimator)(farg1);
+  arg2 = (void *)(farg2);
+  arg3 = (DEERhsFn)(farg3);
+  result = (SUNErrCode)SUNDomEigEstimator_SetRHS(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHSLinearizationVector(SUNDomEigEstimator farg1, N_Vector farg2) {
+  int fresult ;
+  SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNDomEigEstimator)(farg1);
+  arg2 = (N_Vector)(farg2);
+  result = (SUNErrCode)SUNDomEigEstimator_SetRHSLinearizationVector(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetMaxIters(SUNDomEigEstimator farg1, long const *farg2) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;

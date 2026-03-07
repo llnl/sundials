@@ -16,6 +16,12 @@ auto pyClassSUNDomEigEstimator_ =
     .def(nb::init<>()) // implicit default constructor
   ;
 
+m.def("SUNDomEigEstimator_SetRHS", SUNDomEigEstimator_SetRHS, nb::arg("DEE"),
+      nb::arg("rhs_data"), nb::arg("RHSfn"));
+
+m.def("SUNDomEigEstimator_SetRHSLinearizationVector",
+      SUNDomEigEstimator_SetRHSLinearizationVector, nb::arg("DEE"), nb::arg("v"));
+
 m.def("SUNDomEigEstimator_SetMaxIters", SUNDomEigEstimator_SetMaxIters,
       nb::arg("DEE"), nb::arg("max_iters"));
 
