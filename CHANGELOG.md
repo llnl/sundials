@@ -59,6 +59,11 @@ table below lists the old CMake option names and the new replacements.
 | `KOKKOS_WORKS`                         | `SUNDIALS_ENABLE_KOKKOS_CHECKS`                |
 | `ENABLE_KOKKOS_KERNELS`                | `SUNDIALS_ENABLE_KOKKOS_KERNELS`               |
 | `KOKKOS_KERNELS_WORKS`                 | `SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
+| `ENABLE_ALL_WARNINGS`                  | `SUNDIALS_ENABLE_ALL_WARNINGS`                 |
+| `ENABLE_WARNINGS_AS_ERRORS`            | `CMAKE_COMPILE_WARNING_AS_ERROR`               |
+| `ENABLE_ADDRESS_SANITIZER`             | `SUNDIALS_ENABLE_ADDRESS_SANITIZER`            |
+| `ENABLE_MEMORY_SANITIZER`              | `SUNDIALS_ENABLE_MEMORY_SANITIZER`             |
+| `ENABLE_LEAK_SANITIZER`                | `SUNDIALS_ENABLE_LEAK_SANITIZER`               |
 
 ## Changes to SUNDIALS in release 7.6.0
 

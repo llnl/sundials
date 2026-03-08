@@ -79,7 +79,7 @@ endif()
 # TODO(DJG): Set flags based on CMAKE_<language>_COMPILER_ID
 # ===============================================================
 
-if(ENABLE_ALL_WARNINGS)
+if(SUNDIALS_ENABLE_ALL_WARNINGS)
   message(STATUS "Enabling all compiler warnings")
 
   # Some warning flags are not supported by all compilers so ignore unknown
@@ -128,7 +128,7 @@ if(ENABLE_ALL_WARNINGS)
   )
 endif()
 
-if(ENABLE_WARNINGS_AS_ERRORS)
+if(CMAKE_COMPILE_WARNING_AS_ERROR)
   message(STATUS "Enabling compiler warnings as errors")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
@@ -140,7 +140,7 @@ endif()
 # With clang it is not possible to combine the -fsanitize=address and
 # -fsanitize=memory checkers.
 
-if(ENABLE_ADDRESS_SANITIZER)
+if(SUNDIALS_ENABLE_ADDRESS_SANITIZER)
   message(STATUS "Enabling address sanitizer")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
@@ -148,7 +148,7 @@ if(ENABLE_ADDRESS_SANITIZER)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fsanitize=address")
 endif()
 
-if(ENABLE_MEMORY_SANITIZER)
+if(SUNDIALS_ENABLE_MEMORY_SANITIZER)
   message(STATUS "Enabling memory sanitizer")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=memory")
@@ -156,7 +156,7 @@ if(ENABLE_MEMORY_SANITIZER)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fsanitize=memory")
 endif()
 
-if(ENABLE_LEAK_SANITIZER)
+if(SUNDIALS_ENABLE_LEAK_SANITIZER)
   message(STATUS "Enabling leak sanitizer")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=leak")
@@ -164,7 +164,7 @@ if(ENABLE_LEAK_SANITIZER)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fsanitize=leak")
 endif()
 
-if(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
+if(SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
   message(STATUS "Enabling undefined behavior sanitizer")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined")

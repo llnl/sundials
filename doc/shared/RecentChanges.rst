@@ -96,3 +96,13 @@ table below lists the old CMake option names and the new replacements.
 +------------------------------------------+---------------------------------------------------------+
 | ``KOKKOS_KERNELS_WORKS``                 | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
 +------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_ALL_WARNINGS``                  | :cmakeop:`SUNDIALS_ENABLE_ALL_WARNINGS`                 |
++------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_WARNINGS_AS_ERRORS``            | :cmakeop:`CMAKE_COMPILE_WARNING_AS_ERROR`               |
++------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_ADDRESS_SANITIZER``             | :cmakeop:`SUNDIALS_ENABLE_ADDRESS_SANITIZER`            |
++------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_MEMORY_SANITIZER``              | :cmakeop:`SUNDIALS_ENABLE_MEMORY_SANITIZER`             |
++------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_LEAK_SANITIZER``                | :cmakeop:`SUNDIALS_ENABLE_LEAK_SANITIZER`               |
++------------------------------------------+---------------------------------------------------------+
