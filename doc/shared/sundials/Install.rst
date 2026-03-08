@@ -827,6 +827,21 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
 
       Profiling will impact performance, and should be enabled judiciously.
 
+.. _Installation.Options.FusedKernels:
+
+Fused Kernels
+^^^^^^^^^^^^^
+
+.. cmakeoption:: SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
+
+   Enable fused kernels in SUNDIALS packages
+
+   Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``
+
 .. _Installation.Options.Adiak:
 
 Building with Adiak

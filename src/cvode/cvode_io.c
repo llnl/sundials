@@ -1069,7 +1069,7 @@ int CVodeGetNumConstraintCorrections(void* cvode_mem,
 int CVodeSetUseIntegratorFusedKernels(void* cvode_mem, sunbooleantype onoff)
 {
   CVodeMem cv_mem;
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
   N_Vector_ID id;
 #endif
 
@@ -1081,7 +1081,7 @@ int CVodeSetUseIntegratorFusedKernels(void* cvode_mem, sunbooleantype onoff)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
   id = N_VGetVectorID(cv_mem->cv_ewt);
   if (!cv_mem->cv_MallocDone ||
       (id != SUNDIALS_NVEC_CUDA && id != SUNDIALS_NVEC_HIP))

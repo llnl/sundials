@@ -1280,7 +1280,7 @@ Main solver optional input functions
      * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
    **Notes:**
-      SUNDIALS must be compiled appropriately for specialized kernels to be available. The CMake option ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS`` must be set to
+      SUNDIALS must be compiled appropriately for specialized kernels to be available. The CMake option ``SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`` must be set to
       ``ON`` when SUNDIALS is compiled. See the entry for this option in :numref:`Installation.Options` for more information.
       Currently, the fused kernels are only supported when using CVODE with the :ref:`NVECTOR_CUDA <NVectors.CUDA>` and :ref:`NVECTOR_HIP <NVectors.Hip>` implementations of the ``N_Vector``.
 

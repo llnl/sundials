@@ -98,7 +98,7 @@
 #cmakedefine SUNDIALS_HAVE_POSIX_TIMERS
 
 /* BUILD CVODE with fused kernel functionality */
-#cmakedefine SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#cmakedefine SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
 
 /* BUILD SUNDIALS with monitoring functionalities */
 #cmakedefine SUNDIALS_BUILD_WITH_MONITORING
@@ -285,5 +285,15 @@
  * -----------------------------------------------------------------*/
 
 @SUNDIALS_CONFIGH_BUILDS@
+
+/* ------------------------------------------------------------------
+ * SUNDIALS deprecated macros
+ * -----------------------------------------------------------------*/
+
+/* DEPRECATION NOTICE: SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS will be removed in
+ * the next major release. Use SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS instead. */
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
+#define SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#endif
 
 #endif /* _SUNDIALS_CONFIG_H */
