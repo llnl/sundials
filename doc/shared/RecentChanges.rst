@@ -96,3 +96,14 @@ table below lists the old CMake option names and the new replacements.
 +------------------------------------------+---------------------------------------------------------+
 | ``KOKKOS_KERNELS_WORKS``                 | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
 +------------------------------------------+---------------------------------------------------------+
+| ``SUNDIALS_BUILD_WITH_MONITORING``       | :cmakeop:`SUNDIALS_ENABLE_MONITORING`                   |
++------------------------------------------+---------------------------------------------------------+
+
+Following the updated CMake options, the macros listed below have been
+deprecated and replaced with versions that align with the new CMake options.
+
++------------------------------------+--------------------------------+
+| Old Macro                          | New Macro                      |
++------------------------------------+--------------------------------+
+| ``SUNDIALS_BUILD_WITH_MONITORING`` | ``SUNDIALS_ENABLE_MONITORING`` |
++------------------------------------+--------------------------------+

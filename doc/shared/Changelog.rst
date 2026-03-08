@@ -2402,7 +2402,7 @@ contact the SUNDIALS team about any performance changes that they notice.
 Added new capabilities for monitoring the solve phase in the Newton and
 fixed-point :c:type:`SUNNonlinearSolver`, and the SUNDIALS iterative linear
 solvers. SUNDIALS must be built with the CMake option
-:cmakeop:`SUNDIALS_BUILD_WITH_MONITORING` to use these capabilities.
+``SUNDIALS_BUILD_WITH_MONITORING`` to use these capabilities.
 
 Added specialized fused CUDA kernels to CVODE which may offer better performance
 on smaller problems when using CVODE with the CUDA vector. See the optional

@@ -71,7 +71,8 @@ set(SUNDIALS_COUNTER_TYPE
 # ---------------------------------------------------------------
 
 set(DOCSTR "Build with simulation monitoring capabilities enabled")
-sundials_option(SUNDIALS_BUILD_WITH_MONITORING BOOL "${DOCSTR}" OFF)
+sundials_option(SUNDIALS_ENABLE_MONITORING BOOL "${DOCSTR}" OFF
+                DEPRECATED_NAMES SUNDIALS_BUILD_WITH_MONITORING)
 
 # ---------------------------------------------------------------
 # Option to enable profiling

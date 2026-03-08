@@ -796,7 +796,7 @@ For more information on logging in SUNDIALS, see :ref:`SUNDIALS.Logging`.
 Monitoring
 ^^^^^^^^^^
 
-.. cmakeoption:: SUNDIALS_BUILD_WITH_MONITORING
+.. cmakeoption:: SUNDIALS_ENABLE_MONITORING
 
    Build SUNDIALS with capabilities for fine-grained monitoring of solver
    progress and statistics. This is primarily useful for debugging.
@@ -807,6 +807,10 @@ Monitoring
 
       Building with monitoring may result in minor performance degradation even
       if monitoring is not utilized.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_WITH_MONITORING``
 
 .. _Installation.Options.Profiling:
 
