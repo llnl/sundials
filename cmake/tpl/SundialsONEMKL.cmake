@@ -14,26 +14,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup oneMKL correctly.
-# Created from the SundialsTPL.cmake template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup oneMKL.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED SUNDIALS_ONEMKL_INCLUDED)
-  set(SUNDIALS_ONEMKL_INCLUDED)
-else()
-  return()
-endif()
+include_guard(GLOBAL)
 
 # -----------------------------------------------------------------------------
 # Section 2: Check to make sure options are compatible
@@ -58,19 +46,13 @@ endif()
 
 # Workaround bug in MKLConfig.cmake when using icpx -fsycl instead of dpcpp as
 # the C++ compiler
-if(ENABLE_SYCL)
+if(SUNDIALS_ENABLE_SYCL)
   set(DPCPP_COMPILER ON)
 endif()
 
 # Look for CMake configuration file in oneMKL installation
-find_package(
-  MKL
-  CONFIG
-  PATHS
-  "${ONEMKL_DIR}"
-  "${ONEMKL_DIR}/lib/cmake/mkl"
-  NO_DEFAULT_PATH
-  REQUIRED)
+find_package(MKL CONFIG PATHS "${ONEMKL_DIR}" "${ONEMKL_DIR}/lib/cmake/mkl"
+             REQUIRED)
 
 message(STATUS "MKL Version: ${MKL_VERSION}")
 message(STATUS "MKL Targets: ${MKL_IMPORTED_TARGETS}")
@@ -79,11 +61,9 @@ message(STATUS "MKL Targets: ${MKL_IMPORTED_TARGETS}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(MKL_FOUND AND (NOT ONEMKL_WORKS))
-  message(STATUS "Checking if oneMKL works... OK")
-  set(ONEMKL_WORKS
-      TRUE
-      CACHE BOOL "oneMKL works with SUNDIALS as configured" FORCE)
+if(SUNDIALS_ENABLE_ONEMKL_CHECKS)
+  message(CHECK_START "Testing oneMKL")
+  message(CHECK_PASS "success")
 else()
-  message(STATUS "Skipped oneMKL tests, assuming oneMKL works with SUNDIALS.")
+  message(STATUS "Skipped oneMKL checks.")
 endif()

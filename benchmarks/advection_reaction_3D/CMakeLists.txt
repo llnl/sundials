@@ -15,10 +15,10 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-if(ENABLE_RAJA)
+if(SUNDIALS_ENABLE_RAJA)
   add_subdirectory(raja)
 endif()
 
-if(ENABLE_KOKKOS AND BUILD_NVECTOR_KOKKOS)
+if(SUNDIALS_ENABLE_KOKKOS AND BUILD_NVECTOR_KOKKOS)
   add_subdirectory(kokkos)
 endif()

@@ -97,7 +97,7 @@ message(
 # Configure compiler for installed examples
 # ===============================================================
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   set(_EXAMPLES_CUDA_HOST_COMPILER
       "${MPI_CXX_COMPILER}"
       CACHE INTERNAL "${lang} compiler for installed examples")
