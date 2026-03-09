@@ -96,6 +96,8 @@ table below lists the old CMake option names and the new replacements.
 +-------------------------------------------+---------------------------------------------------------+
 | ``KOKKOS_KERNELS_WORKS``                  | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
 +-------------------------------------------+---------------------------------------------------------+
+| ``SUNDIALS_BUILD_WITH_PROFILING``         | :cmakeop:`SUNDIALS_ENABLE_PROFILING`                    |
++-------------------------------------------+---------------------------------------------------------+
 | ``BUILD_BENCHMARKS``                      | :cmakeop:`SUNDIALS_ENABLE_BENCHMARKS`                   |
 +-------------------------------------------+---------------------------------------------------------+
 | ``BENCHMARKS_INSTALL_PATH``               | :cmakeop:`SUNDIALS_BENCHMARKS_INSTALL_PATH`             |
