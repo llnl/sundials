@@ -131,7 +131,7 @@ if(SUNDIALS_ENABLE_MPI)
                           $<$<LINK_LANGUAGE:CXX>:MPI::MPI_CXX>)
 endif()
 
-if(SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_PROFILING)
   if(SUNDIALS_ENABLE_CALIPER)
     set(_link_caliper_if_needed PUBLIC caliper)
   endif()

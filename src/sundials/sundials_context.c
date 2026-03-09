@@ -89,7 +89,7 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
     if (err) { break; }
 #endif
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
     err = SUNProfiler_Create(comm, "SUNContext Default", &profiler);
     SUNCheckCallNoRet(err);
     if (err) { break; }
@@ -112,7 +112,7 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
 
   if (err)
   {
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
     SUNCheckCallNoRet(SUNProfiler_Free(&profiler));
 #endif
     SUNCheckCallNoRet(SUNLogger_Destroy(&logger));
@@ -193,7 +193,7 @@ SUNErrCode SUNContext_GetProfiler(SUNContext sunctx, SUNProfiler* profiler)
 
   SUNFunctionBegin(sunctx);
 
-#ifdef SUNDIALS_BUILD_WITH_PROFILING
+#ifdef SUNDIALS_ENABLE_PROFILING
   /* get profiler */
   *profiler = sunctx->profiler;
 #else
@@ -209,7 +209,7 @@ SUNErrCode SUNContext_SetProfiler(SUNContext sunctx, SUNProfiler profiler)
 
   SUNFunctionBegin(sunctx);
 
-#ifdef SUNDIALS_BUILD_WITH_PROFILING
+#ifdef SUNDIALS_ENABLE_PROFILING
   /* free any existing profiler */
   if (sunctx->profiler && sunctx->own_profiler)
   {
@@ -267,7 +267,7 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
 
   if (!sunctx || !(*sunctx)) { return SUN_SUCCESS; }
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
   /* Find out where we are printing to */
   FILE* fp                    = NULL;
   char* sunprofiler_print_env = getenv("SUNPROFILER_PRINT");

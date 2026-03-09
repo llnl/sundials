@@ -187,7 +187,7 @@ Running
 ^^^^^^^
 
 Based on the configuration, executables for each integrator and backend option
-are built and installed in ``<BENCHMARKS_INSTALL_PATH>/diffusion_2D``. The
+are built and installed in ``<SUNDIALS_BENCHMARKS_INSTALL_PATH>/diffusion_2D``. The
 executables follow the naming convention
 ```<package>_diffusion_2D_<parallelism>`` where ``<package>`` is ``arkode``,
 ``cvode``, or ``ida`` and ``<parallelism>`` is ``mpi`` for MPI only parallelism,

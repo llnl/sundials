@@ -35,19 +35,19 @@ if(NOT TESTRUNNER)
 endif()
 
 # Create the benchmark output directory
-if(NOT EXISTS ${SUNDIALS_BENCHMARK_OUTPUT_DIR})
-  file(MAKE_DIRECTORY ${SUNDIALS_BENCHMARK_OUTPUT_DIR})
+if(NOT EXISTS ${SUNDIALS_BENCHMARKS_OUTPUT_DIR})
+  file(MAKE_DIRECTORY ${SUNDIALS_BENCHMARKS_OUTPUT_DIR})
 endif()
-message(STATUS "Benchmark output directory: ${SUNDIALS_BENCHMARK_OUTPUT_DIR}")
+message(STATUS "Benchmark output directory: ${SUNDIALS_BENCHMARKS_OUTPUT_DIR}")
 
 if(SUNDIALS_ENABLE_CALIPER)
   message(STATUS "Enabled benchmark profiling with Caliper")
-  if(NOT EXISTS ${SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR})
-    file(MAKE_DIRECTORY ${SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR})
+  if(NOT EXISTS ${SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR})
+    file(MAKE_DIRECTORY ${SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR})
   endif()
   message(
     STATUS
-      "Benchmark Caliper output directory: ${SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR}"
+      "Benchmark Caliper output directory: ${SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR}"
   )
 endif()
 

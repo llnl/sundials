@@ -78,9 +78,10 @@ sundials_option(SUNDIALS_BUILD_WITH_MONITORING BOOL "${DOCSTR}" OFF)
 # ---------------------------------------------------------------
 
 set(DOCSTR "Build with simulation profiling capabilities enabled")
-sundials_option(SUNDIALS_BUILD_WITH_PROFILING BOOL "${DOCSTR}" OFF)
+sundials_option(SUNDIALS_ENABLE_PROFILING BOOL "${DOCSTR}" OFF DEPRECATED_NAMES
+                SUNDIALS_BUILD_WITH_PROFILING)
 
-if(SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_PROFILING)
   message(
     WARNING
       "SUNDIALS built with profiling turned on, performance may be affected.")
@@ -245,17 +246,6 @@ endif()
 
 set(DOCSTR "Enable Python interfaces")
 sundials_option(SUNDIALS_ENABLE_PYTHON BOOL "${DOCSTR}" OFF)
-
-# ---------------------------------------------------------------
-# Options for benchmark suite
-# ---------------------------------------------------------------
-
-sundials_option(BUILD_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF)
-
-sundials_option(
-  BENCHMARKS_INSTALL_PATH PATH
-  "Output directory for installing benchmark executables"
-  "${CMAKE_INSTALL_PREFIX}/benchmarks")
 
 # ---------------------------------------------------------------
 # Options for CMake config installation
@@ -474,21 +464,49 @@ sundials_option(SUNDIALS_DEV_CLANG_TIDY BOOL "Enable clang-tidy" OFF ADVANCED)
 # Options for SUNDIALS benchmarks
 # ---------------------------------------------------------------
 
-sundials_option(
-  SUNDIALS_SCHEDULER_COMMAND STRING
-  "Job scheduler command to use to launch SUNDIALS MPI tests" "" ADVANCED)
+sundials_option(SUNDIALS_ENABLE_BENCHMARKS BOOL "Enable the benchmark suite"
+                OFF DEPRECATED_NAMES BUILD_BENCHMARKS)
 
 sundials_option(
-  SUNDIALS_BENCHMARK_OUTPUT_DIR PATH "Location to write benchmark output files"
-  "${PROJECT_BINARY_DIR}/Benchmarking/output" ADVANCED)
+  SUNDIALS_BENCHMARKS_INSTALL_PATH PATH
+  "Output directory for installing benchmark executables"
+  "${CMAKE_INSTALL_PREFIX}/benchmarks" DEPRECATED_NAMES BENCHMARKS_INSTALL_PATH)
+
+sundials_option(SUNDIALS_SCHEDULER_COMMAND STRING
+                "Job scheduler command to use to launch MPI tests" "" ADVANCED)
 
 sundials_option(
-  SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR PATH
+  SUNDIALS_BENCHMARKS_OUTPUT_DIR
+  PATH
+  "Location to write benchmark output files"
+  "${PROJECT_BINARY_DIR}/Benchmarking/output"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_OUTPUT_DIR)
+
+sundials_option(
+  SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR
+  PATH
   "Location to write benchmark caliper files"
-  "${PROJECT_BINARY_DIR}/Benchmarking/caliper" ADVANCED)
+  "${PROJECT_BINARY_DIR}/Benchmarking/caliper"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR)
 
-sundials_option(SUNDIALS_BENCHMARK_NUM_CPUS STRING
-                "Number of CPU cores to run benchmarks with" "40" ADVANCED)
+sundials_option(
+  SUNDIALS_BENCHMARKS_NUM_CPUS
+  STRING
+  "Number of CPU cores to run benchmarks with"
+  "40"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_NUM_CPUS)
 
-sundials_option(SUNDIALS_BENCHMARK_NUM_GPUS STRING
-                "Number of GPUs to run benchmarks with" "4" ADVANCED)
+sundials_option(
+  SUNDIALS_BENCHMARKS_NUM_GPUS
+  STRING
+  "Number of GPUs to run benchmarks with"
+  "4"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_NUM_GPUS)

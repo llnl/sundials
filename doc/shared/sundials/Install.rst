@@ -819,7 +819,7 @@ Profiling
 
 For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
 
-.. cmakeoption:: SUNDIALS_BUILD_WITH_PROFILING
+.. cmakeoption:: SUNDIALS_ENABLE_PROFILING
 
    Build SUNDIALS with capabilities for fine-grained profiling. This requires
    POSIX timers, the Windows ``profileapi.h`` timers, or enabling Caliper with
@@ -830,6 +830,10 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
    .. warning::
 
       Profiling will impact performance, and should be enabled judiciously.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_WITH_PROFILING``
 
 .. _Installation.Options.Adiak:
 
@@ -892,7 +896,7 @@ Caliper support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D SUNDIALS_BUILD_WITH_PROFILING=ON \
+     -D SUNDIALS_ENABLE_PROFILING=ON \
      -D SUNDIALS_ENABLE_CALIPER=ON \
      -D CALIPER_DIR=/path/to/caliper/installation
 
@@ -904,7 +908,7 @@ Caliper support:
 
  .. note::
 
-      Using Caliper requires setting :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` to
+      Using Caliper requires setting :cmakeop:`SUNDIALS_ENABLE_PROFILING` to
       ``ON``.
 
  .. versionadded:: x.y.z

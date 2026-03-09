@@ -43,7 +43,7 @@
 /* Shortcuts                                                       */
 /*=================================================================*/
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 #define IDA_PROFILER IDA_mem->ida_sunctx->profiler
 #endif
 
