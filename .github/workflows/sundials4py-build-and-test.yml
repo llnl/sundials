@@ -51,7 +51,7 @@ jobs:
       with:
         submodules: true
 
-    - uses: pypa/cibuildwheel@v3.3
+    - uses: pypa/cibuildwheel@v3.4
       env:
         # Default (Linux/macOS): install matplotlib and run both test suites
         CIBW_TEST_REQUIRES: "pytest matplotlib"
@@ -87,7 +87,7 @@ jobs:
         submodules: true
 
     # Double precision - run all tests
-    - uses: pypa/cibuildwheel@v3.3
+    - uses: pypa/cibuildwheel@v3.4
       if: matrix.precision == 'double'
       env:
         CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
@@ -95,7 +95,7 @@ jobs:
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test {project}/examples/python"
 
     # Single precision - skip examples
-    - uses: pypa/cibuildwheel@v3.3
+    - uses: pypa/cibuildwheel@v3.4
       if: matrix.precision == 'single'
       env:
         CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
