@@ -70,7 +70,7 @@ requested have the ``output`` option defined to ensure output data is saved in a
 separate location from the test output. Otherwise, the ``.out`` files for each
 test will contain the output and the tests will fail.
 
-Turning on the ``BUILD_BENCHMARKS`` option will build benchmarks. Running
+Turning on the ``SUNDIALS_ENABLE_BENCHMARKS`` option will build benchmarks. Running
 ``make benchmark`` will execute all the available benchmarks and produce
 ``.cali`` output files for each one. To change what parameters benchmarks are run
 with, edit the respective ``CMakeLists.txt``. The ``BENCHMARK_VARS`` variable
