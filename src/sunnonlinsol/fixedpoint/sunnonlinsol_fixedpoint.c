@@ -443,7 +443,7 @@ SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
 SUNErrCode SUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver NLS,
                                             sunrealtype* delnrm)
 {
-  *delnorm = FP_CONTENT(NLS)->delnrm;
+  *delnrm = FP_CONTENT(NLS)->delnrm;
   return SUN_SUCCESS;
 }
 
