@@ -78,25 +78,6 @@ m.def(
   nb::arg("NLS"));
 
 m.def(
-  "SUNNonlinSolGetDeltNorm_FixedPoint",
-  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-  {
-    auto SUNNonlinSolGetDeltNorm_FixedPoint_adapt_modifiable_immutable_to_return =
-      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-    {
-      sunrealtype deltnorm_adapt_modifiable;
-
-      SUNErrCode r =
-        SUNNonlinSolGetDeltNorm_FixedPoint(NLS, &deltnorm_adapt_modifiable);
-      return std::make_tuple(r, deltnorm_adapt_modifiable);
-    };
-
-    return SUNNonlinSolGetDeltNorm_FixedPoint_adapt_modifiable_immutable_to_return(
-      NLS);
-  },
-  nb::arg("NLS"));
-
-m.def(
   "SUNNonlinSolGetDelNrm_FixedPoint",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
   {

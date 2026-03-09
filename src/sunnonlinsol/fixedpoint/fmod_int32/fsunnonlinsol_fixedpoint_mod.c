@@ -447,20 +447,6 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver farg
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetDeltNorm_FixedPoint(SUNNonlinearSolver farg1, double *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (sunrealtype *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetDeltNorm_FixedPoint(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FSUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver farg1, double *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;

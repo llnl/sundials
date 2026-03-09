@@ -440,18 +440,11 @@ SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetDeltNorm_FixedPoint(SUNNonlinearSolver NLS,
-                                              sunrealtype* deltnorm)
-{
-  /* return the current update norm ||delta||_{WRMS} */
-  *deltnorm = FP_CONTENT(NLS)->delnrm;
-  return SUN_SUCCESS;
-}
-
 SUNErrCode SUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver NLS,
                                             sunrealtype* delnrm)
 {
-  return SUNNonlinSolGetDeltNorm_FixedPoint(NLS, delnrm);
+  *delnorm = FP_CONTENT(NLS)->delnrm;
+  return SUN_SUCCESS;
 }
 
 /*=============================================================================

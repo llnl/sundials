@@ -196,11 +196,6 @@ user-callable functions.
       ``crate_const`` is 0.3.
 
 
-.. c:function:: SUNErrCode SUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver NLS, sunrealtype *delnrm)
-
-   This is an alias for :c:func:`SUNNonlinSolGetDeltNorm_FixedPoint`.
-
-
 .. c:function:: SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS, sunrealtype beta)
 
    This sets the damping parameter :math:`\beta` to use with Anderson

@@ -25,6 +25,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
                                      N_Vector del, sunrealtype tol,
                                      N_Vector ewt, void* mem);
 
+SUNDIALS_MAYBE_UNUSED
 static const char* SUNNonlinSolAutoType_ToString(SUNNonlinSolAutoType type)
 {
   switch (type)
