@@ -129,6 +129,6 @@ if(BUILD_FORTRAN_MODULE_INTERFACE)
 endif()
 
 # Add ARKODE XBraid interface
-if(ENABLE_XBRAID)
+if(SUNDIALS_ENABLE_XBRAID)
   add_subdirectory(xbraid)
 endif()

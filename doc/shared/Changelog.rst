@@ -1715,7 +1715,7 @@ A capability to profile/instrument SUNDIALS library code has been added. This
 can be enabled with the CMake option :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING`. A
 built-in profiler will be used by default, but the `Caliper
 <https://github.com/LLNL/Caliper>`__ library can also be used instead with the
-CMake option :cmakeop:`ENABLE_CALIPER`. See the documentation section on
+CMake option ``ENABLE_CALIPER``. See the documentation section on
 profiling for more details.
 
 .. warning::
@@ -3166,7 +3166,7 @@ with those used in native CMake FindMPI module are :cmakeop:`MPI_C_COMPILER`,
 :cmakeop:`MPI_CXX_COMPILER`, :cmakeop:`MPI_Fortran_COMPILER`, and
 :cmakeop:`MPIEXEC_EXECUTABLE`.
 
-When a Fortran name-mangling scheme is needed (e.g., :cmakeop:`ENABLE_LAPACK` is
+When a Fortran name-mangling scheme is needed (e.g., ``ENABLE_LAPACK`` is
 ``ON``) the build system will infer the scheme from the Fortran compiler. If a
 Fortran compiler is not available or the inferred or default scheme needs to be
 overridden, the advanced options ``SUNDIALS_F77_FUNC_CASE`` and

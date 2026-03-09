@@ -25,16 +25,16 @@ sundials_option(EXAMPLES_ENABLE_C BOOL "Build SUNDIALS C examples" ON)
 
 # Some TPLs only have C++ examples. Default the C++ examples to ON if any of
 # these are enabled on the initial configuration pass.
-if(ENABLE_TRILINOS
-   OR ENABLE_SUPERLUDIST
-   OR ENABLE_XBRAID
-   OR ENABLE_HIP
-   OR ENABLE_MAGMA
-   OR ENABLE_SYCL
-   OR ENABLE_ONEMKL
-   OR ENABLE_RAJA
-   OR ENABLE_GINKGO
-   OR ENABLE_KOKKOS)
+if(SUNDIALS_ENABLE_TRILINOS
+   OR SUNDIALS_ENABLE_SUPERLUDIST
+   OR SUNDIALS_ENABLE_XBRAID
+   OR SUNDIALS_ENABLE_HIP
+   OR SUNDIALS_ENABLE_MAGMA
+   OR SUNDIALS_ENABLE_SYCL
+   OR SUNDIALS_ENABLE_ONEMKL
+   OR SUNDIALS_ENABLE_RAJA
+   OR SUNDIALS_ENABLE_GINKGO
+   OR SUNDIALS_ENABLE_KOKKOS)
   sundials_option(EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" ON)
 else()
   sundials_option(EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" OFF)
@@ -82,7 +82,7 @@ endif()
 # -----------------------------------------------------------------------------
 
 sundials_option(EXAMPLES_ENABLE_CUDA BOOL "Build SUNDIALS CUDA examples" ON
-                DEPENDS_ON ENABLE_CUDA)
+                DEPENDS_ON SUNDIALS_ENABLE_CUDA)
 
 # -----------------------------------------------------------------------------
 # Options for installing examples
