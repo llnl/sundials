@@ -30,11 +30,6 @@ static std::string ReadFile(const std::string& path)
 
 static int CountLines(const std::string& s)
 {
-  int count = 0;
-  for (char c : s)
-  {
-    if (c == '\n') { count++; }
-  }
   return std::count(s.begin(), s.end(), '\n');
 }
 
