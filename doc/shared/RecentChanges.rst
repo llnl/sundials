@@ -120,12 +120,12 @@ table below lists the old CMake option names and the new replacements.
 Following the updated CMake options, the macros listed below have been
 deprecated and replaced with versions that align with the new CMake options.
 
-+------------------------------------------+--------------------------------------------------+
-| Old Macro                                | New Macro                                        |
-+------------------------------------------+--------------------------------------------------+
-| ``SUNDIALS_BUILD_WITH_PROFILING``        | ``SUNDIALS_ENABLE_PROFILING``                    |
-+------------------------------------------+--------------------------------------------------+
-| ``SUNDIALS_BUILD_WITH_MONITORING``       | ``SUNDIALS_ENABLE_MONITORING``                   |
-+------------------------------------------+--------------------------------------------------+
-| ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS`` | :cmakeop:`SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS` |
-+------------------------------------------+--------------------------------------------------+
++------------------------------------------+-------------------------------------------+
+| Old Macro                                | New Macro                                 |
++------------------------------------------+-------------------------------------------+
+| ``SUNDIALS_BUILD_WITH_PROFILING``        | ``SUNDIALS_ENABLE_PROFILING``             |
++------------------------------------------+-------------------------------------------+
+| ``SUNDIALS_BUILD_WITH_MONITORING``       | ``SUNDIALS_ENABLE_MONITORING``            |
++------------------------------------------+-------------------------------------------+
+| ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS`` | ``SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`` |
++------------------------------------------+-------------------------------------------+
