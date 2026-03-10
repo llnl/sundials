@@ -40,7 +40,7 @@ foreach(lang ${_SUNDIALS_ENABLED_LANGS})
 endforeach()
 
 # Disable some warnings for examples
-if(ENABLE_ALL_WARNINGS)
+if(SUNDIALS_ENABLE_ALL_WARNINGS)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
 endif()

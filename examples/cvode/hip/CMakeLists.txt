@@ -29,7 +29,7 @@ set(all_examples
 # Specify libraries to link against
 set(SUNDIALS_LIBS sundials_cvode sundials_nvechip)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(SUNDIALS_LIBS ${SUNDIALS_LIBS} sundials_cvode_fused_hip)
 endif()
 
@@ -79,7 +79,7 @@ endforeach(example_tuple ${all_examples})
 # Install the targets
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_kernels_if_enabled cvode_fused_hip)
   else()
     set(_fused_kernels_if_enabled)

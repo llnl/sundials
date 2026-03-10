@@ -54,7 +54,7 @@ set(CVODES_examples
     "cvsRoberts_dns_constraints\;\;develop"
     "cvsRoberts_dns_uw\;\;develop")
 
-if(SUNDIALS_BUILD_WITH_MONITORING)
+if(SUNDIALS_ENABLE_MONITORING)
   list(APPEND CVODE_examples "cvsKrylovDemo_ls\;0 1\;develop")
 endif()
 

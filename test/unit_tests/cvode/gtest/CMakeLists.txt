@@ -21,7 +21,7 @@ target_include_directories(
   PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
           ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(_fused_link_lib sundials_cvode_fused_stubs_obj)
 endif()
 

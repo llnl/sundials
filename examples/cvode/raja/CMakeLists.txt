@@ -26,7 +26,7 @@ set(CVODE_examples "cvAdvDiff_kry_raja.cpp\;develop")
 # Add source directory to include directories
 include_directories(.)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(_fused_stubs sundials_cvode_fused_stubs)
 endif()
 
@@ -74,7 +74,7 @@ endforeach(example_tuple ${CVODE_examples})
 # create Makefile and CMakeLists.txt for examples
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_stubs_target cvode_fused_stubs)
     set(LIBS "-lsundials_cvode_fused_stubs ${LIBS}")
   endif()

@@ -50,7 +50,7 @@ endif()
 # Specify libraries to link against
 set(CVODE_LIB sundials_cvode sundials_fcvode_mod)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   list(APPEND CVODE_LIB sundials_cvode_fused_stubs)
 endif()
 
@@ -178,7 +178,7 @@ if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
   set(SOLVER_FLIB "sundials_fcvode_mod")
   set(NVEC_LIB "sundials_nvecserial")
   set(NVEC_FLIB "sundials_fnvecserial_mod")
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(LIBS "-lsundials_cvode_fused_stubs ${LIBS}")
   endif()
 

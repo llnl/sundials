@@ -250,7 +250,7 @@ allocation account on Frontier:
      -D AMDGPU_TARGETS=gfx90a \
      -D SUNDIALS_ENABLE_HIP=ON \
      -D SUNDIALS_ENABLE_MPI=ON \
-     -D BUILD_FORTRAN_MODULE_INTERFACE=ON
+     -D SUNDIALS_ENABLE_FORTRAN=ON
    cd BUILD_DIR
    make -j8 install
    # Need an allocation to run the tests:
@@ -710,7 +710,7 @@ Example Programs
 
    Build the SUNDIALS Fortran 2003 examples
 
-   Default: ``ON`` when :cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE` is ``ON``,
+   Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_FORTRAN` is ``ON``,
    otherwise ``OFF``
 
    .. versionadded:: x.y.z
@@ -749,9 +749,9 @@ Example Programs
 Fortran Interfaces
 ^^^^^^^^^^^^^^^^^^
 
-.. cmakeoption:: BUILD_FORTRAN_MODULE_INTERFACE
+.. cmakeoption:: SUNDIALS_ENABLE_FORTRAN
 
-   Build the SUNDIALS Fortran 2003 interface
+   Enable SUNDIALS Fortran interfaces
 
    Default: ``OFF``
 
@@ -766,6 +766,10 @@ Fortran Interfaces
       that causes linking the Fortran interfaces to fail when building
       SUNDIALS. For now the work around is to only build with static libraries
       when using MSYS with gfortran on Windows.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_FORTRAN_MODULE_INTERFACE``
 
 .. _Installation.Options.ErrorChecking:
 
@@ -821,7 +825,7 @@ For more information on logging in SUNDIALS, see :ref:`SUNDIALS.Logging`.
 Monitoring
 ^^^^^^^^^^
 
-.. cmakeoption:: SUNDIALS_BUILD_WITH_MONITORING
+.. cmakeoption:: SUNDIALS_ENABLE_MONITORING
 
    Build SUNDIALS with capabilities for fine-grained monitoring of solver
    progress and statistics. This is primarily useful for debugging.
@@ -833,6 +837,10 @@ Monitoring
       Building with monitoring may result in minor performance degradation even
       if monitoring is not utilized.
 
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_WITH_MONITORING``
+
 .. _Installation.Options.Profiling:
 
 Profiling
@@ -840,7 +848,7 @@ Profiling
 
 For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
 
-.. cmakeoption:: SUNDIALS_BUILD_WITH_PROFILING
+.. cmakeoption:: SUNDIALS_ENABLE_PROFILING
 
    Build SUNDIALS with capabilities for fine-grained profiling. This requires
    POSIX timers, the Windows ``profileapi.h`` timers, or enabling Caliper with
@@ -851,6 +859,25 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
    .. warning::
 
       Profiling will impact performance, and should be enabled judiciously.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_WITH_PROFILING``
+
+.. _Installation.Options.FusedKernels:
+
+Fused Kernels
+^^^^^^^^^^^^^
+
+.. cmakeoption:: SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
+
+   Enable fused kernels in SUNDIALS packages
+
+   Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``
 
 .. _Installation.Options.Adiak:
 
@@ -913,7 +940,7 @@ Caliper support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D SUNDIALS_BUILD_WITH_PROFILING=ON \
+     -D SUNDIALS_ENABLE_PROFILING=ON \
      -D SUNDIALS_ENABLE_CALIPER=ON \
      -D CALIPER_DIR=/path/to/caliper/installation
 
@@ -925,7 +952,7 @@ Caliper support:
 
  .. note::
 
-      Using Caliper requires setting :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` to
+      Using Caliper requires setting :cmakeop:`SUNDIALS_ENABLE_PROFILING` to
       ``ON``.
 
  .. versionadded:: x.y.z
@@ -1711,9 +1738,9 @@ configure SUNDIALS with MPI support:
 
    .. note::
 
-      This option is triggered only needed if MPI is enabled
+      This option is only needed if MPI is enabled
       (:cmakeop:`SUNDIALS_ENABLE_MPI` is ``ON``) and the Fortran interfaces are enabled
-      (:cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE` is ``ON``).
+      (:cmakeop:`SUNDIALS_ENABLE_FORTRAN` is ``ON``).
 
 .. cmakeoption:: MPIEXEC_EXECUTABLE
 

@@ -101,7 +101,7 @@ set(ARKODE_examples
     "ark_robertson.c\;\;exclude-single"
     "ark_twowaycouple_mri.c\;\;develop")
 
-if(SUNDIALS_BUILD_WITH_MONITORING)
+if(SUNDIALS_ENABLE_MONITORING)
   list(APPEND ARKODE_examples "ark_brusselator_fp.c\;1\;exclude-single")
 endif()
 

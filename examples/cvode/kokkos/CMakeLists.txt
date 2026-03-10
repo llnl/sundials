@@ -55,7 +55,7 @@ foreach(example_tuple ${examples_list})
                 sundials_sunmatrixkokkosdense sundials_sunlinsolkokkosdense
                 ${EXE_EXTRA_LINK_LIBS})
 
-      if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+      if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
         target_link_libraries(${example_target}
                               PRIVATE sundials_cvode_fused_stubs)
       endif()
@@ -83,7 +83,7 @@ endforeach()
 # Install the targets
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_stubs cvode_fused_stubs)
   endif()
 

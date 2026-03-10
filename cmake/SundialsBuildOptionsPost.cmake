@@ -30,10 +30,10 @@ else()
 endif()
 
 sundials_option(
-  SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS BOOL
+  SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS BOOL
   "Build specialized fused GPU kernels" OFF
   DEPENDS_ON BUILD_CVODE CUDA_OR_HIP
-  DEPENDS_ON_THROW_ERROR)
+  DEPENDS_ON_THROW_ERROR DEPRECATED_NAMES SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
 
 # ---------------------------------------------------------------
 # Options to enable/disable build for NVECTOR modules.

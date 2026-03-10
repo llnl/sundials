@@ -42,7 +42,7 @@ list(APPEND all_examples "${CVODE_examples}")
 # Specify libraries to link against
 set(SUNDIALS_LIBS ${SUNDIALS_LIBS} sundials_cvode sundials_nveccuda)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(SUNDIALS_LIBS ${SUNDIALS_LIBS} sundials_cvode_fused_cuda)
 endif()
 
@@ -104,7 +104,7 @@ if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
   set(SOLVER "CVODE")
   set(SOLVER_LIB "sundials_cvode")
   set(NVECTOR_LIB "sundials_nveccuda")
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(LIBS "-lsundials_cvode_fused_cuda ${LIBS}")
   endif()
 
