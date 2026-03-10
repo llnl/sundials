@@ -103,7 +103,7 @@ if(EXAMPLES_INSTALL)
 
   if(BUILD_CVODE)
     set(_include_cvode cvode)
-    if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+    if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
       set(_include_cvode_stubs cvode_fused_stubs)
     endif()
   endif()

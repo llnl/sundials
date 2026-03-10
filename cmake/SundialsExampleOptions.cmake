@@ -44,37 +44,12 @@ endif()
 # Options for Fortran Examples
 # -----------------------------------------------------------------------------
 
-# F2003 examples (on by default) are an option only if the Fortran 2003
-# interface is enabled.
-set(DOCSTR "Build SUNDIALS Fortran 2003 examples")
-if(BUILD_FORTRAN_MODULE_INTERFACE)
-  set(EXAMPLES_ENABLE_F2003
-      ON
-      CACHE BOOL "${DOCSTR}")
-
-  # Fortran 2003 examples only support double precision
-  if(EXAMPLES_ENABLE_F2003 AND (NOT (SUNDIALS_PRECISION MATCHES "DOUBLE")))
-    message(
-      WARNING
-        "F2003 examples are not compatible with ${SUNDIALS_PRECISION} precision. "
-        "Setting EXAMPLES_ENABLE_F2003 to OFF.")
-    set(EXAMPLES_ENABLE_F2003
-        OFF
-        CACHE BOOL "${DOCSTR}" FORCE)
-  endif()
+if(SUNDIALS_ENABLE_FORTRAN)
+  sundials_option(EXAMPLES_ENABLE_F2003 BOOL "Build SUNDIALS Fortran examples"
+                  ON DEPENDS_ON SUNDIALS_ENABLE_FORTRAN)
 else()
-
-  # set back to OFF (in case it was ON)
-  if(EXAMPLES_ENABLE_F2003)
-    message(
-      WARNING
-        "EXAMPLES_ENABLE_F2003 is ON but BUILD_FORTRAN_MODULE_INTERFACE is OFF. "
-        "Setting EXAMPLES_ENABLE_F2003 to OFF.")
-    set(EXAMPLES_ENABLE_F2003
-        OFF
-        CACHE BOOL "${DOCSTR}" FORCE)
-  endif()
-
+  sundials_option(EXAMPLES_ENABLE_F2003 BOOL "Build SUNDIALS Fortran examples"
+                  OFF DEPENDS_ON SUNDIALS_ENABLE_FORTRAN)
 endif()
 
 # -----------------------------------------------------------------------------
