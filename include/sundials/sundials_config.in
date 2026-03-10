@@ -292,6 +292,7 @@
  * next major release. Use SUNDIALS_ENABLE_MONITORING instead. */
 #ifdef SUNDIALS_ENABLE_MONITORING
 #define SUNDIALS_BUILD_WITH_MONITORING
+#endif
 
 /* DEPRECATION NOTICE: SUNDIALS_BUILD_WITH_PROFILING will be removed in the next
  * major release. Use SUNDIALS_ENABLE_PROFILING instead. */
