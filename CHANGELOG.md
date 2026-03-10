@@ -67,7 +67,7 @@ table below lists the old CMake option names and the new replacements.
 | `EXAMPLES_ENABLE_CXX`                   | `SUNDIALS_ENABLE_CXX_EXAMPLES`                 |
 | `EXAMPLES_ENABLE_F2003`                 | `SUNDIALS_ENABLE_FORTRAN_EXAMPLES`             |
 | `EXAMPLES_ENABLE_CUDA`                  | `SUNDIALS_ENABLE_CUDA_EXAMPLES`                |
-| `EXAMPLES_INSTALL`                      | `SUNDIALS_EXAMPLES_ENABLE_INSTALL`             |
+| `EXAMPLES_INSTALL`                      | `SUNDIALS_ENABLE_EXAMPLES_INSTALL`             |
 | `EXAMPLES_INSTALL_PATH`                 | `SUNDIALS_EXAMPLES_INSTALL_PATH`               |
 | `BUILD_BENCHMARKS`                      | `SUNDIALS_ENABLE_BENCHMARKS`                   |
 | `BENCHMARKS_INSTALL_PATH`               | `SUNDIALS_BENCHMARKS_INSTALL_PATH`             |

@@ -112,7 +112,7 @@ table below lists the old CMake option names and the new replacements.
 +-------------------------------------------+---------------------------------------------------------+
 | ``EXAMPLES_ENABLE_CUDA``                  | :cmakeop:`SUNDIALS_ENABLE_CUDA_EXAMPLES`                |
 +-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_INSTALL``                      | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_INSTALL`             |
+| ``EXAMPLES_INSTALL``                      | :cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL`             |
 +-------------------------------------------+---------------------------------------------------------+
 | ``EXAMPLES_INSTALL_PATH``                 | :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH`               |
 +-------------------------------------------+---------------------------------------------------------+

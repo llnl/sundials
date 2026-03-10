@@ -99,7 +99,7 @@ foreach(example_tuple ${ARKODE_examples})
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   if(BUILD_CVODE)
     set(_include_cvode cvode)

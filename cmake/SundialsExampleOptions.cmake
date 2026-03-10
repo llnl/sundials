@@ -74,7 +74,7 @@ sundials_option(
 # -----------------------------------------------------------------------------
 
 # Enable installing examples by default
-sundials_option(SUNDIALS_EXAMPLES_ENABLE_INSTALL BOOL
+sundials_option(SUNDIALS_ENABLE_EXAMPLES_INSTALL BOOL
                 "Install SUNDIALS examples" ON)
 
 sundials_option(
@@ -83,7 +83,7 @@ sundials_option(
   "${CMAKE_INSTALL_PREFIX}/examples")
 
 # If examples are to be exported, check where we should install them.
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL AND NOT SUNDIALS_EXAMPLES_INSTALL_PATH)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL AND NOT SUNDIALS_EXAMPLES_INSTALL_PATH)
   message(
     WARNING "The example installation path is empty. Example installation "
             "path was reset to its default value")

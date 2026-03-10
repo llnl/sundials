@@ -62,7 +62,7 @@ foreach(example_tuple ${examples_list})
 
 endforeach()
 
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${extras})

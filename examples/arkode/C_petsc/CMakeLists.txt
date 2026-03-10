@@ -73,14 +73,14 @@ foreach(example_tuple ${ARKODE_examples})
   endif()
 
   # install example
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example}.out
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
   endif()
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
   install(FILES README

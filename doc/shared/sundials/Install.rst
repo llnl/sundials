@@ -717,7 +717,7 @@ Example Programs
 
       Replaces the deprecated option ``EXAMPLES_ENABLE_F2003``
 
-.. cmakeoption:: SUNDIALS_EXAMPLES_ENABLE_INSTALL
+.. cmakeoption:: SUNDIALS_ENABLE_EXAMPLES_INSTALL
 
    Install example program source files and sample output files. See
    :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH` for the install location.
@@ -2539,7 +2539,7 @@ command:
 
    make test
 
-Additionally, if :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_INSTALL` is set to ``ON``, then a set of
+Additionally, if :cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL` is set to ``ON``, then a set of
 smoke tests can be run after installing with the command:
 
 .. code-block:: bash
@@ -2554,7 +2554,7 @@ Building and Running Examples
 Each of the SUNDIALS solvers is distributed with a set of examples demonstrating
 basic usage. To build and install the examples, set at least one of the
 ``EXAMPLES_ENABLE_<language>`` options to ``ON``, and set
-:cmakeop:`SUNDIALS_EXAMPLES_ENABLE_INSTALL` to ``ON``. Along side the example sources and
+:cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL` to ``ON``. Along side the example sources and
 outputs, automatically generated ``CMakeLists.txt`` configuration files (and
 ``Makefile`` files if on Linux/Unix systems) are installed referencing the
 *installed* SUNDIALS headers and libraries.
