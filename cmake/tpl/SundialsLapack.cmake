@@ -14,15 +14,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup LAPACK/BLAS correctly.
-# Created from the SundialsTPL.cmake template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# <TPL>_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup LAPACK.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
@@ -36,7 +28,7 @@ include_guard(GLOBAL)
 # -----------------------------------------------------------------------------
 
 # LAPACK does not support extended precision
-if(ENABLE_LAPACK AND SUNDIALS_PRECISION MATCHES "EXTENDED")
+if(SUNDIALS_ENABLE_LAPACK AND SUNDIALS_PRECISION MATCHES "EXTENDED")
   message(
     FATAL_ERROR "LAPACK is not compatible with ${SUNDIALS_PRECISION} precision")
 endif()
@@ -294,7 +286,7 @@ if(NEED_FORTRAN_NAME_MANGLING)
 endif()
 
 # Try building a simple test
-if(NOT LAPACK_WORKS)
+if(SUNDIALS_ENABLE_LAPACK_CHECKS)
 
   message(CHECK_START "Testing LAPACK")
 
@@ -348,5 +340,5 @@ if(NOT LAPACK_WORKS)
   endif()
 
 else()
-  message(STATUS "Skipped LAPACK test. Set LAPACK_WORKS=FALSE to test.")
+  message(STATUS "Skipped LAPACK checks.")
 endif()

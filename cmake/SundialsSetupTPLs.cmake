@@ -26,7 +26,7 @@
 # Find MPI
 # ---------------------------------------------------------------
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   include(SundialsMPI)
   list(APPEND SUNDIALS_TPL_LIST "MPI")
 endif()
@@ -35,7 +35,7 @@ endif()
 # Find OpenMP
 # ---------------------------------------------------------------
 
-if(ENABLE_OPENMP)
+if(SUNDIALS_ENABLE_OPENMP)
   include(SundialsOpenMP)
   list(APPEND SUNDIALS_TPL_LIST "OPENMP")
 endif()
@@ -44,7 +44,7 @@ endif()
 # Find OpenMP with device offloading
 # --------------------------------------------------------------
 
-if(ENABLE_OPENMP_DEVICE)
+if(SUNDIALS_ENABLE_OPENMP_DEVICE)
   include(SundialsOpenMP)
   list(APPEND SUNDIALS_TPL_LIST "OPENMP_DEVICE")
 endif()
@@ -57,7 +57,7 @@ endif()
 # Find (and test) the Adiak libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_ADIAK)
+if(SUNDIALS_ENABLE_ADIAK)
   include(SundialsAdiak)
   list(APPEND SUNDIALS_TPL_LIST "ADIAK")
 endif()
@@ -66,7 +66,7 @@ endif()
 # Find (and test) the Caliper libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_CALIPER)
+if(SUNDIALS_ENABLE_CALIPER)
   include(SundialsCaliper)
   list(APPEND SUNDIALS_TPL_LIST "CALIPER")
 endif()
@@ -75,7 +75,7 @@ endif()
 # Find (and test) the Ginkgo libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_GINKGO)
+if(SUNDIALS_ENABLE_GINKGO)
   include(SundialsGinkgo)
   list(APPEND SUNDIALS_TPL_LIST "GINKGO")
 endif()
@@ -84,7 +84,7 @@ endif()
 # Find (and test) the hypre libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_HYPRE)
+if(SUNDIALS_ENABLE_HYPRE)
   include(SundialsHypre)
   list(APPEND SUNDIALS_TPL_LIST "HYPRE")
 endif()
@@ -93,7 +93,7 @@ endif()
 # Find (and test) Kokkos
 # ---------------------------------------------------------------
 
-if(ENABLE_KOKKOS)
+if(SUNDIALS_ENABLE_KOKKOS)
   include(SundialsKokkos)
   list(APPEND SUNDIALS_TPL_LIST "KOKKOS")
 endif()
@@ -102,7 +102,7 @@ endif()
 # Find (and test) Kokkos Kernels
 # ---------------------------------------------------------------
 
-if(ENABLE_KOKKOS_KERNELS)
+if(SUNDIALS_ENABLE_KOKKOS_KERNELS)
   include(SundialsKokkosKernels)
   list(APPEND SUNDIALS_TPL_LIST "KOKKOS_KERNELS")
 endif()
@@ -111,7 +111,7 @@ endif()
 # Find (and test) the KLU libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_KLU)
+if(SUNDIALS_ENABLE_KLU)
   include(SundialsKLU)
   list(APPEND SUNDIALS_TPL_LIST "KLU")
 endif()
@@ -120,7 +120,7 @@ endif()
 # Find (and test) the LAPACK and BLAS libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_LAPACK)
+if(SUNDIALS_ENABLE_LAPACK)
   include(SundialsLapack)
   list(APPEND SUNDIALS_TPL_LIST "BLAS_LAPACK")
 endif()
@@ -129,7 +129,7 @@ endif()
 # Find (and test) the MAGMA libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_MAGMA)
+if(SUNDIALS_ENABLE_MAGMA)
   include(SundialsMAGMA)
   list(APPEND SUNDIALS_TPL_LIST "MAGMA")
 endif()
@@ -138,7 +138,7 @@ endif()
 # Find (and test) the oneMKL libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_ONEMKL)
+if(SUNDIALS_ENABLE_ONEMKL)
   include(SundialsONEMKL)
   list(APPEND SUNDIALS_TPL_LIST "ONEMKL")
 endif()
@@ -147,7 +147,7 @@ endif()
 # Find (and test) the PETSc libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_PETSC)
+if(SUNDIALS_ENABLE_PETSC)
   include(SundialsPETSC)
   list(APPEND SUNDIALS_TPL_LIST "PETSC")
 endif()
@@ -156,7 +156,7 @@ endif()
 # Find PThreads
 # ---------------------------------------------------------------
 
-if(ENABLE_PTHREAD)
+if(SUNDIALS_ENABLE_PTHREAD)
   include(SundialsPthread)
   list(APPEND SUNDIALS_TPL_LIST "PTHREAD")
 endif()
@@ -165,7 +165,7 @@ endif()
 # Find (and test) RAJA
 # -------------------------------------------------------------
 
-if(ENABLE_RAJA)
+if(SUNDIALS_ENABLE_RAJA)
   include(SundialsRAJA)
   list(APPEND SUNDIALS_TPL_LIST "RAJA")
 endif()
@@ -174,7 +174,7 @@ endif()
 # Find (and test) the SuperLUDIST libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_SUPERLUDIST)
+if(SUNDIALS_ENABLE_SUPERLUDIST)
   include(SundialsSuperLUDIST)
   list(APPEND SUNDIALS_TPL_LIST "SUPERLUDIST")
 endif()
@@ -183,7 +183,7 @@ endif()
 # Find (and test) the SUPERLUMT libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_SUPERLUMT)
+if(SUNDIALS_ENABLE_SUPERLUMT)
   include(SundialsSuperLUMT)
   list(APPEND SUNDIALS_TPL_LIST "SUPERLUMT")
 endif()
@@ -192,7 +192,7 @@ endif()
 # Find (and test) Trilinos
 # -------------------------------------------------------------
 
-if(ENABLE_TRILINOS)
+if(SUNDIALS_ENABLE_TRILINOS)
   include(SundialsTrilinos)
   list(APPEND SUNDIALS_TPL_LIST "TRILINOS")
 endif()
@@ -201,7 +201,7 @@ endif()
 # Find (and test) XBraid
 # -------------------------------------------------------------
 
-if(ENABLE_XBRAID)
+if(SUNDIALS_ENABLE_XBRAID)
   include(SundialsXBRAID)
   list(APPEND SUNDIALS_TPL_LIST "XBRAID")
 endif()

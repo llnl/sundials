@@ -22,7 +22,7 @@
 
 list(APPEND CVODE_examples "cvAdvDiff_sludist.cpp\;2 1\;2\;develop")
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(_fused_lib sundials_cvode_fused_stubs)
 endif()
 
@@ -82,7 +82,7 @@ else()
 endif()
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   sundials_install_examples(
     cvode_superludist CVODE_examples

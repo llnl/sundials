@@ -14,15 +14,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup SUPERLUMT correctly.
-# Created from the SundialsTPL.cmake.template template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup SUPERLUMT.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
@@ -55,7 +47,7 @@ message(STATUS "SUPERLUMT_INCLUDE_DIR: ${SUPERLUMT_INCLUDE_DIR}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(NOT SUPERLUMT_WORKS)
+if(SUNDIALS_ENABLE_SUPERLUMT_CHECKS)
 
   message(CHECK_START "Testing SuperLU_MT")
 
@@ -96,5 +88,5 @@ if(NOT SUPERLUMT_WORKS)
   endif()
 
 else()
-  message(STATUS "Skipped SuperLU_MT test. Set SUPERLUMT_WORKS=FALSE to test.")
+  message(STATUS "Skipped SuperLU_MT checks.")
 endif()

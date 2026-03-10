@@ -14,26 +14,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup SuperLU_DIST correctly.
-# Created from the SundialsTPL.cmake template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# <TPL>_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup SuperLU_DIST.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED SUNDIALS_SUPERLUDIST_INCLUDED)
-  set(SUNDIALS_SUPERLUDIST_INCLUDED)
-else()
-  return()
-endif()
+include_guard(GLOBAL)
 
 # -----------------------------------------------------------------------------
 # Section 2: Check to make sure options are compatible
@@ -47,19 +35,21 @@ if(SUNDIALS_PRECISION MATCHES "SINGLE" OR SUNDIALS_PRECISION MATCHES "EXTENDED")
 endif()
 
 # Using SUPERLUDIST requires building with MPI enabled
-if(ENABLE_SUPERLUDIST AND NOT ENABLE_MPI)
+if(SUNDIALS_ENABLE_SUPERLUDIST AND NOT SUNDIALS_ENABLE_MPI)
   message(
     FATAL_ERROR
-      "MPI is required for SuperLU DIST support. Set ENABLE_MPI to ON.")
+      "MPI is required for SuperLU DIST support. Set SUNDIALS_ENABLE_MPI to ON."
+  )
 endif()
 
 # Using SUPERLUDIST with OpenMP requires building with OpenMP enabled
-if(ENABLE_SUPERLUDIST
+if(SUNDIALS_ENABLE_SUPERLUDIST
    AND SUPERLUDIST_OpenMP
-   AND NOT ENABLE_OPENMP)
+   AND NOT SUNDIALS_ENABLE_OPENMP)
   message(
     FATAL_ERROR
-      "OpenMP is required for SuperLU DIST support. Set ENABLE_OPENMP to ON.")
+      "OpenMP is required for SuperLU DIST support. Set SUNDIALS_ENABLE_OPENMP to ON."
+  )
 endif()
 
 # -----------------------------------------------------------------------------
@@ -85,24 +75,29 @@ message(STATUS "SUPERLUDIST_ROCM:           ${SUPERLUDIST_ROCM}")
 # -----------------------------------------------------------------------------
 
 # If we have the SuperLU_DIST libraries, test them
-if(SUPERLUDIST_FOUND AND (NOT SUPERLUDIST_WORKS))
+if(SUNDIALS_ENABLE_SUPERLUDIST_CHECKS)
 
-  if(SUPERLUDIST_CUDA AND (NOT ENABLE_CUDA))
+  message(CHECK_START "Testing SuperLU_DIST")
+
+  if(SUPERLUDIST_CUDA AND (NOT SUNDIALS_ENABLE_CUDA))
+    message(CHECK_FAIL "failed")
     message(
       FATAL_ERROR
-        "SuperLU_DIST was built with CUDA but SUNDIALS does not have CUDA enabled. Set ENABLE_CUDA=TRUE."
+        "SuperLU_DIST was built with CUDA but SUNDIALS does not have CUDA enabled. Set SUNDIALS_ENABLE_CUDA=TRUE."
     )
   endif()
 
-  if(SUPERLUDIST_HIP AND (NOT ENABLE_HIP))
+  if(SUPERLUDIST_ROCM AND (NOT SUNDIALS_ENABLE_HIP))
+    message(CHECK_FAIL "failed")
     message(
       FATAL_ERROR
-        "SuperLU_DIST was built with HIP but SUNDIALS does not have HIP enabled. Set ENABLE_HIP=TRUE."
+        "SuperLU_DIST was built with HIP but SUNDIALS does not have HIP enabled. Set SUNDIALS_ENABLE_HIP=TRUE."
     )
   endif()
 
   # Check index size
   if(NOT (SUNDIALS_INDEX_SIZE STREQUAL SUPERLUDIST_INDEX_SIZE))
+    message(CHECK_FAIL "failed")
     set(_err_msg_string
         "SuperLU_DIST not functional due to index size mismatch:\n")
     string(
@@ -115,14 +110,8 @@ if(SUPERLUDIST_FOUND AND (NOT SUPERLUDIST_WORKS))
     message(FATAL_ERROR "${_err_msg_string}")
   endif()
 
-  message(STATUS "Checking if SuperLU_DIST works with SUNDIALS... OK")
-  set(SUPERLUDIST_WORKS
-      TRUE
-      CACHE BOOL "SuperLU_DIST works with SUNDIALS as configured" FORCE)
+  message(CHECK_PASS "success")
 
-elseif(SUPERLUDIST_FOUND AND SUPERLUDIST_WORKS)
-  message(
-    STATUS
-      "Skipped SuperLU_DIST tests, assuming SuperLU_DIST works with SUNDIALS. Set SUPERLUDIST_WORKS=FALSE to (re)run compatibility test."
-  )
+else()
+  message(STATUS "Skipped SuperLU_DIST checks.")
 endif()

@@ -27,6 +27,6 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
                              PRIVATE USE_${backend})
 
   install(TARGETS test_nvector_performance_kokkos.${backend}
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/")
+          DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/")
 
 endforeach()
