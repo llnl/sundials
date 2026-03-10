@@ -104,7 +104,7 @@ if(ENABLE_ALL_WARNINGS)
   endif()
 
   # Avoid numerous warnings from SWIG generated functions
-  if(NOT BUILD_FORTRAN_MODULE_INTERFACE)
+  if(NOT SUNDIALS_ENABLE_FORTRAN)
     set(WARNING_FLAGS "-Wmissing-declarations -Wcast-qual ${WARNING_FLAGS}")
   endif()
 
@@ -417,7 +417,7 @@ if(SUNDIALS_LAPACK_CASE AND SUNDIALS_LAPACK_UNDERSCORES)
 endif()
 
 # Do we need a Fortran compiler?
-if(BUILD_FORTRAN_MODULE_INTERFACE OR NEED_FORTRAN_NAME_MANGLING)
+if(SUNDIALS_ENABLE_FORTRAN OR NEED_FORTRAN_NAME_MANGLING)
   include(SundialsSetupFortran)
 endif()
 

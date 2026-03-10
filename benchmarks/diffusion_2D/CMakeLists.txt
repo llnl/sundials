@@ -36,6 +36,7 @@ if(BUILD_ARKODE
     add_subdirectory(mpi_gpu)
   endif()
 
-  install(FILES README.md DESTINATION "${BENCHMARKS_INSTALL_PATH}/diffusion_2D")
+  install(FILES README.md
+          DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/diffusion_2D")
 
 endif()

@@ -30,7 +30,7 @@ set(sunlinsol_dense_examples
 set(sunlinsol_dense_dependencies test_sunlinsol)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_dense_fortran_examples "test_fsunlinsol_dense_mod\;\;")
 endif()
 

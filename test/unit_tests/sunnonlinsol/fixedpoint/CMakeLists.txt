@@ -26,7 +26,7 @@ set(examples
     "test_sunnonlinsol_fixedpoint\;2 0.5\;")
 
 # if building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(fortran_examples "test_fsunnonlinsol_fixedpoint_mod\;\;")
 endif()
 
@@ -36,7 +36,7 @@ include_directories(.)
 # Specify libraries to link against
 set(SUNDIALS_LIBS sundials_nvecserial)
 list(APPEND SUNDIALS_LIBS sundials_sunnonlinsolfixedpoint)
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   list(APPEND SUNDIALS_LIBS sundials_fnvecserial_mod)
   list(APPEND SUNDIALS_LIBS sundials_fsunnonlinsolfixedpoint_mod)
 endif()

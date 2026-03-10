@@ -59,6 +59,10 @@ endforeach()
 ### ------- Create TPL imported targets
 
 if("@SUNDIALS_ENABLE_MPI@" AND NOT TARGET MPI::MPI_C)
+  get_property(LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
+  if (NOT "C" IN_LIST LANGUAGES)
+    enable_language(C)
+  endif()
   set(MPI_C_COMPILER "@MPI_C_COMPILER@")
   find_dependency(MPI)
 endif()

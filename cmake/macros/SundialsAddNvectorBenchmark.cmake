@@ -38,7 +38,8 @@ function(sundials_add_nvector_benchmark NAME)
   target_link_libraries(${NAME} PRIVATE ${arg_SUNDIALS_TARGETS}
                                         ${arg_LINK_LIBRARIES} -lm)
 
-  install(TARGETS ${NAME}
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/${arg_INSTALL_SUBDIR}")
+  install(
+    TARGETS ${NAME}
+    DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/${arg_INSTALL_SUBDIR}")
 
 endfunction(sundials_add_nvector_benchmark)
