@@ -179,3 +179,59 @@ sanitizers. These can be enabled with the following CMake options.
    ``-fsanitize=undefined`` flag.
 
    Default: OFF
+
+Labels
+------
+
+The following labels are associated with examples and tests.
+To run a subset of these examples and tests,
+follow `CTest instructions <https://cmake.org/cmake/help/latest/manual/ctest.1.html#label-matching>`__.
+
+Package labels
+^^^^^^^^^^^^^^
+
+========  ========================================
+Labels    Coverage
+========  ========================================
+arkode    ARKODE package
+========  ========================================
+
+Module labels
+^^^^^^^^^^^^^
+
+================  ========================================
+Labels            Coverage
+================  ========================================
+linsol            Linear solver
+linsol_klu        Linear solver with KLU backend
+logging           Logging
+matrix            Matrix
+matrix_sparse     Sparse matrix
+nvector           NVector
+================  ========================================
+
+Method labels
+^^^^^^^^^^^^^
+
+========  ========================================
+Labels    Coverage
+========  ========================================
+dirk      Diagonally implicit Runge-Kutta methods
+========  ========================================
+
+Parallelism labels
+^^^^^^^^^^^^^^^^^^
+================  ========================================
+Labels            Coverage
+================  ========================================
+nvector_serial    NVector with serial backend
+================  ========================================
+
+Language labels
+^^^^^^^^^^^^^^^
+
+========  ========================================
+Labels    Coverage
+========  ========================================
+c         C language
+========  ========================================
