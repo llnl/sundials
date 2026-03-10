@@ -302,7 +302,7 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!info_filename || (info_filename && !strcmp(info_filename, ""))
+  if (!info_filename || (info_filename && !strcmp(info_filename, "")))
   {
     sunCloseLogFile(logger->info_fp);
     logger->info_fp = NULL;
