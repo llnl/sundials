@@ -104,11 +104,13 @@ table below lists the old CMake option names and the new replacements.
 +-------------------------------------------+---------------------------------------------------------+
 | ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``  | :cmakeop:`SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`        |
 +-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_ENABLE_C``                     | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_C`                   |
+| ``EXAMPLES_ENABLE_C``                     | :cmakeop:`SUNDIALS_ENABLE_C_EXAMPLES`                   |
 +-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_ENABLE_CXX``                   | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_CXX`                 |
+| ``EXAMPLES_ENABLE_CXX``                   | :cmakeop:`SUNDIALS_ENABLE_CXX_EXAMPLES`                 |
 +-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_ENABLE_F2003``                 | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_FORTRAN`             |
+| ``EXAMPLES_ENABLE_F2003``                 | :cmakeop:`SUNDIALS_ENABLE_FORTRAN_EXAMPLES`             |
++-------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_ENABLE_CUDA``                  | :cmakeop:`SUNDIALS_ENABLE_CUDA_EXAMPLES`                |
 +-------------------------------------------+---------------------------------------------------------+
 | ``EXAMPLES_INSTALL``                      | :cmakeop:`SUNDIALS_EXAMPLES_ENABLE_INSTALL`             |
 +-------------------------------------------+---------------------------------------------------------+

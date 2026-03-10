@@ -676,7 +676,7 @@ packages.
 Example Programs
 ^^^^^^^^^^^^^^^^
 
-.. cmakeoption:: SUNDIALS_EXAMPLES_ENABLE_C
+.. cmakeoption:: SUNDIALS_ENABLE_C_EXAMPLES
 
    Build the SUNDIALS C examples
 
@@ -686,7 +686,7 @@ Example Programs
 
       Replaces the deprecated option ``EXAMPLES_ENABLE_C``
 
-.. cmakeoption:: SUNDIALS_EXAMPLES_ENABLE_CXX
+.. cmakeoption:: SUNDIALS_ENABLE_CXX_EXAMPLES
 
    Build the SUNDIALS C++ examples
 
@@ -696,7 +696,7 @@ Example Programs
 
       Replaces the deprecated option ``EXAMPLES_ENABLE_CXX``
 
-.. cmakeoption:: SUNDIALS_EXAMPLES_ENABLE_CUDA
+.. cmakeoption:: SUNDIALS_ENABLE_CUDA_EXAMPLES
 
    Build the SUNDIALS CUDA examples
 
@@ -706,7 +706,7 @@ Example Programs
 
       Replaces the deprecated option ``EXAMPLES_ENABLE_CUDA``
 
-.. cmakeoption:: SUNDIALS_EXAMPLES_ENABLE_FORTRAN
+.. cmakeoption:: SUNDIALS_ENABLE_FORTRAN_EXAMPLES
 
    Build the SUNDIALS Fortran 2003 examples
 
@@ -1725,7 +1725,7 @@ configure SUNDIALS with MPI support:
    .. note::
 
       This option is only needed if MPI is enabled (:cmakeop:`SUNDIALS_ENABLE_MPI` is
-      ``ON``) and C++ examples are enabled (:cmakeop:`SUNDIALS_EXAMPLES_ENABLE_CXX` is
+      ``ON``) and C++ examples are enabled (:cmakeop:`SUNDIALS_ENABLE_CXX_EXAMPLES` is
       ``ON``). All SUNDIALS solvers can be used from C++ MPI applications by
       without setting any additional configuration options other than
       :cmakeop:`SUNDIALS_ENABLE_MPI`.

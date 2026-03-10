@@ -21,7 +21,7 @@
 # Options for C/C++ examples
 # -----------------------------------------------------------------------------
 
-sundials_option(SUNDIALS_EXAMPLES_ENABLE_C BOOL "Build SUNDIALS C examples" ON
+sundials_option(SUNDIALS_ENABLE_C_EXAMPLES BOOL "Build SUNDIALS C examples" ON
                 DEPRECATED_NAMES EXAMPLES_ENABLE_C)
 
 # Some TPLs only have C++ examples. Default the C++ examples to ON if any of
@@ -37,11 +37,11 @@ if(SUNDIALS_ENABLE_TRILINOS
    OR SUNDIALS_ENABLE_GINKGO
    OR SUNDIALS_ENABLE_KOKKOS)
   sundials_option(
-    SUNDIALS_EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" ON
+    SUNDIALS_ENABLE_CXX_EXAMPLES BOOL "Build SUNDIALS C++ examples" ON
     DEPRECATED_NAMES EXAMPLES_ENABLE_CXX)
 else()
   sundials_option(
-    SUNDIALS_EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" OFF
+    SUNDIALS_ENABLE_CXX_EXAMPLES BOOL "Build SUNDIALS C++ examples" OFF
     DEPRECATED_NAMES EXAMPLES_ENABLE_CXX)
 endif()
 
@@ -51,12 +51,12 @@ endif()
 
 if(SUNDIALS_ENABLE_FORTRAN)
   sundials_option(
-    SUNDIALS_EXAMPLES_ENABLE_FORTRAN BOOL "Build SUNDIALS Fortran examples" ON
+    SUNDIALS_ENABLE_FORTRAN_EXAMPLES BOOL "Build SUNDIALS Fortran examples" ON
     DEPENDS_ON SUNDIALS_ENABLE_FORTRAN DEPRECATED_NAMES
                EXAMPLES_ENABLE_F2003)
 else()
   sundials_option(
-    SUNDIALS_EXAMPLES_ENABLE_FORTRAN BOOL "Build SUNDIALS Fortran examples" OFF
+    SUNDIALS_ENABLE_FORTRAN_EXAMPLES BOOL "Build SUNDIALS Fortran examples" OFF
     DEPENDS_ON SUNDIALS_ENABLE_FORTRAN DEPRECATED_NAMES
                EXAMPLES_ENABLE_F2003)
 endif()
@@ -66,7 +66,7 @@ endif()
 # -----------------------------------------------------------------------------
 
 sundials_option(
-  SUNDIALS_EXAMPLES_ENABLE_CUDA BOOL "Build SUNDIALS CUDA examples" ON
+  SUNDIALS_ENABLE_CUDA_EXAMPLES BOOL "Build SUNDIALS CUDA examples" ON
   DEPENDS_ON SUNDIALS_ENABLE_CUDA DEPRECATED_NAMES EXAMPLES_ENABLE_CUDA)
 
 # -----------------------------------------------------------------------------
@@ -96,10 +96,10 @@ endif()
 # Internal variables.
 # -----------------------------------------------------------------------------
 
-if(SUNDIALS_EXAMPLES_ENABLE_C
-   OR SUNDIALS_EXAMPLES_ENABLE_CXX
-   OR SUNDIALS_EXAMPLES_ENABLE_CUDA
-   OR SUNDIALS_EXAMPLES_ENABLE_FORTRAN)
+if(SUNDIALS_ENABLE_C_EXAMPLES
+   OR SUNDIALS_ENABLE_CXX_EXAMPLES
+   OR SUNDIALS_ENABLE_CUDA_EXAMPLES
+   OR SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
   set(_BUILD_EXAMPLES
       TRUE
       CACHE INTERNAL "")
