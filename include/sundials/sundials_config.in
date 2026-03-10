@@ -46,14 +46,12 @@
  * Define SUNDIALS version numbers
  * -----------------------------------------------------------------*/
 
-
 #define SUNDIALS_VERSION "@PACKAGE_VERSION@"
 #define SUNDIALS_VERSION_MAJOR @PACKAGE_VERSION_MAJOR@
 #define SUNDIALS_VERSION_MINOR @PACKAGE_VERSION_MINOR@
 #define SUNDIALS_VERSION_PATCH @PACKAGE_VERSION_PATCH@
 #define SUNDIALS_VERSION_LABEL "@PACKAGE_VERSION_LABEL@"
 #define SUNDIALS_GIT_VERSION "@SUNDIALS_GIT_VERSION@"
-
 
 /* ------------------------------------------------------------------
  * SUNDIALS build information
@@ -101,10 +99,10 @@
 #cmakedefine SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
 
 /* BUILD SUNDIALS with monitoring functionalities */
-#cmakedefine SUNDIALS_BUILD_WITH_MONITORING
+#cmakedefine SUNDIALS_ENABLE_MONITORING
 
 /* BUILD SUNDIALS with profiling functionalities */
-#cmakedefine SUNDIALS_BUILD_WITH_PROFILING
+#cmakedefine SUNDIALS_ENABLE_PROFILING
 
 /* Enable error checking within SUNDIALS */
 #cmakedefine SUNDIALS_ENABLE_ERROR_CHECKS
@@ -294,6 +292,18 @@
  * the next major release. Use SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS instead. */
 #ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
 #define SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#endif
+
+/* DEPRECATION NOTICE: SUNDIALS_BUILD_WITH_MONITORING will be removed in the
+ * next major release. Use SUNDIALS_ENABLE_MONITORING instead. */
+#ifdef SUNDIALS_ENABLE_MONITORING
+#define SUNDIALS_BUILD_WITH_MONITORING
+#endif
+
+/* DEPRECATION NOTICE: SUNDIALS_BUILD_WITH_PROFILING will be removed in the next
+ * major release. Use SUNDIALS_ENABLE_PROFILING instead. */
+#ifdef SUNDIALS_ENABLE_PROFILING
+#define SUNDIALS_BUILD_WITH_PROFILING
 #endif
 
 #endif /* _SUNDIALS_CONFIG_H */

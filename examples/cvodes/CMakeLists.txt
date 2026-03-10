@@ -28,6 +28,6 @@ if(EXAMPLES_ENABLE_C)
   endif()
 endif()
 
-if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
+if(EXAMPLES_ENABLE_F2003)
   add_subdirectory(F2003_serial)
 endif()

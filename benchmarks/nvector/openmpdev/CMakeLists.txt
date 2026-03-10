@@ -39,4 +39,4 @@ target_include_directories(test_nvector_performance_openmpdev PRIVATE ..)
 target_link_libraries(test_nvector_performance_openmpdev ${SUNDIALS_LIBS})
 
 install(TARGETS test_nvector_performance_openmpdev
-        DESTINATION "${BENCHMARKS_INSTALL_PATH}/nvector/openmpdev")
+        DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/nvector/openmpdev")
