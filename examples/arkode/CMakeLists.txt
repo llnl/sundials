@@ -70,7 +70,7 @@ if(EXAMPLES_ENABLE_CXX)
 endif()
 
 # F2003 examples
-if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
+if(EXAMPLES_ENABLE_F2003)
   add_subdirectory(F2003_serial)
   add_subdirectory(F2003_custom)
   if(SUNDIALS_ENABLE_MPI)

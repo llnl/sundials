@@ -29,7 +29,7 @@
 #include <sundials/sundials_errors.h>
 #include "sundials_logger_impl.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNLinearSolver S)
 {
   return (S->sunctx->profiler);

@@ -27,7 +27,7 @@
 #include "sundials/sundials_types.h"
 #include "sundials_debug.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNMemoryHelper H)
 {
   return (H->sunctx->profiler);
