@@ -84,7 +84,7 @@ if(SUNDIALS_ENABLE_ARKODE
     sundials_add_benchmark(
       advection_reaction_3D_raja advection_reaction_3D_raja
       advection_reaction_3D
-      NUM_CORES ${SUNDIALS_BENCHMARK_NUM_CPUS}
+      NUM_CORES ${SUNDIALS_BENCHMARKS_NUM_CPUS}
       BENCHMARK_ARGS ${benchmark_args}
       IDENTIFIER ${identifier})
   endforeach()
@@ -146,7 +146,7 @@ if(SUNDIALS_ENABLE_ARKODE
       sundials_add_benchmark(
         advection_reaction_3D_raja_mpicuda advection_reaction_3D_raja_mpicuda
         advection_reaction_3D ENABLE_GPU
-        NUM_CORES ${SUNDIALS_BENCHMARK_NUM_GPUS}
+        NUM_CORES ${SUNDIALS_BENCHMARKS_NUM_GPUS}
         BENCHMARK_ARGS ${benchmark_args}
         IDENTIFIER ${identifier})
     endforeach()
@@ -201,7 +201,7 @@ if(SUNDIALS_ENABLE_ARKODE
       sundials_add_benchmark(
         advection_reaction_3D_raja_mpihip advection_reaction_3D_raja_mpihip
         advection_reaction_3D ENABLE_GPU
-        NUM_CORES ${SUNDIALS_BENCHMARK_NUM_GPUS}
+        NUM_CORES ${SUNDIALS_BENCHMARKS_NUM_GPUS}
         BENCHMARK_ARGS ${benchmark_args}
         IDENTIFIER ${identifier})
     endforeach()

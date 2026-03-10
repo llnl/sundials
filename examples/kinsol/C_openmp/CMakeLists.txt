@@ -58,7 +58,7 @@ foreach(example_tuple ${KINSOL_examples})
   target_link_libraries(${example} ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example}.out
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/C_openmp)
   endif()
@@ -66,7 +66,7 @@ foreach(example_tuple ${KINSOL_examples})
 endforeach(example_tuple ${KINSOL_examples_OMP})
 
 # create Makefile and CMakeLists.txt for examples
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
   install(FILES README

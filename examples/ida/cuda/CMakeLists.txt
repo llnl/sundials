@@ -59,7 +59,7 @@ foreach(example_tuple ${IDA_examples})
   target_link_libraries(${example} PRIVATE ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.cu ${example}.out
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/cuda)
   endif()
@@ -67,7 +67,7 @@ foreach(example_tuple ${IDA_examples})
 endforeach(example_tuple ${IDA_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
   install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/cuda)

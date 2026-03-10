@@ -81,7 +81,7 @@ foreach(example_tuple ${examples_list})
 endforeach()
 
 # Install the targets
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_stubs cvode_fused_stubs)

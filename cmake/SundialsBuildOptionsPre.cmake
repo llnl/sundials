@@ -215,22 +215,22 @@ endif()
 # Options to enable Fortran interfaces.
 # ---------------------------------------------------------------
 
-# Fortran 2003 interface is disabled by default
+# Fortran interfaces are disabled by default
 sundials_option(
   SUNDIALS_ENABLE_FORTRAN
   BOOL
-  "Enable Fortran 2003 modules"
+  "Enable Fortran interfaces"
   OFF
   DEPRECATED_NAMES
   F2003_INTERFACE_ENABLE
   BUILD_FORTRAN_MODULE_INTERFACE)
 
 if(SUNDIALS_ENABLE_FORTRAN)
-  # F2003 interface only supports double precision
+  # Fortran interfaces only support double precision
   if(NOT (SUNDIALS_PRECISION MATCHES "DOUBLE"))
     message(
       FATAL_ERROR
-        "F2003 interface is not compatible with ${SUNDIALS_PRECISION} precision"
+        "Fortran interfaces are not compatible with ${SUNDIALS_PRECISION} precision"
     )
   endif()
 
@@ -238,7 +238,7 @@ if(SUNDIALS_ENABLE_FORTRAN)
   if(NOT (SUNDIALS_COUNTER_TYPE MATCHES "long int"))
     message(
       FATAL_ERROR
-        "F2003 interface is only compatible with long int SUNDIALS_COUNTER_TYPE"
+        "Fortran interfaces are only compatible with long int SUNDIALS_COUNTER_TYPE"
     )
   endif()
 
@@ -517,30 +517,49 @@ sundials_option(SUNDIALS_DEV_CLANG_TIDY BOOL "Enable clang-tidy" OFF ADVANCED)
 # Options for SUNDIALS benchmarks
 # ---------------------------------------------------------------
 
-sundials_option(
-  SUNDIALS_ENABLE_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF
-  DEPRECATED_NAMES BUILD_BENCHMARKS)
+sundials_option(SUNDIALS_ENABLE_BENCHMARKS BOOL "Enable the benchmark suite"
+                OFF DEPRECATED_NAMES BUILD_BENCHMARKS)
 
 sundials_option(
   SUNDIALS_BENCHMARKS_INSTALL_PATH PATH
   "Output directory for installing benchmark executables"
   "${CMAKE_INSTALL_PREFIX}/benchmarks" DEPRECATED_NAMES BENCHMARKS_INSTALL_PATH)
 
-sundials_option(
-  SUNDIALS_SCHEDULER_COMMAND STRING
-  "Job scheduler command to use to launch SUNDIALS MPI tests" "" ADVANCED)
+sundials_option(SUNDIALS_SCHEDULER_COMMAND STRING
+                "Job scheduler command to use to launch MPI tests" "" ADVANCED)
 
 sundials_option(
-  SUNDIALS_BENCHMARK_OUTPUT_DIR PATH "Location to write benchmark output files"
-  "${PROJECT_BINARY_DIR}/Benchmarking/output" ADVANCED)
+  SUNDIALS_BENCHMARKS_OUTPUT_DIR
+  PATH
+  "Location to write benchmark output files"
+  "${PROJECT_BINARY_DIR}/Benchmarking/output"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_OUTPUT_DIR)
 
 sundials_option(
-  SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR PATH
+  SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR
+  PATH
   "Location to write benchmark caliper files"
-  "${PROJECT_BINARY_DIR}/Benchmarking/caliper" ADVANCED)
+  "${PROJECT_BINARY_DIR}/Benchmarking/caliper"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR)
 
-sundials_option(SUNDIALS_BENCHMARK_NUM_CPUS STRING
-                "Number of CPU cores to run benchmarks with" "40" ADVANCED)
+sundials_option(
+  SUNDIALS_BENCHMARKS_NUM_CPUS
+  STRING
+  "Number of CPU cores to run benchmarks with"
+  "40"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_NUM_CPUS)
 
-sundials_option(SUNDIALS_BENCHMARK_NUM_GPUS STRING
-                "Number of GPUs to run benchmarks with" "4" ADVANCED)
+sundials_option(
+  SUNDIALS_BENCHMARKS_NUM_GPUS
+  STRING
+  "Number of GPUs to run benchmarks with"
+  "4"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_NUM_GPUS)

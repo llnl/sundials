@@ -75,14 +75,14 @@ foreach(example_tuple ${FIDA_examples_OMP})
     EXAMPLE_TYPE ${example_type})
 
   # install example source and out files
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.f90 ${test_name}.out
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/F2003_openmp)
   endif()
 endforeach(example_tuple ${FIDA_examples_OMP})
 
 # create Makefile and CMakeLists.txt for examples
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "IDA")

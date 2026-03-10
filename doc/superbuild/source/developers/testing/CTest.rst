@@ -142,11 +142,19 @@ set of flags is compatible with with GNU and Clang compilers.
 
    Default: OFF
 
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_ALL_WARNINGS``
+
 .. cmakeoption:: CMAKE_COMPILE_WARNING_AS_ERROR
 
    Treat compiler warnings as errors
 
    Default: OFF
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_WARNINGS_AS_ERRORS``
 
 Additionally, the CI will run a subset of tests (no TPLs) using different
 sanitizers. These can be enabled with the following CMake options.
@@ -158,6 +166,10 @@ sanitizers. These can be enabled with the following CMake options.
 
    Default: OFF
 
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_ADDRESS_SANITIZER``
+
 .. cmakeoption:: SUNDIALS_ENABLE_LEAK_SANITIZER
 
    Enable sanitizer to detect memory leaks, adds the ``-fsanitize=leak``
@@ -166,6 +178,10 @@ sanitizers. These can be enabled with the following CMake options.
 
    Default: OFF
 
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_LEAK_SANITIZER``
+
 .. cmakeoption:: SUNDIALS_ENABLE_MEMORY_SANITIZER
 
    Enable sanitizer to detect uninitialized memory errors, adds the
@@ -173,9 +189,17 @@ sanitizers. These can be enabled with the following CMake options.
 
    Default: OFF
 
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_MEMORY_SANITIZER``
+
 .. cmakeoption:: SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER
 
    Enable sanitizer to detect undefined behavior errors, adds the
    ``-fsanitize=undefined`` flag.
 
    Default: OFF
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_UNDEFINED_BEHAVIOR_SANITIZER``

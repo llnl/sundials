@@ -94,7 +94,7 @@ foreach(example_tuple ${CVODES_examples})
   file(GLOB example_out ${example}*.out)
 
   # install example source and .out files
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example_out}
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/parallel)
   endif()
@@ -102,7 +102,7 @@ foreach(example_tuple ${CVODES_examples})
 endforeach(example_tuple ${CVODES_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
   install(FILES README

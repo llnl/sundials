@@ -80,7 +80,7 @@ foreach(example_tuple ${FCVODE_examples})
   file(GLOB example_out ${example}*.out)
 
   # install example source and out files
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.f90 ${example_out}
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_parallel)
   endif()
@@ -88,7 +88,7 @@ foreach(example_tuple ${FCVODE_examples})
 endforeach(example_tuple ${FCVODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${CVODE_extras})

@@ -52,7 +52,7 @@ set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 # Set variables used in generating CMake and Makefiles for examples
 # ===================================================================
 
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   set(SHELL "sh")
   set(prefix "${CMAKE_INSTALL_PREFIX}")

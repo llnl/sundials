@@ -60,7 +60,7 @@ foreach(example_tuple ${CVODES_examples_OMP})
     EXAMPLE_TYPE ${example_type})
 
   # install example source and .out files
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example}.out
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
   endif()
@@ -68,7 +68,7 @@ foreach(example_tuple ${CVODES_examples_OMP})
 endforeach(example_tuple ${CVODES_examples_OMP})
 
 # create Makefile and CMakeLists.txt for examples
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
   install(FILES README

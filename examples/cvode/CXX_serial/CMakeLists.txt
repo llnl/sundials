@@ -78,7 +78,7 @@ foreach(example_tuple ${CVODE_examples})
 endforeach(example_tuple ${CVODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_stubs cvode_fused_stubs)
@@ -94,4 +94,4 @@ if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
     TEST_INSTALL CXX_serial)
 
-endif(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+endif(SUNDIALS_ENABLE_EXAMPLES_INSTALL)

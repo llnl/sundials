@@ -100,7 +100,7 @@ foreach(example_tuple ${FARKODE_examples})
     EXAMPLE_TYPE ${example_type})
 
   # install example source and out files
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.f90 ${test_name}.out
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
   endif()
@@ -140,7 +140,7 @@ if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLKLU_LIBS})
 
     # install example source and out files
-    if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.f90 ${example}.out
               DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
     endif()
@@ -182,7 +182,7 @@ if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLLAPACK_LIBS})
 
     # install example source and out files
-    if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.f90 ${example}.out
               DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
     endif()
@@ -218,7 +218,7 @@ foreach(example_tuple ${FARKODE_tests})
   target_link_libraries(${example} ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.f90
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
   endif()
@@ -226,7 +226,7 @@ foreach(example_tuple ${FARKODE_tests})
 endforeach(example_tuple ${FARKODE_tests})
 
 # create Makefile and CMakeLists.txt for examples
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${ARKODE_extras})

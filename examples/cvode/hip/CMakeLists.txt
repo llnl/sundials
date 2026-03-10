@@ -77,7 +77,7 @@ foreach(example_tuple ${all_examples})
 endforeach(example_tuple ${all_examples})
 
 # Install the targets
-if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_kernels_if_enabled cvode_fused_hip)
