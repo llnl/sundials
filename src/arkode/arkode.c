@@ -663,7 +663,6 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
   int ewtsetOK;
   sunrealtype troundoff, nrm;
   sunbooleantype inactive_roots;
-  sunbooleantype skip_preprocess;
   sunrealtype dsm;
   int nflag, ncf, nef, constrfails;
   int relax_fails;
@@ -888,11 +887,10 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     }
 
     /* Looping point for step attempts */
-    dsm             = ZERO;
-    kflag           = ARK_SUCCESS;
-    skip_preprocess = SUNFALSE;
-    relax_fails     = 0;
-    nflag           = FIRST_CALL;
+    dsm         = ZERO;
+    kflag       = ARK_SUCCESS;
+    relax_fails = 0;
+    nflag       = FIRST_CALL;
     attempts = ncf = nef = constrfails = ark_mem->last_kflag = 0;
     for (;;)
     {
@@ -913,14 +911,13 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       /* fill tcur with the last accepted step time */
       ark_mem->tcur = ark_mem->tn;
 
-      /* call the user-supplied step preprocessing function (if it exists) */
-      if (ark_mem->PreProcessStep != NULL && !skip_preprocess)
+      /* call the user-supplied pre-step function (if it exists) */
+      if (ark_mem->PreStepFn)
       {
-        retval = ark_mem->PreProcessStep(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->ps_data);
-        if (retval != 0) { return (ARK_PREPROCESS_STEP_FAIL); }
+        retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst,
+                                    attempts, ark_mem->user_data);
+        if (retval != 0) { return (ARK_PRESTEPFN_FAIL); }
       }
-      skip_preprocess = SUNFALSE;
 
       /* Call time stepper module to attempt a step:
             0 => step completed successfully
@@ -1018,16 +1015,6 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       /* update h, hprime and next_h for next iteration */
       ark_mem->h *= ark_mem->eta;
       ark_mem->next_h = ark_mem->hprime = ark_mem->h;
-
-      /* since the previous step attempt failed, call the user-supplied
-         step failure postprocessing function (if it exists) */
-      if (ark_mem->PostProcessStepFail != NULL)
-      {
-        retval = ark_mem->PostProcessStepFail(ark_mem->tn, ark_mem->yn,
-                                              ark_mem->ps_data);
-        if (retval != 0) { return (ARK_POSTPROCESS_FAILED_STEP_FAIL); }
-        skip_preprocess = SUNTRUE;
-      }
 
       /* reset (tcur,ycur) to last saved state before reattempting step */
       ark_mem->tcur = ark_mem->tn;
@@ -1619,15 +1606,16 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->VRabstolMallocDone = SUNFALSE;
   ark_mem->MallocDone         = SUNFALSE;
 
-  /* No user-supplied step pre- or post-processing functions yet */
-  ark_mem->PreProcessStep      = NULL;
-  ark_mem->PostProcessStep     = NULL;
-  ark_mem->PostProcessStepFail = NULL;
-  ark_mem->ps_data             = NULL;
+  /* No user-supplied pre- or post-step functions yet */
+  ark_mem->PreStepFn  = NULL;
+  ark_mem->PostStepFn = NULL;
 
-  /* No user-supplied stage pre- or post-processing functions yet */
-  ark_mem->PreRHSProcess    = NULL;
-  ark_mem->PostProcessStage = NULL;
+  /* No user-supplied pre-RHS function yet */
+  ark_mem->PreRhsFn = NULL;
+
+  /* No user-supplied stage/step post-processing functions yet */
+  ark_mem->PostProcessStepFn  = NULL;
+  ark_mem->PostProcessStageFn = NULL;
 
   /* No user_data pointer yet */
   ark_mem->user_data = NULL;
@@ -2772,12 +2760,12 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
     else /* ARK_ACCUMERROR_AVG */ { ark_mem->AccumError += (dsm * ark_mem->h); }
   }
 
-  /* apply user-supplied step postprocessing function (if supplied) */
-  if (ark_mem->PostProcessStep != NULL)
+  /* call the user-supplied post-step function (if supplied) */
+  if (ark_mem->PostStepFn)
   {
-    retval = ark_mem->PostProcessStep(ark_mem->tcur, ark_mem->ycur,
-                                      ark_mem->ps_data);
-    if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
+    retval = ark_mem->PostStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst,
+                                 ark_mem->user_data);
+    if (retval != 0) { return (ARK_POSTSTEPFN_FAIL); }
   }
 
   /* update interpolation structure
@@ -2910,18 +2898,17 @@ int arkHandleFailure(ARKodeMem ark_mem, int flag)
     arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
                     __FILE__, MSG_ARK_POSTPROCESS_STAGE_FAIL, ark_mem->tcur);
     break;
-  case ARK_POSTPROCESS_FAILED_STEP_FAIL:
-    arkProcessError(ark_mem, ARK_POSTPROCESS_FAILED_STEP_FAIL, __LINE__,
-                    __func__, __FILE__, MSG_ARK_POSTPROCESS_FAILED_STEP_FAIL,
-                    ark_mem->tcur);
+  case ARK_PRESTEPFN_FAIL:
+    arkProcessError(ark_mem, ARK_PRESTEPFN_FAIL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_PRESTEPFN_FAIL, ark_mem->tcur);
     break;
-  case ARK_PREPROCESS_STEP_FAIL:
-    arkProcessError(ark_mem, ARK_PREPROCESS_STEP_FAIL, __LINE__, __func__,
-                    __FILE__, MSG_ARK_PREPROCESS_STEP_FAIL, ark_mem->tcur);
+  case ARK_POSTSTEPFN_FAIL:
+    arkProcessError(ark_mem, ARK_POSTSTEPFN_FAIL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_POSTSTEPFN_FAIL, ark_mem->tcur);
     break;
-  case ARK_PREPROCESS_RHS_FAIL:
-    arkProcessError(ark_mem, ARK_PREPROCESS_RHS_FAIL, __LINE__, __func__,
-                    __FILE__, MSG_ARK_PREPROCESS_RHS_FAIL, ark_mem->tcur);
+  case ARK_PRERHSFN_FAIL:
+    arkProcessError(ark_mem, ARK_PRERHSFN_FAIL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_PRERHSFN_FAIL, ark_mem->tcur);
     break;
   case ARK_INTERP_FAIL:
     arkProcessError(ark_mem, ARK_INTERP_FAIL, __LINE__, __func__, __FILE__,

@@ -65,7 +65,7 @@ foreach(example_tuple ${CVODE_examples})
 endforeach()
 
 # Install the targets
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   sundials_install_examples(
     cvode CVODE_examples

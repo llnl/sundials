@@ -105,7 +105,7 @@ int CVodeSetMonitorFn(void* cvode_mem, CVMonitorFn fn)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-#ifdef SUNDIALS_BUILD_WITH_MONITORING
+#ifdef SUNDIALS_ENABLE_MONITORING
   cv_mem->cv_monitorfun = fn;
   return (CV_SUCCESS);
 #else
@@ -142,7 +142,7 @@ int CVodeSetMonitorFrequency(void* cvode_mem, long int nst)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-#ifdef SUNDIALS_BUILD_WITH_MONITORING
+#ifdef SUNDIALS_ENABLE_MONITORING
   cv_mem->cv_monitor_interval = nst;
   return (CV_SUCCESS);
 #else

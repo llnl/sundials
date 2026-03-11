@@ -123,11 +123,11 @@ sundials_add_library(
 message(STATUS "Added ARKODE module")
 
 # Add F2003 module if the interface is enabled
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
 endif()
 
 # Add ARKODE XBraid interface
-if(ENABLE_XBRAID)
+if(SUNDIALS_ENABLE_XBRAID)
   add_subdirectory(xbraid)
 endif()

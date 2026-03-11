@@ -1712,10 +1712,10 @@ namespace.
 *Profiling Capability*
 
 A capability to profile/instrument SUNDIALS library code has been added. This
-can be enabled with the CMake option :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING`. A
+can be enabled with the CMake option ``SUNDIALS_BUILD_WITH_PROFILING``. A
 built-in profiler will be used by default, but the `Caliper
 <https://github.com/LLNL/Caliper>`__ library can also be used instead with the
-CMake option :cmakeop:`ENABLE_CALIPER`. See the documentation section on
+CMake option ``ENABLE_CALIPER``. See the documentation section on
 profiling for more details.
 
 .. warning::
@@ -2402,7 +2402,7 @@ contact the SUNDIALS team about any performance changes that they notice.
 Added new capabilities for monitoring the solve phase in the Newton and
 fixed-point :c:type:`SUNNonlinearSolver`, and the SUNDIALS iterative linear
 solvers. SUNDIALS must be built with the CMake option
-:cmakeop:`SUNDIALS_BUILD_WITH_MONITORING` to use these capabilities.
+``SUNDIALS_BUILD_WITH_MONITORING`` to use these capabilities.
 
 Added specialized fused CUDA kernels to CVODE which may offer better performance
 on smaller problems when using CVODE with the CUDA vector. See the optional
@@ -2887,7 +2887,7 @@ documentation and SUNDIALS examples.
 **Bug Fixes**
 
 The ``EXAMPLES_ENABLE_RAJA`` CMake option has been removed. The option
-:cmakeop:`EXAMPLES_ENABLE_CUDA` enables all examples that use CUDA including the
+``EXAMPLES_ENABLE_CUDA`` enables all examples that use CUDA including the
 RAJA examples with a CUDA back end (if RAJA is enabled).
 
 Python is no longer required to run ``make test`` and ``make test_install``.
@@ -3166,7 +3166,7 @@ with those used in native CMake FindMPI module are :cmakeop:`MPI_C_COMPILER`,
 :cmakeop:`MPI_CXX_COMPILER`, :cmakeop:`MPI_Fortran_COMPILER`, and
 :cmakeop:`MPIEXEC_EXECUTABLE`.
 
-When a Fortran name-mangling scheme is needed (e.g., :cmakeop:`ENABLE_LAPACK` is
+When a Fortran name-mangling scheme is needed (e.g., ``ENABLE_LAPACK`` is
 ``ON``) the build system will infer the scheme from the Fortran compiler. If a
 Fortran compiler is not available or the inferred or default scheme needs to be
 overridden, the advanced options ``SUNDIALS_F77_FUNC_CASE`` and
@@ -3400,9 +3400,9 @@ coefficients accurate enough for use in quad precision.
 Renamed CMake options to enable/disable examples for greater clarity and added
 option to enable/disable Fortran 77 examples:
 
-  - Changed ``EXAMPLES_ENABLE`` to :cmakeop:`EXAMPLES_ENABLE_C`
+  - Changed ``EXAMPLES_ENABLE`` to ``EXAMPLES_ENABLE_C``
 
-  - Changed ``CXX_ENABLE`` to  :cmakeop:`EXAMPLES_ENABLE_CXX`
+  - Changed ``CXX_ENABLE`` to  ``EXAMPLES_ENABLE_CXX``
 
   - Changed ``F90_ENABLE`` to  ``EXAMPLES_ENABLE_F90``
 

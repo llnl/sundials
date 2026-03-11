@@ -36,7 +36,7 @@ set(sunlinsol_pcg_examples "test_sunlinsol_pcg_serial\;100 500 ${TOL} 0\;")
 set(sunlinsol_pcg_dependencies test_sunlinsol)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_pcg_fortran_examples "test_fsunlinsol_pcg_mod_serial\;\;")
 endif()
 

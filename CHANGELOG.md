@@ -49,6 +49,81 @@ number was used instead of an integer, potentially resulting in a rounding error
 
 ### Deprecation Notices
 
+Several CMake options have been deprecated in favor of namespaced versions
+prefixed with `SUNDIALS_` to avoid naming collisions in applications that
+include SUNDIALS directly within their CMake builds. Additionally, a consistent
+naming convention (`SUNDIALS_ENABLE`) is now used for all boolean options. The
+table below lists the old CMake option names and the new replacements.
+
+| Old Option                              | New Option                                     |
+|-----------------------------------------|------------------------------------------------|
+| `ENABLE_MPI`                            | `SUNDIALS_ENABLE_MPI`                          |
+| `ENABLE_OPENMP`                         | `SUNDIALS_ENABLE_OPENMP`                       |
+| `ENABLE_OPENMP_DEVICE`                  | `SUNDIALS_ENABLE_OPENMP_DEVICE`                |
+| `OPENMP_DEVICE_WORKS`                   | `SUNDIALS_ENABLE_OPENMP_DEVICE_CHECKS`         |
+| `ENABLE_PTHREAD`                        | `SUNDIALS_ENABLE_PTHREAD`                      |
+| `ENABLE_CUDA`                           | `SUNDIALS_ENABLE_CUDA`                         |
+| `ENABLE_HIP`                            | `SUNDIALS_ENABLE_HIP`                          |
+| `ENABLE_SYCL`                           | `SUNDIALS_ENABLE_SYCL`                         |
+| `ENABLE_LAPACK`                         | `SUNDIALS_ENABLE_LAPACK`                       |
+| `LAPACK_WORKS`                          | `SUNDIALS_ENABLE_LAPACK_CHECKS`                |
+| `ENABLE_GINKGO`                         | `SUNDIALS_ENABLE_GINKGO`                       |
+| `GINKGO_WORKS`                          | `SUNDIALS_ENABLE_GINKGO_CHECKS`                |
+| `ENABLE_MAGMA`                          | `SUNDIALS_ENABLE_MAGMA`                        |
+| `MAGMA_WORKS`                           | `SUNDIALS_ENABLE_MAGMA_CHECKS`                 |
+| `ENABLE_SUPERLUDIST`                    | `SUNDIALS_ENABLE_SUPERLUDIST`                  |
+| `SUPERLUDIST_WORKS`                     | `SUNDIALS_ENABLE_SUPERLUDIST_CHECKS`           |
+| `ENABLE_SUPERLUMT`                      | `SUNDIALS_ENABLE_SUPERLUMT`                    |
+| `SUPERLUMT_WORKS`                       | `SUNDIALS_ENABLE_SUPERLUMT_CHECKS`             |
+| `ENABLE_KLU`                            | `SUNDIALS_ENABLE_KLU`                          |
+| `KLU_WORKS`                             | `SUNDIALS_ENABLE_KLU_CHECKS`                   |
+| `ENABLE_HYPRE`                          | `SUNDIALS_ENABLE_HYPRE`                        |
+| `HYPRE_WORKS`                           | `SUNDIALS_ENABLE_HYPRE_CHECKS`                 |
+| `ENABLE_PETSC`                          | `SUNDIALS_ENABLE_PETSC`                        |
+| `PETSC_WORKS`                           | `SUNDIALS_ENABLE_PETSC_CHECKS`                 |
+| `ENABLE_TRILINOS`                       | `SUNDIALS_ENABLE_TRILINOS`                     |
+| `ENABLE_RAJA`                           | `SUNDIALS_ENABLE_RAJA`                         |
+| `ENABLE_XBRAID`                         | `SUNDIALS_ENABLE_XBRAID`                       |
+| `XBRAID_WORKS`                          | `SUNDIALS_ENABLE_XBRAID_CHECKS`                |
+| `ENABLE_ONEMKL`                         | `SUNDIALS_ENABLE_ONEMKL`                       |
+| `ONEMKL_WORKS`                          | `SUNDIALS_ENABLE_ONEMKL_CHECKS`                |
+| `ENABLE_CALIPER`                        | `SUNDIALS_ENABLE_CALIPER`                      |
+| `ENABLE_ADIAK`                          | `SUNDIALS_ENABLE_ADIAK`                        |
+| `ENABLE_KOKKOS`                         | `SUNDIALS_ENABLE_KOKKOS`                       |
+| `KOKKOS_WORKS`                          | `SUNDIALS_ENABLE_KOKKOS_CHECKS`                |
+| `ENABLE_KOKKOS_KERNELS`                 | `SUNDIALS_ENABLE_KOKKOS_KERNELS`               |
+| `KOKKOS_KERNELS_WORKS`                  | `SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
+| `BUILD_FORTRAN_MODULE_INTERFACE`        | `SUNDIALS_ENABLE_FORTRAN`                      |
+| `SUNDIALS_BUILD_WITH_PROFILING`         | `SUNDIALS_ENABLE_PROFILING`                    |
+| `SUNDIALS_BUILD_WITH_MONITORING`        | `SUNDIALS_ENABLE_MONITORING`                   |
+| `SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS`  | `SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`        |
+| `EXAMPLES_ENABLE_C`                     | `SUNDIALS_ENABLE_C_EXAMPLES`                   |
+| `EXAMPLES_ENABLE_CXX`                   | `SUNDIALS_ENABLE_CXX_EXAMPLES`                 |
+| `EXAMPLES_ENABLE_F2003`                 | `SUNDIALS_ENABLE_FORTRAN_EXAMPLES`             |
+| `EXAMPLES_ENABLE_CUDA`                  | `SUNDIALS_ENABLE_CUDA_EXAMPLES`                |
+| `EXAMPLES_INSTALL`                      | `SUNDIALS_ENABLE_EXAMPLES_INSTALL`             |
+| `EXAMPLES_INSTALL_PATH`                 | `SUNDIALS_EXAMPLES_INSTALL_PATH`               |
+| `BUILD_BENCHMARKS`                      | `SUNDIALS_ENABLE_BENCHMARKS`                   |
+| `BENCHMARKS_INSTALL_PATH`               | `SUNDIALS_BENCHMARKS_INSTALL_PATH`             |
+| `SUNDIALS_BENCHMARK_OUTPUT_DIR`         | `SUNDIALS_BENCHMARKS_OUTPUT_DIR`               |
+| `SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR` | `SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR`       |
+| `SUNDIALS_BENCHMARK_NUM_CPUS`           | `SUNDIALS_BENCHMARKS_NUM_CPUS`                 |
+| `SUNDIALS_BENCHMARK_NUM_GPUS`           | `SUNDIALS_BENCHMARKS_NUM_GPUS`                 |
+| `ENABLE_ALL_WARNINGS`                   | `SUNDIALS_ENABLE_ALL_WARNINGS`                 |
+| `ENABLE_WARNINGS_AS_ERRORS`             | `CMAKE_COMPILE_WARNING_AS_ERROR`               |
+| `ENABLE_ADDRESS_SANITIZER`              | `SUNDIALS_ENABLE_ADDRESS_SANITIZER`            |
+| `ENABLE_MEMORY_SANITIZER`               | `SUNDIALS_ENABLE_MEMORY_SANITIZER`             |
+| `ENABLE_LEAK_SANITIZER`                 | `SUNDIALS_ENABLE_LEAK_SANITIZER`               |
+
+Following the updated CMake options, the macros listed below have been
+deprecated and replaced with versions that align with the new CMake options.
+
+| Old Macro                              | New Macro                               |
+|----------------------------------------|-----------------------------------------|
+| `SUNDIALS_BUILD_WITH_PROFILING`        | `SUNDIALS_ENABLE_PROFILING`             |
+| `SUNDIALS_BUILD_WITH_MONITORING`       | `SUNDIALS_ENABLE_MONITORING`            |
+| `SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS` | `SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS` |
+
 ## Changes to SUNDIALS in release 7.6.0
 
 ### Major Features

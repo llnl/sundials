@@ -34,7 +34,7 @@ set(sunmatrix_sparse_examples
 set(sunmatrix_sparse_dependencies test_sunmatrix)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunmatrix_sparse_fortran_examples "test_fsunmatrix_sparse_mod\;\;")
 endif()
 

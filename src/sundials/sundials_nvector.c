@@ -31,7 +31,7 @@
 #include "sundials/sundials_errors.h"
 #include "sundials/sundials_types.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static inline SUNProfiler getSUNProfiler(N_Vector v)
 {
   return (v->sunctx->profiler);
