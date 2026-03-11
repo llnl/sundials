@@ -35,15 +35,12 @@
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-#define GSYM "Qg"
 #define FSYM "Qf"
 #define ESYM "Qe"
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define GSYM "Lg"
 #define FSYM "Lf"
 #define ESYM "Le"
 #else
-#define GSYM "g"
 #define FSYM "f"
 #define ESYM "e"
 #endif
