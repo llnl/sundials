@@ -29,7 +29,7 @@ set(sunlinsol_band_examples
 set(sunlinsol_band_dependencies test_sunlinsol)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_band_fortran_examples "test_fsunlinsol_band_mod\;\;")
 endif()
 

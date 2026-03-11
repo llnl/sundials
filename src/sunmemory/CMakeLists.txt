@@ -17,7 +17,7 @@
 # SUNMemory level CMakeLists.txt for SUNDIALS
 # ------------------------------------------------------------------------------
 
-if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
   include_directories(${caliper_INCLUDE_DIR})
 endif()
 

@@ -56,7 +56,9 @@ endif()
 
 # SYCL requires C++17
 if(SUNDIALS_ENABLE_SYCL AND (CMAKE_CXX_STANDARD LESS "17"))
-  message(FATAL_ERROR "CMAKE_CXX_STANDARD must be >= 17 because ENABLE_SYCL=ON")
+  message(
+    FATAL_ERROR
+      "CMAKE_CXX_STANDARD must be >= 17 because SUNDIALS_ENABLE_SYCL=ON")
 endif()
 
 # Ginkgo requires C++17

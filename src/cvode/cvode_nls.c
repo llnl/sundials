@@ -382,7 +382,7 @@ static int cvNlsResidual(N_Vector ycor, N_Vector res, void* cvode_mem)
   if (retval < 0) { return (CV_RHSFUNC_FAIL); }
   if (retval > 0) { return (RHSFUNC_RECVR); }
 
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
     cvNlsResid_fused(cv_mem->cv_rl1, -cv_mem->cv_gamma, cv_mem->cv_zn[1], ycor,

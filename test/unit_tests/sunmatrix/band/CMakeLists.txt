@@ -30,7 +30,7 @@ set(sunmatrix_band_examples
 set(sunmatrix_band_dependencies test_sunmatrix)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunmatrix_band_fortran_examples "test_fsunmatrix_band_mod\;\;")
 endif()
 

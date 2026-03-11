@@ -29,7 +29,7 @@ set(nvector_mpiplusx_examples
 set(nvector_examples_dependencies test_nvector test_mpinvector)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_mpiplusx_fortran_examples "test_fnvector_mpiplusx_mod\;\;1\;1\;"
                                         "test_fnvector_mpiplusx_mod\;\;1\;4\;")
 endif()
@@ -39,7 +39,7 @@ include_directories(. ..)
 
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecmpiplusx sundials_nvecparallel sundials_nvecserial)
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   list(APPEND NVECS_LIB sundials_fnvecmpiplusx_mod sundials_fnvecserial_mod)
 endif()
 
@@ -54,7 +54,7 @@ else()
   include_directories(${MPI_INCLUDE_PATH})
 endif()
 
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   if(MPI_Fortran_COMPILER)
     # use MPI wrapper as the compiler
     set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
