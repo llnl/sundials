@@ -25,7 +25,7 @@ set(ARKODE_examples
     "ark_heat2D_xbraid\;--x_print_level 0\;1\;4\;develop"
     "ark_heat2D_p_xbraid\;--np 2 1 2 --x_print_level 0\;1\;4\;develop")
 
-if(ENABLE_HYPRE AND HYPRE_FOUND)
+if(SUNDIALS_ENABLE_HYPRE)
   set(ARKODE_examples_hypre
       "ark_heat2D_hypre_pfmg_xbraid\;--np 2 1 2 --x_print_level 0\;1\;4\;develop"
   )
@@ -88,14 +88,14 @@ foreach(example_tuple ${ARKODE_examples})
   file(GLOB example_out ${example}*.out)
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.cpp ${example_out}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
   endif()
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(ENABLE_HYPRE AND HYPRE_FOUND)
+if(SUNDIALS_ENABLE_HYPRE)
 
   # Add the build and install targets for each example
   foreach(example_tuple ${ARKODE_examples_hypre})
@@ -143,9 +143,9 @@ if(ENABLE_HYPRE AND HYPRE_FOUND)
     file(GLOB example_out ${example}*.out)
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.cpp ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
     endif()
 
   endforeach(example_tuple ${ARKODE_examples})
@@ -153,16 +153,16 @@ if(ENABLE_HYPRE AND HYPRE_FOUND)
 endif()
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
   install(FILES README.md
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
 
   # Install the extra files
   foreach(extrafile ${ARKODE_extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -184,7 +184,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/arkode/CXX_xbraid/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -200,7 +200,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/arkode/CXX_xbraid/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_xbraid
       RENAME Makefile)
 
   endif(UNIX)
@@ -208,4 +208,4 @@ if(EXAMPLES_INSTALL)
   # add test_install target
   sundials_add_test_install(arkode CXX_xbraid)
 
-endif(EXAMPLES_INSTALL)
+endif(SUNDIALS_ENABLE_EXAMPLES_INSTALL)

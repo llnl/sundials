@@ -569,16 +569,15 @@ struct ARKodeMemRec
   ARKodeRelaxMem relax_mem;     /* relaxation data structure */
 
   /* User-supplied step solution pre/post-processing functions */
-  ARKPostProcessFn PreProcessStep;
-  ARKPostProcessFn PostProcessStep;
-  ARKPostProcessFn PostProcessStepFail;
-  void* ps_data; /* pointer to user_data */
-
-  /* User-supplied stage solution post-processing function */
-  ARKPostProcessFn PostProcessStage;
+  ARKPreStepFn PreStepFn;
+  ARKPostStepFn PostStepFn;
 
   /* User-supplied RHS function pre-processing function */
-  ARKPostProcessFn PreRHSProcess;
+  ARKPreRhsFn PreRhsFn;
+
+  /* User-supplied stage and step solution post-processing function */
+  ARKPostProcessFn PostProcessStepFn;
+  ARKPostProcessFn PostProcessStageFn;
 
   sunbooleantype use_compensated_sums;
 
@@ -819,21 +818,18 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
 #define MSG_ARK_VECTOROP_ERR "At " MSG_TIME ", a vector operation failed."
 #define MSG_ARK_INNERSTEP_FAILED \
   "At " MSG_TIME ", the inner stepper failed in an unrecoverable manner."
-#define MSG_ARK_PREPROCESS_STEP_FAIL \
-  "At " MSG_TIME                     \
-  ", the step preprocessing routine failed in an unrecoverable manner."
+#define MSG_ARK_PRESTEPFN_FAIL \
+  "At " MSG_TIME ", the pre-step function failed in an unrecoverable manner."
+#define MSG_ARK_POSTSTEPFN_FAIL \
+  "At " MSG_TIME ", the post-step function failed in an unrecoverable manner."
 #define MSG_ARK_POSTPROCESS_STEP_FAIL \
   "At " MSG_TIME                      \
   ", the step postprocessing routine failed in an unrecoverable manner."
-#define MSG_ARK_POSTPROCESS_FAILED_STEP_FAIL                              \
-  "At " MSG_TIME ", the failed step postprocessing routine failed in an " \
-  "unrecoverable manner."
 #define MSG_ARK_POSTPROCESS_STAGE_FAIL \
   "At " MSG_TIME                       \
   ", the stage postprocessing routine failed in an unrecoverable manner."
-#define MSG_ARK_PREPROCESS_RHS_FAIL \
-  "At " MSG_TIME                    \
-  ", the RHS preprocessing routine failed in an unrecoverable manner."
+#define MSG_ARK_PRERHSFN_FAIL \
+  "At " MSG_TIME ", the pre-RHS function failed in an unrecoverable manner."
 #define MSG_ARK_NULL_SUNCTX "sunctx = NULL illegal."
 #define MSG_ARK_CONTEXT_MISMATCH \
   "Outer and inner steppers have different contexts."

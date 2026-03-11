@@ -37,7 +37,7 @@ set(sunlinsol_spfgmr_examples
 # Dependencies for sunlinsol examples
 set(sunlinsol_spfgmr_dependencies test_sunlinsol)
 
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_spfgmr_fortran_examples "test_fsunlinsol_spfgmr_mod_serial\;\;")
 endif()
 
