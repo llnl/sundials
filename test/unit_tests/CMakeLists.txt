@@ -20,7 +20,7 @@
 message("Adding units tests")
 
 # Disable some warnings for tests
-if(ENABLE_ALL_WARNINGS)
+if(SUNDIALS_ENABLE_ALL_WARNINGS)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
 endif()
@@ -68,7 +68,7 @@ add_subdirectory(sundomeigest)
 if(CXX_FOUND)
   add_subdirectory(logging)
   add_subdirectory(sunmemory)
-  if(SUNDIALS_BUILD_WITH_PROFILING)
+  if(SUNDIALS_ENABLE_PROFILING)
     add_subdirectory(profiling)
   endif()
 endif()

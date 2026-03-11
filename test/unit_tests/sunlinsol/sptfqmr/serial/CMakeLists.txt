@@ -38,7 +38,7 @@ set(sunlinsol_sptfqmr_examples
 set(sunlinsol_sptfqmr_dependencies test_sunlinsol)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_sptfqmr_fortran_examples
       "test_fsunlinsol_sptfqmr_mod_serial\;\;")
 endif()
