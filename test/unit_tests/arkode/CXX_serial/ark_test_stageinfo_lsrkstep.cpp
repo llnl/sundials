@@ -39,7 +39,8 @@ using namespace problems::prv;
 // callback functions below.  This would normally be stored in user_data, but
 // here we reuse problem definitions from other tests.
 void* arkode_mem = nullptr;
-static int pre_step(sunrealtype t, N_Vector y, long int step, int attempt, void* user_data);
+static int pre_step(sunrealtype t, N_Vector y, long int step, int attempt,
+                    void* user_data);
 static int post_step(sunrealtype t, N_Vector y, long int step, void* user_data);
 static int pre_rhs(sunrealtype t, N_Vector y, void* user_data);
 static int postprocess_step(sunrealtype t, N_Vector y, void* user_data);
@@ -184,8 +185,8 @@ int main(int argc, char* argv[])
 }
 
 // Callback functions
-static int pre_step(sunrealtype t, N_Vector y, long int step,
-                    int attempt, void* user_data)
+static int pre_step(sunrealtype t, N_Vector y, long int step, int attempt,
+                    void* user_data)
 {
   sunrealtype tn, tcur;
   if (ARKodeGetLastTime(arkode_mem, &tn) != ARK_SUCCESS)
@@ -222,8 +223,7 @@ static int post_step(sunrealtype t, N_Vector y, long int step, void* user_data)
   }
   std::cout << "    [Post-step at t = " << std::setprecision(2) << t
             << " (tn = " << tn << " , tcur = " << tcur << "),"
-            << " step = " << step << ", "
-            << std::setprecision(10)
+            << " step = " << step << ", " << std::setprecision(10)
             << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
             << std::flush;
   return 0;
@@ -242,9 +242,9 @@ static int postprocess_step(sunrealtype t, N_Vector y, void* user_data)
     std::cerr << "Error in ARKodeGetCurrentTime" << std::endl;
     return -1;
   }
-  std::cout << "    [Postprocess-step at t = "
-            << std::setprecision(2) << t << " (tn = " << tn
-            << " , tcur = " << tcur << ")," << std::setprecision(10)
+  std::cout << "    [Postprocess-step at t = " << std::setprecision(2) << t
+            << " (tn = " << tn << " , tcur = " << tcur << "),"
+            << std::setprecision(10)
             << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
             << std::flush;
   return 0;
