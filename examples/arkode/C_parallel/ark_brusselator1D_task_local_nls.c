@@ -1727,7 +1727,7 @@ static int SetupProblem(int argc, char* argv[], UserData udata,
     printf("\n1D Advection-Reaction Test Problem\n\n");
     printf("Number of Processors = %li\n", (long int)udata->nprocs);
     printf("Mesh Info:\n");
-    printf("  NX = %lli, NXL = %lli, dx = %.6" FSYM ", xmax = %.6" FSYM "\n", udata->nx,
+    printf("  NX = %li, NXL = %li, dx = %.6" FSYM ", xmax = %.6" FSYM "\n", udata->nx,
            udata->nxl, udata->dx, udata->xmax);
     printf("Problem Parameters:\n");
     printf("  A = %" GSYM "\n", udata->A);
