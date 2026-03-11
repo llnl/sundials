@@ -33,7 +33,7 @@ endif()
 set(CVODE_LIB sundials_cvode)
 set(NVECP_LIB sundials_nvecmpimanyvector sundials_nvecparallel)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   list(APPEND CVODE_LIB sundials_cvode_fused_stubs)
 endif()
 
@@ -70,24 +70,24 @@ foreach(example_tuple ${CVODE_examples})
   endif()
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/C_mpimanyvector)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/C_mpimanyvector)
   endif()
 
 endforeach(example_tuple ${CVODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
   install(FILES README
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/C_mpimanyvector)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/C_mpimanyvector)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "CVODE")
   set(SOLVER_LIB "sundials_cvode")
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(LIBS "-lsundials_cvode_fused_stubs ${LIBS}")
   endif()
 
@@ -105,7 +105,7 @@ if(EXAMPLES_INSTALL)
   # install CMakelists.txt
   install(
     FILES ${PROJECT_BINARY_DIR}/examples/cvode/C_mpimanyvector/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/C_mpimanyvector)
+    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/C_mpimanyvector)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -119,7 +119,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/cvode/C_mpimanyvector/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/C_mpimanyvector
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/C_mpimanyvector
       RENAME Makefile)
   endif()
 
