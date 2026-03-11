@@ -650,15 +650,43 @@ SWIGEXPORT int _wrap_FARKodeSetUserData(void *farg1, void *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeSetPreprocessStepFn(void *farg1, ARKPostProcessFn farg2) {
+SWIGEXPORT int _wrap_FARKodeSetPreStepFn(void *farg1, ARKPreStepFn farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
-  ARKPostProcessFn arg2 = (ARKPostProcessFn) 0 ;
+  ARKPreStepFn arg2 = (ARKPreStepFn) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (ARKPostProcessFn)(farg2);
-  result = (int)ARKodeSetPreprocessStepFn(arg1,arg2);
+  arg2 = (ARKPreStepFn)(farg2);
+  result = (int)ARKodeSetPreStepFn(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKodeSetPostStepFn(void *farg1, ARKPostStepFn farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  ARKPostStepFn arg2 = (ARKPostStepFn) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (ARKPostStepFn)(farg2);
+  result = (int)ARKodeSetPostStepFn(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKodeSetPreRhsFn(void *farg1, ARKPreRhsFn farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  ARKPreRhsFn arg2 = (ARKPreRhsFn) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (ARKPreRhsFn)(farg2);
+  result = (int)ARKodeSetPreRhsFn(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
@@ -673,34 +701,6 @@ SWIGEXPORT int _wrap_FARKodeSetPostprocessStepFn(void *farg1, ARKPostProcessFn f
   arg1 = (void *)(farg1);
   arg2 = (ARKPostProcessFn)(farg2);
   result = (int)ARKodeSetPostprocessStepFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FARKodeSetPostprocessStepFailFn(void *farg1, ARKPostProcessFn farg2) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  ARKPostProcessFn arg2 = (ARKPostProcessFn) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (ARKPostProcessFn)(farg2);
-  result = (int)ARKodeSetPostprocessStepFailFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FARKodeSetPreRHSProcessFn(void *farg1, ARKPostProcessFn farg2) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  ARKPostProcessFn arg2 = (ARKPostProcessFn) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (ARKPostProcessFn)(farg2);
-  result = (int)ARKodeSetPreRHSProcessFn(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }

@@ -50,7 +50,7 @@ endif()
 # Specify libraries to link against
 set(CVODE_LIB sundials_cvode sundials_fcvode_mod)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   list(APPEND CVODE_LIB sundials_cvode_fused_stubs)
 endif()
 
@@ -84,9 +84,9 @@ foreach(example_tuple ${FCVODE_examples})
   target_link_libraries(${example} ${SUNDIALS_LIBS} ${EXE_EXTRA_LINK_LIBS})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.f90 ${example}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
   endif()
 endforeach(example_tuple ${FCVODE_examples})
 
@@ -122,9 +122,9 @@ if(BUILD_SUNLINSOL_KLU)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLKLU_LIBS})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.f90 ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
     endif()
 
   endforeach(example_tuple ${FCVODE_examples_KLU})
@@ -160,9 +160,9 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLLAPACK_LIBS})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.f90 ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
     endif()
 
   endforeach(example_tuple ${FCVODE_examples_LAPACK})
@@ -170,7 +170,7 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
 endif()
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "CVODE")
@@ -178,7 +178,7 @@ if(EXAMPLES_INSTALL)
   set(SOLVER_FLIB "sundials_fcvode_mod")
   set(NVEC_LIB "sundials_nvecserial")
   set(NVEC_FLIB "sundials_fnvecserial_mod")
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(LIBS "-lsundials_cvode_fused_stubs ${LIBS}")
   endif()
 
@@ -203,7 +203,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/cvode/F2003_serial/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -217,7 +217,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/cvode/F2003_serial/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/F2003_serial
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial
       RENAME Makefile)
   endif()
 

@@ -316,7 +316,7 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
 
   /* Form y with perturbation = FRACT*(func. iter. correction) */
   r = FRACT * cv_mem->cv_rl1;
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
     cvDiagSetup_formY(cv_mem->cv_h, r, fpred, cv_mem->cv_zn[1], ypred, ftemp, y);
@@ -345,7 +345,7 @@ static int CVDiagSetup(CVodeMem cv_mem, SUNDIALS_MAYBE_UNUSED int convfail,
   }
 
   /* Construct M = I - gamma*J with J = diag(deltaf_i/deltay_i) */
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
     cvDiagSetup_buildM(FRACT, cv_mem->cv_uround, cv_mem->cv_h, ftemp, fpred,
@@ -410,7 +410,7 @@ static int CVDiagSolve(CVodeMem cv_mem, N_Vector b,
   if (cvdiag_mem->di_gammasv != cv_mem->cv_gamma)
   {
     r = cv_mem->cv_gamma / cvdiag_mem->di_gammasv;
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
     if (cv_mem->cv_usefused) { cvDiagSolve_updateM(r, cvdiag_mem->di_M); }
     else
 #endif

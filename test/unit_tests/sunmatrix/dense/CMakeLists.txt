@@ -30,7 +30,7 @@ set(sunmatrix_dense_examples
 set(sunmatrix_dense_dependencies test_sunmatrix)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunmatrix_dense_fortran_examples "test_fsunmatrix_dense_mod\;\;")
 endif()
 

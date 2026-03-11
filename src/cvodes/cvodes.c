@@ -7896,7 +7896,7 @@ static void cvCompleteStep(CVodeMem cv_mem)
     cv_mem->cv_indx_acor = cv_mem->cv_qmax;
   }
 
-#ifdef SUNDIALS_BUILD_WITH_MONITORING
+#ifdef SUNDIALS_ENABLE_MONITORING
   /* If user access function was provided, call it now */
   if (cv_mem->cv_monitorfun != NULL &&
       !(cv_mem->cv_nst % cv_mem->cv_monitor_interval))

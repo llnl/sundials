@@ -987,7 +987,7 @@ Main solver optional input functions
 
       .. warning::
 
-         Modifying the solution in this function will result in  undefined behavior. This function is only intended to be used  for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_BUILD_WITH_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
+         Modifying the solution in this function will result in  undefined behavior. This function is only intended to be used  for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_ENABLE_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
 
 .. c:function:: int CVodeSetMonitorFrequency(void* cvode_mem, long int nst)
 
@@ -1009,7 +1009,7 @@ Main solver optional input functions
 
       .. warning::
 
-         Modifying the solution in this function will result in undefined behavior. This function is only intended to be used for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_BUILD_WITH_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
+         Modifying the solution in this function will result in undefined behavior. This function is only intended to be used for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_ENABLE_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
 
 .. c:function:: int CVodeSetMaxOrd(void* cvode_mem, int maxord)
 
