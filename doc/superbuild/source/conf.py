@@ -48,6 +48,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinxcontrib.bibtex",
+    "sphinxcontrib.moderncmakedomain",
     "sphinxfortran.fortran_domain",
 ]
 
@@ -66,6 +67,7 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", ("../objects-python.inv", None)),
     "numpy": ("https://numpy.org/doc/stable/", ("../objects-numpy.inv", None)),
     "scipy": ("https://docs.scipy.org/doc/scipy/", ("../objects-scipy.inv", None)),
+    "cmake": ("https://www.cmake.org/cmake/help/latest", ("../objects-cmake.inv", None)),
 }
 
 # Only setup Google analytics for the readthedocs being deployed (not local).

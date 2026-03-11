@@ -78,24 +78,25 @@ foreach(example_tuple ${KINSOL_examples})
   file(GLOB example_out ${example}*.out)
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.cpp ${example_out}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
   endif()
 
 endforeach(example_tuple ${KINSOL_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the header files
   foreach(extrafile ${KINSOL_headers})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
   endforeach()
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "KINSOL")
@@ -114,7 +115,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/kinsol/CXX_parhyp/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -128,7 +129,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/kinsol/CXX_parhyp/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp
       RENAME Makefile)
   endif()
 

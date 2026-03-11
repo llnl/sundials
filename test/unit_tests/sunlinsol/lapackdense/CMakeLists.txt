@@ -31,7 +31,7 @@ set(sunlinsol_lapackdense_examples
 set(sunlinsol_lapackdense_dependencies test_sunlinsol)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_lapackdense_fortran_examples
       "test_fsunlinsol_lapackdense_mod\;10 0 0\;"
       "test_fsunlinsol_lapackdense_mod\;100 0 0\;"

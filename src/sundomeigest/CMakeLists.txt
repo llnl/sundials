@@ -20,6 +20,6 @@
 # required native dominant eigenvalue estimators
 add_subdirectory(power)
 
-if(ENABLE_LAPACK)
+if(SUNDIALS_ENABLE_LAPACK)
   add_subdirectory(arnoldi)
 endif()

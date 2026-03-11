@@ -15,14 +15,14 @@
 
 add_subdirectory(sys)
 
-if(ENABLE_CUDA)
+if(SUNDIALS_ENABLE_CUDA)
   add_subdirectory(cuda)
 endif()
 
-if(ENABLE_HIP)
+if(SUNDIALS_ENABLE_HIP)
   add_subdirectory(hip)
 endif()
 
-if(ENABLE_SYCL)
+if(SUNDIALS_ENABLE_SYCL)
   add_subdirectory(sycl)
 endif()

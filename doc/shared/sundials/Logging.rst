@@ -217,7 +217,7 @@ functions to identify the output level or file.
 The :c:type:`SUNLogger` class provides the following methods.
 
 
-.. c:function:: int SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger)
+.. c:function:: SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger)
 
    Creates a new :c:type:`SUNLogger` object.
 
@@ -233,7 +233,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger)
+.. c:function:: SUNErrCode SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger)
 
    Creates a new :c:type:`SUNLogger` object and opens the output streams/files
    from the environment variables:
@@ -255,7 +255,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filename)
+.. c:function:: SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filename)
 
    Sets the filename for error output.
 
@@ -267,7 +267,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_SetWarningFilename(SUNLogger logger, const char* warning_filename)
+.. c:function:: SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger, const char* warning_filename)
 
    Sets the filename for warning output.
 
@@ -279,7 +279,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename)
+.. c:function:: SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename)
 
    Sets the filename for info output.
 
@@ -291,7 +291,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
+.. c:function:: SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
 
    Sets the filename for debug output.
 
@@ -303,7 +303,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl, const char* scope, const char* label, const char* msg_txt, ...)
+.. c:function:: SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl, const char* scope, const char* label, const char* msg_txt, ...)
 
    Queues a message to the output log level.
 
@@ -319,7 +319,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_Flush(SUNLogger logger, SUNLogLevel lvl)
+.. c:function:: SUNErrCode SUNLogger_Flush(SUNLogger logger, SUNLogLevel lvl)
 
    Flush the message queue(s).
 
@@ -332,7 +332,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_GetOutputRank(SUNLogger logger, int* output_rank)
+.. c:function:: SUNErrCode SUNLogger_GetOutputRank(SUNLogger logger, int* output_rank)
 
    Get the output MPI rank for the logger.
 
@@ -345,7 +345,7 @@ The :c:type:`SUNLogger` class provides the following methods.
       * Returns zero if successful, or non-zero if an error occurred.
 
 
-.. c:function:: int SUNLogger_Destroy(SUNLogger* logger)
+.. c:function:: SUNErrCode SUNLogger_Destroy(SUNLogger* logger)
 
    Free the memory for the :c:type:`SUNLogger` object.
 
