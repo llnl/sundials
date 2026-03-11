@@ -30,7 +30,7 @@
 #include "sundials/sundials_errors.h"
 #include "sundials/sundials_types.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNMatrix A) { return (A->sunctx->profiler); }
 #endif
 

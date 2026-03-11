@@ -32,6 +32,6 @@ if(CXX_FOUND)
 endif()
 
 # F2003 unit tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory(F2003_serial)
 endif()

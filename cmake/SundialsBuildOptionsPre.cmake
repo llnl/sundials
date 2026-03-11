@@ -71,16 +71,18 @@ set(SUNDIALS_COUNTER_TYPE
 # ---------------------------------------------------------------
 
 set(DOCSTR "Build with simulation monitoring capabilities enabled")
-sundials_option(SUNDIALS_BUILD_WITH_MONITORING BOOL "${DOCSTR}" OFF)
+sundials_option(SUNDIALS_ENABLE_MONITORING BOOL "${DOCSTR}" OFF
+                DEPRECATED_NAMES SUNDIALS_BUILD_WITH_MONITORING)
 
 # ---------------------------------------------------------------
 # Option to enable profiling
 # ---------------------------------------------------------------
 
 set(DOCSTR "Build with simulation profiling capabilities enabled")
-sundials_option(SUNDIALS_BUILD_WITH_PROFILING BOOL "${DOCSTR}" OFF)
+sundials_option(SUNDIALS_ENABLE_PROFILING BOOL "${DOCSTR}" OFF DEPRECATED_NAMES
+                SUNDIALS_BUILD_WITH_PROFILING)
 
-if(SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_PROFILING)
   message(
     WARNING
       "SUNDIALS built with profiling turned on, performance may be affected.")
@@ -207,17 +209,22 @@ endif()
 # Options to enable Fortran interfaces.
 # ---------------------------------------------------------------
 
-# Fortran 2003 interface is disabled by default
+# Fortran interfaces are disabled by default
 sundials_option(
-  BUILD_FORTRAN_MODULE_INTERFACE BOOL "Enable Fortran 2003 modules" OFF
-  DEPRECATED_NAMES F2003_INTERFACE_ENABLE)
+  SUNDIALS_ENABLE_FORTRAN
+  BOOL
+  "Enable Fortran interfaces"
+  OFF
+  DEPRECATED_NAMES
+  F2003_INTERFACE_ENABLE
+  BUILD_FORTRAN_MODULE_INTERFACE)
 
-if(BUILD_FORTRAN_MODULE_INTERFACE)
-  # F2003 interface only supports double precision
+if(SUNDIALS_ENABLE_FORTRAN)
+  # Fortran interfaces only support double precision
   if(NOT (SUNDIALS_PRECISION MATCHES "DOUBLE"))
     message(
       FATAL_ERROR
-        "F2003 interface is not compatible with ${SUNDIALS_PRECISION} precision"
+        "Fortran interfaces are not compatible with ${SUNDIALS_PRECISION} precision"
     )
   endif()
 
@@ -225,7 +232,7 @@ if(BUILD_FORTRAN_MODULE_INTERFACE)
   if(NOT (SUNDIALS_COUNTER_TYPE MATCHES "long int"))
     message(
       FATAL_ERROR
-        "F2003 interface is only compatible with long int SUNDIALS_COUNTER_TYPE"
+        "Fortran interfaces are only compatible with long int SUNDIALS_COUNTER_TYPE"
     )
   endif()
 
@@ -242,17 +249,6 @@ set(DOCSTR "Enable Python interfaces")
 sundials_option(SUNDIALS_ENABLE_PYTHON BOOL "${DOCSTR}" OFF)
 
 # ---------------------------------------------------------------
-# Options for benchmark suite
-# ---------------------------------------------------------------
-
-sundials_option(BUILD_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF)
-
-sundials_option(
-  BENCHMARKS_INSTALL_PATH PATH
-  "Output directory for installing benchmark executables"
-  "${CMAKE_INSTALL_PREFIX}/benchmarks")
-
-# ---------------------------------------------------------------
 # Options for CMake config installation
 # ---------------------------------------------------------------
 
@@ -264,14 +260,60 @@ sundials_option(SUNDIALS_INSTALL_CMAKEDIR STRING "${DOCSTR}"
 # Options to enable compiler warnings, address sanitizer
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_ALL_WARNINGS BOOL "Enable all compiler warnings" OFF
-                ADVANCED)
+sundials_option(
+  SUNDIALS_ENABLE_ALL_WARNINGS
+  BOOL
+  "Enable all compiler warnings"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_ALL_WARNINGS)
 
-sundials_option(ENABLE_WARNINGS_AS_ERRORS BOOL
-                "Enable compiler warnings as errors" OFF ADVANCED)
+# CMake 3.24 added the native option, CMAKE_COMPILE_WARNING_AS_ERROR
+sundials_option(
+  CMAKE_COMPILE_WARNING_AS_ERROR
+  BOOL
+  "Treat compiler warnings as errors"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_WARNINGS_AS_ERRORS)
 
-sundials_option(ENABLE_ADDRESS_SANITIZER BOOL "Enable address sanitizer" OFF
-                ADVANCED)
+sundials_option(
+  SUNDIALS_ENABLE_ADDRESS_SANITIZER
+  BOOL
+  "Enable address sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_ADDRESS_SANITIZER)
+
+sundials_option(
+  SUNDIALS_ENABLE_MEMORY_SANITIZER
+  BOOL
+  "Enable memory sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_MEMORY_SANITIZER)
+
+sundials_option(
+  SUNDIALS_ENABLE_LEAK_SANITIZER
+  BOOL
+  "Enable leak sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_LEAK_SANITIZER)
+
+sundials_option(
+  SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER
+  BOOL
+  "Enable undefined behavior sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
 
 # ---------------------------------------------------------------
 # Options to enable SUNDIALS debugging
@@ -469,21 +511,49 @@ sundials_option(SUNDIALS_DEV_CLANG_TIDY BOOL "Enable clang-tidy" OFF ADVANCED)
 # Options for SUNDIALS benchmarks
 # ---------------------------------------------------------------
 
-sundials_option(
-  SUNDIALS_SCHEDULER_COMMAND STRING
-  "Job scheduler command to use to launch SUNDIALS MPI tests" "" ADVANCED)
+sundials_option(SUNDIALS_ENABLE_BENCHMARKS BOOL "Enable the benchmark suite"
+                OFF DEPRECATED_NAMES BUILD_BENCHMARKS)
 
 sundials_option(
-  SUNDIALS_BENCHMARK_OUTPUT_DIR PATH "Location to write benchmark output files"
-  "${PROJECT_BINARY_DIR}/Benchmarking/output" ADVANCED)
+  SUNDIALS_BENCHMARKS_INSTALL_PATH PATH
+  "Output directory for installing benchmark executables"
+  "${CMAKE_INSTALL_PREFIX}/benchmarks" DEPRECATED_NAMES BENCHMARKS_INSTALL_PATH)
+
+sundials_option(SUNDIALS_SCHEDULER_COMMAND STRING
+                "Job scheduler command to use to launch MPI tests" "" ADVANCED)
 
 sundials_option(
-  SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR PATH
+  SUNDIALS_BENCHMARKS_OUTPUT_DIR
+  PATH
+  "Location to write benchmark output files"
+  "${PROJECT_BINARY_DIR}/Benchmarking/output"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_OUTPUT_DIR)
+
+sundials_option(
+  SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR
+  PATH
   "Location to write benchmark caliper files"
-  "${PROJECT_BINARY_DIR}/Benchmarking/caliper" ADVANCED)
+  "${PROJECT_BINARY_DIR}/Benchmarking/caliper"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR)
 
-sundials_option(SUNDIALS_BENCHMARK_NUM_CPUS STRING
-                "Number of CPU cores to run benchmarks with" "40" ADVANCED)
+sundials_option(
+  SUNDIALS_BENCHMARKS_NUM_CPUS
+  STRING
+  "Number of CPU cores to run benchmarks with"
+  "40"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_NUM_CPUS)
 
-sundials_option(SUNDIALS_BENCHMARK_NUM_GPUS STRING
-                "Number of GPUs to run benchmarks with" "4" ADVANCED)
+sundials_option(
+  SUNDIALS_BENCHMARKS_NUM_GPUS
+  STRING
+  "Number of GPUs to run benchmarks with"
+  "4"
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_BENCHMARK_NUM_GPUS)

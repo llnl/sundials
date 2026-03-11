@@ -55,7 +55,7 @@ foreach(example_tuple ${CVODE_examples})
     target_link_libraries(${example_target} sundials_cvode sundials_nvecserial
                           ${EXE_EXTRA_LINK_LIBS})
 
-    if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+    if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
       target_link_libraries(${example_target} sundials_cvode_fused_stubs)
     endif()
   endif()
@@ -78,9 +78,9 @@ foreach(example_tuple ${CVODE_examples})
 endforeach(example_tuple ${CVODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_stubs cvode_fused_stubs)
   endif()
 
@@ -94,4 +94,4 @@ if(EXAMPLES_INSTALL)
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
     TEST_INSTALL CXX_serial)
 
-endif(EXAMPLES_INSTALL)
+endif(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
