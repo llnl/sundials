@@ -35,7 +35,7 @@ runs:
         cd test
         extra_args=""
         if [ -n "${{ inputs.phase }}" ]; then
-          extra_args="--phase ${{ inputs.phase }}"
+          extra_args=" --phase ${{ inputs.phase }}"
         fi
         ./test_driver.sh \
         --testtype CUSTOM \
