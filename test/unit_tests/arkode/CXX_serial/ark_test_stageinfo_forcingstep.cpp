@@ -40,10 +40,10 @@ using namespace problems::estep;
 // callback functions below.  This would normally be stored in user_data, but
 // here we reuse problem definitions from other tests.
 void* arkode_mem = nullptr;
-static int preprocess_step(sunrealtype t, N_Vector y, void* user_data);
+static int pre_step(sunrealtype t, N_Vector y, long int step, int attempt, void* user_data);
+static int post_step(sunrealtype t, N_Vector y, long int step, void* user_data);
+static int pre_rhs(sunrealtype t, N_Vector y, void* user_data);
 static int postprocess_step(sunrealtype t, N_Vector y, void* user_data);
-static int postprocess_step_fail(sunrealtype t, N_Vector y, void* user_data);
-static int preprocess_stage(sunrealtype t, N_Vector y, void* user_data);
 static int postprocess_stage(sunrealtype t, N_Vector y, void* user_data);
 
 int main(int argc, char* argv[])
@@ -98,14 +98,14 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "ARKodeSetFixedStep")) { return 1; }
 
   // Set pre/post step and stage routines
-  flag = ARKodeSetPreprocessStepFn(arkode_mem, preprocess_step);
-  if (check_flag(flag, "ARKodeSetPreprocessStepFn")) { return 1; }
+  flag = ARKodeSetPreStepFn(arkode_mem, pre_step);
+  if (check_flag(flag, "ARKodeSetPreStepFn")) { return 1; }
+  flag = ARKodeSetPostStepFn(arkode_mem, post_step);
+  if (check_flag(flag, "ARKodeSetPostStepFn")) { return 1; }
   flag = ARKodeSetPostprocessStepFn(arkode_mem, postprocess_step);
   if (check_flag(flag, "ARKodeSetPostprocessStepFn")) { return 1; }
-  flag = ARKodeSetPostprocessStepFailFn(arkode_mem, postprocess_step_fail);
-  if (check_flag(flag, "ARKodeSetPostprocessStepFailFn")) { return 1; }
-  flag = ARKodeSetPreRHSProcessFn(arkode_mem, preprocess_stage);
-  if (check_flag(flag, "ARKodeSetPreRHSProcessFn")) { return 1; }
+  flag = ARKodeSetPreRhsFn(arkode_mem, pre_rhs);
+  if (check_flag(flag, "ARKodeSetPreRhsFn")) { return 1; }
   flag = ARKodeSetPostprocessStageFn(arkode_mem, postprocess_stage);
   if (check_flag(flag, "ARKodeSetPostprocessStageFn")) { return 1; }
 
@@ -175,7 +175,8 @@ int main(int argc, char* argv[])
 }
 
 // Callback functions
-static int preprocess_step(sunrealtype t, N_Vector y, void* user_data)
+static int pre_step(sunrealtype t, N_Vector y, long int step,
+                    int attempt, void* user_data)
 {
   sunrealtype tn, tcur;
   if (ARKodeGetLastTime(arkode_mem, &tn) != ARK_SUCCESS)
@@ -188,8 +189,31 @@ static int preprocess_step(sunrealtype t, N_Vector y, void* user_data)
     std::cerr << "Error in ARKodeGetCurrentTime" << std::endl;
     return -1;
   }
-  std::cout << "    [Pre-step processing at t = " << std::setprecision(2) << t
+  std::cout << "    [Pre-step at t = " << std::setprecision(2) << t
             << " (tn = " << tn << " , tcur = " << tcur << "),"
+            << " step = " << step << ", attempt = " << attempt << ", "
+            << std::setprecision(10)
+            << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
+            << std::flush;
+  return 0;
+}
+
+static int post_step(sunrealtype t, N_Vector y, long int step, void* user_data)
+{
+  sunrealtype tn, tcur;
+  if (ARKodeGetLastTime(arkode_mem, &tn) != ARK_SUCCESS)
+  {
+    std::cerr << "Error in ARKodeGetLastTime" << std::endl;
+    return -1;
+  }
+  if (ARKodeGetCurrentTime(arkode_mem, &tcur) != ARK_SUCCESS)
+  {
+    std::cerr << "Error in ARKodeGetCurrentTime" << std::endl;
+    return -1;
+  }
+  std::cout << "    [Post-step at t = " << std::setprecision(2) << t
+            << " (tn = " << tn << " , tcur = " << tcur << "),"
+            << " step = " << step << ", "
             << std::setprecision(10)
             << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
             << std::flush;
@@ -209,28 +233,7 @@ static int postprocess_step(sunrealtype t, N_Vector y, void* user_data)
     std::cerr << "Error in ARKodeGetCurrentTime" << std::endl;
     return -1;
   }
-  std::cout << "    [Post-step processing at t = " << std::setprecision(2) << t
-            << " (tn = " << tn << " , tcur = " << tcur << "),"
-            << std::setprecision(10)
-            << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
-            << std::flush;
-  return 0;
-}
-
-static int postprocess_step_fail(sunrealtype t, N_Vector y, void* user_data)
-{
-  sunrealtype tn, tcur;
-  if (ARKodeGetLastTime(arkode_mem, &tn) != ARK_SUCCESS)
-  {
-    std::cerr << "Error in ARKodeGetLastTime" << std::endl;
-    return -1;
-  }
-  if (ARKodeGetCurrentTime(arkode_mem, &tcur) != ARK_SUCCESS)
-  {
-    std::cerr << "Error in ARKodeGetCurrentTime" << std::endl;
-    return -1;
-  }
-  std::cout << "    [Post-step failure processing at t = "
+  std::cout << "    [Postprocess-step at t = "
             << std::setprecision(2) << t << " (tn = " << tn
             << " , tcur = " << tcur << ")," << std::setprecision(10)
             << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
@@ -238,7 +241,7 @@ static int postprocess_step_fail(sunrealtype t, N_Vector y, void* user_data)
   return 0;
 }
 
-static int preprocess_stage(sunrealtype t, N_Vector y, void* user_data)
+static int pre_rhs(sunrealtype t, N_Vector y, void* user_data)
 {
   int stage, max_stages;
   sunrealtype tn, tcur;
@@ -257,7 +260,7 @@ static int preprocess_stage(sunrealtype t, N_Vector y, void* user_data)
     std::cerr << "Error in ARKodeGetStageIndex" << std::endl;
     return -1;
   }
-  std::cout << "    [Pre-RHS processing (stage " << stage << " of " << max_stages
+  std::cout << "    [Pre-RHS (stage " << stage << " of " << max_stages
             << ") at t = " << std::setprecision(2) << t << " (tn = " << tn
             << " , tcur = " << tcur << "), " << std::setprecision(10)
             << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
