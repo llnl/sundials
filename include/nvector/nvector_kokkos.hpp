@@ -476,22 +476,22 @@ template<class ExecutionSpace = Kokkos::DefaultExecutionSpace,
          class MemorySpace    = typename ExecutionSpace::memory_space,
          // Kokkos::MemoryManaged was deprecated in v4.7 and a default added
          // TODO(DJG): Remove 0 when v4.7+ is required
-         class MemoryTraits   = Kokkos::MemoryTraits<0>>
+         class MemoryTraits = Kokkos::MemoryTraits<0>>
 class Vector : public sundials::impl::BaseNVector,
                public sundials::ConvertibleTo<N_Vector>
 {
 public:
-  using view_type      = Kokkos::View<sunrealtype*, MemorySpace, MemoryTraits>;
+  using view_type = Kokkos::View<sunrealtype*, MemorySpace, MemoryTraits>;
 #if KOKKOS_VERSION / 10000 > 4
   using host_view_type = typename view_type::host_mirror_type;
 #else
   using host_view_type = typename view_type::HostMirror;
 #endif
-  using memory_space   = MemorySpace;
-  using memory_traits  = MemoryTraits;
-  using exec_space     = typename MemorySpace::execution_space;
-  using range_policy   = Kokkos::RangePolicy<exec_space>;
-  using size_type      = typename view_type::size_type;
+  using memory_space  = MemorySpace;
+  using memory_traits = MemoryTraits;
+  using exec_space    = typename MemorySpace::execution_space;
+  using range_policy  = Kokkos::RangePolicy<exec_space>;
+  using size_type     = typename view_type::size_type;
 
   // Default constructor
   Vector() = default;
