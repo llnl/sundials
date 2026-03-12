@@ -475,7 +475,7 @@ sunrealtype N_VWrmsNormMask_Kokkos(N_Vector x, N_Vector w, N_Vector id)
 template<class ExecutionSpace = Kokkos::DefaultExecutionSpace,
          class MemorySpace    = typename ExecutionSpace::memory_space,
          // Kokkos::MemoryManaged was deprecated in v4.7 and a default added
-         // Remove 0 when v4.7+ is required
+         // TODO(DJG): Remove 0 when v4.7+ is required
          class MemoryTraits   = Kokkos::MemoryTraits<0>>
 class Vector : public sundials::impl::BaseNVector,
                public sundials::ConvertibleTo<N_Vector>
@@ -584,7 +584,7 @@ public:
 
   // Static routines to create clones of the vector that are always managed
   // Kokkos::MemoryManaged was deprecated in v4.7 and a default was added
-  // Remove 0 when v4.7+ is required
+  // TODO(DJG): Remove 0 when v4.7+ is required
 
   static Vector<exec_space, memory_space, Kokkos::MemoryTraits<0>>* Clone(
     const Vector<exec_space, memory_space, Kokkos::MemoryTraits<0>>& that_vector,
