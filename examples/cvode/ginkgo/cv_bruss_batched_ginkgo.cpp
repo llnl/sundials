@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
   /* Create SUNMatrix for use in linear solves */
   sunindextype batch_rows = udata.batch_size;
   sunindextype batch_cols = udata.batch_size;
-  auto batch_dim          = gko::batch_dim<2>(udata.num_batches,
+  auto batch_dim = gko::batch_dim<2>(udata.num_batches,
                                      gko::dim<2>(batch_rows, batch_cols));
   auto gko_matA =
     gko::share(GkoBatchMatrixType::create(gko_exec, batch_dim, udata.nnzper));
@@ -470,7 +470,7 @@ int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 #if defined(USE_CUDA) || defined(USE_HIP)
   unsigned threads_per_block = 256;
   unsigned num_blocks        = (udata->num_batches + threads_per_block - 1) /
-                        threads_per_block;
+                               threads_per_block;
   f_kernel<<<num_blocks, threads_per_block>>>(t, ydata, ydotdata, udata->a.get(),
                                               udata->b.get(), udata->ep.get(),
                                               udata->neq, udata->num_batches,
@@ -511,7 +511,7 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
 #if defined(USE_CUDA) || defined(USE_HIP)
   unsigned threads_per_block = 256;
   unsigned num_blocks        = (udata->num_batches + threads_per_block - 1) /
-                        threads_per_block;
+                               threads_per_block;
 
   j_kernel<<<num_blocks, threads_per_block>>>(ydata, Jdata, udata->a.get(),
                                               udata->b.get(), udata->ep.get(),
@@ -548,7 +548,7 @@ int JacVec(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y, N_Vector fy,
 #if defined(USE_CUDA) || defined(USE_HIP)
   unsigned threads_per_block = 256;
   unsigned num_blocks        = (udata->num_batches + threads_per_block - 1) /
-                        threads_per_block;
+                               threads_per_block;
 
   jv_kernel<<<num_blocks, threads_per_block>>>(vdata, Jvdata, ydata,
                                                udata->a.get(), udata->b.get(),

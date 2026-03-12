@@ -334,7 +334,10 @@ int KINSetNumMaxIters(void* kinmem, long int mxiter)
   }
 
   if (mxiter == 0) { kin_mem->kin_mxiter = MXITER_DEFAULT; }
-  else { kin_mem->kin_mxiter = mxiter; }
+  else
+  {
+    kin_mem->kin_mxiter = mxiter;
+  }
 
   return (KIN_SUCCESS);
 }
@@ -409,7 +412,10 @@ int KINSetMaxSetupCalls(void* kinmem, long int msbset)
   }
 
   if (msbset == 0) { kin_mem->kin_msbset = MSBSET_DEFAULT; }
-  else { kin_mem->kin_msbset = msbset; }
+  else
+  {
+    kin_mem->kin_msbset = msbset;
+  }
 
   return (KIN_SUCCESS);
 }
@@ -440,7 +446,10 @@ int KINSetMaxSubSetupCalls(void* kinmem, long int msbsetsub)
   }
 
   if (msbsetsub == 0) { kin_mem->kin_msbset_sub = MSBSET_SUB_DEFAULT; }
-  else { kin_mem->kin_msbset_sub = msbsetsub; }
+  else
+  {
+    kin_mem->kin_msbset_sub = msbsetsub;
+  }
 
   return (KIN_SUCCESS);
 }
@@ -502,7 +511,10 @@ int KINSetEtaConstValue(void* kinmem, sunrealtype eta)
   }
 
   if (eta == ZERO) { kin_mem->kin_eta = POINT1; }
-  else { kin_mem->kin_eta = eta; }
+  else
+  {
+    kin_mem->kin_eta = eta;
+  }
 
   return (KIN_SUCCESS);
 }
@@ -536,7 +548,10 @@ int KINSetEtaParams(void* kinmem, sunrealtype egamma, sunrealtype ealpha)
   }
 
   if (ealpha == ZERO) { kin_mem->kin_eta_alpha = TWO; }
-  else { kin_mem->kin_eta_alpha = ealpha; }
+  else
+  {
+    kin_mem->kin_eta_alpha = ealpha;
+  }
 
   if ((egamma <= ZERO) || (egamma > ONE))
   {
@@ -549,7 +564,10 @@ int KINSetEtaParams(void* kinmem, sunrealtype egamma, sunrealtype ealpha)
   }
 
   if (egamma == ZERO) { kin_mem->kin_eta_gamma = POINT9; }
-  else { kin_mem->kin_eta_gamma = egamma; }
+  else
+  {
+    kin_mem->kin_eta_gamma = egamma;
+  }
 
   return (KIN_SUCCESS);
 }
@@ -582,7 +600,10 @@ int KINSetResMonParams(void* kinmem, sunrealtype omegamin, sunrealtype omegamax)
   }
 
   if (omegamin == ZERO) { kin_mem->kin_omega_min = OMEGA_MIN; }
-  else { kin_mem->kin_omega_min = omegamin; }
+  else
+  {
+    kin_mem->kin_omega_min = omegamin;
+  }
 
   /* check omegamax */
 
@@ -601,7 +622,10 @@ int KINSetResMonParams(void* kinmem, sunrealtype omegamin, sunrealtype omegamax)
                       MSG_BAD_OMEGA);
       return (KIN_ILL_INPUT);
     }
-    else { kin_mem->kin_omega_max = OMEGA_MAX; }
+    else
+    {
+      kin_mem->kin_omega_max = OMEGA_MAX;
+    }
   }
   else
   {
@@ -611,7 +635,10 @@ int KINSetResMonParams(void* kinmem, sunrealtype omegamin, sunrealtype omegamax)
                       MSG_BAD_OMEGA);
       return (KIN_ILL_INPUT);
     }
-    else { kin_mem->kin_omega_max = omegamax; }
+    else
+    {
+      kin_mem->kin_omega_max = omegamax;
+    }
   }
 
   return (KIN_SUCCESS);
@@ -731,7 +758,10 @@ int KINSetMaxBetaFails(void* kinmem, long int mxnbcf)
   }
 
   if (mxnbcf == 0) { kin_mem->kin_mxnbcf = MXNBCF_DEFAULT; }
-  else { kin_mem->kin_mxnbcf = mxnbcf; }
+  else
+  {
+    kin_mem->kin_mxnbcf = mxnbcf;
+  }
 
   return (KIN_SUCCESS);
 }
@@ -767,7 +797,10 @@ int KINSetRelErrFunc(void* kinmem, sunrealtype relfunc)
     uround                    = kin_mem->kin_uround;
     kin_mem->kin_sqrt_relfunc = SUNRsqrt(uround);
   }
-  else { kin_mem->kin_sqrt_relfunc = SUNRsqrt(relfunc); }
+  else
+  {
+    kin_mem->kin_sqrt_relfunc = SUNRsqrt(relfunc);
+  }
 
   return (KIN_SUCCESS);
 }
@@ -803,7 +836,10 @@ int KINSetFuncNormTol(void* kinmem, sunrealtype fnormtol)
     uround                = kin_mem->kin_uround;
     kin_mem->kin_fnormtol = SUNRpowerR(uround, ONETHIRD);
   }
-  else { kin_mem->kin_fnormtol = fnormtol; }
+  else
+  {
+    kin_mem->kin_fnormtol = fnormtol;
+  }
 
   return (KIN_SUCCESS);
 }
@@ -839,7 +875,10 @@ int KINSetScaledStepTol(void* kinmem, sunrealtype scsteptol)
     uround                 = kin_mem->kin_uround;
     kin_mem->kin_scsteptol = SUNRpowerR(uround, TWOTHIRDS);
   }
-  else { kin_mem->kin_scsteptol = scsteptol; }
+  else
+  {
+    kin_mem->kin_scsteptol = scsteptol;
+  }
 
   return (KIN_SUCCESS);
 }

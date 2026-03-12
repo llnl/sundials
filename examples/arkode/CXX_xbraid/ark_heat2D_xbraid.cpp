@@ -628,7 +628,10 @@ int MyInit(braid_App app, sunrealtype t, braid_Vector* u_ptr)
     flag = Solution(t, y, udata);
     if (flag != 0) { return 1; }
   }
-  else { N_VConst(ZERO, y); }
+  else
+  {
+    N_VConst(ZERO, y);
+  }
 
   return 0;
 }
@@ -1323,7 +1326,10 @@ static int PrintUserData(UserData* udata)
   cout << "  linear         = " << udata->linear << endl;
   cout << " --------------------------------- " << endl;
   if (udata->pcg) { cout << "  linear solver  = PCG" << endl; }
-  else { cout << "  linear solver  = GMRES" << endl; }
+  else
+  {
+    cout << "  linear solver  = GMRES" << endl;
+  }
   cout << "  lin iters      = " << udata->liniters << endl;
   cout << "  eps lin        = " << udata->epslin << endl;
   cout << "  prec           = " << udata->prec << endl;

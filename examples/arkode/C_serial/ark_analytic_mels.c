@@ -242,9 +242,7 @@ static SUNLinearSolver MatrixEmbeddedLS(void* arkode_mem, SUNContext ctx)
 
 /* type descriptor */
 static SUNLinearSolver_Type MatrixEmbeddedLSType(SUNLinearSolver S)
-{
-  return (SUNLINEARSOLVER_MATRIX_EMBEDDED);
-}
+{ return (SUNLINEARSOLVER_MATRIX_EMBEDDED); }
 
 /* linear solve routine */
 static int MatrixEmbeddedLSSolve(SUNLinearSolver LS, SUNMatrix A, N_Vector x,

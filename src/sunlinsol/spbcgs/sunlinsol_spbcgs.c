@@ -204,7 +204,10 @@ static SUNErrCode setFromCommandLine_SPBCGS(SUNLinearSolver S, const char* LSid,
   if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
-  else { strcpy(prefix, default_id); }
+  else
+  {
+    strcpy(prefix, default_id);
+  }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -286,14 +289,10 @@ SUNErrCode SUNLinSol_SPBCGSSetMaxl(SUNLinearSolver S, int maxl)
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_SPBCGS(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{
-  return (SUNLINEARSOLVER_ITERATIVE);
-}
+{ return (SUNLINEARSOLVER_ITERATIVE); }
 
 SUNLinearSolver_ID SUNLinSolGetID_SPBCGS(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{
-  return (SUNLINEARSOLVER_SPBCGS);
-}
+{ return (SUNLINEARSOLVER_SPBCGS); }
 
 SUNErrCode SUNLinSolInitialize_SPBCGS(SUNLinearSolver S)
 {
@@ -922,7 +921,10 @@ SUNErrCode SUNLinSolSpace_SPBCGS(SUNLinearSolver S, long int* lenrwLS,
     N_VSpace(SPBCGS_CONTENT(S)->vtemp, &lrw1, &liw1);
     SUNCheckLastErr();
   }
-  else { lrw1 = liw1 = 0; }
+  else
+  {
+    lrw1 = liw1 = 0;
+  }
   *lenrwLS = lrw1 * 9;
   *leniwLS = liw1 * 9;
   return SUN_SUCCESS;

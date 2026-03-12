@@ -31,9 +31,7 @@ namespace experimental {
 
 template<class T, class Deleter>
 std::shared_ptr<T> our_make_shared(T* ptr)
-{
-  return std::shared_ptr<T>(ptr, Deleter{});
-}
+{ return std::shared_ptr<T>(ptr, Deleter{}); }
 
 template<class T, class Deleter>
 class ClassView : public sundials::ConvertibleTo<T>

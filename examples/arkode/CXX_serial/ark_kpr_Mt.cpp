@@ -77,8 +77,8 @@
 // Header files
 #include <arkode/arkode_arkstep.h> // prototypes for ARKStep fcts., consts
 #include <cmath>
+#include <iomanip> //for setw
 #include <iostream>
-#include <iomanip>  //for setw
 #include <nvector/nvector_serial.h> // serial N_Vector type, fcts., macros
 #include <stdio.h>
 #include <string.h>
@@ -214,24 +214,36 @@ int main(int argc, char* argv[])
     << "\nNonlinear Kvaerno-Prothero-Robinson test problem with mass matrix:\n";
   cout << "    time domain:  (" << T0 << "," << Tf << "]\n";
   if (udata.M_timedep) { cout << "    Time-dependent mass matrix\n"; }
-  else { cout << "    Fixed mass matrix\n"; }
+  else
+  {
+    cout << "    Fixed mass matrix\n";
+  }
   if (rk_type == 0) { cout << "    ARK solver, order = " << order << endl; }
   else if (rk_type == 1)
   {
     cout << "    DIRK solver, order = " << order << endl;
   }
-  else { cout << "    ERK solver, order = " << order << endl; }
+  else
+  {
+    cout << "    ERK solver, order = " << order << endl;
+  }
   if (rk_type < 2)
   {
     if (nls_type == 0) { cout << "    Newton nonlinear solver\n"; }
-    else { cout << "    Fixed-point nonlinear solver\n"; }
+    else
+    {
+      cout << "    Fixed-point nonlinear solver\n";
+    }
   }
   if (adaptive)
   {
     cout << "    Adaptive run with reltol = " << reltol
          << ", abstol = " << abstol << endl;
   }
-  else { cout << "    Order-of-convergence run\n"; }
+  else
+  {
+    cout << "    Order-of-convergence run\n";
+  }
   cout << "    G = " << setw(8) << udata.G << endl;
   cout << "    g = " << setw(8) << udata.g << endl;
   cout << "    e = " << setw(8) << udata.e << endl;
@@ -284,7 +296,10 @@ int main(int argc, char* argv[])
       retval = ARKodeSetLinearSolver(arkode_mem, LS, A);
       if (check_retval(&retval, "ARKodeSetLinearSolver", 1)) { return (1); }
       if (rk_type == 0) { retval = ARKodeSetJacFn(arkode_mem, Ji); }
-      else { retval = ARKodeSetJacFn(arkode_mem, Jn); }
+      else
+      {
+        retval = ARKodeSetJacFn(arkode_mem, Jn);
+      }
       if (check_retval(&retval, "ARKodeSetJacFn", 1)) { return 1; }
     }
     else
@@ -603,7 +618,10 @@ static int adaptive_run(void* arkode_mem, N_Vector y, sunrealtype T0,
       retval = ARKodeGetNumJacEvals(arkode_mem, &nje);
       if (check_retval(&retval, "ARKodeGetNumJacEvals", 1)) { return 1; }
     }
-    else { nje = 0; }
+    else
+    {
+      nje = 0;
+    }
   }
 
   // Print some final statistics and return
@@ -754,7 +772,8 @@ static sunrealtype r(sunrealtype t) { return (SUN_RCONST(0.5) * SUNRcos(t)); }
 
 static sunrealtype s(sunrealtype t) { return (SUNRsin(t)); }
 
-static sunrealtype rdot(sunrealtype t) { return (-SUN_RCONST(0.5) * SUNRsin(t)); }
+static sunrealtype rdot(sunrealtype t)
+{ return (-SUN_RCONST(0.5) * SUNRsin(t)); }
 
 static sunrealtype sdot(sunrealtype t) { return (SUNRcos(t)); }
 

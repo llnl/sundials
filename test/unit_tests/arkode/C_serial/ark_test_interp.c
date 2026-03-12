@@ -106,7 +106,10 @@ int main(int argc, char* argv[])
   /* determine test configuration */
   if (sizeof(sunrealtype) == 4) { rtype = 32; }
   else if (sizeof(sunrealtype) == 8) { rtype = 64; }
-  else { rtype = 128; }
+  else
+  {
+    rtype = 128;
+  }
 
   /* set IVP solver tolerances based on rtype */
   if (rtype == 32)
@@ -274,35 +277,37 @@ int main(int argc, char* argv[])
         NV_Ith_S(yerr, 1) =
           SUNRabs(SUNRcos(SUN_RCONST(3.0) * t_test) - NV_Ith_S(ytest, 1));
         /*   dy */
-        NV_Ith_S(dyerr, 0) = SUNRabs(
-          SUN_RCONST(2.0) * SUNRcos(SUN_RCONST(2.0) * t_test) - NV_Ith_S(dytest, 0));
-        NV_Ith_S(dyerr, 1) = SUNRabs(
-          -SUN_RCONST(3.0) * SUNRsin(SUN_RCONST(3.0) * t_test) - NV_Ith_S(dytest, 1));
+        NV_Ith_S(dyerr, 0) =
+          SUNRabs(SUN_RCONST(2.0) * SUNRcos(SUN_RCONST(2.0) * t_test) -
+                  NV_Ith_S(dytest, 0));
+        NV_Ith_S(dyerr, 1) =
+          SUNRabs(-SUN_RCONST(3.0) * SUNRsin(SUN_RCONST(3.0) * t_test) -
+                  NV_Ith_S(dytest, 1));
         /*   d2y */
-        NV_Ith_S(d2yerr,
-                 0) = SUNRabs(-SUN_RCONST(4.0) * SUNRsin(SUN_RCONST(2.0) * t_test) -
-                              NV_Ith_S(d2ytest, 0));
-        NV_Ith_S(d2yerr,
-                 1) = SUNRabs(-SUN_RCONST(9.0) * SUNRcos(SUN_RCONST(3.0) * t_test) -
-                              NV_Ith_S(d2ytest, 1));
+        NV_Ith_S(d2yerr, 0) =
+          SUNRabs(-SUN_RCONST(4.0) * SUNRsin(SUN_RCONST(2.0) * t_test) -
+                  NV_Ith_S(d2ytest, 0));
+        NV_Ith_S(d2yerr, 1) =
+          SUNRabs(-SUN_RCONST(9.0) * SUNRcos(SUN_RCONST(3.0) * t_test) -
+                  NV_Ith_S(d2ytest, 1));
         /*   d3y */
-        NV_Ith_S(d3yerr,
-                 0) = SUNRabs(-SUN_RCONST(8.0) * SUNRcos(SUN_RCONST(2.0) * t_test) -
-                              NV_Ith_S(d3ytest, 0));
-        NV_Ith_S(d3yerr,
-                 1) = SUNRabs(SUN_RCONST(27.0) * SUNRsin(SUN_RCONST(3.0) * t_test) -
-                              NV_Ith_S(d3ytest, 1));
+        NV_Ith_S(d3yerr, 0) =
+          SUNRabs(-SUN_RCONST(8.0) * SUNRcos(SUN_RCONST(2.0) * t_test) -
+                  NV_Ith_S(d3ytest, 0));
+        NV_Ith_S(d3yerr, 1) =
+          SUNRabs(SUN_RCONST(27.0) * SUNRsin(SUN_RCONST(3.0) * t_test) -
+                  NV_Ith_S(d3ytest, 1));
         /*   d4y */
-        NV_Ith_S(d4yerr,
-                 0) = SUNRabs(SUN_RCONST(16.0) * SUNRsin(SUN_RCONST(2.0) * t_test) -
-                              NV_Ith_S(d4ytest, 0));
-        NV_Ith_S(d4yerr,
-                 1) = SUNRabs(SUN_RCONST(81.0) * SUNRcos(SUN_RCONST(3.0) * t_test) -
-                              NV_Ith_S(d4ytest, 1));
+        NV_Ith_S(d4yerr, 0) =
+          SUNRabs(SUN_RCONST(16.0) * SUNRsin(SUN_RCONST(2.0) * t_test) -
+                  NV_Ith_S(d4ytest, 0));
+        NV_Ith_S(d4yerr, 1) =
+          SUNRabs(SUN_RCONST(81.0) * SUNRcos(SUN_RCONST(3.0) * t_test) -
+                  NV_Ith_S(d4ytest, 1));
         /*   d5y */
-        NV_Ith_S(d5yerr,
-                 0) = SUNRabs(SUN_RCONST(32.0) * SUNRcos(SUN_RCONST(2.0) * t_test) -
-                              NV_Ith_S(d5ytest, 0));
+        NV_Ith_S(d5yerr, 0) =
+          SUNRabs(SUN_RCONST(32.0) * SUNRcos(SUN_RCONST(2.0) * t_test) -
+                  NV_Ith_S(d5ytest, 0));
         NV_Ith_S(d5yerr, 1) =
           SUNRabs(-SUN_RCONST(243.0) * SUNRsin(SUN_RCONST(3.0) * t_test) -
                   NV_Ith_S(d5ytest, 1));
@@ -336,10 +341,10 @@ int main(int argc, char* argv[])
            "-----------\n");
     for (ih = 0; ih < NHVALS; ih++)
     {
-      printf("    %.1" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "\n",
-             hvals[ih], yerrs[ih], dyerrs[ih],
-             d2yerrs[ih], d3yerrs[ih], d4yerrs[ih],
-             d5yerrs[ih]);
+      printf("    %.1" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM
+             "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "\n",
+             hvals[ih], yerrs[ih], dyerrs[ih], d2yerrs[ih], d3yerrs[ih],
+             d4yerrs[ih], d5yerrs[ih]);
     }
     printf("  "
            "-------------------------------------------------------------------"
@@ -348,8 +353,8 @@ int main(int argc, char* argv[])
     printf("  Estimated y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3" FSYM,
-             SUNRlog(yerrs[ih] / yerrs[ih - 1]) / SUNRlog(hvals[ih] / hvals[ih - 1]));
+      printf("  %.3" FSYM, SUNRlog(yerrs[ih] / yerrs[ih - 1]) /
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     yrate[ideg] = SUNRlog(yerrs[NHVALS - 1] / yerrs[0]) /
                   SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -359,8 +364,8 @@ int main(int argc, char* argv[])
     printf("  Estimated dy convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3" FSYM,
-             SUNRlog(dyerrs[ih] / dyerrs[ih - 1]) / SUNRlog(hvals[ih] / hvals[ih - 1]));
+      printf("  %.3" FSYM, SUNRlog(dyerrs[ih] / dyerrs[ih - 1]) /
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     dyrate[ideg] = SUNRlog(dyerrs[NHVALS - 1] / dyerrs[0]) /
                    SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -371,7 +376,7 @@ int main(int argc, char* argv[])
     for (ih = 1; ih < NHVALS; ih++)
     {
       printf("  %.3" ESYM, SUNRlog(d2yerrs[ih] / d2yerrs[ih - 1]) /
-                         SUNRlog(hvals[ih] / hvals[ih - 1]));
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d2yrate[ideg] = SUNRlog(d2yerrs[NHVALS - 1] / d2yerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -382,7 +387,7 @@ int main(int argc, char* argv[])
     for (ih = 1; ih < NHVALS; ih++)
     {
       printf("  %.3" FSYM, SUNRlog(d3yerrs[ih] / d3yerrs[ih - 1]) /
-                         SUNRlog(hvals[ih] / hvals[ih - 1]));
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d3yrate[ideg] = SUNRlog(d3yerrs[NHVALS - 1] / d3yerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -393,7 +398,7 @@ int main(int argc, char* argv[])
     for (ih = 1; ih < NHVALS; ih++)
     {
       printf("  %.3" FSYM, SUNRlog(d4yerrs[ih] / d4yerrs[ih - 1]) /
-                         SUNRlog(hvals[ih] / hvals[ih - 1]));
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d4yrate[ideg] = SUNRlog(d4yerrs[NHVALS - 1] / d4yerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -404,7 +409,7 @@ int main(int argc, char* argv[])
     for (ih = 1; ih < NHVALS; ih++)
     {
       printf("  %.3" FSYM, SUNRlog(d5yerrs[ih] / d5yerrs[ih - 1]) /
-                         SUNRlog(hvals[ih] / hvals[ih - 1]));
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d5yrate[ideg] = SUNRlog(d5yerrs[NHVALS - 1] / d5yerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -505,17 +510,19 @@ int main(int argc, char* argv[])
         NV_Ith_S(yerr, 1) =
           SUNRabs(SUNRcos(SUN_RCONST(3.0) * t_test) - NV_Ith_S(ytest, 1));
         /*   dy */
-        NV_Ith_S(dyerr, 0) = SUNRabs(
-          SUN_RCONST(2.0) * SUNRcos(SUN_RCONST(2.0) * t_test) - NV_Ith_S(dytest, 0));
-        NV_Ith_S(dyerr, 1) = SUNRabs(
-          -SUN_RCONST(3.0) * SUNRsin(SUN_RCONST(3.0) * t_test) - NV_Ith_S(dytest, 1));
+        NV_Ith_S(dyerr, 0) =
+          SUNRabs(SUN_RCONST(2.0) * SUNRcos(SUN_RCONST(2.0) * t_test) -
+                  NV_Ith_S(dytest, 0));
+        NV_Ith_S(dyerr, 1) =
+          SUNRabs(-SUN_RCONST(3.0) * SUNRsin(SUN_RCONST(3.0) * t_test) -
+                  NV_Ith_S(dytest, 1));
         /*   d2y */
-        NV_Ith_S(d2yerr,
-                 0) = SUNRabs(-SUN_RCONST(4.0) * SUNRsin(SUN_RCONST(2.0) * t_test) -
-                              NV_Ith_S(d2ytest, 0));
-        NV_Ith_S(d2yerr,
-                 1) = SUNRabs(-SUN_RCONST(9.0) * SUNRcos(SUN_RCONST(3.0) * t_test) -
-                              NV_Ith_S(d2ytest, 1));
+        NV_Ith_S(d2yerr, 0) =
+          SUNRabs(-SUN_RCONST(4.0) * SUNRsin(SUN_RCONST(2.0) * t_test) -
+                  NV_Ith_S(d2ytest, 0));
+        NV_Ith_S(d2yerr, 1) =
+          SUNRabs(-SUN_RCONST(9.0) * SUNRcos(SUN_RCONST(3.0) * t_test) -
+                  NV_Ith_S(d2ytest, 1));
 
         /* compute error norms (2-norm per test, max-norm over interval) */
         yerrs[ih]   = SUNMAX(yerrs[ih], SUNRsqrt(N_VDotProd(yerr, yerr)));
@@ -538,16 +545,16 @@ int main(int argc, char* argv[])
     printf("  ------------------------------------------\n");
     for (ih = 0; ih < NHVALS; ih++)
     {
-      printf("    %.1" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "\n", hvals[ih],
-             yerrs[ih], dyerrs[ih], d2yerrs[ih]);
+      printf("    %.1" ESYM "   %.2" ESYM "   %.2" ESYM "   %.2" ESYM "\n",
+             hvals[ih], yerrs[ih], dyerrs[ih], d2yerrs[ih]);
     }
     printf("  ------------------------------------------\n");
 
     printf("  Estimated y convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3" FSYM,
-             SUNRlog(yerrs[ih] / yerrs[ih - 1]) / SUNRlog(hvals[ih] / hvals[ih - 1]));
+      printf("  %.3" FSYM, SUNRlog(yerrs[ih] / yerrs[ih - 1]) /
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     yrate2[ideg] = SUNRlog(yerrs[NHVALS - 1] / yerrs[0]) /
                    SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -557,8 +564,8 @@ int main(int argc, char* argv[])
     printf("  Estimated dy convergence factors:\n  ");
     for (ih = 1; ih < NHVALS; ih++)
     {
-      printf("  %.3" FSYM,
-             SUNRlog(dyerrs[ih] / dyerrs[ih - 1]) / SUNRlog(hvals[ih] / hvals[ih - 1]));
+      printf("  %.3" FSYM, SUNRlog(dyerrs[ih] / dyerrs[ih - 1]) /
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     dyrate2[ideg] = SUNRlog(dyerrs[NHVALS - 1] / dyerrs[0]) /
                     SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -569,7 +576,7 @@ int main(int argc, char* argv[])
     for (ih = 1; ih < NHVALS; ih++)
     {
       printf("  %.3" FSYM, SUNRlog(d2yerrs[ih] / d2yerrs[ih - 1]) /
-                         SUNRlog(hvals[ih] / hvals[ih - 1]));
+                             SUNRlog(hvals[ih] / hvals[ih - 1]));
     }
     d2yrate2[ideg] = SUNRlog(d2yerrs[NHVALS - 1] / d2yerrs[0]) /
                      SUNRlog(hvals[NHVALS - 1] / hvals[0]);
@@ -592,12 +599,12 @@ int main(int argc, char* argv[])
          "------------------------\n");
   for (ideg = 0; ideg <= ARK_INTERP_MAX_DEGREE; ideg++)
   {
-    printf("      %1d   |  %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM
-           "(%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")\n",
-           ideg, yrate[ideg], yferr[ideg], dyrate[ideg],
-           dyferr[ideg], d2yrate[ideg], d2yferr[ideg],
-           d3yrate[ideg], d3yferr[ideg], d4yrate[ideg],
-           d4yferr[ideg], d5yrate[ideg], d5yferr[ideg]);
+    printf("      %1d   |  %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM
+           ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM "(%.0" ESYM ")   %.1" FSYM
+           " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")\n",
+           ideg, yrate[ideg], yferr[ideg], dyrate[ideg], dyferr[ideg],
+           d2yrate[ideg], d2yferr[ideg], d3yrate[ideg], d3yferr[ideg],
+           d4yrate[ideg], d4yferr[ideg], d5yrate[ideg], d5yferr[ideg]);
   }
   printf("  "
          "---------------------------------------------------------------------"
@@ -609,9 +616,10 @@ int main(int argc, char* argv[])
   printf("  ---------------------------------------------------\n");
   for (ideg = 0; ideg <= ARK_INTERP_MAX_DEGREE; ideg++)
   {
-    printf("      %1d   |  %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM ")\n", ideg,
-           yrate2[ideg], yferr2[ideg], dyrate2[ideg],
-           dyferr2[ideg], d2yrate2[ideg], d2yferr2[ideg]);
+    printf("      %1d   |  %.1" FSYM " (%.0" ESYM ")   %.1" FSYM " (%.0" ESYM
+           ")   %.1" FSYM " (%.0" ESYM ")\n",
+           ideg, yrate2[ideg], yferr2[ideg], dyrate2[ideg], dyferr2[ideg],
+           d2yrate2[ideg], d2yferr2[ideg]);
   }
   printf("  ---------------------------------------------------\n");
 
@@ -652,7 +660,8 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
                       NV_Ith_S(y, 1) - SUNRcos(SUN_RCONST(3.0) * t) +
                       SUN_RCONST(2.0) * SUNRcos(SUN_RCONST(2.0) * t);
   NV_Ith_S(ydot, 1) = NV_Ith_S(y, 0) - NV_Ith_S(y, 1) -
-                      SUNRsin(SUN_RCONST(2.0) * t) + SUNRcos(SUN_RCONST(3.0) * t) -
+                      SUNRsin(SUN_RCONST(2.0) * t) +
+                      SUNRcos(SUN_RCONST(3.0) * t) -
                       SUN_RCONST(3.0) * SUNRsin(SUN_RCONST(3.0) * t);
   return 0; /* Return with success */
 }

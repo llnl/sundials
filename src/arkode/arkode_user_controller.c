@@ -100,9 +100,7 @@ SUNAdaptController ARKUserControl(SUNContext sunctx, void* arkode_mem,
 
 SUNAdaptController_Type SUNAdaptController_GetType_ARKUserControl(
   SUNDIALS_MAYBE_UNUSED SUNAdaptController C)
-{
-  return SUN_ADAPTCONTROLLER_H;
-}
+{ return SUN_ADAPTCONTROLLER_H; }
 
 SUNErrCode SUNAdaptController_EstimateStep_ARKUserControl(
   SUNAdaptController C, sunrealtype h, SUNDIALS_MAYBE_UNUSED int p,

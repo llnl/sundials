@@ -190,9 +190,9 @@ __global__ void LocalResidualKernel(const sunrealtype* uext,
     sunindextype locu  = i + j * mx;
     sunindextype locue = (i + 1) + (j + 1) * (mx + 2);
 
-    sunrealtype termx = coeffx * (uext[locue - 1] + uext[locue + 1]);
-    sunrealtype termy = coeffy *
-                        (uext[locue - (mx + 2)] + uext[locue + (mx + 2)]);
+    sunrealtype termx   = coeffx * (uext[locue - 1] + uext[locue + 1]);
+    sunrealtype termy   = coeffy *
+                          (uext[locue - (mx + 2)] + uext[locue + (mx + 2)]);
     sunrealtype termctr = coeffxy * uext[locue];
     resv[locu]          = upv[locu] - (termx + termy - termctr);
   }
@@ -1145,7 +1145,10 @@ static int SetInitialProfile(N_Vector uu, N_Vector up, N_Vector id,
       {
         iddata[loc] = ZERO;
       }
-      else { iddata[loc] = ONE; }
+      else
+      {
+        iddata[loc] = ONE;
+      }
     }
   }
 

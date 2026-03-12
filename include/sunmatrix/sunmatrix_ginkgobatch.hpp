@@ -80,9 +80,7 @@ void Copy(BatchMatrix<GkoBatchMatType>& A, BatchMatrix<GkoBatchMatType>& B);
 //
 template<class GkoBatchMatType>
 SUNMatrix_ID SUNMatGetID_GinkgoBatch(SUNMatrix A)
-{
-  return SUNMATRIX_GINKGOBATCH;
-}
+{ return SUNMATRIX_GINKGOBATCH; }
 
 template<class GkoBatchMatType>
 SUNMatrix SUNMatClone_GinkgoBatch(SUNMatrix A)
@@ -153,9 +151,7 @@ public:
 
   BatchMatrix(std::shared_ptr<GkoBatchMatType> gko_mat, SUNContext sunctx)
     : sundials::impl::BaseMatrix(sunctx), gkomtx_(gko_mat)
-  {
-    initSUNMatrix();
-  }
+  { initSUNMatrix(); }
 
   // Move constructor
   BatchMatrix(BatchMatrix&& that_matrix) noexcept
@@ -192,9 +188,7 @@ public:
   std::shared_ptr<GkoBatchMatType> GkoMtx() const { return gkomtx_; }
 
   std::shared_ptr<const gko::Executor> GkoExec() const
-  {
-    return GkoMtx()->get_executor();
-  }
+  { return GkoMtx()->get_executor(); }
 
   const gko::batch_dim<2>& GkoSize() const { return GkoMtx()->get_size(); }
 
@@ -243,9 +237,7 @@ inline BatchMatrix<GkoBatchDenseMat>::BatchMatrix(
     gkomtx_(
       GkoBatchDenseMat::create(gko_exec, gko::batch_dim<2>(num_batches,
                                                            gko::dim<2>(M, N))))
-{
-  initSUNMatrix();
-}
+{ initSUNMatrix(); }
 
 #ifdef SUNDIALS_INT32_T
 template<>
@@ -258,9 +250,7 @@ inline BatchMatrix<GkoBatchCsrMat>::BatchMatrix(
       GkoBatchCsrMat::create(gko_exec,
                              gko::batch_dim<2>(num_batches, gko::dim<2>(M, N)),
                              num_nonzeros))
-{
-  initSUNMatrix();
-}
+{ initSUNMatrix(); }
 
 template<>
 inline BatchMatrix<GkoBatchEllMat>::BatchMatrix(
@@ -272,9 +262,7 @@ inline BatchMatrix<GkoBatchEllMat>::BatchMatrix(
       GkoBatchEllMat::create(gko_exec,
                              gko::batch_dim<2>(num_batches, gko::dim<2>(M, N)),
                              num_nonzeros))
-{
-  initSUNMatrix();
-}
+{ initSUNMatrix(); }
 #endif
 
 // =============================================================================
@@ -318,9 +306,7 @@ inline std::unique_ptr<const GkoBatchVecType> WrapConstBatchVector(
 template<class GkoBatchMatType>
 void Matvec(BatchMatrix<GkoBatchMatType>& A, GkoBatchVecType* x,
             GkoBatchVecType* y)
-{
-  A.GkoMtx()->apply(x, y);
-}
+{ A.GkoMtx()->apply(x, y); }
 
 template<class GkoBatchMatType>
 void Matvec(BatchMatrix<GkoBatchMatType>& A, N_Vector x, N_Vector y)
@@ -386,15 +372,11 @@ void ScaleAddI(const sunrealtype c, BatchMatrix<GkoBatchMatType>& A)
 
 template<class GkoBatchMatType>
 void Copy(BatchMatrix<GkoBatchMatType>& A, BatchMatrix<GkoBatchMatType>& B)
-{
-  B.GkoMtx()->copy_from(A.GkoMtx().get());
-}
+{ B.GkoMtx()->copy_from(A.GkoMtx().get()); }
 
 template<class GkoBatchMatType>
 void Print(BatchMatrix<GkoBatchMatType>& A, std::ostream& ost = std::cout)
-{
-  gko::write(ost, A.GkoMtx().get());
-}
+{ gko::write(ost, A.GkoMtx().get()); }
 
 } // namespace impl
 

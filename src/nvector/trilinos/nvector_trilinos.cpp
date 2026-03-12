@@ -60,9 +60,7 @@ typedef TpetraVectorInterface::vector_type vector_type;
  * from abstract N_Vector interface.
  */
 N_Vector_ID N_VGetVectorID_Trilinos(SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
-  return SUNDIALS_NVEC_TRILINOS;
-}
+{ return SUNDIALS_NVEC_TRILINOS; }
 
 /* ----------------------------------------------------------------
  * Function to create a new Trilinos vector with empty data array
@@ -274,7 +272,10 @@ void N_VLinearSum_Trilinos(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
 
   if (x == z) { zv->update(b, *yv, a); }
   else if (y == z) { zv->update(a, *xv, b); }
-  else { zv->update(a, *xv, b, *yv, ZERO); }
+  else
+  {
+    zv->update(a, *xv, b, *yv, ZERO);
+  }
 }
 
 /*

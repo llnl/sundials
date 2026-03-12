@@ -170,17 +170,26 @@ int main(int argc, char* argv[])
   cout << "CVODE Resize History Test\n";
   cout << "Method: ";
   if (method == 1) { cout << "Adams\n"; }
-  else { cout << "BDF\n"; }
+  else
+  {
+    cout << "BDF\n";
+  }
   cout << "Algebraic solvers: ";
   if (nonlinear_solver == 0) { cout << "Fixed-point\n"; }
-  else { cout << "Newton + Band\n"; }
+  else
+  {
+    cout << "Newton + Band\n";
+  }
   cout << "Case: ";
   if (resize == 0) { cout << "No resize\n"; }
   else if (resize == 1)
   {
     cout << "Resize but do not change the problem size\n";
   }
-  else { cout << "Resize each step with the problem size increased by one\n"; }
+  else
+  {
+    cout << "Resize each step with the problem size increased by one\n";
+  }
 
   // -------------
   // Setup problem
@@ -253,7 +262,10 @@ int main(int argc, char* argv[])
 
   int hist_size = 0;
   if (method == CV_BDF) { hist_size = 5; }
-  else { hist_size = 12; }
+  else
+  {
+    hist_size = 12;
+  }
 
   sunrealtype* t_hist = new sunrealtype[hist_size];
   for (int i = 0; i < hist_size; i++) { t_hist[i] = zero; }

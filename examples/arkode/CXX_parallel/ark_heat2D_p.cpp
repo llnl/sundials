@@ -1615,7 +1615,10 @@ static int PrintUserData(UserData* udata)
   cout << "  linear         = " << udata->linear << endl;
   cout << " --------------------------------- " << endl;
   if (udata->pcg) { cout << "  linear solver  = PCG" << endl; }
-  else { cout << "  linear solver  = GMRES" << endl; }
+  else
+  {
+    cout << "  linear solver  = GMRES" << endl;
+  }
   cout << "  lin iters      = " << udata->liniters << endl;
   cout << "  eps lin        = " << udata->epslin << endl;
   cout << "  prec           = " << udata->prec << endl;
@@ -1734,7 +1737,10 @@ static int WriteOutput(sunrealtype t, N_Vector u, UserData* udata)
       {
         cout << setw(22) << t << setw(25) << urms << setw(25) << max << endl;
       }
-      else { cout << setw(22) << t << setw(25) << urms << endl; }
+      else
+      {
+        cout << setw(22) << t << setw(25) << urms << endl;
+      }
     }
 
     // Write solution and error to disk

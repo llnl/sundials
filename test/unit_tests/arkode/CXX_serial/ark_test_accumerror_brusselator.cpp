@@ -556,7 +556,7 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0, sunrealtype T
         const sunrealtype wdsm = abs(ydata[2] - yrefdata[2]) /
                                  (abstol + reltol * abs(yrefdata[2]));
         dsm[ipart] = reltol * SUNRsqrt((udsm * udsm + vdsm * vdsm + wdsm * wdsm) /
-                                   SUN_RCONST(3.0));
+                                       SUN_RCONST(3.0));
         cout << "  h " << hvals[ih] << "  rk_type " << rk_type << "  order "
              << order << "  acc " << accum_types[iaccum] << "  t " << t
              << "  dsm " << dsm[ipart] << "  dsm_est " << dsm_est[ipart]
@@ -639,7 +639,7 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0, sunrealtype T
       const sunrealtype wdsm = abs(ydata[2] - yrefdata[2]) /
                                (abstol + reltol * abs(yrefdata[2]));
       dsm[ipart] = reltol * SUNRsqrt((udsm * udsm + vdsm * vdsm + wdsm * wdsm) /
-                                 SUN_RCONST(3.0));
+                                     SUN_RCONST(3.0));
       cout << "  h " << hvals[ih] << "  rk_type " << rk_type << "  order "
            << order << "  acc " << 2 << "  t " << t << "  dsm " << dsm[ipart]
            << "  dsm_est " << dsm_est[ipart] << "  nsteps " << Nsteps[ipart]

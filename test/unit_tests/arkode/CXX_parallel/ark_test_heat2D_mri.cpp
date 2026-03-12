@@ -178,7 +178,10 @@ int main(int argc, char* argv[])
     cout << "   nxl (proc 0) = " << udata->nxl << "\n";
     cout << "   nyl (proc 0) = " << udata->nyl << "\n";
     if (linear) { cout << "   Linearly implicit solver\n\n"; }
-    else { cout << "   Nonlinear implicit solver\n\n"; }
+    else
+    {
+      cout << "   Nonlinear implicit solver\n\n";
+    }
   }
 
   // Initialize vector data structures
@@ -205,8 +208,9 @@ int main(int argc, char* argv[])
   {
     for (i = 0; i < udata->nxl; i++)
     {
-      data[IDX(i, j, udata->nxl)] = SUNRsin(PI * (udata->is + i) * udata->dx) *
-                                    SUNRsin(TWO * PI * (udata->js + j) * udata->dy);
+      data[IDX(i, j, udata->nxl)] =
+        SUNRsin(PI * (udata->is + i) * udata->dx) *
+        SUNRsin(TWO * PI * (udata->js + j) * udata->dy);
     }
   }
 
@@ -481,7 +485,10 @@ int main(int argc, char* argv[])
   if (outproc)
   {
     if (numfails) { cout << "Failed " << numfails << " tests\n"; }
-    else { cout << "All tests pass!\n"; }
+    else
+    {
+      cout << "All tests pass!\n";
+    }
   }
 
   // Clean up and return with successful completion

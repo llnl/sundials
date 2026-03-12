@@ -46,7 +46,7 @@ struct UserData
   N_Vector rhs_;
 
   UserData(sunrealtype t0, N_Vector y0, N_Vector rhs)
-    : t0_(t0), y0_(y0), rhs_(rhs){};
+    : t0_(t0), y0_(y0), rhs_(rhs) {};
 };
 
 // -----------------------------------------------------------------------------

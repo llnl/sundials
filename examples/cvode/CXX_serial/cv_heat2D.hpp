@@ -28,9 +28,9 @@
 #include <string>
 
 // SUNDIALS types
+#include <sundials/sundials_math.h> //for macros of SUNRcos and SUNRsin
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>
-#include <sundials/sundials_math.h> //for macros of SUNRcos and SUNRsin
 
 // Common utility functions
 #include <example_utilities.hpp>
@@ -231,7 +231,10 @@ static void PrintUserData(UserData& udata)
             << "  dy        = " << udata.dy << "\n"
             << " ----------------------------\n";
   if (udata.pcg) { std::cout << "  linear solver  = PCG\n"; }
-  else { std::cout << "  linear solver  = GMRES\n"; }
+  else
+  {
+    std::cout << "  linear solver  = GMRES\n";
+  }
   std::cout << "  rtol      = " << udata.rtol << "\n"
             << "  atol      = " << udata.atol << "\n"
             << " ----------------------------\n"
@@ -249,8 +252,7 @@ static void PrintUserData(UserData& udata)
 static int OpenOutput(UserData& udata)
 {
   // Header for status output
-  std::cout << std::scientific
-            << std::setprecision(SUN_DIGITS10)
+  std::cout << std::scientific << std::setprecision(SUN_DIGITS10)
             << "          t                     ||u||_rms      "
             << "          max error\n"
             << " ----------------------------------------------"
@@ -271,12 +273,10 @@ static int OpenOutput(UserData& udata)
 
     // Open output streams for solution and error
     udata.uout.open("heat2d_solution.txt");
-    udata.uout << std::scientific
-               << std::setprecision(SUN_DIGITS10);
+    udata.uout << std::scientific << std::setprecision(SUN_DIGITS10);
 
     udata.eout.open("heat2d_error.txt");
-    udata.eout << std::scientific
-               << std::setprecision(SUN_DIGITS10);
+    udata.eout << std::scientific << std::setprecision(SUN_DIGITS10);
   }
 
   return 0;

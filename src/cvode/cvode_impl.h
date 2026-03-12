@@ -721,7 +721,7 @@ int cvDiagSolve_updateM(const sunrealtype r, N_Vector M);
 #define MSGCV_LSOLVE_NULL "The linear solver's solve routine is NULL."
 #define MSGCV_YOUT_NULL   "yout = NULL illegal."
 #define MSGCV_TRET_NULL   "tret = NULL illegal."
-#define MSGCV_BAD_EWT     "Initial ewt has component(s) equal to zero (illegal)."
+#define MSGCV_BAD_EWT "Initial ewt has component(s) equal to zero (illegal)."
 #define MSGCV_EWT_NOW_BAD "At " MSG_TIME ", a component of ewt has become <= 0."
 #define MSGCV_BAD_ITASK   "Illegal value for itask."
 #define MSGCV_BAD_H0      "h0 and tout - t0 inconsistent."

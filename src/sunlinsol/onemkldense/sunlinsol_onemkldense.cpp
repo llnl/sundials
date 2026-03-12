@@ -590,9 +590,7 @@ int SUNLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 }
 
 sunindextype SUNLinSolLastFlag_OneMklDense(SUNLinearSolver S)
-{
-  return LS_LASTFLAG(S);
-}
+{ return LS_LASTFLAG(S); }
 
 SUNErrCode SUNLinSolSpace_OneMklDense(SUNLinearSolver S, long int* lenrwLS,
                                       long int* leniwLS)

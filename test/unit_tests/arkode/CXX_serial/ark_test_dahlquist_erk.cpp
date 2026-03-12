@@ -133,7 +133,10 @@ int main(int argc, char* argv[])
   {
     std::cout << "  interp type  = Lagrange\n";
   }
-  else { std::cout << "  interp type  = None\n"; }
+  else
+  {
+    std::cout << "  interp type  = None\n";
+  }
 
   // Create SUNDIALS context
   sundials::Context sunctx;
@@ -143,8 +146,8 @@ int main(int argc, char* argv[])
 
   ARKodeButcherTable Be = nullptr;
 
-  int stages, order=1;
-  bool explicit_first_stage=true, stiffly_accurate=true, fsal=true;
+  int stages, order = 1;
+  bool explicit_first_stage = true, stiffly_accurate = true, fsal = true;
 
   // --------
   // Explicit
@@ -178,7 +181,10 @@ int main(int argc, char* argv[])
   }
 
   if (numfails) { std::cout << "\n\nFailed " << numfails << " tests!\n"; }
-  else { std::cout << "\n\nAll tests passed!\n"; }
+  else
+  {
+    std::cout << "\n\nAll tests passed!\n";
+  }
 
   // Return test status
   return numfails;
@@ -198,8 +204,8 @@ int run_tests(ARKodeButcherTable Be, ProblemData& prob_data,
   int numfails = 0;
 
   // Get method properties
-  int stages, order=1;
-  bool explicit_first_stage=true, stiffly_accurate=true, fsal=true;
+  int stages, order = 1;
+  bool explicit_first_stage = true, stiffly_accurate = true, fsal = true;
   flag = get_method_properties(Be, stages, order, explicit_first_stage,
                                stiffly_accurate, fsal);
   if (check_flag(&flag, "get_method_properties", 1)) { return 1; }
@@ -414,7 +420,10 @@ int expected_rhs_evals(interp_type i_type, int stages,
     // Save one function evaluation after first step
     nfe_expected = stages + (stages - 1) * (nst - 1);
   }
-  else { nfe_expected = stages * nst; }
+  else
+  {
+    nfe_expected = stages * nst;
+  }
 
   if (i_type == interp_type::hermite && !explicit_first_stage)
   {

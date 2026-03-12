@@ -136,9 +136,7 @@ SUNNonlinearSolver SUNNonlinSol_PetscSNES(N_Vector y, SNES snes, SUNContext sunc
 /* get the type of SUNNonlinearSolver */
 SUNNonlinearSolver_Type SUNNonlinSolGetType_PetscSNES(
   SUNDIALS_MAYBE_UNUSED SUNNonlinearSolver NLS)
-{
-  return (SUNNONLINEARSOLVER_ROOTFIND);
-}
+{ return (SUNNONLINEARSOLVER_ROOTFIND); }
 
 /* performs any initialization needed */
 SUNErrCode SUNNonlinSolInitialize_PetscSNES(SUNNonlinearSolver NLS)

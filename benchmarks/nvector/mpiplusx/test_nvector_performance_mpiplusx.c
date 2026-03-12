@@ -245,7 +245,10 @@ void collect_times(N_Vector X, double* times, int ntimes)
   {
     MPI_Reduce(MPI_IN_PLACE, times, ntimes, MPI_DOUBLE, MPI_MAX, 0, comm);
   }
-  else { MPI_Reduce(times, times, ntimes, MPI_DOUBLE, MPI_MAX, 0, comm); }
+  else
+  {
+    MPI_Reduce(times, times, ntimes, MPI_DOUBLE, MPI_MAX, 0, comm);
+  }
 
   return;
 }

@@ -202,7 +202,8 @@ int main(void)
          "||u||_rms       N   NNI  NLI\n");
   printf(" --------------------------------------------------------------------"
          "--------------------\n");
-  printf(" %4i  %19.15" ESYM "  %19.15" ESYM "  %19.15" ESYM "  %li   %2i  %3i\n",
+  printf(" %4i  %19.15" ESYM "  %19.15" ESYM "  %19.15" ESYM
+         "  %li   %2i  %3i\n",
          iout, olddt, newdt, SUNRsqrt(N_VDotProd(y, y) / udata->N),
          (long int)udata->N, 0, 0);
   while (t < Tf)
@@ -227,7 +228,8 @@ int main(void)
 
     /* print current solution stats */
     iout++;
-    printf(" %4i  %19.15" ESYM "  %19.15" ESYM "  %19.15" ESYM "  %li   %2li  %3li\n",
+    printf(" %4i  %19.15" ESYM "  %19.15" ESYM "  %19.15" ESYM
+           "  %li   %2li  %3li\n",
            iout, olddt, newdt, SUNRsqrt(N_VDotProd(y, y) / udata->N),
            (long int)udata->N, nni, nli);
     nni_tot += nni;

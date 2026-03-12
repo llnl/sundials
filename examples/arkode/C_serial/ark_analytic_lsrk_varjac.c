@@ -250,11 +250,11 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   /* fill in the RHS function: "N_VGetArrayPointer" accesses the 0th entry of ydot */
   N_VGetArrayPointer(ydot)[0] =
     (lambda - alpha * SUNRcos((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
-                          SUNRacos(SUN_RCONST(-1.0)))) *
+                              SUNRacos(SUN_RCONST(-1.0)))) *
       u +
     SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
     (lambda - alpha * SUNRcos((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
-                          SUNRacos(SUN_RCONST(-1.0)))) *
+                              SUNRacos(SUN_RCONST(-1.0)))) *
       SUNRatan(t);
 
   return 0; /* return with success */
@@ -271,7 +271,7 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
   *lambdaR =
     (lambda -
      alpha * SUNRcos((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
-                 SUNRacos(SUN_RCONST(-1.0)))); /* access current solution value */
+                     SUNRacos(SUN_RCONST(-1.0)))); /* access current solution value */
   *lambdaI = SUN_RCONST(0.0);
 
   return 0; /* return with success */

@@ -568,7 +568,10 @@ int ForcingStepGetNumEvolves(void* arkode_mem, int partition, long int* evolves)
   {
     *evolves = step_mem->n_stepper_evolves[0] + step_mem->n_stepper_evolves[1];
   }
-  else { *evolves = step_mem->n_stepper_evolves[partition]; }
+  else
+  {
+    *evolves = step_mem->n_stepper_evolves[partition];
+  }
 
   return ARK_SUCCESS;
 }

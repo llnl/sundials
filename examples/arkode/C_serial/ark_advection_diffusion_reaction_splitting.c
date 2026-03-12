@@ -183,12 +183,14 @@ int main(void)
   sunrealtype tret = T0;
   printf("        t      ||u||_rms\n");
   printf("   ----------------------\n");
-  printf("  %10.6" FSYM "  %10.6" FSYM "\n", tret, SUNRsqrt(N_VDotProd(y, y) / udata.N));
+  printf("  %10.6" FSYM "  %10.6" FSYM "\n", tret,
+         SUNRsqrt(N_VDotProd(y, y) / udata.N));
   while (tret < Tf)
   {
     flag = ARKodeEvolve(arkode_mem, Tf, y, &tret, ARK_ONE_STEP);
     if (check_flag(&flag, "ARKodeEvolve", 1)) { return 1; }
-    printf("  %10.6" FSYM "  %10.6" FSYM "\n", tret, SUNRsqrt(N_VDotProd(y, y) / udata.N));
+    printf("  %10.6" FSYM "  %10.6" FSYM "\n", tret,
+           SUNRsqrt(N_VDotProd(y, y) / udata.N));
   }
   printf("   ----------------------\n");
 

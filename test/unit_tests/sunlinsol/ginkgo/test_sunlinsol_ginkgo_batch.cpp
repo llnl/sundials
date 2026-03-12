@@ -382,7 +382,10 @@ int main(int argc, char* argv[])
   {
     std::cerr << "FAIL: SUNLinSol module failed " << fails << " tests\n\n";
   }
-  else { std::cout << "\nSUCCESS: SUNLinSol module passed all tests\n\n"; }
+  else
+  {
+    std::cout << "\nSUCCESS: SUNLinSol module passed all tests\n\n";
+  }
 
   // clear global_exec
   global_exec = nullptr;

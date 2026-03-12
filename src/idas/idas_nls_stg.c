@@ -198,7 +198,10 @@ int idaNlsInitSensStg(IDAMem IDA_mem)
   {
     retval = SUNNonlinSolSetLSetupFn(IDA_mem->NLSstg, idaNlsLSetupSensStg);
   }
-  else { retval = SUNNonlinSolSetLSetupFn(IDA_mem->NLSstg, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSetupFn(IDA_mem->NLSstg, NULL);
+  }
 
   if (retval != IDA_SUCCESS)
   {
@@ -212,7 +215,10 @@ int idaNlsInitSensStg(IDAMem IDA_mem)
   {
     retval = SUNNonlinSolSetLSolveFn(IDA_mem->NLSstg, idaNlsLSolveSensStg);
   }
-  else { retval = SUNNonlinSolSetLSolveFn(IDA_mem->NLSstg, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSolveFn(IDA_mem->NLSstg, NULL);
+  }
 
   if (retval != IDA_SUCCESS)
   {

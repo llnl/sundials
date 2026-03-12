@@ -89,14 +89,14 @@ static int check_flag(void* flagvalue, const char* funcname, int opt);
 int main(int argc, char* argv[])
 {
   /* general problem parameters */
-  sunrealtype T0   = SUN_RCONST(0.0); /* initial time */
-  sunrealtype Tf   = SUN_RCONST(1.0); /* final time */
-  int Nt           = 10;              /* total number of output times */
-  sunrealtype rtol = SUN_RCONST(1.e-4);           /* relative tolerance */
-  sunrealtype atol = SUN_RCONST(1.e-6);           /* absolute tolerance */
+  sunrealtype T0   = SUN_RCONST(0.0);   /* initial time */
+  sunrealtype Tf   = SUN_RCONST(1.0);   /* final time */
+  int Nt           = 10;                /* total number of output times */
+  sunrealtype rtol = SUN_RCONST(1.e-4); /* relative tolerance */
+  sunrealtype atol = SUN_RCONST(1.e-6); /* absolute tolerance */
   UserData udata   = NULL;
   sunrealtype* data;
-  sunindextype N = 201; /* spatial mesh size */
+  sunindextype N = 201;             /* spatial mesh size */
   sunrealtype k  = SUN_RCONST(0.5); /* heat conductivity */
   sunindextype i;
 
@@ -121,10 +121,8 @@ int main(int argc, char* argv[])
   num_threads =
     omp_get_max_threads(); /* overwrite with OMP_NUM_THREADS environment variable */
 #endif
-  if (argc > 1)
-  { /* overwrite with command line value, if supplied */
-    num_threads = (int)strtol(argv[1], NULL, 0);
-  }
+  if (argc > 1) { /* overwrite with command line value, if supplied */
+                  num_threads = (int)strtol(argv[1], NULL, 0); }
 
   /* allocate and fill udata structure */
   udata           = (UserData)malloc(sizeof(*udata));
@@ -197,7 +195,7 @@ int main(int argc, char* argv[])
   {
     flag = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL); /* call integrator */
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
-    printf("  %10.6" FSYM "  %10.6" FSYM  "\n", t,
+    printf("  %10.6" FSYM "  %10.6" FSYM "\n", t,
            SUNRsqrt(N_VDotProd(y, y) / N)); /* print solution stats */
     if (flag >= 0)
     { /* successful solve: update output time */

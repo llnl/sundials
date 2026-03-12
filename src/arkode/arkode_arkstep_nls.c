@@ -120,7 +120,10 @@ int arkStep_SetNlsRhsFn(ARKodeMem ark_mem, ARKRhsFn nls_fi)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   if (nls_fi) { step_mem->nls_fi = nls_fi; }
-  else { step_mem->nls_fi = step_mem->fi; }
+  else
+  {
+    step_mem->nls_fi = step_mem->fi;
+  }
 
   return (ARK_SUCCESS);
 }
@@ -306,7 +309,10 @@ int arkStep_NlsInit(ARKodeMem ark_mem)
   {
     retval = SUNNonlinSolSetLSetupFn(step_mem->NLS, arkStep_NlsLSetup);
   }
-  else { retval = SUNNonlinSolSetLSetupFn(step_mem->NLS, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSetupFn(step_mem->NLS, NULL);
+  }
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -319,7 +325,10 @@ int arkStep_NlsInit(ARKodeMem ark_mem)
   {
     retval = SUNNonlinSolSetLSolveFn(step_mem->NLS, arkStep_NlsLSolve);
   }
-  else { retval = SUNNonlinSolSetLSolveFn(step_mem->NLS, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSolveFn(step_mem->NLS, NULL);
+  }
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,

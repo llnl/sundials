@@ -38,9 +38,7 @@ class DenseMatrix;
 // Get the Kokkos dense matrix wrapped by a SUNMatrix
 template<class MatrixType>
 inline MatrixType* GetDenseMat(SUNMatrix A)
-{
-  return static_cast<MatrixType*>(A->content);
-}
+{ return static_cast<MatrixType*>(A->content); }
 
 // =============================================================================
 // Everything in the implementation (impl) namespace is private and should not
@@ -50,9 +48,7 @@ inline MatrixType* GetDenseMat(SUNMatrix A)
 namespace impl {
 
 static SUNMatrix_ID SUNMatGetID_KokkosDense(SUNMatrix A)
-{
-  return SUNMATRIX_KOKKOSDENSE;
-}
+{ return SUNMATRIX_KOKKOSDENSE; }
 
 template<class MatrixType>
 SUNMatrix SUNMatClone_KokkosDense(SUNMatrix A)
@@ -283,18 +279,14 @@ public:
     : sundials::impl::BaseMatrix(sunctx),
       exec_space_(ex),
       view_("sunmat_view", blocks, block_rows, block_cols)
-  {
-    initSUNMatrix();
-  }
+  { initSUNMatrix(); }
 
   // Move constructor
   DenseMatrix(DenseMatrix&& that_matrix) noexcept
     : sundials::impl::BaseMatrix(std::forward<DenseMatrix>(that_matrix)),
       exec_space_(std::move(that_matrix.exec_space_)),
       view_(std::move(that_matrix.exec_space_))
-  {
-    initSUNMatrix();
-  }
+  { initSUNMatrix(); }
 
   // Copy constructor
   DenseMatrix(const DenseMatrix& that_matrix)
@@ -302,9 +294,7 @@ public:
       exec_space_(that_matrix.exec_space_),
       view_("sunmat_view", that_matrix.Blocks(), that_matrix.BlockRows(),
             that_matrix.BlockCols())
-  {
-    initSUNMatrix();
-  }
+  { initSUNMatrix(); }
 
   // Move assignment
   DenseMatrix& operator=(DenseMatrix&& rhs) noexcept
@@ -343,27 +333,19 @@ public:
 
   // Get the number of rows in a block
   size_type BlockRows() const
-  {
-    return static_cast<size_type>(view_.extent(1));
-  }
+  { return static_cast<size_type>(view_.extent(1)); }
 
   // Get the number of columns in a block
   size_type BlockCols() const
-  {
-    return static_cast<size_type>(view_.extent(2));
-  }
+  { return static_cast<size_type>(view_.extent(2)); }
 
   // Get the number of rows
   size_type Rows() const
-  {
-    return static_cast<size_type>(view_.extent(0) * view_.extent(1));
-  }
+  { return static_cast<size_type>(view_.extent(0) * view_.extent(1)); }
 
   // Get the number of columns
   size_type Cols() const
-  {
-    return static_cast<size_type>(view_.extent(0) * view_.extent(2));
-  }
+  { return static_cast<size_type>(view_.extent(0) * view_.extent(2)); }
 
   using sundials::impl::BaseMatrix::sunctx;
 

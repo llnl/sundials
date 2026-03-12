@@ -240,7 +240,10 @@ __global__ void invTestKernel(const T* x, T* z, T* out, I n,
   GRID_STRIDE_XLOOP(I, i, n)
   {
     if (x[i] == static_cast<T>(0.0)) { flag += 1.0; }
-    else { z[i] = 1.0 / x[i]; }
+    else
+    {
+      z[i] = 1.0 / x[i];
+    }
   }
   GridReducer<T, op>{}(flag, Id, out, device_count);
 }
@@ -265,8 +268,8 @@ __global__ void constrMaskKernel(const T* c, const T* x, T* m, T* out, I n,
     // test = true if constraints violated
     bool test = (std::abs(c[i]) > 1.5 && c[i] * x[i] <= 0.0) ||
                 (std::abs(c[i]) > 0.5 && c[i] * x[i] < 0.0);
-    m[i] = test ? 1.0 : 0.0;
-    sum  = m[i];
+    m[i]      = test ? 1.0 : 0.0;
+    sum       = m[i];
   }
   GridReducer<T, op>{}(sum, Id, out, device_count);
 }

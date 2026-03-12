@@ -85,7 +85,10 @@ static FILE* sunOpenLogFile(const char* fname, const char* mode)
   {
     if (!strcmp(fname, "stdout")) { fp = stdout; }
     else if (!strcmp(fname, "stderr")) { fp = stderr; }
-    else { fp = fopen(fname, mode); }
+    else
+    {
+      fp = fopen(fname, mode);
+    }
   }
 
   return fp;
@@ -120,7 +123,10 @@ static sunbooleantype sunLoggerIsOutputRank(SUNDIALS_MAYBE_UNUSED SUNLogger logg
       retval = logger->output_rank == rank;
     }
   }
-  else { retval = SUNTRUE; /* output all ranks */ }
+  else
+  {
+    retval = SUNTRUE; /* output all ranks */
+  }
 #else
   if (rank_ref) { *rank_ref = 0; }
   retval = SUNTRUE;
@@ -201,7 +207,8 @@ SUNErrCode SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger_out)
     return err;
   }
 
-  do {
+  do
+  {
     err = SUNLogger_SetErrorFilename(logger, error_fname_env);
     if (err) { break; }
     err = SUNLogger_SetWarningFilename(logger, warning_fname_env);
@@ -213,7 +220,10 @@ SUNErrCode SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger_out)
   while (0);
 
   if (err) { SUNLogger_Destroy(&logger); }
-  else { *logger_out = logger; }
+  else
+  {
+    *logger_out = logger;
+  }
 
   return err;
 }
@@ -240,7 +250,10 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filena
         SUNHashMap_Insert(logger->filenames, error_filename,
                           (void*)logger->error_fp);
       }
-      else { return SUN_ERR_FILE_OPEN; }
+      else
+      {
+        return SUN_ERR_FILE_OPEN;
+      }
     }
 #endif
   }
@@ -271,7 +284,10 @@ SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
         SUNHashMap_Insert(logger->filenames, warning_filename,
                           (void*)logger->warning_fp);
       }
-      else { return SUN_ERR_FILE_OPEN; }
+      else
+      {
+        return SUN_ERR_FILE_OPEN;
+      }
     }
 #endif
   }
@@ -301,7 +317,10 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
         SUNHashMap_Insert(logger->filenames, info_filename,
                           (void*)logger->info_fp);
       }
-      else { return SUN_ERR_FILE_OPEN; }
+      else
+      {
+        return SUN_ERR_FILE_OPEN;
+      }
     }
 #endif
   }
@@ -331,7 +350,10 @@ SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filena
         SUNHashMap_Insert(logger->filenames, debug_filename,
                           (void*)logger->debug_fp);
       }
-      else { return SUN_ERR_FILE_OPEN; }
+      else
+      {
+        return SUN_ERR_FILE_OPEN;
+      }
     }
 #endif
   }

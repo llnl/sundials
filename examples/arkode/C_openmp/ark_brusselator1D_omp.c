@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
   int Nvar       = 3;                /* number of solution fields */
   UserData udata = NULL;
   sunrealtype* data;
-  sunindextype N     = 201; /* spatial mesh size */
+  sunindextype N     = 201;             /* spatial mesh size */
   sunrealtype a      = SUN_RCONST(0.6); /* problem parameters */
   sunrealtype b      = SUN_RCONST(2.0);
   sunrealtype du     = SUN_RCONST(0.025);
@@ -153,10 +153,8 @@ int main(int argc, char* argv[])
   num_threads =
     omp_get_max_threads(); /* overwrite with OMP_NUM_THREADS environment variable */
 #endif
-  if (argc > 1)
-  { /* overwrite with command line value, if supplied */
-    num_threads = (int)strtol(argv[1], NULL, 0);
-  }
+  if (argc > 1) { /* overwrite with command line value, if supplied */
+                  num_threads = (int)strtol(argv[1], NULL, 0); }
 
   /* store the inputs in the UserData structure */
   udata->N        = N;
@@ -207,9 +205,9 @@ int main(int argc, char* argv[])
   pi = SUN_RCONST(4.0) * atan(SUN_RCONST(1.0));
   for (i = 0; i < N; i++)
   {
-    data[IDX(i, 0)] = a + SUN_RCONST(0.1) * SUNRsin(pi * i * udata->dx);     /* u */
+    data[IDX(i, 0)] = a + SUN_RCONST(0.1) * SUNRsin(pi * i * udata->dx); /* u */
     data[IDX(i, 1)] = b / a + SUN_RCONST(0.1) * SUNRsin(pi * i * udata->dx); /* v */
-    data[IDX(i, 2)] = b + SUN_RCONST(0.1) * SUNRsin(pi * i * udata->dx);     /* w */
+    data[IDX(i, 2)] = b + SUN_RCONST(0.1) * SUNRsin(pi * i * udata->dx); /* w */
   }
 
   /* Set mask array values for each solution component */
@@ -435,7 +433,8 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
   /* enforce stationary boundaries */
   dYdata[IDX(0, 0)] = dYdata[IDX(0, 1)] = dYdata[IDX(0, 2)] = SUN_RCONST(0.0);
-  dYdata[IDX(N - 1, 0)] = dYdata[IDX(N - 1, 1)] = dYdata[IDX(N - 1, 2)] = SUN_RCONST(0.0);
+  dYdata[IDX(N - 1, 0)] = dYdata[IDX(N - 1, 1)] = dYdata[IDX(N - 1, 2)] =
+    SUN_RCONST(0.0);
 
   return 0;
 }

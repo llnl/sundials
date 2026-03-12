@@ -215,7 +215,10 @@ extern "C" int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
     failure);
 
   if (failure > ZERO) { return 1; }
-  else { return 0; }
+  else
+  {
+    return 0;
+  }
 }
 
 extern "C" int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
@@ -242,7 +245,10 @@ extern "C" int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
     failure);
 
   if (failure > ZERO) { return 1; }
-  else { return 0; }
+  else
+  {
+    return 0;
+  }
 }
 
 extern "C" int check_vector(N_Vector actual, N_Vector expected, sunrealtype tol)
@@ -265,7 +271,10 @@ extern "C" int check_vector(N_Vector actual, N_Vector expected, sunrealtype tol)
     failure);
 
   if (failure > ZERO) { return 1; }
-  else { return 0; }
+  else
+  {
+    return 0;
+  }
 }
 
 extern "C" sunbooleantype has_data(SUNMatrix A) { return SUNTRUE; }
@@ -278,7 +287,10 @@ extern "C" sunbooleantype is_square(SUNMatrix A)
   const auto matcols = A_mat->Cols();
 
   if (matrows == matcols) { return SUNTRUE; }
-  else { return SUNFALSE; }
+  else
+  {
+    return SUNFALSE;
+  }
 }
 
 extern "C" void sync_device(SUNMatrix A) { Kokkos::fence(); }

@@ -338,7 +338,10 @@ int main(int argc, char* argv[])
   {
     std::cerr << " FAIL: SUNMatrix module failed " << fails << " tests \n\n";
   }
-  else { std::cout << " SUCCESS: SUNMatrix module passed all tests \n\n"; }
+  else
+  {
+    std::cout << " SUCCESS: SUNMatrix module passed all tests \n\n";
+  }
 
   /* Free vectors */
   N_VDestroy(x);
@@ -421,7 +424,10 @@ extern "C" int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
 {
   if (using_csr_matrix_type) { return check_matrix_csr(A, B, tol); }
   else if (using_dense_matrix_type) { return check_matrix_dense(A, B, tol); }
-  else { return 1; }
+  else
+  {
+    return 1;
+  }
 }
 
 static int check_matrix_entry_csr(SUNMatrix A, sunrealtype val, sunrealtype tol)
@@ -478,7 +484,10 @@ extern "C" int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
   {
     return check_matrix_entry_dense(A, val, tol);
   }
-  else { return 1; }
+  else
+  {
+    return 1;
+  }
 }
 
 extern "C" int check_vector(N_Vector expected, N_Vector computed, sunrealtype tol)
@@ -538,7 +547,10 @@ extern "C" sunbooleantype has_data(SUNMatrix A)
     auto Amat{static_cast<BatchMatrix<GkoBatchDenseMat>*>(A->content)->GkoMtx()};
     return !(Amat->get_values() == NULL || Amat->get_num_batch_items() == 0);
   }
-  else { return SUNFALSE; }
+  else
+  {
+    return SUNFALSE;
+  }
 }
 
 extern "C" sunbooleantype is_square(SUNMatrix A)

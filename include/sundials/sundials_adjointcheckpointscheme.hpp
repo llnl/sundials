@@ -28,9 +28,7 @@ namespace experimental {
 struct SUNAdjointCheckpointSchemeDeleter
 {
   void operator()(SUNAdjointCheckpointScheme self)
-  {
-    SUNAdjointCheckpointScheme_Destroy(&self);
-  }
+  { SUNAdjointCheckpointScheme_Destroy(&self); }
 };
 
 } // namespace experimental

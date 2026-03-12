@@ -28,9 +28,7 @@
 
 #if defined(SUNDIALS_BUILD_WITH_PROFILING)
 static SUNProfiler getSUNProfiler(SUNDomEigEstimator DEE)
-{
-  return (DEE->sunctx->profiler);
-}
+{ return (DEE->sunctx->profiler); }
 #endif
 
 /* Forward declaration of function used to destroy any data allocated for Python */
@@ -122,7 +120,10 @@ SUNErrCode sunDEESetFromCommandLine(SUNDomEigEstimator DEE, const char* Did,
   if (Did != NULL && strlen(Did) > 0) { offset = strlen(Did) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (Did != NULL && strlen(Did) > 0) { strcpy(prefix, Did); }
-  else { strcpy(prefix, default_id); }
+  else
+  {
+    strcpy(prefix, default_id);
+  }
   strcat(prefix, ".");
 
   SUNErrCode retval;
@@ -188,7 +189,10 @@ SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data,
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->setatimes) { ier = DEE->ops->setatimes(DEE, A_data, ATimes); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
@@ -215,7 +219,10 @@ SUNErrCode SUNDomEigEstimator_SetOptions(SUNDomEigEstimator DEE,
   {
     return (DEE->ops->setoptions(DEE, Did, file_name, argc, argv));
   }
-  else { return (SUN_SUCCESS); }
+  else
+  {
+    return (SUN_SUCCESS);
+  }
 }
 
 SUNErrCode SUNDomEigEstimator_SetMaxIters(SUNDomEigEstimator DEE,
@@ -224,7 +231,10 @@ SUNErrCode SUNDomEigEstimator_SetMaxIters(SUNDomEigEstimator DEE,
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->setmaxiters) { ier = DEE->ops->setmaxiters(DEE, max_iters); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
@@ -238,7 +248,10 @@ SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE,
   {
     ier = DEE->ops->setnumpreprocessiters(DEE, num_iters);
   }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
@@ -249,7 +262,10 @@ SUNErrCode SUNDomEigEstimator_SetRelTol(SUNDomEigEstimator DEE,
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->setreltol) { ier = DEE->ops->setreltol(DEE, rel_tol); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
@@ -259,7 +275,10 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator DEE, N_Vector q
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->setinitialguess) { ier = DEE->ops->setinitialguess(DEE, q); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
@@ -269,7 +288,10 @@ SUNErrCode SUNDomEigEstimator_Initialize(SUNDomEigEstimator DEE)
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->initialize) { ier = DEE->ops->initialize(DEE); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
@@ -280,7 +302,10 @@ SUNErrCode SUNDomEigEstimator_Estimate(SUNDomEigEstimator DEE,
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->estimate) { ier = DEE->ops->estimate(DEE, lambdaR, lambdaI); }
-  else { ier = SUN_ERR_NOT_IMPLEMENTED; }
+  else
+  {
+    ier = SUN_ERR_NOT_IMPLEMENTED;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
@@ -337,7 +362,10 @@ SUNErrCode SUNDomEigEstimator_Write(SUNDomEigEstimator DEE, FILE* outfile)
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->write) { ier = DEE->ops->write(DEE, outfile); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }

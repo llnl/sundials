@@ -264,11 +264,20 @@ int main(int argc, char* argv[])
     printf("Sensitivity: YES ");
     if (sensi_meth == CV_SIMULTANEOUS) { printf("( SIMULTANEOUS +"); }
     else if (sensi_meth == CV_STAGGERED) { printf("( STAGGERED +"); }
-    else { printf("( STAGGERED1 +"); }
+    else
+    {
+      printf("( STAGGERED1 +");
+    }
     if (err_con) { printf(" FULL ERROR CONTROL )"); }
-    else { printf(" PARTIAL ERROR CONTROL )"); }
+    else
+    {
+      printf(" PARTIAL ERROR CONTROL )");
+    }
   }
-  else { printf("Sensitivity: NO "); }
+  else
+  {
+    printf("Sensitivity: NO ");
+  }
 
   /* In loop, call CVode, print results, and test for error.
      Break out of loop when NOUT preset output times have been reached.  */
@@ -504,7 +513,10 @@ static void ProcessArgs(int argc, char* argv[], sunbooleantype* sensi,
 
   if (strcmp(argv[1], "-nosensi") == 0) { *sensi = SUNFALSE; }
   else if (strcmp(argv[1], "-sensi") == 0) { *sensi = SUNTRUE; }
-  else { WrongArgs(argv[0]); }
+  else
+  {
+    WrongArgs(argv[0]);
+  }
 
   if (*sensi)
   {
@@ -513,11 +525,17 @@ static void ProcessArgs(int argc, char* argv[], sunbooleantype* sensi,
     if (strcmp(argv[2], "sim") == 0) { *sensi_meth = CV_SIMULTANEOUS; }
     else if (strcmp(argv[2], "stg") == 0) { *sensi_meth = CV_STAGGERED; }
     else if (strcmp(argv[2], "stg1") == 0) { *sensi_meth = CV_STAGGERED1; }
-    else { WrongArgs(argv[0]); }
+    else
+    {
+      WrongArgs(argv[0]);
+    }
 
     if (strcmp(argv[3], "t") == 0) { *err_con = SUNTRUE; }
     else if (strcmp(argv[3], "f") == 0) { *err_con = SUNFALSE; }
-    else { WrongArgs(argv[0]); }
+    else
+    {
+      WrongArgs(argv[0]);
+    }
   }
 }
 

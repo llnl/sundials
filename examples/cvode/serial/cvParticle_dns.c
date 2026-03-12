@@ -254,7 +254,10 @@ int main(int argc, char* argv[])
 
     /* Update output time */
     if (out < totalout - 1) { tout += dtout; }
-    else { tout = udata->torbit * udata->orbits; }
+    else
+    {
+      tout = udata->torbit * udata->orbits;
+    }
   }
 
   /* Close output files */
@@ -400,7 +403,7 @@ static int InitUserData(int* argc, char*** argv, UserData udata)
     else if (strcmp((*argv)[arg_idx], "--atol") == 0)
     {
       arg_idx++;
-      udata->atol =  (sunrealtype)(atof((*argv)[arg_idx++]));
+      udata->atol = (sunrealtype)(atof((*argv)[arg_idx++]));
     }
     else if (strcmp((*argv)[arg_idx], "--proj") == 0)
     {

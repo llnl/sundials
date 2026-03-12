@@ -58,7 +58,10 @@ int CVodeSetDeltaGammaMaxLSetup(void* cvode_mem, sunrealtype dgmax_lsetup)
 
   /* Set value or use default */
   if (dgmax_lsetup < ZERO) { cv_mem->cv_dgmax_lsetup = DGMAX_LSETUP_DEFAULT; }
-  else { cv_mem->cv_dgmax_lsetup = dgmax_lsetup; }
+  else
+  {
+    cv_mem->cv_dgmax_lsetup = dgmax_lsetup;
+  }
 
   return (CV_SUCCESS);
 }
@@ -214,7 +217,10 @@ int CVodeSetMaxNumSteps(void* cvode_mem, long int mxsteps)
 
   /* Passing mxsteps=0 sets the default. Passing mxsteps<0 disables the test. */
   if (mxsteps == 0) { cv_mem->cv_mxstep = MXSTEP_DEFAULT; }
-  else { cv_mem->cv_mxstep = mxsteps; }
+  else
+  {
+    cv_mem->cv_mxstep = mxsteps;
+  }
 
   return (CV_SUCCESS);
 }
@@ -409,10 +415,16 @@ int CVodeSetEtaFixedStepBounds(void* cvode_mem, sunrealtype eta_min_fx,
   {
     cv_mem->cv_eta_min_fx = eta_min_fx;
   }
-  else { cv_mem->cv_eta_min_fx = ETA_MIN_FX_DEFAULT; }
+  else
+  {
+    cv_mem->cv_eta_min_fx = ETA_MIN_FX_DEFAULT;
+  }
 
   if (eta_max_fx >= ONE) { cv_mem->cv_eta_max_fx = eta_max_fx; }
-  else { cv_mem->cv_eta_max_fx = ETA_MAX_FX_DEFAULT; }
+  else
+  {
+    cv_mem->cv_eta_max_fx = ETA_MAX_FX_DEFAULT;
+  }
 
   return (CV_SUCCESS);
 }
@@ -437,7 +449,10 @@ int CVodeSetEtaMaxFirstStep(void* cvode_mem, sunrealtype eta_max_fs)
 
   /* set allowed value or use default */
   if (eta_max_fs <= ONE) { cv_mem->cv_eta_max_fs = ETA_MAX_FS_DEFAULT; }
-  else { cv_mem->cv_eta_max_fs = eta_max_fs; }
+  else
+  {
+    cv_mem->cv_eta_max_fs = eta_max_fs;
+  }
 
   return (CV_SUCCESS);
 }
@@ -463,7 +478,10 @@ int CVodeSetEtaMaxEarlyStep(void* cvode_mem, sunrealtype eta_max_es)
 
   /* set allowed value or use default */
   if (eta_max_es <= ONE) { cv_mem->cv_eta_max_es = ETA_MAX_ES_DEFAULT; }
-  else { cv_mem->cv_eta_max_es = eta_max_es; }
+  else
+  {
+    cv_mem->cv_eta_max_es = eta_max_es;
+  }
 
   return (CV_SUCCESS);
 }
@@ -489,7 +507,10 @@ int CVodeSetNumStepsEtaMaxEarlyStep(void* cvode_mem, long int small_nst)
 
   /* set allowed value or use default */
   if (small_nst < 0) { cv_mem->cv_small_nst = SMALL_NST_DEFAULT; }
-  else { cv_mem->cv_small_nst = small_nst; }
+  else
+  {
+    cv_mem->cv_small_nst = small_nst;
+  }
 
   return (CV_SUCCESS);
 }
@@ -514,7 +535,10 @@ int CVodeSetEtaMax(void* cvode_mem, sunrealtype eta_max_gs)
 
   /* set allowed value or use default */
   if (eta_max_gs <= ONE) { cv_mem->cv_eta_max_gs = ETA_MAX_GS_DEFAULT; }
-  else { cv_mem->cv_eta_max_gs = eta_max_gs; }
+  else
+  {
+    cv_mem->cv_eta_max_gs = eta_max_gs;
+  }
 
   return (CV_SUCCESS);
 }
@@ -542,7 +566,10 @@ int CVodeSetEtaMin(void* cvode_mem, sunrealtype eta_min)
   {
     cv_mem->cv_eta_min = ETA_MIN_DEFAULT;
   }
-  else { cv_mem->cv_eta_min = eta_min; }
+  else
+  {
+    cv_mem->cv_eta_min = eta_min;
+  }
 
   return (CV_SUCCESS);
 }
@@ -570,7 +597,10 @@ int CVodeSetEtaMinErrFail(void* cvode_mem, sunrealtype eta_min_ef)
   {
     cv_mem->cv_eta_min_ef = ETA_MIN_EF_DEFAULT;
   }
-  else { cv_mem->cv_eta_min_ef = eta_min_ef; }
+  else
+  {
+    cv_mem->cv_eta_min_ef = eta_min_ef;
+  }
 
   return (CV_SUCCESS);
 }
@@ -599,7 +629,10 @@ int CVodeSetEtaMaxErrFail(void* cvode_mem, sunrealtype eta_max_ef)
   {
     cv_mem->cv_eta_max_ef = ETA_MAX_EF_DEFAULT;
   }
-  else { cv_mem->cv_eta_max_ef = eta_max_ef; }
+  else
+  {
+    cv_mem->cv_eta_max_ef = eta_max_ef;
+  }
 
   return (CV_SUCCESS);
 }
@@ -625,7 +658,10 @@ int CVodeSetNumFailsEtaMaxErrFail(void* cvode_mem, int small_nef)
 
   /* set allowed value or use default */
   if (small_nef < 0) { cv_mem->cv_small_nef = SMALL_NEF_DEFAULT; }
-  else { cv_mem->cv_small_nef = small_nef; }
+  else
+  {
+    cv_mem->cv_small_nef = small_nef;
+  }
 
   return (CV_SUCCESS);
 }
@@ -650,7 +686,10 @@ int CVodeSetEtaConvFail(void* cvode_mem, sunrealtype eta_cf)
 
   /* set allowed value or use default */
   if (eta_cf <= ZERO || eta_cf >= ONE) { cv_mem->cv_eta_cf = ETA_CF_DEFAULT; }
-  else { cv_mem->cv_eta_cf = eta_cf; }
+  else
+  {
+    cv_mem->cv_eta_cf = eta_cf;
+  }
 
   return (CV_SUCCESS);
 }
@@ -1014,7 +1053,10 @@ int CVodeSetMaxNumConstraintFails(void* cvode_mem, int max_fails)
   CVodeMem cv_mem = (CVodeMem)cvode_mem;
 
   if (max_fails <= 0) { cv_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS; }
-  else { cv_mem->max_constraint_fails = max_fails; }
+  else
+  {
+    cv_mem->max_constraint_fails = max_fails;
+  }
 
   return CV_SUCCESS;
 }
@@ -1288,7 +1330,10 @@ int CVodeGetNumStabLimOrderReds(void* cvode_mem, long int* nslred)
   cv_mem = (CVodeMem)cvode_mem;
 
   if (cv_mem->cv_sldeton == SUNFALSE) { *nslred = 0; }
-  else { *nslred = cv_mem->cv_nor; }
+  else
+  {
+    *nslred = cv_mem->cv_nor;
+  }
 
   return (CV_SUCCESS);
 }

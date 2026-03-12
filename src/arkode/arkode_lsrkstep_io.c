@@ -282,7 +282,10 @@ int LSRKStepSetMaxNumStages(void* arkode_mem, int stage_max_limit)
   {
     step_mem->stage_max_limit = STAGE_MAX_LIMIT_DEFAULT;
   }
-  else { step_mem->stage_max_limit = stage_max_limit; }
+  else
+  {
+    step_mem->stage_max_limit = stage_max_limit;
+  }
 
   return ARK_SUCCESS;
 }
@@ -311,7 +314,10 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
   {
     step_mem->dom_eig_safety = DOM_EIG_SAFETY_DEFAULT;
   }
-  else { step_mem->dom_eig_safety = dom_eig_safety; }
+  else
+  {
+    step_mem->dom_eig_safety = dom_eig_safety;
+  }
 
   return ARK_SUCCESS;
 }
@@ -355,7 +361,10 @@ int LSRKStepSetNumDomEigEstPreprocessIters(void* arkode_mem, int num_iters)
   if (retval != ARK_SUCCESS) { return retval; }
 
   if (num_iters < 0) { step_mem->num_warmups = DOM_EIG_NUM_WARMUPS_DEFAULT; }
-  else { step_mem->num_warmups = num_iters; }
+  else
+  {
+    step_mem->num_warmups = num_iters;
+  }
 
   /* Set the number of iterations immediately (if possible) to allow the user to
      can change the value at any time during the integration. This value will be

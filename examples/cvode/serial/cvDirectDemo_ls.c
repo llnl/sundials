@@ -722,7 +722,10 @@ static int PrepareNextRun(SUNContext sunctx, void* cvode_mem, int lmm,
 
   printf("\n\nLinear Multistep Method : ");
   if (lmm == CV_ADAMS) { printf("ADAMS\n"); }
-  else { printf("BDF\n"); }
+  else
+  {
+    printf("BDF\n");
+  }
 
   printf("Iteration               : ");
   if (miter == FUNC)

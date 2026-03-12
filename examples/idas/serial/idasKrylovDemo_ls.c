@@ -596,7 +596,7 @@ static void PrintOutput(void* mem, sunrealtype t, N_Vector uu, int linsolver)
   retval = IDAGetNumPrecSolves(mem, &nps);
   check_retval(&retval, "IDAGetNumPrecSolves", 1);
 
-  #if defined(SUNDIALS_FLOAT128_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
   printf(" %5.2Qf %13.5Qe  %d  %3ld  %3ld  %3ld  %4ld  %4ld  %9.2Qe  %3ld "
          "%3ld\n",
          t, umax, kused, nst, nni, nje, nre, nreLS, hused, npe, nps);

@@ -25,11 +25,10 @@ set(ARKODE_examples "ark_diurnal_kry_p\;\;1\;4\;exclude-single\;default"
                     "ark_diurnal_kry_bbd_p\;\;1\;4\;exclude-single\;default")
 
 list(APPEND ARKODE_examples
-  "ark_brusselator1D_task_local_nls\;--monitor\;1\;4\;develop\;2")
+     "ark_brusselator1D_task_local_nls\;--monitor\;1\;4\;develop\;2")
 list(
   APPEND ARKODE_examples
-  "ark_brusselator1D_task_local_nls\;--monitor --global-nls\;1\;4\;develop\;2"
-)
+  "ark_brusselator1D_task_local_nls\;--monitor --global-nls\;1\;4\;develop\;2")
 list(
   APPEND
   ARKODE_examples
@@ -38,7 +37,6 @@ list(
 
 # Auxiliary files to install
 set(ARKODE_extras "plot_brusselator1D.py")
-
 
 if(MPI_C_COMPILER)
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})

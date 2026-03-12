@@ -49,21 +49,15 @@ public:
   ATestExecPolicy() : stream_(0) {}
 
   virtual size_t gridSize(size_t numWorkElements = 0, size_t blockDim = 0) const
-  {
-    return 1;
-  }
+  { return 1; }
 
   virtual size_t blockSize(size_t numWorkElements = 0, size_t gridDim = 0) const
-  {
-    return 1;
-  }
+  { return 1; }
 
   virtual const cudaStream_t* stream() const { return &stream_; }
 
   virtual SUNCudaExecPolicy* clone() const
-  {
-    return static_cast<SUNCudaExecPolicy*>(new ATestExecPolicy());
-  }
+  { return static_cast<SUNCudaExecPolicy*>(new ATestExecPolicy()); }
 
 private:
   const cudaStream_t stream_;
@@ -509,7 +503,10 @@ int main(int argc, char* argv[])
     printf("\ny = Ax (reference)\n");
     N_VPrint_Cuda(d_y);
   }
-  else { printf("SUCCESS: SUNMatrix module passed all tests \n \n"); }
+  else
+  {
+    printf("SUCCESS: SUNMatrix module passed all tests \n \n");
+  }
 
   printf("Beginning teardown\n");
 
@@ -728,7 +725,10 @@ int check_matrix_entry(SUNMatrix dA, sunrealtype val, sunrealtype tol)
   free(Adata);
 
   if (failure > ZERO) { return (1); }
-  else { return (0); }
+  else
+  {
+    return (0);
+  }
 }
 
 int check_vector(N_Vector expected, N_Vector computed, sunrealtype tol)
@@ -764,14 +764,20 @@ int check_vector(N_Vector expected, N_Vector computed, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else { return (0); }
+  else
+  {
+    return (0);
+  }
 }
 
 sunbooleantype has_data(SUNMatrix A)
 {
   sunrealtype* Adata = SUNMatrix_cuSparse_Data(A);
   if (Adata == NULL) { return SUNFALSE; }
-  else { return SUNTRUE; }
+  else
+  {
+    return SUNTRUE;
+  }
 }
 
 sunbooleantype is_square(SUNMatrix A)
@@ -780,7 +786,10 @@ sunbooleantype is_square(SUNMatrix A)
   {
     return SUNTRUE;
   }
-  else { return SUNFALSE; }
+  else
+  {
+    return SUNFALSE;
+  }
 }
 
 void sync_device(SUNMatrix A) { cudaDeviceSynchronize(); }

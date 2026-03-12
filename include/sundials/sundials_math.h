@@ -482,7 +482,7 @@ extern "C" {
 #define SUNRsinh(x) (sinhq((x)))
 #else
 #error \
-"SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
 #endif
 #endif
 
@@ -508,10 +508,9 @@ extern "C" {
 #define SUNRcosh(x) (coshq((x)))
 #else
 #error \
-"SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
 #endif
 #endif
-
 
 /*
  * -----------------------------------------------------------------

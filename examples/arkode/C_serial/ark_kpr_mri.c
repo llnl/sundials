@@ -144,17 +144,17 @@ int main(int argc, char* argv[])
   SUNContext ctx;
 
   /* general problem parameters */
-  sunrealtype T0     = SUN_RCONST(0.0);       /* initial time */
-  sunrealtype Tf     = SUN_RCONST(5.0);       /* final time */
-  sunrealtype dTout  = SUN_RCONST(0.1);       /* time between outputs */
-  sunindextype NEQ   = 2;                     /* number of dependent vars. */
+  sunrealtype T0     = SUN_RCONST(0.0); /* initial time */
+  sunrealtype Tf     = SUN_RCONST(5.0); /* final time */
+  sunrealtype dTout  = SUN_RCONST(0.1); /* time between outputs */
+  sunindextype NEQ   = 2;               /* number of dependent vars. */
   int Nt             = (int)SUNRceil(Tf / dTout); /* number of output times */
-  int slow_type      = 0;                     /* problem configuration type */
-  int fast_type      = 0;                     /* problem configuration type */
-  sunrealtype hs     = SUN_RCONST(0.01);      /* slow step size */
-  sunrealtype e      = SUN_RCONST(0.5);       /* fast/slow coupling strength */
-  sunrealtype G      = SUN_RCONST(-100.0);    /* stiffness at slow time scale */
-  sunrealtype w      = SUN_RCONST(100.0);     /* time-scale separation factor */
+  int slow_type      = 0;                  /* problem configuration type */
+  int fast_type      = 0;                  /* problem configuration type */
+  sunrealtype hs     = SUN_RCONST(0.01);   /* slow step size */
+  sunrealtype e      = SUN_RCONST(0.5);    /* fast/slow coupling strength */
+  sunrealtype G      = SUN_RCONST(-100.0); /* stiffness at slow time scale */
+  sunrealtype w      = SUN_RCONST(100.0);  /* time-scale separation factor */
   sunrealtype reltol = SUN_RCONST(0.01);
   sunrealtype abstol = SUN_RCONST(1.0e-11);
 
@@ -789,7 +789,10 @@ int main(int argc, char* argv[])
   {
     printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfsi, nff);
   }
-  else { printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfse, nff); }
+  else
+  {
+    printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfse, nff);
+  }
 
   /* Get/print slow integrator decoupled implicit solver statistics */
   if (implicit_slow || imex_slow)
@@ -1031,9 +1034,7 @@ static int Jf(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
  * ------------------------------*/
 
 static sunrealtype r(sunrealtype t, void* user_data)
-{
-  return (SUN_RCONST(0.5) * SUNRcos(t));
-}
+{ return (SUN_RCONST(0.5) * SUNRcos(t)); }
 
 static sunrealtype s(sunrealtype t, void* user_data)
 {
@@ -1042,9 +1043,7 @@ static sunrealtype s(sunrealtype t, void* user_data)
 }
 
 static sunrealtype rdot(sunrealtype t, void* user_data)
-{
-  return (-SUN_RCONST(0.5) * SUNRsin(t));
-}
+{ return (-SUN_RCONST(0.5) * SUNRsin(t)); }
 
 static sunrealtype sdot(sunrealtype t, void* user_data)
 {
@@ -1053,14 +1052,10 @@ static sunrealtype sdot(sunrealtype t, void* user_data)
 }
 
 static sunrealtype utrue(sunrealtype t, void* user_data)
-{
-  return (SUNRsqrt(ONE + r(t, user_data)));
-}
+{ return (SUNRsqrt(ONE + r(t, user_data))); }
 
 static sunrealtype vtrue(sunrealtype t, void* user_data)
-{
-  return (SUNRsqrt(TWO + s(t, user_data)));
-}
+{ return (SUNRsqrt(TWO + s(t, user_data))); }
 
 static int Ytrue(sunrealtype t, N_Vector y, void* user_data)
 {

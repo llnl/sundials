@@ -347,7 +347,10 @@ int CVodeSetLinearSolver(void* cvode_mem, SUNLinearSolver LS, SUNMatrix A)
 
   /* Check if solution scaling should be enabled */
   if (matrixbased && cv_mem->cv_lmm == CV_BDF) { cvls_mem->scalesol = SUNTRUE; }
-  else { cvls_mem->scalesol = SUNFALSE; }
+  else
+  {
+    cvls_mem->scalesol = SUNFALSE;
+  }
 
   /* Attach linear solver memory to integrator memory */
   cv_mem->cv_lmem = cvls_mem;
@@ -415,7 +418,10 @@ int CVodeSetDeltaGammaMaxBadJac(void* cvode_mem, sunrealtype dgmax_jbad)
 
   /* Set value or use default */
   if (dgmax_jbad <= ZERO) { cvls_mem->dgmax_jbad = CVLS_DGMAX; }
-  else { cvls_mem->dgmax_jbad = dgmax_jbad; }
+  else
+  {
+    cvls_mem->dgmax_jbad = dgmax_jbad;
+  }
 
   return (CVLS_SUCCESS);
 }
@@ -633,7 +639,10 @@ int CVodeSetJacTimesRhsFn(void* cvode_mem, CVRhsFn jtimesRhsFn)
 
   /* store function pointers for RHS function (NULL implies use ODE RHS) */
   if (jtimesRhsFn != NULL) { cvls_mem->jt_f = jtimesRhsFn; }
-  else { cvls_mem->jt_f = cv_mem->cv_f; }
+  else
+  {
+    cvls_mem->jt_f = cv_mem->cv_f;
+  }
 
   return (CVLS_SUCCESS);
 }
@@ -1523,9 +1532,15 @@ int cvLsInitialize(CVodeMem cv_mem)
             cvls_mem->jac    = cvLsDQJac;
             cvls_mem->J_data = cv_mem;
           }
-          else { retval++; }
+          else
+          {
+            retval++;
+          }
         }
-        else { retval++; }
+        else
+        {
+          retval++;
+        }
         if (retval)
         {
           cvProcessError(cv_mem, CVLS_ILL_INPUT, __LINE__, __func__,
@@ -1577,7 +1592,10 @@ int cvLsInitialize(CVodeMem cv_mem)
     cvls_mem->jtimes  = cvLsDQJtimes;
     cvls_mem->jt_data = cv_mem;
   }
-  else { cvls_mem->jt_data = cv_mem->cv_user_data; }
+  else
+  {
+    cvls_mem->jt_data = cv_mem->cv_user_data;
+  }
 
   /* if A is NULL and psetup is not present, then cvLsSetup does
      not need to be called, so set the lsetup function to NULL */
@@ -1701,7 +1719,10 @@ int cvLsSetup(CVodeMem cv_mem, int convfail, N_Vector ypred, N_Vector fpred,
           return (1);
         }
       }
-      else { return (retval); }
+      else
+      {
+        return (retval);
+      }
     }
   }
   else
@@ -1780,7 +1801,10 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
   {
     retval = SUNNonlinSolGetCurIter(cv_mem->NLSstg1, &curiter);
   }
-  else { retval = SUNNonlinSolGetCurIter(cv_mem->NLS, &curiter); }
+  else
+  {
+    retval = SUNNonlinSolGetCurIter(cv_mem->NLS, &curiter);
+  }
 
   /* If the linear solver is iterative:
      test norm(b), if small, return x = 0 or x = b;
@@ -1934,7 +1958,10 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
     /* allow reduction but not solution on first Newton iteration,
        otherwise return with a recoverable failure */
     if (curiter == 0) { return (0); }
-    else { return (1); }
+    else
+    {
+      return (1);
+    }
     break;
   case SUNLS_CONV_FAIL:
   case SUNLS_ATIMES_FAIL_REC:
@@ -2183,7 +2210,10 @@ int CVodeSetJacFnB(void* cvode_mem, int which, CVLsJacFnB jacB)
   /* call corresponding routine for cvodeB_mem structure */
   cvodeB_mem = (void*)(cvB_mem->cv_mem);
   if (jacB != NULL) { retval = CVodeSetJacFn(cvodeB_mem, cvLsJacBWrapper); }
-  else { retval = CVodeSetJacFn(cvodeB_mem, NULL); }
+  else
+  {
+    retval = CVodeSetJacFn(cvodeB_mem, NULL);
+  }
 
   return (retval);
 }
@@ -2208,7 +2238,10 @@ int CVodeSetJacFnBS(void* cvode_mem, int which, CVLsJacFnBS jacBS)
   /* call corresponding routine for cvodeB_mem structure */
   cvodeB_mem = (void*)(cvB_mem->cv_mem);
   if (jacBS != NULL) { retval = CVodeSetJacFn(cvodeB_mem, cvLsJacBSWrapper); }
-  else { retval = CVodeSetJacFn(cvodeB_mem, NULL); }
+  else
+  {
+    retval = CVodeSetJacFn(cvodeB_mem, NULL);
+  }
 
   return (retval);
 }
@@ -2427,7 +2460,10 @@ int CVodeSetLinSysFnB(void* cvode_mem, int which, CVLsLinSysFnB linsysB)
   {
     retval = CVodeSetLinSysFn(cvodeB_mem, cvLsLinSysBWrapper);
   }
-  else { retval = CVodeSetLinSysFn(cvodeB_mem, NULL); }
+  else
+  {
+    retval = CVodeSetLinSysFn(cvodeB_mem, NULL);
+  }
 
   return (retval);
 }
@@ -2455,7 +2491,10 @@ int CVodeSetLinSysFnBS(void* cvode_mem, int which, CVLsLinSysFnBS linsysBS)
   {
     retval = CVodeSetLinSysFn(cvodeB_mem, cvLsLinSysBSWrapper);
   }
-  else { retval = CVodeSetLinSysFn(cvodeB_mem, NULL); }
+  else
+  {
+    retval = CVodeSetLinSysFn(cvodeB_mem, NULL);
+  }
 
   return (retval);
 }
@@ -2516,7 +2555,10 @@ static int cvLsJacBSWrapper(sunrealtype t, N_Vector yB, N_Vector fyB,
   {
     retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, ca_mem->ca_yStmp);
   }
-  else { retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL); }
+  else
+  {
+    retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL);
+  }
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, -1, __LINE__, __func__, __FILE__, MSG_LS_BAD_TINTERP);
@@ -2580,7 +2622,10 @@ static int cvLsPrecSetupBSWrapper(sunrealtype t, N_Vector yB, N_Vector fyB,
   {
     retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, ca_mem->ca_yStmp);
   }
-  else { retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL); }
+  else
+  {
+    retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL);
+  }
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, -1, __LINE__, __func__, __FILE__, MSG_LS_BAD_TINTERP);
@@ -2644,7 +2689,10 @@ static int cvLsPrecSolveBSWrapper(sunrealtype t, N_Vector yB, N_Vector fyB,
   {
     retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, ca_mem->ca_yStmp);
   }
-  else { retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL); }
+  else
+  {
+    retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL);
+  }
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, -1, __LINE__, __func__, __FILE__, MSG_LS_BAD_TINTERP);
@@ -2705,7 +2753,10 @@ static int cvLsJacTimesSetupBSWrapper(sunrealtype t, N_Vector yB, N_Vector fyB,
   {
     retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, ca_mem->ca_yStmp);
   }
-  else { retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL); }
+  else
+  {
+    retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL);
+  }
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, -1, __LINE__, __func__, __FILE__, MSG_LS_BAD_TINTERP);
@@ -2769,7 +2820,10 @@ static int cvLsJacTimesVecBSWrapper(N_Vector vB, N_Vector JvB, sunrealtype t,
   {
     retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, ca_mem->ca_yStmp);
   }
-  else { retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL); }
+  else
+  {
+    retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL);
+  }
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, -1, __LINE__, __func__, __FILE__, MSG_LS_BAD_TINTERP);
@@ -2837,7 +2891,10 @@ static int cvLsLinSysBSWrapper(sunrealtype t, N_Vector yB, N_Vector fyB,
   {
     retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, ca_mem->ca_yStmp);
   }
-  else { retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL); }
+  else
+  {
+    retval = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL);
+  }
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, -1, __LINE__, __func__, __FILE__, MSG_LS_BAD_TINTERP);

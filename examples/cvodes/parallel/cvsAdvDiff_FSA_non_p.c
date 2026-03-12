@@ -296,7 +296,10 @@ int main(int argc, char* argv[])
     {
       NLSsens = SUNNonlinSol_FixedPointSens(NS, u, 0, sunctx);
     }
-    else { NLSsens = SUNNonlinSol_FixedPoint(u, 0, sunctx); }
+    else
+    {
+      NLSsens = SUNNonlinSol_FixedPoint(u, 0, sunctx);
+    }
     if (check_retval((void*)NLS, "SUNNonlinSol_FixedPoint", 0, my_pe))
     {
       MPI_Abort(comm, 1);
@@ -311,7 +314,10 @@ int main(int argc, char* argv[])
     {
       retval = CVodeSetNonlinearSolverSensStg(cvode_mem, NLSsens);
     }
-    else { retval = CVodeSetNonlinearSolverSensStg1(cvode_mem, NLSsens); }
+    else
+    {
+      retval = CVodeSetNonlinearSolverSensStg1(cvode_mem, NLSsens);
+    }
     if (check_retval(&retval, "CVodeSetNonlinearSolver", 1, my_pe))
     {
       MPI_Abort(comm, 1);
@@ -322,9 +328,15 @@ int main(int argc, char* argv[])
       printf("Sensitivity: YES ");
       if (sensi_meth == CV_SIMULTANEOUS) { printf("( SIMULTANEOUS +"); }
       else if (sensi_meth == CV_STAGGERED) { printf("( STAGGERED +"); }
-      else { printf("( STAGGERED1 +"); }
+      else
+      {
+        printf("( STAGGERED1 +");
+      }
       if (err_con) { printf(" FULL ERROR CONTROL )"); }
-      else { printf(" PARTIAL ERROR CONTROL )"); }
+      else
+      {
+        printf(" PARTIAL ERROR CONTROL )");
+      }
     }
   }
   else
@@ -439,12 +451,18 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   {
     MPI_Recv(&z[0], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm, &status);
   }
-  else { z[0] = ZERO; }
+  else
+  {
+    z[0] = ZERO;
+  }
   if (my_pe != last_pe)
   {
     MPI_Recv(&z[my_length + 1], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm, &status);
   }
-  else { z[my_length + 1] = ZERO; }
+  else
+  {
+    z[my_length + 1] = ZERO;
+  }
 
   /* Loop over all grid points in current process. */
   for (i = 1; i <= my_length; i++)
@@ -484,7 +502,10 @@ static void ProcessArgs(int argc, char* argv[], int my_pe, sunbooleantype* sensi
 
   if (strcmp(argv[1], "-nosensi") == 0) { *sensi = SUNFALSE; }
   else if (strcmp(argv[1], "-sensi") == 0) { *sensi = SUNTRUE; }
-  else { WrongArgs(my_pe, argv[0]); }
+  else
+  {
+    WrongArgs(my_pe, argv[0]);
+  }
 
   if (*sensi)
   {
@@ -493,11 +514,17 @@ static void ProcessArgs(int argc, char* argv[], int my_pe, sunbooleantype* sensi
     if (strcmp(argv[2], "sim") == 0) { *sensi_meth = CV_SIMULTANEOUS; }
     else if (strcmp(argv[2], "stg") == 0) { *sensi_meth = CV_STAGGERED; }
     else if (strcmp(argv[2], "stg1") == 0) { *sensi_meth = CV_STAGGERED1; }
-    else { WrongArgs(my_pe, argv[0]); }
+    else
+    {
+      WrongArgs(my_pe, argv[0]);
+    }
 
     if (strcmp(argv[3], "t") == 0) { *err_con = SUNTRUE; }
     else if (strcmp(argv[3], "f") == 0) { *err_con = SUNFALSE; }
-    else { WrongArgs(my_pe, argv[0]); }
+    else
+    {
+      WrongArgs(my_pe, argv[0]);
+    }
   }
 }
 
@@ -653,7 +680,10 @@ static void PrintFinalStats(void* cvode_mem, sunbooleantype sensi,
       retval = CVodeGetSensNumErrTestFails(cvode_mem, &netfS);
       check_retval(&retval, "CVodeGetSensNumErrTestFails", 1, 0);
     }
-    else { netfS = 0; }
+    else
+    {
+      netfS = 0;
+    }
     if ((sensi_meth == CV_STAGGERED) || (sensi_meth == CV_STAGGERED1))
     {
       retval = CVodeGetSensNumNonlinSolvIters(cvode_mem, &nniS);

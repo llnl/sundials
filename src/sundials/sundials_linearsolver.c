@@ -31,9 +31,7 @@
 
 #if defined(SUNDIALS_BUILD_WITH_PROFILING)
 static SUNProfiler getSUNProfiler(SUNLinearSolver S)
-{
-  return (S->sunctx->profiler);
-}
+{ return (S->sunctx->profiler); }
 #endif
 
 /* Forward declaration of function used to destroy any data allocated for Python */
@@ -130,7 +128,10 @@ SUNErrCode sunlsSetFromCommandLine(SUNLinearSolver S, const char* LSid,
   if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
-  else { strcpy(prefix, default_id); }
+  else
+  {
+    strcpy(prefix, default_id);
+  }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -163,14 +164,15 @@ SUNErrCode sunlsSetFromCommandLine(SUNLinearSolver S, const char* LSid,
  * -----------------------------------------------------------------*/
 
 SUNLinearSolver_Type SUNLinSolGetType(SUNLinearSolver S)
-{
-  return (S->ops->gettype(S));
-}
+{ return (S->ops->gettype(S)); }
 
 SUNLinearSolver_ID SUNLinSolGetID(SUNLinearSolver S)
 {
   if (S->ops->getid) { return (S->ops->getid(S)); }
-  else { return (SUNLINEARSOLVER_CUSTOM); }
+  else
+  {
+    return (SUNLINEARSOLVER_CUSTOM);
+  }
 }
 
 SUNErrCode SUNLinSolSetATimes(SUNLinearSolver S, void* A_data, SUNATimesFn ATimes)
@@ -178,7 +180,10 @@ SUNErrCode SUNLinSolSetATimes(SUNLinearSolver S, void* A_data, SUNATimesFn ATime
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(S));
   if (S->ops->setatimes) { ier = S->ops->setatimes(S, A_data, ATimes); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(S));
   return (ier);
 }
@@ -192,7 +197,10 @@ SUNErrCode SUNLinSolSetPreconditioner(SUNLinearSolver S, void* P_data,
   {
     ier = S->ops->setpreconditioner(S, P_data, Pset, Psol);
   }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(S));
   return (ier);
 }
@@ -202,7 +210,10 @@ SUNErrCode SUNLinSolSetScalingVectors(SUNLinearSolver S, N_Vector s1, N_Vector s
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(S));
   if (S->ops->setscalingvectors) { ier = S->ops->setscalingvectors(S, s1, s2); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(S));
   return (ier);
 }
@@ -237,7 +248,10 @@ SUNErrCode SUNLinSolSetOptions(SUNLinearSolver S, const char* LSid,
 SUNErrCode SUNLinSolSetZeroGuess(SUNLinearSolver S, sunbooleantype onoff)
 {
   if (S->ops->setzeroguess) { return (S->ops->setzeroguess(S, onoff)); }
-  else { return SUN_SUCCESS; }
+  else
+  {
+    return SUN_SUCCESS;
+  }
 }
 
 SUNErrCode SUNLinSolInitialize(SUNLinearSolver S)
@@ -245,7 +259,10 @@ SUNErrCode SUNLinSolInitialize(SUNLinearSolver S)
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(S));
   if (S->ops->initialize) { ier = S->ops->initialize(S); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(S));
   return (ier);
 }
@@ -255,7 +272,10 @@ int SUNLinSolSetup(SUNLinearSolver S, SUNMatrix A)
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(S));
   if (S->ops->setup) { ier = S->ops->setup(S, A); }
-  else { ier = SUN_SUCCESS; }
+  else
+  {
+    ier = SUN_SUCCESS;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(S));
   return (ier);
 }
@@ -274,7 +294,10 @@ int SUNLinSolNumIters(SUNLinearSolver S)
 {
   int result;
   if (S->ops->numiters) { result = S->ops->numiters(S); }
-  else { result = 0; }
+  else
+  {
+    result = 0;
+  }
   return (result);
 }
 
@@ -283,7 +306,10 @@ sunrealtype SUNLinSolResNorm(SUNLinearSolver S)
   sunrealtype result;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(S));
   if (S->ops->resnorm) { result = S->ops->resnorm(S); }
-  else { result = SUN_RCONST(0.0); }
+  else
+  {
+    result = SUN_RCONST(0.0);
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(S));
   return (result);
 }
@@ -293,7 +319,10 @@ N_Vector SUNLinSolResid(SUNLinearSolver S)
   N_Vector resid;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(S));
   if (S->ops->resid) { resid = S->ops->resid(S); }
-  else { resid = NULL; }
+  else
+  {
+    resid = NULL;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(S));
   return (resid);
 }
@@ -301,7 +330,10 @@ N_Vector SUNLinSolResid(SUNLinearSolver S)
 sunindextype SUNLinSolLastFlag(SUNLinearSolver S)
 {
   if (S->ops->lastflag) { return ((sunindextype)S->ops->lastflag(S)); }
-  else { return 0; }
+  else
+  {
+    return 0;
+  }
 }
 
 SUNErrCode SUNLinSolSpace(SUNLinearSolver S, long int* lenrwLS, long int* leniwLS)

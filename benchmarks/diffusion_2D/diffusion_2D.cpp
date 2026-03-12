@@ -695,16 +695,21 @@ int UserOutput::open(UserData* udata)
     cout << endl;
     if (error)
     {
-      cout << setw(SUN_DIGITS10/2+3) <<" "<<"t"<< setw(SUN_DIGITS10/2+4)  <<" ";
-      cout << setw(SUN_DIGITS10/2+1) <<" "<<"||u||_rms" << setw(SUN_DIGITS10/2+1) <<" ";
-      cout << setw(SUN_DIGITS10/2+1) <<" "<<"max error" << setw(SUN_DIGITS10/2+1) <<" "<< endl;
-      cout << setfill('_') << setw(SUN_DIGITS10*3+28) << setfill(' ')<<endl;
+      cout << setw(SUN_DIGITS10 / 2 + 3) << " " << "t"
+           << setw(SUN_DIGITS10 / 2 + 4) << " ";
+      cout << setw(SUN_DIGITS10 / 2 + 1) << " " << "||u||_rms"
+           << setw(SUN_DIGITS10 / 2 + 1) << " ";
+      cout << setw(SUN_DIGITS10 / 2 + 1) << " " << "max error"
+           << setw(SUN_DIGITS10 / 2 + 1) << " " << endl;
+      cout << setfill('_') << setw(SUN_DIGITS10 * 3 + 28) << setfill(' ') << endl;
     }
     else
     {
-      cout << setw(SUN_DIGITS10/2+3) <<" "<<"t"<< setw(SUN_DIGITS10/2+4)  <<" ";
-      cout << setw(SUN_DIGITS10/2+1) <<" "<<"||u||_rms" << setw(SUN_DIGITS10/2+1) <<" " << endl;
-      cout << setfill('_') << setw(SUN_DIGITS10*2+18) << " "<<endl;
+      cout << setw(SUN_DIGITS10 / 2 + 3) << " " << "t"
+           << setw(SUN_DIGITS10 / 2 + 4) << " ";
+      cout << setw(SUN_DIGITS10 / 2 + 1) << " " << "||u||_rms"
+           << setw(SUN_DIGITS10 / 2 + 1) << " " << endl;
+      cout << setfill('_') << setw(SUN_DIGITS10 * 2 + 18) << " " << endl;
     }
   }
 
@@ -798,9 +803,14 @@ int UserOutput::write(sunrealtype t, N_Vector u, UserData* udata)
     {
       if (error)
       {
-        cout << setw(SUN_DIGITS10+7) << t << setw(SUN_DIGITS10+10) << urms << setw(SUN_DIGITS10+10) << max << endl;
+        cout << setw(SUN_DIGITS10 + 7) << t << setw(SUN_DIGITS10 + 10) << urms
+             << setw(SUN_DIGITS10 + 10) << max << endl;
       }
-      else { cout << setw(SUN_DIGITS10+7) << t << setw(SUN_DIGITS10+10) << urms << endl; }
+      else
+      {
+        cout << setw(SUN_DIGITS10 + 7) << t << setw(SUN_DIGITS10 + 10) << urms
+             << endl;
+      }
     }
 
     // Write solution and error to disk

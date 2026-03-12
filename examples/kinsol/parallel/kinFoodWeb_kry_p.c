@@ -92,10 +92,10 @@
 
 #include <mpi.h>
 
-#include <kinsol/kinsol.h>             /* access to KINSOL func., consts.      */
-#include <nvector/nvector_parallel.h>  /* access to MPI parallel N_Vector      */
-#include <sundials/sundials_dense.h>   /* use generic dense solver in precond. */
-#include <sundials/sundials_types.h>   /* defs. of sunrealtype, sunindextype   */
+#include <kinsol/kinsol.h>            /* access to KINSOL func., consts.      */
+#include <nvector/nvector_parallel.h> /* access to MPI parallel N_Vector      */
+#include <sundials/sundials_dense.h>  /* use generic dense solver in precond. */
+#include <sundials/sundials_types.h>  /* defs. of sunrealtype, sunindextype   */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
 /* Problem Constants */
@@ -128,7 +128,7 @@
 #define ZERO     SUN_RCONST(0.0)    /* 0. */
 #define ONE      SUN_RCONST(1.0)    /* 1. */
 #define PREYIN   SUN_RCONST(1.0)    /* initial guess for prey concentrations. */
-#define PREDIN   SUN_RCONST(30000.0) /* initial guess for predator concs.      */
+#define PREDIN SUN_RCONST(30000.0)  /* initial guess for predator concs.      */
 
 /* User-defined vector access macro: IJ_Vptr */
 

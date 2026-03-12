@@ -79,7 +79,7 @@
 #define NOUT    12                 /* number of output times */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours  */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day */
-#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
+#define PI SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
 
 #define XMIN ZERO /* grid boundaries in x  */
 #define XMAX SUN_RCONST(20.0)
@@ -581,7 +581,10 @@ static void PrintStats(void* cvode_mem, int linsolver, int final)
   check_retval(&retval, "CVodeGetLinWorkSpace", 1);
 
   if (final) { printf("\nFinal Statistics.. \n\n"); }
-  else { printf("\nIntermediate Statistics.. \n\n"); }
+  else
+  {
+    printf("\nIntermediate Statistics.. \n\n");
+  }
   printf("lenrw   = %5ld     leniw   = %5ld\n", lenrw, leniw);
   printf("lenrwLS = %5ld     leniwLS = %5ld\n", lenrwLS, leniwLS);
   printf("nst     = %5ld\n", nst);

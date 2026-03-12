@@ -163,7 +163,10 @@ static sunrealtype* GetVecData(N_Vector y)
   {
     return N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(y));
   }
-  else { return N_VGetArrayPointer(y); }
+  else
+  {
+    return N_VGetArrayPointer(y);
+  }
 #endif
 }
 

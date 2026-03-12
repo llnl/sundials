@@ -70,7 +70,7 @@
 #define NOUT    12                 /* number of output times */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours  */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day */
-#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
+#define PI SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
 
 #define XMIN ZERO /* grid boundaries in x  */
 #define XMAX SUN_RCONST(20.0)

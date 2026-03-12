@@ -308,7 +308,10 @@ void dgdp(N_Vector uvec, N_Vector dgvec, const sunrealtype* p)
 void print_help(int argc, char* argv[], int exit_code)
 {
   if (exit_code) { fprintf(stderr, "%s: option not recognized\n", argv[0]); }
-  else { fprintf(stderr, "%s ", argv[0]); }
+  else
+  {
+    fprintf(stderr, "%s ", argv[0]);
+  }
   fprintf(stderr, "options:\n");
   fprintf(stderr, "--tf <real>         the final simulation time\n");
   fprintf(stderr, "--dt <real>         the timestep size\n");
@@ -334,7 +337,10 @@ void parse_args(int argc, char* argv[], ProgramArgs* args)
     }
     else if (!strcmp(arg, "--dont-keep")) { args->keep_checks = SUNFALSE; }
     else if (!strcmp(arg, "--help")) { print_help(argc, argv, 0); }
-    else { print_help(argc, argv, 1); }
+    else
+    {
+      print_help(argc, argv, 1);
+    }
   }
 }
 

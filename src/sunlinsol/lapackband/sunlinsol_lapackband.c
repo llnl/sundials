@@ -133,14 +133,10 @@ SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A, SUNContext sunctx)
 
 SUNLinearSolver_Type SUNLinSolGetType_LapackBand(
   SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{
-  return (SUNLINEARSOLVER_DIRECT);
-}
+{ return (SUNLINEARSOLVER_DIRECT); }
 
 SUNLinearSolver_ID SUNLinSolGetID_LapackBand(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{
-  return (SUNLINEARSOLVER_LAPACKBAND);
-}
+{ return (SUNLINEARSOLVER_LAPACKBAND); }
 
 SUNErrCode SUNLinSolInitialize_LapackBand(SUNLinearSolver S)
 {
@@ -217,9 +213,7 @@ int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 }
 
 sunindextype SUNLinSolLastFlag_LapackBand(SUNLinearSolver S)
-{
-  return (LASTFLAG(S));
-}
+{ return (LASTFLAG(S)); }
 
 SUNErrCode SUNLinSolSpace_LapackBand(SUNLinearSolver S, long int* lenrwLS,
                                      long int* leniwLS)

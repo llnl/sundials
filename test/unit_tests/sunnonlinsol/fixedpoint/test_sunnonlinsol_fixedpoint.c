@@ -51,19 +51,20 @@
 /* problem constants */
 #define NEQ 3 /* number of equations */
 
-#define ZERO         SUN_RCONST(0.0)             /* real 0.0  */
-#define PTONE        SUN_RCONST(0.1)             /* real 0.1  */
-#define HALF         SUN_RCONST(0.5)             /* real 0.5  */
-#define PTNINE       SUN_RCONST(0.9)             /* real 0.9  */
-#define ONE          SUN_RCONST(1.0)             /* real 1.0  */
-#define ONEPTZEROSIX SUN_RCONST(1.06)            /* real 1.06 */
-#define THREE        SUN_RCONST(3.0)             /* real 3.0  */
-#define SIX          SUN_RCONST(6.0)             /* real 6.0  */
-#define NINE         SUN_RCONST(9.0)             /* real 9.0  */
-#define TEN          SUN_RCONST(10.0)            /* real 10.0 */
-#define TWENTY       SUN_RCONST(20.0)            /* real 20.0 */
-#define SIXTY        SUN_RCONST(60.0)            /* real 60.0 */
-#define PI           SUN_RCONST(3.141592653589793238462643383279502884197169) /* real pi   */
+#define ZERO         SUN_RCONST(0.0)  /* real 0.0  */
+#define PTONE        SUN_RCONST(0.1)  /* real 0.1  */
+#define HALF         SUN_RCONST(0.5)  /* real 0.5  */
+#define PTNINE       SUN_RCONST(0.9)  /* real 0.9  */
+#define ONE          SUN_RCONST(1.0)  /* real 1.0  */
+#define ONEPTZEROSIX SUN_RCONST(1.06) /* real 1.06 */
+#define THREE        SUN_RCONST(3.0)  /* real 3.0  */
+#define SIX          SUN_RCONST(6.0)  /* real 6.0  */
+#define NINE         SUN_RCONST(9.0)  /* real 9.0  */
+#define TEN          SUN_RCONST(10.0) /* real 10.0 */
+#define TWENTY       SUN_RCONST(20.0) /* real 20.0 */
+#define SIXTY        SUN_RCONST(60.0) /* real 60.0 */
+#define PI \
+  SUN_RCONST(3.141592653589793238462643383279502884197169) /* real pi   */
 
 /* analytic solution */
 #define XTRUE HALF
@@ -228,7 +229,10 @@ int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del, sunrealtype tol,
   delnrm = N_VMaxNorm(del);
 
   if (delnrm <= tol) { return (SUN_SUCCESS); /* success       */ }
-  else { return (SUN_NLS_CONTINUE); /* not converged */ }
+  else
+  {
+    return (SUN_NLS_CONTINUE); /* not converged */
+  }
 }
 
 /* -----------------------------------------------------------------------------
@@ -348,7 +352,10 @@ static int check_retval(void* flagvalue, const char* funcname, int opt)
       fprintf(stderr, "\nERROR: %s() failed -- returned NULL\n\n", funcname);
       return (1);
     }
-    else { return (0); }
+    else
+    {
+      return (0);
+    }
   }
 
   /* Check if the function returned an non-zero value -- internal failure */
@@ -361,7 +368,10 @@ static int check_retval(void* flagvalue, const char* funcname, int opt)
               *errflag);
       return (1);
     }
-    else { return (0); }
+    else
+    {
+      return (0);
+    }
   }
 
   /* if we make it here then opt was not 0 or 1 */

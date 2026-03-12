@@ -50,19 +50,20 @@
 /* problem constants */
 #define NEQ 3 /* number of equations */
 
-#define ZERO         SUN_RCONST(0.0)             /* real 0.0  */
-#define PTONE        SUN_RCONST(0.1)             /* real 0.1  */
-#define HALF         SUN_RCONST(0.5)             /* real 0.5  */
-#define PTNINE       SUN_RCONST(0.9)             /* real 0.9  */
-#define ONE          SUN_RCONST(1.0)             /* real 1.0  */
-#define ONEPTZEROSIX SUN_RCONST(1.06)            /* real 1.06 */
-#define THREE        SUN_RCONST(3.0)             /* real 3.0  */
-#define SIX          SUN_RCONST(6.0)             /* real 6.0  */
-#define NINE         SUN_RCONST(9.0)             /* real 9.0  */
-#define TEN          SUN_RCONST(10.0)            /* real 10.0 */
-#define TWENTY       SUN_RCONST(20.0)            /* real 20.0 */
-#define SIXTY        SUN_RCONST(60.0)            /* real 60.0 */
-#define PI           SUN_RCONST(3.141592653589793238462643383279502884197169) /* real pi   */
+#define ZERO         SUN_RCONST(0.0)  /* real 0.0  */
+#define PTONE        SUN_RCONST(0.1)  /* real 0.1  */
+#define HALF         SUN_RCONST(0.5)  /* real 0.5  */
+#define PTNINE       SUN_RCONST(0.9)  /* real 0.9  */
+#define ONE          SUN_RCONST(1.0)  /* real 1.0  */
+#define ONEPTZEROSIX SUN_RCONST(1.06) /* real 1.06 */
+#define THREE        SUN_RCONST(3.0)  /* real 3.0  */
+#define SIX          SUN_RCONST(6.0)  /* real 6.0  */
+#define NINE         SUN_RCONST(9.0)  /* real 9.0  */
+#define TEN          SUN_RCONST(10.0) /* real 10.0 */
+#define TWENTY       SUN_RCONST(20.0) /* real 20.0 */
+#define SIXTY        SUN_RCONST(60.0) /* real 60.0 */
+#define PI \
+  SUN_RCONST(3.141592653589793238462643383279502884197169) /* real pi   */
 
 /* analytic solution */
 #define XTRUE HALF
@@ -155,9 +156,15 @@ int main(int argc, char* argv[])
   printf("    damping_aa   = %" GSYM "\n", uopt->damping_aa);
   printf("    damping_fp   = %" GSYM "\n", uopt->damping_fp);
   if (uopt->use_damping_fn) { printf("    damping_fn   = ON\n"); }
-  else { printf("    damping_fn   = OFF\n"); }
+  else
+  {
+    printf("    damping_fn   = OFF\n");
+  }
   if (uopt->use_depth_fn) { printf("    depth_fn     = ON\n"); }
-  else { printf("    depth_fn     = OFF\n"); }
+  else
+  {
+    printf("    depth_fn     = OFF\n");
+  }
   printf("    orth routine = %d\n", uopt->orth_aa);
 
   /* Create the SUNDIALS context that all SUNDIALS objects require */
@@ -327,7 +334,8 @@ int FPFunction(N_Vector u, N_Vector g, void* user_data)
 
   gdata[0] = (ONE / THREE) * SUNRcos((y - ONE) * z) + (ONE / SIX);
   gdata[1] = (ONE / NINE) * SUNRsqrt(x * x + SUNRsin(z) + ONEPTZEROSIX) + PTNINE;
-  gdata[2] = -(ONE / TWENTY) * SUNRexp(-x * (y - ONE)) - (TEN * PI - THREE) / SIXTY;
+  gdata[2] = -(ONE / TWENTY) * SUNRexp(-x * (y - ONE)) -
+             (TEN * PI - THREE) / SIXTY;
 
   return (0);
 }
@@ -369,7 +377,10 @@ static int DepthFn(long int iter, N_Vector u_val, N_Vector g_val,
                    sunbooleantype* remove_index)
 {
   if (iter < 2) { *new_depth = 1; }
-  else { *new_depth = depth; };
+  else
+  {
+    *new_depth = depth;
+  };
 
   return 0;
 }
@@ -545,7 +556,10 @@ static int check_retval(void* returnvalue, const char* funcname, int opt)
       fprintf(stderr, "\nERROR: %s() failed -- returned NULL\n\n", funcname);
       return (1);
     }
-    else { return (0); }
+    else
+    {
+      return (0);
+    }
   }
 
   /* Check if the function returned a non-zero value -- internal failure */
@@ -558,7 +572,10 @@ static int check_retval(void* returnvalue, const char* funcname, int opt)
               *errflag);
       return (1);
     }
-    else { return (0); }
+    else
+    {
+      return (0);
+    }
   }
 
   /* If we make it here then opt was not 0 or 1 */

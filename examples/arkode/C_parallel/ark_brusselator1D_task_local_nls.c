@@ -107,19 +107,19 @@
 
 typedef struct
 {
-  sunrealtype t0;     /* initial time                 */
-  sunrealtype tf;     /* final time                   */
-  sunrealtype rtol;   /* relative tolerance           */
-  sunrealtype atol;   /* absolute tolerance           */
-  int order;     /* method order                 */
-  int explicit;  /* imex method or explicit      */
-  int global;    /* use global nonlinear solve   */
-  int fused;     /* use fused vector ops         */
-  int nout;      /* number of outputs            */
-  int monitor;   /* print solution to screen     */
-  int printtime; /* print timing information     */
-  FILE* TFID;    /* time output file pointer     */
-  FILE* UFID;    /* solution output file pointer */
+  sunrealtype t0;   /* initial time                 */
+  sunrealtype tf;   /* final time                   */
+  sunrealtype rtol; /* relative tolerance           */
+  sunrealtype atol; /* absolute tolerance           */
+  int order;        /* method order                 */
+  int explicit;     /* imex method or explicit      */
+  int global;       /* use global nonlinear solve   */
+  int fused;        /* use fused vector ops         */
+  int nout;         /* number of outputs            */
+  int monitor;      /* print solution to screen     */
+  int printtime;    /* print timing information     */
+  FILE* TFID;       /* time output file pointer     */
+  FILE* UFID;       /* solution output file pointer */
   FILE* VFID;
   FILE* WFID;
   const char* outputdir;
@@ -158,15 +158,15 @@ typedef struct
   N_Vector wmask;
 
   /* problem parameters */
-  sunindextype nvar;   /* number of species            */
-  sunindextype nx;     /* number of intervals globally */
-  sunindextype nxl;    /* number of intervals locally  */
-  sunindextype NEQ;    /* number of equations locally  */
-  sunrealtype dx;      /* mesh spacing                 */
-  sunrealtype xmax;    /* maximum x value              */
-  sunrealtype A;       /* concentration of species A   */
-  sunrealtype B;       /* w source rate                */
-  sunrealtype k1;      /* reaction rates               */
+  sunindextype nvar; /* number of species            */
+  sunindextype nx;   /* number of intervals globally */
+  sunindextype nxl;  /* number of intervals locally  */
+  sunindextype NEQ;  /* number of equations locally  */
+  sunrealtype dx;    /* mesh spacing                 */
+  sunrealtype xmax;  /* maximum x value              */
+  sunrealtype A;     /* concentration of species A   */
+  sunrealtype B;     /* w source rate                */
+  sunrealtype k1;    /* reaction rates               */
   sunrealtype k2;
   sunrealtype k3;
   sunrealtype k4;
@@ -242,7 +242,8 @@ static int SetupProblem(int argc, char* argv[], UserData udata,
 static void InputError(char* name);
 
 /* function to write solution to disk */
-static int WriteOutput(sunrealtype t, N_Vector y, UserData udata, UserOptions uopt);
+static int WriteOutput(sunrealtype t, N_Vector y, UserData udata,
+                       UserOptions uopt);
 
 /* function to free the problem data */
 static void FreeProblem(UserData udata, UserOptions uopt);
@@ -343,7 +344,10 @@ int main(int argc, char* argv[])
 
   /* Integrate in time */
   if (uopt->explicit) { retval = EvolveProblemExplicit(y, udata, uopt, ctx); }
-  else { retval = EvolveProblemIMEX(y, udata, uopt, ctx); }
+  else
+  {
+    retval = EvolveProblemIMEX(y, udata, uopt, ctx);
+  }
 
   if (check_retval(&retval, "Evolve", 1)) { MPI_Abort(comm, 1); }
 
@@ -375,13 +379,13 @@ static int EvolveProblemIMEX(N_Vector y, UserData udata, UserOptions uopt,
   SUNNonlinearSolver NLS = NULL; /* empty nonlinear solver structure */
   SUNLinearSolver LS     = NULL; /* empty linear solver structure    */
 
-  sunrealtype t, dtout, tout;     /* current/output time data     */
-  int retval;                /* reusable error-checking flag */
-  int iout;                  /* output counter               */
-  long int nst, nst_a, netf; /* step stats                   */
-  long int nfe, nfi;         /* RHS stats                    */
-  long int nni, ncnf;        /* nonlinear solver stats       */
-  long int nli, npre, npsol; /* linear solver stats          */
+  sunrealtype t, dtout, tout; /* current/output time data     */
+  int retval;                 /* reusable error-checking flag */
+  int iout;                   /* output counter               */
+  long int nst, nst_a, netf;  /* step stats                   */
+  long int nfe, nfi;          /* RHS stats                    */
+  long int nni, ncnf;         /* nonlinear solver stats       */
+  long int nli, npre, npsol;  /* linear solver stats          */
 
   /* Create the ARK timestepper module */
   arkode_mem = ARKStepCreate(Advection, Reaction, uopt->t0, y, ctx);
@@ -453,7 +457,8 @@ static int EvolveProblemIMEX(N_Vector y, UserData udata, UserOptions uopt,
   tout = t + dtout;
   iout = 0;
 
-  do {
+  do
+  {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { break; }
@@ -525,12 +530,12 @@ static int EvolveProblemIMEX(N_Vector y, UserData udata, UserOptions uopt,
 static int EvolveProblemExplicit(N_Vector y, UserData udata, UserOptions uopt,
                                  SUNContext ctx)
 {
-  void* arkode_mem = NULL;   /* empty ARKODE memory structure */
-  sunrealtype t, dtout, tout;     /* current/output time data      */
-  int retval;                /* reusable error-checking flag  */
-  int iout;                  /* output counter                */
-  long int nst, nst_a, netf; /* step stats                    */
-  long int nfe;              /* RHS stats                     */
+  void* arkode_mem = NULL;    /* empty ARKODE memory structure */
+  sunrealtype t, dtout, tout; /* current/output time data      */
+  int retval;                 /* reusable error-checking flag  */
+  int iout;                   /* output counter                */
+  long int nst, nst_a, netf;  /* step stats                    */
+  long int nfe;               /* RHS stats                     */
 
   /* Create the ERK timestepper module */
   arkode_mem = ERKStepCreate(AdvectionReaction, uopt->t0, y, ctx);
@@ -567,7 +572,8 @@ static int EvolveProblemExplicit(N_Vector y, UserData udata, UserOptions uopt,
   tout = t + dtout;
   iout = 0;
 
-  do {
+  do
+  {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { break; }
@@ -628,7 +634,9 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData udata, UserOptions uo
     w = SUNRsqrt(w * w / udata->nx);
     if (udata->myid == 0)
     {
-      printf("     %10.6" FSYM "   %10.6" FSYM "   %10.6" FSYM "   %10.6" FSYM "\n", t, u, v, w);
+      printf("     %10.6" FSYM "   %10.6" FSYM "   %10.6" FSYM "   %10.6" FSYM
+             "\n",
+             t, u, v, w);
     }
   }
 
@@ -642,7 +650,10 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData udata, UserOptions uo
     if (check_retval((void*)data, "N_VGetArrayPointer", 0)) { return 1; }
 
     /* output the times to disk */
-    if (udata->myid == 0 && uopt->TFID) { fprintf(uopt->TFID, " %.16" ESYM "\n", t); }
+    if (udata->myid == 0 && uopt->TFID)
+    {
+      fprintf(uopt->TFID, " %.16" ESYM "\n", t);
+    }
 
     /* output results to disk */
     for (i = 0; i < udata->nxl; i++)
@@ -676,14 +687,14 @@ static int SetIC(N_Vector y, UserData udata)
   /* Variable shortcuts */
   sunindextype nvar = udata->nvar;
   sunindextype N    = udata->nxl;
-  sunrealtype dx      = udata->dx;
-  sunrealtype A       = udata->A;
-  sunrealtype B       = udata->B;
-  sunrealtype k1      = udata->k1;
-  sunrealtype k2      = udata->k2;
-  sunrealtype k3      = udata->k3;
-  sunrealtype k4      = udata->k4;
-  int myid       = udata->myid;
+  sunrealtype dx    = udata->dx;
+  sunrealtype A     = udata->A;
+  sunrealtype B     = udata->B;
+  sunrealtype k1    = udata->k1;
+  sunrealtype k2    = udata->k2;
+  sunrealtype k3    = udata->k3;
+  sunrealtype k4    = udata->k4;
+  int myid          = udata->myid;
 
   /* Local variables */
   sunrealtype* data = NULL;
@@ -707,7 +718,8 @@ static int SetIC(N_Vector y, UserData udata)
   for (i = 0; i < N; i++)
   {
     x = (myid * N + i) * dx;
-    p = alpha * SUNRexp(-((x - mu) * (x - mu)) / (SUN_RCONST(2.0) * sigma * sigma));
+    p = alpha *
+        SUNRexp(-((x - mu) * (x - mu)) / (SUN_RCONST(2.0) * sigma * sigma));
     data[IDX(nvar, i, 0)] = us + p;
     data[IDX(nvar, i, 1)] = vs + p;
     data[IDX(nvar, i, 2)] = ws + p;
@@ -730,8 +742,8 @@ static int Advection(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   /* set variable shortcuts */
   sunindextype nvar = udata->nvar;
   sunindextype N    = udata->nxl;
-  sunrealtype dx      = udata->dx;
-  sunrealtype c       = udata->c;
+  sunrealtype dx    = udata->dx;
+  sunrealtype c     = udata->c;
 
   /* local variables */
   sunrealtype* Ydata  = NULL;
@@ -819,14 +831,14 @@ static int Reaction(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   /* set variable shortcuts */
   sunindextype nvar = udata->nvar;
   sunindextype N    = udata->nxl;
-  sunrealtype A       = udata->A;
-  sunrealtype B       = udata->B;
-  sunrealtype k1      = udata->k1;
-  sunrealtype k2      = udata->k2;
-  sunrealtype k3      = udata->k3;
-  sunrealtype k4      = udata->k4;
-  sunrealtype k5      = udata->k5;
-  sunrealtype k6      = udata->k6;
+  sunrealtype A     = udata->A;
+  sunrealtype B     = udata->B;
+  sunrealtype k1    = udata->k1;
+  sunrealtype k2    = udata->k2;
+  sunrealtype k3    = udata->k3;
+  sunrealtype k4    = udata->k4;
+  sunrealtype k5    = udata->k5;
+  sunrealtype k6    = udata->k6;
 
   /* local variables */
   sunrealtype* Ydata  = NULL;
@@ -877,7 +889,8 @@ static int Reaction(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 }
 
 /* Compute the RHS as Advection+Reaction. */
-static int AdvectionReaction(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
+static int AdvectionReaction(sunrealtype t, N_Vector y, N_Vector ydot,
+                             void* user_data)
 {
   int retval;
 
@@ -948,9 +961,9 @@ static int TaskLocalNlsResidual(N_Vector ycor, N_Vector F, void* arkode_mem)
 static int TaskLocalLSolve(N_Vector delta, void* arkode_mem)
 {
   /* local variables */
-  UserData udata = NULL;
-  sunrealtype* Zdata  = NULL;
-  sunrealtype* Bdata  = NULL;
+  UserData udata     = NULL;
+  sunrealtype* Zdata = NULL;
+  sunrealtype* Bdata = NULL;
   sunrealtype u, v, w;
   sunindextype i, j;
   int retval;
@@ -1047,9 +1060,7 @@ static int TaskLocalLSolve(N_Vector delta, void* arkode_mem)
 }
 
 static SUNNonlinearSolver_Type TaskLocalNewton_GetType(SUNNonlinearSolver NLS)
-{
-  return SUNNONLINEARSOLVER_ROOTFIND;
-}
+{ return SUNNONLINEARSOLVER_ROOTFIND; }
 
 static SUNErrCode TaskLocalNewton_Initialize(SUNNonlinearSolver NLS)
 {
@@ -1264,7 +1275,8 @@ static int PSetup(sunrealtype t, N_Vector y, N_Vector ydot, sunbooleantype jok,
       w = Ydata[IDX(nvar, i, 2)];
 
       /* all vars wrt u */
-      SM_ELEMENT_D(P, blocki, blocki)     = -k2 * w + SUN_RCONST(2.0) * k3 * u * v - k4;
+      SM_ELEMENT_D(P, blocki, blocki) = -k2 * w + SUN_RCONST(2.0) * k3 * u * v -
+                                        k4;
       SM_ELEMENT_D(P, blocki + 1, blocki) = k2 * w - SUN_RCONST(2.0) * k3 * u * v;
       SM_ELEMENT_D(P, blocki + 2, blocki) = -k2 * w;
 
@@ -1287,14 +1299,18 @@ static int PSetup(sunrealtype t, N_Vector y, N_Vector ydot, sunbooleantype jok,
     /* indicate that J is now current */
     *jcurPtr = 1;
   }
-  else { *jcurPtr = 0; }
+  else
+  {
+    *jcurPtr = 0;
+  }
 
   return (0);
 }
 
 /* Solves Pz = r */
-static int PSolve(sunrealtype t, N_Vector y, N_Vector ydot, N_Vector r, N_Vector z,
-                  sunrealtype gamma, sunrealtype delta, int lr, void* user_data)
+static int PSolve(sunrealtype t, N_Vector y, N_Vector ydot, N_Vector r,
+                  N_Vector z, sunrealtype gamma, sunrealtype delta, int lr,
+                  void* user_data)
 {
   /* local variables */
   UserData udata = (UserData)user_data;
@@ -1351,7 +1367,8 @@ static int ExchangeBCOnly(N_Vector y, UserData udata)
     {
       udata->Wsend[IDX(nvar, 0, var)] = Ydata[IDX(nvar, 0, var)];
     }
-    ierr = MPI_Isend(udata->Wsend, nvar, MPI_SUNREALTYPE, last, 0, udata->comm, &reqS);
+    ierr = MPI_Isend(udata->Wsend, nvar, MPI_SUNREALTYPE, last, 0, udata->comm,
+                     &reqS);
   }
 
   /* wait for exchange to finish */
@@ -1385,14 +1402,14 @@ static int ExchangeAllStart(N_Vector y, UserData udata)
   int retval;
 
   /* shortcuts */
-  sunrealtype c    = udata->c;
+  sunrealtype c  = udata->c;
   sunindextype N = udata->nxl;
-  int nvar    = udata->nvar;
-  int myid    = udata->myid;
-  int first   = 0;
-  int last    = udata->nprocs - 1;
-  int ipW     = (myid == first) ? last : udata->myid - 1; /* periodic BC */
-  int ipE     = (myid == last) ? first : udata->myid + 1; /* periodic BC */
+  int nvar       = udata->nvar;
+  int myid       = udata->myid;
+  int first      = 0;
+  int last       = udata->nprocs - 1;
+  int ipW        = (myid == first) ? last : udata->myid - 1; /* periodic BC */
+  int ipE        = (myid == last) ? first : udata->myid + 1; /* periodic BC */
 
   /* extract the data */
   sunrealtype* Ydata = N_VGetArrayPointer(y);
@@ -1470,8 +1487,8 @@ static int SetupProblem(int argc, char* argv[], UserData udata,
   /* local variables */
   int i, retval;
   sunrealtype* data = NULL; /* data pointer           */
-  N_Vector tmp = NULL; /* temporary local vector */
-  char fname[MXSTR];   /* output file name       */
+  N_Vector tmp      = NULL; /* temporary local vector */
+  char fname[MXSTR];        /* output file name       */
 
   /* MPI variables */
   udata->comm = MPI_COMM_WORLD;
@@ -1481,11 +1498,11 @@ static int SetupProblem(int argc, char* argv[], UserData udata,
   /* default problem parameters */
   const sunindextype nvar = 3;   /* number of solution fields               */
   const sunindextype NX   = 100; /* global spatial mesh size (NX intervals) */
-  const sunrealtype xmax    = 1.0; /* maximum x value          */
-  const sunrealtype A       = 1.0; /* problem parameters                      */
-  const sunrealtype B       = 3.5;
-  const sunrealtype k       = 1.0;
-  const sunrealtype c       = 0.01;
+  const sunrealtype xmax  = 1.0; /* maximum x value          */
+  const sunrealtype A     = 1.0; /* problem parameters                      */
+  const sunrealtype B     = 3.5;
+  const sunrealtype k     = 1.0;
+  const sunrealtype c     = 0.01;
 
   /* set default user data values */
   udata->nvar  = nvar;
@@ -1510,17 +1527,17 @@ static int SetupProblem(int argc, char* argv[], UserData udata,
   udata->uopt  = uopt;
 
   /* set default integrator options */
-  uopt->order     = 3;      /* method order             */
-  uopt->explicit  = 0;      /* imex or explicit         */
+  uopt->order     = 3;                  /* method order             */
+  uopt->explicit  = 0;                  /* imex or explicit         */
   uopt->t0        = SUN_RCONST(0.0);    /* initial time             */
   uopt->tf        = SUN_RCONST(10.0);   /* final time               */
   uopt->rtol      = SUN_RCONST(1.0e-6); /* relative tolerance       */
   uopt->atol      = SUN_RCONST(1.0e-9); /* absolute tolerance       */
-  uopt->global    = 0;      /* use global NLS           */
-  uopt->fused     = 0;      /* use fused vector ops     */
-  uopt->monitor   = 0;      /* print solution to screen */
-  uopt->printtime = 0;      /* print timing             */
-  uopt->nout      = 40;     /* number of output times   */
+  uopt->global    = 0;                  /* use global NLS           */
+  uopt->fused     = 0;                  /* use fused vector ops     */
+  uopt->monitor   = 0;                  /* print solution to screen */
+  uopt->printtime = 0;                  /* print timing             */
+  uopt->nout      = 40;                 /* number of output times   */
   uopt->TFID      = NULL;
   uopt->UFID      = NULL;
   uopt->VFID      = NULL;
@@ -1727,8 +1744,9 @@ static int SetupProblem(int argc, char* argv[], UserData udata,
     printf("\n1D Advection-Reaction Test Problem\n\n");
     printf("Number of Processors = %li\n", (long int)udata->nprocs);
     printf("Mesh Info:\n");
-    printf("  NX = %lli, NXL = %lli, dx = %.6" FSYM ", xmax = %.6" FSYM "\n", (long long int)udata->nx,
-           (long long int)udata->nxl, udata->dx, udata->xmax);
+    printf("  NX = %lli, NXL = %lli, dx = %.6" FSYM ", xmax = %.6" FSYM "\n",
+           (long long int)udata->nx, (long long int)udata->nxl, udata->dx,
+           udata->xmax);
     printf("Problem Parameters:\n");
     printf("  A = %" GSYM "\n", udata->A);
     printf("  B = %" GSYM "\n", udata->B);

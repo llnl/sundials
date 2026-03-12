@@ -140,9 +140,7 @@ SUNErrCode SUNMatrix_OneMklDense_CopyFromDevice(SUNMatrix A, sunrealtype* h_data
  * ---------------------------------------------------------------------------*/
 
 static inline SUNMatrix_ID SUNMatGetID_OneMklDense(SUNMatrix A)
-{
-  return SUNMATRIX_ONEMKLDENSE;
-}
+{ return SUNMATRIX_ONEMKLDENSE; }
 
 SUNDIALS_EXPORT
 SUNMatrix SUNMatClone_OneMklDense(SUNMatrix A);

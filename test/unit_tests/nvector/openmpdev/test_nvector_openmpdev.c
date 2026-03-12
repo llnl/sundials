@@ -229,7 +229,10 @@ int main(int argc, char* argv[])
 
   /* Print result */
   if (fails) { printf("FAIL: NVector module failed %i tests \n\n", fails); }
-  else { printf("SUCCESS: NVector module passed all tests \n\n"); }
+  else
+  {
+    printf("SUCCESS: NVector module passed all tests \n\n");
+  }
 
   Test_Finalize();
   return (fails);
@@ -332,13 +335,14 @@ sunbooleantype has_data(N_Vector X)
 {
   sunrealtype* Xdata = N_VGetHostArrayPointer_OpenMPDEV(X);
   if (Xdata == NULL) { return SUNFALSE; }
-  else { return SUNTRUE; }
+  else
+  {
+    return SUNTRUE;
+  }
 }
 
 void set_element(N_Vector X, sunindextype i, sunrealtype val)
-{
-  set_element_range(X, i, i, val);
-}
+{ set_element_range(X, i, i, val); }
 
 void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
                        sunrealtype val)
@@ -354,8 +358,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
 #pragma omp target map(to : is, ie, val) is_device_ptr(xdev) device(dev)
 #pragma omp teams distribute parallel for schedule(static, 1)
 
-    for (i = is; i <= ie; i++) { xdev[i] = val; }
-
+  for (i = is; i <= ie; i++) { xdev[i] = val; }
 }
 
 sunrealtype get_element(N_Vector X, sunindextype i)

@@ -56,7 +56,8 @@
 #include <nvector/nvector_serial.h>
 
 /* Value of the natural number e */
-#define EVAL SUN_RCONST(2.718281828459045235360287471352662497757247093699959574966)
+#define EVAL \
+  SUN_RCONST(2.718281828459045235360287471352662497757247093699959574966)
 
 /* Convince macros for using precision-specific format specifiers */
 #if defined(SUNDIALS_EXTENDED_PRECISION)
@@ -156,7 +157,10 @@ int main(int argc, char* argv[])
     printf("   fixed h    = %.1" ESYM "\n", fixed_h);
   }
   if (relax) { printf("   relaxation = ON\n"); }
-  else { printf("   relaxation = OFF\n"); }
+  else
+  {
+    printf("   relaxation = OFF\n");
+  }
   printf("\n");
 
   /* ------------ *

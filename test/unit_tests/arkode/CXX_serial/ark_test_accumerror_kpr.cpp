@@ -413,7 +413,8 @@ static int adaptive_run(void* arkode_mem, N_Vector y, sunrealtype T0,
                            (abstol + rtols[irtol] * abs(utrue(t)));
         sunrealtype vdsm = abs(ydata[1] - vtrue(t, udata)) /
                            (abstol + rtols[irtol] * abs(vtrue(t, udata)));
-        dsm[ipart] = rtols[irtol] * SUNRsqrt(SUN_RCONST(0.5) * (udsm * udsm + vdsm * vdsm));
+        dsm[ipart] = rtols[irtol] *
+                     SUNRsqrt(SUN_RCONST(0.5) * (udsm * udsm + vdsm * vdsm));
         cout << "  rtol " << rtols[irtol] << "  rk_type " << rk_type
              << "  order " << order << "  acc " << accum_types[iaccum] << "  t "
              << t << "  dsm " << dsm[ipart] << "  dsm_est " << dsm_est[ipart]
@@ -524,7 +525,8 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0,
                            (abstol + reltol * abs(utrue(t)));
         sunrealtype vdsm = abs(ydata[1] - vtrue(t, udata)) /
                            (abstol + reltol * abs(vtrue(t, udata)));
-        dsm[ipart] = reltol * SUNRsqrt(SUN_RCONST(0.5) * (udsm * udsm + vdsm * vdsm));
+        dsm[ipart] = reltol *
+                     SUNRsqrt(SUN_RCONST(0.5) * (udsm * udsm + vdsm * vdsm));
         cout << "  h " << hvals[ih] << "  rk_type " << rk_type << "  order "
              << order << "  acc " << accum_types[iaccum] << "  t " << t
              << "  dsm " << dsm[ipart] << "  dsm_est " << dsm_est[ipart]
@@ -618,7 +620,8 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0,
                          (abstol + reltol * abs(utrue(t)));
       sunrealtype vdsm = abs(ydata[1] - vtrue(t, udata)) /
                          (abstol + reltol * abs(vtrue(t, udata)));
-      dsm[ipart] = reltol * SUNRsqrt(SUN_RCONST(0.5) * (udsm * udsm + vdsm * vdsm));
+      dsm[ipart] = reltol *
+                   SUNRsqrt(SUN_RCONST(0.5) * (udsm * udsm + vdsm * vdsm));
       cout << "  h " << hvals[ih] << "  rk_type " << rk_type << "  order "
            << order << "  acc " << 2 << "  t " << t << "  dsm " << dsm[ipart]
            << "  dsm_est " << dsm_est[ipart] << "  nsteps " << Nsteps[ipart]
@@ -635,15 +638,14 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0,
 static sunrealtype p(sunrealtype t) { return (SUNRcos(t)); }
 
 static sunrealtype q(sunrealtype t, UserData& udata)
-{
-  return (SUNRcos(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))));
-}
+{ return (SUNRcos(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO))))); }
 
 static sunrealtype pdot(sunrealtype t) { return (-SUNRsin(t)); }
 
 static sunrealtype qdot(sunrealtype t, UserData& udata)
 {
-  return (-SUNRsin(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))) * udata.omega *
+  return (-SUNRsin(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))) *
+          udata.omega *
           (ONE + SUNRexp(-(t - TWO) * (t - TWO)) -
            t * TWO * (t - TWO) * (SUNRexp(-(t - TWO) * (t - TWO)))));
 }
@@ -651,9 +653,7 @@ static sunrealtype qdot(sunrealtype t, UserData& udata)
 static sunrealtype utrue(sunrealtype t) { return (SUNRsqrt(TWO + p(t))); }
 
 static sunrealtype vtrue(sunrealtype t, UserData& udata)
-{
-  return (SUNRsqrt(TWO + q(t, udata)));
-}
+{ return (SUNRsqrt(TWO + q(t, udata))); }
 
 static int Ytrue(sunrealtype t, N_Vector y, UserData& udata)
 {

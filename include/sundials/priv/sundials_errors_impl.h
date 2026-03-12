@@ -243,7 +243,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheck(expr, code)                                              \
-  do {                                                                    \
+  do                                                                      \
+  {                                                                       \
     if (SUNHintFalse(!(expr)))                                            \
     {                                                                     \
       SUNHandleErrWithFmtMsg(__LINE__, __func__, __FILE__, "expected %s", \
@@ -268,7 +269,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckNoRet(expr, code)                                         \
-  do {                                                                    \
+  do                                                                      \
+  {                                                                       \
     if (SUNHintFalse(!(expr)))                                            \
     {                                                                     \
       SUNHandleErrWithFmtMsg(__LINE__, __func__, __FILE__, "expected %s", \
@@ -292,7 +294,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckNull(expr, code)                                          \
-  do {                                                                    \
+  do                                                                      \
+  {                                                                       \
     if (SUNHintFalse(!(expr)))                                            \
     {                                                                     \
       SUNHandleErrWithFmtMsg(__LINE__, __func__, __FILE__, "expected %s", \
@@ -317,7 +320,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckVoid(expr, code)                                          \
-  do {                                                                    \
+  do                                                                      \
+  {                                                                       \
     if (SUNHintFalse(!(expr)))                                            \
     {                                                                     \
       SUNHandleErrWithFmtMsg(__LINE__, __func__, __FILE__, "expected %s", \
@@ -340,7 +344,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckCallMsg(call, msg)                           \
-  do {                                                       \
+  do                                                         \
+  {                                                          \
     SUNErrCode sun_chk_call_err_code_ = call;                \
     if (SUNHintFalse(sun_chk_call_err_code_ < 0))            \
     {                                                        \
@@ -364,7 +369,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckCallNoRetMsg(call, msg)                      \
-  do {                                                       \
+  do                                                         \
+  {                                                          \
     SUNErrCode sun_chk_call_err_code_ = call;                \
     if (SUNHintFalse(sun_chk_call_err_code_ < 0))            \
     {                                                        \
@@ -387,7 +393,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckCallNullMsg(call, msg)                       \
-  do {                                                       \
+  do                                                         \
+  {                                                          \
     SUNErrCode sun_chk_call_err_code_ = call;                \
     if (SUNHintFalse(sun_chk_call_err_code_ < 0))            \
     {                                                        \
@@ -411,7 +418,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckCallVoidMsg(call, msg)                       \
-  do {                                                       \
+  do                                                         \
+  {                                                          \
     SUNErrCode sun_chk_call_err_code_ = call;                \
     if (SUNHintFalse(sun_chk_call_err_code_ < 0))            \
     {                                                        \
@@ -436,10 +444,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
    If an error occurred, then it will log the error, set the last_err
    value, and call the error handler, **and then returns the code**. */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
-#define SUNCheckLastErrMsg(msg)                              \
-  do {                                                       \
-    SUNCheckCallMsg(SUNContext_PeekLastError(SUNCTX_), msg); \
-  }                                                          \
+#define SUNCheckLastErrMsg(msg)                                   \
+  do { SUNCheckCallMsg(SUNContext_PeekLastError(SUNCTX_), msg); } \
   while (0)
 
 /*
@@ -449,10 +455,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 
    :param msg: an error message
 */
-#define SUNCheckLastErrNoRetMsg(msg)                              \
-  do {                                                            \
-    SUNCheckCallNoRetMsg(SUNContext_PeekLastError(SUNCTX_), msg); \
-  }                                                               \
+#define SUNCheckLastErrNoRetMsg(msg)                                   \
+  do { SUNCheckCallNoRetMsg(SUNContext_PeekLastError(SUNCTX_), msg); } \
   while (0)
 
 /*
@@ -462,10 +466,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 
    :param msg: an error message
 */
-#define SUNCheckLastErrNullMsg(msg)                              \
-  do {                                                           \
-    SUNCheckCallNullMsg(SUNContext_PeekLastError(SUNCTX_), msg); \
-  }                                                              \
+#define SUNCheckLastErrNullMsg(msg)                                   \
+  do { SUNCheckCallNullMsg(SUNContext_PeekLastError(SUNCTX_), msg); } \
   while (0)
 
 /*
@@ -475,10 +477,8 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 
    :param msg: an error message
 */
-#define SUNCheckLastErrVoidMsg(msg)                              \
-  do {                                                           \
-    SUNCheckCallVoidMsg(SUNContext_PeekLastError(SUNCTX_), msg); \
-  }                                                              \
+#define SUNCheckLastErrVoidMsg(msg)                                   \
+  do { SUNCheckCallVoidMsg(SUNContext_PeekLastError(SUNCTX_), msg); } \
   while (0)
 #else
 #define SUNCheckLastErrNoRetMsg(msg)

@@ -88,9 +88,7 @@ static void VaxpyVectorArray_OpenMP(int nvec, sunrealtype a, N_Vector* X,
  * from abstract N_Vector interface.
  */
 N_Vector_ID N_VGetVectorID_OpenMP(SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
-  return SUNDIALS_NVEC_OPENMP;
-}
+{ return SUNDIALS_NVEC_OPENMP; }
 
 /* ----------------------------------------------------------------------------
  * Function to create a new empty vector
@@ -402,9 +400,7 @@ void N_VSpace_OpenMP(N_Vector v, sunindextype* lrw, sunindextype* liw)
  */
 
 sunrealtype* N_VGetArrayPointer_OpenMP(N_Vector v)
-{
-  return ((sunrealtype*)NV_DATA_OMP(v));
-}
+{ return ((sunrealtype*)NV_DATA_OMP(v)); }
 
 /* ----------------------------------------------------------------------------
  * Set vector data pointer
@@ -904,11 +900,17 @@ sunbooleantype N_VInvTest_OpenMP(N_Vector x, N_Vector z)
   for (i = 0; i < N; i++)
   {
     if (xd[i] == ZERO) { val = ONE; }
-    else { zd[i] = ONE / xd[i]; }
+    else
+    {
+      zd[i] = ONE / xd[i];
+    }
   }
 
   if (val > ZERO) { return (SUNFALSE); }
-  else { return (SUNTRUE); }
+  else
+  {
+    return (SUNTRUE);
+  }
 }
 
 /* ----------------------------------------------------------------------------

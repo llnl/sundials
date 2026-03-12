@@ -306,7 +306,8 @@ static int ans(sunrealtype t, N_Vector ytrue, void* user_data)
   /* fill in the solution vector */
   NV_Ith_S(ytrue, 0) = SUNRcos(c1 * t);
   NV_Ith_S(ytrue, 1) = SUNRsin(c1 * t);
-  NV_Ith_S(ytrue, 2) = c2 * SUNRexp(-t) - c3 * SUNRcos(c1 * t) + c4 * SUNRsin(c1 * t);
+  NV_Ith_S(ytrue, 2) = c2 * SUNRexp(-t) - c3 * SUNRcos(c1 * t) +
+                       c4 * SUNRsin(c1 * t);
 
   /* Return with success */
   return 0;

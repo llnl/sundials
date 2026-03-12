@@ -1969,7 +1969,10 @@ int IDAGetQuadB(void* ida_mem, int which, sunrealtype* tret, N_Vector qB)
     N_VScale(ONE, IDAB_mem->IDA_mem->ida_phiQ[0], qB);
     *tret = IDAB_mem->ida_tout;
   }
-  else { flag = IDAGetQuad(ida_memB, tret, qB); }
+  else
+  {
+    flag = IDAGetQuad(ida_memB, tret, qB);
+  }
   return (flag);
 }
 
@@ -2432,7 +2435,8 @@ static int IDAAdataStore(IDAMem IDA_mem, IDAckpntMem ck_mem)
 
   /* Run IDASolve in IDA_ONE_STEP mode to set following structures in dt_mem[i]. */
   i = 1;
-  do {
+  do
+  {
     flag = IDASolve(IDA_mem, ck_mem->ck_t1, &t, IDAADJ_mem->ia_yyTmp,
                     IDAADJ_mem->ia_ypTmp, IDA_ONE_STEP);
     if (flag < 0) { return (IDA_FWD_FAIL); }
@@ -3160,7 +3164,10 @@ static sunbooleantype IDAApolynomialMalloc(IDAMem IDA_mem)
           allocOK = SUNFALSE;
         }
       }
-      else { content->ySd = NULL; }
+      else
+      {
+        content->ySd = NULL;
+      }
     }
 
     dt_mem[i]->content = content;
@@ -3647,11 +3654,17 @@ static int IDAAfindIndex(IDAMem ida_mem, sunrealtype t, long int* index,
     {
       if (*index == 0) { break; }
       if (sign * (t - dt_mem[*index - 1]->t) <= ZERO) { (*index)--; }
-      else { break; }
+      else
+      {
+        break;
+      }
     }
 
     if (*index == 0) { IDAADJ_mem->ia_ilast = 1; }
-    else { IDAADJ_mem->ia_ilast = *index; }
+    else
+    {
+      IDAADJ_mem->ia_ilast = *index;
+    }
 
     if (*index == 0)
     {
@@ -3672,7 +3685,10 @@ static int IDAAfindIndex(IDAMem ida_mem, sunrealtype t, long int* index,
     for (;;)
     {
       if (sign * (t - dt_mem[*index]->t) > ZERO) { (*index)++; }
-      else { break; }
+      else
+      {
+        break;
+      }
     }
 
     IDAADJ_mem->ia_ilast = *index;

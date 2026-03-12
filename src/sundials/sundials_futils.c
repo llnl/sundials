@@ -32,7 +32,10 @@ SUNErrCode SUNFileOpen(const char* filename, const char* mode, FILE** fp_out)
   {
     if (!strcmp(filename, "stdout")) { fp = stdout; }
     else if (!strcmp(filename, "stderr")) { fp = stderr; }
-    else { fp = fopen(filename, mode); }
+    else
+    {
+      fp = fopen(filename, mode);
+    }
   }
 
   if (!fp) { err = SUN_ERR_FILE_OPEN; }
@@ -42,9 +45,7 @@ SUNErrCode SUNFileOpen(const char* filename, const char* mode, FILE** fp_out)
 }
 
 SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp_out)
-{
-  return SUNFileOpen(filename, mode, fp_out);
-}
+{ return SUNFileOpen(filename, mode, fp_out); }
 
 /* Close a file pointer with the given file name. */
 SUNErrCode SUNFileClose(FILE** fp_ptr)

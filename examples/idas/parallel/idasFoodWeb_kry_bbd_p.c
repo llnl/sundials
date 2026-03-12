@@ -122,7 +122,7 @@
 #define NUM_SPECIES 2 * NPREY
 
 #define PI     SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
-#define FOURPI (SUN_RCONST(4.0) * PI)      /* 4 pi */
+#define FOURPI (SUN_RCONST(4.0) * PI) /* 4 pi */
 
 #define MXSUB   10 /* Number of x mesh points per processor subgrid */
 #define MYSUB   10 /* Number of y mesh points per processor subgrid */
@@ -396,7 +396,10 @@ int main(int argc, char* argv[])
     PrintOutput(ida_mem, cc, tret, webdata, comm);
 
     if (iout < 3) { tout *= TMULT; }
-    else { tout += TADD; }
+    else
+    {
+      tout += TADD;
+    }
   }
 
   /* On PE 0, print final set of statistics. */
@@ -1144,7 +1147,10 @@ static int reslocal(sunindextype Nlocal, sunrealtype tt, N_Vector cc,
                   ratesxy[is];
 
         if (is < np) { resxy[is] = cpxy[is] - rhs[is]; }
-        else { resxy[is] = -rhs[is]; }
+        else
+        {
+          resxy[is] = -rhs[is];
+        }
       }
     }
   }

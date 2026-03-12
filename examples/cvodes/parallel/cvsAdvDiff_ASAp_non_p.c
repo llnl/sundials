@@ -431,12 +431,18 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   {
     MPI_Recv(&uLeft, 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm, &status);
   }
-  else { uLeft = ZERO; }
+  else
+  {
+    uLeft = ZERO;
+  }
   if (my_pe != last_pe)
   {
     MPI_Recv(&uRight, 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm, &status);
   }
-  else { uRight = ZERO; }
+  else
+  {
+    uRight = ZERO;
+  }
 
   /* Loop over all grid points in current process. */
   for (i = 0; i < my_length; i++)
@@ -762,13 +768,15 @@ static void PrintOutput(sunrealtype g_val, N_Vector uB, UserData data)
     for (i = 0; i < NEQ; i++)
       printf("  [%2ld]: %8Le\n", (long int)i + 1, mu[i]);
 #else
-    for (i = 0; i < NEQ; i++)
-      printf("  [%2ld]: %8e\n", (long int)i + 1, mu[i]);
+    for (i = 0; i < NEQ; i++) printf("  [%2ld]: %8e\n", (long int)i + 1, mu[i]);
 #endif
 
     free(mu);
   }
-  else { MPI_Send(uBdata, (int)local_N, MPI_SUNREALTYPE, npes, 0, comm); }
+  else
+  {
+    MPI_Send(uBdata, (int)local_N, MPI_SUNREALTYPE, npes, 0, comm);
+  }
 }
 
 /*

@@ -100,7 +100,10 @@ int main(int argc, char* argv[])
     if (myid == 0)
     {
       if (i == UNMANAGED) { printf("Testing RAJA N_Vector \n"); }
-      else { printf("\nTesting RAJA N_Vector with managed memory \n"); }
+      else
+      {
+        printf("\nTesting RAJA N_Vector with managed memory \n");
+      }
       printf("Vector global length %ld \n", (long int)global_length);
       printf("MPI processes %d \n", nprocs);
     }

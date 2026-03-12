@@ -263,16 +263,17 @@ sunbooleantype has_data(N_Vector X)
 {
   if (X->content == NULL) { return SUNFALSE; }
   if (N_VGetVector_Trilinos(X).getRawPtr() == nullptr) { return SUNFALSE; }
-  else { return SUNTRUE; }
+  else
+  {
+    return SUNTRUE;
+  }
 }
 
 /*
  * Sets ith element of vector X to val
  */
 void set_element(N_Vector X, sunindextype i, sunrealtype val)
-{
-  set_element_range(X, i, i, val);
-}
+{ set_element_range(X, i, i, val); }
 
 /*
  * Sets elements [is, ie] of vector X to val
@@ -337,6 +338,4 @@ double max_time(N_Vector X, double time)
   return maxtime;
 }
 
-void sync_device(N_Vector x)
-{ /* Kokkos should take care of this */
-}
+void sync_device(N_Vector x) { /* Kokkos should take care of this */ }

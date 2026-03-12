@@ -58,7 +58,8 @@
 #include <sunmatrix/sunmatrix_dense.h>
 
 /* Value of the natural number e */
-#define EVAL SUN_RCONST(2.718281828459045235360287471352662497757247093699959574966)
+#define EVAL \
+  SUN_RCONST(2.718281828459045235360287471352662497757247093699959574966)
 
 /* Convince macros for using precision-specific format specifiers */
 #if defined(SUNDIALS_FLOAT128_PRECISION)
@@ -160,7 +161,10 @@ int main(int argc, char* argv[])
 
   printf("\nConserved Exponential Entropy problem:\n");
   if (implicit) { printf("   method     = DIRK\n"); }
-  else { printf("   method     = ERK\n"); }
+  else
+  {
+    printf("   method     = ERK\n");
+  }
   printf("   reltol     = %.1" ESYM "\n", reltol);
   printf("   abstol     = %.1" ESYM "\n", abstol);
   if (fixed_h > SUN_RCONST(0.0))
@@ -168,7 +172,10 @@ int main(int argc, char* argv[])
     printf("   fixed h    = %.1" ESYM "\n", fixed_h);
   }
   if (relax) { printf("   relaxation = ON\n"); }
-  else { printf("   relaxation = OFF\n"); }
+  else
+  {
+    printf("   relaxation = OFF\n");
+  }
   printf("\n");
 
   /* ------------ *
@@ -197,7 +204,10 @@ int main(int argc, char* argv[])
 
   /* Initialize ARKStep */
   if (implicit) { arkode_mem = ARKStepCreate(NULL, f, t0, y, ctx); }
-  else { arkode_mem = ARKStepCreate(f, NULL, t0, y, ctx); }
+  else
+  {
+    arkode_mem = ARKStepCreate(f, NULL, t0, y, ctx);
+  }
   if (check_ptr(arkode_mem, "ARKStepCreate")) { return 1; }
 
   /* Set order */

@@ -45,7 +45,7 @@ struct SUNAdjointCheckpointScheme_Fixed_Content_
 typedef struct SUNAdjointCheckpointScheme_Fixed_Content_*
   SUNAdjointCheckpointScheme_Fixed_Content;
 
-#define GET_CONTENT(S)       ((SUNAdjointCheckpointScheme_Fixed_Content)S->content)
+#define GET_CONTENT(S) ((SUNAdjointCheckpointScheme_Fixed_Content)S->content)
 #define IMPL_MEMBER(S, prop) (GET_CONTENT(S)->prop)
 
 SUNErrCode SUNAdjointCheckpointScheme_Create_Fixed(
@@ -96,7 +96,10 @@ SUNErrCode SUNAdjointCheckpointScheme_NeedsSaving_Fixed(
   SUNFunctionBegin(self->sunctx);
 
   if (!(step_num % IMPL_MEMBER(self, interval))) { *yes_or_no = SUNTRUE; }
-  else { *yes_or_no = SUNFALSE; }
+  else
+  {
+    *yes_or_no = SUNFALSE;
+  }
 
   return SUN_SUCCESS;
 }
@@ -127,7 +130,10 @@ SUNErrCode SUNAdjointCheckpointScheme_InsertVector_Fixed(
                                            step_data_node));
     free(key);
   }
-  else { step_data_node = IMPL_MEMBER(self, current_insert_step_node); }
+  else
+  {
+    step_data_node = IMPL_MEMBER(self, current_insert_step_node);
+  }
 
   /* Add the state data as a leaf node in the step node's list of children. */
   SUNDataNode solution_node = NULL;
@@ -174,9 +180,15 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector_Fixed(
     {
       step_data_node = NULL;
     }
-    else { SUNCheckCall(errcode); }
+    else
+    {
+      SUNCheckCall(errcode);
+    }
   }
-  else { step_data_node = IMPL_MEMBER(self, current_load_step_node); }
+  else
+  {
+    step_data_node = IMPL_MEMBER(self, current_load_step_node);
+  }
 
   if (!step_data_node)
   {
@@ -196,7 +208,10 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector_Fixed(
                      stage_num);
     errcode = SUNDataNode_GetChild(step_data_node, stage_num, &solution_node);
     if (errcode == SUN_ERR_DATANODE_NODENOTFOUND) { solution_node = NULL; }
-    else { SUNCheckCall(errcode); }
+    else
+    {
+      SUNCheckCall(errcode);
+    }
   }
   else
   {
@@ -211,7 +226,10 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector_Fixed(
       errcode = SUNDataNode_RemoveChild(step_data_node, stage_num,
                                         &solution_node);
       if (errcode == SUN_ERR_DATANODE_NODENOTFOUND) { solution_node = NULL; }
-      else { SUNCheckCall(errcode); }
+      else
+      {
+        SUNCheckCall(errcode);
+      }
     }
 
     /* If we just removed the last stage (so has_children==false),

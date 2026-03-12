@@ -146,7 +146,10 @@ int main(int argc, char* argv[])
 
   // Retrieve the command-line options:  method Npart G e omega
   if (argc > 1) { method = argv[1]; }
-  else { method = "ARKODE_MRI_GARK_ERK33a"; }
+  else
+  {
+    method = "ARKODE_MRI_GARK_ERK33a";
+  }
   if (argc > 2) udata.Npart = atoi(argv[2]);
   if (argc > 3) udata.G = SUNStrToReal(argv[3]);
   if (argc > 4) udata.e = SUNStrToReal(argv[4]);
@@ -197,7 +200,10 @@ int main(int argc, char* argv[])
   cout << "    MRI method: " << method;
   if (imex) { cout << " (ImEx)" << endl; }
   else if (implicit) { cout << " (implicit)" << endl; }
-  else { cout << " (explicit)" << endl; }
+  else
+  {
+    cout << " (explicit)" << endl;
+  }
 
   //
   // Problem Setup
@@ -234,7 +240,10 @@ int main(int argc, char* argv[])
   {
     mristep_mem = MRIStepCreate(NULL, fn, T0, y, inner_stepper, ctx);
   }
-  else { mristep_mem = MRIStepCreate(fn, NULL, T0, y, inner_stepper, ctx); }
+  else
+  {
+    mristep_mem = MRIStepCreate(fn, NULL, T0, y, inner_stepper, ctx);
+  }
   if (check_retval((void*)mristep_mem, "MRIStepCreate", 0)) return 1;
   MRIStepCoupling C = MRIStepCoupling_LoadTableByName(method.c_str());
   if (check_retval((void*)C, "MRIStepCoupling_LoadTableByName", 0)) return 1;
@@ -251,7 +260,10 @@ int main(int argc, char* argv[])
     retval = ARKodeSetLinearSolver(mristep_mem, LS, A);
     if (check_retval(&retval, "ARKodeSetLinearSolver", 1)) return 1;
     if (imex) { retval = ARKodeSetJacFn(mristep_mem, Ji); }
-    else { retval = ARKodeSetJacFn(mristep_mem, Jn); }
+    else
+    {
+      retval = ARKodeSetJacFn(mristep_mem, Jn);
+    }
     if (check_retval(&retval, "ARKodeSetJacFn", 1)) return 1;
     retval = ARKodeSetJacEvalFrequency(mristep_mem, 1);
     if (check_retval(&retval, "ARKodeSetJacEvalFrequency", 1)) return 1;
@@ -485,15 +497,14 @@ static int run_test(void* mristep_mem, N_Vector y, sunrealtype T0,
 static sunrealtype p(sunrealtype t) { return (SUNRcos(t)); }
 
 static sunrealtype q(sunrealtype t, UserData& udata)
-{
-  return (SUNRcos(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))));
-}
+{ return (SUNRcos(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO))))); }
 
 static sunrealtype pdot(sunrealtype t) { return (-SUNRsin(t)); }
 
 static sunrealtype qdot(sunrealtype t, UserData& udata)
 {
-  return (-SUNRsin(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))) * udata.omega *
+  return (-SUNRsin(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))) *
+          udata.omega *
           (ONE + SUNRexp(-(t - TWO) * (t - TWO)) -
            t * TWO * (t - TWO) * (SUNRexp(-(t - TWO) * (t - TWO)))));
 }
@@ -501,9 +512,7 @@ static sunrealtype qdot(sunrealtype t, UserData& udata)
 static sunrealtype utrue(sunrealtype t) { return (SUNRsqrt(TWO + p(t))); }
 
 static sunrealtype vtrue(sunrealtype t, UserData& udata)
-{
-  return (SUNRsqrt(TWO + q(t, udata)));
-}
+{ return (SUNRsqrt(TWO + q(t, udata))); }
 
 static int Ytrue(sunrealtype t, N_Vector y, UserData& udata)
 {

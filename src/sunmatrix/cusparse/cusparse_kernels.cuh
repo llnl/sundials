@@ -115,9 +115,9 @@ __global__ void matvecBCSR(I m, I nblocks, I blocknnz, const T* A,
       I rownnz = rowptr[row + 1] - tmp; // number of nnz in this row
       I idxl   = tmp; // local (to this block) starting nonzero index
       I idxg   = block * blocknnz +
-               tmp; // global (overall matrix) starting nonzero index
-      I rowg = block * m + row; // global (overall matrix) row
-      I colg = block * m;       // global (overall matrix) starting column
+                 tmp; // global (overall matrix) starting nonzero index
+      I rowg   = block * m + row; // global (overall matrix) row
+      I colg   = block * m;       // global (overall matrix) starting column
       for (I j = 0; j < rownnz; j++)
       {
         y[rowg] += A[idxg + j] * x[colg + colind[idxl + j]];

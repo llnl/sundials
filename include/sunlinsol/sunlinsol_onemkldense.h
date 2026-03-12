@@ -55,14 +55,10 @@ SUNDIALS_EXPORT
 SUNLinearSolver SUNLinSol_OneMklDense(N_Vector y, SUNMatrix A, SUNContext sunctx);
 
 static inline SUNLinearSolver_Type SUNLinSolGetType_OneMklDense(SUNLinearSolver S)
-{
-  return SUNLINEARSOLVER_DIRECT;
-};
+{ return SUNLINEARSOLVER_DIRECT; };
 
 static inline SUNLinearSolver_ID SUNLinSolGetID_OneMklDense(SUNLinearSolver S)
-{
-  return SUNLINEARSOLVER_ONEMKLDENSE;
-};
+{ return SUNLINEARSOLVER_ONEMKLDENSE; };
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLinSolInitialize_OneMklDense(SUNLinearSolver S);

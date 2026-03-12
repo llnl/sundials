@@ -335,7 +335,10 @@ int main(int argc, char* argv[])
     PrintOutput(ida_mem, cc, tret);
 
     if (iout < 3) { tout *= TMULT; }
-    else { tout += TADD; }
+    else
+    {
+      tout += TADD;
+    }
   }
 
   /* Print final statistics and free memory. */
@@ -421,7 +424,10 @@ static int resweb(sunrealtype tt, N_Vector cc, N_Vector cp, N_Vector res,
       for (is = 0; is < NUM_SPECIES; is++)
       {
         if (is < np) { resv[loc + is] = cpv[loc + is] - resv[loc + is]; }
-        else { resv[loc + is] = -resv[loc + is]; }
+        else
+        {
+          resv[loc + is] = -resv[loc + is];
+        }
       }
     }
   }
@@ -812,8 +818,8 @@ static void Fweb(sunrealtype tcalc, N_Vector cc, N_Vector crate, UserData webdat
                       ratesxy[is];
 
       } /* End is loop */
-    }   /* End of jx loop */
-  }     /* End of jy loop */
+    } /* End of jx loop */
+  } /* End of jy loop */
 }
 
 /*

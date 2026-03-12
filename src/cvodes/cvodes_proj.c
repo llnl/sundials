@@ -301,7 +301,10 @@ int cvDoProjection(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
      acorP and errP). */
   acorP = cv_mem->cv_tempv;
   if (proj_mem->err_proj) { errP = cv_mem->cv_ftemp; }
-  else { errP = NULL; }
+  else
+  {
+    errP = NULL;
+  }
 
   /* Copy acor into errP (if projecting the error) */
   if (proj_mem->err_proj) { N_VScale(ONE, cv_mem->cv_acor, errP); }

@@ -1470,7 +1470,10 @@ int IDASensInit(void* ida_mem, int Ns, int ism, IDASensResFn fS, N_Vector* yS0,
   {
     retval = IDASetNonlinearSolverSensSim(IDA_mem, NLS);
   }
-  else { retval = IDASetNonlinearSolverSensStg(IDA_mem, NLS); }
+  else
+  {
+    retval = IDASetNonlinearSolverSensStg(IDA_mem, NLS);
+  }
 
   /* check that the nonlinear solver was successfully attached */
   if (retval != IDA_SUCCESS)
@@ -1485,7 +1488,10 @@ int IDASensInit(void* ida_mem, int Ns, int ism, IDASensResFn fS, N_Vector* yS0,
 
   /* set ownership flag */
   if (ism == IDA_SIMULTANEOUS) { IDA_mem->ownNLSsim = SUNTRUE; }
-  else { IDA_mem->ownNLSstg = SUNTRUE; }
+  else
+  {
+    IDA_mem->ownNLSstg = SUNTRUE;
+  }
 
   /* Sensitivity initialization was successful */
   SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
@@ -1632,7 +1638,10 @@ int IDASensReInit(void* ida_mem, int ism, N_Vector* yS0, N_Vector* ypS0)
     {
       retval = IDASetNonlinearSolverSensSim(IDA_mem, NLS);
     }
-    else { retval = IDASetNonlinearSolverSensStg(IDA_mem, NLS); }
+    else
+    {
+      retval = IDASetNonlinearSolverSensStg(IDA_mem, NLS);
+    }
 
     /* check that the nonlinear solver was successfully attached */
     if (retval != IDA_SUCCESS)
@@ -1646,12 +1655,18 @@ int IDASensReInit(void* ida_mem, int ism, N_Vector* yS0, N_Vector* ypS0)
 
     /* set ownership flag */
     if (ism == IDA_SIMULTANEOUS) { IDA_mem->ownNLSsim = SUNTRUE; }
-    else { IDA_mem->ownNLSstg = SUNTRUE; }
+    else
+    {
+      IDA_mem->ownNLSstg = SUNTRUE;
+    }
 
     /* initialize the NLS object, this assumes that the linear solver has
        already been initialized in IDAInit */
     if (ism == IDA_SIMULTANEOUS) { retval = idaNlsInitSensSim(IDA_mem); }
-    else { retval = idaNlsInitSensStg(IDA_mem); }
+    else
+    {
+      retval = idaNlsInitSensStg(IDA_mem);
+    }
 
     if (retval != IDA_SUCCESS)
     {
@@ -2368,7 +2383,10 @@ int IDARootInit(void* ida_mem, int nrtfn, IDARootFn g)
     SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
     return (IDA_ILL_INPUT);
   }
-  else { IDA_mem->ida_gfun = g; }
+  else
+  {
+    IDA_mem->ida_gfun = g;
+  }
 
   /* Allocate necessary memory and return */
   IDA_mem->ida_glo = NULL;
@@ -4253,7 +4271,10 @@ static sunbooleantype IDACheckNvector(N_Vector tmpl)
   {
     return (SUNFALSE);
   }
-  else { return (SUNTRUE); }
+  else
+  {
+    return (SUNTRUE);
+  }
 }
 
 /*
@@ -4957,7 +4978,10 @@ int IDAInitialSetup(IDAMem IDA_mem)
 
   /* Set data for efun */
   if (IDA_mem->ida_user_efun) { IDA_mem->ida_edata = IDA_mem->ida_user_data; }
-  else { IDA_mem->ida_edata = IDA_mem; }
+  else
+  {
+    IDA_mem->ida_edata = IDA_mem;
+  }
 
   /* Initial error weight vector */
   ier = IDA_mem->ida_efun(IDA_mem->ida_phi[0], IDA_mem->ida_ewt,
@@ -5017,7 +5041,10 @@ int IDAInitialSetup(IDAMem IDA_mem)
       }
     }
   }
-  else { IDA_mem->ida_errconQ = SUNFALSE; }
+  else
+  {
+    IDA_mem->ida_errconQ = SUNFALSE;
+  }
 
   if (IDA_mem->ida_sensi)
   {
@@ -5038,7 +5065,10 @@ int IDAInitialSetup(IDAMem IDA_mem)
       return (IDA_ILL_INPUT);
     }
   }
-  else { IDA_mem->ida_errconS = SUNFALSE; }
+  else
+  {
+    IDA_mem->ida_errconS = SUNFALSE;
+  }
 
   if (IDA_mem->ida_quadr_sensi)
   {
@@ -5113,7 +5143,10 @@ int IDAInitialSetup(IDAMem IDA_mem)
       }
     }
   }
-  else { IDA_mem->ida_errconQS = SUNFALSE; }
+  else
+  {
+    IDA_mem->ida_errconQS = SUNFALSE;
+  }
 
   /* Check to see if y0 satisfies constraints. */
   if (IDA_mem->ida_constraints)
@@ -6217,13 +6250,13 @@ static void IDASetCoeffs(IDAMem IDA_mem, sunrealtype* ck)
       temp2                   = IDA_mem->ida_psi[i - 1];
       IDA_mem->ida_psi[i - 1] = temp1;
       IDA_mem->ida_beta[i]    = IDA_mem->ida_beta[i - 1] *
-                             IDA_mem->ida_psi[i - 1] / temp2;
-      temp1                 = temp2 + IDA_mem->ida_hh;
-      IDA_mem->ida_alpha[i] = IDA_mem->ida_hh / temp1;
-      IDA_mem->ida_sigma[i] = i * IDA_mem->ida_sigma[i - 1] *
-                              IDA_mem->ida_alpha[i];
-      IDA_mem->ida_gamma[i] = IDA_mem->ida_gamma[i - 1] +
-                              IDA_mem->ida_alpha[i - 1] / IDA_mem->ida_hh;
+                                IDA_mem->ida_psi[i - 1] / temp2;
+      temp1                   = temp2 + IDA_mem->ida_hh;
+      IDA_mem->ida_alpha[i]   = IDA_mem->ida_hh / temp1;
+      IDA_mem->ida_sigma[i]   = i * IDA_mem->ida_sigma[i - 1] *
+                                IDA_mem->ida_alpha[i];
+      IDA_mem->ida_gamma[i]   = IDA_mem->ida_gamma[i - 1] +
+                                IDA_mem->ida_alpha[i - 1] / IDA_mem->ida_hh;
     }
     IDA_mem->ida_psi[IDA_mem->ida_kk] = temp1;
   }
@@ -6385,7 +6418,10 @@ static int IDANls(IDAMem IDA_mem)
 
   /* initial guess for the correction to the predictor */
   if (sensi_sim) { N_VConst(ZERO, IDA_mem->ycorSim); }
-  else { N_VConst(ZERO, IDA_mem->ida_ee); }
+  else
+  {
+    N_VConst(ZERO, IDA_mem->ida_ee);
+  }
 
   /* call nonlinear solver setup if it exists */
   if ((IDA_mem->NLS)->ops->setup)
@@ -6394,7 +6430,10 @@ static int IDANls(IDAMem IDA_mem)
     {
       retval = SUNNonlinSolSetup(IDA_mem->NLS, IDA_mem->ycorSim, IDA_mem);
     }
-    else { retval = SUNNonlinSolSetup(IDA_mem->NLS, IDA_mem->ida_ee, IDA_mem); }
+    else
+    {
+      retval = SUNNonlinSolSetup(IDA_mem->NLS, IDA_mem->ida_ee, IDA_mem);
+    }
 
     if (retval < 0) { return (IDA_NLS_SETUP_FAIL); }
     if (retval > 0) { return (IDA_NLS_SETUP_RECVR); }
@@ -6874,7 +6913,10 @@ static int IDATestError(IDAMem IDA_mem, sunrealtype ck, sunrealtype* err_k,
 
   /* Perform error test */
   if (ck * enorm_k > ONE) { return (ERROR_TEST_FAIL); }
-  else { return (IDA_SUCCESS); }
+  else
+  {
+    return (IDA_SUCCESS);
+  }
 }
 
 /*
@@ -6963,7 +7005,10 @@ static int IDAQuadTestError(IDAMem IDA_mem, sunrealtype ck, sunrealtype* err_k,
 
   /* Perform error test */
   if (ck * enormQ > ONE) { return (ERROR_TEST_FAIL); }
-  else { return (IDA_SUCCESS); }
+  else
+  {
+    return (IDA_SUCCESS);
+  }
 }
 
 /*
@@ -7064,7 +7109,10 @@ static int IDASensTestError(IDAMem IDA_mem, sunrealtype ck, sunrealtype* err_k,
 
   /* Perform error test */
   if (ck * enormS > ONE) { return (ERROR_TEST_FAIL); }
-  else { return (IDA_SUCCESS); }
+  else
+  {
+    return (IDA_SUCCESS);
+  }
 }
 
 /*
@@ -7164,7 +7212,10 @@ static int IDAQuadSensTestError(IDAMem IDA_mem, sunrealtype ck,
 
   /* Perform error test */
   if (ck * enormQS > ONE) { return (ERROR_TEST_FAIL); }
-  else { return (IDA_SUCCESS); }
+  else
+  {
+    return (IDA_SUCCESS);
+  }
 }
 
 /*
@@ -7325,7 +7376,10 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
       else if (nflag == IDA_QRHS_FAIL) { return (IDA_QRHS_FAIL); }
       else if (nflag == IDA_SRES_FAIL) { return (IDA_SRES_FAIL); }
       else if (nflag == IDA_QSRHS_FAIL) { return (IDA_QSRHS_FAIL); }
-      else { return (IDA_NLS_FAIL); }
+      else
+      {
+        return (IDA_NLS_FAIL);
+      }
     }
     else
     { /* recoverable failure    */
@@ -7583,7 +7637,10 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
       if (IDA_mem->ida_kk == 1)
       {
         if (terr_kp1 >= HALF * terr_k) { action = MAINTAIN; }
-        else { action = RAISE; }
+        else
+        {
+          action = RAISE;
+        }
 
         SUNLogDebug(IDA_LOGGER, "order-selection-raise",
                     "terr_k = " SUN_FORMAT_G ", terr_kp1 = " SUN_FORMAT_G,
@@ -7594,7 +7651,10 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
         terr_km1 = IDA_mem->ida_kk * err_km1;
         if (terr_km1 <= SUNMIN(terr_k, terr_kp1)) { action = LOWER; }
         else if (terr_kp1 >= terr_k) { action = MAINTAIN; }
-        else { action = RAISE; }
+        else
+        {
+          action = RAISE;
+        }
 
         SUNLogDebug(IDA_LOGGER, "order-selection-rasie-or-lower",
                     "terr_km1 = " SUN_FORMAT_G ", terr_k = " SUN_FORMAT_G
@@ -7614,7 +7674,10 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
       IDA_mem->ida_kk--;
       err_knew = err_km1;
     }
-    else { err_knew = err_k; }
+    else
+    {
+      err_knew = err_k;
+    }
 
     /* Compute tmp = tentative ratio hnew/hh from error norm estimate.
        1. If eta >= eta_max_fx (default = 2), increase hh to at most eta_max
@@ -7864,7 +7927,10 @@ sunrealtype IDAWrmsNorm(IDAMem IDA_mem, N_Vector x, N_Vector w,
   sunrealtype nrm;
 
   if (mask) { nrm = N_VWrmsNormMask(x, w, IDA_mem->ida_id); }
-  else { nrm = N_VWrmsNorm(x, w); }
+  else
+  {
+    nrm = N_VWrmsNorm(x, w);
+  }
 
   return (nrm);
 }
@@ -7948,7 +8014,10 @@ static sunrealtype IDAQuadWrmsNormUpdate(SUNDIALS_MAYBE_UNUSED IDAMem IDA_mem,
 
   qnrm = N_VWrmsNorm(xQ, wQ);
   if (old_nrm > qnrm) { return (old_nrm); }
-  else { return (qnrm); }
+  else
+  {
+    return (qnrm);
+  }
 }
 
 /*
@@ -7967,7 +8036,10 @@ sunrealtype IDASensWrmsNormUpdate(IDAMem IDA_mem, sunrealtype old_nrm,
 
   snrm = IDASensWrmsNorm(IDA_mem, xS, wS, mask);
   if (old_nrm > snrm) { return (old_nrm); }
-  else { return (snrm); }
+  else
+  {
+    return (snrm);
+  }
 }
 
 static sunrealtype IDAQuadSensWrmsNormUpdate(IDAMem IDA_mem, sunrealtype old_nrm,
@@ -7977,7 +8049,10 @@ static sunrealtype IDAQuadSensWrmsNormUpdate(IDAMem IDA_mem, sunrealtype old_nrm
 
   qsnrm = IDAQuadSensWrmsNorm(IDA_mem, xQS, wQS);
   if (old_nrm > qsnrm) { return (old_nrm); }
-  else { return (qsnrm); }
+  else
+  {
+    return (qsnrm);
+  }
 }
 
 /*
@@ -8373,7 +8448,10 @@ static int IDARootfind(IDAMem IDA_mem)
        is closer to tlo if alph < 1, and closer to thi if alph > 1.    */
 
     if (sideprev == side) { alph = (side == 2) ? alph * TWO : alph * HALF; }
-    else { alph = ONE; }
+    else
+    {
+      alph = ONE;
+    }
 
     /* Set next root approximation tmid and get g(tmid).
        If tmid is too close to tlo or thi, adjust it inward,
@@ -8871,7 +8949,8 @@ void IDAProcessError(IDAMem IDA_mem, int error_code, int line, const char* func,
   vsnprintf(msg, msglen, msgfmt, ap);
   va_end(ap);
 
-  do {
+  do
+  {
     if (IDA_mem == NULL)
     {
       SUNGlobalFallbackErrHandler(line, func, file, msg, error_code);

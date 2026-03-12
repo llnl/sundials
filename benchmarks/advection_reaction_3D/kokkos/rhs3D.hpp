@@ -397,8 +397,8 @@ static int SolveReactionLinSys(N_Vector y, N_Vector x, N_Vector b,
       const sunrealtype scratch_4  = A1 * A8;
       const sunrealtype scratch_5  = A2 * A4;
       const sunrealtype scratch_6  = 1.0 / (A0 * scratch_0 - A0 * scratch_3 +
-                                           A3 * scratch_2 - A3 * scratch_4 +
-                                           A6 * scratch_1 - A6 * scratch_5);
+                                            A3 * scratch_2 - A3 * scratch_4 +
+                                            A6 * scratch_1 - A6 * scratch_5);
       const sunrealtype scratch_7  = A2 * A3;
       const sunrealtype scratch_8  = A6 * Bview(i, j, k, 0);
       const sunrealtype scratch_9  = A2 * A6;
@@ -489,8 +489,8 @@ static int SolveReactionLinSysRes(N_Vector y, N_Vector x, N_Vector b,
       const sunrealtype scratch_4  = A1 * A8;
       const sunrealtype scratch_5  = A2 * A4;
       const sunrealtype scratch_6  = 1.0 / (A0 * scratch_0 - A0 * scratch_3 +
-                                           A3 * scratch_2 - A3 * scratch_4 +
-                                           A6 * scratch_1 - A6 * scratch_5);
+                                            A3 * scratch_2 - A3 * scratch_4 +
+                                            A6 * scratch_1 - A6 * scratch_5);
       const sunrealtype scratch_7  = A2 * A3;
       const sunrealtype scratch_8  = A6 * Bview(i, j, k, 0);
       const sunrealtype scratch_9  = A2 * A6;

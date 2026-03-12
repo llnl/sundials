@@ -104,8 +104,8 @@ int main(void)
   SUNContext ctx;
   FILE* FID;
 
-  mem                  = NULL;
-  yy = yp = avtol      = NULL;
+  mem = NULL;
+  yy = yp = avtol = NULL;
   yval = ypval = atval = NULL;
   A                    = NULL;
   LS                   = NULL;
@@ -334,8 +334,8 @@ static void PrintHeader(sunrealtype rtol, N_Vector avtol, N_Vector y)
   printf("         Three equation chemical kinetics problem.\n\n");
   printf("Linear solver: DENSE, with user-supplied Jacobian.\n");
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-    printf("Tolerance parameters:  rtol = %Qg   atol = %Qg %Qg %Qg \n", rtol,
-           atval[0], atval[1], atval[2]);
+  printf("Tolerance parameters:  rtol = %Qg   atol = %Qg %Qg %Qg \n", rtol,
+         atval[0], atval[1], atval[2]);
   printf("Initial conditions y0 = (%Qg %Qg %Qg)\n", yval[0], yval[1], yval[2]);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg %Lg %Lg \n", rtol,

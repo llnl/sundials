@@ -350,10 +350,12 @@ static void PrintHeader(sunrealtype reltol, sunrealtype abstol, sunrealtype umax
   printf("Mesh dimensions = %d X %d\n", MX, MY);
   printf("Total system size = %d\n", NEQ);
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-  printf("Tolerance parameters: reltol = %Qg    abstol = %Qg\n\n", reltol, abstol);
+  printf("Tolerance parameters: reltol = %Qg    abstol = %Qg\n\n", reltol,
+         abstol);
   printf("At t = %Qg      max.norm(u) =%14.6Qe  \n", T0, umax);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("Tolerance parameters: reltol = %Lg    abstol = %Lg\n\n", reltol, abstol);
+  printf("Tolerance parameters: reltol = %Lg    abstol = %Lg\n\n", reltol,
+         abstol);
   printf("At t = %Lg      max.norm(u) =%14.6Le \n", T0, umax);
 #else
   printf("Tolerance parameters: reltol = %g    abstol = %g\n\n", reltol, abstol);

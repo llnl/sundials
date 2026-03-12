@@ -28,9 +28,7 @@
 
 /* Dummy user-supplied function */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
-{
-  return 0;
-}
+{ return 0; }
 
 /* Main program */
 int main(int argc, char* argv[])

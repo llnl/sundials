@@ -111,9 +111,7 @@ static inline sunrealtype* N_VGetDeviceArrayPointer_Cuda(N_Vector x)
  */
 
 static inline N_Vector_ID N_VGetVectorID_Cuda(N_Vector /*v*/)
-{
-  return SUNDIALS_NVEC_CUDA;
-}
+{ return SUNDIALS_NVEC_CUDA; }
 
 SUNDIALS_EXPORT N_Vector N_VCloneEmpty_Cuda(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VClone_Cuda(N_Vector w);

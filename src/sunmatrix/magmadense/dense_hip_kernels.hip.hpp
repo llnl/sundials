@@ -86,8 +86,7 @@ __global__ void scaleAddIKernel(I m, I n, I nblocks, T c, T* A)
 template<typename T, typename I>
 __global__ void scaleAddKernel(I m, I n, I nblocks, T c, T* A, const T* B)
 {
-  block_col_row<T, I>(nblocks, m, n,
-                      [=] __device__(I kij, I row, I col)
+  block_col_row<T, I>(nblocks, m, n, [=] __device__(I kij, I row, I col)
                       { A[kij] = c * A[kij] + B[kij]; });
 }
 

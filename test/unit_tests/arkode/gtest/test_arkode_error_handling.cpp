@@ -27,9 +27,7 @@
 static const std::string errfile{"test_arkode_error_handling.err"};
 
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
-{
-  return 0;
-}
+{ return 0; }
 
 class ARKodeErrConditionTest : public testing::Test
 {

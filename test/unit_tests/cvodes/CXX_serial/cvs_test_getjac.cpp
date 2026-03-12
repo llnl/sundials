@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     tol = std::stold(argv[1]);
 #elif defined(SUNDIALS_FLOAT128_PRECISION)
-    tol = strtoflt128(argv[1],NULL);
+    tol = strtoflt128(argv[1], NULL);
 #else
 #error "SUNDIALS precision macro not defined"
 #endif
@@ -282,7 +282,7 @@ int main(int argc, char* argv[])
   // Output Jacobian data
   std::cout << std::scientific;
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-  std::cout << std::setprecision(SUN_DIGITS10/2);
+  std::cout << std::setprecision(SUN_DIGITS10 / 2);
 #else
   std::cout << std::setprecision(SUN_DIGITS10);
 #endif

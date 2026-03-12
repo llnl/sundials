@@ -45,39 +45,27 @@ __forceinline__ __device__ T shfl_down_sync(T var, int srcLane);
 
 template<>
 __forceinline__ __device__ float shfl_xor_sync<float>(float var, int laneMask)
-{
-  return ::__shfl_xor_sync(0xFFFFFFFF, var, laneMask);
-}
+{ return ::__shfl_xor_sync(0xFFFFFFFF, var, laneMask); }
 
 template<>
 __forceinline__ __device__ double shfl_xor_sync<double>(double var, int laneMask)
-{
-  return ::__shfl_xor_sync(0xFFFFFFFF, var, laneMask);
-}
+{ return ::__shfl_xor_sync(0xFFFFFFFF, var, laneMask); }
 
 template<>
 __forceinline__ __device__ float shfl_sync<float>(float var, int srcLane)
-{
-  return ::__shfl_sync(0xFFFFFFFF, var, srcLane);
-}
+{ return ::__shfl_sync(0xFFFFFFFF, var, srcLane); }
 
 template<>
 __forceinline__ __device__ double shfl_sync<double>(double var, int srcLane)
-{
-  return ::__shfl_sync(0xFFFFFFFF, var, srcLane);
-}
+{ return ::__shfl_sync(0xFFFFFFFF, var, srcLane); }
 
 template<>
 __forceinline__ __device__ float shfl_down_sync(float val, int srcLane)
-{
-  return ::__shfl_down_sync(0xFFFFFFFF, val, srcLane);
-}
+{ return ::__shfl_down_sync(0xFFFFFFFF, val, srcLane); }
 
 template<>
 __forceinline__ __device__ double shfl_down_sync(double val, int srcLane)
-{
-  return ::__shfl_down_sync(0xFFFFFFFF, val, srcLane);
-}
+{ return ::__shfl_down_sync(0xFFFFFFFF, val, srcLane); }
 
 /* The atomic functions below are implemented using the atomic compare and swap
    function atomicCAS which performs an atomic version of
@@ -91,10 +79,11 @@ __forceinline__ __device__ double atomicAdd(double* address, double val)
   unsigned long long int* address_as_ull = (unsigned long long int*)address;
   unsigned long long int old             = *address_as_ull, assumed;
 
-  do {
+  do
+  {
     assumed = old;
-    old     = atomicCAS(address_as_ull, assumed,
-                        __double_as_longlong(val + __longlong_as_double(assumed)));
+    old = atomicCAS(address_as_ull, assumed,
+                    __double_as_longlong(val + __longlong_as_double(assumed)));
     // Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
   }
   while (assumed != old);
@@ -111,7 +100,8 @@ __forceinline__ __device__ float atomicAdd(float* address, float val)
   unsigned int* address_as_ull = (unsigned int*)address;
   unsigned int old             = *address_as_ull, assumed;
 
-  do {
+  do
+  {
     assumed = old;
     old     = atomicCAS(address_as_ull, assumed,
                         __float_as_int(val + __int_as_float(assumed)));
@@ -138,7 +128,8 @@ __forceinline__ __device__ void atomicMax(double* const address,
   unsigned long long* const address_as_i = (unsigned long long*)address;
   unsigned long long old                 = *address_as_i, assumed;
 
-  do {
+  do
+  {
     assumed = old;
     if (__longlong_as_double(assumed) >= value) { break; }
     old = atomicCAS(address_as_i, assumed, __double_as_longlong(value));
@@ -158,7 +149,8 @@ __forceinline__ __device__ void atomicMax(float* const address, const float valu
   unsigned int* const address_as_i = (unsigned int*)address;
   unsigned int old                 = *address_as_i, assumed;
 
-  do {
+  do
+  {
     assumed = old;
     if (__int_as_float(assumed) >= value) { break; }
     old = atomicCAS(address_as_i, assumed, __float_as_int(value));
@@ -179,7 +171,8 @@ __forceinline__ __device__ void atomicMin(double* const address,
   unsigned long long* const address_as_i = (unsigned long long*)address;
   unsigned long long old                 = *address_as_i, assumed;
 
-  do {
+  do
+  {
     assumed = old;
     if (__longlong_as_double(assumed) <= value) { break; }
     old = atomicCAS(address_as_i, assumed, __double_as_longlong(value));
@@ -199,7 +192,8 @@ __forceinline__ __device__ void atomicMin(float* const address, const float valu
   unsigned int* const address_as_i = (unsigned int*)address;
   unsigned int old                 = *address_as_i, assumed;
 
-  do {
+  do
+  {
     assumed = old;
     if (__int_as_float(assumed) <= value) { break; }
     old = atomicCAS(address_as_i, assumed, __float_as_int(value));
@@ -218,27 +212,21 @@ template<typename T>
 struct atomic<sundials::reductions::impl::plus<T>>
 {
   __device__ __forceinline__ void operator()(T* out, const T val)
-  {
-    atomicAdd(out, val);
-  }
+  { atomicAdd(out, val); }
 };
 
 template<typename T>
 struct atomic<sundials::reductions::impl::maximum<T>>
 {
   __device__ __forceinline__ void operator()(T* out, const T val)
-  {
-    atomicMax(out, val);
-  }
+  { atomicMax(out, val); }
 };
 
 template<typename T>
 struct atomic<sundials::reductions::impl::minimum<T>>
 {
   __device__ __forceinline__ void operator()(T* out, const T val)
-  {
-    atomicMin(out, val);
-  }
+  { atomicMin(out, val); }
 };
 
 /*
@@ -418,7 +406,7 @@ __device__ __forceinline__ void gridReduceAtomic(T val, T identity, T* device_me
 {
   int threadId = threadIdx.x + blockDim.x * threadIdx.y +
                  (blockDim.x * blockDim.y) * threadIdx.z;
-  val = blockReduceShflDown<T, BinaryReductionOp>(val, identity);
+  val          = blockReduceShflDown<T, BinaryReductionOp>(val, identity);
   // Final reduction of all block values into the output device_mem
   if (threadId == 0) atomic<BinaryReductionOp>{}(device_mem, val);
 }
@@ -439,9 +427,7 @@ struct GridReducerAtomic
 {
   __device__ __forceinline__ void operator()(T val, T identity, T* device_mem,
                                              unsigned int* device_count)
-  {
-    return gridReduceAtomic<T, BinaryReductionOp>(val, identity, device_mem);
-  }
+  { return gridReduceAtomic<T, BinaryReductionOp>(val, identity, device_mem); }
 };
 
 } // namespace impl

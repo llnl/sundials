@@ -469,5 +469,8 @@ static int check_retval(int retval, const char* funcname)
             funcname, retval);
     return (1);
   }
-  else { return (0); }
+  else
+  {
+    return (0);
+  }
 }

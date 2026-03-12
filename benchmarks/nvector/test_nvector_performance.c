@@ -2741,7 +2741,10 @@ void SetTiming(int onoff, int myid)
 
   /* only print from the root process */
   if (myid == 0) { print_time = onoff; }
-  else { print_time = 0; }
+  else
+  {
+    print_time = 0;
+  }
 }
 
 /* ----------------------------------------------------------------------

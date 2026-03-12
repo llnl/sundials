@@ -98,10 +98,10 @@ typedef float sunrealtype;
 #define SUN_SMALL_REAL    FLT_MIN
 #define SUN_UNIT_ROUNDOFF FLT_EPSILON
 #define SUN_DIGITS10      FLT_DIG
- // TODO(SBR): In C11, FLT_DECIMAL_DIG may be a better choice
+// TODO(SBR): In C11, FLT_DECIMAL_DIG may be a better choice
 #define SUN_FORMAT_E "% ." SUN_STRING(FLT_DIG) "e"
 #define SUN_FORMAT_G "%." SUN_STRING(FLT_DIG) "g"
- // TODO(SBR): This can probably be removed once a complex format macro is added
+// TODO(SBR): This can probably be removed once a complex format macro is added
 #define SUN_FORMAT_SG "%+." SUN_STRING(FLT_DIG) "g"
 
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
@@ -300,52 +300,40 @@ typedef enum SUNDataIOMode SUNDataIOMode;
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 #ifdef SUNDIALS_FLOAT128_PRECISION
 /* This defines an output stream operator for the `__float128` type.*/
-#include <iostream>
-#include <iomanip>
-#include <quadmath.h>
 #include <cstdio>
+#include <iomanip>
+#include <iostream>
+#include <quadmath.h>
 
 static std::ostream& operator<<(std::ostream& os, __float128 value)
 {
   // Get current stream formatting state
-  const int width = os.width();     // Width set by std::setw
+  const int width     = os.width();     // Width set by std::setw
   const int precision = os.precision(); // Precision set by std::setprecision
-  const std::ios_base::fmtflags flags = os.flags(); // Format flags (e.g., scientific notation)
+  const std::ios_base::fmtflags flags =
+    os.flags(); // Format flags (e.g., scientific notation)
 
   // Determine format specifier based on stream flags (e/f/g)
   char format_specifier = 'g';
-  if (flags & std::ios_base::scientific)
-  {
-    format_specifier = 'e';
-  }
-  else if (flags & std::ios_base::fixed)
-  {
-    format_specifier = 'f';
-  }
+  if (flags & std::ios_base::scientific) { format_specifier = 'e'; }
+  else if (flags & std::ios_base::fixed) { format_specifier = 'f'; }
 
   // Dynamically generate format string (e.g., "%20.15Qe")
   char format_buffer[64];
-  std::snprintf(
-    format_buffer, sizeof(format_buffer),
-    "%%%d.%dQ%c",  // Format template: %[width].[precision]Q[e/f/g]
-    width,         // Width from setw
-    precision,     // Precision from setprecision
-    format_specifier
-  );
+  std::snprintf(format_buffer, sizeof(format_buffer),
+                "%%%d.%dQ%c", // Format template: %[width].[precision]Q[e/f/g]
+                width,        // Width from setw
+                precision,    // Precision from setprecision
+                format_specifier);
 
   // Format __float128 to string
   char value_buffer[128];
-  int n = quadmath_snprintf(
-    value_buffer, sizeof(value_buffer),
-    format_buffer, // Dynamically generated format (e.g., "%20.15Qe")
-    value
-  );
+  int n = quadmath_snprintf(value_buffer, sizeof(value_buffer),
+                            format_buffer, // Dynamically generated format (e.g., "%20.15Qe")
+                            value);
 
   // Write to output stream
-  if (n >= 0 && n < sizeof(value_buffer))
-  {
-    os << value_buffer;
-  }
+  if (n >= 0 && n < sizeof(value_buffer)) { os << value_buffer; }
   else
   {
     os << "[FORMAT ERROR]";
