@@ -6,6 +6,8 @@
 
 ### New Features and Enhancements
 
+Updated the Kokkos N_Vector to support Kokkos 5.x versions.
+
 ### Bug Fixes
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
