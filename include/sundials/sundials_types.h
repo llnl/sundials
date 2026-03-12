@@ -351,6 +351,9 @@ static std::ostream& operator<<(std::ostream& os, __float128 value)
     os << "[FORMAT ERROR]";
   }
 
+  // Reset stream width (setw has one-time effect)
+  os.width(0);
+
   return os;
 }
 

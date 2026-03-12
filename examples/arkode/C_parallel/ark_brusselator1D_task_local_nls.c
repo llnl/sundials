@@ -642,7 +642,7 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData udata, UserOptions uo
     if (check_retval((void*)data, "N_VGetArrayPointer", 0)) { return 1; }
 
     /* output the times to disk */
-    if (udata->myid == 0 && uopt->TFID) { fprintf(uopt->TFID, " %.16e\n", t); }
+    if (udata->myid == 0 && uopt->TFID) { fprintf(uopt->TFID, " %.16" ESYM "\n", t); }
 
     /* output results to disk */
     for (i = 0; i < udata->nxl; i++)
@@ -1150,7 +1150,7 @@ static SUNErrCode TaskLocalNewton_GetNumConvFails(SUNNonlinearSolver NLS,
   /* check that the nonlinear solver is non-null */
   if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
 
-  return (GET_NLS_CONTENT(NLS)->ncnf);
+  return (SUNErrCode)(GET_NLS_CONTENT(NLS)->ncnf);
 }
 
 static SUNNonlinearSolver TaskLocalNewton(SUNContext ctx, N_Vector y)
@@ -1727,8 +1727,8 @@ static int SetupProblem(int argc, char* argv[], UserData udata,
     printf("\n1D Advection-Reaction Test Problem\n\n");
     printf("Number of Processors = %li\n", (long int)udata->nprocs);
     printf("Mesh Info:\n");
-    printf("  NX = %li, NXL = %li, dx = %.6" FSYM ", xmax = %.6" FSYM "\n", udata->nx,
-           udata->nxl, udata->dx, udata->xmax);
+    printf("  NX = %lli, NXL = %lli, dx = %.6" FSYM ", xmax = %.6" FSYM "\n", (long long int)udata->nx,
+           (long long int)udata->nxl, udata->dx, udata->xmax);
     printf("Problem Parameters:\n");
     printf("  A = %" GSYM "\n", udata->A);
     printf("  B = %" GSYM "\n", udata->B);

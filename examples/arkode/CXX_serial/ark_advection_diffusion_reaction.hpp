@@ -1174,8 +1174,12 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData& udata,
   {
     // Compute rms norm of the state
     sunrealtype urms = SUNRsqrt(N_VDotProd(y, y) / udata.nx);
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    uopts.uout << setprecision(SUN_DIGITS10/2);
+#else
     uopts.uout << setprecision(SUN_DIGITS10);
-    cout << setw(39) << t << setw(42) << urms << endl;
+#endif
+    cout << setw(22) << t << setw(25) << urms << endl;
 
     // Write solution to disk
     if (uopts.output >= 2)
