@@ -205,8 +205,9 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype u = N_VGetArrayPointer(y)[0]; /* access current solution value */
 
   /* fill in the RHS function: "N_VGetArrayPointer" accesses the 0th entry of ydot */
-  N_VGetArrayPointer(ydot)[0] =
-    lambda * u + SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) - lambda * SUNRatan(t);
+  N_VGetArrayPointer(ydot)[0] = lambda * u +
+                                SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
+                                lambda * SUNRatan(t);
 
   return 0; /* return with success */
 }

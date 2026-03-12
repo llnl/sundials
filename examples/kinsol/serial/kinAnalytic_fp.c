@@ -50,19 +50,20 @@
 /* problem constants */
 #define NEQ 3 /* number of equations */
 
-#define ZERO         SUN_RCONST(0.0)             /* real 0.0  */
-#define PTONE        SUN_RCONST(0.1)             /* real 0.1  */
-#define HALF         SUN_RCONST(0.5)             /* real 0.5  */
-#define PTNINE       SUN_RCONST(0.9)             /* real 0.9  */
-#define ONE          SUN_RCONST(1.0)             /* real 1.0  */
-#define ONEPTZEROSIX SUN_RCONST(1.06)            /* real 1.06 */
-#define THREE        SUN_RCONST(3.0)             /* real 3.0  */
-#define SIX          SUN_RCONST(6.0)             /* real 6.0  */
-#define NINE         SUN_RCONST(9.0)             /* real 9.0  */
-#define TEN          SUN_RCONST(10.0)            /* real 10.0 */
-#define TWENTY       SUN_RCONST(20.0)            /* real 20.0 */
-#define SIXTY        SUN_RCONST(60.0)            /* real 60.0 */
-#define PI           SUN_RCONST(3.141592653589793238462643383279502884197169) /* real pi   */
+#define ZERO         SUN_RCONST(0.0)  /* real 0.0  */
+#define PTONE        SUN_RCONST(0.1)  /* real 0.1  */
+#define HALF         SUN_RCONST(0.5)  /* real 0.5  */
+#define PTNINE       SUN_RCONST(0.9)  /* real 0.9  */
+#define ONE          SUN_RCONST(1.0)  /* real 1.0  */
+#define ONEPTZEROSIX SUN_RCONST(1.06) /* real 1.06 */
+#define THREE        SUN_RCONST(3.0)  /* real 3.0  */
+#define SIX          SUN_RCONST(6.0)  /* real 6.0  */
+#define NINE         SUN_RCONST(9.0)  /* real 9.0  */
+#define TEN          SUN_RCONST(10.0) /* real 10.0 */
+#define TWENTY       SUN_RCONST(20.0) /* real 20.0 */
+#define SIXTY        SUN_RCONST(60.0) /* real 60.0 */
+#define PI \
+  SUN_RCONST(3.141592653589793238462643383279502884197169) /* real pi   */
 
 /* analytic solution */
 #define XTRUE HALF
@@ -327,7 +328,8 @@ int FPFunction(N_Vector u, N_Vector g, void* user_data)
 
   gdata[0] = (ONE / THREE) * SUNRcos((y - ONE) * z) + (ONE / SIX);
   gdata[1] = (ONE / NINE) * SUNRsqrt(x * x + SUNRsin(z) + ONEPTZEROSIX) + PTNINE;
-  gdata[2] = -(ONE / TWENTY) * SUNRexp(-x * (y - ONE)) - (TEN * PI - THREE) / SIXTY;
+  gdata[2] = -(ONE / TWENTY) * SUNRexp(-x * (y - ONE)) -
+             (TEN * PI - THREE) / SIXTY;
 
   return (0);
 }

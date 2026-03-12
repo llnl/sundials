@@ -1175,7 +1175,7 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData& udata,
     // Compute rms norm of the state
     sunrealtype urms = SUNRsqrt(N_VDotProd(y, y) / udata.nx);
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-    uopts.uout << setprecision(SUN_DIGITS10/2);
+    uopts.uout << setprecision(SUN_DIGITS10 / 2);
 #else
     uopts.uout << setprecision(SUN_DIGITS10);
 #endif

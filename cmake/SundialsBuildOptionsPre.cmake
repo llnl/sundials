@@ -132,8 +132,9 @@ endif()
 # ---------------------------------------------------------------
 
 if(UNIX)
-  sundials_option(SUNDIALS_MATH_LIBRARY PATH
-                  "Which math library (e.g., libm) to link to" "-lm -lquadmath" ADVANCED)
+  sundials_option(
+    SUNDIALS_MATH_LIBRARY PATH "Which math library (e.g., libm) to link to"
+    "-lm -lquadmath" ADVANCED)
 else()
   sundials_option(SUNDIALS_MATH_LIBRARY PATH
                   "Which math library (e.g., libm) to link to" "" ADVANCED)

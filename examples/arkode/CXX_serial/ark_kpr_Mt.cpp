@@ -77,8 +77,8 @@
 // Header files
 #include <arkode/arkode_arkstep.h> // prototypes for ARKStep fcts., consts
 #include <cmath>
+#include <iomanip> //for setw
 #include <iostream>
-#include <iomanip>  //for setw
 #include <nvector/nvector_serial.h> // serial N_Vector type, fcts., macros
 #include <stdio.h>
 #include <string.h>
@@ -754,7 +754,10 @@ static sunrealtype r(sunrealtype t) { return (SUN_RCONST(0.5) * SUNRcos(t)); }
 
 static sunrealtype s(sunrealtype t) { return (SUNRsin(t)); }
 
-static sunrealtype rdot(sunrealtype t) { return (-SUN_RCONST(0.5) * SUNRsin(t)); }
+static sunrealtype rdot(sunrealtype t)
+{
+  return (-SUN_RCONST(0.5) * SUNRsin(t));
+}
 
 static sunrealtype sdot(sunrealtype t) { return (SUNRcos(t)); }
 

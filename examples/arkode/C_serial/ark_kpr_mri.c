@@ -144,17 +144,17 @@ int main(int argc, char* argv[])
   SUNContext ctx;
 
   /* general problem parameters */
-  sunrealtype T0     = SUN_RCONST(0.0);       /* initial time */
-  sunrealtype Tf     = SUN_RCONST(5.0);       /* final time */
-  sunrealtype dTout  = SUN_RCONST(0.1);       /* time between outputs */
-  sunindextype NEQ   = 2;                     /* number of dependent vars. */
+  sunrealtype T0     = SUN_RCONST(0.0); /* initial time */
+  sunrealtype Tf     = SUN_RCONST(5.0); /* final time */
+  sunrealtype dTout  = SUN_RCONST(0.1); /* time between outputs */
+  sunindextype NEQ   = 2;               /* number of dependent vars. */
   int Nt             = (int)SUNRceil(Tf / dTout); /* number of output times */
-  int slow_type      = 0;                     /* problem configuration type */
-  int fast_type      = 0;                     /* problem configuration type */
-  sunrealtype hs     = SUN_RCONST(0.01);      /* slow step size */
-  sunrealtype e      = SUN_RCONST(0.5);       /* fast/slow coupling strength */
-  sunrealtype G      = SUN_RCONST(-100.0);    /* stiffness at slow time scale */
-  sunrealtype w      = SUN_RCONST(100.0);     /* time-scale separation factor */
+  int slow_type      = 0;                  /* problem configuration type */
+  int fast_type      = 0;                  /* problem configuration type */
+  sunrealtype hs     = SUN_RCONST(0.01);   /* slow step size */
+  sunrealtype e      = SUN_RCONST(0.5);    /* fast/slow coupling strength */
+  sunrealtype G      = SUN_RCONST(-100.0); /* stiffness at slow time scale */
+  sunrealtype w      = SUN_RCONST(100.0);  /* time-scale separation factor */
   sunrealtype reltol = SUN_RCONST(0.01);
   sunrealtype abstol = SUN_RCONST(1.0e-11);
 

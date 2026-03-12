@@ -292,7 +292,7 @@ int main(int argc, char* argv[])
   // Output Jacobian data
   std::cout << std::scientific;
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-  std::cout << std::setprecision(SUN_DIGITS10/2);
+  std::cout << std::setprecision(SUN_DIGITS10 / 2);
 #else
   std::cout << std::setprecision(SUN_DIGITS10);
 #endif

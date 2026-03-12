@@ -235,9 +235,11 @@ static int func(N_Vector y, N_Vector f, void* user_data)
 
   /* Nonlinear equations */
 
-  eq1 = SUN_RCONST(-0.1238) * x1 + x7 - SUN_RCONST(0.001637) * x2 - SUN_RCONST(0.9338) * x4 + SUN_RCONST(0.004731) * x1 * x3 -
+  eq1 = SUN_RCONST(-0.1238) * x1 + x7 - SUN_RCONST(0.001637) * x2 -
+        SUN_RCONST(0.9338) * x4 + SUN_RCONST(0.004731) * x1 * x3 -
         SUN_RCONST(0.3578) * x2 * x3 - SUN_RCONST(0.3571);
-  eq2 = SUN_RCONST(0.2638) * x1 - x7 - SUN_RCONST(0.07745) * x2 - SUN_RCONST(0.6734) * x4 + SUN_RCONST(0.2238) * x1 * x3 +
+  eq2 = SUN_RCONST(0.2638) * x1 - x7 - SUN_RCONST(0.07745) * x2 -
+        SUN_RCONST(0.6734) * x4 + SUN_RCONST(0.2238) * x1 * x3 +
         SUN_RCONST(0.7623) * x2 * x3 - SUN_RCONST(0.6022);
   eq3 = SUN_RCONST(0.3578) * x1 + SUN_RCONST(0.004731) * x2 + x6 * x8;
   eq4 = SUN_RCONST(-0.7623) * x1 + SUN_RCONST(0.2238) * x2 + SUN_RCONST(0.3461);

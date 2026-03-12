@@ -656,7 +656,8 @@ static void WebRates(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
     ratesxy[is] = dotprod(NUM_SPECIES, cxy, acoef[is]);
   }
 
-  fac = ONE + ALPHA * xx * yy + BETA * SUNRsin(FOURPI * xx) * SUNRsin(FOURPI * yy);
+  fac = ONE + ALPHA * xx * yy +
+        BETA * SUNRsin(FOURPI * xx) * SUNRsin(FOURPI * yy);
 
   for (is = 0; is < NUM_SPECIES; is++)
   {

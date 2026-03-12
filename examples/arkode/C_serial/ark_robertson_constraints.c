@@ -74,11 +74,11 @@ int main(void)
   sunrealtype ONE = SUN_RCONST(1.0);
 
   /* general problem parameters */
-  sunrealtype T0    = SUN_RCONST(0.0);       /* initial time */
-  sunrealtype Tf    = SUN_RCONST(1.e11);     /* final time */
-  sunrealtype dTout = (Tf - T0) / SUN_RCONST(100.);       /* time between outputs */
-  int Nt            = (int)SUNRceil(Tf / dTout); /* number of output times */
-  sunindextype NEQ  = 3;                     /* number of dependent vars. */
+  sunrealtype T0    = SUN_RCONST(0.0);              /* initial time */
+  sunrealtype Tf    = SUN_RCONST(1.e11);            /* final time */
+  sunrealtype dTout = (Tf - T0) / SUN_RCONST(100.); /* time between outputs */
+  int Nt            = (int)SUNRceil(Tf / dTout);    /* number of output times */
+  sunindextype NEQ  = 3; /* number of dependent vars. */
 
   /* general problem variables */
   int flag;                    /* reusable error-checking flag */
@@ -268,7 +268,8 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
   /* Fill in ODE RHS function */
   NV_Ith_S(ydot, 0) = -SUN_RCONST(0.04) * u + SUN_RCONST(1.e4) * v * w;
-  NV_Ith_S(ydot, 1) = SUN_RCONST(0.04) * u - SUN_RCONST(1.e4) * v * w - SUN_RCONST(3.e7) * v * v;
+  NV_Ith_S(ydot, 1) = SUN_RCONST(0.04) * u - SUN_RCONST(1.e4) * v * w -
+                      SUN_RCONST(3.e7) * v * v;
   NV_Ith_S(ydot, 2) = SUN_RCONST(3.e7) * v * v;
 
   return 0; /* Return with success */

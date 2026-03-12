@@ -58,7 +58,8 @@
 #include <sunmatrix/sunmatrix_dense.h>
 
 /* Value of the natural number e */
-#define EVAL SUN_RCONST(2.718281828459045235360287471352662497757247093699959574966)
+#define EVAL \
+  SUN_RCONST(2.718281828459045235360287471352662497757247093699959574966)
 
 /* Convince macros for using precision-specific format specifiers */
 #if defined(SUNDIALS_FLOAT128_PRECISION)

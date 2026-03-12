@@ -400,7 +400,7 @@ static int InitUserData(int* argc, char*** argv, UserData udata)
     else if (strcmp((*argv)[arg_idx], "--atol") == 0)
     {
       arg_idx++;
-      udata->atol =  (sunrealtype)(atof((*argv)[arg_idx++]));
+      udata->atol = (sunrealtype)(atof((*argv)[arg_idx++]));
     }
     else if (strcmp((*argv)[arg_idx], "--proj") == 0)
     {

@@ -996,11 +996,11 @@ int main(int argc, char* argv[])
     werrtot += werr * werr;
     errtot += uerr * uerr + verr * verr + werr * werr;
     accuracy = SUNMAX(accuracy,
-                        uerr / SUNRabs(opts.atol + opts.rtol * yrefdata[0]));
+                      uerr / SUNRabs(opts.atol + opts.rtol * yrefdata[0]));
     accuracy = SUNMAX(accuracy,
-                        verr / SUNRabs(opts.atol + opts.rtol * yrefdata[1]));
+                      verr / SUNRabs(opts.atol + opts.rtol * yrefdata[1]));
     accuracy = SUNMAX(accuracy,
-                        werr / SUNRabs(opts.atol + opts.rtol * yrefdata[2]));
+                      werr / SUNRabs(opts.atol + opts.rtol * yrefdata[2]));
 
     // Periodically output current results to screen
     if (t >= tout)
@@ -1497,7 +1497,8 @@ static sunrealtype q(sunrealtype t, const Options& opts)
 
 static sunrealtype r(sunrealtype t, const Options& opts)
 {
-  return (SUNRcos(opts.om * opts.om * t * (ONE + SUNRexp(-(t - THREE) * (t - THREE)))));
+  return (SUNRcos(opts.om * opts.om * t *
+                  (ONE + SUNRexp(-(t - THREE) * (t - THREE)))));
 }
 
 static sunrealtype pdot(sunrealtype t, const Options& opts)

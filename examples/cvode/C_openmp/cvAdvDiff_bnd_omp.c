@@ -382,7 +382,7 @@ static void SetIC(N_Vector u, UserData data)
     y = j * dy;
     for (i = 1; i <= MX; i++)
     {
-      x                 = i * dx;
+      x = i * dx;
       IJth(udata, i, j) = x * (XMAX - x) * y * (YMAX - y) * SUNRexp(FIVE * x * y);
     }
   }

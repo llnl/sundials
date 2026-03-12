@@ -547,7 +547,7 @@ static int fref(sunrealtype t, N_Vector yy, N_Vector fy, void* f_data)
   yydata = N_VGetArrayPointer(yy);
   fydata = N_VGetArrayPointer(fy);
 
-  fydata[0] = yydata[1];              /* theta'          */
+  fydata[0] = yydata[1];                  /* theta'          */
   fydata[1] = -GRAV * SUNRcos(yydata[0]); /* -g * cos(theta) */
   return (0);
 }

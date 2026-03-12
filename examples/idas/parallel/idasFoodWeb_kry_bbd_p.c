@@ -122,7 +122,7 @@
 #define NUM_SPECIES 2 * NPREY
 
 #define PI     SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
-#define FOURPI (SUN_RCONST(4.0) * PI)      /* 4 pi */
+#define FOURPI (SUN_RCONST(4.0) * PI) /* 4 pi */
 
 #define MXSUB   10 /* Number of x mesh points per processor subgrid */
 #define MYSUB   10 /* Number of y mesh points per processor subgrid */

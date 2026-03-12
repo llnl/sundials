@@ -77,10 +77,10 @@
 #include "cvode/cvode.h"
 #include "nvector/nvector_mpiplusx.h"
 #include "nvector/nvector_serial.h"
+#include "sundials/sundials_math.h"
 #include "sunlinsol/sunlinsol_pcg.h"
 #include "sunlinsol/sunlinsol_spgmr.h"
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h"
-#include "sundials/sundials_math.h"
 
 // Macros for problem constants
 #define PI   SUN_RCONST(3.141592653589793238462643383279502884197169)
@@ -2300,7 +2300,8 @@ static int SetIC(N_Vector u, UserData* udata)
       a = TWO * PI * (x - udata->xl) / (udata->xu - udata->xl);
       b = TWO * PI * (y - udata->yl) / (udata->yu - udata->yl);
 
-      data[UIDX(i, j, nx_loc)] = udata->A + SUN_RCONST(0.5) * SUNRsin(a) * SUNRsin(b);
+      data[UIDX(i, j, nx_loc)] = udata->A +
+                                 SUN_RCONST(0.5) * SUNRsin(a) * SUNRsin(b);
       data[VIDX(i, j, nx_loc)] = udata->B / udata->A;
     }
   }

@@ -354,8 +354,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
 #pragma omp target map(to : is, ie, val) is_device_ptr(xdev) device(dev)
 #pragma omp teams distribute parallel for schedule(static, 1)
 
-    for (i = is; i <= ie; i++) { xdev[i] = val; }
-
+  for (i = is; i <= ie; i++) { xdev[i] = val; }
 }
 
 sunrealtype get_element(N_Vector X, sunindextype i)

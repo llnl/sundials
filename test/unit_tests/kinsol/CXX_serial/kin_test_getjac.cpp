@@ -89,7 +89,8 @@ static int res(N_Vector uu, N_Vector fuu, void* user_data)
   const sunrealtype z = udata[2];
 
   fdata[0] = THREE * x - SUNRcos((y - ONE) * z) - HALF;
-  fdata[1] = SUNSQR(x) - EIGHTYONE * SUNSQR((y - PTNINE)) + SUNRsin(z) + ONEPTZEROSIX;
+  fdata[1] = SUNSQR(x) - EIGHTYONE * SUNSQR((y - PTNINE)) + SUNRsin(z) +
+             ONEPTZEROSIX;
   fdata[2] = SUNRexp(-x * (y - ONE)) + TWENTY * z + (TEN * PI - THREE) / THREE;
 
   return 0;
@@ -298,7 +299,7 @@ int main(int argc, char* argv[])
   // Output Jacobian data
   std::cout << std::scientific;
 #if defined(SUNDIALS_FLOAT128_PRECISION)
-  std::cout << std::setprecision(SUN_DIGITS10/2);
+  std::cout << std::setprecision(SUN_DIGITS10 / 2);
 #else
   std::cout << std::setprecision(SUN_DIGITS10);
 #endif

@@ -131,11 +131,11 @@ struct UserData
   MPI_Request reqSN;
 
   // Fixed Point Solver settings
-  sunrealtype rtol; // relative tolerance
-  int maa;          // m for Anderson Acceleration
-  sunrealtype damping;   // damping for Anderson Acceleration
-  int orthaa;       // orthogonalization routine for AA
-  int maxits;       // max number of fixed point iterations
+  sunrealtype rtol;    // relative tolerance
+  int maa;             // m for Anderson Acceleration
+  sunrealtype damping; // damping for Anderson Acceleration
+  int orthaa;          // orthogonalization routine for AA
+  int maxits;          // max number of fixed point iterations
 
   // c(u) Function and integer for help setting
   cFn c;
@@ -267,7 +267,8 @@ static sunrealtype c6(sunrealtype u_val)
 // c(u) = cos^2(u) - sin^2(u) - e^u
 static sunrealtype c7(sunrealtype u_val)
 {
-  return (SUNRcos(u_val) * SUNRcos(u_val)) - (SUNRsin(u_val) * SUNRsin(u_val)) - SUNRexp(u_val);
+  return (SUNRcos(u_val) * SUNRcos(u_val)) - (SUNRsin(u_val) * SUNRsin(u_val)) -
+         SUNRexp(u_val);
 }
 
 // c(u) = e^u * u^4 - u * e^{cos(u)}

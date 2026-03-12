@@ -29,8 +29,8 @@
 #include <limits>
 #include <sstream>
 #include <sundials/sundials_core.hpp>
-#include <sundials/sundials_types.h>
 #include <sundials/sundials_math.h>
+#include <sundials/sundials_types.h>
 #include <vector>
 
 #include "mpi.h"

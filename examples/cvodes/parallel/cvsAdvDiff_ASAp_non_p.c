@@ -762,8 +762,7 @@ static void PrintOutput(sunrealtype g_val, N_Vector uB, UserData data)
     for (i = 0; i < NEQ; i++)
       printf("  [%2ld]: %8Le\n", (long int)i + 1, mu[i]);
 #else
-    for (i = 0; i < NEQ; i++)
-      printf("  [%2ld]: %8e\n", (long int)i + 1, mu[i]);
+    for (i = 0; i < NEQ; i++) printf("  [%2ld]: %8e\n", (long int)i + 1, mu[i]);
 #endif
 
     free(mu);

@@ -437,7 +437,7 @@ static int Precond(sunrealtype tt, N_Vector cc, N_Vector cp, N_Vector rr,
       for (js = 0; js < NUM_SPECIES; js++)
       {
         inc   = sqru * (SUNMAX(SUNRabs(cxy[js]),
-                            SUNMAX(hh * SUNRabs(cpxy[js]), ONE / ewtxy[js])));
+                               SUNMAX(hh * SUNRabs(cpxy[js]), ONE / ewtxy[js])));
         cctmp = cxy[js];
         cxy[js] += inc;
         fac = -ONE / inc;
@@ -785,7 +785,8 @@ static void WebRates(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
     ratesxy[is] = dotprod(NUM_SPECIES, cxy, acoef[is]);
   }
 
-  fac = ONE + ALPHA * xx * yy + BETA * SUNRsin(FOURPI * xx) * SUNRsin(FOURPI * yy);
+  fac = ONE + ALPHA * xx * yy +
+        BETA * SUNRsin(FOURPI * xx) * SUNRsin(FOURPI * yy);
 
   for (is = 0; is < NUM_SPECIES; is++)
   {
