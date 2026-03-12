@@ -143,8 +143,8 @@ int main(int argc, char* argv[])
 
   ARKodeButcherTable Be = nullptr;
 
-  int stages, order;
-  bool explicit_first_stage, stiffly_accurate, fsal;
+  int stages, order=1;
+  bool explicit_first_stage=true, stiffly_accurate=true, fsal=true;
 
   // --------
   // Explicit
@@ -198,8 +198,8 @@ int run_tests(ARKodeButcherTable Be, ProblemData& prob_data,
   int numfails = 0;
 
   // Get method properties
-  int stages, order;
-  bool explicit_first_stage, stiffly_accurate, fsal;
+  int stages, order=1;
+  bool explicit_first_stage=true, stiffly_accurate=true, fsal=true;
   flag = get_method_properties(Be, stages, order, explicit_first_stage,
                                stiffly_accurate, fsal);
   if (check_flag(&flag, "get_method_properties", 1)) { return 1; }
