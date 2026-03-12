@@ -106,7 +106,10 @@ int main(int argc, char* argv[])
   /* determine test configuration */
   if (sizeof(sunrealtype) == 4) { rtype = 32; }
   else if (sizeof(sunrealtype) == 8) { rtype = 64; }
-  else { rtype = 128; }
+  else
+  {
+    rtype = 128;
+  }
 
   /* set IVP solver tolerances based on rtype */
   if (rtype == 32)

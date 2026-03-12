@@ -33,9 +33,7 @@
 
 #if defined(SUNDIALS_BUILD_WITH_PROFILING)
 static inline SUNProfiler getSUNProfiler(N_Vector v)
-{
-  return (v->sunctx->profiler);
-}
+{ return (v->sunctx->profiler); }
 #endif
 
 /* -----------------------------------------------------------------
@@ -342,7 +340,10 @@ sunrealtype* N_VGetArrayPointer(N_Vector v)
   {
     return (sunrealtype*)v->ops->nvgetarraypointer(v);
   }
-  else { return NULL; }
+  else
+  {
+    return NULL;
+  }
 }
 
 sunrealtype* N_VGetDeviceArrayPointer(N_Vector v)
@@ -351,7 +352,10 @@ sunrealtype* N_VGetDeviceArrayPointer(N_Vector v)
   {
     return ((sunrealtype*)v->ops->nvgetdevicearraypointer(v));
   }
-  else { return (NULL); }
+  else
+  {
+    return (NULL);
+  }
 }
 
 void N_VSetArrayPointer(sunrealtype* v_data, N_Vector v)
@@ -363,18 +367,17 @@ void N_VSetArrayPointer(sunrealtype* v_data, N_Vector v)
 SUNComm N_VGetCommunicator(N_Vector v)
 {
   if (v->ops->nvgetcommunicator) { return (v->ops->nvgetcommunicator(v)); }
-  else { return (SUN_COMM_NULL); }
+  else
+  {
+    return (SUN_COMM_NULL);
+  }
 }
 
 sunindextype N_VGetLength(N_Vector v)
-{
-  return ((sunindextype)v->ops->nvgetlength(v));
-}
+{ return ((sunindextype)v->ops->nvgetlength(v)); }
 
 sunindextype N_VGetLocalLength(N_Vector v)
-{
-  return ((sunindextype)v->ops->nvgetlocallength(v));
-}
+{ return ((sunindextype)v->ops->nvgetlocallength(v)); }
 
 /* -----------------------------------------------------------------
  * standard vector operations
@@ -1105,7 +1108,10 @@ void N_VPrint(N_Vector v)
 {
   if (v == NULL) { printf("NULL Vector\n"); }
   else if (v->ops->nvprint == NULL) { printf("NULL Print Op\n"); }
-  else { v->ops->nvprint(v); }
+  else
+  {
+    v->ops->nvprint(v);
+  }
 }
 
 void N_VPrintFile(N_Vector v, FILE* outfile)
@@ -1117,6 +1123,9 @@ void N_VPrintFile(N_Vector v, FILE* outfile)
     {
       fprintf(outfile, "NULL PrintFile Op\n");
     }
-    else { v->ops->nvprintfile(v, outfile); }
+    else
+    {
+      v->ops->nvprintfile(v, outfile);
+    }
   }
 }

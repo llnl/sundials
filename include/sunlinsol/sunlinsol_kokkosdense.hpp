@@ -44,14 +44,10 @@ class DenseLinearSolver;
 namespace impl {
 
 static SUNLinearSolver_Type SUNLinSolGetType_KokkosDense(SUNLinearSolver S)
-{
-  return SUNLINEARSOLVER_DIRECT;
-}
+{ return SUNLINEARSOLVER_DIRECT; }
 
 static SUNLinearSolver_ID SUNLinSolGetID_KokkosDense(SUNLinearSolver S)
-{
-  return SUNLINEARSOLVER_KOKKOSDENSE;
-}
+{ return SUNLINEARSOLVER_KOKKOSDENSE; }
 
 template<class MatrixType, class LinearSolverType>
 int SUNLinSolSetup_KokkosDense(SUNLinearSolver S, SUNMatrix A)
@@ -167,9 +163,7 @@ public:
 
   DenseLinearSolver(SUNContext sunctx)
     : sundials::impl::BaseLinearSolver(sunctx)
-  {
-    initSUNLinearSolver();
-  }
+  { initSUNLinearSolver(); }
 
   // Move constructor
   DenseLinearSolver(DenseLinearSolver&& that_solver) noexcept

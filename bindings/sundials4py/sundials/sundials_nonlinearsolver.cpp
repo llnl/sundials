@@ -92,7 +92,10 @@ void bind_sunnonlinearsolver(nb::module_& m)
       {
         return SUNNonlinSolSetSysFn(NLS, sunnonlinearsolver_sysfn_wrapper);
       }
-      else { return SUNNonlinSolSetSysFn(NLS, nullptr); }
+      else
+      {
+        return SUNNonlinSolSetSysFn(NLS, nullptr);
+      }
     },
     nb::arg("NLS"), nb::arg("SysFn").none());
 
@@ -108,7 +111,10 @@ void bind_sunnonlinearsolver(nb::module_& m)
       {
         return SUNNonlinSolSetLSetupFn(NLS, sunnonlinearsolver_lsetupfn_wrapper);
       }
-      else { return SUNNonlinSolSetLSetupFn(NLS, nullptr); }
+      else
+      {
+        return SUNNonlinSolSetLSetupFn(NLS, nullptr);
+      }
     },
     nb::arg("NLS"), nb::arg("SetupFn").none());
 
@@ -124,7 +130,10 @@ void bind_sunnonlinearsolver(nb::module_& m)
       {
         return SUNNonlinSolSetLSolveFn(NLS, sunnonlinearsolver_lsolvefn_wrapper);
       }
-      else { return SUNNonlinSolSetLSolveFn(NLS, nullptr); }
+      else
+      {
+        return SUNNonlinSolSetLSolveFn(NLS, nullptr);
+      }
     },
     nb::arg("NLS"), nb::arg("SolveFn").none());
 
@@ -142,7 +151,10 @@ void bind_sunnonlinearsolver(nb::module_& m)
                                          sunnonlinearsolver_convtestfn_wrapper,
                                          NLS->python);
       }
-      else { return SUNNonlinSolSetConvTestFn(NLS, nullptr, nullptr); }
+      else
+      {
+        return SUNNonlinSolSetConvTestFn(NLS, nullptr, nullptr);
+      }
     },
     nb::arg("NLS"), nb::arg("CTestFn").none());
 }
@@ -150,6 +162,4 @@ void bind_sunnonlinearsolver(nb::module_& m)
 } // namespace sundials4py
 
 extern "C" void SUNNonlinearSolverFunctionTable_Destroy(void* ptr)
-{
-  delete static_cast<SUNNonlinearSolverFunctionTable*>(ptr);
-}
+{ delete static_cast<SUNNonlinearSolverFunctionTable*>(ptr); }

@@ -43,15 +43,11 @@ static SUNErrCode arkSUNStepperEvolveHelper(SUNStepper stepper,
 
 static SUNErrCode arkSUNStepperEvolve(SUNStepper stepper, sunrealtype tout,
                                       N_Vector y, sunrealtype* tret)
-{
-  return arkSUNStepperEvolveHelper(stepper, tout, y, tret, ARK_NORMAL);
-}
+{ return arkSUNStepperEvolveHelper(stepper, tout, y, tret, ARK_NORMAL); }
 
 static SUNErrCode arkSUNStepperOneStep(SUNStepper stepper, sunrealtype tout,
                                        N_Vector y, sunrealtype* tret)
-{
-  return arkSUNStepperEvolveHelper(stepper, tout, y, tret, ARK_ONE_STEP);
-}
+{ return arkSUNStepperEvolveHelper(stepper, tout, y, tret, ARK_ONE_STEP); }
 
 /*------------------------------------------------------------------------------
   Implementation of SUNStepperFullRhsFn to compute the full inner

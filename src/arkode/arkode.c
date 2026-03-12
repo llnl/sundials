@@ -135,7 +135,7 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
       {
         ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                           (ONE - FOUR * ark_mem->uround);
-        ark_mem->eta = ark_mem->hprime / ark_mem->h;
+        ark_mem->eta    = ark_mem->hprime / ark_mem->h;
       }
     }
   }
@@ -841,7 +841,10 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       ark_mem->tolsf *= TWO;
       break;
     }
-    else { ark_mem->tolsf = ONE; }
+    else
+    {
+      ark_mem->tolsf = ONE;
+    }
 
     /* Check for h below roundoff level in tn */
     if (ark_mem->tcur + ark_mem->h == ark_mem->tcur)
@@ -1087,7 +1090,10 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
               break;
             }
           }
-          else { N_VScale(ONE, ark_mem->yn, yout); }
+          else
+          {
+            N_VScale(ONE, ark_mem->yn, yout);
+          }
           ark_mem->tretlast = *tret = ark_mem->tstop;
           ark_mem->tstopset         = SUNFALSE;
           istate                    = ARK_TSTOP_RETURN;
@@ -1100,7 +1106,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       {
         ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                           (ONE - FOUR * ark_mem->uround);
-        ark_mem->eta = ark_mem->hprime / ark_mem->h;
+        ark_mem->eta    = ark_mem->hprime / ark_mem->h;
       }
     }
 
@@ -1369,7 +1375,10 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
 
   /* output interpolation quantities */
   if (ark_mem->interp) { arkInterpPrintMem(ark_mem->interp, outfile); }
-  else { fprintf(outfile, "interpolation = NULL\n"); }
+  else
+  {
+    fprintf(outfile, "interpolation = NULL\n");
+  }
 
 #ifdef SUNDIALS_DEBUG_PRINTVEC
   /* output vector quantities */
@@ -1894,7 +1903,10 @@ sunbooleantype arkCheckNvectorRequired(N_Vector tmpl)
   {
     return (SUNFALSE);
   }
-  else { return (SUNTRUE); }
+  else
+  {
+    return (SUNTRUE);
+  }
 }
 
 /*---------------------------------------------------------------
@@ -2067,10 +2079,8 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
   }
 
   /* Load initial residual weights */
-  if (ark_mem->rwt_is_ewt)
-  { /* update pointer to ewt */
-    ark_mem->rwt = ark_mem->ewt;
-  }
+  if (ark_mem->rwt_is_ewt) { /* update pointer to ewt */
+                             ark_mem->rwt = ark_mem->ewt; }
   else
   {
     retval = ark_mem->rfun(ark_mem->yn, ark_mem->rwt, ark_mem->r_data);
@@ -2252,7 +2262,7 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
       {
         ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                           (ONE - FOUR * ark_mem->uround);
-        ark_mem->eta = ark_mem->hprime / ark_mem->h;
+        ark_mem->eta    = ark_mem->hprime / ark_mem->h;
       }
     }
   }
@@ -2399,7 +2409,10 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
             return (1);
           }
         }
-        else { N_VScale(ONE, ark_mem->yn, yout); }
+        else
+        {
+          N_VScale(ONE, ark_mem->yn, yout);
+        }
         ark_mem->tretlast = *tret = ark_mem->tstop;
         ark_mem->tstopset         = SUNFALSE;
         *ier                      = ARK_TSTOP_RETURN;
@@ -2412,7 +2425,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
     {
       ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                         (ONE - FOUR * ark_mem->uround);
-      ark_mem->eta = ark_mem->hprime / ark_mem->h;
+      ark_mem->eta    = ark_mem->hprime / ark_mem->h;
     }
   }
 
@@ -2529,7 +2542,10 @@ int arkHin(ARKodeMem ark_mem, sunrealtype tout)
   if (hub < hlb)
   {
     if (sign == -1) { ark_mem->h = -hg; }
-    else { ark_mem->h = hg; }
+    else
+    {
+      ark_mem->h = hg;
+    }
     return (ARK_SUCCESS);
   }
 
@@ -2700,7 +2716,10 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
   {
     sunCompensatedSum(ark_mem->tn, ark_mem->h, &ark_mem->tcur, &ark_mem->terr);
   }
-  else { ark_mem->tcur = ark_mem->tn + ark_mem->h; }
+  else
+  {
+    ark_mem->tcur = ark_mem->tn + ark_mem->h;
+  }
 
   if (ark_mem->tstopset)
   {
@@ -2723,7 +2742,10 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
     {
       ark_mem->AccumError += dsm;
     }
-    else /* ARK_ACCUMERROR_AVG */ { ark_mem->AccumError += (dsm * ark_mem->h); }
+    else /* ARK_ACCUMERROR_AVG */
+    {
+      ark_mem->AccumError += (dsm * ark_mem->h);
+    }
   }
 
   /* apply user-supplied step postprocessing function (if supplied) */
@@ -3103,7 +3125,10 @@ int arkPredict_VariableOrder(ARKodeMem ark_mem, sunrealtype tau, N_Vector yguess
   /* set the polynomial order based on tau input */
   if (tau <= tau_tol) { ord = 3; }
   else if (tau <= tau_tol2) { ord = 2; }
-  else { ord = 1; }
+  else
+  {
+    ord = 1;
+  }
 
   /* call the interpolation module to do the work */
   return (arkInterpEvaluate(ark_mem, ark_mem->interp, tau, 0, ord, yguess));
@@ -3139,7 +3164,10 @@ int arkPredict_CutoffOrder(ARKodeMem ark_mem, sunrealtype tau, N_Vector yguess)
 
   /* set the polynomial order based on tau input */
   if (tau <= tau_tol) { ord = ARK_INTERP_MAX_DEGREE; }
-  else { ord = 1; }
+  else
+  {
+    ord = 1;
+  }
 
   /* call the interpolation module to do the work */
   return (arkInterpEvaluate(ark_mem, ark_mem->interp, tau, 0, ord, yguess));
@@ -3246,7 +3274,10 @@ int arkCheckConvergence(ARKodeMem ark_mem, int* nflagPtr, int* ncfPtr)
     if (*nflagPtr == ARK_LSETUP_FAIL) { return (ARK_LSETUP_FAIL); }
     else if (*nflagPtr == ARK_LSOLVE_FAIL) { return (ARK_LSOLVE_FAIL); }
     else if (*nflagPtr == ARK_RHSFUNC_FAIL) { return (ARK_RHSFUNC_FAIL); }
-    else { return (ARK_NLS_OP_ERR); }
+    else
+    {
+      return (ARK_NLS_OP_ERR);
+    }
   }
 
   /* At this point, nflag = CONV_FAIL or RHSFUNC_RECVR; increment ncf */
@@ -3658,10 +3689,8 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
   }
 
   /* rwt  */
-  if (ark_mem->rwt_is_ewt)
-  { /* update pointer to ewt */
-    ark_mem->rwt = ark_mem->ewt;
-  }
+  if (ark_mem->rwt_is_ewt) { /* update pointer to ewt */
+                             ark_mem->rwt = ark_mem->ewt; }
   else
   { /* resize if distinct from ewt */
     if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
@@ -3790,7 +3819,8 @@ void arkProcessError(ARKodeMem ark_mem, int error_code, int line,
   vsnprintf(msg, msglen, msgfmt, ap);
   va_end(ap);
 
-  do {
+  do
+  {
     if (ark_mem == NULL)
     {
       SUNGlobalFallbackErrHandler(line, func, file, msg, error_code);
@@ -3884,7 +3914,10 @@ int ark_MRIStepInnerEvolve(MRIStepInnerStepper stepper,
     {
       retval = 1;
     }
-    else { return -1; }
+    else
+    {
+      return -1;
+    }
   }
 
   /* disable inner forcing */
@@ -4000,7 +4033,10 @@ int ark_MRIStepInnerSetRTol(MRIStepInnerStepper stepper, sunrealtype rtol)
     ark_mem->reltol = rtol;
     return 0;
   }
-  else { return -1; }
+  else
+  {
+    return -1;
+  }
 }
 
 /*===============================================================

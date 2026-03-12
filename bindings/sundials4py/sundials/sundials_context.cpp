@@ -99,6 +99,4 @@ void bind_suncontext(nb::module_& m)
 } // namespace sundials4py
 
 extern "C" void SUNContextFunctionTable_Destroy(void* ptr)
-{
-  delete static_cast<SUNContextFunctionTable*>(ptr);
-}
+{ delete static_cast<SUNContextFunctionTable*>(ptr); }

@@ -407,6 +407,9 @@ SUNErrCode SUNMemoryHelper_GetAllocStats_Cuda(SUNMemoryHelper helper,
     *bytes_allocated      = SUNHELPER_CONTENT(helper)->bytes_allocated_uvm;
     *bytes_high_watermark = SUNHELPER_CONTENT(helper)->bytes_high_watermark_uvm;
   }
-  else { return SUN_ERR_ARG_OUTOFRANGE; }
+  else
+  {
+    return SUN_ERR_ARG_OUTOFRANGE;
+  }
   return SUN_SUCCESS;
 }

@@ -133,9 +133,7 @@ SUNNonlinearSolver SUNNonlinSol_NewtonSens(int count, N_Vector y,
 
 SUNNonlinearSolver_Type SUNNonlinSolGetType_Newton(
   SUNDIALS_MAYBE_UNUSED SUNNonlinearSolver NLS)
-{
-  return (SUNNONLINEARSOLVER_ROOTFIND);
-}
+{ return (SUNNONLINEARSOLVER_ROOTFIND); }
 
 SUNErrCode SUNNonlinSolInitialize_Newton(SUNNonlinearSolver NLS)
 {

@@ -253,9 +253,7 @@ int main(int argc, char* argv[])
   y = HIP_OR_CUDA(N_VNew_Hip(batchSize * nbatches, sunctx);
                   , N_VNew_Cuda(batchSize * nbatches,
                                 sunctx);) if (check_retval((void*)y, "N_VNew", 0))
-  {
-    return (1);
-  }
+  { return (1); }
   abstol = N_VClone(y);
   if (check_retval((void*)abstol, "N_VClone", 0)) { return (1); }
 
@@ -397,7 +395,7 @@ int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
   unsigned threads_per_block = 256;
   unsigned num_blocks        = (udata->nbatches + threads_per_block - 1) /
-                        threads_per_block;
+                               threads_per_block;
   f_kernel<<<num_blocks, threads_per_block>>>(t, ydata, ydotdata, udata->a.get(),
                                               udata->b.get(), udata->ep.get(),
                                               udata->nbatches, udata->batchSize);

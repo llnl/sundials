@@ -288,7 +288,10 @@ static int arkRelaxBrentSolve(ARKodeMem ark_mem)
 
       /* Ensure updates produce values within [xc, xb] or [xb, xc] */
       if (pt > ZERO) { qt = -qt; }
-      else { pt = -pt; }
+      else
+      {
+        pt = -pt;
+      }
 
       /* Check if interpolant is acceptable, otherwise use bisection */
       st = THREE * xm * qt - SUNRabs(tol * qt);
@@ -318,7 +321,10 @@ static int arkRelaxBrentSolve(ARKodeMem ark_mem)
 
     /* If update is small, use tolerance in bisection direction */
     if (SUNRabs(new_update) > tol) { xb += new_update; }
-    else { xb += SUNRcopysign(tol, xm); }
+    else
+    {
+      xb += SUNRcopysign(tol, xm);
+    }
 
     /* Compute relaxation residual */
     retval = arkRelaxResidual(xb, &fb, ark_mem);
@@ -453,7 +459,10 @@ int ARKodeSetRelaxEtaFail(void* arkode_mem, sunrealtype eta_fail)
   }
 
   if (eta_fail > ZERO && eta_fail < ONE) { relax_mem->eta_fail = eta_fail; }
-  else { relax_mem->eta_fail = ARK_RELAX_DEFAULT_ETA_FAIL; }
+  else
+  {
+    relax_mem->eta_fail = ARK_RELAX_DEFAULT_ETA_FAIL;
+  }
 
   return ARK_SUCCESS;
 }
@@ -476,7 +485,10 @@ int ARKodeSetRelaxLowerBound(void* arkode_mem, sunrealtype lower)
   }
 
   if (lower > ZERO && lower < ONE) { relax_mem->lower_bound = lower; }
-  else { relax_mem->lower_bound = ARK_RELAX_DEFAULT_LOWER_BOUND; }
+  else
+  {
+    relax_mem->lower_bound = ARK_RELAX_DEFAULT_LOWER_BOUND;
+  }
 
   return ARK_SUCCESS;
 }
@@ -499,7 +511,10 @@ int ARKodeSetRelaxMaxFails(void* arkode_mem, int max_fails)
   }
 
   if (max_fails > 0) { relax_mem->max_fails = max_fails; }
-  else { relax_mem->max_fails = ARK_RELAX_DEFAULT_MAX_FAILS; }
+  else
+  {
+    relax_mem->max_fails = ARK_RELAX_DEFAULT_MAX_FAILS;
+  }
 
   return ARK_SUCCESS;
 }
@@ -522,7 +537,10 @@ int ARKodeSetRelaxMaxIters(void* arkode_mem, int max_iters)
   }
 
   if (max_iters > 0) { relax_mem->max_iters = max_iters; }
-  else { relax_mem->max_iters = ARK_RELAX_DEFAULT_MAX_ITERS; }
+  else
+  {
+    relax_mem->max_iters = ARK_RELAX_DEFAULT_MAX_ITERS;
+  }
 
   return ARK_SUCCESS;
 }
@@ -574,7 +592,10 @@ int ARKodeSetRelaxResTol(void* arkode_mem, sunrealtype res_tol)
   }
 
   if (res_tol > ZERO) { relax_mem->res_tol = res_tol; }
-  else { relax_mem->res_tol = ARK_RELAX_DEFAULT_RES_TOL; }
+  else
+  {
+    relax_mem->res_tol = ARK_RELAX_DEFAULT_RES_TOL;
+  }
 
   return ARK_SUCCESS;
 }
@@ -597,10 +618,16 @@ int ARKodeSetRelaxTol(void* arkode_mem, sunrealtype rel_tol, sunrealtype abs_tol
   }
 
   if (rel_tol > ZERO) { relax_mem->rel_tol = rel_tol; }
-  else { relax_mem->rel_tol = ARK_RELAX_DEFAULT_REL_TOL; }
+  else
+  {
+    relax_mem->rel_tol = ARK_RELAX_DEFAULT_REL_TOL;
+  }
 
   if (abs_tol > ZERO) { relax_mem->abs_tol = abs_tol; }
-  else { relax_mem->abs_tol = ARK_RELAX_DEFAULT_ABS_TOL; }
+  else
+  {
+    relax_mem->abs_tol = ARK_RELAX_DEFAULT_ABS_TOL;
+  }
 
   return ARK_SUCCESS;
 }
@@ -623,7 +650,10 @@ int ARKodeSetRelaxUpperBound(void* arkode_mem, sunrealtype upper)
   }
 
   if (upper > ONE) { relax_mem->upper_bound = upper; }
-  else { relax_mem->upper_bound = ARK_RELAX_DEFAULT_UPPER_BOUND; }
+  else
+  {
+    relax_mem->upper_bound = ARK_RELAX_DEFAULT_UPPER_BOUND;
+  }
 
   return ARK_SUCCESS;
 }

@@ -199,7 +199,10 @@ int check_vector(N_Vector expected, N_Vector computed, sunrealtype tol)
     failure);
 
   if (failure > ZERO) { return 1; }
-  else { return 0; }
+  else
+  {
+    return 0;
+  }
 }
 
 void sync_device() { Kokkos::fence(); }

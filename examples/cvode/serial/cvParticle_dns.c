@@ -254,7 +254,10 @@ int main(int argc, char* argv[])
 
     /* Update output time */
     if (out < totalout - 1) { tout += dtout; }
-    else { tout = udata->torbit * udata->orbits; }
+    else
+    {
+      tout = udata->torbit * udata->orbits;
+    }
   }
 
   /* Close output files */

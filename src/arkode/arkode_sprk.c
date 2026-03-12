@@ -140,8 +140,8 @@ static ARKodeSPRKTable arkodeSymplecticMcLachlan2(void)
   sprk_table->q      = 2;
   sprk_table->stages = 2;
   sprk_table->a[1]   = SUN_RCONST(1.0) - (SUN_RCONST(1.0) / SUN_RCONST(2.0)) *
-                                         SUNRsqrt(SUN_RCONST(2.0));
-  sprk_table->a[0]    = SUN_RCONST(1.0) - sprk_table->a[1];
+                                           SUNRsqrt(SUN_RCONST(2.0));
+  sprk_table->a[0]   = SUN_RCONST(1.0) - sprk_table->a[1];
   sprk_table->ahat[1] = SUN_RCONST(1.0) /
                         (SUN_RCONST(2.0) * (SUN_RCONST(1.0) - sprk_table->a[1]));
   sprk_table->ahat[0] = SUN_RCONST(1.0) - sprk_table->ahat[1];
@@ -165,12 +165,12 @@ static ARKodeSPRKTable arkodeSymplecticMcLachlan3(void)
                   SUN_RCONST(1.0) / SUN_RCONST(3.0));
   w = -SUN_RCONST(2.0) / SUN_RCONST(3.0) +
       SUN_RCONST(1.0) / (SUN_RCONST(9.0) * z) + z;
-  y                = (SUN_RCONST(1.0) + w * w) / SUN_RCONST(4.0);
-  sprk_table->a[0] = SUNRsqrt(SUN_RCONST(1.0) / (SUN_RCONST(9.0) * y) -
-                              w / SUN_RCONST(2.0) + SUNRsqrt(y)) -
-                     SUN_RCONST(1.0) / (SUN_RCONST(3.0) * SUNRsqrt(y));
-  sprk_table->a[1] = SUN_RCONST(0.25) / sprk_table->a[0] -
-                     sprk_table->a[0] / SUN_RCONST(2.0);
+  y = (SUN_RCONST(1.0) + w * w) / SUN_RCONST(4.0);
+  sprk_table->a[0]    = SUNRsqrt(SUN_RCONST(1.0) / (SUN_RCONST(9.0) * y) -
+                                 w / SUN_RCONST(2.0) + SUNRsqrt(y)) -
+                        SUN_RCONST(1.0) / (SUN_RCONST(3.0) * SUNRsqrt(y));
+  sprk_table->a[1]    = SUN_RCONST(0.25) / sprk_table->a[0] -
+                        sprk_table->a[0] / SUN_RCONST(2.0);
   sprk_table->a[2]    = SUN_RCONST(1.0) - sprk_table->a[0] - sprk_table->a[1];
   sprk_table->ahat[0] = sprk_table->a[2];
   sprk_table->ahat[1] = sprk_table->a[1];

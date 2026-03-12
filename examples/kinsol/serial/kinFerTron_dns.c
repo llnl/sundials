@@ -279,10 +279,16 @@ static int SolveIt(void* kmem, N_Vector u, N_Vector s, int glstr, int mset)
   printf("\n");
 
   if (mset == 1) { printf("Exact Newton"); }
-  else { printf("Modified Newton"); }
+  else
+  {
+    printf("Modified Newton");
+  }
 
   if (glstr == KIN_NONE) { printf("\n"); }
-  else { printf(" with line search\n"); }
+  else
+  {
+    printf(" with line search\n");
+  }
 
   retval = KINSetMaxSetupCalls(kmem, mset);
   if (check_retval(&retval, "KINSetMaxSetupCalls", 1)) { return (1); }

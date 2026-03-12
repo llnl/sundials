@@ -53,9 +53,7 @@ N_Vector N_VMake_MPIPlusX(MPI_Comm comm, N_Vector X, SUNContext sunctx)
 }
 
 N_Vector_ID N_VGetVectorID_MPIPlusX(SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
-  return SUNDIALS_NVEC_MPIPLUSX;
-}
+{ return SUNDIALS_NVEC_MPIPLUSX; }
 
 sunrealtype* N_VGetArrayPointer_MPIPlusX(N_Vector v)
 {

@@ -54,9 +54,7 @@ static SUNErrCode SMScaleAddNew_Band(sunrealtype c, SUNMatrix A, SUNMatrix B);
 
 SUNMatrix SUNBandMatrix(sunindextype N, sunindextype mu, sunindextype ml,
                         SUNContext sunctx)
-{
-  return (SUNBandMatrixStorage(N, mu, ml, mu + ml, sunctx));
-}
+{ return (SUNBandMatrixStorage(N, mu, ml, mu + ml, sunctx)); }
 
 /* ----------------------------------------------------------------------------
  * Function to create a new band matrix with specified storage upper bandwidth
@@ -230,9 +228,7 @@ sunrealtype* SUNBandMatrix_Column(SUNMatrix A, sunindextype j)
  */
 
 SUNMatrix_ID SUNMatGetID_Band(SUNDIALS_MAYBE_UNUSED SUNMatrix A)
-{
-  return SUNMATRIX_BAND;
-}
+{ return SUNMATRIX_BAND; }
 
 SUNMatrix SUNMatClone_Band(SUNMatrix A)
 {

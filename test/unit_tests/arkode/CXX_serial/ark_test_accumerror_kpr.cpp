@@ -638,9 +638,7 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0,
 static sunrealtype p(sunrealtype t) { return (SUNRcos(t)); }
 
 static sunrealtype q(sunrealtype t, UserData& udata)
-{
-  return (SUNRcos(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))));
-}
+{ return (SUNRcos(udata.omega * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO))))); }
 
 static sunrealtype pdot(sunrealtype t) { return (-SUNRsin(t)); }
 
@@ -655,9 +653,7 @@ static sunrealtype qdot(sunrealtype t, UserData& udata)
 static sunrealtype utrue(sunrealtype t) { return (SUNRsqrt(TWO + p(t))); }
 
 static sunrealtype vtrue(sunrealtype t, UserData& udata)
-{
-  return (SUNRsqrt(TWO + q(t, udata)));
-}
+{ return (SUNRsqrt(TWO + q(t, udata))); }
 
 static int Ytrue(sunrealtype t, N_Vector y, UserData& udata)
 {

@@ -120,7 +120,10 @@ SUNErrCode sunadctrlSetFromCommandLine(SUNAdaptController C, const char* Cid,
   if (Cid != NULL && strlen(Cid) > 0) { offset = strlen(Cid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (Cid != NULL && strlen(Cid) > 0) { strcpy(prefix, Cid); }
-  else { strcpy(prefix, default_id); }
+  else
+  {
+    strcpy(prefix, default_id);
+  }
   strcat(prefix, ".");
 
   int retval;
@@ -263,7 +266,10 @@ SUNErrCode SUNAdaptController_SetOptions(SUNAdaptController C, const char* Cid,
   {
     return (C->ops->setoptions(C, Cid, file_name, argc, argv));
   }
-  else { return (SUN_SUCCESS); }
+  else
+  {
+    return (SUN_SUCCESS);
+  }
 }
 
 SUNErrCode SUNAdaptController_SetDefaults(SUNAdaptController C)

@@ -148,21 +148,30 @@ int main(int argc, char* argv[])
     printf("FAIL: SUNLinSol_KLUGetSymbolic failure\n");
     fails += 1;
   }
-  else { printf("    PASSED test -- SUNLinSol_KLUGetSymbolic \n"); }
+  else
+  {
+    printf("    PASSED test -- SUNLinSol_KLUGetSymbolic \n");
+  }
   numeric = SUNLinSol_KLUGetNumeric(LS);
   if (numeric->n != N)
   {
     printf("FAIL: SUNLinSol_KLUGetNumeric failure\n");
     fails += 1;
   }
-  else { printf("    PASSED test -- SUNLinSol_KLUGetNumeric \n"); }
+  else
+  {
+    printf("    PASSED test -- SUNLinSol_KLUGetNumeric \n");
+  }
   common = SUNLinSol_KLUGetCommon(LS);
   if (common->singular_col != N)
   {
     printf("FAIL: SUNLinSol_KLUGetCommon failure\n");
     fails += 1;
   }
-  else { printf("    PASSED test -- SUNLinSol_KLUGetCommon \n"); }
+  else
+  {
+    printf("    PASSED test -- SUNLinSol_KLUGetCommon \n");
+  }
 
   /* Print result */
   if (fails)
@@ -177,7 +186,10 @@ int main(int argc, char* argv[])
     printf("\nx (computed) =\n");
     N_VPrint_Serial(x);
   }
-  else { printf("SUCCESS: SUNLinSol module passed all tests \n \n"); }
+  else
+  {
+    printf("SUCCESS: SUNLinSol module passed all tests \n \n");
+  }
 
   /* Free solver, matrix and vectors */
   SUNLinSolFree(LS);
@@ -226,7 +238,10 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
            (long int)maxloc, tol);
     return (1);
   }
-  else { return (0); }
+  else
+  {
+    return (0);
+  }
 }
 
 void sync_device() {}

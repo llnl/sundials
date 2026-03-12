@@ -299,7 +299,10 @@ int main(void)
   SUNContext_Free(&ctx);
 
   if (errors == 0) { printf("Success\n"); }
-  else { printf("%d Test Failures\n", errors); }
+  else
+  {
+    printf("%d Test Failures\n", errors);
+  }
 
   return 0;
 }

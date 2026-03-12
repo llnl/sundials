@@ -48,9 +48,7 @@ protected:
   SUNStlVector_int list;
 
   virtual void SetUp() override
-  {
-    list = SUNStlVector_int_New(2, freeIntValue);
-  }
+  { list = SUNStlVector_int_New(2, freeIntValue); }
 
   virtual void TearDown() override { SUNStlVector_int_Destroy(&list); }
 };
@@ -65,9 +63,7 @@ TEST_F(SUNStlVectorPODTest, NewAndDestroy)
 }
 
 TEST_F(SUNStlVectorPODTest, IsEmpty)
-{
-  EXPECT_TRUE(SUNStlVector_int_IsEmpty(list));
-}
+{ EXPECT_TRUE(SUNStlVector_int_IsEmpty(list)); }
 
 TEST_F(SUNStlVectorPODTest, PushBack)
 {
@@ -143,9 +139,7 @@ protected:
   sundials::Context sunctx;
 
   virtual void SetUp() override
-  {
-    list = SUNStlVector_N_Vector_New(2, freeNvectorValue);
-  }
+  { list = SUNStlVector_N_Vector_New(2, freeNvectorValue); }
 
   virtual void TearDown() override { SUNStlVector_N_Vector_Destroy(&list); }
 };
@@ -160,9 +154,7 @@ TEST_F(SUNStlVectorComplexTest, NewAndDestroy)
 }
 
 TEST_F(SUNStlVectorComplexTest, IsEmpty)
-{
-  EXPECT_TRUE(SUNStlVector_N_Vector_IsEmpty(list));
-}
+{ EXPECT_TRUE(SUNStlVector_N_Vector_IsEmpty(list)); }
 
 TEST_F(SUNStlVectorComplexTest, PushBack)
 {

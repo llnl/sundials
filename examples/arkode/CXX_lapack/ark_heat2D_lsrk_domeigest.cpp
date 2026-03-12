@@ -952,7 +952,10 @@ static int WriteOutput(sunrealtype t, N_Vector u, UserData* udata)
 
       cout << setw(22) << t << setw(25) << urms << setw(25) << max << endl;
     }
-    else { cout << setw(22) << t << setw(25) << urms << endl; }
+    else
+    {
+      cout << setw(22) << t << setw(25) << urms << endl;
+    }
 
     // Write solution and error to disk
     if (udata->output == 2)

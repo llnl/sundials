@@ -108,9 +108,7 @@ static inline sunrealtype* N_VGetDeviceArrayPointer_Raja(N_Vector x)
  */
 
 static inline N_Vector_ID N_VGetVectorID_Raja(N_Vector v)
-{
-  return SUNDIALS_NVEC_RAJA;
-}
+{ return SUNDIALS_NVEC_RAJA; }
 
 SUNDIALS_EXPORT N_Vector N_VCloneEmpty_Raja(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VClone_Raja(N_Vector w);

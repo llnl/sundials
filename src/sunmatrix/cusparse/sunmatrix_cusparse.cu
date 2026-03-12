@@ -107,9 +107,7 @@ public:
   {}
 
   virtual size_t gridSize(size_t numWorkElements, size_t blockDim = 0) const
-  {
-    return (numWorkElements + blockDim - 1) / blockDim;
-  }
+  { return (numWorkElements + blockDim - 1) / blockDim; }
 
   virtual size_t blockSize(size_t numWorkElements = 0, size_t gridDim = 0) const
   {
@@ -120,14 +118,10 @@ public:
   virtual const cudaStream_t* stream() const { return (&stream_); }
 
   virtual ExecPolicy* clone() const
-  {
-    return (static_cast<ExecPolicy*>(new SUNCuSparseMatrixExecPolicy(*this)));
-  }
+  { return (static_cast<ExecPolicy*>(new SUNCuSparseMatrixExecPolicy(*this))); }
 
   static size_t max_block_size(int val)
-  {
-    return ((val > MAX_BLOCK_SIZE) ? MAX_BLOCK_SIZE : val);
-  }
+  { return ((val > MAX_BLOCK_SIZE) ? MAX_BLOCK_SIZE : val); }
 };
 
 SUNCuSparseMatrixExecPolicy DEFAULT_EXEC_POLICY;
@@ -529,19 +523,28 @@ int SUNMatrix_cuSparse_NNZ(SUNMatrix A) { return SMCU_NNZ(A); }
 int* SUNMatrix_cuSparse_IndexPointers(SUNMatrix A)
 {
   if (SUNMatGetID(A) == SUNMATRIX_CUSPARSE) { return (SMCU_INDEXPTRSp(A)); }
-  else { return (NULL); }
+  else
+  {
+    return (NULL);
+  }
 }
 
 int* SUNMatrix_cuSparse_IndexValues(SUNMatrix A)
 {
   if (SUNMatGetID(A) == SUNMATRIX_CUSPARSE) { return (SMCU_INDEXVALSp(A)); }
-  else { return (NULL); }
+  else
+  {
+    return (NULL);
+  }
 }
 
 sunrealtype* SUNMatrix_cuSparse_Data(SUNMatrix A)
 {
   if (SUNMatGetID(A) == SUNMATRIX_CUSPARSE) { return (SMCU_DATAp(A)); }
-  else { return (NULL); }
+  else
+  {
+    return (NULL);
+  }
 }
 
 int SUNMatrix_cuSparse_NumBlocks(SUNMatrix A) { return SMCU_NBLOCKS(A); }
@@ -570,7 +573,10 @@ sunrealtype* SUNMatrix_cuSparse_BlockData(SUNMatrix A, int blockidx)
 cusparseMatDescr_t SUNMatrix_cuSparse_MatDescr(SUNMatrix A)
 {
   if (SUNMatGetID(A) == SUNMATRIX_CUSPARSE) { return (SMCU_MATDESCR(A)); }
-  else { return (NULL); }
+  else
+  {
+    return (NULL);
+  }
 }
 
 SUNErrCode SUNMatrix_cuSparse_SetFixedPattern(SUNMatrix A, sunbooleantype yesno)
@@ -698,9 +704,9 @@ SUNErrCode SUNMatrix_cuSparse_CopyFromDevice(SUNMatrix dA, sunrealtype* h_data,
   {
     _h_idxptrs = SUNMemoryHelper_Wrap(SMCU_MEMHELP(dA), h_idxptrs,
                                       SUNMEMTYPE_HOST);
-    retval     = SUNMemoryHelper_CopyAsync(SMCU_MEMHELP(dA), _h_idxptrs,
-                                           SMCU_INDEXPTRS(dA),
-                                           nidxptrs * sizeof(int), (void*)stream);
+    retval = SUNMemoryHelper_CopyAsync(SMCU_MEMHELP(dA), _h_idxptrs,
+                                       SMCU_INDEXPTRS(dA),
+                                       nidxptrs * sizeof(int), (void*)stream);
     SUNMemoryHelper_Dealloc(SMCU_MEMHELP(dA), _h_idxptrs, nullptr);
     if (retval != 0) { return (SUN_ERR_OP_FAIL); }
   }
@@ -709,9 +715,9 @@ SUNErrCode SUNMatrix_cuSparse_CopyFromDevice(SUNMatrix dA, sunrealtype* h_data,
   {
     _h_idxvals = SUNMemoryHelper_Wrap(SMCU_MEMHELP(dA), h_idxvals,
                                       SUNMEMTYPE_HOST);
-    retval     = SUNMemoryHelper_CopyAsync(SMCU_MEMHELP(dA), _h_idxvals,
-                                           SMCU_INDEXVALS(dA),
-                                           nidxvals * sizeof(int), (void*)stream);
+    retval = SUNMemoryHelper_CopyAsync(SMCU_MEMHELP(dA), _h_idxvals,
+                                       SMCU_INDEXVALS(dA),
+                                       nidxvals * sizeof(int), (void*)stream);
     SUNMemoryHelper_Dealloc(SMCU_MEMHELP(dA), _h_idxvals, nullptr);
     if (retval != 0) { return (SUN_ERR_OP_FAIL); }
   }

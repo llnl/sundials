@@ -501,9 +501,7 @@ int PSolve(void* Data, N_Vector r_vec, N_Vector z_vec, sunrealtype tol, int lr)
 
 /* uniform random number generator */
 static sunrealtype urand(void)
-{
-  return ((sunrealtype)rand() / (sunrealtype)RAND_MAX);
-}
+{ return ((sunrealtype)rand() / (sunrealtype)RAND_MAX); }
 
 /* Check function return value based on "opt" input:
      0:  function allocates memory so check for NULL pointer
@@ -563,7 +561,10 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
            tol);
     return (1);
   }
-  else { return (0); }
+  else
+  {
+    return (0);
+  }
 }
 
 void sync_device(void) {}

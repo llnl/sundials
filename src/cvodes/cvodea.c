@@ -1750,7 +1750,10 @@ int CVodeGetQuadB(void* cvode_mem, int which, sunrealtype* tret, N_Vector qB)
     N_VScale(ONE, cvB_mem->cv_mem->cv_znQ[0], qB);
     *tret = cvB_mem->cv_tout;
   }
-  else { flag = CVodeGetQuad(cvodeB_mem, tret, qB); }
+  else
+  {
+    flag = CVodeGetQuad(cvodeB_mem, tret, qB);
+  }
 
   return (flag);
 }
@@ -2235,7 +2238,10 @@ static void CVAckpntDelete(CVckpntMem* ck_memPtr)
       for (j = 0; j <= tmp->ck_q; j++) { N_VDestroy(tmp->ck_znQ[j]); }
       if (tmp->ck_zqm != 0) { N_VDestroy(tmp->ck_znQ[tmp->ck_zqm]); }
     }
-    else { N_VDestroy(tmp->ck_znQ[0]); }
+    else
+    {
+      N_VDestroy(tmp->ck_znQ[0]);
+    }
   }
 
   /* free N_Vectors for sensitivities in tmp
@@ -2254,7 +2260,10 @@ static void CVAckpntDelete(CVckpntMem* ck_memPtr)
         N_VDestroyVectorArray(tmp->ck_znS[tmp->ck_zqm], tmp->ck_Ns);
       }
     }
-    else { N_VDestroyVectorArray(tmp->ck_znS[0], tmp->ck_Ns); }
+    else
+    {
+      N_VDestroyVectorArray(tmp->ck_znS[0], tmp->ck_Ns);
+    }
   }
 
   /* free N_Vectors for quadrature sensitivities in tmp
@@ -2273,7 +2282,10 @@ static void CVAckpntDelete(CVckpntMem* ck_memPtr)
         N_VDestroyVectorArray(tmp->ck_znQS[tmp->ck_zqm], tmp->ck_Ns);
       }
     }
-    else { N_VDestroyVectorArray(tmp->ck_znQS[0], tmp->ck_Ns); }
+    else
+    {
+      N_VDestroyVectorArray(tmp->ck_znQS[0], tmp->ck_Ns);
+    }
   }
 
   free(tmp);
@@ -2364,7 +2376,8 @@ static int CVAdataStore(CVodeMem cv_mem, CVckpntMem ck_mem)
 
   /* Run CVode to set following structures in dt_mem[i] */
   i = 1;
-  do {
+  do
+  {
     flag = CVode(cv_mem, ck_mem->ck_t1, ca_mem->ca_ytmp, &t, CV_ONE_STEP);
     if (flag < 0) { return (CV_FWD_FAIL); }
 
@@ -2594,11 +2607,17 @@ static int CVAfindIndex(CVodeMem cv_mem, sunrealtype t, long int* index,
     {
       if (*index == 0) { break; }
       if (sign * (t - dt_mem[*index - 1]->t) <= ZERO) { (*index)--; }
-      else { break; }
+      else
+      {
+        break;
+      }
     }
 
     if (*index == 0) { ca_mem->ca_ilast = 1; }
-    else { ca_mem->ca_ilast = *index; }
+    else
+    {
+      ca_mem->ca_ilast = *index;
+    }
 
     if (*index == 0)
     {
@@ -2619,7 +2638,10 @@ static int CVAfindIndex(CVodeMem cv_mem, sunrealtype t, long int* index,
     for (;;)
     {
       if (sign * (t - dt_mem[*index]->t) > ZERO) { (*index)++; }
-      else { break; }
+      else
+      {
+        break;
+      }
     }
 
     ca_mem->ca_ilast = *index;
@@ -3459,7 +3481,10 @@ static int CVArhs(sunrealtype t, N_Vector yB, N_Vector yBdot, void* cvode_mem)
   {
     flag = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, ca_mem->ca_yStmp);
   }
-  else { flag = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL); }
+  else
+  {
+    flag = ca_mem->ca_IMget(cv_mem, t, ca_mem->ca_ytmp, NULL);
+  }
 
   if (flag != CV_SUCCESS)
   {

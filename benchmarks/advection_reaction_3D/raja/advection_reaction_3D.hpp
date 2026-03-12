@@ -124,9 +124,7 @@ struct UserData
       UFID(nullptr),
       VFID(nullptr),
       WFID(nullptr)
-  {
-    SUNContext_GetProfiler(ctx, &prof);
-  }
+  { SUNContext_GetProfiler(ctx, &prof); }
 
   /* destructor frees the problem data */
   ~UserData();

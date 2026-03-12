@@ -33,16 +33,12 @@ public:
   [[deprecated("This function will be removed in the next major release, use "
                "get() instead.")]] T
   Convert() noexcept
-  {
-    return get();
-  }
+  { return get(); }
 
   [[deprecated("This function will be removed in the next major release, use "
                "get() instead.")]] T
   Convert() const noexcept
-  {
-    return get();
-  }
+  { return get(); }
 
   // Implicit conversion to the underlying type
   virtual operator T()       = 0;

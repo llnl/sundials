@@ -231,7 +231,10 @@ static void PrintUserData(UserData& udata)
             << "  dy        = " << udata.dy << "\n"
             << " ----------------------------\n";
   if (udata.pcg) { std::cout << "  linear solver  = PCG\n"; }
-  else { std::cout << "  linear solver  = GMRES\n"; }
+  else
+  {
+    std::cout << "  linear solver  = GMRES\n";
+  }
   std::cout << "  rtol      = " << udata.rtol << "\n"
             << "  atol      = " << udata.atol << "\n"
             << " ----------------------------\n"

@@ -107,7 +107,10 @@ int main(int argc, char* argv[])
   cout << "   reltol = " << reltol << "\n";
   cout << "   abstol = " << abstol << "\n\n";
   if (fixedpoint) { cout << "   Fixed-point nonlinear solver\n"; }
-  else { cout << "   Newton nonlinear solver\n"; }
+  else
+  {
+    cout << "   Newton nonlinear solver\n";
+  }
 
   // Initialize vector data structure and specify initial condition
   y = N_VNew_Serial(NEQ, sunctx);
@@ -360,7 +363,10 @@ int main(int argc, char* argv[])
     }
   }
   if (numfails) { cout << "Failed " << numfails << " tests\n"; }
-  else { cout << "All tests pass!\n"; }
+  else
+  {
+    cout << "All tests pass!\n";
+  }
 
   // Clean up and return with successful completion
   ARKodeButcherTable_Free(B);  // Free Butcher table

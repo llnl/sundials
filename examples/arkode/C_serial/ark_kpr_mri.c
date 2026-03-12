@@ -789,7 +789,10 @@ int main(int argc, char* argv[])
   {
     printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfsi, nff);
   }
-  else { printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfse, nff); }
+  else
+  {
+    printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfse, nff);
+  }
 
   /* Get/print slow integrator decoupled implicit solver statistics */
   if (implicit_slow || imex_slow)
@@ -1031,9 +1034,7 @@ static int Jf(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
  * ------------------------------*/
 
 static sunrealtype r(sunrealtype t, void* user_data)
-{
-  return (SUN_RCONST(0.5) * SUNRcos(t));
-}
+{ return (SUN_RCONST(0.5) * SUNRcos(t)); }
 
 static sunrealtype s(sunrealtype t, void* user_data)
 {
@@ -1042,9 +1043,7 @@ static sunrealtype s(sunrealtype t, void* user_data)
 }
 
 static sunrealtype rdot(sunrealtype t, void* user_data)
-{
-  return (-SUN_RCONST(0.5) * SUNRsin(t));
-}
+{ return (-SUN_RCONST(0.5) * SUNRsin(t)); }
 
 static sunrealtype sdot(sunrealtype t, void* user_data)
 {
@@ -1053,14 +1052,10 @@ static sunrealtype sdot(sunrealtype t, void* user_data)
 }
 
 static sunrealtype utrue(sunrealtype t, void* user_data)
-{
-  return (SUNRsqrt(ONE + r(t, user_data)));
-}
+{ return (SUNRsqrt(ONE + r(t, user_data))); }
 
 static sunrealtype vtrue(sunrealtype t, void* user_data)
-{
-  return (SUNRsqrt(TWO + s(t, user_data)));
-}
+{ return (SUNRsqrt(TWO + s(t, user_data))); }
 
 static int Ytrue(sunrealtype t, N_Vector y, void* user_data)
 {

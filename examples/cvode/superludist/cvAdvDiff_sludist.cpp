@@ -191,13 +191,16 @@ int main(int argc, char* argv[])
 
   dx = data->dx = XMAX /
                   ((sunrealtype)(MX + 1)); /* Set grid coefficients in data */
-  data->hdcoef = ONE / (dx * dx);
-  data->hacoef = HALF / (TWO * dx);
+  data->hdcoef  = ONE / (dx * dx);
+  data->hacoef  = HALF / (TWO * dx);
 
   SetIC(u, dx, local_N, my_base); /* Initialize u vector */
 
   if (!my_pe || (my_pe == (npes - 1))) { local_NNZ = 2 + 3 * (local_N - 1); }
-  else { local_NNZ = 3 * local_N; }
+  else
+  {
+    local_NNZ = 3 * local_N;
+  }
 
   /* Create the SuperLU-DIST SuperMatrix which will be wrapped as A */
   matdata = (sunrealtype*)malloc(local_NNZ * sizeof(sunrealtype));
@@ -441,12 +444,18 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   {
     MPI_Recv(&z[0], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm, &status);
   }
-  else { z[0] = ZERO; }
+  else
+  {
+    z[0] = ZERO;
+  }
   if (my_pe != last_pe)
   {
     MPI_Recv(&z[my_length + 1], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm, &status);
   }
-  else { z[my_length + 1] = ZERO; }
+  else
+  {
+    z[my_length + 1] = ZERO;
+  }
 
   /* Loop over all grid points in current process. */
   for (i = 1; i <= my_length; i++)

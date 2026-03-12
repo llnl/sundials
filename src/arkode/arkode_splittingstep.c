@@ -798,7 +798,10 @@ int SplittingStepGetNumEvolves(void* arkode_mem, int partition, long int* evolve
       *evolves += step_mem->n_stepper_evolves[k];
     }
   }
-  else { *evolves = step_mem->n_stepper_evolves[partition]; }
+  else
+  {
+    *evolves = step_mem->n_stepper_evolves[partition];
+  }
 
   return ARK_SUCCESS;
 }

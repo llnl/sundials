@@ -91,9 +91,7 @@ static inline SUNStlVectorTtype MAKE_NAME(SUNStlVectorTtype,
  */
 static inline sunbooleantype MAKE_NAME(SUNStlVectorTtype,
                                        IsEmpty)(SUNStlVectorTtype self)
-{
-  return self->size == 0;
-}
+{ return self->size == 0; }
 
 /**
  * Allocates more memory (capacity) for the vector.
@@ -250,9 +248,7 @@ static inline SUNErrCode MAKE_NAME(SUNStlVectorTtype,
  * :return: Size of the vector.
  */
 static inline int64_t MAKE_NAME(SUNStlVectorTtype, Size)(SUNStlVectorTtype self)
-{
-  return self->size;
-}
+{ return self->size; }
 
 /**
  * Returns the capacity of the vector.
@@ -262,9 +258,7 @@ static inline int64_t MAKE_NAME(SUNStlVectorTtype, Size)(SUNStlVectorTtype self)
  */
 static inline int64_t MAKE_NAME(SUNStlVectorTtype,
                                 Capacity)(SUNStlVectorTtype self)
-{
-  return self->capacity;
-}
+{ return self->capacity; }
 
 /**
  * Destroys the vector and frees its memory.

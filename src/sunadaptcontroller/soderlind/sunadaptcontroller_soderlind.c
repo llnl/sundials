@@ -34,17 +34,17 @@
  * Macro accessors
  * --------------- */
 
-#define SODERLIND_CONTENT(C)     ((SUNAdaptControllerContent_Soderlind)(C->content))
-#define SODERLIND_K1(C)          (SODERLIND_CONTENT(C)->k1)
-#define SODERLIND_K2(C)          (SODERLIND_CONTENT(C)->k2)
-#define SODERLIND_K3(C)          (SODERLIND_CONTENT(C)->k3)
-#define SODERLIND_K4(C)          (SODERLIND_CONTENT(C)->k4)
-#define SODERLIND_K5(C)          (SODERLIND_CONTENT(C)->k5)
-#define SODERLIND_BIAS(C)        (SODERLIND_CONTENT(C)->bias)
-#define SODERLIND_EP(C)          (SODERLIND_CONTENT(C)->ep)
-#define SODERLIND_EPP(C)         (SODERLIND_CONTENT(C)->epp)
-#define SODERLIND_HP(C)          (SODERLIND_CONTENT(C)->hp)
-#define SODERLIND_HPP(C)         (SODERLIND_CONTENT(C)->hpp)
+#define SODERLIND_CONTENT(C) ((SUNAdaptControllerContent_Soderlind)(C->content))
+#define SODERLIND_K1(C)      (SODERLIND_CONTENT(C)->k1)
+#define SODERLIND_K2(C)      (SODERLIND_CONTENT(C)->k2)
+#define SODERLIND_K3(C)      (SODERLIND_CONTENT(C)->k3)
+#define SODERLIND_K4(C)      (SODERLIND_CONTENT(C)->k4)
+#define SODERLIND_K5(C)      (SODERLIND_CONTENT(C)->k5)
+#define SODERLIND_BIAS(C)    (SODERLIND_CONTENT(C)->bias)
+#define SODERLIND_EP(C)      (SODERLIND_CONTENT(C)->ep)
+#define SODERLIND_EPP(C)     (SODERLIND_CONTENT(C)->epp)
+#define SODERLIND_HP(C)      (SODERLIND_CONTENT(C)->hp)
+#define SODERLIND_HPP(C)     (SODERLIND_CONTENT(C)->hpp)
 #define SODERLIND_FIRSTSTEPS(C)  (SODERLIND_CONTENT(C)->firststeps)
 #define SODERLIND_HISTORYSIZE(C) (SODERLIND_CONTENT(C)->historysize)
 
@@ -162,7 +162,10 @@ static SUNErrCode setFromCommandLine_Soderlind(SUNAdaptController C,
   if (Cid != NULL && strlen(Cid) > 0) { offset = strlen(Cid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (Cid != NULL && strlen(Cid) > 0) { strcpy(prefix, Cid); }
-  else { strcpy(prefix, default_id); }
+  else
+  {
+    strcpy(prefix, default_id);
+  }
   strcat(prefix, ".");
 
   int retval;
@@ -325,7 +328,10 @@ SUNErrCode SUNAdaptController_SetParams_Soderlind(SUNAdaptController C,
   {
     SODERLIND_HISTORYSIZE(C) = 1;
   }
-  else { SODERLIND_HISTORYSIZE(C) = 0; }
+  else
+  {
+    SODERLIND_HISTORYSIZE(C) = 0;
+  }
   return SUN_SUCCESS;
 }
 
@@ -559,9 +565,7 @@ SUNAdaptController SUNAdaptController_H312(SUNContext sunctx)
 
 SUNAdaptController_Type SUNAdaptController_GetType_Soderlind(
   SUNDIALS_MAYBE_UNUSED SUNAdaptController C)
-{
-  return SUN_ADAPTCONTROLLER_H;
-}
+{ return SUN_ADAPTCONTROLLER_H; }
 
 SUNErrCode SUNAdaptController_EstimateStep_Soderlind(SUNAdaptController C,
                                                      sunrealtype h, int p,
@@ -657,7 +661,10 @@ SUNErrCode SUNAdaptController_SetErrorBias_Soderlind(SUNAdaptController C,
 
   /* set allowed value, otherwise set default */
   if (bias <= SUN_RCONST(0.0)) { SODERLIND_BIAS(C) = DEFAULT_BIAS; }
-  else { SODERLIND_BIAS(C) = bias; }
+  else
+  {
+    SODERLIND_BIAS(C) = bias;
+  }
 
   return SUN_SUCCESS;
 }

@@ -128,7 +128,10 @@ int main(int argc, char* argv[])
 
   /* Parse command line arguments */
   if (argc > 1) { ngroups = atoi(argv[1]); }
-  else { ngroups = 100; }
+  else
+  {
+    ngroups = 100;
+  }
   neq = ngroups * GROUPSIZE;
 
   udata.ngroups = ngroups;

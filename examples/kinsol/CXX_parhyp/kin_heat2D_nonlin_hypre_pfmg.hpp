@@ -299,9 +299,7 @@ static sunrealtype c1(sunrealtype u_val) { return u_val; }
 
 // c(u) = u^3 - u
 static sunrealtype c2(sunrealtype u_val)
-{
-  return u_val * u_val * u_val - u_val;
-}
+{ return u_val * u_val * u_val - u_val; }
 
 // c(u) = u - u^2
 static sunrealtype c3(sunrealtype u_val) { return u_val - u_val * u_val; }
@@ -311,21 +309,15 @@ static sunrealtype c4(sunrealtype u_val) { return exp(u_val); }
 
 // c(u) = u^4
 static sunrealtype c5(sunrealtype u_val)
-{
-  return u_val * u_val * u_val * u_val;
-}
+{ return u_val * u_val * u_val * u_val; }
 
 // c(u) = cos^2(u) - sin^2(u)
 static sunrealtype c6(sunrealtype u_val)
-{
-  return (cos(u_val) * cos(u_val)) - (sin(u_val) * sin(u_val));
-}
+{ return (cos(u_val) * cos(u_val)) - (sin(u_val) * sin(u_val)); }
 
 // c(u) = cos^2(u) - sin^2(u) - e^u
 static sunrealtype c7(sunrealtype u_val)
-{
-  return (cos(u_val) * cos(u_val)) - (sin(u_val) * sin(u_val)) - exp(u_val);
-}
+{ return (cos(u_val) * cos(u_val)) - (sin(u_val) * sin(u_val)) - exp(u_val); }
 
 // c(u) = e^u * u^4 - u * e^{cos(u)}
 static sunrealtype c8(sunrealtype u_val)

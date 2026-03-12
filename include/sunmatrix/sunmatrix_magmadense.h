@@ -109,9 +109,7 @@ static inline sunrealtype* SUNMatrix_MagmaDense_BlockColumn(SUNMatrix Amat,
  * ---------------------------------------*/
 
 static inline SUNMatrix_ID SUNMatGetID_MagmaDense(SUNMatrix A)
-{
-  return SUNMATRIX_MAGMADENSE;
-}
+{ return SUNMATRIX_MAGMADENSE; }
 
 SUNDIALS_EXPORT SUNMatrix SUNMatClone_MagmaDense(SUNMatrix A);
 SUNDIALS_EXPORT void SUNMatDestroy_MagmaDense(SUNMatrix A);

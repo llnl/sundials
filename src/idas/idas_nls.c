@@ -150,7 +150,10 @@ int IDASetNlsResFn(void* ida_mem, IDAResFn res)
   IDA_mem = (IDAMem)ida_mem;
 
   if (res) { IDA_mem->nls_res = res; }
-  else { IDA_mem->nls_res = IDA_mem->ida_res; }
+  else
+  {
+    IDA_mem->nls_res = IDA_mem->ida_res;
+  }
 
   return (IDA_SUCCESS);
 }
@@ -200,7 +203,10 @@ int idaNlsInit(IDAMem IDA_mem)
   {
     retval = SUNNonlinSolSetLSetupFn(IDA_mem->NLS, idaNlsLSetup);
   }
-  else { retval = SUNNonlinSolSetLSetupFn(IDA_mem->NLS, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSetupFn(IDA_mem->NLS, NULL);
+  }
 
   if (retval != IDA_SUCCESS)
   {
@@ -214,7 +220,10 @@ int idaNlsInit(IDAMem IDA_mem)
   {
     retval = SUNNonlinSolSetLSolveFn(IDA_mem->NLS, idaNlsLSolve);
   }
-  else { retval = SUNNonlinSolSetLSolveFn(IDA_mem->NLS, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSolveFn(IDA_mem->NLS, NULL);
+  }
 
   if (retval != IDA_SUCCESS)
   {

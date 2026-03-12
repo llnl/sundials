@@ -245,7 +245,7 @@ int cvLs_AccessLMemBCur(void* cvode_mem, const char* fname, CVodeMem* cv_mem,
 #define MSG_LS_SUNMAT_FAILED \
   "A SUNMatrix routine failed in an unrecoverable manner."
 
-#define MSG_LS_NO_ADJ    "Illegal attempt to call before calling CVodeAdjMalloc."
+#define MSG_LS_NO_ADJ "Illegal attempt to call before calling CVodeAdjMalloc."
 #define MSG_LS_BAD_WHICH "Illegal value for which."
 #define MSG_LS_LMEMB_NULL \
   "Linear solver memory is NULL for the backward integration."

@@ -111,9 +111,7 @@ SUNErrCode SUNHashMap_New(int64_t capacity,
     * The capacity of the hashmap
  */
 int64_t SUNHashMap_Capacity(SUNHashMap map)
-{
-  return SUNStlVector_SUNHashMapKeyValue_Capacity(map->buckets);
-}
+{ return SUNStlVector_SUNHashMapKeyValue_Capacity(map->buckets); }
 
 /*
   This function frees the SUNHashMap object.
@@ -170,7 +168,10 @@ int64_t SUNHashMap_Iterate(SUNHashMap map, int64_t start,
     int64_t retval =
       yieldfn(i, *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i), ctx);
     if (retval == SUNHASHMAP_ERROR) { continue; /* keep looking */ }
-    else { return (retval); /* yieldfn indicates the loop should break */ }
+    else
+    {
+      return (retval); /* yieldfn indicates the loop should break */
+    }
   }
 
   return SUNHashMap_Capacity(map);
@@ -345,14 +346,20 @@ int64_t SUNHashMap_GetValue(SUNHashMap map, const char* key, void** value)
       /* the key was either not found anywhere or an error occurred */
       return retval;
     }
-    else { idx = retval; }
+    else
+    {
+      idx = retval;
+    }
   }
 
   /* Return a reference to the value only */
   SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets,
                                                                    idx);
   if (kvp_ptr) { *value = (*kvp_ptr)->value; }
-  else { return SUNHASHMAP_KEYNOTFOUND; }
+  else
+  {
+    return SUNHASHMAP_KEYNOTFOUND;
+  }
 
   return (0);
 }
@@ -397,7 +404,10 @@ int64_t SUNHashMap_Remove(SUNHashMap map, const char* key, void** value)
       /* an error occurred or the key was not found anywhere */
       return retval;
     }
-    else { idx = retval; }
+    else
+    {
+      idx = retval;
+    }
   }
 
   /* Return a reference to the value only */

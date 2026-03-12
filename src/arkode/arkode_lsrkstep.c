@@ -2261,7 +2261,10 @@ void lsrkStep_DomEigUpdateLogic(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
       step_mem->dom_eig_update = !step_mem->dom_eig_is_current;
     }
   }
-  else { step_mem->dom_eig_update = !step_mem->dom_eig_is_current; }
+  else
+  {
+    step_mem->dom_eig_update = !step_mem->dom_eig_is_current;
+  }
 }
 
 /*---------------------------------------------------------------

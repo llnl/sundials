@@ -70,8 +70,8 @@ static void PostKernelLaunch();
 #define NVEC_HIP_MEMSIZE(x) (NVEC_HIP_CONTENT(x)->length * sizeof(sunrealtype))
 #define NVEC_HIP_MEMHELP(x) (NVEC_HIP_CONTENT(x)->mem_helper)
 #define NVEC_HIP_HDATAp(x)  ((sunrealtype*)NVEC_HIP_CONTENT(x)->host_data->ptr)
-#define NVEC_HIP_DDATAp(x)  ((sunrealtype*)NVEC_HIP_CONTENT(x)->device_data->ptr)
-#define NVEC_HIP_STREAM(x)  (NVEC_HIP_CONTENT(x)->stream_exec_policy->stream())
+#define NVEC_HIP_DDATAp(x) ((sunrealtype*)NVEC_HIP_CONTENT(x)->device_data->ptr)
+#define NVEC_HIP_STREAM(x) (NVEC_HIP_CONTENT(x)->stream_exec_policy->stream())
 
 // Macros to access vector private content
 #define NVEC_HIP_PRIVATE(x) \
@@ -476,9 +476,7 @@ void N_VSetDeviceArrayPointer_Hip(sunrealtype* d_vdata, N_Vector v)
  */
 
 sunbooleantype N_VIsManagedMemory_Hip(N_Vector x)
-{
-  return NVEC_HIP_PRIVATE(x)->use_managed_mem;
-}
+{ return NVEC_HIP_PRIVATE(x)->use_managed_mem; }
 
 SUNErrCode N_VSetKernelExecPolicy_Hip(N_Vector x,
                                       SUNHipExecPolicy* stream_exec_policy,
@@ -1994,7 +1992,10 @@ SUNErrCode N_VBufPack_Hip(N_Vector x, void* buf)
                           (void*)NVEC_HIP_STREAM(x));
 
   if (!SUNDIALS_HIP_VERIFY(cuerr) || copy_fail) { return SUN_ERR_GENERIC; }
-  else { return SUN_SUCCESS; }
+  else
+  {
+    return SUN_SUCCESS;
+  }
 }
 
 SUNErrCode N_VBufUnpack_Hip(N_Vector x, void* buf)
@@ -2020,7 +2021,10 @@ SUNErrCode N_VBufUnpack_Hip(N_Vector x, void* buf)
                           (void*)NVEC_HIP_STREAM(x));
 
   if (!SUNDIALS_HIP_VERIFY(cuerr) || copy_fail) { return SUN_ERR_GENERIC; }
-  else { return SUN_SUCCESS; }
+  else
+  {
+    return SUN_SUCCESS;
+  }
 }
 
 /*
@@ -2086,7 +2090,10 @@ SUNErrCode N_VEnableLinearCombination_Hip(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvlinearcombination = N_VLinearCombination_Hip; }
-  else { v->ops->nvlinearcombination = NULL; }
+  else
+  {
+    v->ops->nvlinearcombination = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2102,7 +2109,10 @@ SUNErrCode N_VEnableScaleAddMulti_Hip(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvscaleaddmulti = N_VScaleAddMulti_Hip; }
-  else { v->ops->nvscaleaddmulti = NULL; }
+  else
+  {
+    v->ops->nvscaleaddmulti = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2142,7 +2152,10 @@ SUNErrCode N_VEnableLinearSumVectorArray_Hip(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvlinearsumvectorarray = N_VLinearSumVectorArray_Hip; }
-  else { v->ops->nvlinearsumvectorarray = NULL; }
+  else
+  {
+    v->ops->nvlinearsumvectorarray = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2158,7 +2171,10 @@ SUNErrCode N_VEnableScaleVectorArray_Hip(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvscalevectorarray = N_VScaleVectorArray_Hip; }
-  else { v->ops->nvscalevectorarray = NULL; }
+  else
+  {
+    v->ops->nvscalevectorarray = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2174,7 +2190,10 @@ SUNErrCode N_VEnableConstVectorArray_Hip(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvconstvectorarray = N_VConstVectorArray_Hip; }
-  else { v->ops->nvconstvectorarray = NULL; }
+  else
+  {
+    v->ops->nvconstvectorarray = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2190,7 +2209,10 @@ SUNErrCode N_VEnableWrmsNormVectorArray_Hip(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvwrmsnormvectorarray = N_VWrmsNormVectorArray_Hip; }
-  else { v->ops->nvwrmsnormvectorarray = NULL; }
+  else
+  {
+    v->ops->nvwrmsnormvectorarray = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2209,7 +2231,10 @@ SUNErrCode N_VEnableWrmsNormMaskVectorArray_Hip(N_Vector v, sunbooleantype tf)
   {
     v->ops->nvwrmsnormmaskvectorarray = N_VWrmsNormMaskVectorArray_Hip;
   }
-  else { v->ops->nvwrmsnormmaskvectorarray = NULL; }
+  else
+  {
+    v->ops->nvwrmsnormmaskvectorarray = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2228,7 +2253,10 @@ SUNErrCode N_VEnableScaleAddMultiVectorArray_Hip(N_Vector v, sunbooleantype tf)
   {
     v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Hip;
   }
-  else { v->ops->nvscaleaddmultivectorarray = NULL; }
+  else
+  {
+    v->ops->nvscaleaddmultivectorarray = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2247,7 +2275,10 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Hip(N_Vector v, sunbooleantype 
   {
     v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Hip;
   }
-  else { v->ops->nvlinearcombinationvectorarray = NULL; }
+  else
+  {
+    v->ops->nvlinearcombinationvectorarray = NULL;
+  }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2440,7 +2471,10 @@ static int CopyReductionBufferFromDevice(N_Vector v, size_t n)
   /* we synchronize with respect to the host, but only in this stream */
   cuerr = hipStreamSynchronize(*NVEC_HIP_STREAM(v));
   if (!SUNDIALS_HIP_VERIFY(cuerr) || copy_fail) { return SUN_ERR_GENERIC; }
-  else { return SUN_SUCCESS; }
+  else
+  {
+    return SUN_SUCCESS;
+  }
 }
 
 static int InitializeDeviceCounter(N_Vector v)

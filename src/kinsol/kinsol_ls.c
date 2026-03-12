@@ -373,7 +373,10 @@ int KINSetJacTimesVecSysFn(void* kinmem, KINSysFn jtimesSysFn)
 
   /* store function pointers for system function (NULL implies use kin_func) */
   if (jtimesSysFn != NULL) { kinls_mem->jt_func = jtimesSysFn; }
-  else { kinls_mem->jt_func = kin_mem->kin_func; }
+  else
+  {
+    kinls_mem->jt_func = kin_mem->kin_func;
+  }
 
   return (KINLS_SUCCESS);
 }
@@ -908,10 +911,10 @@ int kinLsBandDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
       utemp_data[j] = u_data[j];
       col_j         = SUNBandMatrix_Column(Jac, j);
       inc           = kin_mem->kin_sqrt_relfunc *
-            SUNMAX(SUNRabs(u_data[j]), ONE / SUNRabs(uscale_data[j]));
-      inc_inv = ONE / inc;
-      i1      = SUNMAX(0, j - mupper);
-      i2      = SUNMIN(j + mlower, N - 1);
+                      SUNMAX(SUNRabs(u_data[j]), ONE / SUNRabs(uscale_data[j]));
+      inc_inv       = ONE / inc;
+      i1            = SUNMAX(0, j - mupper);
+      i2            = SUNMIN(j + mlower, N - 1);
       for (i = i1; i <= i2; i++)
       {
         SM_COLUMN_ELEMENT_B(col_j, i, j) = inc_inv *
@@ -1039,9 +1042,15 @@ int kinLsInitialize(KINMem kin_mem)
         kinls_mem->jac    = kinLsDQJac;
         kinls_mem->J_data = kin_mem;
       }
-      else { retval++; }
+      else
+      {
+        retval++;
+      }
     }
-    else { retval++; }
+    else
+    {
+      retval++;
+    }
     if (retval)
     {
       KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -1088,7 +1097,10 @@ int kinLsInitialize(KINMem kin_mem)
     kinls_mem->jtimes  = kinLsDQJtimes;
     kinls_mem->jt_data = kin_mem;
   }
-  else { kinls_mem->jt_data = kin_mem->kin_user_data; }
+  else
+  {
+    kinls_mem->jt_data = kin_mem->kin_user_data;
+  }
 
   /* if J is NULL and: NOT preconditioning or do NOT need to setup the
      preconditioner, then set the lsetup function to NULL */
@@ -1135,7 +1147,10 @@ int kinLsInitialize(KINMem kin_mem)
     kinls_mem->tol_fac = SUNRsqrt(N_VGetLength(kin_mem->kin_vtemp1)) /
                          N_VWL2Norm(kin_mem->kin_fscale, kin_mem->kin_vtemp1);
   }
-  else { kinls_mem->tol_fac = ONE; }
+  else
+  {
+    kinls_mem->tol_fac = ONE;
+  }
 
   /* Call LS initialize routine, and return result */
   kinls_mem->last_flag = SUNLinSolInitialize(kinls_mem->LS);

@@ -342,7 +342,10 @@ void ARKodeButcherTable_Space(ARKodeButcherTable B, sunindextype* liw,
   /* fill outputs based on B */
   *liw = 3;
   if (B->d != NULL) { *lrw = B->stages * (B->stages + 3); }
-  else { *lrw = B->stages * (B->stages + 2); }
+  else
+  {
+    *lrw = B->stages * (B->stages + 2);
+  }
 }
 
 /*---------------------------------------------------------------
@@ -4239,7 +4242,10 @@ static int __ButcherSimplifyingAssumptions(sunrealtype** A, sunrealtype* b,
       }
     }
     if (alltrue) { Q++; }
-    else { break; }
+    else
+    {
+      break;
+    }
   }
 
   /* D(R) */
@@ -4262,7 +4268,10 @@ static int __ButcherSimplifyingAssumptions(sunrealtype** A, sunrealtype* b,
       }
     }
     if (alltrue) { R++; }
-    else { break; }
+    else
+    {
+      break;
+    }
   }
 
   /* determine q, clean up and return */

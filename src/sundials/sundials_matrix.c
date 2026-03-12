@@ -235,7 +235,10 @@ SUNErrCode SUNMatHermitianTransposeVec(SUNMatrix A, N_Vector x, N_Vector y)
   {
     ier = A->ops->mathermitiantransposevec(A, x, y);
   }
-  else { ier = SUN_ERR_NOT_IMPLEMENTED; }
+  else
+  {
+    ier = SUN_ERR_NOT_IMPLEMENTED;
+  }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(A));
   return (ier);
 }

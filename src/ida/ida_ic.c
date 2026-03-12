@@ -365,7 +365,10 @@ static int IDANlsIC(IDAMem IDA_mem)
       N_VScale(ONE, IDA_mem->ida_savres, IDA_mem->ida_delta);
       continue;
     }
-    else { return (retval); }
+    else
+    {
+      return (retval);
+    }
 
   } /* End of nj loop */
 

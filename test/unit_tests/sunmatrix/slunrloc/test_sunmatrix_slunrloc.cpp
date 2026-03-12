@@ -140,10 +140,8 @@ int main(int argc, char* argv[])
   /* if there is remaining rows, the last process gets them */
   if ((M_local * nprocs) != M)
   {
-    if (grid.iam == (nprocs - 1))
-    { /* last proc. gets all*/
-      M_local = M - M_local * (nprocs - 1);
-    }
+    if (grid.iam == (nprocs - 1)) { /* last proc. gets all*/
+                                    M_local = M - M_local * (nprocs - 1); }
   }
 
   /* Initialize matrices and vectors to null */
@@ -353,7 +351,10 @@ int main(int argc, char* argv[])
         {
           matdata[rowptrs[i] + j] = ONE;
         }
-        else { matdata[rowptrs[i] + j] = ZERO; }
+        else
+        {
+          matdata[rowptrs[i] + j] = ZERO;
+        }
       }
     }
   }
@@ -543,7 +544,10 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else { return (0); }
+  else
+  {
+    return (0);
+  }
 }
 
 int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
@@ -574,7 +578,10 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else { return (0); }
+  else
+  {
+    return (0);
+  }
 }
 
 sunbooleantype has_data(SUNMatrix A)
@@ -589,14 +596,20 @@ sunbooleantype has_data(SUNMatrix A)
   Adata  = (sunrealtype*)Astore->nzval;
 
   if (Adata == NULL) { return SUNFALSE; }
-  else { return SUNTRUE; }
+  else
+  {
+    return SUNTRUE;
+  }
 }
 
 sunbooleantype is_square(SUNMatrix A)
 {
   SuperMatrix* Asuper = SUNMatrix_SLUNRloc_SuperMatrix(A);
   if (Asuper->nrow == Asuper->ncol) { return SUNTRUE; }
-  else { return SUNFALSE; }
+  else
+  {
+    return SUNFALSE;
+  }
 }
 
 int csr_from_dense(SUNMatrix Ad, sunrealtype droptol, sunrealtype** matdata,

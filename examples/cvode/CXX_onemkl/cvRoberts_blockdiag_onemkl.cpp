@@ -246,9 +246,15 @@ int main(int argc, char* argv[])
   printf("\nGroup of independent 3-species kinetics problems\n");
   printf("  number of groups = %d\n", ngroups);
   if (direct) { printf("  using direct linear solver\n"); }
-  else { printf("  using iterative linear solver\n"); }
+  else
+  {
+    printf("  using iterative linear solver\n");
+  }
   if (output) { printf("  output enabled\n"); }
-  else { printf("  output disabled\n"); }
+  else
+  {
+    printf("  output disabled\n");
+  }
 
   int iout         = 0;
   sunrealtype tout = T1;

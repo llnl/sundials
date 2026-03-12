@@ -431,7 +431,10 @@ void set_element(N_Vector X, sunindextype i, sunrealtype val)
 
   /* set i-th element of data array (in appropriate subvector) */
   if (i < x0len) { NV_Ith_S(Xsub[0], i) = val; }
-  else { NV_Ith_P(Xsub[1], i - x0len) = val; }
+  else
+  {
+    NV_Ith_P(Xsub[1], i - x0len) = val;
+  }
 }
 
 void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
@@ -460,7 +463,10 @@ sunrealtype get_element(N_Vector X, sunindextype i)
 
   /* get i-th element of data array (from appropriate subvector) */
   if (i < x0len) { return NV_Ith_S(Xsub[0], i); }
-  else { return NV_Ith_P(Xsub[1], i - x0len); }
+  else
+  {
+    return NV_Ith_P(Xsub[1], i - x0len);
+  }
 }
 
 double max_time(N_Vector X, double time)

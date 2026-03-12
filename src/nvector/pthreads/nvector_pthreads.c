@@ -158,9 +158,7 @@ static void nvInitThreadData(Pthreads_Data* thread_data);
  * from abstract N_Vector interface.
  */
 N_Vector_ID N_VGetVectorID_Pthreads(SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
-  return SUNDIALS_NVEC_PTHREADS;
-}
+{ return SUNDIALS_NVEC_PTHREADS; }
 
 /* ----------------------------------------------------------------------------
  * Function to create a new empty vector
@@ -478,9 +476,7 @@ void N_VSpace_Pthreads(N_Vector v, sunindextype* lrw, sunindextype* liw)
  */
 
 sunrealtype* N_VGetArrayPointer_Pthreads(N_Vector v)
-{
-  return ((sunrealtype*)NV_DATA_PT(v));
-}
+{ return ((sunrealtype*)NV_DATA_PT(v)); }
 
 /* ----------------------------------------------------------------------------
  * Set vector data pointer
@@ -2096,7 +2092,10 @@ sunbooleantype N_VInvTest_Pthreads(N_Vector x, N_Vector z)
   free(thread_data);
 
   if (val > ZERO) { return (SUNFALSE); }
-  else { return (SUNTRUE); }
+  else
+  {
+    return (SUNTRUE);
+  }
 }
 
 /* ----------------------------------------------------------------------------
@@ -2126,7 +2125,10 @@ static void* nvInvTestPt(void* thread_data)
   for (i = start; i < end; i++)
   {
     if (xd[i] == ZERO) { local_val = ONE; }
-    else { zd[i] = ONE / xd[i]; }
+    else
+    {
+      zd[i] = ONE / xd[i];
+    }
   }
 
   /* update global val */
@@ -2191,7 +2193,10 @@ sunbooleantype N_VConstrMask_Pthreads(N_Vector c, N_Vector x, N_Vector m)
   free(thread_data);
 
   if (val > ZERO) { return (SUNFALSE); }
-  else { return (SUNTRUE); }
+  else
+  {
+    return (SUNTRUE);
+  }
 }
 
 /* ----------------------------------------------------------------------------

@@ -258,10 +258,16 @@ int main(int argc, char* argv[])
   std::cout << "\n  Slow integrator: " << opts.mri_method;
   if (slowimex) { std::cout << " (ImEx)" << std::endl; }
   else if (slowimplicit) { std::cout << " (implicit)" << std::endl; }
-  else { std::cout << " (explicit)" << std::endl; }
+  else
+  {
+    std::cout << " (explicit)" << std::endl;
+  }
   PrintSlowAdaptivity(opts);
   if (opts.fast_order == 0) { std::cout << "\n  Fast integrator disabled"; }
-  else { std::cout << "\n  Fast order " << opts.fast_order << std::endl; }
+  else
+  {
+    std::cout << "\n  Fast order " << opts.fast_order << std::endl;
+  }
   PrintFastAdaptivity(opts);
 
   // If SUNLogger is enabled, manually disable it for the reference solver

@@ -324,11 +324,17 @@ int main(int argc, char* argv[])
   std::cout << "\n  Slow integrator: " << opts.mri_method;
   if (slowimex) { std::cout << " (ImEx)" << std::endl; }
   else if (slowimplicit) { std::cout << " (implicit)" << std::endl; }
-  else { std::cout << " (explicit)" << std::endl; }
+  else
+  {
+    std::cout << " (explicit)" << std::endl;
+  }
   std::cout << "\n  Intermediate integrator: " << opts.mid_method;
   if (midimex) { std::cout << " (ImEx)" << std::endl; }
   else if (midimplicit) { std::cout << " (implicit)" << std::endl; }
-  else { std::cout << " (explicit)" << std::endl; }
+  else
+  {
+    std::cout << " (explicit)" << std::endl;
+  }
   PrintSlowAdaptivity(opts);
   std::cout << "\n  Fast order " << opts.fast_order << std::endl;
   PrintFastAdaptivity(opts);
@@ -1486,14 +1492,10 @@ static int Jsi(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 // -----------------------------
 
 static sunrealtype p(sunrealtype t, const Options& opts)
-{
-  return HALF * SUNRcos(t);
-}
+{ return HALF * SUNRcos(t); }
 
 static sunrealtype q(sunrealtype t, const Options& opts)
-{
-  return (SUNRcos(opts.om * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))));
-}
+{ return (SUNRcos(opts.om * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO))))); }
 
 static sunrealtype r(sunrealtype t, const Options& opts)
 {
@@ -1502,9 +1504,7 @@ static sunrealtype r(sunrealtype t, const Options& opts)
 }
 
 static sunrealtype pdot(sunrealtype t, const Options& opts)
-{
-  return -HALF * SUNRsin(t);
-}
+{ return -HALF * SUNRsin(t); }
 
 static sunrealtype qdot(sunrealtype t, const Options& opts)
 {
@@ -1523,19 +1523,13 @@ static sunrealtype rdot(sunrealtype t, const Options& opts)
 }
 
 static sunrealtype utrue(sunrealtype t, const Options& opts)
-{
-  return (SUNRsqrt(TWO + p(t, opts)));
-}
+{ return (SUNRsqrt(TWO + p(t, opts))); }
 
 static sunrealtype vtrue(sunrealtype t, const Options& opts)
-{
-  return (SUNRsqrt(TWO + q(t, opts)));
-}
+{ return (SUNRsqrt(TWO + q(t, opts))); }
 
 static sunrealtype wtrue(sunrealtype t, const Options& opts)
-{
-  return (SUNRsqrt(TWO + r(t, opts)));
-}
+{ return (SUNRsqrt(TWO + r(t, opts))); }
 
 static int Ytrue(sunrealtype t, N_Vector y, const Options& opts)
 {

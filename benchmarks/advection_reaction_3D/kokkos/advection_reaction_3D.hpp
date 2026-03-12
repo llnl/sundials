@@ -126,9 +126,7 @@ struct UserData
       vmask(nullptr),
       wmask(nullptr),
       uopt(nullptr)
-  {
-    SUNContext_GetProfiler(ctx, &prof);
-  }
+  { SUNContext_GetProfiler(ctx, &prof); }
 
   /* destructor frees the problem data */
   ~UserData();

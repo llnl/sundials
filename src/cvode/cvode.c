@@ -913,7 +913,10 @@ int CVodeRootInit(void* cvode_mem, int nrtfn, CVRootFn g)
         return (CV_SUCCESS);
       }
     }
-    else { return (CV_SUCCESS); }
+    else
+    {
+      return (CV_SUCCESS);
+    }
   }
 
   /* Set variable values in CVode memory block */
@@ -924,7 +927,10 @@ int CVodeRootInit(void* cvode_mem, int nrtfn, CVRootFn g)
                    MSGCV_NULL_G);
     return (CV_ILL_INPUT);
   }
-  else { cv_mem->cv_gfun = g; }
+  else
+  {
+    cv_mem->cv_gfun = g;
+  }
 
   /* Allocate necessary memory and return */
   cv_mem->cv_glo = NULL;
@@ -1387,7 +1393,10 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
               return (CV_ILL_INPUT);
             }
           }
-          else { N_VScale(ONE, cv_mem->cv_zn[0], yout); }
+          else
+          {
+            N_VScale(ONE, cv_mem->cv_zn[0], yout);
+          }
           cv_mem->cv_tretlast = *tret = cv_mem->cv_tstop;
           cv_mem->cv_tstopset         = SUNFALSE;
           SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
@@ -1401,7 +1410,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
       {
         cv_mem->cv_hprime = (cv_mem->cv_tstop - cv_mem->cv_tn) *
                             (ONE - FOUR * cv_mem->cv_uround);
-        cv_mem->cv_eta = cv_mem->cv_hprime / cv_mem->cv_h;
+        cv_mem->cv_eta    = cv_mem->cv_hprime / cv_mem->cv_h;
       }
     }
 
@@ -1505,7 +1514,10 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
       cv_mem->cv_tolsf *= TWO;
       break;
     }
-    else { cv_mem->cv_tolsf = ONE; }
+    else
+    {
+      cv_mem->cv_tolsf = ONE;
+    }
 
     /* Check for h below roundoff level in tn */
     if (cv_mem->cv_tn + cv_mem->cv_h == cv_mem->cv_tn)
@@ -1609,7 +1621,10 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
           {
             (void)CVodeGetDky(cv_mem, cv_mem->cv_tstop, 0, yout);
           }
-          else { N_VScale(ONE, cv_mem->cv_zn[0], yout); }
+          else
+          {
+            N_VScale(ONE, cv_mem->cv_zn[0], yout);
+          }
           cv_mem->cv_tretlast = *tret = cv_mem->cv_tstop;
           cv_mem->cv_tstopset         = SUNFALSE;
           istate                      = CV_TSTOP_RETURN;
@@ -1623,7 +1638,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
       {
         cv_mem->cv_hprime = (cv_mem->cv_tstop - cv_mem->cv_tn) *
                             (ONE - FOUR * cv_mem->cv_uround);
-        cv_mem->cv_eta = cv_mem->cv_hprime / cv_mem->cv_h;
+        cv_mem->cv_eta    = cv_mem->cv_hprime / cv_mem->cv_h;
       }
     }
 
@@ -1855,7 +1870,10 @@ static sunbooleantype cvCheckNvector(N_Vector tmpl)
   {
     return (SUNFALSE);
   }
-  else { return (SUNTRUE); }
+  else
+  {
+    return (SUNTRUE);
+  }
 }
 
 /*
@@ -2061,7 +2079,10 @@ static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout)
 
   /* Set data for efun */
   if (cv_mem->cv_user_efun) { cv_mem->cv_e_data = cv_mem->cv_user_data; }
-  else { cv_mem->cv_e_data = cv_mem; }
+  else
+  {
+    cv_mem->cv_e_data = cv_mem;
+  }
 
   /* Check to see if y0 satisfies constraints */
   if (cv_mem->cv_constraints)
@@ -2204,7 +2225,10 @@ static int cvHin(CVodeMem cv_mem, sunrealtype tout)
   if (hub < hlb)
   {
     if (sign == -1) { cv_mem->cv_h = -hg; }
-    else { cv_mem->cv_h = hg; }
+    else
+    {
+      cv_mem->cv_h = hg;
+    }
     return (CV_SUCCESS);
   }
 
@@ -3073,7 +3097,10 @@ static void cvSetTqBDF(CVodeMem cv_mem, sunrealtype hsum, sunrealtype alpha0,
       Cpinv            = (ONE - A4 + A3) / A3;
       cv_mem->cv_tq[1] = SUNRabs(C * Cpinv);
     }
-    else { cv_mem->cv_tq[1] = ONE; }
+    else
+    {
+      cv_mem->cv_tq[1] = ONE;
+    }
     hsum += cv_mem->cv_tau[cv_mem->cv_q];
     xi_inv           = cv_mem->cv_h / hsum;
     A5               = alpha0 - (ONE / (cv_mem->cv_q + 1));
@@ -3371,7 +3398,10 @@ static int cvHandleNFlag(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
     if (nflag == CV_LSETUP_FAIL) { return (CV_LSETUP_FAIL); }
     else if (nflag == CV_LSOLVE_FAIL) { return (CV_LSOLVE_FAIL); }
     else if (nflag == CV_RHSFUNC_FAIL) { return (CV_RHSFUNC_FAIL); }
-    else { return (CV_NLS_FAIL); }
+    else
+    {
+      return (CV_NLS_FAIL);
+    }
   }
 
   /* At this point, a recoverable error occurred. */
@@ -3939,8 +3969,8 @@ static void cvBDFStab(CVodeMem cv_mem)
     }
     factorial = 1;
     for (i = 1; i <= cv_mem->cv_q - 1; i++) { factorial *= i; }
-    sq = factorial * cv_mem->cv_q * (cv_mem->cv_q + 1) * cv_mem->cv_acnrm /
-         SUNMAX(cv_mem->cv_tq[5], TINY);
+    sq   = factorial * cv_mem->cv_q * (cv_mem->cv_q + 1) * cv_mem->cv_acnrm /
+           SUNMAX(cv_mem->cv_tq[5], TINY);
     sqm1 = factorial * cv_mem->cv_q *
            N_VWrmsNorm(cv_mem->cv_zn[cv_mem->cv_q], cv_mem->cv_ewt);
     sqm2 = factorial *
@@ -3967,8 +3997,8 @@ static void cvBDFStab(CVodeMem cv_mem)
         cv_mem->cv_eta    = cv_mem->cv_etaqm1;
         cv_mem->cv_eta    = SUNMIN(cv_mem->cv_eta, cv_mem->cv_etamax);
         cv_mem->cv_eta    = cv_mem->cv_eta /
-                         SUNMAX(ONE, SUNRabs(cv_mem->cv_h) *
-                                       cv_mem->cv_hmax_inv * cv_mem->cv_eta);
+                            SUNMAX(ONE, SUNRabs(cv_mem->cv_h) *
+                                          cv_mem->cv_hmax_inv * cv_mem->cv_eta);
         cv_mem->cv_hprime = cv_mem->cv_h * cv_mem->cv_eta;
         cv_mem->cv_nor    = cv_mem->cv_nor + 1;
       }
@@ -4210,7 +4240,7 @@ static int cvSLdet(CVodeMem cv_mem)
           {
             qjk[j][k] = qc[5][j] +
                         s * (qc[4][j] + s * s * (qc[2][j] + s * qc[1][j]));
-            saqj = SUNRabs(qjk[j][k]) / ssmax[j];
+            saqj      = SUNRabs(qjk[j][k]) / ssmax[j];
             if (saqj > sqmaxk) { sqmaxk = saqj; }
           }
           sqmx[k] = sqmaxk;
@@ -4246,7 +4276,7 @@ static int cvSLdet(CVodeMem cv_mem)
         return (kflag);
       }
     } /*  end of if (sqmax < sqtol) else   */
-  }   /*  end of if (vmin < vrrtol*vrrtol) else, quartics to get rr. */
+  } /*  end of if (vmin < vrrtol*vrrtol) else, quartics to get rr. */
 
   /* given rr, find sigsq[k] and verify rr.  */
   /* All positive kflag drop to this section  */
@@ -4440,14 +4470,17 @@ static int cvRcheck2(CVodeMem cv_mem)
   /* One or more g_i has a zero at tlo.  Check g at tlo+smallh. */
   cv_mem->cv_ttol = (SUNRabs(cv_mem->cv_tn) + SUNRabs(cv_mem->cv_h)) *
                     cv_mem->cv_uround * HUNDRED;
-  smallh = (cv_mem->cv_h > ZERO) ? cv_mem->cv_ttol : -cv_mem->cv_ttol;
-  tplus  = cv_mem->cv_tlo + smallh;
+  smallh          = (cv_mem->cv_h > ZERO) ? cv_mem->cv_ttol : -cv_mem->cv_ttol;
+  tplus           = cv_mem->cv_tlo + smallh;
   if ((tplus - cv_mem->cv_tn) * cv_mem->cv_h >= ZERO)
   {
     hratio = smallh / cv_mem->cv_h;
     N_VLinearSum(ONE, cv_mem->cv_y, hratio, cv_mem->cv_zn[1], cv_mem->cv_y);
   }
-  else { (void)CVodeGetDky(cv_mem, tplus, 0, cv_mem->cv_y); }
+  else
+  {
+    (void)CVodeGetDky(cv_mem, tplus, 0, cv_mem->cv_y);
+  }
   retval = cv_mem->cv_gfun(tplus, cv_mem->cv_y, cv_mem->cv_ghi,
                            cv_mem->cv_user_data);
   cv_mem->cv_nge++;
@@ -4519,7 +4552,7 @@ static int cvRcheck3(CVodeMem cv_mem, sunrealtype tout, int itask)
 
   cv_mem->cv_ttol = (SUNRabs(cv_mem->cv_tn) + SUNRabs(cv_mem->cv_h)) *
                     cv_mem->cv_uround * HUNDRED;
-  ier = cvRootfind(cv_mem);
+  ier             = cvRootfind(cv_mem);
   if (ier == CV_RTFUNC_FAIL) { return (CV_RTFUNC_FAIL); }
   for (i = 0; i < cv_mem->cv_nrtfn; i++)
   {
@@ -4705,7 +4738,10 @@ static int cvRootfind(CVodeMem cv_mem)
        is closer to tlo if alph < 1, and closer to thi if alph > 1.    */
 
     if (sideprev == side) { alph = (side == 2) ? alph * TWO : alph * HALF; }
-    else { alph = ONE; }
+    else
+    {
+      alph = ONE;
+    }
 
     /* Set next root approximation tmid and get g(tmid).
        If tmid is too close to tlo or thi, adjust it inward,
@@ -4973,7 +5009,8 @@ void cvProcessError(CVodeMem cv_mem, int error_code, int line, const char* func,
   vsnprintf(msg, msglen, msgfmt, ap);
   va_end(ap);
 
-  do {
+  do
+  {
     if (cv_mem == NULL)
     {
       SUNGlobalFallbackErrHandler(line, func, file, msg, error_code);
