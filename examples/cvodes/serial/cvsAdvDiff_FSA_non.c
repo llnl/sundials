@@ -447,7 +447,7 @@ static void PrintOutputS(N_Vector* uS)
   printf("                                Sensitivity 1  ");
 #if defined(SUNDIALS_FLOAT128_PRECISION)
   printf("%12.4Qe \n", N_VMaxNorm(uS[0]));
-#elif defined(SUDIALS_EXTENDED_PRECISION)
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%12.4Le \n", N_VMaxNorm(uS[0]));
 #else
   printf("%12.4e \n", N_VMaxNorm(uS[0]));
