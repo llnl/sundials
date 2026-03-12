@@ -219,10 +219,7 @@ SUNErrCode SUNDataNode_GetChild_InMem(const SUNDataNode self, sundataindex index
     *child_node = *child_node_ptr;
     return SUN_SUCCESS;
   }
-  else
-  {
-    return SUN_ERR_DATANODE_NODENOTFOUND;
-  }
+  else { return SUN_ERR_DATANODE_NODENOTFOUND; }
 }
 
 SUNErrCode SUNDataNode_GetNamedChild_InMem(const SUNDataNode self,
@@ -245,10 +242,7 @@ SUNErrCode SUNDataNode_GetNamedChild_InMem(const SUNDataNode self,
     }
     return SUN_SUCCESS;
   }
-  else
-  {
-    return SUN_ERR_DATANODE_NODENOTFOUND;
-  }
+  else { return SUN_ERR_DATANODE_NODENOTFOUND; }
 }
 
 SUNErrCode SUNDataNode_RemoveChild_InMem(SUNDataNode self, sundataindex index,
@@ -275,15 +269,9 @@ SUNErrCode SUNDataNode_RemoveChild_InMem(SUNDataNode self, sundataindex index,
       IMPL_MEMBER(*child_node, parent) = NULL;
       SUNStlVector_SUNDataNode_Erase(IMPL_MEMBER(self, anon_children), index);
     }
-    else
-    {
-      return SUN_ERR_DATANODE_NODENOTFOUND;
-    }
+    else { return SUN_ERR_DATANODE_NODENOTFOUND; }
   }
-  else
-  {
-    return SUN_ERR_DATANODE_NODENOTFOUND;
-  }
+  else { return SUN_ERR_DATANODE_NODENOTFOUND; }
 
   return SUN_SUCCESS;
 }

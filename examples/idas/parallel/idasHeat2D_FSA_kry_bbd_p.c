@@ -899,20 +899,11 @@ static void PrintHeader(sunindextype Neq, sunrealtype rtol, sunrealtype atol,
   {
     printf("Sensitivity: YES ");
     if (sensi_meth == IDA_SIMULTANEOUS) { printf("( SIMULTANEOUS +"); }
-    else
-    {
-      printf("( STAGGERED +");
-    }
+    else { printf("( STAGGERED +"); }
     if (err_con) { printf(" FULL ERROR CONTROL )"); }
-    else
-    {
-      printf(" PARTIAL ERROR CONTROL )");
-    }
+    else { printf(" PARTIAL ERROR CONTROL )"); }
   }
-  else
-  {
-    printf("Sensitivity: NO ");
-  }
+  else { printf("Sensitivity: NO "); }
 
   printf("\n\nOutput Summary: umax = max-norm of solution\n");
   printf("                       max-norm of sensitivity 1\n");
@@ -1024,10 +1015,7 @@ static void ProcessArgs(int argc, char* argv[], int my_pe, sunbooleantype* sensi
 
   if (strcmp(argv[1], "-nosensi") == 0) { *sensi = SUNFALSE; }
   else if (strcmp(argv[1], "-sensi") == 0) { *sensi = SUNTRUE; }
-  else
-  {
-    WrongArgs(my_pe, argv[0]);
-  }
+  else { WrongArgs(my_pe, argv[0]); }
 
   if (*sensi)
   {
@@ -1035,17 +1023,11 @@ static void ProcessArgs(int argc, char* argv[], int my_pe, sunbooleantype* sensi
 
     if (strcmp(argv[2], "sim") == 0) { *sensi_meth = IDA_SIMULTANEOUS; }
     else if (strcmp(argv[2], "stg") == 0) { *sensi_meth = IDA_STAGGERED; }
-    else
-    {
-      WrongArgs(my_pe, argv[0]);
-    }
+    else { WrongArgs(my_pe, argv[0]); }
 
     if (strcmp(argv[3], "t") == 0) { *err_con = SUNTRUE; }
     else if (strcmp(argv[3], "f") == 0) { *err_con = SUNFALSE; }
-    else
-    {
-      WrongArgs(my_pe, argv[0]);
-    }
+    else { WrongArgs(my_pe, argv[0]); }
   }
 }
 

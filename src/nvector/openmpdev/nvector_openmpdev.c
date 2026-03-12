@@ -78,7 +78,9 @@ static int VaxpyVectorArray_OpenMPDEV(int nvec, sunrealtype a, N_Vector* X,
  * from abstract N_Vector interface.
  */
 N_Vector_ID N_VGetVectorID_OpenMPDEV(N_Vector v)
-{ return SUNDIALS_NVEC_OPENMPDEV; }
+{
+  return SUNDIALS_NVEC_OPENMPDEV;
+}
 
 /* ----------------------------------------------------------------------------
  * Function to create a new empty vector
@@ -253,13 +255,17 @@ sunindextype N_VGetLength_OpenMPDEV(N_Vector v) { return NV_LENGTH_OMPDEV(v); }
  * Function to return a pointer to the data array on the host.
  */
 sunrealtype* N_VGetHostArrayPointer_OpenMPDEV(N_Vector v)
-{ return ((sunrealtype*)NV_DATA_HOST_OMPDEV(v)); }
+{
+  return ((sunrealtype*)NV_DATA_HOST_OMPDEV(v));
+}
 
 /* ----------------------------------------------------------------------------
  * Function to return a pointer to the data array on the device.
  */
 sunrealtype* N_VGetDeviceArrayPointer_OpenMPDEV(N_Vector v)
-{ return ((sunrealtype*)NV_DATA_DEV_OMPDEV(v)); }
+{
+  return ((sunrealtype*)NV_DATA_DEV_OMPDEV(v));
+}
 
 /* ----------------------------------------------------------------------------
  * Function to print a vector to stdout
@@ -855,7 +861,9 @@ sunrealtype N_VMaxNorm_OpenMPDEV(N_Vector x)
  */
 
 sunrealtype N_VWrmsNorm_OpenMPDEV(N_Vector x, N_Vector w)
-{ return (SUNRsqrt(N_VWSqrSumLocal_OpenMPDEV(x, w) / (NV_LENGTH_OMPDEV(x)))); }
+{
+  return (SUNRsqrt(N_VWSqrSumLocal_OpenMPDEV(x, w) / (NV_LENGTH_OMPDEV(x))));
+}
 
 /* ----------------------------------------------------------------------------
  * Computes weighted root mean square norm of a masked vector
@@ -1064,17 +1072,11 @@ sunbooleantype N_VInvTest_OpenMPDEV(N_Vector x, N_Vector z)
   for (i = 0; i < N; i++)
   {
     if (xd_dev[i] == ZERO) { val = ONE; }
-    else
-    {
-      zd_dev[i] = ONE / xd_dev[i];
-    }
+    else { zd_dev[i] = ONE / xd_dev[i]; }
   }
 
   if (val > ZERO) { return (SUNFALSE); }
-  else
-  {
-    return (SUNTRUE);
-  }
+  else { return (SUNTRUE); }
 }
 
 /* ----------------------------------------------------------------------------
@@ -1128,10 +1130,7 @@ sunbooleantype N_VConstrMask_OpenMPDEV(N_Vector c, N_Vector x, N_Vector m)
   }
 
   if (temp == ONE) { return (SUNTRUE); }
-  else
-  {
-    return (SUNFALSE);
-  }
+  else { return (SUNFALSE); }
 }
 
 /* ----------------------------------------------------------------------------
@@ -2839,10 +2838,7 @@ SUNErrCode N_VEnableLinearCombination_OpenMPDEV(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvlinearcombination = N_VLinearCombination_OpenMPDEV; }
-  else
-  {
-    v->ops->nvlinearcombination = NULL;
-  }
+  else { v->ops->nvlinearcombination = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2858,10 +2854,7 @@ SUNErrCode N_VEnableScaleAddMulti_OpenMPDEV(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvscaleaddmulti = N_VScaleAddMulti_OpenMPDEV; }
-  else
-  {
-    v->ops->nvscaleaddmulti = NULL;
-  }
+  else { v->ops->nvscaleaddmulti = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2904,10 +2897,7 @@ SUNErrCode N_VEnableLinearSumVectorArray_OpenMPDEV(N_Vector v, sunbooleantype tf
   {
     v->ops->nvlinearsumvectorarray = N_VLinearSumVectorArray_OpenMPDEV;
   }
-  else
-  {
-    v->ops->nvlinearsumvectorarray = NULL;
-  }
+  else { v->ops->nvlinearsumvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2923,10 +2913,7 @@ SUNErrCode N_VEnableScaleVectorArray_OpenMPDEV(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvscalevectorarray = N_VScaleVectorArray_OpenMPDEV; }
-  else
-  {
-    v->ops->nvscalevectorarray = NULL;
-  }
+  else { v->ops->nvscalevectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2942,10 +2929,7 @@ SUNErrCode N_VEnableConstVectorArray_OpenMPDEV(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvconstvectorarray = N_VConstVectorArray_OpenMPDEV; }
-  else
-  {
-    v->ops->nvconstvectorarray = NULL;
-  }
+  else { v->ops->nvconstvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2961,10 +2945,7 @@ SUNErrCode N_VEnableWrmsNormVectorArray_OpenMPDEV(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvwrmsnormvectorarray = N_VWrmsNormVectorArray_OpenMPDEV; }
-  else
-  {
-    v->ops->nvwrmsnormvectorarray = NULL;
-  }
+  else { v->ops->nvwrmsnormvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2984,10 +2965,7 @@ SUNErrCode N_VEnableWrmsNormMaskVectorArray_OpenMPDEV(N_Vector v,
   {
     v->ops->nvwrmsnormmaskvectorarray = N_VWrmsNormMaskVectorArray_OpenMPDEV;
   }
-  else
-  {
-    v->ops->nvwrmsnormmaskvectorarray = NULL;
-  }
+  else { v->ops->nvwrmsnormmaskvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -3007,10 +2985,7 @@ SUNErrCode N_VEnableScaleAddMultiVectorArray_OpenMPDEV(N_Vector v,
   {
     v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_OpenMPDEV;
   }
-  else
-  {
-    v->ops->nvscaleaddmultivectorarray = NULL;
-  }
+  else { v->ops->nvscaleaddmultivectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -3031,10 +3006,7 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_OpenMPDEV(N_Vector v,
     v->ops->nvlinearcombinationvectorarray =
       N_VLinearCombinationVectorArray_OpenMPDEV;
   }
-  else
-  {
-    v->ops->nvlinearcombinationvectorarray = NULL;
-  }
+  else { v->ops->nvlinearcombinationvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;

@@ -55,7 +55,9 @@ ARKodeButcherTable ARKodeButcherTable_LoadERK(ARKODE_ERKTableID emethod)
   Input:  emethod -- string key for the desired method
   ---------------------------------------------------------------*/
 ARKodeButcherTable ARKodeButcherTable_LoadERKByName(const char* emethod)
-{ return ARKodeButcherTable_LoadERK(arkButcherTableERKNameToID(emethod)); }
+{
+  return ARKodeButcherTable_LoadERK(arkButcherTableERKNameToID(emethod));
+}
 
 /*---------------------------------------------------------------
   Returns the string name for a pre-set Runge Kutta method by its ID.

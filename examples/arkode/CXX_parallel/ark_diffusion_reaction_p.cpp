@@ -1315,10 +1315,7 @@ static int CVodeInnerStepper_Reset(MRIStepInnerStepper stepper, sunrealtype tR,
 
   N_Vector yR_vec;
   if (content->local) { yR_vec = N_VGetLocalVector_MPIPlusX(yR); }
-  else
-  {
-    yR_vec = yR;
-  }
+  else { yR_vec = yR; }
 
   // Save current stats before reinitializing
   long int nst, netf, nfe, nni, nncf;
@@ -2266,7 +2263,7 @@ static int ReadInputs(int* argc, char*** argv, UserData* udata)
     sunrealtype cfl_v = SUN_RCONST(0.5) /
                         ((udata->Dvx / (udata->dx * udata->dx)) +
                          (udata->Dvy / (udata->dy * udata->dy)));
-    udata->h_slow     = SUN_RCONST(5.0) * min(cfl_u, cfl_v);
+    udata->h_slow = SUN_RCONST(5.0) * min(cfl_u, cfl_v);
   }
 
   // Return success
@@ -2415,10 +2412,7 @@ static int PrintUserData(UserData* udata)
   cout << "  linear         = " << udata->linear << endl;
   cout << " --------------------------------- " << endl;
   if (udata->pcg) { cout << "  linear solver  = PCG" << endl; }
-  else
-  {
-    cout << "  linear solver  = GMRES" << endl;
-  }
+  else { cout << "  linear solver  = GMRES" << endl; }
   cout << "  lin iters      = " << udata->liniters << endl;
   cout << "  eps lin        = " << udata->epslin << endl;
   cout << "  prec           = " << udata->prec << endl;
@@ -2475,10 +2469,7 @@ static int OpenOutput(UserData* udata)
     {
       udata->uout << "# ie " << udata->ie + 1 << endl;
     }
-    else
-    {
-      udata->uout << "# ie " << udata->ie << endl;
-    }
+    else { udata->uout << "# ie " << udata->ie << endl; }
     udata->uout << "# ny " << udata->ny + 1 << endl;
     udata->uout << "# yl " << udata->yl << endl;
     udata->uout << "# yu " << udata->yu << endl;
@@ -2487,10 +2478,7 @@ static int OpenOutput(UserData* udata)
     {
       udata->uout << "# je " << udata->je + 1 << endl;
     }
-    else
-    {
-      udata->uout << "# je " << udata->je << endl;
-    }
+    else { udata->uout << "# je " << udata->je << endl; }
   }
 
   return 0;

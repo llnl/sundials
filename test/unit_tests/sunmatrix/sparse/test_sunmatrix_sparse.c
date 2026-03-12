@@ -476,10 +476,7 @@ int main(int argc, char* argv[])
   fails += Test_SUNMatHermitianTransposeVec(A, AT, x, y, 0);
   fails += Test_SUNMatSpace(A, 0);
   if (mattype == SUN_CSR_MAT) { fails += Test_SUNSparseMatrixToCSC(A); }
-  else
-  {
-    fails += Test_SUNSparseMatrixToCSR(A);
-  }
+  else { fails += Test_SUNSparseMatrixToCSR(A); }
 
   /* Print result */
   if (fails)
@@ -501,10 +498,7 @@ int main(int argc, char* argv[])
     printf("\nz =\n");
     N_VPrint_Serial(z);
   }
-  else
-  {
-    printf("SUCCESS: SUNMatrix module passed all tests \n \n");
-  }
+  else { printf("SUCCESS: SUNMatrix module passed all tests \n \n"); }
 
   /* Free vectors and matrices */
   N_VDestroy(x);
@@ -597,10 +591,7 @@ int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix B, N_Vector x, N_Vector y,
     N_VDestroy(v);
     return (1);
   }
-  else
-  {
-    printf("    PASSED test -- SUNMatScaleAdd2 check 1 \n");
-  }
+  else { printf("    PASSED test -- SUNMatScaleAdd2 check 1 \n"); }
 
   /* test 2: add A to a matrix with sufficient but misplaced storage */
   D       = SUNMatClone(A);
@@ -662,10 +653,7 @@ int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix B, N_Vector x, N_Vector y,
     N_VDestroy(v);
     return (1);
   }
-  else
-  {
-    printf("    PASSED test -- SUNMatScaleAdd2 check 2 \n");
-  }
+  else { printf("    PASSED test -- SUNMatScaleAdd2 check 2 \n"); }
 
   /* test 3: add A to a matrix with the appropriate structure already in place */
   E       = SUNMatClone(C);
@@ -730,10 +718,7 @@ int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix B, N_Vector x, N_Vector y,
     N_VDestroy(v);
     return (1);
   }
-  else
-  {
-    printf("    PASSED test -- SUNMatScaleAdd2 check 3 \n");
-  }
+  else { printf("    PASSED test -- SUNMatScaleAdd2 check 3 \n"); }
 
   SUNMatDestroy(C);
   SUNMatDestroy(D);
@@ -807,10 +792,7 @@ int Test_SUNMatScaleAddI2(SUNMatrix A, N_Vector x, N_Vector y)
     N_VDestroy(w);
     return (1);
   }
-  else
-  {
-    printf("    PASSED test -- SUNMatScaleAddI2 check 1 \n");
-  }
+  else { printf("    PASSED test -- SUNMatScaleAddI2 check 1 \n"); }
 
   /* test 2: add I to a matrix with sufficient but misplaced
      storage */
@@ -865,10 +847,7 @@ int Test_SUNMatScaleAddI2(SUNMatrix A, N_Vector x, N_Vector y)
     N_VDestroy(w);
     return (1);
   }
-  else
-  {
-    printf("    PASSED test -- SUNMatScaleAddI2 check 2 \n");
-  }
+  else { printf("    PASSED test -- SUNMatScaleAddI2 check 2 \n"); }
 
   /* test 3: add I to a matrix with appropriate structure already in place */
   D       = SUNMatClone(C);
@@ -924,10 +903,7 @@ int Test_SUNMatScaleAddI2(SUNMatrix A, N_Vector x, N_Vector y)
     N_VDestroy(w);
     return (1);
   }
-  else
-  {
-    printf("    PASSED test -- SUNMatScaleAddI2 check 3 \n");
-  }
+  else { printf("    PASSED test -- SUNMatScaleAddI2 check 3 \n"); }
 
   SUNMatDestroy(B);
   SUNMatDestroy(C);
@@ -1123,10 +1099,7 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else
-  {
-    return (0);
-  }
+  else { return (0); }
 }
 
 int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
@@ -1157,29 +1130,20 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else
-  {
-    return (0);
-  }
+  else { return (0); }
 }
 
 sunbooleantype has_data(SUNMatrix A)
 {
   sunrealtype* Adata = SUNSparseMatrix_Data(A);
   if (Adata == NULL) { return SUNFALSE; }
-  else
-  {
-    return SUNTRUE;
-  }
+  else { return SUNTRUE; }
 }
 
 sunbooleantype is_square(SUNMatrix A)
 {
   if (SUNSparseMatrix_Rows(A) == SUNSparseMatrix_Columns(A)) { return SUNTRUE; }
-  else
-  {
-    return SUNFALSE;
-  }
+  else { return SUNFALSE; }
 }
 
 void sync_device(SUNMatrix A)

@@ -262,10 +262,7 @@ static SUNErrCode setFromCommandLine_SuperLUMT(SUNLinearSolver S,
   if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -322,10 +319,14 @@ SUNErrCode SUNLinSol_SuperLUMTSetOrdering(SUNLinearSolver S, int ordering_choice
 
 SUNLinearSolver_Type SUNLinSolGetType_SuperLUMT(
   SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return SUNLINEARSOLVER_DIRECT; }
+{
+  return SUNLINEARSOLVER_DIRECT;
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_SuperLUMT(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return SUNLINEARSOLVER_SUPERLUMT; }
+{
+  return SUNLINEARSOLVER_SUPERLUMT;
+}
 
 SUNErrCode SUNLinSolInitialize_SuperLUMT(SUNLinearSolver S)
 {
@@ -443,7 +444,9 @@ int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 }
 
 sunindextype SUNLinSolLastFlag_SuperLUMT(SUNLinearSolver S)
-{ return (LASTFLAG(S)); }
+{
+  return (LASTFLAG(S));
+}
 
 SUNErrCode SUNLinSolSpace_SuperLUMT(SUNLinearSolver S, long int* lenrwLS,
                                     long int* leniwLS)

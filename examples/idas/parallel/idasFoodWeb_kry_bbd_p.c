@@ -396,10 +396,7 @@ int main(int argc, char* argv[])
     PrintOutput(ida_mem, cc, tret, webdata, comm);
 
     if (iout < 3) { tout *= TMULT; }
-    else
-    {
-      tout += TADD;
-    }
+    else { tout += TADD; }
   }
 
   /* On PE 0, print final set of statistics. */
@@ -1147,10 +1144,7 @@ static int reslocal(sunindextype Nlocal, sunrealtype tt, N_Vector cc,
                   ratesxy[is];
 
         if (is < np) { resxy[is] = cpxy[is] - rhs[is]; }
-        else
-        {
-          resxy[is] = -rhs[is];
-        }
+        else { resxy[is] = -rhs[is]; }
       }
     }
   }

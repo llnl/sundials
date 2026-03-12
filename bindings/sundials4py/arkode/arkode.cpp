@@ -54,10 +54,7 @@ void bind_arkode_splittingstep(nb::module_& m);
       auto fn_table    = get_arkode_fn_table(ark_mem);                  \
       fn_table->MEMBER = nb::cast(fn);                                  \
       if (fn) { return NAME(ark_mem, WRAPPER); }                        \
-      else                                                              \
-      {                                                                 \
-        return NAME(ark_mem, nullptr);                                  \
-      }                                                                 \
+      else { return NAME(ark_mem, nullptr); }                           \
     },                                                                  \
     __VA_ARGS__)
 
@@ -74,10 +71,7 @@ void bind_arkode_splittingstep(nb::module_& m);
       if (fn1 && fn2) { return NAME(ark_mem, WRAPPER1, WRAPPER2); }        \
       else if (fn1) { return NAME(ark_mem, WRAPPER1, nullptr); }           \
       else if (fn2) { return NAME(ark_mem, nullptr, WRAPPER2); }           \
-      else                                                                 \
-      {                                                                    \
-        return NAME(ark_mem, nullptr, nullptr);                            \
-      }                                                                    \
+      else { return NAME(ark_mem, nullptr, nullptr); }                     \
     },                                                                     \
     __VA_ARGS__)
 
@@ -108,10 +102,7 @@ void bind_arkode(nb::module_& m)
         fn_table->rootfn = nb::cast(fn);
         return ARKodeRootInit(ark_mem, nrtfn, arkode_rootfn_wrapper);
       }
-      else
-      {
-        return ARKodeRootInit(ark_mem, nrtfn, nullptr);
-      }
+      else { return ARKodeRootInit(ark_mem, nrtfn, nullptr); }
     },
     nb::arg("arkode_mem"), nb::arg("nrtfn"), nb::arg("root_fn").none());
 
@@ -225,10 +216,7 @@ void bind_arkode(nb::module_& m)
         return ARKodeSetMassTimes(ark_mem, nullptr,
                                   arkode_lsmasstimesvecfn_wrapper, nullptr);
       }
-      else
-      {
-        return ARKodeSetMassTimes(ark_mem, nullptr, nullptr, nullptr);
-      }
+      else { return ARKodeSetMassTimes(ark_mem, nullptr, nullptr, nullptr); }
     },
     nb::arg("ark_mem"), nb::arg("msetup").none(), nb::arg("mtimes").none());
 
@@ -276,4 +264,6 @@ void bind_arkode(nb::module_& m)
 
 // The destroy functions gets called in our C code
 extern "C" void arkode_user_supplied_fn_table_destroy(void* ptr)
-{ delete static_cast<arkode_user_supplied_fn_table*>(ptr); }
+{
+  delete static_cast<arkode_user_supplied_fn_table*>(ptr);
+}

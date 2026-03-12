@@ -178,7 +178,9 @@ sunrealtype* SUNDenseMatrix_Column(SUNMatrix A, sunindextype j)
  */
 
 SUNMatrix_ID SUNMatGetID_Dense(SUNDIALS_MAYBE_UNUSED SUNMatrix A)
-{ return SUNMATRIX_DENSE; }
+{
+  return SUNMATRIX_DENSE;
+}
 
 SUNMatrix SUNMatClone_Dense(SUNMatrix A)
 {

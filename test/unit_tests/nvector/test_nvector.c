@@ -1475,10 +1475,7 @@ int Test_N_VMaxNorm(N_Vector X, sunindextype local_length, int myid)
   /* fill vector data */
   N_VConst(NEG_HALF, X);
   if (myid == 0) { set_element(X, local_length - 1, NEG_TWO); }
-  else
-  {
-    set_element(X, local_length - 1, ONE);
-  }
+  else { set_element(X, local_length - 1, ONE); }
 
   start_time = get_time();
   ans        = N_VMaxNorm(X);
@@ -1598,10 +1595,7 @@ int Test_N_VMin(N_Vector X, sunindextype local_length, int myid)
   /* fill vector data */
   N_VConst(TWO, X);
   if (myid == 0) { set_element(X, local_length - 1, HALF); }
-  else
-  {
-    set_element(X, local_length - 1, ONE);
-  }
+  else { set_element(X, local_length - 1, ONE); }
 
   start_time = get_time();
   ans        = N_VMin(X);
@@ -1626,10 +1620,7 @@ int Test_N_VMin(N_Vector X, sunindextype local_length, int myid)
   /* fill vector data */
   N_VConst(TWO, X);
   if (myid == 0) { set_element(X, local_length - 1, NEG_TWO); }
-  else
-  {
-    set_element(X, local_length - 1, NEG_ONE);
-  }
+  else { set_element(X, local_length - 1, NEG_ONE); }
 
   start_time = get_time();
   ans        = N_VMin(X);
@@ -2104,10 +2095,7 @@ int Test_N_VMinQuotient(N_Vector NUM, N_Vector DENOM, sunindextype local_length,
   N_VConst(TWO, NUM);
   N_VConst(TWO, DENOM);
   if (myid == 0) { set_element(NUM, local_length - 1, HALF); }
-  else
-  {
-    set_element(NUM, local_length - 1, ONE);
-  }
+  else { set_element(NUM, local_length - 1, ONE); }
 
   start_time = get_time();
   ans        = N_VMinQuotient(NUM, DENOM);
@@ -2207,10 +2195,7 @@ int Test_N_VLinearCombination(N_Vector X, sunindextype local_length, int myid)
 
   /* Y1 should be vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, Y1, local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2244,10 +2229,7 @@ int Test_N_VLinearCombination(N_Vector X, sunindextype local_length, int myid)
 
   /* X should be vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, X, local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2282,10 +2264,7 @@ int Test_N_VLinearCombination(N_Vector X, sunindextype local_length, int myid)
 
   /* Y1 should be vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, Y1, local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2321,10 +2300,7 @@ int Test_N_VLinearCombination(N_Vector X, sunindextype local_length, int myid)
 
   /* X should be vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, X, local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2361,10 +2337,7 @@ int Test_N_VLinearCombination(N_Vector X, sunindextype local_length, int myid)
 
   /* Y1 should be vector of +3 */
   if (ierr == 0) { failure = check_ans(TWO + ONE, Y1, local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2401,10 +2374,7 @@ int Test_N_VLinearCombination(N_Vector X, sunindextype local_length, int myid)
 
   /* Y1 should be vector of +2 */
   if (ierr == 0) { failure = check_ans(TWO, Y1, local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2442,10 +2412,7 @@ int Test_N_VLinearCombination(N_Vector X, sunindextype local_length, int myid)
 
   /* X should be vector of +2 */
   if (ierr == 0) { failure = check_ans(TWO, X, local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2507,10 +2474,7 @@ int Test_N_VScaleAddMulti(N_Vector X, sunindextype local_length, int myid)
 
   /* V[0] should be vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, V[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2542,10 +2506,7 @@ int Test_N_VScaleAddMulti(N_Vector X, sunindextype local_length, int myid)
 
   /* Z[0] should be vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, Z[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2585,10 +2546,7 @@ int Test_N_VScaleAddMulti(N_Vector X, sunindextype local_length, int myid)
     failure += check_ans(ZERO, V[1], local_length);
     failure += check_ans(ONE, V[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2631,10 +2589,7 @@ int Test_N_VScaleAddMulti(N_Vector X, sunindextype local_length, int myid)
     failure += check_ans(ZERO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2690,10 +2645,7 @@ int Test_N_VDotProdMulti(N_Vector X, sunindextype local_length, int myid)
   {
     failure = SUNRCompare(dotprods[0], (sunrealtype)global_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2728,10 +2680,7 @@ int Test_N_VDotProdMulti(N_Vector X, sunindextype local_length, int myid)
     failure += SUNRCompare(dotprods[1], (sunrealtype)global_length);
     failure += SUNRCompare(dotprods[2], (sunrealtype)2 * global_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2781,10 +2730,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
 
   /* Z[0] should be a vector of 0 */
   if (ierr == 0) { failure = check_ans(ZERO, Z[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2826,10 +2772,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Y[1], local_length);
     failure += check_ans(ONE, Y[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2872,10 +2815,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Y[1], local_length);
     failure += check_ans(ONE, Y[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2918,10 +2858,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Y[1], local_length);
     failure += check_ans(ONE, Y[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -2964,10 +2901,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, X[1], local_length);
     failure += check_ans(ONE, X[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3010,10 +2944,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, X[1], local_length);
     failure += check_ans(ONE, X[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3056,10 +2987,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, X[1], local_length);
     failure += check_ans(ONE, X[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3105,10 +3033,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3153,10 +3078,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3202,10 +3124,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3251,10 +3170,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3300,10 +3216,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3349,10 +3262,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3398,10 +3308,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ZERO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3447,10 +3354,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(TWO + ONE, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3495,10 +3399,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(TWO + ONE, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3540,10 +3441,7 @@ int Test_N_VLinearSumVectorArray(N_Vector V, sunindextype local_length, int myid
     failure += check_ans(ONE, Z[1], local_length);
     failure += check_ans(TWO, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3598,10 +3496,7 @@ int Test_N_VScaleVectorArray(N_Vector X, sunindextype local_length, int myid)
 
   /* Y[0] should be a vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, Y[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3633,10 +3528,7 @@ int Test_N_VScaleVectorArray(N_Vector X, sunindextype local_length, int myid)
 
   /* Z[0] should be a vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, Z[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3677,10 +3569,7 @@ int Test_N_VScaleVectorArray(N_Vector X, sunindextype local_length, int myid)
     failure += check_ans(NEG_ONE, Y[1], local_length);
     failure += check_ans(TWO, Y[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3721,10 +3610,7 @@ int Test_N_VScaleVectorArray(N_Vector X, sunindextype local_length, int myid)
     failure += check_ans(NEG_ONE, Z[1], local_length);
     failure += check_ans(TWO, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3774,10 +3660,7 @@ int Test_N_VConstVectorArray(N_Vector X, sunindextype local_length, int myid)
 
   /* Y[0] should be a vector of 1 */
   if (ierr == 0) { failure = check_ans(ONE, Z[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3814,10 +3697,7 @@ int Test_N_VConstVectorArray(N_Vector X, sunindextype local_length, int myid)
     failure += check_ans(ONE, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3877,10 +3757,7 @@ int Test_N_VWrmsNormVectorArray(N_Vector X, sunindextype local_length, int myid)
   {
     failure = (nrm[0] < ZERO) ? 1 : SUNRCompare(nrm[0], HALF * HALF);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -3925,10 +3802,7 @@ int Test_N_VWrmsNormVectorArray(N_Vector X, sunindextype local_length, int myid)
     failure += (nrm[1] < ZERO) ? 1 : SUNRCompare(nrm[1], ONE);
     failure += (nrm[2] < ZERO) ? 1 : SUNRCompare(nrm[2], HALF);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4002,10 +3876,7 @@ int Test_N_VWrmsNormMaskVectorArray(N_Vector X, sunindextype local_length,
   {
     failure = (nrm[0] < ZERO) ? 1 : SUNRCompare(nrm[0], fac * HALF * HALF);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4055,10 +3926,7 @@ int Test_N_VWrmsNormMaskVectorArray(N_Vector X, sunindextype local_length,
     failure += (nrm[1] < ZERO) ? 1 : SUNRCompare(nrm[1], fac);
     failure += (nrm[2] < ZERO) ? 1 : SUNRCompare(nrm[2], fac * HALF);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4125,10 +3993,7 @@ int Test_N_VScaleAddMultiVectorArray(N_Vector V, sunindextype local_length,
 
   /* Y[0][0] should be vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, Y[0][0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4164,10 +4029,7 @@ int Test_N_VScaleAddMultiVectorArray(N_Vector V, sunindextype local_length,
 
   /* Z[0][0] should be vector of +1 */
   if (ierr == 0) { failure = check_ans(ONE, Z[0][0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4212,10 +4074,7 @@ int Test_N_VScaleAddMultiVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(ZERO, Y[1][0], local_length);
     failure += check_ans(ONE, Y[2][0], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4264,10 +4123,7 @@ int Test_N_VScaleAddMultiVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(ZERO, Z[1][0], local_length);
     failure += check_ans(ONE, Z[2][0], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4312,10 +4168,7 @@ int Test_N_VScaleAddMultiVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(ZERO, Y[0][1], local_length);
     failure += check_ans(ONE, Y[0][2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4364,10 +4217,7 @@ int Test_N_VScaleAddMultiVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(ZERO, Z[0][1], local_length);
     failure += check_ans(ONE, Z[0][2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4431,10 +4281,7 @@ int Test_N_VScaleAddMultiVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(TWO, Y[1][2], local_length);
     failure += check_ans(ZERO, Y[2][2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4513,10 +4360,7 @@ int Test_N_VScaleAddMultiVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(TWO, Z[1][2], local_length);
     failure += check_ans(ZERO, Z[2][2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4581,10 +4425,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
 
   /* X[0][0] should equal +1 */
   if (ierr == 0) { failure = check_ans(ONE, X[0][0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4619,10 +4460,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
 
   /* X[0][0] should equal +1 */
   if (ierr == 0) { failure = check_ans(ONE, Z[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4659,10 +4497,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
 
   /* X[0][0] should equal +2 */
   if (ierr == 0) { failure = check_ans(TWO, X[0][0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4701,10 +4536,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
 
   /* X[0][0] should equal +2 */
   if (ierr == 0) { failure = check_ans(TWO, Z[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4744,10 +4576,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
 
   /* X[0][0] should equal +2 */
   if (ierr == 0) { failure = check_ans(TWO, X[0][0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4787,10 +4616,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
 
   /* Z[0] should equal +2 */
   if (ierr == 0) { failure = check_ans(TWO, Z[0], local_length); }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4832,10 +4658,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(NEG_HALF, X[0][1], local_length);
     failure += check_ans(ONE, X[0][2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4881,10 +4704,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(NEG_HALF, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4932,10 +4752,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(TWO, X[0][1], local_length);
     failure += check_ans(ONE, X[0][2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -4987,10 +4804,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(TWO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -5042,10 +4856,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(NEG_ONE, X[0][1], local_length);
     failure += check_ans(-TWO - TWO, X[0][2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -5097,10 +4908,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(NEG_TWO, X[0][1], local_length);
     failure += check_ans(ONE, X[0][2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -5156,10 +4964,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
     failure += check_ans(NEG_TWO, Z[1], local_length);
     failure += check_ans(ONE, Z[2], local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -5479,10 +5284,7 @@ int Test_N_VInvTestLocal(N_Vector X, N_Vector Z, sunindextype local_length,
   for (i = 0; i < local_length; i++)
   {
     if (i % 2) { set_element(X, i, HALF); }
-    else
-    {
-      set_element(X, i, ZERO);
-    }
+    else { set_element(X, i, ZERO); }
   }
 
   start_time = get_time();
@@ -5797,10 +5599,7 @@ int Test_N_VDotProdMultiLocal(N_Vector X, sunindextype local_length, int myid)
   {
     failure = SUNRCompare(dotprods[0], (sunrealtype)local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -5838,10 +5637,7 @@ int Test_N_VDotProdMultiLocal(N_Vector X, sunindextype local_length, int myid)
     failure += SUNRCompare(dotprods[1], (sunrealtype)local_length);
     failure += SUNRCompare(dotprods[2], (sunrealtype)2 * local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -5903,10 +5699,7 @@ int Test_N_VDotProdMultiAllReduce(N_Vector X, sunindextype local_length, int myi
   {
     failure = SUNRCompare(dotprods[0], (sunrealtype)local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -5934,10 +5727,7 @@ int Test_N_VDotProdMultiAllReduce(N_Vector X, sunindextype local_length, int myi
   {
     failure = SUNRCompare(dotprods[0], (sunrealtype)global_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -5976,10 +5766,7 @@ int Test_N_VDotProdMultiAllReduce(N_Vector X, sunindextype local_length, int myi
     failure += SUNRCompare(dotprods[1], (sunrealtype)local_length);
     failure += SUNRCompare(dotprods[2], (sunrealtype)2 * local_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {
@@ -6008,10 +5795,7 @@ int Test_N_VDotProdMultiAllReduce(N_Vector X, sunindextype local_length, int myi
     failure += SUNRCompare(dotprods[1], (sunrealtype)global_length);
     failure += SUNRCompare(dotprods[2], (sunrealtype)2 * global_length);
   }
-  else
-  {
-    failure = 1;
-  }
+  else { failure = 1; }
 
   if (failure)
   {

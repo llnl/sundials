@@ -55,7 +55,9 @@ ARKodeButcherTable ARKodeButcherTable_LoadDIRK(ARKODE_DIRKTableID imethod)
   Input:  method -- string key for the desired method
   ---------------------------------------------------------------*/
 ARKodeButcherTable ARKodeButcherTable_LoadDIRKByName(const char* imethod)
-{ return ARKodeButcherTable_LoadDIRK(arkButcherTableDIRKNameToID(imethod)); }
+{
+  return ARKodeButcherTable_LoadDIRK(arkButcherTableDIRKNameToID(imethod));
+}
 
 /*---------------------------------------------------------------
   Returns the string name for a pre-set DIRK method by its ID.

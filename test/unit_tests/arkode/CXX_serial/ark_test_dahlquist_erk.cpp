@@ -133,10 +133,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "  interp type  = Lagrange\n";
   }
-  else
-  {
-    std::cout << "  interp type  = None\n";
-  }
+  else { std::cout << "  interp type  = None\n"; }
 
   // Create SUNDIALS context
   sundials::Context sunctx;
@@ -181,10 +178,7 @@ int main(int argc, char* argv[])
   }
 
   if (numfails) { std::cout << "\n\nFailed " << numfails << " tests!\n"; }
-  else
-  {
-    std::cout << "\n\nAll tests passed!\n";
-  }
+  else { std::cout << "\n\nAll tests passed!\n"; }
 
   // Return test status
   return numfails;
@@ -420,10 +414,7 @@ int expected_rhs_evals(interp_type i_type, int stages,
     // Save one function evaluation after first step
     nfe_expected = stages + (stages - 1) * (nst - 1);
   }
-  else
-  {
-    nfe_expected = stages * nst;
-  }
+  else { nfe_expected = stages * nst; }
 
   if (i_type == interp_type::hermite && !explicit_first_stage)
   {

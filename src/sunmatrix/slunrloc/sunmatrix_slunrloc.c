@@ -149,13 +149,19 @@ void SUNMatrix_SLUNRloc_Print(SUNMatrix A, FILE* fp)
  */
 
 SuperMatrix* SUNMatrix_SLUNRloc_SuperMatrix(SUNMatrix A)
-{ return (SM_SUPERMATRIX_SLUNRLOC(A)); }
+{
+  return (SM_SUPERMATRIX_SLUNRLOC(A));
+}
 
 gridinfo_t* SUNMatrix_SLUNRloc_ProcessGrid(SUNMatrix A)
-{ return (SM_GRID_SLUNRLOC(A)); }
+{
+  return (SM_GRID_SLUNRLOC(A));
+}
 
 sunbooleantype SUNMatrix_SLUNRloc_OwnData(SUNMatrix A)
-{ return (SM_OWNDATA_SLUNRLOC(A)); }
+{
+  return (SM_OWNDATA_SLUNRLOC(A));
+}
 
 /*
  * ----------------------------------------------------------------------------
@@ -164,7 +170,9 @@ sunbooleantype SUNMatrix_SLUNRloc_OwnData(SUNMatrix A)
  */
 
 SUNMatrix_ID SUNMatGetID_SLUNRloc(SUNDIALS_MAYBE_UNUSED SUNMatrix A)
-{ return (SUNMATRIX_SLUNRLOC); }
+{
+  return (SUNMATRIX_SLUNRLOC);
+}
 
 SUNMatrix SUNMatClone_SLUNRloc(SUNMatrix A)
 {

@@ -159,8 +159,10 @@ int main(int argc, char* argv[])
   num_threads =
     omp_get_max_threads(); /* Overwrite with OMP_NUM_THREADS environment variable */
 #endif
-  if (argc > 1) { /* overwrite with command line value, if supplied */
-                  num_threads = (int)strtol(argv[1], NULL, 0); }
+  if (argc > 1)
+  { /* overwrite with command line value, if supplied */
+    num_threads = (int)strtol(argv[1], NULL, 0);
+  }
 
   /* Create an OpenMP vector */
   u = N_VNew_OpenMP(NEQ, num_threads, sunctx); /* Allocate u vector */

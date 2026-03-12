@@ -76,10 +76,7 @@ void bind_sunlinearsolver(nb::module_& m)
         return SUNLinSolSetATimes(LS, LS->python,
                                   sunlinearsolver_atimesfn_wrapper);
       }
-      else
-      {
-        return SUNLinSolSetATimes(LS, nullptr, nullptr);
-      }
+      else { return SUNLinSolSetATimes(LS, nullptr, nullptr); }
     },
     nb::arg("LS"), nb::arg("ATimes").none());
 
@@ -104,10 +101,7 @@ void bind_sunlinearsolver(nb::module_& m)
                                           sunlinearsolver_psetupfn_wrapper,
                                           sunlinearsolver_psolvefn_wrapper);
       }
-      else
-      {
-        return SUNLinSolSetPreconditioner(LS, nullptr, nullptr, nullptr);
-      }
+      else { return SUNLinSolSetPreconditioner(LS, nullptr, nullptr, nullptr); }
     },
     nb::arg("LS"), nb::arg("PSetupFn").none(), nb::arg("PSolveFn"));
 }
@@ -115,4 +109,6 @@ void bind_sunlinearsolver(nb::module_& m)
 } // namespace sundials4py
 
 extern "C" void SUNLinearSolverFunctionTable_Destroy(void* ptr)
-{ delete static_cast<SUNLinearSolverFunctionTable*>(ptr); }
+{
+  delete static_cast<SUNLinearSolverFunctionTable*>(ptr);
+}

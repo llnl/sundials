@@ -71,10 +71,7 @@ static int neg_rhs(sunrealtype t, N_Vector uvec, N_Vector udotvec, void* user_da
 {
   int err = ode_rhs(t, uvec, udotvec, user_data);
   if (err) { return err; }
-  else
-  {
-    N_VScale(SUN_RCONST(-1.0), udotvec, udotvec);
-  }
+  else { N_VScale(SUN_RCONST(-1.0), udotvec, udotvec); }
   return 0;
 }
 
@@ -83,10 +80,7 @@ static int neg_vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t, N_Vector uvec,
 {
   int err = ode_vjp(vvec, Jvvec, t, uvec, udotvec, user_data, tmp);
   if (err) { return err; }
-  else
-  {
-    N_VScale(SUN_RCONST(-1.0), Jvvec, Jvvec);
-  }
+  else { N_VScale(SUN_RCONST(-1.0), Jvvec, Jvvec); }
   return 0;
 }
 
@@ -96,10 +90,7 @@ static int neg_parameter_vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t,
 {
   int err = parameter_vjp(vvec, Jvvec, t, uvec, udotvec, user_data, tmp);
   if (err) { return err; }
-  else
-  {
-    N_VScale(SUN_RCONST(-1.0), Jvvec, Jvvec);
-  }
+  else { N_VScale(SUN_RCONST(-1.0), Jvvec, Jvvec); }
   return 0;
 }
 
@@ -201,10 +192,7 @@ static int adjoint_solution(SUNContext sunctx, SUNAdjointStepper adj_stepper,
 static void print_help(int argc, char* argv[], int exit_code)
 {
   if (exit_code) { fprintf(stderr, "%s: option not recognized\n", argv[0]); }
-  else
-  {
-    fprintf(stderr, "%s ", argv[0]);
-  }
+  else { fprintf(stderr, "%s ", argv[0]); }
   fprintf(stderr, "options:\n");
   fprintf(stderr, "--tf <real>         the final simulation time\n");
   fprintf(stderr, "--dt <real>         the timestep size\n");
@@ -230,10 +218,7 @@ static void parse_args(int argc, char* argv[], ProgramArgs* args)
     }
     else if (!strcmp(arg, "--dont-keep")) { args->keep_checks = SUNFALSE; }
     else if (!strcmp(arg, "--help")) { print_help(argc, argv, 0); }
-    else
-    {
-      print_help(argc, argv, 1);
-    }
+    else { print_help(argc, argv, 1); }
   }
 }
 

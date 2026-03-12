@@ -75,7 +75,7 @@
 #define NOUT    12                 /* number of output times */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours  */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day */
-#define PI SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
+#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
 
 #define XMIN SUN_RCONST(0.0) /* grid boundaries in x  */
 #define XMAX SUN_RCONST(20.0)
@@ -279,20 +279,11 @@ int main(int argc, char* argv[])
     printf("Sensitivity: YES ");
     if (sensi_meth == CV_SIMULTANEOUS) { printf("( SIMULTANEOUS +"); }
     else if (sensi_meth == CV_STAGGERED) { printf("( STAGGERED +"); }
-    else
-    {
-      printf("( STAGGERED1 +");
-    }
+    else { printf("( STAGGERED1 +"); }
     if (err_con) { printf(" FULL ERROR CONTROL )"); }
-    else
-    {
-      printf(" PARTIAL ERROR CONTROL )");
-    }
+    else { printf(" PARTIAL ERROR CONTROL )"); }
   }
-  else
-  {
-    printf("Sensitivity: NO ");
-  }
+  else { printf("Sensitivity: NO "); }
 
   /* In loop over output points, call CVode, print results, test for error */
 
@@ -616,10 +607,7 @@ static void ProcessArgs(int argc, char* argv[], sunbooleantype* sensi,
 
   if (strcmp(argv[1], "-nosensi") == 0) { *sensi = SUNFALSE; }
   else if (strcmp(argv[1], "-sensi") == 0) { *sensi = SUNTRUE; }
-  else
-  {
-    WrongArgs(argv[0]);
-  }
+  else { WrongArgs(argv[0]); }
 
   if (*sensi)
   {
@@ -628,17 +616,11 @@ static void ProcessArgs(int argc, char* argv[], sunbooleantype* sensi,
     if (strcmp(argv[2], "sim") == 0) { *sensi_meth = CV_SIMULTANEOUS; }
     else if (strcmp(argv[2], "stg") == 0) { *sensi_meth = CV_STAGGERED; }
     else if (strcmp(argv[2], "stg1") == 0) { *sensi_meth = CV_STAGGERED1; }
-    else
-    {
-      WrongArgs(argv[0]);
-    }
+    else { WrongArgs(argv[0]); }
 
     if (strcmp(argv[3], "t") == 0) { *err_con = SUNTRUE; }
     else if (strcmp(argv[3], "f") == 0) { *err_con = SUNFALSE; }
-    else
-    {
-      WrongArgs(argv[0]);
-    }
+    else { WrongArgs(argv[0]); }
   }
 }
 
@@ -921,10 +903,7 @@ static void PrintFinalStats(void* cvode_mem, sunbooleantype sensi,
       retval = CVodeGetSensNumErrTestFails(cvode_mem, &netfS);
       check_retval(&retval, "CVodeGetSensNumErrTestFails", 1);
     }
-    else
-    {
-      netfS = 0;
-    }
+    else { netfS = 0; }
     if ((sensi_meth == CV_STAGGERED) || (sensi_meth == CV_STAGGERED1))
     {
       retval = CVodeGetSensNumNonlinSolvIters(cvode_mem, &nniS);

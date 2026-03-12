@@ -29,7 +29,9 @@ namespace experimental {
 struct SplittingStepCoefficientsDeleter
 {
   void operator()(SplittingStepCoefficients s)
-  { SplittingStepCoefficients_Destroy(&s); }
+  {
+    SplittingStepCoefficients_Destroy(&s);
+  }
 };
 
 } // namespace experimental

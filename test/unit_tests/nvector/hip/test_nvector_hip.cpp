@@ -388,10 +388,7 @@ int main(int argc, char* argv[])
     {
       printf("\n\nFAIL: NVector module failed %i tests \n\n", fails);
     }
-    else
-    {
-      printf("\n\nSUCCESS: NVector module passed all tests \n\n");
-    }
+    else { printf("\n\nSUCCESS: NVector module passed all tests \n\n"); }
 
     hipStreamDestroy(stream);
     delete stream_exec_policy;

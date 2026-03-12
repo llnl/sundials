@@ -57,10 +57,7 @@ int SPRKStepSetUseCompensatedSums(void* arkode_mem, sunbooleantype onoff)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   if (onoff) { ark_mem->use_compensated_sums = SUNTRUE; }
-  else
-  {
-    ark_mem->use_compensated_sums = SUNFALSE;
-  }
+  else { ark_mem->use_compensated_sums = SUNFALSE; }
 
   retval = sprkStep_SetUseCompensatedSums(arkode_mem, onoff);
 
@@ -267,10 +264,7 @@ int sprkStep_SetOrder(ARKodeMem ark_mem, int ord)
 
   /* set user-provided value, or default, depending on argument */
   if (ord <= 0) { step_mem->q = 4; }
-  else
-  {
-    step_mem->q = ord;
-  }
+  else { step_mem->q = ord; }
 
   if (step_mem->method)
   {
@@ -345,10 +339,7 @@ int sprkStep_SetUseCompensatedSums(ARKodeMem ark_mem, sunbooleantype onoff)
       N_VConst(ZERO, step_mem->yerr);
     }
   }
-  else
-  {
-    ark_mem->step = sprkStep_TakeStep;
-  }
+  else { ark_mem->step = sprkStep_TakeStep; }
 
   return (retval);
 }
@@ -358,91 +349,147 @@ int sprkStep_SetUseCompensatedSums(ARKodeMem ark_mem, sunbooleantype onoff)
   ===============================================================*/
 
 int SPRKStepReset(void* arkode_mem, sunrealtype tR, N_Vector yR)
-{ return (ARKodeReset(arkode_mem, tR, yR)); }
+{
+  return (ARKodeReset(arkode_mem, tR, yR));
+}
 
 int SPRKStepRootInit(void* arkode_mem, int nrtfn, ARKRootFn g)
-{ return (ARKodeRootInit(arkode_mem, nrtfn, g)); }
+{
+  return (ARKodeRootInit(arkode_mem, nrtfn, g));
+}
 
 int SPRKStepSetRootDirection(void* arkode_mem, int* rootdir)
-{ return (ARKodeSetRootDirection(arkode_mem, rootdir)); }
+{
+  return (ARKodeSetRootDirection(arkode_mem, rootdir));
+}
 
 int SPRKStepSetNoInactiveRootWarn(void* arkode_mem)
-{ return (ARKodeSetNoInactiveRootWarn(arkode_mem)); }
+{
+  return (ARKodeSetNoInactiveRootWarn(arkode_mem));
+}
 
 int SPRKStepSetDefaults(void* arkode_mem)
-{ return (ARKodeSetDefaults(arkode_mem)); }
+{
+  return (ARKodeSetDefaults(arkode_mem));
+}
 
 int SPRKStepSetOrder(void* arkode_mem, int ord)
-{ return (ARKodeSetOrder(arkode_mem, ord)); }
+{
+  return (ARKodeSetOrder(arkode_mem, ord));
+}
 
 int SPRKStepSetInterpolantType(void* arkode_mem, int itype)
-{ return (ARKodeSetInterpolantType(arkode_mem, itype)); }
+{
+  return (ARKodeSetInterpolantType(arkode_mem, itype));
+}
 
 int SPRKStepSetInterpolantDegree(void* arkode_mem, int degree)
-{ return (ARKodeSetInterpolantDegree(arkode_mem, degree)); }
+{
+  return (ARKodeSetInterpolantDegree(arkode_mem, degree));
+}
 
 int SPRKStepSetMaxNumSteps(void* arkode_mem, long int mxsteps)
-{ return (ARKodeSetMaxNumSteps(arkode_mem, mxsteps)); }
+{
+  return (ARKodeSetMaxNumSteps(arkode_mem, mxsteps));
+}
 
 int SPRKStepSetStopTime(void* arkode_mem, sunrealtype tstop)
-{ return (ARKodeSetStopTime(arkode_mem, tstop)); }
+{
+  return (ARKodeSetStopTime(arkode_mem, tstop));
+}
 
 int SPRKStepSetFixedStep(void* arkode_mem, sunrealtype hfixed)
-{ return (ARKodeSetFixedStep(arkode_mem, hfixed)); }
+{
+  return (ARKodeSetFixedStep(arkode_mem, hfixed));
+}
 
 int SPRKStepSetUserData(void* arkode_mem, void* user_data)
-{ return (ARKodeSetUserData(arkode_mem, user_data)); }
+{
+  return (ARKodeSetUserData(arkode_mem, user_data));
+}
 
 int SPRKStepSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
-{ return (ARKodeSetPostprocessStepFn(arkode_mem, ProcessStep)); }
+{
+  return (ARKodeSetPostprocessStepFn(arkode_mem, ProcessStep));
+}
 
 int SPRKStepSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
-{ return (ARKodeSetPostprocessStageFn(arkode_mem, ProcessStage)); }
+{
+  return (ARKodeSetPostprocessStageFn(arkode_mem, ProcessStage));
+}
 
 int SPRKStepEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
                    sunrealtype* tret, int itask)
-{ return (ARKodeEvolve(arkode_mem, tout, yout, tret, itask)); }
+{
+  return (ARKodeEvolve(arkode_mem, tout, yout, tret, itask));
+}
 
 int SPRKStepGetDky(void* arkode_mem, sunrealtype t, int k, N_Vector dky)
-{ return (ARKodeGetDky(arkode_mem, t, k, dky)); }
+{
+  return (ARKodeGetDky(arkode_mem, t, k, dky));
+}
 
 char* SPRKStepGetReturnFlagName(long int flag)
-{ return (ARKodeGetReturnFlagName(flag)); }
+{
+  return (ARKodeGetReturnFlagName(flag));
+}
 
 int SPRKStepGetCurrentState(void* arkode_mem, N_Vector* state)
-{ return (ARKodeGetCurrentState(arkode_mem, state)); }
+{
+  return (ARKodeGetCurrentState(arkode_mem, state));
+}
 
 int SPRKStepGetCurrentStep(void* arkode_mem, sunrealtype* hcur)
-{ return (ARKodeGetCurrentStep(arkode_mem, hcur)); }
+{
+  return (ARKodeGetCurrentStep(arkode_mem, hcur));
+}
 
 int SPRKStepGetCurrentTime(void* arkode_mem, sunrealtype* tcur)
-{ return (ARKodeGetCurrentTime(arkode_mem, tcur)); }
+{
+  return (ARKodeGetCurrentTime(arkode_mem, tcur));
+}
 
 int SPRKStepGetLastStep(void* arkode_mem, sunrealtype* hlast)
-{ return (ARKodeGetLastStep(arkode_mem, hlast)); }
+{
+  return (ARKodeGetLastStep(arkode_mem, hlast));
+}
 
 int SPRKStepGetNumStepAttempts(void* arkode_mem, long int* nstep_attempts)
-{ return (ARKodeGetNumStepAttempts(arkode_mem, nstep_attempts)); }
+{
+  return (ARKodeGetNumStepAttempts(arkode_mem, nstep_attempts));
+}
 
 int SPRKStepGetNumSteps(void* arkode_mem, long int* nsteps)
-{ return (ARKodeGetNumSteps(arkode_mem, nsteps)); }
+{
+  return (ARKodeGetNumSteps(arkode_mem, nsteps));
+}
 
 int SPRKStepGetRootInfo(void* arkode_mem, int* rootsfound)
-{ return (ARKodeGetRootInfo(arkode_mem, rootsfound)); }
+{
+  return (ARKodeGetRootInfo(arkode_mem, rootsfound));
+}
 
 int SPRKStepGetUserData(void* arkode_mem, void** user_data)
-{ return (ARKodeGetUserData(arkode_mem, user_data)); }
+{
+  return (ARKodeGetUserData(arkode_mem, user_data));
+}
 
 int SPRKStepPrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt)
-{ return (ARKodePrintAllStats(arkode_mem, outfile, fmt)); }
+{
+  return (ARKodePrintAllStats(arkode_mem, outfile, fmt));
+}
 
 int SPRKStepWriteParameters(void* arkode_mem, FILE* fp)
-{ return (ARKodeWriteParameters(arkode_mem, fp)); }
+{
+  return (ARKodeWriteParameters(arkode_mem, fp));
+}
 
 int SPRKStepGetStepStats(void* arkode_mem, long int* nsteps,
                          sunrealtype* hinused, sunrealtype* hlast,
                          sunrealtype* hcur, sunrealtype* tcur)
-{ return (ARKodeGetStepStats(arkode_mem, nsteps, hinused, hlast, hcur, tcur)); }
+{
+  return (ARKodeGetStepStats(arkode_mem, nsteps, hinused, hlast, hcur, tcur));
+}
 
 void SPRKStepFree(void** arkode_mem) { ARKodeFree(arkode_mem); }
 

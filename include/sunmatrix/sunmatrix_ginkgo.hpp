@@ -86,7 +86,9 @@ void Copy(Matrix<GkoMatType>& A, Matrix<GkoMatType>& B);
 
 template<typename GkoMatType>
 SUNMatrix_ID SUNMatGetID_Ginkgo(SUNMatrix A)
-{ return SUNMATRIX_GINKGO; }
+{
+  return SUNMATRIX_GINKGO;
+}
 
 template<typename GkoMatType>
 SUNMatrix SUNMatClone_Ginkgo(SUNMatrix A)
@@ -167,7 +169,9 @@ public:
   /// \param sunctx The SUNDIALS simulation context object
   Matrix(std::shared_ptr<GkoMatType> gko_mat, SUNContext sunctx)
     : sundials::impl::BaseMatrix(sunctx), gkomtx_(gko_mat)
-  { initSUNMatrix(); }
+  {
+    initSUNMatrix();
+  }
 
   /// Move constructor
   Matrix(Matrix&& that_matrix) noexcept
@@ -210,7 +214,9 @@ public:
 
   /// Get the ``gko::Executor`` associated with the Ginkgo matrix
   std::shared_ptr<const gko::Executor> GkoExec() const
-  { return GkoMtx()->get_executor(); }
+  {
+    return GkoMtx()->get_executor();
+  }
 
   /// Get the size, i.e. ``gko::dim``, for the Ginkgo matrix
   const gko::dim<2>& GkoSize() const { return GkoMtx()->get_size(); }
@@ -288,11 +294,15 @@ inline std::unique_ptr<const GkoVecType> WrapConstVector(
 
 template<typename GkoMatType>
 void Print(Matrix<GkoMatType>& A, std::ostream& ost)
-{ gko::write(ost, A.GkoMtx().get()); }
+{
+  gko::write(ost, A.GkoMtx().get());
+}
 
 template<typename GkoMatType>
 void Matvec(Matrix<GkoMatType>& A, GkoVecType* x, GkoVecType* y)
-{ A.GkoMtx()->apply(x, y); }
+{
+  A.GkoMtx()->apply(x, y);
+}
 
 template<typename GkoMatType>
 void Matvec(Matrix<GkoMatType>& A, N_Vector x, N_Vector y)
@@ -337,15 +347,21 @@ void ScaleAddI(const sunrealtype c, Matrix<GkoMatType>& A)
 
 template<typename GkoMatType>
 void Zero(Matrix<GkoMatType>& A)
-{ A.GkoMtx()->scale(gko::initialize<GkoDenseMat>({0.0}, A.GkoExec()).get()); }
+{
+  A.GkoMtx()->scale(gko::initialize<GkoDenseMat>({0.0}, A.GkoExec()).get());
+}
 
 template<>
 inline void Zero(Matrix<GkoDenseMat>& A)
-{ A.GkoMtx()->fill(0.0); }
+{
+  A.GkoMtx()->fill(0.0);
+}
 
 template<typename GkoMatType>
 void Copy(Matrix<GkoMatType>& A, Matrix<GkoMatType>& B)
-{ B.GkoMtx()->copy_from(A.GkoMtx().get()); }
+{
+  B.GkoMtx()->copy_from(A.GkoMtx().get());
+}
 
 } // namespace impl
 

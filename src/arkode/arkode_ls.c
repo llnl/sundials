@@ -284,10 +284,7 @@ int ARKodeSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
 
   /* For matrix-based LS, enable solution scaling */
   if (matrixbased) { arkls_mem->scalesol = SUNTRUE; }
-  else
-  {
-    arkls_mem->scalesol = SUNFALSE;
-  }
+  else { arkls_mem->scalesol = SUNFALSE; }
 
   /* Attach ARKLs interface to time stepper module */
   retval = ark_mem->step_attachlinsol(ark_mem, arkLsInitialize, arkLsSetup,
@@ -505,10 +502,7 @@ int ARKodeSetMassLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix M,
         return (ARKLS_MEM_FAIL);
       }
     }
-    else
-    {
-      arkls_mem->M_lu = M;
-    }
+    else { arkls_mem->M_lu = M; }
   }
 
   /* Allocate memory for x */
@@ -2367,10 +2361,7 @@ int arkLsATimes(void* arkode_mem, N_Vector v, N_Vector z)
     if (retval != 0) { return (retval); }
     N_VLinearSum(ONE, arkls_mem->ytemp, -gamma, z, z);
   }
-  else
-  {
-    N_VLinearSum(ONE, v, -gamma, z, z);
-  }
+  else { N_VLinearSum(ONE, v, -gamma, z, z); }
 
   return (0);
 }
@@ -2674,8 +2665,8 @@ int arkLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
                                     : NULL;
 
   /* Set minimum increment based on uround and norm of f */
-  srur  = SUNRsqrt(ark_mem->uround);
-  fnorm = N_VWrmsNorm(fy, ark_mem->rwt);
+  srur   = SUNRsqrt(ark_mem->uround);
+  fnorm  = N_VWrmsNorm(fy, ark_mem->rwt);
   minInc = (fnorm != ZERO)
              ? (MIN_INC_MULT * SUNRabs(ark_mem->h) * ark_mem->uround * N * fnorm)
              : ONE;
@@ -2766,8 +2757,8 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   N_VScale(ONE, y, ytemp);
 
   /* Set minimum increment based on uround and norm of f */
-  srur  = SUNRsqrt(ark_mem->uround);
-  fnorm = N_VWrmsNorm(fy, ark_mem->rwt);
+  srur   = SUNRsqrt(ark_mem->uround);
+  fnorm  = N_VWrmsNorm(fy, ark_mem->rwt);
   minInc = (fnorm != ZERO)
              ? (MIN_INC_MULT * SUNRabs(ark_mem->h) * ark_mem->uround * N * fnorm)
              : ONE;
@@ -2969,10 +2960,7 @@ static int arkLsLinSys(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix A,
 
   /* Perform linear combination A = I - gamma*J or A = M - gamma*J */
   if (M == NULL) { retval = SUNMatScaleAddI(-gamma, A); }
-  else
-  {
-    retval = SUNMatScaleAdd(-gamma, A, M);
-  }
+  else { retval = SUNMatScaleAdd(-gamma, A, M); }
 
   /* Check matrix operation return value */
   if (retval)
@@ -3036,15 +3024,9 @@ int arkLsInitialize(ARKodeMem ark_mem)
             arkls_mem->jac    = arkLsDQJac;
             arkls_mem->J_data = ark_mem;
           }
-          else
-          {
-            retval++;
-          }
+          else { retval++; }
         }
-        else
-        {
-          retval++;
-        }
+        else { retval++; }
         if (retval)
         {
           arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__,
@@ -3283,10 +3265,7 @@ int arkLsSetup(ARKodeMem ark_mem, int convfail, sunrealtype tpred,
           return (1);
         }
       }
-      else
-      {
-        return (retval);
-      }
+      else { return (retval); }
     }
   }
   else
@@ -3507,10 +3486,7 @@ int arkLsSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype tnow, N_Vector ynow,
     /* allow reduction but not solution on first nonlinear iteration,
        otherwise return with a recoverable failure */
     if (mnewt == 0) { return (0); }
-    else
-    {
-      return (1);
-    }
+    else { return (1); }
     break;
   case SUNLS_CONV_FAIL:
   case SUNLS_ATIMES_FAIL_REC:
@@ -3789,10 +3765,7 @@ int arkLsMassSetup(ARKodeMem ark_mem, sunrealtype t, N_Vector vtemp1,
     {
       call_mvsetup = SUNTRUE;
     }
-    else
-    {
-      call_mvsetup = SUNFALSE;
-    }
+    else { call_mvsetup = SUNFALSE; }
 
     /* signal call to LS setup routine */
     call_lssetup = SUNTRUE;

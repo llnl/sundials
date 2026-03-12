@@ -93,10 +93,7 @@ int KINInitOrth(KINMem kin_mem)
     {
       kin_mem->kin_qr_func = (SUNQRAddFn)SUNQRAdd_ICWY_SB;
     }
-    else
-    {
-      kin_mem->kin_qr_func = (SUNQRAddFn)SUNQRAdd_ICWY;
-    }
+    else { kin_mem->kin_qr_func = (SUNQRAddFn)SUNQRAdd_ICWY; }
     kin_mem->kin_qr_data->vtemp      = kin_mem->kin_vtemp2; // KINSOL owns
     kin_mem->kin_qr_data->vtemp2     = kin_mem->kin_vtemp3; // Orth owns
     kin_mem->kin_qr_data->temp_array = kin_mem->kin_T_aa;   // Orth owns
@@ -114,10 +111,7 @@ int KINInitOrth(KINMem kin_mem)
     {
       kin_mem->kin_qr_func = (SUNQRAddFn)SUNQRAdd_DCGS2_SB;
     }
-    else
-    {
-      kin_mem->kin_qr_func = (SUNQRAddFn)SUNQRAdd_DCGS2;
-    }
+    else { kin_mem->kin_qr_func = (SUNQRAddFn)SUNQRAdd_DCGS2; }
     kin_mem->kin_qr_data->vtemp      = kin_mem->kin_vtemp2; // KINSOL owns
     kin_mem->kin_qr_data->vtemp2     = kin_mem->kin_vtemp3; // Orth owns
     kin_mem->kin_qr_data->temp_array = kin_mem->kin_cv;     // AA owns

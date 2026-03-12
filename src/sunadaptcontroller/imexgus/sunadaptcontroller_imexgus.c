@@ -34,14 +34,14 @@
  * Macro accessors
  * --------------- */
 
-#define SACIMEXGUS_CONTENT(C) ((SUNAdaptControllerContent_ImExGus)(C->content))
-#define SACIMEXGUS_K1E(C)     (SACIMEXGUS_CONTENT(C)->k1e)
-#define SACIMEXGUS_K2E(C)     (SACIMEXGUS_CONTENT(C)->k2e)
-#define SACIMEXGUS_K1I(C)     (SACIMEXGUS_CONTENT(C)->k1i)
-#define SACIMEXGUS_K2I(C)     (SACIMEXGUS_CONTENT(C)->k2i)
-#define SACIMEXGUS_BIAS(C)    (SACIMEXGUS_CONTENT(C)->bias)
-#define SACIMEXGUS_EP(C)      (SACIMEXGUS_CONTENT(C)->ep)
-#define SACIMEXGUS_HP(C)      (SACIMEXGUS_CONTENT(C)->hp)
+#define SACIMEXGUS_CONTENT(C)   ((SUNAdaptControllerContent_ImExGus)(C->content))
+#define SACIMEXGUS_K1E(C)       (SACIMEXGUS_CONTENT(C)->k1e)
+#define SACIMEXGUS_K2E(C)       (SACIMEXGUS_CONTENT(C)->k2e)
+#define SACIMEXGUS_K1I(C)       (SACIMEXGUS_CONTENT(C)->k1i)
+#define SACIMEXGUS_K2I(C)       (SACIMEXGUS_CONTENT(C)->k2i)
+#define SACIMEXGUS_BIAS(C)      (SACIMEXGUS_CONTENT(C)->bias)
+#define SACIMEXGUS_EP(C)        (SACIMEXGUS_CONTENT(C)->ep)
+#define SACIMEXGUS_HP(C)        (SACIMEXGUS_CONTENT(C)->hp)
 #define SACIMEXGUS_FIRSTSTEP(C) (SACIMEXGUS_CONTENT(C)->firststep)
 
 /* ------------------
@@ -152,10 +152,7 @@ static SUNErrCode setFromCommandLine_ImExGus(SUNAdaptController C,
   if (Cid != NULL && strlen(Cid) > 0) { offset = strlen(Cid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (Cid != NULL && strlen(Cid) > 0) { strcpy(prefix, Cid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   int retval;
@@ -234,7 +231,9 @@ SUNErrCode SUNAdaptController_SetParams_ImExGus(SUNAdaptController C,
 
 SUNAdaptController_Type SUNAdaptController_GetType_ImExGus(
   SUNDIALS_MAYBE_UNUSED SUNAdaptController C)
-{ return SUN_ADAPTCONTROLLER_H; }
+{
+  return SUN_ADAPTCONTROLLER_H;
+}
 
 SUNErrCode SUNAdaptController_EstimateStep_ImExGus(SUNAdaptController C,
                                                    sunrealtype h, int p,
@@ -308,10 +307,7 @@ SUNErrCode SUNAdaptController_SetErrorBias_ImExGus(SUNAdaptController C,
   SUNFunctionBegin(C->sunctx);
   /* set allowed value, otherwise set default */
   if (bias <= SUN_RCONST(0.0)) { SACIMEXGUS_BIAS(C) = DEFAULT_BIAS; }
-  else
-  {
-    SACIMEXGUS_BIAS(C) = bias;
-  }
+  else { SACIMEXGUS_BIAS(C) = bias; }
 
   return SUN_SUCCESS;
 }

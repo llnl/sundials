@@ -29,7 +29,9 @@
 
 #if defined(SUNDIALS_BUILD_WITH_PROFILING)
 static SUNProfiler getSUNProfiler(SUNMemoryHelper H)
-{ return (H->sunctx->profiler); }
+{
+  return (H->sunctx->profiler);
+}
 #endif
 
 SUNMemory SUNMemoryNewEmpty(SUNContext sunctx)
@@ -171,10 +173,7 @@ SUNErrCode SUNMemoryHelper_Dealloc(SUNMemoryHelper helper, SUNMemory mem,
   SUNAssert(helper->ops->dealloc, SUN_ERR_NOT_IMPLEMENTED);
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(helper));
   if (!mem) { ier = SUN_SUCCESS; }
-  else
-  {
-    ier = helper->ops->dealloc(helper, mem, queue);
-  }
+  else { ier = helper->ops->dealloc(helper, mem, queue); }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(helper));
   return ier;
 }
@@ -201,10 +200,7 @@ SUNErrCode SUNMemoryHelper_CopyAsync(SUNMemoryHelper helper, SUNMemory dst,
   {
     ier = SUNMemoryHelper_Copy(helper, dst, src, memory_size, queue);
   }
-  else
-  {
-    ier = helper->ops->copyasync(helper, dst, src, memory_size, queue);
-  }
+  else { ier = helper->ops->copyasync(helper, dst, src, memory_size, queue); }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(helper));
   return ier;
 }
@@ -253,10 +249,7 @@ SUNMemoryHelper SUNMemoryHelper_Clone(SUNMemoryHelper helper)
       return (hclone);
     }
   }
-  else
-  {
-    return (helper->ops->clone(helper));
-  }
+  else { return (helper->ops->clone(helper)); }
 }
 
 SUNErrCode SUNMemoryHelper_SetDefaultQueue(SUNMemoryHelper helper, void* queue)

@@ -46,7 +46,9 @@ inline sunrealtype phi(sunrealtype t) { return SUNRatan(t); }
 
 // Compute phi'(t)
 inline sunrealtype phi_prime(sunrealtype t)
-{ return SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t); }
+{
+  return SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t);
+}
 
 // Compute the true solution
 inline int true_solution(sunrealtype t, N_Vector y_vec)

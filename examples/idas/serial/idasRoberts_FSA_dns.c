@@ -254,20 +254,11 @@ int main(int argc, char* argv[])
 
     printf("Sensitivity: YES ");
     if (sensi_meth == IDA_SIMULTANEOUS) { printf("( SIMULTANEOUS +"); }
-    else
-    {
-      printf("( STAGGERED +");
-    }
+    else { printf("( STAGGERED +"); }
     if (err_con) { printf(" FULL ERROR CONTROL )"); }
-    else
-    {
-      printf(" PARTIAL ERROR CONTROL )");
-    }
+    else { printf(" PARTIAL ERROR CONTROL )"); }
   }
-  else
-  {
-    printf("Sensitivity: NO ");
-  }
+  else { printf("Sensitivity: NO "); }
 
   /*----------------------------------------------------------
    *               Q U A D R A T U R E S
@@ -372,15 +363,9 @@ int main(int argc, char* argv[])
   if (sensi)
   {
     if (sensi_meth == IDA_SIMULTANEOUS) { strcat(fname, "_-sensi_sim"); }
-    else
-    {
-      strcat(fname, "_-sensi_stg");
-    }
+    else { strcat(fname, "_-sensi_stg"); }
     if (err_con) { strcat(fname, "_t"); }
-    else
-    {
-      strcat(fname, "_f");
-    }
+    else { strcat(fname, "_f"); }
   }
   strcat(fname, ".csv");
   FID    = fopen(fname, "w");
@@ -539,10 +524,7 @@ static void ProcessArgs(int argc, char* argv[], sunbooleantype* sensi,
 
   if (strcmp(argv[1], "-nosensi") == 0) { *sensi = SUNFALSE; }
   else if (strcmp(argv[1], "-sensi") == 0) { *sensi = SUNTRUE; }
-  else
-  {
-    WrongArgs(argv[0]);
-  }
+  else { WrongArgs(argv[0]); }
 
   if (*sensi)
   {
@@ -550,17 +532,11 @@ static void ProcessArgs(int argc, char* argv[], sunbooleantype* sensi,
 
     if (strcmp(argv[2], "sim") == 0) { *sensi_meth = IDA_SIMULTANEOUS; }
     else if (strcmp(argv[2], "stg") == 0) { *sensi_meth = IDA_STAGGERED; }
-    else
-    {
-      WrongArgs(argv[0]);
-    }
+    else { WrongArgs(argv[0]); }
 
     if (strcmp(argv[3], "t") == 0) { *err_con = SUNTRUE; }
     else if (strcmp(argv[3], "f") == 0) { *err_con = SUNFALSE; }
-    else
-    {
-      WrongArgs(argv[0]);
-    }
+    else { WrongArgs(argv[0]); }
   }
 }
 

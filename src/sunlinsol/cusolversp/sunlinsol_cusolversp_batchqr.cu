@@ -144,11 +144,15 @@ SUNLinearSolver SUNLinSol_cuSolverSp_batchQR(N_Vector y, SUNMatrix A,
 
 void SUNLinSol_cuSolverSp_batchQR_GetDescription(SUNLinearSolver S,
                                                  const char** desc)
-{ *desc = SUN_CUSP_DESC(S); }
+{
+  *desc = SUN_CUSP_DESC(S);
+}
 
 void SUNLinSol_cuSolverSp_batchQR_SetDescription(SUNLinearSolver S,
                                                  const char* desc)
-{ SUN_CUSP_DESC(S) = desc; }
+{
+  SUN_CUSP_DESC(S) = desc;
+}
 
 void SUNLinSol_cuSolverSp_batchQR_GetDeviceSpace(SUNLinearSolver S,
                                                  size_t* cuSolverInternal,
@@ -166,10 +170,14 @@ void SUNLinSol_cuSolverSp_batchQR_GetDeviceSpace(SUNLinearSolver S,
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_cuSolverSp_batchQR(SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_DIRECT); }
+{
+  return (SUNLINEARSOLVER_DIRECT);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_cuSolverSp_batchQR(SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_CUSOLVERSP_BATCHQR); }
+{
+  return (SUNLINEARSOLVER_CUSOLVERSP_BATCHQR);
+}
 
 SUNErrCode SUNLinSolInitialize_cuSolverSp_batchQR(SUNLinearSolver S)
 {
@@ -302,7 +310,9 @@ int SUNLinSolSolve_cuSolverSp_batchQR(SUNLinearSolver S, SUNMatrix A,
 }
 
 sunindextype SUNLinSolLastFlag_cuSolverSp_batchQR(SUNLinearSolver S)
-{ return SUN_CUSP_LASTFLAG(S); }
+{
+  return SUN_CUSP_LASTFLAG(S);
+}
 
 SUNErrCode SUNLinSolFree_cuSolverSp_batchQR(SUNLinearSolver S)
 {

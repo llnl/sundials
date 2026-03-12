@@ -379,19 +379,13 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   {
     (void)MPI_Recv(&z[0], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm, &status);
   }
-  else
-  {
-    z[0] = ZERO;
-  }
+  else { z[0] = ZERO; }
   if (my_pe != last_pe)
   {
     (void)MPI_Recv(&z[my_length + 1], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm,
                    &status);
   }
-  else
-  {
-    z[my_length + 1] = ZERO;
-  }
+  else { z[my_length + 1] = ZERO; }
 
   /* Loop over all grid points in current process. */
   for (i = 1; i <= my_length; i++)

@@ -336,10 +336,7 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
 
     /* Update output time */
     if (out < nout - 1) { tout += dtout; }
-    else
-    {
-      tout = tf;
-    }
+    else { tout = tf; }
   }
 
   /* Close output file */
@@ -509,10 +506,7 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout)
 
     /* Update output time */
     if (out < nout - 1) { tout += dtout; }
-    else
-    {
-      tout = tf;
-    }
+    else { tout = tf; }
   }
 
   /* Close output file */

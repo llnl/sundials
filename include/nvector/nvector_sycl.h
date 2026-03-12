@@ -110,7 +110,9 @@ static inline sunrealtype* N_VGetDeviceArrayPointer_Sycl(N_Vector x)
  * ----------------------------------------------------------------- */
 
 static inline N_Vector_ID N_VGetVectorID_Sycl(N_Vector)
-{ return SUNDIALS_NVEC_SYCL; }
+{
+  return SUNDIALS_NVEC_SYCL;
+}
 
 SUNDIALS_EXPORT N_Vector N_VCloneEmpty_Sycl(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VClone_Sycl(N_Vector w);

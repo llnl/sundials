@@ -107,25 +107,13 @@ int main(int argc, char* argv[])
 
   // Retrieve the command-line options:  method Npart ep test
   if (argc > 1) { method = argv[1]; }
-  else
-  {
-    method = "ARKODE_MRI_GARK_ERK22a";
-  }
+  else { method = "ARKODE_MRI_GARK_ERK22a"; }
   if (argc > 2) { udata.a = SUNStrToReal(argv[2]); }
-  else
-  {
-    udata.a = ONE;
-  }
+  else { udata.a = ONE; }
   if (argc > 3) { udata.b = SUNStrToReal(argv[3]); }
-  else
-  {
-    udata.b = ONE;
-  }
+  else { udata.b = ONE; }
   if (argc > 4) { udata.c = SUNStrToReal(argv[4]); }
-  else
-  {
-    udata.c = ONE;
-  }
+  else { udata.c = ONE; }
 
   sunbooleantype implicit = SUNFALSE;
   if ((method == "ARKODE_MRI_GARK_IRK21a") ||
@@ -143,10 +131,7 @@ int main(int argc, char* argv[])
        << ",  c = " << udata.c << endl;
   cout << "    MRI method: " << method;
   if (implicit) { cout << " (implicit)" << endl; }
-  else
-  {
-    cout << " (explicit)" << endl;
-  }
+  else { cout << " (explicit)" << endl; }
 
   //
   // Problem Setup
@@ -182,10 +167,7 @@ int main(int argc, char* argv[])
   {
     mristep_mem = MRIStepCreate(NULL, fn, T0, y, inner_stepper, ctx);
   }
-  else
-  {
-    mristep_mem = MRIStepCreate(fn, NULL, T0, y, inner_stepper, ctx);
-  }
+  else { mristep_mem = MRIStepCreate(fn, NULL, T0, y, inner_stepper, ctx); }
   if (check_retval((void*)mristep_mem, "MRIStepCreate", 0)) return 1;
   MRIStepCoupling C = MRIStepCoupling_LoadTableByName(method.c_str());
   if (check_retval((void*)C, "MRIStepCoupling_LoadTableByName", 0)) return 1;
@@ -383,7 +365,7 @@ static int Ytrue(sunrealtype t, N_Vector y, UserData& udata)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
   ydata[0]           = udata.a / SUN_RCONST(3.0) * t * t * t +
-                       udata.b / SUN_RCONST(2.0) * t * t + udata.c * t + ONE;
+             udata.b / SUN_RCONST(2.0) * t * t + udata.c * t + ONE;
   return (0);
 }
 

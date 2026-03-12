@@ -1905,10 +1905,7 @@ static int PrintUserData(UserData* udata)
   cout << "  linear         = " << udata->linear << endl;
   cout << " --------------------------------- " << endl;
   if (udata->pcg) { cout << "  linear solver  = PCG" << endl; }
-  else
-  {
-    cout << "  linear solver  = GMRES" << endl;
-  }
+  else { cout << "  linear solver  = GMRES" << endl; }
   cout << "  lin iters      = " << udata->liniters << endl;
   cout << "  eps lin        = " << udata->epslin << endl;
   cout << "  prec           = " << udata->prec << endl;
@@ -2029,10 +2026,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, UserData* udata)
       {
         cout << setw(22) << t << setw(25) << urms << setw(25) << max << endl;
       }
-      else
-      {
-        cout << setw(22) << t << setw(25) << urms << endl;
-      }
+      else { cout << setw(22) << t << setw(25) << urms << endl; }
     }
 
     // Write solution and error to disk
@@ -2378,7 +2372,9 @@ SUNMatrix Hypre5ptMatrix(UserData* udata, SUNContext ctx)
 SUNMatrix_ID Hypre5ptMatrix_GetID(SUNMatrix A) { return SUNMATRIX_CUSTOM; }
 
 SUNMatrix Hypre5ptMatrix_Clone(SUNMatrix A)
-{ return (Hypre5ptMatrix(H5PM_UDATA(A), A->sunctx)); }
+{
+  return (Hypre5ptMatrix(H5PM_UDATA(A), A->sunctx));
+}
 
 void Hypre5ptMatrix_Destroy(SUNMatrix A)
 {
@@ -2586,7 +2582,9 @@ SUNLinearSolver HypreLS(SUNMatrix A, UserData* udata, SUNContext ctx)
 }
 
 SUNLinearSolver_Type HypreLS_GetType(SUNLinearSolver LS)
-{ return (SUNLINEARSOLVER_MATRIX_ITERATIVE); }
+{
+  return (SUNLINEARSOLVER_MATRIX_ITERATIVE);
+}
 
 int HypreLS_Setup(SUNLinearSolver LS, SUNMatrix A)
 {
@@ -2796,10 +2794,7 @@ int HypreLS_Free(SUNLinearSolver LS)
     if (HLS_SOLVER(LS))
     {
       if (HLS_PCG(LS)) { HYPRE_StructPCGDestroy(HLS_SOLVER(LS)); }
-      else
-      {
-        HYPRE_StructGMRESDestroy(HLS_SOLVER(LS));
-      }
+      else { HYPRE_StructGMRESDestroy(HLS_SOLVER(LS)); }
     }
     if (HLS_PRECOND(LS)) { HYPRE_StructPFMGDestroy(HLS_PRECOND(LS)); }
     if (HLS_B(LS)) { HYPRE_StructVectorDestroy(HLS_B(LS)); }

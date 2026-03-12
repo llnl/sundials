@@ -184,10 +184,7 @@ static int ParseFloatFormat(char* buf, sunindextype* num, sunindextype* size)
       ++tmp;
       *num = atoi(tmp); /*sscanf(tmp, "%d", num);*/
     }
-    else
-    {
-      ++tmp;
-    }
+    else { ++tmp; }
   }
   ++tmp;
   period = tmp;

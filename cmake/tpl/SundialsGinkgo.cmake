@@ -95,7 +95,8 @@ if(SUNDIALS_ENABLE_GINKGO_CHECKS)
     message(CHECK_FAIL "failed")
     message(
       FATAL_ERROR
-        "SUNDIALS GINKGO interface is not compatible with extended or float128 precision")
+        "SUNDIALS GINKGO interface is not compatible with extended or float128 precision"
+    )
   endif()
 
   if(SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA" AND NOT SUNDIALS_ENABLE_CUDA)

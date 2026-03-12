@@ -216,10 +216,7 @@ int main(int argc, char* argv[])
 
   /* Print result */
   if (fails) { printf("FAIL: SUNLinSol module failed %i tests \n \n", fails); }
-  else
-  {
-    printf("SUCCESS: SUNLinSol module passed all tests \n \n");
-  }
+  else { printf("SUCCESS: SUNLinSol module passed all tests \n \n"); }
 
   /* Free solver, matrix and vectors */
   SUNLinSolFree(LS);
@@ -284,11 +281,10 @@ int check_vector(N_Vector actual, N_Vector expected, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else
-  {
-    return (0);
-  }
+  else { return (0); }
 }
 
 void sync_device()
-{ HIP_OR_CUDA(hipDeviceSynchronize();, cudaDeviceSynchronize();) }
+{
+  HIP_OR_CUDA(hipDeviceSynchronize();, cudaDeviceSynchronize();)
+}

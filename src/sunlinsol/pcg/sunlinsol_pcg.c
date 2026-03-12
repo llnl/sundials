@@ -182,10 +182,7 @@ static SUNErrCode setFromCommandLine_PCG(SUNLinearSolver S, const char* LSid,
   if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -265,10 +262,14 @@ SUNErrCode SUNLinSol_PCGSetMaxl(SUNLinearSolver S, int maxl)
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_PCG(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_ITERATIVE); }
+{
+  return (SUNLINEARSOLVER_ITERATIVE);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_PCG(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_PCG); }
+{
+  return (SUNLINEARSOLVER_PCG);
+}
 
 SUNErrCode SUNLinSolInitialize_PCG(SUNLinearSolver S)
 {
@@ -398,7 +399,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
 
   /* set sunbooleantype flags for internal solver options */
   UsePrec    = ((pretype == SUN_PREC_BOTH) || (pretype == SUN_PREC_LEFT) ||
-                (pretype == SUN_PREC_RIGHT));
+             (pretype == SUN_PREC_RIGHT));
   UseScaling = (w != NULL);
 
   /* Check if Atimes function has been set */

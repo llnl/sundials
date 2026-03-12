@@ -252,7 +252,9 @@ N_Vector N_VMake_Parallel(MPI_Comm comm, sunindextype local_length,
  * from abstract N_Vector interface.
  */
 N_Vector_ID N_VGetVectorID_Parallel(SUNDIALS_MAYBE_UNUSED N_Vector v)
-{ return SUNDIALS_NVEC_PARALLEL; }
+{
+  return SUNDIALS_NVEC_PARALLEL;
+}
 
 /* ----------------------------------------------------------------
  * Function to return global vector length
@@ -265,7 +267,9 @@ sunindextype N_VGetLength_Parallel(N_Vector v) { return NV_GLOBLENGTH_P(v); }
  */
 
 sunindextype N_VGetLocalLength_Parallel(N_Vector v)
-{ return NV_LOCLENGTH_P(v); }
+{
+  return NV_LOCLENGTH_P(v);
+}
 
 /* ----------------------------------------------------------------
  * Function to print the local data in a parallel vector to stdout
@@ -407,7 +411,9 @@ void N_VSpace_Parallel(N_Vector v, sunindextype* lrw, sunindextype* liw)
 }
 
 sunrealtype* N_VGetArrayPointer_Parallel(N_Vector v)
-{ return ((sunrealtype*)NV_DATA_P(v)); }
+{
+  return ((sunrealtype*)NV_DATA_P(v));
+}
 
 void N_VSetArrayPointer_Parallel(sunrealtype* v_data, N_Vector v)
 {
@@ -861,17 +867,11 @@ sunbooleantype N_VInvTestLocal_Parallel(N_Vector x, N_Vector z)
   for (i = 0; i < N; i++)
   {
     if (xd[i] == ZERO) { val = ZERO; }
-    else
-    {
-      zd[i] = ONE / xd[i];
-    }
+    else { zd[i] = ONE / xd[i]; }
   }
 
   if (val == ZERO) { return (SUNFALSE); }
-  else
-  {
-    return (SUNTRUE);
-  }
+  else { return (SUNTRUE); }
 }
 
 sunbooleantype N_VInvTest_Parallel(N_Vector x, N_Vector z)
@@ -2174,10 +2174,7 @@ SUNErrCode N_VEnableLinearCombination_Parallel(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvlinearcombination = N_VLinearCombination_Parallel; }
-  else
-  {
-    v->ops->nvlinearcombination = NULL;
-  }
+  else { v->ops->nvlinearcombination = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2188,10 +2185,7 @@ SUNErrCode N_VEnableScaleAddMulti_Parallel(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvscaleaddmulti = N_VScaleAddMulti_Parallel; }
-  else
-  {
-    v->ops->nvscaleaddmulti = NULL;
-  }
+  else { v->ops->nvscaleaddmulti = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2202,10 +2196,7 @@ SUNErrCode N_VEnableDotProdMulti_Parallel(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvdotprodmulti = N_VDotProdMulti_Parallel; }
-  else
-  {
-    v->ops->nvdotprodmulti = NULL;
-  }
+  else { v->ops->nvdotprodmulti = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2216,10 +2207,7 @@ SUNErrCode N_VEnableLinearSumVectorArray_Parallel(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvlinearsumvectorarray = N_VLinearSumVectorArray_Parallel; }
-  else
-  {
-    v->ops->nvlinearsumvectorarray = NULL;
-  }
+  else { v->ops->nvlinearsumvectorarray = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2230,10 +2218,7 @@ SUNErrCode N_VEnableScaleVectorArray_Parallel(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvscalevectorarray = N_VScaleVectorArray_Parallel; }
-  else
-  {
-    v->ops->nvscalevectorarray = NULL;
-  }
+  else { v->ops->nvscalevectorarray = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2244,10 +2229,7 @@ SUNErrCode N_VEnableConstVectorArray_Parallel(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvconstvectorarray = N_VConstVectorArray_Parallel; }
-  else
-  {
-    v->ops->nvconstvectorarray = NULL;
-  }
+  else { v->ops->nvconstvectorarray = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2258,10 +2240,7 @@ SUNErrCode N_VEnableWrmsNormVectorArray_Parallel(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvwrmsnormvectorarray = N_VWrmsNormVectorArray_Parallel; }
-  else
-  {
-    v->ops->nvwrmsnormvectorarray = NULL;
-  }
+  else { v->ops->nvwrmsnormvectorarray = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2275,10 +2254,7 @@ SUNErrCode N_VEnableWrmsNormMaskVectorArray_Parallel(N_Vector v, sunbooleantype 
   {
     v->ops->nvwrmsnormmaskvectorarray = N_VWrmsNormMaskVectorArray_Parallel;
   }
-  else
-  {
-    v->ops->nvwrmsnormmaskvectorarray = NULL;
-  }
+  else { v->ops->nvwrmsnormmaskvectorarray = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2293,10 +2269,7 @@ SUNErrCode N_VEnableScaleAddMultiVectorArray_Parallel(N_Vector v,
   {
     v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Parallel;
   }
-  else
-  {
-    v->ops->nvscaleaddmultivectorarray = NULL;
-  }
+  else { v->ops->nvscaleaddmultivectorarray = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2312,10 +2285,7 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Parallel(N_Vector v,
     v->ops->nvlinearcombinationvectorarray =
       N_VLinearCombinationVectorArray_Parallel;
   }
-  else
-  {
-    v->ops->nvlinearcombinationvectorarray = NULL;
-  }
+  else { v->ops->nvlinearcombinationvectorarray = NULL; }
 
   return SUN_SUCCESS;
 }
@@ -2326,10 +2296,7 @@ SUNErrCode N_VEnableDotProdMultiLocal_Parallel(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvdotprodmultilocal = N_VDotProdMultiLocal_Parallel; }
-  else
-  {
-    v->ops->nvdotprodmultilocal = NULL;
-  }
+  else { v->ops->nvdotprodmultilocal = NULL; }
 
   return SUN_SUCCESS;
 }

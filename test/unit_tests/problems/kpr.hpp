@@ -70,7 +70,9 @@ inline sunrealtype sig(sunrealtype t) { return SUNRcos(twenty * t); }
 
 // Compute sigma'(t)
 inline sunrealtype sig_p(sunrealtype t)
-{ return -twenty * SUNRsin(twenty * t); }
+{
+  return -twenty * SUNRsin(twenty * t);
+}
 
 // Compute the true solution
 inline int true_sol(sunrealtype t, sunrealtype* u, sunrealtype* v)

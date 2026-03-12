@@ -179,10 +179,7 @@ int main(int argc, char* argv[])
     printf("\ny =\n");
     N_VPrint_Serial(y);
   }
-  else
-  {
-    printf("SUCCESS: SUNMatrix module passed all tests \n \n");
-  }
+  else { printf("SUCCESS: SUNMatrix module passed all tests \n \n"); }
 
   /* Free matrices and vectors */
   SUNMatDestroy(A);
@@ -246,10 +243,7 @@ int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else
-  {
-    return (0);
-  }
+  else { return (0); }
 }
 
 int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
@@ -283,10 +277,7 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else
-  {
-    return (0);
-  }
+  else { return (0); }
 }
 
 int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
@@ -306,20 +297,14 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
   }
 
   if (failure > ZERO) { return (1); }
-  else
-  {
-    return (0);
-  }
+  else { return (0); }
 }
 
 sunbooleantype has_data(SUNMatrix A)
 {
   sunrealtype* Adata = SUNBandMatrix_Data(A);
   if (Adata == NULL) { return SUNFALSE; }
-  else
-  {
-    return SUNTRUE;
-  }
+  else { return SUNTRUE; }
 }
 
 sunbooleantype is_square(SUNMatrix A) { return SUNTRUE; }

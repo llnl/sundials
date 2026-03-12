@@ -146,8 +146,7 @@ int EvolveProblemBDF(N_Vector y, UserData* udata, UserOptions* uopt)
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = CVode(cvode_mem, tout, y, &t, CV_NORMAL);
     if (check_retval(&retval, "CVode", 1, udata->myid)) { break; }
@@ -282,8 +281,7 @@ int EvolveProblemAdams(N_Vector y, UserData* udata, UserOptions* uopt)
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = CVode(cvode_mem, tout, y, &t, CV_NORMAL);
     if (check_retval(&retval, "CVode", 1, udata->myid)) { break; }

@@ -60,8 +60,7 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
   sunAdiakCollectMetadata();
 #endif
 
-  do
-  {
+  do {
 #if SUNDIALS_LOGGING_LEVEL > 0
 #if SUNDIALS_MPI_ENABLED
     err = SUNLogger_CreateFromEnv(comm, &logger);
@@ -119,10 +118,7 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
     SUNCheckCallNoRet(SUNLogger_Destroy(&logger));
     free(sunctx);
   }
-  else
-  {
-    *sunctx_out = sunctx;
-  }
+  else { *sunctx_out = sunctx; }
 
   return err;
 }
@@ -173,10 +169,7 @@ SUNErrCode SUNContext_PopErrHandler(SUNContext sunctx)
     {
       sunctx->err_handler = sunctx->err_handler->previous;
     }
-    else
-    {
-      sunctx->err_handler = NULL;
-    }
+    else { sunctx->err_handler = NULL; }
     SUNErrHandler_Destroy(&eh);
   }
   return SUN_SUCCESS;
@@ -288,10 +281,7 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
     {
       fp = stdout;
     }
-    else
-    {
-      fp = fopen(sunprofiler_print_env, "a");
-    }
+    else { fp = fopen(sunprofiler_print_env, "a"); }
   }
 
   /* Enforce that the profiler is freed before finalizing,

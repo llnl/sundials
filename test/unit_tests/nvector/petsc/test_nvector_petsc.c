@@ -322,7 +322,9 @@ sunbooleantype has_data(N_Vector X)
 }
 
 void set_element(N_Vector X, sunindextype i, sunrealtype val)
-{ set_element_range(X, i, i, val); }
+{
+  set_element_range(X, i, i, val);
+}
 
 void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
                        sunrealtype val)

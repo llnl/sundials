@@ -526,10 +526,7 @@ int main()
   errors += test_reinit(ctx);
 
   if (errors == 0) { std::cout << "Success\n"; }
-  else
-  {
-    std::cout << errors << " Test Failures\n";
-  }
+  else { std::cout << errors << " Test Failures\n"; }
 
   return errors;
 }

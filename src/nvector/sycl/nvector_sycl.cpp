@@ -504,8 +504,8 @@ N_Vector N_VMakeManaged_Sycl(sunindextype length, sunrealtype* vdata,
   NVEC_SYCL_CONTENT(v)->length     = length;
   NVEC_SYCL_CONTENT(v)->mem_helper = SUNMemoryHelper_Sycl(sunctx);
   NVEC_SYCL_CONTENT(v)->own_helper = SUNTRUE;
-  NVEC_SYCL_CONTENT(v)->host_data = SUNMemoryHelper_Wrap(NVEC_SYCL_MEMHELP(v),
-                                                         vdata, SUNMEMTYPE_UVM);
+  NVEC_SYCL_CONTENT(v)->host_data  = SUNMemoryHelper_Wrap(NVEC_SYCL_MEMHELP(v),
+                                                          vdata, SUNMEMTYPE_UVM);
   NVEC_SYCL_CONTENT(v)->device_data =
     SUNMemoryHelper_Alias(NVEC_SYCL_MEMHELP(v), NVEC_SYCL_CONTENT(v)->host_data);
   NVEC_SYCL_CONTENT(v)->stream_exec_policy =
@@ -623,7 +623,9 @@ void N_VSetDeviceArrayPointer_Sycl(sunrealtype* d_vdata, N_Vector v)
 
 /* Return a flag indicating if the memory for the vector data is managed */
 sunbooleantype N_VIsManagedMemory_Sycl(N_Vector x)
-{ return NVEC_SYCL_PRIVATE(x)->use_managed_mem; }
+{
+  return NVEC_SYCL_PRIVATE(x)->use_managed_mem;
+}
 
 SUNErrCode N_VSetKernelExecPolicy_Sycl(N_Vector x,
                                        SUNSyclExecPolicy* stream_exec_policy,
@@ -1226,7 +1228,9 @@ sunrealtype N_VMin_Sycl(N_Vector x)
 }
 
 sunrealtype N_VWL2Norm_Sycl(N_Vector x, N_Vector w)
-{ return ::sycl::sqrt(N_VWSqrSumLocal_Sycl(x, w)); }
+{
+  return ::sycl::sqrt(N_VWSqrSumLocal_Sycl(x, w));
+}
 
 sunrealtype N_VL1Norm_Sycl(N_Vector x)
 {
@@ -1310,10 +1314,7 @@ sunbooleantype N_VInvTest_Sycl(N_Vector x, N_Vector z)
     Q, nthreads_total, nthreads_per_block, item, sum,
     ::sycl::plus<sunrealtype>(), GRID_STRIDE_XLOOP(item, i, N) {
       if (xdata[i] == ZERO) { sum += ONE; }
-      else
-      {
-        zdata[i] = ONE / xdata[i];
-      }
+      else { zdata[i] = ONE / xdata[i]; }
     });
 
   if (CopyReductionBufferFromDevice(x))
@@ -1354,7 +1355,7 @@ sunbooleantype N_VConstrMask_Sycl(N_Vector c, N_Vector x, N_Vector m)
     ::sycl::plus<sunrealtype>(), GRID_STRIDE_XLOOP(item, i, N) {
       bool test = (abs(cdata[i]) > ONEPT5 && cdata[i] * xdata[i] <= ZERO) ||
                   (abs(cdata[i]) > HALF && cdata[i] * xdata[i] < ZERO);
-      mdata[i]  = test ? ONE : ZERO;
+      mdata[i] = test ? ONE : ZERO;
       sum += mdata[i];
     });
 
@@ -2423,7 +2424,7 @@ static int GetKernelParameters(N_Vector v, sunbooleantype reduction,
   /* Get the number of threads per block and total number threads */
   nthreads_per_block = exec_policy->blockSize();
   nthreads_total     = nthreads_per_block *
-                       exec_policy->gridSize(NVEC_SYCL_LENGTH(v));
+                   exec_policy->gridSize(NVEC_SYCL_LENGTH(v));
 
   if (nthreads_per_block == 0)
   {

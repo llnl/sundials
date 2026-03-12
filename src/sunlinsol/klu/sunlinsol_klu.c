@@ -130,19 +130,13 @@ SUNLinearSolver SUNLinSol_KLU(N_Vector y, SUNMatrix A, SUNContext sunctx)
   {
     content->klu_solver = (KLUSolveFn)&klu_l_solve;
   }
-  else
-  {
-    content->klu_solver = (KLUSolveFn)&klu_l_tsolve;
-  }
+  else { content->klu_solver = (KLUSolveFn)&klu_l_tsolve; }
 #elif defined(SUNDIALS_INT32_T)
   if (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT)
   {
     content->klu_solver = &klu_solve;
   }
-  else
-  {
-    content->klu_solver = &klu_tsolve;
-  }
+  else { content->klu_solver = &klu_tsolve; }
 #else /* incompatible sunindextype for KLU */
 #error Incompatible sunindextype for KLU
 #endif
@@ -229,10 +223,7 @@ static SUNErrCode setFromCommandLine_KLU(SUNLinearSolver S, const char* LSid,
   if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -288,13 +279,19 @@ SUNErrCode SUNLinSol_KLUSetOrdering(SUNLinearSolver S, int ordering_choice)
  */
 
 sun_klu_symbolic* SUNLinSol_KLUGetSymbolic(SUNLinearSolver S)
-{ return (SYMBOLIC(S)); }
+{
+  return (SYMBOLIC(S));
+}
 
 sun_klu_numeric* SUNLinSol_KLUGetNumeric(SUNLinearSolver S)
-{ return (NUMERIC(S)); }
+{
+  return (NUMERIC(S));
+}
 
 sun_klu_common* SUNLinSol_KLUGetCommon(SUNLinearSolver S)
-{ return (&(COMMON(S))); }
+{
+  return (&(COMMON(S)));
+}
 
 /*
  * -----------------------------------------------------------------
@@ -303,10 +300,14 @@ sun_klu_common* SUNLinSol_KLUGetCommon(SUNLinearSolver S)
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_KLU(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_DIRECT); }
+{
+  return (SUNLINEARSOLVER_DIRECT);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_KLU(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_KLU); }
+{
+  return (SUNLINEARSOLVER_KLU);
+}
 
 SUNErrCode SUNLinSolInitialize_KLU(SUNLinearSolver S)
 {

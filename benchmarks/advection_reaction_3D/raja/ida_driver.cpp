@@ -152,8 +152,7 @@ int EvolveDAEProblem(N_Vector y, UserData* udata, UserOptions* uopt)
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = IDASolve(ida_mem, tout, &t, y, yp, IDA_NORMAL);
     if (check_retval(&retval, "IDA", 1, udata->myid)) { break; }

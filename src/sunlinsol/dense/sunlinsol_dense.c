@@ -109,10 +109,14 @@ SUNLinearSolver SUNLinSol_Dense(SUNDIALS_MAYBE_UNUSED N_Vector y, SUNMatrix A,
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_Dense(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_DIRECT); }
+{
+  return (SUNLINEARSOLVER_DIRECT);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_Dense(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_DENSE); }
+{
+  return (SUNLINEARSOLVER_DENSE);
+}
 
 SUNErrCode SUNLinSolInitialize_Dense(SUNLinearSolver S)
 {

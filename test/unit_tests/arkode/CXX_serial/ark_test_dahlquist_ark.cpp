@@ -199,10 +199,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "  problem type = Fixed mass matrix\n";
   }
-  else
-  {
-    std::cout << "  problem type = Time-dependent mass matrix\n";
-  }
+  else { std::cout << "  problem type = Time-dependent mass matrix\n"; }
   std::cout << "  lambda expl  = " << prob_data.lambda_e << "\n"
             << "  lambda impl  = " << prob_data.lambda_i << "\n"
             << "  step size    = " << prob_opts.h << "\n"
@@ -216,15 +213,9 @@ int main(int argc, char* argv[])
   {
     std::cout << "  interp type  = Lagrange\n";
   }
-  else
-  {
-    std::cout << "  interp type  = None\n";
-  }
+  else { std::cout << "  interp type  = None\n"; }
   if (prob_opts.p_type == 0) { std::cout << "  pred type    = Trivial (0)\n"; }
-  else
-  {
-    std::cout << "  pred type    = Max order (1)\n";
-  }
+  else { std::cout << "  pred type    = Max order (1)\n"; }
 
   // Create SUNDIALS context
   sundials::Context sunctx;
@@ -385,10 +376,7 @@ int main(int argc, char* argv[])
   }
 
   if (numfails) { std::cout << "\n\nFailed " << numfails << " tests!\n"; }
-  else
-  {
-    std::cout << "\n\nAll tests passed!\n";
-  }
+  else { std::cout << "\n\nAll tests passed!\n"; }
 
   // Return test status
   return numfails;
@@ -446,10 +434,7 @@ int run_tests(ARKodeButcherTable Be, ARKodeButcherTable Bi,
   {
     arkstep_mem = ARKStepCreate(nullptr, fi, prob_opts.t0, y, sunctx);
   }
-  else
-  {
-    arkstep_mem = ARKStepCreate(fe, fi, prob_opts.t0, y, sunctx);
-  }
+  else { arkstep_mem = ARKStepCreate(fe, fi, prob_opts.t0, y, sunctx); }
   if (check_flag((void*)arkstep_mem, "ARKStepCreate", 0)) { return 1; }
 
   // Set user data
@@ -796,10 +781,7 @@ int expected_rhs_evals(ProblemOptions& prob_opts, int stages, int order,
       // Save one function evaluation after first step
       nfe_expected += stages + (stages - 1) * (nst - 1);
     }
-    else
-    {
-      nfe_expected += stages * nst;
-    }
+    else { nfe_expected += stages * nst; }
 
     if (prob_opts.i_type == interp_type::hermite && !explicit_first_stage)
     {
@@ -826,10 +808,7 @@ int expected_rhs_evals(ProblemOptions& prob_opts, int stages, int order,
       // Save one function evaluation after first step
       nfi_expected += stages + (stages - 1) * (nst - 1) + nni;
     }
-    else
-    {
-      nfi_expected += stages * nst + nni;
-    }
+    else { nfi_expected += stages * nst + nni; }
 
     if (prob_opts.i_type == interp_type::hermite && !explicit_first_stage)
     {
@@ -849,10 +828,7 @@ int expected_rhs_evals(ProblemOptions& prob_opts, int stages, int order,
         !explicit_first_stage)
     {
       if (stiffly_accurate) { nfi_expected++; }
-      else
-      {
-        nfi_expected += nst;
-      }
+      else { nfi_expected += nst; }
     }
   }
 
@@ -963,10 +939,7 @@ int MassMatrix(sunrealtype t, SUNMatrix M, void* user_data, N_Vector tmp1,
   ProblemData* prob_data = static_cast<ProblemData*>(user_data);
 
   if (prob_data->m_type == mass_matrix_type::fixed) { M_data[0] = TWO; }
-  else
-  {
-    M_data[0] = TWO + SUNRcos(t);
-  }
+  else { M_data[0] = TWO + SUNRcos(t); }
 
   return 0;
 }

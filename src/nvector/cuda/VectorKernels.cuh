@@ -266,8 +266,8 @@ __global__ void constrMaskKernel(const T* c, const T* x, T* m, T* out, I n,
     // test = true if constraints violated
     bool test = (std::abs(c[i]) > 1.5 && c[i] * x[i] <= 0.0) ||
                 (std::abs(c[i]) > 0.5 && c[i] * x[i] < 0.0);
-    m[i]      = test ? 1.0 : 0.0;
-    sum       = m[i];
+    m[i] = test ? 1.0 : 0.0;
+    sum  = m[i];
   }
   GridReducer<T, op>{}(sum, Id, out, device_count);
 }

@@ -25,10 +25,7 @@ inline int check_flag(int flag, const std::string& funcname)
 {
   if (!flag) { return 0; }
   if (flag < 0) { std::cerr << "ERROR: "; }
-  else
-  {
-    std::cerr << "WARNING: ";
-  }
+  else { std::cerr << "WARNING: "; }
   std::cerr << funcname << " returned " << flag << std::endl;
   return (flag < 0) ? 1 : 0;
 }

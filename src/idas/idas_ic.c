@@ -586,10 +586,7 @@ static int IDANlsIC(IDAMem IDA_mem)
 
       continue;
     }
-    else
-    {
-      return (retval);
-    }
+    else { return (retval); }
 
   } /* End of nj loop */
 
@@ -1086,10 +1083,7 @@ static int IDASensNlsIC(IDAMem IDA_mem)
 
       continue;
     }
-    else
-    {
-      return (retval);
-    }
+    else { return (retval); }
   }
 
   return (IDA_SUCCESS);

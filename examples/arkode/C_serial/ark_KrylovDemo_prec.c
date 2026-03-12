@@ -355,10 +355,7 @@ int main(int argc, char* argv[])
         if (firstrun && (iout % 3 == 0)) { PrintAllSpecies(c, ns, mxns, t); }
         if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
         if (tout > SUN_RCONST(0.9)) { tout += DTOUT; }
-        else
-        {
-          tout *= TOUT_MULT;
-        }
+        else { tout *= TOUT_MULT; }
       }
 
       /* Print final statistics, and loop for next case */

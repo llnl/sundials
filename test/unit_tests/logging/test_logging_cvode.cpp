@@ -108,10 +108,7 @@ int main(int argc, char* argv[])
     flag = CVodeSetNonlinearSolver(cvode_mem, NLS);
     if (check_flag(flag, "CVodeSetLinearSolver")) { return 1; }
   }
-  else
-  {
-    cout << "Using Newton nonlinear solver" << endl;
-  }
+  else { cout << "Using Newton nonlinear solver" << endl; }
 
   SUNMatrix A        = nullptr;
   SUNLinearSolver LS = nullptr;

@@ -54,8 +54,7 @@
   SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_INFO, __func__, label, \
                      /* msg_txt, */ __VA_ARGS__)
 #define SUNLogInfoIf(condition, logger, label, /* msg_txt, */...)    \
-  do                                                                 \
-  {                                                                  \
+  do {                                                               \
     if ((condition))                                                 \
     {                                                                \
       SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_INFO, __func__, label, \
@@ -73,8 +72,7 @@
   SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, __func__, label, \
                      /* msg_txt, */ __VA_ARGS__)
 #define SUNLogDebugIf(condition, logger, label, /* msg_txt, */...)    \
-  do                                                                  \
-  {                                                                   \
+  do {                                                                \
     if ((condition))                                                  \
     {                                                                 \
       SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, __func__, label, \
@@ -92,8 +90,7 @@
   SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, __func__, label, \
                      /* msg_txt, */ __VA_ARGS__)
 #define SUNLogExtraDebugIf(condition, logger, label, /* msg_txt, */...) \
-  do                                                                    \
-  {                                                                     \
+  do {                                                                  \
     if ((condition))                                                    \
     {                                                                   \
       SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, __func__, label,   \
@@ -102,16 +99,14 @@
   }                                                                     \
   while (0)
 #define SUNLogExtraDebugVec(logger, label, vec, /*msg_txt, */...)   \
-  do                                                                \
-  {                                                                 \
+  do {                                                              \
     SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, __func__, label, \
                        /* msg_txt, */ __VA_ARGS__);                 \
     N_VPrintFile(vec, logger->debug_fp);                            \
   }                                                                 \
   while (0)
 #define SUNLogExtraDebugVecIf(condition, logger, label, vec, /* msg_txt, */...) \
-  do                                                                            \
-  {                                                                             \
+  do {                                                                          \
     if ((condition))                                                            \
     {                                                                           \
       SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, __func__, label,           \
@@ -121,8 +116,7 @@
   }                                                                             \
   while (0)
 #define SUNLogExtraDebugVecArray(logger, label, nvecs, vecs, msg_txt)          \
-  do                                                                           \
-  {                                                                            \
+  do {                                                                         \
     for (int vi = 0; vi < (nvecs); ++vi)                                       \
     {                                                                          \
       SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, __func__, label, msg_txt, \

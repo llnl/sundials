@@ -344,10 +344,7 @@ int main(int argc, char* argv[])
 
   /* Integrate in time */
   if (uopt->explicit) { retval = EvolveProblemExplicit(y, udata, uopt, ctx); }
-  else
-  {
-    retval = EvolveProblemIMEX(y, udata, uopt, ctx);
-  }
+  else { retval = EvolveProblemIMEX(y, udata, uopt, ctx); }
 
   if (check_retval(&retval, "Evolve", 1)) { MPI_Abort(comm, 1); }
 
@@ -457,8 +454,7 @@ static int EvolveProblemIMEX(N_Vector y, UserData udata, UserOptions uopt,
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { break; }
@@ -572,8 +568,7 @@ static int EvolveProblemExplicit(N_Vector y, UserData udata, UserOptions uopt,
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { break; }
@@ -1060,7 +1055,9 @@ static int TaskLocalLSolve(N_Vector delta, void* arkode_mem)
 }
 
 static SUNNonlinearSolver_Type TaskLocalNewton_GetType(SUNNonlinearSolver NLS)
-{ return SUNNONLINEARSOLVER_ROOTFIND; }
+{
+  return SUNNONLINEARSOLVER_ROOTFIND;
+}
 
 static SUNErrCode TaskLocalNewton_Initialize(SUNNonlinearSolver NLS)
 {
@@ -1299,10 +1296,7 @@ static int PSetup(sunrealtype t, N_Vector y, N_Vector ydot, sunbooleantype jok,
     /* indicate that J is now current */
     *jcurPtr = 1;
   }
-  else
-  {
-    *jcurPtr = 0;
-  }
+  else { *jcurPtr = 0; }
 
   return (0);
 }

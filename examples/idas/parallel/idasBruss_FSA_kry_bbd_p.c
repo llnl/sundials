@@ -377,10 +377,7 @@ int main(int argc, char* argv[])
     PrintOutput(ida_mem, uv, tret, data, comm);
 
     if (iout < 3) { tout *= TMULT; }
-    else
-    {
-      tout += TADD;
-    }
+    else { tout += TADD; }
   }
   /* Print each PE's portion of the solution in a separate file. */
   PrintSol(ida_mem, uv, uvp, data, comm);

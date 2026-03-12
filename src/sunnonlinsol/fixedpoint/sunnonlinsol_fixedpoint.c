@@ -136,7 +136,9 @@ SUNNonlinearSolver SUNNonlinSol_FixedPointSens(int count, N_Vector y, int m,
 
 SUNNonlinearSolver_Type SUNNonlinSolGetType_FixedPoint(
   SUNDIALS_MAYBE_UNUSED SUNNonlinearSolver NLS)
-{ return (SUNNONLINEARSOLVER_FIXEDPOINT); }
+{
+  return (SUNNONLINEARSOLVER_FIXEDPOINT);
+}
 
 SUNErrCode SUNNonlinSolInitialize_FixedPoint(SUNNonlinearSolver NLS)
 {
@@ -577,10 +579,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
   {
     for (j = i + 1; j < lAA; j++) { gamma[i] -= R[j * maa + i] * gamma[j]; }
     if (gamma[i] == ZERO) { gamma[i] = ZERO; }
-    else
-    {
-      gamma[i] /= R[i * maa + i];
-    }
+    else { gamma[i] /= R[i * maa + i]; }
     cvals[nvec] = -gamma[i];
     Xvecs[nvec] = dg[ipt_map[i]];
     nvec += 1;

@@ -244,10 +244,7 @@ int main(int argc, char* argv[])
     printf("\nb = Ax (reference)\n");
     N_VPrint_Cuda(d_b);
   }
-  else
-  {
-    printf("SUCCESS: SUNLinSol module passed all tests \n \n");
-  }
+  else { printf("SUCCESS: SUNLinSol module passed all tests \n \n"); }
 
   /* Free solver, matrix and vectors */
   SUNLinSolFree(LS);
@@ -308,10 +305,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
            (long int)maxloc, tol);
     return (1);
   }
-  else
-  {
-    return (0);
-  }
+  else { return (0); }
 }
 
 void sync_device() { cudaDeviceSynchronize(); }

@@ -576,10 +576,7 @@ int KINSol(void* kinmem, N_Vector u, int strategy_in, N_Vector u_scale,
      KINSol */
 
   if (kin_mem->kin_noInitSetup) { kin_mem->kin_sthrsh = ONE; }
-  else
-  {
-    kin_mem->kin_sthrsh = TWO;
-  }
+  else { kin_mem->kin_sthrsh = TWO; }
 
   /* if eps is to be bounded from below, set the bound */
 
@@ -592,10 +589,7 @@ int KINSol(void* kinmem, N_Vector u, int strategy_in, N_Vector u_scale,
      at each iteration based on the provided min/max bounds and the
      current function norm. */
   if (kin_mem->kin_omega == ZERO) { kin_mem->kin_eval_omega = SUNTRUE; }
-  else
-  {
-    kin_mem->kin_eval_omega = SUNFALSE;
-  }
+  else { kin_mem->kin_eval_omega = SUNFALSE; }
 
   /* CSW:
      Call fixed point solver for Picard method if requested.
@@ -840,10 +834,7 @@ static sunbooleantype KINCheckNvector(N_Vector tmpl)
   {
     return (SUNFALSE);
   }
-  else
-  {
-    return (SUNTRUE);
-  }
+  else { return (SUNTRUE); }
 }
 
 /*
@@ -1138,10 +1129,7 @@ static int KINSolInit(KINMem kin_mem)
     kin_mem->kin_mxnewtstep = THOUSAND *
                               N_VWL2Norm(kin_mem->kin_uu, kin_mem->kin_uscale);
   }
-  else
-  {
-    kin_mem->kin_mxnewtstep = kin_mem->kin_mxnstepin;
-  }
+  else { kin_mem->kin_mxnewtstep = kin_mem->kin_mxnstepin; }
 
   if (kin_mem->kin_mxnewtstep < ONE) { kin_mem->kin_mxnewtstep = ONE; }
 
@@ -1169,10 +1157,7 @@ static int KINSolInit(KINMem kin_mem)
 
     kin_mem->kin_noResMon = SUNTRUE;
   }
-  else
-  {
-    kin_mem->kin_callForcingTerm = SUNFALSE;
-  }
+  else { kin_mem->kin_callForcingTerm = SUNFALSE; }
 
   /* initialize counters */
 
@@ -1615,7 +1600,8 @@ static int KINLineSearch(KINMem kin_mem, sunrealtype* fnormp,
 
       if (SUNRabs(rl_a) < kin_mem->kin_uround)
       { /* cubic is actually just a quadratic (rl_a ~ 0) */
-        rltmp = -slpi / (TWO * rl_b); }
+        rltmp = -slpi / (TWO * rl_b);
+      }
       else
       { /* real cubic */
         rltmp = (-rl_b + SUNRsqrt(disc)) / (THREE * rl_a);
@@ -1666,8 +1652,7 @@ static int KINLineSearch(KINMem kin_mem, sunrealtype* fnormp,
 
     if ((rl == ONE) && (pnorm < kin_mem->kin_mxnewtstep))
     {
-      do
-      {
+      do {
         rlprev = rl;
         f1nprv = *f1normp;
         rl     = SUNMIN((TWO * rl), rlmax);
@@ -1700,8 +1685,7 @@ static int KINLineSearch(KINMem kin_mem, sunrealtype* fnormp,
       rllo   = SUNMIN(rl, rlprev);
       rldiff = SUNRabs(rlprev - rl);
 
-      do
-      {
+      do {
         rlinc = HALF * rldiff;
         rl    = rllo + rlinc;
         nbktrk_l++;
@@ -1856,10 +1840,7 @@ static int KINStop(KINMem kin_mem, sunbooleantype maxStepTaken, int sflag)
       {
         return (KIN_STEP_LT_STPTOL);
       }
-      else
-      {
-        return (KIN_LINESEARCH_NONCONV);
-      }
+      else { return (KIN_LINESEARCH_NONCONV); }
     }
   }
 
@@ -1903,10 +1884,7 @@ static int KINStop(KINMem kin_mem, sunbooleantype maxStepTaken, int sflag)
      and if not maxStepTaken, then set ncscmx to 0 */
 
   if (maxStepTaken) { kin_mem->kin_ncscmx++; }
-  else
-  {
-    kin_mem->kin_ncscmx = 0;
-  }
+  else { kin_mem->kin_ncscmx = 0; }
 
   if (kin_mem->kin_ncscmx == 5) { return (KIN_MXNEWT_5X_EXCEEDED); }
 
@@ -1933,8 +1911,8 @@ static int KINStop(KINMem kin_mem, sunbooleantype maxStepTaken, int sflag)
       /* If indicated, estimate new OMEGA value */
       if (kin_mem->kin_eval_omega)
       {
-        omexp = SUNMAX(ZERO,
-                       ((kin_mem->kin_fnorm) / (kin_mem->kin_fnormtol)) - ONE);
+        omexp              = SUNMAX(ZERO,
+                                    ((kin_mem->kin_fnorm) / (kin_mem->kin_fnormtol)) - ONE);
         kin_mem->kin_omega = (omexp > TWELVE)
                                ? kin_mem->kin_omega_max
                                : SUNMIN(kin_mem->kin_omega_min * SUNRexp(omexp),
@@ -2197,8 +2175,7 @@ void KINProcessError(KINMem kin_mem, int error_code, int line, const char* func,
   vsnprintf(msg, msglen, msgfmt, ap);
   va_end(ap);
 
-  do
-  {
+  do {
     if (kin_mem == NULL)
     {
       SUNGlobalFallbackErrHandler(line, func, file, msg, error_code);
@@ -2337,10 +2314,7 @@ static int KINPicardAA(KINMem kin_mem)
       {
         iter_aa = kin_mem->kin_nni - 1 - kin_mem->kin_delay_aa;
       }
-      else
-      {
-        iter_aa = kin_mem->kin_nni - 1;
-      }
+      else { iter_aa = kin_mem->kin_nni - 1; }
 
       retval = AndersonAcc(kin_mem,           /* kinsol memory            */
                            kin_mem->kin_gval, /* G(u_cur)       in        */
@@ -2562,10 +2536,7 @@ static int KINFP(KINMem kin_mem)
       {
         iter_aa = kin_mem->kin_nni - 1 - kin_mem->kin_delay_aa;
       }
-      else
-      {
-        iter_aa = kin_mem->kin_nni - 1;
-      }
+      else { iter_aa = kin_mem->kin_nni - 1; }
 
       /* apply Anderson acceleration */
       retval = AndersonAcc(kin_mem, kin_mem->kin_fval, delta, kin_mem->kin_unew,
@@ -2582,10 +2553,7 @@ static int KINFP(KINMem kin_mem)
       {
         tolfac = kin_mem->kin_beta;
       }
-      else
-      {
-        tolfac = ONE;
-      }
+      else { tolfac = ONE; }
     }
 
     SUNLogExtraDebugVec(KIN_LOGGER, "while-loop-after-compute-new",

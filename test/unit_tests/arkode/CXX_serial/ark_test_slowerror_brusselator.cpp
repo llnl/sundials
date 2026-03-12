@@ -151,10 +151,7 @@ int main(int argc, char* argv[])
 
   // Retrieve the command-line options:  method Npart ep test
   if (argc > 1) { method = argv[1]; }
-  else
-  {
-    method = "ARKODE_MRI_GARK_ERK33a";
-  }
+  else { method = "ARKODE_MRI_GARK_ERK33a"; }
   if (argc > 2) udata.Npart = atoi(argv[2]);
   if (argc > 3) udata.ep = SUNStrToReal(argv[3]);
   if (argc > 4) test = atoi(argv[4]);
@@ -231,10 +228,7 @@ int main(int argc, char* argv[])
   cout << "    MRI method: " << method;
   if (imex) { cout << " (ImEx)" << endl; }
   else if (implicit) { cout << " (implicit)" << endl; }
-  else
-  {
-    cout << " (explicit)" << endl;
-  }
+  else { cout << " (explicit)" << endl; }
 
   //
   // Problem Setup
@@ -302,10 +296,7 @@ int main(int argc, char* argv[])
   {
     mristep_mem = MRIStepCreate(NULL, fn, T0, y, inner_stepper, ctx);
   }
-  else
-  {
-    mristep_mem = MRIStepCreate(fn, NULL, T0, y, inner_stepper, ctx);
-  }
+  else { mristep_mem = MRIStepCreate(fn, NULL, T0, y, inner_stepper, ctx); }
   if (check_retval((void*)mristep_mem, "MRIStepCreate", 0)) return 1;
   MRIStepCoupling C = MRIStepCoupling_LoadTableByName(method.c_str());
   if (check_retval((void*)C, "MRIStepCoupling_LoadTableByName", 0)) return 1;
@@ -322,10 +313,7 @@ int main(int argc, char* argv[])
     retval = ARKodeSetLinearSolver(mristep_mem, LS, A);
     if (check_retval(&retval, "ARKodeSetLinearSolver", 1)) return 1;
     if (imex) { retval = ARKodeSetJacFn(mristep_mem, Ji); }
-    else
-    {
-      retval = ARKodeSetJacFn(mristep_mem, Jn);
-    }
+    else { retval = ARKodeSetJacFn(mristep_mem, Jn); }
     if (check_retval(&retval, "ARKodeSetJacFn", 1)) return 1;
     retval = ARKodeSetJacEvalFrequency(mristep_mem, 1);
     if (check_retval(&retval, "ARKodeSetJacEvalFrequency", 1)) return 1;

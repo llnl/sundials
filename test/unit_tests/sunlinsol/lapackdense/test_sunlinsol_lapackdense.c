@@ -164,10 +164,7 @@ int main(int argc, char* argv[])
       SUNDenseMatrix_Print(A, stdout);
     }
   }
-  else
-  {
-    printf("SUCCESS: SUNLinSol module passed all tests \n \n");
-  }
+  else { printf("SUCCESS: SUNLinSol module passed all tests \n \n"); }
 
   /* Free solver, matrix and vectors */
   SUNLinSolFree(LS);

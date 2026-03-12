@@ -84,7 +84,7 @@ static void PostKernelLaunch();
 #define NVEC_CUDA_MEMSIZE(x) \
   (NVEC_CUDA_CONTENT(x)->length * sizeof(sunrealtype))
 #define NVEC_CUDA_MEMHELP(x) (NVEC_CUDA_CONTENT(x)->mem_helper)
-#define NVEC_CUDA_HDATAp(x) ((sunrealtype*)NVEC_CUDA_CONTENT(x)->host_data->ptr)
+#define NVEC_CUDA_HDATAp(x)  ((sunrealtype*)NVEC_CUDA_CONTENT(x)->host_data->ptr)
 #define NVEC_CUDA_DDATAp(x) \
   ((sunrealtype*)NVEC_CUDA_CONTENT(x)->device_data->ptr)
 #define NVEC_CUDA_STREAM(x) (NVEC_CUDA_CONTENT(x)->stream_exec_policy->stream())
@@ -397,8 +397,8 @@ N_Vector N_VMakeManaged_Cuda(sunindextype length, sunrealtype* vdata,
 
   NVEC_CUDA_CONTENT(v)->length     = length;
   NVEC_CUDA_CONTENT(v)->mem_helper = SUNMemoryHelper_Cuda(sunctx);
-  NVEC_CUDA_CONTENT(v)->host_data = SUNMemoryHelper_Wrap(NVEC_CUDA_MEMHELP(v),
-                                                         vdata, SUNMEMTYPE_UVM);
+  NVEC_CUDA_CONTENT(v)->host_data  = SUNMemoryHelper_Wrap(NVEC_CUDA_MEMHELP(v),
+                                                          vdata, SUNMEMTYPE_UVM);
   NVEC_CUDA_CONTENT(v)->device_data =
     SUNMemoryHelper_Alias(NVEC_CUDA_MEMHELP(v), NVEC_CUDA_CONTENT(v)->host_data);
   NVEC_CUDA_CONTENT(v)->stream_exec_policy = DEFAULT_STREAMING_EXECPOLICY.clone();
@@ -507,7 +507,9 @@ void N_VSetDeviceArrayPointer_Cuda(sunrealtype* d_vdata, N_Vector v)
  */
 
 sunbooleantype N_VIsManagedMemory_Cuda(N_Vector x)
-{ return NVEC_CUDA_PRIVATE(x)->use_managed_mem; }
+{
+  return NVEC_CUDA_PRIVATE(x)->use_managed_mem;
+}
 
 SUNErrCode N_VSetKernelExecPolicy_Cuda(N_Vector x,
                                        SUNCudaExecPolicy* stream_exec_policy,
@@ -2049,10 +2051,7 @@ SUNErrCode N_VBufPack_Cuda(N_Vector x, void* buf)
                           (void*)NVEC_CUDA_STREAM(x));
 
   if (!SUNDIALS_CUDA_VERIFY(cuerr) || copy_fail) { return SUN_ERR_GENERIC; }
-  else
-  {
-    return SUN_SUCCESS;
-  }
+  else { return SUN_SUCCESS; }
 }
 
 SUNErrCode N_VBufUnpack_Cuda(N_Vector x, void* buf)
@@ -2078,10 +2077,7 @@ SUNErrCode N_VBufUnpack_Cuda(N_Vector x, void* buf)
                           (void*)NVEC_CUDA_STREAM(x));
 
   if (!SUNDIALS_CUDA_VERIFY(cuerr) || copy_fail) { return SUN_ERR_GENERIC; }
-  else
-  {
-    return SUN_SUCCESS;
-  }
+  else { return SUN_SUCCESS; }
 }
 
 /*
@@ -2411,10 +2407,7 @@ static int CopyReductionBufferFromDevice(N_Vector v, size_t n)
   /* we synchronize with respect to the host, but only in this stream */
   cuerr = cudaStreamSynchronize(*NVEC_CUDA_STREAM(v));
   if (!SUNDIALS_CUDA_VERIFY(cuerr) || copy_fail) { return SUN_ERR_GENERIC; }
-  else
-  {
-    return SUN_SUCCESS;
-  }
+  else { return SUN_SUCCESS; }
 }
 
 static int FusedBuffer_Init(N_Vector v, int nreal, int nptr)

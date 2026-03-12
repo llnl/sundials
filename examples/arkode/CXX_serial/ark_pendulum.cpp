@@ -105,15 +105,9 @@ int main(int argc, char* argv[])
 
   std::cout << "Nonlinear Pendulum problem:\n";
   if (implicit) { std::cout << "   method     = DIRK\n"; }
-  else
-  {
-    std::cout << "   method     = ERK\n";
-  }
+  else { std::cout << "   method     = ERK\n"; }
   if (relax) { std::cout << "   relaxation = ON\n"; }
-  else
-  {
-    std::cout << "   relaxation = OFF\n";
-  }
+  else { std::cout << "   relaxation = OFF\n"; }
   std::cout << "   reltol     = " << reltol << "\n";
   std::cout << "   abstol     = " << abstol << "\n";
   if (fixed_h > SUN_RCONST(0.0))
@@ -144,10 +138,7 @@ int main(int argc, char* argv[])
   // Initialize ARKStep
   void* arkode_mem = nullptr;
   if (implicit) { arkode_mem = ARKStepCreate(nullptr, f, t0, y, ctx); }
-  else
-  {
-    arkode_mem = ARKStepCreate(f, nullptr, t0, y, ctx);
-  }
+  else { arkode_mem = ARKStepCreate(f, nullptr, t0, y, ctx); }
   if (check_ptr(arkode_mem, "ARKStepCreate")) { return 1; }
 
   // Specify tolerances

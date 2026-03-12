@@ -794,10 +794,7 @@ int main(int argc, char* argv[])
     {
       printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfsi, nffi);
     }
-    else
-    {
-      printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfsi, nffe);
-    }
+    else { printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfsi, nffe); }
   }
   else
   {
@@ -806,10 +803,7 @@ int main(int argc, char* argv[])
     {
       printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfse, nffi);
     }
-    else
-    {
-      printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfse, nffe);
-    }
+    else { printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfse, nffe); }
   }
 
   /* Get/print slow integrator decoupled implicit solver statistics */

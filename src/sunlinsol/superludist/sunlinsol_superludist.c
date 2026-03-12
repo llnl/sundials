@@ -132,25 +132,39 @@ SUNLinearSolver SUNLinSol_SuperLUDIST(N_Vector y, SUNMatrix A, gridinfo_t* grid,
  */
 
 sunrealtype SUNLinSol_SuperLUDIST_GetBerr(SUNLinearSolver LS)
-{ return (SLU_BERR(LS)); }
+{
+  return (SLU_BERR(LS));
+}
 
 gridinfo_t* SUNLinSol_SuperLUDIST_GetGridinfo(SUNLinearSolver LS)
-{ return (SLU_GRID(LS)); }
+{
+  return (SLU_GRID(LS));
+}
 
 xLUstruct_t* SUNLinSol_SuperLUDIST_GetLUstruct(SUNLinearSolver LS)
-{ return (SLU_LU(LS)); }
+{
+  return (SLU_LU(LS));
+}
 
 superlu_dist_options_t* SUNLinSol_SuperLUDIST_GetSuperLUOptions(SUNLinearSolver LS)
-{ return (SLU_OPTIONS(LS)); }
+{
+  return (SLU_OPTIONS(LS));
+}
 
 xScalePermstruct_t* SUNLinSol_SuperLUDIST_GetScalePermstruct(SUNLinearSolver LS)
-{ return (SLU_SCALEPERM(LS)); }
+{
+  return (SLU_SCALEPERM(LS));
+}
 
 xSOLVEstruct_t* SUNLinSol_SuperLUDIST_GetSOLVEstruct(SUNLinearSolver LS)
-{ return (SLU_SOLVESTRUCT(LS)); }
+{
+  return (SLU_SOLVESTRUCT(LS));
+}
 
 SuperLUStat_t* SUNLinSol_SuperLUDIST_GetSuperLUStat(SUNLinearSolver LS)
-{ return (SLU_STAT(LS)); }
+{
+  return (SLU_STAT(LS));
+}
 
 /*
  * -----------------------------------------------------------------
@@ -160,10 +174,14 @@ SuperLUStat_t* SUNLinSol_SuperLUDIST_GetSuperLUStat(SUNLinearSolver LS)
 
 SUNLinearSolver_Type SUNLinSolGetType_SuperLUDIST(
   SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_DIRECT); }
+{
+  return (SUNLINEARSOLVER_DIRECT);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_SuperLUDIST(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_SUPERLUDIST); }
+{
+  return (SUNLINEARSOLVER_SUPERLUDIST);
+}
 
 SUNErrCode SUNLinSolInitialize_SuperLUDIST(SUNLinearSolver S)
 {
@@ -239,10 +257,7 @@ int SUNLinSolSolve_SuperLUDIST(SUNLinearSolver S, SUNMatrix A, N_Vector x,
     {
       SLU_LASTFLAG(S) = SUN_ERR_EXT_FAIL;
     }
-    else
-    {
-      SLU_LASTFLAG(S) = SUNLS_PACKAGE_FAIL_REC;
-    }
+    else { SLU_LASTFLAG(S) = SUNLS_PACKAGE_FAIL_REC; }
     return (SLU_LASTFLAG(S));
   }
 
@@ -254,7 +269,9 @@ int SUNLinSolSolve_SuperLUDIST(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 }
 
 sunindextype SUNLinSolLastFlag_SuperLUDIST(SUNLinearSolver S)
-{ return (SLU_LASTFLAG(S)); }
+{
+  return (SLU_LASTFLAG(S));
+}
 
 SUNErrCode SUNLinSolFree_SuperLUDIST(SUNLinearSolver S)
 {

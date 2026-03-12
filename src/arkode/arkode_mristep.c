@@ -880,10 +880,7 @@ ARKRhsFn mriStep_GetImplicitRHS(ARKodeMem ark_mem)
   retval = mriStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (NULL); }
   if (step_mem->implicit_rhs) { return (step_mem->fsi); }
-  else
-  {
-    return (NULL);
-  }
+  else { return (NULL); }
 }
 
 /*---------------------------------------------------------------
@@ -1876,10 +1873,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       {
         N_VLinearSum(ONE, step_mem->Fsi[0], ONE, step_mem->Fse[0], ark_mem->fn);
       }
-      else
-      {
-        N_VScale(ONE, step_mem->Fsi[0], ark_mem->fn);
-      }
+      else { N_VScale(ONE, step_mem->Fsi[0], ark_mem->fn); }
     }
   }
   else if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
@@ -2404,10 +2398,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         N_VLinearSum(ONE, step_mem->Fsi[0], ONE, step_mem->Fse[0], ark_mem->fn);
       }
-      else
-      {
-        N_VScale(ONE, step_mem->Fsi[0], ark_mem->fn);
-      }
+      else { N_VScale(ONE, step_mem->Fsi[0], ark_mem->fn); }
     }
   }
   if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
@@ -4233,10 +4224,7 @@ int mriStep_SlowRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   else
   {
     if (step_mem->implicit_rhs) { N_VScale(ONE, step_mem->Fsi[0], f); }
-    else
-    {
-      N_VScale(ONE, step_mem->Fse[0], f);
-    }
+    else { N_VScale(ONE, step_mem->Fse[0], f); }
   }
 
   return (ARK_SUCCESS);
@@ -4577,10 +4565,7 @@ int mriStepInnerStepper_HasRequiredOps(MRIStepInnerStepper stepper)
   if (stepper->ops == NULL) { return ARK_ILL_INPUT; }
 
   if (stepper->ops->evolve) { return ARK_SUCCESS; }
-  else
-  {
-    return ARK_ILL_INPUT;
-  }
+  else { return ARK_ILL_INPUT; }
 }
 
 /* Check whether stepper supports fast/slow tolerance adaptivity */
@@ -4593,10 +4578,7 @@ sunbooleantype mriStepInnerStepper_SupportsRTolAdaptivity(MRIStepInnerStepper st
   {
     return SUNTRUE;
   }
-  else
-  {
-    return SUNFALSE;
-  }
+  else { return SUNFALSE; }
 }
 
 /* Evolve the inner (fast) ODE */
@@ -4708,10 +4690,7 @@ int mriStepInnerStepper_GetAccumulatedError(MRIStepInnerStepper stepper,
     stepper->last_flag = stepper->ops->geterror(stepper, accum_error);
     return stepper->last_flag;
   }
-  else
-  {
-    return ARK_INNERSTEP_FAIL;
-  }
+  else { return ARK_INNERSTEP_FAIL; }
 }
 
 /* Resets the inner (fast) stepper accumulated error */

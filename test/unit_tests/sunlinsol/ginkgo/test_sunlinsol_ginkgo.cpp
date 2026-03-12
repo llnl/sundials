@@ -481,10 +481,7 @@ int main(int argc, char* argv[])
       gko_matdata.remove_zeros();
       gko_matrix->read(gko_matdata);
     }
-    else
-    {
-      fill_matrix(gko_matrix);
-    }
+    else { fill_matrix(gko_matrix); }
     A = std::make_unique<sundials::ginkgo::Matrix<GkoMatrixType>>(std::move(
                                                                     gko_matrix),
                                                                   sunctx);
@@ -721,10 +718,7 @@ int main(int argc, char* argv[])
   {
     std::cerr << "FAIL: SUNLinSol module failed " << fails << " tests\n\n";
   }
-  else
-  {
-    std::cout << "\nSUCCESS: SUNLinSol module passed all tests\n\n";
-  }
+  else { std::cout << "\nSUCCESS: SUNLinSol module passed all tests\n\n"; }
 
   /* Print solve information */
   std::cout << "Number of linear solver iterations: "

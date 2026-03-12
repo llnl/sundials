@@ -195,10 +195,7 @@ int main(int argc, char* argv[])
 
     /* Integrate in time */
     if (uopt.expl) { retval = EvolveProblemExplicit(ctx, y, &udata, &uopt); }
-    else
-    {
-      retval = EvolveProblemIMEX(ctx, y, &udata, &uopt);
-    }
+    else { retval = EvolveProblemIMEX(ctx, y, &udata, &uopt); }
 
     if (check_retval(&retval, "Evolve", 1)) { MPI_Abort(comm, 1); }
 
@@ -319,8 +316,7 @@ int EvolveProblemIMEX(SUNContext ctx, N_Vector y, UserData* udata,
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { break; }
@@ -431,8 +427,7 @@ int EvolveProblemExplicit(SUNContext ctx, N_Vector y, UserData* udata,
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { break; }
@@ -991,7 +986,9 @@ int TaskLocalLSolve(N_Vector delta, void* arkode_mem)
 }
 
 SUNNonlinearSolver_Type TaskLocalNewton_GetType(SUNNonlinearSolver NLS)
-{ return SUNNONLINEARSOLVER_ROOTFIND; }
+{
+  return SUNNONLINEARSOLVER_ROOTFIND;
+}
 
 int TaskLocalNewton_Initialize(SUNNonlinearSolver NLS)
 {
@@ -1214,8 +1211,7 @@ int ExchangeBCOnly(N_Vector y, UserData* udata)
   if (myid == first)
   {
     RAJA::forall<EXEC_POLICY>(RAJA::RangeSegment(0, nvar),
-                              [=] DEVICE_LAMBDA(int var)
-                              {
+                              [=] DEVICE_LAMBDA(int var) {
                                 Wsend[IDX(nvar, 0, var)] =
                                   Ydata[IDX(nvar, 0, var)];
                               });
@@ -1278,8 +1274,7 @@ int ExchangeAllStart(N_Vector y, UserData* udata)
     if (retval != MPI_SUCCESS) { MPI_Abort(udata->comm, 1); }
 
     RAJA::forall<EXEC_POLICY>(RAJA::RangeSegment(0, nvar),
-                              [=] DEVICE_LAMBDA(int var)
-                              {
+                              [=] DEVICE_LAMBDA(int var) {
                                 Esend[IDX(nvar, 0, var)] =
                                   Ydata[IDX(nvar, N - 1, var)];
                               });
@@ -1298,8 +1293,7 @@ int ExchangeAllStart(N_Vector y, UserData* udata)
     if (retval != MPI_SUCCESS) { MPI_Abort(udata->comm, 1); }
 
     RAJA::forall<EXEC_POLICY>(RAJA::RangeSegment(0, nvar),
-                              [=] DEVICE_LAMBDA(int var)
-                              {
+                              [=] DEVICE_LAMBDA(int var) {
                                 Wsend[IDX(nvar, 0, var)] =
                                   Ydata[IDX(nvar, 0, var)];
                               });
@@ -1343,10 +1337,7 @@ double* GetVecData(N_Vector y)
   {
     return N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(y));
   }
-  else
-  {
-    return N_VGetArrayPointer(y);
-  }
+  else { return N_VGetArrayPointer(y); }
 #endif
 }
 

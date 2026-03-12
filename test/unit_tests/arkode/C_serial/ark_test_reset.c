@@ -135,10 +135,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Initial ARKodeEvolve call successful\n");
-  }
+  else { printf("  Initial ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at dTout, evolve to 2*dTout and check result */
   t = T0 + dTout;
@@ -156,10 +153,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Second ARKodeEvolve call successful\n");
-  }
+  else { printf("  Second ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at 3*dTout, evolve to 4*dTout and check result */
   t = T0 + SUN_RCONST(3.0) * dTout;
@@ -177,10 +171,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Third ARKodeEvolve call successful\n");
-  }
+  else { printf("  Third ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at dTout, evolve to 2*dTout and check result */
   t = T0 + dTout;
@@ -198,10 +189,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Fourth ARKodeEvolve call successful\n");
-  }
+  else { printf("  Fourth ARKodeEvolve call successful\n"); }
 
   /* Free ERKStep memory structure */
   ARKodeFree(&arkode_mem);
@@ -240,10 +228,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Initial ARKodeEvolve call successful\n");
-  }
+  else { printf("  Initial ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at dTout, evolve to 2*dTout and check result */
   t = T0 + dTout;
@@ -261,10 +246,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Second ARKodeEvolve call successful\n");
-  }
+  else { printf("  Second ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at 3*dTout, evolve to 4*dTout and check result */
   t = T0 + SUN_RCONST(3.0) * dTout;
@@ -282,10 +264,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Third ARKodeEvolve call successful\n");
-  }
+  else { printf("  Third ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at dTout, evolve to 2*dTout and check result */
   t = T0 + dTout;
@@ -303,10 +282,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Fourth ARKodeEvolve call successful\n");
-  }
+  else { printf("  Fourth ARKodeEvolve call successful\n"); }
 
   /* Free ARKStep memory structure */
   ARKodeFree(&arkode_mem);
@@ -353,10 +329,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Initial ARKodeEvolve call successful\n");
-  }
+  else { printf("  Initial ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at dTout, evolve to 2*dTout and check result */
   t = T0 + dTout;
@@ -374,10 +347,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Second ARKodeEvolve call successful\n");
-  }
+  else { printf("  Second ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at 3*dTout, evolve to 4*dTout and check result */
   t = T0 + SUN_RCONST(3.0) * dTout;
@@ -395,10 +365,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Third ARKodeEvolve call successful\n");
-  }
+  else { printf("  Third ARKodeEvolve call successful\n"); }
 
   /* Reset state to analytical solution at dTout, evolve to 2*dTout and check result */
   t = T0 + dTout;
@@ -416,10 +383,7 @@ int main(void)
     printf("    |y-ytrue| = %" GSYM "\n", SUNRabs(ytrue(t) - NV_Ith_S(y, 0)));
     return 1;
   }
-  else
-  {
-    printf("  Fourth ARKodeEvolve call successful\n");
-  }
+  else { printf("  Fourth ARKodeEvolve call successful\n"); }
 
   /* Free MRIStep and ARKStep memory structures */
   ARKodeFree(&mristep_mem);

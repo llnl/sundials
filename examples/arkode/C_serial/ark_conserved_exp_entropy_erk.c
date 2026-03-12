@@ -157,10 +157,7 @@ int main(int argc, char* argv[])
     printf("   fixed h    = %.1" ESYM "\n", fixed_h);
   }
   if (relax) { printf("   relaxation = ON\n"); }
-  else
-  {
-    printf("   relaxation = OFF\n");
-  }
+  else { printf("   relaxation = OFF\n"); }
   printf("\n");
 
   /* ------------ *

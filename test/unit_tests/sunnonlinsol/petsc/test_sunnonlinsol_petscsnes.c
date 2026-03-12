@@ -161,10 +161,7 @@ int main(int argc, char* argv[])
 
   /* Print result */
   if (retval) { printf("FAIL\n"); }
-  else
-  {
-    printf("SUCCESS\n");
-  }
+  else { printf("SUCCESS\n"); }
 
   return (retval);
 }
@@ -265,10 +262,7 @@ static int check_retval(void* flagvalue, const char* funcname, int opt)
       fprintf(stderr, "\nERROR: %s() failed -- returned NULL\n\n", funcname);
       return (1);
     }
-    else
-    {
-      return (0);
-    }
+    else { return (0); }
   }
 
   /* Check if the function returned an non-zero value -- internal failure */
@@ -281,10 +275,7 @@ static int check_retval(void* flagvalue, const char* funcname, int opt)
               *errflag);
       return (1);
     }
-    else
-    {
-      return (0);
-    }
+    else { return (0); }
   }
 
   /* if we make it here then opt was not 0 or 1 */

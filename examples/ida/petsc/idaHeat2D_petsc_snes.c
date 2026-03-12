@@ -660,10 +660,7 @@ int PsetupHeat(PC pc)
       {
         ppv[j][i] = ONE; /* Boundary */
       }
-      else
-      {
-        ppv[j][i] = pelinv; /* Interior */
-      }
+      else { ppv[j][i] = pelinv; /* Interior */ }
     }
   }
 
@@ -749,10 +746,7 @@ static int SetInitialProfile(N_Vector uu, N_Vector up, N_Vector id,
       {
         iddat[j][i] = 0.0; /* algebraic variables on the boundary */
       }
-      else
-      {
-        iddat[j][i] = 1.0; /* differential variables in the interior */
-      }
+      else { iddat[j][i] = 1.0; /* differential variables in the interior */ }
     }
   }
 

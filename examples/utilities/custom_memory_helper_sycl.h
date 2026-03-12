@@ -87,10 +87,7 @@ int MyMemoryHelper_Dealloc(SUNMemoryHelper helper, SUNMemory mem, void* queue)
       sycl::free(mem->ptr, *sycl_queue);
       mem->ptr = NULL;
     }
-    else
-    {
-      return -1;
-    }
+    else { return -1; }
   }
 
   free(mem);
@@ -108,10 +105,7 @@ int MyMemoryHelper_Copy(SUNMemoryHelper helper, SUNMemory dst, SUNMemory src,
   {
     memcpy(dst->ptr, src->ptr, memory_size);
   }
-  else
-  {
-    sycl_queue->memcpy(dst->ptr, src->ptr, memory_size);
-  }
+  else { sycl_queue->memcpy(dst->ptr, src->ptr, memory_size); }
   sycl_queue->wait_and_throw();
   return 0;
 }

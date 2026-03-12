@@ -528,10 +528,7 @@ int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
 
   /* set appropriate TakeStep routine based on problem configuration */
   if (ark_mem->do_adjoint) { ark_mem->step = erkStep_TakeStep_Adjoint; }
-  else
-  {
-    ark_mem->step = erkStep_TakeStep;
-  }
+  else { ark_mem->step = erkStep_TakeStep; }
 
   /* Signal to shared arkode module that full RHS evaluations are required */
   ark_mem->call_fullrhs = SUNTRUE;
@@ -665,10 +662,7 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
           return (ARK_RHSFUNC_FAIL);
         }
       }
-      else
-      {
-        N_VScale(ONE, step_mem->F[step_mem->stages - 1], step_mem->F[0]);
-      }
+      else { N_VScale(ONE, step_mem->F[step_mem->stages - 1], step_mem->F[0]); }
 
       /* copy RHS vector into output */
       N_VScale(ONE, step_mem->F[0], f);

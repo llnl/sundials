@@ -829,15 +829,9 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
   {
     cout << "  integrator       = ERK" << endl;
     if (udata.advection) { cout << "  advection        = Explicit" << endl; }
-    else
-    {
-      cout << "  advection        = OFF" << endl;
-    }
+    else { cout << "  advection        = OFF" << endl; }
     if (udata.diffusion) { cout << "  diffusion        = Explicit" << endl; }
-    else
-    {
-      cout << "  diffusion        = OFF" << endl;
-    }
+    else { cout << "  diffusion        = OFF" << endl; }
     cout << "  reaction         = Explicit" << endl;
   }
   else if (uopts.integrator == 1)
@@ -990,10 +984,7 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
       {
         cout << "  reaction         = Fast-Implicit" << endl;
       }
-      else
-      {
-        cout << "  reaction         = Fast-Explicit" << endl;
-      }
+      else { cout << "  reaction         = Fast-Explicit" << endl; }
     }
     else if (!udata.diffusion && udata.advection)
     {
@@ -1004,10 +995,7 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
       {
         cout << "  reaction         = Fast-Implicit" << endl;
       }
-      else
-      {
-        cout << "  reaction         = Fast-Explicit" << endl;
-      }
+      else { cout << "  reaction         = Fast-Explicit" << endl; }
     }
     else if (udata.diffusion && !udata.advection)
     {
@@ -1017,10 +1005,7 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
       {
         cout << "  reaction         = Fast-Implicit" << endl;
       }
-      else
-      {
-        cout << "  reaction         = Fast-Explicit" << endl;
-      }
+      else { cout << "  reaction         = Fast-Explicit" << endl; }
     }
     else
     {
@@ -1070,10 +1055,7 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
   {
     cout << "  order (ark_dirk) = " << uopts.order << endl;
   }
-  else
-  {
-    cout << "  order            = " << uopts.order << endl;
-  }
+  else { cout << "  order            = " << uopts.order << endl; }
   cout << "  rtol             = " << uopts.rtol << endl;
   cout << "  atol             = " << uopts.atol << endl;
   cout << "  fixed h          = " << uopts.fixed_h << endl;
@@ -1096,10 +1078,7 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
     {
       cout << "  predictor        = cutoff order" << endl;
     }
-    else
-    {
-      cout << "  predictor        = " << uopts.predictor << endl;
-    }
+    else { cout << "  predictor        = " << uopts.predictor << endl; }
     cout << "  ls setup freq    = " << uopts.ls_setup_freq << endl;
     cout << "  linear           = " << uopts.linear << endl;
   }
@@ -1128,10 +1107,7 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
     {
       cout << "  predictor        = cutoff order" << endl;
     }
-    else
-    {
-      cout << "  predictor        = " << uopts.predictor_fast << endl;
-    }
+    else { cout << "  predictor        = " << uopts.predictor_fast << endl; }
     cout << "  ls setup freq    = " << uopts.ls_setup_freq_fast << endl;
   }
   else if (uopts.integrator == 3)

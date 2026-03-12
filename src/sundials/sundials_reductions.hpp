@@ -47,10 +47,14 @@ struct plus : public BinaryOperator<Arg1, Arg2, Ret>
 {
   constexpr SUNDIALS_HOST_DEVICE Ret operator()(const Arg1& lhs,
                                                 const Arg2& rhs) const
-  { return Ret{lhs} + rhs; }
+  {
+    return Ret{lhs} + rhs;
+  }
 
   static SUNDIALS_HOST_DEVICE SUNDIALS_DEVICE_INLINE constexpr Ret identity()
-  { return Ret{0}; }
+  {
+    return Ret{0};
+  }
 };
 
 template<typename Ret, typename Arg1 = Ret, typename Arg2 = Arg1>
@@ -58,10 +62,14 @@ struct maximum : public BinaryOperator<Arg1, Arg2, Ret>
 {
   constexpr SUNDIALS_HOST_DEVICE Ret operator()(const Arg1& lhs,
                                                 const Arg2& rhs) const
-  { return (lhs >= rhs) ? lhs : rhs; }
+  {
+    return (lhs >= rhs) ? lhs : rhs;
+  }
 
   static SUNDIALS_HOST_DEVICE SUNDIALS_DEVICE_INLINE constexpr Ret identity()
-  { return std::numeric_limits<Ret>::lowest(); }
+  {
+    return std::numeric_limits<Ret>::lowest();
+  }
 };
 
 template<typename Ret, typename Arg1 = Ret, typename Arg2 = Arg1>
@@ -69,10 +77,14 @@ struct minimum : public BinaryOperator<Arg1, Arg2, Ret>
 {
   constexpr SUNDIALS_HOST_DEVICE Ret operator()(const Arg1& lhs,
                                                 const Arg2& rhs) const
-  { return (rhs < lhs) ? rhs : lhs; }
+  {
+    return (rhs < lhs) ? rhs : lhs;
+  }
 
   static SUNDIALS_HOST_DEVICE SUNDIALS_DEVICE_INLINE constexpr Ret identity()
-  { return std::numeric_limits<Ret>::max(); }
+  {
+    return std::numeric_limits<Ret>::max();
+  }
 };
 
 } // namespace impl

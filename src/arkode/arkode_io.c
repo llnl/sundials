@@ -267,10 +267,7 @@ int ARKodeSetInterpolantDegree(void* arkode_mem, int degree)
     return ARK_ILL_INPUT;
   }
   else if (degree < 0) { ark_mem->interp_degree = ARK_INTERP_MAX_DEGREE; }
-  else
-  {
-    ark_mem->interp_degree = degree;
-  }
+  else { ark_mem->interp_degree = degree; }
 
   /* Set the degree now if possible otherwise it will be used when creating the
      interpolation module */
@@ -1030,10 +1027,7 @@ int ARKodeSetMaxNumSteps(void* arkode_mem, long int mxsteps)
 
   /* Passing mxsteps=0 sets the default. Passing mxsteps<0 disables the test. */
   if (mxsteps == 0) { ark_mem->mxstep = MXSTEP_DEFAULT; }
-  else
-  {
-    ark_mem->mxstep = mxsteps;
-  }
+  else { ark_mem->mxstep = mxsteps; }
 
   return (ARK_SUCCESS);
 }
@@ -1064,10 +1058,7 @@ int ARKodeSetMaxHnilWarns(void* arkode_mem, int mxhnil)
 
   /* Passing mxhnil=0 sets the default, otherwise use input. */
   if (mxhnil == 0) { ark_mem->mxhnil = 10; }
-  else
-  {
-    ark_mem->mxhnil = mxhnil;
-  }
+  else { ark_mem->mxhnil = mxhnil; }
 
   return (ARK_SUCCESS);
 }
@@ -1099,10 +1090,7 @@ int ARKodeSetInitStep(void* arkode_mem, sunrealtype hin)
 
   /* Passing hin=0 sets the default, otherwise use input. */
   if (hin == ZERO) { ark_mem->hin = ZERO; }
-  else
-  {
-    ark_mem->hin = hin;
-  }
+  else { ark_mem->hin = hin; }
 
   /* Clear previous initial step */
   ark_mem->h0u = ZERO;
@@ -1340,10 +1328,7 @@ int ARKodeSetFixedStep(void* arkode_mem, sunrealtype hfixed)
     ark_mem->fixedstep = SUNTRUE;
     ark_mem->hin       = hfixed;
   }
-  else
-  {
-    ark_mem->fixedstep = SUNFALSE;
-  }
+  else { ark_mem->fixedstep = SUNFALSE; }
 
   /* Notify ARKODE to use hfixed as the initial step size, and return */
   return ARKodeSetInitStep(arkode_mem, hfixed);
@@ -1659,10 +1644,7 @@ int ARKodeSetMaxNumConstrFails(void* arkode_mem, int maxfails)
 
   /* Passing maxfails = 0 sets the default, otherwise set to input */
   if (maxfails <= 0) { ark_mem->maxconstrfails = MAXCONSTRFAILS; }
-  else
-  {
-    ark_mem->maxconstrfails = maxfails;
-  }
+  else { ark_mem->maxconstrfails = maxfails; }
 
   return (ARK_SUCCESS);
 }
@@ -1693,10 +1675,7 @@ int ARKodeSetCFLFraction(void* arkode_mem, sunrealtype cfl_frac)
 
   /* set positive-valued parameters, otherwise set default */
   if (cfl_frac <= ZERO) { hadapt_mem->cfl = CFLFAC; }
-  else
-  {
-    hadapt_mem->cfl = cfl_frac;
-  }
+  else { hadapt_mem->cfl = cfl_frac; }
 
   return (ARK_SUCCESS);
 }
@@ -1765,10 +1744,7 @@ int ARKodeSetSafetyFactor(void* arkode_mem, sunrealtype safety)
 
   /* set positive-valued parameters, otherwise set default */
   if (safety <= ZERO) { hadapt_mem->safety = SAFETY; }
-  else
-  {
-    hadapt_mem->safety = safety;
-  }
+  else { hadapt_mem->safety = safety; }
 
   return (ARK_SUCCESS);
 }
@@ -1848,10 +1824,7 @@ int ARKodeSetMaxGrowth(void* arkode_mem, sunrealtype mx_growth)
 
   /* set allowed value, otherwise set default */
   if (mx_growth <= ONE) { hadapt_mem->growth = GROWTH; }
-  else
-  {
-    hadapt_mem->growth = mx_growth;
-  }
+  else { hadapt_mem->growth = mx_growth; }
 
   return (ARK_SUCCESS);
 }
@@ -1882,10 +1855,7 @@ int ARKodeSetMinReduction(void* arkode_mem, sunrealtype eta_min)
 
   /* set allowed value, otherwise set default */
   if (eta_min >= ONE || eta_min <= ZERO) { hadapt_mem->etamin = ETAMIN; }
-  else
-  {
-    hadapt_mem->etamin = eta_min;
-  }
+  else { hadapt_mem->etamin = eta_min; }
 
   return (ARK_SUCCESS);
 }
@@ -1953,10 +1923,7 @@ int ARKodeSetMaxFirstGrowth(void* arkode_mem, sunrealtype etamx1)
 
   /* if argument legal set it, otherwise set default */
   if (etamx1 <= ONE) { hadapt_mem->etamx1 = ETAMX1; }
-  else
-  {
-    hadapt_mem->etamx1 = etamx1;
-  }
+  else { hadapt_mem->etamx1 = etamx1; }
 
   return (ARK_SUCCESS);
 }
@@ -1986,10 +1953,7 @@ int ARKodeSetMaxEFailGrowth(void* arkode_mem, sunrealtype etamxf)
 
   /* if argument legal set it, otherwise set default */
   if ((etamxf <= ZERO) || (etamxf > ONE)) { hadapt_mem->etamxf = ETAMXF; }
-  else
-  {
-    hadapt_mem->etamxf = etamxf;
-  }
+  else { hadapt_mem->etamxf = etamxf; }
 
   return (ARK_SUCCESS);
 }
@@ -2019,10 +1983,7 @@ int ARKodeSetSmallNumEFails(void* arkode_mem, int small_nef)
 
   /* if argument legal set it, otherwise set default */
   if (small_nef <= 0) { hadapt_mem->small_nef = SMALL_NEF; }
-  else
-  {
-    hadapt_mem->small_nef = small_nef;
-  }
+  else { hadapt_mem->small_nef = small_nef; }
 
   return (ARK_SUCCESS);
 }
@@ -2052,10 +2013,7 @@ int ARKodeSetMaxCFailGrowth(void* arkode_mem, sunrealtype etacf)
 
   /* if argument legal set it, otherwise set default */
   if ((etacf <= ZERO) || (etacf > ONE)) { hadapt_mem->etacf = ETACF; }
-  else
-  {
-    hadapt_mem->etacf = etacf;
-  }
+  else { hadapt_mem->etacf = etacf; }
 
   return (ARK_SUCCESS);
 }
@@ -2118,10 +2076,7 @@ int ARKodeSetMaxErrTestFails(void* arkode_mem, int maxnef)
 
   /* argument <= 0 sets default, otherwise set input */
   if (maxnef <= 0) { ark_mem->maxnef = MAXNEF; }
-  else
-  {
-    ark_mem->maxnef = maxnef;
-  }
+  else { ark_mem->maxnef = maxnef; }
   return (ARK_SUCCESS);
 }
 
@@ -2153,10 +2108,7 @@ int ARKodeSetMaxConvFails(void* arkode_mem, int maxncf)
 
   /* argument <= 0 sets default, otherwise set input */
   if (maxncf <= 0) { ark_mem->maxncf = MAXNCF; }
-  else
-  {
-    ark_mem->maxncf = maxncf;
-  }
+  else { ark_mem->maxncf = maxncf; }
   return (ARK_SUCCESS);
 }
 
@@ -3289,10 +3241,7 @@ int ARKodeWriteParameters(void* arkode_mem, FILE* fp)
       fprintf(fp, "  Solver absolute tolerance = " SUN_FORMAT_G "\n",
               ark_mem->Sabstol);
     }
-    else
-    {
-      fprintf(fp, "  Vector-valued solver absolute tolerance\n");
-    }
+    else { fprintf(fp, "  Vector-valued solver absolute tolerance\n"); }
   }
   if (!ark_mem->rwt_is_ewt)
   {
@@ -3307,10 +3256,7 @@ int ARKodeWriteParameters(void* arkode_mem, FILE* fp)
         fprintf(fp, "  Absolute residual tolerance = " SUN_FORMAT_G "\n",
                 ark_mem->SRabstol);
       }
-      else
-      {
-        fprintf(fp, "  Vector-valued residual absolute tolerance\n");
-      }
+      else { fprintf(fp, "  Vector-valued residual absolute tolerance\n"); }
     }
   }
   if (ark_mem->hin != ZERO)
@@ -3341,10 +3287,7 @@ int ARKodeWriteParameters(void* arkode_mem, FILE* fp)
   {
     fprintf(fp, "  No explicit stability function supplied\n");
   }
-  else
-  {
-    fprintf(fp, "  User provided explicit stability function\n");
-  }
+  else { fprintf(fp, "  User provided explicit stability function\n"); }
   if (ark_mem->hadapt_mem->hcontroller != NULL)
   {
     (void)SUNAdaptController_Write(ark_mem->hadapt_mem->hcontroller, fp);
@@ -3416,10 +3359,7 @@ int arkReplaceAdaptController(ARKodeMem ark_mem, SUNAdaptController C,
     }
     ark_mem->hadapt_mem->owncontroller = SUNTRUE;
   }
-  else
-  {
-    ark_mem->hadapt_mem->owncontroller = take_ownership;
-  }
+  else { ark_mem->hadapt_mem->owncontroller = take_ownership; }
 
   /* Attach new SUNAdaptController object */
   retval = SUNAdaptController_Space(C, &lenrw, &leniw);

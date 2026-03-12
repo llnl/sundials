@@ -45,9 +45,9 @@
  * Macro accessors
  * --------------- */
 
-#define MRIHTOL_CONTENT(C) ((SUNAdaptControllerContent_MRIHTol)(C->content))
-#define MRIHTOL_CSLOW(C)   (MRIHTOL_CONTENT(C)->HControl)
-#define MRIHTOL_CFAST(C)   (MRIHTOL_CONTENT(C)->TolControl)
+#define MRIHTOL_CONTENT(C)          ((SUNAdaptControllerContent_MRIHTol)(C->content))
+#define MRIHTOL_CSLOW(C)            (MRIHTOL_CONTENT(C)->HControl)
+#define MRIHTOL_CFAST(C)            (MRIHTOL_CONTENT(C)->TolControl)
 #define MRIHTOL_INNER_MAX_RELCH(C)  (MRIHTOL_CONTENT(C)->inner_max_relch)
 #define MRIHTOL_INNER_MIN_TOLFAC(C) (MRIHTOL_CONTENT(C)->inner_min_tolfac)
 #define MRIHTOL_INNER_MAX_TOLFAC(C) (MRIHTOL_CONTENT(C)->inner_max_tolfac)
@@ -164,10 +164,7 @@ static SUNErrCode setFromCommandLine_MRIHTol(SUNAdaptController C,
   if (Cid != NULL && strlen(Cid) > 0) { offset = strlen(Cid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (Cid != NULL && strlen(Cid) > 0) { strcpy(prefix, Cid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   int retval;
@@ -236,26 +233,17 @@ SUNErrCode SUNAdaptController_SetParams_MRIHTol(SUNAdaptController C,
   {
     MRIHTOL_INNER_MAX_RELCH(C) = INNER_MAX_RELCH;
   }
-  else
-  {
-    MRIHTOL_INNER_MAX_RELCH(C) = inner_max_relch;
-  }
+  else { MRIHTOL_INNER_MAX_RELCH(C) = inner_max_relch; }
   if (inner_min_tolfac <= SUN_RCONST(0.0))
   {
     MRIHTOL_INNER_MIN_TOLFAC(C) = INNER_MIN_TOLFAC;
   }
-  else
-  {
-    MRIHTOL_INNER_MIN_TOLFAC(C) = inner_min_tolfac;
-  }
+  else { MRIHTOL_INNER_MIN_TOLFAC(C) = inner_min_tolfac; }
   if (inner_max_tolfac <= SUN_RCONST(0.0))
   {
     MRIHTOL_INNER_MAX_TOLFAC(C) = INNER_MAX_TOLFAC;
   }
-  else
-  {
-    MRIHTOL_INNER_MAX_TOLFAC(C) = inner_max_tolfac;
-  }
+  else { MRIHTOL_INNER_MAX_TOLFAC(C) = inner_max_tolfac; }
   return SUN_SUCCESS;
 }
 
@@ -287,7 +275,9 @@ SUNErrCode SUNAdaptController_GetFastController_MRIHTol(SUNAdaptController C,
 
 SUNAdaptController_Type SUNAdaptController_GetType_MRIHTol(
   SUNDIALS_MAYBE_UNUSED SUNAdaptController C)
-{ return SUN_ADAPTCONTROLLER_MRI_H_TOL; }
+{
+  return SUN_ADAPTCONTROLLER_MRI_H_TOL;
+}
 
 SUNErrCode SUNAdaptController_EstimateStepTol_MRIHTol(
   SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,

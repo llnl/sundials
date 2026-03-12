@@ -229,10 +229,7 @@ int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del, sunrealtype tol,
   delnrm = N_VMaxNorm(del);
 
   if (delnrm <= tol) { return (SUN_SUCCESS); /* success       */ }
-  else
-  {
-    return (SUN_NLS_CONTINUE); /* not converged */
-  }
+  else { return (SUN_NLS_CONTINUE); /* not converged */ }
 }
 
 /* -----------------------------------------------------------------------------
@@ -352,10 +349,7 @@ static int check_retval(void* flagvalue, const char* funcname, int opt)
       fprintf(stderr, "\nERROR: %s() failed -- returned NULL\n\n", funcname);
       return (1);
     }
-    else
-    {
-      return (0);
-    }
+    else { return (0); }
   }
 
   /* Check if the function returned an non-zero value -- internal failure */
@@ -368,10 +362,7 @@ static int check_retval(void* flagvalue, const char* funcname, int opt)
               *errflag);
       return (1);
     }
-    else
-    {
-      return (0);
-    }
+    else { return (0); }
   }
 
   /* if we make it here then opt was not 0 or 1 */

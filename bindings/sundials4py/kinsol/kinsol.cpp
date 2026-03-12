@@ -38,10 +38,7 @@ using namespace sundials::experimental;
       auto fntable    = get_kinsol_fn_table(kin_mem);                   \
       fntable->MEMBER = nb::cast(fn);                                   \
       if (fn) { return NAME(kin_mem, WRAPPER); }                        \
-      else                                                              \
-      {                                                                 \
-        return NAME(kin_mem, nullptr);                                  \
-      }                                                                 \
+      else { return NAME(kin_mem, nullptr); }                           \
     },                                                                  \
     __VA_ARGS__)
 
@@ -58,10 +55,7 @@ using namespace sundials::experimental;
       if (fn1 && fn2) { return NAME(kin_mem, WRAPPER1, WRAPPER2); }        \
       else if (fn1) { return NAME(kin_mem, WRAPPER1, nullptr); }           \
       else if (fn2) { return NAME(kin_mem, nullptr, WRAPPER2); }           \
-      else                                                                 \
-      {                                                                    \
-        return NAME(kin_mem, nullptr, nullptr);                            \
-      }                                                                    \
+      else { return NAME(kin_mem, nullptr, nullptr); }                     \
     },                                                                     \
     __VA_ARGS__)
 
@@ -98,9 +92,10 @@ void bind_kinsol(nb::module_& m)
     nb::arg("args"));
 
   m.def(
-    "KINCreate", [](SUNContext sunctx)
-    { return std::make_shared<KINView>(KINCreate(sunctx)); }, nb::arg("sunctx"),
-    nb::keep_alive<0, 1>());
+    "KINCreate",
+    [](SUNContext sunctx)
+    { return std::make_shared<KINView>(KINCreate(sunctx)); },
+    nb::arg("sunctx"), nb::keep_alive<0, 1>());
 
   m.def(
     "KINInit",
@@ -159,4 +154,6 @@ void bind_kinsol(nb::module_& m)
 
 // The destroy functions gets called in our C code by the integrator destructor
 extern "C" void kinsol_user_supplied_fn_table_destroy(void* ptr)
-{ delete static_cast<kinsol_user_supplied_fn_table*>(ptr); }
+{
+  delete static_cast<kinsol_user_supplied_fn_table*>(ptr);
+}

@@ -120,17 +120,25 @@ SUNErrCode SUNAdaptController_UpdateH_MRIStep(SUNAdaptController C,
 }
 
 SUNAdaptController_Type SUNAdaptController_GetType_MRIStep(SUNAdaptController C)
-{ return SUNAdaptController_GetType(MRICONTROL_C(C)); }
+{
+  return SUNAdaptController_GetType(MRICONTROL_C(C));
+}
 
 SUNErrCode SUNAdaptController_Reset_MRIStep(SUNAdaptController C)
-{ return SUNAdaptController_Reset(MRICONTROL_C(C)); }
+{
+  return SUNAdaptController_Reset(MRICONTROL_C(C));
+}
 
 SUNErrCode SUNAdaptController_Write_MRIStep(SUNAdaptController C, FILE* fptr)
-{ return SUNAdaptController_Write(MRICONTROL_C(C), fptr); }
+{
+  return SUNAdaptController_Write(MRICONTROL_C(C), fptr);
+}
 
 SUNErrCode SUNAdaptController_Space_MRIStep(SUNAdaptController C,
                                             long int* lenrw, long int* leniw)
-{ return SUNAdaptController_Space(MRICONTROL_C(C), lenrw, leniw); }
+{
+  return SUNAdaptController_Space(MRICONTROL_C(C), lenrw, leniw);
+}
 
 /*===============================================================
   EOF

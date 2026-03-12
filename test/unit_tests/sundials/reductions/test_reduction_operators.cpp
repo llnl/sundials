@@ -39,10 +39,7 @@ static int testPlusWithInts()
   bool pass = c == a + b;
 
   if (pass) { std::cout << " -- passed\n"; }
-  else
-  {
-    std::cout << " -- FAILED\n";
-  }
+  else { std::cout << " -- FAILED\n"; }
 
   return !pass;
 }
@@ -61,10 +58,7 @@ static int testPlusWithDoubles()
   bool pass = c == a + b;
 
   if (pass) { std::cout << " -- passed\n"; }
-  else
-  {
-    std::cout << " -- FAILED\n";
-  }
+  else { std::cout << " -- FAILED\n"; }
 
   return !pass;
 }
@@ -87,10 +81,7 @@ static int testMaximumWithInts()
 
   bool pass = pass1 && pass2;
   if (pass) { std::cout << " -- passed\n"; }
-  else
-  {
-    std::cout << " -- FAILED\n";
-  }
+  else { std::cout << " -- FAILED\n"; }
 
   return !pass;
 }
@@ -113,10 +104,7 @@ static int testMaximumWithDoubles()
 
   bool pass = pass1 && pass2;
   if (pass) { std::cout << " -- passed\n"; }
-  else
-  {
-    std::cout << " -- FAILED\n";
-  }
+  else { std::cout << " -- FAILED\n"; }
 
   return !pass;
 }
@@ -139,10 +127,7 @@ static int testMinimumWithInts()
 
   bool pass = pass1 && pass2;
   if (pass) { std::cout << " -- passed\n"; }
-  else
-  {
-    std::cout << " -- FAILED\n";
-  }
+  else { std::cout << " -- FAILED\n"; }
 
   return !pass;
 }
@@ -165,10 +150,7 @@ static int testMinimumWithDoubles()
 
   bool pass = pass1 && pass2;
   if (pass) { std::cout << " -- passed\n"; }
-  else
-  {
-    std::cout << " -- FAILED\n";
-  }
+  else { std::cout << " -- FAILED\n"; }
 
   return !pass;
 }
@@ -187,10 +169,7 @@ int main()
   fails += testMinimumWithDoubles();
 
   if (fails) { std::cout << "FAIL: " << fails << " tests failed\n"; }
-  else
-  {
-    std::cout << "SUCCESS: all tests passed\n";
-  }
+  else { std::cout << "SUCCESS: all tests passed\n"; }
 
   return fails;
 }

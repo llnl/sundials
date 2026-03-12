@@ -134,7 +134,7 @@
 #define ONE      SUN_RCONST(1.0)    /* 1. */
 #define TWO      SUN_RCONST(2.0)    /* 2. */
 #define PREYIN   SUN_RCONST(1.0)    /* initial guess for prey concentrations. */
-#define PREDIN SUN_RCONST(30000.0)  /* initial guess for predator concs.      */
+#define PREDIN   SUN_RCONST(30000.0) /* initial guess for predator concs.      */
 
 /* Linear Solver Loop Constants */
 

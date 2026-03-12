@@ -231,10 +231,7 @@ N_Vector N_VMake_MPIManyVector(MPI_Comm comm, sunindextype num_subvectors,
     SUNCheckMPICallNull(MPI_Allreduce(&local_length, &(content->global_length), 1,
                                       MPI_SUNINDEXTYPE, MPI_SUM, content->comm));
   }
-  else
-  {
-    content->global_length = local_length;
-  }
+  else { content->global_length = local_length; }
 
   return (v);
 }
@@ -472,7 +469,9 @@ SUNErrCode MVAPPEND(N_VSetSubvectorArrayPointer)(sunrealtype* v_data, N_Vector v
 /* This function returns the overall number of sub-vectors.
    It returns a locally stored integer, and is therefore a local call. */
 sunindextype MVAPPEND(N_VGetNumSubvectors)(N_Vector v)
-{ return (MANYVECTOR_NUM_SUBVECS(v)); }
+{
+  return (MANYVECTOR_NUM_SUBVECS(v));
+}
 
 /* -----------------------------------------------------------------
    ManyVector implementations of generic NVector routines
@@ -513,11 +512,15 @@ void MVAPPEND(N_VPrintFile)(N_Vector x, FILE* outfile)
 
 /* Clones a ManyVector, calling CloneEmpty on subvectors. */
 N_Vector MVAPPEND(N_VCloneEmpty)(N_Vector w)
-{ return (ManyVectorClone(w, SUNTRUE)); }
+{
+  return (ManyVectorClone(w, SUNTRUE));
+}
 
 /* Clones a ManyVector, calling Clone on subvectors. */
 N_Vector MVAPPEND(N_VClone)(N_Vector w)
-{ return (ManyVectorClone(w, SUNFALSE)); }
+{
+  return (ManyVectorClone(w, SUNFALSE));
+}
 
 /* Destroys a ManyVector */
 void MVAPPEND(N_VDestroy)(N_Vector v)
@@ -596,12 +599,16 @@ void MVAPPEND(N_VSpace)(N_Vector v, sunindextype* lrw, sunindextype* liw)
 #ifdef MANYVECTOR_BUILD_WITH_MPI
 /* This function retrieves the MPI Communicator from an MPIManyVector object. */
 MPI_Comm N_VGetCommunicator_MPIManyVector(N_Vector v)
-{ return (MANYVECTOR_COMM(v)); }
+{
+  return (MANYVECTOR_COMM(v));
+}
 #endif
 
 /* This function retrieves the global length of a ManyVector object. */
 sunindextype MVAPPEND(N_VGetLength)(N_Vector v)
-{ return (MANYVECTOR_GLOBLENGTH(v)); }
+{
+  return (MANYVECTOR_GLOBLENGTH(v));
+}
 
 sunindextype MVAPPEND(N_VGetSubvectorLocalLength)(N_Vector v, sunindextype vec_num)
 {
@@ -1929,10 +1936,7 @@ SUNErrCode MVAPPEND(N_VEnableLinearCombination)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
   if (tf) { v->ops->nvlinearcombination = MVAPPEND(N_VLinearCombination); }
-  else
-  {
-    v->ops->nvlinearcombination = NULL;
-  }
+  else { v->ops->nvlinearcombination = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1942,10 +1946,7 @@ SUNErrCode MVAPPEND(N_VEnableScaleAddMulti)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
   if (tf) { v->ops->nvscaleaddmulti = MVAPPEND(N_VScaleAddMulti); }
-  else
-  {
-    v->ops->nvscaleaddmulti = NULL;
-  }
+  else { v->ops->nvscaleaddmulti = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1955,10 +1956,7 @@ SUNErrCode MVAPPEND(N_VEnableDotProdMulti)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
   if (tf) { v->ops->nvdotprodmulti = MVAPPEND(N_VDotProdMulti); }
-  else
-  {
-    v->ops->nvdotprodmulti = NULL;
-  }
+  else { v->ops->nvdotprodmulti = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1971,10 +1969,7 @@ SUNErrCode MVAPPEND(N_VEnableLinearSumVectorArray)(N_Vector v, sunbooleantype tf
   {
     v->ops->nvlinearsumvectorarray = MVAPPEND(N_VLinearSumVectorArray);
   }
-  else
-  {
-    v->ops->nvlinearsumvectorarray = NULL;
-  }
+  else { v->ops->nvlinearsumvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1984,10 +1979,7 @@ SUNErrCode MVAPPEND(N_VEnableScaleVectorArray)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
   if (tf) { v->ops->nvscalevectorarray = MVAPPEND(N_VScaleVectorArray); }
-  else
-  {
-    v->ops->nvscalevectorarray = NULL;
-  }
+  else { v->ops->nvscalevectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1997,10 +1989,7 @@ SUNErrCode MVAPPEND(N_VEnableConstVectorArray)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
   if (tf) { v->ops->nvconstvectorarray = MVAPPEND(N_VConstVectorArray); }
-  else
-  {
-    v->ops->nvconstvectorarray = NULL;
-  }
+  else { v->ops->nvconstvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2010,10 +1999,7 @@ SUNErrCode MVAPPEND(N_VEnableWrmsNormVectorArray)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
   if (tf) { v->ops->nvwrmsnormvectorarray = MVAPPEND(N_VWrmsNormVectorArray); }
-  else
-  {
-    v->ops->nvwrmsnormvectorarray = NULL;
-  }
+  else { v->ops->nvwrmsnormvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2027,10 +2013,7 @@ SUNErrCode MVAPPEND(N_VEnableWrmsNormMaskVectorArray)(N_Vector v,
   {
     v->ops->nvwrmsnormmaskvectorarray = MVAPPEND(N_VWrmsNormMaskVectorArray);
   }
-  else
-  {
-    v->ops->nvwrmsnormmaskvectorarray = NULL;
-  }
+  else { v->ops->nvwrmsnormmaskvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -2040,10 +2023,7 @@ SUNErrCode MVAPPEND(N_VEnableDotProdMultiLocal)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
   if (tf) { v->ops->nvdotprodmultilocal = MVAPPEND(N_VDotProdMultiLocal); }
-  else
-  {
-    v->ops->nvdotprodmultilocal = NULL;
-  }
+  else { v->ops->nvdotprodmultilocal = NULL; }
 
   /* return success */
   return SUN_SUCCESS;

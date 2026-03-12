@@ -29,7 +29,9 @@
 
 #if defined(SUNDIALS_BUILD_WITH_PROFILING)
 static SUNProfiler getSUNProfiler(SUNNonlinearSolver NLS)
-{ return (NLS->sunctx->profiler); }
+{
+  return (NLS->sunctx->profiler);
+}
 #endif
 
 /* Forward declaration of function used to destroy any data allocated for Python */
@@ -115,17 +117,16 @@ void SUNNonlinSolFreeEmpty(SUNNonlinearSolver NLS)
  * ---------------------------------------------------------------------------*/
 
 SUNNonlinearSolver_Type SUNNonlinSolGetType(SUNNonlinearSolver NLS)
-{ return (NLS->ops->gettype(NLS)); }
+{
+  return (NLS->ops->gettype(NLS));
+}
 
 SUNErrCode SUNNonlinSolInitialize(SUNNonlinearSolver NLS)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(NLS));
   if (NLS->ops->initialize) { ier = NLS->ops->initialize(NLS); }
-  else
-  {
-    ier = SUN_SUCCESS;
-  }
+  else { ier = SUN_SUCCESS; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(NLS));
   return (ier);
 }
@@ -135,10 +136,7 @@ int SUNNonlinSolSetup(SUNNonlinearSolver NLS, N_Vector y, void* mem)
   int ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(NLS));
   if (NLS->ops->setup) { ier = NLS->ops->setup(NLS, y, mem); }
-  else
-  {
-    ier = SUN_SUCCESS;
-  }
+  else { ier = SUN_SUCCESS; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(NLS));
   return (ier);
 }
@@ -194,10 +192,7 @@ SUNErrCode sunnlsSetFromCommandLine(SUNNonlinearSolver NLS, const char* NLSid,
   if (NLSid != NULL && strlen(NLSid) > 0) { offset = strlen(NLSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (NLSid != NULL && strlen(NLSid) > 0) { strcpy(prefix, NLSid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -231,17 +226,16 @@ SUNErrCode sunnlsSetFromCommandLine(SUNNonlinearSolver NLS, const char* NLSid,
 
 /* set the nonlinear system function (required) */
 SUNErrCode SUNNonlinSolSetSysFn(SUNNonlinearSolver NLS, SUNNonlinSolSysFn SysFn)
-{ return (NLS->ops->setsysfn(NLS, SysFn)); }
+{
+  return (NLS->ops->setsysfn(NLS, SysFn));
+}
 
 /* set the linear solver setup function (optional) */
 SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS,
                                    SUNNonlinSolLSetupFn LSetupFn)
 {
   if (NLS->ops->setlsetupfn) { return (NLS->ops->setlsetupfn(NLS, LSetupFn)); }
-  else
-  {
-    return (SUN_SUCCESS);
-  }
+  else { return (SUN_SUCCESS); }
 }
 
 /* set the linear solver solve function (optional) */
@@ -249,10 +243,7 @@ SUNErrCode SUNNonlinSolSetLSolveFn(SUNNonlinearSolver NLS,
                                    SUNNonlinSolLSolveFn LSolveFn)
 {
   if (NLS->ops->setlsolvefn) { return (NLS->ops->setlsolvefn(NLS, LSolveFn)); }
-  else
-  {
-    return (SUN_SUCCESS);
-  }
+  else { return (SUN_SUCCESS); }
 }
 
 /* set the convergence test function (optional) */
@@ -264,10 +255,7 @@ SUNErrCode SUNNonlinSolSetConvTestFn(SUNNonlinearSolver NLS,
   {
     return (NLS->ops->setctestfn(NLS, CTestFn, ctest_data));
   }
-  else
-  {
-    return (SUN_SUCCESS);
-  }
+  else { return (SUN_SUCCESS); }
 }
 
 SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,
@@ -291,19 +279,13 @@ SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,
   {
     return (NLS->ops->setoptions(NLS, NLSid, file_name, argc, argv));
   }
-  else
-  {
-    return (SUN_SUCCESS);
-  }
+  else { return (SUN_SUCCESS); }
 }
 
 SUNErrCode SUNNonlinSolSetMaxIters(SUNNonlinearSolver NLS, int maxiters)
 {
   if (NLS->ops->setmaxiters) { return (NLS->ops->setmaxiters(NLS, maxiters)); }
-  else
-  {
-    return (SUN_SUCCESS);
-  }
+  else { return (SUN_SUCCESS); }
 }
 
 /* -----------------------------------------------------------------------------

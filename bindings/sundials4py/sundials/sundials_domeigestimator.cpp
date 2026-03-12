@@ -80,10 +80,7 @@ void bind_sundomeigestimator(nb::module_& m)
         return SUNDomEigEstimator_SetATimes(dee, fntable,
                                             sundomeigestimator_atimes_wrapper);
       }
-      else
-      {
-        return SUNDomEigEstimator_SetATimes(dee, fntable, nullptr);
-      }
+      else { return SUNDomEigEstimator_SetATimes(dee, fntable, nullptr); }
     },
     nb::arg("DEE"), nb::arg("ATimes").none());
 }
@@ -91,4 +88,6 @@ void bind_sundomeigestimator(nb::module_& m)
 } // namespace sundials4py
 
 extern "C" void SUNDomEigEstimatorFunctionTable_Destroy(void* ptr)
-{ delete static_cast<SUNDomEigEstimatorFunctionTable*>(ptr); }
+{
+  delete static_cast<SUNDomEigEstimatorFunctionTable*>(ptr);
+}

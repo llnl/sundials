@@ -61,10 +61,14 @@ public:
 
   virtual size_t blockSize(size_t /* numWorkUnits */ = 0,
                            size_t /* gridDim */      = 0) const
-  { return blockDim_; }
+  {
+    return blockDim_;
+  }
 
   virtual ExecPolicy* clone() const
-  { return static_cast<ExecPolicy*>(new ThreadDirectExecPolicy(*this)); }
+  {
+    return static_cast<ExecPolicy*>(new ThreadDirectExecPolicy(*this));
+  }
 
 private:
   const size_t blockDim_;
@@ -88,14 +92,20 @@ public:
 
   virtual size_t gridSize(size_t /* numWorkUnits */ = 0,
                           size_t /* blockDim */     = 0) const
-  { return gridDim_; }
+  {
+    return gridDim_;
+  }
 
   virtual size_t blockSize(size_t /* numWorkUnits */ = 0,
                            size_t /* gridDim */      = 0) const
-  { return blockDim_; }
+  {
+    return blockDim_;
+  }
 
   virtual ExecPolicy* clone() const
-  { return static_cast<ExecPolicy*>(new GridStrideExecPolicy(*this)); }
+  {
+    return static_cast<ExecPolicy*>(new GridStrideExecPolicy(*this));
+  }
 
 private:
   const size_t blockDim_;
@@ -131,10 +141,14 @@ public:
 
   virtual size_t blockSize(size_t /* numWorkUnits */ = 0,
                            size_t /* gridDim */      = 0) const
-  { return blockDim_; }
+  {
+    return blockDim_;
+  }
 
   virtual ExecPolicy* clone() const
-  { return static_cast<ExecPolicy*>(new BlockReduceExecPolicy(*this)); }
+  {
+    return static_cast<ExecPolicy*>(new BlockReduceExecPolicy(*this));
+  }
 
 private:
   const size_t blockDim_;

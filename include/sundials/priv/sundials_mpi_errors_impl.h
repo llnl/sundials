@@ -41,8 +41,7 @@ extern "C" {
  */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckMPICallMsg(call, msg)                                          \
-  do                                                                           \
-  {                                                                            \
+  do {                                                                         \
     int sun_chk_mpi_call_err_code_ = call;                                     \
     if (sun_chk_mpi_call_err_code_ != MPI_SUCCESS)                             \
     {                                                                          \
@@ -66,8 +65,7 @@ extern "C" {
  */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckMPICallNullMsg(call, msg)                                      \
-  do                                                                           \
-  {                                                                            \
+  do {                                                                         \
     int sun_chk_mpi_call_err_code_ = call;                                     \
     if (sun_chk_mpi_call_err_code_ != MPI_SUCCESS)                             \
     {                                                                          \
@@ -91,8 +89,7 @@ extern "C" {
  */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckMPICallVoidMsg(call, msg)                                      \
-  do                                                                           \
-  {                                                                            \
+  do {                                                                         \
     int sun_chk_mpi_call_err_code_ = call;                                     \
     if (sun_chk_mpi_call_err_code_ != MPI_SUCCESS)                             \
     {                                                                          \
@@ -116,8 +113,7 @@ extern "C" {
  */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNCheckMPICallNoRetMsg(call, msg)                                     \
-  do                                                                           \
-  {                                                                            \
+  do {                                                                         \
     int sun_chk_mpi_call_err_code_ = call;                                     \
     if (sun_chk_mpi_call_err_code_ != MPI_SUCCESS)                             \
     {                                                                          \

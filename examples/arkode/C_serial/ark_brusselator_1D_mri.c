@@ -581,9 +581,9 @@ static int SetIC(N_Vector y, void* user_data)
   /* Set initial conditions into y */
   for (i = 0; i < N; i++)
   {
-    x               = i * dx;
-    p               = SUN_RCONST(0.1) *
-                      SUNRexp(-(SUNSQR(x - SUN_RCONST(0.5))) / SUN_RCONST(0.1));
+    x = i * dx;
+    p = SUN_RCONST(0.1) *
+        SUNRexp(-(SUNSQR(x - SUN_RCONST(0.5))) / SUN_RCONST(0.1));
     data[IDX(i, 0)] = a + p;
     data[IDX(i, 1)] = b / a + p;
     data[IDX(i, 2)] = b + p;

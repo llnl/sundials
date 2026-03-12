@@ -103,10 +103,7 @@ int MyMemoryHelper_Dealloc(SUNMemoryHelper helper, SUNMemory mem, void* queue)
       MY_GPUCHK(MY_GPU(Free)(mem->ptr));
       mem->ptr = NULL;
     }
-    else
-    {
-      return (-1);
-    }
+    else { return (-1); }
   }
 
   free(mem);

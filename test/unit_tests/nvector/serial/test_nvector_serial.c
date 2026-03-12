@@ -240,10 +240,7 @@ int main(int argc, char* argv[])
 
   /* Print result */
   if (fails) { printf("FAIL: NVector module failed %i tests \n\n", fails); }
-  else
-  {
-    printf("SUCCESS: NVector module passed all tests \n\n");
-  }
+  else { printf("SUCCESS: NVector module passed all tests \n\n"); }
 
   Test_Finalize();
   return (fails);

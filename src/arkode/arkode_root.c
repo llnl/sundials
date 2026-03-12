@@ -168,10 +168,7 @@ int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g)
         return (ARK_SUCCESS);
       }
     }
-    else
-    {
-      return (ARK_SUCCESS);
-    }
+    else { return (ARK_SUCCESS); }
   }
 
   /* Set variable values in ARKODE memory block */
@@ -182,10 +179,7 @@ int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g)
                     MSG_ARK_NULL_G);
     return (ARK_ILL_INPUT);
   }
-  else
-  {
-    ark_mem->root_mem->gfun = g;
-  }
+  else { ark_mem->root_mem->gfun = g; }
 
   /* Allocate necessary memory and return */
   ark_mem->root_mem->glo = NULL;
@@ -662,7 +656,7 @@ int arkRootCheck3(void* arkode_mem, sunrealtype tout, int itask)
 
   rootmem->ttol = (SUNRabs(ark_mem->tcur) + SUNRabs(ark_mem->h)) *
                   ark_mem->uround * HUND;
-  ier           = arkRootfind(ark_mem);
+  ier = arkRootfind(ark_mem);
   if (ier == ARK_RTFUNC_FAIL) { return (ARK_RTFUNC_FAIL); }
   for (i = 0; i < rootmem->nrtfn; i++)
   {
@@ -847,10 +841,7 @@ int arkRootfind(void* arkode_mem)
        The next guess tmid is the secant method value if alpha = 1, but
        is closer to tlo if alpha < 1, and closer to thi if alpha > 1.    */
     if (sideprev == side) { alpha = (side == 2) ? alpha * TWO : alpha * HALF; }
-    else
-    {
-      alpha = ONE;
-    }
+    else { alpha = ONE; }
 
     /* Set next root approximation tmid and get g(tmid).
        If tmid is too close to tlo or thi, adjust it inward,

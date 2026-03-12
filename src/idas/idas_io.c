@@ -52,10 +52,7 @@ int IDASetDeltaCjLSetup(void* ida_mem, sunrealtype dcj)
   IDA_mem = (IDAMem)ida_mem;
 
   if (dcj < ZERO || dcj >= ONE) { IDA_mem->ida_dcj = DCJ_DEFAULT; }
-  else
-  {
-    IDA_mem->ida_dcj = dcj;
-  }
+  else { IDA_mem->ida_dcj = dcj; }
 
   return (IDA_SUCCESS);
 }
@@ -98,16 +95,10 @@ int IDASetEtaFixedStepBounds(void* ida_mem, sunrealtype eta_min_fx,
   {
     IDA_mem->ida_eta_min_fx = eta_min_fx;
   }
-  else
-  {
-    IDA_mem->ida_eta_min_fx = ETA_MIN_FX_DEFAULT;
-  }
+  else { IDA_mem->ida_eta_min_fx = ETA_MIN_FX_DEFAULT; }
 
   if (eta_max_fx >= ONE) { IDA_mem->ida_eta_max_fx = eta_max_fx; }
-  else
-  {
-    IDA_mem->ida_eta_max_fx = ETA_MAX_FX_DEFAULT;
-  }
+  else { IDA_mem->ida_eta_max_fx = ETA_MAX_FX_DEFAULT; }
 
   return (IDA_SUCCESS);
 }
@@ -127,10 +118,7 @@ int IDASetEtaMax(void* ida_mem, sunrealtype eta_max)
 
   /* set allowed value or use default */
   if (eta_max <= ONE) { IDA_mem->ida_eta_max = ETA_MAX_DEFAULT; }
-  else
-  {
-    IDA_mem->ida_eta_max = eta_max;
-  }
+  else { IDA_mem->ida_eta_max = eta_max; }
 
   return (IDA_SUCCESS);
 }
@@ -153,10 +141,7 @@ int IDASetEtaMin(void* ida_mem, sunrealtype eta_min)
   {
     IDA_mem->ida_eta_min = ETA_MIN_DEFAULT;
   }
-  else
-  {
-    IDA_mem->ida_eta_min = eta_min;
-  }
+  else { IDA_mem->ida_eta_min = eta_min; }
 
   return (IDA_SUCCESS);
 }
@@ -179,10 +164,7 @@ int IDASetEtaLow(void* ida_mem, sunrealtype eta_low)
   {
     IDA_mem->ida_eta_low = ETA_LOW_DEFAULT;
   }
-  else
-  {
-    IDA_mem->ida_eta_low = eta_low;
-  }
+  else { IDA_mem->ida_eta_low = eta_low; }
 
   return (IDA_SUCCESS);
 }
@@ -205,10 +187,7 @@ int IDASetEtaMinErrFail(void* ida_mem, sunrealtype eta_min_ef)
   {
     IDA_mem->ida_eta_min_ef = ETA_MIN_EF_DEFAULT;
   }
-  else
-  {
-    IDA_mem->ida_eta_min_ef = eta_min_ef;
-  }
+  else { IDA_mem->ida_eta_min_ef = eta_min_ef; }
 
   return (IDA_SUCCESS);
 }
@@ -228,10 +207,7 @@ int IDASetEtaConvFail(void* ida_mem, sunrealtype eta_cf)
 
   /* set allowed value or use default */
   if (eta_cf <= ZERO || eta_cf >= ONE) { IDA_mem->ida_eta_cf = ETA_CF_DEFAULT; }
-  else
-  {
-    IDA_mem->ida_eta_cf = eta_cf;
-  }
+  else { IDA_mem->ida_eta_cf = eta_cf; }
 
   return (IDA_SUCCESS);
 }
@@ -291,10 +267,7 @@ int IDASetMaxNumSteps(void* ida_mem, long int mxsteps)
   /* Passing mxsteps=0 sets the default. Passing mxsteps<0 disables the test. */
 
   if (mxsteps == 0) { IDA_mem->ida_mxstep = MXSTEP_DEFAULT; }
-  else
-  {
-    IDA_mem->ida_mxstep = mxsteps;
-  }
+  else { IDA_mem->ida_mxstep = mxsteps; }
 
   return (IDA_SUCCESS);
 }
@@ -689,10 +662,7 @@ int IDASetMaxNumConstraintFails(void* ida_mem, int max_fails)
   IDAMem IDA_mem = (IDAMem)ida_mem;
 
   if (max_fails <= 0) { IDA_mem->max_constraint_fails = MAX_CONSTRAINT_FAILS; }
-  else
-  {
-    IDA_mem->max_constraint_fails = max_fails;
-  }
+  else { IDA_mem->max_constraint_fails = max_fails; }
 
   return IDA_SUCCESS;
 }

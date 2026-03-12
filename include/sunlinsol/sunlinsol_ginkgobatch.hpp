@@ -39,14 +39,20 @@ class BatchLinearSolver;
 namespace impl {
 
 inline SUNLinearSolver_Type SUNLinSolGetType_GinkgoBatch(SUNLinearSolver S)
-{ return SUNLINEARSOLVER_MATRIX_ITERATIVE; }
+{
+  return SUNLINEARSOLVER_MATRIX_ITERATIVE;
+}
 
 inline SUNLinearSolver_ID SUNLinSolGetID_GinkgoBatch(SUNLinearSolver S)
-{ return SUNLINEARSOLVER_GINKGOBATCH; }
+{
+  return SUNLINEARSOLVER_GINKGOBATCH;
+}
 
 template<class GkoBatchLinearSolverType>
 SUNErrCode SUNLinSolInitialize_GinkgoBatch(SUNLinearSolver S)
-{ return SUN_SUCCESS; }
+{
+  return SUN_SUCCESS;
+}
 
 template<class GkoBatchLinearSolverType>
 SUNErrCode SUNLinSolSetScalingVectors_GinkgoBatch(SUNLinearSolver S,
@@ -148,7 +154,9 @@ public:
       scaling_mode_(LAGGED_SCALING),
       scaling_initialized_(false),
       do_setup_(true)
-  { initSUNLinSol(sunctx); }
+  {
+    initSUNLinSol(sunctx);
+  }
 
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
   BatchLinearSolver(std::shared_ptr<const gko::Executor> gko_exec,
@@ -432,10 +440,7 @@ public:
 
     int retval{0};
     if (at_least_one_did_not_converge) { retval = SUNLS_CONV_FAIL; }
-    else
-    {
-      retval = SUN_SUCCESS;
-    }
+    else { retval = SUN_SUCCESS; }
 
     SUNLogInfo(sunLogger(), "linear-solver",
                "avg. iter count = " SUN_FORMAT_G

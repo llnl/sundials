@@ -75,7 +75,9 @@ static SUNErrCode sunProfilerDestroyKeyValue(SUNHashMapKeyValue* kv_ptr)
 }
 
 static void sunStartTiming(sunTimerStruct* entry)
-{ sunclock_gettime_monotonic(entry->tic); }
+{
+  sunclock_gettime_monotonic(entry->tic);
+}
 
 static void sunStopTiming(sunTimerStruct* entry)
 {

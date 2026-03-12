@@ -271,10 +271,7 @@ int CVodeSetLinearSolver(void* cvode_mem, SUNLinearSolver LS, SUNMatrix A)
 
   /* Check if solution scaling should be enabled */
   if (matrixbased && cv_mem->cv_lmm == CV_BDF) { cvls_mem->scalesol = SUNTRUE; }
-  else
-  {
-    cvls_mem->scalesol = SUNFALSE;
-  }
+  else { cvls_mem->scalesol = SUNFALSE; }
 
   /* Attach linear solver memory to integrator memory */
   cv_mem->cv_lmem = cvls_mem;
@@ -342,10 +339,7 @@ int CVodeSetDeltaGammaMaxBadJac(void* cvode_mem, sunrealtype dgmax_jbad)
 
   /* Set value or use default */
   if (dgmax_jbad <= ZERO) { cvls_mem->dgmax_jbad = CVLS_DGMAX; }
-  else
-  {
-    cvls_mem->dgmax_jbad = dgmax_jbad;
-  }
+  else { cvls_mem->dgmax_jbad = dgmax_jbad; }
 
   return (CVLS_SUCCESS);
 }
@@ -563,10 +557,7 @@ int CVodeSetJacTimesRhsFn(void* cvode_mem, CVRhsFn jtimesRhsFn)
 
   /* store function pointers for RHS function (NULL implies use ODE RHS) */
   if (jtimesRhsFn != NULL) { cvls_mem->jt_f = jtimesRhsFn; }
-  else
-  {
-    cvls_mem->jt_f = cv_mem->cv_f;
-  }
+  else { cvls_mem->jt_f = cv_mem->cv_f; }
 
   return (CVLS_SUCCESS);
 }
@@ -1454,15 +1445,9 @@ int cvLsInitialize(CVodeMem cv_mem)
             cvls_mem->jac    = cvLsDQJac;
             cvls_mem->J_data = cv_mem;
           }
-          else
-          {
-            retval++;
-          }
+          else { retval++; }
         }
-        else
-        {
-          retval++;
-        }
+        else { retval++; }
         if (retval)
         {
           cvProcessError(cv_mem, CVLS_ILL_INPUT, __LINE__, __func__,
@@ -1514,10 +1499,7 @@ int cvLsInitialize(CVodeMem cv_mem)
     cvls_mem->jtimes  = cvLsDQJtimes;
     cvls_mem->jt_data = cv_mem;
   }
-  else
-  {
-    cvls_mem->jt_data = cv_mem->cv_user_data;
-  }
+  else { cvls_mem->jt_data = cv_mem->cv_user_data; }
 
   /* if A is NULL and psetup is not present, then cvLsSetup does
      not need to be called, so set the lsetup function to NULL */
@@ -1641,10 +1623,7 @@ int cvLsSetup(CVodeMem cv_mem, int convfail, N_Vector ypred, N_Vector fpred,
           return (1);
         }
       }
-      else
-      {
-        return (retval);
-      }
+      else { return (retval); }
     }
   }
   else
@@ -1859,10 +1838,7 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
     /* allow reduction but not solution on first Newton iteration,
        otherwise return with a recoverable failure */
     if (curiter == 0) { return (0); }
-    else
-    {
-      return (1);
-    }
+    else { return (1); }
     break;
   case SUNLS_CONV_FAIL:
   case SUNLS_ATIMES_FAIL_REC:

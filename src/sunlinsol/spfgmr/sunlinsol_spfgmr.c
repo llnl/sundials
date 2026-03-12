@@ -193,10 +193,7 @@ static SUNErrCode setFromCommandLine_SPFGMR(SUNLinearSolver S, const char* LSid,
   if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -308,10 +305,14 @@ SUNErrCode SUNLinSol_SPFGMRSetMaxRestarts(SUNLinearSolver S, int maxrs)
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_SPFGMR(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_ITERATIVE); }
+{
+  return (SUNLINEARSOLVER_ITERATIVE);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_SPFGMR(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_SPFGMR); }
+{
+  return (SUNLINEARSOLVER_SPFGMR);
+}
 
 SUNErrCode SUNLinSolInitialize_SPFGMR(SUNLinearSolver S)
 {
@@ -840,16 +841,24 @@ int SUNLinSolSolve_SPFGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 }
 
 int SUNLinSolNumIters_SPFGMR(SUNLinearSolver S)
-{ return (SPFGMR_CONTENT(S)->numiters); }
+{
+  return (SPFGMR_CONTENT(S)->numiters);
+}
 
 sunrealtype SUNLinSolResNorm_SPFGMR(SUNLinearSolver S)
-{ return (SPFGMR_CONTENT(S)->resnorm); }
+{
+  return (SPFGMR_CONTENT(S)->resnorm);
+}
 
 N_Vector SUNLinSolResid_SPFGMR(SUNLinearSolver S)
-{ return (SPFGMR_CONTENT(S)->vtemp); }
+{
+  return (SPFGMR_CONTENT(S)->vtemp);
+}
 
 sunindextype SUNLinSolLastFlag_SPFGMR(SUNLinearSolver S)
-{ return (LASTFLAG(S)); }
+{
+  return (LASTFLAG(S));
+}
 
 SUNErrCode SUNLinSolSpace_SPFGMR(SUNLinearSolver S, long int* lenrwLS,
                                  long int* leniwLS)
@@ -863,10 +872,7 @@ SUNErrCode SUNLinSolSpace_SPFGMR(SUNLinearSolver S, long int* lenrwLS,
     N_VSpace(SPFGMR_CONTENT(S)->vtemp, &lrw1, &liw1);
     SUNCheckLastErr();
   }
-  else
-  {
-    lrw1 = liw1 = 0;
-  }
+  else { lrw1 = liw1 = 0; }
   *lenrwLS = lrw1 * (2 * maxl + 4) + maxl * (maxl + 5) + 2;
   *leniwLS = liw1 * (2 * maxl + 4);
   return SUN_SUCCESS;

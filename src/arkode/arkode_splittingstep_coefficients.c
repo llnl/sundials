@@ -254,7 +254,9 @@ SplittingStepCoefficients SplittingStepCoefficients_LieTrotter(const int partiti
   Routine to construct the standard Stang splitting
   ---------------------------------------------------------------*/
 SplittingStepCoefficients SplittingStepCoefficients_Strang(const int partitions)
-{ return SplittingStepCoefficients_TripleJump(partitions, 2); }
+{
+  return SplittingStepCoefficients_TripleJump(partitions, 2);
+}
 
 /*---------------------------------------------------------------
   Routine to construct a parallel splitting method
@@ -388,11 +390,11 @@ static sunrealtype* const* SplittingStepCoefficients_ComposeStrangHelper(
                                   ? (start + i * gamma)
                                   : (end + (i - composition_stages) * gamma);
     /* Recursively generate coefficients and shift beta_cur */
-    beta_cur = SplittingStepCoefficients_ComposeStrangHelper(partitions,
-                                                             order - 2,
-                                                             composition_stages,
-                                                             start_cur, end_cur,
-                                                             beta_cur);
+    beta_cur  = SplittingStepCoefficients_ComposeStrangHelper(partitions,
+                                                              order - 2,
+                                                              composition_stages,
+                                                              start_cur, end_cur,
+                                                              beta_cur);
     start_cur = end_cur;
   }
 
@@ -432,11 +434,15 @@ static SplittingStepCoefficients SplittingStepCoefficients_ComposeStrang(
 
 SplittingStepCoefficients SplittingStepCoefficients_TripleJump(const int partitions,
                                                                const int order)
-{ return SplittingStepCoefficients_ComposeStrang(partitions, order, 3); }
+{
+  return SplittingStepCoefficients_ComposeStrang(partitions, order, 3);
+}
 
 SplittingStepCoefficients SplittingStepCoefficients_SuzukiFractal(
   const int partitions, const int order)
-{ return SplittingStepCoefficients_ComposeStrang(partitions, order, 5); }
+{
+  return SplittingStepCoefficients_ComposeStrang(partitions, order, 5);
+}
 
 /*---------------------------------------------------------------
   Routine to print a splitting coefficient structure

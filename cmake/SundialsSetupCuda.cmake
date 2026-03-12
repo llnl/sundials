@@ -62,7 +62,8 @@ endif()
 
 if(SUNDIALS_PRECISION MATCHES "EXTENDED|FLOAT128")
   message(
-    FATAL_ERROR "CUDA interfaces are incompatible with ${SUNDIALS_PRECISION} precision.")
+    FATAL_ERROR
+      "CUDA interfaces are incompatible with ${SUNDIALS_PRECISION} precision.")
 endif()
 
 # ===============================================================

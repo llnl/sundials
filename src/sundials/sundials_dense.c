@@ -37,32 +37,50 @@
  */
 
 sunindextype SUNDlsMat_DenseGETRF(SUNDlsMat A, sunindextype* p)
-{ return (SUNDlsMat_denseGETRF(A->cols, A->M, A->N, p)); }
+{
+  return (SUNDlsMat_denseGETRF(A->cols, A->M, A->N, p));
+}
 
 void SUNDlsMat_DenseGETRS(SUNDlsMat A, sunindextype* p, sunrealtype* b)
-{ SUNDlsMat_denseGETRS(A->cols, A->N, p, b); }
+{
+  SUNDlsMat_denseGETRS(A->cols, A->N, p, b);
+}
 
 sunindextype SUNDlsMat_DensePOTRF(SUNDlsMat A)
-{ return (SUNDlsMat_densePOTRF(A->cols, A->M)); }
+{
+  return (SUNDlsMat_densePOTRF(A->cols, A->M));
+}
 
 void SUNDlsMat_DensePOTRS(SUNDlsMat A, sunrealtype* b)
-{ SUNDlsMat_densePOTRS(A->cols, A->M, b); }
+{
+  SUNDlsMat_densePOTRS(A->cols, A->M, b);
+}
 
 int SUNDlsMat_DenseGEQRF(SUNDlsMat A, sunrealtype* beta, sunrealtype* wrk)
-{ return (SUNDlsMat_denseGEQRF(A->cols, A->M, A->N, beta, wrk)); }
+{
+  return (SUNDlsMat_denseGEQRF(A->cols, A->M, A->N, beta, wrk));
+}
 
 int SUNDlsMat_DenseORMQR(SUNDlsMat A, sunrealtype* beta, sunrealtype* vn,
                          sunrealtype* vm, sunrealtype* wrk)
-{ return (SUNDlsMat_denseORMQR(A->cols, A->M, A->N, beta, vn, vm, wrk)); }
+{
+  return (SUNDlsMat_denseORMQR(A->cols, A->M, A->N, beta, vn, vm, wrk));
+}
 
 void SUNDlsMat_DenseCopy(SUNDlsMat A, SUNDlsMat B)
-{ SUNDlsMat_denseCopy(A->cols, B->cols, A->M, A->N); }
+{
+  SUNDlsMat_denseCopy(A->cols, B->cols, A->M, A->N);
+}
 
 void SUNDlsMat_DenseScale(sunrealtype c, SUNDlsMat A)
-{ SUNDlsMat_denseScale(c, A->cols, A->M, A->N); }
+{
+  SUNDlsMat_denseScale(c, A->cols, A->M, A->N);
+}
 
 void SUNDlsMat_DenseMatvec(SUNDlsMat A, sunrealtype* x, sunrealtype* y)
-{ SUNDlsMat_denseMatvec(A->cols, x, y, A->M, A->N); }
+{
+  SUNDlsMat_denseMatvec(A->cols, x, y, A->M, A->N);
+}
 
 sunindextype SUNDlsMat_denseGETRF(sunrealtype** a, sunindextype m,
                                   sunindextype n, sunindextype* p)
@@ -283,10 +301,7 @@ int SUNDlsMat_denseGEQRF(sunrealtype** a, sunindextype m, sunindextype n,
       beta[j] = TWO * v1_2 / (s + v1_2);
       for (i = 1; i < m - j; i++) { v[i] /= v1; }
     }
-    else
-    {
-      beta[j] = ZERO;
-    }
+    else { beta[j] = ZERO; }
 
     /* Update upper triangle of A (load R) */
     for (k = j; k < n; k++)

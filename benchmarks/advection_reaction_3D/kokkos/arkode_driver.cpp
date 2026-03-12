@@ -171,8 +171,7 @@ int EvolveProblemDIRK(N_Vector y, UserData* udata, UserOptions* uopt)
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1, udata->myid)) { break; }
@@ -377,8 +376,7 @@ int EvolveProblemIMEX(N_Vector y, UserData* udata, UserOptions* uopt)
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1, udata->myid)) { break; }
@@ -504,8 +502,7 @@ int EvolveProblemExplicit(N_Vector y, UserData* udata, UserOptions* uopt)
   tout = t + dtout;
   iout = 0;
 
-  do
-  {
+  do {
     /* Integrate to output time */
     retval = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1, udata->myid)) { break; }
@@ -617,7 +614,9 @@ static int TaskLocalLSolve(N_Vector delta, void* arkode_mem)
 }
 
 static SUNNonlinearSolver_Type TaskLocalNewton_GetType(SUNNonlinearSolver NLS)
-{ return SUNNONLINEARSOLVER_ROOTFIND; }
+{
+  return SUNNONLINEARSOLVER_ROOTFIND;
+}
 
 static int TaskLocalNewton_Initialize(SUNNonlinearSolver NLS)
 {

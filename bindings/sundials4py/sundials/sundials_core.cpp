@@ -60,10 +60,7 @@ void bind_core(nb::module_& m)
           std::shared_ptr<FILE> fp;
           SUNErrCode status = SUNFileOpen(filename, modes, &tmp);
           if (status) { fp = nullptr; }
-          else
-          {
-            fp = std::shared_ptr<FILE>(tmp, std::fclose);
-          }
+          else { fp = std::shared_ptr<FILE>(tmp, std::fclose); }
           return std::make_tuple(status, fp);
         });
 

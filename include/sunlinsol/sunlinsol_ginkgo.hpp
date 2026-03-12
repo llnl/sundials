@@ -41,10 +41,14 @@ class LinearSolver;
 namespace impl {
 
 inline SUNLinearSolver_Type SUNLinSolGetType_Ginkgo(SUNLinearSolver S)
-{ return SUNLINEARSOLVER_MATRIX_ITERATIVE; }
+{
+  return SUNLINEARSOLVER_MATRIX_ITERATIVE;
+}
 
 inline SUNLinearSolver_ID SUNLinSolGetID_Ginkgo(SUNLinearSolver S)
-{ return SUNLINEARSOLVER_GINKGO; }
+{
+  return SUNLINEARSOLVER_GINKGO;
+}
 
 template<class GkoSolverType, class GkoMatrixType>
 int SUNLinSolSetup_Ginkgo(SUNLinearSolver S, SUNMatrix A)
@@ -115,7 +119,9 @@ public:
   gko::uint64 get_max_iters() const { return parameters_.max_iters; }
 
   sunrealtype get_reduction_factor() const
-  { return parameters_.reduction_factor; }
+  {
+    return parameters_.reduction_factor;
+  }
 
 protected:
   bool check_impl(gko::uint8 stoppingId, bool setFinalized,
@@ -246,7 +252,9 @@ public:
 
   /// Implicit conversion to a :c:type:`SUNLinearSolver`
   operator SUNLinearSolver() const noexcept override
-  { return sunlinsol_.get(); }
+  {
+    return sunlinsol_.get();
+  }
 
   /// Explicit conversion to a :c:type:`SUNLinearSolver`
   SUNLinearSolver get() noexcept override { return sunlinsol_.get(); }
@@ -256,11 +264,15 @@ public:
 
   /// Get the ``gko::Executor`` associated with the Ginkgo solver
   std::shared_ptr<const gko::Executor> GkoExec() const
-  { return gko_solver_factory_->get_executor(); }
+  {
+    return gko_solver_factory_->get_executor();
+  }
 
   /// Get the underlying Ginkgo solver factory
   std::shared_ptr<typename GkoSolverType::Factory> GkoFactory()
-  { return gko_solver_factory_; }
+  {
+    return gko_solver_factory_;
+  }
 
   /// Get the underlying Ginkgo solver
   /// \note This will be `nullptr` until the linear solver setup phase.

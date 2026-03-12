@@ -110,10 +110,7 @@ void* SPRKStepCreate(ARKRhsFn f1, ARKRhsFn f2, sunrealtype t0, N_Vector y0,
     /* Zero yerr for compensated summation */
     N_VConst(ZERO, step_mem->yerr);
   }
-  else
-  {
-    step_mem->yerr = NULL;
-  }
+  else { step_mem->yerr = NULL; }
   ark_mem->step_init                  = sprkStep_Init;
   ark_mem->step_fullrhs               = sprkStep_FullRHS;
   ark_mem->step                       = sprkStep_TakeStep;

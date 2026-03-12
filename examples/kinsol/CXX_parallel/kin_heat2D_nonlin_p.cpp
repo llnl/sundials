@@ -675,10 +675,7 @@ static int SetC(UserData* udata)
     else if (udata->c_int == 16) { udata->c = c16; }
     else if (udata->c_int == 17) { udata->c = c17; }
   }
-  else
-  {
-    return 1;
-  }
+  else { return 1; }
 
   // Return success
   return 0;

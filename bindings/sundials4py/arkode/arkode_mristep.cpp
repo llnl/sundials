@@ -152,4 +152,6 @@ void bind_arkode_mristep(nb::module_& m)
 
 // The destroy functions gets called in our C code
 extern "C" void mristepinnerstepper_user_supplied_fn_table_destroy(void* ptr)
-{ delete static_cast<mristepinnerstepper_user_supplied_fn_table*>(ptr); }
+{
+  delete static_cast<mristepinnerstepper_user_supplied_fn_table*>(ptr);
+}

@@ -146,7 +146,7 @@
 #define ONE      SUN_RCONST(1.0)    /* 1. */
 #define TWO      SUN_RCONST(2.0)    /* 2. */
 #define PREYIN   SUN_RCONST(1.0)    /* initial guess for prey concentrations. */
-#define PREDIN SUN_RCONST(30000.0)  /* initial guess for predator concs.      */
+#define PREDIN   SUN_RCONST(30000.0) /* initial guess for predator concs.      */
 
 /* User-defined vector access macro: IJ_Vptr */
 
@@ -234,8 +234,10 @@ int main(int argc, char* argv[])
   num_threads =
     omp_get_max_threads(); /* Overwrite with OMP_NUM_THREADS environment variable */
 #endif
-  if (argc > 1) { /* overwrithe with command line value, if supplied */
-                  num_threads = (int)strtol(argv[1], NULL, 0); }
+  if (argc > 1)
+  { /* overwrithe with command line value, if supplied */
+    num_threads = (int)strtol(argv[1], NULL, 0);
+  }
 
   data = AllocUserData();
   if (check_retval((void*)data, "AllocUserData", 2)) { return (1); }

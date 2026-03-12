@@ -128,10 +128,7 @@ int main(int argc, char* argv[])
 
   /* Parse command line arguments */
   if (argc > 1) { ngroups = atoi(argv[1]); }
-  else
-  {
-    ngroups = 1000;
-  }
+  else { ngroups = 1000; }
   neq = ngroups * GROUPSIZE;
 
   udata.ngroups = ngroups;
@@ -322,9 +319,9 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
     colvals[nnzper * groupj + 2] = GROUPSIZE * groupj + 2;
 
     /* second row of block */
-    data[nnzper * groupj + 3]    = SUN_RCONST(0.04);
-    data[nnzper * groupj + 4]    = (SUN_RCONST(-1.0e4) * y3) -
-                                   (SUN_RCONST(6.0e7) * y2);
+    data[nnzper * groupj + 3] = SUN_RCONST(0.04);
+    data[nnzper * groupj + 4] = (SUN_RCONST(-1.0e4) * y3) -
+                                (SUN_RCONST(6.0e7) * y2);
     data[nnzper * groupj + 5]    = SUN_RCONST(-1.0e4) * y2;
     colvals[nnzper * groupj + 3] = GROUPSIZE * groupj;
     colvals[nnzper * groupj + 4] = GROUPSIZE * groupj + 1;

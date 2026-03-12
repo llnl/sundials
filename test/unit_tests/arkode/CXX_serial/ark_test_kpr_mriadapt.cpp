@@ -269,16 +269,10 @@ int main(int argc, char* argv[])
   std::cout << "\n  Slow integrator: " << opts.mri_method;
   if (slowimex) { std::cout << " (ImEx)" << std::endl; }
   else if (slowimplicit) { std::cout << " (implicit)" << std::endl; }
-  else
-  {
-    std::cout << " (explicit)" << std::endl;
-  }
+  else { std::cout << " (explicit)" << std::endl; }
   PrintSlowAdaptivity(opts);
   if (opts.fast_order == 0) { std::cout << "\n  Fast integrator disabled"; }
-  else
-  {
-    std::cout << "\n  Fast order " << opts.fast_order << std::endl;
-  }
+  else { std::cout << "\n  Fast order " << opts.fast_order << std::endl; }
   PrintFastAdaptivity(opts);
 
   // If SUNLogger is enabled, manually disable it for the reference solver
@@ -1127,7 +1121,9 @@ static int Jn(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 static sunrealtype r(sunrealtype t, Options* opts) { return (SUNRcos(t)); }
 
 static sunrealtype s(sunrealtype t, Options* opts)
-{ return (SUNRcos(opts->w * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO))))); }
+{
+  return (SUNRcos(opts->w * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))));
+}
 
 static sunrealtype rdot(sunrealtype t, Options* opts) { return (-SUNRsin(t)); }
 
@@ -1140,10 +1136,14 @@ static sunrealtype sdot(sunrealtype t, Options* opts)
 }
 
 static sunrealtype utrue(sunrealtype t, Options* opts)
-{ return (SUNRsqrt(TWO + r(t, opts))); }
+{
+  return (SUNRsqrt(TWO + r(t, opts)));
+}
 
 static sunrealtype vtrue(sunrealtype t, Options* opts)
-{ return (SUNRsqrt(TWO + s(t, opts))); }
+{
+  return (SUNRsqrt(TWO + s(t, opts)));
+}
 
 static int Ytrue(sunrealtype t, N_Vector y, Options* opts)
 {

@@ -112,10 +112,7 @@ static int kinSetFromCommandLine(void* kinmem, const char* kinid, int argc,
   if (kinid != NULL && strlen(kinid) > 0) { offset = strlen(kinid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (kinid != NULL && strlen(kinid) > 0) { strcpy(prefix, kinid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)

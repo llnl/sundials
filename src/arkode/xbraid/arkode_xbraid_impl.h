@@ -33,16 +33,14 @@ extern "C" {
  * -------------- */
 
 #define CHECK_BRAID_RETURN(last_flag, flag)     \
-  do                                            \
-  {                                             \
+  do {                                          \
     (last_flag) = (flag);                       \
     if ((flag) != 0) return SUNBRAID_BRAIDFAIL; \
   }                                             \
   while (0)
 
 #define CHECK_ARKODE_RETURN(last_flag, flag)  \
-  do                                          \
-  {                                           \
+  do {                                        \
     (last_flag) = (flag);                     \
     if ((flag) != 0) return SUNBRAID_SUNFAIL; \
   }                                           \

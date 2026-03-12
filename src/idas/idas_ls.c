@@ -319,10 +319,7 @@ int IDASetLinearSolver(void* ida_mem, SUNLinearSolver LS, SUNMatrix A)
 
   /* For matrix-based LS, enable solution scaling */
   if (matrixbased) { idals_mem->scalesol = SUNTRUE; }
-  else
-  {
-    idals_mem->scalesol = SUNFALSE;
-  }
+  else { idals_mem->scalesol = SUNFALSE; }
 
   /* Attach linear solver memory to integrator memory */
   IDA_mem->ida_lmem = idals_mem;
@@ -578,10 +575,7 @@ int IDASetJacTimesResFn(void* ida_mem, IDAResFn jtimesResFn)
 
   /* store function pointers for Res function (NULL implies use DAE Res) */
   if (jtimesResFn != NULL) { idals_mem->jt_res = jtimesResFn; }
-  else
-  {
-    idals_mem->jt_res = IDA_mem->ida_res;
-  }
+  else { idals_mem->jt_res = IDA_mem->ida_res; }
 
   return (IDALS_SUCCESS);
 }
@@ -1271,10 +1265,7 @@ int idaLsDQJtimes(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector rr,
   {
     sig = idals_mem->nrmfac * idals_mem->dqincfac;
   }
-  else
-  {
-    sig = idals_mem->dqincfac / N_VWrmsNorm(v, IDA_mem->ida_ewt);
-  }
+  else { sig = idals_mem->dqincfac / N_VWrmsNorm(v, IDA_mem->ida_ewt); }
 
   /* Rename work1 and work2 for readability */
   y_tmp  = work1;
@@ -1346,15 +1337,9 @@ int idaLsInitialize(IDAMem IDA_mem)
         idals_mem->jac    = idaLsDQJac;
         idals_mem->J_data = IDA_mem;
       }
-      else
-      {
-        retval++;
-      }
+      else { retval++; }
     }
-    else
-    {
-      retval++;
-    }
+    else { retval++; }
     if (retval)
     {
       IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -1380,10 +1365,7 @@ int idaLsInitialize(IDAMem IDA_mem)
     idals_mem->jtimes  = idaLsDQJtimes;
     idals_mem->jt_data = IDA_mem;
   }
-  else
-  {
-    idals_mem->jt_data = IDA_mem->ida_user_data;
-  }
+  else { idals_mem->jt_data = IDA_mem->ida_user_data; }
 
   /* if J is NULL and psetup is not present, then idaLsSetup does
      not need to be called, so set the lsetup function to NULL */
@@ -1625,10 +1607,7 @@ int idaLsSolve(IDAMem IDA_mem, N_Vector b, N_Vector weight, N_Vector ycur,
     {
       N_VScale(ONE, SUNLinSolResid(idals_mem->LS), b);
     }
-    else
-    {
-      N_VScale(ONE, idals_mem->x, b);
-    }
+    else { N_VScale(ONE, idals_mem->x, b); }
 
     /* Increment nli counter */
     idals_mem->nli += nli_inc;
@@ -1963,10 +1942,7 @@ int IDASetJacFnB(void* ida_mem, int which, IDALsJacFnB jacB)
   /* call corresponding routine for IDAB_mem structure */
   ida_memB = (void*)IDAB_mem->IDA_mem;
   if (jacB != NULL) { retval = IDASetJacFn(ida_memB, idaLsJacBWrapper); }
-  else
-  {
-    retval = IDASetJacFn(ida_memB, NULL);
-  }
+  else { retval = IDASetJacFn(ida_memB, NULL); }
 
   return (retval);
 }
@@ -1991,10 +1967,7 @@ int IDASetJacFnBS(void* ida_mem, int which, IDALsJacFnBS jacBS)
   /* call corresponding routine for IDAB_mem structure */
   ida_memB = (void*)IDAB_mem->IDA_mem;
   if (jacBS != NULL) { retval = IDASetJacFn(ida_memB, idaLsJacBSWrapper); }
-  else
-  {
-    retval = IDASetJacFn(ida_memB, NULL);
-  }
+  else { retval = IDASetJacFn(ida_memB, NULL); }
 
   return (retval);
 }

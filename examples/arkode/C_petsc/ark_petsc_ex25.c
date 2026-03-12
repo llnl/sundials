@@ -540,8 +540,8 @@ PetscErrorCode FormInitialSolution(Vec X, void* ctx)
   {
     PetscReal xi = i * hx;
     x[i].u       = user->uleft * (1. - xi) + user->uright * xi +
-                   PetscSinReal(2. * PETSC_PI * xi);
-    x[i].v       = user->vleft * (1. - xi) + user->vright * xi;
+             PetscSinReal(2. * PETSC_PI * xi);
+    x[i].v = user->vleft * (1. - xi) + user->vright * xi;
   }
   ierr = DMDAVecRestoreArray(user->da, X, &x);
   CHKERRQ(ierr);

@@ -273,10 +273,7 @@ int main(int argc, char* argv[])
 
   /* Test if matlab output is requested */
   if (argc > 1) { output = SUNTRUE; }
-  else
-  {
-    output = SUNFALSE;
-  }
+  else { output = SUNFALSE; }
 
   /* Allocate and set problem data structure */
   d = (ProblemData)malloc(sizeof *d);
@@ -812,7 +809,7 @@ static void f_comm(sunindextype N_local, sunrealtype t, N_Vector y,
           }
       }
     } /* end loop over direction */
-  } /* end loop over dimension */
+  }   /* end loop over dimension */
 }
 
 /*

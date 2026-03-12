@@ -498,7 +498,9 @@ sunindextype* SUNSparseMatrix_IndexPointers(SUNMatrix A)
  */
 
 SUNMatrix_ID SUNMatGetID_Sparse(SUNDIALS_MAYBE_UNUSED SUNMatrix A)
-{ return SUNMATRIX_SPARSE; }
+{
+  return SUNMATRIX_SPARSE;
+}
 
 SUNMatrix SUNMatClone_Sparse(SUNMatrix A)
 {
@@ -644,10 +646,7 @@ SUNErrCode SUNMatScaleAddI_Sparse(sunrealtype c, SUNMatrix A)
         found = SUNTRUE;
         Ax[i] = ONE + c * Ax[i];
       }
-      else
-      {
-        Ax[i] *= c;
-      }
+      else { Ax[i] *= c; }
     }
     /* If no diagonal element found and the current column (row) can actually
      * contain a diagonal element, increment the storage counter */
@@ -936,10 +935,7 @@ SUNErrCode SUNMatMatvec_Sparse(SUNMatrix A, N_Vector x, N_Vector y)
   {
     SUNCheckCall(Matvec_SparseCSC(A, x, y));
   }
-  else
-  {
-    SUNCheckCall(Matvec_SparseCSR(A, x, y));
-  }
+  else { SUNCheckCall(Matvec_SparseCSR(A, x, y)); }
 
   return SUN_SUCCESS;
 }
@@ -955,10 +951,7 @@ SUNErrCode SUNMatHermitianTransposeVec_Sparse(SUNMatrix A, N_Vector x, N_Vector 
   {
     SUNCheckCall(MatTransposeVec_SparseCSC(A, x, y));
   }
-  else
-  {
-    SUNCheckCall(MatTransposeVec_SparseCSR(A, x, y));
-  }
+  else { SUNCheckCall(MatTransposeVec_SparseCSR(A, x, y)); }
 
   return SUN_SUCCESS;
 }

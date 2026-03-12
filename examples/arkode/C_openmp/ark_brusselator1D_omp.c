@@ -153,8 +153,10 @@ int main(int argc, char* argv[])
   num_threads =
     omp_get_max_threads(); /* overwrite with OMP_NUM_THREADS environment variable */
 #endif
-  if (argc > 1) { /* overwrite with command line value, if supplied */
-                  num_threads = (int)strtol(argv[1], NULL, 0); }
+  if (argc > 1)
+  { /* overwrite with command line value, if supplied */
+    num_threads = (int)strtol(argv[1], NULL, 0);
+  }
 
   /* store the inputs in the UserData structure */
   udata->N        = N;

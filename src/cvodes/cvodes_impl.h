@@ -1289,7 +1289,7 @@ void cvode_user_supplied_fn_table_destroy(void* ptr);
 #define MSGCV_LSOLVE_NULL "The linear solver's solve routine is NULL."
 #define MSGCV_YOUT_NULL   "yout = NULL illegal."
 #define MSGCV_TRET_NULL   "tret = NULL illegal."
-#define MSGCV_BAD_EWT "Initial ewt has component(s) equal to zero (illegal)."
+#define MSGCV_BAD_EWT     "Initial ewt has component(s) equal to zero (illegal)."
 #define MSGCV_EWT_NOW_BAD "At " MSG_TIME ", a component of ewt has become <= 0."
 #define MSGCV_BAD_ITASK   "Illegal value for itask."
 #define MSGCV_BAD_H0      "h0 and tout - t0 inconsistent."
@@ -1425,8 +1425,8 @@ void cvode_user_supplied_fn_table_destroy(void* ptr);
  * =================================================================
  */
 
-#define MSGCV_NO_ADJ    "Illegal attempt to call before calling CVodeAdjMalloc."
-#define MSGCV_BAD_STEPS "Steps nonpositive illegal."
+#define MSGCV_NO_ADJ     "Illegal attempt to call before calling CVodeAdjMalloc."
+#define MSGCV_BAD_STEPS  "Steps nonpositive illegal."
 #define MSGCV_BAD_INTERP "Illegal value for interp."
 #define MSGCV_BAD_WHICH  "Illegal value for which."
 #define MSGCV_NO_BCK     "No backward problems have been defined yet."

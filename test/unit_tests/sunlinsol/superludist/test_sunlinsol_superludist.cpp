@@ -531,10 +531,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
            (long int)maxloc, tol);
     return (1);
   }
-  else
-  {
-    return (0);
-  }
+  else { return (0); }
 }
 
 int csr_from_dense(SUNMatrix Ad, sunrealtype droptol, sunrealtype** matdata,

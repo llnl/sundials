@@ -156,15 +156,9 @@ int main(int argc, char* argv[])
   printf("    damping_aa   = %" GSYM "\n", uopt->damping_aa);
   printf("    damping_fp   = %" GSYM "\n", uopt->damping_fp);
   if (uopt->use_damping_fn) { printf("    damping_fn   = ON\n"); }
-  else
-  {
-    printf("    damping_fn   = OFF\n");
-  }
+  else { printf("    damping_fn   = OFF\n"); }
   if (uopt->use_depth_fn) { printf("    depth_fn     = ON\n"); }
-  else
-  {
-    printf("    depth_fn     = OFF\n");
-  }
+  else { printf("    depth_fn     = OFF\n"); }
   printf("    orth routine = %d\n", uopt->orth_aa);
 
   /* Create the SUNDIALS context that all SUNDIALS objects require */
@@ -377,10 +371,7 @@ static int DepthFn(long int iter, N_Vector u_val, N_Vector g_val,
                    sunbooleantype* remove_index)
 {
   if (iter < 2) { *new_depth = 1; }
-  else
-  {
-    *new_depth = depth;
-  };
+  else { *new_depth = depth; };
 
   return 0;
 }
@@ -556,10 +547,7 @@ static int check_retval(void* returnvalue, const char* funcname, int opt)
       fprintf(stderr, "\nERROR: %s() failed -- returned NULL\n\n", funcname);
       return (1);
     }
-    else
-    {
-      return (0);
-    }
+    else { return (0); }
   }
 
   /* Check if the function returned a non-zero value -- internal failure */
@@ -572,10 +560,7 @@ static int check_retval(void* returnvalue, const char* funcname, int opt)
               *errflag);
       return (1);
     }
-    else
-    {
-      return (0);
-    }
+    else { return (0); }
   }
 
   /* If we make it here then opt was not 0 or 1 */

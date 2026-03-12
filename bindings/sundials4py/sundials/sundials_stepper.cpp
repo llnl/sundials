@@ -51,10 +51,7 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetEvolveFn(stepper, sunstepper_evolve_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetEvolveFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetEvolveFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -70,10 +67,7 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetOneStepFn(stepper, sunstepper_one_step_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetOneStepFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetOneStepFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -89,10 +83,7 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetFullRhsFn(stepper, sunstepper_full_rhs_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetFullRhsFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetFullRhsFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -108,10 +99,7 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetReInitFn(stepper, sunstepper_reinit_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetReInitFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetReInitFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -127,10 +115,7 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetResetFn(stepper, sunstepper_reset_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetResetFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetResetFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -148,10 +133,7 @@ void bind_sunstepper(nb::module_& m)
         return SUNStepper_SetResetCheckpointIndexFn(stepper,
                                                     sunstepper_reset_ckpt_idx_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetResetCheckpointIndexFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetResetCheckpointIndexFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -168,10 +150,7 @@ void bind_sunstepper(nb::module_& m)
         return SUNStepper_SetStopTimeFn(stepper,
                                         sunstepper_set_stop_time_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetStopTimeFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetStopTimeFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -188,10 +167,7 @@ void bind_sunstepper(nb::module_& m)
         return SUNStepper_SetStepDirectionFn(stepper,
                                              sunstepper_set_step_direction_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetStepDirectionFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetStepDirectionFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -206,10 +182,7 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetForcingFn(stepper, sunstepper_set_forcing_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetForcingFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetForcingFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
@@ -225,10 +198,7 @@ void bind_sunstepper(nb::module_& m)
         return SUNStepper_SetGetNumStepsFn(stepper,
                                            sunstepper_get_num_steps_wrapper);
       }
-      else
-      {
-        return SUNStepper_SetGetNumStepsFn(stepper, nullptr);
-      }
+      else { return SUNStepper_SetGetNumStepsFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 }
@@ -236,4 +206,6 @@ void bind_sunstepper(nb::module_& m)
 } // namespace sundials4py
 
 extern "C" void SUNStepperFunctionTable_Destroy(void* ptr)
-{ delete static_cast<SUNStepperFunctionTable*>(ptr); }
+{
+  delete static_cast<SUNStepperFunctionTable*>(ptr);
+}

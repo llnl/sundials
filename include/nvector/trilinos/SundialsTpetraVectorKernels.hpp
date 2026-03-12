@@ -343,10 +343,7 @@ inline bool invTest(const vector_type& x, vector_type& z)
       {
         min_reducer.join(local_min, static_cast<scalar_type>(0.0));
       }
-      else
-      {
-        z_1d(i) = static_cast<scalar_type>(1.0) / x_1d(i);
-      }
+      else { z_1d(i) = static_cast<scalar_type>(1.0) / x_1d(i); }
     },
     min_reducer);
 
@@ -393,8 +390,8 @@ inline bool constraintMask(const vector_type& c, const vector_type& x,
                          c_1d(i) * x_1d(i) <= static_cast<scalar_type>(0.0)) ||
                         (std::abs(c_1d(i)) > static_cast<scalar_type>(0.5) &&
                          c_1d(i) * x_1d(i) < static_cast<scalar_type>(0.0));
-      m_1d(i)         = test ? static_cast<scalar_type>(1.0)
-                             : static_cast<scalar_type>(0.0);
+      m_1d(i) = test ? static_cast<scalar_type>(1.0)
+                     : static_cast<scalar_type>(0.0);
       local_sum += m_1d(i);
     },
     sum);
@@ -678,10 +675,7 @@ inline bool invTestLocal(const vector_type& x, vector_type& z)
       {
         min_reducer.join(local_min, static_cast<scalar_type>(0.0));
       }
-      else
-      {
-        z_1d(i) = static_cast<scalar_type>(1.0) / x_1d(i);
-      }
+      else { z_1d(i) = static_cast<scalar_type>(1.0) / x_1d(i); }
     },
     min_reducer);
 
@@ -725,8 +719,8 @@ inline bool constraintMaskLocal(const vector_type& c, const vector_type& x,
                          c_1d(i) * x_1d(i) <= static_cast<scalar_type>(0.0)) ||
                         (std::abs(c_1d(i)) > static_cast<scalar_type>(0.5) &&
                          c_1d(i) * x_1d(i) < static_cast<scalar_type>(0.0));
-      m_1d(i)         = test ? static_cast<scalar_type>(1.0)
-                             : static_cast<scalar_type>(0.0);
+      m_1d(i) = test ? static_cast<scalar_type>(1.0)
+                     : static_cast<scalar_type>(0.0);
       local_sum += m_1d(i);
     },
     sum);

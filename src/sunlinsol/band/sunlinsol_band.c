@@ -113,10 +113,14 @@ SUNLinearSolver SUNLinSol_Band(SUNDIALS_MAYBE_UNUSED N_Vector y, SUNMatrix A,
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_Band(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_DIRECT); }
+{
+  return (SUNLINEARSOLVER_DIRECT);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_Band(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_BAND); }
+{
+  return (SUNLINEARSOLVER_BAND);
+}
 
 SUNErrCode SUNLinSolInitialize_Band(SUNLinearSolver S)
 {

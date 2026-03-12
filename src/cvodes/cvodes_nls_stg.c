@@ -202,10 +202,7 @@ int cvNlsInitSensStg(CVodeMem cvode_mem)
   {
     retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLSstg, cvNlsLSetupSensStg);
   }
-  else
-  {
-    retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLSstg, NULL);
-  }
+  else { retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLSstg, NULL); }
 
   if (retval != CV_SUCCESS)
   {
@@ -219,10 +216,7 @@ int cvNlsInitSensStg(CVodeMem cvode_mem)
   {
     retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLSstg, cvNlsLSolveSensStg);
   }
-  else
-  {
-    retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLSstg, NULL);
-  }
+  else { retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLSstg, NULL); }
 
   if (retval != CV_SUCCESS)
   {

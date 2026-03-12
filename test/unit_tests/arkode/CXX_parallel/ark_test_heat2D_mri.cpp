@@ -178,10 +178,7 @@ int main(int argc, char* argv[])
     cout << "   nxl (proc 0) = " << udata->nxl << "\n";
     cout << "   nyl (proc 0) = " << udata->nyl << "\n";
     if (linear) { cout << "   Linearly implicit solver\n\n"; }
-    else
-    {
-      cout << "   Nonlinear implicit solver\n\n";
-    }
+    else { cout << "   Nonlinear implicit solver\n\n"; }
   }
 
   // Initialize vector data structures
@@ -485,10 +482,7 @@ int main(int argc, char* argv[])
   if (outproc)
   {
     if (numfails) { cout << "Failed " << numfails << " tests\n"; }
-    else
-    {
-      cout << "All tests pass!\n";
-    }
+    else { cout << "All tests pass!\n"; }
   }
 
   // Clean up and return with successful completion

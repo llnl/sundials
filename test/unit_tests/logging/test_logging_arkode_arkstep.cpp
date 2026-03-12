@@ -130,10 +130,7 @@ int main(int argc, char* argv[])
       flag = ARKodeSetNonlinearSolver(arkode_mem, NLS);
       if (check_flag(flag, "ARKodeSetLinearSolver")) { return 1; }
     }
-    else
-    {
-      cout << "Using Newton nonlinear solver" << endl;
-    }
+    else { cout << "Using Newton nonlinear solver" << endl; }
 
     if (newton && direct)
     {

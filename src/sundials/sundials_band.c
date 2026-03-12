@@ -37,10 +37,14 @@
  */
 
 sunindextype SUNDlsMat_BandGBTRF(SUNDlsMat A, sunindextype* p)
-{ return (SUNDlsMat_bandGBTRF(A->cols, A->M, A->mu, A->ml, A->s_mu, p)); }
+{
+  return (SUNDlsMat_bandGBTRF(A->cols, A->M, A->mu, A->ml, A->s_mu, p));
+}
 
 void SUNDlsMat_BandGBTRS(SUNDlsMat A, sunindextype* p, sunrealtype* b)
-{ SUNDlsMat_bandGBTRS(A->cols, A->M, A->s_mu, A->ml, p, b); }
+{
+  SUNDlsMat_bandGBTRS(A->cols, A->M, A->s_mu, A->ml, p, b);
+}
 
 void SUNDlsMat_BandCopy(SUNDlsMat A, SUNDlsMat B, sunindextype copymu,
                         sunindextype copyml)
@@ -49,10 +53,14 @@ void SUNDlsMat_BandCopy(SUNDlsMat A, SUNDlsMat B, sunindextype copymu,
 }
 
 void SUNDlsMat_BandScale(sunrealtype c, SUNDlsMat A)
-{ SUNDlsMat_bandScale(c, A->cols, A->M, A->mu, A->ml, A->s_mu); }
+{
+  SUNDlsMat_bandScale(c, A->cols, A->M, A->mu, A->ml, A->s_mu);
+}
 
 void SUNDlsMat_BandMatvec(SUNDlsMat A, sunrealtype* x, sunrealtype* y)
-{ SUNDlsMat_bandMatvec(A->cols, x, y, A->M, A->mu, A->ml, A->s_mu); }
+{
+  SUNDlsMat_bandMatvec(A->cols, x, y, A->M, A->mu, A->ml, A->s_mu);
+}
 
 /*
  * -----------------------------------------------------

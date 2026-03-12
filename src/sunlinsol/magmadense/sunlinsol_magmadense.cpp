@@ -56,12 +56,12 @@
 #define MAGMADENSE_CONTENT(S) ((SUNLinearSolverContent_MagmaDense)(S->content))
 #define MHELP(S)              (MAGMADENSE_CONTENT(S)->memhelp)
 #define QUEUE(S)              (MAGMADENSE_CONTENT(S)->q)
-#define PIVOTS(S)       ((sunindextype*)MAGMADENSE_CONTENT(S)->pivots->ptr)
-#define PIVOTSARRAY(S)  ((sunindextype**)MAGMADENSE_CONTENT(S)->pivotsarr->ptr)
-#define RHSARRAY(S)     ((sunrealtype**)MAGMADENSE_CONTENT(S)->rhsarr->ptr)
-#define INFOARRAY(S)    ((sunindextype*)MAGMADENSE_CONTENT(S)->infoarr->ptr)
-#define LASTFLAG(S)     (MAGMADENSE_CONTENT(S)->last_flag)
-#define ASYNCHRONOUS(S) (MAGMADENSE_CONTENT(S)->async)
+#define PIVOTS(S)             ((sunindextype*)MAGMADENSE_CONTENT(S)->pivots->ptr)
+#define PIVOTSARRAY(S)        ((sunindextype**)MAGMADENSE_CONTENT(S)->pivotsarr->ptr)
+#define RHSARRAY(S)           ((sunrealtype**)MAGMADENSE_CONTENT(S)->rhsarr->ptr)
+#define INFOARRAY(S)          ((sunindextype*)MAGMADENSE_CONTENT(S)->infoarr->ptr)
+#define LASTFLAG(S)           (MAGMADENSE_CONTENT(S)->last_flag)
+#define ASYNCHRONOUS(S)       (MAGMADENSE_CONTENT(S)->async)
 
 /*
  * ----------------------------------------------------------------------------
@@ -239,10 +239,14 @@ SUNErrCode SUNLinSol_MagmaDense_SetAsync(SUNLinearSolver S, sunbooleantype onoff
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_MagmaDense(SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_DIRECT); }
+{
+  return (SUNLINEARSOLVER_DIRECT);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_MagmaDense(SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_MAGMADENSE); }
+{
+  return (SUNLINEARSOLVER_MAGMADENSE);
+}
 
 SUNErrCode SUNLinSolInitialize_MagmaDense(SUNLinearSolver S)
 {
@@ -279,10 +283,7 @@ static SUNErrCode setFromCommandLine_MagmaDense(SUNLinearSolver S,
   if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -453,7 +454,9 @@ int SUNLinSolSolve_MagmaDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 }
 
 sunindextype SUNLinSolLastFlag_MagmaDense(SUNLinearSolver S)
-{ return (LASTFLAG(S)); }
+{
+  return (LASTFLAG(S));
+}
 
 SUNErrCode SUNLinSolSpace_MagmaDense(SUNLinearSolver S, long int* lenrwLS,
                                      long int* leniwLS)

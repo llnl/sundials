@@ -77,9 +77,9 @@ void bind_arkode_erkstep(nb::module_& m)
       if (!adj_f) { throw sundials4py::illegal_value("adj_f was null"); }
 
       SUNAdjointStepper adj_stepper = nullptr;
-      int ark_status = ERKStepCreateAdjointStepper(arkode_mem,
-                                                   erkstep_adjf_wrapper, tf, sf,
-                                                   sunctx, &adj_stepper);
+      int ark_status                = ERKStepCreateAdjointStepper(arkode_mem,
+                                                                  erkstep_adjf_wrapper, tf, sf,
+                                                                  sunctx, &adj_stepper);
       if (ark_status != ARK_SUCCESS)
       {
         throw sundials4py::error_returned("Failed to create adjoint stepper");

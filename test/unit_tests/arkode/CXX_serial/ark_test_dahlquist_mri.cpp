@@ -135,10 +135,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "   interp type  = Lagrange\n";
   }
-  else
-  {
-    std::cout << "   interp type  = None\n";
-  }
+  else { std::cout << "   interp type  = None\n"; }
   // Create SUNDIALS context
   sundials::Context sunctx;
 
@@ -156,10 +153,7 @@ int main(int argc, char* argv[])
   numfails += run_tests(MRISTEP_SR, prob_opts, prob_data, sunctx);
 
   if (numfails) { std::cout << "\n\nFailed " << numfails << " tests!\n"; }
-  else
-  {
-    std::cout << "\n\nAll tests passed!\n";
-  }
+  else { std::cout << "\n\nAll tests passed!\n"; }
 
   // Return test status
   return numfails;
@@ -256,10 +250,7 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
   {
     mristep_mem = MRIStepCreate(fe, fi, prob_opts.t0, y, inner_stepper, sunctx);
   }
-  else
-  {
-    return 1;
-  }
+  else { return 1; }
   if (check_flag((void*)mristep_mem, "MRIStepCreate", 0)) { return 1; }
 
   // Set user data
@@ -369,10 +360,7 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
                     {"ARKODE_IMEX_MRI_SR32", true},
                     {"ARKODE_IMEX_MRI_SR43", true}});
   }
-  else
-  {
-    return 1;
-  }
+  else { return 1; }
 
   for (const auto& pair : methods)
   {
@@ -516,10 +504,7 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
     }
 
     if (methodfails) { std::cout << "Failed " << methodfails << " tests\n"; }
-    else
-    {
-      std::cout << "All checks passed\n";
-    }
+    else { std::cout << "All checks passed\n"; }
     numfails += methodfails;
 
     // -------------------
@@ -549,10 +534,7 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
     {
       flag = MRIStepReInit(mristep_mem, fe, fi, prob_opts.t0, y);
     }
-    else
-    {
-      return 1;
-    }
+    else { return 1; }
     if (check_flag(&flag, "MRIStepReInit", 1)) { return 1; }
   }
 

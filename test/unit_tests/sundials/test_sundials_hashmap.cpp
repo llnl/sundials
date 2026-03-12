@@ -40,7 +40,9 @@ protected:
   SUNHashMap map;
 
   virtual void SetUp(size_t init_capacity)
-  { SUNHashMap_New(init_capacity, freeKeyValue, &map); }
+  {
+    SUNHashMap_New(init_capacity, freeKeyValue, &map);
+  }
 
   virtual void TearDown() override { SUNHashMap_Destroy(&map); }
 

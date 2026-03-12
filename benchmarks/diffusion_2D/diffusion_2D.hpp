@@ -62,7 +62,7 @@
 #define IDX(x, y, n) ((n) * (y) + (x))
 
 // Ceiling for integers ceil(a/b) = ceil((a + b - 1) / b)
-#define ICEIL(a, b) (((a) + (b) - 1) / (b))
+#define ICEIL(a, b) (((a) + (b)-1) / (b))
 
 using namespace std;
 

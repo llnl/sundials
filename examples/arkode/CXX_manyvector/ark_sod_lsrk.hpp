@@ -93,7 +93,7 @@ public:
       fixed_h(ZERO),
       maxsteps(10000),
       output(1),
-      nout(10) {};
+      nout(10){};
 
 }; // end ARKODEParameters
 
@@ -131,7 +131,7 @@ public:
       xr(ONE),
       dx(ZERO),
       gamma(SUN_RCONST(1.4)),
-      flux(nullptr) {};
+      flux(nullptr){};
 
   // manual destructor
   void FreeData()
@@ -224,7 +224,9 @@ public:
   inline sunrealtype eos_inv(const sunrealtype& rho, const sunrealtype& mx,
                              const sunrealtype& my, const sunrealtype& mz,
                              const sunrealtype& pr) const
-  { return (pr / (gamma - ONE) + (mx * mx + my * my + mz * mz) * HALF / rho); }
+  {
+    return (pr / (gamma - ONE) + (mx * mx + my * my + mz * mz) * HALF / rho);
+  }
 
 }; // end EulerData;
 

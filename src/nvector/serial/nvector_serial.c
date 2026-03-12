@@ -227,7 +227,9 @@ N_Vector N_VMake_Serial(sunindextype length, sunrealtype* v_data,
  * from abstract N_Vector interface.
  */
 N_Vector_ID N_VGetVectorID_Serial(SUNDIALS_MAYBE_UNUSED N_Vector v)
-{ return SUNDIALS_NVEC_SERIAL; }
+{
+  return SUNDIALS_NVEC_SERIAL;
+}
 
 /* ----------------------------------------------------------------------------
  * Function to return number of vector elements
@@ -371,7 +373,9 @@ void N_VSpace_Serial(N_Vector v, sunindextype* lrw, sunindextype* liw)
 }
 
 sunrealtype* N_VGetArrayPointer_Serial(N_Vector v)
-{ return ((sunrealtype*)NV_DATA_S(v)); }
+{
+  return ((sunrealtype*)NV_DATA_S(v));
+}
 
 void N_VSetArrayPointer_Serial(sunrealtype* v_data, N_Vector v)
 {
@@ -787,10 +791,7 @@ sunbooleantype N_VInvTest_Serial(N_Vector x, N_Vector z)
   for (i = 0; i < N; i++)
   {
     if (xd[i] == ZERO) { no_zero_found = SUNFALSE; }
-    else
-    {
-      zd[i] = ONE / xd[i];
-    }
+    else { zd[i] = ONE / xd[i]; }
   }
 
   return no_zero_found;

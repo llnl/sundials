@@ -468,10 +468,7 @@ public:
     printf("    local npts = {%d, %d, %d}\n", nxl, nyl, nzl);
     printf("  mesh spacing = {%g, %g, %g}\n", dx, dy, dz);
     if (upwindRight) { printf("    upwind dir = right\n"); }
-    else
-    {
-      printf("    upwind dir = left\n");
-    }
+    else { printf("    upwind dir = left\n"); }
   }
 
   // Saves the mesh to a file.

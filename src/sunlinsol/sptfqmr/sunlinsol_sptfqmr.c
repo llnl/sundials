@@ -205,10 +205,7 @@ static SUNErrCode setFromCommandLine_SPTFQMR(SUNLinearSolver S, const char* LSid
   if (LSid != NULL && strlen(LSid) > 0) { offset = strlen(LSid) + 1; }
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   if (LSid != NULL && strlen(LSid) > 0) { strcpy(prefix, LSid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -288,10 +285,14 @@ SUNErrCode SUNLinSol_SPTFQMRSetMaxl(SUNLinearSolver S, int maxl)
  */
 
 SUNLinearSolver_Type SUNLinSolGetType_SPTFQMR(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_ITERATIVE); }
+{
+  return (SUNLINEARSOLVER_ITERATIVE);
+}
 
 SUNLinearSolver_ID SUNLinSolGetID_SPTFQMR(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
-{ return (SUNLINEARSOLVER_SPTFQMR); }
+{
+  return (SUNLINEARSOLVER_SPTFQMR);
+}
 
 SUNErrCode SUNLinSolInitialize_SPTFQMR(SUNLinearSolver S)
 {
@@ -441,7 +442,7 @@ int SUNLinSolSolve_SPTFQMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 
   /* set sunbooleantype flags for internal solver options */
   preOnLeft  = ((SPTFQMR_CONTENT(S)->pretype == SUN_PREC_LEFT) ||
-                (SPTFQMR_CONTENT(S)->pretype == SUN_PREC_BOTH));
+               (SPTFQMR_CONTENT(S)->pretype == SUN_PREC_BOTH));
   preOnRight = ((SPTFQMR_CONTENT(S)->pretype == SUN_PREC_RIGHT) ||
                 (SPTFQMR_CONTENT(S)->pretype == SUN_PREC_BOTH));
   scale_x    = (sx != NULL);
@@ -1128,16 +1129,24 @@ int SUNLinSolSolve_SPTFQMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 }
 
 int SUNLinSolNumIters_SPTFQMR(SUNLinearSolver S)
-{ return (SPTFQMR_CONTENT(S)->numiters); }
+{
+  return (SPTFQMR_CONTENT(S)->numiters);
+}
 
 sunrealtype SUNLinSolResNorm_SPTFQMR(SUNLinearSolver S)
-{ return (SPTFQMR_CONTENT(S)->resnorm); }
+{
+  return (SPTFQMR_CONTENT(S)->resnorm);
+}
 
 N_Vector SUNLinSolResid_SPTFQMR(SUNLinearSolver S)
-{ return (SPTFQMR_CONTENT(S)->vtemp1); }
+{
+  return (SPTFQMR_CONTENT(S)->vtemp1);
+}
 
 sunindextype SUNLinSolLastFlag_SPTFQMR(SUNLinearSolver S)
-{ return (LASTFLAG(S)); }
+{
+  return (LASTFLAG(S));
+}
 
 SUNErrCode SUNLinSolSpace_SPTFQMR(SUNLinearSolver S, long int* lenrwLS,
                                   long int* leniwLS)
@@ -1149,10 +1158,7 @@ SUNErrCode SUNLinSolSpace_SPTFQMR(SUNLinearSolver S, long int* lenrwLS,
     N_VSpace(SPTFQMR_CONTENT(S)->vtemp1, &lrw1, &liw1);
     SUNCheckLastErr();
   }
-  else
-  {
-    lrw1 = liw1 = 0;
-  }
+  else { lrw1 = liw1 = 0; }
   *lenrwLS = lrw1 * 11;
   *leniwLS = liw1 * 11;
   return SUN_SUCCESS;

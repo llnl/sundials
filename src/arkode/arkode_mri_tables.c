@@ -248,10 +248,7 @@ MRIStepCoupling MRIStepCoupling_Create(int nmat, int stages, int q, int p,
   if (W && G) { type = MRISTEP_IMEX; }
   else if (W && !G) { type = MRISTEP_EXPLICIT; }
   else if (!W && G) { type = MRISTEP_IMPLICIT; }
-  else
-  {
-    return (NULL);
-  }
+  else { return (NULL); }
 
   /* Allocate MRIStepCoupling structure */
   MRIC = MRIStepCoupling_Alloc(nmat, stages, type);
@@ -422,10 +419,7 @@ MRIStepCoupling MRIStepCoupling_MIStoMRI(ARKodeButcherTable B, int q, int p)
 
   /* Construct the coupling table */
   if (type == MRISTEP_EXPLICIT) { C = MRIC->W; }
-  else
-  {
-    C = MRIC->G;
-  }
+  else { C = MRIC->G; }
 
   /* First row is identically zero */
   for (i = 0; i < stages; i++)
@@ -856,19 +850,19 @@ int mriStepCoupling_GetStageType(MRIStepCoupling MRIC, int is)
   }
   if (Gdiag)
   { /* DIRK */
-    if (cdiff) { /* Fast */ return (MRISTAGE_DIRK_FAST); }
-    else
-    {
-      return (MRISTAGE_DIRK_NOFAST);
+    if (cdiff)
+    { /* Fast */
+      return (MRISTAGE_DIRK_FAST);
     }
+    else { return (MRISTAGE_DIRK_NOFAST); }
   }
   else
   { /* ERK */
-    if (cdiff) { /* Fast */ return (MRISTAGE_ERK_FAST); }
-    else
-    {
-      return (MRISTAGE_ERK_NOFAST);
+    if (cdiff)
+    { /* Fast */
+      return (MRISTAGE_ERK_FAST);
     }
+    else { return (MRISTAGE_ERK_NOFAST); }
   }
 }
 
@@ -955,10 +949,7 @@ int mriStepCoupling_GetStageMap(MRIStepCoupling MRIC, int* stage_map,
       stage_map[j] = idx;
       idx++;
     }
-    else
-    {
-      stage_map[j] = -1;
-    }
+    else { stage_map[j] = -1; }
   }
 
   /* Check and set number of stage RHS vectors active */

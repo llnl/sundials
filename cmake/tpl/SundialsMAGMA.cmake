@@ -30,7 +30,8 @@ include_guard(GLOBAL)
 if(SUNDIALS_PRECISION MATCHES "extended|float128")
   message(
     FATAL_ERROR
-      "SUNDIALS MAGMA interface is not compatible with ${SUNDIALS_PRECISION} precision")
+      "SUNDIALS MAGMA interface is not compatible with ${SUNDIALS_PRECISION} precision"
+  )
 endif()
 
 # -----------------------------------------------------------------------------

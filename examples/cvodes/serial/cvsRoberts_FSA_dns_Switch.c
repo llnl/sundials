@@ -486,20 +486,11 @@ static void PrintHeader(UserData data)
     case CV_STAGGERED1: printf("STAGGERED-1 + "); break;
     }
     if (data->errconS) { printf("FULL ERROR CONTROL + "); }
-    else
-    {
-      printf("PARTIAL ERROR CONTROL + ");
-    }
+    else { printf("PARTIAL ERROR CONTROL + "); }
     if (data->fsDQ) { printf("DQ sensitivity RHS)\n"); }
-    else
-    {
-      printf("user-provided sensitivity RHS)\n");
-    }
+    else { printf("user-provided sensitivity RHS)\n"); }
   }
-  else
-  {
-    printf("NO\n");
-  }
+  else { printf("NO\n"); }
 
   /* Print current problem parameters */
   printf("Parameters: [%8.4" ESYM "  %8.4" ESYM "  %8.4" ESYM "]\n", data->p[0],
@@ -534,10 +525,7 @@ static int PrintFinalStats(void* cvode_mem, UserData data)
     {
       retval = CVodeGetSensNumErrTestFails(cvode_mem, &netfS);
     }
-    else
-    {
-      netfS = 0;
-    }
+    else { netfS = 0; }
     if (data->meth == CV_STAGGERED)
     {
       retval = CVodeGetSensNumNonlinSolvIters(cvode_mem, &nniS);

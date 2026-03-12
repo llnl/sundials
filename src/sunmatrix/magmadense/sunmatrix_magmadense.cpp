@@ -247,10 +247,7 @@ sunrealtype* SUNMatrix_MagmaDense_Data(SUNMatrix Amat)
   {
     return ((sunrealtype*)A->data->ptr);
   }
-  else
-  {
-    return (NULL);
-  }
+  else { return (NULL); }
 }
 
 sunrealtype** SUNMatrix_MagmaDense_BlockData(SUNMatrix Amat)
@@ -261,10 +258,7 @@ sunrealtype** SUNMatrix_MagmaDense_BlockData(SUNMatrix Amat)
   {
     return ((sunrealtype**)A->blocks->ptr);
   }
-  else
-  {
-    return (NULL);
-  }
+  else { return (NULL); }
 }
 
 extern sunrealtype* SUNMatrix_MagmaDense_Block(SUNMatrix Amat, sunindextype k);

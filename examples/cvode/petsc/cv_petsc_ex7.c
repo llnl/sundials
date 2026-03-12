@@ -151,10 +151,10 @@ int main(int argc, char** argv)
                                     PETSC_VIEWER_DEFAULT, &vf);
   CHKERRQ(ierr);
   ierr = SNESMonitorSet(snes,
-                        (PetscErrorCode (*)(SNES, PetscInt, PetscReal,
-                                            void*))MySNESMonitor,
+                        (PetscErrorCode(*)(SNES, PetscInt, PetscReal,
+                                           void*))MySNESMonitor,
                         vf,
-                        (PetscErrorCode (*)(void**))PetscViewerAndFormatDestroy);
+                        (PetscErrorCode(*)(void**))PetscViewerAndFormatDestroy);
   CHKERRQ(ierr);
 
   /* use matrix free */

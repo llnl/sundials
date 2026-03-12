@@ -75,7 +75,7 @@ static constexpr sunindextype zeroIdx = 0;
 #define NVEC_RAJA_MEMSIZE(x) \
   (NVEC_RAJA_CONTENT(x)->length * sizeof(sunrealtype))
 #define NVEC_RAJA_MEMHELP(x) (NVEC_RAJA_CONTENT(x)->mem_helper)
-#define NVEC_RAJA_HDATAp(x) ((sunrealtype*)NVEC_RAJA_CONTENT(x)->host_data->ptr)
+#define NVEC_RAJA_HDATAp(x)  ((sunrealtype*)NVEC_RAJA_CONTENT(x)->host_data->ptr)
 #define NVEC_RAJA_DDATAp(x) \
   ((sunrealtype*)NVEC_RAJA_CONTENT(x)->device_data->ptr)
 
@@ -531,7 +531,9 @@ void N_VSetDeviceArrayPointer_Raja(sunrealtype* d_vdata, N_Vector v)
  * Return a flag indicating if the memory for the vector data is managed
  */
 sunbooleantype N_VIsManagedMemory_Raja(N_Vector x)
-{ return NVEC_RAJA_PRIVATE(x)->use_managed_mem; }
+{
+  return NVEC_RAJA_PRIVATE(x)->use_managed_mem;
+}
 
 /* ----------------------------------------------------------------------------
  * Copy vector data to the device
@@ -767,8 +769,7 @@ void N_VLinearSum_Raja(sunrealtype a, N_Vector X, sunrealtype b, N_Vector Y,
   sunrealtype* zdata       = NVEC_RAJA_DDATAp(Z);
 
   RAJA::forall<SUNDIALS_RAJA_EXEC_STREAM>(RAJA::RangeSegment(zeroIdx, N),
-                                          [=] RAJA_DEVICE(sunindextype i)
-                                          {
+                                          [=] RAJA_DEVICE(sunindextype i) {
                                             zdata[i] = a * xdata[i] +
                                                        b * ydata[i];
                                           });
@@ -877,8 +878,7 @@ sunrealtype N_VWSqrSumLocal_Raja(N_Vector X, N_Vector W)
 
   RAJA::ReduceSum<SUNDIALS_RAJA_REDUCE, sunrealtype> gpu_result(0.0);
   RAJA::forall<SUNDIALS_RAJA_EXEC_REDUCE>(RAJA::RangeSegment(zeroIdx, N),
-                                          [=] RAJA_DEVICE(sunindextype i)
-                                          {
+                                          [=] RAJA_DEVICE(sunindextype i) {
                                             gpu_result += (xdata[i] * wdata[i] *
                                                            xdata[i] * wdata[i]);
                                           });
@@ -934,7 +934,9 @@ sunrealtype N_VMin_Raja(N_Vector X)
 }
 
 sunrealtype N_VWL2Norm_Raja(N_Vector X, N_Vector W)
-{ return std::sqrt(N_VWSqrSumLocal_Raja(X, W)); }
+{
+  return std::sqrt(N_VWSqrSumLocal_Raja(X, W));
+}
 
 sunrealtype N_VL1Norm_Raja(N_Vector X)
 {
@@ -956,8 +958,7 @@ void N_VCompare_Raja(sunrealtype c, N_Vector X, N_Vector Z)
   sunrealtype* zdata       = NVEC_RAJA_DDATAp(Z);
 
   RAJA::forall<SUNDIALS_RAJA_EXEC_STREAM>(RAJA::RangeSegment(zeroIdx, N),
-                                          [=] RAJA_DEVICE(sunindextype i)
-                                          {
+                                          [=] RAJA_DEVICE(sunindextype i) {
                                             zdata[i] = abs(xdata[i]) >= c ? ONE
                                                                           : ZERO;
                                           });
@@ -977,10 +978,7 @@ sunbooleantype N_VInvTest_Raja(N_Vector x, N_Vector z)
                                             {
                                               gpu_result += ONE;
                                             }
-                                            else
-                                            {
-                                              zdata[i] = ONE / xdata[i];
-                                            }
+                                            else { zdata[i] = ONE / xdata[i]; }
                                           });
   sunrealtype minimum = static_cast<sunrealtype>(gpu_result);
   return (minimum < HALF);
@@ -1588,10 +1586,7 @@ SUNErrCode N_VEnableLinearCombination_Raja(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvlinearcombination = N_VLinearCombination_Raja; }
-  else
-  {
-    v->ops->nvlinearcombination = NULL;
-  }
+  else { v->ops->nvlinearcombination = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1607,10 +1602,7 @@ SUNErrCode N_VEnableScaleAddMulti_Raja(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvscaleaddmulti = N_VScaleAddMulti_Raja; }
-  else
-  {
-    v->ops->nvscaleaddmulti = NULL;
-  }
+  else { v->ops->nvscaleaddmulti = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1626,10 +1618,7 @@ SUNErrCode N_VEnableLinearSumVectorArray_Raja(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvlinearsumvectorarray = N_VLinearSumVectorArray_Raja; }
-  else
-  {
-    v->ops->nvlinearsumvectorarray = NULL;
-  }
+  else { v->ops->nvlinearsumvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1645,10 +1634,7 @@ SUNErrCode N_VEnableScaleVectorArray_Raja(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvscalevectorarray = N_VScaleVectorArray_Raja; }
-  else
-  {
-    v->ops->nvscalevectorarray = NULL;
-  }
+  else { v->ops->nvscalevectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1664,10 +1650,7 @@ SUNErrCode N_VEnableConstVectorArray_Raja(N_Vector v, sunbooleantype tf)
 
   /* enable/disable operation */
   if (tf) { v->ops->nvconstvectorarray = N_VConstVectorArray_Raja; }
-  else
-  {
-    v->ops->nvconstvectorarray = NULL;
-  }
+  else { v->ops->nvconstvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1686,10 +1669,7 @@ SUNErrCode N_VEnableScaleAddMultiVectorArray_Raja(N_Vector v, sunbooleantype tf)
   {
     v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Raja;
   }
-  else
-  {
-    v->ops->nvscaleaddmultivectorarray = NULL;
-  }
+  else { v->ops->nvscaleaddmultivectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
@@ -1709,10 +1689,7 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Raja(N_Vector v,
   {
     v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Raja;
   }
-  else
-  {
-    v->ops->nvlinearcombinationvectorarray = NULL;
-  }
+  else { v->ops->nvlinearcombinationvectorarray = NULL; }
 
   /* return success */
   return SUN_SUCCESS;

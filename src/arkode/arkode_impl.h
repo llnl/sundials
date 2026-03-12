@@ -729,18 +729,18 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
 #define MSG_ARK_NULL_RABSTOL   "rabstol = NULL illegal."
 #define MSG_ARK_NULL_Y0        "y0 = NULL illegal."
 #define MSG_ARK_Y0_FAIL_CONSTR "y0 fails to satisfy constraints."
-#define MSG_ARK_NULL_F      "Must specify at least one of fe, fi (both NULL)."
-#define MSG_ARK_NULL_G      "g = NULL illegal."
-#define MSG_ARK_BAD_NVECTOR "A required vector operation is not implemented."
-#define MSG_ARK_BAD_CONSTR  "Illegal values in constraints vector."
-#define MSG_ARK_NULL_DKY    "dky = NULL illegal."
-#define MSG_ARK_BAD_T       "Illegal value for t. " MSG_TIME_INT
-#define MSG_ARK_NO_ROOT     "Rootfinding was not initialized."
+#define MSG_ARK_NULL_F         "Must specify at least one of fe, fi (both NULL)."
+#define MSG_ARK_NULL_G         "g = NULL illegal."
+#define MSG_ARK_BAD_NVECTOR    "A required vector operation is not implemented."
+#define MSG_ARK_BAD_CONSTR     "Illegal values in constraints vector."
+#define MSG_ARK_NULL_DKY       "dky = NULL illegal."
+#define MSG_ARK_BAD_T          "Illegal value for t. " MSG_TIME_INT
+#define MSG_ARK_NO_ROOT        "Rootfinding was not initialized."
 
 /* ARKODE Error Messages */
 #define MSG_ARK_YOUT_NULL "yout = NULL illegal."
 #define MSG_ARK_TRET_NULL "tret = NULL illegal."
-#define MSG_ARK_BAD_EWT "Initial ewt has component(s) equal to zero (illegal)."
+#define MSG_ARK_BAD_EWT   "Initial ewt has component(s) equal to zero (illegal)."
 #define MSG_ARK_EWT_NOW_BAD \
   "At " MSG_TIME ", a component of ewt has become <= 0."
 #define MSG_ARK_BAD_RWT "Initial rwt has component(s) equal to zero (illegal)."

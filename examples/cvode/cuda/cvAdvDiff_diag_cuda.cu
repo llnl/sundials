@@ -132,8 +132,8 @@ int main(int argc, char* argv[])
 
   dx = data->dx = XMAX /
                   ((sunrealtype)(MX + 1)); /* Set grid coefficients in data */
-  data->hdcoef  = SUN_RCONST(1.0) / (dx * dx);
-  data->hacoef  = SUN_RCONST(0.5) / (SUN_RCONST(2.0) * dx);
+  data->hdcoef = SUN_RCONST(1.0) / (dx * dx);
+  data->hacoef = SUN_RCONST(0.5) / (SUN_RCONST(2.0) * dx);
 
   SetIC(u, dx); /* Initialize u vector */
 
@@ -238,10 +238,7 @@ static void PrintIntro(int toltype, int usefused)
   printf("\n Diagonal linear solver CVDiag \n");
   if (usefused) { printf(" Using fused CVODE kernels \n"); }
   if (toltype == 0) { printf(" Using scalar ATOL\n"); }
-  else
-  {
-    printf(" Using vector ATOL\n");
-  }
+  else { printf(" Using vector ATOL\n"); }
   printf("\n");
 
   return;

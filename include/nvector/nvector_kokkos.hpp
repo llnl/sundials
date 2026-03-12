@@ -34,7 +34,9 @@ class Vector;
 // Get the Kokkos vector wrapped by an N_Vector
 template<class VectorType>
 inline VectorType* GetVec(N_Vector v)
-{ return static_cast<VectorType*>(v->content); }
+{
+  return static_cast<VectorType*>(v->content);
+}
 
 // =============================================================================
 // Everything in the implementation (impl) namespace is private and should not
@@ -46,7 +48,9 @@ namespace impl {
 /* N_Vector API ops */
 
 inline N_Vector_ID N_VGetVectorID_Kokkos(N_Vector v)
-{ return SUNDIALS_NVEC_KOKKOS; }
+{
+  return SUNDIALS_NVEC_KOKKOS;
+}
 
 template<class VectorType>
 sunindextype N_VGetLength_Kokkos(N_Vector v)
@@ -87,11 +91,15 @@ void N_VDestroy_Kokkos(N_Vector v)
 
 template<class VectorType>
 void N_VPrint_Kokkos(N_Vector v)
-{ auto vec{GetVec<VectorType>(v)}; }
+{
+  auto vec{GetVec<VectorType>(v)};
+}
 
 template<class VectorType>
 void N_VPrintFile_Kokkos(N_Vector v, FILE* outfile)
-{ auto vec{GetVec<VectorType>(v)}; }
+{
+  auto vec{GetVec<VectorType>(v)};
+}
 
 /* OPTIONAL local reduction kernels (no parallel communication) */
 
@@ -222,7 +230,7 @@ sunbooleantype N_VConstrMask_Kokkos(N_Vector c, N_Vector x, N_Vector m)
                    cdata(i) * xdata(i) <= sunrealtype{0.0}) ||
                   (std::abs(cdata(i)) > sunrealtype{0.5} &&
                    cdata(i) * xdata(i) < sunrealtype{0.0});
-      mdata(i)  = test ? sunrealtype{1.0} : sunrealtype{0.0};
+      mdata(i) = test ? sunrealtype{1.0} : sunrealtype{0.0};
       update += mdata(i);
     },
     sum);
@@ -298,10 +306,7 @@ sunbooleantype N_VInvTest_Kokkos(N_Vector x, N_Vector z)
     "N_VInvTest", typename VectorType::range_policy(0, xvec->Length()),
     KOKKOS_LAMBDA(const size_type i, sunrealtype& update) {
       if (xdata(i) == sunrealtype{0.0}) { update += sunrealtype{1.0}; }
-      else
-      {
-        zdata(i) = sunrealtype{1.0} / xdata(i);
-      }
+      else { zdata(i) = sunrealtype{1.0} / xdata(i); }
     },
     minimum);
 
@@ -441,7 +446,9 @@ void N_VScale_Kokkos(sunrealtype c, N_Vector x, N_Vector z)
 
 template<class VectorType>
 sunrealtype N_VWL2Norm_Kokkos(N_Vector x, N_Vector w)
-{ return std::sqrt(impl::N_VWSqrSumLocal_Kokkos<VectorType>(x, w)); }
+{
+  return std::sqrt(impl::N_VWSqrSumLocal_Kokkos<VectorType>(x, w));
+}
 
 template<class VectorType>
 sunrealtype N_VWrmsNorm_Kokkos(N_Vector x, N_Vector w)
@@ -488,18 +495,24 @@ public:
       view_("Vector device view", length),
       host_view_(Kokkos::create_mirror_view(view_))
 
-  { initNvector(); }
+  {
+    initNvector();
+  }
 
   Vector(view_type view, SUNContext sunctx)
     : sundials::impl::BaseNVector(sunctx),
       view_(view),
       host_view_(Kokkos::create_mirror_view(view_))
 
-  { initNvector(); }
+  {
+    initNvector();
+  }
 
   Vector(view_type view, host_view_type host_view, SUNContext sunctx)
     : sundials::impl::BaseNVector(sunctx), view_(view), host_view_(host_view)
-  { initNvector(); }
+  {
+    initNvector();
+  }
 
   // Move constructor
   Vector(Vector&& that_vector) noexcept
@@ -507,14 +520,18 @@ public:
       view_(std::move(that_vector.view_)),
       host_view_(std::move(that_vector.host_view_))
 
-  { initNvector(); }
+  {
+    initNvector();
+  }
 
   // Copy constructor
   Vector(const Vector& that_vector)
     : sundials::impl::BaseNVector(that_vector),
       view_("Vector device view", that_vector.Length()),
       host_view_(Kokkos::create_mirror_view(view_))
-  { initNvector(); }
+  {
+    initNvector();
+  }
 
   // Move assignment
   Vector& operator=(Vector&& rhs) noexcept
@@ -649,11 +666,15 @@ void CopyFromDevice(N_Vector v)
 
 template<class VectorType>
 void CopyToDevice(VectorType& v)
-{ Kokkos::deep_copy(v.View(), v.HostView()); }
+{
+  Kokkos::deep_copy(v.View(), v.HostView());
+}
 
 template<class VectorType>
 void CopyFromDevice(VectorType& v)
-{ Kokkos::deep_copy(v.HostView(), v.View()); }
+{
+  Kokkos::deep_copy(v.HostView(), v.View());
+}
 
 template<class VectorType, class view_type>
 view_type GetView(N_Vector v)

@@ -110,7 +110,9 @@ static inline sunrealtype* N_VGetDeviceArrayPointer_Hip(N_Vector x)
  */
 
 static inline N_Vector_ID N_VGetVectorID_Hip(N_Vector /*v*/)
-{ return SUNDIALS_NVEC_HIP; }
+{
+  return SUNDIALS_NVEC_HIP;
+}
 
 SUNDIALS_EXPORT N_Vector N_VCloneEmpty_Hip(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VClone_Hip(N_Vector w);

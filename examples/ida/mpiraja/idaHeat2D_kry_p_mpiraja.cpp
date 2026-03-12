@@ -560,7 +560,7 @@ static int reslocal(sunrealtype tt, N_Vector uu, N_Vector up, N_Vector rr,
                           sunrealtype termx =
                             coeffx * (uext[locue - 1] + uext[locue + 1]);
                           sunrealtype termy   = coeffy * (uext[locue - mxsub2] +
-                                                          uext[locue + mxsub2]);
+                                                        uext[locue + mxsub2]);
                           sunrealtype termctr = coeffxy * uext[locue];
                           resv[locu] = upv[locu] - (termx + termy - termctr);
                         });
@@ -1017,10 +1017,7 @@ static int SetInitialProfile(N_Vector uu, N_Vector up, N_Vector id,
       {
         iddata[loc] = ZERO;
       }
-      else
-      {
-        iddata[loc] = ONE;
-      }
+      else { iddata[loc] = ONE; }
     }
   }
 
