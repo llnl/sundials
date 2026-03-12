@@ -225,7 +225,7 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filena
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!error_filename || (error_filename && !strcmp(error_filename, "")))
+  if (!error_filename || error_filename[0] == '\0')
   {
     sunCloseLogFile(logger->error_fp);
     logger->error_fp = NULL;
@@ -264,7 +264,7 @@ SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!warning_filename || (warning_filename && !strcmp(warning_filename, "")))
+  if (!warning_filename || warning_filename[0] == '\0')
   {
     sunCloseLogFile(logger->warning_fp);
     logger->warning_fp = NULL;
@@ -302,7 +302,7 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!info_filename || (info_filename && !strcmp(info_filename, "")))
+  if (!info_filename || info_filename[0] == '\0')
   {
     sunCloseLogFile(logger->info_fp);
     logger->info_fp = NULL;
@@ -340,7 +340,7 @@ SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filena
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!debug_filename || (debug_filename && !strcmp(debug_filename, "")))
+  if (!debug_filename || debug_filename[0] == '\0')
   {
     sunCloseLogFile(logger->debug_fp);
     logger->debug_fp = NULL;
