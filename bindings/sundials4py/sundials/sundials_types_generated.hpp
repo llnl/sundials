@@ -37,7 +37,4 @@ auto pyEnumSUNDataIOMode =
 //
 // #endif
 //
-// #ifdef __cplusplus
-// #endif
-//
 // #endif
