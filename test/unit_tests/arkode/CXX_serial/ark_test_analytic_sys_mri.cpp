@@ -33,7 +33,7 @@
 #include <iostream>
 #include <nvector/nvector_serial.h>
 #include <string>
-#include <sundials/sundials_types.h>
+#include <sundials/sundials_types.hpp>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunnonlinsol/sunnonlinsol_fixedpoint.h>

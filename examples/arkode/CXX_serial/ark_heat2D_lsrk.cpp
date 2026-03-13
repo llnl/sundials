@@ -57,6 +57,7 @@
 #include <limits>
 #include <string>
 
+#include "sundials/sundials_context.hpp"
 #include "arkode/arkode_lsrkstep.h" // access to LSRKStep
 #include "nvector/nvector_serial.h" // access to the serial N_Vector
 #include "sunadaptcontroller/sunadaptcontroller_imexgus.h"

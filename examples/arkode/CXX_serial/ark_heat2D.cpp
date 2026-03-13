@@ -56,6 +56,7 @@
 #include <limits>
 #include <string>
 
+#include <sundials/sundials_types.hpp> // definition of output stream operator for`__float128`
 #include "arkode/arkode_arkstep.h"     // access to ARKStep
 #include "nvector/nvector_serial.h"    // access to the serial N_Vector
 #include "sunlinsol/sunlinsol_pcg.h"   // access to PCG SUNLinearSolver

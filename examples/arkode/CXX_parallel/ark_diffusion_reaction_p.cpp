@@ -78,6 +78,7 @@
 #include "nvector/nvector_mpiplusx.h"
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_math.h"
+#include "sundials/sundials_types.hpp"
 #include "sunlinsol/sunlinsol_pcg.h"
 #include "sunlinsol/sunlinsol_spgmr.h"
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h"

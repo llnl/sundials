@@ -61,6 +61,7 @@
 #include "nvector/nvector_parallel.h" // access to the MPI N_Vector
 #include "sunadaptcontroller/sunadaptcontroller_imexgus.h"
 #include "sunadaptcontroller/sunadaptcontroller_soderlind.h"
+#include <sundials/sundials_types.hpp>
 
 // Macros for problem constants
 #define PI   SUN_RCONST(3.141592653589793238462643383279502884197169)
