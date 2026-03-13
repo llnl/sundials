@@ -56,12 +56,12 @@
 #include <sstream>
 #include <string>
 
+#include <sundials/sundials_types.hpp>
 #include "arkode/arkode_arkstep.h"     // access to ARKStep
 #include "mpi.h"                       // MPI header file
 #include "nvector/nvector_parallel.h"  // access to the MPI N_Vector
 #include "sunlinsol/sunlinsol_pcg.h"   // access to PCG SUNLinearSolver
 #include "sunlinsol/sunlinsol_spgmr.h" // access to SPGMR SUNLinearSolver
-#include <sundials/sundials_types.hpp>
 
 // Macros for problem constants
 #define PI   SUN_RCONST(3.141592653589793238462643383279502884197169)

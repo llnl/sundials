@@ -57,12 +57,12 @@
 #include <limits>
 #include <string>
 
-#include "sundials/sundials_context.hpp"
 #include "arkode/arkode_lsrkstep.h" // access to LSRKStep
 #include "nvector/nvector_serial.h" // access to the serial N_Vector
 #include "sunadaptcontroller/sunadaptcontroller_imexgus.h"
 #include "sunadaptcontroller/sunadaptcontroller_soderlind.h"
 #include "sundials/sundials_adaptcontroller.h"
+#include "sundials/sundials_context.hpp"
 
 // Macros for problem constants
 #define PI   SUN_RCONST(3.141592653589793238462643383279502884197169)

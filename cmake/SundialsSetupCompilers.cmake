@@ -91,8 +91,7 @@ if(ENABLE_ALL_WARNINGS)
 -Wduplicated-cond -Wduplicated-branches -Wunused-macros \
 -Wunused-local-typedefs -Wundef")
   # TODO(SBR): Try to add -Wredundant-decls once SuperLU version is updated in
-  # CI tests
-  # Avoid numerous warnings from printf
+  # CI tests Avoid numerous warnings from printf
   if(SUNDIALS_PRECISION MATCHES "SINGLE|DOUBLE|EXTENDED")
     set(WARNING_FLAGS "-Wpedantic ${WARNING_FLAGS}")
   endif()

@@ -31,12 +31,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "arkode/arkode_arkstep.h"    // prototypes for ARKStep fcts., consts
-#include "arkode/arkode_mristep.h"    // prototypes for MRIStep fcts., consts
-#include "mpi.h"                      // MPI header file
-#include "nvector/nvector_parallel.h" // parallel N_Vector types, fcts., macros
-#include "sundials/sundials_types.hpp"// def. of type 'sunrealtype'
-#include "sunlinsol/sunlinsol_pcg.h"  // access to PCG SUNLinearSolver
+#include "arkode/arkode_arkstep.h"     // prototypes for ARKStep fcts., consts
+#include "arkode/arkode_mristep.h"     // prototypes for MRIStep fcts., consts
+#include "mpi.h"                       // MPI header file
+#include "nvector/nvector_parallel.h"  // parallel N_Vector types, fcts., macros
+#include "sundials/sundials_types.hpp" // def. of type 'sunrealtype'
+#include "sunlinsol/sunlinsol_pcg.h"   // access to PCG SUNLinearSolver
 
 using namespace std;
 
