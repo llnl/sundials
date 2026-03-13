@@ -65,6 +65,7 @@ set(sundials_HEADERS
     sundials_stepper.hpp
     sundials_types_deprecated.h
     sundials_types.h
+    sundials_types.hpp
     sundials_version.h)
 
 if(SUNDIALS_ENABLE_MPI)
