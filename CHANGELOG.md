@@ -24,7 +24,7 @@ by calling `LSRKStepSetNumSSPStages`.
 ARKODE now allows users to supply functions that will be called before before right-hand
 side routines are called on an updated state, before each internal time step attempt,
 after each internal time step attempt, after each internal stage, and after each
-successful time step (`ARKodeSetPreRHSFn`, `ARKodeSetPreStepFn`,
+successful time step (`ARKodeSetPreRhsFn`, `ARKodeSetPreStepFn`,
 `ARKodeSetPostprocessStepFn`, `ARKodeSetPostprocessStageFn`, and
 `ARKodeSetPostStepFn`).  These are considered **advanced** functions, as they
 should treat the state vector as read-only, otherwise all theoretical guarantees of

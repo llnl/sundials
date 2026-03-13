@@ -23,7 +23,7 @@ their minimum allowable values of 2 and 4. Users may revert to the previous valu
 ARKODE now allows users to supply functions that will be called before before right-hand
 side routines are called on an updated state, before each internal time step attempt,
 after each internal time step attempt, after each internal stage, and after each
-successful time step (:c:func:`ARKodeSetPreRHSFn`, :c:func:`ARKodeSetPreStepFn`,
+successful time step (:c:func:`ARKodeSetPreRhsFn`, :c:func:`ARKodeSetPreStepFn`,
 :c:func:`ARKodeSetPostprocessStepFn`, :c:func:`ARKodeSetPostprocessStageFn`, and
 :c:func:`ARKodeSetPostStepFn`).  These are considered **advanced** functions, as they
 should treat the state vector as read-only, otherwise all theoretical guarantees of
