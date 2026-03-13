@@ -1124,7 +1124,7 @@ stability will be lost.**
 
 
 A user-provided :c:type:`ARKPreStepFn` will be called before each internal time
-step attempt by ARKODE (see :c:func:`ARKSetPreStepFn`).
+step attempt by ARKODE (see :c:func:`ARKodeSetPreStepFn`).
 
 .. c:type:: int (*ARKPreStepFn)(sunrealtype t, N_Vector y, long int step, int attempt, void* user_data)
 
@@ -1153,7 +1153,7 @@ step attempt by ARKODE (see :c:func:`ARKSetPreStepFn`).
    .. versionadded:: x.y.z
 
 A user-provided :c:type:`ARKPostStepFn` will be called following each *successful* internal time
-step by ARKODE (see :c:func:`ARKSetPostStepFn`).
+step by ARKODE (see :c:func:`ARKodeSetPostStepFn`).
 
 .. c:type:: int (*ARKPostStepFn)(sunrealtype t, N_Vector y, long int step, void* user_data)
 
@@ -1176,7 +1176,7 @@ step by ARKODE (see :c:func:`ARKSetPostStepFn`).
 
    .. versionadded:: x.y.z
 
-A user-provided :c:type:`ARKPreRhsFn` will be called just prior to any user-supplied :c:type:`ARKRhsFn` (see :c:func:`ARKSetPreRhsFn`).  In the case of partitioned integration methods (e.g., ARKStep, MRIStep), if multiple :c:type:`ARKRhsFn` will be called with the same :math:`(t,y)` argument, then the :c:type:`ARKPreRhsFn` will be called only once just prior to the first :c:type:`ARKRhsFn` that will be called with that :math:`(t,y)` input.
+A user-provided :c:type:`ARKPreRhsFn` will be called just prior to any user-supplied :c:type:`ARKRhsFn` (see :c:func:`ARKodeSetPreRhsFn`).  In the case of partitioned integration methods (e.g., ARKStep, MRIStep), if multiple :c:type:`ARKRhsFn` will be called with the same :math:`(t,y)` argument, then the :c:type:`ARKPreRhsFn` will be called only once just prior to the first :c:type:`ARKRhsFn` that will be called with that :math:`(t,y)` input.
 
 .. c:type:: int (*ARKPreRhsFn)(sunrealtype t, N_Vector y, void* user_data)
 
