@@ -3567,9 +3567,14 @@ denoting the IVP right hand side function as ``RHS``, then the flow of a
 
    c. Update :math:`(t_{cur},y_{cur})` with the new time step solution
 
-   d. Call ``PostprocessStep`` with :math:`(t_{cur},y_{cur})`
+   d. If the method is FSAL (the last stage is the time step solution),
+      call ``PostprocessStep`` with :math:`(t_{cur},y_{cur})`, else call
+      ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`.
 
-5. Check the local error.
+5. If the method is not FSAL, update :math:`(t_{cur},y_{cur})` with the
+   new time step solution and call ``PostprocessStep``.
+
+6. Check the local error.
 
    a. If the step is successful then call ``PostStep`` with
       :math:`(t_{cur},y_{cur})`, determine the next internal step size :math:`h_n`,
@@ -3626,11 +3631,10 @@ function ``RHS_i`` and the explicit right-hand side function ``RHS_e``:
 
    d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
 
-5. Update :math:`(t_{cur},y_{cur})` with the new time step solution
+5. If the method is not stiffly accurate, update :math:`(t_{cur},y_{cur})` with the new
+   time step solution and call ``PostprocessStep``.
 
-6. If the method is not stiffly accurate, call ``PostprocessStep`` with :math:`(t_{cur},y_{cur})`
-
-7. Check the local error.
+6. Check the local error.
 
    a. If the step is successful then call ``PostStep`` with
       :math:`(t_{cur},y_{cur})`, determine the next internal step size
