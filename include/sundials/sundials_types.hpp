@@ -29,11 +29,11 @@
 #include <iostream>
 #include <quadmath.h>
 /* This defines an output stream operator for the `__float128` type.*/
-static std::ostream& operator<<(std::ostream& os, __float128 value)
+inline std::ostream& operator<<(std::ostream& os, __float128 value)
 {
     // Get current stream formatting state
-    const int width     = os.width();     // Width set by std::setw
-    const int precision = os.precision(); // Precision set by std::setprecision
+    const long int width     = os.width();     // Width set by std::setw
+    const long int precision = os.precision(); // Precision set by std::setprecision
     const std::ios_base::fmtflags flags =
       os.flags(); // Format flags (e.g., scientific notation)
 
@@ -46,18 +46,18 @@ static std::ostream& operator<<(std::ostream& os, __float128 value)
     char format_buffer[64];
     std::snprintf(format_buffer, sizeof(format_buffer),
                   "%%%d.%dQ%c", // Format template: %[width].[precision]Q[e/f/g]
-                  width,        // Width from setw
-                  precision,    // Precision from setprecision
+                  static_cast<int>(width),        // Width from setw
+                  static_cast<int>(precision),    // Precision from setprecision
                   format_specifier);
 
     // Format __float128 to string
     char value_buffer[128];
-    int n = quadmath_snprintf(value_buffer, sizeof(value_buffer),
-                              format_buffer, // Dynamically generated format (e.g., "%20.15Qe")
-                              value);
+    const auto n = static_cast<long unsigned int>(quadmath_snprintf(value_buffer, sizeof(value_buffer),
+                                                                           format_buffer, // Dynamically generated format (e.g., "%20.15Qe")
+                                                                           value));
 
     // Write to output stream
-    if (n >= 0 && n < sizeof(value_buffer)) { os << value_buffer; }
+    if (n < sizeof(value_buffer)) { os << value_buffer; }
     else { os << "[FORMAT ERROR]"; }
 
     // Reset stream width (setw has one-time effect)
