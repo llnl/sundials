@@ -3511,7 +3511,7 @@ callback functions for the following events within a time step:
 * at the end of a successful time step (:c:func:`ARKodeSetPostStepFn`),
 
 * just prior to evaluating user-provided right-hand side (RHS)
-  functions (:c:func:`ARKodeSetPreRHSFn`)
+  functions (:c:func:`ARKodeSetPreRhsFn`)
 
 * immediately after each stage is completed within a time step
   (:c:func:`ARKodeSetPostprocessStageFn`)
@@ -3524,7 +3524,7 @@ For users who wish to perform different actions at individual internal
 stages within an ARKODE method, they may obtain the current stage index by
 calling :c:func:`ARKodeGetStageIndex`
 in their stage-level callback routines provided to
-:c:func:`ARKodeSetPreRHSFn` and :c:func:`ARKodeSetPostprocessStageFn`.
+:c:func:`ARKodeSetPreRhsFn` and :c:func:`ARKodeSetPostprocessStageFn`.
 
 The specific ordering of these functions within a given step depends on
 whether each stage is explicit (as in ERKStep) or implicit (as in ARKStep or
@@ -3665,7 +3665,7 @@ Optional input                                     Function name                
 =================================================  ==========================================  =======================
 Set pre time step function                         :c:func:`ARKodeSetPreStepFn`                ``NULL``
 Set post time step function                        :c:func:`ARKodeSetPostStepFn`               ``NULL``
-Set pre right-hand side function                   :c:func:`ARKodeSetPreRHSFn`                 ``NULL``
+Set pre right-hand side function                   :c:func:`ARKodeSetPreRhsFn`                 ``NULL``
 Set stage postprocessing function                  :c:func:`ARKodeSetPostprocessStageFn`       ``NULL``
 Set time step postprocessing function              :c:func:`ARKodeSetPostprocessStepFn`        ``NULL``
 =================================================  ==========================================  =======================
@@ -3715,7 +3715,7 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
       theoretical guarantees of solution accuracy and stability are lost.
 
 
-.. c:function:: int ARKodeSetPreRHSFn(void* arkode_mem, ARKPreRhsFn PreRhs)
+.. c:function:: int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn PreRhs)
 
    [ADVANCED] Provides a function to be called prior to evaluating user-provided right-hand
    side (RHS) functions.  For partitioned methods (e.g., ARKStep or MRIStep), that will call
