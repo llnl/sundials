@@ -86,12 +86,20 @@ if(ENABLE_ALL_WARNINGS)
   # flags with -Wno-unknown-warning-option. Ironically, this is not supported by
   # some compilers.
   set(WARNING_FLAGS
-      "-Wno-unknown-warning-option -Wall -Wpedantic -Wextra -Wshadow \
+      "-Wno-unknown-warning-option -Wall -Wextra -Wshadow \
 -Wwrite-strings -Wcast-align -Wdisabled-optimization -Wvla -Walloca \
 -Wduplicated-cond -Wduplicated-branches -Wunused-macros \
 -Wunused-local-typedefs -Wundef")
   # TODO(SBR): Try to add -Wredundant-decls once SuperLU version is updated in
   # CI tests
+  # Avoid numerous warnings from printf
+  if(SUNDIALS_PRECISION MATCHES "SINGLE|DOUBLE|EXTENDED")
+    set(WARNING_FLAGS "-Wpedantic ${WARNING_FLAGS}")
+  endif()
+
+  if(SUNDIALS_PRECISION MATCHES "FLOAT128")
+    set(WARNING_FLAGS "-Wno-format ${WARNING_FLAGS}")
+  endif()
 
   # Avoid numerous warnings from printf
   if(SUNDIALS_PRECISION MATCHES "EXTENDED|FLOAT128")
