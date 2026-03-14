@@ -204,14 +204,14 @@ SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data,
   return (ier);
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector(SUNDomEigEstimator DEE,
-                                                        N_Vector v)
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint(SUNDomEigEstimator DEE,
+                                                        sunrealtype t, N_Vector v)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
-  if (DEE->ops->setrhslinearizationvector)
+  if (DEE->ops->setrhslinearizationpoint)
   {
-    ier = DEE->ops->setrhslinearizationvector(DEE, v);
+    ier = DEE->ops->setrhslinearizationpoint(DEE, t, v);
   }
   else { ier = SUN_SUCCESS; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));

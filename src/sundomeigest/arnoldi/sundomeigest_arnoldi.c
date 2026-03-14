@@ -107,8 +107,8 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   /* Attach operations */
   DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Arnoldi;
   DEE->ops->setrhs    = SUNDomEigEstimator_SetRHS_Arnoldi;
-  DEE->ops->setrhslinearizationvector =
-    SUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi;
+  DEE->ops->setrhslinearizationpoint =
+    SUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi;
   DEE->ops->setnumpreprocessiters =
     SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi;
   DEE->ops->setreltol         = SUNDomEigEstimator_SetRelTol_Arnoldi;
@@ -133,8 +133,9 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   content->ATdata         = NULL;
   content->V              = NULL;
   content->q              = NULL;
-  content->rhs_linV       = NULL;
-  content->Fv             = NULL;
+  content->rhs_linY       = NULL;
+  content->rhs_linT       = ZERO;
+  content->Fy             = NULL;
   content->work           = NULL;
   content->kry_dim        = kry_dim;
   content->num_warmups    = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
@@ -206,22 +207,24 @@ SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi(
-  SUNDomEigEstimator DEE, N_Vector v)
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
 {
   SUNFunctionBegin(DEE->sunctx);
 
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
-  SUNAssert(v, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(y, SUN_ERR_ARG_CORRUPT);
 
-  if (Arnoldi_CONTENT(DEE)->rhs_linV == NULL)
+  if (Arnoldi_CONTENT(DEE)->rhs_linY == NULL)
   {
-    Arnoldi_CONTENT(DEE)->rhs_linV = N_VClone(v);
+    Arnoldi_CONTENT(DEE)->rhs_linY = N_VClone(y);
     SUNCheckLastErr();
   }
 
-  N_VScale(ONE, v, Arnoldi_CONTENT(DEE)->rhs_linV);
+  Arnoldi_CONTENT(DEE)->rhs_linT = t;
+
+  N_VScale(ONE, y, Arnoldi_CONTENT(DEE)->rhs_linY);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
@@ -353,8 +356,9 @@ SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
   SUNAssert(Arnoldi_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
   /* set the tolerance for preprocessing iterations */
-  if (tol <= SUN_RCONST(0.0)) { tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT; }
-  else { Arnoldi_CONTENT(DEE)->tol_preprocess = tol; }
+  if (tol < SUN_SMALL_REAL) { tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT; }
+
+  Arnoldi_CONTENT(DEE)->tol_preprocess = tol;
 
   /* set the type of warmup iterations */
   Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNTRUE;
@@ -586,10 +590,10 @@ SUNErrCode SUNDomEigEstimator_Destroy_Arnoldi(SUNDomEigEstimator* DEEptr)
       N_VDestroy(Arnoldi_CONTENT(DEE)->q);
       Arnoldi_CONTENT(DEE)->q = NULL;
     }
-    if (Arnoldi_CONTENT(DEE)->rhs_linV)
+    if (Arnoldi_CONTENT(DEE)->rhs_linY)
     {
-      N_VDestroy(Arnoldi_CONTENT(DEE)->rhs_linV);
-      Arnoldi_CONTENT(DEE)->rhs_linV = NULL;
+      N_VDestroy(Arnoldi_CONTENT(DEE)->rhs_linY);
+      Arnoldi_CONTENT(DEE)->rhs_linY = NULL;
     }
     if (Arnoldi_CONTENT(DEE)->V)
     {
@@ -683,7 +687,7 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   SUNAssert(v, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Jv, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->rhsfn, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(Arnoldi_CONTENT(DEE)->rhs_linV, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(Arnoldi_CONTENT(DEE)->rhs_linY, SUN_ERR_ARG_CORRUPT);
   // TODO: Add assertion as needed
 
   if (Arnoldi_CONTENT(DEE)->work == NULL)
@@ -691,27 +695,32 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
     Arnoldi_CONTENT(DEE)->work = N_VClone(v);
     SUNCheckLastErr();
   }
-  if (Arnoldi_CONTENT(DEE)->Fv == NULL)
+  if (Arnoldi_CONTENT(DEE)->Fy == NULL)
   {
-    Arnoldi_CONTENT(DEE)->Fv = N_VClone(v);
+    Arnoldi_CONTENT(DEE)->Fy = N_VClone(v);
     SUNCheckLastErr();
   }
 
   sunrealtype sig, siginv;
   int iter, retval;
 
-  N_Vector y    = Arnoldi_CONTENT(DEE)->rhs_linV;
+  N_Vector y    = Arnoldi_CONTENT(DEE)->rhs_linY;
   N_Vector work = Arnoldi_CONTENT(DEE)->work;
-  N_Vector Fv   = Arnoldi_CONTENT(DEE)->Fv;
+  N_Vector Fy   = Arnoldi_CONTENT(DEE)->Fy;
 
-  retval = Arnoldi_CONTENT(DEE)->rhsfn(y, Arnoldi_CONTENT(DEE)->Fv,
+  retval = Arnoldi_CONTENT(DEE)->rhsfn(Arnoldi_CONTENT(DEE)->rhs_linT, y, 
+                                       Fy,
                                        Arnoldi_CONTENT(DEE)->rhs_data);
   Arnoldi_CONTENT(DEE)->nfevals++;
   if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
-  /* Initialize perturbation to 1/||v|| */
-  // sunrealtype sig = ONE / N_VWrmsNorm(v, ark_mem->ewt);
-  sunrealtype sig = ONE / N_VWrmsNorm(v, v);
+  /* Initialize perturbation */
+  sunrealtype ydotv = N_VDotProd(y, v);
+  sunrealtype vdotv = N_VDotProd(v, v); 
+  sunrealtype sq1norm = N_VL1Norm(v);
+  sunrealtype sign = (ydotv >= ZERO) ? ONE : -ONE;
+  sunrealtype sqrteps = SUNRsqrt(SUN_UNIT_ROUNDOFF);
+  sig = sign * sqrteps * SUNMAX(SUNRabs(ydotv), sq1norm) / vdotv;
 
   for (iter = 0; iter < MAX_DQITERS; iter++)
   {
@@ -719,7 +728,7 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
     N_VLinearSum(sig, v, ONE, y, work);
 
     /* Set Jv = f(tn, y+sig*v) */
-    retval = Arnoldi_CONTENT(DEE)->rhsfn(work, Jv,
+    retval = Arnoldi_CONTENT(DEE)->rhsfn(Arnoldi_CONTENT(DEE)->rhs_linT, work, Jv,
                                          Arnoldi_CONTENT(DEE)->rhs_data);
     Arnoldi_CONTENT(DEE)->nfevals++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
@@ -730,7 +739,7 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
 
   /* Replace Jv by (Jv - fn)/sig */
   siginv = ONE / sig;
-  N_VLinearSum(siginv, Jv, -siginv, Fv, Jv);
+  N_VLinearSum(siginv, Jv, -siginv, Fy, Jv);
 
   return SUN_SUCCESS;
 }

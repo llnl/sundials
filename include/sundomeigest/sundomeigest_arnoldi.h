@@ -43,13 +43,15 @@ struct SUNDomEigEstimatorContent_Arnoldi_
 
   /* Krylov subspace vectors */
   N_Vector* V;
-  N_Vector q, rhs_linV, Fv, work;
+  N_Vector q, rhs_linY, Fy, work;
 
   int kry_dim;                  /* Krylov subspace dimension */
   int num_warmups;              /* Number of preprocessing iterations */
   long int num_iters;           /* Number of iterations in last Estimate call */
   sunbooleantype warmup_to_tol; /* Type of warmup iterations */
   sunrealtype tol_preprocess;   /* Tolerance for preprocessing iterations */
+
+  sunrealtype rhs_linT; /* Linearization time for the RHS function */
 
   long int num_ATimes; /* Number of ATimes calls */
 
@@ -86,8 +88,8 @@ SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
                                              void* rhs_data, DEERhsFn RHSfn);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi(
-  SUNDomEigEstimator DEE, N_Vector v);
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,

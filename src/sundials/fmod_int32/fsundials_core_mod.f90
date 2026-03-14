@@ -688,7 +688,7 @@ module fsundials_core_mod
  type, bind(C), public :: SUNDomEigEstimator_Ops
   type(C_FUNPTR), public :: setatimes
   type(C_FUNPTR), public :: setrhs
-  type(C_FUNPTR), public :: setrhslinearizationvector
+  type(C_FUNPTR), public :: setrhslinearizationpoint
   type(C_FUNPTR), public :: setoptions
   type(C_FUNPTR), public :: setmaxiters
   type(C_FUNPTR), public :: setnumpreprocessiters
@@ -713,7 +713,7 @@ module fsundials_core_mod
  public :: FSUNDomEigEstimator_FreeEmpty
  public :: FSUNDomEigEstimator_SetATimes
  public :: FSUNDomEigEstimator_SetRHS
- public :: FSUNDomEigEstimator_SetRHSLinearizationVector
+ public :: FSUNDomEigEstimator_SetRHSLinearizationPoint
  public :: FSUNDomEigEstimator_SetMaxIters
  public :: FSUNDomEigEstimator_SetNumPreprocessIters
  public :: FSUNDomEigEstimator_SetRelTol
@@ -2950,8 +2950,8 @@ type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNDomEigEstimator_SetRHSLinearizationVector(farg1, farg2) &
-bind(C, name="_wrap_FSUNDomEigEstimator_SetRHSLinearizationVector") &
+function swigc_FSUNDomEigEstimator_SetRHSLinearizationPoint(farg1, farg2) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetRHSLinearizationPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -7168,7 +7168,7 @@ fresult = swigc_FSUNDomEigEstimator_SetRHS(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FSUNDomEigEstimator_SetRHSLinearizationVector(dee, v) &
+function FSUNDomEigEstimator_SetRHSLinearizationPoint(dee, v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -7180,7 +7180,7 @@ type(C_PTR) :: farg2
 
 farg1 = c_loc(dee)
 farg2 = c_loc(v)
-fresult = swigc_FSUNDomEigEstimator_SetRHSLinearizationVector(farg1, farg2)
+fresult = swigc_FSUNDomEigEstimator_SetRHSLinearizationPoint(farg1, farg2)
 swig_result = fresult
 end function
 

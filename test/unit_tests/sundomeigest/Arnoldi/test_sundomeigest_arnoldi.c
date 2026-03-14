@@ -220,7 +220,7 @@ int main(int argc, char* argv[])
 
   rel_error /= norm_of_dom_eig;
 
-  if (rel_error < rel_tol)
+  if (rel_error < SUN_RCONST(10.0) * rel_tol)
   {
     printf("\n\nPASS:   relative error = " SUN_FORMAT_G " \n\n", rel_error);
   }

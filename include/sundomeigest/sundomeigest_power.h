@@ -41,12 +41,14 @@ struct SUNDomEigEstimatorContent_Power_
   SUNATimesFn ATimes; /* User provided ATimes function */
   void* ATdata;       /* ATimes function data*/
 
-  N_Vector V, q, q_prev, rhs_linV, Fv, work; /* workspace vectors */
+  N_Vector V, q, q_prev, rhs_linY, Fy, work; /* workspace vectors */
 
   int num_warmups;              /* Number of preprocessing iterations */
   long int max_iters;           /* Maximum number of power iterations */
   long int num_iters;           /* Number of iterations in last Estimate call */
   sunbooleantype warmup_to_tol; /* Type of warmup iterations */
+
+  sunrealtype rhs_linT; /* Linearization time for the RHS function */
 
   long int num_ATimes; /* Number of ATimes calls */
 
@@ -96,8 +98,8 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
                                                     N_Vector q);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationVector_Power(SUNDomEigEstimator DEE,
-                                                              N_Vector v);
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Power(SUNDomEigEstimator DEE,
+                                                              sunrealtype t, N_Vector v);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE,

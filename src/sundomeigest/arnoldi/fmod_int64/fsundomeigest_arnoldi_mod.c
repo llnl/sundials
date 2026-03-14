@@ -396,25 +396,25 @@ SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Arnoldi__q_get(SwigClassWrap
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__rhs_linV_set(SwigClassWrapper const *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_set(SwigClassWrapper const *farg1, N_Vector farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhs_linV", return );
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhs_linY", return );
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
   arg2 = (N_Vector)(farg2);
-  if (arg1) (arg1)->rhs_linV = arg2;
+  if (arg1) (arg1)->rhs_linY = arg2;
 }
 
 
-SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Arnoldi__rhs_linV_get(SwigClassWrapper const *farg1) {
+SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_get(SwigClassWrapper const *farg1) {
   N_Vector fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   N_Vector result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhs_linV", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhs_linY", return 0);
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
-  result = (N_Vector) ((arg1)->rhs_linV);
+  result = (N_Vector) ((arg1)->rhs_linY);
   fresult = result;
   return fresult;
 }
@@ -931,7 +931,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator farg1
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi(SUNDomEigEstimator farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(SUNDomEigEstimator farg1, N_Vector farg2) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -939,7 +939,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi(SUNDo
   
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (N_Vector)(farg2);
-  result = (SUNErrCode)SUNDomEigEstimator_SetRHSLinearizationVector_Arnoldi(arg1,arg2);
+  result = (SUNErrCode)SUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
