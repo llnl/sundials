@@ -274,10 +274,10 @@ are for a Linux system and are provided as illustration only.
    files. For options where the default value depends on the value of another
    option, the initial value is set on the first configuration pass and is not
    updated automatically if the related option value is changed in subsequent
-   passes. For example, the default value of :cmakeop:`EXAMPLES_INSTALL_PATH` is
+   passes. For example, the default value of :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH` is
    ``CMAKE_INSTALL_PREFIX/examples``; if the value of
    :cmakeop:`CMAKE_INSTALL_PREFIX` is updated, then
-   :cmakeop:`EXAMPLES_INSTALL_PATH` will also need to be updated as its value
+   :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH` will also need to be updated as its value
    was set using the :cmakeop:`CMAKE_INSTALL_PREFIX` default.
 
 .. _Installation.Options.BuildType:
@@ -676,35 +676,51 @@ packages.
 Example Programs
 ^^^^^^^^^^^^^^^^
 
-.. cmakeoption:: EXAMPLES_ENABLE_C
+.. cmakeoption:: SUNDIALS_ENABLE_C_EXAMPLES
 
    Build the SUNDIALS C examples
 
    Default: ``ON``
 
-.. cmakeoption:: EXAMPLES_ENABLE_CXX
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_ENABLE_C``
+
+.. cmakeoption:: SUNDIALS_ENABLE_CXX_EXAMPLES
 
    Build the SUNDIALS C++ examples
 
    Default: ``OFF``
 
-.. cmakeoption:: EXAMPLES_ENABLE_CUDA
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_ENABLE_CXX``
+
+.. cmakeoption:: SUNDIALS_ENABLE_CUDA_EXAMPLES
 
    Build the SUNDIALS CUDA examples
 
    Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_CUDA` is ``ON``, otherwise ``OFF``
 
-.. cmakeoption:: EXAMPLES_ENABLE_F2003
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_ENABLE_CUDA``
+
+.. cmakeoption:: SUNDIALS_ENABLE_FORTRAN_EXAMPLES
 
    Build the SUNDIALS Fortran 2003 examples
 
    Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_FORTRAN` is ``ON``,
    otherwise ``OFF``
 
-.. cmakeoption:: EXAMPLES_INSTALL
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_ENABLE_F2003``
+
+.. cmakeoption:: SUNDIALS_ENABLE_EXAMPLES_INSTALL
 
    Install example program source files and sample output files. See
-   :cmakeop:`EXAMPLES_INSTALL_PATH` for the install location.
+   :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH` for the install location.
 
    A ``CMakeLists.txt`` file to build the examples will be automatically
    generated and installed with the source files. If building on a Unix-like
@@ -713,11 +729,20 @@ Example Programs
 
    Default: ``ON``
 
-.. cmakeoption:: EXAMPLES_INSTALL_PATH
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_INSTALL``
+
+.. cmakeoption:: SUNDIALS_EXAMPLES_INSTALL_PATH
 
    Full path to where example source and output files will be installed
 
    Default: ``CMAKE_INSTALL_PREFIX/examples``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_INSTALL_PATH``
+
 
 .. _Installation.Options.Fortran:
 
@@ -838,6 +863,21 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
    .. versionadded:: x.y.z
 
       Replaces the deprecated option ``SUNDIALS_BUILD_WITH_PROFILING``
+
+.. _Installation.Options.FusedKernels:
+
+Fused Kernels
+^^^^^^^^^^^^^
+
+.. cmakeoption:: SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
+
+   Enable fused kernels in SUNDIALS packages
+
+   Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``
 
 .. _Installation.Options.Adiak:
 
@@ -1685,7 +1725,7 @@ configure SUNDIALS with MPI support:
    .. note::
 
       This option is only needed if MPI is enabled (:cmakeop:`SUNDIALS_ENABLE_MPI` is
-      ``ON``) and C++ examples are enabled (:cmakeop:`EXAMPLES_ENABLE_CXX` is
+      ``ON``) and C++ examples are enabled (:cmakeop:`SUNDIALS_ENABLE_CXX_EXAMPLES` is
       ``ON``). All SUNDIALS solvers can be used from C++ MPI applications by
       without setting any additional configuration options other than
       :cmakeop:`SUNDIALS_ENABLE_MPI`.
@@ -2499,7 +2539,7 @@ command:
 
    make test
 
-Additionally, if :cmakeop:`EXAMPLES_INSTALL` is set to ``ON``, then a set of
+Additionally, if :cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL` is set to ``ON``, then a set of
 smoke tests can be run after installing with the command:
 
 .. code-block:: bash
@@ -2514,7 +2554,7 @@ Building and Running Examples
 Each of the SUNDIALS solvers is distributed with a set of examples demonstrating
 basic usage. To build and install the examples, set at least one of the
 ``EXAMPLES_ENABLE_<language>`` options to ``ON``, and set
-:cmakeop:`EXAMPLES_INSTALL` to ``ON``. Along side the example sources and
+:cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL` to ``ON``. Along side the example sources and
 outputs, automatically generated ``CMakeLists.txt`` configuration files (and
 ``Makefile`` files if on Linux/Unix systems) are installed referencing the
 *installed* SUNDIALS headers and libraries.

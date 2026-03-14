@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------
 
 # C examples
-if(EXAMPLES_ENABLE_C)
+if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(C_serial)
   if(BUILD_NVECTOR_MANYVECTOR)
     add_subdirectory(C_manyvector)
@@ -47,7 +47,7 @@ if(EXAMPLES_ENABLE_C)
 endif()
 
 # C++ examples
-if(EXAMPLES_ENABLE_CXX)
+if(SUNDIALS_ENABLE_CXX_EXAMPLES)
   add_subdirectory(CXX_serial)
   if(SUNDIALS_ENABLE_LAPACK)
     add_subdirectory(CXX_lapack)
@@ -58,7 +58,7 @@ if(EXAMPLES_ENABLE_CXX)
   if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(CXX_parallel)
   endif()
-  if(SUNDIALS_ENABLE_MPI AND SUNDIALS_ENABLE_HYPRE)
+  if(SUNDIALS_ENABLE_HYPRE)
     add_subdirectory(CXX_parhyp)
   endif()
   if(SUNDIALS_ENABLE_SUPERLUDIST)
@@ -70,7 +70,7 @@ if(EXAMPLES_ENABLE_CXX)
 endif()
 
 # F2003 examples
-if(EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
   add_subdirectory(F2003_serial)
   add_subdirectory(F2003_custom)
   if(SUNDIALS_ENABLE_MPI)

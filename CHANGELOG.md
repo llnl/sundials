@@ -62,20 +62,33 @@ table below lists the old CMake option names and the new replacements.
 | `BUILD_FORTRAN_MODULE_INTERFACE`        | `SUNDIALS_ENABLE_FORTRAN`                      |
 | `SUNDIALS_BUILD_WITH_PROFILING`         | `SUNDIALS_ENABLE_PROFILING`                    |
 | `SUNDIALS_BUILD_WITH_MONITORING`        | `SUNDIALS_ENABLE_MONITORING`                   |
+| `SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS`  | `SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`        |
+| `EXAMPLES_ENABLE_C`                     | `SUNDIALS_ENABLE_C_EXAMPLES`                   |
+| `EXAMPLES_ENABLE_CXX`                   | `SUNDIALS_ENABLE_CXX_EXAMPLES`                 |
+| `EXAMPLES_ENABLE_F2003`                 | `SUNDIALS_ENABLE_FORTRAN_EXAMPLES`             |
+| `EXAMPLES_ENABLE_CUDA`                  | `SUNDIALS_ENABLE_CUDA_EXAMPLES`                |
+| `EXAMPLES_INSTALL`                      | `SUNDIALS_ENABLE_EXAMPLES_INSTALL`             |
+| `EXAMPLES_INSTALL_PATH`                 | `SUNDIALS_EXAMPLES_INSTALL_PATH`               |
 | `BUILD_BENCHMARKS`                      | `SUNDIALS_ENABLE_BENCHMARKS`                   |
 | `BENCHMARKS_INSTALL_PATH`               | `SUNDIALS_BENCHMARKS_INSTALL_PATH`             |
 | `SUNDIALS_BENCHMARK_OUTPUT_DIR`         | `SUNDIALS_BENCHMARKS_OUTPUT_DIR`               |
 | `SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR` | `SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR`       |
 | `SUNDIALS_BENCHMARK_NUM_CPUS`           | `SUNDIALS_BENCHMARKS_NUM_CPUS`                 |
 | `SUNDIALS_BENCHMARK_NUM_GPUS`           | `SUNDIALS_BENCHMARKS_NUM_GPUS`                 |
+| `ENABLE_ALL_WARNINGS`                   | `SUNDIALS_ENABLE_ALL_WARNINGS`                 |
+| `ENABLE_WARNINGS_AS_ERRORS`             | `CMAKE_COMPILE_WARNING_AS_ERROR`               |
+| `ENABLE_ADDRESS_SANITIZER`              | `SUNDIALS_ENABLE_ADDRESS_SANITIZER`            |
+| `ENABLE_MEMORY_SANITIZER`               | `SUNDIALS_ENABLE_MEMORY_SANITIZER`             |
+| `ENABLE_LEAK_SANITIZER`                 | `SUNDIALS_ENABLE_LEAK_SANITIZER`               |
 
 Following the updated CMake options, the macros listed below have been
 deprecated and replaced with versions that align with the new CMake options.
 
-| Old Macro                        | New Macro                    |
-|----------------------------------|------------------------------|
-| `SUNDIALS_BUILD_WITH_PROFILING`  | `SUNDIALS_ENABLE_PROFILING`  |
-| `SUNDIALS_BUILD_WITH_MONITORING` | `SUNDIALS_ENABLE_MONITORING` |
+| Old Macro                              | New Macro                               |
+|----------------------------------------|-----------------------------------------|
+| `SUNDIALS_BUILD_WITH_PROFILING`        | `SUNDIALS_ENABLE_PROFILING`             |
+| `SUNDIALS_BUILD_WITH_MONITORING`       | `SUNDIALS_ENABLE_MONITORING`            |
+| `SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS` | `SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS` |
 
 ## Changes to SUNDIALS in release 7.6.0
 

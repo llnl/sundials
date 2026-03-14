@@ -163,14 +163,14 @@ foreach(example_tuple ${ARKODE_examples})
     EXAMPLE_TYPE ${example_type})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example} ${test_name}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_serial)
   endif()
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   sundials_install_examples(
     arkode ARKODE_examples
     CMAKE_TEMPLATE cmakelists_C_ex.in

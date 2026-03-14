@@ -136,29 +136,41 @@ real type precision, index size, and if the Fortran interfaces are enabled. See
 ``cmake/SundialsSetupCompilers.cmake`` for the exact set of flags. The current
 set of flags is compatible with with GNU and Clang compilers.
 
-.. cmakeoption:: ENABLE_ALL_WARNINGS
+.. cmakeoption:: SUNDIALS_ENABLE_ALL_WARNINGS
 
    Enable additional compiler warnings
 
    Default: OFF
 
-.. cmakeoption:: ENABLE_WARNINGS_AS_ERRORS
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_ALL_WARNINGS``
+
+.. cmakeoption:: CMAKE_COMPILE_WARNING_AS_ERROR
 
    Treat compiler warnings as errors
 
    Default: OFF
 
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_WARNINGS_AS_ERRORS``
+
 Additionally, the CI will run a subset of tests (no TPLs) using different
 sanitizers. These can be enabled with the following CMake options.
 
-.. cmakeoption:: ENABLE_ADDRESS_SANITIZER
+.. cmakeoption:: SUNDIALS_ENABLE_ADDRESS_SANITIZER
 
    Enable sanitizer to detect memory errors, adds the ``-fsanitize=address``
    flag. Depending on the compiler, this may also detect memory leaks.
 
    Default: OFF
 
-.. cmakeoption:: ENABLE_LEAK_SANITIZER
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_ADDRESS_SANITIZER``
+
+.. cmakeoption:: SUNDIALS_ENABLE_LEAK_SANITIZER
 
    Enable sanitizer to detect memory leaks, adds the ``-fsanitize=leak``
    flag. Depending on the compiler, the leak sanitizer may be part of the
@@ -166,16 +178,28 @@ sanitizers. These can be enabled with the following CMake options.
 
    Default: OFF
 
-.. cmakeoption:: ENABLE_MEMORY_SANITIZER
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_LEAK_SANITIZER``
+
+.. cmakeoption:: SUNDIALS_ENABLE_MEMORY_SANITIZER
 
    Enable sanitizer to detect uninitialized memory errors, adds the
    ``-fsanitize=memory`` flag.
 
    Default: OFF
 
-.. cmakeoption:: ENABLE_UNDEFINED_BEHAVIOR_SANITIZER
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_MEMORY_SANITIZER``
+
+.. cmakeoption:: SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER
 
    Enable sanitizer to detect undefined behavior errors, adds the
    ``-fsanitize=undefined`` flag.
 
    Default: OFF
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_UNDEFINED_BEHAVIOR_SANITIZER``

@@ -260,14 +260,60 @@ sundials_option(SUNDIALS_INSTALL_CMAKEDIR STRING "${DOCSTR}"
 # Options to enable compiler warnings, address sanitizer
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_ALL_WARNINGS BOOL "Enable all compiler warnings" OFF
-                ADVANCED)
+sundials_option(
+  SUNDIALS_ENABLE_ALL_WARNINGS
+  BOOL
+  "Enable all compiler warnings"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_ALL_WARNINGS)
 
-sundials_option(ENABLE_WARNINGS_AS_ERRORS BOOL
-                "Enable compiler warnings as errors" OFF ADVANCED)
+# CMake 3.24 added the native option, CMAKE_COMPILE_WARNING_AS_ERROR
+sundials_option(
+  CMAKE_COMPILE_WARNING_AS_ERROR
+  BOOL
+  "Treat compiler warnings as errors"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_WARNINGS_AS_ERRORS)
 
-sundials_option(ENABLE_ADDRESS_SANITIZER BOOL "Enable address sanitizer" OFF
-                ADVANCED)
+sundials_option(
+  SUNDIALS_ENABLE_ADDRESS_SANITIZER
+  BOOL
+  "Enable address sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_ADDRESS_SANITIZER)
+
+sundials_option(
+  SUNDIALS_ENABLE_MEMORY_SANITIZER
+  BOOL
+  "Enable memory sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_MEMORY_SANITIZER)
+
+sundials_option(
+  SUNDIALS_ENABLE_LEAK_SANITIZER
+  BOOL
+  "Enable leak sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_LEAK_SANITIZER)
+
+sundials_option(
+  SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER
+  BOOL
+  "Enable undefined behavior sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
 
 # ---------------------------------------------------------------
 # Options to enable SUNDIALS debugging

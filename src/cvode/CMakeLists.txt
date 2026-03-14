@@ -47,7 +47,7 @@ set(cvode_HEADERS
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/cvode/ cvode_HEADERS)
 
 # Build fused kernel libraries
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
 
   if(BUILD_NVECTOR_CUDA)
 
