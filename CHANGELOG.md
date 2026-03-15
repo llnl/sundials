@@ -16,9 +16,9 @@ read-only, otherwise all theoretical guarantees of solution accuracy and
 stability will be lost.
 
 Note to users utilizing the previously undocumented `ARKodeSetPostprocessStepFn`
-function, the supplied function is now called on the newly computed state vector
-for all step attempts not just successful steps. To obtain the previous behavior
-of only calling a function on successful steps, switch to using
+function, the supplied function is now called on the newly computed state
+vectors for all step attempts not just successful steps. To obtain the previous
+behavior of only calling a function on successful steps, switch to using
 `ARKodeSetPostStepFn`.
 
 ### Bug Fixes
