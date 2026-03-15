@@ -42,6 +42,6 @@ runs:
         --env env/docker.sh \
         --tpls ${{ inputs.tpls }} \
         --sunrealtype ${{ inputs.precision }} \
-        --indexsize ${{ inputs.indexsize }}\
+        --indexsize ${{ inputs.indexsize }} \
         ${extra_args}
       shell: bash
