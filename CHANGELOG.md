@@ -6,14 +6,14 @@
 
 ### New Features and Enhancements
 
-ARKODE now allows users to supply functions that will be called before each internal
-time step, after each successful time step, after each failed time step, before
-right-hand side routines are called on an updated state, and/or once each internal
-stage is computed (`ARKodeSetPreprocessStepFn`, `ARKodeSetPostprocessStepFn`,
-`ARKodeSetPostprocessStepFailFn`, `ARKodeSetPreRHSProcessFn`, and
-`ARKodeSetPostprocessStageFn`).  These are considered **advanced** functions, as they
-should treat the state vector as read-only, otherwise all theoretical guarantees of
-solution accuracy and stability will be lost.
+ARKODE now allows users to supply functions that will be called before each
+internal time step attempt (`ARKodeSetPreStepFn`), after each successful time
+step (`ARKodeSetPostStepFn`), before right-hand side routines are called on an
+updated state (`ARKodeSetPreRhsFn`), and/or once each internal stage/stage is
+computed (`ARKodeSetPostprocessStepFn`/ `ARKodeSetPostprocessStageFn`). These
+are considered **advanced** functions, as they should treat the state vector as
+read-only, otherwise all theoretical guarantees of solution accuracy and
+stability will be lost.
 
 ### Bug Fixes
 
