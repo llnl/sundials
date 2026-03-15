@@ -9,11 +9,17 @@
 ARKODE now allows users to supply functions that will be called before each
 internal time step attempt (`ARKodeSetPreStepFn`), after each successful time
 step (`ARKodeSetPostStepFn`), before right-hand side routines are called on an
-updated state (`ARKodeSetPreRhsFn`), and/or once each internal stage/stage is
+updated state (`ARKodeSetPreRhsFn`), and/or once each internal step/stage is
 computed (`ARKodeSetPostprocessStepFn`/ `ARKodeSetPostprocessStageFn`). These
 are considered **advanced** functions, as they should treat the state vector as
 read-only, otherwise all theoretical guarantees of solution accuracy and
 stability will be lost.
+
+Note to users utilizing the previously undocumented `ARKodeSetPostprocessStepFn`
+function, the supplied function is now called on the newly computed state vector
+for all step attempts not just successful steps. To obtain the previous behavior
+of only calling a function on successful steps, switch to using
+`ARKodeSetPostStepFn`.
 
 ### Bug Fixes
 
@@ -22,8 +28,8 @@ installed without setting the `SUPERLUMT_WORKS` option to `TRUE`.
 
 Fixed the embedded coefficients for the `ARKODE_TSITOURAS_7_4_5` Butcher table.
 
-Fixed a bug in logging output from ARKODE, where for some time stepping modules, the
-the current "time" output in the logger was incorrect.
+Fixed a bug in logging output from ARKODE, where for some time stepping modules,
+the the current "time" output in the logger was incorrect.
 
 ### Deprecation Notices
 
