@@ -16,9 +16,9 @@
 # ---------------------------------------------------------------
 
 # Add the build targets for each backend
-if(BUILD_ARKODE
-   AND BUILD_CVODE
-   AND BUILD_IDA)
+if(SUNDIALS_ENABLE_ARKODE
+   AND SUNDIALS_ENABLE_CVODE
+   AND SUNDIALS_ENABLE_IDA)
   foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
 
     # set benchmark target name
