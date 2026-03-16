@@ -33,6 +33,39 @@ static int CountLines(const std::string& s)
   return std::count(s.begin(), s.end(), '\n');
 }
 
+TEST(SUNLoggerTest, EmptyFilenameDisablesErrorOutput)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_ERROR
+  GTEST_SKIP() << "Errors not enabled in this build";
+#else
+  const std::string errfile = "test_sundials_logger.err";
+
+  (void)std::remove(errfile.c_str());
+
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetErrorFilename(logger, errfile.c_str()), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "scope", "label",
+                               "first"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+
+  EXPECT_EQ(CountLines(ReadFile(errfile)), 1);
+
+  ASSERT_EQ(SUNLogger_SetErrorFilename(logger, ""), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "scope", "label",
+                               "second"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+
+  EXPECT_EQ(CountLines(ReadFile(errfile)), 1);
+
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  (void)std::remove(errfile.c_str());
+#endif
+}
+
 TEST(SUNLoggerTest, EmptyFilenameDisablesWarningOutput)
 {
 #if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_WARNING
@@ -66,35 +99,68 @@ TEST(SUNLoggerTest, EmptyFilenameDisablesWarningOutput)
 #endif
 }
 
-TEST(SUNLoggerTest, EmptyFilenameDisablesErrorOutput)
+TEST(SUNLoggerTest, EmptyFilenameDisablesInfoOutput)
 {
-#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_ERROR
-  GTEST_SKIP() << "Errors not enabled in this build";
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_INFO
+  GTEST_SKIP() << "Info logging not enabled in this build";
 #else
-  const std::string errfile = "test_sundials_logger.err";
+  const std::string infofile = "test_sundials_logger.info";
 
-  (void)std::remove(errfile.c_str());
+  (void)std::remove(infofile.c_str());
 
   SUNLogger logger = NULL;
   ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
 
-  ASSERT_EQ(SUNLogger_SetErrorFilename(logger, errfile.c_str()), SUN_SUCCESS);
-  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "scope", "label",
+  ASSERT_EQ(SUNLogger_SetInfoFilename(logger, infofile.c_str()), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_INFO, "scope", "label",
                                "first"),
             SUN_SUCCESS);
-  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_INFO), SUN_SUCCESS);
 
-  EXPECT_EQ(CountLines(ReadFile(errfile)), 1);
+  EXPECT_EQ(CountLines(ReadFile(infofile)), 1);
 
-  ASSERT_EQ(SUNLogger_SetErrorFilename(logger, ""), SUN_SUCCESS);
-  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "scope", "label",
+  ASSERT_EQ(SUNLogger_SetInfoFilename(logger, ""), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_INFO, "scope", "label",
                                "second"),
             SUN_SUCCESS);
-  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_INFO), SUN_SUCCESS);
 
-  EXPECT_EQ(CountLines(ReadFile(errfile)), 1);
+  EXPECT_EQ(CountLines(ReadFile(infofile)), 1);
 
   ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
-  (void)std::remove(errfile.c_str());
+  (void)std::remove(infofile.c_str());
+#endif
+}
+
+TEST(SUNLoggerTest, EmptyFilenameDisablesDebugOutput)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_DEBUG
+  GTEST_SKIP() << "Debug logging not enabled in this build";
+#else
+  const std::string debugfile = "test_sundials_logger.debug";
+
+  (void)std::remove(debugfile.c_str());
+
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetDebugFilename(logger, debugfile.c_str()), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, "scope", "label",
+                               "first"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_DEBUG), SUN_SUCCESS);
+
+  EXPECT_EQ(CountLines(ReadFile(debugfile)), 1);
+
+  ASSERT_EQ(SUNLogger_SetDebugFilename(logger, ""), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, "scope", "label",
+                               "second"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_DEBUG), SUN_SUCCESS);
+
+  EXPECT_EQ(CountLines(ReadFile(debugfile)), 1);
+
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  (void)std::remove(debugfile.c_str());
 #endif
 }
