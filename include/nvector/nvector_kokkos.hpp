@@ -474,18 +474,24 @@ sunrealtype N_VWrmsNormMask_Kokkos(N_Vector x, N_Vector w, N_Vector id)
 
 template<class ExecutionSpace = Kokkos::DefaultExecutionSpace,
          class MemorySpace    = typename ExecutionSpace::memory_space,
-         class MemoryTraits   = Kokkos::MemoryManaged>
+         // Kokkos::MemoryManaged was deprecated in v4.7 and a default added
+         // TODO(DJG): Remove 0 when v4.7+ is required
+         class MemoryTraits = Kokkos::MemoryTraits<0>>
 class Vector : public sundials::impl::BaseNVector,
                public sundials::ConvertibleTo<N_Vector>
 {
 public:
-  using view_type      = Kokkos::View<sunrealtype*, MemorySpace, MemoryTraits>;
+  using view_type = Kokkos::View<sunrealtype*, MemorySpace, MemoryTraits>;
+#if KOKKOS_VERSION / 10000 > 4
+  using host_view_type = typename view_type::host_mirror_type;
+#else
   using host_view_type = typename view_type::HostMirror;
-  using memory_space   = MemorySpace;
-  using memory_traits  = MemoryTraits;
-  using exec_space     = typename MemorySpace::execution_space;
-  using range_policy   = Kokkos::RangePolicy<exec_space>;
-  using size_type      = typename view_type::size_type;
+#endif
+  using memory_space  = MemorySpace;
+  using memory_traits = MemoryTraits;
+  using exec_space    = typename MemorySpace::execution_space;
+  using range_policy  = Kokkos::RangePolicy<exec_space>;
+  using size_type     = typename view_type::size_type;
 
   // Default constructor
   Vector() = default;
@@ -577,21 +583,23 @@ public:
   N_Vector get() const noexcept override { return object_.get(); }
 
   // Static routines to create clones of the vector that are always managed
+  // Kokkos::MemoryManaged was deprecated in v4.7 and a default was added
+  // TODO(DJG): Remove 0 when v4.7+ is required
 
-  static Vector<exec_space, memory_space, Kokkos::MemoryManaged>* Clone(
-    const Vector<exec_space, memory_space, Kokkos::MemoryManaged>& that_vector,
+  static Vector<exec_space, memory_space, Kokkos::MemoryTraits<0>>* Clone(
+    const Vector<exec_space, memory_space, Kokkos::MemoryTraits<0>>& that_vector,
     SUNContext sunctx)
   {
     return new Vector<exec_space, memory_space,
-                      Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
+                      Kokkos::MemoryTraits<0>>(that_vector.Length(), sunctx);
   }
 
-  static Vector<exec_space, memory_space, Kokkos::MemoryManaged>* Clone(
+  static Vector<exec_space, memory_space, Kokkos::MemoryTraits<0>>* Clone(
     const Vector<exec_space, memory_space, Kokkos::MemoryUnmanaged>& that_vector,
     SUNContext sunctx)
   {
     return new Vector<exec_space, memory_space,
-                      Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
+                      Kokkos::MemoryTraits<0>>(that_vector.Length(), sunctx);
   }
 
 private:
