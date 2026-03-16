@@ -21,6 +21,7 @@
 
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_logger.h>
+#include <sundials/priv/sundials_logger_macros.h>
 
 static std::string ReadFile(const std::string& path)
 {
