@@ -2099,8 +2099,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* apply user-supplied step postprocessing function (if supplied) */
   if (ark_mem->PostProcessStepFn)
   {
-    retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+    retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                        ark_mem->user_data);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2417,8 +2417,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* apply user-supplied step postprocessing function (if supplied) */
   if (ark_mem->PostProcessStepFn)
   {
-    retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+    retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                        ark_mem->user_data);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
