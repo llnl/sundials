@@ -57,7 +57,8 @@ set(SUNDIALS_CONFIGH_BUILDS "")
 foreach(_item ${SUNDIALS_BUILD_LIST})
   if(${${_item}})
     if(${_item} MATCHES "BUILD_")
-      # TODO(DJG): remove once all BUILD_ variables are updated to SUNDIALS_ENABLE_
+      # TODO(DJG): remove once all BUILD_ variables are updated to
+      # SUNDIALS_ENABLE_
       string(REPLACE "BUILD_" "" _module ${_item})
     else()
       string(REPLACE "SUNDIALS_ENABLE_" "" _module ${_item})

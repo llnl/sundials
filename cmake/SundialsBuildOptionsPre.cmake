@@ -78,7 +78,7 @@ sundials_option(SUNDIALS_ENABLE_MONITORING BOOL "${DOCSTR}" OFF
 # Option to enable profiling
 # ---------------------------------------------------------------
 
-set(DOCSTR "Enable profiling (may affect preformance)")
+set(DOCSTR "Enable profiling (may affect performance)")
 sundials_option(SUNDIALS_ENABLE_PROFILING BOOL "${DOCSTR}" OFF DEPRECATED_NAMES
                 SUNDIALS_BUILD_WITH_PROFILING)
 
@@ -98,9 +98,9 @@ else()
   set(_default_err_checks OFF)
 endif()
 
-sundials_option(SUNDIALS_ENABLE_ERROR_CHECKS BOOL
-                "Enable error checking (may affect performance)"
-                ${_default_err_checks})
+sundials_option(
+  SUNDIALS_ENABLE_ERROR_CHECKS BOOL
+  "Enable error checking (may affect performance)" ${_default_err_checks})
 if(SUNDIALS_ENABLE_ERROR_CHECKS)
   message(STATUS "SUNDIALS error checking enabled")
   message(
@@ -113,10 +113,12 @@ endif()
 # Option to enable logging
 # ---------------------------------------------------------------
 
-sundials_option(SUNDIALS_LOGGING_LEVEL STRING
-                "Enable logging (0 = none, 1 = errors, 2 = +warnings, 3 = +info, 4 = +debug, 5 = +extras"
-                2
-                OPTIONS "0;1;2;3;4;5")
+sundials_option(
+  SUNDIALS_LOGGING_LEVEL
+  STRING
+  "Enable logging (0 = none, 1 = errors, 2 = +warnings, 3 = +info, 4 = +debug, 5 = +extras)"
+  2
+  OPTIONS "0;1;2;3;4;5")
 
 if(SUNDIALS_LOGGING_LEVEL GREATER_EQUAL 3)
   message(STATUS "SUNDIALS logging level set to ${SUNDIALS_LOGGING_LEVEL}")
