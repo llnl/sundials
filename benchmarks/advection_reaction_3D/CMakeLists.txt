@@ -19,6 +19,6 @@ if(SUNDIALS_ENABLE_RAJA)
   add_subdirectory(raja)
 endif()
 
-if(SUNDIALS_ENABLE_KOKKOS AND SUNDIALS_ENABLE_NVECTOR_KOKKOS)
+if(SUNDIALS_ENABLE_NVECTOR_KOKKOS)
   add_subdirectory(kokkos)
 endif()
