@@ -1134,6 +1134,13 @@ step attempt by ARKODE (see :c:func:`ARKodeSetPreStepFn`).
 
 .. c:type:: int (*ARKPreStepFn)(sunrealtype t, N_Vector y, long int step, int attempt, void* user_data)
 
+   A function to be called before each internal step attempt.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
    :param t: the current value of the independent variable.
    :param y: the current value of the dependent variable vector that will be used
              as the initial condition for the upcoming step.
@@ -1151,17 +1158,19 @@ step attempt by ARKODE (see :c:func:`ARKodeSetPreStepFn`).
              positive value if a recoverable error occurred, or a negative value if an
              unrecoverable error occurred.
 
-   .. danger::
-
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
-
    .. versionadded:: x.y.z
 
 A user-provided :c:type:`ARKPostStepFn` will be called following each *successful* internal time
 step by ARKODE (see :c:func:`ARKodeSetPostStepFn`).
 
 .. c:type:: int (*ARKPostStepFn)(sunrealtype t, N_Vector y, long int step, void* user_data)
+
+   A function to be called after each successful step attempt.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
 
    :param t: the current value of the independent variable.
    :param y: the current value of the dependent variable vector that resulted from
@@ -1175,11 +1184,6 @@ step by ARKODE (see :c:func:`ARKodeSetPostStepFn`).
              positive value if a recoverable error occurred, or a negative value if an
              unrecoverable error occurred.
 
-   .. danger::
-
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
-
    .. versionadded:: x.y.z
 
 A user-provided :c:type:`ARKPreRhsFn` will be called just prior to any user-supplied
@@ -1190,6 +1194,13 @@ called only once just prior to the first :c:type:`ARKRhsFn` that will be called 
 that :math:`(t,y)` input.
 
 .. c:type:: int (*ARKPreRhsFn)(sunrealtype t, N_Vector y, void* user_data)
+
+   A function to be called before right-hand side (RHS) evaluations.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
 
    :param t: the current value of the independent variable that will be provided
              to the :c:type:`ARKRhsFn`.
@@ -1202,11 +1213,6 @@ that :math:`(t,y)` input.
              positive value if a recoverable error occurred, or a negative value if an
              unrecoverable error occurred.
 
-   .. danger::
-
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
-
    .. versionadded:: x.y.z
 
 A user-provided :c:type:`ARKPostProcessFn` will be called either after each internal
@@ -1214,6 +1220,13 @@ stage (see :c:func:`ARKodeSetPostprocessStageFn`) or after each internal step at
 (see :c:func:`ARKodeSetPostprocessStepFn`).
 
 .. c:type:: int (*ARKPostProcessFn)(sunrealtype t, N_Vector y, void* user_data)
+
+   A function to postprocess step or stage data.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
 
    :param t: the current value of the independent variable.
    :param y: the current value of the dependent variable vector resulting from
