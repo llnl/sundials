@@ -18,23 +18,23 @@
 # List of test tuples of the form "name"
 set(unit_tests)
 
-if(BUILD_ARKODE)
+if(SUNDIALS_ENABLE_ARKODE)
   list(APPEND unit_tests "test_constraints_arkode.cpp")
 endif()
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   list(APPEND unit_tests "test_constraints_cvode.cpp")
 endif()
 
-if(BUILD_CVODES)
+if(SUNDIALS_ENABLE_CVODES)
   list(APPEND unit_tests "test_constraints_cvodes.cpp")
 endif()
 
-if(BUILD_IDA)
+if(SUNDIALS_ENABLE_IDA)
   list(APPEND unit_tests "test_constraints_ida.cpp")
 endif()
 
-if(BUILD_IDAS)
+if(SUNDIALS_ENABLE_IDAS)
   list(APPEND unit_tests "test_constraints_idas.cpp")
 endif()
 

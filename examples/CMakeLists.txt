@@ -116,31 +116,31 @@ endif()
 # ===================================================================
 
 # Add ARKode examples
-if(BUILD_ARKODE)
+if(SUNDIALS_ENABLE_ARKODE)
   add_subdirectory(arkode)
 endif()
 
 # Add CVODE examples
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   add_subdirectory(cvode)
 endif()
 
 # Add CVODES Examples
-if(BUILD_CVODES)
+if(SUNDIALS_ENABLE_CVODES)
   add_subdirectory(cvodes)
 endif()
 
 # Add IDA examples
-if(BUILD_IDA)
+if(SUNDIALS_ENABLE_IDA)
   add_subdirectory(ida)
 endif()
 
 # Add IDAS examples
-if(BUILD_IDAS)
+if(SUNDIALS_ENABLE_IDAS)
   add_subdirectory(idas)
 endif()
 
 # Add KINSOL examples
-if(BUILD_KINSOL)
+if(SUNDIALS_ENABLE_KINSOL)
   add_subdirectory(kinsol)
 endif()
