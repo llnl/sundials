@@ -1114,8 +1114,8 @@ Relaxation Jacobian function
 
 .. _ARKODE.Usage.ARKodeProcessingFunctions:
 
-Pre-Step, Post-Step, and Post-processing functions (ADVANCED)
--------------------------------------------------------------
+Pre-Step, Post-Step, Pre-RHS, and Post-processing functions (ADVANCED)
+----------------------------------------------------------------------
 
 The user may supply functions that will be called before each time step attempt,
 after each successful step, before their :c:type:`ARKRhsFn` problem-defining

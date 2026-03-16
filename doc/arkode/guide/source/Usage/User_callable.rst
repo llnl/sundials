@@ -3490,8 +3490,8 @@ Disable inactive root warnings          :c:func:`ARKodeSetNoInactiveRootWarn`  e
 
 .. _ARKODE.Usage.ARKodeProcessingInputTable:
 
-Pre-step, Post-step, and Post-processing optional inputs (ADVANCED)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Pre-step, Post-step, Pre-RHS, and Post-processing optional inputs (ADVANCED)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ARKODE provides multiple options for user-supplied callback routines that can be
 called at various times within the time-stepping process.  Each of these
