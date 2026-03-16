@@ -34,6 +34,12 @@ if(TARGET GTest::gtest_main AND TARGET GTest::gmock)
       ${test} PRIVATE sundials_core sundials_nvecserial sundials_sunmemsys_obj
                       GTest::gtest_main GTest::gmock)
 
+  if(test STREQUAL "test_sundials_logger")
+    gtest_discover_tests(${test}
+      PROPERTIES LABELS "logging"
+    )
+  else()
     gtest_discover_tests(${test})
+  endif()
   endforeach()
 endif()
