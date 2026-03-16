@@ -905,6 +905,7 @@ Minimum absolute step size                         :c:func:`ARKodeSetMinStep`   
 Set a value for :math:`t_{stop}`                   :c:func:`ARKodeSetStopTime`                 undefined
 Interpolate at :math:`t_{stop}`                    :c:func:`ARKodeSetInterpolateStopTime`      ``SUNFALSE``
 Disable the stop time                              :c:func:`ARKodeClearStopTime`               N/A
+Disregard stop time limited steps in adaptivity    :c:func:`ARKodeSkipAdaptStopTime`           ``SUNFALSE``
 Supply a pointer for user data                     :c:func:`ARKodeSetUserData`                 ``NULL``
 Maximum no. of ARKODE error test failures          :c:func:`ARKodeSetMaxErrTestFails`          7
 Set inequality constraints on solution             :c:func:`ARKodeSetConstraints`              ``NULL``
@@ -1445,6 +1446,30 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
       when using the key "arkid.clear_stop_time".
 
    .. versionadded:: 6.1.0
+
+
+.. c:function:: int ARKodeSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
+
+   Specifies whether stop-time-limited steps should be disregarded
+   when selecting step sizes for time step adaptivity.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param skip: flag indicating to disregard (1) or retain (0) stop time
+                limited steps from the temporal adaptivity algorithm.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. note::
+
+      The default behavior is to use all successful time steps
+      (including stop-time-limited steps) when determining an
+      adapted time step size.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.skip_adapt_stop_time".
+
+   .. versionadded:: x.y.z
 
 
 .. c:function:: int ARKodeSetUserData(void* arkode_mem, void* user_data)

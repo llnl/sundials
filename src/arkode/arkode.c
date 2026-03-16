@@ -128,6 +128,7 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
     ark_mem->hprime *= hscale;
 
     /* If next step would overtake tstop, adjust stepsize */
+    ark_mem->tstoplimited = SUNFALSE;
     if (ark_mem->tstopset)
     {
       if ((ark_mem->tcur + ark_mem->hprime - ark_mem->tstop) * ark_mem->hprime >
@@ -136,6 +137,7 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
         ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                           (ONE - FOUR * ark_mem->uround);
         ark_mem->eta = ark_mem->hprime / ark_mem->h;
+        if (ark_mem->skipadapttstop)  ark_mem->tstoplimited = SUNTRUE;
       }
     }
   }
@@ -866,8 +868,8 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     /* Update parameter for upcoming step size */
     if (ark_mem->hprime != ark_mem->h)
     {
-      ark_mem->h      = ark_mem->h * ark_mem->eta;
-      ark_mem->next_h = ark_mem->h;
+      ark_mem->h = ark_mem->h * ark_mem->eta;
+      if (!ark_mem->skipadapttstop)  ark_mem->next_h = ark_mem->h;
     }
     if (ark_mem->fixedstep)
     {
@@ -1084,6 +1086,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     }
 
     /* Check if tn is at tstop or near tstop */
+    ark_mem->tstoplimited = SUNFALSE;
     if (ark_mem->tstopset)
     {
       troundoff = FUZZ_FACTOR * ark_mem->uround *
@@ -1120,6 +1123,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
         ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                           (ONE - FOUR * ark_mem->uround);
         ark_mem->eta = ark_mem->hprime / ark_mem->h;
+        if (ark_mem->skipadapttstop)  ark_mem->tstoplimited = SUNTRUE;
       }
     }
 
@@ -1335,6 +1339,8 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
   fprintf(outfile, "user_efun = %i\n", ark_mem->user_efun);
   fprintf(outfile, "tstopset = %i\n", ark_mem->tstopset);
   fprintf(outfile, "tstopinterp = %i\n", ark_mem->tstopinterp);
+  fprintf(outfile, "tstoplimited = %i\n", ark_mem->tstoplimited);
+  fprintf(outfile, "skipadapttstop = %i\n", ark_mem->skipadapttstop);
   fprintf(outfile, "tstop = " SUN_FORMAT_G "\n", ark_mem->tstop);
   fprintf(outfile, "VabstolMallocDone = %i\n", ark_mem->VabstolMallocDone);
   fprintf(outfile, "MallocDone = %i\n", ark_mem->MallocDone);
@@ -2276,6 +2282,7 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
     ark_mem->h0u    = ark_mem->h;
     ark_mem->eta    = ONE;
     ark_mem->hprime = ark_mem->h;
+    ark_mem->hold   = ark_mem->h;
   }
   else
   {
@@ -2782,8 +2789,9 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
   N_VScale(ONE, ark_mem->ycur, ark_mem->yn);
   ark_mem->fn_is_current = SUNFALSE;
 
-  /* Notify time step controller object of successful step */
-  if (ark_mem->hadapt_mem->hcontroller)
+  /* Notify time step controller object of successful step
+     (skip this if the previous step was stop-time-limited) */
+  if (ark_mem->hadapt_mem->hcontroller && !ark_mem->tstoplimited)
   {
     retval = SUNAdaptController_UpdateH(ark_mem->hadapt_mem->hcontroller,
                                         ark_mem->h, dsm);
@@ -3420,6 +3428,14 @@ int arkCheckTemporalError(ARKodeMem ark_mem, int* nflagPtr, int* nefPtr,
     return (ARK_MEM_NULL);
   }
   hadapt_mem = ark_mem->hadapt_mem;
+
+  /* If a stop-time-limited step will succeed, set eta so that the step size
+     reverts to the last "full size" successful step for the next attempt */
+  if (ark_mem->tstoplimited && dsm <= ONE)
+  {
+    ark_mem->eta = ark_mem->hold / ark_mem->h;
+    return (ARK_SUCCESS);
+  }
 
   /* consider change of step size for next step attempt (may be
      larger/smaller than current step, depending on dsm) */
