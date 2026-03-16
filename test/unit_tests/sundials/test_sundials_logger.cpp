@@ -23,13 +23,16 @@
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_logger.h>
 
-static std::string ReadFile(const std::string& path)
+// Add [[maybe_unused]] because ReadFile and CountLines are "unused" when the
+// logging level is set to 0
+
+[[maybe_unused]] static std::string ReadFile(const std::string& path)
 {
   std::ifstream file(path);
   return {std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 }
 
-static int CountLines(const std::string& s)
+[[maybe_unused]] static int CountLines(const std::string& s)
 {
   return std::count(s.begin(), s.end(), '\n');
 }
