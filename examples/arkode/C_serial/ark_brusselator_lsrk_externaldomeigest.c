@@ -19,43 +19,23 @@
  *---------------------------------------------------------------
  * Example problem:
  *
- * The following test simulates a brusselator problem from chemical
- * kinetics.  This is an ODE system with 3 components, Y = [u,v,w],
- * satisfying the equations,
- *    du/dt = a - (w+1)*u + v*u^2
- *    dv/dt = w*u - v*u^2
- *    dw/dt = (b-w)/ep - w*u
- * for t in the interval [0.0, 10.0], with initial conditions
- * Y0 = [u0,v0,w0].
- *
- * We have 3 different testing scenarios:
- *
- * Test 1:  u0=3.9,  v0=1.1,  w0=2.8,  a=1.2,  b=2.5,  ep=1.0e-5
- *    Here, all three components exhibit a rapid transient change
- *    during the first 0.2 time units, followed by a slow and
- *    smooth evolution.
- *
- * Test 2:  u0=1.2,  v0=3.1,  w0=3,  a=1,  b=3.5,  ep=5.0e-6
- *    Here, w experiences a fast initial transient, jumping 0.5
- *    within a few steps.  All values proceed smoothly until
- *    around t=6.5, when both u and v undergo a sharp transition,
- *    with u increaseing from around 0.5 to 5 and v decreasing
- *    from around 6 to 1 in less than 0.5 time units.  After this
- *    transition, both u and v continue to evolve somewhat
- *    rapidly for another 1.4 time units, and finish off smoothly.
- *
- * Test 3:  u0=3,  v0=3,  w0=3.5,  a=0.5,  b=3,  ep=5.0e-4
- *    Here, all components undergo very rapid initial transients
- *    during the first 0.3 time units, and all then proceed very
- *    smoothly for the remainder of the simulation.
- *
- * This file is hard-coded to use test 2.
- *
- * This program solves the problem with the LSRK method using internal
- * SUNDIALS dominant eigenvalue estimation (DEE) module.
- *
- * 100 outputs are printed at equal intervals, and run statistics
- * are printed at the end.
+ * The following test simulates the same problem as 
+ * ark_brusselator_lsrk_domeigest.c.
+ * 
+ * The only difference with that example is that this one
+ * attaches a "user provided" dominant eigenvalue estimate,
+ * and where that estimate is provided by a user-constructed
+ * SUNDomEigEstimator object (see the dom_eig function below).
+ * 
+ * While this example and ark_brusselator_lsrk_domeigest.c should provide
+ * the same results, the purpose of this example is to show 
+ * users how they may manually construct SUNDomEigEstimator
+ * objects to query the dominant eigenvalues of a desired 
+ * function.  In particular, we note that there is no 
+ * requirement for the SUNDomEigEstimator to be used purely
+ * for super-time-stepping methods in LSRKStep, so users 
+ * interested in other purposes may focus on the contents 
+ * of the dom_eig function below as a template.
  *-----------------------------------------------------------------*/
 
 /* Header files */
@@ -96,7 +76,6 @@ typedef struct
   SUNDomEigEstimator DEE;
   sunrealtype rel_tol;
   sunindextype max_iters;
-  sunindextype numwarmup;
 } UserData;
 
 /* Main Program */
@@ -118,7 +97,6 @@ int main(int argc, char* argv[])
   N_Vector y       = NULL; /* empty vector for storing solution */
   void* arkode_mem = NULL; /* empty ARKode memory structure */
   UserData ProbData;       /* problem data structure     */
-  FILE* UFID;
   sunrealtype t, tout;
   int iout;
 
@@ -174,7 +152,6 @@ int main(int argc, char* argv[])
   ProbData.DEE         = NULL;
   ProbData.rel_tol     = SUN_RCONST(5.0e-3);
   ProbData.max_iters   = 100;
-  ProbData.numwarmup   = 10;
   y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
   NV_Ith_S(y, 0) = u0; /* Set initial conditions */
@@ -219,14 +196,6 @@ int main(int argc, char* argv[])
   flag = LSRKStepSetDomEigSafetyFactor(arkode_mem, SUN_RCONST(1.01));
   if (check_flag(&flag, "LSRKStepSetDomEigSafetyFactor", 1)) { return 1; }
 
-  /* Specify the number of preprocessing warmups before each estimate call
-     succeeding the very first estimate call. */
-  flag = LSRKStepSetNumDomEigEstPreprocessIters(arkode_mem, 0);
-  if (check_flag(&flag, "LSRKStepSetNumDomEigEstPreprocessIters", 1))
-  {
-    return 1;
-  }
-
   /* Specify the Runge--Kutta--Chebyshev LSRK method by name */
   flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKL_2");
   if (check_flag(&flag, "LSRKStepSetSTSMethodByName", 1)) { return 1; }
@@ -234,14 +203,6 @@ int main(int argc, char* argv[])
   /* Override any current settings with command-line options */
   flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
   if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
-
-  /* Open output stream for results, output comment line */
-  UFID = fopen("solution.txt", "w");
-  fprintf(UFID, "# t u v w\n");
-
-  /* output initial condition to disk */
-  fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", T0,
-          NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached */
@@ -259,8 +220,6 @@ int main(int argc, char* argv[])
     printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM
            "\n", /* access/print solution */
            t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
-    fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", t,
-            NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
     if (flag >= 0)
     { /* successful solve: update time */
       tout += dTout;
@@ -273,7 +232,6 @@ int main(int argc, char* argv[])
     }
   }
   printf("   -------------------------------------------\n");
-  fclose(UFID);
 
   /* Print final statistics */
   printf("\nFinal Statistics:\n");
@@ -324,6 +282,8 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
   SUNContext ctx         = data->ctx; /* access context from UserData */
   SUNDomEigEstimator DEE = data->DEE; /* access DEE from UserData */
 
+  /* DEE is initialized to NULL, so on the first dom_eig call we need
+     to create and initialize this object */
   if (DEE == NULL)
   {
     /* Create random initial vector for power iteration */
@@ -345,12 +305,6 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
     /* Set the linearization vector for the Jacobian-vector products */
     flag = SUNDomEigEstimator_SetRHSLinearizationPoint(DEE, t, y); // set the time t as well
     if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationPoint", 1))
-    {
-      return 1;
-    }
-
-    flag = SUNDomEigEstimator_SetNumPreprocessIters(DEE, data->numwarmup);
-    if (check_flag(&flag, "SUNDomEigEstimator_SetNumPreprocessIters", 1))
     {
       return 1;
     }

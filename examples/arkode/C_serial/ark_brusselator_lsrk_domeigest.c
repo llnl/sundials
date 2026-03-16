@@ -102,7 +102,6 @@ int main(int argc, char* argv[])
   N_Vector y       = NULL; /* empty vector for storing solution */
   void* arkode_mem = NULL; /* empty ARKode memory structure */
   sunrealtype rdata[3];
-  FILE* UFID;
   sunrealtype t, tout;
   int iout;
 
@@ -204,8 +203,8 @@ int main(int argc, char* argv[])
   N_VDestroy(q);
 
   /* Attach the DEE to the LSRKStep module.
-  There is no need to set Atimes or initialize since these are all
-  performed after attaching the DEE by LSRKStep. */
+  There is no need to set Atimes or initialize since LSRKStep provides
+  a default Atimes, and initialized the DEE, after it is attached. */
   flag = LSRKStepSetDomEigEstimator(arkode_mem, DEE);
   if (check_flag(&flag, "LSRKStepSetDomEigEstimator", 1)) { return 1; }
 
@@ -214,7 +213,7 @@ int main(int argc, char* argv[])
   eigenvalue. The warmup is performed only once by the LSRKStep module
   internally unless LSRKStepSetNumDomEigEstPreprocessIters is called to set
   a new number of succeeding warmups that would be executed before
-  every dominant eigenvalue estimate calls */
+  every dominant eigenvalue estimation call */
   flag = LSRKStepSetNumDomEigEstInitPreprocessIters(arkode_mem, numwarmup);
   if (check_flag(&flag, "LSRKStepSetNumDomEigEstInitPreprocessIters", 1))
   {
@@ -237,14 +236,6 @@ int main(int argc, char* argv[])
   flag = LSRKStepSetDomEigSafetyFactor(arkode_mem, SUN_RCONST(1.01));
   if (check_flag(&flag, "LSRKStepSetDomEigSafetyFactor", 1)) { return 1; }
 
-  /* Specify the number of preprocessing warmups before each estimate call
-     succeeding the very first estimate call. */
-  flag = LSRKStepSetNumDomEigEstPreprocessIters(arkode_mem, 0);
-  if (check_flag(&flag, "LSRKStepSetNumDomEigEstPreprocessIters", 1))
-  {
-    return 1;
-  }
-
   /* Specify the Runge--Kutta--Chebyshev LSRK method by name */
   flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKL_2");
   if (check_flag(&flag, "LSRKStepSetSTSMethodByName", 1)) { return 1; }
@@ -256,14 +247,6 @@ int main(int argc, char* argv[])
   /* Override any current settings with command-line options */
   flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
   if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
-
-  /* Open output stream for results, output comment line */
-  UFID = fopen("solution.txt", "w");
-  fprintf(UFID, "# t u v w\n");
-
-  /* output initial condition to disk */
-  fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", T0,
-          NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached */
@@ -281,8 +264,6 @@ int main(int argc, char* argv[])
     printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM
            "\n", /* access/print solution */
            t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
-    fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", t,
-            NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
     if (flag >= 0)
     { /* successful solve: update time */
       tout += dTout;
@@ -295,7 +276,6 @@ int main(int argc, char* argv[])
     }
   }
   printf("   -------------------------------------------\n");
-  fclose(UFID);
 
   /* Print final statistics */
   printf("\nFinal Statistics:\n");

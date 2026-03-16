@@ -109,7 +109,7 @@ routines:
       :c:func:`SUNDomEigEstimator_SetInitialGuess`.
 
 
-.. c:function:: SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real);
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real)
 
    This routine informs the Power iteration that the dominant eigenvalue is 
    real-valued, so that the complex projection described in Section 
@@ -148,12 +148,21 @@ The SUNDomEigEstimator_Power module defines the *content* field of a
      void* ATdata;
      N_Vector* V;
      N_Vector q;
+     N_Vector q_prev;
+     N_Vector rhs_linY;
+     N_Vector Fy;
+     N_Vector work;
      int num_warmups;
      long int max_iters;
      long int num_iters;
      long int num_ATimes;
+     sunrealtype rhs_linT;
      sunrealtype rel_tol;
      sunrealtype res;
+     DEERhsFn rhsfn;
+     void* rhs_data;
+     long int nfevals;
+     sunbooleantype complex;
    };
 
 
@@ -164,7 +173,7 @@ information:
 
 * ``ATData`` - pointer to structure for ``ATimes``,
 
-* ``V, q``   - ``N_Vector`` used for workspace by the PI algorithm.
+* ``V, q, q_prev, Fy, work``   - ``N_Vector`` used for workspace.
 
 * ``num_warmups`` - number of preprocessing iterations (default is 100),
 
@@ -175,11 +184,23 @@ information:
 
 * ``num_ATimes`` - number of calls to the ``ATimes`` function,
 
+* ``rhs_linY`` - state vector for linearization point,
+
+* ``rhs_linT`` - time value for linearization point (default is 0.0),
+
 * ``rel_tol`` - relative tolerance for the convergence criteria (default is 0.005),
 
 * ``res`` - the residual from the last :c:func:`SUNDomEigEstimator_Estimate`
   call.
 
+* ``rhsfn`` - user provided RHS function,
+
+* ``rhs_data`` - pointer to the data structure for ``rhsfn``,
+
+* ``nfevals`` - number of RHS evaluations,
+
+* ``complex`` - flag indicating whether the dominant eigenvalue is 
+  complex-valued (default is ``SUNTRUE``).
 
 This estimator is constructed to perform the following operations:
 

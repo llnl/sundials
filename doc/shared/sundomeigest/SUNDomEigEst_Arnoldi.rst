@@ -116,15 +116,24 @@ The SUNDomEigEstimator_Arnoldi module defines the *content* field of a
      void* ATdata;
      N_Vector* V;
      N_Vector q;
+     N_Vector rhs_linY;
+     N_Vector Fy;
+     N_Vector work;
      int kry_dim;
      int num_warmups;
      long int num_iters;
+     sunbooleantype warmup_to_tol;
+     sunrealtype tol_preprocess;
+     sunrealtype rhs_linT;
      long int num_ATimes;
+     DEERhsFn rhsfn;
+     void* rhs_data;
+     long int nfevals;
      sunrealtype* LAPACK_A;
      sunrealtype* LAPACK_wr;
      sunrealtype* LAPACK_wi;
      sunrealtype* LAPACK_work;
-     snuindextype LAPACK_lwork;
+     sunindextype LAPACK_lwork;
      sunrealtype** LAPACK_arr;
      sunrealtype** Hes;
    };
@@ -137,7 +146,7 @@ information:
 
 * ``ATData`` - pointer to structure for ``ATimes``,
 
-* ``V, q``   - vectors used for workspace by the Arnoldi algorithm.
+* ``V, q, Fy, work``   - vectors used for workspace.
 
 * ``kry_dim`` - dimension of Krylov subspaces (default is 3),
 
@@ -145,6 +154,21 @@ information:
 
 * ``num_iters`` - number of iterations (preprocessing and estimation) in the
   last :c:func:`SUNDomEigEstimator_Estimate` call,
+
+* ``warmup_to_tol`` - type of warmup iterations (default is ``SUNFALSE``)
+
+* ``tol_preprocess`` - tolerance for preprocessing iterations (default is 0.005; 
+  only used if ``warmup_to_tol`` is ``SUNTRUE``),
+
+* ``rhs_linY`` - state vector for linearization point,
+
+* ``rhs_linT`` - time value for linearization point (default is 0.0),
+
+* ``rhsfn`` - user provided RHS function,
+
+* ``rhs_data`` - pointer to the data structure for ``rhsfn``,
+
+* ``nfevals`` - number of RHS evaluations,
 
 * ``num_ATimes`` - number of calls to the ``ATimes`` function,
 

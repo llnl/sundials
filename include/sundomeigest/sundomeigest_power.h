@@ -46,9 +46,7 @@ struct SUNDomEigEstimatorContent_Power_
   int num_warmups;              /* Number of preprocessing iterations */
   long int max_iters;           /* Maximum number of power iterations */
   long int num_iters;           /* Number of iterations in last Estimate call */
-  sunbooleantype warmup_to_tol; /* Type of warmup iterations */
-
-  sunrealtype rhs_linT; /* Linearization time for the RHS function */
+  sunrealtype rhs_linT;         /* Time value for linearization point */
 
   long int num_ATimes; /* Number of ATimes calls */
 
