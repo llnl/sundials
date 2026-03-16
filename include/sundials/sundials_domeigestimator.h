@@ -32,7 +32,8 @@
 extern "C" {
 #endif
 
-typedef int (*DEERhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
+typedef int (*DEERhsFn)(sunrealtype t, N_Vector y, N_Vector ydot,
+                        void* user_data);
 #define MAX_DQITERS 3
 
 /* -----------------------------------------------------------------
@@ -50,8 +51,8 @@ struct SUNDomEigEstimator_Ops_
 {
   SUNErrCode (*setatimes)(SUNDomEigEstimator, void*, SUNATimesFn);
   SUNErrCode (*setrhs)(SUNDomEigEstimator, void*, DEERhsFn);
-  SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype, 
-                                          N_Vector);
+  SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype,
+                                         N_Vector);
   SUNErrCode (*setoptions)(SUNDomEigEstimator DEE, const char* Did,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNDomEigEstimator, long int);

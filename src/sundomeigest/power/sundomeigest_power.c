@@ -200,8 +200,8 @@ SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Power(SUNDomEigEstimator DEE,
-                                                              sunrealtype t, N_Vector y)
+SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Power(
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -676,17 +676,16 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work = PI_CONTENT(DEE)->work;
   N_Vector Fy   = PI_CONTENT(DEE)->Fy;
 
-  retval = PI_CONTENT(DEE)->rhsfn(PI_CONTENT(DEE)->rhs_linT, y, 
-                                  Fy,
+  retval = PI_CONTENT(DEE)->rhsfn(PI_CONTENT(DEE)->rhs_linT, y, Fy,
                                   PI_CONTENT(DEE)->rhs_data);
   PI_CONTENT(DEE)->nfevals++;
   if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
   /* Initialize perturbation */
-  sunrealtype ydotv = N_VDotProd(y, v);
-  sunrealtype vdotv = N_VDotProd(v, v); 
+  sunrealtype ydotv   = N_VDotProd(y, v);
+  sunrealtype vdotv   = N_VDotProd(v, v);
   sunrealtype sq1norm = N_VL1Norm(v);
-  sunrealtype sign = (ydotv >= ZERO) ? ONE : -ONE;
+  sunrealtype sign    = (ydotv >= ZERO) ? ONE : -ONE;
   sunrealtype sqrteps = SUNRsqrt(SUN_UNIT_ROUNDOFF);
   sig = sign * sqrteps * SUNMAX(SUNRabs(ydotv), sq1norm) / vdotv;
 
@@ -696,7 +695,7 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
     N_VLinearSum(sig, v, ONE, y, work);
 
     /* Set Jv = f(tn, y+sig*v) */
-    retval = PI_CONTENT(DEE)->rhsfn(PI_CONTENT(DEE)->rhs_linT, work, Jv, 
+    retval = PI_CONTENT(DEE)->rhsfn(PI_CONTENT(DEE)->rhs_linT, work, Jv,
                                     PI_CONTENT(DEE)->rhs_data);
     PI_CONTENT(DEE)->nfevals++;
     if (retval == 0) { break; }

@@ -145,13 +145,13 @@ int main(int argc, char* argv[])
   printf("    reltol = %.1" ESYM ",  abstol = %.1" ESYM "\n\n", reltol, abstol);
 
   /* Initialize data structures */
-  ProbData.ctx         = ctx;
-  ProbData.rdata[0]    = a; /* set user data  */
-  ProbData.rdata[1]    = b;
-  ProbData.rdata[2]    = ep;
-  ProbData.DEE         = NULL;
-  ProbData.rel_tol     = SUN_RCONST(5.0e-3);
-  ProbData.max_iters   = 100;
+  ProbData.ctx       = ctx;
+  ProbData.rdata[0]  = a; /* set user data  */
+  ProbData.rdata[1]  = b;
+  ProbData.rdata[2]  = ep;
+  ProbData.DEE       = NULL;
+  ProbData.rel_tol   = SUN_RCONST(5.0e-3);
+  ProbData.max_iters = 100;
   y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
   NV_Ith_S(y, 0) = u0; /* Set initial conditions */
@@ -277,7 +277,7 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
                    N_Vector temp2, N_Vector temp3)
 {
   int flag;
-  UserData* data    = (UserData*)user_data; /* cast user_data to UserData */
+  UserData* data = (UserData*)user_data; /* cast user_data to UserData */
 
   SUNContext ctx         = data->ctx; /* access context from UserData */
   SUNDomEigEstimator DEE = data->DEE; /* access DEE from UserData */
@@ -303,7 +303,8 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
     if (check_flag(&flag, "SUNDomEigEstimator_SetRHS", 1)) { return 1; }
 
     /* Set the linearization vector for the Jacobian-vector products */
-    flag = SUNDomEigEstimator_SetRHSLinearizationPoint(DEE, t, y); // set the time t as well
+    flag = SUNDomEigEstimator_SetRHSLinearizationPoint(DEE, t,
+                                                       y); // set the time t as well
     if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationPoint", 1))
     {
       return 1;
@@ -314,7 +315,7 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
   }
 
   /* Update the linearization vector and time for the Jacobian-vector products */
-  flag = SUNDomEigEstimator_SetRHSLinearizationPoint(DEE,  t, y);
+  flag = SUNDomEigEstimator_SetRHSLinearizationPoint(DEE, t, y);
   if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationPoint", 1))
   {
     return 1;

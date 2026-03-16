@@ -205,7 +205,7 @@ SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data,
 }
 
 SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint(SUNDomEigEstimator DEE,
-                                                        sunrealtype t, N_Vector v)
+                                                       sunrealtype t, N_Vector v)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));

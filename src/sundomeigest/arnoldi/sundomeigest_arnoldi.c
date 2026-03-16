@@ -708,17 +708,16 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work = Arnoldi_CONTENT(DEE)->work;
   N_Vector Fy   = Arnoldi_CONTENT(DEE)->Fy;
 
-  retval = Arnoldi_CONTENT(DEE)->rhsfn(Arnoldi_CONTENT(DEE)->rhs_linT, y, 
-                                       Fy,
+  retval = Arnoldi_CONTENT(DEE)->rhsfn(Arnoldi_CONTENT(DEE)->rhs_linT, y, Fy,
                                        Arnoldi_CONTENT(DEE)->rhs_data);
   Arnoldi_CONTENT(DEE)->nfevals++;
   if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
   /* Initialize perturbation */
-  sunrealtype ydotv = N_VDotProd(y, v);
-  sunrealtype vdotv = N_VDotProd(v, v); 
+  sunrealtype ydotv   = N_VDotProd(y, v);
+  sunrealtype vdotv   = N_VDotProd(v, v);
   sunrealtype sq1norm = N_VL1Norm(v);
-  sunrealtype sign = (ydotv >= ZERO) ? ONE : -ONE;
+  sunrealtype sign    = (ydotv >= ZERO) ? ONE : -ONE;
   sunrealtype sqrteps = SUNRsqrt(SUN_UNIT_ROUNDOFF);
   sig = sign * sqrteps * SUNMAX(SUNRabs(ydotv), sq1norm) / vdotv;
 
@@ -728,8 +727,8 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
     N_VLinearSum(sig, v, ONE, y, work);
 
     /* Set Jv = f(tn, y+sig*v) */
-    retval = Arnoldi_CONTENT(DEE)->rhsfn(Arnoldi_CONTENT(DEE)->rhs_linT, work, Jv,
-                                         Arnoldi_CONTENT(DEE)->rhs_data);
+    retval = Arnoldi_CONTENT(DEE)->rhsfn(Arnoldi_CONTENT(DEE)->rhs_linT, work,
+                                         Jv, Arnoldi_CONTENT(DEE)->rhs_data);
     Arnoldi_CONTENT(DEE)->nfevals++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
