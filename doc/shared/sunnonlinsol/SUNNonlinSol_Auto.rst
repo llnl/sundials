@@ -54,7 +54,7 @@ Newton occurs when the rate of convergence of the solver, defined as
 
 .. math:: 
 
-   R_ \leftarrow \max\{0.3R, \|\delta_m\| / \|\delta_{m-1}\|\},
+   R \leftarrow \max\{0.3R, \|\delta_m\| / \|\delta_{m-1}\|\},
 
 is indicating slow convergence or divergence, i.e., when ``R > \alpha``, where 
 :math:`0.0 < \alpha < 1.0`, for a specified number of consecutive iterations (default is 1).
@@ -77,13 +77,16 @@ SUNNonlinSol_Auto functions
 The SUNNonlinSol_Auto module provides the following constructor for creating the
 ``SUNNonlinearSolver`` object.
 
-.. c:function:: SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m, SUNNonlinSolAutoType active_solver_type, SUNContext sunctx)
+.. c:function:: SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m, SUNNonlinSolAutoType initial_solver_type,\
+                                                     SUNContext sunctx)
 
    This creates a ``SUNNonlinearSolver`` object for use with SUNDIALS integrators.
 
    :param y: a template for cloning vectors needed within the solver.
-   :param m: the number of acceleration vectors to use with the underlying fixed-point solver (passed to :c:func:`SUNNonlinSol_FixedPoint`).
-   :param active_solver_type: the initial solver active_solver_type (see :c:active_solver_type:`SUNNonlinSolAutoType`).
+   :param m: the number of acceleration vectors to use with the underlying fixed-point solver
+      (passed to :c:func:`SUNNonlinSol_FixedPoint`).
+   :param initial_solver_type: the initial solver initial_solver_type 
+      (see :c:active_solver_type:`SUNNonlinSolAutoType`).
    :param sunctx: the :c:active_solver_type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`)
 
    :returns: a pointer to a SUNNonlinSol object if the constructor exits successfully, otherwise it will be ``NULL``.
