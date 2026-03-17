@@ -87,22 +87,22 @@ static int check_flag(void* flagvalue, const char* funcname, int opt);
 int main(int argc, char* argv[])
 {
   /* general problem parameters */
-  sunrealtype T0     = SUN_RCONST(0.0);       /* initial time */
-  sunrealtype Tf     = SUN_RCONST(10.0);      /* final time */
-  sunrealtype dTout  = SUN_RCONST(1.0);       /* time between outputs */
-  sunindextype NEQ   = 3;                     /* number of dependent vars. */
-  int Nt             = (int)ceil(Tf / dTout); /* number of output times */
-  int test           = 2;                     /* test problem to run */
+  sunrealtype T0    = SUN_RCONST(0.0);       /* initial time */
+  sunrealtype Tf    = SUN_RCONST(10.0);      /* final time */
+  sunrealtype dTout = SUN_RCONST(1.0);       /* time between outputs */
+  sunindextype NEQ  = 3;                     /* number of dependent vars. */
+  int Nt            = (int)ceil(Tf / dTout); /* number of output times */
+  int test          = 2;                     /* test problem to run */
   sunrealtype a, b, ep, u0, v0, w0;
 
 #if defined(SUNDIALS_DOUBLE_PRECISION)
-  sunrealtype reltol = SUN_RCONST(1.0e-6);    /* tolerances */
+  sunrealtype reltol = SUN_RCONST(1.0e-6); /* tolerances */
   sunrealtype abstol = SUN_RCONST(1.0e-10);
 #elif defined(SUNDIALS_SINGLE_PRECISION)
-  sunrealtype reltol = SUN_RCONST(1.0e-4);    /* tolerances */
+  sunrealtype reltol = SUN_RCONST(1.0e-4); /* tolerances */
   sunrealtype abstol = SUN_RCONST(1.0e-8);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-  sunrealtype reltol = SUN_RCONST(1.0e-6);    /* tolerances */
+  sunrealtype reltol = SUN_RCONST(1.0e-6); /* tolerances */
   sunrealtype abstol = SUN_RCONST(1.0e-10);
 #endif
 

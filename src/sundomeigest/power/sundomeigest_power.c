@@ -538,7 +538,7 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   SUNCheckLastErr();
 
   /* Safety against roundoff in dot product */
-  if (cos_qs > ONE)  { cos_qs = ONE; }
+  if (cos_qs > ONE) { cos_qs = ONE; }
   if (cos_qs < -ONE) { cos_qs = -ONE; }
 
   /* Use Gram determinant as the near-dependence measure:
