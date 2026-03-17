@@ -17,9 +17,9 @@
 
 .. _SUNNonlinSol.Auto:
 
-============================================
+====================================
 The SUNNonlinSol_Auto implementation
-============================================
+====================================
 
 This section describes the SUNNonlinSol implementation that can automatically
 switch between :numref:`SUNNonlinSol.FixedPoint` and :numref:`SUNNonlinSol.Newton`
@@ -34,7 +34,7 @@ shared libraries and ``.a`` for static libraries.
 .. _SUNNonlinSol.Auto.Description:
 
 SUNNonlinSol_Auto description
-----------------------------------------
+-----------------------------
 
 SUNNonlinSol_Auto is a hybrid nonlinear solver that delegates each nonlinear
 solve to an underlying fixed-point or Newton solver and may request a switch
@@ -48,11 +48,31 @@ solver propagates this code back to the integrator. Integrators that support
 automatic nonlinear solver switching will respond by reinitializing the
 nonlinear solver interface and retrying the nonlinear solve.
 
+A full mathematical description of the switching criterion and algorithm can be
+found in :cite:p:`norsett1986switching`. In short, switching from fixed-point to 
+Newton occurs when the rate of convergence of the solver, defined as
+
+.. math:: 
+
+   R_ \leftarrow \max\{0.3R, \|\delta_m\| / \|\delta_{m-1}\|\},
+
+is indicating slow convergence or divergence, i.e., when ``R > \alpha``, where 
+:math:`0.0 < \alpha < 1.0`, for a specified number of consecutive iterations (default is 1).
+Switching from Newton to fixed-point occurs when the stiffness indicator, defined as 
+
+.. math::
+
+   \text{stiffr} \leftarrow \|F(y^n)\| / \|\delta_{m} \|,
+
+satisfies :math:`\text{stiffr} < \beta` where :math:`1.0 < \beta \leq 2` for a certain number
+of consecutive iterations (default is 10).
+
+
 
 .. _SUNNonlinSol.Auto.Functions:
 
 SUNNonlinSol_Auto functions
-----------------------------------------
+---------------------------
 
 The SUNNonlinSol_Auto module provides the following constructor for creating the
 ``SUNNonlinearSolver`` object.
@@ -61,16 +81,12 @@ The SUNNonlinSol_Auto module provides the following constructor for creating the
 
    This creates a ``SUNNonlinearSolver`` object for use with SUNDIALS integrators.
 
-   **Arguments:**
-      * *y* -- a template for cloning vectors needed within the solver.
-      * *m* -- the number of acceleration vectors to use with the underlying
-        fixed-point solver (passed to :c:func:`SUNNonlinSol_FixedPoint`).
-      * *active_solver_type* -- the initial solver active_solver_type (see :c:active_solver_type:`SUNNonlinSolAutoType`).
-      * *sunctx* -- the :c:active_solver_type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`)
+   :param y: a template for cloning vectors needed within the solver.
+   :param m: the number of acceleration vectors to use with the underlying fixed-point solver (passed to :c:func:`SUNNonlinSol_FixedPoint`).
+   :param active_solver_type: the initial solver active_solver_type (see :c:active_solver_type:`SUNNonlinSolAutoType`).
+   :param sunctx: the :c:active_solver_type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`)
 
-   **Return value:**
-      A SUNNonlinSol object if the constructor exits successfully, otherwise it
-      will be ``NULL``.
+   :returns: a pointer to a SUNNonlinSol object if the constructor exits successfully, otherwise it will be ``NULL``.
 
 .. c:enum:: SUNNonlinSolAutoType
 
@@ -90,30 +106,20 @@ The SUNNonlinSol_Auto module implements all of the functions defined in
 as those defined by the generic SUNNonlinSol API with ``_Auto`` appended to the
 function name.
 
-The SUNNonlinSol_Auto module also defines the following user-callable functions
-to configure the switching criteria:
+The SUNNonlinSol_Auto module also defines the following functions for controlling the switching behavior.
 
-.. c:function:: SUNErrCode SUNNonlinSolSetFpToNewtAlpha_Auto(SUNNonlinearSolver NLS, sunrealtype alpha)
+.. c:function:: SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(SUNNonlinearSolver NLS, sunrealtype newt_to_fp_threshold, \
+                                                                   long int newt_to_fp_delay, sunrealtype fp_to_newt_threshold, \
+                                                                   long int fp_to_newt_delay)
 
-   Set the fixed-point criterion parameter ``alpha`` where the switching test is
-   ``crate >= alpha`` (with ``crate`` computed by the fixed-point solver).
+   This function sets the parameters that control the switching behavior of the SUNNonlinSol_Auto module. 
 
-   **Arguments:**
-      * *NLS* -- a SUNNonlinSol object.
-      * *alpha* -- the criterion parameter (must be positive).
+   :param NLS: the nonlinear solver object returned by :c:func:`SUNNonlinSol_Auto`.
+   :param newt_to_fp_threshold: the threshold for switching from Newton to fixed-point (aka :math:`\beta`)
+   :param newt_to_fp_delay: the number of consecutive iterations that must satisfy the switching criterion 
+      before switching from Newton to fixed-point.
+   :param fp_to_newt_threshold: the threshold for switching from fixed-point to Newton (aka :math:`\alpha`).
+   :param fp_to_newt_delay: the number of consecutive iterations that must satisfy the switching 
+      criterion before switching from fixed-point to Newton.
 
-   **Return value:**
-      A :c:active_solver_type:`SUNErrCode`.
-
-.. c:function:: SUNErrCode SUNNonlinSolSetNewtToFpThreshold_Auto(SUNNonlinearSolver NLS, sunrealtype threshold)
-
-   Set the Newton criterion parameter ``threshold`` where the switching test is
-   ``stiffr < threshold`` (with ``stiffr`` computed by the Newton solver).
-
-   **Arguments:**
-      * *NLS* -- a SUNNonlinSol object.
-      * *threshold* -- the criterion parameter (must be positive).
-
-   **Return value:**
-      A :c:active_solver_type:`SUNErrCode`.
-
+   :returns: :c:macro:`SUN_SUCCESS` if successful, otherwise an error code.

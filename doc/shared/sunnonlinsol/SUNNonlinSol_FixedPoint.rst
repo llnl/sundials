@@ -181,7 +181,7 @@ user-callable functions.
 
    .. math::
 
-      roc_m = \max{crate_const * roc_{m-1}, \|\delta_m\| / \|\delta_{m-1}\|
+      roc_m = \max\{ crate_const * roc_{m-1}, \|\delta_m\| / \|\delta_{m-1}\| \}
 
    **Arguments:**
       * *NLS* -- a SUNNonlinSol object.
