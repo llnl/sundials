@@ -306,6 +306,7 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
     /* Create power iteration dominant eigenvalue estimator (DEE) */
     DEE = SUNDomEigEstimator_Power(temp1, data->max_iters, data->rel_tol, ctx);
     if (check_flag(DEE, "SUNDomEigEstimator_Power", 0)) { return 1; }
+    data->DEE = DEE;
 
     /* Set the ODE right-hand side function at t for the Jacobian-vector products */
     flag = SUNDomEigEstimator_SetRHS(DEE, user_data, f);
