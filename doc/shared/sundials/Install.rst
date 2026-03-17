@@ -250,7 +250,7 @@ allocation account on Frontier:
      -D AMDGPU_TARGETS=gfx90a \
      -D SUNDIALS_ENABLE_HIP=ON \
      -D SUNDIALS_ENABLE_MPI=ON \
-     -D BUILD_FORTRAN_MODULE_INTERFACE=ON
+     -D SUNDIALS_ENABLE_FORTRAN=ON
    cd BUILD_DIR
    make -j8 install
    # Need an allocation to run the tests:
@@ -274,10 +274,10 @@ are for a Linux system and are provided as illustration only.
    files. For options where the default value depends on the value of another
    option, the initial value is set on the first configuration pass and is not
    updated automatically if the related option value is changed in subsequent
-   passes. For example, the default value of :cmakeop:`EXAMPLES_INSTALL_PATH` is
+   passes. For example, the default value of :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH` is
    ``CMAKE_INSTALL_PREFIX/examples``; if the value of
    :cmakeop:`CMAKE_INSTALL_PREFIX` is updated, then
-   :cmakeop:`EXAMPLES_INSTALL_PATH` will also need to be updated as its value
+   :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH` will also need to be updated as its value
    was set using the :cmakeop:`CMAKE_INSTALL_PREFIX` default.
 
 .. _Installation.Options.BuildType:
@@ -635,76 +635,116 @@ SUNDIALS Packages
 The following options can be used to enable/disable particular SUNDIALS
 packages.
 
-.. cmakeoption:: BUILD_ARKODE
+.. cmakeoption:: SUNDIALS_ENABLE_ARKODE
 
-   Build the ARKODE library
-
-   Default: ``ON``
-
-.. cmakeoption:: BUILD_CVODE
-
-   Build the CVODE library
+   Enable the ARKODE library
 
    Default: ``ON``
 
-.. cmakeoption:: BUILD_CVODES
+   .. versionadded:: x.y.z
 
-   Build the CVODES library
+      Replaces the deprecated option ``BUILD_ARKODE``
 
-   Default: ``ON``
+.. cmakeoption:: SUNDIALS_ENABLE_CVODE
 
-.. cmakeoption:: BUILD_IDA
-
-   Build the IDA library
+   Enable the CVODE library
 
    Default: ``ON``
 
-.. cmakeoption:: BUILD_IDAS
+   .. versionadded:: x.y.z
 
-   Build the IDAS library
+      Replaces the deprecated option ``BUILD_CVODE``
+
+.. cmakeoption:: SUNDIALS_ENABLE_CVODES
+
+   Enable the CVODES library
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_CVODES``
+
+.. cmakeoption:: SUNDIALS_ENABLE_IDA
+
+   Enable the IDA library
 
    Default: ``ON``
 
-.. cmakeoption:: BUILD_KINSOL
+   .. versionadded:: x.y.z
 
-   Build the KINSOL library
+      Replaces the deprecated option ``BUILD_IDA``
+
+.. cmakeoption:: SUNDIALS_ENABLE_IDAS
+
+   Enable the IDAS library
 
    Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_IDAS``
+
+.. cmakeoption:: SUNDIALS_ENABLE_KINSOL
+
+   Enable the KINSOL library
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_KINSOL``
 
 .. _Installation.Options.Examples:
 
 Example Programs
 ^^^^^^^^^^^^^^^^
 
-.. cmakeoption:: EXAMPLES_ENABLE_C
+.. cmakeoption:: SUNDIALS_ENABLE_C_EXAMPLES
 
    Build the SUNDIALS C examples
 
    Default: ``ON``
 
-.. cmakeoption:: EXAMPLES_ENABLE_CXX
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_ENABLE_C``
+
+.. cmakeoption:: SUNDIALS_ENABLE_CXX_EXAMPLES
 
    Build the SUNDIALS C++ examples
 
    Default: ``OFF``
 
-.. cmakeoption:: EXAMPLES_ENABLE_CUDA
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_ENABLE_CXX``
+
+.. cmakeoption:: SUNDIALS_ENABLE_CUDA_EXAMPLES
 
    Build the SUNDIALS CUDA examples
 
    Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_CUDA` is ``ON``, otherwise ``OFF``
 
-.. cmakeoption:: EXAMPLES_ENABLE_F2003
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_ENABLE_CUDA``
+
+.. cmakeoption:: SUNDIALS_ENABLE_FORTRAN_EXAMPLES
 
    Build the SUNDIALS Fortran 2003 examples
 
-   Default: ``ON`` when :cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE` is ``ON``,
+   Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_FORTRAN` is ``ON``,
    otherwise ``OFF``
 
-.. cmakeoption:: EXAMPLES_INSTALL
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_ENABLE_F2003``
+
+.. cmakeoption:: SUNDIALS_ENABLE_EXAMPLES_INSTALL
 
    Install example program source files and sample output files. See
-   :cmakeop:`EXAMPLES_INSTALL_PATH` for the install location.
+   :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH` for the install location.
 
    A ``CMakeLists.txt`` file to build the examples will be automatically
    generated and installed with the source files. If building on a Unix-like
@@ -713,20 +753,29 @@ Example Programs
 
    Default: ``ON``
 
-.. cmakeoption:: EXAMPLES_INSTALL_PATH
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_INSTALL``
+
+.. cmakeoption:: SUNDIALS_EXAMPLES_INSTALL_PATH
 
    Full path to where example source and output files will be installed
 
    Default: ``CMAKE_INSTALL_PREFIX/examples``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``EXAMPLES_INSTALL_PATH``
+
 
 .. _Installation.Options.Fortran:
 
 Fortran Interfaces
 ^^^^^^^^^^^^^^^^^^
 
-.. cmakeoption:: BUILD_FORTRAN_MODULE_INTERFACE
+.. cmakeoption:: SUNDIALS_ENABLE_FORTRAN
 
-   Build the SUNDIALS Fortran 2003 interface
+   Enable SUNDIALS Fortran interfaces
 
    Default: ``OFF``
 
@@ -741,6 +790,10 @@ Fortran Interfaces
       that causes linking the Fortran interfaces to fail when building
       SUNDIALS. For now the work around is to only build with static libraries
       when using MSYS with gfortran on Windows.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_FORTRAN_MODULE_INTERFACE``
 
 .. _Installation.Options.ErrorChecking:
 
@@ -796,7 +849,7 @@ For more information on logging in SUNDIALS, see :ref:`SUNDIALS.Logging`.
 Monitoring
 ^^^^^^^^^^
 
-.. cmakeoption:: SUNDIALS_BUILD_WITH_MONITORING
+.. cmakeoption:: SUNDIALS_ENABLE_MONITORING
 
    Build SUNDIALS with capabilities for fine-grained monitoring of solver
    progress and statistics. This is primarily useful for debugging.
@@ -808,6 +861,10 @@ Monitoring
       Building with monitoring may result in minor performance degradation even
       if monitoring is not utilized.
 
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_WITH_MONITORING``
+
 .. _Installation.Options.Profiling:
 
 Profiling
@@ -815,7 +872,7 @@ Profiling
 
 For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
 
-.. cmakeoption:: SUNDIALS_BUILD_WITH_PROFILING
+.. cmakeoption:: SUNDIALS_ENABLE_PROFILING
 
    Build SUNDIALS with capabilities for fine-grained profiling. This requires
    POSIX timers, the Windows ``profileapi.h`` timers, or enabling Caliper with
@@ -826,6 +883,25 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
    .. warning::
 
       Profiling will impact performance, and should be enabled judiciously.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_WITH_PROFILING``
+
+.. _Installation.Options.FusedKernels:
+
+Fused Kernels
+^^^^^^^^^^^^^
+
+.. cmakeoption:: SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
+
+   Enable fused kernels in SUNDIALS packages
+
+   Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``
 
 .. _Installation.Options.Adiak:
 
@@ -888,7 +964,7 @@ Caliper support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D SUNDIALS_BUILD_WITH_PROFILING=ON \
+     -D SUNDIALS_ENABLE_PROFILING=ON \
      -D SUNDIALS_ENABLE_CALIPER=ON \
      -D CALIPER_DIR=/path/to/caliper/installation
 
@@ -900,7 +976,7 @@ Caliper support:
 
  .. note::
 
-      Using Caliper requires setting :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` to
+      Using Caliper requires setting :cmakeop:`SUNDIALS_ENABLE_PROFILING` to
       ``ON``.
 
  .. versionadded:: x.y.z
@@ -1673,7 +1749,7 @@ configure SUNDIALS with MPI support:
    .. note::
 
       This option is only needed if MPI is enabled (:cmakeop:`SUNDIALS_ENABLE_MPI` is
-      ``ON``) and C++ examples are enabled (:cmakeop:`EXAMPLES_ENABLE_CXX` is
+      ``ON``) and C++ examples are enabled (:cmakeop:`SUNDIALS_ENABLE_CXX_EXAMPLES` is
       ``ON``). All SUNDIALS solvers can be used from C++ MPI applications by
       without setting any additional configuration options other than
       :cmakeop:`SUNDIALS_ENABLE_MPI`.
@@ -1686,9 +1762,9 @@ configure SUNDIALS with MPI support:
 
    .. note::
 
-      This option is triggered only needed if MPI is enabled
+      This option is only needed if MPI is enabled
       (:cmakeop:`SUNDIALS_ENABLE_MPI` is ``ON``) and the Fortran interfaces are enabled
-      (:cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE` is ``ON``).
+      (:cmakeop:`SUNDIALS_ENABLE_FORTRAN` is ``ON``).
 
 .. cmakeoption:: MPIEXEC_EXECUTABLE
 
@@ -2487,7 +2563,7 @@ command:
 
    make test
 
-Additionally, if :cmakeop:`EXAMPLES_INSTALL` is set to ``ON``, then a set of
+Additionally, if :cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL` is set to ``ON``, then a set of
 smoke tests can be run after installing with the command:
 
 .. code-block:: bash
@@ -2502,7 +2578,7 @@ Building and Running Examples
 Each of the SUNDIALS solvers is distributed with a set of examples demonstrating
 basic usage. To build and install the examples, set at least one of the
 ``EXAMPLES_ENABLE_<language>`` options to ``ON``, and set
-:cmakeop:`EXAMPLES_INSTALL` to ``ON``. Along side the example sources and
+:cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL` to ``ON``. Along side the example sources and
 outputs, automatically generated ``CMakeLists.txt`` configuration files (and
 ``Makefile`` files if on Linux/Unix systems) are installed referencing the
 *installed* SUNDIALS headers and libraries.

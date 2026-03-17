@@ -3244,7 +3244,7 @@ static int cvCheckConstraints(CVodeMem cv_mem, int* nflagPtr,
    *
    * 6. Zero out entries where the constraints passed, v = mask * v
    */
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
     cvCheckConstraints_fused(cv_mem->cv_constraints, cv_mem->cv_ewt,
@@ -3608,7 +3608,7 @@ static void cvCompleteStep(CVodeMem cv_mem)
     cv_mem->cv_indx_acor = cv_mem->cv_qmax;
   }
 
-#ifdef SUNDIALS_BUILD_WITH_MONITORING
+#ifdef SUNDIALS_ENABLE_MONITORING
   /* If user access function was provided, call it now */
   if (cv_mem->cv_monitorfun != NULL &&
       !(cv_mem->cv_nst % cv_mem->cv_monitor_interval))
@@ -4892,7 +4892,7 @@ int cvEwtSet(N_Vector ycur, N_Vector weight, void* data)
 
 static int cvEwtSetSS(CVodeMem cv_mem, N_Vector ycur, N_Vector weight)
 {
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
     /* We compute weight (inverse of tempv) regardless of the component test
@@ -4932,7 +4932,7 @@ static int cvEwtSetSS(CVodeMem cv_mem, N_Vector ycur, N_Vector weight)
 
 static int cvEwtSetSV(CVodeMem cv_mem, N_Vector ycur, N_Vector weight)
 {
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
   if (cv_mem->cv_usefused)
   {
     /* We compute weight (inverse of tempv) regardless of the component test

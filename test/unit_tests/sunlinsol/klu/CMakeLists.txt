@@ -29,7 +29,7 @@ set(sunlinsol_klu_examples
 set(sunlinsol_klu_dependencies test_sunlinsol)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_klu_fortran_examples "test_fsunlinsol_klu_mod\;\;")
 endif()
 

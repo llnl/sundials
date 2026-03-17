@@ -14,10 +14,10 @@
 # ---------------------------------------------------------------
 
 if(NOT
-   (BUILD_ARKODE
-    AND BUILD_CVODES
-    AND BUILD_IDAS
-    AND BUILD_KINSOL))
+   (SUNDIALS_ENABLE_ARKODE
+    AND SUNDIALS_ENABLE_CVODES
+    AND SUNDIALS_ENABLE_IDAS
+    AND SUNDIALS_ENABLE_KINSOL))
   message(
     FATAL_ERROR
       "sundials4py requires ARKODE, CVODES, IDAS, and KINSOL to be enabled")

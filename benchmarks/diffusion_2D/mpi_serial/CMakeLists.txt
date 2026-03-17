@@ -18,15 +18,15 @@
 # list of tests
 set(tests)
 
-if(BUILD_ARKODE)
+if(SUNDIALS_ENABLE_ARKODE)
   list(APPEND tests "arkode\;BENCHMARK_ODE")
 endif()
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   list(APPEND tests "cvode\;BENCHMARK_ODE")
 endif()
 
-if(BUILD_IDA)
+if(SUNDIALS_ENABLE_IDA)
   list(APPEND tests "ida\;BENCHMARK_DAE")
 endif()
 

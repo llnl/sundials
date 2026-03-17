@@ -27,7 +27,7 @@
 #include <sundials/sundials_core.h>
 #include "sundials_logger_impl.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNNonlinearSolver NLS)
 {
   return (NLS->sunctx->profiler);

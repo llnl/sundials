@@ -16,9 +16,9 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-if(BUILD_ARKODE
-   AND BUILD_CVODE
-   AND BUILD_IDA)
+if(SUNDIALS_ENABLE_ARKODE
+   AND SUNDIALS_ENABLE_CVODE
+   AND SUNDIALS_ENABLE_IDA)
 
   if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"
                                                 ))

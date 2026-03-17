@@ -12,6 +12,8 @@ iteration and fixed-point iteration based on an estimate of stiffness. This
 solver may be useful to pair with the BDF method in CVODE/CVODES for users who
 are unsure about the stiffness of their problem.
 
+Updated the Kokkos N_Vector to support Kokkos 5.x versions.
+
 **Bug Fixes**
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
@@ -30,6 +32,18 @@ table below lists the old CMake option names and the new replacements.
 
 +-------------------------------------------+---------------------------------------------------------+
 | Old Option                                | New Option                                              |
++-------------------------------------------+---------------------------------------------------------+
+| ``BUILD_ARKODE``                          | :cmakeop:`SUNDIALS_ENABLE_ARKODE`                       |
++-------------------------------------------+---------------------------------------------------------+
+| ``BUILD_CVODE``                           | :cmakeop:`SUNDIALS_ENABLE_CVODE`                        |
++-------------------------------------------+---------------------------------------------------------+
+| ``BUILD_CVODES``                          | :cmakeop:`SUNDIALS_ENABLE_CVODES`                       |
++-------------------------------------------+---------------------------------------------------------+
+| ``BUILD_IDA``                             | :cmakeop:`SUNDIALS_ENABLE_IDA`                          |
++-------------------------------------------+---------------------------------------------------------+
+| ``BUILD_IDAS``                            | :cmakeop:`SUNDIALS_ENABLE_IDAS`                         |
++-------------------------------------------+---------------------------------------------------------+
+| ``BUILD_KINSOL``                          | :cmakeop:`SUNDIALS_ENABLE_KINSOL`                       |
 +-------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_MPI``                            | :cmakeop:`SUNDIALS_ENABLE_MPI`                          |
 +-------------------------------------------+---------------------------------------------------------+
@@ -103,6 +117,26 @@ table below lists the old CMake option names and the new replacements.
 +-------------------------------------------+---------------------------------------------------------+
 | ``KOKKOS_KERNELS_WORKS``                  | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
 +-------------------------------------------+---------------------------------------------------------+
+| ``BUILD_FORTRAN_MODULE_INTERFACE``        | :cmakeop:`SUNDIALS_ENABLE_FORTRAN`                      |
++-------------------------------------------+---------------------------------------------------------+
+| ``SUNDIALS_BUILD_WITH_PROFILING``         | :cmakeop:`SUNDIALS_ENABLE_PROFILING`                    |
++-------------------------------------------+---------------------------------------------------------+
+| ``SUNDIALS_BUILD_WITH_MONITORING``        | :cmakeop:`SUNDIALS_ENABLE_MONITORING`                   |
++-------------------------------------------+---------------------------------------------------------+
+| ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``  | :cmakeop:`SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`        |
++-------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_ENABLE_C``                     | :cmakeop:`SUNDIALS_ENABLE_C_EXAMPLES`                   |
++-------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_ENABLE_CXX``                   | :cmakeop:`SUNDIALS_ENABLE_CXX_EXAMPLES`                 |
++-------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_ENABLE_F2003``                 | :cmakeop:`SUNDIALS_ENABLE_FORTRAN_EXAMPLES`             |
++-------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_ENABLE_CUDA``                  | :cmakeop:`SUNDIALS_ENABLE_CUDA_EXAMPLES`                |
++-------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_INSTALL``                      | :cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL`             |
++-------------------------------------------+---------------------------------------------------------+
+| ``EXAMPLES_INSTALL_PATH``                 | :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH`               |
++-------------------------------------------+---------------------------------------------------------+
 | ``BUILD_BENCHMARKS``                      | :cmakeop:`SUNDIALS_ENABLE_BENCHMARKS`                   |
 +-------------------------------------------+---------------------------------------------------------+
 | ``BENCHMARKS_INSTALL_PATH``               | :cmakeop:`SUNDIALS_BENCHMARKS_INSTALL_PATH`             |
@@ -115,3 +149,26 @@ table below lists the old CMake option names and the new replacements.
 +-------------------------------------------+---------------------------------------------------------+
 | ``SUNDIALS_BENCHMARK_NUM_GPUS``           | :cmakeop:`SUNDIALS_BENCHMARKS_NUM_GPUS`                 |
 +-------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_ALL_WARNINGS``                   | :cmakeop:`SUNDIALS_ENABLE_ALL_WARNINGS`                 |
++-------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_WARNINGS_AS_ERRORS``             | :cmakeop:`CMAKE_COMPILE_WARNING_AS_ERROR`               |
++-------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_ADDRESS_SANITIZER``              | :cmakeop:`SUNDIALS_ENABLE_ADDRESS_SANITIZER`            |
++-------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_MEMORY_SANITIZER``               | :cmakeop:`SUNDIALS_ENABLE_MEMORY_SANITIZER`             |
++-------------------------------------------+---------------------------------------------------------+
+| ``ENABLE_LEAK_SANITIZER``                 | :cmakeop:`SUNDIALS_ENABLE_LEAK_SANITIZER`               |
++-------------------------------------------+---------------------------------------------------------+
+
+Following the updated CMake options, the macros listed below have been
+deprecated and replaced with versions that align with the new CMake options.
+
++------------------------------------------+-------------------------------------------+
+| Old Macro                                | New Macro                                 |
++------------------------------------------+-------------------------------------------+
+| ``SUNDIALS_BUILD_WITH_PROFILING``        | ``SUNDIALS_ENABLE_PROFILING``             |
++------------------------------------------+-------------------------------------------+
+| ``SUNDIALS_BUILD_WITH_MONITORING``       | ``SUNDIALS_ENABLE_MONITORING``            |
++------------------------------------------+-------------------------------------------+
+| ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS`` | ``SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`` |
++------------------------------------------+-------------------------------------------+

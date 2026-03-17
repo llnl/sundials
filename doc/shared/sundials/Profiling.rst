@@ -33,7 +33,7 @@ Enabling Profiling
 ------------------
 
 To enable profiling, SUNDIALS must be built with the CMake option
-:cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` set to ``ON``. To utilize Caliper
+:cmakeop:`SUNDIALS_ENABLE_PROFILING` set to ``ON``. To utilize Caliper
 support, the CMake option :cmakeop:`SUNDIALS_ENABLE_CALIPER` must also be set to ``ON``.
 More details in regards to configuring SUNDIALS with CMake can be found in
 :numref:`Installation`.

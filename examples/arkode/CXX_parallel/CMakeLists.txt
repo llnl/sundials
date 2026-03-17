@@ -89,14 +89,14 @@ macro(build_examples examples_to_build lang)
 
     # Not all examples are added to the generated CMake file installed the
     # output and source files here
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
       # Find all .out files for this example
       file(GLOB example_out ${example_target}*.out)
 
       # Install example source and out files
       install(FILES ${example} ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_parallel)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_parallel)
 
     endif()
 
@@ -138,7 +138,7 @@ list(APPEND ARKODE_extras plot_heat2D_p.py)
 # ARKODE + CVODE MPI Examples
 # ---------------------------
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   set(examples_cvode
       "ark_diffusion_reaction_p.cpp\;\;--np 2 2 --imex\;1\;4\;exclude-single\;default"
       "ark_diffusion_reaction_p.cpp\;\;--np 2 2 --mri-arkstep\;1\;4\;exclude-single\;default"
@@ -242,7 +242,7 @@ if(SUNDIALS_ENABLE_RAJA
   endif()
 endif()
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   set(examples_to_install "${parallel_examples}")
   set(_sundials_targets arkode nvecparallel)

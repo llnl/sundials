@@ -15,9 +15,9 @@
 # SUNDIALS Copyright End
 # ------------------------------------------------------------------------------
 
-if(BUILD_ARKODE
-   OR BUILD_CVODE
-   OR BUILD_IDA)
+if(SUNDIALS_ENABLE_ARKODE
+   OR SUNDIALS_ENABLE_CVODE
+   OR SUNDIALS_ENABLE_IDA)
 
   # Shared sources
   set(shared_sources diffusion_2D.hpp diffusion_2D.cpp
