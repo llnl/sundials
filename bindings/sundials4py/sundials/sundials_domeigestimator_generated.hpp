@@ -20,7 +20,8 @@ m.def("SUNDomEigEstimator_SetRHS", SUNDomEigEstimator_SetRHS, nb::arg("DEE"),
       nb::arg("rhs_data"), nb::arg("RHSfn"));
 
 m.def("SUNDomEigEstimator_SetRHSLinearizationPoint",
-      SUNDomEigEstimator_SetRHSLinearizationPoint, nb::arg("DEE"), nb::arg("v"));
+      SUNDomEigEstimator_SetRHSLinearizationPoint, nb::arg("DEE"), nb::arg("t"),
+      nb::arg("v"));
 
 m.def("SUNDomEigEstimator_SetMaxIters", SUNDomEigEstimator_SetMaxIters,
       nb::arg("DEE"), nb::arg("max_iters"));

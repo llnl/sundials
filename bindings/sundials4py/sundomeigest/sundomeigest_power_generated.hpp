@@ -38,7 +38,7 @@ m.def("SUNDomEigEstimator_SetRHS_Power", SUNDomEigEstimator_SetRHS_Power,
 
 m.def("SUNDomEigEstimator_SetRHSLinearizationPoint_Power",
       SUNDomEigEstimator_SetRHSLinearizationPoint_Power, nb::arg("DEE"),
-      nb::arg("v"));
+      nb::arg("t"), nb::arg("v"));
 
 m.def("SUNDomEigEstimator_SetDEEisReal_Power",
       SUNDomEigEstimator_SetDEEisReal_Power, nb::arg("DEE"), nb::arg("real"));
