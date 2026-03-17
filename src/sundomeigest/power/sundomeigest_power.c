@@ -529,14 +529,24 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   SUNFunctionBegin(DEE->sunctx);
 
   int retval;
-  sunrealtype cos_qs, det_G_inv, h11, h12, h21, h22, p11, p12, p21, p22;
+  sunrealtype cos_qs, gram_det, det_G_inv, h11, h12, h21, h22, p11, p12, p21, p22;
   /* The threshold for identifying real or complex DEE is experimentally 
   determined based on the relative tolerance PI_CONTENT(DEE)->rel_tol */
-  sunrealtype proj_cond_inv = PI_CONTENT(DEE)->rel_tol;
-  cos_qs                    = N_VDotProd(v_prev, v);
+  sunrealtype gram_det_tol = SUNMAX(SUN_RCONST(10.0) * SUN_UNIT_ROUNDOFF,
+                                    SUN_RCONST(10.0) * PI_CONTENT(DEE)->rel_tol);
+  cos_qs                   = N_VDotProd(v_prev, v);
   SUNCheckLastErr();
 
-  if (SUNRabs(SUNRabs(cos_qs) - ONE) < proj_cond_inv)
+  /* Safety against roundoff in dot product */
+  if (cos_qs > ONE)  { cos_qs = ONE; }
+  if (cos_qs < -ONE) { cos_qs = -ONE; }
+
+  /* Use Gram determinant as the near-dependence measure:
+     G = [ [1, cos_qs], [cos_qs, 1] ], det(G) = 1 - cos_qs^2
+     This assumes v_prev and v are normalized. */
+  gram_det = ONE - cos_qs * cos_qs;
+
+  if (gram_det <= gram_det_tol)
   {
     /* Dominant eigenvalue is real */
     *lambdaR_out = lambdaR;
@@ -545,10 +555,10 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   }
   else
   {
-    det_G_inv = ONE / (ONE - cos_qs * cos_qs);
+    det_G_inv = ONE / gram_det;
 
-    /* Solve for G = [v_prev v]' * [v_prev v] and compute 
-    projected matrix P = G^{-1} * [v_prev v]' * A * [v_prev v] */
+    /* Solve for G = [v_prev v]' * [v_prev v] and compute
+       projected matrix P = G^{-1} * [v_prev v]' * A * [v_prev v] */
 
     retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata, v_prev,
                                      PI_CONTENT(DEE)->q);
@@ -557,7 +567,9 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     h11 = N_VDotProd(v_prev, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
     h21 = N_VDotProd(v, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
 
     retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata, v,
                                      PI_CONTENT(DEE)->q);
@@ -566,7 +578,9 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     h12 = N_VDotProd(v_prev, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
     h22 = N_VDotProd(v, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
 
     p11 = det_G_inv * (h11 - cos_qs * h21);
     p12 = det_G_inv * (h12 - cos_qs * h22);

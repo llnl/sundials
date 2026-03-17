@@ -259,8 +259,34 @@ instead of supplying a dummy routine.
 
    .. note::
 
-      The relative tolerance is used as a stopping criterion for the Power Iteration method. Specifically, 
-      it defines the acceptable relative change between successive dominant eigenvalue estimates.
+      The relative tolerance is used as a stopping criterion for the Power Iteration method. Specifically,
+      it defines the acceptable relative change between successive dominant eigenvalue estimates. It also
+      serves as a threshold for determining whether the dominant eigenvalue is real or complex.
+
+      A threshold, with :math:`\varepsilon` representing the machine precision,
+
+      .. math::
+         \texttt{gram_det_tol} = 10 \cdot \max\left(\varepsilon,\; \texttt{rel_tol}\right)
+
+      is used to assess the numerical rank of the 2×2 Gram matrix formed by the current and previous
+      iterates in the Power Iteration method. If the determinant of this Gram matrix is less than or equal to
+      this threshold, the iterates are considered nearly linearly dependent, and the dominant eigenvalue is
+      treated as real.
+
+      To ensure that the Power Iteration method captures small imaginary parts of the dominant eigenvalue,
+      the relative tolerance should not be chosen too large. In practice, the smallest reliably detectable
+      imaginary part is proportional to the chosen relative tolerance, i.e.,
+
+      .. math::
+         |\beta| \gtrsim \mathcal{O}(\texttt{rel_tol}).
+
+      Therefore, to resolve an expected imaginary part of magnitude :math:`|\beta|`, it is recommended to choose
+
+      .. math::
+         \texttt{rel_tol} \ll |\beta|.
+
+      Choosing a smaller relative tolerance improves the ability to detect weakly complex eigenvalues,
+      but may increase computational cost.
 
       When used in combination with Arnoldi Iteration, this routine sets the stopping criterion for 
       the preprocessing Power Iteration phase. In this workflow, Power Iteration is first applied to 
