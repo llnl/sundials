@@ -227,7 +227,7 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filena
   /* An empty filename disables output for this stream. */
   if (!error_filename || error_filename[0] == '\0')
   {
-    sunCloseLogFile(logger->error_fp);
+    /* Don't close the file here, that is managed by the underlying hashmap */
     logger->error_fp = NULL;
     return SUN_SUCCESS;
   }
@@ -266,7 +266,7 @@ SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
   /* An empty filename disables output for this stream. */
   if (!warning_filename || warning_filename[0] == '\0')
   {
-    sunCloseLogFile(logger->warning_fp);
+    /* Don't close the file here, that is managed by the underlying hashmap */
     logger->warning_fp = NULL;
     return SUN_SUCCESS;
   }
@@ -304,7 +304,7 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
   /* An empty filename disables output for this stream. */
   if (!info_filename || info_filename[0] == '\0')
   {
-    sunCloseLogFile(logger->info_fp);
+    /* Don't close the file here, that is managed by the underlying hashmap */
     logger->info_fp = NULL;
     return SUN_SUCCESS;
   }
@@ -342,7 +342,7 @@ SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filena
   /* An empty filename disables output for this stream. */
   if (!debug_filename || debug_filename[0] == '\0')
   {
-    sunCloseLogFile(logger->debug_fp);
+    /* Don't close the file here, that is managed by the underlying hashmap */
     logger->debug_fp = NULL;
     return SUN_SUCCESS;
   }
