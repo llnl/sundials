@@ -32,7 +32,7 @@ if(SUNDIALS_ENABLE_ARKODE
   add_subdirectory(mpi_serial)
 
   # MPI + CUDA/HIP
-  if(BUILD_NVECTOR_CUDA OR BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA OR SUNDIALS_ENABLE_NVECTOR_HIP)
     add_subdirectory(mpi_gpu)
   endif()
 

@@ -194,7 +194,7 @@ if(SUNDIALS_ENABLE_RAJA
 
   if(RAJA_BACKENDS MATCHES "CUDA")
 
-    if(BUILD_NVECTOR_CUDA)
+    if(SUNDIALS_ENABLE_NVECTOR_CUDA)
       set(cuda_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_CUDA_NVEC\;--monitor\;1\;4\;develop\;2"
           "ark_brusselator1D_task_local_nls.cpp\;USE_CUDAUVM_NVEC\;--monitor\;1\;4\;exclude\;2"
@@ -204,7 +204,7 @@ if(SUNDIALS_ENABLE_RAJA
       build_examples(cuda_raja_examples CUDA)
     endif()
 
-    if(BUILD_NVECTOR_RAJA AND (SUNDIALS_RAJA_BACKENDS MATCHES "CUDA"))
+    if(SUNDIALS_ENABLE_NVECTOR_RAJA AND (SUNDIALS_RAJA_BACKENDS MATCHES "CUDA"))
       set(raja_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_RAJA_NVEC\;--monitor\;1\;4\;exclude\;2"
       )
@@ -216,7 +216,7 @@ if(SUNDIALS_ENABLE_RAJA
     # RAJA + HIP
     # ----------
 
-    if(BUILD_NVECTOR_HIP AND (RAJA_BACKENDS MATCHES "HIP"))
+    if(SUNDIALS_ENABLE_NVECTOR_HIP AND (RAJA_BACKENDS MATCHES "HIP"))
       set(hip_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_HIP_NVEC\;--monitor\;1\;4\;exclude\;2"
       )
@@ -228,7 +228,8 @@ if(SUNDIALS_ENABLE_RAJA
     # RAJA + OpenMP Offload
     # ---------------------
 
-    if(BUILD_NVECTOR_OPENMPDEV AND (RAJA_BACKENDS MATCHES "TARGET_OPENMP"))
+    if(SUNDIALS_ENABLE_NVECTOR_OPENMPDEV AND (RAJA_BACKENDS MATCHES
+                                              "TARGET_OPENMP"))
       set(openmpdev_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_OMPDEV_NVEC\;--monitor\;1\;4\;exclude\;2"
       )
