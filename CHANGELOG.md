@@ -6,6 +6,8 @@
 
 ### New Features and Enhancements
 
+Updated the Kokkos N_Vector to support Kokkos 5.x versions.
+
 ### Bug Fixes
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
@@ -23,6 +25,12 @@ table below lists the old CMake option names and the new replacements.
 
 | Old Option                              | New Option                                     |
 |-----------------------------------------|------------------------------------------------|
+| `BUILD_ARKODE`                          | `SUNDIALS_ENABLE_ARKODE`                       |
+| `BUILD_CVODE`                           | `SUNDIALS_ENABLE_CVODE`                        |
+| `BUILD_CVODES`                          | `SUNDIALS_ENABLE_CVODES`                       |
+| `BUILD_IDA`                             | `SUNDIALS_ENABLE_IDA`                          |
+| `BUILD_IDAS`                            | `SUNDIALS_ENABLE_IDAS`                         |
+| `BUILD_KINSOL`                          | `SUNDIALS_ENABLE_KINSOL`                       |
 | `ENABLE_MPI`                            | `SUNDIALS_ENABLE_MPI`                          |
 | `ENABLE_OPENMP`                         | `SUNDIALS_ENABLE_OPENMP`                       |
 | `ENABLE_OPENMP_DEVICE`                  | `SUNDIALS_ENABLE_OPENMP_DEVICE`                |
