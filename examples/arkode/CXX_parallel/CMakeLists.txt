@@ -138,7 +138,7 @@ list(APPEND ARKODE_extras plot_heat2D_p.py)
 # ARKODE + CVODE MPI Examples
 # ---------------------------
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   set(examples_cvode
       "ark_diffusion_reaction_p.cpp\;\;--np 2 2 --imex\;1\;4\;exclude-single\;default"
       "ark_diffusion_reaction_p.cpp\;\;--np 2 2 --mri-arkstep\;1\;4\;exclude-single\;default"

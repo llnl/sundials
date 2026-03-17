@@ -18,7 +18,7 @@
 # list of tests
 set(tests)
 
-if(BUILD_ARKODE)
+if(SUNDIALS_ENABLE_ARKODE)
   if(BUILD_NVECTOR_CUDA)
     list(APPEND tests "arkode\;BENCHMARK_ODE\;USE_CUDA")
   endif()
@@ -27,7 +27,7 @@ if(BUILD_ARKODE)
   endif()
 endif()
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   if(BUILD_NVECTOR_CUDA)
     list(APPEND tests "cvode\;BENCHMARK_ODE\;USE_CUDA")
   endif()
@@ -36,7 +36,7 @@ if(BUILD_CVODE)
   endif()
 endif()
 
-if(BUILD_IDA)
+if(SUNDIALS_ENABLE_IDA)
   if(BUILD_NVECTOR_CUDA)
     list(APPEND tests "ida\;BENCHMARK_DAE\;USE_CUDA")
   endif()
