@@ -51,7 +51,7 @@ module fsunnonlinsol_auto_mod
  public :: FSUNNonlinSolGetNumItersByType_Auto
  public :: FSUNNonlinSolGetCurIter_Auto
  public :: FSUNNonlinSolGetNumConvFails_Auto
- public :: FSUNNonlinSolGetDelNrm_Auto
+ public :: FSUNNonlinSolGetDeltaNorm_Auto
 
 ! WRAPPER DECLARATIONS
 interface
@@ -209,8 +209,8 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNNonlinSolGetDelNrm_Auto(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetDelNrm_Auto") &
+function swigc_FSUNNonlinSolGetDeltaNorm_Auto(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetDeltaNorm_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -510,7 +510,7 @@ fresult = swigc_FSUNNonlinSolGetNumConvFails_Auto(farg1, farg2)
 swig_result = fresult
 end function
 
-function FSUNNonlinSolGetDelNrm_Auto(nls, delnrm) &
+function FSUNNonlinSolGetDeltaNorm_Auto(nls, delnrm) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -522,7 +522,7 @@ type(C_PTR) :: farg2
 
 farg1 = c_loc(nls)
 farg2 = c_loc(delnrm(1))
-fresult = swigc_FSUNNonlinSolGetDelNrm_Auto(farg1, farg2)
+fresult = swigc_FSUNNonlinSolGetDeltaNorm_Auto(farg1, farg2)
 swig_result = fresult
 end function
 

@@ -325,7 +325,7 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the correction */
-  if (SUNNonlinSolGetDelNrm(NLS, &del) != SUN_SUCCESS)
+  if (SUNNonlinSolGetDeltaNorm(NLS, &del) != SUN_SUCCESS)
   {
     del = N_VWrmsNorm(delta, ewt);
   }

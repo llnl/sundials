@@ -77,19 +77,19 @@ m.def(
   nb::arg("NLS"));
 
 m.def(
-  "SUNNonlinSolGetDelNrm_Auto",
+  "SUNNonlinSolGetDeltaNorm_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
   {
-    auto SUNNonlinSolGetDelNrm_Auto_adapt_modifiable_immutable_to_return =
+    auto SUNNonlinSolGetDeltaNorm_Auto_adapt_modifiable_immutable_to_return =
       [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
     {
       sunrealtype delnrm_adapt_modifiable;
 
-      SUNErrCode r = SUNNonlinSolGetDelNrm_Auto(NLS, &delnrm_adapt_modifiable);
+      SUNErrCode r = SUNNonlinSolGetDeltaNorm_Auto(NLS, &delnrm_adapt_modifiable);
       return std::make_tuple(r, delnrm_adapt_modifiable);
     };
 
-    return SUNNonlinSolGetDelNrm_Auto_adapt_modifiable_immutable_to_return(NLS);
+    return SUNNonlinSolGetDeltaNorm_Auto_adapt_modifiable_immutable_to_return(NLS);
   },
   nb::arg("NLS"));
 // #ifdef __cplusplus

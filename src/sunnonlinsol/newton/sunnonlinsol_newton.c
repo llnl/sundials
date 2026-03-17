@@ -71,7 +71,7 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_Newton;
   NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_Newton;
   NLS->ops->getnumconvfails = SUNNonlinSolGetNumConvFails_Newton;
-  NLS->ops->getdelnrm       = SUNNonlinSolGetDelNrm_Newton;
+  NLS->ops->getdelnrm       = SUNNonlinSolGetDeltaNorm_Newton;
 
   /* Create content */
   content = NULL;
@@ -459,7 +459,7 @@ SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetDelNrm_Newton(SUNNonlinearSolver NLS,
+SUNErrCode SUNNonlinSolGetDeltaNorm_Newton(SUNNonlinearSolver NLS,
                                         sunrealtype* delnrm)
 {
   /* return the update norm ||delta||_{WRMS} */

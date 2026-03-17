@@ -381,7 +381,7 @@ linear solver module; otherwise :c:func:`SUNNonlinSolGetCurIter` is optional.
       * A :c:type:`SUNErrCode`
 
 
-.. c:function:: SUNErrCode SUNNonlinSolGetDelNrm(SUNNonlinearSolver NLS, sunrealtype *delnrm)
+.. c:function:: SUNErrCode SUNNonlinSolGetDeltaNorm(SUNNonlinearSolver NLS, sunrealtype *delnrm)
 
    This *optional* function returns the norm of the most recent nonlinear
    solver update (often denoted :math:`\|\delta\|}`) computed by the

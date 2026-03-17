@@ -73,7 +73,7 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_FixedPoint;
   NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_FixedPoint;
   NLS->ops->getnumconvfails = SUNNonlinSolGetNumConvFails_FixedPoint;
-  NLS->ops->getdelnrm       = SUNNonlinSolGetDelNrm_FixedPoint;
+  NLS->ops->getdelnrm       = SUNNonlinSolGetDeltaNorm_FixedPoint;
 
   /* Create nonlinear solver content structure */
   content = NULL;
@@ -440,7 +440,7 @@ SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver NLS,
+SUNErrCode SUNNonlinSolGetDeltaNorm_FixedPoint(SUNNonlinearSolver NLS,
                                             sunrealtype* delnrm)
 {
   *delnrm = FP_CONTENT(NLS)->delnrm;

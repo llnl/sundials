@@ -59,7 +59,7 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_Auto;
   NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_Auto;
   NLS->ops->getnumconvfails = SUNNonlinSolGetNumConvFails_Auto;
-  NLS->ops->getdelnrm       = SUNNonlinSolGetDelNrm_Auto;
+  NLS->ops->getdelnrm       = SUNNonlinSolGetDeltaNorm_Auto;
 
   content = (SUNNonlinearSolverContent_Auto)malloc(sizeof *content);
   SUNAssertNull(content, SUN_ERR_MALLOC_FAIL);
@@ -418,16 +418,16 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetDelNrm_Auto(SUNNonlinearSolver NLS, sunrealtype* delnrm)
+SUNErrCode SUNNonlinSolGetDeltaNorm_Auto(SUNNonlinearSolver NLS, sunrealtype* delnrm)
 {
   SUNFunctionBegin(NLS->sunctx);
   SUNAssert(delnrm, SUN_ERR_ARG_CORRUPT);
   if (AUTO_CONTENT(NLS)->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
-    return SUNNonlinSolGetDelNrm(AUTO_CONTENT(NLS)->fp_solver, delnrm);
+    return SUNNonlinSolGetDeltaNorm(AUTO_CONTENT(NLS)->fp_solver, delnrm);
   }
   else
   {
-    return SUNNonlinSolGetDelNrm(AUTO_CONTENT(NLS)->newton_solver, delnrm);
+    return SUNNonlinSolGetDeltaNorm(AUTO_CONTENT(NLS)->newton_solver, delnrm);
   }
 }

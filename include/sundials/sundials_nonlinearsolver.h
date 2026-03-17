@@ -201,7 +201,7 @@ SUNErrCode SUNNonlinSolGetNumConvFails(SUNNonlinearSolver NLS,
                                        long int* nconvfails);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetDelNrm(SUNNonlinearSolver NLS, sunrealtype* delnrm);
+SUNErrCode SUNNonlinSolGetDeltaNorm(SUNNonlinearSolver NLS, sunrealtype* delnrm);
 
 /* -----------------------------------------------------------------------------
  * SUNNonlinearSolver return values

@@ -330,7 +330,7 @@ SUNErrCode SUNNonlinSolGetNumConvFails(SUNNonlinearSolver NLS,
   }
 }
 
-SUNErrCode SUNNonlinSolGetDelNrm(SUNNonlinearSolver NLS, sunrealtype* delnrm)
+SUNErrCode SUNNonlinSolGetDeltaNorm(SUNNonlinearSolver NLS, sunrealtype* delnrm)
 {
   if (NLS == NULL || delnrm == NULL) { return SUN_ERR_ARG_CORRUPT; }
   if (NLS->ops->getdelnrm) { return (NLS->ops->getdelnrm(NLS, delnrm)); }

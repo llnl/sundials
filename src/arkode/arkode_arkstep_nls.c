@@ -1140,7 +1140,7 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS,
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  if (SUNNonlinSolGetDelNrm(NLS, &delnrm) != SUN_SUCCESS)
+  if (SUNNonlinSolGetDeltaNorm(NLS, &delnrm) != SUN_SUCCESS)
   {
     delnrm = N_VWrmsNorm(del, ewt);
   }

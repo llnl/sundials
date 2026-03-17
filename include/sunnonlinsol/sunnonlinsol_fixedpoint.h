@@ -143,7 +143,7 @@ SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
                                               sunrealtype* crate);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetDelNrm_FixedPoint(SUNNonlinearSolver NLS,
+SUNErrCode SUNNonlinSolGetDeltaNorm_FixedPoint(SUNNonlinearSolver NLS,
                                             sunrealtype* delnrm);
 
 #ifdef __cplusplus
