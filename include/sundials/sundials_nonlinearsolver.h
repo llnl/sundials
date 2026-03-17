@@ -114,7 +114,6 @@ struct _generic_SUNNonlinearSolver_Ops
                sunbooleantype, void*);
   SUNErrCode (*free)(SUNNonlinearSolver);
   SUNErrCode (*setsysfn)(SUNNonlinearSolver, SUNNonlinSolSysFn);
-  // SUNErrCode (*setsysfn)
   SUNErrCode (*setlsetupfn)(SUNNonlinearSolver, SUNNonlinSolLSetupFn);
   SUNErrCode (*setlsolvefn)(SUNNonlinearSolver, SUNNonlinSolLSolveFn);
   SUNErrCode (*setctestfn)(SUNNonlinearSolver, SUNNonlinSolConvTestFn, void*);
