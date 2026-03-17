@@ -86,8 +86,8 @@ m.def(
     {
       sunrealtype delnrm_adapt_modifiable;
 
-      SUNErrCode r = SUNNonlinSolGetDeltaNorm_FixedPoint(NLS,
-                                                      &delnrm_adapt_modifiable);
+      SUNErrCode r =
+        SUNNonlinSolGetDeltaNorm_FixedPoint(NLS, &delnrm_adapt_modifiable);
       return std::make_tuple(r, delnrm_adapt_modifiable);
     };
 

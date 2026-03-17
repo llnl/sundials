@@ -112,7 +112,7 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetDeltaNorm_Auto(SUNNonlinearSolver NLS,
-                                      sunrealtype* delnrm);
+                                         sunrealtype* delnrm);
 
 #ifdef __cplusplus
 }

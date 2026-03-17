@@ -418,7 +418,8 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetDeltaNorm_Auto(SUNNonlinearSolver NLS, sunrealtype* delnrm)
+SUNErrCode SUNNonlinSolGetDeltaNorm_Auto(SUNNonlinearSolver NLS,
+                                         sunrealtype* delnrm)
 {
   SUNFunctionBegin(NLS->sunctx);
   SUNAssert(delnrm, SUN_ERR_ARG_CORRUPT);

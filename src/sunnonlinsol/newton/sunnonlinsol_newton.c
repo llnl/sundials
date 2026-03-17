@@ -460,7 +460,7 @@ SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS,
 }
 
 SUNErrCode SUNNonlinSolGetDeltaNorm_Newton(SUNNonlinearSolver NLS,
-                                        sunrealtype* delnrm)
+                                           sunrealtype* delnrm)
 {
   /* return the update norm ||delta||_{WRMS} */
   *delnrm = NEWTON_CONTENT(NLS)->delnrm;

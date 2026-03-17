@@ -60,11 +60,13 @@ m.def(
     {
       sunrealtype delnrm_adapt_modifiable;
 
-      SUNErrCode r = SUNNonlinSolGetDeltaNorm_Newton(NLS, &delnrm_adapt_modifiable);
+      SUNErrCode r = SUNNonlinSolGetDeltaNorm_Newton(NLS,
+                                                     &delnrm_adapt_modifiable);
       return std::make_tuple(r, delnrm_adapt_modifiable);
     };
 
-    return SUNNonlinSolGetDeltaNorm_Newton_adapt_modifiable_immutable_to_return(NLS);
+    return SUNNonlinSolGetDeltaNorm_Newton_adapt_modifiable_immutable_to_return(
+      NLS);
   },
   nb::arg("NLS"));
 // #ifdef __cplusplus
