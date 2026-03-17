@@ -26,6 +26,6 @@ endif()
 add_subdirectory(newton)
 add_subdirectory(fixedpoint)
 
-if(BUILD_SUNNONLINSOL_PETSCSNES)
+if(SUNDIALS_ENABLE_SUNNONLINSOL_PETSCSNES)
   add_subdirectory(petsc)
 endif()

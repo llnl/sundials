@@ -49,7 +49,7 @@ add_prefix(${SUNDIALS_SOURCE_DIR}/include/cvode/ cvode_HEADERS)
 # Build fused kernel libraries
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
 
-  if(BUILD_NVECTOR_CUDA)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA)
 
     set_source_files_properties(cvode_fused_gpu.cpp PROPERTIES LANGUAGE CUDA)
 
@@ -63,7 +63,7 @@ if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
       SOVERSION ${cvodelib_SOVERSION})
   endif()
 
-  if(BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_HIP)
     sundials_add_library(
       sundials_cvode_fused_hip
       SOURCES cvode_fused_gpu.cpp
