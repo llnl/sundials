@@ -821,9 +821,12 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     if (do_save)
     {
       errcode =
+        /* SUNAdjointCheckpointScheme_InsertVector(ark_mem->checkpoint_scheme, */
+        /*                                         ark_mem->checkpoint_step_idx, 0, */
+        /*                                         ark_mem->tcur, ark_mem->ycur); */
         SUNAdjointCheckpointScheme_InsertVector(ark_mem->checkpoint_scheme,
                                                 ark_mem->checkpoint_step_idx, 0,
-                                                ark_mem->tcur, ark_mem->ycur);
+                                                ark_mem->tcur, ark_mem->yn);
 
       if (errcode)
       {
