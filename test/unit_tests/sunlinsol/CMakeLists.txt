@@ -17,7 +17,7 @@
 # test/unit_tests/sunlinsol level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
   include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
@@ -51,44 +51,44 @@ if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(sptfqmr/parallel)
 endif()
 
-if(BUILD_SUNMATRIX_CUSPARSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_CUSPARSE)
   if(SUNDIALS_INDEX_SIZE MATCHES "32")
     add_subdirectory(cusolversp)
   endif()
 endif()
 
-if(BUILD_SUNLINSOL_GINKGO)
+if(SUNDIALS_ENABLE_SUNLINSOL_GINKGO)
   add_subdirectory(ginkgo)
 endif()
 
-if(BUILD_SUNLINSOL_KLU)
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
   add_subdirectory(klu)
 endif()
 
-if(BUILD_SUNLINSOL_KOKKOSDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE)
   add_subdirectory(kokkos)
 endif()
 
-if(BUILD_SUNLINSOL_LAPACKBAND)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND)
   add_subdirectory(lapackband)
 endif()
 
-if(BUILD_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
   add_subdirectory(lapackdense)
 endif()
 
-if(BUILD_SUNLINSOL_MAGMADENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_MAGMADENSE)
   add_subdirectory(magmadense)
 endif()
 
-if(BUILD_SUNLINSOL_ONEMKLDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE)
   add_subdirectory(onemkldense)
 endif()
 
-if(BUILD_SUNLINSOL_SUPERLUMT)
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
   add_subdirectory(superlumt)
 endif()
 
-if(BUILD_SUNLINSOL_SUPERLUDIST)
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUDIST)
   add_subdirectory(superludist)
 endif()

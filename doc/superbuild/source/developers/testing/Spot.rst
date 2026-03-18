@@ -38,7 +38,7 @@ into the SPOT search bar the absolute path to the directory containing the
 ``.cali`` files and refresh the page. By default ``.cali`` files will be
 generated in the build directory under ``Benchmarking/caliper`` and
 ``Testing/caliper``. To specify where ``.cali`` output files are placed, define
-the CMake options ``SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR`` and
+the CMake options ``SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR`` and
 ``SUNDIALS_TEST_CALIPER_OUTPUT_DIR`` with the desired directory path.
 
 To retain the same filters as a given SPOT visualization link in

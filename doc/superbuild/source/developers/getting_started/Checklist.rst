@@ -33,8 +33,8 @@ system, etc. developers should adhere to the following checklist.
 #. It can be helpful to configure SUNDIALS using the C flags ``-Wall -Werror``.
    When building, modify your file to remove any error/warning messages output
    during compilation of your code. This can be done automatically with the
-   advanced CMake options ``ENABLE_ALL_WARNINGS`` and
-   ``ENABLE_WARNINGS_AS_ERRORS``.
+   advanced CMake options ``SUNDIALS_ENABLE_ALL_WARNINGS`` and
+   ``CMAKE_COMPILE_WARNING_AS_ERROR``.
 
 #. Configure your build with a minimal set of configuration options enabled
    (serial). Run ``make``, ``make test``, ``make install``, and

@@ -33,7 +33,12 @@ following naming conventions:
    of their CMake build system, SUNDIALS CMake cache variables are prefixed with
    ``SUNDIALS_``.
 
+#. Boolean options are prefixed with ``SUNDIALS_ENABLE_``.
+
 #. Cache variables use screaming snake case, ``SUNDIALS_OPTION_NAME``.
+
+#. Options to enable third party libraries are named
+   ``SUNDIALS_ENABLE_LIBRARY_NAME``.
 
 #. The ``SUNDIALS_`` prefix may be followed by a category name for grouping
    related options, ``SUNDIALS_CATEGORY_OPTION_NAME``. For example,
@@ -47,12 +52,6 @@ following naming conventions:
    * ``SUNDIALS_DEV_`` for development options
 
    * ``SUNDIALS_DEBUG_`` for debugging options
-
-#. Boolean options are named ``SUNDIALS_ENABLE_OPTION_NAME`` or
-   ``SUNDIALS_CATEGORY_ENABLE_OPTION_NAME``.
-
-#. Options to enable third party libraries are named
-   ``SUNDIALS_ENABLE_LIBRARY_NAME``.
 
 Formatting
 ----------

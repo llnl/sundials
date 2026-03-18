@@ -79,7 +79,7 @@ endif()
 # TODO(DJG): Set flags based on CMAKE_<language>_COMPILER_ID
 # ===============================================================
 
-if(ENABLE_ALL_WARNINGS)
+if(SUNDIALS_ENABLE_ALL_WARNINGS)
   message(STATUS "Enabling all compiler warnings")
 
   # Some warning flags are not supported by all compilers so ignore unknown
@@ -111,7 +111,7 @@ if(ENABLE_ALL_WARNINGS)
   endif()
 
   # Avoid numerous warnings from SWIG generated functions
-  if(NOT BUILD_FORTRAN_MODULE_INTERFACE)
+  if(NOT SUNDIALS_ENABLE_FORTRAN)
     set(WARNING_FLAGS "-Wmissing-declarations -Wcast-qual ${WARNING_FLAGS}")
   endif()
 
@@ -135,7 +135,7 @@ if(ENABLE_ALL_WARNINGS)
   )
 endif()
 
-if(ENABLE_WARNINGS_AS_ERRORS)
+if(CMAKE_COMPILE_WARNING_AS_ERROR)
   message(STATUS "Enabling compiler warnings as errors")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
@@ -147,7 +147,7 @@ endif()
 # With clang it is not possible to combine the -fsanitize=address and
 # -fsanitize=memory checkers.
 
-if(ENABLE_ADDRESS_SANITIZER)
+if(SUNDIALS_ENABLE_ADDRESS_SANITIZER)
   message(STATUS "Enabling address sanitizer")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
@@ -155,7 +155,7 @@ if(ENABLE_ADDRESS_SANITIZER)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fsanitize=address")
 endif()
 
-if(ENABLE_MEMORY_SANITIZER)
+if(SUNDIALS_ENABLE_MEMORY_SANITIZER)
   message(STATUS "Enabling memory sanitizer")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=memory")
@@ -163,7 +163,7 @@ if(ENABLE_MEMORY_SANITIZER)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fsanitize=memory")
 endif()
 
-if(ENABLE_LEAK_SANITIZER)
+if(SUNDIALS_ENABLE_LEAK_SANITIZER)
   message(STATUS "Enabling leak sanitizer")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=leak")
@@ -171,7 +171,7 @@ if(ENABLE_LEAK_SANITIZER)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fsanitize=leak")
 endif()
 
-if(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
+if(SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
   message(STATUS "Enabling undefined behavior sanitizer")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined")
@@ -424,7 +424,7 @@ if(SUNDIALS_LAPACK_CASE AND SUNDIALS_LAPACK_UNDERSCORES)
 endif()
 
 # Do we need a Fortran compiler?
-if(BUILD_FORTRAN_MODULE_INTERFACE OR NEED_FORTRAN_NAME_MANGLING)
+if(SUNDIALS_ENABLE_FORTRAN OR NEED_FORTRAN_NAME_MANGLING)
   include(SundialsSetupFortran)
 endif()
 
@@ -432,10 +432,10 @@ endif()
 # C++ settings
 # ===============================================================
 
-if(BUILD_BENCHMARKS
+if(SUNDIALS_ENABLE_BENCHMARKS
    OR SUNDIALS_ENABLE_PYTHON
    OR SUNDIALS_TEST_ENABLE_UNIT_TESTS
-   OR EXAMPLES_ENABLE_CXX
+   OR SUNDIALS_ENABLE_CXX_EXAMPLES
    OR SUNDIALS_ENABLE_CUDA
    OR SUNDIALS_ENABLE_HIP
    OR SUNDIALS_ENABLE_SYCL

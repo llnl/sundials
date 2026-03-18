@@ -981,7 +981,7 @@ Main solver optional input functions
 
       .. warning::
 
-         Modifying the solution in this function will result in  undefined behavior. This function is only intended to be used  for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_BUILD_WITH_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
+         Modifying the solution in this function will result in  undefined behavior. This function is only intended to be used  for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_ENABLE_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
 
 .. c:function:: int CVodeSetMonitorFrequency(void* cvode_mem, long int nst)
 
@@ -1003,7 +1003,7 @@ Main solver optional input functions
 
       .. warning::
 
-         Modifying the solution in this function will result in undefined behavior. This function is only intended to be used for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_BUILD_WITH_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
+         Modifying the solution in this function will result in undefined behavior. This function is only intended to be used for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_ENABLE_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
 
 .. c:function:: int CVodeSetMaxOrd(void* cvode_mem, int maxord)
 
@@ -1280,7 +1280,7 @@ Main solver optional input functions
      * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
    **Notes:**
-      SUNDIALS must be compiled appropriately for specialized kernels to be available. The CMake option ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS`` must be set to
+      SUNDIALS must be compiled appropriately for specialized kernels to be available. The CMake option ``SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`` must be set to
       ``ON`` when SUNDIALS is compiled. See the entry for this option in :numref:`Installation.Options` for more information.
       Currently, the fused kernels are only supported when using CVODE with the :ref:`NVECTOR_CUDA <NVectors.CUDA>` and :ref:`NVECTOR_HIP <NVectors.Hip>` implementations of the ``N_Vector``.
 

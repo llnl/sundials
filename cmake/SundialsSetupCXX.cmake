@@ -33,7 +33,8 @@ sundials_option(CMAKE_CXX_STANDARD_REQUIRED BOOL "Require C++ standard version"
 
 if(SUNDIALS_ENABLE_PYTHON
    OR SUNDIALS_ENABLE_SYCL
-   OR SUNDIALS_ENABLE_GINKGO)
+   OR SUNDIALS_ENABLE_GINKGO
+   OR SUNDIALS_TEST_ENABLE_GTEST)
   set(DOCSTR "The C++ standard to use if C++ is enabled (17, 20, 23)")
   sundials_option(CMAKE_CXX_STANDARD STRING "${DOCSTR}" "17" OPTIONS "17;20;23")
 else()
@@ -56,7 +57,9 @@ endif()
 
 # SYCL requires C++17
 if(SUNDIALS_ENABLE_SYCL AND (CMAKE_CXX_STANDARD LESS "17"))
-  message(FATAL_ERROR "CMAKE_CXX_STANDARD must be >= 17 because ENABLE_SYCL=ON")
+  message(
+    FATAL_ERROR
+      "CMAKE_CXX_STANDARD must be >= 17 because SUNDIALS_ENABLE_SYCL=ON")
 endif()
 
 # Ginkgo requires C++17

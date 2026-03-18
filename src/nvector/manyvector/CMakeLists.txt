@@ -19,7 +19,7 @@
 # ---------------------------------------------------------------
 
 # Create the sundials_nvecmanyvector library
-if(BUILD_NVECTOR_MANYVECTOR)
+if(SUNDIALS_ENABLE_NVECTOR_MANYVECTOR)
   install(CODE "MESSAGE(\"\nInstall NVECTOR_MANYVECTOR\n\")")
 
   sundials_add_library(
@@ -36,7 +36,7 @@ if(BUILD_NVECTOR_MANYVECTOR)
 endif()
 
 # Create the sundials_nvecmpimanyvector library
-if(BUILD_NVECTOR_MPIMANYVECTOR)
+if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
   install(CODE "MESSAGE(\"\nInstall NVECTOR_MPIMANYVECTOR\n\")")
 
   if(MPI_C_COMPILER)
@@ -63,6 +63,6 @@ if(BUILD_NVECTOR_MPIMANYVECTOR)
 endif()
 
 # Add F2003 module if the interface is enabled
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
 endif()
