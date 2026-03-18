@@ -28,7 +28,7 @@ set(nvector_manyvector_examples "test_nvector_manyvector\;1000 100 0\;"
 set(nvector_examples_dependencies test_nvector)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_manyvector_fortran_examples "test_fnvector_manyvector_mod\;\;")
 endif()
 
@@ -37,7 +37,7 @@ include_directories(. ..)
 
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecserial sundials_nvecmanyvector)
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   list(APPEND NVECS_LIB sundials_fnvecserial_mod sundials_fnvecmanyvector_mod)
 endif()
 

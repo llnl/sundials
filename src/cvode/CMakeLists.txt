@@ -47,9 +47,9 @@ set(cvode_HEADERS
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/cvode/ cvode_HEADERS)
 
 # Build fused kernel libraries
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
 
-  if(BUILD_NVECTOR_CUDA)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA)
 
     set_source_files_properties(cvode_fused_gpu.cpp PROPERTIES LANGUAGE CUDA)
 
@@ -63,7 +63,7 @@ if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
       SOVERSION ${cvodelib_SOVERSION})
   endif()
 
-  if(BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_HIP)
     sundials_add_library(
       sundials_cvode_fused_hip
       SOURCES cvode_fused_gpu.cpp
@@ -117,6 +117,6 @@ sundials_add_library(
 message(STATUS "Added CVODE module")
 
 # Add F2003 module if the interface is enabled
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
 endif()

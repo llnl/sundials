@@ -112,7 +112,7 @@ if [ "$compilername" == "gcc" ]; then
         export CUDAFLAGS="-g -O3"
     fi
 
-    # additional Fortran flags not currently added by ENABLE_ALL_WARNINGS
+    # additional Fortran flags not currently added by SUNDIALS_ENABLE_ALL_WARNINGS
     export FFLAGS="${FFLAGS} -fcheck=all,no-pointer,no-recursion"
 fi
 

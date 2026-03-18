@@ -58,23 +58,24 @@ foreach(example_tuple ${ARKODE_examples})
                         ${EXE_EXTRA_LINK_LIBS})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev)
   endif()
 
 endforeach(example_tuple ${ARKODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev)
 
   # Install the extra files
   foreach(extrafile ${ARKODE_extras_OMP})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -94,7 +95,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/arkode/C_openmpdev/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -108,7 +109,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/arkode/C_openmpdev/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_openmpdev
       RENAME Makefile)
   endif()
 

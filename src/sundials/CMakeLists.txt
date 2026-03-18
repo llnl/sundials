@@ -132,7 +132,7 @@ if(SUNDIALS_ENABLE_MPI)
                           $<$<LINK_LANGUAGE:CXX>:MPI::MPI_CXX>)
 endif()
 
-if(SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_PROFILING)
   if(SUNDIALS_ENABLE_CALIPER)
     set(_link_caliper_if_needed PUBLIC caliper)
   endif()
@@ -173,6 +173,6 @@ generate_export_header(
   "${PROJECT_BINARY_DIR}/include/sundials/sundials_export.h")
 
 # Add F2003 module if the interface is enabled
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
 endif()
