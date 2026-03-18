@@ -1040,8 +1040,9 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
       * For ForcingStep, only *ord* :math:`= 1` is supported.
 
-      * For LSRKStep, :math:`2 \le` *ord* :math:`\le 4`, and the default
-        value is 4.
+      * LSRKStep does not support this function. Use
+        :c:func:`LSRKStepSetSTSMethod` and :c:func:`LSRKStepSetSSPMethod`
+        instead.
 
       * For MRIStep, :math:`1 \le` *ord* :math:`\le 5`, and the default
         value is 3.
