@@ -131,10 +131,14 @@ endif()
 # Option to set the math library
 # ---------------------------------------------------------------
 
-if(UNIX)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
   sundials_option(
     SUNDIALS_MATH_LIBRARY PATH "Which math library (e.g., libm) to link to"
     "-lm -lquadmath" ADVANCED)
+elseif(CMAKE_C_COMPILER_ID MATCHES "AppleClang|Clang|Intel|IntelLLVM")
+    sundials_option(
+            SUNDIALS_MATH_LIBRARY PATH "Which math library (e.g., libm) to link to"
+            "-lm" ADVANCED)
 else()
   sundials_option(SUNDIALS_MATH_LIBRARY PATH
                   "Which math library (e.g., libm) to link to" "" ADVANCED)
