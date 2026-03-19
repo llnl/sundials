@@ -75,7 +75,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
                              MRIStepCouplingDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return MRIStepCoupling_LoadTable_adapt_return_type_to_shared_ptr(method);
@@ -94,7 +93,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
                              MRIStepCouplingDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return MRIStepCoupling_LoadTableByName_adapt_return_type_to_shared_ptr(method);
@@ -133,7 +131,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
                              MRIStepCouplingDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return MRIStepCoupling_Create_adapt_return_type_to_shared_ptr(nmat, stages,
@@ -156,7 +153,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
                              MRIStepCouplingDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return MRIStepCoupling_MIStoMRI_adapt_return_type_to_shared_ptr(B, q, p);
@@ -175,7 +171,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
                              MRIStepCouplingDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return MRIStepCoupling_Copy_adapt_return_type_to_shared_ptr(MRIC);

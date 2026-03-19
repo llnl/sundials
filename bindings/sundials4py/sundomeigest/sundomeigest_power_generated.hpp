@@ -24,7 +24,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SUNDomEigEstimator>,
                              SUNDomEigEstimatorDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SUNDomEigEstimator_Power_adapt_return_type_to_shared_ptr(q, max_iters,

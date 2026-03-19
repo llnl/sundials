@@ -71,7 +71,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_Create_adapt_return_type_to_shared_ptr(sequential_methods,
@@ -97,7 +96,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_Copy_adapt_return_type_to_shared_ptr(
@@ -121,7 +119,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_LoadCoefficients_adapt_return_type_to_shared_ptr(
@@ -142,7 +139,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_LoadCoefficientsByName_adapt_return_type_to_shared_ptr(
@@ -166,7 +162,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_LieTrotter_adapt_return_type_to_shared_ptr(
@@ -187,7 +182,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_Strang_adapt_return_type_to_shared_ptr(
@@ -208,7 +202,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_Parallel_adapt_return_type_to_shared_ptr(
@@ -229,7 +222,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_SymmetricParallel_adapt_return_type_to_shared_ptr(
@@ -250,7 +242,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_ThirdOrderSuzuki_adapt_return_type_to_shared_ptr(
@@ -272,7 +263,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_TripleJump_adapt_return_type_to_shared_ptr(partitions,
@@ -294,7 +284,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SplittingStepCoefficients>,
                              SplittingStepCoefficientsDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SplittingStepCoefficients_SuzukiFractal_adapt_return_type_to_shared_ptr(partitions,
