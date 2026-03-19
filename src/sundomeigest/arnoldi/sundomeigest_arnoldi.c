@@ -359,14 +359,8 @@ SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
     Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNFALSE;
     return SUN_SUCCESS;
   }
-  else if (tol == ZERO)
-  {
-    tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
-  }
-  else
-  {
-    Arnoldi_CONTENT(DEE)->tol_preprocess = tol;
-  }
+  else if (tol == ZERO) { tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT; }
+  else { Arnoldi_CONTENT(DEE)->tol_preprocess = tol; }
 
   /* set the type of warmup iterations */
   Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNTRUE;
