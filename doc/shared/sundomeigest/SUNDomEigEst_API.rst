@@ -305,6 +305,11 @@ instead of supplying a dummy routine.
       the cheaper magnitude-based preprocessing step, the routine avoids multiple Arnoldi runs that would
       yield only marginal improvements in accuracy while incurring significantly higher computational cost.
 
+      When this routine is used in combination with Power Iteration and ``rel_tol`` is less than or equal 
+      to zero, a default value of ``rel_tol`` = 0.005 is applied. In the case of Arnoldi Iteration, this 
+      routine sets ``rel_tol`` = 0.005 for the preprocessing Power Iteration phase when ``rel_tol`` is zero,
+      and disables preprocessing based on tolerance.
+
       This routine will be called by :c:func:`SUNDomEigEstimator_SetOptions`
       when using the key "Did.rel_tol".
 

@@ -43,7 +43,7 @@
 
 /* Default estimator parameters */
 #define DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT 100
-#define DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT SUN_RCONST(1.0e-2)
+#define DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT SUN_RCONST(0.005)
 
 /* Default Arnoldi Iteration parameters */
 #define DEE_KRYLOV_DIM_DEFAULT 3
@@ -342,8 +342,6 @@ SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator D
   /* set the number of warmups */
   Arnoldi_CONTENT(DEE)->num_warmups = num_iters;
 
-  /* set the type of warmup iterations */
-  Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNFALSE;
   return SUN_SUCCESS;
 }
 
@@ -356,9 +354,19 @@ SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
   SUNAssert(Arnoldi_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
   /* set the tolerance for preprocessing iterations */
-  if (tol < SUN_SMALL_REAL) { tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT; }
-
-  Arnoldi_CONTENT(DEE)->tol_preprocess = tol;
+  if (tol < ZERO)
+  {
+    Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNFALSE;
+    return SUN_SUCCESS;
+  }
+  else if (tol == ZERO)
+  {
+    tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
+  }
+  else
+  {
+    Arnoldi_CONTENT(DEE)->tol_preprocess = tol;
+  }
 
   /* set the type of warmup iterations */
   Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNTRUE;
