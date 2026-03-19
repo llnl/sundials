@@ -1038,7 +1038,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       * For ImEx methods, :math:`2 \le` *ord* :math:`\le 5`, and the default
         value is 4.
 
-      * For ForcingStep, only *ord* :math:`= 1` is supported.
+      * ForcingStep does not support this function.
 
       * LSRKStep does not support this function. Use
         :c:func:`LSRKStepSetSTSMethod` and :c:func:`LSRKStepSetSSPMethod`
