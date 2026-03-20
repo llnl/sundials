@@ -140,9 +140,8 @@ static SUNErrCode sunLoggerFreeKeyValue(SUNHashMapKeyValue* kv_ptr)
 
 SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger_ptr)
 {
-  SUNLogger logger = NULL;
-
-  *logger_ptr = logger = (SUNLogger)malloc(sizeof(struct SUNLogger_));
+  *logger_ptr = NULL;
+  SUNLogger logger = (SUNLogger)malloc(sizeof(struct SUNLogger_));
   if (logger == NULL) { return SUN_ERR_MALLOC_FAIL; }
 
   /* Attach the comm, duplicating it if MPI is used. */
@@ -171,6 +170,7 @@ SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger_ptr
   logger->warning_fp = stdout;
   logger->debug_fp   = NULL;
   logger->info_fp    = NULL;
+#if SUNDIALS_LOGGING_LEVEL > 0
   if (sunLoggerIsOutputRank(logger, NULL))
   {
     /* We store the FILE* in a hash map so that we can ensure
@@ -179,7 +179,9 @@ SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger_ptr
     SUNHashMap_New(SUN_DEFAULT_LOGFILE_HANDLES_, sunLoggerFreeKeyValue,
                    &logger->filenames);
   }
+#endif
 
+  *logger_ptr = logger;
   return SUN_SUCCESS;
 }
 
@@ -197,18 +199,29 @@ SUNErrCode SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger_out)
 
   if (SUNLogger_Create(comm, output_rank, &logger))
   {
-    err = SUN_ERR_CORRUPT;
-    return err;
+    return SUN_ERR_CORRUPT;
   }
 
   do {
-    err = SUNLogger_SetErrorFilename(logger, error_fname_env);
-    if (err) { break; }
-    err = SUNLogger_SetWarningFilename(logger, warning_fname_env);
-    if (err) { break; }
-    err = SUNLogger_SetDebugFilename(logger, debug_fname_env);
-    if (err) { break; }
-    err = SUNLogger_SetInfoFilename(logger, info_fname_env);
+    if (!sunIsNullOrEmpty(error_fname_env)) {
+      err = SUNLogger_SetErrorFilename(logger, error_fname_env);
+      if (err) { break; }
+    }
+
+    if (!sunIsNullOrEmpty(warning_fname_env)) {
+      err = SUNLogger_SetWarningFilename(logger, warning_fname_env);
+      if (err) { break; }
+    }
+
+    if (!sunIsNullOrEmpty(debug_fname_env)) {
+      err = SUNLogger_SetDebugFilename(logger, debug_fname_env);
+      if (err) { break; }
+    }
+
+    if (!sunIsNullOrEmpty(info_fname_env)) {
+      err = SUNLogger_SetInfoFilename(logger, info_fname_env);
+      if (err) { break; }
+    }
   }
   while (0);
 
@@ -222,36 +235,28 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filena
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_ERROR
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!error_filename || error_filename[0] == '\0')
+  if (!sunIsNullOrEmpty(error_filename))
   {
     /* Don't close the file here, that is managed by the underlying hashmap */
     logger->error_fp = NULL;
     return SUN_SUCCESS;
   }
 
-  if (error_filename && strcmp(error_filename, ""))
+  if (SUNHashMap_GetValue(logger->filenames, error_filename, (void**) &logger->error_fp))
   {
-#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_ERROR
-    FILE* fp = NULL;
-    if (!SUNHashMap_GetValue(logger->filenames, error_filename, (void*)&fp))
+    logger->error_fp = sunOpenLogFile(error_filename, "w+");
+    if (logger->error_fp)
     {
-      logger->error_fp = fp;
+      SUNHashMap_Insert(logger->filenames, error_filename,
+                        (void*)logger->error_fp);
     }
-    else
-    {
-      logger->error_fp = sunOpenLogFile(error_filename, "w+");
-      if (logger->error_fp)
-      {
-        SUNHashMap_Insert(logger->filenames, error_filename,
-                          (void*)logger->error_fp);
-      }
-      else { return SUN_ERR_FILE_OPEN; }
-    }
-#endif
+    else { return SUN_ERR_FILE_OPEN; }
   }
+#endif
 
   return SUN_SUCCESS;
 }
@@ -261,36 +266,28 @@ SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_WARNING
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!warning_filename || warning_filename[0] == '\0')
+  if (!sunIsNullOrEmpty(warning_filename))
   {
     /* Don't close the file here, that is managed by the underlying hashmap */
     logger->warning_fp = NULL;
     return SUN_SUCCESS;
   }
 
-  if (warning_filename && strcmp(warning_filename, ""))
+  if (SUNHashMap_GetValue(logger->filenames, warning_filename, (void**) &logger->warning_fp))
   {
-#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_WARNING
-    FILE* fp = NULL;
-    if (!SUNHashMap_GetValue(logger->filenames, warning_filename, (void*)&fp))
+    logger->warning_fp = sunOpenLogFile(warning_filename, "w+");
+    if (logger->warning_fp)
     {
-      logger->warning_fp = fp;
+      SUNHashMap_Insert(logger->filenames, warning_filename,
+                        (void*)logger->warning_fp);
     }
-    else
-    {
-      logger->warning_fp = sunOpenLogFile(warning_filename, "w+");
-      if (logger->warning_fp)
-      {
-        SUNHashMap_Insert(logger->filenames, warning_filename,
-                          (void*)logger->warning_fp);
-      }
-      else { return SUN_ERR_FILE_OPEN; }
-    }
-#endif
+    else { return SUN_ERR_FILE_OPEN; }
   }
+#endif
 
   return SUN_SUCCESS;
 }
@@ -299,36 +296,28 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!info_filename || info_filename[0] == '\0')
+  if (!sunIsNullOrEmpty(info_filename))
   {
     /* Don't close the file here, that is managed by the underlying hashmap */
     logger->info_fp = NULL;
     return SUN_SUCCESS;
   }
 
-  if (info_filename && strcmp(info_filename, ""))
+  if (!SUNHashMap_GetValue(logger->filenames, info_filename, (void**) &logger->info_fp))
   {
-#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
-    FILE* fp = NULL;
-    if (!SUNHashMap_GetValue(logger->filenames, info_filename, (void*)&fp))
+    logger->info_fp = sunOpenLogFile(info_filename, "w+");
+    if (logger->info_fp)
     {
-      logger->info_fp = fp;
+      SUNHashMap_Insert(logger->filenames, info_filename,
+                        (void*)logger->info_fp);
     }
-    else
-    {
-      logger->info_fp = sunOpenLogFile(info_filename, "w+");
-      if (logger->info_fp)
-      {
-        SUNHashMap_Insert(logger->filenames, info_filename,
-                          (void*)logger->info_fp);
-      }
-      else { return SUN_ERR_FILE_OPEN; }
-    }
-#endif
+    else { return SUN_ERR_FILE_OPEN; }
   }
+#endif
 
   return SUN_SUCCESS;
 }
@@ -337,36 +326,28 @@ SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filena
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_DEBUG
   if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
 
   /* An empty filename disables output for this stream. */
-  if (!debug_filename || debug_filename[0] == '\0')
+  if (!sunIsNullOrEmpty(debug_filename))
   {
     /* Don't close the file here, that is managed by the underlying hashmap */
     logger->debug_fp = NULL;
     return SUN_SUCCESS;
   }
 
-  if (debug_filename && strcmp(debug_filename, ""))
+  if (!SUNHashMap_GetValue(logger->filenames, debug_filename, (void**) &logger->debug_fp))
   {
-#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_DEBUG
-    FILE* fp = NULL;
-    if (!SUNHashMap_GetValue(logger->filenames, debug_filename, (void*)&fp))
+    logger->debug_fp = sunOpenLogFile(debug_filename, "w+");
+    if (logger->debug_fp)
     {
-      logger->debug_fp = fp;
+      SUNHashMap_Insert(logger->filenames, debug_filename,
+                        (void*)logger->debug_fp);
     }
-    else
-    {
-      logger->debug_fp = sunOpenLogFile(debug_filename, "w+");
-      if (logger->debug_fp)
-      {
-        SUNHashMap_Insert(logger->filenames, debug_filename,
-                          (void*)logger->debug_fp);
-      }
-      else { return SUN_ERR_FILE_OPEN; }
-    }
-#endif
+    else { return SUN_ERR_FILE_OPEN; }
   }
+#endif
 
   return SUN_SUCCESS;
 }
