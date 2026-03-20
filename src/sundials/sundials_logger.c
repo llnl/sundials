@@ -140,7 +140,7 @@ static SUNErrCode sunLoggerFreeKeyValue(SUNHashMapKeyValue* kv_ptr)
 
 SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger_ptr)
 {
-  *logger_ptr = NULL;
+  *logger_ptr      = NULL;
   SUNLogger logger = (SUNLogger)malloc(sizeof(struct SUNLogger_));
   if (logger == NULL) { return SUN_ERR_MALLOC_FAIL; }
 
@@ -197,28 +197,29 @@ SUNErrCode SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger_out)
   const char* info_fname_env    = getenv("SUNLOGGER_INFO_FILENAME");
   const char* debug_fname_env   = getenv("SUNLOGGER_DEBUG_FILENAME");
 
-  if (SUNLogger_Create(comm, output_rank, &logger))
-  {
-    return SUN_ERR_CORRUPT;
-  }
+  if (SUNLogger_Create(comm, output_rank, &logger)) { return SUN_ERR_CORRUPT; }
 
   do {
-    if (!sunIsNullOrEmpty(error_fname_env)) {
+    if (!sunIsNullOrEmpty(error_fname_env))
+    {
       err = SUNLogger_SetErrorFilename(logger, error_fname_env);
       if (err) { break; }
     }
 
-    if (!sunIsNullOrEmpty(warning_fname_env)) {
+    if (!sunIsNullOrEmpty(warning_fname_env))
+    {
       err = SUNLogger_SetWarningFilename(logger, warning_fname_env);
       if (err) { break; }
     }
 
-    if (!sunIsNullOrEmpty(debug_fname_env)) {
+    if (!sunIsNullOrEmpty(debug_fname_env))
+    {
       err = SUNLogger_SetDebugFilename(logger, debug_fname_env);
       if (err) { break; }
     }
 
-    if (!sunIsNullOrEmpty(info_fname_env)) {
+    if (!sunIsNullOrEmpty(info_fname_env))
+    {
       err = SUNLogger_SetInfoFilename(logger, info_fname_env);
       if (err) { break; }
     }
@@ -246,7 +247,8 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filena
     return SUN_SUCCESS;
   }
 
-  if (SUNHashMap_GetValue(logger->filenames, error_filename, (void**) &logger->error_fp))
+  if (SUNHashMap_GetValue(logger->filenames, error_filename,
+                          (void**)&logger->error_fp))
   {
     logger->error_fp = sunOpenLogFile(error_filename, "w+");
     if (logger->error_fp)
@@ -277,7 +279,8 @@ SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
     return SUN_SUCCESS;
   }
 
-  if (SUNHashMap_GetValue(logger->filenames, warning_filename, (void**) &logger->warning_fp))
+  if (SUNHashMap_GetValue(logger->filenames, warning_filename,
+                          (void**)&logger->warning_fp))
   {
     logger->warning_fp = sunOpenLogFile(warning_filename, "w+");
     if (logger->warning_fp)
@@ -307,13 +310,13 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
     return SUN_SUCCESS;
   }
 
-  if (!SUNHashMap_GetValue(logger->filenames, info_filename, (void**) &logger->info_fp))
+  if (!SUNHashMap_GetValue(logger->filenames, info_filename,
+                           (void**)&logger->info_fp))
   {
     logger->info_fp = sunOpenLogFile(info_filename, "w+");
     if (logger->info_fp)
     {
-      SUNHashMap_Insert(logger->filenames, info_filename,
-                        (void*)logger->info_fp);
+      SUNHashMap_Insert(logger->filenames, info_filename, (void*)logger->info_fp);
     }
     else { return SUN_ERR_FILE_OPEN; }
   }
@@ -337,7 +340,8 @@ SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filena
     return SUN_SUCCESS;
   }
 
-  if (!SUNHashMap_GetValue(logger->filenames, debug_filename, (void**) &logger->debug_fp))
+  if (!SUNHashMap_GetValue(logger->filenames, debug_filename,
+                           (void**)&logger->debug_fp))
   {
     logger->debug_fp = sunOpenLogFile(debug_filename, "w+");
     if (logger->debug_fp)

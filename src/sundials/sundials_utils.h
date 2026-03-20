@@ -30,7 +30,8 @@
 /* width of name field in sunfprintf_<type> for aligning table output */
 #define SUN_TABLE_WIDTH 29
 
-static inline sunbooleantype sunIsNullOrEmpty(const char *str) {
+static inline sunbooleantype sunIsNullOrEmpty(const char* str)
+{
   return str == NULL || str[0] == '\0';
 }
 
