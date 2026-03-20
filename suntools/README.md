@@ -18,7 +18,7 @@ python -m pip install -e .
 Then import as:
 
 ```python
-from suntools import logs
+import suntools
 ```
 
 ## CLI Log Parsing Examples
