@@ -6,11 +6,6 @@
 
 ### New Features and Enhancements
 
-The default number of stages for the SSP Runge-Kutta methods `ARKODE_LSRK_SSP_S_2`
-and `ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to
-their minimum allowable values of 2 and 4. Users may revert to the previous values
-by calling `LSRKStepSetNumSSPStages`.
-
 ARKODE now allows users to supply functions that will be called before each
 internal time step attempt (`ARKodeSetPreStepFn`), after each successful time
 step (`ARKodeSetPostStepFn`), before right-hand side routines are called on an
@@ -27,6 +22,11 @@ of only calling a function on successful steps, switch to using
 `ARKodeSetPostStepFn`.
 
 Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP`` mode.
+
+The default number of stages for the SSP Runge-Kutta methods `ARKODE_LSRK_SSP_S_2`
+and `ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to
+their minimum allowable values of 2 and 4. Users may revert to the previous values
+by calling `LSRKStepSetNumSSPStages`.
 
 ### Bug Fixes
 
