@@ -451,8 +451,7 @@ int main(int argc, char* argv[])
   if (check_flag(retval, "ARKodeSetMaxNumSteps")) return 1;
   retval = ARKodeSetUserData(inner_arkode_mem, (void*)&opts);
   if (check_flag(retval, "ARKodeSetUserData")) return 1;
-  retval = ARKodeSetOptions(inner_arkode_mem, "arkfast", nullptr,
-                            argc, argv);
+  retval = ARKodeSetOptions(inner_arkode_mem, "arkfast", nullptr, argc, argv);
   if (check_flag(retval, "ARKodeSetOptions")) return 1;
 
   // Create inner stepper
@@ -876,8 +875,7 @@ int main(int argc, char* argv[])
     retval = ARKodeSetFixedStep(mid_arkode_mem, opts.hm);
     if (check_flag(retval, "ARKodeSetFixedStep")) return 1;
   }
-  retval = ARKodeSetOptions(mid_arkode_mem, "arkmid", nullptr,
-                            argc, argv);
+  retval = ARKodeSetOptions(mid_arkode_mem, "arkmid", nullptr, argc, argv);
   if (check_flag(retval, "ARKodeSetOptions")) return 1;
 
   // Create intermediate stepper
@@ -937,8 +935,7 @@ int main(int argc, char* argv[])
     retval = ARKodeSetFixedStep(arkode_mem, opts.hs);
     if (check_flag(retval, "ARKodeSetFixedStep")) return 1;
   }
-  retval = ARKodeSetOptions(arkode_mem, "arkslow", nullptr,
-                            argc, argv);
+  retval = ARKodeSetOptions(arkode_mem, "arkslow", nullptr, argc, argv);
   if (check_flag(retval, "ARKodeSetOptions")) return 1;
 
   //
