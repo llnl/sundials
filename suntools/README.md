@@ -5,6 +5,8 @@ This directory contains the `suntools` Python package which provides utilities f
 - Structured parsing of logs produced by the SUNDIALS `SUNLogger` including filtering and plotting
 - more to come...
 
+- Structured parsing of logs produced by the SUNDIALS `SUNLogger` including filtering and plotting
+
 ## Install
 
 From this directory:
@@ -16,7 +18,7 @@ python -m pip install -e .
 Then import as:
 
 ```python
-import suntools
+from suntools import logs
 ```
 
 ## CLI Log Parsing Examples
