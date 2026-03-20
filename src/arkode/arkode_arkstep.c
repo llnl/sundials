@@ -1781,8 +1781,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         errcode =
           SUNAdjointCheckpointScheme_InsertVector(ark_mem->checkpoint_scheme,
-                                                  ark_mem->checkpoint_step_idx, 0,
-                                                  ark_mem->tcur, ark_mem->ycur);
+                                                  ark_mem->checkpoint_step_idx,
+                                                  0, ark_mem->tcur, ark_mem->yn);
 
         if (errcode)
         {
@@ -1850,7 +1850,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
          of the just completed step (tn, yn) and potentially reuse the
          evaluation (FSAL method) or save the value for later use. */
       mode   = (ark_mem->initsetup) ? ARK_FULLRHS_START : ARK_FULLRHS_END;
-      retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->ycur,
+      retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->yn,
                                      ark_mem->fn, mode);
       if (retval)
       {
@@ -1883,7 +1883,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
             return (ARK_PRERHSFN_FAIL);
           }
         }
-        retval = step_mem->fi(ark_mem->tn, ark_mem->ycur, step_mem->Fi[0],
+        retval = step_mem->fi(ark_mem->tn, ark_mem->yn, step_mem->Fi[0],
                               ark_mem->user_data);
         step_mem->nfi++;
 

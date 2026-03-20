@@ -76,10 +76,16 @@ The user-supplied functions for ARKODE consist of:
   :ref:`evaluates the conservative or dissipative function <ARKODE.Usage.RelaxFn>`
   :math:`\xi(y(t))` (required) and a function to
   :ref:`evaluate its Jacobian <ARKODE.Usage.RelaxJacFn>`
-  :math:`\xi'(y(t))` (required).
+  :math:`\xi'(y(t))` (required),
 
-* functions that can optionally be called :ref:`before and after each time step or
-  within the stages of supported ARKODE time stepping modules
+* functions that can optionally be called :ref:`before each step attempt and
+  after each successful step <ARKODE.Usage.ARKodeProcessingFunctions>`,
+
+* a function that can optionally be called :ref:`before right-hand side function
+  evaluations <ARKODE.Usage.ARKodeProcessingFunctions>`, and
+
+* functions that can optionally be called :ref:`after each step or stage
+  computation within supported ARKODE time stepping modules
   <ARKODE.Usage.ARKodeProcessingFunctions>`.
 
 
@@ -1108,99 +1114,119 @@ Relaxation Jacobian function
 
 .. _ARKODE.Usage.ARKodeProcessingFunctions:
 
-Step and stage processing functions
-------------------------------------
+Pre-Step, Post-Step, Pre-RHS, and Post-processing functions (ADVANCED)
+----------------------------------------------------------------------
 
-The user may supply functions that will be called before/after each internal time
-step, before their :c:type:`ARKRhsFn` problem-defining functions are called, and
-after each internal stage.  These user-supplied functions vary slightly in type,
-depending on their use case, as outlined below.  Such functions are typically used
-for applications that compute auxiliary diagnostic data between time steps or stages,
-and store that data in their `user_data` pointer or output to screen or disk.
-Alternately, some may be used to better prepare auxiliary data for an upcoming time
-step or :c:type:`ARKRhsFn` evaluation.   **These should not be used to modify the
-active state data; if so then all theoretical guarantees of solution accuracy and
+The user may supply functions that will be called before each time step attempt,
+after each successful step, before their :c:type:`ARKRhsFn` problem-defining
+functions are called, and after each internal step/stage computation. These
+user-supplied functions vary slightly in type, depending on their use case, as
+outlined below. Such functions are typically used for applications that compute
+auxiliary diagnostic data between time steps or stages, and store that data in
+their `user_data` pointer or output to screen or disk. Alternately, some may be
+used to better prepare auxiliary data for an upcoming time step or
+:c:type:`ARKRhsFn` evaluation. **These should not be used to modify the active
+state data; if so then all theoretical guarantees of solution accuracy and
 stability will be lost.**
-
 
 A user-provided :c:type:`ARKPreStepFn` will be called before each internal time
 step attempt by ARKODE (see :c:func:`ARKodeSetPreStepFn`).
 
 .. c:type:: int (*ARKPreStepFn)(sunrealtype t, N_Vector y, long int step, int attempt, void* user_data)
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector that will be used
-             as the initial condition for the upcoming step.
-   :param step: the step index (starting from the first internal step since ARKODE
-                was (re-)initialized).
-   :param attempt: a counter indicating which attempt at the step is about to
-                   occur -- 0 indicates that the previous step succeeded and this
-                   is the first attempt the step `step`, while a number greater than
-                   0 indicates that the previous step attempt failed and this is a
-                   subsequent try at computing the step `step`.
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
-
-   :return:  An :c:func:`ARKPreStepFn` function should return 0 if successful, a
-             positive value if a recoverable error occurred, or a negative value if an
-             unrecoverable error occurred.
+   A function to be called before each internal step attempt.
 
    .. danger::
 
       If the supplied function modifies any of the active state data, then all
       theoretical guarantees of solution accuracy and stability are lost.
 
+   :param t: the current value of the independent variable.
+   :param y: the current value of the dependent variable vector that will be
+             used as the initial condition for the upcoming step.
+   :param step: the step index (starting from the first internal step since
+                ARKODE was (re-)initialized).
+   :param attempt: a counter indicating which attempt at the step is about to
+                   occur -- 0 indicates that the previous step succeeded and this
+                   is the first attempt the step `step`, while a number greater
+                   than 0 indicates that the previous step attempt failed and this
+                   is a subsequent try at computing the step `step`.
+   :param user_data: the ``user_data`` pointer that was passed to
+                     :c:func:`ARKodeSetUserData`.
+
+   :return: An :c:func:`ARKPreStepFn` function should return 0 if successful, a
+            positive value if a recoverable error occurred, or a negative value if an
+            unrecoverable error occurred.
+
    .. versionadded:: x.y.z
 
-A user-provided :c:type:`ARKPostStepFn` will be called following each *successful* internal time
-step by ARKODE (see :c:func:`ARKodeSetPostStepFn`).
+A user-provided :c:type:`ARKPostStepFn` will be called following each
+*successful* internal time step by ARKODE (see :c:func:`ARKodeSetPostStepFn`).
 
 .. c:type:: int (*ARKPostStepFn)(sunrealtype t, N_Vector y, long int step, void* user_data)
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector that resulted from
-             the successful time step.
-   :param step: the step index (starting from the first internal step since ARKODE
-                was (re-)initialized).
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
-
-   :return:  An :c:func:`ARKPostStepFn` function should return 0 if successful, a
-             positive value if a recoverable error occurred, or a negative value if an
-             unrecoverable error occurred.
+   A function to be called after each successful step attempt.
 
    .. danger::
 
       If the supplied function modifies any of the active state data, then all
       theoretical guarantees of solution accuracy and stability are lost.
 
+   :param t: the current value of the independent variable.
+   :param y: the current value of the dependent variable vector that resulted
+             from the successful time step.
+   :param step: the step index (starting from the first internal step since
+                ARKODE was (re-)initialized).
+   :param user_data: the ``user_data`` pointer that was passed to
+                     :c:func:`ARKodeSetUserData`.
+
+   :return: An :c:func:`ARKPostStepFn` function should return 0 if successful, a
+            positive value if a recoverable error occurred, or a negative value if an
+            unrecoverable error occurred.
+
    .. versionadded:: x.y.z
 
-A user-provided :c:type:`ARKPreRhsFn` will be called just prior to any user-supplied :c:type:`ARKRhsFn` (see :c:func:`ARKodeSetPreRhsFn`).  In the case of partitioned integration methods (e.g., ARKStep, MRIStep), if multiple :c:type:`ARKRhsFn` will be called with the same :math:`(t,y)` argument, then the :c:type:`ARKPreRhsFn` will be called only once just prior to the first :c:type:`ARKRhsFn` that will be called with that :math:`(t,y)` input.
+A user-provided :c:type:`ARKPreRhsFn` will be called just prior to any
+user-supplied :c:type:`ARKRhsFn` (see :c:func:`ARKodeSetPreRhsFn`). In the case
+of partitioned integration methods (e.g., ARKStep, MRIStep), if multiple
+:c:type:`ARKRhsFn` will be called with the same :math:`(t,y)` argument, then the
+:c:type:`ARKPreRhsFn` will be called only once just prior to the first
+:c:type:`ARKRhsFn` that will be called with that :math:`(t,y)` input.
 
 .. c:type:: int (*ARKPreRhsFn)(sunrealtype t, N_Vector y, void* user_data)
 
-   :param t: the current value of the independent variable that will be provided
-             to the :c:type:`ARKRhsFn`.
+   A function to be called before right-hand side (RHS) evaluations.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param t: the current value of the independent variable that will be
+             provided to the :c:type:`ARKRhsFn`.
    :param y: the current value of the dependent variable vector that will be
              provided to the :c:type:`ARKRhsFn`.
    :param user_data: the ``user_data`` pointer that was passed to
                      :c:func:`ARKodeSetUserData`.
 
-   :return:  An :c:func:`ARKPreRhsFn` function should return 0 if successful, a
-             positive value if a recoverable error occurred, or a negative value if an
-             unrecoverable error occurred.
+   :return: An :c:func:`ARKPreRhsFn` function should return 0 if successful, a
+            positive value if a recoverable error occurred, or a negative value if an
+            unrecoverable error occurred.
+
+   .. versionadded:: x.y.z
+
+A user-provided :c:type:`ARKPostProcessFn` will be called either after each
+internal stage (see :c:func:`ARKodeSetPostprocessStageFn`) or after each
+internal step attempt (see :c:func:`ARKodeSetPostprocessStepFn`).
+
+.. c:type:: int (*ARKPostProcessFn)(sunrealtype t, N_Vector y, void* user_data)
+
+   A function to postprocess step or stage data.
 
    .. danger::
 
       If the supplied function modifies any of the active state data, then all
       theoretical guarantees of solution accuracy and stability are lost.
-
-   .. versionadded:: x.y.z
-
-A user-provided :c:type:`ARKPostProcessFn` will be called either after each internal stage (see :c:func:`ARKodeSetPostprocessStageFn`) or after each internal step attempt (see :c:func:`ARKodeSetPostprocessStepFn`).
-
-.. c:type:: int (*ARKPostProcessFn)(sunrealtype t, N_Vector y, void* user_data)
 
    :param t: the current value of the independent variable.
    :param y: the current value of the dependent variable vector resulting from
@@ -1208,13 +1234,15 @@ A user-provided :c:type:`ARKPostProcessFn` will be called either after each inte
    :param user_data: the ``user_data`` pointer that was passed to
                      :c:func:`ARKodeSetUserData`.
 
-   :return:  An :c:func:`ARKPostProcessFn` function should return 0 if successful, a
-             positive value if a recoverable error occurred, or a negative value if an
-             unrecoverable error occurred.
+   :return: An :c:func:`ARKPostProcessFn` function should return 0 if successful, a
+            positive value if a recoverable error occurred, or a negative value if an
+            unrecoverable error occurred.
 
-   .. danger::
+   .. warning::
 
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
+      :c:func:`ARKPostProcessFn` functions are currently incompatible with
+      discrete adjoint capabilities in ARKODE
+      (:c:func:`ARKodeSetAdjointCheckpointScheme` and
+      :c:func:`ARKodeSetAdjointCheckpointIndex`).
 
    .. versionadded:: x.y.z
