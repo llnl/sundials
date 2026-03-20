@@ -232,7 +232,8 @@ SUNErrCode SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger_out)
   return err;
 }
 
-SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filename)
+SUNErrCode SUNLogger_SetErrorFilename(
+  SUNLogger logger, SUNDIALS_MAYBE_UNUSED const char* error_filename)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
@@ -263,8 +264,8 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filena
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
-                                        const char* warning_filename)
+SUNErrCode SUNLogger_SetWarningFilename(
+  SUNLogger logger, SUNDIALS_MAYBE_UNUSED const char* warning_filename)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
@@ -295,7 +296,8 @@ SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename)
+SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger,
+                                     SUNDIALS_MAYBE_UNUSED const char* info_filename)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
@@ -325,7 +327,8 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
+SUNErrCode SUNLogger_SetDebugFilename(
+  SUNLogger logger, SUNDIALS_MAYBE_UNUSED const char* debug_filename)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
@@ -356,9 +359,11 @@ SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filena
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,
-                              const char* scope, const char* label,
-                              const char* msg_txt, ...)
+SUNErrCode SUNLogger_QueueMsg(SUNDIALS_MAYBE_UNUSED SUNLogger logger,
+                              SUNDIALS_MAYBE_UNUSED SUNLogLevel lvl,
+                              SUNDIALS_MAYBE_UNUSED const char* scope,
+                              SUNDIALS_MAYBE_UNUSED const char* label,
+                              SUNDIALS_MAYBE_UNUSED const char* msg_txt, ...)
 {
   SUNErrCode retval = SUN_SUCCESS;
 
@@ -413,19 +418,12 @@ SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,
       }
     }
   }
-#else
-  /* silence warnings when all logging is disabled */
-  ((void)logger);
-  ((void)lvl);
-  ((void)scope);
-  ((void)label);
-  ((void)msg_txt);
 #endif
 
   return retval;
 }
 
-SUNErrCode SUNLogger_Flush(SUNLogger logger, SUNLogLevel lvl)
+SUNErrCode SUNLogger_Flush(SUNLogger logger, SUNDIALS_MAYBE_UNUSED SUNLogLevel lvl)
 {
   SUNErrCode retval = SUN_SUCCESS;
 
@@ -466,9 +464,6 @@ SUNErrCode SUNLogger_Flush(SUNLogger logger, SUNLogLevel lvl)
       }
     }
   }
-#else
-  /* silence warnings when all logging is disabled */
-  ((void)lvl);
 #endif
 
   return retval;
