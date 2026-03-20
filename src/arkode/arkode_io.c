@@ -79,14 +79,14 @@ int ARKodeSetDefaults(void* arkode_mem)
   ark_mem->maxnef    = MAXNEF;         /* max error test fails */
   ark_mem->maxncf    = MAXNCF;         /* max convergence fails */
   ark_mem->maxconstrfails = MAXCONSTRFAILS; /* max number of constraint fails */
-  ark_mem->hin            = ZERO;       /* determine initial step on-the-fly */
-  ark_mem->hmin           = ZERO;       /* no minimum step size */
-  ark_mem->hmax_inv       = ZERO;       /* no maximum step size */
-  ark_mem->tstopset       = SUNFALSE;   /* no stop time set */
-  ark_mem->tstopinterp    = SUNFALSE;   /* copy at stop time */
-  ark_mem->tstoplimited   = SUNFALSE;   /* tstop did not limit last step */
-  ark_mem->skipadapttstop = SUNFALSE;   /* tstop-limited steps can affect adaptivity */
-  ark_mem->tstop          = ZERO;       /* no fixed stop time */
+  ark_mem->hin            = ZERO;     /* determine initial step on-the-fly */
+  ark_mem->hmin           = ZERO;     /* no minimum step size */
+  ark_mem->hmax_inv       = ZERO;     /* no maximum step size */
+  ark_mem->tstopset       = SUNFALSE; /* no stop time set */
+  ark_mem->tstopinterp    = SUNFALSE; /* copy at stop time */
+  ark_mem->tstoplimited   = SUNFALSE; /* tstop did not limit last step */
+  ark_mem->skipadapttstop = SUNFALSE; /* tstop-limited steps can affect adaptivity */
+  ark_mem->tstop              = ZERO;   /* no fixed stop time */
   ark_mem->hadapt_mem->etamx1 = ETAMX1; /* max change on first step */
   ark_mem->hadapt_mem->etamxf = ETAMXF; /* max change on error-failed step */
   ark_mem->hadapt_mem->etamin = ETAMIN; /* min bound on time step reduction */
@@ -1288,7 +1288,7 @@ int ARKodeSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
                     MSG_ARK_NO_MEM);
     return (ARK_MEM_NULL);
   }
-  ark_mem = (ARKodeMem)arkode_mem;
+  ark_mem                 = (ARKodeMem)arkode_mem;
   ark_mem->skipadapttstop = skip;
 
   return (ARK_SUCCESS);
