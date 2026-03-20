@@ -743,9 +743,8 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     }
   }
 
-  /* fill (tcur,ycur) with current stored solution */
+  /* fill current independent variable */
   ark_mem->tcur = ark_mem->tn;
-  N_VCopy(ark_mem->yn, ark_mem->ycur);
 
   /*--------------------------------------------------
     Looping point for successful internal steps
@@ -916,7 +915,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       /* call the user-supplied pre-step function (if it exists) */
       if (ark_mem->PreStepFn)
       {
-        retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst,
+        retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->yn, ark_mem->nst,
                                     attempts, ark_mem->user_data);
         if (retval != 0) { return (ARK_PRESTEPFN_FAIL); }
       }
@@ -1018,9 +1017,8 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       ark_mem->h *= ark_mem->eta;
       ark_mem->next_h = ark_mem->hprime = ark_mem->h;
 
-      /* reset (tcur,ycur) to last saved state before reattempting step */
+      /* reset tcur to last saved internal time before reattempting step */
       ark_mem->tcur = ark_mem->tn;
-      N_VCopy(ark_mem->yn, ark_mem->ycur);
 
     } /* end looping for step attempts */
 

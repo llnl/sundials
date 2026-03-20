@@ -309,6 +309,8 @@ static int splittingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 
   SplittingStepCoefficients coefficients = step_mem->coefficients;
 
+  N_VCopy(ark_mem->yn, ark_mem->ycur);
+
   SUNLogInfo(ARK_LOGGER, "begin-sequential-methods-list",
              "sequential method = 0");
 
