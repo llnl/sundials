@@ -5,26 +5,32 @@
 
 **New Features and Enhancements**
 
-Multiple minor updates were made to the ARKODE package.  We removed an extraneous
-copy of the output vector when using ARKODE in ``ARK_ONE_STEP`` mode.
-We added the function :c:func:`ARKodeAllocateInternalData` to ARKODE to enable
-stage-related data allocation before the first call to :c:func:`ARKodeEvolve`
-(but after all other optional input routines have been called), to support
-users who measure memory usage before beginning a simulation.
+ARKODE now allows users to supply functions that will be called before each
+internal time step attempt (:c:func:`ARKodeSetPreStepFn`), after each successful
+time step (:c:func:`ARKodeSetPostStepFn`), before right-hand side routines are
+called on an updated state (:c:func:`ARKodeSetPreRhsFn`), and/or once each
+internal step/stage is computed (:c:func:`ARKodeSetPostprocessStepFn`/
+:c:func:`ARKodeSetPostprocessStageFn`). These are considered **advanced**
+functions, as they should treat the state vector as read-only, otherwise all
+theoretical guarantees of solution accuracy and stability will be lost.
+
+Note to users utilizing the previously undocumented
+:c:func:`ARKodeSetPostprocessStepFn` function, the supplied function is now
+called on the newly computed state vector for all step attempts not just
+successful steps. To obtain the previous behavior of only calling a function on
+successful steps, switch to using :c:func:`ARKodeSetPostStepFn`.
+
+Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP`` mode.
+
 The default number of stages for the SSP Runge-Kutta methods :c:enumerator:`ARKODE_LSRK_SSP_S_2`
 and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to
 their minimum allowable values of 2 and 4. Users may revert to the previous values by calling
 :c:func:`LSRKStepSetNumSSPStages`.
 
-ARKODE now allows users to supply functions that will be called before each internal
-time step, after each successful time step, after each failed time step, before
-right-hand side routines are called on an updated state, and/or once each internal
-stage is computed (:c:func:`ARKodeSetPreprocessStepFn`,
-:c:func:`ARKodeSetPostprocessStepFn`, :c:func:`ARKodeSetPostprocessStepFailFn`,
-:c:func:`ARKodeSetPreRHSProcessFn`, and :c:func:`ARKodeSetPostprocessStageFn`).
-These are considered **advanced** functions, as they should treat the state vector as
-read-only, otherwise all theoretical guarantees of solution accuracy and stability
-will be lost.
+Added the function :c:func:`ARKodeAllocateInternalData` to ARKODE to enable
+stage-related data allocation before the first call to :c:func:`ARKodeEvolve`
+(but after all other optional input routines have been called), to support
+users who measure memory usage before beginning a simulation.
 
 **Bug Fixes**
 
@@ -34,8 +40,8 @@ installed without setting the ``SUPERLUMT_WORKS`` option to ``TRUE``.
 Fixed the embedded coefficients for the ``ARKODE_TSITOURAS_7_4_5`` Butcher
 table.
 
-Fixed a bug in logging output from ARKODE, where for some time stepping modules, the
-the current "time" output in the logger was incorrect.
+Fixed a bug in logging output from ARKODE, where for some time stepping modules,
+the the current "time" output in the logger was incorrect.
 
 Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method, where a real
 number was used instead of an integer, potentially resulting in a rounding error.

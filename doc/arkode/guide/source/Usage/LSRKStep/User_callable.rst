@@ -396,8 +396,9 @@ Allowable Method Families
 
    .. versionchanged:: x.y.z
 
-      The default numbers of stages for :c:enumerator:`ARKODE_LSRK_SSP_S_2` and :c:enumerator:`ARKODE_LSRK_SSP_S_3`
-      were changed from 10 and 9, respectively, to their minimum allowable values of 2 and 4.
+      The default number of stages for :c:enumerator:`ARKODE_LSRK_SSP_S_2` and
+      :c:enumerator:`ARKODE_LSRK_SSP_S_3` were changed from 10 and 9,
+      respectively, to their minimum allowable values of 2 and 4.
 
 
 .. _ARKODE.Usage.LSRKStep.OptionalOutputs:

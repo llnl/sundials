@@ -538,8 +538,7 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   should be 0.
 
   The variables (ark_mem->tcur, ark_mem->ycur) should
-  contain the current time and solution at each stage within
-  the time step.
+  contain the current time and solution at the end of this time step.
 
   The input/output variable nflagPtr is generally used in ARKODE
   to gauge the convergence of any algebraic solvers. However, since
@@ -638,8 +637,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* call the user-supplied pre-rhs function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
-                                 ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->yn, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -649,7 +647,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* call fe */
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
@@ -888,8 +886,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   should be 0.
 
   The variables (ark_mem->tcur, ark_mem->ycur) should
-  contain the current time and solution at each stage of within
-  the time step.
+  contain the current time and solution at the end of this time step.
 
   The input/output variable nflagPtr is generally used in ARKODE
   to gauge the convergence of any algebraic solvers. However, since
@@ -991,8 +988,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
-                                 ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->yn, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1000,7 +996,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         return ARK_PRERHSFN_FAIL;
       }
     }
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
@@ -1217,8 +1213,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   should be 0.
 
   The variables (ark_mem->tcur, ark_mem->ycur) should
-  contain the current time and solution at each stage of within
-  the time step.
+  contain the current time and solution at the end of this time step.
 
   The input/output variable nflagPtr is used to gauge convergence
   of any algebraic solvers within the step.  As this routine
@@ -1282,8 +1277,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
-                                 ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->yn, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1292,7 +1286,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
@@ -1474,8 +1468,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   should be 0.
 
   The variables (ark_mem->tcur, ark_mem->ycur) should
-  contain the current time and solution at each stage of within
-  the time step.
+  contain the current time and solution at the end of this time step.
 
   The input/output variable nflagPtr is used to gauge convergence
   of any algebraic solvers within the step.  As this routine
@@ -1523,8 +1516,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
-                                 ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->yn, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1533,7 +1525,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
@@ -1856,8 +1848,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   should be 0.
 
   The variables (ark_mem->tcur, ark_mem->ycur) should
-  contain the current time and solution at each stage of within
-  the time step.
+  contain the current time and solution at the end of this time step.
 
   The input/output variable nflagPtr is used to gauge convergence
   of any algebraic solvers within the step.  As this routine
@@ -1903,8 +1894,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
-                                 ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->yn, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1913,7 +1903,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
@@ -2099,8 +2089,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* apply user-supplied step postprocessing function (if supplied) */
   if (ark_mem->PostProcessStepFn)
   {
-    retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+    retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                        ark_mem->user_data);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2137,8 +2127,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   should be 0.
 
   The variables (ark_mem->tcur, ark_mem->ycur) should
-  contain the current time and solution at each stage of within
-  the time step.
+  contain the current time and solution at the end of this time step.
 
   The input/output variable nflagPtr is used to gauge convergence
   of any algebraic solvers within the step.  As this routine
@@ -2183,8 +2172,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
-      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
-                                 ark_mem->user_data);
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->yn, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2193,7 +2181,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
@@ -2417,8 +2405,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* apply user-supplied step postprocessing function (if supplied) */
   if (ark_mem->PostProcessStepFn)
   {
-    retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
-                                         ark_mem->user_data);
+    retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                        ark_mem->user_data);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2723,7 +2711,7 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
   }
   else if (step_mem->dom_eig_fn != NULL)
   {
-    retval = step_mem->dom_eig_fn(ark_mem->tn, ark_mem->ycur, ark_mem->fn,
+    retval = step_mem->dom_eig_fn(ark_mem->tn, ark_mem->yn, ark_mem->fn,
                                   &step_mem->lambdaR, &step_mem->lambdaI,
                                   ark_mem->user_data, ark_mem->tempv1,
                                   ark_mem->tempv2, ark_mem->tempv3);
@@ -2803,7 +2791,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
   if (retval != ARK_SUCCESS) { return retval; }
 
   sunrealtype t = ark_mem->tcur;
-  N_Vector y    = ark_mem->ycur;
+  N_Vector y    = ark_mem->yn;
   N_Vector work = ark_mem->tempv3;
 
   /* Compute RHS function, if necessary. */

@@ -912,11 +912,6 @@ Set max number of constraint failures              :c:func:`ARKodeSetMaxNumConst
 Set the checkpointing scheme to use (for adjoint)  :c:func:`ARKodeSetAdjointCheckpointScheme`  ``NULL``
 Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointCheckpointIndex`   0
 Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensatedSums`       ``SUNFALSE``
-Set time step preprocessing function               :c:func:`ARKodeSetPreprocessStepFn`         ``NULL``
-Set time step postprocessing function              :c:func:`ARKodeSetPostprocessStepFn`        ``NULL``
-Set failed time step postrocessing function        :c:func:`ARKodeSetPostprocessStepFailFn`    ``NULL``
-Set pre right-hand side processing function        :c:func:`ARKodeSetPreRHSProcessFn`          ``NULL``
-Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocessStageFn`       ``NULL``
 =================================================  ==========================================  =======================
 
 
@@ -1631,122 +1626,6 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
 
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.use_compensated_sums".
-
-
-.. c:function:: int ARKodeSetPreprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
-
-   [ADVANCED] Provides a function to be called before each time step.  A ``NULL``
-   input function disables step preprocessing.  If a user-supplied failed-step postprocessing
-   function is supplied by calling :c:func:`ARKodeSetPostprocessStepFailFn`, then
-   preprocessing will not be called on the step attempt that immediately follows a failed step.
-
-   This should **not** adjust the state vector itself.  It is designed to allow users to set
-   up auxiliary data structures that they will use within the time step (e.g., in their
-   right-hand side function(s)).
-
-   :param arkode_mem: pointer to the ARKODE memory block.
-   :param ProcessStep: the user-supplied function to call.
-
-   :retval ARK_SUCCESS: the function exited successfully.
-   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
-
-   .. danger::
-
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
-
-   .. versionadded:: x.y.z
-
-
-.. c:function:: int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
-
-   [ADVANCED] Provides a function to be called following each successful time step.  A ``NULL``
-   input function disables step postprocessing.
-
-   This should **not** adjust the state vector itself.  It is designed to allow users to compute
-   relevant diagnostic information after each step.
-
-   :param arkode_mem: pointer to the ARKODE memory block.
-   :param ProcessStep: the user-supplied function to call.
-
-   :retval ARK_SUCCESS: the function exited successfully.
-   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
-
-   .. danger::
-
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
-
-
-.. c:function:: int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
-
-   [ADVANCED] Provides a function to be called following each failed time step.  A ``NULL``
-   input function disables failed step postprocessing.  The ``ProcessStep`` function will be called
-   with the :math:`(t,y)` that corresponds with the saved state to be used as the initial condition
-   for the upcoming step attempt.
-
-   This should **not** adjust the state vector itself.  It is designed to allow users to reset
-   any relevant diagnostic information they may have accumulated within a rejected time step.
-
-   :param arkode_mem: pointer to the ARKODE memory block.
-   :param ProcessStep: the user-supplied function to call.
-
-   :retval ARK_SUCCESS: the function exited successfully.
-   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
-
-   .. danger::
-
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
-
-   .. versionadded:: x.y.z
-
-
-.. c:function:: int ARKodeSetPreRHSProcessFn(void* arkode_mem, ARKPostProcessFn PreRHSProcess)
-
-   [ADVANCED] Provides a function to be called prior to evaluating user-provided right-hand
-   side (RHS) functions.  For partitioned methods (e.g., ARKStep or MRIStep), that will call
-   multiple RHS functions with identical inputs, this is called only once prior to the first
-   RHS evaluation.  A ``NULL`` input function disables RHS preprocessing.
-
-   This should **not** adjust the state vector itself.  It is designed to allow users to set up
-   auxiliary data structures that will be used within the RHS evaluations (e.g., MPI communication
-   to fill and send exchange buffers).
-
-   :param arkode_mem: pointer to the ARKODE memory block.
-   :param PreRHSProcess: the user-supplied function to call.
-
-   :retval ARK_SUCCESS: the function exited successfully.
-   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
-
-   .. danger::
-
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
-
-   .. versionadded:: x.y.z
-
-
-.. c:function:: int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
-
-   [ADVANCED] Provides a function to be called immediately after each stage is completed within
-   ARKODE's multi-stage methods.  A ``NULL`` input function disables stage postprocessing.
-
-   This should **not** adjust the state vector itself.  It is designed to allow users to compute
-   relevant diagnostic information within each step.
-
-   :param arkode_mem: pointer to the ARKODE memory block.
-   :param ProcessStage: the user-supplied function to call.
-
-   :retval ARK_SUCCESS: the function exited successfully.
-   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
-
-   .. danger::
-
-      If the supplied function modifies any of the active state data, then all
-      theoretical guarantees of solution accuracy and stability are lost.
-
-
 
 
 .. _ARKODE.Usage.ARKodeAdaptivityInputTable:
@@ -3605,6 +3484,305 @@ Disable inactive root warnings          :c:func:`ARKodeSetNoInactiveRootWarn`  e
       when using the key "arkid.no_inactive_root_warn".
 
    .. versionadded:: 6.1.0
+
+
+
+
+.. _ARKODE.Usage.ARKodeProcessingInputTable:
+
+Pre-step, Post-step, Pre-RHS, and Post-processing optional inputs (ADVANCED)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ARKODE provides multiple options for user-supplied callback routines that can be
+called at various times within the time-stepping process.  Each of these
+callback functions has a similar structure, wherein the callback function will
+be provided with the current time, current solution, and the *user_data*
+structure that was provided to :c:func:`ARKodeSetUserData`; some functions are
+also provided the current time step counter, or even a counter indicating how
+many times this step has been attempted previously. More specifically, users may
+provide callback functions for the following events within a time step:
+
+* just prior to starting a time step attempt
+  (:c:func:`ARKodeSetPreStepFn`),
+
+* at the end of a successful time step (:c:func:`ARKodeSetPostStepFn`),
+
+* just prior to evaluating user-provided right-hand side (RHS)
+  functions (:c:func:`ARKodeSetPreRhsFn`),
+
+* immediately after each stage is completed within a time step
+  (:c:func:`ARKodeSetPostprocessStageFn`), and
+
+* immedaiately after computing the new step but before the step is
+  accepted or rejected (:c:func:`ARKodeSetPostprocessStepFn`).
+
+The specific ordering of these functions within a given step depends on whether
+each stage is explicit (as in ERKStep) or implicit (as in ARKStep or MRIStep).
+Denoting the most-recent "saved" time step as :math:`(t_n,y_n)`, the
+time-evolving temporary state within a step as :math:`(t_{cur},y_{cur})`, the
+functions provided to the five above functions as ``PreStep``, ``PostStep``,
+``PreRHS``, ``PostprocessStage``, and ``PostprocessStep``, and denoting the IVP
+right hand side function as ``RHS``, then the flow of a 3-stage explicit method
+would proceed as:
+
+0. Initialize ``attempt`` counter to 0
+
+1. Call ``PreStep`` with :math:`(t_{cur},y_{cur})`
+
+2. Stage 0
+
+   a. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+
+   c. Update :math:`(t_{cur},y_{cur})` with the next stage solution
+
+   d. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+3. Stage 1
+
+   a. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+
+   c. Update :math:`(t_{cur},y_{cur})` with the next stage solution
+
+   d. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+4. Stage 2
+
+   a. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+
+   c. Update :math:`(t_{cur},y_{cur})` with the new time step solution
+
+   d. If the method is FSAL (the last stage is the time step solution),
+      call ``PostprocessStep`` with :math:`(t_{cur},y_{cur})`, else call
+      ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`.
+
+5. If the method is not FSAL, update :math:`(t_{cur},y_{cur})` with the
+   new time step solution and call ``PostprocessStep``.
+
+6. Check the local error.
+
+   a. If the step is successful then call ``PostStep`` with
+      :math:`(t_{cur},y_{cur})`, determine the next internal step size
+      :math:`h_n`, and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
+
+   b. Else rewind :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`, increment
+      ``attempt`` counter, determine the next internal step size :math:`h_n`,
+      and return to step 1
+
+Alternately, the flow of a 3-stage method that must perform a solve of some sort
+for each stage (i.e., a DIRK or ARK method in ARKStep, or a multirate method
+with MRIstep) would proceed as follows.  Here, we show the implicit-explicit
+approach since that also shows the relationship between both the implicit
+right-hand side function ``RHS_i`` and the explicit right-hand side function
+``RHS_e``:
+
+0. Initialize ``attempt`` counter to 0
+
+1. Call ``PreStep`` with :math:`(t_{cur},y_{cur})`
+
+2. Stage 0
+
+   a. Solve implicit system, calling ``PreRHS`` and then ``RHS_i`` with
+      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+   b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
+
+3. Stage 1
+
+   a. Solve implicit system, calling ``PreRHS`` and then ``RHS_i`` with
+      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+   b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
+
+4. Stage 2
+
+   a. Solve implicit system, calling ``PreRHS`` and then ``RHS_i`` with
+      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+   b. If the method is stiffly accurate, call ``PostprocessStep`` with
+      :math:`(t_{cur},y_{cur})`, else call ``PostprocessStage`` with
+      :math:`(t_{cur},y_{cur})`,
+
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
+
+5. If the method is not stiffly accurate, update :math:`(t_{cur},y_{cur})` with
+   the new time step solution and call ``PostprocessStep``.
+
+6. Check the local error.
+
+   a. If the step is successful then call ``PostStep`` with
+      :math:`(t_{cur},y_{cur})`, determine the next internal step size
+      :math:`h_n`, and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
+
+   b. Else rewind :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`, increment
+      ``attempt`` counter, determine the next internal step size :math:`h_n`,
+      and return to step 1
+
+We consider these as "advanced" because of their danger, although the callback
+functions are provided with the internally-evolving state, users should **not**
+adjust entries of this state vector, since doing so will destroy all theoretical
+guarantees of solution accuracy and numerical stability.  The only "supported"
+approach for user modifications to the state vector is if this occurs between
+calls to :c:func:`ARKodeEvolve`, and if the user calls :c:func:`ARKodeReset`
+after every modification to the state vector so that ARKODE can reset its saved
+solution.
+
+
+.. cssclass:: table-bordered
+
+=================================================  ==========================================  =======================
+Optional input                                     Function name                               Default
+=================================================  ==========================================  =======================
+Set pre time step function                         :c:func:`ARKodeSetPreStepFn`                ``NULL``
+Set post time step function                        :c:func:`ARKodeSetPostStepFn`               ``NULL``
+Set pre right-hand side function                   :c:func:`ARKodeSetPreRhsFn`                 ``NULL``
+Set stage postprocessing function                  :c:func:`ARKodeSetPostprocessStageFn`       ``NULL``
+Set time step postprocessing function              :c:func:`ARKodeSetPostprocessStepFn`        ``NULL``
+=================================================  ==========================================  =======================
+
+
+
+.. c:function:: int ARKodeSetPreStepFn(void* arkode_mem, ARKPreStepFn prestep_fn)
+
+   [ADVANCED] Provide a function to be called before each step attempt.
+
+   The attached function allows users to set up auxiliary data structures that
+   only need to be updated at the start of a step and can be reused within the
+   time step (e.g., in their right-hand side function(s)).
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param prestep_fn: the user-supplied function to call. A ``NULL`` input
+                      function disables calling a prestep function.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: x.y.z
+
+
+.. c:function:: int ARKodeSetPostStepFn(void* arkode_mem, ARKPostStepFn poststep_fn)
+
+   [ADVANCED] Provide a function to be called following each successful time
+   step.
+
+   The attached function allows users to compute relevant diagnostic information
+   after each step.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param poststep_fn: the user-supplied function to call. A ``NULL`` input
+                       function disables calling a poststep function.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: x.y.z
+
+
+.. c:function:: int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn prerhs_fn)
+
+   [ADVANCED] Provides a function to be called prior to evaluating user-provided
+   right-hand side (RHS) functions. For partitioned methods with multiple RHS
+   functions (e.g., ARKStep or MRIStep), when multiple RHS functions will be
+   called in succession with identical inputs, this function is called only once
+   prior to the RHS function evaluations.
+
+   The attached function allows users to set up auxiliary data structures that
+   will be used within the RHS evaluations (e.g., MPI communication to fill and
+   send exchange buffers).
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param prerhs_fn: the user-supplied function to call. A ``NULL`` input
+                     function disables calling a pre-RHS function.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: x.y.z
+
+
+.. c:function:: int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
+
+   [ADVANCED] Provides a function to be called immediately after computing a new
+   step but before the step is accepted/rejected.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param ProcessStep: the user-supplied function to call.  A ``NULL`` input
+                       function disables step postprocessing.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: x.y.z
+
+   .. warning::
+
+      This function is currently incompatible with discrete adjoint capabilities
+      in ARKODE (:c:func:`ARKodeSetAdjointCheckpointScheme` and
+      :c:func:`ARKodeSetAdjointCheckpointIndex`).
+
+
+.. c:function:: int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
+
+   [ADVANCED] Provides a function to be called immediately after each stage is
+   completed within ARKODE's multi-stage methods.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param ProcessStage: the user-supplied function to call. A ``NULL`` input
+                        function disables stage postprocessing.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: x.y.z
+
+   .. warning::
+
+      This function is currently incompatible with discrete adjoint capabilities
+      in ARKODE (:c:func:`ARKodeSetAdjointCheckpointScheme` and
+      :c:func:`ARKodeSetAdjointCheckpointIndex`).
 
 
 
