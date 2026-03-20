@@ -125,7 +125,7 @@ In this section we list the public API of the
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.
 
@@ -133,6 +133,6 @@ In this section we list the public API of the
 
       Explicit conversion to a :c:type:`SUNMatrix`.
 
-      .. versionadded:: x.y.z
+      .. versionadded:: 7.6.0
       
          Replaces the ``Convert`` method which was deprecated.

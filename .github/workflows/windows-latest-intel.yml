@@ -1,13 +1,18 @@
 name: Build and Test - Windows/intel/ninja (short)
 
 on:
-  pull_request:
-  merge_group:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
   workflow_dispatch:
 
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: windows-intel-ninja-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)

@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -14,26 +14,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup Pthreads correctly.
-# Created from the SundialsTPL.cmake template.
-# All SUNDIALS modules that find and setup a TPL must:
-#
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
-# 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
+# Module to find and setup Pthreads.
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED SUNDIALS_PTHREAD_INCLUDED)
-  set(SUNDIALS_PTHREAD_INCLUDED)
-else()
-  return()
-endif()
+include_guard(GLOBAL)
 
 # -----------------------------------------------------------------------------
 # Section 2: Check to make sure options are compatible

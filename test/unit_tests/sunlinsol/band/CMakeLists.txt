@@ -2,7 +2,7 @@
 # Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -29,7 +29,7 @@ set(sunlinsol_band_examples
 set(sunlinsol_band_dependencies test_sunlinsol)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_band_fortran_examples "test_fsunlinsol_band_mod\;\;")
 endif()
 

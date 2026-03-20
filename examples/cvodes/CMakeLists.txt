@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner and Slaven Peles @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -18,16 +18,16 @@
 # ---------------------------------------------------------------
 
 # C examples
-if(EXAMPLES_ENABLE_C)
+if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(serial)
-  if(ENABLE_MPI AND MPI_C_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(parallel)
   endif()
-  if(ENABLE_OPENMP AND OPENMP_FOUND)
+  if(SUNDIALS_ENABLE_OPENMP)
     add_subdirectory(C_openmp)
   endif()
 endif()
 
-if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
   add_subdirectory(F2003_serial)
 endif()

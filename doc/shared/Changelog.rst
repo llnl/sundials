@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -30,6 +30,114 @@ Changes to SUNDIALS in release X.Y.Z
 ====================================
 
 .. include:: RecentChanges_link.rst
+
+.. _Changelog.7.6.0:
+
+Changes to SUNDIALS in release 7.6.0
+====================================
+
+.. For package-specific references use :ref: rather than :numref: so intersphinx
+   links to the appropriate place on read the docs
+
+**Major Features**
+
+SUNDIALS now has official Python interfaces! With this release, we are shipping
+a **beta version** of the sundials4py Python module (created with nanobind and
+litgen). sundials4py provides explicit interfaces to most features of SUNDIALS.
+See the :ref:`Python` section of the user guide for more information.
+
+**New Features and Enhancements**
+
+Added functions to CVODE(S) and IDA(S) to set the maximum number of inequality
+constraint failures in a step attempt (:c:func:`CVodeSetMaxNumConstraintFails`
+and :c:func:`IDASetMaxNumConstraintFails`) and to retrieve the total number of
+failed step attempts due to an inequality constraint violation
+(:c:func:`CVodeGetNumConstraintFails` and
+:c:func:`IDAGetNumConstraintFails`). As a result, constraint failures are no
+longer included in the number of step failures due to a solver failure (i.e.,
+the values returned by :c:func:`CVodeGetNumStepSolveFails` and
+:c:func:`IDAGetNumStepSolveFails`). The functions
+:c:func:`CVodeGetNumConstraintCorrections` and
+:c:func:`IDAGetNumConstraintCorrections` were also added to retrieve the number
+of steps where the corrector was modified to satisfy an inequality constraint
+without failing the step.
+
+The functions ``CVodeGetUserDataB`` and ``IDAGetUserDataB`` were added to CVODES
+and IDAS, respectively.
+
+**Bug Fixes**
+
+Fixed a bug in the CVODE(S) inequality constraint handling where the predicted
+state was used to compute the step size reduction factor which could lead to an
+insufficient reduction in the step size or, when the prediction violates the
+constraints, an infinitely large step size in the next step attempt (`Issue #702
+<https://github.com/LLNL/sundials/issues/702>`__).
+
+On the initial time step with a user-supplied initial step size, ARKODE and
+CVODE(S) will now return ``ARK_TOO_CLOSE`` or ``CV_TOO_CLOSE``, respectively,
+when the requested output time is the same as, or within numerical roundoff of,
+the initial time (`Issue #722
+<https://github.com/LLNL/sundials/issues/722>`__). Before a ``TOO_CLOSE`` error
+would only be returned when internally estimating the initial step size. In
+IDA(S), added a ``IDA_TOO_CLOSE`` return value for when the initial and output
+time are too close. Previously, IDA(S) would return ``IDA_ILL_INPUT``.
+
+Fixed a bug in ARKODE, CVODE(S), and IDA(S) where the linear solver counters
+were not reset on reinitialization until the next call to advance the system. As
+such, non-zero linear solver statistics could be returned if retrieving or
+printing linear solver counters between reinitialization and the next call to
+advance the system.
+
+In CVODES and IDA, added missing return flag names to
+:c:func:`CVodeGetReturnFlagName` and :c:func:`IDAGetReturnFlagName`,
+respectively.
+
+The SPRKStep module now accounts for zero coefficients in the SPRK tables,
+eliminating extraneous function evaluations.
+
+A bug was fixed in KINSOL where the information logging function would always be
+called even when informational logging was disabled (`Issue #801
+<https://github.com/LLNL/sundials/issues/801>`__).
+
+A bug preventing a user supplied :c:func:`SUNStepper_ResetCheckpointIndex`
+function from being called was fixed.
+
+The interface to Ginkgo batched linear solvers has been updated to fix build
+errors when using 64-bit index types (`Issue #797
+<https://github.com/LLNL/sundials/issues/797>`__). Note, only the batched dense
+matrix in Ginkgo is currently compatible with 64-bit indexing (as of Ginkgo
+1.10).
+
+The Kokkos N_Vector now properly handles unmanaged views. Previously, if a
+Kokkos ``N_Vector`` was created from an unmanaged view, the view would become a
+managed view and the data would be freed unexpectedly.
+
+Fixed a CMake bug which resulted in static targets depending on shared targets
+when building both types of libraries in the same build (`Issue #692
+<https://github.com/LLNL/sundials/issues/692>`__).
+
+Some installed Fortran example makefiles were not linking to
+``sundials_fcore_mod`` and ``sundials_core`` libraries as they should be. This
+is now fixed.
+
+**Deprecation Notices**
+
+The ``N_Vector_S`` typedef to ``N_Vector*`` is deprecated and will be removed in
+the next major release.
+
+The ``CSC_MAT`` and ``CSR_MAT`` macros defined in ``sunmatrix_sparse.h`` will be
+removed in the next major release. Use ``SUN_CSC_MAT`` and ``SUN_CSR_MAT``
+instead.
+
+``SUNDIALSFileOpen`` and ``SUNDIALSFileClose`` will be removed in the next major
+release.  Use :c:func:`SUNFileOpen` and :c:func:`SUNFileClose` instead.
+
+The ``Convert`` methods on the ``sundials::kokkos:Vector``,
+``sundials::kokkos::DenseMatrix``, ``sundials::ginkgo::Matrix``,
+``sundials::ginkgo::BatchMatrix``, ``sundials::kokkos::DenseLinearSolver``,
+``sundials::ginkgo::LinearSolver``, and ``sundials::ginkgo::BatchLinearSolver``
+classes have been deprecated and will be removed in the next major release. The
+method ``get``, should be used instead.
 
 .. _Changelog.7.5.0:
 
@@ -1604,10 +1712,10 @@ namespace.
 *Profiling Capability*
 
 A capability to profile/instrument SUNDIALS library code has been added. This
-can be enabled with the CMake option :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING`. A
+can be enabled with the CMake option ``SUNDIALS_BUILD_WITH_PROFILING``. A
 built-in profiler will be used by default, but the `Caliper
 <https://github.com/LLNL/Caliper>`__ library can also be used instead with the
-CMake option :cmakeop:`ENABLE_CALIPER`. See the documentation section on
+CMake option ``ENABLE_CALIPER``. See the documentation section on
 profiling for more details.
 
 .. warning::
@@ -2294,7 +2402,7 @@ contact the SUNDIALS team about any performance changes that they notice.
 Added new capabilities for monitoring the solve phase in the Newton and
 fixed-point :c:type:`SUNNonlinearSolver`, and the SUNDIALS iterative linear
 solvers. SUNDIALS must be built with the CMake option
-:cmakeop:`SUNDIALS_BUILD_WITH_MONITORING` to use these capabilities.
+``SUNDIALS_BUILD_WITH_MONITORING`` to use these capabilities.
 
 Added specialized fused CUDA kernels to CVODE which may offer better performance
 on smaller problems when using CVODE with the CUDA vector. See the optional
@@ -2779,7 +2887,7 @@ documentation and SUNDIALS examples.
 **Bug Fixes**
 
 The ``EXAMPLES_ENABLE_RAJA`` CMake option has been removed. The option
-:cmakeop:`EXAMPLES_ENABLE_CUDA` enables all examples that use CUDA including the
+``EXAMPLES_ENABLE_CUDA`` enables all examples that use CUDA including the
 RAJA examples with a CUDA back end (if RAJA is enabled).
 
 Python is no longer required to run ``make test`` and ``make test_install``.
@@ -3058,7 +3166,7 @@ with those used in native CMake FindMPI module are :cmakeop:`MPI_C_COMPILER`,
 :cmakeop:`MPI_CXX_COMPILER`, :cmakeop:`MPI_Fortran_COMPILER`, and
 :cmakeop:`MPIEXEC_EXECUTABLE`.
 
-When a Fortran name-mangling scheme is needed (e.g., :cmakeop:`ENABLE_LAPACK` is
+When a Fortran name-mangling scheme is needed (e.g., ``ENABLE_LAPACK`` is
 ``ON``) the build system will infer the scheme from the Fortran compiler. If a
 Fortran compiler is not available or the inferred or default scheme needs to be
 overridden, the advanced options ``SUNDIALS_F77_FUNC_CASE`` and
@@ -3292,9 +3400,9 @@ coefficients accurate enough for use in quad precision.
 Renamed CMake options to enable/disable examples for greater clarity and added
 option to enable/disable Fortran 77 examples:
 
-  - Changed ``EXAMPLES_ENABLE`` to :cmakeop:`EXAMPLES_ENABLE_C`
+  - Changed ``EXAMPLES_ENABLE`` to ``EXAMPLES_ENABLE_C``
 
-  - Changed ``CXX_ENABLE`` to  :cmakeop:`EXAMPLES_ENABLE_CXX`
+  - Changed ``CXX_ENABLE`` to  ``EXAMPLES_ENABLE_CXX``
 
   - Changed ``F90_ENABLE`` to  ``EXAMPLES_ENABLE_F90``
 

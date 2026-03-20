@@ -3,7 +3,7 @@
 #                 Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -16,9 +16,9 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-if(BUILD_ARKODE
-   AND BUILD_CVODE
-   AND BUILD_IDA)
+if(SUNDIALS_ENABLE_ARKODE
+   AND SUNDIALS_ENABLE_CVODE
+   AND SUNDIALS_ENABLE_IDA)
 
   if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"
                                                 ))
@@ -66,12 +66,16 @@ if(BUILD_ARKODE
             ${MPI_CXX_LIBRARIES}
             ${OTHER_LIBS})
 
-  install(TARGETS advection_reaction_3D_raja
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
+  install(
+    TARGETS advection_reaction_3D_raja
+    DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja"
+  )
 
-  install(FILES README.md ../scripts/compare_error.py
-                ../scripts/compute_error.py ../scripts/pickle_solution_output.py
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
+  install(
+    FILES README.md ../scripts/compare_error.py ../scripts/compute_error.py
+          ../scripts/pickle_solution_output.py
+    DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja"
+  )
 
   foreach(benchmark_tuple ${BENCHMARK_VAR})
     list(GET benchmark_tuple 0 benchmark_args)
@@ -80,7 +84,7 @@ if(BUILD_ARKODE
     sundials_add_benchmark(
       advection_reaction_3D_raja advection_reaction_3D_raja
       advection_reaction_3D
-      NUM_CORES ${SUNDIALS_BENCHMARK_NUM_CPUS}
+      NUM_CORES ${SUNDIALS_BENCHMARKS_NUM_CPUS}
       BENCHMARK_ARGS ${benchmark_args}
       IDENTIFIER ${identifier})
   endforeach()
@@ -89,7 +93,7 @@ if(BUILD_ARKODE
   # MPI + CUDA
   # ----------------------------------------------------------------------------
 
-  if(BUILD_NVECTOR_CUDA)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA)
 
     set_source_files_properties(advection_reaction_3D.cpp PROPERTIES LANGUAGE
                                                                      CUDA)
@@ -130,8 +134,10 @@ if(BUILD_ARKODE
     target_compile_definitions(advection_reaction_3D_raja_mpicuda
                                PRIVATE USE_CUDA_NVEC)
 
-    install(TARGETS advection_reaction_3D_raja_mpicuda
-            DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
+    install(
+      TARGETS advection_reaction_3D_raja_mpicuda
+      DESTINATION
+        "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
 
     foreach(benchmark_tuple ${BENCHMARK_VAR})
       list(GET benchmark_tuple 0 benchmark_args)
@@ -140,7 +146,7 @@ if(BUILD_ARKODE
       sundials_add_benchmark(
         advection_reaction_3D_raja_mpicuda advection_reaction_3D_raja_mpicuda
         advection_reaction_3D ENABLE_GPU
-        NUM_CORES ${SUNDIALS_BENCHMARK_NUM_GPUS}
+        NUM_CORES ${SUNDIALS_BENCHMARKS_NUM_GPUS}
         BENCHMARK_ARGS ${benchmark_args}
         IDENTIFIER ${identifier})
     endforeach()
@@ -150,7 +156,7 @@ if(BUILD_ARKODE
   # MPI + HIP
   # ----------------------------------------------------------------------------
 
-  if(BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_HIP)
 
     sundials_add_executable(
       advection_reaction_3D_raja_mpihip
@@ -183,8 +189,10 @@ if(BUILD_ARKODE
     target_compile_definitions(advection_reaction_3D_raja_mpihip
                                PRIVATE USE_HIP_NVEC)
 
-    install(TARGETS advection_reaction_3D_raja_mpihip
-            DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
+    install(
+      TARGETS advection_reaction_3D_raja_mpihip
+      DESTINATION
+        "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
 
     foreach(benchmark_tuple ${BENCHMARK_VAR})
       list(GET benchmark_tuple 0 benchmark_args)
@@ -193,7 +201,7 @@ if(BUILD_ARKODE
       sundials_add_benchmark(
         advection_reaction_3D_raja_mpihip advection_reaction_3D_raja_mpihip
         advection_reaction_3D ENABLE_GPU
-        NUM_CORES ${SUNDIALS_BENCHMARK_NUM_GPUS}
+        NUM_CORES ${SUNDIALS_BENCHMARKS_NUM_GPUS}
         BENCHMARK_ARGS ${benchmark_args}
         IDENTIFIER ${identifier})
     endforeach()

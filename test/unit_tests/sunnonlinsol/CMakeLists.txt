@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -17,7 +17,7 @@
 # test/unit_tests/sunnonlinsol level CMakeLists.txt for SUNDIALS
 # ------------------------------------------------------------------------------
 
-if(ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
   include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
@@ -26,6 +26,6 @@ endif()
 add_subdirectory(newton)
 add_subdirectory(fixedpoint)
 
-if(BUILD_SUNNONLINSOL_PETSCSNES)
+if(SUNDIALS_ENABLE_SUNNONLINSOL_PETSCSNES)
   add_subdirectory(petsc)
 endif()

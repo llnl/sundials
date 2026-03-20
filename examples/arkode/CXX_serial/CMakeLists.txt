@@ -3,7 +3,7 @@
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -44,7 +44,7 @@ set(ARKODE_examples
 # Header files to install
 set(ARKODE_headers)
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   list(APPEND ARKODE_examples "ark_advection_diffusion_reaction.cpp\;\;develop")
   list(APPEND ARKODE_headers "ark_advection_diffusion_reaction.hpp")
 endif()
@@ -77,7 +77,7 @@ foreach(example_tuple ${ARKODE_examples})
     target_link_libraries(${example_target} sundials_arkode sundials_nvecserial
                           ${EXE_EXTRA_LINK_LIBS})
 
-    if(BUILD_CVODE)
+    if(SUNDIALS_ENABLE_CVODE)
       target_link_libraries(${example_target} sundials_cvode)
     endif()
   endif()
@@ -99,11 +99,11 @@ foreach(example_tuple ${ARKODE_examples})
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
-  if(BUILD_CVODE)
+  if(SUNDIALS_ENABLE_CVODE)
     set(_include_cvode cvode)
-    if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+    if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
       set(_include_cvode_stubs cvode_fused_stubs)
     endif()
   endif()

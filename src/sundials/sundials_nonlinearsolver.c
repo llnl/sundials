@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -27,11 +27,16 @@
 #include <sundials/sundials_core.h>
 #include "sundials_logger_impl.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNNonlinearSolver NLS)
 {
   return (NLS->sunctx->profiler);
 }
+#endif
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNNonlinearSolverFunctionTable_Destroy(void* ptr);
 #endif
 
 /* internal function prototypes */
@@ -97,7 +102,9 @@ void SUNNonlinSolFreeEmpty(SUNNonlinearSolver NLS)
   free(NLS->ops);
   NLS->ops = NULL;
 
-  free(NLS->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNNonlinearSolverFunctionTable_Destroy(NLS->python);
+#endif
   NLS->python = NULL;
 
   /* free overall N_Vector object and return */
@@ -160,7 +167,9 @@ SUNErrCode SUNNonlinSolFree(SUNNonlinearSolver NLS)
   NLS->content = NULL;
   free(NLS->ops);
   NLS->ops = NULL;
-  free(NLS->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNNonlinearSolverFunctionTable_Destroy(NLS->python);
+#endif
   NLS->python = NULL;
   free(NLS);
   NLS = NULL;

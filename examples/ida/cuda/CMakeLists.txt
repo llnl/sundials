@@ -2,7 +2,7 @@
 # Programmer(s): Slaven Peles and Cody Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -59,18 +59,18 @@ foreach(example_tuple ${IDA_examples})
   target_link_libraries(${example} PRIVATE ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.cu ${example}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/cuda)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/cuda)
   endif()
 
 endforeach(example_tuple ${IDA_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/cuda)
+  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/cuda)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "IDA")
@@ -90,7 +90,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/ida/cuda/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/cuda)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/cuda)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -104,7 +104,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/ida/cuda/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/cuda
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/cuda
       RENAME Makefile)
   endif()
 

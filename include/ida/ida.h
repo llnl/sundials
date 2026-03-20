@@ -3,7 +3,7 @@
  *                and Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -102,6 +102,7 @@ typedef int (*IDAEwtFn)(N_Vector y, N_Vector ewt, void* user_data);
  * ------------------- */
 
 /* Initialization functions */
+
 SUNDIALS_EXPORT void* IDACreate(SUNContext sunctx);
 
 SUNDIALS_EXPORT int IDAInit(void* ida_mem, IDAResFn res, sunrealtype t0,
@@ -110,6 +111,7 @@ SUNDIALS_EXPORT int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0,
                               N_Vector yp0);
 
 /* Tolerance input functions */
+
 SUNDIALS_EXPORT int IDASStolerances(void* ida_mem, sunrealtype reltol,
                                     sunrealtype abstol);
 SUNDIALS_EXPORT int IDASVtolerances(void* ida_mem, sunrealtype reltol,
@@ -124,6 +126,7 @@ SUNDIALS_EXPORT int IDASetOptions(void* ida_mem, const char* idaid,
                                   const char* file_name, int argc, char* argv[]);
 
 /* Initial condition calculation optional input functions */
+
 SUNDIALS_EXPORT int IDASetNonlinConvCoefIC(void* ida_mem, sunrealtype epiccon);
 SUNDIALS_EXPORT int IDASetMaxNumStepsIC(void* ida_mem, int maxnh);
 SUNDIALS_EXPORT int IDASetMaxNumJacsIC(void* ida_mem, int maxnj);
@@ -133,6 +136,7 @@ SUNDIALS_EXPORT int IDASetStepToleranceIC(void* ida_mem, sunrealtype steptol);
 SUNDIALS_EXPORT int IDASetMaxBacksIC(void* ida_mem, int maxbacks);
 
 /* Optional input functions */
+
 SUNDIALS_EXPORT int IDASetDeltaCjLSetup(void* ida_max, sunrealtype dcj);
 SUNDIALS_EXPORT int IDASetUserData(void* ida_mem, void* user_data);
 SUNDIALS_EXPORT int IDASetMaxOrd(void* ida_mem, int maxord);
@@ -146,8 +150,10 @@ SUNDIALS_EXPORT int IDASetMaxErrTestFails(void* ida_mem, int maxnef);
 SUNDIALS_EXPORT int IDASetSuppressAlg(void* ida_mem, sunbooleantype suppressalg);
 SUNDIALS_EXPORT int IDASetId(void* ida_mem, N_Vector id);
 SUNDIALS_EXPORT int IDASetConstraints(void* ida_mem, N_Vector constraints);
+SUNDIALS_EXPORT int IDASetMaxNumConstraintFails(void* ida_mem, int max_fails);
 
 /* Optional step adaptivity input functions */
+
 SUNDIALS_EXPORT
 int IDASetEtaFixedStepBounds(void* ida_mem, sunrealtype eta_min_fx,
                              sunrealtype eta_max_fx);
@@ -163,6 +169,7 @@ SUNDIALS_EXPORT
 int IDASetEtaConvFail(void* ida_mem, sunrealtype eta_cf);
 
 /* Nonlinear solve input functions */
+
 SUNDIALS_EXPORT int IDASetMaxConvFails(void* ida_mem, int maxncf);
 SUNDIALS_EXPORT int IDASetMaxNonlinIters(void* ida_mem, int maxcor);
 SUNDIALS_EXPORT int IDASetNlsResFn(void* IDA_mem, IDAResFn res);
@@ -170,10 +177,12 @@ SUNDIALS_EXPORT int IDASetNonlinConvCoef(void* ida_mem, sunrealtype epcon);
 SUNDIALS_EXPORT int IDASetNonlinearSolver(void* ida_mem, SUNNonlinearSolver NLS);
 
 /* Rootfinding initialization function */
+
 SUNDIALS_EXPORT int IDARootInit(void* ida_mem, int nrtfn, IDARootFn g);
 
 /* Rootfinding optional input functions */
-SUNDIALS_EXPORT int IDASetRootDirection(void* ida_mem, int* rootdir);
+
+SUNDIALS_EXPORT int IDASetRootDirection(void* ida_mem, int* rootdir_1d);
 SUNDIALS_EXPORT int IDASetNoInactiveRootWarn(void* ida_mem);
 
 /* Solver function */
@@ -181,6 +190,7 @@ SUNDIALS_EXPORT int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret,
                              N_Vector yret, N_Vector ypret, int itask);
 
 /* Utility functions to update/compute y and yp based on ycor */
+
 SUNDIALS_EXPORT int IDAComputeY(void* ida_mem, N_Vector ycor, N_Vector y);
 SUNDIALS_EXPORT int IDAComputeYp(void* ida_mem, N_Vector ycor, N_Vector yp);
 
@@ -188,6 +198,7 @@ SUNDIALS_EXPORT int IDAComputeYp(void* ida_mem, N_Vector ycor, N_Vector yp);
 SUNDIALS_EXPORT int IDAGetDky(void* ida_mem, sunrealtype t, int k, N_Vector dky);
 
 /* Optional output functions */
+
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")
 int IDAGetWorkSpace(void* ida_mem, long int* lenrw, long int* leniw);
@@ -212,8 +223,12 @@ SUNDIALS_EXPORT int IDAGetCurrentTime(void* ida_mem, sunrealtype* tcur);
 SUNDIALS_EXPORT int IDAGetTolScaleFactor(void* ida_mem, sunrealtype* tolsfact);
 SUNDIALS_EXPORT int IDAGetErrWeights(void* ida_mem, N_Vector eweight);
 SUNDIALS_EXPORT int IDAGetEstLocalErrors(void* ida_mem, N_Vector ele);
+SUNDIALS_EXPORT int IDAGetNumConstraintFails(void* ida_mem,
+                                             long int* num_fails_out);
+SUNDIALS_EXPORT int IDAGetNumConstraintCorrections(void* ida_mem,
+                                                   long int* num_corrections_out);
 SUNDIALS_EXPORT int IDAGetNumGEvals(void* ida_mem, long int* ngevals);
-SUNDIALS_EXPORT int IDAGetRootInfo(void* ida_mem, int* rootsfound);
+SUNDIALS_EXPORT int IDAGetRootInfo(void* ida_mem, int* rootsfound_1d);
 SUNDIALS_EXPORT int IDAGetIntegratorStats(void* ida_mem, long int* nsteps,
                                           long int* nrevals, long int* nlinsetups,
                                           long int* netfails, int* qlast,

@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -180,9 +180,10 @@ team.
 Installation
 ------------
 
-The installation procedure for the Fortran interfaces is the same as for the C/C++ core of SUNDIALS, refer
-to :numref:`Installation`. The CMake option to turn on the Fortran interfaces in a SUNDIALS build 
-is :cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE`. The Spack variant is ``+fortran``.
+The installation procedure for the Fortran interfaces is the same as for the
+C/C++ core of SUNDIALS, refer to :numref:`Installation`. The CMake option to
+turn on the Fortran interfaces in a SUNDIALS build is
+:cmakeop:`SUNDIALS_ENABLE_FORTRAN`. The Spack variant is ``+fortran``.
 
 .. _Fortran.Portability:
 

@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos and David J. Gardner @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -161,9 +161,12 @@ extern "C" int cvEwtSetSV_fused(const sunbooleantype atolMin0,
  * -----------------------------------------------------------------
  */
 
-__global__ void cvCheckConstraints_kernel(
-  const sunindextype length, const sunrealtype* c, const sunrealtype* ewt,
-  const sunrealtype* y, const sunrealtype* mm, sunrealtype* tempv)
+__global__ void cvCheckConstraints_kernel(const sunindextype length,
+                                          const sunrealtype* c,
+                                          const sunrealtype* ewt,
+                                          const sunrealtype* y,
+                                          const sunrealtype* mm,
+                                          sunrealtype* tempv, sunrealtype* save)
 {
   static const sunrealtype zero   = 0.0;
   static const sunrealtype pt1    = 0.1;
@@ -174,11 +177,13 @@ __global__ void cvCheckConstraints_kernel(
     // N_VCompare(ONEPT5, cv_mem->cv_constraints, tmp); /* a[i]=1 when |c[i]|=2  */
     // N_VProd(tmp, cv_mem->cv_constraints, tmp);       /* a * c                 */
     // N_VDiv(tmp, cv_mem->cv_ewt, tmp);                /* a * c * wt            */
+    // N_VScale(-PT1, tmp, save);
     // N_VLinearSum(ONE, cv_mem->cv_y, -PT1, tmp, tmp); /* y - 0.1 * a * c * wt  */
     // N_VProd(tmp, mm, tmp);                           /* v = mm*(y-0.1*a*c*wt) */
     sunrealtype tmp = (abs(c[i]) >= onept5) ? one : zero;
     tmp             = tmp * c[i];
     tmp             = tmp / ewt[i];
+    save[i]         = -pt1 * tmp;
     tmp             = y[i] - pt1 * tmp;
     tempv[i]        = tmp * mm[i];
   }
@@ -186,7 +191,7 @@ __global__ void cvCheckConstraints_kernel(
 
 extern "C" int cvCheckConstraints_fused(const N_Vector c, const N_Vector ewt,
                                         const N_Vector y, const N_Vector mm,
-                                        N_Vector tempv)
+                                        N_Vector tempv, N_Vector save)
 {
   const SUNExecPolicy* exec_policy =
     ((NVectorContent)c->content)->stream_exec_policy;
@@ -199,7 +204,8 @@ extern "C" int cvCheckConstraints_fused(const N_Vector c, const N_Vector ewt,
                                                 N_VGetDeviceArrayPointer(ewt),
                                                 N_VGetDeviceArrayPointer(y),
                                                 N_VGetDeviceArrayPointer(mm),
-                                                N_VGetDeviceArrayPointer(tempv));
+                                                N_VGetDeviceArrayPointer(tempv),
+                                                N_VGetDeviceArrayPointer(save));
 
 #ifdef SUNDIALS_DEBUG_GPU_LASTERROR
   gpuDeviceSynchronize();

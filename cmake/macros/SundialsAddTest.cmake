@@ -2,7 +2,7 @@
 # Programmer(s): Steven Smith and David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -200,7 +200,7 @@ function(SUNDIALS_ADD_TEST NAME EXECUTABLE)
         list(APPEND TEST_ARGS "--runargs=\"${_post_exe}\"")
       endif()
 
-      if(SUNDIALS_TEST_ENABLE_PROFILING AND ENABLE_CALIPER)
+      if(SUNDIALS_TEST_ENABLE_PROFILING AND SUNDIALS_ENABLE_CALIPER)
         list(APPEND TEST_ARGS "--profile")
         list(APPEND TEST_ARGS "--calidir=${SUNDIALS_TEST_CALIPER_OUTPUT_DIR}")
       endif()

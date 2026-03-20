@@ -2,17 +2,18 @@
 name: Build and Test - Ubuntu/gcc (TPLs, no GPUs)
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-  merge_group:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
   workflow_dispatch:
 
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: ubuntu-gcc-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   build_and_test:
@@ -54,7 +55,7 @@ jobs:
         env:
           CMAKE_BUILD_TYPE: ${{ matrix.buildtype }}
       - name: Archive build files from failed build
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: build_files_${{ matrix.indexsize }}_${{ matrix.precision }}_${{ matrix.buildtype }}_${{ matrix.tpls }}
@@ -62,7 +63,7 @@ jobs:
             ${{ github.workspace }}/test/build_*
             !${{ github.workspace }}/test/build_*/Testing/output
       - name: Archive output files from failed build
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: output_files_${{ matrix.indexsize }}_${{ matrix.precision }}_${{ matrix.buildtype }}_${{ matrix.tpls }}

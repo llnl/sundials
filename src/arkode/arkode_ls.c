@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -2661,8 +2661,8 @@ int arkLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   /* Obtain pointers to the data for various vectors */
   ewt_data = N_VGetArrayPointer(ark_mem->ewt);
   y_data   = N_VGetArrayPointer(y);
-  cns_data = (ark_mem->constraintsSet) ? N_VGetArrayPointer(ark_mem->constraints)
-                                       : NULL;
+  cns_data = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
+                                    : NULL;
 
   /* Set minimum increment based on uround and norm of f */
   srur   = SUNRsqrt(ark_mem->uround);
@@ -2680,7 +2680,7 @@ int arkLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
     inc     = SUNMAX(srur * SUNRabs(yjsaved), minInc / ewt_data[j]);
 
     /* Adjust sign(inc) if y_j has an inequality constraint. */
-    if (ark_mem->constraintsSet)
+    if (ark_mem->constraints)
     {
       conj = cns_data[j];
       if (SUNRabs(conj) == ONE)
@@ -2750,8 +2750,8 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   ftemp_data = N_VGetArrayPointer(ftemp);
   y_data     = N_VGetArrayPointer(y);
   ytemp_data = N_VGetArrayPointer(ytemp);
-  cns_data = (ark_mem->constraintsSet) ? N_VGetArrayPointer(ark_mem->constraints)
-                                       : NULL;
+  cns_data   = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
+                                      : NULL;
 
   /* Load ytemp with y = predicted y vector */
   N_VScale(ONE, y, ytemp);
@@ -2776,7 +2776,7 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       inc = SUNMAX(srur * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) if yj has an inequality constraint. */
-      if (ark_mem->constraintsSet)
+      if (ark_mem->constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -2805,7 +2805,7 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       inc           = SUNMAX(srur * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) as before. */
-      if (ark_mem->constraintsSet)
+      if (ark_mem->constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)

@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -23,7 +23,7 @@
 # Example programs
 set(examples "test_sunnonlinsol_newton\;\;")
 
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(fortran_examples "test_fsunnonlinsol_newton_mod\;\;")
 endif()
 
@@ -35,7 +35,7 @@ set(SUNDIALS_LIBS sundials_nvecserial)
 list(APPEND SUNDIALS_LIBS sundials_sunmatrixdense)
 list(APPEND SUNDIALS_LIBS sundials_sunlinsoldense)
 list(APPEND SUNDIALS_LIBS sundials_sunnonlinsolnewton)
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   list(APPEND SUNDIALS_LIBS sundials_fnvecserial_mod)
   list(APPEND SUNDIALS_LIBS sundials_fsunmatrixdense_mod)
   list(APPEND SUNDIALS_LIBS sundials_fsunlinsoldense_mod)

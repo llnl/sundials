@@ -3,7 +3,7 @@
 # Programmer(s): Cody J. Balos and David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -112,7 +112,7 @@ if [ "$compilername" == "gcc" ]; then
         export CUDAFLAGS="-g -O3"
     fi
 
-    # additional Fortran flags not currently added by ENABLE_ALL_WARNINGS
+    # additional Fortran flags not currently added by SUNDIALS_ENABLE_ALL_WARNINGS
     export FFLAGS="${FFLAGS} -fcheck=all,no-pointer,no-recursion"
 fi
 

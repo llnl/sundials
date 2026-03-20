@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -32,6 +32,11 @@
 
 #include "sundials_adiak_metadata.h"
 #include "sundials_macros.h"
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNContextFunctionTable_Destroy(void* ptr);
+#endif
 
 SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
 {
@@ -84,7 +89,7 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
     if (err) { break; }
 #endif
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
     err = SUNProfiler_Create(comm, "SUNContext Default", &profiler);
     SUNCheckCallNoRet(err);
     if (err) { break; }
@@ -107,7 +112,7 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
 
   if (err)
   {
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
     SUNCheckCallNoRet(SUNProfiler_Free(&profiler));
 #endif
     SUNCheckCallNoRet(SUNLogger_Destroy(&logger));
@@ -188,7 +193,7 @@ SUNErrCode SUNContext_GetProfiler(SUNContext sunctx, SUNProfiler* profiler)
 
   SUNFunctionBegin(sunctx);
 
-#ifdef SUNDIALS_BUILD_WITH_PROFILING
+#ifdef SUNDIALS_ENABLE_PROFILING
   /* get profiler */
   *profiler = sunctx->profiler;
 #else
@@ -204,7 +209,7 @@ SUNErrCode SUNContext_SetProfiler(SUNContext sunctx, SUNProfiler profiler)
 
   SUNFunctionBegin(sunctx);
 
-#ifdef SUNDIALS_BUILD_WITH_PROFILING
+#ifdef SUNDIALS_ENABLE_PROFILING
   /* free any existing profiler */
   if (sunctx->profiler && sunctx->own_profiler)
   {
@@ -262,7 +267,7 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
 
   if (!sunctx || !(*sunctx)) { return SUN_SUCCESS; }
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
   /* Find out where we are printing to */
   FILE* fp                    = NULL;
   char* sunprofiler_print_env = getenv("SUNPROFILER_PRINT");
@@ -296,7 +301,9 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
 
   SUNContext_ClearErrHandlers(*sunctx);
 
-  free((*sunctx)->python);
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNContextFunctionTable_Destroy((*sunctx)->python);
+#endif
   (*sunctx)->python = NULL;
 
   free(*sunctx);

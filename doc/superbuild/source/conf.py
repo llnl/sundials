@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -20,7 +20,7 @@ from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../shared")))
 
-# Add suntools directory to import python function docstings with autodoc
+# Add suntools directory to import python function docstrings with autodoc
 sys.path.append(os.path.abspath("../../../tools/suntools"))
 
 # -- General configuration ----------------------------------------------------
@@ -35,31 +35,39 @@ needs_sphinx = "4.0"
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    "sphinx_rtd_theme",
-    "sphinx.ext.extlinks",
-    "sphinx.ext.ifconfig",
-    "sphinx.ext.mathjax",
-    "sphinx.ext.intersphinx",
-    "sphinxfortran.fortran_domain",
-    "sphinxcontrib.bibtex",
+    "numpydoc",
     "sphinx_copybutton",
-    "sphinx.ext.graphviz",
+    "sphinx_multitoc_numbering",
+    "sphinx_rtd_theme",
     "sphinx_sundials",
     "sphinx_toolbox.collapse",
     "sphinx.ext.autodoc",
-    "sphinx_multitoc_numbering",
+    "sphinx.ext.extlinks",
+    "sphinx.ext.graphviz",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "sphinxcontrib.bibtex",
+    "sphinxcontrib.moderncmakedomain",
+    "sphinxfortran.fortran_domain",
 ]
 
 extlinks = {
     "pdfdoc": (
         f"https://github.com/LLNL/sundials/releases/download/{sundials_version}/%s.pdf",
         None,
-    )
+    ),
+    "github": (f"https://github.com/LLNL/sundials/%s", None),
+    "examples": (f"https://github.com/LLNL/sundials/tree/{doc_version}/examples/%s", None),
 }
 
 # Where to find cross-references to the Sphinx documentation.
 intersphinx_mapping = {
-    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects.inv", None))
+    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects-sphinx.inv", None)),
+    "python": ("https://docs.python.org/3", ("../objects-python.inv", None)),
+    "numpy": ("https://numpy.org/doc/stable/", ("../objects-numpy.inv", None)),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", ("../objects-scipy.inv", None)),
+    "cmake": ("https://www.cmake.org/cmake/help/latest", ("../objects-cmake.inv", None)),
 }
 
 # Only setup Google analytics for the readthedocs being deployed (not local).
@@ -93,9 +101,7 @@ project = "Documentation for SUNDIALS"
 copyright = """\
     2025-{year}, Lawrence Livermore National Security, University of Maryland Baltimore County, and the SUNDIALS contributors.
     Copyright (c) 2013-2025, Lawrence Livermore National Security and Southern Methodist University.
-    Copyright (c) 2002-2013, Lawrence Livermore National Security""".format(
-    year=year
-)
+    Copyright (c) 2002-2013, Lawrence Livermore National Security""".format(year=year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -252,3 +258,11 @@ html_show_sourcelink = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "SUNDIALSdoc"
+
+# This prevents numpydoc from showing too much detail of the Enum classes
+numpydoc_show_class_members = False
+
+# Generate rst files with autofunction directives for sundials4py functions
+from generate_autofunctions import generate_autofunctions_for_sundials4py
+
+generate_autofunctions_for_sundials4py()

@@ -3,7 +3,7 @@
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -104,15 +104,16 @@ foreach(example_tuple ${KINSOL_examples})
   file(GLOB example_out ${example}*.out)
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
   endif()
 
 endforeach(example_tuple ${KINSOL_examples})
 
 # Add the build and install targets for each LAPACK example (if needed)
-if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+   AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
   set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackband
@@ -140,9 +141,9 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLLAPACK_LIBS})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
     endif()
 
   endforeach(example_tuple ${KINSOL_examples_BL})
@@ -150,7 +151,7 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
 endif()
 
 # Add the build and install targets for each KLU example (if needed)
-if(BUILD_SUNLINSOL_KLU)
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
 
   # Sundials KLU linear solver module
   set(SUNLINSOLKLU_LIBS sundials_sunlinsolklu)
@@ -180,9 +181,9 @@ if(BUILD_SUNLINSOL_KLU)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLKLU_LIBS})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
     endif()
 
   endforeach(example_tuple ${KINSOL_examples_KLU})
@@ -190,7 +191,7 @@ if(BUILD_SUNLINSOL_KLU)
 endif()
 
 # Add the build and install targets for each SuperLU_MT example (if needed)
-if(BUILD_SUNLINSOL_SUPERLUMT)
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
 
   # Sundials SuperLU_MT linear solver module
   set(SUNLINSOLSLUMT_LIBS sundials_sunlinsolsuperlumt)
@@ -220,9 +221,9 @@ if(BUILD_SUNLINSOL_SUPERLUMT)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLSLUMT_LIBS})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
     endif()
 
   endforeach(example_tuple ${KINSOL_examples_SUPERLUMT})
@@ -230,15 +231,16 @@ if(BUILD_SUNLINSOL_SUPERLUMT)
 endif()
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
 
   # Install the extra files
   foreach(extrafile ${KINSOL_extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -247,19 +249,20 @@ if(EXAMPLES_INSTALL)
 
   examples2string(KINSOL_examples EXAMPLES)
 
-  if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+     AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     examples2string(KINSOL_examples_BL EXAMPLES_BL)
   else()
     set(EXAMPLES_BL "")
   endif()
 
-  if(BUILD_SUNLINSOL_KLU)
+  if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
     examples2string(KINSOL_examples_KLU EXAMPLES_KLU)
   else()
     set(EXAMPLES_KLU "")
   endif()
 
-  if(BUILD_SUNLINSOL_SUPERLUMT)
+  if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
     examples2string(KINSOL_examples_SUPERLUMT EXAMPLES_SLUMT)
     if(SUNDIALS_SUPERLUMT_THREAD_TYPE STREQUAL "PTHREAD")
       set(THREAD_LIBRARY_SLUMT ${CMAKE_THREAD_LIBS_INIT})
@@ -282,7 +285,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/kinsol/serial/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -296,7 +299,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/kinsol/serial/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial
       RENAME Makefile)
   endif()
 
