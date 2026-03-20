@@ -2372,9 +2372,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   ytilde = ark_mem->tempv4;
   ytemp  = ark_mem->tempv2;
 
-  /* initialize ycur with saved solution */
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
-
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
   adapt_type     = SUNAdaptController_GetType(ark_mem->hadapt_mem->hcontroller);
@@ -2429,7 +2426,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = 0, stage type = %d, tcur = " SUN_FORMAT_G, MRISTAGE_FIRST,
              ark_mem->tcur);
-  /* SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_0(:) ="); */
   SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->yn, "z_0(:) =");
 
   /* Evaluate the slow RHS functions if needed. NOTE: we decide between calling the
@@ -2505,7 +2501,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     embedding = (stage == step_mem->stages);
 
     /* Set initial condition for this stage */
-    if (stage > 1)  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
     /* Set current stage abscissa */
     cstage = (embedding) ? ONE : step_mem->MRIC->c[stage];
@@ -2933,7 +2929,6 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = 0, stage type = %d, tcur = " SUN_FORMAT_G, MRISTAGE_FIRST,
              ark_mem->tcur);
-  /* SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_0(:) ="); */
   SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->yn, "z_0(:) =");
 
   /* Evaluate the slow RHS function if needed. NOTE: we decide between calling the
