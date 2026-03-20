@@ -2,10 +2,8 @@
 
 This directory contains the `suntools` Python package which provides utilities for
 
-- parsing SUNDIALS log files
-- more to come...
-
 - Structured parsing of logs produced by the SUNDIALS `SUNLogger` including filtering and plotting
+- more to come...
 
 ## Install
 
