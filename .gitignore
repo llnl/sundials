@@ -91,3 +91,4 @@ uberenv_libs
 # python
 .pytest_cache
 __pycache__
+*.egg-info

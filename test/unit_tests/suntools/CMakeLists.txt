@@ -15,11 +15,11 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-# Locate suntools module
-set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/tools/suntools")
+# Locate suntools module (Python package root)
+set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/tools")
 
-if(NOT EXISTS "${SUNTOOLS_DIR}/logs.py")
-  message(WARNING "Skipped suntools log parser tests (logs.py not found)")
+if(NOT EXISTS "${SUNTOOLS_DIR}/suntools/logs.py")
+  message(WARNING "Skipped suntools log parser tests (suntools/logs.py not found)")
   return()
 endif()
 
@@ -51,5 +51,14 @@ add_test(NAME test_logfile_to_list
 set_tests_properties(
   test_logfile_to_list PROPERTIES ENVIRONMENT "PYTHONPATH=${SUNTOOLS_DIR}"
                                   LABELS "suntools;logging")
+
+# Add the test and configure the environment
+add_test(NAME test_cli_parse_logs
+         COMMAND ${Python3_EXECUTABLE}
+                 ${CMAKE_CURRENT_SOURCE_DIR}/test_cli_parse_logs.py)
+
+set_tests_properties(
+  test_cli_parse_logs PROPERTIES ENVIRONMENT "PYTHONPATH=${SUNTOOLS_DIR}"
+                                 LABELS "suntools;logging")
 
 message(STATUS "Added suntools log parser tests")
