@@ -42,4 +42,4 @@
 #include <sundials/sundials_mpi_errors.h>
 #endif
 
-#endif /* _SUNDIALS_CORE_H */
+#endif /* SUNDIALS_CORE_H */

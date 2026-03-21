@@ -219,4 +219,4 @@ void N_VSetArrayPointer_Petsc(sunrealtype* v_data, N_Vector v);
 }
 #endif
 
-#endif /* _NVECTOR_PETSC_H */
+#endif /* NVECTOR_PETSC_H */

@@ -25,4 +25,4 @@
 #include <sundials/sundials_nvector.hpp>
 #include <sundials/sundials_profiler.hpp>
 
-#endif /* _SUNDIALS_CORE_HPP */
+#endif /* SUNDIALS_CORE_HPP */

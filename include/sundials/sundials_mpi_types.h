@@ -38,4 +38,4 @@
 #define MPI_SUNINDEXTYPE MPI_INT32_T
 #endif
 
-#endif /* _SUNDIALS_MPI_TYPES_H */
+#endif /* SUNDIALS_MPI_TYPES_H */
