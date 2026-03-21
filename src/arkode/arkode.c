@@ -741,8 +741,9 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     }
   }
 
-  /* fill current independent variable */
+  /* fill current independent variable (and optionally ycur with yn) */
   ark_mem->tcur = ark_mem->tn;
+  if (ark_mem->ensure_ycur) N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
   /*--------------------------------------------------
     Looping point for successful internal steps
@@ -913,8 +914,16 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       /* call the user-supplied pre-step function (if it exists) */
       if (ark_mem->PreStepFn)
       {
-        retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->yn, ark_mem->nst,
-                                    attempts, ark_mem->user_data);
+        if (ark_mem->ensure_ycur)
+        {
+          retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst,
+                                      attempts, ark_mem->user_data);
+        }
+        else
+        {
+          retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->yn, ark_mem->nst,
+                                      attempts, ark_mem->user_data);
+        }
         if (retval != 0) { return (ARK_PRESTEPFN_FAIL); }
       }
 
@@ -1015,8 +1024,10 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       ark_mem->h *= ark_mem->eta;
       ark_mem->next_h = ark_mem->hprime = ark_mem->h;
 
-      /* reset tcur to last saved internal time before reattempting step */
+      /* reset tcur to last saved internal time before reattempting step
+         (and optionally ycur to yn ) */
       ark_mem->tcur = ark_mem->tn;
+      if (ark_mem->ensure_ycur) N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
     } /* end looping for step attempts */
 
@@ -1346,6 +1357,7 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
   fprintf(outfile, "tolsf = " SUN_FORMAT_G "\n", ark_mem->tolsf);
   fprintf(outfile, "call_fullrhs = %i\n", ark_mem->call_fullrhs);
   fprintf(outfile, "do_adjoint = %i\n", ark_mem->do_adjoint);
+  fprintf(outfile, "ensure_ycur = %i\n", ark_mem->ensure_ycur);
 
   /* output counters */
   fprintf(outfile, "nhnil = %i\n", ark_mem->nhnil);
@@ -1656,6 +1668,9 @@ ARKodeMem arkCreate(SUNContext sunctx)
   /* Accumulated error estimation strategy */
   ark_mem->AccumErrorType = ARK_ACCUMERROR_NONE;
   ark_mem->AccumError     = ZERO;
+
+  /* Default to having stepper initialize ycur during evolution */
+  ark_mem->ensure_ycur = SUNFALSE;
 
   /* Set default values for integrator and stepper optional inputs */
   iret = ARKodeSetDefaults(ark_mem);
