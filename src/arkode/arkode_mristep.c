@@ -2501,7 +2501,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     embedding = (stage == step_mem->stages);
 
     /* Set initial condition for this stage (all but first stage) */
-    if (stage > 1)  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    if (stage > 1) N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
     /* Set current stage abscissa */
     cstage = (embedding) ? ONE : step_mem->MRIC->c[stage];
@@ -2998,7 +2998,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* Set initial condition for this stage group (all but first group) */
-    if (ig > 0)  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    if (ig > 0) N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
     t0 = ark_mem->tn;
 
     /* Evolve fast IVP over each subinterval in stage group */
