@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ADIAK_METADATA_H
-#define _SUNDIALS_ADIAK_METADATA_H
+#ifndef SUNDIALS_ADIAK_METADATA_H
+#define SUNDIALS_ADIAK_METADATA_H
 
 #ifdef SUNDIALS_ADIAK_ENABLED
 #include <adiak.h>

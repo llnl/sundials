@@ -20,8 +20,8 @@
 #include "sundials_datanode.h"
 #include "sundials_hashmap_impl.h"
 
-#ifndef _SUNDATANODE_INMEM_H
-#define _SUNDATANODE_INMEM_H
+#ifndef SUNDATANODE_INMEM_H
+#define SUNDATANODE_INMEM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -114,4 +114,4 @@ SUNErrCode SUNDataNode_Destroy_InMem(SUNDataNode* node);
 }
 #endif
 
-#endif // _SUNDATANODE_INMEM_H
+#endif // SUNDATANODE_INMEM_H

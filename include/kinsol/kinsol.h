@@ -18,8 +18,8 @@
  * This is the header file for the main KINSOL solver.
  * -----------------------------------------------------------------*/
 
-#ifndef _KINSOL_H
-#define _KINSOL_H
+#ifndef KINSOL_H
+#define KINSOL_H
 
 #include <kinsol/kinsol_ls.h>
 #include <stdio.h>

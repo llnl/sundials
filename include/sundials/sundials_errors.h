@@ -16,8 +16,8 @@
  * not depend on MPI.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ERRORS_H
-#define _SUNDIALS_ERRORS_H
+#ifndef SUNDIALS_ERRORS_H
+#define SUNDIALS_ERRORS_H
 
 #include <assert.h>
 #include <stdarg.h>

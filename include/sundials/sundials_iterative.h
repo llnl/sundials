@@ -26,8 +26,8 @@
  *    solving the preconditioner equation Pz = r (SUNPSolveFn).
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ITERATIVE_H
-#define _SUNDIALS_ITERATIVE_H
+#ifndef SUNDIALS_ITERATIVE_H
+#define SUNDIALS_ITERATIVE_H
 
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_errors.h>

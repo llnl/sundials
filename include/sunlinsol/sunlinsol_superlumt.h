@@ -26,8 +26,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_SLUMT_H
-#define _SUNLINSOL_SLUMT_H
+#ifndef SUNLINSOL_SUPERLUMT_H
+#define SUNLINSOL_SUPERLUMT_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

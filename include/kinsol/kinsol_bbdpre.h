@@ -21,8 +21,8 @@
  * matrix with banded blocks.
  * -----------------------------------------------------------------*/
 
-#ifndef _KINBBDPRE_H
-#define _KINBBDPRE_H
+#ifndef KINSOL_BBDPRE_H
+#define KINSOL_BBDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

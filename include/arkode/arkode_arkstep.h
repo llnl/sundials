@@ -17,8 +17,8 @@
  * This is the header file for the ARKODE ARKStep module.
  * -----------------------------------------------------------------*/
 
-#ifndef _ARKSTEP_H
-#define _ARKSTEP_H
+#ifndef ARKODE_ARKSTEP_H
+#define ARKODE_ARKSTEP_H
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_arkstep_deprecated.h>

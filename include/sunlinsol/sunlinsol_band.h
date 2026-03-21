@@ -24,8 +24,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_BAND_H
-#define _SUNLINSOL_BAND_H
+#ifndef SUNLINSOL_BAND_H
+#define SUNLINSOL_BAND_H
 
 #include <sundials/sundials_band.h>
 #include <sundials/sundials_linearsolver.h>

@@ -18,8 +18,8 @@
  * This is the header file for the main IDA solver.
  * -----------------------------------------------------------------*/
 
-#ifndef _IDA_H
-#define _IDA_H
+#ifndef IDA_H
+#define IDA_H
 
 #include <ida/ida_ls.h>
 #include <stdio.h>

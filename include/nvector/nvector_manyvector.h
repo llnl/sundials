@@ -37,8 +37,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_MANY_VECTOR_H
-#define _NVECTOR_MANY_VECTOR_H
+#ifndef NVECTOR_MANYVECTOR_H
+#define NVECTOR_MANYVECTOR_H
 
 #include <stdio.h>
 #include <sundials/sundials_core.h>

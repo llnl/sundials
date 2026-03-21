@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef SUNDIALS_PROFILER_IMPL_H_
-#define SUNDIALS_PROFILER_IMPL_H_
+#ifndef SUNDIALS_PROFILER_IMPL_H
+#define SUNDIALS_PROFILER_IMPL_H
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -19,8 +19,8 @@
  * This is the header file for IDA's linear solver interface.
  * ----------------------------------------------------------------*/
 
-#ifndef _IDALS_H
-#define _IDALS_H
+#ifndef IDA_LS_H
+#define IDA_LS_H
 
 #include <sundials/sundials_direct.h>
 #include <sundials/sundials_iterative.h>

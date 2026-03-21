@@ -19,8 +19,8 @@
  * dense and banded matrices and corresponding accessor macros.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_DIRECT_H
-#define _SUNDIALS_DIRECT_H
+#ifndef SUNDIALS_DIRECT_H
+#define SUNDIALS_DIRECT_H
 
 #include <stdio.h>
 #include <sundials/sundials_types.h>

@@ -18,8 +18,8 @@
  * utility.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_ROOT_IMPL_H
-#define _ARKODE_ROOT_IMPL_H
+#ifndef ARKODE_ROOT_IMPL_H
+#define ARKODE_ROOT_IMPL_H
 
 #include <arkode/arkode.h>
 #include <stdarg.h>

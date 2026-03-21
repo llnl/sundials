@@ -31,8 +31,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNMATRIX_DENSE_H
-#define _SUNMATRIX_DENSE_H
+#ifndef SUNMATRIX_DENSE_H
+#define SUNMATRIX_DENSE_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>

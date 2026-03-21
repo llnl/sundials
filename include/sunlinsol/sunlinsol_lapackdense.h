@@ -24,8 +24,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_LAPDENSE_H
-#define _SUNLINSOL_LAPDENSE_H
+#ifndef SUNLINSOL_LAPACKDENSE_H
+#define SUNLINSOL_LAPACKDENSE_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

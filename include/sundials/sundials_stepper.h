@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_STEPPER_H
-#define _SUNDIALS_STEPPER_H
+#ifndef SUNDIALS_STEPPER_H
+#define SUNDIALS_STEPPER_H
 
 #include <sundials/sundials_matrix.h>
 #include <sundials/sundials_nvector.h>

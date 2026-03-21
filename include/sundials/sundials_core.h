@@ -15,8 +15,8 @@
  * Header file that includes the SUNDIALS core.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CORE_H
-#define _SUNDIALS_CORE_H
+#ifndef SUNDIALS_CORE_H
+#define SUNDIALS_CORE_H
 
 #include <sundials/sundials_adaptcontroller.h>
 #include <sundials/sundials_adjointcheckpointscheme.h>

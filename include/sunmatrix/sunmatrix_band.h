@@ -31,8 +31,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNMATRIX_BAND_H
-#define _SUNMATRIX_BAND_H
+#ifndef SUNMATRIX_BAND_H
+#define SUNMATRIX_BAND_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>

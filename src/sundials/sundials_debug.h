@@ -18,8 +18,8 @@
  * for SUNDIALS debugging.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_DEBUG_H
-#define _SUNDIALS_DEBUG_H
+#ifndef SUNDIALS_DEBUG_H
+#define SUNDIALS_DEBUG_H
 
 #include <stdio.h>
 

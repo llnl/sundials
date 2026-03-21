@@ -24,8 +24,8 @@
  * Routines that work with sunrealtype** begin with "dense".
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_DENSE_H
-#define _SUNDIALS_DENSE_H
+#ifndef SUNDIALS_DENSE_H
+#define SUNDIALS_DENSE_H
 
 #include <sundials/sundials_direct.h>
 

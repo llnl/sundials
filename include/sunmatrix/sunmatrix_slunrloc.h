@@ -19,8 +19,8 @@
  * ----------------------------------------------------------------------------
  */
 
-#ifndef _SUNMATRIX_SUPERLUNRLOC_H
-#define _SUNMATRIX_SUPERLUNRLOC_H
+#ifndef SUNMATRIX_SLUNRLOC_H
+#define SUNMATRIX_SLUNRLOC_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>

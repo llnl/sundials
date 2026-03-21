@@ -20,8 +20,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _CVDIAG_IMPL_H
-#define _CVDIAG_IMPL_H
+#ifndef CVODE_DIAG_IMPL_H
+#define CVODE_DIAG_IMPL_H
 
 #include <cvode/cvode_diag.h>
 

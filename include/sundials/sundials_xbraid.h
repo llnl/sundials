@@ -18,8 +18,8 @@
  * NVector interface.
  * -------------------------------------------------------------------------- */
 
-#ifndef _SUNDIALS_XBRAID_H
-#define _SUNDIALS_XBRAID_H
+#ifndef SUNDIALS_XBRAID_H
+#define SUNDIALS_XBRAID_H
 
 #include "braid.h"
 #include "sundials/sundials_nvector.h"

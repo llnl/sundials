@@ -17,8 +17,8 @@
  * SUNDIALS CUDA memory helper header file.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CUDAMEMORY_H
-#define _SUNDIALS_CUDAMEMORY_H
+#ifndef SUNMEMORY_CUDA_H
+#define SUNMEMORY_CUDA_H
 
 #include <cuda_runtime.h>
 #include <sundials/sundials_memory.h>

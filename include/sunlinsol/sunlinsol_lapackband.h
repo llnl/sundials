@@ -24,8 +24,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_LAPBAND_H
-#define _SUNLINSOL_LAPBAND_H
+#ifndef SUNLINSOL_LAPACKBAND_H
+#define SUNLINSOL_LAPACKBAND_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

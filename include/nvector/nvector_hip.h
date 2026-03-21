@@ -18,8 +18,8 @@
  * NVECTOR module.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_HIP_H
-#define _NVECTOR_HIP_H
+#ifndef NVECTOR_HIP_H
+#define NVECTOR_HIP_H
 
 #include <hip/hip_runtime.h>
 #include <stdio.h>
