@@ -17,8 +17,8 @@
  * C++ view of SUNDIALS SUNAdjointStepper
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ADJOINTSTEPPER_HPP
-#define _SUNDIALS_ADJOINTSTEPPER_HPP
+#ifndef SUNDIALS_ADJOINTSTEPPER_HPP
+#define SUNDIALS_ADJOINTSTEPPER_HPP
 
 #include <sundials/sundials_adjointstepper.h>
 

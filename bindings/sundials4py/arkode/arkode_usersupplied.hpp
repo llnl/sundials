@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_ARKODE_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_ARKODE_USERSUPPLIED_HPP
+#ifndef ARKODE_USERSUPPLIED_HPP
+#define ARKODE_USERSUPPLIED_HPP
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_arkstep.h>

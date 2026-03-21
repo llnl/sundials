@@ -28,8 +28,8 @@
  *
  * ---------------------------------------------------------------------------*/
 
-#ifndef CONSTANT_HPP_
-#define CONSTANT_HPP_
+#ifndef CONSTANT_HPP
+#define CONSTANT_HPP
 
 #include <sundials/sundials_matrix.h>
 #include <sundials/sundials_nvector.h>
@@ -111,4 +111,4 @@ inline int dae_res_jac(sunrealtype t, sunrealtype cj, N_Vector y, N_Vector yp,
 } // namespace constant
 } // namespace problems
 
-#endif // CONSTANT_HPP_
+#endif // CONSTANT_HPP

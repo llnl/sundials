@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
 
-#ifndef ADVECTION_REACTION_3D_BACKENDS_HPP
-#define ADVECTION_REACTION_3D_BACKENDS_HPP
+#ifndef BACKENDS_HPP
+#define BACKENDS_HPP
 
 #include <RAJA/RAJA.hpp>
 

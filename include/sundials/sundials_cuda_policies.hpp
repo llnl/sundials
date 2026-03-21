@@ -20,8 +20,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNDIALS_CUDAEXECPOLICIES_HPP
-#define _SUNDIALS_CUDAEXECPOLICIES_HPP
+#ifndef SUNDIALS_CUDA_POLICIES_HPP
+#define SUNDIALS_CUDA_POLICIES_HPP
 
 #include <cstdio>
 #include <stdexcept>

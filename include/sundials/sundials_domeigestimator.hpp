@@ -17,8 +17,8 @@
  * C++ view of SUNDIALS SUNDomEigEstimator
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_DOMEIGESTIMATOR_HPP
-#define _SUNDIALS_DOMEIGESTIMATOR_HPP
+#ifndef SUNDIALS_DOMEIGESTIMATOR_HPP
+#define SUNDIALS_DOMEIGESTIMATOR_HPP
 
 #include <sundials/sundials_domeigestimator.h>
 

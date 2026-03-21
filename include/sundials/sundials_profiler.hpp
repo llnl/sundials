@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_PROFILER_HPP
-#define _SUNDIALS_PROFILER_HPP
+#ifndef SUNDIALS_PROFILER_HPP
+#define SUNDIALS_PROFILER_HPP
 
 #include <cstring>
 #include <utility>

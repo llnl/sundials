@@ -27,8 +27,8 @@
  * problem, the value of lambda should be negative.
  * ---------------------------------------------------------------------------*/
 
-#ifndef PR_HPP_
-#define PR_HPP_
+#ifndef PR_HPP
+#define PR_HPP
 
 #include <cmath>
 #include <sundials/sundials_core.hpp>

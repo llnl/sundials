@@ -34,8 +34,8 @@
  * a function for computing the dominant eigenvalue, L(t).
  * ---------------------------------------------------------------------------*/
 
-#ifndef PRV_HPP_
-#define PRV_HPP_
+#ifndef PRV_HPP
+#define PRV_HPP
 
 #include <cmath>
 #include <sundials/sundials_core.hpp>

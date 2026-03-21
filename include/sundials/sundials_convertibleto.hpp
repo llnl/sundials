@@ -17,8 +17,8 @@
  * Base class for converting C++ wrappers (views) to SUNDIALS objects
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CONVERTIBLETO_HPP
-#define _SUNDIALS_CONVERTIBLETO_HPP
+#ifndef SUNDIALS_CONVERTIBLETO_HPP
+#define SUNDIALS_CONVERTIBLETO_HPP
 
 namespace sundials {
 
@@ -53,4 +53,4 @@ public:
 
 } // namespace sundials
 
-#endif // _SUNDIALS_CONVERTIBLETO_HPP
+#endif // SUNDIALS_CONVERTIBLETO_HPP

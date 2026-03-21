@@ -17,8 +17,8 @@
  * SUNLinearSolver interface to Ginkgo linear solvers
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNLINSOL_GINKGO_HPP
-#define _SUNLINSOL_GINKGO_HPP
+#ifndef SUNLINSOL_GINKGO_HPP
+#define SUNLINSOL_GINKGO_HPP
 
 #include <cstring>
 #include <ginkgo/ginkgo.hpp>

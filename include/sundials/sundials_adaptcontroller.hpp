@@ -17,8 +17,8 @@
  * C++ view of SUNDIALS SUNAdaptController
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ADAPTCONTROLLER_HPP
-#define _SUNDIALS_ADAPTCONTROLLER_HPP
+#ifndef SUNDIALS_ADAPTCONTROLLER_HPP
+#define SUNDIALS_ADAPTCONTROLLER_HPP
 
 #include <sundials/sundials_adaptcontroller.h>
 
