@@ -989,12 +989,8 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
       return (ARK_ILL_INPUT);
     }
 
-    /* MRIGARK methods expect arkode to ensure that ycur==yn upon
-       entry to TakeStep function */
-    if (ark_mem->step == mriStep_TakeStepMRIGARK)
-    {
-      ark_mem->ensure_ycur = SUNTRUE;
-    }
+    /* Request arkode ensure that ycur==yn upon entry to TakeStep function */
+    ark_mem->ensure_ycur = SUNTRUE;
 
     /* Retrieve/store method and embedding orders now that tables are finalized */
     step_mem->stages = step_mem->MRIC->stages;
@@ -2314,9 +2310,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   This routine performs a single MRISR step.
 
-  The vector ark_mem->yn holds the previous time-step solution
-  on input, and the vector ark_mem->ycur should hold the result
-  of this step on output.
+  Both the vectors ark_mem->yn and ark_mem->ycur hold the previous
+  time-step solution on input, and the vector ark_mem->ycur should
+  hold the result of this step on output.
 
   If timestep adaptivity is enabled, this routine also computes
   the error estimate y-ytilde, where ytilde is the
@@ -2406,7 +2402,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (!ark_mem->fixedstep)
   {
     retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tn,
-                                       ark_mem->yn);
+                                       ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
@@ -2430,7 +2426,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = 0, stage type = %d, tcur = " SUN_FORMAT_G, MRISTAGE_FIRST,
              ark_mem->tcur);
-  SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->yn, "z_0(:) =");
+  SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_0(:) =");
 
   /* Evaluate the slow RHS functions if needed. NOTE: we decide between calling the
      full RHS function (if ark_mem->fn is non-NULL and MRIStep is not an inner
@@ -2441,7 +2437,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   nested_mri = step_mem->expforcing || step_mem->impforcing;
   if (ark_mem->fn == NULL || nested_mri)
   {
-    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->yn,
+    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->ycur,
                               ARK_FULLRHS_START);
     if (retval)
     {
@@ -2464,7 +2460,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
   if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
   {
-    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->yn, ark_mem->fn,
+    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->ycur, ark_mem->fn,
                              ARK_FULLRHS_START);
     if (retval)
     {
@@ -2504,8 +2500,8 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     solution  = (stage == step_mem->stages - 1);
     embedding = (stage == step_mem->stages);
 
-    /* Set initial condition for this stage */
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    /* Set initial condition for this stage (all but first stage) */
+    if (stage > 1)  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
     /* Set current stage abscissa */
     cstage = (embedding) ? ONE : step_mem->MRIC->c[stage];
@@ -2826,9 +2822,9 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   This routine performs a single MERK step.
 
-  The vector ark_mem->yn holds the previous time-step solution
-  on input, and the vector ark_mem->ycur should hold the result
-  of this step on output.
+  Both the vectors ark_mem->yn and ark_mem->ycur hold the previous
+  time-step solution on input, and the vector ark_mem->ycur should
+  hold the result of this step on output.
 
   If timestep adaptivity is enabled, this routine also computes
   the error estimate y-ytilde, where ytilde is the
@@ -2921,7 +2917,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
   if (!ark_mem->fixedstep)
   {
-    retval = mriStepInnerStepper_Reset(step_mem->stepper, t0, ark_mem->yn);
+    retval = mriStepInnerStepper_Reset(step_mem->stepper, t0, ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
@@ -2933,7 +2929,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = 0, stage type = %d, tcur = " SUN_FORMAT_G, MRISTAGE_FIRST,
              ark_mem->tcur);
-  SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->yn, "z_0(:) =");
+  SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_0(:) =");
 
   /* Evaluate the slow RHS function if needed. NOTE: we decide between calling the
      full RHS function (if ark_mem->fn is non-NULL and MRIStep is not an inner
@@ -2943,7 +2939,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   nested_mri = step_mem->expforcing || step_mem->impforcing;
   if (ark_mem->fn == NULL || nested_mri)
   {
-    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->yn,
+    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->ycur,
                               ARK_FULLRHS_START);
     if (retval)
     {
@@ -2954,7 +2950,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
   else if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
   {
-    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->yn, ark_mem->fn,
+    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->ycur, ark_mem->fn,
                              ARK_FULLRHS_START);
     if (retval)
     {
@@ -3001,8 +2997,8 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       return (retval);
     }
 
-    /* Set initial condition for this stage group */
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    /* Set initial condition for this stage group (all but first group) */
+    if (ig > 0)  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
     t0 = ark_mem->tn;
 
     /* Evolve fast IVP over each subinterval in stage group */
