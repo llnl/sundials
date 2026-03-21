@@ -281,4 +281,4 @@ enum SUNDataIOMode
 typedef enum SUNDataIOMode SUNDataIOMode;
 #endif
 
-#endif /* _SUNDIALS_TYPES_H */
+#endif /* SUNDIALS_TYPES_H */

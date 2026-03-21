@@ -81,4 +81,4 @@ SUNErrCode SUNAdjointStepper_Destroy(SUNAdjointStepper*);
 #ifdef __cplusplus
 }
 #endif
-#endif /* _SUNADJOINT_STEPPER_H */
+#endif /* SUNDIALS_ADJOINTSTEPPER_H */

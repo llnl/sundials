@@ -137,4 +137,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _SUNDIALS_MPI_ERRORS_IMPL_H */
+#endif /* SUNDIALS_MPI_ERRORS_IMPL_H */

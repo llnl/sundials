@@ -130,4 +130,4 @@ const char* SUNGetErrMsg(SUNErrCode code);
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 } /* extern "C" */
 #endif
-#endif /* _SUNDIALS_ERRORS_H */
+#endif /* SUNDIALS_ERRORS_H */

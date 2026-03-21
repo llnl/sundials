@@ -166,4 +166,4 @@ SUNErrCode SUNMatSpace(SUNMatrix A, long int* lenrw, long int* leniw);
 }
 #endif
 
-#endif /* _SUNMATRIX_H */
+#endif /* SUNDIALS_MATRIX_H */

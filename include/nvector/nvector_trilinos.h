@@ -145,4 +145,4 @@ SUNDIALS_EXPORT sunrealtype N_VMinQuotientLocal_Trilinos(N_Vector num,
 }
 #endif
 
-#endif /* _NVECTOR_TRILINOS_H */
+#endif /* NVECTOR_TRILINOS_H */

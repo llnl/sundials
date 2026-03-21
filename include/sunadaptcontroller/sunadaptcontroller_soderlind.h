@@ -148,4 +148,4 @@ SUNAdaptController SUNAdaptController_H312(SUNContext sunctx);
 }
 #endif
 
-#endif /* _SUNADAPTCONTROLLER_SODERLIND_H */
+#endif /* SUNADAPTCONTROLLER_SODERLIND_H */

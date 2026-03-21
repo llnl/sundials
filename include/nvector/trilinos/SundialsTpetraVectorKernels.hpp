@@ -772,4 +772,4 @@ inline scalar_type minQuotientLocal(const vector_type& num, const vector_type& d
 } // namespace trilinos
 } // namespace sundials
 
-#endif // _TPETRA_SUNDIALS_VECTOR_KERNELS_HPP_
+#endif // SUNDIALSTPETRAVECTORKERNELS_HPP

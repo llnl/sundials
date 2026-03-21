@@ -371,4 +371,4 @@ int ARKStepGetNumRhsEvals(void* arkode_mem, long int* nfe_evals,
 }
 #endif
 
-#endif /* _ARKSTEP_DEPRECATED_H */
+#endif /* ARKODE_ARKSTEP_DEPRECATED_H */

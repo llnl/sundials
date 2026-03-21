@@ -93,4 +93,4 @@ SUNErrCode SUNAdaptController_Space_ImExGus(SUNAdaptController C,
 }
 #endif
 
-#endif /* _SUNADAPTCONTROLLER_IMEXGUS_H */
+#endif /* SUNADAPTCONTROLLER_IMEXGUS_H */

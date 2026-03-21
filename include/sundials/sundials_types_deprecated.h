@@ -72,4 +72,4 @@ typedef long double realtype;
 }
 #endif
 
-#endif /* _SUNDIALS_TYPES_DEPRECATED_H */
+#endif /* SUNDIALS_TYPES_DEPRECATED_H */

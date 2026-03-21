@@ -31,4 +31,4 @@ void SUNMPIAbortErrHandlerFn(int line, const char* func, const char* file,
 }
 #endif
 
-#endif /* _SUNDIALS_MPI_ERRORS_H */
+#endif /* SUNDIALS_MPI_ERRORS_H */
