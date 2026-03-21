@@ -200,25 +200,25 @@ SUNErrCode SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger_out)
   if (SUNLogger_Create(comm, output_rank, &logger)) { return SUN_ERR_CORRUPT; }
 
   do {
-    if (!sunIsNullOrEmpty(error_fname_env))
+    if (error_fname_env != NULL)
     {
       err = SUNLogger_SetErrorFilename(logger, error_fname_env);
       if (err) { break; }
     }
 
-    if (!sunIsNullOrEmpty(warning_fname_env))
+    if (warning_fname_env != NULL)
     {
       err = SUNLogger_SetWarningFilename(logger, warning_fname_env);
       if (err) { break; }
     }
 
-    if (!sunIsNullOrEmpty(debug_fname_env))
+    if (debug_fname_env != NULL)
     {
       err = SUNLogger_SetDebugFilename(logger, debug_fname_env);
       if (err) { break; }
     }
 
-    if (!sunIsNullOrEmpty(info_fname_env))
+    if (info_fname_env != NULL)
     {
       err = SUNLogger_SetInfoFilename(logger, info_fname_env);
       if (err) { break; }
