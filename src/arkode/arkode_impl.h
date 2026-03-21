@@ -478,6 +478,8 @@ struct ARKodeMemRec
   N_Vector ycur;                /* pointer to user-provided solution memory;
                                    used as evolving solution by the time stepper
                                    modules */
+  sunbooleantype ensure_ycur;   /* SUNTRUE if stepper expects ycur=yn on
+                                   entry to its takestep routine */
   N_Vector yn;                  /* solution from the last successful step     */
   N_Vector fn;                  /* full IVP right-hand side from last step    */
   sunbooleantype fn_is_current; /* SUNTRUE if fn has been evaluated at yn     */

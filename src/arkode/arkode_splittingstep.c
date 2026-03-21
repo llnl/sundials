@@ -141,6 +141,9 @@ static int splittingStep_Init(ARKodeMem ark_mem,
     }
   }
 
+  /* inform arkode to ensure that ycur==yn upon entry to TakeStep function */
+  ark_mem->ensure_ycur = SUNTRUE;
+
   /* immediately return if resize or reset */
   if (init_type == RESIZE_INIT || init_type == RESET_INIT)
   {
@@ -308,8 +311,6 @@ static int splittingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   *dsmPtr   = ZERO;        /* No error estimate */
 
   SplittingStepCoefficients coefficients = step_mem->coefficients;
-
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
   SUNLogInfo(ARK_LOGGER, "begin-sequential-methods-list",
              "sequential method = 0");
