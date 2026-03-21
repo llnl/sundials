@@ -1850,7 +1850,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   if (!ark_mem->fixedstep)
   {
     retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tn,
-                                       ark_mem->yn);
+                                       ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
@@ -1885,7 +1885,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   nested_mri = step_mem->expforcing || step_mem->impforcing;
   if (ark_mem->fn == NULL || nested_mri)
   {
-    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->yn,
+    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->ycur,
                               ARK_FULLRHS_START);
     if (retval)
     {
@@ -1908,7 +1908,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   }
   else if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
   {
-    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->yn, ark_mem->fn,
+    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->ycur, ark_mem->fn,
                              ARK_FULLRHS_START);
     if (retval)
     {
