@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------*/
 
-#ifndef KIN_EM_P_H
-#define KIN_EM_P_H
+#ifndef KIN_EM_P_HPP
+#define KIN_EM_P_HPP
 
 #include <algorithm>
 #include <cmath>

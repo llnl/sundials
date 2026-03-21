@@ -17,8 +17,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _NVECTOR_HIP_KERNELS_CUH_
-#define _NVECTOR_HIP_KERNELS_CUH_
+#ifndef VECTORKERNELS_HIP_HPP
+#define VECTORKERNELS_HIP_HPP
 
 #include <limits>
 
@@ -297,4 +297,4 @@ __global__ void minQuotientKernel(const T MAX_VAL, const T* num, const T* den,
 } // namespace hip
 } // namespace sundials
 
-#endif // _NVECTOR_HIP_KERNELS_CUH_
+#endif // VECTORKERNELS_HIP_HPP

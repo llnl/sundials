@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_STEPPER_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_STEPPER_USERSUPPLIED_HPP
+#ifndef SUNDIALS_STEPPER_USERSUPPLIED_HPP
+#define SUNDIALS_STEPPER_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -147,4 +147,4 @@ inline SUNErrCode sunstepper_get_num_steps_wrapper(SUNStepper stepper,
   return std::get<0>(result);
 }
 
-#endif // _SUNDIALS4PY_STEPPER_USERSUPPLIED_HPP
+#endif // SUNDIALS_STEPPER_USERSUPPLIED_HPP

@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP
+#ifndef SUNDIALS_NONLINEARSOLVER_USERSUPPLIED_HPP
+#define SUNDIALS_NONLINEARSOLVER_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -77,4 +77,4 @@ inline int sunnonlinearsolver_convtestfn_wrapper(Args... args)
     1>(&SUNNonlinearSolverFunctionTable::convtestfn, std::forward<Args>(args)...);
 }
 
-#endif // _SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP
+#endif // SUNDIALS_NONLINEARSOLVER_USERSUPPLIED_HPP

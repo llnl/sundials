@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_TYPES_HPP
-#define _SUNDIALS4PY_TYPES_HPP
+#ifndef SUNDIALS4PY_TYPES_HPP
+#define SUNDIALS4PY_TYPES_HPP
 
 #include <stdexcept>
 

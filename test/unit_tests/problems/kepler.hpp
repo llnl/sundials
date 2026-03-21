@@ -44,8 +44,8 @@
  *   Force RHS    = ode_rhs_force    = RHS terms for p'
  * ---------------------------------------------------------------------------*/
 
-#ifndef KEPLER_HPP_
-#define KEPLER_HPP_
+#ifndef KEPLER_HPP
+#define KEPLER_HPP
 
 #include <cmath>
 #include <sundials/sundials_core.hpp>

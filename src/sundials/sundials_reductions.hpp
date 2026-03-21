@@ -20,8 +20,8 @@
 /* NOTE: SUNDIALS_HOST_DEVICE and SUNDIALS_DEVICE_INLINE must be defined
          before including this file */
 
-#ifndef SUNDIALS_HOST_DEVICE
-#define SUNDIALS_HOST_DEVICE
+#ifndef SUNDIALS_REDUCTIONS_HPP
+#define SUNDIALS_REDUCTIONS_HPP
 #endif
 
 #ifndef SUNDIALS_DEVICE_INLINE

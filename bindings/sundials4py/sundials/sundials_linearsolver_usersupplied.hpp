@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
+#ifndef SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP
+#define SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -61,4 +61,4 @@ inline int sunlinearsolver_psolvefn_wrapper(Args... args)
     5>(&SUNLinearSolverFunctionTable::PSolveFn, std::forward<Args>(args)...);
 }
 
-#endif // _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
+#endif // SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP

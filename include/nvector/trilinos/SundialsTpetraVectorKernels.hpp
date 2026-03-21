@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_TPETRA_VECTOR_KERNELS_HPP_
-#define _SUNDIALS_TPETRA_VECTOR_KERNELS_HPP_
+#ifndef SUNDIALSTPETRAVECTORKERNELS_HPP
+#define SUNDIALSTPETRAVECTORKERNELS_HPP
 
 #include <Kokkos_Core.hpp>
 #include <Tpetra_Vector.hpp>

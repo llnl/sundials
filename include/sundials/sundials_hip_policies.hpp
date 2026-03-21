@@ -20,8 +20,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNDIALS_HIPEXECPOLICIES_HPP
-#define _SUNDIALS_HIPEXECPOLICIES_HPP
+#ifndef SUNDIALS_HIP_POLICIES_HPP
+#define SUNDIALS_HIP_POLICIES_HPP
 
 #include <cstdio>
 #include <stdexcept>

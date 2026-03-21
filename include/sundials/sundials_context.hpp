@@ -17,8 +17,8 @@
  * C++ interface to the SUNDIALS context object
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CONTEXT_HPP
-#define _SUNDIALS_CONTEXT_HPP
+#ifndef SUNDIALS_CONTEXT_HPP
+#define SUNDIALS_CONTEXT_HPP
 
 #include <memory>
 #include <type_traits>
@@ -57,4 +57,4 @@ using Context = SUNContextView;
 
 } // namespace sundials
 
-#endif // _SUNDIALS_CONTEXT_HPP
+#endif // SUNDIALS_CONTEXT_HPP

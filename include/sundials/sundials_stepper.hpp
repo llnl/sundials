@@ -17,8 +17,8 @@
  * C++ view of SUNDIALS SUNStepper
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_STEPPER_HPP
-#define _SUNDIALS_STEPPER_HPP
+#ifndef SUNDIALS_STEPPER_HPP
+#define SUNDIALS_STEPPER_HPP
 
 #include <utility>
 

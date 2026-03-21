@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_LOGGER_HPP
-#define _SUNDIALS_LOGGER_HPP
+#ifndef SUNDIALS_LOGGER_HPP
+#define SUNDIALS_LOGGER_HPP
 
 #include <utility>
 

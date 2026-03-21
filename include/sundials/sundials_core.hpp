@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CORE_HPP
-#define _SUNDIALS_CORE_HPP
+#ifndef SUNDIALS_CORE_HPP
+#define SUNDIALS_CORE_HPP
 
 #include <sundials/sundials_context.hpp>
 #include <sundials/sundials_core.h>

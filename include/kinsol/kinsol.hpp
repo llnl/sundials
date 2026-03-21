@@ -17,8 +17,8 @@
  * C++ specific KINSOL definitions.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _KINSOL_HPP
-#define _KINSOL_HPP
+#ifndef KINSOL_HPP
+#define KINSOL_HPP
 
 #include <sundials/sundials_classview.hpp>
 

@@ -17,8 +17,8 @@
  * Base classes for C++ implementations wrappers (views) of SUNDIALS objects.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CLASSVIEW_HPP
-#define _SUNDIALS_CLASSVIEW_HPP
+#ifndef SUNDIALS_CLASSVIEW_HPP
+#define SUNDIALS_CLASSVIEW_HPP
 
 #include <memory>
 #include <type_traits>

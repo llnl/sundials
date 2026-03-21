@@ -17,8 +17,8 @@
  * C++ view of SUNDIALS SUNAdjointCheckpointScheme
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ADJOINTCHECKPOINTSCHEME_HPP
-#define _SUNDIALS_ADJOINTCHECKPOINTSCHEME_HPP
+#ifndef SUNDIALS_ADJOINTCHECKPOINTSCHEME_HPP
+#define SUNDIALS_ADJOINTCHECKPOINTSCHEME_HPP
 
 #include <sundials/sundials_adjointcheckpointscheme.h>
 

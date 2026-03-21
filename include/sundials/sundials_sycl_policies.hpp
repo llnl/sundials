@@ -18,8 +18,8 @@
  * are utilized to determine SYCL kernel launch parameters.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_SYCLEXECPOLICIES_HPP
-#define _SUNDIALS_SYCLEXECPOLICIES_HPP
+#ifndef SUNDIALS_SYCL_POLICIES_HPP
+#define SUNDIALS_SYCL_POLICIES_HPP
 
 #include <cstdio>
 #include <stdexcept>

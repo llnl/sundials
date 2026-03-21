@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_HELPERS_HPP
-#define _SUNDIALS4PY_HELPERS_HPP
+#ifndef SUNDIALS4PY_HELPERS_HPP
+#define SUNDIALS4PY_HELPERS_HPP
 
 #include "sundials4py.hpp"
 
