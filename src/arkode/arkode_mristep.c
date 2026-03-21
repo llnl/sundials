@@ -989,6 +989,13 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
       return (ARK_ILL_INPUT);
     }
 
+    /* MRIGARK methods expect arkode to ensure that ycur==yn upon
+       entry to TakeStep function */
+    if (ark_mem->step == mriStep_TakeStepMRIGARK)
+    {
+      ark_mem->ensure_ycur = SUNTRUE;
+    }
+
     /* Retrieve/store method and embedding orders now that tables are finalized */
     step_mem->stages = step_mem->MRIC->stages;
     step_mem->q = ark_mem->hadapt_mem->q = step_mem->MRIC->q;
@@ -1754,9 +1761,9 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
   This routine serves the primary purpose of the MRIStep module:
   it performs a single MRI step (with embedding, if possible).
 
-  The vector ark_mem->yn holds the previous time-step solution
-  on input, and the vector ark_mem->ycur should hold the result
-  of this step on output.
+  Both the vectors ark_mem->yn and ark_mem->ycur hold the previous
+  time-step solution on input, and the vector ark_mem->ycur should
+  hold the result of this step on output.
 
   If timestep adaptivity is enabled, this routine also computes
   the error estimate y-ytilde, where ytilde is the
