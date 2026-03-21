@@ -17,8 +17,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNDIALS_HIP_KERNELS_CUH
-#define _SUNDIALS_HIP_KERNELS_CUH
+#ifndef SUNDIALS_HIP_KERNELS_HIP_HPP
+#define SUNDIALS_HIP_KERNELS_HIP_HPP
 
 #define SUNDIALS_HOST_DEVICE   __host__ __device__
 #define SUNDIALS_DEVICE_INLINE __forceinline__
@@ -461,4 +461,4 @@ struct GridReducerAtomic
 } // namespace hip
 } // namespace sundials
 
-#endif // _SUNDIALS_HIP_KERNELS_CUH
+#endif // SUNDIALS_HIP_KERNELS_HIP_HPP

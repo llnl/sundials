@@ -17,8 +17,8 @@
  * Base classes for C++ implementations of SUNDIALS objects.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_BASE_HPP
-#define _SUNDIALS_BASE_HPP
+#ifndef SUNDIALS_BASE_HPP
+#define SUNDIALS_BASE_HPP
 
 #include <memory>
 #include <sundials/sundials_context.hpp>

@@ -18,8 +18,8 @@
  * for the SUNMATRIX package based on MAGMA.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNGPUDENSE_MATRIX_KERNELS_HIP
-#define _SUNGPUDENSE_MATRIX_KERNELS_HIP
+#ifndef DENSE_HIP_KERNELS_HIP_HPP
+#define DENSE_HIP_KERNELS_HIP_HPP
 
 #include <hip/hip_runtime.h>
 

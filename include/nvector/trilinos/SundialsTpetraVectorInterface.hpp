@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_TPETRA_INTERFACE_HPP_
-#define _SUNDIALS_TPETRA_INTERFACE_HPP_
+#ifndef SUNDIALSTPETRAVECTORINTERFACE_HPP
+#define SUNDIALSTPETRAVECTORINTERFACE_HPP
 
 #include <Tpetra_Vector.hpp>
 #include <nvector/nvector_trilinos.h>

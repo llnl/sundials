@@ -17,8 +17,8 @@
  * C++ specific IDA definitions.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _IDA_HPP
-#define _IDA_HPP
+#ifndef IDA_HPP
+#define IDA_HPP
 
 #include <sundials/sundials_classview.hpp>
 

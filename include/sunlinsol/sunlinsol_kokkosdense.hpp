@@ -17,8 +17,8 @@
  * This is the header file for a SUNLinearSolver using Kokkoks Kernels
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNLINSOL_KOKKOSDENSE_HPP
-#define _SUNLINSOL_KOKKOSDENSE_HPP
+#ifndef SUNLINSOL_KOKKOSDENSE_HPP
+#define SUNLINSOL_KOKKOSDENSE_HPP
 
 #include <KokkosBatched_LU_Decl.hpp>
 #include <KokkosBatched_Trsv_Decl.hpp>

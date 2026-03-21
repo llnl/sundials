@@ -21,8 +21,8 @@
  * with parameters p.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _LOTKA_VOLTERRA_HPP
-#define _LOTKA_VOLTERRA_HPP
+#ifndef LOTKA_VOLTERRA_HPP
+#define LOTKA_VOLTERRA_HPP
 
 #include <sundials/sundials_core.hpp>
 #include <sunmatrix/sunmatrix_dense.h>

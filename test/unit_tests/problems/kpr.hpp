@@ -36,8 +36,8 @@
  * ImEx splitting as above) while the v equation is considered fast.
  * ---------------------------------------------------------------------------*/
 
-#ifndef KPR_HPP_
-#define KPR_HPP_
+#ifndef KPR_HPP
+#define KPR_HPP
 
 #include <cmath>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -386,4 +386,4 @@ inline int dae_res_jac(sunrealtype t, sunrealtype cj, N_Vector y, N_Vector yp,
 } // namespace kpr
 } // namespace problems
 
-#endif // KPR_HPP_
+#endif // KPR_HPP
