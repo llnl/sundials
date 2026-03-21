@@ -37,8 +37,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_PETSC_H
-#define _NVECTOR_PETSC_H
+#ifndef NVECTOR_PETSC_H
+#define NVECTOR_PETSC_H
 
 #include <mpi.h>
 #include <petscvec.h>

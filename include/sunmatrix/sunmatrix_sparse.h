@@ -32,8 +32,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNMATRIX_SPARSE_H
-#define _SUNMATRIX_SPARSE_H
+#ifndef SUNMATRIX_SPARSE_H
+#define SUNMATRIX_SPARSE_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>

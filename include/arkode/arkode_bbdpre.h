@@ -19,8 +19,8 @@
  * matrix with banded blocks.
  * -----------------------------------------------------------------*/
 
-#ifndef _ARKBBDPRE_H
-#define _ARKBBDPRE_H
+#ifndef ARKODE_BBDPRE_H
+#define ARKODE_BBDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
 
-#ifndef _ARKSTEP_DEPRECATED_H
-#define _ARKSTEP_DEPRECATED_H
+#ifndef ARKODE_ARKSTEP_DEPRECATED_H
+#define ARKODE_ARKSTEP_DEPRECATED_H
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_ls.h>

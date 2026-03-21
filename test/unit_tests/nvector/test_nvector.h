@@ -18,8 +18,8 @@
  * test an NVECTOR module implementation.
  * -----------------------------------------------------------------*/
 
-#ifndef _TEST_NVECTOR_H
-#define _TEST_NVECTOR_H
+#ifndef TEST_NVECTOR_H
+#define TEST_NVECTOR_H
 
 #include <math.h>
 #include <sundials/sundials_types.h>

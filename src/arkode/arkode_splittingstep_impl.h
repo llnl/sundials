@@ -17,8 +17,8 @@
  * This header defines the step memory for SplittingStep.
  *--------------------------------------------------------------*/
 
-#ifndef ARKODE_SPLITTINGSTEP_IMPL_H_
-#define ARKODE_SPLITTINGSTEP_IMPL_H_
+#ifndef ARKODE_SPLITTINGSTEP_IMPL_H
+#define ARKODE_SPLITTINGSTEP_IMPL_H
 
 #include <arkode/arkode_splittingstep.h>
 

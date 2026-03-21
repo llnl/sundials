@@ -18,8 +18,8 @@
  * a banded difference quotient Jacobian-based preconditioner.
  * -----------------------------------------------------------------*/
 
-#ifndef _ARKBANDPRE_H
-#define _ARKBANDPRE_H
+#ifndef ARKODE_BANDPRE_H
+#define ARKODE_BANDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

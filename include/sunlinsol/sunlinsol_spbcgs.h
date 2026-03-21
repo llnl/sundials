@@ -27,8 +27,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_SPBCGS_H
-#define _SUNLINSOL_SPBCGS_H
+#ifndef SUNLINSOL_SPBCGS_H
+#define SUNLINSOL_SPBCGS_H
 
 #include <stdio.h>
 #include <sundials/sundials_linearsolver.h>

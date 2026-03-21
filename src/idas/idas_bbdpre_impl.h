@@ -21,8 +21,8 @@
  * and an IDASPILS linear solver.
  *-----------------------------------------------------------------*/
 
-#ifndef _IDASBBDPRE_IMPL_H
-#define _IDASBBDPRE_IMPL_H
+#ifndef IDAS_BBDPRE_IMPL_H
+#define IDAS_BBDPRE_IMPL_H
 
 #include <idas/idas_bbdpre.h>
 #include <sunlinsol/sunlinsol_band.h>

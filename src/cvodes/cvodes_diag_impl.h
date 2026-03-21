@@ -19,8 +19,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _CVSDIAG_IMPL_H
-#define _CVSDIAG_IMPL_H
+#ifndef CVODES_DIAG_IMPL_H
+#define CVODES_DIAG_IMPL_H
 
 #include <cvodes/cvodes_diag.h>
 

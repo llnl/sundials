@@ -18,8 +18,8 @@
  * interface.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKLS_IMPL_H
-#define _ARKLS_IMPL_H
+#ifndef ARKODE_LS_IMPL_H
+#define ARKODE_LS_IMPL_H
 
 #include <arkode/arkode_ls.h>
 

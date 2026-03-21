@@ -17,8 +17,8 @@
  * This is the implementation header file for the ARKode + XBraid interface.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _ARKSTEP_XBRAID_IMP_H
-#define _ARKSTEP_XBRAID_IMP_H
+#ifndef ARKODE_XBRAID_IMPL_H
+#define ARKODE_XBRAID_IMPL_H
 
 #include "arkode_impl.h"
 #include "braid.h"

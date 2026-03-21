@@ -18,8 +18,8 @@
  * unmanaged memory only and synchronous copies.
  * -----------------------------------------------------------------*/
 
-#ifndef _CUSTOM_MEMORY_HELPER_GPU_H
-#define _CUSTOM_MEMORY_HELPER_GPU_H
+#ifndef CUSTOM_MEMORY_HELPER_GPU_H
+#define CUSTOM_MEMORY_HELPER_GPU_H
 
 #include <assert.h>
 #include <string.h>

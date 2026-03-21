@@ -16,8 +16,8 @@
  * are used by MPI parallel vector implementations.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_MPI_TYPES_H
-#define _SUNDIALS_MPI_TYPES_H
+#ifndef SUNDIALS_MPI_TYPES_H
+#define SUNDIALS_MPI_TYPES_H
 
 #include <mpi.h>
 #include <sundials/sundials_types.h>

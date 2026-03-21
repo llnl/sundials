@@ -17,8 +17,8 @@
  * Implementation header file for the ARKBANDPRE module.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKBANDPRE_IMPL_H
-#define _ARKBANDPRE_IMPL_H
+#ifndef ARKODE_BANDPRE_IMPL_H
+#define ARKODE_BANDPRE_IMPL_H
 
 #include <arkode/arkode_bandpre.h>
 #include <sunlinsol/sunlinsol_band.h>

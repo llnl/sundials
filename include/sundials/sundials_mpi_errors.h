@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_MPI_ERRORS_H
-#define _SUNDIALS_MPI_ERRORS_H
+#ifndef SUNDIALS_MPI_ERRORS_H
+#define SUNDIALS_MPI_ERRORS_H
 
 #include <sundials/sundials_errors.h>
 

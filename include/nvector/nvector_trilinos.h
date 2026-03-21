@@ -44,8 +44,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_TRILINOS_H
-#define _NVECTOR_TRILINOS_H
+#ifndef NVECTOR_TRILINOS_H
+#define NVECTOR_TRILINOS_H
 
 #include <sundials/sundials_nvector.h>
 

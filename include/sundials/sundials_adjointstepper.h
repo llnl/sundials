@@ -15,8 +15,8 @@
  * SUNAdjointStepper class definition.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNADJOINT_STEPPER_H
-#define _SUNADJOINT_STEPPER_H
+#ifndef SUNDIALS_ADJOINTSTEPPER_H
+#define SUNDIALS_ADJOINTSTEPPER_H
 
 #include <sundials/sundials_adjointcheckpointscheme.h>
 #include <sundials/sundials_matrix.h>

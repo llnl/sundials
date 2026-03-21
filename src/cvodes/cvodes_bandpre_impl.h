@@ -20,8 +20,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _CVSBANDPRE_IMPL_H
-#define _CVSBANDPRE_IMPL_H
+#ifndef CVODES_BANDPRE_IMPL_H
+#define CVODES_BANDPRE_IMPL_H
 
 #include <cvodes/cvodes_bandpre.h>
 #include <sunlinsol/sunlinsol_band.h>

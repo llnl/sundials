@@ -17,8 +17,8 @@
  * SUNDIALS memory helpers and types.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_MEMORY_H
-#define _SUNDIALS_MEMORY_H
+#ifndef SUNDIALS_MEMORY_H
+#define SUNDIALS_MEMORY_H
 
 #include <stdlib.h>
 #include <sundials/sundials_context.h>

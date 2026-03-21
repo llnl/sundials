@@ -17,8 +17,8 @@
  * to only use the types defined in sundials_types.h .
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_TYPES_DEPRECATED_H
-#define _SUNDIALS_TYPES_DEPRECATED_H
+#ifndef SUNDIALS_TYPES_DEPRECATED_H
+#define SUNDIALS_TYPES_DEPRECATED_H
 
 #include <float.h>
 #include <stddef.h>

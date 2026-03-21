@@ -20,8 +20,8 @@
  * Contains error checking macros and prototypes for MPI calls.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_MPI_ERRORS_IMPL_H
-#define _SUNDIALS_MPI_ERRORS_IMPL_H
+#ifndef SUNDIALS_MPI_ERRORS_IMPL_H
+#define SUNDIALS_MPI_ERRORS_IMPL_H
 
 #include <mpi.h>
 #include <sundials/priv/sundials_errors_impl.h>

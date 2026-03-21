@@ -37,8 +37,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_MPI_MANY_VECTOR_H
-#define _NVECTOR_MPI_MANY_VECTOR_H
+#ifndef NVECTOR_MPIMANYVECTOR_H
+#define NVECTOR_MPIMANYVECTOR_H
 
 #include <mpi.h>
 #include <stdio.h>

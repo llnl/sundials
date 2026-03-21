@@ -18,8 +18,8 @@
  * module.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_SPRKSTEP_IMPL_H
-#define _ARKODE_SPRKSTEP_IMPL_H
+#ifndef ARKODE_SPRKSTEP_IMPL_H
+#define ARKODE_SPRKSTEP_IMPL_H
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_sprk.h>

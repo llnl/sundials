@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_LOGGER_MACROS_H
-#define _SUNDIALS_LOGGER_MACROS_H
+#ifndef SUNDIALS_LOGGER_MACROS_H
+#define SUNDIALS_LOGGER_MACROS_H
 
 #include <stdarg.h>
 

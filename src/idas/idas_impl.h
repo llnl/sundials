@@ -18,8 +18,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _IDAS_IMPL_H
-#define _IDAS_IMPL_H
+#ifndef IDAS_IMPL_H
+#define IDAS_IMPL_H
 
 #include <stdarg.h>
 

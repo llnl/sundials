@@ -24,8 +24,8 @@
  * Routines that work with sunrealtype ** begin with "band".
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_BAND_H
-#define _SUNDIALS_BAND_H
+#ifndef SUNDIALS_BAND_H
+#define SUNDIALS_BAND_H
 
 #include <sundials/sundials_direct.h>
 

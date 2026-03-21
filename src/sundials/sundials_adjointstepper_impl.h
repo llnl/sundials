@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef SUNDIALS_ADJOINTSTEPPER_IMPL_H_
-#define SUNDIALS_ADJOINTSTEPPER_IMPL_H_
+#ifndef SUNDIALS_ADJOINTSTEPPER_IMPL_H
+#define SUNDIALS_ADJOINTSTEPPER_IMPL_H
 
 #include <sundials/sundials_adjointcheckpointscheme.h>
 #include <sundials/sundials_core.h>

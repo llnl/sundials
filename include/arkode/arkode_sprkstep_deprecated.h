@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SPRKSTEP_DEPRECATED_H
-#define _SPRKSTEP_DEPRECATED_H
+#ifndef ARKODE_SPRKSTEP_DEPRECATED_H
+#define ARKODE_SPRKSTEP_DEPRECATED_H
 
 #include <arkode/arkode.h>
 

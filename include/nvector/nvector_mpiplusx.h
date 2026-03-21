@@ -19,8 +19,8 @@
  * of the ManyVector.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_MPIPLUSX_H
-#define _NVECTOR_MPIPLUSX_H
+#ifndef NVECTOR_MPIPLUSX_H
+#define NVECTOR_MPIPLUSX_H
 
 #include <mpi.h>
 #include <nvector/nvector_mpimanyvector.h>

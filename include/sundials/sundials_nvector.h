@@ -45,8 +45,8 @@
  *   - a routine to print the content of an N_Vector
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_H
-#define _NVECTOR_H
+#ifndef SUNDIALS_NVECTOR_H
+#define SUNDIALS_NVECTOR_H
 
 #include <stdio.h>
 #include <stdlib.h>

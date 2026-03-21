@@ -17,8 +17,8 @@
  * This is the header file for the SUNAdaptController_MRIHTol module.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNADAPTCONTROLLER_MRIHTOL_H
-#define _SUNADAPTCONTROLLER_MRIHTOL_H
+#ifndef SUNADAPTCONTROLLER_MRIHTOL_H
+#define SUNADAPTCONTROLLER_MRIHTOL_H
 
 #include <stdio.h>
 #include <sundials/sundials_adaptcontroller.h>

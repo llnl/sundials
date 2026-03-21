@@ -17,8 +17,8 @@
  * Implementation header file for the main ARKODE integrator.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _ARKODE_MRI_TABLES_IMPL_H
-#define _ARKODE_MRI_TABLES_IMPL_H
+#ifndef ARKODE_MRI_TABLES_IMPL_H
+#define ARKODE_MRI_TABLES_IMPL_H
 
 #include "arkode_mristep_impl.h"
 

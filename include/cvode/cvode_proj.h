@@ -19,8 +19,8 @@
  * This is the header file for CVODE's projection interface.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _CVPROJ_H
-#define _CVPROJ_H
+#ifndef CVODE_PROJ_H
+#define CVODE_PROJ_H
 
 #include <sundials/sundials_nvector.h>
 

@@ -18,8 +18,8 @@
  * Implementation header file for IDAS's linear solver interface.
  *-----------------------------------------------------------------*/
 
-#ifndef _IDASLS_IMPL_H
-#define _IDASLS_IMPL_H
+#ifndef IDAS_LS_IMPL_H
+#define IDAS_LS_IMPL_H
 
 #include <idas/idas_ls.h>
 

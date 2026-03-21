@@ -18,8 +18,8 @@
  * the Intel oneAPI Math Kernel Library (oneMKL).
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNLINSOL_ONEMKLDENSE_H
-#define _SUNLINSOL_ONEMKLDENSE_H
+#ifndef SUNLINSOL_ONEMKLDENSE_H
+#define SUNLINSOL_ONEMKLDENSE_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

@@ -18,8 +18,8 @@
  * Implementation header file for KINSOL's linear solver interface.
  *-----------------------------------------------------------------*/
 
-#ifndef _KINLS_IMPL_H
-#define _KINLS_IMPL_H
+#ifndef KINSOL_LS_IMPL_H
+#define KINSOL_LS_IMPL_H
 
 #include <kinsol/kinsol_ls.h>
 

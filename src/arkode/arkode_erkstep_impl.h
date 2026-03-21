@@ -18,8 +18,8 @@
  * module.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_ERKSTEP_IMPL_H
-#define _ARKODE_ERKSTEP_IMPL_H
+#ifndef ARKODE_ERKSTEP_IMPL_H
+#define ARKODE_ERKSTEP_IMPL_H
 
 #include <arkode/arkode_erkstep.h>
 

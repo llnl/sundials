@@ -19,8 +19,8 @@
  * Header file for cuSolverSp batched QR SUNLinearSolver interface.
  * ----------------------------------------------------------------------------*/
 
-#ifndef _SUNLINSOL_CUSOLVERSP_H
-#define _SUNLINSOL_CUSOLVERSP_H
+#ifndef SUNLINSOL_CUSOLVERSP_BATCHQR_H
+#define SUNLINSOL_CUSOLVERSP_BATCHQR_H
 
 #include <cuda_runtime.h>
 #include <cusolverSp.h>

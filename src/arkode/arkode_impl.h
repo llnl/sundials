@@ -17,8 +17,8 @@
  * Implementation header file for the main ARKODE integrator.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_IMPL_H
-#define _ARKODE_IMPL_H
+#ifndef ARKODE_IMPL_H
+#define ARKODE_IMPL_H
 
 #include <stdarg.h>
 

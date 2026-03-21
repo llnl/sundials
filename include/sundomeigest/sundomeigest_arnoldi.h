@@ -23,8 +23,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNDOMEIGEST_ARNOLDI_H
-#define _SUNDOMEIGEST_ARNOLDI_H
+#ifndef SUNDOMEIGEST_ARNOLDI_H
+#define SUNDOMEIGEST_ARNOLDI_H
 
 #include <sundials/sundials_domeigestimator.h>
 

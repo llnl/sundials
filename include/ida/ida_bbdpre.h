@@ -20,8 +20,8 @@
  * matrix with banded blocks.
  * -----------------------------------------------------------------*/
 
-#ifndef _IDABBDPRE_H
-#define _IDABBDPRE_H
+#ifndef IDA_BBDPRE_H
+#define IDA_BBDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

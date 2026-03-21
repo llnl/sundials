@@ -23,8 +23,8 @@
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>
 
-#ifndef _DREADRB_H_
-#define _DREADRB_H_
+#ifndef DREADRB_H
+#define DREADRB_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {

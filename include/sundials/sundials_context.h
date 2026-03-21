@@ -19,8 +19,8 @@
  * that each thread has its own context object.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CONTEXT_H
-#define _SUNDIALS_CONTEXT_H
+#ifndef SUNDIALS_CONTEXT_H
+#define SUNDIALS_CONTEXT_H
 
 #include <sundials/priv/sundials_context_impl.h>
 

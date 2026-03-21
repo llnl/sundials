@@ -21,8 +21,8 @@
  * matrix with banded blocks.
  * -----------------------------------------------------------------*/
 
-#ifndef _CVBBDPRE_H
-#define _CVBBDPRE_H
+#ifndef CVODE_BBDPRE_H
+#define CVODE_BBDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

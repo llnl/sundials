@@ -17,8 +17,8 @@
  * This is the header file for a generic SUNDomEigEst package.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDOMEIGEST_H
-#define _SUNDOMEIGEST_H
+#ifndef SUNDIALS_DOMEIGESTIMATOR_H
+#define SUNDIALS_DOMEIGESTIMATOR_H
 
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_config.h>

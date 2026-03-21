@@ -29,8 +29,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_DENSE_H
-#define _SUNLINSOL_DENSE_H
+#ifndef SUNLINSOL_DENSE_H
+#define SUNLINSOL_DENSE_H
 
 #include <sundials/sundials_dense.h>
 #include <sundials/sundials_linearsolver.h>

@@ -21,8 +21,8 @@
 #include <sundials/sundials_types.h>
 #include <sycl/sycl.hpp>
 
-#ifndef _SUNDIALS_SYCL_H
-#define _SUNDIALS_SYCL_H
+#ifndef SUNDIALS_SYCL_H
+#define SUNDIALS_SYCL_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
