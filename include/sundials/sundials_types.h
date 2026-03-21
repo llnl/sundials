@@ -48,8 +48,8 @@
  * literal constants only. It cannot be used for expressions.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_TYPES_H
-#define _SUNDIALS_TYPES_H
+#ifndef SUNDIALS_TYPES_H
+#define SUNDIALS_TYPES_H
 
 #include <float.h>
 #include <stddef.h>

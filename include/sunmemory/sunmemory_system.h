@@ -17,8 +17,8 @@
  * SUNDIALS system memory helper header file.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_SYSMEMORY_H
-#define _SUNDIALS_SYSMEMORY_H
+#ifndef SUNMEMORY_SYSTEM_H
+#define SUNMEMORY_SYSTEM_H
 
 #include <sundials/sundials_memory.h>
 

@@ -28,8 +28,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_SPGMR_H
-#define _SUNLINSOL_SPGMR_H
+#ifndef SUNLINSOL_SPGMR_H
+#define SUNLINSOL_SPGMR_H
 
 #include <stdio.h>
 #include <sundials/sundials_linearsolver.h>

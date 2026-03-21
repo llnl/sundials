@@ -20,8 +20,8 @@
  * accuracy.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ADAPTCONTROLLER_H
-#define _SUNDIALS_ADAPTCONTROLLER_H
+#ifndef SUNDIALS_ADAPTCONTROLLER_H
+#define SUNDIALS_ADAPTCONTROLLER_H
 
 #include <stdio.h>
 #include <stdlib.h>

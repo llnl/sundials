@@ -19,8 +19,8 @@
  * a banded difference quotient Jacobian-based preconditioner.
  * -----------------------------------------------------------------*/
 
-#ifndef _CVSBANDPRE_H
-#define _CVSBANDPRE_H
+#ifndef CVODES_BANDPRE_H
+#define CVODES_BANDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

@@ -18,8 +18,8 @@
  * class using the Intel oneAPI Math Kernel Library (oneMKL).
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNMATRIX_ONEMKLDENSE_H
-#define _SUNMATRIX_ONEMKLDENSE_H
+#ifndef SUNMATRIX_ONEMKLDENSE_H
+#define SUNMATRIX_ONEMKLDENSE_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>

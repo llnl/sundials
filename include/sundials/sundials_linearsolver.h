@@ -53,8 +53,8 @@
  *   - "Get" routines to access solver-specific performance metrics
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNLINEARSOLVER_H
-#define _SUNLINEARSOLVER_H
+#ifndef SUNDIALS_LINEARSOLVER_H
+#define SUNDIALS_LINEARSOLVER_H
 
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_context.h>

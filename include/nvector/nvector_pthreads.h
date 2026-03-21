@@ -43,8 +43,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_PTHREADS_H
-#define _NVECTOR_PTHREADS_H
+#ifndef NVECTOR_PTHREADS_H
+#define NVECTOR_PTHREADS_H
 
 #include <pthread.h>
 #include <stdio.h>

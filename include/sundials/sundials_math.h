@@ -22,8 +22,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNDIALSMATH_H
-#define _SUNDIALSMATH_H
+#ifndef SUNDIALS_MATH_H
+#define SUNDIALS_MATH_H
 
 #include <math.h>
 #include <sundials/sundials_types.h>

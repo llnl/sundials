@@ -22,8 +22,8 @@
  * Part II contains prototypes for the solver constructor and operations.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNNONLINSOL_NEWTON_H
-#define _SUNNONLINSOL_NEWTON_H
+#ifndef SUNNONLINSOL_NEWTON_H
+#define SUNNONLINSOL_NEWTON_H
 
 #include "sundials/sundials_nonlinearsolver.h"
 #include "sundials/sundials_nvector.h"

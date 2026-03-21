@@ -17,8 +17,8 @@
  * This is the header file for the ARKODE ERKStep module.
  * -----------------------------------------------------------------*/
 
-#ifndef _ERKSTEP_H
-#define _ERKSTEP_H
+#ifndef ARKODE_ERKSTEP_H
+#define ARKODE_ERKSTEP_H
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_butcher_erk.h>

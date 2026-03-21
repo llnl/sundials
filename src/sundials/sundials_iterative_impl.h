@@ -18,8 +18,8 @@
  * different iterative solvers.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ITERATIVE_IMPL_H
-#define _SUNDIALS_ITERATIVE_IMPL_H
+#ifndef SUNDIALS_ITERATIVE_IMPL_H
+#define SUNDIALS_ITERATIVE_IMPL_H
 
 #include <sundials/sundials_iterative.h>
 

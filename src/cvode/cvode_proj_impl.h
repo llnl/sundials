@@ -19,8 +19,8 @@
  * Implementation header file for projections in CVODE.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _CVODE_PROJ_IMPL_H
-#define _CVODE_PROJ_IMPL_H
+#ifndef CVODE_PROJ_IMPL_H
+#define CVODE_PROJ_IMPL_H
 
 #include <cvode/cvode.h>
 

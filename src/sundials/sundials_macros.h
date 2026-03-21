@@ -17,8 +17,8 @@
  * SUNDIALS macros
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_MACROS_H
-#define _SUNDIALS_MACROS_H
+#ifndef SUNDIALS_MACROS_H
+#define SUNDIALS_MACROS_H
 
 #include "sundials/sundials_config.h"
 

@@ -15,8 +15,8 @@
  * SUNAdjointCheckpointScheme_Fixed class declaration.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNADJOINTCHECKPOINTSCHEME_FIXED_H
-#define _SUNADJOINTCHECKPOINTSCHEME_FIXED_H
+#ifndef SUNADJOINTCHECKPOINTSCHEME_FIXED_H
+#define SUNADJOINTCHECKPOINTSCHEME_FIXED_H
 
 #include <sundials/sundials_adjointcheckpointscheme.h>
 #include <sundials/sundials_core.h>

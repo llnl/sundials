@@ -22,8 +22,8 @@
  * SUNDIALS context class implementation.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CONTEXT_IMPL_H
-#define _SUNDIALS_CONTEXT_IMPL_H
+#ifndef SUNDIALS_CONTEXT_IMPL_H
+#define SUNDIALS_CONTEXT_IMPL_H
 
 #include <sundials/sundials_types.h>
 

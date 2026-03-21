@@ -20,8 +20,8 @@
  * Contains all error checking macros and private error handling API.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ERRORS_IMPL_H
-#define _SUNDIALS_ERRORS_IMPL_H
+#ifndef SUNDIALS_ERRORS_IMPL_H
+#define SUNDIALS_ERRORS_IMPL_H
 
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_context.h>

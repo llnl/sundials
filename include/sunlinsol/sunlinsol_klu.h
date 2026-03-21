@@ -26,8 +26,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_KLU_H
-#define _SUNLINSOL_KLU_H
+#ifndef SUNLINSOL_KLU_H
+#define SUNLINSOL_KLU_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

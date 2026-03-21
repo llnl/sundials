@@ -17,8 +17,8 @@
  * Implementation header file for the main CVODES integrator.
  * -----------------------------------------------------------------*/
 
-#ifndef _CVODES_IMPL_H
-#define _CVODES_IMPL_H
+#ifndef CVODES_IMPL_H
+#define CVODES_IMPL_H
 
 #include <stdarg.h>
 

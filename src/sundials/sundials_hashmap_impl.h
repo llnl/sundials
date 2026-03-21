@@ -20,8 +20,8 @@
  * the hash map upon its destruction.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_HASHMAP_IMPL_H
-#define _SUNDIALS_HASHMAP_IMPL_H
+#ifndef SUNDIALS_HASHMAP_IMPL_H
+#define SUNDIALS_HASHMAP_IMPL_H
 
 #include <stdlib.h>
 #include <sundials/sundials_types.h>

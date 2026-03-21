@@ -17,8 +17,8 @@
  * This is the header file for the ARKODE SPRKStep module.
  * -----------------------------------------------------------------*/
 
-#ifndef _ARKODE_SPRKSTEP_H
-#define _ARKODE_SPRKSTEP_H
+#ifndef ARKODE_SPRKSTEP_H
+#define ARKODE_SPRKSTEP_H
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_sprk.h>

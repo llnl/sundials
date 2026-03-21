@@ -18,8 +18,8 @@
  * module.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNADAPTCONTROLLER_SODERLIND_H
-#define _SUNADAPTCONTROLLER_SODERLIND_H
+#ifndef SUNADAPTCONTROLLER_SODERLIND_H
+#define SUNADAPTCONTROLLER_SODERLIND_H
 
 #include <stdio.h>
 #include <sundials/sundials_adaptcontroller.h>

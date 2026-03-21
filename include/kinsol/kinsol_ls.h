@@ -19,8 +19,8 @@
  * This is the header file for KINSOL's linear solver interface.
  * ----------------------------------------------------------------*/
 
-#ifndef _KINLS_H
-#define _KINLS_H
+#ifndef KINSOL_LS_H
+#define KINSOL_LS_H
 
 #include <sundials/sundials_direct.h>
 #include <sundials/sundials_iterative.h>

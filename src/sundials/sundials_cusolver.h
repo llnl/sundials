@@ -27,8 +27,8 @@
 #include <stdio.h>
 #include <sundials/sundials_types.h>
 
-#ifndef _SUNDIALS_CUSOLVER_H
-#define _SUNDIALS_CUSOLVER_H
+#ifndef SUNDIALS_CUSOLVER_H
+#define SUNDIALS_CUSOLVER_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {

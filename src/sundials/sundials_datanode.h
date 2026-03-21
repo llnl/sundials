@@ -19,8 +19,8 @@
  * SUNDataNode maps well to a JSON node.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_DATANODE_H
-#define _SUNDIALS_DATANODE_H
+#ifndef SUNDIALS_DATANODE_H
+#define SUNDIALS_DATANODE_H
 
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>
