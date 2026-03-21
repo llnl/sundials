@@ -1334,8 +1334,8 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
       if (ark_mem->hin == ZERO)
       {
         /*   tempv1 = fslow(t0, y0) */
-        if (mriStep_SlowRHS(ark_mem, ark_mem->tn, ark_mem->yn,
-                            ark_mem->tempv1, ARK_FULLRHS_START) != ARK_SUCCESS)
+        if (mriStep_SlowRHS(ark_mem, ark_mem->tn, ark_mem->yn, ark_mem->tempv1,
+                            ARK_FULLRHS_START) != ARK_SUCCESS)
         {
           arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
                           __FILE__, "error calling slow RHS function(s)");
