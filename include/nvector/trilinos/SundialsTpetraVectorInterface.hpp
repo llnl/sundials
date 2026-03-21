@@ -63,4 +63,4 @@ SUNDIALS_EXPORT N_Vector N_VMake_Trilinos(
   Teuchos::RCP<sundials::trilinos::nvector_tpetra::TpetraVectorInterface::vector_type> v,
   SUNContext sunctx);
 
-#endif // _TPETRA_SUNDIALS_INTERFACE_HPP_
+#endif // SUNDIALSTPETRAVECTORINTERFACE_HPP

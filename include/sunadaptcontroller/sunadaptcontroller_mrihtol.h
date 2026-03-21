@@ -102,4 +102,4 @@ int SUNAdaptController_Space_MRIHTol(SUNAdaptController C, long int* lenrw,
 }
 #endif
 
-#endif /* _SUNADAPTCONTROLLER_MRIHTOL_H */
+#endif /* SUNADAPTCONTROLLER_MRIHTOL_H */

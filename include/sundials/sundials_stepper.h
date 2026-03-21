@@ -175,4 +175,4 @@ SUNDIALS_EXPORT SUNErrCode SUNStepper_SetDestroyFn(SUNStepper stepper,
 }
 #endif
 
-#endif /* _SUNDIALS_STEPPER_H */
+#endif /* SUNDIALS_STEPPER_H */

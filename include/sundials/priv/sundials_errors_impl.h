@@ -528,4 +528,4 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 }
 #endif
 
-#endif /* _SUNDIALS_ERRORS_IMPL_H */
+#endif /* SUNDIALS_ERRORS_IMPL_H */

@@ -203,4 +203,4 @@ SUNErrCode SUNAdaptController_Space(SUNAdaptController C, long int* lenrw,
 }
 #endif
 
-#endif /* _SUNDIALS_ADAPTCONTROLLER_H */
+#endif /* SUNDIALS_ADAPTCONTROLLER_H */

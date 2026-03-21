@@ -133,4 +133,4 @@
 #define SUNLogExtraDebugVecArray(logger, label, nvecs, vecs, msg_txt)
 #endif
 
-#endif /* _SUNDIALS_LOGGER_MACROS_H */
+#endif /* SUNDIALS_LOGGER_MACROS_H */
