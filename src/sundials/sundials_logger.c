@@ -129,6 +129,33 @@ static sunbooleantype sunLoggerIsOutputRank(SUNDIALS_MAYBE_UNUSED SUNLogger logg
   return retval;
 }
 
+static SUNErrCode sunLoggerSetFilename(SUNLogger logger, const char* filename,
+                                       FILE** fp)
+{
+  if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
+
+  /* An empty or NULL filename disables output for this stream. */
+  if (sunIsNullOrEmpty(filename))
+  {
+    /* Don't close the file here, that is managed by the underlying hashmap */
+    *fp = NULL;
+    return SUN_SUCCESS;
+  }
+
+  int64_t err = SUNHashMap_GetValue(logger->filenames, filename, (void**)fp);
+  if (err == SUNHASHMAP_ERROR) { return SUN_ERR_FILE_OPEN; }
+  else if (err == SUNHASHMAP_KEYNOTFOUND)
+  {
+    *fp = sunOpenLogFile(filename, "w+");
+    if (*fp == NULL) { return SUN_ERR_FILE_OPEN; }
+
+    err = SUNHashMap_Insert(logger->filenames, filename, (void*)*fp);
+    if (err != 0) { return SUN_ERR_FILE_OPEN; }
+  }
+
+  return SUN_SUCCESS;
+}
+
 static SUNErrCode sunLoggerFreeKeyValue(SUNHashMapKeyValue* kv_ptr)
 {
   if (!kv_ptr || !(*kv_ptr)) { return SUN_SUCCESS; }
@@ -233,33 +260,6 @@ SUNErrCode SUNLogger_CreateFromEnv(SUNComm comm, SUNLogger* logger_out)
   else { *logger_out = logger; }
 
   return err;
-}
-
-static SUNErrCode sunLoggerSetFilename(SUNLogger logger, const char* filename,
-                                       FILE** fp)
-{
-  if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
-
-  /* An empty or NULL filename disables output for this stream. */
-  if (sunIsNullOrEmpty(filename))
-  {
-    /* Don't close the file here, that is managed by the underlying hashmap */
-    *fp = NULL;
-    return SUN_SUCCESS;
-  }
-
-  int64_t err = SUNHashMap_GetValue(logger->filenames, filename, (void**)fp);
-  if (err == SUNHASHMAP_ERROR) { return SUN_ERR_FILE_OPEN; }
-  else if (err == SUNHASHMAP_KEYNOTFOUND)
-  {
-    *fp = sunOpenLogFile(filename, "w+");
-    if (*fp == NULL) { return SUN_ERR_FILE_OPEN; }
-
-    err = SUNHashMap_Insert(logger->filenames, filename, (void*)*fp);
-    if (err != 0) { return SUN_ERR_FILE_OPEN; }
-  }
-
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filename)
