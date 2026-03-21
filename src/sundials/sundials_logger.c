@@ -38,6 +38,8 @@
 #include "sundials_macros.h"
 #include "sundials_utils.h"
 
+#if SUNDIALS_LOGGING_LEVEL > 0
+
 /* default number of files that we allocate space for */
 #define SUN_DEFAULT_LOGFILE_HANDLES_ 8
 
@@ -76,7 +78,6 @@ void sunCreateLogMessage(SUNLogLevel lvl, int rank, const char* scope,
   free(formatted_txt);
 }
 
-#if SUNDIALS_LOGGING_LEVEL > 0
 static FILE* sunOpenLogFile(const char* fname, const char* mode)
 {
   FILE* fp = NULL;
@@ -90,7 +91,6 @@ static FILE* sunOpenLogFile(const char* fname, const char* mode)
 
   return fp;
 }
-#endif
 
 static void sunCloseLogFile(void* fp)
 {
@@ -137,6 +137,8 @@ static SUNErrCode sunLoggerFreeKeyValue(SUNHashMapKeyValue* kv_ptr)
   free(*kv_ptr);
   return SUN_SUCCESS;
 }
+
+#endif
 
 SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger_ptr)
 {
@@ -437,29 +439,29 @@ SUNErrCode SUNLogger_GetOutputRank(SUNLogger logger, int* output_rank)
 
 SUNErrCode SUNLogger_Destroy(SUNLogger* logger_ptr)
 {
-  int retval       = 0;
-  SUNLogger logger = NULL;
+  SUNErrCode retval = SUN_SUCCESS;
+  SUNLogger logger  = *logger_ptr;
 
   if (!logger_ptr) { return SUN_SUCCESS; }
-
-  logger = *logger_ptr;
 
   if (logger && logger->destroy) { retval = logger->destroy(logger_ptr); }
   else if (logger)
   {
     /* Default implementation */
 
+#if SUNDIALS_LOGGING_LEVEL > 0
     if (sunLoggerIsOutputRank(logger, NULL))
     {
       SUNHashMap_Destroy(&logger->filenames);
     }
+#endif
 
 #if SUNDIALS_MPI_ENABLED
     if (logger->comm != SUN_COMM_NULL) { MPI_Comm_free(&logger->comm); }
 #endif
 
     free(logger);
-    logger = NULL;
+    *logger_ptr = NULL;
   }
 
   return retval;
