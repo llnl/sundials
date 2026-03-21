@@ -43,10 +43,11 @@ camelcase for private names (e.g. ``doSomething``).
 Files
 -----
 
-File names in `src` and `include` should use snake case. C header files should
-use the `.h` extension, and C++ header files should the `.hpp` extension. All
-header files should contain an include guard in upper snake case that is
-consistent with the file name. For example, `my_header.h` should contain
+File names in ``src`` and ``include`` should use snake case. C header files
+should use the ``.h`` extension, and C++ header files should the ``.hpp``
+extension. All header files should contain an include guard in upper snake case
+that is consistent with the file name. For example, ``my_header.h`` should
+contain
 
 .. code-block:: c
 
