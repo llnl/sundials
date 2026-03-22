@@ -85,8 +85,8 @@ The user-supplied functions for ARKODE consist of:
   evaluations <ARKODE.Usage.ARKodeProcessingFunctions>`, and
 
 * functions that can optionally be called :ref:`after each step or stage
-  computation within supported ARKODE time stepping modules
-  <ARKODE.Usage.ARKodeProcessingFunctions>`.
+  computation <ARKODE.Usage.ARKodeProcessingFunctions>` within supported ARKODE
+  time stepping modules.
 
 
 .. _ARKODE.Usage.ODERHS:
