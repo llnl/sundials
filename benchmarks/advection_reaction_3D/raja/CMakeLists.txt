@@ -16,9 +16,9 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-if(BUILD_ARKODE
-   AND BUILD_CVODE
-   AND BUILD_IDA)
+if(SUNDIALS_ENABLE_ARKODE
+   AND SUNDIALS_ENABLE_CVODE
+   AND SUNDIALS_ENABLE_IDA)
 
   if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"
                                                 ))
@@ -93,7 +93,7 @@ if(BUILD_ARKODE
   # MPI + CUDA
   # ----------------------------------------------------------------------------
 
-  if(BUILD_NVECTOR_CUDA)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA)
 
     set_source_files_properties(advection_reaction_3D.cpp PROPERTIES LANGUAGE
                                                                      CUDA)
@@ -156,7 +156,7 @@ if(BUILD_ARKODE
   # MPI + HIP
   # ----------------------------------------------------------------------------
 
-  if(BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_HIP)
 
     sundials_add_executable(
       advection_reaction_3D_raja_mpihip

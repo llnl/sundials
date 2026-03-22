@@ -107,7 +107,7 @@ foreach(example_tuple ${FARKODE_examples})
 endforeach(example_tuple ${FARKODE_examples})
 
 # Add the build and install targets for each KLU example (if needed)
-if(BUILD_SUNLINSOL_KLU)
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
 
   # Sundials KLU linear solver module
   set(SUNLINSOLKLU_LIBS sundials_sunlinsolklu sundials_fsunlinsolklu_mod)
@@ -150,7 +150,7 @@ if(BUILD_SUNLINSOL_KLU)
 endif()
 
 # Add the build and install targets for each LAPACK example (if needed)
-if(BUILD_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
   set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackdense

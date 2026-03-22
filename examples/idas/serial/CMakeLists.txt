@@ -114,7 +114,8 @@ foreach(example_tuple ${IDAS_examples})
 endforeach(example_tuple ${IDAS_examples})
 
 # Add the build and install targets for each LAPACK example (if needed)
-if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+   AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
   set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackband
@@ -169,7 +170,7 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
 endif()
 
 # Add the build and install targets for each KLU example (if needed)
-if(BUILD_SUNLINSOL_KLU)
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
 
   # Sundials KLU linear solver module
   set(SUNLINSOLKLU_LIBS sundials_sunlinsolklu)
@@ -226,7 +227,7 @@ if(BUILD_SUNLINSOL_KLU)
 endif()
 
 # Add the build and install targets for each SuperLU_MT example (if needed)
-if(BUILD_SUNLINSOL_SUPERLUMT)
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
 
   # Sundials SuperLU_MT linear solver module
   set(SUNLINSOLSLUMT_LIBS sundials_sunlinsolsuperlumt)
@@ -307,19 +308,20 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   examples2string(IDAS_examples EXAMPLES)
 
-  if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+     AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     examples2string(IDAS_examples_BL EXAMPLES_BL)
   else()
     set(EXAMPLES_BL "")
   endif()
 
-  if(BUILD_SUNLINSOL_KLU)
+  if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
     examples2string(IDAS_examples_KLU EXAMPLES_KLU)
   else()
     set(EXAMPLES_KLU "")
   endif()
 
-  if(BUILD_SUNLINSOL_SUPERLUMT)
+  if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
     examples2string(IDAS_examples_SUPERLUMT EXAMPLES_SLUMT)
     if(SUNDIALS_SUPERLUMT_THREAD_TYPE STREQUAL "PTHREAD")
       set(THREAD_LIBRARY_SLUMT ${CMAKE_THREAD_LIBS_INIT})
