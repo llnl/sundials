@@ -1946,6 +1946,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                         step_mem->Fsi[0], "Fsi_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
+  /* The first stage is the previous time-step solution, so its RHS
+     is the [already-computed] slow RHS from the start of the step */
+
   /* Loop over remaining internal stages */
   for (is = 1; is < step_mem->stages - 1; is++)
   {
