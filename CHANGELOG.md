@@ -37,6 +37,10 @@ did not disable the corresponding logging stream ([Issue
 Fixed a bug in logging output from ARKODE, where for some time stepping modules,
 the current "time" output in the logger was incorrect.
 
+Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
+state would be stored on the first step if the output vector passed to
+`ARKodeEvolve` did not contain the initial condition on the first call.
+
 ### Deprecation Notices
 
 Several CMake options have been deprecated in favor of namespaced versions
