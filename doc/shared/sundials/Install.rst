@@ -635,41 +635,65 @@ SUNDIALS Packages
 The following options can be used to enable/disable particular SUNDIALS
 packages.
 
-.. cmakeoption:: BUILD_ARKODE
+.. cmakeoption:: SUNDIALS_ENABLE_ARKODE
 
-   Build the ARKODE library
-
-   Default: ``ON``
-
-.. cmakeoption:: BUILD_CVODE
-
-   Build the CVODE library
+   Enable the ARKODE library
 
    Default: ``ON``
 
-.. cmakeoption:: BUILD_CVODES
+   .. versionadded:: x.y.z
 
-   Build the CVODES library
+      Replaces the deprecated option ``BUILD_ARKODE``
 
-   Default: ``ON``
+.. cmakeoption:: SUNDIALS_ENABLE_CVODE
 
-.. cmakeoption:: BUILD_IDA
-
-   Build the IDA library
+   Enable the CVODE library
 
    Default: ``ON``
 
-.. cmakeoption:: BUILD_IDAS
+   .. versionadded:: x.y.z
 
-   Build the IDAS library
+      Replaces the deprecated option ``BUILD_CVODE``
+
+.. cmakeoption:: SUNDIALS_ENABLE_CVODES
+
+   Enable the CVODES library
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_CVODES``
+
+.. cmakeoption:: SUNDIALS_ENABLE_IDA
+
+   Enable the IDA library
 
    Default: ``ON``
 
-.. cmakeoption:: BUILD_KINSOL
+   .. versionadded:: x.y.z
 
-   Build the KINSOL library
+      Replaces the deprecated option ``BUILD_IDA``
+
+.. cmakeoption:: SUNDIALS_ENABLE_IDAS
+
+   Enable the IDAS library
 
    Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_IDAS``
+
+.. cmakeoption:: SUNDIALS_ENABLE_KINSOL
+
+   Enable the KINSOL library
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_KINSOL``
 
 .. _Installation.Options.Examples:
 

@@ -30,36 +30,31 @@ add_subdirectory(sunadjointcheckpointscheme)
 add_subdirectory(sundomeigest)
 
 # ARKODE library
-if(BUILD_ARKODE)
+if(SUNDIALS_ENABLE_ARKODE)
   add_subdirectory(arkode)
 endif()
 
 # CVODE library
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   add_subdirectory(cvode)
 endif()
 
 # CVODES library
-if(BUILD_CVODES)
+if(SUNDIALS_ENABLE_CVODES)
   add_subdirectory(cvodes)
 endif()
 
 # IDA library
-if(BUILD_IDA)
+if(SUNDIALS_ENABLE_IDA)
   add_subdirectory(ida)
 endif()
 
 # IDAS library
-if(BUILD_IDAS)
+if(SUNDIALS_ENABLE_IDAS)
   add_subdirectory(idas)
 endif()
 
 # KINSOL library
-if(BUILD_KINSOL)
+if(SUNDIALS_ENABLE_KINSOL)
   add_subdirectory(kinsol)
-endif()
-
-# CPODES library
-if(BUILD_CPODES)
-  add_subdirectory(cpodes)
 endif()

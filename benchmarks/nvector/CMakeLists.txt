@@ -19,51 +19,51 @@
 
 add_subdirectory(serial)
 
-if(BUILD_NVECTOR_PARALLEL)
+if(SUNDIALS_ENABLE_NVECTOR_PARALLEL)
   add_subdirectory(parallel)
 endif()
 
-if(BUILD_NVECTOR_MPIPLUSX)
+if(SUNDIALS_ENABLE_NVECTOR_MPIPLUSX)
   add_subdirectory(mpiplusx)
 endif()
 
-if(BUILD_NVECTOR_PARHYP)
+if(SUNDIALS_ENABLE_NVECTOR_PARHYP)
   add_subdirectory(parhyp)
 endif()
 
-if(BUILD_NVECTOR_PTHREADS)
+if(SUNDIALS_ENABLE_NVECTOR_PTHREADS)
   add_subdirectory(pthreads)
 endif()
 
-if(BUILD_NVECTOR_OPENMP)
+if(SUNDIALS_ENABLE_NVECTOR_OPENMP)
   add_subdirectory(openmp)
 endif()
 
-if(BUILD_NVECTOR_OPENMPDEV)
+if(SUNDIALS_ENABLE_NVECTOR_OPENMPDEV)
   add_subdirectory(openmpdev)
 endif()
 
-if(BUILD_NVECTOR_PETSC)
+if(SUNDIALS_ENABLE_NVECTOR_PETSC)
   add_subdirectory(petsc)
 endif()
 
-if(BUILD_NVECTOR_CUDA)
+if(SUNDIALS_ENABLE_NVECTOR_CUDA)
   add_subdirectory(cuda)
 endif()
 
-if(BUILD_NVECTOR_HIP)
+if(SUNDIALS_ENABLE_NVECTOR_HIP)
   add_subdirectory(hip)
 endif()
 
-if(BUILD_NVECTOR_RAJA)
+if(SUNDIALS_ENABLE_NVECTOR_RAJA)
   add_subdirectory(raja)
 endif()
 
-if(BUILD_NVECTOR_SYCL)
+if(SUNDIALS_ENABLE_NVECTOR_SYCL)
   add_subdirectory(sycl)
 endif()
 
-if(BUILD_NVECTOR_KOKKOS)
+if(SUNDIALS_ENABLE_NVECTOR_KOKKOS)
   add_subdirectory(kokkos)
 endif()
 

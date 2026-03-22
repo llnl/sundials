@@ -23,13 +23,13 @@ add_subdirectory(dense)
 add_subdirectory(sparse)
 
 # optional TPL matrices
-if(BUILD_SUNMATRIX_CUSPARSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_CUSPARSE)
   add_subdirectory(cusparse)
 endif()
 
-if(BUILD_SUNMATRIX_GINKGO)
+if(SUNDIALS_ENABLE_SUNMATRIX_GINKGO)
   install(CODE "MESSAGE(\"\nInstall SUNMATRIX_GINKGO\n\")")
-  message(STATUS "Added BUILD_SUNMATRIX_GINKGO module")
+  message(STATUS "Added SUNDIALS_ENABLE_SUNMATRIX_GINKGO module")
   add_library(sundials_sunmatrixginkgo INTERFACE)
   target_link_libraries(sundials_sunmatrixginkgo INTERFACE sundials_core)
   target_include_directories(
@@ -47,9 +47,9 @@ if(BUILD_SUNMATRIX_GINKGO)
       CACHE INTERNAL "" FORCE)
 endif()
 
-if(BUILD_SUNMATRIX_KOKKOSDENSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_KOKKOSDENSE)
   install(CODE "MESSAGE(\"\nInstall SUNMATRIX_KOKKOSDENSE\n\")")
-  message(STATUS "Added BUILD_SUNMATRIX_KOKKOSDENSE module")
+  message(STATUS "Added SUNDIALS_ENABLE_SUNMATRIX_KOKKOSDENSE module")
   add_library(sundials_sunmatrixkokkosdense INTERFACE)
   target_link_libraries(
     sundials_sunmatrixkokkosdense INTERFACE sundials_core Kokkos::kokkos
@@ -68,14 +68,14 @@ if(BUILD_SUNMATRIX_KOKKOSDENSE)
       CACHE INTERNAL "" FORCE)
 endif()
 
-if(BUILD_SUNMATRIX_MAGMADENSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_MAGMADENSE)
   add_subdirectory(magmadense)
 endif()
 
-if(BUILD_SUNMATRIX_ONEMKLDENSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_ONEMKLDENSE)
   add_subdirectory(onemkldense)
 endif()
 
-if(BUILD_SUNMATRIX_SLUNRLOC)
+if(SUNDIALS_ENABLE_SUNMATRIX_SLUNRLOC)
   add_subdirectory(slunrloc)
 endif()

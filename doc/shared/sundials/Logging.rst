@@ -60,7 +60,8 @@ to the file ``sun.log`` as follows
 
 The different environment variables may all be set to the same file, or to
 distinct files, or some combination there of. To disable output for one of the
-streams, then do not set the environment variable, or set it to an empty string.
+streams, set the environment variable to an empty string. To leave the stream
+at its default output, do not set the environment variable.
 If :cmakeop:`SUNDIALS_LOGGING_LEVEL` was set at build-time to a level lower than
 the corresponding environment variable, then setting the environment variable
 will do nothing. For example, if the logging level is set to ``2`` (errors and
@@ -261,7 +262,9 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``error_filename`` -- the name of the file to use for error output.
+      * ``error_filename`` -- the name of the file to use for error
+        output. Passing ``NULL`` or an empty string disables output for this
+        stream.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
@@ -273,7 +276,9 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``warning_filename`` -- the name of the file to use for warning output.
+      * ``warning_filename`` -- the name of the file to use for warning
+        output. Passing ``NULL`` or an empty string disables output for this
+        stream.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
@@ -285,7 +290,9 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``info_filename`` -- the name of the file to use for info output.
+      * ``info_filename`` -- the name of the file to use for info
+        output. Passing ``NULL`` or an empty string disables output for this
+        stream.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
@@ -297,7 +304,9 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``debug_filename`` -- the name of the file to use for debug output.
+      * ``debug_filename`` -- the name of the file to use for debug
+        output. Passing an ``NULL`` or empty string disables output for this
+        stream.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
