@@ -35,7 +35,7 @@ did not disable the corresponding logging stream ([Issue
 #844](https://github.com/llnl/sundials/issues/844)).
 
 Fixed a bug in logging output from ARKODE, where for some time stepping modules,
-the the current "time" output in the logger was incorrect.
+the current "time" output in the logger was incorrect.
 
 ### Deprecation Notices
 
