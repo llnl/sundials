@@ -44,7 +44,7 @@ set(ARKODE_examples
 # Header files to install
 set(ARKODE_headers)
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   list(APPEND ARKODE_examples "ark_advection_diffusion_reaction.cpp\;\;develop")
   list(APPEND ARKODE_headers "ark_advection_diffusion_reaction.hpp")
 endif()
@@ -77,7 +77,7 @@ foreach(example_tuple ${ARKODE_examples})
     target_link_libraries(${example_target} sundials_arkode sundials_nvecserial
                           ${EXE_EXTRA_LINK_LIBS})
 
-    if(BUILD_CVODE)
+    if(SUNDIALS_ENABLE_CVODE)
       target_link_libraries(${example_target} sundials_cvode)
     endif()
   endif()
@@ -101,7 +101,7 @@ endforeach(example_tuple ${ARKODE_examples})
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
-  if(BUILD_CVODE)
+  if(SUNDIALS_ENABLE_CVODE)
     set(_include_cvode cvode)
     if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
       set(_include_cvode_stubs cvode_fused_stubs)
