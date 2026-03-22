@@ -16,9 +16,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  */
-
-#ifndef VECTORKERNELS_HIP_HPP
-#define VECTORKERNELS_HIP_HPP
+#ifndef SUNDIALS_VECTORKERNELS_HIP_HPP
+#define SUNDIALS_VECTORKERNELS_HIP_HPP
 
 #include <limits>
 
@@ -297,4 +296,4 @@ __global__ void minQuotientKernel(const T MAX_VAL, const T* num, const T* den,
 } // namespace hip
 } // namespace sundials
 
-#endif // VECTORKERNELS_HIP_HPP
+#endif // SUNDIALS_VECTORKERNELS_HIP_HPP

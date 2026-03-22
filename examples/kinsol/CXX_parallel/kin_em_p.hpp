@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------*/
-
-#ifndef KIN_EM_P_HPP
-#define KIN_EM_P_HPP
+#ifndef SUNDIALS_KIN_EM_P_HPP
+#define SUNDIALS_KIN_EM_P_HPP
 
 #include <algorithm>
 #include <cmath>

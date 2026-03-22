@@ -19,9 +19,8 @@
  * Implementation header file for the CVSBANDPRE module.
  * -----------------------------------------------------------------
  */
-
-#ifndef CVODES_BANDPRE_IMPL_H
-#define CVODES_BANDPRE_IMPL_H
+#ifndef SUNDIALS_CVODES_BANDPRE_IMPL_H
+#define SUNDIALS_CVODES_BANDPRE_IMPL_H
 
 #include <cvodes/cvodes_bandpre.h>
 #include <sunlinsol/sunlinsol_band.h>

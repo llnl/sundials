@@ -20,9 +20,8 @@
  * block-diagonal matrix with banded blocks, for use with IDA
  * and an IDASPILS linear solver.
  *-----------------------------------------------------------------*/
-
-#ifndef IDAS_BBDPRE_IMPL_H
-#define IDAS_BBDPRE_IMPL_H
+#ifndef SUNDIALS_IDAS_BBDPRE_IMPL_H
+#define SUNDIALS_IDAS_BBDPRE_IMPL_H
 
 #include <idas/idas_bbdpre.h>
 #include <sunlinsol/sunlinsol_band.h>

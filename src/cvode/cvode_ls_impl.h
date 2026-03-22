@@ -17,9 +17,8 @@
  *-----------------------------------------------------------------
  * Implementation header file for CVODE's linear solver interface.
  *-----------------------------------------------------------------*/
-
-#ifndef CVODE_LS_IMPL_H
-#define CVODE_LS_IMPL_H
+#ifndef SUNDIALS_CVODE_LS_IMPL_H
+#define SUNDIALS_CVODE_LS_IMPL_H
 
 #include <cvode/cvode_ls.h>
 

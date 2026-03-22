@@ -16,9 +16,8 @@
  * ---------------------------------------------------------------------
  * This is the header file for the CVODE diagonal linear solver, CVDIAG.
  * ---------------------------------------------------------------------*/
-
-#ifndef CVODES_DIAG_H
-#define CVODES_DIAG_H
+#ifndef SUNDIALS_CVODES_DIAG_H
+#define SUNDIALS_CVODES_DIAG_H
 
 #include <sundials/sundials_nvector.h>
 

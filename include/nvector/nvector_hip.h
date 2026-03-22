@@ -17,9 +17,8 @@
  * This is the header file for the HIP implementation of the
  * NVECTOR module.
  * -----------------------------------------------------------------*/
-
-#ifndef NVECTOR_HIP_H
-#define NVECTOR_HIP_H
+#ifndef SUNDIALS_NVECTOR_HIP_H
+#define SUNDIALS_NVECTOR_HIP_H
 
 #include <hip/hip_runtime.h>
 #include <stdio.h>

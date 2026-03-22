@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_LOGGER_MACROS_H
-#define SUNDIALS_LOGGER_MACROS_H
+#ifndef SUNDIALS_SUNDIALS_LOGGER_MACROS_H
+#define SUNDIALS_SUNDIALS_LOGGER_MACROS_H
 
 #include <stdarg.h>
 
@@ -133,4 +132,4 @@
 #define SUNLogExtraDebugVecArray(logger, label, nvecs, vecs, msg_txt)
 #endif
 
-#endif /* SUNDIALS_LOGGER_MACROS_H */
+#endif /* SUNDIALS_SUNDIALS_LOGGER_MACROS_H */

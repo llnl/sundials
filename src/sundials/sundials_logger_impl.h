@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * SUNDIALS logging class implementation.
  * ----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_LOGGER_IMPL_H
-#define SUNDIALS_LOGGER_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_LOGGER_IMPL_H
+#define SUNDIALS_SUNDIALS_LOGGER_IMPL_H
 
 #include <stdarg.h>
 #include <sundials/priv/sundials_logger_macros.h>

@@ -19,9 +19,8 @@
  * SUNMATRIX module, SUNMATRIX_MAGMADENSE.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNMATRIX_MAGMADENSE_H
-#define SUNMATRIX_MAGMADENSE_H
+#ifndef SUNDIALS_SUNMATRIX_MAGMADENSE_H
+#define SUNDIALS_SUNMATRIX_MAGMADENSE_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>

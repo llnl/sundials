@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * C++ specific ARKODE definitions.
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_MRISTEP_HPP
-#define ARKODE_MRISTEP_HPP
+#ifndef SUNDIALS_ARKODE_MRISTEP_HPP
+#define SUNDIALS_ARKODE_MRISTEP_HPP
 
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_mristep.h>

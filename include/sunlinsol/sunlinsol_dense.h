@@ -28,9 +28,8 @@
  *     for the type 'sunbooleantype' and 'indextype'.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNLINSOL_DENSE_H
-#define SUNLINSOL_DENSE_H
+#ifndef SUNDIALS_SUNLINSOL_DENSE_H
+#define SUNDIALS_SUNLINSOL_DENSE_H
 
 #include <sundials/sundials_dense.h>
 #include <sundials/sundials_linearsolver.h>

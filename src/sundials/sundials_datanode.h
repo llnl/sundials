@@ -18,9 +18,8 @@
  * holding references to child nodes (list or object nodes). A
  * SUNDataNode maps well to a JSON node.
  * ----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_DATANODE_H
-#define SUNDIALS_DATANODE_H
+#ifndef SUNDIALS_SUNDIALS_DATANODE_H
+#define SUNDIALS_SUNDIALS_DATANODE_H
 
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>

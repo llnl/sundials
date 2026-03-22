@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_PROFILER_HPP
-#define SUNDIALS_PROFILER_HPP
+#ifndef SUNDIALS_SUNDIALS_PROFILER_HPP
+#define SUNDIALS_SUNDIALS_PROFILER_HPP
 
 #include <cstring>
 #include <utility>
@@ -64,4 +63,4 @@ struct SUNProfilerDeleter
 } // namespace experimental
 } // namespace sundials
 
-#endif /* SUNDIALS_PROFILER_HPP */
+#endif /* SUNDIALS_SUNDIALS_PROFILER_HPP */

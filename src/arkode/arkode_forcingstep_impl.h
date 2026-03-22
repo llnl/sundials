@@ -16,9 +16,8 @@
  *---------------------------------------------------------------
  * This header defines the step memory for ForcingStep.
  *--------------------------------------------------------------*/
-
-#ifndef ARKODE_FORCINGSTEP_IMPL_H
-#define ARKODE_FORCINGSTEP_IMPL_H
+#ifndef SUNDIALS_ARKODE_FORCINGSTEP_IMPL_H
+#define SUNDIALS_ARKODE_FORCINGSTEP_IMPL_H
 
 #include <sundials/sundials_stepper.h>
 

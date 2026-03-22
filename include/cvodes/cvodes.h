@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * This is the header file for the main CVODES integrator.
  * -----------------------------------------------------------------*/
-
-#ifndef CVODES_H
-#define CVODES_H
+#ifndef SUNDIALS_CVODES_H
+#define SUNDIALS_CVODES_H
 
 #include <cvodes/cvodes_ls.h>
 #include <cvodes/cvodes_proj.h>

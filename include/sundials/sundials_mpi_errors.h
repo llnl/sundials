@@ -12,9 +12,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_MPI_ERRORS_H
-#define SUNDIALS_MPI_ERRORS_H
+#ifndef SUNDIALS_SUNDIALS_MPI_ERRORS_H
+#define SUNDIALS_SUNDIALS_MPI_ERRORS_H
 
 #include <sundials/sundials_errors.h>
 
@@ -31,4 +30,4 @@ void SUNMPIAbortErrHandlerFn(int line, const char* func, const char* file,
 }
 #endif
 
-#endif /* SUNDIALS_MPI_ERRORS_H */
+#endif /* SUNDIALS_SUNDIALS_MPI_ERRORS_H */

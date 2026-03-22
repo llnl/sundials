@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
-
-#ifndef SUNDIALS_CONTEXT_USERSUPPLIED_HPP
-#define SUNDIALS_CONTEXT_USERSUPPLIED_HPP
+#ifndef SUNDIALS_SUNDIALS_CONTEXT_USERSUPPLIED_HPP
+#define SUNDIALS_SUNDIALS_CONTEXT_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>

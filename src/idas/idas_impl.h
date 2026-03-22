@@ -17,9 +17,8 @@
  * This is the header file (private version) for the main IDAS solver.
  * -----------------------------------------------------------------
  */
-
-#ifndef IDAS_IMPL_H
-#define IDAS_IMPL_H
+#ifndef SUNDIALS_IDAS_IMPL_H
+#define SUNDIALS_IDAS_IMPL_H
 
 #include <stdarg.h>
 

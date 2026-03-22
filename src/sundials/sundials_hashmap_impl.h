@@ -19,9 +19,8 @@
  * The values can be anything, but will be freed by
  * the hash map upon its destruction.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_HASHMAP_IMPL_H
-#define SUNDIALS_HASHMAP_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_HASHMAP_IMPL_H
+#define SUNDIALS_SUNDIALS_HASHMAP_IMPL_H
 
 #include <stdlib.h>
 #include <sundials/sundials_types.h>

@@ -27,9 +27,8 @@
  * prototypes for use across ARKODE-based time integration
  * modules.
  * -----------------------------------------------------------------*/
-
-#ifndef ARKODE_H
-#define ARKODE_H
+#ifndef SUNDIALS_ARKODE_H
+#define SUNDIALS_ARKODE_H
 
 #include <arkode/arkode_butcher.h>
 #include <stdio.h>

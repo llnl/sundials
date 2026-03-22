@@ -15,9 +15,8 @@
  * This header file contains definitions of MPI data types, which
  * are used by MPI parallel vector implementations.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_MPI_TYPES_H
-#define SUNDIALS_MPI_TYPES_H
+#ifndef SUNDIALS_SUNDIALS_MPI_TYPES_H
+#define SUNDIALS_SUNDIALS_MPI_TYPES_H
 
 #include <mpi.h>
 #include <sundials/sundials_types.h>
@@ -38,4 +37,4 @@
 #define MPI_SUNINDEXTYPE MPI_INT32_T
 #endif
 
-#endif /* SUNDIALS_MPI_TYPES_H */
+#endif /* SUNDIALS_SUNDIALS_MPI_TYPES_H */

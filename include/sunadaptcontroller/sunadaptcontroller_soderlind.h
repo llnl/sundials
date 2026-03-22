@@ -17,9 +17,8 @@
  * This is the header file for the SUNAdaptController_Soderlind
  * module.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNADAPTCONTROLLER_SODERLIND_H
-#define SUNADAPTCONTROLLER_SODERLIND_H
+#ifndef SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H
+#define SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H
 
 #include <stdio.h>
 #include <sundials/sundials_adaptcontroller.h>
@@ -148,4 +147,4 @@ SUNAdaptController SUNAdaptController_H312(SUNContext sunctx);
 }
 #endif
 
-#endif /* SUNADAPTCONTROLLER_SODERLIND_H */
+#endif /* SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H */

@@ -19,9 +19,8 @@
  * -----------------------------------------------------------------
  * Contains all error checking macros and private error handling API.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_ERRORS_IMPL_H
-#define SUNDIALS_ERRORS_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_ERRORS_IMPL_H
+#define SUNDIALS_SUNDIALS_ERRORS_IMPL_H
 
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_context.h>
@@ -558,4 +557,4 @@ static inline void SUNHandleErrWithFmtMsg(int line, const char* func,
 }
 #endif
 
-#endif /* SUNDIALS_ERRORS_IMPL_H */
+#endif /* SUNDIALS_SUNDIALS_ERRORS_IMPL_H */
