@@ -1146,7 +1146,7 @@ step attempt by ARKODE (see :c:func:`ARKodeSetPreStepFn`).
    * **t** -- the current value of the independent variable.
    * **y** -- the current value of the dependent variable vector that will be
      used as the initial condition for the upcoming step.
-   * **step** -- the step index (starting from the first internal step since
+   * **step** -- the step index (starting at 0 for the first internal step since
      ARKODE was (re-)initialized).
    * **attempt** -- a counter indicating which attempt at the step is about to
      occur -- 0 indicates that the previous step succeeded and this is the first
@@ -1181,7 +1181,7 @@ A user-provided :c:type:`ARKPostStepFn` will be called following each
    * **t** -- the current value of the independent variable.
    * **y** -- the current value of the dependent variable vector that resulted
      from the successful time step.
-   * **step** -- the step index (starting from the first internal step since
+   * **step** -- the step index (starting at 0 for the first internal step since
      ARKODE was (re-)initialized).
    * **user_data** -- the ``user_data`` pointer that was passed to
      :c:func:`ARKodeSetUserData`.
