@@ -42,6 +42,7 @@
  *     (which stores the result of the operation a*x+b*y in y)
  *     is legal.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_NVECTOR_PTHREADS_H
 #define SUNDIALS_NVECTOR_PTHREADS_H
 

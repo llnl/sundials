@@ -18,6 +18,7 @@
  * -----------------------------------------------------------------------------
  * This is the header file for CVODE's projection interface.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_CVODE_PROJ_H
 #define SUNDIALS_CVODE_PROJ_H
 

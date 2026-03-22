@@ -18,6 +18,7 @@
  * -----------------------------------------------------------------
  * KINBBDPRE module header file (private version)
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_KINSOL_BBDPRE_IMPL_H
 #define SUNDIALS_KINSOL_BBDPRE_IMPL_H
 

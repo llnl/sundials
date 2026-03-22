@@ -18,6 +18,7 @@
  * SUNDIALS objects in a simulation share. It is thread-safe provided
  * that each thread has its own context object.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_CONTEXT_H
 #define SUNDIALS_SUNDIALS_CONTEXT_H
 

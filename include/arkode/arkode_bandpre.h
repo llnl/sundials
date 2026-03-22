@@ -17,6 +17,7 @@
  * This is the header file for the ARKBANDPRE module, which provides
  * a banded difference quotient Jacobian-based preconditioner.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_BANDPRE_H
 #define SUNDIALS_ARKODE_BANDPRE_H
 

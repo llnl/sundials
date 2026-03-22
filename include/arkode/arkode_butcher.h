@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This is the header file for ARKode Butcher table structures.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_BUTCHER_H
 #define SUNDIALS_ARKODE_BUTCHER_H
 

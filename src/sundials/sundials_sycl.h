@@ -20,6 +20,7 @@
 
 #include <sundials/sundials_types.h>
 #include <sycl/sycl.hpp>
+
 #ifndef SUNDIALS_SUNDIALS_SYCL_H
 #define SUNDIALS_SUNDIALS_SYCL_H
 

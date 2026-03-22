@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * This is the header file an NVector implementation using Kokkos.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_NVECTOR_KOKKOS_HPP
 #define SUNDIALS_NVECTOR_KOKKOS_HPP
 

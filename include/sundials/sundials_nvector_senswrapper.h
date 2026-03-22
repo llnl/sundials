@@ -25,6 +25,7 @@
  * Part III contains the prototype for the constructors N_VNewEmpty_SensWrapper
  * and N_VNew_SensWrapper, as well as wrappers to NVECTOR vector operations.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_NVECTOR_SENSWRAPPER_H
 #define SUNDIALS_SUNDIALS_NVECTOR_SENSWRAPPER_H
 

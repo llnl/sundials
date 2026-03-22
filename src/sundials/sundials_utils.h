@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This header file contains common utility functions.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_UTILS_H
 #define SUNDIALS_SUNDIALS_UTILS_H
 

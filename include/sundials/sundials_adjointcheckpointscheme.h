@@ -14,6 +14,7 @@
  * -----------------------------------------------------------------
  * SUNAdjointCheckpointScheme class declaration.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_H
 #define SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_H
 

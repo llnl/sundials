@@ -17,6 +17,7 @@
  * Implementation header file for ARKODE's root-finding (in time)
  * utility.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_ROOT_IMPL_H
 #define SUNDIALS_ARKODE_ROOT_IMPL_H
 

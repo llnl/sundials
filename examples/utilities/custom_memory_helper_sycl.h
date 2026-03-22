@@ -17,6 +17,7 @@
  * Example of a custom SUNMemoryHelper that only supports SYCL
  * unmanaged memory only and synchronous copies.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_CUSTOM_MEMORY_HELPER_SYCL_H
 #define SUNDIALS_CUSTOM_MEMORY_HELPER_SYCL_H
 

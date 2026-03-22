@@ -27,6 +27,7 @@
  * prototypes for use across ARKODE-based time integration
  * modules.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_H
 #define SUNDIALS_ARKODE_H
 

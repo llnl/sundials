@@ -15,6 +15,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_RHS3D_HPP
 #define SUNDIALS_RHS3D_HPP
 

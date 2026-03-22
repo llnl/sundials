@@ -30,6 +30,7 @@
  *     for the type 'sunbooleantype' and 'indextype'.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNMATRIX_BAND_H
 #define SUNDIALS_SUNMATRIX_BAND_H
 

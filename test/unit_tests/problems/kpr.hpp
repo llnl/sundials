@@ -35,6 +35,7 @@
  * For MRI methods the u equation is considered slow (potentially with the same
  * ImEx splitting as above) while the v equation is considered fast.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_KPR_HPP
 #define SUNDIALS_KPR_HPP
 

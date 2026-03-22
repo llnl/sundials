@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This is the header file for the ARKODE SPRKStep module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_SPRKSTEP_H
 #define SUNDIALS_ARKODE_SPRKSTEP_H
 

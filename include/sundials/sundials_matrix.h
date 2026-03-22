@@ -43,6 +43,7 @@
  *   - macros to access the underlying SUNMatrix data
  *   - a routine to print the content of a SUNMatrix
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_MATRIX_H
 #define SUNDIALS_SUNDIALS_MATRIX_H
 

@@ -17,6 +17,7 @@
  * This is the header file for the RAJA implementation of the
  * NVECTOR module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_NVECTOR_RAJA_H
 #define SUNDIALS_NVECTOR_RAJA_H
 

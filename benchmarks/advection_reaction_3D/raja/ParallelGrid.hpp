@@ -18,6 +18,7 @@
  * A simple implementation of a parallel structured cartesian mesh class that
  * supports up to 3 dimensions and an arbitrary number of degrees of freedom.
  * ----------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_PARALLELGRID_HPP
 #define SUNDIALS_PARALLELGRID_HPP
 

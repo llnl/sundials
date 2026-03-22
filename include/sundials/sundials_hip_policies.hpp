@@ -19,6 +19,7 @@
  * are utilized to determine HIP kernel launch parameters.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNDIALS_HIP_POLICIES_HPP
 #define SUNDIALS_SUNDIALS_HIP_POLICIES_HPP
 

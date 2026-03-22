@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * C++ view of SUNDIALS NVector
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_NVECTOR_HPP
 #define SUNDIALS_SUNDIALS_NVECTOR_HPP
 

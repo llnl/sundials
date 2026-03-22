@@ -16,6 +16,7 @@
  *---------------------------------------------------------------
  * Implementation header file for the ARKBANDPRE module.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_BANDPRE_IMPL_H
 #define SUNDIALS_ARKODE_BANDPRE_IMPL_H
 

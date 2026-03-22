@@ -16,6 +16,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_VECTORKERNELS_CUH
 #define SUNDIALS_VECTORKERNELS_CUH
 

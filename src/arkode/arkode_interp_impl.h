@@ -17,6 +17,7 @@
  * Implementation header file for ARKODE's temporal interpolation
  * utilities.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_INTERP_IMPL_H
 #define SUNDIALS_ARKODE_INTERP_IMPL_H
 

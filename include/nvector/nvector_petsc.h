@@ -36,6 +36,7 @@
  *     (which stores the result of the operation a*x+b*y in y)
  *     is legal.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_NVECTOR_PETSC_H
 #define SUNDIALS_NVECTOR_PETSC_H
 

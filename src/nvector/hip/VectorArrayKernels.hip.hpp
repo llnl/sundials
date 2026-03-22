@@ -16,6 +16,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_VECTORARRAYKERNELS_HIP_HPP
 #define SUNDIALS_VECTORARRAYKERNELS_HIP_HPP
 

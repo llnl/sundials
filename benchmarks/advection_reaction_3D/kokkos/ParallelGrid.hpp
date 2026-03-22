@@ -19,6 +19,7 @@
  * supports up to 3 spatial dimensions and an arbitrary number of degrees of
  * freedom, and that uses Kokkos views to store communication buffer data.
  * ----------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_PARALLELGRID_HPP
 #define SUNDIALS_PARALLELGRID_HPP
 

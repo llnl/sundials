@@ -14,6 +14,7 @@
  * -----------------------------------------------------------------
  * SUNAdjointStepper class definition.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_ADJOINTSTEPPER_H
 #define SUNDIALS_SUNDIALS_ADJOINTSTEPPER_H
 

@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * C++ specific ARKODE definitions.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_ERKSTEP_HPP
 #define SUNDIALS_ARKODE_ERKSTEP_HPP
 

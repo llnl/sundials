@@ -21,6 +21,7 @@
  * -----------------------------------------------------------------
  * SUNDIALS context class implementation.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_CONTEXT_IMPL_H
 #define SUNDIALS_SUNDIALS_CONTEXT_IMPL_H
 

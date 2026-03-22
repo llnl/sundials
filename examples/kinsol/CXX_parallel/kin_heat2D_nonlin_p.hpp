@@ -15,6 +15,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_KIN_HEAT2D_NONLIN_P_HPP
 #define SUNDIALS_KIN_HEAT2D_NONLIN_P_HPP
 

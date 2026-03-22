@@ -16,6 +16,7 @@
  *---------------------------------------------------------------
  * Implementation header file for the ARKBBDPRE module.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_BBDPRE_IMPL_H
 #define SUNDIALS_ARKODE_BBDPRE_IMPL_H
 

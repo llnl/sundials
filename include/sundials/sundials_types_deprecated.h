@@ -16,6 +16,7 @@
  * related to realtype for backwards compatibility. It is preferable
  * to only use the types defined in sundials_types.h .
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_TYPES_DEPRECATED_H
 #define SUNDIALS_SUNDIALS_TYPES_DEPRECATED_H
 

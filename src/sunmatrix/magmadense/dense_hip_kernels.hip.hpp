@@ -17,6 +17,7 @@
  * This is the implementation file for the dense matrix HIP kernels
  * for the SUNMATRIX package based on MAGMA.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_DENSE_HIP_KERNELS_HIP_HPP
 #define SUNDIALS_DENSE_HIP_KERNELS_HIP_HPP
 

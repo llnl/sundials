@@ -17,6 +17,7 @@
  * This is the implementation file for the dense matrix CUDA kernels
  * for the SUNMATRIX package based on MAGMA.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_DENSE_CUDA_KERNELS_CUH
 #define SUNDIALS_DENSE_CUDA_KERNELS_CUH
 

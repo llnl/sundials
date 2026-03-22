@@ -20,6 +20,7 @@
  * Implementation header file for the CVBANDPRE module.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_CVODE_BANDPRE_IMPL_H
 #define SUNDIALS_CVODE_BANDPRE_IMPL_H
 

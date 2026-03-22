@@ -28,6 +28,7 @@
  *     for the type 'sunbooleantype' and 'indextype'.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNLINSOL_DENSE_H
 #define SUNDIALS_SUNLINSOL_DENSE_H
 

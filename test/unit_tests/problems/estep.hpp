@@ -31,6 +31,7 @@
  *   Partition 1 = ode_rhs_1 = -lambda * y
  *   Partition 2 = ode_rhs_2 = y^2
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ESTEP_HPP
 #define SUNDIALS_ESTEP_HPP
 

@@ -17,6 +17,7 @@
  * This is the header file for the CUDA implementation of the
  * NVECTOR module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_NVECTOR_CUDA_H
 #define SUNDIALS_NVECTOR_CUDA_H
 

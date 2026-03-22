@@ -18,6 +18,7 @@
  * ----------------------------------------------------------------
  * This is the header file for CVODE's linear solver interface.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_CVODE_LS_H
 #define SUNDIALS_CVODE_LS_H
 

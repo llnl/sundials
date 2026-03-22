@@ -19,6 +19,7 @@
 
 #include "sundials_datanode.h"
 #include "sundials_hashmap_impl.h"
+
 #ifndef SUNDIALS_SUNDATANODE_INMEM_H
 #define SUNDIALS_SUNDATANODE_INMEM_H
 

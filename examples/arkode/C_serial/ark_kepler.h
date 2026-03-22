@@ -16,6 +16,7 @@
  * ----------------------------------------------------------------------------
  * Utilities for the arkode_kepler example.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARK_KEPLER_H
 #define SUNDIALS_ARK_KEPLER_H
 

@@ -19,6 +19,7 @@
  * that the next step solution should satisfy a desired temporal
  * accuracy.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H
 #define SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H
 

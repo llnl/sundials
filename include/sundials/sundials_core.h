@@ -14,6 +14,7 @@
  * -----------------------------------------------------------------
  * Header file that includes the SUNDIALS core.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_CORE_H
 #define SUNDIALS_SUNDIALS_CORE_H
 

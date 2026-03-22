@@ -23,6 +23,7 @@
  *     be found in the header file sundials_linearsolver.h.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNLINSOL_LAPACKBAND_H
 #define SUNDIALS_SUNLINSOL_LAPACKBAND_H
 

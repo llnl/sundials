@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALSTPETRAVECTORKERNELS_HPP
 #define SUNDIALS_SUNDIALSTPETRAVECTORKERNELS_HPP
 

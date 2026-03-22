@@ -27,6 +27,7 @@
  *   y(t) = a * (t - t_0) + y_0
  *
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_CONSTANT_HPP
 #define SUNDIALS_CONSTANT_HPP
 

@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This is the header file for the main IDAS solver.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_IDAS_H
 #define SUNDIALS_IDAS_H
 

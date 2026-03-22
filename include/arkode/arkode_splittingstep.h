@@ -16,6 +16,7 @@
  *---------------------------------------------------------------
  * This is the header file for the ARKODE SplittingStep module.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_SPLITTINGSTEP_H
 #define SUNDIALS_ARKODE_SPLITTINGSTEP_H
 

@@ -16,6 +16,7 @@
  * ----------------------------------------------------------------------------
  * Utilities for the arkode_harmonic_symplectic example.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARK_HARMONIC_SYMPLECTIC_H
 #define SUNDIALS_ARK_HARMONIC_SYMPLECTIC_H
 

@@ -17,6 +17,7 @@
  * This is the header file for the SUNAdaptController_Soderlind
  * module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H
 #define SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H
 

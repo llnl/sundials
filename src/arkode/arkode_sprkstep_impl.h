@@ -17,6 +17,7 @@
  * Implementation header file for ARKODE's SPRK time stepper
  * module.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_SPRKSTEP_IMPL_H
 #define SUNDIALS_ARKODE_SPRKSTEP_IMPL_H
 

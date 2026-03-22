@@ -19,6 +19,7 @@
  * SUNMATRIX module, SUNMATRIX_MAGMADENSE.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNMATRIX_MAGMADENSE_H
 #define SUNDIALS_SUNMATRIX_MAGMADENSE_H
 

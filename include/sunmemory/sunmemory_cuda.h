@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * SUNDIALS CUDA memory helper header file.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNMEMORY_CUDA_H
 #define SUNDIALS_SUNMEMORY_CUDA_H
 
