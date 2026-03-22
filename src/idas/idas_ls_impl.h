@@ -17,6 +17,7 @@
  *-----------------------------------------------------------------
  * Implementation header file for IDAS's linear solver interface.
  *-----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_IDAS_LS_IMPL_H
 #define SUNDIALS_IDAS_LS_IMPL_H
 

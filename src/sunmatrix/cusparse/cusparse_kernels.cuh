@@ -19,6 +19,7 @@
  * SUNMATRIX module.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_CUSPARSE_KERNELS_CUH
 #define SUNDIALS_CUSPARSE_KERNELS_CUH
 

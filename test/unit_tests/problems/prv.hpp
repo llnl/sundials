@@ -33,6 +33,7 @@
  * Right-hand side (RHS) function is defined for the full problem as well as
  * a function for computing the dominant eigenvalue, L(t).
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_PRV_HPP
 #define SUNDIALS_PRV_HPP
 

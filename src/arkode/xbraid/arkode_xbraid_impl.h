@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * This is the implementation header file for the ARKode + XBraid interface.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_XBRAID_IMPL_H
 #define SUNDIALS_ARKODE_XBRAID_IMPL_H
 

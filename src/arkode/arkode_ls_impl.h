@@ -17,6 +17,7 @@
  * Implementation header file for ARKODE's linear solver
  * interface.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_LS_IMPL_H
 #define SUNDIALS_ARKODE_LS_IMPL_H
 

@@ -23,6 +23,7 @@
  * Routines that work with the type DlsMat begin with "Dense".
  * Routines that work with sunrealtype** begin with "dense".
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_DENSE_H
 #define SUNDIALS_SUNDIALS_DENSE_H
 

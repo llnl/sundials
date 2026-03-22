@@ -15,6 +15,7 @@
  * Contains all error handling interfaces for SUNDIALS that do
  * not depend on MPI.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_ERRORS_H
 #define SUNDIALS_SUNDIALS_ERRORS_H
 

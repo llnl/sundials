@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This is the header file for the ARKODE ARKStep module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_ARKSTEP_H
 #define SUNDIALS_ARKODE_ARKSTEP_H
 

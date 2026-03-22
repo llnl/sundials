@@ -22,6 +22,7 @@
  *     be found in the header file sundials_domeigestimator.h.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNDOMEIGEST_ARNOLDI_H
 #define SUNDIALS_SUNDOMEIGEST_ARNOLDI_H
 

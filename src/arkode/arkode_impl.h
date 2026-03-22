@@ -16,6 +16,7 @@
  *---------------------------------------------------------------
  * Implementation header file for the main ARKODE integrator.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_IMPL_H
 #define SUNDIALS_ARKODE_IMPL_H
 

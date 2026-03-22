@@ -16,6 +16,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNDIALS_HIP_KERNELS_HIP_HPP
 #define SUNDIALS_SUNDIALS_HIP_KERNELS_HIP_HPP
 

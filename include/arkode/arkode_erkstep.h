@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This is the header file for the ARKODE ERKStep module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_ERKSTEP_H
 #define SUNDIALS_ARKODE_ERKSTEP_H
 

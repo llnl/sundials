@@ -18,6 +18,7 @@
  * SUNAdaptController module implementation.  This provides backwards-
  * compatibility for ARKODE's previous "ARKAdaptFn"
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_USER_CONTROLLER_H
 #define SUNDIALS_ARKODE_USER_CONTROLLER_H
 

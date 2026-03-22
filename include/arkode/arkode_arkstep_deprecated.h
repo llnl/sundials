@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_ARKSTEP_DEPRECATED_H
 #define SUNDIALS_ARKODE_ARKSTEP_DEPRECATED_H
 

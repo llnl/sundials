@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * Implementation header file with forward declarations of ARKODE types.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_TYPES_IMPL_H
 #define SUNDIALS_ARKODE_TYPES_IMPL_H
 

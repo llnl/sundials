@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * Implementation header file for ARKODE's relaxation (in time) functionality.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_RELAXATION_IMPL_H
 #define SUNDIALS_ARKODE_RELAXATION_IMPL_H
 

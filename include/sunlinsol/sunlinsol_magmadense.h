@@ -19,6 +19,7 @@
  * SUNLINSOL module, SUNLINSOL_MAGMADENSE.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNLINSOL_MAGMADENSE_H
 #define SUNDIALS_SUNLINSOL_MAGMADENSE_H
 

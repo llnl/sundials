@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * SUNDIALS FILE utility definitions.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_FUTILS_H
 #define SUNDIALS_SUNDIALS_FUTILS_H
 

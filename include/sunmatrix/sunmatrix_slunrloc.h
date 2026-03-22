@@ -18,6 +18,7 @@
  * This is the header file for the SuperLU SLU_NR_loc SUNMatrix.
  * ----------------------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNMATRIX_SLUNRLOC_H
 #define SUNDIALS_SUNMATRIX_SLUNRLOC_H
 

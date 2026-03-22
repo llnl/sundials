@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * C++ view of SUNDIALS SUNMemoryHelper
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_MEMORY_HPP
 #define SUNDIALS_SUNDIALS_MEMORY_HPP
 

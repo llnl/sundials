@@ -46,6 +46,7 @@
  *   - "Set" routines to control solver-specific parameters/options
  *   - "Get" routines to access solver-specific performance metrics
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_NONLINEARSOLVER_H
 #define SUNDIALS_SUNDIALS_NONLINEARSOLVER_H
 

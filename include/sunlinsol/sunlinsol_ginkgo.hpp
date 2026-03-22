@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * SUNLinearSolver interface to Ginkgo linear solvers
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNLINSOL_GINKGO_HPP
 #define SUNDIALS_SUNLINSOL_GINKGO_HPP
 

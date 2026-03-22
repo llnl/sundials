@@ -20,6 +20,7 @@
  * block-diagonal matrix with banded blocks, for use with IDA
  * and an IDASPILS linear solver.
  *-----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_IDA_BBDPRE_IMPL_H
 #define SUNDIALS_IDA_BBDPRE_IMPL_H
 
