@@ -21,7 +21,7 @@
 # for examples excluded from 'make test' in releases
 
 # Examples using SUNDIALS linear solvers
-if(BUILD_SUNNONLINSOL_PETSCSNES)
+if(SUNDIALS_ENABLE_SUNNONLINSOL_PETSCSNES)
   set(ARKODE_examples "ark_petsc_ex25\;1\;1\;develop")
 endif()
 
@@ -36,7 +36,7 @@ endif()
 # Specify libraries to link against
 set(ARKODE_LIB sundials_arkode)
 set(NVECP_LIB sundials_nvecpetsc)
-if(BUILD_SUNNONLINSOL_PETSCSNES)
+if(SUNDIALS_ENABLE_SUNNONLINSOL_PETSCSNES)
   set(SUNNLS_LIB sundials_sunnonlinsolpetscsnes)
 endif()
 

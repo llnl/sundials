@@ -15,10 +15,12 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
+# Check for RAJA not NVECTOR_RAJA because other GPU-enabled vectors are used in
+# the benchmark and RAJA is needed for the user-supplied functions
 if(SUNDIALS_ENABLE_RAJA)
   add_subdirectory(raja)
 endif()
 
-if(SUNDIALS_ENABLE_KOKKOS AND BUILD_NVECTOR_KOKKOS)
+if(SUNDIALS_ENABLE_NVECTOR_KOKKOS)
   add_subdirectory(kokkos)
 endif()
