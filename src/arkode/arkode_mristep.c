@@ -1923,7 +1923,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   /* The first stage is the previous time-step solution, so its RHS
      is the [already-computed] slow RHS from the start of the step */
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
   /* Loop over remaining internal stages */
   for (is = 1; is < step_mem->stages - 1; is++)
