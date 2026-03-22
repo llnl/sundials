@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALSTPETRAVECTORKERNELS_HPP
-#define SUNDIALSTPETRAVECTORKERNELS_HPP
+#ifndef SUNDIALS_SUNDIALSTPETRAVECTORKERNELS_HPP
+#define SUNDIALS_SUNDIALSTPETRAVECTORKERNELS_HPP
 
 #include <Kokkos_Core.hpp>
 #include <Tpetra_Vector.hpp>
@@ -772,4 +771,4 @@ inline scalar_type minQuotientLocal(const vector_type& num, const vector_type& d
 } // namespace trilinos
 } // namespace sundials
 
-#endif // SUNDIALSTPETRAVECTORKERNELS_HPP
+#endif // SUNDIALS_SUNDIALSTPETRAVECTORKERNELS_HPP

@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * SUNLinearSolver interface to Ginkgo linear solvers
  * ---------------------------------------------------------------------------*/
-
-#ifndef SUNLINSOL_GINKGO_HPP
-#define SUNLINSOL_GINKGO_HPP
+#ifndef SUNDIALS_SUNLINSOL_GINKGO_HPP
+#define SUNDIALS_SUNLINSOL_GINKGO_HPP
 
 #include <cstring>
 #include <ginkgo/ginkgo.hpp>
@@ -359,4 +358,4 @@ private:
 } // namespace ginkgo
 } // namespace sundials
 
-#endif // SUNLINSOL_GINKGO_HPP
+#endif // SUNDIALS_SUNLINSOL_GINKGO_HPP

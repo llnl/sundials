@@ -17,9 +17,8 @@
  * Implementation header file for ARKODE's LSRK time stepper
  * module.
  *--------------------------------------------------------------*/
-
-#ifndef ARKODE_LSRKSTEP_IMPL_H
-#define ARKODE_LSRKSTEP_IMPL_H
+#ifndef SUNDIALS_ARKODE_LSRKSTEP_IMPL_H
+#define SUNDIALS_ARKODE_LSRKSTEP_IMPL_H
 
 #include <arkode/arkode_lsrkstep.h>
 #include <sundials/sundials_domeigestimator.h>

@@ -17,9 +17,8 @@
  * This is the header file for the SUNLINEARSOLVER class implementation using
  * the Intel oneAPI Math Kernel Library (oneMKL).
  * ---------------------------------------------------------------------------*/
-
-#ifndef SUNLINSOL_ONEMKLDENSE_H
-#define SUNLINSOL_ONEMKLDENSE_H
+#ifndef SUNDIALS_SUNLINSOL_ONEMKLDENSE_H
+#define SUNDIALS_SUNLINSOL_ONEMKLDENSE_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

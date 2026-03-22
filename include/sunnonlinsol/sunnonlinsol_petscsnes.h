@@ -21,9 +21,8 @@
  *
  * Part II contains prototypes for the solver constructor and operations.
  * ---------------------------------------------------------------------------*/
-
-#ifndef SUNNONLINSOL_PETSCSNES_H
-#define SUNNONLINSOL_PETSCSNES_H
+#ifndef SUNDIALS_SUNNONLINSOL_PETSCSNES_H
+#define SUNDIALS_SUNNONLINSOL_PETSCSNES_H
 
 #include <petscsnes.h>
 

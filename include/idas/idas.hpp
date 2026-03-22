@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * C++ specific IDAS definitions.
  * ---------------------------------------------------------------------------*/
-
-#ifndef IDAS_HPP
-#define IDAS_HPP
+#ifndef SUNDIALS_IDAS_HPP
+#define SUNDIALS_IDAS_HPP
 
 #include <sundials/sundials_classview.hpp>
 

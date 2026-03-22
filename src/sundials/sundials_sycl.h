@@ -20,9 +20,8 @@
 
 #include <sundials/sundials_types.h>
 #include <sycl/sycl.hpp>
-
-#ifndef SUNDIALS_SYCL_H
-#define SUNDIALS_SYCL_H
+#ifndef SUNDIALS_SUNDIALS_SYCL_H
+#define SUNDIALS_SUNDIALS_SYCL_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {

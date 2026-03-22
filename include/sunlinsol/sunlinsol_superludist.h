@@ -30,9 +30,8 @@
  *   the header file sundials_linearsolver.h.
  * ----------------------------------------------------------------------------
  */
-
-#ifndef SUNLINSOL_SUPERLUDIST_H
-#define SUNLINSOL_SUPERLUDIST_H
+#ifndef SUNDIALS_SUNLINSOL_SUPERLUDIST_H
+#define SUNDIALS_SUNLINSOL_SUPERLUDIST_H
 
 #include <mpi.h>
 #include <sundials/sundials_linearsolver.h>

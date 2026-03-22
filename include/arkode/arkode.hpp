@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * C++ specific ARKODE definitions.
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_HPP
-#define ARKODE_HPP
+#ifndef SUNDIALS_ARKODE_HPP
+#define SUNDIALS_ARKODE_HPP
 
 #include <sundials/sundials_classview.hpp>
 

@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
-
-#ifndef BACKENDS_HPP
-#define BACKENDS_HPP
+#ifndef SUNDIALS_BACKENDS_HPP
+#define SUNDIALS_BACKENDS_HPP
 
 #include <RAJA/RAJA.hpp>
 

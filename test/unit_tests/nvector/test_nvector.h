@@ -17,9 +17,8 @@
  * This is the header file contains the prototypes for functions to
  * test an NVECTOR module implementation.
  * -----------------------------------------------------------------*/
-
-#ifndef TEST_NVECTOR_H
-#define TEST_NVECTOR_H
+#ifndef SUNDIALS_TEST_NVECTOR_H
+#define SUNDIALS_TEST_NVECTOR_H
 
 #include <math.h>
 #include <sundials/sundials_types.h>

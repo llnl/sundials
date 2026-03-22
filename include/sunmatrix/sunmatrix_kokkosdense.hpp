@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * This is the header file for a dense SUNMarix implementation using Kokkos.
  * ---------------------------------------------------------------------------*/
-
-#ifndef SUNMATRIX_KOKKOSDENSE_HPP
-#define SUNMATRIX_KOKKOSDENSE_HPP
+#ifndef SUNDIALS_SUNMATRIX_KOKKOSDENSE_HPP
+#define SUNDIALS_SUNMATRIX_KOKKOSDENSE_HPP
 
 #include <KokkosBatched_Gemv_Decl.hpp>
 #include <KokkosBlas2_gemv.hpp>

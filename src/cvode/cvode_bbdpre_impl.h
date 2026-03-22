@@ -19,9 +19,8 @@
  * Implementation header file for the CVBBDPRE module.
  * -----------------------------------------------------------------
  */
-
-#ifndef CVODE_BBDPRE_IMPL_H
-#define CVODE_BBDPRE_IMPL_H
+#ifndef SUNDIALS_CVODE_BBDPRE_IMPL_H
+#define SUNDIALS_CVODE_BBDPRE_IMPL_H
 
 #include <cvode/cvode_bbdpre.h>
 #include <sunlinsol/sunlinsol_band.h>

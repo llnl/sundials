@@ -17,9 +17,8 @@
  * This is the header file for the CUDA implementation of the
  * NVECTOR module.
  * -----------------------------------------------------------------*/
-
-#ifndef NVECTOR_CUDA_H
-#define NVECTOR_CUDA_H
+#ifndef SUNDIALS_NVECTOR_CUDA_H
+#define SUNDIALS_NVECTOR_CUDA_H
 
 #include <cuda_runtime.h>
 #include <stdio.h>

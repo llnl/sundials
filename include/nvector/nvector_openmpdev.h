@@ -41,9 +41,8 @@
  *     (which stores the result of the operation a*x+b*y in y)
  *     is legal.
  * -----------------------------------------------------------------*/
-
-#ifndef NVECTOR_OPENMPDEV_H
-#define NVECTOR_OPENMPDEV_H
+#ifndef SUNDIALS_NVECTOR_OPENMPDEV_H
+#define SUNDIALS_NVECTOR_OPENMPDEV_H
 
 #include <stdio.h>
 #include <sundials/sundials_nvector.h>

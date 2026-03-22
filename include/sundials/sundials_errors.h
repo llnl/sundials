@@ -15,9 +15,8 @@
  * Contains all error handling interfaces for SUNDIALS that do
  * not depend on MPI.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_ERRORS_H
-#define SUNDIALS_ERRORS_H
+#ifndef SUNDIALS_SUNDIALS_ERRORS_H
+#define SUNDIALS_SUNDIALS_ERRORS_H
 
 #include <assert.h>
 #include <stdarg.h>
@@ -130,4 +129,4 @@ const char* SUNGetErrMsg(SUNErrCode code);
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 } /* extern "C" */
 #endif
-#endif /* SUNDIALS_ERRORS_H */
+#endif /* SUNDIALS_SUNDIALS_ERRORS_H */

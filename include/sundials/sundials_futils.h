@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * SUNDIALS FILE utility definitions.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_FUTILS_H
-#define SUNDIALS_FUTILS_H
+#ifndef SUNDIALS_SUNDIALS_FUTILS_H
+#define SUNDIALS_SUNDIALS_FUTILS_H
 
 #include <stdio.h>
 

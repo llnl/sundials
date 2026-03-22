@@ -12,9 +12,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_STEPPER_IMPL_H
-#define SUNDIALS_STEPPER_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_STEPPER_IMPL_H
+#define SUNDIALS_SUNDIALS_STEPPER_IMPL_H
 
 #include <sundials/sundials_core.h>
 #include <sundials/sundials_stepper.h>

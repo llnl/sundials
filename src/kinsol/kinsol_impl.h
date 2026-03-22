@@ -19,9 +19,8 @@
  * KINSOL solver module header file (private version)
  * -----------------------------------------------------------------
  */
-
-#ifndef KINSOL_IMPL_H
-#define KINSOL_IMPL_H
+#ifndef SUNDIALS_KINSOL_IMPL_H
+#define SUNDIALS_KINSOL_IMPL_H
 
 #include <stdarg.h>
 

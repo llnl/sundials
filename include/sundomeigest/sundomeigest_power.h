@@ -22,9 +22,8 @@
  *     be found in the header file sundials_domeigestimator.h.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNDOMEIGEST_POWER_H
-#define SUNDOMEIGEST_POWER_H
+#ifndef SUNDIALS_SUNDOMEIGEST_POWER_H
+#define SUNDIALS_SUNDOMEIGEST_POWER_H
 
 #include <sundials/sundials_domeigestimator.h>
 

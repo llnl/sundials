@@ -17,9 +17,8 @@
  * Example of a custom SUNMemoryHelper that only supports CUDA/HIP
  * unmanaged memory only and synchronous copies.
  * -----------------------------------------------------------------*/
-
-#ifndef CUSTOM_MEMORY_HELPER_GPU_H
-#define CUSTOM_MEMORY_HELPER_GPU_H
+#ifndef SUNDIALS_CUSTOM_MEMORY_HELPER_GPU_H
+#define SUNDIALS_CUSTOM_MEMORY_HELPER_GPU_H
 
 #include <assert.h>
 #include <string.h>

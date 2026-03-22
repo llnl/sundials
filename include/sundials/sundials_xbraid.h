@@ -17,9 +17,8 @@
  * This is the header file for SUNDIALS + XBraid interface base class and
  * NVector interface.
  * -------------------------------------------------------------------------- */
-
-#ifndef SUNDIALS_XBRAID_H
-#define SUNDIALS_XBRAID_H
+#ifndef SUNDIALS_SUNDIALS_XBRAID_H
+#define SUNDIALS_SUNDIALS_XBRAID_H
 
 #include "braid.h"
 #include "sundials/sundials_nvector.h"

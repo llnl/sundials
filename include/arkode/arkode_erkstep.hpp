@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * C++ specific ARKODE definitions.
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_ERKSTEP_HPP
-#define ARKODE_ERKSTEP_HPP
+#ifndef SUNDIALS_ARKODE_ERKSTEP_HPP
+#define SUNDIALS_ARKODE_ERKSTEP_HPP
 
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_erkstep.h>

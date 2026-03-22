@@ -36,9 +36,8 @@
  *     (which stores the result of the operation a*x+b*y in y)
  *     is legal.
  * -----------------------------------------------------------------*/
-
-#ifndef NVECTOR_MPIMANYVECTOR_H
-#define NVECTOR_MPIMANYVECTOR_H
+#ifndef SUNDIALS_NVECTOR_MPIMANYVECTOR_H
+#define SUNDIALS_NVECTOR_MPIMANYVECTOR_H
 
 #include <mpi.h>
 #include <stdio.h>

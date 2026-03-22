@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * Shared header file for 2D diffusion benchmark problem
  * ---------------------------------------------------------------------------*/
-
-#ifndef DIFFUSION_2D_HPP
-#define DIFFUSION_2D_HPP
+#ifndef SUNDIALS_DIFFUSION_2D_HPP
+#define SUNDIALS_DIFFUSION_2D_HPP
 
 #include <algorithm>
 #include <cmath>

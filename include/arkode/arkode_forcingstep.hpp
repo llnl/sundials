@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * C++ specific ARKODE definitions.
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_FORCINGSTEP_HPP
-#define ARKODE_FORCINGSTEP_HPP
+#ifndef SUNDIALS_ARKODE_FORCINGSTEP_HPP
+#define SUNDIALS_ARKODE_FORCINGSTEP_HPP
 
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_forcingstep.h>

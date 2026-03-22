@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * C++ view of SUNDIALS SUNMatrix
  * ---------------------------------------------------------------------------*/
-
-#ifndef SUNDIALS_MATRIX_HPP
-#define SUNDIALS_MATRIX_HPP
+#ifndef SUNDIALS_SUNDIALS_MATRIX_HPP
+#define SUNDIALS_SUNDIALS_MATRIX_HPP
 
 #include <utility>
 

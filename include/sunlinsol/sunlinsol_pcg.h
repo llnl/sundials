@@ -24,9 +24,8 @@
  *     be found in the header file sundials_linearsolver.h.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNLINSOL_PCG_H
-#define SUNLINSOL_PCG_H
+#ifndef SUNDIALS_SUNLINSOL_PCG_H
+#define SUNDIALS_SUNLINSOL_PCG_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

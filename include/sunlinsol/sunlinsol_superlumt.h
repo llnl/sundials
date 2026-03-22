@@ -25,9 +25,8 @@
  *     be found in the header file sundials_linearsolver.h.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNLINSOL_SUPERLUMT_H
-#define SUNLINSOL_SUPERLUMT_H
+#ifndef SUNDIALS_SUNLINSOL_SUPERLUMT_H
+#define SUNDIALS_SUNLINSOL_SUPERLUMT_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

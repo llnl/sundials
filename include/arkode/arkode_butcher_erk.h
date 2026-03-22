@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * This is the header file for ARKode's built-in ERK Butcher tables.
  * -----------------------------------------------------------------*/
-
-#ifndef ARKODE_BUTCHER_ERK_H
-#define ARKODE_BUTCHER_ERK_H
+#ifndef SUNDIALS_ARKODE_BUTCHER_ERK_H
+#define SUNDIALS_ARKODE_BUTCHER_ERK_H
 
 #include <arkode/arkode_butcher.h>
 

@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_PROFILER_H
-#define SUNDIALS_PROFILER_H
+#ifndef SUNDIALS_SUNDIALS_PROFILER_H
+#define SUNDIALS_SUNDIALS_PROFILER_H
 
 #include <stdio.h>
 #include <sundials/sundials_config.h>
@@ -102,4 +101,4 @@ SUNErrCode SUNProfiler_Reset(SUNProfiler p);
 }
 
 #endif
-#endif /* SUNDIALS_PROFILER_H */
+#endif /* SUNDIALS_SUNDIALS_PROFILER_H */

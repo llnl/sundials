@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARK_BRUSSELATOR1D_H
-#define ARK_BRUSSELATOR1D_H
+#ifndef SUNDIALS_ARK_BRUSSELATOR1D_H
+#define SUNDIALS_ARK_BRUSSELATOR1D_H
 
 #include <cmath>
 #include <cstdio>

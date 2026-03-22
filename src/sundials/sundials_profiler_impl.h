@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_PROFILER_IMPL_H
-#define SUNDIALS_PROFILER_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_PROFILER_IMPL_H
+#define SUNDIALS_SUNDIALS_PROFILER_IMPL_H
 
 #include <stdio.h>
 #include <stdlib.h>

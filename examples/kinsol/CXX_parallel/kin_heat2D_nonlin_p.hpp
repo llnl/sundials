@@ -15,9 +15,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------*/
-
-#ifndef KIN_HEAT2D_NONLIN_P_HPP
-#define KIN_HEAT2D_NONLIN_P_HPP
+#ifndef SUNDIALS_KIN_HEAT2D_NONLIN_P_HPP
+#define SUNDIALS_KIN_HEAT2D_NONLIN_P_HPP
 
 #include <cmath>
 #include <cstdio>

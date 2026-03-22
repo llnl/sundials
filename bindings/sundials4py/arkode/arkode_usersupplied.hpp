@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
-
-#ifndef ARKODE_USERSUPPLIED_HPP
-#define ARKODE_USERSUPPLIED_HPP
+#ifndef SUNDIALS_ARKODE_USERSUPPLIED_HPP
+#define SUNDIALS_ARKODE_USERSUPPLIED_HPP
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_arkstep.h>

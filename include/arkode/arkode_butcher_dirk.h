@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * This is the header file for ARKode's built-in DIRK Butcher tables.
  * -----------------------------------------------------------------*/
-
-#ifndef ARKODE_BUTCHER_DIRK_H
-#define ARKODE_BUTCHER_DIRK_H
+#ifndef SUNDIALS_ARKODE_BUTCHER_DIRK_H
+#define SUNDIALS_ARKODE_BUTCHER_DIRK_H
 
 #include <arkode/arkode_butcher.h>
 

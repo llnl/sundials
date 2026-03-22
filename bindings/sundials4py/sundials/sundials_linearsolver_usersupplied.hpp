@@ -12,9 +12,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP
-#define SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP
+#ifndef SUNDIALS_SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP
+#define SUNDIALS_SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -61,4 +60,4 @@ inline int sunlinearsolver_psolvefn_wrapper(Args... args)
     5>(&SUNLinearSolverFunctionTable::PSolveFn, std::forward<Args>(args)...);
 }
 
-#endif // SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP
+#endif // SUNDIALS_SUNDIALS_LINEARSOLVER_USERSUPPLIED_HPP

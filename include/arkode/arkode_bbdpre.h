@@ -18,9 +18,8 @@
  * band-block-diagonal preconditioner, i.e. a block-diagonal
  * matrix with banded blocks.
  * -----------------------------------------------------------------*/
-
-#ifndef ARKODE_BBDPRE_H
-#define ARKODE_BBDPRE_H
+#ifndef SUNDIALS_ARKODE_BBDPRE_H
+#define SUNDIALS_ARKODE_BBDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

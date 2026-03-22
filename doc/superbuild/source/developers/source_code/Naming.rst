@@ -40,27 +40,19 @@ appropriately!
 Generally Pascal case (e.g. ``DoSomething``) is used for public names and
 camelcase for private names (e.g. ``doSomething``).
 
-Files
------
-
-File names in ``src`` and ``include`` should use snake case. C header files
-should use the ``.h`` extension, and C++ header files should the ``.hpp``
-extension. All header files should contain an include guard in upper snake case
-that is consistent with the file name. For example, ``my_header.h`` should
-contain
-
-.. code-block:: c
-
-   #ifndef MY_HEADER_H
-   #define MY_HEADER_H
-   // ...
-   #endif
-
-
 Macros/Constants
 ----------------
 
-Upper case should be used for macros and constants.
+Upper case should be used for macros and constants. All header files should
+contain an include guard defining a macro starting with ``SUNDIALS_`` followed
+by the file name in upper case. For example, ``my_header.h`` should contain
+
+.. code-block:: c
+
+   #ifndef SUNDIALS_MY_HEADER_H
+   #define SUNDIALS_MY_HEADER_H
+   // ...
+   #endif
 
 Variable names
 --------------

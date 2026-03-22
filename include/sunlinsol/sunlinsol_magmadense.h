@@ -19,9 +19,8 @@
  * SUNLINSOL module, SUNLINSOL_MAGMADENSE.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNLINSOL_MAGMADENSE_H
-#define SUNLINSOL_MAGMADENSE_H
+#ifndef SUNDIALS_SUNLINSOL_MAGMADENSE_H
+#define SUNDIALS_SUNLINSOL_MAGMADENSE_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>

@@ -15,9 +15,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------*/
-
-#ifndef RHS3D_HPP
-#define RHS3D_HPP
+#ifndef SUNDIALS_RHS3D_HPP
+#define SUNDIALS_RHS3D_HPP
 
 #include "advection_reaction_3D.hpp"
 

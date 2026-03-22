@@ -43,9 +43,8 @@
  *     (which stores the result of the operation a*x+b*y in y)
  *     is legal.
  * -----------------------------------------------------------------*/
-
-#ifndef NVECTOR_TRILINOS_H
-#define NVECTOR_TRILINOS_H
+#ifndef SUNDIALS_NVECTOR_TRILINOS_H
+#define SUNDIALS_NVECTOR_TRILINOS_H
 
 #include <sundials/sundials_nvector.h>
 
@@ -145,4 +144,4 @@ SUNDIALS_EXPORT sunrealtype N_VMinQuotientLocal_Trilinos(N_Vector num,
 }
 #endif
 
-#endif /* NVECTOR_TRILINOS_H */
+#endif /* SUNDIALS_NVECTOR_TRILINOS_H */

@@ -16,9 +16,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  */
-
-#ifndef _SUNDIALS_CUDA_KERNELS_CUH
-#define _SUNDIALS_CUDA_KERNELS_CUH
+#ifndef SUNDIALS_SUNDIALS_CUDA_KERNELS_CUH
+#define SUNDIALS_SUNDIALS_CUDA_KERNELS_CUH
 
 #define SUNDIALS_HOST_DEVICE   __host__ __device__
 #define SUNDIALS_DEVICE_INLINE __forceinline__
@@ -448,4 +447,4 @@ struct GridReducerAtomic
 } // namespace cuda
 } // namespace sundials
 
-#endif // _SUNDIALS_CUDA_KERNELS_CUH
+#endif // SUNDIALS_SUNDIALS_CUDA_KERNELS_CUH

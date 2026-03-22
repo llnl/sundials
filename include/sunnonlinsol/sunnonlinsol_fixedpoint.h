@@ -21,9 +21,8 @@
  *
  * Part II contains prototypes for the solver constructor and operations.
  * ---------------------------------------------------------------------------*/
-
-#ifndef SUNNONLINSOL_FIXEDPOINT_H
-#define SUNNONLINSOL_FIXEDPOINT_H
+#ifndef SUNDIALS_SUNNONLINSOL_FIXEDPOINT_H
+#define SUNDIALS_SUNNONLINSOL_FIXEDPOINT_H
 
 #include <sundials/sundials_core.h>
 

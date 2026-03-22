@@ -37,9 +37,8 @@
  *     (which stores the result of the operation a*x+b*y in y)
  *     is legal.
  * -----------------------------------------------------------------*/
-
-#ifndef NVECTOR_SERIAL_H
-#define NVECTOR_SERIAL_H
+#ifndef SUNDIALS_NVECTOR_SERIAL_H
+#define SUNDIALS_NVECTOR_SERIAL_H
 
 #include <stdio.h>
 #include <sundials/sundials_nvector.h>

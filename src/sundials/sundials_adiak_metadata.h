@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_ADIAK_METADATA_H
-#define SUNDIALS_ADIAK_METADATA_H
+#ifndef SUNDIALS_SUNDIALS_ADIAK_METADATA_H
+#define SUNDIALS_SUNDIALS_ADIAK_METADATA_H
 
 #ifdef SUNDIALS_ADIAK_ENABLED
 #include <adiak.h>

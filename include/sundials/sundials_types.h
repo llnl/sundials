@@ -47,9 +47,8 @@
  * explicitly cast 1.0 to (sunrealtype). The macro can be used for
  * literal constants only. It cannot be used for expressions.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_TYPES_H
-#define SUNDIALS_TYPES_H
+#ifndef SUNDIALS_SUNDIALS_TYPES_H
+#define SUNDIALS_SUNDIALS_TYPES_H
 
 #include <float.h>
 #include <stddef.h>
@@ -281,4 +280,4 @@ enum SUNDataIOMode
 typedef enum SUNDataIOMode SUNDataIOMode;
 #endif
 
-#endif /* SUNDIALS_TYPES_H */
+#endif /* SUNDIALS_SUNDIALS_TYPES_H */

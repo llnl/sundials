@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_MRISTEP_DEPRECATED_H
-#define ARKODE_MRISTEP_DEPRECATED_H
+#ifndef SUNDIALS_ARKODE_MRISTEP_DEPRECATED_H
+#define SUNDIALS_ARKODE_MRISTEP_DEPRECATED_H
 
 #include <arkode/arkode.h>
 

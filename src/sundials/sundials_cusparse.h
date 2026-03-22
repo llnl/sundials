@@ -25,9 +25,8 @@
 #include <cusparse.h>
 #include <stdio.h>
 #include <sundials/sundials_types.h>
-
-#ifndef SUNDIALS_CUSPARSE_H
-#define SUNDIALS_CUSPARSE_H
+#ifndef SUNDIALS_SUNDIALS_CUSPARSE_H
+#define SUNDIALS_SUNDIALS_CUSPARSE_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {

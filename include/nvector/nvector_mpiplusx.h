@@ -18,9 +18,8 @@
  * NVECTOR module. The MPIPlusX NVECTOR is really just an extension
  * of the ManyVector.
  * -----------------------------------------------------------------*/
-
-#ifndef NVECTOR_MPIPLUSX_H
-#define NVECTOR_MPIPLUSX_H
+#ifndef SUNDIALS_NVECTOR_MPIPLUSX_H
+#define SUNDIALS_NVECTOR_MPIPLUSX_H
 
 #include <mpi.h>
 #include <nvector/nvector_mpimanyvector.h>

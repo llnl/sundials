@@ -23,9 +23,8 @@
  * Routines that work with the type SUNDlsMat begin with "Band".
  * Routines that work with sunrealtype ** begin with "band".
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_BAND_H
-#define SUNDIALS_BAND_H
+#ifndef SUNDIALS_SUNDIALS_BAND_H
+#define SUNDIALS_SUNDIALS_BAND_H
 
 #include <sundials/sundials_direct.h>
 

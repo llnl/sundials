@@ -18,9 +18,8 @@
  * generic direct linear solvers for Ax = b. It defines types for
  * dense and banded matrices and corresponding accessor macros.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_DIRECT_H
-#define SUNDIALS_DIRECT_H
+#ifndef SUNDIALS_SUNDIALS_DIRECT_H
+#define SUNDIALS_SUNDIALS_DIRECT_H
 
 #include <stdio.h>
 #include <sundials/sundials_types.h>

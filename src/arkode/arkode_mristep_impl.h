@@ -17,9 +17,8 @@
  * -----------------------------------------------------------------------------
  * Implementation header file for ARKODE's MRI time stepper module.
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_MRISTEP_IMPL_H
-#define ARKODE_MRISTEP_IMPL_H
+#ifndef SUNDIALS_ARKODE_MRISTEP_IMPL_H
+#define SUNDIALS_ARKODE_MRISTEP_IMPL_H
 
 /* Public header file */
 #include "arkode/arkode_mristep.h"

@@ -31,9 +31,8 @@
  *     for the type 'sunbooleantype' and 'indextype'.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNMATRIX_SPARSE_H
-#define SUNMATRIX_SPARSE_H
+#ifndef SUNDIALS_SUNMATRIX_SPARSE_H
+#define SUNDIALS_SUNMATRIX_SPARSE_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>

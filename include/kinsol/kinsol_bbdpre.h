@@ -20,9 +20,8 @@
  * band-block-diagonal preconditioner, i.e. a block-diagonal
  * matrix with banded blocks.
  * -----------------------------------------------------------------*/
-
-#ifndef KINSOL_BBDPRE_H
-#define KINSOL_BBDPRE_H
+#ifndef SUNDIALS_KINSOL_BBDPRE_H
+#define SUNDIALS_KINSOL_BBDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

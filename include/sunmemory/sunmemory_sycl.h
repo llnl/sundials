@@ -16,9 +16,8 @@
  * ----------------------------------------------------------------
  * SUNDIALS SYCL memory helper header file.
  * ----------------------------------------------------------------*/
-
-#ifndef SUNMEMORY_SYCL_H
-#define SUNMEMORY_SYCL_H
+#ifndef SUNDIALS_SUNMEMORY_SYCL_H
+#define SUNDIALS_SUNMEMORY_SYCL_H
 
 #include <sundials/sundials_memory.h>
 #include <sycl/sycl.hpp>

@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * This is the header file for the main IDAS solver.
  * -----------------------------------------------------------------*/
-
-#ifndef IDAS_H
-#define IDAS_H
+#ifndef SUNDIALS_IDAS_H
+#define SUNDIALS_IDAS_H
 
 #include <idas/idas_ls.h>
 #include <stdio.h>

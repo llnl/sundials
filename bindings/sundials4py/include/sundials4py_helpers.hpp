@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
-
-#ifndef SUNDIALS4PY_HELPERS_HPP
-#define SUNDIALS4PY_HELPERS_HPP
+#ifndef SUNDIALS_SUNDIALS4PY_HELPERS_HPP
+#define SUNDIALS_SUNDIALS4PY_HELPERS_HPP
 
 #include "sundials4py.hpp"
 

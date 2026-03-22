@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * C++ specific ARKODE definitions.
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_SPLITTINGSTEP_HPP
-#define ARKODE_SPLITTINGSTEP_HPP
+#ifndef SUNDIALS_ARKODE_SPLITTINGSTEP_HPP
+#define SUNDIALS_ARKODE_SPLITTINGSTEP_HPP
 
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_splittingstep.h>

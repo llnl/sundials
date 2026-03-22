@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * SUNDIALS HIP memory helper header file.
  * ----------------------------------------------------------------*/
-
-#ifndef SUNMEMORY_HIP_H
-#define SUNMEMORY_HIP_H
+#ifndef SUNDIALS_SUNMEMORY_HIP_H
+#define SUNDIALS_SUNMEMORY_HIP_H
 
 #include <hip/hip_runtime.h>
 #include <sundials/sundials_memory.h>

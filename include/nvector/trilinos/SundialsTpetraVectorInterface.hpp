@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALSTPETRAVECTORINTERFACE_HPP
-#define SUNDIALSTPETRAVECTORINTERFACE_HPP
+#ifndef SUNDIALS_SUNDIALSTPETRAVECTORINTERFACE_HPP
+#define SUNDIALS_SUNDIALSTPETRAVECTORINTERFACE_HPP
 
 #include <Tpetra_Vector.hpp>
 #include <nvector/nvector_trilinos.h>
@@ -63,4 +62,4 @@ SUNDIALS_EXPORT N_Vector N_VMake_Trilinos(
   Teuchos::RCP<sundials::trilinos::nvector_tpetra::TpetraVectorInterface::vector_type> v,
   SUNContext sunctx);
 
-#endif // SUNDIALSTPETRAVECTORINTERFACE_HPP
+#endif // SUNDIALS_SUNDIALSTPETRAVECTORINTERFACE_HPP

@@ -14,9 +14,8 @@
  * -----------------------------------------------------------------
  * SUNAdjointCheckpointScheme class declaration.
  * ----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_ADJOINTCHECKPOINTSCHEME_H
-#define SUNDIALS_ADJOINTCHECKPOINTSCHEME_H
+#ifndef SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_H
+#define SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_H
 
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>

@@ -16,9 +16,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  */
-
-#ifndef VECTORARRAYKERNELS_HIP_HPP
-#define VECTORARRAYKERNELS_HIP_HPP
+#ifndef SUNDIALS_VECTORARRAYKERNELS_HIP_HPP
+#define SUNDIALS_VECTORARRAYKERNELS_HIP_HPP
 
 #include <limits>
 
@@ -206,4 +205,4 @@ __global__ void linearCombinationVectorArrayKernel(int nv, int ns, T* c, T** xd,
 } // namespace hip
 } // namespace sundials
 
-#endif // VECTORARRAYKERNELS_HIP_HPP
+#endif // SUNDIALS_VECTORARRAYKERNELS_HIP_HPP

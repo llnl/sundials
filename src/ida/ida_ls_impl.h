@@ -17,9 +17,8 @@
  *-----------------------------------------------------------------
  * Implementation header file for IDA's linear solver interface.
  *-----------------------------------------------------------------*/
-
-#ifndef IDA_LS_IMPL_H
-#define IDA_LS_IMPL_H
+#ifndef SUNDIALS_IDA_LS_IMPL_H
+#define SUNDIALS_IDA_LS_IMPL_H
 
 #include <ida/ida_ls.h>
 

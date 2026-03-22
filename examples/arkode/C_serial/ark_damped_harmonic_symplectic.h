@@ -16,9 +16,8 @@
  * ----------------------------------------------------------------------------
  * Utilities for the arkode_damped_harmonic_symplectic example.
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARK_DAMPED_HARMONIC_SYMPLECTIC_H
-#define ARK_DAMPED_HARMONIC_SYMPLECTIC_H
+#ifndef SUNDIALS_ARK_DAMPED_HARMONIC_SYMPLECTIC_H
+#define SUNDIALS_ARK_DAMPED_HARMONIC_SYMPLECTIC_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -148,4 +147,4 @@ static int check_retval(void* returnvalue, const char* funcname, int opt)
   return 0;
 }
 
-#endif /* ARK_DAMPED_HARMONIC_SYMPLECTIC_H */
+#endif /* SUNDIALS_ARK_DAMPED_HARMONIC_SYMPLECTIC_H */

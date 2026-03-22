@@ -26,9 +26,8 @@
  * The stiffness of the problem depends on the value of lambda. For a well-posed
  * problem, the value of lambda should be negative.
  * ---------------------------------------------------------------------------*/
-
-#ifndef PR_HPP
-#define PR_HPP
+#ifndef SUNDIALS_PR_HPP
+#define SUNDIALS_PR_HPP
 
 #include <cmath>
 #include <sundials/sundials_core.hpp>

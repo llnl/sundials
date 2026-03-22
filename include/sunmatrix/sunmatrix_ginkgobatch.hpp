@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ----------------------------------------------------------------*/
-
-#ifndef SUNMATRIX_GINKGOBATCH_HPP
-#define SUNMATRIX_GINKGOBATCH_HPP
+#ifndef SUNDIALS_SUNMATRIX_GINKGOBATCH_HPP
+#define SUNDIALS_SUNMATRIX_GINKGOBATCH_HPP
 
 #include <memory>
 

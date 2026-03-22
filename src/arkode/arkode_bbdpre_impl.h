@@ -16,9 +16,8 @@
  *---------------------------------------------------------------
  * Implementation header file for the ARKBBDPRE module.
  *--------------------------------------------------------------*/
-
-#ifndef ARKODE_BBDPRE_IMPL_H
-#define ARKODE_BBDPRE_IMPL_H
+#ifndef SUNDIALS_ARKODE_BBDPRE_IMPL_H
+#define SUNDIALS_ARKODE_BBDPRE_IMPL_H
 
 #include <arkode/arkode_bbdpre.h>
 #include <sunlinsol/sunlinsol_band.h>

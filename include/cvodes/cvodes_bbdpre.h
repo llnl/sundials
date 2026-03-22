@@ -19,9 +19,8 @@
  * band-block-diagonal preconditioner, i.e. a block-diagonal
  * matrix with banded blocks.
  * -----------------------------------------------------------------*/
-
-#ifndef CVODES_BBDPRE_H
-#define CVODES_BBDPRE_H
+#ifndef SUNDIALS_CVODES_BBDPRE_H
+#define SUNDIALS_CVODES_BBDPRE_H
 
 #include <sundials/sundials_nvector.h>
 

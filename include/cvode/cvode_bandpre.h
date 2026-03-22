@@ -18,9 +18,8 @@
  * This is the header file for the CVBANDPRE module, which provides
  * a banded difference quotient Jacobian-based preconditioner.
  * -----------------------------------------------------------------*/
-
-#ifndef CVODE_BANDPRE_H
-#define CVODE_BANDPRE_H
+#ifndef SUNDIALS_CVODE_BANDPRE_H
+#define SUNDIALS_CVODE_BANDPRE_H
 
 #include <sundials/sundials_nvector.h>
 
