@@ -6,6 +6,8 @@
 
 ### New Features and Enhancements
 
+Updated the Kokkos N_Vector to support Kokkos 5.x versions.
+
 ARKODE now allows users to supply functions that will be called before each
 internal time step attempt (`ARKodeSetPreStepFn`), after each successful time
 step (`ARKodeSetPostStepFn`), before right-hand side routines are called on an
@@ -35,6 +37,10 @@ installed without setting the `SUPERLUMT_WORKS` option to `TRUE`.
 
 Fixed the embedded coefficients for the `ARKODE_TSITOURAS_7_4_5` Butcher table.
 
+Fixed a bug where passing an empty string to `SUNLogger_Set{Error,Warning,Info,Debug}Filename`
+did not disable the corresponding logging stream ([Issue
+#844](https://github.com/llnl/sundials/issues/844)).
+
 Fixed a bug in logging output from ARKODE, where for some time stepping modules,
 the the current "time" output in the logger was incorrect.
 
@@ -51,6 +57,12 @@ table below lists the old CMake option names and the new replacements.
 
 | Old Option                              | New Option                                     |
 |-----------------------------------------|------------------------------------------------|
+| `BUILD_ARKODE`                          | `SUNDIALS_ENABLE_ARKODE`                       |
+| `BUILD_CVODE`                           | `SUNDIALS_ENABLE_CVODE`                        |
+| `BUILD_CVODES`                          | `SUNDIALS_ENABLE_CVODES`                       |
+| `BUILD_IDA`                             | `SUNDIALS_ENABLE_IDA`                          |
+| `BUILD_IDAS`                            | `SUNDIALS_ENABLE_IDAS`                         |
+| `BUILD_KINSOL`                          | `SUNDIALS_ENABLE_KINSOL`                       |
 | `ENABLE_MPI`                            | `SUNDIALS_ENABLE_MPI`                          |
 | `ENABLE_OPENMP`                         | `SUNDIALS_ENABLE_OPENMP`                       |
 | `ENABLE_OPENMP_DEVICE`                  | `SUNDIALS_ENABLE_OPENMP_DEVICE`                |
