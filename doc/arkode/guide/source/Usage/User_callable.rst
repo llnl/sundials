@@ -3739,6 +3739,10 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
 
    .. versionadded:: x.y.z
 
+      This function replaces the undocumented
+      :c:func:`ARKodeSetPostprocessStepFn` used in earlier versions for
+      attaching a function to be called after each successful step.
+
 
 .. c:function:: int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn prerhs_fn)
 
@@ -3786,6 +3790,11 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
 
    .. versionadded:: x.y.z
 
+      This function existed in earlier versions as an undocumented feature and
+      the attached function was called after each successful step. Starting with
+      version x.y.z, use :c:func:`ARKodeSetPostStepFn` to attach a function to
+      be called after each successful step.
+
    .. warning::
 
       This function is currently incompatible with discrete adjoint capabilities
@@ -3811,6 +3820,8 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
    .. versionadded:: x.y.z
+
+      This function existed in earlier versions as an undocumented feature.
 
    .. warning::
 
