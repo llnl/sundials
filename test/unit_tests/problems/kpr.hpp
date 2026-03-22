@@ -35,9 +35,8 @@
  * For MRI methods the u equation is considered slow (potentially with the same
  * ImEx splitting as above) while the v equation is considered fast.
  * ---------------------------------------------------------------------------*/
-
-#ifndef KPR_HPP
-#define KPR_HPP
+#ifndef SUNDIALS_KPR_HPP
+#define SUNDIALS_KPR_HPP
 
 #include <cmath>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -386,4 +385,4 @@ inline int dae_res_jac(sunrealtype t, sunrealtype cj, N_Vector y, N_Vector yp,
 } // namespace kpr
 } // namespace problems
 
-#endif // KPR_HPP
+#endif // SUNDIALS_KPR_HPP

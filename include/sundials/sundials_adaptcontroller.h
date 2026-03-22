@@ -19,9 +19,8 @@
  * that the next step solution should satisfy a desired temporal
  * accuracy.
  * ----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_ADAPTCONTROLLER_H
-#define SUNDIALS_ADAPTCONTROLLER_H
+#ifndef SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H
+#define SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -203,4 +202,4 @@ SUNErrCode SUNAdaptController_Space(SUNAdaptController C, long int* lenrw,
 }
 #endif
 
-#endif /* SUNDIALS_ADAPTCONTROLLER_H */
+#endif /* SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H */

@@ -19,9 +19,8 @@
  * are utilized to determine CUDA kernel launch parameters.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNDIALS_CUDA_POLICIES_HPP
-#define SUNDIALS_CUDA_POLICIES_HPP
+#ifndef SUNDIALS_SUNDIALS_CUDA_POLICIES_HPP
+#define SUNDIALS_SUNDIALS_CUDA_POLICIES_HPP
 
 #include <cstdio>
 #include <stdexcept>

@@ -18,9 +18,8 @@
  * This is the header file (private version) for the main IDA solver.
  * -----------------------------------------------------------------
  */
-
-#ifndef IDA_IMPL_H
-#define IDA_IMPL_H
+#ifndef SUNDIALS_IDA_IMPL_H
+#define SUNDIALS_IDA_IMPL_H
 
 #include <stdarg.h>
 

@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * SUNAdjointCheckpointScheme private class definition.
  * ----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_ADJOINTCHECKPOINTSCHEME_IMPL_H
-#define SUNDIALS_ADJOINTCHECKPOINTSCHEME_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_IMPL_H
+#define SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_IMPL_H
 
 #include <sundials/sundials_adjointcheckpointscheme.h>
 

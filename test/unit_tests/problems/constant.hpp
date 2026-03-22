@@ -27,9 +27,8 @@
  *   y(t) = a * (t - t_0) + y_0
  *
  * ---------------------------------------------------------------------------*/
-
-#ifndef CONSTANT_HPP
-#define CONSTANT_HPP
+#ifndef SUNDIALS_CONSTANT_HPP
+#define SUNDIALS_CONSTANT_HPP
 
 #include <sundials/sundials_matrix.h>
 #include <sundials/sundials_nvector.h>
@@ -111,4 +110,4 @@ inline int dae_res_jac(sunrealtype t, sunrealtype cj, N_Vector y, N_Vector yp,
 } // namespace constant
 } // namespace problems
 
-#endif // CONSTANT_HPP
+#endif // SUNDIALS_CONSTANT_HPP

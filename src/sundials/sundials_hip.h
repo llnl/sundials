@@ -23,9 +23,8 @@
 #include <hip/hip_runtime.h>
 #include <stdio.h>
 #include <sundials/sundials_types.h>
-
-#ifndef SUNDIALS_HIP_H
-#define SUNDIALS_HIP_H
+#ifndef SUNDIALS_SUNDIALS_HIP_H
+#define SUNDIALS_SUNDIALS_HIP_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {

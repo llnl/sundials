@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------
  * This header file contains common utility functions.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_UTILS_H
-#define SUNDIALS_UTILS_H
+#ifndef SUNDIALS_SUNDIALS_UTILS_H
+#define SUNDIALS_SUNDIALS_UTILS_H
 
 #include <stdarg.h>
 #include <stdio.h>

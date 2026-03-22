@@ -16,9 +16,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  */
-
-#ifndef _NVECTOR_CUDA_KERNELS_CUH_
-#define _NVECTOR_CUDA_KERNELS_CUH_
+#ifndef SUNDIALS_VECTORKERNELS_CUH
+#define SUNDIALS_VECTORKERNELS_CUH
 
 #include <cuda_runtime.h>
 #include <limits>
@@ -298,4 +297,4 @@ __global__ void minQuotientKernel(const T MAX_VAL, const T* num, const T* den,
 } // namespace cuda
 } // namespace sundials
 
-#endif // _NVECTOR_CUDA_KERNELS_CUH_
+#endif // SUNDIALS_VECTORKERNELS_CUH

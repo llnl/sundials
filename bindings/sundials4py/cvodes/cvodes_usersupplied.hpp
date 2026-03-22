@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
-
-#ifndef CVODES_USERSUPPLIED_HPP
-#define CVODES_USERSUPPLIED_HPP
+#ifndef SUNDIALS_CVODES_USERSUPPLIED_HPP
+#define SUNDIALS_CVODES_USERSUPPLIED_HPP
 
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_ls.h>

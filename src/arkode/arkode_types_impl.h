@@ -16,9 +16,8 @@
  * -----------------------------------------------------------------------------
  * Implementation header file with forward declarations of ARKODE types.
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_TYPES_IMPL_H
-#define ARKODE_TYPES_IMPL_H
+#ifndef SUNDIALS_ARKODE_TYPES_IMPL_H
+#define SUNDIALS_ARKODE_TYPES_IMPL_H
 
 typedef struct ARKodeMemRec* ARKodeMem;
 typedef struct ARKodeRelaxMemRec* ARKodeRelaxMem;

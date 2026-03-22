@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
-
-#ifndef IDAS_USERSUPPLIED_HPP
-#define IDAS_USERSUPPLIED_HPP
+#ifndef SUNDIALS_IDAS_USERSUPPLIED_HPP
+#define SUNDIALS_IDAS_USERSUPPLIED_HPP
 
 #include <idas/idas.h>
 #include <idas/idas_ls.h>

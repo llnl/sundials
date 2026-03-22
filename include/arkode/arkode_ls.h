@@ -16,9 +16,8 @@
  * ----------------------------------------------------------------
  * This is the header file for ARKode's linear solver interface.
  * ----------------------------------------------------------------*/
-
-#ifndef ARKODE_LS_H
-#define ARKODE_LS_H
+#ifndef SUNDIALS_ARKODE_LS_H
+#define SUNDIALS_ARKODE_LS_H
 
 #include <sundials/sundials_direct.h>
 #include <sundials/sundials_iterative.h>

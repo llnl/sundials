@@ -19,9 +19,8 @@
  * SUNMATRIX module.
  * -----------------------------------------------------------------
  */
-
-#ifndef SUNMATRIX_CUSPARSE_H
-#define SUNMATRIX_CUSPARSE_H
+#ifndef SUNDIALS_SUNMATRIX_CUSPARSE_H
+#define SUNDIALS_SUNMATRIX_CUSPARSE_H
 
 #include <cuda_runtime.h>
 #include <cusparse.h>

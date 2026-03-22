@@ -17,9 +17,8 @@
  * This is the implementation header file for SUNDIALS functions used by
  * different iterative solvers.
  * ---------------------------------------------------------------------------*/
-
-#ifndef SUNDIALS_ITERATIVE_IMPL_H
-#define SUNDIALS_ITERATIVE_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_ITERATIVE_IMPL_H
+#define SUNDIALS_SUNDIALS_ITERATIVE_IMPL_H
 
 #include <sundials/sundials_iterative.h>
 

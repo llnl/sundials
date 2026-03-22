@@ -14,9 +14,8 @@
  * -----------------------------------------------------------------
  * SUNAdjointStepper class definition.
  * ----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_ADJOINTSTEPPER_H
-#define SUNDIALS_ADJOINTSTEPPER_H
+#ifndef SUNDIALS_SUNDIALS_ADJOINTSTEPPER_H
+#define SUNDIALS_SUNDIALS_ADJOINTSTEPPER_H
 
 #include <sundials/sundials_adjointcheckpointscheme.h>
 #include <sundials/sundials_matrix.h>
@@ -81,4 +80,4 @@ SUNErrCode SUNAdjointStepper_Destroy(SUNAdjointStepper*);
 #ifdef __cplusplus
 }
 #endif
-#endif /* SUNDIALS_ADJOINTSTEPPER_H */
+#endif /* SUNDIALS_SUNDIALS_ADJOINTSTEPPER_H */

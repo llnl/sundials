@@ -17,9 +17,8 @@
  * Implementation header file for ARKODE's ARK time stepper
  * module.
  *--------------------------------------------------------------*/
-
-#ifndef ARKODE_ARKSTEP_IMPL_H
-#define ARKODE_ARKSTEP_IMPL_H
+#ifndef SUNDIALS_ARKODE_ARKSTEP_IMPL_H
+#define SUNDIALS_ARKODE_ARKSTEP_IMPL_H
 
 #include <arkode/arkode_arkstep.h>
 #include <arkode/arkode_mristep.h>

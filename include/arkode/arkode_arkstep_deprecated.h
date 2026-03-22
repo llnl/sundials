@@ -14,9 +14,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
-
-#ifndef ARKODE_ARKSTEP_DEPRECATED_H
-#define ARKODE_ARKSTEP_DEPRECATED_H
+#ifndef SUNDIALS_ARKODE_ARKSTEP_DEPRECATED_H
+#define SUNDIALS_ARKODE_ARKSTEP_DEPRECATED_H
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_ls.h>
@@ -371,4 +370,4 @@ int ARKStepGetNumRhsEvals(void* arkode_mem, long int* nfe_evals,
 }
 #endif
 
-#endif /* ARKODE_ARKSTEP_DEPRECATED_H */
+#endif /* SUNDIALS_ARKODE_ARKSTEP_DEPRECATED_H */

@@ -12,9 +12,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
-
-#ifndef DUMPSTDERR_HPP
-#define DUMPSTDERR_HPP
+#ifndef SUNDIALS_DUMPSTDERR_HPP
+#define SUNDIALS_DUMPSTDERR_HPP
 
 #include <fstream>
 #include <string>

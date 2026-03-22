@@ -19,9 +19,8 @@
  * -----------------------------------------------------------------
  * Contains error checking macros and prototypes for MPI calls.
  * -----------------------------------------------------------------*/
-
-#ifndef SUNDIALS_MPI_ERRORS_IMPL_H
-#define SUNDIALS_MPI_ERRORS_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_MPI_ERRORS_IMPL_H
+#define SUNDIALS_SUNDIALS_MPI_ERRORS_IMPL_H
 
 #include <mpi.h>
 #include <sundials/priv/sundials_errors_impl.h>
@@ -137,4 +136,4 @@ extern "C" {
 }
 #endif
 
-#endif /* SUNDIALS_MPI_ERRORS_IMPL_H */
+#endif /* SUNDIALS_SUNDIALS_MPI_ERRORS_IMPL_H */

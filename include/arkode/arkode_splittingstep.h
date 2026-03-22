@@ -16,9 +16,8 @@
  *---------------------------------------------------------------
  * This is the header file for the ARKODE SplittingStep module.
  *--------------------------------------------------------------*/
-
-#ifndef ARKODE_SPLITTINGSTEP_H
-#define ARKODE_SPLITTINGSTEP_H
+#ifndef SUNDIALS_ARKODE_SPLITTINGSTEP_H
+#define SUNDIALS_ARKODE_SPLITTINGSTEP_H
 
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_stepper.h>

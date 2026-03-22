@@ -17,9 +17,8 @@
  * This is the header file for the dense implementation of the SUNMATRIX
  * class using the Intel oneAPI Math Kernel Library (oneMKL).
  * ---------------------------------------------------------------------------*/
-
-#ifndef SUNMATRIX_ONEMKLDENSE_H
-#define SUNMATRIX_ONEMKLDENSE_H
+#ifndef SUNDIALS_SUNMATRIX_ONEMKLDENSE_H
+#define SUNDIALS_SUNMATRIX_ONEMKLDENSE_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>

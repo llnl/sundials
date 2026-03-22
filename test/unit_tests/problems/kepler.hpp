@@ -43,9 +43,8 @@
  *   Velocity RHS = ode_rhs_velocity = RHS terms for q'
  *   Force RHS    = ode_rhs_force    = RHS terms for p'
  * ---------------------------------------------------------------------------*/
-
-#ifndef KEPLER_HPP
-#define KEPLER_HPP
+#ifndef SUNDIALS_KEPLER_HPP
+#define SUNDIALS_KEPLER_HPP
 
 #include <cmath>
 #include <sundials/sundials_core.hpp>
