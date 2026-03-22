@@ -229,7 +229,7 @@ if(_BUILD_EXAMPLES)
 endif()
 
 # Add benchmarks to the build
-if(SUNDIALS_BUILD_BENCHMARKS)
+if(SUNDIALS_ENABLE_BENCHMARKS)
   include(SundialsSetupBenchmarks)
   add_subdirectory(benchmarks)
 endif()

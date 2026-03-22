@@ -140,10 +140,10 @@ Fortran code:
 
 .. sourcecode:: Fortran
 
-   type(MyUserData) :: udata
-   type(c_ptr)      :: arkode_mem
+   type(MyUserData), target :: udata
+   type(c_ptr)              :: cvode_mem
 
-   ierr = FARKStepSetUserData(arkode_mem, c_loc(udata))
+   ierr = FCVodeSetUserData(cvode_mem, c_loc(udata))
 
 On the other hand, Fortran users may instead choose to store problem-specific
 data, e.g.  problem parameters, within modules, and thus do not need the

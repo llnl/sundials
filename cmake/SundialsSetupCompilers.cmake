@@ -425,7 +425,7 @@ endif()
 # C++ settings
 # ===============================================================
 
-if(BUILD_BENCHMARKS
+if(SUNDIALS_ENABLE_BENCHMARKS
    OR SUNDIALS_ENABLE_PYTHON
    OR SUNDIALS_TEST_ENABLE_UNIT_TESTS
    OR SUNDIALS_ENABLE_CXX_EXAMPLES
