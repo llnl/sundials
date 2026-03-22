@@ -17,6 +17,7 @@
  * This header files defines internal utility functions and macros
  * for SUNDIALS debugging.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_DEBUG_H
 #define SUNDIALS_SUNDIALS_DEBUG_H
 

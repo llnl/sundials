@@ -20,6 +20,7 @@
  *
  * with parameters p.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_LOTKA_VOLTERRA_HPP
 #define SUNDIALS_LOTKA_VOLTERRA_HPP
 

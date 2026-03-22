@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This is the header file for the SUNAdaptController_ImExGus module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNADAPTCONTROLLER_IMEXGUS_H
 #define SUNDIALS_SUNADAPTCONTROLLER_IMEXGUS_H
 

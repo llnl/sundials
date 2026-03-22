@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This header file defines the ARKodeSPRKTable structure.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_SPRK_H
 #define SUNDIALS_ARKODE_SPRK_H
 

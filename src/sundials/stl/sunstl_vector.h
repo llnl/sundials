@@ -32,9 +32,11 @@
 
 #include <stdlib.h>
 #include <sundials/sundials_core.h>
+
 #ifndef SUNDIALS_SUNSTL_VECTOR_H
 #error "Must define template type for SUNStlVector"
 #endif
+
 #define SUNDIALS_SUNSTL_VECTOR_H b)            a##b
 #define PASTE(a, b)             CONCAT(a, b)
 #define MAKE_NAME(prefix, name) PASTE(prefix, PASTE(_, name))

@@ -16,6 +16,7 @@
  *---------------------------------------------------------------
  * This is the header file for the ARKODE ForcingStep module.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_FORCINGSTEP_H
 #define SUNDIALS_ARKODE_FORCINGSTEP_H
 

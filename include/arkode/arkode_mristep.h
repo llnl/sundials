@@ -17,6 +17,7 @@
  * -----------------------------------------------------------------
  * This is the header file for the ARKODE MRIStep module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_MRISTEP_H
 #define SUNDIALS_ARKODE_MRISTEP_H
 

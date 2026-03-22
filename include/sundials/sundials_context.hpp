@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * C++ interface to the SUNDIALS context object
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_CONTEXT_HPP
 #define SUNDIALS_SUNDIALS_CONTEXT_HPP
 

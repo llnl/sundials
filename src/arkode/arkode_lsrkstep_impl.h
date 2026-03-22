@@ -17,6 +17,7 @@
  * Implementation header file for ARKODE's LSRK time stepper
  * module.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_LSRKSTEP_IMPL_H
 #define SUNDIALS_ARKODE_LSRKSTEP_IMPL_H
 

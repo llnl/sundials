@@ -44,6 +44,7 @@
  *     a NULL data pointer).
  *   - a routine to print the content of an N_Vector
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_NVECTOR_H
 #define SUNDIALS_SUNDIALS_NVECTOR_H
 

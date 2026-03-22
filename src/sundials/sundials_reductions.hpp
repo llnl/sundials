@@ -19,6 +19,7 @@
 
 /* NOTE: SUNDIALS_HOST_DEVICE and SUNDIALS_DEVICE_INLINE must be defined
          before including this file */
+
 #ifndef SUNDIALS_SUNDIALS_REDUCTIONS_HPP
 #define SUNDIALS_SUNDIALS_REDUCTIONS_HPP
 #endif

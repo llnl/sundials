@@ -21,6 +21,7 @@
  * the header file sundials_types.h.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNDIALS_MATH_H
 #define SUNDIALS_SUNDIALS_MATH_H
 

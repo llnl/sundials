@@ -17,6 +17,7 @@
  * This is the header file for the SYCL implementation of the
  * NVECTOR module.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_NVECTOR_SYCL_H
 #define SUNDIALS_NVECTOR_SYCL_H
 

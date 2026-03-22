@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_CHECK_RETVAL_H
 #define SUNDIALS_CHECK_RETVAL_H
 

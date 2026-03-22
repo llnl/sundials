@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This is the header file for a generic SUNDomEigEst package.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_DOMEIGESTIMATOR_H
 #define SUNDIALS_SUNDIALS_DOMEIGESTIMATOR_H
 

@@ -19,6 +19,7 @@
  * Implementation header file for the CVBBDPRE module.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_CVODE_BBDPRE_IMPL_H
 #define SUNDIALS_CVODE_BBDPRE_IMPL_H
 

@@ -26,6 +26,7 @@
 #include <cusolverSp.h>
 #include <stdio.h>
 #include <sundials/sundials_types.h>
+
 #ifndef SUNDIALS_SUNDIALS_CUSOLVER_H
 #define SUNDIALS_SUNDIALS_CUSOLVER_H
 

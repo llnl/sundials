@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * SUNDIALS memory helpers and types.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_MEMORY_H
 #define SUNDIALS_SUNDIALS_MEMORY_H
 

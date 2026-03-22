@@ -19,6 +19,7 @@
  * -----------------------------------------------------------------
  * Contains all error checking macros and private error handling API.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_ERRORS_IMPL_H
 #define SUNDIALS_SUNDIALS_ERRORS_IMPL_H
 

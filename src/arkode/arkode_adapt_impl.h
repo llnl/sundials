@@ -17,6 +17,7 @@
  * Implementation header file for ARKODE's time step adaptivity
  * utilities.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_ADAPT_IMPL_H
 #define SUNDIALS_ARKODE_ADAPT_IMPL_H
 

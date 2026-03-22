@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * SUNDIALS command-line utility definitions.
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_CLI_H
 #define SUNDIALS_SUNDIALS_CLI_H
 

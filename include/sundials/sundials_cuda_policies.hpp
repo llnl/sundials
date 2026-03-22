@@ -19,6 +19,7 @@
  * are utilized to determine CUDA kernel launch parameters.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNDIALS_CUDA_POLICIES_HPP
 #define SUNDIALS_SUNDIALS_CUDA_POLICIES_HPP
 

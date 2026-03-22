@@ -18,6 +18,7 @@
  * holding references to child nodes (list or object nodes). A
  * SUNDataNode maps well to a JSON node.
  * ----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_DATANODE_H
 #define SUNDIALS_SUNDIALS_DATANODE_H
 

@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------------------
  * SUNMatrix interface to Ginkgo matrices
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNMATRIX_GINKGO_HPP
 #define SUNDIALS_SUNMATRIX_GINKGO_HPP
 

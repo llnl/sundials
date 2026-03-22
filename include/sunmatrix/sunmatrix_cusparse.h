@@ -19,6 +19,7 @@
  * SUNMATRIX module.
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNMATRIX_CUSPARSE_H
 #define SUNDIALS_SUNMATRIX_CUSPARSE_H
 

@@ -18,6 +18,7 @@
  * -----------------------------------------------------------------------------
  * Implementation header file for projections in CVODE.
  * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_CVODES_PROJ_IMPL_H
 #define SUNDIALS_CVODES_PROJ_IMPL_H
 

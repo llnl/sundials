@@ -16,6 +16,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  */
+
 #ifndef SUNDIALS_SUNDIALS_CUDA_KERNELS_CUH
 #define SUNDIALS_SUNDIALS_CUDA_KERNELS_CUH
 

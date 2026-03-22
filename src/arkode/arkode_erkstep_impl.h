@@ -17,6 +17,7 @@
  * Implementation header file for ARKODE's ERK time stepper
  * module.
  *--------------------------------------------------------------*/
+
 #ifndef SUNDIALS_ARKODE_ERKSTEP_IMPL_H
 #define SUNDIALS_ARKODE_ERKSTEP_IMPL_H
 

@@ -16,6 +16,7 @@
  * -----------------------------------------------------------------
  * This header file is for routines to get SUNDIALS version info
  * -----------------------------------------------------------------*/
+
 #ifndef SUNDIALS_SUNDIALS_VERSION_H
 #define SUNDIALS_SUNDIALS_VERSION_H
 
