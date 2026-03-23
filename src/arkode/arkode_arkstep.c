@@ -1767,7 +1767,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       SUNErrCode errcode =
         SUNAdjointCheckpointScheme_NeedsSaving(ark_mem->checkpoint_scheme,
                                                ark_mem->checkpoint_step_idx, 0,
-                                               ark_mem->tcur, &do_save);
+                                               ark_mem->tn, &do_save);
       if (errcode)
       {
         arkProcessError(ark_mem, ARK_ADJ_CHECKPOINT_FAIL, __LINE__, __func__,
@@ -1782,7 +1782,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         errcode =
           SUNAdjointCheckpointScheme_InsertVector(ark_mem->checkpoint_scheme,
                                                   ark_mem->checkpoint_step_idx,
-                                                  0, ark_mem->tcur, ark_mem->yn);
+                                                  0, ark_mem->tn, ark_mem->yn);
 
         if (errcode)
         {
