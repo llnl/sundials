@@ -39,6 +39,9 @@ stage currently being processed, and the total number of stages in the method, f
 users who must compute auxiliary quantities in their IVP right-hand side functions
 during some stages and not others (e.g., in all but the first or last stage).
 
+Added the functions :c:func:`ARKodeGetLastTime` and :c:func:`ARKodeGetLastState` to
+return the last successful time and state achieved by ARKODE, respectively.
+
 **Bug Fixes**
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and

@@ -4122,7 +4122,7 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. note::
+   .. danger::
 
       Users should exercise extreme caution when using this function,
       as altering values of *yn* may lead to undesirable behavior, depending
