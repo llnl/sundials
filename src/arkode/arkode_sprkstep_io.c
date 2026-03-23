@@ -292,8 +292,8 @@ int sprkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
   /* if table is not yet set, return defaults */
   if (step_mem->method == NULL)
   {
-    *istage     = -1;
-    *num_stages = -1;
+    *stage      = -1;
+    *max_stages = -1;
     arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
                     "method structure not allocated");
     return retval;

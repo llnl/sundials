@@ -718,7 +718,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     step_mem->istage = j - 1;
 
     /* Evaluate RHS and store in ycur */
-    ark_mem->tcur = ark_mem->tn + ark_mem->h * thjm1;
+
 
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
@@ -1061,7 +1061,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     step_mem->istage = j - 1;
 
     /* Evaluate RHS and store in ycur */
-    ark_mem->tcur = ark_mem->tn + ark_mem->h * cjm1;
+
 
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
@@ -1351,7 +1351,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     step_mem->istage = j - 1;
 
     /* Complete previous stage by evaluating RHS and storing it in tempv2 */
-    ark_mem->tcur = ark_mem->tn + (j - 1) * hsm1inv;
+
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreRhsFn)
@@ -1598,7 +1598,6 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     step_mem->istage = j - 1;
 
     /* Complete previous stage by evaluating RHS and storing it in tempv3 */
-    ark_mem->tcur = ark_mem->tn + (j - 1) * hrat;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreRhsFn)
@@ -1662,7 +1661,6 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     step_mem->istage = j - 1;
 
     /* Complete previous stage by evaluating RHS and storing it in tempv3 */
-    ark_mem->tcur = ark_mem->tn + (j - 1) * hrat;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreRhsFn)
@@ -1718,7 +1716,6 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   /* Complete the last stage from the second stage group */
   step_mem->istage = (in * (in + 1) / 2 - 1);
-  ark_mem->tcur    = ark_mem->tn + hrat * (rn * (rn + ONE) / TWO - ONE);
 
   /* apply user-supplied stage preprocessing function (if supplied) */
   if (ark_mem->PreRhsFn)
@@ -1788,7 +1785,6 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     step_mem->istage = j - 1;
 
     /* Complete the previous stage */
-    ark_mem->tcur = ark_mem->tn + (j - in - 1) * hrat;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreRhsFn)
@@ -2357,7 +2353,6 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     step_mem->istage = j - 1;
 
     /* Complete previous stage by evaluating RHS and storing in tempv3 */
-    ark_mem->tcur = ark_mem->tn + (j - 4) * hsixth;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreRhsFn)
@@ -2421,7 +2416,6 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   step_mem->istage = 9;
 
   /* Complete the last stage by evaluating RHS and storing in tempv3 */
-  ark_mem->tcur = ark_mem->tn + ark_mem->h;
 
   /* apply user-supplied stage preprocessing function (if supplied) */
   if (ark_mem->PreRhsFn)
