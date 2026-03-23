@@ -51,6 +51,13 @@ state would be stored on the first step if the output vector passed to
 Fixed a potential bug in LSRKStep's `ARKODE_LSRK_SSP_S_3` method, where a real
 number was used instead of an integer, potentially resulting in a rounding error.
 
+Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
+user-supplied dominant eigenvalue function on the first step unless the output
+vector passed to `ARKodeEvolve` contained the initial condition and when an
+eigenvalue estimate is requested on the first step in a subsequent call to
+`ARKodeEvolve` unless the output vector passed contained the most recently returned
+solution.
+
 ### Deprecation Notices
 
 Several CMake options have been deprecated in favor of namespaced versions
