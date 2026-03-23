@@ -474,8 +474,11 @@ static int splittingStep_GetStageIndex(ARKodeMem ark_mem, int* istage,
   /* if coefficients structure is not yet available, return defaults */
   if (step_mem->coefficients == NULL)
   {
-    *istage     = 0;
-    *num_stages = 1;
+    *istage     = -1;
+    *num_stages = -1;
+      arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                      "coefficient table not allocated");
+      return retval;
   }
   else
   {
