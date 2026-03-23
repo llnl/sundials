@@ -85,8 +85,8 @@ The user-supplied functions for ARKODE consist of:
   evaluations <ARKODE.Usage.ARKodeProcessingFunctions>`, and
 
 * functions that can optionally be called :ref:`after each step or stage
-  computation within supported ARKODE time stepping modules
-  <ARKODE.Usage.ARKodeProcessingFunctions>`.
+  computation <ARKODE.Usage.ARKodeProcessingFunctions>` within supported ARKODE
+  time stepping modules.
 
 
 .. _ARKODE.Usage.ODERHS:
@@ -1123,8 +1123,8 @@ functions are called, and after each internal step/stage computation. These
 user-supplied functions vary slightly in type, depending on their use case, as
 outlined below. Such functions are typically used for applications that compute
 auxiliary diagnostic data between time steps or stages, and store that data in
-their `user_data` pointer or output to screen or disk. Alternately, some may be
-used to better prepare auxiliary data for an upcoming time step or
+their ``user_data`` pointer or output to screen or disk. Alternately, some may
+be used to better prepare auxiliary data for an upcoming time step or
 :c:type:`ARKRhsFn` evaluation. **These should not be used to modify the active
 state data; if so then all theoretical guarantees of solution accuracy and
 stability will be lost.**
@@ -1146,13 +1146,13 @@ step attempt by ARKODE (see :c:func:`ARKodeSetPreStepFn`).
    * **t** -- the current value of the independent variable.
    * **y** -- the current value of the dependent variable vector that will be
      used as the initial condition for the upcoming step.
-   * **step** -- the step index (starting from the first internal step since
+   * **step** -- the step index (starting at 0 for the first internal step since
      ARKODE was (re-)initialized).
    * **attempt** -- a counter indicating which attempt at the step is about to
      occur -- 0 indicates that the previous step succeeded and this is the first
-     attempt the step `step`, while a number greater than 0 indicates that the
+     attempt the step ``step``, while a number greater than 0 indicates that the
      previous step attempt failed and this is a subsequent try at computing the
-     step `step`.
+     step ``step``.
    * **user_data** -- the ``user_data`` pointer that was passed to
      :c:func:`ARKodeSetUserData`.
 
@@ -1181,7 +1181,7 @@ A user-provided :c:type:`ARKPostStepFn` will be called following each
    * **t** -- the current value of the independent variable.
    * **y** -- the current value of the dependent variable vector that resulted
      from the successful time step.
-   * **step** -- the step index (starting from the first internal step since
+   * **step** -- the step index (starting at 0 for the first internal step since
      ARKODE was (re-)initialized).
    * **user_data** -- the ``user_data`` pointer that was passed to
      :c:func:`ARKodeSetUserData`.
