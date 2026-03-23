@@ -42,6 +42,15 @@ Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
 state would be stored on the first step if the output vector passed to
 :c:func:`ARKodeEvolve` did not contain the initial condition on the first call.
 
+Fixed a bug in MRIStep when using a custom inner integrator that relies on the
+input state being the initial condition for the fast integration rather than
+retaining the result from the last inner integration or most recent reset call
+and the output vector passed to :c:func:`ARKodeEvolve` does not contain the
+initial condition on the first call or the last returned solution on subsequent
+calls.
+
+Removed an extraneous copy of the output vector in each step with SplittingStep.
+
 **Deprecation Notices**
 
 Several CMake options have been deprecated in favor of namespaced versions
@@ -49,7 +58,10 @@ prefixed with ``SUNDIALS_`` to avoid naming collisions in applications that
 include SUNDIALS directly within their CMake builds. Additionally, a consistent
 naming convention (``SUNDIALS_ENABLE``) is now used for all boolean options. The
 table below lists the old CMake option names and the new replacements.
+Removed an extraneous copy of the output vector in each step with SplittingStep.
 
+Added a missing call to :c:func:`SUNNonlinSolSetup` in MRIStep when using an
+IMEX-MRI-SR method.
 +-------------------------------------------+---------------------------------------------------------+
 | Old Option                                | New Option                                              |
 +-------------------------------------------+---------------------------------------------------------+
