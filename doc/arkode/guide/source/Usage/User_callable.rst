@@ -4507,7 +4507,8 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
 .. c:function:: int ARKodeGetStageIndex(void* arkode_mem, int* stage, int *max_stages)
 
    Returns the index of the current stage (0-based) and the total number of
-   stages in the method.
+   stages in the method i.e., for an :math:`s`-stage method `stage`
+   :math:`\in 0,\dots,s-1` and `max_stages` :math:`= s`.
 
    :param arkode_mem: pointer to the ARKODE memory block.
    :param stage: pointer to storage for the current stage index.
@@ -4515,6 +4516,13 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
 
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+   :retval ARK_STEPPER_UNSUPPORTED: stage indexing is not supported by the
+                                    current time-stepping module.
+
+   .. note::
+
+      For temporally adaptive computations in MRIStep, the "embedding" stage is
+      indicated using `stage` **equal to** `max_stages`.
 
    .. versionadded:: x.y.z
 
