@@ -1845,7 +1845,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
   if (!ark_mem->fixedstep)
   {
-    retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tn,
+    retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
                                        ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {
@@ -1881,7 +1881,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   nested_mri = step_mem->expforcing || step_mem->impforcing;
   if (ark_mem->fn == NULL || nested_mri)
   {
-    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->ycur,
+    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tcur, ark_mem->ycur,
                               ARK_FULLRHS_START);
     if (retval)
     {
@@ -1904,7 +1904,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   }
   else if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
   {
-    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->ycur, ark_mem->fn,
+    retval = mriStep_FullRHS(ark_mem, ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
                              ARK_FULLRHS_START);
     if (retval)
     {
@@ -2401,7 +2401,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
   if (!ark_mem->fixedstep)
   {
-    retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tn,
+    retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
                                        ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {
@@ -2437,7 +2437,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   nested_mri = step_mem->expforcing || step_mem->impforcing;
   if (ark_mem->fn == NULL || nested_mri)
   {
-    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->ycur,
+    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tcur, ark_mem->ycur,
                               ARK_FULLRHS_START);
     if (retval)
     {
@@ -2460,7 +2460,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
   if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
   {
-    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->ycur, ark_mem->fn,
+    retval = mriStep_FullRHS(ark_mem, ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
                              ARK_FULLRHS_START);
     if (retval)
     {
@@ -2939,7 +2939,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   nested_mri = step_mem->expforcing || step_mem->impforcing;
   if (ark_mem->fn == NULL || nested_mri)
   {
-    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tn, ark_mem->ycur,
+    retval = mriStep_UpdateF0(ark_mem, step_mem, ark_mem->tcur, ark_mem->ycur,
                               ARK_FULLRHS_START);
     if (retval)
     {
@@ -2950,7 +2950,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
   else if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
   {
-    retval = mriStep_FullRHS(ark_mem, ark_mem->tn, ark_mem->ycur, ark_mem->fn,
+    retval = mriStep_FullRHS(ark_mem, ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
                              ARK_FULLRHS_START);
     if (retval)
     {
