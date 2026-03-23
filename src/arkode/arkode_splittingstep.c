@@ -476,9 +476,9 @@ static int splittingStep_GetStageIndex(ARKodeMem ark_mem, int* istage,
   {
     *istage     = -1;
     *num_stages = -1;
-      arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                      "coefficient table not allocated");
-      return retval;
+    arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    "coefficient table not allocated");
+    return retval;
   }
   else
   {
