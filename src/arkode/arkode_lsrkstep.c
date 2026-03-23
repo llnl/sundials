@@ -1348,7 +1348,6 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
     /* Complete previous stage by evaluating RHS and storing it in tempv2 */
 
-
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
@@ -2123,6 +2122,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Compute the time step solution and embedding */
+  step_mem->istage = 4;
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 4, ark_mem->tcur);
