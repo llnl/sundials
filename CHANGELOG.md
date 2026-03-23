@@ -47,7 +47,10 @@ Several CMake options have been deprecated in favor of namespaced versions
 prefixed with `SUNDIALS_` to avoid naming collisions in applications that
 include SUNDIALS directly within their CMake builds. Additionally, a consistent
 naming convention (`SUNDIALS_ENABLE`) is now used for all boolean options. The
-table below lists the old CMake option names and the new replacements.
+Removed an extraneous copy of the output vector in each step with SplittingStep.
+
+Added a missing call to `SUNNonlinSolSetup` in MRIStep when using an
+IMEX-MRI-SR method.
 
 | Old Option                              | New Option                                     |
 |-----------------------------------------|------------------------------------------------|
