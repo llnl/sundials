@@ -47,7 +47,11 @@ did not disable the corresponding logging stream ([Issue
 #844](https://github.com/llnl/sundials/issues/844)).
 
 Fixed a bug in logging output from ARKODE, where for some time stepping modules,
-the the current "time" output in the logger was incorrect.
+the current "time" output in the logger was incorrect.
+
+Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
+state would be stored on the first step if the output vector passed to
+`ARKodeEvolve` did not contain the initial condition on the first call.
 
 Fixed a potential bug in LSRKStep's `ARKODE_LSRK_SSP_S_3` method, where a real
 number was used instead of an integer, potentially resulting in a rounding error.

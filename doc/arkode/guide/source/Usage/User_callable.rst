@@ -3513,7 +3513,7 @@ Pre-step, Post-step, Pre-RHS, and Post-processing optional inputs (ADVANCED)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ARKODE provides multiple options for user-supplied callback routines that can be
-called at various times within the time-stepping process.  Each of these
+called at various times within the time-stepping process. Each of these
 callback functions has a similar structure, wherein the callback function will
 be provided with the current time, current solution, and the *user_data*
 structure that was provided to :c:func:`ARKodeSetUserData`; some functions are
@@ -3546,79 +3546,93 @@ would proceed as:
 
 0. Initialize ``attempt`` counter to 0
 
-1. Call ``PreStep`` with :math:`(t_{cur},y_{cur})`
+1. Call ``PreStep`` with :math:`(t_{n},y_{n})`
 
 2. Stage 0
 
-   a. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+   a. If this is not the first step and the method is FSAL (First Same As Last
+      -- the last stage of the prior step is the current solution and the first
+      stage is explicit) or the ``RHS`` has already been computed at
+      :math:`(t_{n},y_{n})`, proceed to stage 1.
 
-   b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+   a. Call ``PreRHS`` with :math:`(t_{n},y_{n})`
 
-   c. Update :math:`(t_{cur},y_{cur})` with the next stage solution
-
-   d. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+   b. Evaluate ``RHS`` at :math:`(t_{n},y_{n})`
 
 3. Stage 1
 
-   a. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+   a. Compute the stage solution :math:`(t_{cur},y_{cur})`
 
-   b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+   b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
 
-   c. Update :math:`(t_{cur},y_{cur})` with the next stage solution
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
 
-   d. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+   d. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
 
 4. Stage 2
 
-   a. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+   a. Compute the stage solution :math:`(t_{cur},y_{cur})`
 
-   b. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+   b. If the method is FSAL call ``PostprocessStep`` with
+      :math:`(t_{cur},y_{cur})`, else call ``PostprocessStage`` with
+      :math:`(t_{cur},y_{cur})`
 
-   c. Update :math:`(t_{cur},y_{cur})` with the new time step solution
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
 
-   d. If the method is FSAL (the last stage is the time step solution),
-      call ``PostprocessStep`` with :math:`(t_{cur},y_{cur})`, else call
-      ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`.
+   d. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
 
-5. If the method is not FSAL, update :math:`(t_{cur},y_{cur})` with the
-   new time step solution and call ``PostprocessStep``.
+5. If the method is not FSAL, compute the new time step solution
+   :math:`(t_{cur},y_{cur})` and call ``PostprocessStep`` with
+   :math:`(t_{cur},y_{cur})`
 
-6. Check the local error.
+6. Check the local error
 
    a. If the step is successful then call ``PostStep`` with
       :math:`(t_{cur},y_{cur})`, determine the next internal step size
       :math:`h_n`, and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
 
-   b. Else rewind :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`, increment
+   b. Else rewind :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`, increment the
       ``attempt`` counter, determine the next internal step size :math:`h_n`,
       and return to step 1
 
 Alternately, the flow of a 3-stage method that must perform a solve of some sort
 for each stage (i.e., a DIRK or ARK method in ARKStep, or a multirate method
-with MRIstep) would proceed as follows.  Here, we show the implicit-explicit
+with MRIstep) would proceed as follows. Here, we show the implicit-explicit
 approach since that also shows the relationship between both the implicit
 right-hand side function ``RHS_i`` and the explicit right-hand side function
 ``RHS_e``:
 
 0. Initialize ``attempt`` counter to 0
 
-1. Call ``PreStep`` with :math:`(t_{cur},y_{cur})`
+1. Call ``PreStep`` with :math:`(t_{n},y_{n})`
 
 2. Stage 0
 
-   a. Solve implicit system, calling ``PreRHS`` and then ``RHS_i`` with
-      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
-      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+   a. If the first stage is explicit:
 
-   b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+      i. If this is not the first step and the method is FSAL or ``RHS_i`` and
+         ``RHS_e`` have already been computed at :math:`(t_{n},y_{n})`, proceed
+         to stage 1.
 
-   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+      ii. Call ``PreRHS`` with :math:`(t_{n},y_{n})`
 
-   d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
+      iii. Evaluate ``RHS_i`` and ``RHS_e`` at :math:`(t_{n},y_{n})`
+
+   b. Else the first stage is implicit:
+
+      i. Solve the implicit system, calling ``PreRHS`` and then ``RHS_i`` with
+         :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+         iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+      ii. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+      iii. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+      iv. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
 
 3. Stage 1
 
-   a. Solve implicit system, calling ``PreRHS`` and then ``RHS_i`` with
+   a. Solve the implicit system, calling ``PreRHS`` and then ``RHS_i`` with
       :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
       iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
 
@@ -3642,8 +3656,9 @@ right-hand side function ``RHS_i`` and the explicit right-hand side function
 
    d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
 
-5. If the method is not stiffly accurate, update :math:`(t_{cur},y_{cur})` with
-   the new time step solution and call ``PostprocessStep``.
+5. If the method is not stiffly accurate, compute the new time step solution
+   :math:`(t_{cur},y_{cur})` and call ``PostprocessStep`` with
+   :math:`(t_{cur},y_{cur})`
 
 6. Check the local error.
 
@@ -3655,14 +3670,14 @@ right-hand side function ``RHS_i`` and the explicit right-hand side function
       ``attempt`` counter, determine the next internal step size :math:`h_n`,
       and return to step 1
 
-We consider these as "advanced" because of their danger, although the callback
-functions are provided with the internally-evolving state, users should **not**
-adjust entries of this state vector, since doing so will destroy all theoretical
-guarantees of solution accuracy and numerical stability.  The only "supported"
-approach for user modifications to the state vector is if this occurs between
-calls to :c:func:`ARKodeEvolve`, and if the user calls :c:func:`ARKodeReset`
-after every modification to the state vector so that ARKODE can reset its saved
-solution.
+We consider these functions as "advanced" because of their danger, although the
+callback functions are provided with the internally-evolving state, users should
+**not** adjust entries of this state vector, since doing so will destroy all
+theoretical guarantees of solution accuracy and numerical stability. The only
+"supported" approach for user modifications to the state vector is if this
+occurs between calls to :c:func:`ARKodeEvolve`, and if the user calls
+:c:func:`ARKodeReset` after every modification to the state vector so that
+ARKODE can reset its saved solution.
 
 
 .. cssclass:: table-bordered
@@ -3724,6 +3739,10 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
 
    .. versionadded:: x.y.z
 
+      This function replaces the undocumented
+      :c:func:`ARKodeSetPostprocessStepFn` used in earlier versions for
+      attaching a function to be called after each successful step.
+
 
 .. c:function:: int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn prerhs_fn)
 
@@ -3771,6 +3790,11 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
 
    .. versionadded:: x.y.z
 
+      This function existed in earlier versions as an undocumented feature and
+      the attached function was called after each successful step. Starting with
+      version x.y.z, use :c:func:`ARKodeSetPostStepFn` to attach a function to
+      be called after each successful step.
+
    .. warning::
 
       This function is currently incompatible with discrete adjoint capabilities
@@ -3796,6 +3820,8 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
    .. versionadded:: x.y.z
+
+      This function existed in earlier versions as an undocumented feature.
 
    .. warning::
 
