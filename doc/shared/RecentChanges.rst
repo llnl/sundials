@@ -52,8 +52,24 @@ Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
 state would be stored on the first step if the output vector passed to
 :c:func:`ARKodeEvolve` did not contain the initial condition on the first call.
 
+Fixed a bug in MRIStep when using a custom inner integrator that relies on the
+input state being the initial condition for the fast integration rather than
+retaining the result from the last inner integration or most recent reset call
+and the output vector passed to :c:func:`ARKodeEvolve` does not contain the
+initial condition on the first call or the last returned solution on subsequent
+calls.
+
+Removed an extraneous copy of the output vector in each step with SplittingStep.
+
 Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method, where a real
 number was used instead of an integer, potentially resulting in a rounding error.
+
+Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
+user-supplied dominant eigenvalue function on the first step unless the output
+vector passed to :c:func:`ARKodeEvolve` contained the initial condition and when
+an eigenvalue estimate is requested on the first step in a subsequent call to
+:c:func:`ARKodeEvolve` unless the output vector passed contained the most recently
+returned solution.
 
 **Deprecation Notices**
 
@@ -62,7 +78,10 @@ prefixed with ``SUNDIALS_`` to avoid naming collisions in applications that
 include SUNDIALS directly within their CMake builds. Additionally, a consistent
 naming convention (``SUNDIALS_ENABLE``) is now used for all boolean options. The
 table below lists the old CMake option names and the new replacements.
+Removed an extraneous copy of the output vector in each step with SplittingStep.
 
+Added a missing call to :c:func:`SUNNonlinSolSetup` in MRIStep when using an
+IMEX-MRI-SR method.
 +-------------------------------------------+---------------------------------------------------------+
 | Old Option                                | New Option                                              |
 +-------------------------------------------+---------------------------------------------------------+
