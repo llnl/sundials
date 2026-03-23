@@ -4524,6 +4524,9 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
       For temporally adaptive computations in MRIStep, the "embedding" stage is
       indicated using `stage` **equal to** `max_stages`.
 
+      Also, for RKC and RKL methods in LSRKStep, the right-hand side will be called
+      at the end of the step, at which point `stage` will also equal `max_stages`.
+
    .. versionadded:: x.y.z
 
 

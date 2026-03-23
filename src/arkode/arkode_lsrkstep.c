@@ -719,7 +719,6 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     /* Evaluate RHS and store in ycur */
 
-
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
@@ -790,8 +789,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else if (j == step_mem->req_stages && ark_mem->PostProcessStepFn)
     {
-      retval = ark_mem->PostProcessStepFn(ark_mem->tcur + ark_mem->h * thj,
-                                          ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -830,7 +829,6 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   /* final stage processing */
   step_mem->istage = step_mem->req_stages;
-  ark_mem->tcur    = ark_mem->tn + ark_mem->h;
 
   /* call the user-supplied pre-RHS function (if supplied) */
   if (ark_mem->PreRhsFn)
@@ -1062,7 +1060,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     /* Evaluate RHS and store in ycur */
 
-
     /* call the user-supplied pre-RHS function (if supplied) */
     if (ark_mem->PreRhsFn)
     {
@@ -1163,7 +1160,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   /* final stage processing */
   step_mem->istage = step_mem->req_stages;
-  ark_mem->tcur    = ark_mem->tn + ark_mem->h;
 
   /* call the user-supplied pre-RHS function (if supplied) */
   if (ark_mem->PreRhsFn)
@@ -1406,7 +1402,6 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   /* Complete the next-to-last stage by evaluating the RHS and storing it in tempv2 */
   step_mem->istage = step_mem->req_stages - 1;
-  ark_mem->tcur    = ark_mem->tn + ark_mem->h;
   if (ark_mem->PreRhsFn)
   {
     retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
@@ -1432,6 +1427,8 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Compute the step solution */
+  ark_mem->tcur = ark_mem->tn + ark_mem->h;
+  step_mem->istage = step_mem->req_stages;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
              step_mem->req_stages, ark_mem->tcur);
   cvals[0] = ONE / (sm1inv * rs);
