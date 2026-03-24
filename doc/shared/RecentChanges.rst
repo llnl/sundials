@@ -15,6 +15,10 @@ internal step/stage is computed (:c:func:`ARKodeSetPostprocessStepFn`/
 :c:func:`ARKodeSetPostprocessStageFn`). These are considered **advanced**
 functions, as they should treat the state vector as read-only, otherwise all
 theoretical guarantees of solution accuracy and stability will be lost.
+As a result of these new functions, the values of multiple ARKODE return
+codes (e.g., ``ARK_INTERP_FAIL``) have been updated; users who key off of the
+named constants will not be affected, but users who rely on the values
+themselves should update their codes accordingly.
 
 Note to users utilizing the previously undocumented
 :c:func:`ARKodeSetPostprocessStepFn` function, the supplied function is now
@@ -61,6 +65,9 @@ calls.
 
 Removed an extraneous copy of the output vector in each step with SplittingStep.
 
+Added a missing call to :c:func:`SUNNonlinSolSetup` in MRIStep when using an
+IMEX-MRI-SR method.
+
 Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method, where a real
 number was used instead of an integer, potentially resulting in a rounding error.
 
@@ -78,10 +85,7 @@ prefixed with ``SUNDIALS_`` to avoid naming collisions in applications that
 include SUNDIALS directly within their CMake builds. Additionally, a consistent
 naming convention (``SUNDIALS_ENABLE``) is now used for all boolean options. The
 table below lists the old CMake option names and the new replacements.
-Removed an extraneous copy of the output vector in each step with SplittingStep.
 
-Added a missing call to :c:func:`SUNNonlinSolSetup` in MRIStep when using an
-IMEX-MRI-SR method.
 +-------------------------------------------+---------------------------------------------------------+
 | Old Option                                | New Option                                              |
 +-------------------------------------------+---------------------------------------------------------+
