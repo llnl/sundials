@@ -34,6 +34,12 @@ def make_estimator(estimator_type, sunctx):
 
         SUNDomEigEstimator_SetATimes(e, atimes)
 
+        def deerhs(_, v, z):
+            # dummy rhs for smoke testing
+            return 0
+
+        SUNDomEigEstimator_SetRHS(e, deerhs)
+
         return e, nvec
     else:
         raise ValueError("Unknown estimator type")
