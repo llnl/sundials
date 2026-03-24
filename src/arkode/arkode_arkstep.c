@@ -1466,7 +1466,12 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
         if (ark_mem->PreRhsFn)
         {
           retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
-          if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+          if (retval != 0)
+          {
+            arkProcessError(ark_mem, ARK_PRERHSFN_FAIL, __LINE__, __func__,
+                              __FILE__, MSG_ARK_PRERHSFN_FAIL, t);
+            return (ARK_PRERHSFN_FAIL); }
+          }
         }
 
         /* compute the implicit component */
