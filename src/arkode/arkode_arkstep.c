@@ -1334,7 +1334,12 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       if (ark_mem->PreRhsFn)
       {
         retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
-        if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+        if (retval != 0)
+        {
+          arkProcessError(ark_mem, ARK_PRERHSFN_FAIL, __LINE__, __func__,
+                          __FILE__, MSG_ARK_PRERHSFN_FAIL, t);
+          return (ARK_PRERHSFN_FAIL);
+        }
       }
 
       /* compute the implicit component */
@@ -1473,195 +1478,201 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
             return (ARK_PRERHSFN_FAIL);
           }
         }
-      }
 
-      /* compute the implicit component */
-      if (step_mem->implicit)
-      {
-        retval = step_mem->fi(t, y, step_mem->Fi[0], ark_mem->user_data);
-        step_mem->nfi++;
-        if (retval != 0)
+        /* compute the implicit component */
+        if (step_mem->implicit)
         {
-          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
-                          __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
-          return (ARK_RHSFUNC_FAIL);
+          retval = step_mem->fi(t, y, step_mem->Fi[0], ark_mem->user_data);
+          step_mem->nfi++;
+          if (retval != 0)
+          {
+            arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
+                            __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
+            return (ARK_RHSFUNC_FAIL);
+          }
+
+          /* compute and store M(t)^{-1} fi */
+          if (step_mem->mass_type == MASS_TIMEDEP)
+          {
+            retval = step_mem->msolve((void*)ark_mem, step_mem->Fi[0],
+                                      step_mem->nlscoef / ark_mem->h);
+            if (retval)
+            {
+              arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
+                              __FILE__, "Mass matrix solver failure");
+              return ARK_MASSSOLVE_FAIL;
+            }
+          }
         }
 
-        /* compute and store M(t)^{-1} fi */
-        if (step_mem->mass_type == MASS_TIMEDEP)
+        /* compute the explicit component */
+        if (step_mem->explicit)
         {
-          retval = step_mem->msolve((void*)ark_mem, step_mem->Fi[0],
-                                    step_mem->nlscoef / ark_mem->h);
-          if (retval)
+          retval = step_mem->fe(t, y, step_mem->Fe[0], ark_mem->user_data);
+          step_mem->nfe++;
+          if (retval != 0)
           {
-            arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
-                            __FILE__, "Mass matrix solver failure");
-            return ARK_MASSSOLVE_FAIL;
+            arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
+                            __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
+            return (ARK_RHSFUNC_FAIL);
+          }
+
+          /* compute and store M(t)^{-1} fi */
+          if (step_mem->mass_type == MASS_TIMEDEP)
+          {
+            retval = step_mem->msolve((void*)ark_mem, step_mem->Fe[0],
+                                      step_mem->nlscoef / ark_mem->h);
+            if (retval)
+            {
+              arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
+                              __FILE__, "Mass matrix solver failure");
+              return ARK_MASSSOLVE_FAIL;
+            }
           }
         }
       }
-
-      /* compute the explicit component */
-      if (step_mem->explicit)
+      else
       {
-        retval = step_mem->fe(t, y, step_mem->Fe[0], ark_mem->user_data);
-        step_mem->nfe++;
-        if (retval != 0)
+        if (step_mem->explicit)
         {
-          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
-                          __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
-          return (ARK_RHSFUNC_FAIL);
+          N_VScale(ONE, step_mem->Fe[step_mem->stages - 1], step_mem->Fe[0]);
         }
-
-        /* compute and store M(t)^{-1} fi */
-        if (step_mem->mass_type == MASS_TIMEDEP)
+        if (step_mem->implicit)
         {
-          retval = step_mem->msolve((void*)ark_mem, step_mem->Fe[0],
-                                    step_mem->nlscoef / ark_mem->h);
-          if (retval)
-          {
-            arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
-                            __FILE__, "Mass matrix solver failure");
-            return ARK_MASSSOLVE_FAIL;
-          }
+          N_VScale(ONE, step_mem->Fi[step_mem->stages - 1], step_mem->Fi[0]);
         }
       }
+    }
+
+    /* combine RHS vector(s) into output */
+    if (step_mem->explicit && step_mem->implicit)
+    {
+      /* ImEx */
+      N_VLinearSum(ONE, step_mem->Fi[0], ONE, step_mem->Fe[0], f);
+    }
+    else if (step_mem->implicit)
+    {
+      /* implicit */
+      N_VScale(ONE, step_mem->Fi[0], f);
     }
     else
     {
-      if (step_mem->explicit)
+      /* explicit */
+      N_VScale(ONE, step_mem->Fe[0], f);
+    }
+
+    /* compute M^{-1} f for output but do not store */
+    if (step_mem->mass_type == MASS_FIXED)
+    {
+      retval = step_mem->msolve((void*)ark_mem, f,
+                                step_mem->nlscoef / ark_mem->h);
+      if (retval)
       {
-        N_VScale(ONE, step_mem->Fe[step_mem->stages - 1], step_mem->Fe[0]);
+        arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
+                        __FILE__, "Mass matrix solver failure");
+        return ARK_MASSSOLVE_FAIL;
       }
-      if (step_mem->implicit)
+    }
+
+    /* apply external polynomial (MRI) forcing (M = I required) */
+    if (step_mem->expforcing || step_mem->impforcing)
+    {
+      cvals[0] = ONE;
+      Xvecs[0] = f;
+      nvec     = 1;
+      arkStep_ApplyForcing(step_mem, &t, &stage_coefs, 1, &nvec);
+      N_VLinearCombination(nvec, cvals, Xvecs, f);
+    }
+
+    break;
+
+  case ARK_FULLRHS_OTHER:
+
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+      if (retval != 0)
       {
-        N_VScale(ONE, step_mem->Fi[step_mem->stages - 1], step_mem->Fi[0]);
+        arkProcessError(ark_mem, ARK_PRERHSFN_FAIL, __LINE__, __func__,
+                        __FILE__, MSG_ARK_PRERHSFN_FAIL, t);
+        return (ARK_PRERHSFN_FAIL);
       }
     }
-  }
 
-  /* combine RHS vector(s) into output */
-  if (step_mem->explicit && step_mem->implicit)
-  {
-    /* ImEx */
-    N_VLinearSum(ONE, step_mem->Fi[0], ONE, step_mem->Fe[0], f);
-  }
-  else if (step_mem->implicit)
-  {
-    /* implicit */
-    N_VScale(ONE, step_mem->Fi[0], f);
-  }
-  else
-  {
-    /* explicit */
-    N_VScale(ONE, step_mem->Fe[0], f);
-  }
-
-  /* compute M^{-1} f for output but do not store */
-  if (step_mem->mass_type == MASS_FIXED)
-  {
-    retval = step_mem->msolve((void*)ark_mem, f, step_mem->nlscoef / ark_mem->h);
-    if (retval)
+    /* compute the implicit component and store in sdata */
+    if (step_mem->implicit)
     {
-      arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__, __FILE__,
-                      "Mass matrix solver failure");
-      return ARK_MASSSOLVE_FAIL;
+      retval = step_mem->fi(t, y, step_mem->sdata, ark_mem->user_data);
+      step_mem->nfi++;
+      if (retval != 0)
+      {
+        arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
+                        MSG_ARK_RHSFUNC_FAILED, t);
+        return (ARK_RHSFUNC_FAIL);
+      }
     }
-  }
 
-  /* apply external polynomial (MRI) forcing (M = I required) */
-  if (step_mem->expforcing || step_mem->impforcing)
-  {
-    cvals[0] = ONE;
-    Xvecs[0] = f;
-    nvec     = 1;
-    arkStep_ApplyForcing(step_mem, &t, &stage_coefs, 1, &nvec);
-    N_VLinearCombination(nvec, cvals, Xvecs, f);
-  }
-
-  break;
-
-case ARK_FULLRHS_OTHER:
-
-  /* call the user-supplied pre-RHS function (if supplied) */
-  if (ark_mem->PreRhsFn)
-  {
-    retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
-    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
-  }
-
-  /* compute the implicit component and store in sdata */
-  if (step_mem->implicit)
-  {
-    retval = step_mem->fi(t, y, step_mem->sdata, ark_mem->user_data);
-    step_mem->nfi++;
-    if (retval != 0)
+    /* compute the explicit component and store in ark_tempv2 */
+    if (step_mem->explicit)
     {
-      arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                      MSG_ARK_RHSFUNC_FAILED, t);
-      return (ARK_RHSFUNC_FAIL);
+      retval = step_mem->fe(t, y, ark_mem->tempv2, ark_mem->user_data);
+      step_mem->nfe++;
+      if (retval != 0)
+      {
+        arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
+                        MSG_ARK_RHSFUNC_FAILED, t);
+        return (ARK_RHSFUNC_FAIL);
+      }
     }
-  }
 
-  /* compute the explicit component and store in ark_tempv2 */
-  if (step_mem->explicit)
-  {
-    retval = step_mem->fe(t, y, ark_mem->tempv2, ark_mem->user_data);
-    step_mem->nfe++;
-    if (retval != 0)
+    /* combine RHS vector(s) into output */
+    if (step_mem->explicit && step_mem->implicit)
+    { /* ImEx */
+      N_VLinearSum(ONE, step_mem->sdata, ONE, ark_mem->tempv2, f);
+    }
+    else if (step_mem->implicit)
+    { /* implicit */
+      N_VScale(ONE, step_mem->sdata, f);
+    }
+    else
+    { /* explicit */
+      N_VScale(ONE, ark_mem->tempv2, f);
+    }
+
+    /* compute M^{-1} f for output but do not store */
+    if (step_mem->mass_type != MASS_IDENTITY)
     {
-      arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                      MSG_ARK_RHSFUNC_FAILED, t);
-      return (ARK_RHSFUNC_FAIL);
+      retval = step_mem->msolve((void*)ark_mem, f,
+                                step_mem->nlscoef / ark_mem->h);
+      if (retval)
+      {
+        arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
+                        __FILE__, "Mass matrix solver failure");
+        return ARK_MASSSOLVE_FAIL;
+      }
     }
-  }
 
-  /* combine RHS vector(s) into output */
-  if (step_mem->explicit && step_mem->implicit)
-  { /* ImEx */
-    N_VLinearSum(ONE, step_mem->sdata, ONE, ark_mem->tempv2, f);
-  }
-  else if (step_mem->implicit)
-  { /* implicit */
-    N_VScale(ONE, step_mem->sdata, f);
-  }
-  else
-  { /* explicit */
-    N_VScale(ONE, ark_mem->tempv2, f);
-  }
-
-  /* compute M^{-1} f for output but do not store */
-  if (step_mem->mass_type != MASS_IDENTITY)
-  {
-    retval = step_mem->msolve((void*)ark_mem, f, step_mem->nlscoef / ark_mem->h);
-    if (retval)
+    /* apply external polynomial (MRI) forcing (M = I required) */
+    if (step_mem->expforcing || step_mem->impforcing)
     {
-      arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__, __FILE__,
-                      "Mass matrix solver failure");
-      return ARK_MASSSOLVE_FAIL;
+      cvals[0] = ONE;
+      Xvecs[0] = f;
+      nvec     = 1;
+      arkStep_ApplyForcing(step_mem, &t, &stage_coefs, 1, &nvec);
+      N_VLinearCombination(nvec, cvals, Xvecs, f);
     }
+
+    break;
+
+  default:
+    /* return with RHS failure if unknown mode is passed */
+    arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
+                    "Unknown full RHS mode");
+    return (ARK_RHSFUNC_FAIL);
   }
 
-  /* apply external polynomial (MRI) forcing (M = I required) */
-  if (step_mem->expforcing || step_mem->impforcing)
-  {
-    cvals[0] = ONE;
-    Xvecs[0] = f;
-    nvec     = 1;
-    arkStep_ApplyForcing(step_mem, &t, &stage_coefs, 1, &nvec);
-    N_VLinearCombination(nvec, cvals, Xvecs, f);
-  }
-
-  break;
-
-default:
-  /* return with RHS failure if unknown mode is passed */
-  arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                  "Unknown full RHS mode");
-  return (ARK_RHSFUNC_FAIL);
-}
-
-return (ARK_SUCCESS);
+  return (ARK_SUCCESS);
 }
 
 /*---------------------------------------------------------------
