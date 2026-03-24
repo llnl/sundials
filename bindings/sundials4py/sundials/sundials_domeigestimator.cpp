@@ -85,7 +85,25 @@ void bind_sundomeigestimator(nb::module_& m)
     nb::arg("DEE"), nb::arg("ATimes").none());
 }
 
-} // namespace sundials4py
+m.def(
+  "SUNDomEigEstimator_SetRHS",
+  [](SUNDomEigEstimator DEE,
+     std::function<std::remove_pointer_t<DEERhsFn>> RHSfn) -> SUNErrCode
+  {
+    if (!DEE->python) { DEE->python = new SUNDomEigEstimatorFunctionTable; }
+
+    auto fntable = static_cast<SUNDomEigEstimatorFunctionTable*>(DEE->python);
+
+    fntable->deerhs = nb::cast(RHSfn);
+
+    if (RHSfn)
+    {
+      return SUNDomEigEstimator_SetRHS(DEE, fntable,
+                                      sundomeigestimator_setrhs_wrapper);
+    }
+    else { return SUNDomEigEstimator_SetRHS(DEE, fntable, nullptr); }
+  },
+  nb::arg("DEE"), nb::arg("RHSfn").none());
 
 extern "C" void SUNDomEigEstimatorFunctionTable_Destroy(void* ptr)
 {

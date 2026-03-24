@@ -32,6 +32,11 @@ m.def(
   },
   nb::arg("q"), nb::arg("max_iters"), nb::arg("rel_tol"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
+
+m.def(
+  "SUNDomEigEstimator_SetDEEisReal_Power",
+  SUNDomEigEstimator_SetDEEisReal_Power, nb::arg("DEE"), nb::arg("DEEisReal"));
+
 // #ifdef __cplusplus
 //
 // #endif
