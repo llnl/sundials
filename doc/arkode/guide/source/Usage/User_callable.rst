@@ -3586,9 +3586,9 @@ would proceed as:
       stage is explicit) or the ``RHS`` has already been computed at
       :math:`(t_{n},y_{n})`, proceed to stage 1.
 
-   a. Call ``PreRHS`` with :math:`(t_{n},y_{n})`
+   b. Call ``PreRHS`` with :math:`(t_{n},y_{n})`
 
-   b. Evaluate ``RHS`` at :math:`(t_{n},y_{n})`
+   c. Evaluate ``RHS`` at :math:`(t_{n},y_{n})`
 
 3. Stage 1
 
@@ -4147,7 +4147,7 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. note::
+   .. danger::
 
       Users should exercise extreme caution when using this function,
       as altering values of *yn* may lead to undesirable behavior, depending
@@ -4532,7 +4532,8 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
 .. c:function:: int ARKodeGetStageIndex(void* arkode_mem, int* stage, int *max_stages)
 
    Returns the index of the current stage (0-based) and the total number of
-   stages in the method.
+   stages in the method i.e., for an :math:`s`-stage method `stage`
+   :math:`\in 0,\dots,s-1` and `max_stages` :math:`= s`.
 
    :param arkode_mem: pointer to the ARKODE memory block.
    :param stage: pointer to storage for the current stage index.
@@ -4540,6 +4541,16 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
 
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+   :retval ARK_STEPPER_UNSUPPORTED: stage indexing is not supported by the
+                                    current time-stepping module.
+
+   .. note::
+
+      For temporally adaptive computations in MRIStep, the "embedding" stage is
+      indicated using `stage` **equal to** `max_stages`.
+
+      Also, for RKC and RKL methods in LSRKStep, the right-hand side will be called
+      at the end of the step, at which point `stage` will also equal `max_stages`.
 
    .. versionadded:: x.y.z
 

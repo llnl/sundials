@@ -103,16 +103,20 @@ ARKODE time-stepping module:
    These functions compute the ODE right-hand side for a given
    value of the independent variable :math:`t` and state vector :math:`y`.
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector.
-   :param ydot: the output vector that forms [a portion of] the ODE RHS :math:`f(t,y)`.
-   :param user_data: the `user_data` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An *ARKRhsFn* should return 0 if successful, a positive value if a
-            recoverable error occurred (in which case ARKODE will attempt to
-            correct), or a negative value if it failed unrecoverably (in which
-            case the integration is halted and *ARK_RHSFUNC_FAIL* is returned).
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector.
+   * **ydot** -- the output vector that forms [a portion of] the ODE RHS :math:`f(t,y)`.
+   * **user_data** -- the `user_data` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An *ARKRhsFn* should return 0 if successful, a positive value if a
+     recoverable error occurred (in which case ARKODE will attempt to
+     correct), or a negative value if it failed unrecoverably (in which
+     case the integration is halted and *ARK_RHSFUNC_FAIL* is returned).
 
    .. note::
 
@@ -159,13 +163,17 @@ in :numref:`ARKODE.Mathematics.Error.Norm`.
    This function computes the WRMS error weights for the vector
    :math:`y`.
 
-   :param y: the dependent variable vector at which the weight vector is to be computed.
-   :param ewt: the output vector containing the error weights.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData` function
+   **Parameters:**
 
-   :return: An *ARKEwtFn* function must return 0 if it
-            successfully set the error weights, and -1 otherwise.
+   * **y** -- the dependent variable vector at which the weight vector is to be computed.
+   * **ewt** -- the output vector containing the error weights.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData` function
+
+   **Returns:**
+
+     An *ARKEwtFn* function must return 0 if it
+     successfully set the error weights, and -1 otherwise.
 
    .. note::
 
@@ -203,14 +211,18 @@ in :numref:`ARKODE.Mathematics.Error.Norm`.
    This function computes the WRMS residual weights for the vector
    :math:`y`.
 
-   :param y: the dependent variable vector at which the
-             weight vector is to be computed.
-   :param rwt: the output vector containing the residual weights.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An *ARKRwtFn* function must return 0 if it
-            successfully set the residual weights, and -1 otherwise.
+   * **y** -- the dependent variable vector at which the
+     weight vector is to be computed.
+   * **rwt** -- the output vector containing the residual weights.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An *ARKRwtFn* function must return 0 if it
+     successfully set the residual weights, and -1 otherwise.
 
    .. note::
 
@@ -246,23 +258,27 @@ such that the error estimate for the next time step remains below 1.
    This function implements a time step adaptivity algorithm
    that chooses :math:`h` to satisfy the error tolerances.
 
-   :param y: the current value of the dependent variable vector.
-   :param t: the current value of the independent variable.
-   :param h1: the current step size, :math:`t_n - t_{n-1}`.
-   :param h2: the previous step size, :math:`t_{n-1} - t_{n-2}`.
-   :param h3: the step size :math:`t_{n-2}-t_{n-3}`.
-   :param e1: the error estimate from the current step, :math:`n`.
-   :param e2: the error estimate from the previous step, :math:`n-1`.
-   :param e3: the error estimate from the step :math:`n-2`.
-   :param q: the global order of accuracy for the method.
-   :param p: the global order of accuracy for the embedded method.
-   :param hnew: the output value of the next step size.
-   :param user_data: a pointer to user data, the same as the
-                     *h_data* parameter that was passed to :c:func:`ARKStepSetAdaptivityFn`
-                     or :c:func:`ERKStepSetAdaptivityFn`.
+   **Parameters:**
 
-   :return: An *ARKAdaptFn* function should return 0 if it
-            successfully set the next step size, and a non-zero value otherwise.
+   * **y** -- the current value of the dependent variable vector.
+   * **t** -- the current value of the independent variable.
+   * **h1** -- the current step size, :math:`t_n - t_{n-1}`.
+   * **h2** -- the previous step size, :math:`t_{n-1} - t_{n-2}`.
+   * **h3** -- the step size :math:`t_{n-2}-t_{n-3}`.
+   * **e1** -- the error estimate from the current step, :math:`n`.
+   * **e2** --  the error estimate from the previous step, :math:`n-1`.
+   * **e3** -- the error estimate from the step :math:`n-2`.
+   * **q** -- the global order of accuracy for the method.
+   * **p** -- the global order of accuracy for the embedded method.
+   * **hnew** -- the output value of the next step size.
+   * **user_data** -- a pointer to user data, the same as the
+     *h_data* parameter that was passed to :c:func:`ARKStepSetAdaptivityFn`
+     or :c:func:`ERKStepSetAdaptivityFn`.
+
+   **Returns:**
+
+     An *ARKAdaptFn* function should return 0 if it
+     successfully set the next step size, and a non-zero value otherwise.
 
    .. deprecated:: 5.7.0
 
@@ -301,16 +317,20 @@ step, and the accuracy-based time step.
    This function predicts the maximum stable step size for the
    explicit portion of the ODE system.
 
-   :param y: the current value of the dependent variable vector.
-   :param t: the current value of the independent variable.
-   :param hstab: the output value with the absolute value of the
-                 maximum stable step size.
-   :param user_data: a pointer to user data, the same as the *estab_data*
-                     parameter that was passed to :c:func:`ARKodeSetStabilityFn`.
+   **Parameters:**
 
-   :return: An *ARKExpStabFn* function should return 0 if it
-            successfully set the upcoming stable step size, and a non-zero
-            value otherwise.
+   * **y** -- the current value of the dependent variable vector.
+   * **t** -- the current value of the independent variable.
+   * **hstab** -- the output value with the absolute value of the
+     maximum stable step size.
+   * **user_data** -- a pointer to user data, the same as the *estab_data*
+     parameter that was passed to :c:func:`ARKodeSetStabilityFn`.
+
+   **Returns:**
+
+     An *ARKExpStabFn* function should return 0 if it
+     successfully set the upcoming stable step size, and a non-zero
+     value otherwise.
 
    .. note::
 
@@ -343,16 +363,20 @@ the default trivial predictor in place.
 
    This function updates the prediction for the implicit stage solution.
 
-   :param t: the current value of the independent variable containing the
-             "time" corresponding to the predicted solution.
-   :param zpred: the ARKODE-predicted stage solution on input, and the
-                 user-modified predicted stage solution on output.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An *ARKStagePredictFn* function should return 0 if it
-            successfully set the upcoming stable step size, and a non-zero
-            value otherwise.
+   * **t** -- the current value of the independent variable containing the
+     "time" corresponding to the predicted solution.
+   * **zpred** -- the ARKODE-predicted stage solution on input, and the
+     user-modified predicted stage solution on output.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An *ARKStagePredictFn* function should return 0 if it
+     successfully set the upcoming stable step size, and a non-zero
+     value otherwise.
 
    .. note::
 
@@ -381,15 +405,19 @@ ODE system, the user must supply a function of type :c:type:`ARKRootFn`.
    :math:`g(t,y)` such that roots are sought for the components
    :math:`g_i(t,y)`, :math:`i=0,\ldots,` *nrtfn*-1.
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector.
-   :param gout: the output array, of length *nrtfn*, with components :math:`g_i(t,y)`.
-   :param user_data: a pointer to user data, the same as the
-                     *user_data* parameter that was passed to the ``SetUserData`` function
+   **Parameters:**
 
-   :return: An *ARKRootFn* function should return 0 if successful
-            or a non-zero value if an error occurred (in which case the
-            integration is halted and ARKODE returns *ARK_RTFUNC_FAIL*).
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector.
+   * **gout** -- the output array, of length *nrtfn*, with components :math:`g_i(t,y)`.
+   * **user_data** -- a pointer to user data, the same as the
+     *user_data* parameter that was passed to the ``SetUserData`` function
+
+   **Returns:**
+
+     An *ARKRootFn* function should return 0 if successful
+     or a non-zero value if an error occurred (in which case the
+     integration is halted and ARKODE returns *ARK_RTFUNC_FAIL*).
 
    .. note::
 
@@ -414,24 +442,28 @@ function of type :c:type:`ARKLsJacFn` to provide the Jacobian approximation or
    This function computes the Jacobian matrix :math:`J(t,y) =
    \dfrac{\partial f^I}{\partial y}(t,y)` (or an approximation to it).
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector, namely
-             the predicted value of :math:`y(t)`.
-   :param fy: the current value of the vector :math:`f^I(t,y)`.
-   :param Jac: the output Jacobian matrix.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
-   :param tmp*: pointers to memory allocated to
-                variables of type ``N_Vector`` which can be used by an
-                ARKLsJacFn as temporary storage or work space.
+   **Parameters:**
 
-   :return: An *ARKLsJacFn* function should return 0 if successful, a positive
-            value if a recoverable error occurred (in which case ARKODE will
-            attempt to correct, while ARKLS sets *last_flag* to
-            *ARKLS_JACFUNC_RECVR*), or a negative value if it failed
-            unrecoverably (in which case the integration is halted,
-            :c:func:`ARKodeEvolve` returns *ARK_LSETUP_FAIL* and
-            ARKLS sets *last_flag* to *ARKLS_JACFUNC_UNRECVR*).
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector, namely
+     the predicted value of :math:`y(t)`.
+   * **fy** -- the current value of the vector :math:`f^I(t,y)`.
+   * **Jac** -- the output Jacobian matrix.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   * **tmp1, tmp2, tmp3** -- pointers to memory allocated to
+     variables of type ``N_Vector`` which can be used by an
+     ARKLsJacFn as temporary storage or work space.
+
+   **Returns:**
+
+     An *ARKLsJacFn* function should return 0 if successful, a positive
+     value if a recoverable error occurred (in which case ARKODE will
+     attempt to correct, while ARKLS sets *last_flag* to
+     *ARKLS_JACFUNC_RECVR*), or a negative value if it failed
+     unrecoverably (in which case the integration is halted,
+     :c:func:`ARKodeEvolve` returns *ARK_LSETUP_FAIL* and
+     ARKLS sets *last_flag* to *ARKLS_JACFUNC_UNRECVR*).
 
    .. note::
 
@@ -499,36 +531,40 @@ function of type :c:type:`ARKLsJacFn` to provide the Jacobian approximation or
    This function computes the linear system matrix :math:`\mathcal{A}(t,y) = M(t) - \gamma J(t,y)` (or
    an approximation to it).
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector, namely the
-             predicted value of :math:`y(t)`.
-   :param fy: the current value of the vector :math:`f^I(t,y)`.
-   :param A: the output linear system matrix.
-   :param M: the current mass matrix (this input is ``NULL`` if :math:`M = I`).
-   :param jok: is an input flag indicating whether the Jacobian-related data
-               needs to be updated. The *jok* argument provides for the reuse of
-               Jacobian data. When *jok* = ``SUNFALSE``, the Jacobian-related data
-               should be recomputed from scratch. When *jok* = ``SUNTRUE`` the Jacobian
-               data, if saved from the previous call to this function, can be reused
-               (with the current value of *gamma*). A call with *jok* = ``SUNTRUE`` can
-               only occur after a call with *jok* = ``SUNFALSE``.
-   :param jcur: is a pointer to a flag which should be set to ``SUNTRUE`` if
-                Jacobian data was recomputed, or set to ``SUNFALSE`` if Jacobian data
-                was not recomputed, but saved data was still reused.
-   :param gamma: the scalar :math:`\gamma` appearing in the Newton system matrix
-                 :math:`\mathcal{A}=M(t)-\gamma J(t,y)`.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
-   :param tmp*: pointers to memory allocated to variables of
-                            type ``N_Vector`` which can be used by an ARKLsLinSysFn as temporary
-                            storage or work space.
+   **Parameters:**
 
-   :return: An *ARKLsLinSysFn* function should return 0 if successful, a positive value
-            if a recoverable error occurred (in which case ARKODE will attempt to
-            correct, while ARKLS sets *last_flag* to *ARKLS_JACFUNC_RECVR*), or a
-            negative value if it failed unrecoverably (in which case the integration is
-            halted, :c:func:`ARKodeEvolve` returns *ARK_LSETUP_FAIL* and ARKLS sets
-            *last_flag* to *ARKLS_JACFUNC_UNRECVR*).
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector, namely the
+     predicted value of :math:`y(t)`.
+   * **fy** -- the current value of the vector :math:`f^I(t,y)`.
+   * **A** -- the output linear system matrix.
+   * **M** -- the current mass matrix (this input is ``NULL`` if :math:`M = I`).
+   * **jok** -- is an input flag indicating whether the Jacobian-related data
+     needs to be updated. The *jok* argument provides for the reuse of
+     Jacobian data. When *jok* = ``SUNFALSE``, the Jacobian-related data
+     should be recomputed from scratch. When *jok* = ``SUNTRUE`` the Jacobian
+     data, if saved from the previous call to this function, can be reused
+     (with the current value of *gamma*). A call with *jok* = ``SUNTRUE`` can
+     only occur after a call with *jok* = ``SUNFALSE``.
+   * **jcur** -- is a pointer to a flag which should be set to ``SUNTRUE`` if
+     Jacobian data was recomputed, or set to ``SUNFALSE`` if Jacobian data
+     was not recomputed, but saved data was still reused.
+   * **gamma** -- the scalar :math:`\gamma` appearing in the Newton system matrix
+     :math:`\mathcal{A}=M(t)-\gamma J(t,y)`.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   * **tmp1, tmp2, tmp3** -- pointers to memory allocated to variables of
+     type ``N_Vector`` which can be used by an ARKLsLinSysFn as temporary
+     storage or work space.
+
+   **Returns:**
+
+     An *ARKLsLinSysFn* function should return 0 if successful, a positive value
+     if a recoverable error occurred (in which case ARKODE will attempt to
+     correct, while ARKLS sets *last_flag* to *ARKLS_JACFUNC_RECVR*), or a
+     negative value if it failed unrecoverably (in which case the integration is
+     halted, :c:func:`ARKodeEvolve` returns *ARK_LSETUP_FAIL* and ARKLS sets
+     *last_flag* to *ARKLS_JACFUNC_UNRECVR*).
 
 
 
@@ -550,20 +586,24 @@ the default is a difference quotient approximation to these products.
    This function computes the product :math:`Jv` where :math:`J(t,y) \approx
    \dfrac{\partial f^I}{\partial y}(t,y)` (or an approximation to it).
 
-   :param v: the vector to multiply.
-   :param Jv: the output vector computed.
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector.
-   :param fy: the current value of the vector :math:`f^I(t,y)`.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
-   :param tmp: pointer to memory allocated to a variable of type
-               ``N_Vector`` which can be used as temporary storage or work space.
+   **Parameters:**
 
-   :return: The value to be returned by the Jacobian-vector product
-            function should be 0 if successful. Any other return value will
-            result in an unrecoverable error of the generic Krylov solver,
-            in which case the integration is halted.
+   * **v** -- the vector to multiply.
+   * **Jv** -- the output vector computed.
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector.
+   * **fy** -- the current value of the vector :math:`f^I(t,y)`.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   * **tmp** - pointer to memory allocated to a variable of type
+     ``N_Vector`` which can be used as temporary storage or work space.
+
+   **Returns:**
+
+     The value to be returned by the Jacobian-vector product
+     function should be 0 if successful. Any other return value will
+     result in an unrecoverable error of the generic Krylov solver,
+     in which case the integration is halted.
 
    .. note::
 
@@ -596,16 +636,20 @@ defined as follows:
    This function preprocesses and/or evaluates any Jacobian-related
    data needed by the Jacobian-times-vector routine.
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector.
-   :param fy: the current value of the vector :math:`f^I(t,y)`.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: The value to be returned by the Jacobian-vector setup
-            function should be 0 if successful, positive for a recoverable
-            error (in which case the step will be retried), or negative for an
-            unrecoverable error (in which case the integration is halted).
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector.
+   * **fy** -- the current value of the vector :math:`f^I(t,y)`.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     The value to be returned by the Jacobian-vector setup
+     function should be 0 if successful, positive for a recoverable
+     error (in which case the step will be retried), or negative for an
+     unrecoverable error (in which case the integration is halted).
 
    .. note::
 
@@ -649,31 +693,35 @@ preconditioner matrices should approximate :math:`\mathcal{A}`.
 
    This function solves the preconditioner system :math:`Pz=r`.
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector.
-   :param fy: the current value of the vector :math:`f^I(t,y)`.
-   :param r: the right-hand side vector of the linear system.
-   :param z: the computed output solution vector.
-   :param gamma: the scalar :math:`\gamma` appearing in the Newton
-                 matrix given by :math:`\mathcal{A}=M(t)-\gamma J(t,y)`.
-   :param delta: an input tolerance to be used if an iterative method
-                 is employed in the solution.  In that case, the residual vector
-                 :math:`Res = r-Pz` of the system should be made to be less than *delta*
-                 in the weighted :math:`l_2` norm, i.e. :math:`\left(\displaystyle \sum_{i=1}^n
-                 \left(Res_i * ewt_i\right)^2 \right)^{1/2} < \delta`, where :math:`\delta =`
-                 `delta`.  To obtain the ``N_Vector`` *ewt*, call
-                 :c:func:`ARKodeGetErrWeights`.
-   :param lr: an input flag indicating whether the preconditioner
-              solve is to use the left preconditioner (*lr* = 1) or the right
-              preconditioner (*lr* = 2).
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: The value to be returned by the preconditioner solve
-            function is a flag indicating whether it was successful. This value
-            should be 0 if successful, positive for a recoverable error (in
-            which case the step will be retried), or negative for an
-            unrecoverable error (in which case the integration is halted).
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector.
+   * **fy** -- the current value of the vector :math:`f^I(t,y)`.
+   * **r** -- the right-hand side vector of the linear system.
+   * **z** -- the computed output solution vector.
+   * **gamma** -- the scalar :math:`\gamma` appearing in the Newton
+     matrix given by :math:`\mathcal{A}=M(t)-\gamma J(t,y)`.
+   * **delta** -- an input tolerance to be used if an iterative method
+     is employed in the solution.  In that case, the residual vector
+     :math:`Res = r-Pz` of the system should be made to be less than *delta*
+     in the weighted :math:`l_2` norm, i.e. :math:`\left(\displaystyle \sum_{i=1}^n
+     \left(Res_i * ewt_i\right)^2 \right)^{1/2} < \delta`, where :math:`\delta =`
+     `delta`.  To obtain the ``N_Vector`` *ewt*, call
+     :c:func:`ARKodeGetErrWeights`.
+   * **lr** -- an input flag indicating whether the preconditioner
+     solve is to use the left preconditioner (*lr* = 1) or the right
+     preconditioner (*lr* = 2).
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     The value to be returned by the preconditioner solve
+     function is a flag indicating whether it was successful. This value
+     should be 0 if successful, positive for a recoverable error (in
+     which case the step will be retried), or negative for an
+     unrecoverable error (in which case the integration is halted).
 
 
 
@@ -693,30 +741,34 @@ user-supplied function of type :c:type:`ARKLsPrecSetupFn`.
    This function preprocesses and/or evaluates Jacobian-related
    data needed by the preconditioner.
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector.
-   :param fy: the current value of the vector :math:`f^I(t,y)`.
-   :param jok: is an input flag indicating whether the Jacobian-related
-               data needs to be updated. The *jok* argument provides for the
-               reuse of Jacobian data in the preconditioner solve function. When
-               *jok* = ``SUNFALSE``, the Jacobian-related data should be recomputed
-               from scratch. When *jok* = ``SUNTRUE`` the Jacobian data, if saved from the
-               previous call to this function, can be reused (with the current
-               value of *gamma*). A call with *jok* = ``SUNTRUE`` can only occur
-               after a call with *jok* = ``SUNFALSE``.
-   :param jcurPtr: is a pointer to a flag which should be set to
-                   ``SUNTRUE`` if Jacobian data was recomputed, or set to ``SUNFALSE`` if
-                   Jacobian data was not recomputed, but saved data was still reused.
-   :param gamma: the scalar :math:`\gamma` appearing in the Newton
-                 matrix given by :math:`\mathcal{A}=M(t)-\gamma J(t,y)`.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: The value to be returned by the preconditioner setup
-            function is a flag indicating whether it was successful. This value
-            should be 0 if successful, positive for a recoverable error (in
-            which case the step will be retried), or negative for an
-            unrecoverable error (in which case the integration is halted).
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector.
+   * **fy** -- the current value of the vector :math:`f^I(t,y)`.
+   * **jok** -- is an input flag indicating whether the Jacobian-related
+     data needs to be updated. The *jok* argument provides for the
+     reuse of Jacobian data in the preconditioner solve function. When
+     *jok* = ``SUNFALSE``, the Jacobian-related data should be recomputed
+     from scratch. When *jok* = ``SUNTRUE`` the Jacobian data, if saved from the
+     previous call to this function, can be reused (with the current
+     value of *gamma*). A call with *jok* = ``SUNTRUE`` can only occur
+     after a call with *jok* = ``SUNFALSE``.
+   * **jcurPtr** - is a pointer to a flag which should be set to
+     ``SUNTRUE`` if Jacobian data was recomputed, or set to ``SUNFALSE`` if
+     Jacobian data was not recomputed, but saved data was still reused.
+   * **gamma** -- the scalar :math:`\gamma` appearing in the Newton
+     matrix given by :math:`\mathcal{A}=M(t)-\gamma J(t,y)`.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     The value to be returned by the preconditioner setup
+     function is a flag indicating whether it was successful. This value
+     should be 0 if successful, positive for a recoverable error (in
+     which case the step will be retried), or negative for an
+     unrecoverable error (in which case the integration is halted).
 
    .. note::
 
@@ -768,19 +820,23 @@ the mass matrix approximation.
 
    This function computes the mass matrix :math:`M(t)` (or an approximation to it).
 
-   :param t: the current value of the independent variable.
-   :param M: the output mass matrix.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
-   :param tmp1*: pointers to memory allocated to
-                 variables of type ``N_Vector`` which can be used by an
-                 ARKLsMassFn as temporary storage or work space.
+   **Parameters:**
 
-   :return: An *ARKLsMassFn* function should return 0 if successful, or a
-            negative value if it failed unrecoverably (in which case the
-            integration is halted, :c:func:`ARKodeEvolve` returns
-            *ARK_MASSSETUP_FAIL* and ARKLS sets *last_flag* to
-            *ARKLS_MASSFUNC_UNRECVR*).
+   * **t** -- the current value of the independent variable.
+   * **M** -- the output mass matrix.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   * **tmp1, tmp2, tmp3** -- pointers to memory allocated to
+     variables of type ``N_Vector`` which can be used by an
+     ARKLsMassFn as temporary storage or work space.
+
+   **Returns:**
+
+     An *ARKLsMassFn* function should return 0 if successful, or a
+     negative value if it failed unrecoverably (in which case the
+     integration is halted, :c:func:`ARKodeEvolve` returns
+     *ARK_MASSSETUP_FAIL* and ARKLS sets *last_flag* to
+     *ARKLS_MASSFUNC_UNRECVR*).
 
    .. note::
 
@@ -839,16 +895,20 @@ compute matrix-vector products :math:`M(t)\, v`.
 
    This function computes the product :math:`M(t)\, v` (or an approximation to it).
 
-   :param v: the vector to multiply.
-   :param Mv: the output vector computed.
-   :param t: the current value of the independent variable.
-   :param mtimes_data: a pointer to user data, the same as the *mtimes_data*
-                       parameter that was passed to :c:func:`ARKodeSetMassTimes`.
+   **Parameters:**
 
-   :return: The value to be returned by the mass-matrix-vector product
-            function should be 0 if successful. Any other return value will
-            result in an unrecoverable error of the generic Krylov solver,
-            in which case the integration is halted.
+   * **v** -- the vector to multiply.
+   * **Mv** -- the output vector computed.
+   * **t** -- the current value of the independent variable.
+   * **mtimes_data** -- a pointer to user data, the same as the *mtimes_data*
+     parameter that was passed to :c:func:`ARKodeSetMassTimes`.
+
+   **Returns:**
+
+     The value to be returned by the mass-matrix-vector product
+     function should be 0 if successful. Any other return value will
+     result in an unrecoverable error of the generic Krylov solver,
+     in which case the integration is halted.
 
 
 
@@ -870,14 +930,18 @@ be done in a user-supplied function of type
    This function preprocesses and/or evaluates any mass-matrix-related
    data needed by the mass-matrix-times-vector routine.
 
-   :param t: the current value of the independent variable.
-   :param mtimes_data: a pointer to user data, the same as the *mtimes_data*
-                       parameter that was passed to :c:func:`ARKodeSetMassTimes`.
+   **Parameters:**
 
-   :return: The value to be returned by the mass-matrix-vector setup
-            function should be 0 if successful. Any other return value will
-            result in an unrecoverable error of the ARKLS mass matrix solver
-            interface, in which case the integration is halted.
+   * **t** -- the current value of the independent variable.
+   * **mtimes_data** -- a pointer to user data, the same as the *mtimes_data*
+     parameter that was passed to :c:func:`ARKodeSetMassTimes`.
+
+   **Returns:**
+
+     The value to be returned by the mass-matrix-vector setup
+     function should be 0 if successful. Any other return value will
+     result in an unrecoverable error of the ARKLS mass matrix solver
+     interface, in which case the integration is halted.
 
 
 
@@ -901,27 +965,31 @@ approximate :math:`M(t)`.
 
    This function solves the preconditioner system :math:`Pz=r`.
 
-   :param t: the current value of the independent variable.
-   :param r: the right-hand side vector of the linear system.
-   :param z: the computed output solution vector.
-   :param delta: an input tolerance to be used if an iterative method
-                 is employed in the solution.  In that case, the residual vector
-                 :math:`Res = r-Pz` of the system should be made to be less than *delta*
-                 in the weighted :math:`l_2` norm, i.e. :math:`\left(\displaystyle \sum_{i=1}^n
-                 \left(Res_i * ewt_i\right)^2 \right)^{1/2} < \delta`, where :math:`\delta =`
-                 *delta*.  To obtain the ``N_Vector`` *ewt*, call
-                 :c:func:`ARKodeGetErrWeights`.
-   :param lr: an input flag indicating whether the preconditioner
-              solve is to use the left preconditioner (*lr* = 1) or the right
-              preconditioner (*lr* = 2).
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: The value to be returned by the preconditioner solve
-            function is a flag indicating whether it was successful. This value
-            should be 0 if successful, positive for a recoverable error (in
-            which case the step will be retried), or negative for an
-            unrecoverable error (in which case the integration is halted).
+   * **t** -- the current value of the independent variable.
+   * **r** -- the right-hand side vector of the linear system.
+   * **z** -- the computed output solution vector.
+   * **delta** -- an input tolerance to be used if an iterative method
+     is employed in the solution.  In that case, the residual vector
+     :math:`Res = r-Pz` of the system should be made to be less than *delta*
+     in the weighted :math:`l_2` norm, i.e. :math:`\left(\displaystyle \sum_{i=1}^n
+     \left(Res_i * ewt_i\right)^2 \right)^{1/2} < \delta`, where :math:`\delta =`
+     *delta*.  To obtain the ``N_Vector`` *ewt*, call
+     :c:func:`ARKodeGetErrWeights`.
+   * **lr** -- an input flag indicating whether the preconditioner
+     solve is to use the left preconditioner (*lr* = 1) or the right
+     preconditioner (*lr* = 2).
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     The value to be returned by the preconditioner solve
+     function is a flag indicating whether it was successful. This value
+     should be 0 if successful, positive for a recoverable error (in
+     which case the step will be retried), or negative for an
+     unrecoverable error (in which case the integration is halted).
 
 
 
@@ -944,15 +1012,19 @@ occur within a user-supplied function of type
    This function preprocesses and/or evaluates mass-matrix-related
    data needed by the preconditioner.
 
-   :param t: the current value of the independent variable.
-   :param user_data: a pointer to user data, the same as the *user_data*
-                     parameter that was passed to :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: The value to be returned by the mass matrix preconditioner setup
-            function is a flag indicating whether it was successful. This value
-            should be 0 if successful, positive for a recoverable error (in
-            which case the step will be retried), or negative for an
-            unrecoverable error (in which case the integration is halted).
+   * **t** -- the current value of the independent variable.
+   * **user_data** -- a pointer to user data, the same as the *user_data*
+     parameter that was passed to :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     The value to be returned by the mass matrix preconditioner setup
+     function is a flag indicating whether it was successful. This value
+     should be 0 if successful, positive for a recoverable error (in
+     which case the step will be retried), or negative for an
+     unrecoverable error (in which case the integration is halted).
 
    .. note::
 
@@ -996,13 +1068,17 @@ following form:
    This function resizes the vector *y* to match the dimensions of the
    supplied vector, *ytemplate*.
 
-   :param y: the vector to resize.
-   :param ytemplate: a vector of the desired size.
-   :param user_data: a pointer to user data, the same as the *resize_data*
-                     parameter that was passed to :c:func:`ARKodeResize`.
+   **Parameters:**
 
-   :return: An *ARKVecResizeFn* function should return 0 if it successfully
-            resizes the vector *y*, and a non-zero value otherwise.
+   * **y** -- the vector to resize.
+   * **ytemplate** -- a vector of the desired size.
+   * **user_data** -- a pointer to user data, the same as the *resize_data*
+     parameter that was passed to :c:func:`ARKodeResize`.
+
+   **Returns:**
+
+     An *ARKVecResizeFn* function should return 0 if it successfully
+     resizes the vector *y*, and a non-zero value otherwise.
 
    .. note::
 
@@ -1026,15 +1102,19 @@ integrator for the inner integration.
 
 .. c:type:: int (*MRIStepPreInnerFn)(sunrealtype t, N_Vector* f, int num_vecs, void* user_data)
 
-   :param t: the current value of the independent variable.
-   :param f: an ``N_Vector`` array of outer forcing vectors.
-   :param num_vecs: the number of vectors in the ``N_Vector`` array.
-   :param user_data: the `user_data` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An *MRIStepPreInnerFn* function should return 0 if successful, a positive value
-            if a recoverable error occurred, or a negative value if an unrecoverable
-            error occurred.
+   * **t** -- the current value of the independent variable.
+   * **f** -- an ``N_Vector`` array of outer forcing vectors.
+   * **num_vecs** -- the number of vectors in the ``N_Vector`` array.
+   * **user_data** -- the `user_data` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An *MRIStepPreInnerFn* function should return 0 if successful, a positive value
+     if a recoverable error occurred, or a negative value if an unrecoverable
+     error occurred.
 
    .. note::
 
@@ -1055,14 +1135,18 @@ outer integrator for the outer integration.
 
 .. c:type:: int (*MRIStepPostInnerFn)(sunrealtype t, N_Vector y, void* user_data)
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector.
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return:  An :c:func:`MRIStepPostInnerFn` function should return 0 if successful, a
-             positive value if a recoverable error occurred, or a negative value if an
-             unrecoverable error occurred.
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector.
+   * **user_data** -- the ``user_data`` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An :c:func:`MRIStepPostInnerFn` function should return 0 if successful, a
+     positive value if a recoverable error occurred, or a negative value if an
+     unrecoverable error occurred.
 
    .. note::
 
@@ -1080,15 +1164,19 @@ Relaxation function
    When applying relaxation, an :c:func:`ARKRelaxFn` function is required to
    compute the conservative or dissipative function :math:`\xi(y)`.
 
-   :param y: the current value of the dependent variable vector.
-   :param r: the value of :math:`\xi(y)`.
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An :c:func:`ARKRelaxFn` function should return 0 if successful, a positive
-            value if a recoverable error occurred, or a negative value if an
-            unrecoverable error occurred. If a recoverable error occurs, the step size
-            will be reduced and the step repeated.
+   * **y** -- the current value of the dependent variable vector.
+   * **r** -- the value of :math:`\xi(y)`.
+   * **user_data** -- the ``user_data`` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An :c:func:`ARKRelaxFn` function should return 0 if successful, a positive
+     value if a recoverable error occurred, or a negative value if an
+     unrecoverable error occurred. If a recoverable error occurs, the step size
+     will be reduced and the step repeated.
 
 .. _ARKODE.Usage.RelaxJacFn:
 
@@ -1101,15 +1189,19 @@ Relaxation Jacobian function
    compute the Jacobian :math:`\xi'(y)` of the :c:func:`ARKRelaxFn`
    :math:`\xi(y)`.
 
-   :param y: the current value of the dependent variable vector.
-   :param J: the Jacobian vector :math:`\xi'(y)`.
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An :c:func:`ARKRelaxJacFn` function should return 0 if successful, a
-            positive value if a recoverable error occurred, or a negative value if an
-            unrecoverable error occurred. If a recoverable error occurs, the step size
-            will be reduced and the step repeated.
+   * **y** -- the current value of the dependent variable vector.
+   * **J** -- the Jacobian vector :math:`\xi'(y)`.
+   * **user_data** -- the ``user_data`` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An :c:func:`ARKRelaxJacFn` function should return 0 if successful, a
+     positive value if a recoverable error occurred, or a negative value if an
+     unrecoverable error occurred. If a recoverable error occurs, the step size
+     will be reduced and the step repeated.
 
 
 .. _ARKODE.Usage.ARKodeProcessingFunctions:
@@ -1141,22 +1233,26 @@ step attempt by ARKODE (see :c:func:`ARKodeSetPreStepFn`).
       If the supplied function modifies any of the active state data, then all
       theoretical guarantees of solution accuracy and stability are lost.
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector that will be
-             used as the initial condition for the upcoming step.
-   :param step: the step index (starting at 0 for the first internal step since
-                ARKODE was (re-)initialized).
-   :param attempt: a counter indicating which attempt at the step is about to
-                   occur -- 0 indicates that the previous step succeeded and this
-                   is the first attempt the step ``step``, while a number greater
-                   than 0 indicates that the previous step attempt failed and this
-                   is a subsequent try at computing the step ``step``.
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An :c:func:`ARKPreStepFn` function should return 0 if successful, a
-            positive value if a recoverable error occurred, or a negative value
-            if an unrecoverable error occurred.
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector that will be
+     used as the initial condition for the upcoming step.
+   * **step** -- the step index (starting at 0 for the first internal step since
+     ARKODE was (re-)initialized).
+   * **attempt** -- a counter indicating which attempt at the step is about to
+     occur -- 0 indicates that the previous step succeeded and this
+     is the first attempt the step ``step``, while a number greater
+     than 0 indicates that the previous step attempt failed and this
+     is a subsequent try at computing the step ``step``.
+   * **user_data** -- the ``user_data`` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An :c:func:`ARKPreStepFn` function should return 0 if successful, a
+     positive value if a recoverable error occurred, or a negative value
+     if an unrecoverable error occurred.
 
    .. versionadded:: x.y.z
 
@@ -1172,17 +1268,21 @@ A user-provided :c:type:`ARKPostStepFn` will be called following each
       If the supplied function modifies any of the active state data, then all
       theoretical guarantees of solution accuracy and stability are lost.
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector that resulted
-             from the successful time step.
-   :param step: the step index (starting at 0 for the first internal step since
-                ARKODE was (re-)initialized).
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An :c:func:`ARKPostStepFn` function should return 0 if successful, a
-            positive value if a recoverable error occurred, or a negative value
-            if an unrecoverable error occurred.
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector that resulted
+     from the successful time step.
+   * **step** -- the step index (starting at 0 for the first internal step since
+     ARKODE was (re-)initialized).
+   * **user_data** -- the ``user_data`` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An :c:func:`ARKPostStepFn` function should return 0 if successful, a
+     positive value if a recoverable error occurred, or a negative value
+     if an unrecoverable error occurred.
 
    .. versionadded:: x.y.z
 
@@ -1202,16 +1302,20 @@ of partitioned integration methods (e.g., ARKStep, MRIStep), if multiple
       If the supplied function modifies any of the active state data, then all
       theoretical guarantees of solution accuracy and stability are lost.
 
-   :param t: the current value of the independent variable that will be
-             provided to the :c:type:`ARKRhsFn`.
-   :param y: the current value of the dependent variable vector that will be
-             provided to the :c:type:`ARKRhsFn`.
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An :c:func:`ARKPreRhsFn` function should return 0 if successful, a
-            positive value if a recoverable error occurred, or a negative value if an
-            unrecoverable error occurred.
+   * **t** -- the current value of the independent variable that will be
+     provided to the :c:type:`ARKRhsFn`.
+   * **y** -- the current value of the dependent variable vector that will be
+     provided to the :c:type:`ARKRhsFn`.
+   * **user_data** -- the ``user_data`` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An :c:func:`ARKPreRhsFn` function should return 0 if successful, a
+     positive value if a recoverable error occurred, or a negative value if an
+     unrecoverable error occurred.
 
    .. versionadded:: x.y.z
 
@@ -1228,15 +1332,19 @@ internal step attempt (see :c:func:`ARKodeSetPostprocessStepFn`).
       If the supplied function modifies any of the active state data, then all
       theoretical guarantees of solution accuracy and stability are lost.
 
-   :param t: the current value of the independent variable.
-   :param y: the current value of the dependent variable vector resulting from
-             the step or stage.
-   :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`ARKodeSetUserData`.
+   **Parameters:**
 
-   :return: An :c:func:`ARKPostProcessFn` function should return 0 if successful, a
-            positive value if a recoverable error occurred, or a negative value if an
-            unrecoverable error occurred.
+   * **t** -- the current value of the independent variable.
+   * **y** -- the current value of the dependent variable vector resulting from
+     the step or stage.
+   * **user_data** -- the ``user_data`` pointer that was passed to
+     :c:func:`ARKodeSetUserData`.
+
+   **Returns:**
+
+     An :c:func:`ARKPostProcessFn` function should return 0 if successful, a
+     positive value if a recoverable error occurred, or a negative value if an
+     unrecoverable error occurred.
 
    .. warning::
 
