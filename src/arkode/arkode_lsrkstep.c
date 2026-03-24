@@ -1426,7 +1426,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Compute the step solution */
-  ark_mem->tcur = ark_mem->tn + ark_mem->h;
+  ark_mem->tcur    = ark_mem->tn + ark_mem->h;
   step_mem->istage = step_mem->req_stages;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
              step_mem->req_stages, ark_mem->tcur);
@@ -2123,7 +2123,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   /* Compute the time step solution and embedding */
   step_mem->istage = 4;
-  ark_mem->tcur = ark_mem->tn + ark_mem->h;
+  ark_mem->tcur    = ark_mem->tn + ark_mem->h;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 4, ark_mem->tcur);
   N_VLinearSum(ONE, ark_mem->ycur, hp5, ark_mem->tempv3, ark_mem->ycur);
