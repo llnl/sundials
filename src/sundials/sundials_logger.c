@@ -38,11 +38,6 @@
 #include "sundials_macros.h"
 #include "sundials_utils.h"
 
-#if SUNDIALS_LOGGING_LEVEL > 0
-
-/* default number of files that we allocate space for */
-#define SUN_DEFAULT_LOGFILE_HANDLES_ 8
-
 void sunCreateLogMessage(SUNLogLevel lvl, int rank, const char* scope,
                          const char* label, const char* txt, va_list args,
                          char** log_msg)
@@ -77,6 +72,11 @@ void sunCreateLogMessage(SUNLogLevel lvl, int rank, const char* scope,
            scope, label, formatted_txt);
   free(formatted_txt);
 }
+
+#if SUNDIALS_LOGGING_LEVEL > 0
+
+/* default number of files that we allocate space for */
+#define SUN_DEFAULT_LOGFILE_HANDLES_ 8
 
 static FILE* sunOpenLogFile(const char* fname, const char* mode)
 {
