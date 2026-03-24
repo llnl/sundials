@@ -32,16 +32,6 @@ m.def(
   },
   nb::arg("q"), nb::arg("max_iters"), nb::arg("rel_tol"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
-
-m.def("SUNDomEigEstimator_SetRHS_Power", SUNDomEigEstimator_SetRHS_Power,
-      nb::arg("DEE"), nb::arg("rhs_data"), nb::arg("RHSfn"));
-
-m.def("SUNDomEigEstimator_SetRHSLinearizationPoint_Power",
-      SUNDomEigEstimator_SetRHSLinearizationPoint_Power, nb::arg("DEE"),
-      nb::arg("t"), nb::arg("v"));
-
-m.def("SUNDomEigEstimator_SetDEEisReal_Power",
-      SUNDomEigEstimator_SetDEEisReal_Power, nb::arg("DEE"), nb::arg("real"));
 // #ifdef __cplusplus
 //
 // #endif
