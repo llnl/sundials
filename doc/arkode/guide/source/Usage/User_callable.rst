@@ -3561,9 +3561,9 @@ would proceed as:
       stage is explicit) or the ``RHS`` has already been computed at
       :math:`(t_{n},y_{n})`, proceed to stage 1.
 
-   a. Call ``PreRHS`` with :math:`(t_{n},y_{n})`
+   b. Call ``PreRHS`` with :math:`(t_{n},y_{n})`
 
-   b. Evaluate ``RHS`` at :math:`(t_{n},y_{n})`
+   c. Evaluate ``RHS`` at :math:`(t_{n},y_{n})`
 
 3. Stage 1
 

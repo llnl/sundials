@@ -15,7 +15,10 @@ updated state (`ARKodeSetPreRhsFn`), and/or once each internal step/stage is
 computed (`ARKodeSetPostprocessStepFn`/ `ARKodeSetPostprocessStageFn`). These
 are considered **advanced** functions, as they should treat the state vector as
 read-only, otherwise all theoretical guarantees of solution accuracy and
-stability will be lost.
+stability will be lost.  As a result of these new functions, the values of
+multiple ARKODE return codes (e.g., ``ARK_INTERP_FAIL``) have been updated;
+users who key off of the named constants will not be affected, but users who
+rely on the values themselves should update their codes accordingly.
 
 Note to users utilizing the previously undocumented `ARKodeSetPostprocessStepFn`
 function, the supplied function is now called on the newly computed state vector
@@ -61,8 +64,26 @@ Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
 state would be stored on the first step if the output vector passed to
 `ARKodeEvolve` did not contain the initial condition on the first call.
 
+Fixed a bug in MRIStep when using a custom inner integrator that relies on the
+input state being the initial condition for the fast integration rather than
+retaining the result from the last inner integration or most recent reset call
+and the output vector passed to `ARKodeEvolve` does not contain the initial
+condition on the first call or the last returned solution on subsequent calls.
+
+Removed an extraneous copy of the output vector in each step with SplittingStep.
+
+Added a missing call to `SUNNonlinSolSetup` in MRIStep when using an
+IMEX-MRI-SR method.
+
 Fixed a potential bug in LSRKStep's `ARKODE_LSRK_SSP_S_3` method, where a real
 number was used instead of an integer, potentially resulting in a rounding error.
+
+Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
+user-supplied dominant eigenvalue function on the first step unless the output
+vector passed to `ARKodeEvolve` contained the initial condition and when an
+eigenvalue estimate is requested on the first step in a subsequent call to
+`ARKodeEvolve` unless the output vector passed contained the most recently returned
+solution.
 
 ### Deprecation Notices
 
@@ -70,7 +91,7 @@ Several CMake options have been deprecated in favor of namespaced versions
 prefixed with `SUNDIALS_` to avoid naming collisions in applications that
 include SUNDIALS directly within their CMake builds. Additionally, a consistent
 naming convention (`SUNDIALS_ENABLE`) is now used for all boolean options. The
-table below lists the old CMake option names and the new replacements.
+Removed an extraneous copy of the output vector in each step with SplittingStep.
 
 | Old Option                              | New Option                                     |
 |-----------------------------------------|------------------------------------------------|
