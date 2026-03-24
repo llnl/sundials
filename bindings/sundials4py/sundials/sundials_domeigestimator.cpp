@@ -99,7 +99,7 @@ m.def(
     if (RHSfn)
     {
       return SUNDomEigEstimator_SetRHS(DEE, fntable,
-                                      sundomeigestimator_setrhs_wrapper);
+                                       sundomeigestimator_setrhs_wrapper);
     }
     else { return SUNDomEigEstimator_SetRHS(DEE, fntable, nullptr); }
   },
