@@ -745,7 +745,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
 
   /* fill current independent variable (and optionally ycur with yn) */
   ark_mem->tcur = ark_mem->tn;
-  if (ark_mem->ensure_ycur) N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  if (ark_mem->ensure_ycur) { N_VScale(ONE, ark_mem->yn, ark_mem->ycur); }
 
   /*--------------------------------------------------
     Looping point for successful internal steps
@@ -1029,7 +1029,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       /* reset tcur to last saved internal time before reattempting step
          (and optionally ycur to yn ) */
       ark_mem->tcur = ark_mem->tn;
-      if (ark_mem->ensure_ycur) N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+      if (ark_mem->ensure_ycur) { N_VScale(ONE, ark_mem->yn, ark_mem->ycur); }
 
     } /* end looping for step attempts */
 

@@ -3252,9 +3252,12 @@ int ARKodeGetStageIndex(void* arkode_mem, int* stage, int* max_stages)
   }
   else
   {
-    *stage      = 0;
-    *max_stages = 1;
-    return (ARK_SUCCESS);
+    *stage      = -1;
+    *max_stages = -1;
+    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
+                    __FILE__,
+                    "time-stepping module does not support this function");
+    return (ARK_STEPPER_UNSUPPORTED);
   }
 }
 

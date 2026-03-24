@@ -15,6 +15,10 @@ internal step/stage is computed (:c:func:`ARKodeSetPostprocessStepFn`/
 :c:func:`ARKodeSetPostprocessStageFn`). These are considered **advanced**
 functions, as they should treat the state vector as read-only, otherwise all
 theoretical guarantees of solution accuracy and stability will be lost.
+As a result of these new functions, the values of multiple ARKODE return
+codes (e.g., ``ARK_INTERP_FAIL``) have been updated; users who key off of the
+named constants will not be affected, but users who rely on the values
+themselves should update their codes accordingly.
 
 Note to users utilizing the previously undocumented
 :c:func:`ARKodeSetPostprocessStepFn` function, the supplied function is now
@@ -39,6 +43,9 @@ stage currently being processed, and the total number of stages in the method, f
 users who must compute auxiliary quantities in their IVP right-hand side functions
 during some stages and not others (e.g., in all but the first or last stage).
 
+Added the functions :c:func:`ARKodeGetLastTime` and :c:func:`ARKodeGetLastState` to
+return the last successful time and state achieved by ARKODE, respectively.
+
 **Bug Fixes**
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
@@ -57,8 +64,27 @@ Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
 state would be stored on the first step if the output vector passed to
 :c:func:`ARKodeEvolve` did not contain the initial condition on the first call.
 
+Fixed a bug in MRIStep when using a custom inner integrator that relies on the
+input state being the initial condition for the fast integration rather than
+retaining the result from the last inner integration or most recent reset call
+and the output vector passed to :c:func:`ARKodeEvolve` does not contain the
+initial condition on the first call or the last returned solution on subsequent
+calls.
+
+Removed an extraneous copy of the output vector in each step with SplittingStep.
+
+Added a missing call to :c:func:`SUNNonlinSolSetup` in MRIStep when using an
+IMEX-MRI-SR method.
+
 Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method, where a real
 number was used instead of an integer, potentially resulting in a rounding error.
+
+Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
+user-supplied dominant eigenvalue function on the first step unless the output
+vector passed to :c:func:`ARKodeEvolve` contained the initial condition and when
+an eigenvalue estimate is requested on the first step in a subsequent call to
+:c:func:`ARKodeEvolve` unless the output vector passed contained the most recently
+returned solution.
 
 **Deprecation Notices**
 
