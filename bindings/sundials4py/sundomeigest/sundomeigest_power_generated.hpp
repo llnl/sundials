@@ -34,9 +34,7 @@ m.def(
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
 m.def("SUNDomEigEstimator_SetDEEisReal_Power",
-      SUNDomEigEstimator_SetDEEisReal_Power, nb::arg("DEE"),
-      nb::arg("DEEisReal"));
-
+      SUNDomEigEstimator_SetDEEisReal_Power, nb::arg("DEE"), nb::arg("real"));
 // #ifdef __cplusplus
 //
 // #endif
