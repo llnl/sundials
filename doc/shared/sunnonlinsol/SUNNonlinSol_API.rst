@@ -397,7 +397,7 @@ linear solver module; otherwise :c:func:`SUNNonlinSolGetCurIter` is optional.
 
    **Notes:**
       If the nonlinear solver does not implement this operation, the return
-      value will be :c:macro:`SUN_ERR_NOT_IMPLEMENTED`.
+      value will be ``SUN_ERR_NOT_IMPLEMENTED`.
 
 
 .. _SUNNonlinSol.API.SUNSuppliedFn:
@@ -567,6 +567,8 @@ successful call.
    | SUN_NLS_CONTINUE      |  901    | the nonlinear solver is not converged, keep iterating         |
    +-----------------------+---------+---------------------------------------------------------------+
    | SUN_NLS_CONV_RECVR    |  902    | the nonlinear solver appears to be diverging, try to recover  |
+   +-----------------------+---------+---------------------------------------------------------------+
+   | SUN_NLS_SWITCH        |  903    | the nonlinear solver will switch to a different strategy      |
    +-----------------------+---------+---------------------------------------------------------------+
 
 

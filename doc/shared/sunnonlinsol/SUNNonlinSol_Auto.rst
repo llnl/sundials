@@ -43,7 +43,7 @@ to the other algorithm based on a runtime switching criterion.
 Switching decisions are checked at every nonlinear iteration by intercepting
 the convergence test function provided by the integrator (see
 :c:func:`SUNNonlinSolSetConvTestFn`). When SUNNonlinSol_Auto decides to switch,
-it returns :c:macro:`SUN_NLS_SWITCH` from the convergence test. The underlying
+it returns ``SUN_NLS_SWITCH`` from the convergence test. The underlying
 solver propagates this code back to the integrator. Integrators that support
 automatic nonlinear solver switching will respond by reinitializing the
 nonlinear solver interface and retrying the nonlinear solve.
@@ -124,4 +124,4 @@ The SUNNonlinSol_Auto module also defines the following functions for controllin
    :param fp_to_newt_delay: the number of consecutive iterations that must satisfy the switching 
       criterion before switching from fixed-point to Newton.
 
-   :returns: :c:macro:`SUN_SUCCESS` if successful, otherwise an error code.
+   :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
