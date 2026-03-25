@@ -5158,9 +5158,10 @@ int IDAInitialSetup(IDAMem IDA_mem)
  *
  * 
  */
-static int IDAQuadSetup(IDAMem IDA_mem) {
+static int IDAQuadSetup(IDAMem IDA_mem)
+{
   int ier;
-  
+
   if (IDA_mem->ida_quadr)
   {
     /* Evaluate quadrature rhs and set phiQ[1] */
