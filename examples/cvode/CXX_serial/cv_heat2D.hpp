@@ -28,8 +28,9 @@
 #include <string>
 
 // SUNDIALS types
+#include <sundials/sundials_math.h> //for macros of SUNRcos and SUNRsin
 #include <sundials/sundials_nvector.h>
-#include <sundials/sundials_types.h>
+#include <sundials/sundials_types.hpp>
 
 // Common utility functions
 #include <example_utilities.hpp>
@@ -118,7 +119,7 @@ static int Solution(sunrealtype t, N_Vector u, UserData& udata)
   N_VConst(ONE, u);
 
   // Compute the true solution
-  auto cos_sqr_t = cos(PI * t) * cos(PI * t);
+  auto cos_sqr_t = SUNRcos(PI * t) * SUNRcos(PI * t);
 
   for (sunindextype j = 1; j < udata.ny - 1; j++)
   {
@@ -127,8 +128,8 @@ static int Solution(sunrealtype t, N_Vector u, UserData& udata)
       auto x = i * udata.dx;
       auto y = j * udata.dy;
 
-      auto sin_sqr_x = sin(PI * x) * sin(PI * x);
-      auto sin_sqr_y = sin(PI * y) * sin(PI * y);
+      auto sin_sqr_x = SUNRsin(PI * x) * SUNRsin(PI * x);
+      auto sin_sqr_y = SUNRsin(PI * y) * SUNRsin(PI * y);
 
       auto idx    = i + j * udata.nx;
       uarray[idx] = sin_sqr_x * sin_sqr_y * cos_sqr_t + ONE;
@@ -248,8 +249,7 @@ static void PrintUserData(UserData& udata)
 static int OpenOutput(UserData& udata)
 {
   // Header for status output
-  std::cout << std::scientific
-            << std::setprecision(std::numeric_limits<sunrealtype>::digits10)
+  std::cout << std::scientific << std::setprecision(SUN_DIGITS10)
             << "          t                     ||u||_rms      "
             << "          max error\n"
             << " ----------------------------------------------"
@@ -270,12 +270,10 @@ static int OpenOutput(UserData& udata)
 
     // Open output streams for solution and error
     udata.uout.open("heat2d_solution.txt");
-    udata.uout << std::scientific
-               << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+    udata.uout << std::scientific << std::setprecision(SUN_DIGITS10);
 
     udata.eout.open("heat2d_error.txt");
-    udata.eout << std::scientific
-               << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+    udata.eout << std::scientific << std::setprecision(SUN_DIGITS10);
   }
 
   return 0;
@@ -292,7 +290,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, N_Vector e, UserData& udata)
   sunrealtype max = N_VMaxNorm(e);
 
   // Compute rms norm of the state
-  sunrealtype urms = sqrt(N_VDotProd(u, u) / udata.nx / udata.ny);
+  sunrealtype urms = SUNRsqrt(N_VDotProd(u, u) / udata.nx / udata.ny);
 
   // Output current status
   std::cout << std::setw(22) << t << std::setw(25) << urms << std::setw(25)

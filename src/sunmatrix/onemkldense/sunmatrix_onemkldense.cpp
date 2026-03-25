@@ -35,6 +35,8 @@
 // Check for a valid precision
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #error "oneMLK unsupported precision"
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#error "oneMLK unsupported precision"
 #endif
 
 // Constants

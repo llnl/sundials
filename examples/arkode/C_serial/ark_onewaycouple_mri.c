@@ -51,7 +51,11 @@
 #include <stdio.h>
 #include <sundials/sundials_types.h> /* def. of type 'sunrealtype'              */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -300,9 +304,10 @@ static int ans(sunrealtype t, N_Vector ytrue, void* user_data)
   sunrealtype c4 = SUN_RCONST(51.0) / SUN_RCONST(2501.0);
 
   /* fill in the solution vector */
-  NV_Ith_S(ytrue, 0) = cos(c1 * t);
-  NV_Ith_S(ytrue, 1) = sin(c1 * t);
-  NV_Ith_S(ytrue, 2) = c2 * exp(-t) - c3 * cos(c1 * t) + c4 * sin(c1 * t);
+  NV_Ith_S(ytrue, 0) = SUNRcos(c1 * t);
+  NV_Ith_S(ytrue, 1) = SUNRsin(c1 * t);
+  NV_Ith_S(ytrue, 2) = c2 * SUNRexp(-t) - c3 * SUNRcos(c1 * t) +
+                       c4 * SUNRsin(c1 * t);
 
   /* Return with success */
   return 0;

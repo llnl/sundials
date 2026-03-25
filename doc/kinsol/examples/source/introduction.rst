@@ -48,10 +48,10 @@ differ from one machine environment to another by as much as 10% to 20%.
    compile and run for any combination of configuration options used during the
    installation of SUNDIALS. As a consequence, they contain portions of code
    that will not be typically present in a user program. For example, programs
-   may make use of the variables ``SUNDIALS_EXTENDED_PRECISION`` and
-   ``SUNDIALS_DOUBLE_PRECISION`` to test if the solver libraries were built in
-   extended or double precision, and use the appropriate conversion specifiers
-   in ``printf`` functions.
+   may make use of the variables ``SUNDIALS_FLOAT128_PRECISION``,
+   ``SUNDIALS_EXTENDED_PRECISION`` and ``SUNDIALS_DOUBLE_PRECISION`` to test if
+   the solver libraries were built in float128, extended or double precision,
+   and use the appropriate conversion specifiers in ``printf`` functions.
 
 Serial examples
 ---------------

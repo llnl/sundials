@@ -460,7 +460,7 @@ static int adaptive_run(void* arkode_mem, N_Vector y, sunrealtype T0,
                                  (abstol + rtols[irtol] * abs(yrefdata[2]));
         dsm[ipart] =
           rtols[irtol] *
-          sqrt((udsm * udsm + vdsm * vdsm + wdsm * wdsm) / SUN_RCONST(3.0));
+          SUNRsqrt((udsm * udsm + vdsm * vdsm + wdsm * wdsm) / SUN_RCONST(3.0));
         cout << "  rtol " << rtols[irtol] << "  rk_type " << rk_type
              << "  order " << order << "  acc " << accum_types[iaccum] << "  t "
              << t << "  dsm " << dsm[ipart] << "  dsm_est " << dsm_est[ipart]
@@ -555,8 +555,8 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0, sunrealtype T
                                  (abstol + reltol * abs(yrefdata[1]));
         const sunrealtype wdsm = abs(ydata[2] - yrefdata[2]) /
                                  (abstol + reltol * abs(yrefdata[2]));
-        dsm[ipart] = reltol * sqrt((udsm * udsm + vdsm * vdsm + wdsm * wdsm) /
-                                   SUN_RCONST(3.0));
+        dsm[ipart] = reltol * SUNRsqrt((udsm * udsm + vdsm * vdsm + wdsm * wdsm) /
+                                       SUN_RCONST(3.0));
         cout << "  h " << hvals[ih] << "  rk_type " << rk_type << "  order "
              << order << "  acc " << accum_types[iaccum] << "  t " << t
              << "  dsm " << dsm[ipart] << "  dsm_est " << dsm_est[ipart]
@@ -638,8 +638,8 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0, sunrealtype T
                                (abstol + reltol * abs(yrefdata[1]));
       const sunrealtype wdsm = abs(ydata[2] - yrefdata[2]) /
                                (abstol + reltol * abs(yrefdata[2]));
-      dsm[ipart] = reltol * sqrt((udsm * udsm + vdsm * vdsm + wdsm * wdsm) /
-                                 SUN_RCONST(3.0));
+      dsm[ipart] = reltol * SUNRsqrt((udsm * udsm + vdsm * vdsm + wdsm * wdsm) /
+                                     SUN_RCONST(3.0));
       cout << "  h " << hvals[ih] << "  rk_type " << rk_type << "  order "
            << order << "  acc " << 2 << "  t " << t << "  dsm " << dsm[ipart]
            << "  dsm_est " << dsm_est[ipart] << "  nsteps " << Nsteps[ipart]

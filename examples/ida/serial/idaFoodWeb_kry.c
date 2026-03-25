@@ -100,18 +100,12 @@
 #include <sundials/sundials_types.h> /* definition of type sunrealtype          */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to spgmr SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef MAX
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-#endif
-
 /* Problem Constants. */
 
 #define NPREY       1 /* No. of prey (= no. of predators). */
 #define NUM_SPECIES 2 * NPREY
 
-#define PI     SUN_RCONST(3.1415926535898)
+#define PI     SUN_RCONST(3.141592653589793238462643383279502884197169)
 #define FOURPI (SUN_RCONST(4.0) * PI)
 
 #define MX    20 /* MX = number of x mesh points      */
@@ -418,7 +412,7 @@ static int Precond(sunrealtype tt, N_Vector cc, N_Vector cp, N_Vector rr,
   del_y   = webdata->dy;
 
   uround = SUN_UNIT_ROUNDOFF;
-  sqru   = sqrt(uround);
+  sqru   = SUNRsqrt(uround);
 
   mem    = webdata->ida_mem;
   ewt    = webdata->ewt;
@@ -442,8 +436,8 @@ static int Precond(sunrealtype tt, N_Vector cc, N_Vector cp, N_Vector rr,
 
       for (js = 0; js < NUM_SPECIES; js++)
       {
-        inc   = sqru * (MAX(SUNRabs(cxy[js]),
-                            MAX(hh * SUNRabs(cpxy[js]), ONE / ewtxy[js])));
+        inc   = sqru * (SUNMAX(SUNRabs(cxy[js]),
+                               SUNMAX(hh * SUNRabs(cpxy[js]), ONE / ewtxy[js])));
         cctmp = cxy[js];
         cxy[js] += inc;
         fac = -ONE / inc;
@@ -631,10 +625,10 @@ static void PrintHeader(int maxl, sunrealtype rtol, sunrealtype atol)
   printf("Number of species ns: %d", NUM_SPECIES);
   printf("     Mesh dimensions: %d x %d", MX, MY);
   printf("     System size: %d\n", NEQ);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, atol);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #endif
@@ -668,18 +662,16 @@ static void PrintOutput(void* mem, N_Vector c, sunrealtype t)
   c_bl = IJ_Vptr(c, 0, 0);
   c_tr = IJ_Vptr(c, MX - 1, MY - 1);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%8.2Qe %12.4Qe %12.4Qe   | %3ld  %1d %12.4Qe\n", t, c_bl[0], c_tr[0],
+         nst, kused, hused);
+  for (i = 1; i < NUM_SPECIES; i++)
+    printf("         %12.4Qe %12.4Qe   |\n", c_bl[i], c_tr[i]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%8.2Le %12.4Le %12.4Le   | %3ld  %1d %12.4Le\n", t, c_bl[0], c_tr[0],
          nst, kused, hused);
   for (i = 1; i < NUM_SPECIES; i++)
     printf("         %12.4Le %12.4Le   |\n", c_bl[i], c_tr[i]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%8.2e %12.4e %12.4e   | %3ld  %1d %12.4e\n", t, c_bl[0], c_tr[0], nst,
-         kused, hused);
-  for (i = 1; i < NUM_SPECIES; i++)
-  {
-    printf("         %12.4e %12.4e   |\n", c_bl[i], c_tr[i]);
-  }
 #else
   printf("%8.2e %12.4e %12.4e   | %3ld  %1d %12.4e\n", t, c_bl[0], c_tr[0], nst,
          kused, hused);
@@ -793,7 +785,8 @@ static void WebRates(sunrealtype xx, sunrealtype yy, sunrealtype* cxy,
     ratesxy[is] = dotprod(NUM_SPECIES, cxy, acoef[is]);
   }
 
-  fac = ONE + ALPHA * xx * yy + BETA * sin(FOURPI * xx) * sin(FOURPI * yy);
+  fac = ONE + ALPHA * xx * yy +
+        BETA * SUNRsin(FOURPI * xx) * SUNRsin(FOURPI * yy);
 
   for (is = 0; is < NUM_SPECIES; is++)
   {

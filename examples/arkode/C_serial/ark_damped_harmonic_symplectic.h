@@ -25,7 +25,7 @@
 #include <string.h>
 #include <sundials/sundials_types.h>
 
-#define PI SUN_RCONST(3.14159265358979323846264338327950)
+#define PI SUN_RCONST(3.141592653589793238462643383279502884197169)
 
 typedef struct
 {

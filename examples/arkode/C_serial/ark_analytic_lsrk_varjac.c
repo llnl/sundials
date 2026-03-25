@@ -48,7 +48,11 @@
 #include <sundials/sundials_math.h> /* def. of SUNRsqrt, etc. */
 #include <sundials/sundials_types.h> /* definition of type sunrealtype          */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -56,20 +60,6 @@
 #define GSYM "g"
 #define ESYM "e"
 #define FSYM "f"
-#endif
-
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define ATAN(x) (atan((x)))
-#define ACOS(x) (acos((x)))
-#define COS(x)  (cos((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define ATAN(x) (atanf((x)))
-#define ACOS(x) (acosf((x)))
-#define COS(x)  (cosf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define ATAN(x) (atanl((x)))
-#define ACOS(x) (acosl((x)))
-#define COS(x)  (cosl((x)))
 #endif
 
 /* User-supplied Functions Called by the Solver */
@@ -110,6 +100,11 @@ int main(void)
   sunrealtype lambda = SUN_RCONST(-1.0e+3); /* stiffness parameter 1 */
   sunrealtype alpha  = SUN_RCONST(1.0e+1);  /* stiffness parameter 2 */
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
+  sunrealtype reltol = SUN_RCONST(1.0e-8); /* tolerances */
+  sunrealtype abstol = SUN_RCONST(1.0e-8);
+  sunrealtype lambda = SUN_RCONST(-1.0e+6); /* stiffness parameter 1 */
+  sunrealtype alpha  = SUN_RCONST(1.0e+2);  /* stiffness parameter 2 */
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
   sunrealtype reltol = SUN_RCONST(1.0e-8); /* tolerances */
   sunrealtype abstol = SUN_RCONST(1.0e-8);
   sunrealtype lambda = SUN_RCONST(-1.0e+6); /* stiffness parameter 1 */
@@ -174,7 +169,7 @@ int main(void)
   if (check_flag(&flag, "LSRKStepSetMaxNumStages", 1)) { return 1; }
 
   /* Specify max number of steps allowed */
-  flag = ARKodeSetMaxNumSteps(arkode_mem, 2000);
+  flag = ARKodeSetMaxNumSteps(arkode_mem, 2000000);
   if (check_flag(&flag, "ARKodeSetMaxNumSteps", 1)) { return 1; }
 
   /* Specify safety factor for user provided dom_eig */
@@ -254,13 +249,13 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
   /* fill in the RHS function: "N_VGetArrayPointer" accesses the 0th entry of ydot */
   N_VGetArrayPointer(ydot)[0] =
-    (lambda - alpha * COS((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
-                          ACOS(SUN_RCONST(-1.0)))) *
+    (lambda - alpha * SUNRcos((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
+                              SUNRacos(SUN_RCONST(-1.0)))) *
       u +
     SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
-    (lambda - alpha * COS((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
-                          ACOS(SUN_RCONST(-1.0)))) *
-      ATAN(t);
+    (lambda - alpha * SUNRcos((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
+                              SUNRacos(SUN_RCONST(-1.0)))) *
+      SUNRatan(t);
 
   return 0; /* return with success */
 }
@@ -275,8 +270,8 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
   sunrealtype alpha  = rdata[1]; /* set shortcut for stiffness parameter 2 */
   *lambdaR =
     (lambda -
-     alpha * COS((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
-                 ACOS(SUN_RCONST(-1.0)))); /* access current solution value */
+     alpha * SUNRcos((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
+                     SUNRacos(SUN_RCONST(-1.0)))); /* access current solution value */
   *lambdaI = SUN_RCONST(0.0);
 
   return 0; /* return with success */
@@ -336,7 +331,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, sunrealtype at
   sunrealtype ans, err, ewt; /* answer data, error, and error weight */
 
   /* compute solution error */
-  ans = ATAN(t);
+  ans = SUNRatan(t);
   ewt = SUN_RCONST(1.0) / (rtol * SUNRabs(ans) + atol);
   err = ewt * SUNRabs(N_VGetArrayPointer(y)[0] - ans);
 
@@ -357,7 +352,7 @@ static int compute_error(N_Vector y, sunrealtype t)
   sunrealtype ans, err; /* answer data, error */
 
   /* compute solution error */
-  ans = ATAN(t);
+  ans = SUNRatan(t);
   err = SUNRabs(N_VGetArrayPointer(y)[0] - ans);
 
   fprintf(stdout, "\nACCURACY at the final time   = %" GSYM "\n", err);

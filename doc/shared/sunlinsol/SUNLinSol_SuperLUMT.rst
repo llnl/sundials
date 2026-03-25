@@ -167,7 +167,7 @@ appropriately to link with SuperLU_MT (see
 Additionally, this wrapper only supports single- and
 double-precision calculations, and therefore cannot be compiled if
 SUNDIALS is configured to have :c:type:`sunrealtype` set to ``extended``
-(see :numref:`SUNDIALS.DataTypes` for details).  Moreover,
+or ``float128`` (see :numref:`SUNDIALS.DataTypes` for details).  Moreover,
 since the SuperLU_MT library may be installed to support either 32-bit
 or 64-bit integers, it is assumed that the SuperLU_MT library is
 installed using the same integer precision as the SUNDIALS

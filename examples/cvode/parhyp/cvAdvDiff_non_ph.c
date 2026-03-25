@@ -54,7 +54,7 @@
 #include <nvector/nvector_parhyp.h> /* nvector implementation                       */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sundials/sundials_math.h> /* definition of EXP                            */
+#include <sundials/sundials_math.h> /* definition of SUNRexp                            */
 #include <sundials/sundials_types.h> /* definition of sunrealtype                       */
 
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h" /* access to the fixed point SUNNonlinearSolver */

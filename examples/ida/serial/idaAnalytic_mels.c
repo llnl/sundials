@@ -37,7 +37,10 @@
 #include <sundials/sundials_math.h> /* defs. of SUNRabs, SUNRexp, etc.      */
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define FSYM "Lf"
 #else
@@ -133,7 +136,7 @@ int main(int argc, char* argv[])
   tout = T0 + dTout;
   printf("        t          x1         x2\n");
   printf("   ----------------------------------\n");
-  while (Tf - t > 1.0e-15)
+  while (Tf - t > SUN_RCONST(1.0e-15))
   {
     retval = IDASolve(ida_mem, tout, &t, yy, yp, IDA_NORMAL); /* call integrator */
     if (check_retval(&retval, "IDASolve", 1)) { return (1); }
@@ -205,7 +208,7 @@ int fres(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector rr, void* user_data)
   sunrealtype TWO   = SUN_RCONST(2.0);
 
   NV_Ith_S(rr, 0) = (ONE - alpha) / (t - TWO) * x1 - x1 + (alpha - ONE) * x2 +
-                    TWO * exp(t) - x1p;
+                    TWO * SUNRexp(t) - x1p;
   NV_Ith_S(rr, 1) = (t + TWO) * x1 - (t + TWO) * SUNRexp(t);
 
   return (0);

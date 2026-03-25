@@ -129,15 +129,15 @@ int main(void)
 
   data = (UserData)malloc(sizeof *data);
 
-  data->a         = 0.5; /* half-length of crank */
-  data->J1        = 1.0; /* crank moment of inertia */
-  data->m2        = 1.0; /* mass of connecting rod */
-  data->m1        = 1.0;
-  data->J2        = 2.0; /* moment of inertia of connecting rod */
-  data->params[0] = 1.0; /* spring constant */
-  data->params[1] = 1.0; /* damper constant */
-  data->l0        = 1.0; /* spring free length */
-  data->F         = 1.0; /* external constant force */
+  data->a         = SUN_RCONST(0.5); /* half-length of crank */
+  data->J1        = SUN_RCONST(1.0); /* crank moment of inertia */
+  data->m2        = SUN_RCONST(1.0); /* mass of connecting rod */
+  data->m1        = SUN_RCONST(1.0);
+  data->J2        = SUN_RCONST(2.0); /* moment of inertia of connecting rod */
+  data->params[0] = SUN_RCONST(1.0); /* spring constant */
+  data->params[1] = SUN_RCONST(1.0); /* damper constant */
+  data->l0        = SUN_RCONST(1.0); /* spring free length */
+  data->F         = SUN_RCONST(1.0); /* external constant force */
 
   N_VConst(ONE, id);
   NV_Ith_S(id, 9) = ZERO;
@@ -208,7 +208,9 @@ int main(void)
 
   IDAGetQuad(mem, &tret, q);
   printf("--------------------------------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("  G = %24.16Qf\n", Ith(q, 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  G = %24.16Lf\n", Ith(q, 1));
 #else
   printf("  G = %24.16f\n", Ith(q, 1));
@@ -217,7 +219,9 @@ int main(void)
 
   IDAGetQuadSens(mem, &tret, qS);
   printf("-------------F O R W A R D------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe %12.4Qe\n", Ith(qS[0], 1), Ith(qS[1], 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le\n", Ith(qS[0], 1), Ith(qS[1], 1));
 #else
   printf("   dG/dp:  %12.4e %12.4e\n", Ith(qS[0], 1), Ith(qS[1], 1));
@@ -328,7 +332,9 @@ int main(void)
   printf("\n\n   Checking using Finite Differences \n\n");
 
   printf("---------------BACKWARD------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe %12.4Qe\n", (G - Gm[0]) / dp, (G - Gm[1]) / dp);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le\n", (G - Gm[0]) / dp, (G - Gm[1]) / dp);
 #else
   printf("   dG/dp:  %12.4e %12.4e\n", (G - Gm[0]) / dp, (G - Gm[1]) / dp);
@@ -336,7 +342,9 @@ int main(void)
   printf("-----------------------------------------\n\n");
 
   printf("---------------FORWARD-------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe %12.4Qe\n", (Gp[0] - G) / dp, (Gp[1] - G) / dp);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le\n", (Gp[0] - G) / dp, (Gp[1] - G) / dp);
 #else
   printf("   dG/dp:  %12.4e %12.4e\n", (Gp[0] - G) / dp, (Gp[1] - G) / dp);
@@ -344,7 +352,10 @@ int main(void)
   printf("-----------------------------------------\n\n");
 
   printf("--------------CENTERED-------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe %12.4Qe\n", (Gp[0] - Gm[0]) / (TWO * dp),
+         (Gp[1] - Gm[1]) / (TWO * dp));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le\n", (Gp[0] - Gm[0]) / (TWO * dp),
          (Gp[1] - Gm[1]) / (TWO * dp));
 #else
@@ -380,7 +391,7 @@ static void setIC(N_Vector yy, N_Vector yp, UserData data)
   N_VConst(ZERO, yy);
   N_VConst(ZERO, yp);
 
-  pi = FOUR * atan(ONE);
+  pi = FOUR * SUNRatan(ONE);
 
   a  = data->a;
   J1 = data->J1;
@@ -388,8 +399,8 @@ static void setIC(N_Vector yy, N_Vector yp, UserData data)
   J2 = data->J2;
 
   q = pi / TWO;
-  p = asin(-a);
-  x = cos(p);
+  p = SUNRasin(-a);
+  x = SUNRcos(p);
 
   NV_Ith_S(yy, 0) = q;
   NV_Ith_S(yy, 1) = x;
@@ -425,15 +436,15 @@ static void force(N_Vector yy, sunrealtype* Q, UserData data)
   xd = NV_Ith_S(yy, 4);
   pd = NV_Ith_S(yy, 5);
 
-  s1  = sin(q);
-  c1  = cos(q);
-  s2  = sin(p);
-  c2  = cos(p);
+  s1  = SUNRsin(q);
+  c1  = SUNRcos(q);
+  s2  = SUNRsin(p);
+  c2  = SUNRcos(p);
   s21 = s2 * c1 - c2 * s1;
   c21 = c2 * c1 + s2 * s1;
 
   l2 = x * x - x * (c2 + a * c1) + (ONE + a * a) / FOUR + a * c21 / TWO;
-  l  = sqrt(l2);
+  l  = SUNRsqrt(l2);
   ld = TWO * x * xd - xd * (c2 + a * c1) + x * (s2 * pd + a * s1 * qd) -
        a * s21 * (pd - qd) / TWO;
   ld /= TWO * l;
@@ -483,10 +494,10 @@ static int ressc(sunrealtype tres, N_Vector yy, N_Vector yp, N_Vector rr,
   mu1 = yval[8];
   mu2 = yval[9];
 
-  s1 = sin(q);
-  c1 = cos(q);
-  s2 = sin(p);
-  c2 = cos(p);
+  s1 = SUNRsin(q);
+  c1 = SUNRcos(q);
+  s2 = SUNRsin(p);
+  c2 = SUNRcos(p);
 
   force(yy, Q, data);
 

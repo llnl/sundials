@@ -256,7 +256,7 @@ int Test_N_VMake_OpenMPDEV(N_Vector X, sunindextype length, int myid)
   d_data = N_VGetDeviceArrayPointer_OpenMPDEV(X);
 
   /* Case 1: h_data and d_data are not null */
-  Y = N_VMake_OpenMPDEV(length, h_data, d_data);
+  Y = N_VMake_OpenMPDEV(length, h_data, d_data, sunctx);
   if (Y == NULL)
   {
     printf(">>> FAILED test -- N_VMake_OpenMPDEV, Proc %d \n", myid);
@@ -295,7 +295,7 @@ int Test_N_VMake_OpenMPDEV(N_Vector X, sunindextype length, int myid)
   N_VDestroy(Y);
 
   /* Case 2: data is null */
-  Y = N_VMake_OpenMPDEV(length, NULL, NULL);
+  Y = N_VMake_OpenMPDEV(length, NULL, NULL, sunctx);
   if (Y != NULL)
   {
     printf(">>> FAILED test -- N_VMake_OpenMPDEV Case 2, Proc %d \n", myid);
@@ -353,9 +353,8 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
   /* set elements [is,ie] of the data array */
 #pragma omp target map(to : is, ie, val) is_device_ptr(xdev) device(dev)
 #pragma omp teams distribute parallel for schedule(static, 1)
-  {
-    for (i = is; i <= ie; i++) { xdev[i] = val; }
-  }
+
+  for (i = is; i <= ie; i++) { xdev[i] = val; }
 }
 
 sunrealtype get_element(N_Vector X, sunindextype i)

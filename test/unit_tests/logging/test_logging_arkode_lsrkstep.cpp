@@ -120,11 +120,11 @@ int main(int argc, char* argv[])
   sunrealtype tret        = zero;
   sunrealtype tout        = tret + dtout;
 
-  const int width = numeric_limits<sunrealtype>::digits10 + 8;
+  const int width = SUN_DIGITS10 + 8;
 
   // Output initial contion
   cout << scientific;
-  cout << setprecision(numeric_limits<sunrealtype>::digits10);
+  cout << setprecision(SUN_DIGITS10);
   cout << setw(width) << " t";
   cout << setw(width) << " y";
   cout << setw(width) << " y err" << endl;

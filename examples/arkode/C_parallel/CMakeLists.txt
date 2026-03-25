@@ -24,23 +24,19 @@
 set(ARKODE_examples "ark_diurnal_kry_p\;\;1\;4\;exclude-single\;default"
                     "ark_diurnal_kry_bbd_p\;\;1\;4\;exclude-single\;default")
 
-if(SUNDIALS_PRECISION MATCHES "DOUBLE" AND SUNDIALS_INDEX_SIZE MATCHES "64")
+list(APPEND ARKODE_examples
+     "ark_brusselator1D_task_local_nls\;--monitor\;1\;4\;develop\;2")
+list(
+  APPEND ARKODE_examples
+  "ark_brusselator1D_task_local_nls\;--monitor --global-nls\;1\;4\;develop\;2")
+list(
+  APPEND
+  ARKODE_examples
+  "ark_brusselator1D_task_local_nls\;--monitor --explicit --tf 3\;1\;4\;develop\;2"
+)
 
-  list(APPEND ARKODE_examples
-       "ark_brusselator1D_task_local_nls\;--monitor\;1\;4\;develop\;2")
-  list(
-    APPEND ARKODE_examples
-    "ark_brusselator1D_task_local_nls\;--monitor --global-nls\;1\;4\;develop\;2"
-  )
-  list(
-    APPEND
-    ARKODE_examples
-    "ark_brusselator1D_task_local_nls\;--monitor --explicit --tf 3\;1\;4\;develop\;2"
-  )
-
-  # Auxiliary files to install
-  set(ARKODE_extras "plot_brusselator1D.py")
-endif()
+# Auxiliary files to install
+set(ARKODE_extras "plot_brusselator1D.py")
 
 if(MPI_C_COMPILER)
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})

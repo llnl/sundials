@@ -2860,6 +2860,6 @@ static void time_stats(N_Vector X, double* times, int num_warmups, int ntests,
     {
       *sdev += (times[i] - *avg) * (times[i] - *avg);
     }
-    *sdev = sqrt(*sdev / (ntests - 1));
+    *sdev = SUNRsqrt(*sdev / (ntests - 1));
   }
 }

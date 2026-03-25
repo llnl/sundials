@@ -39,54 +39,36 @@
 #include "nvector/nvector_serial.h" /* access to serial N_Vector       */
 
 /* precision specific formatting macros */
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #else
 #define GSYM "g"
 #endif
 
-/* precision specific math function macros */
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define ABS(x)  (fabs((x)))
-#define SQRT(x) (sqrt((x)))
-#define EXP(x)  (exp((x)))
-#define SIN(x)  (sin((x)))
-#define COS(x)  (cos((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define ABS(x)  (fabsf((x)))
-#define SQRT(x) (sqrtf((x)))
-#define EXP(x)  (expf((x)))
-#define SIN(x)  (sinf((x)))
-#define COS(x)  (cosf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define ABS(x)  (fabsl((x)))
-#define SQRT(x) (sqrtl((x)))
-#define EXP(x)  (expl((x)))
-#define SIN(x)  (sinl((x)))
-#define COS(x)  (cosl((x)))
-#endif
-
 /* problem constants */
 #define NEQ 3 /* number of equations */
 
-#define ZERO         SUN_RCONST(0.0)             /* real 0.0  */
-#define PTONE        SUN_RCONST(0.1)             /* real 0.1  */
-#define HALF         SUN_RCONST(0.5)             /* real 0.5  */
-#define PTNINE       SUN_RCONST(0.9)             /* real 0.9  */
-#define ONE          SUN_RCONST(1.0)             /* real 1.0  */
-#define ONEPTZEROSIX SUN_RCONST(1.06)            /* real 1.06 */
-#define THREE        SUN_RCONST(3.0)             /* real 3.0  */
-#define SIX          SUN_RCONST(6.0)             /* real 6.0  */
-#define NINE         SUN_RCONST(9.0)             /* real 9.0  */
-#define TEN          SUN_RCONST(10.0)            /* real 10.0 */
-#define TWENTY       SUN_RCONST(20.0)            /* real 20.0 */
-#define SIXTY        SUN_RCONST(60.0)            /* real 60.0 */
-#define PI           SUN_RCONST(3.1415926535898) /* real pi   */
+#define ZERO         SUN_RCONST(0.0)  /* real 0.0  */
+#define PTONE        SUN_RCONST(0.1)  /* real 0.1  */
+#define HALF         SUN_RCONST(0.5)  /* real 0.5  */
+#define PTNINE       SUN_RCONST(0.9)  /* real 0.9  */
+#define ONE          SUN_RCONST(1.0)  /* real 1.0  */
+#define ONEPTZEROSIX SUN_RCONST(1.06) /* real 1.06 */
+#define THREE        SUN_RCONST(3.0)  /* real 3.0  */
+#define SIX          SUN_RCONST(6.0)  /* real 6.0  */
+#define NINE         SUN_RCONST(9.0)  /* real 9.0  */
+#define TEN          SUN_RCONST(10.0) /* real 10.0 */
+#define TWENTY       SUN_RCONST(20.0) /* real 20.0 */
+#define SIXTY        SUN_RCONST(60.0) /* real 60.0 */
+#define PI \
+  SUN_RCONST(3.141592653589793238462643383279502884197169) /* real pi   */
 
 /* analytic solution */
 #define XTRUE HALF
 #define YTRUE ONE
-#define ZTRUE -PI / SIX
+#define ZTRUE (-PI / SIX)
 
 /* problem options */
 typedef struct
@@ -344,9 +326,10 @@ int FPFunction(N_Vector u, N_Vector g, void* user_data)
   y = udata[1];
   z = udata[2];
 
-  gdata[0] = (ONE / THREE) * COS((y - ONE) * z) + (ONE / SIX);
-  gdata[1] = (ONE / NINE) * SQRT(x * x + SIN(z) + ONEPTZEROSIX) + PTNINE;
-  gdata[2] = -(ONE / TWENTY) * EXP(-x * (y - ONE)) - (TEN * PI - THREE) / SIXTY;
+  gdata[0] = (ONE / THREE) * SUNRcos((y - ONE) * z) + (ONE / SIX);
+  gdata[1] = (ONE / NINE) * SUNRsqrt(x * x + SUNRsin(z) + ONEPTZEROSIX) + PTNINE;
+  gdata[2] = -(ONE / TWENTY) * SUNRexp(-x * (y - ONE)) -
+             (TEN * PI - THREE) / SIXTY;
 
   return (0);
 }
@@ -355,7 +338,7 @@ static int DampingFn(long int iter, N_Vector u_val, N_Vector g_val,
                      sunrealtype* qt_fn, long int depth, void* user_data,
                      sunrealtype* damping_factor)
 {
-  if (depth == 0) { *damping_factor = 0.5; }
+  if (depth == 0) { *damping_factor = SUN_RCONST(0.5); }
   else
   {
     /* Compute ||Q^T fn||^2 */
@@ -376,7 +359,7 @@ static int DampingFn(long int iter, N_Vector u_val, N_Vector g_val,
     /* Compute the gain = sqrt(1 - ||Q^T fn||^2 / ||fn||^2) */
     sunrealtype gain = SUNRsqrt(ONE - qt_fn_norm_sqr / fn_norm_sqr);
 
-    *damping_factor = 0.9 - 0.5 * gain;
+    *damping_factor = SUN_RCONST(0.9) - SUN_RCONST(0.5) * gain;
   }
 
   return 0;
@@ -412,9 +395,9 @@ static int check_ans(N_Vector u, sunrealtype tol)
   printf("    z = %" GSYM "\n", data[2]);
 
   /* solution error */
-  ex = ABS(data[0] - XTRUE);
-  ey = ABS(data[1] - YTRUE);
-  ez = ABS(data[2] - ZTRUE);
+  ex = SUNRabs(data[0] - XTRUE);
+  ey = SUNRabs(data[1] - YTRUE);
+  ez = SUNRabs(data[2] - ZTRUE);
 
   /* print the solution error */
   printf("Solution error:\n");
@@ -444,7 +427,7 @@ static int SetDefaults(UserOpt* uopt)
   if (*uopt == NULL) { return (-1); }
 
   /* Set default options values */
-  (*uopt)->tol            = 100 * SQRT(SUN_UNIT_ROUNDOFF);
+  (*uopt)->tol            = 100 * SUNRsqrt(SUN_UNIT_ROUNDOFF);
   (*uopt)->maxiter        = 30;
   (*uopt)->m_aa           = 0;               /* no acceleration */
   (*uopt)->delay_aa       = 0;               /* no delay        */

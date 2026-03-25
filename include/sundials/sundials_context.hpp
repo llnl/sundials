@@ -26,7 +26,7 @@
 #include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_context.h>
 #include <sundials/sundials_convertibleto.hpp>
-#include <sundials/sundials_types.h>
+#include <sundials/sundials_types.hpp>
 
 namespace sundials {
 

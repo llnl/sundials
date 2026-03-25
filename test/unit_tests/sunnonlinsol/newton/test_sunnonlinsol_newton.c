@@ -26,7 +26,9 @@
 #include "sunmatrix/sunmatrix_dense.h"
 #include "sunnonlinsol/sunnonlinsol_newton.h"
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #else
 #define GSYM "g"

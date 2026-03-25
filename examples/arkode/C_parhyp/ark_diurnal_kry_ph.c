@@ -65,7 +65,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sundials/sundials_dense.h> /* prototypes for small dense fcts. */
-#include <sundials/sundials_math.h>  /* definition of macros SUNSQR and EXP */
+#include <sundials/sundials_math.h> /* definition of macros SUNSQR and SUNRexp */
 #include <sundials/sundials_types.h> /* definitions of sunrealtype, sunbooleantype */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver  */
 
@@ -86,7 +86,7 @@
 #define NOUT    12                 /* number of output times */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours  */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day */
-#define PI      SUN_RCONST(3.1415926535898) /* pi */
+#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
 
 #define XMIN SUN_RCONST(0.0) /* grid boundaries in x  */
 #define XMAX SUN_RCONST(20.0)

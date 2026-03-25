@@ -294,10 +294,10 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "IDAGetQuad", 1)) { return (1); }
 
   printf("--------------------------------------------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("G:          %12.4Qe \n", Ith(q, 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("G:          %12.4Le \n", Ith(q, 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("G:          %12.4e \n", Ith(q, 1));
 #else
   printf("G:          %12.4e \n", Ith(q, 1));
 #endif
@@ -780,17 +780,17 @@ static int rhsQB(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector yyB,
 static void PrintOutput(sunrealtype tfinal, N_Vector yB, N_Vector ypB, N_Vector qB)
 {
   printf("--------------------------------------------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("tB0:        %12.4Qe\n", tfinal);
+  printf("dG/dp:      %12.4Qe %12.4Qe %12.4Qe\n", -Ith(qB, 1), -Ith(qB, 2),
+         -Ith(qB, 3));
+  printf("lambda(t0): %12.4Qe %12.4Qe %12.4Qe\n", Ith(yB, 1), Ith(yB, 2),
+         Ith(yB, 3));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("tB0:        %12.4Le\n", tfinal);
   printf("dG/dp:      %12.4Le %12.4Le %12.4Le\n", -Ith(qB, 1), -Ith(qB, 2),
          -Ith(qB, 3));
   printf("lambda(t0): %12.4Le %12.4Le %12.4Le\n", Ith(yB, 1), Ith(yB, 2),
-         Ith(yB, 3));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("tB0:        %12.4e\n", tfinal);
-  printf("dG/dp:      %12.4e %12.4e %12.4e\n", -Ith(qB, 1), -Ith(qB, 2),
-         -Ith(qB, 3));
-  printf("lambda(t0): %12.4e %12.4e %12.4e\n", Ith(yB, 1), Ith(yB, 2),
          Ith(yB, 3));
 #else
   printf("tB0:        %12.4e\n", tfinal);

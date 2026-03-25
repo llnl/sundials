@@ -77,6 +77,7 @@
 // Header files
 #include <arkode/arkode_arkstep.h> // prototypes for ARKStep fcts., consts
 #include <cmath>
+#include <iomanip> //for setw
 #include <iostream>
 #include <nvector/nvector_serial.h> // serial N_Vector type, fcts., macros
 #include <stdio.h>
@@ -88,7 +89,10 @@
 #include <sunnonlinsol/sunnonlinsol_newton.h>     // Newton nonlinear solver
 #include <vector>
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"
 #define FSYM "Lf"
 #else
@@ -228,9 +232,9 @@ int main(int argc, char* argv[])
          << ", abstol = " << abstol << endl;
   }
   else { cout << "    Order-of-convergence run\n"; }
-  cout << "    G = " << udata.G << endl;
-  cout << "    g = " << udata.g << endl;
-  cout << "    e = " << udata.e << endl;
+  cout << "    G = " << setw(8) << udata.G << endl;
+  cout << "    g = " << setw(8) << udata.g << endl;
+  cout << "    e = " << setw(8) << udata.e << endl;
 
   //
   // Problem Setup
@@ -360,8 +364,8 @@ static int fe(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   // fill in the RHS function:
   //   g*[ cos(t) sin(t)] * [rdot(t)/(2u)]
   //     [-sin(t) cos(t)]   [sdot(t)/(2v)]
-  gcos = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
-  gsin = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
+  gcos = (udata->M_timedep) ? udata->g * SUNRcos(t) : udata->g * SUNRcos(PI4);
+  gsin = (udata->M_timedep) ? udata->g * SUNRsin(t) : udata->g * SUNRsin(PI4);
   tmp1 = rdot(t) / (TWO * u);
   tmp2 = sdot(t) / (TWO * v);
   NV_Ith_S(ydot, 0) = gcos * tmp1 + gsin * tmp2;
@@ -382,8 +386,8 @@ static int fi(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   // fill in the RHS function:
   //   g*[ cos(t) sin(t)]*[G  e]*[(-1+u^2-r(t))/(2*u)]
   //     [-sin(t) cos(t)] [e -1] [(-2+v^2-s(t))/(2*v)]
-  gcos = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
-  gsin = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
+  gcos = (udata->M_timedep) ? udata->g * SUNRcos(t) : udata->g * SUNRcos(PI4);
+  gsin = (udata->M_timedep) ? udata->g * SUNRsin(t) : udata->g * SUNRsin(PI4);
   tmp1 = (-ONE + u * u - r(t)) / (TWO * u);
   tmp2 = (-TWO + v * v - s(t)) / (TWO * v);
   tmp3 = udata->G * tmp1 + udata->e * tmp2;
@@ -405,8 +409,8 @@ static int fn(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   // fill in the RHS function:
   //   g*[ cos(t) sin(t)]*( [G  e]*[(-1+u^2-r(t))/(2*u)] + [rdot(t)/(2u)]
   //     [-sin(t) cos(t)] ( [e -1] [(-2+v^2-s(t))/(2*v)]   [sdot(t)/(2v)]
-  gcos = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
-  gsin = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
+  gcos = (udata->M_timedep) ? udata->g * SUNRcos(t) : udata->g * SUNRcos(PI4);
+  gsin = (udata->M_timedep) ? udata->g * SUNRsin(t) : udata->g * SUNRsin(PI4);
   tmp1 = (-ONE + u * u - r(t)) / (TWO * u);
   tmp2 = (-TWO + v * v - s(t)) / (TWO * v);
   tmp3 = udata->G * tmp1 + udata->e * tmp2 + rdot(t) / (TWO * u);
@@ -429,8 +433,8 @@ static int Ji(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   // fill in the Jacobian:
   //   g*[ cos(t) sin(t)]*[G  e]*[1-(u^2-r(t)-1)/(2*u^2),  0]
   //     [-sin(t) cos(t)] [e -1] [0,  1-(v^2-s(t)-2)/(2*v^2)]
-  gcos = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
-  gsin = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
+  gcos = (udata->M_timedep) ? udata->g * SUNRcos(t) : udata->g * SUNRcos(PI4);
+  gsin = (udata->M_timedep) ? udata->g * SUNRsin(t) : udata->g * SUNRsin(PI4);
   t11  = ONE - (u * u - r(t) - ONE) / (TWO * u * u);
   t12  = ZERO;
   t22  = ONE - (v * v - s(t) - TWO) / (TWO * v * v);
@@ -459,8 +463,8 @@ static int Jn(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   // fill in the Jacobian:
   //   g*[ cos(t) sin(t)]*( [G  e]*[1-(u^2-r(t)-1)/(2*u^2),  0] + [-r'(t)/(2*u^2),  0])
   //     [-sin(t) cos(t)] ( [e -1] [0,  1-(v^2-s(t)-2)/(2*v^2)]   [0,  -s'(t)/(2*v^2)])
-  gcos = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
-  gsin = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
+  gcos = (udata->M_timedep) ? udata->g * SUNRcos(t) : udata->g * SUNRcos(PI4);
+  gsin = (udata->M_timedep) ? udata->g * SUNRsin(t) : udata->g * SUNRsin(PI4);
   t11  = ONE - (u * u - r(t) - ONE) / (TWO * u * u);
   t12  = ZERO;
   t21  = ZERO;
@@ -485,14 +489,14 @@ static int MassMatrix(sunrealtype t, SUNMatrix M, void* user_data,
   UserData* udata = (UserData*)user_data;
 
   // fill in the mass matrix: g*[ cos(t) sin(t); -sin(t) cos(t)]
-  SM_ELEMENT_D(M, 0, 0) = (udata->M_timedep) ? udata->g * cos(t)
-                                             : udata->g * cos(PI4);
-  SM_ELEMENT_D(M, 0, 1) = (udata->M_timedep) ? udata->g * sin(t)
-                                             : udata->g * sin(PI4);
-  SM_ELEMENT_D(M, 1, 0) = (udata->M_timedep) ? -udata->g * sin(t)
-                                             : -udata->g * sin(PI4);
-  SM_ELEMENT_D(M, 1, 1) = (udata->M_timedep) ? udata->g * cos(t)
-                                             : udata->g * cos(PI4);
+  SM_ELEMENT_D(M, 0, 0) = (udata->M_timedep) ? udata->g * SUNRcos(t)
+                                             : udata->g * SUNRcos(PI4);
+  SM_ELEMENT_D(M, 0, 1) = (udata->M_timedep) ? udata->g * SUNRsin(t)
+                                             : udata->g * SUNRsin(PI4);
+  SM_ELEMENT_D(M, 1, 0) = (udata->M_timedep) ? -udata->g * SUNRsin(t)
+                                             : -udata->g * SUNRsin(PI4);
+  SM_ELEMENT_D(M, 1, 1) = (udata->M_timedep) ? udata->g * SUNRcos(t)
+                                             : udata->g * SUNRcos(PI4);
 
   return 0;
 }
@@ -527,7 +531,7 @@ static int adaptive_run(void* arkode_mem, N_Vector y, sunrealtype T0,
 
   // Main time-stepping loop: calls ARKodeEvolve to perform integration,
   // then prints results. Stops when the final time has been reached
-  int Nt              = (int)ceil((Tf - T0) / dTout);
+  int Nt              = (int)SUNRceil((Tf - T0) / dTout);
   sunrealtype t       = T0;
   sunrealtype tout    = T0 + dTout;
   sunrealtype uerr    = ZERO;
@@ -657,7 +661,7 @@ static int check_order(void* arkode_mem, N_Vector y, sunrealtype T0,
   sunrealtype hmax = Tf - T0;
   if (rk_type == 2) { hmax = ONE / SUNRabs(udata.G); }
   sunrealtype Nmin          = SUNMAX((sunrealtype)Nout,
-                                     (sunrealtype)ceil((Tf - T0) / hmax));
+                                     (sunrealtype)SUNRceil((Tf - T0) / hmax));
   vector<sunrealtype> hvals = {(Tf - T0) / Nmin,      (Tf - T0) / 2 / Nmin,
                                (Tf - T0) / 4 / Nmin,  (Tf - T0) / 8 / Nmin,
                                (Tf - T0) / 16 / Nmin, (Tf - T0) / 32 / Nmin,
@@ -700,15 +704,15 @@ static int check_order(void* arkode_mem, N_Vector y, sunrealtype T0,
     }
     errs[ih] = SUNMIN(ONE, SUNRsqrt(errs[ih] / ((sunrealtype)Nout * 2)));
     a11 += 1;
-    a12 += log(hvals[ih]);
-    a21 += log(hvals[ih]);
-    a22 += (log(hvals[ih]) * log(hvals[ih]));
-    b1 += log(errs[ih]);
-    b2 += (log(errs[ih]) * log(hvals[ih]));
+    a12 += SUNRlog(hvals[ih]);
+    a21 += SUNRlog(hvals[ih]);
+    a22 += (SUNRlog(hvals[ih]) * SUNRlog(hvals[ih]));
+    b1 += SUNRlog(errs[ih]);
+    b2 += (SUNRlog(errs[ih]) * SUNRlog(hvals[ih]));
     if (ih > 0)
     {
-      orders[ih - 1] = log(errs[ih] / errs[ih - 1]) /
-                       log(hvals[ih] / hvals[ih - 1]);
+      orders[ih - 1] = SUNRlog(errs[ih] / errs[ih - 1]) /
+                       SUNRlog(hvals[ih] / hvals[ih - 1]);
       printf("   h = %.3" ESYM ",  error = %.3" ESYM ",  order = %.2" FSYM "\n",
              hvals[ih], errs[ih], orders[ih - 1]);
     }
@@ -746,13 +750,16 @@ static int check_order(void* arkode_mem, N_Vector y, sunrealtype T0,
   }
 }
 
-static sunrealtype r(sunrealtype t) { return (SUN_RCONST(0.5) * cos(t)); }
+static sunrealtype r(sunrealtype t) { return (SUN_RCONST(0.5) * SUNRcos(t)); }
 
-static sunrealtype s(sunrealtype t) { return (sin(t)); }
+static sunrealtype s(sunrealtype t) { return (SUNRsin(t)); }
 
-static sunrealtype rdot(sunrealtype t) { return (-SUN_RCONST(0.5) * sin(t)); }
+static sunrealtype rdot(sunrealtype t)
+{
+  return (-SUN_RCONST(0.5) * SUNRsin(t));
+}
 
-static sunrealtype sdot(sunrealtype t) { return (cos(t)); }
+static sunrealtype sdot(sunrealtype t) { return (SUNRcos(t)); }
 
 static sunrealtype utrue(sunrealtype t) { return (SUNRsqrt(ONE + r(t))); }
 

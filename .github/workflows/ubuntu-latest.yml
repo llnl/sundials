@@ -26,7 +26,7 @@ jobs:
       max-parallel: 2
       matrix:
         indexsize: [32, 64]
-        precision: ['single', 'double', 'extended']
+        precision: ['single', 'double', 'extended', 'float128']
         buildtype: ['Debug', 'Release', 'RelWithDebInfo']
         tpls: ['ON']
         exclude:
@@ -34,10 +34,14 @@ jobs:
             precision: single
           - buildtype: Debug
             precision: extended
+          - buildtype: Debug
+            precision: float128
           - buildtype: Release
             precision: single
           - buildtype: Release
             precision: extended
+          - buildtype: Release
+            precision: float128
           - buildtype: RelWithDebInfo
             precision: double
 

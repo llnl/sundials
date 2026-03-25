@@ -257,7 +257,7 @@ int main(int argc, char* argv[])
   const sunrealtype dt = args.dt;
   sunrealtype t0       = SUN_RCONST(0.0);
   sunrealtype tf       = args.tf;
-  const int nsteps     = (int)ceil(((tf - t0) / dt));
+  const int nsteps     = (int)SUNRceil(((tf - t0) / dt));
   const int order      = args.order;
 
   void* arkode_mem = ERKStepCreate(ode_rhs, t0, u, sunctx);

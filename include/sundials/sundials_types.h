@@ -97,6 +97,7 @@ typedef float sunrealtype;
 #define SUN_BIG_REAL      FLT_MAX
 #define SUN_SMALL_REAL    FLT_MIN
 #define SUN_UNIT_ROUNDOFF FLT_EPSILON
+#define SUN_DIGITS10      FLT_DIG
 // TODO(SBR): In C11, FLT_DECIMAL_DIG may be a better choice
 #define SUN_FORMAT_E "% ." SUN_STRING(FLT_DIG) "e"
 #define SUN_FORMAT_G "%." SUN_STRING(FLT_DIG) "g"
@@ -110,6 +111,7 @@ typedef double sunrealtype;
 #define SUN_BIG_REAL      DBL_MAX
 #define SUN_SMALL_REAL    DBL_MIN
 #define SUN_UNIT_ROUNDOFF DBL_EPSILON
+#define SUN_DIGITS10      DBL_DIG
 #define SUN_FORMAT_E      "% ." SUN_STRING(DBL_DIG) "e"
 #define SUN_FORMAT_G      "%." SUN_STRING(DBL_DIG) "g"
 #define SUN_FORMAT_SG     "%+." SUN_STRING(DBL_DIG) "g"
@@ -121,9 +123,23 @@ typedef long double sunrealtype;
 #define SUN_BIG_REAL      LDBL_MAX
 #define SUN_SMALL_REAL    LDBL_MIN
 #define SUN_UNIT_ROUNDOFF LDBL_EPSILON
+#define SUN_DIGITS10      LDBL_DIG
 #define SUN_FORMAT_E      "% ." SUN_STRING(LDBL_DIG) "Le"
 #define SUN_FORMAT_G      "%." SUN_STRING(LDBL_DIG) "Lg"
 #define SUN_FORMAT_SG     "%+." SUN_STRING(LDBL_DIG) "Lg"
+
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+
+#include <quadmath.h>
+typedef __float128 sunrealtype;
+#define SUN_RCONST(x)     x##Q
+#define SUN_BIG_REAL      FLT128_MAX
+#define SUN_SMALL_REAL    FLT128_MIN
+#define SUN_UNIT_ROUNDOFF FLT128_EPSILON
+#define SUN_DIGITS10      FLT128_DIG
+#define SUN_FORMAT_E      "% ." SUN_STRING(FLT128_DIG) "Qe"
+#define SUN_FORMAT_G      "%." SUN_STRING(FLT128_DIG) "Qg"
+#define SUN_FORMAT_SG     "%+." SUN_STRING(FLT128_DIG) "Qg"
 
 #endif
 

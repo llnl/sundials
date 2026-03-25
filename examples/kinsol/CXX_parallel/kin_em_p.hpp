@@ -79,11 +79,11 @@ struct UserData
   int myid;      // process ID in communicator
 
   // Fixed Point Solver settings
-  sunrealtype rtol; // relative tolerance
-  int maa;          // m for Anderson Acceleration
-  double damping;   // damping for Anderson Acceleration
-  int orthaa;       // orthogonalization routine for AA
-  int maxits;       // max number of fixed point iterations
+  sunrealtype rtol;    // relative tolerance
+  int maa;             // m for Anderson Acceleration
+  sunrealtype damping; // damping for Anderson Acceleration
+  int orthaa;          // orthogonalization routine for AA
+  int maxits;          // max number of fixed point iterations
 
   // Vectors to help with FPFunction definition and execution
   N_Vector samples_local; // vector containing distribution samples

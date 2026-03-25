@@ -38,7 +38,11 @@
 #include <stdio.h>
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -212,7 +216,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
   /* fill in the RHS function: "NV_Ith_S" accesses the 0th entry of ydot */
   NV_Ith_S(ydot, 0) = lambda * u + SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
-                      lambda * atan(t);
+                      lambda * SUNRatan(t);
 
   return 0; /* return with success */
 }
@@ -340,7 +344,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, sunrealtype at
   sunrealtype ans, err, ewt; /* answer data, error, and error weight */
 
   /* compute solution error */
-  ans = atan(t);
+  ans = SUNRatan(t);
   ewt = SUN_RCONST(1.0) / (rtol * SUNRabs(ans) + atol);
   err = ewt * SUNRabs(NV_Ith_S(y, 0) - ans);
 

@@ -65,12 +65,6 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Problem Constants */
 
 #define NUM_SPECIES 2                 /* number of species */
@@ -81,7 +75,7 @@
 #define NOUT    12                 /* number of output times */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours  */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day */
-#define PI      SUN_RCONST(3.1415926535898) /* pi */
+#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
 
 #define XMIN SUN_RCONST(0.0) /* grid boundaries in x  */
 #define XMAX SUN_RCONST(20.0)
@@ -371,11 +365,11 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
   /* Set diurnal rate coefficients. */
 
-  s = sin(data->om * t);
+  s = SUNRsin(data->om * t);
   if (s > ZERO)
   {
-    q3       = exp(-A3 / s);
-    data->q4 = exp(-A4 / s);
+    q3       = SUNRexp(-A3 / s);
+    data->q4 = SUNRexp(-A4 / s);
   }
   else
   {
@@ -399,8 +393,8 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
     zdn  = ZMIN + (jz - SUN_RCONST(0.5)) * delz;
     zup  = zdn + delz;
-    czdn = verdco * exp(SUN_RCONST(0.2) * zdn);
-    czup = verdco * exp(SUN_RCONST(0.2) * zup);
+    czdn = verdco * SUNRexp(SUN_RCONST(0.2) * zdn);
+    czup = verdco * SUNRexp(SUN_RCONST(0.2) * zup);
     idn  = (jz == 0) ? 1 : -1;
     iup  = (jz == MZ - 1) ? -1 : 1;
     for (jx = 0; jx < MX; jx++)
@@ -509,8 +503,8 @@ static int Precond(sunrealtype tn, N_Vector y, N_Vector fy, sunbooleantype jok,
     {
       zdn  = ZMIN + (jz - SUN_RCONST(0.5)) * delz;
       zup  = zdn + delz;
-      czdn = verdco * exp(SUN_RCONST(0.2) * zdn);
-      czup = verdco * exp(SUN_RCONST(0.2) * zup);
+      czdn = verdco * SUNRexp(SUN_RCONST(0.2) * zdn);
+      czup = verdco * SUNRexp(SUN_RCONST(0.2) * zup);
       diag = -(czdn + czup + SUN_RCONST(2.0) * hordco);
       for (jx = 0; jx < MX; jx++)
       {
@@ -686,9 +680,9 @@ static void InitUserData(UserData data)
   data->om   = PI / HALFDAY;
   data->dx   = (XMAX - XMIN) / (MX - 1);
   data->dz   = (ZMAX - ZMIN) / (MZ - 1);
-  data->hdco = KH / SQR(data->dx);
+  data->hdco = KH / SUNSQR(data->dx);
   data->haco = VEL / (SUN_RCONST(2.0) * data->dx);
-  data->vdco = (ONE / SQR(data->dz)) * KV0;
+  data->vdco = (ONE / SUNSQR(data->dz)) * KV0;
 
   data->p[0] = Q1;
   data->p[1] = Q2;
@@ -742,13 +736,13 @@ static void SetInitialProfiles(N_Vector y, sunrealtype dx, sunrealtype dz)
   for (jz = 0; jz < MZ; jz++)
   {
     z  = ZMIN + jz * dz;
-    cz = SQR(SUN_RCONST(0.1) * (z - ZMID));
-    cz = ONE - cz + SUN_RCONST(0.5) * SQR(cz);
+    cz = SUNSQR(SUN_RCONST(0.1) * (z - ZMID));
+    cz = ONE - cz + SUN_RCONST(0.5) * SUNSQR(cz);
     for (jx = 0; jx < MX; jx++)
     {
       x                       = XMIN + jx * dx;
-      cx                      = SQR(SUN_RCONST(0.1) * (x - XMID));
-      cx                      = ONE - cx + SUN_RCONST(0.5) * SQR(cx);
+      cx                      = SUNSQR(SUN_RCONST(0.1) * (x - XMID));
+      cx                      = ONE - cx + SUN_RCONST(0.5) * SUNSQR(cx);
       IJKth(ydata, 1, jx, jz) = C1_SCALE * cx * cz;
       IJKth(ydata, 2, jx, jz) = C2_SCALE * cx * cz;
     }
@@ -775,31 +769,31 @@ static void PrintOutput(void* cvode_mem, sunrealtype t, N_Vector y)
   retval = CVodeGetLastStep(cvode_mem, &hu);
   check_retval(&retval, "CVodeGetLastStep", 1);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%8.3Qe %2d  %8.3Qe %5ld\n", t, qu, hu, nst);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%8.3Le %2d  %8.3Le %5ld\n", t, qu, hu, nst);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%8.3e %2d  %8.3e %5ld\n", t, qu, hu, nst);
 #else
   printf("%8.3e %2d  %8.3e %5ld\n", t, qu, hu, nst);
 #endif
 
   printf("                                Solution       ");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le \n", IJKth(ydata, 1, 0, 0),
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%12.4Qe %12.4Qe \n", IJKth(ydata, 1, 0, 0),
          IJKth(ydata, 1, MX - 1, MZ - 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e \n", IJKth(ydata, 1, 0, 0),
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+  printf("%12.4Le %12.4Le \n", IJKth(ydata, 1, 0, 0),
          IJKth(ydata, 1, MX - 1, MZ - 1));
 #else
   printf("%12.4e %12.4e \n", IJKth(ydata, 1, 0, 0),
          IJKth(ydata, 1, MX - 1, MZ - 1));
 #endif
   printf("                                               ");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le \n", IJKth(ydata, 2, 0, 0),
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%12.4Qe %12.4Qe \n", IJKth(ydata, 2, 0, 0),
          IJKth(ydata, 2, MX - 1, MZ - 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e \n", IJKth(ydata, 2, 0, 0),
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+  printf("%12.4Le %12.4Le \n", IJKth(ydata, 2, 0, 0),
          IJKth(ydata, 2, MX - 1, MZ - 1));
 #else
   printf("%12.4e %12.4e \n", IJKth(ydata, 2, 0, 0),
@@ -820,22 +814,22 @@ static void PrintOutputS(N_Vector* uS)
   printf("                                "
          "----------------------------------------\n");
   printf("                                Sensitivity 1  ");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le \n", IJKth(sdata, 1, 0, 0),
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%12.4Qe %12.4Qe \n", IJKth(sdata, 1, 0, 0),
          IJKth(sdata, 1, MX - 1, MZ - 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e \n", IJKth(sdata, 1, 0, 0),
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+  printf("%12.4Le %12.4Le \n", IJKth(sdata, 1, 0, 0),
          IJKth(sdata, 1, MX - 1, MZ - 1));
 #else
   printf("%12.4e %12.4e \n", IJKth(sdata, 1, 0, 0),
          IJKth(sdata, 1, MX - 1, MZ - 1));
 #endif
   printf("                                               ");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le \n", IJKth(sdata, 2, 0, 0),
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%12.4Qe %12.4Qe \n", IJKth(sdata, 2, 0, 0),
          IJKth(sdata, 2, MX - 1, MZ - 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e \n", IJKth(sdata, 2, 0, 0),
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+  printf("%12.4Le %12.4Le \n", IJKth(sdata, 2, 0, 0),
          IJKth(sdata, 2, MX - 1, MZ - 1));
 #else
   printf("%12.4e %12.4e \n", IJKth(sdata, 2, 0, 0),
@@ -847,22 +841,22 @@ static void PrintOutputS(N_Vector* uS)
   printf("                                "
          "----------------------------------------\n");
   printf("                                Sensitivity 2  ");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le \n", IJKth(sdata, 1, 0, 0),
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%12.4Qe %12.4Qe \n", IJKth(sdata, 1, 0, 0),
          IJKth(sdata, 1, MX - 1, MZ - 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e \n", IJKth(sdata, 1, 0, 0),
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+  printf("%12.4Le %12.4Le \n", IJKth(sdata, 1, 0, 0),
          IJKth(sdata, 1, MX - 1, MZ - 1));
 #else
   printf("%12.4e %12.4e \n", IJKth(sdata, 1, 0, 0),
          IJKth(sdata, 1, MX - 1, MZ - 1));
 #endif
   printf("                                               ");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le \n", IJKth(sdata, 2, 0, 0),
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%12.4Qe %12.4Qe \n", IJKth(sdata, 2, 0, 0),
          IJKth(sdata, 2, MX - 1, MZ - 1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e \n", IJKth(sdata, 2, 0, 0),
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+  printf("%12.4Le %12.4Le \n", IJKth(sdata, 2, 0, 0),
          IJKth(sdata, 2, MX - 1, MZ - 1));
 #else
   printf("%12.4e %12.4e \n", IJKth(sdata, 2, 0, 0),

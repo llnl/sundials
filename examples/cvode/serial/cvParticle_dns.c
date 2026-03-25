@@ -46,27 +46,15 @@
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix       */
 
 /* Precision specific formatting macros */
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #else
 #define GSYM "g"
 #define ESYM "e"
-#endif
-
-/* Precision specific math function macros */
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define SIN(x)  (sin((x)))
-#define COS(x)  (cos((x)))
-#define SQRT(x) (sqrt((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define SIN(x)  (sinf((x)))
-#define COS(x)  (cosf((x)))
-#define SQRT(x) (sqrtf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define SIN(x)  (sinl((x)))
-#define COS(x)  (cosl((x)))
-#define SQRT(x) (sqrtl((x)))
 #endif
 
 /* Problem Constants */
@@ -343,7 +331,7 @@ static int Proj(sunrealtype t, N_Vector ycur, N_Vector corr,
   sunrealtype errxp, erryp;
 
   /* project onto the unit circle */
-  r = SQRT(x * x + y * y);
+  r = SUNRsqrt(x * x + y * y);
 
   xp = x / r;
   yp = y / r;
@@ -396,7 +384,7 @@ static int InitUserData(int* argc, char*** argv, UserData udata)
     if (strcmp((*argv)[arg_idx], "--alpha") == 0)
     {
       arg_idx++;
-      udata->alpha  = atof((*argv)[arg_idx++]);
+      udata->alpha  = (sunrealtype)(atof((*argv)[arg_idx++]));
       udata->torbit = (TWO * PI) / udata->alpha;
     }
     else if (strcmp((*argv)[arg_idx], "--orbits") == 0)
@@ -407,12 +395,12 @@ static int InitUserData(int* argc, char*** argv, UserData udata)
     else if (strcmp((*argv)[arg_idx], "--rtol") == 0)
     {
       arg_idx++;
-      udata->rtol = atof((*argv)[arg_idx++]);
+      udata->rtol = (sunrealtype)(atof((*argv)[arg_idx++]));
     }
     else if (strcmp((*argv)[arg_idx], "--atol") == 0)
     {
       arg_idx++;
-      udata->atol = atof((*argv)[arg_idx++]);
+      udata->atol = (sunrealtype)(atof((*argv)[arg_idx++]));
     }
     else if (strcmp((*argv)[arg_idx], "--proj") == 0)
     {
@@ -493,8 +481,8 @@ static int ComputeSolution(sunrealtype t, N_Vector y, UserData udata)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
 
-  ydata[0] = COS((udata->alpha) * t);
-  ydata[1] = SIN((udata->alpha) * t);
+  ydata[0] = SUNRcos((udata->alpha) * t);
+  ydata[1] = SUNRsin((udata->alpha) * t);
 
   return (0);
 }

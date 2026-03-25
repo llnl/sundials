@@ -49,12 +49,6 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
-/* helpful macros */
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Problem Constants */
 
 #define ZERO SUN_RCONST(0.0)
@@ -77,7 +71,7 @@
 #define NOUT    12                 /* number of output times */
 #define TWOHR   SUN_RCONST(7200.0) /* number of seconds in two hours  */
 #define HALFDAY SUN_RCONST(4.32e4) /* number of seconds in a half day */
-#define PI      SUN_RCONST(3.1415926535898) /* pi */
+#define PI      SUN_RCONST(3.141592653589793238462643383279502884197169) /* pi */
 
 #define XMIN ZERO /* grid boundaries in x  */
 #define XMAX SUN_RCONST(20.0)
@@ -285,9 +279,9 @@ static void InitUserData(UserData data)
   data->om   = PI / HALFDAY;
   data->dx   = (XMAX - XMIN) / (MX - 1);
   data->dy   = (YMAX - YMIN) / (MY - 1);
-  data->hdco = KH / SQR(data->dx);
+  data->hdco = KH / SUNSQR(data->dx);
   data->haco = VEL / (TWO * data->dx);
-  data->vdco = (ONE / SQR(data->dy)) * KV0;
+  data->vdco = (ONE / SUNSQR(data->dy)) * KV0;
 }
 
 /* Free data memory */
@@ -326,13 +320,13 @@ static void SetInitialProfiles(N_Vector u, sunrealtype dx, sunrealtype dy)
   for (jy = 0; jy < MY; jy++)
   {
     y  = YMIN + jy * dy;
-    cy = SQR(SUN_RCONST(0.1) * (y - YMID));
-    cy = ONE - cy + SUN_RCONST(0.5) * SQR(cy);
+    cy = SUNSQR(SUN_RCONST(0.1) * (y - YMID));
+    cy = ONE - cy + SUN_RCONST(0.5) * SUNSQR(cy);
     for (jx = 0; jx < MX; jx++)
     {
       x                       = XMIN + jx * dx;
-      cx                      = SQR(SUN_RCONST(0.1) * (x - XMID));
-      cx                      = ONE - cx + SUN_RCONST(0.5) * SQR(cx);
+      cx                      = SUNSQR(SUN_RCONST(0.1) * (x - XMID));
+      cx                      = ONE - cx + SUN_RCONST(0.5) * SUNSQR(cx);
       IJKth(udata, 1, jx, jy) = C1_SCALE * cx * cy;
       IJKth(udata, 2, jx, jy) = C2_SCALE * cx * cy;
     }
@@ -357,22 +351,22 @@ static void PrintOutput(void* cvode_mem, N_Vector u, sunrealtype t)
   retval = CVodeGetLastStep(cvode_mem, &hu);
   check_retval(&retval, "CVodeGetLastStep", 1);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("t = %.2Qe   no. steps = %ld   order = %d   stepsize = %.2Qe\n", t,
+         nst, qu, hu);
+  printf("c1 (bot.left/middle/top rt.) = %12.3Qe  %12.3Qe  %12.3Qe\n",
+         IJKth(udata, 1, 0, 0), IJKth(udata, 1, mxh, myh),
+         IJKth(udata, 1, mx1, my1));
+  printf("c2 (bot.left/middle/top rt.) = %12.3Qe  %12.3Qe  %12.3Qe\n\n",
+         IJKth(udata, 2, 0, 0), IJKth(udata, 2, mxh, myh),
+         IJKth(udata, 2, mx1, my1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("t = %.2Le   no. steps = %ld   order = %d   stepsize = %.2Le\n", t,
          nst, qu, hu);
   printf("c1 (bot.left/middle/top rt.) = %12.3Le  %12.3Le  %12.3Le\n",
          IJKth(udata, 1, 0, 0), IJKth(udata, 1, mxh, myh),
          IJKth(udata, 1, mx1, my1));
   printf("c2 (bot.left/middle/top rt.) = %12.3Le  %12.3Le  %12.3Le\n\n",
-         IJKth(udata, 2, 0, 0), IJKth(udata, 2, mxh, myh),
-         IJKth(udata, 2, mx1, my1));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("t = %.2e   no. steps = %ld   order = %d   stepsize = %.2e\n", t, nst,
-         qu, hu);
-  printf("c1 (bot.left/middle/top rt.) = %12.3e  %12.3e  %12.3e\n",
-         IJKth(udata, 1, 0, 0), IJKth(udata, 1, mxh, myh),
-         IJKth(udata, 1, mx1, my1));
-  printf("c2 (bot.left/middle/top rt.) = %12.3e  %12.3e  %12.3e\n\n",
          IJKth(udata, 2, 0, 0), IJKth(udata, 2, mxh, myh),
          IJKth(udata, 2, mx1, my1));
 #else
@@ -503,11 +497,11 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
 
   /* Set diurnal rate coefficients. */
 
-  s = sin(data->om * t);
+  s = SUNRsin(data->om * t);
   if (s > ZERO)
   {
-    q3       = exp(-A3 / s);
-    data->q4 = exp(-A4 / s);
+    q3       = SUNRexp(-A3 / s);
+    data->q4 = SUNRexp(-A4 / s);
   }
   else
   {
@@ -531,8 +525,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
 
     ydn  = YMIN + (jy - SUN_RCONST(0.5)) * dely;
     yup  = ydn + dely;
-    cydn = verdco * exp(SUN_RCONST(0.2) * ydn);
-    cyup = verdco * exp(SUN_RCONST(0.2) * yup);
+    cydn = verdco * SUNRexp(SUN_RCONST(0.2) * ydn);
+    cyup = verdco * SUNRexp(SUN_RCONST(0.2) * yup);
     idn  = (jy == 0) ? 1 : -1;
     iup  = (jy == MY - 1) ? -1 : 1;
     for (jx = 0; jx < MX; jx++)
@@ -603,8 +597,8 @@ static int jtv(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector u, N_Vector fu,
 
   /* Set diurnal rate coefficients. */
 
-  s = sin(data->om * t);
-  if (s > ZERO) { data->q4 = exp(-A4 / s); }
+  s = SUNRsin(data->om * t);
+  if (s > ZERO) { data->q4 = SUNRexp(-A4 / s); }
   else { data->q4 = ZERO; }
 
   /* Make local copies of problem variables, for efficiency. */
@@ -624,8 +618,8 @@ static int jtv(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector u, N_Vector fu,
     ydn = YMIN + (jy - SUN_RCONST(0.5)) * dely;
     yup = ydn + dely;
 
-    cydn = verdco * exp(SUN_RCONST(0.2) * ydn);
-    cyup = verdco * exp(SUN_RCONST(0.2) * yup);
+    cydn = verdco * SUNRexp(SUN_RCONST(0.2) * ydn);
+    cyup = verdco * SUNRexp(SUN_RCONST(0.2) * yup);
 
     idn = (jy == 0) ? 1 : -1;
     iup = (jy == MY - 1) ? -1 : 1;
@@ -762,8 +756,8 @@ static int Precond(sunrealtype tn, N_Vector u, N_Vector fu, sunbooleantype jok,
     {
       ydn  = YMIN + (jy - SUN_RCONST(0.5)) * dely;
       yup  = ydn + dely;
-      cydn = verdco * exp(SUN_RCONST(0.2) * ydn);
-      cyup = verdco * exp(SUN_RCONST(0.2) * yup);
+      cydn = verdco * SUNRexp(SUN_RCONST(0.2) * ydn);
+      cyup = verdco * SUNRexp(SUN_RCONST(0.2) * yup);
       diag = -(cydn + cyup + TWO * hordco);
       for (jx = 0; jx < MX; jx++)
       {

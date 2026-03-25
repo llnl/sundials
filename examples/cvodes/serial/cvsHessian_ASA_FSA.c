@@ -253,7 +253,17 @@ int main(int argc, char* argv[])
 
   printf("ncheck = %d\n", ncheck);
   printf("\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("     y:    %12.4Qe %12.4Qe %12.4Qe", Ith(y, 1), Ith(y, 2), Ith(y, 3));
+  printf("     G:    %12.4Qe\n", Ith(yQ, 1));
+  printf("\n");
+  printf("     yS1:  %12.4Qe %12.4Qe %12.4Qe\n", Ith(yS[0], 1), Ith(yS[0], 2),
+         Ith(yS[0], 3));
+  printf("     yS2:  %12.4Qe %12.4Qe %12.4Qe\n", Ith(yS[1], 1), Ith(yS[1], 2),
+         Ith(yS[1], 3));
+  printf("\n");
+  printf("   dG/dp:  %12.4Qe %12.4Qe\n", Ith(yQS[0], 1), Ith(yQS[1], 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("     y:    %12.4Le %12.4Le %12.4Le", Ith(y, 1), Ith(y, 2), Ith(y, 3));
   printf("     G:    %12.4Le\n", Ith(yQ, 1));
   printf("\n");
@@ -396,7 +406,12 @@ int main(int argc, char* argv[])
   retval = CVodeGetQuadB(cvode_mem, indexB2, &time, yQB2);
   if (check_retval(&retval, "CVodeGetQuadB", 1)) { return (1); }
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe %12.4Qe   (from backward pb. 1)\n", -Ith(yQB1, 1),
+         -Ith(yQB1, 2));
+  printf("           %12.4Qe %12.4Qe   (from backward pb. 2)\n", -Ith(yQB2, 1),
+         -Ith(yQB2, 2));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le   (from backward pb. 1)\n", -Ith(yQB1, 1),
          -Ith(yQB1, 2));
   printf("           %12.4Le %12.4Le   (from backward pb. 2)\n", -Ith(yQB2, 1),
@@ -410,7 +425,10 @@ int main(int argc, char* argv[])
   printf("\n");
   printf("   H = d2G/dp2:\n");
   printf("        (1)            (2)\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("  %12.4Qe   %12.4Qe\n", -Ith(yQB1, 3), -Ith(yQB2, 3));
+  printf("  %12.4Qe   %12.4Qe\n", -Ith(yQB1, 4), -Ith(yQB2, 4));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  %12.4Le   %12.4Le\n", -Ith(yQB1, 3), -Ith(yQB2, 3));
   printf("  %12.4Le   %12.4Le\n", -Ith(yQB1, 4), -Ith(yQB2, 4));
 #else
@@ -447,7 +465,9 @@ int main(int argc, char* argv[])
   printf("Finite Difference tests\n");
   printf("-----------------------\n\n");
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("del_p = %Qg\n\n", dp);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("del_p = %Lg\n\n", dp);
 #else
   printf("del_p = %g\n\n", dp);
@@ -497,8 +517,10 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeGetQuad", 1)) { return (1); }
 
   Gp = Ith(yQ, 1);
-
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("p1+  y:   %12.4Qe %12.4Qe %12.4Qe", Ith(y, 1), Ith(y, 2), Ith(y, 3));
+  printf("     G:   %12.4Qe\n", Ith(yQ, 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("p1+  y:   %12.4Le %12.4Le %12.4Le", Ith(y, 1), Ith(y, 2), Ith(y, 3));
   printf("     G:   %12.4Le\n", Ith(yQ, 1));
 #else
@@ -520,7 +542,10 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeGetQuad", 1)) { return (1); }
 
   Gm = Ith(yQ, 1);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("p1-  y:   %12.4Qe %12.4Qe %12.4Qe", Ith(y, 1), Ith(y, 2), Ith(y, 3));
+  printf("     G:   %12.4Qe\n", Ith(yQ, 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("p1-  y:   %12.4Le %12.4Le %12.4Le", Ith(y, 1), Ith(y, 2), Ith(y, 3));
   printf("     G:   %12.4Le\n", Ith(yQ, 1));
 #else
@@ -549,7 +574,10 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeGetQuad", 1)) { return (1); }
 
   Gp = Ith(yQ, 1);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("p2+  y:   %12.4Qe %12.4Qe %12.4Qe", Ith(y, 1), Ith(y, 2), Ith(y, 3));
+  printf("     G:   %12.4Qe\n", Ith(yQ, 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("p2+  y:   %12.4Le %12.4Le %12.4Le", Ith(y, 1), Ith(y, 2), Ith(y, 3));
   printf("     G:   %12.4Le\n", Ith(yQ, 1));
 #else
@@ -571,7 +599,10 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeGetQuad", 1)) { return (1); }
 
   Gm = Ith(yQ, 1);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("p2-  y:   %12.4Qe %12.4Qe %12.4Qe", Ith(y, 1), Ith(y, 2), Ith(y, 3));
+  printf("     G:   %12.4Qe\n", Ith(yQ, 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("p2-  y:   %12.4Le %12.4Le %12.4Le", Ith(y, 1), Ith(y, 2), Ith(y, 3));
   printf("     G:   %12.4Le\n", Ith(yQ, 1));
 #else
@@ -587,7 +618,14 @@ int main(int argc, char* argv[])
 
   printf("\n");
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe %12.4Qe   (fwd FD)\n", grdG_fwd[0], grdG_fwd[1]);
+  printf("           %12.4Qe %12.4Qe   (bck FD)\n", grdG_bck[0], grdG_bck[1]);
+  printf("           %12.4Qe %12.4Qe   (cntr FD)\n", grdG_cntr[0], grdG_cntr[1]);
+  printf("\n");
+  printf("  H(1,1):  %12.4Qe\n", H11);
+  printf("  H(2,2):  %12.4Qe\n", H22);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le   (fwd FD)\n", grdG_fwd[0], grdG_fwd[1]);
   printf("           %12.4Le %12.4Le   (bck FD)\n", grdG_bck[0], grdG_bck[1]);
   printf("           %12.4Le %12.4Le   (cntr FD)\n", grdG_cntr[0], grdG_cntr[1]);
@@ -662,7 +700,7 @@ static int fQ(sunrealtype t, N_Vector y, N_Vector qdot, void* user_data)
   y2 = Ith(y, 2);
   y3 = Ith(y, 3);
 
-  Ith(qdot, 1) = 0.5 * (y1 * y1 + y2 * y2 + y3 * y3);
+  Ith(qdot, 1) = SUN_RCONST(0.5) * (y1 * y1 + y2 * y2 + y3 * y3);
 
   return (0);
 }

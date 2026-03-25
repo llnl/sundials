@@ -5,6 +5,8 @@
 
 **New Features and Enhancements**
 
+Add `__float128` support with quadmath dependency and ostream integration.
+
 Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 
 **Bug Fixes**

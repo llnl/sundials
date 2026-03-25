@@ -47,7 +47,10 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype, etc */
 #include <sunlinsol/sunlinsol_pcg.h> /* access to PCG SUNLinearSolver        */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #else
@@ -199,8 +202,9 @@ int main(void)
          "||u||_rms       N   NNI  NLI\n");
   printf(" --------------------------------------------------------------------"
          "--------------------\n");
-  printf(" %4i  %19.15" ESYM "  %19.15" ESYM "  %19.15e  %li   %2i  %3i\n",
-         iout, olddt, newdt, sqrt(N_VDotProd(y, y) / udata->N),
+  printf(" %4i  %19.15" ESYM "  %19.15" ESYM "  %19.15" ESYM
+         "  %li   %2i  %3i\n",
+         iout, olddt, newdt, SUNRsqrt(N_VDotProd(y, y) / udata->N),
          (long int)udata->N, 0, 0);
   while (t < Tf)
   {
@@ -224,8 +228,9 @@ int main(void)
 
     /* print current solution stats */
     iout++;
-    printf(" %4i  %19.15" ESYM "  %19.15" ESYM "  %19.15e  %li   %2li  %3li\n",
-           iout, olddt, newdt, sqrt(N_VDotProd(y, y) / udata->N),
+    printf(" %4i  %19.15" ESYM "  %19.15" ESYM "  %19.15" ESYM
+           "  %li   %2li  %3li\n",
+           iout, olddt, newdt, SUNRsqrt(N_VDotProd(y, y) / udata->N),
            (long int)udata->N, nni, nli);
     nni_tot += nni;
     nli_tot += nli;
@@ -330,10 +335,10 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
     Ydot[i] =
       Y[i - 1] * k * TWO / (dxL * (dxL + dxR)) - Y[i] * k * TWO / (dxL * dxR) +
       Y[i + 1] * k * TWO / (dxR * (dxL + dxR)) +
-      TWO * exp(-TWOHUNDRED * (x[i] - PT25) * (x[i] - PT25)) /* source term */
-      - exp(-FOURHUNDRED * (x[i] - PT7) * (x[i] - PT7)) +
-      exp(-FIVEHUNDRED * (x[i] - PT4) * (x[i] - PT4)) -
-      TWO * exp(-SIXHUNDRED * (x[i] - PT55) * (x[i] - PT55));
+      TWO * SUNRexp(-TWOHUNDRED * (x[i] - PT25) * (x[i] - PT25)) /* source term */
+      - SUNRexp(-FOURHUNDRED * (x[i] - PT7) * (x[i] - PT7)) +
+      SUNRexp(-FIVEHUNDRED * (x[i] - PT4) * (x[i] - PT4)) -
+      TWO * SUNRexp(-SIXHUNDRED * (x[i] - PT55) * (x[i] - PT55));
   }
 
   return 0; /* Return with success */

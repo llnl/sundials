@@ -226,7 +226,9 @@ int main(int argc, char* argv[])
 
   IDAGetQuad(ida_mem, &time, q);
   G = Ith(q, 1);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("     G:    %12.4Qe\n", G);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("     G:    %12.4Le\n", G);
 #else
   printf("     G:    %12.4e\n", G);
@@ -237,7 +239,9 @@ int main(int argc, char* argv[])
   IDAGetSensDky(ida_mem, tf, 1, ypS);
 
   IDAGetQuadSens(ida_mem, &time, qS);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe %12.4Qe\n", Ith(qS[0], 1), Ith(qS[1], 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le\n", Ith(qS[0], 1), Ith(qS[1], 1));
 #else
   printf("   dG/dp:  %12.4e %12.4e\n", Ith(qS[0], 1), Ith(qS[1], 1));
@@ -342,7 +346,12 @@ int main(int argc, char* argv[])
 
   retval = IDAGetQuadB(ida_mem, indexB1, &time, qB1);
   retval = IDAGetQuadB(ida_mem, indexB2, &time, qB2);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe %12.4Qe   (from backward pb. 1)\n", Ith(qB1, 1),
+         Ith(qB1, 2));
+  printf("   dG/dp:  %12.4Qe %12.4Qe   (from backward pb. 2)\n", Ith(qB2, 1),
+         Ith(qB2, 2));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le   (from backward pb. 1)\n", Ith(qB1, 1),
          Ith(qB1, 2));
   printf("   dG/dp:  %12.4Le %12.4Le   (from backward pb. 2)\n", Ith(qB2, 1),
@@ -357,7 +366,10 @@ int main(int argc, char* argv[])
   printf("\n");
   printf("   H = d2G/dp2:\n");
   printf("        (1)            (2)\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("  %12.4Qe  %12.4Qe\n", Ith(qB1, 3), Ith(qB2, 3));
+  printf("  %12.4Qe  %12.4Qe\n", Ith(qB1, 4), Ith(qB2, 4));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  %12.4Le  %12.4Le\n", Ith(qB1, 3), Ith(qB2, 3));
   printf("  %12.4Le  %12.4Le\n", Ith(qB1, 4), Ith(qB2, 4));
 #else
@@ -383,7 +395,9 @@ int main(int argc, char* argv[])
 
   printf("\n");
   printf("---------------------------------------------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Finite Differences ( dp1=%6.1Qe and dp2 = %6.1Qe )\n", dp1, dp2);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Finite Differences ( dp1=%6.1Le and dp2 = %6.1Le )\n", dp1, dp2);
 #else
   printf("Finite Differences ( dp1=%6.1e and dp2 = %6.1e )\n", dp1, dp2);
@@ -512,7 +526,14 @@ int main(int argc, char* argv[])
   H22          = (Gp - 2.0 * G + Gm) / (dp2 * dp2);
 
   printf("\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   dG/dp:  %12.4Qe  %12.4Qe   (fwd FD)\n", grdG_fwd[0], grdG_fwd[1]);
+  printf("           %12.4Qe  %12.4Qe   (bck FD)\n", grdG_bck[0], grdG_bck[1]);
+  printf("           %12.4Qe  %12.4Qe   (cntr FD)\n", grdG_cntr[0], grdG_cntr[1]);
+  printf("\n");
+  printf("  H(1,1):  %12.4Qe\n", H11);
+  printf("  H(2,2):  %12.4Qe\n", H22);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le  %12.4Le   (fwd FD)\n", grdG_fwd[0], grdG_fwd[1]);
   printf("           %12.4Le  %12.4Le   (bck FD)\n", grdG_bck[0], grdG_bck[1]);
   printf("           %12.4Le  %12.4Le   (cntr FD)\n", grdG_cntr[0], grdG_cntr[1]);

@@ -33,7 +33,7 @@ endif()
 # Option to specify precision (sunrealtype)
 # ---------------------------------------------------------------
 
-set(DOCSTR "single, double, or extended")
+set(DOCSTR "single, double, extended or float128")
 sundials_option(SUNDIALS_PRECISION STRING "${DOCSTR}" "DOUBLE")
 string(TOUPPER ${SUNDIALS_PRECISION} _upper_SUNDIALS_PRECISION)
 set(SUNDIALS_PRECISION
@@ -132,7 +132,11 @@ endif()
 # Option to set the math library
 # ---------------------------------------------------------------
 
-if(UNIX)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  sundials_option(
+    SUNDIALS_MATH_LIBRARY PATH "Which math library (e.g., libm) to link to"
+    "-lm -lquadmath" ADVANCED)
+elseif(CMAKE_C_COMPILER_ID MATCHES "AppleClang|Clang|Intel|IntelLLVM")
   sundials_option(SUNDIALS_MATH_LIBRARY PATH
                   "Which math library (e.g., libm) to link to" "-lm" ADVANCED)
 else()

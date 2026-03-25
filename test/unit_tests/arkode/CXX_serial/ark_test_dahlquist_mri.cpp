@@ -451,7 +451,7 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
     {
       pow += prob_data.lambda_i;
     }
-    sunrealtype ytrue = exp(pow * t);
+    sunrealtype ytrue = SUNRexp(pow * t);
 
     sunrealtype* ydata = N_VGetArrayPointer(y);
     sunrealtype error  = ytrue - ydata[0];

@@ -3,6 +3,7 @@
 /.project
 /builddir
 /build*
+/cmake-build*
 /instdir
 /install*
 /TPLs
@@ -18,9 +19,12 @@
 *.directory
 /.pydevproject
 .vscode
+.vs
+/out
 compile_commands.json
 .venv
 .clangd
+.idea
 
 # custom test environment setup script
 /test/env/env.sh

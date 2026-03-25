@@ -322,14 +322,14 @@ static void PrintHeader(sunrealtype rtol, N_Vector avtol, N_Vector y)
          "IDA.\n");
   printf("               Three equation chemical kinetics problem.\n\n");
   printf("Linear solver: SUPERLUMT, with user-supplied Jacobian.\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters:  rtol = %Qg   atol = %Qg %Qg %Qg \n", rtol,
+         atval[0], atval[1], atval[2]);
+  printf("Initial conditions y0 = (%Lg %Lg %Lg)\n", yval[0], yval[1], yval[2]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg %Lg %Lg \n", rtol,
          atval[0], atval[1], atval[2]);
   printf("Initial conditions y0 = (%Lg %Lg %Lg)\n", yval[0], yval[1], yval[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g %g %g \n", rtol,
-         atval[0], atval[1], atval[2]);
-  printf("Initial conditions y0 = (%g %g %g)\n", yval[0], yval[1], yval[2]);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g %g %g \n", rtol,
          atval[0], atval[1], atval[2]);

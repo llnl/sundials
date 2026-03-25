@@ -44,7 +44,7 @@ namespace problems {
 namespace prv {
 
 // Problem constants
-static const sunrealtype pi = std::acos(SUN_RCONST(-1.0));
+static const sunrealtype pi = SUNRacos(SUN_RCONST(-1.0));
 
 constexpr sunrealtype zero = SUN_RCONST(0.0);
 constexpr sunrealtype one  = SUN_RCONST(1.0);
@@ -60,11 +60,11 @@ sunrealtype problem_data[2] = {SUN_RCONST(-1000.0), SUN_RCONST(10.0)};
 // Compute L(t)
 inline sunrealtype l_coef(sunrealtype t, sunrealtype c[2])
 {
-  return c[0] - c[1] * std::cos((ten - t) / ten * pi);
+  return c[0] - c[1] * SUNRcos((ten - t) / ten * pi);
 }
 
 // Compute phi(t)
-inline sunrealtype phi(sunrealtype t) { return std::atan(t); }
+inline sunrealtype phi(sunrealtype t) { return SUNRatan(t); }
 
 // Compute phi'(t)
 inline sunrealtype phi_prime(sunrealtype t) { return one / (one + t * t); }

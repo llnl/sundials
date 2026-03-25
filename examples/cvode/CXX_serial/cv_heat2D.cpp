@@ -281,8 +281,7 @@ int main(int argc, char* argv[])
 
   sunrealtype maxerr = N_VMaxNorm(e);
 
-  std::cout << std::scientific
-            << std::setprecision(std::numeric_limits<sunrealtype>::digits10)
+  std::cout << std::scientific << std::setprecision(SUN_DIGITS10)
             << "  Max error = " << maxerr << std::endl;
 
   // --------------------
@@ -328,8 +327,8 @@ int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
   const auto bx = kx * TWO * PI * PI;
   const auto by = ky * TWO * PI * PI;
 
-  const auto sin_t_cos_t = sin(PI * t) * cos(PI * t);
-  const auto cos_sqr_t   = cos(PI * t) * cos(PI * t);
+  const auto sin_t_cos_t = SUNRsin(PI * t) * SUNRcos(PI * t);
+  const auto cos_sqr_t   = SUNRcos(PI * t) * SUNRcos(PI * t);
 
   // Initialize RHS vector to zero (handles boundary conditions)
   N_VConst(ZERO, f);
@@ -342,11 +341,11 @@ int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
       auto x = i * dx;
       auto y = j * dy;
 
-      auto sin_sqr_x = sin(PI * x) * sin(PI * x);
-      auto sin_sqr_y = sin(PI * y) * sin(PI * y);
+      auto sin_sqr_x = SUNRsin(PI * x) * SUNRsin(PI * x);
+      auto sin_sqr_y = SUNRsin(PI * y) * SUNRsin(PI * y);
 
-      auto cos_sqr_x = cos(PI * x) * cos(PI * x);
-      auto cos_sqr_y = cos(PI * y) * cos(PI * y);
+      auto cos_sqr_x = SUNRcos(PI * x) * SUNRcos(PI * x);
+      auto cos_sqr_y = SUNRcos(PI * y) * SUNRcos(PI * y);
 
       // center, north, south, east, and west indices
       auto idx_c = i + j * nx;

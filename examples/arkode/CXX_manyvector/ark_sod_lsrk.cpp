@@ -336,8 +336,8 @@ void face_flux(sunrealtype (&w1d)[STSIZE][NSPECIES], sunrealtype* f_face,
   //   v = wbar_3 / wbar_1
   //   w = wbar_4 / wbar_1
   //   H = wbar_5 / wbar_1
-  rhosqrL   = sqrt(w1d[2][0]);
-  rhosqrR   = sqrt(w1d[3][0]);
+  rhosqrL   = SUNRsqrt(w1d[2][0]);
+  rhosqrR   = SUNRsqrt(w1d[3][0]);
   rhosqrbar = HALF * (rhosqrL + rhosqrR);
   u         = HALF * (w1d[2][1] / rhosqrL + w1d[3][1] / rhosqrR) / rhosqrbar;
   v         = HALF * (w1d[2][2] / rhosqrL + w1d[3][2] / rhosqrR) / rhosqrbar;
@@ -417,8 +417,8 @@ void face_flux(sunrealtype (&w1d)[STSIZE][NSPECIES], sunrealtype* f_face,
     flux[j][2] = u * w1d[j][2];          // f_my = rho*v*u = my*u
     flux[j][3] = u * w1d[j][3];          // f_mz = rho*w*u = mz*u
     flux[j][4] = u * (w1d[j][4] + p[j]); // f_et = u*(et + p)
-    csnd  = sqrt(udata.gamma * p[j] / w1d[j][0]); // csnd = sqrt(gamma*p/rho)
-    alpha = max(alpha, abs(u) + csnd);
+    csnd = SUNRsqrt(udata.gamma * p[j] / w1d[j][0]); // csnd = sqrt(gamma*p/rho)
+    alpha = SUNMAX(alpha, SUNRabs(u) + csnd);
   }
 
   // compute flux from right side of face at x_{i+1/2}:
@@ -447,19 +447,22 @@ void face_flux(sunrealtype (&w1d)[STSIZE][NSPECIES], sunrealtype* f_face,
   for (i = 0; i < NSPECIES; i++)
   {
     // smoothness indicators
-    beta1 = bc * pow(fproj[2][i] - SUN_RCONST(2.0) * fproj[3][i] + fproj[4][i],
-                     2) +
-            FOURTH * pow(SUN_RCONST(3.0) * fproj[2][i] -
-                           SUN_RCONST(4.0) * fproj[3][i] + fproj[4][i],
-                         2);
-    beta2 = bc * pow(fproj[1][i] - SUN_RCONST(2.0) * fproj[2][i] + fproj[3][i],
-                     2) +
-            FOURTH * pow(fproj[1][i] - fproj[3][i], 2);
-    beta3 = bc * pow(fproj[0][i] - SUN_RCONST(2.0) * fproj[1][i] + fproj[2][i],
-                     2) +
-            FOURTH * pow(fproj[0][i] - SUN_RCONST(4.0) * fproj[1][i] +
-                           SUN_RCONST(3.0) * fproj[2][i],
-                         2);
+    beta1 =
+      bc * SUNRpowerI(fproj[2][i] - SUN_RCONST(2.0) * fproj[3][i] + fproj[4][i],
+                      2) +
+      FOURTH * SUNRpowerI(SUN_RCONST(3.0) * fproj[2][i] -
+                            SUN_RCONST(4.0) * fproj[3][i] + fproj[4][i],
+                          2);
+    beta2 =
+      bc * SUNRpowerI(fproj[1][i] - SUN_RCONST(2.0) * fproj[2][i] + fproj[3][i],
+                      2) +
+      FOURTH * SUNRpowerI(fproj[1][i] - fproj[3][i], 2);
+    beta3 =
+      bc * SUNRpowerI(fproj[0][i] - SUN_RCONST(2.0) * fproj[1][i] + fproj[2][i],
+                      2) +
+      FOURTH * SUNRpowerI(fproj[0][i] - SUN_RCONST(4.0) * fproj[1][i] +
+                            SUN_RCONST(3.0) * fproj[2][i],
+                          2);
     // nonlinear weights
     w1 = SUN_RCONST(0.3) / ((epsilon + beta1) * (epsilon + beta1));
     w2 = SUN_RCONST(0.6) / ((epsilon + beta2) * (epsilon + beta2));
@@ -504,19 +507,22 @@ void face_flux(sunrealtype (&w1d)[STSIZE][NSPECIES], sunrealtype* f_face,
   for (i = 0; i < NSPECIES; i++)
   {
     // smoothness indicators
-    beta1 = bc * pow(fproj[2][i] - SUN_RCONST(2.0) * fproj[3][i] + fproj[4][i],
-                     2) +
-            FOURTH * pow(SUN_RCONST(3.0) * fproj[2][i] -
-                           SUN_RCONST(4.0) * fproj[3][i] + fproj[4][i],
-                         2);
-    beta2 = bc * pow(fproj[1][i] - SUN_RCONST(2.0) * fproj[2][i] + fproj[3][i],
-                     2) +
-            FOURTH * pow(fproj[1][i] - fproj[3][i], 2);
-    beta3 = bc * pow(fproj[0][i] - SUN_RCONST(2.0) * fproj[1][i] + fproj[2][i],
-                     2) +
-            FOURTH * pow(fproj[0][i] - SUN_RCONST(4.0) * fproj[1][i] +
-                           SUN_RCONST(3.0) * fproj[2][i],
-                         2);
+    beta1 =
+      bc * SUNRpowerI(fproj[2][i] - SUN_RCONST(2.0) * fproj[3][i] + fproj[4][i],
+                      2) +
+      FOURTH * SUNRpowerI(SUN_RCONST(3.0) * fproj[2][i] -
+                            SUN_RCONST(4.0) * fproj[3][i] + fproj[4][i],
+                          2);
+    beta2 =
+      bc * SUNRpowerI(fproj[1][i] - SUN_RCONST(2.0) * fproj[2][i] + fproj[3][i],
+                      2) +
+      FOURTH * SUNRpowerI(fproj[1][i] - fproj[3][i], 2);
+    beta3 =
+      bc * SUNRpowerI(fproj[0][i] - SUN_RCONST(2.0) * fproj[1][i] + fproj[2][i],
+                      2) +
+      FOURTH * SUNRpowerI(fproj[0][i] - SUN_RCONST(4.0) * fproj[1][i] +
+                            SUN_RCONST(3.0) * fproj[2][i],
+                          2);
     // nonlinear weights
     w1 = SUN_RCONST(0.1) / ((epsilon + beta1) * (epsilon + beta1));
     w2 = SUN_RCONST(0.6) / ((epsilon + beta2) * (epsilon + beta2));

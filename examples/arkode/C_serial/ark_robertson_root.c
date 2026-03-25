@@ -47,7 +47,10 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #else
@@ -271,9 +274,10 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype w = NV_Ith_S(y, 2);
 
   /* Fill in ODE RHS function */
-  NV_Ith_S(ydot, 0) = -0.04 * u + 1.e4 * v * w;
-  NV_Ith_S(ydot, 1) = 0.04 * u - 1.e4 * v * w - 3.e7 * v * v;
-  NV_Ith_S(ydot, 2) = 3.e7 * v * v;
+  NV_Ith_S(ydot, 0) = -SUN_RCONST(0.04) * u + SUN_RCONST(1.e4) * v * w;
+  NV_Ith_S(ydot, 1) = SUN_RCONST(0.04) * u - SUN_RCONST(1.e4) * v * w -
+                      SUN_RCONST(3.e7) * v * v;
+  NV_Ith_S(ydot, 2) = SUN_RCONST(3.e7) * v * v;
 
   return 0; /* Return with success */
 }
@@ -287,15 +291,15 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   SUNMatZero(J); /* initialize Jacobian to zero */
 
   /* Fill in the Jacobian of the ODE RHS function */
-  SM_ELEMENT_D(J, 0, 0) = -0.04;
-  SM_ELEMENT_D(J, 0, 1) = 1.e4 * w;
-  SM_ELEMENT_D(J, 0, 2) = 1.e4 * v;
+  SM_ELEMENT_D(J, 0, 0) = -SUN_RCONST(0.04);
+  SM_ELEMENT_D(J, 0, 1) = SUN_RCONST(1.e4) * w;
+  SM_ELEMENT_D(J, 0, 2) = SUN_RCONST(1.e4) * v;
 
-  SM_ELEMENT_D(J, 1, 0) = 0.04;
-  SM_ELEMENT_D(J, 1, 1) = -1.e4 * w - 6.e7 * v;
-  SM_ELEMENT_D(J, 1, 2) = -1.e4 * v;
+  SM_ELEMENT_D(J, 1, 0) = SUN_RCONST(0.04);
+  SM_ELEMENT_D(J, 1, 1) = -SUN_RCONST(1.e4) * w - SUN_RCONST(6.e7) * v;
+  SM_ELEMENT_D(J, 1, 2) = -SUN_RCONST(1.e4) * v;
 
-  SM_ELEMENT_D(J, 2, 1) = 6.e7 * v;
+  SM_ELEMENT_D(J, 2, 1) = SUN_RCONST(6.e7) * v;
 
   return 0; /* Return with success */
 }

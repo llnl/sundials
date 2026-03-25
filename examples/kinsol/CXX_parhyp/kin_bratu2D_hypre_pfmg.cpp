@@ -1676,7 +1676,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   udata->uout.open(fname.str());
 
   udata->uout << scientific;
-  udata->uout << setprecision(numeric_limits<sunrealtype>::digits10);
+  udata->uout << setprecision(SUN_DIGITS10);
 
   // Write solution and error to disk
   sunrealtype* uarray = N_VGetArrayPointer(u);
@@ -1709,7 +1709,7 @@ static int OpenResOutput(UserData* udata)
     udata->rout.open(fname.str());
 
     udata->rout << scientific;
-    udata->rout << setprecision(numeric_limits<sunrealtype>::digits10);
+    udata->rout << setprecision(SUN_DIGITS10);
   }
 
   return 0;

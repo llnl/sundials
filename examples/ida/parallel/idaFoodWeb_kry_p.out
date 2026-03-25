@@ -21,30 +21,30 @@ CalcIC called to correct initial predator concentrations
 1.00e-02   1.6189e+02   1.9735e+02   |  86  4   1.7533e-04
            1.6189e+06   1.9735e+06   |
 
-1.00e-01   2.4019e+02   2.7072e+02   | 163  1   2.2442e-02
+1.00e-01   2.4019e+02   2.7072e+02   | 167  1   4.4884e-02
            2.4019e+06   2.7072e+06   |
 
-4.00e-01   2.4019e+02   2.7072e+02   | 166  1   1.7954e-01
+4.00e-01   2.4019e+02   2.7072e+02   | 169  1   1.7954e-01
            2.4019e+06   2.7072e+06   |
 
-7.00e-01   2.4019e+02   2.7072e+02   | 167  1   3.5907e-01
+7.00e-01   2.4019e+02   2.7072e+02   | 170  1   3.5907e-01
            2.4019e+06   2.7072e+06   |
 
-1.00e+00   2.4019e+02   2.7072e+02   | 168  1   7.1814e-01
+1.00e+00   2.4019e+02   2.7072e+02   | 171  1   7.1814e-01
            2.4019e+06   2.7072e+06   |
 
 -----------------------------------------------------------
 
 Final statistics: 
 
-Number of steps                    = 168
-Number of residual evaluations     = 1217
-Number of nonlinear iterations     = 202
+Number of steps                    = 171
+Number of residual evaluations     = 1247
+Number of nonlinear iterations     = 209
 Number of error test failures      = 0
 Number of nonlinear conv. failures = 0
 
-Number of linear iterations        = 1013
+Number of linear iterations        = 1036
 Number of linear conv. failures    = 0
 
 Number of preconditioner setups    = 26
-Number of preconditioner solves    = 1217
+Number of preconditioner solves    = 1247

@@ -397,12 +397,12 @@ static void PrintHeader(sunrealtype reltol, sunrealtype abstol, sunrealtype umax
   printf("\n2-D Advection-Diffusion Equation\n");
   printf("Mesh dimensions = %d X %d\n", MX, MY);
   printf("Total system size = %d\n", NEQ);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters: reltol = %Qg   abstol = %Qg\n\n", reltol, abstol);
+  printf("At t = %Qg      max.norm(u) =%14.6Qe \n", T0, umax);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters: reltol = %Lg   abstol = %Lg\n\n", reltol, abstol);
   printf("At t = %Lg      max.norm(u) =%14.6Le \n", T0, umax);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters: reltol = %g   abstol = %g\n\n", reltol, abstol);
-  printf("At t = %g      max.norm(u) =%14.6e \n", T0, umax);
 #else
   printf("Tolerance parameters: reltol = %g   abstol = %g\n\n", reltol, abstol);
   printf("At t = %g      max.norm(u) =%14.6e \n", T0, umax);
@@ -415,10 +415,10 @@ static void PrintHeader(sunrealtype reltol, sunrealtype abstol, sunrealtype umax
 
 static void PrintOutput(sunrealtype t, sunrealtype umax, long int nst)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("At t = %4.2Qf   max.norm(u) =%14.6Qe   nst = %4ld\n", t, umax, nst);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("At t = %4.2Lf   max.norm(u) =%14.6Le   nst = %4ld\n", t, umax, nst);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At t = %4.2f   max.norm(u) =%14.6e   nst = %4ld\n", t, umax, nst);
 #else
   printf("At t = %4.2f   max.norm(u) =%14.6e   nst = %4ld\n", t, umax, nst);
 #endif

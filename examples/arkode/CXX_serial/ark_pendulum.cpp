@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
       ARKodeButcherTable B = ARKodeButcherTable_Alloc(2, SUNFALSE);
 
       const sunrealtype gamma =
-        ((SUN_RCONST(3.0) + std::sqrt(SUN_RCONST(3.0))) / SUN_RCONST(6.0));
+        ((SUN_RCONST(3.0) + SUNRsqrt(SUN_RCONST(3.0))) / SUN_RCONST(6.0));
 
       B->A[0][0] = gamma;
       B->A[1][0] = SUN_RCONST(1.0) - SUN_RCONST(2.0) * gamma;
@@ -228,12 +228,12 @@ int main(int argc, char* argv[])
 
   // Output the initial condition and energy
   int swidth = 8;
-  int rwidth = std::numeric_limits<sunrealtype>::digits10 + 8;
+  int rwidth = SUN_DIGITS10 + 8;
 
   std::ofstream outfile("ark_pendulum.txt");
   outfile << "# vars: t u v energy energy_err\n";
   outfile << std::scientific;
-  outfile << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+  outfile << std::setprecision(SUN_DIGITS10);
   outfile << t << " " << ydata[0] << " " << ydata[1] << " " << eng0 << " "
           << SUN_RCONST(0.0) << std::endl;
 
@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
 
   std::cout << std::endl;
   std::cout << std::scientific;
-  std::cout << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+  std::cout << std::setprecision(SUN_DIGITS10);
   std::cout << std::setw(swidth) << 0 << std::setw(rwidth) << t
             << std::setw(rwidth) << ydata[0] << std::setw(rwidth) << ydata[1]
             << std::setw(rwidth) << eng0 << std::setw(rwidth) << SUN_RCONST(0.0);
@@ -398,7 +398,7 @@ int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype* ydata = N_VGetArrayPointer(y);
   sunrealtype* fdata = N_VGetArrayPointer(ydot);
 
-  fdata[0] = -std::sin(ydata[1]);
+  fdata[0] = -SUNRsin(ydata[1]);
   fdata[1] = ydata[0];
 
   return 0;
@@ -416,7 +416,7 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
   Jdata[1] = SUN_RCONST(1.0);
 
   // column 1
-  Jdata[2] = -std::cos(ydata[1]);
+  Jdata[2] = -SUNRcos(ydata[1]);
   Jdata[3] = SUN_RCONST(0.0);
 
   return 0;
@@ -427,7 +427,7 @@ int Eng(N_Vector y, sunrealtype* e, void* user_data)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
 
-  *e = SUN_RCONST(0.5) * ydata[0] * ydata[0] - std::cos(ydata[1]);
+  *e = SUN_RCONST(0.5) * ydata[0] * ydata[0] - SUNRcos(ydata[1]);
 
   return 0;
 }
@@ -439,7 +439,7 @@ int JacEng(N_Vector y, N_Vector J, void* user_data)
   sunrealtype* jdata = N_VGetArrayPointer(J);
 
   jdata[0] = ydata[0];
-  jdata[1] = std::sin(ydata[1]);
+  jdata[1] = SUNRsin(ydata[1]);
 
   return 0;
 }

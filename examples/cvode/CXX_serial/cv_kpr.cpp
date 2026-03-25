@@ -123,7 +123,7 @@ int main(int argc, char* argv[])
 
   // Output initial contion
   std::cout << std::scientific;
-  std::cout << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+  std::cout << std::setprecision(SUN_DIGITS10);
   std::cout << "           t              ";
   std::cout << "          u              ";
   std::cout << "          v              ";
@@ -134,8 +134,8 @@ int main(int argc, char* argv[])
 
   std::cout << std::setw(22) << tret << std::setw(25) << ydata[0]
             << std::setw(25) << ydata[1] << std::setw(25)
-            << std::abs(ydata[0] - utrue) << std::setw(25)
-            << std::abs(ydata[1] - vtrue) << std::endl;
+            << SUNRabs(ydata[0] - utrue) << std::setw(25)
+            << SUNRabs(ydata[1] - vtrue) << std::endl;
 
   // Advance in time
   for (int i = 0; i < opts.nout; i++)
@@ -148,8 +148,8 @@ int main(int argc, char* argv[])
 
     std::cout << std::setw(22) << tret << std::setw(25) << ydata[0]
               << std::setw(25) << ydata[1] << std::setw(25)
-              << std::abs(ydata[0] - utrue) << std::setw(25)
-              << std::abs(ydata[1] - vtrue) << std::endl;
+              << SUNRabs(ydata[0] - utrue) << std::setw(25)
+              << SUNRabs(ydata[1] - vtrue) << std::endl;
 
     // update output time
     tout += opts.dtout;

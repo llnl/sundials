@@ -54,8 +54,9 @@ foreach(test_tuple ${tests})
 
   target_include_directories(${target} PRIVATE ${benchmark_prefix})
 
-  target_link_libraries(${target} PRIVATE sundials_${package}
-                                          sundials_nvecparallel MPI::MPI_CXX)
+  target_link_libraries(
+    ${target} PRIVATE sundials_${package} sundials_nvecparallel MPI::MPI_CXX
+                      ${SUNDIALS_MATH_LIBRARY})
 
   if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUDIST)
     target_compile_definitions(${target} PRIVATE USE_SUPERLU_DIST)

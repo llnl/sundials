@@ -823,19 +823,19 @@ int main(int argc, char* argv[])
     u    = ydata[0];
     v    = ydata[1];
     w    = ydata[2];
-    uerr = std::abs(yrefdata[0] - u);
-    verr = std::abs(yrefdata[1] - v);
-    werr = std::abs(yrefdata[2] - w);
+    uerr = SUNRabs(yrefdata[0] - u);
+    verr = SUNRabs(yrefdata[1] - v);
+    werr = SUNRabs(yrefdata[2] - w);
     uerrtot += uerr * uerr;
     verrtot += verr * verr;
     werrtot += werr * werr;
     errtot += uerr * uerr + verr * verr + werr * werr;
     accuracy = std::max(accuracy,
-                        uerr / std::abs(opts.atol + opts.rtol * yrefdata[0]));
+                        uerr / SUNRabs(opts.atol + opts.rtol * yrefdata[0]));
     accuracy = std::max(accuracy,
-                        verr / std::abs(opts.atol + opts.rtol * yrefdata[1]));
+                        verr / SUNRabs(opts.atol + opts.rtol * yrefdata[1]));
     accuracy = std::max(accuracy,
-                        werr / std::abs(opts.atol + opts.rtol * yrefdata[2]));
+                        werr / SUNRabs(opts.atol + opts.rtol * yrefdata[2]));
 
     // Periodically output current results to screen
     if (t >= tout)
@@ -880,10 +880,10 @@ int main(int argc, char* argv[])
   check_flag(retval, "ARKodeGetNumRhsEvals");
 
   // Print some final statistics
-  uerrtot = std::sqrt(uerrtot / (sunrealtype)nsts);
-  verrtot = std::sqrt(verrtot / (sunrealtype)nsts);
-  werrtot = std::sqrt(werrtot / (sunrealtype)nsts);
-  errtot  = std::sqrt(errtot / SUN_RCONST(3.0) / (sunrealtype)nsts);
+  uerrtot = SUNRsqrt(uerrtot / (sunrealtype)nsts);
+  verrtot = SUNRsqrt(verrtot / (sunrealtype)nsts);
+  werrtot = SUNRsqrt(werrtot / (sunrealtype)nsts);
+  errtot  = SUNRsqrt(errtot / SUN_RCONST(3.0) / (sunrealtype)nsts);
   std::cout << "\nFinal Solver Statistics:\n";
   std::cout << "   Slow steps = " << nsts << "  (attempts = " << natts
             << ",  fails = " << netfs << ")\n";

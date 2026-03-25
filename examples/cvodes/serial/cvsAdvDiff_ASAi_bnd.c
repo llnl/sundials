@@ -546,18 +546,18 @@ static void PrintOutput(N_Vector uB, UserData data)
   }
 
   printf("\nMaximum sensitivity\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("  lambda max = %Qe\n", uBmax);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  lambda max = %Le\n", uBmax);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("  lambda max = %e\n", uBmax);
 #else
   printf("  lambda max = %e\n", uBmax);
 #endif
   printf("at\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("  x = %Qe\n  y = %Qe\n", x, y);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  x = %Le\n  y = %Le\n", x, y);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("  x = %e\n  y = %e\n", x, y);
 #else
   printf("  x = %e\n  y = %e\n", x, y);
 #endif

@@ -559,20 +559,20 @@ static void PrintOutput(void* cvode_mem, int my_pe, sunrealtype t, N_Vector u)
 
   if (my_pe == 0)
   {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf("%8.3Qe %2d  %8.3Qe %5ld\n", t, qu, hu, nst);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("%8.3Le %2d  %8.3Le %5ld\n", t, qu, hu, nst);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%8.3e %2d  %8.3e %5ld\n", t, qu, hu, nst);
 #else
     printf("%8.3e %2d  %8.3e %5ld\n", t, qu, hu, nst);
 #endif
 
     printf("                                Solution       ");
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf("%12.4Qe \n", umax);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("%12.4Le \n", umax);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%12.4e \n", umax);
 #else
     printf("%12.4e \n", umax);
 #endif
@@ -591,10 +591,10 @@ static void PrintOutputS(int my_pe, N_Vector* uS)
   if (my_pe == 0)
   {
     printf("                                Sensitivity 1  ");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf("%12.4Qe \n", smax);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("%12.4Le \n", smax);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%12.4e \n", smax);
 #else
     printf("%12.4e \n", smax);
 #endif
@@ -604,10 +604,10 @@ static void PrintOutputS(int my_pe, N_Vector* uS)
   if (my_pe == 0)
   {
     printf("                                Sensitivity 2  ");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf("%12.4Qe \n", smax);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("%12.4Le \n", smax);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%12.4e \n", smax);
 #else
     printf("%12.4e \n", smax);
 #endif

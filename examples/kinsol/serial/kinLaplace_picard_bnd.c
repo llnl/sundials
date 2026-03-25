@@ -206,7 +206,9 @@ int main(void)
   retval = KINGetFuncNorm(kmem, &fnorm);
   if (check_retval(&retval, "KINGetfuncNorm", 1)) { return (1); }
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("\nComputed solution (||F|| = %Qg):\n\n", fnorm);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("\nComputed solution (||F|| = %Lg):\n\n", fnorm);
 #else
   printf("\nComputed solution (||F|| = %g):\n\n", fnorm);
@@ -275,7 +277,7 @@ static int func(N_Vector u, N_Vector f, void* user_data)
 
       /* Set residual at x_i, y_j */
 
-      IJth(fdata, i, j) = hdiff + vdiff + uij - uij * uij * uij + 2.0;
+      IJth(fdata, i, j) = hdiff + vdiff + uij - uij * uij * uij + TWO;
     }
   }
 
@@ -321,7 +323,7 @@ static int jac(N_Vector u, N_Vector f, SUNMatrix J, void* user_data,
 
       k                                 = i + j * NX;
       kthCol                            = SUNBandMatrix_Column(J, k);
-      SM_COLUMN_ELEMENT_B(kthCol, k, k) = -2.0 * hdc - 2.0 * vdc;
+      SM_COLUMN_ELEMENT_B(kthCol, k, k) = -TWO * hdc - TWO * vdc;
       if (i != (NX - 1)) { SM_COLUMN_ELEMENT_B(kthCol, k + 1, k) = hdc; }
       if (i != 0) { SM_COLUMN_ELEMENT_B(kthCol, k - 1, k) = hdc; }
       if (j != (NY - 1)) { SM_COLUMN_ELEMENT_B(kthCol, k + NX, k) = vdc; }
@@ -351,10 +353,10 @@ static void PrintOutput(N_Vector u)
   for (i = 1; i <= NX; i += SKIP)
   {
     x = i * dx;
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf("%-8.5Qf ", x);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("%-8.5Lf ", x);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%-8.5f ", x);
 #else
     printf("%-8.5f ", x);
 #endif
@@ -364,19 +366,19 @@ static void PrintOutput(N_Vector u)
   for (j = 1; j <= NY; j += SKIP)
   {
     y = j * dy;
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf("%-8.5Qf    ", y);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf("%-8.5Lf    ", y);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf("%-8.5f    ", y);
 #else
     printf("%-8.5f    ", y);
 #endif
     for (i = 1; i <= NX; i += SKIP)
     {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+      printf("%-8.5Qf ", IJth(udata, i, j));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
       printf("%-8.5Lf ", IJth(udata, i, j));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-      printf("%-8.5f ", IJth(udata, i, j));
 #else
       printf("%-8.5f ", IJth(udata, i, j));
 #endif

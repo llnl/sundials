@@ -96,20 +96,6 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype   */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
-/* Math function macros */
-
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define ABS(x)  (fabs((x)))
-#define SQRT(x) (sqrt((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define ABS(x)  (fabsf((x)))
-#define SQRT(x) (sqrtf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define ABS(x)  (fabsl((x)))
-#define SQRT(x) (sqrtl((x)))
-#endif
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-
 /* Problem Constants */
 
 /* must equal 2*(number of prey or predators)
@@ -419,7 +405,7 @@ static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
       for (j = 0; j < NUM_SPECIES; j++)
       {
         csave = cxy[j]; /* Save the j,jx,jy element of cc */
-        r     = MAX(sqruround * ABS(csave), r0 / scxy[j]);
+        r     = SUNMAX(sqruround * SUNRabs(csave), r0 / scxy[j]);
         cxy[j] += r; /* Perturb the j,jx,jy element of cc */
         fac = ONE / r;
 
@@ -578,7 +564,7 @@ static void InitUserData(UserData data)
   data->dx        = (data->ax) / (MX - 1);
   data->dy        = (data->ay) / (MY - 1);
   data->uround    = SUN_UNIT_ROUNDOFF;
-  data->sqruround = SQRT(data->uround);
+  data->sqruround = SUNRsqrt(data->uround);
 
   /* Set up the coefficients a and b plus others found in the equations */
   np = data->np;
@@ -697,8 +683,11 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
   printf("Flag globalstrategy = %d (0 = None, 1 = Linesearch)\n", globalstrategy);
   printf("Linear solver is SPGMR with maxl = %d, maxlrst = %d\n", maxl, maxlrst);
   printf("Preconditioning uses interaction-only block-diagonal matrix\n");
-  printf("Positivity constraints imposed on all components\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+  printf("Positivity constraints imposed on all components \n");
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters:  fnormtol = %Qg   scsteptol = %Qg\n", fnormtol,
+         scsteptol);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  fnormtol = %Lg   scsteptol = %Lg\n", fnormtol,
          scsteptol);
 #else
@@ -707,7 +696,10 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
 #endif
 
   printf("\nInitial profile of concentration\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("At all mesh points:  %Qg %Qg %Qg   %Qg %Qg %Qg\n", PREYIN, PREYIN,
+         PREYIN, PREDIN, PREDIN, PREDIN);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("At all mesh points:  %Lg %Lg %Lg   %Lg %Lg %Lg\n", PREYIN, PREYIN,
          PREYIN, PREDIN, PREDIN, PREDIN);
 #else
@@ -736,7 +728,9 @@ static void PrintOutput(N_Vector cc)
   for (is = 0; is < NUM_SPECIES; is++)
   {
     if ((is % 6) * 6 == is) { printf("\n"); }
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf(" %Qg", ct[is]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf(" %Lg", ct[is]);
 #else
     printf(" %g", ct[is]);
@@ -752,7 +746,9 @@ static void PrintOutput(N_Vector cc)
   for (is = 0; is < NUM_SPECIES; is++)
   {
     if ((is % 6) * 6 == is) { printf("\n"); }
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf(" %Qg", ct[is]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf(" %Lg", ct[is]);
 #else
     printf(" %g", ct[is]);

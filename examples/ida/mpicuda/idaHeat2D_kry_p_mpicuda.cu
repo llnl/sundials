@@ -1181,7 +1181,9 @@ static void PrintHeader(sunrealtype rtol, sunrealtype atol, UserData data)
   printf("        Total system size: %ld\n\n", (long)data->mx * data->my);
   printf("Subgrid dimensions: %d x %d", (int)data->mxsub, (int)data->mysub);
   printf("        Processor array: %d x %d\n", (int)data->npex, (int)data->npey);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, atol);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
@@ -1237,7 +1239,11 @@ static void PrintOutput(int id, void* ida_mem, sunrealtype t, N_Vector uu)
     ier = IDAGetNumPrecSolves(ida_mem, &nps);
     check_flag(&ier, "IDAGetNumPrecSolves", 1, id);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf(" %5.2Qf %13.5Qe  %d  %3ld  %3ld  %3ld  %4ld  %4ld  %9.2Qe  %3ld "
+           "%3ld\n",
+           t, umax, kused, nst, nni, nje, nre, nreLS, hused, npe, nps);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     printf(" %5.2Lf %13.5Le  %d  %3ld  %3ld  %3ld  %4ld  %4ld  %9.2Le  %3ld "
            "%3ld\n",
            t, umax, kused, nst, nni, nje, nre, nreLS, hused, npe, nps);

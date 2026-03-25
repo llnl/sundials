@@ -62,24 +62,24 @@
 // -----------------------------------------------------------------------------
 
 // Compute r(t)
-static sunrealtype r(sunrealtype t) { return HALF * cos(t); }
+static sunrealtype r(sunrealtype t) { return HALF * SUNRcos(t); }
 
 // Compute the derivative of r(t)
-static sunrealtype rdot(sunrealtype t) { return -HALF * sin(t); }
+static sunrealtype rdot(sunrealtype t) { return -HALF * SUNRsin(t); }
 
 // Compute s(t)
-static sunrealtype s(sunrealtype t) { return cos(TWENTY * t); }
+static sunrealtype s(sunrealtype t) { return SUNRcos(TWENTY * t); }
 
 // Compute the derivative of s(t)
-static sunrealtype sdot(sunrealtype t) { return -TWENTY * sin(TWENTY * t); }
+static sunrealtype sdot(sunrealtype t) { return -TWENTY * SUNRsin(TWENTY * t); }
 
 // Compute the true solution
 static int ytrue(sunrealtype t, N_Vector y)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
 
-  ydata[0] = sqrt(ONE + r(t));
-  ydata[1] = sqrt(TWO + s(t));
+  ydata[0] = SUNRsqrt(ONE + r(t));
+  ydata[1] = SUNRsqrt(TWO + s(t));
 
   return 0;
 }
@@ -185,18 +185,10 @@ int main(int argc, char* argv[])
   sundials::Context sunctx;
 
   // Comparison tolerance
-  sunrealtype tol = 100 * std::sqrt(SUN_UNIT_ROUNDOFF);
+  sunrealtype tol = 100 * SUNRsqrt(SUN_UNIT_ROUNDOFF);
   if (argc > 1)
   {
-#if defined(SUNDIALS_SINGLE_PRECISION)
-    tol = std::stof(argv[1]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    tol = std::stod(argv[1]);
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-    tol = std::stold(argv[1]);
-#else
-#error "SUNDIALS precision macro not defined"
-#endif
+    tol = SUNStrToReal(argv[1]);
     if (tol <= ZERO)
     {
       std::cerr << "ERROR: Invalid tolerance, tol = " << tol << std::endl;
@@ -212,6 +204,8 @@ int main(int argc, char* argv[])
   const sunrealtype rtol = SUN_RCONST(1.0e-6);
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   const sunrealtype rtol = SUN_RCONST(1.0e-9);
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+  const sunrealtype rtol = SUN_RCONST(1.0e-12);
 #else
 #error "SUNDIALS precision macro not defined"
 #endif
@@ -297,7 +291,11 @@ int main(int argc, char* argv[])
 
   // Output Jacobian data
   std::cout << std::scientific;
-  std::cout << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  std::cout << std::setprecision(SUN_DIGITS10 / 2);
+#else
+  std::cout << std::setprecision(SUN_DIGITS10);
+#endif
   std::cout << "Jac nst = " << nst_Jdq << std::endl;
   std::cout << "Jac t   = " << t_Jdq << std::endl;
   std::cout << std::endl;
@@ -315,9 +313,9 @@ int main(int argc, char* argv[])
     std::cout << std::setw(8) << std::right << i << std::setw(25) << std::right
               << Jdq_data[i] << std::setw(25) << std::right << Jtrue_data[i]
               << std::setw(25) << std::right
-              << std::abs(Jdq_data[i] - Jtrue_data[i]) << std::setw(25)
+              << SUNRabs(Jdq_data[i] - Jtrue_data[i]) << std::setw(25)
               << std::right
-              << std::abs(Jdq_data[i] - Jtrue_data[i]) / Jtrue_data[i]
+              << SUNRabs(Jdq_data[i] - Jtrue_data[i]) / Jtrue_data[i]
               << std::endl;
     result += SUNRCompareTol(Jdq_data[i], Jtrue_data[i], tol);
   }

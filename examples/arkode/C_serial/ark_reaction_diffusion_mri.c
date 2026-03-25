@@ -52,7 +52,11 @@
 #include <stdlib.h>
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype, etc */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -209,7 +213,7 @@ int main(void)
   tout  = T0 + dTout;
   printf("        t      ||u||_rms\n");
   printf("   -------------------------\n");
-  printf("  %10.6" FSYM "  %10.6f\n", t, sqrt(N_VDotProd(y, y) / N));
+  printf("  %10.6" FSYM "  %10.6" FSYM "\n", t, SUNRsqrt(N_VDotProd(y, y) / N));
   for (iout = 0; iout < Nt; iout++)
   {
     /* call integrator */
@@ -217,7 +221,7 @@ int main(void)
     if (check_retval(&retval, "ARKodeEvolve", 1)) { break; }
 
     /* print solution stats and output results to disk */
-    printf("  %10.6" FSYM "  %10.6f\n", t, sqrt(N_VDotProd(y, y) / N));
+    printf("  %10.6" FSYM "  %10.6" FSYM "\n", t, SUNRsqrt(N_VDotProd(y, y) / N));
     for (i = 0; i < N; i++) { fprintf(UFID, " %.16" ESYM "", data[i]); }
     fprintf(UFID, "\n");
 

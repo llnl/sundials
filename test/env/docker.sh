@@ -45,7 +45,7 @@ compilerversion="${compiler##*@}"
 # ------------------------------------------------------------------------------
 
 case "$SUNDIALS_PRECISION" in
-    single|double|extended) ;;
+    single|double|extended|float128) ;;
     *)
         echo "ERROR: Unknown real type option: $SUNDIALS_PRECISION"
         return 1
@@ -166,7 +166,10 @@ fi
 # Uncomment to override the default output file comparison precisions. The float
 # precision is number of digits to compare (0 = all digits) and the integer
 # precision is allowed percentage difference (0 = no difference).
-if [ "$SUNDIALS_PRECISION" == "extended" ]; then
+if [ "$SUNDIALS_PRECISION" == "float128" ]; then
+    export SUNDIALS_TEST_FLOAT_PRECISION=7
+    export SUNDIALS_TEST_INTEGER_PRECISION=10
+elif [ "$SUNDIALS_PRECISION" == "extended" ]; then
     export SUNDIALS_TEST_FLOAT_PRECISION=7
     export SUNDIALS_TEST_INTEGER_PRECISION=10
 elif [ "$SUNDIALS_PRECISION" == "double" ]; then

@@ -40,40 +40,31 @@
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h"
 
 /* precision specific formatting macros */
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #else
 #define GSYM "g"
 #endif
 
-/* precision specific math function macros */
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define SUNRsin(x) (sin((x)))
-#define SUNRcos(x) (cos((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define SUNRsin(x) (sinf((x)))
-#define SUNRcos(x) (cosf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define SUNRsin(x) (sinl((x)))
-#define SUNRcos(x) (cosl((x)))
-#endif
-
 /* problem constants */
 #define NEQ 3 /* number of equations */
 
-#define ZERO         SUN_RCONST(0.0)             /* real 0.0  */
-#define PTONE        SUN_RCONST(0.1)             /* real 0.1  */
-#define HALF         SUN_RCONST(0.5)             /* real 0.5  */
-#define PTNINE       SUN_RCONST(0.9)             /* real 0.9  */
-#define ONE          SUN_RCONST(1.0)             /* real 1.0  */
-#define ONEPTZEROSIX SUN_RCONST(1.06)            /* real 1.06 */
-#define THREE        SUN_RCONST(3.0)             /* real 3.0  */
-#define SIX          SUN_RCONST(6.0)             /* real 6.0  */
-#define NINE         SUN_RCONST(9.0)             /* real 9.0  */
-#define TEN          SUN_RCONST(10.0)            /* real 10.0 */
-#define TWENTY       SUN_RCONST(20.0)            /* real 20.0 */
-#define SIXTY        SUN_RCONST(60.0)            /* real 60.0 */
-#define PI           SUN_RCONST(3.1415926535898) /* real pi   */
+#define ZERO         SUN_RCONST(0.0)  /* real 0.0  */
+#define PTONE        SUN_RCONST(0.1)  /* real 0.1  */
+#define HALF         SUN_RCONST(0.5)  /* real 0.5  */
+#define PTNINE       SUN_RCONST(0.9)  /* real 0.9  */
+#define ONE          SUN_RCONST(1.0)  /* real 1.0  */
+#define ONEPTZEROSIX SUN_RCONST(1.06) /* real 1.06 */
+#define THREE        SUN_RCONST(3.0)  /* real 3.0  */
+#define SIX          SUN_RCONST(6.0)  /* real 6.0  */
+#define NINE         SUN_RCONST(9.0)  /* real 9.0  */
+#define TEN          SUN_RCONST(10.0) /* real 10.0 */
+#define TWENTY       SUN_RCONST(20.0) /* real 20.0 */
+#define SIXTY        SUN_RCONST(60.0) /* real 60.0 */
+#define PI \
+  SUN_RCONST(3.141592653589793238462643383279502884197169) /* real pi   */
 
 /* analytic solution */
 #define XTRUE HALF

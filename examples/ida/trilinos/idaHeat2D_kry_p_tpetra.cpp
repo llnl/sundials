@@ -1021,7 +1021,9 @@ static void PrintHeader(sunrealtype rtol, sunrealtype atol, UserData* data)
   printf("        Total system size: %ld\n\n", (long)data->mx * data->my);
   printf("Subgrid dimensions: %d x %d", (int)data->mxsub, (int)data->mysub);
   printf("        Processor array: %d x %d\n", (int)data->npex, (int)data->npey);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, atol);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);

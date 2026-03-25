@@ -48,7 +48,11 @@ sunrealtype SUNRpowerI(sunrealtype base, int exponent)
 
 sunbooleantype SUNRCompare(sunrealtype a, sunrealtype b)
 {
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  return (SUNRCompareTol(a, b, 100 * SUN_UNIT_ROUNDOFF));
+#else
   return (SUNRCompareTol(a, b, 10 * SUN_UNIT_ROUNDOFF));
+#endif
 }
 
 sunbooleantype SUNRCompareTol(sunrealtype a, sunrealtype b, sunrealtype tol)
@@ -64,14 +68,14 @@ sunbooleantype SUNRCompareTol(sunrealtype a, sunrealtype b, sunrealtype tol)
   diff = SUNRabs(a - b);
   norm = SUNMIN(SUNRabs(a + b), SUN_BIG_REAL);
 
-  /* When |a + b| is very small (less than 10*SUN_UNIT_ROUNDOFF) or zero, we use
-   * an absolute difference:
+  /* When |a + b| is very small (less than 10* or 100*SUN_UNIT_ROUNDOFF)
+   * or zero, we use an absolute difference:
    *    |a - b| >= 10*SUN_UNIT_ROUNDOFF
    * Otherwise we use a relative difference:
    *    |a - b| < tol * |a + b|
    * The choice to use |a + b| over max(a, b) is arbitrary, as is the choice to
    * use 10*SUN_UNIT_ROUNDOFF.
-   * 
+   *
    * In order to handle NANs correctly without explicit checks of isnan or
    * isunordered (which throw warnings for some compilers and flags), we use
    * !isless. The seemingly equivalent >= can have undefined behavior for NANs.
@@ -88,6 +92,8 @@ sunrealtype SUNStrToReal(const char* str)
   return strtod(str, &end);
 #elif defined(SUNDIALS_SINGLE_PRECISION)
   return strtof(str, &end);
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+  return strtoflt128(str, &end);
 #else
 #error \
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"

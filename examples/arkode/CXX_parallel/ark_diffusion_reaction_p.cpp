@@ -77,6 +77,8 @@
 #include "cvode/cvode.h"
 #include "nvector/nvector_mpiplusx.h"
 #include "nvector/nvector_serial.h"
+#include "sundials/sundials_math.h"
+#include "sundials/sundials_types.hpp"
 #include "sunlinsol/sunlinsol_pcg.h"
 #include "sunlinsol/sunlinsol_spgmr.h"
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h"
@@ -89,7 +91,7 @@
 
 #define NSPECIES 2
 
-#define WIDTH (10 + numeric_limits<sunrealtype>::digits10)
+#define WIDTH (10 + SUN_DIGITS10)
 
 // Macro to access each species at an (x,y) location in a 1D array
 #define UIDX(x, y, nx) (NSPECIES * ((nx) * (y) + (x)))
@@ -2299,7 +2301,8 @@ static int SetIC(N_Vector u, UserData* udata)
       a = TWO * PI * (x - udata->xl) / (udata->xu - udata->xl);
       b = TWO * PI * (y - udata->yl) / (udata->yu - udata->yl);
 
-      data[UIDX(i, j, nx_loc)] = udata->A + SUN_RCONST(0.5) * sin(a) * sin(b);
+      data[UIDX(i, j, nx_loc)] = udata->A +
+                                 SUN_RCONST(0.5) * SUNRsin(a) * SUNRsin(b);
       data[VIDX(i, j, nx_loc)] = udata->B / udata->A;
     }
   }
@@ -2430,7 +2433,7 @@ static int OpenOutput(UserData* udata)
   if (udata->output > 0 && udata->outproc)
   {
     cout << scientific;
-    cout << setprecision(numeric_limits<sunrealtype>::digits10);
+    cout << setprecision(SUN_DIGITS10);
     cout << "          t           ";
     cout << "          ||u||_rms      " << endl;
     cout << " ---------------------";
@@ -2447,7 +2450,7 @@ static int OpenOutput(UserData* udata)
     udata->uout.open(fname.str());
 
     udata->uout << scientific;
-    udata->uout << setprecision(numeric_limits<sunrealtype>::digits10);
+    udata->uout << setprecision(SUN_DIGITS10);
 
     // Add 1 to the total number of nodes in the x and y directions and to the
     // end indices in the x and y direction at the North and East boundary to
@@ -2490,7 +2493,7 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData* udata)
   if (udata->output > 0)
   {
     // Compute rms norm of the state
-    sunrealtype urms = sqrt(N_VDotProd(y, y) / udata->nx / udata->ny);
+    sunrealtype urms = SUNRsqrt(N_VDotProd(y, y) / udata->nx / udata->ny);
 
     // Output current status
     if (udata->outproc) { cout << setw(22) << t << setw(25) << urms << endl; }

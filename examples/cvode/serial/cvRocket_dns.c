@@ -328,10 +328,10 @@ static int g(sunrealtype t, N_Vector y, sunrealtype* gout, void* user_data)
 
 static void PrintOutput(sunrealtype t, sunrealtype y1, sunrealtype y2)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("At t = %0.4Qe      y =%14.6Qe  %14.6Qe\n", t, y1, y2);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("At t = %0.4Le      y =%14.6Le  %14.6Le\n", t, y1, y2);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At t = %0.4e      y =%14.6e  %14.6e\n", t, y1, y2);
 #else
   printf("At t = %0.4e      y =%14.6e  %14.6e\n", t, y1, y2);
 #endif

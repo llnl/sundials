@@ -31,7 +31,6 @@
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
 #endif
-
 /*
  * -----------------------------------------------------------------
  * Macros
@@ -46,11 +45,35 @@ extern "C" {
  *
  * SUNRabs calls the appropriate version of abs
  *
+ * SUNRisnan calls the appropriate version of isnan
+ *
  * SUNRexp calls the appropriate version of exp
+ *
+ * SUNRlog calls the appropriate version of log
  *
  * SUNRceil calls the appropriate version of ceil
  *
+ * SUNRcopysign calls the appropriate version copysign
+ *
+ * SUNRpowerR calls the appropriate version pow
+ *
  * SUNRround calls the appropriate version of round
+ *
+ * SUNRsin calls the appropriate version of sin
+ *
+ * SUNRcos calls the appropriate version of cos
+ *
+ * SUNRasin calls the appropriate version of asin
+ *
+ * SUNRacos calls the appropriate version of acos
+ *
+ * SUNRsinh calls the appropriate version of sinh
+ *
+ * SUNRcosh calls the appropriate version of cosh
+
+ * SUNRatan calls the appropriate version of atan
+ *
+ * SUNRpower calls the appropriate version of power
  * -----------------------------------------------------------------
  */
 
@@ -85,6 +108,8 @@ extern "C" {
 #define SUNRsqrt(x) ((x) <= SUN_RCONST(0.0) ? (SUN_RCONST(0.0)) : (sqrtf((x))))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define SUNRsqrt(x) ((x) <= SUN_RCONST(0.0) ? (SUN_RCONST(0.0)) : (sqrtl((x))))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRsqrt(x) ((x) <= SUN_RCONST(0.0) ? (SUN_RCONST(0.0)) : (sqrtq((x))))
 #else
 #error \
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
@@ -109,6 +134,34 @@ extern "C" {
 #define SUNRabs(x) (fabsf((x)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define SUNRabs(x) (fabsl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRabs(x) (fabsq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRisnan
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype isnan_x;
+ *         isnan_x = SUNRisnan(x);
+ * -----------------------------------------------------------------
+ * SUNRisnan(x) returns isnan_x.
+ * -----------------------------------------------------------------
+ */
+
+#ifndef SUNRisnan
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRisnan(x) (isnan((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRisnan(x) (isnanf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRisnan(x) (isnanl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRisnan(x) (isnanq((x)))
 #else
 #error \
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
@@ -133,6 +186,34 @@ extern "C" {
 #define SUNRexp(x) (expf((x)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define SUNRexp(x) (expl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRexp(x) (expq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRlog
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype log_x;
+ *         log_x = SUNRlog(x);
+ * -----------------------------------------------------------------
+ * SUNRlog(x) returns log_x.
+ * -----------------------------------------------------------------
+ */
+
+#ifndef SUNRlog
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRlog(x) (log((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRlog(x) (logf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRlog(x) (logl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRlog(x) (logq((x)))
 #else
 #error \
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
@@ -157,6 +238,8 @@ extern "C" {
 #define SUNRceil(x) (ceilf((x)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define SUNRceil(x) (ceill((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRceil(x) (ceilq((x)))
 #else
 #error \
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
@@ -181,6 +264,8 @@ extern "C" {
 #define SUNRcopysign(x, y) (copysignf((x), (y)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define SUNRcopysign(x, y) (copysignl((x), (y)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRcopysign(x, y) (copysignq((x), (y)))
 #else
 #error \
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
@@ -197,7 +282,7 @@ extern "C" {
  * SUNRsamesign(x, y) returns true if x and y share the same sign,
  * false otherwise
  * -----------------------------------------------------------------
- */
+*/
 
 #ifndef SUNRsamesign
 #define SUNRsamesign(x, y) (signbit((x)) == signbit((y)))
@@ -213,7 +298,7 @@ extern "C" {
  * SUNRdifferentsign(x) returns true if x and y have different
  * signs, false otherwise
  * -----------------------------------------------------------------
- */
+*/
 
 #ifndef SUNRdifferentsign
 #define SUNRdifferentsign(x, y) (!SUNRsamesign((x), (y)))
@@ -237,6 +322,8 @@ extern "C" {
 #define SUNRpowerR(base, exponent) (powf(base, exponent))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define SUNRpowerR(base, exponent) (powl(base, exponent))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRpowerR(base, exponent) (powq(base, exponent))
 #else
 #error \
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
@@ -261,6 +348,190 @@ extern "C" {
 #define SUNRround(x) (roundf((x)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define SUNRround(x) (roundl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRround(x) (roundq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRsin
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype sin_x;
+ *         sin_x = SUNRsin(x);
+ * -----------------------------------------------------------------
+ * SUNRsin(x) returns the sin value of x.
+ * -----------------------------------------------------------------
+ */
+
+#ifndef SUNRsin
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRsin(x) (sin((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRsin(x) (sinf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRsin(x) (sinl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRsin(x) (sinq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRcos
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype cos_x;
+ *         cos_x = SUNRcos(x);
+ * -----------------------------------------------------------------
+ * SUNRcos(x) returns the cos value of x.
+ * -----------------------------------------------------------------
+ */
+
+#ifndef SUNRcos
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRcos(x) (cos((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRcos(x) (cosf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRcos(x) (cosl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRcos(x) (cosq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRasin
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype cos_x;
+ *         asin_x = SUNRasin(x);
+ * -----------------------------------------------------------------
+ * SUNRasin(x) returns the asin value of x.
+ * -----------------------------------------------------------------
+ */
+
+#ifndef SUNRasin
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRasin(x) (asin((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRasin(x) (asinf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRasin(x) (asinl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRasin(x) (asinq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRacos
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype acos_x;
+ *         acos_x = SUNRacos(x);
+ * -----------------------------------------------------------------
+ * SUNRacos(x) returns the acos value of x.
+ * -----------------------------------------------------------------
+ */
+
+#ifndef SUNRacos
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRacos(x) (acos((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRacos(x) (acosf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRacos(x) (acosl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRacos(x) (acosq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRsinh
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype sinh_x;
+ *         sinh_x = SUNRsinh(x);
+ * -----------------------------------------------------------------
+ * SUNRsinh(x) returns sinh(x) (the hyperbolic sine of x).
+ * -----------------------------------------------------------------
+*/
+
+#ifndef SUNRsinh
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRsinh(x) (sinh((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRsinh(x) (sinhf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRsinh(x) (sinhl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRsinh(x) (sinhq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRcosh
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype cosh_x;
+ *         cosh_x = SUNRcosh(x);
+ * -----------------------------------------------------------------
+ * SUNRcosh(x) returns cosh(x) (the hyperbolic cosine of x).
+ * -----------------------------------------------------------------
+ */
+
+#ifndef SUNRcosh
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRcosh(x) (cosh((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRcosh(x) (coshf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRcosh(x) (coshl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRcosh(x) (coshq((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRatan
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype cos_x;
+ *         atan_x = SUNRatan(x);
+ * -----------------------------------------------------------------
+ * SUNRatan(x) returns the atan value of x.
+ * -----------------------------------------------------------------
+ */
+
+#ifndef SUNRatan
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRatan(x) (atan((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRatan(x) (atanf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRatan(x) (atanl((x)))
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#define SUNRatan(x) (atanq((x)))
 #else
 #error \
   "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
@@ -305,10 +576,10 @@ SUNDIALS_EXPORT sunrealtype SUNRpowerI(sunrealtype base, int exponent);
  *         isNotEqual = SUNRCompare(a, b);
  * -----------------------------------------------------------------
  * SUNRCompareTol returns 0 if the relative difference of a and b is
- * less than or equal to 10*machine epsilon. If the relative
- * difference is greater than 10*machine epsilon, it returns 1. The
- * function handles the case where a or b are near zero as well as
- * the case where a or b are inf/nan.
+ * less than or equal to 10* or 100*(for __float128) machine epsilon.
+ * If the relative difference is greater than 10* or 100*machine
+ * epsilon, it returns 1. The function handles the case where a or b
+ * are near zero as well as the case where a or b are inf/nan.
  * -----------------------------------------------------------------
  */
 

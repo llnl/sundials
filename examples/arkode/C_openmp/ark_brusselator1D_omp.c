@@ -60,8 +60,11 @@
 #ifdef _OPENMP
 #include <omp.h> /* OpenMP functions */
 #endif
-
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -110,15 +113,15 @@ int main(int argc, char* argv[])
   int Nvar       = 3;                /* number of solution fields */
   UserData udata = NULL;
   sunrealtype* data;
-  sunindextype N     = 201; /* spatial mesh size */
-  sunrealtype a      = 0.6; /* problem parameters */
-  sunrealtype b      = 2.0;
-  sunrealtype du     = 0.025;
-  sunrealtype dv     = 0.025;
-  sunrealtype dw     = 0.025;
-  sunrealtype ep     = 1.0e-5; /* stiffness parameter */
-  sunrealtype reltol = 1.0e-6; /* tolerances */
-  sunrealtype abstol = 1.0e-10;
+  sunindextype N     = 201;             /* spatial mesh size */
+  sunrealtype a      = SUN_RCONST(0.6); /* problem parameters */
+  sunrealtype b      = SUN_RCONST(2.0);
+  sunrealtype du     = SUN_RCONST(0.025);
+  sunrealtype dv     = SUN_RCONST(0.025);
+  sunrealtype dw     = SUN_RCONST(0.025);
+  sunrealtype ep     = SUN_RCONST(1.0e-5); /* stiffness parameter */
+  sunrealtype reltol = SUN_RCONST(1.0e-6); /* tolerances */
+  sunrealtype abstol = SUN_RCONST(1.0e-10);
   sunindextype NEQ, i;
 
   /* general problem variables */
@@ -204,9 +207,9 @@ int main(int argc, char* argv[])
   pi = SUN_RCONST(4.0) * atan(SUN_RCONST(1.0));
   for (i = 0; i < N; i++)
   {
-    data[IDX(i, 0)] = a + SUN_RCONST(0.1) * sin(pi * i * udata->dx);     /* u */
-    data[IDX(i, 1)] = b / a + SUN_RCONST(0.1) * sin(pi * i * udata->dx); /* v */
-    data[IDX(i, 2)] = b + SUN_RCONST(0.1) * sin(pi * i * udata->dx);     /* w */
+    data[IDX(i, 0)] = a + SUN_RCONST(0.1) * SUNRsin(pi * i * udata->dx); /* u */
+    data[IDX(i, 1)] = b / a + SUN_RCONST(0.1) * SUNRsin(pi * i * udata->dx); /* v */
+    data[IDX(i, 2)] = b + SUN_RCONST(0.1) * SUNRsin(pi * i * udata->dx); /* w */
   }
 
   /* Set mask array values for each solution component */
@@ -290,11 +293,11 @@ int main(int argc, char* argv[])
     flag = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL); /* call integrator */
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
     u = N_VWL2Norm(y, umask); /* access/print solution statistics */
-    u = sqrt(u * u / N);
+    u = SUNRsqrt(u * u / N);
     v = N_VWL2Norm(y, vmask);
-    v = sqrt(v * v / N);
+    v = SUNRsqrt(v * v / N);
     w = N_VWL2Norm(y, wmask);
-    w = sqrt(w * w / N);
+    w = SUNRsqrt(w * w / N);
     printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "\n", t,
            u, v, w);
     if (flag >= 0)
@@ -431,8 +434,9 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   }
 
   /* enforce stationary boundaries */
-  dYdata[IDX(0, 0)] = dYdata[IDX(0, 1)] = dYdata[IDX(0, 2)] = 0.0;
-  dYdata[IDX(N - 1, 0)] = dYdata[IDX(N - 1, 1)] = dYdata[IDX(N - 1, 2)] = 0.0;
+  dYdata[IDX(0, 0)] = dYdata[IDX(0, 1)] = dYdata[IDX(0, 2)] = SUN_RCONST(0.0);
+  dYdata[IDX(N - 1, 0)] = dYdata[IDX(N - 1, 1)] = dYdata[IDX(N - 1, 2)] =
+    SUN_RCONST(0.0);
 
   return 0;
 }

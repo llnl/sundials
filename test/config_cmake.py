@@ -405,7 +405,7 @@ def main():
         "double",
         "STRING",
         "real type precision",
-        choices=["single", "double", "extended"],
+        choices=["single", "double", "extended", "float128"],
     )
 
     # monitoring

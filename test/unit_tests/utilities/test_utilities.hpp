@@ -52,6 +52,8 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
     dest = stod(*(it + 1));
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     dest = stold(*(it + 1));
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+    dest = sunrealtype(stold(*(it + 1)));
 #endif
     args.erase(it, it + 2);
   }

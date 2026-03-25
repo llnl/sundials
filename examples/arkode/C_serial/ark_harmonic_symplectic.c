@@ -119,8 +119,8 @@ int main(int argc, char* argv[])
 
   /* Fill the initial conditions (x0 then v0) */
   ydata    = N_VGetArrayPointer(y);
-  ydata[0] = A * cos(phi);
-  ydata[1] = -A * omega * sin(phi);
+  ydata[0] = A * SUNRcos(phi);
+  ydata[1] = -A * omega * SUNRsin(phi);
 
   /* Create SPRKStep integrator */
   arkode_mem = SPRKStepCreate(xdot, vdot, T0, y, sunctx);
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
 
     /* Compute L2 error */
     N_VLinearSum(SUN_RCONST(1.0), y, -SUN_RCONST(1.0), solution, solution);
-    sunrealtype err = sqrt(N_VDotProd(solution, solution));
+    sunrealtype err = SUNRsqrt(N_VDotProd(solution, solution));
 
     /* Output current integration status */
     fprintf(stdout, "t = %.6Lf, x(t) = %.6Lf, E = %.6Lf, sol. err = %.16Le\n",
@@ -200,8 +200,8 @@ void Solution(sunrealtype t, N_Vector y, N_Vector solvec, UserData* udata)
   sunrealtype* sol = N_VGetArrayPointer(solvec);
 
   /* compute solution */
-  sol[0] = udata->A * cos(udata->omega * t + udata->phi);
-  sol[1] = -udata->A * udata->omega * sin(udata->omega * t + udata->phi);
+  sol[0] = udata->A * SUNRcos(udata->omega * t + udata->phi);
+  sol[1] = -udata->A * udata->omega * SUNRsin(udata->omega * t + udata->phi);
 }
 
 sunrealtype Energy(N_Vector yvec, sunrealtype dt, UserData* udata)

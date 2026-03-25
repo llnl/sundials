@@ -60,25 +60,25 @@ sunrealtype problem_data[4] = {-two, half, half, -one};
 // -----------------------------------------------------------------------------
 
 // Compute rho(t)
-inline sunrealtype rho(sunrealtype t) { return half * std::cos(t); }
+inline sunrealtype rho(sunrealtype t) { return half * SUNRcos(t); }
 
 // Compute rho'(t)
-inline sunrealtype rho_p(sunrealtype t) { return -half * std::sin(t); }
+inline sunrealtype rho_p(sunrealtype t) { return -half * SUNRsin(t); }
 
 // Compute sigma(t)
-inline sunrealtype sig(sunrealtype t) { return cos(twenty * t); }
+inline sunrealtype sig(sunrealtype t) { return SUNRcos(twenty * t); }
 
 // Compute sigma'(t)
 inline sunrealtype sig_p(sunrealtype t)
 {
-  return -twenty * std::sin(twenty * t);
+  return -twenty * SUNRsin(twenty * t);
 }
 
 // Compute the true solution
 inline int true_sol(sunrealtype t, sunrealtype* u, sunrealtype* v)
 {
-  *u = std::sqrt(one + rho(t));
-  *v = std::sqrt(two + sig(t));
+  *u = SUNRsqrt(one + rho(t));
+  *v = SUNRsqrt(two + sig(t));
 
   return 0;
 }
@@ -86,8 +86,8 @@ inline int true_sol(sunrealtype t, sunrealtype* u, sunrealtype* v)
 // Compute the true solution derivative
 inline int true_sol_p(sunrealtype t, sunrealtype* up, sunrealtype* vp)
 {
-  *up = rho_p(t) / (two * std::sqrt(one + rho(t)));
-  *vp = sig_p(t) / (two * std::sqrt(two + sig(t)));
+  *up = rho_p(t) / (two * SUNRsqrt(one + rho(t)));
+  *vp = sig_p(t) / (two * SUNRsqrt(two + sig(t)));
 
   return 0;
 }

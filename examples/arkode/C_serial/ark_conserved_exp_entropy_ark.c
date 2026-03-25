@@ -58,25 +58,13 @@
 #include <sunmatrix/sunmatrix_dense.h>
 
 /* Value of the natural number e */
-#define EVAL 2.718281828459045235360287471352662497757247093699959574966
-
-/* Convince macros for calling precision-specific math functions */
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define EXP(x)  (exp((x)))
-#define SQRT(x) (sqrt((x)))
-#define LOG(x)  (log((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define EXP(x)  (expf((x)))
-#define SQRT(x) (sqrtf((x)))
-#define LOG(x)  (logf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define EXP(x)  (expl((x)))
-#define SQRT(x) (sqrtl((x)))
-#define LOG(x)  (logl((x)))
-#endif
+#define EVAL \
+  SUN_RCONST(2.718281828459045235360287471352662497757247093699959574966)
 
 /* Convince macros for using precision-specific format specifiers */
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"
 #else
 #define ESYM "e"
@@ -427,8 +415,8 @@ int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype* ydata = N_VGetArrayPointer(y);
   sunrealtype* fdata = N_VGetArrayPointer(ydot);
 
-  fdata[0] = -EXP(ydata[1]);
-  fdata[1] = EXP(ydata[0]);
+  fdata[0] = -SUNRexp(ydata[1]);
+  fdata[1] = SUNRexp(ydata[0]);
 
   return 0;
 }
@@ -442,10 +430,10 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
 
   /* column 0 */
   Jdata[0] = SUN_RCONST(0.0);
-  Jdata[1] = EXP(ydata[0]);
+  Jdata[1] = SUNRexp(ydata[0]);
 
   /* column 1 */
-  Jdata[2] = -EXP(ydata[1]);
+  Jdata[2] = -SUNRexp(ydata[1]);
   Jdata[3] = SUN_RCONST(0.0);
 
   return 0;
@@ -456,7 +444,7 @@ int Ent(N_Vector y, sunrealtype* e, void* user_data)
 {
   sunrealtype* ydata = N_VGetArrayPointer(y);
 
-  *e = EXP(ydata[0]) + EXP(ydata[1]);
+  *e = SUNRexp(ydata[0]) + SUNRexp(ydata[1]);
 
   return 0;
 }
@@ -467,8 +455,8 @@ int JacEnt(N_Vector y, N_Vector J, void* user_data)
   sunrealtype* ydata = N_VGetArrayPointer(y);
   sunrealtype* jdata = N_VGetArrayPointer(J);
 
-  jdata[0] = EXP(ydata[0]);
-  jdata[1] = EXP(ydata[1]);
+  jdata[0] = SUNRexp(ydata[0]);
+  jdata[1] = SUNRexp(ydata[1]);
 
   return 0;
 }
@@ -483,11 +471,11 @@ int ans(sunrealtype t, N_Vector y)
   sunrealtype a, b;
   sunrealtype* ydata = N_VGetArrayPointer(y);
 
-  a = SQRT(EVAL) + EVAL;
-  b = SQRT(EVAL) + EXP(a * t);
+  a = SUNRsqrt(EVAL) + EVAL;
+  b = SUNRsqrt(EVAL) + SUNRexp(a * t);
 
-  ydata[0] = LOG(EVAL + EXP(SUN_RCONST(1.5))) - LOG(b);
-  ydata[1] = LOG(a * EXP(a * t)) - LOG(b);
+  ydata[0] = SUNRlog(EVAL + SUNRexp(SUN_RCONST(1.5))) - SUNRlog(b);
+  ydata[1] = SUNRlog(a * SUNRexp(a * t)) - SUNRlog(b);
 
   return 0;
 }

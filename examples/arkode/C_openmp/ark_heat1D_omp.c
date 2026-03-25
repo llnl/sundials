@@ -54,7 +54,11 @@
 #include <omp.h> /* OpenMP function defs.                */
 #endif
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -85,15 +89,15 @@ static int check_flag(void* flagvalue, const char* funcname, int opt);
 int main(int argc, char* argv[])
 {
   /* general problem parameters */
-  sunrealtype T0   = SUN_RCONST(0.0); /* initial time */
-  sunrealtype Tf   = SUN_RCONST(1.0); /* final time */
-  int Nt           = 10;              /* total number of output times */
-  sunrealtype rtol = 1.e-4;           /* relative tolerance */
-  sunrealtype atol = 1.e-6;           /* absolute tolerance */
+  sunrealtype T0   = SUN_RCONST(0.0);   /* initial time */
+  sunrealtype Tf   = SUN_RCONST(1.0);   /* final time */
+  int Nt           = 10;                /* total number of output times */
+  sunrealtype rtol = SUN_RCONST(1.e-4); /* relative tolerance */
+  sunrealtype atol = SUN_RCONST(1.e-6); /* absolute tolerance */
   UserData udata   = NULL;
   sunrealtype* data;
-  sunindextype N = 201; /* spatial mesh size */
-  sunrealtype k  = 0.5; /* heat conductivity */
+  sunindextype N = 201;             /* spatial mesh size */
+  sunrealtype k  = SUN_RCONST(0.5); /* heat conductivity */
   sunindextype i;
 
   /* general problem variables */
@@ -188,13 +192,13 @@ int main(int argc, char* argv[])
   tout  = T0 + dTout;
   printf("        t      ||u||_rms\n");
   printf("   -------------------------\n");
-  printf("  %10.6" FSYM "  %10.6f\n", t, sqrt(N_VDotProd(y, y) / N));
+  printf("  %10.6" FSYM "  %10.6" FSYM "\n", t, SUNRsqrt(N_VDotProd(y, y) / N));
   for (iout = 0; iout < Nt; iout++)
   {
     flag = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL); /* call integrator */
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
-    printf("  %10.6" FSYM "  %10.6f\n", t,
-           sqrt(N_VDotProd(y, y) / N)); /* print solution stats */
+    printf("  %10.6" FSYM "  %10.6" FSYM "\n", t,
+           SUNRsqrt(N_VDotProd(y, y) / N)); /* print solution stats */
     if (flag >= 0)
     { /* successful solve: update output time */
       tout += dTout;
@@ -285,15 +289,15 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   c1      = k / dx / dx;
   c2      = -SUN_RCONST(2.0) * k / dx / dx;
   isource = N / 2;
-  Ydot[0] = 0.0; /* left boundary condition */
+  Ydot[0] = SUN_RCONST(0.0); /* left boundary condition */
 #pragma omp parallel for default(shared) private(i) schedule(static) \
   num_threads(udata->nthreads)
   for (i = 1; i < N - 1; i++)
   {
     Ydot[i] = c1 * Y[i - 1] + c2 * Y[i] + c1 * Y[i + 1];
   }
-  Ydot[N - 1] = 0.0;          /* right boundary condition */
-  Ydot[isource] += 0.01 / dx; /* source term */
+  Ydot[N - 1] = SUN_RCONST(0.0);          /* right boundary condition */
+  Ydot[isource] += SUN_RCONST(0.01) / dx; /* source term */
 
   return 0; /* Return with success */
 }
@@ -319,14 +323,14 @@ static int Jac(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y, N_Vector fy,
   /* iterate over domain, computing all Jacobian-vector products */
   c1    = k / dx / dx;
   c2    = -SUN_RCONST(2.0) * k / dx / dx;
-  JV[0] = 0.0;
+  JV[0] = SUN_RCONST(0.0);
 #pragma omp parallel for default(shared) private(i) schedule(static) \
   num_threads(udata->nthreads)
   for (i = 1; i < N - 1; i++)
   {
     JV[i] = c1 * V[i - 1] + c2 * V[i] + c1 * V[i + 1];
   }
-  JV[N - 1] = 0.0;
+  JV[N - 1] = SUN_RCONST(0.0);
 
   return 0; /* Return with success */
 }

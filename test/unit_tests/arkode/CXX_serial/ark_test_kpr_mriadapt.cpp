@@ -129,7 +129,10 @@
 #include <sunmatrix/sunmatrix_dense.h> // dense matrix type, fcts., macros
 #include "../../utilities/test_utilities.hpp" // common utility functions
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"
 #define FSYM "Lf"
 #else
@@ -830,15 +833,15 @@ int main(int argc, char* argv[])
     // access/print solution and error
     u    = ydata[0];
     v    = ydata[1];
-    uerr = std::abs(yrefdata[0] - u);
-    verr = std::abs(yrefdata[1] - v);
+    uerr = SUNRabs(yrefdata[0] - u);
+    verr = SUNRabs(yrefdata[1] - v);
     uerrtot += uerr * uerr;
     verrtot += verr * verr;
     errtot += uerr * uerr + verr * verr;
     accuracy = std::max(accuracy,
-                        uerr / std::abs(opts.atol + opts.rtol * yrefdata[0]));
+                        uerr / SUNRabs(opts.atol + opts.rtol * yrefdata[0]));
     accuracy = std::max(accuracy,
-                        verr / std::abs(opts.atol + opts.rtol * yrefdata[1]));
+                        verr / SUNRabs(opts.atol + opts.rtol * yrefdata[1]));
 
     // Periodically output current results to screen
     if (t >= tout)
@@ -881,9 +884,9 @@ int main(int argc, char* argv[])
   check_flag(retval, "ARKodeGetNumRhsEvals");
 
   // Print some final statistics
-  uerrtot = std::sqrt(uerrtot / (sunrealtype)nsts);
-  verrtot = std::sqrt(verrtot / (sunrealtype)nsts);
-  errtot  = std::sqrt(errtot / SUN_RCONST(2.0) / (sunrealtype)nsts);
+  uerrtot = SUNRsqrt(uerrtot / (sunrealtype)nsts);
+  verrtot = SUNRsqrt(verrtot / (sunrealtype)nsts);
+  errtot  = SUNRsqrt(errtot / SUN_RCONST(2.0) / (sunrealtype)nsts);
   std::cout << "\nFinal Solver Statistics:\n";
   std::cout << "   Slow steps = " << nsts << "  (attempts = " << natts
             << ",  fails = " << netfs << ")\n";
@@ -1115,31 +1118,31 @@ static int Jn(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 // Private helper functions
 // -----------------------------
 
-static sunrealtype r(sunrealtype t, Options* opts) { return (cos(t)); }
+static sunrealtype r(sunrealtype t, Options* opts) { return (SUNRcos(t)); }
 
 static sunrealtype s(sunrealtype t, Options* opts)
 {
-  return (cos(opts->w * t * (ONE + exp(-(t - TWO) * (t - TWO)))));
+  return (SUNRcos(opts->w * t * (ONE + SUNRexp(-(t - TWO) * (t - TWO)))));
 }
 
-static sunrealtype rdot(sunrealtype t, Options* opts) { return (-sin(t)); }
+static sunrealtype rdot(sunrealtype t, Options* opts) { return (-SUNRsin(t)); }
 
 static sunrealtype sdot(sunrealtype t, Options* opts)
 {
   const sunrealtype tTwo  = t - TWO;
-  const sunrealtype eterm = exp(-tTwo * tTwo);
-  return (-sin(opts->w * t * (ONE + eterm)) * opts->w *
+  const sunrealtype eterm = SUNRexp(-tTwo * tTwo);
+  return (-SUNRsin(opts->w * t * (ONE + eterm)) * opts->w *
           (ONE + eterm * (ONE - TWO * t * tTwo)));
 }
 
 static sunrealtype utrue(sunrealtype t, Options* opts)
 {
-  return (std::sqrt(TWO + r(t, opts)));
+  return (SUNRsqrt(TWO + r(t, opts)));
 }
 
 static sunrealtype vtrue(sunrealtype t, Options* opts)
 {
-  return (std::sqrt(TWO + s(t, opts)));
+  return (SUNRsqrt(TWO + s(t, opts)));
 }
 
 static int Ytrue(sunrealtype t, N_Vector y, Options* opts)

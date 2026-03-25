@@ -433,8 +433,7 @@ sunrealtype* N_VGetArrayPointer_ParHyp(SUNDIALS_MAYBE_UNUSED N_Vector v)
  */
 void N_VSetArrayPointer_ParHyp(SUNDIALS_MAYBE_UNUSED sunrealtype* v_data,
                                SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
-  /* Not implemented for Hypre vector */
+{ /* Not implemented for Hypre vector */
 }
 
 MPI_Comm N_VGetCommunicator_ParHyp(N_Vector v) { return (NV_COMM_PH(v)); }

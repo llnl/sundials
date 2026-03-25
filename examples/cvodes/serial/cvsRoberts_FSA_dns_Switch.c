@@ -36,7 +36,9 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver          */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix                */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"
 #else
 #define ESYM "e"

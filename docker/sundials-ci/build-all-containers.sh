@@ -2,7 +2,7 @@
 
 export DOCKER_BUILDKIT=1
 export BUILDKIT_PROGRESS=plain
-images=('int32-double' 'int32-extended' 'int32-single' 'int64-double' 'int64-extended' 'int64-single')
+images=('int32-double' 'int32-extended' 'int32-float128' 'int32-single' 'int64-double' 'int64-extended' 'int64-float128' 'int64-single')
 set -x
 docker build -t ghcr.io/llnl/sundials-ci-e4s-base:latest e4s-base/
 docker build -t ghcr.io/llnl/sundials-ci-e4s-base:e4s-22.05 e4s-base/

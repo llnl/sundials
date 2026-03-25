@@ -691,23 +691,25 @@ int UserOutput::open(UserData* udata)
   if (outproc)
   {
     cout << scientific;
-    cout << setprecision(numeric_limits<sunrealtype>::digits10);
+    cout << setprecision(SUN_DIGITS10);
     cout << endl;
     if (error)
     {
-      cout << "          t           ";
-      cout << "          ||u||_rms      ";
-      cout << "          max error      " << endl;
-      cout << " ---------------------";
-      cout << "-------------------------";
-      cout << "-------------------------" << endl;
+      cout << setw(SUN_DIGITS10 / 2 + 3) << " "
+           << "t" << setw(SUN_DIGITS10 / 2 + 4) << " ";
+      cout << setw(SUN_DIGITS10 / 2 + 1) << " "
+           << "||u||_rms" << setw(SUN_DIGITS10 / 2 + 1) << " ";
+      cout << setw(SUN_DIGITS10 / 2 + 1) << " "
+           << "max error" << setw(SUN_DIGITS10 / 2 + 1) << " " << endl;
+      cout << setfill('_') << setw(SUN_DIGITS10 * 3 + 28) << setfill(' ') << endl;
     }
     else
     {
-      cout << "          t           ";
-      cout << "          ||u||_rms      " << endl;
-      cout << " ---------------------";
-      cout << "-------------------------" << endl;
+      cout << setw(SUN_DIGITS10 / 2 + 3) << " "
+           << "t" << setw(SUN_DIGITS10 / 2 + 4) << " ";
+      cout << setw(SUN_DIGITS10 / 2 + 1) << " "
+           << "||u||_rms" << setw(SUN_DIGITS10 / 2 + 1) << " " << endl;
+      cout << setfill('_') << setw(SUN_DIGITS10 * 2 + 18) << " " << endl;
     }
   }
 
@@ -739,7 +741,7 @@ int UserOutput::open(UserData* udata)
     uoutstream << "# je  " << udata->je << endl;
 
     uoutstream << scientific;
-    uoutstream << setprecision(numeric_limits<sunrealtype>::digits10);
+    uoutstream << setprecision(SUN_DIGITS10);
 
     if (error)
     {
@@ -768,7 +770,7 @@ int UserOutput::open(UserData* udata)
       eoutstream << "# je  " << udata->je << endl;
 
       eoutstream << scientific;
-      eoutstream << setprecision(numeric_limits<sunrealtype>::digits10);
+      eoutstream << setprecision(SUN_DIGITS10);
     }
   }
 
@@ -794,16 +796,21 @@ int UserOutput::write(sunrealtype t, N_Vector u, UserData* udata)
     }
 
     // Compute rms norm of the state
-    sunrealtype urms = sqrt(N_VDotProd(u, u) / udata->nx / udata->ny);
+    sunrealtype urms = SUNRsqrt(N_VDotProd(u, u) / udata->nx / udata->ny);
 
     // Output current status
     if (outproc)
     {
       if (error)
       {
-        cout << setw(22) << t << setw(25) << urms << setw(25) << max << endl;
+        cout << setw(SUN_DIGITS10 + 7) << t << setw(SUN_DIGITS10 + 10) << urms
+             << setw(SUN_DIGITS10 + 10) << max << endl;
       }
-      else { cout << setw(22) << t << setw(25) << urms << endl; }
+      else
+      {
+        cout << setw(SUN_DIGITS10 + 7) << t << setw(SUN_DIGITS10 + 10) << urms
+             << endl;
+      }
     }
 
     // Write solution and error to disk

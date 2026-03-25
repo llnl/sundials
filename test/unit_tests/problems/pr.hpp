@@ -42,7 +42,7 @@ namespace pr {
 // -----------------------------------------------------------------------------
 
 // Compute phi(t)
-inline sunrealtype phi(sunrealtype t) { return std::atan(t); }
+inline sunrealtype phi(sunrealtype t) { return SUNRatan(t); }
 
 // Compute phi'(t)
 inline sunrealtype phi_prime(sunrealtype t)

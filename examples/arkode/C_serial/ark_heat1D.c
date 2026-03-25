@@ -47,7 +47,11 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype, etc */
 #include <sunlinsol/sunlinsol_pcg.h> /* access to PCG SUNLinearSolver        */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -179,13 +183,13 @@ int main(int argc, char* argv[])
   tout  = T0 + dTout;
   printf("        t      ||u||_rms\n");
   printf("   -------------------------\n");
-  printf("  %10.6" FSYM "  %10.6f\n", t, sqrt(N_VDotProd(y, y) / N));
+  printf("  %10.6" FSYM "  %10.6" FSYM "\n", t, SUNRsqrt(N_VDotProd(y, y) / N));
   for (iout = 0; iout < Nt; iout++)
   {
     flag = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL); /* call integrator */
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
-    printf("  %10.6" FSYM "  %10.6f\n", t,
-           sqrt(N_VDotProd(y, y) / N)); /* print solution stats */
+    printf("  %10.6" FSYM "  %10.6" FSYM "\n", t,
+           SUNRsqrt(N_VDotProd(y, y) / N)); /* print solution stats */
     if (flag >= 0)
     { /* successful solve: update output time */
       tout += dTout;
@@ -307,12 +311,12 @@ static int Jac(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y, N_Vector fy,
   /* iterate over domain, computing all Jacobian-vector products */
   c1    = k / dx / dx;
   c2    = -SUN_RCONST(2.0) * k / dx / dx;
-  JV[0] = 0.0;
+  JV[0] = SUN_RCONST(0.0);
   for (i = 1; i < N - 1; i++)
   {
     JV[i] = c1 * V[i - 1] + c2 * V[i] + c1 * V[i + 1];
   }
-  JV[N - 1] = 0.0;
+  JV[N - 1] = SUN_RCONST(0.0);
 
   return 0; /* Return with success */
 }

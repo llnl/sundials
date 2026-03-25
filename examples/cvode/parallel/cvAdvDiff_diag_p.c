@@ -308,7 +308,7 @@ static void SetIC(N_Vector u, sunrealtype dx, sunindextype my_length,
   {
     iglobal      = my_base + i;
     x            = iglobal * dx;
-    udata[i - 1] = x * (XMAX - x) * exp(SUN_RCONST(2.0) * x);
+    udata[i - 1] = x * (XMAX - x) * SUNRexp(SUN_RCONST(2.0) * x);
   }
 }
 
@@ -327,10 +327,10 @@ static void PrintIntro(int npes)
 
 static void PrintData(sunrealtype t, sunrealtype umax, long int nst)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("At t = %4.2Qf  max.norm(u) =%14.6Qe  nst =%4ld \n", t, umax, nst);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("At t = %4.2Lf  max.norm(u) =%14.6Le  nst =%4ld \n", t, umax, nst);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At t = %4.2f  max.norm(u) =%14.6e  nst =%4ld \n", t, umax, nst);
 #else
   printf("At t = %4.2f  max.norm(u) =%14.6e  nst =%4ld \n", t, umax, nst);
 #endif

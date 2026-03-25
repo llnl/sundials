@@ -39,7 +39,11 @@
 #include <sundials/sundials_math.h> /* def. of SUNRsqrt, etc. */
 #include <sundials/sundials_types.h> /* definition of type sunrealtype          */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -47,14 +51,6 @@
 #define GSYM "g"
 #define ESYM "e"
 #define FSYM "f"
-#endif
-
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define ATAN(x) (atan((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define ATAN(x) (atanf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define ATAN(x) (atanl((x)))
 #endif
 
 /* User-supplied Functions Called by the Solver */
@@ -84,6 +80,10 @@ int main(void)
   sunrealtype abstol = SUN_RCONST(1.0e-8);
   sunrealtype lambda = SUN_RCONST(-10.0); /* stiffness parameter */
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
+  sunrealtype reltol = SUN_RCONST(1.0e-8); /* tolerances */
+  sunrealtype abstol = SUN_RCONST(1.0e-8);
+  sunrealtype lambda = SUN_RCONST(-10.0); /* stiffness parameter */
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
   sunrealtype reltol = SUN_RCONST(1.0e-8); /* tolerances */
   sunrealtype abstol = SUN_RCONST(1.0e-8);
   sunrealtype lambda = SUN_RCONST(-10.0); /* stiffness parameter */
@@ -205,8 +205,9 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype u = N_VGetArrayPointer(y)[0]; /* access current solution value */
 
   /* fill in the RHS function: "N_VGetArrayPointer" accesses the 0th entry of ydot */
-  N_VGetArrayPointer(ydot)[0] =
-    lambda * u + SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) - lambda * ATAN(t);
+  N_VGetArrayPointer(ydot)[0] = lambda * u +
+                                SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
+                                lambda * SUNRatan(t);
 
   return 0; /* return with success */
 }
@@ -264,7 +265,7 @@ static int compute_error(N_Vector y, sunrealtype t)
   sunrealtype ans, err; /* answer data, error */
 
   /* compute solution error */
-  ans = ATAN(t);
+  ans = SUNRatan(t);
   err = SUNRabs(N_VGetArrayPointer(y)[0] - ans);
 
   fprintf(stdout, "\nACCURACY at the final time = %" GSYM "\n", err);

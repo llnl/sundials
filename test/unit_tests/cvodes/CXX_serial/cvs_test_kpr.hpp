@@ -107,22 +107,22 @@ int J(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
 // -----------------------------------------------------------------------------
 
 // Compute r(t)
-static sunrealtype r(sunrealtype t) { return HALF * cos(t); }
+static sunrealtype r(sunrealtype t) { return HALF * SUNRcos(t); }
 
 // Compute the derivative of r(t)
-static sunrealtype rdot(sunrealtype t) { return -HALF * sin(t); }
+static sunrealtype rdot(sunrealtype t) { return -HALF * SUNRsin(t); }
 
 // Compute s(t)
-static sunrealtype s(sunrealtype t) { return cos(TWENTY * t); }
+static sunrealtype s(sunrealtype t) { return SUNRcos(TWENTY * t); }
 
 // Compute the derivative of s(t)
-static sunrealtype sdot(sunrealtype t) { return -TWENTY * sin(TWENTY * t); }
+static sunrealtype sdot(sunrealtype t) { return -TWENTY * SUNRsin(TWENTY * t); }
 
 // Compute the true solution
 static int true_sol(sunrealtype t, sunrealtype* u, sunrealtype* v)
 {
-  *u = sqrt(ONE + r(t));
-  *v = sqrt(TWO + s(t));
+  *u = SUNRsqrt(ONE + r(t));
+  *v = SUNRsqrt(TWO + s(t));
 
   return 0;
 }
@@ -159,6 +159,8 @@ inline void find_arg(vector<string>& args, const string key, sunrealtype& dest)
     dest = stod(*(it + 1));
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
     dest = stold(*(it + 1));
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+    dest = sunrealtype(stod(*(it + 1)));
 #endif
     args.erase(it, it + 2);
   }

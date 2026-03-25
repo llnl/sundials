@@ -369,7 +369,9 @@ int main(int argc, char* argv[])
 
   qdata = N_VGetArrayPointer(q);
   MPI_Allreduce(&qdata[0], &G, 1, MPI_SUNREALTYPE, MPI_SUM, comm);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  if (myId == 0) printf("  G = %Qe\n", G);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   if (myId == 0) printf("  G = %Le\n", G);
 #else
   if (myId == 0) { printf("  G = %e\n", G); }
@@ -1132,8 +1134,10 @@ static void PrintHeader(void)
   printf("with respect to the source values at each grid point.\n\n");
 
   printf("Domain:\n");
-
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   %Qf < x < %Qf   mx = %d  npe_x = %d \n", XMIN, XMAX, MX, NPX);
+  printf("   %Qf < y < %Qf   my = %d  npe_y = %d \n", YMIN, YMAX, MY, NPY);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   %Lf < x < %Lf   mx = %d  npe_x = %d \n", XMIN, XMAX, MX, NPX);
   printf("   %Lf < y < %Lf   my = %d  npe_y = %d \n", YMIN, YMAX, MY, NPY);
 #else
@@ -1142,7 +1146,9 @@ static void PrintHeader(void)
 #endif
 
 #ifdef USE3D
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("   %Qf < z < %Qf   mz = %d  npe_z = %d \n", ZMIN, ZMAX, MZ, NPZ);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   %Lf < z < %Lf   mz = %d  npe_z = %d \n", ZMIN, ZMAX, MZ, NPZ);
 #else
   printf("   %f < z < %f   mz = %d  npe_z = %d \n", ZMIN, ZMAX, MZ, NPZ);
@@ -1272,7 +1278,9 @@ static void OutputGradient(int myId, N_Vector qB, ProblemData d)
   for (i[0] = 0; i[0] < l_m[0]; i[0]++)
   {
     x[0] = xmin[0] + (m_start[0] + i[0]) * dx[0];
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    fprintf(fid, "x%d(%d,1) = %Qe; \n", myId, i[0] + 1, x[0]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     fprintf(fid, "x%d(%d,1) = %Le; \n", myId, i[0] + 1, x[0]);
 #else
     fprintf(fid, "x%d(%d,1) = %e; \n", myId, i[0] + 1, x[0]);
@@ -1282,7 +1290,9 @@ static void OutputGradient(int myId, N_Vector qB, ProblemData d)
   for (i[1] = 0; i[1] < l_m[1]; i[1]++)
   {
     x[1] = xmin[1] + (m_start[1] + i[1]) * dx[1];
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    fprintf(fid, "y%d(%d,1) = %Qe; \n", myId, i[1] + 1, x[1]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     fprintf(fid, "y%d(%d,1) = %Le; \n", myId, i[1] + 1, x[1]);
 #else
     fprintf(fid, "y%d(%d,1) = %e; \n", myId, i[1] + 1, x[1]);
@@ -1293,7 +1303,9 @@ static void OutputGradient(int myId, N_Vector qB, ProblemData d)
   for (i[2] = 0; i[2] < l_m[2]; i[2]++)
   {
     x[2] = xmin[2] + (m_start[2] + i[2]) * dx[2];
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    fprintf(fid, "z%d(%d,1) = %Qe; \n", myId, i[2] + 1, x[2]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     fprintf(fid, "z%d(%d,1) = %Le; \n", myId, i[2] + 1, x[2]);
 #else
     fprintf(fid, "z%d(%d,1) = %e; \n", myId, i[2] + 1, x[2]);
@@ -1315,7 +1327,12 @@ static void OutputGradient(int myId, N_Vector qB, ProblemData d)
         x[2] = xmin[2] + (m_start[2] + i[2]) * dx[2];
         g    = IJth(qBdata, i);
         p    = IJth(pdata, i);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+        fprintf(fid, "p%d(%d,%d,%d) = %Qe; \n", myId, i[1] + 1, i[0] + 1,
+                i[2] + 1, p);
+        fprintf(fid, "g%d(%d,%d,%d) = %Qe; \n", myId, i[1] + 1, i[0] + 1,
+                i[2] + 1, g);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
         fprintf(fid, "p%d(%d,%d,%d) = %Le; \n", myId, i[1] + 1, i[0] + 1,
                 i[2] + 1, p);
         fprintf(fid, "g%d(%d,%d,%d) = %Le; \n", myId, i[1] + 1, i[0] + 1,
@@ -1330,7 +1347,10 @@ static void OutputGradient(int myId, N_Vector qB, ProblemData d)
 #else
       g = IJth(qBdata, i);
       p = IJth(pdata, i);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+      fprintf(fid, "p%d(%d,%d) = %Qe; \n", myId, i[1] + 1, i[0] + 1, p);
+      fprintf(fid, "g%d(%d,%d) = %Qe; \n", myId, i[1] + 1, i[0] + 1, g);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
       fprintf(fid, "p%d(%d,%d) = %Le; \n", myId, i[1] + 1, i[0] + 1, p);
       fprintf(fid, "g%d(%d,%d) = %Le; \n", myId, i[1] + 1, i[0] + 1, g);
 #else
@@ -1359,7 +1379,11 @@ static void OutputGradient(int myId, N_Vector qB, ProblemData d)
     fprintf(fid, "gcol1 = 'blue';\n");
     fprintf(fid, "gcol2 = 'green';\n");
     fprintf(fid, "gtrans = 0.5;\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    fprintf(fid, "xp=[%Qf %Qf];\n", G1_X, G2_X);
+    fprintf(fid, "yp=[%Qf];\n", G2_Y);
+    fprintf(fid, "zp=[%Qf];\n", G1_Z);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
     fprintf(fid, "xp=[%Lf %Lf];\n", G1_X, G2_X);
     fprintf(fid, "yp=[%Lf];\n", G2_Y);
     fprintf(fid, "zp=[%Lf];\n", G1_Z);

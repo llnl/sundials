@@ -62,16 +62,6 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver    */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix          */
 
-/* Precision specific math function macros */
-
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define EXP(x) (exp((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define EXP(x) (expf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define EXP(x) (expl((x)))
-#endif
-
 /* Problem Constants */
 
 #define NVAR 2
@@ -339,8 +329,9 @@ static int func(N_Vector u, N_Vector f, void* user_data)
   l2 = udata[4];
   L2 = udata[5];
 
-  fdata[0] = PT5 * sin(x1 * x2) - PT25 * x2 / PI - PT5 * x1;
-  fdata[1] = (ONE - PT25 / PI) * (EXP(TWO * x1) - E) + E * x2 / PI - TWO * E * x1;
+  fdata[0] = PT5 * SUNRsin(x1 * x2) - PT25 * x2 / PI - PT5 * x1;
+  fdata[1] = (ONE - PT25 / PI) * (SUNRexp(TWO * x1) - E) + E * x2 / PI -
+             TWO * E * x1;
   fdata[2] = l1 - x1 + lb[0];
   fdata[3] = L1 - x1 + ub[0];
   fdata[4] = l2 - x2 + lb[1];
@@ -417,10 +408,10 @@ static void PrintHeader(sunrealtype fnormtol, sunrealtype scsteptol)
 {
   printf("\nFerraris and Tronconi test problem\n");
   printf("Tolerance parameters:\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("  fnormtol  = %10.6Qg\n  scsteptol = %10.6Qg\n", fnormtol, scsteptol);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  fnormtol  = %10.6Lg\n  scsteptol = %10.6Lg\n", fnormtol, scsteptol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("  fnormtol  = %10.6g\n  scsteptol = %10.6g\n", fnormtol, scsteptol);
 #else
   printf("  fnormtol  = %10.6g\n  scsteptol = %10.6g\n", fnormtol, scsteptol);
 #endif
@@ -433,7 +424,9 @@ static void PrintHeader(sunrealtype fnormtol, sunrealtype scsteptol)
 static void PrintOutput(N_Vector u)
 {
   sunrealtype* udata = N_VGetArrayPointer(u);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf(" %8.6Qg  %8.6Qg\n", udata[0], udata[1]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf(" %8.6Lg  %8.6Lg\n", udata[0], udata[1]);
 #else
   printf(" %8.6g  %8.6g\n", udata[0], udata[1]);

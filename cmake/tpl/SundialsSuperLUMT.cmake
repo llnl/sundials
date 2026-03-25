@@ -27,8 +27,8 @@ include_guard(GLOBAL)
 # Section 2: Check to make sure options are compatible
 # -----------------------------------------------------------------------------
 
-# SUPERLUMT does not support extended precision
-if(SUNDIALS_PRECISION MATCHES "EXTENDED")
+# SUPERLUMT does not support extended or float128 precision
+if(SUNDIALS_PRECISION MATCHES "EXTENDED|FLOAT128")
   message(
     FATAL_ERROR
       "SUPERLUMT is not compatible with ${SUNDIALS_PRECISION} precision")

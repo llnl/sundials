@@ -198,8 +198,8 @@ void setIC(N_Vector yy, N_Vector yp, UserData data)
   J2 = data->J2;
 
   q = pi / TWO;
-  p = asin(-a);
-  x = cos(p);
+  p = SUNRasin(-a);
+  x = SUNRcos(p);
 
   NV_Ith_S(yy, 0) = q;
   NV_Ith_S(yy, 1) = x;
@@ -235,15 +235,15 @@ void force(N_Vector yy, sunrealtype* Q, UserData data)
   xd = NV_Ith_S(yy, 4);
   pd = NV_Ith_S(yy, 5);
 
-  s1  = sin(q);
-  c1  = cos(q);
-  s2  = sin(p);
-  c2  = cos(p);
+  s1  = SUNRsin(q);
+  c1  = SUNRcos(q);
+  s2  = SUNRsin(p);
+  c2  = SUNRcos(p);
   s21 = s2 * c1 - c2 * s1;
   c21 = c2 * c1 + s2 * s1;
 
   l2 = x * x - x * (c2 + a * c1) + (ONE + a * a) / FOUR + a * c21 / TWO;
-  l  = sqrt(l2);
+  l  = SUNRsqrt(l2);
   ld = TWO * x * xd - xd * (c2 + a * c1) + x * (s2 * pd + a * s1 * qd) -
        a * s21 * (pd - qd) / TWO;
   ld /= TWO * l;
@@ -292,10 +292,10 @@ int ressc(sunrealtype tres, N_Vector yy, N_Vector yp, N_Vector rr, void* user_da
   mu1 = yval[8];
   mu2 = yval[9];
 
-  s1 = sin(q);
-  c1 = cos(q);
-  s2 = sin(p);
-  c2 = cos(p);
+  s1 = SUNRsin(q);
+  c1 = SUNRcos(q);
+  s2 = SUNRsin(p);
+  c2 = SUNRcos(p);
 
   force(yy, Q, data);
 
@@ -320,10 +320,10 @@ static void PrintHeader(sunrealtype rtol, sunrealtype atol, N_Vector y)
 {
   printf("\nidaSlCrank_dns: Slider-Crank DAE serial example problem for IDA\n");
   printf("Linear solver: DENSE, Jacobian is computed by IDA.\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, atol);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #endif
@@ -347,8 +347,10 @@ static int PrintOutput(void* mem, sunrealtype t, N_Vector y)
   retval = IDAGetLastOrder(mem, &kused);
   retval = IDAGetNumSteps(mem, &nst);
   retval = IDAGetLastStep(mem, &hused);
-
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%10.4Qe %12.4Qe %12.4Qe %12.4Qe %3ld  %1d %12.4Qe\n", t, yval[0],
+         yval[1], yval[2], nst, kused, hused);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%10.4Le %12.4Le %12.4Le %12.4Le %3ld  %1d %12.4Le\n", t, yval[0],
          yval[1], yval[2], nst, kused, hused);
 #else

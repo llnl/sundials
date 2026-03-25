@@ -53,7 +53,9 @@
 #endif
 #define STEPS 5 /* checkpoint interval  */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #else
 #define GSYM "g"
@@ -95,7 +97,7 @@ int main(int argc, char* argv[])
   if (check_retval((void*)u, "N_VNew_Serial", 0)) { return 1; }
 
   /* Initialize the solution vector */
-  N_VConst(1.0, u);
+  N_VConst(SUN_RCONST(1.0), u);
 
   /* Set the tolerances */
   reltol = RTOL;

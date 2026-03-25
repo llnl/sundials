@@ -22,32 +22,32 @@ At bottom left:  c1, c2 =    1.404e+04    3.387e+11
 At top right:    c1, c2 =    1.561e+04    3.765e+11 
 
 t = 4.32e+04   no. steps = 196   stepsize = 1.75e+03
-At bottom left:  c1, c2 =   -4.884e-08    3.382e+11 
-At top right:    c1, c2 =   -8.694e-07    3.804e+11 
+At bottom left:  c1, c2 =   -4.835e-08    3.382e+11 
+At top right:    c1, c2 =   -8.697e-07    3.804e+11 
 
 t = 5.04e+04   no. steps = 200   stepsize = 1.26e+03
-At bottom left:  c1, c2 =   -7.230e-09    3.358e+11 
-At top right:    c1, c2 =    3.094e-08    3.864e+11 
+At bottom left:  c1, c2 =   -7.426e-09    3.358e+11 
+At top right:    c1, c2 =    3.187e-08    3.864e+11 
 
-t = 5.76e+04   no. steps = 205   stepsize = 1.08e+03
-At bottom left:  c1, c2 =    4.422e-06    3.320e+11 
-At top right:    c1, c2 =   -2.623e-05    3.909e+11 
+t = 5.76e+04   no. steps = 205   stepsize = 1.09e+03
+At bottom left:  c1, c2 =    4.570e-06    3.320e+11 
+At top right:    c1, c2 =   -2.713e-05    3.909e+11 
 
 t = 6.48e+04   no. steps = 209   stepsize = 2.05e+03
-At bottom left:  c1, c2 =    1.105e-08    3.313e+11 
-At top right:    c1, c2 =    7.165e-08    3.963e+11 
+At bottom left:  c1, c2 =    1.360e-08    3.313e+11 
+At top right:    c1, c2 =    9.541e-08    3.963e+11 
 
-t = 7.20e+04   no. steps = 213   stepsize = 2.13e+03
-At bottom left:  c1, c2 =   -4.810e-06    3.330e+11 
-At top right:    c1, c2 =   -1.198e-04    4.039e+11 
+t = 7.20e+04   no. steps = 213   stepsize = 2.14e+03
+At bottom left:  c1, c2 =   -4.071e-06    3.330e+11 
+At top right:    c1, c2 =   -1.276e-04    4.039e+11 
 
 t = 7.92e+04   no. steps = 216   stepsize = 2.32e+03
-At bottom left:  c1, c2 =    7.856e-08    3.334e+11 
-At top right:    c1, c2 =    6.407e-07    4.120e+11 
+At bottom left:  c1, c2 =    1.342e-07    3.334e+11 
+At top right:    c1, c2 =    1.106e-06    4.120e+11 
 
 t = 8.64e+04   no. steps = 219   stepsize = 2.47e+03
-At bottom left:  c1, c2 =    1.878e-08    3.352e+11 
-At top right:    c1, c2 =    2.566e-08    4.163e+11 
+At bottom left:  c1, c2 =    2.723e-08    3.352e+11 
+At top right:    c1, c2 =    2.857e-08    4.163e+11 
 
 
 Final Statistics: 

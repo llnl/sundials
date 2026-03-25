@@ -36,8 +36,9 @@ static int FinalizeClearCache();
  * --------------------------------------------------------------------*/
 int main(int argc, char* argv[])
 {
-  N_Vector X;          /* test vector       */
-  sunindextype veclen; /* vector length     */
+  SUNContext ctx = NULL; /* SUNDIALS context */
+  N_Vector X     = NULL; /* test vector      */
+  sunindextype veclen;   /* vector length    */
 
   int print_timing; /* output timings    */
   int ntests;       /* number of tests   */
@@ -59,27 +60,27 @@ int main(int argc, char* argv[])
     return (-1);
   }
 
-  veclen = atol(argv[1]);
+  veclen = (sunindextype)atol(argv[1]);
   if (veclen <= 0)
   {
     printf("ERROR: length of vector must be a positive integer \n");
     return (-1);
   }
 
-  nvecs = atol(argv[2]);
+  nvecs = (int)atol(argv[2]);
   if (nvecs < 1) { printf("WARNING: Fused operation tests disabled\n"); }
 
-  nsums = atol(argv[3]);
+  nsums = (int)atol(argv[3]);
   if (nsums < 1) { printf("WARNING: Some fused operation tests disabled\n"); }
 
-  ntests = atol(argv[4]);
+  ntests = (int)atol(argv[4]);
   if (ntests <= 0)
   {
     printf("ERROR: number of tests must be a positive integer \n");
     return (-1);
   }
 
-  cachesize = atol(argv[5]);
+  cachesize = (int)atol(argv[5]);
   if (cachesize < 0)
   {
     printf("ERROR: cache size (MB) must be a non-negative integer \n");
@@ -98,7 +99,7 @@ int main(int argc, char* argv[])
   printf("  timing on/off         %d  \n", print_timing);
 
   /* Create vectors */
-  X = N_VNew_OpenMPDEV(veclen);
+  X = N_VNew_OpenMPDEV(veclen, ctx);
 
   /* run tests */
   if (print_timing) { printf("\n\n standard operations:\n"); }
@@ -153,6 +154,9 @@ int main(int argc, char* argv[])
   N_VDestroy(X);
 
   FinalizeClearCache();
+
+  flag = SUNContext_Free(&ctx);
+  if (flag) { return flag; }
 
   printf("\nFinished Tests\n");
 

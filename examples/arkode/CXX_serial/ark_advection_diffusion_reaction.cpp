@@ -1547,7 +1547,7 @@ int SetIC(N_Vector y, UserData& udata)
   for (sunindextype i = 0; i < udata.nx; i++)
   {
     x              = udata.xl + i * udata.dx;
-    p              = SUN_RCONST(0.1) * sin(PI * x);
+    p              = SUN_RCONST(0.1) * SUNRsin(PI * x);
     ydata[UIDX(i)] = udata.A + p;
     ydata[VIDX(i)] = udata.B / udata.A + p;
     ydata[WIDX(i)] = udata.B + p;

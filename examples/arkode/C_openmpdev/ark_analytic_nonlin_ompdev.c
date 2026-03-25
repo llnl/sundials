@@ -43,7 +43,10 @@
 #include <omp.h> /* OpenMP functions */
 #endif
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"
 #define FSYM "Lf"
 #else

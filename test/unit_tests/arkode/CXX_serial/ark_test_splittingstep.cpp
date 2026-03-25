@@ -62,8 +62,8 @@ static int test_forward(sundials::Context& ctx, int order, int partitions)
   {
     partition_mem[i] = ERKStepCreate(f, t0, y, ctx);
     /* The lambdas sum up to 1 */
-    lambda[i] = std::pow(SUN_RCONST(2.0), i) /
-                (1 - std::pow(SUN_RCONST(2.0), partitions));
+    lambda[i] = SUNRpowerI(SUN_RCONST(2.0), i) /
+                (SUN_RCONST(1.0) - SUNRpowerI(SUN_RCONST(2.0), partitions));
     ARKodeSetUserData(partition_mem[i], &lambda[i]);
     ARKodeSStolerances(partition_mem[i], local_tol, local_tol);
     ARKodeCreateSUNStepper(partition_mem[i], &steppers[i]);
@@ -76,7 +76,7 @@ static int test_forward(sundials::Context& ctx, int order, int partitions)
   ARKodeEvolve(arkode_mem, tf, y, &tret, ARK_NORMAL);
 
   /* Check that the solution matches the exact solution */
-  auto exact_solution     = std::exp(t0 - tf);
+  auto exact_solution     = SUNRexp(t0 - tf);
   auto numerical_solution = N_VGetArrayPointer(y)[0];
   auto err                = numerical_solution - exact_solution;
 
@@ -271,8 +271,8 @@ static int test_resize(const sundials::Context& ctx)
   ARKodeEvolve(arkode_mem, t2, y_new, &tret, ARK_NORMAL);
 
   auto err                   = N_VClone(y_new);
-  N_VGetArrayPointer(err)[0] = std::exp(t1 - t2);
-  N_VGetArrayPointer(err)[1] = std::exp(t0 - t2);
+  N_VGetArrayPointer(err)[0] = sunrealtype(SUNRexp(t1 - t2));
+  N_VGetArrayPointer(err)[1] = SUNRexp(t0 - t2);
   N_VLinearSum(SUN_RCONST(1.0), err, -SUN_RCONST(1.0), y_new, err);
   auto max_err = N_VMaxNorm(err);
 
@@ -342,7 +342,7 @@ static SUNStepper create_exp_stepper(const sundials::Context& ctx,
     [](SUNStepper s, sunrealtype tout, N_Vector vret, sunrealtype* tret)
   {
     auto& content = Content::from_stepper(s);
-    N_VScale(std::exp(content.lambda * (tout - content.t)), content.v, vret);
+    N_VScale(SUNRexp(content.lambda * (tout - content.t)), content.v, vret);
     *tret = tout;
     return 0;
   };
@@ -388,7 +388,7 @@ static int test_custom_stepper(const sundials::Context& ctx, int order)
   ARKodeEvolve(arkode_mem, tf, y, &tret, ARK_NORMAL);
 
   /* Check that the solution matches the exact solution */
-  auto exact_solution     = std::exp(t0 - tf);
+  auto exact_solution     = SUNRexp(t0 - tf);
   auto numerical_solution = N_VGetArrayPointer(y)[0];
   auto err                = numerical_solution - exact_solution;
 

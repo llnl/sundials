@@ -235,38 +235,40 @@ static int func(N_Vector y, N_Vector f, void* user_data)
 
   /* Nonlinear equations */
 
-  eq1 = -0.1238 * x1 + x7 - 0.001637 * x2 - 0.9338 * x4 + 0.004731 * x1 * x3 -
-        0.3578 * x2 * x3 - 0.3571;
-  eq2 = 0.2638 * x1 - x7 - 0.07745 * x2 - 0.6734 * x4 + 0.2238 * x1 * x3 +
-        0.7623 * x2 * x3 - 0.6022;
-  eq3 = 0.3578 * x1 + 0.004731 * x2 + x6 * x8;
-  eq4 = -0.7623 * x1 + 0.2238 * x2 + 0.3461;
-  eq5 = x1 * x1 + x2 * x2 - 1;
-  eq6 = x3 * x3 + x4 * x4 - 1;
-  eq7 = x5 * x5 + x6 * x6 - 1;
-  eq8 = x7 * x7 + x8 * x8 - 1;
+  eq1 = SUN_RCONST(-0.1238) * x1 + x7 - SUN_RCONST(0.001637) * x2 -
+        SUN_RCONST(0.9338) * x4 + SUN_RCONST(0.004731) * x1 * x3 -
+        SUN_RCONST(0.3578) * x2 * x3 - SUN_RCONST(0.3571);
+  eq2 = SUN_RCONST(0.2638) * x1 - x7 - SUN_RCONST(0.07745) * x2 -
+        SUN_RCONST(0.6734) * x4 + SUN_RCONST(0.2238) * x1 * x3 +
+        SUN_RCONST(0.7623) * x2 * x3 - SUN_RCONST(0.6022);
+  eq3 = SUN_RCONST(0.3578) * x1 + SUN_RCONST(0.004731) * x2 + x6 * x8;
+  eq4 = SUN_RCONST(-0.7623) * x1 + SUN_RCONST(0.2238) * x2 + SUN_RCONST(0.3461);
+  eq5 = x1 * x1 + x2 * x2 - SUN_RCONST(1.0);
+  eq6 = x3 * x3 + x4 * x4 - SUN_RCONST(1.0);
+  eq7 = x5 * x5 + x6 * x6 - SUN_RCONST(1.0);
+  eq8 = x7 * x7 + x8 * x8 - SUN_RCONST(1.0);
 
   /* Lower bounds ( l_i = 1 + x_i >= 0)*/
 
-  lb1 = l1 - 1.0 - x1;
-  lb2 = l2 - 1.0 - x2;
-  lb3 = l3 - 1.0 - x3;
-  lb4 = l4 - 1.0 - x4;
-  lb5 = l5 - 1.0 - x5;
-  lb6 = l6 - 1.0 - x6;
-  lb7 = l7 - 1.0 - x7;
-  lb8 = l8 - 1.0 - x8;
+  lb1 = l1 - SUN_RCONST(1.0) - x1;
+  lb2 = l2 - SUN_RCONST(1.0) - x2;
+  lb3 = l3 - SUN_RCONST(1.0) - x3;
+  lb4 = l4 - SUN_RCONST(1.0) - x4;
+  lb5 = l5 - SUN_RCONST(1.0) - x5;
+  lb6 = l6 - SUN_RCONST(1.0) - x6;
+  lb7 = l7 - SUN_RCONST(1.0) - x7;
+  lb8 = l8 - SUN_RCONST(1.0) - x8;
 
   /* Upper bounds ( u_i = 1 - x_i >= 0)*/
 
-  ub1 = u1 - 1.0 + x1;
-  ub2 = u2 - 1.0 + x2;
-  ub3 = u3 - 1.0 + x3;
-  ub4 = u4 - 1.0 + x4;
-  ub5 = u5 - 1.0 + x5;
-  ub6 = u6 - 1.0 + x6;
-  ub7 = u7 - 1.0 + x7;
-  ub8 = u8 - 1.0 + x8;
+  ub1 = u1 - SUN_RCONST(1.0) + x1;
+  ub2 = u2 - SUN_RCONST(1.0) + x2;
+  ub3 = u3 - SUN_RCONST(1.0) + x3;
+  ub4 = u4 - SUN_RCONST(1.0) + x4;
+  ub5 = u5 - SUN_RCONST(1.0) + x5;
+  ub6 = u6 - SUN_RCONST(1.0) + x6;
+  ub7 = u7 - SUN_RCONST(1.0) + x7;
+  ub8 = u8 - SUN_RCONST(1.0) + x8;
 
   fd[0]  = eq1;
   fd[8]  = lb1;
@@ -324,59 +326,59 @@ static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
      - 0.1238*x1 + x7 - 0.001637*x2
      - 0.9338*x4 + 0.004731*x1*x3 - 0.3578*x2*x3 - 0.3571
   */
-  IJth(J, 1, 1) = -0.1238 + 0.004731 * x3;
-  IJth(J, 1, 2) = -0.001637 - 0.3578 * x3;
-  IJth(J, 1, 3) = 0.004731 * x1 - 0.3578 * x2;
-  IJth(J, 1, 4) = -0.9338;
-  IJth(J, 1, 7) = 1.0;
+  IJth(J, 1, 1) = SUN_RCONST(-0.1238) + SUN_RCONST(0.004731) * x3;
+  IJth(J, 1, 2) = SUN_RCONST(-0.001637) - SUN_RCONST(0.3578) * x3;
+  IJth(J, 1, 3) = SUN_RCONST(0.004731) * x1 - SUN_RCONST(0.3578) * x2;
+  IJth(J, 1, 4) = SUN_RCONST(-0.9338);
+  IJth(J, 1, 7) = SUN_RCONST(1.0);
 
   /*
     0.2638*x1 - x7 - 0.07745*x2
     - 0.6734*x4 + 0.2238*x1*x3 + 0.7623*x2*x3 - 0.6022
   */
-  IJth(J, 2, 1) = 0.2638 + 0.2238 * x3;
-  IJth(J, 2, 2) = -0.07745 + 0.7623 * x3;
-  IJth(J, 2, 3) = 0.2238 * x1 + 0.7623 * x2;
-  IJth(J, 2, 4) = -0.6734;
-  IJth(J, 2, 7) = -1.0;
+  IJth(J, 2, 1) = SUN_RCONST(0.2638) + SUN_RCONST(0.2238) * x3;
+  IJth(J, 2, 2) = SUN_RCONST(-0.07745) + SUN_RCONST(0.7623) * x3;
+  IJth(J, 2, 3) = SUN_RCONST(0.2238) * x1 + SUN_RCONST(0.7623) * x2;
+  IJth(J, 2, 4) = SUN_RCONST(-0.6734);
+  IJth(J, 2, 7) = SUN_RCONST(-1.0);
 
   /*
     0.3578*x1 + 0.004731*x2 + x6*x8
   */
-  IJth(J, 3, 1) = 0.3578;
-  IJth(J, 3, 2) = 0.004731;
+  IJth(J, 3, 1) = SUN_RCONST(0.3578);
+  IJth(J, 3, 2) = SUN_RCONST(0.004731);
   IJth(J, 3, 6) = x8;
   IJth(J, 3, 8) = x6;
 
   /*
     - 0.7623*x1 + 0.2238*x2 + 0.3461
   */
-  IJth(J, 4, 1) = -0.7623;
-  IJth(J, 4, 2) = 0.2238;
+  IJth(J, 4, 1) = SUN_RCONST(-0.7623);
+  IJth(J, 4, 2) = SUN_RCONST(0.2238);
 
   /*
     x1*x1 + x2*x2 - 1
   */
-  IJth(J, 5, 1) = 2.0 * x1;
-  IJth(J, 5, 2) = 2.0 * x2;
+  IJth(J, 5, 1) = SUN_RCONST(2.0) * x1;
+  IJth(J, 5, 2) = SUN_RCONST(2.0) * x2;
 
   /*
     x3*x3 + x4*x4 - 1
   */
-  IJth(J, 6, 3) = 2.0 * x3;
-  IJth(J, 6, 4) = 2.0 * x4;
+  IJth(J, 6, 3) = SUN_RCONST(2.0) * x3;
+  IJth(J, 6, 4) = SUN_RCONST(2.0) * x4;
 
   /*
     x5*x5 + x6*x6 - 1
   */
-  IJth(J, 7, 5) = 2.0 * x5;
-  IJth(J, 7, 6) = 2.0 * x6;
+  IJth(J, 7, 5) = SUN_RCONST(2.0) * x5;
+  IJth(J, 7, 6) = SUN_RCONST(2.0) * x6;
 
   /*
     x7*x7 + x8*x8 - 1
   */
-  IJth(J, 8, 7) = 2.0 * x7;
-  IJth(J, 8, 8) = 2.0 * x8;
+  IJth(J, 8, 7) = SUN_RCONST(2.0) * x7;
+  IJth(J, 8, 8) = SUN_RCONST(2.0) * x8;
 
   /*
     Lower bounds ( l_i = 1 + x_i >= 0)
@@ -385,8 +387,8 @@ static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
 
   for (i = 1; i <= 8; i++)
   {
-    IJth(J, 8 + i, i)     = -1.0;
-    IJth(J, 8 + i, 8 + i) = 1.0;
+    IJth(J, 8 + i, i)     = SUN_RCONST(-1.0);
+    IJth(J, 8 + i, 8 + i) = SUN_RCONST(1.0);
   }
 
   /*
@@ -396,8 +398,8 @@ static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
 
   for (i = 1; i <= 8; i++)
   {
-    IJth(J, 16 + i, i)      = 1.0;
-    IJth(J, 16 + i, 16 + i) = 1.0;
+    IJth(J, 16 + i, i)      = SUN_RCONST(1.0);
+    IJth(J, 16 + i, 16 + i) = SUN_RCONST(1.0);
   }
 
   return (0);
@@ -416,11 +418,11 @@ static void PrintOutput(N_Vector y)
 
   for (i = 1; i <= NVAR; i++)
   {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-    printf(" %10.6Lg   %10.6Lg   %10.6Lg\n", Ith(y, i + NVAR), Ith(y, i),
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+    printf(" %10.6Qg   %10.6Qg   %10.6Qg\n", Ith(y, i + NVAR), Ith(y, i),
            Ith(y, i + 2 * NVAR));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %10.6g   %10.6g   %10.6g\n", Ith(y, i + NVAR), Ith(y, i),
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+    printf(" %10.6Lg   %10.6Lg   %10.6Lg\n", Ith(y, i + NVAR), Ith(y, i),
            Ith(y, i + 2 * NVAR));
 #else
     printf(" %10.6g   %10.6g   %10.6g\n", Ith(y, i + NVAR), Ith(y, i),

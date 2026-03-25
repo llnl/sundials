@@ -70,7 +70,7 @@ inline int true_solution(sunrealtype t, sunrealtype lambda, N_Vector y_vec)
   sunrealtype* y_data = N_VGetArrayPointer(y_vec);
   if (y_data == nullptr) { return 1; }
 
-  y_data[0] = lambda * y0 / (y0 - (y0 - lambda) * std::exp(lambda * t));
+  y_data[0] = lambda * y0 / (y0 - (y0 - lambda) * SUNRexp(lambda * t));
 
   return 0;
 }

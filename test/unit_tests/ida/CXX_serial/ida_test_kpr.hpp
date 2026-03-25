@@ -92,22 +92,22 @@ int J(sunrealtype t, sunrealtype cj, N_Vector y, N_Vector yp, N_Vector rr,
 // -----------------------------------------------------------------------------
 
 // Compute r(t)
-static sunrealtype r(sunrealtype t) { return HALF * cos(t); }
+static sunrealtype r(sunrealtype t) { return HALF * SUNRcos(t); }
 
 // Compute the derivative of r(t)
-static sunrealtype rdot(sunrealtype t) { return -HALF * sin(t); }
+static sunrealtype rdot(sunrealtype t) { return -HALF * SUNRsin(t); }
 
 // Compute s(t)
-static sunrealtype s(sunrealtype t) { return cos(TWENTY * t); }
+static sunrealtype s(sunrealtype t) { return SUNRcos(TWENTY * t); }
 
 // Compute the derivative of s(t)
-static sunrealtype sdot(sunrealtype t) { return -TWENTY * sin(TWENTY * t); }
+static sunrealtype sdot(sunrealtype t) { return -TWENTY * SUNRsin(TWENTY * t); }
 
 // Compute the true solution
 static int true_sol(sunrealtype t, sunrealtype* u, sunrealtype* v)
 {
-  *u = sqrt(ONE + r(t));
-  *v = sqrt(TWO + s(t));
+  *u = SUNRsqrt(ONE + r(t));
+  *v = SUNRsqrt(TWO + s(t));
 
   return 0;
 }
@@ -115,8 +115,8 @@ static int true_sol(sunrealtype t, sunrealtype* u, sunrealtype* v)
 // Compute the true solution derivative
 static int true_sol_p(sunrealtype t, sunrealtype* up, sunrealtype* vp)
 {
-  *up = rdot(t) / (TWO * sqrt(ONE + r(t)));
-  *vp = sdot(t) / (TWO * sqrt(TWO + s(t)));
+  *up = rdot(t) / (TWO * SUNRsqrt(ONE + r(t)));
+  *vp = sdot(t) / (TWO * SUNRsqrt(TWO + s(t)));
 
   return 0;
 }

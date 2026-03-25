@@ -56,6 +56,7 @@
 #include <limits>
 #include <sstream>
 
+#include <sundials/sundials_types.hpp>
 #include "arkode/arkode_lsrkstep.h"   // access to LSRKStep
 #include "mpi.h"                      // MPI header file
 #include "nvector/nvector_parallel.h" // access to the MPI N_Vector
@@ -463,7 +464,7 @@ int main(int argc, char* argv[])
     if (outproc)
     {
       cout << scientific;
-      cout << setprecision(numeric_limits<sunrealtype>::digits10);
+      cout << setprecision(SUN_DIGITS10);
       cout << "  Max error = " << maxerr << endl;
     }
   }
@@ -736,8 +737,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
     sunrealtype bx = (udata->kx) * TWO * PI * PI;
     sunrealtype by = (udata->ky) * TWO * PI * PI;
 
-    sunrealtype sin_t_cos_t = sin(PI * t) * cos(PI * t);
-    sunrealtype cos_sqr_t   = cos(PI * t) * cos(PI * t);
+    sunrealtype sin_t_cos_t = SUNRsin(PI * t) * SUNRcos(PI * t);
+    sunrealtype cos_sqr_t   = SUNRcos(PI * t) * SUNRcos(PI * t);
 
     for (j = jstart; j < jend; j++)
     {
@@ -746,11 +747,11 @@ static int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
         x = (udata->is + i) * udata->dx;
         y = (udata->js + j) * udata->dy;
 
-        sin_sqr_x = sin(PI * x) * sin(PI * x);
-        sin_sqr_y = sin(PI * y) * sin(PI * y);
+        sin_sqr_x = SUNRsin(PI * x) * SUNRsin(PI * x);
+        sin_sqr_y = SUNRsin(PI * y) * SUNRsin(PI * y);
 
-        cos_sqr_x = cos(PI * x) * cos(PI * x);
-        cos_sqr_y = cos(PI * y) * cos(PI * y);
+        cos_sqr_x = SUNRcos(PI * x) * SUNRcos(PI * x);
+        cos_sqr_y = SUNRcos(PI * y) * SUNRcos(PI * y);
 
         farray[IDX(i, j, nx_loc)] =
           -TWO * PI * sin_sqr_x * sin_sqr_y * sin_t_cos_t -
@@ -1367,7 +1368,7 @@ static int Solution(sunrealtype t, N_Vector u, UserData* udata)
   sunrealtype sin_sqr_x, sin_sqr_y;
 
   // Constants for computing solution
-  cos_sqr_t = cos(PI * t) * cos(PI * t);
+  cos_sqr_t = SUNRcos(PI * t) * SUNRcos(PI * t);
 
   // Initialize u to zero (handles boundary conditions)
   N_VConst(ZERO, u);
@@ -1389,8 +1390,8 @@ static int Solution(sunrealtype t, N_Vector u, UserData* udata)
       x = (udata->is + i) * udata->dx;
       y = (udata->js + j) * udata->dy;
 
-      sin_sqr_x = sin(PI * x) * sin(PI * x);
-      sin_sqr_y = sin(PI * y) * sin(PI * y);
+      sin_sqr_x = SUNRsin(PI * x) * SUNRsin(PI * x);
+      sin_sqr_y = SUNRsin(PI * y) * SUNRsin(PI * y);
 
       uarray[IDX(i, j, udata->nx_loc)] = sin_sqr_x * sin_sqr_y * cos_sqr_t;
     }
@@ -1496,7 +1497,7 @@ static int OpenOutput(UserData* udata)
   if (udata->output > 0 && outproc)
   {
     cout << scientific;
-    cout << setprecision(numeric_limits<sunrealtype>::digits10);
+    cout << setprecision(SUN_DIGITS10);
     if (udata->forcing)
     {
       cout << "          t           ";
@@ -1546,7 +1547,7 @@ static int OpenOutput(UserData* udata)
     udata->uout.open(fname.str());
 
     udata->uout << scientific;
-    udata->uout << setprecision(numeric_limits<sunrealtype>::digits10);
+    udata->uout << setprecision(SUN_DIGITS10);
 
     if (udata->forcing)
     {
@@ -1557,7 +1558,7 @@ static int OpenOutput(UserData* udata)
       udata->eout.open(fname.str());
 
       udata->eout << scientific;
-      udata->eout << setprecision(numeric_limits<sunrealtype>::digits10);
+      udata->eout << setprecision(SUN_DIGITS10);
     }
   }
 
@@ -1584,7 +1585,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, UserData* udata)
     }
 
     // Compute rms norm of the state
-    sunrealtype urms = sqrt(N_VDotProd(u, u) / udata->nx / udata->ny);
+    sunrealtype urms = SUNRsqrt(N_VDotProd(u, u) / udata->nx / udata->ny);
 
     // Output current status
     if (outproc)

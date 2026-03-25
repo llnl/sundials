@@ -110,16 +110,6 @@
 #include <sundials/sundials_types.h> /* definition of sunrealtype                      */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver             */
 
-/* helpful macros */
-
-#ifndef MAX
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-#endif
-
-#ifndef SQR
-#define SQR(A) ((A) * (A))
-#endif
-
 /* Constants */
 
 #define ZERO SUN_RCONST(0.0)
@@ -420,8 +410,8 @@ static void InitUserData(WebData wdata)
   dy = wdata->dy = DY;
   for (i = 0; i < ns; i++)
   {
-    cox[i] = diff[i] / SQR(dx);
-    coy[i] = diff[i] / SQR(dy);
+    cox[i] = diff[i] / SUNSQR(dx);
+    coy[i] = diff[i] / SUNSQR(dy);
   }
 
   /* Set remaining method parameters */
@@ -430,7 +420,7 @@ static void InitUserData(WebData wdata)
   wdata->mq   = MQ;
   wdata->mx   = MX;
   wdata->my   = MY;
-  wdata->srur = sqrt(SUN_UNIT_ROUNDOFF);
+  wdata->srur = SUNRsqrt(SUN_UNIT_ROUNDOFF);
   wdata->mxmp = MXMP;
   wdata->ngrp = NGRP;
   wdata->ngx  = NGX;
@@ -479,17 +469,17 @@ static void CInit(N_Vector c, WebData wdata)
   dx    = wdata->dx;
   dy    = wdata->dy;
 
-  x_factor = SUN_RCONST(4.0) / SQR(AX);
-  y_factor = SUN_RCONST(4.0) / SQR(AY);
+  x_factor = SUN_RCONST(4.0) / SUNSQR(AX);
+  y_factor = SUN_RCONST(4.0) / SUNSQR(AY);
   for (jy = 0; jy < MY; jy++)
   {
     y     = jy * dy;
-    argy  = SQR(y_factor * y * (AY - y));
+    argy  = SUNSQR(y_factor * y * (AY - y));
     iyoff = mxns * jy;
     for (jx = 0; jx < MX; jx++)
     {
       x    = jx * dx;
-      argx = SQR(x_factor * x * (AX - x));
+      argx = SUNSQR(x_factor * x * (AX - x));
       ioff = iyoff + ns * jx;
       for (i = 1; i <= ns; i++)
       {
@@ -505,16 +495,16 @@ static void PrintIntro(void)
   printf("\n\nDemonstration program for CVODE - SPGMR linear solver\n\n");
   printf("Food web problem with ns species, ns = %d\n", NS);
   printf("Predator-prey interaction and diffusion on a 2-D square\n\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Matrix parameters: a = %.2Qg   e = %.2Qg   g = %.2Qg\n", AA, EE, GG);
+  printf("b parameter = %.2Qg\n", BB);
+  printf("Diffusion coefficients: Dprey = %.2Qg   Dpred = %.2Qg\n", DPREY, DPRED);
+  printf("Rate parameter alpha = %.2Qg\n\n", ALPHA);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Matrix parameters: a = %.2Lg   e = %.2Lg   g = %.2Lg\n", AA, EE, GG);
   printf("b parameter = %.2Lg\n", BB);
   printf("Diffusion coefficients: Dprey = %.2Lg   Dpred = %.2Lg\n", DPREY, DPRED);
   printf("Rate parameter alpha = %.2Lg\n\n", ALPHA);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Matrix parameters: a = %.2g   e = %.2g   g = %.2g\n", AA, EE, GG);
-  printf("b parameter = %.2g\n", BB);
-  printf("Diffusion coefficients: Dprey = %.2g   Dpred = %.2g\n", DPREY, DPRED);
-  printf("Rate parameter alpha = %.2g\n\n", ALPHA);
 #else
   printf("Matrix parameters: a = %.2g   e = %.2g   g = %.2g\n", AA, EE, GG);
   printf("b parameter = %.2g\n", BB);
@@ -523,10 +513,10 @@ static void PrintIntro(void)
 #endif
   printf("Mesh dimensions (mx,my) are %d, %d.  ", MX, MY);
   printf("Total system size is neq = %d \n\n", NEQ);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerances: reltol = %.2Qg, abstol = %.2Qg \n\n", RTOL, ATOL);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerances: reltol = %.2Lg, abstol = %.2Lg \n\n", RTOL, ATOL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerances: reltol = %.2g, abstol = %.2g \n\n", RTOL, ATOL);
 #else
   printf("Tolerances: reltol = %.2g, abstol = %.2g \n\n", RTOL, ATOL);
 #endif
@@ -571,10 +561,10 @@ static void PrintAllSpecies(N_Vector c, int ns, int mxns, sunrealtype t)
   sunrealtype* cdata;
 
   cdata = N_VGetArrayPointer(c);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("c values at t = %Qg:\n\n", t);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("c values at t = %Lg:\n\n", t);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("c values at t = %g:\n\n", t);
 #else
   printf("c values at t = %g:\n\n", t);
 #endif
@@ -585,10 +575,10 @@ static void PrintAllSpecies(N_Vector c, int ns, int mxns, sunrealtype t)
     {
       for (jx = 0; jx < MX; jx++)
       {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+        printf("%-10.6Qg", cdata[(i - 1) + jx * ns + jy * mxns]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
         printf("%-10.6Lg", cdata[(i - 1) + jx * ns + jy * mxns]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-        printf("%-10.6g", cdata[(i - 1) + jx * ns + jy * mxns]);
 #else
         printf("%-10.6g", cdata[(i - 1) + jx * ns + jy * mxns]);
 #endif
@@ -616,12 +606,12 @@ static void PrintOutput(void* cvode_mem, sunrealtype t)
   retval = CVodeGetLastStep(cvode_mem, &hu);
   check_retval(&retval, "CVodeGetLastStep", 1);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("t = %10.2Qe  nst = %ld  nfe = %ld  nni = %ld", t, nst, nfe, nni);
+  printf("  qu = %d  hu = %11.2Qe\n\n", qu, hu);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("t = %10.2Le  nst = %ld  nfe = %ld  nni = %ld", t, nst, nfe, nni);
   printf("  qu = %d  hu = %11.2Le\n\n", qu, hu);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("t = %10.2e  nst = %ld  nfe = %ld  nni = %ld", t, nst, nfe, nni);
-  printf("  qu = %d  hu = %11.2e\n\n", qu, hu);
 #else
   printf("t = %10.2e  nst = %ld  nfe = %ld  nni = %ld", t, nst, nfe, nni);
   printf("  qu = %d  hu = %11.2e\n\n", qu, hu);
@@ -683,7 +673,9 @@ static void PrintFinalStats(void* cvode_mem)
   printf(" Number of nonlinear conv. failures    = %4ld \n", ncfn);
   printf(" Number of linear convergence failures = %4ld \n", ncfl);
   avdim = (nni > 0) ? ((sunrealtype)nli) / ((sunrealtype)nni) : ZERO;
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf(" Average Krylov subspace dimension     = %.3Qf \n", avdim);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf(" Average Krylov subspace dimension     = %.3Lf \n", avdim);
 #else
   printf(" Average Krylov subspace dimension     = %.3f \n", avdim);
@@ -868,7 +860,7 @@ static int Precond(sunrealtype t, N_Vector c, N_Vector fc, sunbooleantype jok,
         /* Generate the jth column as a difference quotient */
         jj   = if0 + j;
         save = cdata[jj];
-        r    = MAX(srur * SUNRabs(save), r0 / rewtdata[jj]);
+        r    = SUNMAX(srur * SUNRabs(save), r0 / rewtdata[jj]);
         cdata[jj] += r;
         fac = -gamma / r;
         fblock(t, cdata, jx, jy, f1, wdata);

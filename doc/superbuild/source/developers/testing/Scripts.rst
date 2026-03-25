@@ -61,7 +61,7 @@ machine script to change the compiler used when testing.
 
 The setup script will set the following environment variables (among others):
 
-* ``SUNDIALS_PRECISION`` the real type: ``single``, ``double``, or ``extended``
+* ``SUNDIALS_PRECISION`` the real type: ``single``, ``double``, ``extended`` or ``float128``
 
 * ``SUNDIALS_INDEX_SIZE`` the index size: ``32`` or ``64``
 

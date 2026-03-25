@@ -62,16 +62,6 @@
 #include <sunlinsol/sunlinsol_klu.h>    /* access to KLU SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_sparse.h> /* access to sparse SUNMatrix         */
 
-/* Precision specific math function macros */
-
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define EXP(x) (exp((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define EXP(x) (expf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define EXP(x) (expl((x)))
-#endif
-
 /* Problem Constants */
 
 #define NVAR 2
@@ -347,8 +337,9 @@ static int func(N_Vector u, N_Vector f, void* user_data)
   l2 = udata[4];
   L2 = udata[5];
 
-  fdata[0] = PT5 * sin(x1 * x2) - PT25 * x2 / PI - PT5 * x1;
-  fdata[1] = (ONE - PT25 / PI) * (EXP(TWO * x1) - E) + E * x2 / PI - TWO * E * x1;
+  fdata[0] = PT5 * SUNRsin(x1 * x2) - PT25 * x2 / PI - PT5 * x1;
+  fdata[1] = (ONE - PT25 / PI) * (SUNRexp(TWO * x1) - E) + E * x2 / PI -
+             TWO * E * x1;
   fdata[2] = l1 - x1 + lb[0];
   fdata[3] = L1 - x1 + ub[0];
   fdata[4] = l2 - x2 + lb[1];
@@ -388,7 +379,7 @@ static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
   colvals[1] = 1;
 
   /* row 1: J(1,0) and J(1,1) */
-  data[2]    = TWO * (ONE - PT25 / PI) * (EXP(TWO * yd[0]) - E);
+  data[2]    = TWO * (ONE - PT25 / PI) * (SUNRexp(TWO * yd[0]) - E);
   colvals[2] = 0;
   data[3]    = E / PI;
   colvals[3] = 1;

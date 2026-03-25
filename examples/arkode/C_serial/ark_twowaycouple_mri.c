@@ -42,7 +42,11 @@
 #include <stdio.h>
 #include <sundials/sundials_types.h> /* def. of type 'sunrealtype'              */
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #define FSYM "Lf"
@@ -63,14 +67,14 @@ static int check_retval(void* returnvalue, const char* funcname, int opt);
 int main(void)
 {
   /* general problem parameters */
-  sunrealtype T0    = SUN_RCONST(0.0);       /* initial time */
-  sunrealtype Tf    = SUN_RCONST(2.0);       /* final time */
-  sunrealtype dTout = SUN_RCONST(0.1);       /* time between outputs */
-  sunindextype NEQ  = 3;                     /* number of dependent vars. */
-  int Nt            = (int)ceil(Tf / dTout); /* number of output times */
-  sunrealtype hs    = SUN_RCONST(0.001);     /* slow step size */
-  sunrealtype hf    = SUN_RCONST(0.00002);   /* fast step size */
-  sunrealtype u0, v0, w0;                    /* initial conditions */
+  sunrealtype T0    = SUN_RCONST(0.0);           /* initial time */
+  sunrealtype Tf    = SUN_RCONST(2.0);           /* final time */
+  sunrealtype dTout = SUN_RCONST(0.1);           /* time between outputs */
+  sunindextype NEQ  = 3;                         /* number of dependent vars. */
+  int Nt            = (int)SUNRceil(Tf / dTout); /* number of output times */
+  sunrealtype hs    = SUN_RCONST(0.001);         /* slow step size */
+  sunrealtype hf    = SUN_RCONST(0.00002);       /* fast step size */
+  sunrealtype u0, v0, w0;                        /* initial conditions */
 
   /* general problem variables */
   int retval;                               /* reusable error-checking flag */

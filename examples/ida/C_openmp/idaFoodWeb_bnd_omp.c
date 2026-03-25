@@ -127,7 +127,7 @@
 #define NPREY       1 /* No. of prey (= no. of predators). */
 #define NUM_SPECIES 2 * NPREY
 
-#define PI     SUN_RCONST(3.1415926535898)
+#define PI     SUN_RCONST(3.141592653589793238462643383279502884197169)
 #define FOURPI (SUN_RCONST(4.0) * PI)
 
 #define MX    20 /* MX = number of x mesh points      */
@@ -529,10 +529,10 @@ static void PrintHeader(sunindextype mu, sunindextype ml, sunrealtype rtol,
   printf("Number of species ns: %d", NUM_SPECIES);
   printf("     Mesh dimensions: %d x %d", MX, MY);
   printf("     System size: %d\n", NEQ);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, atol);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
 #endif
@@ -567,18 +567,16 @@ static void PrintOutput(void* ida_mem, N_Vector c, sunrealtype t)
   c_bl = IJ_Vptr(c, 0, 0);
   c_tr = IJ_Vptr(c, MX - 1, MY - 1);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%8.2Qe %12.4Qe %12.4Qe   | %3ld  %1d %12.4Qe\n", t, c_bl[0], c_tr[0],
+         nst, kused, hused);
+  for (i = 1; i < NUM_SPECIES; i++)
+    printf("         %12.4Qe %12.4Qe   |\n", c_bl[i], c_tr[i]);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%8.2Le %12.4Le %12.4Le   | %3ld  %1d %12.4Le\n", t, c_bl[0], c_tr[0],
          nst, kused, hused);
   for (i = 1; i < NUM_SPECIES; i++)
     printf("         %12.4Le %12.4Le   |\n", c_bl[i], c_tr[i]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%8.2e %12.4e %12.4e   | %3ld  %1d %12.4e\n", t, c_bl[0], c_tr[0], nst,
-         kused, hused);
-  for (i = 1; i < NUM_SPECIES; i++)
-  {
-    printf("         %12.4e %12.4e   |\n", c_bl[i], c_tr[i]);
-  }
 #else
   printf("%8.2e %12.4e %12.4e   | %3ld  %1d %12.4e\n", t, c_bl[0], c_tr[0], nst,
          kused, hused);

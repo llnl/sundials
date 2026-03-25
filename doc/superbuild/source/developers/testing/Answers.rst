@@ -63,7 +63,7 @@ is expected/desired. Changing output files requires careful verification that th
      the branch that you are developing in sundials on: ``git checkout -b <branch name>``.
 
   #. Update the relevant ``.out`` files in
-     ``test/answers/linux-ubuntu20.04-x86_64/gcc-9.4.0/<double|single|extended>`` (this is the files
+     ``test/answers/linux-ubuntu20.04-x86_64/gcc-9.4.0/<double|single|extended|float128>`` (this is the files
      used for the GitHub Actions CI). Like with the embedded ``.out`` files, you can try and use the
      output generated on your machine, but it may be different enough from what is produced on the
      GitHub actions to trigger a failure. You can download the output files generated on the GitHub
@@ -79,7 +79,7 @@ is expected/desired. Changing output files requires careful verification that th
 
      When updating files in the answers repo the source path is the path to the build directory
      downloaded from GitHub and the destination path is ``<path to answers
-     repo>/linux-ubuntu20.04-x86_64/gcc-9.4.0/<double|single|extended>``. When updating with output
+     repo>/linux-ubuntu20.04-x86_64/gcc-9.4.0/<double|single|extended|float128>``. When updating with output
      from Jenkins the source path is the build directory for the Jenkins run and the destination
      path is the top level of the sundials repo (i.e., ../. if running from scripts). The script
      will automatically traverse the examples and test/unit_test directories to update output files

@@ -212,7 +212,9 @@ int main(void)
   retval = IDAGetQuad(mem, &time, q);
   if (check_retval(&retval, "IDAGetQuad", 1)) { return (1); }
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("G:          %24.16Qf \n", Ith(q, 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("G:          %24.16Lf \n", Ith(q, 1));
 #else
   printf("G:          %24.16f \n", Ith(q, 1));
@@ -437,7 +439,10 @@ static int resB(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector yyB,
  */
 static void PrintOutput(sunrealtype tfinal, N_Vector yB, N_Vector ypB)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("dG/dy0: "
+         "\t%12.4Qe\n\t\t%12.4Qe\n\t\t%12.4Qe\n\t\t%12.4Qe\n\t\t%12.4Qe\n",
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("dG/dy0: "
          "\t%12.4Le\n\t\t%12.4Le\n\t\t%12.4Le\n\t\t%12.4Le\n\t\t%12.4Le\n",
 #else

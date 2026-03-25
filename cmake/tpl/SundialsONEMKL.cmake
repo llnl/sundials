@@ -27,8 +27,8 @@ include_guard(GLOBAL)
 # Section 2: Check to make sure options are compatible
 # -----------------------------------------------------------------------------
 
-# oneMKL does not support extended precision
-if(SUNDIALS_PRECISION MATCHES "EXTENDED")
+# oneMKL does not support extended or float128 precision
+if(SUNDIALS_PRECISION MATCHES "EXTENDED|FLOAT128")
   message(
     FATAL_ERROR "oneMKL is not compatible with ${SUNDIALS_PRECISION} precision")
 endif()

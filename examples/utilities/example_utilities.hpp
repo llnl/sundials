@@ -76,6 +76,19 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   }
 }
 
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+inline void find_arg(std::vector<std::string>& args, const std::string key,
+                     __float128& dest)
+{
+  auto it = std::find(args.cbegin(), args.cend(), key);
+  if (it != args.end())
+  {
+    dest = __float128(stod(*(it + 1)));
+    args.erase(it, it + 2);
+  }
+}
+#endif
+
 inline void find_arg(std::vector<std::string>& args, const std::string key,
                      long long& dest)
 {

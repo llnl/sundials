@@ -71,7 +71,7 @@ inline int initial_condition(N_Vector y_vec, sunrealtype ecc)
   y_data[0] = one - ecc;
   y_data[1] = zero;
   y_data[2] = zero;
-  y_data[3] = std::sqrt((one + ecc) / (one - ecc));
+  y_data[3] = SUNRsqrt((one + ecc) / (one - ecc));
 
   return 0;
 }
@@ -91,7 +91,7 @@ inline int hamiltonian(N_Vector y_vec, sunrealtype* H)
   const sunrealtype qTq = q1 * q1 + q2 * q2;
   const sunrealtype pTp = p1 * p1 + p2 * p2;
 
-  *H = half * pTp - one / std::sqrt(qTq);
+  *H = half * pTp - one / SUNRsqrt(qTq);
 
   return 0;
 }
@@ -143,10 +143,10 @@ inline int ode_rhs_force(sunrealtype t, N_Vector y_vec, N_Vector f_vec,
   const sunrealtype q1 = y_data[0];
   const sunrealtype q2 = y_data[1];
 
-  const sunrealtype sqrt_qTq = std::sqrt(q1 * q1 + q2 * q2);
+  const sunrealtype sqrt_qTq = SUNRsqrt(q1 * q1 + q2 * q2);
 
-  f_data[2] = -q1 / std::pow(sqrt_qTq, 3);
-  f_data[3] = -q2 / std::pow(sqrt_qTq, 3);
+  f_data[2] = -q1 / SUNRpowerI(sqrt_qTq, 3);
+  f_data[3] = -q2 / SUNRpowerI(sqrt_qTq, 3);
 
   return 0;
 }

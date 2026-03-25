@@ -188,7 +188,9 @@ int main(void)
 
   IDAGetQuad(mem, &tret, q);
   printf("--------------------------------------------\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("  G = %24.16Qf\n", Ith(q, 1));
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("  G = %24.16Lf\n", Ith(q, 1));
 #else
   printf("  G = %24.16f\n", Ith(q, 1));
@@ -374,10 +376,10 @@ static void PrintHeader(sunrealtype rtol, sunrealtype avtol, N_Vector y)
   printf(
     "\nidasSlCrank_dns: Slider-Crank DAE serial example problem for IDAS\n");
   printf("Linear solver: DENSE, Jacobian is computed by IDAS.\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("Tolerance parameters:  rtol = %Qg   atol = %Qg\n", rtol, avtol);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, avtol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, avtol);
 #else
   printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, avtol);
 #endif
@@ -404,12 +406,12 @@ static void PrintOutput(void* mem, sunrealtype t, N_Vector y)
   check_retval(&retval, "IDAGetNumSteps", 1);
   retval = IDAGetLastStep(mem, &hused);
   check_retval(&retval, "IDAGetLastStep", 1);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  printf("%5.2Qf %12.4Qe %12.4Qe %12.4Qe | %3ld  %1d %12.4Qe\n", t, yval[0],
+         yval[1], yval[2], nst, kused, hused);
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   printf("%5.2Lf %12.4Le %12.4Le %12.4Le | %3ld  %1d %12.4Le\n", t, yval[0],
          yval[1], yval[2], nst, kused, hused);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%5.2f %12.4e %12.4e %12.4e | %3ld  %1d %12.4e\n", t, yval[0], yval[1],
-         yval[2], nst, kused, hused);
 #else
   printf("%5.2f %12.4e %12.4e %12.4e | %3ld  %1d %12.4e\n", t, yval[0], yval[1],
          yval[2], nst, kused, hused);

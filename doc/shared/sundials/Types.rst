@@ -42,52 +42,60 @@ Floating point types
 
 .. c:type:: sunrealtype
 
-   The type ``sunrealtype`` can be ``float``, ``double``, or ``long double``, with
-   the default being ``double``. The user can change the precision of the
-   arithmetic used in the SUNDIALS solvers at the configuration stage (see
-   :cmakeop:`SUNDIALS_PRECISION`).
+   The type ``sunrealtype`` can be ``float``, ``double``, ``long double``, or
+   ``__float128`` with the default being ``double``. The user can change the
+   precision of the arithmetic used in the SUNDIALS solvers at the configuration
+   stage (see: cmakeop:`SUNDIALS_PRECISION`).
 
 Additionally, based on the current precision, ``sundials_types.h`` defines
 ``SUN_BIG_REAL`` to be the largest value representable as a ``sunrealtype``,
-``SUN_SMALL_REAL`` to be the smallest value representable as a ``sunrealtype``, and
+``SUN_SMALL_REAL`` to be the smallest value representable as a ``sunrealtype``,
 ``SUN_UNIT_ROUNDOFF`` to be the difference between :math:`1.0` and the minimum
-``sunrealtype`` greater than :math:`1.0`.
+``sunrealtype`` greater than :math:`1.0`, and ``SUN_DIGITS10`` to be the number
+ of decimal digits, ``q``, such that any floating-point number as a ``sunrealtype``
+ with ``q`` digits and back again without change to the ``q`` decimal digits,
+ same as ``std::numeric_limits<sunrealtype>::digits10``.
+
 
 Within SUNDIALS, real constants are set by way of a macro called ``SUN_RCONST``. It
 is this macro that needs the ability to branch on the definition of
 ``sunrealtype``. In ANSI C, a floating-point constant with no suffix is stored as a
 ``double``. Placing the suffix "``F``" at the end of a floating point constant
-makes it a ``float``, whereas using the suffix "``L``" makes it a ``long
-double``. For example,
+makes it a ``float``, whereas using the suffix "``L``" makes it a ``long double``,
+whereas using the suffix "``Q``" makes it a ``__float128``.  For example,
 
 .. code-block:: c
 
    #define A 1.0
    #define B 1.0F
    #define C 1.0L
+   #define D 1.0Q
 
 defines ``A`` to be a ``double`` constant equal to :math:`1.0`, ``B`` to be a
-``float`` constant equal to :math:`1.0`, and ``C`` to be a ``long double``
+``float`` constant equal to :math:`1.0`, ``C`` to be a ``long double``
+constant equal to :math:`1.0`, and ``D`` to be a ``__float128``
 constant equal to :math:`1.0`. The macro call ``SUN_RCONST(1.0)`` automatically
 expands to ``1.0`` if ``sunrealtype`` is ``double``, to ``1.0F`` if ``sunrealtype`` is
-``float``, or to ``1.0L`` if ``sunrealtype`` is ``long double``. SUNDIALS uses the
+``float``, to ``1.0L`` if ``sunrealtype`` is ``long double``, or to ``1.0Q`` if
+``sunrealtype`` is ``__float128``. SUNDIALS uses the
 ``SUN_RCONST`` macro internally to declare all of its floating-point constants.
 
 Additionally, SUNDIALS defines several macros for common mathematical functions
-*e.g.*, ``fabs``, ``sqrt``, ``exp``, etc. in ``sundials_math.h``. The macros are
-prefixed with ``SUNR`` and expand to the appropriate ``C`` function based on the
-``sunrealtype``. For example, the macro ``SUNRabs`` expands to the ``C`` function
-``fabs`` when ``sunrealtype`` is ``double``, ``fabsf`` when ``sunrealtype`` is
-``float``, and ``fabsl`` when ``sunrealtype`` is ``long double``.
+*e.g.*, ``fabs``, ``sqrt``, ``exp``, ``sin``, ``sinh``, etc. in ``sundials_math.h``.
+The macros are prefixed with ``SUNR`` and expand to the appropriate ``C`` function
+based on the ``sunrealtype``. For example, the macro ``SUNRabs`` expands to the
+``C`` function ``fabs`` when ``sunrealtype`` is ``double``, ``fabsf`` when
+``sunrealtype`` is ``float``, ``fabsl`` when ``sunrealtype`` is ``long double``,
+and ``fabsq`` when ``sunrealtype`` is ``__float128``.
 
 A user program which uses the type ``sunrealtype``, the ``SUN_RCONST`` macro, and the
 ``SUNR`` mathematical function macros is precision-independent except for any
 calls to precision-specific library functions. Our example programs use
 ``sunrealtype``, ``SUN_RCONST``, and the ``SUNR`` macros. Users can, however, use the
-type ``double``, ``float``, or ``long double`` in their code (assuming that this
-usage is consistent with the typedef for ``sunrealtype``) and call the appropriate
-math library functions directly. Thus, a previously existing piece of C or C++
-code can use SUNDIALS without modifying the code to use ``sunrealtype``,
+type ``double``, ``float``, ``long double``  or ``__float128`` in their code (assuming
+that this usage is consistent with the typedef for ``sunrealtype``) and call the
+appropriate math library functions directly. Thus, a previously existing piece of C
+or C++ code can use SUNDIALS without modifying the code to use ``sunrealtype``,
 ``SUN_RCONST``, or the ``SUNR`` macros so long as the SUNDIALS libraries are built
 to use the corresponding precision (see :numref:`Installation.Options`).
 

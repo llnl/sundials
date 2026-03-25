@@ -46,7 +46,10 @@
 #include <sunlinsol/sunlinsol_band.h>
 #include <sunmatrix/sunmatrix_band.h>
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define FSYM "Qf"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define FSYM "Lf"
 #else
@@ -180,12 +183,14 @@ int main(void)
   sunrealtype tret = T0;
   printf("        t      ||u||_rms\n");
   printf("   ----------------------\n");
-  printf("  %10.6" FSYM "  %10.6f\n", tret, sqrt(N_VDotProd(y, y) / udata.N));
+  printf("  %10.6" FSYM "  %10.6" FSYM "\n", tret,
+         SUNRsqrt(N_VDotProd(y, y) / udata.N));
   while (tret < Tf)
   {
     flag = ARKodeEvolve(arkode_mem, Tf, y, &tret, ARK_ONE_STEP);
     if (check_flag(&flag, "ARKodeEvolve", 1)) { return 1; }
-    printf("  %10.6" FSYM "  %10.6f\n", tret, sqrt(N_VDotProd(y, y) / udata.N));
+    printf("  %10.6" FSYM "  %10.6" FSYM "\n", tret,
+           SUNRsqrt(N_VDotProd(y, y) / udata.N));
   }
   printf("   ----------------------\n");
 

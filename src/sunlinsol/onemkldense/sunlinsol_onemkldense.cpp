@@ -33,6 +33,8 @@ using namespace oneapi::mkl::lapack;
 // Check for a valid precision and index size
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #error "oneMLK unsupported precision"
+#elif defined(SUNDIALS_FLOAT128_PRECISION)
+#error "oneMLK unsupported precision"
 #endif
 
 #if defined(SUNDIALS_INT32_T)

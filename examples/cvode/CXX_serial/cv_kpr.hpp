@@ -28,6 +28,7 @@
 #include <vector>
 
 // SUNDIALS types
+#include <sundials/sundials_math.h> //for macros of SUNRcos, SUNRsin and SUNRabs
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>
 
@@ -64,22 +65,22 @@ struct Options
 // -----------------------------------------------------------------------------
 
 // Compute r(t)
-inline sunrealtype r(sunrealtype t) { return HALF * cos(t); }
+inline sunrealtype r(sunrealtype t) { return HALF * SUNRcos(t); }
 
 // Compute the derivative of r(t)
-inline sunrealtype rdot(sunrealtype t) { return -HALF * sin(t); }
+inline sunrealtype rdot(sunrealtype t) { return -HALF * SUNRsin(t); }
 
 // Compute s(t)
-inline sunrealtype s(sunrealtype t) { return cos(TWENTY * t); }
+inline sunrealtype s(sunrealtype t) { return SUNRcos(TWENTY * t); }
 
 // Compute the derivative of s(t)
-inline sunrealtype sdot(sunrealtype t) { return -TWENTY * sin(TWENTY * t); }
+inline sunrealtype sdot(sunrealtype t) { return -TWENTY * SUNRsin(TWENTY * t); }
 
 // Compute the true solution
 inline int true_sol(sunrealtype t, sunrealtype* u, sunrealtype* v)
 {
-  *u = sqrt(ONE + r(t));
-  *v = sqrt(TWO + s(t));
+  *u = SUNRsqrt(ONE + r(t));
+  *v = SUNRsqrt(TWO + s(t));
 
   return 0;
 }

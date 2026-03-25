@@ -69,28 +69,12 @@
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNmatrix       */
 
 /* Precision specific formatting macros */
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define ESYM "Le"
 #else
 #define ESYM "e"
-#endif
-
-/* Precision specific math function macros */
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define SIN(x)  (sin((x)))
-#define COS(x)  (cos((x)))
-#define SQRT(x) (sqrt((x)))
-#define ABS(x)  (fabs((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define SIN(x)  (sinf((x)))
-#define COS(x)  (cosf((x)))
-#define SQRT(x) (sqrtf((x)))
-#define ABS(x)  (fabsf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define SIN(x)  (sinl((x)))
-#define COS(x)  (cosl((x)))
-#define SQRT(x) (sqrtl((x)))
-#define ABS(x)  (fabsl((x)))
 #endif
 
 /* Problem Constants */
@@ -361,7 +345,7 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
   /* Compute the constraint violation */
   x = yydata[0];
   y = yydata[1];
-  g = ABS(x * x + y * y - ONE);
+  g = SUNRabs(x * x + y * y - ONE);
 
   /* Compute the absolute error compared to the reference solution */
   N_VLinearSum(ONE, yy, -ONE, yref, yy);
@@ -480,7 +464,7 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout)
   fprintf(FID,
           "%24.16" ESYM " %24.16" ESYM " %24.16" ESYM " %24.16" ESYM
           " %24.16" ESYM "\n",
-          ZERO, COS(th), SIN(th), -thd * SIN(th), thd * COS(th));
+          ZERO, SUNRcos(th), SUNRsin(th), -thd * SUNRsin(th), thd * SUNRcos(th));
 
   /* Integrate to tf and periodically output the solution */
   dtout = tf / nout;
@@ -518,7 +502,7 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout)
     fprintf(FID,
             "%24.16" ESYM " %24.16" ESYM " %24.16" ESYM " %24.16" ESYM
             " %24.16" ESYM "\n",
-            t, COS(th), SIN(th), -thd * SIN(th), thd * COS(th));
+            t, SUNRcos(th), SUNRsin(th), -thd * SUNRsin(th), thd * SUNRcos(th));
 
     /* Update output time */
     if (out < nout - 1) { tout += dtout; }
@@ -535,10 +519,10 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout)
   /* Convert to Cartesian reference solution */
   yydata = N_VGetArrayPointer(yref);
 
-  yydata[0] = COS(th);
-  yydata[1] = SIN(th);
-  yydata[2] = -thd * SIN(th);
-  yydata[3] = thd * COS(th);
+  yydata[0] = SUNRcos(th);
+  yydata[1] = SUNRsin(th);
+  yydata[2] = -thd * SUNRsin(th);
+  yydata[3] = thd * SUNRcos(th);
 
   /* Free memory */
   N_VDestroy_Serial(yy);
@@ -563,8 +547,8 @@ static int fref(sunrealtype t, N_Vector yy, N_Vector fy, void* f_data)
   yydata = N_VGetArrayPointer(yy);
   fydata = N_VGetArrayPointer(fy);
 
-  fydata[0] = yydata[1];              /* theta'          */
-  fydata[1] = -GRAV * COS(yydata[0]); /* -g * cos(theta) */
+  fydata[0] = yydata[1];                  /* theta'          */
+  fydata[1] = -GRAV * SUNRcos(yydata[0]); /* -g * cos(theta) */
   return (0);
 }
 
@@ -629,7 +613,7 @@ static int proj(sunrealtype t, N_Vector yy, N_Vector corr, sunrealtype epsProj,
 
   /* Project positions */
 
-  R = SQRT(x * x + y * y);
+  R = SUNRsqrt(x * x + y * y);
 
   x_new = x / R;
   y_new = y / R;
@@ -695,13 +679,13 @@ static int ReadInputs(int* argc, char*** argv, sunrealtype* rtol,
     if (strcmp((*argv)[arg_idx], "--tol") == 0)
     {
       arg_idx++;
-      *rtol = atof((*argv)[arg_idx++]);
-      *atol = atof((*argv)[arg_idx++]);
+      *rtol = (sunrealtype)atof((*argv)[arg_idx++]);
+      *atol = (sunrealtype)atof((*argv)[arg_idx++]);
     }
     else if (strcmp((*argv)[arg_idx], "--tf") == 0)
     {
       arg_idx++;
-      *tf = atof((*argv)[arg_idx++]);
+      *tf = (sunrealtype)atof((*argv)[arg_idx++]);
     }
     else if (strcmp((*argv)[arg_idx], "--nout") == 0)
     {

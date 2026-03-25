@@ -36,7 +36,10 @@
 #include "sunlinsol/sunlinsol_dense.h"
 #include "sunmatrix/sunmatrix_dense.h"
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+#define GSYM "Qg"
+#define ESYM "Qe"
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
 #define ESYM "Le"
 #else
@@ -74,7 +77,7 @@ int main(int argc, char* argv[])
 
   /* tolerances */
   sunrealtype reltol = SUNRsqrt(SUN_UNIT_ROUNDOFF);
-  sunrealtype abstol = SUNRsqrt(SUN_UNIT_ROUNDOFF) / 100;
+  sunrealtype abstol = SUNRsqrt(SUN_UNIT_ROUNDOFF) / SUN_RCONST(100.0);
 
   /* general problem variables */
   int flag;                  /* reusable error-checking flag             */
@@ -400,7 +403,11 @@ int main(int argc, char* argv[])
   printf("IMEX solution:\n");
   N_VPrint_Serial(y);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
+#if defined(SUNDIALS_FLOAT128_PRECISION)
+  /* The 5th order case with float128 precision tends to slightly under solve
+     so we loosen the comparison tolerance by 10% */
+  if (order == 5) { reltol *= SUN_RCONST(1.1); };
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
   /* The 5th order case with extended precision tends to slightly under solve
      so we loosen the comparison tolerance by 5% */
   if (order == 5) { reltol *= SUN_RCONST(1.05); };
