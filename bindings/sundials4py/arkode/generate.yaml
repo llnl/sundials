@@ -78,6 +78,10 @@ modules:
     - "^ARKStepCreate$"
     - "^ARKStepCreateAdjointStepper$"
     - "^ARKStepReInit$"
+    fn_params_optional_with_default_null:
+      "ARKStepSetTables":
+      - "Be"
+      - "Bi" 
   erkstep:
     path: arkode/arkode_erkstep_generated.hpp
     headers:
