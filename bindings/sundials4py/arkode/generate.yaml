@@ -35,6 +35,8 @@ modules:
     fn_params_optional_with_default_null:
       "SetLinearSolver":
       - "A" 
+      "ARKodeButcherTable_Create":
+      - "d_1d"
   arkode:
     path: arkode/arkode_generated.hpp
     headers:
