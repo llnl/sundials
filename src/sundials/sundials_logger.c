@@ -300,7 +300,7 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
 }
 
 SUNErrCode SUNLogger_SetDebugFilename(
-  SUNLogger logger, SUNDIALS_MAYBE_UNUSED const char* debug_filename)
+  SUNLogger logger, const char* debug_filename)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
