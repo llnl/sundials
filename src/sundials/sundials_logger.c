@@ -299,8 +299,7 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
 #endif
 }
 
-SUNErrCode SUNLogger_SetDebugFilename(
-  SUNLogger logger, const char* debug_filename)
+SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
