@@ -397,7 +397,7 @@ linear solver module; otherwise :c:func:`SUNNonlinSolGetCurIter` is optional.
 
    **Notes:**
       If the nonlinear solver does not implement this operation, the return
-      value will be ``SUN_ERR_NOT_IMPLEMENTED`.
+      value will be ``SUN_ERR_NOT_IMPLEMENTED``.
 
 
 .. _SUNNonlinSol.API.SUNSuppliedFn:
