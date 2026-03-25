@@ -20,6 +20,70 @@
 Benchmarks
 ==========
 
+In this chapter we describe performance benchmark programs distributed with
+SUNDIALS. To enable the benchmark programs and set the installation location use
+the following CMake options.
+
+.. cmakeoption:: SUNDIALS_ENABLE_BENCHMARKS
+
+   Enable the benchmark problems
+
+   Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_BENCHMARKS``
+
+.. cmakeoption:: SUNDIALS_BENCHMARKS_INSTALL_PATH
+
+   Full path to where to install the benchmark problems
+
+   Default: ``CMAKE_INSTALL_PREFIX/benchmarks``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BENCHMARKS_INSTALL_PATH``
+
+.. cmakeoption:: SUNDIALS_BENCHMARKS_OUTPUT_DIR
+
+   Location to write benchmark output files
+
+   Default: ``PROJECT_BINARY_DIR/Benchmarking/output``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BENCHMARK_OUTPUT_DIR``
+
+.. cmakeoption:: SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR
+
+   Location to write benchmark caliper files
+
+   Default: ``PROJECT_BINARY_DIR/Benchmarking/caliper``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR``
+
+.. cmakeoption:: SUNDIALS_BENCHMARKS_NUM_CPUS
+
+   Number of CPU cores to run benchmarks with
+
+   Default: 40
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BENCHMARK_NUM_CPUS``
+
+.. cmakeoption:: SUNDIALS_BENCHMARKS_NUM_GPUS
+
+   Number of GPUs to run benchmarks with
+
+   Default: 4
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BENCHMARK_NUM_GPUS``
+
 The following sections describe the SUNDIALS performance benchmark problems.
 
 .. toctree::

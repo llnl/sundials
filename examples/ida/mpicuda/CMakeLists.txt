@@ -59,18 +59,19 @@ foreach(example_tuple ${IDA_examples})
   target_link_libraries(${example} PRIVATE MPI::MPI_CXX ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.cu ${example}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/mpicuda)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/mpicuda)
   endif()
 
 endforeach(example_tuple ${IDA_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/mpicuda)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/mpicuda)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "IDA")
@@ -89,7 +90,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/ida/mpicuda/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/mpicuda)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/mpicuda)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -103,7 +104,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/ida/mpicuda/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/ida/mpicuda
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/mpicuda
       RENAME Makefile)
   endif()
 

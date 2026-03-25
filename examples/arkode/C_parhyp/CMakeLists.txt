@@ -53,7 +53,7 @@ foreach(example_tuple ${ARKODE_examples})
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   sundials_install_examples(
     arkode ARKODE_examples

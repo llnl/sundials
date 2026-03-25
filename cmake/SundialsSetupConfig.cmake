@@ -56,7 +56,7 @@ endif()
 set(SUNDIALS_CONFIGH_BUILDS "")
 foreach(_item ${SUNDIALS_BUILD_LIST})
   if(${${_item}})
-    string(REPLACE "BUILD_" "" _module ${_item})
+    string(REPLACE "SUNDIALS_ENABLE_" "" _module ${_item})
     string(APPEND SUNDIALS_CONFIGH_BUILDS "#define SUNDIALS_${_module} 1\n")
   endif()
 endforeach()
@@ -68,7 +68,7 @@ foreach(tpl ${SUNDIALS_TPL_LIST})
 endforeach()
 
 # prepare substitution variable SUNDIALS_TRILINOS_HAVE_MPI for sundials_config.h
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   set(SUNDIALS_TRILINOS_HAVE_MPI TRUE)
 endif()
 

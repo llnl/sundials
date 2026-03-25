@@ -21,86 +21,71 @@
 # Options for C/C++ examples
 # -----------------------------------------------------------------------------
 
-sundials_option(EXAMPLES_ENABLE_C BOOL "Build SUNDIALS C examples" ON)
+sundials_option(SUNDIALS_ENABLE_C_EXAMPLES BOOL "Build SUNDIALS C examples" ON
+                DEPRECATED_NAMES EXAMPLES_ENABLE_C)
 
 # Some TPLs only have C++ examples. Default the C++ examples to ON if any of
 # these are enabled on the initial configuration pass.
-if(ENABLE_TRILINOS
-   OR ENABLE_SUPERLUDIST
-   OR ENABLE_XBRAID
-   OR ENABLE_HIP
-   OR ENABLE_MAGMA
-   OR ENABLE_SYCL
-   OR ENABLE_ONEMKL
-   OR ENABLE_RAJA
-   OR ENABLE_GINKGO
-   OR ENABLE_KOKKOS)
-  sundials_option(EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" ON)
+if(SUNDIALS_ENABLE_TRILINOS
+   OR SUNDIALS_ENABLE_SUPERLUDIST
+   OR SUNDIALS_ENABLE_XBRAID
+   OR SUNDIALS_ENABLE_HIP
+   OR SUNDIALS_ENABLE_MAGMA
+   OR SUNDIALS_ENABLE_SYCL
+   OR SUNDIALS_ENABLE_ONEMKL
+   OR SUNDIALS_ENABLE_RAJA
+   OR SUNDIALS_ENABLE_GINKGO
+   OR SUNDIALS_ENABLE_KOKKOS)
+  sundials_option(
+    SUNDIALS_ENABLE_CXX_EXAMPLES BOOL "Build SUNDIALS C++ examples" ON
+    DEPRECATED_NAMES EXAMPLES_ENABLE_CXX)
 else()
-  sundials_option(EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" OFF)
+  sundials_option(
+    SUNDIALS_ENABLE_CXX_EXAMPLES BOOL "Build SUNDIALS C++ examples" OFF
+    DEPRECATED_NAMES EXAMPLES_ENABLE_CXX)
 endif()
 
 # -----------------------------------------------------------------------------
 # Options for Fortran Examples
 # -----------------------------------------------------------------------------
 
-# F2003 examples (on by default) are an option only if the Fortran 2003
-# interface is enabled.
-set(DOCSTR "Build SUNDIALS Fortran 2003 examples")
-if(BUILD_FORTRAN_MODULE_INTERFACE)
-  set(EXAMPLES_ENABLE_F2003
-      ON
-      CACHE BOOL "${DOCSTR}")
-
-  # Fortran 2003 examples only support double precision
-  if(EXAMPLES_ENABLE_F2003 AND (NOT (SUNDIALS_PRECISION MATCHES "DOUBLE")))
-    message(
-      WARNING
-        "F2003 examples are not compatible with ${SUNDIALS_PRECISION} precision. "
-        "Setting EXAMPLES_ENABLE_F2003 to OFF.")
-    set(EXAMPLES_ENABLE_F2003
-        OFF
-        CACHE BOOL "${DOCSTR}" FORCE)
-  endif()
+if(SUNDIALS_ENABLE_FORTRAN)
+  sundials_option(
+    SUNDIALS_ENABLE_FORTRAN_EXAMPLES BOOL "Build SUNDIALS Fortran examples" ON
+    DEPENDS_ON SUNDIALS_ENABLE_FORTRAN DEPRECATED_NAMES EXAMPLES_ENABLE_F2003)
 else()
-
-  # set back to OFF (in case it was ON)
-  if(EXAMPLES_ENABLE_F2003)
-    message(
-      WARNING
-        "EXAMPLES_ENABLE_F2003 is ON but BUILD_FORTRAN_MODULE_INTERFACE is OFF. "
-        "Setting EXAMPLES_ENABLE_F2003 to OFF.")
-    set(EXAMPLES_ENABLE_F2003
-        OFF
-        CACHE BOOL "${DOCSTR}" FORCE)
-  endif()
-
+  sundials_option(
+    SUNDIALS_ENABLE_FORTRAN_EXAMPLES BOOL "Build SUNDIALS Fortran examples" OFF
+    DEPENDS_ON SUNDIALS_ENABLE_FORTRAN DEPRECATED_NAMES EXAMPLES_ENABLE_F2003)
 endif()
 
 # -----------------------------------------------------------------------------
 # Options for CUDA Examples
 # -----------------------------------------------------------------------------
 
-sundials_option(EXAMPLES_ENABLE_CUDA BOOL "Build SUNDIALS CUDA examples" ON
-                DEPENDS_ON ENABLE_CUDA)
+sundials_option(
+  SUNDIALS_ENABLE_CUDA_EXAMPLES BOOL "Build SUNDIALS CUDA examples" ON
+  DEPENDS_ON SUNDIALS_ENABLE_CUDA DEPRECATED_NAMES EXAMPLES_ENABLE_CUDA)
 
 # -----------------------------------------------------------------------------
 # Options for installing examples
 # -----------------------------------------------------------------------------
 
 # Enable installing examples by default
-sundials_option(EXAMPLES_INSTALL BOOL "Install SUNDIALS examples" ON)
+sundials_option(SUNDIALS_ENABLE_EXAMPLES_INSTALL BOOL
+                "Install SUNDIALS examples" ON)
 
 sundials_option(
-  EXAMPLES_INSTALL_PATH PATH "Output directory for installing example files"
+  SUNDIALS_EXAMPLES_INSTALL_PATH PATH
+  "Output directory for installing example files"
   "${CMAKE_INSTALL_PREFIX}/examples")
 
 # If examples are to be exported, check where we should install them.
-if(EXAMPLES_INSTALL AND NOT EXAMPLES_INSTALL_PATH)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL AND NOT SUNDIALS_EXAMPLES_INSTALL_PATH)
   message(
     WARNING "The example installation path is empty. Example installation "
             "path was reset to its default value")
-  set(EXAMPLES_INSTALL_PATH
+  set(SUNDIALS_EXAMPLES_INSTALL_PATH
       "${CMAKE_INSTALL_PREFIX}/examples"
       CACHE STRING "Output directory for installing example files" FORCE)
 endif()
@@ -109,10 +94,10 @@ endif()
 # Internal variables.
 # -----------------------------------------------------------------------------
 
-if(EXAMPLES_ENABLE_C
-   OR EXAMPLES_ENABLE_CXX
-   OR EXAMPLES_ENABLE_CUDA
-   OR EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_C_EXAMPLES
+   OR SUNDIALS_ENABLE_CXX_EXAMPLES
+   OR SUNDIALS_ENABLE_CUDA_EXAMPLES
+   OR SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
   set(_BUILD_EXAMPLES
       TRUE
       CACHE INTERNAL "")

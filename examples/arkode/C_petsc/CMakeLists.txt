@@ -21,7 +21,7 @@
 # for examples excluded from 'make test' in releases
 
 # Examples using SUNDIALS linear solvers
-if(BUILD_SUNNONLINSOL_PETSCSNES)
+if(SUNDIALS_ENABLE_SUNNONLINSOL_PETSCSNES)
   set(ARKODE_examples "ark_petsc_ex25\;1\;1\;develop")
 endif()
 
@@ -36,7 +36,7 @@ endif()
 # Specify libraries to link against
 set(ARKODE_LIB sundials_arkode)
 set(NVECP_LIB sundials_nvecpetsc)
-if(BUILD_SUNNONLINSOL_PETSCSNES)
+if(SUNDIALS_ENABLE_SUNNONLINSOL_PETSCSNES)
   set(SUNNLS_LIB sundials_sunnonlinsolpetscsnes)
 endif()
 
@@ -73,17 +73,18 @@ foreach(example_tuple ${ARKODE_examples})
   endif()
 
   # install example
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example}.out
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
   endif()
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "ARKODE")
@@ -102,7 +103,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/arkode/C_petsc/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -116,7 +117,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/arkode/C_petsc/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_petsc
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_petsc
       RENAME Makefile)
   endif()
 

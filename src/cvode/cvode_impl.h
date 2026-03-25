@@ -641,7 +641,7 @@ void cvRestore(CVodeMem cv_mem, sunrealtype saved_t);
 
 void cvRescale(CVodeMem cv_mem);
 
-#ifdef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#ifdef SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
 int cvEwtSetSS_fused(const sunbooleantype atolmin0, const sunrealtype reltol,
                      const sunrealtype Sabstol, const N_Vector ycur,
                      N_Vector tempv, N_Vector weight);

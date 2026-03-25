@@ -30,7 +30,7 @@ set(nvector_pthreads_examples
 set(nvector_examples_dependencies test_nvector)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_pthreads_fortran_examples "test_fnvector_pthreads_mod\;\;")
 endif()
 
@@ -39,7 +39,7 @@ include_directories(. ..)
 
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecpthreads)
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   list(APPEND NVECS_LIB sundials_fnvecpthreads_mod)
 endif()
 
