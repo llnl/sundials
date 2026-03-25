@@ -20,6 +20,9 @@ did not disable the corresponding logging stream `Issue #844 <https://github.com
 
 **Deprecation Notices**
 
+The ``CVodeSetMonitorFn`` and ``CVodeSetMonitorFrequency`` functions have been deprecated and will be
+removed in the next major release.
+
 Several CMake options have been deprecated in favor of namespaced versions
 prefixed with ``SUNDIALS_`` to avoid naming collisions in applications that
 include SUNDIALS directly within their CMake builds. Additionally, a consistent
