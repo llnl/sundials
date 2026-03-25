@@ -983,6 +983,8 @@ Main solver optional input functions
 
          Modifying the solution in this function will result in  undefined behavior. This function is only intended to be used  for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_ENABLE_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
 
+   .. deprecated:: x.y.z
+
 .. c:function:: int CVodeSetMonitorFrequency(void* cvode_mem, long int nst)
 
    The function ``CVodeSetMonitorFrequency`` specifies the  interval, measured in successfully completed CVODE time-steps,  at which the monitor function should be called.
@@ -1004,6 +1006,8 @@ Main solver optional input functions
       .. warning::
 
          Modifying the solution in this function will result in undefined behavior. This function is only intended to be used for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_ENABLE_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
+
+   .. deprecated:: x.y.z
 
 .. c:function:: int CVodeSetMaxOrd(void* cvode_mem, int maxord)
 
