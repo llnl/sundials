@@ -74,6 +74,7 @@ foreach(test_tuple ${ARKODE_unit_tests})
               sundials_sunlinsoldense_obj
               $<TARGET_OBJECTS:sundials_sunnonlinsolauto_obj>
               sundials_sunnonlinsolnewton_obj
+              sundials_sunnonlinsolfixedpoint_obj
               sundials_sunadaptcontrollerimexgus_obj
               sundials_sunadaptcontrollersoderlind_obj
               sundials_adjointcheckpointscheme_fixed_obj
