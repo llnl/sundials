@@ -200,6 +200,9 @@ The `Convert` methods on the `sundials::kokkos:Vector`,
 classes have been deprecated and will be removed in the next major release. The
 method `get`, should be used instead.
 
+The `CVodeSetMonitorFn` and `CVodeSetMonitorFrequency` functions have been deprecated and will be
+removed in the next major release.
+
 ## Changes to SUNDIALS in release 7.5.0
 
 ### Major Features
