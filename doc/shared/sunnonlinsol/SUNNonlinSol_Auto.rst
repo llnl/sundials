@@ -86,8 +86,7 @@ The SUNNonlinSol_Auto module provides the following constructor for creating the
    :param m: the number of acceleration vectors to use with the underlying fixed-point solver
       (passed to :c:func:`SUNNonlinSol_FixedPoint`).
    :param initial_solver_type: the initial solver initial_solver_type 
-      (see :c:active_solver_type:`SUNNonlinSolAutoType`).
-   :param sunctx: the :c:active_solver_type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`)
+   :param sunctx: the ``SUNContext`` object (see :numref:`SUNDIALS.SUNContext`)
 
    :returns: a pointer to a SUNNonlinSol object if the constructor exits successfully, otherwise it will be ``NULL``.
 
