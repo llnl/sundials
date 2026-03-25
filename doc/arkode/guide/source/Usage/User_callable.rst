@@ -892,7 +892,7 @@ Optional input                                     Function name                
 =================================================  ==========================================  =======================
 Set ARKODE options from the command line or file   :c:func:`ARKodeSetOptions`                  internal
 Return ARKODE parameters to their defaults         :c:func:`ARKodeSetDefaults`                 internal
-Set integrator method order                        :c:func:`ARKodeSetOrder`                    4
+Set integrator method order                        :c:func:`ARKodeSetOrder`                    stepper-specific
 Set dense output interpolation type                :c:func:`ARKodeSetInterpolantType`          stepper-specific
 Set dense output polynomial degree                 :c:func:`ARKodeSetInterpolantDegree`        method-dependent
 Disable time step adaptivity (fixed-step mode)     :c:func:`ARKodeSetFixedStep`                disabled
@@ -1027,11 +1027,30 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
    .. note::
 
-      For explicit methods, the allowed values are :math:`2 \le`
-      *ord* :math:`\le 8`.  For implicit methods, the allowed values are
-      :math:`2\le` *ord* :math:`\le 5`, and for ImEx methods the allowed
-      values are :math:`2 \le` *ord* :math:`\le 5`.  Any illegal input
-      will result in the default value of 4.
+      The range of supported orders and the default order are stepper-specific:
+
+      * For explicit methods, :math:`1 \le` *ord* :math:`\le 9`, and the default
+        value is 4.
+
+      * For implicit methods, :math:`1 \le` *ord* :math:`\le 5`, and the default
+        value is 4.
+
+      * For ImEx methods, :math:`2 \le` *ord* :math:`\le 5`, and the default
+        value is 4.
+
+      * ForcingStep does not support this function.
+
+      * LSRKStep does not support this function. Use
+        :c:func:`LSRKStepSetSTSMethod` and :c:func:`LSRKStepSetSSPMethod`
+        instead.
+
+      * For MRIStep, :math:`1 \le` *ord* :math:`\le 5`, and the default
+        value is 3.
+
+      * For SplittingStep, :math:`1 \le` *ord*, and the default value is 1.
+
+      * For SPRKStep, *ord* :math:`\in \{1,2,3,4,5,6,8,10\}`, and the default
+        value is 4.
 
       Since *ord* affects the memory requirements for the internal
       ARKODE memory block, it cannot be changed after the first call to

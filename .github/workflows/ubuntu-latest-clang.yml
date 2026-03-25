@@ -41,6 +41,7 @@ jobs:
         -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
         -D CMAKE_C_COMPILER="$(which clang)" \
         -D CMAKE_CXX_COMPILER="$(which clang++)" \
+        -D CMAKE_CXX_STANDARD=17 \
         -D SUNDIALS_LOGGING_LEVEL=${{matrix.logging_level}} \
         -D ENABLE_ALL_WARNINGS=ON \
         -D ENABLE_WARNINGS_AS_ERRORS=ON \
