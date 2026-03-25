@@ -72,7 +72,7 @@ foreach(test_tuple ${ARKODE_unit_tests})
               sundials_nvecmanyvector_obj
               sundials_sunlinsolband_obj
               sundials_sunlinsoldense_obj
-              sundials_sunnonlinsolauto_obj
+              $<TARGET_OBJECTS:sundials_sunnonlinsolauto_obj>
               sundials_sunnonlinsolnewton_obj
               sundials_sunadaptcontrollerimexgus_obj
               sundials_sunadaptcontrollersoderlind_obj

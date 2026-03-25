@@ -31,7 +31,7 @@ target_link_libraries(
           sundials_nvecserial_obj
           sundials_sunlinsolband_obj
           sundials_sunlinsoldense_obj
-          sundials_sunnonlinsolauto_obj
+          $<TARGET_OBJECTS:sundials_sunnonlinsolauto_obj>
           sundials_sunnonlinsolnewton_obj
           ${EXE_EXTRA_LINK_LIBS})
 
