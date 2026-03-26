@@ -4922,9 +4922,10 @@ static void IDAQuadSensFreeVectors(IDAMem IDA_mem)
 /*
  * IDAInitialSetup
  *
- * This routine is called by IDASolve once at the first step.
- * It performs all checks on optional inputs and inputs to
- * IDAInit/IDAReInit that could not be done before.
+ * This routine is called by IDASolve once at the first step or when
+ * computing consistent initial conditions. It performs all checks
+ * on optional inputs and inputs to IDAInit/IDAReInit that could not
+ * be done before.
  *
  * If no error is encountered, IDAInitialSetup returns IDA_SUCCESS.
  * Otherwise, it returns an error flag and reported to the error
@@ -5156,7 +5157,14 @@ int IDAInitialSetup(IDAMem IDA_mem)
 /*
  * IDAQuadSetup
  *
- * 
+ * This routine is called by IDASolve once at the first step. It
+ * fills in phiQ[1] and phiQS[1] since they are not provided by
+ * the user. It is important this is NOT done in the IDAInitialSetup
+ * routine because that can be called just before finding consistent
+ * initial conditions. If quadrature is not set by that point, that
+ * would incorrectly use phiQ[1] = 0 and phiQS[1] = 0. Even if
+ * IDAQuadInit is called before IDACalcIC, phiQ[1] and phiQS[1] would
+ * be evaluated at the inconsistent initial condition.
  */
 static int IDAQuadSetup(IDAMem IDA_mem)
 {
