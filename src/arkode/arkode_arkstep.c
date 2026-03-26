@@ -1045,28 +1045,22 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     /*   Allocate Fe[0] ... Fe[stages-1] if needed */
     if (step_mem->explicit)
     {
-      if (step_mem->Fe == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fe),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fe),
-                              ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                              &(ark_mem->liw)))
-        {
-          return (ARK_MEM_FAIL);
-        }
+        return (ARK_MEM_FAIL);
       }
     }
 
     /*   Allocate Fi[0] ... Fi[stages-1] if needed */
     if (step_mem->implicit)
     {
-      if (step_mem->Fi == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fi),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fi),
-                              ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                              &(ark_mem->liw)))
-        {
-          return (ARK_MEM_FAIL);
-        }
+        return (ARK_MEM_FAIL);
       }
     }
 
@@ -1075,14 +1069,11 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     if (ark_mem->relax_enabled &&
         (step_mem->implicit || step_mem->mass_type == MASS_FIXED))
     {
-      if (step_mem->z == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->z),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->z),
-                              ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                              &(ark_mem->liw)))
-        {
-          return (ARK_MEM_FAIL);
-        }
+        return (ARK_MEM_FAIL);
       }
     }
 
