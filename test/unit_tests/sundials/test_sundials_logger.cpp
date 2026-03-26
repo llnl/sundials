@@ -37,6 +37,48 @@
   return std::count(s.begin(), s.end(), '\n');
 }
 
+TEST(SUNLoggerTest, DefaultErrorLogger)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_ERROR
+  GTEST_SKIP() << "Errors not enabled in this build";
+#else
+  testing::internal::CaptureStderr();
+
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "scope", "label",
+                               "test"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+
+  EXPECT_EQ(CountLines(testing::internal::GetCapturedStderr()), 1);
+
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  ASSERT_EQ(logger, nullptr);
+#endif
+}
+
+TEST(SUNLoggerTest, DefaultWarningLogger)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_WARNING
+  GTEST_SKIP() << "Warnings not enabled in this build";
+#else
+  testing::internal::CaptureStdout();
+
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_WARNING, "scope", "label",
+                               "test"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+
+  EXPECT_EQ(CountLines(testing::internal::GetCapturedStdout()), 1);
+
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  ASSERT_EQ(logger, nullptr);
+#endif
+}
+
 TEST(SUNLoggerTest, EmptyFilenameDisablesErrorOutput)
 {
 #if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_ERROR
