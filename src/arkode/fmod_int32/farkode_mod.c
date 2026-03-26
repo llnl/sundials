@@ -356,6 +356,18 @@ SWIGEXPORT int _wrap_FARKodeReset(void *farg1, double const *farg2, N_Vector far
 }
 
 
+SWIGEXPORT int _wrap_FARKodeInit(void *farg1) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  result = (int)ARKodeInit(arg1);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FARKodeCreateMRIStepInnerStepper(void *farg1, void *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -715,18 +727,6 @@ SWIGEXPORT int _wrap_FARKodeSetPostprocessStageFn(void *farg1, ARKPostProcessFn 
   arg1 = (void *)(farg1);
   arg2 = (ARKPostProcessFn)(farg2);
   result = (int)ARKodeSetPostprocessStageFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FARKodeAllocateInternalData(void *farg1) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  result = (int)ARKodeAllocateInternalData(arg1);
   fresult = (int)(result);
   return fresult;
 }
