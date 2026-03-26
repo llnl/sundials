@@ -460,14 +460,11 @@ int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
 
   /* Allocate RHS vector memory, update storage requirements */
   /*   Allocate F[0] ... F[stages-1] if needed */
-  if (step_mem->F == NULL)
+  if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->F),
+                        ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                        &(ark_mem->liw)))
   {
-    if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->F),
-                          ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                          &(ark_mem->liw)))
-    {
-      return (ARK_MEM_FAIL);
-    }
+    return (ARK_MEM_FAIL);
   }
 
   /* Allocate reusable arrays for fused vector interface */
