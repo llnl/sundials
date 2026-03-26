@@ -2938,7 +2938,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
   if (!ark_mem->fixedstep)
   {
-    retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tn,
+    retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
                                        ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {

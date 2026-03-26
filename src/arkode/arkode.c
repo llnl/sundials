@@ -1754,7 +1754,7 @@ int arkRwtSet(N_Vector y, N_Vector weight, void* data)
       init_type == FIRST_INIT), or
   (c) an ARKODE timestepper module re-initialization routine
       (with init_type == FIRST_INIT).
-  This should never by the user.
+  This should never be called by the user.
 
   The initialization type indicates if the values of internal
   counters should be reinitialized (FIRST_INIT) or retained
