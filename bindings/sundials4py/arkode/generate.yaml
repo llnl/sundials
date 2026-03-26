@@ -30,7 +30,7 @@ modules:
     # TODO(CJB): Making d_1d a nullopt argument causes this error 
     # `Critical nanobind error: Negative ndarray sizes are not allowed here!`
     # So we manually bind it for now.
-    - "ARKodeButcherTable_Create":
+    - "ARKodeButcherTable_Create"
     macro_define_include_by_name__regex:
     - "^SUN_"
     - "^ARK_"
