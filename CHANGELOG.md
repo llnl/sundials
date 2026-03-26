@@ -33,8 +33,8 @@ and `ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, 
 their minimum allowable values of 2 and 4. Users may revert to the previous values
 by calling `LSRKStepSetNumSSPStages`.
 
-Added the function `ARKodeAllocateInternalData` to ARKODE to enable
-stage-related data allocation before the first call to `ARKodeEvolve`
+Added the optional function `ARKodeInit` to ARKODE to enable
+data allocation before the first call to `ARKodeEvolve`
 (but after all other optional input routines have been called), to support
 users who measure memory usage before beginning a simulation.
 

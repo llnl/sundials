@@ -5431,9 +5431,9 @@ internal data before the first call to :c:func:`ARKodeEvolve`, the user
 may call the function :c:func:`ARKodeAllocateInternalData`.
 
 
-.. c:function:: int ARKodeAllocateInternalData(void* arkode_mem)
+.. c:function:: int ARKodeInit(void* arkode_mem)
 
-   Optionally allocates stage-related internal data for the current ARKODE time-stepper module.
+   Optionally allocates internal data for the current ARKODE time-stepper module.
 
    :param arkode_mem: pointer to the ARKODE memory block.
 

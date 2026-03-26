@@ -253,6 +253,9 @@ SUNDIALS_EXPORT int ARKodeResize(void* arkode_mem, N_Vector ynew,
                                  ARKVecResizeFn resize, void* resize_data);
 SUNDIALS_EXPORT int ARKodeReset(void* arkode_mem, sunrealtype tR, N_Vector yR);
 
+/* Optional data allocation function */
+SUNDIALS_EXPORT int ARKodeInit(void* arkode_mem);
+
 /* Utility to wrap ARKODE as an MRIStepInnerStepper */
 SUNDIALS_EXPORT int ARKodeCreateMRIStepInnerStepper(void* arkode_mem,
                                                     MRIStepInnerStepper* stepper);
@@ -295,7 +298,6 @@ SUNDIALS_EXPORT int ARKodeSetPostprocessStepFn(void* arkode_mem,
                                                ARKPostProcessFn ProcessStep);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStageFn(void* arkode_mem,
                                                 ARKPostProcessFn ProcessStage);
-SUNDIALS_EXPORT int ARKodeAllocateInternalData(void* arkode_mem);
 
 /* Optional input functions (implicit solver) */
 SUNDIALS_EXPORT int ARKodeSetNonlinearSolver(void* arkode_mem,

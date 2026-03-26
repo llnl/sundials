@@ -2296,14 +2296,14 @@ int ARKodeSetUseCompensatedSums(void* arkode_mem, sunbooleantype onoff)
 }
 
 /*---------------------------------------------------------------
-  ARKodeAllocateInternalData:
+  ARKodeInit:
 
   Allocates internal data structures for an ARKODE stepper module
   before the first call to ARKodeEvolve.
 
   **THIS MUST BE CALLED AFTER ALL "SET" ROUTINES.**
   ---------------------------------------------------------------*/
-int ARKodeAllocateInternalData(void* arkode_mem)
+int ARKodeInit(void* arkode_mem)
 {
   ARKodeMem ark_mem;
   int retval;
