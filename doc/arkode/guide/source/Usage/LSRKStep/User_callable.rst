@@ -348,7 +348,7 @@ Allowable Method Families
       have the option to choose their preference for a more conservative or more aggressive 
       approach to stability. This input is only used for RKC and RKL methods.
 
-      .. figure:: ../../../../../arkode/guide/source/figs/arkode/STS2_region_s10.png
+      .. figure:: ../../../../../shared/figs/arkode/STS2_region_s10.png
          :alt: Stability region of RKL method with 10 stages
          :align: center
          :width: 50%

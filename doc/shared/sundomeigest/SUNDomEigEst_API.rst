@@ -209,6 +209,27 @@ instead of supplying a dummy routine.
       A :c:type:`SUNErrCode`.
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data, SUNRHSFn RHSfn)
+
+   This *optional* function provides a :c:type:`SUNRHSFn` function for performing
+   evaluations of the right-hand side function, as well as a ``void*`` pointer to a data structure
+   used by this routine, to the dominant eigenvalue estimator. This function allows the estimator to
+   perform a discrete Jacobian-vector product using quotient approximations of the Jacobian and estimate
+   dominant eigenvalues of the Jacobian without requiring the user to provide a matrix-vector product 
+   function. This can be useful when the user does not have access to the Jacobian or its matrix-vector 
+   product, but can evaluate the right-hand side function.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *rhs_data* -- pointer to structure for ``RHSfn``.
+      * *RHSfn* -- function pointer to perform right-hand side evaluations.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE, int num_iters)
 
    This *optional* routine sets the number of preprocessing matrix-vector
@@ -243,6 +264,7 @@ instead of supplying a dummy routine.
 
       This routine will be called by :c:func:`SUNDomEigEstimator_SetOptions`
       when using the key "Did.num_preprocess_iters".
+
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRelTol(SUNDomEigEstimator DEE, sunrealtype rel_tol)
 
@@ -442,11 +464,21 @@ dominant eigenvalue estimator.  *All routines are optional.*
 Functions provided by SUNDIALS packages
 ---------------------------------------------
 
-To interface with SUNDomEigEst modules, the SUNDIALS packages supply a
-:c:type:`SUNATimesFn` function for evaluating the matrix-vector product. This
-package-provided routine translates between the user-supplied ODE or DAE systems
-and the generic dominant eigenvalue estimator API. The function types for these
+To interface with SUNDomEigEst modules, the SUNDIALS packages supply
+:c:type:`SUNATimesFn` and :c:type:`SUNRHSFn` functions for evaluating the matrix-vector 
+product. This package-provided routine translates between the user-supplied ODE or DAE 
+systems and the generic dominant eigenvalue estimator API. The function types for these
 routines are defined in the header file ``sundials/sundials_iterative.h``.
+
+
+.. c:type:: int (*SUNRHSFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)
+
+   Used to compute the right-hand side of an ODE or DAE system. This function is used 
+   when the dominant eigenvalue estimator is configured to perform a discrete 
+   Jacobian-vector product using quotient approximations of the Jacobian. The parameter
+   *rhs_data* is a pointer to any information about RHS which the function needs in order 
+   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left 
+   unchanged.
 
 
 .. _SUNDomEigEst.Generic:
