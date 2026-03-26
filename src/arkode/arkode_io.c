@@ -3306,6 +3306,7 @@ char* ARKodeGetReturnFlagName(long int flag)
   case ARK_SUNSTEPPER_ERR: sprintf(name, "ARK_SUNSTEPPER_ERR"); break;
   case ARK_STEP_DIRECTION_ERR: sprintf(name, "ARK_STEP_DIRECTION_ERR"); break;
   case ARK_UNRECOGNIZED_ERROR: sprintf(name, "ARK_UNRECOGNIZED_ERROR"); break;
+  case ARK_STEP_H0_FAIL: sprintf(name, "ARK_STEP_H0_FAIL"); break;
   default: sprintf(name, "NONE");
   }
 

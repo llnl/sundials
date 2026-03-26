@@ -160,6 +160,8 @@ extern "C" {
 
 #define ARK_DEE_FAIL -59
 
+#define ARK_STEP_H0_FAIL -60
+
 #define ARK_UNRECOGNIZED_ERROR -99
 
 /* ------------------------------

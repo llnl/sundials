@@ -1334,24 +1334,6 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
                         __FILE__, "Timestep adaptivity enabled, but non-embedded MRI table specified");
         return (ARK_ILL_INPUT);
       }
-      if (ark_mem->hin == ZERO)
-      {
-        /*   tempv1 = fslow(t0, y0) */
-        if (mriStep_SlowRHS(ark_mem, ark_mem->tn, ark_mem->yn, ark_mem->tempv1,
-                            ARK_FULLRHS_START) != ARK_SUCCESS)
-        {
-          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
-                          __FILE__, "error calling slow RHS function(s)");
-          return (ARK_RHSFUNC_FAIL);
-        }
-        retval = mriStep_Hin(ark_mem, ark_mem->tn, tout, ark_mem->tempv1,
-                             &(ark_mem->hin));
-        if (retval != ARK_SUCCESS)
-        {
-          retval = arkHandleFailure(ark_mem, retval);
-          return (retval);
-        }
-      }
     }
 
     /* Perform additional setup for (H,tol) controller */
@@ -1378,6 +1360,38 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
   if (init_type == FIRST_INIT) { step_mem->preallocated = SUNFALSE; }
 
   return (ARK_SUCCESS);
+}
+
+/*------------------------------------------------------------------------------
+  mriStep_ComputeH0:
+
+  This utility routine computes the initial slow step size for MRI methods.
+
+  It is assumed that the IVP is defined by multiple RHS functions,
+     y'(t) = f(t,y) = fs(t,y)  + ff(t,y),
+  where fs corresponds to dynamics that should be evolved directly by MRIStep,
+  and ff corresponds to dynamics that will be evolved by an inner stepper.
+  ----------------------------------------------------------------------------*/
+int mriStep_ComputeH0(ARKodeMem ark_mem, sunrealtype tout, sunrealtype *hin)
+{
+  int retval;
+
+  /*   tempv1 = fs(t0, y0) */
+  if (mriStep_SlowRHS(ark_mem, ark_mem->tn, ark_mem->yn, ark_mem->tempv1,
+                      ARK_FULLRHS_START) != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
+                      __FILE__, "error calling slow RHS function(s)");
+      return (ARK_RHSFUNC_FAIL);
+    }
+    retval = mriStep_Hin(ark_mem, ark_mem->tn, tout, ark_mem->tempv1, hin);
+    if (retval != ARK_SUCCESS)
+    {
+      retval = arkHandleFailure(ark_mem, retval);
+      return (retval);
+    }
+
+  return ARK_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------

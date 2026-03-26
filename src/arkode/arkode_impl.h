@@ -232,6 +232,8 @@ typedef int (*ARKTimestepSetOptions)(ARKodeMem ark_mem, int* argidx, char* argv[
                                      size_t offset, sunbooleantype* arg_used);
 
 /* time stepper interface functions -- temporal adaptivity */
+typedef int (*ARKTimestepComputeH0)(ARKodeMem ark_mem, sunrealtype tout,
+                                    sunrealtype *hin);
 typedef int (*ARKTimestepGetEstLocalErrors)(ARKodeMem ark_mem, N_Vector ele);
 typedef int (*ARKSetAdaptControllerFn)(ARKodeMem ark_mem, SUNAdaptController C);
 
@@ -426,6 +428,7 @@ struct ARKodeMemRec
 
   /* Time stepper module -- temporal adaptivity */
   sunbooleantype step_supports_adaptive;
+  ARKTimestepComputeH0 step_H0;
   ARKSetAdaptControllerFn step_setadaptcontroller;
   ARKTimestepGetEstLocalErrors step_getestlocalerrors;
 

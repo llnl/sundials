@@ -1582,6 +1582,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->step_setstepdirection          = NULL;
   ark_mem->step_setoptions                = NULL;
   ark_mem->step_getnumlinsolvsetups       = NULL;
+  ark_mem->step_H0                        = NULL;
   ark_mem->step_setadaptcontroller        = NULL;
   ark_mem->step_getestlocalerrors         = NULL;
   ark_mem->step_getcurrentgamma           = NULL;
@@ -2187,6 +2188,19 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "Stop time interpolation requires an interpolation module");
     return ARK_ILL_INPUT;
+  }
+
+  /* Call stepper-provided initial step size estimation routine to fill
+     ark_mem->hin, if applicable. */
+  if (ark_mem->h0u == ZERO && ark_mem->hin == ZERO &&
+      !ark_mem->fixedstep && ark_mem->step_H0)
+  {
+    if (ark_mem->step_H0(ark_mem, tout, &(ark_mem->hin)))
+    {
+      arkProcessError(ark_mem, ARK_STEP_H0_FAIL, __LINE__, __func__, __FILE__,
+                      "Failure in timestepping module h0 calculation");
+      return ARK_STEP_H0_FAIL;
+    }
   }
 
   /* If fullrhs will be called (to estimate initial step, explicit steppers, Hermite
