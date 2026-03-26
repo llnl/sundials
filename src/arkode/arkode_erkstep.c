@@ -297,9 +297,8 @@ void erkStep_Free(ARKodeMem ark_mem)
     /* free the RHS vectors */
     if (step_mem->F)
     {
-      arkFreeVecArray(step_mem->stages, &(step_mem->F),
-                      ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                      &(ark_mem->liw));
+      arkFreeVecArray(step_mem->stages, &(step_mem->F), ark_mem->lrw1,
+                      &(ark_mem->lrw), ark_mem->liw1, &(ark_mem->liw));
       step_mem->F = NULL;
     }
 
