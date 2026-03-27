@@ -947,8 +947,7 @@ int arkStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
     on ARKStep solver options)
   - updates the call_fullrhs flag if necessary
   ---------------------------------------------------------------*/
-int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                 int init_type)
+int arkStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeARKStepMem step_mem;
   int retval;

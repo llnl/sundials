@@ -205,8 +205,7 @@ typedef int (*ARKMassSolveFn)(ARKodeMem ark_mem, N_Vector b,
 typedef int (*ARKMassFreeFn)(ARKodeMem ark_mem);
 
 /* time stepper interface functions -- general */
-typedef int (*ARKTimestepInitFn)(ARKodeMem ark_mem, sunrealtype tout,
-                                 int init_type);
+typedef int (*ARKTimestepInitFn)(ARKodeMem ark_mem, int init_type);
 typedef int (*ARKTimestepFullRHSFn)(ARKodeMem ark_mem, sunrealtype t,
                                     N_Vector y, N_Vector f, int mode);
 typedef int (*ARKTimestepStepFn)(ARKodeMem ark_mem, sunrealtype* dsm, int* nflag);
