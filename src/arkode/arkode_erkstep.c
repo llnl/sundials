@@ -272,7 +272,6 @@ int erkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   ---------------------------------------------------------------*/
 void erkStep_Free(ARKodeMem ark_mem)
 {
-  int j;
   sunindextype Bliw, Blrw;
   ARKodeERKStepMem step_mem;
 
