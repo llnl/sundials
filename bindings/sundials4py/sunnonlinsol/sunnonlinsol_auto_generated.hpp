@@ -46,9 +46,6 @@ m.def(
   nb::arg("y"), nb::arg("m"), nb::arg("active_solver_type"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
-m.def("SUNNonlinSolSetSysFns_Auto", SUNNonlinSolSetSysFns_Auto, nb::arg("NLS"),
-      nb::arg("root_fn"), nb::arg("fixed_point_fn"));
-
 m.def("SUNNonlinSolSetSwitchingParameters_Auto",
       SUNNonlinSolSetSwitchingParameters_Auto, nb::arg("NLS"),
       nb::arg("newt_to_fp_threshold"), nb::arg("newt_to_fp_delay"),
