@@ -1,5 +1,5 @@
 numpydoc
-sphinx >=6.0.0
+sphinx >=6.0.0,<9
 sphinx_rtd_theme
 sphinx-copybutton
 sphinx-fortran
