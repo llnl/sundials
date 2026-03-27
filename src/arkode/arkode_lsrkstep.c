@@ -1266,7 +1266,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* The method is not FSAL. Therefore, fn ​is computed at the beginning
+  /* The method is not FSAL. Therefore, fn is computed at the beginning
      of the step unless a renewed step or ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
@@ -1451,7 +1451,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* The method is not FSAL. Therefore, fn ​is computed at the beginning
+  /* The method is not FSAL. Therefore, fn is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
@@ -1736,7 +1736,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* The method is not FSAL. Therefore, fn ​is computed at the beginning
+  /* The method is not FSAL. Therefore, fn is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
@@ -1941,7 +1941,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* The method is not FSAL. Therefore, fn ​is computed at the beginning
+  /* The method is not FSAL. Therefore, fn is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
@@ -2494,7 +2494,7 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
   if (step_mem->use_ellipse)
   {
     /* The stability region of the damped RKC method is approximated by an ellipse with 
-    vertices at (0,0), (re_stab_min,0), and (re_stab_min/2,±im_stab_min). These vertices 
+    vertices at (0,0), (re_stab_min,0), and (re_stab_min/2,+/-im_stab_min). These vertices
     depend on the damping parameter. Also, im_stab_min is estimated heuristically from 
     the ellipse aspect ratio, taken as approximately 3.65s, where s is the number of stages 
     (for s=2, the ratio is approximated as 0.6s). This heuristic reflects the observed 
