@@ -2192,8 +2192,8 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
 
   /* Call stepper-provided initial step size estimation routine to fill
      ark_mem->hin, if applicable. */
-  if (ark_mem->h0u == ZERO && ark_mem->hin == ZERO &&
-      !ark_mem->fixedstep && ark_mem->step_H0)
+  if (ark_mem->h0u == ZERO && ark_mem->hin == ZERO && !ark_mem->fixedstep &&
+      ark_mem->step_H0)
   {
     if (ark_mem->step_H0(ark_mem, tout, &(ark_mem->hin)))
     {
