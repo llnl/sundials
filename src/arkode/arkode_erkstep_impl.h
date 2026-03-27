@@ -84,7 +84,7 @@ typedef struct ARKodeERKStepMemRec
   ===============================================================*/
 
 /* Interface routines supplied to ARKODE */
-int erkStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int erkStep_Init(ARKodeMem ark_mem, int init_type);
 int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
                     int mode);
 int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);

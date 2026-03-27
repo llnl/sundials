@@ -361,8 +361,7 @@ void sprkStep_Free(ARKodeMem ark_mem)
 
   With initialization type RESET_INIT, this routine does nothing.
   ---------------------------------------------------------------*/
-int sprkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                  int init_type)
+int sprkStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeSPRKStepMem step_mem = NULL;
   int retval                 = 0;

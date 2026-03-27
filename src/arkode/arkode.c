@@ -2105,7 +2105,7 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
                     "Time stepper module is missing");
     return (ARK_ILL_INPUT);
   }
-  retval = ark_mem->step_init(ark_mem, tout, ark_mem->init_type);
+  retval = ark_mem->step_init(ark_mem, ark_mem->init_type);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,

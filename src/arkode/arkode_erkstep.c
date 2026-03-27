@@ -393,8 +393,7 @@ void erkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
 
   With other initialization types, this routine does nothing.
   ---------------------------------------------------------------*/
-int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                 int init_type)
+int erkStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeERKStepMem step_mem;
   sunbooleantype reset_efun;

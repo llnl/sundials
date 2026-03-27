@@ -327,8 +327,7 @@ int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
 
   With other initialization types, this routine does nothing.
   ---------------------------------------------------------------*/
-int lsrkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                  int init_type)
+int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeLSRKStepMem step_mem;
   int retval;

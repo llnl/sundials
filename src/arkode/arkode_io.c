@@ -2324,7 +2324,7 @@ int ARKodeInit(void* arkode_mem)
                     "Time stepper module is missing");
     return (ARK_ILL_INPUT);
   }
-  retval = ark_mem->step_init(ark_mem, ZERO, ALLOC_INIT);
+  retval = ark_mem->step_init(ark_mem, ALLOC_INIT);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
