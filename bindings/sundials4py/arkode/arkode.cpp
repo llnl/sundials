@@ -250,8 +250,8 @@ void bind_arkode(nb::module_& m)
   m.def("ARKodeSetMassLinearSolver", ARKodeSetMassLinearSolver,
         nb::arg("arkode_mem"), nb::arg("LS"), nb::arg("M").none(),
         nb::arg("time_dep"));
-  
-  // TODO(CJB) The nullopt approach of handling None args doesnt seem to be compatible with sundials4py::Array1d, 
+
+  // TODO(CJB) The nullopt approach of handling None args doesnt seem to be compatible with sundials4py::Array1d,
   // so we just use none() for the Bi and Be args here for now.
   m.def(
     "ARKodeButcherTable_Create",
