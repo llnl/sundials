@@ -77,6 +77,9 @@ eigenvalue estimate is requested on the first step in a subsequent call to
 `ARKodeEvolve` unless the output vector passed contained the most recently returned
 solution.
 
+Fixed a bug in MRIStep for estimating the first "slow" time step in an adaptive
+multirate calculation.
+
 ### Deprecation Notices
 
 Several CMake options have been deprecated in favor of namespaced versions
