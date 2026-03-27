@@ -933,7 +933,9 @@ int mriStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
 
   With other initialization types, this routine does nothing.
   ---------------------------------------------------------------*/
-int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
+int mriStep_Init(ARKodeMem ark_mem,
+                 SUNDIALS_MAYBE_UNUSED sunrealtype tout,
+                 int init_type)
 {
   ARKodeMRIStepMem step_mem;
   int retval, j;
