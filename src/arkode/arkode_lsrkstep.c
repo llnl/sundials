@@ -575,10 +575,9 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype ss = SUNRceil(SUNRsqrt(ONE - coefz * zR));
   ss             = SUNMAX(ss, SUN_RCONST(2.0));
 
-  /* Check if number of stages exceeds maximum allowed.
-     If so, and if adaptive stepping is enabled, reduce step size
-     and return ARK_RETRY_STEP. If fixed step size, return
-     ARK_MAX_STAGE_LIMIT_FAIL error. */
+  /* Check if number of stages exceeds maximum allowed.  If so, and if adaptive
+     stepping is enabled, reduce step size and return ARK_RETRY_STEP. If fixed
+     step size, return ARK_MAX_STAGE_LIMIT_FAIL error. */
   if (ss >= step_mem->stage_max_limit)
   {
     SUNLogInfo(ARK_LOGGER, "compute-num-stages",
@@ -608,11 +607,12 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
 
   step_mem->req_stages = (int)ss;
-  /* To check stability, we evaluate the analytic stability function or an inscribed 
-     ellipse approximation. If the stability norm is greater than one, 
-     for adaptive stepping, we reduce step size and return ARK_RETRY_STEP. 
-     For fixed step size, we increase number of stages until stability norm is acceptable 
-     or stage_max_limit is reached. */
+
+  /* To check stability, we evaluate the analytic stability function or an
+     inscribed ellipse approximation. If the stability norm is greater than one,
+     for adaptive stepping, we reduce step size and return ARK_RETRY_STEP. For
+     fixed step size, we increase number of stages until stability norm is
+     acceptable or stage_max_limit is reached. */
   retval = lsrkStep_RKC_CheckStabilityNorm(ark_mem, step_mem, &stability_norm);
   if (retval != ARK_SUCCESS) { return retval; }
 
@@ -934,10 +934,9 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   ss = SUNMAX(ss, SUN_RCONST(2.0));
 
-  /* Check if number of stages exceeds maximum allowed.
-     If so, and if adaptive stepping is enabled, reduce step size
-     and return ARK_RETRY_STEP. If fixed step size, return
-     ARK_MAX_STAGE_LIMIT_FAIL error. */
+  /* Check if number of stages exceeds maximum allowed. If so, and if adaptive
+     stepping is enabled, reduce step size and return ARK_RETRY_STEP. If fixed
+     step size, return ARK_MAX_STAGE_LIMIT_FAIL error. */
   if (ss >= step_mem->stage_max_limit)
   {
     SUNLogInfo(ARK_LOGGER, "compute-num-stages",
@@ -968,11 +967,12 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
 
   step_mem->req_stages = (int)ss;
-  /* To check stability, we evaluate the analytic stability function or an inscribed 
-     ellipse approximation. If the stability norm is greater than one, 
-     for adaptive stepping, we reduce step size and return ARK_RETRY_STEP. 
-     For fixed step size, we increase number of stages until stability norm is acceptable 
-     or stage_max_limit is reached. */
+
+  /* To check stability, we evaluate the analytic stability function or an
+     inscribed ellipse approximation. If the stability norm is greater than one,
+     for adaptive stepping, we reduce step size and return ARK_RETRY_STEP. For
+     fixed step size, we increase number of stages until stability norm is
+     acceptable or stage_max_limit is reached. */
   retval = lsrkStep_RKL_CheckStabilityNorm(ark_mem, step_mem, &stability_norm);
   if (retval != ARK_SUCCESS) { return retval; }
 
@@ -2477,10 +2477,10 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
 /*---------------------------------------------------------------
   lsrkStep_RKC_CheckStabilityNorm:
 
-  This routine computes the stability norm for RKC methods. 
-  If use_ellipse is SUNTRUE, we use a heuristic that approximates the stability region by an ellipse. 
-  If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
-  the Chebyshev polynomial.
+  This routine computes the stability norm for RKC methods. If use_ellipse is
+  SUNTRUE, we use a heuristic that approximates the stability region by an
+  ellipse.  If use_ellipse is SUNFALSE, we compute the stability norm directly
+  from the stability function using the Chebyshev polynomial.
   ---------------------------------------------------------------*/
 int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                     sunrealtype* stability_norm)
@@ -2493,14 +2493,16 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
 
   if (step_mem->use_ellipse)
   {
-    /* The stability region of the damped RKC method is approximated by an ellipse with 
-    vertices at (0,0), (re_stab_min,0), and (re_stab_min/2,+/-im_stab_min). These vertices
-    depend on the damping parameter. Also, im_stab_min is estimated heuristically from 
-    the ellipse aspect ratio, taken as approximately 3.65s, where s is the number of stages 
-    (for s=2, the ratio is approximated as 0.6s). This heuristic reflects the observed 
-    near-linear growth of the imaginary extent with the number of stages. The numerical 
-    factors (3.65 and 0.6) were obtained empirically from stability-region plots using 
-    the default damping parameter and may change if the damping is modified. */
+    /* The stability region of the damped RKC method is approximated by an
+       ellipse with vertices at (0,0), (re_stab_min,0), and
+       (re_stab_min/2,+/-im_stab_min). These vertices depend on the damping
+       parameter. Also, im_stab_min is estimated heuristically from the ellipse
+       aspect ratio, taken as approximately 3.65s, where s is the number of
+       stages (for s=2, the ratio is approximated as 0.6s). This heuristic
+       reflects the observed near-linear growth of the imaginary extent with the
+       number of stages. The numerical factors (3.65 and 0.6) were obtained
+       empirically from stability-region plots using the default damping
+       parameter and may change if the damping is modified. */
     re_stab_min = TWO / THREE * (ONE - SUNSQR(ss)) *
                   (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping);
     im_stab_min = -re_stab_min /
@@ -2548,10 +2550,10 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
 /*---------------------------------------------------------------
   lsrkStep_RKL_CheckStabilityNorm:
 
-  This routine computes the stability norm for RKL methods. 
-  If use_ellipse is SUNTRUE, we use a heuristic that approximates the stability region by an ellipse. 
-  If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
-  the Chebyshev polynomial.
+  This routine computes the stability norm for RKL methods. If use_ellipse is
+  SUNTRUE, we use a heuristic that approximates the stability region by an
+  ellipse. If use_ellipse is SUNFALSE, we compute the stability norm directly
+  from the stability function using the Chebyshev polynomial.
   ---------------------------------------------------------------*/
 int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                     sunrealtype* stability_norm)
@@ -2598,10 +2600,12 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
         im_stab_min = -re_stab_min / (imag_extend_factor[6 - (int)ss % 2] * ss);
       }
     }
-    // TODO: get opinon on whether we want to use the heuristic with different factors for different number of stages or
-    // to use a single global factor for all number of stages. The heuristic with different factors for different number
-    // of stages is more accurate, especially for small number of stages, but it is also more complicated.
-    // Instead we can use a single global factor of 1.5 for all number of stages as follows:
+    // TODO: get opinon on whether we want to use the heuristic with different
+    // factors for different number of stages or to use a single global factor
+    // for all number of stages. The heuristic with different factors for
+    // different number of stages is more accurate, especially for small number
+    // of stages, but it is also more complicated.  Instead we can use a single
+    // global factor of 1.5 for all number of stages as follows:
     // im_stab_min = -re_stab_min / (SUN_RCONST(1.5) * ss);
 
     xc = re_stab_min / TWO;
