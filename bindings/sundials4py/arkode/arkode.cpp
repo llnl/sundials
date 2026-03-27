@@ -251,8 +251,8 @@ void bind_arkode(nb::module_& m)
         nb::arg("arkode_mem"), nb::arg("LS"), nb::arg("M").none(),
         nb::arg("time_dep"));
 
-  // TODO(CJB) The nullopt approach of handling None args doesnt seem to be compatible with sundials4py::Array1d,
-  // so we just use none() for the Bi and Be args here for now.
+  // TODO(CJB) The nullopt approach of handling None args doesn't seem to be compatible 
+  // with sundials4py::Array1d, so we just use none() for the Bi and Be args here for now.
   m.def(
     "ARKodeButcherTable_Create",
     [](int s, int q, int p, sundials4py::Array1d c_1d, sundials4py::Array1d A_1d,
