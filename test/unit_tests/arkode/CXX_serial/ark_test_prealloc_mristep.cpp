@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
   sunrealtype tret        = zero;
   sunrealtype tout        = tret + dtout;
 
-  // Output initial contion
+  // Output initial condition
   cout << scientific;
   cout << setprecision(numeric_limits<sunrealtype>::digits10);
   cout << "           t              ";

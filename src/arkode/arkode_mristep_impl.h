@@ -75,9 +75,6 @@ typedef struct ARKodeMRIStepMemRec
   sunbooleantype implicit_rhs;   /* SUNTRUE if fsi is provided     */
   sunbooleantype deduce_rhs;     /* SUNTRUE if fi is deduced after
                                     a nonlinear solve              */
-  sunbooleantype preallocated;   /* SUNTRUE if data has been
-                                   preallocated in a call to
-                                   mriStep_Init with ALLOC_INIT    */
 
   /* Outer RK method storage and parameters */
   N_Vector* Fse;           /* explicit RHS at each stage               */
