@@ -1320,8 +1320,8 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     }
 
     /* Controller provides adaptivity (at least at the slow time scale):
-        - verify that the MRI method includes an embedding, and
-        - estimate initial slow step size (store in ark_mem->hin) */
+       - verify that the MRI method includes an embedding, and
+       - estimate initial slow step size (store in ark_mem->hin) */
     if (step_mem->MRIC->p <= 0)
     {
       arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,

@@ -99,9 +99,9 @@ extern "C" {
 /*---------------------------------------------------------------
   Initialization types
   ---------------------------------------------------------------*/
-#define FIRST_INIT  0 /* first step (re-)initialization    */
-#define RESET_INIT  1 /* reset initialization              */
-#define RESIZE_INIT 2 /* resize initialization             */
+#define FIRST_INIT  0 /* first step (re-)initialization */
+#define RESET_INIT  1 /* reset initialization           */
+#define RESIZE_INIT 2 /* resize initialization          */
 
 /*---------------------------------------------------------------
   Control constants for lower-level time-stepping functions
@@ -555,7 +555,7 @@ struct ARKodeMemRec
   sunbooleantype firststage;   /* denotes first stage in simulation          */
   sunbooleantype initialized;  /* denotes arkInitialSetup has been done      */
   sunbooleantype call_fullrhs; /* denotes the full RHS fn will be called     */
-  sunbooleantype preallocated;   /* SUNTRUE if ARKodeInit has been
+  sunbooleantype preallocated; /* SUNTRUE if ARKodeInit has been
                                     called to preallocate data
                                     prior to ARKodeEvolve */
 

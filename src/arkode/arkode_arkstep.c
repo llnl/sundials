@@ -1096,19 +1096,19 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
        start with a fast integration */
     // if (step_mem->expforcing || step_mem->impforcing)
     // {
-      if (!(step_mem->stage_times))
-      {
-        step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
-                                                     sizeof(sunrealtype));
-        ark_mem->lrw += step_mem->stages;
-      }
+    if (!(step_mem->stage_times))
+    {
+      step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
+                                                   sizeof(sunrealtype));
+      ark_mem->lrw += step_mem->stages;
+    }
 
-      if (!(step_mem->stage_coefs))
-      {
-        step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
-                                                     sizeof(sunrealtype));
-        ark_mem->lrw += step_mem->stages;
-      }
+    if (!(step_mem->stage_coefs))
+    {
+      step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
+                                                   sizeof(sunrealtype));
+      ark_mem->lrw += step_mem->stages;
+    }
     // }
 
     /* Override the interpolant degree (if needed), used in arkInitialSetup */
