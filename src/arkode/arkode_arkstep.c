@@ -1091,11 +1091,7 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     }
 
     /* Allocate workspace for MRI forcing -- need to allocate here as the
-       number of stages may not bet set before this point and we assume
-       SetInnerForcing has been called before the first step i.e., methods
-       start with a fast integration */
-    // if (step_mem->expforcing || step_mem->impforcing)
-    // {
+       number of stages may not bet set before this point */
     if (!(step_mem->stage_times))
     {
       step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
@@ -1109,7 +1105,6 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
                                                    sizeof(sunrealtype));
       ark_mem->lrw += step_mem->stages;
     }
-    // }
 
     /* Override the interpolant degree (if needed), used in arkInitialSetup */
     if (step_mem->q > 1 && ark_mem->interp_degree > (step_mem->q - 1))
