@@ -5428,7 +5428,7 @@ preallocate this data earlier, for example to measure the memory footprint
 before beginning a calculation, or to check for allocation errors at an
 earlier time.  To request that that ARKODE preallocate all stage-related
 internal data before the first call to :c:func:`ARKodeEvolve`, the user
-may call the function :c:func:`ARKodeAllocateInternalData`.
+may call the function :c:func:`ARKodeInit`.
 
 
 .. c:function:: int ARKodeInit(void* arkode_mem)
