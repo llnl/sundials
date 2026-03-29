@@ -83,6 +83,7 @@ m.attr("ARK_ADJ_CHECKPOINT_FAIL")    = -56;
 m.attr("ARK_ADJ_RECOMPUTE_FAIL")     = -57;
 m.attr("ARK_SUNADJSTEPPER_ERR")      = -58;
 m.attr("ARK_DEE_FAIL")               = -59;
+m.attr("ARK_STEP_H0_FAIL")           = -60;
 m.attr("ARK_UNRECOGNIZED_ERROR")     = -99;
 
 auto pyEnumARKRelaxSolver = nb::enum_<ARKRelaxSolver>(m, "ARKRelaxSolver",
@@ -109,6 +110,9 @@ auto pyEnumARKAccumError =
 
 m.def("ARKodeReset", ARKodeReset, nb::arg("arkode_mem"), nb::arg("tR"),
       nb::arg("yR"));
+
+m.def("ARKodeInit", ARKodeInit, nb::arg("arkode_mem"),
+      "Optional data allocation function");
 
 m.def(
   "ARKodeCreateMRIStepInnerStepper",
@@ -204,9 +208,6 @@ m.def("ARKodeSetFixedStep", ARKodeSetFixedStep, nb::arg("arkode_mem"),
 
 m.def("ARKodeSetStepDirection", ARKodeSetStepDirection, nb::arg("arkode_mem"),
       nb::arg("stepdir"));
-
-m.def("ARKodeAllocateInternalData", ARKodeAllocateInternalData,
-      nb::arg("arkode_mem"));
 
 m.def("ARKodeSetNonlinearSolver", ARKodeSetNonlinearSolver,
       nb::arg("arkode_mem"), nb::arg("NLS"));

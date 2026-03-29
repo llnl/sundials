@@ -33,8 +33,8 @@ and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, 
 their minimum allowable values of 2 and 4. Users may revert to the previous values by calling
 :c:func:`LSRKStepSetNumSSPStages`.
 
-Added the function :c:func:`ARKodeAllocateInternalData` to ARKODE to enable
-stage-related data allocation before the first call to :c:func:`ARKodeEvolve`
+Added the optional function :c:func:`ARKodeInit` to ARKODE to enable
+data allocation before the first call to :c:func:`ARKodeEvolve`
 (but after all other optional input routines have been called), to support
 users who measure memory usage before beginning a simulation.
 
@@ -86,7 +86,13 @@ an eigenvalue estimate is requested on the first step in a subsequent call to
 :c:func:`ARKodeEvolve` unless the output vector passed contained the most recently
 returned solution.
 
+Fixed a bug in MRIStep for estimating the first "slow" time step in an adaptive
+multirate calculation.
+
 **Deprecation Notices**
+
+The ``CVodeSetMonitorFn`` and ``CVodeSetMonitorFrequency`` functions have been deprecated and will be
+removed in the next major release.
 
 Several CMake options have been deprecated in favor of namespaced versions
 prefixed with ``SUNDIALS_`` to avoid naming collisions in applications that

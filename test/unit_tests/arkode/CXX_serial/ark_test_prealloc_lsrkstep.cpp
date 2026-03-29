@@ -77,8 +77,8 @@ int main(int argc, char* argv[])
   // Data preallocation
   if (preallocate_data)
   {
-    flag = ARKodeAllocateInternalData(arkode_mem);
-    if (check_flag(flag, "ARKodeAllocateInternalData")) { return 1; }
+    flag = ARKodeInit(arkode_mem);
+    if (check_flag(flag, "ARKodeInit")) { return 1; }
   }
 
   // Initial time and fist output time

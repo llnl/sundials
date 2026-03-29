@@ -99,10 +99,9 @@ extern "C" {
 /*---------------------------------------------------------------
   Initialization types
   ---------------------------------------------------------------*/
-#define FIRST_INIT  0 /* first step (re-)initialization    */
-#define RESET_INIT  1 /* reset initialization              */
-#define RESIZE_INIT 2 /* resize initialization             */
-#define ALLOC_INIT  3 /* allocate data (before FIRST_INIT) */
+#define FIRST_INIT  0 /* first step (re-)initialization */
+#define RESET_INIT  1 /* reset initialization           */
+#define RESIZE_INIT 2 /* resize initialization          */
 
 /*---------------------------------------------------------------
   Control constants for lower-level time-stepping functions
@@ -205,8 +204,7 @@ typedef int (*ARKMassSolveFn)(ARKodeMem ark_mem, N_Vector b,
 typedef int (*ARKMassFreeFn)(ARKodeMem ark_mem);
 
 /* time stepper interface functions -- general */
-typedef int (*ARKTimestepInitFn)(ARKodeMem ark_mem, sunrealtype tout,
-                                 int init_type);
+typedef int (*ARKTimestepInitFn)(ARKodeMem ark_mem, int init_type);
 typedef int (*ARKTimestepFullRHSFn)(ARKodeMem ark_mem, sunrealtype t,
                                     N_Vector y, N_Vector f, int mode);
 typedef int (*ARKTimestepStepFn)(ARKodeMem ark_mem, sunrealtype* dsm, int* nflag);
@@ -234,6 +232,8 @@ typedef int (*ARKTimestepGetStageIndex)(ARKodeMem ark_mem, int* stage,
                                         int* max_stages);
 
 /* time stepper interface functions -- temporal adaptivity */
+typedef int (*ARKTimestepComputeH0)(ARKodeMem ark_mem, sunrealtype tout,
+                                    sunrealtype* hin);
 typedef int (*ARKTimestepGetEstLocalErrors)(ARKodeMem ark_mem, N_Vector ele);
 typedef int (*ARKSetAdaptControllerFn)(ARKodeMem ark_mem, SUNAdaptController C);
 
@@ -429,6 +429,7 @@ struct ARKodeMemRec
 
   /* Time stepper module -- temporal adaptivity */
   sunbooleantype step_supports_adaptive;
+  ARKTimestepComputeH0 step_H0;
   ARKSetAdaptControllerFn step_setadaptcontroller;
   ARKTimestepGetEstLocalErrors step_getestlocalerrors;
 
@@ -557,6 +558,9 @@ struct ARKodeMemRec
   sunbooleantype firststage;   /* denotes first stage in simulation          */
   sunbooleantype initialized;  /* denotes arkInitialSetup has been done      */
   sunbooleantype call_fullrhs; /* denotes the full RHS fn will be called     */
+  sunbooleantype preallocated; /* SUNTRUE if ARKodeInit has been
+                                    called to preallocate data
+                                    prior to ARKodeEvolve */
 
   /* Rootfinding Data */
   ARKodeRootMem root_mem; /* root-finding structure */
@@ -1032,25 +1036,18 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
 
   This routine is called just prior to performing internal time
   steps (after all user "set" routines have been called), either
-  from within arkInitialSetup or ARKodeAllocateInternalData.
+  from within arkInitialSetup or ARKodeInit.
   It should perform initializations for a specific ARKODE time
   stepping module, such as verifying compatibility of user-
   specified linear and nonlinear solver objects.
 
   The input init_type flag indicates the type of call:
-  * FIRST_INIT -- called during arkInitialSetup for the first
-    time step of a simulation.
+  * FIRST_INIT -- called during arkInitialSetup or ARKodeInit for
+    the first time step of a simulation.
   * RESIZE_INIT -- called during ARKodeResize to resize
     internal stepper data structures after a change in problem size.
   * RESET_INIT -- called during ARKodeReset to reset the current
     (t,y) state in the stepper.
-  * ALLOC_INIT -- called during the optional routine
-    ARKodeAllocateInternalData to allocate and initialize
-    internal stepper data structures. Note that the routine
-    will be called again with FIRST_INIT.  Thus a time-stepper
-    can either ignore this flag (and just return), or if it
-    performs allocations here then it should not re-allocate
-    the same data when called with FIRST_INIT.
 
   This routine should return 0 if it has successfully initialized
   the ARKODE time stepper module and a negative value otherwise.

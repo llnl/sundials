@@ -75,9 +75,6 @@ typedef struct ARKodeMRIStepMemRec
   sunbooleantype implicit_rhs;   /* SUNTRUE if fsi is provided     */
   sunbooleantype deduce_rhs;     /* SUNTRUE if fi is deduced after
                                     a nonlinear solve              */
-  sunbooleantype preallocated;   /* SUNTRUE if data has been
-                                   preallocated in a call to
-                                   mriStep_Init with ALLOC_INIT    */
 
   /* Outer RK method storage and parameters */
   N_Vector* Fse;           /* explicit RHS at each stage               */
@@ -224,7 +221,7 @@ int mriStep_AttachLinsol(ARKodeMem ark_mem, ARKLinsolInitFn linit,
                          ARKLinsolFreeFn lfree,
                          SUNLinearSolver_Type lsolve_type, void* lmem);
 void mriStep_DisableLSetup(ARKodeMem ark_mem);
-int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int mriStep_Init(ARKodeMem ark_mem, int init_type);
 void* mriStep_GetLmem(ARKodeMem ark_mem);
 ARKRhsFn mriStep_GetImplicitRHS(ARKodeMem ark_mem);
 int mriStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat,
@@ -280,6 +277,7 @@ void mriStep_Free(ARKodeMem ark_mem);
 void mriStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int mriStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
                             sunrealtype tscale, N_Vector* f, int nvecs);
+int mriStep_ComputeH0(ARKodeMem ark_mem, sunrealtype tout, sunrealtype* hin);
 
 /* Internal utility routines */
 int mriStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
