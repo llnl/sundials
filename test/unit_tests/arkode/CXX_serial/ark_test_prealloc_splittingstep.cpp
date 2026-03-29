@@ -100,12 +100,12 @@ int main(int argc, char* argv[])
   // Data preallocation (all steppers)
   if (preallocate_data)
   {
-    flag = ARKodeAllocateInternalData(stepper_1);
-    if (check_flag(flag, "ARKodeAllocateInternalData")) { return 1; }
-    flag = ARKodeAllocateInternalData(stepper_2);
-    if (check_flag(flag, "ARKodeAllocateInternalData")) { return 1; }
-    flag = ARKodeAllocateInternalData(arkode_mem);
-    if (check_flag(flag, "ARKodeAllocateInternalData")) { return 1; }
+    flag = ARKodeInit(stepper_1);
+    if (check_flag(flag, "ARKodeInit")) { return 1; }
+    flag = ARKodeInit(stepper_2);
+    if (check_flag(flag, "ARKodeInit")) { return 1; }
+    flag = ARKodeInit(arkode_mem);
+    if (check_flag(flag, "ARKodeInit")) { return 1; }
   }
 
   // Initial time and fist output time

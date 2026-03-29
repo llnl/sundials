@@ -79,9 +79,6 @@ typedef struct ARKodeARKStepMemRec
   sunbooleantype implicit;       /* SUNTRUE if fi is enabled       */
   sunbooleantype deduce_rhs;     /* SUNTRUE if fi is deduced after
                                    a nonlinear solve               */
-  sunbooleantype preallocated;   /* SUNTRUE if data has been
-                                   preallocated in a call to
-                                   arkStep_Init with ALLOC_INIT    */
 
   /* Adjoint problem specification */
   SUNAdjRhsFn adj_fe;
@@ -190,7 +187,7 @@ int arkStep_AttachMasssol(ARKodeMem ark_mem, ARKMassInitFn minit,
                           SUNLinearSolver_Type msolve_type, void* mass_mem);
 void arkStep_DisableLSetup(ARKodeMem ark_mem);
 void arkStep_DisableMSetup(ARKodeMem ark_mem);
-int arkStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int arkStep_Init(ARKodeMem ark_mem, int init_type);
 void* arkStep_GetLmem(ARKodeMem ark_mem);
 void* arkStep_GetMassMem(ARKodeMem ark_mem);
 ARKRhsFn arkStep_GetImplicitRHS(ARKodeMem ark_mem);

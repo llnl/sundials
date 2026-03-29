@@ -114,10 +114,10 @@ int main(int argc, char* argv[])
   // Data preallocation (all steppers)
   if (preallocate_data)
   {
-    flag = ARKodeAllocateInternalData(inner_arkode_mem);
-    if (check_flag(flag, "ARKodeAllocateInternalData")) { return 1; }
-    flag = ARKodeAllocateInternalData(arkode_mem);
-    if (check_flag(flag, "ARKodeAllocateInternalData")) { return 1; }
+    flag = ARKodeInit(inner_arkode_mem);
+    if (check_flag(flag, "ARKodeInit")) { return 1; }
+    flag = ARKodeInit(arkode_mem);
+    if (check_flag(flag, "ARKodeInit")) { return 1; }
   }
 
   // Initial time and fist output time
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
   sunrealtype tret        = zero;
   sunrealtype tout        = tret + dtout;
 
-  // Output initial contion
+  // Output initial condition
   cout << scientific;
   cout << setprecision(numeric_limits<sunrealtype>::digits10);
   cout << "           t              ";

@@ -108,6 +108,7 @@ module farkode_mod
  integer(C_INT), parameter, public :: ARK_ADJ_RECOMPUTE_FAIL = -57_C_INT
  integer(C_INT), parameter, public :: ARK_SUNADJSTEPPER_ERR = -58_C_INT
  integer(C_INT), parameter, public :: ARK_DEE_FAIL = -59_C_INT
+ integer(C_INT), parameter, public :: ARK_STEP_H0_FAIL = -60_C_INT
  integer(C_INT), parameter, public :: ARK_UNRECOGNIZED_ERROR = -99_C_INT
  ! enum ARKRelaxSolver
  enum, bind(c)
@@ -127,6 +128,7 @@ module farkode_mod
  public :: ARK_ACCUMERROR_NONE, ARK_ACCUMERROR_MAX, ARK_ACCUMERROR_SUM, ARK_ACCUMERROR_AVG
  public :: FARKodeResize
  public :: FARKodeReset
+ public :: FARKodeInit
  public :: FARKodeCreateMRIStepInnerStepper
  public :: FARKodeSStolerances
  public :: FARKodeSVtolerances
@@ -153,7 +155,6 @@ module farkode_mod
  public :: FARKodeSetPreRhsFn
  public :: FARKodeSetPostprocessStepFn
  public :: FARKodeSetPostprocessStageFn
- public :: FARKodeAllocateInternalData
  public :: FARKodeSetNonlinearSolver
  public :: FARKodeSetLinear
  public :: FARKodeSetNonlinear
@@ -526,6 +527,14 @@ type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
+function swigc_FARKodeInit(farg1) &
+bind(C, name="_wrap_FARKodeInit") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT) :: fresult
+end function
+
 function swigc_FARKodeCreateMRIStepInnerStepper(farg1, farg2) &
 bind(C, name="_wrap_FARKodeCreateMRIStepInnerStepper") &
 result(fresult)
@@ -757,14 +766,6 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FARKodeAllocateInternalData(farg1) &
-bind(C, name="_wrap_FARKodeAllocateInternalData") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2633,6 +2634,19 @@ fresult = swigc_FARKodeReset(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
+function FARKodeInit(arkode_mem) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+
+farg1 = arkode_mem
+fresult = swigc_FARKodeInit(farg1)
+swig_result = fresult
+end function
+
 function FARKodeCreateMRIStepInnerStepper(arkode_mem, stepper) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -3046,19 +3060,6 @@ type(C_FUNPTR) :: farg2
 farg1 = arkode_mem
 farg2 = processstage
 fresult = swigc_FARKodeSetPostprocessStageFn(farg1, farg2)
-swig_result = fresult
-end function
-
-function FARKodeAllocateInternalData(arkode_mem) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = arkode_mem
-fresult = swigc_FARKodeAllocateInternalData(farg1)
 swig_result = fresult
 end function
 
