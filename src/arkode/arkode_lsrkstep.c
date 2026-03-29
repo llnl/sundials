@@ -913,7 +913,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 {
   int retval;
-  sunrealtype hmax, w1, bjm1, bjm2, mus, bj, ajm1, cjm1, temj, cj, mu, nu;
+  sunrealtype hmax, w1, bjm1, bjm2, mus, bj, ajm1, temj, cj, mu, nu;
   const sunrealtype p8 = SUN_RCONST(0.8), p4 = SUN_RCONST(0.4);
   ARKodeLSRKStepMem step_mem;
 
@@ -1030,7 +1030,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   bjm2 = ONE / THREE;
   bjm1 = bjm2;
   mus  = w1 * bjm1;
-  cjm1 = mus;
 
   /* Evaluate the first stage (store in tmp2) and initialize embedding */
   ark_mem->tcur = ark_mem->tn + ark_mem->h * mus;
@@ -1147,7 +1146,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
       N_VCopy(ark_mem->ycur, tmp2);
 
-      cjm1 = cj;
       bjm2 = bjm1;
       bjm1 = bj;
     }
