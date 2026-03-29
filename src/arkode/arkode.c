@@ -1588,6 +1588,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->step_setstepdirection          = NULL;
   ark_mem->step_setoptions                = NULL;
   ark_mem->step_getnumlinsolvsetups       = NULL;
+  ark_mem->step_H0                        = NULL;
   ark_mem->step_setadaptcontroller        = NULL;
   ark_mem->step_getestlocalerrors         = NULL;
   ark_mem->step_getcurrentgamma           = NULL;
@@ -1761,7 +1762,7 @@ int arkRwtSet(N_Vector y, N_Vector weight, void* data)
       init_type == FIRST_INIT), or
   (c) an ARKODE timestepper module re-initialization routine
       (with init_type == FIRST_INIT).
-  This should never by the user.
+  This should never be called by the user.
 
   The initialization type indicates if the values of internal
   counters should be reinitialized (FIRST_INIT) or retained
@@ -2104,19 +2105,22 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
     return (ARK_ILL_INPUT);
   }
 
-  /* Set up the time stepper module */
-  if (ark_mem->step_init == NULL)
+  /* Set up the time stepper module if not done so already */
+  if (!ark_mem->preallocated)
   {
-    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "Time stepper module is missing");
-    return (ARK_ILL_INPUT);
-  }
-  retval = ark_mem->step_init(ark_mem, tout, ark_mem->init_type);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Error in initialization of time stepper module");
-    return (retval);
+    if (ark_mem->step_init == NULL)
+    {
+      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "Time stepper module is missing");
+      return (ARK_ILL_INPUT);
+    }
+    retval = ark_mem->step_init(ark_mem, ark_mem->init_type);
+    if (retval != ARK_SUCCESS)
+    {
+      arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                      "Error in initialization of time stepper module");
+      return (retval);
+    }
   }
 
   /* Load initial residual weights */
@@ -2194,6 +2198,19 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "Stop time interpolation requires an interpolation module");
     return ARK_ILL_INPUT;
+  }
+
+  /* Call stepper-provided initial step size estimation routine to fill
+     ark_mem->hin, if applicable. */
+  if (ark_mem->h0u == ZERO && ark_mem->hin == ZERO && !ark_mem->fixedstep &&
+      ark_mem->step_H0)
+  {
+    if (ark_mem->step_H0(ark_mem, tout, &(ark_mem->hin)))
+    {
+      arkProcessError(ark_mem, ARK_STEP_H0_FAIL, __LINE__, __func__, __FILE__,
+                      "Failure in timestepping module h0 calculation");
+      return ARK_STEP_H0_FAIL;
+    }
   }
 
   /* If fullrhs will be called (to estimate initial step, explicit steppers, Hermite

@@ -65,8 +65,7 @@ static int forcingStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
   This routine is called just prior to performing internal time steps (after
   all user "set" routines have been called) from within arkInitialSetup.
   ----------------------------------------------------------------------------*/
-static int forcingStep_Init(ARKodeMem ark_mem,
-                            SUNDIALS_MAYBE_UNUSED sunrealtype tout, int init_type)
+static int forcingStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeForcingStepMem step_mem = NULL;
   int retval = forcingStep_AccessStepMem(ark_mem, __func__, &step_mem);
@@ -90,8 +89,11 @@ static int forcingStep_Init(ARKodeMem ark_mem,
     return ARK_ILL_INPUT;
   }
 
-  /* immediately return if not called in FIRST_INIT mode */
-  if (init_type != FIRST_INIT) { return ARK_SUCCESS; }
+  /* immediately return if resize or reset */
+  if (init_type == RESIZE_INIT || init_type == RESET_INIT)
+  {
+    return ARK_SUCCESS;
+  }
 
   /* On first initialization, make the SUNStepper consistent with the current
    * state in case a user provided a different initial condition for the

@@ -119,9 +119,7 @@ static int splittingStep_SetCoefficients(ARKodeMem ark_mem,
 
   With other initialization types, this routine does nothing.
   ----------------------------------------------------------------------------*/
-static int splittingStep_Init(ARKodeMem ark_mem,
-                              SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                              int init_type)
+static int splittingStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeSplittingStepMem step_mem = NULL;
   int retval = splittingStep_AccessStepMem(ark_mem, __func__, &step_mem);

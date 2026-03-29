@@ -185,9 +185,6 @@ void* ARKStepCreate(ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0,
     return (NULL);
   }
 
-  /* Initialize preallocated flag */
-  step_mem->preallocated = SUNFALSE;
-
   /* Copy the input parameters into ARKODE state */
   step_mem->fe = fe;
   step_mem->fi = fi;
@@ -924,17 +921,6 @@ int arkStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
   For all initialization types, this routine sets the relevant
   TakeStep routine based on the current problem configuration.
 
-  With initialization type RESET_INIT, this routine does nothing.
-
-  For other initialization types, this routine:
-  - sets the relevant TakeStep routine based on the current
-    problem configuration
-  - checks for consistency between the system and mass matrix
-    linear solvers (if applicable)
-  - initializes and sets up the system and mass matrix linear
-    solvers (if applicable)
-  - initializes and sets up the nonlinear solver (if applicable)
-
   With initialization type FIRST_INIT this routine:
   - sets/checks the ARK Butcher tables to be used
   - allocates any memory that depends on the number of ARK stages,
@@ -947,9 +933,19 @@ int arkStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
   - allocates the interpolation data structure (if needed based
     on ARKStep solver options)
   - updates the call_fullrhs flag if necessary
+
+  With initialization type FIRST_INIT or RESIZE_INIT, this routine:
+  - sets the relevant TakeStep routine based on the current
+    problem configuration
+  - checks for consistency between the system and mass matrix
+    linear solvers (if applicable)
+  - initializes and sets up the system and mass matrix linear
+    solvers (if applicable)
+  - initializes and sets up the nonlinear solver (if applicable)
+
+  With initialization type RESET_INIT, this routine does nothing.
   ---------------------------------------------------------------*/
-int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                 int init_type)
+int arkStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeARKStepMem step_mem;
   int retval;
@@ -963,7 +959,7 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   if (init_type == RESET_INIT) { return (ARK_SUCCESS); }
 
   /* initializations/checks for (re-)initialization call */
-  if (init_type == ALLOC_INIT || init_type == FIRST_INIT)
+  if (init_type == FIRST_INIT)
   {
     /* enforce use of arkEwtSmallReal if using a fixed step size for
        an explicit method, an internal error weight function, not
@@ -1046,28 +1042,22 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     /*   Allocate Fe[0] ... Fe[stages-1] if needed */
     if (step_mem->explicit)
     {
-      if (step_mem->Fe == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fe),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fe),
-                              ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                              &(ark_mem->liw)))
-        {
-          return (ARK_MEM_FAIL);
-        }
+        return (ARK_MEM_FAIL);
       }
     }
 
     /*   Allocate Fi[0] ... Fi[stages-1] if needed */
     if (step_mem->implicit)
     {
-      if (step_mem->Fi == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fi),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fi),
-                              ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                              &(ark_mem->liw)))
-        {
-          return (ARK_MEM_FAIL);
-        }
+        return (ARK_MEM_FAIL);
       }
     }
 
@@ -1076,14 +1066,11 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     if (ark_mem->relax_enabled &&
         (step_mem->implicit || step_mem->mass_type == MASS_FIXED))
     {
-      if (step_mem->z == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->z),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->z),
-                              ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                              &(ark_mem->liw)))
-        {
-          return (ARK_MEM_FAIL);
-        }
+        return (ARK_MEM_FAIL);
       }
     }
 
@@ -1105,24 +1092,19 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     }
 
     /* Allocate workspace for MRI forcing -- need to allocate here as the
-       number of stages may not bet set before this point and we assume
-       SetInnerForcing has been called before the first step i.e., methods
-       start with a fast integration */
-    if (step_mem->expforcing || step_mem->impforcing)
+       number of stages may not bet set before this point */
+    if (!(step_mem->stage_times))
     {
-      if (!(step_mem->stage_times))
-      {
-        step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
-                                                     sizeof(sunrealtype));
-        ark_mem->lrw += step_mem->stages;
-      }
+      step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
+                                                   sizeof(sunrealtype));
+      ark_mem->lrw += step_mem->stages;
+    }
 
-      if (!(step_mem->stage_coefs))
-      {
-        step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
-                                                     sizeof(sunrealtype));
-        ark_mem->lrw += step_mem->stages;
-      }
+    if (!(step_mem->stage_coefs))
+    {
+      step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
+                                                   sizeof(sunrealtype));
+      ark_mem->lrw += step_mem->stages;
     }
 
     /* Override the interpolant degree (if needed), used in arkInitialSetup */
@@ -1164,7 +1146,7 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   }
 
   /* Perform mass matrix solver initialization and setup (if applicable) */
-  if (step_mem->mass_type != MASS_IDENTITY && !step_mem->preallocated)
+  if (step_mem->mass_type != MASS_IDENTITY)
   {
     /* Call minit (if it exists) */
     if (step_mem->minit != NULL)
@@ -1193,7 +1175,7 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   }
 
   /* Call linit (if it exists) */
-  if (step_mem->linit && !step_mem->preallocated)
+  if (step_mem->linit)
   {
     retval = step_mem->linit(ark_mem);
     if (retval != 0)
@@ -1205,7 +1187,7 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   }
 
   /* Initialize the nonlinear solver object (if it exists) */
-  if (step_mem->NLS && !step_mem->preallocated)
+  if (step_mem->NLS)
   {
     retval = arkStep_NlsInit(ark_mem);
     if (retval != ARK_SUCCESS)
@@ -1218,13 +1200,6 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
 
   /* Signal to shared arkode module that full RHS evaluations are required */
   ark_mem->call_fullrhs = SUNTRUE;
-
-  /* if init_type == ALLOC_INIT then store preallocated flag */
-  if (init_type == ALLOC_INIT) { step_mem->preallocated = SUNTRUE; }
-
-  /* if init_type == FIRST_INIT then reset preallocated flag (in case
-     of an eventual resize or reinit) */
-  if (init_type == FIRST_INIT) { step_mem->preallocated = SUNFALSE; }
 
   return (ARK_SUCCESS);
 }
