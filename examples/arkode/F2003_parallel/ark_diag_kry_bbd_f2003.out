@@ -1,4 +1,4 @@
-
+   
  Diagonal test problem:
    neq =   40
    nlocal =   10
@@ -9,7 +9,7 @@
     ydot_i = -alpha*i * y_i (i = 1,...,neq)
     Method is DIRK/NEWTON/SPGMR
     Precond is band-block-diagonal, using ARKBBDPRE
-
+   
     Preconditioning on left:
          t         steps   steps att.   fe     fi
     -------------------------------------------------
@@ -25,7 +25,7 @@
      1.000000       77       77        0      974
     -------------------------------------------------
 Max. absolute error is   4.66E-09
-
+   
  Final Solver Statistics:
    Internal solver steps =     77 (attempted =     77)
    Total explicit RHS evals =      0
@@ -38,13 +38,13 @@ Max. absolute error is   4.66E-09
    Total Convergence Failures - Nonlinear =      0
                               - Linear    =      0
    Total number of error test failures =      0
-   Main solver real/int workspace sizes =    918   285
+   Main solver real/int workspace sizes =    930   285
    Linear solver real/int workspace sizes =    535   126
    BBD preconditioner real/int workspace sizes =    160    72
    Total number of g evals =      4
-
-
-
+    
+    
+    
     Preconditioning on right:
          t         steps   steps att.   fe     fi
     -------------------------------------------------
@@ -60,7 +60,7 @@ Max. absolute error is   4.66E-09
      1.000000       77       77        0      974
     -------------------------------------------------
 Max. absolute error is   4.66E-09
-
+   
  Final Solver Statistics:
    Internal solver steps =     77 (attempted =     77)
    Total explicit RHS evals =      0
@@ -73,7 +73,10 @@ Max. absolute error is   4.66E-09
    Total Convergence Failures - Nonlinear =      0
                               - Linear    =      0
    Total number of error test failures =      0
-   Main solver real/int workspace sizes =    918   285
+   Main solver real/int workspace sizes =    930   285
    Linear solver real/int workspace sizes =    535   126
    BBD preconditioner real/int workspace sizes =    160    72
    Total number of g evals =      4
+    
+    
+    
