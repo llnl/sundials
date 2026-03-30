@@ -1952,9 +1952,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Loop over remaining internal stages */
   for (is = 1; is < step_mem->stages - 1; is++)
   {
-    /* Set relevant stage times (including desired stage time for implicit solves) */
+    /* Set relevant stage times (including desired stage time for implicit solves)
+       and stage index */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
     tf = ark_mem->tcur = ark_mem->tn + step_mem->MRIC->c[is] * ark_mem->h;
+    step_mem->istage = is;
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
@@ -2016,9 +2018,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
-
-    /* Update current stage index */
-    step_mem->istage = is;
 
     /* conditionally reset the inner integrator with the modified stage solution */
     if (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC)
@@ -2148,9 +2147,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* perform embedded stage (if needed) */
   if (do_embedding)
   {
-    /* Set current stage index */
-    step_mem->istage = is = step_mem->stages;
-
     /* Temporarily swap ark_mem->ycur and ark_mem->tempv4 pointers, copying
        data so that both hold the current ark_mem->ycur value.  This ensures
        that during this embedding "stage":
@@ -2162,9 +2158,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     ark_mem->tempv4 = tmp;
 
     /* Reset ark_mem->tcur as the time value corresponding with the end of the step */
-    /* Set relevant stage times (including desired stage time for implicit solves) */
+    /* Set relevant stage times (including desired stage time for implicit solves),
+       and set the current stage index */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 2] * ark_mem->h;
     tf = ark_mem->tcur = ark_mem->tn + ark_mem->h;
+    step_mem->istage = is = step_mem->stages;
 
     SUNLogInfo(ARK_LOGGER, "begin-compute-embedding",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
@@ -2232,12 +2230,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   /* Compute final stage (for evolved solution), along with error estimate */
   {
-    /* Set current stage index */
-    step_mem->istage = is = step_mem->stages - 1;
-
-    /* Set relevant stage times (including desired stage time for implicit solves) */
+    /* Set relevant stage times (including desired stage time for implicit solves),
+       and set the current stage index */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
     tf = ark_mem->tcur = ark_mem->tn + ark_mem->h;
+    step_mem->istage = is = step_mem->stages - 1;
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
