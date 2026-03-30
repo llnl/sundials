@@ -238,8 +238,8 @@ int main(int argc, char* argv[])
   if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
 
   /* Set real type dominant eigenvalue */
-  flag = SUNDomEigEstimator_SetDEEisReal_Power(DEE, SUNTRUE);
-  if (check_flag(&flag, "SUNDomEigEstimator_SetDEEisReal_Power", 1))
+  flag = SUNDomEigEstimator_SetIsReal_Power(DEE, SUNTRUE);
+  if (check_flag(&flag, "SUNDomEigEstimator_SetIsReal_Power", 1))
   {
     return 1;
   }

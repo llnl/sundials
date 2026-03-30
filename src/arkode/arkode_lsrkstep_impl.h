@@ -248,9 +248,9 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
                                     sunrealtype* stability_norm);
 int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                     sunrealtype* stability_norm);
-int lsrkStep_cheb_T_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
+int lsrkStep_cheb_T_complex(int s, sunrealtype zR, sunrealtype zI,
                             sunrealtype* TsR, sunrealtype* TsI);
-int lsrkStep_legendre_P_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
+int lsrkStep_legendre_P_complex(int s, sunrealtype zR, sunrealtype zI,
                                 sunrealtype* PsR, sunrealtype* PsI);
 int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv);
 

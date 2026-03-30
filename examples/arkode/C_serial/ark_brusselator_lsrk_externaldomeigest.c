@@ -309,13 +309,13 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
     data->DEE = DEE;
 
     /* Set the ODE right-hand side function at t for the Jacobian-vector products */
-    flag = SUNDomEigEstimator_SetRHS(DEE, user_data, f);
-    if (check_flag(&flag, "SUNDomEigEstimator_SetRHS", 1)) { return 1; }
+    flag = SUNDomEigEstimator_SetRhs(DEE, user_data, f);
+    if (check_flag(&flag, "SUNDomEigEstimator_SetRhs", 1)) { return 1; }
 
     /* Set the linearization vector for the Jacobian-vector products */
-    flag = SUNDomEigEstimator_SetRHSLinearizationPoint(DEE, t,
+    flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t,
                                                        y); // set the time t as well
-    if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationPoint", 1))
+    if (check_flag(&flag, "SUNDomEigEstimator_SetRhsLinearizationPoint", 1))
     {
       return 1;
     }
@@ -325,8 +325,8 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
   }
 
   /* Update the linearization vector and time for the Jacobian-vector products */
-  flag = SUNDomEigEstimator_SetRHSLinearizationPoint(DEE, t, y);
-  if (check_flag(&flag, "SUNDomEigEstimator_SetRHSLinearizationPoint", 1))
+  flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t, y);
+  if (check_flag(&flag, "SUNDomEigEstimator_SetRhsLinearizationPoint", 1))
   {
     return 1;
   }

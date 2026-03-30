@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+#define MAX_DQITERS 3
+
 /* -----------------------------------------------------
  * Power Iteration Implementation of SUNDomEigEstimator
  * ----------------------------------------------------- */
@@ -76,7 +78,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
                                               void* A_data, SUNATimesFn ATimes);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE,
+SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
                                            void* rhs_data, DEERhsFn RHSfn);
 
 SUNDIALS_EXPORT
@@ -96,11 +98,11 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
                                                     N_Vector q);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Power(
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
   SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE,
+SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
                                                  sunbooleantype real);
 
 SUNDIALS_EXPORT

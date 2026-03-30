@@ -109,7 +109,7 @@ routines:
       :c:func:`SUNDomEigEstimator_SetInitialGuess`.
 
 
-.. c:function:: SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE, sunbooleantype real)
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE, sunbooleantype real)
 
    This routine informs the Power iteration that the dominant eigenvalue is 
    real-valued, so that the complex projection described in Section 
@@ -239,7 +239,7 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_SetRelTol_Power``
 
-* ``SUNDomEigEstimator_SetDEEisReal_Power``
+* ``SUNDomEigEstimator_SetIsReal_Power``
 
 * ``SUNDomEigEstimator_Initialize_Power``
 

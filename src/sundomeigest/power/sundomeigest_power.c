@@ -101,9 +101,9 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
 
   /* Attach operations */
   DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Power;
-  DEE->ops->setrhs    = SUNDomEigEstimator_SetRHS_Power;
+  DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Power;
   DEE->ops->setrhslinearizationpoint =
-    SUNDomEigEstimator_SetRHSLinearizationPoint_Power;
+    SUNDomEigEstimator_SetRhsLinearizationPoint_Power;
   DEE->ops->setmaxiters = SUNDomEigEstimator_SetMaxIters_Power;
   DEE->ops->setnumpreprocessiters = SUNDomEigEstimator_SetNumPreprocessIters_Power;
   DEE->ops->setreltol         = SUNDomEigEstimator_SetRelTol_Power;
@@ -180,7 +180,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE,
+SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
                                            void* rhs_data, DEERhsFn RHSfn)
 {
   SUNFunctionBegin(DEE->sunctx);
@@ -200,7 +200,7 @@ SUNErrCode SUNDomEigEstimator_SetRHS_Power(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Power(
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
   SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
 {
   SUNFunctionBegin(DEE->sunctx);
@@ -223,7 +223,7 @@ SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Power(
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetDEEisReal_Power(SUNDomEigEstimator DEE,
+SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
                                                  sunbooleantype real)
 {
   SUNFunctionBegin(DEE->sunctx);

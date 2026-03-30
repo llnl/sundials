@@ -26,13 +26,13 @@ modules:
     fn_exclude_by_name__regex:
       # Don't interface the implementation specific overrides of the generic routines
       - "^SUNDomEigEstimator_SetATimes_.*"
-      - "^SUNDomEigEstimator_SetRHS_.*"
+      - "^SUNDomEigEstimator_SetRhs_.*"
       - "^SUNDomEigEstimator_SetOptions_.*"
       - "^SUNDomEigEstimator_SetMaxIters_.*"
       - "^SUNDomEigEstimator_SetNumPreprocessIters_.*"
       - "^SUNDomEigEstimator_SetRelTol_.*"
       - "^SUNDomEigEstimator_SetInitialGuess_.*"
-      - "^SUNDomEigEstimator_SetRHSLinearizationPoint_.*"
+      - "^SUNDomEigEstimator_SetRhsLinearizationPoint_.*"
       - "^SUNDomEigEstimator_Initialize_.*"
       - "^SUNDomEigEstimator_Estimate_.*"
       - "^SUNDomEigEstimator_GetRes_.*"

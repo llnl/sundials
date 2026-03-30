@@ -787,6 +787,7 @@ int lsrkStep_SetDefaults(ARKodeMem ark_mem)
   step_mem->const_Jac        = SUNFALSE;
   step_mem->num_init_warmups = DOM_EIG_NUM_INIT_WARMUPS_DEFAULT;
   step_mem->num_warmups      = DOM_EIG_NUM_WARMUPS_DEFAULT;
+  step_mem->use_ellipse      = SUNTRUE;
 
   /* Load the default SUNAdaptController */
   retval = arkReplaceAdaptController(ark_mem, NULL, SUNTRUE);

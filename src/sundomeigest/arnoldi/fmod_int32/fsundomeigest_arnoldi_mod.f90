@@ -97,8 +97,8 @@ module fsundomeigest_arnoldi_mod
  end interface
  public :: FSUNDomEigEstimator_Arnoldi
  public :: FSUNDomEigEstimator_SetATimes_Arnoldi
- public :: FSUNDomEigEstimator_SetRHS_Arnoldi
- public :: FSUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi
+ public :: FSUNDomEigEstimator_SetRhs_Arnoldi
+ public :: FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi
  public :: FSUNDomEigEstimator_SetNumPreprocessIters_Arnoldi
  public :: FSUNDomEigEstimator_SetRelTol_Arnoldi
  public :: FSUNDomEigEstimator_SetInitialGuess_Arnoldi
@@ -562,8 +562,8 @@ type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNDomEigEstimator_SetRHS_Arnoldi(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNDomEigEstimator_SetRHS_Arnoldi") &
+function swigc_FSUNDomEigEstimator_SetRhs_Arnoldi(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetRhs_Arnoldi") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -572,8 +572,8 @@ type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi") &
+function swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -1342,7 +1342,7 @@ fresult = swigc_FSUNDomEigEstimator_SetATimes_Arnoldi(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FSUNDomEigEstimator_SetRHS_Arnoldi(dee, rhs_data, rhsfn) &
+function FSUNDomEigEstimator_SetRhs_Arnoldi(dee, rhs_data, rhsfn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -1357,11 +1357,11 @@ type(C_FUNPTR) :: farg3
 farg1 = c_loc(dee)
 farg2 = rhs_data
 farg3 = rhsfn
-fresult = swigc_FSUNDomEigEstimator_SetRHS_Arnoldi(farg1, farg2, farg3)
+fresult = swigc_FSUNDomEigEstimator_SetRhs_Arnoldi(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FSUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(dee, t, v) &
+function FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(dee, t, v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -1376,7 +1376,7 @@ type(C_PTR) :: farg3
 farg1 = c_loc(dee)
 farg2 = t
 farg3 = c_loc(v)
-fresult = swigc_FSUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(farg1, farg2, farg3)
+fresult = swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

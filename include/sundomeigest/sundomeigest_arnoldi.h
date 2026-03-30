@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+#define MAX_DQITERS 3
+
 /* -----------------------------------------------------
  * Arnoldi Iteration Implementation of SUNDomEigEstimator
  * ----------------------------------------------------- */
@@ -83,11 +85,11 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
                                                 void* A_data, SUNATimesFn ATimes);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
+SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
                                              void* rhs_data, DEERhsFn RHSfn);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(
   SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
 
 SUNDIALS_EXPORT

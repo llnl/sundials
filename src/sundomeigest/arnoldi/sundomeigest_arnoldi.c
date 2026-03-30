@@ -106,9 +106,9 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
 
   /* Attach operations */
   DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Arnoldi;
-  DEE->ops->setrhs    = SUNDomEigEstimator_SetRHS_Arnoldi;
+  DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Arnoldi;
   DEE->ops->setrhslinearizationpoint =
-    SUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi;
+    SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi;
   DEE->ops->setnumpreprocessiters =
     SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi;
   DEE->ops->setreltol         = SUNDomEigEstimator_SetRelTol_Arnoldi;
@@ -188,7 +188,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
+SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
                                              void* rhs_data, DEERhsFn RHSfn)
 {
   SUNFunctionBegin(DEE->sunctx);
@@ -207,7 +207,7 @@ SUNErrCode SUNDomEigEstimator_SetRHS_Arnoldi(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetRHSLinearizationPoint_Arnoldi(
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(
   SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
 {
   SUNFunctionBegin(DEE->sunctx);

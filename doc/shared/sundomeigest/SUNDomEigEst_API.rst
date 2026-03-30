@@ -209,7 +209,7 @@ instead of supplying a dummy routine.
       A :c:type:`SUNErrCode`.
 
 
-.. c:function:: SUNErrCode SUNDomEigEstimator_SetRHS(SUNDomEigEstimator DEE, void* rhs_data, SUNRHSFn RHSfn)
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data, SUNRHSFn RHSfn)
 
    This *optional* function provides a :c:type:`SUNRHSFn` function for performing
    evaluations of the right-hand side function, as well as a ``void*`` pointer to a data structure

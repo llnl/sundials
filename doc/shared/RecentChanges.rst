@@ -18,6 +18,10 @@ table.
 Fixed a bug where passing an empty string to ``SUNLogger_Set{Error,Warning,Info,Debug}Filename``
 did not disable the corresponding logging stream `Issue #844 <https://github.com/llnl/sundials/issues/844>`__.
 
+Fixed a minor bug where the number of required stages for STS methods 
+in the LSRKStep module was incorrectly computed using the spectral 
+radius instead of the real part of the Jacobian eigenvalues.
+
 **Deprecation Notices**
 
 The ``CVodeSetMonitorFn`` and ``CVodeSetMonitorFrequency`` functions have been deprecated and will be

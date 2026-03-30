@@ -3800,7 +3800,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetATimes(SUNDomEigEstimator farg1, voi
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHS(SUNDomEigEstimator farg1, void *farg2, DEERhsFn farg3) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs(SUNDomEigEstimator farg1, void *farg2, DEERhsFn farg3) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   void *arg2 = (void *) 0 ;
@@ -3810,13 +3810,13 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHS(SUNDomEigEstimator farg1, void *
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (void *)(farg2);
   arg3 = (DEERhsFn)(farg3);
-  result = (SUNErrCode)SUNDomEigEstimator_SetRHS(arg1,arg2,arg3);
+  result = (SUNErrCode)SUNDomEigEstimator_SetRhs(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHSLinearizationPoint(SUNDomEigEstimator farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator farg1, double const *farg2, N_Vector farg3) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   sunrealtype arg2 ;
@@ -3826,7 +3826,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRHSLinearizationPoint(SUNDomEigEstim
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
-  result = (SUNErrCode)SUNDomEigEstimator_SetRHSLinearizationPoint(arg1,arg2,arg3);
+  result = (SUNErrCode)SUNDomEigEstimator_SetRhsLinearizationPoint(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

@@ -85,7 +85,7 @@ void bind_sundomeigestimator(nb::module_& m)
     nb::arg("DEE"), nb::arg("ATimes").none());
 
   m.def(
-    "SUNDomEigEstimator_SetRHS",
+    "SUNDomEigEstimator_SetRhs",
     [](SUNDomEigEstimator DEE,
        std::function<std::remove_pointer_t<DEERhsFn>> RHSfn) -> SUNErrCode
     {
@@ -97,10 +97,10 @@ void bind_sundomeigestimator(nb::module_& m)
 
       if (RHSfn)
       {
-        return SUNDomEigEstimator_SetRHS(DEE, fntable,
+        return SUNDomEigEstimator_SetRhs(DEE, fntable,
                                          sundomeigestimator_setrhs_wrapper);
       }
-      else { return SUNDomEigEstimator_SetRHS(DEE, fntable, nullptr); }
+      else { return SUNDomEigEstimator_SetRhs(DEE, fntable, nullptr); }
     },
     nb::arg("DEE"), nb::arg("RHSfn").none());
 }
