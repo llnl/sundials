@@ -826,6 +826,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
 
   /* final stage processing */
+  ark_mem->tcur = ark_mem->tn + ark_mem->h;
 
   /* call the user-supplied pre-RHS function (if supplied) */
   if (ark_mem->PreRhsFn)
@@ -1150,9 +1151,10 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
-  SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
 
   /* final stage processing */
+  SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
+  ark_mem->tcur = ark_mem->tn + ark_mem->h;
 
   /* call the user-supplied pre-RHS function (if supplied) */
   if (ark_mem->PreRhsFn)
