@@ -87,6 +87,9 @@ modules:
     path: sundials/sundials_logger_generated.hpp
     headers:
     - ../../include/sundials/sundials_logger.h
+    fn_exclude_by_name__regex:
+     # we need to allow some none arguments
+    - "^SUNLogger_Set.*File$"
   sundials_matrix:
     path: sundials/sundials_matrix_generated.hpp
     headers:
