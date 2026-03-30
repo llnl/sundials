@@ -9,6 +9,11 @@ Prefer out-of-source CMake builds. Never build in the source tree.
 
 If you need full option details or platform-specific notes, open `doc/shared/sundials/Install.rst` (search for “Configuration options”, “Build Type”, “Compilers”, and “Example Programs”).
 
+For CI-like, multi-config testing use `test/test_driver.sh` (supports `--testtype pr|release|branch` and `--buildjobs/--testjobs`).
+
+Python bindings (sundials4py) are driven by `pyproject.toml` and `scikit-build-core`:
+`python -m pip install -e ".[dev]"` then `pytest`.
+
 ## User build (install + consume)
 
 1) Configure (choose an install prefix):

@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-- `src/` and `include/`: core SUNDIALS C/C++ sources and public headers, organized by module (e.g., `cvode/`, `ida/`, `nvector/`, `sunlinsol/`).
+- `src/` and `include/`: core SUNDIALS C/C++ sources and public headers, organized by package (e.g., `cvode/`, `ida/`) or module (e.g., `nvector/`, `sunlinsol/`).
 - `examples/`: buildable examples (C, C++, CUDA, etc.) wired into CMake.
 - `test/`: test infrastructure, answer files, and `test/unit_tests/` (optionally includes GoogleTest-based tests).
 - `cmake/`: CMake modules and option definitions (e.g., example/test toggles).
@@ -11,19 +11,7 @@
 
 ## Build, Test, and Development Commands
 
-Preferred build is CMake out-of-source:
-
-```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON \
-  -DEXAMPLES_ENABLE_C=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=ON
-cmake --build build -j
-ctest --test-dir build --output-on-failure
-```
-
-For CI-like, multi-config testing use `test/test_driver.sh` (supports `--testtype pr|release|branch` and `--buildjobs/--testjobs`).
-
-Python bindings (sundials4py) are driven by `pyproject.toml` and `scikit-build-core`:
-`python -m pip install -e ".[dev]"` then `pytest`.
+Refer to  `.agents/skills/building`.
 
 ## Coding Style & Naming
 
