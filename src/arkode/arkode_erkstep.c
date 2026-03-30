@@ -831,7 +831,7 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   for (is = 1; is < step_mem->stages; is++)
   {
     /* Set current stage time and index */
-    ark_mem->tcur = ark_mem->tn + step_mem->B->c[is] * ark_mem->h;
+    ark_mem->tcur    = ark_mem->tn + step_mem->B->c[is] * ark_mem->h;
     step_mem->istage = is;
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",

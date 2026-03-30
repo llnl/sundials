@@ -1956,7 +1956,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
        and stage index */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
     tf = ark_mem->tcur = ark_mem->tn + step_mem->MRIC->c[is] * ark_mem->h;
-    step_mem->istage = is;
+    step_mem->istage   = is;
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
@@ -2527,7 +2527,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   for (stage = 1; stage < max_stages; stage++)
   {
     /* Set current stage time and index */
-    ark_mem->tcur = ark_mem->tn + cstage * ark_mem->h;
+    ark_mem->tcur    = ark_mem->tn + cstage * ark_mem->h;
     step_mem->istage = stage;
 
     /* Determine if this is an "embedding" or "solution" stage */
@@ -2572,8 +2572,8 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     /* Evolve fast IVP for this stage, potentially get inner dsm on
        all non-embedding stages */
-    retval = mriStep_StageERKFast(ark_mem, step_mem, ark_mem->tn,
-                                  ark_mem->tcur, ark_mem->ycur, ytemp,
+    retval = mriStep_StageERKFast(ark_mem, step_mem, ark_mem->tn, ark_mem->tcur,
+                                  ark_mem->ycur, ytemp,
                                   need_inner_dsm && !embedding);
     if (retval != ARK_SUCCESS)
     {

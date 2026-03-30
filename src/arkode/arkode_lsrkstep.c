@@ -682,7 +682,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   mus  = w1 * bjm1;
 
   /* Evaluate the first stage (store in tmp2) and initialize embedding */
-  ark_mem->tcur = ark_mem->tn + ark_mem->h * mus;
+  ark_mem->tcur    = ark_mem->tn + ark_mem->h * mus;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
@@ -742,16 +742,16 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Compute new stage value and store in ycur */
-    zj            = TWO * w0 * zjm1 - zjm2;
-    dzj           = TWO * w0 * dzjm1 - dzjm2 + TWO * zjm1;
-    d2zj          = TWO * w0 * d2zjm1 - d2zjm2 + FOUR * dzjm1;
-    bj            = d2zj / SUNSQR(dzj);
-    ajm1          = ONE - zjm1 * bjm1;
-    mu            = TWO * w0 * bj / bjm1;
-    nu            = -bj / bjm2;
-    mus           = mu * w1 / w0;
-    thj           = mu * thjm1 + nu * thjm2 + mus * (ONE - ajm1);
-    ark_mem->tcur = ark_mem->tn + ark_mem->h * thj;
+    zj               = TWO * w0 * zjm1 - zjm2;
+    dzj              = TWO * w0 * dzjm1 - dzjm2 + TWO * zjm1;
+    d2zj             = TWO * w0 * d2zjm1 - d2zjm2 + FOUR * dzjm1;
+    bj               = d2zj / SUNSQR(dzj);
+    ajm1             = ONE - zjm1 * bjm1;
+    mu               = TWO * w0 * bj / bjm1;
+    nu               = -bj / bjm2;
+    mus              = mu * w1 / w0;
+    thj              = mu * thjm1 + nu * thjm2 + mus * (ONE - ajm1);
+    ark_mem->tcur    = ark_mem->tn + ark_mem->h * thj;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
@@ -1030,7 +1030,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   mus  = w1 * bjm1;
 
   /* Evaluate the first stage (store in tmp2) and initialize embedding */
-  ark_mem->tcur = ark_mem->tn + ark_mem->h * mus;
+  ark_mem->tcur    = ark_mem->tn + ark_mem->h * mus;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
@@ -1080,14 +1080,14 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Compute new stage value and store in ycur */
-    temj          = (j + TWO) * (j - ONE);
-    bj            = temj / (TWO * j * (j + ONE));
-    ajm1          = ONE - bjm1;
-    mu            = (TWO * j - ONE) / j * (bj / bjm1);
-    nu            = -(j - ONE) / j * (bj / bjm2);
-    mus           = w1 * mu;
-    cj            = temj * w1 / FOUR;
-    ark_mem->tcur = ark_mem->tn + ark_mem->h * cj;
+    temj             = (j + TWO) * (j - ONE);
+    bj               = temj / (TWO * j * (j + ONE));
+    ajm1             = ONE - bjm1;
+    mu               = (TWO * j - ONE) / j * (bj / bjm1);
+    nu               = -(j - ONE) / j * (bj / bjm2);
+    mus              = w1 * mu;
+    cj               = temj * w1 / FOUR;
+    ark_mem->tcur    = ark_mem->tn + ark_mem->h * cj;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
@@ -1311,7 +1311,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Begin the second stage, and accumulate embedding into tempv1 */
-  ark_mem->tcur = ark_mem->tn + hsm1inv;
+  ark_mem->tcur    = ark_mem->tn + hsm1inv;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
@@ -1368,7 +1368,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
     /* Begin the j-th stage by updating the state and embedding */
     step_mem->istage = j;
-    ark_mem->tcur = ark_mem->tn + j * hsm1inv;
+    ark_mem->tcur    = ark_mem->tn + j * hsm1inv;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
     N_VLinearSum(ONE, ark_mem->ycur, hsm1inv, ark_mem->tempv2, ark_mem->ycur);
@@ -1556,7 +1556,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Begin the second stage, and accumulate embedding into tempv1 */
-  ark_mem->tcur = ark_mem->tn + hrat;
+  ark_mem->tcur    = ark_mem->tn + hrat;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
@@ -1612,7 +1612,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Begin the j-th stage by updating the state and embedding */
-    ark_mem->tcur = ark_mem->tn + j * hrat;
+    ark_mem->tcur    = ark_mem->tn + j * hrat;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
@@ -1673,7 +1673,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Begin the j-th stage by updating the state and embedding */
-    ark_mem->tcur = ark_mem->tn + j * hrat;
+    ark_mem->tcur    = ark_mem->tn + j * hrat;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
@@ -1725,7 +1725,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Begin the next stage before final stage group */
-  ark_mem->tcur = ark_mem->tn + (in * (in - 1) / 2) * hrat;
+  ark_mem->tcur    = ark_mem->tn + (in * (in - 1) / 2) * hrat;
   step_mem->istage = in * (in + 1) / 2;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
              (in * (in + 1) / 2), ark_mem->tcur);
@@ -1793,7 +1793,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Begin the j-th stage by updating the state and embedding */
-    ark_mem->tcur = ark_mem->tn + (j - in) * hrat;
+    ark_mem->tcur    = ark_mem->tn + (j - in) * hrat;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
@@ -1936,7 +1936,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Perform the second stage, and accumulate embedding into tempv1 */
-  ark_mem->tcur = ark_mem->tn + hp5;
+  ark_mem->tcur    = ark_mem->tn + hp5;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
@@ -1986,7 +1986,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Perform the third stage */
-  ark_mem->tcur = ark_mem->tn + ark_mem->h;
+  ark_mem->tcur    = ark_mem->tn + ark_mem->h;
   step_mem->istage = 2;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 2, ark_mem->tcur);
@@ -2037,7 +2037,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Perform the fourth stage */
-  ark_mem->tcur = ark_mem->tn + hp5;
+  ark_mem->tcur    = ark_mem->tn + hp5;
   step_mem->istage = 3;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 3, ark_mem->tcur);
@@ -2224,7 +2224,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   N_VScale(ONE, ark_mem->yn, ark_mem->tempv2);
 
   /* Begin the second stage, and accumulate embedding into tempv1 */
-  ark_mem->tcur = ark_mem->tn + hsixth;
+  ark_mem->tcur    = ark_mem->tn + hsixth;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
@@ -2354,7 +2354,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Begin the j-th stage by updating the state and embedding */
-    ark_mem->tcur = ark_mem->tn + (j - 3) * hsixth;
+    ark_mem->tcur    = ark_mem->tn + (j - 3) * hsixth;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
@@ -2412,13 +2412,13 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   /* Compute the final time step solution */
   step_mem->istage = 10;
-  cvals[0] = SUN_RCONST(0.6);
-  Xvecs[0] = ark_mem->ycur;
-  cvals[1] = ONE;
-  Xvecs[1] = ark_mem->tempv2;
-  cvals[2] = SUN_RCONST(0.1) * ark_mem->h;
-  Xvecs[2] = ark_mem->tempv3;
-  retval   = N_VLinearCombination(3, cvals, Xvecs, ark_mem->ycur);
+  cvals[0]         = SUN_RCONST(0.6);
+  Xvecs[0]         = ark_mem->ycur;
+  cvals[1]         = ONE;
+  Xvecs[1]         = ark_mem->tempv2;
+  cvals[2]         = SUN_RCONST(0.1) * ark_mem->h;
+  Xvecs[2]         = ark_mem->tempv3;
+  retval           = N_VLinearCombination(3, cvals, Xvecs, ark_mem->ycur);
   if (retval != 0)
   {
     SUNLogInfo(ARK_LOGGER, "end-stages-list",
