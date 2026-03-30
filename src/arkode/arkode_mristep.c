@@ -2526,10 +2526,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Loop over stages */
   for (stage = 1; stage < max_stages; stage++)
   {
-    /* Set current stage time and index */
-    ark_mem->tcur    = ark_mem->tn + cstage * ark_mem->h;
-    step_mem->istage = stage;
-
     /* Determine if this is an "embedding" or "solution" stage */
     solution  = (stage == step_mem->stages - 1);
     embedding = (stage == step_mem->stages);
@@ -2539,6 +2535,10 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     /* Set current stage abscissa */
     cstage = (embedding) ? ONE : step_mem->MRIC->c[stage];
+
+    /* Set current stage time and index */
+    ark_mem->tcur    = ark_mem->tn + cstage * ark_mem->h;
+    step_mem->istage = stage;
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, stage,
