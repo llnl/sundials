@@ -1,5 +1,6 @@
 numpydoc
-sphinx >=6.0.0
+# TODO(CJB): Update range when sphinx-toolbox supports Sphinx 9
+sphinx >=6.0.0,<9
 sphinx_rtd_theme
 sphinx-copybutton
 sphinx-fortran
