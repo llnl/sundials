@@ -138,12 +138,18 @@ If you added a new enable option, confirm it shows up in `build-dev/include/sund
 
 ## 10) Language bindings
 
-Ensure to add the Fortran and Python language binding code for the new module.
+Only add language bindings when they are applicable:
 
-For Fortran, add the SWIG interface file in swig/ and add it to swig/Makefile appropriately.
-Generate the Fortran interface code to commit.
+- The module is user-visible (i.e., part of the public API users are expected to call), and
+- The module’s category already has existing Fortran and/or Python bindings.
 
-For Python, add the module as a neighbor to the other modules of the same type in `bindings/sundials4py`
-and add it to the generate.yaml with the neighbors.
+If Fortran bindings are applicable:
 
-Generate the Python binding code to commit. Always format it first.
+- Add the SWIG interface file in `swig/` and add it to `swig/Makefile` appropriately.
+- Generate the Fortran interface code and commit the generated sources.
+
+If Python bindings are applicable:
+
+- Add the module as a neighbor to the other modules of the same type in `bindings/sundials4py`.
+- Add it to the `generate.yaml` with the appropriate neighbors.
+- Generate the Python binding code to commit, and always format it first.

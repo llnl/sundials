@@ -11,7 +11,7 @@
 
 ## Build, Test, and Development Commands
 
-Refer to  `.agents/skills/building`.
+Refer to [`.agents/skills/building/SKILL.md`](.agents/skills/building/SKILL.md).
 
 ## Coding Style & Naming
 
