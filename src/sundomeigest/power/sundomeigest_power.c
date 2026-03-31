@@ -224,7 +224,7 @@ SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
 }
 
 SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
-                                                 sunbooleantype real)
+                                              sunbooleantype real)
 {
   SUNFunctionBegin(DEE->sunctx);
 

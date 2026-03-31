@@ -103,7 +103,7 @@ SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
-                                                 sunbooleantype real);
+                                              sunbooleantype real);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE);

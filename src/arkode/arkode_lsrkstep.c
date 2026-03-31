@@ -2613,7 +2613,8 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
     wi  = w1 * zI;
 
     sunrealtype PsR, PsI, Ps_ZR, Ps_ZI;
-    int retval = lsrkStep_legendre_P_complex(step_mem->req_stages, wr, wi, &PsR, &PsI);
+    int retval = lsrkStep_legendre_P_complex(step_mem->req_stages, wr, wi, &PsR,
+                                             &PsI);
     if (retval != ARK_SUCCESS) { return retval; }
 
     Ps_ZR = a_s + b_s * PsR;
