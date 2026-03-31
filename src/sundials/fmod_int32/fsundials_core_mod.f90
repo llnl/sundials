@@ -683,7 +683,6 @@ module fsundials_core_mod
  public :: FSUNAdjointStepper_GetNumRecompute
  public :: FSUNAdjointStepper_PrintAllStats
  public :: FSUNAdjointStepper_Destroy
- integer(C_INT), parameter, public :: MAX_DQITERS = 3_C_INT
  ! struct struct SUNDomEigEstimator_Ops_
  type, bind(C), public :: SUNDomEigEstimator_Ops
   type(C_FUNPTR), public :: setatimes

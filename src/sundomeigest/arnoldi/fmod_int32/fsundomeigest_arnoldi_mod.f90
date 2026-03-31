@@ -28,6 +28,7 @@ module fsundomeigest_arnoldi_mod
  private
 
  ! DECLARATION CONSTRUCTS
+ integer(C_INT), parameter, public :: MAX_DQITERS = 3_C_INT
 
  integer, parameter :: swig_cmem_own_bit = 0
  integer, parameter :: swig_cmem_rvalue_bit = 1
