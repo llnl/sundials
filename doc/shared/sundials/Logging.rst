@@ -279,7 +279,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``error_fp`` -- the :c:type:`FILE` pointer to use for error output.
+      * ``error_fp`` -- the ``FILE`` pointer to use for error output.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
@@ -307,7 +307,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``warning_fp`` -- the :c:type:`FILE` pointer to use for warning output.
+      * ``warning_fp`` -- the ``FILE`` pointer to use for warning output.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
@@ -335,7 +335,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``info_fp`` -- the :c:type:`FILE` pointer to use for info output.
+      * ``info_fp`` -- the ``FILE`` pointer to use for info output.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
@@ -363,7 +363,7 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``debug_fp`` -- the :c:type:`FILE` pointer to use for debug output.
+      * ``debug_fp`` -- the ``FILE`` pointer to use for debug output.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
