@@ -1952,9 +1952,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Loop over remaining internal stages */
   for (is = 1; is < step_mem->stages - 1; is++)
   {
-    /* Set relevant stage times (including desired stage time for implicit solves) */
+    /* Set relevant stage times (including desired stage time for implicit solves)
+       and stage index */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
     tf = ark_mem->tcur = ark_mem->tn + step_mem->MRIC->c[is] * ark_mem->h;
+    step_mem->istage   = is;
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
@@ -2016,9 +2018,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
-
-    /* Update current stage index */
-    step_mem->istage = is;
 
     /* conditionally reset the inner integrator with the modified stage solution */
     if (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC)
@@ -2148,7 +2147,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* perform embedded stage (if needed) */
   if (do_embedding)
   {
-    /* Set current stage index */
     step_mem->istage = is = step_mem->stages;
 
     /* Temporarily swap ark_mem->ycur and ark_mem->tempv4 pointers, copying
@@ -2232,7 +2230,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   /* Compute final stage (for evolved solution), along with error estimate */
   {
-    /* Set current stage index */
     step_mem->istage = is = step_mem->stages - 1;
 
     /* Set relevant stage times (including desired stage time for implicit solves) */
@@ -2529,9 +2526,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Loop over stages */
   for (stage = 1; stage < max_stages; stage++)
   {
-    /* Set current stage index */
-    step_mem->istage = stage;
-
     /* Determine if this is an "embedding" or "solution" stage */
     solution  = (stage == step_mem->stages - 1);
     embedding = (stage == step_mem->stages);
@@ -2542,13 +2536,17 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* Set current stage abscissa */
     cstage = (embedding) ? ONE : step_mem->MRIC->c[stage];
 
+    /* Set current stage time and index */
+    ark_mem->tcur    = ark_mem->tn + cstage * ark_mem->h;
+    step_mem->istage = stage;
+
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, stage,
-               MRISTAGE_ERK_FAST, ark_mem->tn + cstage * ark_mem->h);
+               MRISTAGE_ERK_FAST, ark_mem->tcur);
 
     /* Compute forcing function for inner solver */
     retval = mriStep_ComputeInnerForcing(ark_mem, step_mem, stage, ark_mem->tn,
-                                         ark_mem->tn + cstage * ark_mem->h);
+                                         ark_mem->tcur);
     if (retval != ARK_SUCCESS)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2574,8 +2572,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     /* Evolve fast IVP for this stage, potentially get inner dsm on
        all non-embedding stages */
-    retval = mriStep_StageERKFast(ark_mem, step_mem, ark_mem->tn,
-                                  ark_mem->tn + cstage * ark_mem->h,
+    retval = mriStep_StageERKFast(ark_mem, step_mem, ark_mem->tn, ark_mem->tcur,
                                   ark_mem->ycur, ytemp,
                                   need_inner_dsm && !embedding);
     if (retval != ARK_SUCCESS)
@@ -2585,10 +2582,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                  "status = failed fast ERK stage, retval = %i", retval);
       return retval;
     }
-
-    /* set current stage time for implicit correction, postprocessing
-       and RHS calls */
-    ark_mem->tcur = ark_mem->tn + cstage * ark_mem->h;
 
     /* perform MRISR slow/implicit correction */
     impl_corr = SUNFALSE;
