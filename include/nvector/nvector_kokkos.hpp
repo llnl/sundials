@@ -466,6 +466,11 @@ sunrealtype N_VWrmsNormMask_Kokkos(N_Vector x, N_Vector w, N_Vector id)
                    static_cast<sunrealtype>(xvec->Length()));
 }
 
+#if KOKKOS_VERSION >= 40700 // Kokkos version >= 4.7
+using DefaultMemoryTraits = Kokkos::MemoryTraits<>;
+#else
+using DefaultMemoryTraits = Kokkos::MemoryManaged;
+
 } // namespace impl
 
 // =============================================================================
@@ -474,7 +479,7 @@ sunrealtype N_VWrmsNormMask_Kokkos(N_Vector x, N_Vector w, N_Vector id)
 
 template<class ExecutionSpace = Kokkos::DefaultExecutionSpace,
          class MemorySpace    = typename ExecutionSpace::memory_space,
-         class MemoryTraits   = Kokkos::MemoryManaged>
+         class MemoryTraits   = impl::DefaultMemoryTraits>
 class Vector : public sundials::impl::BaseNVector,
                public sundials::ConvertibleTo<N_Vector>
 {
@@ -578,20 +583,20 @@ public:
 
   // Static routines to create clones of the vector that are always managed
 
-  static Vector<exec_space, memory_space, Kokkos::MemoryManaged>* Clone(
-    const Vector<exec_space, memory_space, Kokkos::MemoryManaged>& that_vector,
+  static Vector<exec_space, memory_space, impl::DefaultMemoryTraits>* Clone(
+    const Vector<exec_space, memory_space, impl::DefaultMemoryTraits>& that_vector,
     SUNContext sunctx)
   {
     return new Vector<exec_space, memory_space,
-                      Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
+                      impl::DefaultMemoryTraits>(that_vector.Length(), sunctx);
   }
 
-  static Vector<exec_space, memory_space, Kokkos::MemoryManaged>* Clone(
+  static Vector<exec_space, memory_space, impl::DefaultMemoryTraits>* Clone(
     const Vector<exec_space, memory_space, Kokkos::MemoryUnmanaged>& that_vector,
     SUNContext sunctx)
   {
     return new Vector<exec_space, memory_space,
-                      Kokkos::MemoryManaged>(that_vector.Length(), sunctx);
+                      impl::DefaultMemoryTraits>(that_vector.Length(), sunctx);
   }
 
 private:
