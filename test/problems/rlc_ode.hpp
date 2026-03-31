@@ -42,9 +42,6 @@
 #ifndef RLC_ODE_HPP_
 #define RLC_ODE_HPP_
 
-#include <algorithm>
-#include <array>
-#include <complex>
 #include <initializer_list>
 #include <iomanip>
 #include <ios>
@@ -57,68 +54,8 @@
 #include <sundials/sundials_types.h>
 #include <sunmatrix/sunmatrix_dense.h>
 
-#include <sundials/sundials_lapack_defs.h>
-
-/* Interfaces to match 'sunrealtype' with the correct LAPACK functions */
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define xgeev_f77 dgeev_f77
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define xgeev_f77 sgeev_f77
-#else
-#error Incompatible sunrealtype for LAPACK; disable LAPACK and rebuild
-#endif
-
 namespace problems {
 namespace rlc_ode {
-
-struct rlc_eigenvalues
-{
-  std::array<std::complex<sunrealtype>, 4> eigenvalues{};
-  std::array<std::array<std::complex<sunrealtype>, 4>, 4> rightEigenvectors{};
-  std::array<std::array<std::complex<sunrealtype>, 4>, 4> leftEigenvectors{};
-  sunrealtype min_mag;
-  sunrealtype max_mag;
-  int min_mag_idx;
-  int max_mag_idx;
-
-  void print(std::ostream& os = std::cout, bool printHeader = false, bool printLeftEigenvectors = false) const
-  {
-    auto print_complex = [&](const std::complex<sunrealtype>& z)
-    {
-      const auto re = static_cast<long double>(z.real());
-      const auto im = static_cast<long double>(z.imag());
-      os << re << (im < 0 ? " - " : " + ") << std::abs(im) << "i";
-    };
-
-    if (printHeader)
-    {
-      os << "eigenvalue, right_eigenvector";
-      if (printLeftEigenvectors) { os << ", eigenvalue left_eigenvector"; }
-      os << "\n";
-    }
-    os << std::scientific;
-    os << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
-
-    for (int i = 0; i < 4; ++i)
-    {
-      print_complex(eigenvalues[i]);
-      for (int k = 0; k < 4; ++k)
-      {
-        os << ", ";
-        print_complex(rightEigenvectors[i][k]);
-      }
-      if (printLeftEigenvectors)
-      {
-        for (int k = 0; k < 4; ++k)
-        {
-          os << ", ";
-          print_complex(leftEigenvectors[i][k]);
-        }
-      }
-      os << "\n";
-    }
-  }
-};
 
 class ODEProblem
 {
@@ -139,30 +76,49 @@ public:
 
   int getNumEquations() const { return NEQ; }
 
+  sunrealtype getR1() { return R1; }
+
+  sunrealtype getR2() { return R2; }
+
+  sunrealtype getR3() { return R3; }
+
+  sunrealtype getR4() { return R4; }
+
+  sunrealtype getL2() { return L2; }
+
+  sunrealtype getL4() { return L4; }
+
+  sunrealtype getC3() { return C3; }
+
+  sunrealtype getC4() { return C4; }
+
+  sunrealtype getVs() { return Vs; }
+
   void setVoltageSource(sunrealtype vs) { Vs = vs; }
 
-  void printHeader(const std::vector<std::string>& labels, std::ostream& os = std::cout) const
+  void printHeader(const std::vector<std::string>& labels,
+                   std::ostream& os = std::cout) const
   {
     os << std::setw(26) << "time";
-    for (const auto& label : labels) {
-      os << std::setw(26) << label;
-    }
+    for (const auto& label : labels) { os << std::setw(26) << label; }
     os << "\n";
   }
 
-  void printHeader(std::initializer_list<std::string> labels, std::ostream& os = std::cout) const
-  {
-    printHeader(std::vector<std::string>(labels), os);
-  }
+  void printHeader(std::initializer_list<std::string> labels,
+                   std::ostream& os = std::cout) const
+  { printHeader(std::vector<std::string>(labels), os); }
 
   void printState(sunrealtype t, N_Vector y, std::ostream& os = std::cout) const
   {
     sunrealtype* ydata = N_VGetArrayPointer(y);
+
+    std::ios::fmtflags old_settings = std::cout.flags(); // save original flags
     os << std::scientific;
     os << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
     os << std::setw(26) << t;
-    for (int i = 0; i < NEQ; ++i){ os << std::setw(26) << ydata[i]; }
+    for (int i = 0; i < NEQ; ++i) { os << std::setw(26) << ydata[i]; }
     os << "\n";
+    std::cout.flags(old_settings); // Restore original flags
   }
 
   // Mass matrix function (instance method)
@@ -232,7 +188,7 @@ public:
     SM_ELEMENT_D(J, 2, 2) = -R3 - R4;
     SM_ELEMENT_D(J, 3, 2) = 1.0;
 
-    // Column 2 - d/dvC4
+    // Column 3 - d/dvC4
     SM_ELEMENT_D(J, 0, 3) = 0.0;
     SM_ELEMENT_D(J, 1, 3) = 0.0;
     SM_ELEMENT_D(J, 2, 3) = -1.0;
@@ -248,154 +204,6 @@ public:
   {
     ODEProblem* problem = static_cast<ODEProblem*>(user_data);
     return problem->computeJacDense(J);
-  }
-
-  // Compute eigenvalues of the Jacobian at a given state
-  rlc_eigenvalues computeEigenvalues(bool computeLeftEigenvectors = false) const
-  {
-    constexpr int N = 4;
-
-    // Convert to double column-major for LAPACK.
-    sunrealtype MinvJ[16];
-    // Column 0 - d/di2
-    MinvJ[0] = (-(R1 + R2) - R3) / L2;
-    MinvJ[1] = 1.0 / L2;
-    MinvJ[2] = R3 / L2;
-    MinvJ[3] = 0.0;
-    // Column 1 - d/dvC3
-    MinvJ[4] = -1.0 / C3;
-    MinvJ[5] = 0.0;
-    MinvJ[6] = 1.0 / C3;
-    MinvJ[7] = 0.0;
-    // Column 2 - d/di4
-    MinvJ[8]  = R3 / L4;
-    MinvJ[9]  = -1.0 / L4;
-    MinvJ[10] = (-R3 - R4) / L4;
-    MinvJ[11] = 1.0;
-    // Column 2 - d/dvC4
-    MinvJ[12] = 0.0;
-    MinvJ[13] = 0.0;
-    MinvJ[14] = -1.0 / C4;
-    MinvJ[15] = 0.0;
-
-    sunrealtype WR[N], WI[N];
-
-    char JOBVL = computeLeftEigenvectors ? 'V' : 'N';
-    char JOBVR = 'V';
-    int LDA    = N;
-    int LDVL   = N;
-    int LDVR   = N;
-    int INFO   = 0;
-
-    // LAPACK outputs VL/VR in column-major, each is N x N when requested.
-    std::vector<sunrealtype> VL_mat(computeLeftEigenvectors ? (N * N) : 1);
-    std::vector<sunrealtype> VR_mat(N * N);
-
-    // Workspace query
-    int LWORK              = -1;
-    sunrealtype WORK_QUERY = 0.0;
-    xgeev_f77(&JOBVL, &JOBVR, (int*)&N, MinvJ, &LDA, WR, WI, VL_mat.data(),
-              &LDVL, VR_mat.data(), &LDVR, &WORK_QUERY, &LWORK, &INFO);
-
-    if (INFO != 0)
-      throw std::runtime_error(
-        "LAPACK workspace query failed (INFO=" + std::to_string(INFO) + ")");
-
-    LWORK = std::max(1, static_cast<int>(WORK_QUERY));
-    std::vector<sunrealtype> WORK(static_cast<size_t>(LWORK));
-
-    // Compute eigenvalues/eigenvectors
-    xgeev_f77(&JOBVL, &JOBVR, (int*)&N, MinvJ, &LDA, WR, WI, VL_mat.data(),
-              &LDVL, VR_mat.data(), &LDVR, WORK.data(), &LWORK, &INFO);
-
-    if (INFO != 0)
-      throw std::runtime_error("GEEV failed (INFO=" + std::to_string(INFO) + ")");
-
-    rlc_eigenvalues out{};
-
-    // Eigenvalues
-    for (int i = 0; i < N; ++i)
-      out.eigenvalues[i] = {static_cast<sunrealtype>(WR[i]),
-                            static_cast<sunrealtype>(WI[i])};
-
-    auto get_col = [](const std::vector<sunrealtype>& M, int n, int col,
-                      int row) -> sunrealtype
-    {
-      // M is column-major n x n
-      return M[col * n + row];
-    };
-
-    // For a real eigenvalue WR[i] (WI[i]==0): the i-th right eigenvector is VR(:,i) (real).
-    //
-    // For a complex conjugate pair (WI[i]>0, WI[i+1]<0):
-    //   right eigenvector for eigenvalue (WR[i] + i*WI[i]) is VR(:,i) + i*VR(:,i+1)
-    //   right eigenvector for eigenvalue (WR[i] - i*WI[i]) is VR(:,i) - i*VR(:,i+1)
-
-    // Right eigenvectors (complex reconstruction for conjugate pairs)
-    for (int i = 0; i < N; ++i)
-    {
-      if (WI[i] == 0.0)
-      {
-        for (int r = 0; r < N; ++r)
-          out.rightEigenvectors[i][r] = {static_cast<sunrealtype>(
-                                           get_col(VR_mat, N, i, r)),
-                                         static_cast<sunrealtype>(0.0)};
-      }
-      else if (WI[i] > 0.0)
-      {
-        // i and i+1 form a conjugate pair
-        for (int r = 0; r < N; ++r)
-        {
-          const sunrealtype a             = get_col(VR_mat, N, i, r);
-          const sunrealtype b             = get_col(VR_mat, N, i + 1, r);
-          out.rightEigenvectors[i][r]     = {static_cast<sunrealtype>(a),
-                                             static_cast<sunrealtype>(b)};
-          out.rightEigenvectors[i + 1][r] = {static_cast<sunrealtype>(a),
-                                             static_cast<sunrealtype>(-b)};
-        }
-      }
-      // WI[i] < 0.0 is handled when we processed the prior WI[i-1] > 0.0
-    }
-
-    // Left eigenvectors (optional, same reconstruction rules applied to VL)
-    if (computeLeftEigenvectors)
-    {
-      for (int i = 0; i < N; ++i)
-      {
-        if (WI[i] == 0.0)
-        {
-          for (int r = 0; r < N; ++r)
-            out.leftEigenvectors[i][r] = {static_cast<sunrealtype>(
-                                            get_col(VL_mat, N, i, r)),
-                                          static_cast<sunrealtype>(0.0)};
-        }
-        else if (WI[i] > 0.0)
-        {
-          for (int r = 0; r < N; ++r)
-          {
-            const sunrealtype a            = get_col(VL_mat, N, i, r);
-            const sunrealtype b            = get_col(VL_mat, N, i + 1, r);
-            out.leftEigenvectors[i][r]     = {static_cast<sunrealtype>(a),
-                                              static_cast<sunrealtype>(b)};
-            out.leftEigenvectors[i + 1][r] = {static_cast<sunrealtype>(a),
-                                              static_cast<sunrealtype>(-b)};
-          }
-        }
-      }
-    }
-
-    auto result = std::minmax_element(out.eigenvalues.begin(),
-                                      out.eigenvalues.end(),
-                                      [](std::complex<sunrealtype> a,
-                                         std::complex<sunrealtype> b)
-                                      { return std::abs(a) < std::abs(b); });
-
-    out.min_mag     = std::abs(*result.first);
-    out.max_mag     = std::abs(*result.second);
-    out.min_mag_idx = std::distance(out.eigenvalues.begin(), result.first);
-    out.max_mag_idx = std::distance(out.eigenvalues.begin(), result.second);
-
-    return out;
   }
 };
 
