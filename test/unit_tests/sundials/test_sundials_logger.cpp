@@ -210,3 +210,155 @@ TEST(SUNLoggerTest, EmptyFilenameDisablesDebugOutput)
   (void)std::remove(debugfile.c_str());
 #endif
 }
+
+TEST(SUNLoggerTest, SetFileNullLogger)
+{
+  EXPECT_EQ(SUNLogger_SetErrorFile(NULL, NULL), SUN_ERR_ARG_CORRUPT);
+  EXPECT_EQ(SUNLogger_SetWarningFile(NULL, NULL), SUN_ERR_ARG_CORRUPT);
+  EXPECT_EQ(SUNLogger_SetInfoFile(NULL, NULL), SUN_ERR_ARG_CORRUPT);
+  EXPECT_EQ(SUNLogger_SetDebugFile(NULL, NULL), SUN_ERR_ARG_CORRUPT);
+}
+
+TEST(SUNLoggerTest, SetErrorFileAndDisableWithNull)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_ERROR
+  GTEST_SKIP() << "Errors not enabled in this build";
+#else
+  const std::string errfile = "test_sundials_logger.error_fp.err";
+  (void)std::remove(errfile.c_str());
+
+  FILE* fp = std::fopen(errfile.c_str(), "w+");
+  ASSERT_NE(fp, nullptr);
+
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetErrorFile(logger, fp), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "scope", "label",
+                               "first"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetErrorFile(logger, NULL), SUN_SUCCESS);
+  testing::internal::CaptureStderr();
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "scope", "label",
+                               "second"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+  EXPECT_EQ(CountLines(testing::internal::GetCapturedStderr()), 0);
+
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  ASSERT_EQ(logger, nullptr);
+
+  ASSERT_EQ(std::fclose(fp), 0);
+  EXPECT_EQ(CountLines(ReadFile(errfile)), 1);
+  (void)std::remove(errfile.c_str());
+#endif
+}
+
+TEST(SUNLoggerTest, SetWarningFileAndDisableWithNull)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_WARNING
+  GTEST_SKIP() << "Warnings not enabled in this build";
+#else
+  const std::string warnfile = "test_sundials_logger.warning_fp.warn";
+  (void)std::remove(warnfile.c_str());
+
+  FILE* fp = std::fopen(warnfile.c_str(), "w+");
+  ASSERT_NE(fp, nullptr);
+
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetWarningFile(logger, fp), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_WARNING, "scope", "label",
+                               "first"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_WARNING), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetWarningFile(logger, NULL), SUN_SUCCESS);
+  testing::internal::CaptureStdout();
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_WARNING, "scope", "label",
+                               "second"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_WARNING), SUN_SUCCESS);
+  EXPECT_EQ(CountLines(testing::internal::GetCapturedStdout()), 0);
+
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  ASSERT_EQ(logger, nullptr);
+
+  ASSERT_EQ(std::fclose(fp), 0);
+  EXPECT_EQ(CountLines(ReadFile(warnfile)), 1);
+  (void)std::remove(warnfile.c_str());
+#endif
+}
+
+TEST(SUNLoggerTest, SetInfoFileAndDisableWithNull)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_INFO
+  GTEST_SKIP() << "Info logging not enabled in this build";
+#else
+  const std::string infofile = "test_sundials_logger.info_fp.info";
+  (void)std::remove(infofile.c_str());
+
+  FILE* fp = std::fopen(infofile.c_str(), "w+");
+  ASSERT_NE(fp, nullptr);
+
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetInfoFile(logger, fp), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_INFO, "scope", "label",
+                               "first"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_INFO), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetInfoFile(logger, NULL), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_INFO, "scope", "label",
+                               "second"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_INFO), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  ASSERT_EQ(logger, nullptr);
+
+  ASSERT_EQ(std::fclose(fp), 0);
+  EXPECT_EQ(CountLines(ReadFile(infofile)), 1);
+  (void)std::remove(infofile.c_str());
+#endif
+}
+
+TEST(SUNLoggerTest, SetDebugFileAndDisableWithNull)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_DEBUG
+  GTEST_SKIP() << "Debug logging not enabled in this build";
+#else
+  const std::string debugfile = "test_sundials_logger.debug_fp.debug";
+  (void)std::remove(debugfile.c_str());
+
+  FILE* fp = std::fopen(debugfile.c_str(), "w+");
+  ASSERT_NE(fp, nullptr);
+
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetDebugFile(logger, fp), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, "scope", "label",
+                               "first"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_DEBUG), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_SetDebugFile(logger, NULL), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_DEBUG, "scope", "label",
+                               "second"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_DEBUG), SUN_SUCCESS);
+
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  ASSERT_EQ(logger, nullptr);
+
+  ASSERT_EQ(std::fclose(fp), 0);
+  EXPECT_EQ(CountLines(ReadFile(debugfile)), 1);
+  (void)std::remove(debugfile.c_str());
+#endif
+}

@@ -8,6 +8,9 @@
 
 Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 
+Added `SUNLogger_Set{Error,Warning,Info,Debug}File` functions to allow setting
+logger output streams with a `FILE*`.
+
 ### Bug Fixes
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and

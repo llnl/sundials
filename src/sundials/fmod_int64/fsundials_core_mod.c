@@ -705,6 +705,20 @@ SWIGEXPORT int _wrap_FSUNLogger_SetErrorFilename(void *farg1, SwigArrayWrapper *
 }
 
 
+SWIGEXPORT int _wrap_FSUNLogger_SetErrorFile(void *farg1, void *farg2) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  FILE *arg2 = (FILE *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (FILE *)(farg2);
+  result = (SUNErrCode)SUNLogger_SetErrorFile(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNLogger_SetWarningFilename(void *farg1, SwigArrayWrapper *farg2) {
   int fresult ;
   SUNLogger arg1 = (SUNLogger) 0 ;
@@ -714,6 +728,20 @@ SWIGEXPORT int _wrap_FSUNLogger_SetWarningFilename(void *farg1, SwigArrayWrapper
   arg1 = (SUNLogger)(farg1);
   arg2 = (char *)(farg2->data);
   result = (SUNErrCode)SUNLogger_SetWarningFilename(arg1,(char const *)arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNLogger_SetWarningFile(void *farg1, void *farg2) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  FILE *arg2 = (FILE *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (FILE *)(farg2);
+  result = (SUNErrCode)SUNLogger_SetWarningFile(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -733,6 +761,20 @@ SWIGEXPORT int _wrap_FSUNLogger_SetDebugFilename(void *farg1, SwigArrayWrapper *
 }
 
 
+SWIGEXPORT int _wrap_FSUNLogger_SetDebugFile(void *farg1, void *farg2) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  FILE *arg2 = (FILE *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (FILE *)(farg2);
+  result = (SUNErrCode)SUNLogger_SetDebugFile(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNLogger_SetInfoFilename(void *farg1, SwigArrayWrapper *farg2) {
   int fresult ;
   SUNLogger arg1 = (SUNLogger) 0 ;
@@ -742,6 +784,20 @@ SWIGEXPORT int _wrap_FSUNLogger_SetInfoFilename(void *farg1, SwigArrayWrapper *f
   arg1 = (SUNLogger)(farg1);
   arg2 = (char *)(farg2->data);
   result = (SUNErrCode)SUNLogger_SetInfoFilename(arg1,(char const *)arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNLogger_SetInfoFile(void *farg1, void *farg2) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  FILE *arg2 = (FILE *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (FILE *)(farg2);
+  result = (SUNErrCode)SUNLogger_SetInfoFile(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
