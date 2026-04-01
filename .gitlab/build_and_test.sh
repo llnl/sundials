@@ -83,7 +83,6 @@ then
     fi
 
     mirror_opt=""
-    buildcache="/usr/workspace/sundials/ci/spack_stuff/build_caches/${SPACK_REF}"
 
     if [[ ! -d "${buildcache}" ]]
     then
