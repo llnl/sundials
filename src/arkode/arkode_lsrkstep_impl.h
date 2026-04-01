@@ -244,9 +244,11 @@ int lsrkStep_AccessStepMem(ARKodeMem ark_mem, const char* fname,
 void lsrkStep_DomEigUpdateLogic(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                 sunrealtype dsm);
 int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem);
-int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
+int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem,
+                                    int num_stages, sunrealtype h,
                                     sunrealtype* stability_norm);
-int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
+int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem,
+                                    int num_stages, sunrealtype h,
                                     sunrealtype* stability_norm);
 int lsrkStep_cheb_T_complex(int s, sunrealtype zR, sunrealtype zI,
                             sunrealtype* TsR, sunrealtype* TsI);

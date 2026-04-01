@@ -181,7 +181,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
 }
 
 SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
-                                           void* rhs_data, DEERhsFn RHSfn)
+                                           void* rhs_data, SUNRhsFn RHSfn)
 {
   SUNFunctionBegin(DEE->sunctx);
 

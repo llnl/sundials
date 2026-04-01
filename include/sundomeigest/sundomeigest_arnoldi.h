@@ -56,7 +56,7 @@ struct SUNDomEigEstimatorContent_Arnoldi_
 
   long int num_ATimes; /* Number of ATimes calls */
 
-  DEERhsFn rhsfn;   /* User provided RHS function */
+  SUNRhsFn rhsfn;   /* User provided RHS function */
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */
 
@@ -86,7 +86,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
-                                             void* rhs_data, DEERhsFn RHSfn);
+                                             void* rhs_data, SUNRhsFn RHSfn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(

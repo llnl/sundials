@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-typedef int (*DEERhsFn)(sunrealtype t, N_Vector y, N_Vector ydot,
+typedef int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot,
                         void* user_data);
 
 /* -----------------------------------------------------------------
@@ -49,7 +49,7 @@ typedef _SUNDIALS_STRUCT_ SUNDomEigEstimator_* SUNDomEigEstimator;
 struct SUNDomEigEstimator_Ops_
 {
   SUNErrCode (*setatimes)(SUNDomEigEstimator, void*, SUNATimesFn);
-  SUNErrCode (*setrhs)(SUNDomEigEstimator, void*, DEERhsFn);
+  SUNErrCode (*setrhs)(SUNDomEigEstimator, void*, SUNRhsFn);
   SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype,
                                          N_Vector);
   SUNErrCode (*setoptions)(SUNDomEigEstimator DEE, const char* Did,
@@ -94,7 +94,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
-                                     DEERhsFn RHSfn);
+                                     SUNRhsFn RHSfn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE,

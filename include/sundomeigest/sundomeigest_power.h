@@ -55,7 +55,7 @@ struct SUNDomEigEstimatorContent_Power_
   sunrealtype rel_tol; /* Convergence criteria for the power iteration */
   sunrealtype res;     /* Residual from the last Estimate call */
 
-  DEERhsFn rhsfn;   /* User provided RHS function */
+  SUNRhsFn rhsfn;   /* User provided RHS function */
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */
 
@@ -79,7 +79,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
-                                           void* rhs_data, DEERhsFn RHSfn);
+                                           void* rhs_data, SUNRhsFn RHSfn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetMaxIters_Power(SUNDomEigEstimator DEE,

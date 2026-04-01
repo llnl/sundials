@@ -159,7 +159,7 @@ The SUNDomEigEstimator_Power module defines the *content* field of a
      sunrealtype rhs_linT;
      sunrealtype rel_tol;
      sunrealtype res;
-     DEERhsFn rhsfn;
+     SUNRhsFn rhsfn;
      void* rhs_data;
      long int nfevals;
      sunbooleantype complex;

@@ -605,36 +605,55 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
   }
 
-  step_mem->req_stages = (int)ss;
-  /* To check stability, we evaluate the analytic stability function or an inscribed 
-     ellipse approximation. If the stability norm is greater than one, 
-     for adaptive stepping, we reduce step size and return ARK_RETRY_STEP. 
-     For fixed step size, we increase number of stages until stability norm is acceptable 
-     or stage_max_limit is reached. */
-  retval = lsrkStep_RKC_CheckStabilityNorm(ark_mem, step_mem, &stability_norm);
+  int req_stages = (int)ss;
+
+  /* To check stability, we evaluate the analytic stability function or an
+     inscribed ellipse approximation. If the stability norm is greater than
+     one, first check whether the method is stable at stage_max_limit. If so,
+     increase the number of stages until stability is obtained. Otherwise,
+     keep the existing fixed-step error and adaptive-step eta update logic. */
+  retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, ark_mem->h, 
+                                           &stability_norm);
   if (retval != ARK_SUCCESS) { return retval; }
 
   if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
   {
-    if (!ark_mem->fixedstep)
+    sunrealtype initial_stability_norm = stability_norm;
+    sunbooleantype max_stage_is_stable = SUNFALSE;
+
+    if (req_stages < step_mem->stage_max_limit)
     {
-      ark_mem->eta = ark_mem->hadapt_mem->safety / stability_norm;
-      *nflagPtr    = ARK_RETRY_STEP;
-      ark_mem->hadapt_mem->nst_exp++;
-      return ARK_RETRY_STEP;
+      retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, 
+                                               step_mem->stage_max_limit,
+                                               ark_mem->h, &stability_norm);
+      if (retval != ARK_SUCCESS) { return retval; }
+
+      max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
+      stability_norm      = initial_stability_norm;
     }
-    else
+
+    if (max_stage_is_stable)
     {
-      while (stability_norm > ONE - SUN_UNIT_ROUNDOFF &&
-             step_mem->req_stages < step_mem->stage_max_limit)
+      while ((stability_norm > ONE - SUN_UNIT_ROUNDOFF) &&
+             (req_stages < step_mem->stage_max_limit))
       {
-        step_mem->req_stages += 1;
-        retval = lsrkStep_RKC_CheckStabilityNorm(ark_mem, step_mem,
-                                                 &stability_norm);
+        req_stages += 1;
+        retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, 
+                                                 ark_mem->h, &stability_norm);
         if (retval != ARK_SUCCESS) { return retval; }
       }
-      if (stability_norm > ONE - SUN_UNIT_ROUNDOFF ||
-          step_mem->req_stages >= step_mem->stage_max_limit)
+    }
+
+    if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
+    {
+      if (!ark_mem->fixedstep)
+      {
+        ark_mem->eta = ark_mem->hadapt_mem->safety / initial_stability_norm;
+        *nflagPtr    = ARK_RETRY_STEP;
+        ark_mem->hadapt_mem->nst_exp++;
+        return ARK_RETRY_STEP;
+      }
+      else
       {
         arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
                         __FILE__,
@@ -644,6 +663,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
   }
+
+  step_mem->req_stages = req_stages;
 
   step_mem->stage_max = SUNMAX(step_mem->req_stages, step_mem->stage_max);
 
@@ -965,36 +986,56 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
   }
 
-  step_mem->req_stages = (int)ss;
-  /* To check stability, we evaluate the analytic stability function or an inscribed 
-     ellipse approximation. If the stability norm is greater than one, 
-     for adaptive stepping, we reduce step size and return ARK_RETRY_STEP. 
-     For fixed step size, we increase number of stages until stability norm is acceptable 
-     or stage_max_limit is reached. */
-  retval = lsrkStep_RKL_CheckStabilityNorm(ark_mem, step_mem, &stability_norm);
+  int req_stages = (int)ss;
+
+  /* To check stability, we evaluate the analytic stability function or an
+     inscribed ellipse approximation. If the stability norm is greater than
+     one, first check whether the method is stable at stage_max_limit. If so,
+     increase the number of stages until stability is obtained. Otherwise,
+     keep the existing fixed-step error and adaptive-step eta update logic. */
+  retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
+                                           &stability_norm);
   if (retval != ARK_SUCCESS) { return retval; }
 
   if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
   {
-    if (!ark_mem->fixedstep)
+    sunrealtype initial_stability_norm = stability_norm;
+    sunbooleantype max_stage_is_stable = SUNFALSE;
+
+    if (req_stages < step_mem->stage_max_limit)
     {
-      ark_mem->eta = ark_mem->hadapt_mem->safety / stability_norm;
-      *nflagPtr    = ARK_RETRY_STEP;
-      ark_mem->hadapt_mem->nst_exp++;
-      return ARK_RETRY_STEP;
+      retval = lsrkStep_RKL_CheckStabilityNorm(step_mem,
+                                               step_mem->stage_max_limit,
+                                               ark_mem->h,
+                                               &stability_norm);
+      if (retval != ARK_SUCCESS) { return retval; }
+
+      max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
+      stability_norm      = initial_stability_norm;
     }
-    else
+
+    if (max_stage_is_stable)
     {
-      while (stability_norm > ONE - SUN_UNIT_ROUNDOFF &&
-             step_mem->req_stages < step_mem->stage_max_limit)
+      while ((stability_norm > ONE - SUN_UNIT_ROUNDOFF) &&
+             (req_stages < step_mem->stage_max_limit))
       {
-        step_mem->req_stages += 1;
-        retval = lsrkStep_RKL_CheckStabilityNorm(ark_mem, step_mem,
-                                                 &stability_norm);
+        req_stages += 1;
+        retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages,
+                                                 ark_mem->h, &stability_norm);
         if (retval != ARK_SUCCESS) { return retval; }
       }
-      if (stability_norm > ONE - SUN_UNIT_ROUNDOFF ||
-          step_mem->req_stages >= step_mem->stage_max_limit)
+    }
+
+    if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
+    {
+      if (!ark_mem->fixedstep)
+      {
+        ark_mem->eta = ark_mem->hadapt_mem->safety / initial_stability_norm;
+        *nflagPtr    = ARK_RETRY_STEP;
+        ark_mem->hadapt_mem->nst_exp++;
+        return ARK_RETRY_STEP;
+      }
+      else
       {
         arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
                         __FILE__,
@@ -1004,6 +1045,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
   }
+
+  step_mem->req_stages = req_stages;
 
   step_mem->stage_max = SUNMAX(step_mem->req_stages, step_mem->stage_max);
 
@@ -2434,7 +2477,7 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
     return ARK_DOMEIG_FAIL;
   }
 
-  if (step_mem->lambdaR * ark_mem->h > ZERO)
+  if (step_mem->lambdaR * ark_mem->h > SUNRsqrt(SUN_UNIT_ROUNDOFF))
   {
     arkProcessError(NULL, ARK_DOMEIG_FAIL, __LINE__, __func__, __FILE__,
                     "lambdaR*h must be nonpositive");
@@ -2480,14 +2523,14 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
   If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
   the Chebyshev polynomial.
   ---------------------------------------------------------------*/
-int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
-                                    sunrealtype* stability_norm)
+int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages, 
+                                    sunrealtype h, sunrealtype* stability_norm)
 {
-  sunrealtype ss = step_mem->req_stages;
+  sunrealtype ss = (sunrealtype)num_stages;
   sunrealtype w0, w1, wr, wi, th, sh, ch, b_s, a_s, Ts, Ts_p, Ts_pp, a, b, xc, yc;
   sunrealtype re_stab_min, im_stab_min;
-  sunrealtype zR = SUNRabs(ark_mem->h) * step_mem->lambdaR;
-  sunrealtype zI = SUNRabs(ark_mem->h) * step_mem->lambdaI;
+  sunrealtype zR = SUNRabs(h) * step_mem->lambdaR;
+  sunrealtype zI = SUNRabs(h) * step_mem->lambdaI;
 
   if (step_mem->use_ellipse)
   {
@@ -2531,8 +2574,7 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
     wi = w1 * zI;
 
     sunrealtype TsR, TsI, Ps_ZR, Ps_ZI;
-    int retval = lsrkStep_cheb_T_complex(step_mem->req_stages, wr, wi, &TsR,
-                                         &TsI);
+    int retval = lsrkStep_cheb_T_complex(num_stages, wr, wi, &TsR, &TsI);
     if (retval != ARK_SUCCESS) { return retval; }
 
     Ps_ZR = a_s + b_s * TsR;
@@ -2552,14 +2594,14 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
   If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
   the Chebyshev polynomial.
   ---------------------------------------------------------------*/
-int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
-                                    sunrealtype* stability_norm)
+int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages, 
+                                    sunrealtype h, sunrealtype* stability_norm)
 {
-  sunrealtype ss = step_mem->req_stages;
+  sunrealtype ss = (sunrealtype)num_stages;
   sunrealtype w1, wr, wi, a_s, b_s, a, b, xc, yc;
   sunrealtype re_stab_min, im_stab_min;
-  sunrealtype zR = SUNRabs(ark_mem->h) * step_mem->lambdaR;
-  sunrealtype zI = SUNRabs(ark_mem->h) * step_mem->lambdaI;
+  sunrealtype zR = SUNRabs(h) * step_mem->lambdaR;
+  sunrealtype zI = SUNRabs(h) * step_mem->lambdaI;
 
   if (step_mem->use_ellipse)
   {
@@ -2614,8 +2656,7 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
     wi  = w1 * zI;
 
     sunrealtype PsR, PsI, Ps_ZR, Ps_ZI;
-    int retval = lsrkStep_legendre_P_complex(step_mem->req_stages, wr, wi, &PsR,
-                                             &PsI);
+    int retval = lsrkStep_legendre_P_complex(num_stages, wr, wi, &PsR, &PsI);
     if (retval != ARK_SUCCESS) { return retval; }
 
     Ps_ZR = a_s + b_s * PsR;

@@ -194,7 +194,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data,
 }
 
 SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
-                                     DEERhsFn RHSfn)
+                                     SUNRhsFn RHSfn)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));

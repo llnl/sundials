@@ -636,25 +636,25 @@ SWIGEXPORT long _wrap_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_get(SwigClas
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__rhsfn_set(SwigClassWrapper const *farg1, DEERhsFn farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__rhsfn_set(SwigClassWrapper const *farg1, SUNRhsFn farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
-  DEERhsFn arg2 = (DEERhsFn) 0 ;
+  SUNRhsFn arg2 = (SUNRhsFn) 0 ;
   
   SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhsfn", return );
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
-  arg2 = (DEERhsFn)(farg2);
+  arg2 = (SUNRhsFn)(farg2);
   if (arg1) (arg1)->rhsfn = arg2;
 }
 
 
-SWIGEXPORT DEERhsFn _wrap_SUNDomEigEstimatorContent_Arnoldi__rhsfn_get(SwigClassWrapper const *farg1) {
-  DEERhsFn fresult ;
+SWIGEXPORT SUNRhsFn _wrap_SUNDomEigEstimatorContent_Arnoldi__rhsfn_get(SwigClassWrapper const *farg1) {
+  SUNRhsFn fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
-  DEERhsFn result;
+  SUNRhsFn result;
   
   SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhsfn", return 0);
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
-  result = (DEERhsFn) ((arg1)->rhsfn);
+  result = (SUNRhsFn) ((arg1)->rhsfn);
   fresult = result;
   return fresult;
 }
@@ -939,16 +939,16 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator fa
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator farg1, void *farg2, DEERhsFn farg3) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator farg1, void *farg2, SUNRhsFn farg3) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   void *arg2 = (void *) 0 ;
-  DEERhsFn arg3 = (DEERhsFn) 0 ;
+  SUNRhsFn arg3 = (SUNRhsFn) 0 ;
   SUNErrCode result;
   
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (void *)(farg2);
-  arg3 = (DEERhsFn)(farg3);
+  arg3 = (SUNRhsFn)(farg3);
   result = (SUNErrCode)SUNDomEigEstimator_SetRhs_Arnoldi(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;

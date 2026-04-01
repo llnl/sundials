@@ -126,7 +126,7 @@ The SUNDomEigEstimator_Arnoldi module defines the *content* field of a
      sunrealtype tol_preprocess;
      sunrealtype rhs_linT;
      long int num_ATimes;
-     DEERhsFn rhsfn;
+     SUNRhsFn rhsfn;
      void* rhs_data;
      long int nfevals;
      sunrealtype* LAPACK_A;

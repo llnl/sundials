@@ -189,7 +189,7 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
 }
 
 SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
-                                             void* rhs_data, DEERhsFn RHSfn)
+                                             void* rhs_data, SUNRhsFn RHSfn)
 {
   SUNFunctionBegin(DEE->sunctx);
 

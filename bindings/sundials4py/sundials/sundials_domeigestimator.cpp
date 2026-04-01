@@ -87,7 +87,7 @@ void bind_sundomeigestimator(nb::module_& m)
   m.def(
     "SUNDomEigEstimator_SetRhs",
     [](SUNDomEigEstimator DEE,
-       std::function<std::remove_pointer_t<DEERhsFn>> RHSfn) -> SUNErrCode
+       std::function<std::remove_pointer_t<SUNRhsFn>> RHSfn) -> SUNErrCode
     {
       if (!DEE->python) { DEE->python = new SUNDomEigEstimatorFunctionTable; }
 

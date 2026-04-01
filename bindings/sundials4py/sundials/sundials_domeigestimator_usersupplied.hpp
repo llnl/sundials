@@ -48,7 +48,7 @@ template<typename... Args>
 SUNErrCode sundomeigestimator_setrhs_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<DEERhsFn>, SUNDomEigEstimatorFunctionTable,
+    std::remove_pointer_t<SUNRhsFn>, SUNDomEigEstimatorFunctionTable,
     3>(&SUNDomEigEstimatorFunctionTable::deerhs, std::forward<Args>(args)...);
 }
 
