@@ -612,7 +612,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      one, first check whether the method is stable at stage_max_limit. If so,
      increase the number of stages until stability is obtained. Otherwise,
      keep the existing fixed-step error and adaptive-step eta update logic. */
-  retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, ark_mem->h, 
+  retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
                                            &stability_norm);
   if (retval != ARK_SUCCESS) { return retval; }
 
@@ -623,7 +623,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     if (req_stages < step_mem->stage_max_limit)
     {
-      retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, 
+      retval = lsrkStep_RKC_CheckStabilityNorm(step_mem,
                                                step_mem->stage_max_limit,
                                                ark_mem->h, &stability_norm);
       if (retval != ARK_SUCCESS) { return retval; }
@@ -638,7 +638,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
              (req_stages < step_mem->stage_max_limit))
       {
         req_stages += 1;
-        retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, 
+        retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages,
                                                  ark_mem->h, &stability_norm);
         if (retval != ARK_SUCCESS) { return retval; }
       }
@@ -1006,8 +1006,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       retval = lsrkStep_RKL_CheckStabilityNorm(step_mem,
                                                step_mem->stage_max_limit,
-                                               ark_mem->h,
-                                               &stability_norm);
+                                               ark_mem->h, &stability_norm);
       if (retval != ARK_SUCCESS) { return retval; }
 
       max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
@@ -2523,7 +2522,7 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
   If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
   the Chebyshev polynomial.
   ---------------------------------------------------------------*/
-int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages, 
+int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
                                     sunrealtype h, sunrealtype* stability_norm)
 {
   sunrealtype ss = (sunrealtype)num_stages;
@@ -2594,7 +2593,7 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
   If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
   the Chebyshev polynomial.
   ---------------------------------------------------------------*/
-int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages, 
+int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
                                     sunrealtype h, sunrealtype* stability_norm)
 {
   sunrealtype ss = (sunrealtype)num_stages;
