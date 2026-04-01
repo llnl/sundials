@@ -20,10 +20,14 @@ sync:
 
 .build-and-test:
   stage: build-and-test
-
+  variables:
+    GIT_STRATEGY: fetch
+    GIT_DEPTH: 1
+    
 nvidia-h100-cuda-12.8:
   extends: .build-and-test
   tags: [nvidia-h100]
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   script:
+    - ls -al
     - ./build-and-test.sh
