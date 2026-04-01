@@ -27,7 +27,7 @@ sync:
     BUILD_ROOT: ${CI_PROJECT_DIR}
     BUILDCACHE_ROOT: ".buildcache" # TODO(CJB): figure out where this should be (maybe use gitlab registry?)
     SPACK_REF: "releases/latest"
-  script:
+  before_script:
     - apt-get update && apt-get install -y git cmake python3
     
 nvidia-h100-cuda-12.8:
