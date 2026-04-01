@@ -1,0 +1,29 @@
+workflow:
+  name: '$GITHUB_PIPELINE_NAME'
+
+stages:
+  - sync
+  - build-and-test
+
+sync:
+  stage: sync
+  variables:
+    GIT_STRATEGY: none
+    GITHUB_TOKEN: $GITHUB_TOKEN
+    GITLAB_SSH_KEY_BASE64: $GITLAB_SSH_KEY_BASE64
+  script:
+    - wget https://raw.githubusercontent.com/spack/spack-infrastructure/refs/heads/main/images/gh-gl-sync/SpackCIBridge.py
+    - wget https://raw.githubusercontent.com/spack/spack-infrastructure/refs/heads/main/images/gh-gl-sync/requirements.txt
+    - pip3 install -r requirements.txt
+    - pip3 install requests==2.32.2
+    - python3 ./SpackCIBridge.py "llnl/sundials" "ssh://git@ssh.gitlab.spack.io/sundials/sundials" "https://gitlab.spack.io" "sundials/sundials"
+
+.build-and-test:
+  stage: build-and-test
+
+nvidia-h100-cuda-12.8:
+  extends: .build-and-test
+  tags: [nvidia-h100]
+  image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
+  script:
+    - ./build-and-test.sh
