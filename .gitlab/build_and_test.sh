@@ -20,6 +20,8 @@ job_unique_id=${CI_JOB_ID:-""}
 sys_type=${SYS_TYPE:-""}
 py_env_path=${PYTHON_ENVIRONMENT_PATH:-""}
 
+buildcache=${BUILDCACHE_ROOT:-"/usr/workspace/sundials/ci/spack_stuff/build_caches/${SPACK_REF}"}
+
 # Dependencies
 date
 

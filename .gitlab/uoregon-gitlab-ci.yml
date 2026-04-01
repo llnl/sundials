@@ -23,11 +23,16 @@ sync:
   variables:
     GIT_STRATEGY: fetch
     GIT_DEPTH: 1
+    GIT_SUBMODULE_STRATEGY: recursive
+    BUILD_ROOT: ${CI_PROJECT_DIR}
+    BUILDCACHE_ROOT: ".buildcache" # TODO(CJB): figure out where this should be (maybe use gitlab registry?)
+    SPACK_REF: "1f55b591715496b15d58b43605ce8657d722fe7d" # v0.22.4
     
 nvidia-h100-cuda-12.8:
   extends: .build-and-test
   tags: [nvidia-h100]
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   script:
-    - ls -al
-    - ./build-and-test.sh
+    - .gitlab/build_and_test.sh
+  variables:
+      SPEC: "%gcc +cuda"
