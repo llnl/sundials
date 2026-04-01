@@ -18,7 +18,7 @@ sync:
     # - pip3 install requests==2.32.2
     # - python3 ./SpackCIBridge.py "llnl/sundials" "ssh://git@ssh.gitlab.spack.io/sundials/sundials" "https://gitlab.spack.io" "sundials/sundials"
     - pip install repligit
-    - python3 ./mirror.py
+    - python3 ./gitlab/mirror.py
 
 .build-and-test:
   stage: build-and-test
