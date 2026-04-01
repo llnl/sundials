@@ -26,7 +26,9 @@ sync:
     GIT_SUBMODULE_STRATEGY: recursive
     BUILD_ROOT: ${CI_PROJECT_DIR}
     BUILDCACHE_ROOT: ".buildcache" # TODO(CJB): figure out where this should be (maybe use gitlab registry?)
-    SPACK_REF: "1f55b591715496b15d58b43605ce8657d722fe7d" # v0.22.4
+    SPACK_REF: "releases/latest"
+    script:
+      - apt-get update && apt-get install -y git cmake python3
     
 nvidia-h100-cuda-12.8:
   extends: .build-and-test
