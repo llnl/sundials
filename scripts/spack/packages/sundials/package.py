@@ -1,13 +1,11 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
-# Spack Project Developers. See the top-level COPYRIGHT file for details.
-#
-# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 
 import os
-import re
 import sys
 
-from llnl.util import tty
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
@@ -18,11 +16,11 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://computing.llnl.gov/projects/sundials"
     url = "https://github.com/LLNL/sundials/releases/download/v2.7.0/sundials-2.7.0.tar.gz"
-    git = "https://github.com/llnl/sundials.git"
+    git = "https://github.com/LLNL/sundials.git"
     tags = ["radiuss", "e4s"]
     test_requires_compiler = True
 
-    maintainers = ["balos1", "cswoodward", "gardner48"]
+    maintainers("balos1", "cswoodward", "gardner48")
     license("BSD-3-Clause")
 
     # ==========================================================================
@@ -131,6 +129,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         when="@6.0.0: +profiling",
         description="Enable Caliper instrumentation/profiling",
     )
+    variant(
+        "adiak",
+        default=False,
+        when="@6.0.0: +profiling",
+        description="Enable adiak instrumentation/profiling",
+    )
     variant("ginkgo", default=False, when="@6.4.0:", description="Enable Ginkgo interfaces")
     variant("hypre", default=False, description="Enable Hypre MPI parallel vector")
     variant("kokkos", default=False, when="@6.4.0:", description="Enable Kokkos vector")
@@ -153,7 +157,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("static", default=True, description="Build static libraries")
 
     # Fortran interfaces
-    variant("fcmix", default=False, description="Enable Fortran 77 interface")
     variant("f2003", default=False, description="Enable Fortran 2003 interface")
 
     # Examples
@@ -180,7 +183,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant(
         "profiling", default=False, when="@6.0.0:", description="Build with profiling capabilities"
     )
-
     # ==========================================================================
     # Extra variants for our internal sundials package
     # ==========================================================================
@@ -278,15 +280,11 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     # Conflicts
     # ==========================================================================
 
-    conflicts("+cuda", when="@:2.7.0")
-    conflicts("+f2003", when="@:4.1.0")
-    conflicts("~int64", when="@:2.7.0")
     conflicts("+rocm", when="@:5.6.0")
-    conflicts("~openmp", when="^superlu-dist+openmp")
 
-    # External libraries incompatible with 64-bit indices
-    conflicts("+lapack", when="@3.0.0: +int64")
-    conflicts("+hypre", when="+hypre@:2.6.1a +int64")
+    with when("+int64"):
+        conflicts("+lapack")
+        conflicts("+hypre", when="+hypre@:2.6.1a")
 
     # External libraries incompatible with single precision
     with when("precision=single"):
@@ -302,8 +300,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         conflicts("+superlu-dist")
         conflicts("+superlu-mt")
 
-    # SuperLU_MT interface requires lapack for external blas (before v3.0.0)
-    conflicts("+superlu-mt", when="@:2.7.0 ~lapack")
 
     # rocm+examples and cstd do not work together in 6.0.0
     conflicts("+rocm+examples", when="@6.0.0")
@@ -317,9 +313,18 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     # ==========================================================================
     # Patches
     # ==========================================================================
+    # https://github.com/LLNL/sundials/pull/434
+    # https://github.com/LLNL/sundials/pull/437
+    patch("sundials-hip-platform.patch", when="@6.7.0:7.0.0 +rocm")
+
+    # https://github.com/spack/spack/issues/29526
+    patch("nvector-pic.patch", when="@6.1.0:6.2.0 +rocm")
+
+    # Backward compatibility is stopped from ROCm 6.0
+    # Need to follow the changes similar to PR https://github.com/LLNL/RAJA/pull/1568
+    patch("Change-HIP_PLATFORM-from-HCC-to-AMD-and-NVCC-to-NVIDIA.patch", when="^hip@6.0 +rocm")
 
     # remove OpenMP header file and function from hypre vector test code
-    patch("test_nvector_parhyp.patch", when="@2.7.0:3.0.0")
     patch("FindPackageMultipass.cmake.patch", when="@5.0.0")
     patch("5.5.0-xsdk-patches.patch", when="@5.5.0")
     patch("0001-add-missing-README-to-examples-cvode-hip.patch", when="@5.6.0:5.7.0")
@@ -327,8 +332,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     patch("remove-links-to-OpenMP-vector.patch", when="@5.5.0:5.7.0")
     # fix issues with exported PETSc target(s) in SUNDIALSConfig.cmake
     patch("sundials-v5.8.0.patch", when="@5.8.0")
-    # https://github.com/spack/spack/issues/29526
-    patch("nvector-pic.patch", when="@6.1.0:6.2.0 +rocm")
 
     # ==========================================================================
     # Post Install Actions
@@ -338,14 +341,10 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     def post_install(self):
         """Run after install to fix install name of dynamic libraries
         on Darwin to have full path and install the LICENSE file."""
-        spec = self.spec
         prefix = self.spec.prefix
 
         if sys.platform == "darwin":
             fix_darwin_install_name(prefix.lib)
-
-        if spec.satisfies("@:3.0.0"):
-            install("LICENSE", prefix)
 
     @run_after("install")
     def filter_compilers(self):
@@ -415,31 +414,17 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         cxx_files = [
             "arkode/CXX_parallel/Makefile",
-            "arkode/CXX_serial/Makefile" "cvode/cuda/Makefile",
+            "arkode/CXX_serial/Makefile",
+            "cvode/cuda/Makefile",
             "cvode/raja/Makefile",
             "nvector/cuda/Makefile",
             "nvector/raja/Makefile",
         ]
 
-        f77_files = [
-            "arkode/F77_parallel/Makefile",
-            "arkode/F77_serial/Makefile",
-            "cvode/fcmix_parallel/Makefile",
-            "cvode/fcmix_serial/Makefile",
-            "ida/fcmix_openmp/Makefile",
-            "ida/fcmix_parallel/Makefile",
-            "ida/fcmix_pthreads/Makefile",
-            "ida/fcmix_serial/Makefile",
-            "kinsol/fcmix_parallel/Makefile",
-            "kinsol/fcmix_serial/Makefile",
-        ]
-
-        f90_files = ["arkode/F90_parallel/Makefile", "arkode/F90_serial/Makefile"]
-
         f2003_files = [
             "arkode/F2003_serial/Makefile",
             "cvode/F2003_serial/Makefile",
-            "cvodes/F2003_serial/Makefike",
+            "cvodes/F2003_serial/Makefile",
             "ida/F2003_serial/Makefile",
             "idas/F2003_serial/Makefile",
             "kinsol/F2003_serial/Makefile",
@@ -460,18 +445,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         for filename in cxx_files:
             filter_file(r"^CPP\s*=.*", self.compiler.cc, os.path.join(dirname, filename), **kwargs)
-
-        if ("+fcmix" in spec) and ("+examples" in spec):
-            for filename in f77_files:
-                filter_file(
-                    os.environ["F77"], self.compiler.f77, os.path.join(dirname, filename), **kwargs
-                )
-
-        if ("+fcmix" in spec) and ("+examples" in spec):
-            for filename in f90_files:
-                filter_file(
-                    os.environ["FC"], self.compiler.fc, os.path.join(dirname, filename), **kwargs
-                )
 
         if ("+f2003" in spec) and ("+examples" in spec):
             for filename in f2003_files:
@@ -509,117 +482,98 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
-    def test_install(self):
-        """Perform make test_install."""
+    def check_test_install(self):
+        """Perform test_install on the build."""
         with working_dir(self.build_directory):
             make("test_install")
-
-    @property
-    def _smoke_tests(self):
-        # smoke_tests tuple: exe, args, purpose, use cmake (true/false)
-        smoke_tests = []
-        if "+CVODE" in self.spec:
-            smoke_tests.append(("cvode/serial/cvAdvDiff_bnd", [], "Test CVODE", True))
-
-        if "+cuda" in self.spec:
-            if "+CVODE" in self.spec:
-                smoke_tests.append(
-                    ("cvode/cuda/cvAdvDiff_kry_cuda", [], "Test CVODE with CUDA", True)
-                )
-
-        if "+hip" in self.spec:
-            if "+CVODE" in self.spec:
-                smoke_tests.append(
-                    ("cvode/hip/cvAdvDiff_kry_hip", [], "Test CVODE with HIP", True)
-                )
-
-        if "+sycl" in self.spec:
-            if "+CVODE" in self.spec:
-                smoke_tests.append(
-                    ("cvode/sycl/cvAdvDiff_kry_sycl", [], "Test CVODE with SYCL", True)
-                )
-
-        return smoke_tests
 
     @property
     def _smoke_tests_path(self):
         # examples/smoke-tests are cached for testing
         return self.prefix.examples
 
-    # TODO: Replace this method and its 'get' use for cmake path with
-    #   join_path(self.spec['cmake'].prefix.bin, 'cmake') once stand-alone
-    #   tests can access build dependencies through self.spec['cmake'].
-    def cmake_bin(self, set=True):
-        """(Hack) Set/get cmake dependency path."""
-        filepath = join_path(self.install_test_root, "cmake_bin_path.txt")
-        if set:
-            with open(filepath, "w") as out_file:
-                cmake_bin = join_path(self.spec["cmake"].prefix.bin, "cmake")
-                out_file.write("{0}\n".format(cmake_bin))
-        elif os.path.isfile(filepath):
-            with open(filepath, "r") as in_file:
-                return in_file.read().strip()
+    def run_example(self, exe_path, opts, cmake_bool):
+        """Common sundials test method"""
+        if "~examples-install" in self.spec:
+            raise SkipTest("Package must be installed with +examples-install")
 
-    @run_after("install")
-    def setup_smoke_tests(self):
-        install_tree(self._smoke_tests_path, join_path(self.install_test_root, "testing"))
-        self.cmake_bin(set=True)
+        (dirname, basename) = os.path.split(exe_path)
+        srcpath = join_path(self._smoke_tests_path, dirname)
+        if not os.path.exists(srcpath):
+            raise SkipTest(f"Example '{basename}' source directory not found in {self.version}")
 
-    def build_smoke_tests(self):
-        cmake_bin = self.cmake_bin(set=False)
+        # copy the example's directory to the test stage
+        mkdirp(dirname)
+        install_tree(srcpath, dirname)
 
-        if not cmake_bin:
-            tty.msg("Skipping sundials test: cmake_bin_path.txt not found")
-            return
+        # build and run the example
+        with working_dir(dirname):
+            if cmake_bool:
+                deps = "sundials mpi"
+                prefixes = ";".join([self.spec[x].prefix for x in deps.split()])
+                cmake = self.spec["cmake"].command
+                cmake("-DCMAKE_PREFIX_PATH=" + prefixes, ".")
 
-        for smoke_test in self._smoke_tests:
-            work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
-            with working_dir(work_dir):
-                if smoke_test[3]:  # use cmake
-                    self.run_test(exe=cmake_bin, options=["."])
-                self.run_test(exe="make")
+            make = which("make", required=True)
+            make()
+            exe = which(basename, required=True)
+            exe(*opts)
+            make("clean")
 
-    def run_smoke_tests(self):
-        for smoke_test in self._smoke_tests:
-            self.run_test(
-                exe=join_path(self._smoke_tests_path, smoke_test[0]),
-                options=smoke_test[1],
-                status=[0],
-                installed=True,
-                skip_missing=True,
-                purpose=smoke_test[2],
-            )
+    def test_nvector_serial(self):
+        """build and run serial N_Vector"""
+        self.run_example(join_path("nvector", "serial", "test_nvector_serial"), ["10", "0"], False)
 
-    def clean_smoke_tests(self):
-        for smoke_test in self._smoke_tests:
-            work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
-            with working_dir(work_dir):
-                self.run_test(exe="make", options=["clean"])
+    def test_cvadvdiff_serial(self):
+        """build and run serial cvAdvDiff_bnd"""
+        if "+CVODE" not in self.spec:
+            raise SkipTest("Package must be installed with +CVODE")
 
-    def test(self):
-        self.build_smoke_tests()
-        self.run_smoke_tests()
-        self.clean_smoke_tests()
-        return
-        """Run the smoke tests."""
-        if "+examples" not in self.spec:
-            print("Smoke tests were skipped: install with examples enabled")
-        return
+        self.run_example(join_path("cvode", "serial", "cvAdvDiff_bnd"), [], True)
 
-        self.run_test(
-            "examples/nvector/serial/test_nvector_serial",
-            options=["10", "0"],
-            work_dir=self._extra_tests_path,
+    def test_nvector_cuda(self):
+        """build and run CUDA N_Vector"""
+        if "+cuda" not in self.spec:
+            raise SkipTest("Package must be installed with +cuda")
+
+        self.run_example(join_path("nvector", "cuda", "test_nvector_cuda"), ["10", "0", "0"], True)
+
+    def test_cvadvdiff_cuda(self):
+        """build and run CUDA cvAdvDiff_kry"""
+        if "+cuda" not in self.spec or "+CVODE" not in self.spec:
+            raise SkipTest("Package must be installed with +cuda+CVODE")
+
+        self.run_example(join_path("cvode", "cuda", "cvAdvDiff_kry_cuda"), [], True)
+
+    def test_nvector_hip(self):
+        """build and run ROCM N_Vector"""
+        if "+rocm" not in self.spec:
+            raise SkipTest("Package must be installed with +rocm")
+
+        self.run_example(join_path("nvector", "hip", "test_nvector_hip"), ["10", "0", "0"], True)
+
+    def test_cvadvdiff_hip(self):
+        """build and run ROCM cvAdvDiff_kry"""
+        if "+rocm" not in self.spec or "+CVODE" not in self.spec:
+            raise SkipTest("Package must be installed with +rocm+CVODE")
+
+        self.run_example(join_path("cvode", "hip", "cvAdvDiff_kry_hip"), [], True)
+
+    def test_nvector_sycl(self):
+        """build and run SYCL N_Vector"""
+        if "+sycl" not in self.spec:
+            raise SkipTest("Package must be installed with +sycl")
+
+        self.run_example(
+            join_path("nvector", "sycl", "test_nvector_sycl"), ["10", "0", "0"], False
         )
-        if "+cuda" in self.spec:
-            self.run_test("examples/cvode/cuda/cvAdvDiff_ky_cuda", work_dir=self._extra_tests_path)
-        if "+rocm" in self.spec:
-            self.run_test("examples/cvode/hip/cvAdvDiff_kry_hip", work_dir=self._extra_tests_path)
-        if "+sycl" in self.spec:
-            self.run_test(
-                "examples/cvode/CXX_sycl/cvAdvDiff_kry_sycl", work_dir=self._extra_tests_path
-            )
-        return
+
+    def test_sycl_cvode(self):
+        """build and run SYCL cvAdvDiff_kry"""
+        if "+sycl" not in self.spec or "+CVODE" not in self.spec:
+            raise SkipTest("Package must be installed with +sycl and +CVODE")
+
+        self.run_example(join_path("cvode", "sycl", "cvAdvDiff_kry_sycl"), [], True)
 
     # ==========================================================================
     # SUNDIALS Settings
@@ -733,7 +687,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                 # Precision
                 self.cache_string_from_variant("SUNDIALS_PRECISION", "precision"),
                 # Fortran interface
-                self.cache_option_from_variant("F77_INTERFACE_ENABLE", "fcmix"),
                 self.cache_option_from_variant("F2003_INTERFACE_ENABLE", "f2003"),
                 # library type
                 self.cache_option_from_variant("BUILD_SHARED_LIBS", "shared"),
@@ -761,15 +714,13 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             ]
         )
 
-        # index type (v3.0.0 or later)
-        if spec.satisfies("@3:"):
-            intsize = "64" if "+int64" in spec else "32"
-            entries.extend(
-                [
-                    cmake_cache_string("SUNDIALS_INDEX_SIZE", intsize),
-                    cmake_cache_string("SUNDIALS_INDEX_TYPE", "int{}_t".format(intsize)),
-                ]
-            )
+        intsize = "64" if "+int64" in spec else "32"
+        entries.extend(
+            [
+                cmake_cache_string("SUNDIALS_INDEX_SIZE", intsize),
+                cmake_cache_string("SUNDIALS_INDEX_TYPE", "int{}_t".format(intsize)),
+            ]
+        )
 
         # TPLs
         entries.extend(
@@ -914,43 +865,29 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         # Building with SuperLU_DIST
         if "+superlu-dist" in spec:
-            # if spec.satisfies("@6.4.0:"):
-            if False:
-                entries.extend(
-                    [
-                        cmake_cache_path("SUPERLUDIST_DIR", spec["superlu-dist"].prefix),
-                        cmake_cache_string("SUPERLUDIST_OpenMP", "^superlu-dist+openmp" in spec),
-                    ]
-                )
-            else:
-                superludist_libs = []
-                superludist_libs.extend(spec["parmetis"].libs)
-                superludist_libs.extend(spec["metis"].libs)
-                superludist_libs.extend(spec["superlu-dist"].libs)
-                entries.extend(
-                    [
-                        cmake_cache_path(
-                            "SUPERLUDIST_INCLUDE_DIR", spec["superlu-dist"].prefix.include
-                        ),
-                        cmake_cache_path(
-                            "SUPERLUDIST_LIBRARY_DIR", spec["superlu-dist"].prefix.lib
-                        ),
-                        cmake_cache_string("SUPERLUDIST_LIBRARIES", ";".join(superludist_libs)),
-                        cmake_cache_string("SUPERLUDIST_OpenMP", "^superlu-dist+openmp" in spec),
-                    ]
-                )
+            superludist_libs = []
+            superludist_libs.extend(spec["parmetis"].libs)
+            superludist_libs.extend(spec["metis"].libs)
+            superludist_libs.extend(spec["superlu-dist"].libs)
+            entries.extend(
+                [
+                    cmake_cache_path(
+                        "SUPERLUDIST_INCLUDE_DIR", spec["superlu-dist"].prefix.include
+                    ),
+                    cmake_cache_path(
+                        "SUPERLUDIST_LIBRARY_DIR", spec["superlu-dist"].prefix.lib
+                    ),
+                    cmake_cache_string("SUPERLUDIST_LIBRARIES", ";".join(superludist_libs)),
+                    cmake_cache_string("SUPERLUDIST_OpenMP", "^superlu-dist+openmp" in spec),
+                ]
+            )
 
         # Building with SuperLU_MT
         if "+superlu-mt" in spec:
-            if spec.satisfies("@3:"):
-                entries.extend(
-                    [
-                        cmake_cache_string("BLAS_ENABLE", True),
-                        cmake_cache_string("BLAS_LIBRARIES", spec["blas"].libs),
-                    ]
-                )
             entries.extend(
                 [
+                    cmake_cache_string("BLAS_ENABLE", True),
+                    cmake_cache_string("BLAS_LIBRARIES", spec["blas"].libs),
                     cmake_cache_path("SUPERLUMT_INCLUDE_DIR", spec["superlu-mt"].prefix.include),
                     cmake_cache_path("SUPERLUMT_LIBRARY_DIR", spec["superlu-mt"].prefix.lib),
                     cmake_cache_string(
@@ -965,23 +902,14 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_path("Trilinos_DIR", spec["trilinos"].prefix))
 
         # Examples
-        if spec.satisfies("@3:"):
-            entries.extend(
-                [
-                    self.cache_option_from_variant("EXAMPLES_ENABLE_C", "examples"),
-                    self.cache_option_from_variant("EXAMPLES_ENABLE_CXX", "examples"),
-                    cmake_cache_option("EXAMPLES_ENABLE_CUDA", "+examples+cuda" in spec),
-                    cmake_cache_option("EXAMPLES_ENABLE_F77", "+examples+fcmix" in spec),
-                    cmake_cache_option("EXAMPLES_ENABLE_F90", "+examples+fcmix" in spec),
-                    cmake_cache_option("EXAMPLES_ENABLE_F2003", "+examples+f2003" in spec),
-                ]
-            )
-        else:
-            entries.extend(
-                [
-                    self.cache_option_from_variant("EXAMPLES_ENABLE", "examples"),
-                    self.cache_option_from_variant("CXX_ENABLE", "examples"),
-                    cmake_cache_option("F90_ENABLE", "+examples+fcmix" in spec),
-                ]
-            )
+        entries.extend(
+            [
+                self.cache_option_from_variant("EXAMPLES_ENABLE_C", "examples"),
+                self.cache_option_from_variant("EXAMPLES_ENABLE_CXX", "examples"),
+                cmake_cache_option("EXAMPLES_ENABLE_F2003", "+examples+f2003" in spec),
+                cmake_cache_option("EXAMPLES_ENABLE_CUDA", "+examples+cuda" in spec),
+                cmake_cache_option("EXAMPLES_ENABLE_HIP", "+examples+rocm" in spec),
+            ]
+        )
+        
         return entries
