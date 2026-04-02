@@ -37,6 +37,6 @@ nvidia-h100-cuda-12.8:
   tags: [nvidia-h100]
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   variables:
-    SPEC: "%gcc +cuda"
+    SPEC: "+cuda ^gcc"
   script:
     - .gitlab/build_and_test.sh
