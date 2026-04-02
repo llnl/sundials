@@ -5415,6 +5415,40 @@ Output all ARKODE solver parameters   :c:func:`ARKodeWriteParameters`
    .. versionadded:: 6.1.0
 
 
+.. _ARKODE.Usage.Preallocation:
+
+ARKODE data preallocation function
+----------------------------------
+
+Since the multi-stage structure of most ARKODE methods results in data
+requirements that depend on the number of stages, ARKODE generally defers
+allocation of stage-related internal data until the first call to
+:c:func:`ARKodeEvolve`.  However, in some cases the user may wish to
+preallocate this data earlier, for example to measure the memory footprint
+before beginning a calculation, or to check for allocation errors at an
+earlier time.  To request that that ARKODE preallocate all stage-related
+internal data before the first call to :c:func:`ARKodeEvolve`, the user
+may call the function :c:func:`ARKodeInit`.
+
+
+.. c:function:: int ARKodeInit(void* arkode_mem)
+
+   Optionally allocates internal data for the current ARKODE time-stepper module.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL:  ``arkode_mem`` was ``NULL``.
+   :retval ARK_MEM_FAIL:  a memory allocation failed.
+
+   .. warning::
+
+      This must be called **after** all other optional input routines have been called,
+      and **before** the first call to :c:func:`ARKodeEvolve`.  This routine should
+      be called at most once per ARKODE memory block.
+
+   .. versionadded:: x.y.z
+
 
 .. _ARKODE.Usage.Reset:
 

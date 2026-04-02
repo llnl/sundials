@@ -915,14 +915,23 @@ int mriStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
   steps (after all user "set" routines have been called) from
   within arkInitialSetup.
 
-  With initialization types FIRST_INIT this routine:
+  With initialization type RESET_INIT, this routine does nothing.
+
+  For other initialization types, this routine:
+  - initializes and sets up the linear and nonlinear solvers
+    (if applicable)
+  - initializes and sets up the nonlinear solver (if applicable)
+  - performs timestep adaptivity checks and initial setup,
+    including setting the initial time step size if needed
+  - sets the relevant TakeStep routine based on the current
+    problem configuration
   - sets/checks the coefficient tables to be used
   - allocates any internal memory that depends on the MRI method
     structure or solver options
 
   With other initialization types, this routine does nothing.
   ---------------------------------------------------------------*/
-int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
+int mriStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeMRIStepMem step_mem;
   int retval, j;
@@ -1286,8 +1295,6 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
     }
   }
 
-  /*** Perform timestep adaptivity checks and initial setup ***/
-
   /* get timestep adaptivity type */
   adapt_type = SUNAdaptController_GetType(ark_mem->hadapt_mem->hcontroller);
 
@@ -1321,24 +1328,6 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
                       __FILE__, "Timestep adaptivity enabled, but non-embedded MRI table specified");
       return (ARK_ILL_INPUT);
     }
-    if (ark_mem->hin == ZERO)
-    {
-      /*   tempv1 = fslow(t0, y0) */
-      if (mriStep_SlowRHS(ark_mem, ark_mem->tcur, ark_mem->yn, ark_mem->tempv1,
-                          ARK_FULLRHS_START) != ARK_SUCCESS)
-      {
-        arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                        "error calling slow RHS function(s)");
-        return (ARK_RHSFUNC_FAIL);
-      }
-      retval = mriStep_Hin(ark_mem, ark_mem->tcur, tout, ark_mem->tempv1,
-                           &(ark_mem->hin));
-      if (retval != ARK_SUCCESS)
-      {
-        retval = arkHandleFailure(ark_mem, retval);
-        return (retval);
-      }
-    }
   }
 
   /* Perform additional setup for (H,tol) controller */
@@ -1357,6 +1346,38 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
   }
 
   return (ARK_SUCCESS);
+}
+
+/*------------------------------------------------------------------------------
+  mriStep_ComputeH0:
+
+  This utility routine computes the initial slow step size for MRI methods.
+
+  It is assumed that the IVP is defined by multiple RHS functions,
+     y'(t) = f(t,y) = fs(t,y)  + ff(t,y),
+  where fs corresponds to dynamics that should be evolved directly by MRIStep,
+  and ff corresponds to dynamics that will be evolved by an inner stepper.
+  ----------------------------------------------------------------------------*/
+int mriStep_ComputeH0(ARKodeMem ark_mem, sunrealtype tout, sunrealtype* hin)
+{
+  int retval;
+
+  /*   tempv1 = fs(t0, y0) */
+  if (mriStep_SlowRHS(ark_mem, ark_mem->tn, ark_mem->yn, ark_mem->tempv1,
+                      ARK_FULLRHS_START) != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
+                    "error calling slow RHS function(s)");
+    return (ARK_RHSFUNC_FAIL);
+  }
+  retval = mriStep_Hin(ark_mem, ark_mem->tn, tout, ark_mem->tempv1, hin);
+  if (retval != ARK_SUCCESS)
+  {
+    retval = arkHandleFailure(ark_mem, retval);
+    return (retval);
+  }
+
+  return ARK_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------
@@ -2917,7 +2938,8 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
   if (!ark_mem->fixedstep)
   {
-    retval = mriStepInnerStepper_Reset(step_mem->stepper, t0, ark_mem->ycur);
+    retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
+                                       ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,

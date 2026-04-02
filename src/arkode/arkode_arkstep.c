@@ -944,11 +944,10 @@ int arkStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
 
   With initialization type RESET_INIT, this routine does nothing.
   ---------------------------------------------------------------*/
-int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                 int init_type)
+int arkStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeARKStepMem step_mem;
-  int j, retval;
+  int retval;
   sunbooleantype reset_efun;
 
   /* access ARKodeARKStepMem structure */
@@ -1042,35 +1041,23 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     /*   Allocate Fe[0] ... Fe[stages-1] if needed */
     if (step_mem->explicit)
     {
-      if (step_mem->Fe == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fe),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        step_mem->Fe = (N_Vector*)calloc(step_mem->stages, sizeof(N_Vector));
+        return (ARK_MEM_FAIL);
       }
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        if (!arkAllocVec(ark_mem, ark_mem->ewt, &(step_mem->Fe[j])))
-        {
-          return (ARK_MEM_FAIL);
-        }
-      }
-      ark_mem->liw += step_mem->stages; /* pointers */
     }
 
     /*   Allocate Fi[0] ... Fi[stages-1] if needed */
     if (step_mem->implicit)
     {
-      if (step_mem->Fi == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fi),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        step_mem->Fi = (N_Vector*)calloc(step_mem->stages, sizeof(N_Vector));
+        return (ARK_MEM_FAIL);
       }
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        if (!arkAllocVec(ark_mem, ark_mem->ewt, &(step_mem->Fi[j])))
-        {
-          return (ARK_MEM_FAIL);
-        }
-      }
-      ark_mem->liw += step_mem->stages; /* pointers */
     }
 
     /* Allocate stage storage for relaxation with implicit/IMEX methods or if a
@@ -1078,18 +1065,12 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     if (ark_mem->relax_enabled &&
         (step_mem->implicit || step_mem->mass_type == MASS_FIXED))
     {
-      if (step_mem->z == NULL)
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->z),
+                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                            &(ark_mem->liw)))
       {
-        step_mem->z = (N_Vector*)calloc(step_mem->stages, sizeof(N_Vector));
+        return (ARK_MEM_FAIL);
       }
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        if (!arkAllocVec(ark_mem, ark_mem->ewt, &(step_mem->z[j])))
-        {
-          return (ARK_MEM_FAIL);
-        }
-      }
-      ark_mem->liw += step_mem->stages; /* pointers */
     }
 
     /* Allocate reusable arrays for fused vector operations */
@@ -1110,24 +1091,19 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     }
 
     /* Allocate workspace for MRI forcing -- need to allocate here as the
-       number of stages may not bet set before this point and we assume
-       SetInnerForcing has been called before the first step i.e., methods
-       start with a fast integration */
-    if (step_mem->expforcing || step_mem->impforcing)
+       number of stages may not be set before this point */
+    if (!(step_mem->stage_times))
     {
-      if (!(step_mem->stage_times))
-      {
-        step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
-                                                     sizeof(sunrealtype));
-        ark_mem->lrw += step_mem->stages;
-      }
+      step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
+                                                   sizeof(sunrealtype));
+      ark_mem->lrw += step_mem->stages;
+    }
 
-      if (!(step_mem->stage_coefs))
-      {
-        step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
-                                                     sizeof(sunrealtype));
-        ark_mem->lrw += step_mem->stages;
-      }
+    if (!(step_mem->stage_coefs))
+    {
+      step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
+                                                   sizeof(sunrealtype));
+      ark_mem->lrw += step_mem->stages;
     }
 
     /* Override the interpolant degree (if needed), used in arkInitialSetup */

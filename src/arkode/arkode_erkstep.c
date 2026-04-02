@@ -272,7 +272,6 @@ int erkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   ---------------------------------------------------------------*/
 void erkStep_Free(ARKodeMem ark_mem)
 {
-  int j;
   sunindextype Bliw, Blrw;
   ARKodeERKStepMem step_mem;
 
@@ -295,15 +294,11 @@ void erkStep_Free(ARKodeMem ark_mem)
     }
 
     /* free the RHS vectors */
-    if (step_mem->F != NULL)
+    if (step_mem->F)
     {
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        arkFreeVec(ark_mem, &step_mem->F[j]);
-      }
-      free(step_mem->F);
+      arkFreeVecArray(step_mem->stages, &(step_mem->F), ark_mem->lrw1,
+                      &(ark_mem->lrw), ark_mem->liw1, &(ark_mem->liw));
       step_mem->F = NULL;
-      ark_mem->liw -= step_mem->stages;
     }
 
     /* free the reusable arrays for fused vector interface */
@@ -392,18 +387,17 @@ void erkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
 
   With initialization types FIRST_INIT this routine:
   - sets/checks the ARK Butcher tables to be used
-  - allocates any memory that depends on the number of ARK
+  - allocates any memory that depends on the number of
     stages, method order, or solver options
   - sets the call_fullrhs flag
 
   With other initialization types, this routine does nothing.
   ---------------------------------------------------------------*/
-int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                 int init_type)
+int erkStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeERKStepMem step_mem;
   sunbooleantype reset_efun;
-  int retval, j;
+  int retval;
 
   /* access ARKodeERKStepMem structure */
   retval = erkStep_AccessStepMem(ark_mem, __func__, &step_mem);
@@ -461,20 +455,14 @@ int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
     return (ARK_ILL_INPUT);
   }
 
-  /* Allocate ARK RHS vector memory, update storage requirements */
+  /* Allocate RHS vector memory, update storage requirements */
   /*   Allocate F[0] ... F[stages-1] if needed */
-  if (step_mem->F == NULL)
+  if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->F),
+                        ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
+                        &(ark_mem->liw)))
   {
-    step_mem->F = (N_Vector*)calloc(step_mem->stages, sizeof(N_Vector));
+    return (ARK_MEM_FAIL);
   }
-  for (j = 0; j < step_mem->stages; j++)
-  {
-    if (!arkAllocVec(ark_mem, ark_mem->ewt, &(step_mem->F[j])))
-    {
-      return (ARK_MEM_FAIL);
-    }
-  }
-  ark_mem->liw += step_mem->stages; /* pointers */
 
   /* Allocate reusable arrays for fused vector interface */
   step_mem->nfusedopvecs = 2 * step_mem->stages + 2 + step_mem->nforcing;
@@ -493,24 +481,19 @@ int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   }
 
   /* Allocate workspace for MRI forcing -- need to allocate here as the
-     number of stages may not bet set before this point and we assume
-     SetInnerForcing has been called before the first step i.e., methods
-     start with a fast integration */
-  if (step_mem->nforcing > 0)
+     number of stages may not be set before this point */
+  if (!(step_mem->stage_times))
   {
-    if (!(step_mem->stage_times))
-    {
-      step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
-                                                   sizeof(sunrealtype));
-      ark_mem->lrw += step_mem->stages;
-    }
+    step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
+                                                 sizeof(sunrealtype));
+    ark_mem->lrw += step_mem->stages;
+  }
 
-    if (!(step_mem->stage_coefs))
-    {
-      step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
-                                                   sizeof(sunrealtype));
-      ark_mem->lrw += step_mem->stages;
-    }
+  if (!(step_mem->stage_coefs))
+  {
+    step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
+                                                 sizeof(sunrealtype));
+    ark_mem->lrw += step_mem->stages;
   }
 
   /* Override the interpolant degree (if needed), used in arkInitialSetup */
@@ -781,7 +764,7 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
   /* Call the full RHS if needed. If this is the first step then we may need to
-     evaluate or copy the RHS values from an  earlier evaluation (e.g., to
+     evaluate or copy the RHS values from an earlier evaluation (e.g., to
      compute h0). For subsequent steps treat this RHS evaluation as an
      evaluation at the end of the just completed step to potentially reuse
      (FSAL methods) RHS evaluations from the end of the last step. */

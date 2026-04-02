@@ -69,7 +69,14 @@ set(unit_tests
     "ark_test_adjoint_ark.cpp\;--check-freq 5\;"
     "ark_test_adjoint_ark.cpp\;--check-freq 1 --dont-keep\;"
     "ark_test_adjoint_ark.cpp\;--check-freq 2 --dont-keep\;"
-    "ark_test_adjoint_ark.cpp\;--check-freq 5 --dont-keep\;")
+    "ark_test_adjoint_ark.cpp\;--check-freq 5 --dont-keep\;"
+    "ark_test_prealloc_arkstep.cpp\;1\;"
+    "ark_test_prealloc_erkstep.cpp\;1\;"
+    "ark_test_prealloc_forcingstep.cpp\;1\;"
+    "ark_test_prealloc_lsrkstep.cpp\;1\;"
+    "ark_test_prealloc_mristep.cpp\;1\;"
+    "ark_test_prealloc_splittingstep.cpp\;1\;"
+    "ark_test_prealloc_sprkstep.cpp\;1\;")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
@@ -110,6 +117,7 @@ foreach(test_tuple ${unit_tests})
               sundials_nvecmanyvector_obj
               sundials_sunlinsolband_obj
               sundials_sunlinsoldense_obj
+              sundials_sunlinsolspgmr_obj
               sundials_sunnonlinsolnewton_obj
               sundials_sunnonlinsolfixedpoint_obj
               sundials_sunadaptcontrollerimexgus_obj

@@ -160,6 +160,8 @@ extern "C" {
 
 #define ARK_DEE_FAIL -59
 
+#define ARK_STEP_H0_FAIL -60
+
 #define ARK_UNRECOGNIZED_ERROR -99
 
 /* ------------------------------
@@ -252,6 +254,9 @@ SUNDIALS_EXPORT int ARKodeResize(void* arkode_mem, N_Vector ynew,
                                  sunrealtype hscale, sunrealtype t0,
                                  ARKVecResizeFn resize, void* resize_data);
 SUNDIALS_EXPORT int ARKodeReset(void* arkode_mem, sunrealtype tR, N_Vector yR);
+
+/* Optional data allocation function */
+SUNDIALS_EXPORT int ARKodeInit(void* arkode_mem);
 
 /* Utility to wrap ARKODE as an MRIStepInnerStepper */
 SUNDIALS_EXPORT int ARKodeCreateMRIStepInnerStepper(void* arkode_mem,

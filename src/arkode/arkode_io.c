@@ -79,6 +79,7 @@ int ARKodeSetDefaults(void* arkode_mem)
   ark_mem->maxnef    = MAXNEF;         /* max error test fails */
   ark_mem->maxncf    = MAXNCF;         /* max convergence fails */
   ark_mem->maxconstrfails = MAXCONSTRFAILS; /* max number of constraint fails */
+  ark_mem->preallocated   = SUNFALSE;       /* data was not preallocated */
   ark_mem->hin            = ZERO;       /* determine initial step on-the-fly */
   ark_mem->hmin           = ZERO;       /* no minimum step size */
   ark_mem->hmax_inv       = ZERO;       /* no maximum step size */
@@ -2219,6 +2220,13 @@ int ARKodeResetAccumulatedError(void* arkode_mem)
   return (ARK_SUCCESS);
 }
 
+/*---------------------------------------------------------------
+  ARKodeSetAdjointCheckpointScheme:
+  ARKodeSetAdjointCheckpointIndex:
+
+  Specifies the checkpointing scheme and index to be used for adjoint
+  sensitivity analysis.
+  ---------------------------------------------------------------*/
 int ARKodeSetAdjointCheckpointScheme(void* arkode_mem,
                                      SUNAdjointCheckpointScheme checkpoint_scheme)
 
@@ -2260,6 +2268,12 @@ int ARKodeSetAdjointCheckpointIndex(void* arkode_mem, suncountertype step_index)
   return (ARK_SUCCESS);
 }
 
+/*---------------------------------------------------------------
+  ARKodeSetUseCompensatedSums:
+
+  Specifies that ARKode should use compensated summation to reduce
+  the effects of floating-point roundoff.
+  ---------------------------------------------------------------*/
 int ARKodeSetUseCompensatedSums(void* arkode_mem, sunbooleantype onoff)
 {
   ARKodeMem ark_mem;
@@ -2280,6 +2294,54 @@ int ARKodeSetUseCompensatedSums(void* arkode_mem, sunbooleantype onoff)
   }
 
   return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  ARKodeInit:
+
+  Allocates internal data structures for an ARKODE stepper module
+  before the first call to ARKodeEvolve.
+
+  **THIS MUST BE CALLED AFTER ALL "SET" ROUTINES.**
+  ---------------------------------------------------------------*/
+int ARKodeInit(void* arkode_mem)
+{
+  ARKodeMem ark_mem;
+  int retval;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* For now, prohibit the user from calling this after data has
+     already been initialized */
+  if (ark_mem->initialized)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Time stepper data has already been allocated");
+    return (ARK_ILL_INPUT);
+  }
+
+  /* Call step_init routine with "FIRST_INIT" flag, requesting
+     that the time stepper module allocate any remaining internal
+     data */
+  if (ark_mem->step_init == NULL)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Time stepper module is missing");
+    return (ARK_ILL_INPUT);
+  }
+  retval = ark_mem->step_init(ark_mem, FIRST_INIT);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Error in initialization of time stepper module");
+  }
+  ark_mem->preallocated = SUNTRUE;
+  return (retval);
 }
 
 /*===============================================================
@@ -3255,6 +3317,7 @@ char* ARKodeGetReturnFlagName(long int flag)
   case ARK_SUNSTEPPER_ERR: sprintf(name, "ARK_SUNSTEPPER_ERR"); break;
   case ARK_STEP_DIRECTION_ERR: sprintf(name, "ARK_STEP_DIRECTION_ERR"); break;
   case ARK_UNRECOGNIZED_ERROR: sprintf(name, "ARK_UNRECOGNIZED_ERROR"); break;
+  case ARK_STEP_H0_FAIL: sprintf(name, "ARK_STEP_H0_FAIL"); break;
   default: sprintf(name, "NONE");
   }
 
