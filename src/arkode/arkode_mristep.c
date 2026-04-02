@@ -1895,7 +1895,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = 0, stage type = %d, tcur = " SUN_FORMAT_G, MRISTAGE_FIRST,
              ark_mem->tcur);
-  SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->yn, "z_0(:) =");
+  SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_0(:) =");
 
   /* Evaluate the slow RHS functions if needed. NOTE: we decide between calling the
      full RHS function (if ark_mem->fn is non-NULL and MRIStep is not an inner
