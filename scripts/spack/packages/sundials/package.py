@@ -684,7 +684,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                 cmake_cache_option("BUILD_SHARED_LIBS", spec.variants["shared"].value),
                 cmake_cache_option("BUILD_STATIC_LIBS", spec.variants["static"].value),
                 # Generic (std-c) math libraries
-                entries.append(cmake_cache_option("USE_GENERIC_MATH", spec.variants["generic-math"].value)) if "generic-math" in spec.variants else None,
+                cmake_cache_option("USE_GENERIC_MATH", spec.variants["generic-math"].value) if "generic-math" in spec.variants else None,
                 # Logging
                 cmake_cache_string("SUNDIALS_LOGGING_LEVEL", spec.variants["logging-level"].value),
                 # Monitoring
