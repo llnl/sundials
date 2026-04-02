@@ -42,28 +42,29 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("7.1.1", tag="v7.1.1", commit="c28eaa3764a03705d61decb6025b409360e9d53f")
     version("7.0.0", sha256="d762a7950ef4097fbe9d289f67a8fb717a0b9f90f87ed82170eb5c36c0a07989")
     version("6.7.0", sha256="5f113a1564a9d2d98ff95249f4871a4c815a05dbb9b8866a82b13ab158c37adb")
+    version("5.8.0", sha256="d4ed403351f72434d347df592da6c91a69452071860525385b3339c824e8a213")
     version("6.6.2", sha256="08f8223a5561327e44c072e46faa7f665c0c0bc8cd7e45d23f486c3d24c65009")
     version("6.6.1", sha256="21f71e4aef95b18f954c8bbdc90b62877443950533d595c68051ab768b76984b")
-    version("6.6.0", sha256="f90029b8da846c8faff5530fd1fa4847079188d040554f55c1d5d1e04743d29d")
     version("6.5.1", sha256="4252303805171e4dbdd19a01e52c1dcfe0dafc599c3cfedb0a5c2ffb045a8a75")
-    version("6.5.0", sha256="4e0b998dff292a2617e179609b539b511eb80836f5faacf800e688a886288502")
     version("6.4.1", sha256="7bf10a8d2920591af3fba2db92548e91ad60eb7241ab23350a9b1bc51e05e8d0")
-    version("6.4.0", sha256="0aff803a12c6d298d05b56839197dd09858631864017e255ed89e28b49b652f1")
     version("6.3.0", sha256="89a22bea820ff250aa7239f634ab07fa34efe1d2dcfde29cc8d3af11455ba2a7")
-    version("6.2.0", sha256="195d5593772fc483f63f08794d79e4bab30c2ec58e6ce4b0fb6bcc0e0c48f31d")
     version("6.1.1", sha256="cfaf637b792c330396a25ef787eb59d58726c35918ebbc08e33466e45d50470c")
-    version("6.1.0", sha256="eea49f52140640e54931c779e73aece65f34efa996a26b2263db6a1e27d0901c")
-    version("6.0.0", sha256="c7178e54df20a9363ae3e5ac5b3ee9db756a4ddd4b8fff045127e93b73b151f4")
-    version("5.8.0", sha256="d4ed403351f72434d347df592da6c91a69452071860525385b3339c824e8a213")
-    version("5.7.0", sha256="48da7baa8152ddb22aed1b02d82d1dbb4fbfea22acf67634011aa0303a100a43")
-    version("5.6.1", sha256="16b77999ec7e7f2157aa1d04ca1de4a2371ca8150e056d24951d0c58966f2a83")
-    version("5.6.0", sha256="95e4201912e150f29c6f6f7625de763385e2073dae7f929c4a544561ea29915d")
-    version("5.5.0", sha256="2a755e89aab96d2ff096a4e30bf00bb162e80be20e9e99f424dccfb249098237")
-    version("5.4.0", sha256="04d8a2ebe02cdaeef5a9e22ff7e3146bb563d8400f65772b6c7af80001413ffa")
-    version("5.3.0", sha256="88dff7e11a366853d8afd5de05bf197a8129a804d9d4461fb64297f1ef89bca7")
-    version("5.2.0", sha256="95f058acce5bd66e654de65acdbb1c9f44c90cf1b4e28f8d933cdb4415ebba3e")
-    version("5.1.0", sha256="fb22d14fad42203809dc46d046b001149ec4e901b23882bd4a80619157fd9b21")
-    version("5.0.0", sha256="345141ec01c641d0bdfb3476c478b7e74fd6a7192a478a27cafe75d9da2d7dd3")
+    with default_args(deprecated=True):
+        version("6.6.0", sha256="f90029b8da846c8faff5530fd1fa4847079188d040554f55c1d5d1e04743d29d")
+        version("6.5.0", sha256="4e0b998dff292a2617e179609b539b511eb80836f5faacf800e688a886288502")
+        version("6.4.0", sha256="0aff803a12c6d298d05b56839197dd09858631864017e255ed89e28b49b652f1")
+        version("6.2.0", sha256="195d5593772fc483f63f08794d79e4bab30c2ec58e6ce4b0fb6bcc0e0c48f31d")
+        version("6.1.0", sha256="eea49f52140640e54931c779e73aece65f34efa996a26b2263db6a1e27d0901c")
+        version("6.0.0", sha256="c7178e54df20a9363ae3e5ac5b3ee9db756a4ddd4b8fff045127e93b73b151f4")
+        version("5.7.0", sha256="48da7baa8152ddb22aed1b02d82d1dbb4fbfea22acf67634011aa0303a100a43")
+        version("5.6.1", sha256="16b77999ec7e7f2157aa1d04ca1de4a2371ca8150e056d24951d0c58966f2a83")
+        version("5.6.0", sha256="95e4201912e150f29c6f6f7625de763385e2073dae7f929c4a544561ea29915d")
+        version("5.5.0", sha256="2a755e89aab96d2ff096a4e30bf00bb162e80be20e9e99f424dccfb249098237")
+        version("5.4.0", sha256="04d8a2ebe02cdaeef5a9e22ff7e3146bb563d8400f65772b6c7af80001413ffa")
+        version("5.3.0", sha256="88dff7e11a366853d8afd5de05bf197a8129a804d9d4461fb64297f1ef89bca7")
+        version("5.2.0", sha256="95f058acce5bd66e654de65acdbb1c9f44c90cf1b4e28f8d933cdb4415ebba3e")
+        version("5.1.0", sha256="fb22d14fad42203809dc46d046b001149ec4e901b23882bd4a80619157fd9b21")
+        version("5.0.0", sha256="345141ec01c641d0bdfb3476c478b7e74fd6a7192a478a27cafe75d9da2d7dd3")
 
     # ==========================================================================
     # Variants
@@ -683,7 +684,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                 cmake_cache_option("BUILD_SHARED_LIBS", spec.variants["shared"].value),
                 cmake_cache_option("BUILD_STATIC_LIBS", spec.variants["static"].value),
                 # Generic (std-c) math libraries
-                cmake_cache_option("USE_GENERIC_MATH", spec.variants["generic-math"].value),
+                entries.append(cmake_cache_option("USE_GENERIC_MATH", spec.variants["generic-math"].value)) if "generic-math" in spec.variants else None,
                 # Logging
                 cmake_cache_string("SUNDIALS_LOGGING_LEVEL", spec.variants["logging-level"].value),
                 # Monitoring
