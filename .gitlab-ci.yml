@@ -66,8 +66,11 @@ variables:
 # We build the projects in the CI clone directory.
 # Used in script/gitlab/build_and_test.sh script.
 # TODO: add a clean-up mechanism.
-  BUILD_ROOT: ${CI_PROJECT_DIR}
   SPACK_REF: "1f55b591715496b15d58b43605ce8657d722fe7d" # v0.22.4
+  BUILD_ROOT: ${CI_PROJECT_DIR}
+  BUILDCACHE_ROOT: /usr/workspace/sundials/ci/spack_stuff/build_caches/${SPACK_REF}
+  GPG_KEY_PREFIX: /usr/workspace/sundials/ci/spack_stuff/gpg_keys/${SPACK_REF}
+  TEMP_PREFIX: /dev/shm
 
 ##### SHARED_CI CONFIGURATION
 # Required information about GitHub repository

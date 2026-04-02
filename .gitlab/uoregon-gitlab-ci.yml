@@ -27,8 +27,8 @@ sync:
     SPACK_REF: "2e2169d5282d166f63e3ee4db8d4446c43cefa8a" # v1.1.1
     BUILD_ROOT: ${CI_PROJECT_DIR}
     TEMP_PREFIX: /tmp
-    BUILDCACHE_ROOT: ""
-    GPG_KEY_PREFIX: ""
+    BUILDCACHE_ROOT:
+    GPG_KEY_PREFIX:
   before_script:
     - apt-get update && apt-get install -y git cmake python3
     

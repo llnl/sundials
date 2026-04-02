@@ -20,9 +20,9 @@ job_unique_id=${CI_JOB_ID:-""}
 sys_type=${SYS_TYPE:-""}
 py_env_path=${PYTHON_ENVIRONMENT_PATH:-""}
 
-buildcache=${BUILDCACHE_ROOT:-"/usr/workspace/sundials/ci/spack_stuff/build_caches/${SPACK_REF}"}
-gpg_key_path=${GPG_KEY_PREFIX:-"/usr/workspace/sundials/ci/spack_stuff/gpg_backup"}
-temp_prefix=${TEMP_PREFIX:-"/dev/shm"}
+buildcache=${BUILDCACHE_ROOT:-""}
+gpg_key_path=${GPG_KEY_PREFIX:-""}
+temp_prefix=${TEMP_PREFIX:-""}
 
 # Dependencies
 date
@@ -86,18 +86,21 @@ then
 
     mirror_opt=""
 
-    if [[ ! -d "${buildcache}" ]]
+    if [[ -z "${buildcache}" ]]
     then
-        mkdir "${buildcache}"
+        echo "BUILDCACHE_ROOT is undefined, not using spack buildcache."
+    else
+        mirror_opt=("--mirror=${buildcache}" "--mirror-autopush")
+        key_opt=("--trust-key ${gpg_key_path}/pubring.gpg" "--trust-key ${gpg_key_path}/secring.gpg")
+    
+        if [[ ! -d "${buildcache}" ]]
+        then
+            mkdir "${buildcache}"
+        fi
     fi
 
-    # mirror_opt=("--mirror=${buildcache}" "--mirror-autopush")
-
-    # spack mirror add --oci-username ${{ github.actor }} --oci-password ${{ secrets.OCI_TOKEN }} sundials_spack_cache oci://ghcr.io/LLNL/sundials_spack_cache
-        # --trust-key ${gpg_key_path}/pubring.gpg --trust-key ${gpg_key_path}/secring.gpg \
-
     python3 .gitlab/uberenv/uberenv.py \
-        --spec="${spec}" "${mirror_opt[@]}" "${prefix_opt}" \
+        --spec="${spec}" "${mirror_opt[@]}" "${key_opt[@]}" "${prefix_opt}" \
         --spack-commit="${SPACK_REF}"
 fi
 
