@@ -26,7 +26,7 @@ sync:
     GIT_SUBMODULE_STRATEGY: recursive
     BUILD_ROOT: ${CI_PROJECT_DIR}
     BUILDCACHE_ROOT: ".buildcache" # TODO(CJB): figure out where this should be (maybe use gitlab registry?)
-    SPACK_REF: "2e2169d5282d166f63e3ee4db8d4446c43cefa8a # v1.1.1
+    SPACK_REF: "2e2169d5282d166f63e3ee4db8d4446c43cefa8a" # v1.1.1
   before_script:
     - apt-get update && apt-get install -y git cmake python3
     
