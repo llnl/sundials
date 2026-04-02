@@ -75,6 +75,7 @@ typedef struct ARKodeMRIStepMemRec
   sunbooleantype implicit_rhs;   /* SUNTRUE if fsi is provided     */
   sunbooleantype deduce_rhs;     /* SUNTRUE if fi is deduced after
                                     a nonlinear solve              */
+  int cur_stage;                 /* current stage index            */
 
   /* Outer RK method storage and parameters */
   N_Vector* Fse;           /* explicit RHS at each stage               */
@@ -97,7 +98,7 @@ typedef struct ARKodeMRIStepMemRec
   N_Vector sdata;         /* old stage data in residual               */
   N_Vector zpred;         /* predicted stage solution                 */
   N_Vector zcor;          /* stage correction                         */
-  int istage;             /* current stage index                      */
+  int istage;             /* stage index used in nonlinear solve      */
   SUNNonlinearSolver NLS; /* generic SUNNonlinearSolver object        */
   sunbooleantype ownNLS;  /* flag indicating ownership of NLS         */
   ARKRhsFn nls_fsi;       /* fsi(t,y) used in the nonlinear solver    */
