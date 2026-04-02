@@ -75,7 +75,6 @@ typedef struct ARKodeMRIStepMemRec
   sunbooleantype implicit_rhs;   /* SUNTRUE if fsi is provided     */
   sunbooleantype deduce_rhs;     /* SUNTRUE if fi is deduced after
                                     a nonlinear solve              */
-  int cur_stage;                 /* current stage index            */
 
   /* Outer RK method storage and parameters */
   N_Vector* Fse;           /* explicit RHS at each stage               */
@@ -98,7 +97,6 @@ typedef struct ARKodeMRIStepMemRec
   N_Vector sdata;         /* old stage data in residual               */
   N_Vector zpred;         /* predicted stage solution                 */
   N_Vector zcor;          /* stage correction                         */
-  int istage;             /* stage index used in nonlinear solve      */
   SUNNonlinearSolver NLS; /* generic SUNNonlinearSolver object        */
   sunbooleantype ownNLS;  /* flag indicating ownership of NLS         */
   ARKRhsFn nls_fsi;       /* fsi(t,y) used in the nonlinear solver    */
@@ -114,16 +112,21 @@ typedef struct ARKodeMRIStepMemRec
   sunrealtype eRNrm;      /* estimated residual norm, used in nonlin
                              and linear solver convergence tests      */
   sunrealtype nlscoef;    /* coefficient in nonlin. convergence test  */
-
-  int msbp;       /* positive => max # steps between lsetup
-                     negative => call at each Newton iter     */
-  long int nstlp; /* step number of last setup call           */
-
-  int maxcor;          /* max num iterations for solving the
-                          nonlinear equation                       */
-  int convfail;        /* NLS fail flag (for interface routines)   */
-  sunbooleantype jcur; /* is Jacobian info for lin solver current? */
+  int msbp;               /* positive => max # steps between lsetup
+                             negative => call at each Newton iter     */
+  long int nstlp;         /* step number of last setup call           */
+  int maxcor;             /* max num iterations for solving the
+                             nonlinear equation                       */
+  int convfail;           /* NLS fail flag (for interface routines)   */
+  sunbooleantype jcur;    /* is Jacobian info for lin solver current? */
   ARKStagePredictFn stage_predict; /* User-supplied stage predictor   */
+  int istage; /* stage index used in nonlinear solve      */
+
+  /* Informational output for mriStep_GetStageIndex -- note that this
+     may differ from istage, since that is used internally by the
+     nonlinear solver, and it is manually modified during embedding
+     stages to match the last internal stage index. */
+  int cur_stage;
 
   /* Linear Solver Data */
   ARKLinsolInitFn linit;
