@@ -26,17 +26,46 @@ sync:
     GIT_SUBMODULE_STRATEGY: recursive
     SPACK_REF: "2e2169d5282d166f63e3ee4db8d4446c43cefa8a" # v1.1.1
     BUILD_ROOT: ${CI_PROJECT_DIR}
-    TEMP_PREFIX: "/tmp"
-    BUILDCACHE_ROOT: ".buildcache" # TODO(CJB): figure out where this should be (maybe use gitlab registry?)
-    GPG_KEY_PREFIX: "/home/users/balos1/spack_gpg_backup"
+    TEMP_PREFIX: /tmp
+    BUILDCACHE_ROOT: ""
+    GPG_KEY_PREFIX: ""
   before_script:
     - apt-get update && apt-get install -y git cmake python3
     
-nvidia-h100-cuda-12.8:
+# nvidia-h100-cuda-12.8:
+#   extends: .build-and-test
+#   tags: [nvidia-h100]
+#   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
+#   variables:
+#     SPEC: "+cuda ^gcc"
+#   script:
+#     - .gitlab/build_and_test.sh
+
+nvidia-grace-cuda-12.8:
   extends: .build-and-test
-  tags: [nvidia-h100]
+  tags: [nvidia-grace]
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   variables:
-    SPEC: "+cuda ^gcc"
+    SPEC: "+cuda ^nvhpc"
   script:
+    - .gitlab/build_and_test.sh
+
+nvidia-grace-hopper-cuda-12.8:
+  extends: .build-and-test
+  tags: [nvidia-grace-hopper]
+  image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
+  variables:
+    SPEC: "+cuda ^nvhpc"
+  script:
+    - .gitlab/build_and_test.sh
+
+intel-pvc:
+  extends: .build-and-test
+  tags: [intel-data-center-max-1100]
+  image: intel/oneapi-basekit:2025.3.0-0-devel-ubuntu24.04
+  variables:
+    SPEC: "+sycl ^intel-oneapi-compiler"
+  script:
+    - sycl-ls
+    - export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
     - .gitlab/build_and_test.sh
