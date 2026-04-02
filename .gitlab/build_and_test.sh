@@ -21,7 +21,7 @@ sys_type=${SYS_TYPE:-""}
 py_env_path=${PYTHON_ENVIRONMENT_PATH:-""}
 
 buildcache=${BUILDCACHE_ROOT:-"/usr/workspace/sundials/ci/spack_stuff/build_caches/${SPACK_REF}"}
-gpg_key_path=${GPG_KEY_PATH:-"/usr/workspace/sundials/ci/spack_stuff/gpg_backup"}
+gpg_key_path=${GPG_KEY_PREFIX:-"/usr/workspace/sundials/ci/spack_stuff/gpg_backup"}
 temp_prefix=${TEMP_PREFIX:-"/dev/shm"}
 
 # Dependencies
@@ -95,8 +95,8 @@ then
 
     # spack mirror add --oci-username ${{ github.actor }} --oci-password ${{ secrets.OCI_TOKEN }} sundials_spack_cache oci://ghcr.io/LLNL/sundials_spack_cache
 
-        # --trust-key ${gpg_key_path}/pubring.gpg --trust-key ${gpg_key_path}/secring.gpg \
     python3 .gitlab/uberenv/uberenv.py \
+        --trust-key ${gpg_key_path}/pubring.gpg --trust-key ${gpg_key_path}/secring.gpg \
         --spec="${spec}" "${mirror_opt[@]}" "${prefix_opt}" \
         --spack-commit="${SPACK_REF}"
 fi

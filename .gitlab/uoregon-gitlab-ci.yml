@@ -28,7 +28,7 @@ sync:
     BUILD_ROOT: ${CI_PROJECT_DIR}
     TEMP_PREFIX: "/tmp"
     BUILDCACHE_ROOT: ".buildcache" # TODO(CJB): figure out where this should be (maybe use gitlab registry?)
-    GPG_KEY_PATH: ""
+    GPG_KEY_PREFIX: "/home/users/balos1/spack_gpg_backup"
   before_script:
     - apt-get update && apt-get install -y git cmake python3
     
