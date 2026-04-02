@@ -2594,8 +2594,8 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       /* perform implicit solve for correction */
       if (impl_corr)
       {
-        /* store current stage index (for an "embedded" stage, subtract 1) */
-        step_mem->istage = (stage == step_mem->stages) ? stage - 1 : stage;
+        /* update stage index for prediction and nonlinear solver if this is an "embedded" stage */
+        if (embedding) { step_mem->istage = stage - 1; }
 
         /* Call predictor for current stage solution (result placed in zpred) */
         retval = mriStep_Predict(ark_mem, step_mem->istage, step_mem->zpred);

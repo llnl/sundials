@@ -2415,7 +2415,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-           "stage = %i, tcur = " SUN_FORMAT_G, 10, ark_mem->tcur);
+             "stage = %i, tcur = " SUN_FORMAT_G, 10, ark_mem->tcur);
 
   /* Compute the final time step solution */
   step_mem->istage = 10;
