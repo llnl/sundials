@@ -138,25 +138,74 @@ int main(int argc, char* argv[])
   Adata[14] = -1.0 / L4;
   Adata[15] = 0.0;
 
-  cout << "A matrix:\n";
-  SUNDenseMatrix_Print(A, stdout);
-  cout << "\n";
+  // cout << "A matrix:\n";
+  // SUNDenseMatrix_Print(A, stdout);
+  // cout << "\n";
 
   auto eigs = computeEigenvalues(Adata); // will modify Adata
   ofstream eigfile(output_prefix + "_eig.txt");
-  eigs.print();
-  eigs.print(eigfile, true);
-  cout << eigs.stiffness_ratio << "\n";
+  // eigs.print();
+  // eigs.print(eigfile, true);
+  // cout << eigs.stiffness_ratio << "\n";
 
-  cout << "A matrix:\n";
-  SUNDenseMatrix_Print(A, stdout);
-  cout << "\n";
+  // cout << "A matrix:\n";
+  // SUNDenseMatrix_Print(A, stdout);
+  // cout << "\n";
 
   problem.computeMassDense(M);
   problem.computeJacDense(A);
   SUNMatrix J = form_jacobian_from_mass(M, A);
-  cout << "A matrix:\n";
-  SUNDenseMatrix_Print(J, stdout);
+  // cout << "A matrix:\n";
+  // SUNDenseMatrix_Print(J, stdout);
+
+  auto modes = build_ode_modes_from_dgeev(J);
+  cout << "Eigenvalue, right Eigenvector, left Eigenvector\n";
+  printModes(modes);
+  ofstream eigfile2(output_prefix + "_eig_2.txt");
+  printModes(modes, eigfile2, true);
+
+  cout << "Stiffness Ratio: " << eigs.stiffness_ratio << "\n";
+
+  ModeWeightOptions w_mag;
+  w_mag.kind = ModeWeightKind::EigenvalueMagnitude;
+  w_mag.power = 1.0;
+
+  auto selected = select_modes_top_k_by_weight(modes, 2, w_mag);
+  auto scores_right = classify_stiff_vars_right_only_ode(modes, selected, w_mag);
+  auto scores_both  = classify_stiff_vars_left_right_ode(modes, selected, w_mag);
+
+  cout << "Selected modes: ";
+  for (const auto& mode : selected)
+  {
+    cout << mode << ", ";
+  }
+  cout << "\n";
+
+  cout << "Raw right scores: ";
+  for (const auto& score : scores_right.raw)
+  {
+    cout << score << ", ";
+  }
+  cout << "\n";
+  cout << "Normalized right scores: ";
+  for (const auto& score : scores_right.normalized)
+  {
+    cout << score << ", ";
+  }
+  cout << "\n";
+
+  cout << "Raw left-right scores: ";
+  for (const auto& score : scores_both.raw)
+  {
+    cout << score << ", ";
+  }
+  cout << "\n";
+  cout << "Normalized left-right scores: ";
+  for (const auto& score : scores_both.normalized)
+  {
+    cout << score << ", ";
+  }
+  cout << "\n";
 
 
   // Time integration loop
