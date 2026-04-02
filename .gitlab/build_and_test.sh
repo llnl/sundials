@@ -91,12 +91,12 @@ then
         mkdir "${buildcache}"
     fi
 
-    mirror_opt=("--mirror=${buildcache}" "--mirror-autopush")
+    # mirror_opt=("--mirror=${buildcache}" "--mirror-autopush")
 
     # spack mirror add --oci-username ${{ github.actor }} --oci-password ${{ secrets.OCI_TOKEN }} sundials_spack_cache oci://ghcr.io/LLNL/sundials_spack_cache
+        # --trust-key ${gpg_key_path}/pubring.gpg --trust-key ${gpg_key_path}/secring.gpg \
 
     python3 .gitlab/uberenv/uberenv.py \
-        --trust-key ${gpg_key_path}/pubring.gpg --trust-key ${gpg_key_path}/secring.gpg \
         --spec="${spec}" "${mirror_opt[@]}" "${prefix_opt}" \
         --spack-commit="${SPACK_REF}"
 fi
