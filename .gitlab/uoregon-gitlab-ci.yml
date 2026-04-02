@@ -2,6 +2,7 @@ workflow:
   name: '$GITHUB_PIPELINE_NAME'
 
 stages:
+  # - sync
   - build-and-test
 
 # sync:
