@@ -598,26 +598,11 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         return options
 
-    def _from_variant_helper(self, cmake_var, variant):
-        if variant is None:
-            variant = cmake_var.lower()
-        if variant not in self.variants:
-            raise KeyError('"{0}" is not a variant of "{1}"'.format(variant, self.name))
-        if variant not in self.spec.variants:
-            return ""
-        value = self.spec.variants[variant].value
-        if isinstance(value, (tuple, list)):
-            # Sort multi-valued variants for reproducibility
-            value = sorted(value)
-        return value
-
     def cache_string_from_variant(self, cmake_var, variant):
-        value = self._from_variant_helper(cmake_var, variant)
-        return cmake_cache_string(cmake_var, value)
+        return cmake_cache_string(cmake_var, self.spec.variants[variant].value)
 
     def cache_option_from_variant(self, cmake_var, variant):
-        value = self._from_variant_helper(cmake_var, variant)
-        return cmake_cache_option(cmake_var, value)
+        return cmake_cache_option(cmake_var, self.spec.variants[variant].value)
 
     def initconfig_compiler_entries(self):
         entries = []
@@ -643,7 +628,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "+mpi" in spec:
             entries.extend(
                 [
-                    self.cache_option_from_variant("MPI_ENABLE", "mpi"),
+                    cmake_cache_option("MPI_ENABLE", True),
                     cmake_cache_path("MPI_MPICC", spec["mpi"].mpicc),
                     cmake_cache_path("MPI_MPICXX", spec["mpi"].mpicxx),
                     cmake_cache_path("MPI_MPIF77", spec["mpi"].mpif77),
