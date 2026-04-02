@@ -2301,8 +2301,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin the sixth stage */
-  ark_mem->tcur = ark_mem->tn + TWO * hsixth;
+  /* Finish stage 5 by preparing for the final stage group */
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 6, ark_mem->tcur);
   N_VLinearSum(SUN_RCONST(1.0) / SUN_RCONST(25.0), ark_mem->tempv2,
