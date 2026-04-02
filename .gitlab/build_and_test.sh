@@ -99,9 +99,16 @@ then
         fi
     fi
 
+    if [[ ! -z "${SPACK_YAML}" ]]
+    then
+        spack_yaml_opt="--spack-yaml=${SPACK_YAML}"
+    else
+        spack_yaml_opt=""
+    fi
+
     python3 .gitlab/uberenv/uberenv.py \
-        --spec="${spec}" "${mirror_opt[@]}" "${key_opt[@]}" "${prefix_opt}" \
-        --spack-commit="${SPACK_REF}"
+        --spec="${spec}" --spack-commit="${SPACK_REF}"  \
+         "${prefix_opt}" "${spack_yaml_opt}" "${mirror_opt[@]}" "${key_opt[@]}" 
 fi
 
 date

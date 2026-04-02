@@ -1,0 +1,14 @@
+spack:
+
+  packages:
+    intel-oneapi-compilers:
+      version: [2025.3.0]
+      externals:
+        - spec: intel-oneapi-compiler@2025.3.0
+          prefix: /opt/intel/oneapi/compiler/2025.3
+      extra_attributes:
+        compilers:
+          c: /opt/intel/oneapi/compiler/2025.3/bin/icc
+          cxx: /opt/intel/oneapi/compiler/2025.3.0/bin/icpc
+          fortran: /opt/intel/oneapi/compiler/2025.3/bin/ifort
+  

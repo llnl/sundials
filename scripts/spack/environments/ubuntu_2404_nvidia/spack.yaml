@@ -1,0 +1,13 @@
+spack:
+
+  packages:
+    nvhpc:
+      version: [25.1]
+      externals:
+        - spec: nvhpc@25.1
+          prefix: /opt/nvidia/hpc_sdk/Linux_x86_64/25.1
+      extra_attributes:
+        compilers:
+          c: /opt/nvidia/hpc_sdk/Linux_x86_64/25.1/compilers/bin/nvc
+          cxx: /opt/nvidia/hpc_sdk/Linux_x86_64/25.1/compilers/bin/nvc++
+          fortran: /opt/nvidia/hpc_sdk/Linux_x86_64/25.1/compilers/bin/nvfortran

@@ -37,6 +37,7 @@ nvidia-grace-cuda-12.8:
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   variables:
     SPEC: "%gcc"
+    SPACK_YAML: scripts/spack/environments/ubuntu_2404_nvidia/spack.yaml
   script:
     - .gitlab/build_and_test.sh
 
@@ -46,6 +47,7 @@ nvidia-grace-hopper-cuda-12.8:
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   variables:
     SPEC: "+cuda cuda_arch=90 %gcc"
+    SPACK_YAML: scripts/spack/environments/ubuntu_2404_nvidia/spack.yaml
   script:
     - .gitlab/build_and_test.sh
 
@@ -55,6 +57,7 @@ intel-pvc:
   image: intel/oneapi-basekit:2025.3.0-0-devel-ubuntu24.04
   variables:
     SPEC: "+sycl ^intel-oneapi-compiler"
+    SPACK_YAML: scripts/spack/environments/ubuntu_2404_oneapi/spack.yaml
   script:
     - sycl-ls
     - export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
