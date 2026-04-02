@@ -23,11 +23,25 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     maintainers = ["balos1", "cswoodward", "gardner48"]
+    license("BSD-3-Clause")
 
     # ==========================================================================
     # Versions
     # ==========================================================================
     version("develop", branch="develop")
+    version("main", branch="main")
+    version("7.6.0", tag="v7.6.0", commit="ddf5daba8397ea89287a0fec6f1b3bc3fe6c548b")
+    version("7.5.0", tag="v7.5.0", commit="c8dabcea90ca8bf195474da120e4f3dd39aa711f")
+    version("7.4.0", tag="v7.4.0", commit="8e17876d3b4d682b4098684b07a85b005a122f81")
+    version("7.3.0", tag="v7.3.0", commit="cb681a4e3a46bcad903fb966284d6f53e85bdb94")
+    version("7.2.1", tag="v7.2.1", commit="2dcb3e018b4c4cfe824bff09eb52184ed083e368")
+    version("7.2.0", tag="v7.2.0", commit="71a4cc9ad5e7bc8b4e33a1ca9795b4e96883f9a6")
+    version("7.1.1", tag="v7.1.1", commit="c28eaa3764a03705d61decb6025b409360e9d53f")
+    version("7.0.0", sha256="d762a7950ef4097fbe9d289f67a8fb717a0b9f90f87ed82170eb5c36c0a07989")
+    version("6.7.0", sha256="5f113a1564a9d2d98ff95249f4871a4c815a05dbb9b8866a82b13ab158c37adb")
+    version("6.6.2", sha256="08f8223a5561327e44c072e46faa7f665c0c0bc8cd7e45d23f486c3d24c65009")
+    version("6.6.1", sha256="21f71e4aef95b18f954c8bbdc90b62877443950533d595c68051ab768b76984b")
+    version("6.6.0", sha256="f90029b8da846c8faff5530fd1fa4847079188d040554f55c1d5d1e04743d29d")
     version("6.5.1", sha256="4252303805171e4dbdd19a01e52c1dcfe0dafc599c3cfedb0a5c2ffb045a8a75")
     version("6.5.0", sha256="4e0b998dff292a2617e179609b539b511eb80836f5faacf800e688a886288502")
     version("6.4.1", sha256="7bf10a8d2920591af3fba2db92548e91ad60eb7241ab23350a9b1bc51e05e8d0")
@@ -47,16 +61,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("5.2.0", sha256="95f058acce5bd66e654de65acdbb1c9f44c90cf1b4e28f8d933cdb4415ebba3e")
     version("5.1.0", sha256="fb22d14fad42203809dc46d046b001149ec4e901b23882bd4a80619157fd9b21")
     version("5.0.0", sha256="345141ec01c641d0bdfb3476c478b7e74fd6a7192a478a27cafe75d9da2d7dd3")
-    version("4.1.0", sha256="280de1c27b2360170a6f46cb3799b2aee9dff3bddbafc8b08c291a47ab258aa5")
-    version("4.0.1", sha256="29e409c8620e803990edbda1ebf49e03a38c08b9187b90658d86bddae913aed4")
-    version("3.2.1", sha256="47d94d977ab2382cdcdd02f72a25ebd4ba8ca2634bbb2f191fe1636e71c86808")
-    version("3.2.0", sha256="d2b690afecadf8b5a048bb27ab341de591d714605b98d3518985dfc2250e93f9")
-    version("3.1.2", sha256="a8985bb1e851d90e24260450667b134bc13d71f5c6effc9e1d7183bd874fe116")
-    version("3.1.1", sha256="a24d643d31ed1f31a25b102a1e1759508ce84b1e4739425ad0e18106ab471a24")
-    version("3.1.0", sha256="18d52f8f329626f77b99b8bf91e05b7d16b49fde2483d3a0ea55496ce4cdd43a")
-    version("3.0.0", sha256="28b8e07eecfdef66e2c0d0ea0cb1b91af6e4e94d71008abfe80c27bf39f63fde")
-    version("2.7.0", sha256="d39fcac7175d701398e4eb209f7e92a5b30a78358d4a0c0fcc23db23c11ba104")
-    version("2.6.2", sha256="d8ed0151509dd2b0f317b318a4175f8b95a174340fc3080b8c20617da8aa4d2f")
 
     # ==========================================================================
     # Variants
@@ -73,7 +77,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         "cstd", default="99", description="C language standard", values=("90", "99", "11", "17")
     )
 
-    variant("cxxstd", default="14", description="C++ language standard", values=("14", "17"))
+    variant(
+        "cxxstd",
+        default="14",
+        description="C++ language standard",
+        values=("99", "11", "14", "17"),
+    )
 
     # Logging (default=0 when "@6.2.0:6.7.0", default=2 when "@7.0.0:")
     variant(
@@ -112,11 +121,10 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("mpi", default=True, description="Enable MPI parallel vector")
     variant("openmp", default=False, description="Enable OpenMP parallel vector")
     variant("pthread", default=False, description="Enable Pthreads parallel vector")
-    variant("raja", default=False, when="@3.0.0:", description="Enable RAJA vector")
+    variant("raja", default=False, description="Enable RAJA vector")
     variant("sycl", default=False, when="@5.7.0:", description="Enable SYCL vector")
 
     # External libraries
-    variant("adiak", default=False, when="@6.6.0:", description="Enable Adiak interfaces")
     variant(
         "caliper",
         default=False,
@@ -124,7 +132,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         description="Enable Caliper instrumentation/profiling",
     )
     variant("ginkgo", default=False, when="@6.4.0:", description="Enable Ginkgo interfaces")
-    variant("hypre", default=False, when="@2.7.0:", description="Enable Hypre MPI parallel vector")
+    variant("hypre", default=False, description="Enable Hypre MPI parallel vector")
     variant("kokkos", default=False, when="@6.4.0:", description="Enable Kokkos vector")
     variant(
         "kokkos-kernels",
@@ -134,16 +142,11 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     )
     variant("klu", default=False, description="Enable KLU sparse, direct solver")
     variant("lapack", default=False, description="Enable LAPACK direct solvers")
-    variant("petsc", default=False, when="@2.7.0:", description="Enable PETSc interfaces")
+    variant("petsc", default=False, description="Enable PETSc interfaces")
     variant("magma", default=False, when="@5.7.0:", description="Enable MAGMA interface")
     variant("superlu-mt", default=False, description="Enable SuperLU_MT sparse, direct solver")
-    variant(
-        "superlu-dist",
-        default=False,
-        when="@5.0.0:",
-        description="Enable SuperLU_DIST sparse, direct solver",
-    )
-    variant("trilinos", default=False, when="@5.0.0:", description="Enable Trilinos interfaces")
+    variant("superlu-dist", default=False, description="Enable SuperLU_DIST sparse, direct solver")
+    variant("trilinos", default=False, description="Enable Trilinos interfaces")
 
     # Library type
     variant("shared", default=True, description="Build shared libraries")
@@ -157,10 +160,11 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("examples", default=True, description="Enable examples")
     variant("examples-install", default=True, description="Install examples")
 
-    # Generic (std-c) math libraries (UNIX only)
+    # Generic (std-c) math libraries (UNIX only) (option removed in 7.0)
     variant(
         "generic-math",
         default=True,
+        when="@:6.7.0",
         description="Use generic (std-c) math libraries on unix systems",
     )
 
@@ -176,6 +180,10 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant(
         "profiling", default=False, when="@6.0.0:", description="Build with profiling capabilities"
     )
+
+    # ==========================================================================
+    # Extra variants for our internal sundials package
+    # ==========================================================================
 
     # Scheduler
     variant(
@@ -203,9 +211,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     # Dependencies
     # ==========================================================================
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     # Build dependencies
-    depends_on("cmake@3.12:", when="~cuda", type="build")
-    depends_on("cmake@3.18:", when="+cuda", type="build")
+    depends_on("cmake@3.18:", type="build")
 
     # MPI related dependencies
     depends_on("mpi", when="+mpi")
@@ -219,9 +230,8 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("raja+rocm", when="+raja +rocm")
 
     # External libraries
-    depends_on("adiak", when="+adiak")
     depends_on("caliper", when="+caliper")
-    depends_on("ginkgo@1.9.0:", when="+ginkgo")
+    depends_on("ginkgo@1.5.0:", when="+ginkgo")
     depends_on("kokkos", when="+kokkos")
     depends_on("kokkos-kernels", when="+kokkos-kernels")
     for cuda_arch in CudaPackage.cuda_arch_values:
@@ -239,32 +249,30 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             when="+kokkos +rocm amdgpu_target=%s" % rocm_arch,
         )
     depends_on("lapack", when="+lapack")
-    depends_on("hypre+mpi@2.22.1:", when="@5.7.1: +hypre")
-    depends_on("hypre+mpi@:2.22.0", when="@:5.7.0 +hypre")
+    depends_on("blas", when="+lapack")
+    depends_on("hypre+mpi~int64", when="@5.7.1: +hypre ~int64")
+    depends_on("hypre+mpi+int64", when="@5.7.1: +hypre +int64")
+    depends_on("hypre@:2.22.0+mpi~int64", when="@:5.7.0 +hypre ~int64")
+    depends_on("hypre@:2.22.0+mpi+int64", when="@:5.7.0 +hypre +int64")
     depends_on("magma", when="+magma")
     depends_on("petsc+mpi", when="+petsc")
     depends_on("suite-sparse", when="+klu")
-    depends_on("superlu-dist@7.0.0:", when="@6.4.0: +superlu-dist")
-    depends_on("superlu-dist@6.3.0:", when="@5.5.0:6.3.0 +superlu-dist")
     depends_on("superlu-dist@6.1.1:", when="@:5.4.0 +superlu-dist")
-    depends_on("superlu-mt+blas", when="+superlu-mt")
-    depends_on("trilinos+tpetra@:13", when="@:7.1.1 +trilinos")
-    depends_on("trilinos+tpetra@14:", when="@7.2.0: +trilinos")
+    depends_on("superlu-dist@6.3.0:", when="@5.5.0:6.3 +superlu-dist")
+    depends_on("superlu-dist@7:", when="@6.4: +superlu-dist")
+    depends_on("trilinos+tpetra", when="+trilinos")
 
     # Require that external libraries built with the same precision
     depends_on("petsc~double~complex", when="+petsc precision=single")
     depends_on("petsc+double~complex", when="+petsc precision=double")
 
     # Require that external libraries built with the same index type
-    with when("+int64"):
-        depends_on("hypre+mpi+int64", when="+hypre +int64")
-        depends_on("petsc+int64", when="+petsc +int64")
-        depends_on("superlu-dist+int64", when="+superlu-dist +int64")
+    depends_on("petsc~int64", when="+petsc ~int64")
+    depends_on("petsc+int64", when="+petsc +int64")
+    depends_on("superlu-dist+int64", when="+superlu-dist +int64")
 
-    with when("~int64"):
-        depends_on("hypre+mpi~int64", when="+hypre ~int64")
-        depends_on("petsc~int64", when="+petsc ~int64")
-        depends_on("superlu-dist~int64", when="+superlu-dist ~int64")
+    # Require that SuperLU_MT built with external blas
+    depends_on("superlu-mt+blas", when="+superlu-mt")
 
     # ==========================================================================
     # Conflicts
