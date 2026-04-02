@@ -22,6 +22,7 @@ py_env_path=${PYTHON_ENVIRONMENT_PATH:-""}
 
 buildcache=${BUILDCACHE_ROOT:-"/usr/workspace/sundials/ci/spack_stuff/build_caches/${SPACK_REF}"}
 gpg_key_path=${GPG_KEY_PATH:-"/usr/workspace/sundials/ci/spack_stuff/gpg_backup"}
+temp_prefix=${TEMP_PREFIX:-"/dev/shm"}
 
 # Dependencies
 date
@@ -59,9 +60,9 @@ then
 
     prefix_opt=""
 
-    if [[ -d /dev/shm ]]
+    if [[ -d ${TEMP_PREFIX} ]]
     then
-        prefix="/dev/shm/${hostname}"
+        prefix="${TEMP_PREFIX}/${hostname}"
         if [[ -z ${job_unique_id} ]]; then
           job_unique_id=manual_job_$(date +%s)
           while [[ -d ${prefix}/${job_unique_id} ]] ; do

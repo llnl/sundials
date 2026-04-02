@@ -24,10 +24,11 @@ sync:
     GIT_STRATEGY: fetch
     GIT_DEPTH: 1
     GIT_SUBMODULE_STRATEGY: recursive
+    SPACK_REF: "2e2169d5282d166f63e3ee4db8d4446c43cefa8a" # v1.1.1
     BUILD_ROOT: ${CI_PROJECT_DIR}
+    TEMP_PREFIX: "/tmp"
     BUILDCACHE_ROOT: ".buildcache" # TODO(CJB): figure out where this should be (maybe use gitlab registry?)
     GPG_KEY_PATH: ""
-    SPACK_REF: "2e2169d5282d166f63e3ee4db8d4446c43cefa8a" # v1.1.1
   before_script:
     - apt-get update && apt-get install -y git cmake python3
     
