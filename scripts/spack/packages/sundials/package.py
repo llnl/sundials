@@ -305,7 +305,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         conflicts("+superlu-dist")
         conflicts("+superlu-mt")
 
-
     # rocm+examples and cstd do not work together in 6.0.0
     conflicts("+rocm+examples", when="@6.0.0")
 
@@ -622,7 +621,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                 cmake_cache_path("CMAKE_CXX_COMPILER", self.compiler.cxx),
                 cmake_cache_path("CMAKE_Fortran_COMPILER", self.compiler.fc),
                 # language standard
-                self.cache_string_from_variant("CMAKE_C_STANDARD", "cstd"),
+                # self.cache_string_from_variant("CMAKE_C_STANDARD", "cstd"),
                 self.cache_string_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             ]
         )
@@ -879,9 +878,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                     cmake_cache_path(
                         "SUPERLUDIST_INCLUDE_DIR", spec["superlu-dist"].prefix.include
                     ),
-                    cmake_cache_path(
-                        "SUPERLUDIST_LIBRARY_DIR", spec["superlu-dist"].prefix.lib
-                    ),
+                    cmake_cache_path("SUPERLUDIST_LIBRARY_DIR", spec["superlu-dist"].prefix.lib),
                     cmake_cache_string("SUPERLUDIST_LIBRARIES", ";".join(superludist_libs)),
                     cmake_cache_string("SUPERLUDIST_OpenMP", "^superlu-dist+openmp" in spec),
                 ]
@@ -916,5 +913,5 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                 cmake_cache_option("EXAMPLES_ENABLE_HIP", "+examples+rocm" in spec),
             ]
         )
-        
+
         return entries
