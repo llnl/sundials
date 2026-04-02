@@ -37,7 +37,7 @@ nvidia-grace-cuda-12.8:
   tags: [grace]
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   variables:
-    SPEC: "^nvhpc"
+    SPEC: "%gcc"
   script:
     - .gitlab/build_and_test.sh
 
@@ -46,7 +46,7 @@ nvidia-grace-hopper-cuda-12.8:
   tags: [nvidia-gh200]
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   variables:
-    SPEC: "+cuda cuda_arch=90 ^nvhpc"
+    SPEC: "+cuda cuda_arch=90 %gcc"
   script:
     - .gitlab/build_and_test.sh
 
