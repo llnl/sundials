@@ -32,31 +32,31 @@ stages:
     - apt-get update && apt-get install -y git cmake python3
     
 nvidia-grace-cuda-12.8:
-  extends: .build-and-test
+  extends: [.build-and-test]
   tags: [grace]
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   variables:
-    SPEC: "%gcc"
+    SPEC: "%c,cxx,fortran=nvhpc"
     SPACK_YAML: scripts/spack/environments/ubuntu_2404_nvidia/spack.yaml
   script:
     - .gitlab/build_and_test.sh
 
 nvidia-grace-hopper-cuda-12.8:
-  extends: .build-and-test
+  extends: [.build-and-test]
   tags: [nvidia-gh200]
   image: nvcr.io/nvidia/cuda:12.8.0-devel-ubuntu24.04
   variables:
-    SPEC: "+cuda cuda_arch=90 %gcc"
+    SPEC: "+cuda cuda_arch=90 %c,cxx,fortran=nvhpc"
     SPACK_YAML: scripts/spack/environments/ubuntu_2404_nvidia/spack.yaml
   script:
     - .gitlab/build_and_test.sh
 
 intel-pvc:
-  extends: .build-and-test
+  extends: [.build-and-test]
   tags: [intel-data-center-max-1100]
   image: intel/oneapi-basekit:2025.3.0-0-devel-ubuntu24.04
   variables:
-    SPEC: "+sycl ^intel-oneapi-compiler"
+    SPEC: "+sycl %c,cxx,fortran=oneapi"
     SPACK_YAML: scripts/spack/environments/ubuntu_2404_oneapi/spack.yaml
   script:
     - sycl-ls

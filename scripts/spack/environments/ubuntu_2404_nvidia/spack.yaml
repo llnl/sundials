@@ -1,6 +1,20 @@
 spack:
+  concretizer:
+    unify: true
+
+  view: false
 
   packages:
+    c:
+      prefer:
+      - nvhpc 
+    cxx:
+      prefer:
+      - nvhpc
+    fortran:
+      prefer:
+      - nvhpc  
+
     nvhpc:
       version: [25.1]
       externals:

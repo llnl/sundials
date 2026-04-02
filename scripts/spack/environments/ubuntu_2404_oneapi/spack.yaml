@@ -1,10 +1,24 @@
 spack:
+  concretizer:
+    unify: true
+
+  view: false
 
   packages:
+    c:
+      prefer:
+      - intel-oneapi-compilers 
+    cxx:
+      prefer:
+      - intel-oneapi-compilers
+    fortran:
+      prefer:
+      - intel-oneapi-compilers  
+
     intel-oneapi-compilers:
       version: [2025.3.0]
       externals:
-        - spec: intel-oneapi-compiler@2025.3.0
+        - spec: intel-oneapi-compilers@2025.3.0
           prefix: /opt/intel/oneapi/compiler/2025.3
       extra_attributes:
         compilers:
