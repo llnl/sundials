@@ -598,12 +598,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         return options
 
-    def cache_string_from_variant(self, cmake_var, variant):
-        return cmake_cache_string(cmake_var, self.spec.variants[variant].value)
-
-    def cache_option_from_variant(self, cmake_var, variant):
-        return cmake_cache_option(cmake_var, self.spec.variants[variant].value)
-
     def initconfig_compiler_entries(self):
         entries = []
 
@@ -649,7 +643,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries = []
 
         if "+cuda" in spec:
-            entries.append(self.cache_option_from_variant("CUDA_ENABLE", "cuda"))
+            entries.append(cmake_cache_option("CUDA_ENABLE", True))
             if not spec.satisfies("cuda_arch=none"):
                 cuda_arch = spec.variants["cuda_arch"].value
                 entries.append(
@@ -659,7 +653,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "+rocm" in spec:
             entries.extend(
                 [
-                    self.cache_option_from_variant("ENABLE_HIP", "rocm"),
+                    cmake_cache_option("ENABLE_HIP", True),
                     cmake_cache_path("HIP_PATH", spec["hip"].prefix),
                     cmake_cache_path("HIP_DIR", spec["hip"].prefix.cmake),
                     cmake_cache_path("HIP_CLANG_INCLUDE_PATH", spec["llvm-amdgpu"].prefix.include),
@@ -677,35 +671,39 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         # SUNDIALS solvers
         for pkg in self.sun_solvers:
-            entries.append(self.cache_option_from_variant("BUILD_" + pkg, pkg))
+            entries.append(cmake_cache_option("BUILD_" + pkg, spec.variants[pkg].value))
 
         entries.extend(
             [
                 # Precision
-                self.cache_string_from_variant("SUNDIALS_PRECISION", "precision"),
+                cmake_cache_string("SUNDIALS_PRECISION", spec.variants["precision"].value),
                 # Fortran interface
-                self.cache_option_from_variant("F2003_INTERFACE_ENABLE", "f2003"),
+                cmake_cache_option("F2003_INTERFACE_ENABLE", spec.variants["f2003"].value),
                 # library type
-                self.cache_option_from_variant("BUILD_SHARED_LIBS", "shared"),
-                self.cache_option_from_variant("BUILD_STATIC_LIBS", "static"),
+                cmake_cache_option("BUILD_SHARED_LIBS", spec.variants["shared"].value),
+                cmake_cache_option("BUILD_STATIC_LIBS", spec.variants["static"].value),
                 # Generic (std-c) math libraries
-                self.cache_option_from_variant("USE_GENERIC_MATH", "generic-math"),
+                cmake_cache_option("USE_GENERIC_MATH", spec.variants["generic-math"].value),
                 # Logging
-                self.cache_string_from_variant("SUNDIALS_LOGGING_LEVEL", "logging-level"),
+                cmake_cache_string("SUNDIALS_LOGGING_LEVEL", spec.variants["logging-level"].value),
                 # Monitoring
-                self.cache_option_from_variant("SUNDIALS_BUILD_WITH_MONITORING", "monitoring"),
-                # Profiling
-                self.cache_option_from_variant("SUNDIALS_BUILD_WITH_PROFILING", "profiling"),
-                self.cache_option_from_variant("ENABLE_CALIPER", "caliper"),
-                self.cache_option_from_variant("ENABLE_ADIAK", "adiak"),
-                # Benchmarking
-                self.cache_option_from_variant("BUILD_BENCHMARKS", "benchmarks"),
-                # Profile examples
-                self.cache_option_from_variant(
-                    "SUNDIALS_TEST_ENABLE_PROFILING", "profile-examples"
+                cmake_cache_option(
+                    "SUNDIALS_BUILD_WITH_MONITORING", spec.variants["monitoring"].value
                 ),
-                self.cache_option_from_variant(
-                    "SUNDIALS_TEST_ENABLE_DEV_TESTS", "profile-examples"
+                # Profiling
+                cmake_cache_option(
+                    "SUNDIALS_BUILD_WITH_PROFILING", spec.variants["profiling"].value
+                ),
+                cmake_cache_option("ENABLE_CALIPER", spec.variants["caliper"].value),
+                cmake_cache_option("ENABLE_ADIAK", spec.variants["adiak"].value),
+                # Benchmarking
+                cmake_cache_option("BUILD_BENCHMARKS", spec.variants["benchmarks"].value),
+                # Profile examples
+                cmake_cache_option(
+                    "SUNDIALS_TEST_ENABLE_PROFILING", spec.variants["profile-examples"].value
+                ),
+                cmake_cache_option(
+                    "SUNDIALS_TEST_ENABLE_DEV_TESTS", spec.variants["profile-examples"].value
                 ),
                 cmake_cache_string("SPACK_VERSION", ".".join(map(str, spack.spack_version_info))),
             ]
@@ -722,21 +720,21 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         # TPLs
         entries.extend(
             [
-                self.cache_option_from_variant("ENABLE_GINKGO", "ginkgo"),
-                self.cache_option_from_variant("ENABLE_KOKKOS_KERNELS", "kokkos-kernels"),
-                self.cache_option_from_variant("ENABLE_KOKKOS", "kokkos"),
-                self.cache_option_from_variant("ENABLE_SYCL", "sycl"),
-                self.cache_option_from_variant("EXAMPLES_INSTALL", "examples-install"),
-                self.cache_option_from_variant("HYPRE_ENABLE", "hypre"),
-                self.cache_option_from_variant("KLU_ENABLE", "klu"),
-                self.cache_option_from_variant("LAPACK_ENABLE", "lapack"),
-                self.cache_option_from_variant("OPENMP_ENABLE", "openmp"),
-                self.cache_option_from_variant("PETSC_ENABLE", "petsc"),
-                self.cache_option_from_variant("PTHREAD_ENABLE", "pthread"),
-                self.cache_option_from_variant("RAJA_ENABLE", "raja"),
-                self.cache_option_from_variant("SUPERLUDIST_ENABLE", "superlu-dist"),
-                self.cache_option_from_variant("SUPERLUMT_ENABLE", "superlu-mt"),
-                self.cache_option_from_variant("Trilinos_ENABLE", "trilinos"),
+                cmake_cache_option("ENABLE_GINKGO", spec.variants["ginkgo"].value),
+                cmake_cache_option("ENABLE_KOKKOS_KERNELS", spec.variants["kokkos-kernels"].value),
+                cmake_cache_option("ENABLE_KOKKOS", spec.variants["kokkos"].value),
+                cmake_cache_option("ENABLE_SYCL", spec.variants["sycl"].value),
+                cmake_cache_option("EXAMPLES_INSTALL", spec.variants["examples-install"].value),
+                cmake_cache_option("HYPRE_ENABLE", spec.variants["hypre"].value),
+                cmake_cache_option("KLU_ENABLE", spec.variants["klu"].value),
+                cmake_cache_option("LAPACK_ENABLE", spec.variants["lapack"].value),
+                cmake_cache_option("OPENMP_ENABLE", spec.variants["openmp"].value),
+                cmake_cache_option("PETSC_ENABLE", spec.variants["petsc"].value),
+                cmake_cache_option("PTHREAD_ENABLE", spec.variants["pthread"].value),
+                cmake_cache_option("RAJA_ENABLE", spec.variants["raja"].value),
+                cmake_cache_option("SUPERLUDIST_ENABLE", spec.variants["superlu-dist"].value),
+                cmake_cache_option("SUPERLUMT_ENABLE", spec.variants["superlu-mt"].value),
+                cmake_cache_option("Trilinos_ENABLE", spec.variants["trilinos"].value),
             ]
         )
 
@@ -756,13 +754,13 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
             if not "caliper-dir=none" in spec:
                 entries.append(
-                    self.cache_string_from_variant(
-                        "SUNDIALS_TEST_CALIPER_OUTPUT_DIR", "caliper-dir"
+                    cmake_cache_string(
+                        "SUNDIALS_TEST_CALIPER_OUTPUT_DIR", spec.variants["caliper-dir"].value
                     )
                 )
                 entries.append(
-                    self.cache_string_from_variant(
-                        "SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR", "caliper-dir"
+                    cmake_cache_string(
+                        "SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR", spec.variants["caliper-dir"].value
                     )
                 )
 
@@ -899,8 +897,8 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         # Examples
         entries.extend(
             [
-                self.cache_option_from_variant("EXAMPLES_ENABLE_C", "examples"),
-                self.cache_option_from_variant("EXAMPLES_ENABLE_CXX", "examples"),
+                cmake_cache_option("EXAMPLES_ENABLE_C", spec.variants["examples"].value),
+                cmake_cache_option("EXAMPLES_ENABLE_CXX", spec.variants["examples"].value),
                 cmake_cache_option("EXAMPLES_ENABLE_F2003", "+examples+f2003" in spec),
                 cmake_cache_option("EXAMPLES_ENABLE_CUDA", "+examples+cuda" in spec),
                 cmake_cache_option("EXAMPLES_ENABLE_HIP", "+examples+rocm" in spec),
