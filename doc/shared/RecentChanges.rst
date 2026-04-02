@@ -40,7 +40,7 @@ users who measure memory usage before beginning a simulation.
 
 Added the function :c:func:`ARKodeGetStageIndex` that returns the index of the
 stage currently being processed, and the total number of stages in the method, for
-users who must compute auxiliary quantities in their IVP right-hand side functions
+users who wish to compute auxiliary quantities in their IVP right-hand side functions
 during some stages and not others (e.g., in all but the first or last stage).
 
 Added the functions :c:func:`ARKodeGetLastTime` and :c:func:`ARKodeGetLastState` to

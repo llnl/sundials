@@ -40,8 +40,8 @@ users who measure memory usage before beginning a simulation.
 
 Added the function `ARKodeGetStageIndex` that returns the index of the stage
 currently being processed, and the total number of stages in the method, for users
-who must compute auxiliary quantities in their IVP right-hand side functions during
-some stages and not others (e.g., in all but the first or last stage).
+who wish to compute auxiliary quantities in their IVP right-hand side functions
+during some stages and not others (e.g., in all but the first or last stage).
 
 Added the functions `ARKodeGetLastTime` and `ARKodeGetLastState` to return the last
 successful time and state achieved by ARKODE, respectively.
