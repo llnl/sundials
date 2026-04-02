@@ -25,6 +25,8 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 9, tcur = 6.103515625e-12
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 10, tcur = 6.103515625e-12
+[INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 1.14486680447989e-07
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 6.103515625e-08
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 10000
@@ -53,6 +55,8 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 9, tcur = 6.1041259765625e-08
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 10, tcur = 6.1041259765625e-08
+[INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.000101192886669469
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 1.220703125e-06
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
@@ -80,6 +84,8 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 8, tcur = 1.07829386393229e-06
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 9, tcur = 1.28174438476563e-06
+[INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
+[INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 10, tcur = 1.28174438476563e-06
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.000676820854209895
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 2.44140625e-05

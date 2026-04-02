@@ -710,6 +710,7 @@ void mriStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
   fprintf(outfile, "MRIStep: q = %i\n", step_mem->q);
   fprintf(outfile, "MRIStep: p = %i\n", step_mem->p);
   fprintf(outfile, "MRIStep: istage = %i\n", step_mem->istage);
+  fprintf(outfile, "MRIStep: cur_stage = %i\n", step_mem->cur_stage);
   fprintf(outfile, "MRIStep: stages = %i\n", step_mem->stages);
   fprintf(outfile, "MRIStep: maxcor = %i\n", step_mem->maxcor);
   fprintf(outfile, "MRIStep: msbp = %i\n", step_mem->msbp);
@@ -1839,7 +1840,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                  (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE);
 
   /* initialize the current stage index */
-  step_mem->istage = 0;
+  step_mem->istage = step_mem->cur_stage = 0;
 
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
@@ -1895,7 +1896,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = 0, stage type = %d, tcur = " SUN_FORMAT_G, MRISTAGE_FIRST,
              ark_mem->tcur);
-  SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->yn, "z_0(:) =");
+  SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_0(:) =");
 
   /* Evaluate the slow RHS functions if needed. NOTE: we decide between calling the
      full RHS function (if ark_mem->fn is non-NULL and MRIStep is not an inner
@@ -1956,7 +1957,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
        and stage index */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
     tf = ark_mem->tcur = ark_mem->tn + step_mem->MRIC->c[is] * ark_mem->h;
-    step_mem->istage   = is;
+    step_mem->istage = step_mem->cur_stage = is;
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
@@ -2147,7 +2148,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* perform embedded stage (if needed) */
   if (do_embedding)
   {
-    step_mem->istage = is = step_mem->stages;
+    step_mem->istage = step_mem->cur_stage = is = step_mem->stages;
 
     /* Temporarily swap ark_mem->ycur and ark_mem->tempv4 pointers, copying
        data so that both hold the current ark_mem->ycur value.  This ensures
@@ -2230,7 +2231,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   /* Compute final stage (for evolved solution), along with error estimate */
   {
-    step_mem->istage = is = step_mem->stages - 1;
+    step_mem->istage = step_mem->cur_stage = is = step_mem->stages - 1;
 
     /* Set relevant stage times (including desired stage time for implicit solves) */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
@@ -2400,7 +2401,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   ytemp  = ark_mem->tempv2;
 
   /* initialize the current stage index */
-  step_mem->istage = 0;
+  step_mem->istage = step_mem->cur_stage = 0;
 
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
@@ -2538,7 +2539,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     /* Set current stage time and index */
     ark_mem->tcur    = ark_mem->tn + cstage * ark_mem->h;
-    step_mem->istage = stage;
+    step_mem->istage = step_mem->cur_stage = stage;
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, stage,
@@ -2593,8 +2594,8 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       /* perform implicit solve for correction */
       if (impl_corr)
       {
-        /* store current stage index (for an "embedded" stage, subtract 1) */
-        step_mem->istage = (stage == step_mem->stages) ? stage - 1 : stage;
+        /* update stage index for prediction and nonlinear solver if this is an "embedded" stage */
+        if (embedding) { step_mem->istage = stage - 1; }
 
         /* Call predictor for current stage solution (result placed in zpred) */
         retval = mriStep_Predict(ark_mem, step_mem->istage, step_mem->zpred);
@@ -2918,7 +2919,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   t0 = ark_mem->tn;
 
   /* initialize the current stage index */
-  step_mem->istage = 0;
+  step_mem->istage = step_mem->cur_stage = 0;
 
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
@@ -3039,7 +3040,8 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       /* Get stage index from group; skip to the next group if
          we've reached the end of this one */
-      step_mem->istage = stage = step_mem->MRIC->group[ig][is];
+      step_mem->istage = step_mem->cur_stage = stage =
+        step_mem->MRIC->group[ig][is];
       if (stage < 0) { break; }
       nextstage = -1;
       if (stage < step_mem->stages)

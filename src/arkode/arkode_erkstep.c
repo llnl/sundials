@@ -483,7 +483,7 @@ int erkStep_Init(ARKodeMem ark_mem, int init_type)
   }
 
   /* Allocate workspace for MRI forcing -- need to allocate here as the
-     number of stages may not bet set before this point */
+     number of stages may not be set before this point */
   if (!(step_mem->stage_times))
   {
     step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,

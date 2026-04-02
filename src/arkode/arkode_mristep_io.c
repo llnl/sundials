@@ -377,7 +377,8 @@ int mriStep_SetDefaults(ARKodeMem ark_mem)
   step_mem->dgmax          = DGMAX;  /* max gamma change to recompute J or P */
   step_mem->msbp           = MSBP;   /* max steps between updating J or P */
   step_mem->stages         = 0;      /* no stages */
-  step_mem->istage         = 0;      /* current stage index */
+  step_mem->istage         = 0;      /* implicit solver stage index */
+  step_mem->cur_stage      = 0;      /* current stage index */
   step_mem->jcur           = SUNFALSE;
   step_mem->convfail       = ARK_NO_FAILURES;
   step_mem->stage_predict  = NULL; /* no user-supplied stage predictor */
@@ -842,7 +843,7 @@ int mriStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
   retval = mriStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  *stage      = step_mem->istage;
+  *stage      = step_mem->cur_stage;
   *max_stages = step_mem->stages;
 
   return (ARK_SUCCESS);
