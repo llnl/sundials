@@ -622,7 +622,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                 cmake_cache_path("CMAKE_Fortran_COMPILER", self.compiler.fc),
                 # language standard
                 # self.cache_string_from_variant("CMAKE_C_STANDARD", "cstd"),
-                self.cache_string_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
+                # self.cache_string_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             ]
         )
 
