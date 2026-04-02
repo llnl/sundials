@@ -428,6 +428,8 @@ contains the ARKODE output constants.
    +-------------------------------------+------+------------------------------------------------------------+
    | :index:`ARK_DEE_FAIL`               | -59  | An error occurred in the SUNDomEigEstimator module.        |
    +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_STEP_H0_FAIL`           | -60  | Time stepping module was unable to set the initial step.   |
+   +-------------------------------------+------+------------------------------------------------------------+
    | :index:`ARK_UNRECOGNIZED_ERROR`     | -99  | An unknown error was encountered.                          |
    +-------------------------------------+------+------------------------------------------------------------+
    | **ARKLS linear solver module output constants**                                                         |

@@ -3241,9 +3241,8 @@ int ARKodeGetUserData(void* arkode_mem, void** user_data)
   ARKodeGetStageIndex:
 
   Returns the index of the current stage and the total number of
-  stages.  If this is not supplied by the time-stepping module
-  then it returns (0,1), indicating that it is currently in the
-  first of only a single stage.
+  stages. If this is not supplied by the time-stepping module
+  then an error is returned and the values are set to (-1, -1).
   ---------------------------------------------------------------*/
 int ARKodeGetStageIndex(void* arkode_mem, int* stage, int* max_stages)
 {

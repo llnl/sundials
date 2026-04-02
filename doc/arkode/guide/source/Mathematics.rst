@@ -529,8 +529,8 @@ Runge--Kutta--Chebyshev (RKC), :cite:p:`VSH:04` and Runge--Kutta--Legendre (RKL)
 .. math::
    z_1 &= y_n,\\
    z_2 &= z_1 + h_n \tilde{\mu}_2 f(t_n,z_1),\\
-   z_j &= (1-\mu_j-\nu_j)z_1 + \mu_j z_{j-1} + \nu_jz_{j-2} + h_n \tilde{\gamma}_j f(t_n,z_1) + h_n \tilde{\mu}_j f(t_n + c_{j-1}h, z_{j-1}) \\
-   y_{n+1} &= z_s.
+   z_j &= (1-\mu_j-\nu_j)z_1 + \mu_j z_{j-1} + \nu_jz_{j-2} + h_n \tilde{\gamma}_j f(t_n,z_1) + h_n \tilde{\mu}_j f(t_n + c_{j-1}h, z_{j-1}), \quad j = 3,\ldots,s+1 \\
+   y_{n+1} &= z_{s+1}.
    :label: ARKODE_RKC_RKL
 
 The corresponding coefficients can be found in :cite:p:`VSH:04` and :cite:p:`MBA:14`, respectively.
