@@ -288,7 +288,7 @@ instead of supplying a dummy routine.
       A threshold, with :math:`\varepsilon` representing the machine precision,
 
       .. math::
-         \texttt{gram_det_tol} = 10 \cdot \max\left(\varepsilon,\; \texttt{rel_tol}\right)
+         \mathtt{gram\_det\_tol} = 10 \cdot \max\left(\varepsilon,\; \mathtt{rel\_tol}\right)
 
       is used to assess the numerical rank of the 2×2 Gram matrix formed by the current and previous
       iterates in the Power Iteration method. If the determinant of this Gram matrix is less than or equal to
@@ -300,12 +300,12 @@ instead of supplying a dummy routine.
       imaginary part is proportional to the chosen relative tolerance, i.e.,
 
       .. math::
-         |\beta| \gtrsim \mathcal{O}(\texttt{rel_tol}).
+         |\beta| \gtrsim \mathcal{O}(\mathtt{rel\_tol}).
 
       Therefore, to resolve an expected imaginary part of magnitude :math:`|\beta|`, it is recommended to choose
 
       .. math::
-         \texttt{rel_tol} \ll |\beta|.
+         \mathtt{rel\_tol} \ll |\beta|.
 
       Choosing a smaller relative tolerance improves the ability to detect weakly complex eigenvalues,
       but may increase computational cost.
@@ -318,7 +318,7 @@ instead of supplying a dummy routine.
       .. math::
 
          \left|\,|\lambda_{k}| - |\lambda_{k-1}|\,\right|
-         \le \texttt{rel_tol} \cdot |\lambda_{k}|.
+         \le \mathtt{rel\_tol} \cdot |\lambda_{k}|.
 
       The implementation performs this inexpensive preprocessing check using only the magnitude of 
       the eigenvalue estimates. Arnoldi Iteration is executed only after this convergence criterion is 
