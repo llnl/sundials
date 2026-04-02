@@ -579,8 +579,16 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         self.run_example(join_path("cvode", "sycl", "cvAdvDiff_kry_sycl"), [], True)
 
+    @property
+    def c_std(self):
+        return self.spec.variants["cstd"].value
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants["cxxstd"].value
+
     # ==========================================================================
-    # SUNDIALS Settings
+    # Construct CMake arguments
     # ==========================================================================
 
     def cmake_args(self):
@@ -621,8 +629,8 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                 cmake_cache_path("CMAKE_CXX_COMPILER", self.compiler.cxx),
                 cmake_cache_path("CMAKE_Fortran_COMPILER", self.compiler.fc),
                 # language standard
-                # self.cache_string_from_variant("CMAKE_C_STANDARD", "cstd"),
-                # self.cache_string_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
+                cmake_cache_string("CMAKE_C_STANDARD", self.c_std),
+                cmake_cache_string("CMAKE_CXX_STANDARD", self.cxx_std),
             ]
         )
 
