@@ -1,14 +1,27 @@
 .. For package-specific references use :ref: rather than :numref: so intersphinx
    links to the appropriate place on read the docs
 
-**Major Features**
-
 **New Features and Enhancements**
 
-Updated the Kokkos N_Vector to support Kokkos 5.x versions.
+The default number of stages for the SSP Runge-Kutta methods
+:c:enumerator:`ARKODE_LSRK_SSP_S_2` and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in
+LSRKStep were changed from 10 and 9, respectively, to their minimum allowable
+values of 2 and 4. Users may revert to the previous values by calling
+:c:func:`LSRKStepSetNumSSPStages`.
 
-Added ``SUNLogger_Set{Error,Warning,Info,Debug}File`` functions to allow setting
-logger output streams with a ``FILE*``.
+Added the optional function :c:func:`ARKodeInit` to ARKODE to enable data
+allocation before the first call to :c:func:`ARKodeEvolve` (but after all other
+optional input routines have been called), to support users who measure memory
+usage before beginning a simulation.
+
+Added the function :c:func:`ARKodeGetStageIndex` that returns the index of the
+stage currently being processed, and the total number of stages in the method,
+for users who wish to compute auxiliary quantities in their IVP right-hand side
+functions during some stages and not others (e.g., in all but the first or last
+stage).
+
+Added the functions :c:func:`ARKodeGetLastTime` and :c:func:`ARKodeGetLastState`
+to return the last successful time and state achieved by ARKODE, respectively.
 
 ARKODE now allows users to supply functions that will be called before each
 internal time step attempt (:c:func:`ARKodeSetPreStepFn`), after each successful
@@ -17,11 +30,11 @@ called on an updated state (:c:func:`ARKodeSetPreRhsFn`), and/or once each
 internal step/stage is computed (:c:func:`ARKodeSetPostprocessStepFn`/
 :c:func:`ARKodeSetPostprocessStageFn`). These are considered **advanced**
 functions, as they should treat the state vector as read-only, otherwise all
-theoretical guarantees of solution accuracy and stability will be lost.
-As a result of these new functions, the values of multiple ARKODE return
-codes (e.g., ``ARK_INTERP_FAIL``) have been updated; users who key off of the
-named constants will not be affected, but users who rely on the values
-themselves should update their codes accordingly.
+theoretical guarantees of solution accuracy and stability will be lost.  As a
+result of these new functions, the values of multiple ARKODE return codes (e.g.,
+``ARK_INTERP_FAIL``) have been updated; users who key off of the named constants
+will not be affected, but users who rely on the values themselves should update
+their codes accordingly.
 
 Note to users utilizing the previously undocumented
 :c:func:`ARKodeSetPostprocessStepFn` function, the supplied function is now
@@ -29,25 +42,10 @@ called on the newly computed state vector for all step attempts not just
 successful steps. To obtain the previous behavior of only calling a function on
 successful steps, switch to using :c:func:`ARKodeSetPostStepFn`.
 
-Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP`` mode.
+Added ``SUNLogger_Set{Error,Warning,Info,Debug}File`` functions to allow setting
+logger output streams with a ``FILE*``.
 
-The default number of stages for the SSP Runge-Kutta methods :c:enumerator:`ARKODE_LSRK_SSP_S_2`
-and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to
-their minimum allowable values of 2 and 4. Users may revert to the previous values by calling
-:c:func:`LSRKStepSetNumSSPStages`.
-
-Added the optional function :c:func:`ARKodeInit` to ARKODE to enable
-data allocation before the first call to :c:func:`ARKodeEvolve`
-(but after all other optional input routines have been called), to support
-users who measure memory usage before beginning a simulation.
-
-Added the function :c:func:`ARKodeGetStageIndex` that returns the index of the
-stage currently being processed, and the total number of stages in the method, for
-users who wish to compute auxiliary quantities in their IVP right-hand side functions
-during some stages and not others (e.g., in all but the first or last stage).
-
-Added the functions :c:func:`ARKodeGetLastTime` and :c:func:`ARKodeGetLastState` to
-return the last successful time and state achieved by ARKODE, respectively.
+Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 
 **Bug Fixes**
 
@@ -57,15 +55,19 @@ installed without setting the ``SUPERLUMT_WORKS`` option to ``TRUE``.
 Fixed the embedded coefficients for the ``ARKODE_TSITOURAS_7_4_5`` Butcher
 table.
 
-Fixed a bug where passing an empty string to ``SUNLogger_Set{Error,Warning,Info,Debug}Filename``
-did not disable the corresponding logging stream `Issue #844 <https://github.com/llnl/sundials/issues/844>`__.
+Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
+user-supplied dominant eigenvalue function on the first step unless the output
+vector passed to :c:func:`ARKodeEvolve` contained the initial condition and when
+an eigenvalue estimate is requested on the first step in a subsequent call to
+:c:func:`ARKodeEvolve` unless the output vector passed contained the most
+recently returned solution.
 
-Fixed a bug in logging output from ARKODE, where for some time stepping modules,
-the current "time" output in the logger was incorrect.
+Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method,
+where a real number was used instead of an integer, potentially resulting in a
+rounding error.
 
-Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
-state would be stored on the first step if the output vector passed to
-:c:func:`ARKodeEvolve` did not contain the initial condition on the first call.
+Fixed a bug in MRIStep for estimating the first "slow" time step in an adaptive
+multirate calculation.
 
 Fixed a bug in MRIStep when using a custom inner integrator that relies on the
 input state being the initial condition for the fast integration rather than
@@ -74,28 +76,30 @@ and the output vector passed to :c:func:`ARKodeEvolve` does not contain the
 initial condition on the first call or the last returned solution on subsequent
 calls.
 
-Removed an extraneous copy of the output vector in each step with SplittingStep.
-
 Added a missing call to :c:func:`SUNNonlinSolSetup` in MRIStep when using an
 IMEX-MRI-SR method.
 
-Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method, where a real
-number was used instead of an integer, potentially resulting in a rounding error.
+Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
+state would be stored on the first step if the output vector passed to
+:c:func:`ARKodeEvolve` did not contain the initial condition on the first call.
 
-Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
-user-supplied dominant eigenvalue function on the first step unless the output
-vector passed to :c:func:`ARKodeEvolve` contained the initial condition and when
-an eigenvalue estimate is requested on the first step in a subsequent call to
-:c:func:`ARKodeEvolve` unless the output vector passed contained the most recently
-returned solution.
+Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP``
+mode.
 
-Fixed a bug in MRIStep for estimating the first "slow" time step in an adaptive
-multirate calculation.
+Removed an extraneous copy of the output vector in each step with SplittingStep.
+
+Fixed a bug in logging output from ARKODE, where for some time stepping modules,
+the current "time" output in the logger was incorrect.
+
+Fixed a bug where passing an empty string to
+``SUNLogger_Set{Error,Warning,Info,Debug}Filename`` did not disable the
+corresponding logging stream `Issue #844
+<https://github.com/llnl/sundials/issues/844>`__.
 
 **Deprecation Notices**
 
-The ``CVodeSetMonitorFn`` and ``CVodeSetMonitorFrequency`` functions have been deprecated and will be
-removed in the next major release.
+The ``CVodeSetMonitorFn`` and ``CVodeSetMonitorFrequency`` functions have been
+deprecated and will be removed in the next major release.
 
 Several CMake options have been deprecated in favor of namespaced versions
 prefixed with ``SUNDIALS_`` to avoid naming collisions in applications that
