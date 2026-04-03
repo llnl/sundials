@@ -156,6 +156,14 @@ static SUNErrCode sunLoggerSetFilename(SUNLogger logger, const char* filename,
   return SUN_SUCCESS;
 }
 
+static SUNErrCode sunLoggerSetFilePointer(SUNLogger logger, FILE* file_ptr,
+                                          FILE** fp)
+{
+  if (!sunLoggerIsOutputRank(logger, NULL)) { return SUN_SUCCESS; }
+  *fp = file_ptr;
+  return SUN_SUCCESS;
+}
+
 static SUNErrCode sunLoggerFreeKeyValue(SUNHashMapKeyValue* kv_ptr)
 {
   if (!kv_ptr || !(*kv_ptr)) { return SUN_SUCCESS; }
@@ -274,6 +282,18 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger, const char* error_filena
 #endif
 }
 
+SUNErrCode SUNLogger_SetErrorFile(SUNLogger logger, FILE* error_fp)
+{
+  if (!logger) { return SUN_ERR_ARG_CORRUPT; }
+
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_ERROR
+  return sunLoggerSetFilePointer(logger, error_fp, &logger->error_fp);
+#else
+  ((void)error_fp);
+  return SUN_SUCCESS;
+#endif
+}
+
 SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
                                         const char* warning_filename)
 {
@@ -283,6 +303,18 @@ SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
   return sunLoggerSetFilename(logger, warning_filename, &logger->warning_fp);
 #else
   ((void)warning_filename);
+  return SUN_SUCCESS;
+#endif
+}
+
+SUNErrCode SUNLogger_SetWarningFile(SUNLogger logger, FILE* warning_fp)
+{
+  if (!logger) { return SUN_ERR_ARG_CORRUPT; }
+
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_WARNING
+  return sunLoggerSetFilePointer(logger, warning_fp, &logger->warning_fp);
+#else
+  ((void)warning_fp);
   return SUN_SUCCESS;
 #endif
 }
@@ -299,6 +331,18 @@ SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename
 #endif
 }
 
+SUNErrCode SUNLogger_SetInfoFile(SUNLogger logger, FILE* info_fp)
+{
+  if (!logger) { return SUN_ERR_ARG_CORRUPT; }
+
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
+  return sunLoggerSetFilePointer(logger, info_fp, &logger->info_fp);
+#else
+  ((void)info_fp);
+  return SUN_SUCCESS;
+#endif
+}
+
 SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
@@ -307,6 +351,18 @@ SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filena
   return sunLoggerSetFilename(logger, debug_filename, &logger->debug_fp);
 #else
   ((void)debug_filename);
+  return SUN_SUCCESS;
+#endif
+}
+
+SUNErrCode SUNLogger_SetDebugFile(SUNLogger logger, FILE* debug_fp)
+{
+  if (!logger) { return SUN_ERR_ARG_CORRUPT; }
+
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_DEBUG
+  return sunLoggerSetFilePointer(logger, debug_fp, &logger->debug_fp);
+#else
+  ((void)debug_fp);
   return SUN_SUCCESS;
 #endif
 }

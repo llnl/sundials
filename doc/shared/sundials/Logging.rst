@@ -269,6 +269,20 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetErrorFile(SUNLogger logger, FILE* error_fp)
+
+   Sets the file pointer for error output.
+
+   The logger does not take ownership of ``error_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``error_fp`` -- the ``FILE`` pointer to use for error output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger, const char* warning_filename)
 
@@ -283,6 +297,20 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetWarningFile(SUNLogger logger, FILE* warning_fp)
+
+   Sets the file pointer for warning output.
+
+   The logger does not take ownership of ``warning_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``warning_fp`` -- the ``FILE`` pointer to use for warning output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename)
 
@@ -297,6 +325,20 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetInfoFile(SUNLogger logger, FILE* info_fp)
+
+   Sets the file pointer for info output.
+
+   The logger does not take ownership of ``info_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``info_fp`` -- the ``FILE`` pointer to use for info output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
 
@@ -311,6 +353,20 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetDebugFile(SUNLogger logger, FILE* debug_fp)
+
+   Sets the file pointer for debug output.
+
+   The logger does not take ownership of ``debug_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``debug_fp`` -- the ``FILE`` pointer to use for debug output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl, const char* scope, const char* label, const char* msg_txt, ...)
 

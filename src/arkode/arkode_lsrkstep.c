@@ -2299,11 +2299,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* no need to call RHS preprocessing here, since the stage does not require
      a RHS function evaluation */
 
-  SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
-
   /* Finish stage 5 by preparing for the final stage group */
-  SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-             "stage = %i, tcur = " SUN_FORMAT_G, 6, ark_mem->tcur);
   N_VLinearSum(SUN_RCONST(1.0) / SUN_RCONST(25.0), ark_mem->tempv2,
                SUN_RCONST(9.0) / SUN_RCONST(25.0), ark_mem->ycur,
                ark_mem->tempv2);
