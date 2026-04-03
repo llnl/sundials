@@ -153,9 +153,13 @@ module fsundials_core_mod
  public :: FSUNLogger_Create
  public :: FSUNLogger_CreateFromEnv
  public :: FSUNLogger_SetErrorFilename
+ public :: FSUNLogger_SetErrorFile
  public :: FSUNLogger_SetWarningFilename
+ public :: FSUNLogger_SetWarningFile
  public :: FSUNLogger_SetDebugFilename
+ public :: FSUNLogger_SetDebugFile
  public :: FSUNLogger_SetInfoFilename
+ public :: FSUNLogger_SetInfoFile
  public :: FSUNLogger_QueueMsg
  public :: FSUNLogger_Flush
  public :: FSUNLogger_GetOutputRank
@@ -963,6 +967,15 @@ type(SwigArrayWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNLogger_SetErrorFile(farg1, farg2) &
+bind(C, name="_wrap_FSUNLogger_SetErrorFile") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNLogger_SetWarningFilename(farg1, farg2) &
 bind(C, name="_wrap_FSUNLogger_SetWarningFilename") &
 result(fresult)
@@ -970,6 +983,15 @@ use, intrinsic :: ISO_C_BINDING
 import :: swigarraywrapper
 type(C_PTR), value :: farg1
 type(SwigArrayWrapper) :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNLogger_SetWarningFile(farg1, farg2) &
+bind(C, name="_wrap_FSUNLogger_SetWarningFile") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -983,6 +1005,15 @@ type(SwigArrayWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNLogger_SetDebugFile(farg1, farg2) &
+bind(C, name="_wrap_FSUNLogger_SetDebugFile") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNLogger_SetInfoFilename(farg1, farg2) &
 bind(C, name="_wrap_FSUNLogger_SetInfoFilename") &
 result(fresult)
@@ -990,6 +1021,15 @@ use, intrinsic :: ISO_C_BINDING
 import :: swigarraywrapper
 type(C_PTR), value :: farg1
 type(SwigArrayWrapper) :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNLogger_SetInfoFile(farg1, farg2) &
+bind(C, name="_wrap_FSUNLogger_SetInfoFile") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -3492,6 +3532,22 @@ fresult = swigc_FSUNLogger_SetErrorFilename(farg1, farg2)
 swig_result = fresult
 end function
 
+function FSUNLogger_SetErrorFile(logger, error_fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_PTR) :: error_fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = logger
+farg2 = error_fp
+fresult = swigc_FSUNLogger_SetErrorFile(farg1, farg2)
+swig_result = fresult
+end function
+
 function FSUNLogger_SetWarningFilename(logger, warning_filename) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -3506,6 +3562,22 @@ type(SwigArrayWrapper) :: farg2
 farg1 = logger
 call SWIG_string_to_chararray(warning_filename, farg2_chars, farg2)
 fresult = swigc_FSUNLogger_SetWarningFilename(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNLogger_SetWarningFile(logger, warning_fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_PTR) :: warning_fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = logger
+farg2 = warning_fp
+fresult = swigc_FSUNLogger_SetWarningFile(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -3526,6 +3598,22 @@ fresult = swigc_FSUNLogger_SetDebugFilename(farg1, farg2)
 swig_result = fresult
 end function
 
+function FSUNLogger_SetDebugFile(logger, debug_fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_PTR) :: debug_fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = logger
+farg2 = debug_fp
+fresult = swigc_FSUNLogger_SetDebugFile(farg1, farg2)
+swig_result = fresult
+end function
+
 function FSUNLogger_SetInfoFilename(logger, info_filename) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -3540,6 +3628,22 @@ type(SwigArrayWrapper) :: farg2
 farg1 = logger
 call SWIG_string_to_chararray(info_filename, farg2_chars, farg2)
 fresult = swigc_FSUNLogger_SetInfoFilename(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNLogger_SetInfoFile(logger, info_fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_PTR) :: info_fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = logger
+farg2 = info_fp
+fresult = swigc_FSUNLogger_SetInfoFile(farg1, farg2)
 swig_result = fresult
 end function
 

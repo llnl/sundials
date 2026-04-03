@@ -251,6 +251,54 @@ void bind_arkode(nb::module_& m)
         nb::arg("arkode_mem"), nb::arg("LS"), nb::arg("M").none(),
         nb::arg("time_dep"));
 
+  // TODO(CJB) The nullopt approach of handling None args doesn't seem to be compatible
+  // with sundials4py::Array1d, so we just use none() for the Bi and Be args here for now.
+  m.def(
+    "ARKodeButcherTable_Create",
+    [](int s, int q, int p, sundials4py::Array1d c_1d, sundials4py::Array1d A_1d,
+       sundials4py::Array1d b_1d, sundials4py::Array1d d_1d)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+    {
+      auto ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector =
+        [](int s, int q, int p, sundials4py::Array1d c_1d,
+           sundials4py::Array1d A_1d, sundials4py::Array1d b_1d,
+           sundials4py::Array1d d_1d) -> ARKodeButcherTable
+      {
+        sunrealtype* c_1d_ptr = c_1d.size() == 0 ? nullptr : c_1d.data();
+        sunrealtype* A_1d_ptr = A_1d.size() == 0 ? nullptr : A_1d.data();
+        sunrealtype* b_1d_ptr = b_1d.size() == 0 ? nullptr : b_1d.data();
+        sunrealtype* d_1d_ptr = d_1d.size() == 0 ? nullptr : d_1d.data();
+
+        auto lambda_result = ARKodeButcherTable_Create(s, q, p, c_1d_ptr,
+                                                       A_1d_ptr, b_1d_ptr,
+                                                       d_1d_ptr);
+        return lambda_result;
+      };
+      auto ARKodeButcherTable_Create_adapt_return_type_to_shared_ptr =
+        [&ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector](int s, int q,
+                                                                 int p,
+                                                                 sundials4py::Array1d c_1d,
+                                                                 sundials4py::Array1d A_1d,
+                                                                 sundials4py::Array1d b_1d,
+                                                                 sundials4py::Array1d d_1d)
+        -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+      {
+        auto lambda_result =
+          ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector(s, q, p, c_1d,
+                                                                A_1d, b_1d, d_1d);
+
+        return our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                               ARKodeButcherTableDeleter>(lambda_result);
+      };
+
+      return ARKodeButcherTable_Create_adapt_return_type_to_shared_ptr(s, q, p,
+                                                                       c_1d,
+                                                                       A_1d, b_1d,
+                                                                       d_1d);
+    },
+    nb::arg("s"), nb::arg("q"), nb::arg("p"), nb::arg("c_1d"), nb::arg("A_1d"),
+    nb::arg("b_1d"), nb::arg("d_1d").none());
+
   bind_arkode_arkstep(m);
   bind_arkode_erkstep(m);
   bind_arkode_sprkstep(m);
