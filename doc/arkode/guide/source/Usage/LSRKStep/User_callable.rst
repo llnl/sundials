@@ -350,7 +350,7 @@ Allowable Method Families
 
       If :c:func:`LSRKStepSetUseAnalyticStabRegion` is called during integration, the change will take effect 
       at the next step attempt. Both analytic and ellipse stability regions of RKC and RKL methods with 10 stages
-      are shown in the figure below.
+      are shown in the figure below. 
 
       .. figure:: ../../../../../shared/figs/arkode/STS2_region_s10.png
          :alt: Stability region of RKL method with 10 stages
