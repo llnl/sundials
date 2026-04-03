@@ -230,6 +230,23 @@ instead of supplying a dummy routine.
       A :c:type:`SUNErrCode`.
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
+
+   This *optional* function sets the linearization point for the right-hand side function when using
+   :c:func:`SUNDomEigEstimator_SetRhs`. This allows the estimator to perform a discrete Jacobian-vector product using 
+   quotient approximations of the Jacobian at a specified linearization point.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *t* -- the time at which the linearization point is specified.
+      * *y* -- the linearization point for the right-hand side function.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE, int num_iters)
 
    This *optional* routine sets the number of preprocessing matrix-vector
@@ -327,10 +344,12 @@ instead of supplying a dummy routine.
       the cheaper magnitude-based preprocessing step, the routine avoids multiple Arnoldi runs that would
       yield only marginal improvements in accuracy while incurring significantly higher computational cost.
 
-      When this routine is used in combination with Power Iteration and ``rel_tol`` is less than or equal 
-      to zero, a default value of ``rel_tol`` = 0.005 is applied. In the case of Arnoldi Iteration, this 
-      routine sets ``rel_tol`` = 0.005 for the preprocessing Power Iteration phase when ``rel_tol`` is zero,
-      and disables preprocessing based on tolerance.
+      When this routine is used in combination with Power Iteration, for ``rel_tol <= 0`` or 
+      ``rel_tol >= (1 - \varepsilon)``, a default value of ``rel_tol = 0.005`` is applied.
+
+      In the case of Arnoldi Iteration, this routine sets ``rel_tol = 0.005`` for the preprocessing 
+      Power Iteration phase for ``rel_tol = 0`` or ``rel_tol >= (1 - \varepsilon)``, and disables 
+      preprocessing when ``rel_tol < 0``.
 
       This routine will be called by :c:func:`SUNDomEigEstimator_SetOptions`
       when using the key "Did.rel_tol".

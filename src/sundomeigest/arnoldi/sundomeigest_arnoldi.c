@@ -359,8 +359,11 @@ SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
     Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNFALSE;
     return SUN_SUCCESS;
   }
-  else if (tol == ZERO) { tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT; }
-  else { Arnoldi_CONTENT(DEE)->tol_preprocess = tol; }
+  else if (tol == ZERO || tol > ONE - SUN_UNIT_ROUNDOFF)
+  {
+    tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
+  }
+  Arnoldi_CONTENT(DEE)->tol_preprocess = tol;
 
   /* set the type of warmup iterations */
   Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNTRUE;
@@ -597,6 +600,16 @@ SUNErrCode SUNDomEigEstimator_Destroy_Arnoldi(SUNDomEigEstimator* DEEptr)
       N_VDestroy(Arnoldi_CONTENT(DEE)->rhs_linY);
       Arnoldi_CONTENT(DEE)->rhs_linY = NULL;
     }
+    if (Arnoldi_CONTENT(DEE)->Fy)
+    {
+      N_VDestroy(Arnoldi_CONTENT(DEE)->Fy);
+      Arnoldi_CONTENT(DEE)->Fy = NULL;
+    }
+    if (Arnoldi_CONTENT(DEE)->work)
+    {
+      N_VDestroy(Arnoldi_CONTENT(DEE)->work);
+      Arnoldi_CONTENT(DEE)->work = NULL;
+    }
     if (Arnoldi_CONTENT(DEE)->V)
     {
       N_VDestroyVectorArray(Arnoldi_CONTENT(DEE)->V,
@@ -690,7 +703,14 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   SUNAssert(Jv, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->rhsfn, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->rhs_linY, SUN_ERR_ARG_CORRUPT);
-  // TODO: Add assertion as needed
+  
+  sunrealtype vdotv   = N_VDotProd(v, v);
+  if (vdotv <= SUN_SMALL_REAL)
+  {
+    N_VScale(ZERO, v, Jv);
+    SUNCheckLastErr();
+    return SUN_SUCCESS;
+  }
 
   if (Arnoldi_CONTENT(DEE)->work == NULL)
   {

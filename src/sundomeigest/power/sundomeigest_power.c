@@ -91,8 +91,11 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   /* check for max_iters values; if illegal use defaults */
   if (max_iters <= 0) { max_iters = DEE_MAX_ITER_DEFAULT; }
 
-  /* Check if rel_tol > 0 */
-  if (rel_tol < SUN_SMALL_REAL) { rel_tol = DEE_TOL_DEFAULT; }
+  /* Check if rel_tol > 0 and < 1 */
+  if (rel_tol < SUN_SMALL_REAL || rel_tol > ONE - SUN_UNIT_ROUNDOFF)
+  {
+    rel_tol = DEE_TOL_DEFAULT;
+  }
 
   /* Create dominant eigenvalue estimator */
   DEE = NULL;
@@ -253,7 +256,7 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
-  if (PI_CONTENT(DEE)->rel_tol < SUN_SMALL_REAL)
+  if (PI_CONTENT(DEE)->rel_tol < SUN_SMALL_REAL || PI_CONTENT(DEE)->rel_tol > ONE - SUN_UNIT_ROUNDOFF)
   {
     PI_CONTENT(DEE)->rel_tol = DEE_TOL_DEFAULT;
   }
@@ -311,8 +314,11 @@ SUNErrCode SUNDomEigEstimator_SetRelTol_Power(SUNDomEigEstimator DEE,
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
-  /* Check if rel_tol > 0 */
-  if (rel_tol < SUN_SMALL_REAL) { rel_tol = DEE_TOL_DEFAULT; }
+  /* Check if rel_tol > 0 and < 1 */
+  if (rel_tol < SUN_SMALL_REAL || rel_tol > ONE - SUN_UNIT_ROUNDOFF)
+  {
+    rel_tol = DEE_TOL_DEFAULT;
+  }
 
   /* set the tolerance */
   PI_CONTENT(DEE)->rel_tol = rel_tol;
@@ -682,6 +688,14 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   SUNAssert(PI_CONTENT(DEE)->rhsfn, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->rhs_linY, SUN_ERR_ARG_CORRUPT);
 
+  sunrealtype vdotv   = N_VDotProd(v, v);
+  if (vdotv <= SUN_SMALL_REAL)
+  {
+    N_VScale(ZERO, v, Jv);
+    SUNCheckLastErr();
+    return SUN_SUCCESS;
+  }
+
   if (PI_CONTENT(DEE)->work == NULL)
   {
     PI_CONTENT(DEE)->work = N_VClone(v);
@@ -707,7 +721,6 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
 
   /* Initialize perturbation */
   sunrealtype ydotv   = N_VDotProd(y, v);
-  sunrealtype vdotv   = N_VDotProd(v, v);
   sunrealtype sq1norm = N_VL1Norm(v);
   sunrealtype sign    = (ydotv >= ZERO) ? ONE : -ONE;
   sunrealtype sqrteps = SUNRsqrt(SUN_UNIT_ROUNDOFF);
