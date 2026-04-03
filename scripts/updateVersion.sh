@@ -253,7 +253,7 @@ sedi "s/### Version.*/### Version ${ark_ver} (${date})/" $fn
 sedi "s/\"User Documentation for ARKODE v.*/\"User Documentation for ARKODE v${ark_ver},\" LLNL technical report/" $fn
 sedi "s/LLNL-SM-668082,.*/LLNL-SM-668082, ${date}./" $fn
 sedi "s/\"Example Programs for ARKODE v.*/\"Example Programs for ARKODE v${ark_ver},\" Technical Report,/" $fn
-sedi "s/Scientific Computation.*/Scientific Computation, ${date}./" $fn
+sedi "s/UMBC,.*/UMBC, ${date}./" $fn
 
 fn="../src/cvode/README.md"
 sedi "s/### Version.*/### Version ${cv_ver} (${date})/" $fn

@@ -47,4 +47,4 @@ the "SUNDIALS Release History" appendix of the ARKODE User Guide.
   LLNL-SM-668082, Apr 2026.
 
 * D. R. Reynolds, "Example Programs for ARKODE v6.7.0," Technical Report,
-  Southern Methodist University Center for Scientific Computation, Apr 2026.
+  UMBC, Apr 2026.
