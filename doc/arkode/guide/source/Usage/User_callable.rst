@@ -3720,7 +3720,7 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 
 .. c:function:: int ARKodeSetPostStepFn(void* arkode_mem, ARKPostStepFn poststep_fn)
@@ -3743,7 +3743,7 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
       This function replaces the undocumented
       :c:func:`ARKodeSetPostprocessStepFn` used in earlier versions for
@@ -3774,7 +3774,7 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 
 .. c:function:: int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
@@ -3794,11 +3794,11 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
       This function existed in earlier versions as an undocumented feature and
       the attached function was called after each successful step. Starting with
-      version x.y.z, use :c:func:`ARKodeSetPostStepFn` to attach a function to
+      version 6.7.0, use :c:func:`ARKodeSetPostStepFn` to attach a function to
       be called after each successful step.
 
    .. warning::
@@ -3825,7 +3825,7 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
       This function existed in earlier versions as an undocumented feature.
 
@@ -4109,7 +4109,7 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 
 .. c:function:: int ARKodeGetLastState(void *arkode_mem, N_Vector *yn)
@@ -4128,7 +4128,7 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
       as altering values of *yn* may lead to undesirable behavior, depending
       on the particular use case and on when this routine is called.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 
 .. c:function:: int ARKodeGetCurrentTime(void* arkode_mem, sunrealtype* tcur)
@@ -4530,7 +4530,7 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
       when calling `ARKodeGetStageIndex` while using LSRKStep, `stage` will
       range from 0 to `s` (inclusive), and `max_stages` will be `s+1`.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 
 
@@ -5517,7 +5517,7 @@ may call the function :c:func:`ARKodeInit`.
       and **before** the first call to :c:func:`ARKodeEvolve`.  This routine should
       be called at most once per ARKODE memory block.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 
 .. _ARKODE.Usage.Reset:

@@ -1,6 +1,6 @@
 # SUNDIALS Changelog
 
-## Changes to SUNDIALS in release X.Y.Z
+## Changes to SUNDIALS in release 7.7.0
 
 ### Major Features
 
