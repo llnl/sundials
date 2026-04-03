@@ -4,7 +4,7 @@
 **Alan C. Hindmarsh, Radu Serban, Cody J. Balos, David J. Gardner,
   and Carol S. Woodward, Center for Applied Scientific Computing, LLNL**
 
-**Daniel R. Reynolds, Department of Mathematics, Southern Methodist University**
+**Daniel R. Reynolds, Department of Mathematics and Statistics, UMBC**
 
 CVODE is a package for the solution of stiff and nonstiff ordinary differential
 equation (ODE) systems (initial value problems) given in explicit form

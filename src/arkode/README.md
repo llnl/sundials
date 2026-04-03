@@ -1,8 +1,7 @@
 # ARKODE
 ### Version 6.7.0 (Apr 2026)
 
-**Daniel R. Reynolds,
-  Department of Mathematics and Statistics, UMBC**
+**Daniel R. Reynolds, Department of Mathematics and Statistics, UMBC**
 
 **David J. Gardner, Carol S. Woodward, and Cody J. Balos,
   Center for Applied Scientific Computing, LLNL**

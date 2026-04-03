@@ -4,8 +4,7 @@
 **Alan C. Hindmarsh, Radu Serban, Cody J. Balos, David J. Gardner,
   and Carol S. Woodward, Center for Applied Scientific Computing, LLNL**
 
-**Daniel R. Reynolds, Department of Mathematics, Southern Methodist University**
-
+**Daniel R. Reynolds, Department of Mathematics and Statistics, UMBC**
 
 KINSOL is a package for the solution for nonlinear algebraic systems
 ```
