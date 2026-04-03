@@ -26,8 +26,6 @@ Start LSRKStep Logging test
  1.000000000000000e+00
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 5, tcur = 2.03450520833333e-12
-[INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
-[INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 6, tcur = 2.03450520833333e-12
 [DEBUG][rank 0][lsrkStep_TakeStepSSP104][stage RHS] F_5(:) =
  1.000000000000000e+00
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
@@ -82,8 +80,6 @@ Start LSRKStep Logging test
  9.999999999999984e-01
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 5, tcur = 2.03511555989583e-08
-[INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
-[INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 6, tcur = 2.03511555989583e-08
 [DEBUG][rank 0][lsrkStep_TakeStepSSP104][stage RHS] F_5(:) =
  9.999999999999996e-01
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
@@ -138,8 +134,6 @@ Start LSRKStep Logging test
  9.999999999992345e-01
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 5, tcur = 4.67942301432292e-07
-[INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
-[INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 6, tcur = 4.67942301432292e-07
 [DEBUG][rank 0][lsrkStep_TakeStepSSP104][stage RHS] F_5(:) =
  9.999999999997812e-01
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success

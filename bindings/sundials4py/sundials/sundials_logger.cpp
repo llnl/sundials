@@ -36,6 +36,18 @@ void bind_sunlogger(nb::module_& m)
 {
 #include "sundials_logger_generated.hpp"
   nb::class_<SUNLogger_>(m, "SUNLogger_");
+
+  m.def("SUNLogger_SetErrorFile", SUNLogger_SetErrorFile, nb::arg("logger"),
+        nb::arg("error_fp").none());
+
+  m.def("SUNLogger_SetWarningFile", SUNLogger_SetWarningFile, nb::arg("logger"),
+        nb::arg("warning_fp").none());
+
+  m.def("SUNLogger_SetDebugFile", SUNLogger_SetDebugFile, nb::arg("logger"),
+        nb::arg("debug_fp").none());
+
+  m.def("SUNLogger_SetInfoFile", SUNLogger_SetInfoFile, nb::arg("logger"),
+        nb::arg("info_fp").none());
 }
 
 } // namespace sundials4py

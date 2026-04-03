@@ -7,6 +7,9 @@
 
 Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 
+Added ``SUNLogger_Set{Error,Warning,Info,Debug}File`` functions to allow setting
+logger output streams with a ``FILE*``.
+
 ARKODE now allows users to supply functions that will be called before each
 internal time step attempt (:c:func:`ARKodeSetPreStepFn`), after each successful
 time step (:c:func:`ARKodeSetPostStepFn`), before right-hand side routines are
@@ -40,7 +43,7 @@ users who measure memory usage before beginning a simulation.
 
 Added the function :c:func:`ARKodeGetStageIndex` that returns the index of the
 stage currently being processed, and the total number of stages in the method, for
-users who must compute auxiliary quantities in their IVP right-hand side functions
+users who wish to compute auxiliary quantities in their IVP right-hand side functions
 during some stages and not others (e.g., in all but the first or last stage).
 
 Added the functions :c:func:`ARKodeGetLastTime` and :c:func:`ARKodeGetLastState` to
