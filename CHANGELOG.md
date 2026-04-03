@@ -8,6 +8,9 @@
 
 Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 
+Added `SUNLogger_Set{Error,Warning,Info,Debug}File` functions to allow setting
+logger output streams with a `FILE*`.
+
 ### Bug Fixes
 
 Fixed a CMake bug where the SuperLU_MT interface would not be built and
@@ -199,6 +202,9 @@ The `Convert` methods on the `sundials::kokkos:Vector`,
 `sundials::ginkgo::LinearSolver`, and `sundials::ginkgo::BatchLinearSolver`
 classes have been deprecated and will be removed in the next major release. The
 method `get`, should be used instead.
+
+The `CVodeSetMonitorFn` and `CVodeSetMonitorFrequency` functions have been deprecated and will be
+removed in the next major release.
 
 ## Changes to SUNDIALS in release 7.5.0
 
