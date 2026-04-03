@@ -209,9 +209,9 @@ instead of supplying a dummy routine.
       A :c:type:`SUNErrCode`.
 
 
-.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data, SUNRHSFn RHSfn)
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data, SUNRhsFn RHSfn)
 
-   This *optional* function provides a :c:type:`SUNRHSFn` function for performing
+   This *optional* function provides a :c:type:`SUNRhsFn` function for performing
    evaluations of the right-hand side function, as well as a ``void*`` pointer to a data structure
    used by this routine, to the dominant eigenvalue estimator. This function allows the estimator to
    perform a discrete Jacobian-vector product using quotient approximations of the Jacobian and estimate

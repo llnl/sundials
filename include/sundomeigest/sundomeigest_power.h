@@ -32,7 +32,9 @@
 extern "C" {
 #endif
 
+#ifndef MAX_DQITERS
 #define MAX_DQITERS 3
+#endif
 
 /* -----------------------------------------------------
  * Power Iteration Implementation of SUNDomEigEstimator

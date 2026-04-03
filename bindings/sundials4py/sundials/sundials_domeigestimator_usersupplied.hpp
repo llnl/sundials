@@ -49,7 +49,7 @@ SUNErrCode sundomeigestimator_setrhs_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<SUNRhsFn>, SUNDomEigEstimatorFunctionTable,
-    3>(&SUNDomEigEstimatorFunctionTable::deerhs, std::forward<Args>(args)...);
+    4>(&SUNDomEigEstimatorFunctionTable::deerhs, std::forward<Args>(args)...);
 }
 
 #endif
