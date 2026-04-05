@@ -256,7 +256,8 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
-  if (PI_CONTENT(DEE)->rel_tol < SUN_SMALL_REAL || PI_CONTENT(DEE)->rel_tol > ONE - SUN_UNIT_ROUNDOFF)
+  if (PI_CONTENT(DEE)->rel_tol < SUN_SMALL_REAL ||
+      PI_CONTENT(DEE)->rel_tol > ONE - SUN_UNIT_ROUNDOFF)
   {
     PI_CONTENT(DEE)->rel_tol = DEE_TOL_DEFAULT;
   }
@@ -688,7 +689,7 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   SUNAssert(PI_CONTENT(DEE)->rhsfn, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->rhs_linY, SUN_ERR_ARG_CORRUPT);
 
-  sunrealtype vdotv   = N_VDotProd(v, v);
+  sunrealtype vdotv = N_VDotProd(v, v);
   if (vdotv <= SUN_SMALL_REAL)
   {
     N_VScale(ZERO, v, Jv);

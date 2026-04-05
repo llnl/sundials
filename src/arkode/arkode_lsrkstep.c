@@ -742,7 +742,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   step_mem->step_nst = ark_mem->nst + 1;
 
   /* Initialize constants */
-  w0    = (ONE + step_mem->rkc_damping / SUNSQR((sunrealtype)(step_mem->req_stages)));
+  w0 = (ONE + step_mem->rkc_damping / SUNSQR((sunrealtype)(step_mem->req_stages)));
   temp1 = SUNSQR(w0) - ONE;
   temp2 = SUNRsqrt(temp1);
   arg   = step_mem->req_stages * SUNRlog(w0 + temp2);

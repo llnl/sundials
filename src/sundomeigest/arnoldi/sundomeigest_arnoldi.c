@@ -703,8 +703,8 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
   SUNAssert(Jv, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->rhsfn, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->rhs_linY, SUN_ERR_ARG_CORRUPT);
-  
-  sunrealtype vdotv   = N_VDotProd(v, v);
+
+  sunrealtype vdotv = N_VDotProd(v, v);
   if (vdotv <= SUN_SMALL_REAL)
   {
     N_VScale(ZERO, v, Jv);
