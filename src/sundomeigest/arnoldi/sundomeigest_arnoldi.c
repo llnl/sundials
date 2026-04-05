@@ -737,7 +737,6 @@ SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
 
   /* Initialize perturbation */
   sunrealtype ydotv   = N_VDotProd(y, v);
-  sunrealtype vdotv   = N_VDotProd(v, v);
   sunrealtype sq1norm = N_VL1Norm(v);
   sunrealtype sign    = (ydotv >= ZERO) ? ONE : -ONE;
   sunrealtype sqrteps = SUNRsqrt(SUN_UNIT_ROUNDOFF);
