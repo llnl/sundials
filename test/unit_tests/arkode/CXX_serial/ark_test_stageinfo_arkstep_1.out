@@ -1,0 +1,144 @@
+Start ARKStep StageInfo test
+Using DIRK method
+Using Newton nonlinear solver
+Using GMRES iterative linear solver
+           t                        u                        v                      u err                    v err            
+------------------------------------------------------------------------------------------------------------------------------
+ 0.000000000000000e+00    1.224744871391589e+00    1.732050807568877e+00    0.000000000000000e+00    0.000000000000000e+00
+    [Pre-RHS (stage 0 of 6) at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 0 of 6) at t = 4.71e-08 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 0 of 6) at t = 2.06e-04 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 2.1213203436e+00]
+    [Pre-step at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), step = 0, attempt = 1, ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 1 of 6) at t = 5.15e-05 (tn = 0.00e+00 , tcur = 5.15e-05), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 1 of 6) at t = 5.15e-05 (tn = 0.00e+00 , tcur = 5.15e-05), ||y||_2 = 2.1213183410e+00]
+    [Post-stage processing (stage 1 of 6) at t = 5.15e-05 (tn = 0.00e+00 , tcur = 5.15e-05), ||y||_2 = 2.1213202184e+00]
+    [Pre-RHS (stage 1 of 6) at t = 5.15e-05 (tn = 0.00e+00 , tcur = 5.15e-05), ||y||_2 = 2.1213202184e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.51e-05 (tn = 0.00e+00 , tcur = 1.51e-05), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.51e-05 (tn = 0.00e+00 , tcur = 1.51e-05), ||y||_2 = 2.1213183410e+00]
+    [Post-stage processing (stage 2 of 6) at t = 1.51e-05 (tn = 0.00e+00 , tcur = 1.51e-05), ||y||_2 = 2.1213203328e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.51e-05 (tn = 0.00e+00 , tcur = 1.51e-05), ||y||_2 = 2.1213203328e+00]
+    [Pre-RHS (stage 3 of 6) at t = 6.44e-05 (tn = 0.00e+00 , tcur = 6.44e-05), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 3 of 6) at t = 6.44e-05 (tn = 0.00e+00 , tcur = 6.44e-05), ||y||_2 = 2.1213183410e+00]
+    [Post-stage processing (stage 3 of 6) at t = 6.44e-05 (tn = 0.00e+00 , tcur = 6.44e-05), ||y||_2 = 2.1213201480e+00]
+    [Pre-RHS (stage 3 of 6) at t = 6.44e-05 (tn = 0.00e+00 , tcur = 6.44e-05), ||y||_2 = 2.1213201480e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.07e-04 (tn = 0.00e+00 , tcur = 1.07e-04), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.07e-04 (tn = 0.00e+00 , tcur = 1.07e-04), ||y||_2 = 2.1213183410e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.07e-04 (tn = 0.00e+00 , tcur = 1.07e-04), ||y||_2 = 2.1213198021e+00]
+    [Post-stage processing (stage 4 of 6) at t = 1.07e-04 (tn = 0.00e+00 , tcur = 1.07e-04), ||y||_2 = 2.1213198021e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.07e-04 (tn = 0.00e+00 , tcur = 1.07e-04), ||y||_2 = 2.1213198021e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), ||y||_2 = 2.1213183410e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), ||y||_2 = 2.1213198430e+00]
+    [Postprocess-step at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04),||y||_2 = 2.1213198430e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), ||y||_2 = 2.1213198430e+00]
+    [Post-step at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), step = 0, ||y||_2 = 2.1213198430e+00]
+      1.0298602561e-04         1.2247448703e+00         1.7320501952e+00         7.8541617654e-12         2.7311486406e-14
+    [Pre-step at t = 1.03e-04 (tn = 1.03e-04 , tcur = 1.03e-04), step = 1, attempt = 1, ||y||_2 = 2.1213198430e+00]
+    [Pre-RHS (stage 1 of 6) at t = 8.22e-03 (tn = 1.03e-04 , tcur = 8.22e-03), ||y||_2 = 2.1213198430e+00]
+    [Pre-RHS (stage 1 of 6) at t = 8.22e-03 (tn = 1.03e-04 , tcur = 8.22e-03), ||y||_2 = 2.1213178432e+00]
+    [Pre-RHS (stage 1 of 6) at t = 8.22e-03 (tn = 1.03e-04 , tcur = 8.22e-03), ||y||_2 = 2.1213208437e+00]
+    [Pre-RHS (stage 1 of 6) at t = 8.22e-03 (tn = 1.03e-04 , tcur = 8.22e-03), ||y||_2 = 2.1181363163e+00]
+    [Pre-RHS (stage 1 of 6) at t = 8.22e-03 (tn = 1.03e-04 , tcur = 8.22e-03), ||y||_2 = 2.1181350536e+00]
+    [Post-stage processing (stage 1 of 6) at t = 8.22e-03 (tn = 1.03e-04 , tcur = 8.22e-03), ||y||_2 = 2.1181363098e+00]
+    [Pre-RHS (stage 1 of 6) at t = 8.22e-03 (tn = 1.03e-04 , tcur = 8.22e-03), ||y||_2 = 2.1181363098e+00]
+    [Pre-RHS (stage 2 of 6) at t = 2.48e-03 (tn = 1.03e-04 , tcur = 2.48e-03), ||y||_2 = 2.1213198430e+00]
+    [Pre-RHS (stage 2 of 6) at t = 2.48e-03 (tn = 1.03e-04 , tcur = 2.48e-03), ||y||_2 = 2.1213178432e+00]
+    [Pre-RHS (stage 2 of 6) at t = 2.48e-03 (tn = 1.03e-04 , tcur = 2.48e-03), ||y||_2 = 2.1213208437e+00]
+    [Pre-RHS (stage 2 of 6) at t = 2.48e-03 (tn = 1.03e-04 , tcur = 2.48e-03), ||y||_2 = 2.1210284133e+00]
+    [Post-stage processing (stage 2 of 6) at t = 2.48e-03 (tn = 1.03e-04 , tcur = 2.48e-03), ||y||_2 = 2.1210284133e+00]
+    [Pre-RHS (stage 2 of 6) at t = 2.48e-03 (tn = 1.03e-04 , tcur = 2.48e-03), ||y||_2 = 2.1210284133e+00]
+    [Pre-RHS (stage 3 of 6) at t = 1.03e-02 (tn = 1.03e-04 , tcur = 1.03e-02), ||y||_2 = 2.1213198430e+00]
+    [Pre-RHS (stage 3 of 6) at t = 1.03e-02 (tn = 1.03e-04 , tcur = 1.03e-02), ||y||_2 = 2.1213178432e+00]
+    [Pre-RHS (stage 3 of 6) at t = 1.03e-02 (tn = 1.03e-04 , tcur = 1.03e-02), ||y||_2 = 2.1213208437e+00]
+    [Pre-RHS (stage 3 of 6) at t = 1.03e-02 (tn = 1.03e-04 , tcur = 1.03e-02), ||y||_2 = 2.1163722079e+00]
+    [Pre-RHS (stage 3 of 6) at t = 1.03e-02 (tn = 1.03e-04 , tcur = 1.03e-02), ||y||_2 = 2.1163703975e+00]
+    [Post-stage processing (stage 3 of 6) at t = 1.03e-02 (tn = 1.03e-04 , tcur = 1.03e-02), ||y||_2 = 2.1163721828e+00]
+    [Pre-RHS (stage 3 of 6) at t = 1.03e-02 (tn = 1.03e-04 , tcur = 1.03e-02), ||y||_2 = 2.1163721828e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.70e-02 (tn = 1.03e-04 , tcur = 1.70e-02), ||y||_2 = 2.1213198430e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.70e-02 (tn = 1.03e-04 , tcur = 1.70e-02), ||y||_2 = 2.1213178432e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.70e-02 (tn = 1.03e-04 , tcur = 1.70e-02), ||y||_2 = 2.1213208437e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.70e-02 (tn = 1.03e-04 , tcur = 1.70e-02), ||y||_2 = 2.1077899293e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.70e-02 (tn = 1.03e-04 , tcur = 1.70e-02), ||y||_2 = 2.1077876979e+00]
+    [Post-stage processing (stage 4 of 6) at t = 1.70e-02 (tn = 1.03e-04 , tcur = 1.70e-02), ||y||_2 = 2.1077895079e+00]
+    [Pre-RHS (stage 4 of 6) at t = 1.70e-02 (tn = 1.03e-04 , tcur = 1.70e-02), ||y||_2 = 2.1077895079e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.63e-02 (tn = 1.03e-04 , tcur = 1.63e-02), ||y||_2 = 2.1213198430e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.63e-02 (tn = 1.03e-04 , tcur = 1.63e-02), ||y||_2 = 2.1213178432e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.63e-02 (tn = 1.03e-04 , tcur = 1.63e-02), ||y||_2 = 2.1213208437e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.63e-02 (tn = 1.03e-04 , tcur = 1.63e-02), ||y||_2 = 2.1087855087e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.63e-02 (tn = 1.03e-04 , tcur = 1.63e-02), ||y||_2 = 2.1087832811e+00]
+    [Postprocess-step at t = 1.63e-02 (tn = 1.03e-04 , tcur = 1.63e-02),||y||_2 = 2.1087851663e+00]
+    [Pre-RHS (stage 5 of 6) at t = 1.63e-02 (tn = 1.03e-04 , tcur = 1.63e-02), ||y||_2 = 2.1087851663e+00]
+    [Post-step at t = 1.63e-02 (tn = 1.03e-04 , tcur = 1.63e-02), step = 1, ||y||_2 = 2.1087851663e+00]
+      1.6345098313e-02         1.2247176001e+00         1.7166949867e+00         4.4663841514e-09         6.0447369332e-09
+    [Pre-step at t = 1.63e-02 (tn = 1.63e-02 , tcur = 1.63e-02), step = 2, attempt = 1, ||y||_2 = 2.1087851663e+00]
+    [Pre-RHS (stage 1 of 6) at t = 2.44e-02 (tn = 1.63e-02 , tcur = 2.44e-02), ||y||_2 = 2.1087851663e+00]
+    [Pre-RHS (stage 1 of 6) at t = 2.44e-02 (tn = 1.63e-02 , tcur = 2.44e-02), ||y||_2 = 2.1087831901e+00]
+    [Pre-RHS (stage 1 of 6) at t = 2.44e-02 (tn = 1.63e-02 , tcur = 2.44e-02), ||y||_2 = 2.1087861728e+00]
+    [Pre-RHS (stage 1 of 6) at t = 2.44e-02 (tn = 1.63e-02 , tcur = 2.44e-02), ||y||_2 = 2.0935038914e+00]
+    [Pre-RHS (stage 1 of 6) at t = 2.44e-02 (tn = 1.63e-02 , tcur = 2.44e-02), ||y||_2 = 2.0935017104e+00]
+    [Pre-RHS (stage 1 of 6) at t = 2.44e-02 (tn = 1.63e-02 , tcur = 2.44e-02), ||y||_2 = 2.0935030146e+00]
+    [Post-stage processing (stage 1 of 6) at t = 2.44e-02 (tn = 1.63e-02 , tcur = 2.44e-02), ||y||_2 = 2.0935030146e+00]
+    [Pre-RHS (stage 1 of 6) at t = 2.44e-02 (tn = 1.63e-02 , tcur = 2.44e-02), ||y||_2 = 2.0935030146e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.87e-02 (tn = 1.63e-02 , tcur = 1.87e-02), ||y||_2 = 2.1087851663e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.87e-02 (tn = 1.63e-02 , tcur = 1.87e-02), ||y||_2 = 2.1087831901e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.87e-02 (tn = 1.63e-02 , tcur = 1.87e-02), ||y||_2 = 2.1087861728e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.87e-02 (tn = 1.63e-02 , tcur = 1.87e-02), ||y||_2 = 2.1049048443e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.87e-02 (tn = 1.63e-02 , tcur = 1.87e-02), ||y||_2 = 2.1049026286e+00]
+    [Post-stage processing (stage 2 of 6) at t = 1.87e-02 (tn = 1.63e-02 , tcur = 1.87e-02), ||y||_2 = 2.1049048041e+00]
+    [Pre-RHS (stage 2 of 6) at t = 1.87e-02 (tn = 1.63e-02 , tcur = 1.87e-02), ||y||_2 = 2.1049048041e+00]
+    [Pre-RHS (stage 3 of 6) at t = 2.65e-02 (tn = 1.63e-02 , tcur = 2.65e-02), ||y||_2 = 2.1087851663e+00]
+    [Pre-RHS (stage 3 of 6) at t = 2.65e-02 (tn = 1.63e-02 , tcur = 2.65e-02), ||y||_2 = 2.1087831900e+00]
+    [Pre-RHS (stage 3 of 6) at t = 2.65e-02 (tn = 1.63e-02 , tcur = 2.65e-02), ||y||_2 = 2.1087861728e+00]
+    [Pre-RHS (stage 3 of 6) at t = 2.65e-02 (tn = 1.63e-02 , tcur = 2.65e-02), ||y||_2 = 2.0887688424e+00]
+    [Pre-RHS (stage 3 of 6) at t = 2.65e-02 (tn = 1.63e-02 , tcur = 2.65e-02), ||y||_2 = 2.0887666758e+00]
+    [Pre-RHS (stage 3 of 6) at t = 2.65e-02 (tn = 1.63e-02 , tcur = 2.65e-02), ||y||_2 = 2.0887671872e+00]
+    [Post-stage processing (stage 3 of 6) at t = 2.65e-02 (tn = 1.63e-02 , tcur = 2.65e-02), ||y||_2 = 2.0887671872e+00]
+    [Pre-RHS (stage 3 of 6) at t = 2.65e-02 (tn = 1.63e-02 , tcur = 2.65e-02), ||y||_2 = 2.0887671872e+00]
+    [Pre-RHS (stage 4 of 6) at t = 3.32e-02 (tn = 1.63e-02 , tcur = 3.32e-02), ||y||_2 = 2.1087851663e+00]
+    [Pre-RHS (stage 4 of 6) at t = 3.32e-02 (tn = 1.63e-02 , tcur = 3.32e-02), ||y||_2 = 2.1087831900e+00]
+    [Pre-RHS (stage 4 of 6) at t = 3.32e-02 (tn = 1.63e-02 , tcur = 3.32e-02), ||y||_2 = 2.1087861727e+00]
+    [Pre-RHS (stage 4 of 6) at t = 3.32e-02 (tn = 1.63e-02 , tcur = 3.32e-02), ||y||_2 = 2.0706044641e+00]
+    [Pre-RHS (stage 4 of 6) at t = 3.32e-02 (tn = 1.63e-02 , tcur = 3.32e-02), ||y||_2 = 2.0706023406e+00]
+    [Pre-RHS (stage 4 of 6) at t = 3.32e-02 (tn = 1.63e-02 , tcur = 3.32e-02), ||y||_2 = 2.0705966613e+00]
+    [Post-stage processing (stage 4 of 6) at t = 3.32e-02 (tn = 1.63e-02 , tcur = 3.32e-02), ||y||_2 = 2.0705966613e+00]
+    [Pre-RHS (stage 4 of 6) at t = 3.32e-02 (tn = 1.63e-02 , tcur = 3.32e-02), ||y||_2 = 2.0705966613e+00]
+    [Pre-RHS (stage 5 of 6) at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02), ||y||_2 = 2.1087851663e+00]
+    [Pre-RHS (stage 5 of 6) at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02), ||y||_2 = 2.1087831900e+00]
+    [Pre-RHS (stage 5 of 6) at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02), ||y||_2 = 2.1087861727e+00]
+    [Pre-RHS (stage 5 of 6) at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02), ||y||_2 = 2.0725003019e+00]
+    [Pre-RHS (stage 5 of 6) at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02), ||y||_2 = 2.0724981746e+00]
+    [Pre-RHS (stage 5 of 6) at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02), ||y||_2 = 2.0724934067e+00]
+    [Postprocess-step at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02),||y||_2 = 2.0724934067e+00]
+    [Pre-RHS (stage 5 of 6) at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02), ||y||_2 = 2.0724934067e+00]
+    [Post-step at t = 3.25e-02 (tn = 1.63e-02 , tcur = 3.25e-02), step = 2, ||y||_2 = 2.0724934067e+00]
+      3.2548714654e-02         1.2246367417e+00         1.6719730177e+00         8.0260502688e-09         5.9880200798e-09
+------------------------------------------------------------------------------------------------------------------------------
+Current time                  = 0.0325487146540888
+Steps                         = 3
+Step attempts                 = 3
+Stability limited steps       = 0
+Accuracy limited steps        = 3
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.000102986025609508
+Last step size                = 0.0162036163408584
+Current step size             = 0.0160003634285686
+Explicit RHS fn evals         = 0
+Implicit RHS fn evals         = 49
+NLS iters                     = 31
+NLS fails                     = 0
+NLS iters per step            = 10.3333333333333
+LS setups                     = 0
+Jac fn evals                  = 0
+LS RHS fn evals               = 34
+Prec setup evals              = 0
+Prec solves                   = 0
+LS iters                      = 34
+LS fails                      = 0
+Jac-times setups              = 0
+Jac-times evals               = 34
+LS iters per NLS iter         = 1.09677419354839
+Jac evals per NLS iter        = 0
+Prec evals per NLS iter       = 0
+End ARKStep StageInfo test

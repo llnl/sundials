@@ -746,10 +746,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   temp1 = SUNSQR(w0) - ONE;
   temp2 = SUNRsqrt(temp1);
   arg   = step_mem->req_stages * SUNRlog(w0 + temp2);
-
-  w1 = SUNRsinh(arg) * temp1 /
+  w1    = SUNRsinh(arg) * temp1 /
        (SUNRcosh(arg) * step_mem->req_stages * temp2 - w0 * SUNRsinh(arg));
-
   bjm1 = ONE / SUNSQR(TWO * w0);
   bjm2 = bjm1;
   mus  = w1 * bjm1;

@@ -60,6 +60,38 @@ table.
 Fixed a bug where passing an empty string to ``SUNLogger_Set{Error,Warning,Info,Debug}Filename``
 did not disable the corresponding logging stream `Issue #844 <https://github.com/llnl/sundials/issues/844>`__.
 
+Fixed a bug in logging output from ARKODE, where for some time stepping modules,
+the current "time" output in the logger was incorrect.
+
+Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
+state would be stored on the first step if the output vector passed to
+:c:func:`ARKodeEvolve` did not contain the initial condition on the first call.
+
+Fixed a bug in MRIStep when using a custom inner integrator that relies on the
+input state being the initial condition for the fast integration rather than
+retaining the result from the last inner integration or most recent reset call
+and the output vector passed to :c:func:`ARKodeEvolve` does not contain the
+initial condition on the first call or the last returned solution on subsequent
+calls.
+
+Removed an extraneous copy of the output vector in each step with SplittingStep.
+
+Added a missing call to :c:func:`SUNNonlinSolSetup` in MRIStep when using an
+IMEX-MRI-SR method.
+
+Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method, where a real
+number was used instead of an integer, potentially resulting in a rounding error.
+
+Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
+user-supplied dominant eigenvalue function on the first step unless the output
+vector passed to :c:func:`ARKodeEvolve` contained the initial condition and when
+an eigenvalue estimate is requested on the first step in a subsequent call to
+:c:func:`ARKodeEvolve` unless the output vector passed contained the most recently
+returned solution.
+
+Fixed a bug in MRIStep for estimating the first "slow" time step in an adaptive
+multirate calculation.
+
 Fixed a minor bug where the number of required stages for STS methods 
 in the LSRKStep module was incorrectly computed using the spectral 
 radius instead of the real part of the Jacobian eigenvalues.

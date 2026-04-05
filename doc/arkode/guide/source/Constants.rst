@@ -369,52 +369,66 @@ contains the ARKODE output constants.
    +-------------------------------------+------+------------------------------------------------------------+
    | :index:`ARK_INNERSTEP_FAIL`         | -34  | An error occurred in the inner stepper module.             |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_PREINNERFN_FAIL`        | -35  | An error occurred in the MRIStep pre inner integrator      |
+   | :index:`ARK_OUTERTOINNER_FAIL`      | -35  | An error occurred in the MRIStep pre inner integrator      |
    |                                     |      | function.                                                  |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_POSTINNERFN_FAIL`       | -36  | An error occurred in the MRIStep post inner integrator     |
+   | :index:`ARK_INNERTOOUTER_FAIL`      | -36  | An error occurred in the MRIStep post inner integrator     |
    |                                     |      | function.                                                  |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_INTERP_FAIL`            | -40  | An error occurred in the ARKODE polynomial interpolation   |
+   | :index:`ARK_POSTPROCESS_STEP_FAIL`  | -37  | An error occurred in a step postprocessing function.       |
+   +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_POSTPROCESS_STAGE_FAIL` | -38  | An error occurred in a stage postprocessing function.      |
+   +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_PRESTEPFN_FAIL`         | -39  | An error occurred in a prestep function.                   |
+   +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_POSTSTEPFN_FAIL`        | -40  | An error occurred in a poststep function.                  |
+   +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_PRERHS_FAIL`            | -41  | An error occurred in a pre-RHS function.                   |
+   +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_USER_PREDICT_FAIL`      | -42  | An error occurred in a user predictor function.            |
+   +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_INTERP_FAIL`            | -43  | An error occurred in the ARKODE polynomial interpolation   |
    |                                     |      | module.                                                    |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_INVALID_TABLE`          | -41  | An invalid Butcher or MRI table was encountered.           |
+   | :index:`ARK_INVALID_TABLE`          | -44  | An invalid Butcher or MRI table was encountered.           |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_CONTEXT_ERR`            | -42  | An error occurred with the SUNDIALS context object         |
+   | :index:`ARK_CONTEXT_ERR`            | -45  | An error occurred with the SUNDIALS context object         |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_RELAX_FAIL`             | -43  | An error occurred in computing the relaxation parameter    |
+   | :index:`ARK_RELAX_FAIL`             | -46  | An error occurred in computing the relaxation parameter    |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_RELAX_MEM_FAIL`         | -44  | The relaxation memory structure is ``NULL``                |
+   | :index:`ARK_RELAX_MEM_FAIL`         | -47  | The relaxation memory structure is ``NULL``                |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_RELAX_FUNC_FAIL`        | -45  | The relaxation function returned an unrecoverable error    |
+   | :index:`ARK_RELAX_FUNC_FAIL`        | -48  | The relaxation function returned an unrecoverable error    |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_RELAX_JAC_FAIL`         | -46  | The relaxation Jacobian function returned an unrecoverable |
+   | :index:`ARK_RELAX_JAC_FAIL`         | -49  | The relaxation Jacobian function returned an unrecoverable |
    |                                     |      | error                                                      |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_CONTROLLER_ERR`         | -47  | An error with a SUNAdaptController object was encountered. |
+   | :index:`ARK_CONTROLLER_ERR`         | -50  | An error with a SUNAdaptController object was encountered. |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_STEPPER_UNSUPPORTED`    | -48  | An operation was not supported by the current              |
+   | :index:`ARK_STEPPER_UNSUPPORTED`    | -51  | An operation was not supported by the current              |
    |                                     |      | time-stepping module.                                      |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_DOMEIG_FAIL`            | -49  | The dominant eigenvalue function failed. It is either not  |
+   | :index:`ARK_DOMEIG_FAIL`            | -52  | The dominant eigenvalue function failed. It is either not  |
    |                                     |      | provided or returns an illegal value.                      |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_MAX_STAGE_LIMIT_FAIL`   | -50  | Stepper failed to achieve stable results. Either reduce    |
+   | :index:`ARK_MAX_STAGE_LIMIT_FAIL`   | -53  | Stepper failed to achieve stable results. Either reduce    |
    |                                     |      | the step size or increase the stage_max_limit              |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_SUNSTEPPER_ERR`         | -51  | An error occurred in the SUNStepper module.                |
+   | :index:`ARK_SUNSTEPPER_ERR`         | -54  | An error occurred in the SUNStepper module.                |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_STEP_DIRECTION_ERR`     | -52  | An error occurred changing the step direction.             |
+   | :index:`ARK_STEP_DIRECTION_ERR`     | -55  | An error occurred changing the step direction.             |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_ADJ_CHECKPOINT_FAIL`    | -53  | An occurred when checkpointing a state during the adjoint  |
+   | :index:`ARK_ADJ_CHECKPOINT_FAIL`    | -56  | An occurred when checkpointing a state during the adjoint  |
    |                                     |      | integration.                                               |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_ADJ_RECOMPUTE_FAIL`     | -54  | An occurred recomputing steps during the adjoint           |
+   | :index:`ARK_ADJ_RECOMPUTE_FAIL`     | -57  | An occurred recomputing steps during the adjoint           |
    |                                     |      | integration.                                               |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_SUNADJSTEPPER_ERR`      | -55  | An error occurred in the SUNAdjStepper module.             |
+   | :index:`ARK_SUNADJSTEPPER_ERR`      | -58  | An error occurred in the SUNAdjStepper module.             |
    +-------------------------------------+------+------------------------------------------------------------+
-   | :index:`ARK_DEE_FAIL`               | -56  | An error occurred in the SUNDomEigEstimator module.        |
+   | :index:`ARK_DEE_FAIL`               | -59  | An error occurred in the SUNDomEigEstimator module.        |
+   +-------------------------------------+------+------------------------------------------------------------+
+   | :index:`ARK_STEP_H0_FAIL`           | -60  | Time stepping module was unable to set the initial step.   |
    +-------------------------------------+------+------------------------------------------------------------+
    | :index:`ARK_UNRECOGNIZED_ERROR`     | -99  | An unknown error was encountered.                          |
    +-------------------------------------+------+------------------------------------------------------------+
@@ -470,9 +484,9 @@ contains the ARKODE output constants.
    Commented-out table rows:
 
       +-------------------------------------+------+------------------------------------------------------------+
-      | :index:`ARK_POSTPROCESS_STEP_FAIL`  | -37  | An error occurred when calling the user-provided           |
+      | :index:`ARK_POSTPROCESS_STEP_FAIL`  | -37  | An error occurred when calling a user-provided.            |
       |                                     |      | step-based :c:func:`ARKPostProcessFn` routine.             |
       +-------------------------------------+------+------------------------------------------------------------+
-      | :index:`ARK_POSTPROCESS_STAGE_FAIL` | -38  | An error occurred when calling the user-provided           |
+      | :index:`ARK_POSTPROCESS_STAGE_FAIL` | -38  | An error occurred when calling a user-provided             |
       |                                     |      | stage-based :c:func:`ARKPostProcessFn` routine.            |
       +-------------------------------------+------+------------------------------------------------------------+

@@ -1,0 +1,40 @@
+Start ARKStep preallocation test
+Using DIRK method
+Using Newton nonlinear solver
+Using GMRES iterative linear solver
+           t                        u                        v                      u err                    v err
+------------------------------------------------------------------------------------------------------------------------------
+ 0.000000000000000e+00    1.224744871391589e+00    1.732050807568877e+00    0.000000000000000e+00    0.000000000000000e+00
+ 1.029860256095084e-04    1.224744870316961e+00    1.732050195224250e+00    7.854161765408207e-12    2.731148640577885e-14
+ 1.634509831323043e-02    1.224717600096914e+00    1.716694986722200e+00    4.466384151413649e-09    6.044736933219497e-09
+ 3.254871465408885e-02    1.224636741657479e+00    1.671973017680123e+00    8.026050268838958e-09    5.988020079783496e-09
+------------------------------------------------------------------------------------------------------------------------------
+Current time                  = 0.0325487146540888
+Steps                         = 3
+Step attempts                 = 3
+Stability limited steps       = 0
+Accuracy limited steps        = 3
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.000102986025609508
+Last step size                = 0.0162036163408584
+Current step size             = 0.0160003634285686
+Explicit RHS fn evals         = 0
+Implicit RHS fn evals         = 49
+NLS iters                     = 31
+NLS fails                     = 0
+NLS iters per step            = 10.3333333333333
+LS setups                     = 0
+Jac fn evals                  = 0
+LS RHS fn evals               = 34
+Prec setup evals              = 0
+Prec solves                   = 0
+LS iters                      = 34
+LS fails                      = 0
+Jac-times setups              = 0
+Jac-times evals               = 34
+LS iters per NLS iter         = 1.09677419354839
+Jac evals per NLS iter        = 0
+Prec evals per NLS iter       = 0
+End ARKStep preallocation test

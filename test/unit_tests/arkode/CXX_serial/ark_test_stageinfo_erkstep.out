@@ -1,0 +1,63 @@
+Start ERKStep StageInfo test
+           t                        u                        v                      u err                    v err            
+------------------------------------------------------------------------------------------------------------------------------
+ 0.000000000000000e+00    1.224744871391589e+00    1.732050807568877e+00    0.000000000000000e+00    0.000000000000000e+00
+    [Pre-RHS (stage 0 of 5) at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 0 of 5) at t = 4.71e-08 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 0 of 5) at t = 2.06e-04 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 2.1213203436e+00]
+    [Pre-step at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), step = 0, attempt = 1, ||y||_2 = 2.1213203436e+00]
+    [Post-stage processing (stage 1 of 5) at t = 4.12e-05 (tn = 0.00e+00 , tcur = 4.12e-05), ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 1 of 5) at t = 4.12e-05 (tn = 0.00e+00 , tcur = 4.12e-05), ||y||_2 = 2.1213203436e+00]
+    [Post-stage processing (stage 2 of 5) at t = 6.18e-05 (tn = 0.00e+00 , tcur = 6.18e-05), ||y||_2 = 2.1213200432e+00]
+    [Pre-RHS (stage 2 of 5) at t = 6.18e-05 (tn = 0.00e+00 , tcur = 6.18e-05), ||y||_2 = 2.1213200432e+00]
+    [Post-stage processing (stage 3 of 5) at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), ||y||_2 = 2.1213199340e+00]
+    [Pre-RHS (stage 3 of 5) at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), ||y||_2 = 2.1213199340e+00]
+    [Postprocess-step at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04),||y||_2 = 2.1213198430e+00]
+    [Pre-RHS (stage 4 of 5) at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), ||y||_2 = 2.1213198430e+00]
+    [Post-step at t = 1.03e-04 (tn = 0.00e+00 , tcur = 1.03e-04), step = 0, ||y||_2 = 2.1213198430e+00]
+      1.0298602561e-04         1.2247448703e+00         1.7320501952e+00         2.2204460493e-16         0.0000000000e+00
+    [Pre-step at t = 1.03e-04 (tn = 1.03e-04 , tcur = 1.03e-04), step = 1, attempt = 1, ||y||_2 = 2.1213198430e+00]
+    [Post-stage processing (stage 1 of 5) at t = 6.56e-03 (tn = 1.03e-04 , tcur = 6.56e-03), ||y||_2 = 2.1212571010e+00]
+    [Pre-RHS (stage 1 of 5) at t = 6.56e-03 (tn = 1.03e-04 , tcur = 6.56e-03), ||y||_2 = 2.1212571010e+00]
+    [Post-stage processing (stage 2 of 5) at t = 9.78e-03 (tn = 1.03e-04 , tcur = 9.78e-03), ||y||_2 = 2.1138657565e+00]
+    [Pre-RHS (stage 2 of 5) at t = 9.78e-03 (tn = 1.03e-04 , tcur = 9.78e-03), ||y||_2 = 2.1138657565e+00]
+    [Post-stage processing (stage 3 of 5) at t = 1.62e-02 (tn = 1.03e-04 , tcur = 1.62e-02), ||y||_2 = 2.1111621630e+00]
+    [Pre-RHS (stage 3 of 5) at t = 1.62e-02 (tn = 1.03e-04 , tcur = 1.62e-02), ||y||_2 = 2.1111621630e+00]
+    [Postprocess-step at t = 1.62e-02 (tn = 1.03e-04 , tcur = 1.62e-02),||y||_2 = 2.1089486502e+00]
+    [Pre-RHS (stage 4 of 5) at t = 1.62e-02 (tn = 1.03e-04 , tcur = 1.62e-02), ||y||_2 = 2.1089486502e+00]
+    [Pre-step at t = 1.03e-04 (tn = 1.03e-04 , tcur = 1.03e-04), step = 1, attempt = 2, ||y||_2 = 2.1213198430e+00]
+    [Post-stage processing (stage 1 of 5) at t = 6.49e-03 (tn = 1.03e-04 , tcur = 6.49e-03), ||y||_2 = 2.1212577772e+00]
+    [Pre-RHS (stage 1 of 5) at t = 6.49e-03 (tn = 1.03e-04 , tcur = 6.49e-03), ||y||_2 = 2.1212577772e+00]
+    [Post-stage processing (stage 2 of 5) at t = 9.68e-03 (tn = 1.03e-04 , tcur = 9.68e-03), ||y||_2 = 2.1140241446e+00]
+    [Pre-RHS (stage 2 of 5) at t = 9.68e-03 (tn = 1.03e-04 , tcur = 9.68e-03), ||y||_2 = 2.1140241446e+00]
+    [Post-stage processing (stage 3 of 5) at t = 1.61e-02 (tn = 1.03e-04 , tcur = 1.61e-02), ||y||_2 = 2.1113775352e+00]
+    [Pre-RHS (stage 3 of 5) at t = 1.61e-02 (tn = 1.03e-04 , tcur = 1.61e-02), ||y||_2 = 2.1113775352e+00]
+    [Postprocess-step at t = 1.61e-02 (tn = 1.03e-04 , tcur = 1.61e-02),||y||_2 = 2.1092106860e+00]
+    [Pre-RHS (stage 4 of 5) at t = 1.61e-02 (tn = 1.03e-04 , tcur = 1.61e-02), ||y||_2 = 2.1092106860e+00]
+    [Post-step at t = 1.61e-02 (tn = 1.03e-04 , tcur = 1.61e-02), step = 1, ||y||_2 = 2.1092106860e+00]
+      1.6063645340e-02         1.2247184913e+00         1.7172170321e+00         4.4212199679e-08         2.9106373312e-08
+    [Pre-step at t = 1.61e-02 (tn = 1.61e-02 , tcur = 1.61e-02), step = 2, attempt = 1, ||y||_2 = 2.1092106860e+00]
+    [Post-stage processing (stage 1 of 5) at t = 2.24e-02 (tn = 1.61e-02 , tcur = 2.24e-02), ||y||_2 = 2.0996520676e+00]
+    [Pre-RHS (stage 1 of 5) at t = 2.24e-02 (tn = 1.61e-02 , tcur = 2.24e-02), ||y||_2 = 2.0996520676e+00]
+    [Post-stage processing (stage 2 of 5) at t = 2.56e-02 (tn = 1.61e-02 , tcur = 2.56e-02), ||y||_2 = 2.0880076268e+00]
+    [Pre-RHS (stage 2 of 5) at t = 2.56e-02 (tn = 1.61e-02 , tcur = 2.56e-02), ||y||_2 = 2.0880076268e+00]
+    [Post-stage processing (stage 3 of 5) at t = 3.20e-02 (tn = 1.61e-02 , tcur = 3.20e-02), ||y||_2 = 2.0760211062e+00]
+    [Pre-RHS (stage 3 of 5) at t = 3.20e-02 (tn = 1.61e-02 , tcur = 3.20e-02), ||y||_2 = 2.0760211062e+00]
+    [Postprocess-step at t = 3.20e-02 (tn = 1.61e-02 , tcur = 3.20e-02),||y||_2 = 2.0740200715e+00]
+    [Pre-RHS (stage 4 of 5) at t = 3.20e-02 (tn = 1.61e-02 , tcur = 3.20e-02), ||y||_2 = 2.0740200715e+00]
+    [Post-step at t = 3.20e-02 (tn = 1.61e-02 , tcur = 3.20e-02), step = 2, ||y||_2 = 2.0740200715e+00]
+      3.2023388180e-02         1.2246401240e+00         1.6738625462e+00         8.7464898657e-08         1.4947668525e-07
+------------------------------------------------------------------------------------------------------------------------------
+Current time                  = 0.0320233881803733
+Steps                         = 3
+Step attempts                 = 4
+Stability limited steps       = 0
+Accuracy limited steps        = 4
+Error test fails              = 1
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.000102986025609508
+Last step size                = 0.0159597428408288
+Current step size             = 0.0166588795523219
+RHS fn evals                  = 19
+End ERKStep StageInfo test
