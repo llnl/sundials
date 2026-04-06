@@ -168,6 +168,8 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2` | 2      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`              | 3      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`                | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_BOGACKI_SHAMPINE_4_2_3`        | 4      | 2              | 3*    |
@@ -363,6 +365,37 @@ Accessible via the string ``"ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2"`` to
    :align: center
 
    Linear stability region for the Explicit-Midpoint-Euler method.  The method's
+   region is outlined in blue; the embedding's region is in red.
+
+
+.. c:enumerator:: ARKODE_ARS222_ERK_3_1_2
+
+Accessible via the constant ``ARKODE_ARS222_ERK_3_1_2`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_ARS222_ERK_3_1_2"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the explicit portion of the ARK(2,2,2) additive method
+from :cite:p:`Ascher1997`).
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     0      & 0      & 0        & 0 \\
+     \gamma & \gamma & 0        & 0 \\
+     1      & \delta & 1-\delta & 0 \\
+     \hline
+     2 & \delta & 1-\delta & 0 \\
+     1 & 0 & \frac35 & \frac 25 \\
+   \end{array}
+
+.. figure:: /figs/arkode/ARS222-ERK_stab_region.png
+   :scale: 65 %
+   :align: center
+
+   Linear stability region for the ARS222-ERK method. The method's
    region is outlined in blue; the embedding's region is in red.
 
 
@@ -1271,6 +1304,8 @@ with values specified in :numref:`ARKODE.Butcher.DIRK_properties`.
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`          | 3      | 1              | 2*    |
    +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`      | 3      | 1              | 2*    |
+   +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SDIRK_2_1_2`              | 2      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_IMPLICIT_MIDPOINT_1_2`    | 1      | ---            | 2     |
@@ -1384,6 +1419,36 @@ default 2nd order additive method
    Linear stability region for the ARK2-DIRK method. The method's
    region is outlined in blue; the embedding's region is in red.
 
+
+.. c:enumerator:: ARKODE_ARS222_ESDIRK_3_1_2
+
+Accessible via the constant ``ARKODE_ARS222_ESDIRK_3_1_2`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`DIRKStepSetTableNum` or
+:c:func:`ARKodeButcherTable_LoadDIRK`.
+Accessible via the string ``"ARKODE_ARS222_ESDIRK_3_1_2"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`DIRKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadDIRKByName`.
+This is the implicit portion of the ARK(2,2,2) additive method
+from :cite:p:`Ascher1997`).
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     0      & 0 & 0        & 0 \\
+     \gamma & 0 & \gamma   & 0 \\
+     1      & 0 & 1-\gamma & \gamma \\
+     \hline
+     2 & 0 & 1-\gamma & \gamma \\
+     1 & 0 & \frac35 & \frac 25 \\
+   \end{array}
+
+.. figure:: /figs/arkode/ARS222-SDIRK_stab_region.png
+   :scale: 65 %
+   :align: center
+
+   Linear stability region for the ARS222-ESDIRK method. The method's
+   region is outlined in blue; the embedding's region is in red.
 
 .. c:enumerator:: ARKODE_SDIRK_2_1_2
 
@@ -2155,6 +2220,8 @@ Butcher table pairs are as follows:
    | ERK Method ID                                | DIRK Method ID                                | Stages | Embedded Order | Order |
    +==============================================+===============================================+========+================+=======+
    | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`        | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`        | 3      | 1              | 2*    |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`      | :c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`    | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK324L2SA_ERK_4_2_3`  | :c:enumerator:`ARKODE_ARK324L2SA_DIRK_4_2_3`  | 4      | 2              | 3*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+

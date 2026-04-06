@@ -40,6 +40,7 @@
      ARKODE_BACKWARD_EULER_1_1         SDIRK     Y         Y       Y
      ARKODE_SDIRK_2_1_2                SDIRK     Y         N       Y
      ARKODE_ARK2_DIRK_3_1_2           ESDIRK     Y         Y       Y
+     ARKODE_ARS222_ESDIRK_3_1_2       ESDIRK     Y         Y       Y
      ARKODE_IMPLICIT_MIDPOINT_1_2      SDIRK     Y         N       Y
      ARKODE_IMPLICIT_TRAPEZOIDAL_2_2  ESDIRK     Y         N       Y
      ARKODE_BILLINGTON_3_3_2           SDIRK     N         N       Y
@@ -130,9 +131,36 @@ ARK_BUTCHER_TABLE(ARKODE_ARK2_DIRK_3_1_2, { /* ARK2 Implicit Table (A,L stable) 
 
     B->d[0] = beta;
     B->d[1] = beta;
-    B->d[2] = SUN_RCONST(1.0) / (SUN_RCONST(2.0) * SUNRsqrt(SUN_RCONST(2.0)));
+    B->d[2] = delta;
 
     B->c[1] = twogamma;
+    B->c[2] = SUN_RCONST(1.0);
+
+    return B;
+  })
+
+ARK_BUTCHER_TABLE(ARKODE_ARS222_ESDIRK_3_1_2, {
+/* implicit table of ARK(2,2,2) method from https://doi.org/10.1016/S0168-9274(97)00056-1
+   with custom embedding */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
+
+    /* 1 - 1 / sqrt(2) */
+    const sunrealtype gamma = SUN_RCONST(1.0) - SUN_RCONST(1.0) / SUNRsqrt(SUN_RCONST(2.0));
+
+    B->q = 2;
+    B->p = 1;
+
+    B->A[1][1] = gamma;
+    B->A[2][1] = SUN_RCONST(1.0) - gamma;
+    B->A[2][2] = gamma;
+
+    B->b[1] = SUN_RCONST(1.0) - gamma;
+    B->b[2] = gamma;
+
+    B->d[1] = SUN_RCONST(0.6);
+    B->d[2] = SUN_RCONST(0.4);
+
+    B->c[1] = gamma;
     B->c[2] = SUN_RCONST(1.0);
 
     return B;
