@@ -1,11 +1,10 @@
 # KINSOL
-### Version 7.6.0 (Jan 2026)
+### Version 7.7.0 (Apr 2026)
 
 **Alan C. Hindmarsh, Radu Serban, Cody J. Balos, David J. Gardner,
   and Carol S. Woodward, Center for Applied Scientific Computing, LLNL**
 
-**Daniel R. Reynolds, Department of Mathematics, Southern Methodist University**
-
+**Daniel R. Reynolds, Department of Mathematics and Statistics, UMBC**
 
 KINSOL is a package for the solution for nonlinear algebraic systems
 ```
@@ -48,11 +47,11 @@ the "SUNDIALS Release History" appendix of the KINSOL User Guide.
 
 * A. C. Hindmarsh, R. Serban, C. J. Balos, D. J. Gardner,
   D. R. Reynolds and C. S. Woodward,
-  "User Documentation for KINSOL v7.6.0," LLNL technical report
-  UCRL-SM-208116, Jan 2026.
+  "User Documentation for KINSOL v7.7.0," LLNL technical report
+  UCRL-SM-208116, Apr 2026.
 
-* A. M. Collier and R. Serban, "Example Programs for KINSOL v7.6.0,"
-  LLNL technical report UCRL-SM-208114, Jan 2026.
+* A. M. Collier and R. Serban, "Example Programs for KINSOL v7.7.0,"
+  LLNL technical report UCRL-SM-208114, Apr 2026.
 
 * A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban,
   D. E. Shumaker, and C. S. Woodward, "SUNDIALS, Suite of Nonlinear and

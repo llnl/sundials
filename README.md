@@ -4,7 +4,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/sundials4py?label=sundials4py)](https://pypi.org/project/sundials4py/)
 [![track SUNDIALS downloads](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml/badge.svg)](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml)
 
-### Version 7.6.0 (Jan 2026) ###
+### Version 7.7.0 (Apr 2026) ###
 
 **Center for Applied Scientific Computing, Lawrence Livermore National Laboratory**
 

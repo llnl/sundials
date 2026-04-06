@@ -276,6 +276,38 @@ int sprkStep_SetOrder(ARKodeMem ark_mem, int ord)
 }
 
 /*---------------------------------------------------------------
+  sprkStep_GetStageIndex:
+
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+int sprkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
+{
+  ARKodeSPRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeSPRKStepMem structure */
+  retval = sprkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  /* if table is not yet set, return defaults */
+  if (step_mem->method == NULL)
+  {
+    *stage      = -1;
+    *max_stages = -1;
+    arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    "method structure not allocated");
+    return retval;
+  }
+  else
+  {
+    *stage      = step_mem->istage;
+    *max_stages = step_mem->method->stages;
+  }
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
   sprkStep_PrintAllStats:
 
   Prints integrator statistics

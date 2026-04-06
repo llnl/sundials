@@ -1299,6 +1299,26 @@ int arkStep_GetNonlinSolvStats(ARKodeMem ark_mem, long int* nniters,
 }
 
 /*---------------------------------------------------------------
+  arkStep_GetStageIndex:
+
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+int arkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
+{
+  ARKodeARKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeARKStepMem structure */
+  retval = arkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  *stage      = step_mem->istage;
+  *max_stages = step_mem->stages;
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
   arkStep_PrintAllStats:
 
   Prints integrator statistics

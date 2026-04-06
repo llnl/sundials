@@ -23,7 +23,7 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-stages-list] stage = 9, tcur = 6.103515625e-12
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-stages-list] status = success
-[INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-compute-embedding] 
+[INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-compute-embedding]
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-compute-embedding] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0
   6.103515625000001e-12  6.103515625000001e-12  0.000000000000000e+00
@@ -48,7 +48,7 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-stages-list] stage = 9, tcur = 6.1041259765625e-08
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-stages-list] status = success
-[INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-compute-embedding] 
+[INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-compute-embedding]
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-compute-embedding] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.32348889930549e-13
   6.104125976562500e-08  6.104125976562493e-08  0.000000000000000e+00
@@ -73,10 +73,10 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-stages-list] stage = 9, tcur = 1.28174438476563e-06
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-stages-list] status = success
-[INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-compute-embedding] 
+[INFO][rank 0][lsrkStep_TakeStepSSPs3][begin-compute-embedding]
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-compute-embedding] status = success
-[INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.67186954059802e-10
-  1.281744384765625e-06  1.281744384764923e-06  0.000000000000000e+00
+[INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.65070663502083e-10
+  1.281744384765625e-06  1.281744384764923e-06  2.117582368135751e-22
 ---------------------------------------------------------------------
 Current time                  = 1.28174438476563e-06
 Steps                         = 3

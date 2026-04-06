@@ -137,6 +137,18 @@ void bind_arkode(nb::module_& m)
                         arkode_relaxjacfn_wrapper, nb::arg("arkode_mem"),
                         nb::arg("rfn").none(), nb::arg("rjacfn").none());
 
+  BIND_ARKODE_CALLBACK(ARKodeSetPreStepFn, ARKPreStepFn, prestepfn,
+                       arkode_prestepfn_wrapper, nb::arg("arkode_mem"),
+                       nb::arg("prestep").none());
+
+  BIND_ARKODE_CALLBACK(ARKodeSetPostStepFn, ARKPostStepFn, poststepfn,
+                       arkode_poststepfn_wrapper, nb::arg("arkode_mem"),
+                       nb::arg("poststep").none());
+
+  BIND_ARKODE_CALLBACK(ARKodeSetPreRhsFn, ARKPreRhsFn, prerhsfn,
+                       arkode_prerhsfn_wrapper, nb::arg("arkode_mem"),
+                       nb::arg("prerhs").none());
+
   BIND_ARKODE_CALLBACK(ARKodeSetPostprocessStepFn, ARKPostProcessFn,
                        postprocessstepfn, arkode_postprocessstepfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("postprocessstep").none());

@@ -87,24 +87,28 @@ module farkode_mod
  integer(C_INT), parameter, public :: ARK_POSTPROCESS_FAIL = -37_C_INT
  integer(C_INT), parameter, public :: ARK_POSTPROCESS_STEP_FAIL = -37_C_INT
  integer(C_INT), parameter, public :: ARK_POSTPROCESS_STAGE_FAIL = -38_C_INT
- integer(C_INT), parameter, public :: ARK_USER_PREDICT_FAIL = -39_C_INT
- integer(C_INT), parameter, public :: ARK_INTERP_FAIL = -40_C_INT
- integer(C_INT), parameter, public :: ARK_INVALID_TABLE = -41_C_INT
- integer(C_INT), parameter, public :: ARK_CONTEXT_ERR = -42_C_INT
- integer(C_INT), parameter, public :: ARK_RELAX_FAIL = -43_C_INT
- integer(C_INT), parameter, public :: ARK_RELAX_MEM_NULL = -44_C_INT
- integer(C_INT), parameter, public :: ARK_RELAX_FUNC_FAIL = -45_C_INT
- integer(C_INT), parameter, public :: ARK_RELAX_JAC_FAIL = -46_C_INT
- integer(C_INT), parameter, public :: ARK_CONTROLLER_ERR = -47_C_INT
- integer(C_INT), parameter, public :: ARK_STEPPER_UNSUPPORTED = -48_C_INT
- integer(C_INT), parameter, public :: ARK_DOMEIG_FAIL = -49_C_INT
- integer(C_INT), parameter, public :: ARK_MAX_STAGE_LIMIT_FAIL = -50_C_INT
- integer(C_INT), parameter, public :: ARK_SUNSTEPPER_ERR = -51_C_INT
- integer(C_INT), parameter, public :: ARK_STEP_DIRECTION_ERR = -52_C_INT
- integer(C_INT), parameter, public :: ARK_ADJ_CHECKPOINT_FAIL = -53_C_INT
- integer(C_INT), parameter, public :: ARK_ADJ_RECOMPUTE_FAIL = -54_C_INT
- integer(C_INT), parameter, public :: ARK_SUNADJSTEPPER_ERR = -55_C_INT
- integer(C_INT), parameter, public :: ARK_DEE_FAIL = -56_C_INT
+ integer(C_INT), parameter, public :: ARK_PRESTEPFN_FAIL = -39_C_INT
+ integer(C_INT), parameter, public :: ARK_POSTSTEPFN_FAIL = -40_C_INT
+ integer(C_INT), parameter, public :: ARK_PRERHSFN_FAIL = -41_C_INT
+ integer(C_INT), parameter, public :: ARK_USER_PREDICT_FAIL = -42_C_INT
+ integer(C_INT), parameter, public :: ARK_INTERP_FAIL = -43_C_INT
+ integer(C_INT), parameter, public :: ARK_INVALID_TABLE = -44_C_INT
+ integer(C_INT), parameter, public :: ARK_CONTEXT_ERR = -45_C_INT
+ integer(C_INT), parameter, public :: ARK_RELAX_FAIL = -46_C_INT
+ integer(C_INT), parameter, public :: ARK_RELAX_MEM_NULL = -47_C_INT
+ integer(C_INT), parameter, public :: ARK_RELAX_FUNC_FAIL = -48_C_INT
+ integer(C_INT), parameter, public :: ARK_RELAX_JAC_FAIL = -49_C_INT
+ integer(C_INT), parameter, public :: ARK_CONTROLLER_ERR = -50_C_INT
+ integer(C_INT), parameter, public :: ARK_STEPPER_UNSUPPORTED = -51_C_INT
+ integer(C_INT), parameter, public :: ARK_DOMEIG_FAIL = -52_C_INT
+ integer(C_INT), parameter, public :: ARK_MAX_STAGE_LIMIT_FAIL = -53_C_INT
+ integer(C_INT), parameter, public :: ARK_SUNSTEPPER_ERR = -54_C_INT
+ integer(C_INT), parameter, public :: ARK_STEP_DIRECTION_ERR = -55_C_INT
+ integer(C_INT), parameter, public :: ARK_ADJ_CHECKPOINT_FAIL = -56_C_INT
+ integer(C_INT), parameter, public :: ARK_ADJ_RECOMPUTE_FAIL = -57_C_INT
+ integer(C_INT), parameter, public :: ARK_SUNADJSTEPPER_ERR = -58_C_INT
+ integer(C_INT), parameter, public :: ARK_DEE_FAIL = -59_C_INT
+ integer(C_INT), parameter, public :: ARK_STEP_H0_FAIL = -60_C_INT
  integer(C_INT), parameter, public :: ARK_UNRECOGNIZED_ERROR = -99_C_INT
  ! enum ARKRelaxSolver
  enum, bind(c)
@@ -124,6 +128,7 @@ module farkode_mod
  public :: ARK_ACCUMERROR_NONE, ARK_ACCUMERROR_MAX, ARK_ACCUMERROR_SUM, ARK_ACCUMERROR_AVG
  public :: FARKodeResize
  public :: FARKodeReset
+ public :: FARKodeInit
  public :: FARKodeCreateMRIStepInnerStepper
  public :: FARKodeSStolerances
  public :: FARKodeSVtolerances
@@ -145,6 +150,9 @@ module farkode_mod
  public :: FARKodeSetFixedStep
  public :: FARKodeSetStepDirection
  public :: FARKodeSetUserData
+ public :: FARKodeSetPreStepFn
+ public :: FARKodeSetPostStepFn
+ public :: FARKodeSetPreRhsFn
  public :: FARKodeSetPostprocessStepFn
  public :: FARKodeSetPostprocessStageFn
  public :: FARKodeSetNonlinearSolver
@@ -209,6 +217,7 @@ module farkode_mod
  public :: FARKodePrintAllStats
  public :: FARKodeGetReturnFlagName
  public :: FARKodeWriteParameters
+ public :: FARKodeGetStageIndex
  public :: FARKodeGetNumExpSteps
  public :: FARKodeGetNumAccSteps
  public :: FARKodeGetNumErrTestFails
@@ -219,6 +228,8 @@ module farkode_mod
  public :: FARKodeGetStepStats
  public :: FARKodeGetAccumulatedError
  public :: FARKodeGetNumLinSolvSetups
+ public :: FARKodeGetLastTime
+ public :: FARKodeGetLastState
  public :: FARKodeGetCurrentTime
  public :: FARKodeGetCurrentState
  public :: FARKodeGetCurrentGamma
@@ -516,6 +527,14 @@ type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
+function swigc_FARKodeInit(farg1) &
+bind(C, name="_wrap_FARKodeInit") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT) :: fresult
+end function
+
 function swigc_FARKodeCreateMRIStepInnerStepper(farg1, farg2) &
 bind(C, name="_wrap_FARKodeCreateMRIStepInnerStepper") &
 result(fresult)
@@ -702,6 +721,33 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeSetPreStepFn(farg1, farg2) &
+bind(C, name="_wrap_FARKodeSetPreStepFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeSetPostStepFn(farg1, farg2) &
+bind(C, name="_wrap_FARKodeSetPostStepFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeSetPreRhsFn(farg1, farg2) &
+bind(C, name="_wrap_FARKodeSetPreRhsFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1260,6 +1306,16 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FARKodeGetStageIndex(farg1, farg2, farg3) &
+bind(C, name="_wrap_FARKodeGetStageIndex") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
 function swigc_FARKodeGetNumExpSteps(farg1, farg2) &
 bind(C, name="_wrap_FARKodeGetNumExpSteps") &
 result(fresult)
@@ -1347,6 +1403,24 @@ end function
 
 function swigc_FARKodeGetNumLinSolvSetups(farg1, farg2) &
 bind(C, name="_wrap_FARKodeGetNumLinSolvSetups") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeGetLastTime(farg1, farg2) &
+bind(C, name="_wrap_FARKodeGetLastTime") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeGetLastState(farg1, farg2) &
+bind(C, name="_wrap_FARKodeGetLastState") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -2560,6 +2634,19 @@ fresult = swigc_FARKodeReset(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
+function FARKodeInit(arkode_mem) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+
+farg1 = arkode_mem
+fresult = swigc_FARKodeInit(farg1)
+swig_result = fresult
+end function
+
 function FARKodeCreateMRIStepInnerStepper(arkode_mem, stepper) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -2893,6 +2980,54 @@ type(C_PTR) :: farg2
 farg1 = arkode_mem
 farg2 = user_data
 fresult = swigc_FARKodeSetUserData(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeSetPreStepFn(arkode_mem, prestep_fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_FUNPTR), intent(in), value :: prestep_fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = arkode_mem
+farg2 = prestep_fn
+fresult = swigc_FARKodeSetPreStepFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeSetPostStepFn(arkode_mem, poststep_fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_FUNPTR), intent(in), value :: poststep_fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = arkode_mem
+farg2 = poststep_fn
+fresult = swigc_FARKodeSetPostStepFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeSetPreRhsFn(arkode_mem, prerhs_fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_FUNPTR), intent(in), value :: prerhs_fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = arkode_mem
+farg2 = prerhs_fn
+fresult = swigc_FARKodeSetPreRhsFn(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -3914,6 +4049,25 @@ fresult = swigc_FARKodeWriteParameters(farg1, farg2)
 swig_result = fresult
 end function
 
+function FARKodeGetStageIndex(arkode_mem, stage, max_stages) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+integer(C_INT), dimension(*), target, intent(inout) :: stage
+integer(C_INT), dimension(*), target, intent(inout) :: max_stages
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = arkode_mem
+farg2 = c_loc(stage(1))
+farg3 = c_loc(max_stages(1))
+fresult = swigc_FARKodeGetStageIndex(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
 function FARKodeGetNumExpSteps(arkode_mem, expsteps) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -4083,6 +4237,38 @@ type(C_PTR) :: farg2
 farg1 = arkode_mem
 farg2 = c_loc(nlinsetups(1))
 fresult = swigc_FARKodeGetNumLinSolvSetups(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeGetLastTime(arkode_mem, tn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+real(C_DOUBLE), dimension(*), target, intent(inout) :: tn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = arkode_mem
+farg2 = c_loc(tn(1))
+fresult = swigc_FARKodeGetLastTime(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeGetLastState(arkode_mem, state) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_PTR) :: state
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = arkode_mem
+farg2 = state
+fresult = swigc_FARKodeGetLastState(farg1, farg2)
 swig_result = fresult
 end function
 

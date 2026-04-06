@@ -123,6 +123,7 @@ void* SPRKStepCreate(ARKRhsFn f1, ARKRhsFn f2, sunrealtype t0, N_Vector y0,
   ark_mem->step_setdefaults           = sprkStep_SetDefaults;
   ark_mem->step_setorder              = sprkStep_SetOrder;
   ark_mem->step_getnumrhsevals        = sprkStep_GetNumRhsEvals;
+  ark_mem->step_getstageindex         = sprkStep_GetStageIndex;
   ark_mem->step_mem                   = (void*)step_mem;
 
   /* Set default values for optional inputs */
@@ -361,8 +362,7 @@ void sprkStep_Free(ARKodeMem ark_mem)
 
   With initialization type RESET_INIT, this routine does nothing.
   ---------------------------------------------------------------*/
-int sprkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                  int init_type)
+int sprkStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeSPRKStepMem step_mem = NULL;
   int retval                 = 0;
@@ -492,6 +492,13 @@ int sprkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   case ARK_FULLRHS_END:
   case ARK_FULLRHS_OTHER:
 
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
+
     /* Since f1 and f2 do not have overlapping outputs and so the f vector is
        passed to both RHS functions. */
 
@@ -566,6 +573,20 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       N_VConst(ZERO, step_mem->sdata); /* either have to do this or ask user to
                                           set other outputs to zero */
 
+      /* call the user-supplied pre-RHS function (if supplied) */
+      if (ark_mem->PreRhsFn)
+      {
+        retval = ark_mem->PreRhsFn(ark_mem->tn + chati * ark_mem->h, prev_stage,
+                                   ark_mem->user_data);
+        if (retval != 0)
+        {
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                     "status = failed preprocess rhs, retval = %i", retval);
+          return (ARK_PRERHSFN_FAIL);
+        }
+      }
+
+      /* evaluate p' */
       retval = sprkStep_f1(step_mem, ark_mem->tn + chati * ark_mem->h,
                            prev_stage, step_mem->sdata, ark_mem->user_data);
 
@@ -595,6 +616,20 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       N_VConst(ZERO, step_mem->sdata); /* either have to do this or ask user to
                                         set other outputs to zero */
 
+      /* call the user-supplied pre-RHS function (if supplied) */
+      if (ark_mem->PreRhsFn)
+      {
+        retval = ark_mem->PreRhsFn(ark_mem->tn + ci * ark_mem->h, curr_stage,
+                                   ark_mem->user_data);
+        if (retval != 0)
+        {
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                     "status = failed preprocess rhs, retval = %i", retval);
+          return (ARK_PRERHSFN_FAIL);
+        }
+      }
+
+      /* evaluate q' */
       retval = sprkStep_f2(step_mem, ark_mem->tn + ci * ark_mem->h, curr_stage,
                            step_mem->sdata, ark_mem->user_data);
 
@@ -613,10 +648,10 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
-    if (ark_mem->ProcessStage != NULL)
+    if (is < step_mem->method->stages - 1 && ark_mem->PostProcessStageFn)
     {
-      retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                     ark_mem->user_data);
+      retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
+                                           ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -624,9 +659,17 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
-
-    /* keep track of the stage number */
-    step_mem->istage++;
+    else if (is == step_mem->method->stages - 1 && ark_mem->PostProcessStepFn)
+    {
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed postprocess step, retval = %i", retval);
+        return (ARK_POSTPROCESS_STEP_FAIL);
+      }
+    }
 
     prev_stage = curr_stage;
 
@@ -668,6 +711,21 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   /* [ \Delta P_0 ] = [ 0 ]
      [ \Delta Q_0 ] = [ 0 ] */
   N_VConst(ZERO, delta_Yi);
+
+  /* if user-supplied stage preprocessing or postprocessing functions,
+    * we error out since those won't work with the increment form */
+  if ((ark_mem->PreRhsFn) || (ark_mem->PostProcessStageFn) ||
+      (ark_mem->PostProcessStepFn))
+  {
+    SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+               "status = failed stage stage processing, retval = %i",
+               ARK_PRERHSFN_FAIL);
+    arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
+                    __FILE__,
+                    "Compensated summation is not compatible with stage "
+                    "Pre- or PostProcessing!\n");
+    return (ARK_POSTPROCESS_STAGE_FAIL);
+  }
 
   /* loop over internal stages to the step */
   for (is = 0; is < step_mem->method->stages; is++)
@@ -747,19 +805,6 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
          [            ] = [                ] + [       ]
          [ \Delta Q_i ] = [ \Delta Q_{i-1} ] + [ sdata ] */
       N_VLinearSum(ONE, delta_Yi, ark_mem->h * ai, step_mem->sdata, delta_Yi);
-    }
-
-    /* if user-supplied stage postprocessing function, we error out since it
-     * won't work with the increment form */
-    if (ark_mem->ProcessStage != NULL)
-    {
-      SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                 "status = failed postprocess stage, retval = %i", retval);
-      arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
-                      __FILE__,
-                      "Compensated summation is not compatible with stage "
-                      "PostProcessing!\n");
-      return (ARK_POSTPROCESS_STAGE_FAIL);
     }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
