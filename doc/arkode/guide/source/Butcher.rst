@@ -500,8 +500,6 @@ Accessible via the constant ``ARKODE_KNOTH_WOLKE_3_3`` to
 Accessible via the string ``"ARKODE_KNOTH_WOLKE_3_3"`` to
 :c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName`, or
 :c:func:`ARKodeButcherTable_LoadERKByName`.
-This is the default 3th order slow and fast MRIStep method (from
-:cite:p:`KnWo:98`).
 
 .. math::
 
@@ -518,7 +516,8 @@ This is the default 3th order slow and fast MRIStep method (from
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Knoth-Wolke method
+   Linear stability region for the Knoth-Wolke method from
+   :cite:p:`KnWo:98`.
 
 
 .. c:enumerator:: ARKODE_SOFRONIOU_SPALETTA_5_3_4

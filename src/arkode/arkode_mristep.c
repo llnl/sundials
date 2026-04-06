@@ -281,6 +281,9 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
     return (NULL);
   }
 
+  /* Initialize pointer for ExtSTS inner stepper */
+  step_mem->extsts_inner_stepper = NULL;
+
   /* return ARKODE memory */
   return ((void*)ark_mem);
 }

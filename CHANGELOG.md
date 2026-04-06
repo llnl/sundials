@@ -6,6 +6,14 @@
 
 ### New Features and Enhancements
 
+Updated the MRIStep module in ARKODE to support *extended
+Super Time Stepping* (ExtSTS) methods for multi-physics simulations involving
+parabolic components, through the `MRIStepCreateExtSTS` function.
+See the documentation section on the mathematical methods in MRIStep
+for more details on structure of ExtSTS methods, and the documentation
+mathematical formulation of these methods, and the documentation section on
+a skeleton of usage for MRIStep for details on its usage.
+
 Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 
 Added `SUNLogger_Set{Error,Warning,Info,Debug}File` functions to allow setting

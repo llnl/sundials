@@ -149,3 +149,59 @@ unchanged from the skeleton program presented in
 #. *Free the SUNContext object*
 
 #. *Finalize MPI, if used*
+
+
+.. _ARKODE.Usage.MRIStep.Skeleton-ExtSTS:
+
+A skeleton of the user's main program for ExtSTS methods
+========================================================
+
+When using MRIStep to construct an extended super time stepping (ExtSTS)
+method, it's usage differs somewhat from the standard MRIStep usage.
+Namely, since ExtSTS methods are a special case of MRIStep methods, but
+where the inner integrator consists of a single step of a STS method,
+some of the "setup" for MRIStep is simplified.  Steps that are unchanged
+from the skeleton program presented above are *italicized*.
+
+.. index:: MRIStep ExtSTS method user main program
+
+#. *Initialize parallel or multi-threaded environment, if appropriate.*
+
+#. *Create the SUNDIALS simulation context object*
+
+#. *Set problem dimensions, etc.*
+
+#. *Set vector of initial values*
+
+#. Create the MRIStep object for ExtSTS methods by calling
+   func:`MRIStepCreateExtSTS`.
+
+#. Set optional inputs
+
+   * If an implicit partition is present, or if the user wishes to adjust
+     configuration of the MRI aspects of the ExtSTS solver, they may
+     configure these by calling the relevant MRIStep configuration
+     functions directly on the MRIStep object, e.g.,
+     :c:func:`MRIStepSetCoupling` or :c:func:`ARKodeSetNonlinearSolver`.
+
+   * If the user wishes to adjust configuration of the LSRKStep component
+     inside the ExtSTS solver object, access the LSRKStep object by calling
+     :c:func:`MRIStep_GetSTSStepper` and configure it as normal.
+
+#. *Specify rootfinding problem*
+
+#. *Advance solution in time*
+
+#. *Get optional outputs*
+
+#. *Deallocate memory for solution vector*
+
+#. Free solver memory
+
+   * Call :c:func:`ARKodeFree` to free the memory allocated for the MRIStep
+     slow integration object.  This will automatically free the inner LSRKStep
+     object as well.
+
+#. *Free the SUNContext object*
+
+#. *Finalize MPI, if used*

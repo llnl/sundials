@@ -56,6 +56,35 @@ extern "C" {
 #define NLSCOEF SUN_RCONST(0.1)
 
 /*===============================================================
+  ExtSTS inner stepper structure -- this is used to insert a
+  single time step from an LSRKStep STS method as the inner
+  stepper for MRIStep.
+  ===============================================================*/
+
+typedef struct _extSTSInnerStepper
+{
+  void* sts_mem;   /* LSRKStep memory structure */
+  MRIStepInnerStepper inner_stepper; /* pointer to inner stepper object */
+  void* user_data; /* user data pointer */
+  ARKRhsFn f_diffusion; /* diffusion RHS function pointer */
+}* extSTSInnerStepper;
+
+#define EXTSTS_STS(C)   (((extSTSInnerStepper)(C->content))->sts_mem)
+#define EXTSTS_INNER(C) (((extSTSInnerStepper)(C->content))->inner_stepper)
+#define EXTSTS_UDATA(C) (((extSTSInnerStepper)(C->content))->user_data)
+#define EXTSTS_FD(C)    (((extSTSInnerStepper)(C->content))->f_diffusion)
+#define EXTSTS_NST(C)   (((extSTSInnerStepper)(C->content))->nst)
+#define EXTSTS_NFE(C)   (((extSTSInnerStepper)(C->content))->nfe)
+
+int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
+                              sunrealtype tout, N_Vector y);
+int extSTSInnerStepper_FullRhs(MRIStepInnerStepper sts_mem, sunrealtype t,
+                               N_Vector y, N_Vector f, int mode);
+int extSTSInnerStepper_Reset(MRIStepInnerStepper sts_mem, sunrealtype tR,
+                             N_Vector yR);
+int extSTSInnerStepper_Free(MRIStepInnerStepper* sts_mem);
+
+/*===============================================================
   MRI time step module data structure
   ===============================================================*/
 
@@ -163,6 +192,9 @@ typedef struct ARKodeMRIStepMemRec
   /* Reusable arrays for fused vector operations */
   sunrealtype* cvals;
   N_Vector* Xvecs;
+
+  /* ExtSTS inner stepper content */
+  extSTSInnerStepper extsts_inner_stepper;
 
 }* ARKodeMRIStepMem;
 

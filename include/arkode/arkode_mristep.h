@@ -204,6 +204,12 @@ SUNDIALS_EXPORT void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0,
                                     SUNContext sunctx);
 SUNDIALS_EXPORT int MRIStepReInit(void* arkode_mem, ARKRhsFn fse, ARKRhsFn fsi,
                                   sunrealtype t0, N_Vector y0);
+SUNDIALS_EXPORT void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
+                                          sunrealtype t0, N_Vector y0,
+                                          SUNContext sunctx);
+SUNDIALS_EXPORT int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd,
+                                        ARKRhsFn fe, ARKRhsFn fi,
+                                        sunrealtype t0, N_Vector y0);
 
 /* Optional input functions -- must be called AFTER MRIStepCreate */
 SUNDIALS_EXPORT int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC);
@@ -219,6 +225,7 @@ SUNDIALS_EXPORT int MRIStepGetCurrentCoupling(
 SUNDIALS_EXPORT int MRIStepGetLastInnerStepFlag(void* arkode_mem, int* flag);
 SUNDIALS_EXPORT int MRIStepGetNumInnerStepperFails(void* arkode_mem,
                                                    long int* inner_fails);
+SUNDIALS_EXPORT void* MRIStep_GetSTSStepper(void* arkode_mem);
 
 /* Custom inner stepper functions */
 SUNDIALS_EXPORT int MRIStepInnerStepper_Create(SUNContext sunctx,
