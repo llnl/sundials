@@ -83,14 +83,14 @@ individual packages. The name of the distribution archive is of the form
 ``cvodes``, ``arkode``, ``ida``, ``idas``, or ``kinsol``, and ``a.b.c``
 represents the version number of the SUNDIALS suite or of the individual
 package. After downloading the relevant archives, uncompress and expand the
-sources. For example, if you downloaded ``sundials-x.y.z.tar.gz``, running the
+sources. For example, if you downloaded ``sundials-7.7.0.tar.gz``, running the
 command
 
 .. code-block:: bash
 
-   tar -zxf sundials-x.y.z.tar.gz
+   tar -zxf sundials-7.7.0.tar.gz
 
-will extract the source files under the ``sundials-x.y.z`` directory.
+will extract the source files under the ``sundials-7.7.0`` directory.
 
 In the installation steps below we will refer to the following directories:
 
@@ -641,7 +641,7 @@ packages.
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``BUILD_ARKODE``
 
@@ -651,7 +651,7 @@ packages.
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``BUILD_CVODE``
 
@@ -661,7 +661,7 @@ packages.
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``BUILD_CVODES``
 
@@ -671,7 +671,7 @@ packages.
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``BUILD_IDA``
 
@@ -681,7 +681,7 @@ packages.
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``BUILD_IDAS``
 
@@ -691,7 +691,7 @@ packages.
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``BUILD_KINSOL``
 
@@ -706,7 +706,7 @@ Example Programs
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``EXAMPLES_ENABLE_C``
 
@@ -716,7 +716,7 @@ Example Programs
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``EXAMPLES_ENABLE_CXX``
 
@@ -726,7 +726,7 @@ Example Programs
 
    Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_CUDA` is ``ON``, otherwise ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``EXAMPLES_ENABLE_CUDA``
 
@@ -737,7 +737,7 @@ Example Programs
    Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_FORTRAN` is ``ON``,
    otherwise ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``EXAMPLES_ENABLE_F2003``
 
@@ -753,7 +753,7 @@ Example Programs
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``EXAMPLES_INSTALL``
 
@@ -763,7 +763,7 @@ Example Programs
 
    Default: ``CMAKE_INSTALL_PREFIX/examples``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``EXAMPLES_INSTALL_PATH``
 
@@ -791,7 +791,7 @@ Fortran Interfaces
       SUNDIALS. For now the work around is to only build with static libraries
       when using MSYS with gfortran on Windows.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``BUILD_FORTRAN_MODULE_INTERFACE``
 
@@ -861,7 +861,7 @@ Monitoring
       Building with monitoring may result in minor performance degradation even
       if monitoring is not utilized.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``SUNDIALS_BUILD_WITH_MONITORING``
 
@@ -884,7 +884,7 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
 
       Profiling will impact performance, and should be enabled judiciously.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``SUNDIALS_BUILD_WITH_PROFILING``
 
@@ -899,7 +899,7 @@ Fused Kernels
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``
 
@@ -919,7 +919,7 @@ Laboratory and can be obtained from the `Adiak GitHub repository
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_ADIAK``
 
@@ -935,7 +935,7 @@ Laboratory and can be obtained from the `Adiak GitHub repository
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``adiak_WORKS``
 
@@ -979,7 +979,7 @@ Caliper support:
       Using Caliper requires setting :cmakeop:`SUNDIALS_ENABLE_PROFILING` to
       ``ON``.
 
- .. versionadded:: x.y.z
+ .. versionadded:: 7.7.0
 
     Replaces the deprecated option ``ENABLE_CALIPER``
 
@@ -995,7 +995,7 @@ Caliper support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``CALIPER_WORKS``
 
@@ -1041,7 +1041,7 @@ SUNDIALS with CUDA support for a system with an Ampere GPU:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_CUDA``
 
@@ -1123,7 +1123,7 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_GINKGO``
 
@@ -1152,7 +1152,7 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``GINKGO_WORKS``
 
@@ -1196,7 +1196,7 @@ configure SUNDIALS with HIP support for a system with an MI250X GPU:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_HIP``
 
@@ -1250,7 +1250,7 @@ SUNDIALS with *hypre* support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_HYPRE``
 
@@ -1266,7 +1266,7 @@ SUNDIALS with *hypre* support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``HYPRE_WORKS``
 
@@ -1311,7 +1311,7 @@ following command will configure SUNDIALS with KLU support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_KLU``
 
@@ -1339,7 +1339,7 @@ following command will configure SUNDIALS with KLU support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``KLU_WORKS``
 
@@ -1381,7 +1381,7 @@ following command will configure SUNDIALS with Kokkos support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_KOKKOS``
 
@@ -1397,7 +1397,7 @@ following command will configure SUNDIALS with Kokkos support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``KOKKOS_WORKS``
 
@@ -1445,7 +1445,7 @@ SUNDIALS with Kokkos and KokkosKernels support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_KOKKOS_KERNELS``
 
@@ -1461,7 +1461,7 @@ SUNDIALS with Kokkos and KokkosKernels support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``KOKKOS_KERNELS_WORKS``
 
@@ -1525,7 +1525,7 @@ build. For example, this is sometimes needed when using OpenBLAS:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_LAPACK``
 
@@ -1601,7 +1601,7 @@ build. For example, this is sometimes needed when using OpenBLAS:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``LAPACK_WORKS``
 
@@ -1649,7 +1649,7 @@ the CUDA backend (targeting Ampere GPUs):
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_MAGMA``
 
@@ -1675,7 +1675,7 @@ the CUDA backend (targeting Ampere GPUs):
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``MAGMA_WORKS``
 
@@ -1730,7 +1730,7 @@ configure SUNDIALS with MPI support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_MPI``
 
@@ -1826,7 +1826,7 @@ the following command will configure SUNDIALS with oneMKL support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_ONEMKL``
 
@@ -1856,7 +1856,7 @@ the following command will configure SUNDIALS with oneMKL support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ONEMKL_WORKS``
 
@@ -1889,7 +1889,7 @@ example, the following command will configure SUNDIALS with OpenMP support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_OPENMP``
 
@@ -1923,7 +1923,7 @@ will configure SUNDIALS with OpenMP device offloading support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_OPENMP_DEVICE``
 
@@ -1933,7 +1933,7 @@ will configure SUNDIALS with OpenMP device offloading support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``OPENMP_DEVICE_WORKS``
 
@@ -1979,7 +1979,7 @@ configure SUNDIALS with PETSc support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_PETSC``
 
@@ -2011,7 +2011,7 @@ configure SUNDIALS with PETSc support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``PETSC_WORKS``
 
@@ -2045,7 +2045,7 @@ example, the following command will configure SUNDIALS with PThreads support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_PTHREAD``
 
@@ -2090,7 +2090,7 @@ the CUDA backend (targeting Ampere GPUs):
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_RAJA``
 
@@ -2149,7 +2149,7 @@ SuperLU_DIST support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_SUPERLUDIST``
 
@@ -2220,7 +2220,7 @@ SuperLU_DIST support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``SUPERLUDIST_WORKS``
 
@@ -2276,7 +2276,7 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_SUPERLUMT``
 
@@ -2311,7 +2311,7 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``SUPERLUMT_WORKS``
 
@@ -2361,7 +2361,7 @@ compilers:
       any ahead of time compilation flags must be added to
       :cmakeop:`CMAKE_CXX_FLAGS`.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_SYCL``
 
@@ -2408,7 +2408,7 @@ the following command will configure SUNDIALS with Trilinos support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_TRILINOS``
 
@@ -2459,7 +2459,7 @@ SUNDIALS with XBraid support:
 
    Default: ``OFF``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``ENABLE_XBRAID``
 
@@ -2491,7 +2491,7 @@ SUNDIALS with XBraid support:
 
    Default: ``ON``
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``XBRAID_WORKS``
 

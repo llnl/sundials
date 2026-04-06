@@ -1,10 +1,10 @@
 # CVODE
-### Version 7.6.0 (Jan 2026)
+### Version 7.7.0 (Apr 2026)
 
 **Alan C. Hindmarsh, Radu Serban, Cody J. Balos, David J. Gardner,
   and Carol S. Woodward, Center for Applied Scientific Computing, LLNL**
 
-**Daniel R. Reynolds, Department of Mathematics, Southern Methodist University**
+**Daniel R. Reynolds, Department of Mathematics and Statistics, UMBC**
 
 CVODE is a package for the solution of stiff and nonstiff ordinary differential
 equation (ODE) systems (initial value problems) given in explicit form
@@ -47,11 +47,11 @@ the "SUNDIALS Release History" appendix of the CVODE User Guide.
 ## References
 
 * A. C. Hindmarsh, R. Serban, C. J. Balos, D. J. Gardner, D. R. Reynolds
-  and C. S. Woodward, "User Documentation for CVODE v7.6.0,"
-  LLNL technical report UCRL-SM-208108, Jan 2026.
+  and C. S. Woodward, "User Documentation for CVODE v7.7.0,"
+  LLNL technical report UCRL-SM-208108, Apr 2026.
 
-* A. C. Hindmarsh and R. Serban, "Example Programs for CVODE v7.6.0,"
-  LLNL technical report UCRL-SM-208110, Jan 2026.
+* A. C. Hindmarsh and R. Serban, "Example Programs for CVODE v7.7.0,"
+  LLNL technical report UCRL-SM-208110, Apr 2026.
 
 * S.D. Cohen and A.C. Hindmarsh, "CVODE, a Stiff/nonstiff ODE Solver in C,"
   Computers in Physics, 10(2), pp. 138-143, 1996.

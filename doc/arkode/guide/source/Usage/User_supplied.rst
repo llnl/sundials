@@ -1254,7 +1254,7 @@ step attempt by ARKODE (see :c:func:`ARKodeSetPreStepFn`).
      positive value if a recoverable error occurred, or a negative value
      if an unrecoverable error occurred.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 A user-provided :c:type:`ARKPostStepFn` will be called following each
 *successful* internal time step by ARKODE (see :c:func:`ARKodeSetPostStepFn`).
@@ -1284,7 +1284,7 @@ A user-provided :c:type:`ARKPostStepFn` will be called following each
      positive value if a recoverable error occurred, or a negative value
      if an unrecoverable error occurred.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 A user-provided :c:type:`ARKPreRhsFn` will be called just prior to any
 user-supplied :c:type:`ARKRhsFn` (see :c:func:`ARKodeSetPreRhsFn`). In the case
@@ -1317,7 +1317,7 @@ of partitioned integration methods (e.g., ARKStep, MRIStep), if multiple
      positive value if a recoverable error occurred, or a negative value if an
      unrecoverable error occurred.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
 
 A user-provided :c:type:`ARKPostProcessFn` will be called either after each
 internal stage (see :c:func:`ARKodeSetPostprocessStageFn`) or after each
@@ -1353,4 +1353,4 @@ internal step attempt (see :c:func:`ARKodeSetPostprocessStepFn`).
       (:c:func:`ARKodeSetAdjointCheckpointScheme` and
       :c:func:`ARKodeSetAdjointCheckpointIndex`).
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 6.7.0
