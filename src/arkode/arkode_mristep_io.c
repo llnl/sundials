@@ -343,6 +343,17 @@ int mriStep_SetUserData(ARKodeMem ark_mem, void* user_data)
     if (retval != ARKLS_SUCCESS) { return (retval); }
   }
 
+  /* if MRIStep implements an ExtSTS method, store the
+     user_data pointer in the extSTSInnerStepper object, and
+     pass to the LSRKStep object */
+  if (step_mem->extsts_inner_stepper != NULL)
+  {
+    step_mem->extsts_inner_stepper->user_data = user_data;
+    retval = ARKodeSetUserData(step_mem->extsts_inner_stepper->sts_mem,
+                               user_data);
+    if (retval != ARK_SUCCESS) { return (retval); }
+  }
+
   return (ARK_SUCCESS);
 }
 

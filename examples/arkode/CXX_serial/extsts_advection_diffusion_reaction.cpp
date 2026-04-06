@@ -116,10 +116,8 @@ int main(int argc, char* argv[])
   void* sts_mem = MRIStep_GetSTSStepper(arkode_mem);
   if (check_ptr(sts_mem, "MRIStep_GetSTSStepper")) { return 1; }
 
-  // Attach user data
+  // Attach user data (this attaches to both MRIStep and LSRKStep)
   flag = ARKodeSetUserData(arkode_mem, &udata);
-  if (check_flag(flag, "ARKodeSetUserData")) { return 1; }
-  flag = ARKodeSetUserData(sts_mem, &udata);
   if (check_flag(flag, "ARKodeSetUserData")) { return 1; }
 
   // Select STS method
