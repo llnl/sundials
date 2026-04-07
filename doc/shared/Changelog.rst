@@ -34,6 +34,7 @@ Changes to SUNDIALS in release X.Y.Z
 Fixed a minor bug where the number of required stages for STS methods 
 in the LSRKStep module was incorrectly computed using the spectral 
 radius instead of the real part of the Jacobian eigenvalues.
+
 .. include:: RecentChanges_link.rst
 
 .. _Changelog.7.7.0:
