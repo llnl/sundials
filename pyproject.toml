@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "sundials4py"
-version = "7.6.0"
+version = "7.7.0"
 description = "Official Python bindings for the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
 authors = [
     { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }
