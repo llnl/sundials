@@ -24,16 +24,9 @@ Changelog
 
 .. SED_REPLACEMENT_KEY
 
-.. _Changelog.7.7.0:
+.. _Changelog.X.Y.Z:
 
-Changes to SUNDIALS in release 7.7.0
-====================================
-
-.. SED_REPLACEMENT_KEY
-
-.. _Changelog.7.7.0:
-
-Changes to SUNDIALS in release 7.7.0
+Changes to SUNDIALS in release X.Y.Z
 ====================================
 
 **Bug Fixes**
@@ -41,6 +34,12 @@ Changes to SUNDIALS in release 7.7.0
 Fixed a minor bug where the number of required stages for STS methods 
 in the LSRKStep module was incorrectly computed using the spectral 
 radius instead of the real part of the Jacobian eigenvalues.
+
+.. _Changelog.7.7.0:
+
+Changes to SUNDIALS in release 7.7.0
+====================================
+
 
 .. include:: RecentChanges_link.rst
 
