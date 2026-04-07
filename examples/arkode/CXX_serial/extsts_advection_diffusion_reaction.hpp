@@ -376,7 +376,7 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
   }
   else
   {
-    cout << "  MRI method " << uopts.mri_method << endl;
+    cout << "  MRI method       = " << uopts.mri_method << endl;
   }
   if (uopts.sts_method == 0)
   { cout << "  STS method       = RKC" << endl; }

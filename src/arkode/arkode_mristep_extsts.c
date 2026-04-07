@@ -25,12 +25,6 @@
 #include "arkode_impl.h"
 #include "arkode_mristep_impl.h"
 
-/* TODO:
-   * update LSRKStep to internally support external polynomial forcing terms
-   * update MRIStep's SetUserData function so that if an inner STS method is used,
-     it will also set the user data for the STS integrator
-   * add desired ExtSTS MRI tables to arkode_mri_tables.def
-*/
 
 /* MRIStep ExtSTS constructor routine */
 void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
@@ -38,7 +32,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
 {
 
   /* Create LSRKStep integrator and configure with ExtSTS defaults */
-  void* sts_mem = LSRKStepCreateSTS(fd, t0, y0, sunctx);
+  void* sts_mem = LSRKStepCreateSTS(extSTSInnerStepper_fd_forcing, t0, y0, sunctx);
   if (sts_mem == NULL)
   {
     arkProcessError(NULL, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -87,6 +81,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
   }
   inner_content->sts_mem = sts_mem;
   inner_content->f_diffusion = fd;
+  inner_content->dom_eig = NULL;
   inner_content->inner_stepper = NULL;
   retval = MRIStepInnerStepper_Create(sunctx, &(inner_content->inner_stepper));
   if (retval != ARK_SUCCESS)
@@ -132,6 +127,18 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
                     "Failed to set MRIStep inner stepper reset function.");
+    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    free(inner_content);
+    ARKodeFree(&sts_mem);
+    return NULL;
+  }
+
+  /* LSRKStep user data should point to the extSTSInnerStepper structure */
+  retval = ARKodeSetUserData(sts_mem, inner_content);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
+                    "Failed to set LSRKStep user data for ExtSTS method.");
     MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
     free(inner_content);
     ARKodeFree(&sts_mem);
@@ -208,40 +215,44 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
 int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe,
                         ARKRhsFn fi, sunrealtype t0, N_Vector y0)
 {
-  /* access ARKodeMem structure */
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ARKodeMem ark_mem = (ARKodeMem)arkode_mem;
-  int retval = MRIStepReInit(arkode_mem, fe, fi, t0, y0);
-  if (retval != ARK_SUCCESS)
+  /* access ARKodeMem and ARKodeMRIStepMem structures */
+  ARKodeMem ark_mem = NULL;
+  ARKodeMRIStepMem step_mem = NULL;
+  int retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
+  if (retval) { return retval; }
+
+  /* Reinitialize the MRIStep integrator */
+  retval = MRIStepReInit(arkode_mem, fe, fi, t0, y0);
+  if (retval)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
                     "Failed to set MRIStep coupling table for ExtSTS method.");
     return retval;
   }
-  void* sts_mem = MRIStep_GetSTSStepper(arkode_mem);
-  if (sts_mem == NULL)
-  {
-    arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                    "Failed to access STS integrator from MRIStep memory.");
-    return ARK_MEM_FAIL;
-  }
-  retval = LSRKStepReInitSTS(sts_mem, fd, t0, y0);
-  if (retval != ARK_SUCCESS)
+
+  /* Reinitialize the LSRKStep integrator */
+  retval = LSRKStepReInitSTS(step_mem->extsts_inner_stepper->sts_mem,
+                             extSTSInnerStepper_fd_forcing, t0, y0);
+  if (retval)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
                     "Failed to set reinitialize LSRKStep for ExtSTS method.");
     return retval;
   }
+
+  /* Ensure that LSRKStep user data points to the extSTSInnerStepper structure */
+  retval = ARKodeSetUserData(step_mem->extsts_inner_stepper->sts_mem,
+                             step_mem->extsts_inner_stepper);
+  if (retval)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Failed to set LSRKStep user data for ExtSTS method.");
+  }
   return retval;
 }
 
 /* Accessor routine for the inner LSRKStep solver from an ExtSTS method */
-void* MRIStep_GetSTSStepper(void* arkode_mem)
+void* MRIStepGetSTSStepper(void* arkode_mem)
 {
   /* access ARKodeMem and ARKodeMRIStepMem structures */
   ARKodeMem ark_mem = NULL;
@@ -261,7 +272,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   int retval = ARKodeReset(EXTSTS_STS(sts_mem), t0, y);
   if (retval != ARK_SUCCESS)
   {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
+    arkProcessError(EXTSTS_STSARKMEM(sts_mem), retval, __LINE__, __func__, __FILE__,
                     "Failed to reset LSRKStep for ExtSTS method.");
     return retval;
   }
@@ -270,7 +281,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   retval = ARKodeSetFixedStep(EXTSTS_STS(sts_mem), tout - t0);
   if (retval != ARK_SUCCESS)
   {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
+    arkProcessError(EXTSTS_STSARKMEM(sts_mem), retval, __LINE__, __func__, __FILE__,
                     "Failed to set LSRKStep step size for ExtSTS method.");
     return retval;
   }
@@ -279,7 +290,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   retval = ARKodeSetStopTime(EXTSTS_STS(sts_mem), tout);
   if (retval != ARK_SUCCESS)
   {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
+    arkProcessError(EXTSTS_STSARKMEM(sts_mem), retval, __LINE__, __func__, __FILE__,
                     "Failed to set LSRKStep stop time for ExtSTS method.");
     return retval;
   }
@@ -287,9 +298,9 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   /* Evolve a single time step */
   sunrealtype tret;
   retval = ARKodeEvolve(EXTSTS_STS(sts_mem), tout, y, &tret, ARK_ONE_STEP);
-  if (retval != ARK_SUCCESS)
+  if (retval < 0)
   {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
+    arkProcessError(EXTSTS_STSARKMEM(sts_mem), retval, __LINE__, __func__, __FILE__,
                     "Failed to evolve LSRKStep for ExtSTS method.");
     return retval;
   }
@@ -304,7 +315,7 @@ int extSTSInnerStepper_FullRhs(MRIStepInnerStepper sts_mem, sunrealtype t,
   int retval = EXTSTS_FD(sts_mem)(t, y, f, EXTSTS_UDATA(sts_mem));
   if (retval != ARK_SUCCESS)
   {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
+    arkProcessError(EXTSTS_STSARKMEM(sts_mem), retval, __LINE__, __func__, __FILE__,
                     "Failed to evaluate diffusion RHS for ExtSTS method.");
     return retval;
   }
@@ -317,8 +328,9 @@ int extSTSInnerStepper_Reset(MRIStepInnerStepper sts_mem, sunrealtype tR,
 {
   /* Reset STS integrator to current state */
   int retval = ARKodeReset(EXTSTS_STS(sts_mem), tR, yR);
+  if (retval != ARK_SUCCESS)
   {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
+    arkProcessError(EXTSTS_STSARKMEM(sts_mem), retval, __LINE__, __func__, __FILE__,
                     "Failed to reset LSRKStep for ExtSTS method.");
   }
   return 0;
@@ -343,6 +355,34 @@ int extSTSInnerStepper_Free(MRIStepInnerStepper* sts_mem)
   return 0;
 }
 
+int extSTSInnerStepper_fd_forcing(sunrealtype t, N_Vector y, N_Vector f,
+                                  void* user_data)
+{
+  /* Access problem data */
+  extSTSInnerStepper extsts = (extSTSInnerStepper)user_data;
+
+  /* Compute diffusion RHS */
+  int retval = extsts->f_diffusion(t, y, f, extsts->user_data);
+  if (retval) { return retval; }
+
+  /* Apply inner forcing for MRI + LSRKStep */
+  retval = MRIStepInnerStepper_AddForcing(extsts->inner_stepper, t, f);
+  return (retval);
+}
+
+int extSTSInnerStepper_dom_eig(sunrealtype t, N_Vector y, N_Vector fn,
+                               sunrealtype* lambdaR, sunrealtype* lambdaI,
+                               void* user_data, N_Vector temp1,
+                               N_Vector temp2, N_Vector temp3)
+{
+  /* Access problem data */
+  extSTSInnerStepper extsts = (extSTSInnerStepper)user_data;
+
+  /* Call user-provided dominant eigenvalue estimator */
+  int retval = extsts->dom_eig(t, y, fn, lambdaR, lambdaI, extsts->user_data,
+                              temp1, temp2, temp3);
+  return (retval);
+}
 /*===============================================================
   EOF
   ===============================================================*/

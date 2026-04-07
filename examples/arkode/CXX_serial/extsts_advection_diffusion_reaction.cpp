@@ -87,13 +87,10 @@ int main(int argc, char* argv[])
 
   // ARKODE memory structures
   void* arkode_mem = nullptr;
-  void* arkref_mem = nullptr;
 
   // Matrix and linear solver for IMEX or ExtSTS integrators
   SUNMatrix A           = nullptr;
   SUNLinearSolver LS    = nullptr;
-  SUNMatrix Aref        = nullptr;
-  SUNLinearSolver LSref = nullptr;
 
   // Create integrator
   ARKRhsFn fe_RHS;   // explicit RHS function
@@ -113,8 +110,8 @@ int main(int argc, char* argv[])
   if (check_ptr(arkode_mem, "MRIStepCreateExtSTS")) { return 1; }
 
   // Access inner LSRKStep solver
-  void* sts_mem = MRIStep_GetSTSStepper(arkode_mem);
-  if (check_ptr(sts_mem, "MRIStep_GetSTSStepper")) { return 1; }
+  void* sts_mem = MRIStepGetSTSStepper(arkode_mem);
+  if (check_ptr(sts_mem, "MRIStepGetSTSStepper")) { return 1; }
 
   // Attach user data (this attaches to both MRIStep and LSRKStep)
   flag = ARKodeSetUserData(arkode_mem, &udata);
@@ -127,8 +124,8 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "LSRKStepSetSTSMethod")) { return 1; }
 
   // Set dominant eigenvalue function and frequency
-  flag = LSRKStepSetDomEigFn(sts_mem, diffusion_domeig);
-  if (check_flag(flag, "LSRKStepSetDomEigFn")) { return 1; }
+  flag = MRIStepExtSTSSetDomEigFn(arkode_mem, diffusion_domeig);
+  if (check_flag(flag, "MRIStepExtSTSSetDomEigFn")) { return 1; }
   flag = LSRKStepSetDomEigFrequency(sts_mem, uopts.ls_setup_freq);
   if (check_flag(flag, "LSRKStepSetDomEigFrequency")) { return 1; }
 
@@ -264,9 +261,8 @@ int main(int argc, char* argv[])
     cout << endl << "ExtSTS Integrator:" << endl;
     flag = ARKodePrintAllStats(arkode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
     if (check_flag(flag, "ARKodePrintAllStats")) { return -1; }
-    cout << endl;
     cout << endl << "Inner STS Method:" << endl;
-    flag = ARKodePrintAllStats(arkode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
+    flag = ARKodePrintAllStats(sts_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
     if (check_flag(flag, "ARKodePrintAllStats")) { return -1; }
   }
 

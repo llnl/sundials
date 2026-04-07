@@ -125,10 +125,57 @@ int MRIStepSetPostInnerFn(void* arkode_mem, MRIStepPostInnerFn postfn)
   retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* Set pre inner evolve function */
+  /* Set post inner evolve function */
   step_mem->post_inner_evolve = postfn;
 
   return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  MRIStepExtSTSSetDomEigFn:
+
+  Sets the user-supplied function called to compute the dominant
+  eigenvalue for an ExtSTS method
+  ---------------------------------------------------------------*/
+int MRIStepExtSTSSetDomEigFn(void* arkode_mem, ARKDomEigFn dom_eig)
+{
+  ARKodeMem ark_mem;
+  ARKodeMRIStepMem step_mem;
+  int retval;
+
+  /* access ARKodeMem and ARKodeMRIStepMem structures */
+  retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  /* Access the extSTSInnerStepper object; if it is not present then
+     MRIStep was not configured for an ExtSTS method, so return an error */
+  if (!step_mem->extsts_inner_stepper)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "MRIStep does not implement an ExtSTS method");
+    return (ARK_ILL_INPUT);
+  }
+  extSTSInnerStepper extsts = step_mem->extsts_inner_stepper;
+
+  /* If the input is non-NULL, attach the user-provided dominant eigenvalue
+     estimator to the interface and pass the wrapper function to LSRKStep */
+  if (dom_eig)
+  {
+    /* attach the user-provided dominant eigenvalue estimator to the interface */
+    extsts->dom_eig = dom_eig;
+
+    /* attach the interface dominant eigenvalue function to LSRKStep */
+    retval = LSRKStepSetDomEigFn(extsts->sts_mem,
+                                 extSTSInnerStepper_dom_eig);
+  }
+  else
+  {
+    /* if the input is NULL, set the dominant eigenvalue estimator to NULL in the
+       interface and pass NULL to LSRKStep */
+    extsts->dom_eig = NULL;
+    retval = LSRKStepSetDomEigFn(extsts->sts_mem, NULL);
+  }
+  return (retval);
 }
 
 /*===============================================================
@@ -337,21 +384,17 @@ int mriStep_SetUserData(ARKodeMem ark_mem, void* user_data)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* set user data in ARKODELS mem */
-  if (step_mem->lmem != NULL)
+  if (step_mem->lmem)
   {
     retval = arkLSSetUserData(ark_mem, user_data);
     if (retval != ARKLS_SUCCESS) { return (retval); }
   }
 
   /* if MRIStep implements an ExtSTS method, store the
-     user_data pointer in the extSTSInnerStepper object, and
-     pass to the LSRKStep object */
-  if (step_mem->extsts_inner_stepper != NULL)
+     user_data pointer in the extSTSInnerStepper object */
+  if (step_mem->extsts_inner_stepper)
   {
     step_mem->extsts_inner_stepper->user_data = user_data;
-    retval = ARKodeSetUserData(step_mem->extsts_inner_stepper->sts_mem,
-                               user_data);
-    if (retval != ARK_SUCCESS) { return (retval); }
   }
 
   return (ARK_SUCCESS);

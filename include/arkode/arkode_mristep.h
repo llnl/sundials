@@ -25,6 +25,7 @@
 #include <arkode/arkode_butcher_dirk.h>
 #include <arkode/arkode_butcher_erk.h>
 #include <arkode/arkode_ls.h>
+#include <arkode/arkode_lsrkstep.h>
 #include <arkode/arkode_mristep_deprecated.h>
 #include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
 #include <sundials/sundials_stepper.h>
@@ -221,6 +222,8 @@ SUNDIALS_EXPORT int MRIStepSetPreInnerFn(void* arkode_mem,
                                          MRIStepPreInnerFn prefn);
 SUNDIALS_EXPORT int MRIStepSetPostInnerFn(void* arkode_mem,
                                           MRIStepPostInnerFn postfn);
+SUNDIALS_EXPORT int MRIStepExtSTSSetDomEigFn(void* arkode_mem,
+                                             ARKDomEigFn dom_eig);
 
 /* Optional output functions */
 SUNDIALS_EXPORT int MRIStepGetCurrentCoupling(
@@ -229,7 +232,7 @@ SUNDIALS_EXPORT int MRIStepGetCurrentCoupling(
 SUNDIALS_EXPORT int MRIStepGetLastInnerStepFlag(void* arkode_mem, int* flag);
 SUNDIALS_EXPORT int MRIStepGetNumInnerStepperFails(void* arkode_mem,
                                                    long int* inner_fails);
-SUNDIALS_EXPORT void* MRIStep_GetSTSStepper(void* arkode_mem);
+SUNDIALS_EXPORT void* MRIStepGetSTSStepper(void* arkode_mem);
 
 /* Custom inner stepper functions */
 SUNDIALS_EXPORT int MRIStepInnerStepper_Create(SUNContext sunctx,

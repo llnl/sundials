@@ -138,7 +138,7 @@ MRIStep initialization and deallocation functions
          extsts_mem = MRIStepCreateExtSTS(fd, fe, fi, t0, y0, sunctx);
 
          /* access the inner STS stepper object */
-         sts_mem = MRIStep_GetSTSStepper(extsts_mem);
+         sts_mem = MRIStepGetSTSStepper(extsts_mem);
 
          /* configure ExtSTS integrator */
          retval = MRIStepSet*(extsts_mem, ...);
@@ -793,6 +793,28 @@ Optional inputs for MRIStep
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory is ``NULL``
 
+
+.. c:function:: int MRIStepExtSTSSetDomEigFn(void* arkode_mem, ARKDomEigFn dom_eig)
+
+   Specifies the user-supplied dominant eigenvalue approximation routine to
+   be used for determining the number of stages that will be used by STS method
+   within an ExtSTS MRIStep time step.  This is only applicable when MRIStep has
+   been constructed using :c:func:`MRIStepCreateExtSTS()`.
+
+   :param arkode_mem: pointer to the MRIStep memory block.
+   :param dom_eig: the name of user-supplied dominant eigenvalue approximation function.
+
+      :retval ARK_SUCCESS: if successful
+      :retval ARK_MEM_NULL: if ``arkode_mem`` was ``NULL``.
+
+   .. note::
+
+      When using ExtSTS methods, users must either call :c:func:`MRIStepExtSTSSetDomEigFn`
+      to supply a :c:type:`ARKDomEigFn` function, or or attach a dominant eigenvalue
+      estimator to the inner LSRKStep solver by first calling :c:func:`MRIStepGetSTSStepper`
+      and then calling :c:func:`LSRKStepSetDomEigEstimator`.
+
+   .. versionadded:: x.y.z
 
 
 
@@ -1619,7 +1641,7 @@ Main solver optional output functions
 
 
 
-.. c:function:: void* MRIStep_GetSTSStepper(void* arkode_mem)
+.. c:function:: void* MRIStepGetSTSStepper(void* arkode_mem)
 
    Returns a pointer to the LSRKStep super-time-stepping object
    used within the MRIStep module when performing ExtSTS time-stepping.

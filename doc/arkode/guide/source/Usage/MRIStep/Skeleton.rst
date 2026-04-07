@@ -186,7 +186,7 @@ from the skeleton program presented above are *italicized*.
 
    * If the user wishes to adjust configuration of the LSRKStep component
      inside the ExtSTS solver object, access the LSRKStep object by calling
-     :c:func:`MRIStep_GetSTSStepper` and configure it as normal.
+     :c:func:`MRIStepGetSTSStepper` and configure it as normal.
 
 #. *Specify rootfinding problem*
 
