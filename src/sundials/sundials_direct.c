@@ -252,15 +252,9 @@ sunrealtype* SUNDlsMat_newRealArray(sunindextype m)
   return (v);
 }
 
-void SUNDlsMat_DestroyArray(void* V)
-{
-  free(V);
-}
+void SUNDlsMat_DestroyArray(void* V) { free(V); }
 
-void SUNDlsMat_destroyArray(void* v)
-{
-  free(v);
-}
+void SUNDlsMat_destroyArray(void* v) { free(v); }
 
 void SUNDlsMat_AddIdentity(SUNDlsMat A)
 {
