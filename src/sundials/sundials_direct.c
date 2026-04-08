@@ -171,7 +171,6 @@ void SUNDlsMat_DestroyMat(SUNDlsMat A)
   A->data = NULL;
   free(A->cols);
   free(A);
-  A = NULL;
 }
 
 void SUNDlsMat_destroyMat(sunrealtype** a)
@@ -179,7 +178,6 @@ void SUNDlsMat_destroyMat(sunrealtype** a)
   free(a[0]);
   a[0] = NULL;
   free(a);
-  a = NULL;
 }
 
 int* SUNDlsMat_NewIntArray(int N)
@@ -257,13 +255,11 @@ sunrealtype* SUNDlsMat_newRealArray(sunindextype m)
 void SUNDlsMat_DestroyArray(void* V)
 {
   free(V);
-  V = NULL;
 }
 
 void SUNDlsMat_destroyArray(void* v)
 {
   free(v);
-  v = NULL;
 }
 
 void SUNDlsMat_AddIdentity(SUNDlsMat A)
