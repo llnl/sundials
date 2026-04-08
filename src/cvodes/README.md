@@ -1,11 +1,10 @@
 # CVODES
-### Version 7.6.0 (Jan 2026)
+### Version 7.7.0 (Apr 2026)
 
 **Alan C. Hindmarsh, Radu Serban, Cody J. Balos, David J. Gardner,
   and Carol S. Woodward, Center for Applied Scientific Computing, LLNL**
 
-**Daniel R. Reynolds, Department of Mathematics, Southern Methodist University**
-
+**Daniel R. Reynolds, Department of Mathematics and Statistics, UMBC**
 
 CVODES is a package for the solution of stiff and nonstiff ordinary differential
 equation (ODE) systems (initial value problem) given in explicit form
@@ -44,11 +43,11 @@ the "SUNDIALS Release History" appendix of the CVODES User Guide.
 ## References
 
 * A. C. Hindmarsh, R. Serban, C. J. Balos, D. J. Gardner, D. R. Reynolds
-  and C. S. Woodward, "User Documentation for CVODES v7.6.0,"
-  LLNL technical report UCRL-SM-208111, Jan 2026.
+  and C. S. Woodward, "User Documentation for CVODES v7.7.0,"
+  LLNL technical report UCRL-SM-208111, Apr 2026.
 
-* A. C. Hindmarsh and R. Serban, "Example Programs for CVODES v7.6.0,"
-  LLNL technical report UCRL-SM-208115, Jan 2026.
+* A. C. Hindmarsh and R. Serban, "Example Programs for CVODES v7.7.0,"
+  LLNL technical report UCRL-SM-208115, Apr 2026.
 
 * R. Serban and A. C. Hindmarsh, "CVODES: the Sensitivity-Enabled ODE
   solver in SUNDIALS," Proceedings of IDETC/CIE 2005, Sept. 2005,

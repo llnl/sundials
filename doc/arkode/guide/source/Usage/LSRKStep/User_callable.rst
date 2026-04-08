@@ -394,7 +394,7 @@ Allowable Method Families
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.num_ssp_stages".
 
-   .. versionchanged:: x.y.z
+   .. versionchanged:: 6.7.0
 
       The default number of stages for :c:enumerator:`ARKODE_LSRK_SSP_S_2` and
       :c:enumerator:`ARKODE_LSRK_SSP_S_3` were changed from 10 and 9,

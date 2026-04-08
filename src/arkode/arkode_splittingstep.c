@@ -675,6 +675,7 @@ void* SplittingStepCreate(SUNStepper* steppers, int partitions, sunrealtype t0,
   step_mem->steppers          = NULL;
   step_mem->n_stepper_evolves = NULL;
   step_mem->coefficients      = NULL;
+  step_mem->istage            = 0;
   retval = splittingStep_InitStepMem(ark_mem, step_mem, steppers, partitions);
   if (retval != ARK_SUCCESS)
   {
