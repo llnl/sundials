@@ -682,18 +682,18 @@ int IDACreateB(void* ida_mem, int* which)
   }
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
-  /* Allocate a new IDABMem struct. */
-  new_IDAB_mem = (IDABMem)malloc(sizeof(struct IDABMemRec));
-  if (new_IDAB_mem == NULL)
+  /* Allocate the IDAMem struct needed by this backward problem. */
+  ida_memB = IDACreate(IDA_mem->ida_sunctx);
+  if (ida_memB == NULL)
   {
     IDAProcessError(IDA_mem, IDA_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_MEM_FAIL);
     return (IDA_MEM_FAIL);
   }
 
-  /* Allocate the IDAMem struct needed by this backward problem. */
-  ida_memB = IDACreate(IDA_mem->ida_sunctx);
-  if (ida_memB == NULL)
+  /* Allocate a new IDABMem struct. */
+  new_IDAB_mem = (IDABMem)malloc(sizeof(struct IDABMemRec));
+  if (new_IDAB_mem == NULL)
   {
     IDAProcessError(IDA_mem, IDA_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_MEM_FAIL);

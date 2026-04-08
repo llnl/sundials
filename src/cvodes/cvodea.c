@@ -692,21 +692,21 @@ int CVodeCreateB(void* cvode_mem, int lmmB, int* which)
   }
   ca_mem = cv_mem->cv_adj_mem;
 
-  /* Allocate space for new CVodeBMem object */
+  /* Create and set a new CVODES object for the backward problem */
 
-  new_cvB_mem = NULL;
-  new_cvB_mem = (CVodeBMem)malloc(sizeof(struct CVodeBMemRec));
-  if (new_cvB_mem == NULL)
+  cvodeB_mem = CVodeCreate(lmmB, cv_mem->cv_sunctx);
+  if (cvodeB_mem == NULL)
   {
     cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
                    MSGCV_MEM_FAIL);
     return (CV_MEM_FAIL);
   }
 
-  /* Create and set a new CVODES object for the backward problem */
+  /* Allocate space for new CVodeBMem object */
 
-  cvodeB_mem = CVodeCreate(lmmB, cv_mem->cv_sunctx);
-  if (cvodeB_mem == NULL)
+  new_cvB_mem = NULL;
+  new_cvB_mem = (CVodeBMem)malloc(sizeof(struct CVodeBMemRec));
+  if (new_cvB_mem == NULL)
   {
     cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
                    MSGCV_MEM_FAIL);
