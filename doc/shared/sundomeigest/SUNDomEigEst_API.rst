@@ -484,13 +484,13 @@ Functions provided by SUNDIALS packages
 ---------------------------------------------
 
 To interface with SUNDomEigEst modules, the SUNDIALS packages supply
-:c:type:`SUNATimesFn` and :c:type:`SUNRHSFn` functions for evaluating the matrix-vector 
+:c:type:`SUNATimesFn` and :c:type:`SUNRhsFn` functions for evaluating the matrix-vector 
 product. This package-provided routine translates between the user-supplied ODE or DAE 
 systems and the generic dominant eigenvalue estimator API. The function types for these
 routines are defined in the header file ``sundials/sundials_iterative.h``.
 
 
-.. c:type:: int (*SUNRHSFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)
+.. c:type:: int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)
 
    Used to compute the right-hand side of an ODE or DAE system. This function is used 
    when the dominant eigenvalue estimator is configured to perform a discrete 
