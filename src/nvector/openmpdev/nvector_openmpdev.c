@@ -207,7 +207,7 @@ N_Vector N_VNew_OpenMPDEV(sunindextype length)
       N_VDestroy(v);
       return (NULL);
     }
-    NV_DATA_DEV_OMPDEV(v)  = dev_data;
+    NV_DATA_DEV_OMPDEV(v) = dev_data;
   }
 
   return (v);
@@ -439,7 +439,7 @@ N_Vector N_VClone_OpenMPDEV(N_Vector w)
     }
 
     /* Attach data */
-    NV_DATA_DEV_OMPDEV(v)  = dev_data;
+    NV_DATA_DEV_OMPDEV(v) = dev_data;
   }
 
   return (v);
