@@ -19,22 +19,22 @@ Analytical ODE test problem:
    ---------------------
 
 Final Statistics:
-Current time                  = 10.0040469322476
-Steps                         = 1120
-Step attempts                 = 1124
+Current time                  = 10.0013387372969
+Steps                         = 1122
+Step attempts                 = 1125
 Stability limited steps       = 232
-Accuracy limited steps        = 1124
-Error test fails              = 4
+Accuracy limited steps        = 1125
+Error test fails              = 3
 NLS step fails                = 0
 Inequality constraint fails   = 0
 Initial step size             = 1.93010111094261e-10
 Last step size                = 0.01791
-Current step size             = 0.0370361796227445
-RHS fn evals                  = 141974
+Current step size             = 0.0393007765090647
+RHS fn evals                  = 141846
 Number of dom_eig updates     = 1
 Max. num. of stages used      = 199
 Max. num. of stages allowed   = 200
 Max. spectral radius          = 1010000
 Min. spectral radius          = 1010000
 
-ACCURACY at the final time   = 1.52101e-13
+ACCURACY at the final time   = 1.04139e-13

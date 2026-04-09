@@ -1,6 +1,8 @@
 # SUNDIALS Changelog
 
-## Changes to SUNDIALS in release 7.7.0
+## Changes to SUNDIALS in release X.Y.Z
+
+### Major Features
 
 ### New Features and Enhancements
 
@@ -11,6 +13,18 @@ See the documentation section on the mathematical methods in MRIStep
 for more details on structure of ExtSTS methods, and the documentation
 mathematical formulation of these methods, and the documentation section on
 a skeleton of usage for MRIStep for details on its usage.
+
+### Bug Fixes
+
+Fixed a minor bug where the number of required stages for STS methods
+in the LSRKStep module was incorrectly computed using the spectral
+radius instead of the real part of the Jacobian eigenvalues.
+
+### Deprecation Notices
+
+## Changes to SUNDIALS in release 7.7.0
+
+### New Features and Enhancements
 
 Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 

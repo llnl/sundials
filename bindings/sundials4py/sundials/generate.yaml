@@ -63,6 +63,7 @@ modules:
     - ../../include/sundials/sundials_domeigestimator.h
     fn_exclude_by_name__regex:
     - "SUNDomEigEstimator_SetATimes" # nanobind cannot bind to functions which take a function pointer, so we do something custom
+    - "SUNDomEigEstimator_SetRhs" # nanobind cannot bind to functions which take a function pointer, so we do something custom
   sundials_errors:
     path: sundials/sundials_errors_generated.hpp
     headers:

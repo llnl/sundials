@@ -23,24 +23,24 @@ The stiffness of the problem is directly proportional to
    ---------------------
 
 Final Statistics:
-Current time                  = 10.0078124292941
-Steps                         = 1220
-Step attempts                 = 1279
-Stability limited steps       = 109
-Accuracy limited steps        = 1279
-Error test fails              = 59
+Current time                  = 10.0012842870746
+Steps                         = 1225
+Step attempts                 = 1282
+Stability limited steps       = 44
+Accuracy limited steps        = 1282
+Error test fails              = 57
 NLS step fails                = 0
 Inequality constraint fails   = 0
 Initial step size             = 1.93010111094261e-10
-Last step size                = 0.0231428888979688
-Current step size             = 0.0371525856132128
-RHS fn evals                  = 132879
+Last step size                = 0.0232720481291628
+Current step size             = 0.0257097908695329
+RHS fn evals                  = 132323
 Number of dom_eig updates     = 81
-Number of fe calls for DEE    = 147
+Number of fe calls for DEE    = 144
 Number of iterations for DEE  = 91
 Max. num. of stages used      = 199
 Max. num. of stages allowed   = 200
-Max. spectral radius          = 1010099.62410851
+Max. spectral radius          = 1010100.37814108
 Min. spectral radius          = 1009899
 
-ACCURACY at the final time   = 1.98952e-13
+ACCURACY at the final time   = 7.18314e-13

@@ -317,6 +317,29 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
 }
 
 /*---------------------------------------------------------------
+  LSRKStepSetUseAnalyticStabRegion sets whether to use the ellipse or the exact 
+  stability region for stability checks.
+  ---------------------------------------------------------------*/
+int LSRKStepSetUseAnalyticStabRegion(void* arkode_mem,
+                                     sunbooleantype use_analytic_stab_region)
+{
+  ARKodeMem ark_mem;
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeMem and ARKodeLSRKStepMem structures */
+  retval = lsrkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                        &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  step_mem->dom_eig_update     = SUNTRUE;
+  step_mem->dom_eig_is_current = SUNFALSE;
+  step_mem->use_ellipse        = !use_analytic_stab_region;
+
+  return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
   LSRKStepSetNumDomEigEstInitPreprocessIters sets the number of the preprocessing
   iterations before the very first estimate call.
   ---------------------------------------------------------------*/
@@ -761,9 +784,11 @@ int lsrkStep_SetDefaults(ARKodeMem ark_mem)
   /* Spectral info */
   step_mem->dom_eig_safety   = DOM_EIG_SAFETY_DEFAULT;
   step_mem->dom_eig_freq     = DOM_EIG_FREQ_DEFAULT;
+  step_mem->rkc_damping      = RKC_DAMPING_DEFAULT;
   step_mem->const_Jac        = SUNFALSE;
   step_mem->num_init_warmups = DOM_EIG_NUM_INIT_WARMUPS_DEFAULT;
   step_mem->num_warmups      = DOM_EIG_NUM_WARMUPS_DEFAULT;
+  step_mem->use_ellipse      = SUNTRUE;
 
   /* Load the default SUNAdaptController */
   retval = arkReplaceAdaptController(ark_mem, NULL, SUNTRUE);
@@ -895,6 +920,8 @@ int lsrkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp)
             step_mem->spectral_radius);
     fprintf(fp, "  Safety factor for the dom eig = " SUN_FORMAT_G "\n",
             step_mem->dom_eig_safety);
+    fprintf(fp, "  Damping factor for RKC = " SUN_FORMAT_G "\n",
+            step_mem->rkc_damping);
     fprintf(fp, "  Max num of successful steps before new dom eig update = %li\n",
             step_mem->dom_eig_freq);
     fprintf(fp, "  Number of first preprocessing warmups = %i\n",

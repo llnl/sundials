@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * Copyright (c) 2025, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -14,19 +14,19 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
- * These test functions check some components of Arnoldi Iteration
+ * These test functions check some components of Power Iteration
  * module implementation.
  * -----------------------------------------------------------------
  */
 
 #include <nvector/nvector_serial.h>
-#include <sundomeigest/sundomeigest_arnoldi.h>
+#include <sundomeigest/sundomeigest_power.h>
 #include "../test_sundomeigest.h"
 
 /* constants */
 #define ZERO SUN_RCONST(0.0)
 
-#define factor   SUN_RCONST(-100.0)
+#define factor   SUN_RCONST(-10.0)
 #define realpart SUN_RCONST(-30000.0)
 #define imagpart SUN_RCONST(+40000.0)
 
@@ -57,11 +57,11 @@ int main(int argc, char* argv[])
   SUNDomEigEstimator DEE = NULL;  /* domeig estimator object    */
   UserData ProbData;              /* problem data structure     */
   int num_warmups;                /* number of preprocessing iters */
-  int kry_dim;                    /* Krylov subspace dimension  */
-  long int num_iters;             /* number of iterations       */
+  long int max_iters;             /* max power iteration        */
+  long int num_iters;             /* cur. number of iterations  */
   long int num_ATimes;            /* number of ATimes calls     */
   int print_timing;               /* timing output flag         */
-  sunrealtype res;                /* residual                   */
+  sunrealtype res;                /* current residual           */
   sunrealtype lambdaR, lambdaI;   /* computed domeig parts      */
   sunrealtype tlambdaR, tlambdaI; /* true domeig parts          */
   SUNContext sunctx;
@@ -75,12 +75,12 @@ int main(int argc, char* argv[])
     return (-1);
   }
 
-  /* check inputs: local problem size, Krylov dimension, preprocessing items, timing flag */
+  /* check inputs: local problem size, max iters, num preprocessing, timing flag */
   if (argc < 5)
   {
     printf("ERROR: FOUR (4) Inputs required:\n");
     printf("  Problem size should be >= 2\n");
-    printf("  Krylov subspace dimension should be > 0\n");
+    printf("  Maximum number of power iterations should be > 0\n");
     printf("  Number of preprocessing iters should be >= 0\n");
     printf("  Include timers for calculation (0=off, 1=on)\n");
     return 1;
@@ -91,17 +91,17 @@ int main(int argc, char* argv[])
     printf("ERROR: Problem size must be a positive integer\n");
     return 1;
   }
-  kry_dim = atoi(argv[2]);
-  if (kry_dim <= 0)
+  max_iters = atoi(argv[2]);
+  if (max_iters <= 0)
   {
-    printf("ERROR: Krylov subspace dimension must be a positive integer\n");
+    printf(
+      "ERROR: Maximum number of power iterations must be a positive integer\n");
     return 1;
   }
   num_warmups = atoi(argv[3]);
   if (num_warmups < 0)
   {
-    printf(
-      "ERROR: Number of preprocessing iters must be a nonnegative integer\n");
+    printf("ERROR: Number of preprocessing must be a nonnegative integer\n");
     return 1;
   }
   print_timing = atoi(argv[4]);
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 
   printf("\nDomEig module test:\n");
   printf("  Problem size = %ld\n", (long int)ProbData.N);
-  printf("  Krylov subspace dimension = %i\n", kry_dim);
+  printf("  Number of power iterations = %ld\n", (long int)max_iters);
   printf("  Number of preprocessing iters = %i\n", num_warmups);
   printf("  Timing output flag = %i\n\n", print_timing);
 
@@ -140,23 +140,19 @@ int main(int argc, char* argv[])
   ProbData.real_part = realpart;
   ProbData.imag_part = imagpart;
 
-  /* Create Arnoldi Iteration Dominant Eigvalue Estimator (DEE)*/
-  DEE = SUNDomEigEstimator_Arnoldi(q, kry_dim, sunctx);
-  if (check_flag(DEE, "SUNDomEigEstimator_Arnoldi", 0)) { return 1; }
+  /* Create Power Iteration Dominant Eigvalue Estimator (DEE)*/
+  DEE = SUNDomEigEstimator_Power(q, max_iters, rel_tol, sunctx);
+  if (check_flag(DEE, "SUNDomEigEstimator_Power", 0)) { return 1; }
 
   fails += Test_SUNDomEigEstimator_SetATimes(DEE, &ProbData, ATimes, 0);
-  // SUNDomEigEstimator_SetMaxIters is not an option for Arnoldi iteration.
-  // It should return with SUN_SUCCESS
-  fails += Test_SUNDomEigEstimator_SetMaxIters(DEE, kry_dim, 0);
+  fails += Test_SUNDomEigEstimator_SetMaxIters(DEE, max_iters, 0);
   fails += Test_SUNDomEigEstimator_SetNumPreprocessIters(DEE, num_warmups, 0);
   fails += Test_SUNDomEigEstimator_SetRelTol(DEE, rel_tol, 0);
   fails += Test_SUNDomEigEstimator_SetInitialGuess(DEE, q, 0);
   fails += Test_SUNDomEigEstimator_Initialize(DEE, 0);
   fails += Test_SUNDomEigEstimator_Estimate(DEE, &lambdaR, &lambdaI, 0);
-  // SUNDomEigEstimator_GetRes is not an option
-  // for Arnoldi iteration. It should return with 0.
   fails += Test_SUNDomEigEstimator_GetRes(DEE, &res, 0);
-  if (res > SUN_SMALL_REAL)
+  if (res < SUN_SMALL_REAL)
   {
     printf("    >>> FAILED test -- SUNDomEigEstimator_GetRes return value\n");
     fails++;
@@ -173,16 +169,15 @@ int main(int argc, char* argv[])
 
   if (fails)
   {
-    printf("FAIL: SUNDomEigEstimator_Arnoldi module failed %i initialization "
+    printf("FAIL: SUNDomEigEstimator_Power module failed %i initialization "
            "tests\n\n",
            fails);
     return 1;
   }
   else
   {
-    printf(
-      "SUCCESS: SUNDomEigEstimator_Arnoldi module passed all initialization "
-      "tests\n\n");
+    printf("SUCCESS: SUNDomEigEstimator_Power module passed all initialization "
+           "tests\n\n");
   }
 
   /* First check if the computed eigenvalue has a nonzero magnitute */

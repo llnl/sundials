@@ -431,6 +431,20 @@ SWIGEXPORT int _wrap_FLSRKStepSetDomEigSafetyFactor(void *farg1, double const *f
 }
 
 
+SWIGEXPORT int _wrap_FLSRKStepSetUseAnalyticStabRegion(void *farg1, int const *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int arg2 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (int)(*farg2);
+  result = (int)LSRKStepSetUseAnalyticStabRegion(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FLSRKStepSetNumDomEigEstInitPreprocessIters(void *farg1, int const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;

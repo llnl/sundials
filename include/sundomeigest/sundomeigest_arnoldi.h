@@ -32,6 +32,10 @@
 extern "C" {
 #endif
 
+#ifndef MAX_DQITERS
+#define MAX_DQITERS 3
+#endif
+
 /* -----------------------------------------------------
  * Arnoldi Iteration Implementation of SUNDomEigEstimator
  * ----------------------------------------------------- */
@@ -43,13 +47,20 @@ struct SUNDomEigEstimatorContent_Arnoldi_
 
   /* Krylov subspace vectors */
   N_Vector* V;
-  N_Vector q;
+  N_Vector q, rhs_linY, Fy, work;
 
-  int kry_dim;        /* Krylov subspace dimension */
-  int num_warmups;    /* Number of preprocessing iterations */
-  long int num_iters; /* Number of iterations in last Estimate call */
+  int kry_dim;                  /* Krylov subspace dimension */
+  int num_warmups;              /* Number of preprocessing iterations */
+  long int num_iters;           /* Number of iterations in last Estimate call */
+  sunbooleantype warmup_to_tol; /* Type of warmup iterations */
+  sunrealtype tol_preprocess;   /* Tolerance for preprocessing iterations */
+  sunrealtype rhs_linT;         /* Time value for linearization point */
 
   long int num_ATimes; /* Number of ATimes calls */
+
+  SUNRhsFn rhsfn;   /* User provided RHS function */
+  void* rhs_data;   /* RHS function data */
+  long int nfevals; /* Number of RHS evaluations */
 
   sunrealtype* LAPACK_A; /* The vector which holds rows of the Hessenberg matrix in the given order */
   sunrealtype* LAPACK_wr;    /* Real parts of eigenvalues */
@@ -76,8 +87,20 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
                                                 void* A_data, SUNATimesFn ATimes);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
+                                             void* rhs_data, SUNRhsFn RHSfn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,
                                                             int num_iters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
+                                                sunrealtype tol);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetInitialGuess_Arnoldi(SUNDomEigEstimator DEE,

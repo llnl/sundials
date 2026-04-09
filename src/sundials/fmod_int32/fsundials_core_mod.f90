@@ -690,6 +690,8 @@ module fsundials_core_mod
  ! struct struct SUNDomEigEstimator_Ops_
  type, bind(C), public :: SUNDomEigEstimator_Ops
   type(C_FUNPTR), public :: setatimes
+  type(C_FUNPTR), public :: setrhs
+  type(C_FUNPTR), public :: setrhslinearizationpoint
   type(C_FUNPTR), public :: setoptions
   type(C_FUNPTR), public :: setmaxiters
   type(C_FUNPTR), public :: setnumpreprocessiters
@@ -713,6 +715,8 @@ module fsundials_core_mod
  public :: FSUNDomEigEstimator_NewEmpty
  public :: FSUNDomEigEstimator_FreeEmpty
  public :: FSUNDomEigEstimator_SetATimes
+ public :: FSUNDomEigEstimator_SetRhs
+ public :: FSUNDomEigEstimator_SetRhsLinearizationPoint
  public :: FSUNDomEigEstimator_SetMaxIters
  public :: FSUNDomEigEstimator_SetNumPreprocessIters
  public :: FSUNDomEigEstimator_SetRelTol
@@ -2972,6 +2976,26 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 type(C_FUNPTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNDomEigEstimator_SetRhs(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetRhs") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_FUNPTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -7226,6 +7250,44 @@ farg1 = c_loc(dee)
 farg2 = a_data
 farg3 = atimes
 fresult = swigc_FSUNDomEigEstimator_SetATimes(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNDomEigEstimator_SetRhs(dee, rhs_data, rhsfn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+type(C_PTR) :: rhs_data
+type(C_FUNPTR), intent(in), value :: rhsfn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_FUNPTR) :: farg3 
+
+farg1 = c_loc(dee)
+farg2 = rhs_data
+farg3 = rhsfn
+fresult = swigc_FSUNDomEigEstimator_SetRhs(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNDomEigEstimator_SetRhsLinearizationPoint(dee, t, v) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+real(C_DOUBLE), intent(in) :: t
+type(N_Vector), target, intent(inout) :: v
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+real(C_DOUBLE) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(dee)
+farg2 = t
+farg3 = c_loc(v)
+fresult = swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

@@ -51,6 +51,18 @@
  * -----------------------------------------------------------------
  */
 
+/*
+* --------------------------------------------------------------------------
+* private functions
+* --------------------------------------------------------------------------
+*/
+
+SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
+  SUNDomEigEstimator DEE, sunrealtype lambdaR, N_Vector v_prev, N_Vector v,
+  sunrealtype* lambdaR_out, sunrealtype* lambdaI_out);
+
+SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv);
+
 /* ----------------------------------------------------------------------------
  * Function to create a new PI estimator
  */
@@ -79,8 +91,11 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   /* check for max_iters values; if illegal use defaults */
   if (max_iters <= 0) { max_iters = DEE_MAX_ITER_DEFAULT; }
 
-  /* Check if rel_tol > 0 */
-  if (rel_tol < SUN_SMALL_REAL) { rel_tol = DEE_TOL_DEFAULT; }
+  /* Check if rel_tol > 0 and < 1 */
+  if (rel_tol < SUN_SMALL_REAL || rel_tol > ONE - SUN_UNIT_ROUNDOFF)
+  {
+    rel_tol = DEE_TOL_DEFAULT;
+  }
 
   /* Create dominant eigenvalue estimator */
   DEE = NULL;
@@ -88,7 +103,10 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  DEE->ops->setatimes   = SUNDomEigEstimator_SetATimes_Power;
+  DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Power;
+  DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Power;
+  DEE->ops->setrhslinearizationpoint =
+    SUNDomEigEstimator_SetRhsLinearizationPoint_Power;
   DEE->ops->setmaxiters = SUNDomEigEstimator_SetMaxIters_Power;
   DEE->ops->setnumpreprocessiters = SUNDomEigEstimator_SetNumPreprocessIters_Power;
   DEE->ops->setreltol         = SUNDomEigEstimator_SetRelTol_Power;
@@ -114,10 +132,19 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   content->ATdata      = NULL;
   content->V           = NULL;
   content->q           = NULL;
+  content->q_prev      = NULL;
+  content->rhs_linY    = NULL;
+  content->rhs_linT    = ZERO;
+  content->Fy          = NULL;
+  content->work        = NULL;
+  content->complex     = SUNTRUE;
   content->max_iters   = max_iters;
   content->num_warmups = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
   content->rel_tol     = rel_tol;
   content->res         = ZERO;
+  content->rhsfn       = NULL;
+  content->rhs_data    = NULL;
+  content->nfevals     = 0;
   content->num_iters   = 0;
   content->num_ATimes  = 0;
 
@@ -156,6 +183,72 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
+SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
+                                           void* rhs_data, SUNRhsFn RHSfn)
+{
+  SUNFunctionBegin(DEE->sunctx);
+
+  SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
+  SUNAssert(RHSfn, SUN_ERR_ARG_CORRUPT);
+
+  /* set function pointers to integrator-supplied RHS routine
+     and data, and return with success */
+  PI_CONTENT(DEE)->rhsfn    = RHSfn;
+  PI_CONTENT(DEE)->rhs_data = rhs_data;
+
+  DEE->ops->setatimes(DEE, (void*)DEE, dee_DQJtimes);
+  SUNCheckLastErr();
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
+{
+  SUNFunctionBegin(DEE->sunctx);
+
+  SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
+  SUNAssert(y, SUN_ERR_ARG_CORRUPT);
+
+  if (PI_CONTENT(DEE)->rhs_linY == NULL)
+  {
+    PI_CONTENT(DEE)->rhs_linY = N_VClone(y);
+    SUNCheckLastErr();
+  }
+
+  PI_CONTENT(DEE)->rhs_linT = t;
+
+  N_VScale(ONE, y, PI_CONTENT(DEE)->rhs_linY);
+  SUNCheckLastErr();
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
+                                              sunbooleantype real)
+{
+  SUNFunctionBegin(DEE->sunctx);
+
+  SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
+
+  /* set the complex flag to the opposite of the real flag */
+  PI_CONTENT(DEE)->complex = !real;
+
+  /* q_prev is allocated in SUNDomEigEstimator_Initialize_Power, which is expected to be 
+  called after this routine. If the user calls this routine after initialization, we need 
+  to free q_prev here. */
+  if (!(PI_CONTENT(DEE)->complex) && PI_CONTENT(DEE)->q_prev)
+  {
+    N_VDestroy(PI_CONTENT(DEE)->q_prev);
+    PI_CONTENT(DEE)->q_prev = NULL;
+  }
+
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
 {
   SUNFunctionBegin(DEE->sunctx);
@@ -163,7 +256,8 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
-  if (PI_CONTENT(DEE)->rel_tol < SUN_SMALL_REAL)
+  if (PI_CONTENT(DEE)->rel_tol < SUN_SMALL_REAL ||
+      PI_CONTENT(DEE)->rel_tol > ONE - SUN_UNIT_ROUNDOFF)
   {
     PI_CONTENT(DEE)->rel_tol = DEE_TOL_DEFAULT;
   }
@@ -179,6 +273,11 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
   SUNAssert(PI_CONTENT(DEE)->ATimes, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
+
+  if (PI_CONTENT(DEE)->complex)
+  {
+    SUNAssert(PI_CONTENT(DEE)->q_prev == NULL, SUN_ERR_ARG_CORRUPT);
+  }
 
   /* Initialize the vector V */
   sunrealtype normq = N_VDotProd(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q);
@@ -216,8 +315,11 @@ SUNErrCode SUNDomEigEstimator_SetRelTol_Power(SUNDomEigEstimator DEE,
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
-  /* Check if rel_tol > 0 */
-  if (rel_tol < SUN_SMALL_REAL) { rel_tol = DEE_TOL_DEFAULT; }
+  /* Check if rel_tol > 0 and < 1 */
+  if (rel_tol < SUN_SMALL_REAL || rel_tol > ONE - SUN_UNIT_ROUNDOFF)
+  {
+    rel_tol = DEE_TOL_DEFAULT;
+  }
 
   /* set the tolerance */
   PI_CONTENT(DEE)->rel_tol = rel_tol;
@@ -275,6 +377,12 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
   SUNAssert((PI_CONTENT(DEE)->max_iters >= 0), SUN_ERR_ARG_CORRUPT);
+  if (PI_CONTENT(DEE)->complex && (PI_CONTENT(DEE)->q_prev == NULL))
+  {
+    /* allocate q_prev vector */
+    PI_CONTENT(DEE)->q_prev = N_VClone(PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
+  }
 
   sunrealtype newlambdaR = ZERO;
   sunrealtype oldlambdaR = ZERO;
@@ -284,6 +392,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   PI_CONTENT(DEE)->num_ATimes = 0;
   PI_CONTENT(DEE)->num_iters  = 0;
 
+  /* Set the initial q = A^{num_warmups}q/||A^{num_warmups}q|| */
   for (int i = 0; i < PI_CONTENT(DEE)->num_warmups; i++)
   {
     retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata,
@@ -302,6 +411,12 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
 
   for (int k = 0; k < PI_CONTENT(DEE)->max_iters; k++)
   {
+    if (PI_CONTENT(DEE)->complex)
+    {
+      N_VScale(ONE, PI_CONTENT(DEE)->V, PI_CONTENT(DEE)->q_prev);
+      SUNCheckLastErr();
+    }
+
     retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata,
                                      PI_CONTENT(DEE)->V, PI_CONTENT(DEE)->q);
     PI_CONTENT(DEE)->num_ATimes++;
@@ -312,10 +427,6 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
                             PI_CONTENT(DEE)->q); //Rayleigh quotient
     SUNCheckLastErr();
 
-    PI_CONTENT(DEE)->res = SUNRabs(newlambdaR - oldlambdaR) / SUNRabs(newlambdaR);
-
-    if (PI_CONTENT(DEE)->res < PI_CONTENT(DEE)->rel_tol) { break; }
-
     normq = N_VDotProd(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q);
     SUNCheckLastErr();
 
@@ -323,11 +434,28 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     N_VScale(ONE / normq, PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->V);
     SUNCheckLastErr();
 
+    PI_CONTENT(DEE)->res = SUNRabs(newlambdaR - oldlambdaR);
+    if (PI_CONTENT(DEE)->res <= PI_CONTENT(DEE)->rel_tol * SUNRabs(newlambdaR))
+    {
+      break;
+    }
+
     oldlambdaR = newlambdaR;
   }
 
-  *lambdaI = ZERO;
-  *lambdaR = newlambdaR;
+  if (PI_CONTENT(DEE)->complex)
+  {
+    retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR,
+                                                         PI_CONTENT(DEE)->q_prev,
+                                                         PI_CONTENT(DEE)->V,
+                                                         lambdaR, lambdaI);
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+  }
+  else
+  {
+    *lambdaR = newlambdaR;
+    *lambdaI = ZERO;
+  }
 
   return SUN_SUCCESS;
 }
@@ -401,6 +529,92 @@ SUNErrCode SUNDomEigEstimator_Write_Power(SUNDomEigEstimator DEE, FILE* outfile)
   return SUN_SUCCESS;
 }
 
+SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
+  SUNDomEigEstimator DEE, sunrealtype lambdaR, N_Vector v_prev, N_Vector v,
+  sunrealtype* lambdaR_out, sunrealtype* lambdaI_out)
+{
+  SUNFunctionBegin(DEE->sunctx);
+
+  int retval;
+  sunrealtype cos_qs, gram_det, det_G_inv, h11, h12, h21, h22, p11, p12, p21, p22;
+  /* The threshold for identifying real or complex DEE is experimentally 
+  determined based on the relative tolerance PI_CONTENT(DEE)->rel_tol */
+  sunrealtype gram_det_tol = SUNMAX(SUN_RCONST(10.0) * SUN_UNIT_ROUNDOFF,
+                                    SUN_RCONST(10.0) * PI_CONTENT(DEE)->rel_tol);
+  cos_qs                   = N_VDotProd(v_prev, v);
+  SUNCheckLastErr();
+
+  /* Safety against roundoff in dot product */
+  if (cos_qs > ONE) { cos_qs = ONE; }
+  if (cos_qs < -ONE) { cos_qs = -ONE; }
+
+  /* Use Gram determinant as the near-dependence measure:
+     G = [ [1, cos_qs], [cos_qs, 1] ], det(G) = 1 - cos_qs^2
+     This assumes v_prev and v are normalized. */
+  gram_det = ONE - cos_qs * cos_qs;
+
+  if (gram_det <= gram_det_tol)
+  {
+    /* Dominant eigenvalue is real */
+    *lambdaR_out = lambdaR;
+    *lambdaI_out = ZERO;
+    return SUN_SUCCESS;
+  }
+  else
+  {
+    det_G_inv = ONE / gram_det;
+
+    /* Solve for G = [v_prev v]' * [v_prev v] and compute
+       projected matrix P = G^{-1} * [v_prev v]' * A * [v_prev v] */
+
+    retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata, v_prev,
+                                     PI_CONTENT(DEE)->q);
+    PI_CONTENT(DEE)->num_ATimes++;
+    PI_CONTENT(DEE)->num_iters++;
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+
+    h11 = N_VDotProd(v_prev, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
+    h21 = N_VDotProd(v, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
+
+    retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata, v,
+                                     PI_CONTENT(DEE)->q);
+    PI_CONTENT(DEE)->num_ATimes++;
+    PI_CONTENT(DEE)->num_iters++;
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+
+    h12 = N_VDotProd(v_prev, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
+    h22 = N_VDotProd(v, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
+
+    p11 = det_G_inv * (h11 - cos_qs * h21);
+    p12 = det_G_inv * (h12 - cos_qs * h22);
+    p21 = det_G_inv * (h21 - cos_qs * h11);
+    p22 = det_G_inv * (h22 - cos_qs * h12);
+
+    /* Compute eigenvalues of P */
+    sunrealtype traceP  = p11 + p22;
+    sunrealtype detP    = p11 * p22 - p12 * p21;
+    sunrealtype discrim = traceP * traceP - SUN_RCONST(4.0) * detP;
+    if (discrim >= ZERO)
+    {
+      /* Dominant eigenvalue is real */
+      *lambdaR_out = (traceP + SUNRsqrt(discrim)) / SUN_RCONST(2.0);
+      *lambdaI_out = ZERO;
+    }
+    else
+    {
+      /* Dominant eigenvalue is complex */
+      *lambdaR_out = traceP / SUN_RCONST(2.0);
+      *lambdaI_out = SUNRsqrt(-discrim) / SUN_RCONST(2.0);
+    }
+  }
+
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNDomEigEstimator_Destroy_Power(SUNDomEigEstimator* DEEptr)
 {
   SUNFunctionBegin((*DEEptr)->sunctx);
@@ -417,12 +631,31 @@ SUNErrCode SUNDomEigEstimator_Destroy_Power(SUNDomEigEstimator* DEEptr)
       N_VDestroy(PI_CONTENT(DEE)->q);
       PI_CONTENT(DEE)->q = NULL;
     }
+    if (PI_CONTENT(DEE)->q_prev)
+    {
+      N_VDestroy(PI_CONTENT(DEE)->q_prev);
+      PI_CONTENT(DEE)->q_prev = NULL;
+    }
     if (PI_CONTENT(DEE)->V)
     {
       N_VDestroy(PI_CONTENT(DEE)->V);
       PI_CONTENT(DEE)->V = NULL;
     }
-
+    if (PI_CONTENT(DEE)->rhs_linY)
+    {
+      N_VDestroy(PI_CONTENT(DEE)->rhs_linY);
+      PI_CONTENT(DEE)->rhs_linY = NULL;
+    }
+    if (PI_CONTENT(DEE)->Fy)
+    {
+      N_VDestroy(PI_CONTENT(DEE)->Fy);
+      PI_CONTENT(DEE)->Fy = NULL;
+    }
+    if (PI_CONTENT(DEE)->work)
+    {
+      N_VDestroy(PI_CONTENT(DEE)->work);
+      PI_CONTENT(DEE)->work = NULL;
+    }
     free(DEE->content);
     DEE->content = NULL;
   }
@@ -433,5 +666,86 @@ SUNErrCode SUNDomEigEstimator_Destroy_Power(SUNDomEigEstimator* DEEptr)
   }
   free(DEE);
   *DEEptr = NULL;
+  return SUN_SUCCESS;
+}
+
+/*---------------------------------------------------------------
+  dee_DQJtimes:
+
+  This routine generates a difference quotient approximation to
+  the Jacobian-vector product f_y(t,y) * v. The approximation is
+  Jv = [f(y + v*sig) - f(y)]/sig, where sig = 1 / ||v||_WRMS,
+  i.e. the WRMS norm of v*sig is 1.
+  ---------------------------------------------------------------*/
+SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
+{
+  SUNDomEigEstimator DEE = (SUNDomEigEstimator)voidstarDEE;
+  SUNFunctionBegin(DEE->sunctx);
+
+  SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
+  SUNAssert(v, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(Jv, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE)->rhsfn, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE)->rhs_linY, SUN_ERR_ARG_CORRUPT);
+
+  sunrealtype vdotv = N_VDotProd(v, v);
+  if (vdotv <= SUN_SMALL_REAL)
+  {
+    N_VScale(ZERO, v, Jv);
+    SUNCheckLastErr();
+    return SUN_SUCCESS;
+  }
+
+  if (PI_CONTENT(DEE)->work == NULL)
+  {
+    PI_CONTENT(DEE)->work = N_VClone(v);
+    SUNCheckLastErr();
+  }
+  if (PI_CONTENT(DEE)->Fy == NULL)
+  {
+    PI_CONTENT(DEE)->Fy = N_VClone(v);
+    SUNCheckLastErr();
+  }
+
+  sunrealtype sig, siginv;
+  int iter, retval;
+
+  N_Vector y    = PI_CONTENT(DEE)->rhs_linY;
+  N_Vector work = PI_CONTENT(DEE)->work;
+  N_Vector Fy   = PI_CONTENT(DEE)->Fy;
+
+  retval = PI_CONTENT(DEE)->rhsfn(PI_CONTENT(DEE)->rhs_linT, y, Fy,
+                                  PI_CONTENT(DEE)->rhs_data);
+  PI_CONTENT(DEE)->nfevals++;
+  if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+
+  /* Initialize perturbation */
+  sunrealtype ydotv   = N_VDotProd(y, v);
+  sunrealtype sq1norm = N_VL1Norm(v);
+  sunrealtype sign    = (ydotv >= ZERO) ? ONE : -ONE;
+  sunrealtype sqrteps = SUNRsqrt(SUN_UNIT_ROUNDOFF);
+  sig = sign * sqrteps * SUNMAX(SUNRabs(ydotv), sq1norm) / vdotv;
+
+  for (iter = 0; iter < MAX_DQITERS; iter++)
+  {
+    /* Set work = y + sig*v */
+    N_VLinearSum(sig, v, ONE, y, work);
+
+    /* Set Jv = f(tn, y+sig*v) */
+    retval = PI_CONTENT(DEE)->rhsfn(PI_CONTENT(DEE)->rhs_linT, work, Jv,
+                                    PI_CONTENT(DEE)->rhs_data);
+    PI_CONTENT(DEE)->nfevals++;
+    if (retval == 0) { break; }
+    if (retval < 0) { return (-1); }
+
+    /* If f failed recoverably, shrink sig and retry */
+    sig *= SUN_RCONST(0.25);
+  }
+
+  /* Replace Jv by (Jv - fn)/sig */
+  siginv = ONE / sig;
+  N_VLinearSum(siginv, Jv, -siginv, Fy, Jv);
+
   return SUN_SUCCESS;
 }

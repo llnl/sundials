@@ -1,5 +1,8 @@
 /*-----------------------------------------------------------------
  * Programmer(s): Mustafa Aggul @ SMU
+ * Based on
+ * ark_analytic_lsrk_domeigest.c by Mustafa Aggul @ SMU and
+ * ark_brusselator.c by Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -16,29 +19,43 @@
  *---------------------------------------------------------------
  * Example problem:
  *
- * The following is a simple example problem that solves the ODE
+ * The following test simulates a brusselator problem from chemical
+ * kinetics.  This is an ODE system with 3 components, Y = [u,v,w],
+ * satisfying the equations,
+ *    du/dt = a - (w+1)*u + v*u^2
+ *    dv/dt = w*u - v*u^2
+ *    dw/dt = (b-w)/ep - w*u
+ * for t in the interval [0.0, 10.0], with initial conditions
+ * Y0 = [u0,v0,w0].
  *
- *    dy/dt = (lambda - alpha*cos((10 - t)/10*pi)*y + 1/(1+t^2)
- *          - (lambda - alpha*cos((10 - t)/10*pi)*atan(t),
+ * We have 3 different testing scenarios:
  *
- * for t in the interval [0.0, 10.0], with an initial condition: y=0.
- * This initial value problem has the analytical solution
+ * Test 1:  u0=3.9,  v0=1.1,  w0=2.8,  a=1.2,  b=2.5,  ep=1.0e-5
+ *    Here, all three components exhibit a rapid transient change
+ *    during the first 0.2 time units, followed by a slow and
+ *    smooth evolution.
  *
- *    y(t) = arctan(t).
+ * Test 2:  u0=1.2,  v0=3.1,  w0=3,  a=1,  b=3.5,  ep=5.0e-6
+ *    Here, w experiences a fast initial transient, jumping 0.5
+ *    within a few steps.  All values proceed smoothly until
+ *    around t=6.5, when both u and v undergo a sharp transition,
+ *    with u increaseing from around 0.5 to 5 and v decreasing
+ *    from around 6 to 1 in less than 0.5 time units.  After this
+ *    transition, both u and v continue to evolve somewhat
+ *    rapidly for another 1.4 time units, and finish off smoothly.
  *
- * The stiffness of the problem depends on both lambda and alpha together.
- * While lambda determines the center of the stiffness parameter,
- * the value of alpha determines the radius of the interval in which
- * the stiffness parameter lies.
+ * Test 3:  u0=3,  v0=3,  w0=3.5,  a=0.5,  b=3,  ep=5.0e-4
+ *    Here, all components undergo very rapid initial transients
+ *    during the first 0.3 time units, and all then proceed very
+ *    smoothly for the remainder of the simulation.
  *
- * The value of lambda - alpha*cos((10 - t)/10*pi) should
- * be negative to result in a well-posed ODE; for values with magnitude
- * larger than 100 the problem becomes quite stiff.
+ * This file is hard-coded to use test 2.
  *
  * This program solves the problem with the LSRK method using internal
  * SUNDIALS dominant eigenvalue estimation (DEE) module.
- * Output is printed every 1.0 units of time (10 total).
- * Run statistics (optional outputs) are printed at the end.
+ *
+ * 100 outputs are printed at equal intervals, and run statistics
+ * are printed at the end.
  *-----------------------------------------------------------------*/
 
 /* Header files */
@@ -60,69 +77,42 @@
 #define FSYM "f"
 #endif
 
-#if defined(SUNDIALS_DOUBLE_PRECISION)
-#define ATAN(x) (atan((x)))
-#define ACOS(x) (acos((x)))
-#define COS(x)  (cos((x)))
-#elif defined(SUNDIALS_SINGLE_PRECISION)
-#define ATAN(x) (atanf((x)))
-#define ACOS(x) (acosf((x)))
-#define COS(x)  (cosf((x)))
-#elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define ATAN(x) (atanl((x)))
-#define ACOS(x) (acosl((x)))
-#define COS(x)  (cosl((x)))
-#endif
-
 /* User-supplied Functions Called by the Solver */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
 
 /* Private function to check function return values */
 static int check_flag(void* flagvalue, const char* funcname, int opt);
 
-/* Private function to check computed solution */
-static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol,
-                     sunrealtype atol);
-
-/* Private function to compute error */
-static int compute_error(N_Vector y, sunrealtype t);
-
 /* Main Program */
 int main(int argc, char* argv[])
 {
   /* general problem parameters */
-  sunrealtype T0    = SUN_RCONST(0.0);  /* initial time */
-  sunrealtype Tf    = SUN_RCONST(10.0); /* final time */
-  sunrealtype dTout = SUN_RCONST(1.0);  /* time between outputs */
-  sunindextype NEQ  = 1;                /* number of dependent vars. */
+  sunrealtype T0    = SUN_RCONST(0.0);       /* initial time */
+  sunrealtype Tf    = SUN_RCONST(10.0);      /* final time */
+  sunrealtype dTout = SUN_RCONST(1.0);       /* time between outputs */
+  sunindextype NEQ  = 3;                     /* number of dependent vars. */
+  int Nt            = (int)ceil(Tf / dTout); /* number of output times */
+  int test          = 2;                     /* test problem to run */
+  sunrealtype a, b, ep, u0, v0, w0;
 
 #if defined(SUNDIALS_DOUBLE_PRECISION)
-  sunrealtype reltol = SUN_RCONST(1.0e-8); /* tolerances */
-  sunrealtype abstol = SUN_RCONST(1.0e-8);
-  sunrealtype lambda = SUN_RCONST(-1.0e+6); /* stiffness parameter 1 */
-  sunrealtype alpha  = SUN_RCONST(1.0e+2);  /* stiffness parameter 2 */
+  sunrealtype reltol = SUN_RCONST(1.0e-6); /* tolerances */
+  sunrealtype abstol = SUN_RCONST(1.0e-10);
 #elif defined(SUNDIALS_SINGLE_PRECISION)
   sunrealtype reltol = SUN_RCONST(1.0e-4); /* tolerances */
   sunrealtype abstol = SUN_RCONST(1.0e-8);
-  sunrealtype lambda = SUN_RCONST(-1.0e+3); /* stiffness parameter 1 */
-  sunrealtype alpha  = SUN_RCONST(1.0e+1);  /* stiffness parameter 2 */
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-  sunrealtype reltol = SUN_RCONST(1.0e-8); /* tolerances */
-  sunrealtype abstol = SUN_RCONST(1.0e-8);
-  sunrealtype lambda = SUN_RCONST(-1.0e+6); /* stiffness parameter 1 */
-  sunrealtype alpha  = SUN_RCONST(1.0e+2);  /* stiffness parameter 2 */
+  sunrealtype reltol = SUN_RCONST(1.0e-6); /* tolerances */
+  sunrealtype abstol = SUN_RCONST(1.0e-10);
 #endif
-
-  sunrealtype UserData[2];
-  UserData[0] = lambda;
-  UserData[1] = alpha;
 
   /* general problem variables */
   int flag;                /* reusable error-checking flag */
   N_Vector y       = NULL; /* empty vector for storing solution */
   void* arkode_mem = NULL; /* empty ARKode memory structure */
-  FILE *UFID, *FID;
+  sunrealtype rdata[3];
   sunrealtype t, tout;
+  int iout;
 
   /* Dominant Eigenvalue Estimator (DEE) pointers and variables */
   SUNDomEigEstimator DEE = NULL; /* domeig estimator object */
@@ -136,19 +126,54 @@ int main(int argc, char* argv[])
   flag = SUNContext_Create(SUN_COMM_NULL, &ctx);
   if (check_flag(&flag, "SUNContext_Create", 1)) { return 1; }
 
-  /* Initial diagnostics output */
-  printf("\nAnalytical ODE test problem with a variable Jacobian:");
-  printf("\nThe stiffness of the problem is directly proportional to");
-  printf("\n\"lambda - alpha*cos((10 - t)/10*pi)\"\n\n");
-  printf("    lambda = %" GSYM "\n", lambda);
-  printf("     alpha = %" GSYM "\n", alpha);
-  printf("    reltol = %.1" ESYM "\n", reltol);
-  printf("    abstol = %.1" ESYM "\n\n", abstol);
+  /* set up the test problem according to the desired test */
+  if (test == 1)
+  {
+    u0 = SUN_RCONST(3.9);
+    v0 = SUN_RCONST(1.1);
+    w0 = SUN_RCONST(2.8);
+    a  = SUN_RCONST(1.2);
+    b  = SUN_RCONST(2.5);
+    ep = SUN_RCONST(1.0e-5);
+  }
+  else if (test == 3)
+  {
+    u0 = SUN_RCONST(3.0);
+    v0 = SUN_RCONST(3.0);
+    w0 = SUN_RCONST(3.5);
+    a  = SUN_RCONST(0.5);
+    b  = SUN_RCONST(3.0);
+    ep = SUN_RCONST(5.0e-4);
+  }
+  else
+  {
+    u0 = SUN_RCONST(1.2);
+    v0 = SUN_RCONST(3.1);
+    w0 = SUN_RCONST(3.0);
+    a  = SUN_RCONST(1.0);
+    b  = SUN_RCONST(3.5);
+    ep = SUN_RCONST(5.0e-6);
+  }
+
+  /* Initial problem output */
+  printf("\nBrusselator ODE test problem:\n");
+  printf("    initial conditions:  u0 = %" GSYM ",  v0 = %" GSYM
+         ",  w0 = %" GSYM "\n",
+         u0, v0, w0);
+  printf("    problem parameters:  a = %" GSYM ",  b = %" GSYM ",  ep = %" GSYM
+         "\n",
+         a, b, ep);
+  printf("    reltol = %.1" ESYM ",  abstol = %.1" ESYM "\n\n", reltol, abstol);
 
   /* Initialize data structures */
-  y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
+  rdata[0] = a; /* set user data  */
+  rdata[1] = b;
+  rdata[2] = ep;
+  y        = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
-  N_VConst(SUN_RCONST(0.0), y); /* Specify initial condition */
+  NV_Ith_S(y, 0) = u0; /* Set initial conditions */
+  NV_Ith_S(y, 1) = v0;
+  NV_Ith_S(y, 2) = w0;
 
   /* Call LSRKStepCreateSTS to initialize the ARK timestepper module and
      specify the right-hand side function in y'=f(t,y), the initial time
@@ -158,12 +183,15 @@ int main(int argc, char* argv[])
 
   /* Set routines */
   flag = ARKodeSetUserData(arkode_mem,
-                           (void*)&UserData); /* Pass lambda to user functions */
+                           (void*)rdata); /* Pass rdata to user functions */
   if (check_flag(&flag, "ARKodeSetUserData", 1)) { return 1; }
 
-  /* Specify tolerances */
-  flag = ARKodeSStolerances(arkode_mem, reltol, abstol);
+  flag = ARKodeSStolerances(arkode_mem, reltol, abstol); /* Specify tolerances */
   if (check_flag(&flag, "ARKodeSStolerances", 1)) { return 1; }
+
+  flag = ARKodeSetInterpolantType(arkode_mem,
+                                  ARK_INTERP_LAGRANGE); /* Specify stiff interpolant */
+  if (check_flag(&flag, "ARKodeSetInterpolantType", 1)) { return 1; }
 
   /* Set the initial random eigenvector for the DEE */
   q = N_VClone(y);
@@ -184,8 +212,8 @@ int main(int argc, char* argv[])
   N_VDestroy(q);
 
   /* Attach the DEE to the LSRKStep module.
-  There is no need to set Atimes or initialize since these are all
-  performed after attaching the DEE by LSRKStep. */
+  There is no need to set Atimes or initialize since LSRKStep provides
+  a default Atimes, and initialized the DEE, after it is attached. */
   flag = LSRKStepSetDomEigEstimator(arkode_mem, DEE);
   if (check_flag(&flag, "LSRKStepSetDomEigEstimator", 1)) { return 1; }
 
@@ -194,7 +222,7 @@ int main(int argc, char* argv[])
   eigenvalue. The warmup is performed only once by the LSRKStep module
   internally unless LSRKStepSetNumDomEigEstPreprocessIters is called to set
   a new number of succeeding warmups that would be executed before
-  every dominant eigenvalue estimate calls */
+  every dominant eigenvalue estimation call */
   flag = LSRKStepSetNumDomEigEstInitPreprocessIters(arkode_mem, numwarmup);
   if (check_flag(&flag, "LSRKStepSetNumDomEigEstInitPreprocessIters", 1))
   {
@@ -202,7 +230,7 @@ int main(int argc, char* argv[])
   }
 
   /* Specify after how many successful steps dom_eig is recomputed */
-  flag = LSRKStepSetDomEigFrequency(arkode_mem, 25);
+  flag = LSRKStepSetDomEigFrequency(arkode_mem, 0);
   if (check_flag(&flag, "LSRKStepSetDomEigFrequency", 1)) { return 1; }
 
   /* Specify max number of stages allowed */
@@ -217,16 +245,8 @@ int main(int argc, char* argv[])
   flag = LSRKStepSetDomEigSafetyFactor(arkode_mem, SUN_RCONST(1.01));
   if (check_flag(&flag, "LSRKStepSetDomEigSafetyFactor", 1)) { return 1; }
 
-  /* Specify the number of preprocessing warmups before each estimate call
-     succeeding the very first estimate call. */
-  flag = LSRKStepSetNumDomEigEstPreprocessIters(arkode_mem, 0);
-  if (check_flag(&flag, "LSRKStepSetNumDomEigEstPreprocessIters", 1))
-  {
-    return 1;
-  }
-
   /* Specify the Runge--Kutta--Chebyshev LSRK method by name */
-  flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKC_2");
+  flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKL_2");
   if (check_flag(&flag, "LSRKStepSetSTSMethodByName", 1)) { return 1; }
 
   /* Override any current settings with command-line options */
@@ -237,58 +257,41 @@ int main(int argc, char* argv[])
   flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
   if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
 
-  /* Set real type dominant eigenvalue */
-  flag = SUNDomEigEstimator_SetIsReal_Power(DEE, SUNTRUE);
-  if (check_flag(&flag, "SUNDomEigEstimator_SetIsReal_Power", 1)) { return 1; }
-
-  /* Open output stream for results, output comment line */
-  UFID = fopen("solution.txt", "w");
-  fprintf(UFID, "# t u\n");
-
-  /* output initial condition to disk */
-  fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", T0, N_VGetArrayPointer(y)[0]);
-
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached */
   t    = T0;
   tout = T0 + dTout;
-  printf("        t           u\n");
-  printf("   ---------------------\n");
-  while (Tf - t > SUN_RCONST(1.0e-15))
+  printf("        t           u           v           w\n");
+  printf("   -------------------------------------------\n");
+  printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "\n", t,
+         NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+
+  for (iout = 0; iout < Nt; iout++)
   {
     flag = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL); /* call integrator */
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
-    printf("  %10.6" FSYM "  %10.6" FSYM "\n", t,
-           N_VGetArrayPointer(y)[0]); /* access/print solution */
-    fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", t, N_VGetArrayPointer(y)[0]);
-    if (flag < 0)
-    { /* unsuccessful solve: break */
-      fprintf(stderr, "Solver failure, stopping integration\n");
-      break;
-    }
-    else
+    printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM
+           "\n", /* access/print solution */
+           t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+    if (flag >= 0)
     { /* successful solve: update time */
       tout += dTout;
       tout = (tout > Tf) ? Tf : tout;
     }
+    else
+    { /* unsuccessful solve: break */
+      fprintf(stderr, "Solver failure, stopping integration\n");
+      break;
+    }
   }
-  printf("   ---------------------\n");
-  fclose(UFID);
+  printf("   -------------------------------------------\n");
 
   /* Print final statistics */
   printf("\nFinal Statistics:\n");
   flag = ARKodePrintAllStats(arkode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
+  if (check_flag(&flag, "ARKodePrintAllStats", 1)) { return 1; }
 
-  /* Print final statistics to a file in CSV format */
-  FID  = fopen("ark_analytic_nonlin_stats.csv", "w");
-  flag = ARKodePrintAllStats(arkode_mem, FID, SUN_OUTPUTFORMAT_CSV);
-  fclose(FID);
-
-  /* check the solution error */
-  flag = check_ans(y, t, reltol, abstol);
-  flag = compute_error(y, t);
-
-  /* Clean up and return */
+  /* Clean up and return with successful completion */
   N_VDestroy(y);                    /* Free y vector */
   ARKodeFree(&arkode_mem);          /* Free integrator memory */
   SUNDomEigEstimator_Destroy(&DEE); /* Free DEE object */
@@ -305,21 +308,19 @@ int main(int argc, char* argv[])
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
-  sunrealtype lambda = rdata[0]; /* set shortcut for stiffness parameter 1 */
-  sunrealtype alpha  = rdata[1]; /* set shortcut for stiffness parameter 2 */
-  sunrealtype u = N_VGetArrayPointer(y)[0]; /* access current solution value */
+  sunrealtype a  = rdata[0];                    /* access data entries */
+  sunrealtype b  = rdata[1];
+  sunrealtype ep = rdata[2];
+  sunrealtype u  = NV_Ith_S(y, 0); /* access solution values */
+  sunrealtype v  = NV_Ith_S(y, 1);
+  sunrealtype w  = NV_Ith_S(y, 2);
 
-  /* fill in the RHS function: "N_VGetArrayPointer" accesses the 0th entry of ydot */
-  N_VGetArrayPointer(ydot)[0] =
-    (lambda - alpha * COS((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
-                          ACOS(SUN_RCONST(-1.0)))) *
-      u +
-    SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
-    (lambda - alpha * COS((SUN_RCONST(10.0) - t) / SUN_RCONST(10.0) *
-                          ACOS(SUN_RCONST(-1.0)))) *
-      ATAN(t);
+  /* fill in the RHS function */
+  NV_Ith_S(ydot, 0) = a - (w + 1.0) * u + v * u * u;
+  NV_Ith_S(ydot, 1) = w * u - v * u * u;
+  NV_Ith_S(ydot, 2) = (b - w) / ep - w * u;
 
-  return 0; /* return with success */
+  return 0; /* Return with success */
 }
 
 /*-------------------------------
@@ -366,41 +367,6 @@ static int check_flag(void* flagvalue, const char* funcname, int opt)
     return 1;
   }
 
-  return 0;
-}
-
-/* check the computed solution */
-static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, sunrealtype atol)
-{
-  int passfail = 0;          /* answer pass (0) or fail (1) flag     */
-  sunrealtype ans, err, ewt; /* answer data, error, and error weight */
-
-  /* compute solution error */
-  ans = ATAN(t);
-  ewt = SUN_RCONST(1.0) / (rtol * SUNRabs(ans) + atol);
-  err = ewt * SUNRabs(N_VGetArrayPointer(y)[0] - ans);
-
-  /* is the solution within the tolerances? */
-  passfail = (err < SUN_RCONST(1.0)) ? 0 : 1;
-
-  if (passfail)
-  {
-    fprintf(stdout, "\nSUNDIALS_WARNING: check_ans error=%" GSYM "\n\n", err);
-  }
-
-  return (passfail);
-}
-
-/* check the error */
-static int compute_error(N_Vector y, sunrealtype t)
-{
-  sunrealtype ans, err; /* answer data, error */
-
-  /* compute solution error */
-  ans = ATAN(t);
-  err = SUNRabs(N_VGetArrayPointer(y)[0] - ans);
-
-  fprintf(stdout, "\nACCURACY at the final time   = %" GSYM "\n", err);
   return 0;
 }
 
