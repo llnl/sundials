@@ -64,7 +64,7 @@
 
 int sundomeigest_Compare(const void* a, const void* b);
 
-SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv);
+SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv);
 
 /*
  * -----------------------------------------------------------------
@@ -201,7 +201,7 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
   Arnoldi_CONTENT(DEE)->rhsfn    = RHSfn;
   Arnoldi_CONTENT(DEE)->rhs_data = rhs_data;
 
-  DEE->ops->setatimes(DEE, (void*)DEE, dee_DQJtimes);
+  DEE->ops->setatimes(DEE, (void*)DEE, dee_DQJtimes_Arnoldi);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
@@ -685,14 +685,14 @@ int sundomeigest_Compare(const void* a, const void* b)
 }
 
 /*---------------------------------------------------------------
-  dee_DQJtimes:
+  dee_DQJtimes_Arnoldi:
 
   This routine generates a difference quotient approximation to
   the Jacobian-vector product f_y(t,y) * v. The approximation is
   Jv = [f(y + v*sig) - f(y)]/sig, where sig = 1 / ||v||_WRMS,
   i.e. the WRMS norm of v*sig is 1.
   ---------------------------------------------------------------*/
-SUNErrCode dee_DQJtimes(void* voidstarDEE, N_Vector v, N_Vector Jv)
+SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
 {
   SUNDomEigEstimator DEE = (SUNDomEigEstimator)voidstarDEE;
   SUNFunctionBegin(DEE->sunctx);

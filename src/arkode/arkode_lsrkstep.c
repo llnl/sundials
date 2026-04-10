@@ -595,10 +595,17 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     if (retval != ARK_SUCCESS) { return retval; }
   }
 
-  /* Compute number of stages based on current step size and
-     dominant eigenvalue using Eq. (2.7) in Verwer et al. (2004) */
-  sunrealtype zR = SUNRabs(ark_mem->h) * step_mem->lambdaR;
-  sunrealtype ss = SUNRceil(SUNRsqrt(ONE - coefz * zR));
+  /* Compute the number of stages based on the current step size and dominant  
+     eigenvalue using Eq. 2.7 in Verwer et al. (2004) 
+     https://doi.org/10.1016/j.jcp.2004.05.002  
+      
+     Note beta(s) in Eq. 2.7 is positive (i.e., beta = -zR = h * lambdaR assuming  
+     that h * lambdaR < 0) and we have incorporated the minus sign on zR below. We  
+     rely on SUNRsqrt(x) returning 0 for x <= 0, to ensure we use the minimum number  
+     of stages (ss = 2) for zR > 0. */
+  sunrealtype zR = ark_mem->h * step_mem->lambdaR;
+  sunrealtype zI = ark_mem->h * step_mem->lambdaI;
+  sunrealtype ss = zR > ZERO ? SUN_RCONST(2.0) : SUNRceil(SUNRsqrt(ONE - coefz * zR));
   ss             = SUNMAX(ss, SUN_RCONST(2.0));
 
   /* Check if number of stages exceeds maximum allowed.
@@ -635,59 +642,69 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   int req_stages = (int)ss;
 
-  /* To check stability, we evaluate the analytic stability function or an
-     inscribed ellipse approximation. If the stability norm is greater than
-     one, first check whether the method is stable at stage_max_limit. If so,
-     increase the number of stages until stability is obtained. Otherwise,
-     keep the existing fixed-step error and adaptive-step eta update logic. */
-  retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
-                                           &stability_norm);
-  if (retval != ARK_SUCCESS) { return retval; }
-
-  if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
+  if (zR < ZERO)
   {
-    sunrealtype initial_stability_norm = stability_norm;
-    sunbooleantype max_stage_is_stable = SUNFALSE;
-
-    if (req_stages < step_mem->stage_max_limit)
-    {
-      retval = lsrkStep_RKC_CheckStabilityNorm(step_mem,
-                                               step_mem->stage_max_limit,
-                                               ark_mem->h, &stability_norm);
-      if (retval != ARK_SUCCESS) { return retval; }
-
-      max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
-      stability_norm      = initial_stability_norm;
-    }
-
-    if (max_stage_is_stable)
-    {
-      while ((stability_norm > ONE - SUN_UNIT_ROUNDOFF) &&
-             (req_stages < step_mem->stage_max_limit))
-      {
-        req_stages += 1;
-        retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages,
-                                                 ark_mem->h, &stability_norm);
-        if (retval != ARK_SUCCESS) { return retval; }
-      }
-    }
+    /* We first check whether the combination of ss, step size, and dominant 
+      eigenvalue, is stable.  If not, we then check whether it would be stable 
+      when using ss = stage_max_limit -- if so, we increase ss until stability is 
+      obtained. Otherwise, we reject the step, resulting either in method failure 
+      when using fixed step sizes, or time step reduction when using adaptive 
+      steps. */
+    retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
+                                            &stability_norm);
+    if (retval != ARK_SUCCESS) { return retval; }
 
     if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
     {
-      if (!ark_mem->fixedstep)
+      sunrealtype initial_stability_norm = stability_norm;
+      sunbooleantype max_stage_is_stable = SUNFALSE;
+
+      if (req_stages < step_mem->stage_max_limit)
       {
-        ark_mem->eta = ark_mem->hadapt_mem->safety / initial_stability_norm;
-        *nflagPtr    = ARK_RETRY_STEP;
-        ark_mem->hadapt_mem->nst_exp++;
-        return ARK_RETRY_STEP;
+        retval = lsrkStep_RKC_CheckStabilityNorm(step_mem,
+                                                step_mem->stage_max_limit,
+                                                ark_mem->h, &stability_norm);
+        if (retval != ARK_SUCCESS) { return retval; }
+
+        max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
+        stability_norm      = initial_stability_norm;
       }
-      else
+
+      if (max_stage_is_stable)
       {
-        arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                        __FILE__,
-                        "Unable to achieve stable results: Either reduce the "
-                        "step size or increase the stage_max_limit");
-        return ARK_MAX_STAGE_LIMIT_FAIL;
+        while ((stability_norm > ONE - SUN_UNIT_ROUNDOFF) &&
+              (req_stages < step_mem->stage_max_limit))
+        {
+          req_stages += 1;
+          retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages,
+                                                  ark_mem->h, &stability_norm);
+          if (retval != ARK_SUCCESS) { return retval; }
+        }
+      }
+
+      if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
+      {
+        if (!ark_mem->fixedstep)
+        {
+          /* For adaptive simulations, we adjust the step size by the ellipse approximation */
+          const sunrealtype a = (TWO / THREE) * (SUNSQR(ss) - ONE) * (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping) / TWO;
+          const sunrealtype b = a / (ss == 2 ? SUN_RCONST(0.6) : SUN_RCONST(1.825) * ss);
+
+          //TODO: Get opinions for negative eta if we remove the positivity restriction above for zR.
+          //Should we enforce a minimum eta value here?
+          ark_mem->eta = ark_mem->hadapt_mem->safety * (-TWO * a * b * b * zR) / (SUNSQR(b * zR) + SUNSQR(a * zI));
+          *nflagPtr    = ARK_RETRY_STEP;
+          ark_mem->hadapt_mem->nst_exp++;
+          return ARK_RETRY_STEP;
+        }
+        else
+        {
+          arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                          __FILE__,
+                          "Unable to achieve stable results: Either reduce the "
+                          "step size or increase the stage_max_limit");
+          return ARK_MAX_STAGE_LIMIT_FAIL;
+        }
       }
     }
   }
@@ -1015,8 +1032,10 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   /* Compute number of stages based on current step size and
      dominant eigenvalue using Eq. 21 in Meyer et al. (2014) */
-  sunrealtype zRabs = SUNRabs(ark_mem->h * step_mem->lambdaR);
-  sunrealtype ss =
+  sunrealtype zR    = ark_mem->h * step_mem->lambdaR;
+  sunrealtype zI    = ark_mem->h * step_mem->lambdaI;
+  sunrealtype zRabs = SUNRabs(zR);
+  sunrealtype ss = zR > ZERO ? SUN_RCONST(2.0) :
     SUNRceil((SUNRsqrt(SUN_RCONST(9.0) + SUN_RCONST(8.0) * zRabs) - ONE) / TWO);
 
   ss = SUNMAX(ss, SUN_RCONST(2.0));
@@ -1056,59 +1075,91 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   int req_stages = (int)ss;
 
-  /* To check stability, we evaluate the analytic stability function or an
-     inscribed ellipse approximation. If the stability norm is greater than
-     one, first check whether the method is stable at stage_max_limit. If so,
-     increase the number of stages until stability is obtained. Otherwise,
-     keep the existing fixed-step error and adaptive-step eta update logic. */
-  retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
-                                           &stability_norm);
-  if (retval != ARK_SUCCESS) { return retval; }
-
-  if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
+  if (zR < ZERO)
   {
-    sunrealtype initial_stability_norm = stability_norm;
-    sunbooleantype max_stage_is_stable = SUNFALSE;
-
-    if (req_stages < step_mem->stage_max_limit)
-    {
-      retval = lsrkStep_RKL_CheckStabilityNorm(step_mem,
-                                               step_mem->stage_max_limit,
-                                               ark_mem->h, &stability_norm);
-      if (retval != ARK_SUCCESS) { return retval; }
-
-      max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
-      stability_norm      = initial_stability_norm;
-    }
-
-    if (max_stage_is_stable)
-    {
-      while ((stability_norm > ONE - SUN_UNIT_ROUNDOFF) &&
-             (req_stages < step_mem->stage_max_limit))
-      {
-        req_stages += 1;
-        retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages,
-                                                 ark_mem->h, &stability_norm);
-        if (retval != ARK_SUCCESS) { return retval; }
-      }
-    }
+    /* To check stability, we evaluate the analytic stability function or an
+      inscribed ellipse approximation. If the stability norm is greater than
+      one, first check whether the method is stable at stage_max_limit. If so,
+      increase the number of stages until stability is obtained. Otherwise,
+      keep the existing fixed-step error and adaptive-step eta update logic. */
+    retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
+                                            &stability_norm);
+    if (retval != ARK_SUCCESS) { return retval; }
 
     if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
     {
-      if (!ark_mem->fixedstep)
+      sunrealtype initial_stability_norm = stability_norm;
+      sunbooleantype max_stage_is_stable = SUNFALSE;
+
+      if (req_stages < step_mem->stage_max_limit)
       {
-        ark_mem->eta = ark_mem->hadapt_mem->safety / initial_stability_norm;
-        *nflagPtr    = ARK_RETRY_STEP;
-        ark_mem->hadapt_mem->nst_exp++;
-        return ARK_RETRY_STEP;
+        retval = lsrkStep_RKL_CheckStabilityNorm(step_mem,
+                                                step_mem->stage_max_limit,
+                                                ark_mem->h, &stability_norm);
+        if (retval != ARK_SUCCESS) { return retval; }
+
+        max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
+        stability_norm      = initial_stability_norm;
       }
-      else
+
+      if (max_stage_is_stable)
       {
-        arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                        __FILE__,
-                        "Unable to achieve stable results: Either reduce the "
-                        "step size or increase the stage_max_limit");
-        return ARK_MAX_STAGE_LIMIT_FAIL;
+        while ((stability_norm > ONE - SUN_UNIT_ROUNDOFF) &&
+              (req_stages < step_mem->stage_max_limit))
+        {
+          req_stages += 1;
+          retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages,
+                                                  ark_mem->h, &stability_norm);
+          if (retval != ARK_SUCCESS) { return retval; }
+        }
+      }
+
+      if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
+      {
+        if (!ark_mem->fixedstep)
+        {
+          const sunrealtype aspect_ratio[7] = {
+            SUN_RCONST(0.3) * ss,   /* s = 2 */
+            SUN_RCONST(0.75) * ss,  /* s = 3 */
+            SUN_RCONST(0.665) * ss, /* s = 4 */
+            SUN_RCONST(0.665) * ss, /* s = 5 */
+            SUN_RCONST(0.635) * ss, /* s = 6 to 20 */
+            SUN_RCONST(0.6) * ss,   /* s >= 20 and odd */
+            SUN_RCONST(0.53) * ss   /* s >= 20 and even */
+          };
+          const sunrealtype a =
+            (((TWO * ss + ONE) * (TWO * ss + ONE)) - SUN_RCONST(9.0)) /
+            SUN_RCONST(16.0);
+          sunrealtype b;
+
+          if (ss < 7)
+          {
+            b = a / aspect_ratio[(int)ss - 2];
+          }
+          else if (ss <= 20)
+          {
+            b = a / aspect_ratio[4];
+          }
+          else
+          {
+            b = a / aspect_ratio[6 - (int)ss % 2];
+          }
+
+          ark_mem->eta = ark_mem->hadapt_mem->safety *
+                        (-TWO * a * b * b * zR) /
+                        (SUNSQR(b * zR) + SUNSQR(a * zI));
+          *nflagPtr    = ARK_RETRY_STEP;
+          ark_mem->hadapt_mem->nst_exp++;
+          return ARK_RETRY_STEP;
+        }
+        else
+        {
+          arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                          __FILE__,
+                          "Unable to achieve stable results: Either reduce the "
+                          "step size or increase the stage_max_limit");
+          return ARK_MAX_STAGE_LIMIT_FAIL;
+        }
       }
     }
   }
@@ -2945,32 +2996,26 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
                                     sunrealtype h, sunrealtype* stability_norm)
 {
   sunrealtype ss = (sunrealtype)num_stages;
-  sunrealtype w0, w1, wr, wi, th, sh, ch, b_s, a_s, Ts, Ts_p, Ts_pp, a, b, xc, yc;
-  sunrealtype re_stab_min, im_stab_min;
+  sunrealtype w0, w1, wr, wi, th, sh, ch, b_s, a_s, Ts, Ts_p, Ts_pp;
   sunrealtype zR = SUNRabs(h) * step_mem->lambdaR;
   sunrealtype zI = SUNRabs(h) * step_mem->lambdaI;
 
   if (step_mem->use_ellipse)
   {
-    /* The stability region of the damped RKC method is approximated by an ellipse with 
-    vertices at (0,0), (re_stab_min,0), and (re_stab_min/2,+/-im_stab_min). These vertices 
-    depend on the damping parameter. Also, im_stab_min is estimated heuristically from 
-    the ellipse aspect ratio, taken as approximately 3.65s, where s is the number of stages 
-    (for s=2, the ratio is approximated as 0.6s). This heuristic reflects the observed 
-    near-linear growth of the imaginary extent with the number of stages. The numerical 
-    factors (3.65 and 0.6) were obtained empirically from stability-region plots using 
-    the default damping parameter and may change if the damping is modified. */
-    re_stab_min = TWO / THREE * (ONE - SUNSQR(ss)) *
-                  (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping);
-    im_stab_min = -re_stab_min /
-                  (ss == 2 ? SUN_RCONST(0.6) * ss : SUN_RCONST(3.65) * ss);
+  /* The stability region of the damped RKC method is approximated by an ellipse
+    centered at (-a,0), with horizontal semiaxis a and vertical semiaxis b, so
+    that its vertices are located at (0,0), (-2a,0), and (-a,+/-b). These
+    quantities depend on the damping parameter. Also, b is estimated
+    heuristically from the ellipse aspect ratio, taken as approximately 1.825s,
+    where s is the number of stages (for s=2, the ratio is approximated as 0.6).
+    This heuristic reflects the observed near-linear growth of the imaginary
+    extent with the number of stages. The numerical factors (1.825 and 0.6)
+    were obtained empirically from stability-region plots using the default
+    damping parameter and may change if the damping is modified. */
+    const sunrealtype a = (TWO / THREE) * (SUNSQR(ss) - ONE) * (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping) / TWO;  
+    const sunrealtype b = a / (ss == 2 ? SUN_RCONST(0.6) : SUN_RCONST(1.825) * ss);
 
-    xc = re_stab_min / TWO;
-    yc = ZERO;
-    a  = SUNRabs(re_stab_min) / TWO;
-    b  = SUNRabs(im_stab_min);
-
-    *stability_norm = SUNRsqrt(SUNSQR((zR - xc) / a) + SUNSQR((zI - yc) / b));
+    *stability_norm = SUNRsqrt(SUNSQR((zR + a) / a) + SUNSQR((zI) / b));
   }
   else
   {
@@ -3016,54 +3061,54 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
                                     sunrealtype h, sunrealtype* stability_norm)
 {
   sunrealtype ss = (sunrealtype)num_stages;
-  sunrealtype w1, wr, wi, a_s, b_s, a, b, xc, yc;
-  sunrealtype re_stab_min, im_stab_min;
+  sunrealtype w1, wr, wi, a_s, b_s;
   sunrealtype zR = SUNRabs(h) * step_mem->lambdaR;
   sunrealtype zI = SUNRabs(h) * step_mem->lambdaI;
 
   if (step_mem->use_ellipse)
   {
-    /*  The inscibed ellipse parameters are estimated heuristically based on s values as follows:
-        s = 2 -> 0.6
-        s = 3 -> 1.5
-        s = 4 -> 1.33
-        s = 5 -> 1.33
-        s = 6 to 20 -> 1.27
-        s >= 20 and odd -> 1.2
-        s >= 20 and even -> 1.06 */
-    const sunrealtype imag_extend_factor[7] = {
-      SUN_RCONST(0.6),  /* s = 2 */
-      SUN_RCONST(1.5),  /* s = 3 */
-      SUN_RCONST(1.33), /* s = 4 */
-      SUN_RCONST(1.33), /* s = 5 */
-      SUN_RCONST(1.27), /* s = 6 to 20 */
-      SUN_RCONST(1.2),  /* s >= 20 and odd */
-      SUN_RCONST(1.06)  /* s >= 20 and even */
+    /* The stability region of the RKL method is approximated by an ellipse
+       centered at (-a,0), with horizontal semiaxis a and vertical semiaxis b,
+       so that its vertices are located at (0,0), (-2a,0), and (-a,+/-b).
+       The half-height b is estimated heuristically from the ellipse aspect
+       ratio a/b based on the number of stages as follows:
+         s = 2 -> 0.3 s
+         s = 3 -> 0.75 s
+         s = 4 -> 0.665 s
+         s = 5 -> 0.665 s
+         s = 6 to 20 -> 0.635 s
+         s >= 20 and odd -> 0.6 s
+         s >= 20 and even -> 0.53 s */
+    const sunrealtype aspect_ratio[7] = {
+      SUN_RCONST(0.3) * ss,   /* s = 2 */
+      SUN_RCONST(0.75) * ss,  /* s = 3 */
+      SUN_RCONST(0.665) * ss, /* s = 4 */
+      SUN_RCONST(0.665) * ss, /* s = 5 */
+      SUN_RCONST(0.635) * ss, /* s = 6 to 20 */
+      SUN_RCONST(0.6) * ss,   /* s >= 20 and odd */
+      SUN_RCONST(0.53) * ss   /* s >= 20 and even */
     };
-    re_stab_min = -((TWO * ss + ONE) * (TWO * ss + ONE) - SUN_RCONST(9.0)) /
-                  SUN_RCONST(8.0);
+    const sunrealtype a = (((TWO * ss + ONE) * (TWO * ss + ONE)) - SUN_RCONST(9.0)) /
+                          SUN_RCONST(16.0);
+    sunrealtype b;
+
     if (ss < 7)
     {
-      im_stab_min = -re_stab_min / (imag_extend_factor[(int)ss - 2] * ss);
+      b = a / (aspect_ratio[(int)ss - 2]);
     }
     else
     {
       if (ss <= 20)
       {
-        im_stab_min = -re_stab_min / (imag_extend_factor[4] * ss);
+        b = a / (aspect_ratio[4]);
       }
       else
       {
-        im_stab_min = -re_stab_min / (imag_extend_factor[6 - (int)ss % 2] * ss);
+        b = a / (aspect_ratio[6 - (int)ss % 2]);
       }
     }
 
-    xc = re_stab_min / TWO;
-    yc = ZERO;
-    a  = SUNRabs(re_stab_min) / TWO;
-    b  = SUNRabs(im_stab_min);
-
-    *stability_norm = SUNRsqrt(SUNSQR((zR - xc) / a) + SUNSQR((zI - yc) / b));
+    *stability_norm = SUNRsqrt(SUNSQR((zR + a) / a) + SUNSQR(zI / b));
   }
   else
   {

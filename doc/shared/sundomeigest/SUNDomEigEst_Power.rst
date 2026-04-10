@@ -116,18 +116,17 @@ routines:
    :numref:`SUNDomEigEst.Introduction` can be omitted.
 
    :param DEE: the dominant eigenvalue estimator object.
-   :param real: the value to set the ``real`` flag to.
+   :param real: flag indicating that the dominant eigenvalue is real-valued.
 
-   :returns: If successful, ``SUN_SUCCESS`` otherwise an appropriate error code.
+   :returns: ``SUN_SUCCESS`` if successful, otherwise an appropriate error code. 
 
    .. note::
 
-      If ``real`` is ``SUNTRUE``, then the convergence criterion is based on the relative change 
-      in the magnitude of successive eigenvalue estimates.  If ``real`` is ``SUNFALSE``, then a 
-      postprocessing step is performed to compute the complex-valued dominant eigenvalue estimate, 
-      and the convergence criterion is based on the relative change in the magnitude of successive 
-      eigenvalue estimates. :c:func:`SUNDomEigEstimator_SetRelTol` can be used to set 
-      the relative tolerance for this convergence criterion.
+      No matter the value of ``real``, the convergence criterion is based on the relative change in the 
+      magnitude of successive eigenvalue estimates (with tolerance set using 
+      :c:func:`SUNDomEigEstimator_SetRelTol`).  If ``real`` is ``SUNTRUE``, then the final Power 
+      Iteration estimate is returned.  Otherwise, a postprocessing step is performed to compute 
+      the complex-valued dominant eigenvalue estimate. 
 
       The default value is ``SUNFALSE``.
 
@@ -186,7 +185,7 @@ information:
 
 * ``rhs_linY`` - state vector for linearization point,
 
-* ``rhs_linT`` - time value for linearization point (default is 0.0),
+* ``rhs_linT`` - time value for linearization point,
 
 * ``rel_tol`` - relative tolerance for the convergence criteria (default is 0.005),
 

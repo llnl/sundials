@@ -52,7 +52,7 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   int kry_dim;                  /* Krylov subspace dimension */
   int num_warmups;              /* Number of preprocessing iterations */
   long int num_iters;           /* Number of iterations in last Estimate call */
-  sunbooleantype warmup_to_tol; /* Type of warmup iterations */
+  sunbooleantype warmup_to_tol; /* Whether to use warmup iterations */
   sunrealtype tol_preprocess;   /* Tolerance for preprocessing iterations */
   sunrealtype rhs_linT;         /* Time value for linearization point */
 

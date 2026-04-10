@@ -155,14 +155,14 @@ information:
 * ``num_iters`` - number of iterations (preprocessing and estimation) in the
   last :c:func:`SUNDomEigEstimator_Estimate` call,
 
-* ``warmup_to_tol`` - type of warmup iterations (default is ``SUNFALSE``)
+* ``warmup_to_tol`` - enable warmup iterations (default is ``SUNFALSE``)
 
 * ``tol_preprocess`` - tolerance for preprocessing iterations (default is 0.005; 
   only used if ``warmup_to_tol`` is ``SUNTRUE``),
 
 * ``rhs_linY`` - state vector for linearization point,
 
-* ``rhs_linT`` - time value for linearization point (default is 0.0),
+* ``rhs_linT`` - time value for linearization point,
 
 * ``rhsfn`` - user provided RHS function,
 

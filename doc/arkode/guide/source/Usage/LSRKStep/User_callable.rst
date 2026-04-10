@@ -329,24 +329,24 @@ Allowable Method Families
 
    .. note::
 
+      This input is only used for RKC and RKL methods.
+      
       If :c:func:`LSRKStepSetUseAnalyticStabRegion` is not called, then the default
       ``analytic_stab_region`` is set to ``SUNFALSE``.  This routine will be called by
       :c:func:`ARKodeSetOptions` when using the key "arkid.use_analytic_stab_region".
 
-      :c:func:`LSRKStepSetUseAnalyticStabRegion` sets whether to use the ellipse or the exact stability region for 
-      stability checks. The stability region check for RKC and RKL methods is performed with the dominant
-      eigenvalue and the current step size to ensure stability. While this is sufficient for a stability
-      region of disk, the stability region of RKC and RKL methods is not a disk but rather a more complicated 
-      region that can be approximated by an inscribed ellipse. By default, the ellipse is used for stability 
-      checks, which is a conservative approximation of the stability region that possibly reduces the step 
-      sizes to ensure stability. Setting use_analytic_stab_region to SUNTRUE allows the use of the exact 
-      stability region, which can potentially allow for larger step sizes but possibly cause stability failures 
-      for the second dominant eigenvalue since it might be outside of the stability region even if the dominant 
-      eigenvalue is inside the stability region. Using ellipse for stability checks can be beneficial when two 
-      dominant eigenvalues are close to the stability boundary. Nevertheless, unless the full spectrum is used 
-      for stability checks, there is always a risk of stability failures one way or another. Thus, users 
-      have the option to choose their preference for a more conservative or more aggressive 
-      approach to stability. This input is only used for RKC and RKL methods.
+      :c:func:`LSRKStepSetUseAnalyticStabRegion` sets whether to use the exact stability region or an 
+      ellipse that is fully inscribed in the stability region for determining stability in RKC and RKL 
+      methods.  Whichever region is selected, LSRKStep will ensure that the complex number 
+      :math:`z=h\lambda`, where :math:`h` is the current time step size and :math:`\lambda` is the 
+      estimated dominant eigenvalue, is in this region.  Since the ellipse is smaller than the analytical
+      stability region it provides a more conservative estimate, which may be appropriate for problems 
+      wherein sub-dominant eigenvalues may also limit stability of the method.  Thus, the ellipse may 
+      result in a smaller time step size, more internal stages, or both, when compared to using the 
+      analytical stability region. We note that in either case, since LSRKStep does not examine the 
+      full eigenvalue spectrum, there is always some risk of instability.  For applications where 
+      this is a concern, we recommend calling :c:func:`LSRKStepSetDomEigSafetyFactor` with a `dom_eig_safety` 
+      value significantly larger than 1.
 
       If :c:func:`LSRKStepSetUseAnalyticStabRegion` is called during integration, the change will take effect 
       at the next step attempt. Both analytic and ellipse stability regions of RKC and RKL methods with 10 stages

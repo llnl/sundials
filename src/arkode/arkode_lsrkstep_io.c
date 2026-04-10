@@ -920,6 +920,8 @@ int lsrkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp)
             step_mem->spectral_radius);
     fprintf(fp, "  Safety factor for the dom eig = " SUN_FORMAT_G "\n",
             step_mem->dom_eig_safety);
+    fprintf(fp, "  Use elliptical stability region = %i\n",
+            step_mem->use_ellipse;
     fprintf(fp, "  Damping factor for RKC = " SUN_FORMAT_G "\n",
             step_mem->rkc_damping);
     fprintf(fp, "  Max num of successful steps before new dom eig update = %li\n",
