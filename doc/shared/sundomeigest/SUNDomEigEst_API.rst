@@ -300,9 +300,10 @@ instead of supplying a dummy routine.
 
    .. note::
 
-      The relative tolerance is used as a stopping criterion for the Power Iteration method. Specifically,
-      it defines the acceptable relative change between successive dominant eigenvalue estimates. It also
-      serves as a threshold for determining whether the dominant eigenvalue is real or complex.
+      The relative tolerance is used as a stopping criterion for either the Power Iteration method, or for the 
+      preprocessing phase of the Arnoldi iteration. Specifically, it defines the acceptable relative change 
+      between successive dominant eigenvalue estimates. It also serves as a threshold for determining 
+      whether the dominant eigenvalue estimated by the Power Iteration is real- or complex-valued.
 
       When used to check convergence, we declare the iteration converged when the change in magnitude between successive estimates satisfies
 
