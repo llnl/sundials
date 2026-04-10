@@ -21,16 +21,8 @@ permissions:
 jobs:
   sundials4py-deploy-build-and-test:
     name: Build and test
-    runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
-    steps:
-    - name: Clone repository
-      uses: actions/checkout@v6
-      with:
-        submodules: true
-
-    - name: Build and test
-      uses: ./.github/workflows/sundials4py-build-and-test.yml
+    uses: ./.github/workflows/sundials4py-build-and-test.yml
 
   sundials4py-deploy-to-gh-release:
     name: Attach sundials4py wheels to GitHub release
@@ -55,21 +47,24 @@ jobs:
 
   sundials4py-deploy-to-pypi:
     name: Publish sundials4py to pypi if release
-    permissions:
-      id-token: write
     needs: [sundials4py-deploy-build-and-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
 
     steps:
+    - uses: actions/checkout@v6
+      with:
+        submodules: true
     - uses: actions/setup-python@v6
+    - name: Install twine
+      run: python -m pip install --upgrade twine
     - uses: actions/download-artifact@v8
       with:
         path: dist
         pattern: dist-*
         merge-multiple: true
 
-    - uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        user: __token__
-        password: ${{ secrets.pypi_password }}
+    - name: Publish sundials4py artifacts
+      env:
+        PYPI_TOKEN: ${{ secrets.pypi_password }}
+      run: ./scripts/publish_sundials4py_wheels.sh --dist-dir dist --include-sdist
