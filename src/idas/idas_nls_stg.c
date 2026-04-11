@@ -182,6 +182,34 @@ int IDASetNonlinearSolverSensStg(void* ida_mem, SUNNonlinearSolver NLS)
     NV_VEC_SW(IDA_mem->ewtStg, is)      = IDA_mem->ida_ewtS[is];
   }
 
+  /* Wire LSolveFn/LSetupFn immediately if the linear solver is already set.
+   * Without this, replacing NLSstg after IDACalcIC (which sets
+   * ida_SetupDone=TRUE) leaves LSolveFn=NULL on the new NLS because
+   * idaNlsInitSensStg only runs from IDAInitialSetup, which is skipped
+   * when ida_SetupDone is already TRUE. Any subsequent Newton solve on
+   * NLSstg then crashes with a NULL function pointer dereference. */
+  if (IDA_mem->ida_lsolve)
+  {
+    retval = SUNNonlinSolSetLSolveFn(IDA_mem->NLSstg, idaNlsLSolveSensStg);
+    if (retval != IDA_SUCCESS)
+    {
+      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "Setting linear solver solve function failed");
+      return (IDA_ILL_INPUT);
+    }
+  }
+
+  if (IDA_mem->ida_lsetup)
+  {
+    retval = SUNNonlinSolSetLSetupFn(IDA_mem->NLSstg, idaNlsLSetupSensStg);
+    if (retval != IDA_SUCCESS)
+    {
+      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "Setting linear solver setup function failed");
+      return (IDA_ILL_INPUT);
+    }
+  }
+
   return (IDA_SUCCESS);
 }
 
