@@ -10,3 +10,6 @@
 [submodule "bindings/sundials4py/sundials4py-generate"]
 	path = bindings/sundials4py/sundials4py-generate
 	url = https://github.com/sundials-codes/sundials4py-generate.git
+[submodule "test/answers"]
+	path = test/answers
+	url = https://github.com/sundials-codes/answers.git
