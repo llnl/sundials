@@ -1,0 +1,28 @@
+Start ForcingStep StageInfo test
+                      t                      y                  y err
+---------------------------------------------------------------------
+  0.000000000000000e+00  1.000000000000000e+00  0.000000000000000e+00
+    [Pre-step at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), step = 0, attempt = 1, ||y||_2 = 1.0000000000e+00]
+    [Post-step at t = 1.00e-03 (tn = 0.00e+00 , tcur = 1.00e-03), step = 0, ||y||_2 = 9.9900100033e-01]
+       1.0000000000e-03       9.9900100033e-01       9.9999966707e-07
+    [Pre-step at t = 1.00e-03 (tn = 1.00e-03 , tcur = 1.00e-03), step = 1, attempt = 1, ||y||_2 = 9.9900100033e-01]
+    [Post-step at t = 2.00e-03 (tn = 1.00e-03 , tcur = 2.00e-03), step = 1, ||y||_2 = 9.9800200066e-01]
+       2.0000000000e-03       9.9800200066e-01       1.9979980046e-06
+    [Pre-step at t = 2.00e-03 (tn = 2.00e-03 , tcur = 2.00e-03), step = 2, attempt = 1, ||y||_2 = 9.9800200066e-01]
+    [Post-step at t = 3.00e-03 (tn = 2.00e-03 , tcur = 3.00e-03), step = 2, ||y||_2 = 9.9700300299e-01]
+       3.0000000000e-03       9.9700300299e-01       2.9939930263e-06
+---------------------------------------------------------------------
+Current time                  = 0.003
+Steps                         = 3
+Step attempts                 = 3
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.001
+Last step size                = 0.001
+Current step size             = 0.001
+Partition 1 evolves           = 3
+Partition 2 evolves           = 3
+End ForcingStep StageInfo test
