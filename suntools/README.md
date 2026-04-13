@@ -7,10 +7,10 @@ This directory contains the `suntools` Python package which provides utilities f
 
 ## Install
 
-From the SUNDIALS repo root:
+From this directory:
 
 ```bash
-python -m pip install -e tools
+python -m pip install -e .
 ```
 
 Then import as:

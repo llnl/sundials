@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-name = "sundials-suntools"
-version = "7.6.0"
-description = "Utilities for parsing SUNDIALS SUNLogger output (suntools)."
+name = "suntools"
+version = "7.7.0"
+description = "Utilities designed to assist users of the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "BSD-3-Clause" }
@@ -26,5 +26,13 @@ Source = "https://github.com/LLNL/sundials"
 [project.scripts]
 suntools = "suntools.cli:main"
 
-[tool.setuptools]
-packages = ["suntools"]
+[tool.hatch.build.targets.wheel]
+packages = ["src/suntools"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src/suntools",
+  "/examples",
+  "/README.md",
+  "/pyproject.toml",
+]
