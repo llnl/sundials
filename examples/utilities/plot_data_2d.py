@@ -206,7 +206,6 @@ def main():
         plot_contour_ani(args, info, time, xvals, yvals, zdata)
 
     if args.plottype == "slice":
-
         # slice data
         if (args.yslice > -1) and (args.yslice < info["ny"]):
             svals = xvals
@@ -234,7 +233,6 @@ def main():
             plot_slice_time(args, info, time, svals, sdata, hlabel, suffix)
 
     if args.plottype == "point":
-
         # point data
         pdata = zdata[:, args.point[1], args.point[0], :]
         suffix = " at x = {:.4f}, y = {:.4f}".format(xvals[args.point[0]], yvals[args.point[1]])
@@ -274,10 +272,8 @@ def read_header(args):
 
     # read the first input file and extract info from the header
     with open(args.datafiles[0]) as fn:
-
         # read the file line by line
         for line in fn:
-
             # skip empty lines
             if not line.strip():
                 continue
@@ -347,7 +343,6 @@ def read_header(args):
         print("WARNING: nvar not provided. Using nvar = 1")
 
     if info["nt"] is None or info["nx"] is None or info["ny"] is None:
-
         # check if data exists
         if data.ndim != 2:
             print("ERROR: data file is not 2d")
@@ -446,9 +441,7 @@ def read_subdomains(args, info):
         subdomains[0, 3] = info["ny"] - 1
     else:
         for idx, datafile in enumerate(args.datafiles):
-
             with open(datafile) as fn:
-
                 # initialize found flags
                 found_is = False
                 found_ie = False
@@ -457,7 +450,6 @@ def read_subdomains(args, info):
 
                 # read the file line by line
                 for line in fn:
-
                     # skip empty lines
                     if not line.strip():
                         continue
@@ -514,7 +506,6 @@ def read_data(args, info, subdomains):
 
     # extract data
     for idx, datafile in enumerate(args.datafiles):
-
         if args.debug:
             print(datafile)
 
@@ -528,7 +519,7 @@ def read_data(args, info, subdomains):
             print(
                 "WARNING: subdomain",
                 str(idx),
-                "has an incorrect number of" "output times (",
+                "has an incorrect number ofoutput times (",
                 np.shape(data)[0],
                 "vs",
                 info["nt"],
@@ -647,12 +638,10 @@ def plot_surface(args, info, time, xvals, yvals, zdata):
 
     # generate plots
     for v in info["pltvars"]:
-
         if args.merge:
             mergefiles = list()
 
         for t in info["plttimes"]:
-
             # create figure and axes
             fig = plt.figure()
             ax = fig.add_subplot(111, projection="3d")
@@ -766,7 +755,6 @@ def plot_surface_ani(args, info, time, xvals, yvals, zdata):
 
     # generate plots
     for v in info["pltvars"]:
-
         # create figure and axes
         fig = plt.figure()
         ax = plt.axes(projection="3d")
@@ -856,12 +844,10 @@ def plot_contour(args, info, time, xvals, yvals, zdata):
 
     # generate plots
     for v in info["pltvars"]:
-
         levels = np.linspace(info["zmin"][v], info["zmax"][v], 100)
         ticks = np.linspace(info["zmin"][v], info["zmax"][v], 10)
 
         for t in info["plttimes"]:
-
             # create figure and axes
             fig, ax = plt.subplots()
 
@@ -940,7 +926,6 @@ def plot_contour_ani(args, info, time, xvals, yvals, zdata):
 
     # generate plots
     for v in info["pltvars"]:
-
         levels = np.linspace(info["zmin"][v], info["zmax"][v], 100)
         ticks = np.linspace(info["zmin"][v], info["zmax"][v], 10)
 
@@ -1018,7 +1003,6 @@ def plot_slice_vars(args, info, time, svals, sdata, hlabel, suffix):
 
     # create plot for each variable
     for v in info["pltvars"]:
-
         # create figure and axes
         fig, ax = plt.subplots()
 
@@ -1104,7 +1088,6 @@ def plot_slice_time(args, info, time, svals, sdata, hlabel, suffix):
 
     # create plot for each variable
     for t in info["plttimes"]:
-
         # create figure and axes
         fig, ax = plt.subplots()
 

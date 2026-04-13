@@ -407,7 +407,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         cxx_files = [
             "arkode/CXX_parallel/Makefile",
-            "arkode/CXX_serial/Makefile" "cvode/cuda/Makefile",
+            "arkode/CXX_serial/Makefilecvode/cuda/Makefile",
             "cvode/raja/Makefile",
             "nvector/cuda/Makefile",
             "nvector/raja/Makefile",
