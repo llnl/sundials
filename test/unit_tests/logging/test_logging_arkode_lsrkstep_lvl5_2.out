@@ -149,7 +149,7 @@ Start LSRKStep Logging test
 [DEBUG][rank 0][lsrkStep_TakeStepSSPs2][stage RHS] F_8(:) =
  9.999999999986863e-01
 [INFO][rank 0][lsrkStep_TakeStepSSPs2][end-stages-list] status = success
-[INFO][rank 0][lsrkStep_TakeStepSSPs2][begin-stages-list] stage = 9, tcur = 1.28174438476562e-06
+[INFO][rank 0][lsrkStep_TakeStepSSPs2][begin-stages-list] stage = 9, tcur = 1.28174438476563e-06
 [DEBUG][rank 0][lsrkStep_TakeStepSSPs2][stage RHS] F_9(:) =
  9.999999999983570e-01
 [INFO][rank 0][lsrkStep_TakeStepSSPs2][end-stages-list] status = success

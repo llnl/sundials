@@ -115,15 +115,15 @@ int LSRKStepSetSSPMethod(void* arkode_mem, ARKODE_LSRKMethodType method)
   case ARKODE_LSRK_SSP_S_2:
     ark_mem->step          = lsrkStep_TakeStepSSPs2;
     step_mem->is_SSP       = SUNTRUE;
-    step_mem->req_stages   = 10;
+    step_mem->req_stages   = 2;
     step_mem->nfusedopvecs = 3;
     step_mem->q = ark_mem->hadapt_mem->q = 2;
     step_mem->p = ark_mem->hadapt_mem->p = 1;
     break;
   case ARKODE_LSRK_SSP_S_3:
-    ark_mem->step          = lsrkStep_TakeStepSSPs3;
+    ark_mem->step          = lsrkStep_TakeStepSSP43;
     step_mem->is_SSP       = SUNTRUE;
-    step_mem->req_stages   = 9;
+    step_mem->req_stages   = 4;
     step_mem->nfusedopvecs = 3;
     step_mem->q = ark_mem->hadapt_mem->q = 3;
     step_mem->p = ark_mem->hadapt_mem->p = 2;
@@ -419,9 +419,9 @@ int LSRKStepSetNumSSPStages(void* arkode_mem, int num_of_stages)
   {
     switch (step_mem->LSRKmethod)
     {
-    case ARKODE_LSRK_SSP_S_2: step_mem->req_stages = 10; break;
+    case ARKODE_LSRK_SSP_S_2: step_mem->req_stages = 2; break;
 
-    case ARKODE_LSRK_SSP_S_3: step_mem->req_stages = 9; break;
+    case ARKODE_LSRK_SSP_S_3: step_mem->req_stages = 4; break;
 
     case ARKODE_LSRK_SSP_10_4: step_mem->req_stages = 10; break;
 
@@ -466,6 +466,7 @@ int LSRKStepSetNumSSPStages(void* arkode_mem, int num_of_stages)
         return ARK_ILL_INPUT;
       }
       if (num_of_stages == 4) { ark_mem->step = lsrkStep_TakeStepSSP43; }
+      else { ark_mem->step = lsrkStep_TakeStepSSPs3; }
       break;
 
     case ARKODE_LSRK_SSP_10_4:
@@ -769,6 +770,26 @@ int lsrkStep_SetDefaults(ARKodeMem ark_mem)
   if (retval) { return retval; }
 
   return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
+  lsrkStep_GetStageIndex:
+
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
+{
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeLSRKStepMem structure */
+  retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  *stage      = step_mem->istage;
+  *max_stages = step_mem->req_stages + 1;
+
+  return (ARK_SUCCESS);
 }
 
 /*---------------------------------------------------------------

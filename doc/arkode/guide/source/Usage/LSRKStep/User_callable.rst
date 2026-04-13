@@ -387,12 +387,19 @@ Allowable Method Families
       If :c:func:`LSRKStepSetNumSSPStages` is not called, the default ``num_of_stages``
       is set. Calling this function with ``num_of_stages <= 0`` resets the default values:
 
-      * ``num_of_stages = 10`` for :c:enumerator:`ARKODE_LSRK_SSP_S_2`
-      * ``num_of_stages = 9`` for :c:enumerator:`ARKODE_LSRK_SSP_S_3`
+      * ``num_of_stages = 2`` for :c:enumerator:`ARKODE_LSRK_SSP_S_2`
+      * ``num_of_stages = 4`` for :c:enumerator:`ARKODE_LSRK_SSP_S_3`
       * ``num_of_stages = 10`` for :c:enumerator:`ARKODE_LSRK_SSP_10_4`
 
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.num_ssp_stages".
+
+   .. versionchanged:: 6.7.0
+
+      The default number of stages for :c:enumerator:`ARKODE_LSRK_SSP_S_2` and
+      :c:enumerator:`ARKODE_LSRK_SSP_S_3` were changed from 10 and 9,
+      respectively, to their minimum allowable values of 2 and 4.
+
 
 .. _ARKODE.Usage.LSRKStep.OptionalOutputs:
 

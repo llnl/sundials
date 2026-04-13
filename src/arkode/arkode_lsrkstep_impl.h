@@ -139,7 +139,8 @@ typedef struct ARKodeLSRKStepMemRec
   int q; /* method order               */
   int p; /* embedding order            */
 
-  int req_stages; /* number of requested stages   */
+  int istage;     /* current stage            */
+  int req_stages; /* number of stages in step */
 
   ARKODE_LSRKMethodType LSRKmethod;
 
@@ -189,7 +190,7 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
                               SUNContext sunctx);
 int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
                             N_Vector y0);
-int lsrkStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int lsrkStep_Init(ARKodeMem ark_mem, int init_type);
 int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
                      int mode);
 int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
@@ -209,6 +210,7 @@ void lsrkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int lsrkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
                             long int* rhs_evals);
 int lsrkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele);
+int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
 int lsrkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
@@ -216,7 +218,7 @@ int lsrkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
 int lsrkStep_AccessStepMem(ARKodeMem ark_mem, const char* fname,
                            ARKodeLSRKStepMem* step_mem);
 void lsrkStep_DomEigUpdateLogic(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
-                                sunrealtype dsm);
+                                sunrealtype dsm, N_Vector fnew);
 int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem);
 int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv);
 

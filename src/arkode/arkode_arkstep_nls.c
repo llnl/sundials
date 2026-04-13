@@ -557,6 +557,12 @@ int arkStep_NlsResidual_MassIdent(N_Vector zcor, N_Vector r, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                             step_mem->Fi[step_mem->istage], ark_mem->user_data);
   step_mem->nfi++;
@@ -603,6 +609,13 @@ int arkStep_NlsResidual_MassIdent_TrivialPredAutonomous(N_Vector zcor, N_Vector 
   }
   else
   {
+    /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
     retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                               step_mem->Fi[step_mem->istage], ark_mem->user_data);
     step_mem->nfi++;
@@ -670,7 +683,12 @@ int arkStep_NlsResidual_MassFixed(N_Vector zcor, N_Vector r, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute implicit RHS if not already available */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                             step_mem->Fi[step_mem->istage], ark_mem->user_data);
   step_mem->nfi++;
@@ -720,6 +738,13 @@ int arkStep_NlsResidual_MassFixed_TrivialPredAutonomous(N_Vector zcor, N_Vector 
   }
   else
   {
+    /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
     retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                               step_mem->Fi[step_mem->istage], ark_mem->user_data);
     step_mem->nfi++;
@@ -793,7 +818,12 @@ int arkStep_NlsResidual_MassTDep(N_Vector zcor, N_Vector r, void* arkode_mem)
   retval = step_mem->mmult((void*)ark_mem, step_mem->Fi[step_mem->istage], r);
   if (retval != ARK_SUCCESS) { return (ARK_MASSMULT_FAIL); }
 
-  /* compute implicit RHS */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                             step_mem->Fi[step_mem->istage], ark_mem->user_data);
   step_mem->nfi++;
@@ -858,7 +888,12 @@ int arkStep_NlsFPFunction_MassIdent(N_Vector zcor, N_Vector g, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute implicit RHS and save for later */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                             step_mem->Fi[step_mem->istage], ark_mem->user_data);
   step_mem->nfi++;
@@ -898,7 +933,13 @@ int arkStep_NlsFPFunction_MassIdent_TrivialPredAutonomous(N_Vector zcor,
   }
   else
   {
-    /* compute implicit RHS and save for later */
+    /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
     retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                               step_mem->Fi[step_mem->istage], ark_mem->user_data);
     step_mem->nfi++;
@@ -967,7 +1008,12 @@ int arkStep_NlsFPFunction_MassFixed(N_Vector zcor, N_Vector g, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute implicit RHS and save for later */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                             step_mem->Fi[step_mem->istage], ark_mem->user_data);
   step_mem->nfi++;
@@ -1012,7 +1058,13 @@ int arkStep_NlsFPFunction_MassFixed_TrivialPredAutonomous(N_Vector zcor,
   }
   else
   {
-    /* compute implicit RHS and save for later */
+    /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur,
+                                 ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
     retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                               step_mem->Fi[step_mem->istage], ark_mem->user_data);
     step_mem->nfi++;
@@ -1082,7 +1134,12 @@ int arkStep_NlsFPFunction_MassTDep(N_Vector zcor, N_Vector g, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute implicit RHS and save for later */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fi(ark_mem->tcur, ark_mem->ycur,
                             step_mem->Fi[step_mem->istage], ark_mem->user_data);
   step_mem->nfi++;

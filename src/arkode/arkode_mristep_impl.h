@@ -97,7 +97,6 @@ typedef struct ARKodeMRIStepMemRec
   N_Vector sdata;         /* old stage data in residual               */
   N_Vector zpred;         /* predicted stage solution                 */
   N_Vector zcor;          /* stage correction                         */
-  int istage;             /* current stage index                      */
   SUNNonlinearSolver NLS; /* generic SUNNonlinearSolver object        */
   sunbooleantype ownNLS;  /* flag indicating ownership of NLS         */
   ARKRhsFn nls_fsi;       /* fsi(t,y) used in the nonlinear solver    */
@@ -113,16 +112,21 @@ typedef struct ARKodeMRIStepMemRec
   sunrealtype eRNrm;      /* estimated residual norm, used in nonlin
                              and linear solver convergence tests      */
   sunrealtype nlscoef;    /* coefficient in nonlin. convergence test  */
-
-  int msbp;       /* positive => max # steps between lsetup
-                     negative => call at each Newton iter     */
-  long int nstlp; /* step number of last setup call           */
-
-  int maxcor;          /* max num iterations for solving the
-                          nonlinear equation                       */
-  int convfail;        /* NLS fail flag (for interface routines)   */
-  sunbooleantype jcur; /* is Jacobian info for lin solver current? */
+  int msbp;               /* positive => max # steps between lsetup
+                             negative => call at each Newton iter     */
+  long int nstlp;         /* step number of last setup call           */
+  int maxcor;             /* max num iterations for solving the
+                             nonlinear equation                       */
+  int convfail;           /* NLS fail flag (for interface routines)   */
+  sunbooleantype jcur;    /* is Jacobian info for lin solver current? */
   ARKStagePredictFn stage_predict; /* User-supplied stage predictor   */
+  int istage; /* stage index used in nonlinear solve      */
+
+  /* Informational output for mriStep_GetStageIndex -- note that this
+     may differ from istage, since that is used internally by the
+     nonlinear solver, and it is manually modified during embedding
+     stages to match the last internal stage index. */
+  int cur_stage;
 
   /* Linear Solver Data */
   ARKLinsolInitFn linit;
@@ -221,7 +225,7 @@ int mriStep_AttachLinsol(ARKodeMem ark_mem, ARKLinsolInitFn linit,
                          ARKLinsolFreeFn lfree,
                          SUNLinearSolver_Type lsolve_type, void* lmem);
 void mriStep_DisableLSetup(ARKodeMem ark_mem);
-int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int mriStep_Init(ARKodeMem ark_mem, int init_type);
 void* mriStep_GetLmem(ARKodeMem ark_mem);
 ARKRhsFn mriStep_GetImplicitRHS(ARKodeMem ark_mem);
 int mriStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat,
@@ -266,6 +270,7 @@ int mriStep_GetNumNonlinSolvIters(ARKodeMem ark_mem, long int* nniters);
 int mriStep_GetNumNonlinSolvConvFails(ARKodeMem ark_mem, long int* nnfails);
 int mriStep_GetNonlinSolvStats(ARKodeMem ark_mem, long int* nniters,
                                long int* nnfails);
+int mriStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 int mriStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt);
 int mriStep_WriteParameters(ARKodeMem ark_mem, FILE* fp);
 int mriStep_Reset(ARKodeMem ark_mem, sunrealtype tR, N_Vector yR);
@@ -276,6 +281,7 @@ void mriStep_Free(ARKodeMem ark_mem);
 void mriStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int mriStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
                             sunrealtype tscale, N_Vector* f, int nvecs);
+int mriStep_ComputeH0(ARKodeMem ark_mem, sunrealtype tout, sunrealtype* hin);
 
 /* Internal utility routines */
 int mriStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,

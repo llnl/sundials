@@ -356,6 +356,18 @@ SWIGEXPORT int _wrap_FARKodeReset(void *farg1, double const *farg2, N_Vector far
 }
 
 
+SWIGEXPORT int _wrap_FARKodeInit(void *farg1) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  result = (int)ARKodeInit(arg1);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FARKodeCreateMRIStepInnerStepper(void *farg1, void *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -645,6 +657,48 @@ SWIGEXPORT int _wrap_FARKodeSetUserData(void *farg1, void *farg2) {
   arg1 = (void *)(farg1);
   arg2 = (void *)(farg2);
   result = (int)ARKodeSetUserData(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKodeSetPreStepFn(void *farg1, ARKPreStepFn farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  ARKPreStepFn arg2 = (ARKPreStepFn) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (ARKPreStepFn)(farg2);
+  result = (int)ARKodeSetPreStepFn(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKodeSetPostStepFn(void *farg1, ARKPostStepFn farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  ARKPostStepFn arg2 = (ARKPostStepFn) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (ARKPostStepFn)(farg2);
+  result = (int)ARKodeSetPostStepFn(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKodeSetPreRhsFn(void *farg1, ARKPreRhsFn farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  ARKPreRhsFn arg2 = (ARKPreRhsFn) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (ARKPreRhsFn)(farg2);
+  result = (int)ARKodeSetPreRhsFn(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
@@ -1507,6 +1561,22 @@ SWIGEXPORT int _wrap_FARKodeWriteParameters(void *farg1, void *farg2) {
 }
 
 
+SWIGEXPORT int _wrap_FARKodeGetStageIndex(void *farg1, int *farg2, int *farg3) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int *arg2 = (int *) 0 ;
+  int *arg3 = (int *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (int *)(farg2);
+  arg3 = (int *)(farg3);
+  result = (int)ARKodeGetStageIndex(arg1,arg2,arg3);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FARKodeGetNumExpSteps(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -1650,6 +1720,34 @@ SWIGEXPORT int _wrap_FARKodeGetNumLinSolvSetups(void *farg1, long *farg2) {
   arg1 = (void *)(farg1);
   arg2 = (long *)(farg2);
   result = (int)ARKodeGetNumLinSolvSetups(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKodeGetLastTime(void *farg1, double *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (sunrealtype *)(farg2);
+  result = (int)ARKodeGetLastTime(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKodeGetLastState(void *farg1, void *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (N_Vector *)(farg2);
+  result = (int)ARKodeGetLastState(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
