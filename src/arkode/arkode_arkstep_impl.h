@@ -187,7 +187,7 @@ int arkStep_AttachMasssol(ARKodeMem ark_mem, ARKMassInitFn minit,
                           SUNLinearSolver_Type msolve_type, void* mass_mem);
 void arkStep_DisableLSetup(ARKodeMem ark_mem);
 void arkStep_DisableMSetup(ARKodeMem ark_mem);
-int arkStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int arkStep_Init(ARKodeMem ark_mem, int init_type);
 void* arkStep_GetLmem(ARKodeMem ark_mem);
 void* arkStep_GetMassMem(ARKodeMem ark_mem);
 ARKRhsFn arkStep_GetImplicitRHS(ARKodeMem ark_mem);
@@ -240,6 +240,7 @@ void arkStep_Free(ARKodeMem ark_mem);
 void arkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int arkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
                             sunrealtype tscale, N_Vector* f, int nvecs);
+int arkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
 int arkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,

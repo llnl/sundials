@@ -1,0 +1,62 @@
+Start MRIStep preallocation test
+Using Im-MRI-GARK method
+Using Newton nonlinear solver
+Using dense direct linear solver
+           t                        u                        v                      u err                    v err            
+------------------------------------------------------------------------------------------------------------------------------
+ 0.000000000000000e+00    1.224744871391589e+00    1.732050807568877e+00    0.000000000000000e+00    0.000000000000000e+00
+ 1.029860256095084e-04    1.224744870309107e+00    1.732050195254716e+00    6.661338147750939e-16    3.043898466614792e-11
+ 2.208263771663438e-02    1.224695107307122e+00    1.704126308579107e+00    4.748178072944143e-09    6.177791833650303e-09
+ 4.421954682859922e-02    1.224545328964241e+00    1.622886627736992e+00    1.025614881910997e-08    7.985006544863893e-08
+------------------------------------------------------------------------------------------------------------------------------
+
+Outer integrator statistics:
+Current time                  = 0.0442195468285992
+Steps                         = 3
+Step attempts                 = 3
+Stability limited steps       = 0
+Accuracy limited steps        = 3
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.000102986025609508
+Last step size                = 0.0221369091119648
+Current step size             = 0.0221726095445298
+Explicit slow RHS fn evals    = 0
+Implicit slow RHS fn evals    = 36
+Inner stepper failures        = 0
+NLS iters                     = 22
+NLS fails                     = 0
+NLS iters per step            = 7.33333333333333
+LS setups                     = 2
+Jac fn evals                  = 2
+LS RHS fn evals               = 0
+Prec setup evals              = 0
+Prec solves                   = 0
+LS iters                      = 0
+LS fails                      = 0
+Jac-times setups              = 0
+Jac-times evals               = 0
+LS iters per NLS iter         = 0
+Jac evals per NLS iter        = 0.0909090909090909
+Prec evals per NLS iter       = 0
+
+Inner integrator statistics:
+Current time                  = 0.0442195468285992
+Steps                         = 12
+Step attempts                 = 12
+Stability limited steps       = 0
+Accuracy limited steps        = 12
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 1.17824906651486e-09
+Last step size                = 0.00737896970398828
+Current step size             = 0.00737896970398828
+Explicit RHS fn evals         = 64
+Implicit RHS fn evals         = 0
+NLS iters                     = 0
+NLS fails                     = 0
+NLS iters per step            = 0
+LS setups                     = 0
+End MRIStep preallocation test

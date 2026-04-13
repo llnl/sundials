@@ -2,7 +2,7 @@
 
 This directory contains the `suntools` Python package which provides utilities for
 
-- Structured parsing of logs produced by the SUNDIALS `SUNLogger` including filtering and plotting
+- parsing SUNDIALS log files
 - more to come...
 
 ## Install
@@ -18,17 +18,3 @@ Then import as:
 ```python
 import suntools
 ```
-
-## CLI Log Parsing Examples
-
-Filter a SUNLogger logfile (or stdin) down to high-level categories:
-
-```bash
-cat sun.log | suntools parse_logs --filter="integrator,nonlinear,linear"
-```
-
-Supported filter categories:
-
-- `integrator` (step-attempt region output)
-- `nonlinear` (nonlinear solver output, includes `begin/end-nonlinear-solve` and KINSOL info logs)
-- `linear` (linear solver output, includes `begin/end-linear-solve` and KINSOL `kinLs*` scopes)

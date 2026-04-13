@@ -1,11 +1,10 @@
 # IDAS
-### Version 6.6.0 (Jan 2026)
+### Version 6.7.0 (Apr 2026)
 
 **Radu Serban, Cosmin Petra, Alan C. Hindmarsh, Cody J. Balos, David J. Gardner,
   and Carol S. Woodward, Center for Applied Scientific Computing, LLNL**
 
-**Daniel R. Reynolds, Department of Mathematics, Southern Methodist University**
-
+**Daniel R. Reynolds, Department of Mathematics and Statistics, UMBC**
 
 IDAS is a package for the solution of differential-algebraic equation (DAE)
 systems
@@ -43,11 +42,11 @@ the "SUNDIALS Release History" appendix of the IDAS User Guide.
 ## References
 
 * R. Serban, C. Petra, A. C. Hindmarsh, C. J. Balos, D. J. Gardner,
-  D. R. Reynolds and C. S. Woodward, "User Documentation for IDAS v6.6.0,"
-  LLNL technical report UCRL-SM-234051, Jan 2026.
+  D. R. Reynolds and C. S. Woodward, "User Documentation for IDAS v6.7.0,"
+  LLNL technical report UCRL-SM-234051, Apr 2026.
 
-* R. Serban and A.C. Hindmarsh, "Example Programs for IDAS v6.6.0,"
-  LLNL technical report LLNL-TR-437091, Jan 2026.
+* R. Serban and A.C. Hindmarsh, "Example Programs for IDAS v6.7.0,"
+  LLNL technical report LLNL-TR-437091, Apr 2026.
 
 * A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban,
   D. E. Shumaker, and C. S. Woodward, "SUNDIALS, Suite of Nonlinear and

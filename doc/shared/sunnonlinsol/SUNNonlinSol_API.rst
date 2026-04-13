@@ -689,6 +689,11 @@ A SUNNonlinSol implementation *must* do the following:
 * Define and implement a user-callable constructor to create a
   ``SUNNonlinearSolver`` object.
 
+* If the implementation depends on a linear solver, then it must evaluate
+  the nonlinear system function passed to :c:func:`SUNNonlinSolSetSysFn`
+  *before* setting up the linear solver (signaled by the `callLSetup` flag
+  to :c:func:`SUNNonlinSolSolve`).
+
 To aid in the creation of custom ``SUNNonlinearSolver`` modules, the generic
 ``SUNNonlinearSolver`` module provides the utility functions
 :c:func:`SUNNonlinSolNewEmpty` and :c:func:`SUNNonlinSolFreeEmpty`. When used
