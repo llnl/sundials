@@ -22,7 +22,7 @@ import unittest
 import sys
 
 # Import the logs module
-import logs
+from suntools import logs
 
 
 class TestParseLogfilePayload(unittest.TestCase):

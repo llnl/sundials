@@ -25,7 +25,7 @@ import os
 import sys
 
 # Import the logs module
-import logs
+from suntools import logs
 
 
 class TestLogParsing(unittest.TestCase):

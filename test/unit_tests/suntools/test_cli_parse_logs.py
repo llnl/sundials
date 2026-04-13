@@ -28,9 +28,9 @@ import unittest
 class TestCliParseLogs(unittest.TestCase):
     def _run(self, stdin_text, args):
         env = os.environ.copy()
-        # Make sure we import the repo-local package (tools/ is the project root for packaging).
+        # Make sure we import the repo-local package.
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-        env["PYTHONPATH"] = os.path.join(repo_root, "tools") + os.pathsep + env.get(
+        env["PYTHONPATH"] = os.path.join(repo_root, "suntools", "src") + os.pathsep + env.get(
             "PYTHONPATH", ""
         )
         proc = subprocess.run(
