@@ -14,7 +14,7 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------------------------
 # This script will use clang-format to format C/C++ code, fprettify for Fortran
-# code, cmake-format for CMake files, and black for Python code.
+# code, cmake-format for CMake files, and ruff for Python code.
 #
 # Usage:
 #    ./format.sh <paths to directories or files to format>
@@ -29,13 +29,13 @@ fi
 
 paths=( "$@" )
 
-find "${paths[@]}" -iname '*.h' -o -iname '*.hpp' -o \
-     -iname '*.c' -o -iname '*.cpp' -o \
-     -iname '*.cuh' -o -iname '*.cu' | grep -v fmod | xargs clang-format -i
+# find "${paths[@]}" -iname '*.h' -o -iname '*.hpp' -o \
+#      -iname '*.c' -o -iname '*.cpp' -o \
+#      -iname '*.cuh' -o -iname '*.cu' | grep -v fmod | xargs clang-format -i
 
-find "${paths[@]}" -iname '*.f90' | grep -v fmod | xargs fprettify --indent 2 --enable-replacements --c-relations
+# find "${paths[@]}" -iname '*.f90' | grep -v fmod | xargs fprettify --indent 2 --enable-replacements --c-relations
 
-find "${paths[@]}" \( -iname '*.cmake' -o -iname 'CMakeLists.txt' \) \
-     -exec cmake-format -i {} ';'
+# find "${paths[@]}" \( -iname '*.cmake' -o -iname 'CMakeLists.txt' \) \
+#      -exec cmake-format -i {} ';'
 
-find "${paths[@]}" -iname '*.py' -exec black {} ';'
+ruff format "${paths[@]}"
