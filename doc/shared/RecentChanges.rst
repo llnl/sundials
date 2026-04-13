@@ -7,4 +7,7 @@
 
 **Bug Fixes**
 
+Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
+``malloc``.
+
 **Deprecation Notices**
