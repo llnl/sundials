@@ -111,7 +111,7 @@ set(ARKODE_examples
     "ark_twowaycouple_mri.c\;\;develop\;real")
 
 if(SUNDIALS_ENABLE_MONITORING)
-  list(APPEND ARKODE_examples "ark_brusselator_fp.c\;1\;exclude-single\;real)
+  list(APPEND ARKODE_examples "ark_brusselator_fp.c\;1\;exclude-single\;real")
 endif()
 
 # Auxiliary files to install
