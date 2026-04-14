@@ -1,0 +1,4 @@
+interface:
+  display_name: "Decision Tree"
+  short_description: "Choose SUNDIALS solver paths"
+  default_prompt: "Use $decision-tree to choose the right SUNDIALS package, method, and starting solver settings for my model."
