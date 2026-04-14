@@ -519,7 +519,7 @@ def read_data(args, info, subdomains):
             print(
                 "WARNING: subdomain",
                 str(idx),
-                "has an incorrect number ofoutput times (",
+                "has an incorrect number of output times (",
                 np.shape(data)[0],
                 "vs",
                 info["nt"],
