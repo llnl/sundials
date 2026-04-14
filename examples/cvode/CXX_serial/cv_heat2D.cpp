@@ -375,7 +375,7 @@ int PSetup(sunrealtype t, N_Vector u, N_Vector f, sunbooleantype jok,
   auto udata = static_cast<UserData*>(user_data);
 
   // Access data array
-  sunrealtype* diag = N_VGetArrayPointer(udata->d);
+  sunscalartype* diag = N_VGetArrayPointer(udata->d);
   if (check_ptr(diag, "N_VGetArrayPointer")) { return -1; }
 
   // Constants for computing diffusion

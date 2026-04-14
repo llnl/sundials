@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
 
 void Solution(sunrealtype t, N_Vector y, N_Vector solvec, UserData* udata)
 {
-  sunrealtype* sol = N_VGetArrayPointer(solvec);
+  sunscalartype* sol = N_VGetArrayPointer(solvec);
 
   /* compute solution */
   sol[0] = udata->A * cos(udata->omega * t + udata->phi);
@@ -207,7 +207,7 @@ void Solution(sunrealtype t, N_Vector y, N_Vector solvec, UserData* udata)
 sunrealtype Energy(N_Vector yvec, sunrealtype dt, UserData* udata)
 {
   sunrealtype E            = 0.0;
-  sunrealtype* y           = N_VGetArrayPointer(yvec);
+  sunscalartype* y           = N_VGetArrayPointer(yvec);
   const sunrealtype x      = y[0];
   const sunrealtype v      = y[1];
   const sunrealtype omega2 = udata->omega * udata->omega;
@@ -219,8 +219,8 @@ sunrealtype Energy(N_Vector yvec, sunrealtype dt, UserData* udata)
 
 int xdot(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 {
-  sunrealtype* y      = N_VGetArrayPointer(yvec);
-  sunrealtype* ydot   = N_VGetArrayPointer(ydotvec);
+  sunscalartype* y      = N_VGetArrayPointer(yvec);
+  sunscalartype* ydot   = N_VGetArrayPointer(ydotvec);
   const sunrealtype v = y[1];
 
   ydot[0] = v;
@@ -231,8 +231,8 @@ int xdot(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 int vdot(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 {
   UserData* udata          = (UserData*)user_data;
-  sunrealtype* y           = N_VGetArrayPointer(yvec);
-  sunrealtype* ydot        = N_VGetArrayPointer(ydotvec);
+  sunscalartype* y           = N_VGetArrayPointer(yvec);
+  sunscalartype* ydot        = N_VGetArrayPointer(ydotvec);
   const sunrealtype x      = y[0];
   const sunrealtype omega2 = udata->omega * udata->omega;
 

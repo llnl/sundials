@@ -293,7 +293,7 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
 
 sunbooleantype has_data(SUNMatrix A)
 {
-  sunrealtype* Adata = SUNDenseMatrix_Data(A);
+  sunscalartype* Adata = SUNDenseMatrix_Data(A);
   if (Adata == NULL) { return SUNFALSE; }
   else { return SUNTRUE; }
 }

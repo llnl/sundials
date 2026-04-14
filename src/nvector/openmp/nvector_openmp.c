@@ -401,9 +401,9 @@ void N_VSpace_OpenMP(N_Vector v, sunindextype* lrw, sunindextype* liw)
  * Get vector data pointer
  */
 
-sunrealtype* N_VGetArrayPointer_OpenMP(N_Vector v)
+sunscalartype* N_VGetArrayPointer_OpenMP(N_Vector v)
 {
-  return ((sunrealtype*)NV_DATA_OMP(v));
+  return ((sunscalartype*)NV_DATA_OMP(v));
 }
 
 /* ----------------------------------------------------------------------------

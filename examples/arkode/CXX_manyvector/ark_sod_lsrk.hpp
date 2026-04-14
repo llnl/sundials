@@ -492,15 +492,15 @@ static int WriteOutput(sunrealtype t, N_Vector y, EulerData& udata,
     // Write solution to disk
     if (uopts.output >= 2)
     {
-      sunrealtype* rhodata = N_VGetArrayPointer(rho);
+      sunscalartype* rhodata = N_VGetArrayPointer(rho);
       if (check_ptr(rhodata, "N_VGetArrayPointer")) { return -1; }
-      sunrealtype* mxdata = N_VGetArrayPointer(mx);
+      sunscalartype* mxdata = N_VGetArrayPointer(mx);
       if (check_ptr(mxdata, "N_VGetArrayPointer")) { return -1; }
-      sunrealtype* mydata = N_VGetArrayPointer(my);
+      sunscalartype* mydata = N_VGetArrayPointer(my);
       if (check_ptr(mydata, "N_VGetArrayPointer")) { return -1; }
-      sunrealtype* mzdata = N_VGetArrayPointer(mz);
+      sunscalartype* mzdata = N_VGetArrayPointer(mz);
       if (check_ptr(mzdata, "N_VGetArrayPointer")) { return -1; }
-      sunrealtype* etdata = N_VGetArrayPointer(et);
+      sunscalartype* etdata = N_VGetArrayPointer(et);
       if (check_ptr(etdata, "N_VGetArrayPointer")) { return -1; }
 
       uopts.uout << t;

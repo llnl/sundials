@@ -398,8 +398,8 @@ int main(int argc, char* argv[])
 /* ODE RHS function f(t,y). */
 int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
-  sunrealtype* fdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* fdata = N_VGetArrayPointer(ydot);
   fdata[0]           = -EXP(ydata[0]);
   return 0;
 }
@@ -408,8 +408,8 @@ int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
         N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
-  sunrealtype* Jdata = SUNDenseMatrix_Data(J);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* Jdata = SUNDenseMatrix_Data(J);
   Jdata[0]           = -EXP(ydata[0]);
   return 0;
 }
@@ -417,7 +417,7 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
 /* Entropy function e(y) */
 int Ent(N_Vector y, sunrealtype* e, void* user_data)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   *e                 = EXP(ydata[0]);
   return 0;
 }
@@ -425,8 +425,8 @@ int Ent(N_Vector y, sunrealtype* e, void* user_data)
 /* Entropy function Jacobian Je(y) = de/dy */
 int JacEnt(N_Vector y, N_Vector J, void* user_data)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
-  sunrealtype* jdata = N_VGetArrayPointer(J);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* jdata = N_VGetArrayPointer(J);
   jdata[0]           = EXP(ydata[0]);
   return 0;
 }
@@ -438,7 +438,7 @@ int JacEnt(N_Vector y, N_Vector J, void* user_data)
 /* Analytic solution */
 int ans(sunrealtype t, N_Vector y)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   ydata[0]           = -LOG(EXP(SUN_RCONST(-0.5)) + t);
   return 0;
 }

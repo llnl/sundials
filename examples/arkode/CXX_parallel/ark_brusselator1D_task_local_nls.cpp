@@ -474,7 +474,7 @@ int WriteOutput(double t, N_Vector y, UserData* udata, UserOptions* uopt)
 {
   int nvar = udata->nvar;
   double u, v, w, N;
-  double* data = NULL;
+  sunscalartype* data = NULL;
 
   /* get left end point for output */
   ExchangeBCOnly(y, udata);

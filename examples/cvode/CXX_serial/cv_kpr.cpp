@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   flag = true_sol(ZERO, &utrue, &vtrue);
   if (check_flag(flag, "true_sol")) { return 1; }
 
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   ydata[0]           = utrue;
   ydata[1]           = vtrue;
 
@@ -184,14 +184,14 @@ int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   const sunrealtype c = udata[2];
   const sunrealtype d = udata[3];
 
-  sunrealtype* ydata  = N_VGetArrayPointer(y);
+  sunscalartype* ydata  = N_VGetArrayPointer(y);
   const sunrealtype u = ydata[0];
   const sunrealtype v = ydata[1];
 
   const sunrealtype tmp1 = (-ONE + u * u - r(t)) / (TWO * u);
   const sunrealtype tmp2 = (-TWO + v * v - s(t)) / (TWO * v);
 
-  sunrealtype* fdata = N_VGetArrayPointer(ydot);
+  sunscalartype* fdata = N_VGetArrayPointer(ydot);
   fdata[0]           = a * tmp1 + b * tmp2 + rdot(t) / (TWO * u);
   fdata[1]           = c * tmp1 + d * tmp2 + sdot(t) / (TWO * v);
 
@@ -213,8 +213,8 @@ int J(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
   const sunrealtype c = udata[2];
   const sunrealtype d = udata[3];
 
-  sunrealtype* ydata = N_VGetArrayPointer(y);
-  sunrealtype* Jdata = SUNDenseMatrix_Data(J);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* Jdata = SUNDenseMatrix_Data(J);
 
   const sunrealtype u = ydata[0];
   const sunrealtype v = ydata[1];

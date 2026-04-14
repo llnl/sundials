@@ -943,8 +943,8 @@ int main(int argc, char* argv[])
   sunrealtype t2        = T0;
   sunrealtype dTout     = (Tf - T0) / Nt;
   sunrealtype tout      = T0 + dTout;
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* yrefdata = N_VGetArrayPointer(yref);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* yrefdata = N_VGetArrayPointer(yref);
   sunrealtype u, v, w, uerr, verr, werr, uerrtot, verrtot, werrtot, errtot,
     accuracy;
   uerr = verr = werr = uerrtot = verrtot = werrtot = errtot = accuracy = ZERO;
@@ -1145,8 +1145,8 @@ int main(int argc, char* argv[])
 static int fn(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   Options* opts         = static_cast<Options*>(user_data);
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* ydotdata = N_VGetArrayPointer(ydot);
   const sunrealtype u   = ydata[0];
   const sunrealtype v   = ydata[1];
   const sunrealtype w   = ydata[2];
@@ -1175,8 +1175,8 @@ static int fn(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   Options* opts         = static_cast<Options*>(user_data);
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* ydotdata = N_VGetArrayPointer(ydot);
   const sunrealtype u   = ydata[0];
   const sunrealtype v   = ydata[1];
   const sunrealtype w   = ydata[2];
@@ -1204,8 +1204,8 @@ static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fm(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   Options* opts         = static_cast<Options*>(user_data);
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* ydotdata = N_VGetArrayPointer(ydot);
   const sunrealtype u   = ydata[0];
   const sunrealtype v   = ydata[1];
   const sunrealtype w   = ydata[2];
@@ -1232,8 +1232,8 @@ static int fm(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fme(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   Options* opts         = static_cast<Options*>(user_data);
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* ydotdata = N_VGetArrayPointer(ydot);
   const sunrealtype v   = ydata[1];
 
   // fill in the RHS function:
@@ -1251,8 +1251,8 @@ static int fme(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fmi(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   Options* opts         = static_cast<Options*>(user_data);
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* ydotdata = N_VGetArrayPointer(ydot);
   const sunrealtype u   = ydata[0];
   const sunrealtype v   = ydata[1];
   const sunrealtype w   = ydata[2];
@@ -1280,8 +1280,8 @@ static int fmi(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   Options* opts         = static_cast<Options*>(user_data);
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* ydotdata = N_VGetArrayPointer(ydot);
   const sunrealtype u   = ydata[0];
   const sunrealtype v   = ydata[1];
   const sunrealtype w   = ydata[2];
@@ -1307,8 +1307,8 @@ static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fse(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   Options* opts         = static_cast<Options*>(user_data);
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* ydotdata = N_VGetArrayPointer(ydot);
   const sunrealtype u   = ydata[0];
 
   // fill in the RHS function:
@@ -1326,8 +1326,8 @@ static int fse(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fsi(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   Options* opts         = static_cast<Options*>(user_data);
-  sunrealtype* ydata    = N_VGetArrayPointer(y);
-  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata    = N_VGetArrayPointer(y);
+  sunscalartype* ydotdata = N_VGetArrayPointer(ydot);
   const sunrealtype u   = ydata[0];
   const sunrealtype v   = ydata[1];
   const sunrealtype w   = ydata[2];
@@ -1355,7 +1355,7 @@ static int Jm(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
               void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   Options* opts       = static_cast<Options*>(user_data);
-  sunrealtype* ydata  = N_VGetArrayPointer(y);
+  sunscalartype* ydata  = N_VGetArrayPointer(y);
   const sunrealtype u = ydata[0];
   const sunrealtype v = ydata[1];
   const sunrealtype w = ydata[2];
@@ -1387,7 +1387,7 @@ static int Jmi(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   Options* opts       = static_cast<Options*>(user_data);
-  sunrealtype* ydata  = N_VGetArrayPointer(y);
+  sunscalartype* ydata  = N_VGetArrayPointer(y);
   const sunrealtype u = ydata[0];
   const sunrealtype v = ydata[1];
   const sunrealtype w = ydata[2];
@@ -1419,7 +1419,7 @@ static int Js(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
               void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   Options* opts       = static_cast<Options*>(user_data);
-  sunrealtype* ydata  = N_VGetArrayPointer(y);
+  sunscalartype* ydata  = N_VGetArrayPointer(y);
   const sunrealtype u = ydata[0];
   const sunrealtype v = ydata[1];
   const sunrealtype w = ydata[2];
@@ -1451,7 +1451,7 @@ static int Jsi(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   Options* opts       = static_cast<Options*>(user_data);
-  sunrealtype* ydata  = N_VGetArrayPointer(y);
+  sunscalartype* ydata  = N_VGetArrayPointer(y);
   const sunrealtype u = ydata[0];
   const sunrealtype v = ydata[1];
   const sunrealtype w = ydata[2];

@@ -354,7 +354,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   /* State at which to evaluate the Jacobian */
-  sunrealtype* yval = N_VGetArrayPointer(y);
+  sunscalartype* yval = N_VGetArrayPointer(y);
 
   /* J is stored in CSC format:
      data    = non-zero matrix entries stored column-wise (length NNZ)

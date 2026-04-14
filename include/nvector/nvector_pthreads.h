@@ -167,7 +167,7 @@ SUNDIALS_DEPRECATED_EXPORT_MSG(
 void N_VSpace_Pthreads(N_Vector v, sunindextype* lrw, sunindextype* liw);
 
 SUNDIALS_EXPORT
-sunrealtype* N_VGetArrayPointer_Pthreads(N_Vector v);
+sunscalartype* N_VGetArrayPointer_Pthreads(N_Vector v);
 
 SUNDIALS_EXPORT
 void N_VSetArrayPointer_Pthreads(sunrealtype* v_data, N_Vector v);

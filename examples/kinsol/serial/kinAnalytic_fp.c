@@ -372,8 +372,8 @@ static int DampingFn(long int iter, N_Vector u_val, N_Vector g_val,
     }
 
     /* Compute ||fn||^2 = ||G(u_n) - u_n||^2 */
-    sunrealtype* g_data = N_VGetArrayPointer(g_val);
-    sunrealtype* u_data = N_VGetArrayPointer(u_val);
+    sunscalartype* g_data = N_VGetArrayPointer(g_val);
+    sunscalartype* u_data = N_VGetArrayPointer(u_val);
     sunrealtype fn[3];
     for (int i = 0; i < 3; i++) { fn[i] = g_data[i] - u_data[i]; }
     sunrealtype fn_norm_sqr = ZERO;

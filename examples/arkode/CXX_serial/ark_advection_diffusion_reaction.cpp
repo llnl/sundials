@@ -1117,10 +1117,10 @@ int f_advection(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
   UserData* udata = (UserData*)user_data;
 
   // Access data arrays
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_ptr(ydata, "N_VGetArrayPointer")) { return -1; }
 
-  sunrealtype* fdata = N_VGetArrayPointer(f);
+  sunscalartype* fdata = N_VGetArrayPointer(f);
   if (check_ptr(fdata, "N_VGetArrayPointer")) { return -1; }
 
   // Compute advection RHS
@@ -1184,10 +1184,10 @@ int f_diffusion(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
   UserData* udata = (UserData*)user_data;
 
   // Access data arrays
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_ptr(ydata, "N_VGetArrayPointer")) { return -1; }
 
-  sunrealtype* fdata = N_VGetArrayPointer(f);
+  sunscalartype* fdata = N_VGetArrayPointer(f);
   if (check_ptr(fdata, "N_VGetArrayPointer")) { return -1; }
 
   // Compute diffusion RHS
@@ -1257,10 +1257,10 @@ int f_reaction(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
   UserData* udata = (UserData*)user_data;
 
   // Access data arrays
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_ptr(ydata, "N_VGetArrayPointer")) { return -1; }
 
-  sunrealtype* fdata = N_VGetArrayPointer(f);
+  sunscalartype* fdata = N_VGetArrayPointer(f);
   if (check_ptr(fdata, "N_VGetArrayPointer")) { return -1; }
 
   // Compute reaction RHS
@@ -1292,7 +1292,7 @@ int J_reaction(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   UserData* udata = (UserData*)user_data;
 
   // Access data array
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_ptr(ydata, "N_VGetArrayPointer")) { return 1; }
 
   sunrealtype u, v, w;
@@ -1539,7 +1539,7 @@ int f_react_forcing(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
 // Compute the initial condition
 int SetIC(N_Vector y, UserData& udata)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_ptr(ydata, "N_VGetArrayPointer")) { return -1; }
 
   sunrealtype x, p;

@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
   q = N_VClone(y);
   if (check_flag(q, "N_VClone", 0)) { return 1; }
 
-  sunrealtype* qd = N_VGetArrayPointer(q);
+  sunscalartype* qd = N_VGetArrayPointer(q);
   for (int i = 0; i < NEQ; i++)
   {
     qd[i] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;

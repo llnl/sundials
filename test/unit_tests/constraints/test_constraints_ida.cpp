@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
   N_Vector rhs = N_VNew_Serial(2, sunctx);
   if (check_ptr(rhs, "N_VNew_Serial")) { return 1; }
 
-  sunrealtype* rhs_data = N_VGetArrayPointer(rhs);
+  sunscalartype* rhs_data = N_VGetArrayPointer(rhs);
   rhs_data[0]           = SUN_RCONST(-2.0);
   rhs_data[1]           = SUN_RCONST(1.0);
 
@@ -57,12 +57,12 @@ int main(int argc, char* argv[])
   N_Vector y     = N_VClone(rhs);
   if (check_ptr(y, "N_VClone")) { return 1; }
 
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunscalartype* y_data = N_VGetArrayPointer(y);
   y_data[0]           = SUN_RCONST(1.0);
   y_data[1]           = SUN_RCONST(-1.0);
 
   N_Vector yp = N_VClone(rhs);
-  if (check_ptr(y, "N_VClone")) { return 1; }
+  if (check_ptr(yp, "N_VClone")) { return 1; }
 
   N_VScale(SUN_RCONST(1.0), rhs, yp);
 
@@ -101,9 +101,9 @@ int main(int argc, char* argv[])
 
   // Create constraint vector
   N_Vector constraints = N_VClone(rhs);
-  if (check_ptr(y, "N_VClone")) { return 1; }
+  if (check_ptr(constraints, "N_VClone")) { return 1; }
 
-  sunrealtype* c_data = N_VGetArrayPointer(constraints);
+  sunscalartype* c_data = N_VGetArrayPointer(constraints);
   c_data[0]           = SUN_RCONST(1.0);  // >= 0.0
   c_data[1]           = SUN_RCONST(-1.0); // <= 0.0
 

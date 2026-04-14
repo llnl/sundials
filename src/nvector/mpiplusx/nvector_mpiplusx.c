@@ -57,7 +57,7 @@ N_Vector_ID N_VGetVectorID_MPIPlusX(SUNDIALS_MAYBE_UNUSED N_Vector v)
   return SUNDIALS_NVEC_MPIPLUSX;
 }
 
-sunrealtype* N_VGetArrayPointer_MPIPlusX(N_Vector v)
+sunscalartype* N_VGetArrayPointer_MPIPlusX(N_Vector v)
 {
   SUNFunctionBegin(v->sunctx);
   sunrealtype* arr = N_VGetSubvectorArrayPointer_MPIManyVector(v, 0);

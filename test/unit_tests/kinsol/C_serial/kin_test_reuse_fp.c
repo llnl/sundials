@@ -30,9 +30,9 @@
  * At x* ~ 0.292893, g'(x*) = x* < 1 => contraction. */
 static int gfun(N_Vector x, N_Vector g, void* user_data)
 {
-  sunrealtype* x_data = N_VGetArrayPointer(x);
+  sunscalartype* x_data = N_VGetArrayPointer(x);
   if (!x_data) { return -1; }
-  sunrealtype* g_data = N_VGetArrayPointer(g);
+  sunscalartype* g_data = N_VGetArrayPointer(g);
   if (!g_data) { return -1; }
 
   const double xv = x_data[0];
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
   // -------
 
   // Set the initial guess
-  sunrealtype* x_data = N_VGetArrayPointer(x);
+  sunscalartype* x_data = N_VGetArrayPointer(x);
   if (!x_data)
   {
     printf("ERROR: N_VGetArrayPointer returned NULL");

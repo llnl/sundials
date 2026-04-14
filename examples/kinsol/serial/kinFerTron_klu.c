@@ -157,7 +157,7 @@ int main(void)
 
   N_VConst(ONE, s); /* no scaling */
 
-  sunrealtype* cdata = N_VGetArrayPointer(c);
+  sunscalartype* cdata = N_VGetArrayPointer(c);
   cdata[0]           = ZERO; /* no constraint on x1 */
   cdata[1]           = ZERO; /* no constraint on x2 */
   cdata[2]           = ONE;  /* l1 = x1 - x1_min >= 0 */
@@ -503,7 +503,7 @@ static void PrintHeader(sunrealtype fnormtol, sunrealtype scsteptol)
 
 static void PrintOutput(N_Vector u)
 {
-  sunrealtype* udata = N_VGetArrayPointer(u);
+  sunscalartype* udata = N_VGetArrayPointer(u);
 #if defined(SUNDIALS_EXTENDED_PRECISION)
   printf(" %8.6Lg  %8.6Lg\n", udata[0], udata[1]);
 #else

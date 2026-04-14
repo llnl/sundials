@@ -217,7 +217,7 @@ SUNDIALS_EXPORT SUNErrCode N_VEnableDotProdMultiLocal_ParHyp(N_Vector v,
                                                              sunbooleantype tf);
 
 SUNDIALS_DEPRECATED_EXPORT_MSG("Not supported, use N_VGetVector_ParHyp")
-sunrealtype* N_VGetArrayPointer_ParHyp(N_Vector v);
+sunscalartype* N_VGetArrayPointer_ParHyp(N_Vector v);
 
 SUNDIALS_DEPRECATED_EXPORT_MSG("Not supported, use N_VGetVector_ParHyp")
 void N_VSetArrayPointer_ParHyp(sunrealtype* v_data, N_Vector v);

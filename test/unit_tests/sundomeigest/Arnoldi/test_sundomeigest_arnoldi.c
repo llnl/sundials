@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
   q = N_VClone(ProbData.diag);
   if (check_flag(q, "N_VClone", 0)) { return 1; }
 
-  sunrealtype* qd = N_VGetArrayPointer(q);
+  sunscalartype* qd = N_VGetArrayPointer(q);
   for (int i = 0; i < ProbData.N; i++)
   {
     qd[i] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
   // [-imagpart   realpart]
   // This setup allows two types of dominant eigenvalues (real and complex)
   // based on the "factor" and the problem dimension N.
-  sunrealtype* v = N_VGetArrayPointer(ProbData.diag);
+  sunscalartype* v = N_VGetArrayPointer(ProbData.diag);
   for (int i = 0; i < ProbData.N - 2; i++) { v[i] = factor * (i + 3); }
 
   // Set the problem data corresponding to 2x2 block matrix

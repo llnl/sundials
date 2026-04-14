@@ -88,8 +88,8 @@ int main(int argc, char* argv[])
   sunrealtype tout        = tret + dtout;
 
   // Output initial contion
-  sunrealtype* ydata = N_VGetArrayPointer(y);
-  if (check_ptr(y, "N_VGetArrayPointer")) { return 1; }
+  sunscalartype* ydata = N_VGetArrayPointer(y);
+  if (check_ptr(ydata, "N_VGetArrayPointer")) { return 1; }
 
   cout << scientific;
   cout << setprecision(numeric_limits<sunrealtype>::digits10);

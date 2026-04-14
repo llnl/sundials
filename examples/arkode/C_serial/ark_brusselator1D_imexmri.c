@@ -1301,7 +1301,7 @@ static int ReactionJac(sunrealtype c, N_Vector y, SUNMatrix Jac, UserData udata)
   sunrealtype ep = udata->ep;
   sunindextype i;
   sunrealtype u, v, w;
-  sunrealtype* Ydata = N_VGetArrayPointer(y); /* access solution array */
+  sunscalartype* Ydata = N_VGetArrayPointer(y); /* access solution array */
   if (check_retval((void*)Ydata, "N_VGetArrayPointer", 0)) { return 1; }
 
   /* iterate over nodes, filling in Jacobian of reaction terms */

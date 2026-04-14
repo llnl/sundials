@@ -369,7 +369,7 @@ void InitialConditions(N_Vector y0vec, sunrealtype ecc)
 {
   const sunrealtype zero = SUN_RCONST(0.0);
   const sunrealtype one  = SUN_RCONST(1.0);
-  sunrealtype* y0        = N_VGetArrayPointer(y0vec);
+  sunscalartype* y0        = N_VGetArrayPointer(y0vec);
 
   y0[0] = one - ecc;
   y0[1] = zero;
@@ -380,7 +380,7 @@ void InitialConditions(N_Vector y0vec, sunrealtype ecc)
 sunrealtype Hamiltonian(N_Vector yvec)
 {
   sunrealtype H              = 0.0;
-  sunrealtype* y             = N_VGetArrayPointer(yvec);
+  sunscalartype* y             = N_VGetArrayPointer(yvec);
   const sunrealtype sqrt_qTq = SUNRsqrt(y[0] * y[0] + y[1] * y[1]);
   const sunrealtype pTp      = y[2] * y[2] + y[3] * y[3];
 
@@ -392,7 +392,7 @@ sunrealtype Hamiltonian(N_Vector yvec)
 sunrealtype AngularMomentum(N_Vector yvec)
 {
   sunrealtype L        = 0.0;
-  sunrealtype* y       = N_VGetArrayPointer(yvec);
+  sunscalartype* y       = N_VGetArrayPointer(yvec);
   const sunrealtype q1 = y[0];
   const sunrealtype q2 = y[1];
   const sunrealtype p1 = y[2];
@@ -415,8 +415,8 @@ int dydt(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 
 int velocity(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 {
-  sunrealtype* y       = N_VGetArrayPointer(yvec);
-  sunrealtype* ydot    = N_VGetArrayPointer(ydotvec);
+  sunscalartype* y       = N_VGetArrayPointer(yvec);
+  sunscalartype* ydot    = N_VGetArrayPointer(ydotvec);
   const sunrealtype p1 = y[2];
   const sunrealtype p2 = y[3];
 
@@ -428,8 +428,8 @@ int velocity(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 
 int force(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 {
-  sunrealtype* y             = N_VGetArrayPointer(yvec);
-  sunrealtype* ydot          = N_VGetArrayPointer(ydotvec);
+  sunscalartype* y             = N_VGetArrayPointer(yvec);
+  sunscalartype* ydot          = N_VGetArrayPointer(ydotvec);
   const sunrealtype q1       = y[0];
   const sunrealtype q2       = y[1];
   const sunrealtype sqrt_qTq = SUNRsqrt(q1 * q1 + q2 * q2);
@@ -442,7 +442,7 @@ int force(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 
 int rootfn(sunrealtype t, N_Vector yvec, sunrealtype* gout, void* user_data)
 {
-  sunrealtype* y       = N_VGetArrayPointer(yvec);
+  sunscalartype* y       = N_VGetArrayPointer(yvec);
   const sunrealtype q2 = y[1];
 
   gout[0] = q2;

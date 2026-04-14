@@ -363,10 +363,10 @@ static int SetupSamples(UserData* udata)
   sunrealtype mean, val;
 
   // Access problem data
-  sunrealtype* samples_local = N_VGetArrayPointer(udata->samples_local);
+  sunscalartype* samples_local = N_VGetArrayPointer(udata->samples_local);
   if (check_retval((void*)samples_local, "N_VGetArrayPointer", 0)) { return 1; }
 
-  sunrealtype* mu_host =
+  sunscalartype* mu_host =
     N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(udata->mu_true));
   if (check_retval((void*)mu_host, "N_VGetArrayPointer", 0)) { return 1; }
 
@@ -410,7 +410,7 @@ static int SetMus(UserData* udata)
 {
   sunindextype i;
 
-  sunrealtype* mu_host =
+  sunscalartype* mu_host =
     N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(udata->mu_true));
   if (check_retval((void*)mu_host, "N_VGetArrayPointer", 0)) { return 1; }
 
@@ -428,7 +428,7 @@ static int SetMus(UserData* udata)
 
 static int SetStartGuess(N_Vector u, UserData* udata)
 {
-  sunrealtype* u_host = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(u));
+  sunscalartype* u_host = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(u));
   if (check_retval((void*)u_host, "N_VGetArrayPointer", 0)) { return 1; }
 
   for (sunindextype i = 0; i < udata->nodes_loc; i++)
@@ -455,11 +455,11 @@ static int EM(N_Vector u, N_Vector f, void* user_data)
   sunrealtype scale = ONE / sqrt(TWO * PI);
 
   // Get input pointers
-  sunrealtype* u_host = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(u));
-  sunrealtype* x_host = N_VGetArrayPointer(udata->samples_local);
+  sunscalartype* u_host = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(u));
+  sunscalartype* x_host = N_VGetArrayPointer(udata->samples_local);
 
   // Get output pointer
-  sunrealtype* px_host = N_VGetArrayPointer(udata->px);
+  sunscalartype* px_host = N_VGetArrayPointer(udata->px);
 
   // Px calculation
   sunrealtype val1, val2, val3;
@@ -482,8 +482,8 @@ static int EM(N_Vector u, N_Vector f, void* user_data)
   // --------------
 
   // Get output device pointers
-  sunrealtype* mub_host = N_VGetArrayPointer(udata->mu_bottom);
-  sunrealtype* mut_host = N_VGetArrayPointer(udata->mu_top);
+  sunscalartype* mub_host = N_VGetArrayPointer(udata->mu_bottom);
+  sunscalartype* mut_host = N_VGetArrayPointer(udata->mu_top);
 
   // Initialize temporary variables
   sunrealtype frac1, frac2, frac3;
@@ -520,7 +520,7 @@ static int EM(N_Vector u, N_Vector f, void* user_data)
   // EM FINALIZE COMPUTATION
   // -----------------------
 
-  sunrealtype* f_host = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(f));
+  sunscalartype* f_host = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(f));
 
   // Serial EM Fin calculation
   for (int j = 0; j < udata->nodes_loc; j++)

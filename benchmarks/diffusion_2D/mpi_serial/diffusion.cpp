@@ -47,10 +47,10 @@ int laplacian(sunrealtype t, N_Vector u, N_Vector f, UserData* udata)
   sunrealtype cc = -TWO * (cx + cy);
 
   // Access data arrays
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
-  sunrealtype* farray = N_VGetArrayPointer(f);
+  sunscalartype* farray = N_VGetArrayPointer(f);
   if (check_flag((void*)farray, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Initialize rhs vector to zero (handles boundary conditions)

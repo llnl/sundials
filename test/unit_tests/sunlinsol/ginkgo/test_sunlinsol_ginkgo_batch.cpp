@@ -224,7 +224,7 @@ int main(int argc, char* argv[])
   /* Fill x with random data */
   std::default_random_engine engine;
   std::uniform_real_distribution<sunrealtype> distribution_real(8, 10);
-  sunrealtype* xdata = N_VGetArrayPointer(x);
+  sunscalartype* xdata = N_VGetArrayPointer(x);
   for (sunindextype batchi = 0; batchi < num_batches; batchi++)
   {
     for (sunindextype i = 0; i < matcols; i++)

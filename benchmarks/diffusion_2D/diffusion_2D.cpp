@@ -813,7 +813,7 @@ int UserOutput::write(sunrealtype t, N_Vector u, UserData* udata)
       flag = CopyDataFromDevice(u);
       if (check_flag(&flag, "CopyDataFromDevice", 1)) { return -1; }
 
-      sunrealtype* uarray = N_VGetArrayPointer(u);
+      sunscalartype* uarray = N_VGetArrayPointer(u);
       if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
       uoutstream << t << " ";
@@ -830,7 +830,7 @@ int UserOutput::write(sunrealtype t, N_Vector u, UserData* udata)
         if (check_flag(&flag, "CopyDataFromDevice", 1)) { return -1; }
 
         // Output error to disk
-        sunrealtype* earray = N_VGetArrayPointer(error);
+        sunscalartype* earray = N_VGetArrayPointer(error);
         if (check_flag((void*)earray, "N_VGetArrayPointer", 0)) { return -1; }
 
         eoutstream << t << " ";

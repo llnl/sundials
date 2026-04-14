@@ -944,13 +944,13 @@ SWIGEXPORT int _wrap_FN_VEnableWrmsNormMaskVectorArray_Serial(N_Vector farg1, in
 
 
 
-SWIGEXPORT double * _wrap_FN_VGetArrayPointer_Serial(N_Vector farg1) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FN_VGetArrayPointer_Serial(N_Vector farg1) {
+  sunscalartype * fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (N_Vector)(farg1);
-  result = (sunrealtype *)N_VGetArrayPointer_Serial(arg1);
+  result = (sunscalartype *)N_VGetArrayPointer_Serial(arg1);
   fresult = result;
   return fresult;
 }

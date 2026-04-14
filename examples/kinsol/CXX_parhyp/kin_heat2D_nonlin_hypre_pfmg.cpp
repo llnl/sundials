@@ -605,7 +605,7 @@ static int SetupRHS(void* user_data)
   // ----------------------
 
   // Access data array
-  sunrealtype* barray = N_VGetArrayPointer(udata->b);
+  sunscalartype* barray = N_VGetArrayPointer(udata->b);
   if (check_retval((void*)barray, "N_VGetArrayPointer", 0)) { return 1; }
 
   // Initialize rhs vector to zero (handles boundary conditions)
@@ -670,10 +670,10 @@ static int c(N_Vector u, N_Vector z, void* user_data)
   sunindextype jend   = (udata->HaveNbrN) ? ny_loc : ny_loc - 1;
 
   // Access data arrays
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
 
-  sunrealtype* zarray = N_VGetArrayPointer(z);
+  sunscalartype* zarray = N_VGetArrayPointer(z);
   if (check_retval((void*)zarray, "N_VGetArrayPointer", 0)) { return 1; }
 
   // Initialize rhs vector to zero (handles boundary conditions)
@@ -1737,7 +1737,7 @@ static int Solution(N_Vector u, UserData* udata)
   sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
   sunindextype jend   = (udata->HaveNbrN) ? udata->ny_loc : udata->ny_loc - 1;
 
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
 
   for (sunindextype j = jstart; j < jend; j++)
@@ -1948,7 +1948,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   udata->uout << setprecision(numeric_limits<sunrealtype>::digits10);
 
   // Write solution and error to disk
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
   for (sunindextype i = 0; i < udata->nodes_loc; i++)

@@ -1462,7 +1462,7 @@ static int ReactionJac(N_Vector y, SUNMatrix Jac, UserData udata)
   sunrealtype Ju[9], Jv[9], Jw[9];
 
   /* access data arrays */
-  sunrealtype* Ydata = N_VGetArrayPointer(y);
+  sunscalartype* Ydata = N_VGetArrayPointer(y);
   if (check_retval((void*)Ydata, "N_VGetArrayPointer", 0)) { return (1); }
 
   /* initialize all local variables to zero (to avoid uninitialized variable warnings) */

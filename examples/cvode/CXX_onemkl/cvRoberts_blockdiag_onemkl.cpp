@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
   if (check_retval((void*)abstol, "N_VClone", 0)) { return 1; }
 
   // Initialize y
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   for (sunindextype groupj = 0; groupj < neq; groupj += GROUPSIZE)
   {
     ydata[groupj]     = Y1;
@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
   sunrealtype reltol = RTOL;
 
   // Set the vector absolute tolerance
-  sunrealtype* abstol_data = N_VGetArrayPointer(abstol);
+  sunscalartype* abstol_data = N_VGetArrayPointer(abstol);
   for (sunindextype groupj = 0; groupj < neq; groupj += GROUPSIZE)
   {
     abstol_data[groupj]     = ATOL1;

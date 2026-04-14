@@ -504,7 +504,7 @@ static int ReactionJac(sunrealtype c, N_Vector y, SUNMatrix Jac, UserData udata)
   sunrealtype ep = udata->ep;
   sunindextype i = 0;
   sunrealtype u, v, w;
-  sunrealtype* Ydata = N_VGetArrayPointer(y); /* access solution array */
+  sunscalartype* Ydata = N_VGetArrayPointer(y); /* access solution array */
   if (check_flag((void*)Ydata, "N_VGetArrayPointer", 0)) { return 1; }
 
   /* iterate over nodes, filling in Jacobian entries */

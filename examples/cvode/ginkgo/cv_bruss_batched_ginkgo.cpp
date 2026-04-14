@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
   if (check_retval((void*)abstol, "N_VClone", 0)) { return 1; }
 
   /* Initialize y */
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   for (int batchj = 0; batchj < udata.num_batches; ++batchj)
   {
     ydata[batchj * udata.batch_size]     = udata.u0[batchj];
@@ -242,7 +242,7 @@ int main(int argc, char* argv[])
   }
 
   /* Set the vector absolute tolerance */
-  sunrealtype* abstol_data = N_VGetArrayPointer(abstol);
+  sunscalartype* abstol_data = N_VGetArrayPointer(abstol);
   for (int batchj = 0; batchj < udata.num_batches; ++batchj)
   {
     abstol_data[batchj * udata.batch_size]     = 1.0e-15;
@@ -506,7 +506,7 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
   auto Jgko       = static_cast<SUNGkoMatrixType*>(J->content)->GkoMtx();
 
   sunrealtype* Jdata = Jgko->get_values();
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
 
 #if defined(USE_CUDA) || defined(USE_HIP)
   unsigned threads_per_block = 256;
@@ -541,9 +541,9 @@ int JacVec(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y, N_Vector fy,
 {
   UserData* udata = (UserData*)user_data;
 
-  sunrealtype* vdata  = N_VGetArrayPointer(v);
-  sunrealtype* Jvdata = N_VGetArrayPointer(Jv);
-  sunrealtype* ydata  = N_VGetArrayPointer(y);
+  sunscalartype* vdata  = N_VGetArrayPointer(v);
+  sunscalartype* Jvdata = N_VGetArrayPointer(Jv);
+  sunscalartype* ydata  = N_VGetArrayPointer(y);
 
 #if defined(USE_CUDA) || defined(USE_HIP)
   unsigned threads_per_block = 256;

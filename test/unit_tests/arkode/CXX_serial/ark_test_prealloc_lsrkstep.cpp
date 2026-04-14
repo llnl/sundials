@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
   for (int i = 0; i < 3 * width; i++) { cout << "-"; }
   cout << endl;
 
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunscalartype* y_data = N_VGetArrayPointer(y);
 
   cout << setw(width) << tret << setw(width) << y_data[0] << setw(width)
        << abs(y_data[0] - true_solution(tret)) << endl;

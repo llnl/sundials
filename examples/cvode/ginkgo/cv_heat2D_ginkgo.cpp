@@ -423,10 +423,10 @@ int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
 #else
 
   // Access host data arrays
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_ptr(uarray, "N_VGetArrayPointer")) { return -1; }
 
-  sunrealtype* farray = N_VGetArrayPointer(f);
+  sunscalartype* farray = N_VGetArrayPointer(f);
   if (check_ptr(farray, "N_VGetArrayPointer")) { return -1; }
 
   // Iterate over domain interior and fill the RHS vector

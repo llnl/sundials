@@ -127,7 +127,7 @@ int main(int argc, char** argv)
   if (check_retval((void*)u, "N_VNew_Sycl", 0)) { return 1; }
 
   // Extract host pointer to solution vector data on the host
-  sunrealtype* udata = N_VGetArrayPointer(u);
+  sunscalartype* udata = N_VGetArrayPointer(u);
 
   // Load initial profile into u vector
   for (sunindextype tid = 0; tid < data.NEQ; tid++)

@@ -18,6 +18,11 @@
 # List of test tuples of the form "name"
 set(unit_tests)
 
+if(SUNDIALS_SCALAR_TYPE MATCHES "COMPLEX")
+  message(STATUS "Constraints tests are not compatible with complex scalar type")
+  return()
+endif()
+
 if(SUNDIALS_ENABLE_ARKODE)
   list(APPEND unit_tests "test_constraints_arkode.cpp")
 endif()

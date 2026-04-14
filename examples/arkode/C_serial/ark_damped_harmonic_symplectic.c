@@ -165,7 +165,7 @@ static sunrealtype F(sunrealtype t) { return SUN_RCONST(0.018) * sin(t / PI); }
 sunrealtype Hamiltonian(N_Vector yvec, sunrealtype t)
 {
   sunrealtype H       = SUN_RCONST(0.0);
-  sunrealtype* y      = N_VGetArrayPointer(yvec);
+  sunscalartype* y      = N_VGetArrayPointer(yvec);
   const sunrealtype p = y[0];
   const sunrealtype q = y[1];
 
@@ -177,8 +177,8 @@ sunrealtype Hamiltonian(N_Vector yvec, sunrealtype t)
 
 int qdot(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 {
-  sunrealtype* y      = N_VGetArrayPointer(yvec);
-  sunrealtype* ydot   = N_VGetArrayPointer(ydotvec);
+  sunscalartype* y      = N_VGetArrayPointer(yvec);
+  sunscalartype* ydot   = N_VGetArrayPointer(ydotvec);
   const sunrealtype p = y[0];
 
   ydot[1] = p * exp(-F(t));
@@ -188,8 +188,8 @@ int qdot(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 
 int pdot(sunrealtype t, N_Vector yvec, N_Vector ydotvec, void* user_data)
 {
-  sunrealtype* y      = N_VGetArrayPointer(yvec);
-  sunrealtype* ydot   = N_VGetArrayPointer(ydotvec);
+  sunscalartype* y      = N_VGetArrayPointer(yvec);
+  sunscalartype* ydot   = N_VGetArrayPointer(ydotvec);
   const sunrealtype p = y[0];
   const sunrealtype q = y[1];
 

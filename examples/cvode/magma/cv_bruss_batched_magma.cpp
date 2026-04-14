@@ -260,7 +260,7 @@ int main(int argc, char* argv[])
   if (check_retval((void*)abstol, "N_VClone", 0)) { return (1); }
 
   /* Initialize y */
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   for (int batchj = 0; batchj < udata.nbatches; ++batchj)
   {
     ydata[batchj * udata.batchSize]     = udata.u0[batchj];
@@ -270,7 +270,7 @@ int main(int argc, char* argv[])
   HIP_OR_CUDA(N_VCopyToDevice_Hip(y);, N_VCopyToDevice_Cuda(y);)
 
   /* Set the vector absolute tolerance */
-  sunrealtype* abstol_data = N_VGetArrayPointer(abstol);
+  sunscalartype* abstol_data = N_VGetArrayPointer(abstol);
   for (int batchj = 0; batchj < udata.nbatches; ++batchj)
   {
     abstol_data[batchj * udata.batchSize]     = 1.0e-10;

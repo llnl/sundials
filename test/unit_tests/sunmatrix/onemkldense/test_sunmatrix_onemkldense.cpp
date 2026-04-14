@@ -234,7 +234,7 @@ int main(int argc, char* argv[])
     SUNMatrix_OneMklDense_CopyToDevice(K, Idata);
   }
 
-  sunrealtype* xdata = N_VGetArrayPointer(x);
+  sunscalartype* xdata = N_VGetArrayPointer(x);
   for (k = 0; k < nblocks; k++)
   {
     for (i = 0; i < matcols; i++) { xdata[matcols * k + i] = ONE / (i + 1); }
@@ -244,7 +244,7 @@ int main(int argc, char* argv[])
 
   N_VCopyToDevice_Sycl(x);
 
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   for (k = 0; k < nblocks; k++)
   {
     for (i = 0; i < matrows; i++)

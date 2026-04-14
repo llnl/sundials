@@ -283,7 +283,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
   sunindextype i;
 
   /* set elements [is,ie] of the data array */
-  sunrealtype* xd = N_VGetArrayPointer(X);
+  sunscalartype* xd = N_VGetArrayPointer(X);
   for (i = is; i <= ie; i++) { xd[i] = val; }
 }
 

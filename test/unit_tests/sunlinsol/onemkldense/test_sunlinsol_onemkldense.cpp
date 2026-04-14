@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
   SUNMatrix_OneMklDense_CopyToDevice(K, Idata);
 
   // Fill x vector with uniform random data in [0,1]
-  sunrealtype* xdata = N_VGetArrayPointer(x);
+  sunscalartype* xdata = N_VGetArrayPointer(x);
   for (j = 0; j < cols * nblocks; j++)
   {
     xdata[j] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
@@ -364,8 +364,8 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
   int failure               = 0;
   sunindextype i            = 0;
   sunindextype local_length = N_VGetLength(X);
-  sunrealtype* Xdata        = N_VGetArrayPointer(X);
-  sunrealtype* Ydata        = N_VGetArrayPointer(Y);
+  sunscalartype* Xdata        = N_VGetArrayPointer(X);
+  sunscalartype* Ydata        = N_VGetArrayPointer(Y);
 
   // Copy data to host
   N_VCopyFromDevice_Sycl(X);

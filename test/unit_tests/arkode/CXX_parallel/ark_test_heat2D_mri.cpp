@@ -520,9 +520,9 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype ky   = udata->ky;
   sunrealtype dx   = udata->dx;
   sunrealtype dy   = udata->dy;
-  sunrealtype* Y   = N_VGetArrayPointer(y); // access data arrays
+  sunscalartype* Y   = N_VGetArrayPointer(y); // access data arrays
   if (check_flag((void*)Y, "N_VGetArrayPointer", 0)) { return -1; }
-  sunrealtype* Ydot = N_VGetArrayPointer(ydot);
+  sunscalartype* Ydot = N_VGetArrayPointer(ydot);
   if (check_flag((void*)Ydot, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Exchange boundary data with neighbors
@@ -641,7 +641,7 @@ static int PSet(sunrealtype t, N_Vector y, N_Vector fy, sunbooleantype jok,
   sunrealtype ky    = udata->ky;
   sunrealtype dx    = udata->dx;
   sunrealtype dy    = udata->dy;
-  sunrealtype* diag = N_VGetArrayPointer(udata->d); // access data arrays
+  sunscalartype* diag = N_VGetArrayPointer(udata->d); // access data arrays
   if (check_flag((void*)diag, "N_VGetArrayPointer", 0)) { return -1; }
 
   // set all entries of d to the diagonal values of interior
@@ -805,7 +805,7 @@ static int Exchange(N_Vector y, UserData* udata)
   sunindextype nxl = udata->nxl;
 
   // access data array
-  sunrealtype* Y = N_VGetArrayPointer(y);
+  sunscalartype* Y = N_VGetArrayPointer(y);
   if (check_flag((void*)Y, "N_VGetArrayPointer", 0)) { return -1; }
 
   // MPI neighborhood information

@@ -1177,7 +1177,7 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData& udata,
     // Write solution to disk
     if (uopts.output >= 2)
     {
-      sunrealtype* ydata = N_VGetArrayPointer(y);
+      sunscalartype* ydata = N_VGetArrayPointer(y);
       if (check_ptr(ydata, "N_VGetArrayPointer")) { return -1; }
 
       uopts.uout << t;

@@ -23,7 +23,7 @@
 int UserData::pack_buffers(const N_Vector u)
 {
   // Access data array
-  const sunrealtype* uarray = N_VGetArrayPointer(u);
+  const sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_flag(uarray, "N_VGetArrayPointer", 0)) return -1;
 
   if (HaveNbrW)

@@ -210,7 +210,7 @@ SUNDIALS_EXPORT SUNErrCode N_VEnableDotProdMultiLocal_Petsc(N_Vector v,
                                                             sunbooleantype tf);
 
 SUNDIALS_DEPRECATED_EXPORT_MSG("Not supported, use N_VGetVector_Petsc")
-sunrealtype* N_VGetArrayPointer_Petsc(N_Vector v);
+sunscalartype* N_VGetArrayPointer_Petsc(N_Vector v);
 
 SUNDIALS_DEPRECATED_EXPORT_MSG("Not supported, use N_VGetVector_Petsc")
 void N_VSetArrayPointer_Petsc(sunrealtype* v_data, N_Vector v);

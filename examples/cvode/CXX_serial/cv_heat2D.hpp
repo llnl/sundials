@@ -301,7 +301,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, N_Vector e, UserData& udata)
   // Write solution and error to disk
   if (udata.output)
   {
-    sunrealtype* uarray = N_VGetArrayPointer(u);
+    sunscalartype* uarray = N_VGetArrayPointer(u);
     if (check_ptr(uarray, "N_VGetArrayPointer")) { return -1; }
 
     udata.uout << t << " ";
@@ -312,7 +312,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, N_Vector e, UserData& udata)
     udata.uout << std::endl;
 
     // Output error to disk
-    sunrealtype* earray = N_VGetArrayPointer(e);
+    sunscalartype* earray = N_VGetArrayPointer(e);
     if (check_ptr(earray, "N_VGetArrayPointer")) { return -1; }
 
     udata.eout << t << " ";

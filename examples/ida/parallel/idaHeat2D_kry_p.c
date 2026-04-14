@@ -395,7 +395,7 @@ int PsetupHeat(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector rr,
   const int npey           = data->npey;
   const sunindextype mxsub = data->mxsub;
   const sunindextype mysub = data->mysub;
-  sunrealtype* ppv         = N_VGetArrayPointer(data->pp);
+  sunscalartype* ppv         = N_VGetArrayPointer(data->pp);
 
   /* Calculate the value for the inverse of the diagonal preconditioner */
   const sunrealtype pelinv = ONE / (c_j + data->coeffxy);
@@ -472,7 +472,7 @@ static int rescomm(N_Vector uu, N_Vector up, UserData data)
   const sunindextype mysub = data->mysub;
 
   /* Get solution vector data, buffers, extended array uext. */
-  const sunrealtype* uarray = N_VGetArrayPointer(uu);
+  const sunscalartype* uarray = N_VGetArrayPointer(uu);
   sunrealtype* uext         = data->uext;
   sunrealtype* send_buffer  = data->send_buff;
   sunrealtype* recv_buff    = data->recv_buff;
@@ -515,9 +515,9 @@ static int reslocal(sunrealtype tt, N_Vector uu, N_Vector up, N_Vector rr,
   const sunindextype mysub  = data->mysub;
 
   /* Vector data arrays, extended work array uext. */
-  const sunrealtype* uuv = N_VGetArrayPointer(uu);
-  const sunrealtype* upv = N_VGetArrayPointer(up);
-  sunrealtype* resv      = N_VGetArrayPointer(rr);
+  const sunscalartype* uuv = N_VGetArrayPointer(uu);
+  const sunscalartype* upv = N_VGetArrayPointer(up);
+  sunscalartype* resv      = N_VGetArrayPointer(rr);
   sunrealtype* uext      = data->uext;
 
   /* Initialize all elements of rr to uu. This sets the boundary
@@ -855,8 +855,8 @@ static int SetInitialProfile(N_Vector uu, N_Vector up, N_Vector id,
 
   /* Initialize uu. */
 
-  sunrealtype* uudata = N_VGetArrayPointer(uu);
-  sunrealtype* iddata = N_VGetArrayPointer(id);
+  sunscalartype* uudata = N_VGetArrayPointer(uu);
+  sunscalartype* iddata = N_VGetArrayPointer(id);
 
   /* Set mesh spacings and subgrid indices for this PE. */
   const sunrealtype dx = data->dx;

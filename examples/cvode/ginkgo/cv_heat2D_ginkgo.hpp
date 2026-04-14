@@ -184,7 +184,7 @@ static int Solution(sunrealtype t, N_Vector u, UserData& udata)
       });
 #else
 
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_ptr(uarray, "N_VGetArrayPointer")) { return -1; }
 
   for (sunindextype j = 1; j < ny - 1; j++)
@@ -374,7 +374,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, N_Vector e, UserData& udata)
 #endif
 
     // Access host data array
-    sunrealtype* uarray = N_VGetArrayPointer(u);
+    sunscalartype* uarray = N_VGetArrayPointer(u);
     if (check_ptr(uarray, "N_VGetArrayPointer")) { return -1; }
 
     udata.uout << t << " ";
@@ -385,7 +385,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, N_Vector e, UserData& udata)
     udata.uout << std::endl;
 
     // Access host data array
-    sunrealtype* earray = N_VGetArrayPointer(e);
+    sunscalartype* earray = N_VGetArrayPointer(e);
     if (check_ptr(earray, "N_VGetArrayPointer")) { return -1; }
 
     udata.eout << t << " ";

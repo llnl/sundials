@@ -242,7 +242,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
   sunrealtype lambda = rdata[0]; /* set shortcut for stiffness parameter */
-  sunrealtype* Jdata = SUNDenseMatrix_Data(J);
+  sunscalartype* Jdata = SUNDenseMatrix_Data(J);
 
   /* Fill in Jacobian of f: set the first entry of the data array to set the (0,0) entry */
   Jdata[0] = lambda;

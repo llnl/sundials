@@ -521,9 +521,9 @@ static int func_local(sunindextype Nlocal, N_Vector cc, N_Vector fval,
   dely   = data->dy;
   shifty = (MXSUB + 2) * NUM_SPECIES;
 
-  sunrealtype* ccdata = N_VGetArrayPointer(cc);
-  sunrealtype* rdata  = N_VGetArrayPointer(data->rates);
-  sunrealtype* fdata  = N_VGetArrayPointer(fval);
+  sunscalartype* ccdata = N_VGetArrayPointer(cc);
+  sunscalartype* rdata  = N_VGetArrayPointer(data->rates);
+  sunscalartype* fdata  = N_VGetArrayPointer(fval);
 
   for (jy = 0; jy < MYSUB; jy++)
   {
@@ -741,8 +741,8 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   sunrealtype *cloc, *sloc;
   sunrealtype ctemp[NUM_SPECIES], stemp[NUM_SPECIES];
 
-  sunrealtype* ccdata = N_VGetArrayPointer(cc);
-  sunrealtype* scdata = N_VGetArrayPointer(sc);
+  sunscalartype* ccdata = N_VGetArrayPointer(cc);
+  sunscalartype* scdata = N_VGetArrayPointer(sc);
 
   /* Initialize arrays ctemp and stemp used in the loading process */
   for (i = 0; i < NUM_SPECIES / 2; i++)

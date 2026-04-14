@@ -1162,13 +1162,13 @@ SWIGEXPORT int _wrap_FN_VEnableDotProdMultiLocal_Parallel(N_Vector farg1, int co
 
 
 
-SWIGEXPORT double * _wrap_FN_VGetArrayPointer_Parallel(N_Vector farg1) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FN_VGetArrayPointer_Parallel(N_Vector farg1) {
+  sunscalartype * fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (N_Vector)(farg1);
-  result = (sunrealtype *)N_VGetArrayPointer_Parallel(arg1);
+  result = (sunscalartype *)N_VGetArrayPointer_Parallel(arg1);
   fresult = result;
   return fresult;
 }

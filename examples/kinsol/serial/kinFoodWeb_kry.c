@@ -325,9 +325,9 @@ static int func(N_Vector cc, N_Vector fval, void* user_data)
   delx = data->dx;
   dely = data->dy;
 
-  sunrealtype* ccdata = N_VGetArrayPointer(cc);
-  sunrealtype* rdata  = N_VGetArrayPointer(data->rates);
-  sunrealtype* fdata  = N_VGetArrayPointer(fval);
+  sunscalartype* ccdata = N_VGetArrayPointer(cc);
+  sunscalartype* rdata  = N_VGetArrayPointer(data->rates);
+  sunscalartype* fdata  = N_VGetArrayPointer(fval);
 
   /* Loop over all mesh points, evaluating rate array at each point*/
   for (jy = 0; jy < MY; jy++)
@@ -398,9 +398,9 @@ static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
   r0        = THOUSAND * uround * fac * NEQ;
   if (r0 == ZERO) { r0 = ONE; }
 
-  sunrealtype* ccdata = N_VGetArrayPointer(cc);
-  sunrealtype* csdata = N_VGetArrayPointer(cscale);
-  sunrealtype* rdata  = N_VGetArrayPointer(data->rates);
+  sunscalartype* ccdata = N_VGetArrayPointer(cc);
+  sunscalartype* csdata = N_VGetArrayPointer(cscale);
+  sunscalartype* rdata  = N_VGetArrayPointer(data->rates);
 
   /* Loop over spatial points; get size NUM_SPECIES Jacobian block at each */
   for (jy = 0; jy < MY; jy++)
@@ -462,7 +462,7 @@ static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
 
   data = (UserData)user_data;
 
-  sunrealtype* vdata = N_VGetArrayPointer(vv);
+  sunscalartype* vdata = N_VGetArrayPointer(vv);
 
   for (jx = 0; jx < MX; jx++)
   {
@@ -652,8 +652,8 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   sunrealtype *cloc, *sloc;
   sunrealtype ctemp[NUM_SPECIES], stemp[NUM_SPECIES];
 
-  sunrealtype* ccdata = N_VGetArrayPointer(cc);
-  sunrealtype* scdata = N_VGetArrayPointer(sc);
+  sunscalartype* ccdata = N_VGetArrayPointer(cc);
+  sunscalartype* scdata = N_VGetArrayPointer(sc);
 
   /* Initialize arrays ctemp and stemp used in the loading process */
   for (i = 0; i < NUM_SPECIES / 2; i++)
@@ -725,7 +725,7 @@ static void PrintOutput(N_Vector cc)
   int is, jx, jy;
   sunrealtype* ct;
 
-  sunrealtype* ccdata = N_VGetArrayPointer(cc);
+  sunscalartype* ccdata = N_VGetArrayPointer(cc);
 
   jy = 0;
   jx = 0;

@@ -229,8 +229,8 @@ int main(int argc, char* argv[])
 int lotka_volterra(sunrealtype t, N_Vector uvec, N_Vector udotvec, void* user_data)
 {
   sunrealtype* p    = (sunrealtype*)user_data;
-  sunrealtype* u    = N_VGetArrayPointer(uvec);
-  sunrealtype* udot = N_VGetArrayPointer(udotvec);
+  sunscalartype* u    = N_VGetArrayPointer(uvec);
+  sunscalartype* udot = N_VGetArrayPointer(udotvec);
 
   udot[0] = p[0] * u[0] - p[1] * u[0] * u[1];
   udot[1] = -p[2] * u[1] + p[3] * u[0] * u[1];
@@ -243,9 +243,9 @@ int vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t, N_Vector uvec,
         void* user_data)
 {
   sunrealtype* p  = (sunrealtype*)user_data;
-  sunrealtype* u  = N_VGetArrayPointer(uvec);
-  sunrealtype* v  = N_VGetArrayPointer(vvec);
-  sunrealtype* Jv = N_VGetArrayPointer(Jvvec);
+  sunscalartype* u  = N_VGetArrayPointer(uvec);
+  sunscalartype* v  = N_VGetArrayPointer(vvec);
+  sunscalartype* Jv = N_VGetArrayPointer(Jvvec);
 
   Jv[0] = (p[0] - p[1] * u[1]) * v[0] + p[3] * u[1] * v[1];
   Jv[1] = -p[1] * u[0] * v[0] + (-p[2] + p[3] * u[0]) * v[1];
@@ -259,9 +259,9 @@ int parameter_vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t, N_Vector uvec,
 {
   if (user_data != params) { return -1; }
 
-  sunrealtype* u  = N_VGetArrayPointer(uvec);
-  sunrealtype* v  = N_VGetArrayPointer(vvec);
-  sunrealtype* Jv = N_VGetArrayPointer(Jvvec);
+  sunscalartype* u  = N_VGetArrayPointer(uvec);
+  sunscalartype* v  = N_VGetArrayPointer(vvec);
+  sunscalartype* Jv = N_VGetArrayPointer(Jvvec);
 
   Jv[0] = u[0] * v[0];
   Jv[1] = -u[0] * u[1] * v[0];
@@ -276,8 +276,8 @@ int parameter_vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t, N_Vector uvec,
    does not depend on the parameters. */
 void dgdu(N_Vector uvec, N_Vector dgvec)
 {
-  sunrealtype* u  = N_VGetArrayPointer(uvec);
-  sunrealtype* dg = N_VGetArrayPointer(dgvec);
+  sunscalartype* u  = N_VGetArrayPointer(uvec);
+  sunscalartype* dg = N_VGetArrayPointer(dgvec);
 
   dg[0] = -SUN_RCONST(1.0) + u[0];
   dg[1] = -SUN_RCONST(1.0) + u[1];

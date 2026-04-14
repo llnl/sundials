@@ -100,7 +100,7 @@ inline int dae_res_jac(sunrealtype t, sunrealtype cj, N_Vector y, N_Vector yp,
                        N_Vector tempv1, N_Vector tempv2, N_Vector tempv3)
 {
   const sunindextype length = N_VGetLength(y);
-  sunrealtype* jac_data     = SUNDenseMatrix_Data(J);
+  sunscalartype* jac_data   = SUNDenseMatrix_Data(J);
 
   SUNMatZero(J);
   for (sunindextype i = 0; i < length; ++i) { jac_data[i * length + i] = cj; }

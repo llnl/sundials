@@ -306,8 +306,8 @@ int main(int argc, char* argv[])
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   UserData udata     = (UserData)user_data;
-  sunrealtype* ydata = N_VGetArrayPointer(y);
-  sunrealtype* fdata = N_VGetArrayPointer(ydot);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* fdata = N_VGetArrayPointer(ydot);
 
   fdata[0] = -(udata->alpha) * ydata[1];
   fdata[1] = (udata->alpha) * ydata[0];
@@ -320,7 +320,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   UserData udata     = (UserData)user_data;
-  sunrealtype* Jdata = SUNDenseMatrix_Data(J);
+  sunscalartype* Jdata = SUNDenseMatrix_Data(J);
 
   Jdata[0] = ZERO;
   Jdata[1] = -(udata->alpha);
@@ -334,8 +334,8 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 static int Proj(sunrealtype t, N_Vector ycur, N_Vector corr,
                 sunrealtype epsProj, N_Vector err, void* user_data)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(ycur);
-  sunrealtype* cdata = N_VGetArrayPointer(corr);
+  sunscalartype* ydata = N_VGetArrayPointer(ycur);
+  sunscalartype* cdata = N_VGetArrayPointer(corr);
   sunrealtype* edata = NULL;
   sunrealtype x      = ydata[0];
   sunrealtype y      = ydata[1];
@@ -491,7 +491,7 @@ static void InputHelp(void)
 /* Compute the analytical solution */
 static int ComputeSolution(sunrealtype t, N_Vector y, UserData udata)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
 
   ydata[0] = COS((udata->alpha) * t);
   ydata[1] = SIN((udata->alpha) * t);
@@ -503,7 +503,7 @@ static int ComputeSolution(sunrealtype t, N_Vector y, UserData udata)
 static int ComputeError(sunrealtype t, N_Vector y, N_Vector e, sunrealtype* ec,
                         UserData udata)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   int retval;
 
   /* solution error */
@@ -521,8 +521,8 @@ static int ComputeError(sunrealtype t, N_Vector y, N_Vector e, sunrealtype* ec,
 static int WriteOutput(sunrealtype t, N_Vector y, N_Vector e, sunrealtype ec,
                        int screenfile, FILE* YFID, FILE* EFID)
 {
-  sunrealtype* ydata = N_VGetArrayPointer(y);
-  sunrealtype* edata = N_VGetArrayPointer(e);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* edata = N_VGetArrayPointer(e);
 
   if (screenfile == 0)
   {

@@ -283,7 +283,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   /* Jdata is column-major */
-  sunrealtype* Jdata = SUNDenseMatrix_Data(J);
+  sunscalartype* Jdata = SUNDenseMatrix_Data(J);
 
   Jdata[1] = SUN_RCONST(1.0);
   Jdata[3] = -Drag;

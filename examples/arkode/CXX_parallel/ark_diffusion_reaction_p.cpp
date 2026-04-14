@@ -1375,10 +1375,10 @@ static int diffusion(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
   sunrealtype ccv = -TWO * (cxv + cyv);
 
   // Access data arrays
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_flag((void*)ydata, "N_VGetArrayPointer", 0)) { return -1; }
 
-  sunrealtype* fdata = N_VGetArrayPointer(f);
+  sunscalartype* fdata = N_VGetArrayPointer(f);
   if (check_flag((void*)fdata, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Shortcuts to array indices (center, west, east, south, north)
@@ -1608,10 +1608,10 @@ static int reaction(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
   udata->rhsR.start();
 
   // Access data arrays
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_flag((void*)ydata, "N_VGetArrayPointer", 0)) { return -1; }
 
-  sunrealtype* fdata = N_VGetArrayPointer(f);
+  sunscalartype* fdata = N_VGetArrayPointer(f);
   if (check_flag((void*)fdata, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Shortcuts to local number of nodes
@@ -1703,10 +1703,10 @@ static int PSolve(sunrealtype t, N_Vector u, N_Vector f, N_Vector r, N_Vector z,
   sunrealtype ccv = -TWO * (cxv + cyv);
 
   // Access data arrays
-  sunrealtype* rdata = N_VGetArrayPointer(r);
+  sunscalartype* rdata = N_VGetArrayPointer(r);
   if (check_flag((void*)rdata, "N_VGetArrayPointer", 0)) { return -1; }
 
-  sunrealtype* zdata = N_VGetArrayPointer(z);
+  sunscalartype* zdata = N_VGetArrayPointer(z);
   if (check_flag((void*)zdata, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Shortcuts to local number of nodes
@@ -1786,7 +1786,7 @@ static int StartExchange(N_Vector y, UserData* udata)
   sunindextype nx_loc = udata->nx_loc;
 
   // Access data array
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_flag((void*)ydata, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Send West face data to neighbor's East face
@@ -1968,7 +1968,7 @@ static int ExchangeBC(N_Vector y, UserData* udata)
     }
   }
 
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   if (check_flag((void*)ydata, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Send West face data
@@ -2286,7 +2286,7 @@ static int SetIC(N_Vector u, UserData* udata)
   default_random_engine generator;
   normal_distribution<double> dist(SUN_RCONST(0.0), SUN_RCONST(0.001));
 
-  sunrealtype* data = N_VGetArrayPointer(u);
+  sunscalartype* data = N_VGetArrayPointer(u);
   if (check_flag((void*)data, "N_VGetArrayPointer", 0)) { return -1; }
 
   for (sunindextype j = 0; j < ny_loc; j++)
@@ -2505,7 +2505,7 @@ static int WriteOutput(sunrealtype t, N_Vector y, UserData* udata)
       flag = ExchangeBC(y, udata);
       if (check_flag(&flag, "ExchangeBC", 1)) { return -1; }
 
-      sunrealtype* ydata = N_VGetArrayPointer(y);
+      sunscalartype* ydata = N_VGetArrayPointer(y);
       if (check_flag((void*)ydata, "N_VGetArrayPointer", 0)) { return -1; }
 
       udata->uout << t;

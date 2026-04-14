@@ -574,7 +574,7 @@ static int ReactionJac(N_Vector y, SUNMatrix Jac, UserData udata)
   sunindextype* colptrs = SUNSparseMatrix_IndexPointers(Jac);
   sunindextype* rowvals = SUNSparseMatrix_IndexValues(Jac);
   sunrealtype* data     = SUNSparseMatrix_Data(Jac);
-  sunrealtype* Ydata    = N_VGetArrayPointer(y); /* access solution array */
+  sunscalartype* Ydata    = N_VGetArrayPointer(y); /* access solution array */
   if (check_flag((void*)Ydata, "N_VGetArrayPointer", 0)) { return 1; }
 
   /* clear out matrix */

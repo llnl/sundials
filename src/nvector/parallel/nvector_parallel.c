@@ -410,9 +410,9 @@ void N_VSpace_Parallel(N_Vector v, sunindextype* lrw, sunindextype* liw)
   return;
 }
 
-sunrealtype* N_VGetArrayPointer_Parallel(N_Vector v)
+sunscalartype* N_VGetArrayPointer_Parallel(N_Vector v)
 {
-  return ((sunrealtype*)NV_DATA_P(v));
+  return ((sunscalartype*)NV_DATA_P(v));
 }
 
 void N_VSetArrayPointer_Parallel(sunrealtype* v_data, N_Vector v)

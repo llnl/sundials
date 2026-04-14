@@ -767,10 +767,10 @@ static int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
   sunindextype ny_loc = udata->ny_loc;
 
   // Access data arrays
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
-  sunrealtype* farray = N_VGetArrayPointer(f);
+  sunscalartype* farray = N_VGetArrayPointer(f);
   if (check_flag((void*)farray, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Open exchange receives
@@ -989,10 +989,10 @@ static int fi(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
   sunindextype ny_loc = udata->ny_loc;
 
   // Access data arrays
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
-  sunrealtype* farray = N_VGetArrayPointer(f);
+  sunscalartype* farray = N_VGetArrayPointer(f);
   if (check_flag((void*)farray, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Open exchange receives
@@ -1168,10 +1168,10 @@ static int fe(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
   sunindextype ny_loc = udata->ny_loc;
 
   // Access data arrays
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
-  sunrealtype* farray = N_VGetArrayPointer(f);
+  sunscalartype* farray = N_VGetArrayPointer(f);
   if (check_flag((void*)farray, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Open exchange receives
@@ -2050,7 +2050,7 @@ static int SendData(N_Vector y, UserData* udata)
   double t1 = MPI_Wtime();
 
   // Access data array
-  sunrealtype* Y = N_VGetArrayPointer(y);
+  sunscalartype* Y = N_VGetArrayPointer(y);
   if (check_flag((void*)Y, "N_VGetArrayPointer", 0)) { return -1; }
 
   // Send data
@@ -2508,7 +2508,7 @@ static int InitSolution(sunrealtype t, N_Vector u, UserData* udata)
   sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
   sunindextype jend   = (udata->HaveNbrN) ? udata->ny_loc : udata->ny_loc - 1;
 
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
   for (sunindextype j = jstart; j < jend; j++)
@@ -2679,7 +2679,7 @@ static int WriteOutput(sunrealtype t, N_Vector u, UserData* udata)
     // Write solution to disk
     if (udata->output == 2)
     {
-      sunrealtype* uarray = N_VGetArrayPointer(u);
+      sunscalartype* uarray = N_VGetArrayPointer(u);
       if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
       udata->uout << t << " ";

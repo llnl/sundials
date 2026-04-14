@@ -1322,7 +1322,7 @@ static int ExchangeBCOnly(N_Vector y, UserData udata)
   int last  = udata->nprocs - 1;
 
   /* extract the data */
-  double* Ydata = N_VGetArrayPointer(y);
+  sunscalartype* Ydata = N_VGetArrayPointer(y);
 
   /* open the East Irecv buffer */
   if (myid == last)
@@ -1382,7 +1382,7 @@ static int ExchangeAllStart(N_Vector y, UserData udata)
   int ipE     = (myid == last) ? first : udata->myid + 1; /* periodic BC */
 
   /* extract the data */
-  double* Ydata = N_VGetArrayPointer(y);
+  sunscalartype* Ydata = N_VGetArrayPointer(y);
 
   if (c > 0.0)
   {

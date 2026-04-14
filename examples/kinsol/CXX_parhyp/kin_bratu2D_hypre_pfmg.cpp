@@ -448,10 +448,10 @@ static int FPFunction(N_Vector u, N_Vector f, void* user_data)
   UserData* udata = (UserData*)user_data;
 
   // Get array pointers
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
 
-  sunrealtype* farray = N_VGetArrayPointer(f);
+  sunscalartype* farray = N_VGetArrayPointer(f);
   if (check_retval((void*)farray, "N_VGetArrayPointer", 0)) { return 1; }
 
   // Start timer
@@ -1262,7 +1262,7 @@ static int InitialGuess(N_Vector u, UserData* udata)
   sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
   sunindextype jend   = (udata->HaveNbrN) ? udata->ny_loc : udata->ny_loc - 1;
 
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
 
   for (sunindextype j = jstart; j < jend; j++)
@@ -1679,7 +1679,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   udata->uout << setprecision(numeric_limits<sunrealtype>::digits10);
 
   // Write solution and error to disk
-  sunrealtype* uarray = N_VGetArrayPointer(u);
+  sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
   for (sunindextype i = 0; i < udata->nodes_loc; i++)
