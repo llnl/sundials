@@ -31,7 +31,7 @@ Serial C example problems
 ark_analytic
 ====================================
 
-This is a very simple C example showing how to use the ARKode solver
+This is a very simple C example showing how to use the ARKODE solver
 interface.
 
 The problem is that of a scalar-valued initial value problem (IVP)
@@ -64,7 +64,7 @@ example file contains functions to evaluate both :math:`f(t,y)` and
 
 We specify the relative and absolute tolerances, :math:`rtol=10^{-6}`
 and :math:`atol=10^{-10}`, respectively.  Aside from these choices,
-this problem uses only the default ARKode solver parameters.
+this problem uses only the default ARKODE solver parameters.
 
 
 
@@ -96,7 +96,7 @@ This example problem is only marginally more difficult than the
 preceding problem, in that the ODE right-hand side function is
 nonlinear in the solution :math:`y`.  While the implicit solver from
 the preceding problem would also work on this example, because it is
-not stiff we use this to demonstrate how to use ARKode's explicit
+not stiff we use this to demonstrate how to use ARKODE's explicit
 solver interface.  Although both the ARKStep and ERKStep time stepping
 modules are appropriate in this scenario, we use the ERKStep module
 here.
@@ -146,7 +146,7 @@ comparable with those specified by the requested error tolerances
 ark_brusselator
 ================================================
 
-We now wish to exercise the ARKode solvers on more challenging
+We now wish to exercise the ARKODE solvers on more challenging
 nonlinear ODE systems.  The following test simulates a brusselator
 problem from chemical kinetics, and is widely used as a standard
 benchmark problem for new solvers.  The ODE system has 3 components,
@@ -408,7 +408,7 @@ ark_robertson_root
 
 We again test the Robertson problem, but in this example we will
 utilize both a logarithmically-spaced set of output times (to properly
-show the solution behavior), as well as ARKode's root-finding
+show the solution behavior), as well as ARKODE's root-finding
 capabilities.  Again, the Robertson problem consists of an ODE system
 with 3 components, :math:`Y = [u,\, v,\, w]^T`, satisfying the equations,
 
@@ -451,7 +451,7 @@ and set absolute tolerances on :math:`u`, :math:`v` and :math:`w` of
 printed at the end.
 
 However, unlike in the previous problem, while integrating the system,
-we use the rootfinding feature of ARKode to find the times at which
+we use the rootfinding feature of ARKODE to find the times at which
 either :math:`u=10^{-4}` or :math:`w=10^{-2}`.
 
 
@@ -468,7 +468,7 @@ solution components for the Robertson ODE system.
    :align: center
 
 We note that when running this example, the root-finding capabilities
-of ARKode report outside of the typical logarithmically-spaced output
+of ARKODE report outside of the typical logarithmically-spaced output
 times to declare that at time :math:`t=0.264019` the variable
 :math:`w` attains the value :math:`10^{-2}`, and that at time
 :math:`t=2.07951\cdot10^{7}` the variable :math:`u` attains the value
@@ -529,7 +529,7 @@ We employ a *method of lines* approach, wherein we first
 semi-discretize in space to convert the system of 3 PDEs into a larger
 system of ODEs.  To this end, the spatial derivatives are computed
 using second-order centered differences, with the data distributed
-over :math:`N` points on a uniform spatial grid.  As a result, ARKode
+over :math:`N` points on a uniform spatial grid.  As a result, ARKODE
 approaches the problem as one involving :math:`3N` coupled ODEs.
 
 The problem is run using :math:`N=201` spatial points, with parameters
@@ -574,7 +574,7 @@ This problem is mathematically identical to the preceding problem,
 :ref:`ark_brusselator1D`, but instead of using the SUNMATRIX_BAND
 banded matrix module and SUNLINSOL_BAND linear solver module, it uses
 the SUNMATRIX_SPARSE sparse matrix module with the SUNLINSOL_KLU
-linear solver module.  These are still provided to ARKode using the
+linear solver module.  These are still provided to ARKODE using the
 ARKDLS direct linear solver interface, and again a routine is provided
 to supply a compressed-sparse-column version of the Jacobian matrix.
 Additionally, the solution is only output 10 times instead of 100.
@@ -615,7 +615,7 @@ therefore approximate these integrals using a three-node Gaussian
 quadrature, exact for polynomials up to degree six.
 
 After this spatial semi-discretization, the system of three PDEs is
-passed to ARKode as a system of :math:`3N` coupled ODEs, as with the
+passed to ARKODE as a system of :math:`3N` coupled ODEs, as with the
 preceding problem.
 
 As with the preceding problem :ref:`ark_brusselator1D_klu`, this
@@ -762,15 +762,15 @@ as the simulation proceeds the mesh is [crudely] adapted to add points
 to the center of subintervals bordering any node where
 :math:`\left|\frac{\partial^2 u}{\partial x^2}\right| > 0.003`.
 We note that the spatial adaptivity approach employed in this example
-is *ad-hoc*, designed only to exemplify ARKode usage on a problem with
+is *ad-hoc*, designed only to exemplify ARKODE usage on a problem with
 varying size (not to show optimally-adaptive spatial refinement
 methods).
 
 This program solves the problem with a DIRK method, utilizing a Newton
 iteration and the SUNLINSOL_PCG iterative linear solver.
-Additionally, the test problem utilizes ARKode's spatial adaptivity
+Additionally, the test problem utilizes ARKODE's spatial adaptivity
 support (via ``ARKodeResize``), allowing retention of the
-major ARKode data structures across vector length changes.
+major ARKODE data structures across vector length changes.
 
 
 
@@ -781,7 +781,7 @@ major ARKode data structures across vector length changes.
 ark_KrylovDemo_prec
 ============================================
 
-This problem is an ARKode clone of the CVODE problem,
+This problem is an ARKODE clone of the CVODE problem,
 ``cv_KrylovDemo_prec``.  This is a demonstration program using the
 SUNLINSOL_SPGMR linear solver module.  As explained more thoroughly in
 :cite:p:`cvode_ug`, the problem is a stiff ODE system that arises from a
@@ -841,7 +841,7 @@ We employ a method of lines approach, wherein we first semi-discretize
 in space to convert the system of 6 PDEs into a larger system of ODEs.
 To this end, the spatial derivatives are computed using second-order
 centered differences, with the data distributed over :math:`Mx*My`
-points on a uniform spatial grid.  As a result, ARKode approaches the
+points on a uniform spatial grid.  As a result, ARKODE approaches the
 problem as one involving :math:`6*Mx*My` coupled ODEs.
 
 This program solves the problem with a DIRK method, using a Newton

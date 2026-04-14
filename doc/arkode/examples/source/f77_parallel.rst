@@ -31,7 +31,7 @@ Parallel Fortran 77 example problems
 fark_diag_kry_bbd_p
 ===================================================
 
-This problem is an ARKode clone of the CVODE problem,
+This problem is an ARKODE clone of the CVODE problem,
 ``fcv_diag_kry_bbd_p``.  As described in :cite:p:`cvode_ug`, this problem
 models a stiff, linear, diagonal ODE system,
 
@@ -78,7 +78,7 @@ errors and final performance counters are printed on completion.
 fark_diag_non_p
 ===================================================
 
-This problem is an ARKode clone of the CVODE problem,
+This problem is an ARKODE clone of the CVODE problem,
 ``fcv_diag_non_p``.  As described in :cite:p:`cvode_ug`, this problem models a
 nonstiff, linear, diagonal ODE system,
 

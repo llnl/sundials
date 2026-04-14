@@ -31,7 +31,7 @@ ark_diurnal_kry_bbd_p
 ===================================================
 
 
-This problem is an ARKode clone of the CVODE problem,
+This problem is an ARKODE clone of the CVODE problem,
 ``cv_diurnal_kry_bbd_p``.  As described in :cite:p:`cvode_ug`, this problem
 models a two-species diurnal kinetics advection-diffusion PDE system
 in two spatial dimensions,
@@ -79,7 +79,7 @@ We employ a method of lines approach, wherein we first
 semi-discretize in space to convert the system of 2 PDEs into a larger
 system of ODEs.  To this end, the spatial derivatives are computed
 using second-order centered differences, with the data distributed
-over :math:`Mx*My` points on a uniform spatial grid.  As a result, ARKode
+over :math:`Mx*My` points on a uniform spatial grid.  As a result, ARKODE
 approaches the problem as one involving :math:`2*Mx*My` coupled ODEs.
 
 The problem is decomposed in parallel into uniformly-sized subdomains,
@@ -112,7 +112,7 @@ on completion.
 ark_diurnal_kry_p
 ===================================================
 
-This problem is an ARKode clone of the CVODE problem,
+This problem is an ARKODE clone of the CVODE problem,
 ``cv_diurnal_kry_p``.  As described in :cite:p:`cvode_ug`, this test problem
 models a two-species diurnal kinetics advection-diffusion PDE system
 in two spatial dimensions,
@@ -160,7 +160,7 @@ We employ a method of lines approach, wherein we first semi-discretize
 in space to convert the system of 2 PDEs into a larger system of ODEs.
 To this end, the spatial derivatives are computed using second-order
 centered differences, with the data distributed over :math:`Mx*My`
-points on a uniform spatial grid.  As a result, ARKode approaches the
+points on a uniform spatial grid.  As a result, ARKODE approaches the
 problem as one involving :math:`2*Mx*My` coupled ODEs.
 
 The problem is decomposed in parallel into uniformly-sized subdomains,

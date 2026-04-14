@@ -388,7 +388,7 @@ C Compiler
 
    Default: ``99``
 
-   Options: ``99``, ``11``, or ``17``
+   Options: ``99``, ``11``, ``17``, or ``23``
 
 .. cmakeoption:: CMAKE_C_EXTENSIONS
 

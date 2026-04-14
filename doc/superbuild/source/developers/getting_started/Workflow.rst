@@ -208,7 +208,7 @@ Commit Messages
 
 The desired format for longer commit messages (more than a single line) is a
 short descriptive title followed by a blank line, and then a detailed commit
-message. For example, a commit making several changes to the ARKode
+message. For example, a commit making several changes to the ARKODE
 initialization function might have the following message:
 
 .. code-block:: none

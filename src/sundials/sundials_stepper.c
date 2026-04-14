@@ -117,7 +117,7 @@ SUNErrCode SUNStepper_ResetCheckpointIndex(SUNStepper stepper,
                                            suncountertype ckptIdxR)
 {
   SUNFunctionBegin(stepper->sunctx);
-  if (stepper->ops->reset)
+  if (stepper->ops->resetcheckpointindex)
   {
     return stepper->ops->resetcheckpointindex(stepper, ckptIdxR);
   }

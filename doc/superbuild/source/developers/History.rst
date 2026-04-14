@@ -55,7 +55,7 @@ released under that name in 2002.
 
 Extensions to the time integrators to handle forward and adjoint sensitivity
 problems, called CVODES and IDAS, were added later. In 2015 a new ODE
-integration package, ARKode, was added to SUNDIALS. ARKode includes multistage
+integration package, ARKODE, was added to SUNDIALS. ARKODE includes multistage
 methods which are better suited to time evolution systems posed within spatially
 adaptive codes than the multistep methods in CVODE. The six packages in SUNDIALS
 all share a collection of vector operation modules, which originally included
@@ -80,6 +80,6 @@ A timeline of SUNDIALS development:
  * 2002 - First release of SUNDIALS under a BSD license
  * 2004 - CVODES first released
  * 2009 - IDAS first released
- * 2015 - ARKode first released as part of SUNDIALS
+ * 2015 - ARKODE first released as part of SUNDIALS
  * 2016 - Changed procedures to allow for unregistered downloads
  * 2017 - Created GitHub mirror of released software for download

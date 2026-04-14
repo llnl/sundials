@@ -23,4 +23,7 @@ to match the configuration of the :c:type:`sunscalartype` alias.
 The SPRKStep module now accounts for zero coefficients in the SPRK tables, eliminating
 extraneous function evaluations.
 
+A bug preventing a user supplied :c:func:`SUNStepper_ResetCheckpointIndex` function from being
+called was fixed. 
+
 **Deprecation Notices**

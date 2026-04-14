@@ -186,8 +186,8 @@ endif()
 # C settings
 # ===============================================================
 
-set(DOCSTR "The C standard to use (99, 11, 17)")
-sundials_option(CMAKE_C_STANDARD STRING "${DOCSTR}" "99" OPTIONS "99;11;17")
+set(DOCSTR "The C standard to use (99, 11, 17, 23)")
+sundials_option(CMAKE_C_STANDARD STRING "${DOCSTR}" "99" OPTIONS "99;11;17;23")
 message(STATUS "C standard set to ${CMAKE_C_STANDARD}")
 
 set(DOCSTR "Enable C compiler specific extensions")

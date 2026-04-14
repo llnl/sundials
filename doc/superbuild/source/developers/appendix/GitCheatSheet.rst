@@ -139,7 +139,7 @@ the :ref:`Workflow` section.
 
   The desired format for a commit message is a short descriptive title
   followed by a blank line, and then a detailed commit message. For
-  example, a commit making several changes to the ARKode initialization
+  example, a commit making several changes to the ARKODE initialization
   function might have the following message:
 
   .. code-block:: none

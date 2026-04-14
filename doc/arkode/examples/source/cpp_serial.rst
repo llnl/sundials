@@ -30,7 +30,7 @@ Serial C++ example problems
 ark_analytic_sys
 ===============================================
 
-This example demonstrates the use of ARKode's fully implicit solver on
+This example demonstrates the use of ARKODE's fully implicit solver on
 a stiff ODE system that has a simple analytical solution.  The problem
 is that of a linear ODE system,
 
@@ -86,7 +86,7 @@ Solutions
 ---------
 
 This problem is included both as a simple example to test systems of
-ODE within ARKode on a problem having an analytical solution,
+ODE within ARKODE on a problem having an analytical solution,
 :math:`Y(t) = V e^{Dt} V^{-1} Y(0)`.  As seen in the plots below, the
 computed solution tracks the analytical solution quite well (left),
 and results in errors with exactly the magnitude as specified by the

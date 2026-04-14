@@ -46,6 +46,12 @@ system, etc. developers should adhere to the following checklist.
    ``make install``, and ``make test_install`` to ensure that everything
    functions smoothly when external libraries are supplied.
 
+#. When developing new code, configure your build with ``CMAKE_BUILD_TYPE=Debug``
+   as this will enable internal SUNDIALS error-checking.  Run ``make`` and
+   ``make test`` to ensure that none of the internal error checking fails.  Only
+   once these run smoothly should you reset your ``CMAKE_BUILD_TYPE`` to
+   ``RelWithDebInfo`` or ``Release``.
+
 #. When implementing a bug-fix to an existing package/solver:
 
    * If this change affects the user interface, update the documentation to

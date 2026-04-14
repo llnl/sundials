@@ -23,6 +23,9 @@ to match the configuration of the `sunscalartype` alias.
 The SPRKStep module now accounts for zero coefficients in the SPRK tables, eliminating
 extraneous function evaluations.
 
+A bug preventing a user supplied `SUNStepper_ResetCheckpointIndex` function from being
+called was fixed. 
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.5.0

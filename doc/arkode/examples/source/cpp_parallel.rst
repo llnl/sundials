@@ -31,7 +31,7 @@ Parallel C++ example problems
 ark_heat2D
 ======================================================================
 
-ARKode provides one parallel C++ example problem, that extends our
+ARKODE provides one parallel C++ example problem, that extends our
 previous :ref:`ark_heat1D` test to now simulate a two-dimensional heat
 equation,
 
