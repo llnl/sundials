@@ -2,7 +2,7 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -187,7 +187,7 @@ int main(void)
   if (check_retval(&retval, "KINInit", 1)) { return (1); }
 
   /* Create sparse SUNMatrix */
-  SUNMatrix J = SUNSparseMatrix(NEQ, NEQ, data->nnz, CSR_MAT, sunctx);
+  SUNMatrix J = SUNSparseMatrix(NEQ, NEQ, data->nnz, SUN_CSR_MAT, sunctx);
   if (check_retval((void*)J, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create KLU solver object */

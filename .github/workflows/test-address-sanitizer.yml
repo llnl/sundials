@@ -2,17 +2,18 @@
 name: Build and Test - Ubuntu/gcc (Address Sanitizer)
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-  merge_group:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+  # Allows manual triggering
   workflow_dispatch:
 
+# Cancel any in-progress workflow runs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: sanitizer-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   sanitizer_build_and_test:
@@ -32,7 +33,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: true
       - name: Run test_driver.sh
@@ -44,7 +45,7 @@ jobs:
         env:
           CMAKE_BUILD_TYPE: ${{ matrix.buildtype }}
       - name: Archive build files from failed build
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: build_files_${{ matrix.indexsize }}_${{ matrix.precision }}_${{ matrix.buildtype }}_${{ matrix.tpls }}
@@ -52,7 +53,7 @@ jobs:
             ${{ github.workspace }}/test/build_*
             !${{ github.workspace }}/test/build_*/Testing/output
       - name: Archive output files from failed build
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: output_files_${{ matrix.indexsize }}_${{ matrix.precision }}_${{ matrix.buildtype }}_${{ matrix.tpls }}

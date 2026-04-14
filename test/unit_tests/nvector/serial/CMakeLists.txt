@@ -2,7 +2,7 @@
 # Programmer(s): Steven Smith and Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -30,7 +30,7 @@ elseif(SUNDIALS_SCALAR_TYPE MATCHES "COMPLEX")
 endif()
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_serial_fortran_examples "test_fnvector_serial_mod\;\;")
 endif()
 
@@ -39,7 +39,7 @@ include_directories(. ..)
 
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecserial)
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   list(APPEND NVECS_LIB sundials_fnvecserial_mod)
 endif()
 

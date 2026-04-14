@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -70,7 +70,7 @@ typedef struct ARKodeSPRKStepMemRec
   ===============================================================*/
 
 /* Interface routines supplied to ARKODE */
-int sprkStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int sprkStep_Init(ARKodeMem ark_mem, int init_type);
 int sprkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
                      int mode);
 int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
@@ -91,6 +91,7 @@ void sprkStep_Free(ARKodeMem ark_mem);
 void sprkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int sprkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
                             long int* rhs_evals);
+int sprkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
 int sprkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,

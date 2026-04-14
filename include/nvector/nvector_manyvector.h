@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -51,18 +51,19 @@ typedef struct _N_VectorContent_ManyVector* N_VectorContent_ManyVector;
    ----------------------------------------------------------------- */
 
 SUNDIALS_EXPORT
-N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array,
+N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array_1d,
                            SUNContext sunctx);
 
 SUNDIALS_EXPORT
-N_Vector N_VGetSubvector_ManyVector(N_Vector v, sunindextype vec_num);
+N_Vector N_VGetSubvector_ManyVector(N_Vector v,
+                                    sunindextype vec_num); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 sunscalartype* N_VGetSubvectorArrayPointer_ManyVector(N_Vector v,
                                                       sunindextype vec_num);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VSetSubvectorArrayPointer_ManyVector(sunscalartype* v_data,
+SUNErrCode N_VSetSubvectorArrayPointer_ManyVector(sunscalartype* v_data_1d,
                                                   N_Vector v,
                                                   sunindextype vec_num);
 

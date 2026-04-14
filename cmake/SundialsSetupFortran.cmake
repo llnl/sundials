@@ -2,7 +2,7 @@
 # Programmer(s): Radu Serban, David Gardner, Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -34,7 +34,7 @@ set(CMAKE_Fortran_PREPROCESS ON)
 # -----------------------------------------------------------------------------
 # Check if Fortran 2003 is supported
 # -----------------------------------------------------------------------------
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   if(NOT F2003_FOUND)
     message(STATUS "Checking whether ${CMAKE_Fortran_COMPILER} supports F2003")
 
@@ -86,7 +86,7 @@ if(BUILD_FORTRAN_MODULE_INTERFACE)
       message("${COMPILE_OUTPUT}")
       message(
         FATAL_ERROR
-          "BUILD_FORTRAN_MODULE_INTERFACE is set to ON, but the CMAKE_Fortran_COMPILER does not support F2003"
+          "SUNDIALS_ENABLE_FORTRAN is set to ON, but the CMAKE_Fortran_COMPILER does not support F2003"
       )
     endif()
   else()

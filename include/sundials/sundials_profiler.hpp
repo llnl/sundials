@@ -2,7 +2,7 @@
  * Programmer: Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -19,12 +19,15 @@
 #define _SUNDIALS_PROFILER_HPP
 
 #include <cstring>
+#include <utility>
+
+#include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_profiler.h>
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
 #define SUNDIALS_CXX_MARK_FUNCTION(projobj) CALI_CXX_MARK_FUNCTION
-#elif defined(SUNDIALS_BUILD_WITH_PROFILING)
+#elif defined(SUNDIALS_ENABLE_PROFILING)
 #define SUNDIALS_CXX_MARK_FUNCTION(profobj) \
   sundials::ProfilerMarkScope ProfilerMarkScope__(profobj, __func__)
 #else
@@ -50,6 +53,15 @@ private:
   SUNProfiler prof_;
   const char* name_;
 };
+
+namespace experimental {
+
+struct SUNProfilerDeleter
+{
+  void operator()(SUNProfiler profiler) { SUNProfiler_Free(&profiler); }
+};
+
+} // namespace experimental
 } // namespace sundials
 
 #endif /* SUNDIALS_PROFILER_HPP */

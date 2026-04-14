@@ -14,6 +14,10 @@ inputs:
   tpls:
     description: "enable/disable TPLs"
     required: true
+  phase:
+    description: "Optional phase passed to test_driver.sh as --phase <PHASE> (e.g., BUILD)"
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -32,11 +36,16 @@ runs:
       run: |
         git config --global --add safe.directory $GITHUB_WORKSPACE
         cd test
+        extra_args=""
+        if [ -n "${{ inputs.phase }}" ]; then
+          extra_args=" --phase ${{ inputs.phase }}"
+        fi
         ./test_driver.sh \
         --testtype CUSTOM \
         --env env/docker.sh \
         --tpls ${{ inputs.tpls }} \
         --sunrealtype ${{ inputs.precision }} \
         --sunscalartype ${{ inputs.scalar }} \
-        --indexsize ${{ inputs.indexsize }}
+        --indexsize ${{ inputs.indexsize }} \
+        ${extra_args}
       shell: bash

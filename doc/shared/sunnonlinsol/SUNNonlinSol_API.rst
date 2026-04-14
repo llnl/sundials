@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -688,6 +688,11 @@ A SUNNonlinSol implementation *must* do the following:
 
 * Define and implement a user-callable constructor to create a
   ``SUNNonlinearSolver`` object.
+
+* If the implementation depends on a linear solver, then it must evaluate
+  the nonlinear system function passed to :c:func:`SUNNonlinSolSetSysFn`
+  *before* setting up the linear solver (signaled by the `callLSetup` flag
+  to :c:func:`SUNNonlinSolSolve`).
 
 To aid in the creation of custom ``SUNNonlinearSolver`` modules, the generic
 ``SUNNonlinearSolver`` module provides the utility functions

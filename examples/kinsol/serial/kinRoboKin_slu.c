@@ -4,7 +4,7 @@
  * Based on kinRoboKin_dns.c by Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -130,7 +130,7 @@ int main(void)
 
   /* Create sparse SUNMatrix */
   nnz = 56; /* number of nonzeros in the Jacobian */
-  J   = SUNSparseMatrix(NEQ, NEQ, nnz, CSC_MAT, sunctx);
+  J   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
   if (check_retval((void*)J, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create SuperLUMT solver object */

@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner, and Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -89,11 +89,15 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
  * SUNNonlinearSolver types
  * ---------------------------------------------------------------------------*/
 
-typedef enum
+enum SUNNonlinearSolver_Type
 {
   SUNNONLINEARSOLVER_ROOTFIND,
   SUNNONLINEARSOLVER_FIXEDPOINT
-} SUNNonlinearSolver_Type;
+};
+
+#ifndef SWIG
+typedef enum SUNNonlinearSolver_Type SUNNonlinearSolver_Type;
+#endif
 
 /* -----------------------------------------------------------------------------
  * Generic definition of SUNNonlinearSolver
@@ -126,6 +130,7 @@ struct _generic_SUNNonlinearSolver_Ops
 struct _generic_SUNNonlinearSolver
 {
   void* content;
+  void* python;
   SUNNonlinearSolver_Ops ops;
   SUNContext sunctx;
 };

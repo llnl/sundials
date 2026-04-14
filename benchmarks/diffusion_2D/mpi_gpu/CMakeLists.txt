@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -18,29 +18,29 @@
 # list of tests
 set(tests)
 
-if(BUILD_ARKODE)
-  if(BUILD_NVECTOR_CUDA)
+if(SUNDIALS_ENABLE_ARKODE)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA)
     list(APPEND tests "arkode\;BENCHMARK_ODE\;USE_CUDA")
   endif()
-  if(BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_HIP)
     list(APPEND tests "arkode\;BENCHMARK_ODE\;USE_HIP")
   endif()
 endif()
 
-if(BUILD_CVODE)
-  if(BUILD_NVECTOR_CUDA)
+if(SUNDIALS_ENABLE_CVODE)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA)
     list(APPEND tests "cvode\;BENCHMARK_ODE\;USE_CUDA")
   endif()
-  if(BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_HIP)
     list(APPEND tests "cvode\;BENCHMARK_ODE\;USE_HIP")
   endif()
 endif()
 
-if(BUILD_IDA)
-  if(BUILD_NVECTOR_CUDA)
+if(SUNDIALS_ENABLE_IDA)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA)
     list(APPEND tests "ida\;BENCHMARK_DAE\;USE_CUDA")
   endif()
-  if(BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_HIP)
     list(APPEND tests "ida\;BENCHMARK_DAE\;USE_HIP")
   endif()
 endif()
@@ -73,12 +73,12 @@ foreach(test_tuple ${tests})
   sundials_add_executable(${target} ${sources})
 
   # if("${backend}" STREQUAL "USE_CUDA") sundials_add_benchmark(${target}
-  # ${target} diffusion_2D ENABLE_GPU NUM_CORES ${SUNDIALS_BENCHMARK_NUM_GPUS} )
-  # endif()
+  # ${target} diffusion_2D ENABLE_GPU NUM_CORES ${SUNDIALS_BENCHMARKS_NUM_GPUS}
+  # ) endif()
 
   if("${backend}" STREQUAL "USE_HIP")
     sundials_add_benchmark(${target} ${target} diffusion_2D ENABLE_GPU
-                           NUM_CORES ${SUNDIALS_BENCHMARK_NUM_GPUS})
+                           NUM_CORES ${SUNDIALS_BENCHMARKS_NUM_GPUS})
 
   endif()
 
@@ -113,6 +113,6 @@ foreach(test_tuple ${tests})
   target_link_libraries(${target} PRIVATE ${MPI_CXX_LIBRARIES})
 
   install(TARGETS ${target}
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/diffusion_2D")
+          DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/diffusion_2D")
 
 endforeach()

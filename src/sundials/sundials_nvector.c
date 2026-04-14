@@ -4,7 +4,7 @@
  *                Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -31,7 +31,7 @@
 #include "sundials/sundials_errors.h"
 #include "sundials/sundials_types.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static inline SUNProfiler getSUNProfiler(N_Vector v)
 {
   return (v->sunctx->profiler);
@@ -311,7 +311,7 @@ void N_VDestroy(N_Vector v)
   if (v == NULL) { return; }
 
   /* if the destroy operation exists use it */
-  if (v->ops->nvdestroy) { v->ops->nvdestroy(v); }
+  if (v->ops && v->ops->nvdestroy) { v->ops->nvdestroy(v); }
   else
   {
     /* if we reach this point, either ops == NULL or nvdestroy == NULL,
@@ -341,7 +341,7 @@ void N_VSpace(N_Vector v, sunindextype* lrw, sunindextype* liw)
 
 sunscalartype* N_VGetArrayPointer(N_Vector v)
 {
-  if (v->ops->nvgetarraypointer)
+  if (v->ops && v->ops->nvgetarraypointer)
   {
     return (sunscalartype*)v->ops->nvgetarraypointer(v);
   }
@@ -1105,7 +1105,6 @@ void N_VDestroyVectorArray(N_Vector* vs, int count)
   }
 
   free(vs);
-  vs = NULL;
 
   return;
 }

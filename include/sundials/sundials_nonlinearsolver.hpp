@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -20,8 +20,10 @@
 #ifndef _SUNDIALS_NONLINEARSOLVER_HPP
 #define _SUNDIALS_NONLINEARSOLVER_HPP
 
-#include <memory>
+#include <utility>
+
 #include <sundials/sundials_base.hpp>
+#include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_nonlinearsolver.h>
 
 namespace sundials {

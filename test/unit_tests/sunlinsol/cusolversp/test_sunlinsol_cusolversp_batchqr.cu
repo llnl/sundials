@@ -2,7 +2,7 @@
  * Programmer(s): Cody J.Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
   }
 
   /* Create sparse matrix from dense, and destroy B */
-  A = SUNSparseFromDenseMatrix(B, ZERO, CSR_MAT);
+  A = SUNSparseFromDenseMatrix(B, ZERO, SUN_CSR_MAT);
   SUNMatDestroy(B);
 
   /* Calculate actual number of nonzeros per block */

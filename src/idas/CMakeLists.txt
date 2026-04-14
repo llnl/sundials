@@ -3,7 +3,7 @@
 #                Radu Serban, Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -35,7 +35,7 @@ set(idas_SOURCES
     idas_nls_stg.c)
 
 # Add variable idas_HEADERS with the exported IDAS header files
-set(idas_HEADERS idas.h idas_bbdpre.h idas_ls.h)
+set(idas_HEADERS idas.h idas.hpp idas_bbdpre.h idas_ls.h)
 
 # Add prefix with complete path to the IDAS header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/idas/ idas_HEADERS)
@@ -70,6 +70,6 @@ sundials_add_library(
 message(STATUS "Added IDAS module")
 
 # Add F2003 module if the interface is enabled
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
 endif()

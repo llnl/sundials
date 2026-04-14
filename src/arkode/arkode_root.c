@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -357,7 +357,6 @@ int arkPrintRootMem(void* arkode_mem, FILE* outfile)
                 ark_mem->root_mem->rootdir[i]);
       }
     }
-    fprintf(outfile, "ark_taskc = %i\n", ark_mem->root_mem->taskc);
     fprintf(outfile, "ark_irfnd = %i\n", ark_mem->root_mem->irfnd);
     fprintf(outfile, "ark_mxgnull = %i\n", ark_mem->root_mem->mxgnull);
     if (ark_mem->root_mem->gactive != NULL)
@@ -395,7 +394,6 @@ int arkPrintRootMem(void* arkode_mem, FILE* outfile)
                 ark_mem->root_mem->grout[i]);
       }
     }
-    fprintf(outfile, "ark_toutc = " SUN_FORMAT_G "\n", ark_mem->root_mem->toutc);
     fprintf(outfile, "ark_ttol = " SUN_FORMAT_G "\n", ark_mem->root_mem->ttol);
   }
   return (ARK_SUCCESS);
@@ -473,8 +471,9 @@ int arkRootCheck1(void* arkode_mem)
   hratio = SUNMAX(rootmem->ttol / SUNRabs(ark_mem->h), TENTH);
   smallh = hratio * ark_mem->h;
   tplus  = rootmem->tlo + smallh;
-  N_VLinearSum(ONE, ark_mem->yn, smallh, ark_mem->fn, ark_mem->ycur);
-  retval = rootmem->gfun(tplus, ark_mem->ycur, rootmem->ghi, rootmem->root_data);
+  N_VLinearSum(ONE, ark_mem->yn, smallh, ark_mem->fn, ark_mem->tempv4);
+  retval = rootmem->gfun(tplus, ark_mem->tempv4, rootmem->ghi,
+                         rootmem->root_data);
   rootmem->nge++;
   if (retval != 0)
   {
@@ -535,11 +534,11 @@ int arkRootCheck2(void* arkode_mem)
   /* return if no roots in previous step */
   if (rootmem->irfnd == 0) { return (ARK_SUCCESS); }
 
-  /* Set ark_ycur = y(tlo) */
-  (void)ARKodeGetDky(ark_mem, rootmem->tlo, 0, ark_mem->ycur);
+  /* Set tempv4 = y(tlo) */
+  (void)ARKodeGetDky(ark_mem, rootmem->tlo, 0, ark_mem->tempv4);
 
   /* Evaluate root-finding function: glo = g(tlo, y(tlo)) */
-  retval = rootmem->gfun(rootmem->tlo, ark_mem->ycur, rootmem->glo,
+  retval = rootmem->gfun(rootmem->tlo, ark_mem->tempv4, rootmem->glo,
                          rootmem->root_data);
   rootmem->nge++;
   if (retval != 0) { return (ARK_RTFUNC_FAIL); }
@@ -571,7 +570,7 @@ int arkRootCheck2(void* arkode_mem)
   if ((tplus - ark_mem->tcur) * ark_mem->h >= ZERO)
   {
     /* hratio = smallh/ark_mem->h; */
-    N_VLinearSum(ONE, ark_mem->ycur, smallh, ark_mem->fn, ark_mem->ycur);
+    N_VLinearSum(ONE, ark_mem->tempv4, smallh, ark_mem->fn, ark_mem->ycur);
   }
   else
   {
@@ -616,7 +615,7 @@ int arkRootCheck2(void* arkode_mem)
     RTFOUND         = 1 if a root of g was found, or
     ARK_SUCCESS     = 0 otherwise.
   ---------------------------------------------------------------*/
-int arkRootCheck3(void* arkode_mem)
+int arkRootCheck3(void* arkode_mem, sunrealtype tout, int itask)
 {
   int i, retval, ier;
   ARKodeMem ark_mem;
@@ -631,27 +630,27 @@ int arkRootCheck3(void* arkode_mem)
   rootmem = ark_mem->root_mem;
 
   /* Set thi = tn or tout, whichever comes first; set y = y(thi). */
-  if (rootmem->taskc == ARK_ONE_STEP)
+  if (itask == ARK_ONE_STEP)
   {
     rootmem->thi = ark_mem->tcur;
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    N_VScale(ONE, ark_mem->yn, ark_mem->tempv4);
   }
-  if (rootmem->taskc == ARK_NORMAL)
+  if (itask == ARK_NORMAL)
   {
-    if ((rootmem->toutc - ark_mem->tcur) * ark_mem->h >= ZERO)
+    if ((tout - ark_mem->tcur) * ark_mem->h >= ZERO)
     {
       rootmem->thi = ark_mem->tcur;
-      N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+      N_VScale(ONE, ark_mem->yn, ark_mem->tempv4);
     }
     else
     {
-      rootmem->thi = rootmem->toutc;
-      (void)ARKodeGetDky(ark_mem, rootmem->thi, 0, ark_mem->ycur);
+      rootmem->thi = tout;
+      (void)ARKodeGetDky(ark_mem, rootmem->thi, 0, ark_mem->tempv4);
     }
   }
 
   /* Set rootmem->ghi = g(thi) and call arkRootfind to search (tlo,thi) for roots. */
-  retval = rootmem->gfun(rootmem->thi, ark_mem->ycur, rootmem->ghi,
+  retval = rootmem->gfun(rootmem->thi, ark_mem->tempv4, rootmem->ghi,
                          rootmem->root_data);
   rootmem->nge++;
   if (retval != 0) { return (ARK_RTFUNC_FAIL); }
@@ -863,8 +862,8 @@ int arkRootfind(void* arkode_mem)
       tmid    = rootmem->thi - fracsub * (rootmem->thi - rootmem->tlo);
     }
 
-    (void)ARKodeGetDky(ark_mem, tmid, 0, ark_mem->ycur);
-    retval = rootmem->gfun(tmid, ark_mem->ycur, rootmem->grout,
+    (void)ARKodeGetDky(ark_mem, tmid, 0, ark_mem->tempv4);
+    retval = rootmem->gfun(tmid, ark_mem->tempv4, rootmem->grout,
                            rootmem->root_data);
     rootmem->nge++;
     if (retval != 0) { return (ARK_RTFUNC_FAIL); }

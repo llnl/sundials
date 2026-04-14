@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -27,8 +27,22 @@ class ConvertibleTo
 {
 public:
   // Explicit conversion to the underlying type
-  virtual T Convert()       = 0;
-  virtual T Convert() const = 0;
+  virtual T get() noexcept       = 0;
+  virtual T get() const noexcept = 0;
+
+  [[deprecated("This function will be removed in the next major release, use "
+               "get() instead.")]] T
+  Convert() noexcept
+  {
+    return get();
+  }
+
+  [[deprecated("This function will be removed in the next major release, use "
+               "get() instead.")]] T
+  Convert() const noexcept
+  {
+    return get();
+  }
 
   // Implicit conversion to the underlying type
   virtual operator T()       = 0;

@@ -2,7 +2,7 @@
 # Programmer:  Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -39,7 +39,7 @@ set(CVODE_LIB sundials_cvode)
 set(NVECP_LIB sundials_nvecpetsc)
 set(SUNNLS_LIB sundials_sunnonlinsolpetscsnes)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   list(APPEND CVODE_LIB sundials_cvode_fused_stubs)
 endif()
 
@@ -78,23 +78,24 @@ foreach(example_tuple ${CVODE_examples})
     endif()
 
     # install example
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/petsc)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/petsc)
     endif()
   endif()
 
 endforeach(example_tuple ${CVODE_examples})
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/petsc)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/petsc)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "CVODE")
   set(SOLVER_LIB "sundials_cvode")
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(LIBS "-lsundials_cvode_fused_stubs ${LIBS}")
   endif()
 
@@ -111,7 +112,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/cvode/petsc/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/petsc)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/petsc)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -125,7 +126,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/cvode/petsc/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/petsc
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/petsc
       RENAME Makefile)
   endif()
 

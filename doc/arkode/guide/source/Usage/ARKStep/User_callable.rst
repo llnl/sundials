@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -1807,7 +1807,7 @@ Optional inputs for time step adaptivity
    .. deprecated:: 6.1.0
 
       Use :c:func:`ARKodeSetSafetyFactor` instead.
-
+      
    .. versionchanged:: 6.3.0
 
       The default default was changed from 0.96 to 0.9. The maximum value is now

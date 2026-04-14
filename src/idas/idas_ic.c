@@ -2,7 +2,7 @@
  * Programmers: Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -65,7 +65,6 @@ extern int IDAInitialSetup(IDAMem IDA_mem);
 extern int IDASensEwtSet(IDAMem IDA_mem, N_Vector* yScur, N_Vector* weightS);
 
 static int IDANlsIC(IDAMem IDA_mem);
-
 static int IDANewtonIC(IDAMem IDA_mem);
 static int IDALineSrch(IDAMem IDA_mem, sunrealtype* delnorm, sunrealtype* fnorm);
 static int IDAfnorm(IDAMem IDA_mem, sunrealtype* fnorm);
@@ -360,7 +359,6 @@ int IDACalcIC(void* ida_mem, int icopt, sunrealtype tout1)
     }
 
     icret = IDAICFailFlag(IDA_mem, retval);
-
     SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
     return (icret);
   }
@@ -751,7 +749,7 @@ static int IDALineSrch(IDAMem IDA_mem, sunrealtype* delnorm, sunrealtype* fnorm)
   ratio              = ONE;
 
   /* If there are constraints, check and reduce step if necessary. */
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     /* Update y and check constraints. */
     IDANewy(IDA_mem);

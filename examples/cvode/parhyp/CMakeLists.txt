@@ -2,7 +2,7 @@
 # Programmer(s): Radu Serban @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -25,7 +25,7 @@
 # Examples using SUNDIALS linear solvers
 set(CVODE_examples "cvAdvDiff_non_ph.c\;2\;2\;develop\;real")
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(_fused_stubs sundials_cvode_fused_stubs)
 endif()
 
@@ -68,9 +68,9 @@ foreach(example_tuple ${CVODE_examples})
 endforeach(example_tuple ${CVODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_stubs_target cvode_fused_stubs)
     set(LIBS "-lsundials_cvode_fused_stubs ${LIBS}")
   endif()

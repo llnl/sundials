@@ -2,7 +2,7 @@
  * Programmer: Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -23,6 +23,7 @@
 #include <ginkgo/core/base/batch_multi_vector.hpp>
 #include <ginkgo/ginkgo.hpp>
 
+#include <sundials/sundials_config.h>
 #include <sundials/sundials_matrix.hpp>
 
 #if (GKO_VERSION_MAJOR < 1) || (GKO_VERSION_MAJOR == 1 && GKO_VERSION_MINOR < 9)
@@ -33,9 +34,12 @@ namespace sundials {
 namespace ginkgo {
 
 using GkoBatchDenseMat = gko::batch::matrix::Dense<sunrealtype>;
-using GkoBatchCsrMat   = gko::batch::matrix::Csr<sunrealtype, sunindextype>;
-using GkoBatchEllMat   = gko::batch::matrix::Ell<sunrealtype, sunindextype>;
-using GkoBatchVecType  = gko::batch::MultiVector<sunrealtype>;
+#ifdef SUNDIALS_INT32_T
+// Currently (Ginkgo v1.10) only the dense matrix supports 64-bit index types
+using GkoBatchCsrMat = gko::batch::matrix::Csr<sunrealtype, sunindextype>;
+using GkoBatchEllMat = gko::batch::matrix::Ell<sunrealtype, sunindextype>;
+#endif
+using GkoBatchVecType = gko::batch::MultiVector<sunrealtype>;
 
 // Forward declare BatchMatrix class
 template<class GkoBatchMatType>
@@ -57,11 +61,13 @@ void Matvec(BatchMatrix<GkoBatchMatType>& A, N_Vector x, N_Vector y);
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
               BatchMatrix<GkoBatchDenseMat>& B);
 
+#ifdef SUNDIALS_INT32_T
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
               BatchMatrix<GkoBatchCsrMat>& B);
 
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
               BatchMatrix<GkoBatchEllMat>& B);
+#endif
 
 template<class GkoBatchMatType>
 void ScaleAddI(const sunrealtype c, BatchMatrix<GkoBatchMatType>& A);
@@ -83,7 +89,7 @@ SUNMatrix SUNMatClone_GinkgoBatch(SUNMatrix A)
 {
   auto Amat{static_cast<BatchMatrix<GkoBatchMatType>*>(A->content)};
   auto new_mat{new BatchMatrix<GkoBatchMatType>(*Amat)};
-  return new_mat->Convert();
+  return new_mat->get();
 }
 
 template<class GkoBatchMatType>
@@ -197,13 +203,13 @@ public:
   using sundials::impl::BaseMatrix::sunctx;
 
   // Override the ConvertibleTo methods
-  operator SUNMatrix() override { return object_.get(); }
+  operator SUNMatrix() noexcept override { return object_.get(); }
 
-  operator SUNMatrix() const override { return object_.get(); }
+  operator SUNMatrix() const noexcept override { return object_.get(); }
 
-  SUNMatrix Convert() override { return object_.get(); }
+  SUNMatrix get() noexcept override { return object_.get(); }
 
-  SUNMatrix Convert() const override { return object_.get(); }
+  SUNMatrix get() const noexcept override { return object_.get(); }
 
 private:
   std::shared_ptr<GkoBatchMatType> gkomtx_;
@@ -241,6 +247,7 @@ inline BatchMatrix<GkoBatchDenseMat>::BatchMatrix(
   initSUNMatrix();
 }
 
+#ifdef SUNDIALS_INT32_T
 template<>
 inline BatchMatrix<GkoBatchCsrMat>::BatchMatrix(
   gko::size_type num_batches, sunindextype M, sunindextype N,
@@ -268,6 +275,7 @@ inline BatchMatrix<GkoBatchEllMat>::BatchMatrix(
 {
   initSUNMatrix();
 }
+#endif
 
 // =============================================================================
 // Everything in the implementation (impl) namespace is private and should not
@@ -345,6 +353,7 @@ void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
   A.GkoMtx()->scale_add(cmat.get(), B.GkoMtx().get());
 }
 
+#ifdef SUNDIALS_INT32_T
 void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
               BatchMatrix<GkoBatchCsrMat>& B)
 {
@@ -358,6 +367,7 @@ void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
   // NOTE: This is not implemented by Ginkgo for BatchEll yet
   throw("scale_add not implemented for gko::batch::matrix::Ell");
 }
+#endif
 
 template<class GkoBatchMatType>
 void ScaleAddI(const sunrealtype c, BatchMatrix<GkoBatchMatType>& A)

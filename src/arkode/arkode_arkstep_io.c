@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -1294,6 +1294,26 @@ int arkStep_GetNonlinSolvStats(ARKodeMem ark_mem, long int* nniters,
 
   *nniters = step_mem->nls_iters;
   *nnfails = step_mem->nls_fails;
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  arkStep_GetStageIndex:
+
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+int arkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
+{
+  ARKodeARKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeARKStepMem structure */
+  retval = arkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  *stage      = step_mem->istage;
+  *max_stages = step_mem->stages;
 
   return (ARK_SUCCESS);
 }

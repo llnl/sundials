@@ -7,7 +7,7 @@
  *                   @ LLNL
  * -------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -98,8 +98,8 @@ SUNDIALS_EXPORT N_Vector N_VNewEmpty_OpenMPDEV(sunindextype vec_length,
                                                SUNContext sunctx);
 
 SUNDIALS_EXPORT N_Vector N_VMake_OpenMPDEV(sunindextype vec_length,
-                                           sunrealtype* h_data,
-                                           sunrealtype* v_data,
+                                           sunrealtype* h_data_1d,
+                                           sunrealtype* v_data_1d,
                                            SUNContext sunctx);
 
 SUNDIALS_EXPORT sunindextype N_VGetLength_OpenMPDEV(N_Vector v);

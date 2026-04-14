@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -2668,8 +2668,8 @@ int arkLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   /* Obtain pointers to the data for various vectors */
   ewt_data = N_VGetArrayPointer(ark_mem->ewt);
   y_data   = N_VGetArrayPointer(y);
-  cns_data = (ark_mem->constraintsSet) ? N_VGetArrayPointer(ark_mem->constraints)
-                                       : NULL;
+  cns_data = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
+                                    : NULL;
 
   /* Set minimum increment based on uround and norm of f */
   srur   = SUNRsqrt(ark_mem->uround);
@@ -2687,7 +2687,7 @@ int arkLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
     inc     = SUNMAX(srur * SUNabs(yjsaved), minInc / SUN_REAL(ewt_data[j]));
 
     /* Adjust sign(inc) if y_j has an inequality constraint. */
-    if (ark_mem->constraintsSet)
+    if (ark_mem->constraints)
     {
       conj = SUN_REAL(cns_data[j]);
       if (SUNRabs(conj) == ONE)
@@ -2702,6 +2702,12 @@ int arkLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
 
     y_data[j] += inc;
 
+    /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
     retval = fi(t, y, ftemp, ark_mem->user_data);
     arkls_mem->nfeDQ++;
     if (retval != 0) { break; }
@@ -2757,8 +2763,8 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   ftemp_data = N_VGetArrayPointer(ftemp);
   y_data     = N_VGetArrayPointer(y);
   ytemp_data = N_VGetArrayPointer(ytemp);
-  cns_data = (ark_mem->constraintsSet) ? N_VGetArrayPointer(ark_mem->constraints)
-                                       : NULL;
+  cns_data   = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
+                                      : NULL;
 
   /* Load ytemp with y = predicted y vector */
   N_VScale(ONE, y, ytemp);
@@ -2783,7 +2789,7 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       inc = SUNMAX(srur * SUNabs(y_data[j]), minInc / SUN_REAL(ewt_data[j]));
 
       /* Adjust sign(inc) if yj has an inequality constraint. */
-      if (ark_mem->constraintsSet)
+      if (ark_mem->constraints)
       {
         conj = SUN_REAL(cns_data[j]);
         if (SUNRabs(conj) == ONE)
@@ -2799,7 +2805,12 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       ytemp_data[j] += inc;
     }
 
-    /* Evaluate f with incremented y */
+    /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(t, ytemp, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
     retval = fi(t, ytemp, ftemp, ark_mem->user_data);
     arkls_mem->nfeDQ++;
     if (retval != 0) { break; }
@@ -2812,7 +2823,7 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       inc = SUNMAX(srur * SUNabs(y_data[j]), minInc / SUN_REAL(ewt_data[j]));
 
       /* Adjust sign(inc) as before. */
-      if (ark_mem->constraintsSet)
+      if (ark_mem->constraints)
       {
         conj = SUN_REAL(cns_data[j]);
         if (SUNRabs(conj) == ONE)
@@ -2866,7 +2877,12 @@ int arkLsDQJtimes(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y,
     /* Set work = y + sig*v */
     N_VLinearSum(sig, v, ONE, y, work);
 
-    /* Set Jv = f(tn, y+sig*v) */
+    /* Set Jv = f(tn, y+sig*v), after calling pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(t, work, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
     retval = arkls_mem->Jt_f(t, work, Jv, ark_mem->user_data);
     arkls_mem->nfeDQ++;
     if (retval == 0) { break; }
@@ -3344,7 +3360,8 @@ int arkLsSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype tnow, N_Vector ynow,
     bnorm  = N_VWrmsNorm(b, ark_mem->rwt);
 
     SUNLogInfo(ARK_LOGGER, "begin-linear-solve",
-               "iterative = 1, b-norm = %.16g, b-tol = %.16g, res-tol = %.16g",
+               "iterative = 1, b-norm = " SUN_FORMAT_G ", b-tol = " SUN_FORMAT_G
+               ", res-tol = " SUN_FORMAT_G,
                bnorm, deltar, deltar * arkls_mem->nrmfac);
 
     if (bnorm <= deltar)
@@ -3478,11 +3495,11 @@ int arkLsSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype tnow, N_Vector ynow,
   /* Interpret solver return value  */
   arkls_mem->last_flag = retval;
 
-  SUNLogInfoIf(retval == SUN_SUCCESS, ARK_LOGGER, "end-linear-solve",
-               "status = success, iters = %i, p-solves = %i, resnorm = %.16g",
+  SUNLogInfoIf(retval == SUN_SUCCESS, ARK_LOGGER,
+               "end-linear-solve", "status = success, iters = %i, p-solves = %i, resnorm = " SUN_FORMAT_G,
                nli_inc, (int)(arkls_mem->nps - nps_inc), resnorm);
   SUNLogInfoIf(retval != SUN_SUCCESS, ARK_LOGGER,
-               "end-linear-solve", "status = failed, retval = %i, iters = %i, p-solves = %i, resnorm = %.16g",
+               "end-linear-solve", "status = failed, retval = %i, iters = %i, p-solves = %i, resnorm = " SUN_FORMAT_G,
                retval, nli_inc, (int)(arkls_mem->nps - nps_inc), resnorm);
 
   switch (retval)
@@ -3827,7 +3844,7 @@ int arkLsMassSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype nlscoef)
     delta = arkls_mem->eplifac * nlscoef * arkls_mem->nrmfac;
 
     SUNLogInfo(ARK_LOGGER, "begin-mass-linear-solve",
-               "iterative = 1, res-tol = %.16g", delta);
+               "iterative = 1, res-tol = " SUN_FORMAT_G, delta);
   }
   else
   {
@@ -3916,11 +3933,12 @@ int arkLsMassSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype nlscoef)
   arkls_mem->nli += nli_inc;
   if (retval != SUN_SUCCESS) { arkls_mem->ncfl++; }
 
-  SUNLogInfoIf(retval == SUN_SUCCESS, ARK_LOGGER, "end-mass-linear-solve",
-               "status = success, iters = %i, p-solves = %i, res-norm = %.16g",
+  SUNLogInfoIf(retval == SUN_SUCCESS, ARK_LOGGER,
+               "end-mass-linear-solve", "status = success, iters = %i, p-solves = %i, res-norm = " SUN_FORMAT_G,
                nli_inc, (int)(arkls_mem->nps - nps_inc), resnorm);
-  SUNLogInfoIf(retval != SUN_SUCCESS, ARK_LOGGER,
-               "end-mass-linear-solve", "status = failed, retval = %i, iters = %i, p-solves = %i, res-norm = %.16g",
+  SUNLogInfoIf(retval != SUN_SUCCESS, ARK_LOGGER, "end-mass-linear-solve",
+               "status = failed, retval = %i, iters = %i, p-solves = %i, "
+               "res-norm = " SUN_FORMAT_G,
                retval, nli_inc, (int)(arkls_mem->nps - nps_inc), resnorm);
 
   /* Interpret solver return value  */

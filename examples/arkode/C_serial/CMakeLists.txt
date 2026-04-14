@@ -3,7 +3,7 @@
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -110,8 +110,8 @@ set(ARKODE_examples
     "ark_robertson.c\;\;exclude-single\;real"
     "ark_twowaycouple_mri.c\;\;develop\;real")
 
-if(SUNDIALS_BUILD_WITH_MONITORING)
-  list(APPEND ARKODE_examples "ark_brusselator_fp.c\;1\;exclude-single\;real")
+if(SUNDIALS_ENABLE_MONITORING)
+  list(APPEND ARKODE_examples "ark_brusselator_fp.c\;1\;exclude-single\;real)
 endif()
 
 # Auxiliary files to install
@@ -173,11 +173,17 @@ foreach(example_tuple ${ARKODE_examples})
       ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
       ANSWER_FILE ${test_name}.out
       EXAMPLE_TYPE ${example_type})
+
+    # install example source and out files
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+      install(FILES ${example} ${test_name}.out
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_serial)
+    endif()
   endif()
 
 endforeach(example_tuple ${ARKODE_examples})
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   sundials_install_examples(
     arkode ARKODE_examples
     CMAKE_TEMPLATE cmakelists_C_ex.in

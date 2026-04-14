@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -165,7 +165,7 @@ The structure of this document is as follows:
    description of the user interface for the integration of ODE initial
    value problems.
 
--  In :numref:`SUNDIALS.Fortran`, we describe the use of
+-  In :numref:`Fortran`, we describe the use of
    CVODE with Fortran applications.
 
 -  :numref:`NVectors` gives a brief overview of the

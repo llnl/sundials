@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -256,7 +256,6 @@ void arkInterpFree_Hermite(ARKodeMem ark_mem, ARKInterp interp)
     interp->ops = NULL;
   }
   free(interp);
-  interp = NULL;
 
   return;
 }
@@ -942,7 +941,6 @@ void arkInterpFree_Lagrange(ARKodeMem ark_mem, ARKInterp interp)
     interp->ops = NULL;
   }
   free(interp);
-  interp = NULL;
 
   return;
 }

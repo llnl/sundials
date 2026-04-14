@@ -3,7 +3,7 @@
  *                Alan C. Hindmarsh and Radu Serban @ LLNL
  *-----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -987,7 +987,7 @@ int idaLsDenseDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
   ewt_data = N_VGetArrayPointer(IDA_mem->ida_ewt);
   y_data   = N_VGetArrayPointer(yy);
   yp_data  = N_VGetArrayPointer(yp);
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     cns_data = N_VGetArrayPointer(IDA_mem->ida_constraints);
   }
@@ -1015,7 +1015,7 @@ int idaLsDenseDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
     inc = (SUN_REAL(yj) + inc) - SUN_REAL(yj);
 
     /* Adjust sign(inc) again if y_j has an inequality constraint. */
-    if (IDA_mem->ida_constraintsSet)
+    if (IDA_mem->ida_constraints)
     {
       conj = SUN_REAL(cns_data[j]);
       if (SUNRabs(conj) == ONE)
@@ -1100,7 +1100,7 @@ int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
   rtemp_data  = N_VGetArrayPointer(rtemp);
   ytemp_data  = N_VGetArrayPointer(ytemp);
   yptemp_data = N_VGetArrayPointer(yptemp);
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     cns_data = N_VGetArrayPointer(IDA_mem->ida_constraints);
   }
@@ -1134,7 +1134,7 @@ int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
       inc = (SUN_REAL(yj) + inc) - SUN_REAL(yj);
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = SUN_REAL(cns_data[j]);
         if (SUNRabs(conj) == ONE)
@@ -1172,7 +1172,7 @@ int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
                    ONE / ewtj);
       if (IDA_mem->ida_hh * SUN_REAL(ypj) < ZERO) { inc = -inc; }
       inc = (SUN_REAL(yj) + inc) - SUN_REAL(yj);
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = SUN_REAL(cns_data[j]);
         if (SUNRabs(conj) == ONE)
@@ -1473,7 +1473,7 @@ int idaLsSolve(IDAMem IDA_mem, N_Vector b, N_Vector weight, N_Vector ycur,
     tol = idals_mem->nrmfac * idals_mem->eplifac * IDA_mem->ida_epsNewt;
 
     SUNLogInfo(IDA_LOGGER, "begin-linear-solve",
-               "iterative = 1, res-tol = %.16g", tol);
+               "iterative = 1, res-tol = " SUN_FORMAT_G, tol);
   }
   else
   {
@@ -1598,11 +1598,12 @@ int idaLsSolve(IDAMem IDA_mem, N_Vector b, N_Vector weight, N_Vector ycur,
   /* Interpret solver return value  */
   idals_mem->last_flag = retval;
 
-  SUNLogInfoIf(retval == SUN_SUCCESS, IDA_LOGGER, "end-linear-solve",
-               "status = success, iters = %i, p-solves = %i, res-norm = %.16g",
+  SUNLogInfoIf(retval == SUN_SUCCESS, IDA_LOGGER,
+               "end-linear-solve", "status = success, iters = %i, p-solves = %i, res-norm = " SUN_FORMAT_G,
                nli_inc, (int)(idals_mem->nps - nps_inc), resnorm);
-  SUNLogInfoIf(retval != SUN_SUCCESS, IDA_LOGGER,
-               "end-linear-solve", "status = failed, retval = %i, iters = %i, p-solves = %i, res-norm = %.16g",
+  SUNLogInfoIf(retval != SUN_SUCCESS, IDA_LOGGER, "end-linear-solve",
+               "status = failed, retval = %i, iters = %i, p-solves = %i, "
+               "res-norm = " SUN_FORMAT_G,
                retval, nli_inc, (int)(idals_mem->nps - nps_inc), resnorm);
 
   switch (retval)

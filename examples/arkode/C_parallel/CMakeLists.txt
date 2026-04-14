@@ -2,7 +2,7 @@
 # Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -108,24 +108,25 @@ foreach(example_tuple ${ARKODE_examples})
     file(GLOB example_out ${example}*.out)
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_parallel)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_parallel)
     endif()
   endif()
 
 endforeach(example_tuple ${ARKODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_parallel)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_parallel)
 
   # Install the extra files
   foreach(extrafile ${ARKODE_extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_parallel)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_parallel)
   endforeach(extrafile ${ARKODE_extras})
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -145,7 +146,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/arkode/C_parallel/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_parallel)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_parallel)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -159,7 +160,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/arkode/C_parallel/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_parallel
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_parallel
       RENAME Makefile)
   endif()
 

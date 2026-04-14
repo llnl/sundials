@@ -4,7 +4,7 @@
 # Based on CMakeLists.txt in cvode/serial by Radu Serban @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -46,7 +46,7 @@ list(APPEND all_examples "${CVODE_examples}")
 # Specify libraries to link against
 set(SUNDIALS_LIBS ${SUNDIALS_LIBS} sundials_cvode sundials_nveccuda)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(SUNDIALS_LIBS ${SUNDIALS_LIBS} sundials_cvode_fused_cuda)
 endif()
 
@@ -98,25 +98,24 @@ foreach(example_tuple ${all_examples})
       EXAMPLE_TYPE ${example_type})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.cu ${test_name}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/cuda)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cuda)
     endif()
   endif()
-
 endforeach(example_tuple ${CVODE_examples})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/cuda)
+  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cuda)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "CVODE")
   set(SOLVER_LIB "sundials_cvode")
   set(NVECTOR_LIB "sundials_nveccuda")
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(LIBS "-lsundials_cvode_fused_cuda ${LIBS}")
   endif()
 
@@ -139,7 +138,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/cvode/cuda/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/cuda)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cuda)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -153,7 +152,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/cvode/cuda/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/cuda
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cuda
       RENAME Makefile)
   endif()
 

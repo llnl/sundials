@@ -3,7 +3,7 @@
  *                Aaron Collier, and Slaven Peles @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -271,11 +271,15 @@ typedef SUNDIALS_COUNTER_TYPE suncountertype;
  *------------------------------------------------------------------
  */
 
-typedef enum
+enum SUNOutputFormat
 {
   SUN_OUTPUTFORMAT_TABLE,
   SUN_OUTPUTFORMAT_CSV
-} SUNOutputFormat;
+};
+
+#ifndef SWIG
+typedef enum SUNOutputFormat SUNOutputFormat;
+#endif
 
 /*
  *------------------------------------------------------------------
@@ -325,15 +329,17 @@ typedef void (*SUNErrHandlerFn)(int line, const char* func, const char* file,
     because we manually insert the wrapper code for SUN_COMM_NULL
     (and %ignoring it in the SWIG code doesn't seem to work). */
 
+#ifndef SWIG
+#define SUN_COMM_NULL 0
+#endif
+
 #if SUNDIALS_MPI_ENABLED
 #ifndef SWIG
+#undef SUN_COMM_NULL
 #define SUN_COMM_NULL MPI_COMM_NULL
 #endif
 typedef MPI_Comm SUNComm;
 #else
-#ifndef SWIG
-#define SUN_COMM_NULL 0
-#endif
 typedef int SUNComm;
 #endif
 
@@ -350,9 +356,13 @@ typedef int SUNComm;
  *------------------------------------------------------------------
  */
 
-typedef enum
+enum SUNDataIOMode
 {
   SUNDATAIOMODE_INMEM,
-} SUNDataIOMode;
+};
+
+#ifndef SWIG
+typedef enum SUNDataIOMode SUNDataIOMode;
+#endif
 
 #endif /* _SUNDIALS_TYPES_H */

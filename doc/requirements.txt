@@ -1,7 +1,11 @@
-sphinx >=4.0.0
-sphinx-fortran
+numpydoc
+# TODO(CJB): Update range when sphinx-toolbox supports Sphinx 9
+sphinx >=6.0.0,<9
 sphinx_rtd_theme
-sphinxcontrib.bibtex
 sphinx-copybutton
+sphinx-fortran
+sphinx-multitoc-numbering
 sphinx-toolbox
 sphinxcontrib-googleanalytics
+sphinxcontrib.bibtex
+sphinxcontrib-moderncmakedomain

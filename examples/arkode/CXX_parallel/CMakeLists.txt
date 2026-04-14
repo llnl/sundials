@@ -3,7 +3,7 @@
 #                Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -51,7 +51,7 @@ macro(build_examples examples_to_build lang)
       sundials_add_executable(${example_target} ${example}
         SCALAR_TYPE ${example_scalartype})
 
-        if(TARGET ${example_target})
+      if(TARGET ${example_target})
         # folder to organize targets in an IDE
         set_target_properties(${example_target} PROPERTIES FOLDER "Examples")
 
@@ -92,16 +92,16 @@ macro(build_examples examples_to_build lang)
         EXAMPLE_TYPE ${example_type}
         FLOAT_PRECISION ${example_precision})
 
-      # Not all examples are added to the generated CMake file installed the
-      # output and source files here
-      if(EXAMPLES_INSTALL)
+    # Not all examples are added to the generated CMake file installed the
+    # output and source files here
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
         # Find all .out files for this example
         file(GLOB example_out ${example_target}*.out)
 
-        # Install example source and out files
-        install(FILES ${example} ${example_out}
-                DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/CXX_parallel)
+      # Install example source and out files
+      install(FILES ${example} ${example_out}
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/CXX_parallel)
 
       endif()
     endif()
@@ -144,7 +144,7 @@ list(APPEND ARKODE_extras plot_heat2D_p.py)
 # ARKODE + CVODE MPI Examples
 # ---------------------------
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   set(examples_cvode
       "ark_diffusion_reaction_p.cpp\;\;--np 2 2 --imex\;1\;4\;exclude-single\;default\;real"
       "ark_diffusion_reaction_p.cpp\;\;--np 2 2 --mri-arkstep\;1\;4\;exclude-single\;default\;real"
@@ -160,7 +160,7 @@ endif()
 # RAJA Examples
 # -------------
 
-if(ENABLE_RAJA
+if(SUNDIALS_ENABLE_RAJA
    AND (SUNDIALS_PRECISION MATCHES "DOUBLE")
    AND (SUNDIALS_INDEX_SIZE MATCHES "32"))
 
@@ -200,7 +200,7 @@ if(ENABLE_RAJA
 
   if(RAJA_BACKENDS MATCHES "CUDA")
 
-    if(BUILD_NVECTOR_CUDA)
+    if(SUNDIALS_ENABLE_NVECTOR_CUDA)
       set(cuda_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_CUDA_NVEC\;--monitor\;1\;4\;develop\;2\;real"
           "ark_brusselator1D_task_local_nls.cpp\;USE_CUDAUVM_NVEC\;--monitor\;1\;4\;exclude\;2\;real"
@@ -210,7 +210,7 @@ if(ENABLE_RAJA
       build_examples(cuda_raja_examples CUDA)
     endif()
 
-    if(BUILD_NVECTOR_RAJA AND (SUNDIALS_RAJA_BACKENDS MATCHES "CUDA"))
+    if(SUNDIALS_ENABLE_NVECTOR_RAJA AND (SUNDIALS_RAJA_BACKENDS MATCHES "CUDA"))
       set(raja_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_RAJA_NVEC\;--monitor\;1\;4\;exclude\;2\;real"
       )
@@ -222,7 +222,7 @@ if(ENABLE_RAJA
     # RAJA + HIP
     # ----------
 
-    if(BUILD_NVECTOR_HIP AND (RAJA_BACKENDS MATCHES "HIP"))
+    if(SUNDIALS_ENABLE_NVECTOR_HIP AND (RAJA_BACKENDS MATCHES "HIP"))
       set(hip_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_HIP_NVEC\;--monitor\;1\;4\;exclude\;2\;real"
       )
@@ -234,7 +234,8 @@ if(ENABLE_RAJA
     # RAJA + OpenMP Offload
     # ---------------------
 
-    if(BUILD_NVECTOR_OPENMPDEV AND (RAJA_BACKENDS MATCHES "TARGET_OPENMP"))
+    if(SUNDIALS_ENABLE_NVECTOR_OPENMPDEV AND (RAJA_BACKENDS MATCHES
+                                              "TARGET_OPENMP"))
       set(openmpdev_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_OMPDEV_NVEC\;--monitor\;1\;4\;exclude\;2\;real"
       )
@@ -248,7 +249,7 @@ if(ENABLE_RAJA
   endif()
 endif()
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   set(examples_to_install "${parallel_examples}")
   set(_sundials_targets arkode nvecparallel)

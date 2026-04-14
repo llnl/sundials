@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -18,8 +18,11 @@
 # Example lists are tuples "name\;args\;type\;scalartype"
 
 # Examples that support CPU and GPU Ginkgo backends
-set(cpu_gpu_examples "cv_heat2D_ginkgo.cpp\;\;develop\;real"
-                     "cv_bruss_batched_ginkgo.cpp\;\;develop\;real")
+set(cpu_gpu_examples "cv_heat2D_ginkgo.cpp\;\;develop\;real")
+
+if(SUNDIALS_INDEX_SIZE STREQUAL "32")
+  list(APPEND cpu_gpu_examples "cv_bruss_batched_ginkgo.cpp\;\;develop\;real")
+endif()
 
 sundials_add_examples_ginkgo(
   cpu_gpu_examples
@@ -35,7 +38,7 @@ sundials_add_examples_ginkgo(
   BACKENDS REF OMP)
 
 # Install the targets
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   if(SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA")
     list(APPEND vectors nveccuda)

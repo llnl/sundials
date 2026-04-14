@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -71,7 +71,7 @@ const std::unordered_map<std::string, int> matrix_types{{"csr", 0}, {"dense", 1}
 constexpr sunrealtype solve_tolerance =
   1000 * std::numeric_limits<sunrealtype>::epsilon();
 
-static void fill_matrix_data(gko::matrix_data<sunrealtype>& data)
+static void fill_matrix_data(gko::matrix_data<sunrealtype, sunindextype>& data)
 {
   auto num_rows = data.size[0];
   for (gko::size_type row = 0; row < num_rows; ++row)
@@ -151,6 +151,15 @@ int main(int argc, char* argv[])
   std::string matrix_type{argv[++argi]};
   std::transform(matrix_type.begin(), matrix_type.end(), matrix_type.begin(),
                  [](unsigned char c) { return std::tolower(c); });
+
+#ifdef SUNDIALS_INT64_T
+  if (matrix_type == "csr")
+  {
+    std::cerr << "ERROR: the CSR matrix type is not compatible with 64-bit "
+                 "index types\n";
+    return 1;
+  }
+#endif
 
   if (!matrix_types.count(matrix_type))
   {
@@ -235,7 +244,7 @@ int main(int argc, char* argv[])
                                              gko::remove_complex<sunrealtype>{
                                                matcond},
                                              distribution_real, engine)
-      : gko::matrix_data<sunrealtype>(matrix_dim);
+      : gko::matrix_data<sunrealtype, sunindextype>(matrix_dim);
 
   if (matcond <= 0) { fill_matrix_data(gko_matdata); }
 
@@ -243,6 +252,7 @@ int main(int argc, char* argv[])
 
   if (matrix_type == "csr")
   {
+#ifdef SUNDIALS_INT32_T
     using GkoMatrixType = gko::matrix::Csr<sunrealtype, sunindextype>;
     using GkoBatchMatrixType = gko::batch::matrix::Csr<sunrealtype, sunindextype>;
 
@@ -266,6 +276,9 @@ int main(int argc, char* argv[])
       sundials::ginkgo::BatchMatrix<GkoBatchMatrixType>>(std::move(
                                                            gko_batch_matrix),
                                                          sunctx);
+#else
+    return 1;
+#endif
   }
   else if (matrix_type == "dense")
   {
@@ -297,8 +310,8 @@ int main(int argc, char* argv[])
   N_VConst(sunrealtype{3.0}, s2);
 
   /* Create right-hand side vector for linear solve */
-  fails += SUNMatMatvecSetup(A->Convert());
-  fails += SUNMatMatvec(A->Convert(), x, b);
+  fails += SUNMatMatvecSetup(A->get());
+  fails += SUNMatMatvec(A->get(), x, b);
   if (fails)
   {
     printf("FAIL: SUNLinSol SUNMatMatvec failure\n");
@@ -324,6 +337,7 @@ int main(int argc, char* argv[])
     using GkoSolverType = gko::batch::solver::Bicgstab<sunrealtype>;
     if (matrix_type == "csr")
     {
+#ifdef SUNDIALS_INT32_T
       using GkoBatchMatrixType = gko::batch::matrix::Csr<sunrealtype>;
       using SUNGkoLinearSolverType =
         BatchLinearSolver<GkoSolverType, GkoBatchMatrixType>;
@@ -332,6 +346,9 @@ int main(int argc, char* argv[])
                                                  gko::batch::stop::tolerance_type::absolute,
                                                  precond_factory, max_iters,
                                                  num_batches, sunctx);
+#else
+      return 1;
+#endif
     }
     else if (matrix_type == "dense")
     {
@@ -347,19 +364,18 @@ int main(int argc, char* argv[])
   }
 
   /* Run Tests */
-  fails += Test_SUNLinSolGetID(LS->Convert(), SUNLINEARSOLVER_GINKGOBATCH, 0);
-  fails += Test_SUNLinSolGetType(LS->Convert(),
-                                 SUNLINEARSOLVER_MATRIX_ITERATIVE, 0);
-  fails += Test_SUNLinSolInitialize(LS->Convert(), 0);
-  fails += Test_SUNLinSolSetup(LS->Convert(), A->Convert(), 0);
-  fails += Test_SUNLinSolSolve(LS->Convert(), A->Convert(), x, b,
-                               solve_tolerance, SUNTRUE, 0);
+  fails += Test_SUNLinSolGetID(LS->get(), SUNLINEARSOLVER_GINKGOBATCH, 0);
+  fails += Test_SUNLinSolGetType(LS->get(), SUNLINEARSOLVER_MATRIX_ITERATIVE, 0);
+  fails += Test_SUNLinSolInitialize(LS->get(), 0);
+  fails += Test_SUNLinSolSetup(LS->get(), A->get(), 0);
+  fails += Test_SUNLinSolSolve(LS->get(), A->get(), x, b, solve_tolerance,
+                               SUNTRUE, 0);
 
   /* Try with scaling */
-  fails += Test_SUNLinSolSetScalingVectors(LS->Convert(), s1, s2, 0);
-  fails += Test_SUNLinSolSetup(LS->Convert(), A->Convert(), 0);
-  fails += Test_SUNLinSolSolve(LS->Convert(), A->Convert(), x, b,
-                               solve_tolerance, SUNTRUE, 0);
+  fails += Test_SUNLinSolSetScalingVectors(LS->get(), s1, s2, 0);
+  fails += Test_SUNLinSolSetup(LS->get(), A->get(), 0);
+  fails += Test_SUNLinSolSolve(LS->get(), A->get(), x, b, solve_tolerance,
+                               SUNTRUE, 0);
 
   /* Print result */
   if (fails)

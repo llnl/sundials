@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -95,7 +95,7 @@ SUNMatrix SUNMatClone_Ginkgo(SUNMatrix A)
 {
   auto A_mat{static_cast<Matrix<GkoMatType>*>(A->content)};
   auto new_mat{new Matrix<GkoMatType>(*A_mat)}; // NOLINT
-  return new_mat->Convert();
+  return new_mat->get();
 }
 
 template<typename GkoMatType>
@@ -226,16 +226,16 @@ public:
   // Override the ConvertibleTo methods
 
   /// Implicit conversion to a :c:type:`SUNMatrix`
-  operator SUNMatrix() override { return object_.get(); }
+  operator SUNMatrix() noexcept override { return object_.get(); }
 
   /// Implicit conversion to a :c:type:`SUNMatrix`
-  operator SUNMatrix() const override { return object_.get(); }
+  operator SUNMatrix() const noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNMatrix`
-  SUNMatrix Convert() override { return object_.get(); }
+  SUNMatrix get() noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNMatrix`
-  SUNMatrix Convert() const override { return object_.get(); }
+  SUNMatrix get() const noexcept override { return object_.get(); }
 
 private:
   std::shared_ptr<GkoMatType> gkomtx_;

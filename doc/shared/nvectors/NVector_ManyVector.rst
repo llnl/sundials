@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -132,7 +132,7 @@ the following additional user-callable routines:
    Users of the Fortran 2003 interface to this function will first need to use
    the generic ``N_Vector`` utility functions :c:func:`N_VNewVectorArray`, and
    :c:func:`N_VSetVecAtIndexVectorArray` to create the ``N_Vector*`` argument.  This is
-   further explained in :numref:`SUNDIALS.Fortran.Differences.NVectorArrays`,
+   further explained in :numref:`Fortran.Differences.NVectorArrays`,
    and the functions are documented in :numref:`NVectors.Description.utilities`.
 
 

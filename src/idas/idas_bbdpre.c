@@ -4,7 +4,7 @@
  *        Alan C. Hindmarsh and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -493,7 +493,7 @@ static int IDABBDPrecSetup(sunrealtype tt, N_Vector yy, N_Vector yp,
                     MSGBBD_FUNC_FAILED);
     return (-1);
   }
-  if (retval > 0) { return (+1); }
+  if (retval > 0) { return (1); }
 
   /* Do LU factorization of matrix and return error flag */
   retval = SUNLinSolSetup_Band(pdata->LS, pdata->PP);
@@ -617,7 +617,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
   ypdata    = N_VGetArrayPointer(yp);
   gtempdata = N_VGetArrayPointer(gtemp);
   ewtdata   = N_VGetArrayPointer(IDA_mem->ida_ewt);
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     cnsdata = N_VGetArrayPointer(IDA_mem->ida_constraints);
   }
@@ -661,7 +661,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
       inc = (SUN_REAL(yj) + inc) - SUN_REAL(yj);
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = SUN_REAL(cnsdata[j]);
         if (SUNRabs(conj) == ONE)
@@ -698,7 +698,7 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
                    SUNMAX(SUNRabs(IDA_mem->ida_hh * SUN_REAL(ypj)), ONE / ewtj));
       if (IDA_mem->ida_hh * SUN_REAL(ypj) < ZERO) { inc = -inc; }
       inc = (SUN_REAL(yj) + inc) - SUN_REAL(yj);
-      if (IDA_mem->ida_constraintsSet)
+      if (IDA_mem->ida_constraints)
       {
         conj = SUN_REAL(cnsdata[j]);
         if (SUNRabs(conj) == ONE)

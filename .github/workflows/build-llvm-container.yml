@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Free up disk space
         uses: ./.github/actions/free-space-ubuntu
 
       - name: Checkout Spack
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: spack/spack
           ref: v0.21.0

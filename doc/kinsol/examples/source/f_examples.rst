@@ -1,7 +1,7 @@
 ..
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -21,7 +21,7 @@ Fortran Example Problems
 
 The Fortran example problem programs supplied with the KINSOL package are all
 written using the Fortran 2003 standard, use double precision arithmetic, and
-32- or 64-bit integers for indexing. See the :ref:`SUNDIALS.Fortran` section in
+32- or 64-bit integers for indexing. See the :ref:`Fortran` section in
 the KINSOL User Documentation for details.
 
 A serial example: kinDiagon_kry_f2003

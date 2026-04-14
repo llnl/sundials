@@ -20,10 +20,7 @@ to match the configuration of the :c:type:`sunscalartype` alias.
 
 **Bug Fixes**
 
-The SPRKStep module now accounts for zero coefficients in the SPRK tables, eliminating
-extraneous function evaluations.
-
-A bug preventing a user supplied :c:func:`SUNStepper_ResetCheckpointIndex` function from being
-called was fixed. 
+Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
+``malloc``.
 
 **Deprecation Notices**

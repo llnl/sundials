@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner and Slaven Peles @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -18,67 +18,62 @@
 # ---------------------------------------------------------------
 
 # C examples
-if(EXAMPLES_ENABLE_C)
+if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(C_serial)
-  if(BUILD_NVECTOR_MANYVECTOR)
+  if(SUNDIALS_ENABLE_NVECTOR_MANYVECTOR)
     add_subdirectory(C_manyvector)
   endif()
-  if(ENABLE_OPENMP AND OPENMP_FOUND)
+  if(SUNDIALS_ENABLE_OPENMP)
     add_subdirectory(C_openmp)
   endif()
-  if(ENABLE_OPENMP_DEVICE
-     AND OPENMP_FOUND
-     AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
+  if(SUNDIALS_ENABLE_OPENMP_DEVICE AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
     add_subdirectory(C_openmpdev)
   endif()
-  if(ENABLE_MPI AND MPI_C_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(C_parallel)
   endif()
-  if(ENABLE_HYPRE AND HYPRE_FOUND)
+  if(SUNDIALS_ENABLE_HYPRE)
     add_subdirectory(C_parhyp)
   endif()
-  if(BUILD_SUNLINSOL_KLU)
+  if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
     add_subdirectory(C_klu)
   endif()
-  if(ENABLE_PETSC AND PETSC_FOUND)
+  if(SUNDIALS_ENABLE_PETSC)
     add_subdirectory(C_petsc)
   endif()
-  if(BUILD_SUNLINSOL_SUPERLUMT)
+  if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
     add_subdirectory(C_superlu-mt)
   endif()
 endif()
 
 # C++ examples
-if(EXAMPLES_ENABLE_CXX)
+if(SUNDIALS_ENABLE_CXX_EXAMPLES)
   add_subdirectory(CXX_serial)
-  if(ENABLE_LAPACK)
+  if(SUNDIALS_ENABLE_LAPACK)
     add_subdirectory(CXX_lapack)
   endif()
-  if(BUILD_NVECTOR_MANYVECTOR)
+  if(SUNDIALS_ENABLE_NVECTOR_MANYVECTOR)
     add_subdirectory(CXX_manyvector)
   endif()
-  if(ENABLE_MPI AND MPI_CXX_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(CXX_parallel)
   endif()
-  if(ENABLE_MPI
-     AND MPI_CXX_FOUND
-     AND ENABLE_HYPRE
-     AND HYPRE_FOUND)
+  if(SUNDIALS_ENABLE_HYPRE)
     add_subdirectory(CXX_parhyp)
   endif()
-  if(MPI_CXX_FOUND AND ENABLE_SUPERLUDIST)
+  if(SUNDIALS_ENABLE_SUPERLUDIST)
     add_subdirectory(CXX_superludist)
   endif()
-  if(ENABLE_XBRAID)
+  if(SUNDIALS_ENABLE_XBRAID)
     add_subdirectory(CXX_xbraid)
   endif()
 endif()
 
 # F2003 examples
-if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
   add_subdirectory(F2003_serial)
   add_subdirectory(F2003_custom)
-  if(ENABLE_MPI AND MPI_Fortran_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(F2003_parallel)
   endif()
 endif()

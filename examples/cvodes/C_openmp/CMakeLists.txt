@@ -2,7 +2,7 @@
 # Programmer(s): Ting Yan @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -67,24 +67,25 @@ foreach(example_tuple ${CVODES_examples_OMP})
       EXAMPLE_TYPE ${example_type})
 
     # install example source and .out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
     endif()
   endif()
 
 endforeach(example_tuple ${CVODES_examples_OMP})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
 
   # Install the extra files
   foreach(extrafile ${CVODES_extras_OMP})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -104,7 +105,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/cvodes/C_openmp/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/C_openmp)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -118,7 +119,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/cvodes/C_openmp/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvodes/C_openmp
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/C_openmp
       RENAME Makefile)
   endif()
 

@@ -3,7 +3,7 @@
  * Based on codes <solver>_klu.c, written by Carol Woodward @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -126,13 +126,13 @@ SUNLinearSolver SUNLinSol_KLU(N_Vector y, SUNMatrix A, SUNContext sunctx)
   content->numeric         = NULL;
 
 #if defined(SUNDIALS_INT64_T)
-  if (SUNSparseMatrix_SparseType(A) == CSC_MAT)
+  if (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT)
   {
     content->klu_solver = (KLUSolveFn)&klu_l_solve;
   }
   else { content->klu_solver = (KLUSolveFn)&klu_l_tsolve; }
 #elif defined(SUNDIALS_INT32_T)
-  if (SUNSparseMatrix_SparseType(A) == CSC_MAT)
+  if (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT)
   {
     content->klu_solver = &klu_solve;
   }

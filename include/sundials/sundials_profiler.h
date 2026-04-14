@@ -2,7 +2,7 @@
  * Programmer: Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -22,7 +22,7 @@
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_types.h>
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
 #include "caliper/cali.h"
 #endif
 
@@ -32,6 +32,7 @@ extern "C" {
 
 SUNDIALS_EXPORT
 SUNErrCode SUNProfiler_Create(SUNComm comm, const char* title, SUNProfiler* p);
+
 SUNDIALS_EXPORT
 SUNErrCode SUNProfiler_Free(SUNProfiler* p);
 
@@ -54,7 +55,7 @@ SUNErrCode SUNProfiler_Print(SUNProfiler p, FILE* fp);
 SUNDIALS_EXPORT
 SUNErrCode SUNProfiler_Reset(SUNProfiler p);
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
+#if defined(SUNDIALS_ENABLE_PROFILING) && defined(SUNDIALS_CALIPER_ENABLED)
 
 #define SUNDIALS_MARK_FUNCTION_BEGIN(profobj) CALI_MARK_FUNCTION_BEGIN
 
@@ -67,7 +68,7 @@ SUNErrCode SUNProfiler_Reset(SUNProfiler p);
 
 #define SUNDIALS_MARK_END(profobj, name) CALI_MARK_END(name)
 
-#elif defined(SUNDIALS_BUILD_WITH_PROFILING)
+#elif defined(SUNDIALS_ENABLE_PROFILING)
 
 #define SUNDIALS_MARK_FUNCTION_BEGIN(profobj) \
   SUNProfiler_Begin(profobj, __func__)

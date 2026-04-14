@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -223,16 +223,16 @@ public:
   // Override the ConvertibleTo methods
 
   /// Implicit conversion to a :c:type:`SUNLinearSolver`
-  operator SUNLinearSolver() override { return object_.get(); }
+  operator SUNLinearSolver() noexcept override { return object_.get(); }
 
   /// Implicit conversion to a :c:type:`SUNLinearSolver`
-  operator SUNLinearSolver() const override { return object_.get(); }
+  operator SUNLinearSolver() const noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNLinearSolver`
-  SUNLinearSolver Convert() override { return object_.get(); }
+  SUNLinearSolver get() noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNLinearSolver`
-  SUNLinearSolver Convert() const override { return object_.get(); }
+  SUNLinearSolver get() const noexcept override { return object_.get(); }
 
   /// Get the underlying Ginkgo solver
   /// \note This will be `nullptr` until the linear solver setup phase.
@@ -268,9 +268,9 @@ public:
       col_scale_vec_ =
         std::move(impl::WrapBatchScalingArray(GkoExec(), num_batches_, s1_));
 
-      if (!s2inv_.Convert())
+      if (!s2inv_.get())
       {
-        s2inv_ = sundials::experimental::NVectorView(N_VClone(s2));
+        s2inv_ = std::move(sundials::experimental::N_VectorView(N_VClone(s2)));
       }
 
       // SUNLinearSolver API wants s2inv_
@@ -409,8 +409,8 @@ public:
                                        iter_count_array_.get_data());
     auto iter_count = iter_count_array_.get_data();
 
-    sunindextype max_iter_count{0};
-    sunindextype min_iter_count{max_iters_};
+    int max_iter_count{0};
+    int min_iter_count{max_iters_};
     avg_iter_count_ = sunrealtype{0.0};
     for (gko::size_type i = 0; i < num_batches_; i++)
     {
@@ -468,12 +468,12 @@ private:
   gko::size_type num_batches_;
   int max_iters_;
   gko::array<sunrealtype> res_norm_array_;
-  gko::array<sunindextype> iter_count_array_;
+  gko::array<int> iter_count_array_;
   sunrealtype avg_iter_count_;
   sunrealtype sum_of_avg_iters_;
   sunrealtype stddev_iter_count_;
   N_Vector s1_;
-  sundials::experimental::NVectorView s2inv_;
+  sundials::experimental::N_VectorView s2inv_;
   int scaling_mode_;
   bool scaling_initialized_;
   bool do_setup_;

@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -26,11 +26,16 @@
 
 #include <sundials/sundials_domeigestimator.h>
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNDomEigEstimator DEE)
 {
   return (DEE->sunctx->profiler);
 }
+#endif
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNDomEigEstimatorFunctionTable_Destroy(void* ptr);
 #endif
 
 /* internal function prototypes */
@@ -74,6 +79,7 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   /* attach ops and initialize content and context to NULL */
   DEE->ops     = ops;
   DEE->content = NULL;
+  DEE->python  = NULL;
   DEE->sunctx  = sunctx;
 
   return (DEE);
@@ -90,6 +96,11 @@ void SUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator DEE)
   /* free non-NULL ops structure */
   if (DEE->ops) { free(DEE->ops); }
   DEE->ops = NULL;
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNDomEigEstimatorFunctionTable_Destroy(DEE->python);
+#endif
+  DEE->python = NULL;
 
   /* free overall SUNDomEigEstimator object and return */
   free(DEE);

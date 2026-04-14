@@ -1,7 +1,7 @@
 ..
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -51,10 +51,10 @@ Adiak enabled for the CPT suite by setting the CMake options
 .. code-block:: bash
 
   $ cmake \
-  > -DSUNDIALS_BUILD_WITH_PROFILING=ON \
-  > -DENABLE_CALIPER=ON \
+  > -DSUNDIALS_ENABLE_PROFILING=ON \
+  > -DSUNDIALS_ENABLE_CALIPER=ON \
   > -DCaliper_DIR=/path/to/caliper \
-  > -DENABLE_ADIAK=ON \
+  > -DSUNDIALS_ENABLE_ADIAK=ON \
   > -Dadiak_DIR=/path/to/adiak/lib/cmake/adiak \
   > -DSUNDIALS_TEST_ENABLE_DEV_TESTS=ON \
   > -DSUNDIALS_TEST_ENABLE_PROFILING=ON \
@@ -70,7 +70,7 @@ requested have the ``output`` option defined to ensure output data is saved in a
 separate location from the test output. Otherwise, the ``.out`` files for each
 test will contain the output and the tests will fail.
 
-Turning on the ``BUILD_BENCHMARKS`` option will build benchmarks. Running
+Turning on the ``SUNDIALS_ENABLE_BENCHMARKS`` option will build benchmarks. Running
 ``make benchmark`` will execute all the available benchmarks and produce
 ``.cali`` output files for each one. To change what parameters benchmarks are run
 with, edit the respective ``CMakeLists.txt``. The ``BENCHMARK_VARS`` variable

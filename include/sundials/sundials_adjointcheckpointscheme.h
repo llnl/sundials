@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-typedef struct SUNAdjointCheckpointScheme_* SUNAdjointCheckpointScheme;
+typedef _SUNDIALS_STRUCT_ SUNAdjointCheckpointScheme_* SUNAdjointCheckpointScheme;
 
 typedef SUNErrCode (*SUNAdjointCheckpointSchemeNeedsSavingFn)(
   SUNAdjointCheckpointScheme check_scheme, suncountertype step_num,
@@ -108,7 +108,7 @@ SUNDIALS_EXPORT
 SUNErrCode SUNAdjointCheckpointScheme_LoadVector(
   SUNAdjointCheckpointScheme check_scheme, suncountertype step_num,
   suncountertype stage_num, sunbooleantype peek, N_Vector* out,
-  sunrealtype* tout);
+  sunrealtype* tout); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNAdjointCheckpointScheme_Destroy(SUNAdjointCheckpointScheme*);

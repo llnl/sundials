@@ -3,7 +3,7 @@
  *                Radu Serban @ LLNL
  * ----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -221,10 +221,11 @@ int CVodeSetLinearSolver(void* cvode_mem, SUNLinearSolver LS, SUNMatrix A)
   if (cv_mem->cv_lfree) { cv_mem->cv_lfree(cv_mem); }
 
   /* Set four main system linear solver function fields in cv_mem */
-  cv_mem->cv_linit  = cvLsInitialize;
-  cv_mem->cv_lsetup = cvLsSetup;
-  cv_mem->cv_lsolve = cvLsSolve;
-  cv_mem->cv_lfree  = cvLsFree;
+  cv_mem->cv_linit   = cvLsInitialize;
+  cv_mem->cv_lreinit = cvLsReInitialize;
+  cv_mem->cv_lsetup  = cvLsSetup;
+  cv_mem->cv_lsolve  = cvLsSolve;
+  cv_mem->cv_lfree   = cvLsFree;
 
   /* Allocate memory for CVLsMemRec */
   cvls_mem = NULL;
@@ -1157,7 +1158,7 @@ int cvLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   /* Obtain pointers to the data for ewt, y */
   ewt_data = N_VGetArrayPointer(cv_mem->cv_ewt);
   y_data   = N_VGetArrayPointer(y);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -1178,7 +1179,7 @@ int cvLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
     inc     = SUNMAX(srur * SUNabs(yjsaved), minInc / SUN_REAL(ewt_data[j]));
 
     /* Adjust sign(inc) if y_j has an inequality constraint. */
-    if (cv_mem->cv_constraintsSet)
+    if (cv_mem->cv_constraints)
     {
       conj = SUN_REAL(cns_data[j]);
       if (SUNRabs(conj) == ONE)
@@ -1254,7 +1255,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   ftemp_data = N_VGetArrayPointer(ftemp);
   y_data     = N_VGetArrayPointer(y);
   ytemp_data = N_VGetArrayPointer(ytemp);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -1282,7 +1283,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       inc = SUNMAX(srur * SUNabs(y_data[j]), minInc / SUN_REAL(ewt_data[j]));
 
       /* Adjust sign(inc) if yj has an inequality constraint. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = SUN_REAL(cns_data[j]);
         if (SUNRabs(conj) == ONE)
@@ -1311,7 +1312,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       inc = SUNMAX(srur * SUNabs(y_data[j]), minInc / SUN_REAL(ewt_data[j]));
 
       /* Adjust sign(inc) as before. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = SUN_REAL(cns_data[j]);
         if (SUNRabs(conj) == ONE)
@@ -1601,6 +1602,25 @@ int cvLsInitialize(CVodeMem cv_mem)
   return (cvls_mem->last_flag);
 }
 
+int cvLsReInitialize(CVodeMem cv_mem)
+{
+  CVLsMem cvls_mem;
+
+  /* access CVLsMem structure */
+  if (cv_mem->cv_lmem == NULL)
+  {
+    cvProcessError(cv_mem, CVLS_LMEM_NULL, __LINE__, __func__, __FILE__,
+                   MSG_LS_LMEM_NULL);
+    return (CVLS_LMEM_NULL);
+  }
+  cvls_mem = (CVLsMem)cv_mem->cv_lmem;
+
+  /* Initialize counters */
+  cvLsInitializeCounters(cvls_mem);
+
+  return CVLS_SUCCESS;
+}
+
 /*-----------------------------------------------------------------
   cvLsSetup
 
@@ -1775,7 +1795,8 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
     bnorm  = N_VWrmsNorm(b, weight);
 
     SUNLogInfo(CV_LOGGER, "begin-linear-solve",
-               "iterative = 1, b-norm = %.16g, b-tol = %.16g, res-tol = %.16g",
+               "iterative = 1, b-norm = " SUN_FORMAT_G ", b-tol = " SUN_FORMAT_G
+               ", res-tol = " SUN_FORMAT_G,
                bnorm, deltar, deltar * cvls_mem->nrmfac);
 
     if (bnorm <= deltar)
@@ -1902,11 +1923,12 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
   /* Interpret solver return value  */
   cvls_mem->last_flag = retval;
 
-  SUNLogInfoIf(retval == SUN_SUCCESS, CV_LOGGER, "end-linear-solve",
-               "status = success, iters = %i, p-solves = %i, res-norm = %.16g",
+  SUNLogInfoIf(retval == SUN_SUCCESS, CV_LOGGER,
+               "end-linear-solve", "status = success, iters = %i, p-solves = %i, res-norm = " SUN_FORMAT_G,
                nli_inc, (int)(cvls_mem->nps - nps_inc), resnorm);
-  SUNLogInfoIf(retval != SUN_SUCCESS, CV_LOGGER,
-               "end-linear-solve", "status = failed, retval = %i, iters = %i, p-solves = %i, res-norm = %.16g",
+  SUNLogInfoIf(retval != SUN_SUCCESS, CV_LOGGER, "end-linear-solve",
+               "status = failed, retval = %i, iters = %i, p-solves = %i, "
+               "res-norm = " SUN_FORMAT_G,
                retval, nli_inc, (int)(cvls_mem->nps - nps_inc), resnorm);
 
   switch (retval)

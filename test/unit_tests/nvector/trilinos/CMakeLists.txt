@@ -2,7 +2,7 @@
 # Programmer(s): Slaven Peles and Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -33,7 +33,7 @@ else()
 endif()
 
 # Dependencies for nvector examples
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   set(nvector_examples_dependencies test_nvector test_mpinvector)
 else()
   set(nvector_examples_dependencies test_nvector)
@@ -66,7 +66,7 @@ foreach(example_tuple ${nvector_trilinos_examples})
 
     # link vector test utilities
     target_link_libraries(${example} PRIVATE test_nvector_obj)
-    if(ENABLE_MPI)
+    if(SUNDIALS_ENABLE_MPI)
       target_link_libraries(${example} PRIVATE test_nvectormpi_obj)
     endif()
 

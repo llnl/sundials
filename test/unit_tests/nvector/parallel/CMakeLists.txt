@@ -2,7 +2,7 @@
 # Programmer(s): Steven Smith @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -30,7 +30,7 @@ set(nvector_parallel_examples
 set(nvector_examples_dependencies test_nvector test_mpinvector)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_parallel_fortran_examples "test_fnvector_parallel_mod\;\;1\;4\;")
 endif()
 
@@ -45,7 +45,7 @@ else()
   include_directories(${MPI_INCLUDE_PATH})
 endif()
 
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   if(MPI_Fortran_COMPILER)
     # use MPI wrapper as the compiler
     set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})

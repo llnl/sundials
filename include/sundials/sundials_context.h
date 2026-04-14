@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -48,13 +48,15 @@ SUNDIALS_EXPORT
 SUNErrCode SUNContext_ClearErrHandlers(SUNContext sunctx);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNContext_GetProfiler(SUNContext sunctx, SUNProfiler* profiler);
+SUNErrCode SUNContext_GetProfiler(SUNContext sunctx,
+                                  SUNProfiler* profiler); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNContext_SetProfiler(SUNContext sunctx, SUNProfiler profiler);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNContext_GetLogger(SUNContext sunctx, SUNLogger* logger);
+SUNErrCode SUNContext_GetLogger(SUNContext sunctx,
+                                SUNLogger* logger); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNContext_SetLogger(SUNContext sunctx, SUNLogger logger);

@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -62,12 +62,12 @@ foreach(example_tuple ${examples_list})
 
 endforeach()
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/C_superlumt)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_superlumt)
   endforeach(extrafile ${extras})
 
   sundials_install_examples(

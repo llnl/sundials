@@ -3,7 +3,7 @@
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -49,7 +49,7 @@ set(CVODE_examples
     "cvRoberts_dns_uw\;\;develop\;real"
     "cvRocket_dns\;\;develop\;real")
 
-if(SUNDIALS_BUILD_WITH_MONITORING)
+if(SUNDIALS_ENABLE_MONITORING)
   list(APPEND CVODE_examples "cvKrylovDemo_ls\;0 1\;develop\;real")
 endif()
 
@@ -71,7 +71,7 @@ set(CVODE_extras plot_cvParticle.py plot_cvPendulum.py cvRoberts_dns_stats.csv)
 set(CVODE_LIB sundials_cvode)
 set(NVECS_LIB sundials_nvecserial)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   list(APPEND CVODE_LIB sundials_cvode_fused_stubs)
 endif()
 
@@ -123,16 +123,17 @@ foreach(example_tuple ${CVODE_examples})
     file(GLOB example_out ${example}*.out)
 
     # install example source and .out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
     endif()
   endif()
 
 endforeach(example_tuple ${CVODE_examples})
 
 # Add the build and install targets for each LAPACK example (if needed)
-if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+   AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
   set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackband
@@ -177,9 +178,9 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
     file(GLOB example_out ${example}*.out)
 
     # install example source and .out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
     endif()
 
   endforeach(example_tuple ${CVODE_examples_BL})
@@ -187,7 +188,7 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
 endif()
 
 # Add the build and install targets for each KLU example (if needed)
-if(BUILD_SUNLINSOL_KLU)
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
 
   # Sundials KLU linear solver module
   set(SUNLINSOLKLU_LIBS sundials_sunlinsolklu)
@@ -234,9 +235,9 @@ if(BUILD_SUNLINSOL_KLU)
     file(GLOB example_out ${example}*.out)
 
     # install example source and .out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
     endif()
 
   endforeach(example_tuple ${CVODE_examples_KLU})
@@ -244,7 +245,7 @@ if(BUILD_SUNLINSOL_KLU)
 endif()
 
 # Add the build and install targets for each SuperLU_MT example (if needed)
-if(BUILD_SUNLINSOL_SUPERLUMT)
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
 
   # Sundials SuperLU_MT linear solver module
   set(SUNLINSOLSLUMT_LIBS sundials_sunlinsolsuperlumt)
@@ -297,9 +298,9 @@ if(BUILD_SUNLINSOL_SUPERLUMT)
     file(GLOB example_out ${example}*.out)
 
     # install example source and .out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example_out}
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
     endif()
 
   endforeach(example_tuple ${CVODE_examples_SUPERLUMT})
@@ -307,39 +308,41 @@ if(BUILD_SUNLINSOL_SUPERLUMT)
 endif()
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
 
   # Install the extra files
   foreach(extrafile ${CVODE_extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "CVODE")
   set(SOLVER_LIB "sundials_cvode")
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(LIBS "-lsundials_cvode_fused_stubs ${LIBS}")
   endif()
 
   examples2string(CVODE_examples EXAMPLES)
 
-  if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+     AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     examples2string(CVODE_examples_BL EXAMPLES_BL)
   else()
     set(EXAMPLES_BL "")
   endif()
 
-  if(BUILD_SUNLINSOL_KLU)
+  if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
     examples2string(CVODE_examples_KLU EXAMPLES_KLU)
   else()
     set(EXAMPLES_KLU "")
   endif()
 
-  if(BUILD_SUNLINSOL_SUPERLUMT)
+  if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
     examples2string(CVODE_examples_SUPERLUMT EXAMPLES_SLUMT)
     if(SUNDIALS_SUPERLUMT_THREAD_TYPE STREQUAL "PTHREAD")
       set(THREAD_LIBRARY_SLUMT ${CMAKE_THREAD_LIBS_INIT})
@@ -362,7 +365,7 @@ if(EXAMPLES_INSTALL)
 
   # install CMakelists.txt
   install(FILES ${PROJECT_BINARY_DIR}/examples/cvode/serial/CMakeLists.txt
-          DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial)
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -376,7 +379,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/cvode/serial/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/serial
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/serial
       RENAME Makefile)
   endif()
 

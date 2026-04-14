@@ -4,7 +4,7 @@
  *                Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -74,6 +74,8 @@ extern "C" {
 typedef struct KINMemRec
 {
   SUNContext kin_sunctx;
+
+  void* python;
 
   sunrealtype kin_uround; /* machine epsilon (or unit roundoff error)
                                  (defined in sundials_types.h)                */
@@ -400,6 +402,12 @@ void KINFreeAA(KINMem kin_mem);
 int KINInitOrth(KINMem kin_mem);
 void KINFreeOrth(KINMem kin_mem);
 
+/* Function to destroy function table allocated by the Python binding code */
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void kinsol_user_supplied_fn_table_destroy(void* ptr);
+#endif
+
 /*
  * =================================================================
  *   K I N S O L    E R R O R    M E S S A G E S
@@ -481,55 +489,25 @@ void KINFreeOrth(KINMem kin_mem);
 #define INFO_RETVAL "Return value: %d"
 #define INFO_ADJ    "no. of lambda adjustments = %ld"
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-
-#define INFO_RVAR   "%s = %26.16Lg"
-#define INFO_NNI    "nni = %4ld, nfe = %6ld, fnorm = %26.16Lg"
-#define INFO_TOL    "scsteptol = %12.3Lg, fnormtol = %12.3Lg"
-#define INFO_FMAX   "scaled f norm (for stopping) = %12.3Lg"
-#define INFO_PNORM  "pnorm = %12.4Le"
-#define INFO_PNORM1 "(ivio=1) pnorm = %12.4Le"
-#define INFO_FNORM  "fnorm(L2) = %20.8Le"
-#define INFO_LAM    "min_lam = %11.4Le, f1norm = %11.4Le, pnorm = %11.4Le"
-#define INFO_ALPHA \
-  "fnorm = %15.8Le, f1norm = %15.8Le, alpha_cond = %15.8Le, lam = %15.8Le"
-#define INFO_BETA "f1norm = %15.8Le, beta_cond = %15.8Le, lam = %15.8Le"
-#define INFO_ALPHABETA \
-  "f1norm = %15.8Le, alpha_cond = %15.8Le, beta_cond = %15.8Le, lam = %15.8Le"
-
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-
-#define INFO_RVAR   "%s = %26.16lg"
-#define INFO_NNI    "nni = %4ld, nfe = %6ld, fnorm = %26.16lg"
-#define INFO_TOL    "scsteptol = %12.3lg, fnormtol = %12.3lg"
-#define INFO_FMAX   "scaled f norm (for stopping) = %12.3lg"
-#define INFO_PNORM  "pnorm = %12.4le"
-#define INFO_PNORM1 "(ivio=1) pnorm = %12.4le"
-#define INFO_FNORM  "fnorm(L2) = %20.8le"
-#define INFO_LAM    "min_lam = %11.4le, f1norm = %11.4le, pnorm = %11.4le"
-#define INFO_ALPHA \
-  "fnorm = %15.8le, f1norm = %15.8le, alpha_cond = %15.8le,lam = %15.8le"
-#define INFO_BETA "f1norm = %15.8le, beta_cond = %15.8le, lam = %15.8le"
-#define INFO_ALPHABETA \
-  "f1norm = %15.8le, alpha_cond = %15.8le, beta_cond = %15.8le, lam = %15.8le"
-
-#else
-
-#define INFO_RVAR   "%s = %26.16g"
-#define INFO_NNI    "nni = %4ld, nfe = %6ld, fnorm = %26.16g"
-#define INFO_TOL    "scsteptol = %12.3g, fnormtol = %12.3g"
-#define INFO_FMAX   "scaled f norm (for stopping) = %12.3g"
-#define INFO_PNORM  "pnorm = %12.4e"
-#define INFO_PNORM1 "(ivio=1) pnorm = %12.4e"
-#define INFO_FNORM  "fnorm(L2) = %20.8e"
-#define INFO_LAM    "min_lam = %11.4e, f1norm = %11.4e, pnorm = %11.4e"
-#define INFO_ALPHA \
-  "fnorm = %15.8e, f1norm = %15.8e, alpha_cond = %15.8e, lam = %15.8e"
-#define INFO_BETA "f1norm = %15.8e, beta_cond = %15.8e, lam = %15.8e"
-#define INFO_ALPHABETA \
-  "f1norm = %15.8e, alpha_cond = %15.8e, beta_cond = %15.8e, lam = %15.8e"
-
-#endif
+#define INFO_RVAR   "%s = " SUN_FORMAT_G
+#define INFO_NNI    "nni = %4ld, nfe = %6ld, fnorm = " SUN_FORMAT_G
+#define INFO_TOL    "scsteptol = " SUN_FORMAT_G ", fnormtol = " SUN_FORMAT_G
+#define INFO_FMAX   "scaled f norm (for stopping) = " SUN_FORMAT_G
+#define INFO_PNORM  "pnorm = " SUN_FORMAT_E
+#define INFO_PNORM1 "(ivio=1) pnorm = " SUN_FORMAT_E
+#define INFO_FNORM  "fnorm(L2) = " SUN_FORMAT_E
+#define INFO_LAM                                                  \
+  "min_lam = " SUN_FORMAT_E ", f1norm = " SUN_FORMAT_E ", pnorm " \
+  "= " SUN_FORMAT_E
+#define INFO_ALPHA                                   \
+  "fnorm = " SUN_FORMAT_E ", f1norm = " SUN_FORMAT_E \
+  ", alpha_cond = " SUN_FORMAT_E ", lam = " SUN_FORMAT_E
+#define INFO_BETA                                                 \
+  "f1norm = " SUN_FORMAT_E ", beta_cond = " SUN_FORMAT_E ", lam " \
+  "= " SUN_FORMAT_E
+#define INFO_ALPHABETA                                    \
+  "f1norm = " SUN_FORMAT_E ", alpha_cond = " SUN_FORMAT_E \
+  ", beta_cond = " SUN_FORMAT_E ", lam = " SUN_FORMAT_E
 
 #ifdef __cplusplus
 }

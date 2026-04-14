@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -14,16 +14,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# Module to find and setup <TPL> correctly.
-# Created from the SundialsTPL.cmake template.
+# Module to find and setup <TPL>.
+# -----------------------------------------------------------------------------
+
 # All SUNDIALS modules that find and setup a TPL must:
 #
-# 1. Check to make sure the SUNDIALS configuration and the TPL is compatible.
+# 1. Check to make sure the SUNDIALS configuration and the TPL are compatible.
 # 2. Find the TPL.
-# 3. Check if the TPL works with SUNDIALS, UNLESS the override option
-# TPL_WORKS is TRUE - in this case the tests should not be performed and it
-# should be assumed that the TPL works with SUNDIALS.
-# -----------------------------------------------------------------------------
+# 3. If enabled, perform additional compatibility/compile checks.
 
 # -----------------------------------------------------------------------------
 # Section 1: Include guard
@@ -48,33 +46,40 @@ find_package(<TPL> REQUIRED)
 # Do any checks which don't require compilation first.
 
 # Try building a simple test
-if(NOT <TPL>_WORKS)
+if(SUNDIALS_ENABLE_<TPL>_CHECKS)
 
   message(CHECK_START "Testing <TPL>")
 
   # Create the test directory
-  set(<TPL>_TEST_DIR ${PROJECT_BINARY_DIR}/<TPL>_TEST)
+  set(TEST_DIR ${PROJECT_BINARY_DIR}/<TPL>_TEST)
 
   # Create a C source file
-  file(WRITE ${<TPL>_TEST_DIR}/test.c
+  file(
+    WRITE ${TEST_DIR}/test.c
     "int main(void) {\n"
     "return 0;\n"
     "}\n")
 
   # Attempt to build and link the test executable, pass --debug-trycompile to
   # the cmake command to save build files for debugging
-  try_compile(COMPILE_OK ${<TPL>_TEST_DIR} ${<TPL>_TEST_DIR}/test.c
-    LINK_LIBRARIES <TPL target> OUTPUT_VARIABLE COMPILE_OUTPUT)
+  try_compile(
+    COMPILE_OK ${TEST_DIR}
+    ${TEST_DIR}/test.c
+    LINK_LIBRARIES <TPL target>
+    OUTPUT_VARIABLE COMPILE_OUTPUT)
 
   # Check the result
   if(COMPILE_OK)
     message(CHECK_PASS "success")
   else()
     message(CHECK_FAIL "failed")
-    file(WRITE ${<TPL>_TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
-    message(FATAL_ERROR "Could not compile <TPL> test. Check output in ${<TPL>_TEST_DIR}/compile.out")
+    file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
+    message(
+      FATAL_ERROR
+        "Could not compile <TPL> test. Check output in ${TEST_DIR}/compile.out"
+    )
   endif()
 
 else()
-  message(STATUS "Skipped <TPL> test. Set <TPL>_WORKS=FALSE to test.")
+  message(STATUS "Skipped <TPL> checks.")
 endif()

@@ -1,7 +1,7 @@
 ..
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -72,7 +72,7 @@ For example,
 
    // Alternatively with explicit conversion of LS to a SUNLinearSolver
    // and A to a SUNMatrix:
-   CVodeSetLinearSolver(cvode_mem, LS.Convert(), A.Convert());
+   CVodeSetLinearSolver(cvode_mem, LS.get(), A.get());
 
 After attaching the linear solver to the SUNDIALS integrator, one must change the norm factor the integrator uses
 since the Ginkgo linear solver will take norms over individual batches, not the entire system.
@@ -222,13 +222,21 @@ The public API of the :cpp:type:`sundials::ginkgo::BatchLinearSolver` class is a
 
       Implicit conversion to a :c:type:`SUNLinearSolver`.
 
-   .. cpp:function:: SUNLinearSolver Convert() override
+   .. cpp:function:: SUNLinearSolver get() override
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
 
-   .. cpp:function:: SUNLinearSolver Convert() const override
+      .. versionadded:: 7.6.0
+      
+         Replaces the ``Convert`` method which was deprecated.
+
+   .. cpp:function:: SUNLinearSolver get() const override
 
       Explicit conversion to a :c:type:`SUNLinearSolver`.
+
+      .. versionadded:: 7.6.0
+      
+         Replaces the ``Convert`` method which was deprecated.
 
    .. cpp:function:: std::shared_ptr<const gko::Executor> GkoExec() const
 

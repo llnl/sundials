@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -395,6 +395,26 @@ int erkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele)
 
   /* otherwise, copy local truncation error vector to output */
   N_VScale(ONE, ark_mem->tempv1, ele);
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  erkStep_GetStageIndex:
+
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+int erkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
+{
+  ARKodeERKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeARKStepMem structure */
+  retval = erkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  *stage      = step_mem->istage;
+  *max_stages = step_mem->stages;
+
   return (ARK_SUCCESS);
 }
 

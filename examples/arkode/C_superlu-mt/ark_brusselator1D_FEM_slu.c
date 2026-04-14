@@ -3,7 +3,7 @@
  *                Cody J. Balos @ LLNL
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -306,7 +306,7 @@ int main(int argc, char* argv[])
   /* Initialize sparse matrix data structure and linear solvers (system and mass) */
   NNZ = 15 * NEQ;
 
-  A = SUNSparseMatrix(NEQ, NEQ, NNZ, CSR_MAT, ctx);
+  A = SUNSparseMatrix(NEQ, NEQ, NNZ, SUN_CSR_MAT, ctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   LS = SUNLinSol_SuperLUMT(y, A, num_threads, ctx);
@@ -742,7 +742,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   {
     udata->R = SUNSparseMatrix(SUNSparseMatrix_Rows(J),
                                SUNSparseMatrix_Columns(J),
-                               SUNSparseMatrix_NNZ(J), CSR_MAT, J->sunctx);
+                               SUNSparseMatrix_NNZ(J), SUN_CSR_MAT, J->sunctx);
     if (udata->R == NULL)
     {
       printf("Jac: error in allocating R matrix!\n");

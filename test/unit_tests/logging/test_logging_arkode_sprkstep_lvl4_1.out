@@ -3,36 +3,36 @@ Start SPRKStep Logging test
 ------------------------------------------------------------------------------------------------------------------------------
  0.000000000000000e+00    4.000000000000000e-01    0.000000000000000e+00    0.000000000000000e+00    2.000000000000000e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 1, tn = 0, h = 0.001
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 0, t = 0.000515352837431123, that = 0.000134496199277431
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 1, t = 0.000429570818018149, that = -9.03236038019897e-05
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 2, t = 0.000871153841634616, that = 0.000665996396713679
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 3, t = 0.001, that = 0.001
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 0, t = 0.000515352837431123, that = 0.000134496199277431
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 1, t = 0.000429570818018149, that = -9.03236038019897e-05
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 2, t = 0.000871153841634616, that = 0.000665996396713679
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 3, t = 0.001, that = 0.001
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success
  1.000000000000000e-03    3.999968750113932e-01    1.999994791691249e-03   -6.249954427477658e-03    1.999984375130207e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 0.001, h = 0.001
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 0, t = 0.00151535283743112, that = 0.00113449619927743
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 1, t = 0.00142957081801815, that = 0.00090967639619801
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 2, t = 0.00187115384163462, that = 0.00166599639671368
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 3, t = 0.002, that = 0.002
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 0, t = 0.00151535283743112, that = 0.00113449619927743
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 1, t = 0.00142957081801815, that = 0.00090967639619801
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 2, t = 0.00187115384163462, that = 0.00166599639671368
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 3, t = 0.002, that = 0.002
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success
  2.000000000000000e-03    3.999875001822875e-01    3.999958334163726e-03   -1.249963542950928e-02    1.999937502083256e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 3, tn = 0.002, h = 0.001
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 0, t = 0.00251535283743112, that = 0.00213449619927743
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 1, t = 0.00242957081801815, that = 0.00190967639619801
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 2, t = 0.00287115384163462, that = 0.00266599639671368
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 3, t = 0.003, that = 0.003
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 0, t = 0.00251535283743112, that = 0.00213449619927743
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 1, t = 0.00242957081801815, that = 0.00190967639619801
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 2, t = 0.00287115384163462, that = 0.00266599639671368
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 3, t = 0.003, that = 0.003
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success
  3.000000000000000e-03    3.999718759228029e-01    5.999859381323370e-03   -1.874876962886015e-02    1.999859385545991e+00
 ------------------------------------------------------------------------------------------------------------------------------

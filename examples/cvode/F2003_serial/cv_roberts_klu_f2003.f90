@@ -4,7 +4,7 @@
 !                modified by Daniel M. Margolis @ UMBC
 ! ------------------------------------------------------------------
 ! SUNDIALS Copyright Start
-! Copyright (c) 2025, Lawrence Livermore National Security,
+! Copyright (c) 2025-2026, Lawrence Livermore National Security,
 ! University of Maryland Baltimore County, and the SUNDIALS contributors.
 ! Copyright (c) 2013-2025, Lawrence Livermore National Security
 ! and Southern Methodist University.
@@ -318,7 +318,7 @@ program main
   end if
 
   ! Create sparse SUNMatrix for use in linear solves
-  sunmat_A => FSUNSparseMatrix(neq, neq, nnz, CSC_MAT, sunctx)
+  sunmat_A => FSUNSparseMatrix(neq, neq, nnz, SUN_CSC_MAT, sunctx)
   if (.not. associated(sunmat_A)) then
     print *, 'ERROR: sunmat = NULL'
     stop 1

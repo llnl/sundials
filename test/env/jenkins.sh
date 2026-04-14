@@ -3,7 +3,7 @@
 # Programmer(s): Cody J. Balos and David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -86,6 +86,9 @@ export CUDAFLAGS="-O0"
 # SUNDIALS Options
 # ------------------------------------------------------------------------------
 
+# Unset deprecated CMake options after copying the value to the new option
+export SUNDIALS_ENABLE_UNSET_DEPRECATED=ON
+
 # Verbose build
 export CMAKE_VERBOSE_MAKEFILE=OFF
 
@@ -127,6 +130,10 @@ export SUNDIALS_LOGGING_LEVEL=3
 # precision is allowed percentage difference (0 = no difference).
 export SUNDIALS_TEST_FLOAT_PRECISION=0
 export SUNDIALS_TEST_INTEGER_PRECISION=0
+
+# The Python version on the test machine is currently too old to install
+# sundials4py so use a mock module when building the Sphinx docs
+export SPHINX_MOCK_SUNDIALS4PY=ON
 
 # ------------------------------------------------------------------------------
 # Third party libraries
@@ -219,15 +226,9 @@ fi
 
 if [ "$SUNDIALS_PRECISION" != "extended" ]; then
     if [ "$SUNDIALS_CUDA" == "ON" ]; then
-        if [ "$SUNDIALS_INDEX_SIZE" == "32" ]; then
-            export SUNDIALS_GINKGO=ON
-            export GINKGO_ROOT="$(spack location -i ginkgo@master +cuda)"
-            export GINKGO_BACKENDS="REF;OMP;CUDA"
-        else
-            export SUNDIALS_GINKGO=OFF
-            unset GINKGO_ROOT
-            unset GINKGO_BACKENDS
-        fi
+        export SUNDIALS_GINKGO=ON
+        export GINKGO_ROOT="$(spack location -i ginkgo@master +cuda)"
+        export GINKGO_BACKENDS="REF;OMP;CUDA"
     else
         export SUNDIALS_GINKGO=ON
         export GINKGO_ROOT="$(spack location -i ginkgo@master ~cuda)"

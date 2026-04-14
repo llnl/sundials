@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds and Mustafa Aggul @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -35,14 +35,18 @@ typedef int (*ARKDomEigFn)(sunrealtype t, N_Vector y, N_Vector fn,
  * LSRKStep Constants
  * ------------------ */
 
-typedef enum
+enum ARKODE_LSRKMethodType
 {
   ARKODE_LSRK_RKC_2,
   ARKODE_LSRK_RKL_2,
   ARKODE_LSRK_SSP_S_2,
   ARKODE_LSRK_SSP_S_3,
   ARKODE_LSRK_SSP_10_4
-} ARKODE_LSRKMethodType;
+};
+
+#ifndef SWIG
+typedef enum ARKODE_LSRKMethodType ARKODE_LSRKMethodType;
+#endif
 
 /* -------------------
  * Exported Functions

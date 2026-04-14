@@ -2,7 +2,7 @@
  * Programmer(s): Steven B. Roberts @ LLNL
  *------------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -65,8 +65,7 @@ static int forcingStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
   This routine is called just prior to performing internal time steps (after
   all user "set" routines have been called) from within arkInitialSetup.
   ----------------------------------------------------------------------------*/
-static int forcingStep_Init(ARKodeMem ark_mem,
-                            SUNDIALS_MAYBE_UNUSED sunrealtype tout, int init_type)
+static int forcingStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeForcingStepMem step_mem = NULL;
   int retval = forcingStep_AccessStepMem(ark_mem, __func__, &step_mem);
@@ -241,12 +240,12 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   sunrealtype tret = ZERO;
 
   /* Evolve stepper 0 on its own */
-  SUNLogInfo(ARK_LOGGER, "begin-partition", "partition = 0");
+  SUNLogInfo(ARK_LOGGER, "begin-partitions-list", "partition = 0");
 
   SUNErrCode err = SUNStepper_Reset(s0, ark_mem->tn, ark_mem->yn);
   if (err != SUN_SUCCESS)
   {
-    SUNLogInfo(ARK_LOGGER, "end-partition",
+    SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                "status = failed stepper reset, err = %i", err);
     return ARK_SUNSTEPPER_ERR;
   }
@@ -254,7 +253,7 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   err = SUNStepper_SetStopTime(s0, tout);
   if (err != SUN_SUCCESS)
   {
-    SUNLogInfo(ARK_LOGGER, "end-partition",
+    SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                "status = failed set stop time, err = %i", err);
     return ARK_SUNSTEPPER_ERR;
   }
@@ -263,14 +262,14 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   SUNLogExtraDebugVec(ARK_LOGGER, "partition state", ark_mem->ycur, "y_par(:) =");
   if (err != SUN_SUCCESS)
   {
-    SUNLogInfo(ARK_LOGGER, "end-partition", "status = failed evolve, err = %i",
-               err);
+    SUNLogInfo(ARK_LOGGER, "end-partitions-list",
+               "status = failed evolve, err = %i", err);
     return ARK_SUNSTEPPER_ERR;
   }
   step_mem->n_stepper_evolves[0]++;
 
-  SUNLogInfo(ARK_LOGGER, "end-partition", "status = success");
-  SUNLogInfo(ARK_LOGGER, "begin-partition", "partition = 1");
+  SUNLogInfo(ARK_LOGGER, "end-partitions-list", "status = success");
+  SUNLogInfo(ARK_LOGGER, "begin-partitions-list", "partition = 1");
 
   SUNStepper s1 = step_mem->stepper[1];
   /* A reset is not needed because steeper 1's state is consistent with the
@@ -278,7 +277,7 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   err = SUNStepper_SetStopTime(s1, tout);
   if (err != SUN_SUCCESS)
   {
-    SUNLogInfo(ARK_LOGGER, "end-partition",
+    SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                "status = failed set stop time, err = %i", err);
     return ARK_SUNSTEPPER_ERR;
   }
@@ -290,7 +289,7 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   SUNLogExtraDebugVec(ARK_LOGGER, "forcing", ark_mem->tempv1, "forcing(:) =");
   if (err != SUN_SUCCESS)
   {
-    SUNLogInfo(ARK_LOGGER, "end-partition",
+    SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                "status = failed set forcing, err = %i", err);
     return ARK_SUNSTEPPER_ERR;
   }
@@ -300,8 +299,8 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   SUNLogExtraDebugVec(ARK_LOGGER, "partition state", ark_mem->ycur, "y_par(:) =");
   if (err != SUN_SUCCESS)
   {
-    SUNLogInfo(ARK_LOGGER, "end-partition", "status = failed evolve, err = %i",
-               err);
+    SUNLogInfo(ARK_LOGGER, "end-partitions-list",
+               "status = failed evolve, err = %i", err);
     return ARK_SUNSTEPPER_ERR;
   }
   step_mem->n_stepper_evolves[1]++;
@@ -310,12 +309,12 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   err = SUNStepper_SetForcing(s1, ZERO, ZERO, NULL, 0);
   if (err != SUN_SUCCESS)
   {
-    SUNLogInfo(ARK_LOGGER, "end-partition",
+    SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                "status = failed set forcing, err = %i", err);
     return ARK_SUNSTEPPER_ERR;
   }
 
-  SUNLogInfo(ARK_LOGGER, "end-partition", "status = success");
+  SUNLogInfo(ARK_LOGGER, "end-partitions-list", "status = success");
   SUNLogExtraDebugVec(ARK_LOGGER, "current state", ark_mem->ycur, "y_cur(:) =");
 
   return ARK_SUCCESS;

@@ -2,7 +2,7 @@
 # Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -33,7 +33,7 @@ endif()
 set(nvector_examples_dependencies test_nvector)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_manyvector_fortran_examples "test_fnvector_manyvector_mod\;\;")
 endif()
 
@@ -42,7 +42,7 @@ include_directories(. ..)
 
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecserial sundials_nvecmanyvector)
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   list(APPEND NVECS_LIB sundials_fnvecserial_mod sundials_fnvecmanyvector_mod)
 endif()
 

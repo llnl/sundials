@@ -3,7 +3,7 @@
 #                modified by Daniel M. Margolis @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -108,16 +108,15 @@ foreach(example_tuple ${FARKODE_examples})
       EXAMPLE_TYPE ${example_type})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.f90 ${test_name}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
     endif()
   endif()
-
 endforeach(example_tuple ${FARKODE_examples})
 
 # Add the build and install targets for each KLU example (if needed)
-if(BUILD_SUNLINSOL_KLU)
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
 
   # Sundials KLU linear solver module
   set(SUNLINSOLKLU_LIBS sundials_sunlinsolklu sundials_fsunlinsolklu_mod)
@@ -150,9 +149,9 @@ if(BUILD_SUNLINSOL_KLU)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLKLU_LIBS})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.f90 ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
     endif()
 
   endforeach(example_tuple ${FARKODE_examples_KLU})
@@ -160,7 +159,7 @@ if(BUILD_SUNLINSOL_KLU)
 endif()
 
 # Add the build and install targets for each LAPACK example (if needed)
-if(BUILD_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
   set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackdense
@@ -192,9 +191,9 @@ if(BUILD_SUNLINSOL_LAPACKDENSE)
     target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLLAPACK_LIBS})
 
     # install example source and out files
-    if(EXAMPLES_INSTALL)
+    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       install(FILES ${example}.f90 ${example}.out
-              DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
+              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
     endif()
 
   endforeach(example_tuple ${FARKODE_examples_LAPACK})
@@ -228,20 +227,20 @@ foreach(example_tuple ${FARKODE_tests})
   target_link_libraries(${example} ${SUNDIALS_LIBS})
 
   # install example source and out files
-  if(EXAMPLES_INSTALL)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     install(FILES ${example}.f90
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
   endif()
 
 endforeach(example_tuple ${FARKODE_tests})
 
 # create Makefile and CMakeLists.txt for examples
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${ARKODE_extras})
     install(FILES ${extrafile}
-            DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -265,7 +264,7 @@ if(EXAMPLES_INSTALL)
   # install CMakelists.txt
   install(
     FILES ${PROJECT_BINARY_DIR}/examples/arkode/F2003_serial/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
+    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -279,7 +278,7 @@ if(EXAMPLES_INSTALL)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/arkode/F2003_serial/Makefile_ex
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/arkode/F2003_serial
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/F2003_serial
       RENAME Makefile)
   endif()
 

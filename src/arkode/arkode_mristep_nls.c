@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -324,7 +324,7 @@ int mriStep_Nls(ARKodeMem ark_mem, int nflag)
   /* Reset the stored residual norm (for iterative linear solvers) */
   step_mem->eRNrm = SUN_RCONST(0.1) * step_mem->nlscoef;
 
-  SUNLogInfo(ARK_LOGGER, "begin-nonlinear-solve", "tol = %.16g",
+  SUNLogInfo(ARK_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G,
              step_mem->nlscoef);
 
   /* solve the nonlinear system for the actual correction */
@@ -474,7 +474,12 @@ int mriStep_NlsResidual(N_Vector zcor, N_Vector r, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute slow implicit RHS and save for later */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fsi(ark_mem->tcur, ark_mem->ycur,
                              step_mem->Fsi[step_mem->stage_map[step_mem->istage]],
                              ark_mem->user_data);
@@ -529,7 +534,12 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute slow implicit RHS and save for later */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fsi(ark_mem->tcur, ark_mem->ycur,
                              step_mem->Fsi[step_mem->stage_map[step_mem->istage]],
                              ark_mem->user_data);

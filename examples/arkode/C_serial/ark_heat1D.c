@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -23,7 +23,7 @@
  * Dirichlet boundary conditions, i.e.
  *    u_t(t,0) = u_t(t,1) = 0,
  * and a point-source heating term,
- *    f = 1 for x=0.5.
+ *    f = 0.01 for x=0.5.
  *
  * The spatial derivatives are computed using second-order
  * centered differences, with the data distributed over N points
@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
   if (check_flag(&flag, "ARKodeSStolerances", 1)) { return 1; }
 
   /* Initialize PCG solver -- no preconditioning, with up to N iterations  */
-  LS = SUNLinSol_PCG(y, 0, (int)N, ctx);
+  LS = SUNLinSol_PCG(y, SUN_PREC_NONE, (int)N, ctx);
   if (check_flag((void*)LS, "SUNLinSol_PCG", 0)) { return 1; }
 
   /* Linear solver interface -- set user-supplied J*v routine (no 'jtsetup' required) */
