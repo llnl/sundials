@@ -806,6 +806,15 @@ Python Interfaces
 
    Default: ``OFF``
 
+   .. note::
+
+      The recommended method of installing the SUNDIALS python interfaces is
+      ``pip install sundials4py``, or, from the root of the SUNDIALS repository,
+      ``pip install .``.
+
+   .. versionadded:: 7.6.0
+
+
 .. _Installation.Options.ErrorChecking:
 
 Error Checking
