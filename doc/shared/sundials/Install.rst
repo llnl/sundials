@@ -795,6 +795,17 @@ Fortran Interfaces
 
       Replaces the deprecated option ``BUILD_FORTRAN_MODULE_INTERFACE``
 
+.. _Installation.Options.Python:
+
+Python Interfaces
+^^^^^^^^^^^^^^^^^
+
+.. cmakeoption:: SUNDIALS_ENABLE_PYTHON
+
+   Enable SUNDIALS Python interfaces
+
+   Default: ``OFF``
+
 .. _Installation.Options.ErrorChecking:
 
 Error Checking
