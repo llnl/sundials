@@ -154,7 +154,7 @@ int main(int argc, char** argv)
                         (PetscErrorCode(*)(SNES, PetscInt, PetscReal,
                                            void*))MySNESMonitor,
                         vf,
-#if PETSC_VERSION_GE(3, 23, 0)
+#if PETSC_VERSION_GE(3, 25, 0)
                         (PetscCtxDestroyFn*)PetscViewerAndFormatDestroy);
 #else
                         (PetscErrorCode(*)(void**))PetscViewerAndFormatDestroy);
