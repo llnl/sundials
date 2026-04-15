@@ -2892,7 +2892,7 @@ static int arkode_butcher_vv(sunrealtype* x, sunrealtype* y, int s, sunrealtype*
 static int arkode_butcher_vp(sunrealtype* x, int l, int s, sunrealtype* z)
 {
   int i;
-  if ((x == NULL) || (z == NULL) || (s < 1) || (s < 0)) { return (1); }
+  if ((x == NULL) || (z == NULL) || (s < 1)) { return (1); }
   for (i = 0; i < s; i++) { z[i] = SUNRpowerI(x[i], l); }
   return (0);
 }

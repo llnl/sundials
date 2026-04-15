@@ -1,5 +1,18 @@
 # SUNDIALS Changelog
 
+## Changes to SUNDIALS in release X.Y.Z
+
+### Major Features
+
+### New Features and Enhancements
+
+### Bug Fixes
+
+Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
+`malloc`.
+
+### Deprecation Notices
+
 ## Changes to SUNDIALS in release 7.7.0
 
 ### New Features and Enhancements
