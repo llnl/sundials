@@ -380,6 +380,10 @@ typedef struct CVodeMemRec
 
   sunbooleantype cv_tstopset;
   sunbooleantype cv_tstopinterp;
+  sunbooleantype cv_tstoplimited;
+  sunbooleantype cv_skipadapttstop;
+  int cv_qsave;
+  sunrealtype cv_hsave;
   sunrealtype cv_tstop;
 
   /*---------

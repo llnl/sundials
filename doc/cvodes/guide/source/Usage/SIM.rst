@@ -873,6 +873,9 @@ Main solver optional input functions
    +-------------------------------+---------------------------------------------+----------------+
    | Disable the stop time         | :c:func:`CVodeClearStopTime`                | N/A            |
    +-------------------------------+---------------------------------------------+----------------+
+   | Disregard stop time limited   | :c:func:`CVodeSkipAdaptStopTime`            | ``SUNFALSE``   |
+   | steps in adaptivity           |                                             |                |
+   +-------------------------------+---------------------------------------------+----------------+
    | Maximum no. of error test     | :c:func:`CVodeSetMaxErrTestFails`           | 7              |
    | failures                      |                                             |                |
    +-------------------------------+---------------------------------------------+----------------+
@@ -1212,6 +1215,28 @@ Main solver optional input functions
       when using the key "cvid.clear_stop_time".
 
    .. versionadded:: 6.5.1
+
+.. c:function:: int CVodeSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
+
+   Specifies whether stop-time-limited steps should be disregarded
+   when adapting step sizes and method order.
+
+   **Arguments:**
+      * ``cvode_mem`` -- pointer to the CVODE memory block.
+      * ``skip`` -- flag indicating to disregard (1) or retain (0) stop time limited steps from the temporal adaptivity algorithm.
+
+   **Return value:**
+      * ``CV_SUCCESS`` if successful
+      * ``CV_MEM_NULL`` if the CVODE memory is ``NULL``
+
+   **Notes:**
+      The default behavior is to use all successful time steps
+      (including stop-time-limited steps) when performing adaptivity.
+
+      This routine will be called by :c:func:`CVodeSetOptions`
+      when using the key "cvid.skip_adapt_stop_time".
+
+   .. versionadded:: x.y.z
 
 .. c:function:: int CVodeSetMaxErrTestFails(void* cvode_mem, int maxnef)
 
