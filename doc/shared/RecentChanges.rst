@@ -5,6 +5,8 @@
 
 **New Features and Enhancements**
 
+Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
+
 **Bug Fixes**
 
 Fixed a minor bug where the number of required stages for STS methods 

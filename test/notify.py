@@ -76,13 +76,11 @@ def main():
 
     # send notification if tests fail, log file not found, or fixed
     if args.teststatus == "failed":
-
         subject = "FAILED: SUNDIALS " + args.testname + " failed regression tests"
         print("Tests failed, sending notification to", recipient)
         sendEmail(recipient, subject, logfile)
 
     elif args.teststatus == "fixed":
-
         subject = "FIXED: SUNDIALS " + args.testname + " passed regression tests"
         print("Tests fixed, sending notification to", recipient)
         sendEmail(recipient, subject, logfile)

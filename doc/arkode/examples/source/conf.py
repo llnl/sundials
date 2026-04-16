@@ -253,15 +253,20 @@ latex_elements = {
     # arguments to the sphinxsetup macro
     "sphinxsetup":
     # the color for titles
-    "TitleColor={RGB}{0,0,0}," +
+    "TitleColor={RGB}{0,0,0},"
+    +
     # disable frames around code-blocks
-    "verbatimwithframe=false," +
+    "verbatimwithframe=false,"
+    +
     # do not wrap long lines in code-blocks
-    "verbatimwrapslines=false," +
+    "verbatimwrapslines=false,"
+    +
     # background color for code-blocks
-    "VerbatimColor={RGB}{240.0,240.0,240.0}," +
+    "VerbatimColor={RGB}{240.0,240.0,240.0},"
+    +
     # font used by heading
-    "HeaderFamily=\\rmfamily\\bfseries," +
+    "HeaderFamily=\\rmfamily\\bfseries,"
+    +
     # line breaks are allowed inside inline literals
     "inlineliteralwraps=true",
     # disable the fncychap package
