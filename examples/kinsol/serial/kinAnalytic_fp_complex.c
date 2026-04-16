@@ -199,6 +199,7 @@ int main(int argc, char* argv[])
 
   /* Set number of prior residuals used in Anderson acceleration */
   retval = KINSetMAA(kmem, uopt->m_aa);
+  if (check_retval(&retval, "KINSetMAA", 1)) { return (1); }
 
   /* Set orthogonalization routine used in Anderson acceleration */
   retval = KINSetOrthAA(kmem, uopt->orth_aa);
@@ -220,7 +221,11 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "KINSetNumMaxItersFuncNormTol", 1)) { return (1); }
 
   /* Set Fixed point damping parameter */
-  if (uopt->m_aa == 0) { retval = KINSetDamping(kmem, uopt->damping_fp); }
+  if (uopt->m_aa == 0) 
+  { 
+    retval = KINSetDamping(kmem, uopt->damping_fp);
+    if (check_retval(&retval, "KINSetDamping", 1)) { return (1);}
+   }
 
   /* Set Anderson acceleration options */
   if (uopt->m_aa > 0)
@@ -370,10 +375,10 @@ static int DampingFn(long int iter, N_Vector u_val, N_Vector g_val,
     /* Compute ||fn||^2 = ||G(u_n) - u_n||^2 */
     sunscalartype* g_data = N_VGetArrayPointer(g_val);
     sunscalartype* u_data = N_VGetArrayPointer(u_val);
-    sunrealtype fn[3];
+    sunscalartype fn[3];
     for (int i = 0; i < 3; i++) { fn[i] = g_data[i] - u_data[i]; }
     sunrealtype fn_norm_sqr = ZERO;
-    for (int i = 0; i < 3; i++) { fn_norm_sqr += fn[i] * fn[i]; }
+    for (int i = 0; i < 3; i++) { fn_norm_sqr += SUN_CREAL(fn[i] * SUNCONJ(fn[i])); }
 
     /* Compute the gain = sqrt(1 - ||Q^T fn||^2 / ||fn||^2) */
     sunrealtype gain = SUNRsqrt(ONE - qt_fn_norm_sqr / fn_norm_sqr);
@@ -409,18 +414,18 @@ static int check_ans(N_Vector u, sunrealtype tol)
 
   /* print the solution */
   printf("Computed solution:\n");
-  printf("    x = %f + %fI\n", creal(data[0]), cimag(data[0]));
-  printf("    y = %f + %fI\n", creal(data[1]), cimag(data[1]));
-  printf("    z = %f + %fI\n", creal(data[2]), cimag(data[2]));
+  printf("    x = %f + %fI\n", SUN_CREAL(data[0]), SUN_CIMAG(data[0]));
+  printf("    y = %f + %fI\n", SUN_CREAL(data[1]), SUN_CIMAG(data[1]));
+  printf("    z = %f + %fI\n", SUN_CREAL(data[2]), SUN_CIMAG(data[2]));
 
   /* solution error */
-  exR = ABS(creal(data[0]) - creal(XTRUE));
-  eyR = ABS(creal(data[1]) - creal(YTRUE));
-  ezR = ABS(creal(data[2]) - creal(ZTRUE));
+  exR = ABS(SUN_CREAL(data[0]) - SUN_CREAL(XTRUE));
+  eyR = ABS(SUN_CREAL(data[1]) - SUN_CREAL(YTRUE));
+  ezR = ABS(SUN_CREAL(data[2]) - SUN_CREAL(ZTRUE));
 
-  exI = ABS(cimag(data[0]) - cimag(XTRUE));
-  eyI = ABS(cimag(data[1]) - cimag(YTRUE));
-  ezI = ABS(cimag(data[2]) - cimag(ZTRUE));
+  exI = ABS(SUN_CIMAG(data[0]) - SUN_CIMAG(XTRUE));
+  eyI = ABS(SUN_CIMAG(data[1]) - SUN_CIMAG(YTRUE));
+  ezI = ABS(SUN_CIMAG(data[2]) - SUN_CIMAG(ZTRUE));
 
   /* print the solution error */
   printf("Solution error:\n");

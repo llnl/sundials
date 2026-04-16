@@ -49,7 +49,7 @@ int KINInitAA(KINMem kin_mem)
 
     // Array of acceleration weights
     kin_mem->kin_gamma_aa =
-      (sunrealtype*)malloc(kin_mem->kin_m_aa * sizeof(sunrealtype));
+      (sunscalartype*)malloc(kin_mem->kin_m_aa * sizeof(sunscalartype));
     if (kin_mem->kin_gamma_aa == NULL)
     {
       KINFreeAA(kin_mem);
@@ -58,8 +58,8 @@ int KINInitAA(KINMem kin_mem)
     }
 
     // R matrix for QR factorization
-    kin_mem->kin_R_aa = (sunrealtype*)malloc(
-      (kin_mem->kin_m_aa * kin_mem->kin_m_aa) * sizeof(sunrealtype));
+    kin_mem->kin_R_aa = (sunscalartype*)malloc(
+      (kin_mem->kin_m_aa * kin_mem->kin_m_aa) * sizeof(sunscalartype));
     if (kin_mem->kin_R_aa == NULL)
     {
       KINFreeAA(kin_mem);
@@ -114,7 +114,7 @@ int KINInitAA(KINMem kin_mem)
 
     // Workspace array for fused operation constants
     kin_mem->kin_cv =
-      (sunrealtype*)malloc(2 * (kin_mem->kin_m_aa + 1) * sizeof(sunrealtype));
+      (sunscalartype*)malloc(2 * (kin_mem->kin_m_aa + 1) * sizeof(sunscalartype));
     if (kin_mem->kin_cv == NULL)
     {
       KINFreeAA(kin_mem);
