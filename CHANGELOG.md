@@ -8,10 +8,10 @@
 
 We added a new SUNNonlinearSolver implementation, `SUNNonlinearSolver_Auto`,
 which uses an algorithm described in https://doi.org/10.1007/BF01933714 to
-switch between modified Newton iteration and fixed-point iteration based on
+switch between a modified Newton iteration and fixed-point iteration based on
 an estimate of stiffness. This solver may be useful to pair with the BDF method
-in CVODE/CVODES for users who are unsure about the stiffness of their problem.
-See the module documentation for more information.
+in CVODE/CVODES, or with DIRK methods in ARKODE, for users who are unsure about
+the stiffness of their problem. See the module documentation for more information.
 
 Updated `examples/cvode/petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
 
