@@ -737,6 +737,28 @@ int CVodeClearStopTime(void* cvode_mem)
 }
 
 /*
+ * CVodeSkipAdaptStopTime
+ *
+ * Specififies whether stop-time-limited steps should be disregarded
+ * when performing step size and order adaptivity.
+ */
+
+int CVodeSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  cv_mem                    = (CVodeMem)cvode_mem;
+  cv_mem->cv_skipadapttstop = skip;
+
+  return (CV_SUCCESS);
+}
+
+/*
  * CVodeSetMaxErrTestFails
  *
  * Specifies the maximum number of error test failures during one

@@ -54,6 +54,9 @@ struct Options
   // Finite difference Jacobian
   bool fd_jac = false;
 
+  // Enforce stop time exactly (instead of interpolating)
+  bool use_tstop = false;
+
   // Output options
   sunrealtype dtout = ONE; // output interval
   int nout          = 10;  // number of outputs
@@ -99,6 +102,7 @@ static void InputHelp()
   std::cout << "  --fdjac        : finite-difference Jacobian\n";
   std::cout << "  --dtout        : output interval\n";
   std::cout << "  --nout         : number of outputs\n";
+  std::cout << "  --tstop        : enforce stop time exactly\n";
 }
 
 static int ReadInputs(std::vector<std::string>& args, Options& opts,
@@ -116,6 +120,7 @@ static int ReadInputs(std::vector<std::string>& args, Options& opts,
   find_arg(args, "--fdjac", opts.fd_jac);
   find_arg(args, "--dtout", opts.dtout);
   find_arg(args, "--nout", opts.nout);
+  find_arg(args, "--tstop", opts.use_tstop);
 
   return 0;
 }
