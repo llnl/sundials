@@ -94,8 +94,7 @@ def main():
     fail = False
     errors = []
     for i, bf in enumerate(buildfiles):
-
-        print(f"[{i+1} of {total}] Building: {bf}")
+        print(f"[{i + 1} of {total}] Building: {bf}")
 
         # move to example directory
         os.chdir(os.path.dirname(bf))

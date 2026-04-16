@@ -29,15 +29,15 @@ Formatting
 All new code added to SUNDIALS should be formatted with `clang-format
 <https://clang.llvm.org/docs/ClangFormat.html>`_ for C/C++, `fprettify
 <https://github.com/fortran-lang/fprettify>`_ for Fortran, `cmake-format
-<https://cmake-format.readthedocs.io>`_ for CMake, and `black
-<https://black.readthedocs.io>`_ for Python. The ``.clang-format`` file in the
-root of the project defines our configuration for clang-format. We use the
-default fprettify settings, except we use 2-space indentation. The
+<https://cmake-format.readthedocs.io>`_ for CMake, and `ruff format
+<https://docs.astral.sh/ruff/formatter/>`_ for Python. The ``.clang-format``
+file in the root of the project defines our configuration for clang-format. We
+use the default fprettify settings, except we use 2-space indentation. The
 ``.cmake-format.py`` file in the root of the project defines our configuration
-for cmake-format. We also use the default black settings.
+for cmake-format. Python formatting is configured in ``pyproject.toml``.
 
 
-To apply ``clang-format``, ``fprettify``, ``cmake-format``, and ``black`` you
+To apply ``clang-format``, ``fprettify``, ``cmake-format``, and ``ruff format`` you
 can run:
 
 .. code-block:: shell
