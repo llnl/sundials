@@ -5,10 +5,15 @@
 
 **New Features and Enhancements**
 
+Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
+
 Added the function :c:func:`ARKodeSkipAdaptStopTime` to specify that
 stop-time-limited steps should be disregarded when selecting step sizes
 for time step adaptivity.
 
 **Bug Fixes**
+
+Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
+``malloc``.
 
 **Deprecation Notices**

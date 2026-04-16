@@ -89,9 +89,14 @@ void* SPRKStepCreate(ARKRhsFn f1, ARKRhsFn f2, sunrealtype t0, N_Vector y0,
   {
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_ARK_ARKMEM_FAIL);
+    ARKodeFree((void**)&ark_mem);
     return (NULL);
   }
   memset(step_mem, 0, sizeof(struct ARKodeSPRKStepMemRec));
+
+  /* Attach stepper memory early so generic cleanup can handle partial setup. */
+  ark_mem->step_free = sprkStep_Free;
+  ark_mem->step_mem  = (void*)step_mem;
 
   /* Allocate vectors in stepper mem */
   if (!arkAllocVec(ark_mem, y0, &(step_mem->sdata)))
@@ -119,12 +124,10 @@ void* SPRKStepCreate(ARKRhsFn f1, ARKRhsFn f2, sunrealtype t0, N_Vector y0,
   ark_mem->step_setusecompensatedsums = sprkStep_SetUseCompensatedSums;
   ark_mem->step_setoptions            = sprkStep_SetOptions;
   ark_mem->step_resize                = sprkStep_Resize;
-  ark_mem->step_free                  = sprkStep_Free;
   ark_mem->step_setdefaults           = sprkStep_SetDefaults;
   ark_mem->step_setorder              = sprkStep_SetOrder;
   ark_mem->step_getnumrhsevals        = sprkStep_GetNumRhsEvals;
   ark_mem->step_getstageindex         = sprkStep_GetStageIndex;
-  ark_mem->step_mem                   = (void*)step_mem;
 
   /* Set default values for optional inputs */
   retval = sprkStep_SetDefaults((void*)ark_mem);

@@ -695,6 +695,7 @@ int IDACreateB(void* ida_mem, int* which)
   ida_memB = IDACreate(IDA_mem->ida_sunctx);
   if (ida_memB == NULL)
   {
+    free(new_IDAB_mem);
     IDAProcessError(IDA_mem, IDA_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_MEM_FAIL);
     return (IDA_MEM_FAIL);
