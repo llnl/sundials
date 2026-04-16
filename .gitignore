@@ -1,5 +1,6 @@
 # /
 /.cache
+/.agents/scratch
 /.project
 /builddir
 /build*
