@@ -61,8 +61,8 @@ int KINInitOrth(KINMem kin_mem)
     if (kin_mem->kin_orth_aa == KIN_ORTH_ICWY)
     {
       // T matrix for ICWY
-      kin_mem->kin_T_aa = (sunrealtype*)malloc(
-        ((kin_mem->kin_m_aa * kin_mem->kin_m_aa)) * sizeof(sunrealtype));
+      kin_mem->kin_T_aa = (sunscalartype*)malloc(
+        ((kin_mem->kin_m_aa * kin_mem->kin_m_aa)) * sizeof(sunscalartype));
       if (kin_mem->kin_T_aa == NULL)
       {
         KINFreeOrth(kin_mem);
