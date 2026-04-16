@@ -212,7 +212,7 @@ user-callable functions.
       A ``beta`` value should satisfy :math:`0 < \beta < 1` if
       damping is to be used. A value of one or more will disable damping.
 
-.. c:function:: SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS, sunrealtype crate_const)
+.. c:function:: SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS, sunrealtype crate_const)
 
    This sets the convergence rate constant used in the fixed-point estimate of
    the nonlinear convergence rate (``crate``). This corresponds to the
@@ -228,6 +228,10 @@ user-callable functions.
 
    **Notes:**
       By default, ``crate_const`` is ``0.3``.
+
+      If supported by the SUNNonlinearSolver implementation, this routine will be called by
+      :c:func:`SUNNonlinSolSetOptions` when using the key
+      ``NLSid.conv_rate_constant``.
 
 
 .. _SUNNonlinSol.FixedPoint.Content:
@@ -246,29 +250,29 @@ following structure.
      SUNNonlinSolConvTestFn CTest;
 
      int            m;
-     int            *imap;
-     sunrealtype    *R;
-     sunbooleantype damping
-     sunrealtype    beta
+     int           *imap;
+     sunrealtype   *R;
+     sunbooleantype damping;
+     sunrealtype    beta;
      sunrealtype    *gamma;
      sunrealtype    *cvals;
-     sunrealtype     delnrm;
-     sunrealtype     crate;
-     sunrealtype     crate_const;
-     N_Vector       *df;
-     N_Vector       *dg;
-     N_Vector       *q;
-     N_Vector       *Xvecs;
-     N_Vector        yprev;
-     N_Vector        gy;
-     N_Vector        fold;
-     N_Vector        gold;
-     N_Vector        delta;
-     int             curiter;
-     int             maxiters;
-     long int        niters;
-     long int        nconvfails;
-     void           *ctest_data;
+     sunrealtype    delnrm;
+     sunrealtype    crate;
+     sunrealtype    crate_const;
+     N_Vector      *df;
+     N_Vector      *dg;
+     N_Vector      *q;
+     N_Vector      *Xvecs;
+     N_Vector       yprev;
+     N_Vector       gy;
+     N_Vector       fold;
+     N_Vector       gold;
+     N_Vector       delta;
+     int            curiter;
+     int            maxiters;
+     long int       niters;
+     long int       nconvfails;
+     void          *ctest_data;
    };
 
 The following entries of the *content* field are always

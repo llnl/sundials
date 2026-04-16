@@ -90,19 +90,19 @@ m.def(
   nb::arg("NLS"));
 
 m.def(
-  "SUNNonlinSolGetDeltaNorm",
+  "SUNNonlinSolGetUpdateNorm",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
   {
-    auto SUNNonlinSolGetDeltaNorm_adapt_modifiable_immutable_to_return =
+    auto SUNNonlinSolGetUpdateNorm_adapt_modifiable_immutable_to_return =
       [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
     {
       sunrealtype delnrm_adapt_modifiable;
 
-      SUNErrCode r = SUNNonlinSolGetDeltaNorm(NLS, &delnrm_adapt_modifiable);
+      SUNErrCode r = SUNNonlinSolGetUpdateNorm(NLS, &delnrm_adapt_modifiable);
       return std::make_tuple(r, delnrm_adapt_modifiable);
     };
 
-    return SUNNonlinSolGetDeltaNorm_adapt_modifiable_immutable_to_return(NLS);
+    return SUNNonlinSolGetUpdateNorm_adapt_modifiable_immutable_to_return(NLS);
   },
   nb::arg("NLS"));
 m.attr("SUN_NLS_CONTINUE")   = +901;

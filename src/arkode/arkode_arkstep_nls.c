@@ -195,7 +195,7 @@ int arkStep_SetNlsSysFn(ARKodeMem ark_mem)
   }
   else if (SUNNonlinSolGetType(step_mem->NLS) == SUNNONLINEARSOLVER_HYBRID)
   {
-    retval = SUNNonlinSolSetSysFns_Auto(step_mem->NLS, root_fn, fixedpoint_fn);
+    retval = SUNNonlinSolSetSysFns(step_mem->NLS, root_fn, fixedpoint_fn);
   }
   else
   {
@@ -1197,7 +1197,7 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS,
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  if (SUNNonlinSolGetDeltaNorm(NLS, &delnrm) != SUN_SUCCESS)
+  if (SUNNonlinSolGetUpdateNorm(NLS, &delnrm) != SUN_SUCCESS)
   {
     delnrm = N_VWrmsNorm(del, ewt);
   }

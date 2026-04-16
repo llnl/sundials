@@ -222,6 +222,23 @@ parameters. Only the routine for setting the nonlinear system defining function
       * A :c:type:`SUNErrCode`
 
 
+.. c:function:: SUNErrCode SUNNonlinSolSetSysFns(SUNNonlinearSolver NLS, SUNNonlinSolSysFn root_fn, SUNNonlinSolSysFn fixed_point_fn)
+
+   This *optional* function is used by hybrid nonlinear solvers to receive both
+   the root-finding residual :math:`F(y)` and the fixed-point map
+   :math:`G(y)`. Integrators should prefer this routine over
+   :c:func:`SUNNonlinSolSetSysFn` when configuring a
+   ``SUNNONLINEARSOLVER_HYBRID`` module.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *root_fn* -- the function defining the nonlinear residual :math:`F(y)`.
+      * *fixed_point_fn* -- the function defining the fixed-point map :math:`G(y)`.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+
 .. c:function:: SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS, SUNNonlinSolLSetupFn SetupFn)
 
    This *optional* function is called by SUNDIALS integrators to provide
@@ -381,12 +398,14 @@ linear solver module; otherwise :c:func:`SUNNonlinSolGetCurIter` is optional.
       * A :c:type:`SUNErrCode`
 
 
-.. c:function:: SUNErrCode SUNNonlinSolGetDeltaNorm(SUNNonlinearSolver NLS, sunrealtype *delnrm)
+.. c:function:: SUNErrCode SUNNonlinSolGetUpdateNorm(SUNNonlinearSolver NLS, sunrealtype *delnrm)
 
    This *optional* function returns the norm of the most recent nonlinear
    solver update (often denoted :math:`\|\delta\|`) computed by the
    nonlinear solver. The norm used is left up to the nonlinear solver implementation,
-   but typically it is the WRMS norm.
+   but typically it is the WRMS norm, with weight vector given by the
+   solution error weight vector ``w`` that was passed to
+   :c:func:`SUNNonlinSolSolve`.
 
    **Arguments:**
       * *NLS* -- a SUNNonlinSol object.
@@ -568,7 +587,8 @@ successful call.
    +-----------------------+---------+---------------------------------------------------------------+
    | SUN_NLS_CONV_RECVR    |  902    | the nonlinear solver appears to be diverging, try to recover  |
    +-----------------------+---------+---------------------------------------------------------------+
-   | SUN_NLS_SWITCH        |  903    | the nonlinear solver will switch to a different strategy      |
+   | SUN_NLS_SWITCH        |  903    | the nonlinear solver will switch to a different strategy,     |
+   |                       |         | reinitialize the nonlinear solver and keep iterating          |
    +-----------------------+---------+---------------------------------------------------------------+
 
 

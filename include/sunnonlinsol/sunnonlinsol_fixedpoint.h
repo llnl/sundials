@@ -102,6 +102,12 @@ SUNErrCode SUNNonlinSolFree_FixedPoint(SUNNonlinearSolver NLS);
 
 /* set functions */
 SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetOptions_FixedPoint(SUNNonlinearSolver NLS,
+                                             const char* NLSid,
+                                             const char* file_name, int argc,
+                                             char* argv[]);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetSysFn_FixedPoint(SUNNonlinearSolver NLS,
                                            SUNNonlinSolSysFn SysFn);
 
@@ -121,6 +127,10 @@ SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS,
                                                    sunrealtype crate_const);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS,
+                                                      sunrealtype crate_const);
 
 /* get functions */
 SUNDIALS_EXPORT
@@ -143,8 +153,8 @@ SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
                                               sunrealtype* crate);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetDeltaNorm_FixedPoint(SUNNonlinearSolver NLS,
-                                               sunrealtype* delnrm);
+SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
+                                                sunrealtype* delnrm);
 
 #ifdef __cplusplus
 }

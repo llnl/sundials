@@ -93,8 +93,7 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   }
   else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_HYBRID)
   {
-    retval = SUNNonlinSolSetSysFns_Auto(cv_mem->NLS, cvNlsResidual,
-                                        cvNlsFPFunction);
+    retval = SUNNonlinSolSetSysFns(cv_mem->NLS, cvNlsResidual, cvNlsFPFunction);
   }
   else
   {
@@ -325,7 +324,7 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the correction */
-  if (SUNNonlinSolGetDeltaNorm(NLS, &del) != SUN_SUCCESS)
+  if (SUNNonlinSolGetUpdateNorm(NLS, &del) != SUN_SUCCESS)
   {
     del = N_VWrmsNorm(delta, ewt);
   }

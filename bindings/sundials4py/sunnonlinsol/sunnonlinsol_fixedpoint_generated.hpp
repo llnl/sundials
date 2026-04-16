@@ -58,6 +58,10 @@ m.def("SUNNonlinSolSetCrateConstant_FixedPoint",
       SUNNonlinSolSetCrateConstant_FixedPoint, nb::arg("NLS"),
       nb::arg("crate_const"));
 
+m.def("SUNNonlinSolSetConvRateConstant_FixedPoint",
+      SUNNonlinSolSetConvRateConstant_FixedPoint, nb::arg("NLS"),
+      nb::arg("crate_const"));
+
 m.def(
   "SUNNonlinSolGetConvRate_FixedPoint",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
@@ -78,20 +82,20 @@ m.def(
   nb::arg("NLS"));
 
 m.def(
-  "SUNNonlinSolGetDeltaNorm_FixedPoint",
+  "SUNNonlinSolGetUpdateNorm_FixedPoint",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
   {
-    auto SUNNonlinSolGetDeltaNorm_FixedPoint_adapt_modifiable_immutable_to_return =
+    auto SUNNonlinSolGetUpdateNorm_FixedPoint_adapt_modifiable_immutable_to_return =
       [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
     {
       sunrealtype delnrm_adapt_modifiable;
 
       SUNErrCode r =
-        SUNNonlinSolGetDeltaNorm_FixedPoint(NLS, &delnrm_adapt_modifiable);
+        SUNNonlinSolGetUpdateNorm_FixedPoint(NLS, &delnrm_adapt_modifiable);
       return std::make_tuple(r, delnrm_adapt_modifiable);
     };
 
-    return SUNNonlinSolGetDeltaNorm_FixedPoint_adapt_modifiable_immutable_to_return(
+    return SUNNonlinSolGetUpdateNorm_FixedPoint_adapt_modifiable_immutable_to_return(
       NLS);
   },
   nb::arg("NLS"));

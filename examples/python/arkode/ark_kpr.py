@@ -158,6 +158,7 @@ def main(argv=None):
     problem = KPRODE(a=stiffness, b=coupling, c=coupling, d=stiffness)
     problem.set_init_cond(y)
 
+    # Create the ARKStep solver and configure tolerances/step limits.
     ark = ARKStepCreate(None, problem.fi, T0, y, sunctx)
     assert ark is not None
 
@@ -167,6 +168,8 @@ def main(argv=None):
     status = ARKodeSetMaxNumSteps(ark.get(), args.max_steps)
     assert status == ARK_SUCCESS
 
+    # Attach the switching nonlinear solver and the Newton linear solver pieces
+    # needed whenever the auto method selects Newton.
     active_solver_type = (
         SUNNONLINSOL_AUTO_FIXEDPOINT
         if args.auto_init == "fixedpoint"
@@ -242,10 +245,7 @@ def main(argv=None):
             uerr = abs(yarr[0] - utrue)
             verr = abs(yarr[1] - vtrue)
 
-            print(
-                f"  {tret:22.15e} {yarr[0]:22.15e} {yarr[1]:22.15e} "
-                f"{uerr:18.10e} {verr:18.10e}"
-            )
+            print(f"  {tret:22.15e} {yarr[0]:22.15e} {yarr[1]:22.15e} {uerr:18.10e} {verr:18.10e}")
             out.write(f"{tret:.16e} {yarr[0]:.16e} {yarr[1]:.16e} {uerr:.16e} {verr:.16e}\n")
             ts.append(float(tret))
             us.append(float(yarr[0]))
@@ -257,40 +257,15 @@ def main(argv=None):
         "   -------------------------------------------------------------------------------------------"
     )
 
-    status, nst = ARKodeGetNumSteps(ark.get())
+    print("\nFinal Solver Statistics:")
+    status, file_ptr = SUNFileOpen("stdout", "w+")
     assert status == ARK_SUCCESS
-    status, nst_a = ARKodeGetNumStepAttempts(ark.get())
-    assert status == ARK_SUCCESS
-    status, nfi = ARKodeGetNumRhsEvals(ark.get(), 1)
-    assert status == ARK_SUCCESS
-    status, nsetups = ARKodeGetNumLinSolvSetups(ark.get())
-    assert status == ARK_SUCCESS
-    status, netf = ARKodeGetNumErrTestFails(ark.get())
-    assert status == ARK_SUCCESS
-    status, ncfn = ARKodeGetNumStepSolveFails(ark.get())
-    assert status == ARK_SUCCESS
-    status, nni = ARKodeGetNumNonlinSolvIters(ark.get())
-    assert status == ARK_SUCCESS
-    status, nnf = ARKodeGetNumNonlinSolvConvFails(ark.get())
-    assert status == ARK_SUCCESS
-    status, nje = ARKodeGetNumJacEvals(ark.get())
-    assert status == ARK_SUCCESS
-    status, nfeLS = ARKodeGetNumLinRhsEvals(ark.get())
-    assert status == ARK_SUCCESS
-    status, nfp, nnewt = SUNNonlinSolGetNumItersByType_Auto(nls)
+    status = ARKodePrintAllStats(ark.get(), file_ptr, SUN_OUTPUTFORMAT_TABLE)
     assert status == ARK_SUCCESS
 
-    print("\nFinal Solver Statistics:")
-    print(f"   Internal solver steps = {nst} (attempted = {nst_a})")
-    print(f"   Total RHS evals (Fi) = {nfi}")
-    print(f"   Total linear solver setups = {nsetups}")
-    print(f"   Total RHS evals for setting up the linear system = {nfeLS}")
-    print(f"   Total number of Jacobian evaluations = {nje}")
-    print(f"   Total number of nonlinear iterations = {nni}")
-    print(f"         newton = {nnewt}, fixed-point = {nfp}")
-    print(f"   Total number of nonlinear solver convergence failures = {nnf}")
-    print(f"   Total number of error test failures = {netf}")
-    print(f"   Total number of failed steps from solver failure = {ncfn}")
+    status, nfp, nnewt = SUNNonlinSolGetTotalNumItersByType_Auto(nls)
+    assert status == ARK_SUCCESS
+    print(f"   Auto nonlinear solver iteration totals: newton = {nnewt}, fixed-point = {nfp}")
 
 
 def test_ark_kpr_auto_nls():

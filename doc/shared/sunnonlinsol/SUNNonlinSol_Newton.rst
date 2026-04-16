@@ -151,7 +151,7 @@ user-callable function.
       SUNNonlinSol_Newton module.  We note that SUNNonlinSol_Newton
       will not leverage the results from any user calls to *SysFn*.
 
-.. c:function:: SUNErrCode SUNNonlinSolGetDeltaNorm_Newton(SUNNonlinearSolver NLS, sunrealtype *delnrm)
+.. c:function:: SUNErrCode SUNNonlinSolGetUpdateNorm_Newton(SUNNonlinearSolver NLS, sunrealtype *delnrm)
 
    This returns the WRMS norm of the most recent Newton update (``delnrm``).
 

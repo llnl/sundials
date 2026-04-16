@@ -43,7 +43,7 @@ module fsunnonlinsol_newton_mod
  public :: FSUNNonlinSolGetCurIter_Newton
  public :: FSUNNonlinSolGetNumConvFails_Newton
  public :: FSUNNonlinSolGetSysFn_Newton
- public :: FSUNNonlinSolGetDeltaNorm_Newton
+ public :: FSUNNonlinSolGetUpdateNorm_Newton
 
 ! WRAPPER DECLARATIONS
 interface
@@ -186,8 +186,8 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNNonlinSolGetDeltaNorm_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetDeltaNorm_Newton") &
+function swigc_FSUNNonlinSolGetUpdateNorm_Newton(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetUpdateNorm_Newton") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -452,7 +452,7 @@ fresult = swigc_FSUNNonlinSolGetSysFn_Newton(farg1, farg2)
 swig_result = fresult
 end function
 
-function FSUNNonlinSolGetDeltaNorm_Newton(nls, delnrm) &
+function FSUNNonlinSolGetUpdateNorm_Newton(nls, delnrm) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -464,7 +464,7 @@ type(C_PTR) :: farg2
 
 farg1 = c_loc(nls)
 farg2 = c_loc(delnrm(1))
-fresult = swigc_FSUNNonlinSolGetDeltaNorm_Newton(farg1, farg2)
+fresult = swigc_FSUNNonlinSolGetUpdateNorm_Newton(farg1, farg2)
 swig_result = fresult
 end function
 

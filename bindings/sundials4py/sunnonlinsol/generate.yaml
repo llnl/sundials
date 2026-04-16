@@ -59,4 +59,6 @@ modules:
       - ../../include/sunnonlinsol/sunnonlinsol_auto.h
       fn_exclude_by_name__regex:
       # We do not support getting a function pointer back to Python
+      - "^SUNNonlinSolGetFixedPointSolver_Auto$"
+      - "^SUNNonlinSolGetNewtonSolver_Auto$"
       - "^SUNNonlinSolSetSysFns_Auto"

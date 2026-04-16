@@ -521,7 +521,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: getnumiters
   type(C_FUNPTR), public :: getcuriter
   type(C_FUNPTR), public :: getnumconvfails
-  type(C_FUNPTR), public :: getdelnrm
+  type(C_FUNPTR), public :: getupdatenorm
  end type SUNNonlinearSolver_Ops
  ! struct struct _generic_SUNNonlinearSolver
  type, bind(C), public :: SUNNonlinearSolver
@@ -545,7 +545,7 @@ module fsundials_core_mod
  public :: FSUNNonlinSolGetNumIters
  public :: FSUNNonlinSolGetCurIter
  public :: FSUNNonlinSolGetNumConvFails
- public :: FSUNNonlinSolGetDeltaNorm
+ public :: FSUNNonlinSolGetUpdateNorm
  integer(C_INT), parameter, public :: SUN_NLS_CONTINUE = +901_C_INT
  integer(C_INT), parameter, public :: SUN_NLS_CONV_RECVR = +902_C_INT
  integer(C_INT), parameter, public :: SUN_NLS_SWITCH = +903_C_INT
@@ -2195,8 +2195,8 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNNonlinSolGetDeltaNorm(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetDeltaNorm") &
+function swigc_FSUNNonlinSolGetUpdateNorm(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetUpdateNorm") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -5775,7 +5775,7 @@ fresult = swigc_FSUNNonlinSolGetNumConvFails(farg1, farg2)
 swig_result = fresult
 end function
 
-function FSUNNonlinSolGetDeltaNorm(nls, delnrm) &
+function FSUNNonlinSolGetUpdateNorm(nls, delnrm) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -5787,7 +5787,7 @@ type(C_PTR) :: farg2
 
 farg1 = c_loc(nls)
 farg2 = c_loc(delnrm(1))
-fresult = swigc_FSUNNonlinSolGetDeltaNorm(farg1, farg2)
+fresult = swigc_FSUNNonlinSolGetUpdateNorm(farg1, farg2)
 swig_result = fresult
 end function
 

@@ -20,33 +20,29 @@ enum SUNNonlinSolAutoType
 typedef enum SUNNonlinSolAutoType SUNNonlinSolAutoType;
 #endif
 
-struct _SUNNonlinearSolverContent_Auto
+struct SUNNonlinearSolverContent_Auto_
 {
   SUNNonlinSolAutoType active_solver_type;
   SUNNonlinearSolver fp_solver;
   SUNNonlinearSolver newton_solver;
-  SUNNonlinSolConvTestFn user_ctest_fn;
-  void* user_ctest_data;
-  int maxiters;
-  int curiter;
   long int fp_to_newt_delay;
   long int newt_to_fp_delay;
-  long int nsolves_since_switch;
+  long int num_solves_since_switch;
   sunrealtype newt_to_fp_threshold;
   sunrealtype fp_to_newt_threshold;
-  long int niters;
-  long int nconvfails;
+  long int num_iters;
+  long int num_conv_fails;
   long int switch_count;
-  long int fp_niters_total;
-  long int newt_niters_total;
+  long int fp_num_iters_total;
+  long int newton_num_iters_total;
   void* auto_ctest_data;
 };
 
-typedef struct _SUNNonlinearSolverContent_Auto* SUNNonlinearSolverContent_Auto;
+typedef struct SUNNonlinearSolverContent_Auto_* SUNNonlinearSolverContent_Auto;
 
 SUNDIALS_EXPORT
 SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
-                                     SUNNonlinSolAutoType active_solver_type,
+                                     SUNNonlinSolAutoType initial_solver_type,
                                      SUNContext sunctx);
 
 SUNDIALS_EXPORT
@@ -62,10 +58,6 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolFree_Auto(SUNNonlinearSolver NLS);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
-                                     SUNNonlinSolSysFn SysFn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetSysFns_Auto(SUNNonlinearSolver NLS,
@@ -86,13 +78,18 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
                                         SUNNonlinSolLSolveFn LSolveFn);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters);
-
-SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
   SUNNonlinearSolver NLS, sunrealtype newt_to_fp_threshold,
   long int newt_to_fp_delay, sunrealtype fp_to_newt_threshold,
   long int fp_to_newt_delay);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetFixedPointSolver_Auto(SUNNonlinearSolver NLS,
+                                                SUNNonlinearSolver* fp_nls);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetNewtonSolver_Auto(SUNNonlinearSolver NLS,
+                                            SUNNonlinearSolver* newton_nls);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters);
@@ -111,8 +108,13 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
                                             long int* nconvfails);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetDeltaNorm_Auto(SUNNonlinearSolver NLS,
-                                         sunrealtype* delnrm);
+SUNErrCode SUNNonlinSolGetNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
+                                                  long int* fp_nconvfails,
+                                                  long int* newt_nconvfails);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetUpdateNorm_Auto(SUNNonlinearSolver NLS,
+                                          sunrealtype* delnrm);
 
 #ifdef __cplusplus
 }

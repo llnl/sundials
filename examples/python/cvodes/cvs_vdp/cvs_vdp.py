@@ -103,6 +103,7 @@ def main(argv=None):
     ode = VanDerPolODE(mu, y10, y20)
     ode.set_init_cond(y)
 
+    # Create and configure CVODE.
     cvode = CVodeCreate(CV_BDF, sunctx)
 
     status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode.f(t, y, ydot), T0, y)
@@ -125,6 +126,7 @@ def main(argv=None):
     assert status == CV_SUCCESS
 
     if args.solver == "newton" or args.solver == "auto":
+        # Newton and Auto both require a linear solver/Jacobian for the Newton path.
         A = SUNDenseMatrix(NEQ, NEQ, sunctx)
         LS = SUNLinSol_Dense(y, A, sunctx)
 
@@ -177,36 +179,15 @@ def main(argv=None):
                 break
         print("   -----------------------------------")
 
-    status, nst = CVodeGetNumSteps(cvode.get())
-    assert status == CV_SUCCESS
-    status, nfe = CVodeGetNumRhsEvals(cvode.get())
-    assert status == CV_SUCCESS
-    status, nni = CVodeGetNumNonlinSolvIters(cvode.get())
-    assert status == CV_SUCCESS
-    status, ncfn = CVodeGetNumNonlinSolvConvFails(cvode.get())
-    assert status == CV_SUCCESS
-
-    if args.solver == "newton" or args.solver == "auto":
-        status, nsetups = CVodeGetNumLinSolvSetups(cvode.get())
-        assert status == CV_SUCCESS
-        status, nje = CVodeGetNumJacEvals(cvode.get())
-        assert status == CV_SUCCESS
-        status, nfeLS = CVodeGetNumLinRhsEvals(cvode.get())
-        assert status == CV_SUCCESS
-
     print("\nFinal Solver Statistics:")
-    print(f"   Internal solver steps = {nst}")
-    print(f"   Total RHS evals = {nfe}")
-    print(f"   Total number of nonlinear solver iterations = {nni}")
+    status, file_ptr = SUNFileOpen("stdout", "w+")
+    assert status == CV_SUCCESS
+    status = CVodePrintAllStats(cvode.get(), file_ptr, SUN_OUTPUTFORMAT_TABLE)
+    assert status == CV_SUCCESS
     if args.solver == "auto":
-        status, nfp, nnewt = SUNNonlinSolGetNumItersByType_Auto(NLS)
+        status, nfp, nnewt = SUNNonlinSolGetTotalNumItersByType_Auto(NLS)
         assert status == CV_SUCCESS
-        print(f"        newton={nnewt}, fixedpoint={nfp}")
-    print(f"   Total number of nonlinear solver convergence failures = {ncfn}")
-    if args.solver == "newton" or args.solver == "auto":
-        print(f"   Total number of Jacobian evaluations = {nje}")
-        print(f"   Total linear solver setups = {nsetups}")
-        print(f"   Total RHS evals for setting up the linear system = {nfeLS}")
+        print(f"   Auto nonlinear solver iteration totals: newton = {nnewt}, fixed-point = {nfp}")
 
     if args.plot:
         try:

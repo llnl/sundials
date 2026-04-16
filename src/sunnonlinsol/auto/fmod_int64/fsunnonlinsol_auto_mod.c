@@ -455,7 +455,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver farg1,
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetDeltaNorm_Auto(SUNNonlinearSolver farg1, double *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolGetUpdateNorm_Auto(SUNNonlinearSolver farg1, double *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -463,7 +463,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetDeltaNorm_Auto(SUNNonlinearSolver farg1, do
   
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (sunrealtype *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetDeltaNorm_Auto(arg1,arg2);
+  result = (SUNErrCode)SUNNonlinSolGetUpdateNorm_Auto(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

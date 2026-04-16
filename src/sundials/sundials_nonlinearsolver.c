@@ -72,6 +72,7 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   ops->solve           = NULL;
   ops->free            = NULL;
   ops->setsysfn        = NULL;
+  ops->setsysfns       = NULL;
   ops->setlsetupfn     = NULL;
   ops->setlsolvefn     = NULL;
   ops->setctestfn      = NULL;
@@ -80,7 +81,7 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   ops->getnumiters     = NULL;
   ops->getcuriter      = NULL;
   ops->getnumconvfails = NULL;
-  ops->getdelnrm       = NULL;
+  ops->getupdatenorm   = NULL;
 
   /* attach context and ops, initialize content to NULL */
   NLS->sunctx  = sunctx;
@@ -231,6 +232,22 @@ SUNErrCode SUNNonlinSolSetSysFn(SUNNonlinearSolver NLS, SUNNonlinSolSysFn SysFn)
   return (NLS->ops->setsysfn(NLS, SysFn));
 }
 
+/* set both the root and fixed-point system functions (optional) */
+SUNErrCode SUNNonlinSolSetSysFns(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolSysFn root_fn,
+                                 SUNNonlinSolSysFn fixed_point_fn)
+{
+  if (NLS->ops->setsysfns)
+  {
+    return (NLS->ops->setsysfns(NLS, root_fn, fixed_point_fn));
+  }
+  if (root_fn == fixed_point_fn && NLS->ops->setsysfn)
+  {
+    return (NLS->ops->setsysfn(NLS, root_fn));
+  }
+  return SUN_ERR_NOT_IMPLEMENTED;
+}
+
 /* set the linear solver setup function (optional) */
 SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS,
                                    SUNNonlinSolLSetupFn LSetupFn)
@@ -330,10 +347,15 @@ SUNErrCode SUNNonlinSolGetNumConvFails(SUNNonlinearSolver NLS,
   }
 }
 
-SUNErrCode SUNNonlinSolGetDeltaNorm(SUNNonlinearSolver NLS, sunrealtype* delnrm)
+SUNErrCode SUNNonlinSolGetUpdateNorm(SUNNonlinearSolver NLS, sunrealtype* delnrm)
 {
-  if (NLS == NULL || delnrm == NULL) { return SUN_ERR_ARG_CORRUPT; }
-  if (NLS->ops->getdelnrm) { return (NLS->ops->getdelnrm(NLS, delnrm)); }
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+  SUNAssert(delnrm, SUN_ERR_ARG_CORRUPT);
+  if (NLS->ops->getupdatenorm)
+  {
+    return (NLS->ops->getupdatenorm(NLS, delnrm));
+  }
   *delnrm = SUN_RCONST(0.0);
   return SUN_ERR_NOT_IMPLEMENTED;
 }

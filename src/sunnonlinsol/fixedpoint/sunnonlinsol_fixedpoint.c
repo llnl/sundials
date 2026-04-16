@@ -43,6 +43,10 @@ static void FreeContent(SUNNonlinearSolver NLS);
 #define ONE  SUN_RCONST(1.0)
 #define ZERO SUN_RCONST(0.0)
 
+static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
+                                                const char* NLSid, int argc,
+                                                char* argv[]);
+
 /*==============================================================================
   Constructor to create a new fixed point solver
   ============================================================================*/
@@ -69,11 +73,12 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   NLS->ops->free            = SUNNonlinSolFree_FixedPoint;
   NLS->ops->setsysfn        = SUNNonlinSolSetSysFn_FixedPoint;
   NLS->ops->setctestfn      = SUNNonlinSolSetConvTestFn_FixedPoint;
+  NLS->ops->setoptions      = SUNNonlinSolSetOptions_FixedPoint;
   NLS->ops->setmaxiters     = SUNNonlinSolSetMaxIters_FixedPoint;
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_FixedPoint;
   NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_FixedPoint;
   NLS->ops->getnumconvfails = SUNNonlinSolGetNumConvFails_FixedPoint;
-  NLS->ops->getdelnrm       = SUNNonlinSolGetDeltaNorm_FixedPoint;
+  NLS->ops->getupdatenorm   = SUNNonlinSolGetUpdateNorm_FixedPoint;
 
   /* Create nonlinear solver content structure */
   content = NULL;
@@ -384,6 +389,12 @@ SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
 SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS,
                                                    sunrealtype crate_const)
 {
+  return SUNNonlinSolSetConvRateConstant_FixedPoint(NLS, crate_const);
+}
+
+SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS,
+                                                      sunrealtype crate_const)
+{
   SUNFunctionBegin(NLS->sunctx);
   SUNAssert(crate_const <= SUN_RCONST(1.0), SUN_ERR_ARG_OUTOFRANGE);
 
@@ -440,10 +451,81 @@ SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetDeltaNorm_FixedPoint(SUNNonlinearSolver NLS,
-                                               sunrealtype* delnrm)
+SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
+                                                sunrealtype* delnrm)
 {
   *delnrm = FP_CONTENT(NLS)->delnrm;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolSetOptions_FixedPoint(
+  SUNNonlinearSolver NLS, const char* NLSid,
+  SUNDIALS_MAYBE_UNUSED const char* file_name, int argc, char* argv[])
+{
+  SUNFunctionBegin(NLS->sunctx);
+
+  SUNAssert((file_name == NULL || strlen(file_name) == 0),
+            SUN_ERR_ARG_INCOMPATIBLE);
+
+  if (argc > 0 && argv != NULL)
+  {
+    SUNCheckCall(setFromCommandLine_FixedPoint(NLS, NLSid, argc, argv));
+  }
+
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
+                                                const char* NLSid, int argc,
+                                                char* argv[])
+{
+  SUNFunctionBegin(NLS->sunctx);
+
+  const char* default_id = "sunnonlinearsolver";
+  size_t offset          = strlen(default_id) + 1;
+  if (NLSid != NULL && strlen(NLSid) > 0) { offset = strlen(NLSid) + 1; }
+
+  char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
+  SUNAssert(prefix, SUN_ERR_MALLOC_FAIL);
+  if (NLSid != NULL && strlen(NLSid) > 0) { strcpy(prefix, NLSid); }
+  else { strcpy(prefix, default_id); }
+  strcat(prefix, ".");
+
+  for (int idx = 1; idx < argc; idx++)
+  {
+    int retval;
+
+    if (strncmp(argv[idx], prefix, strlen(prefix)) != 0) { continue; }
+
+    if (strcmp(argv[idx] + offset, "damping") == 0)
+    {
+      idx += 1;
+      retval = SUNNonlinSolSetDamping_FixedPoint(NLS,
+                                                 (sunrealtype)atof(argv[idx]));
+      if (retval != SUN_SUCCESS)
+      {
+        free(prefix);
+        return retval;
+      }
+      continue;
+    }
+
+    if (strcmp(argv[idx] + offset, "conv_rate_constant") == 0 ||
+        strcmp(argv[idx] + offset, "crate_constant") == 0)
+    {
+      idx += 1;
+      retval = SUNNonlinSolSetConvRateConstant_FixedPoint(NLS, (sunrealtype)atof(
+                                                                 argv[idx]));
+      if (retval != SUN_SUCCESS)
+      {
+        free(prefix);
+        return retval;
+      }
+      continue;
+    }
+  }
+
+  free(prefix);
   return SUN_SUCCESS;
 }
 

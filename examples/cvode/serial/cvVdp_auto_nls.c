@@ -197,24 +197,20 @@ int main(int argc, char* argv[])
   }
   printf("   -----------------------------------\n");
 
-  long int nst, nfe, nsetups, nni, ncfn, nje, nfeLS;
-  (void)CVodeGetNumSteps(cvode_mem, &nst);
-  (void)CVodeGetNumRhsEvals(cvode_mem, &nfe);
-  (void)CVodeGetNumLinSolvSetups(cvode_mem, &nsetups);
-  (void)CVodeGetNumNonlinSolvIters(cvode_mem, &nni);
-  (void)CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
-  (void)CVodeGetNumJacEvals(cvode_mem, &nje);
-  (void)CVodeGetNumLinRhsEvals(cvode_mem, &nfeLS);
+  retval = CVodePrintAllStats(cvode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
+  if (check_retval(&retval, "CVodePrintAllStats", 1)) { return 1; }
 
-  printf("\nFinal Solver Statistics:\n");
-  printf("   Internal solver steps = %ld\n", nst);
-  printf("   Total RHS evals = %ld\n", nfe);
-  printf("   Total number of nonlinear solver iterations = %ld\n", nni);
-  printf("   Total number of nonlinear solver convergence failures = %ld\n",
-         ncfn);
-  printf("   Total number of Jacobian evaluations = %ld\n", nje);
-  printf("   Total linear solver setups = %ld\n", nsetups);
-  printf("   Total RHS evals for setting up the linear system = %ld\n", nfeLS);
+  {
+    long int nfp, nnewt;
+    retval = SUNNonlinSolGetTotalNumItersByType_Auto(NLS, &nfp, &nnewt);
+    if (check_retval(&retval, "SUNNonlinSolGetTotalNumItersByType_Auto", 1))
+    {
+      return 1;
+    }
+    printf("   Auto nonlinear solver iteration totals: newton = %ld, "
+           "fixed-point = %ld\n",
+           nnewt, nfp);
+  }
 
   CVodeFree(&cvode_mem);
   SUNNonlinSolFree(NLS);

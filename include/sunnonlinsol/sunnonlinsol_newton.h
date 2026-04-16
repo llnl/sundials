@@ -125,8 +125,8 @@ SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS,
                                        SUNNonlinSolSysFn* SysFn);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetDeltaNorm_Newton(SUNNonlinearSolver NLS,
-                                           sunrealtype* delnrm);
+SUNErrCode SUNNonlinSolGetUpdateNorm_Newton(SUNNonlinearSolver NLS,
+                                            sunrealtype* delnrm);
 
 #ifdef __cplusplus
 }

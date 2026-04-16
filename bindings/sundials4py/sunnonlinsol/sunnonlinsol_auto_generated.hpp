@@ -16,34 +16,34 @@ auto pyEnumSUNNonlinSolAutoType =
 // #endif
 //
 
-auto pyClass_SUNNonlinearSolverContent_Auto =
-  nb::class_<_SUNNonlinearSolverContent_Auto>(m,
-                                              "_SUNNonlinearSolverContent_Auto",
+auto pyClassSUNNonlinearSolverContent_Auto_ =
+  nb::class_<SUNNonlinearSolverContent_Auto_>(m,
+                                              "SUNNonlinearSolverContent_Auto_",
                                               "")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 m.def(
   "SUNNonlinSol_Auto",
-  [](N_Vector y, int m, SUNNonlinSolAutoType active_solver_type,
+  [](N_Vector y, int m, SUNNonlinSolAutoType initial_solver_type,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
   {
     auto SUNNonlinSol_Auto_adapt_return_type_to_shared_ptr =
-      [](N_Vector y, int m, SUNNonlinSolAutoType active_solver_type,
+      [](N_Vector y, int m, SUNNonlinSolAutoType initial_solver_type,
          SUNContext sunctx)
       -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
     {
-      auto lambda_result = SUNNonlinSol_Auto(y, m, active_solver_type, sunctx);
+      auto lambda_result = SUNNonlinSol_Auto(y, m, initial_solver_type, sunctx);
 
       return our_make_shared<std::remove_pointer_t<SUNNonlinearSolver>,
                              SUNNonlinearSolverDeleter>(lambda_result);
     };
 
     return SUNNonlinSol_Auto_adapt_return_type_to_shared_ptr(y, m,
-                                                             active_solver_type,
+                                                             initial_solver_type,
                                                              sunctx);
   },
-  nb::arg("y"), nb::arg("m"), nb::arg("active_solver_type"), nb::arg("sunctx"),
+  nb::arg("y"), nb::arg("m"), nb::arg("initial_solver_type"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
 m.def("SUNNonlinSolSetSwitchingParameters_Auto",
@@ -74,19 +74,44 @@ m.def(
   nb::arg("NLS"));
 
 m.def(
-  "SUNNonlinSolGetDeltaNorm_Auto",
+  "SUNNonlinSolGetNumConvFailsByType_Auto",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
+  {
+    auto SUNNonlinSolGetNumConvFailsByType_Auto_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
+    {
+      long fp_nconvfails_adapt_modifiable;
+      long newt_nconvfails_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNNonlinSolGetNumConvFailsByType_Auto(NLS,
+                                               &fp_nconvfails_adapt_modifiable,
+                                               &newt_nconvfails_adapt_modifiable);
+      return std::make_tuple(r, fp_nconvfails_adapt_modifiable,
+                             newt_nconvfails_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetNumConvFailsByType_Auto_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
+
+m.def(
+  "SUNNonlinSolGetUpdateNorm_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
   {
-    auto SUNNonlinSolGetDeltaNorm_Auto_adapt_modifiable_immutable_to_return =
+    auto SUNNonlinSolGetUpdateNorm_Auto_adapt_modifiable_immutable_to_return =
       [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
     {
       sunrealtype delnrm_adapt_modifiable;
 
-      SUNErrCode r = SUNNonlinSolGetDeltaNorm_Auto(NLS, &delnrm_adapt_modifiable);
+      SUNErrCode r = SUNNonlinSolGetUpdateNorm_Auto(NLS,
+                                                    &delnrm_adapt_modifiable);
       return std::make_tuple(r, delnrm_adapt_modifiable);
     };
 
-    return SUNNonlinSolGetDeltaNorm_Auto_adapt_modifiable_immutable_to_return(NLS);
+    return SUNNonlinSolGetUpdateNorm_Auto_adapt_modifiable_immutable_to_return(
+      NLS);
   },
   nb::arg("NLS"));
 // #ifdef __cplusplus
