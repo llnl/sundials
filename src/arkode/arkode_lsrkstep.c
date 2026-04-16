@@ -1035,8 +1035,15 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     if (retval != ARK_SUCCESS) { return retval; }
   }
 
-  /* Compute number of stages based on current step size and
-     dominant eigenvalue using Eq. 21 in Meyer et al. (2014) */
+  /* Compute the number of stages based on the current step size and dominant
+     eigenvalue using Eq. 19 in Meyer et al. (2014)
+     https://doi.org/10.1016/j.jcp.2013.08.021
+      
+     Using delta t_expl = 2 / lambda_max, note tau_max * lambda_max in Eq. 19 is
+     positive (i.e., tau_max * lambda_max = -zR = h * lambdaR assuming that
+     h * lambdaR < 0) and we have incorporated the minus sign on zR below. We rely on
+     SUNRsqrt(x) returning 0 for x <= 0, to ensure we use the minimum number of
+     stages (ss = 2) for zR > 0. */
   sunrealtype zR    = ark_mem->h * step_mem->lambdaR;
   sunrealtype zI    = ark_mem->h * step_mem->lambdaI;
   sunrealtype zRabs = SUNRabs(zR);
