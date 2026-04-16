@@ -52,7 +52,6 @@ plt.savefig("brusselator1D_FEM_mesh.png")
 
 # generate plots of results
 for tstep in range(nt):
-
     # set string constants for output plots, current time, mesh size
     pname = "brusselator1D_FEM." + repr(tstep).zfill(3) + ".png"
     tstr = repr(tstep)

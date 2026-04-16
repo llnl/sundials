@@ -5,6 +5,8 @@
 
 **New Features and Enhancements**
 
+Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
+
 **Bug Fixes**
 
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
