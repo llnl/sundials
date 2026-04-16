@@ -1,0 +1,31 @@
+Solve the nonlinear system:
+    4x    - sin(y) - zi     - 1  = 0
+   -x^2   + 5y     - cos(z) - 2i = 0
+   -e^-x  - y      + 6z     - 3  = 0
+Analytic solution:
+    x = 0.284431  + 0.270317I
+    y = 0.161171  + 0.426222I
+    z = 0.647715  + 0.037549I
+Solution method: Anderson accelerated fixed point iteration.
+    tolerance    = 1.49012e-06
+    max iters    = 30
+    m_aa         = 1
+    delay_aa     = 0
+    damping_aa   = 0.5
+    damping_fp   = 1
+    damping_fn   = OFF
+    depth_fn     = OFF
+    orth routine = 0
+
+Final Statistics:
+Number of nonlinear iterations:     15
+Number of function evaluations:     15
+Computed solution:
+    x = 0.284432 + 0.270316I
+    y = 0.161171 + 0.426221I
+    z = 0.647716 + 0.037548I
+Solution error:
+    ex = 7.659431e-07 + 4.442849e-07I
+    ey = 2.294924e-07 + 9.663902e-07I
+    ez = 7.677629e-07 + 1.172233e-06I
+PASS

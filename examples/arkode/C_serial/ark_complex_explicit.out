@@ -1,6 +1,5 @@
 
 Analytic ODE test problem:
-    problem parameters:  a = 1 + 0i,  b = 1 + 0i,  c = 1 + 0i
     reltol = 1.0e-06,  abstol = 1.0e-10
 
      t               u                      v                      w
@@ -10,13 +9,13 @@ Analytic ODE test problem:
     2.000 | -0.27067 +  2.00000i |  0.00000 + -0.54134i |  2.00000 +  0.13534i
     3.000 | -0.14936 +  2.00000i |  0.00000 + -0.44808i |  3.00000 +  0.04979i
     4.000 | -0.07326 +  2.00000i |  0.00000 + -0.29305i |  4.00000 +  0.01832i
-    5.000 | -0.03367 +  2.00000i |  0.00000 + -0.16843i |  5.00000 +  0.00675i
+    5.000 | -0.03367 +  2.00000i | -0.00000 + -0.16843i |  5.00000 +  0.00675i
    ----------------------------------------------------------------------------
     Max-norm of the error is 1.79444e-05
    ----------------------------------------------------------------------------
 
 Final Solver Statistics:
-Current time                  = 5.03195030925342
+Current time                  = 5.03195030925378
 Steps                         = 67
 Step attempts                 = 71
 Stability limited steps       = 0
@@ -25,6 +24,6 @@ Error test fails              = 4
 NLS step fails                = 0
 Inequality constraint fails   = 0
 Initial step size             = 6.58037005653823e-06
-Last step size                = 0.123596184606097
-Current step size             = 0.124254419304074
+Last step size                = 0.123596184606083
+Current step size             = 0.124254419304052
 RHS fn evals                  = 287

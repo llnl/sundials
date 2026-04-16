@@ -7,16 +7,16 @@ Analytic ODE test problem:
    ----------------------------------------------------------------------------
     0.000 |  0.00000 +  2.00000i | -0.00000 + -0.00000i |  0.00000 +  1.00000i
     1.000 | -0.36786 +  2.00000i | -0.00000 + -0.36791i |  1.00000 +  0.36788i
-    2.000 | -0.27065 +  2.00000i | -0.00000 + -0.54135i |  2.00000 +  0.13534i
-    3.000 | -0.14935 +  2.00000i | -0.00000 + -0.44806i |  3.00000 +  0.04980i
-    4.000 | -0.07326 +  2.00000i | -0.00000 + -0.29302i |  4.00000 +  0.01832i
-    5.000 | -0.03371 +  2.00000i | -0.00000 + -0.16844i |  5.00000 +  0.00674i
+    2.000 | -0.27065 +  2.00000i |  0.00000 + -0.54135i |  2.00000 +  0.13534i
+    3.000 | -0.14935 +  2.00000i |  0.00000 + -0.44806i |  3.00000 +  0.04980i
+    4.000 | -0.07326 +  2.00000i |  0.00000 + -0.29302i |  4.00000 +  0.01832i
+    5.000 | -0.03371 +  2.00000i |  0.00000 + -0.16844i |  5.00000 +  0.00674i
    ----------------------------------------------------------------------------
-    Max-norm of the error is 2.49119e-05
+    Max-norm of the error is 2.49118e-05
    ----------------------------------------------------------------------------
 
 Final Solver Statistics:
-Current time                  = 5.16859222708397
+Current time                  = 5.16858763494108
 Steps                         = 34
 Step attempts                 = 34
 Stability limited steps       = 0
@@ -25,8 +25,8 @@ Error test fails              = 0
 NLS step fails                = 0
 Inequality constraint fails   = 0
 Initial step size             = 6.58037005653823e-06
-Last step size                = 0.384324495109945
-Current step size             = 0.421234660853529
+Last step size                = 0.384324125198027
+Current step size             = 0.421233955733631
 Explicit RHS fn evals         = 0
 Implicit RHS fn evals         = 343
 NLS iters                     = 340
@@ -34,13 +34,13 @@ NLS fails                     = 0
 NLS iters per step            = 10
 LS setups                     = 0
 Jac fn evals                  = 0
-LS RHS fn evals               = 510
+LS RHS fn evals               = 509
 Prec setup evals              = 0
 Prec solves                   = 0
-LS iters                      = 510
+LS iters                      = 509
 LS fails                      = 0
 Jac-times setups              = 0
-Jac-times evals               = 510
-LS iters per NLS iter         = 1.5
+Jac-times evals               = 509
+LS iters per NLS iter         = 1.49705882352941
 Jac evals per NLS iter        = 0
 Prec evals per NLS iter       = 0
