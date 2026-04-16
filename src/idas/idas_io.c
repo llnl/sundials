@@ -412,6 +412,23 @@ int IDAClearStopTime(void* ida_mem)
 
 /*-----------------------------------------------------------------*/
 
+int IDASkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
+{
+  IDAMem IDA_mem;
+
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+  IDA_mem                     = (IDAMem)ida_mem;
+  IDA_mem->ida_skipadapttstop = skip;
+
+  return (IDA_SUCCESS);
+}
+
+/*-----------------------------------------------------------------*/
+
 int IDASetNonlinConvCoef(void* ida_mem, sunrealtype epcon)
 {
   IDAMem IDA_mem;

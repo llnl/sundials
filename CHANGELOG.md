@@ -10,7 +10,10 @@ Updated `examples/cvode/petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
 
 Added the function `ARKodeSkipAdaptStopTime` to specify that
 stop-time-limited steps should be disregarded when selecting step sizes
-for time step adaptivity.
+for time step adaptivity.  Added the functions `CVodeSkipAdaptStopTime`
+and `IDASkipAdaptStopTime` to specify that stop-time-limited steps should
+be disregarded when adapting the step size and method order for CVODE(S)
+and IDA(S), respectively.
 
 ### Bug Fixes
 
