@@ -192,11 +192,9 @@ instead of supplying a dummy routine.
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data, SUNATimesFn ATimes)
 
-   This function provides a :c:type:`SUNATimesFn` function for performing
+   This *optional* function provides a :c:type:`SUNATimesFn` function for performing
    matrix-vector products, as well as a ``void*`` pointer to a data structure
-   used by this routine, to the dominant eigenvalue estimator. This function is
-   *required* when using the matrix-vector product function provided by a
-   SUNDIALS integrator, otherwise the function is *optional*.
+   used by this routine, to the dominant eigenvalue estimator.
 
    **Arguments:**
 

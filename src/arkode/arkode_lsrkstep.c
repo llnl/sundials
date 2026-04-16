@@ -601,8 +601,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       
      Note beta(s) in Eq. 2.7 is positive (i.e., beta = -zR = h * lambdaR assuming  
      that h * lambdaR < 0) and we have incorporated the minus sign on zR below. We  
-     rely on SUNRsqrt(x) returning 0 for x <= 0, to ensure we use the minimum number  
-     of stages (ss = 2) for zR > 0. */
+     use the minimum number of stages (ss = 2) when zR > 0. */
   sunrealtype zR = ark_mem->h * step_mem->lambdaR;
   sunrealtype zI = ark_mem->h * step_mem->lambdaI;
   sunrealtype ss = zR > ZERO ? SUN_RCONST(2.0)
@@ -694,8 +693,6 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           const sunrealtype b = a / (ss == 2 ? SUN_RCONST(0.6)
                                              : SUN_RCONST(1.825) * ss);
 
-          //TODO: Get opinions for negative eta if we remove the positivity restriction above for zR.
-          //Should we enforce a minimum eta value here?
           ark_mem->eta = ark_mem->hadapt_mem->safety * (-TWO * a * b * b * zR) /
                          (SUNSQR(b * zR) + SUNSQR(a * zI));
           *nflagPtr = ARK_RETRY_STEP;
@@ -1041,9 +1038,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       
      Using delta t_expl = 2 / lambda_max, note tau_max * lambda_max in Eq. 19 is
      positive (i.e., tau_max * lambda_max = -zR = h * lambdaR assuming that
-     h * lambdaR < 0) and we have incorporated the minus sign on zR below. We rely on
-     SUNRsqrt(x) returning 0 for x <= 0, to ensure we use the minimum number of
-     stages (ss = 2) for zR > 0. */
+     h * lambdaR < 0) and we have incorporated the minus sign on zR below. We 
+     use the minimum number of stages (ss = 2) for zR > 0. */
   sunrealtype zR    = ark_mem->h * step_mem->lambdaR;
   sunrealtype zI    = ark_mem->h * step_mem->lambdaI;
   sunrealtype zRabs = SUNRabs(zR);
