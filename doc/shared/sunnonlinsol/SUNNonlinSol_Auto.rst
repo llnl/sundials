@@ -46,7 +46,7 @@ the convergence test function provided by the integrator (see
 it returns ``SUN_NLS_SWITCH`` from the convergence test. The underlying
 solver propagates this code back to the integrator. Integrators that support
 automatic nonlinear solver switching will respond by reinitializing the
-nonlinear solver interface and retrying the nonlinear solve.
+nonlinear solver interface and retrying the nonlinear solve. 
 
 A full mathematical description of the switching criterion and algorithm can be
 found in :cite:p:`norsett1986switching`. In short, switching from fixed-point to
@@ -58,17 +58,18 @@ Newton occurs when the fixed-point convergence-rate estimate
 
 indicates slow convergence or divergence, i.e., when :math:`R \ge \alpha`, for
 a specified number of nonlinear solves. The implementation default is
-:math:`\alpha = 0.8` with no additional delay for switching from fixed-point to
-Newton. Switching from Newton to fixed-point occurs when the stiffness
-indicator
+:math:`\alpha = 0.8` with ``fp_to_newt_delay = 0``, consistent with the
+Norsett switching criterion. Switching from Newton to fixed-point occurs when
+the stiffness indicator
 
 .. math::
 
    \text{stiffr} \leftarrow \|F(y^m)\| / \|\delta_m\|,
 
 satisfies :math:`\text{stiffr} < \beta` for a specified number of nonlinear
-solves. The implementation default is :math:`\beta = 2.0` with a delay of
-10 solves before switching from Newton to fixed-point is allowed.
+solves. The implementation default is :math:`\beta = 2.0` with
+``newt_to_fp_delay = 10`` solves before switching from Newton to fixed-point is
+allowed, matching the recommendation in :cite:p:`norsett1986switching`.
 
 
 
@@ -104,12 +105,12 @@ The SUNNonlinSol_Auto module provides the following constructor for creating the
 
       Use the Newton solver.
 
-The SUNNonlinSol_Auto module implements the generic nonlinear-solver interface
-defined in :numref:`SUNNonlinSol.API.CoreFn`--:numref:`SUNNonlinSol.API.GetFn`
-except for :c:func:`SUNNonlinSolSetup`. Users should normally call the generic
-SUNNonlinSol API. When solver-specific access is needed, the auto module
-provides ``_Auto`` helper routines for switching parameters, accumulated
-statistics, and access to the underlying fixed-point and Newton solvers.
+The SUNNonlinSol_Auto module follows the generic nonlinear-solver interface
+defined in :numref:`SUNNonlinSol.API.CoreFn`--:numref:`SUNNonlinSol.API.GetFn`.
+Users should normally call the generic SUNNonlinSol API. When solver-specific
+access is needed, the auto module provides ``_Auto`` helper routines for
+switching parameters, accumulated statistics, and access to the underlying
+fixed-point and Newton solvers.
 
 The SUNNonlinSol_Auto module also defines the following function for
 controlling the switching behavior.

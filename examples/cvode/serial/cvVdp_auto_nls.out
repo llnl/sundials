@@ -33,12 +33,33 @@ Van der Pol oscillator (CVODE):
   240.000000    1.181039   -0.029808
   250.000000   -1.957462    0.006913
    -----------------------------------
-
-Final Solver Statistics:
-   Internal solver steps = 3350
-   Total RHS evals = 4198
-   Total number of nonlinear solver iterations = 8993
-   Total number of nonlinear solver convergence failures = 106
-   Total number of Jacobian evaluations = 52
-   Total linear solver setups = 279
-   Total RHS evals for setting up the linear system = 0
+Current time                  = 251.165885395588
+Steps                         = 3350
+Error test fails              = 201
+NLS step fails                = 180
+Constraint fails              = 0
+Constraint corrections        = 0
+Initial step size             = 2.04083345024543e-07
+Last step size                = 1.80160227938833
+Current step size             = 1.80160227938833
+Last method order             = 1
+Current method order          = 1
+Stab. lim. order reductions   = 0
+RHS fn evals                  = 4198
+NLS iters                     = 8993
+NLS fails                     = 106
+NLS iters per step            = 2.6844776119403
+LS setups                     = 279
+Jac fn evals                  = 52
+LS RHS fn evals               = 0
+Prec setup evals              = 0
+Prec solves                   = 0
+LS iters                      = 0
+LS fails                      = 0
+Jac-times setups              = 0
+Jac-times evals               = 0
+LS iters per NLS iter         = 0
+Jac evals per NLS iter        = 0.00578227510285778
+Prec evals per NLS iter       = 0
+Root fn evals                 = 0
+   Auto nonlinear solver iteration totals: newton = 664, fixed-point = 3531
