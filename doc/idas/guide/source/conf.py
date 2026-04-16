@@ -21,7 +21,7 @@ from sundials_vars import *
 sys.path.append(os.path.dirname(os.path.abspath("../../../shared")))
 
 # Add the suntools package source parent for autodoc imports.
-sys.path.append(os.path.abspath("../../../../suntools/src"))
+sys.path.append(os.path.abspath("../../../../suntools/src/suntools"))
 
 # -- General configuration ----------------------------------------------------
 
