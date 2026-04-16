@@ -235,7 +235,6 @@ def log_file_to_list(filename):
        plt.show()
     """
     with open(filename, "r") as logfile:
-
         # List of step attempts, each entry is a dictionary for one attempt
         step_attempts = []
 
@@ -252,7 +251,6 @@ def log_file_to_list(filename):
         s = StepData()
 
         for line_number, line in enumerate(all_lines):
-
             line_dict = _parse_logfile_line(line.rstrip(), line_number, all_lines)
 
             if not line_dict:

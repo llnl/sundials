@@ -2,7 +2,6 @@
 # Options affecting listfile parsing
 # ----------------------------------
 with section("parse"):
-
     # Specify structure for custom cmake functions
     additional_commands = {
         "add_prefix": {"pargs": {"nargs": 2}},
@@ -138,7 +137,6 @@ with section("parse"):
 # Options affecting formatting.
 # -----------------------------
 with section("format"):
-
     # Disable formatting entirely, making cmake-format a no-op
     disable = False
 
@@ -236,7 +234,6 @@ with section("format"):
 # Options affecting comment reflow and formatting.
 # ------------------------------------------------
 with section("markup"):
-
     # What character to use for bulleted lists
     bullet_char = "*"
 
@@ -280,7 +277,6 @@ with section("markup"):
 # Options affecting the linter
 # ----------------------------
 with section("lint"):
-
     # a list of lint codes to disable
     disabled_codes = []
 
@@ -337,7 +333,6 @@ with section("lint"):
 # Options affecting file encoding
 # -------------------------------
 with section("encode"):
-
     # If true, emit the unicode byte-order mark (BOM) at the start of the file
     emit_byteorder_mark = False
 
@@ -352,7 +347,6 @@ with section("encode"):
 # Miscellaneous configurations options.
 # -------------------------------------
 with section("misc"):
-
     # A dictionary containing any per-command configuration overrides. Currently
     # only `command_case` is supported.
     per_command = {}
