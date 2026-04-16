@@ -157,7 +157,7 @@ controlling the switching behavior.
 
    :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
 
-.. c:function:: SUNErrCode SUNNonlinSolGetNumItersByType_Auto(SUNNonlinearSolver NLS, long int *fp_iters, long int *newt_iters)
+.. c:function:: SUNErrCode SUNNonlinSolGetTotalNumItersByType_Auto(SUNNonlinearSolver NLS, long int *fp_iters, long int *newt_iters)
 
    This function returns the total nonlinear iteration counts accumulated by the
    fixed-point and Newton sub-solvers.

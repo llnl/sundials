@@ -96,9 +96,9 @@ SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters
 
 /* Get the iteration counts for each sub-solver separately. */
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNumItersByType_Auto(SUNNonlinearSolver NLS,
-                                              long int* fp_iters,
-                                              long int* newt_iters);
+SUNErrCode SUNNonlinSolGetTotalNumItersByType_Auto(SUNNonlinearSolver NLS,
+                                                   long int* fp_iters,
+                                                   long int* newt_iters);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetCurIter_Auto(SUNNonlinearSolver NLS, int* iter);

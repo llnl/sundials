@@ -408,7 +408,7 @@ def main(argv=None):
     assert status == CV_SUCCESS
     status = CVodePrintAllStats(cvode.get(), file_ptr, SUN_OUTPUTFORMAT_TABLE)
     assert status == CV_SUCCESS
-    status, nfp, nnewt = SUNNonlinSolGetNumItersByType_Auto(nls)
+    status, nfp, nnewt = SUNNonlinSolGetTotalNumItersByType_Auto(nls)
     assert status == CV_SUCCESS
     print(f"   Auto nonlinear solver iteration totals: newton = {nnewt}, fixed-point = {nfp}")
 

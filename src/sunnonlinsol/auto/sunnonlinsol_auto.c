@@ -351,11 +351,7 @@ SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
 {
   SUNFunctionBegin(NLS->sunctx);
 
-  SUNAssert(newt_to_fp_threshold < SUN_RCONST(0.0) ||
-              newt_to_fp_threshold > SUN_RCONST(0.0),
-            SUN_ERR_ARG_OUTOFRANGE);
-  SUNAssert(fp_to_newt_threshold < SUN_RCONST(0.0) ||
-              fp_to_newt_threshold > SUN_RCONST(0.0),
+  SUNAssert(newt_to_fp_threshold <= SUNNLS_AUTO_DEFAULT_NEWT_TO_FP_THRESHOLD,
             SUN_ERR_ARG_OUTOFRANGE);
 
   AUTO_CONTENT(NLS)->newt_to_fp_threshold =
@@ -406,9 +402,9 @@ SUNErrCode SUNNonlinSolGetNewtonSolver_Auto(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetNumItersByType_Auto(SUNNonlinearSolver NLS,
-                                              long int* fp_iters,
-                                              long int* newt_iters)
+SUNErrCode SUNNonlinSolGetTotalNumItersByType_Auto(SUNNonlinearSolver NLS,
+                                                   long int* fp_iters,
+                                                   long int* newt_iters)
 {
   SUNFunctionBegin(NLS->sunctx);
   SUNAssert(fp_iters, SUN_ERR_ARG_CORRUPT);

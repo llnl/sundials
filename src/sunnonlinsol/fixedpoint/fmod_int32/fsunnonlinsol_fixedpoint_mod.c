@@ -181,6 +181,22 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -210,6 +226,45 @@
 
 
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h"
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+typedef struct {
+    void* data;
+    size_t size;
+} SwigArrayWrapper;
+
+
+SWIGINTERN SwigArrayWrapper SwigArrayWrapper_uninitialized() {
+  SwigArrayWrapper result;
+  result.data = NULL;
+  result.size = 0;
+  return result;
+}
+
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
 
 SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSol_FixedPoint(N_Vector farg1, int const *farg2, void *farg3) {
   SUNNonlinearSolver fresult ;
@@ -305,6 +360,27 @@ SWIGEXPORT int _wrap_FSUNNonlinSolFree_FixedPoint(SUNNonlinearSolver farg1) {
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolSetOptions_FixedPoint(SUNNonlinearSolver farg1, SwigArrayWrapper *farg2, SwigArrayWrapper *farg3, int const *farg4, SwigClassWrapper const *farg5) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  char *arg2 = (char *) 0 ;
+  char *arg3 = (char *) 0 ;
+  int arg4 ;
+  char **arg5 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (char *)(farg2->data);
+  arg3 = (char *)(farg3->data);
+  arg4 = (int)(*farg4);
+  SWIG_check_mutable(*farg5, "char **", "SWIGTYPE_p_p_char", "SUNNonlinSolSetOptions_FixedPoint(SUNNonlinearSolver,char const *,char const *,int,char *[])", return 0);
+  arg5 = (char **)(farg5->cptr);
+  result = (SUNErrCode)SUNNonlinSolSetOptions_FixedPoint(arg1,(char const *)arg2,(char const *)arg3,arg4,arg5);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn_FixedPoint(SUNNonlinearSolver farg1, SUNNonlinSolSysFn farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
@@ -377,6 +453,20 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver farg1, double const *farg2) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  sunrealtype arg2 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (sunrealtype)(*farg2);
+  result = (SUNErrCode)SUNNonlinSolSetConvRateConstant_FixedPoint(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters_FixedPoint(SUNNonlinearSolver farg1, long *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
@@ -428,20 +518,6 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver farg1, 
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolSysFn *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetSysFn_FixedPoint(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver farg1, double *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (sunrealtype *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetConvRate_FixedPoint(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

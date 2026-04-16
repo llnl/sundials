@@ -52,23 +52,93 @@ m.def("SUNNonlinSolSetSwitchingParameters_Auto",
       nb::arg("fp_to_newt_threshold"), nb::arg("fp_to_newt_delay"));
 
 m.def(
-  "SUNNonlinSolGetNumItersByType_Auto",
+  "SUNNonlinSolGetFixedPointSolver_Auto",
+  [](SUNNonlinearSolver NLS)
+    -> std::tuple<SUNErrCode,
+                  std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>>
+  {
+    auto SUNNonlinSolGetFixedPointSolver_Auto_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, SUNNonlinearSolver>
+    {
+      SUNNonlinearSolver fp_nls_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNNonlinSolGetFixedPointSolver_Auto(NLS, &fp_nls_adapt_modifiable);
+      return std::make_tuple(r, fp_nls_adapt_modifiable);
+    };
+    auto SUNNonlinSolGetFixedPointSolver_Auto_adapt_return_type_to_shared_ptr =
+      [&SUNNonlinSolGetFixedPointSolver_Auto_adapt_modifiable_immutable_to_return](
+        SUNNonlinearSolver NLS)
+      -> std::tuple<SUNErrCode,
+                    std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>>
+    {
+      auto lambda_result =
+        SUNNonlinSolGetFixedPointSolver_Auto_adapt_modifiable_immutable_to_return(
+          NLS);
+
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNNonlinearSolver>,
+                                             SUNNonlinearSolverDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return SUNNonlinSolGetFixedPointSolver_Auto_adapt_return_type_to_shared_ptr(
+      NLS);
+  },
+  nb::arg("NLS"), nb::rv_policy::reference);
+
+m.def(
+  "SUNNonlinSolGetNewtonSolver_Auto",
+  [](SUNNonlinearSolver NLS)
+    -> std::tuple<SUNErrCode,
+                  std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>>
+  {
+    auto SUNNonlinSolGetNewtonSolver_Auto_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, SUNNonlinearSolver>
+    {
+      SUNNonlinearSolver newton_nls_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNNonlinSolGetNewtonSolver_Auto(NLS, &newton_nls_adapt_modifiable);
+      return std::make_tuple(r, newton_nls_adapt_modifiable);
+    };
+    auto SUNNonlinSolGetNewtonSolver_Auto_adapt_return_type_to_shared_ptr =
+      [&SUNNonlinSolGetNewtonSolver_Auto_adapt_modifiable_immutable_to_return](
+        SUNNonlinearSolver NLS)
+      -> std::tuple<SUNErrCode,
+                    std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>>
+    {
+      auto lambda_result =
+        SUNNonlinSolGetNewtonSolver_Auto_adapt_modifiable_immutable_to_return(NLS);
+
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNNonlinearSolver>,
+                                             SUNNonlinearSolverDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return SUNNonlinSolGetNewtonSolver_Auto_adapt_return_type_to_shared_ptr(NLS);
+  },
+  nb::arg("NLS"), nb::rv_policy::reference);
+
+m.def(
+  "SUNNonlinSolGetTotalNumItersByType_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
   {
-    auto SUNNonlinSolGetNumItersByType_Auto_adapt_modifiable_immutable_to_return =
+    auto SUNNonlinSolGetTotalNumItersByType_Auto_adapt_modifiable_immutable_to_return =
       [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
     {
       long fp_iters_adapt_modifiable;
       long newt_iters_adapt_modifiable;
 
       SUNErrCode r =
-        SUNNonlinSolGetNumItersByType_Auto(NLS, &fp_iters_adapt_modifiable,
-                                           &newt_iters_adapt_modifiable);
+        SUNNonlinSolGetTotalNumItersByType_Auto(NLS, &fp_iters_adapt_modifiable,
+                                                &newt_iters_adapt_modifiable);
       return std::make_tuple(r, fp_iters_adapt_modifiable,
                              newt_iters_adapt_modifiable);
     };
 
-    return SUNNonlinSolGetNumItersByType_Auto_adapt_modifiable_immutable_to_return(
+    return SUNNonlinSolGetTotalNumItersByType_Auto_adapt_modifiable_immutable_to_return(
       NLS);
   },
   nb::arg("NLS"));

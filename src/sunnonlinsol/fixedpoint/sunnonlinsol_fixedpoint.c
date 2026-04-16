@@ -443,14 +443,6 @@ SUNErrCode SUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
-                                              sunrealtype* crate)
-{
-  /* return the current estimated convergence rate */
-  *crate = FP_CONTENT(NLS)->crate;
-  return SUN_SUCCESS;
-}
-
 SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                                 sunrealtype* delnrm)
 {

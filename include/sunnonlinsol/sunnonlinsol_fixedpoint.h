@@ -149,10 +149,6 @@ SUNErrCode SUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver NLS,
                                            SUNNonlinSolSysFn* SysFn);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
-                                              sunrealtype* crate);
-
-SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                                 sunrealtype* delnrm);
 

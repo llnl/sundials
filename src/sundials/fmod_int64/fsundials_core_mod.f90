@@ -513,6 +513,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: solve
   type(C_FUNPTR), public :: free
   type(C_FUNPTR), public :: setsysfn
+  type(C_FUNPTR), public :: setsysfns
   type(C_FUNPTR), public :: setlsetupfn
   type(C_FUNPTR), public :: setlsolvefn
   type(C_FUNPTR), public :: setctestfn
@@ -538,6 +539,7 @@ module fsundials_core_mod
  public :: FSUNNonlinSolSolve
  public :: FSUNNonlinSolFree
  public :: FSUNNonlinSolSetSysFn
+ public :: FSUNNonlinSolSetSysFns
  public :: FSUNNonlinSolSetLSetupFn
  public :: FSUNNonlinSolSetLSolveFn
  public :: FSUNNonlinSolSetConvTestFn
@@ -2128,6 +2130,16 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetSysFns(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetSysFns") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -5657,6 +5669,25 @@ type(C_FUNPTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = sysfn
 fresult = swigc_FSUNNonlinSolSetSysFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetSysFns(nls, root_fn, fixed_point_fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: root_fn
+type(C_FUNPTR), intent(in), value :: fixed_point_fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_FUNPTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = root_fn
+farg3 = fixed_point_fn
+fresult = swigc_FSUNNonlinSolSetSysFns(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

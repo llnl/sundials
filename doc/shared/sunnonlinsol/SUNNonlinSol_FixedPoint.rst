@@ -174,28 +174,6 @@ user-callable functions.
       calls to *SysFn*.
 
 
-.. c:function:: SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS, sunrealtype *crate)
-
-   This returns the fixed-point solver estimate of the nonlinear convergence
-   rate (``crate``) from the most recent nonlinear iteration. It uses the estimate:
-
-   .. math::
-
-      roc_m = \max\{ crate_const * roc_{m-1}, \|\delta_m\| / \|\delta_{m-1}\| \}
-
-   **Arguments:**
-      * *NLS* -- a SUNNonlinSol object.
-      * *crate* -- the current estimate of the convergence rate.
-
-   **Return value:**
-      * A :c:type:`SUNErrCode`
-
-   **Notes:**
-      This function is intended for users that wish to use ``crate`` in a custom
-      convergence test function and avoid recomputing it. The default value for
-      ``crate_const`` is 0.3.
-
-
 .. c:function:: SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS, sunrealtype beta)
 
    This sets the damping parameter :math:`\beta` to use with Anderson

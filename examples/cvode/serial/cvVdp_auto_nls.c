@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
   retval = CVodeSetNonlinearSolver(cvode_mem, NLS);
   if (check_retval(&retval, "CVodeSetNonlinearSolver", 1)) { return 1; }
 
-  /* Provide Newton linear solver and Jacobian for when Newton is active */
+  /* Provide dense linear solver and Jacobian for when Newton is active */
   SUNMatrix A        = SUNDenseMatrix(NEQ, NEQ, sunctx);
   SUNLinearSolver LS = SUNLinSol_Dense(y, A, sunctx);
   if (check_retval((void*)A, "SUNDenseMatrix", 0)) { return 1; }

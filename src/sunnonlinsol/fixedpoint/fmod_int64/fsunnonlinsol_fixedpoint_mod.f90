@@ -34,16 +34,32 @@ module fsunnonlinsol_fixedpoint_mod
  public :: FSUNNonlinSolInitialize_FixedPoint
  public :: FSUNNonlinSolSolve_FixedPoint
  public :: FSUNNonlinSolFree_FixedPoint
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ type, public :: SWIGTYPE_p_p_char
+  type(SwigClassWrapper), public :: swigdata
+ end type
+ type, bind(C) :: SwigArrayWrapper
+  type(C_PTR), public :: data = C_NULL_PTR
+  integer(C_SIZE_T), public :: size = 0
+ end type
+ public :: FSUNNonlinSolSetOptions_FixedPoint
  public :: FSUNNonlinSolSetSysFn_FixedPoint
  public :: FSUNNonlinSolSetConvTestFn_FixedPoint
  public :: FSUNNonlinSolSetMaxIters_FixedPoint
  public :: FSUNNonlinSolSetDamping_FixedPoint
  public :: FSUNNonlinSolSetCrateConstant_FixedPoint
+ public :: FSUNNonlinSolSetConvRateConstant_FixedPoint
  public :: FSUNNonlinSolGetNumIters_FixedPoint
  public :: FSUNNonlinSolGetCurIter_FixedPoint
  public :: FSUNNonlinSolGetNumConvFails_FixedPoint
  public :: FSUNNonlinSolGetSysFn_FixedPoint
- public :: FSUNNonlinSolGetConvRate_FixedPoint
  public :: FSUNNonlinSolGetUpdateNorm_FixedPoint
 
 ! WRAPPER DECLARATIONS
@@ -107,6 +123,20 @@ type(C_PTR), value :: farg1
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNNonlinSolSetOptions_FixedPoint(farg1, farg2, farg3, farg4, farg5) &
+bind(C, name="_wrap_FSUNNonlinSolSetOptions_FixedPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigarraywrapper
+import :: swigclasswrapper
+type(C_PTR), value :: farg1
+type(SwigArrayWrapper) :: farg2
+type(SwigArrayWrapper) :: farg3
+integer(C_INT), intent(in) :: farg4
+type(SwigClassWrapper) :: farg5
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNNonlinSolSetSysFn_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetSysFn_FixedPoint") &
 result(fresult)
@@ -153,6 +183,15 @@ real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNNonlinSolSetConvRateConstant_FixedPoint(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolSetConvRateConstant_FixedPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNNonlinSolGetNumIters_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNumIters_FixedPoint") &
 result(fresult)
@@ -182,15 +221,6 @@ end function
 
 function swigc_FSUNNonlinSolGetSysFn_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetSysFn_FixedPoint") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetConvRate_FixedPoint(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetConvRate_FixedPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -323,6 +353,51 @@ fresult = swigc_FSUNNonlinSolFree_FixedPoint(farg1)
 swig_result = fresult
 end function
 
+
+subroutine SWIG_string_to_chararray(string, chars, wrap)
+  use, intrinsic :: ISO_C_BINDING
+  character(kind=C_CHAR, len=*), intent(IN) :: string
+  character(kind=C_CHAR), dimension(:), target, allocatable, intent(OUT) :: chars
+  type(SwigArrayWrapper), intent(OUT) :: wrap
+  integer :: i
+
+  allocate(character(kind=C_CHAR) :: chars(len(string) + 1))
+  do i=1,len(string)
+    chars(i) = string(i:i)
+  end do
+  i = len(string) + 1
+  chars(i) = C_NULL_CHAR ! C string compatibility
+  wrap%data = c_loc(chars)
+  wrap%size = len(string)
+end subroutine
+
+function FSUNNonlinSolSetOptions_FixedPoint(nls, nlsid, file_name, argc, argv) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+character(kind=C_CHAR, len=*), target :: nlsid
+character(kind=C_CHAR), dimension(:), allocatable, target :: farg2_chars
+character(kind=C_CHAR, len=*), target :: file_name
+character(kind=C_CHAR), dimension(:), allocatable, target :: farg3_chars
+integer(C_INT), intent(in) :: argc
+class(SWIGTYPE_p_p_char), intent(in) :: argv
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(SwigArrayWrapper) :: farg2 
+type(SwigArrayWrapper) :: farg3 
+integer(C_INT) :: farg4 
+type(SwigClassWrapper) :: farg5 
+
+farg1 = c_loc(nls)
+call SWIG_string_to_chararray(nlsid, farg2_chars, farg2)
+call SWIG_string_to_chararray(file_name, farg3_chars, farg3)
+farg4 = argc
+farg5 = argv%swigdata
+fresult = swigc_FSUNNonlinSolSetOptions_FixedPoint(farg1, farg2, farg3, farg4, farg5)
+swig_result = fresult
+end function
+
 function FSUNNonlinSolSetSysFn_FixedPoint(nls, sysfn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -406,6 +481,22 @@ fresult = swigc_FSUNNonlinSolSetCrateConstant_FixedPoint(farg1, farg2)
 swig_result = fresult
 end function
 
+function FSUNNonlinSolSetConvRateConstant_FixedPoint(nls, crate_const) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+real(C_DOUBLE), intent(in) :: crate_const
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = crate_const
+fresult = swigc_FSUNNonlinSolSetConvRateConstant_FixedPoint(farg1, farg2)
+swig_result = fresult
+end function
+
 function FSUNNonlinSolGetNumIters_FixedPoint(nls, niters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -467,22 +558,6 @@ type(C_PTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = c_loc(sysfn)
 fresult = swigc_FSUNNonlinSolGetSysFn_FixedPoint(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetConvRate_FixedPoint(nls, crate) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-real(C_DOUBLE), dimension(*), target, intent(inout) :: crate
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(crate(1))
-fresult = swigc_FSUNNonlinSolGetConvRate_FixedPoint(farg1, farg2)
 swig_result = fresult
 end function
 

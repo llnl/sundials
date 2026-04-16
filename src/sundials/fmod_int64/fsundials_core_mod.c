@@ -2512,6 +2512,22 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn(SUNNonlinearSolver farg1, SUNNonlinSo
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFns(SUNNonlinearSolver farg1, SUNNonlinSolSysFn farg2, SUNNonlinSolSysFn farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
+  SUNNonlinSolSysFn arg3 = (SUNNonlinSolSysFn) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolSysFn)(farg2);
+  arg3 = (SUNNonlinSolSysFn)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetSysFns(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNNonlinSolSetLSetupFn(SUNNonlinearSolver farg1, SUNNonlinSolLSetupFn farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
