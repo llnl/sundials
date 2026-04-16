@@ -167,9 +167,9 @@ int main(int argc, char* argv[])
   printf("   -x^2   + 5y     - cos(z) - 2i = 0\n");
   printf("   -e^-x  - y      + 6z     - 3  = 0\n");
   printf("Analytic solution in each bin:\n");
-  printf("    x = %f  + %fI\n", creal(XTRUE), cimag(XTRUE));
-  printf("    y = %f  + %fI\n", creal(YTRUE), cimag(YTRUE));
-  printf("    z = %f  + %fI\n", creal(ZTRUE), cimag(ZTRUE));
+  printf("    x = %f  + %fI\n", SUN_CREAL(XTRUE), SUN_CIMAG(XTRUE));
+  printf("    y = %f  + %fI\n", SUN_CREAL(YTRUE), SUN_CIMAG(YTRUE));
+  printf("    z = %f  + %fI\n", SUN_CREAL(ZTRUE), SUN_CIMAG(ZTRUE));
   printf("Solution method: Newton\n");
   printf("    tolerance     = %" GSYM "\n", uopt->tol);
   printf("    max iters     = %ld\n", uopt->maxiter);
@@ -385,21 +385,21 @@ static int check_ans(N_Vector u, sunrealtype tol)
   for (j = 0; j < NX; j++)
   {
     /* solution error */
-    exR = ABS(creal(data[3 * j + 0]) - creal(XTRUE));
-    eyR = ABS(creal(data[3 * j + 1]) - creal(YTRUE));
-    ezR = ABS(creal(data[3 * j + 2]) - creal(ZTRUE));
+    exR = ABS(SUN_CREAL(data[3 * j + 0]) - SUN_CREAL(XTRUE));
+    eyR = ABS(SUN_CREAL(data[3 * j + 1]) - SUN_CREAL(YTRUE));
+    ezR = ABS(SUN_CREAL(data[3 * j + 2]) - SUN_CREAL(ZTRUE));
 
-    exI = ABS(cimag(data[3 * j + 0]) - cimag(XTRUE));
-    eyI = ABS(cimag(data[3 * j + 1]) - cimag(YTRUE));
-    ezI = ABS(cimag(data[3 * j + 2]) - cimag(ZTRUE));
+    exI = ABS(SUN_CIMAG(data[3 * j + 0]) - SUN_CIMAG(XTRUE));
+    eyI = ABS(SUN_CIMAG(data[3 * j + 1]) - SUN_CIMAG(YTRUE));
+    ezI = ABS(SUN_CIMAG(data[3 * j + 2]) - SUN_CIMAG(ZTRUE));
 
     /* print the solution and error in the first cell */
     if (j == 0)
     {
       printf("Computed solution (first cell):\n");
-      printf("    x = %f + %fI\n", creal(data[0]), cimag(data[0]));
-      printf("    y = %f + %fI\n", creal(data[1]), cimag(data[1]));
-      printf("    z = %f + %fI\n", creal(data[2]), cimag(data[2]));
+      printf("    x = %f + %fI\n", SUN_CREAL(data[0]), SUN_CIMAG(data[0]));
+      printf("    y = %f + %fI\n", SUN_CREAL(data[1]), SUN_CIMAG(data[1]));
+      printf("    z = %f + %fI\n", SUN_CREAL(data[2]), SUN_CIMAG(data[2]));
 
       printf("Solution error (first cell):\n");
       printf("    ex = %e + %eI\n", exR, exI);

@@ -160,9 +160,9 @@ int main(int argc, char* argv[])
   printf("   -x^2   + 5y     - cos(z) - 2i = 0\n");
   printf("   -e^-x  - y      + 6z     - 3  = 0\n");
   printf("Analytic solution:\n");
-  printf("    x = %f  + %fI\n", creal(XTRUE), cimag(XTRUE));
-  printf("    y = %f  + %fI\n", creal(YTRUE), cimag(YTRUE));
-  printf("    z = %f  + %fI\n", creal(ZTRUE), cimag(ZTRUE));
+  printf("    x = %f  + %fI\n", SUN_CREAL(XTRUE), SUN_CIMAG(XTRUE));
+  printf("    y = %f  + %fI\n", SUN_CREAL(YTRUE), SUN_CIMAG(YTRUE));
+  printf("    z = %f  + %fI\n", SUN_CREAL(ZTRUE), SUN_CIMAG(ZTRUE));
   printf("Solution method: Anderson accelerated fixed point iteration.\n");
   printf("    tolerance    = %" GSYM "\n", uopt->tol);
   printf("    max iters    = %ld\n", uopt->maxiter);
