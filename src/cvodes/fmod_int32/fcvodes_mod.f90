@@ -126,6 +126,7 @@ module fcvodes_mod
  public :: FCVodeSetStopTime
  public :: FCVodeSetInterpolateStopTime
  public :: FCVodeClearStopTime
+ public :: FCVodeSkipAdaptStopTime
  public :: FCVodeSetUserData
  public :: FCVodeSetEtaFixedStepBounds
  public :: FCVodeSetEtaMaxFirstStep
@@ -657,6 +658,15 @@ bind(C, name="_wrap_FCVodeClearStopTime") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
+integer(C_INT) :: fresult
+end function
+
+function swigc_FCVodeSkipAdaptStopTime(farg1, farg2) &
+bind(C, name="_wrap_FCVodeSkipAdaptStopTime") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -3299,6 +3309,22 @@ type(C_PTR) :: farg1
 
 farg1 = cvode_mem
 fresult = swigc_FCVodeClearStopTime(farg1)
+swig_result = fresult
+end function
+
+function FCVodeSkipAdaptStopTime(cvode_mem, skipadapttstop) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: cvode_mem
+integer(C_INT), intent(in) :: skipadapttstop
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = cvode_mem
+farg2 = skipadapttstop
+fresult = swigc_FCVodeSkipAdaptStopTime(farg1, farg2)
 swig_result = fresult
 end function
 
