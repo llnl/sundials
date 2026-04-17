@@ -282,8 +282,13 @@ SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger_ptr
   logger->python      = NULL;
 
   /* use default routines */
+#if SUNDIALS_LOGGING_LEVEL > 0
   logger->queue_msg = sunQueueLogMessage;
   logger->flush_msg = sunFlushLogMessage;
+#else
+  logger->queue_msg = NULL;
+  logger->flush_msg = NULL;
+#endif
 
   /* set the output file handles */
   logger->filenames  = NULL;
