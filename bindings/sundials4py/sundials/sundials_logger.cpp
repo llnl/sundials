@@ -57,7 +57,7 @@ void bind_sunlogger(nb::module_& m)
        std::function<std::remove_pointer_t<SUNLoggerFlushMsgFn>> flush_fn) -> SUNErrCode
     {
       if (!logger->python) { logger->python = new SUNLoggerFunctionTable; }
-      auto fntable = static_cast<SUNLoggerFunctionTable*>(logger->python);
+      auto fntable       = static_cast<SUNLoggerFunctionTable*>(logger->python);
       fntable->queue_msg = nb::cast(queue_fn);
       fntable->flush_msg = nb::cast(flush_fn);
       if (queue_fn && flush_fn)
@@ -75,7 +75,8 @@ void bind_sunlogger(nb::module_& m)
       }
       else
       {
-        return SUNLogger_SetQueueAndFlushMsgFns(logger, nullptr, nullptr, nullptr);
+        return SUNLogger_SetQueueAndFlushMsgFns(logger, nullptr, nullptr,
+                                                nullptr);
       }
     },
     nb::arg("logger"), nb::arg("queue_fn").none(), nb::arg("flush_fn").none());
@@ -87,4 +88,3 @@ extern "C" void SUNLoggerFunctionTable_Destroy(void* ptr)
 {
   delete static_cast<SUNLoggerFunctionTable*>(ptr);
 }
-

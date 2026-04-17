@@ -57,7 +57,8 @@ void SUNLoggerFunctionTable_Destroy(void* ptr);
   :return: void
 */
 
-static void sunCreateLogPayload(int rank, const char* txt, va_list args, char** payload)
+static void sunCreateLogPayload(int rank, const char* txt, va_list args,
+                                char** payload)
 {
   int msg_length = sunvasnprintf(payload, txt, args);
   if (msg_length < 0)
@@ -87,11 +88,12 @@ static void sunCreateLogPayload(int rank, const char* txt, va_list args, char** 
 */
 
 static void sunCreateLogMessage(const char* prefix, int rank, const char* scope,
-                                const char* label, const char* payload, char** log_msg)
+                                const char* label, const char* payload,
+                                char** log_msg)
 {
   int msg_length = snprintf(NULL, 0, "[%s][rank %d][%s][%s] %s\n", prefix, rank,
                             scope, label, payload);
-  *log_msg = (char*)malloc(msg_length + 1);
+  *log_msg       = (char*)malloc(msg_length + 1);
   snprintf(*log_msg, msg_length + 1, "[%s][rank %d][%s][%s] %s\n", prefix, rank,
            scope, label, payload);
 }
@@ -150,8 +152,9 @@ static sunbooleantype sunLoggerIsOutputRank(SUNDIALS_MAYBE_UNUSED SUNLogger logg
   return retval;
 }
 
-static SUNErrCode sunQueueLogMessage(SUNLogger logger, SUNLogLevel lvl, const char* prefix,
-                                     int rank, const char* scope, const char* label,
+static SUNErrCode sunQueueLogMessage(SUNLogger logger, SUNLogLevel lvl,
+                                     const char* prefix, int rank,
+                                     const char* scope, const char* label,
                                      const char* payload,
                                      SUNDIALS_MAYBE_UNUSED void* content)
 {
@@ -161,22 +164,19 @@ static SUNErrCode sunQueueLogMessage(SUNLogger logger, SUNLogLevel lvl, const ch
 
   switch (lvl)
   {
-    case (SUN_LOGLEVEL_DEBUG):
-      if (logger->debug_fp) { fprintf(logger->debug_fp, "%s", log_msg); }
-      break;
-    case (SUN_LOGLEVEL_WARNING):
-      if (logger->warning_fp)
-      {
-        fprintf(logger->warning_fp, "%s", log_msg);
-      }
-      break;
-    case (SUN_LOGLEVEL_INFO):
-      if (logger->info_fp) { fprintf(logger->info_fp, "%s", log_msg); }
-      break;
-    case (SUN_LOGLEVEL_ERROR):
-      if (logger->error_fp) { fprintf(logger->error_fp, "%s", log_msg); }
-      break;
-    default: retval = SUN_ERR_UNREACHABLE;
+  case (SUN_LOGLEVEL_DEBUG):
+    if (logger->debug_fp) { fprintf(logger->debug_fp, "%s", log_msg); }
+    break;
+  case (SUN_LOGLEVEL_WARNING):
+    if (logger->warning_fp) { fprintf(logger->warning_fp, "%s", log_msg); }
+    break;
+  case (SUN_LOGLEVEL_INFO):
+    if (logger->info_fp) { fprintf(logger->info_fp, "%s", log_msg); }
+    break;
+  case (SUN_LOGLEVEL_ERROR):
+    if (logger->error_fp) { fprintf(logger->error_fp, "%s", log_msg); }
+    break;
+  default: retval = SUN_ERR_UNREACHABLE;
   }
 
   free(log_msg);
@@ -190,25 +190,25 @@ static SUNErrCode sunFlushLogMessage(SUNLogger logger, SUNLogLevel lvl,
   SUNErrCode retval = SUN_SUCCESS;
   switch (lvl)
   {
-    case (SUN_LOGLEVEL_DEBUG):
-      if (logger->debug_fp) { fflush(logger->debug_fp); }
-      break;
-    case (SUN_LOGLEVEL_WARNING):
-      if (logger->warning_fp) { fflush(logger->warning_fp); }
-      break;
-    case (SUN_LOGLEVEL_INFO):
-      if (logger->info_fp) { fflush(logger->info_fp); }
-      break;
-    case (SUN_LOGLEVEL_ERROR):
-      if (logger->error_fp) { fflush(logger->error_fp); }
-      break;
-    case (SUN_LOGLEVEL_ALL):
-      if (logger->debug_fp) { fflush(logger->debug_fp); }
-      if (logger->warning_fp) { fflush(logger->warning_fp); }
-      if (logger->info_fp) { fflush(logger->info_fp); }
-      if (logger->error_fp) { fflush(logger->error_fp); }
-      break;
-    default: retval = SUN_ERR_UNREACHABLE;
+  case (SUN_LOGLEVEL_DEBUG):
+    if (logger->debug_fp) { fflush(logger->debug_fp); }
+    break;
+  case (SUN_LOGLEVEL_WARNING):
+    if (logger->warning_fp) { fflush(logger->warning_fp); }
+    break;
+  case (SUN_LOGLEVEL_INFO):
+    if (logger->info_fp) { fflush(logger->info_fp); }
+    break;
+  case (SUN_LOGLEVEL_ERROR):
+    if (logger->error_fp) { fflush(logger->error_fp); }
+    break;
+  case (SUN_LOGLEVEL_ALL):
+    if (logger->debug_fp) { fflush(logger->debug_fp); }
+    if (logger->warning_fp) { fflush(logger->warning_fp); }
+    if (logger->info_fp) { fflush(logger->info_fp); }
+    if (logger->error_fp) { fflush(logger->error_fp); }
+    break;
+  default: retval = SUN_ERR_UNREACHABLE;
   }
   return retval;
 }
@@ -482,7 +482,7 @@ SUNErrCode SUNLogger_GetDebugFile(SUNLogger logger, FILE** debug_fp)
 SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger,
                                             SUNLoggerQueueMsgFn queue_msg,
                                             SUNLoggerFlushMsgFn flush_msg,
-                                            void *lptr)
+                                            void* lptr)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 #if SUNDIALS_LOGGING_LEVEL > 0
@@ -537,7 +537,8 @@ SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,
         sunCreateLogPayload(rank, msg_txt, args, &payload);
         va_end(args);
 
-        retval = logger->queue_msg(logger, lvl, prefix, rank, scope, label, payload, logger->content);
+        retval = logger->queue_msg(logger, lvl, prefix, rank, scope, label,
+                                   payload, logger->content);
 
         free(payload);
       }
@@ -569,7 +570,10 @@ SUNErrCode SUNLogger_Flush(SUNLogger logger, SUNLogLevel lvl)
   /* Default implementation */
   if (sunLoggerIsOutputRank(logger, NULL))
   {
-    if (logger->flush_msg) { retval = logger->flush_msg(logger, lvl, logger->content); }
+    if (logger->flush_msg)
+    {
+      retval = logger->flush_msg(logger, lvl, logger->content);
+    }
   }
 #else
   /* silence warnings when all logging is disabled */

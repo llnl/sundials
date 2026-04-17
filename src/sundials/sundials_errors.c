@@ -101,8 +101,8 @@ void SUNAbortErrHandlerFn(int line, const char* func, const char* file,
 }
 
 static void sunCreateLogMessage(SUNLogLevel lvl, int rank, const char* scope,
-                                const char* label, const char* txt, va_list args,
-                                char** log_msg)
+                                const char* label, const char* txt,
+                                va_list args, char** log_msg)
 {
   const char* prefix;
   char* formatted_txt;

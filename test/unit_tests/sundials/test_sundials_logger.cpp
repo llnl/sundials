@@ -381,8 +381,8 @@ static SUNErrCode CustomQueueMsg(SUNLogger logger, SUNLogLevel lvl,
 
   // Format the log message
   char log_msg[1024];
-  snprintf(log_msg, sizeof(log_msg), "[%s][rank %d][%s][%s] %s\n", prefix,
-           rank, scope, label, payload);
+  snprintf(log_msg, sizeof(log_msg), "[%s][rank %d][%s][%s] %s\n", prefix, rank,
+           scope, label, payload);
 
   // Write to file
   if (data->file_fp) { fprintf(data->file_fp, "%s", log_msg); }
@@ -394,8 +394,7 @@ static SUNErrCode CustomQueueMsg(SUNLogger logger, SUNLogLevel lvl,
 }
 
 // Custom flush function that flushes both file and stdout
-static SUNErrCode CustomFlushMsg(SUNLogger logger, SUNLogLevel lvl,
-                                 void* content)
+static SUNErrCode CustomFlushMsg(SUNLogger logger, SUNLogLevel lvl, void* content)
 {
   CustomLogData* data = static_cast<CustomLogData*>(content);
   if (!data) { return SUN_ERR_ARG_CORRUPT; }
