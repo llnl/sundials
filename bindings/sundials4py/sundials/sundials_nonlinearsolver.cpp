@@ -100,24 +100,23 @@ void bind_sunnonlinearsolver(nb::module_& m)
     "SUNNonlinSolSetSysFns",
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolSysFn>> RootFn,
-       std::function<std::remove_pointer_t<SUNNonlinSolSysFn>> FixedPointFn)
-      -> SUNErrCode
+       std::function<std::remove_pointer_t<SUNNonlinSolSysFn>> FixedPointFn) -> SUNErrCode
     {
       if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->rootsysfn       = nb::cast(RootFn);
       fntable->fixedpointsysfn = nb::cast(FixedPointFn);
-      return SUNNonlinSolSetSysFns(
-        NLS,
-        RootFn ? static_cast<SUNNonlinSolSysFn>(
-                   sunnonlinearsolver_rootsysfn_wrapper)
-               : nullptr,
-        FixedPointFn ? static_cast<SUNNonlinSolSysFn>(
-                         sunnonlinearsolver_fixedpointsysfn_wrapper)
-                     : nullptr);
+      return SUNNonlinSolSetSysFns(NLS,
+                                   RootFn
+                                     ? static_cast<SUNNonlinSolSysFn>(
+                                         sunnonlinearsolver_rootsysfn_wrapper)
+                                     : nullptr,
+                                   FixedPointFn
+                                     ? static_cast<SUNNonlinSolSysFn>(
+                                         sunnonlinearsolver_fixedpointsysfn_wrapper)
+                                     : nullptr);
     },
-    nb::arg("NLS"), nb::arg("RootFn").none(),
-    nb::arg("FixedPointFn").none());
+    nb::arg("NLS"), nb::arg("RootFn").none(), nb::arg("FixedPointFn").none());
 
   m.def(
     "SUNNonlinSolSetLSetupFn",

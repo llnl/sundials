@@ -1199,7 +1199,9 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS,
   /* compute the norm of the correction */
   if (SUNNonlinSolGetUpdateNorm(NLS, &delnrm) != SUN_SUCCESS)
   {
-    delnrm = N_VWrmsNorm(del, ewt);
+    arkProcessError(ark_mem, ARK_NLS_FAIL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NLS_FAIL);
+    return (ARK_NLS_FAIL);
   }
 
   /* get the current nonlinear solver iteration count */

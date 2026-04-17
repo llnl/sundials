@@ -132,11 +132,10 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
              "solver = Auto, active = %s",
              SUNNonlinSolAutoType_ToString(AUTO_CONTENT(NLS)->active_solver_type));
 
-  AUTO_CONTENT(NLS)->fp_solver->getupdatenormfn    = NLS->getupdatenormfn;
-  AUTO_CONTENT(NLS)->fp_solver->getupdatenorm_data = NLS->getupdatenorm_data;
+  AUTO_CONTENT(NLS)->fp_solver->getupdatenormfn     = NLS->getupdatenormfn;
+  AUTO_CONTENT(NLS)->fp_solver->getupdatenorm_data  = NLS->getupdatenorm_data;
   AUTO_CONTENT(NLS)->newton_solver->getupdatenormfn = NLS->getupdatenormfn;
-  AUTO_CONTENT(NLS)->newton_solver->getupdatenorm_data =
-    NLS->getupdatenorm_data;
+  AUTO_CONTENT(NLS)->newton_solver->getupdatenorm_data = NLS->getupdatenorm_data;
 
   if (AUTO_CONTENT(NLS)->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {

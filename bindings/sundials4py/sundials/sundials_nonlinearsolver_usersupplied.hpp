@@ -52,8 +52,7 @@ inline int sunnonlinearsolver_rootsysfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<SUNNonlinSolSysFn>, SUNNonlinearSolverFunctionTable,
-    1>(&SUNNonlinearSolverFunctionTable::rootsysfn,
-       std::forward<Args>(args)...);
+    1>(&SUNNonlinearSolverFunctionTable::rootsysfn, std::forward<Args>(args)...);
 }
 
 template<typename... Args>

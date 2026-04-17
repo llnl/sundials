@@ -250,7 +250,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     SUNCheckLastErr();
 
     /* compute the norm of delta, but save the previous value for computing a rate of convergence */
-    sunrealtype delnrmp     = FP_CONTENT(NLS)->delnrm;
+    sunrealtype delnrmp = FP_CONTENT(NLS)->delnrm;
     if (NLS->getupdatenormfn)
     {
       retval = NLS->getupdatenormfn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm),

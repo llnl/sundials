@@ -390,10 +390,8 @@ static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
 }
 
 static SUNErrCode cvNlsUpdateNormSensStg(SUNDIALS_MAYBE_UNUSED N_Vector ycorStg,
-                                         N_Vector deltaStg,
-                                         N_Vector ewtStg,
-                                         sunrealtype* delnrm,
-                                         void* cvode_mem)
+                                         N_Vector deltaStg, N_Vector ewtStg,
+                                         sunrealtype* delnrm, void* cvode_mem)
 {
   CVodeMem cv_mem;
   N_Vector *deltaS, *ewtS;
