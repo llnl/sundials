@@ -32,6 +32,8 @@ using namespace sundials::experimental;
 struct SUNNonlinearSolverFunctionTable
 {
   nb::object sysfn;
+  nb::object rootsysfn;
+  nb::object fixedpointsysfn;
   nb::object lsetupfn;
   nb::object lsolvefn;
   nb::object convtestfn;
@@ -43,6 +45,24 @@ inline int sunnonlinearsolver_sysfn_wrapper(Args... args)
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<SUNNonlinSolSysFn>, SUNNonlinearSolverFunctionTable,
     1>(&SUNNonlinearSolverFunctionTable::sysfn, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline int sunnonlinearsolver_rootsysfn_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNNonlinSolSysFn>, SUNNonlinearSolverFunctionTable,
+    1>(&SUNNonlinearSolverFunctionTable::rootsysfn,
+       std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline int sunnonlinearsolver_fixedpointsysfn_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNNonlinSolSysFn>, SUNNonlinearSolverFunctionTable,
+    1>(&SUNNonlinearSolverFunctionTable::fixedpointsysfn,
+       std::forward<Args>(args)...);
 }
 
 using SUNNonlinSolLSetupStdFn = std::tuple<int, sunbooleantype>(sunbooleantype jbad,
