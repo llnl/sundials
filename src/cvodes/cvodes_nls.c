@@ -315,6 +315,7 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
   int m, retval;
   sunrealtype del;
   sunrealtype dcon;
+  sunbooleantype use_solver_norm;
 
   if (cvode_mem == NULL)
   {
@@ -324,7 +325,10 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the correction */
-  if (SUNNonlinSolGetUpdateNorm(NLS, &del) != SUN_SUCCESS)
+  use_solver_norm = !(cv_mem->sens_solve ||
+                      (cv_mem->cv_sensi && (cv_mem->cv_ism == CV_SIMULTANEOUS)));
+
+  if (!use_solver_norm || SUNNonlinSolGetUpdateNorm(NLS, &del) != SUN_SUCCESS)
   {
     del = N_VWrmsNorm(delta, ewt);
   }
