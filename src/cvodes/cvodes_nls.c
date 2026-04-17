@@ -336,7 +336,8 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
   /* compute the norm of the correction */
   if (SUNNonlinSolGetUpdateNorm(NLS, &del) != SUN_SUCCESS)
   {
-    del = N_VWrmsNorm(delta, ewt);
+    cvProcessError(cv_mem, CV_NLS_FAIL , __LINE__, __func__, __FILE__, MSGCV_NLS_FAIL);
+    return (CV_MEM_NULL);
   }
 
   /* get the current nonlinear solver iteration count */
