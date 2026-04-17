@@ -7098,10 +7098,7 @@ static int cvNls(CVodeMem cv_mem, int nflag)
 
     return (flag);
   }
-  else if (flag == SUN_NLS_SWITCH)
-  {
-    flag = SUN_NLS_CONV_RECVR;
-  }
+  else if (flag == SUN_NLS_SWITCH) { flag = SUN_NLS_CONV_RECVR; }
 
   /* solve successful */
 

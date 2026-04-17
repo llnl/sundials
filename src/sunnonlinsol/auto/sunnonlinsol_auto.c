@@ -205,10 +205,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
   else
   {
     sunrealtype stiffr;
-    if (SUNNonlinSolGetStiffr_Newton(C->newton_solver, &stiffr) != SUN_SUCCESS)
-    {
-      return SUN_ERR_ARG_CORRUPT;
-    }
+    SUNCheckCall(SUNNonlinSolGetStiffr_Newton(C->newton_solver, &stiffr));
 
     sunbooleantype contraction = stiffr < C->newt_to_fp_threshold;
     sunbooleantype dont_delay = C->num_solves_since_switch >= C->newt_to_fp_delay;

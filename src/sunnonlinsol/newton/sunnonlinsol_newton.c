@@ -85,19 +85,19 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   NLS->content = content;
 
   /* Fill general content */
-  content->Sys        = NULL;
-  content->LSetup     = NULL;
-  content->LSolve     = NULL;
-  content->CTest      = NULL;
-  content->jcur       = SUNFALSE;
-  content->curiter    = 0;
-  content->maxiters   = 3;
-  content->niters     = 0;
-  content->nconvfails = 0;
+  content->Sys            = NULL;
+  content->LSetup         = NULL;
+  content->LSolve         = NULL;
+  content->CTest          = NULL;
+  content->jcur           = SUNFALSE;
+  content->curiter        = 0;
+  content->maxiters       = 3;
+  content->niters         = 0;
+  content->nconvfails     = 0;
   content->compute_stiffr = SUNFALSE;
-  content->stiffr     = SUN_RCONST(0.0);
-  content->delnrm     = SUN_RCONST(0.0);
-  content->ctest_data = NULL;
+  content->stiffr         = SUN_RCONST(0.0);
+  content->delnrm         = SUN_RCONST(0.0);
+  content->ctest_data     = NULL;
 
   /* Fill allocatable content */
   content->delta = N_VClone(y);

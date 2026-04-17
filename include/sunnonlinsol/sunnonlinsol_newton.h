@@ -54,8 +54,8 @@ struct _SUNNonlinearSolverContent_Newton
   long int nconvfails; /* total number of convergence failures across all solves
                         */
   sunbooleantype compute_stiffr; /* enable stiffness-metric updates           */
-  sunrealtype stiffr;  /* ratio ||F_m|| / || delta_m || to monitor stiffness */
-  sunrealtype delnrm;  /* wrms norm of delta from last iteration            */
+  sunrealtype stiffr; /* ratio ||F_m|| / || delta_m || to monitor stiffness */
+  sunrealtype delnrm; /* wrms norm of delta from last iteration            */
   void* ctest_data; /* data to pass to convergence test function              */
 };
 
