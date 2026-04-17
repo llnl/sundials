@@ -517,9 +517,12 @@ static SUNErrCode setFromCommandLine_Auto(SUNNonlinearSolver NLS,
         free(prefix);
         return SUN_ERR_ARG_INCOMPATIBLE;
       }
-      retval = SUNNonlinSolSetSwitchingParameters_Auto(
-        NLS, (sunrealtype)atof(argv[idx + 1]), atol(argv[idx + 2]),
-        (sunrealtype)atof(argv[idx + 3]), atol(argv[idx + 4]));
+      retval =
+        SUNNonlinSolSetSwitchingParameters_Auto(NLS,
+                                                (sunrealtype)atof(argv[idx + 1]),
+                                                atol(argv[idx + 2]),
+                                                (sunrealtype)atof(argv[idx + 3]),
+                                                atol(argv[idx + 4]));
       if (retval != SUN_SUCCESS)
       {
         free(prefix);
