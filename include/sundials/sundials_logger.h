@@ -64,7 +64,7 @@ SUNErrCode SUNLogger_SetErrorFile(SUNLogger logger, FILE* error_fp);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_GetErrorFile(SUNLogger logger,
-                                  FILE** error_fp); // nb::rv_policy::reference
+                                  FILE** error_fp_ptr); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
@@ -75,7 +75,7 @@ SUNErrCode SUNLogger_SetWarningFile(SUNLogger logger, FILE* warning_fp);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_GetWarningFile(SUNLogger logger,
-                                    FILE** warning_fp); // nb::rv_policy::reference
+                                    FILE** warning_fp_ptr); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger,
@@ -86,7 +86,7 @@ SUNErrCode SUNLogger_SetDebugFile(SUNLogger logger, FILE* debug_fp);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_GetDebugFile(SUNLogger logger,
-                                  FILE** debug_fp); // nb::rv_policy::reference
+                                  FILE** debug_fp_ptr); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename);
@@ -96,7 +96,7 @@ SUNErrCode SUNLogger_SetInfoFile(SUNLogger logger, FILE* info_fp);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_GetInfoFile(SUNLogger logger,
-                                 FILE** info_fp); // nb::rv_policy::reference
+                                 FILE** info_fp_ptr); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger,
