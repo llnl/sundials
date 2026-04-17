@@ -203,7 +203,7 @@ user-callable functions.
    **Arguments:**
      * *NLS* -- a SUNNonlinSol object.
      * *crate_const* -- the convergence rate constant. Values must satisfy
-       :math:`crate\\_const \\le 1`. A negative value resets the default.
+       :math:`crate\_const \leq 1`. A negative value resets the default.
 
    **Return value:**
       * A :c:type:`SUNErrCode`
