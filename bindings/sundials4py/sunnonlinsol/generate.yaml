@@ -31,6 +31,7 @@ modules:
       - "^SUNNonlinSolSolve_.*"
       - "^SUNNonlinSolFree_.*"
       - "^SUNNonlinSolSetSysFn_.*"
+      - "^SUNNonlinSolSetSysFns_.*"
       - "^SUNNonlinSolSetLSetupFn_.*"
       - "^SUNNonlinSolSetLSolveFn_.*"
       - "^SUNNonlinSolSetConvTestFn_.*"
@@ -57,6 +58,3 @@ modules:
       path: sunnonlinsol/sunnonlinsol_auto_generated.hpp
       headers:
       - ../../include/sunnonlinsol/sunnonlinsol_auto.h
-      fn_exclude_by_name__regex:
-      # We do not support getting a function pointer back to Python
-      - "^SUNNonlinSolSetSysFns_Auto"
