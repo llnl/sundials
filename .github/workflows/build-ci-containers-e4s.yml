@@ -32,7 +32,7 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v7.1.0
       with:
-          context: "./docker/sundials-ci/e4s-base"
+          context: "./scripts/docker/sundials-ci/e4s-base"
           build-args: e4s_version=22.05
           push: true
           tags: ghcr.io/llnl/sundials-ci-e4s-base:latest, ghcr.io/llnl/sundials-ci-e4s-base:e4s-22.05
@@ -62,7 +62,7 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v7.1.0
       with:
-          context: "./docker/sundials-ci/e4s-quarterly"
+          context: "./scripts/docker/sundials-ci/e4s-quarterly"
           build-args: spack_yaml=./int${{ matrix.indexsize }}-${{ matrix.precision }}/spack.yaml
           push: true
           tags: ghcr.io/llnl/sundials-ci-int${{ matrix.indexsize }}-${{ matrix.precision }}:latest, ghcr.io/llnl/sundials-ci-int${{ matrix.indexsize }}-${{ matrix.precision }}:e4s-22.05
