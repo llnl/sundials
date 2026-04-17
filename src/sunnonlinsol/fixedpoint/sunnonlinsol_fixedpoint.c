@@ -484,8 +484,8 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
   }
   else if (iter <= maa)
   { /* another iteration before we've reached maa, add a column to the QR factorization */
-    SUNCheckCall(SUNQRAdd_MGS(Q, R, df[i_pt], maa, maa, qr_data));
-    ipt_map[m] = m;
+    SUNCheckCall(SUNQRAdd_MGS(Q, R, df[i_pt], m, maa, qr_data));
+    for (i = 0; i < iter; i++) { ipt_map[i] = i; }
   }
   else
   { /* we've filled the acceleration subspace, so start recycling */
@@ -545,7 +545,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
     }
 
     /* add the new df vector */
-    SUNCheckCall(SUNQRAdd_MGS(Q, R, df[i_pt], maa, maa, qr_data));
+    SUNCheckCall(SUNQRAdd_MGS(Q, R, df[i_pt], maa - 1, maa, qr_data));
 
     /* update the iteration map */
     j = 0;

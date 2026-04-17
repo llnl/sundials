@@ -1,6 +1,7 @@
 /*
  * -----------------------------------------------------------------
  * Programmer(s): Daniel Reynolds, Ashley Crawford, Sylvia Amihere @ UMBC
+ *                Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
