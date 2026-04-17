@@ -449,10 +449,6 @@ TEST(SUNLoggerTest, CustomQueueAndFlushToFileAndStdout)
   EXPECT_TRUE(stdout_output.find("test_scope") != std::string::npos);
   EXPECT_TRUE(stdout_output.find("test_label") != std::string::npos);
 
-  // Clean up logger
-  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
-  ASSERT_EQ(logger, nullptr);
-
   // Check file contents
   ASSERT_EQ(std::fclose(fp), 0);
   std::string file_output = ReadFile(logfile);
@@ -464,7 +460,28 @@ TEST(SUNLoggerTest, CustomQueueAndFlushToFileAndStdout)
 
   // Verify file and stdout contents match
   EXPECT_EQ(file_output, stdout_output);
-
   (void)std::remove(logfile.c_str());
+
+  // Test restoring default behavior by passing NULL values
+  ASSERT_EQ(SUNLogger_SetQueueAndFlushMsgFns(logger, NULL, NULL, NULL),
+            SUN_SUCCESS);
+
+  // Capture stderr to verify default behavior (errors go to stderr)
+  testing::internal::CaptureStderr();
+
+  // Queue and flush another error message
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "default_scope",
+                               "default_label", "default error message"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+
+  // Check that message appears on stderr (default behavior)
+  std::string stderr_output = testing::internal::GetCapturedStderr();
+  EXPECT_EQ(CountLines(stderr_output), 1);
+  EXPECT_TRUE(stderr_output.find("default error message") != std::string::npos);
+
+  // Clean up logger
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  ASSERT_EQ(logger, nullptr);
 #endif
 }
