@@ -9,6 +9,12 @@
 /tarballs
 /thirdparty
 
+# Agent symlinks
+# links to .agents
+.claude
+# links to AGENTS.md
+CLAUDE.md
+
 # IDE/tool created
 /autom4te.cache
 /.settings
