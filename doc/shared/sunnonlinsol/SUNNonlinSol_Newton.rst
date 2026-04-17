@@ -169,7 +169,7 @@ user-callable functions.
 .. c:function:: SUNErrCode SUNNonlinSolSetComputeStiffr_Newton(SUNNonlinearSolver NLS, sunbooleantype onoff)
 
    This enables or disables the additional residual norm evaluation used to
-   compute the Newton stiffness metric ``stiffr``.
+   compute the stiffness ratio ``stiffr`` from :cite:p:`norsett1986switching`.
 
    **Arguments:**
       * *NLS* -- a SUNNonlinSol object.
@@ -180,13 +180,11 @@ user-callable functions.
       * A :c:type:`SUNErrCode`
 
    **Notes:**
-      By default ``stiffr`` computation is disabled. The
-      :c:func:`SUNNonlinSol_Auto` module enables it on the wrapped Newton
-      solver so it can evaluate the switching criterion.
+      By default ``stiffr`` computation is disabled.
 
 .. c:function:: SUNErrCode SUNNonlinSolGetStiffr_Newton(SUNNonlinearSolver NLS, sunrealtype *stiffr)
 
-   This returns the most recently computed Newton stiffness metric.
+   This returns the most recently computed stiffness ratio.
 
    **Arguments:**
       * *NLS* -- a SUNNonlinSol object.
