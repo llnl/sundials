@@ -363,6 +363,7 @@ TEST(SUNLoggerTest, SetDebugFileAndDisableWithNull)
 #endif
 }
 
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_ERROR
 // User-defined data structure for custom log handler that writes to multiple destinations
 struct CustomLogData
 {
@@ -405,6 +406,7 @@ static SUNErrCode CustomFlushMsg(SUNLogger logger, SUNLogLevel lvl, void* conten
 
   return SUN_SUCCESS;
 }
+#endif
 
 TEST(SUNLoggerTest, CustomQueueAndFlushToFileAndStdout)
 {
