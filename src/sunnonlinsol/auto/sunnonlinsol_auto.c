@@ -510,70 +510,22 @@ static SUNErrCode setFromCommandLine_Auto(SUNNonlinearSolver NLS,
 
     if (strncmp(argv[idx], prefix, strlen(prefix)) != 0) { continue; }
 
-    if (strcmp(argv[idx] + offset, "newt_to_fp_threshold") == 0)
+    if (strcmp(argv[idx] + offset, "switching_parameters") == 0)
     {
-      idx += 1;
-      retval =
-        SUNNonlinSolSetSwitchingParameters_Auto(NLS, (sunrealtype)atof(argv[idx]),
-                                                AUTO_CONTENT(NLS)->newt_to_fp_delay,
-                                                AUTO_CONTENT(NLS)->fp_to_newt_threshold,
-                                                AUTO_CONTENT(NLS)->fp_to_newt_delay);
+      if (idx + 4 >= argc)
+      {
+        free(prefix);
+        return SUN_ERR_ARG_INCOMPATIBLE;
+      }
+      retval = SUNNonlinSolSetSwitchingParameters_Auto(
+        NLS, (sunrealtype)atof(argv[idx + 1]), atol(argv[idx + 2]),
+        (sunrealtype)atof(argv[idx + 3]), atol(argv[idx + 4]));
       if (retval != SUN_SUCCESS)
       {
         free(prefix);
         return retval;
       }
-      continue;
-    }
-
-    if (strcmp(argv[idx] + offset, "newt_to_fp_delay") == 0)
-    {
-      idx += 1;
-      retval =
-        SUNNonlinSolSetSwitchingParameters_Auto(NLS,
-                                                AUTO_CONTENT(NLS)->newt_to_fp_threshold,
-                                                atol(argv[idx]),
-                                                AUTO_CONTENT(NLS)->fp_to_newt_threshold,
-                                                AUTO_CONTENT(NLS)->fp_to_newt_delay);
-      if (retval != SUN_SUCCESS)
-      {
-        free(prefix);
-        return retval;
-      }
-      continue;
-    }
-
-    if (strcmp(argv[idx] + offset, "fp_to_newt_threshold") == 0)
-    {
-      idx += 1;
-      retval =
-        SUNNonlinSolSetSwitchingParameters_Auto(NLS,
-                                                AUTO_CONTENT(NLS)->newt_to_fp_threshold,
-                                                AUTO_CONTENT(NLS)->newt_to_fp_delay,
-                                                (sunrealtype)atof(argv[idx]),
-                                                AUTO_CONTENT(NLS)->fp_to_newt_delay);
-      if (retval != SUN_SUCCESS)
-      {
-        free(prefix);
-        return retval;
-      }
-      continue;
-    }
-
-    if (strcmp(argv[idx] + offset, "fp_to_newt_delay") == 0)
-    {
-      idx += 1;
-      retval =
-        SUNNonlinSolSetSwitchingParameters_Auto(NLS,
-                                                AUTO_CONTENT(NLS)->newt_to_fp_threshold,
-                                                AUTO_CONTENT(NLS)->newt_to_fp_delay,
-                                                AUTO_CONTENT(NLS)->fp_to_newt_threshold,
-                                                atol(argv[idx]));
-      if (retval != SUN_SUCCESS)
-      {
-        free(prefix);
-        return retval;
-      }
+      idx += 4;
       continue;
     }
   }

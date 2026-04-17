@@ -121,19 +121,20 @@ controlling the switching behavior.
    ``SUNNonlinearSolver_Auto`` module.
 
    :param NLS: the nonlinear solver object returned by :c:func:`SUNNonlinSol_Auto`.
-   :param newt_to_fp_threshold: the threshold for switching from Newton to fixed-point (i.e., :math:`\beta`).
-   :param newt_to_fp_delay: the minimum number of nonlinear solves after a switch before switching from Newton to fixed-point is allowed.
-   :param fp_to_newt_threshold: the threshold for switching from fixed-point to Newton (i.e., :math:`\alpha`).
-   :param fp_to_newt_delay: the minimum number of nonlinear solves after a switch before switching from fixed-point to Newton is allowed.
+   :param newt_to_fp_threshold: the threshold for switching from Newton to fixed-point (i.e., :math:`\beta`). Values in ``[0, 2.0]`` are accepted; negative values reset the default ``2.0``.
+   :param newt_to_fp_delay: the minimum number of nonlinear solves after a switch before switching from Newton to fixed-point is allowed. Nonnegative values are accepted; negative values reset the default ``10``.
+   :param fp_to_newt_threshold: the threshold for switching from fixed-point to Newton (i.e., :math:`\alpha`). Nonnegative values are accepted; negative values reset the default ``0.8``.
+   :param fp_to_newt_delay: the minimum number of nonlinear solves after a switch before switching from fixed-point to Newton is allowed. Nonnegative values are accepted; negative values reset the default ``0``.
 
    :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
 
    .. note::
 
       If supported by the SUNNonlinearSolver implementation, this routine will be called by
-      :c:func:`SUNNonlinSolSetOptions` when using the keys
-      ``NLSid.newt_to_fp_threshold``, ``NLSid.newt_to_fp_delay``,
-      ``NLSid.fp_to_newt_threshold``, and ``NLSid.fp_to_newt_delay``.
+      :c:func:`SUNNonlinSolSetOptions` when using the key
+      ``NLSid.switching_parameters`` followed by four values in the order
+      ``newt_to_fp_threshold``, ``newt_to_fp_delay``,
+      ``fp_to_newt_threshold``, and ``fp_to_newt_delay``.
 
 .. c:function:: SUNErrCode SUNNonlinSolGetFixedPointSolver_Auto(SUNNonlinearSolver NLS, SUNNonlinearSolver *fp_nls)
 
