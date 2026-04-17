@@ -27,27 +27,27 @@ endif()
 
 add_subdirectory(sundials)
 
-if(BUILD_ARKODE)
+if(SUNDIALS_ENABLE_ARKODE)
   add_subdirectory(arkode)
 endif()
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   add_subdirectory(cvode)
 endif()
 
-if(BUILD_CVODES)
+if(SUNDIALS_ENABLE_CVODES)
   add_subdirectory(cvodes)
 endif()
 
-if(BUILD_IDA)
+if(SUNDIALS_ENABLE_IDA)
   add_subdirectory(ida)
 endif()
 
-if(BUILD_IDAS)
+if(SUNDIALS_ENABLE_IDAS)
   add_subdirectory(idas)
 endif()
 
-if(BUILD_KINSOL)
+if(SUNDIALS_ENABLE_KINSOL)
   add_subdirectory(kinsol)
 endif()
 

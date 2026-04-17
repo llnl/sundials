@@ -93,7 +93,6 @@ def main():
     colors = plt.get_cmap("tab10")
 
     for idx, lf in enumerate(args.logfiles):
-
         # parse log file
         log = sunlog.log_file_to_list(lf)
 

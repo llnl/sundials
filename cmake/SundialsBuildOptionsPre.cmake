@@ -70,7 +70,7 @@ set(SUNDIALS_COUNTER_TYPE
 # Option to enable monitoring
 # ---------------------------------------------------------------
 
-set(DOCSTR "Build with simulation monitoring capabilities enabled")
+set(DOCSTR "Enable simulation monitoring capabilities")
 sundials_option(SUNDIALS_ENABLE_MONITORING BOOL "${DOCSTR}" OFF
                 DEPRECATED_NAMES SUNDIALS_BUILD_WITH_MONITORING)
 
@@ -78,7 +78,7 @@ sundials_option(SUNDIALS_ENABLE_MONITORING BOOL "${DOCSTR}" OFF
 # Option to enable profiling
 # ---------------------------------------------------------------
 
-set(DOCSTR "Build with simulation profiling capabilities enabled")
+set(DOCSTR "Enable profiling (may affect performance)")
 sundials_option(SUNDIALS_ENABLE_PROFILING BOOL "${DOCSTR}" OFF DEPRECATED_NAMES
                 SUNDIALS_BUILD_WITH_PROFILING)
 
@@ -98,11 +98,9 @@ else()
   set(_default_err_checks OFF)
 endif()
 
-set(DOCSTR
-    "Build with error checking enabled/disabled. Enabling error checks may affect performance."
-)
-sundials_option(SUNDIALS_ENABLE_ERROR_CHECKS BOOL "${DOCSTR}"
-                ${_default_err_checks})
+sundials_option(
+  SUNDIALS_ENABLE_ERROR_CHECKS BOOL
+  "Enable error checking (may affect performance)" ${_default_err_checks})
 if(SUNDIALS_ENABLE_ERROR_CHECKS)
   message(STATUS "SUNDIALS error checking enabled")
   message(
@@ -115,11 +113,12 @@ endif()
 # Option to enable logging
 # ---------------------------------------------------------------
 
-set(DOCSTR
-    "Build with logging capabilities enabled (0 = no logging, 1 = errors, 2 = +warnings, 3 = +info, 4 = +debug, 5 = +extras"
-)
-sundials_option(SUNDIALS_LOGGING_LEVEL STRING "${DOCSTR}" 2
-                OPTIONS "0;1;2;3;4;5")
+sundials_option(
+  SUNDIALS_LOGGING_LEVEL
+  STRING
+  "Enable logging (0 = none, 1 = errors, 2 = +warnings, 3 = +info, 4 = +debug, 5 = +extras)"
+  2
+  OPTIONS "0;1;2;3;4;5")
 
 if(SUNDIALS_LOGGING_LEVEL GREATER_EQUAL 3)
   message(STATUS "SUNDIALS logging level set to ${SUNDIALS_LOGGING_LEVEL}")
@@ -164,45 +163,51 @@ endif()
 # the user the option of enabling/disabling it.
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/arkode")
-  sundials_option(BUILD_ARKODE BOOL "Build the ARKODE library" ON)
-  list(APPEND SUNDIALS_BUILD_LIST "BUILD_ARKODE")
+  sundials_option(SUNDIALS_ENABLE_ARKODE BOOL "Enable the ARKODE library" ON
+                  DEPRECATED_NAMES BUILD_ARKODE)
+  list(APPEND SUNDIALS_BUILD_LIST "SUNDIALS_ENABLE_ARKODE")
 else()
-  set(BUILD_ARKODE OFF)
+  set(SUNDIALS_ENABLE_ARKODE OFF)
 endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/cvode")
-  sundials_option(BUILD_CVODE BOOL "Build the CVODE library" ON)
-  list(APPEND SUNDIALS_BUILD_LIST "BUILD_CVODE")
+  sundials_option(SUNDIALS_ENABLE_CVODE BOOL "Enable the CVODE library" ON
+                  DEPRECATED_NAMES BUILD_CVODE)
+  list(APPEND SUNDIALS_BUILD_LIST "SUNDIALS_ENABLE_CVODE")
 else()
-  set(BUILD_CVODE OFF)
+  set(SUNDIALS_ENABLE_CVODE OFF)
 endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/cvodes")
-  sundials_option(BUILD_CVODES BOOL "Build the CVODES library" ON)
-  list(APPEND SUNDIALS_BUILD_LIST "BUILD_CVODES")
+  sundials_option(SUNDIALS_ENABLE_CVODES BOOL "Enable the CVODES library" ON
+                  DEPRECATED_NAMES BUILD_CVODES)
+  list(APPEND SUNDIALS_BUILD_LIST "SUNDIALS_ENABLE_CVODES")
 else()
-  set(BUILD_CVODES OFF)
+  set(SUNDIALS_ENABLE_CVODES OFF)
 endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/ida")
-  sundials_option(BUILD_IDA BOOL "Build the IDA library" ON)
-  list(APPEND SUNDIALS_BUILD_LIST "BUILD_IDA")
+  sundials_option(SUNDIALS_ENABLE_IDA BOOL "Enable the IDA library" ON
+                  DEPRECATED_NAMES BUILD_IDA)
+  list(APPEND SUNDIALS_BUILD_LIST "SUNDIALS_ENABLE_IDA")
 else()
-  set(BUILD_IDA OFF)
+  set(SUNDIALS_ENABLE_IDA OFF)
 endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/idas")
-  sundials_option(BUILD_IDAS BOOL "Build the IDAS library" ON)
-  list(APPEND SUNDIALS_BUILD_LIST "BUILD_IDAS")
+  sundials_option(SUNDIALS_ENABLE_IDAS BOOL "Enable the IDAS library" ON
+                  DEPRECATED_NAMES BUILD_IDAS)
+  list(APPEND SUNDIALS_BUILD_LIST "SUNDIALS_ENABLE_IDAS")
 else()
-  set(BUILD_IDAS OFF)
+  set(SUNDIALS_ENABLE_IDAS OFF)
 endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/kinsol")
-  sundials_option(BUILD_KINSOL BOOL "Build the KINSOL library" ON)
-  list(APPEND SUNDIALS_BUILD_LIST "BUILD_KINSOL")
+  sundials_option(SUNDIALS_ENABLE_KINSOL BOOL "Enable the KINSOL library" ON
+                  DEPRECATED_NAMES BUILD_KINSOL)
+  list(APPEND SUNDIALS_BUILD_LIST "SUNDIALS_ENABLE_KINSOL")
 else()
-  set(BUILD_KINSOL OFF)
+  set(SUNDIALS_ENABLE_KINSOL OFF)
 endif()
 
 # ---------------------------------------------------------------

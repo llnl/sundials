@@ -60,7 +60,8 @@ to the file ``sun.log`` as follows
 
 The different environment variables may all be set to the same file, or to
 distinct files, or some combination there of. To disable output for one of the
-streams, then do not set the environment variable, or set it to an empty string.
+streams, set the environment variable to an empty string. To leave the stream
+at its default output, do not set the environment variable.
 If :cmakeop:`SUNDIALS_LOGGING_LEVEL` was set at build-time to a level lower than
 the corresponding environment variable, then setting the environment variable
 will do nothing. For example, if the logging level is set to ``2`` (errors and
@@ -261,11 +262,27 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``error_filename`` -- the name of the file to use for error output.
+      * ``error_filename`` -- the name of the file to use for error
+        output. Passing ``NULL`` or an empty string disables output for this
+        stream.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetErrorFile(SUNLogger logger, FILE* error_fp)
+
+   Sets the file pointer for error output.
+
+   The logger does not take ownership of ``error_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``error_fp`` -- the ``FILE`` pointer to use for error output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger, const char* warning_filename)
 
@@ -273,11 +290,27 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``warning_filename`` -- the name of the file to use for warning output.
+      * ``warning_filename`` -- the name of the file to use for warning
+        output. Passing ``NULL`` or an empty string disables output for this
+        stream.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetWarningFile(SUNLogger logger, FILE* warning_fp)
+
+   Sets the file pointer for warning output.
+
+   The logger does not take ownership of ``warning_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``warning_fp`` -- the ``FILE`` pointer to use for warning output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename)
 
@@ -285,11 +318,27 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``info_filename`` -- the name of the file to use for info output.
+      * ``info_filename`` -- the name of the file to use for info
+        output. Passing ``NULL`` or an empty string disables output for this
+        stream.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetInfoFile(SUNLogger logger, FILE* info_fp)
+
+   Sets the file pointer for info output.
+
+   The logger does not take ownership of ``info_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``info_fp`` -- the ``FILE`` pointer to use for info output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
 
@@ -297,11 +346,27 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Arguments:**
       * ``logger`` -- a :c:type:`SUNLogger` object.
-      * ``debug_filename`` -- the name of the file to use for debug output.
+      * ``debug_filename`` -- the name of the file to use for debug
+        output. Passing an ``NULL`` or empty string disables output for this
+        stream.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetDebugFile(SUNLogger logger, FILE* debug_fp)
+
+   Sets the file pointer for debug output.
+
+   The logger does not take ownership of ``debug_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``debug_fp`` -- the ``FILE`` pointer to use for debug output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl, const char* scope, const char* label, const char* msg_txt, ...)
 

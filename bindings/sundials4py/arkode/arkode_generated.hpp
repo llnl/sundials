@@ -62,24 +62,28 @@ m.attr("ARK_INNERTOOUTER_FAIL")      = -36;
 m.attr("ARK_POSTPROCESS_FAIL")       = -37;
 m.attr("ARK_POSTPROCESS_STEP_FAIL")  = -37;
 m.attr("ARK_POSTPROCESS_STAGE_FAIL") = -38;
-m.attr("ARK_USER_PREDICT_FAIL")      = -39;
-m.attr("ARK_INTERP_FAIL")            = -40;
-m.attr("ARK_INVALID_TABLE")          = -41;
-m.attr("ARK_CONTEXT_ERR")            = -42;
-m.attr("ARK_RELAX_FAIL")             = -43;
-m.attr("ARK_RELAX_MEM_NULL")         = -44;
-m.attr("ARK_RELAX_FUNC_FAIL")        = -45;
-m.attr("ARK_RELAX_JAC_FAIL")         = -46;
-m.attr("ARK_CONTROLLER_ERR")         = -47;
-m.attr("ARK_STEPPER_UNSUPPORTED")    = -48;
-m.attr("ARK_DOMEIG_FAIL")            = -49;
-m.attr("ARK_MAX_STAGE_LIMIT_FAIL")   = -50;
-m.attr("ARK_SUNSTEPPER_ERR")         = -51;
-m.attr("ARK_STEP_DIRECTION_ERR")     = -52;
-m.attr("ARK_ADJ_CHECKPOINT_FAIL")    = -53;
-m.attr("ARK_ADJ_RECOMPUTE_FAIL")     = -54;
-m.attr("ARK_SUNADJSTEPPER_ERR")      = -55;
-m.attr("ARK_DEE_FAIL")               = -56;
+m.attr("ARK_PRESTEPFN_FAIL")         = -39;
+m.attr("ARK_POSTSTEPFN_FAIL")        = -40;
+m.attr("ARK_PRERHSFN_FAIL")          = -41;
+m.attr("ARK_USER_PREDICT_FAIL")      = -42;
+m.attr("ARK_INTERP_FAIL")            = -43;
+m.attr("ARK_INVALID_TABLE")          = -44;
+m.attr("ARK_CONTEXT_ERR")            = -45;
+m.attr("ARK_RELAX_FAIL")             = -46;
+m.attr("ARK_RELAX_MEM_NULL")         = -47;
+m.attr("ARK_RELAX_FUNC_FAIL")        = -48;
+m.attr("ARK_RELAX_JAC_FAIL")         = -49;
+m.attr("ARK_CONTROLLER_ERR")         = -50;
+m.attr("ARK_STEPPER_UNSUPPORTED")    = -51;
+m.attr("ARK_DOMEIG_FAIL")            = -52;
+m.attr("ARK_MAX_STAGE_LIMIT_FAIL")   = -53;
+m.attr("ARK_SUNSTEPPER_ERR")         = -54;
+m.attr("ARK_STEP_DIRECTION_ERR")     = -55;
+m.attr("ARK_ADJ_CHECKPOINT_FAIL")    = -56;
+m.attr("ARK_ADJ_RECOMPUTE_FAIL")     = -57;
+m.attr("ARK_SUNADJSTEPPER_ERR")      = -58;
+m.attr("ARK_DEE_FAIL")               = -59;
+m.attr("ARK_STEP_H0_FAIL")           = -60;
 m.attr("ARK_UNRECOGNIZED_ERROR")     = -99;
 
 auto pyEnumARKRelaxSolver = nb::enum_<ARKRelaxSolver>(m, "ARKRelaxSolver",
@@ -106,6 +110,9 @@ auto pyEnumARKAccumError =
 
 m.def("ARKodeReset", ARKodeReset, nb::arg("arkode_mem"), nb::arg("tR"),
       nb::arg("yR"));
+
+m.def("ARKodeInit", ARKodeInit, nb::arg("arkode_mem"),
+      "Optional data allocation function");
 
 m.def(
   "ARKodeCreateMRIStepInnerStepper",
@@ -498,6 +505,26 @@ m.def("ARKodeWriteParameters", ARKodeWriteParameters, nb::arg("arkode_mem"),
       nb::arg("fp"));
 
 m.def(
+  "ARKodeGetStageIndex",
+  [](void* arkode_mem) -> std::tuple<int, int, int>
+  {
+    auto ARKodeGetStageIndex_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, int, int>
+    {
+      int stage_adapt_modifiable;
+      int max_stages_adapt_modifiable;
+
+      int r = ARKodeGetStageIndex(arkode_mem, &stage_adapt_modifiable,
+                                  &max_stages_adapt_modifiable);
+      return std::make_tuple(r, stage_adapt_modifiable,
+                             max_stages_adapt_modifiable);
+    };
+
+    return ARKodeGetStageIndex_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
+
+m.def(
   "ARKodeGetNumExpSteps",
   [](void* arkode_mem) -> std::tuple<int, long>
   {
@@ -670,6 +697,40 @@ m.def(
       arkode_mem);
   },
   nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeGetLastTime",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetLastTime_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype tn_adapt_modifiable;
+
+      int r = ARKodeGetLastTime(arkode_mem, &tn_adapt_modifiable);
+      return std::make_tuple(r, tn_adapt_modifiable);
+    };
+
+    return ARKodeGetLastTime_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeGetLastState",
+  [](void* arkode_mem) -> std::tuple<int, N_Vector>
+  {
+    auto ARKodeGetLastState_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, N_Vector>
+    {
+      N_Vector state_adapt_modifiable;
+
+      int r = ARKodeGetLastState(arkode_mem, &state_adapt_modifiable);
+      return std::make_tuple(r, state_adapt_modifiable);
+    };
+
+    return ARKodeGetLastState_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "ARKodeGetCurrentTime",
@@ -1448,50 +1509,6 @@ auto pyClassARKodeButcherTableMem =
   nb::class_<ARKodeButcherTableMem>(m, "ARKodeButcherTableMem", "")
     .def(nb::init<>()) // implicit default constructor
   ;
-
-m.def(
-  "ARKodeButcherTable_Create",
-  [](int s, int q, int p, sundials4py::Array1d c_1d, sundials4py::Array1d A_1d,
-     sundials4py::Array1d b_1d, sundials4py::Array1d d_1d)
-    -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
-  {
-    auto ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector =
-      [](int s, int q, int p, sundials4py::Array1d c_1d,
-         sundials4py::Array1d A_1d, sundials4py::Array1d b_1d,
-         sundials4py::Array1d d_1d) -> ARKodeButcherTable
-    {
-      sunrealtype* c_1d_ptr = c_1d.size() == 0 ? nullptr : c_1d.data();
-      sunrealtype* A_1d_ptr = A_1d.size() == 0 ? nullptr : A_1d.data();
-      sunrealtype* b_1d_ptr = b_1d.size() == 0 ? nullptr : b_1d.data();
-      sunrealtype* d_1d_ptr = d_1d.size() == 0 ? nullptr : d_1d.data();
-
-      auto lambda_result = ARKodeButcherTable_Create(s, q, p, c_1d_ptr, A_1d_ptr,
-                                                     b_1d_ptr, d_1d_ptr);
-      return lambda_result;
-    };
-    auto ARKodeButcherTable_Create_adapt_return_type_to_shared_ptr =
-      [&ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector](int s, int q,
-                                                               int p,
-                                                               sundials4py::Array1d c_1d,
-                                                               sundials4py::Array1d A_1d,
-                                                               sundials4py::Array1d b_1d,
-                                                               sundials4py::Array1d d_1d)
-      -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
-    {
-      auto lambda_result =
-        ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector(s, q, p, c_1d,
-                                                              A_1d, b_1d, d_1d);
-
-      return our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
-                             ARKodeButcherTableDeleter>(lambda_result);
-    };
-
-    return ARKodeButcherTable_Create_adapt_return_type_to_shared_ptr(s, q, p,
-                                                                     c_1d, A_1d,
-                                                                     b_1d, d_1d);
-  },
-  nb::arg("s"), nb::arg("q"), nb::arg("p"), nb::arg("c_1d"), nb::arg("A_1d"),
-  nb::arg("b_1d"), nb::arg("d_1d"));
 
 m.def(
   "ARKodeButcherTable_Copy",

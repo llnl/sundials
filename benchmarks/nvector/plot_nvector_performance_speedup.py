@@ -100,7 +100,6 @@ def main():
 
     # parse file names to get input parameters
     for f in output:
-
         split_fout = f.split("/")[-1]
         split_fout = split_fout.split("_")
 
@@ -283,7 +282,6 @@ def main():
     # Speedup v. Number of Elements Plots
     # --------------------------------------------------------------------------
     if not args.noplots:
-
         colors = [
             "#000000",
             "#a6cee3",

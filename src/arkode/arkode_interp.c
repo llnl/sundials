@@ -256,7 +256,6 @@ void arkInterpFree_Hermite(ARKodeMem ark_mem, ARKInterp interp)
     interp->ops = NULL;
   }
   free(interp);
-  interp = NULL;
 
   return;
 }
@@ -942,7 +941,6 @@ void arkInterpFree_Lagrange(ARKodeMem ark_mem, ARKInterp I)
     I->ops = NULL;
   }
   free(I);
-  I = NULL;
 
   return;
 }

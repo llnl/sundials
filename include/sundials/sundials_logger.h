@@ -52,15 +52,27 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger,
                                       const char* error_filename);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetErrorFile(SUNLogger logger, FILE* error_fp);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
                                         const char* warning_filename);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetWarningFile(SUNLogger logger, FILE* warning_fp);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger,
                                       const char* debug_filename);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetDebugFile(SUNLogger logger, FILE* debug_fp);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetInfoFile(SUNLogger logger, FILE* info_fp);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,

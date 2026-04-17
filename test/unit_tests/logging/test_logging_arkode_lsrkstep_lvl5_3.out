@@ -153,11 +153,11 @@ Start LSRKStep Logging test
 [DEBUG][rank 0][lsrkStep_TakeStepSSPs3][embedded solution] y_embedded(:) =
  1.281744384764940e-06
 [INFO][rank 0][lsrkStep_TakeStepSSPs3][end-compute-embedding] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.00221586141183015
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.00222529072291584
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 2.44140625e-05
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
-[INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.67186954059802e-10
-  1.281744384765625e-06  1.281744384764923e-06  0.000000000000000e+00
+[INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.65070663502083e-10
+  1.281744384765625e-06  1.281744384764923e-06  2.117582368135751e-22
 ---------------------------------------------------------------------
 Current time                  = 1.28174438476563e-06
 Steps                         = 3

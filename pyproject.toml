@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "sundials4py"
-version = "7.6.0"
+version = "7.7.0"
 description = "Official Python bindings for the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
 authors = [
     { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }
@@ -26,7 +26,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "black",
+    "ruff",
     "isort",
     "pytest",
     "pytest-random-order",
@@ -84,6 +84,8 @@ test-requires = "pytest"
 [tool.cibuildwheel.macos.environment]
 MACOSX_DEPLOYMENT_TARGET = "10.15"
 
-[tool.black]
+[tool.ruff]
 line-length = 99
-skip_magic_trailing_comma = true
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
