@@ -129,12 +129,7 @@ If the user already supplied these, do not ask again.
 
 - Treat direct replies from the branch author or explicitly prioritized reviewer as tie-breakers.
 - Prefer the latest concrete design decision over earlier broad suggestions.
-- Watch for comments that change semantics, not just style:
-  - API naming
-  - initialization behavior
-  - linker/object-library usage
-  - doc defaults versus implementation defaults
-  - whether a function should be public, generic, or removed
+- Watch for comments that change semantics, not just style.
 
 ## Output expectations
 
