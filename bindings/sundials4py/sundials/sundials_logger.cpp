@@ -67,6 +67,12 @@ void bind_sunlogger(nb::module_& m)
                                                 sunlogger_flush_msg_wrapper,
                                                 nullptr);
       }
+      else if (queue_fn && !flush_fn)
+      {
+        return SUNLogger_SetQueueAndFlushMsgFns(logger,
+                                                sunlogger_queue_msg_wrapper,
+                                                nullptr, nullptr);
+      }
       else
       {
         return SUNLogger_SetQueueAndFlushMsgFns(logger, nullptr, nullptr, nullptr);
