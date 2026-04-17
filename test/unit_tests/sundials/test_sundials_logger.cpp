@@ -362,3 +362,108 @@ TEST(SUNLoggerTest, SetDebugFileAndDisableWithNull)
   (void)std::remove(debugfile.c_str());
 #endif
 }
+
+// User-defined data structure for custom log handler that writes to multiple destinations
+struct CustomLogData
+{
+  FILE* file_fp;
+  FILE* stdout_fp;
+};
+
+// Custom queue message function that writes to both file and stdout
+static SUNErrCode CustomQueueMsg(SUNLogger logger, SUNLogLevel lvl,
+                                 const char* prefix, int rank,
+                                 const char* scope, const char* label,
+                                 const char* payload, void* content)
+{
+  CustomLogData* data = static_cast<CustomLogData*>(content);
+  if (!data) { return SUN_ERR_ARG_CORRUPT; }
+
+  // Format the log message
+  char log_msg[1024];
+  snprintf(log_msg, sizeof(log_msg), "[%s][rank %d][%s][%s] %s\n", prefix,
+           rank, scope, label, payload);
+
+  // Write to file
+  if (data->file_fp) { fprintf(data->file_fp, "%s", log_msg); }
+
+  // Write to stdout
+  if (data->stdout_fp) { fprintf(data->stdout_fp, "%s", log_msg); }
+
+  return SUN_SUCCESS;
+}
+
+// Custom flush function that flushes both file and stdout
+static SUNErrCode CustomFlushMsg(SUNLogger logger, SUNLogLevel lvl,
+                                 void* content)
+{
+  CustomLogData* data = static_cast<CustomLogData*>(content);
+  if (!data) { return SUN_ERR_ARG_CORRUPT; }
+
+  // Flush both streams
+  if (data->file_fp) { fflush(data->file_fp); }
+  if (data->stdout_fp) { fflush(data->stdout_fp); }
+
+  return SUN_SUCCESS;
+}
+
+TEST(SUNLoggerTest, CustomQueueAndFlushToFileAndStdout)
+{
+#if SUNDIALS_LOGGING_LEVEL < SUNDIALS_LOGGING_ERROR
+  GTEST_SKIP() << "Errors not enabled in this build";
+#else
+  const std::string logfile = "test_sundials_logger.custom.log";
+  (void)std::remove(logfile.c_str());
+
+  // Open file for custom handler
+  FILE* fp = std::fopen(logfile.c_str(), "w+");
+  ASSERT_NE(fp, nullptr);
+
+  // Create custom data structure
+  CustomLogData custom_data;
+  custom_data.file_fp   = fp;
+  custom_data.stdout_fp = stdout;
+
+  // Create logger and set custom queue/flush functions
+  SUNLogger logger = NULL;
+  ASSERT_EQ(SUNLogger_Create(SUN_COMM_NULL, 0, &logger), SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_SetQueueAndFlushMsgFns(logger, CustomQueueMsg,
+                                             CustomFlushMsg, &custom_data),
+            SUN_SUCCESS);
+
+  // Capture stdout to verify message appears there
+  testing::internal::CaptureStdout();
+
+  // Queue and flush an error message
+  ASSERT_EQ(SUNLogger_QueueMsg(logger, SUN_LOGLEVEL_ERROR, "test_scope",
+                               "test_label", "test message to file and stdout"),
+            SUN_SUCCESS);
+  ASSERT_EQ(SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR), SUN_SUCCESS);
+
+  // Check stdout captured output
+  std::string stdout_output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(CountLines(stdout_output), 1);
+  EXPECT_TRUE(stdout_output.find("test message to file and stdout") !=
+              std::string::npos);
+  EXPECT_TRUE(stdout_output.find("test_scope") != std::string::npos);
+  EXPECT_TRUE(stdout_output.find("test_label") != std::string::npos);
+
+  // Clean up logger
+  ASSERT_EQ(SUNLogger_Destroy(&logger), SUN_SUCCESS);
+  ASSERT_EQ(logger, nullptr);
+
+  // Check file contents
+  ASSERT_EQ(std::fclose(fp), 0);
+  std::string file_output = ReadFile(logfile);
+  EXPECT_EQ(CountLines(file_output), 1);
+  EXPECT_TRUE(file_output.find("test message to file and stdout") !=
+              std::string::npos);
+  EXPECT_TRUE(file_output.find("test_scope") != std::string::npos);
+  EXPECT_TRUE(file_output.find("test_label") != std::string::npos);
+
+  // Verify file and stdout contents match
+  EXPECT_EQ(file_output, stdout_output);
+
+  (void)std::remove(logfile.c_str());
+#endif
+}
