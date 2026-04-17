@@ -34,7 +34,7 @@
 
 [[maybe_unused]] static int CountLines(const std::string& s)
 {
-  return std::count(s.begin(), s.end(), '\n');
+  return static_cast<int>(std::count(s.begin(), s.end(), '\n'));
 }
 
 TEST(SUNLoggerTest, DefaultErrorLogger)
