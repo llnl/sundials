@@ -57,6 +57,11 @@ initialization (:c:func:`SUNNonlinSolInitialize`), setup
 
       The nonlinear solver expects systems in fixed-point form :math:`G(y) = y`.
 
+   .. c:enumerator:: SUNNONLINEARSOLVER_HYBRID
+
+      The nonlinear solver may use both rootfinding and fixed-point forms and
+      can receive both :math:`F(y)` and :math:`G(y)`.
+
 
 .. c:function:: SUNNonlinearSolver_Type SUNNonlinSolGetType(SUNNonlinearSolver NLS)
 

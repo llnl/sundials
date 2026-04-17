@@ -237,15 +237,26 @@ SUNErrCode SUNNonlinSolSetSysFns(SUNNonlinearSolver NLS,
                                  SUNNonlinSolSysFn root_fn,
                                  SUNNonlinSolSysFn fixed_point_fn)
 {
+  SUNNonlinearSolver_Type nls_type;
+
   if (NLS->ops->setsysfns)
   {
     return (NLS->ops->setsysfns(NLS, root_fn, fixed_point_fn));
   }
-  if (root_fn == fixed_point_fn && NLS->ops->setsysfn)
+
+  if (!NLS->ops->setsysfn) { return SUN_ERR_NOT_IMPLEMENTED; }
+
+  nls_type = SUNNonlinSolGetType(NLS);
+  if (nls_type == SUNNONLINEARSOLVER_ROOTFIND)
   {
     return (NLS->ops->setsysfn(NLS, root_fn));
   }
-  return SUN_ERR_NOT_IMPLEMENTED;
+  if (nls_type == SUNNONLINEARSOLVER_FIXEDPOINT)
+  {
+    return (NLS->ops->setsysfn(NLS, fixed_point_fn));
+  }
+
+  return SUN_ERR_ARG_CORRUPT;
 }
 
 /* set the linear solver setup function (optional) */
