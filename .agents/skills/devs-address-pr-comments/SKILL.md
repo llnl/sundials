@@ -114,7 +114,7 @@ If the user already supplied these, do not ask again.
 
 ## Output expectations
 
-Before finishing, ensure:
+Before finishing, ensure that:
 
 - the local code reflects the latest actionable review guidance,
 - `.agents/scratch/pr-<pr>-comments-latest.json` exists or was refreshed,
