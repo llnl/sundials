@@ -211,8 +211,7 @@ user-callable functions.
    **Notes:**
       By default, ``crate_const`` is ``0.3``.
 
-      If supported by the SUNNonlinearSolver implementation, this routine will be called by
-      :c:func:`SUNNonlinSolSetOptions` when using the key
+      This routine will be called by :c:func:`SUNNonlinSolSetOptions` when using the key
       ``NLSid.conv_rate_constant``.
 
 
