@@ -64,7 +64,7 @@ The gitlab configuration file is in ``.gitlab/gitlab-ci-llnl-lc.yml``.
 The only thing that is typically changed in the main pipeline file is the 
 ``SPACK_REF`` variable in the ``variables`` section (this is done when we update 
 the version of Spack we use for installing dependencies). Currently, we also override 
-the `.build-and-test` job defined in ``.gitlab/.gitlab-ci.yml`` so that we can 
+the `.build-and-test` job defined in ``.gitlab/gitlab-ci-llnl-lc.yml`` so that we can 
 pull in some files from our fork of `radiuss-shared-ci`
 (maintained `here <https://lc.llnl.gov/gitlab/sundials/radiuss-shared-ci>`__)
 instead of the upstream repository.
@@ -133,7 +133,7 @@ Updating Spack
 ^^^^^^^^^^^^^^
 
 To update the spack commit used for the CI simply replace the commit hash in the
-``SPACK_REF`` variable inside ``.gitlab/.gitlab-ci.yml`` with the new commit
+``SPACK_REF`` variable inside ``.gitlab/gitlab-ci-llnl-lc.yml`` with the new commit
 hash. The first time a pipeline runs with a new ``SPACK_REF`` the pipeline will
 take longer than normal as a new Spack build cache must be created and populated
 (so all packages will be built from source).
