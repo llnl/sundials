@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
 import pytest
-import sys
-from io import StringIO
 from sundials4py.core import *
 
 
-def test_custom_queue_and_flush_and_restore_default():
+def test_custom_queue_and_flush_and_restore_default(capfd):
     """
     Test that custom queue/flush functions work and that passing
     None values restores the default behavior (errors to stderr).
@@ -52,10 +50,6 @@ def test_custom_queue_and_flush_and_restore_default():
     status = SUNLogger_SetQueueAndFlushMsgFns(logger, None, None)
     assert status == SUN_SUCCESS
 
-    # Capture stderr to verify default behavior
-    old_stderr = sys.stderr
-    sys.stderr = StringIO()
-
     # Queue and flush another error message
     status = SUNLogger_QueueMsg(
         logger, SUN_LOGLEVEL_ERROR, "default_scope", "default_label", "default error message"
@@ -65,13 +59,11 @@ def test_custom_queue_and_flush_and_restore_default():
     status = SUNLogger_Flush(logger, SUN_LOGLEVEL_ERROR)
     assert status == SUN_SUCCESS
 
-    # Get stderr output and restore original stderr
-    stderr_output = sys.stderr.getvalue()
-    sys.stderr = old_stderr
+    # capfd captures at the file descriptor level
+    captured = capfd.readouterr()
 
-    # Verify the message appears on stderr (default behavior)
-    assert stderr_output.count("\n") == 1
-    assert "default error message" in stderr_output
+    assert captured.err.count("\n") == 1
+    assert "default error message" in captured.err
 
     # Verify the custom handler was NOT called again
     assert len(messages) == 1
