@@ -60,13 +60,12 @@ the templates provided in the
 `radiuss-shared-ci <https://radiuss-shared-ci.readthedocs.io/en/latest/>`__ repo.
 Here we briefly outline the relevant files:
 
-The root ``.gitlab-ci.yml`` file is a thin include shim for the main pipeline
-configuration in ``.gitlab/.gitlab-ci.yml``. The only thing that is typically
-changed in the main pipeline file is the ``SPACK_REF`` variable in the
-``variables`` section (this is done when we update the version of Spack we use
-for installing dependencies). Currently, we also override the `.build-and-test`
-job defined in ``.gitlab/.gitlab-ci.yml`` so that we can pull in some files
-from our fork of `radiuss-shared-ci`
+The gitlab configuration file is in ``.gitlab/gitlab-ci-llnl-lc.yml``. 
+The only thing that is typically changed in the main pipeline file is the 
+``SPACK_REF`` variable in the ``variables`` section (this is done when we update 
+the version of Spack we use for installing dependencies). Currently, we also override 
+the `.build-and-test` job defined in ``.gitlab/.gitlab-ci.yml`` so that we can 
+pull in some files from our fork of `radiuss-shared-ci`
 (maintained `here <https://lc.llnl.gov/gitlab/sundials/radiuss-shared-ci>`__)
 instead of the upstream repository.
 
