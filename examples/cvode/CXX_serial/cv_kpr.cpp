@@ -140,6 +140,12 @@ int main(int argc, char* argv[])
   // Advance in time
   for (int i = 0; i < opts.nout; i++)
   {
+    if (opts.use_tstop)
+    {
+      flag = CVodeSetStopTime(cvode_mem, tout);
+      if (check_flag(flag, "CVodeSetStopTime")) { return 1; }
+    }
+
     flag = CVode(cvode_mem, tout, y, &tret, CV_NORMAL);
     if (check_flag(flag, "CVode")) { return 1; }
 

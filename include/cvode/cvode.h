@@ -155,6 +155,8 @@ SUNDIALS_EXPORT int CVodeSetStopTime(void* cvode_mem, sunrealtype tstop);
 SUNDIALS_EXPORT int CVodeSetInterpolateStopTime(void* cvode_mem,
                                                 sunbooleantype interp);
 SUNDIALS_EXPORT int CVodeClearStopTime(void* cvode_mem);
+SUNDIALS_EXPORT int CVodeSkipAdaptStopTime(void* cvode_mem,
+                                           sunbooleantype skipadapttstop);
 SUNDIALS_EXPORT int CVodeSetUseIntegratorFusedKernels(void* cvode_mem,
                                                       sunbooleantype onoff);
 SUNDIALS_EXPORT int CVodeSetUserData(void* cvode_mem, void* user_data);

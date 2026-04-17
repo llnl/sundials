@@ -307,32 +307,34 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_uround = SUN_UNIT_ROUNDOFF;
 
   /* Set default values for integrator optional inputs */
-  IDA_mem->ida_res         = NULL;
-  IDA_mem->ida_user_data   = NULL;
-  IDA_mem->ida_itol        = IDA_NN;
-  IDA_mem->ida_atolmin0    = SUNTRUE;
-  IDA_mem->ida_user_efun   = SUNFALSE;
-  IDA_mem->ida_efun        = NULL;
-  IDA_mem->ida_edata       = NULL;
-  IDA_mem->ida_maxord      = MAXORD_DEFAULT;
-  IDA_mem->ida_mxstep      = MXSTEP_DEFAULT;
-  IDA_mem->ida_hmax_inv    = HMAX_INV_DEFAULT;
-  IDA_mem->ida_hmin        = HMIN_DEFAULT;
-  IDA_mem->ida_eta_max_fx  = ETA_MAX_FX_DEFAULT;
-  IDA_mem->ida_eta_min_fx  = ETA_MIN_FX_DEFAULT;
-  IDA_mem->ida_eta_max     = ETA_MAX_DEFAULT;
-  IDA_mem->ida_eta_low     = ETA_LOW_DEFAULT;
-  IDA_mem->ida_eta_min     = ETA_MIN_DEFAULT;
-  IDA_mem->ida_eta_min_ef  = ETA_MIN_EF_DEFAULT;
-  IDA_mem->ida_eta_cf      = ETA_CF_DEFAULT;
-  IDA_mem->ida_hin         = ZERO;
-  IDA_mem->ida_epcon       = EPCON;
-  IDA_mem->ida_maxnef      = MXNEF;
-  IDA_mem->ida_maxncf      = MXNCF;
-  IDA_mem->ida_suppressalg = SUNFALSE;
-  IDA_mem->ida_id          = NULL;
-  IDA_mem->ida_tstopset    = SUNFALSE;
-  IDA_mem->ida_dcj         = DCJ_DEFAULT;
+  IDA_mem->ida_res            = NULL;
+  IDA_mem->ida_user_data      = NULL;
+  IDA_mem->ida_itol           = IDA_NN;
+  IDA_mem->ida_atolmin0       = SUNTRUE;
+  IDA_mem->ida_user_efun      = SUNFALSE;
+  IDA_mem->ida_efun           = NULL;
+  IDA_mem->ida_edata          = NULL;
+  IDA_mem->ida_maxord         = MAXORD_DEFAULT;
+  IDA_mem->ida_mxstep         = MXSTEP_DEFAULT;
+  IDA_mem->ida_hmax_inv       = HMAX_INV_DEFAULT;
+  IDA_mem->ida_hmin           = HMIN_DEFAULT;
+  IDA_mem->ida_eta_max_fx     = ETA_MAX_FX_DEFAULT;
+  IDA_mem->ida_eta_min_fx     = ETA_MIN_FX_DEFAULT;
+  IDA_mem->ida_eta_max        = ETA_MAX_DEFAULT;
+  IDA_mem->ida_eta_low        = ETA_LOW_DEFAULT;
+  IDA_mem->ida_eta_min        = ETA_MIN_DEFAULT;
+  IDA_mem->ida_eta_min_ef     = ETA_MIN_EF_DEFAULT;
+  IDA_mem->ida_eta_cf         = ETA_CF_DEFAULT;
+  IDA_mem->ida_hin            = ZERO;
+  IDA_mem->ida_epcon          = EPCON;
+  IDA_mem->ida_maxnef         = MXNEF;
+  IDA_mem->ida_maxncf         = MXNCF;
+  IDA_mem->ida_suppressalg    = SUNFALSE;
+  IDA_mem->ida_id             = NULL;
+  IDA_mem->ida_tstopset       = SUNFALSE;
+  IDA_mem->ida_tstoplimited   = SUNFALSE;
+  IDA_mem->ida_skipadapttstop = SUNFALSE;
+  IDA_mem->ida_dcj            = DCJ_DEFAULT;
 
   /* Initialize inequality constraint variables */
   IDA_mem->ida_constraints        = NULL;
@@ -1204,6 +1206,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
 
     /* Check for approach to tstop */
 
+    IDA_mem->ida_tstoplimited = SUNFALSE;
     if (IDA_mem->ida_tstopset)
     {
       if ((IDA_mem->ida_tstop - IDA_mem->ida_tn) * IDA_mem->ida_hh <= ZERO)
@@ -1217,6 +1220,12 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
             IDA_mem->ida_hh >
           ZERO)
       {
+        if (IDA_mem->ida_skipadapttstop)
+        {
+          IDA_mem->ida_tstoplimited = SUNTRUE;
+          IDA_mem->ida_hsave        = IDA_mem->ida_hh;
+          IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+        }
         IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                           (ONE - FOUR * IDA_mem->ida_uround);
       }
@@ -2182,6 +2191,7 @@ static int IDAStopTest1(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
   int ier;
   sunrealtype troundoff;
 
+  IDA_mem->ida_tstoplimited = SUNFALSE;
   if (IDA_mem->ida_tstopset)
   {
     /* Test for tn past tstop */
@@ -2219,6 +2229,12 @@ static int IDAStopTest1(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
                IDA_mem->ida_hh >
              ZERO)
     {
+      if (IDA_mem->ida_skipadapttstop)
+      {
+        IDA_mem->ida_tstoplimited = SUNTRUE;
+        IDA_mem->ida_hsave        = IDA_mem->ida_hh;
+        IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+      }
       IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                         (ONE - FOUR * IDA_mem->ida_uround);
     }
@@ -2292,6 +2308,7 @@ static int IDAStopTest2(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
   /* int ier; */
   sunrealtype troundoff;
 
+  IDA_mem->ida_tstoplimited = SUNFALSE;
   if (IDA_mem->ida_tstopset)
   {
     troundoff = HUNDRED * IDA_mem->ida_uround *
@@ -2315,6 +2332,12 @@ static int IDAStopTest2(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
                IDA_mem->ida_hh >
              ZERO)
     {
+      if (IDA_mem->ida_skipadapttstop)
+      {
+        IDA_mem->ida_tstoplimited = SUNTRUE;
+        IDA_mem->ida_hsave        = IDA_mem->ida_hh;
+        IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+      }
       IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                         (ONE - FOUR * IDA_mem->ida_uround);
     }
@@ -3270,7 +3293,11 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
      stepsize and order are set by the usual local error algorithm.
 
      Note that, after the first step, the order is not increased, as not all
-     of the necessary information is available yet. */
+     of the necessary information is available yet.
+
+     Also, if the current step size was reduced due to reaching a requested stop
+     time, reset the next step order to equal the order before the stop-time-reduced
+     step. */
 
   if (IDA_mem->ida_phase == 0)
   {
@@ -3288,7 +3315,12 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
 
     /* Set action = LOWER/MAINTAIN/RAISE to specify order decision */
 
-    if (IDA_mem->ida_knew == IDA_mem->ida_kk - 1)
+    if (IDA_mem->ida_skipadapttstop && IDA_mem->ida_tstoplimited)
+    {
+      /* Returning order to the value used prior to the stop-time-reduced step. */
+      action = MAINTAIN;
+    }
+    else if (IDA_mem->ida_knew == IDA_mem->ida_kk - 1)
     {
       /* Already decided to reduce the order */
       action = LOWER;
@@ -3355,6 +3387,9 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
     else { err_knew = err_k; }
 
     /* Compute tmp = tentative ratio hnew/hh from error norm estimate.
+       0. If the current step size was reduced due to reaching a requested
+          stop time, set eta to return the step size to the size just preceding
+          the stop-time-reduced step.
        1. If eta >= eta_max_fx (default = 2), increase hh to at most eta_max
           (default = 2) i.e., double the step size
        2. If eta <= eta_min_fx (default = 1), reduce hh to between eta_min
@@ -3364,7 +3399,12 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
     IDA_mem->ida_eta = ONE;
     tmp = SUNRpowerR(TWO * err_knew + PT0001, -ONE / (IDA_mem->ida_kk + 1));
 
-    if (tmp >= IDA_mem->ida_eta_max_fx)
+    if (IDA_mem->ida_skipadapttstop && IDA_mem->ida_tstoplimited)
+    {
+      /* Returning step size to the value used prior to the stop-time-reduced step. */
+      IDA_mem->ida_eta = IDA_mem->ida_hsave / IDA_mem->ida_hh;
+    }
+    else if (tmp >= IDA_mem->ida_eta_max_fx)
     {
       /* Enforce max growth factor bound and max step size */
       IDA_mem->ida_eta = SUNMIN(tmp, IDA_mem->ida_eta_max);

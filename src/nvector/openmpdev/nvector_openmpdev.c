@@ -200,6 +200,7 @@ N_Vector N_VNew_OpenMPDEV(sunindextype length)
       N_VDestroy(v);
       return (NULL);
     }
+    NV_DATA_HOST_OMPDEV(v) = data;
 
     /* Allocate memory on device */
     dev      = omp_get_default_device();
@@ -209,10 +210,7 @@ N_Vector N_VNew_OpenMPDEV(sunindextype length)
       N_VDestroy(v);
       return (NULL);
     }
-
-    /* Attach data */
-    NV_DATA_HOST_OMPDEV(v) = data;
-    NV_DATA_DEV_OMPDEV(v)  = dev_data;
+    NV_DATA_DEV_OMPDEV(v) = dev_data;
   }
 
   return (v);
@@ -432,6 +430,8 @@ N_Vector N_VClone_OpenMPDEV(N_Vector w)
       return (NULL);
     }
 
+    NV_DATA_HOST_OMPDEV(v) = data;
+
     /* Allocate memory on device */
     dev      = omp_get_default_device();
     dev_data = omp_target_alloc(length * sizeof(sunrealtype), dev);
@@ -442,8 +442,7 @@ N_Vector N_VClone_OpenMPDEV(N_Vector w)
     }
 
     /* Attach data */
-    NV_DATA_HOST_OMPDEV(v) = data;
-    NV_DATA_DEV_OMPDEV(v)  = dev_data;
+    NV_DATA_DEV_OMPDEV(v) = dev_data;
   }
 
   return (v);

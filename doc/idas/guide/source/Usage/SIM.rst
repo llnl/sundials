@@ -936,6 +936,8 @@ Main solver optional input functions
    +--------------------------------------------------------------------+---------------------------------------+----------------+
    | Disable the stop time                                              | :c:func:`IDAClearStopTime`            | N/A            |
    +--------------------------------------------------------------------+---------------------------------------+----------------+
+   | Disregard stop time limited steps in adaptivity                    | :c:func:`IDASkipAdaptStopTime`        | ``SUNFALSE``   |
+   +--------------------------------------------------------------------+---------------------------------------+----------------+
    | Maximum no. of error test failures                                 | :c:func:`IDASetMaxErrTestFails`       | 10             |
    +--------------------------------------------------------------------+---------------------------------------+----------------+
    | Suppress alg. vars. from error test                                | :c:func:`IDASetSuppressAlg`           | ``SUNFALSE``   |
@@ -1193,6 +1195,28 @@ Main solver optional input functions
       when using the key "idaid.clear_stop_time".
 
    .. versionadded:: 6.5.1
+
+.. c:function:: int IDASkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
+
+   Specifies whether stop-time-limited steps should be disregarded
+   when adapting step sizes and method order.
+
+   **Arguments:**
+      * ``ida_mem`` -- pointer to the IDA memory block.
+      * ``skip`` -- flag indicating to disregard (1) or retain (0) stop time limited steps from the temporal adaptivity algorithm.
+
+   **Return value:**
+      * ``IDA_SUCCESS`` if successful
+      * ``IDA_MEM_NULL`` if the IDA memory is ``NULL``
+
+   **Notes:**
+      The default behavior is to use all successful time steps
+      (including stop-time-limited steps) when performing adaptivity.
+
+      This routine will be called by :c:func:`IDASetOptions`
+      when using the key "idaid.skip_adapt_stop_time".
+
+   .. versionadded:: x.y.z
 
 .. c:function:: int IDASetMaxErrTestFails(void * ida_mem, int maxnef)
 

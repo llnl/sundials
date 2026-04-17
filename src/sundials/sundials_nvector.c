@@ -1111,7 +1111,6 @@ void N_VDestroyVectorArray(N_Vector* vs, int count)
   }
 
   free(vs);
-  vs = NULL;
 
   return;
 }

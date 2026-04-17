@@ -88,7 +88,8 @@ static int idaSetFromCommandLine(void* ida_mem, const char* idaid, int argc,
      {"sens_max_nonlin_iters", IDASetSensMaxNonlinIters},
      {"quad_sens_err_con", IDASetQuadSensErrCon},
      {"linear_solution_scaling", IDASetLinearSolutionScaling},
-     {"max_num_constraint_fails", IDASetMaxNumConstraintFails}};
+     {"max_num_constraint_fails", IDASetMaxNumConstraintFails},
+     {"skip_adapt_stop_time", IDASkipAdaptStopTime}};
   static const int num_int_keys = sizeof(int_pairs) / sizeof(*int_pairs);
 
   static const struct sunKeyLongPair long_pairs[] = {
