@@ -36,6 +36,9 @@ static int cvNlsLSolveSensStg(N_Vector deltaStg, void* cvode_mem);
 static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
                                 N_Vector delStg, sunrealtype tol,
                                 N_Vector ewtStg, void* cvode_mem);
+static SUNErrCode cvNlsUpdateNormSensStg(N_Vector ycorStg, N_Vector deltaStg,
+                                         N_Vector ewtStg, sunrealtype* delnrm,
+                                         void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -130,6 +133,15 @@ int CVodeSetNonlinearSolverSensStg(void* cvode_mem, SUNNonlinearSolver NLS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "Setting convergence test function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetUpdateNormFn(cv_mem->NLSstg, cvNlsUpdateNormSensStg,
+                                       cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting update norm function failed");
     return (CV_ILL_INPUT);
   }
 
@@ -375,6 +387,25 @@ static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
 
   /* Not yet converged */
   return (SUN_NLS_CONTINUE);
+}
+
+static SUNErrCode cvNlsUpdateNormSensStg(SUNDIALS_MAYBE_UNUSED N_Vector ycorStg,
+                                         N_Vector deltaStg,
+                                         N_Vector ewtStg,
+                                         sunrealtype* delnrm,
+                                         void* cvode_mem)
+{
+  CVodeMem cv_mem;
+  N_Vector *deltaS, *ewtS;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  deltaS  = NV_VECS_SW(deltaStg);
+  ewtS    = NV_VECS_SW(ewtStg);
+  *delnrm = cvSensNorm(cv_mem, deltaS, ewtS);
+
+  return SUN_SUCCESS;
 }
 
 static int cvNlsResidualSensStg(N_Vector ycorStg, N_Vector resStg, void* cvode_mem)

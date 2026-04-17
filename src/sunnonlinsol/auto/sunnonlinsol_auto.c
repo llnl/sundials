@@ -132,6 +132,12 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
              "solver = Auto, active = %s",
              SUNNonlinSolAutoType_ToString(AUTO_CONTENT(NLS)->active_solver_type));
 
+  AUTO_CONTENT(NLS)->fp_solver->getupdatenormfn    = NLS->getupdatenormfn;
+  AUTO_CONTENT(NLS)->fp_solver->getupdatenorm_data = NLS->getupdatenorm_data;
+  AUTO_CONTENT(NLS)->newton_solver->getupdatenormfn = NLS->getupdatenormfn;
+  AUTO_CONTENT(NLS)->newton_solver->getupdatenorm_data =
+    NLS->getupdatenorm_data;
+
   if (AUTO_CONTENT(NLS)->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
     retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->fp_solver, y0, ycor, w, tol,
@@ -179,15 +185,19 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
 
   if (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
+    sunrealtype crate;
+
     /* In the unlikely event that we are 'diverging', but the integrator-provided
        convergence test passed, we just exit with success and don't consider any switching. */
     if (retval == SUN_SUCCESS) { return retval; }
 
-    SUNNonlinearSolverContent_FixedPoint fp_content =
-      (SUNNonlinearSolverContent_FixedPoint)C->fp_solver->content;
+    if (SUNNonlinSolGetConvRate_FixedPoint(C->fp_solver, &crate) != SUN_SUCCESS)
+    {
+      return SUN_ERR_ARG_CORRUPT;
+    }
 
     /* Check if we are diverging */
-    sunbooleantype diverging = fp_content->crate >= C->fp_to_newt_threshold;
+    sunbooleantype diverging = crate >= C->fp_to_newt_threshold;
     sunbooleantype dont_delay = C->num_solves_since_switch >= C->fp_to_newt_delay;
 
     if (diverging && dont_delay)
@@ -198,7 +208,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
       SUNLogInfo(auto_nls->sunctx->logger, "auto-nonlinear-solver-switch",
                  "from = Fixed-Point, to = Newton, crate = " SUN_FORMAT_G
                  ", threshold = " SUN_FORMAT_G ", delay = %li",
-                 fp_content->crate, C->fp_to_newt_threshold, C->fp_to_newt_delay);
+                 crate, C->fp_to_newt_threshold, C->fp_to_newt_delay);
       return SUN_NLS_SWITCH;
     }
   }

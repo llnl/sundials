@@ -251,7 +251,16 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
 
     /* compute the norm of delta, but save the previous value for computing a rate of convergence */
     sunrealtype delnrmp     = FP_CONTENT(NLS)->delnrm;
-    FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
+    if (NLS->getupdatenormfn)
+    {
+      retval = NLS->getupdatenormfn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm),
+                                    NLS->getupdatenorm_data);
+      if (retval != SUN_SUCCESS)
+      {
+        FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
+      }
+    }
+    else { FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
 
     /* compute the convergence rate using the CVODE method */
     if (FP_CONTENT(NLS)->curiter > 1)
@@ -441,6 +450,13 @@ SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                                 sunrealtype* delnrm)
 {
   *delnrm = FP_CONTENT(NLS)->delnrm;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
+                                              sunrealtype* crate)
+{
+  *crate = FP_CONTENT(NLS)->crate;
   return SUN_SUCCESS;
 }
 

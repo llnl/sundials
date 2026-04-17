@@ -45,6 +45,9 @@ static int cvNlsLSolveSensSim(N_Vector deltaSim, void* cvode_mem);
 static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
                                 N_Vector delSim, sunrealtype tol,
                                 N_Vector ewtSim, void* cvode_mem);
+static SUNErrCode cvNlsUpdateNormSensSim(N_Vector ycorSim, N_Vector deltaSim,
+                                         N_Vector ewtSim, sunrealtype* delnrm,
+                                         void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -139,6 +142,15 @@ int CVodeSetNonlinearSolverSensSim(void* cvode_mem, SUNNonlinearSolver NLS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "Setting convergence test function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetUpdateNormFn(cv_mem->NLSsim, cvNlsUpdateNormSensSim,
+                                       cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting update norm function failed");
     return (CV_ILL_INPUT);
   }
 
@@ -452,6 +464,30 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 
   /* Not yet converged */
   return (SUN_NLS_CONTINUE);
+}
+
+static SUNErrCode cvNlsUpdateNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
+                                         N_Vector deltaSim, N_Vector ewtSim,
+                                         sunrealtype* delnrm, void* cvode_mem)
+{
+  CVodeMem cv_mem;
+  sunrealtype del;
+  N_Vector delta;
+  N_Vector ewt;
+  N_Vector *deltaS, *ewtS;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  delta  = NV_VEC_SW(deltaSim, 0);
+  deltaS = NV_VECS_SW(deltaSim) + 1;
+  ewt    = NV_VEC_SW(ewtSim, 0);
+  ewtS   = NV_VECS_SW(ewtSim) + 1;
+
+  del     = N_VWrmsNorm(delta, ewt);
+  *delnrm = cvSensUpdateNorm(cv_mem, del, deltaS, ewtS);
+
+  return SUN_SUCCESS;
 }
 
 static int cvNlsResidualSensSim(N_Vector ycorSim, N_Vector resSim, void* cvode_mem)

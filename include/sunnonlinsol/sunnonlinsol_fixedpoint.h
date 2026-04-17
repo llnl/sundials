@@ -148,6 +148,10 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                                 sunrealtype* delnrm);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
+                                              sunrealtype* crate);
+
 #ifdef __cplusplus
 }
 #endif

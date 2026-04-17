@@ -321,6 +321,23 @@ parameters. Only the routine for setting the nonlinear system defining function
       criteria may set this function to ``NULL``.
 
 
+.. c:function:: SUNErrCode SUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver NLS, SUNNonlinSolUpdateNormFn UpdateNormFn, void* getupdatenorm_data)
+
+   This *optional* function attaches an integrator-provided callback for
+   computing the nonlinear update norm :math:`\|\delta\|`. Integrators may use
+   this when the nonlinear solver should report an update norm that matches the
+   integrator's own convergence-test norm, such as for sensitivity solves that
+   use wrapped vectors or combined correction norms.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *UpdateNormFn* -- the function used to compute the update norm.
+      * *getupdatenorm_data* -- user data passed to *UpdateNormFn*.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+
 
 .. c:function:: SUNErrCode SUNNonlinSolSetMaxIters(SUNNonlinearSolver NLS, int maxiters)
 
@@ -564,6 +581,22 @@ module have types defined in the header file
       the tolerance in a weighted root-mean-squared norm with error
       weight vector ``ewt``.  SUNNonlinSol modules utilizing their
       own convergence criteria may ignore these functions.
+
+
+.. c:type:: SUNErrCode (*SUNNonlinSolUpdateNormFn)(N_Vector ycor, N_Vector del, N_Vector w, sunrealtype *delnrm, void* mem)
+
+   These functions compute an integrator-defined nonlinear update norm for use
+   by nonlinear solvers that expose or internally reuse the update norm.
+
+   **Arguments:**
+      * *ycor* -- is the current nonlinear correction or iterate.
+      * *del* -- is the current nonlinear update.
+      * *w* -- is the weight vector passed to :c:func:`SUNNonlinSolSolve`.
+      * *delnrm* -- stores the computed update norm.
+      * *mem* -- is integrator-owned callback data.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
 
 
 

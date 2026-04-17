@@ -34,6 +34,8 @@ static int cvNlsLSetup(sunbooleantype jbad, sunbooleantype* jcur,
 static int cvNlsLSolve(N_Vector delta, void* cvode_mem);
 static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector del,
                          sunrealtype tol, N_Vector ewt, void* cvode_mem);
+static SUNErrCode cvNlsUpdateNorm(N_Vector ycor, N_Vector delta, N_Vector ewt,
+                                  sunrealtype* delnrm, void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -115,6 +117,14 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "Setting convergence test function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetUpdateNormFn(cv_mem->NLS, cvNlsUpdateNorm, cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting update norm function failed");
     return (CV_ILL_INPUT);
   }
 
@@ -315,7 +325,6 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
   int m, retval;
   sunrealtype del;
   sunrealtype dcon;
-  sunbooleantype use_solver_norm;
 
   if (cvode_mem == NULL)
   {
@@ -325,10 +334,7 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the correction */
-  use_solver_norm = !(cv_mem->sens_solve ||
-                      (cv_mem->cv_sensi && (cv_mem->cv_ism == CV_SIMULTANEOUS)));
-
-  if (!use_solver_norm || SUNNonlinSolGetUpdateNorm(NLS, &del) != SUN_SUCCESS)
+  if (SUNNonlinSolGetUpdateNorm(NLS, &del) != SUN_SUCCESS)
   {
     del = N_VWrmsNorm(delta, ewt);
   }
@@ -363,6 +369,15 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
 
   /* Not yet converged */
   return (SUN_NLS_CONTINUE);
+}
+
+static SUNErrCode cvNlsUpdateNorm(SUNDIALS_MAYBE_UNUSED N_Vector ycor,
+                                  N_Vector delta, N_Vector ewt,
+                                  sunrealtype* delnrm,
+                                  SUNDIALS_MAYBE_UNUSED void* cvode_mem)
+{
+  *delnrm = N_VWrmsNorm(delta, ewt);
+  return SUN_SUCCESS;
 }
 
 static int cvNlsResidual(N_Vector ycor, N_Vector res, void* cvode_mem)
