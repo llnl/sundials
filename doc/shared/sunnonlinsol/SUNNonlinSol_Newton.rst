@@ -249,10 +249,10 @@ information:
 * ``nconvfails`` -- the total number of nonlinear convergence failures across
   all solves,
 
-* ``compute_stiffr`` -- a flag indicating whether to compute the Newton
-  stiffness metric after continued iterations,
+* ``compute_stiffr`` -- a flag indicating whether to compute the
+  stiffness ratio after continued iterations,
 
-* ``stiffr`` -- the most recently computed Newton stiffness metric,
+* ``stiffr`` -- the most recently computed stiffness ratio,
 
 * ``delnrm`` -- the WRMS norm of the most recent Newton update,
 
