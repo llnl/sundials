@@ -386,12 +386,6 @@ SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS,
-                                                   sunrealtype crate_const)
-{
-  return SUNNonlinSolSetConvRateConstant_FixedPoint(NLS, crate_const);
-}
-
 SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS,
                                                       sunrealtype crate_const)
 {
@@ -502,8 +496,7 @@ static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
       continue;
     }
 
-    if (strcmp(argv[idx] + offset, "conv_rate_constant") == 0 ||
-        strcmp(argv[idx] + offset, "crate_constant") == 0)
+    if (strcmp(argv[idx] + offset, "conv_rate_constant") == 0)
     {
       idx += 1;
       retval = SUNNonlinSolSetConvRateConstant_FixedPoint(NLS, (sunrealtype)atof(

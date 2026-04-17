@@ -439,20 +439,6 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver farg1
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver farg1, double const *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  sunrealtype arg2 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (sunrealtype)(*farg2);
-  result = (SUNErrCode)SUNNonlinSolSetCrateConstant_FixedPoint(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FSUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver farg1, double const *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
@@ -535,6 +521,5 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver fa
   fresult = (SUNErrCode)(result);
   return fresult;
 }
-
 
 

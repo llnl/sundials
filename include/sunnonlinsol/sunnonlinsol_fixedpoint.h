@@ -125,10 +125,6 @@ SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
                                              sunrealtype beta);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetCrateConstant_FixedPoint(SUNNonlinearSolver NLS,
-                                                   sunrealtype crate_const);
-
-SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS,
                                                       sunrealtype crate_const);
 

@@ -54,7 +54,6 @@ module fsunnonlinsol_fixedpoint_mod
  public :: FSUNNonlinSolSetConvTestFn_FixedPoint
  public :: FSUNNonlinSolSetMaxIters_FixedPoint
  public :: FSUNNonlinSolSetDamping_FixedPoint
- public :: FSUNNonlinSolSetCrateConstant_FixedPoint
  public :: FSUNNonlinSolSetConvRateConstant_FixedPoint
  public :: FSUNNonlinSolGetNumIters_FixedPoint
  public :: FSUNNonlinSolGetCurIter_FixedPoint
@@ -167,15 +166,6 @@ end function
 
 function swigc_FSUNNonlinSolSetDamping_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetDamping_FixedPoint") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetCrateConstant_FixedPoint(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetCrateConstant_FixedPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -462,22 +452,6 @@ real(C_DOUBLE) :: farg2
 farg1 = c_loc(nls)
 farg2 = beta
 fresult = swigc_FSUNNonlinSolSetDamping_FixedPoint(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetCrateConstant_FixedPoint(nls, crate_const) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-real(C_DOUBLE), intent(in) :: crate_const
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = crate_const
-fresult = swigc_FSUNNonlinSolSetCrateConstant_FixedPoint(farg1, farg2)
 swig_result = fresult
 end function
 

@@ -190,6 +190,10 @@ user-callable functions.
       A ``beta`` value should satisfy :math:`0 < \beta < 1` if
       damping is to be used. A value of one or more will disable damping.
 
+      If supported by the SUNNonlinearSolver implementation, this routine will be called by
+      :c:func:`SUNNonlinSolSetOptions` when using the key
+      ``NLSid.damping``.
+
 .. c:function:: SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS, sunrealtype crate_const)
 
    This sets the convergence rate constant used in the fixed-point estimate of
