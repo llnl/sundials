@@ -218,7 +218,7 @@ user-callable functions.
 .. c:function:: SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS, sunrealtype *crate)
 
    This returns the current estimate of the fixed-point nonlinear convergence
-   rate ``crate``.
+   rate :math:`crate \leftarrow \max\{0.3R, \|\delta_m\| / \|\delta_{m-1}\|\}`.
 
    **Arguments:**
       * *NLS* -- a SUNNonlinSol object.
