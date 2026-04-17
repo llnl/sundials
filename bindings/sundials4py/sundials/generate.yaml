@@ -91,7 +91,7 @@ modules:
     # we need to allow some none arguments
     - "^SUNLogger_Set.*File$"
     # don't provide getting file pointers to python
-    - "^SUNLogger_GSet.*File$"
+    - "^SUNLogger_Get.*File$"
     # nanobind cannot bind to functions which take function pointers, so we do something custom
     - "^SUNLogger_SetQueueAndFlushMsgFns$"
   sundials_matrix:
