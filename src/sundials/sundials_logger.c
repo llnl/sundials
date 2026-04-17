@@ -34,6 +34,11 @@
 #include <mpi.h>
 #endif
 
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNLoggerFunctionTable_Destroy(void* ptr);
+#endif
+
 #include "sundials_hashmap_impl.h"
 #include "sundials_macros.h"
 #include "sundials_utils.h"
@@ -274,6 +279,7 @@ SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger_ptr
 #endif
   logger->output_rank = output_rank;
   logger->content     = NULL;
+  logger->python      = NULL;
 
   /* use default routines */
   logger->queue_msg = sunQueueLogMessage;
@@ -595,6 +601,11 @@ SUNErrCode SUNLogger_Destroy(SUNLogger* logger_ptr)
       SUNHashMap_Destroy(&logger->filenames);
     }
 #endif
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+    SUNLoggerFunctionTable_Destroy(logger->python);
+#endif
+    logger->python = NULL;
 
 #if SUNDIALS_MPI_ENABLED
     if (logger->comm != SUN_COMM_NULL) { MPI_Comm_free(&logger->comm); }

@@ -90,6 +90,8 @@ modules:
     fn_exclude_by_name__regex:
      # we need to allow some none arguments
     - "^SUNLogger_Set.*File$"
+    # nanobind cannot bind to functions which take function pointers, so we do something custom
+    - "^SUNLogger_SetQueueAndFlushMsgFns$"
   sundials_matrix:
     path: sundials/sundials_matrix_generated.hpp
     headers:

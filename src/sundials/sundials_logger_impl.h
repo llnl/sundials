@@ -156,6 +156,9 @@ struct SUNLogger_
   /* Content for custom implementations */
   void* content;
 
+  /* Python binding function table (managed by sundials4py) */
+  void* python;
+
   /* Overridable operations */
   SUNLoggerQueueMsgFn queue_msg;
   SUNLoggerFlushMsgFn flush_msg;
