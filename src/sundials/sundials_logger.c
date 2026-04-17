@@ -476,7 +476,7 @@ SUNErrCode SUNLogger_GetDebugFile(SUNLogger logger, FILE** debug_fp)
 SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger,
                                             SUNLoggerQueueMsgFn queue_msg,
                                             SUNLoggerFlushMsgFn flush_msg,
-                                            void *ldata)
+                                            void *lptr)
 {
   if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 #if SUNDIALS_LOGGING_LEVEL > 0
@@ -484,7 +484,7 @@ SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger,
   {
     logger->queue_msg = queue_msg;
     logger->flush_msg = flush_msg;
-    logger->content   = ldata;
+    logger->content   = lptr;
   }
   else
   {
@@ -495,7 +495,7 @@ SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger,
 #else
   ((void)queue_msg);
   ((void)flush_msg);
-  ((void)ldata);
+  ((void)lptr);
 #endif
   return SUN_SUCCESS;
 }

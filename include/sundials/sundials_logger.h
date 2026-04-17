@@ -97,7 +97,7 @@ SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger,
                                             SUNLoggerQueueMsgFn queue_msg,
                                             SUNLoggerFlushMsgFn flush_msg,
-                                            void *ldata);
+                                            void *lptr);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,
