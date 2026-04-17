@@ -60,6 +60,7 @@ module fsunnonlinsol_fixedpoint_mod
  public :: FSUNNonlinSolGetNumConvFails_FixedPoint
  public :: FSUNNonlinSolGetSysFn_FixedPoint
  public :: FSUNNonlinSolGetUpdateNorm_FixedPoint
+ public :: FSUNNonlinSolGetConvRate_FixedPoint
 
 ! WRAPPER DECLARATIONS
 interface
@@ -220,6 +221,15 @@ end function
 
 function swigc_FSUNNonlinSolGetUpdateNorm_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetUpdateNorm_FixedPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolGetConvRate_FixedPoint(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetConvRate_FixedPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -548,6 +558,22 @@ type(C_PTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = c_loc(delnrm(1))
 fresult = swigc_FSUNNonlinSolGetUpdateNorm_FixedPoint(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolGetConvRate_FixedPoint(nls, crate) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+real(C_DOUBLE), dimension(*), target, intent(inout) :: crate
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = c_loc(crate(1))
+fresult = swigc_FSUNNonlinSolGetConvRate_FixedPoint(farg1, farg2)
 swig_result = fresult
 end function
 

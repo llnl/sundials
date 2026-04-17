@@ -2572,6 +2572,22 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn(SUNNonlinearSolver farg1, SUNNon
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver farg1, SUNNonlinSolUpdateNormFn farg2, void *farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolUpdateNormFn arg2 = (SUNNonlinSolUpdateNormFn) 0 ;
+  void *arg3 = (void *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolUpdateNormFn)(farg2);
+  arg3 = (void *)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetUpdateNormFn(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNNonlinSolSetMaxIters(SUNNonlinearSolver farg1, int const *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
