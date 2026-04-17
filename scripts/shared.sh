@@ -92,5 +92,5 @@ $tar $tarfile $distrobase/test/unit_tests/
 echo "   --- Add external files to $tarfile"
 $tar $tarfile $distrobase/external/
 
-echo "   --- Add tools to $tarfile"
+echo "   --- Add suntools to $tarfile"
 $tar $tarfile $distrobase/suntools/
