@@ -83,14 +83,26 @@ m.def(
 m.def("SUNLogger_SetErrorFilename", SUNLogger_SetErrorFilename,
       nb::arg("logger"), nb::arg("error_filename"));
 
+m.def("SUNLogger_GetErrorFile", SUNLogger_GetErrorFile, nb::arg("logger"),
+      nb::arg("error_fp"));
+
 m.def("SUNLogger_SetWarningFilename", SUNLogger_SetWarningFilename,
       nb::arg("logger"), nb::arg("warning_filename"));
+
+m.def("SUNLogger_GetWarningFile", SUNLogger_GetWarningFile, nb::arg("logger"),
+      nb::arg("warning_fp"));
 
 m.def("SUNLogger_SetDebugFilename", SUNLogger_SetDebugFilename,
       nb::arg("logger"), nb::arg("debug_filename"));
 
+m.def("SUNLogger_GetDebugFile", SUNLogger_GetDebugFile, nb::arg("logger"),
+      nb::arg("debug_fp"));
+
 m.def("SUNLogger_SetInfoFilename", SUNLogger_SetInfoFilename, nb::arg("logger"),
       nb::arg("info_filename"));
+
+m.def("SUNLogger_GetInfoFile", SUNLogger_GetInfoFile, nb::arg("logger"),
+      nb::arg("info_fp"));
 
 m.def(
   "SUNLogger_QueueMsg",
