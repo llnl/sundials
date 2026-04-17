@@ -739,7 +739,7 @@ int CVodeClearStopTime(void* cvode_mem)
 /*
  * CVodeSkipAdaptStopTime
  *
- * Specififies whether stop-time-limited steps should be disregarded
+ * Specifies whether stop-time-limited steps should be disregarded
  * when performing step size and order adaptivity.
  */
 
