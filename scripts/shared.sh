@@ -93,4 +93,4 @@ echo "   --- Add external files to $tarfile"
 $tar $tarfile $distrobase/external/
 
 echo "   --- Add tools to $tarfile"
-$tar $tarfile $distrobase/tools/
+$tar $tarfile $distrobase/suntools/

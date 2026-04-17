@@ -210,7 +210,7 @@ mkdir $tmpdir/examples
 mkdir $tmpdir/include
 mkdir $tmpdir/src
 mkdir $tmpdir/test
-mkdir $tmpdir/tools
+mkdir $tmpdir/suntools
 
 #----------------------------------
 # Copy appropriate files in $tmpdir
