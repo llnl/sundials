@@ -100,6 +100,8 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   content->auto_ctest_data         = NULL;
   content->fp_solver               = SUNNonlinSol_FixedPoint(y, m, sunctx);
   content->newton_solver           = SUNNonlinSol_Newton(y, sunctx);
+  SUNCheckCallNull(
+    SUNNonlinSolSetComputeStiffr_Newton(content->newton_solver, SUNTRUE));
 
   return NLS;
 }
@@ -113,14 +115,8 @@ SUNNonlinearSolver_Type SUNNonlinSolGetType_Auto(
 SUNErrCode SUNNonlinSolInitialize_Auto(SUNNonlinearSolver NLS)
 {
   SUNFunctionBegin(NLS->sunctx);
-  if (AUTO_CONTENT(NLS)->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
-  {
-    SUNCheckCall(SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->fp_solver));
-  }
-  else
-  {
-    SUNCheckCall(SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->newton_solver));
-  }
+  SUNCheckCall(SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->fp_solver));
+  SUNCheckCall(SUNNonlinSolInitialize(AUTO_CONTENT(NLS)->newton_solver));
   return SUN_SUCCESS;
 }
 
@@ -208,10 +204,13 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
   }
   else
   {
-    SUNNonlinearSolverContent_Newton newton_content =
-      (SUNNonlinearSolverContent_Newton)C->newton_solver->content;
+    sunrealtype stiffr;
+    if (SUNNonlinSolGetStiffr_Newton(C->newton_solver, &stiffr) != SUN_SUCCESS)
+    {
+      return SUN_ERR_ARG_CORRUPT;
+    }
 
-    sunbooleantype contraction = newton_content->stiffr < C->newt_to_fp_threshold;
+    sunbooleantype contraction = stiffr < C->newt_to_fp_threshold;
     sunbooleantype dont_delay = C->num_solves_since_switch >= C->newt_to_fp_delay;
 
     if (contraction && dont_delay)
@@ -222,8 +221,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
       SUNLogInfo(auto_nls->sunctx->logger, "auto-nonlinear-solver-switch",
                  "from = Newton, to = Fixed-Point, stiffr = " SUN_FORMAT_G
                  ", threshold = " SUN_FORMAT_G ", delay = %li",
-                 newton_content->stiffr, C->newt_to_fp_threshold,
-                 C->newt_to_fp_delay);
+                 stiffr, C->newt_to_fp_threshold, C->newt_to_fp_delay);
       return SUN_NLS_SWITCH;
     }
   }

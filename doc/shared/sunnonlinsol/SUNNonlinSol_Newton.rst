@@ -131,7 +131,7 @@ in :numref:`SUNNonlinSol.API.CoreFn`--:numref:`SUNNonlinSol.API.GetFn`
 should be called in favor of the SUNNonlinSol_Newton-specific implementations.
 
 The SUNNonlinSol_Newton module also defines the following
-user-callable function.
+user-callable functions.
 
 
 .. c:function:: SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS, SUNNonlinSolSysFn *SysFn)
@@ -166,6 +166,35 @@ user-callable function.
       This function is intended for users that wish to use the update norm in a
       custom convergence test function and avoid recomputing it.
 
+.. c:function:: SUNErrCode SUNNonlinSolSetComputeStiffr_Newton(SUNNonlinearSolver NLS, sunbooleantype onoff)
+
+   This enables or disables the additional residual norm evaluation used to
+   compute the Newton stiffness metric ``stiffr``.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *onoff* -- ``SUNTRUE`` to compute ``stiffr`` after each continued
+        Newton iteration, or ``SUNFALSE`` to disable that extra work.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   **Notes:**
+      By default ``stiffr`` computation is disabled. The
+      :c:func:`SUNNonlinSol_Auto` module enables it on the wrapped Newton
+      solver so it can evaluate the switching criterion.
+
+.. c:function:: SUNErrCode SUNNonlinSolGetStiffr_Newton(SUNNonlinearSolver NLS, sunrealtype *stiffr)
+
+   This returns the most recently computed Newton stiffness metric.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *stiffr* -- the stiffness metric :math:`\|F(y^m)\| / \|\delta_m\|`.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
 
 .. _SUNNonlinSol.Newton.Content:
 
@@ -190,6 +219,9 @@ following structure.
      int            maxiters;
      long int       niters;
      long int       nconvfails;
+     sunbooleantype compute_stiffr;
+     sunrealtype    stiffr;
+     sunrealtype    delnrm;
      void*          ctest_data;
    };
 
@@ -218,5 +250,12 @@ information:
 
 * ``nconvfails`` -- the total number of nonlinear convergence failures across
   all solves,
+
+* ``compute_stiffr`` -- a flag indicating whether to compute the Newton
+  stiffness metric after continued iterations,
+
+* ``stiffr`` -- the most recently computed Newton stiffness metric,
+
+* ``delnrm`` -- the WRMS norm of the most recent Newton update,
 
 * ``ctest_data`` -- the data pointer passed to the convergence test function,

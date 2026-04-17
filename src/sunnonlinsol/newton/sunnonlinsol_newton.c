@@ -94,6 +94,7 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   content->maxiters   = 3;
   content->niters     = 0;
   content->nconvfails = 0;
+  content->compute_stiffr = SUNFALSE;
   content->stiffr     = SUN_RCONST(0.0);
   content->delnrm     = SUN_RCONST(0.0);
   content->ctest_data = NULL;
@@ -153,6 +154,7 @@ SUNErrCode SUNNonlinSolInitialize_Newton(SUNNonlinearSolver NLS)
   /* reset the total number of iterations and convergence failures */
   NEWTON_CONTENT(NLS)->niters     = 0;
   NEWTON_CONTENT(NLS)->nconvfails = 0;
+  NEWTON_CONTENT(NLS)->stiffr     = SUN_RCONST(0.0);
 
   /* reset the Jacobian status */
   NEWTON_CONTENT(NLS)->jcur = SUNFALSE;
@@ -295,14 +297,15 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       retval = NEWTON_CONTENT(NLS)->Sys(ycor, delta, mem);
       if (retval != SUN_SUCCESS) { break; }
 
-      /* compute the residual norm and store it in delnrm (a bit confusing, 
-         but we repurpose delta to save memory), which will be reused by the
-         integrator, but first we need to save the correction norm */
-      sunrealtype delnrm          = NEWTON_CONTENT(NLS)->delnrm;
-      NEWTON_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
+      if (NEWTON_CONTENT(NLS)->compute_stiffr)
+      {
+        sunrealtype delnrm = NEWTON_CONTENT(NLS)->delnrm;
+        sunrealtype resnrm = N_VWrmsNorm(delta, w);
 
-      /* compute stiffness metric from https://doi.org/10.1007/BF01933714 */
-      NEWTON_CONTENT(NLS)->stiffr = NEWTON_CONTENT(NLS)->delnrm / delnrm;
+        /* Norsett's switching metric compares the next residual to the
+           previous Newton update norm. */
+        NEWTON_CONTENT(NLS)->stiffr = resnrm / delnrm;
+      }
     } /* end of Newton iteration loop */
 
     /* all errors go here */
@@ -425,6 +428,15 @@ SUNErrCode SUNNonlinSolSetMaxIters_Newton(SUNNonlinearSolver NLS, int maxiters)
   return SUN_SUCCESS;
 }
 
+SUNErrCode SUNNonlinSolSetComputeStiffr_Newton(SUNNonlinearSolver NLS,
+                                               sunbooleantype onoff)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  NEWTON_CONTENT(NLS)->compute_stiffr = onoff;
+  if (!onoff) { NEWTON_CONTENT(NLS)->stiffr = SUN_RCONST(0.0); }
+  return SUN_SUCCESS;
+}
+
 /*==============================================================================
   Get functions
   ============================================================================*/
@@ -464,5 +476,13 @@ SUNErrCode SUNNonlinSolGetUpdateNorm_Newton(SUNNonlinearSolver NLS,
 {
   /* return the update norm ||delta||_{WRMS} */
   *delnrm = NEWTON_CONTENT(NLS)->delnrm;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetStiffr_Newton(SUNNonlinearSolver NLS,
+                                        sunrealtype* stiffr)
+{
+  /* return the most recently computed stiffness metric */
+  *stiffr = NEWTON_CONTENT(NLS)->stiffr;
   return SUN_SUCCESS;
 }

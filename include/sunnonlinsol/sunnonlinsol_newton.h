@@ -53,6 +53,7 @@ struct _SUNNonlinearSolverContent_Newton
   long int niters; /* total number of nonlinear iterations across all solves */
   long int nconvfails; /* total number of convergence failures across all solves
                         */
+  sunbooleantype compute_stiffr; /* enable stiffness-metric updates           */
   sunrealtype stiffr;  /* ratio ||F_m|| / || delta_m || to monitor stiffness */
   sunrealtype delnrm;  /* wrms norm of delta from last iteration            */
   void* ctest_data; /* data to pass to convergence test function              */
@@ -108,6 +109,10 @@ SUNErrCode SUNNonlinSolSetConvTestFn_Newton(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetMaxIters_Newton(SUNNonlinearSolver NLS, int maxiters);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetComputeStiffr_Newton(SUNNonlinearSolver NLS,
+                                               sunbooleantype onoff);
+
 /* get functions */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Newton(SUNNonlinearSolver NLS,
@@ -127,6 +132,10 @@ SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetUpdateNorm_Newton(SUNNonlinearSolver NLS,
                                             sunrealtype* delnrm);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetStiffr_Newton(SUNNonlinearSolver NLS,
+                                        sunrealtype* stiffr);
 
 #ifdef __cplusplus
 }
