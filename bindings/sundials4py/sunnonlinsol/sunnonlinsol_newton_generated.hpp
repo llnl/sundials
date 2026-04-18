@@ -51,6 +51,9 @@ m.def(
   nb::arg("count"), nb::arg("y"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
   nb::keep_alive<0, 3>());
 
+m.def("SUNNonlinSolSetComputeStiffr_Newton",
+      SUNNonlinSolSetComputeStiffr_Newton, nb::arg("NLS"), nb::arg("onoff"));
+
 m.def(
   "SUNNonlinSolGetUpdateNorm_Newton",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
@@ -67,6 +70,23 @@ m.def(
 
     return SUNNonlinSolGetUpdateNorm_Newton_adapt_modifiable_immutable_to_return(
       NLS);
+  },
+  nb::arg("NLS"));
+
+m.def(
+  "SUNNonlinSolGetStiffr_Newton",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetStiffr_Newton_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+    {
+      sunrealtype stiffr_adapt_modifiable;
+
+      SUNErrCode r = SUNNonlinSolGetStiffr_Newton(NLS, &stiffr_adapt_modifiable);
+      return std::make_tuple(r, stiffr_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetStiffr_Newton_adapt_modifiable_immutable_to_return(NLS);
   },
   nb::arg("NLS"));
 // #ifdef __cplusplus
