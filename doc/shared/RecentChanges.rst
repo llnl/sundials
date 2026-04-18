@@ -12,6 +12,9 @@ iteration based on an estimate of stiffness. This solver may be useful to pair w
 in CVODE/CVODES, or with DIRK methods in ARKODE, for users who are unsure about
 the stiffness of their problem. See the module documentation for more information.
 
+Added the function :c:func:`SUNLogger_SetQueueAndFlushMsgFns` to allow for
+user-defined functions to queue and flush log messages.
+
 Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
 
 **Bug Fixes**

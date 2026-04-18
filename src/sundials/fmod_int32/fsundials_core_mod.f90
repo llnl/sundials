@@ -154,12 +154,17 @@ module fsundials_core_mod
  public :: FSUNLogger_CreateFromEnv
  public :: FSUNLogger_SetErrorFilename
  public :: FSUNLogger_SetErrorFile
+ public :: FSUNLogger_GetErrorFile
  public :: FSUNLogger_SetWarningFilename
  public :: FSUNLogger_SetWarningFile
+ public :: FSUNLogger_GetWarningFile
  public :: FSUNLogger_SetDebugFilename
  public :: FSUNLogger_SetDebugFile
+ public :: FSUNLogger_GetDebugFile
  public :: FSUNLogger_SetInfoFilename
  public :: FSUNLogger_SetInfoFile
+ public :: FSUNLogger_GetInfoFile
+ public :: FSUNLogger_SetQueueAndFlushMsgFns
  public :: FSUNLogger_QueueMsg
  public :: FSUNLogger_Flush
  public :: FSUNLogger_GetOutputRank
@@ -985,6 +990,15 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNLogger_GetErrorFile(farg1, farg2) &
+bind(C, name="_wrap_FSUNLogger_GetErrorFile") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNLogger_SetWarningFilename(farg1, farg2) &
 bind(C, name="_wrap_FSUNLogger_SetWarningFilename") &
 result(fresult)
@@ -997,6 +1011,15 @@ end function
 
 function swigc_FSUNLogger_SetWarningFile(farg1, farg2) &
 bind(C, name="_wrap_FSUNLogger_SetWarningFile") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNLogger_GetWarningFile(farg1, farg2) &
+bind(C, name="_wrap_FSUNLogger_GetWarningFile") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -1023,6 +1046,15 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNLogger_GetDebugFile(farg1, farg2) &
+bind(C, name="_wrap_FSUNLogger_GetDebugFile") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNLogger_SetInfoFilename(farg1, farg2) &
 bind(C, name="_wrap_FSUNLogger_SetInfoFilename") &
 result(fresult)
@@ -1039,6 +1071,26 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNLogger_GetInfoFile(farg1, farg2) &
+bind(C, name="_wrap_FSUNLogger_GetInfoFile") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNLogger_SetQueueAndFlushMsgFns(farg1, farg2, farg3, farg4) &
+bind(C, name="_wrap_FSUNLogger_SetQueueAndFlushMsgFns") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_FUNPTR), value :: farg3
+type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -3586,6 +3638,22 @@ fresult = swigc_FSUNLogger_SetErrorFile(farg1, farg2)
 swig_result = fresult
 end function
 
+function FSUNLogger_GetErrorFile(logger, error_fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_PTR), target, intent(inout) :: error_fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = logger
+farg2 = c_loc(error_fp)
+fresult = swigc_FSUNLogger_GetErrorFile(farg1, farg2)
+swig_result = fresult
+end function
+
 function FSUNLogger_SetWarningFilename(logger, warning_filename) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -3616,6 +3684,22 @@ type(C_PTR) :: farg2
 farg1 = logger
 farg2 = warning_fp
 fresult = swigc_FSUNLogger_SetWarningFile(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNLogger_GetWarningFile(logger, warning_fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_PTR), target, intent(inout) :: warning_fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = logger
+farg2 = c_loc(warning_fp)
+fresult = swigc_FSUNLogger_GetWarningFile(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -3652,6 +3736,22 @@ fresult = swigc_FSUNLogger_SetDebugFile(farg1, farg2)
 swig_result = fresult
 end function
 
+function FSUNLogger_GetDebugFile(logger, debug_fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_PTR), target, intent(inout) :: debug_fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = logger
+farg2 = c_loc(debug_fp)
+fresult = swigc_FSUNLogger_GetDebugFile(farg1, farg2)
+swig_result = fresult
+end function
+
 function FSUNLogger_SetInfoFilename(logger, info_filename) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -3682,6 +3782,44 @@ type(C_PTR) :: farg2
 farg1 = logger
 farg2 = info_fp
 fresult = swigc_FSUNLogger_SetInfoFile(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNLogger_GetInfoFile(logger, info_fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_PTR), target, intent(inout) :: info_fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = logger
+farg2 = c_loc(info_fp)
+fresult = swigc_FSUNLogger_GetInfoFile(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNLogger_SetQueueAndFlushMsgFns(logger, queue_msg, flush_msg, lptr) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: logger
+type(C_FUNPTR), intent(in), value :: queue_msg
+type(C_FUNPTR), intent(in), value :: flush_msg
+type(C_PTR) :: lptr
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_FUNPTR) :: farg3 
+type(C_PTR) :: farg4 
+
+farg1 = logger
+farg2 = queue_msg
+farg3 = flush_msg
+farg4 = lptr
+fresult = swigc_FSUNLogger_SetQueueAndFlushMsgFns(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
