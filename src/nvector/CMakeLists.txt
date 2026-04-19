@@ -111,3 +111,19 @@ install(FILES ${PROJECT_SOURCE_DIR}/include/nvector/nvector_stdvector.hpp
 set(_SUNDIALS_INSTALLED_COMPONENTS
     "nvecstdvector;${_SUNDIALS_INSTALLED_COMPONENTS}"
     CACHE INTERNAL "" FORCE)
+
+install(CODE "MESSAGE(\"\nInstall NVECTOR_STDMDSPAN\n\")")
+message(STATUS "Added NVECTOR_STDMDSPAN module")
+add_library(sundials_nvecstdmdspan INTERFACE)
+target_link_libraries(sundials_nvecstdmdspan INTERFACE sundials_core)
+target_include_directories(
+  sundials_nvecstdmdspan
+  INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            $<BUILD_INTERFACE:${SUNDIALS_SOURCE_DIR}/src/sundials>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+install(FILES ${PROJECT_SOURCE_DIR}/include/nvector/nvector_stdmdspan.hpp
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/nvector")
+set(_SUNDIALS_INSTALLED_COMPONENTS
+    "nvecstdmdspan;${_SUNDIALS_INSTALLED_COMPONENTS}"
+    CACHE INTERNAL "" FORCE)
