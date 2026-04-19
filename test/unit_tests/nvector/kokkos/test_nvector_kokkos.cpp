@@ -49,11 +49,10 @@ using ExecSpace = Kokkos::OpenMP;
 using ExecSpace = Kokkos::Serial;
 #endif
 
-using VecType          = sundials::kokkos::Vector<ExecSpace>;
-using UnmanagedVecType = sundials::kokkos::Vector<ExecSpace,
-                                                   ExecSpace::memory_space,
-                                                   Kokkos::MemoryUnmanaged>;
-using SizeType         = VecType::size_type;
+using VecType = sundials::kokkos::Vector<ExecSpace>;
+using UnmanagedVecType =
+  sundials::kokkos::Vector<ExecSpace, ExecSpace::memory_space, Kokkos::MemoryUnmanaged>;
+using SizeType = VecType::size_type;
 
 /* -----------------------------------------------------------------------------
  * Run the vector operation tests
@@ -244,10 +243,10 @@ int main(int argc, char* argv[])
     /* Raw pointer allocated in the correct memory space for the execution
      * backend. Lifetime spans the op tests so that it outlives the Vector
      * constructed over it. */
-    sunrealtype* unmanaged_ptr =
-      static_cast<sunrealtype*>(Kokkos::kokkos_malloc<ExecSpace::memory_space>(
-        "unmanaged_storage",
-        static_cast<size_t>(length) * sizeof(sunrealtype)));
+    sunrealtype* unmanaged_ptr = static_cast<sunrealtype*>(
+      Kokkos::kokkos_malloc<ExecSpace::memory_space>("unmanaged_storage",
+                                                     static_cast<size_t>(length) *
+                                                       sizeof(sunrealtype)));
 
     {
       UnmanagedVecType::view_type unmanaged_view(unmanaged_ptr,
