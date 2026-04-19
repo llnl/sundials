@@ -160,6 +160,8 @@ endif()
 # Check if GTest is needed
 #
 if(SUNDIALS_TEST_ENABLE_GTEST)
+  # Prevent installing gtest targets
+  set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
   # find_package(GTest)
   if(NOT (TARGET GTest::gtest_main OR TARGET GTest::Main))
     include(FetchContent)
