@@ -445,7 +445,6 @@ def log_file_to_list(filename):
        plt.show()
     """
     with open(filename, "r") as logfile:
-
         # List of step attempts, each entry is a dictionary for one attempt
         step_attempts = []
 
@@ -462,7 +461,6 @@ def log_file_to_list(filename):
         s = StepData()
 
         for line_number, line in enumerate(all_lines):
-
             line_dict = _parse_logfile_line(line.rstrip(), line_number, all_lines)
 
             if not line_dict:
@@ -582,3 +580,61 @@ def get_history(
         return steps_by_level, times_by_level, values_by_level
     else:
         return steps, times, values
+
+
+def _get_history(log, key, step_status, time_range, step_range):
+    """Extract the step/time series of the requested value."""
+
+    steps = []
+    times = []
+    values = []
+    levels = []
+
+    for entry in log:
+        step = int(entry["step"])
+        time = float(entry["tn"])
+        level = entry["level"]
+
+        if time_range is not None:
+            if time < time_range[0] or time > time_range[1]:
+                continue
+
+        if step_range is not None:
+            if step < step_range[0] or step > step_range[1]:
+                continue
+
+        save_data = True
+        if step_status is not None:
+            if step_status not in entry["status"]:
+                save_data = False
+
+        if key in entry and save_data:
+            steps.append(step)
+            times.append(time)
+            values.append(entry[key])
+            levels.append(level)
+
+        if "stages" in entry:
+            for s in entry["stages"]:
+                next_level_key = f"time-level-{level + 1}"
+                if next_level_key in s:
+                    sub_steps, sub_times, sub_values, sub_levels = _get_history(
+                        s[next_level_key], key, step_status, time_range, None
+                    )
+                    steps.extend(sub_steps)
+                    times.extend(sub_times)
+                    values.extend(sub_values)
+                    levels.extend(sub_levels)
+
+        if "compute-embedding" in entry:
+            next_level_key = f"time-level-{level + 1}"
+            if next_level_key in entry["compute-embedding"]:
+                sub_steps, sub_times, sub_values, sub_levels = _get_history(
+                    entry["compute-embedding"][next_level_key], key, step_status, time_range, None
+                )
+                steps.extend(sub_steps)
+                times.extend(sub_times)
+                values.extend(sub_values)
+                levels.extend(sub_levels)
+
+    return steps, times, values, levels
