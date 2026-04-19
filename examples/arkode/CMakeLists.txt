@@ -49,6 +49,7 @@ endif()
 # C++ examples
 if(SUNDIALS_ENABLE_CXX_EXAMPLES)
   add_subdirectory(CXX_serial)
+  add_subdirectory(CXX_std)
   if(SUNDIALS_ENABLE_LAPACK)
     add_subdirectory(CXX_lapack)
   endif()
