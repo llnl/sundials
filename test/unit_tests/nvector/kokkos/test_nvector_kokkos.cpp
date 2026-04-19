@@ -235,10 +235,6 @@ int main(int argc, char* argv[])
      * internal workspace vectors. Operations such as N_VScale(c, X, Z) then
      * dispatch through Z->ops (managed), operating on X (unmanaged) and Z
      * (managed) simultaneously.
-     *
-     * This is the exact configuration that triggered a Kokkos 5 abort in
-     * SharedAllocationRecord::increment before the to_managed fix was applied
-     * to the Vector view constructor.
      * -----------------------------------------------------------------------*/
     printf("\n====================================================\n");
     printf("Testing KOKKOS N_Vector: unmanaged view constructor\n");
@@ -298,7 +294,7 @@ int main(int argc, char* argv[])
 
       /* Y and Z are managed clones of the unmanaged X. Vector operations will
        * mix unmanaged (X) and managed views (Y, Z), exercising the type-mixing
-       * code path that failed in Kokkos 5. */
+       * code path. */
       N_Vector Y_nv = N_VClone(X);
       N_Vector Z_nv = N_VClone(X);
 
