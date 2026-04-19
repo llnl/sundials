@@ -580,8 +580,8 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
       implicit, then we just declare 'success' no matter what
       is provided.
   ---------------------------------------------------------------*/
-int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y, 
-                        SUNDIALS_MAYBE_UNUSED N_Vector del, sunrealtype tol, 
+int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y,
+                        SUNDIALS_MAYBE_UNUSED N_Vector del, sunrealtype tol,
                         SUNDIALS_MAYBE_UNUSED N_Vector ewt, void* arkode_mem)
 {
   /* temporary variables */
