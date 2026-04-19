@@ -59,6 +59,7 @@ set(sundials_HEADERS
     sundials_nonlinearsolver.hpp
     sundials_nvector.h
     sundials_nvector.hpp
+    sundials_nvector_base.hpp
     sundials_profiler.h
     sundials_profiler.hpp
     sundials_stepper.h
