@@ -24,3 +24,13 @@ add_executable(harmonic_serial harmonic_oscillator_serial.cpp)
 target_link_libraries(harmonic_serial PRIVATE
   sundials_arkode sundials_nvecserial
 )
+
+add_executable(coupled_oscillators coupled_oscillators.cpp)
+target_link_libraries(coupled_oscillators PRIVATE
+  sundials_arkode sundials_nvecserial
+)
+
+add_executable(coupled_oscillators_serial coupled_oscillators_serial.cpp)
+target_link_libraries(coupled_oscillators_serial PRIVATE
+  sundials_arkode sundials_nvecserial
+)
