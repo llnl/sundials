@@ -318,8 +318,9 @@ static int cvNlsLSolve(N_Vector delta, void* cvode_mem)
   return (CV_SUCCESS);
 }
 
-static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
-                         sunrealtype tol, N_Vector ewt, void* cvode_mem)
+static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
+                         SUNDIALS_MAYBE_UNUSED N_Vector delta, sunrealtype tol,
+                         N_Vector ewt, void* cvode_mem)
 {
   CVodeMem cv_mem;
   int m, retval;
