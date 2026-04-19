@@ -130,7 +130,6 @@ def test_fixedpoint_setup_and_solve(sunctx):
 
     # Create the problem
     with AnalyticNonlinearSys(u0) as problem:
-
         # Create the solver
         nls = SUNNonlinSol_FixedPoint(u0, 2, sunctx)
 
