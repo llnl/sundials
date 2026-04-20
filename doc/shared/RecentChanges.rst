@@ -5,6 +5,9 @@
 
 **New Features and Enhancements**
 
+Added the function :c:func:`SUNLogger_SetQueueAndFlushMsgFns` to allow for
+user-defined functions to queue and flush log messages.
+
 Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
 
 **Bug Fixes**

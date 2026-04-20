@@ -28,7 +28,7 @@ modules:
     - "CopyOps" # No need to call CopyOps functions in Python
     - "Space" # Space functions are deprecated, so dont expose them in Python
     # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
-    - "SetOptions" 
+    - "SetOptions"
     macro_define_include_by_name__regex:
     - "^SUN_"
     - "^SUNDIALS_"
@@ -54,7 +54,7 @@ modules:
     headers:
     - ../../include/sundials/sundials_context.h
     fn_exclude_by_name__regex:
-    # nanobind cannot bind to functions which take functions points, so we do do something custom 
+    # nanobind cannot bind to functions which take functions points, so we do do something custom
     - "^SUNContext_PushErrHandler$"
     - "^SUNContext_PopErrHandler$"
   sundials_domeigestimator:
@@ -77,20 +77,24 @@ modules:
     - ../../include/sundials/sundials_linearsolver.h
     fn_exclude_by_name__regex:
     # SUNLinSolSolve has an optional argument, A, followed by non-optional. Litgen can't handle this yet, so we just manually wrap it.
-    - "^SUNLinSolSolve$" 
+    - "^SUNLinSolSolve$"
     # need to do custom handling of functions which take a function pointer
     - "^SUNLinSolSetATimes$"
     - "^SUNLinSolSetPreconditioner$"
     fn_params_optional_with_default_null:
       "SUNLinSolSetup":
-      - "A" 
+      - "A"
   sundials_logger:
     path: sundials/sundials_logger_generated.hpp
     headers:
     - ../../include/sundials/sundials_logger.h
     fn_exclude_by_name__regex:
-     # we need to allow some none arguments
+    # we need to allow some none arguments
     - "^SUNLogger_Set.*File$"
+    # don't provide getting file pointers to python
+    - "^SUNLogger_Get.*File$"
+    # nanobind cannot bind to functions which take function pointers, so we do something custom
+    - "^SUNLogger_SetQueueAndFlushMsgFns$"
   sundials_matrix:
     path: sundials/sundials_matrix_generated.hpp
     headers:
@@ -101,11 +105,11 @@ modules:
     - ../../include/sundials/sundials_memory.h
     fn_exclude_by_name__regex:
     # these functions are not needed in a Python code, so we don't interface them
-    - "Alias" 
-    - "Wrap" 
+    - "Alias"
+    - "Wrap"
     - "Alloc*"
-    - "Dealloc" 
-    - "Copy*" 
+    - "Dealloc"
+    - "Copy*"
     class_exclude_by_name__regex:
     - "SUNMemory_" # not needed in Python
   sundials_nonlinearsolver:
@@ -156,7 +160,7 @@ modules:
     fn_exclude_by_name__regex:
     - "Set.*Fn" # nanobind cannot bind to functions which take a function pointer, so we do something custom
     # we dont allow access to content from Python
-    - "SetContent" 
+    - "SetContent"
     - "GetContent"
   sundials_types:
     path: sundials/sundials_types_generated.hpp
