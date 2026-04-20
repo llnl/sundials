@@ -166,6 +166,9 @@ m.def("CVodeSetInterpolateStopTime", CVodeSetInterpolateStopTime,
 
 m.def("CVodeClearStopTime", CVodeClearStopTime, nb::arg("cvode_mem"));
 
+m.def("CVodeSkipAdaptStopTime", CVodeSkipAdaptStopTime, nb::arg("cvode_mem"),
+      nb::arg("skipadapttstop"));
+
 m.def("CVodeSetEtaFixedStepBounds", CVodeSetEtaFixedStepBounds,
       nb::arg("cvode_mem"), nb::arg("eta_min_fx"), nb::arg("eta_max_fx"));
 

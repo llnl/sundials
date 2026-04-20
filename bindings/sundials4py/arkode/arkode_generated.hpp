@@ -203,6 +203,9 @@ m.def("ARKodeSetStopTime", ARKodeSetStopTime, nb::arg("arkode_mem"),
 
 m.def("ARKodeClearStopTime", ARKodeClearStopTime, nb::arg("arkode_mem"));
 
+m.def("ARKodeSkipAdaptStopTime", ARKodeSkipAdaptStopTime, nb::arg("arkode_mem"),
+      nb::arg("skipadapttstop"));
+
 m.def("ARKodeSetFixedStep", ARKodeSetFixedStep, nb::arg("arkode_mem"),
       nb::arg("hfixed"));
 
