@@ -20,7 +20,7 @@ Brusselator ODE test problem:
    -------------------------------------------
 
 Final Statistics:
-Current time                  = 10.0124653670818
+Current time                  = 10.0124697014274
 Steps                         = 752
 Step attempts                 = 762
 Stability limited steps       = 0
@@ -29,8 +29,8 @@ Error test fails              = 10
 NLS step fails                = 0
 Inequality constraint fails   = 0
 Initial step size             = 1.13978962117636e-08
-Last step size                = 0.020921379243018
-Current step size             = 0.0212806907861296
+Last step size                = 0.0209214515801851
+Current step size             = 0.0212807658348458
 RHS fn evals                  = 47265
 Number of dom_eig updates     = 1
 Number of fe calls for DEE    = 12

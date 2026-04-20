@@ -1,4 +1,4 @@
- 
+
 1D adaptive Heat PDE test problem:
   diffusion coefficient:  k = 0.5
   initial N = 21
@@ -72,7 +72,7 @@
    65  2.014255531625573e-02  2.014255531625573e-02  3.250909359584335e-02  61    5  105
  ----------------------------------------------------------------------------------------
  Final solver statistics:
-   Total number of time steps = 60
-   Total nonlinear iterations = 370
-   Total linear iterations    = 6972
+   Total number of time steps = 65
+   Total nonlinear iterations = 433
+   Total linear iterations    = 8275
 
