@@ -2998,8 +2998,8 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
 {
   sunrealtype ss = (sunrealtype)num_stages;
   sunrealtype w0, w1, wr, wi, th, sh, ch, b_s, a_s, Ts, Ts_p, Ts_pp;
-  sunrealtype zR = SUNRabs(h) * step_mem->lambdaR;
-  sunrealtype zI = SUNRabs(h) * step_mem->lambdaI;
+  sunrealtype zR = h * step_mem->lambdaR;
+  sunrealtype zI = h * step_mem->lambdaI;
 
   if (step_mem->use_ellipse)
   {
@@ -3066,8 +3066,8 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
 {
   sunrealtype ss = (sunrealtype)num_stages;
   sunrealtype w1, wr, wi, a_s, b_s;
-  sunrealtype zR = SUNRabs(h) * step_mem->lambdaR;
-  sunrealtype zI = SUNRabs(h) * step_mem->lambdaI;
+  sunrealtype zR = h * step_mem->lambdaR;
+  sunrealtype zI = h * step_mem->lambdaI;
 
   if (step_mem->use_ellipse)
   {
