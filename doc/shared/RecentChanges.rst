@@ -15,4 +15,7 @@ Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 ``malloc``.
 
+Fixed an error in the Python logging tools where repeated keys would cause an
+error.
+
 **Deprecation Notices**
