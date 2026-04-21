@@ -160,14 +160,22 @@ endif()
 # Check if GTest is needed
 #
 if(SUNDIALS_TEST_ENABLE_GTEST)
+  # Prevent installing gtest targets
+  set(INSTALL_GTEST
+      OFF
+      CACHE BOOL "" FORCE)
   # find_package(GTest)
   if(NOT (TARGET GTest::gtest_main OR TARGET GTest::Main))
     include(FetchContent)
     FetchContent_Declare(
       googletest
-      URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
-      URL_HASH
-        SHA256=a9607c9215866bd425a725610c5e0f739eeb50887a57903df48891446ce6fb3c)
+      # Use commit with fix for implicit conversion warning with Clang 21+
+      # TODO(DJG): Update to v1.18.0 when available URL
+      # https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
+      # URL_HASH
+      # SHA256=a9607c9215866bd425a725610c5e0f739eeb50887a57903df48891446ce6fb3c)
+      URL https://github.com/google/googletest/archive/fa8438ae6b70c57010177de47a9f13d7041a6328.zip
+    )
     if(WIN32)
       # For Windows: Prevent overriding the parent project's compiler/linker
       # settings
