@@ -26,6 +26,7 @@ Soderlind SUNAdaptController module:
   previous-previous step = 1
   firststeps = 0
   historysize = 0
+  Skip tstop-limited steps from affecting temporal adaptivity = 0
   Maximum number of error test failures = 7
   Maximum number of convergence test failures = 10
 ARKStep time step module parameters:
