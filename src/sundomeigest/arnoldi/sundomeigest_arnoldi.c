@@ -195,6 +195,7 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
 
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
+  SUNAssert(RHSfn, SUN_ERR_ARG_CORRUPT);
 
   /* set function pointers to integrator-supplied RHS routine
      and data, and return with success */
@@ -756,6 +757,9 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
     /* If f failed recoverably, shrink sig and retry */
     sig *= SUN_RCONST(0.25);
   }
+
+  /* If retval still isn't 0, return with a recoverable failure */
+  if (retval > 0) { return (+1); }
 
   /* Replace Jv by (Jv - fn)/sig */
   siginv = ONE / sig;

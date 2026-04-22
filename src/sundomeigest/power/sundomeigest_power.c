@@ -743,6 +743,9 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
     sig *= SUN_RCONST(0.25);
   }
 
+  /* If retval still isn't 0, return with a recoverable failure */
+  if (retval > 0) { return (+1); }
+
   /* Replace Jv by (Jv - fn)/sig */
   siginv = ONE / sig;
   N_VLinearSum(siginv, Jv, -siginv, Fy, Jv);

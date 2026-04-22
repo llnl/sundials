@@ -64,17 +64,19 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   SUNAssertNull(ops, SUN_ERR_MALLOC_FAIL);
 
   /* initialize operations to NULL */
-  ops->setatimes             = NULL;
-  ops->setoptions            = NULL;
-  ops->setmaxiters           = NULL;
-  ops->setreltol             = NULL;
-  ops->setnumpreprocessiters = NULL;
-  ops->initialize            = NULL;
-  ops->estimate              = NULL;
-  ops->getnumiters           = NULL;
-  ops->getres                = NULL;
-  ops->write                 = NULL;
-  ops->destroy               = NULL;
+  ops->setatimes                = NULL;
+  ops->setrhs                   = NULL;
+  ops->setrhslinearizationpoint = NULL;
+  ops->setoptions               = NULL;
+  ops->setmaxiters              = NULL;
+  ops->setreltol                = NULL;
+  ops->setnumpreprocessiters    = NULL;
+  ops->initialize               = NULL;
+  ops->estimate                 = NULL;
+  ops->getnumiters              = NULL;
+  ops->getres                   = NULL;
+  ops->write                    = NULL;
+  ops->destroy                  = NULL;
 
   /* attach ops and initialize content and context to NULL */
   DEE->ops     = ops;
