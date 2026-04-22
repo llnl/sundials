@@ -165,25 +165,6 @@ m.def(
       NLS);
   },
   nb::arg("NLS"));
-
-m.def(
-  "SUNNonlinSolGetUpdateNorm_Auto",
-  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-  {
-    auto SUNNonlinSolGetUpdateNorm_Auto_adapt_modifiable_immutable_to_return =
-      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-    {
-      sunrealtype delnrm_adapt_modifiable;
-
-      SUNErrCode r = SUNNonlinSolGetUpdateNorm_Auto(NLS,
-                                                    &delnrm_adapt_modifiable);
-      return std::make_tuple(r, delnrm_adapt_modifiable);
-    };
-
-    return SUNNonlinSolGetUpdateNorm_Auto_adapt_modifiable_immutable_to_return(
-      NLS);
-  },
-  nb::arg("NLS"));
 // #ifdef __cplusplus
 //
 // #endif

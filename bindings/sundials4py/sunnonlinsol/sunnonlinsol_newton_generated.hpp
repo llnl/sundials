@@ -55,25 +55,6 @@ m.def("SUNNonlinSolSetComputeStiffr_Newton",
       SUNNonlinSolSetComputeStiffr_Newton, nb::arg("NLS"), nb::arg("onoff"));
 
 m.def(
-  "SUNNonlinSolGetUpdateNorm_Newton",
-  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-  {
-    auto SUNNonlinSolGetUpdateNorm_Newton_adapt_modifiable_immutable_to_return =
-      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-    {
-      sunrealtype delnrm_adapt_modifiable;
-
-      SUNErrCode r = SUNNonlinSolGetUpdateNorm_Newton(NLS,
-                                                      &delnrm_adapt_modifiable);
-      return std::make_tuple(r, delnrm_adapt_modifiable);
-    };
-
-    return SUNNonlinSolGetUpdateNorm_Newton_adapt_modifiable_immutable_to_return(
-      NLS);
-  },
-  nb::arg("NLS"));
-
-m.def(
   "SUNNonlinSolGetStiffr_Newton",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
   {

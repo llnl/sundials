@@ -151,21 +151,6 @@ user-callable functions.
       SUNNonlinSol_Newton module.  We note that SUNNonlinSol_Newton
       will not leverage the results from any user calls to *SysFn*.
 
-.. c:function:: SUNErrCode SUNNonlinSolGetUpdateNorm_Newton(SUNNonlinearSolver NLS, sunrealtype *delnrm)
-
-   This returns the WRMS norm of the most recent Newton update (``delnrm``).
-
-   **Arguments:**
-      * *NLS* -- a SUNNonlinSol object.
-      * *delnrm* -- the current update norm.
-
-   **Return value:**
-      * A :c:type:`SUNErrCode`
-
-   **Notes:**
-      This function is intended for users that wish to use the update norm in a
-      custom convergence test function and avoid recomputing it.
-
 .. c:function:: SUNErrCode SUNNonlinSolSetComputeStiffr_Newton(SUNNonlinearSolver NLS, sunbooleantype onoff)
 
    This enables or disables the additional residual norm evaluation used to
