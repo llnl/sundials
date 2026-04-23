@@ -124,10 +124,9 @@ class StepData:
 
     def update(self, data):
         """Update the active dictionary"""
-        top = self.stack[-1]
-        conflicts = [k for k in top.keys() & data.keys() if top[k] != data[k]]
+        conflicts = self.stack[-1].keys() & data.keys()
         if conflicts:
-            raise KeyError(f"Cannot update: keys repeated with inconsistent values: {conflicts}")
+            raise KeyError(f"Cannot update: keys already exist: {conflicts}")
         self.stack[-1].update(data)
 
     def open_dict(self, key):
