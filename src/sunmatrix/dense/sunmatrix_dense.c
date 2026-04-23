@@ -119,7 +119,12 @@ void SUNDenseMatrix_Print(SUNMatrix A, FILE* outfile)
   {
     for (j = 0; j < SM_COLUMNS_D(A); j++)
     {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      fprintf(outfile, SUN_FORMAT_E " + " SUN_FORMAT_E "I  ",
+              SUN_REAL(SM_ELEMENT_D(A, i, j)), SUN_IMAG(SM_ELEMENT_D(A, i, j)));
+#else
       fprintf(outfile, SUN_FORMAT_E "  ", SUN_REAL(SM_ELEMENT_D(A, i, j)));
+#endif
     }
     fprintf(outfile, "\n");
   }
@@ -359,7 +364,7 @@ SUNErrCode SUNMatHermitianTransposeVec_Dense(SUNMatrix A, N_Vector x, N_Vector y
     sunscalartype* row_i = SM_COLUMN_D(A, i);
     for (sunindextype j = 0; j < SM_ROWS_D(A); j++)
     {
-      yd[i] += row_i[j] * xd[j];
+      yd[i] += SUNCONJ(row_i[j]) * xd[j];
     }
   }
   return SUN_SUCCESS;

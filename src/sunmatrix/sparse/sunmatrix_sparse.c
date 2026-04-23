@@ -425,8 +425,14 @@ void SUNSparseMatrix_Print(SUNMatrix A, FILE* outfile)
     fprintf(outfile, "  ");
     for (i = (SM_INDEXPTRS_S(A))[j]; i < (SM_INDEXPTRS_S(A))[j + 1]; i++)
     {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      fprintf(outfile, "%ld: " SUN_FORMAT_E " + " SUN_FORMAT_E "I",
+              (long int)(SM_INDEXVALS_S(A))[i], SUN_REAL((SM_DATA_S(A))[i]),
+            SUN_IMAG((SM_DATA_S(A))[i]));
+#else
       fprintf(outfile, "%ld: " SUN_FORMAT_E "  ",
               (long int)(SM_INDEXVALS_S(A))[i], SUN_REAL((SM_DATA_S(A))[i]));
+#endif
     }
     fprintf(outfile, "\n");
   }
@@ -1064,7 +1070,7 @@ SUNErrCode MatTransposeVec_SparseCSC(SUNMatrix A, N_Vector x, N_Vector y)
 {
   sunindextype i, j;
   sunindextype *Ap, *Ai;
-  sunrealtype *Ax, *xd, *yd;
+  sunscalartype *Ax, *xd, *yd;
   SUNFunctionBegin(A->sunctx);
 
   /* access data from CSC structure (return if failure) */
@@ -1088,7 +1094,7 @@ SUNErrCode MatTransposeVec_SparseCSC(SUNMatrix A, N_Vector x, N_Vector y)
   for (j = 0; j < SM_COLUMNS_S(A); j++)
   {
     /* iterate through non-zero elements in the current column */
-    for (i = Ap[j]; i < Ap[j + 1]; i++) { yd[j] += Ax[i] * xd[Ai[i]]; }
+    for (i = Ap[j]; i < Ap[j + 1]; i++) { yd[j] += SUNCONJ(Ax[i]) * xd[Ai[i]]; }
   }
 
   return SUN_SUCCESS;
@@ -1142,7 +1148,7 @@ SUNErrCode MatTransposeVec_SparseCSR(SUNMatrix A, N_Vector x, N_Vector y)
 {
   sunindextype i, j;
   sunindextype *Ap, *Aj;
-  sunrealtype *Ax, *xd, *yd;
+  sunscalartype *Ax, *xd, *yd;
   SUNFunctionBegin(A->sunctx);
 
   /* access data from CSR structure (return if failure) */
@@ -1168,7 +1174,7 @@ SUNErrCode MatTransposeVec_SparseCSR(SUNMatrix A, N_Vector x, N_Vector y)
   /* iterate over rows of the original matrix (columns of the transposed matrix) */
   for (i = 0; i < SM_ROWS_S(A); i++)
   {
-    for (j = Ap[i]; j < Ap[i + 1]; j++) { yd[Aj[j]] += Ax[j] * xd[i]; }
+    for (j = Ap[i]; j < Ap[i + 1]; j++) { yd[Aj[j]] += SUNCONJ(Ax[j]) * xd[i]; }
   }
 
   return SUN_SUCCESS;

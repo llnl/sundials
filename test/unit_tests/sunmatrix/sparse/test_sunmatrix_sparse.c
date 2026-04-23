@@ -31,6 +31,12 @@
 
 #include "test_sunmatrix.h"
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define GSYM "Lg"
+#else
+#define GSYM "g"
+#endif
+
 /* prototypes for custom tests */
 int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix B, N_Vector x, N_Vector y,
                          N_Vector z);
@@ -47,14 +53,15 @@ int main(int argc, char* argv[])
   sunindextype matrows, matcols;   /* matrix dims                */
   int mattype;                     /* matrix storage type        */
   N_Vector x, y, z;                /* test vectors               */
-  sunrealtype* vecdata;            /* pointers to vector data    */
+  sunscalartype* vecdata;            /* pointers to vector data    */
   SUNMatrix A, AT, B, C, CT, D, K; /* test matrices              */
-  sunrealtype* matdata;            /* pointer to matrix data     */
+  sunscalartype* matdata;            /* pointer to matrix data     */
   sunindextype i, j, k, kstart, kend, N, uband, lband;
   sunindextype *colptrs, *rowindices;
   sunindextype *rowptrs, *colindices;
   int print_timing, square;
   SUNContext sunctx;
+  sunscalartype sc;
 
   if (SUNContext_Create(SUN_COMM_NULL, &sunctx))
   {
@@ -113,16 +120,22 @@ int main(int argc, char* argv[])
   /* check creating sparse matrix from dense matrix */
   B = SUNDenseMatrix(5, 6, sunctx);
 
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+  sc = ONE + I;
+#else
+  sc = ONE;
+#endif
+
   matdata     = SUNDenseMatrix_Data(B);
-  matdata[2]  = SUN_RCONST(1.0); /* [ 0 2 0 0 7 0 ] */
-  matdata[5]  = SUN_RCONST(2.0); /* [ 0 0 4 0 8 0 ] */
-  matdata[9]  = SUN_RCONST(3.0); /* [ 1 0 0 0 0 0 ] */
-  matdata[11] = SUN_RCONST(4.0); /* [ 0 0 5 6 0 0 ] */
-  matdata[13] = SUN_RCONST(5.0); /* [ 0 3 0 0 0 9 ] */
-  matdata[18] = SUN_RCONST(6.0);
-  matdata[20] = SUN_RCONST(7.0);
-  matdata[21] = SUN_RCONST(8.0);
-  matdata[29] = SUN_RCONST(9.0);
+  matdata[2]  = SUN_RCONST(1.0) * sc; /* [ 0 2 0 0 7 0 ]      */
+  matdata[5]  = SUN_RCONST(2.0) * sc; /* [ 0 0 4 0 8 0 ]      */
+  matdata[9]  = SUN_RCONST(3.0) * sc; /* [ 1 0 0 0 0 0 ] * sc */
+  matdata[11] = SUN_RCONST(4.0) * sc; /* [ 0 0 5 6 0 0 ]      */
+  matdata[13] = SUN_RCONST(5.0) * sc; /* [ 0 3 0 0 0 9 ]      */
+  matdata[18] = SUN_RCONST(6.0) * sc;
+  matdata[20] = SUN_RCONST(7.0) * sc;
+  matdata[21] = SUN_RCONST(8.0) * sc;
+  matdata[29] = SUN_RCONST(9.0) * sc;
 
   if (mattype == SUN_CSR_MAT)
   {
@@ -132,27 +145,27 @@ int main(int argc, char* argv[])
     colindices    = SUNSparseMatrix_IndexValues(C);
     matdata       = SUNSparseMatrix_Data(C);
     rowptrs[0]    = 0;
-    matdata[0]    = SUN_RCONST(2.0);
+    matdata[0]    = SUN_RCONST(2.0) * sc;
     colindices[0] = 1;
-    matdata[1]    = SUN_RCONST(7.0);
+    matdata[1]    = SUN_RCONST(7.0) * sc;
     colindices[1] = 4;
     rowptrs[1]    = 2;
-    matdata[2]    = SUN_RCONST(4.0);
+    matdata[2]    = SUN_RCONST(4.0) * sc;
     colindices[2] = 2;
-    matdata[3]    = SUN_RCONST(8.0);
+    matdata[3]    = SUN_RCONST(8.0) * sc;
     colindices[3] = 4;
     rowptrs[2]    = 4;
-    matdata[4]    = SUN_RCONST(1.0);
+    matdata[4]    = SUN_RCONST(1.0) * sc;
     colindices[4] = 0;
     rowptrs[3]    = 5;
-    matdata[5]    = SUN_RCONST(5.0);
+    matdata[5]    = SUN_RCONST(5.0) * sc;
     colindices[5] = 2;
-    matdata[6]    = SUN_RCONST(6.0);
+    matdata[6]    = SUN_RCONST(6.0) * sc;
     colindices[6] = 3;
     rowptrs[4]    = 7;
-    matdata[7]    = SUN_RCONST(3.0);
+    matdata[7]    = SUN_RCONST(3.0) * sc;
     colindices[7] = 1;
-    matdata[8]    = SUN_RCONST(9.0);
+    matdata[8]    = SUN_RCONST(9.0) * sc;
     colindices[8] = 5;
     rowptrs[5]    = 9;
 
@@ -176,28 +189,28 @@ int main(int argc, char* argv[])
     rowindices    = SUNSparseMatrix_IndexValues(D);
     matdata       = SUNSparseMatrix_Data(D);
     colptrs[0]    = 0;
-    matdata[0]    = SUN_RCONST(1.0);
+    matdata[0]    = SUN_RCONST(1.0) * sc;
     rowindices[0] = 2;
     colptrs[1]    = 1;
-    matdata[1]    = SUN_RCONST(2.0);
+    matdata[1]    = SUN_RCONST(2.0) * sc;
     rowindices[1] = 0;
-    matdata[2]    = SUN_RCONST(3.0);
+    matdata[2]    = SUN_RCONST(3.0) * sc;
     rowindices[2] = 4;
     colptrs[2]    = 3;
-    matdata[3]    = SUN_RCONST(4.0);
+    matdata[3]    = SUN_RCONST(4.0) * sc;
     rowindices[3] = 1;
-    matdata[4]    = SUN_RCONST(5.0);
+    matdata[4]    = SUN_RCONST(5.0) * sc;
     rowindices[4] = 3;
     colptrs[3]    = 5;
-    matdata[5]    = SUN_RCONST(6.0);
+    matdata[5]    = SUN_RCONST(6.0) * sc;
     rowindices[5] = 3;
     colptrs[4]    = 6;
-    matdata[6]    = SUN_RCONST(7.0);
+    matdata[6]    = SUN_RCONST(7.0) * sc;
     rowindices[6] = 0;
-    matdata[7]    = SUN_RCONST(8.0);
+    matdata[7]    = SUN_RCONST(8.0) * sc;
     rowindices[7] = 1;
     colptrs[5]    = 8;
-    matdata[8]    = SUN_RCONST(9.0);
+    matdata[8]    = SUN_RCONST(9.0) * sc;
     rowindices[8] = 4;
     colptrs[6]    = 9;
 
@@ -218,17 +231,16 @@ int main(int argc, char* argv[])
   /* check creating sparse matrix from banded matrix */
   N     = 7;
   uband = 1;
-  lband = 2;                                  /* B(i,j) = j + (j-i) */
-  B = SUNBandMatrix(N, uband, lband, sunctx); /* B = [  0  2  0  0  0  0  0 ] */
+  lband = 2;                                  /* B(i,j) = j + (j-i) * sc */
+  B = SUNBandMatrix(N, uband, lband, sunctx);
   for (j = 0; j < N; j++)
-  {                                       /*     [ -1  1  3  0  0  0  0 ] */
-    matdata = SUNBandMatrix_Column(B, j); /*     [ -2  0  2  4  0  0  0 ] */
-    kstart  = (j < uband) ? -j : -uband;  /*     [  0 -1  1  3  5  0  0 ] */
-    kend    = (j > N - 1 - lband) ? N - 1 - j
-                                  : lband; /*     [  0  0  0  2  4  6  0 ] */
+  {
+    matdata = SUNBandMatrix_Column(B, j);
+    kstart  = (j < uband) ? -j : -uband;
+    kend    = (j > N - 1 - lband) ? N - 1 - j : lband;
     for (k = kstart; k <= kend; k++)
-    {                     /*     [  0  0  0  1  3  5  7 ] */
-      matdata[k] = j - k; /*     [  0  0  0  0  2  4  6 ] */
+    {
+      matdata[k] = (j - k) * sc;
     }
   }
 
@@ -240,53 +252,53 @@ int main(int argc, char* argv[])
     colindices     = SUNSparseMatrix_IndexValues(C);
     matdata        = SUNSparseMatrix_Data(C);
     rowptrs[0]     = 0;
-    matdata[0]     = SUN_RCONST(2.0);
+    matdata[0]     = SUN_RCONST(2.0) * sc;
     colindices[0]  = 1;
     rowptrs[1]     = 1;
-    matdata[1]     = SUN_RCONST(-1.0);
+    matdata[1]     = SUN_RCONST(-1.0) * sc;
     colindices[1]  = 0;
-    matdata[2]     = SUN_RCONST(1.0);
+    matdata[2]     = SUN_RCONST(1.0) * sc;
     colindices[2]  = 1;
-    matdata[3]     = SUN_RCONST(3.0);
+    matdata[3]     = SUN_RCONST(3.0) * sc;
     colindices[3]  = 2;
     rowptrs[2]     = 4;
-    matdata[4]     = SUN_RCONST(-2.0);
+    matdata[4]     = SUN_RCONST(-2.0) * sc;
     colindices[4]  = 0;
-    matdata[5]     = SUN_RCONST(2.0);
+    matdata[5]     = SUN_RCONST(2.0) * sc;
     colindices[5]  = 2;
-    matdata[6]     = SUN_RCONST(4.0);
+    matdata[6]     = SUN_RCONST(4.0) * sc;
     colindices[6]  = 3;
     rowptrs[3]     = 7;
-    matdata[7]     = SUN_RCONST(-1.0);
+    matdata[7]     = SUN_RCONST(-1.0) * sc;
     colindices[7]  = 1;
-    matdata[8]     = SUN_RCONST(1.0);
+    matdata[8]     = SUN_RCONST(1.0) * sc;
     colindices[8]  = 2;
-    matdata[9]     = SUN_RCONST(3.0);
+    matdata[9]     = SUN_RCONST(3.0) * sc;
     colindices[9]  = 3;
-    matdata[10]    = SUN_RCONST(5.0);
+    matdata[10]    = SUN_RCONST(5.0) * sc;
     colindices[10] = 4;
     rowptrs[4]     = 11;
-    matdata[11]    = SUN_RCONST(2.0);
+    matdata[11]    = SUN_RCONST(2.0) * sc;
     colindices[11] = 3;
-    matdata[12]    = SUN_RCONST(4.0);
+    matdata[12]    = SUN_RCONST(4.0) * sc;
     colindices[12] = 4;
-    matdata[13]    = SUN_RCONST(6.0);
+    matdata[13]    = SUN_RCONST(6.0) * sc;
     colindices[13] = 5;
     rowptrs[5]     = 14;
-    matdata[14]    = SUN_RCONST(1.0);
+    matdata[14]    = SUN_RCONST(1.0) * sc;
     colindices[14] = 3;
-    matdata[15]    = SUN_RCONST(3.0);
+    matdata[15]    = SUN_RCONST(3.0) * sc;
     colindices[15] = 4;
-    matdata[16]    = SUN_RCONST(5.0);
+    matdata[16]    = SUN_RCONST(5.0) * sc;
     colindices[16] = 5;
-    matdata[17]    = SUN_RCONST(7.0);
+    matdata[17]    = SUN_RCONST(7.0) * sc;
     colindices[17] = 6;
     rowptrs[6]     = 18;
-    matdata[18]    = SUN_RCONST(2.0);
+    matdata[18]    = SUN_RCONST(2.0) * sc;
     colindices[18] = 4;
-    matdata[19]    = SUN_RCONST(4.0);
+    matdata[19]    = SUN_RCONST(4.0) * sc;
     colindices[19] = 5;
-    matdata[20]    = SUN_RCONST(6.0);
+    matdata[20]    = SUN_RCONST(6.0) * sc;
     colindices[20] = 6;
     rowptrs[7]     = 21;
 
@@ -310,53 +322,53 @@ int main(int argc, char* argv[])
     rowindices     = SUNSparseMatrix_IndexValues(D);
     matdata        = SUNSparseMatrix_Data(D);
     colptrs[0]     = 0;
-    matdata[0]     = SUN_RCONST(-1.0);
+    matdata[0]     = SUN_RCONST(-1.0) * sc;
     rowindices[0]  = 1;
-    matdata[1]     = SUN_RCONST(-2.0);
+    matdata[1]     = SUN_RCONST(-2.0) * sc;
     rowindices[1]  = 2;
     colptrs[1]     = 2;
-    matdata[2]     = SUN_RCONST(2.0);
+    matdata[2]     = SUN_RCONST(2.0) * sc;
     rowindices[2]  = 0;
-    matdata[3]     = SUN_RCONST(1.0);
+    matdata[3]     = SUN_RCONST(1.0) * sc;
     rowindices[3]  = 1;
-    matdata[4]     = SUN_RCONST(-1.0);
+    matdata[4]     = SUN_RCONST(-1.0) * sc;
     rowindices[4]  = 3;
     colptrs[2]     = 5;
-    matdata[5]     = SUN_RCONST(3.0);
+    matdata[5]     = SUN_RCONST(3.0) * sc;
     rowindices[5]  = 1;
-    matdata[6]     = SUN_RCONST(2.0);
+    matdata[6]     = SUN_RCONST(2.0) * sc;
     rowindices[6]  = 2;
-    matdata[7]     = SUN_RCONST(1.0);
+    matdata[7]     = SUN_RCONST(1.0) * sc;
     rowindices[7]  = 3;
     colptrs[3]     = 8;
-    matdata[8]     = SUN_RCONST(4.0);
+    matdata[8]     = SUN_RCONST(4.0) * sc;
     rowindices[8]  = 2;
-    matdata[9]     = SUN_RCONST(3.0);
+    matdata[9]     = SUN_RCONST(3.0) * sc;
     rowindices[9]  = 3;
-    matdata[10]    = SUN_RCONST(2.0);
+    matdata[10]    = SUN_RCONST(2.0) * sc;
     rowindices[10] = 4;
-    matdata[11]    = SUN_RCONST(1.0);
+    matdata[11]    = SUN_RCONST(1.0) * sc;
     rowindices[11] = 5;
     colptrs[4]     = 12;
-    matdata[12]    = SUN_RCONST(5.0);
+    matdata[12]    = SUN_RCONST(5.0) * sc;
     rowindices[12] = 3;
-    matdata[13]    = SUN_RCONST(4.0);
+    matdata[13]    = SUN_RCONST(4.0) * sc;
     rowindices[13] = 4;
-    matdata[14]    = SUN_RCONST(3.0);
+    matdata[14]    = SUN_RCONST(3.0) * sc;
     rowindices[14] = 5;
-    matdata[15]    = SUN_RCONST(2.0);
+    matdata[15]    = SUN_RCONST(2.0) * sc;
     rowindices[15] = 6;
     colptrs[5]     = 16;
-    matdata[16]    = SUN_RCONST(6.0);
+    matdata[16]    = SUN_RCONST(6.0) * sc;
     rowindices[16] = 4;
-    matdata[17]    = SUN_RCONST(5.0);
+    matdata[17]    = SUN_RCONST(5.0) * sc;
     rowindices[17] = 5;
-    matdata[18]    = SUN_RCONST(4.0);
+    matdata[18]    = SUN_RCONST(4.0) * sc;
     rowindices[18] = 6;
     colptrs[6]     = 19;
-    matdata[19]    = SUN_RCONST(7.0);
+    matdata[19]    = SUN_RCONST(7.0) * sc;
     rowindices[19] = 5;
-    matdata[20]    = SUN_RCONST(6.0);
+    matdata[20]    = SUN_RCONST(6.0) * sc;
     rowindices[20] = 6;
     colptrs[7]     = 21;
 
@@ -401,14 +413,14 @@ int main(int argc, char* argv[])
     i          = rand() % matrows;
     j          = rand() % matcols;
     matdata    = SUNDenseMatrix_Column(D, j);
-    matdata[i] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+    matdata[i] = (sunscalartype)rand() / (sunrealtype)RAND_MAX * sc;
   }
   for (k = 0; k < matrows; k++)
   {
     i          = rand() % matrows;
     j          = rand() % matcols;
     matdata    = SUNDenseMatrix_Column(C, j);
-    matdata[i] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+    matdata[i] = (sunscalartype)rand() / (sunrealtype)RAND_MAX * sc;
   }
 
   /* Create transposed matrices */
@@ -416,7 +428,7 @@ int main(int argc, char* argv[])
   {
     for (j = 0; j < matrows; j++)
     {
-      SM_ELEMENT_D(CT, i, j) = SM_ELEMENT_D(C, j, i);
+      SM_ELEMENT_D(CT, i, j) = SUNCONJ(SM_ELEMENT_D(C, j, i));
     }
   }
 
@@ -431,7 +443,7 @@ int main(int argc, char* argv[])
   vecdata = N_VGetArrayPointer(x);
   for (i = 0; i < matcols; i++)
   {
-    vecdata[i] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+    vecdata[i] = (sunscalartype)rand() / (sunrealtype)RAND_MAX * SUNCONJ(sc);
   }
   if (SUNMatMatvec(C, x, y) != 0)
   {
@@ -473,6 +485,9 @@ int main(int argc, char* argv[])
     fails += Test_SUNMatScaleAddI2(A, x, y);
   }
   fails += Test_SUNMatMatvec(A, x, y, 0);
+
+  /* Update x vector for Hermitian transpose product */
+  SUNMatHermitianTransposeVec(C, y, x);  /* x = C^T y = A^T y */
   fails += Test_SUNMatHermitianTransposeVec(A, AT, x, y, 0);
   fails += Test_SUNMatSpace(A, 0);
   if (mattype == SUN_CSR_MAT) { fails += Test_SUNSparseMatrixToCSC(A); }
@@ -999,7 +1014,7 @@ int Test_SUNSparseMatrixToCSC(SUNMatrix A)
 int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
 {
   int failure = 0;
-  sunrealtype *Adata, *Bdata;
+  sunscalartype *Adata, *Bdata;
   sunindextype *Aindexptrs, *Bindexptrs;
   sunindextype *Aindexvals, *Bindexvals;
   sunindextype i, ANP, BNP, Annz, Bnnz;
@@ -1069,7 +1084,7 @@ int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
   /* compare matrix values */
   for (i = 0; i < Annz; i++)
   {
-    failure += SUNRCompareTol(Adata[i], Bdata[i], tol);
+    failure += SUNCompareTol(Adata[i], Bdata[i], tol);
   }
   if (failure > ZERO)
   {
@@ -1080,10 +1095,10 @@ int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
   return (0);
 }
 
-int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
+int check_matrix_entry(SUNMatrix A, sunscalartype val, sunrealtype tol)
 {
   int failure = 0;
-  sunrealtype* Adata;
+  sunscalartype* Adata;
   sunindextype* indexptrs;
   sunindextype i, NP;
 
@@ -1095,7 +1110,7 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
   NP        = SUNSparseMatrix_NP(A);
   for (i = 0; i < indexptrs[NP]; i++)
   {
-    failure += SUNRCompareTol(Adata[i], val, tol);
+    failure += SUNCompareTol(Adata[i], val, tol);
   }
 
   if (failure > ZERO) { return (1); }
@@ -1105,7 +1120,7 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
 int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
 {
   int failure = 0;
-  sunrealtype *xdata, *ydata;
+  sunscalartype *xdata, *ydata;
   sunindextype xldata, yldata;
   sunindextype i;
 
@@ -1114,8 +1129,8 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
   ydata = N_VGetArrayPointer(y);
 
   /* check data lengths */
-  xldata = N_VGetLength_Serial(x);
-  yldata = N_VGetLength_Serial(y);
+  xldata = N_VGetLength(x);
+  yldata = N_VGetLength(y);
 
   if (xldata != yldata)
   {
@@ -1126,7 +1141,26 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
   /* check vector data */
   for (i = 0; i < xldata; i++)
   {
-    failure += SUNRCompareTol(xdata[i], ydata[i], tol);
+    failure += SUNCompareTol(xdata[i], ydata[i], tol);
+  }
+
+  if (failure > ZERO)
+  {
+    printf("Check_vector failures:\n");
+    for (i = 0; i < xldata; i++)
+    {
+      if (SUNCompareTol(xdata[i], ydata[i], tol) != 0)
+      {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+        printf("  xdata[%ld] = %" GSYM " + %" GSYM "I != %" GSYM " + %" GSYM "I (err = %" GSYM ")\n",
+               (long int)i, SUN_REAL(xdata[i]), SUN_IMAG(xdata[i]), SUN_REAL(ydata[i]),
+               SUN_IMAG(ydata[i]), SUNabs(xdata[i] - ydata[i]));
+#else
+        printf("  xdata[%ld] = %" GSYM " != %" GSYM " (err = %" GSYM ")\n",
+               (long int)i, xdata[i], ydata[i], SUNRabs(xdata[i] - ydata[i]));
+#endif
+      }
+    }
   }
 
   if (failure > ZERO) { return (1); }
@@ -1135,7 +1169,7 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
 
 sunbooleantype has_data(SUNMatrix A)
 {
-  sunrealtype* Adata = SUNSparseMatrix_Data(A);
+  sunscalartype* Adata = SUNSparseMatrix_Data(A);
   if (Adata == NULL) { return SUNFALSE; }
   else { return SUNTRUE; }
 }

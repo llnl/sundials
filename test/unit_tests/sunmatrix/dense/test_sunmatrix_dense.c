@@ -41,12 +41,12 @@
  * --------------------------------------------------------------------*/
 int main(int argc, char* argv[])
 {
-  int fails = 0;                       /* counter for test failures  */
-  sunindextype matrows, matcols;       /* vector length              */
-  N_Vector x, y;                       /* test vectors               */
-  sunrealtype *xdata, *ydata;          /* pointers to vector data    */
-  SUNMatrix A, AT, K;                  /* test matrices              */
-  sunrealtype *Adata, *ATdata, *Idata; /* pointers to matrix data    */
+  int fails = 0;                         /* counter for test failures  */
+  sunindextype matrows, matcols;         /* vector length              */
+  N_Vector x, y;                         /* test vectors               */
+  sunscalartype *xdata, *ydata;          /* pointers to vector data    */
+  SUNMatrix A, AT, K;                    /* test matrices              */
+  sunscalartype *Adata, *ATdata, *Idata; /* pointers to matrix data    */
   int print_timing, square;
   sunindextype i, j, m, n;
   SUNContext sunctx;
@@ -106,7 +106,11 @@ int main(int argc, char* argv[])
   {
     for (i = 0; i < matrows; i++)
     {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      Adata[j * matrows + i] = (j + 1) * (i + j) * (ONE + I);
+#else
       Adata[j * matrows + i] = (j + 1) * (i + j);
+#endif
     }
   }
 
@@ -115,7 +119,11 @@ int main(int argc, char* argv[])
   {
     for (i = 0; i < matrows; i++)
     {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      ATdata[i * matcols + j] = (j + 1) * (i + j) * (ONE - I);
+#else
       ATdata[i * matcols + j] = (j + 1) * (i + j);
+#endif
     }
   }
 
@@ -126,14 +134,25 @@ int main(int argc, char* argv[])
   }
 
   xdata = N_VGetArrayPointer(x);
-  for (i = 0; i < matcols; i++) { xdata[i] = ONE / (i + 1); }
+  for (i = 0; i < matcols; i++)
+  {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+     xdata[i] = ONE / (i + 1) * (ONE - I);
+#else
+     xdata[i] = ONE / (i + 1);
+#endif
+  }
 
   ydata = N_VGetArrayPointer(y);
   for (i = 0; i < matrows; i++)
   {
     m        = i;
     n        = m + matcols - 1;
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+    ydata[i] = (n + 1 - m) * (n + m);
+#else
     ydata[i] = HALF * (n + 1 - m) * (n + m);
+#endif
   }
 
   /* SUNMatrix Tests */
@@ -147,6 +166,30 @@ int main(int argc, char* argv[])
     fails += Test_SUNMatScaleAddI(A, K, 0);
   }
   fails += Test_SUNMatMatvec(A, x, y, 0);
+
+  /* Update the vector data for the Hermitian transpose product */
+  xdata = N_VGetArrayPointer(x);
+  for (i = 0; i < matcols; i++)
+  {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+     xdata[i] = SUN_RCONST(2.0) / (i + 1);
+#else
+     xdata[i] = ONE / (i + 1);
+#endif
+  }
+
+  ydata = N_VGetArrayPointer(y);
+  for (i = 0; i < matrows; i++)
+  {
+    m        = i;
+    n        = m + matcols - 1;
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+    ydata[i] = HALF * (n + 1 - m) * (n + m) * (ONE + I);
+#else
+    ydata[i] = HALF * (n + 1 - m) * (n + m);
+#endif
+  }
+
   fails += Test_SUNMatHermitianTransposeVec(A, AT, x, y, 0);
   fails += Test_SUNMatSpace(A, 0);
 
@@ -185,7 +228,7 @@ int main(int argc, char* argv[])
 int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
 {
   int failure = 0;
-  sunrealtype *Adata, *Bdata;
+  sunscalartype *Adata, *Bdata;
   sunindextype Aldata, Bldata;
   sunindextype i;
 
@@ -206,17 +249,17 @@ int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
   /* compare data */
   for (i = 0; i < Aldata; i++)
   {
-    failure += SUNRCompareTol(Adata[i], Bdata[i], tol);
+    failure += SUNCompareTol(Adata[i], Bdata[i], tol);
   }
 
   if (failure > ZERO) { return (1); }
   else { return (0); }
 }
 
-int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
+int check_matrix_entry(SUNMatrix A, sunscalartype val, sunrealtype tol)
 {
   int failure = 0;
-  sunrealtype* Adata;
+  sunscalartype* Adata;
   sunindextype Aldata;
   sunindextype i;
 
@@ -227,7 +270,7 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
   Aldata = SUNDenseMatrix_LData(A);
   for (i = 0; i < Aldata; i++)
   {
-    failure += SUNRCompareTol(Adata[i], val, tol);
+    failure += SUNCompareTol(Adata[i], val, tol);
   }
 
   if (failure > ZERO)
@@ -235,10 +278,16 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
     printf("Check_matrix_entry failures:\n");
     for (i = 0; i < Aldata; i++)
     {
-      if (SUNRCompareTol(Adata[i], val, tol) != 0)
+      if (SUNCompareTol(Adata[i], val, tol) != 0)
       {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+        printf("  Adata[%ld] = %" GSYM " + %" GSYM "I != %" GSYM " + %" GSYM "I (err = %" GSYM ")\n",
+               (long int)i, SUN_REAL(Adata[i]), SUN_IMAG(Adata[i]), SUN_REAL(val),
+               SUN_IMAG(val), SUNabs(Adata[i] - val));
+#else
         printf("  Adata[%ld] = %" GSYM " != %" GSYM " (err = %" GSYM ")\n",
                (long int)i, Adata[i], val, SUNRabs(Adata[i] - val));
+#endif
       }
     }
   }
@@ -250,7 +299,7 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
 int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
 {
   int failure = 0;
-  sunrealtype *xdata, *ydata;
+  sunscalartype *xdata, *ydata;
   sunindextype xldata, yldata;
   sunindextype i;
 
@@ -271,7 +320,7 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
   /* check vector data */
   for (i = 0; i < xldata; i++)
   {
-    failure += SUNRCompareTol(xdata[i], ydata[i], tol);
+    failure += SUNCompareTol(xdata[i], ydata[i], tol);
   }
 
   if (failure > ZERO)
@@ -279,10 +328,16 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
     printf("Check_vector failures:\n");
     for (i = 0; i < xldata; i++)
     {
-      if (SUNRCompareTol(xdata[i], ydata[i], tol) != 0)
+      if (SUNCompareTol(xdata[i], ydata[i], tol) != 0)
       {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+        printf("  xdata[%ld] = %" GSYM " + %" GSYM "I != %" GSYM " + %" GSYM "I (err = %" GSYM ")\n",
+               (long int)i, SUN_REAL(xdata[i]), SUN_IMAG(xdata[i]), SUN_REAL(ydata[i]),
+               SUN_IMAG(ydata[i]), SUNabs(xdata[i] - ydata[i]));
+#else
         printf("  xdata[%ld] = %" GSYM " != %" GSYM " (err = %" GSYM ")\n",
                (long int)i, xdata[i], ydata[i], SUNRabs(xdata[i] - ydata[i]));
+#endif
       }
     }
   }

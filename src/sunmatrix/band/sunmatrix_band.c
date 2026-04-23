@@ -142,7 +142,12 @@ void SUNBandMatrix_Print(SUNMatrix A, FILE* outfile)
     for (j = 0; j < start; j++) { fprintf(outfile, "%12s  ", ""); }
     for (j = start; j <= finish; j++)
     {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      fprintf(outfile, SUN_FORMAT_E " + " SUN_FORMAT_E "I  ",
+              SUN_REAL(SM_ELEMENT_B(A, i, j)), SUN_IMAG(SM_ELEMENT_B(A, i, j)));
+#else
       fprintf(outfile, SUN_FORMAT_E "  ", SUN_REAL(SM_ELEMENT_B(A, i, j)));
+#endif
     }
     fprintf(outfile, "\n");
   }

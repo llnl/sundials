@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
   N_Vector x, y;                   /* test vectors               */
   int print_timing;
   sunindextype i, j, k, kstart, kend, jstart, jend;
-  sunrealtype *colj, *xdata, *ydata;
+  sunscalartype *colj, *xdata, *ydata;
   SUNContext sunctx;
 
   if (SUNContext_Create(SUN_COMM_NULL, &sunctx))
@@ -122,7 +122,11 @@ int main(int argc, char* argv[])
     kend   = (j > cols - 1 - lband) ? cols - 1 - j : lband;
     for (k = kstart; k <= kend; k++)
     {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      colj[k] = (j - k)*(ONE + I); /* A(i,j) = (j + (j-i)) * (ONE + I) */
+#else
       colj[k] = j - k; /* A(i,j) = j + (j-i) */
+#endif
     }
   }
 
@@ -133,7 +137,7 @@ int main(int argc, char* argv[])
     {
       if (j - uband <= i && i <= j + lband)
       {
-        SM_ELEMENT_B(AT, j, i) = SM_ELEMENT_B(A, i, j);
+        SM_ELEMENT_B(AT, j, i) = SUNCONJ(SM_ELEMENT_B(A, i, j));
       }
     }
   }
@@ -142,13 +146,24 @@ int main(int argc, char* argv[])
   for (i = 0; i < cols; i++)
   {
     /* x vector */
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+    xdata[i] = i * (ONE - I);
+#else
     xdata[i] = i;
+#endif
 
     /* y vector */
     ydata[i] = SUN_RCONST(0.0);
     jstart   = SUNMAX(0, i - lband);
     jend     = SUNMIN(cols - 1, i + uband);
-    for (j = jstart; j <= jend; j++) { ydata[i] += (j + j - i) * (j); }
+    for (j = jstart; j <= jend; j++)
+    {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      ydata[i] += SUN_RCONST(2.0) * (j + j - i) * (j);
+#else
+      ydata[i] += (j + j - i) * (j);
+#endif
+    }
   }
 
   /* Run Tests */
@@ -159,6 +174,31 @@ int main(int argc, char* argv[])
   fails += Test_SUNMatScaleAdd(A, K, 0);
   fails += Test_SUNMatScaleAddI(A, K, 0);
   fails += Test_SUNMatMatvec(A, x, y, 0);
+
+  /* Update vectors for Hermitian transpose product */
+  for (i = 0; i < cols; i++)
+  {
+    /* x vector */
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+    xdata[i] = i * SUN_RCONST(2.0);
+#else
+    xdata[i] = i;
+#endif
+
+    /* y vector */
+    ydata[i] = SUN_RCONST(0.0);
+    jstart   = SUNMAX(0, i - lband);
+    jend     = SUNMIN(cols - 1, i + uband);
+    for (j = jstart; j <= jend; j++)
+    {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      ydata[i] += (j + j - i) * (j) * (ONE + I);
+#else
+      ydata[i] += (j + j - i) * (j);
+#endif
+    }
+  }
+
   fails += Test_SUNMatHermitianTransposeVec(A, AT, x, y, 0);
   fails += Test_SUNMatSpace(A, 0);
 
@@ -197,7 +237,7 @@ int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
 {
   int failure = 0;
   sunindextype i, j, istart, iend;
-  sunrealtype *Acolj, *Bcolj;
+  sunscalartype *Acolj, *Bcolj;
 
   /* check matrix type and dimensions */
   if (SUNMatGetID(A) != SUNMatGetID(B)) { return 1; }
@@ -228,7 +268,7 @@ int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
              : SUNBandMatrix_LowerBandwidth(A);
     for (i = istart; i <= iend; i++)
     {
-      failure += SUNRCompareTol(Acolj[i], Bcolj[i], tol);
+      failure += SUNCompareTol(Acolj[i], Bcolj[i], tol);
     }
   }
 
@@ -244,11 +284,11 @@ int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
   else { return (0); }
 }
 
-int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
+int check_matrix_entry(SUNMatrix A, sunscalartype val, sunrealtype tol)
 {
   int failure = 0;
   sunindextype i, j, istart, iend;
-  sunrealtype* Acolj;
+  sunscalartype* Acolj;
 
   /* check matrix data */
   for (j = 0; j < SUNBandMatrix_Columns(A); j++)
@@ -265,11 +305,17 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
              : SUNBandMatrix_LowerBandwidth(A);
     for (i = istart; i <= iend; i++)
     {
-      if (SUNRCompareTol(Acolj[i], val, tol))
+      if (SUNCompareTol(Acolj[i], val, tol))
       {
         failure++;
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
         printf("j = %li, Acolj[%li] = %" GSYM ", val = %" GSYM "\n",
                (long int)j, (long int)i, Acolj[i], val);
+#else
+        printf("j = %li, Acolj[%li] = %" GSYM " + %" GSYM "I, val = %" GSYM " + %" GSYM "I\n",
+               (long int)j, (long int)i, SUN_REAL(Acolj[i]), SUN_IMAG(Acolj[i]),
+               SUN_REAL(val), SUN_IMAG(val));
+#endif
       }
     }
   }
@@ -278,20 +324,50 @@ int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol)
   else { return (0); }
 }
 
-int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
+int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
 {
   int failure = 0;
-  sunindextype i, local_length;
-  sunrealtype *Xdata, *Ydata;
+  sunscalartype *xdata, *ydata;
+  sunindextype xldata, yldata;
+  sunindextype i;
 
-  Xdata        = N_VGetArrayPointer(X);
-  Ydata        = N_VGetArrayPointer(Y);
-  local_length = N_VGetLength_Serial(X);
+  /* get vector data */
+  xdata = N_VGetArrayPointer(x);
+  ydata = N_VGetArrayPointer(y);
+
+  /* check data lengths */
+  xldata = N_VGetLength(x);
+  yldata = N_VGetLength(y);
+
+  if (xldata != yldata)
+  {
+    printf(">>> ERROR: check_vector: Different data array lengths \n");
+    return (1);
+  }
 
   /* check vector data */
-  for (i = 0; i < local_length; i++)
+  for (i = 0; i < xldata; i++)
   {
-    failure += SUNRCompareTol(Xdata[i], Ydata[i], tol);
+    failure += SUNCompareTol(xdata[i], ydata[i], tol);
+  }
+
+  if (failure > ZERO)
+  {
+    printf("Check_vector failures:\n");
+    for (i = 0; i < xldata; i++)
+    {
+      if (SUNCompareTol(xdata[i], ydata[i], tol) != 0)
+      {
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+        printf("  xdata[%ld] = %" GSYM " + %" GSYM "I != %" GSYM " + %" GSYM "I (err = %" GSYM ")\n",
+               (long int)i, SUN_REAL(xdata[i]), SUN_IMAG(xdata[i]), SUN_REAL(ydata[i]),
+               SUN_IMAG(ydata[i]), SUNabs(xdata[i] - ydata[i]));
+#else
+        printf("  xdata[%ld] = %" GSYM " != %" GSYM " (err = %" GSYM ")\n",
+               (long int)i, xdata[i], ydata[i], SUNRabs(xdata[i] - ydata[i]));
+#endif
+      }
+    }
   }
 
   if (failure > ZERO) { return (1); }
@@ -300,7 +376,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
 
 sunbooleantype has_data(SUNMatrix A)
 {
-  sunrealtype* Adata = SUNBandMatrix_Data(A);
+  sunscalartype* Adata = SUNBandMatrix_Data(A);
   if (Adata == NULL) { return SUNFALSE; }
   else { return SUNTRUE; }
 }

@@ -62,7 +62,7 @@ extern "C" {
 #endif
 /* Forward declarations for implementation specific utility functions */
 int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol);
-int check_matrix_entry(SUNMatrix A, sunrealtype val, sunrealtype tol);
+int check_matrix_entry(SUNMatrix A, sunscalartype val, sunrealtype tol);
 int check_vector(N_Vector expected, N_Vector computed, sunrealtype tol);
 sunbooleantype has_data(SUNMatrix A);
 sunbooleantype is_square(SUNMatrix A);

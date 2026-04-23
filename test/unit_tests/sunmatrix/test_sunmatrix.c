@@ -576,7 +576,7 @@ int Test_SUNMatMatvec(SUNMatrix A, N_Vector x, N_Vector y, int myid)
 }
 
 /* ----------------------------------------------------------------------
- * SUNMatHermitianTransposeVec Test (y should be correct A^T*x product)
+ * SUNMatHermitianTransposeVec Test (x should be correct A^T*y product)
  * --------------------------------------------------------------------*/
 int Test_SUNMatHermitianTransposeVec(SUNMatrix A, SUNMatrix AT, N_Vector x,
                                      N_Vector y, int myid)
