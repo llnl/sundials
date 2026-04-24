@@ -30,6 +30,12 @@
 
 #include "test_sunlinsol.h"
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define GSYM "Lg"
+#else
+#define GSYM "g"
+#endif
+
 /* ----------------------------------------------------------------------
  * SUNLinSol_LapackBand Testing Routine
  * --------------------------------------------------------------------*/
@@ -42,7 +48,7 @@ int main(int argc, char* argv[])
   N_Vector x, y, b;                /* test vectors               */
   int print_timing, print_matrix_on_fail;
   sunindextype j, k, kstart, kend;
-  sunrealtype *colj, *xdata;
+  sunscalartype *colj, *xdata;
   SUNContext sunctx;
 
   if (SUNContext_Create(SUN_COMM_NULL, &sunctx))
@@ -194,7 +200,8 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
 {
   int failure = 0;
   sunindextype i, local_length;
-  sunrealtype *Xdata, *Ydata, maxerr;
+  sunrealtype maxerr;
+  sunscalartype *Xdata, *Ydata;
 
   Xdata        = N_VGetArrayPointer(X);
   Ydata        = N_VGetArrayPointer(Y);
@@ -211,9 +218,10 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
     maxerr = ZERO;
     for (i = 0; i < local_length; i++)
     {
-      maxerr = SUNMAX(SUNRabs(Xdata[i] - Ydata[i]), maxerr);
+      maxerr = SUNMAX(SUNabs(Xdata[i] - Ydata[i]), maxerr);
     }
-    printf("check err failure: maxerr = %g (tol = %g)\n", maxerr, tol);
+    printf("check err failure: maxerr = %" GSYM " (tol = %" GSYM ")\n",
+           maxerr, tol);
     return (1);
   }
   else { return (0); }

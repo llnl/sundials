@@ -30,6 +30,12 @@
 
 #include "test_sunlinsol.h"
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define GSYM "Lg"
+#else
+#define GSYM "g"
+#endif
+
 /* ----------------------------------------------------------------------
  * SUNLinSol_LapackDense Testing Routine
  * --------------------------------------------------------------------*/
@@ -215,7 +221,8 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
     {
       maxerr = SUNMAX(SUNabs(Xdata[i] - Ydata[i]), maxerr);
     }
-    printf("check err failure: maxerr = %g (tol = %g)\n", maxerr, tol);
+    printf("check err failure: maxerr = %" GSYM " (tol = %" GSYM ")\n",
+           maxerr, tol);
     return failure;
   }
 
