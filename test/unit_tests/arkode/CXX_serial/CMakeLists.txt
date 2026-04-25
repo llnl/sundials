@@ -21,9 +21,9 @@
 # for tests excluded from 'make test' in releases and 'scalartype' is either 'real' or 'complex' 
 # if the test should only be built for a single scalar type
 set(unit_tests
-    "ark_test_accumerror_brusselator.cpp\;20 3 1\;exclude-single\;"
-    "ark_test_accumerror_brusselator.cpp\;20 -4 0\;exclude-single\;"
-    "ark_test_accumerror_brusselator.cpp\;20 5 0\;exclude-single\;"
+    "ark_test_accumerror_brusselator.cpp\;20 3 1\;exclude-single\;real"
+    "ark_test_accumerror_brusselator.cpp\;20 -4 0\;exclude-single\;real"
+    "ark_test_accumerror_brusselator.cpp\;20 5 0\;exclude-single\;real"
     "ark_test_accumerror_kpr.cpp\;20 2 0\;exclude-single\;"
     "ark_test_accumerror_kpr.cpp\;20 3 1\;exclude-single\;"
     "ark_test_accumerror_kpr.cpp\;20 -4 1\;exclude-single\;"
@@ -54,8 +54,8 @@ set(unit_tests
     "ark_test_getjac.cpp\;\;develop\;"
     "ark_test_getjac_mri.cpp\;\;develop\;"
     "ark_test_kpr_mriadapt.cpp\;--hs 0.002 --rtol 0.000004 --scontrol 0\;exclude-single\;"
-    "ark_test_brusselator_mriadapt.cpp\;--rtol 0.000004 --scontrol 0\;exclude-single\;"
-    "ark_test_slowerror_brusselator.cpp\;\;exclude-single\;"
+    "ark_test_brusselator_mriadapt.cpp\;--rtol 0.000004 --scontrol 0\;exclude-single\;real"
+    "ark_test_slowerror_brusselator.cpp\;\;exclude-single\;real"
     "ark_test_slowerror_kpr.cpp\;\;exclude-single\;"
     "ark_test_slowerror_polynomial.cpp\;\;exclude-single\;"
     "ark_test_splittingstep.cpp\;\;\;"
@@ -78,10 +78,10 @@ set(unit_tests
     "ark_test_prealloc_mristep.cpp\;1\;\;"
     "ark_test_prealloc_splittingstep.cpp\;1\;\;"
     "ark_test_prealloc_sprkstep.cpp\;1\;\;"
-    "ark_test_stageinfo_arkstep.cpp\;0\;\;" # ERK
-    "ark_test_stageinfo_arkstep.cpp\;1\;\;" # DIRK
-    "ark_test_stageinfo_arkstep.cpp\;2\;\;" # ImEx
-    "ark_test_stageinfo_erkstep.cpp\;\;\;"
+    "ark_test_stageinfo_arkstep.cpp\;0\;\;real" # ERK
+    "ark_test_stageinfo_arkstep.cpp\;1\;\;real" # DIRK
+    "ark_test_stageinfo_arkstep.cpp\;2\;\;real" # ImEx
+    "ark_test_stageinfo_erkstep.cpp\;\;\;real"
     "ark_test_stageinfo_forcingstep.cpp\;\;\;"
     "ark_test_stageinfo_lsrkstep.cpp\;0\;\;" # RKC
     "ark_test_stageinfo_lsrkstep.cpp\;1\;\;" # RKL

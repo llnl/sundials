@@ -136,8 +136,13 @@ int main(int argc, char* argv[])
   sunscalartype* y_data  = N_VGetArrayPointer(y);
   sunscalartype* yt_data = N_VGetArrayPointer(yt);
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
   cout << setw(width) << tret << setw(width) << y_data[0] << setw(width)
        << abs(y_data[0] - yt_data[0]) << endl;
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  cout << setw(width) << tret << setw(width) << SUN_REAL(y_data[0]) << setw(width)
+       << abs(SUN_REAL(y_data[0]) - yt_data[0]) << endl;
+#endif
 
   // Advance in time
   for (int i = 0; i < nout; i++)
@@ -148,8 +153,13 @@ int main(int argc, char* argv[])
     flag = true_solution(tret, problem_data, yt);
     if (check_flag(flag, "true_solution")) { return 1; }
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
     cout << setw(width) << tret << setw(width) << y_data[0] << setw(width)
          << abs(y_data[0] - yt_data[0]) << endl;
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    cout << setw(width) << tret << setw(width) << SUN_REAL(y_data[0]) << setw(width)
+         << abs(SUN_REAL(y_data[0]) - yt_data[0]) << endl;
+#endif
 
     // update output time
     tout += dtout;
