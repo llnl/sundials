@@ -458,9 +458,15 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
 
     std::cout << "\nMRIStep Statistics:\n";
     std::cout << "   Time        = " << t << "\n";
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
     std::cout << "   y(t)        = " << ytrue << "\n";
     std::cout << "   y_n         = " << ydata[0] << "\n";
     std::cout << "   Error       = " << error << "\n";
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    std::cout << "   y(t)        = " << SUN_REAL(ytrue) << "\n";
+    std::cout << "   y_n         = " << SUN_REAL(ydata[0]) << "\n";
+    std::cout << "   Error       = " << SUN_REAL(error) << "\n";
+#endif
     std::cout << "   Steps       = " << mri_nst << "\n";
     std::cout << "   Fe evals    = " << mri_nfse << "\n";
     std::cout << "   Fi evals    = " << mri_nfsi << "\n";
