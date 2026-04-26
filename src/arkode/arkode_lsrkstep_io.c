@@ -786,16 +786,8 @@ int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
   retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  if (step_mem->is_SSP)
-  {
-    *stage      = step_mem->istage;
-    *max_stages = step_mem->req_stages;
-  }
-  else
-  {
-    *stage      = step_mem->istage;
-    *max_stages = step_mem->req_stages + 1;
-  }
+  *stage      = step_mem->istage;
+  *max_stages = step_mem->req_stages + (step_mem->is_SSP ? 0 : 1);
 
   return (ARK_SUCCESS);
 }
