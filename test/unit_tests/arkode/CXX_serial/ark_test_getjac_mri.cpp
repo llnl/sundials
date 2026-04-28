@@ -312,6 +312,7 @@ int main(int argc, char* argv[])
   sunindextype ldata = SUNDenseMatrix_LData(Jtrue);
   for (sunindextype i = 0; i < ldata; i++)
   {
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
     std::cout << std::setw(8) << std::right << i << std::setw(25) << std::right
               << Jdq_data[i] << std::setw(25) << std::right << Jtrue_data[i]
               << std::setw(25) << std::right
@@ -319,6 +320,16 @@ int main(int argc, char* argv[])
               << std::right
               << std::abs(Jdq_data[i] - Jtrue_data[i]) / Jtrue_data[i]
               << std::endl;
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    std::cout << std::setw(8) << std::right << i << std::setw(25) << std::right
+              << SUN_REAL(Jdq_data[i]) << std::setw(25) << std::right
+              << SUN_REAL(Jtrue_data[i]) << std::setw(25) << std::right
+              << std::abs(SUN_REAL(Jdq_data[i]) - SUN_REAL(Jtrue_data[i]))
+              << std::setw(25) << std::right
+              << std::abs(SUN_REAL(Jdq_data[i]) - SUN_REAL(Jtrue_data[i]))
+                    / SUN_REAL(Jtrue_data[i])
+              << std::endl;
+#endif
     result += SUNRCompareTol(SUN_REAL(Jdq_data[i]), SUN_REAL(Jtrue_data[i]), tol);
     result += SUNRCompareTol(SUN_IMAG(Jdq_data[i]), SUN_IMAG(Jtrue_data[i]), tol);
   }

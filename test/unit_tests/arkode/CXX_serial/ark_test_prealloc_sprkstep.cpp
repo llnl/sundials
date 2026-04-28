@@ -90,8 +90,13 @@ int main(int argc, char* argv[])
   for (int i = 0; i < 9; i++) { cout << "--------------"; }
   cout << endl;
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
   cout << setw(22) << tret << setw(25) << ydata[0] << setw(25) << ydata[1]
        << setw(25) << ydata[2] << setw(25) << ydata[3] << endl;
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  cout << setw(22) << tret << setw(25) << SUN_REAL(ydata[0]) << setw(25) << SUN_REAL(ydata[1]) << setw(25)
+       << SUN_REAL(ydata[2]) << setw(25) << SUN_REAL(ydata[3]) << endl;
+#endif
 
   // Advance in time
   for (int i = 0; i < nout; i++)
@@ -99,8 +104,13 @@ int main(int argc, char* argv[])
     flag = ARKodeEvolve(arkode_mem, tout, y, &tret, ARK_ONE_STEP);
     if (check_flag(flag, "ARKodeEvolve")) { return 1; }
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
     cout << setw(22) << tret << setw(25) << ydata[0] << setw(25) << ydata[1]
          << setw(25) << ydata[2] << setw(25) << ydata[3] << endl;
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    cout << setw(22) << tret << setw(25) << SUN_REAL(ydata[0]) << setw(25) << SUN_REAL(ydata[1]) << setw(25)
+         << SUN_REAL(ydata[2]) << setw(25) << SUN_REAL(ydata[3]) << endl;
+#endif
 
     // update output time
     tout += dtout;

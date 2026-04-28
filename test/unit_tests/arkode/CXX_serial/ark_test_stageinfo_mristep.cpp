@@ -228,9 +228,14 @@ int main(int argc, char* argv[])
   for (int i = 0; i < 9; i++) { cout << "--------------"; }
   cout << endl;
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
   cout << setw(22) << tret << setw(25) << ydata[0] << setw(25) << ydata[1]
        << setw(25) << abs(ydata[0] - utrue) << setw(25) << abs(ydata[1] - vtrue)
        << endl;
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  cout << setw(22) << tret << setw(25) << SUN_REAL(ydata[0]) << setw(25) << SUN_REAL(ydata[1]) << setw(25)
+       << abs(SUN_REAL(ydata[0]) - utrue) << setw(25) << abs(SUN_REAL(ydata[1]) - vtrue) << endl;
+#endif
 
   // Advance in time
   for (int i = 0; i < nout; i++)
@@ -241,9 +246,14 @@ int main(int argc, char* argv[])
     flag = true_sol(tret, &utrue, &vtrue);
     if (check_flag(flag, "true_sol")) { return 1; }
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
     cout << setw(22) << tret << setw(25) << ydata[0] << setw(25) << ydata[1]
          << setw(25) << abs(ydata[0] - utrue) << setw(25)
          << abs(ydata[1] - vtrue) << endl;
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    cout << setw(22) << tret << setw(25) << SUN_REAL(ydata[0]) << setw(25) << SUN_REAL(ydata[1]) << setw(25)
+         << abs(SUN_REAL(ydata[0]) - utrue) << setw(25) << abs(SUN_REAL(ydata[1]) - vtrue) << endl;
+#endif
 
     // update output time
     tout += dtout;

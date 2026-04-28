@@ -80,8 +80,14 @@ static int test_forward(sundials::Context& ctx, int order, int partitions)
   auto numerical_solution = N_VGetArrayPointer(y)[0];
   auto err                = numerical_solution - exact_solution;
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
   std::cout << "Forward solution of order " << order << " with " << partitions
             << " partitions completed with an error of " << err << "\n";
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  std::cout << "Forward solution of order " << order << " with " << partitions
+            << " partitions completed with an error of " <<SUN_REAL(err) << "\n";
+#endif
+
   ARKodePrintAllStats(arkode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
 
   sunbooleantype fail = SUNRCompareTol(SUN_REAL(exact_solution),
@@ -395,8 +401,14 @@ static int test_custom_stepper(const sundials::Context& ctx, int order)
   auto numerical_solution = N_VGetArrayPointer(y)[0];
   auto err                = numerical_solution - exact_solution;
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
   std::cout << "Custom SUNStepper solution of order " << order
             << " completed with an error of " << err << "\n";
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  std::cout << "Custom SUNStepper solution of order " << order
+            << " completed with an error of " <<SUN_REAL(err) << "\n";
+#endif
+
   ARKodePrintAllStats(arkode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
 
   sunbooleantype fail =
@@ -478,8 +490,12 @@ static int test_reinit(const sundials::Context& ctx)
   auto numerical_solution = N_VGetArrayPointer(y)[0];
   auto err                = numerical_solution - exact_solution;
 
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
   std::cout << "Reinitialized solution completed with an error of " << err
             << "\n";
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  std::cout << "Reinitialized solution completed with an error of " <<SUN_REAL(err) << "\n";
+#endif
   ARKodePrintAllStats(arkode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
 
   sunbooleantype fail = SUNRCompareTol(SUN_REAL(exact_solution),
