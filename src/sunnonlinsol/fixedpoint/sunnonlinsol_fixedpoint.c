@@ -417,36 +417,33 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
 {
   SUNFunctionBegin(NLS->sunctx);
   /* local variables */
-  int nvec, i_pt, i, j, lAA, m, maa, *ipt_map;
+  int nvec, i_pt, i, j, lAA, maa, *ipt_map;
   sunrealtype beta, onembeta;
-  sunscalartype a, b, c, s, temp, temp2, temp3;
-  sunscalartype *R, *cvals, *gamma;
+  sunscalartype a, b, c, s, temp, temp2, temp3, dot;
+  sunscalartype *cvals, *R, *gamma;
   N_Vector fv, vtemp, gold, fold, *df, *dg, *Q, *Xvecs;
   sunbooleantype damping;
-  SUNQRData qr_data;
 
   /* local shortcut variables */
-  qr_data        = FP_CONTENT(NLS)->qr_data;
-  qr_data->vtemp = vtemp = x; /* use result as temporary vector */
-  ipt_map                = FP_CONTENT(NLS)->imap;
-  maa                    = FP_CONTENT(NLS)->m;
-  m                      = iter - 1;
-  gold                   = FP_CONTENT(NLS)->gold;
-  fold                   = FP_CONTENT(NLS)->fold;
-  df                     = FP_CONTENT(NLS)->df;
-  dg                     = FP_CONTENT(NLS)->dg;
-  Q                      = FP_CONTENT(NLS)->q;
-  cvals                  = FP_CONTENT(NLS)->cvals;
-  Xvecs                  = FP_CONTENT(NLS)->Xvecs;
-  R                      = FP_CONTENT(NLS)->R;
-  gamma                  = FP_CONTENT(NLS)->gamma;
-  fv                     = FP_CONTENT(NLS)->delta;
-  damping                = FP_CONTENT(NLS)->damping;
-  beta                   = FP_CONTENT(NLS)->beta;
+  vtemp   = x; /* use result as temporary vector */
+  ipt_map = FP_CONTENT(NLS)->imap;
+  maa     = FP_CONTENT(NLS)->m;
+  gold    = FP_CONTENT(NLS)->gold;
+  fold    = FP_CONTENT(NLS)->fold;
+  df      = FP_CONTENT(NLS)->df;
+  dg      = FP_CONTENT(NLS)->dg;
+  Q       = FP_CONTENT(NLS)->q;
+  cvals   = FP_CONTENT(NLS)->cvals;
+  Xvecs   = FP_CONTENT(NLS)->Xvecs;
+  R       = FP_CONTENT(NLS)->R;
+  gamma   = FP_CONTENT(NLS)->gamma;
+  fv      = FP_CONTENT(NLS)->delta;
+  damping = FP_CONTENT(NLS)->damping;
+  beta    = FP_CONTENT(NLS)->beta;
 
   /* reset ipt_map, i_pt */
   for (i = 0; i < maa; i++) { ipt_map[i] = 0; }
-  i_pt = m - (m / maa) * maa;
+  i_pt = iter - 1 - ((iter - 1) / maa) * maa;
 
   /* update dg[i_pt], df[i_pt], fv, gold and fold*/
   N_VLinearSum(ONE, gval, -ONE, xold, fv);
@@ -475,7 +472,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
 
   if (iter == 1)
   { /* second iteration, add a column to the QR factorization */
-    sunscalartype dot = ZERO;
+    dot = ZERO;
     SUNCheckCall(N_VDotProdComplex(df[i_pt], df[i_pt], &dot));
     R[0] = SUNRsqrt(SUN_REAL(dot));
     N_VScale(ONE / R[0], df[i_pt], Q[i_pt]);
@@ -484,8 +481,32 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
   }
   else if (iter <= maa)
   { /* another iteration before we've reached maa, add a column to the QR factorization */
-    SUNCheckCall(SUNQRAdd_MGS(Q, R, df[i_pt], m, maa, qr_data));
-    for (i = 0; i < iter; i++) { ipt_map[i] = i; }
+
+    N_VScale(ONE, df[i_pt], vtemp);
+    SUNCheckLastErr();
+    for (j = 0; j < iter - 1; j++)
+    {
+      ipt_map[j] = j;
+      dot = ZERO;
+      SUNCheckCall(N_VDotProdComplex(Q[j], vtemp, &dot));
+      R[(iter - 1) * maa + j] = dot;
+      N_VLinearSum(ONE, vtemp, -R[(iter - 1) * maa + j], Q[j], vtemp);
+      SUNCheckLastErr();
+    }
+    dot = ZERO;
+    SUNCheckCall(N_VDotProdComplex(vtemp, vtemp, &dot));
+    R[(iter - 1) * maa + iter - 1] = SUNRsqrt(SUN_REAL(dot));
+    if (R[(iter - 1) * maa + iter - 1] == ZERO)
+    {
+      N_VScale(ZERO, vtemp, Q[i_pt]);
+      SUNCheckLastErr();
+    }
+    else
+    {
+      N_VScale((ONE / R[(iter - 1) * maa + iter - 1]), vtemp, Q[i_pt]);
+      SUNCheckLastErr();
+    }
+    ipt_map[iter - 1] = iter - 1;
   }
   else
   { /* we've filled the acceleration subspace, so start recycling */
@@ -493,10 +514,8 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
     /* delete left-most column vector from QR factorization */
     for (i = 0; i < maa - 1; i++)
     {
-      a    = R[(i + 1) * maa + i];
-      b    = R[(i + 1) * maa + i + 1];
-      temp = SUNsqrt(a * a + b * b);
-
+      a     = R[(i + 1) * maa + i];
+      b     = R[(i + 1) * maa + i + 1];
       if (b == ZERO)
       {
         c = ONE;
@@ -525,7 +544,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
         {
           a                  = R[j * maa + i];
           b                  = R[j * maa + i + 1];
-          temp               = c * a - s * b;
+          temp               = c * a + s * b;
           R[j * maa + i + 1] = SUNCONJ(s) * a + SUNCONJ(c) * b;
           R[j * maa + i]     = temp;
         }
@@ -545,7 +564,21 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
     }
 
     /* add the new df vector */
-    SUNCheckCall(SUNQRAdd_MGS(Q, R, df[i_pt], maa - 1, maa, qr_data));
+    N_VScale(ONE, df[i_pt], vtemp);
+    SUNCheckLastErr();
+    for (j = 0; j < maa - 1; j++)
+    {
+      dot = ZERO;
+      SUNCheckCall(N_VDotProdComplex(Q[j], vtemp, &dot));
+      R[(maa - 1) * maa + j] = dot;
+      N_VLinearSum(ONE, vtemp, -R[(maa - 1) * maa + j], Q[j], vtemp);
+      SUNCheckLastErr();
+    }
+    dot = ZERO;
+    SUNCheckCall(N_VDotProdComplex(vtemp, vtemp, &dot));
+    R[(maa - 1) * maa + maa - 1] = SUNRsqrt(SUN_REAL(dot));
+    N_VScale((ONE / R[(maa - 1) * maa + maa - 1]), vtemp, Q[maa - 1]);
+    SUNCheckLastErr();
 
     /* update the iteration map */
     j = 0;
@@ -622,10 +655,11 @@ static SUNErrCode AllocateContent(SUNNonlinearSolver NLS, N_Vector y)
     FP_CONTENT(NLS)->R = (sunscalartype*)malloc((m * m) * sizeof(sunscalartype));
     SUNAssert(FP_CONTENT(NLS)->R, SUN_ERR_MALLOC_FAIL);
 
-    FP_CONTENT(NLS)->gamma = malloc(m * sizeof(*FP_CONTENT(NLS)->gamma));
+    FP_CONTENT(NLS)->gamma = (sunscalartype*)malloc(m * sizeof(sunscalartype));
     SUNAssert(FP_CONTENT(NLS)->gamma, SUN_ERR_MALLOC_FAIL);
 
-    FP_CONTENT(NLS)->cvals = malloc(2 * (m + 1) * sizeof(*FP_CONTENT(NLS)->cvals));
+    FP_CONTENT(NLS)->cvals =
+      (sunscalartype*)malloc(2 * (m + 1) * sizeof(sunscalartype));
     SUNAssert(FP_CONTENT(NLS)->cvals, SUN_ERR_MALLOC_FAIL);
 
     FP_CONTENT(NLS)->df = N_VCloneVectorArray(m, y);
@@ -639,8 +673,6 @@ static SUNErrCode AllocateContent(SUNNonlinearSolver NLS, N_Vector y)
 
     FP_CONTENT(NLS)->Xvecs = (N_Vector*)malloc(2 * (m + 1) * sizeof(N_Vector));
     SUNAssert(FP_CONTENT(NLS)->Xvecs, SUN_ERR_MALLOC_FAIL);
-
-    FP_CONTENT(NLS)->qr_data = (SUNQRData)malloc(sizeof *FP_CONTENT(NLS)->qr_data);
   }
 
   return SUN_SUCCESS;
@@ -724,12 +756,6 @@ static void FreeContent(SUNNonlinearSolver NLS)
   {
     free(FP_CONTENT(NLS)->Xvecs);
     FP_CONTENT(NLS)->Xvecs = NULL;
-  }
-
-  if (FP_CONTENT(NLS)->qr_data)
-  {
-    free(FP_CONTENT(NLS)->qr_data);
-    FP_CONTENT(NLS)->qr_data = NULL;
   }
 
   return;

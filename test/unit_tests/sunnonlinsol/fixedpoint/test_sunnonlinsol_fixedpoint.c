@@ -15,19 +15,36 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
  * This is the testing routine to check the SUNNonlinearSolver fixed point
- * module. This test solves the nonlinear system
+ * module. When running with real scalar type, this test solves the nonlinear
+ * system
  *
- * 3x - cos((y-1)z) - 1/2 = 0
- * x^2 - 81(y-0.9)^2 + sin(z) + 1.06 = 0
- * exp(-x(y-1)) + 20z + (10 pi - 3)/3 = 0
+ *   3x - cos((y-1)z) - 1/2 = 0
+ *   x^2 - 81(y-0.9)^2 + sin(z) + 1.06 = 0
+ *   exp(-x(y-1)) + 20z + (10 pi - 3)/3 = 0
  *
  * where the fixed point function is
  *
- * g1(x,y,z) = 1/3 cos((y-1)yz) + 1/6
- * g2(x,y,z) = 1/9 sqrt(x^2 + sin(z) + 1.06) + 0.9
- * g3(x,y,z) = -1/20 exp(-x(y-1)) - (10 pi - 3) / 60
+ *   g1(x,y,z) = 1/3 cos((y-1)yz) + 1/6
+ *   g2(x,y,z) = 1/9 sqrt(x^2 + sin(z) + 1.06) + 0.9
+ *   g3(x,y,z) = -1/20 exp(-x(y-1)) - (10 pi - 3) / 60
  *
  * This system has the analytic solution x = 1/2, y = 1, z = -pi/6.
+ *
+ * When running with complex scalar type, this test solves the nonlinear system
+ *   4x    - sin(y) - zi     - 1  = 0
+ *   -x^2  + 5y     - cos(z) - 2i = 0
+ *   -e^-x - y      + 6z     - 3  = 0
+ *
+ * where the fixed point function is
+ *
+ *   g1(x,y,z) = (1/4)*(sin(y) + zi + 1)
+ *   g2(x,y,z) = (1/5)*(x^2 + cos(z) + 2i)
+ *   g3(x,y,z) = (1/6)*(exp(-x) + y + 3)
+ *
+ * This system has the analytic solution
+ *   x = 0.28443101049565 + 0.27031686078054i,
+ *   y = 0.16117132843381 + 0.42622240595676i
+ *   z = 0.64771494226506 + 0.03754877135588i
  * ---------------------------------------------------------------------------*/
 
 #include <math.h>
@@ -47,15 +64,28 @@
 #endif
 
 /* precision specific math function macros */
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
 #if defined(SUNDIALS_DOUBLE_PRECISION)
-#define SUNRsin(x) (sin((x)))
-#define SUNRcos(x) (cos((x)))
+#define SUNsin(x)  (csin((x)))
+#define SUNcos(x)  (ccos((x)))
 #elif defined(SUNDIALS_SINGLE_PRECISION)
-#define SUNRsin(x) (sinf((x)))
-#define SUNRcos(x) (cosf((x)))
+#define SUNsin(x)  (csinf((x)))
+#define SUNcos(x)  (ccosf((x)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define SUNRsin(x) (sinl((x)))
-#define SUNRcos(x) (cosl((x)))
+#define SUNsin(x)  (csinl((x)))
+#define SUNcos(x)  (ccosl((x)))
+#endif
+#else
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNsin(x) (sin((x)))
+#define SUNcos(x) (cos((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNsin(x) (sinf((x)))
+#define SUNcos(x) (cosf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNsin(x) (sinl((x)))
+#define SUNcos(x) (cosl((x)))
+#endif
 #endif
 
 /* problem constants */
@@ -68,6 +98,8 @@
 #define ONE          SUN_RCONST(1.0)             /* real 1.0  */
 #define ONEPTZEROSIX SUN_RCONST(1.06)            /* real 1.06 */
 #define THREE        SUN_RCONST(3.0)             /* real 3.0  */
+#define FOUR         SUN_RCONST(4.0)             /* real 4.0  */
+#define FIVE         SUN_RCONST(5.0)             /* real 5.0  */
 #define SIX          SUN_RCONST(6.0)             /* real 6.0  */
 #define NINE         SUN_RCONST(9.0)             /* real 9.0  */
 #define TEN          SUN_RCONST(10.0)            /* real 10.0 */
@@ -76,9 +108,15 @@
 #define PI           SUN_RCONST(3.1415926535898) /* real pi   */
 
 /* analytic solution */
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+#define XTRUE SUN_CCONST(0.28443101049565, 0.27031686078054)
+#define YTRUE SUN_CCONST(0.16117132843381, 0.42622240595676)
+#define ZTRUE SUN_CCONST(0.64771494226506, 0.03754877135588)
+#else
 #define XTRUE HALF
 #define YTRUE ONE
 #define ZTRUE -PI / SIX
+#endif
 
 /* Check the system solution */
 static int check_ans(N_Vector ycur, sunrealtype tol);
@@ -115,7 +153,7 @@ int main(int argc, char* argv[])
   int retval             = 0;
   SUNNonlinearSolver NLS = NULL;
   sunrealtype tol        = 100 * SUNRsqrt(SUN_UNIT_ROUNDOFF);
-  int mxiter             = 20;
+  int mxiter             = 50;
   int maa                = 0;               /* no acceleration */
   sunrealtype damping    = SUN_RCONST(1.0); /* no damping      */
   long int niters        = 0;
@@ -128,6 +166,15 @@ int main(int argc, char* argv[])
 
   /* Print problem description */
   printf("Solve the nonlinear system:\n");
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  printf("    4x - sin(y) - z*i - 1  = 0\n");
+  printf("    -x^2 + 5y - cos(z) - 2i = 0\n");
+  printf("    -exp(-x) - y + 6z - 3 = 0\n");
+  printf("Analytic solution:\n");
+  printf("    x = %" GSYM " + %" GSYM "i\n", SUN_REAL(XTRUE), SUN_IMAG(XTRUE));
+  printf("    y = %" GSYM " + %" GSYM "i\n", SUN_REAL(YTRUE), SUN_IMAG(YTRUE));
+  printf("    z = %" GSYM " + %" GSYM "i\n", SUN_REAL(ZTRUE), SUN_IMAG(ZTRUE));
+#else
   printf("    3x - cos((y-1)z) - 1/2 = 0\n");
   printf("    x^2 - 81(y-0.9)^2 + sin(z) + 1.06 = 0\n");
   printf("    exp(-x(y-1)) + 20z + (10 pi - 3)/3 = 0\n");
@@ -135,6 +182,7 @@ int main(int argc, char* argv[])
   printf("    x = %" GSYM "\n", XTRUE);
   printf("    y = %" GSYM "\n", YTRUE);
   printf("    z = %" GSYM "\n", ZTRUE);
+#endif
   printf("Solution method: Anderson accelerated fixed point iteration.\n");
   printf("    tolerance = %" GSYM "\n", tol);
   printf("    max iters = %d\n", mxiter);
@@ -242,23 +290,45 @@ int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del, sunrealtype tol,
 }
 
 /* -----------------------------------------------------------------------------
- * Nonlinear system F(x,y,z):
+ * When running with real scalar type:
  *
- * 3x - cos((y-1)z) - 1/2 = 0
- * x^2 - 81(y-0.9)^2 + sin(z) + 1.06 = 0
- * exp(-x(y-1)) + 20z + (10 pi - 3)/3 = 0
+ *   Nonlinear system F(x,y,z):
  *
- * Nonlinear fixed point function G(x,y,z):
+ *   3x - cos((y-1)z) - 1/2 = 0
+ *   x^2 - 81(y-0.9)^2 + sin(z) + 1.06 = 0
+ *   exp(-x(y-1)) + 20z + (10 pi - 3)/3 = 0
  *
- * G1(x,y,z) = 1/3 cos((y-1)yz) + 1/6
- * G2(x,y,z) = 1/9 sqrt(x^2 + sin(z) + 1.06) + 0.9
- * G3(x,y,z) = -1/20 exp(-x(y-1)) - (10 pi - 3) / 60
+ *   Nonlinear fixed point function G(x,y,z):
  *
- * Corrector form g(x,y,z):
+ *   G1(x,y,z) = 1/3 cos((y-1)yz) + 1/6
+ *   G2(x,y,z) = 1/9 sqrt(x^2 + sin(z) + 1.06) + 0.9
+ *   G3(x,y,z) = -1/20 exp(-x(y-1)) - (10 pi - 3) / 60
  *
- * g1(x,y,z) = 1/3 cos((y-1)yz) + 1/6 - x0
- * g2(x,y,z) = 1/9 sqrt(x^2 + sin(z) + 1.06) + 0.9 - y0
- * g3(x,y,z) = -1/20 exp(-x(y-1)) - (10 pi - 3) / 60 - z0
+ *   Corrector form g(x,y,z):
+ *
+ *   g1(x,y,z) = 1/3 cos((y-1)yz) + 1/6 - x0
+ *   g2(x,y,z) = 1/9 sqrt(x^2 + sin(z) + 1.06) + 0.9 - y0
+ *   g3(x,y,z) = -1/20 exp(-x(y-1)) - (10 pi - 3) / 60 - z0
+ *
+ * When running with complex scalar type:
+ *
+ *   Nonlinear system F(x,y,z):
+ *
+ *   4x - sin(y) - z*i - 1 = 0
+ *   -x^2 + 5y - cos(z) - 2i = 0
+ *   -exp(-x) - y + 6z- 3 = 0
+ *
+ *   Nonlinear fixed point function G(x,y,z):
+ *
+ *   G1(x,y,z) = (1/4)*(sin(y) + z*i + 1)
+ *   G2(x,y,z) = (1/5)*(x^2 + cos(z) + 2i)
+ *   G3(x,y,z) = (1/6)*(exp(-x) + y + 3)
+ *
+ *   Corrector form g(x,y,z):
+ *
+ *   g1(x,y,z) = (1/4)*(sin(y) + z*i + 1) - x0
+ *   g2(x,y,z) = (1/5)*(x^2 + cos(z) + 2i) - y0
+ *   g3(x,y,z) = (1/6)*(exp(-x) + y + 3) - z0
  *
  * ---------------------------------------------------------------------------*/
 int FPFunction(N_Vector ycor, N_Vector gvec, void* mem)
@@ -266,7 +336,7 @@ int FPFunction(N_Vector ycor, N_Vector gvec, void* mem)
   IntegratorMem Imem;
   sunscalartype* ydata = NULL;
   sunscalartype* gdata = NULL;
-  sunrealtype x, y, z;
+  sunscalartype x, y, z;
 
   if (mem == NULL)
   {
@@ -291,10 +361,16 @@ int FPFunction(N_Vector ycor, N_Vector gvec, void* mem)
   z = ydata[2];
 
   /* compute fixed point function */
-  gdata[0] = (ONE / THREE) * SUNRcos((y - ONE) * z) + (ONE / SIX);
-  gdata[1] = (ONE / NINE) * SUNRsqrt(x * x + SUNRsin(z) + ONEPTZEROSIX) + PTNINE;
-  gdata[2] = -(ONE / TWENTY) * SUNRexp(-x * (y - ONE)) -
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  gdata[0] = (ONE / FOUR) * (SUNsin(y) + SUN_CCONST(0.0, 1.0) * z + ONE);
+  gdata[1] = (ONE / FIVE) * (x * x + SUNcos(z) + SUN_CCONST(0.0, 2.0));
+  gdata[2] = (ONE / SIX) * (SUNexp(-x) + y + THREE);
+#else
+  gdata[0] = (ONE / THREE) * SUNcos((y - ONE) * z) + (ONE / SIX);
+  gdata[1] = (ONE / NINE) * SUNsqrt(x * x + SUNsin(z) + ONEPTZEROSIX) + PTNINE;
+  gdata[2] = -(ONE / TWENTY) * SUNexp(-x * (y - ONE)) -
              (TEN * PI - THREE) / SIXTY;
+#endif
 
   N_VLinearSum(ONE, gvec, -ONE, Imem->y0, gvec);
 
@@ -315,9 +391,15 @@ static int check_ans(N_Vector ycur, sunrealtype tol)
 
   /* print the solution */
   printf("Computed solution:\n");
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  printf("    y1 = %" GSYM " + %" GSYM "i\n", SUN_REAL(data[0]), SUN_IMAG(data[0]));
+  printf("    y2 = %" GSYM " + %" GSYM "i\n", SUN_REAL(data[1]), SUN_IMAG(data[1]));
+  printf("    y3 = %" GSYM " + %" GSYM "i\n", SUN_REAL(data[2]), SUN_IMAG(data[2]));
+#else
   printf("    y1 = %" GSYM "\n", data[0]);
   printf("    y2 = %" GSYM "\n", data[1]);
   printf("    y3 = %" GSYM "\n", data[2]);
+#endif
 
   /* solution error */
   ex = SUNabs(data[0] - XTRUE);

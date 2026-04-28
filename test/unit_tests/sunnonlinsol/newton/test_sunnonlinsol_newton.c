@@ -22,6 +22,7 @@
 
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_types.h"
+#include "sundials/sundials_math.h"
 #include "sunlinsol/sunlinsol_dense.h"
 #include "sunmatrix/sunmatrix_dense.h"
 #include "sunnonlinsol/sunnonlinsol_newton.h"
@@ -42,12 +43,46 @@
 #define TWO   SUN_RCONST(2.0) /* real 2.0 */
 #define THREE SUN_RCONST(3.0) /* real 3.0 */
 #define FOUR  SUN_RCONST(4.0) /* real 4.0 */
+#define FIVE  SUN_RCONST(5.0) /* real 5.0 */
 #define SIX   SUN_RCONST(6.0) /* real 6.0 */
 
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNsin(x)  (csin((x)))
+#define SUNcos(x)  (ccos((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNsin(x)  (csinf((x)))
+#define SUNcos(x)  (ccosf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNsin(x)  (csinl((x)))
+#define SUNcos(x)  (ccosl((x)))
+#endif
+#else
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNsin(x)  (sin((x)))
+#define SUNcos(x)  (cos((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNsin(x)  (sinf((x)))
+#define SUNcos(x)  (cosf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNsin(x)  (sinl((x)))
+#define SUNcos(x)  (cosl((x)))
+#endif
+#endif
+
 /* approximate solution */
-#define Y1 0.785196933062355226
-#define Y2 0.496611392944656396
-#define Y3 0.369922830745872357
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+#define Y1_R SUN_RCONST(0.28443101049565)
+#define Y1_I SUN_RCONST(0.27031686078054)
+#define Y2_R SUN_RCONST(0.16117132843381)
+#define Y2_I SUN_RCONST(0.42622240595676)
+#define Y3_R SUN_RCONST(0.64771494226506)
+#define Y3_I SUN_RCONST(0.03754877135588)
+#else
+#define Y1 SUN_RCONST(0.785196933062355226)
+#define Y2 SUN_RCONST(0.496611392944656396)
+#define Y3 SUN_RCONST(0.369922830745872357)
+#endif
 
 /* Check function return values */
 static int check_retval(void* flagvalue, const char* funcname, int opt);
@@ -120,9 +155,15 @@ int main(int argc, char* argv[])
   if (check_retval((void*)Imem->x, "N_VClone", 0)) { return (1); }
 
   /* set initial guess for the state */
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  NV_Ith_S(Imem->y0, 0) = SUN_CCONST(0.0, 0.5);;
+  NV_Ith_S(Imem->y0, 1) = SUN_CCONST(0.5, 0.0);;
+  NV_Ith_S(Imem->y0, 2) = SUN_CCONST(1.0, 0.0);;
+#else
   NV_Ith_S(Imem->y0, 0) = HALF;
   NV_Ith_S(Imem->y0, 1) = HALF;
   NV_Ith_S(Imem->y0, 2) = HALF;
+#endif
 
   /* set initial guess for the correction */
   NV_Ith_S(Imem->ycor, 0) = ZERO;
@@ -178,15 +219,27 @@ int main(int argc, char* argv[])
 
   /* print the solution */
   printf("Solution:\n");
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  printf("y1 = %" GSYM " + %" GSYM "i\n", SUN_REAL(NV_Ith_S(Imem->ycur, 0)), SUN_IMAG(NV_Ith_S(Imem->ycur, 0)));
+  printf("y2 = %" GSYM " + %" GSYM "i\n", SUN_REAL(NV_Ith_S(Imem->ycur, 1)), SUN_IMAG(NV_Ith_S(Imem->ycur, 1)));
+  printf("y3 = %" GSYM " + %" GSYM "i\n", SUN_REAL(NV_Ith_S(Imem->ycur, 2)), SUN_IMAG(NV_Ith_S(Imem->ycur, 2)));
+#else
   printf("y1 = %" GSYM "\n", NV_Ith_S(Imem->ycur, 0));
   printf("y2 = %" GSYM "\n", NV_Ith_S(Imem->ycur, 1));
   printf("y3 = %" GSYM "\n", NV_Ith_S(Imem->ycur, 2));
+#endif
 
   /* print the solution error */
   printf("Solution Error:\n");
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  printf("y1 = %" GSYM " + %" GSYM "i\n", SUN_REAL(NV_Ith_S(Imem->ycur, 0) - Y1_R), SUN_IMAG(NV_Ith_S(Imem->ycur, 0) - Y1_I));
+  printf("y2 = %" GSYM " + %" GSYM "i\n", SUN_REAL(NV_Ith_S(Imem->ycur, 1) - Y2_R), SUN_IMAG(NV_Ith_S(Imem->ycur, 1) - Y2_I));
+  printf("y3 = %" GSYM " + %" GSYM "i\n", SUN_REAL(NV_Ith_S(Imem->ycur, 2) - Y3_R), SUN_IMAG(NV_Ith_S(Imem->ycur, 2) - Y3_I));
+#else
   printf("e1 = %" GSYM "\n", NV_Ith_S(Imem->ycur, 0) - Y1);
   printf("e2 = %" GSYM "\n", NV_Ith_S(Imem->ycur, 1) - Y2);
   printf("e3 = %" GSYM "\n", NV_Ith_S(Imem->ycur, 2) - Y3);
+#endif
 
   /* get the number of linear iterations */
   retval = SUNNonlinSolGetNumIters(NLS, &niters);
@@ -274,15 +327,21 @@ int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del, sunrealtype tol,
 /* -----------------------------------------------------------------------------
  * Nonlinear residual function
  *
- * f1(x,y,z) = x^2 + y^2 + z^2 - 1 = 0
- * f2(x,y,z) = 2x^2 + y^2 - 4z     = 0
- * f3(x,y,z) = 3x^2 - 4y + z^2     = 0
+ * Complex scalar type:
+ *   f1(x,y,z) = 4x - sin(y) - z*i - 1   = 0
+ *   f2(x,y,z) = -x^2 + 5y - cos(z) - 2i = 0
+ *   f3(x,y,z) = -exp(-x) - y + 6z - 3   = 0
+ *
+ * Real scalar type:
+ *   f1(x,y,z) = x^2 + y^2 + z^2 - 1 = 0
+ *   f2(x,y,z) = 2x^2 + y^2 - 4z     = 0
+ *   f3(x,y,z) = 3x^2 - 4y + z^2     = 0
  *
  * ---------------------------------------------------------------------------*/
 int Res(N_Vector ycor, N_Vector f, void* mem)
 {
   IntegratorMem Imem;
-  sunrealtype y1, y2, y3;
+  sunscalartype y1, y2, y3;
 
   if (mem == NULL)
   {
@@ -300,9 +359,15 @@ int Res(N_Vector ycor, N_Vector f, void* mem)
   y3 = NV_Ith_S(Imem->ycur, 2);
 
   /* compute the residual function */
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  NV_Ith_S(f, 0) = FOUR * y1 - SUNsin(y2) - SUN_I * y3 - ONE;
+  NV_Ith_S(f, 1) = -y1 * y1 + FIVE * y2 - SUNcos(y3) - TWO * SUN_I;
+  NV_Ith_S(f, 2) = -SUNexp(-y1) - y2 + SIX * y3 - THREE;
+#else
   NV_Ith_S(f, 0) = y1 * y1 + y2 * y2 + y3 * y3 - ONE;
   NV_Ith_S(f, 1) = TWO * y1 * y1 + y2 * y2 - FOUR * y3;
   NV_Ith_S(f, 2) = THREE * (y1 * y1) - FOUR * y2 + y3 * y3;
+#endif
 
   /* return success */
   return (0);
@@ -311,20 +376,39 @@ int Res(N_Vector ycor, N_Vector f, void* mem)
 /* -----------------------------------------------------------------------------
  * Jacobian of the nonlinear residual function
  *
- *            ( 2x  2y  2z )
- * J(x,y,z) = ( 4x  2y  -4 )
- *            ( 6x  -4  2z )
+ * Complex scalar type:
+ *              ( 4       -cos(y)    -i   )
+ *   J(x,y,z) = ( -2x        5     sin(z) )
+ *              ( exp(-x)   -1        6   )
+ *
+ * Real scalar type:
+ *              ( 2x  2y  2z )
+ *   J(x,y,z) = ( 4x  2y  -4 )
+ *              ( 6x  -4  2z )
  *
  * ---------------------------------------------------------------------------*/
 int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
         N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
-  sunrealtype y1, y2, y3;
+  sunscalartype y1, y2, y3;
 
   y1 = NV_Ith_S(y, 0);
   y2 = NV_Ith_S(y, 1);
   y3 = NV_Ith_S(y, 2);
 
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  SM_ELEMENT_D(J, 0, 0) = FOUR;
+  SM_ELEMENT_D(J, 0, 1) = -SUNcos(y2);
+  SM_ELEMENT_D(J, 0, 2) = -SUN_I;
+
+  SM_ELEMENT_D(J, 1, 0) = -TWO * y1;
+  SM_ELEMENT_D(J, 1, 1) = FIVE;
+  SM_ELEMENT_D(J, 1, 2) = SUNsin(y3);
+
+  SM_ELEMENT_D(J, 2, 0) = SUNexp(-y1);
+  SM_ELEMENT_D(J, 2, 1) = -ONE;
+  SM_ELEMENT_D(J, 2, 2) = SIX;
+#else
   SM_ELEMENT_D(J, 0, 0) = TWO * y1;
   SM_ELEMENT_D(J, 0, 1) = TWO * y2;
   SM_ELEMENT_D(J, 0, 2) = TWO * y3;
@@ -336,6 +420,7 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
   SM_ELEMENT_D(J, 2, 0) = SIX * y1;
   SM_ELEMENT_D(J, 2, 1) = -FOUR;
   SM_ELEMENT_D(J, 2, 2) = TWO * y3;
+#endif
 
   return (0);
 }
