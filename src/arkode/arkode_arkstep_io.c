@@ -501,15 +501,6 @@ int ARKStepSetTableNum(void* arkode_mem, ARKODE_DIRKTableID itable,
     step_mem->q      = step_mem->Bi->q;
     step_mem->p      = step_mem->Bi->p;
 
-    /* hard code the bias factor for  ARKODE_SSP_LSPUM_3_1_2 */
-    if ((etable == ARKODE_SSP_LSPUM_ERK_3_1_2) &&
-        (itable == ARKODE_SSP_LSPUM_SDIRK_3_1_2))
-    {
-        (void)SUNAdaptController_SetErrorBias(ark_mem->hadapt_mem->hcontroller,
-                                              SUN_RCONST(2.0));
-    }
-    /* END hard code the bias factor for  ARKODE_SSP_LSPUM_3_1_2 */
-
     /* set method as ImEx */
     if (ARKStepSetImEx(arkode_mem) != ARK_SUCCESS)
     {
