@@ -5,6 +5,9 @@
 
 **New Features and Enhancements**
 
+Added the function :c:func:`SUNLogger_SetQueueAndFlushMsgFns` to allow for
+user-defined functions to queue and flush log messages.
+
 Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
 
 Added the ``ARKODE_SSP_ERK_2_1_2``, ``ARKODE_SSP_ERK_3_1_2``, ``ARKODE_SSP_ERK_4_1_2``,
