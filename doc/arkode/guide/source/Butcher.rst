@@ -366,37 +366,6 @@ Accessible via the string ``"ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2"`` to
    region is outlined in blue; the embedding's region is in red.
 
 
-.. c:enumerator:: ARKODE_SSP_ERK_2_1_2
-
-Accessible via the constant ``ARKODE_SSP_ERK_2_1_2`` to
-:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
-:c:func:`ARKodeButcherTable_LoadERK`.
-Accessible via the string ``"ARKODE_SSP_ERK_2_1_2"`` to
-:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
-:c:func:`ARKodeButcherTable_LoadERKByName`.
-This is the "SSPERK(2,2)" method from :cite:p:`FCS:22`.
-Both the method and its embedding have optimal SSP coefficient
-equal to 1.
-
-.. math::
-
-   \renewcommand{\arraystretch}{1.5}
-   \begin{array}{r|cc}
-     0 & 0 & 0 \\
-     1 & 1 & 0 \\
-     \hline
-     2 & \frac{1}{2}    & \frac{1}{2}     \\
-     1 & 0.694021459207626 & 1-0.694021459207626 \\
-   \end{array}
-
-.. figure:: /figs/arkode/ARKODE_SSP_ERK_2_1_2_stab_region.png
-   :width: 50 %
-   :align: center
-
-   Linear stability region for the SSP-ERK-2-1-2 method. The method's
-   region is outlined in red; the embedding's region is in blue dashed.
-
-
 .. c:enumerator:: ARKODE_SSP_ERK_3_1_2
 
 Accessible via the constant ``ARKODE_SSP_ERK_3_1_2`` to
@@ -459,45 +428,6 @@ equal to 3.
    :align: center
 
    Linear stability region for the SSP-ERK-4-1-2 method. The method's
-   region is outlined in red; the embedding's region is in blue dashed.
-
-
-.. c:enumerator:: ARKODE_SSP_ERK_10_1_2
-
-Accessible via the constant ``ARKODE_SSP_ERK_10_1_2`` to
-:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
-:c:func:`ARKodeButcherTable_LoadERK`.
-Accessible via the string ``"ARKODE_SSP_ERK_10_1_2"`` to
-:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
-:c:func:`ARKodeButcherTable_LoadERKByName`.
-This is the "SSPERK(10,2)" method from :cite:p:`FCS:22`.
-Both the method and its embedding have optimal SSP coefficient
-equal to 8.97.
-
-.. math::
-
-   \renewcommand{\arraystretch}{1.5}
-   \begin{array}{r|cccccccccc}
-     0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac19 & \frac19 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-     \frac29 & \frac19 & \frac19 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-     \frac13 & \frac19 & \frac19 & \frac19 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-     \frac49 & \frac19 & \frac19 & \frac19 & \frac19 & 0 & 0 & 0 & 0 & 0 & 0\\
-     \frac59 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & 0 & 0 & 0 & 0 & 0\\
-     \frac23 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & 0 & 0 & 0 & 0\\
-     \frac79 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & 0 & 0 & 0\\
-     \frac89 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & 0 & 0\\
-     1       & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & \frac19 & 0\\
-     \hline
-     2 & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10}\\
-     1 & \frac{11}{100} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{9}{100}\\
-   \end{array}
-
-.. figure:: /figs/arkode/ARKODE_SSP_ERK_10_1_2_stab_region.png
-   :width: 50 %
-   :align: center
-
-   Linear stability region for the SSP-ERK-10-1-2 method. The method's
    region is outlined in red; the embedding's region is in blue dashed.
 
 
@@ -753,44 +683,6 @@ Both the method and its embedding have SSP coefficient equal to 2.
    :align: center
 
    Linear stability region for the SSP-ERK-4-2-3 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed.
-
-
-.. c:enumerator:: ARKODE_SSP_ERK_9_2_3
-
-Accessible via the constant ``ARKODE_SSP_ERK_9_2_3`` to
-:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
-:c:func:`ARKodeButcherTable_LoadERK`.
-Accessible via the string ``"ARKODE_SSP_ERK_9_2_3"`` to
-:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName`, or
-:c:func:`ARKodeButcherTable_LoadERKByName`.
-This is the "SSPERK(9,3)" method from :cite:p:`FCS:22`.
-The method has SSP coefficient equal to 6, and the embedding has
-SSP coefficient equal to 1.14.
-
-.. math::
-
-   \renewcommand{\arraystretch}{1.5}
-   \begin{array}{r|ccccccccc}
-           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac16 & \frac16 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac13 & \frac16 & \frac16      & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac12 & \frac16 & \frac16      & \frac16      & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac23 & \frac16 & \frac16      & \frac16      & \frac16      & 0 & 0 & 0 & 0 & 0 \\
-     \frac56 & \frac16 & \frac16      & \frac16      & \frac16      & \frac16      & 0 & 0 & 0 & 0 \\
-     \frac12 & \frac16 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & 0 & 0 & 0 \\
-     \frac23 & \frac16 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16 & 0 & 0 \\
-     \frac56 & \frac16 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16 & \frac16 & 0 \\
-     \hline
-           3 & \frac16 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16 & \frac16 & \frac16\\
-           2 & \frac19 & \frac19      & \frac19      & \frac19      & \frac19      & \frac19      & \frac19 & \frac19 & \frac19
-   \end{array}
-
-.. figure:: /figs/arkode/ARKODE_SSP_ERK_9_2_3_stab_region.png
-   :width: 50 %
-   :align: center
-
-   Linear stability region for the SSP-ERK-9-2-3 method.  The method's
    region is outlined in red; the embedding's region is in blue dashed.
 
 
@@ -1730,39 +1622,6 @@ Both the method and embedding are A- and B-stable.
    region is outlined in blue; the embedding's region is in red.
 
 
-.. c:enumerator:: ARKODE_SSP_SDIRK_2_1_2
-
-Accessible via the constant ``ARKODE_SSP_SDIRK_2_1_2`` to
-:c:func:`ARKStepSetTableNum`, or
-:c:func:`ARKodeButcherTable_LoadDIRK`.
-Accessible via the string ``"ARKODE_SSP_SDIRK_2_1_2"`` to
-:c:func:`ARKStepSetTableName`, or
-:c:func:`ARKodeButcherTable_LoadDIRKByName`.
-This method was invented specifically for ARKODE.  The method and embedding are
-both A- and B-stable.  The method has SSP coefficient 2.41 and the embedding has
-SSP coefficient 3.34.
-
-.. math::
-
-   \renewcommand{\arraystretch}{1.5}
-   \begin{array}{r|cc}
-     \gamma   & \gamma & 0 \\
-     1-\gamma & 1-2\gamma & \gamma \\
-     \hline
-     2 & \frac12 & \frac12 \\
-     1 & \frac{5}{12} & \frac{7}{12} \\
-   \end{array}
-
-where :math:`\gamma = 1 - \frac{1}{\sqrt{2}}`.
-
-.. figure:: /figs/arkode/ARKODE_SSP_SDIRK_2_1_2_stab_region.png
-   :width: 50 %
-   :align: center
-
-   Linear stability region for the SSP-SDIRK-2-1-2 method. The method's
-   region is outlined in red; the embedding's region is in blue dashed.
-
-
 .. c:enumerator:: ARKODE_ASCHER_SDIRK_3_1_2
 
 Accessible via the constant ``ARKODE_ASCHER_SDIRK_3_1_2`` to
@@ -2039,44 +1898,6 @@ where :math:`\gamma =  0.435866521508459`, :math:`\alpha = 0.1677218170940733`,
    :align: center
 
    Linear stability region for the SSP-ESDIRK-4-2-3 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed.
-
-
-.. c:enumerator:: ARKODE_SSP_ESDIRK_9_2_3
-
-Accessible via the constant ``ARKODE_SSP_ESDIRK_9_2_3`` to
-:c:func:`ARKStepSetTableNum` or :c:func:`ARKodeButcherTable_LoadDIRK`.
-Accessible via the string ``"ARKODE_SSP_ESDIRK_9_2_3"`` to
-:c:func:`ARKStepSetTableName` or
-:c:func:`ARKodeButcherTable_LoadDIRKByName`.
-This method was invented specifically for ARKODE as an implicit method to
-pair with ``ARKODE_SSP_ERK_9_2_3`` for an embedded additive
-Runge--Kutta method.  The method and embedding are both A/L-stable.
-Neither the ESDIRK method or its embedding are SSP.
-
-.. math::
-
-   \renewcommand{\arraystretch}{1.5}
-   \begin{array}{r|ccccccccc}
-           0 &  0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac16 & -\frac{2}{15} & \frac{3}{10} & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac13 & -\frac16 & \frac12      & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac12 &  0       & \frac12      & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-     \frac23 & -\frac{2}{15} & \frac12 & 0 & 0 & \frac{3}{10} & 0 & 0 & 0 & 0 \\
-     \frac56 & \frac{10750067225}{15104505504} & \frac12 & 0 & 0 & -\frac{5715232057}{15104505504} & 0 & 0 & 0 & 0 \\
-     \frac12 & \frac{211}{2178} & \frac{17}{5445} & 0 & 0 & \frac{1}{10} & 0 & \frac{3}{10} & 0 & 0 \\
-     \frac23 & \frac{16853104507}{56641895640} & \frac{17}{5445} & 0 & 0 & \frac{1}{10} & 0 & \frac{2767149}{10402552} & 0 & 0 \\
-     \frac56 & \frac{1860170351}{11328379128} & \frac{17}{5445} & 0 & 0 & \frac{1}{10} & 0 & \frac{2767149}{10402552} & 0 & \frac{3}{10} \\
-     \hline
-           3 & \frac{3130013}{1058750} & -\frac{46374583}{9528750} & 0 & 0 & \frac{3281263}{1361250} & 0 & \frac{6789401}{3176250} & 0 & -\frac{2600638}{1588125}\\
-           2 & \frac{2941}{30250} & \frac{7251}{30250} & 0 & 0 & \frac{933}{1210} & 0 & -\frac{27}{250} & 0 & 0
-   \end{array}
-
-.. figure:: /figs/arkode/ARKODE_SSP_ESDIRK_9_2_3_stab_region.png
-   :width: 50 %
-   :align: center
-
-   Linear stability region for the SSP-ESDIRK-9-2-3 method.  The method's
    region is outlined in red; the embedding's region is in blue dashed.
 
 
@@ -2725,8 +2546,6 @@ are as follows.
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`      | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`     | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_SSP_ERK_2_1_2`         | :c:enumerator:`ARKODE_SSP_SDIRK_2_1_2`        | 2      | 1              | 2     |
-   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`         | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`         | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2`   | :c:enumerator:`ARKODE_SSP_LSPUM_SDIRK_3_1_2`  | 3      | 1              | 2     |
@@ -2734,8 +2553,6 @@ are as follows.
    | :c:enumerator:`ARKODE_ARK324L2SA_ERK_4_2_3`  | :c:enumerator:`ARKODE_ARK324L2SA_DIRK_4_2_3`  | 4      | 2              | 3*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_4_2_3`         | :c:enumerator:`ARKODE_SSP_ESDIRK_4_2_3`       | 4      | 2              | 3     |
-   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_SSP_ERK_9_2_3`         | :c:enumerator:`ARKODE_SSP_ESDIRK_9_2_3`       | 9      | 2              | 3     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK437L2SA_ERK_7_3_4`  | :c:enumerator:`ARKODE_ARK437L2SA_DIRK_7_3_4`  | 7      | 3              | 4*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
@@ -2785,26 +2602,6 @@ ARKODE_ASCHER_ARK_3_1_2
    ``ARKODE_ASCHER_ARK_3_1_2`` method.
    All joint stability regions coincide, so only the :math:`80^o` boundary
    is visible.
-
-
-.. _Butcher.ARKODE_SSP_ARK_2_1_2:
-
-ARKODE_SSP_ARK_2_1_2
-^^^^^^^^^^^^^^^^^^^^
-
-.. index:: ARKODE_SSP_ARK_2_1_2 ARK method
-
-2nd-order method that combines :c:enumerator:`ARKODE_SSP_ERK_2_1_2` with
-:c:enumerator:`ARKODE_SSP_SDIRK_2_1_2`.
-
-.. figure:: /figs/arkode/ARKODE_SSP_ARK_2_1_2_joint_stab_region.png
-   :width: 50 %
-   :align: center
-
-   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
-   ``ARKODE_SSP_ARK_2_1_2`` method.  All
-   joint stability regions coincide, so only the :math:`80^o` boundary is
-   visible.
 
 
 .. _Butcher.ARKODE_SSP_ARK_3_1_2:
@@ -2890,26 +2687,6 @@ ARKODE_SSP_ARK_4_2_3
    ``ARKODE_SSP_ARK_4_2_3`` method.  Note that when the implicit partition
    is nonstiff, the joint stability region more closely aligns with the
    ``ARKODE_SSP_ERK_4_2_3`` stability region.
-
-
-.. _Butcher.ARKODE_SSP_ARK_9_2_3:
-
-ARKODE_SSP_ARK_9_2_3
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. index:: ARKODE_SSP_ARK_9_2_3 ARK method
-
-3rd-order method that combines :c:enumerator:`ARKODE_SSP_ERK_9_2_3` with
-:c:enumerator:`ARKODE_SSP_ESDIRK_9_2_3`.
-
-.. figure:: /figs/arkode/ARKODE_SSP_ARK_9_2_3_joint_stab_region_rho1.png
-   :width: 50 %
-   :align: center
-
-   Joint linear stability regions :math:`\mathcal{J}_{\theta,1}` for the
-   ``ARKODE_SSP_ARK_9_2_3`` method.
-   All joint stability regions coincide, so only the :math:`80^o` boundary is visible.
-   The joint stability region is empty for the stiff implicit :math:`\rho=10^8`.
 
 
 .. _Butcher.ARKODE_ARK436L2SA_ARK_6_3_4:

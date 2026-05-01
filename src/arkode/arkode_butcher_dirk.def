@@ -41,7 +41,6 @@
      ARKODE_IMPLICIT_MIDPOINT_1_2      SDIRK     Y         N       Y
      ARKODE_IMPLICIT_TRAPEZOIDAL_2_2  ESDIRK     Y         N       Y
      ARKODE_SDIRK_2_1_2                SDIRK     Y         N       Y
-     ARKODE_SSP_SDIRK_2_1_2*           SDIRK     Y         N       Y
      ARKODE_ARK2_DIRK_3_1_2*          ESDIRK     Y         Y       Y
      ARKODE_ASCHER_SDIRK_3_1_2*        SDIRK     Y         Y       Y
      ARKODE_SSP_DIRK_3_1_2*             DIRK     Y         N       Y
@@ -160,30 +159,6 @@ ARK_BUTCHER_TABLE(ARKODE_ASCHER_SDIRK_3_1_2, { /* https://doi.org/10.1016/S0168-
 
     B->c[1] = gamma;
     B->c[2] = SUN_RCONST(1.0);
-    return B;
-  })
-
-ARK_BUTCHER_TABLE(ARKODE_SSP_SDIRK_2_1_2, { /* https://doi.org/10.1007/BF02728986 (custom embedding) */
-    ARKodeButcherTable B = ARKodeButcherTable_Alloc(2, SUNTRUE);
-
-    /* 1 - 1 / sqrt(2) */
-    const sunrealtype gamma = SUN_RCONST(1.0) - SUN_RCONST(1.0) / SUNRsqrt(SUN_RCONST(2.0));
-
-    B->q = 2;
-    B->p = 1;
-
-    B->A[0][0] = gamma;
-    B->A[1][0] = SUN_RCONST(1.0) - SUN_RCONST(2.0)*gamma;
-    B->A[1][1] = gamma;
-
-    B->b[0] = SUN_RCONST(0.5);
-    B->b[1] = SUN_RCONST(0.5);
-
-    B->d[0] = SUN_RCONST(5.0)/SUN_RCONST(12.0);
-    B->d[1] = SUN_RCONST(7.0)/SUN_RCONST(12.0);
-
-    B->c[0] = gamma;
-    B->c[1] = SUN_RCONST(1.0) - gamma;
     return B;
   })
 
@@ -348,59 +323,6 @@ ARK_BUTCHER_TABLE(ARKODE_SSP_ESDIRK_4_2_3, { /* custom */
     B->c[1] = SUN_RCONST(0.5);
     B->c[2] = SUN_RCONST(1.0);
     B->c[3] = SUN_RCONST(0.5);
-    return B;
-  })
-
-ARK_BUTCHER_TABLE(ARKODE_SSP_ESDIRK_9_2_3, {
-    ARKodeButcherTable B = ARKodeButcherTable_Alloc(9, SUNTRUE);
-
-    B->q = 3;
-    B->p = 2;
-
-    B->A[1][0] = -SUN_RCONST(2.0)/SUN_RCONST(15.0);
-    B->A[1][1] = SUN_RCONST(3.0)/SUN_RCONST(10.0);
-    B->A[2][0] = -SUN_RCONST(1.0)/SUN_RCONST(6.0);
-    B->A[2][1] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
-    B->A[3][1] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
-    B->A[4][0] = -SUN_RCONST(2.0)/SUN_RCONST(15.0);
-    B->A[4][1] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
-    B->A[4][4] = SUN_RCONST(3.0)/SUN_RCONST(10.0);
-    B->A[5][0] = SUN_RCONST(10750067225.0)/SUN_RCONST(15104505504.0);
-    B->A[5][1] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
-    B->A[5][4] = -SUN_RCONST(5715232057.0)/SUN_RCONST(15104505504.0);
-    B->A[6][0] = SUN_RCONST(211.0)/SUN_RCONST(2178.0);
-    B->A[6][1] = SUN_RCONST(17.0)/SUN_RCONST(5445.0);
-    B->A[6][4] = SUN_RCONST(1.0)/SUN_RCONST(10.0);
-    B->A[6][6] = SUN_RCONST(3.0)/SUN_RCONST(10.0);
-    B->A[7][0] = SUN_RCONST(16853104507.0)/SUN_RCONST(56641895640.0);
-    B->A[7][1] = SUN_RCONST(17.0)/SUN_RCONST(5445.0);
-    B->A[7][4] = SUN_RCONST(1.0)/SUN_RCONST(10.0);
-    B->A[7][6] = SUN_RCONST(2767149.0)/SUN_RCONST(10402552.0);
-    B->A[8][0] = SUN_RCONST(1860170351.0)/SUN_RCONST(11328379128.0);
-    B->A[8][1] = SUN_RCONST(17.0)/SUN_RCONST(5445.0);
-    B->A[8][4] = SUN_RCONST(1.0)/SUN_RCONST(10.0);
-    B->A[8][6] = SUN_RCONST(2767149.0)/SUN_RCONST(10402552.0);
-    B->A[8][8] = SUN_RCONST(3.0)/SUN_RCONST(10.0);
-
-    B->b[0] = SUN_RCONST(3130013.0)/SUN_RCONST(1058750.0);
-    B->b[1] = -SUN_RCONST(46374583.0)/SUN_RCONST(9528750.0);
-    B->b[4] = SUN_RCONST(3281263.0)/SUN_RCONST(1361250.0);
-    B->b[6] = SUN_RCONST(6789401.0)/SUN_RCONST(3176250.0);
-    B->b[8] = -SUN_RCONST(2600638.0)/SUN_RCONST(1588125.0);
-
-    B->d[0] = SUN_RCONST(2941.0)/SUN_RCONST(30250.0);
-    B->d[1] = SUN_RCONST(7251.0)/SUN_RCONST(30250.0);
-    B->d[4] = SUN_RCONST(933.0)/SUN_RCONST(1210.0);
-    B->d[6] = -SUN_RCONST(27.0)/SUN_RCONST(250.0);
-
-    B->c[1] = SUN_RCONST(1.0)/SUN_RCONST(6.0);
-    B->c[2] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
-    B->c[3] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
-    B->c[4] = SUN_RCONST(2.0)/SUN_RCONST(3.0);
-    B->c[5] = SUN_RCONST(5.0)/SUN_RCONST(6.0);
-    B->c[6] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
-    B->c[7] = SUN_RCONST(2.0)/SUN_RCONST(3.0);
-    B->c[8] = SUN_RCONST(5.0)/SUN_RCONST(6.0);
     return B;
   })
 
