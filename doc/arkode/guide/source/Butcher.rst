@@ -1679,7 +1679,7 @@ embedding have SSP coefficient equal to 2.4.
      1       & \frac13 & \frac13 & \frac13 \\
      \hline
      2 & \frac13 & \frac13 & \frac13 \\
-     1 & \frac13-\frac{1}{10} & \frac13 & \frac13+\frac{1}{10} \\
+     1 & \frac{7}{30} & \frac13 & \frac{13}{30} \\
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_DIRK_3_1_2_stab_region.png
@@ -2522,9 +2522,9 @@ where the sector :math:`S(\theta,\rho)` is defined as
    S(\theta,\rho) = \left\{ \eta^I = -a+i b \; :\; a>0,\; b\ge 0,\; |\eta^I|\le \rho,\; \operatorname{atan}\left(\frac{b}{a}\right) \le \theta \right\}.
 
 For each ARK method, we overlay plots of the border of :math:`\mathcal{J}_{\theta,\rho}`
-for values :math:`\theta \in \left\{0^o, 20^0, 40^0, 60^0, 80^0\right\}` and
+for values :math:`\theta \in \left\{0^{\circ}, 20^{\circ}, 40^{\circ}, 60^{\circ}, 80^{\circ}\right\}` and
 :math:`\rho=10^8`; roughly corresponding with the shape of the explicit stability region
-under the assumption that the implicit method is :math:`A-\theta` stable; typically
+under the assumption that the implicit method is :math:`A-\theta` stable;
 the joint stability region decreases in area as :math:`\theta` and :math:`\rho` increase.
 
 As with traditional Runge--Kutta methods, the value :math:`\eta^E_0 =
