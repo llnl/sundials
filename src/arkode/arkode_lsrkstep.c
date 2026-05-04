@@ -595,12 +595,12 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     if (retval != ARK_SUCCESS) { return retval; }
   }
 
-  /* Compute the number of stages based on the current step size and dominant  
-     eigenvalue using Eq. 2.7 in Verwer et al. (2004) 
-     https://doi.org/10.1016/j.jcp.2004.05.002  
-      
-     Note beta(s) in Eq. 2.7 is positive (i.e., beta = -zR = h * lambdaR assuming  
-     that h * lambdaR < 0) and we have incorporated the minus sign on zR below. We  
+  /* Compute the number of stages based on the current step size and dominant
+     eigenvalue using Eq. 2.7 in Verwer et al. (2004)
+     https://doi.org/10.1016/j.jcp.2004.05.002
+
+     Note beta(s) in Eq. 2.7 is positive (i.e., beta = -zR = h * lambdaR assuming
+     that h * lambdaR < 0) and we have incorporated the minus sign on zR below. We
      use the minimum number of stages (ss = 2) when zR > 0. */
   sunrealtype zR = ark_mem->h * step_mem->lambdaR;
   sunrealtype zI = ark_mem->h * step_mem->lambdaI;
@@ -644,11 +644,11 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   if (zR < ZERO)
   {
-    /* We first check whether the combination of ss, step size, and dominant 
-      eigenvalue, is stable.  If not, we then check whether it would be stable 
-      when using ss = stage_max_limit -- if so, we increase ss until stability is 
-      obtained. Otherwise, we reject the step, resulting either in method failure 
-      when using fixed step sizes, or time step reduction when using adaptive 
+    /* We first check whether the combination of ss, step size, and dominant
+      eigenvalue, is stable.  If not, we then check whether it would be stable
+      when using ss = stage_max_limit -- if so, we increase ss until stability is
+      obtained. Otherwise, we reject the step, resulting either in method failure
+      when using fixed step sizes, or time step reduction when using adaptive
       steps. */
     retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
                                              &stability_norm);
@@ -1035,10 +1035,10 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Compute the number of stages based on the current step size and dominant
      eigenvalue using Eq. 19 in Meyer et al. (2014)
      https://doi.org/10.1016/j.jcp.2013.08.021
-      
+
      Using delta t_expl = 2 / lambda_max, note tau_max * lambda_max in Eq. 19 is
      positive (i.e., tau_max * lambda_max = -zR = h * lambdaR assuming that
-     h * lambdaR < 0) and we have incorporated the minus sign on zR below. We 
+     h * lambdaR < 0) and we have incorporated the minus sign on zR below. We
      use the minimum number of stages (ss = 2) for zR > 0. */
   sunrealtype zR    = ark_mem->h * step_mem->lambdaR;
   sunrealtype zI    = ark_mem->h * step_mem->lambdaI;
@@ -2988,9 +2988,9 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
 /*---------------------------------------------------------------
   lsrkStep_RKC_CheckStabilityNorm:
 
-  This routine computes the stability norm for RKC methods. 
-  If use_ellipse is SUNTRUE, we use a heuristic that approximates the stability region by an ellipse. 
-  If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
+  This routine computes the stability norm for RKC methods.
+  If use_ellipse is SUNTRUE, we use a heuristic that approximates the stability region by an ellipse.
+  If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using
   the Chebyshev polynomial.
   ---------------------------------------------------------------*/
 int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
@@ -3056,9 +3056,9 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
 /*---------------------------------------------------------------
   lsrkStep_RKL_CheckStabilityNorm:
 
-  This routine computes the stability norm for RKL methods. 
-  If use_ellipse is SUNTRUE, we use a heuristic that approximates the stability region by an ellipse. 
-  If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using 
+  This routine computes the stability norm for RKL methods.
+  If use_ellipse is SUNTRUE, we use a heuristic that approximates the stability region by an ellipse.
+  If use_ellipse is SUNFALSE, we compute the stability norm directly from the stability function using
   the Chebyshev polynomial.
   ---------------------------------------------------------------*/
 int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
