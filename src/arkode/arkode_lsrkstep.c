@@ -1469,7 +1469,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* The method is not FSAL. Therefore, fn ​is computed at the beginning
+  /* The method is not FSAL. Therefore, fn is computed at the beginning
      of the step unless the previous step failed or ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
@@ -1713,7 +1713,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* The method is not FSAL. Therefore, fn ​is computed at the beginning
+  /* The method is not FSAL. Therefore, fn is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
@@ -2093,7 +2093,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* The method is not FSAL. Therefore, fn ​is computed at the beginning
+  /* The method is not FSAL. Therefore, fn is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
@@ -2378,7 +2378,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* The method is not FSAL. Therefore, fn ​is computed at the beginning
+  /* The method is not FSAL. Therefore, fn is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
