@@ -5926,7 +5926,7 @@ static int IDAStep(IDAMem IDA_mem)
   {
     SUNLogInfo(IDA_LOGGER, "begin-step-attempt",
                "step = %li, tn = " SUN_FORMAT_G ", h = " SUN_FORMAT_G
-               ", kk = %d",
+               ", q = %d",
                IDA_mem->ida_nst + 1, IDA_mem->ida_tn, IDA_mem->ida_hh,
                IDA_mem->ida_kk);
 
