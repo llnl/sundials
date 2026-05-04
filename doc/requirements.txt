@@ -2,9 +2,9 @@ numpydoc
 sphinx >=6.0.0
 sphinx_rtd_theme
 sphinx-copybutton
+sphinx-design
 sphinx-fortran
 sphinx-multitoc-numbering
-sphinx-design
 sphinxcontrib-googleanalytics
 sphinxcontrib.bibtex
 sphinxcontrib-moderncmakedomain
