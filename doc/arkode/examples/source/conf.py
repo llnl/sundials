@@ -39,7 +39,6 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
-    "sphinxfortran.fortran_domain",
     "sphinxcontrib.bibtex",
     "sphinx_copybutton",
     "sphinx_sundials",
