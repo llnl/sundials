@@ -133,30 +133,30 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes         = NULL;
-  content->ATdata         = NULL;
-  content->V              = NULL;
-  content->q              = NULL;
-  content->rhs_linY       = NULL;
-  content->rhs_linT       = ZERO;
-  content->Fy             = NULL;
-  content->work           = NULL;
-  content->kry_dim        = kry_dim;
-  content->num_warmups    = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->num_iters      = 0;
-  content->num_ATimes     = 0;
-  content->warmup_to_tol  = SUNFALSE;
-  content->tol_warmup     = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->rhsfn          = NULL;
-  content->rhs_data       = NULL;
-  content->nfevals        = 0;
-  content->LAPACK_A       = NULL;
-  content->LAPACK_wr      = NULL;
-  content->LAPACK_wi      = NULL;
-  content->LAPACK_work    = NULL;
-  content->LAPACK_lwork   = 0;
-  content->LAPACK_arr     = NULL;
-  content->Hes            = NULL;
+  content->ATimes        = NULL;
+  content->ATdata        = NULL;
+  content->V             = NULL;
+  content->q             = NULL;
+  content->rhs_linY      = NULL;
+  content->rhs_linT      = ZERO;
+  content->Fy            = NULL;
+  content->work          = NULL;
+  content->kry_dim       = kry_dim;
+  content->num_warmups   = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->num_iters     = 0;
+  content->num_ATimes    = 0;
+  content->warmup_to_tol = SUNFALSE;
+  content->tol_warmup    = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->rhsfn         = NULL;
+  content->rhs_data      = NULL;
+  content->nfevals       = 0;
+  content->LAPACK_A      = NULL;
+  content->LAPACK_wr     = NULL;
+  content->LAPACK_wi     = NULL;
+  content->LAPACK_work   = NULL;
+  content->LAPACK_lwork  = 0;
+  content->LAPACK_arr    = NULL;
+  content->Hes           = NULL;
 
   /* Allocate content */
   content->q = N_VClone(q);

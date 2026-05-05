@@ -141,7 +141,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   content->rhs_linT    = ZERO;
   content->Fy          = NULL;
   content->work        = NULL;
-  content->complex     = SUNTRUE;
+  content->is_complex  = SUNTRUE;
   content->max_iters   = max_iters;
   content->num_warmups = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
   content->rel_tol     = rel_tol;
@@ -239,12 +239,12 @@ SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
   /* set the complex flag to the opposite of the real flag */
-  PI_CONTENT(DEE)->complex = !real;
+  PI_CONTENT(DEE)->is_complex = !real;
 
   /* q_prev is allocated in SUNDomEigEstimator_Initialize_Power, which is expected to be 
   called after this routine. If the user calls this routine after initialization, we need 
   to free q_prev here. */
-  if (!(PI_CONTENT(DEE)->complex) && PI_CONTENT(DEE)->q_prev)
+  if (!(PI_CONTENT(DEE)->is_complex) && PI_CONTENT(DEE)->q_prev)
   {
     N_VDestroy(PI_CONTENT(DEE)->q_prev);
     PI_CONTENT(DEE)->q_prev = NULL;
@@ -278,7 +278,7 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
 
-  if (PI_CONTENT(DEE)->complex)
+  if (PI_CONTENT(DEE)->is_complex)
   {
     SUNAssert(PI_CONTENT(DEE)->q_prev == NULL, SUN_ERR_ARG_CORRUPT);
   }
@@ -381,7 +381,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
   SUNAssert((PI_CONTENT(DEE)->max_iters >= 0), SUN_ERR_ARG_CORRUPT);
-  if (PI_CONTENT(DEE)->complex && (PI_CONTENT(DEE)->q_prev == NULL))
+  if (PI_CONTENT(DEE)->is_complex && (PI_CONTENT(DEE)->q_prev == NULL))
   {
     /* allocate q_prev vector */
     PI_CONTENT(DEE)->q_prev = N_VClone(PI_CONTENT(DEE)->q);
@@ -415,7 +415,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
 
   for (int k = 0; k < PI_CONTENT(DEE)->max_iters; k++)
   {
-    if (PI_CONTENT(DEE)->complex)
+    if (PI_CONTENT(DEE)->is_complex)
     {
       N_VScale(ONE, PI_CONTENT(DEE)->V, PI_CONTENT(DEE)->q_prev);
       SUNCheckLastErr();
@@ -447,7 +447,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     oldlambdaR = newlambdaR;
   }
 
-  if (PI_CONTENT(DEE)->complex)
+  if (PI_CONTENT(DEE)->is_complex)
   {
     retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR,
                                                          PI_CONTENT(DEE)->q_prev,

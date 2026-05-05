@@ -57,7 +57,7 @@ struct SUNDomEigEstimatorContent_Power_
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */
 
-  sunbooleantype complex; /* Flag for complex eigenvalue request */
+  sunbooleantype is_complex; /* Flag for complex eigenvalue request */
 };
 
 typedef struct SUNDomEigEstimatorContent_Power_* SUNDomEigEstimatorContent_Power;

@@ -321,7 +321,7 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
   stability region for stability checks.
   ---------------------------------------------------------------*/
 int LSRKStepSetUseAnalyticStabilityRegion(void* arkode_mem,
-                                     sunbooleantype use_analytic_stab_region)
+                                          sunbooleantype use_analytic_stab_region)
 {
   ARKodeMem ark_mem;
   ARKodeLSRKStepMem step_mem;

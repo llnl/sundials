@@ -42,8 +42,9 @@ m.def("LSRKStepSetMaxNumStages", LSRKStepSetMaxNumStages, nb::arg("arkode_mem"),
 m.def("LSRKStepSetDomEigSafetyFactor", LSRKStepSetDomEigSafetyFactor,
       nb::arg("arkode_mem"), nb::arg("dom_eig_safety"));
 
-m.def("LSRKStepSetUseAnalyticStabilityRegion", LSRKStepSetUseAnalyticStabilityRegion,
-      nb::arg("arkode_mem"), nb::arg("analytic_stab_region"));
+m.def("LSRKStepSetUseAnalyticStabilityRegion",
+      LSRKStepSetUseAnalyticStabilityRegion, nb::arg("arkode_mem"),
+      nb::arg("analytic_stab_region"));
 
 m.def("LSRKStepSetNumDomEigEstInitPreprocessIters",
       LSRKStepSetNumDomEigEstInitPreprocessIters, nb::arg("arkode_mem"),

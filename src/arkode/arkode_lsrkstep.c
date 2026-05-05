@@ -624,7 +624,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       hmax = ark_mem->hadapt_mem->safety *
              (ONE - SUNSQR(step_mem->stage_max_limit)) /
-             (coefz * step_mem->lambdaR);
+             (-coefz * SUNRabs(step_mem->lambdaR));
       ark_mem->eta = hmax / SUNRabs(ark_mem->h);
       *nflagPtr    = ARK_RETRY_STEP;
       ark_mem->hadapt_mem->nst_exp++;

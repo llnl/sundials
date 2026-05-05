@@ -161,7 +161,7 @@ The SUNDomEigEstimator_Power module defines the *content* field of a
      SUNRhsFn rhsfn;
      void* rhs_data;
      long int nfevals;
-     sunbooleantype complex;
+     sunbooleantype is_complex;
    };
 
 
@@ -198,7 +198,7 @@ information:
 
 * ``nfevals`` - number of RHS evaluations,
 
-* ``complex`` - flag indicating whether the dominant eigenvalue is 
+* ``is_complex`` - flag indicating whether the dominant eigenvalue is 
   complex-valued (default is ``SUNTRUE``).
 
 This estimator is constructed to perform the following operations:
