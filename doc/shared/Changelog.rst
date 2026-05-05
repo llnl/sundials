@@ -29,16 +29,6 @@ Changelog
 Changes to SUNDIALS in release X.Y.Z
 ====================================
 
-**Bug Fixes**
-
-Fixed a minor bug where the number of required stages for STS methods 
-in the LSRKStep module was incorrectly computed using the spectral 
-radius instead of the real part of the Jacobian eigenvalues.
-
-Fixed a minor bug where negative real extend of the stability region 
-for the RKC method was not being properly computed, which could result 
-in an underestimation of the number of stages required for stability.
-
 .. include:: RecentChanges_link.rst
 
 .. _Changelog.7.7.0:
