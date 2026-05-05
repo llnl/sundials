@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
   {
     cout << "Using SSP(9,3) method" << endl;
     flag = LSRKStepSetSSPMethodByName(arkode_mem, "ARKODE_LSRK_SSP_S_3");
-    if (flag == 0) { flag = LSRKStepSetNumSSPStages(arkode_mem, 4); }
+    if (flag == 0) { flag = LSRKStepSetNumSSPStages(arkode_mem, 9); }
   }
   else if (method == 4)
   {
