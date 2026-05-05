@@ -16,6 +16,12 @@ Updated `examples/cvode/petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 `malloc`.
 
+Fixed minor bug in reporting the maximum number of stages in `ARKodeGetStageIndex`
+when running SSP methods in LSRKStep.
+
+Removed duplicate logging output that would cause the Python logging tools to fail
+with a repeated key error.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.7.0

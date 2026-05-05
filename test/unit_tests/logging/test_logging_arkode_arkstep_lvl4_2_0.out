@@ -63,7 +63,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.038771328024463
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.038771328024463
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0348941952220167
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 338.824563968755
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 4.97817873492126e-11
@@ -233,7 +233,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0387902265102253
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0387902265102253
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00872354880550418
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 1
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.00255789974230297
@@ -327,7 +327,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0386500490885101
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0386500490885101
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0347850441796591
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 3.98748777076953
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.00259521044973254
