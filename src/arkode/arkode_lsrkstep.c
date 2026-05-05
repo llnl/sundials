@@ -623,8 +623,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     if (!ark_mem->fixedstep)
     {
       hmax = ark_mem->hadapt_mem->safety *
-             (ONE - SUNSQR(step_mem->stage_max_limit)) /
-             (-coefz * SUNRabs(step_mem->lambdaR));
+             (SUNSQR(step_mem->stage_max_limit) - ONE) /
+             (coefz * SUNRabs(step_mem->lambdaR));
       ark_mem->eta = hmax / SUNRabs(ark_mem->h);
       *nflagPtr    = ARK_RETRY_STEP;
       ark_mem->hadapt_mem->nst_exp++;
@@ -1055,7 +1055,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      If so, and if adaptive stepping is enabled, reduce step size
      and return ARK_RETRY_STEP. If fixed step size, return
      ARK_MAX_STAGE_LIMIT_FAIL error. */
-  if (ss >= step_mem->stage_max_limit)
+  if (ss > step_mem->stage_max_limit)
   {
     SUNLogInfo(ARK_LOGGER, "compute-num-stages",
                "spectral radius = " SUN_FORMAT_G ", num stages = " SUN_FORMAT_G
