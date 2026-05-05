@@ -164,11 +164,9 @@ def main():
     elif args.val == "dsm":
         ax.set_ylabel("LTE estimate")
 
-    # ax.legend(loc="best")
+    ax.legend(loc="best")
 
     ax.grid(alpha=0.3, linestyle="--")
-
-    ax.legend(loc="best")
 
     if args.save:
         plt.savefig(args.save, bbox_inches="tight")
