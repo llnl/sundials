@@ -32,10 +32,6 @@
 extern "C" {
 #endif
 
-#ifndef MAX_DQITERS
-#define MAX_DQITERS 3
-#endif
-
 /* -----------------------------------------------------
  * Arnoldi Iteration Implementation of SUNDomEigEstimator
  * ----------------------------------------------------- */
@@ -53,7 +49,7 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   int num_warmups;              /* Number of preprocessing iterations */
   long int num_iters;           /* Number of iterations in last Estimate call */
   sunbooleantype warmup_to_tol; /* Whether to use warmup iterations */
-  sunrealtype tol_preprocess;   /* Tolerance for preprocessing iterations */
+  sunrealtype tol_warmup;       /* Tolerance for warmup iterations */
   sunrealtype rhs_linT;         /* Time value for linearization point */
 
   long int num_ATimes; /* Number of ATimes calls */

@@ -56,7 +56,7 @@ module farkode_lsrkstep_mod
  public :: FLSRKStepSetDomEigFrequency
  public :: FLSRKStepSetMaxNumStages
  public :: FLSRKStepSetDomEigSafetyFactor
- public :: FLSRKStepSetUseAnalyticStabRegion
+ public :: FLSRKStepSetUseAnalyticStabilityRegion
  public :: FLSRKStepSetNumDomEigEstInitPreprocessIters
  public :: FLSRKStepSetNumDomEigEstPreprocessIters
  public :: FLSRKStepSetNumSSPStages
@@ -194,8 +194,8 @@ real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FLSRKStepSetUseAnalyticStabRegion(farg1, farg2) &
-bind(C, name="_wrap_FLSRKStepSetUseAnalyticStabRegion") &
+function swigc_FLSRKStepSetUseAnalyticStabilityRegion(farg1, farg2) &
+bind(C, name="_wrap_FLSRKStepSetUseAnalyticStabilityRegion") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -523,7 +523,7 @@ fresult = swigc_FLSRKStepSetDomEigSafetyFactor(farg1, farg2)
 swig_result = fresult
 end function
 
-function FLSRKStepSetUseAnalyticStabRegion(arkode_mem, analytic_stab_region) &
+function FLSRKStepSetUseAnalyticStabilityRegion(arkode_mem, analytic_stab_region) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -535,7 +535,7 @@ integer(C_INT) :: farg2
 
 farg1 = arkode_mem
 farg2 = analytic_stab_region
-fresult = swigc_FLSRKStepSetUseAnalyticStabRegion(farg1, farg2)
+fresult = swigc_FLSRKStepSetUseAnalyticStabilityRegion(farg1, farg2)
 swig_result = fresult
 end function
 

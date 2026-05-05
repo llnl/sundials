@@ -27,6 +27,10 @@
 #include "sundials_logger_impl.h"
 #include "sundials_macros.h"
 
+#ifndef MAX_DQITERS
+#define MAX_DQITERS 3
+#endif
+
 #define ZERO SUN_RCONST(0.0)
 #define ONE  SUN_RCONST(1.0)
 

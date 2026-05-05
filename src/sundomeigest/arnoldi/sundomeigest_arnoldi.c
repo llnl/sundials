@@ -38,6 +38,10 @@
 #error Incompatible sunrealtype for LAPACK; disable LAPACK and rebuild
 #endif
 
+#ifndef MAX_DQITERS
+#define MAX_DQITERS 3
+#endif
+
 #define ZERO SUN_RCONST(0.0)
 #define ONE  SUN_RCONST(1.0)
 
@@ -142,7 +146,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   content->num_iters      = 0;
   content->num_ATimes     = 0;
   content->warmup_to_tol  = SUNFALSE;
-  content->tol_preprocess = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->tol_warmup     = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
   content->rhsfn          = NULL;
   content->rhs_data       = NULL;
   content->nfevals        = 0;
@@ -364,7 +368,7 @@ SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
   {
     tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
   }
-  Arnoldi_CONTENT(DEE)->tol_preprocess = tol;
+  Arnoldi_CONTENT(DEE)->tol_warmup = tol;
 
   /* set the type of warmup iterations */
   Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNTRUE;
@@ -446,7 +450,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     {
       res           = SUNRabs(newnormlambda - oldnormlambda);
       oldnormlambda = newnormlambda;
-      if (res <= Arnoldi_CONTENT(DEE)->tol_preprocess * SUNRabs(newnormlambda))
+      if (res <= Arnoldi_CONTENT(DEE)->tol_warmup * SUNRabs(newnormlambda))
       {
         break;
       }

@@ -315,7 +315,7 @@ Allowable Method Families
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.dom_eig_safety_factor".
 
-.. c:function:: int LSRKStepSetUseAnalyticStabRegion(void* arkode_mem, sunbooleantype analytic_stab_region);
+.. c:function:: int LSRKStepSetUseAnalyticStabilityRegion(void* arkode_mem, sunbooleantype analytic_stab_region);
 
    Specifies whether to use the analytic stability region for determining the number of stages in STS methods.
 
@@ -331,11 +331,11 @@ Allowable Method Families
 
       This input is only used for RKC and RKL methods.
       
-      If :c:func:`LSRKStepSetUseAnalyticStabRegion` is not called, then the default
+      If :c:func:`LSRKStepSetUseAnalyticStabilityRegion` is not called, then the default
       ``analytic_stab_region`` is set to ``SUNFALSE``.  This routine will be called by
       :c:func:`ARKodeSetOptions` when using the key "arkid.use_analytic_stab_region".
 
-      :c:func:`LSRKStepSetUseAnalyticStabRegion` sets whether to use the exact stability region or an 
+      :c:func:`LSRKStepSetUseAnalyticStabilityRegion` sets whether to use the exact stability region or an 
       ellipse that is fully inscribed in the stability region for determining stability in RKC and RKL 
       methods.  Whichever region is selected, LSRKStep will ensure that the complex number 
       :math:`z=h\lambda`, where :math:`h` is the current time step size and :math:`\lambda` is the 
@@ -348,7 +348,7 @@ Allowable Method Families
       this is a concern, we recommend calling :c:func:`LSRKStepSetDomEigSafetyFactor` with a `dom_eig_safety` 
       value significantly larger than 1.
 
-      If :c:func:`LSRKStepSetUseAnalyticStabRegion` is called during integration, the change will take effect 
+      If :c:func:`LSRKStepSetUseAnalyticStabilityRegion` is called during integration, the change will take effect 
       at the next step attempt. Both analytic and ellipse stability regions of RKC and RKL methods with 10 stages
       are shown in the figure below. 
 

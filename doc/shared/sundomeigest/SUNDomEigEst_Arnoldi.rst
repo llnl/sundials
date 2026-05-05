@@ -123,7 +123,7 @@ The SUNDomEigEstimator_Arnoldi module defines the *content* field of a
      int num_warmups;
      long int num_iters;
      sunbooleantype warmup_to_tol;
-     sunrealtype tol_preprocess;
+     sunrealtype tol_warmup;
      sunrealtype rhs_linT;
      long int num_ATimes;
      SUNRhsFn rhsfn;
@@ -157,7 +157,7 @@ information:
 
 * ``warmup_to_tol`` - enable warmup iterations (default is ``SUNFALSE``)
 
-* ``tol_preprocess`` - tolerance for preprocessing iterations (default is 0.005; 
+* ``tol_warmup`` - tolerance for preprocessing iterations (default is 0.005; 
   only used if ``warmup_to_tol`` is ``SUNTRUE``),
 
 * ``rhs_linY`` - state vector for linearization point,

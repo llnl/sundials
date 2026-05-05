@@ -612,7 +612,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      If so, and if adaptive stepping is enabled, reduce step size
      and return ARK_RETRY_STEP. If fixed step size, return
      ARK_MAX_STAGE_LIMIT_FAIL error. */
-  if (ss >= step_mem->stage_max_limit)
+  if (ss > step_mem->stage_max_limit)
   {
     SUNLogInfo(ARK_LOGGER, "compute-num-stages",
                "spectral radius = " SUN_FORMAT_G ", num stages = " SUN_FORMAT_G
@@ -625,7 +625,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       hmax = ark_mem->hadapt_mem->safety *
              (ONE - SUNSQR(step_mem->stage_max_limit)) /
              (coefz * step_mem->lambdaR);
-      ark_mem->eta = hmax / ark_mem->h;
+      ark_mem->eta = hmax / SUNRabs(ark_mem->h);
       *nflagPtr    = ARK_RETRY_STEP;
       ark_mem->hadapt_mem->nst_exp++;
       return ARK_RETRY_STEP;
@@ -1068,8 +1068,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       hmax =
         ark_mem->hadapt_mem->safety *
         (SUNSQR(step_mem->stage_max_limit) + step_mem->stage_max_limit - TWO) /
-        (-TWO * step_mem->lambdaR);
-      ark_mem->eta = hmax / ark_mem->h;
+        (TWO * SUNRabs(step_mem->lambdaR));
+      ark_mem->eta = hmax / SUNRabs(ark_mem->h);
       *nflagPtr    = ARK_RETRY_STEP;
       ark_mem->hadapt_mem->nst_exp++;
       return ARK_RETRY_STEP;
@@ -1143,9 +1143,9 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
             SUN_RCONST(16.0);
           sunrealtype b;
 
-          if (ss < 7) { b = a / aspect_ratio[(int)ss - 2]; }
+          if (ss < 7) { b = a / aspect_ratio[req_stages - 2]; }
           else if (ss <= 20) { b = a / aspect_ratio[4]; }
-          else { b = a / aspect_ratio[6 - (int)ss % 2]; }
+          else { b = a / aspect_ratio[6 - req_stages % 2]; }
 
           ark_mem->eta = ark_mem->hadapt_mem->safety * (-TWO * a * b * b * zR) /
                          (SUNSQR(b * zR) + SUNSQR(a * zI));
@@ -3097,11 +3097,11 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
       SUN_RCONST(16.0);
     sunrealtype b;
 
-    if (ss < 7) { b = a / (aspect_ratio[(int)ss - 2]); }
+    if (ss < 7) { b = a / (aspect_ratio[num_stages - 2]); }
     else
     {
       if (ss <= 20) { b = a / (aspect_ratio[4]); }
-      else { b = a / (aspect_ratio[6 - (int)ss % 2]); }
+      else { b = a / (aspect_ratio[6 - num_stages % 2]); }
     }
 
     *stability_norm = SUNRsqrt(SUNSQR((zR + a) / a) + SUNSQR(zI / b));
