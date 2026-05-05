@@ -348,6 +348,11 @@ Allowable Method Families
       this is a concern, we recommend calling :c:func:`LSRKStepSetDomEigSafetyFactor` with a `dom_eig_safety` 
       value significantly larger than 1.
 
+      If a stable step cannot be achieved even with the maximum allowed number of stages, LSRKStep
+      adjusts the time step size to maintain stability. Even if the analytic stability region is
+      employed by calling this function, it uses an inscribed ellipse to determine the maximum
+      stable time step once this stage limit is reached.
+
       If :c:func:`LSRKStepSetUseAnalyticStabilityRegion` is called during integration, the change will take effect 
       at the next step attempt. Both analytic and ellipse stability regions of RKC and RKL methods with 10 stages
       are shown in the figure below. 
