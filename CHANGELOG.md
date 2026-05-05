@@ -16,6 +16,9 @@ Updated `examples/cvode/petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 `malloc`.
 
+Fixed minor bug in reporting the maximum number of stages in `ARKodeGetStageIndex`
+when running SSP methods in LSRKStep.
+
 Fixed a minor bug where the number of required stages for STS methods 
 in the LSRKStep module was incorrectly computed using the spectral 
 radius instead of the real part of the Jacobian eigenvalues.
