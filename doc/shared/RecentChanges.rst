@@ -16,6 +16,10 @@ Fixed a minor bug where the number of required stages for STS methods
 in the LSRKStep module was incorrectly computed using the spectral 
 radius instead of the real part of the Jacobian eigenvalues.
 
+Fixed a minor bug where negative real extend of the stability region 
+for the RKC method was not being properly computed, which could result 
+in an underestimation of the number of stages required for stability.
+
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 ``malloc``.
 
