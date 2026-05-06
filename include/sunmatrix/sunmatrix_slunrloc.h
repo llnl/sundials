@@ -24,7 +24,16 @@
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>
+
+#if defined(SUNDIALS_DOUBLE_PRECISION)
 #include <superlu_ddefs.h>
+#define pxgsmv_comm_t pdgsmv_comm_t
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#include <superlu_sdefs.h>
+#define pxgsmv_comm_t psgsmv_comm_t
+#else
+#error Incompatible sunrealtype for SuperLU_DIST
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +50,7 @@ struct _SUNMatrixContent_SLUNRloc
   sunbooleantype own_data;
   gridinfo_t* grid;
   sunindextype* row_to_proc;
-  pdgsmv_comm_t* gsmv_comm;
+  pxgsmv_comm_t* gsmv_comm;
   SuperMatrix* A_super;
   SuperMatrix* ACS_super;
 };
