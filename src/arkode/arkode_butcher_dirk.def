@@ -111,13 +111,13 @@ ARK_BUTCHER_TABLE(ARKODE_ARK2_DIRK_3_1_2, { /* ARK2 Implicit Table (A,L stable) 
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
 
     /* 1 - 1 / sqrt(2) */
-    const sunrealtype gamma = SUN_RCONST(1.0) - SUN_RCONST(1.0) / SUNRsqrt(SUN_RCONST(2.0));
+    const sunrealtype gamma = SUN_RCONST(0.29289321881345247559915563789515096071516);
     /* 1 / (2 sqrt(2)) */
-    const sunrealtype delta = SUN_RCONST(1.0) / (SUN_RCONST(2.0) * SUNRsqrt(SUN_RCONST(2.0)));
+    const sunrealtype delta = SUN_RCONST(0.3535533905932737622004221810524245196424);
     /* 2 - sqrt(2) */
-    const sunrealtype twogamma = SUN_RCONST(2.0) - SUNRsqrt(SUN_RCONST(2.0));
+    const sunrealtype twogamma = SUN_RCONST(2.0)*gamma;
     /* (4 - sqrt(2)) / 8 */
-    const sunrealtype beta = (SUN_RCONST(4.0) - SUNRsqrt(SUN_RCONST(2.0))) / SUN_RCONST(8.0);
+    const sunrealtype beta = SUN_RCONST(0.3232233047033631188997889094737877401788);
 
     B->q = 2;
     B->p = 1;
@@ -134,7 +134,7 @@ ARK_BUTCHER_TABLE(ARKODE_ARK2_DIRK_3_1_2, { /* ARK2 Implicit Table (A,L stable) 
 
     B->d[0] = beta;
     B->d[1] = beta;
-    B->d[2] = SUN_RCONST(1.0) / (SUN_RCONST(2.0) * SUNRsqrt(SUN_RCONST(2.0)));
+    B->d[2] = SUN_RCONST(0.3535533905932737622004221810524245196424);
 
     B->c[1] = twogamma;
     B->c[2] = SUN_RCONST(1.0);
@@ -144,7 +144,7 @@ ARK_BUTCHER_TABLE(ARKODE_ARK2_DIRK_3_1_2, { /* ARK2 Implicit Table (A,L stable) 
 
 ARK_BUTCHER_TABLE(ARKODE_ASCHER_SDIRK_3_1_2, { /* https://doi.org/10.1016/S0168-9274(97)00056-1 (custom embedding) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
-    const sunrealtype gamma = SUN_RCONST(1.0) - SUN_RCONST(1.0) / SUNRsqrt(SUN_RCONST(2.0));
+    const sunrealtype gamma = SUN_RCONST(0.29289321881345247559915563789515096071516);
     B->q = 2;
     B->p = 1;
     B->A[1][1] = gamma;
