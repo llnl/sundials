@@ -100,3 +100,4 @@ If time-adaptive multirate calculations from ARKODE were used, please also cite 
      pages     = {117773},
      doi       = {10.1016/j.cam.2026.117773}
    }
+
