@@ -14,7 +14,21 @@
    ----------------------------------------------------------------
 
 We ask users of SUNDIALS to cite the following papers in any publications
-reporting work done with SUNDIALS:
+reporting work done with SUNDIALS cite :cite:p`RARBGW:26, GRWB:22, HBGLSSW:05`:
+
+.. code-block:: latex
+
+   @article{roberts2026sundials,
+     title     = {New {Time} {Integrators} and {Capabilities} in {SUNDIALS} {Versions} 6.2.0-7.4.0},
+     author    = {Roberts, Steven B and Aggul, Mustafa and Reynolds, Daniel R and Balos, Cody J and Gardner, David J and Woodward, Carol S},
+     journal   = {ACM Transactions on Mathematical Software (TOMS)},
+     publisher = {ACM},
+     volume    = {52},
+     number    = {1},
+     pages     = {8:1--8:14},
+     year      = {2026},
+     doi       = {10.1145/3797888}
+   }
 
 .. code-block:: latex
 
@@ -44,7 +58,7 @@ reporting work done with SUNDIALS:
      doi       = {10.1145/1089014.1089020}
    }
 
-If any GPU features of SUNDIALS were utilized, please also cite:
+If any GPU features of SUNDIALS were utilized, please also cite :cite:p`balos2021enabling`:
 
 .. code-block:: latex
 
@@ -57,4 +71,32 @@ If any GPU features of SUNDIALS were utilized, please also cite:
      pages     = {102836},
      year      = {2021},
      doi       = {10.1016/j.parco.2021.102836}
+   }
+
+If ARKODE was used, please also cite :cite:p`RGWC:23`:
+
+.. code-block:: latex
+
+   @article{reynolds2023arkode,
+     title     = {{ARKODE}: {A} flexible {IVP} solver infrastructure for one-step methods},
+     author    = {Reynolds, Daniel R and Gardner, David J and Woodward, Carol S and Chinomona, Rujeko},
+     journal   = {ACM Transactions on Mathematical Software (TOMS)},
+     publisher = {ACM},
+     volume    = {49},
+     number    = {2},
+     year      = {2023},
+     pages     = {1--26},
+     doi       = {10.1145/3594632}
+   }
+
+If time-adaptive multirate calculations from ARKODE were used, please also cite :cite:p`RAML:26`:
+
+   @article{reynolds2026efficient,
+     title     = {Efficient and {Flexible} {Multirate} {Temporal} {Adaptivity}},
+     author    = {Reynolds, Daniel R. and Amihere, Sylvia and Mitchell, Dashon and Luan, Vu Thai},
+     journal   = {Journal of Computational and Applied Mathematics},
+     publisher = {Elsevier},
+     year      = {2026},
+     pages     = {117773},
+     doi       = {10.1016/j.cam.2026.117773}
    }
