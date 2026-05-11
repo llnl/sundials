@@ -14,7 +14,7 @@
    ----------------------------------------------------------------
 
 We ask users of SUNDIALS to cite the following papers in any publications
-reporting work done with SUNDIALS cite :cite:p`RARBGW:26, GRWB:22, HBGLSSW:05`:
+reporting work done with SUNDIALS cite :cite:p:`RARBGW:26, GRWB:22, HBGLSSW:05`:
 
 .. code-block:: latex
 
@@ -58,7 +58,7 @@ reporting work done with SUNDIALS cite :cite:p`RARBGW:26, GRWB:22, HBGLSSW:05`:
      doi       = {10.1145/1089014.1089020}
    }
 
-If any GPU features of SUNDIALS were utilized, please also cite :cite:p`balos2021enabling`:
+If any GPU features of SUNDIALS were utilized, please also cite :cite:p:`balos2021enabling`:
 
 .. code-block:: latex
 
@@ -73,7 +73,7 @@ If any GPU features of SUNDIALS were utilized, please also cite :cite:p`balos202
      doi       = {10.1016/j.parco.2021.102836}
    }
 
-If ARKODE was used, please also cite :cite:p`RGWC:23`:
+If ARKODE was used, please also cite :cite:p:`RGWC:23`:
 
 .. code-block:: latex
 
@@ -89,7 +89,7 @@ If ARKODE was used, please also cite :cite:p`RGWC:23`:
      doi       = {10.1145/3594632}
    }
 
-If time-adaptive multirate calculations from ARKODE were used, please also cite :cite:p`RAML:26`:
+If time-adaptive multirate calculations from ARKODE were used, please also cite :cite:p:`RAML:26`:
 
    @article{reynolds2026efficient,
      title     = {Efficient and {Flexible} {Multirate} {Temporal} {Adaptivity}},
