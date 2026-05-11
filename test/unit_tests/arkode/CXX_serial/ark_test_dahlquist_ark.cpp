@@ -334,27 +334,19 @@ int main(int argc, char* argv[])
   Be = nullptr;
   Bi = nullptr;
 
-  const char* ark_methods_erk[10] = {"ARKODE_ARK2_ERK_3_1_2",
-                                     "ARKODE_ASCHER_ERK_3_1_2",
-                                     "ARKODE_SSP_ERK_2_1_2",
-                                     "ARKODE_SSP_ERK_3_1_2",
-                                     "ARKODE_SSP_LSPUM_ERK_3_1_2",
-                                     "ARKODE_ARK324L2SA_ERK_4_2_3",
-                                     "ARKODE_ARK436L2SA_ERK_6_3_4",
-                                     "ARKODE_ARK437L2SA_ERK_7_3_4",
-                                     "ARKODE_ARK548L2SA_ERK_8_4_5",
-                                     "ARKODE_ARK548L2SAb_ERK_8_4_5"};
+  const char* ark_methods_erk[10] =
+    {"ARKODE_ARK2_ERK_3_1_2",       "ARKODE_ASCHER_ERK_3_1_2",
+     "ARKODE_SSP_ERK_2_1_2",        "ARKODE_SSP_ERK_3_1_2",
+     "ARKODE_SSP_LSPUM_ERK_3_1_2",  "ARKODE_ARK324L2SA_ERK_4_2_3",
+     "ARKODE_ARK436L2SA_ERK_6_3_4", "ARKODE_ARK437L2SA_ERK_7_3_4",
+     "ARKODE_ARK548L2SA_ERK_8_4_5", "ARKODE_ARK548L2SAb_ERK_8_4_5"};
 
-  const char* ark_methods_dirk[10] = {"ARKODE_ARK2_DIRK_3_1_2",
-                                      "ARKODE_ASCHER_SDIRK_3_1_2",
-                                      "ARKODE_SSP_SDIRK_2_1_2",
-                                      "ARKODE_SSP_DIRK_3_1_2",
-                                      "ARKODE_SSP_LSPUM_SDIRK_3_1_2",
-                                      "ARKODE_ARK324L2SA_DIRK_4_2_3",
-                                      "ARKODE_ARK436L2SA_DIRK_6_3_4",
-                                      "ARKODE_ARK437L2SA_DIRK_7_3_4",
-                                      "ARKODE_ARK548L2SA_DIRK_8_4_5",
-                                      "ARKODE_ARK548L2SAb_DIRK_8_4_5"};
+  const char* ark_methods_dirk[10] =
+    {"ARKODE_ARK2_DIRK_3_1_2",       "ARKODE_ASCHER_SDIRK_3_1_2",
+     "ARKODE_SSP_SDIRK_2_1_2",       "ARKODE_SSP_DIRK_3_1_2",
+     "ARKODE_SSP_LSPUM_SDIRK_3_1_2", "ARKODE_ARK324L2SA_DIRK_4_2_3",
+     "ARKODE_ARK436L2SA_DIRK_6_3_4", "ARKODE_ARK437L2SA_DIRK_7_3_4",
+     "ARKODE_ARK548L2SA_DIRK_8_4_5", "ARKODE_ARK548L2SAb_DIRK_8_4_5"};
 
   for (int i = 0; i < 10; i++)
   {

@@ -214,8 +214,7 @@ int main(int argc, char* argv[])
     implicit = SUNTRUE;
   }
   if ((method == "ARKODE_IMEX_MRI_SR21") ||
-      (method == "ARKODE_IMEX_MRI_SR32") ||
-      (method == "ARKODE_IMEX_MRI_SR43") ||
+      (method == "ARKODE_IMEX_MRI_SR32") || (method == "ARKODE_IMEX_MRI_SR43") ||
       (method == "ARKODE_IMEX_MRI_GARK_ARS222") ||
       (method == "ARKODE_IMEX_MRI_GARK_GIRALDO"))
   {

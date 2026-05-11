@@ -120,8 +120,7 @@ int main(int argc, char* argv[])
       (method == "ARKODE_MRI_GARK_ESDIRK34a") ||
       (method == "ARKODE_MRI_GARK_ESDIRK46a") ||
       (method == "ARKODE_IMEX_MRI_SR21") ||
-      (method == "ARKODE_IMEX_MRI_SR32") ||
-      (method == "ARKODE_IMEX_MRI_SR43") ||
+      (method == "ARKODE_IMEX_MRI_SR32") || (method == "ARKODE_IMEX_MRI_SR43") ||
       (method == "ARKODE_IMEX_MRI_GARK_ARS222") ||
       (method == "ARKODE_IMEX_MRI_GARK_GIRALDO"))
   {
