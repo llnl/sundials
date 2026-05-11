@@ -251,13 +251,7 @@ static void PrintOutput(N_Vector y)
   y2 = Ith(y, 2);
   y3 = Ith(y, 3);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("y =%14.6Le  %14.6Le  %14.6Le\n", y1, y2, y3);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("y =%14.6e  %14.6e  %14.6e\n", y1, y2, y3);
-#else
-  printf("y =%14.6e  %14.6e  %14.6e\n", y1, y2, y3);
-#endif
+  printf("y =%14.6" GSYM "  %14.6" GSYM "  %14.6" GSYM "\n", y1, y2, y3);
 
   return;
 }
