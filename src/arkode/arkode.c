@@ -107,7 +107,7 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
   }
 
   /* Check for legal input parameters */
-  if (y0 == NULL)
+  if ((ark_mem->ycur = y0) == NULL)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_ARK_NULL_Y0);
@@ -1786,7 +1786,7 @@ int arkInit(ARKodeMem ark_mem, sunrealtype t0, N_Vector y0, int init_type)
   }
 
   /* Check for legal input parameters */
-  if (y0 == NULL)
+  if ((ark_mem->ycur = y0) == NULL)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_ARK_NULL_Y0);

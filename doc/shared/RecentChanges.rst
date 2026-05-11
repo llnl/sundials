@@ -22,4 +22,10 @@ adapting the step size and method order for CVODE(S) and IDA(S), respectively.
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 ``malloc``.
 
+Fixed minor bug in reporting the maximum number of stages in
+:c:func:`ARKodeGetStageIndex` when running SSP methods in LSRKStep.
+
+Removed duplicate logging output that would cause the Python logging tools to fail
+with a repeated key error.
+
 **Deprecation Notices**

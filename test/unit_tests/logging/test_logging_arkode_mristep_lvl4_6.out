@@ -22,7 +22,7 @@ Using MERK method
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.00141059262695848
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.00141059262695848
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.000171612953244125
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 10000
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 2.19075505353205e-20
@@ -39,7 +39,7 @@ Using MERK method
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162676691109628
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162676691109628
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0034322590648825
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.23850835179651e-08
@@ -56,7 +56,7 @@ Using MERK method
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162575318333283
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162575318333283
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.006567397709211
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.66431234155382e-07
@@ -80,7 +80,7 @@ Using MERK method
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162444409871335
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162444409871335
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0146199968884201
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 14.6199968884202
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.4360875494827e-05
@@ -108,7 +108,7 @@ Using MERK method
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162275960399179
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162275960399179
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00999999999999999
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.01287327936077e-07
@@ -132,7 +132,7 @@ Using MERK method
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162151724451245
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162151724451245
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.014593655200612
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 14.593655200612
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.44648426371442e-05
@@ -160,7 +160,7 @@ Using MERK method
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162008552507156
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162008552507156
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00999999999999999
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.07252660258631e-07
@@ -184,7 +184,7 @@ Using MERK method
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.016189862795696
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.016189862795696
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0145708765161264
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 14.5708765161264
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.45555066492002e-05
