@@ -5159,12 +5159,11 @@ int IDAInitialSetup(IDAMem IDA_mem)
  *
  * This routine is called by IDASolve once at the first step. It
  * fills in phiQ[1] and phiQS[1] since they are not provided by
- * the user. It is important this is NOT done in the IDAInitialSetup
- * routine because that can be called just before finding consistent
- * initial conditions. If quadrature is not set by that point, that
- * would incorrectly use phiQ[1] = 0 and phiQS[1] = 0. Even if
- * IDAQuadInit is called before IDACalcIC, phiQ[1] and phiQS[1] would
- * be evaluated at the inconsistent initial condition.
+ * the user. It is important this is NOT done in IDAInitialSetup as
+ * IDACalcIC will call IDAInitialSetup in which case inconsistent initial
+ * conditions will be used to compute phiQ[1] and phiQS[1] (if
+ * IDAQuadInit is called BEFORE IDACalcIC) or phiQ[1] and phiQS[1]
+ * will not be initialized (if IDAQuadInit is called AFTER IDACalcIC).
  */
 static int IDAQuadSetup(IDAMem IDA_mem)
 {
