@@ -91,6 +91,8 @@ If ARKODE was used, please also cite :cite:p:`RGWC:23`:
 
 If time-adaptive multirate calculations from ARKODE were used, please also cite :cite:p:`RAML:26`:
 
+.. code-block:: latex
+
    @article{reynolds2026efficient,
      title     = {Efficient and {Flexible} {Multirate} {Temporal} {Adaptivity}},
      author    = {Reynolds, Daniel R. and Amihere, Sylvia and Mitchell, Dashon and Luan, Vu Thai},
