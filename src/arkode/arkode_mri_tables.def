@@ -401,7 +401,6 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARS222, {
 
     const sunrealtype gamma = ONE - ONE / SUNRsqrt(SUN_RCONST(2.0));
     const sunrealtype delta = ONE - ONE / (SUN_RCONST(2.0)*gamma);
-    const sunrealtype three = SUN_RCONST(3.0);
     C->q = 2;
     C->p = 1;
 
@@ -452,8 +451,8 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_GIRALDO, {
     C->W[0][5][0] = ONE/(two * sqrt2) - (three - two * sqrt2)/six;
     C->W[0][5][2] = ONE/(two * sqrt2) - (three + two * sqrt2)/six;
     C->W[0][5][4] = ONE - ONE / SUNRsqrt(SUN_RCONST(2.0));
-    C->W[0][6][0] = (FOUR - sqrt2) / eight - (three - two * sqrt2)/six;
-    C->W[0][6][2] = (FOUR - sqrt2) / eight - (three + two * sqrt2)/six;
+    C->W[0][6][0] = (four - sqrt2) / eight - (three - two * sqrt2)/six;
+    C->W[0][6][2] = (four - sqrt2) / eight - (three + two * sqrt2)/six;
     C->W[0][6][4] = ONE / (two * sqrt2);
 
     C->G[0][1][0] = two - sqrt2;
@@ -464,8 +463,8 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_GIRALDO, {
     C->G[0][4][0] = ONE / (two * sqrt2);
     C->G[0][4][2] = ONE / (two * sqrt2) - ONE;
     C->G[0][4][4] = ONE - ONE / sqrt2;
-    C->G[0][6][0] = (FOUR - sqrt2) / eight - ONE / (two * sqrt2);
-    C->G[0][6][2] = (FOUR - sqrt2) / eight - ONE / (two * sqrt2);
+    C->G[0][6][0] = (four - sqrt2) / eight - ONE / (two * sqrt2);
+    C->G[0][6][2] = (four - sqrt2) / eight - ONE / (two * sqrt2);
     C->G[0][6][4] = ONE / (two * sqrt2) - (ONE - ONE / sqrt2);
     return C;
   })
