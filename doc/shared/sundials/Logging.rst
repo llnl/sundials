@@ -215,6 +215,38 @@ functions to identify the output level or file.
       Represents deubg-level logging messages
 
 
+The following function pointer types are used to define custom message queueing
+and flushing behavior:
+
+.. c:type:: SUNErrCode (*SUNLoggerQueueMsgFn)(SUNLogger logger, SUNLogLevel lvl, const char* prefix, int rank, const char* scope, const char* label, const char* payload, void* content)
+
+   Function pointer type for custom message queueing implementations.
+
+   **Arguments:**
+      * ``logger`` -- the :c:type:`SUNLogger` object
+      * ``lvl`` -- the message log level (i.e. error, warning, info, debug)
+      * ``prefix`` -- the string representation of the log level (e.g., "ERROR", "WARNING")
+      * ``rank`` -- the MPI rank of the caller
+      * ``scope`` -- the message scope (e.g. the function name)
+      * ``label`` -- the message label
+      * ``payload`` -- the formatted message text
+      * ``content`` -- user-defined data pointer (passed via :c:func:`SUNLogger_SetQueueAndFlushMsgFns`)
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
+
+.. c:type:: SUNErrCode (*SUNLoggerFlushMsgFn)(SUNLogger logger, SUNLogLevel lvl, void* content)
+
+   Function pointer type for custom message flushing implementations.
+
+   **Arguments:**
+      * ``logger`` -- the :c:type:`SUNLogger` object.
+      * ``lvl`` -- the message log level to flush (i.e. error, warning, info, debug, or all).
+      * ``content`` -- user-defined data pointer (passed via :c:func:`SUNLogger_SetQueueAndFlushMsgFns`).
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
+
 The :c:type:`SUNLogger` class provides the following methods.
 
 
@@ -269,6 +301,31 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetErrorFile(SUNLogger logger, FILE* error_fp)
+
+   Sets the file pointer for error output.
+
+   The logger does not take ownership of ``error_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``error_fp`` -- the ``FILE`` pointer to use for error output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
+
+.. c:function:: SUNErrCode SUNLogger_GetErrorFile(SUNLogger logger, FILE** error_fp)
+
+   Gets the file pointer for error output.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``error_fp`` -- on output, the file pointer used for error output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger, const char* warning_filename)
 
@@ -283,6 +340,31 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetWarningFile(SUNLogger logger, FILE* warning_fp)
+
+   Sets the file pointer for warning output.
+
+   The logger does not take ownership of ``warning_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``warning_fp`` -- the ``FILE`` pointer to use for warning output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
+
+.. c:function:: SUNErrCode SUNLogger_GetWarningFile(SUNLogger logger, FILE** warning_fp)
+
+   Gets the file pointer for warning output.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``warning_fp`` -- on output, the file pointer used for warning output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename)
 
@@ -297,6 +379,31 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetInfoFile(SUNLogger logger, FILE* info_fp)
+
+   Sets the file pointer for info output.
+
+   The logger does not take ownership of ``info_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``info_fp`` -- the ``FILE`` pointer to use for info output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
+
+.. c:function:: SUNErrCode SUNLogger_GetInfoFile(SUNLogger logger, FILE** info_fp)
+
+   Gets the file pointer for info output.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``info_fp`` -- on output, the file pointer used for info output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger, const char* debug_filename)
 
@@ -311,6 +418,31 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+.. c:function:: SUNErrCode SUNLogger_SetDebugFile(SUNLogger logger, FILE* debug_fp)
+
+   Sets the file pointer for debug output.
+
+   The logger does not take ownership of ``debug_fp``; the user is responsible
+   for closing the file if needed. Passing ``NULL`` disables output for this
+   stream.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``debug_fp`` -- the ``FILE`` pointer to use for debug output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
+
+.. c:function:: SUNErrCode SUNLogger_GetDebugFile(SUNLogger logger, FILE** debug_fp)
+
+   Gets the file pointer for debug output.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object.
+      * ``debug_fp`` -- on output, the file pointer used for debug output.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl, const char* scope, const char* label, const char* msg_txt, ...)
 
@@ -340,6 +472,27 @@ The :c:type:`SUNLogger` class provides the following methods.
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+
+.. c:function:: SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger, SUNLoggerQueueMsgFn queue_msg, SUNLoggerFlushMsgFn flush_msg, void* lptr)
+
+   Attaches user-defined functions to queue and flush log messages.
+
+   This function allows users to override the default message queueing and
+   flushing behavior with custom implementations. Passing ``NULL`` for
+   ``queue_msg`` resets the logger to use the default queue and flush functions.
+
+   **Arguments:**
+      * ``logger`` -- a :c:type:`SUNLogger` object
+      * ``queue_msg`` -- the :c:type:`SUNLoggerQueueMsgFn` function to use for
+        queueing messages, or ``NULL`` to reset to the default implementation
+      * ``flush_msg`` -- the :c:type:`SUNLoggerFlushMsgFn` function to use for
+        flushing messages, or ``NULL`` to disable flushing with
+        :c:func:`SUNLogger_Flush`
+      * ``lptr`` -- user-defined data pointer that will be passed to the
+        ``queue_msg`` and ``flush_msg`` functions as the ``content`` parameter.
+
+   **Returns:**
+      * Returns zero if successful, or non-zero if an error occurred.
 
 .. c:function:: SUNErrCode SUNLogger_GetOutputRank(SUNLogger logger, int* output_rank)
 

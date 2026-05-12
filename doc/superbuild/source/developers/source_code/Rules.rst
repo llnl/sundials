@@ -34,9 +34,9 @@ not adhere to all of these rules.
 #. All new code added to SUNDIALS should be formatted with `clang-format
    <https://clang.llvm.org/docs/ClangFormat.html>`_ for C/C++, `fprettify
    <https://github.com/fortran-lang/fprettify>`_ for Fortran, `cmake-format
-   <https://cmake-format.readthedocs.io>`_ for CMake, and `black
-   <https://black.readthedocs.io>`_ for Python. See :ref:`SourceCode.Style` for
-   details.
+   <https://cmake-format.readthedocs.io>`_ for CMake, and `ruff format
+   <https://docs.astral.sh/ruff/formatter/>`_ for Python. See
+   :ref:`SourceCode.Style` for details.
 
 #. Spaces not tabs.
 

@@ -6190,10 +6190,6 @@ static int IDAStep(IDAMem IDA_mem)
 
   } /* end loop */
 
-  SUNLogInfo(IDA_LOGGER, "end-step-attempt",
-             "status = success, dsm = " SUN_FORMAT_G,
-             ck * err_k / IDA_mem->ida_sigma[IDA_mem->ida_kk]);
-
   /* Nonlinear system solve and error test were both successful;
      update data, and consider change of step and/or order */
 
@@ -6211,6 +6207,10 @@ static int IDAStep(IDAMem IDA_mem)
   */
 
   N_VScale(ck, IDA_mem->ida_ee, IDA_mem->ida_ee);
+
+  SUNLogInfo(IDA_LOGGER, "end-step-attempt",
+             "status = success, dsm = " SUN_FORMAT_G,
+             ck * err_k / IDA_mem->ida_sigma[IDA_mem->ida_kk]);
 
   return (IDA_SUCCESS);
 }
@@ -6900,9 +6900,6 @@ static int IDATestError(IDAMem IDA_mem, sunrealtype ck, sunrealtype* err_k,
     }
   }
 
-  SUNLogDebug(IDA_LOGGER, "new-order", "kk = %i, knew = %i", IDA_mem->ida_kk,
-              IDA_mem->ida_knew);
-
   SUNLogDebug(IDA_LOGGER, "error-estimate", "ck_enorm_k = " SUN_FORMAT_G,
               ck * enorm_k);
 
@@ -7392,6 +7389,8 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
     (*nefPtr)++;  /* local counter for error test failures */
     (*netfPtr)++; /* global counter for error test failures */
 
+    SUNLogDebug(IDA_LOGGER, "error-test-fail", "nef = %i", *nefPtr);
+
     if (*nefPtr == 1)
     {
       /* On first error test failure, keep current order or lower order by one.
@@ -7408,10 +7407,6 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
                                 IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
       IDA_mem->ida_hh *= IDA_mem->ida_eta;
 
-      SUNLogDebug(IDA_LOGGER, "first-error-test_fail",
-                  "kk = %i, eta = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
-                  IDA_mem->ida_kk, IDA_mem->ida_eta, IDA_mem->ida_hh);
-
       return (PREDICT_AGAIN);
     }
     else if (*nefPtr == 2)
@@ -7424,10 +7419,6 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
                                 IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
       IDA_mem->ida_hh *= IDA_mem->ida_eta;
 
-      SUNLogDebug(IDA_LOGGER, "second-error-test-fail",
-                  "kk = %i, eta = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
-                  IDA_mem->ida_kk, IDA_mem->ida_eta, IDA_mem->ida_hh);
-
       return (PREDICT_AGAIN);
     }
     else if (*nefPtr < IDA_mem->ida_maxnef)
@@ -7438,10 +7429,6 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
       IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta_min_ef,
                                 IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
       IDA_mem->ida_hh *= IDA_mem->ida_eta;
-
-      SUNLogDebug(IDA_LOGGER, "error-test-fail",
-                  "kk = %i, eta = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
-                  IDA_mem->ida_kk, IDA_mem->ida_eta, IDA_mem->ida_hh);
 
       return (PREDICT_AGAIN);
     }

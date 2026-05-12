@@ -71,7 +71,7 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSPs2][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSPs2][begin-stages-list] stage = 8, tcur = 1.14611070421007e-06
 [INFO][rank 0][lsrkStep_TakeStepSSPs2][end-stages-list] status = success
-[INFO][rank 0][lsrkStep_TakeStepSSPs2][begin-stages-list] stage = 9, tcur = 1.28174438476562e-06
+[INFO][rank 0][lsrkStep_TakeStepSSPs2][begin-stages-list] stage = 9, tcur = 1.28174438476563e-06
 [INFO][rank 0][lsrkStep_TakeStepSSPs2][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSPs2][begin-stages-list] stage = 10, tcur = 1.28174438476563e-06
 [INFO][rank 0][lsrkStep_TakeStepSSPs2][end-stages-list] status = success

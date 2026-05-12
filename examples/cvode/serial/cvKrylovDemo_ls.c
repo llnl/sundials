@@ -180,8 +180,6 @@ static int Precond(sunrealtype tn, N_Vector u, N_Vector fu, sunbooleantype jok,
 static int PSolve(sunrealtype tn, N_Vector u, N_Vector fu, N_Vector r, N_Vector z,
                   sunrealtype gamma, sunrealtype delta, int lr, void* user_data);
 
-static int myMonitorFunction(void* cvode_mem, void* user_data);
-
 /*
  *-------------------------------
  * Main Program
@@ -199,7 +197,7 @@ int main(int argc, char* argv[])
   int linsolver, iout, retval;
   int nrmfactor;      /* LS norm conversion factor flag */
   sunrealtype nrmfac; /* LS norm conversion factor      */
-  int monitor;        /* LS resiudal monitoring flag    */
+  int monitor;        /* LS residual monitoring flag    */
   SUNContext sunctx;
   SUNLogger logger;
   const char* info_fname = "cvKrylovDemo_ls-info.txt";
@@ -262,16 +260,6 @@ int main(int argc, char* argv[])
    * and scalar absolute tolerances */
   retval = CVodeSStolerances(cvode_mem, reltol, abstol);
   if (check_retval(&retval, "CVodeSStolerances", 1)) { return (1); }
-
-  /* Set a function that CVode will call every 50 successful time steps.
-   * This will be used to monitor the solution and integrator statistics. */
-  if (monitor)
-  {
-    retval = CVodeSetMonitorFn(cvode_mem, myMonitorFunction);
-    if (check_retval(&retval, "CVodeSetMonitorFn", 1)) { return (1); }
-    retval = CVodeSetMonitorFrequency(cvode_mem, 50);
-    if (check_retval(&retval, "CVodeSetMonitorFrequency", 1)) { return (1); }
-  }
 
   /* Create the SUNNonlinearSolver */
   NLS = SUNNonlinSol_Newton(u, sunctx);
@@ -888,20 +876,6 @@ static int PSolve(sunrealtype tn, N_Vector u, N_Vector fu, N_Vector r, N_Vector 
       SUNDlsMat_denseGETRS(P[jx][jy], NUM_SPECIES, pivot[jx][jy], v);
     }
   }
-
-  return (0);
-}
-
-/* Function that is called at some step interval by CVODE */
-
-static int myMonitorFunction(void* cvode_mem, void* user_data)
-{
-  UserData data = (UserData)user_data;
-  sunrealtype t = 0;
-
-  CVodeGetCurrentTime(cvode_mem, &t);
-  PrintOutput(cvode_mem, data->u, t);
-  PrintStats(cvode_mem, data->linsolver, 0);
 
   return (0);
 }

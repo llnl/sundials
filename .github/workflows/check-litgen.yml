@@ -50,11 +50,11 @@ jobs:
             && apt-get clean \
             && rm -rf /var/lib/apt/lists/*
 
-      - name: Install black
-        run: pip install black
+      - name: Install ruff
+        run: pip install ruff
 
-      - name: Print black version
-        run: black --version
+      - name: Print ruff version
+        run: ruff --version
 
       - name: Install cmake-format
         run: pip install cmakelang
