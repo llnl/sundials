@@ -47,7 +47,7 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v7.1.0
       with:
-        context: "./docker/sundials-ci"
+        context: "./scripts/docker"
         build-args: |
           SPACK_BASE_IMAGE=spack/ubuntu-noble:${{ env.SPACK_RELEASE }}
           spack_yaml=int${{ matrix.indexsize }}-${{ matrix.precision }}/spack.yaml
