@@ -30,7 +30,6 @@
 #include <sundials/sundials_types.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunmatrix/sunmatrix_slunrloc.h>
-#include <supermatrix.h>
 
 #if defined(SUNDIALS_DOUBLE_PRECISION)
 #include <superlu_ddefs.h>
