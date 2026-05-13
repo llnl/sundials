@@ -10,7 +10,7 @@ spack:
         - openmpi
   specs:
   - cmake
-  - ginko
+  - ginkgo
   - hypre +int64 precision=single
   - kokkos +serial +openmp
   - kokkos-kernels +serial +openmp
