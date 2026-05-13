@@ -47,16 +47,15 @@ RUN --mount=type=cache,target=/var/cache/spack-mirror                   \
     || spack -d -v install --no-check-signature                         \
     || status=$?                                                        \
  && mkdir -p /var/cache/spack-mirror/build_cache                        \
- && spack buildcache update-index -d /var/cache/spack-mirror            \
+ && spack buildcache update-index /var/cache/spack-mirror               \
  && spack buildcache list --allarch --very-long                         \
     | sed '/^$/d;/^--/d;s/@.\+//;s/\([a-z0-9]*\) \(.*\)/\2\/\1/'        \
     | sort > tmp.buildcache.txt                                         \
  && spack find --format {name}/{hash} | sort                            \
     | comm -23 - tmp.buildcache.txt                                     \
     | xargs --no-run-if-empty                                           \
-      spack buildcache create --allow-root --only package --unsigned    \
-                              --directory /var/cache/spack-mirror       \
-                              --rebuild-index                           \
+      spack buildcache push --unsigned --only package                   \
+                            --update-index /var/cache/spack-mirror      \
  && spack clean -a                                                      \
  && exit $status
 
