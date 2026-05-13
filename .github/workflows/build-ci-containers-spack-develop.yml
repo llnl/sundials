@@ -3,7 +3,7 @@ name: CI Containers - spack@develop
 on:
   workflow_dispatch:
   schedule:
-  - cron: '30 23 * * 0'
+  - cron: '30 23 * * 6'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
