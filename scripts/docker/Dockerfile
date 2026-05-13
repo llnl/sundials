@@ -11,6 +11,9 @@ FROM ${SPACK_BASE_IMAGE} AS builder
 ARG spack_yaml
 
 # Install python environment for docs
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3-venv && \
+    rm -rf /var/lib/apt/lists/*
 RUN python3 -m venv /opt/python-venv/sundocs && \
     . /opt/python-venv/sundocs/bin/activate && \
     pip install wheel && \
