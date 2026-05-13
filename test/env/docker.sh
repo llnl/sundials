@@ -280,28 +280,28 @@ if [ "$SUNDIALS_PRECISION" == "double" ]; then
 
     # build with netlib blas/lapack if using 64-bit indices so that we can
     # use 64-bit openblas for other TPLs
-    export BLAS_ROOT=/opt/view
+    SUPERLU_DIST_BLAS_ROOT=/opt/view
     if [ "$SUNDIALS_INDEX_SIZE" == "64" ]; then
-        if [ -f "${BLAS_ROOT}/lib/libblas.so" ]; then
-            export BLAS_LIBRARIES="${BLAS_ROOT}/lib/libblas.so;${BLAS_ROOT}/lib/liblapack.so"
+        if [ -f "${SUPERLU_DIST_BLAS_ROOT}/lib/libblas.so" ]; then
+            SUPERLU_DIST_BLAS_LIBRARIES="${SUPERLU_DIST_BLAS_ROOT}/lib/libblas.so;${SUPERLU_DIST_BLAS_ROOT}/lib/liblapack.so"
         fi
     else
-        export BLAS_LIBRARIES="${BLAS_ROOT}/lib/libopenblas.so"
+        SUPERLU_DIST_BLAS_LIBRARIES="${SUPERLU_DIST_BLAS_ROOT}/lib/libopenblas.so"
     fi
 
     # PARMETIS
-    export PARMETIS_ROOT=/opt/view
-    export PARMETIS_LIBRARIES="${PARMETIS_ROOT}/lib/libparmetis.so"
+    PARMETIS_ROOT=/opt/view
+    PARMETIS_LIBRARIES="${PARMETIS_ROOT}/lib/libparmetis.so"
 
     # METIS
-    export METIS_ROOT=/opt/view
-    export METIS_LIBRARIES="${METIS_ROOT}/lib/libmetis.so"
+    METIS_ROOT=/opt/view
+    METIS_LIBRARIES="${METIS_ROOT}/lib/libmetis.so"
 
-    export SUPERLU_DIST_LIBRARIES="${BLAS_LIBRARIES};${PARMETIS_LIBRARIES};${METIS_LIBRARIES};${SUPERLU_DIST_ROOT}/lib/libsuperlu_dist.a"
+    export SUPERLU_DIST_LIBRARIES="${SUPERLU_DIST_BLAS_LIBRARIES};${PARMETIS_LIBRARIES};${METIS_LIBRARIES};${SUPERLU_DIST_ROOT}/lib/libsuperlu_dist.a"
     export SUPERLU_DIST_OPENMP=OFF
 
     # if BLAS wasn't found, then dont build SuperLU_DIST
-    if [ -z "$BLAS_LIBRARIES" ]; then
+    if [ -z "$SUPERLU_DIST_BLAS_LIBRARIES" ]; then
         export SUNDIALS_SUPERLU_DIST=OFF
     else
         export SUNDIALS_SUPERLU_DIST=ON
