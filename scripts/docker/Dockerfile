@@ -1,21 +1,9 @@
 # ------------------------------------------------------------------------------
-# SUNDIALS CI Container
-#
 # Build a container with third-party libraries installed via Spack for SUNDIALS
 # CI testing.
-#
-# Usage:
-#   # Spack release container
-#   docker build -t ghcr.io/llnl/sundials-ci-int32-double:spack-v1.1.1 \
-#     --build-arg spack_yaml=int32-double/spack.yaml .
-#
-#   # Spack develop container
-#   docker build -t ghcr.io/llnl/sundials-ci-int32-double:spack-develop \
-#     --build-arg spack_yaml=int32-double/spack.yaml \
-#     --build-arg SPACK_BASE_IMAGE=spack/ubuntu-noble:develop .
 # ------------------------------------------------------------------------------
 
-ARG SPACK_BASE_IMAGE=spack/ubuntu-noble:v1.1.1
+ARG SPACK_BASE_IMAGE=spack/ubuntu-noble:1.1.1
 
 # Build stage with Spack pre-installed and ready to be used
 FROM ${SPACK_BASE_IMAGE} AS builder

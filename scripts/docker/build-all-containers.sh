@@ -17,7 +17,7 @@
 export DOCKER_BUILDKIT=1
 export BUILDKIT_PROGRESS=plain
 
-SPACK_RELEASE="v1.1.1"
+SPACK_RELEASE="1.1.1"
 SPACK_RELEASE_IMAGE="spack/ubuntu-noble:${SPACK_RELEASE}"
 SPACK_DEVELOP_IMAGE="spack/ubuntu-noble:develop"
 
@@ -28,7 +28,7 @@ set -x
 # Build containers pinned to a Spack release (:spack-vX.Y.Z tag)
 for image in "${images[@]}"; do
   docker build \
-    -t "ghcr.io/llnl/sundials-ci-${image}:spack-${SPACK_RELEASE}" \
+    -t "ghcr.io/llnl/sundials-ci-${image}:spack-v${SPACK_RELEASE}" \
     --build-arg "SPACK_BASE_IMAGE=${SPACK_RELEASE_IMAGE}" \
     --build-arg "spack_yaml=${image}/spack.yaml" \
     .
