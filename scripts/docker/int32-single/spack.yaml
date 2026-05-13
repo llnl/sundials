@@ -8,6 +8,8 @@ spack:
         mpi:
         - openmpi
   specs:
+  - adiak
+  - caliper +adiak
   - cmake
   - ginkgo
   - hypre ~int64 precision=single
