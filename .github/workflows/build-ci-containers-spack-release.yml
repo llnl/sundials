@@ -2,8 +2,6 @@ name: CI Containers - spack@release
 
 on:
   workflow_dispatch:
-  # Add for testing
-  push:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}

@@ -2,8 +2,6 @@ name: CI Containers - spack@develop
 
 on:
   workflow_dispatch:
-  # Add for testing
-  push:
   schedule:
   - cron: '30 23 * * 0'
 
