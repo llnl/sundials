@@ -37,7 +37,9 @@ COPY ${spack_yaml} /opt/spack-environment/spack.yaml
 
 # Install the spack environment. Uses a Docker cache mount so that packages
 # built in a previous (possibly failed) build attempt can be reused via the
-# local buildcache.
+# local buildcache. The buildcache commands are non-fatal (|| true) since the
+# mirror may be empty on first build or when running in ephemeral CI
+# environments.
 RUN --mount=type=cache,target=/var/cache/spack-mirror                   \
     cd /opt/spack-environment                                           \
  && spack env activate .                                                \
@@ -47,8 +49,8 @@ RUN --mount=type=cache,target=/var/cache/spack-mirror                   \
     || spack -d -v install --no-check-signature                         \
     || status=$?                                                        \
  && mkdir -p /var/cache/spack-mirror/build_cache                        \
- && spack buildcache update-index /var/cache/spack-mirror               \
- && spack buildcache list --allarch --very-long                         \
+ && ( spack buildcache update-index /var/cache/spack-mirror || true )   \
+ && ( spack buildcache list --allarch --very-long                       \
     | sed '/^$/d;/^--/d;s/@.\+//;s/\([a-z0-9]*\) \(.*\)/\2\/\1/'        \
     | sort > tmp.buildcache.txt                                         \
  && spack find --format {name}/{hash} | sort                            \
@@ -56,6 +58,7 @@ RUN --mount=type=cache,target=/var/cache/spack-mirror                   \
     | xargs --no-run-if-empty                                           \
       spack buildcache push --unsigned --only package                   \
                             --update-index /var/cache/spack-mirror      \
+    || true )                                                           \
  && spack clean -a                                                      \
  && exit $status
 
