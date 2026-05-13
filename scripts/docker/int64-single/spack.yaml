@@ -21,7 +21,13 @@ spack:
   - suite-sparse ^openblas +ilp64
   - superlu-dist +int64 ^parmetis+int64 ^metis+int64 ^netlib-lapack # needs 32-bit index blas
   - superlu-mt@master +int64 ~blas # TODO(DJG): update to 4.0.2
-  - trilinos +float +tpetra gotype=long_long
+  # Trilinos CMake configuration fails with:
+  # CMake Error at packages/tpetra/CMakeLists.txt:916 (MESSAGE):
+  # Tpetra: Tpetra_INST_FLOAT is ON (meaning that you want to instantiate
+  # and/or test Tpetra with Scalar = float), but HAVE_TEUCHOS_BLASFLOAT is OFF.
+  # This means that you are linking with a BLAS library that lacks float (S)
+  # support.  Tpetra needs a BLAS implementation that supports float.
+  #- trilinos +float +tpetra gotype=long_long
   - xbraid
   concretizer:
     reuse: false
