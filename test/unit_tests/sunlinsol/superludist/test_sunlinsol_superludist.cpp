@@ -31,6 +31,18 @@
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunmatrix/sunmatrix_slunrloc.h>
 
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#include <superlu_ddefs.h>
+#define SLU_X                          SLU_D
+#define xCreate_CompRowLoc_Matrix_dist dCreate_CompRowLoc_Matrix_dist
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#include <superlu_sdefs.h>
+#define SLU_X                          SLU_S
+#define xCreate_CompRowLoc_Matrix_dist sCreate_CompRowLoc_Matrix_dist
+#else
+#error Incompatible sunrealtype for SuperLU_DIST
+#endif
+
 #include "test_sunlinsol.h"
 
 /* 1 --> print extended output from each process to a file instead
@@ -273,8 +285,8 @@ int main(int argc, char* argv[])
     Asuper = (SuperMatrix*)SUPERLU_MALLOC(sizeof(SuperMatrix));
 
     /* Allocates Asuper->Store and sets structure members */
-    dCreate_CompRowLoc_Matrix_dist(Asuper, N, N, NNZ_local, M_loc, fst_row,
-                                   matdata, colind, rowptrs, SLU_NR_loc, SLU_D,
+    xCreate_CompRowLoc_Matrix_dist(Asuper, N, N, NNZ_local, M_loc, fst_row,
+                                   matdata, colind, rowptrs, SLU_NR_loc, SLU_X,
                                    SLU_GE);
 
     A = SUNMatrix_SLUNRloc(Asuper, &grid, sunctx);
@@ -326,8 +338,8 @@ int main(int argc, char* argv[])
     /* Create local SuperLU-DIST SuperMatrix */
     Asuper = NULL;
     Asuper = (SuperMatrix*)SUPERLU_MALLOC(sizeof(SuperMatrix));
-    dCreate_CompRowLoc_Matrix_dist(Asuper, N, N, NNZ_local, M_loc, fst_row,
-                                   matdata, colind, rowptrs, SLU_NR_loc, SLU_D,
+    xCreate_CompRowLoc_Matrix_dist(Asuper, N, N, NNZ_local, M_loc, fst_row,
+                                   matdata, colind, rowptrs, SLU_NR_loc, SLU_X,
                                    SLU_GE);
 
     /* Create local SuperLU-DIST SUNMatrix */

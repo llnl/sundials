@@ -53,7 +53,17 @@
 #include <sunlinsol/sunlinsol_superludist.h> /* access to the SuperLU-DIST SUNLinearSolver   */
 #include <sunmatrix/sunmatrix_slunrloc.h> /* access to the SuperLU SLU_NR_loc SUNMatrix   */
 
-#include "superlu_ddefs.h"
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#include <superlu_ddefs.h>
+#define SLU_X                          SLU_D
+#define xCreate_CompRowLoc_Matrix_dist dCreate_CompRowLoc_Matrix_dist
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#include <superlu_sdefs.h>
+#define SLU_X                          SLU_S
+#define xCreate_CompRowLoc_Matrix_dist sCreate_CompRowLoc_Matrix_dist
+#else
+#error Incompatible sunrealtype for SuperLU_DIST
+#endif
 
 /* Problem Constants */
 
@@ -117,9 +127,9 @@ int main(int argc, char* argv[])
   long int nst;
 
   gridinfo_t grid;
-  dLUstruct_t LUstruct;
-  dScalePermstruct_t scaleperm;
-  dSOLVEstruct_t solve;
+  xLUstruct_t LUstruct;
+  xScalePermstruct_t scaleperm;
+  xSOLVEstruct_t solve;
   SuperLUStat_t stat;
   superlu_dist_options_t options;
   SuperMatrix Asuper;
@@ -217,8 +227,8 @@ int main(int argc, char* argv[])
   matdata = (sunrealtype*)malloc(local_NNZ * sizeof(sunrealtype));
   colind  = (sunindextype*)calloc(local_NNZ, sizeof(sunindextype));
   rowptr  = (sunindextype*)calloc((local_N + 1), sizeof(sunindextype));
-  dCreate_CompRowLoc_Matrix_dist(&Asuper, NEQ, NEQ, local_NNZ, local_N, my_base,
-                                 matdata, colind, rowptr, SLU_NR_loc, SLU_D,
+  xCreate_CompRowLoc_Matrix_dist(&Asuper, NEQ, NEQ, local_NNZ, local_N, my_base,
+                                 matdata, colind, rowptr, SLU_NR_loc, SLU_X,
                                  SLU_GE);
 
   /* Use the default SuperLU-DIST solver options */
@@ -226,8 +236,8 @@ int main(int argc, char* argv[])
   options.PrintStat = NO;
 
   /* Initialize SuperLU-DIST solver structures */
-  dScalePermstructInit(NEQ, NEQ, &scaleperm);
-  dLUstructInit(NEQ, &LUstruct);
+  xScalePermstructInit(NEQ, NEQ, &scaleperm);
+  xLUstructInit(NEQ, &LUstruct);
   PStatInit(&stat);
 
   /* Call CVodeCreate to create the solver memory and specify the Adams-Moulton LMM */
@@ -324,8 +334,8 @@ int main(int argc, char* argv[])
 
   /* Free the SuperLU_DIST structures */
   PStatFree(&stat);
-  dScalePermstructFree(&scaleperm);
-  dLUstructFree(&LUstruct);
+  xScalePermstructFree(&scaleperm);
+  xLUstructFree(&LUstruct);
   Destroy_CompRowLoc_Matrix_dist(&Asuper);
   superlu_gridexit(&grid);
 

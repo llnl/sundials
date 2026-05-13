@@ -82,6 +82,18 @@
 #define FSYM "f"
 #endif
 
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#include <superlu_ddefs.h>
+#define SLU_X                          SLU_D
+#define xCreate_CompRowLoc_Matrix_dist dCreate_CompRowLoc_Matrix_dist
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#include <superlu_sdefs.h>
+#define SLU_X                          SLU_S
+#define xCreate_CompRowLoc_Matrix_dist sCreate_CompRowLoc_Matrix_dist
+#else
+#error Incompatible sunrealtype for SuperLU_DIST
+#endif
+
 /* accessor macros between (x,v) location and 1D NVector array */
 /* [variables are grouped according to spatial location] */
 #define IDX(x, v) (3 * (x) + v)
@@ -185,9 +197,9 @@ int main(int argc, char* argv[])
   SuperMatrix Msuper;         /* empty SuperLU-DIST mass matrix object */
   SuperMatrix Rsuper;         /* empty SuperLU-DIST reaction matrix object */
   gridinfo_t grid;            /* SuperLU-DIST process grid */
-  dLUstruct_t Alu, Mlu;       /* SuperLU-DIST dLUstruct_t */
-  dScalePermstruct_t Ascaleperm, Mscaleperm; /* SuperLU-DIST dScalePermstruct_t */
-  dSOLVEstruct_t Asolve, Msolve;             /* SuperLU-DIST dSOLVEstruct_t */
+  xLUstruct_t Alu, Mlu;       /* SuperLU-DIST dLUstruct_t */
+  xScalePermstruct_t Ascaleperm, Mscaleperm; /* SuperLU-DIST dScalePermstruct_t */
+  xSOLVEstruct_t Asolve, Msolve;             /* SuperLU-DIST dSOLVEstruct_t */
   SuperLUStat_t Astat, Mstat;                /* SuperLU-DIST SuperLUState_t */
   superlu_dist_options_t Aopts, Mopts;       /* SuperLU-DIST options struct */
 
@@ -432,24 +444,24 @@ int main(int argc, char* argv[])
   }
 
   /* SuperLU_DIST structures */
-  dCreate_CompRowLoc_Matrix_dist(&Asuper, NEQ, NEQ, NNZ, NEQ, 0, Adata, Acolind,
-                                 Arowptr, SLU_NR_loc, SLU_D, SLU_GE);
-  dScalePermstructInit(NEQ, NEQ, &Ascaleperm);
-  dLUstructInit(NEQ, &Alu);
+  xCreate_CompRowLoc_Matrix_dist(&Asuper, NEQ, NEQ, NNZ, NEQ, 0, Adata, Acolind,
+                                 Arowptr, SLU_NR_loc, SLU_X, SLU_GE);
+  xScalePermstructInit(NEQ, NEQ, &Ascaleperm);
+  xLUstructInit(NEQ, &Alu);
   PStatInit(&Astat);
   set_default_options_dist(&Aopts);
   Aopts.PrintStat = NO;
 
-  dCreate_CompRowLoc_Matrix_dist(&Msuper, NEQ, NEQ, NNZ, NEQ, 0, Mdata, Mcolind,
-                                 Mrowptr, SLU_NR_loc, SLU_D, SLU_GE);
-  dScalePermstructInit(NEQ, NEQ, &Mscaleperm);
-  dLUstructInit(NEQ, &Mlu);
+  xCreate_CompRowLoc_Matrix_dist(&Msuper, NEQ, NEQ, NNZ, NEQ, 0, Mdata, Mcolind,
+                                 Mrowptr, SLU_NR_loc, SLU_X, SLU_GE);
+  xScalePermstructInit(NEQ, NEQ, &Mscaleperm);
+  xLUstructInit(NEQ, &Mlu);
   PStatInit(&Mstat);
   set_default_options_dist(&Mopts);
   Mopts.PrintStat = NO;
 
-  dCreate_CompRowLoc_Matrix_dist(&Rsuper, NEQ, NEQ, NNZ, NEQ, 0, Rdata, Rcolind,
-                                 Rrowptr, SLU_NR_loc, SLU_D, SLU_GE);
+  xCreate_CompRowLoc_Matrix_dist(&Rsuper, NEQ, NEQ, NNZ, NEQ, 0, Rdata, Rcolind,
+                                 Rrowptr, SLU_NR_loc, SLU_X, SLU_GE);
 
   /* SUNDIALS structures */
   A = SUNMatrix_SLUNRloc(&Asuper, &grid, ctx);
@@ -630,10 +642,10 @@ int main(int argc, char* argv[])
   /* Free the SuperLU_DIST structures */
   PStatFree(&Astat);
   PStatFree(&Mstat);
-  dScalePermstructFree(&Ascaleperm);
-  dScalePermstructFree(&Mscaleperm);
-  dLUstructFree(&Alu);
-  dLUstructFree(&Mlu);
+  xScalePermstructFree(&Ascaleperm);
+  xScalePermstructFree(&Mscaleperm);
+  xLUstructFree(&Alu);
+  xLUstructFree(&Mlu);
   Destroy_CompRowLoc_Matrix_dist(&Asuper);
   Destroy_CompRowLoc_Matrix_dist(&Msuper);
   Destroy_CompRowLoc_Matrix_dist(&Rsuper);
