@@ -39,6 +39,7 @@ for image in "${images[@]}"; do
   docker build \
     -t "ghcr.io/llnl/sundials-ci-${image}:spack-develop" \
     --build-arg "SPACK_BASE_IMAGE=${SPACK_DEVELOP_IMAGE}" \
+    --build-arg "UPDATE_SPACK_PACKAGES=true" \
     --build-arg "spack_yaml=${image}/spack.yaml" \
     .
 done

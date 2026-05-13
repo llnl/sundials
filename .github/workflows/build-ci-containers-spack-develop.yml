@@ -2,6 +2,8 @@ name: CI Containers - spack@develop
 
 on:
   workflow_dispatch:
+  # Add for testing
+  push:
   schedule:
   - cron: '30 23 * * 0'
 
@@ -45,6 +47,7 @@ jobs:
         context: "./scripts/docker"
         build-args: |
           SPACK_BASE_IMAGE=spack/ubuntu-noble:develop
+          UPDATE_SPACK_PACKAGES=true
           spack_yaml=int${{ matrix.indexsize }}-${{ matrix.precision }}/spack.yaml
         push: true
         tags: >-

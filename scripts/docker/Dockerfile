@@ -9,6 +9,14 @@ ARG SPACK_BASE_IMAGE=spack/ubuntu-noble:1.1.1
 FROM ${SPACK_BASE_IMAGE} AS builder
 
 ARG spack_yaml
+ARG UPDATE_SPACK_PACKAGES=false
+
+# Update the builtin package repo to the latest develop branch so we pick up the
+# newest package recipes.
+RUN if [ "${UPDATE_SPACK_PACKAGES}" = "true" ]; then \
+      BUILTIN_PATH=$(spack repo list | awk '/builtin/{print $NF}') && \
+      git -C "${BUILTIN_PATH}" pull --ff-only origin develop; \
+    fi
 
 # Install python environment for docs
 RUN apt-get update && \
