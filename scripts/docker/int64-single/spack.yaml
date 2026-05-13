@@ -23,7 +23,7 @@ spack:
   - xbraid
   concretizer:
     compiler_mixing: false
-    unify: true
+    unify: when_possible # because superlu-dist needs 32-bit index blas
   config:
     install_tree:
       root: /opt/software
