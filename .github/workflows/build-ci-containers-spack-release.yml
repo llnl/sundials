@@ -18,12 +18,12 @@ env:
 
 jobs:
   build_ci_containers:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         indexsize: [32, 64]
         precision: ['single', 'double', 'extended']
-    runs-on: ubuntu-latest
     steps:
     - name: VM Hardware Info
       run: cat /proc/cpuinfo
