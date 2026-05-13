@@ -1,7 +1,6 @@
 spack:
   packages:
     all:
-      compiler: [gcc]
       target: [x86_64]
       providers:
         blas:
