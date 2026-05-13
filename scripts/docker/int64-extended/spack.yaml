@@ -18,7 +18,7 @@ spack:
       root: /opt/software
   mirrors:
     local: /var/cache/spack-mirror
-    spack-public: https://binaries.spack.io/v1.1.1
+    spack-public: https://binaries.spack.io/develop
   repos: []
   upstreams: {}
   view:
