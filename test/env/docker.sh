@@ -224,6 +224,7 @@ elif [ "$SUNDIALS_PRECISION" == "double" ]; then
 else
     export SUNDIALS_LAPACK=OFF
     unset LAPACK_LIBRARIES
+    unset BLAS_LIBRARIES
 fi
 
 # ---
