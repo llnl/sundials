@@ -1,0 +1,41 @@
+spack:
+  packages:
+    all:
+      compiler: [gcc]
+      target: [x86_64]
+      providers:
+        blas:
+        - openblas
+        mpi:
+        - openmpi
+  specs:
+  - cmake
+  - ginkgo
+  - hypre ~int64 precision=single
+  - kokkos +serial +openmp
+  - kokkos-kernels +serial +openmp
+  - openblas ~ilp64
+  - openmpi
+  - petsc ~double ~int64 ~superlu-dist ~hypre
+  - suite-sparse ^openblas ~ilp64
+  - superlu-dist ~int64 ^parmetis~int64 ^metis~int64
+  - superlu-mt@master ~int64 ~blas # TODO(DJG): update to 4.0.2
+  - trilinos +float +tpetra gotype=int
+  - xbraid
+  concretizer:
+    compiler_mixing: false
+    unify: true
+  config:
+    install_tree:
+      root: /opt/software
+  mirrors:
+    local: /var/cache/spack-mirror
+    spack-public: https://binaries.spack.io/v1.1.1
+  repos: []
+  upstreams: {}
+  view:
+    default:
+      root: /opt/view
+      projections:
+        superlu-mt: '{name}'
+        superlu-dist: '{name}'

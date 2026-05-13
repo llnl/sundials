@@ -1,0 +1,30 @@
+spack:
+  packages:
+    all:
+      compiler: [gcc]
+      target: [x86_64]
+      providers:
+        blas:
+        - openblas
+        mpi:
+        - openmpi
+  specs:
+  - cmake
+  - openmpi
+  concretizer:
+    compiler_mixing: false
+    unify: true
+  config:
+    install_tree:
+      root: /opt/software
+  mirrors:
+    local: /var/cache/spack-mirror
+    spack-public: https://binaries.spack.io/v1.1.1
+  repos: []
+  upstreams: {}
+  view:
+    default:
+      root: /opt/view
+      projections:
+        superlu-mt: '{name}'
+        superlu-dist: '{name}'
