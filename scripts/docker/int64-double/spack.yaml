@@ -22,6 +22,7 @@ spack:
   - trilinos ~float +tpetra gotype=long_long
   - xbraid
   concretizer:
+    reuse: false
     compiler_mixing: false
     unify: when_possible # because superlu-dist needs 32-bit index blas
   config:
@@ -29,7 +30,6 @@ spack:
       root: /opt/software
   mirrors:
     local: /var/cache/spack-mirror
-    spack-public: https://binaries.spack.io/develop
   repos: []
   upstreams: {}
   view:

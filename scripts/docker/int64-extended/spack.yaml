@@ -11,6 +11,7 @@ spack:
   - cmake
   - openmpi
   concretizer:
+    reuse: false
     compiler_mixing: false
     unify: true
   config:
@@ -18,7 +19,6 @@ spack:
       root: /opt/software
   mirrors:
     local: /var/cache/spack-mirror
-    spack-public: https://binaries.spack.io/develop
   repos: []
   upstreams: {}
   view:
