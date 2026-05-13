@@ -52,5 +52,3 @@ jobs:
         push: true
         tags: >-
           ${{ env.REGISTRY }}/llnl/sundials-ci-int${{ matrix.indexsize }}-${{ matrix.precision }}:spack-develop
-        cache-from: type=gha,scope=sundials-ci-int${{ matrix.indexsize }}-${{ matrix.precision }}-develop
-        cache-to: type=gha,mode=max,scope=sundials-ci-int${{ matrix.indexsize }}-${{ matrix.precision }}-develop
