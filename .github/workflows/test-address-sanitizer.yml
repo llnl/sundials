@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: build_files_${{ matrix.indexsize }}_${{ matrix.precision }}_${{ matrix.buildtype }}_${{ matrix.tpls }}
+          name: build_files_address_sanitizer_${{ matrix.indexsize }}_${{ matrix.precision }}_${{ matrix.buildtype }}_${{ matrix.tpls }}
           path: |
             ${{ github.workspace }}/test/build_*
             !${{ github.workspace }}/test/build_*/Testing/output
@@ -56,6 +56,6 @@ jobs:
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: output_files_${{ matrix.indexsize }}_${{ matrix.precision }}_${{ matrix.buildtype }}_${{ matrix.tpls }}
+          name: output_files_address_sanitizer_${{ matrix.indexsize }}_${{ matrix.precision }}_${{ matrix.buildtype }}_${{ matrix.tpls }}
           path: |
             ${{ github.workspace }}/test/build_*/Testing/
