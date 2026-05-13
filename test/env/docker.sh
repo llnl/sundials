@@ -214,10 +214,12 @@ export MPIEXEC_PREFLAGS="--oversubscribe"
 if [ "$SUNDIALS_PRECISION" == "single" ]; then
     export SUNDIALS_LAPACK=ON
     export LAPACK_ROOT=/opt/view
+    export BLAS_LIBRARIES="${LAPACK_ROOT}/lib/libopenblas.so"
     export LAPACK_LIBRARIES="${LAPACK_ROOT}/lib/libopenblas.so"
 elif [ "$SUNDIALS_PRECISION" == "double" ]; then
     export SUNDIALS_LAPACK=ON
     export LAPACK_ROOT=/opt/view
+    export BLAS_LIBRARIES="${LAPACK_ROOT}/lib/libopenblas.so"
     export LAPACK_LIBRARIES="${LAPACK_ROOT}/lib/libopenblas.so"
 else
     export SUNDIALS_LAPACK=OFF
