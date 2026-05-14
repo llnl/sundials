@@ -21,4 +21,8 @@ Fixed minor bug in reporting the maximum number of stages in
 Removed duplicate logging output that would cause the Python logging tools to fail
 with a repeated key error.
 
+Fixed empty ``elseif()`` cases in the CMake files for the Fortran interfaces to
+the ManyVector and MPIPlusX vectors which could results in a missing include
+path when compiling if an MPI compiler wrapper is not found.
+
 **Deprecation Notices**
