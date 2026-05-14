@@ -40,8 +40,8 @@ endif()
 
 # Deprecated with SUNDIALS 6.4.0
 if(DEFINED SUPERLUDIST_LIBRARY_DIR)
-  message(DEPRECATION "The CMake option SUPERLUDIST_LIBRARY_DIR is deprecated. "
-                      "Use SUPERLUDIST_DIR instead.")
+  message(WARNING "The CMake option SUPERLUDIST_LIBRARY_DIR is deprecated. "
+                  "Use SUPERLUDIST_DIR instead.")
   set(SUPERLUDIST_DIR
       "${SUPERLUDIST_LIBRARY_DIR}/../"
       CACHE BOOL "SuperLU_DIST root directory" FORCE)
@@ -52,8 +52,8 @@ endif()
 
 # Deprecated CUDA_ARCH option
 if(DEFINED CUDA_ARCH)
-  message(DEPRECATION "The CMake option CUDA_ARCH is deprecated. "
-                      "Use CMAKE_CUDA_ARCHITECTURES instead.")
+  message(WARNING "The CMake option CUDA_ARCH is deprecated. "
+                  "Use CMAKE_CUDA_ARCHITECTURES instead.")
   # convert sm_** to just **
   string(REGEX MATCH "[0-9]+" arch_name "${CUDA_ARCH}")
   set(CMAKE_CUDA_ARCHITECTURES
@@ -66,7 +66,7 @@ endif()
 
 if(SUNDIALS_CALIPER_OUTPUT_DIR)
   message(
-    DEPRECATION
+    WARNING
       "The CMake option SUNDIALS_CALIPER_OUTPUT_DIR is deprecated. "
       "Use SUNDIALS_TEST_CALIPER_OUTPUT_DIR and SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR instead."
   )
