@@ -19,8 +19,12 @@ Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 Fixed minor bug in reporting the maximum number of stages in `ARKodeGetStageIndex`
 when running SSP methods in LSRKStep.
 
-Removed duplicate logging output that would cause the Python logging tools to fail
-with a repeated key error.
+Removed duplicate logging output that would cause the Python logging tools to
+fail with a repeated key error.
+
+Fixed a CMake issue that prevented finding third-party libraries installed in
+default search locations e.g., paths included in `CMAKE_INSTALL_PREFIX`
+([Issue #935](https://github.com/llnl/sundials/issues/935)).
 
 ### Deprecation Notices
 
