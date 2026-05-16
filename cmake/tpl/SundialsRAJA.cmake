@@ -49,7 +49,7 @@ endif()
 # find the library configuration file
 find_file(
   RAJA_CONFIGHPP_PATH config.hpp
-  HINTS "${RAJA_DIR}"
+  PATHS "${RAJA_DIR}"
   PATH_SUFFIXES include include/RAJA)
 mark_as_advanced(FORCE RAJA_CONFIGHPP_PATH)
 
@@ -60,7 +60,6 @@ find_package(
   PATHS
   "${RAJA_DIR}"
   "${RAJA_DIR}/share/raja/cmake"
-  NO_DEFAULT_PATH
   REQUIRED)
 
 # determine the backends

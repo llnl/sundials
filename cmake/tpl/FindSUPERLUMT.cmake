@@ -89,12 +89,7 @@ if(NOT SUPERLUMT_LIBRARY)
   # search user provided directory path
   find_library(
     SUPERLUMT_LIBRARY ${SUPERLUMT_LIBRARY_NAME}
-    PATHS ${SUPERLUMT_LIBRARY_DIR}
-    NO_DEFAULT_PATH)
-  # if user didn't provide a path, search anywhere
-  if(NOT (SUPERLUMT_LIBRARY_DIR OR SUPERLUMT_LIBRARY))
-    find_library(SUPERLUMT_LIBRARY ${SUPERLUMT_LIBRARY_NAME})
-  endif()
+    PATHS ${SUPERLUMT_LIBRARY_DIR})
   mark_as_advanced(SUPERLUMT_LIBRARY)
 endif()
 

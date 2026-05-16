@@ -140,8 +140,7 @@ else()
     XBRAID_INCLUDE_DIR braid.h
     PATHS ${XBRAID_DIR}
     PATH_SUFFIXES include braid
-    DOC "XBraid include directory"
-    NO_DEFAULT_PATH)
+    DOC "XBraid include directory")
 
   # check if the include directory was found
   if(NOT XBRAID_INCLUDE_DIR)
@@ -157,8 +156,7 @@ else()
     XBRAID_LIBRARY braid
     PATHS ${XBRAID_DIR}
     PATH_SUFFIXES lib braid
-    DOC "XBraid library"
-    NO_DEFAULT_PATH)
+    DOC "XBraid library")
 
   # check if the library was found
   if(NOT XBRAID_LIBRARY)
