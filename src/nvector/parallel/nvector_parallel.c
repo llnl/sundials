@@ -84,22 +84,34 @@ N_Vector N_VNewEmpty_Parallel(MPI_Comm comm, sunindextype local_length,
   SUNFunctionBegin(sunctx);
   N_Vector v;
   N_VectorContent_Parallel content;
-  sunindextype n, Nsum;
 
   SUNAssertNull(local_length >= 0, SUN_ERR_ARG_OUTOFRANGE);
   SUNAssertNull(global_length >= 0, SUN_ERR_ARG_OUTOFRANGE);
 
-  /* Compute global length as sum of local lengths */
-  n = local_length;
-  SUNCheckMPICallNull(
-    MPI_Allreduce(&n, &Nsum, 1, MPI_SUNINDEXTYPE, MPI_SUM, comm));
-  if (Nsum != global_length)
+  sunindextype total_length = 0;
+#if defined(SUNDIALS_DEBUG)
+  /* Always compute and check if the global length is correct */
+  SUNCheckMPICallNull(MPI_Allreduce(&local_length, &total_length, 1, MPI_SUNINDEXTYPE, MPI_SUM, comm));
+  if (global_length == 0)
+  {
+    global_length = total_length;
+  }
+  else if (total_length != global_length)
   {
     SUNHandleErrWithMsg(__LINE__, __func__,
                         __FILE__, "global_length does not equal the computed global length",
                         SUN_ERR_ARG_INCOMPATIBLE, SUNCTX_);
     return NULL;
   }
+#else
+  /* Only compute the global length if necessary, all ranks must pass a global
+     length of zero otherwise this will deadlock */
+  if (global_length == 0)
+  {
+    SUNCheckMPICallNull(MPI_Allreduce(&local_length, &total_length, 1, MPI_SUNINDEXTYPE, MPI_SUM, comm));
+    global_length = total_length;
+  }
+#endif
 
   /* Create an empty vector object */
   v = NULL;
