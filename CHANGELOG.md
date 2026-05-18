@@ -16,6 +16,20 @@ Updated `examples/cvode/petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 `malloc`.
 
+Fixed minor bug in reporting the maximum number of stages in `ARKodeGetStageIndex`
+when running SSP methods in LSRKStep.
+
+Removed duplicate logging output that would cause the Python logging tools to
+fail with a repeated key error.
+
+Fixed a CMake issue that prevented finding third-party libraries installed in
+default search locations e.g., paths included in `CMAKE_INSTALL_PREFIX`
+([Issue #935](https://github.com/llnl/sundials/issues/935)).
+
+Fixed empty `elseif()` cases in the CMake files for the Fortran interfaces to
+the ManyVector and MPIPlusX vectors which could results in a missing include
+path when compiling if an MPI compiler wrapper is not found.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.7.0

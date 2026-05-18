@@ -31,9 +31,8 @@ Using GMRES iterative linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 23.5578942788034, terr_k = 47.1157885576069
-[DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
 [DEBUG][rank 0][IDATestError][error-estimate] ck_enorm_k = 23.5578942788034
-[DEBUG][rank 0][IDAHandleNFlag][first-error-test_fail] kk = 1, eta = 0.25, h = 0.00025
+[DEBUG][rank 0][IDAHandleNFlag][error-test-fail] nef = 1
 [INFO][rank 0][IDAStep][end-step-attempt] status = failed error test, dsm = 23.5578942788034, kflag = 20
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 1, tn = 0, h = 0.00025, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
@@ -62,9 +61,8 @@ Using GMRES iterative linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 1.47287906618417, terr_k = 2.94575813236834
-[DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
 [DEBUG][rank 0][IDATestError][error-estimate] ck_enorm_k = 1.47287906618417
-[DEBUG][rank 0][IDAHandleNFlag][second-error-test-fail] kk = 1, eta = 0.25, h = 6.25e-05
+[DEBUG][rank 0][IDAHandleNFlag][error-test-fail] nef = 2
 [INFO][rank 0][IDAStep][end-step-attempt] status = failed error test, dsm = 1.47287906618417, kflag = 20
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 1, tn = 0, h = 6.25e-05, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
@@ -93,10 +91,9 @@ Using GMRES iterative linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 0.0920633747821273, terr_k = 0.184126749564255
-[DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
 [DEBUG][rank 0][IDATestError][error-estimate] ck_enorm_k = 0.0920633747821273
-[INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.0920633747821273
 [DEBUG][rank 0][IDACompleteStep][new-step-and-order] knew = 1, err_knew = 0.0920633747821273, eta = 2, hnew = 0.000125
+[INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.0920633747821273
  6.250000000000000e-05    1.224744870587421e+00    1.732050356527687e+00    4.054883095960804e-10    2.255137558915266e-07
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 2, tn = 6.25e-05, h = 0.000125, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
@@ -117,10 +114,9 @@ Using GMRES iterative linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 1
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 0.490988500999434, terr_k = 0.981977001998869
-[DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
 [DEBUG][rank 0][IDATestError][error-estimate] ck_enorm_k = 0.490988500999434
-[INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.490988500999434
 [DEBUG][rank 0][IDACompleteStep][new-step-and-order] knew = 1, err_knew = 0.490988500999434, eta = 1, hnew = 0.000125
+[INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.490988500999434
  1.875000000000000e-04    1.224744865733311e+00    1.732047650340516e+00    2.070158044986670e-09    1.127482510687727e-06
 [INFO][rank 0][IDAStep][begin-step-attempt] step = 3, tn = 0.0001875, h = 0.000125, q = 1
 [INFO][rank 0][IDANls][begin-nonlinear-solve] tol = 0.33
@@ -141,10 +137,9 @@ Using GMRES iterative linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [INFO][rank 0][IDANls][end-nonlinear-solve] status = success, iters = 1
 [DEBUG][rank 0][IDATestError][estimate-error-order-k] err_k = 0.368240764380389, terr_k = 0.736481528760778
-[DEBUG][rank 0][IDATestError][new-order] kk = 1, knew = 1
 [DEBUG][rank 0][IDATestError][error-estimate] ck_enorm_k = 0.368240764380389
-[INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.368240764380389
 [DEBUG][rank 0][IDACompleteStep][new-step-and-order] knew = 1, err_knew = 0.368240764380389, eta = 1, hnew = 0.000125
+[INFO][rank 0][IDAStep][end-step-attempt] status = success, dsm = 0.368240764380389
  3.125000000000000e-04    1.224744857633826e+00    1.732043140054366e+00    3.790763480893133e-09    2.029337465403458e-06
 ------------------------------------------------------------------------------------------------------------------------------
 Current time                  = 0.0003125

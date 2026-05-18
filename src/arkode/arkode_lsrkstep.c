@@ -2239,7 +2239,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Evaluate stages j = 2,...,5 */
   for (int j = 2; j <= 5; j++)
   {
-    /* Complete the previous stage (postprocesses the stage, evaluate the RHS, and
+    /* Complete the previous stage (postprocess the stage, evaluate the RHS, and
        store it in tempv3) */
 
     /* apply user-supplied stage postprocessing function (if supplied) */
