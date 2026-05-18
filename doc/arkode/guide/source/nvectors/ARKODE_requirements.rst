@@ -51,6 +51,8 @@ some may be needed by ``SUNNonlinearSolver`` or ``SUNLinearSolver``
 modules).
 
 
+.. tabularcolumns:: |\Y{0.20}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|
+
 .. _NVectors.ARKODE.Table:
 .. table:: List of vector functions usage by ARKODE code modules
 
