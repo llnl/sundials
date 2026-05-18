@@ -181,7 +181,12 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
 
   /* Indicate that problem needs to be initialized */
   ark_mem->initsetup  = SUNTRUE;
-  ark_mem->init_type  = RESIZE_INIT;
+  /* Prior initialization, not the pending init type, determines resize setup. */
+  if (ark_mem->initialized)
+  {
+    ark_mem->init_type    = RESIZE_INIT;
+    ark_mem->preallocated = SUNFALSE;
+  }
   ark_mem->firststage = SUNTRUE;
 
   /* Call the stepper-specific resize (if provided) */
