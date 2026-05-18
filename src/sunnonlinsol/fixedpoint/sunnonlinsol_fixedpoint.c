@@ -255,10 +255,10 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     {
       retval = NLS->getupdatenormfn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm),
                                     NLS->getupdatenorm_data);
-      if (retval != SUN_SUCCESS)
-      {
-        FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
-      }
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
+                 "status = failed getupdatenormfn call, retval = %d",
+                 retval);
+      return retval;
     }
     else { FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
 
