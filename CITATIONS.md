@@ -4,6 +4,20 @@ We ask users of SUNDIALS to cite the following papers in any publications
 reporting work done with SUNDIALS:
 
 ```bibtex
+@article{roberts2026sundials,
+  title     = {New {Time} {Integrators} and {Capabilities} in {SUNDIALS} {Versions} 6.2.0-7.4.0},
+  author    = {Roberts, Steven B and Aggul, Mustafa and Reynolds, Daniel R and Balos, Cody J and Gardner, David J and Woodward, Carol S},
+  journal   = {ACM Transactions on Mathematical Software (TOMS)},
+  publisher = {ACM},
+  volume    = {52},
+  number    = {1},
+  pages     = {8:1--8:14},
+  year      = {2026},
+  doi       = {10.1145/3797888}
+}
+```
+
+```bibtex
 @article{gardner2022sundials,
   title     = {Enabling new flexibility in the {SUNDIALS} suite of nonlinear and differential/algebraic equation solvers},
   author    = {Gardner, David J and Reynolds, Daniel R and Woodward, Carol S and Balos, Cody J},
@@ -46,7 +60,7 @@ If any GPU features of SUNDIALS were utilized, please also cite:
 }
 ```
 
-When using the ARKODE package from SUNDIALS, please also cite:
+If ARKODE was used, please also cite:
 
 ```bibtex
 @article{reynolds2023arkode,
@@ -58,6 +72,20 @@ When using the ARKODE package from SUNDIALS, please also cite:
   pages   = {1--26},
   year    = {2023},
   doi     = {10.1145/3594632}
+}
+```
+
+If time-adaptive multirate calculations from ARKODE were used, please also cite :cite:p:`RAML:26`:
+
+```bibtex
+@article{reynolds2026efficient,
+  title     = {Efficient and {Flexible} {Multirate} {Temporal} {Adaptivity}},
+  author    = {Reynolds, Daniel R. and Amihere, Sylvia and Mitchell, Dashon and Luan, Vu Thai},
+  journal   = {Journal of Computational and Applied Mathematics},
+  publisher = {Elsevier},
+  year      = {2026},
+  pages     = {117773},
+  doi       = {10.1016/j.cam.2026.117773}
 }
 ```
 

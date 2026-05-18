@@ -14,7 +14,7 @@
    ----------------------------------------------------------------
 
 We ask users of SUNDIALS to cite the following papers in any publications
-reporting work done with SUNDIALS cite :cite:p:`RARBGW:26, GRWB:22, HBGLSSW:05`:
+reporting work done with SUNDIALS :cite:p:`RARBGW:26, GRWB:22, HBGLSSW:05`:
 
 .. code-block:: latex
 
@@ -102,4 +102,3 @@ If time-adaptive multirate calculations from ARKODE were used, please also cite 
      pages     = {117773},
      doi       = {10.1016/j.cam.2026.117773}
    }
-
