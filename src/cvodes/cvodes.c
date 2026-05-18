@@ -6171,9 +6171,6 @@ static int cvStep(CVodeMem cv_mem)
     break;
   }
 
-  SUNLogInfo(CV_LOGGER, "end-step-attempt",
-             "status = success, dsm = " SUN_FORMAT_G, dsm);
-
   /* Nonlinear system solve and error test were both successful.
      Update data, and consider change of step and/or order.       */
 
@@ -6223,6 +6220,9 @@ static int cvStep(CVodeMem cv_mem)
                                  cv_mem->cv_acorQS, cv_mem->cv_acorQS);
     if (retval != CV_SUCCESS) { return (CV_VECTOROP_ERR); }
   }
+
+  SUNLogInfo(CV_LOGGER, "end-step-attempt",
+             "status = success, dsm = " SUN_FORMAT_G, dsm);
 
   return (CV_SUCCESS);
 }
@@ -7653,10 +7653,6 @@ static int cvDoErrorTest(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
   N_Vector wrk1, wrk2;
 
   dsm = acor_nrm * cv_mem->cv_tq[2];
-
-  SUNLogDebug(CV_LOGGER, "error-test",
-              "step = %li, h = " SUN_FORMAT_G ", dsm = " SUN_FORMAT_G,
-              cv_mem->cv_nst, cv_mem->cv_h, dsm);
 
   /* If est. local error norm dsm passes test, return CV_SUCCESS */
   *dsmPtr = dsm;
