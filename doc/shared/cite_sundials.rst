@@ -13,8 +13,9 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-We ask users of SUNDIALS to cite the following papers in any publications
-reporting work done with SUNDIALS :cite:p:`RARBGW:26, GRWB:22, HBGLSSW:05`:
+We ask users to cite one or more of the following papers in their publications
+reporting work done with SUNDIALS.  High-level publications describing SUNDIALS
+in general include :cite:p:`RARBGW:26, GRWB:22, HBGLSSW:05`:
 
 .. code-block:: latex
 
@@ -58,7 +59,7 @@ reporting work done with SUNDIALS :cite:p:`RARBGW:26, GRWB:22, HBGLSSW:05`:
      doi       = {10.1145/1089014.1089020}
    }
 
-If any GPU features of SUNDIALS were utilized, please also cite :cite:p:`balos2021enabling`:
+GPU features of SUNDIALS are described in :cite:p:`balos2021enabling`:
 
 .. code-block:: latex
 
@@ -73,7 +74,7 @@ If any GPU features of SUNDIALS were utilized, please also cite :cite:p:`balos20
      doi       = {10.1016/j.parco.2021.102836}
    }
 
-If ARKODE was used, please also cite :cite:p:`RGWC:23`:
+The ARKODE solver was introduced in :cite:p:`RGWC:23`:
 
 .. code-block:: latex
 
@@ -89,7 +90,7 @@ If ARKODE was used, please also cite :cite:p:`RGWC:23`:
      doi       = {10.1145/3594632}
    }
 
-If time-adaptive multirate calculations from ARKODE were used, please also cite :cite:p:`RAML:26`:
+Time adaptivity for ARKODE's multirate solvers is described in :cite:p:`RAML:26`:
 
 .. code-block:: latex
 

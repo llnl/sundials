@@ -1,7 +1,8 @@
 # Citing SUNDIALS
 
-We ask users of SUNDIALS to cite the following papers in any publications
-reporting work done with SUNDIALS:
+We ask users to cite one or more of the following papers in their publications
+reporting work done with SUNDIALS.  High-level publications describing SUNDIALS
+in general include:
 
 ```bibtex
 @article{roberts2026sundials,
@@ -45,7 +46,7 @@ reporting work done with SUNDIALS:
 }
 ```
 
-If any GPU features of SUNDIALS were utilized, please also cite:
+GPU features of SUNDIALS are described in:
 
 ```bibtex
 @article{balos2021enabling,
@@ -60,7 +61,7 @@ If any GPU features of SUNDIALS were utilized, please also cite:
 }
 ```
 
-If ARKODE was used, please also cite:
+The ARKODE solver was introduced in:
 
 ```bibtex
 @article{reynolds2023arkode,
@@ -75,7 +76,7 @@ If ARKODE was used, please also cite:
 }
 ```
 
-If time-adaptive multirate calculations from ARKODE were used, please also cite :cite:p:`RAML:26`:
+Time adaptivity for ARKODE's multirate solvers is described in:
 
 ```bibtex
 @article{reynolds2026efficient,
@@ -89,8 +90,8 @@ If time-adaptive multirate calculations from ARKODE were used, please also cite 
 }
 ```
 
-We also ask that users cite the documentation for the package and version that
-they are using rather than the combined SUNDIALS online guide:
+If desired, users can instead cite the documentation for the package and version that
+they are using rather than SUNDIALS as a whole:
 
 ```bibtex
 @Misc{arkodeDocumentation,
