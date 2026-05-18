@@ -165,7 +165,9 @@ user-callable functions.
       * A :c:type:`SUNErrCode`
 
    **Notes:**
-      By default ``stiffr`` computation is disabled.
+      By default ``stiffr`` computation is disabled.  This is automatically 
+      enabled when the Newton solver is used from within the `SUNNonlinSol_Auto` 
+      module (see :numref:`SUNNonlinSol.Auto`).
 
 .. c:function:: SUNErrCode SUNNonlinSolGetStiffr_Newton(SUNNonlinearSolver NLS, sunrealtype *stiffr)
 
