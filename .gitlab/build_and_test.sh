@@ -42,6 +42,9 @@ hostname=${hostname%%[0-9]*}
 # number of parallel build jobs
 BUILD_JOBS=${BUILD_JOBS:-"1"}
 
+# LC workaround for MPI / CSM / PSM errors
+export PSM2_KASSIST_MODE="auto"
+
 if [[ "${option}" != "--build-only" && "${option}" != "--test-only" ]]
 then
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
