@@ -35,7 +35,7 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: Configure CMake (Static)
-      run: cmake -G "Ninja" -B ${{github.workspace}}/build_static -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_FLAGS=-Wno-deprecated-declarations -DCMAKE_C_COMPILER=icx-cl -DCMAKE_CXX_COMPILER=icx-cl -DCMAKE_Fortran_COMPILER=ifx -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_FORTRAN_MODULE_INTERFACE=ON -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=OFF -DEXAMPLES_ENABLE_CXX=ON
+      run: cmake -W error=dev -G "Ninja" -B ${{github.workspace}}/build_static -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_FLAGS=-Wno-deprecated-declarations -DCMAKE_C_COMPILER=icx-cl -DCMAKE_CXX_COMPILER=icx-cl -DCMAKE_Fortran_COMPILER=ifx -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_FORTRAN_MODULE_INTERFACE=ON -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=OFF -DEXAMPLES_ENABLE_CXX=ON
 
     - name: Build (Static)
       run: cmake --build ${{github.workspace}}/build_static --verbose
@@ -45,7 +45,7 @@ jobs:
       run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
 
     - name: Configure CMake (Shared)
-      run: cmake -G "Ninja" -B ${{github.workspace}}/build_shared -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_FLAGS=-Wno-deprecated-declarations -DCMAKE_C_COMPILER=icx-cl -DCMAKE_CXX_COMPILER=icx-cl -DCMAKE_Fortran_COMPILER=ifx -DBUILD_STATIC_LIBS=OFF -DBUILD_SHARED_LIBS=ON -DBUILD_FORTRAN_MODULE_INTERFACE=ON -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=OFF -DEXAMPLES_ENABLE_CXX=ON
+      run: cmake -W error=dev -G "Ninja" -B ${{github.workspace}}/build_shared -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_FLAGS=-Wno-deprecated-declarations -DCMAKE_C_COMPILER=icx-cl -DCMAKE_CXX_COMPILER=icx-cl -DCMAKE_Fortran_COMPILER=ifx -DBUILD_STATIC_LIBS=OFF -DBUILD_SHARED_LIBS=ON -DBUILD_FORTRAN_MODULE_INTERFACE=ON -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=OFF -DEXAMPLES_ENABLE_CXX=ON
 
     - name: Build (Shared)
       run: cmake --build ${{github.workspace}}/build_shared --verbose

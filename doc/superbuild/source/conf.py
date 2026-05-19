@@ -40,7 +40,7 @@ extensions = [
     "sphinx_multitoc_numbering",
     "sphinx_rtd_theme",
     "sphinx_sundials",
-    "sphinx_toolbox.collapse",
+    "sphinx_design",
     "sphinx.ext.autodoc",
     "sphinx.ext.extlinks",
     "sphinx.ext.graphviz",

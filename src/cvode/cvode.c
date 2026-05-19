@@ -2490,9 +2490,6 @@ static int cvStep(CVodeMem cv_mem)
     break;
   }
 
-  SUNLogInfo(CV_LOGGER, "end-step-attempt",
-             "status = success, dsm = " SUN_FORMAT_G, dsm);
-
   /* Nonlinear system solve and error test were both successful.
      Update data, and consider change of step and/or order.       */
 
@@ -2513,6 +2510,9 @@ static int cvStep(CVodeMem cv_mem)
       estimated local error vector. */
 
   N_VScale(cv_mem->cv_tq[2], cv_mem->cv_acor, cv_mem->cv_acor);
+
+  SUNLogInfo(CV_LOGGER, "end-step-attempt",
+             "status = success, dsm = " SUN_FORMAT_G, dsm);
 
   return (CV_SUCCESS);
 }
@@ -3456,8 +3456,6 @@ static int cvDoErrorTest(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
   int retval;
 
   dsm = cv_mem->cv_acnrm * cv_mem->cv_tq[2];
-
-  SUNLogDebug(CV_LOGGER, "error-test", "dsm = " SUN_FORMAT_G, dsm);
 
   /* If est. local error norm dsm passes test, return CV_SUCCESS */
   *dsmPtr = dsm;
