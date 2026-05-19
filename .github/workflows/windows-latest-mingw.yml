@@ -33,9 +33,11 @@ jobs:
           - msystem: MINGW64
             target-prefix: mingw-w64-x86_64
             install-tpls: true
+            enable-fortran: true
           - msystem: MINGW32
             target-prefix: mingw-w64-i686
             install-tpls: false
+            enable-fortran: false
 
     steps:
     - uses: actions/checkout@v6
@@ -49,7 +51,7 @@ jobs:
             base-devel
             ${{ matrix.target-prefix }}-cmake
             ${{ matrix.target-prefix }}-gcc
-            ${{ matrix.target-prefix }}-gcc-fortran
+            ${{ matrix.enable-fortran && format('{0}-gcc-fortran', matrix.target-prefix) || '' }}
             ${{ matrix.install-tpls && format('{0}-openblas', matrix.target-prefix) || '' }}
             ${{ matrix.install-tpls && format('{0}-suitesparse', matrix.target-prefix) || '' }}
 
@@ -57,11 +59,12 @@ jobs:
       # Configure CMake in a 'build' subdirectory
       run: |
         cmake \
+          -W error=dev \
           -G "MSYS Makefiles" \
           -B ${GITHUB_WORKSPACE}/build_static \
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
           -DCMAKE_C_FLAGS=-Wno-deprecated-declarations \
-          -DBUILD_FORTRAN_MODULE_INTERFACE=ON \
+          -DBUILD_FORTRAN_MODULE_INTERFACE=${{ matrix.enable-fortran && 'ON' || 'OFF' }} \
           -DBUILD_SHARED_LIBS=OFF \
           -DSUNDIALS_BUILD_WITH_PROFILING=ON \
           -DSUNDIALS_LOGGING_LEVEL=2 \
@@ -84,6 +87,7 @@ jobs:
       # Configure CMake in a 'build' subdirectory
       run: |
         cmake \
+          -W error=dev \
           -G "MSYS Makefiles" \
           -B ${GITHUB_WORKSPACE}/build_shared \
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \

@@ -15,6 +15,16 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
  * This is the testing routine for the NVector implementation using Kokkos.
+ *
+ * Three construction scenarios are exercised:
+ *
+ *   A. Allocating constructor     -- Vector(length, sunctx)
+ *   B. Managed view constructor   -- Vector(managed_view, sunctx)
+ *   C. Unmanaged view constructor -- Vector(unmanaged_view, sunctx)
+ *
+ * Additional vectors are obtained via N_VClone, which always returns a managed
+ * Vector, to mirror the pattern in SUNDIALS packages where the user supplies
+ * an initial vector and the integrator clones it to create internal workspace.
  * ---------------------------------------------------------------------------*/
 
 #include <nvector/nvector_kokkos.hpp>
@@ -39,12 +49,72 @@ using ExecSpace = Kokkos::OpenMP;
 using ExecSpace = Kokkos::Serial;
 #endif
 
-using VecType  = sundials::kokkos::Vector<ExecSpace>;
+using VecType = sundials::kokkos::Vector<ExecSpace>;
+using UnmanagedVecType =
+  sundials::kokkos::Vector<ExecSpace, ExecSpace::memory_space, Kokkos::MemoryUnmanaged>;
 using SizeType = VecType::size_type;
 
-/* ----------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
+ * Run the vector operation tests
+ * ---------------------------------------------------------------------------*/
+static int run_all_tests(N_Vector X, N_Vector Y, N_Vector Z, sunindextype length)
+{
+  int fails{0};
+
+  printf("\nTesting standard vector operations:\n\n");
+
+  fails += Test_N_VAbs(X, Z, length, 0);
+  fails += Test_N_VAddConst(X, Z, length, 0);
+  fails += Test_N_VCompare(X, Z, length, 0);
+  fails += Test_N_VConst(X, length, 0);
+  fails += Test_N_VConstrMask(X, Y, Z, length, 0);
+  fails += Test_N_VDiv(X, Y, Z, length, 0);
+  fails += Test_N_VDotProd(X, Y, length, 0);
+  fails += Test_N_VInv(X, Z, length, 0);
+  fails += Test_N_VInvTest(X, Z, length, 0);
+  fails += Test_N_VL1Norm(X, length, 0);
+  fails += Test_N_VLinearSum(X, Y, Z, length, 0);
+  fails += Test_N_VMaxNorm(X, length, 0);
+  fails += Test_N_VMin(X, length, 0);
+  fails += Test_N_VMinQuotient(X, Y, length, 0);
+  fails += Test_N_VProd(X, Y, Z, length, 0);
+  fails += Test_N_VScale(X, Z, length, 0);
+  fails += Test_N_VCopy(X, Z, length, 0);
+  fails += Test_N_VWL2Norm(X, Y, length, 0);
+  fails += Test_N_VWrmsNorm(X, Y, length, 0);
+  fails += Test_N_VWrmsNormMask(X, Y, Z, length, 0);
+
+  printf("\nTesting fused and vector array operations (disabled):\n\n");
+
+  fails += Test_N_VLinearCombination(X, length, 0);
+  fails += Test_N_VScaleAddMulti(X, length, 0);
+  fails += Test_N_VDotProdMulti(X, length, 0);
+  fails += Test_N_VLinearSumVectorArray(X, length, 0);
+  fails += Test_N_VScaleVectorArray(X, length, 0);
+  fails += Test_N_VConstVectorArray(X, length, 0);
+  fails += Test_N_VWrmsNormVectorArray(X, length, 0);
+  fails += Test_N_VWrmsNormMaskVectorArray(X, length, 0);
+  fails += Test_N_VScaleAddMultiVectorArray(X, length, 0);
+  fails += Test_N_VLinearCombinationVectorArray(X, length, 0);
+
+  printf("\nTesting local reduction operations:\n\n");
+
+  fails += Test_N_VDotProdLocal(X, Y, length, 0);
+  fails += Test_N_VMaxNormLocal(X, length, 0);
+  fails += Test_N_VMinLocal(X, length, 0);
+  fails += Test_N_VL1NormLocal(X, length, 0);
+  fails += Test_N_VWSqrSumLocal(X, Y, length, 0);
+  fails += Test_N_VWSqrSumMaskLocal(X, Y, Z, length, 0);
+  fails += Test_N_VInvTestLocal(X, Z, length, 0);
+  fails += Test_N_VConstrMaskLocal(X, Y, Z, length, 0);
+  fails += Test_N_VMinQuotientLocal(X, Y, length, 0);
+
+  return fails;
+}
+
+/* -----------------------------------------------------------------------------
  * Main NVector Testing Routine
- * --------------------------------------------------------------------*/
+ * ---------------------------------------------------------------------------*/
 int main(int argc, char* argv[])
 {
   int fails{0};        /* counter for test failures */
@@ -70,87 +140,171 @@ int main(int argc, char* argv[])
   print_timing = atoi(argv[2]);
   SetTiming(print_timing, 0);
 
-  printf("Testing KOKKOS N_Vector \n");
-
-  printf("Vector length %ld \n\n", (long int)length);
-
   Kokkos::initialize(argc, argv);
   {
-    VecType X{static_cast<SizeType>(length), sunctx};
+    /* -------------------------------------------------------------------------
+     * Scenario A: allocating constructor
+     *
+     * X owns its memory. Y and Z are managed clones of X. All three vectors
+     * share the same VecType specialisation so there is no managed/unmanaged
+     * mixing.
+     * -----------------------------------------------------------------------*/
+    printf("====================================================\n");
+    printf("Testing KOKKOS N_Vector: allocating constructor\n");
+    printf("Vector length %ld\n", (long int)length);
+    printf("====================================================\n");
 
-    /* Check vector ID */
-    fails += Test_N_VGetVectorID(X, SUNDIALS_NVEC_KOKKOS, 0);
+    {
+      VecType X{static_cast<SizeType>(length), sunctx};
 
-    /* Test clone functions */
-    fails += Test_N_VClone(X, length, 0);
-    fails += Test_N_VCloneVectorArray(5, X, length, 0);
+      fails += Test_N_VGetVectorID(X, SUNDIALS_NVEC_KOKKOS, 0);
+      fails += Test_N_VClone(X, length, 0);
+      fails += Test_N_VCloneVectorArray(5, X, length, 0);
+      fails += Test_N_VGetLength(X, 0);
+      fails += Test_N_VGetCommunicator(X, SUN_COMM_NULL, 0);
 
-    /* Check vector length */
-    fails += Test_N_VGetLength(X, 0);
+      N_Vector Y_nv = N_VClone(X);
+      N_Vector Z_nv = N_VClone(X);
 
-    /* Check vector communicator */
-    fails += Test_N_VGetCommunicator(X, SUN_COMM_NULL, 0);
+      fails += run_all_tests(X, Y_nv, Z_nv, length);
 
-    /* Clone additional vectors for testing */
-    VecType Y{X};
-    VecType Z{X};
+      N_VDestroy(Y_nv);
+      N_VDestroy(Z_nv);
+    }
 
-    /* Standard vector operation tests */
-    printf("\nTesting standard vector operations:\n\n");
+    /* -------------------------------------------------------------------------
+     * Scenario B: managed view constructor
+     *
+     * X is constructed from a pre-existing managed Kokkos view. The view is
+     * shared between the caller and the Vector (reference counted). Y and Z are
+     * managed clones. All three vectors are the same VecType specialisation; no
+     * managed/unmanaged mixing occurs.
+     *
+     * This exercises the view constructor path and verifies that constructing
+     * from a managed view does not allocate a second buffer.
+     * -----------------------------------------------------------------------*/
+    printf("\n====================================================\n");
+    printf("Testing KOKKOS N_Vector: managed view constructor\n");
+    printf("Vector length %ld\n", (long int)length);
+    printf("====================================================\n");
 
-    fails += Test_N_VAbs(X, Z, length, 0);
-    fails += Test_N_VAddConst(X, Z, length, 0);
-    fails += Test_N_VCompare(X, Z, length, 0);
-    fails += Test_N_VConst(X, length, 0);
-    fails += Test_N_VConstrMask(X, Y, Z, length, 0);
-    fails += Test_N_VDiv(X, Y, Z, length, 0);
-    fails += Test_N_VDotProd(X, Y, length, 0);
-    fails += Test_N_VInv(X, Z, length, 0);
-    fails += Test_N_VInvTest(X, Z, length, 0);
-    fails += Test_N_VL1Norm(X, length, 0);
-    fails += Test_N_VLinearSum(X, Y, Z, length, 0);
-    fails += Test_N_VMaxNorm(X, length, 0);
-    fails += Test_N_VMin(X, length, 0);
-    fails += Test_N_VMinQuotient(X, Y, length, 0);
-    fails += Test_N_VProd(X, Y, Z, length, 0);
-    fails += Test_N_VScale(X, Z, length, 0);
-    fails += Test_N_VCopy(X, Z, length, 0);
-    fails += Test_N_VWL2Norm(X, Y, length, 0);
-    fails += Test_N_VWrmsNorm(X, Y, length, 0);
-    fails += Test_N_VWrmsNormMask(X, Y, Z, length, 0);
+    {
+      VecType::view_type managed_view("managed_view",
+                                      static_cast<SizeType>(length));
+      VecType X{managed_view, sunctx};
 
-    /* Fused and vector array operations tests (disabled) */
-    printf("\nTesting fused and vector array operations (disabled):\n\n");
+      /* Verify zero-copy: X wraps the same allocation, no copy occurred */
+      if (X.View().data() != managed_view.data())
+      {
+        printf("FAILED: managed view constructor: data pointer mismatch -- "
+               "Vector did not wrap the provided view\n");
+        fails++;
+      }
+      else
+      {
+        printf("PASSED: managed view constructor: data pointer matches "
+               "provided view\n");
+      }
 
-    /* create vector and test vector array operations */
-    VecType U{X};
+      fails += Test_N_VGetVectorID(X, SUNDIALS_NVEC_KOKKOS, 0);
+      fails += Test_N_VClone(X, length, 0);
+      fails += Test_N_VCloneVectorArray(5, X, length, 0);
+      fails += Test_N_VGetLength(X, 0);
+      fails += Test_N_VGetCommunicator(X, SUN_COMM_NULL, 0);
 
-    /* fused operations */
-    fails += Test_N_VLinearCombination(U, length, 0);
-    fails += Test_N_VScaleAddMulti(U, length, 0);
-    fails += Test_N_VDotProdMulti(U, length, 0);
+      N_Vector Y_nv = N_VClone(X);
+      N_Vector Z_nv = N_VClone(X);
 
-    /* vector array operations */
-    fails += Test_N_VLinearSumVectorArray(U, length, 0);
-    fails += Test_N_VScaleVectorArray(U, length, 0);
-    fails += Test_N_VConstVectorArray(U, length, 0);
-    fails += Test_N_VWrmsNormVectorArray(U, length, 0);
-    fails += Test_N_VWrmsNormMaskVectorArray(U, length, 0);
-    fails += Test_N_VScaleAddMultiVectorArray(U, length, 0);
-    fails += Test_N_VLinearCombinationVectorArray(U, length, 0);
+      fails += run_all_tests(X, Y_nv, Z_nv, length);
 
-    /* local reduction operations */
-    printf("\nTesting local reduction operations:\n\n");
+      N_VDestroy(Y_nv);
+      N_VDestroy(Z_nv);
+    }
 
-    fails += Test_N_VDotProdLocal(X, Y, length, 0);
-    fails += Test_N_VMaxNormLocal(X, length, 0);
-    fails += Test_N_VMinLocal(X, length, 0);
-    fails += Test_N_VL1NormLocal(X, length, 0);
-    fails += Test_N_VWSqrSumLocal(X, Y, length, 0);
-    fails += Test_N_VWSqrSumMaskLocal(X, Y, Z, length, 0);
-    fails += Test_N_VInvTestLocal(X, Z, length, 0);
-    fails += Test_N_VConstrMaskLocal(X, Y, Z, length, 0);
-    fails += Test_N_VMinQuotientLocal(X, Y, length, 0);
+#if KOKKOS_VERSION / 10000 > 4
+#warning "Unmanaged views are not currently supported with Kokkos 5+"
+#else
+    /* -------------------------------------------------------------------------
+     * Scenario C: unmanaged view constructor
+     *
+     * X is constructed from an unmanaged view wrapping a raw pointer. Y and Z
+     * are managed clones produced by N_VClone, which always returns a managed
+     * VecType regardless of the type of the vector being cloned.
+     *
+     * The user supplies X and the integrator clones it to create managed
+     * internal workspace vectors. Operations such as N_VScale(c, X, Z) then
+     * dispatch through Z->ops (managed), operating on X (unmanaged) and Z
+     * (managed) simultaneously.
+     * -----------------------------------------------------------------------*/
+    printf("\n====================================================\n");
+    printf("Testing KOKKOS N_Vector: unmanaged view constructor\n");
+    printf("Vector length %ld\n", (long int)length);
+    printf("====================================================\n");
+
+    /* Raw pointer allocated in the correct memory space for the execution
+     * backend. Lifetime spans the op tests so that it outlives the Vector
+     * constructed over it. */
+    sunrealtype* unmanaged_ptr = static_cast<sunrealtype*>(
+      Kokkos::kokkos_malloc<ExecSpace::memory_space>("unmanaged_storage",
+                                                     static_cast<size_t>(length) *
+                                                       sizeof(sunrealtype)));
+
+    {
+      UnmanagedVecType::view_type unmanaged_view(unmanaged_ptr,
+                                                 static_cast<SizeType>(length));
+      UnmanagedVecType X{unmanaged_view, sunctx};
+
+      /* Verify zero-copy: X wraps the raw pointer without copying */
+      if (X.View().data() != unmanaged_ptr)
+      {
+        printf("FAILED: unmanaged view constructor: data pointer mismatch -- "
+               "Vector did not wrap the provided view\n");
+        fails++;
+      }
+      else
+      {
+        printf("PASSED: unmanaged view constructor: data pointer matches "
+               "unmanaged storage\n");
+      }
+
+      fails += Test_N_VGetVectorID(X, SUNDIALS_NVEC_KOKKOS, 0);
+
+      /* N_VClone on an unmanaged vector must return a managed clone that
+       * owns separate memory -- it must not alias the raw pointer. */
+      {
+        N_Vector clone = N_VClone(X);
+        auto clone_vec{sundials::kokkos::GetVec<VecType>(clone)};
+        if (clone_vec->View().data() == unmanaged_ptr)
+        {
+          printf("FAILED: N_VClone of unmanaged vector aliased the original "
+                 "unmanaged storage -- clone must own independent memory\n");
+          fails++;
+        }
+        else
+        {
+          printf("PASSED: N_VClone of unmanaged vector owns independent "
+                 "memory\n");
+        }
+        N_VDestroy(clone);
+      }
+
+      fails += Test_N_VCloneVectorArray(5, X, length, 0);
+      fails += Test_N_VGetLength(X, 0);
+      fails += Test_N_VGetCommunicator(X, SUN_COMM_NULL, 0);
+
+      /* Y and Z are managed clones of the unmanaged X. Vector operations will
+       * mix unmanaged (X) and managed views (Y, Z), exercising the type-mixing
+       * code path. */
+      N_Vector Y_nv = N_VClone(X);
+      N_Vector Z_nv = N_VClone(X);
+
+      fails += run_all_tests(X, Y_nv, Z_nv, length);
+
+      N_VDestroy(Y_nv);
+      N_VDestroy(Z_nv);
+    }
+    Kokkos::kokkos_free<ExecSpace::memory_space>(unmanaged_ptr);
+#endif
   }
   Kokkos::finalize();
 
