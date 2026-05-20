@@ -31,7 +31,7 @@ enum ARKODE_DIRKTableID
   ARKODE_DIRK_NONE = -1, /* ensure enum is signed int */
   /* WARNING:  ARKODE_MIN_ERK_NUM must come after the first entry, ARKODE_SDIRK_2_1_2,
      because Python enums will only expose the member that is defined first. Due to
-     this and how pybind/nanobind handle the enums, if we defined ARKODE_MRI_NUM first,
+     this and how pybind/nanobind handle the enums, if we defined ARKODE_MIN_ERK_NUM first,
      then ARKODE_SDIRK_2_1_2 would not be usable from the module scope (the MIN/MAX) entries
      will still be usable when accessing through the IntEnum object, but not from module scope. */
   ARKODE_SDIRK_2_1_2  = 100,

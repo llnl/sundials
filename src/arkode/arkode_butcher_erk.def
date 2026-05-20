@@ -69,7 +69,6 @@
      ARKODE_ARK548L2SAb_ERK_8_4_5*        N
      ARKODE_VERNER_8_5_6                  Y
      ARKODE_FEHLBERG_13_7_8               Y
-     ARKODE_ARK2_ERK_3_1_2                Y
      ARKODE_VERNER_9_5_6                  Y
      ARKODE_VERNER_10_6_7                 Y
      ARKODE_VERNER_13_7_8                 Y
