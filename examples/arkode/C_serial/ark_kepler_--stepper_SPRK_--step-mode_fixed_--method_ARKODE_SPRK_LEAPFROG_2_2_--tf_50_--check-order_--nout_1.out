@@ -11,7 +11,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -2.2382096176443156e-13, L(p,q)-L0 = -4.9960036108132044e-14
+t = 50.0000, H(p,q)-H0 = -2.3780977187470853e-13, L(p,q)-L0 = -3.7303493627405260e-14
 Current time                  = 50
 Steps                         = 50001
 Step attempts                 = 50001
@@ -42,7 +42,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -1.0321183419037538e-07, L(p,q)-L0 = 1.0436096431476471e-14
+t = 50.0000, H(p,q)-H0 = -1.0321183707695525e-07, L(p,q)-L0 = -5.7731597280508140e-15
 Current time                  = 50
 Steps                         = 50001
 Step attempts                 = 50001
@@ -70,7 +70,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -2.5832368022449259e-08, L(p,q)-L0 = 2.1094237467877974e-14
+t = 50.0000, H(p,q)-H0 = -2.5832401107095393e-08, L(p,q)-L0 = 1.7097434579227411e-14
 Current time                  = 50
 Steps                         = 100000
 Step attempts                 = 100000
@@ -98,7 +98,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -6.4599039450996543e-09, L(p,q)-L0 = 4.4297898682543746e-14
+t = 50.0000, H(p,q)-H0 = -6.4599741111948106e-09, L(p,q)-L0 = -1.8984813721090177e-14
 Current time                  = 50
 Steps                         = 200000
 Step attempts                 = 200000
@@ -126,7 +126,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -1.6151293635857655e-09, L(p,q)-L0 = -3.3972824553529790e-14
+t = 50.0000, H(p,q)-H0 = -1.6150365489409069e-09, L(p,q)-L0 = 2.3758772726978350e-14
 Current time                  = 50
 Steps                         = 400001
 Step attempts                 = 400001
@@ -154,7 +154,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -4.0367864606594139e-10, L(p,q)-L0 = 2.3758772726978350e-14
+t = 50.0000, H(p,q)-H0 = -4.0353587138497460e-10, L(p,q)-L0 = 1.5920598173124745e-13
 Current time                  = 50
 Steps                         = 800001
 Step attempts                 = 800001
@@ -182,7 +182,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -1.0080203338702631e-10, L(p,q)-L0 = 5.5733195836182858e-14
+t = 50.0000, H(p,q)-H0 = -1.0085821067207235e-10, L(p,q)-L0 = 3.1419311596891930e-14
 Current time                  = 50
 Steps                         = 1600001
 Step attempts                 = 1600001
@@ -210,7 +210,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -2.5249136115235160e-11, L(p,q)-L0 = 1.5543122344752192e-14
+t = 50.0000, H(p,q)-H0 = -2.5235147305124883e-11, L(p,q)-L0 = 4.4408920985006262e-14
 Current time                  = 50
 Steps                         = 3200000
 Step attempts                 = 3200000
@@ -238,7 +238,7 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -6.0400573431707016e-12, L(p,q)-L0 = 2.0916601783937949e-13
+t = 50.0000, H(p,q)-H0 = -6.3868910160636005e-12, L(p,q)-L0 = -5.1403326040144748e-14
 Current time                  = 50
 Steps                         = 6400000
 Step attempts                 = 6400000
@@ -253,5 +253,5 @@ Current step size             = 7.8125e-06
 f1 RHS fn evals               = 6400000
 f2 RHS fn evals               = 12800000
 
-Order of accuracy wrt solution:    expected = 2, max = 2.0097,  avg = 1.8616,  overall = 1.9108
-Order of accuracy wrt Hamiltonian: expected = 2, max = 2.0636,  avg = 2.0087,  overall = 2.0051
+Order of accuracy wrt solution:    expected = 2, max = 2.0097,  avg = 1.8620,  overall = 1.9110
+Order of accuracy wrt Hamiltonian: expected = 2, max = 2.0008,  avg = 1.9972,  overall = 1.9984

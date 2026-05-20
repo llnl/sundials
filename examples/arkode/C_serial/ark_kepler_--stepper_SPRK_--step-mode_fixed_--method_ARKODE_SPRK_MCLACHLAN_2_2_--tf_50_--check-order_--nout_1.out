@@ -11,24 +11,24 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = -2.2382096176443156e-13, L(p,q)-L0 = -4.9960036108132044e-14
-Current time                 = 50
-Steps                        = 50001
-Step attempts                = 50001
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 0.001
-Last step size               = 2.58282284448796e-11
-Current step size            = 0.001
-Explicit RHS fn evals        = 400008
-Implicit RHS fn evals        = 0
-NLS iters                    = 0
-NLS fails                    = 0
-NLS iters per step           = 0
-LS setups                    = 0
+t = 50.0000, H(p,q)-H0 = -2.3780977187470853e-13, L(p,q)-L0 = -3.7303493627405260e-14
+Current time                  = 50
+Steps                         = 50001
+Step attempts                 = 50001
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.001
+Last step size                = 2.58282284448796e-11
+Current step size             = 0.001
+Explicit RHS fn evals         = 400008
+Implicit RHS fn evals         = 0
+NLS iters                     = 0
+NLS fails                     = 0
+NLS iters per step            = 0
+LS setups                     = 0
 
    Begin Kepler Problem
 
@@ -42,20 +42,20 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = 7.5370554486475783e-07, L(p,q)-L0 = -5.1070259132757201e-15
-Current time                 = 50
-Steps                        = 50001
-Step attempts                = 50001
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 0.001
-Last step size               = 2.58282284448796e-11
-Current step size            = 0.001
-f1 RHS fn evals              = 100002
-f2 RHS fn evals              = 100002
+t = 50.0000, H(p,q)-H0 = 7.5370552554687720e-07, L(p,q)-L0 = 5.6621374255882984e-15
+Current time                  = 50
+Steps                         = 50001
+Step attempts                 = 50001
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.001
+Last step size                = 2.58282284448796e-11
+Current step size             = 0.001
+f1 RHS fn evals               = 100002
+f2 RHS fn evals               = 100002
 
 
    Begin Kepler Problem
@@ -70,20 +70,20 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = 1.8834971715619986e-07, L(p,q)-L0 = -5.1070259132757201e-15
-Current time                 = 50
-Steps                        = 100000
-Step attempts                = 100000
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 0.0005
-Last step size               = 0.000499999943286866
-Current step size            = 0.0005
-f1 RHS fn evals              = 200000
-f2 RHS fn evals              = 200000
+t = 50.0000, H(p,q)-H0 = 1.8834973314341141e-07, L(p,q)-L0 = 2.1982415887578100e-14
+Current time                  = 50
+Steps                         = 100000
+Step attempts                 = 100000
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.0005
+Last step size                = 0.000499999943286866
+Current step size             = 0.0005
+f1 RHS fn evals               = 200000
+f2 RHS fn evals               = 200000
 
 
    Begin Kepler Problem
@@ -98,20 +98,20 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = 4.7081460952114185e-08, L(p,q)-L0 = -9.1038288019262836e-15
-Current time                 = 50
-Steps                        = 200000
-Step attempts                = 200000
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 0.00025
-Last step size               = 0.000249999852272253
-Current step size            = 0.00025
-f1 RHS fn evals              = 400000
-f2 RHS fn evals              = 400000
+t = 50.0000, H(p,q)-H0 = 4.7081430976092520e-08, L(p,q)-L0 = -2.2648549702353193e-14
+Current time                  = 50
+Steps                         = 200000
+Step attempts                 = 200000
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.00025
+Last step size                = 0.000249999852272253
+Current step size             = 0.00025
+f1 RHS fn evals               = 400000
+f2 RHS fn evals               = 400000
 
 
    Begin Kepler Problem
@@ -126,20 +126,20 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = 1.1769735408506676e-08, L(p,q)-L0 = -3.5416114485542494e-14
-Current time                 = 50
-Steps                        = 400001
-Step attempts                = 400001
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 0.000125
-Last step size               = 3.18358672757313e-10
-Current step size            = 0.000125
-f1 RHS fn evals              = 800002
-f2 RHS fn evals              = 800002
+t = 50.0000, H(p,q)-H0 = 1.1769806462780252e-08, L(p,q)-L0 = -3.8524738954492932e-14
+Current time                  = 50
+Steps                         = 400001
+Step attempts                 = 400001
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.000125
+Last step size                = 3.18358672757313e-10
+Current step size             = 0.000125
+f1 RHS fn evals               = 800002
+f2 RHS fn evals               = 800002
 
 
    Begin Kepler Problem
@@ -154,20 +154,20 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = 2.9423714575926851e-09, L(p,q)-L0 = -3.2751579226442118e-14
-Current time                 = 50
-Steps                        = 800001
-Step attempts                = 800001
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 6.25e-05
-Last step size               = 7.5034733981738e-10
-Current step size            = 6.25e-05
-f1 RHS fn evals              = 1600002
-f2 RHS fn evals              = 1600002
+t = 50.0000, H(p,q)-H0 = 2.9423847802689806e-09, L(p,q)-L0 = -2.7755575615628914e-14
+Current time                  = 50
+Steps                         = 800001
+Step attempts                 = 800001
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 6.25e-05
+Last step size                = 7.5034733981738e-10
+Current step size             = 6.25e-05
+f1 RHS fn evals               = 1600002
+f2 RHS fn evals               = 1600002
 
 
    Begin Kepler Problem
@@ -182,20 +182,20 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = 7.3555672663871974e-10, L(p,q)-L0 = -1.1768364061026659e-14
-Current time                 = 50
-Steps                        = 1600001
-Step attempts                = 1600001
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 3.125e-05
-Last step size               = 9.66345226061093e-10
-Current step size            = 3.125e-05
-f1 RHS fn evals              = 3200002
-f2 RHS fn evals              = 3200002
+t = 50.0000, H(p,q)-H0 = 7.3560668667482787e-10, L(p,q)-L0 = -2.6534330288541241e-14
+Current time                  = 50
+Steps                         = 1600001
+Step attempts                 = 1600001
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 3.125e-05
+Last step size                = 9.66345226061093e-10
+Current step size             = 3.125e-05
+f1 RHS fn evals               = 3200002
+f2 RHS fn evals               = 3200002
 
 
    Begin Kepler Problem
@@ -210,20 +210,20 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = 1.8393531142635311e-10, L(p,q)-L0 = 5.1736392947532295e-14
-Current time                 = 50
-Steps                        = 3200000
-Step attempts                = 3200000
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 1.5625e-05
-Last step size               = 1.56219816247471e-05
-Current step size            = 1.5625e-05
-f1 RHS fn evals              = 6400000
-f2 RHS fn evals              = 6400000
+t = 50.0000, H(p,q)-H0 = 1.8406010049432098e-10, L(p,q)-L0 = 1.1513012765362873e-13
+Current time                  = 50
+Steps                         = 3200000
+Step attempts                 = 3200000
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 1.5625e-05
+Last step size                = 1.56219816247471e-05
+Current step size             = 1.5625e-05
+f1 RHS fn evals               = 6400000
+f2 RHS fn evals               = 6400000
 
 
    Begin Kepler Problem
@@ -238,20 +238,20 @@ Problem Arguments:
   nout:                 1
 
 t = 0.0000, H(p,q) = -0.5000000000000000, L(p,q) = 0.8000000000000000
-t = 50.0000, H(p,q)-H0 = 4.6057602176574619e-11, L(p,q)-L0 = 9.7921670771938807e-14
-Current time                 = 50
-Steps                        = 6400000
-Step attempts                = 6400000
-Stability limited steps      = 0
-Accuracy limited steps       = 0
-Error test fails             = 0
-NLS step fails               = 0
-Inequality constraint fails  = 0
-Initial step size            = 7.8125e-06
-Last step size               = 7.80589764559635e-06
-Current step size            = 7.8125e-06
-f1 RHS fn evals              = 12800000
-f2 RHS fn evals              = 12800000
+t = 50.0000, H(p,q)-H0 = 4.6295411948449328e-11, L(p,q)-L0 = 2.5268676040468563e-13
+Current time                  = 50
+Steps                         = 6400000
+Step attempts                 = 6400000
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 7.8125e-06
+Last step size                = 7.80589764559635e-06
+Current step size             = 7.8125e-06
+f1 RHS fn evals               = 12800000
+f2 RHS fn evals               = 12800000
 
-Order of accuracy wrt solution:    expected = 2, max = 2.0069,  avg = 1.8941,  overall = 1.9322
-Order of accuracy wrt Hamiltonian: expected = 2, max = 2.0006,  avg = 1.9998,  overall = 1.9999
+Order of accuracy wrt solution:    expected = 2, max = 2.0067,  avg = 1.8940,  overall = 1.9321
+Order of accuracy wrt Hamiltonian: expected = 2, max = 2.0006,  avg = 1.9987,  overall = 1.9992
