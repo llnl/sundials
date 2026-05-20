@@ -243,13 +243,14 @@ tex_author = r"""
     Daniel R. Reynolds$^1$,
     David J. Gardner$^2$,
     Carol S. Woodward$^2$,
-    Cody J. Balos$^2$
+    Cody J. Balos$^2$, \\
     Rujeko Chinomona$^3$, and
-    Mustafa Aggul$^1$ \\
+    Mustafa Aggul$^4$ \\
     \\
-    {\em $^1$Department of Mathematics, Southern Methodist University} \\
+    {\em $^1$Department of Mathematics and Statistics, University of Maryland Baltimore County} \\
     {\em $^2$Center for Applied Scientific Computing, Lawrence Livermore National Laboratory} \\
-    {\em $^3$Department of Mathematics, Temple University}
+    {\em $^3$Department of Mathematics, Temple University} \\
+    {\em $^4$Department of Mathematics, Southern Methodist University}
     """
 
 latex_documents = [("index", "ark_guide.tex", project, tex_author, "manual", False)]
