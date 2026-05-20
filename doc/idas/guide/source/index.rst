@@ -19,6 +19,37 @@ IDAS Documentation
 
 .. include:: Landing.rst
 
+Citing
+======
+
+When using the IDAS package from SUNDIALS, please cite:
+
+.. code-block:: latex
+
+   @article{hindmarsh2005sundials,
+     title     = {{SUNDIALS}: Suite of nonlinear and differential/algebraic equation solvers},
+     author    = {Hindmarsh, Alan C and Brown, Peter N and Grant, Keith E and Lee, Steven L and Serban, Radu and Shumaker, Dan E and Woodward, Carol S},
+     journal   = {ACM Transactions on Mathematical Software (TOMS)},
+     publisher = {ACM},
+     volume    = {31},
+     number    = {3},
+     pages     = {363--396},
+     year      = {2005},
+     doi       = {10.1145/1089014.1089020}
+   }
+
+The IDAS documentation can be cited:
+
+.. parsed-literal::
+
+   @Misc{idasDocumentation,
+     author = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
+     title  = {User Documentation for IDAS},
+     year   = {|YEAR|},
+     note   = {|IDAS_VERSION|}
+   }
+
+
 .. only:: html
 
    **Table of Contents**
@@ -42,6 +73,7 @@ IDAS Documentation
    Constants
    Fortran/index.rst
    Python/index.rst
+   Publications_link.rst
    History_link.rst
    Changelog_link.rst
    References
