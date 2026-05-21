@@ -605,7 +605,18 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
     if (discrim >= ZERO)
     {
       /* Dominant eigenvalue is real */
-      *lambdaR_out = (traceP + SUNRsqrt(discrim)) / SUN_RCONST(2.0);
+      sunrealtype sqrt_discrim = SUNRsqrt(discrim);
+      sunrealtype lam_plus  = (traceP + sqrt_discrim) / SUN_RCONST(2.0);
+      sunrealtype lam_minus = (traceP - sqrt_discrim) / SUN_RCONST(2.0);
+      if (SUNRabs(lam_plus) >= SUNRabs(lam_minus))
+      {
+        *lambdaR_out = lam_plus;
+      }
+      else
+      {
+        *lambdaR_out = lam_minus;
+      }
+      *lambdaI_out = ZERO;
       *lambdaI_out = ZERO;
     }
     else
@@ -741,7 +752,7 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
                                     PI_CONTENT(DEE)->rhs_data);
     PI_CONTENT(DEE)->nfevals++;
     if (retval == 0) { break; }
-    if (retval < 0) { return (-1); }
+    if (retval < 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     /* If f failed recoverably, shrink sig and retry */
     sig *= SUN_RCONST(0.25);

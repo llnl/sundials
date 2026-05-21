@@ -20,7 +20,7 @@ Brusselator ODE test problem:
    -------------------------------------------
 
 Final Statistics:
-Current time                  = 10.0124697014274
+Current time                  = 10.0124653670818
 Steps                         = 752
 Step attempts                 = 762
 Stability limited steps       = 0
@@ -29,13 +29,13 @@ Error test fails              = 10
 NLS step fails                = 0
 Inequality constraint fails   = 0
 Initial step size             = 1.13978962117636e-08
-Last step size                = 0.0209214515801851
-Current step size             = 0.0212807658348458
+Last step size                = 0.020921379243018
+Current step size             = 0.0212806907861296
 RHS fn evals                  = 47265
-Number of dom_eig updates     = 1
-Number of fe calls for DEE    = 12
-Number of iterations for DEE  = 12
+Number of dom_eig updates     = 38
+Number of fe calls for DEE    = 106
+Number of iterations for DEE  = 86
 Max. num. of stages used      = 195
 Max. num. of stages allowed   = 200
-Max. spectral radius          = 202001.212020988
-Min. spectral radius          = 202001.212020988
+Max. spectral radius          = 202005.038281334
+Min. spectral radius          = 202000.341509488

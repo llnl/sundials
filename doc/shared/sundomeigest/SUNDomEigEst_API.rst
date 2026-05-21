@@ -473,7 +473,7 @@ dominant eigenvalue estimator.  *All routines are optional.*
 
 .. _SUNDomEigEst.SUNSuppliedFn:
 
-User or SUNDIALS package provided functions
+SUNDomEigEstimator callback functions
 ---------------------------------------------
 
 To interface with SUNDomEigEst modules, the SUNDIALS packages supply a

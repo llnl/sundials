@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -169,8 +169,7 @@ int main(int argc, char* argv[])
 
   if (fails)
   {
-    printf("FAIL: SUNDomEigEstimator_Power module failed %i initialization "
-           "tests\n\n",
+    printf("FAIL: SUNDomEigEstimator_Power module failed %i tests\n\n",
            fails);
     return 1;
   }

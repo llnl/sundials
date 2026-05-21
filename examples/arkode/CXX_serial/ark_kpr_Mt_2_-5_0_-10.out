@@ -14,9 +14,9 @@ Nonlinear Kvaerno-Prothero-Robinson test problem with mass matrix:
    h = 5.000e-02,  error = 5.227e-09,  order = 5.99
    h = 2.500e-02,  error = 1.028e-10,  order = 5.67
    h = 1.250e-02,  error = 2.405e-12,  order = 5.42
-   h = 6.250e-03,  error = 6.356e-14,  order = 5.24
-   h = 3.125e-03,  error = 6.933e-15,  order = 3.20
-   h = 1.563e-03,  error = 1.453e-14,  order = -1.07
-   h = 7.813e-04,  error = 2.683e-14,  order = -0.88
+   h = 6.250e-03,  error = 6.355e-14,  order = 5.24
+   h = 3.125e-03,  error = 6.955e-15,  order = 3.19
+   h = 1.563e-03,  error = 1.453e-14,  order = -1.06
+   h = 7.813e-04,  error = 2.690e-14,  order = -0.89
  -----------------------------------------------------
  Order: max = 5.99,  avg = 3.37,  overall = 3.62 [SUCCESS]

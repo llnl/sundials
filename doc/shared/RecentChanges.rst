@@ -20,6 +20,10 @@ Fixed a minor bug where negative real extend of the stability region
 for the RKC method was not being properly computed, which could result 
 in an underestimation of the number of stages required for stability.
 
+Fixed a minor bug where STS methods were limited to one fewer than
+the maximum allowed number of stages. STS can now use the full maximum
+number of stages.
+
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 ``malloc``.
 
