@@ -23,9 +23,17 @@ Use `CV_BDF` when you see any of these:
 - a Jacobian or preconditioner is already part of the model workflow
 - the user is already expecting Newton or Krylov solves
 
+Remember the limitation: BDF methods above order 2 are not A-stable. `CV_BDF` is still an excellent stiff default, but it should not be treated as automatically interchangeable with an implicit DIRK method.
+
 Use `CV_ADAMS` when the problem is plainly nonstiff and the user wants a simpler nonstiff ODE workflow.
 
 For stiff `CV_BDF` runs, the default Newton iteration is the natural recommendation. For nonstiff `CV_ADAMS`, fixed-point iteration can be reasonable if the problem is mild enough, but do not force it when the user is already prepared to use Newton.
+
+When the user is comparing `CV_BDF` against implicit `ARKStep`, use this rule of thumb:
+
+- prefer `CV_BDF` when the variable-order multistep workflow is the main advantage and there is no sign that higher-order BDF stability or damping will be problematic
+- prefer implicit `ARKStep` when one-step A-stable or L-stable behavior matters, when strongly diffusive fast modes should be damped aggressively, or when a parabolic semi-discretization is a poor fit for higher-order BDF behavior
+- if `CV_BDF` is otherwise attractive but stability theory points toward the A-stable range, mention capping the BDF order at 2 as a concrete alternative
 
 ### IDA and IDAS
 
@@ -45,7 +53,11 @@ Choose the stepper from the model structure:
 - `MRIStep` for multirate
 - `SPRKStep` for separable Hamiltonian systems
 
+For stiff unsplit ODEs, `ARKStep` is still a live option. Use it when the recommendation is being driven by one-step RK stability or damping properties rather than by an explicit/implicit split.
+
 Within `ARKStep`, decide which part belongs in the explicit vs implicit operator. Put the genuinely stiff portion in the implicit operator and keep the explicit side for the terms that would otherwise restrict stability.
+
+If the problem is fully implicit, say that explicitly and recommend an appropriate DIRK configuration rather than pretending an IMEX split exists.
 
 For many users, the built-in defaults and adaptivity are acceptable starting points. Only reach for custom Butcher tables or custom adaptivity when the user has a concrete reason.
 

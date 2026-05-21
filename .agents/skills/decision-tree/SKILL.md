@@ -3,13 +3,13 @@ name: decision-tree
 description: Guide SUNDIALS users to the right package, time-stepping module, nonlinear/linear solver strategy, and initial tuning choices. Use when a request asks which SUNDIALS package to use (CVODE, CVODES, IDA, IDAS, ARKODE, KINSOL), whether to choose explicit vs implicit vs IMEX or multirate methods, how to pick dense/band/sparse/Krylov solvers and preconditioners, or what tolerances, step limits, initial-condition handling, and other starting settings to try.
 ---
 
-# Choose a SUNDIALS Solver Strategy
+# Choose a SUNDIALS Strategy
 
 ## Overview
 
-Map a user problem to the right SUNDIALS package and give a defensible first-pass solver configuration. Keep the recommendation concrete: name the package, method family, linear/nonlinear solver approach, starting settings, and the next doc/example file to inspect.
+Map a user problem to the right SUNDIALS package and give a defensible first-pass configuration. Keep the recommendation concrete: name the package, method family, linear/nonlinear solver approach, starting settings, and the next doc/example file to inspect.
 
-Start by extracting only the facts that actually control solver choice. If key facts are missing, ask for the minimum needed to classify the problem: equation type, stiffness, sensitivities, natural splitting, system size, sparsity, and any special structure.
+Start by extracting only the facts that actually control package and solver choice. If key facts are missing, ask for the minimum needed to classify the problem: equation type, stiffness, sensitivities, natural splitting, system size, sparsity, and any special structure. Do not treat the `CVODE` versus `ARKODE` choice as purely a question of model structure; numerical stability and damping requirements can decide it even for an unsplit ODE.
 
 ## Intake Checklist
 
@@ -19,6 +19,7 @@ Collect these before recommending a package or method:
 - need for forward or adjoint sensitivities
 - expected stiffness: nonstiff, stiff, or mixed stiff/nonstiff
 - natural model split: explicit/implicit, slow/fast, Hamiltonian, operator splitting
+- whether one-step RK stability properties matter: e.g., need for A-stability or L-stability at order above 2, strong damping of fast modes, or concern about higher-order BDF stability-angle limits
 - size and matrix structure: small dense, banded, sparse, or very large matrix-free
 - Jacobian and preconditioner availability
 - important constraints: positivity, algebraic variables, event/rootfinding, fixed output cadence, structure preservation
@@ -32,23 +33,24 @@ If the user does not know whether the model is stiff, infer it from context but 
 
 - Use `KINSOL` for nonlinear algebraic systems `F(u) = 0` with no time integration.
 - Use `IDA` or `IDAS` for DAEs of the form `F(t, y, y') = 0`.
-- Use `CVODE` or `CVODES` for general ODE IVPs when a multistep solver is a good fit and there is no important split structure to exploit.
-- Use `ARKODE` when the problem benefits from one-step Runge-Kutta structure: explicit-only, implicit-only, IMEX/additive splitting, multirate evolution, low-storage explicit stepping, Hamiltonian structure, or operator splitting.
-- Prefer the sensitivity-enabled supersets `CVODES` and `IDAS` when the user needs forward or adjoint sensitivities.
+- Use `CVODE` or `CVODES` for general ODE IVPs when a multistep solver is a good fit and there is no important reason to prefer one-step RK stability or splitting structure.
+- Use `ARKODE` when the problem benefits from one-step Runge-Kutta structure or stability properties: explicit-only, implicit-only, IMEX/additive splitting, multirate evolution, low-storage explicit stepping, Hamiltonian structure, operator splitting, or a stiff problem where DIRK stability and damping are preferable to higher-order BDF behavior.
+- If `CVODE` or `IDA` is the right choice, prefer the sensitivity-enabled supersets `CVODES` and `IDAS` when the user needs forward or adjoint sensitivities.
 
 Open [package-selection.md](references/package-selection.md) when the package choice is the main question.
 
 ### 2. Choose the method or stepper
 
-- For `CVODE` or `CVODES`, recommend `CV_ADAMS` for nonstiff problems and `CV_BDF` for stiff problems.
+- For `CVODE` or `CVODES`, recommend `CV_ADAMS` for nonstiff problems and `CV_BDF` for stiff problems when a multistep BDF method is still a good numerical fit.
 - For `IDA` or `IDAS`, the main integration method is variable-order BDF; focus the decision on initial-condition handling, Jacobian strategy, and linear solver choice.
 - For `ARKODE`, select the narrowest stepper that matches the model:
   - `ERKStep` for fully explicit ODEs.
-  - `ARKStep` for fully implicit DIRK or IMEX/additive explicit-implicit splits.
+  - `ARKStep` for fully implicit DIRK or IMEX/additive explicit-implicit splits, especially when one-step A-stable or L-stable behavior is more important than the variable-order BDF workflow.
   - `MRIStep` for genuine slow/fast multirate problems.
   - `SPRKStep` for separable Hamiltonian systems where structure preservation matters.
   - `LSRKStep`, `ForcingStep`, or `SplittingStep` only when the user explicitly benefits from those formulations.
 - For `KINSOL`, choose `KIN_LINESEARCH` when robustness matters, `KIN_NONE` for plain Newton with a good initial guess, `KIN_FP` for natural fixed-point maps, and `KIN_PICARD` when a Picard iteration is natural and a linear solver is available.
+- When comparing `CV_BDF` and implicit `ARKStep`, remember that BDF methods above order 2 are not A-stable. If the user needs higher-order stiff decay, stronger damping of parasitic fast modes, or a parabolic diffusion problem is behaving poorly under high-order BDF, either cap BDF order at 2 or move the recommendation toward an appropriate DIRK table in `ARKStep`.
 
 Open [method-and-linear-solvers.md](references/method-and-linear-solvers.md) when the package is already known but the method or solver stack is not.
 
@@ -91,6 +93,7 @@ Prefer wording like:
 - "Use `IDAS` because the model is a DAE and you also need sensitivities."
 - "Start with `CV_BDF + Newton + GMRES` because the system appears stiff and too large for dense factorization."
 - "Use `ARKStep` rather than `CVODE` because the RHS already has a meaningful stiff/nonstiff split."
+- "Use `ARKStep` rather than `CVODE` because the problem is stiff and the one-step DIRK stability properties matter, even though there is no natural IMEX split."
 
 Ground recommendations in these repo docs when needed:
 
@@ -107,3 +110,7 @@ Ground recommendations in these repo docs when needed:
 - `doc/kinsol/guide/source/Usage/index.rst`
 
 When a user wants code, inspect the closest example under `examples/<package>/` and adapt that pattern instead of describing an abstract setup.
+
+## Pitfalls
+
+Just because a SUNDIALS example uses a method/solver/setting doesn't mean its the right choice. Decisions should be grounded in doc recommendations and published literature on time integrator and solver methods. In particular, do not reduce `CVODE` versus `ARKODE` to "no split" versus "has split": stability region, stiff decay, stage order, and order restrictions also matter.

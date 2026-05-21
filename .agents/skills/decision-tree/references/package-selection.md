@@ -16,15 +16,15 @@ Choose the package from the mathematical problem first.
 | Problem shape | Choose | Why |
 | --- | --- | --- |
 | `F(u) = 0` nonlinear algebraic system | `KINSOL` | No time integration; focus is nonlinear solve strategy |
-| `y' = f(t, y)` general ODE IVP | `CVODE` | General-purpose variable-step multistep ODE solver |
+| `y' = f(t, y)` general ODE IVP | `CVODE` | General-purpose variable-step multistep ODE solver when multistep BDF or Adams behavior is the right fit |
 | `y' = f(t, y)` with sensitivities | `CVODES` | `CVODE` plus forward and adjoint sensitivities |
 | `F(t, y, y') = 0` DAE IVP | `IDA` | Variable-step BDF DAE solver |
 | `F(t, y, y') = 0` with sensitivities | `IDAS` | `IDA` plus forward and adjoint sensitivities |
-| ODE with explicit/implicit split, multirate structure, Hamiltonian structure, or strong one-step RK preference | `ARKODE` | Exposes stepper families matched to problem structure |
+| ODE with explicit/implicit split, multirate structure, Hamiltonian structure, or strong one-step RK stability preference | `ARKODE` | Exposes stepper families matched to problem structure and one-step RK stability goals |
 
 ## ODE packages
 
-Use `CVODE` or `CVODES` when the model is a standard ODE IVP and there is no strong reason to exploit a special split or structure.
+Use `CVODE` or `CVODES` when the model is a standard ODE IVP and there is no strong reason to exploit a special split, one-step RK stability property, or a DIRK-specific damping behavior.
 
 Prefer `CVODES` over `CVODE` when the request includes:
 
@@ -37,8 +37,12 @@ Use `ARKODE` instead of `CVODE(S)` when one of these is true:
 - the RHS is naturally split into nonstiff and stiff parts and the split is worth exploiting
 - the problem is genuinely multirate
 - the user wants a one-step Runge-Kutta method instead of a multistep method
+- the stiff problem needs one-step RK stability behavior, for example A-stability or L-stability beyond BDF order 2, or stronger damping of very fast modes
+- the problem is a diffusive or parabolic semi-discretization where higher-order BDF stability-angle limits are a real concern
 - the problem is Hamiltonian or otherwise structure-preserving integration matters
 - low-storage explicit RK or super-time-stepping is a main requirement
+
+For stiff unsplit ODEs, do not assume `CVODE` wins by default. A fully implicit `ARKStep` DIRK method can be the better recommendation even without IMEX structure when the user cares about stiff decay, order-reduction behavior, or the fact that BDF methods above order 2 are not A-stable.
 
 ## DAE packages
 
@@ -87,3 +91,4 @@ If the user just says "I have an ODE, which SUNDIALS package should I use?", do 
 - Do not recommend both `IDA` and `IDAS` together for one application; `IDAS` is the sensitivity-enabled superset.
 - For DAEs, package selection is usually easier than consistent-IC setup. If the problem is index-one and the initial conditions are not consistent, plan to discuss `IDASetId` and `IDACalcIC`.
 - For large stiff systems, the package choice and the linear solver choice are tightly coupled. If the user cannot supply a useful preconditioner, say that solver performance may be limited.
+- For stiff ODEs, the `CVODE` versus `ARKODE` decision is not only about model structure. If high-order BDF behavior is questionable for the problem, say so and explain why a DIRK method may be safer.
