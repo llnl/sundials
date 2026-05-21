@@ -17,9 +17,9 @@ Choose the package from the mathematical problem first.
 | --- | --- | --- |
 | `F(u) = 0` nonlinear algebraic system | `KINSOL` | No time integration; focus is nonlinear solve strategy |
 | `y' = f(t, y)` general ODE IVP | `CVODE` | General-purpose variable-step multistep ODE solver when multistep BDF or Adams behavior is the right fit |
-| `y' = f(t, y)` with sensitivities | `CVODES` | `CVODE` plus forward and adjoint sensitivities |
+| `y' = f(t, y)` with sensitivities or quadratures | `CVODES` | `CVODE` plus forward/adjoint sensitivities and quadrature integration APIs |
 | `F(t, y, y') = 0` DAE IVP | `IDA` | Variable-step BDF DAE solver |
-| `F(t, y, y') = 0` with sensitivities | `IDAS` | `IDA` plus forward and adjoint sensitivities |
+| `F(t, y, y') = 0` with sensitivities or quadratures | `IDAS` | `IDA` plus forward/adjoint sensitivities and quadrature integration APIs |
 | ODE with explicit/implicit split, multirate structure, Hamiltonian structure, or strong one-step RK stability preference | `ARKODE` | Exposes stepper families matched to problem structure and one-step RK stability goals |
 
 ## ODE packages
@@ -28,6 +28,7 @@ Use `CVODE` or `CVODES` when the model is a standard ODE IVP and there is no str
 
 Prefer `CVODES` over `CVODE` when the request includes:
 
+- pure quadrature integration for an ODE
 - forward sensitivities with respect to parameters
 - adjoint sensitivities or gradient calculations
 - quadratures coupled to sensitivity workflows
@@ -44,11 +45,13 @@ Use `ARKODE` instead of `CVODE(S)` when one of these is true:
 
 For stiff unsplit ODEs, do not assume `CVODE` wins by default. A fully implicit `ARKStep` DIRK method can be the better recommendation even without IMEX structure when the user cares about stiff decay, order-reduction behavior, or the fact that BDF methods above order 2 are not A-stable.
 
+Do not recommend `ARKODE` to satisfy forward-sensitivity requests. Its documented adjoint support is limited to fixed-step discrete ASA for `ERKStep` and compatible explicit `ARKStep`, so general sensitivity workflows still point to `CVODES`.
+
 ## DAE packages
 
 Use `IDA` or `IDAS` for DAEs written as `F(t, y, y') = 0`.
 
-Prefer `IDAS` when sensitivities are needed. `IDAS` is a superset of `IDA`.
+Prefer `IDAS` when sensitivities or quadrature integration are needed. `IDAS` is a superset of `IDA`.
 
 Practical cues that point to `IDA(S)`:
 

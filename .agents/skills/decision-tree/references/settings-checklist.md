@@ -20,7 +20,12 @@ For time integrators:
 - set each `atol` near the smallest meaningful magnitude for that component
 - set `rtol` from the required relative accuracy
 
-The SUNDIALS guides explicitly recommend experimenting with tolerances and checking how the solution changes as tolerances are reduced. If the user knows the target global error, a useful rule of thumb from the guides is to set local tolerances roughly two orders of magnitude tighter than that target.
+The SUNDIALS guides explicitly recommend experimenting with tolerances and checking how the solution changes as tolerances are reduced. If the user knows the target global error, use the package-specific rules of thumb from the guides as a starting point:
+
+- `CVODE`, `CVODES`, `IDA`, and `IDAS`: set local tolerances roughly two orders of magnitude tighter than the desired global error
+- `ARKODE`: set local tolerances roughly one order of magnitude tighter than the desired global error
+
+Treat those as starting guesses, not guarantees, and tell the user to confirm them with a convergence check.
 
 If the user has no accuracy target:
 

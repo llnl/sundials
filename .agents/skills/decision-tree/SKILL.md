@@ -17,6 +17,7 @@ Collect these before recommending a package or method:
 
 - problem form: nonlinear algebraic system, ODE IVP, or DAE IVP
 - need for forward or adjoint sensitivities
+- need for quadrature integration, with or without sensitivities
 - expected stiffness: nonstiff, stiff, or mixed stiff/nonstiff
 - natural model split: explicit/implicit, slow/fast, Hamiltonian, operator splitting
 - whether one-step RK stability properties matter: e.g., need for A-stability or L-stability at order above 2, strong damping of fast modes, or concern about higher-order BDF stability-angle limits
@@ -34,8 +35,8 @@ If the user does not know whether the model is stiff, infer it from context but 
 - Use `KINSOL` for nonlinear algebraic systems `F(u) = 0` with no time integration.
 - Use `IDA` or `IDAS` for DAEs of the form `F(t, y, y') = 0`.
 - Use `CVODE` or `CVODES` for general ODE IVPs when a multistep solver is a good fit and there is no important reason to prefer one-step RK stability or splitting structure.
-- Use `ARKODE` when the problem benefits from one-step Runge-Kutta structure or stability properties: explicit-only, implicit-only, IMEX/additive splitting, multirate evolution, low-storage explicit stepping, Hamiltonian structure, operator splitting, or a stiff problem where DIRK stability and damping are preferable to higher-order BDF behavior.
-- If `CVODE` or `IDA` is the right choice, prefer the sensitivity-enabled supersets `CVODES` and `IDAS` when the user needs forward or adjoint sensitivities.
+- Use `ARKODE` when the problem benefits from one-step Runge-Kutta structure or stability properties that its steppers actually support: explicit-only, implicit-only, IMEX/additive splitting, multirate evolution, low-storage explicit stepping, Hamiltonian structure, operator splitting, or a stiff problem where DIRK stability and damping are preferable to higher-order BDF behavior. Do not route users to `ARKODE` for forward sensitivities, and only mention ARKODE adjoints when fixed-step discrete ASA with `ERKStep` or compatible explicit `ARKStep` is acceptable.
+- If `CVODE` or `IDA` is the right choice, prefer the supersets `CVODES` and `IDAS` when the user needs forward sensitivities, adjoint sensitivities, or quadrature integration APIs.
 
 Open [package-selection.md](references/package-selection.md) when the package choice is the main question.
 
@@ -114,3 +115,5 @@ When a user wants code, inspect the closest example under `examples/<package>/` 
 ## Pitfalls
 
 Just because a SUNDIALS example uses a method/solver/setting doesn't mean its the right choice. Decisions should be grounded in doc recommendations and published literature on time integrator and solver methods. In particular, do not reduce `CVODE` versus `ARKODE` to "no split" versus "has split": stability region, stiff decay, stage order, and order restrictions also matter.
+
+If the best choice not something SUNDIALS currently supports, acknowledge this.
