@@ -169,8 +169,7 @@ int main(int argc, char* argv[])
 
   if (fails)
   {
-    printf("FAIL: SUNDomEigEstimator_Power module failed %i tests\n\n",
-           fails);
+    printf("FAIL: SUNDomEigEstimator_Power module failed %i tests\n\n", fails);
     return 1;
   }
   else

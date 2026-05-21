@@ -606,16 +606,10 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
     {
       /* Dominant eigenvalue is real */
       sunrealtype sqrt_discrim = SUNRsqrt(discrim);
-      sunrealtype lam_plus  = (traceP + sqrt_discrim) / SUN_RCONST(2.0);
-      sunrealtype lam_minus = (traceP - sqrt_discrim) / SUN_RCONST(2.0);
-      if (SUNRabs(lam_plus) >= SUNRabs(lam_minus))
-      {
-        *lambdaR_out = lam_plus;
-      }
-      else
-      {
-        *lambdaR_out = lam_minus;
-      }
+      sunrealtype lam_plus     = (traceP + sqrt_discrim) / SUN_RCONST(2.0);
+      sunrealtype lam_minus    = (traceP - sqrt_discrim) / SUN_RCONST(2.0);
+      if (SUNRabs(lam_plus) >= SUNRabs(lam_minus)) { *lambdaR_out = lam_plus; }
+      else { *lambdaR_out = lam_minus; }
       *lambdaI_out = ZERO;
       *lambdaI_out = ZERO;
     }
