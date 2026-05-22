@@ -230,7 +230,7 @@ are defined ``arkode/arkode_mristep.h``.
          C->group[1][1] = 4;
          C->group[2][0] = 3;
 
-   .. versionchanged:: 6.2.0
+   .. versionchanged:: 7.2.0 (ARKODE 6.2.0)
 
       This function now supports a broader range of MRI method types.
 
@@ -357,7 +357,7 @@ are defined ``arkode/arkode_mristep.h``.
    :retval ARK_SUCCESS: if successful.
    :retval ARK_MEM_NULL: if the Butcher table memory was ``NULL``.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 

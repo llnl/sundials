@@ -116,7 +116,7 @@ MRIStep initialization and deallocation functions
    :param arkode_mem: pointer to the MRIStep memory block.
 
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeFree` instead.
 
@@ -140,7 +140,7 @@ MRIStep tolerance specification functions
    :retval ARK_NO_MALLOC:  if the MRIStep memory was not allocated by the time-stepping module
    :retval ARK_ILL_INPUT: if an argument had an illegal value (e.g. a negative tolerance).
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSStolerances` instead.
 
@@ -162,7 +162,7 @@ MRIStep tolerance specification functions
    :retval ARK_NO_MALLOC:  if the MRIStep memory was not allocated by the time-stepping module
    :retval ARK_ILL_INPUT: if an argument had an illegal value (e.g. a negative tolerance).
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSVtolerances` instead.
 
@@ -181,7 +181,7 @@ MRIStep tolerance specification functions
    :retval ARK_MEM_NULL:  if the MRIStep memory was ``NULL``
    :retval ARK_NO_MALLOC:  if the MRIStep memory was not allocated by the time-stepping module
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeWFtolerances` instead.
 
@@ -234,7 +234,7 @@ Linear solver interface functions
       insufficient to store :math:`\mathcal{A}` then it will need to be
       resized internally by MRIStep.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetLinearSolver` instead.
 
@@ -265,7 +265,7 @@ Nonlinear solver interface functions
       default; a call to this routine replaces that module with the
       supplied *NLS* object.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetNonlinearSolver` instead.
 
@@ -306,7 +306,7 @@ Rootfinding initialization function
       Rootfinding is only supported for the slow (outer) integrator and should not
       be activated for the fast (inner) integrator.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeRootInit` instead.
 
@@ -416,7 +416,7 @@ MRIStep solver function
       On all other error returns, *tret* and *yout* are left unchanged
       from those provided to the routine.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeEvolve` instead.
 
@@ -452,7 +452,7 @@ Optional inputs for MRIStep
       structures or options related to root-finding (those can be reset using
       :c:func:`MRIStepRootInit()`).
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetDefaults` instead.
 
@@ -460,7 +460,7 @@ Optional inputs for MRIStep
 
 .. c:function:: int MRIStepSetInterpolantType(void* arkode_mem, int itype)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       This function is now a wrapper to :c:func:`ARKodeSetInterpolantType`, see
       the documentation for that function instead.
@@ -500,12 +500,12 @@ Optional inputs for MRIStep
       input *degree*, for :math:`q > 1` where :math:`q` is the order of accuracy
       for the time integration method.
 
-   .. versionchanged:: 5.5.1
+   .. versionchanged:: 6.5.1 (ARKODE 5.5.1)
 
       When :math:`q=1`, a linear interpolant is the default to ensure values
       obtained by the integrator are returned at the ends of the time interval.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetInterpolantDegree` instead.
 
@@ -513,7 +513,7 @@ Optional inputs for MRIStep
 
 .. c:function:: int MRIStepSetDenseOrder(void* arkode_mem, int dord)
 
-   .. deprecated:: 5.2.0
+   .. deprecated:: 6.2.0 (ARKODE 5.2.0)
 
       Use :c:func:`ARKodeSetInterpolantDegree` instead.
 
@@ -541,7 +541,7 @@ Optional inputs for MRIStep
       for this pointer, since statistics from all processes would be
       identical.
 
-   .. deprecated:: 5.2.0
+   .. deprecated:: 6.2.0 (ARKODE 5.2.0)
 
       Use :c:func:`SUNLogger_SetInfoFilename` instead.
 
@@ -563,7 +563,7 @@ Optional inputs for MRIStep
       The step sizes used by the inner (fast) stepper may be controlled through calling the
       appropriate "Set" routines on the inner integrator.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetFixedStep` instead.
 
@@ -588,7 +588,7 @@ Optional inputs for MRIStep
 
       A negative value indicates that no warning messages should be issued.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetMaxHnilWarns` instead.
 
@@ -614,7 +614,7 @@ Optional inputs for MRIStep
 
       Passing *mxsteps* < 0 disables the test (not recommended).
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetMaxNumSteps` instead.
 
@@ -644,7 +644,7 @@ Optional inputs for MRIStep
       :c:func:`MRIStepReset` will remain active but can be disabled by calling
       :c:func:`MRIStepClearStopTime`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetStopTime` instead.
 
@@ -662,9 +662,9 @@ Optional inputs for MRIStep
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory is ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetInterpolateStopTime` instead.
 
@@ -684,9 +684,9 @@ Optional inputs for MRIStep
       The stop time can be re-enabled though a new call to
       :c:func:`MRIStepSetStopTime`.
 
-   .. versionadded:: 5.5.1
+   .. versionadded:: 6.5.1 (ARKODE 5.5.1)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeClearStopTime` instead.
 
@@ -716,7 +716,7 @@ Optional inputs for MRIStep
       may be the same as or different from the pointer attached to the outer
       integrator depending on what is required by the user code.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetUserData` instead.
 
@@ -781,7 +781,7 @@ Optional inputs for IVP method selection
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory is ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetOrder` instead.
 
@@ -847,7 +847,7 @@ Optional inputs for implicit stage solves
       The only SUNDIALS-provided SUNNonlinearSolver module that is compatible
       with the :c:func:`MRIStepSetLinear()` option is the Newton solver.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetLinear` instead.
 
@@ -872,7 +872,7 @@ Optional inputs for implicit stage solves
       :c:func:`MRIStepSetDeltaGammaMax()` to reset the step size ratio
       threshold to the default value.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetNonlinear` instead.
 
@@ -914,7 +914,7 @@ Optional inputs for implicit stage solves
       The "bootstrap" predictor (option 4 above) has been deprecated, and
       will be removed from a future release.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetPredictorMethod` instead.
 
@@ -937,7 +937,7 @@ Optional inputs for implicit stage solves
 
       The default value is 3; set *maxcor* :math:`\le 0` to specify this default.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetMaxNonlinIters` instead.
 
@@ -958,7 +958,7 @@ Optional inputs for implicit stage solves
 
       The default value is 0.1; set *nlscoef* :math:`\le 0` to specify this default.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetNonlinConvCoef` instead.
 
@@ -979,7 +979,7 @@ Optional inputs for implicit stage solves
 
       Any non-positive parameter will imply a reset to the default value.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetNonlinCRDown` instead.
 
@@ -1002,7 +1002,7 @@ Optional inputs for implicit stage solves
 
       Any non-positive parameter will imply a reset to the default value.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetNonlinRDiv` instead.
 
@@ -1025,7 +1025,7 @@ Optional inputs for implicit stage solves
       See :numref:`ARKODE.Usage.StagePredictFn` for more information on
       this user-supplied routine.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetStagePredictFn` instead.
 
@@ -1053,7 +1053,7 @@ Optional inputs for implicit stage solves
       When using a non-default nonlinear solver, this function must be called
       *after* :c:func:`MRIStepSetNonlinearSolver()`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetNlsRhsFn` instead.
 
@@ -1073,9 +1073,9 @@ Optional inputs for implicit stage solves
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory is ``NULL``
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (ARKODE 5.2.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetDeduceImplicitRhs` instead.
 
@@ -1109,7 +1109,7 @@ Optional inputs for the ARKLS linear solver interface
 
       Any non-positive parameter will imply a reset to the default value.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetDeltaGammaMax` instead.
 
@@ -1134,7 +1134,7 @@ Optional inputs for the ARKLS linear solver interface
       step. If **msbp** is 0, the default value of 20 will be used. A negative
       value forces a linear solver step at each implicit stage.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetLSetupFrequency` instead.
 
@@ -1166,7 +1166,7 @@ Optional inputs for the ARKLS linear solver interface
       This function must be called *after* the ARKLS system solver interface has
       been initialized through a call to :c:func:`MRIStepSetLinearSolver()`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetJacEvalFrequency` instead.
 
@@ -1204,7 +1204,7 @@ Optional inputs for matrix-based ``SUNLinearSolver`` modules
       The function type :c:func:`ARKLsJacFn()` is described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetJacFn` instead.
 
@@ -1235,7 +1235,7 @@ Optional inputs for matrix-based ``SUNLinearSolver`` modules
       The function type :c:func:`ARKLsLinSysFn()` is described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetLinSysFn` instead.
 
@@ -1260,7 +1260,7 @@ Optional inputs for matrix-based ``SUNLinearSolver`` modules
       Linear solution scaling is enabled by default when a matrix-based
       linear solver is attached.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetLinearSolutionScaling` instead.
 
@@ -1303,7 +1303,7 @@ Optional inputs for matrix-free ``SUNLinearSolver`` modules
       :c:type:`ARKLsJacTimesVecFn` are described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetJacTimes` instead.
 
@@ -1331,7 +1331,7 @@ Optional inputs for matrix-free ``SUNLinearSolver`` modules
       This function must be called *after* the ARKLS system solver interface has
       been initialized through a call to :c:func:`MRIStepSetLinearSolver()`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetJacTimesRhsFn` instead.
 
@@ -1374,7 +1374,7 @@ Optional inputs for iterative ``SUNLinearSolver`` modules
       :c:func:`ARKLsPrecSolveFn()` are described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetPreconditioner` instead.
 
@@ -1403,7 +1403,7 @@ Optional inputs for iterative ``SUNLinearSolver`` modules
       interface has been initialized through a call to
       :c:func:`MRIStepSetLinearSolver()`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetEpsLin` instead.
 
@@ -1435,7 +1435,7 @@ Optional inputs for iterative ``SUNLinearSolver`` modules
       This function must be called *after* the ARKLS system solver interface has
       been initialized through a call to :c:func:`MRIStepSetLinearSolver()`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetLSNormFactor` instead.
 
@@ -1467,7 +1467,7 @@ Rootfinding optional input functions
 
       The default behavior is to monitor for both zero-crossing directions.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRootDirection` instead.
 
@@ -1493,7 +1493,7 @@ Rootfinding optional input functions
       first step), MRIStep will issue a warning which can be disabled with
       this optional input function.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetNoInactiveRootWarn` instead.
 
@@ -1540,7 +1540,7 @@ Interpolated output function
       functions :c:func:`MRIStepGetCurrentTime()` and
       :c:func:`MRIStepGetLastStep()`, respectively.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetDky` instead.
 
@@ -1568,7 +1568,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: int MRIStepGetWorkSpace(void* arkode_mem, long int* lenrw, long int* leniw)
@@ -1582,7 +1582,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetWorkSpace` instead.
 
@@ -1600,7 +1600,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumSteps` instead.
 
@@ -1617,7 +1617,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetLastStep` instead.
 
@@ -1633,7 +1633,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetCurrentTime` instead.
 
@@ -1654,7 +1654,7 @@ Main solver optional output functions
       as altering values of *ycur* may lead to undesirable behavior, depending
       on the particular use case and on when this routine is called.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetCurrentState` instead.
 
@@ -1670,7 +1670,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetCurrentGamma` instead.
 
@@ -1687,7 +1687,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetTolScaleFactor` instead.
 
@@ -1707,7 +1707,7 @@ Main solver optional output functions
       The user must allocate space for *eweight*, that will be
       filled in by this function.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetErrWeights` instead.
 
@@ -1736,9 +1736,9 @@ Main solver optional output functions
       the data from a SUNDIALS CSV output file using the key and value pair
       format.
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (ARKODE 5.2.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodePrintAllStats` instead.
 
@@ -1756,7 +1756,7 @@ Main solver optional output functions
 
       The user is responsible for freeing the returned string.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetReturnFlagName` instead.
 
@@ -1774,7 +1774,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.2.0
+   .. deprecated:: 7.2.0 (ARKODE 6.2.0)
 
       Use :c:func:`ARKodeGetNumRhsEvals` instead.
 
@@ -1789,7 +1789,7 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumStepSolveFails` instead.
 
@@ -1834,9 +1834,9 @@ Main solver optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the ARKStep memory was ``NULL``
 
-   .. versionadded:: 5.3.0
+   .. versionadded:: 6.3.0 (ARKODE 5.3.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetUserData` instead.
 
@@ -1864,7 +1864,7 @@ Implicit solver optional output functions
       solver object; the counter is reset whenever a new nonlinear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumLinSolvSetups` instead.
 
@@ -1886,7 +1886,7 @@ Implicit solver optional output functions
       solver object; the counter is reset whenever a new nonlinear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumNonlinSolvIters` instead.
 
@@ -1909,7 +1909,7 @@ Implicit solver optional output functions
       solver object; the counter is reset whenever a new nonlinear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumNonlinSolvConvFails` instead.
 
@@ -1933,7 +1933,7 @@ Implicit solver optional output functions
       nonlinear solver object; the counters are reset whenever a new
       nonlinear solver module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNonlinSolvStats` instead.
 
@@ -1970,7 +1970,7 @@ Rootfinding optional output functions
       zero-crossing.  A value of +1 indicates that :math:`g_i` is
       increasing, while a value of -1 indicates a decreasing :math:`g_i`.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetRootInfo` instead.
 
@@ -1987,7 +1987,7 @@ Rootfinding optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumGEvals` instead.
 
@@ -2015,7 +2015,7 @@ Linear solver interface optional output functions
       This function is provided for debugging purposes and the values in the
       returned matrix should not be altered.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetJac` instead.
 
@@ -2032,7 +2032,7 @@ Linear solver interface optional output functions
    :retval ARKLS_MEM_NULL: ``arkode_mem`` was ``NULL``
    :retval ARKLS_LMEM_NULL: the linear solver interface has not been initialized
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetJacTime` instead.
 
@@ -2050,7 +2050,7 @@ Linear solver interface optional output functions
    :retval ARKLS_MEM_NULL: ``arkode_mem`` was ``NULL``
    :retval ARKLS_LMEM_NULL: the linear solver interface has not been initialized
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetJacNumSteps` instead.
 
@@ -2078,7 +2078,7 @@ Linear solver interface optional output functions
       In a parallel setting, the above values are global (i.e., summed over all
       processors).
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetLinWorkSpace` instead.
 
@@ -2100,7 +2100,7 @@ Linear solver interface optional output functions
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumJacEvals` instead.
 
@@ -2124,7 +2124,7 @@ Linear solver interface optional output functions
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumPrecEvals` instead.
 
@@ -2147,7 +2147,7 @@ Linear solver interface optional output functions
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumPrecSolves` instead.
 
@@ -2169,7 +2169,7 @@ Linear solver interface optional output functions
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumLinIters` instead.
 
@@ -2191,7 +2191,7 @@ Linear solver interface optional output functions
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumLinConvFails` instead.
 
@@ -2214,7 +2214,7 @@ Linear solver interface optional output functions
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumJTSetupEvals` instead.
 
@@ -2237,7 +2237,7 @@ Linear solver interface optional output functions
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumJtimesEvals` instead.
 
@@ -2265,7 +2265,7 @@ Linear solver interface optional output functions
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to MRIStep, or when MRIStep is resized.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumLinRhsEvals` instead.
 
@@ -2327,7 +2327,7 @@ Linear solver interface optional output functions
       * *SUNLS_PACKAGE_FAIL_UNREC*, indicating an unrecoverable failure in
         an external iterative linear solver package.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetLastLinFlag` instead.
 
@@ -2348,7 +2348,7 @@ Linear solver interface optional output functions
 
       The user is responsible for freeing the returned string.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetLinReturnFlagName` instead.
 
@@ -2379,7 +2379,7 @@ General usability functions
       for this pointer, since parameters for all processes would be
       identical.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeWriteParameters` instead.
 
@@ -2403,7 +2403,7 @@ General usability functions
       for this pointer, since tables for all processes would be
       identical.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`MRIStepGetCurrentCoupling` and :c:func:`MRIStepCoupling_Write`
       instead.
@@ -2516,13 +2516,13 @@ MRIStep reset function
       If an error occurred, :c:func:`MRIStepReset()` also sends an error message to
       the error handler function.
 
-   .. versionchanged:: 5.3.0
+   .. versionchanged:: 6.3.0 (ARKODE 5.3.0)
 
       This now calls the corresponding :c:type:`MRIStepInnerResetFn` with the same
       (*tR*, *yR*) arguments for the :c:type:`MRIStepInnerStepper` object that is
       used to evolve the MRI "fast" time scale subproblems.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeReset` instead.
 
@@ -2591,6 +2591,6 @@ MRIStep system resize function
         routine, see the supplied serial C example problem,
         ``ark_heat1D_adapt.c``.
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeResize` instead.

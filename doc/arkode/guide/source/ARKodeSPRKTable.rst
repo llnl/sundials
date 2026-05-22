@@ -172,7 +172,7 @@ ARKodeSPRKTable functions
    :param liw: Pointer to store the integer workspace size.
    :param lrw: Pointer to store the real workspace size.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
