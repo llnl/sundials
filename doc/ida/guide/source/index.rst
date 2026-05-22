@@ -35,9 +35,9 @@ When using the IDA package from SUNDIALS, please cite:
      doi       = {10.1145/1089014.1089020}
    }
 
-The IDA documentation can be cited:
+The IDA documentation can be cited as:
 
-.. parsed-literal::
+.. code-block:: latex
 
    @Misc{idaDocumentation,
      author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},

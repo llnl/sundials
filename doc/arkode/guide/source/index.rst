@@ -62,9 +62,9 @@ When using the ARKODE package from SUNDIALS, please cite:
      doi     = {10.1145/3594632}
    }
 
-The ARKODE documentation can be cited:
+The ARKODE documentation can be cited as:
 
-.. parsed-literal::
+.. code-block:: latex
 
    @Misc{arkodeDocumentation,
      author = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward and Cody J. Balos},

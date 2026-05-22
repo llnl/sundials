@@ -124,22 +124,19 @@ numfig_format = {"section": "§%s"}
 
 rst_prolog = open("../../../shared/global.rst.txt", "r").read()
 
-rst_epilog = """
-.. |YEAR| replace:: {year}
-.. |CVODE_VERSION| replace:: {cvode_version}
-.. |CVODES_VERSION| replace:: {cvodes_version}
-.. |ARKODE_VERSION| replace:: {arkode_version}
-.. |IDA_VERSION| replace:: {ida_version}
-.. |IDAS_VERSION| replace:: {idas_version}
-.. |KINSOL_VERSION| replace:: {kinsol_version}
-""".format(
-    year=year,
-    cvode_version=cvode_version,
-    cvodes_version=cvodes_version,
-    arkode_version=arkode_version,
-    ida_version=ida_version,
-    idas_version=idas_version,
-    kinsol_version=kinsol_version,
+source_replacements = {
+    "|YEAR|": str(year),
+    "|CVODE_VERSION|": cvode_version,
+    "|CVODES_VERSION|": cvodes_version,
+    "|ARKODE_VERSION|": arkode_version,
+    "|IDA_VERSION|": ida_version,
+    "|IDAS_VERSION|": idas_version,
+    "|KINSOL_VERSION|": kinsol_version,
+}
+
+rst_epilog = "\n".join(
+    f".. {name} replace:: {value}"
+    for name, value in source_replacements.items()
 )
 
 # -- Options for HTML output ---------------------------------------------------

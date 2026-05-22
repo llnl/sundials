@@ -35,9 +35,9 @@ When using the IDAS package from SUNDIALS, please cite:
      doi       = {10.1145/1089014.1089020}
    }
 
-The IDAS documentation can be cited:
+The IDAS documentation can be cited as:
 
-.. parsed-literal::
+.. code-block:: latex
 
    @Misc{idasDocumentation,
      author = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
