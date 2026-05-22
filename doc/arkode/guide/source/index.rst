@@ -37,8 +37,6 @@ should apply to most users, though control over nearly all internal
 parameters and time adaptivity algorithms is enabled through optional
 interface routines.
 
-ARKODE is written in C, with C++ and Fortran interfaces.
-
 ARKODE is developed by the
 `University of Maryland Baltimore County <https://www.umbc.edu>`_
 and `Lawrence Livermore National Security <https://www.llnl.gov>`_,
