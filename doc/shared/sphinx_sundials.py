@@ -18,6 +18,7 @@
 from sphinx.application import Sphinx
 from sphinx.domains.changeset import VersionChange
 
+
 class SundialsVersionChange(VersionChange):
     def run(self):
         # Join all arguments into the version string so the full text appears before the
@@ -26,6 +27,7 @@ class SundialsVersionChange(VersionChange):
         self.arguments[0] = " ".join(self.arguments)
         self.arguments = [self.arguments[0]]
         return super().run()
+
 
 def setup(app: Sphinx):
     # Create new object type for CMake options
