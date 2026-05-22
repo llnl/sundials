@@ -408,7 +408,7 @@ done
 
 for fn in $(grep -Iirl "x.y.z" ../doc/arkode/guide/source/*)
 do
-    sedi "s/x.y.z/${ark_ver}/gI" $fn
+    sedi "s/x.y.z/${sun_ver} (${ark_ver})/gI" $fn
 done
 
 for fn in $(grep -Iirl "x.y.z" ../doc/cvode/guide/source/*)
@@ -428,7 +428,7 @@ done
 
 for fn in $(grep -Iirl "x.y.z" ../doc/idas/guide/source/*)
 do
-    sedi "s/x.y.z/${idas_ver}/gI" $fn
+    sedi "s/x.y.z/${sun_ver} (${idas_ver})/gI" $fn
 done
 
 for fn in $(grep -Iirl "x.y.z" ../doc/kinsol/guide/source/*)
