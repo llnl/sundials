@@ -267,8 +267,8 @@ latex_elements = {
     # disable frames around code-blocks
     "verbatimwithframe=false,"
     +
-    # do not wrap long lines in code-blocks
-    "verbatimwrapslines=false,"
+    # wrap long lines in code-blocks
+    "verbatimwrapslines=true,"
     +
     # background color for code-blocks
     "VerbatimColor={RGB}{240.0,240.0,240.0},"
