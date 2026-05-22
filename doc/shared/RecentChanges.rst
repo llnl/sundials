@@ -29,4 +29,9 @@ Fixed empty ``elseif()`` cases in the CMake files for the Fortran interfaces to
 the ManyVector and MPIPlusX vectors which could results in a missing include
 path when compiling if an MPI compiler wrapper is not found.
 
+Corrected the version number used in version added, changed, and deprecated
+notes in the documentation to always use the SUNDIALS version number with the
+package version number as a parenthetical note when it differs from the SUNDIALS
+version number.
+
 **Deprecation Notices**
