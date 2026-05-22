@@ -19,9 +19,6 @@ KINSOL Documentation
 
 .. include:: Landing.rst
 
-Citing
-======
-
 When using the KINSOL package from SUNDIALS, please cite:
 
 .. code-block:: latex

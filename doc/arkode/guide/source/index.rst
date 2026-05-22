@@ -47,9 +47,6 @@ with support by the `US Department of Energy <http://www.doe.gov>`_,
 
 .. include:: Landing.rst
 
-Citing
-======
-
 When using the ARKODE package from SUNDIALS, please cite:
 
 .. code-block:: latex

@@ -19,9 +19,6 @@ IDAS Documentation
 
 .. include:: Landing.rst
 
-Citing
-======
-
 When using the IDAS package from SUNDIALS, please cite:
 
 .. code-block:: latex

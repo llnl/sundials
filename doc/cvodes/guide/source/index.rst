@@ -19,9 +19,6 @@ CVODES Documentation
 
 .. include:: Landing.rst
 
-Citing
-======
-
 When using the CVODES package from SUNDIALS, please cite:
 
 .. code-block:: latex
