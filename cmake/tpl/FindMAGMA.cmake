@@ -21,18 +21,16 @@
 find_path(
   MAGMA_INCLUDE_DIR magma_v2.h
   NAMES magma_v2.h
-  HINTS ${MAGMA_DIR} $ENV{MAGMA_DIR}
+  PATHS ${MAGMA_DIR} $ENV{MAGMA_DIR}
   PATH_SUFFIXES include
-  NO_DEFAULT_PATH
   DOC "Directory with MAGMA header")
 
 # find the main MAGMA library
 find_library(
   MAGMA_LIBRARY
   NAMES magma
-  HINTS ${MAGMA_DIR} $ENV{MAGMA_DIR}
+  PATHS ${MAGMA_DIR} $ENV{MAGMA_DIR}
   PATH_SUFFIXES lib lib64
-  NO_DEFAULT_PATH
   DOC "The MAGMA library.")
 
 # Find the optional sparse component
@@ -41,9 +39,8 @@ if("SPARSE" IN_LIST MAGMA_FIND_COMPONENTS)
   find_library(
     MAGMA_SPARSE_LIBRARY
     NAMES magma_sparse
-    HINTS ${MAGMA_DIR} $ENV{MAGMA_DIR}
+    PATHS ${MAGMA_DIR} $ENV{MAGMA_DIR}
     PATH_SUFFIXES lib lib64
-    NO_DEFAULT_PATH
     DOC "The MAGMA sparse library.")
 else()
   set(_sparse_required)

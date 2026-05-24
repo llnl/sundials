@@ -79,6 +79,18 @@ jobs:
 
           CHANGED="$(git diff --name-only "$BASE" "$HEAD")"
 
+          # If a CI workflow file changed, run everything
+          if echo "$CHANGED" | grep -qE '^(.github/workflows/)'; then
+            echo "Workflow updates detected, running all jobs"
+            {
+              echo "docs=true"
+              echo "src=true"
+              echo "python=true"
+              echo "fortran=true"
+             } >> "$GITHUB_OUTPUT"
+             exit 0
+          fi
+
           # Check for changes to trigger documentation build checks
           # Updates in doc, bindings/sundials4py, or suntools directories
           if echo "$CHANGED" | grep -qE '^(doc/|bindings/sundials4py/|suntools/)'; then

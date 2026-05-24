@@ -86,29 +86,25 @@ if(KLU_LIBRARY)
 else()
   # find library with user provided directory path
   set(KLU_LIBRARY_NAME klu)
-  find_library(KLU_LIBRARY ${KLU_LIBRARY_NAME} ${KLU_LIBRARY_DIR}
-               NO_DEFAULT_PATH)
+  find_library(KLU_LIBRARY ${KLU_LIBRARY_NAME} ${KLU_LIBRARY_DIR})
 endif()
 mark_as_advanced(KLU_LIBRARY)
 
 if(NOT AMD_LIBRARY)
   set(AMD_LIBRARY_NAME amd)
-  find_library(AMD_LIBRARY ${AMD_LIBRARY_NAME} ${KLU_LIBRARY_DIR}
-               NO_DEFAULT_PATH)
+  find_library(AMD_LIBRARY ${AMD_LIBRARY_NAME} ${KLU_LIBRARY_DIR})
   mark_as_advanced(AMD_LIBRARY)
 endif()
 
 if(NOT COLAMD_LIBRARY)
   set(COLAMD_LIBRARY_NAME colamd)
-  find_library(COLAMD_LIBRARY ${COLAMD_LIBRARY_NAME} ${KLU_LIBRARY_DIR}
-               NO_DEFAULT_PATH)
+  find_library(COLAMD_LIBRARY ${COLAMD_LIBRARY_NAME} ${KLU_LIBRARY_DIR})
   mark_as_advanced(COLAMD_LIBRARY)
 endif()
 
 if(NOT BTF_LIBRARY)
   set(BTF_LIBRARY_NAME btf)
-  find_library(BTF_LIBRARY ${BTF_LIBRARY_NAME} ${KLU_LIBRARY_DIR}
-               NO_DEFAULT_PATH)
+  find_library(BTF_LIBRARY ${BTF_LIBRARY_NAME} ${KLU_LIBRARY_DIR})
   mark_as_advanced(BTF_LIBRARY)
 endif()
 
@@ -119,7 +115,7 @@ if(NOT SUITESPARSECONFIG_LIBRARY)
     set(CMAKE_FIND_LIBRARY_PREFIXES "")
   endif()
   find_library(SUITESPARSECONFIG_LIBRARY ${SUITESPARSECONFIG_LIBRARY_NAME}
-               ${KLU_LIBRARY_DIR} NO_DEFAULT_PATH)
+               ${KLU_LIBRARY_DIR})
   mark_as_advanced(SUITESPARSECONFIG_LIBRARY)
 endif()
 

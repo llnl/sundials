@@ -39,7 +39,7 @@
 find_path(
   temp_HYPRE_INCLUDE_DIR
   NAMES HYPRE.h hypre.h
-  HINTS "${HYPRE_DIR}" "${HYPRE_DIR}/include" "${HYPRE_INCLUDE_DIR}")
+  PATHS "${HYPRE_DIR}" "${HYPRE_DIR}/include" "${HYPRE_INCLUDE_DIR}")
 if(temp_HYPRE_INCLUDE_DIR)
   set(HYPRE_INCLUDE_DIR
       "${temp_HYPRE_INCLUDE_DIR}"
@@ -61,7 +61,7 @@ else()
   find_library(
     HYPRE_LIBRARY
     NAMES ${HYPRE_LIBRARY_NAMES}
-    HINTS "${HYPRE_DIR}" "${HYPRE_DIR}/lib" "${HYPRE_DIR}/lib64"
+    PATHS "${HYPRE_DIR}" "${HYPRE_DIR}/lib" "${HYPRE_DIR}/lib64"
           "${HYPRE_LIBRARY_DIR}")
 endif()
 mark_as_advanced(HYPRE_LIBRARY)

@@ -65,7 +65,7 @@ Using dense direct linear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0180466177813669
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0180466177813669
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0162419560032302
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 157.710290372936
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.06054698179545e-09
@@ -165,7 +165,7 @@ Using dense direct linear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0180040323394217
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0180040323394217
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0162036291054795
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 0.997640253566561
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.662329625971577
@@ -270,7 +270,7 @@ Using dense direct linear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0177780771533373
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0177780771533373
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0160002694380036
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 0.987449745600065
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.690096824069046
