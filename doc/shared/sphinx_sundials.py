@@ -17,9 +17,11 @@
 
 from sphinx.application import Sphinx
 
+
 def source_replacements_handler(app, docname, source):
     for old, new in app.config.source_replacements.items():
         source[0] = source[0].replace(old, new)
+
 
 def setup(app: Sphinx):
     # Create new object type for CMake options

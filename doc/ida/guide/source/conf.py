@@ -129,8 +129,7 @@ source_replacements = {
 }
 
 rst_epilog = "\n".join(
-    f".. {name} replace:: {value}"
-    for name, value in source_replacements.items()
+    f".. {name} replace:: {value}" for name, value in source_replacements.items()
 )
 
 # -- Options for HTML output ---------------------------------------------------
