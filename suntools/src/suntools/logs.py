@@ -271,7 +271,6 @@ def _get_history(log, key, step_status, time_range, step_range):
     levels = []
 
     for entry in log:
-
         step = int(entry["step"])
         time = float(entry["tn"])
         level = entry["level"]

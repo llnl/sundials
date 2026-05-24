@@ -29,8 +29,8 @@ class TestCliParseLogs(unittest.TestCase):
         env = os.environ.copy()
         # Make sure we import the repo-local package.
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-        env["PYTHONPATH"] = os.path.join(repo_root, "suntools", "src") + os.pathsep + env.get(
-            "PYTHONPATH", ""
+        env["PYTHONPATH"] = (
+            os.path.join(repo_root, "suntools", "src") + os.pathsep + env.get("PYTHONPATH", "")
         )
         proc = subprocess.run(
             [sys.executable, "-m", "suntools.cli", "parse_logs", *args],
@@ -49,7 +49,7 @@ class TestCliParseLogs(unittest.TestCase):
             "[INFO][rank 0][CVode][end-nonlinear-solve] status = success, iters = 3\n"
             "[INFO][rank 0][CVode][end-step-attempt] status = success\n"
         )
-        proc = self._run(log, ['--filter=integrator'])
+        proc = self._run(log, ["--filter=integrator"])
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn("begin-step-attempt", proc.stdout)
         self.assertIn("end-step-attempt", proc.stdout)
@@ -63,7 +63,7 @@ class TestCliParseLogs(unittest.TestCase):
             "[INFO][rank 0][CVode][begin-nonlinear-solve] tol = 1e-4\n"
             "[INFO][rank 0][CVode][end-nonlinear-solve] status = success, iters = 3\n"
         )
-        proc = self._run(log, ['--filter=nonlinear,linear'])
+        proc = self._run(log, ["--filter=nonlinear,linear"])
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn("begin-linear-solve", proc.stdout)
         self.assertIn("end-linear-solve", proc.stdout)
@@ -79,7 +79,7 @@ class TestCliParseLogs(unittest.TestCase):
             "\n"
             "[DEBUG][rank 0][Scope][end-step-attempt] status = success\n"
         )
-        proc = self._run(log, ['--filter=integrator'])
+        proc = self._run(log, ["--filter=integrator"])
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn("u_0(:) =", proc.stdout)
         self.assertIn("\n 1\n", proc.stdout)
@@ -95,7 +95,7 @@ class TestCliParseLogs(unittest.TestCase):
             "[INFO][rank 0][CVode][newton-iter] iter = 1\n"
             "[INFO][rank 0][CVode][end-nonlinear-solve] status = success, iters = 2\n"
         )
-        proc = self._run(log, ['--filter=nonlinear'])
+        proc = self._run(log, ["--filter=nonlinear"])
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn("begin-nonlinear-solve", proc.stdout)
         self.assertIn("end-nonlinear-solve", proc.stdout)
