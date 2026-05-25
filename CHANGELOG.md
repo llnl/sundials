@@ -132,36 +132,10 @@ Fixed a bug where passing an empty string to
 corresponding logging stream ([Issue
 #844](https://github.com/llnl/sundials/issues/844)).
 
-Fixed a bug in logging output from ARKODE, where for some time stepping modules,
-the current "time" output in the logger was incorrect.
-
-Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
-state would be stored on the first step if the output vector passed to
-`ARKodeEvolve` did not contain the initial condition on the first call.
-
-Fixed a bug in MRIStep when using a custom inner integrator that relies on the
-input state being the initial condition for the fast integration rather than
-retaining the result from the last inner integration or most recent reset call
-and the output vector passed to `ARKodeEvolve` does not contain the initial
-condition on the first call or the last returned solution on subsequent calls.
-
-Removed an extraneous copy of the output vector in each step with SplittingStep.
-
-Added a missing call to `SUNNonlinSolSetup` in MRIStep when using an
-IMEX-MRI-SR method.
-
-Fixed a potential bug in LSRKStep's `ARKODE_LSRK_SSP_S_3` method, where a real
-number was used instead of an integer, potentially resulting in a rounding error.
-
-Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
-user-supplied dominant eigenvalue function on the first step unless the output
-vector passed to `ARKodeEvolve` contained the initial condition and when an
-eigenvalue estimate is requested on the first step in a subsequent call to
-`ARKodeEvolve` unless the output vector passed contained the most recently returned
-solution.
-
-Fixed a bug in MRIStep for estimating the first "slow" time step in an adaptive
-multirate calculation.
+Fixed a bug where IDAS would incorrectly compute the quadrature predictor when
+IDACalcIC was used. In some cases, this lead to an inconsistent solution in the
+forward solve compared to the forward recomputation from a checkpoint,
+ultimately causing a segfault.
 
 ### Deprecation Notices
 
