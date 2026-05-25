@@ -29,11 +29,21 @@ class SundialsVersionChange(VersionChange):
         return super().run()
 
 
+def source_replacements_handler(app, docname, source):
+    for old, new in app.config.source_replacements.items():
+        source[0] = source[0].replace(old, new)
+
+
 def setup(app: Sphinx):
     # Create new object type for CMake options
     app.add_object_type("cmakeoption", "cmakeop", "single: CMake options; %s")
-    # Create new configuration value set in conf.py
+    # Create new configuration value sets in conf.py
     app.add_config_value("package_name", "", "env", types=[str])
+    app.add_config_value("source_replacements", {}, "env", types=[dict])
+    # Replace key strings in source_replacements dictionary with corresponding values.
+    # This allows for replacing strings anywhere e.g., inside ..code-block instead of
+    # just parsed-literal using rst_epilog
+    app.connect("source-read", source_replacements_handler)
     # Override the built-in directives
     app.add_directive("versionchanged", SundialsVersionChange, override=True)
     app.add_directive("versionadded", SundialsVersionChange, override=True)

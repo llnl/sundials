@@ -130,6 +130,11 @@ Fixed a bug where passing an empty string to
 corresponding logging stream ([Issue
 #844](https://github.com/llnl/sundials/issues/844)).
 
+Fixed a bug where IDAS would incorrectly compute the quadrature predictor when
+IDACalcIC was used. In some cases, this lead to an inconsistent solution in the
+forward solve compared to the forward recomputation from a checkpoint,
+ultimately causing a segfault.
+
 ### Deprecation Notices
 
 The `CVodeSetMonitorFn` and `CVodeSetMonitorFrequency` functions have been
