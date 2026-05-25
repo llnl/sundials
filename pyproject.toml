@@ -43,7 +43,7 @@ Source = "https://github.com/LLNL/sundials"
 minimum-version = "0.4"
 
 # Setuptools-style build caching in a local directory
-build-dir = "build/{wheel_tag}"
+build-dir = "build_sundials4py/{wheel_tag}"
 
 # Build stable ABI wheels for CPython 3.12+
 wheel.py-api = "cp312"
