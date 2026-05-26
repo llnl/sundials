@@ -1275,12 +1275,12 @@ int ARKodeClearStopTime(void* arkode_mem)
 }
 
 /*---------------------------------------------------------------
-  ARKodeSkipAdaptStopTime:
+  ARKodeSetSkipAdaptStopTime:
 
   Specifies whether stop-time-limited steps should be disregarded
   when selecting step sizes for time step adaptivity.
   ---------------------------------------------------------------*/
-int ARKodeSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
+int ARKodeSetSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
 {
   ARKodeMem ark_mem;
   if (arkode_mem == NULL)

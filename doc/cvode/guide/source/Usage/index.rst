@@ -864,7 +864,7 @@ Main solver optional input functions
    +-------------------------------+---------------------------------------------+----------------+
    | Disable the stop time         | :c:func:`CVodeClearStopTime`                | N/A            |
    +-------------------------------+---------------------------------------------+----------------+
-   | Disregard stop time limited   | :c:func:`CVodeSkipAdaptStopTime`            | ``SUNFALSE``   |
+   | Disregard stop time limited   | :c:func:`CVodeSetSkipAdaptStopTime`         | ``SUNFALSE``   |
    | steps in adaptivity           |                                             |                |
    +-------------------------------+---------------------------------------------+----------------+
    | Maximum no. of error test     | :c:func:`CVodeSetMaxErrTestFails`           | 7              |
@@ -1210,7 +1210,7 @@ Main solver optional input functions
 
    .. versionadded:: 6.5.1
 
-.. c:function:: int CVodeSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
+.. c:function:: int CVodeSetSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
 
    Specifies whether stop-time-limited steps should be disregarded
    when adapting step sizes and method order.

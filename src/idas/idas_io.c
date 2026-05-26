@@ -412,7 +412,7 @@ int IDAClearStopTime(void* ida_mem)
 
 /*-----------------------------------------------------------------*/
 
-int IDASkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
+int IDASetSkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
 {
   IDAMem IDA_mem;
 

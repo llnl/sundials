@@ -905,7 +905,7 @@ Minimum absolute step size                         :c:func:`ARKodeSetMinStep`   
 Set a value for :math:`t_{stop}`                   :c:func:`ARKodeSetStopTime`                 undefined
 Interpolate at :math:`t_{stop}`                    :c:func:`ARKodeSetInterpolateStopTime`      ``SUNFALSE``
 Disable the stop time                              :c:func:`ARKodeClearStopTime`               N/A
-Disregard stop time limited steps in adaptivity    :c:func:`ARKodeSkipAdaptStopTime`           ``SUNFALSE``
+Disregard stop time limited steps in adaptivity    :c:func:`ARKodeSetSkipAdaptStopTime`        ``SUNFALSE``
 Supply a pointer for user data                     :c:func:`ARKodeSetUserData`                 ``NULL``
 Maximum no. of ARKODE error test failures          :c:func:`ARKodeSetMaxErrTestFails`          7
 Set inequality constraints on solution             :c:func:`ARKodeSetConstraints`              ``NULL``
@@ -1467,7 +1467,7 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
    .. versionadded:: 6.1.0
 
 
-.. c:function:: int ARKodeSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
+.. c:function:: int ARKodeSetSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
 
    Specifies whether stop-time-limited steps should be disregarded
    when selecting step sizes for time step adaptivity.

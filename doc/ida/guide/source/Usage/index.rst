@@ -931,7 +931,7 @@ Main solver optional input functions
    +--------------------------------------------------------------------+---------------------------------------+----------------+
    | Disable the stop time                                              | :c:func:`IDAClearStopTime`            | N/A            |
    +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Disregard stop time limited steps in adaptivity                    | :c:func:`IDASkipAdaptStopTime`        | ``SUNFALSE``   |
+   | Disregard stop time limited steps in adaptivity                    | :c:func:`IDASetSkipAdaptStopTime`     | ``SUNFALSE``   |
    +--------------------------------------------------------------------+---------------------------------------+----------------+
    | Maximum no. of error test failures                                 | :c:func:`IDASetMaxErrTestFails`       | 10             |
    +--------------------------------------------------------------------+---------------------------------------+----------------+
@@ -1191,7 +1191,7 @@ Main solver optional input functions
 
    .. versionadded:: 6.5.1
 
-.. c:function:: int IDASkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
+.. c:function:: int IDASetSkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
 
    Specifies whether stop-time-limited steps should be disregarded
    when adapting step sizes and method order.

@@ -737,13 +737,13 @@ int CVodeClearStopTime(void* cvode_mem)
 }
 
 /*
- * CVodeSkipAdaptStopTime
+ * CVodeSetSkipAdaptStopTime
  *
  * Specifies whether stop-time-limited steps should be disregarded
  * when performing step size and order adaptivity.
  */
 
-int CVodeSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
+int CVodeSetSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
 {
   CVodeMem cv_mem;
 
