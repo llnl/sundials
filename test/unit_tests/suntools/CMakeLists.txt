@@ -15,8 +15,8 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-# Locate suntools module
-set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/tools/suntools")
+# Locate suntools module source directory.
+set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/suntools/src/suntools")
 
 if(NOT EXISTS "${SUNTOOLS_DIR}/logs.py")
   message(WARNING "Skipped suntools log parser tests (logs.py not found)")

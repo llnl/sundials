@@ -21,7 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "nanobind >= 2.9.2",
-    "numpy >= 2.0.0",
+    "numpy >= 2.0.0"
 ]
 
 [project.optional-dependencies]
