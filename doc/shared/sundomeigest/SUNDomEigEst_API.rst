@@ -303,11 +303,12 @@ instead of supplying a dummy routine.
       between successive dominant eigenvalue estimates. It also serves as a threshold for determining 
       whether the dominant eigenvalue estimated by the Power Iteration is real- or complex-valued.
 
-      When used to check convergence, we declare the iteration converged when the change in magnitude between successive estimates satisfies
+      When used to check convergence, we declare the iteration converged when the change in magnitude 
+      between successive estimates satisfies
 
       .. math::
 
-         \left|\,|\lambda_{k}| - |\lambda_{k-1}|\,\right|
+         \left|\lambda_{k} - \lambda_{k-1}\right|
          \le \mathtt{rel\_tol} \cdot |\lambda_{k}|.
          
       When used to assess preprocessing iterations for the Arnoldi method, once the above test is satisfied, 

@@ -419,8 +419,8 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   Arnoldi_CONTENT(DEE)->num_iters  = 0;
 
   sunrealtype res;
-  sunrealtype newnormlambda = ZERO;
-  sunrealtype oldnormlambda = ZERO;
+  sunrealtype new_lambda = ZERO;
+  sunrealtype old_lambda = ZERO;
 
   /* Set the initial q = A^{num_warmups}q/||A^{num_warmups}q|| */
   for (int i = 0; i < Arnoldi_CONTENT(DEE)->num_warmups; i++)
@@ -434,8 +434,8 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
 
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
-      newnormlambda = N_VDotProd(Arnoldi_CONTENT(DEE)->V[0],
-                                 Arnoldi_CONTENT(DEE)->q); //Rayleigh quotient
+      new_lambda = N_VDotProd(Arnoldi_CONTENT(DEE)->V[0],
+                              Arnoldi_CONTENT(DEE)->q); //Rayleigh quotient
       SUNCheckLastErr();
     }
 
@@ -448,9 +448,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
 
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
-      res           = SUNRabs(newnormlambda - oldnormlambda);
-      oldnormlambda = newnormlambda;
-      if (res <= Arnoldi_CONTENT(DEE)->tol_warmup * SUNRabs(newnormlambda))
+      res        = SUNRabs(new_lambda - old_lambda);
+      old_lambda = new_lambda;
+      if (res <= Arnoldi_CONTENT(DEE)->tol_warmup * SUNRabs(new_lambda))
       {
         break;
       }

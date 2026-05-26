@@ -29,8 +29,8 @@ any ``N_Vector`` implementation that supports a minimal subset of operations
 (:c:func:`N_VClone()`, :c:func:`N_VDotProd()`, :c:func:`N_VScale()`, and
 :c:func:`N_VDestroy()`).
 
-Power iteration is useful for large, sparse matrices whose dominant eigenvalue
-is real-valued and has algebraic multiplicity one. The algorithm starts with a non-zero
+Power iteration is useful for large, sparse matrices whose dominant eigenvalues
+are algebraic multiplicity one.  The algorithm starts with a non-zero
 vector :math:`\mathbf{v}_{0}`.  It then  iteratively updates this via
 
 .. math::
@@ -49,9 +49,30 @@ can be approximated using the Rayleigh quotient
 The iteration continues until the two successive eigenvalue approximations are
 relatively close enough to one another.  That is, for some :ref:`relative tolerance <pi_rel_tol>`.
 
-Power iteration works for the matrices that have a **real** dominant eigenvalue.
-If it is strictly greater than all others (in magnitude), convergence is guaranteed.
-The speed of convergence depends on the ratios of the magnitude of the first two dominant eigenvalues.
+The default Power iteration implementation estimates complex-valued dominant
+eigenvalues with real arithmetic.  After the iteration phase, a postprocessing 
+step is performed using the two most recent iterate vectors (approximations of 
+the dominant eigenvector).  These vectors are used to construct a 2×2 projection
+of the original matrix.
+
+If the two iterates are (numerically) linearly dependent, this indicates
+convergence to a one-dimensional invariant subspace, consistent with a
+real-valued dominant eigenvalue.  In this case, the dominant eigenvalue
+estimate is taken as the Rayleigh quotient of the final iterate.
+
+If the iterates are not linearly dependent, they span a two-dimensional
+subspace.  A 2×2 projection of the original matrix onto this subspace is
+constructed, and the eigenvalues of this projected matrix are used as the
+dominant eigenvalue estimates.  This allows the method to capture complex
+conjugate dominant eigenvalue pairs.
+
+An option is also provided to estimate only a real-valued dominant
+eigenvalue.  In this mode, the 2×2 projection step is skipped and the
+Rayleigh quotient of the final iterate is returned directly.
+
+If the dominant eigenvalue is strictly greater than all others (in magnitude), 
+convergence is guaranteed.  The speed of convergence depends on the ratios of 
+the magnitude of the first two dominant eigenvalues.
 
 The matrix :math:`A` is not required explicitly; only a routine that provides
 the matrix-vector product :math:`Av` is required.  Also, PI requires a fixed

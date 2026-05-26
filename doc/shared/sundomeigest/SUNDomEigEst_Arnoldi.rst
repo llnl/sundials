@@ -43,11 +43,23 @@ approximate some of the eigenvalues of :math:`A`; the dominant eigenvalue of :ma
 well-approximated by the dominant eigenvalue of :math:`H_m`.
 
 Arnoldi iteration works for matrices with both real and complex eigenvalues.  It supports
-estimations with a user-specified fixed Krylov subspace dimension (at least 3).  While
-the choice of dimension results in a prefixed amount of memory, it strictly
-determines the quality of the estimate.  To improve the estimation accuracy, we have found that
-preprocessing with a number of Power iterations is particularly useful.
-This operation is free from any additional memory requirement and is further explained below.
+estimations with a user-specified fixed Krylov subspace dimension (at least 3).  This
+choice guarantees a bounded memory footprint, which is essential for large-scale
+problems, while strongly influencing the quality of the estimate.  To improve the
+estimation accuracy, we have found that preprocessing with a number of power
+iterations is particularly useful.  This operation requires no additional Krylov
+storage and is further explained below.
+
+Unlike the power iteration, these implementations do not perform tolerance-based
+convergence checks at every Arnoldi step, since repeating an Arnoldi iteration due
+to failed convergence would be computationally expensive.  Instead, the
+magnitude-based convergence criterion defined in :ref:`relative tolerance <pi_rel_tol>`
+is used as a preliminary screening mechanism before invoking the Krylov-based estimator.
+
+While this approach is slightly less robust than explicitly monitoring both the
+real and imaginary components of the eigenvalue residual during Arnoldi iteration,
+it significantly reduces computational cost.  This trade-off is particularly
+advantageous for large-scale problems, where each Arnoldi cycle may be expensive.
 
 The matrix :math:`A` is not required explicitly; only a routine that provides an
 approximation of the matrix-vector product, :math:`Av`, is required.
