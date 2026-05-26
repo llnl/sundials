@@ -137,7 +137,7 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
         ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                           (ONE - FOUR * ark_mem->uround);
         ark_mem->eta = ark_mem->hprime / ark_mem->h;
-        if (ark_mem->skipadapttstop) { ark_mem->tstoplimited = SUNTRUE; }
+        ark_mem->tstoplimited = SUNTRUE;
       }
     }
   }
@@ -1132,7 +1132,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
         ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                           (ONE - FOUR * ark_mem->uround);
         ark_mem->eta = ark_mem->hprime / ark_mem->h;
-        if (ark_mem->skipadapttstop) ark_mem->tstoplimited = SUNTRUE;
+        ark_mem->tstoplimited = SUNTRUE;
       }
     }
 

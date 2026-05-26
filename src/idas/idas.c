@@ -2716,11 +2716,11 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
             IDA_mem->ida_hh >
           ZERO)
       {
+        IDA_mem->ida_tstoplimited = SUNTRUE;
         if (IDA_mem->ida_skipadapttstop)
         {
-          IDA_mem->ida_tstoplimited = SUNTRUE;
-          IDA_mem->ida_hsave        = IDA_mem->ida_hh;
-          IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+          IDA_mem->ida_hsave = IDA_mem->ida_hh;
+          IDA_mem->ida_ksave = IDA_mem->ida_kk;
         }
         IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                           (ONE - FOUR * IDA_mem->ida_uround);
@@ -5637,11 +5637,11 @@ static int IDAStopTest1(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
                IDA_mem->ida_hh >
              ZERO)
     {
+      IDA_mem->ida_tstoplimited = SUNTRUE;
       if (IDA_mem->ida_skipadapttstop)
       {
-        IDA_mem->ida_tstoplimited = SUNTRUE;
-        IDA_mem->ida_hsave        = IDA_mem->ida_hh;
-        IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+        IDA_mem->ida_hsave = IDA_mem->ida_hh;
+        IDA_mem->ida_ksave = IDA_mem->ida_kk;
       }
       IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                         (ONE - FOUR * IDA_mem->ida_uround);
@@ -5740,11 +5740,11 @@ static int IDAStopTest2(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
                IDA_mem->ida_hh >
              ZERO)
     {
+      IDA_mem->ida_tstoplimited = SUNTRUE;
       if (IDA_mem->ida_skipadapttstop)
       {
-        IDA_mem->ida_tstoplimited = SUNTRUE;
-        IDA_mem->ida_hsave        = IDA_mem->ida_hh;
-        IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+        IDA_mem->ida_hsave = IDA_mem->ida_hh;
+        IDA_mem->ida_ksave = IDA_mem->ida_kk;
       }
       IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                         (ONE - FOUR * IDA_mem->ida_uround);

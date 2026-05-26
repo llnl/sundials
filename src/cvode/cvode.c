@@ -1216,9 +1216,9 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     {
       if ((cv_mem->cv_tn + cv_mem->cv_h - cv_mem->cv_tstop) * cv_mem->cv_h > ZERO)
       {
+        cv_mem->cv_tstoplimited = SUNTRUE;
         if (cv_mem->cv_skipadapttstop)
         {
-          cv_mem->cv_tstoplimited = SUNTRUE;
           cv_mem->cv_hsave        = cv_mem->cv_h;
           cv_mem->cv_qsave        = cv_mem->cv_q;
         }
@@ -1409,9 +1409,9 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                  cv_mem->cv_h >
                ZERO)
       {
+        cv_mem->cv_tstoplimited = SUNTRUE;
         if (cv_mem->cv_skipadapttstop)
         {
-          cv_mem->cv_tstoplimited = SUNTRUE;
           cv_mem->cv_hsave        = cv_mem->cv_hprime;
           cv_mem->cv_qsave        = cv_mem->cv_q;
         }
@@ -1638,9 +1638,9 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                  cv_mem->cv_h >
                ZERO)
       {
+        cv_mem->cv_tstoplimited = SUNTRUE;
         if (cv_mem->cv_skipadapttstop)
         {
-          cv_mem->cv_tstoplimited = SUNTRUE;
           cv_mem->cv_hsave        = cv_mem->cv_hprime;
           cv_mem->cv_qsave        = cv_mem->cv_q;
         }
