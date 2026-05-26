@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------
 
 # List of test tuples of the form "name\;args"
-set(unit_tests "ida_test_getuserdata\;" "ida_test_tstop\;")
+set(unit_tests "ida_test_getuserdata\;" "ida_test_tstop\;" "ida_test_tstop\;1")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})

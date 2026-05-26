@@ -72,6 +72,12 @@ int main(int argc, char* argv[])
   sunrealtype dt_tstop = SUN_RCONST(0.30);
   sunrealtype tret     = ZERO;
   sunrealtype tcur     = ZERO;
+  sunrealtype dt_cur   = ZERO;
+  sunrealtype dt_last  = ZERO;
+
+  /* if an argument supplied, call SetSkipAdaptStopTime with that value */
+  sunbooleantype skip_adapt_stop_time_threshold = SUNFALSE;
+  if (argc > 1) { skip_adapt_stop_time_threshold = SUNTRUE; }
 
   /* --------------
    * Create context
@@ -127,6 +133,12 @@ int main(int argc, char* argv[])
   flag = IDASetStopTime(ida_mem, tstop);
   if (flag) { return 1; }
 
+  if (skip_adapt_stop_time_threshold)
+  {
+    flag = IDASetSkipAdaptStopTime(ida_mem, 1);
+    if (flag) { return 1; }
+  }
+
   /* ---------------
    * Advance in time
    * --------------- */
@@ -167,6 +179,20 @@ int main(int argc, char* argv[])
         printf("ERROR: Expected stop return!\n");
         flag = 1;
         break;
+      }
+
+      if (skip_adapt_stop_time_threshold)
+      {
+        flag = IDAGetCurrentStep(ida_mem, &dt_cur);
+        if (flag) { return 1; }
+        flag = IDAGetLastStep(ida_mem, &dt_last);
+        if (flag) { return 1; }
+        if (dt_cur <= dt_last)
+        {
+          printf("ERROR: Expected dt_cur > dt_last (%" GSYM " <= %" GSYM ")\n", dt_cur, dt_last);
+          flag = 1;
+          break;
+        }
       }
 
       /* Update stop time */
