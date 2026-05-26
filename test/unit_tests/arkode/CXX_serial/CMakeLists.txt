@@ -132,6 +132,7 @@ foreach(test_tuple ${unit_tests})
     target_link_libraries(
       ${test_target}
       PRIVATE $<TARGET_OBJECTS:sundials_arkode_obj>
+              sundials_ida
               sundials_sunmemsys_obj
               sundials_nvecserial_obj
               sundials_nvecmanyvector_obj

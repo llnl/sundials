@@ -44,6 +44,8 @@ set(arkode_SOURCES
     arkode_mristep_io.c
     arkode_mristep_nls.c
     arkode_mristep.c
+    arkode_pdaestep.c
+    arkode_pdaestep_nls.c
     arkode_relaxation.c
     arkode_root.c
     arkode_splittingstep_coefficients.c
@@ -78,6 +80,7 @@ set(arkode_HEADERS
     arkode_mristep.h
     arkode_mristep.hpp
     arkode_mristep_deprecated.h
+    arkode_pdaestep.h
     arkode_splittingstep.h
     arkode_splittingstep.hpp
     arkode_sprk.h
@@ -94,7 +97,7 @@ sundials_add_library(
   SOURCES ${arkode_SOURCES}
   HEADERS ${arkode_HEADERS}
   INCLUDE_SUBDIR arkode
-  LINK_LIBRARIES PUBLIC sundials_core
+  LINK_LIBRARIES PUBLIC sundials_core sundials_ida
   OBJECT_LIBRARIES
     sundials_sunmemsys_obj
     sundials_nvecserial_obj

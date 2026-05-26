@@ -39,6 +39,7 @@ set(ARKODE_examples
     "ark_analytic_partitioned.c\;splitting ARKODE_SPLITTING_BEST_2_2_2\;develop"
     "ark_analytic_partitioned.c\;splitting ARKODE_SPLITTING_RUTH_3_3_2\;exclude-single"
     "ark_analytic_partitioned.c\;splitting ARKODE_SPLITTING_YOSHIDA_8_6_2\;exclude-single"
+    "ark_partitioned_dae.c\;\;develop"
     "ark_analytic_ssprk.c\;\;develop"
     "ark_brusselator_1D_mri.c\;\;develop"
     "ark_brusselator_fp.c\;\;exclude-single"

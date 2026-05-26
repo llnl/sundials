@@ -29,11 +29,6 @@ add_subdirectory(sunadaptcontroller)
 add_subdirectory(sunadjointcheckpointscheme)
 add_subdirectory(sundomeigest)
 
-# ARKODE library
-if(SUNDIALS_ENABLE_ARKODE)
-  add_subdirectory(arkode)
-endif()
-
 # CVODE library
 if(SUNDIALS_ENABLE_CVODE)
   add_subdirectory(cvode)
@@ -57,4 +52,9 @@ endif()
 # KINSOL library
 if(SUNDIALS_ENABLE_KINSOL)
   add_subdirectory(kinsol)
+endif()
+
+# ARKODE library
+if(SUNDIALS_ENABLE_ARKODE)
+  add_subdirectory(arkode)
 endif()

@@ -28,6 +28,7 @@ target_include_directories(
 target_link_libraries(
   test_arkode_error_handling
   PRIVATE $<TARGET_OBJECTS:sundials_arkode_obj>
+          sundials_ida
           sundials_sunmemsys_obj
           sundials_nvecserial_obj
           sundials_nvecmanyvector_obj
