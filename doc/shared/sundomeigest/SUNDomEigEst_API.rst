@@ -394,6 +394,27 @@ dominant eigenvalue estimator.  *All routines are optional.*
          retval = SUNDomEigEstimator_GetNumIters(DEE, &num_iters);
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_GetNumRhsCalls(SUNDomEigEstimator DEE, long int* num_rhs_calls)
+
+   This *optional* routine should return the number of calls to the :c:type:`SUNRhsFn` function.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *num_rhs_calls* -- the number of calls to the ``RHS`` function.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+   **Usage:**
+
+      .. code-block:: c
+
+         long int num_rhs_calls;
+         retval = SUNDomEigEstimator_GetNumRhsCalls(DEE, &num_rhs_calls);
+
+
 .. c:function:: SUNErrCode SUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator DEE, long int* num_ATimes)
 
    This *optional* routine should return the number of calls to the :c:type:`SUNATimesFn` function.
@@ -525,6 +546,10 @@ The virtual table structure is defined as
 
       The function implementing :c:func:`SUNDomEigEstimator_GetNumIters`
 
+   .. c:member:: long int (*getnumrhscalls)(SUNDomEigEstimator)
+
+      The function implementing :c:func:`SUNDomEigEstimator_GetNumRhsCalls`
+
    .. c:member:: long int (*getnumatimescalls)(SUNDomEigEstimator)
 
       The function implementing :c:func:`SUNDomEigEstimator_GetNumATimesCalls`
@@ -609,6 +634,8 @@ implementation detail for the interested reader.
    | :c:func:`SUNDomEigEstimator_GetRes`\ :sup:`2`      |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_GetNumIters`           |          O          |          O          |
+   +----------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_GetNumRhsCalls`        |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_GetNumATimesCalls`     |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+

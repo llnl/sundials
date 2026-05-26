@@ -120,6 +120,10 @@ SUNErrCode SUNDomEigEstimator_GetNumIters_Power(SUNDomEigEstimator DEE,
                                                 long int* num_iters);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_GetNumRhsCalls_Power(SUNDomEigEstimator DEE,
+                                                   long int* num_rhs_calls);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumATimesCalls_Power(SUNDomEigEstimator DEE,
                                                       long int* num_ATimes);
 

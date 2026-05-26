@@ -326,6 +326,37 @@ int Test_SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
 }
 
 /* ----------------------------------------------------------------------
+ * SUNDomEigEstimator_GetNumRhsCalls Test
+ * --------------------------------------------------------------------*/
+int Test_SUNDomEigEstimator_GetNumRhsCalls(SUNDomEigEstimator DEE,
+                                          long int* num_rhs_calls, int myid)
+{
+  int failure;
+  double start_time, stop_time;
+
+  start_time = get_time();
+  failure    = SUNDomEigEstimator_GetNumRhsCalls(DEE, num_rhs_calls);
+  stop_time  = get_time();
+  if (failure)
+  {
+    printf(">>> FAILED test -- SUNDomEigEstimator_GetNumRhsCalls check, Proc "
+           "%d \n",
+           myid);
+    PRINT_TIME("    SUNDomEigEstimator_GetNumRhsCalls Time: %22.15e \n \n",
+               stop_time - start_time);
+    return (1);
+  }
+  else if (myid == 0)
+  {
+    printf("    PASSED test -- SUNDomEigEstimator_GetNumRhsCalls \n");
+    PRINT_TIME("    SUNDomEigEstimator_GetNumRhsCalls Time: %22.15e \n \n",
+               stop_time - start_time);
+  }
+
+  return (0);
+}
+
+/* ----------------------------------------------------------------------
  * SUNDomEigEstimator_GetNumATimesCalls Test
  * --------------------------------------------------------------------*/
 int Test_SUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator DEE,

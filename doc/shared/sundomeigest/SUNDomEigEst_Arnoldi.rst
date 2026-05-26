@@ -261,6 +261,8 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_GetNumIters_Arnoldi``
 
+* ``SUNDomEigEstimator_GetNumRhsCalls_Arnoldi``
+
 * ``SUNDomEigEstimator_GetNumATimesCalls_Arnoldi``
 
 * ``SUNDomEigEstimator_Write_Arnoldi``

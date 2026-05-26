@@ -71,10 +71,13 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   ops->setmaxiters              = NULL;
   ops->setreltol                = NULL;
   ops->setnumpreprocessiters    = NULL;
+  ops->setinitialguess          = NULL;
   ops->initialize               = NULL;
   ops->estimate                 = NULL;
   ops->getnumiters              = NULL;
+  ops->getnumrhscalls           = NULL;
   ops->getres                   = NULL;
+  ops->getnumatimescalls        = NULL;
   ops->write                    = NULL;
   ops->destroy                  = NULL;
 
@@ -336,6 +339,24 @@ SUNErrCode SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
   {
     *num_iters = 0;
     ier        = SUN_SUCCESS;
+  }
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
+  return (ier);
+}
+
+SUNErrCode SUNDomEigEstimator_GetNumRhsCalls(SUNDomEigEstimator DEE,
+                                             long int* num_rhs_calls)
+{
+  SUNErrCode ier;
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
+  if (DEE->ops->getnumrhscalls)
+  {
+    ier = DEE->ops->getnumrhscalls(DEE, num_rhs_calls);
+  }
+  else
+  {
+    *num_rhs_calls = 0;
+    ier            = SUN_SUCCESS;
   }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);

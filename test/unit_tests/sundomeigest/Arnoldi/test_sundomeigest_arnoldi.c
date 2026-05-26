@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
   int num_warmups;                /* number of preprocessing iters */
   int kry_dim;                    /* Krylov subspace dimension  */
   long int num_iters;             /* number of iterations       */
+  long int num_rhs_calls;         /* number of rhs calls        */
   long int num_ATimes;            /* number of ATimes calls     */
   int print_timing;               /* timing output flag         */
   sunrealtype res;                /* residual                   */
@@ -168,6 +169,7 @@ int main(int argc, char* argv[])
       "    >>> FAILED test -- SUNDomEigEstimator_GetNumIters return value\n");
     fails++;
   }
+  fails += Test_SUNDomEigEstimator_GetNumRhsCalls(DEE, &num_rhs_calls, 0);
   fails += Test_SUNDomEigEstimator_GetNumATimesCalls(DEE, &num_ATimes, 0);
   fails += Test_SUNDomEigEstimator_Write(DEE, 0);
 

@@ -120,6 +120,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->ops->initialize        = SUNDomEigEstimator_Initialize_Arnoldi;
   DEE->ops->estimate          = SUNDomEigEstimator_Estimate_Arnoldi;
   DEE->ops->getnumiters       = SUNDomEigEstimator_GetNumIters_Arnoldi;
+  DEE->ops->getnumrhscalls    = SUNDomEigEstimator_GetNumRhsCalls_Arnoldi;
   DEE->ops->getnumatimescalls = SUNDomEigEstimator_GetNumATimesCalls_Arnoldi;
   DEE->ops->write             = SUNDomEigEstimator_Write_Arnoldi;
   DEE->ops->destroy           = SUNDomEigEstimator_Destroy_Arnoldi;
@@ -547,6 +548,20 @@ SUNErrCode SUNDomEigEstimator_GetNumIters_Arnoldi(SUNDomEigEstimator DEE,
   SUNAssert(num_iters, SUN_ERR_ARG_CORRUPT);
 
   *num_iters = Arnoldi_CONTENT(DEE)->num_iters;
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNDomEigEstimator_GetNumRhsCalls_Arnoldi(SUNDomEigEstimator DEE,
+                                                     long int* num_rhs_calls)
+{
+  SUNFunctionBegin(DEE->sunctx);
+
+  SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(Arnoldi_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
+  SUNAssert(num_rhs_calls, SUN_ERR_ARG_CORRUPT);
+
+  *num_rhs_calls = Arnoldi_CONTENT(DEE)->nfevals;
 
   return SUN_SUCCESS;
 }
