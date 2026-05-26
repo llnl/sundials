@@ -24,16 +24,22 @@ if(SUNDIALS_ENABLE_ALL_WARNINGS)
 endif()
 
 set(arkode_SOURCES
-    farkode_mod.f90
-    farkode_mod.c
-    farkode_arkstep_mod.f90
-    farkode_arkstep_mod.c
-    farkode_erkstep_mod.f90
-    farkode_erkstep_mod.c
-    farkode_sprkstep_mod.f90
-    farkode_sprkstep_mod.c
-    farkode_mristep_mod.f90
-    farkode_mristep_mod.c)
+  farkode_arkstep_mod.c
+  farkode_arkstep_mod.f90
+  farkode_erkstep_mod.c
+  farkode_erkstep_mod.f90
+  farkode_forcingstep_mod.c
+  farkode_forcingstep_mod.f90
+  farkode_lsrkstep_mod.c
+  farkode_lsrkstep_mod.f90
+  farkode_mod.c
+  farkode_mod.f90
+  farkode_mristep_mod.c
+  farkode_mristep_mod.f90
+  farkode_splittingstep_mod.c
+  farkode_splittingstep_mod.f90
+  farkode_sprkstep_mod.c
+  farkode_sprkstep_mod.f90)
 
 # Create the library
 sundials_add_f2003_library(
