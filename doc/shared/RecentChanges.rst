@@ -41,4 +41,7 @@ IDACalcIC was used. In some cases, this lead to an inconsistent solution in the
 forward solve compared to the forward recomputation from a checkpoint,
 ultimately causing a segfault.
 
+Fixed a CMake bug where Fortran modules were not created for LSRKStep,
+ForcingStep, and SplittingStep.
+
 **Deprecation Notices**
