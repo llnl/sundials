@@ -107,7 +107,25 @@ static int pdaeStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   *nflagPtr = ARK_SUCCESS; /* No algebraic solver */
   *dsmPtr   = ZERO;        /* No error estimate */
 
-  // TODO(SBR): print stats
+  //TODO(SBR): extend to more stages
+
+  for (int i = 0; i < step_mem->partitions; i++) {
+    void *ida_mem = step_mem->ida_mems[i];
+    sunrealtype tout = ark_mem->tn + ark_mem->h;
+    IDASetStopTime(ida_mem, tout);
+    retval = IDASolve(ida_mem, tout, &tout, step_mem->user_datas[i].y,
+            step_mem->user_datas[i].yp, IDA_NORMAL);
+
+    if (retval != IDA_SUCCESS) {
+      arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_ARK_INNERSTEP_FAILED, ark_mem->tcur);
+      return ARK_INNERSTEP_FAIL;
+    }
+  }
+
+  ark_mem->tcur += ark_mem->h;
+
+  //TODO(SBR): perform nonlinear solve
 
   return ARK_SUCCESS;
 }

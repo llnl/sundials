@@ -3,6 +3,7 @@
 #include <arkode/arkode.h>
 #include <arkode/arkode_pdaestep.h>
 #include <nvector/nvector_serial.h>
+#include <nvector/nvector_manyvector.h>
 
 #define PARTITIONS 2
 
@@ -14,13 +15,49 @@
 #define SIN(x)  (sinl(x))
 #endif
 
-static int f(sunrealtype t, N_Vector y, N_Vector w, N_Vector yp, N_Vector res, void* user_data)
+static sunrealtype f(sunrealtype x, sunrealtype z, sunrealtype w, sunrealtype xp) {
+  return SIN(w - z) - x - xp;
+}
+
+static sunrealtype g(sunrealtype x, sunrealtype z, sunrealtype w) {
+  return x * x + z * z + w * w - SUN_RCONST(5.0);
+}
+
+static int component_res(sunrealtype t, N_Vector y_vec, N_Vector w_vec, N_Vector yp_vec,
+  N_Vector res_vec, void* user_data)
 {
+  // TODO(SBR): make helper functions to extract components
+  sunrealtype x = N_VGetArrayPointer(N_VGetSubvector_ManyVector(y_vec, 0))[0];
+  sunrealtype z = N_VGetArrayPointer(N_VGetSubvector_ManyVector(y_vec, 1))[0];
+  sunrealtype xp = N_VGetArrayPointer(N_VGetSubvector_ManyVector(yp_vec, 0))[0];
+  sunrealtype w = N_VGetArrayPointer(w_vec)[0];
+
+  sunrealtype *res = N_VGetArrayPointer(res_vec);
+
+  res[0] = f(x, z, w, xp);
+  res[1] = g(x, z, w);
+
   return 0;
 }
 
-static int h(sunrealtype t, N_Vector y, N_Vector w, N_Vector res, void* user_data)
+static sunrealtype h(sunrealtype x1, sunrealtype x2, sunrealtype z1, sunrealtype z2, sunrealtype w)
 {
+  return x1 - z1 + x2 - z2 + w;
+}
+
+static int algebraic_res(sunrealtype t, N_Vector y_vec, N_Vector w_vec, N_Vector res_vec, void* user_data)
+{
+  sunrealtype x1 = N_VGetArrayPointer(PDAEStepGetDifferentialSubvector(y_vec, 0))[0];
+  sunrealtype z1 = N_VGetArrayPointer(PDAEStepGetAlgebraicSubvector(y_vec, 0))[0];
+  sunrealtype x2 = N_VGetArrayPointer(PDAEStepGetDifferentialSubvector(y_vec, 1))[0];
+  sunrealtype z2 = N_VGetArrayPointer(PDAEStepGetAlgebraicSubvector(y_vec, 1))[0];
+  sunrealtype w = N_VGetArrayPointer(w_vec)[0];
+
+  sunrealtype *res = N_VGetArrayPointer(res_vec);
+  res[0] = g(x1, z1, w);
+  res[1] = g(x1, z1, w);
+  res[2] = h(x1, x2, z1, z2, w);
+
   return 0;
 }
 
@@ -50,10 +87,17 @@ int main(void) {
 
   N_Vector y = PDAEStepManyVector(x, z, w, PARTITIONS);
   N_Vector yp = PDAEStepManyVector(xp, zp, wp, PARTITIONS);
+  const sunrealtype tspan[] = {SUN_RCONST(0.0), SUN_RCONST(1.0)};
 
-  PDAEStepComponentResFn component_res_fns[] = {f, f};
-  PDAEStepAlgebraicResFn algebraic_res_fn = h;
-  void *arkode_mem = PDAEStepCreate(component_res_fns, algebraic_res_fn, 0.0, y, yp, PARTITIONS, sunctx);
+  PDAEStepComponentResFn component_res_fns[] = {component_res, component_res};
+  PDAEStepAlgebraicResFn algebraic_res_fn = algebraic_res;
+  void *arkode_mem = PDAEStepCreate(component_res_fns, algebraic_res_fn, tspan[0], y, yp, PARTITIONS, sunctx);
+  ARKodeSetFixedStep(arkode_mem, SUN_RCONST(0.01));
+
+  sunrealtype tret;
+  ARKodeEvolve(arkode_mem, tspan[1], y, &tret, ARK_NORMAL);
+
+  N_VPrint(y);
 
   for (int i = 0; i < PARTITIONS; i++) {
     N_VDestroy(x[i]);
