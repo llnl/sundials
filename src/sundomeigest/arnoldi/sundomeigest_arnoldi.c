@@ -694,8 +694,9 @@ int sundomeigest_Compare(const void* a, const void* b)
 
   This routine generates a difference quotient approximation to
   the Jacobian-vector product f_y(t,y) * v. The approximation is
-  Jv = [f(y + v*sig) - f(y)]/sig, where sig = 1 / ||v||_WRMS,
-  i.e. the WRMS norm of v*sig is 1.
+  Jv = [f(y + v*sig) - f(y)]/sig, where
+      sig = sign(y^T v) * sqrt(unit roundoff)
+            * max(|y^T v|, ||v||_1) / (v^T v).
   ---------------------------------------------------------------*/
 SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
 {
@@ -756,7 +757,8 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
     retval = Arnoldi_CONTENT(DEE)->rhsfn(Arnoldi_CONTENT(DEE)->rhs_linT, work,
                                          Jv, Arnoldi_CONTENT(DEE)->rhs_data);
     Arnoldi_CONTENT(DEE)->nfevals++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval == 0) { break; }
+    if (retval < 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     /* If f failed recoverably, shrink sig and retry */
     sig *= SUN_RCONST(0.25);

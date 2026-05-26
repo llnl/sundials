@@ -585,7 +585,6 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
     retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata, v,
                                      PI_CONTENT(DEE)->q);
     PI_CONTENT(DEE)->num_ATimes++;
-    PI_CONTENT(DEE)->num_iters++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     h12 = N_VDotProd(v_prev, PI_CONTENT(DEE)->q);
@@ -683,8 +682,9 @@ SUNErrCode SUNDomEigEstimator_Destroy_Power(SUNDomEigEstimator* DEEptr)
 
   This routine generates a difference quotient approximation to
   the Jacobian-vector product f_y(t,y) * v. The approximation is
-  Jv = [f(y + v*sig) - f(y)]/sig, where sig = 1 / ||v||_WRMS,
-  i.e. the WRMS norm of v*sig is 1.
+  Jv = [f(y + v*sig) - f(y)]/sig, where
+      sig = sign(y^T v) * sqrt(unit roundoff)
+            * max(|y^T v|, ||v||_1) / (v^T v).
   ---------------------------------------------------------------*/
 SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
 {
