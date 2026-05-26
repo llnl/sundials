@@ -46,7 +46,7 @@ foreach(_next_lib IN LISTS PKG_PETSC_LIBRARIES)
   find_library(
     _petsc_lib_${_next_lib}
     NAMES ${_next_lib}
-    HINTS ${PKG_PETSC_LIBRARY_DIRS})
+    PATHS ${PKG_PETSC_LIBRARY_DIRS})
   if(_petsc_lib_${_next_lib})
     list(APPEND _petsc_libs "${_petsc_lib_${_next_lib}}")
   endif()
@@ -62,15 +62,15 @@ foreach(_next_lib IN LISTS PKG_PETSC_STATIC_LIBRARIES)
   endif()
   if(_next_lib MATCHES "kokkoskernels")
     if(NOT TARGET Kokkos::kokkoskernels)
-      find_package(KokkosKernels REQUIRED HINTS "${KokkosKernels_DIR}"
-                   "${PKG_PETSC_LIBRARY_DIRS}" NO_DEFAULT_PATH)
+      find_package(KokkosKernels REQUIRED PATHS "${KokkosKernels_DIR}"
+                   "${PKG_PETSC_LIBRARY_DIRS}")
     endif()
     list(APPEND _petsc_libs "Kokkos::kokkoskernels")
   endif()
   if(_next_lib MATCHES "kokkos")
     if(NOT TARGET Kokkos::kokkos)
-      find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}"
-                   "${PKG_PETSC_LIBRARY_DIRS}" NO_DEFAULT_PATH)
+      find_package(Kokkos REQUIRED PATHS "${Kokkos_DIR}"
+                   "${PKG_PETSC_LIBRARY_DIRS}")
     endif()
     list(APPEND _petsc_libs "Kokkos::kokkos")
   endif()

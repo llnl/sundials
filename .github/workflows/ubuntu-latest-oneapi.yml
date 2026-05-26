@@ -36,6 +36,7 @@ jobs:
     - name: Configure CMake
       run: |
         cmake \
+        -W error=dev \
         -B ${{github.workspace}}/build \
         -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
         -D CMAKE_C_COMPILER="$(which icx)" \

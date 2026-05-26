@@ -59,6 +59,7 @@ jobs:
       # Configure CMake in a 'build' subdirectory
       run: |
         cmake \
+          -W error=dev \
           -G "MSYS Makefiles" \
           -B ${GITHUB_WORKSPACE}/build_static \
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
@@ -86,6 +87,7 @@ jobs:
       # Configure CMake in a 'build' subdirectory
       run: |
         cmake \
+          -W error=dev \
           -G "MSYS Makefiles" \
           -B ${GITHUB_WORKSPACE}/build_shared \
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \

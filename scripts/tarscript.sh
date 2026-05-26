@@ -210,7 +210,7 @@ mkdir $tmpdir/examples
 mkdir $tmpdir/include
 mkdir $tmpdir/src
 mkdir $tmpdir/test
-mkdir $tmpdir/tools
+mkdir $tmpdir/suntools
 
 #----------------------------------
 # Copy appropriate files in $tmpdir
@@ -258,7 +258,7 @@ cp -r $sundialsdir/src/sundomeigest $tmpdir/src/
 cp    $sundialsdir/test/testRunner $tmpdir/test/
 cp -r $sundialsdir/test/unit_tests $tmpdir/test/
 
-cp -r $sundialsdir/tools $tmpdir/
+cp -r $sundialsdir/suntools $tmpdir/
 
 # Clean up tmpdir
 rm -rf $tmpdir/doc/shared/__pycache__
@@ -269,7 +269,7 @@ find $tmpdir -name ".DS_Store" -delete
 
 # Remove ignored or untracked files that may have been added
 cd $sundialsdir
-for f in $(git ls-files --others --directory benchmarks cmake doc examples external include src test tools); do
+for f in $(git ls-files --others --directory benchmarks cmake doc examples external include src test suntools); do
     rm -rf $tmpdir/$f
 done
 cd -
