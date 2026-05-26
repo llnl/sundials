@@ -533,7 +533,8 @@ Runge--Kutta--Chebyshev (RKC), :cite:p:`VSH:04` and Runge--Kutta--Legendre (RKL)
    y_{n+1} &= z_{s+1}.
    :label: ARKODE_RKC_RKL
 
-The corresponding coefficients can be found in :cite:p:`VSH:04` and :cite:p:`MBA:14`, respectively.
+The corresponding coefficients can be found in :cite:p:`VSH:04` and :cite:p:`MBA:14`, respectively, and extension of
+these methods for time adaptivity can be found in :cite:p:`RARBGW:26`.
 
 LSRK methods of STS type are designed for stiff problems characterized by
 having Jacobians with eigenvalues that have large real and small imaginary parts.
@@ -597,7 +598,7 @@ For cases with only a single slow right-hand side function (i.e., :math:`f^E
 step (MIS) :cite:p:`Schlegel:09, Schlegel:12a, Schlegel:12b`, first through
 fourth order multirate infinitesimal GARK (MRI-GARK) :cite:p:`Sandu:19`, and
 second through fifth order multirate exponential Runge--Kutta (MERK)
-:cite:p:`Luan:20` methods. For problems with an additively split slow right-hand
+:cite:p:`Luan:20, RAML:26` methods. For problems with an additively split slow right-hand
 side, MRIStep provides first through fourth order implicit-explicit MRI-GARK
 (IMEX-MRI-GARK) :cite:p:`ChiRen:21` and second through fourth order
 implicit-explicit multirate infinitesimal stage-restart (IMEX-MRI-SR)

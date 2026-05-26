@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "suntools"
+version = "7.7.0"
+description = "Utilities designed to assist users of the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "BSD-3-Clause" }
+authors = [
+  { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: BSD License",
+  "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://computing.llnl.gov/projects/sundials"
+Documentation = "https://sundials.readthedocs.io/"
+Source = "https://github.com/LLNL/sundials"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/suntools"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src/suntools",
+  "/examples",
+  "/README.md",
+  "/pyproject.toml",
+]

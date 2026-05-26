@@ -40,20 +40,3 @@
    Cosmin Petra, Steven B. Roberts, H. Hunter Schwartz, Jean M. Sexton, Dan
    Shumaker, Steve G. Smith, Shahbaj Sohal, Allan G. Taylor, Hilari C. Tiedeman,
    Chris White, Ting Yan, and Ulrike M. Yang.
-
-   .. ifconfig:: package_name != 'super'
-
-      **Citing**
-
-      .. include:: ../../../shared/cite_sundials.rst
-
-      The KINSOL documentation can be cited:
-
-      .. parsed-literal::
-
-         @Misc{kinsolDocumentation,
-            author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-            title  = {User Documentation for KINSOL},
-            year   = {|YEAR|},
-            note   = {|KINSOL_VERSION|}
-         }
