@@ -298,52 +298,10 @@ instead of supplying a dummy routine.
 
    .. note::
 
-      The relative tolerance is used as a stopping criterion for either the Power Iteration method, or for the 
-      preprocessing phase of the Arnoldi iteration. Specifically, it defines the acceptable relative change 
-      between successive dominant eigenvalue estimates. It also serves as a threshold for determining 
-      whether the dominant eigenvalue estimated by the Power Iteration is real- or complex-valued.
-
-      When used to check convergence, we declare the iteration converged when the change in magnitude 
-      between successive estimates satisfies
-
-      .. math::
-
-         \left|\lambda_{k} - \lambda_{k-1}\right|
-         \le \mathtt{rel\_tol} \cdot |\lambda_{k}|.
-         
-      When used to assess preprocessing iterations for the Arnoldi method, once the above test is satisfied, 
-      the Arnoldi iteration commences, ensuring that Arnoldi is performed only once, as opposed to restarting 
-      Arnoldi repeatedly.
-      
-      When ``rel_tol`` is used as a threshold to assess whether the Power Iteration dominant eigenvalue is 
-      real versus complex, we define 
-
-      .. math::
-         \mathtt{gram\_det\_tol} = 10 \cdot \max\left(\varepsilon,\; \mathtt{rel\_tol}\right)
-
-      where :math:`\varepsilon` represents the machine precision.  The ``gram_det_tol`` value is used to 
-      assess the numerical rank of the 2×2 Gram matrix formed by the two most recent iterates
-      in the Power Iteration method -- if the determinant of this Gram matrix is less than or equal to 
-      ``gram_det_tol``, the iterates are considered linearly dependent, and the dominant eigenvalue is 
-      treated as real.  For this use case, to ensure that small imaginary parts of the dominant eigenvalue are 
-      not ignored, ``rel_tol`` should not be chosen too large. In practice, the smallest reliably detectable
-      imaginary part is proportional to the chosen relative tolerance, i.e.,
-
-      .. math::
-         |\beta| \gtrsim \mathcal{O}(\mathtt{rel\_tol}).
-
-      Therefore, to resolve an expected imaginary part of magnitude :math:`|\beta|`, it is recommended to choose
-
-      .. math::
-         \mathtt{rel\_tol} \ll |\beta|.
-
-      Choosing a smaller relative tolerance improves the ability to detect weakly complex eigenvalues,
-      but may increase computational cost.
-
-      Acceptable inputs to this routine include :math:`0 < \mathtt{rel\_tol} < 1 - \varepsilon`.  For Power 
-      Iteration, values outside this range result in the default value of ``rel_tol = 0.005``.  For 
-      Arnoldi, ``rel_tol < 0`` disables preprocessing, while 
-      :math:`\mathtt{rel\_tol} \ge 1-\varepsilon` result in the default value of ``rel_tol = 0.005``.
+      The interpretation of ``rel_tol``, its acceptable range, the default
+      value, and the way it is used are implementation-specific. For details,
+      see :c:func:`SUNDomEigEstimator_SetRelTol_Power` and
+      :c:func:`SUNDomEigEstimator_SetRelTol_Arnoldi`.
 
       This routine will be called by :c:func:`SUNDomEigEstimator_SetOptions`
       when using the key "Did.rel_tol".

@@ -62,9 +62,8 @@
 */
 
 SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
-  SUNDomEigEstimator DEE, sunrealtype lambdaR, sunrealtype h21,
-  N_Vector v_prev, N_Vector v, sunrealtype* lambdaR_out,
-  sunrealtype* lambdaI_out);
+  SUNDomEigEstimator DEE, sunrealtype lambdaR, sunrealtype h21, N_Vector v_prev,
+  N_Vector v, sunrealtype* lambdaR_out, sunrealtype* lambdaI_out);
 
 SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv);
 
@@ -453,8 +452,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
 
   if (PI_CONTENT(DEE)->is_complex)
   {
-    retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR,
-                                                         normq,
+    retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR, normq,
                                                          PI_CONTENT(DEE)->q_prev,
                                                          PI_CONTENT(DEE)->V,
                                                          lambdaR, lambdaI);
@@ -539,9 +537,8 @@ SUNErrCode SUNDomEigEstimator_Write_Power(SUNDomEigEstimator DEE, FILE* outfile)
 }
 
 SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
-  SUNDomEigEstimator DEE, sunrealtype lambdaR, sunrealtype h21,
-  N_Vector v_prev, N_Vector v, sunrealtype* lambdaR_out,
-  sunrealtype* lambdaI_out)
+  SUNDomEigEstimator DEE, sunrealtype lambdaR, sunrealtype h21, N_Vector v_prev,
+  N_Vector v, sunrealtype* lambdaR_out, sunrealtype* lambdaI_out)
 {
   SUNFunctionBegin(DEE->sunctx);
 

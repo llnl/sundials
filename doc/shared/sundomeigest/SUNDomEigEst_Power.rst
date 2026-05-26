@@ -152,6 +152,62 @@ routines:
       The default value is ``SUNFALSE``.
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRelTol_Power(SUNDomEigEstimator DEE, sunrealtype rel_tol)
+
+   This routine sets the relative tolerance used by the Power iteration.
+
+   :param DEE: the dominant eigenvalue estimator object.
+   :param rel_tol: requested relative tolerance.
+
+   :returns: ``SUN_SUCCESS`` if successful, otherwise an appropriate error code.
+
+   .. note::
+
+      In the Power implementation, ``rel_tol`` is used in two ways.
+
+      First, it is used in the convergence test for successive dominant
+      eigenvalue estimates:
+
+      .. math::
+
+         \left|\lambda_{k} - \lambda_{k-1}\right|
+         \le \mathtt{rel\_tol} \cdot |\lambda_{k}|.
+
+      Second, when estimating complex-valued dominant eigenvalues with real
+      arithmetic, it is used to determine whether the two most recent iterates
+      are numerically linearly dependent. In this case,
+
+      .. math::
+
+         \mathtt{gram\_det\_tol} = 10 \cdot \max\left(\varepsilon,\; \mathtt{rel\_tol}\right),
+
+      where :math:`\varepsilon` denotes machine precision. If the determinant
+      of the 2×2 Gram matrix formed from the two most recent iterates is less
+      than or equal to ``gram_det_tol``, then the dominant eigenvalue is treated
+      as real.
+
+      To avoid masking a small imaginary part of the dominant eigenvalue,
+      ``rel_tol`` should not be chosen too large. In practice, the smallest
+      reliably detectable imaginary part satisfies
+
+      .. math::
+
+         |\beta| \gtrsim \mathcal{O}(\mathtt{rel\_tol}),
+
+      so to resolve an expected imaginary part of magnitude :math:`|\beta|`, it
+      is recommended to choose
+
+      .. math::
+
+         \mathtt{rel\_tol} \ll |\beta|.
+
+      Choosing a smaller relative tolerance improves the ability to detect
+      weakly complex eigenvalues, but may increase computational cost.
+
+      Acceptable inputs satisfy :math:`0 < \mathtt{rel\_tol} < 1 - \varepsilon`.
+      Values outside this range reset to the default value ``0.005``.
+
+
 .. _SUNDomEigEst.Power.Description:
 
 SUNDomEigEstimator_Power Description

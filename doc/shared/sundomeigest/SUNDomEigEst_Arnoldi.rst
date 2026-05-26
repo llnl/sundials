@@ -113,6 +113,33 @@ routines:
       :c:func:`SUNDomEigEstimator_SetInitialGuess`.
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE, sunrealtype rel_tol)
+
+   This routine sets the relative tolerance used during the preprocessing phase
+   of the Arnoldi implementation.
+
+   :param DEE: the dominant eigenvalue estimator object.
+   :param rel_tol: requested relative tolerance.
+
+   :returns: ``SUN_SUCCESS`` if successful, otherwise an appropriate error code.
+
+   .. note::
+
+      In the Arnoldi implementation, ``rel_tol`` is used only to assess the
+      preprocessing Power iterations. Once the preprocessing estimate satisfies
+
+      .. math::
+
+         \left|\lambda_{k} - \lambda_{k-1}\right|
+         \le \mathtt{rel\_tol} \cdot |\lambda_{k}|,
+
+      the Arnoldi iteration begins. This avoids restarting Arnoldi repeatedly.
+
+      Supplying ``rel_tol < 0`` disables preprocessing-to-tolerance behavior,
+      while values with :math:`\mathtt{rel\_tol} \ge 1 - \varepsilon` reset to
+      the default value ``0.005``.
+
+
 .. _SUNDomEigEst.Arnoldi.Description:
 
 SUNDomEigEstimator_Arnoldi Description
