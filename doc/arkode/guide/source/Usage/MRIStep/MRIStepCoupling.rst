@@ -417,14 +417,14 @@ with values specified for each method below (e.g., ``ARKODE_MIS_KW3``).
    :index:`ARKODE_MRI_GARK_ERK22a`         2                   1                2               :cite:p:`Sandu:19`
    :index:`ARKODE_MRI_GARK_ERK22b`         :math:`2^{*\circ}`  1                2               :cite:p:`Sandu:19`
    :index:`ARKODE_MRI_GARK_RALSTON2`       2                   1                2               :cite:p:`Roberts:22`
-   :index:`ARKODE_MERK21`                  2                   1                2               :cite:p:`Luan:20`
+   :index:`ARKODE_MERK21`                  2                   1                2               :cite:p:`RAML:26`
    :index:`ARKODE_MIS_KW3`                 :math:`3^*`         --               3               :cite:p:`Schlegel:09`
    :index:`ARKODE_MRI_GARK_ERK33a`         :math:`3^{\circ}`   2                3               :cite:p:`Sandu:19`
    :index:`ARKODE_MRI_GARK_RALSTON3`       3                   2                3               :cite:p:`Roberts:22`
-   :index:`ARKODE_MERK32`                  3                   2                3               :cite:p:`Luan:20`
+   :index:`ARKODE_MERK32`                  3                   2                3               :cite:p:`RAML:26`
    :index:`ARKODE_MRI_GARK_ERK45a`         :math:`4^{*\circ}`  3                5               :cite:p:`Sandu:19`
-   :index:`ARKODE_MERK43`                  4                   3                6               :cite:p:`Luan:20`
-   :index:`ARKODE_MERK54`                  :math:`5^{A}`       4                10              :cite:p:`Luan:20`
+   :index:`ARKODE_MERK43`                  4                   3                6               :cite:p:`RAML:26`
+   :index:`ARKODE_MERK54`                  :math:`5^{A}`       4                10              :cite:p:`RAML:26`
    ======================================  ==================  ===============  ==============  =====================
 
 
