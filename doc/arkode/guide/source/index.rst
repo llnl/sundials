@@ -37,20 +37,44 @@ should apply to most users, though control over nearly all internal
 parameters and time adaptivity algorithms is enabled through optional
 interface routines.
 
-ARKODE is written in C, with C++ and Fortran interfaces.
-
-ARKODE is developed by `Southern Methodist University <https://www.smu.edu>`_ and
-`Lawrence Livermore National Security <https://www.llnl.gov>`_,
+ARKODE is developed by the
+`University of Maryland Baltimore County <https://www.umbc.edu>`_
+and `Lawrence Livermore National Security <https://www.llnl.gov>`_,
 with support by the `US Department of Energy <http://www.doe.gov>`_,
 `Office of Science <https://www.energy.gov/science/office-science>`_.
 
-
 .. include:: Landing.rst
+
+When using the ARKODE package from SUNDIALS, please cite:
+
+.. code-block:: latex
+
+   @article{reynolds2023arkode,
+     title   = {{ARKODE: A flexible IVP solver infrastructure for one-step methods}},
+     author  = {Reynolds, Daniel R and Gardner, David J and Woodward, Carol S and Chinomona, Rujeko},
+     journal = {ACM Transactions on Mathematical Software},
+     volume  = {49},
+     number  = {2},
+     pages   = {1--26},
+     year    = {2023},
+     doi     = {10.1145/3594632}
+   }
+
+The ARKODE documentation can be cited as:
+
+.. code-block:: latex
+
+   @Misc{arkodeDocumentation,
+     author = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward and Cody J. Balos},
+     title  = {User Documentation for ARKODE},
+     year   = {|YEAR|},
+     note   = {|ARKODE_VERSION|}
+   }
+
 
 .. only:: html
 
    **Table of Contents**
-
 
 .. toctree::
    :numbered:
@@ -77,6 +101,7 @@ with support by the `US Department of Energy <http://www.doe.gov>`_,
    Butcher
    Fortran/index.rst
    Python/index.rst
+   Publications_link.rst
    History_link.rst
    Changelog_link.rst
    References
