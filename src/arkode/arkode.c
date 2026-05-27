@@ -869,7 +869,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     if (ark_mem->hprime != ark_mem->h)
     {
       ark_mem->h = ark_mem->h * ark_mem->eta;
-      if (!ark_mem->skip_adapt_tstop) ark_mem->next_h = ark_mem->h;
+      ark_mem->next_h = ark_mem->h;
     }
     if (ark_mem->fixedstep)
     {
