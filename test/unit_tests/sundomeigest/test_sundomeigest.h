@@ -49,7 +49,7 @@ int Test_SUNDomEigEstimator_GetRes(SUNDomEigEstimator DEE, sunrealtype* cur_res,
 int Test_SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
                                         long int* curniter, int myid);
 int Test_SUNDomEigEstimator_GetNumRhsCalls(SUNDomEigEstimator DEE,
-                                          long int* num_rhs_calls, int myid);
+                                           long int* num_rhs_calls, int myid);
 int Test_SUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator DEE,
                                               long int* num_ATimes, int myid);
 int Test_SUNDomEigEstimator_Write(SUNDomEigEstimator DEE, int myid);

@@ -329,7 +329,7 @@ int Test_SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
  * SUNDomEigEstimator_GetNumRhsCalls Test
  * --------------------------------------------------------------------*/
 int Test_SUNDomEigEstimator_GetNumRhsCalls(SUNDomEigEstimator DEE,
-                                          long int* num_rhs_calls, int myid)
+                                           long int* num_rhs_calls, int myid)
 {
   int failure;
   double start_time, stop_time;
