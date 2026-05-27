@@ -46,7 +46,7 @@ when
 .. math::
    :name: pi_rel_tol
 
-   \frac{\left||\lambda_k| - |\lambda_{k-1}|\right|}{\left|\lambda_k \right|} < \tau,
+   \left|\lambda_k - \lambda_{k-1}\right| <= \tau \left|\lambda_k\right|,
 
 where :math:`\tau` is a prescribed tolerance.
 

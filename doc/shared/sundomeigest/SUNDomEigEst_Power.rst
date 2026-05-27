@@ -134,7 +134,7 @@ routines:
 
    This routine informs the Power iteration that the dominant eigenvalue is 
    real-valued, so that the complex projection described in Section 
-   :numref:`SUNDomEigEst.Introduction` can be omitted.
+   :numref:`SUNDomEigEst.Power` can be omitted.
 
    :param DEE: the dominant eigenvalue estimator object.
    :param real: flag indicating that the dominant eigenvalue is real-valued.
