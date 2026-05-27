@@ -187,7 +187,7 @@ int main(int argc, char* argv[])
       "tests\n\n");
   }
 
-  /* First check if the computed eigenvalue has a nonzero magnitute */
+  /* First check if the computed eigenvalue has a nonzero magnitude */
   sunrealtype norm_of_dom_eig = SUNRsqrt(lambdaR * lambdaR + lambdaI * lambdaI);
   if (norm_of_dom_eig < SUN_SMALL_REAL)
   {

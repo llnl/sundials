@@ -164,6 +164,7 @@ int main(int argc, char* argv[])
       "    >>> FAILED test -- SUNDomEigEstimator_GetNumIters return value\n");
     fails++;
   }
+  fails += Test_SUNDomEigEstimator_GetNumRhsCalls(DEE, &num_rhs_calls, 0);
   fails += Test_SUNDomEigEstimator_GetNumATimesCalls(DEE, &num_ATimes, 0);
   fails += Test_SUNDomEigEstimator_Write(DEE, 0);
 
@@ -178,7 +179,7 @@ int main(int argc, char* argv[])
            "tests\n\n");
   }
 
-  /* First check if the computed eigenvalue has a nonzero magnitute */
+  /* First check if the computed eigenvalue has a nonzero magnitude */
   sunrealtype norm_of_dom_eig = SUNRsqrt(lambdaR * lambdaR + lambdaI * lambdaI);
   if (norm_of_dom_eig < SUN_SMALL_REAL)
   {

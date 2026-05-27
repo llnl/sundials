@@ -135,9 +135,12 @@ routines:
 
       the Arnoldi iteration begins. This avoids restarting Arnoldi repeatedly.
 
-      Supplying ``rel_tol < 0`` disables preprocessing-to-tolerance behavior,
-      while values with :math:`\mathtt{rel\_tol} \ge 1 - \varepsilon` reset to
-      the default value ``0.005``.
+      Supplying ``rel_tol < 0`` disables preprocessing-to-tolerance behavior.
+      Inputs satisfying :math:`0 < \mathtt{rel\_tol} < 1 - \varepsilon`
+      enable this behavior and are used directly. Values with
+      :math:`\mathtt{rel\_tol} = 0` or
+      :math:`\mathtt{rel\_tol} > 1 - \varepsilon` reset to the default value
+      ``0.005``.
 
 
 .. _SUNDomEigEst.Arnoldi.Description:
@@ -245,8 +248,10 @@ This estimator is constructed to perform the following operations:
 
   (see :c:func:`LSRKStepSetNumDomEigEstInitPreprocessIters` and
   :c:func:`LSRKStepSetNumDomEigEstPreprocessIters` for setting the number of
-  preprocessing iterations). Then, the Arnoldi iteration is performed to compute
-  the estimate.
+  preprocessing iterations). If tolerance-based warmup checking is enabled via
+  :c:func:`SUNDomEigEstimator_SetRelTol_Arnoldi`, this preprocessing phase may
+  terminate early once the warmup estimate satisfies the requested relative
+  tolerance. Then, the Arnoldi iteration is performed to compute the estimate.
 
 The SUNDomEigEstimator_Arnoldi module defines implementations of all dominant
 eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:

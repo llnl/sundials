@@ -979,6 +979,20 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumIters_Power(SUNDomEigEstimator fa
 }
 
 
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumRhsCalls_Power(SUNDomEigEstimator farg1, long *farg2) {
+  int fresult ;
+  SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
+  long *arg2 = (long *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNDomEigEstimator)(farg1);
+  arg2 = (long *)(farg2);
+  result = (SUNErrCode)SUNDomEigEstimator_GetNumRhsCalls_Power(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumATimesCalls_Power(SUNDomEigEstimator farg1, long *farg2) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;

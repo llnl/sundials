@@ -105,6 +105,7 @@ module fsundomeigest_arnoldi_mod
  public :: FSUNDomEigEstimator_Initialize_Arnoldi
  public :: FSUNDomEigEstimator_Estimate_Arnoldi
  public :: FSUNDomEigEstimator_GetNumIters_Arnoldi
+ public :: FSUNDomEigEstimator_GetNumRhsCalls_Arnoldi
  public :: FSUNDomEigEstimator_GetNumATimesCalls_Arnoldi
  public :: FSUNDomEigEstimator_Write_Arnoldi
  public :: FSUNDomEigEstimator_Destroy_Arnoldi
@@ -629,6 +630,15 @@ end function
 
 function swigc_FSUNDomEigEstimator_GetNumIters_Arnoldi(farg1, farg2) &
 bind(C, name="_wrap_FSUNDomEigEstimator_GetNumIters_Arnoldi") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNDomEigEstimator_GetNumRhsCalls_Arnoldi(farg1, farg2) &
+bind(C, name="_wrap_FSUNDomEigEstimator_GetNumRhsCalls_Arnoldi") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -1473,6 +1483,22 @@ type(C_PTR) :: farg2
 farg1 = c_loc(dee)
 farg2 = c_loc(num_iters(1))
 fresult = swigc_FSUNDomEigEstimator_GetNumIters_Arnoldi(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNDomEigEstimator_GetNumRhsCalls_Arnoldi(dee, num_rhs_calls) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+integer(C_LONG), dimension(*), target, intent(inout) :: num_rhs_calls
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(dee)
+farg2 = c_loc(num_rhs_calls(1))
+fresult = swigc_FSUNDomEigEstimator_GetNumRhsCalls_Arnoldi(farg1, farg2)
 swig_result = fresult
 end function
 
