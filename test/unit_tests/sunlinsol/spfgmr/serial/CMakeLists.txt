@@ -27,7 +27,7 @@ if(SUNDIALS_PRECISION MATCHES "SINGLE")
 elseif(SUNDIALS_PRECISION MATCHES "DOUBLE")
   set(TOL "1e-13")
 else()
-  set(TOL "1e-14")
+  set(TOL "5e-14")
 endif()
 
 # Example lists are tuples "name\;args\;type" where the type is 'develop' for

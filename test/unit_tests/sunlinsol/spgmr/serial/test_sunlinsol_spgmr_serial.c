@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
   int gstype, pretype, maxl, print_timing;
   sunindextype i;
   sunscalartype* vecdata;
-  double tol;
+  sunrealtype tol;
   SUNContext sunctx;
 
   if (SUNContext_Create(SUN_COMM_NULL, &sunctx))
@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
       "ERROR: Maximum Krylov subspace dimension must be a positive integer\n");
     return 1;
   }
-  tol = atof(argv[5]);
+  tol = SUNStrToReal(argv[5]);
   if (tol <= ZERO)
   {
     printf("ERROR: Solver tolerance must be a positive real number\n");
@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
   printf("  Gram-Schmidt orthogonalization type = %i\n", gstype);
   printf("  Preconditioning type = %i\n", pretype);
   printf("  Maximum Krylov subspace dimension = %i\n", maxl);
-  printf("  Solver Tolerance = %g\n", tol);
+  printf("  Solver Tolerance = " SUN_FORMAT_G "\n", tol);
   printf("  timing output flag = %i\n\n", print_timing);
 
   /* Create vectors */

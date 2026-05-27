@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
   int maxl, print_timing;
   sunindextype i;
   sunrealtype* vecdata;
-  double tol;
+  sunrealtype tol;
   SUNContext sunctx;
 
   /* Set up MPI environment */
@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
       "ERROR: Maximum Krylov subspace dimension must be a positive integer\n");
     return 1;
   }
-  tol = atof(argv[3]);
+  tol = SUNStrToReal(argv[3]);
   if (tol <= ZERO)
   {
     printf("ERROR: Solver tolerance must be a positive real number\n");
@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
     printf("  local/global problem sizes = %ld/%lld\n", (long int)ProbData.Nloc,
            (long long int)ProbData.nprocs * ProbData.Nloc);
     printf("  Maximum Krylov subspace dimension = %i\n", maxl);
-    printf("  Solver Tolerance = %g\n", tol);
+    printf("  Solver Tolerance = " SUN_FORMAT_G "\n", tol);
     printf("  timing output flag = %i\n\n", print_timing);
   }
 
