@@ -533,7 +533,7 @@ int SUNLinSolSolve_SPTFQMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 
   /* Initialize rho[0] */
   /* NOTE: initialized here to reduce number of computations - avoid need
-           to compute r_star^T*r_star twice, and avoid needlessly squaring
+           to compute r_star^H*r_star twice, and avoid needlessly squaring
            values */
   SUNCheckCall(N_VDotProdComplex(r_star, r_star, &rho[0]));
 
@@ -971,7 +971,7 @@ int SUNLinSolSolve_SPTFQMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     SUNCheckLastErr();
 
     /* p = u+beta*(q+beta*p) = beta*beta*p + beta*q + u */
-    cv[0] = SUNSQR(beta);
+    cv[0] = beta * beta;
     Xv[0] = p;
 
     cv[1] = beta;

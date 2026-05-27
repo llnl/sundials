@@ -193,6 +193,8 @@ int main(int argc, char* argv[])
   if (check_flag(ProbData.s1, "N_VNew_Serial", 0)) { return 1; }
   ProbData.s2 = N_VNew_Serial(ProbData.N, sunctx);
   if (check_flag(ProbData.s2, "N_VNew_Serial", 0)) { return 1; }
+  ProbData.up  = SOMEMATRIXNUMBERup;
+  ProbData.low = SOMEMATRIXNUMBERlow;
 
   /* Fill xhat vector with uniform random data in [1,2] */
   vecdata = N_VGetArrayPointer(xhat);
