@@ -8,7 +8,7 @@
 // Test utilities
 #include <utilities/parse_options.hpp>
 #include <utilities/compute_eigenvalues.hpp>
-#include <utilities/compute_eigenvalues_2.hpp>
+#include <utilities/compute_eigenvalues_ode.hpp>
 
 // SUNDIALS headers
 #include <arkode/arkode_arkstep.h>
