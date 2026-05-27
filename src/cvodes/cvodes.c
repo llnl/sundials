@@ -544,8 +544,8 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->cv_small_nef        = SMALL_NEF_DEFAULT;
   cv_mem->cv_tstopset         = SUNFALSE;
   cv_mem->cv_tstopinterp      = SUNFALSE;
-  cv_mem->cv_tstoplimited     = SUNFALSE;
-  cv_mem->cv_skipadapttstop   = SUNFALSE;
+  cv_mem->cv_tstop_limited     = SUNFALSE;
+  cv_mem->cv_skip_adapt_tstop   = SUNFALSE;
   cv_mem->cv_maxnef           = MXNEF;
   cv_mem->cv_maxncf           = MXNCF;
   cv_mem->cv_nlscoef          = CORTES;
@@ -3145,13 +3145,13 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
 
     /* Check for approach to tstop */
 
-    cv_mem->cv_tstoplimited = SUNFALSE;
+    cv_mem->cv_tstop_limited = SUNFALSE;
     if (cv_mem->cv_tstopset)
     {
       if ((cv_mem->cv_tn + cv_mem->cv_h - cv_mem->cv_tstop) * cv_mem->cv_h > ZERO)
       {
-        cv_mem->cv_tstoplimited = SUNTRUE;
-        if (cv_mem->cv_skipadapttstop)
+        cv_mem->cv_tstop_limited = SUNTRUE;
+        if (cv_mem->cv_skip_adapt_tstop)
         {
           cv_mem->cv_hsave = cv_mem->cv_h;
           cv_mem->cv_qsave = cv_mem->cv_q;
@@ -3352,7 +3352,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     } /* end of root stop check */
 
     /* Test for tn at tstop or near tstop */
-    cv_mem->cv_tstoplimited = SUNFALSE;
+    cv_mem->cv_tstop_limited = SUNFALSE;
     if (cv_mem->cv_tstopset)
     {
       /* Test for tn at tstop */
@@ -3385,8 +3385,8 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                  cv_mem->cv_h >
                ZERO)
       {
-        cv_mem->cv_tstoplimited = SUNTRUE;
-        if (cv_mem->cv_skipadapttstop)
+        cv_mem->cv_tstop_limited = SUNTRUE;
+        if (cv_mem->cv_skip_adapt_tstop)
         {
           cv_mem->cv_hsave = cv_mem->cv_hprime;
           cv_mem->cv_qsave = cv_mem->cv_q;
@@ -3638,7 +3638,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     }
 
     /* Check if tn is at tstop or near tstop */
-    cv_mem->cv_tstoplimited = SUNFALSE;
+    cv_mem->cv_tstop_limited = SUNFALSE;
     if (cv_mem->cv_tstopset)
     {
       troundoff = FUZZ_FACTOR * cv_mem->cv_uround *
@@ -3667,8 +3667,8 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                  cv_mem->cv_h >
                ZERO)
       {
-        cv_mem->cv_tstoplimited = SUNTRUE;
-        if (cv_mem->cv_skipadapttstop)
+        cv_mem->cv_tstop_limited = SUNTRUE;
+        if (cv_mem->cv_skip_adapt_tstop)
         {
           cv_mem->cv_hsave = cv_mem->cv_hprime;
           cv_mem->cv_qsave = cv_mem->cv_q;
@@ -7947,7 +7947,7 @@ static void cvPrepareNextStep(CVodeMem cv_mem, sunrealtype dsm)
     cv_mem->cv_hprime = cv_mem->cv_h;
     cv_mem->cv_eta    = ONE;
   }
-  else if (cv_mem->cv_skipadapttstop && cv_mem->cv_tstoplimited)
+  else if (cv_mem->cv_skip_adapt_tstop && cv_mem->cv_tstop_limited)
   {
     /* If the current step was limited by tstop, set the upcoming step size
        and order to match the values just prior to the tstop-limited step */

@@ -118,7 +118,7 @@ m.def("IDASetStopTime", IDASetStopTime, nb::arg("ida_mem"), nb::arg("tstop"));
 m.def("IDAClearStopTime", IDAClearStopTime, nb::arg("ida_mem"));
 
 m.def("IDASkipAdaptStopTime", IDASkipAdaptStopTime, nb::arg("ida_mem"),
-      nb::arg("skipadapttstop"));
+      nb::arg("skip_adapt_tstop"));
 
 m.def("IDASetMaxErrTestFails", IDASetMaxErrTestFails, nb::arg("ida_mem"),
       nb::arg("maxnef"));

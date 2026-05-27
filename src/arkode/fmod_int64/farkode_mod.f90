@@ -2945,18 +2945,18 @@ fresult = swigc_FARKodeClearStopTime(farg1)
 swig_result = fresult
 end function
 
-function FARKodeSkipAdaptStopTime(arkode_mem, skipadapttstop) &
+function FARKodeSkipAdaptStopTime(arkode_mem, skip_adapt_tstop) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-integer(C_INT), intent(in) :: skipadapttstop
+integer(C_INT), intent(in) :: skip_adapt_tstop
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
 
 farg1 = arkode_mem
-farg2 = skipadapttstop
+farg2 = skip_adapt_tstop
 fresult = swigc_FARKodeSkipAdaptStopTime(farg1, farg2)
 swig_result = fresult
 end function

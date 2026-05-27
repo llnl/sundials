@@ -463,8 +463,8 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_suppressalg    = SUNFALSE;
   IDA_mem->ida_id             = NULL;
   IDA_mem->ida_tstopset       = SUNFALSE;
-  IDA_mem->ida_tstoplimited   = SUNFALSE;
-  IDA_mem->ida_skipadapttstop = SUNFALSE;
+  IDA_mem->ida_tstop_limited   = SUNFALSE;
+  IDA_mem->ida_skip_adapt_tstop = SUNFALSE;
   IDA_mem->ida_dcj            = DCJ_DEFAULT;
 
   /* Initialize inequality constraint variables */
@@ -2702,7 +2702,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
 
     /* Check for approach to tstop */
 
-    IDA_mem->ida_tstoplimited = SUNFALSE;
+    IDA_mem->ida_tstop_limited = SUNFALSE;
     if (IDA_mem->ida_tstopset)
     {
       if ((IDA_mem->ida_tstop - IDA_mem->ida_tn) * IDA_mem->ida_hh <= ZERO)
@@ -2716,8 +2716,8 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
             IDA_mem->ida_hh >
           ZERO)
       {
-        IDA_mem->ida_tstoplimited = SUNTRUE;
-        if (IDA_mem->ida_skipadapttstop)
+        IDA_mem->ida_tstop_limited = SUNTRUE;
+        if (IDA_mem->ida_skip_adapt_tstop)
         {
           IDA_mem->ida_hsave = IDA_mem->ida_hh;
           IDA_mem->ida_ksave = IDA_mem->ida_kk;
@@ -5599,7 +5599,7 @@ static int IDAStopTest1(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
   int ier;
   sunrealtype troundoff;
 
-  IDA_mem->ida_tstoplimited = SUNFALSE;
+  IDA_mem->ida_tstop_limited = SUNFALSE;
   if (IDA_mem->ida_tstopset)
   {
     /* Test for tn past tstop */
@@ -5637,8 +5637,8 @@ static int IDAStopTest1(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
                IDA_mem->ida_hh >
              ZERO)
     {
-      IDA_mem->ida_tstoplimited = SUNTRUE;
-      if (IDA_mem->ida_skipadapttstop)
+      IDA_mem->ida_tstop_limited = SUNTRUE;
+      if (IDA_mem->ida_skip_adapt_tstop)
       {
         IDA_mem->ida_hsave = IDA_mem->ida_hh;
         IDA_mem->ida_ksave = IDA_mem->ida_kk;
@@ -5716,7 +5716,7 @@ static int IDAStopTest2(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
   /* int ier; */
   sunrealtype troundoff;
 
-  IDA_mem->ida_tstoplimited = SUNFALSE;
+  IDA_mem->ida_tstop_limited = SUNFALSE;
   if (IDA_mem->ida_tstopset)
   {
     troundoff = HUNDRED * IDA_mem->ida_uround *
@@ -5740,8 +5740,8 @@ static int IDAStopTest2(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
                IDA_mem->ida_hh >
              ZERO)
     {
-      IDA_mem->ida_tstoplimited = SUNTRUE;
-      if (IDA_mem->ida_skipadapttstop)
+      IDA_mem->ida_tstop_limited = SUNTRUE;
+      if (IDA_mem->ida_skip_adapt_tstop)
       {
         IDA_mem->ida_hsave = IDA_mem->ida_hh;
         IDA_mem->ida_ksave = IDA_mem->ida_kk;
@@ -7564,7 +7564,7 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
 
     /* Set action = LOWER/MAINTAIN/RAISE to specify order decision */
 
-    if (IDA_mem->ida_skipadapttstop && IDA_mem->ida_tstoplimited)
+    if (IDA_mem->ida_skip_adapt_tstop && IDA_mem->ida_tstop_limited)
     {
       /* Returning order to the value used prior to the stop-time-reduced step. */
       action = MAINTAIN;
@@ -7681,7 +7681,7 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
     IDA_mem->ida_eta = ONE;
     tmp = SUNRpowerR(TWO * err_knew + PT0001, -ONE / (IDA_mem->ida_kk + 1));
 
-    if (IDA_mem->ida_skipadapttstop && IDA_mem->ida_tstoplimited)
+    if (IDA_mem->ida_skip_adapt_tstop && IDA_mem->ida_tstop_limited)
     {
       /* Returning step size to the value used prior to the stop-time-reduced step. */
       IDA_mem->ida_eta = IDA_mem->ida_hsave / IDA_mem->ida_hh;

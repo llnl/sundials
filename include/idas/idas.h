@@ -211,7 +211,7 @@ SUNDIALS_EXPORT int IDASetMinStep(void* ida_mem, sunrealtype hmin);
 SUNDIALS_EXPORT int IDASetStopTime(void* ida_mem, sunrealtype tstop);
 SUNDIALS_EXPORT int IDAClearStopTime(void* ida_mem);
 SUNDIALS_EXPORT int IDASetSkipAdaptStopTime(void* ida_mem,
-                                            sunbooleantype skipadapttstop);
+                                            sunbooleantype skip_adapt_tstop);
 SUNDIALS_EXPORT int IDASetMaxErrTestFails(void* ida_mem, int maxnef);
 SUNDIALS_EXPORT int IDASetSuppressAlg(void* ida_mem, sunbooleantype suppressalg);
 SUNDIALS_EXPORT int IDASetId(void* ida_mem, N_Vector id);

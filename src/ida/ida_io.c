@@ -423,7 +423,7 @@ int IDASetSkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
     return (IDA_MEM_NULL);
   }
   IDA_mem                     = (IDAMem)ida_mem;
-  IDA_mem->ida_skipadapttstop = skip;
+  IDA_mem->ida_skip_adapt_tstop = skip;
 
   return (IDA_SUCCESS);
 }

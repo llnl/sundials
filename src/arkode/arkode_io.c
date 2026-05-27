@@ -85,8 +85,8 @@ int ARKodeSetDefaults(void* arkode_mem)
   ark_mem->hmax_inv       = ZERO;     /* no maximum step size */
   ark_mem->tstopset       = SUNFALSE; /* no stop time set */
   ark_mem->tstopinterp    = SUNFALSE; /* copy at stop time */
-  ark_mem->tstoplimited   = SUNFALSE; /* tstop did not limit last step */
-  ark_mem->skipadapttstop = SUNFALSE; /* tstop-limited steps can affect adaptivity */
+  ark_mem->tstop_limited   = SUNFALSE; /* tstop did not limit last step */
+  ark_mem->skip_adapt_tstop = SUNFALSE; /* tstop-limited steps can affect adaptivity */
   ark_mem->tstop              = ZERO;   /* no fixed stop time */
   ark_mem->hadapt_mem->etamx1 = ETAMX1; /* max change on first step */
   ark_mem->hadapt_mem->etamxf = ETAMXF; /* max change on error-failed step */
@@ -1290,7 +1290,7 @@ int ARKodeSetSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
     return (ARK_MEM_NULL);
   }
   ark_mem                 = (ARKodeMem)arkode_mem;
-  ark_mem->skipadapttstop = skip;
+  ark_mem->skip_adapt_tstop = skip;
 
   return (ARK_SUCCESS);
 }
@@ -3518,7 +3518,7 @@ int ARKodeWriteParameters(void* arkode_mem, FILE* fp)
     (void)SUNAdaptController_Write(ark_mem->hadapt_mem->hcontroller, fp);
   }
   fprintf(fp, "  Skip tstop-limited steps from affecting temporal adaptivity = %i\n",
-          ark_mem->skipadapttstop);
+          ark_mem->skip_adapt_tstop);
 
   fprintf(fp, "  Maximum number of error test failures = %i\n", ark_mem->maxnef);
   fprintf(fp, "  Maximum number of convergence test failures = %i\n",

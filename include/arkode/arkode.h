@@ -290,7 +290,7 @@ SUNDIALS_EXPORT int ARKodeSetInterpolateStopTime(void* arkode_mem,
 SUNDIALS_EXPORT int ARKodeSetStopTime(void* arkode_mem, sunrealtype tstop);
 SUNDIALS_EXPORT int ARKodeClearStopTime(void* arkode_mem);
 SUNDIALS_EXPORT int ARKodeSetSkipAdaptStopTime(void* arkode_mem,
-                                               sunbooleantype skipadapttstop);
+                                               sunbooleantype skip_adapt_tstop);
 SUNDIALS_EXPORT int ARKodeSetFixedStep(void* arkode_mem, sunrealtype hfixed);
 SUNDIALS_EXPORT int ARKodeSetStepDirection(void* arkode_mem, sunrealtype stepdir);
 SUNDIALS_EXPORT int ARKodeSetUserData(void* arkode_mem, void* user_data);
