@@ -2486,7 +2486,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
     {
       ark_mem->hprime = (ark_mem->tstop - ark_mem->tcur) *
                         (ONE - FOUR * ark_mem->uround);
-      ark_mem->eta = ark_mem->hprime / ark_mem->h;
+      ark_mem->eta           = ark_mem->hprime / ark_mem->h;
       ark_mem->tstop_limited = SUNTRUE;
     }
   }
@@ -2825,7 +2825,8 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
 
   /* Notify time step controller object of successful step
      (skip this if the previous step was stop-time-limited) */
-  if (ark_mem->hadapt_mem->hcontroller && !(ark_mem->skip_adapt_tstop && ark_mem->tstop_limited))
+  if (ark_mem->hadapt_mem->hcontroller &&
+      !(ark_mem->skip_adapt_tstop && ark_mem->tstop_limited))
   {
     retval = SUNAdaptController_UpdateH(ark_mem->hadapt_mem->hcontroller,
                                         ark_mem->h, dsm);
