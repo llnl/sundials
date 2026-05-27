@@ -26,6 +26,9 @@ $ ./autogen.sh
 $ ./configure --prefix=/my/install/location
 ```
 
+*Note, for the complex support prototype, you need the backport-complex-support branch
+of sundials-codes/swig.*
+
 At this point you should check and make sure that autoconf will in fact build
 the Fortran generator. The final line of the configure output should say
 something like:
@@ -50,8 +53,51 @@ $ make install # optional
 
 ## How to regenerate the interfaces
 
-To regenerate the interfaces that have already been created. Simply run
-`make all32 all64` from the `sundials/swig` directory.
+To regenerate the interfaces that have already been created, configure the
+standalone CMake project in `sundials/swig` with the desired
+`SUNDIALS_INDEX_SIZE` and `SUNDIALS_SCALAR_TYPE`, then build the default target:
+
+```bash
+$ cmake -S swig -B build-swig
+$ cmake --build build-swig
+```
+
+The standalone project defaults to `SUNDIALS_INDEX_SIZE=64` and
+`SUNDIALS_SCALAR_TYPE=REAL`. To regenerate a different variant, configure those
+cache variables explicitly. For example, to generate the complex 32-bit
+wrappers:
+
+```bash
+$ cmake -S swig -B build-swig-c32 \
+    -DSUNDIALS_INDEX_SIZE=32 \
+    -DSUNDIALS_SCALAR_TYPE=COMPLEX
+$ cmake --build build-swig-c32
+```
+
+If SWIG-Fortran is not on `PATH`, set `SWIG_EXECUTABLE` when configuring:
+
+```bash
+$ cmake -S swig -B build-swig -DSWIG_EXECUTABLE=/path/to/swig
+```
+
+It is also possible to force the SWIG generation to run as part of the main
+SUNDIALS build by enabling the optional top-level switch `SUNDIALS_ENABLE_SWIG`
+Once enabled, the SWIG generation step will run during the CMake build phase
+(before compilation steps). You can still invoke the SWIG generation step explicitly
+with the `sundials_swig` target if needed:
+
+```bash
+$ cmake -S . -B build -DSUNDIALS_ENABLE_FORTRAN=ON -DSUNDIALS_ENABLE_SWIG=ON
+$ cmake --build build
+# or explicitly:
+$ cmake --build build --target sundials_swig
+```
+
+In that mode `sundials_swig` follows the configured `SUNDIALS_INDEX_SIZE` and
+`SUNDIALS_SCALAR_TYPE`. Both the standalone `swig/` project and the top-level
+integration now follow the configured cache variables rather than exposing
+separate per-variant build targets.
+
 **This will replace all the generated files in `sundials/src`.**
 
 
@@ -59,7 +105,8 @@ To regenerate the interfaces that have already been created. Simply run
 
 To create an interface to a new SUNDIALS module or package, the easiest thing
 to do is copy one of the existing `.i` files for a module that is similar.
-Then add the file to the appropriate section of the Makefile.
+Then add the file to the `SUNDIALS_SWIG_INTERFACE_SPECS` list in
+`swig/CMakeLists.txt`.
 
 It may be useful to first read the "SUNDIALS Fortran 2003 interface" section
 of the  user guide before trying to develop new interfaces.

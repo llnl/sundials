@@ -447,12 +447,12 @@ SWIGEXPORT int _wrap_FSUNMatCopy_Sparse(SUNMatrix farg1, SUNMatrix farg2) {
 
 SWIGEXPORT int _wrap_FSUNMatScaleAdd_Sparse(double const *farg1, SUNMatrix farg2, SUNMatrix farg3) {
   int fresult ;
-  sunrealtype arg1 ;
+  sunscalartype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNMatrix arg3 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (sunrealtype)(*farg1);
+  arg1 = (sunscalartype)(*farg1);
   arg2 = (SUNMatrix)(farg2);
   arg3 = (SUNMatrix)(farg3);
   result = (SUNErrCode)SUNMatScaleAdd_Sparse(arg1,arg2,arg3);
@@ -463,11 +463,11 @@ SWIGEXPORT int _wrap_FSUNMatScaleAdd_Sparse(double const *farg1, SUNMatrix farg2
 
 SWIGEXPORT int _wrap_FSUNMatScaleAddI_Sparse(double const *farg1, SUNMatrix farg2) {
   int fresult ;
-  sunrealtype arg1 ;
+  sunscalartype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (sunrealtype)(*farg1);
+  arg1 = (sunscalartype)(*farg1);
   arg2 = (SUNMatrix)(farg2);
   result = (SUNErrCode)SUNMatScaleAddI_Sparse(arg1,arg2);
   fresult = (SUNErrCode)(result);

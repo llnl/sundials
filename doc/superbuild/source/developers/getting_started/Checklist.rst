@@ -93,7 +93,14 @@ system, etc. developers should adhere to the following checklist.
    `"answers" repository <https://github.com/sundials-codes/answers>`_.
 
 #. If you changed any header files, re-run SWIG to generate updated fortran interfaces.
-   This is done by navigating to the `swig/` directory and running `make all32 all64`.
+   This is done by configuring the standalone ``swig/`` CMake project and then
+   building the default ``swig`` target with the desired
+   ``SUNDIALS_INDEX_SIZE`` and ``SUNDIALS_SCALAR_TYPE``, e.g.
+   ``cmake -S swig -B build-swig-32 -DSUNDIALS_INDEX_SIZE=32 && cmake --build build-swig-32``
+   and
+   ``cmake -S swig -B build-swig-64 -DSUNDIALS_INDEX_SIZE=64 && cmake --build build-swig-64``.
+   You can also expose the generator inside the main SUNDIALS build with
+   ``-DSUNDIALS_ENABLE_SWIG=ON`` and then build the ``sundials_swig`` target.
    If you do not have `swig` installed on your system, you can obtain a git patch file
    from the SWIG GitHub action that we run on all pull requests. The patch can be found
    under the job artifacts (if there were in fact changes that required updates

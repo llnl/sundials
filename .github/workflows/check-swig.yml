@@ -40,9 +40,10 @@ jobs:
 
       - name: Run swig on code
         run: |
-          cd swig
-          make all32
-          make all64
+          cmake -S swig -B build-swig-32 -DSUNDIALS_INDEX_SIZE=32
+          cmake --build build-swig-32 --parallel
+          cmake -S swig -B build-swig-64 -DSUNDIALS_INDEX_SIZE=64
+          cmake --build build-swig-64 --parallel
 
       - name: Run git diff to see if anything changed
         run: /usr/bin/git diff --exit-code

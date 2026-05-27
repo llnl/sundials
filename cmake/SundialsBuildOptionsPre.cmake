@@ -257,6 +257,14 @@ if(SUNDIALS_ENABLE_FORTRAN)
   sundials_option(Fortran_INSTALL_MODDIR STRING "${DOCSTR}" "fortran")
 endif()
 
+set(DOCSTR "Enable SWIG-Fortran regeneration of Fortran interfaces")
+sundials_option(
+  SUNDIALS_ENABLE_SWIG
+  BOOL
+  "${DOCSTR}"
+  OFF
+  ADVANCED)
+
 # ---------------------------------------------------------------
 # Options to enable Python interfaces.
 # ---------------------------------------------------------------

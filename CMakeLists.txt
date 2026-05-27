@@ -221,6 +221,10 @@ include(SundialsSetupTesting)
 # ===============================================================
 
 # Add selected packages and modules to the build
+if(SUNDIALS_ENABLE_SWIG)
+  add_subdirectory(swig)
+endif()
+
 add_subdirectory(src)
 
 # Add selected examples to the build

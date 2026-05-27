@@ -24,22 +24,40 @@
 %include <stdint.i>
 %include <complex.i>
 
-#ifdef GENERATE_INT32
-// Inform SWIG of the configure-provided types
-#define SUNDIALS_INT32_T
-#define SUNDIALS_INDEX_TYPE int32_t
-#else
-#define SUNDIALS_INT64_T
-#define SUNDIALS_INDEX_TYPE int64_t
-#endif
-#define SUNDIALS_DOUBLE_PRECISION
-#define SUNDIALS_COUNTER_TYPE long int
+/* Define precision of SUNDIALS data type 'sunrealtype'
+ * Depending on the precision level, one of the following
+ * three macros will be defined:
+ *     #define SUNDIALS_SINGLE_PRECISION 1
+ *     #define SUNDIALS_DOUBLE_PRECISION 1
+ *     #define SUNDIALS_EXTENDED_PRECISION 1
+ */
+@PRECISION_LEVEL@
 
-#ifdef SCALAR_TYPE_COMPLEX
-#define SUNDIALS_SCALAR_TYPE_COMPLEX 1
-#else
-#define SUNDIALS_SCALAR_TYPE_REAL 1
-#endif
+/* Define the SUNDIALS data scalar type 'sunscalartype'
+ * as either real or complex:
+ *     #define SUNDIALS_SCALAR_TYPE_REAL 1
+ *     #define SUNDIALS_SCALAR_TYPE_COMPLEX 1
+ */
+@SCALAR_TYPE@
+
+/* Define type of vector indices in SUNDIALS 'sunindextype'.
+ * Depending on user choice of index type, one of the following
+ * two macros will be defined:
+ *     #define SUNDIALS_INT64_T 1
+ *     #define SUNDIALS_INT32_T 1
+ */
+@INDEX_TYPE@
+
+/* Define the type of vector indices in SUNDIALS 'sunindextype'.
+ * The macro will be defined with a type of the appropriate size.
+ */
+#define SUNDIALS_INDEX_TYPE @SUNDIALS_CINDEX_TYPE@
+
+/* Define the type used for 'suncountertype'.
+ * The macro will be defined with a type of the appropriate size.
+ */
+#define SUNDIALS_COUNTER_TYPE @SUNDIALS_COUNTER_TYPE@
+
 
 %ignore SUN_FORMAT_E;
 %ignore SUN_FORMAT_G;

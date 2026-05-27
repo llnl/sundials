@@ -215,6 +215,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: nvinv
   type(C_FUNPTR), public :: nvaddconst
   type(C_FUNPTR), public :: nvdotprod
+  type(C_FUNPTR), public :: nvdotprodcomplex
   type(C_FUNPTR), public :: nvmaxnorm
   type(C_FUNPTR), public :: nvwrmsnorm
   type(C_FUNPTR), public :: nvwrmsnormmask
@@ -236,6 +237,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: nvscaleaddmultivectorarray
   type(C_FUNPTR), public :: nvlinearcombinationvectorarray
   type(C_FUNPTR), public :: nvdotprodlocal
+  type(C_FUNPTR), public :: nvdotprodlocalcomplex
   type(C_FUNPTR), public :: nvmaxnormlocal
   type(C_FUNPTR), public :: nvminlocal
   type(C_FUNPTR), public :: nvl1normlocal
@@ -279,6 +281,7 @@ module fsundials_core_mod
  public :: FN_VInv
  public :: FN_VAddConst
  public :: FN_VDotProd
+ public :: FN_VDotProdComplex
  public :: FN_VMaxNorm
  public :: FN_VWrmsNorm
  public :: FN_VWrmsNormMask
@@ -298,6 +301,7 @@ module fsundials_core_mod
  public :: FN_VWrmsNormVectorArray
  public :: FN_VWrmsNormMaskVectorArray
  public :: FN_VDotProdLocal
+ public :: FN_VDotProdLocalComplex
  public :: FN_VMaxNormLocal
  public :: FN_VMinLocal
  public :: FN_VL1NormLocal
@@ -1274,6 +1278,16 @@ type(C_PTR), value :: farg2
 real(C_DOUBLE) :: fresult
 end function
 
+function swigc_FN_VDotProdComplex(farg1, farg2, farg3) &
+bind(C, name="_wrap_FN_VDotProdComplex") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
 function swigc_FN_VMaxNorm(farg1) &
 bind(C, name="_wrap_FN_VMaxNorm") &
 result(fresult)
@@ -1460,6 +1474,16 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 real(C_DOUBLE) :: fresult
+end function
+
+function swigc_FN_VDotProdLocalComplex(farg1, farg2, farg3) &
+bind(C, name="_wrap_FN_VDotProdLocalComplex") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
 end function
 
 function swigc_FN_VMaxNormLocal(farg1) &
@@ -4073,6 +4097,25 @@ fresult = swigc_FN_VDotProd(farg1, farg2)
 swig_result = fresult
 end function
 
+function FN_VDotProdComplex(x, y, result) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(N_Vector), target, intent(inout) :: x
+type(N_Vector), target, intent(inout) :: y
+real(C_DOUBLE), dimension(*), target, intent(inout) :: result
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(x)
+farg2 = c_loc(y)
+farg3 = c_loc(result(1))
+fresult = swigc_FN_VDotProdComplex(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
 function FN_VMaxNorm(x) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -4427,6 +4470,25 @@ type(C_PTR) :: farg2
 farg1 = c_loc(x)
 farg2 = c_loc(y)
 fresult = swigc_FN_VDotProdLocal(farg1, farg2)
+swig_result = fresult
+end function
+
+function FN_VDotProdLocalComplex(x, y, result) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(N_Vector), target, intent(inout) :: x
+type(N_Vector), target, intent(inout) :: y
+real(C_DOUBLE), dimension(*), target, intent(inout) :: result
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(x)
+farg2 = c_loc(y)
+farg3 = c_loc(result(1))
+fresult = swigc_FN_VDotProdLocalComplex(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

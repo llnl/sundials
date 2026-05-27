@@ -49,6 +49,7 @@ module fnvector_serial_mod
  public :: FN_VInv_Serial
  public :: FN_VAddConst_Serial
  public :: FN_VDotProd_Serial
+ public :: FN_VDotProdComplex_Serial
  public :: FN_VMaxNorm_Serial
  public :: FN_VWrmsNorm_Serial
  public :: FN_VWrmsNormMask_Serial
@@ -251,6 +252,16 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 real(C_DOUBLE) :: fresult
+end function
+
+function swigc_FN_VDotProdComplex_Serial(farg1, farg2, farg3) &
+bind(C, name="_wrap_FN_VDotProdComplex_Serial") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
 end function
 
 function swigc_FN_VMaxNorm_Serial(farg1) &
@@ -863,6 +874,25 @@ type(C_PTR) :: farg2
 farg1 = c_loc(x)
 farg2 = c_loc(y)
 fresult = swigc_FN_VDotProd_Serial(farg1, farg2)
+swig_result = fresult
+end function
+
+function FN_VDotProdComplex_Serial(x, y, result) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(N_Vector), target, intent(inout) :: x
+type(N_Vector), target, intent(inout) :: y
+real(C_DOUBLE), dimension(*), target, intent(inout) :: result
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(x)
+farg2 = c_loc(y)
+farg3 = c_loc(result(1))
+fresult = swigc_FN_VDotProdComplex_Serial(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
