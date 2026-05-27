@@ -306,8 +306,8 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->cv_small_nef        = SMALL_NEF_DEFAULT;
   cv_mem->cv_tstopset         = SUNFALSE;
   cv_mem->cv_tstopinterp      = SUNFALSE;
-  cv_mem->cv_tstop_limited     = SUNFALSE;
-  cv_mem->cv_skip_adapt_tstop   = SUNFALSE;
+  cv_mem->cv_tstop_limited    = SUNFALSE;
+  cv_mem->cv_skip_adapt_tstop = SUNFALSE;
   cv_mem->cv_maxnef           = MXNEF;
   cv_mem->cv_maxncf           = MXNCF;
   cv_mem->cv_nlscoef          = CORTES;
@@ -1219,8 +1219,8 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
         cv_mem->cv_tstop_limited = SUNTRUE;
         if (cv_mem->cv_skip_adapt_tstop)
         {
-          cv_mem->cv_hsave        = cv_mem->cv_h;
-          cv_mem->cv_qsave        = cv_mem->cv_q;
+          cv_mem->cv_hsave = cv_mem->cv_h;
+          cv_mem->cv_qsave = cv_mem->cv_q;
         }
         cv_mem->cv_h = (cv_mem->cv_tstop - cv_mem->cv_tn) *
                        (ONE - FOUR * cv_mem->cv_uround);
@@ -1412,8 +1412,8 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
         cv_mem->cv_tstop_limited = SUNTRUE;
         if (cv_mem->cv_skip_adapt_tstop)
         {
-          cv_mem->cv_hsave        = cv_mem->cv_hprime;
-          cv_mem->cv_qsave        = cv_mem->cv_q;
+          cv_mem->cv_hsave = cv_mem->cv_hprime;
+          cv_mem->cv_qsave = cv_mem->cv_q;
         }
         cv_mem->cv_hprime = (cv_mem->cv_tstop - cv_mem->cv_tn) *
                             (ONE - FOUR * cv_mem->cv_uround);
@@ -1641,8 +1641,8 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
         cv_mem->cv_tstop_limited = SUNTRUE;
         if (cv_mem->cv_skip_adapt_tstop)
         {
-          cv_mem->cv_hsave        = cv_mem->cv_hprime;
-          cv_mem->cv_qsave        = cv_mem->cv_q;
+          cv_mem->cv_hsave = cv_mem->cv_hprime;
+          cv_mem->cv_qsave = cv_mem->cv_q;
         }
         cv_mem->cv_hprime = (cv_mem->cv_tstop - cv_mem->cv_tn) *
                             (ONE - FOUR * cv_mem->cv_uround);

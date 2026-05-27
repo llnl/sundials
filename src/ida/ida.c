@@ -307,34 +307,34 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_uround = SUN_UNIT_ROUNDOFF;
 
   /* Set default values for integrator optional inputs */
-  IDA_mem->ida_res            = NULL;
-  IDA_mem->ida_user_data      = NULL;
-  IDA_mem->ida_itol           = IDA_NN;
-  IDA_mem->ida_atolmin0       = SUNTRUE;
-  IDA_mem->ida_user_efun      = SUNFALSE;
-  IDA_mem->ida_efun           = NULL;
-  IDA_mem->ida_edata          = NULL;
-  IDA_mem->ida_maxord         = MAXORD_DEFAULT;
-  IDA_mem->ida_mxstep         = MXSTEP_DEFAULT;
-  IDA_mem->ida_hmax_inv       = HMAX_INV_DEFAULT;
-  IDA_mem->ida_hmin           = HMIN_DEFAULT;
-  IDA_mem->ida_eta_max_fx     = ETA_MAX_FX_DEFAULT;
-  IDA_mem->ida_eta_min_fx     = ETA_MIN_FX_DEFAULT;
-  IDA_mem->ida_eta_max        = ETA_MAX_DEFAULT;
-  IDA_mem->ida_eta_low        = ETA_LOW_DEFAULT;
-  IDA_mem->ida_eta_min        = ETA_MIN_DEFAULT;
-  IDA_mem->ida_eta_min_ef     = ETA_MIN_EF_DEFAULT;
-  IDA_mem->ida_eta_cf         = ETA_CF_DEFAULT;
-  IDA_mem->ida_hin            = ZERO;
-  IDA_mem->ida_epcon          = EPCON;
-  IDA_mem->ida_maxnef         = MXNEF;
-  IDA_mem->ida_maxncf         = MXNCF;
-  IDA_mem->ida_suppressalg    = SUNFALSE;
-  IDA_mem->ida_id             = NULL;
-  IDA_mem->ida_tstopset       = SUNFALSE;
-  IDA_mem->ida_tstop_limited   = SUNFALSE;
+  IDA_mem->ida_res              = NULL;
+  IDA_mem->ida_user_data        = NULL;
+  IDA_mem->ida_itol             = IDA_NN;
+  IDA_mem->ida_atolmin0         = SUNTRUE;
+  IDA_mem->ida_user_efun        = SUNFALSE;
+  IDA_mem->ida_efun             = NULL;
+  IDA_mem->ida_edata            = NULL;
+  IDA_mem->ida_maxord           = MAXORD_DEFAULT;
+  IDA_mem->ida_mxstep           = MXSTEP_DEFAULT;
+  IDA_mem->ida_hmax_inv         = HMAX_INV_DEFAULT;
+  IDA_mem->ida_hmin             = HMIN_DEFAULT;
+  IDA_mem->ida_eta_max_fx       = ETA_MAX_FX_DEFAULT;
+  IDA_mem->ida_eta_min_fx       = ETA_MIN_FX_DEFAULT;
+  IDA_mem->ida_eta_max          = ETA_MAX_DEFAULT;
+  IDA_mem->ida_eta_low          = ETA_LOW_DEFAULT;
+  IDA_mem->ida_eta_min          = ETA_MIN_DEFAULT;
+  IDA_mem->ida_eta_min_ef       = ETA_MIN_EF_DEFAULT;
+  IDA_mem->ida_eta_cf           = ETA_CF_DEFAULT;
+  IDA_mem->ida_hin              = ZERO;
+  IDA_mem->ida_epcon            = EPCON;
+  IDA_mem->ida_maxnef           = MXNEF;
+  IDA_mem->ida_maxncf           = MXNCF;
+  IDA_mem->ida_suppressalg      = SUNFALSE;
+  IDA_mem->ida_id               = NULL;
+  IDA_mem->ida_tstopset         = SUNFALSE;
+  IDA_mem->ida_tstop_limited    = SUNFALSE;
   IDA_mem->ida_skip_adapt_tstop = SUNFALSE;
-  IDA_mem->ida_dcj            = DCJ_DEFAULT;
+  IDA_mem->ida_dcj              = DCJ_DEFAULT;
 
   /* Initialize inequality constraint variables */
   IDA_mem->ida_constraints        = NULL;
@@ -1223,8 +1223,8 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
         IDA_mem->ida_tstop_limited = SUNTRUE;
         if (IDA_mem->ida_skip_adapt_tstop)
         {
-          IDA_mem->ida_hsave        = IDA_mem->ida_hh;
-          IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+          IDA_mem->ida_hsave = IDA_mem->ida_hh;
+          IDA_mem->ida_ksave = IDA_mem->ida_kk;
         }
         IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                           (ONE - FOUR * IDA_mem->ida_uround);
@@ -2232,8 +2232,8 @@ static int IDAStopTest1(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
       IDA_mem->ida_tstop_limited = SUNTRUE;
       if (IDA_mem->ida_skip_adapt_tstop)
       {
-        IDA_mem->ida_hsave        = IDA_mem->ida_hh;
-        IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+        IDA_mem->ida_hsave = IDA_mem->ida_hh;
+        IDA_mem->ida_ksave = IDA_mem->ida_kk;
       }
       IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                         (ONE - FOUR * IDA_mem->ida_uround);
@@ -2335,8 +2335,8 @@ static int IDAStopTest2(IDAMem IDA_mem, sunrealtype tout, sunrealtype* tret,
       IDA_mem->ida_tstop_limited = SUNTRUE;
       if (IDA_mem->ida_skip_adapt_tstop)
       {
-        IDA_mem->ida_hsave        = IDA_mem->ida_hh;
-        IDA_mem->ida_ksave        = IDA_mem->ida_kk;
+        IDA_mem->ida_hsave = IDA_mem->ida_hh;
+        IDA_mem->ida_ksave = IDA_mem->ida_kk;
       }
       IDA_mem->ida_hh = (IDA_mem->ida_tstop - IDA_mem->ida_tn) *
                         (ONE - FOUR * IDA_mem->ida_uround);

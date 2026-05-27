@@ -752,7 +752,7 @@ int CVodeSetSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
     cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
     return (CV_MEM_NULL);
   }
-  cv_mem                    = (CVodeMem)cvode_mem;
+  cv_mem                      = (CVodeMem)cvode_mem;
   cv_mem->cv_skip_adapt_tstop = skip;
 
   return (CV_SUCCESS);

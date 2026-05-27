@@ -182,7 +182,8 @@ int main(int argc, char* argv[])
         if (flag) { return 1; }
         if (dt_cur <= dt_last)
         {
-          printf("ERROR: Expected dt_cur > dt_last (%" GSYM " <= %" GSYM ")\n", dt_cur, dt_last);
+          printf("ERROR: Expected dt_cur > dt_last (%" GSYM " <= %" GSYM ")\n",
+                 dt_cur, dt_last);
           flag = 1;
           break;
         }

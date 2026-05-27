@@ -421,7 +421,7 @@ int IDASetSkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
     IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
     return (IDA_MEM_NULL);
   }
-  IDA_mem                     = (IDAMem)ida_mem;
+  IDA_mem                       = (IDAMem)ida_mem;
   IDA_mem->ida_skip_adapt_tstop = skip;
 
   return (IDA_SUCCESS);
