@@ -308,6 +308,7 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->cv_tstopinterp      = SUNFALSE;
   cv_mem->cv_tstop_limited    = SUNFALSE;
   cv_mem->cv_skip_adapt_tstop = SUNFALSE;
+  cv_mem->cv_skip_adapt_tstop_threshold = ZERO;
   cv_mem->cv_maxnef           = MXNEF;
   cv_mem->cv_maxncf           = MXNCF;
   cv_mem->cv_nlscoef          = CORTES;

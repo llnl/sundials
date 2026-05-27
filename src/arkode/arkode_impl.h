@@ -504,6 +504,7 @@ struct ARKodeMemRec
   sunbooleantype tstopinterp;
   sunbooleantype tstop_limited;
   sunbooleantype skip_adapt_tstop;
+  sunrealtype skip_adapt_tstop_threshold;
   sunrealtype tstop;
 
   /* Time step data */

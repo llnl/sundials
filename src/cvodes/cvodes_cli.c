@@ -81,7 +81,6 @@ static int cvSetFromCommandLine(void* cvode_mem, const char* cvid, int argc,
      {"max_order", CVodeSetMaxOrd},
      {"stab_lim_det", CVodeSetStabLimDet},
      {"interpolate_stop_time", CVodeSetInterpolateStopTime},
-     {"skip_adapt_stop_time", CVodeSetSkipAdaptStopTime},
      {"num_fails_eta_max_err_fail", CVodeSetNumFailsEtaMaxErrFail},
      {"quad_err_con", CVodeSetQuadErrCon},
      {"sens_err_con", CVodeSetSensErrCon},
@@ -120,7 +119,8 @@ static int cvSetFromCommandLine(void* cvode_mem, const char* cvid, int argc,
      {"eps_lin", CVodeSetEpsLin},
      {"ls_norm_factor", CVodeSetLSNormFactor},
      {"eps_proj", CVodeSetEpsProj},
-     {"proj_fail_eta", CVodeSetProjFailEta}};
+     {"proj_fail_eta", CVodeSetProjFailEta},
+     {"skip_adapt_stop_time_threshold", CVodeSetSkipAdaptStopTimeThreshold}};
   static const int num_real_keys = sizeof(real_pairs) / sizeof(*real_pairs);
 
   static const struct sunKeyTwoRealPair tworeal_pairs[] =

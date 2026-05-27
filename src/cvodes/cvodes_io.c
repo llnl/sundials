@@ -739,13 +739,13 @@ int CVodeClearStopTime(void* cvode_mem)
 }
 
 /*
- * CVodeSetSkipAdaptStopTime
+ * CVodeSetSkipAdaptStopTimeThreshold
  *
- * Specifies whether stop-time-limited steps should be disregarded
+ * Specifies the threshold for skipping stop-time-limited steps
  * when performing step size and order adaptivity.
  */
 
-int CVodeSetSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
+int CVodeSetSkipAdaptStopTimeThreshold(void* cvode_mem, sunrealtype skip_threshold)
 {
   CVodeMem cv_mem;
 
@@ -755,7 +755,8 @@ int CVodeSetSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
     return (CV_MEM_NULL);
   }
   cv_mem                      = (CVodeMem)cvode_mem;
-  cv_mem->cv_skip_adapt_tstop = skip;
+  cv_mem->cv_skip_adapt_tstop = SUNTRUE;
+  cv_mem->cv_skip_adapt_tstop_threshold = skip_threshold;
 
   return (CV_SUCCESS);
 }

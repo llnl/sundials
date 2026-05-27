@@ -910,39 +910,39 @@ Main solver optional input functions
 
 .. table:: Optional inputs for IDA
 
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | **Optional input**                                                 | **Function name**                     | **Default**    |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Set IDA options from the command line or file                      | :c:func:`IDASetOptions`               |                |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | User data                                                          | :c:func:`IDASetUserData`              | NULL           |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Maximum order for BDF method                                       | :c:func:`IDASetMaxOrd`                | 5              |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Maximum no. of internal steps before :math:`t_{{\scriptsize out}}` | :c:func:`IDASetMaxNumSteps`           | 500            |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Initial step size                                                  | :c:func:`IDASetInitStep`              | estimated      |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Minimum absolute step size :math:`h_{\text{min}}`                  | :c:func:`IDASetMinStep`               | 0              |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Maximum absolute step size :math:`h_{\text{max}}`                  | :c:func:`IDASetMaxStep`               | :math:`\infty` |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Value of :math:`t_{stop}`                                          | :c:func:`IDASetStopTime`              | undefined      |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Disable the stop time                                              | :c:func:`IDAClearStopTime`            | N/A            |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Disregard stop time limited steps in adaptivity                    | :c:func:`IDASetSkipAdaptStopTime`     | ``SUNFALSE``   |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Maximum no. of error test failures                                 | :c:func:`IDASetMaxErrTestFails`       | 10             |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Suppress alg. vars. from error test                                | :c:func:`IDASetSuppressAlg`           | ``SUNFALSE``   |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Variable types (differential/algebraic)                            | :c:func:`IDASetId`                    | NULL           |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Inequality constraints on solution                                 | :c:func:`IDASetConstraints`           | disabled       |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
-   | Maximum number of inequality constraint failures                   | :c:func:`IDASetMaxNumConstraintFails` | 10             |
-   +--------------------------------------------------------------------+---------------------------------------+----------------+
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | **Optional input**                                                 | **Function name**                          | **Default**    |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Set IDA options from the command line or file                      | :c:func:`IDASetOptions`                    |                |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | User data                                                          | :c:func:`IDASetUserData`                   | NULL           |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Maximum order for BDF method                                       | :c:func:`IDASetMaxOrd`                     | 5              |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Maximum no. of internal steps before :math:`t_{{\scriptsize out}}` | :c:func:`IDASetMaxNumSteps`                | 500            |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Initial step size                                                  | :c:func:`IDASetInitStep`                   | estimated      |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Minimum absolute step size :math:`h_{\text{min}}`                  | :c:func:`IDASetMinStep`                    | 0              |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Maximum absolute step size :math:`h_{\text{max}}`                  | :c:func:`IDASetMaxStep`                    | :math:`\infty` |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Value of :math:`t_{stop}`                                          | :c:func:`IDASetStopTime`                   | undefined      |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Disable the stop time                                              | :c:func:`IDAClearStopTime`                 | N/A            |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Disregard stop time limited steps in adaptivity                    | :c:func:`IDASetSkipAdaptStopTimeThreshold` | 0.0            |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Maximum no. of error test failures                                 | :c:func:`IDASetMaxErrTestFails`            | 10             |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Suppress alg. vars. from error test                                | :c:func:`IDASetSuppressAlg`                | ``SUNFALSE``   |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Variable types (differential/algebraic)                            | :c:func:`IDASetId`                         | NULL           |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Inequality constraints on solution                                 | :c:func:`IDASetConstraints`                | disabled       |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
+   | Maximum number of inequality constraint failures                   | :c:func:`IDASetMaxNumConstraintFails`      | 10             |
+   +--------------------------------------------------------------------+--------------------------------------------+----------------+
 
 .. c:function:: int IDASetOptions(void* ida_mem, const char* idaid, const char* file_name, int argc, char* argv[])
 
@@ -1191,25 +1191,39 @@ Main solver optional input functions
 
    .. versionadded:: 6.5.1
 
-.. c:function:: int IDASetSkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
+.. c:function:: int IDASetSkipAdaptStopTimeThreshold(void* ida_mem, sunrealtype skip_threshold)
 
-   Specifies whether stop-time-limited steps should be disregarded
-   when adapting step sizes and method order.
+   Specifies a threshold for disregarding stop-time-limited steps when selecting step
+   sizes for time step adaptivity.
 
    **Arguments:**
       * ``ida_mem`` -- pointer to the IDA memory block.
-      * ``skip`` -- flag indicating to disregard (1) or retain (0) stop time limited steps from the temporal adaptivity algorithm.
+      * ``skip_threshold`` -- threshold for disregarding stop-time-limited steps.
 
    **Return value:**
       * ``IDA_SUCCESS`` if successful
       * ``IDA_MEM_NULL`` if the IDA memory is ``NULL``
 
    **Notes:**
-      The default behavior is to use all successful time steps
-      (including stop-time-limited steps) when performing adaptivity.
+      If we denote the desired upcoming time step as :math:`h_{next}`, but this is
+      shortened to :math:`h_{tstop}` to satisfy a user-requested stop time, then if
+      the ratio :math:`h_{tstop}/h_{next} < \text{skip_threshold}` the step is
+      considered to be "stop-time-limited," and it will be disregarded when
+      selecting the next internal time step size.
+
+      The default value of `skip_threshold` is 0, indicating that all successful
+      time steps (including stop-time-limited steps) when determining an adapted
+      time step size.
+
+      Alternately, a value of 1 indicates that any stop-time-reduced
+      time step will be disregarded when performing time step adaptivity.  We have
+      found this threshold to be useful when using explicit time integrators on
+      applications where the step sizes are limited by stability, and thus the time
+      adaptivity controller is used to automatically identify the largest stable
+      time step size.
 
       This routine will be called by :c:func:`IDASetOptions`
-      when using the key "idaid.skip_adapt_stop_time".
+      when using the key "idaid.skip_adapt_stop_time_threshold".
 
    .. versionadded:: x.y.z
 

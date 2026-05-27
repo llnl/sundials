@@ -412,7 +412,7 @@ int IDAClearStopTime(void* ida_mem)
 
 /*-----------------------------------------------------------------*/
 
-int IDASetSkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
+int IDASetSkipAdaptStopTimeThreshold(void* ida_mem, sunrealtype skip_threshold)
 {
   IDAMem IDA_mem;
 
@@ -422,7 +422,8 @@ int IDASetSkipAdaptStopTime(void* ida_mem, sunbooleantype skip)
     return (IDA_MEM_NULL);
   }
   IDA_mem                       = (IDAMem)ida_mem;
-  IDA_mem->ida_skip_adapt_tstop = skip;
+  IDA_mem->ida_skip_adapt_tstop = SUNTRUE;
+  IDA_mem->ida_skip_adapt_tstop_threshold = skip_threshold;
 
   return (IDA_SUCCESS);
 }

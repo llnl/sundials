@@ -297,6 +297,7 @@ typedef struct IDAMemRec
   sunbooleantype ida_tstopset;
   sunbooleantype ida_tstop_limited;
   sunbooleantype ida_skip_adapt_tstop;
+  sunrealtype ida_skip_adapt_tstop_threshold;
   int ida_ksave;
   sunrealtype ida_hsave;
   sunrealtype ida_tstop;

@@ -84,7 +84,6 @@ static int arkSetFromCommandLine(void* arkode_mem, const char* arkid, int argc,
      {"max_nonlin_iters", ARKodeSetMaxNonlinIters},
      {"max_hnil_warns", ARKodeSetMaxHnilWarns},
      {"interpolate_stop_time", ARKodeSetInterpolateStopTime},
-     {"skip_adapt_stop_time", ARKodeSetSkipAdaptStopTime},
      {"max_num_constr_fails", ARKodeSetMaxNumConstrFails},
      {"adaptivity_adjustment", ARKodeSetAdaptivityAdjustment},
      {"small_num_efails", ARKodeSetSmallNumEFails},
@@ -122,7 +121,8 @@ static int arkSetFromCommandLine(void* arkode_mem, const char* arkid, int argc,
      {"eps_lin", ARKodeSetEpsLin},
      {"mass_eps_lin", ARKodeSetMassEpsLin},
      {"ls_norm_factor", ARKodeSetLSNormFactor},
-     {"mass_ls_norm_factor", ARKodeSetMassLSNormFactor}};
+     {"mass_ls_norm_factor", ARKodeSetMassLSNormFactor},
+     {"skip_adapt_stop_time_threshold", ARKodeSetSkipAdaptStopTimeThreshold}};
   static const int num_real_keys = sizeof(real_pairs) / sizeof(*real_pairs);
 
   static const struct sunKeyTwoRealPair tworeal_pairs[] =

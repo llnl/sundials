@@ -1353,6 +1353,8 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
   fprintf(outfile, "tstopinterp = %i\n", ark_mem->tstopinterp);
   fprintf(outfile, "tstop_limited = %i\n", ark_mem->tstop_limited);
   fprintf(outfile, "skip_adapt_tstop = %i\n", ark_mem->skip_adapt_tstop);
+  fprintf(outfile, "skip_adapt_tstop_threshold = " SUN_FORMAT_G "\n",
+          ark_mem->skip_adapt_tstop_threshold);
   fprintf(outfile, "tstop = " SUN_FORMAT_G "\n", ark_mem->tstop);
   fprintf(outfile, "VabstolMallocDone = %i\n", ark_mem->VabstolMallocDone);
   fprintf(outfile, "MallocDone = %i\n", ark_mem->MallocDone);

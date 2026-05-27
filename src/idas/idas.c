@@ -465,6 +465,7 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_tstopset         = SUNFALSE;
   IDA_mem->ida_tstop_limited    = SUNFALSE;
   IDA_mem->ida_skip_adapt_tstop = SUNFALSE;
+  IDA_mem->ida_skip_adapt_tstop_threshold = ZERO;
   IDA_mem->ida_dcj              = DCJ_DEFAULT;
 
   /* Initialize inequality constraint variables */

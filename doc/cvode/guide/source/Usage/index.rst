@@ -829,56 +829,56 @@ Main solver optional input functions
 
 .. table:: Optional inputs for CVODE
 
-   +-------------------------------+---------------------------------------------+----------------+
-   |      **Optional input**       |              **Function name**              |  **Default**   |
-   +===============================+=============================================+================+
-   | Set CVODE options from the    | :c:func:`CVodeSetOptions`                   |                |
-   | command line or a file        |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | User data                     | :c:func:`CVodeSetUserData`                  | ``NULL``       |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Maximum order for BDF method  | :c:func:`CVodeSetMaxOrd`                    | 5              |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Maximum order for Adams       | :c:func:`CVodeSetMaxOrd`                    | 12             |
-   | method                        |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Maximum no. of internal steps | :c:func:`CVodeSetMaxNumSteps`               | 500            |
-   | before :math:`t_{out}`        |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Maximum no. of warnings for   | :c:func:`CVodeSetMaxHnilWarns`              | 10             |
-   | :math:`t_n+h=t_n`             |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Flag to activate stability    | :c:func:`CVodeSetStabLimDet`                | ``SUNFALSE``   |
-   | limit detection               |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Initial step size             | :c:func:`CVodeSetInitStep`                  | estimated      |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Minimum absolute step size    | :c:func:`CVodeSetMinStep`                   | 0.0            |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Maximum absolute step size    | :c:func:`CVodeSetMaxStep`                   | :math:`\infty` |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Value of :math:`t_{stop}`     | :c:func:`CVodeSetStopTime`                  | undefined      |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Interpolate at                | :c:func:`CVodeSetInterpolateStopTime`       | ``SUNFALSE``   |
-   | :math:`t_{stop}`              |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Disable the stop time         | :c:func:`CVodeClearStopTime`                | N/A            |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Disregard stop time limited   | :c:func:`CVodeSetSkipAdaptStopTime`         | ``SUNFALSE``   |
-   | steps in adaptivity           |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Maximum no. of error test     | :c:func:`CVodeSetMaxErrTestFails`           | 7              |
-   | failures                      |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Inequality constraints on     | :c:func:`CVodeSetConstraints`               | disabled       |
-   | solution                      |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Maximum number of inequality  | :c:func:`CVodeSetMaxNumConstraintFails`     | 10             |
-   | constraint fails in a step    |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
-   | Flag to activate specialized  | :c:func:`CVodeSetUseIntegratorFusedKernels` | ``SUNFALSE``   |
-   | fused kernels                 |                                             |                |
-   +-------------------------------+---------------------------------------------+----------------+
+   +-------------------------------+----------------------------------------------+----------------+
+   |      **Optional input**       |              **Function name**               |  **Default**   |
+   +===============================+==============================================+================+
+   | Set CVODE options from the    | :c:func:`CVodeSetOptions`                    |                |
+   | command line or a file        |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | User data                     | :c:func:`CVodeSetUserData`                   | ``NULL``       |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Maximum order for BDF method  | :c:func:`CVodeSetMaxOrd`                     | 5              |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Maximum order for Adams       | :c:func:`CVodeSetMaxOrd`                     | 12             |
+   | method                        |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Maximum no. of internal steps | :c:func:`CVodeSetMaxNumSteps`                | 500            |
+   | before :math:`t_{out}`        |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Maximum no. of warnings for   | :c:func:`CVodeSetMaxHnilWarns`               | 10             |
+   | :math:`t_n+h=t_n`             |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Flag to activate stability    | :c:func:`CVodeSetStabLimDet`                 | ``SUNFALSE``   |
+   | limit detection               |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Initial step size             | :c:func:`CVodeSetInitStep`                   | estimated      |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Minimum absolute step size    | :c:func:`CVodeSetMinStep`                    | 0.0            |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Maximum absolute step size    | :c:func:`CVodeSetMaxStep`                    | :math:`\infty` |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Value of :math:`t_{stop}`     | :c:func:`CVodeSetStopTime`                   | undefined      |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Interpolate at                | :c:func:`CVodeSetInterpolateStopTime`        | ``SUNFALSE``   |
+   | :math:`t_{stop}`              |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Disable the stop time         | :c:func:`CVodeClearStopTime`                 | N/A            |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Disregard stop time limited   | :c:func:`CVodeSetSkipAdaptStopTimeThreshold` | 0.0            |
+   | steps in adaptivity           |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Maximum no. of error test     | :c:func:`CVodeSetMaxErrTestFails`            | 7              |
+   | failures                      |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Inequality constraints on     | :c:func:`CVodeSetConstraints`                | disabled       |
+   | solution                      |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Maximum number of inequality  | :c:func:`CVodeSetMaxNumConstraintFails`      | 10             |
+   | constraint fails in a step    |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
+   | Flag to activate specialized  | :c:func:`CVodeSetUseIntegratorFusedKernels`  | ``SUNFALSE``   |
+   | fused kernels                 |                                              |                |
+   +-------------------------------+----------------------------------------------+----------------+
 
 
 .. c:function:: int CVodeSetOptions(void* cvode_mem, const char* cvid, const char* file_name, int argc, char* argv[])
@@ -1210,25 +1210,39 @@ Main solver optional input functions
 
    .. versionadded:: 6.5.1
 
-.. c:function:: int CVodeSetSkipAdaptStopTime(void* cvode_mem, sunbooleantype skip)
+.. c:function:: int CVodeSetSkipAdaptStopTimeThreshold(void* cvode_mem, sunrealtype skip_threshold)
 
-   Specifies whether stop-time-limited steps should be disregarded
-   when adapting step sizes and method order.
+   Specifies a threshold for disregarding stop-time-limited steps when selecting step
+   sizes for time step adaptivity.
 
    **Arguments:**
       * ``cvode_mem`` -- pointer to the CVODE memory block.
-      * ``skip`` -- flag indicating to disregard (1) or retain (0) stop time limited steps from the temporal adaptivity algorithm.
+      * ``skip_threshold`` -- threshold for disregarding stop-time-limited steps.
 
    **Return value:**
       * ``CV_SUCCESS`` if successful
       * ``CV_MEM_NULL`` if the CVODE memory is ``NULL``
 
    **Notes:**
-      The default behavior is to use all successful time steps
-      (including stop-time-limited steps) when performing adaptivity.
+      If we denote the desired upcoming time step as :math:`h_{next}`, but this is
+      shortened to :math:`h_{tstop}` to satisfy a user-requested stop time, then if
+      the ratio :math:`h_{tstop}/h_{next} < \text{skip_threshold}` the step is
+      considered to be "stop-time-limited," and it will be disregarded when
+      selecting the next internal time step size.
+
+      The default value of `skip_threshold` is 0, indicating that all successful
+      time steps (including stop-time-limited steps) when determining an adapted
+      time step size.
+
+      Alternately, a value of 1 indicates that any stop-time-reduced
+      time step will be disregarded when performing time step adaptivity.  We have
+      found this threshold to be useful when using explicit time integrators on
+      applications where the step sizes are limited by stability, and thus the time
+      adaptivity controller is used to automatically identify the largest stable
+      time step size.
 
       This routine will be called by :c:func:`CVodeSetOptions`
-      when using the key "cvid.skip_adapt_stop_time".
+      when using the key "cvid.skip_adapt_stop_time_threshold".
 
    .. versionadded:: x.y.z
 

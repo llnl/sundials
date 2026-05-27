@@ -887,33 +887,33 @@ Optional inputs for ARKODE
 
 .. cssclass:: table-bordered
 
-=================================================  ==========================================  =======================
-Optional input                                     Function name                               Default
-=================================================  ==========================================  =======================
-Set ARKODE options from the command line or file   :c:func:`ARKodeSetOptions`                  internal
-Return ARKODE parameters to their defaults         :c:func:`ARKodeSetDefaults`                 internal
-Set integrator method order                        :c:func:`ARKodeSetOrder`                    stepper-specific
-Set dense output interpolation type                :c:func:`ARKodeSetInterpolantType`          stepper-specific
-Set dense output polynomial degree                 :c:func:`ARKodeSetInterpolantDegree`        method-dependent
-Disable time step adaptivity (fixed-step mode)     :c:func:`ARKodeSetFixedStep`                disabled
-Set forward or backward integration direction      :c:func:`ARKodeSetStepDirection`            0.0
-Supply an initial step size to attempt             :c:func:`ARKodeSetInitStep`                 estimated
-Maximum no. of warnings for :math:`t_n+h = t_n`    :c:func:`ARKodeSetMaxHnilWarns`             10
-Maximum no. of internal steps before *tout*        :c:func:`ARKodeSetMaxNumSteps`              500
-Maximum absolute step size                         :c:func:`ARKodeSetMaxStep`                  :math:`\infty`
-Minimum absolute step size                         :c:func:`ARKodeSetMinStep`                  0.0
-Set a value for :math:`t_{stop}`                   :c:func:`ARKodeSetStopTime`                 undefined
-Interpolate at :math:`t_{stop}`                    :c:func:`ARKodeSetInterpolateStopTime`      ``SUNFALSE``
-Disable the stop time                              :c:func:`ARKodeClearStopTime`               N/A
-Disregard stop time limited steps in adaptivity    :c:func:`ARKodeSetSkipAdaptStopTime`        ``SUNFALSE``
-Supply a pointer for user data                     :c:func:`ARKodeSetUserData`                 ``NULL``
-Maximum no. of ARKODE error test failures          :c:func:`ARKodeSetMaxErrTestFails`          7
-Set inequality constraints on solution             :c:func:`ARKodeSetConstraints`              ``NULL``
-Set max number of constraint failures              :c:func:`ARKodeSetMaxNumConstrFails`        10
-Set the checkpointing scheme to use (for adjoint)  :c:func:`ARKodeSetAdjointCheckpointScheme`  ``NULL``
-Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointCheckpointIndex`   0
-Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensatedSums`       ``SUNFALSE``
-=================================================  ==========================================  =======================
+=================================================  =============================================  =======================
+Optional input                                     Function name                                  Default
+=================================================  =============================================  =======================
+Set ARKODE options from the command line or file   :c:func:`ARKodeSetOptions`                     internal
+Return ARKODE parameters to their defaults         :c:func:`ARKodeSetDefaults`                    internal
+Set integrator method order                        :c:func:`ARKodeSetOrder`                       stepper-specific
+Set dense output interpolation type                :c:func:`ARKodeSetInterpolantType`             stepper-specific
+Set dense output polynomial degree                 :c:func:`ARKodeSetInterpolantDegree`           method-dependent
+Disable time step adaptivity (fixed-step mode)     :c:func:`ARKodeSetFixedStep`                   disabled
+Set forward or backward integration direction      :c:func:`ARKodeSetStepDirection`               0.0
+Supply an initial step size to attempt             :c:func:`ARKodeSetInitStep`                    estimated
+Maximum no. of warnings for :math:`t_n+h = t_n`    :c:func:`ARKodeSetMaxHnilWarns`                10
+Maximum no. of internal steps before *tout*        :c:func:`ARKodeSetMaxNumSteps`                 500
+Maximum absolute step size                         :c:func:`ARKodeSetMaxStep`                     :math:`\infty`
+Minimum absolute step size                         :c:func:`ARKodeSetMinStep`                     0.0
+Set a value for :math:`t_{stop}`                   :c:func:`ARKodeSetStopTime`                    undefined
+Interpolate at :math:`t_{stop}`                    :c:func:`ARKodeSetInterpolateStopTime`         ``SUNFALSE``
+Disable the stop time                              :c:func:`ARKodeClearStopTime`                  N/A
+Disregard stop time limited steps in adaptivity    :c:func:`ARKodeSetSkipAdaptStopTimeThreshold`  0.0
+Supply a pointer for user data                     :c:func:`ARKodeSetUserData`                    ``NULL``
+Maximum no. of ARKODE error test failures          :c:func:`ARKodeSetMaxErrTestFails`             7
+Set inequality constraints on solution             :c:func:`ARKodeSetConstraints`                 ``NULL``
+Set max number of constraint failures              :c:func:`ARKodeSetMaxNumConstrFails`           10
+Set the checkpointing scheme to use (for adjoint)  :c:func:`ARKodeSetAdjointCheckpointScheme`     ``NULL``
+Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointCheckpointIndex`      0
+Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensatedSums`          ``SUNFALSE``
+=================================================  =============================================  =======================
 
 
 .. c:function:: int ARKodeSetOptions(void* arkode_mem, const char* arkid, const char* file_name, int argc, char* argv[])
@@ -1467,26 +1467,38 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
    .. versionadded:: 6.1.0
 
 
-.. c:function:: int ARKodeSetSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
+.. c:function:: int ARKodeSetSkipAdaptStopTimeThreshold(void* arkode_mem, sunrealtype skip_threshold)
 
-   Specifies whether stop-time-limited steps should be disregarded
-   when selecting step sizes for time step adaptivity.
+   Specifies a threshold for disregarding stop-time-limited steps when selecting step
+   sizes for time step adaptivity.
 
    :param arkode_mem: pointer to the ARKODE memory block.
-   :param skip: flag indicating to disregard (1) or retain (0) stop time
-                limited steps from the temporal adaptivity algorithm.
+   :param skip_threshold: threshold for disregarding stop-time-limited steps.
 
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
    .. note::
 
-      The default behavior is to use all successful time steps
-      (including stop-time-limited steps) when determining an
-      adapted time step size.
+      If we denote the desired upcoming time step as :math:`h_{next}`, but this is
+      shortened to :math:`h_{tstop}` to satisfy a user-requested stop time, then if
+      the ratio :math:`h_{tstop}/h_{next} < \text{skip_threshold}` the step is
+      considered to be "stop-time-limited," and it will be disregarded when
+      selecting the next internal time step size.
+
+      The default value of `skip_threshold` is 0, indicating that all successful
+      time steps (including stop-time-limited steps) when determining an adapted
+      time step size.
+
+      Alternately, a value of 1 indicates that any stop-time-reduced
+      time step will be disregarded when performing time step adaptivity.  We have
+      found this threshold to be useful when using explicit time integrators on
+      applications where the step sizes are limited by stability, and thus the time
+      adaptivity controller is used to automatically identify the largest stable
+      time step size.
 
       This routine will be called by :c:func:`ARKodeSetOptions`
-      when using the key "arkid.skip_adapt_stop_time".
+      when using the key "arkid.skip_adapt_stop_time_threshold".
 
    .. versionadded:: x.y.z
 

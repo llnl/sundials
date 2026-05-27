@@ -88,12 +88,14 @@ int ARKodeSetDefaults(void* arkode_mem)
   ark_mem->tstop_limited  = SUNFALSE; /* tstop did not limit last step */
   ark_mem->skip_adapt_tstop =
     SUNFALSE; /* tstop-limited steps can affect adaptivity */
+  ark_mem->skip_adapt_tstop_threshold = ONE;  /* default threshold for skipping adaptivity */
   ark_mem->tstop              = ZERO;   /* no fixed stop time */
   ark_mem->hadapt_mem->etamx1 = ETAMX1; /* max change on first step */
   ark_mem->hadapt_mem->etamxf = ETAMXF; /* max change on error-failed step */
   ark_mem->hadapt_mem->etamin = ETAMIN; /* min bound on time step reduction */
   ark_mem->hadapt_mem->small_nef =
-    SMALL_NEF; /* num error fails before ETAMXF enforced */
+    SMALL_NEF; /* num error fails before ETAMXF enforced */  ark_mem->skip_adapt_tstop = SUNFALSE;  /* perform adaptivity as normal */
+  ark_mem->skip_adapt_tstop_threshold = ZERO;  /* default threshold for skipping adaptivity */
   ark_mem->hadapt_mem->etacf  = ETACF;  /* max change on convergence failure */
   ark_mem->hadapt_mem->cfl    = CFLFAC; /* explicit stability factor */
   ark_mem->hadapt_mem->safety = SAFETY; /* step adaptivity safety factor  */
@@ -1276,12 +1278,13 @@ int ARKodeClearStopTime(void* arkode_mem)
 }
 
 /*---------------------------------------------------------------
-  ARKodeSetSkipAdaptStopTime:
+  ARKodeSetSkipAdaptStopTimeThreshold:
 
-  Specifies whether stop-time-limited steps should be disregarded
+  Specifies the threshold for skipping stop-time-limited steps
   when selecting step sizes for time step adaptivity.
   ---------------------------------------------------------------*/
-int ARKodeSetSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
+int ARKodeSetSkipAdaptStopTimeThreshold(void* arkode_mem,
+                                        sunrealtype skip_threshold)
 {
   ARKodeMem ark_mem;
   if (arkode_mem == NULL)
@@ -1291,7 +1294,8 @@ int ARKodeSetSkipAdaptStopTime(void* arkode_mem, sunbooleantype skip)
     return (ARK_MEM_NULL);
   }
   ark_mem                   = (ARKodeMem)arkode_mem;
-  ark_mem->skip_adapt_tstop = skip;
+  ark_mem->skip_adapt_tstop = SUNTRUE;
+  ark_mem->skip_adapt_tstop_threshold = skip_threshold;
 
   return (ARK_SUCCESS);
 }
