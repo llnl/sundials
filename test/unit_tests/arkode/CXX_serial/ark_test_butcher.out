@@ -90,7 +90,7 @@ Testing method ARKODE_IMPLICIT_MIDPOINT_1_2:  table matches predicted method/emb
 Testing method ARKODE_IMPLICIT_TRAPEZOIDAL_2_2:  table matches predicted method/embedding orders of 2/0
 Testing method ARKODE_SSP_DIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
 Testing method ARKODE_SSP_LSPUM_SDIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
-Testing method ARKODE_SSP_ESDIRK_4_2_3:  table matches predicted method/embedding orders of 3/2
+Testing method ARKODE_ESDIRK_4_2_3:  table matches predicted method/embedding orders of 3/2
 Testing method ARKODE_ASCHER_SDIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
 
 Testing ARK pairs:
