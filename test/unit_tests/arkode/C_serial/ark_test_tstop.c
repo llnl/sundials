@@ -69,8 +69,7 @@ int main(int argc, char* argv[])
   sunrealtype dt_tstop = SUN_RCONST(0.30);
   sunrealtype tret     = ZERO;
   sunrealtype tcur     = ZERO;
-  sunrealtype dt_cur   = ZERO;
-  sunrealtype dt_last  = ZERO;
+  long int nsteps      = 0;
 
   /* if an argument supplied, call SetSkipAdaptStopTime with that value */
   sunbooleantype skip_adapt_stop_time = SUNFALSE;
@@ -171,21 +170,6 @@ int main(int argc, char* argv[])
         break;
       }
 
-      if (skip_adapt_stop_time)
-      {
-        flag = ARKodeGetCurrentStep(arkode_mem, &dt_cur);
-        if (flag) { return 1; }
-        flag = ARKodeGetLastStep(arkode_mem, &dt_last);
-        if (flag) { return 1; }
-        if (dt_cur <= dt_last)
-        {
-          printf("ERROR: Expected dt_cur > dt_last (%" GSYM " <= %" GSYM ")\n",
-                 dt_cur, dt_last);
-          flag = 1;
-          break;
-        }
-      }
-
       /* Update stop time */
       tstop += dt_tstop;
       flag = ARKodeSetStopTime(arkode_mem, tstop);
@@ -243,6 +227,12 @@ int main(int argc, char* argv[])
     /* update output time */
     tout += dt_tout;
   }
+
+  flag = ARKodeGetNumSteps(arkode_mem, &nsteps);
+  if (flag) { return 1; }
+  printf("Number of steps = %li\n", nsteps);
+  flag = ARKodePrintAllStats(arkode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
+  if (flag) { return 1; }
 
   /* --------
    * Clean up
