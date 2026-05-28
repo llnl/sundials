@@ -322,7 +322,7 @@ int mriStep_Nls(ARKodeMem ark_mem, int nflag)
   N_VConst(ZERO, step_mem->zcor);
 
   /* Reset the stored residual norm (for iterative linear solvers) */
-  step_mem->eRNrm = SUN_RCONST(0.1) * step_mem->nlscoef;
+  step_mem->eRNrm = step_mem->nlscoef;
 
   SUNLogInfo(ARK_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G,
              step_mem->nlscoef);
