@@ -168,7 +168,15 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2` | 2      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`                 | 3      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_4_1_2`                 | 4      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`                | 3      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`              | 3      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2`           | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_BOGACKI_SHAMPINE_4_2_3`        | 4      | 2              | 3*    |
    +------------------------------------------------------+--------+----------------+-------+
@@ -177,6 +185,10 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    | :c:enumerator:`ARKODE_SHU_OSHER_3_2_3`               | 3      | 2              | 3     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_KNOTH_WOLKE_3_3`               | 3      | ---            | 3     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_4_2_3`                 | 4      | 2              | 3     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_10_3_4`                | 10     | 3              | 4     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SOFRONIOU_SPALETTA_5_3_4`      | 5      | 3              | 4*    |
    +------------------------------------------------------+--------+----------------+-------+
@@ -1477,6 +1489,12 @@ with values specified in :numref:`ARKODE.Butcher.DIRK_properties`.
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SDIRK_2_1_2`              | 2      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`       | 3      | 1              | 2     |
+   +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`           | 3      | 1              | 2     |
+   +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_LSPUM_SDIRK_3_1_2`    | 3      | 1              | 2     |
+   +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_IMPLICIT_MIDPOINT_1_2`    | 1      | ---            | 2     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_IMPLICIT_TRAPEZOIDAL_2_2` | 2      | ---            | 2     |
@@ -1486,6 +1504,8 @@ with values specified in :numref:`ARKODE.Butcher.DIRK_properties`.
    | :c:enumerator:`ARKODE_TRBDF2_3_3_2`             | 3      | 3              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ESDIRK325L2SA_5_2_3`      | 5      | 2              | 3*    |
+   +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ESDIRK_4_2_3`             | 4      | 2              | 3     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ESDIRK324L2SA_4_2_3`      | 4      | 2              | 3     |
    +-------------------------------------------------+--------+----------------+-------+
@@ -1690,6 +1710,39 @@ embedding have SSP coefficient equal to 2.4.
    region is outlined in red; the embedding's region is in blue dashed.
 
 
+.. c:enumerator:: ARKODE_SSP_LSPUM_SDIRK_3_1_2
+
+Accessible via the constant ``ARKODE_SSP_LSPUM_SDIRK_3_1_2`` to
+:c:func:`ARKStepSetTableNum` or
+:c:func:`ARKodeButcherTable_LoadDIRK`.
+Accessible via the string ``"ARKODE_SSP_LSPUM_SDIRK_3_1_2"`` to
+:c:func:`ARKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadDIRKByName`.
+The method is the implicit portion of the "SSP2(3,3,2)-LSPUM" additive
+Runge--Kutta method from :cite:p:`H:14`; the embedding was invented
+specifically for ARKODE.  The method is both A- and L-stable,
+while the embedding is A-stable.  Both the method and embedding have SSP
+coefficient equal to 3.81.
+
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     \frac{2}{11}    & \frac{2}{11}      & 0 & 0 \\
+     \frac{289}{462} & \frac{205}{462}   & \frac{2}{11}   & 0 \\
+     \frac{751}{924} & \frac{2033}{4620} & \frac{21}{110} & \frac{2}{11} \\
+     \hline
+     2 & \frac{24}{55} & \frac{1}{5} & \frac{4}{11} \\
+     1 & \frac{4247}{9840} & \frac{21343}{108240} & \frac{49}{132}
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_LSPUM_SDIRK_3_1_2_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-LSPUM-SDIRK-3-1-2 method.  The method's
+   region is outlined in red; the embedding's region is in blue dashed.
 
 
 .. c:enumerator:: ARKODE_IMPLICIT_MIDPOINT_1_2
@@ -1828,41 +1881,6 @@ Both the method and embedding are A- and L-stable.
 
    Linear stability region for the ESDIRK325L2SA-5-2-3 method method.  The method's
    region is outlined in blue; the embedding's region is in red.
-
-
-.. c:enumerator:: ARKODE_SSP_LSPUM_SDIRK_3_1_2
-
-Accessible via the constant ``ARKODE_SSP_LSPUM_SDIRK_3_1_2`` to
-:c:func:`ARKStepSetTableNum` or
-:c:func:`ARKodeButcherTable_LoadDIRK`.
-Accessible via the string ``"ARKODE_SSP_LSPUM_SDIRK_3_1_2"`` to
-:c:func:`ARKStepSetTableName` or
-:c:func:`ARKodeButcherTable_LoadDIRKByName`.
-The method is the implicit portion of the "SSP2(3,3,2)-LSPUM" additive
-Runge--Kutta method from :cite:p:`H:14`; the embedding was invented
-specifically for ARKODE.  The method is both A- and L-stable,
-while the embedding is A-stable.  Both the method and embedding have SSP
-coefficient equal to 3.81.
-
-
-.. math::
-
-   \renewcommand{\arraystretch}{1.5}
-   \begin{array}{r|ccc}
-     \frac{2}{11}    & \frac{2}{11}      & 0 & 0 \\
-     \frac{289}{462} & \frac{205}{462}   & \frac{2}{11}   & 0 \\
-     \frac{751}{924} & \frac{2033}{4620} & \frac{21}{110} & \frac{2}{11} \\
-     \hline
-     2 & \frac{24}{55} & \frac{1}{5} & \frac{4}{11} \\
-     1 & \frac{4247}{9840} & \frac{21343}{108240} & \frac{49}{132}
-   \end{array}
-
-.. figure:: /figs/arkode/ARKODE_SSP_LSPUM_SDIRK_3_1_2_stab_region.png
-   :width: 50 %
-   :align: center
-
-   Linear stability region for the SSP-LSPUM-SDIRK-3-1-2 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed.
 
 
 .. c:enumerator:: ARKODE_ESDIRK_4_2_3
