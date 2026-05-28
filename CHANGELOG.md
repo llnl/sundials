@@ -43,6 +43,10 @@ notes in the documentation to always use the SUNDIALS version number with the
 package version number as a parenthetical note when it differs from the SUNDIALS
 version number.
 
+Fixed a bug in sundials4py where `CVodeGetRootInfo` and `ARKodeGetRootInfo` functions
+did not correctly return the rootsfound array. This addresses
+[Issue #937](https://github.com/llnl/sundials/issues/937).
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.7.0
