@@ -46,7 +46,6 @@ endif()
 
 
 ### REMAINING TESTS ###
-
 # List of test tuples of the form "name\;args"
 set(unit_tests "test_sundials_QRfactorization\;" 
                "test_sundials_GramSchmidt\;ClassicalGS\;"
