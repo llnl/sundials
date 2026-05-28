@@ -48,8 +48,14 @@ endif()
 ### REMAINING TESTS ###
 
 # List of test tuples of the form "name\;args"
-set(unit_tests "test_sundials_QRfactorization\;" "test_sundials_GramSchmidt\;"
-               "test_sundials_QRAddVariants\;")
+set(unit_tests "test_sundials_QRfactorization\;" 
+               "test_sundials_GramSchmidt\;ClassicalGS\;"
+               "test_sundials_GramSchmidt\;ModifiedGS\;"
+               "test_sundials_QRAddVariants\;sunqradd_mgs\;"
+               "test_sundials_QRAddVariants\;sunqradd_icwy\;"
+               "test_sundials_QRAddVariants\;sunqradd_cgs2\;"
+               "test_sundials_QRAddVariants\;sunqradd_dcgs2\;")
+                
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
@@ -57,8 +63,24 @@ foreach(test_tuple ${unit_tests})
   list(GET test_tuple 0 test)
   list(GET test_tuple 1 test_args)
 
-  add_executable(
-    ${test} ${test}.cpp)
-  target_link_libraries(
-    ${test} PRIVATE sundials_core sundials_nvecserial)
+  # check if this example has already been added, only need to add example
+  # source files once for testing with different inputs
+  if(NOT TARGET ${test})
+    # example source files
+    add_executable(${test} ${test}.cpp)
+
+    # libraries to link against
+    target_link_libraries(${test} sundials_core sundials_nvecserial)
+  endif()
+
+  if("${test_args}" STREQUAL "")
+    set(test_name ${test})
+  else()
+    set(test_name ${test}_${test_args})
+  endif()
+
+  # add example to regression tests
+  sundials_add_test(
+    ${test_name} ${test}
+    TEST_ARGS ${test_args})
 endforeach()
