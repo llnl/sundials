@@ -707,7 +707,8 @@ int lsrkStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
      {"num_ssp_stages", LSRKStepSetNumSSPStages},
      {"num_dom_eig_est_init_preprocess_iters",
       LSRKStepSetNumDomEigEstInitPreprocessIters},
-     {"num_dom_eig_est_preprocess_iters", LSRKStepSetNumDomEigEstPreprocessIters}};
+     {"num_dom_eig_est_preprocess_iters", LSRKStepSetNumDomEigEstPreprocessIters},
+     {"use_analytic_stability_region", LSRKStepSetUseAnalyticStabilityRegion}};
   static const int num_int_keys = sizeof(int_pairs) / sizeof(*int_pairs);
 
   static const struct sunKeyRealPair real_pairs[] = {

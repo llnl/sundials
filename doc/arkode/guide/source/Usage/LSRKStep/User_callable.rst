@@ -333,7 +333,7 @@ Allowable Method Families
       
       If :c:func:`LSRKStepSetUseAnalyticStabilityRegion` is not called, then the default
       ``analytic_stab_region`` is set to ``SUNFALSE``.  This routine will be called by
-      :c:func:`ARKodeSetOptions` when using the key "arkid.use_analytic_stab_region".
+      :c:func:`ARKodeSetOptions` when using the key "arkid.use_analytic_stability_region".
 
       :c:func:`LSRKStepSetUseAnalyticStabilityRegion` sets whether to use the exact stability region or an 
       ellipse that is fully inscribed in the stability region for determining stability in RKC and RKL 

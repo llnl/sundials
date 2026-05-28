@@ -458,10 +458,12 @@ SUNDomEigEstimator callback functions
 
 To interface with SUNDomEigEst modules, the SUNDIALS packages supply a
 :c:type:`SUNATimesFn` function for evaluating the matrix-vector 
-product. This package-provided routine translates between the user-supplied ODE or DAE 
-systems and the generic dominant eigenvalue estimator API. The function type :c:type:`SUNATimesFn` is defined in the header file ``sundials/sundials_iterative.h``.
+product. This package-provided routine translates between the user-supplied ODE
+systems and the generic dominant eigenvalue estimator API. The function type 
+:c:type:`SUNATimesFn` is defined in the header file ``sundials/sundials_iterative.h``.
 
-Users who wish to use a SUNDomEigEst module in "standalone" mode, however, must  provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described below.
+Users who wish to use a SUNDomEigEst module in "standalone" mode, however, must 
+provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described below.
 
 
 .. c:type:: int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)

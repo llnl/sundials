@@ -29,9 +29,11 @@ any ``N_Vector`` implementation that supports a minimal subset of operations
 (:c:func:`N_VClone()`, :c:func:`N_VDotProd()`, :c:func:`N_VScale()`, and
 :c:func:`N_VDestroy()`).
 
-Power iteration is useful for large, sparse matrices whose dominant eigenvalues
-are algebraic multiplicity one.  The algorithm starts with a non-zero
-vector :math:`\mathbf{v}_{0}`.  It then  iteratively updates this via
+Power iteration is useful for large, sparse matrices whose dominant eigenvalue
+has algebraic multiplicity one, or if the dominant eigenvalues are a complex 
+conjugate pair, then that pair has algebraic multiplicity one.  The algorithm
+starts with a non-zero vector :math:`\mathbf{v}_{0}`.  It then  iteratively 
+updates this via
 
 .. math::
 
