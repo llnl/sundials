@@ -263,7 +263,7 @@ Accessible via the string ``"ARKODE_RALSTON_3_1_2"`` to
 This is the default 2nd order explicit method
 (primary method from :cite:p:`Ralston:62`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Added as the default 2nd order explicit method
 
@@ -297,7 +297,7 @@ Accessible via the string ``"ARKODE_HEUN_EULER_2_1_2"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (primary method from :cite:p:`Runge:95`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_RALSTON_3_1_2`` as the default 2nd order explicit method
 
@@ -747,7 +747,7 @@ Accessible via the string ``"ARKODE_SOFRONIOU_SPALETTA_5_3_4"`` to
 This is the default 4th order explicit method.
 (from :cite:p:`Sof:04`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 4th order explicit method
 
@@ -783,7 +783,7 @@ Accessible via the string ``"ARKODE_ZONNEVELD_5_3_4"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (from :cite:p:`Zon:63`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_SOFRONIOU_SPALETTA_5_3_4`` as the default 4th order explicit method
 
@@ -820,7 +820,7 @@ Accessible via the string ``"ARKODE_ARK436L2SA_ERK_6_3_4"`` to
 This is the explicit portion of the ARK4(3)6L[2]SA method from
 :cite:p:`KenCarp:03`.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ARK437L2SA_ERK_7_3_4`` as the explicit portion of the default 4th order additive method
 
@@ -858,7 +858,7 @@ Accessible via the string ``"ARKODE_ARK437L2SA_ERK_7_3_4"`` to
 This is the explicit portion of the default 4th order additive method and the
 explicit portion of the ARK4(3)7L[2]SA method from :cite:p:`KenCarp:19`.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the explicit portion of the default 4th order additive method
 
@@ -935,7 +935,7 @@ Accessible via the string ``"ARKODE_TSITOURAS_7_4_5"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the default 5th order explicit method (from :cite:p:`Tsitouras:11`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Added as the default 5th order explicit method
 
@@ -988,7 +988,7 @@ Accessible via the string ``"ARKODE_CASH_KARP_6_4_5"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (from :cite:p:`CashKarp:90`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_TSITOURAS_7_4_5`` as the default 5th order explicit method
 
@@ -1093,7 +1093,7 @@ Accessible via the string ``"ARKODE_ARK548L2SA_ERK_8_4_5"`` to
 This is the explicit portion of the ARK5(4)8L[2]SA method from
 :cite:p:`KenCarp:03`.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ARK548L2SAb_ERK_8_4_5`` as the explicit portion of the default 5th order additive method
 
@@ -1141,7 +1141,7 @@ This is the explicit portion of the default 5th order additive method and the
 explicit portion of the 5th order ARK5(4)8L[2]SA method from
 :cite:p:`KenCarp:19`.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the explicit portion of the default 5th order additive method
 
@@ -1188,7 +1188,7 @@ Accessible via the string ``"ARKODE_VERNER_9_5_6"`` to
 This is the default 6th order explicit method
 (method IIIXb-6(5) from :cite:p:`Ver:10`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 6th order explicit method
 
@@ -1237,7 +1237,7 @@ Accessible via the string ``"ARKODE_VERNER_8_5_6"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (from :cite:p:`HEJ:76`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_VERNER_9_5_6`` as the default 6th order explicit method
 
@@ -1321,7 +1321,7 @@ Accessible via the string ``"ARKODE_VERNER_13_7_8"`` to
 This is the default 8th order explicit method
 (method IIIX-8(7) from :cite:p:`Ver:10`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 8th order explicit method
 
@@ -1373,7 +1373,7 @@ Accessible via the string ``"ARKODE_FEHLBERG_13_7_8"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (from :cite:p:`Butcher:08`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_VERNER_13_7_8`` as the default 8th order explicit method
 
@@ -1585,7 +1585,7 @@ This is the default 2nd order implicit method and the implicit portion of the
 default 2nd order additive method
 (the implicit portion of the ARK2 method from :cite:p:`giraldo2013implicit`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 2nd order implicit method
 
@@ -1619,7 +1619,7 @@ Accessible via the string ``"ARKODE_SDIRK_2_1_2"`` to
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 Both the method and embedding are A- and B-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ARK2_DIRK_3_1_2`` as the default 2nd order implicit method
 
@@ -1871,7 +1871,7 @@ This is the default 3rd order implicit method and the ESDIRK3(2)5L[2]SA method
 from :cite:p:`KenCarp:16`.
 Both the method and embedding are A- and L-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 3rd order implicit method
 
@@ -2000,7 +2000,7 @@ method and embedding are A-stable; additionally the method is L-stable
 (this is the implicit portion of the ARK3(2)4L[2]SA method from
 :cite:p:`KenCarp:03`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ESDIRK325L2SA_5_2_3`` as the default 3rd order implicit method
 
@@ -2035,7 +2035,7 @@ Accessible via the string ``"ARKODE_ESDIRK436L2SA_6_3_4"`` to
 This is the default 4th order implicit method and the ESDIRK4(3)6L[2]SA method
 from :cite:p:`KenCarp:16`. Both the method and embedding are A- and L-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 4th order implicit method
 
@@ -2124,7 +2124,7 @@ Accessible via the string ``"ARKODE_SDIRK_5_3_4"`` to
 Here, the method is both A- and L-stable, although the embedding has reduced
 stability (from :cite:p:`HaWa:91`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ESDIRK436L2SA_6_3_4`` as the default 4th order implicit method
 
@@ -2201,7 +2201,7 @@ Both the method and embedding are A-stable; additionally the method is L-stable
 (this is the implicit portion of the ARK4(3)6L[2]SA method from
 :cite:p:`KenCarp:03`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ARK437L2SA_DIRK_7_3_4`` as the implicit portion of the default 4th order additive method
 
@@ -2240,7 +2240,7 @@ This is the implicit portion of the default 4th order additive method and the
 implicit portion of the 4th order ARK4(3)7L[2]SA method from
 :cite:p:`KenCarp:19`.  Both the method and embedding are A- and L-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the implicit portion of the default 4th order additive method
 
@@ -2332,7 +2332,7 @@ Accessible via the string ``"ARKODE_ESDIRK547L2SA2_7_4_5"`` to
 This is the default 5th order implicit method and the ESDIRK5(4)7L[2]SA2 method
 from :cite:p:`KenCarp:19b`. Both the method and embedding are A- and L-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 5th order implicit method
 
@@ -2397,7 +2397,7 @@ Accessible via the string ``"ARKODE_ARK548L2SA_DIRK_8_4_5"`` to
 Both the method and embedding are A-stable; additionally the method is L-stable
 (the implicit portion of the ARK5(4)8L[2]SA method from :cite:p:`KenCarp:03`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ESDIRK547L2SA2_7_4_5`` as the default 5th order implicit method and replaced by ``ARKODE_ARK548L2SAb_DIRK_8_4_5`` as the implicit portion of the default 5th order additive method
 
@@ -2446,7 +2446,7 @@ Both the method and embedding are A-stable; additionally the method is L-stable
 (this is the implicit portion of the 5th order ARK5(4)8L[2]SA method from
 :cite:p:`KenCarp:19`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the implicit portion of the default 5th order additive method
 
