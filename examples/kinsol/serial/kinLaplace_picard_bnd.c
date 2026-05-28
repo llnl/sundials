@@ -392,7 +392,6 @@ static void PrintOutput(N_Vector u)
 static void PrintFinalStats(void* kmem)
 {
   long int nni, nfe, nje, nfeD;
-  long int lenrwB, leniwB;
   int retval;
 
   /* Main solver statistics */
@@ -409,16 +408,10 @@ static void PrintFinalStats(void* kmem)
   retval = KINGetNumLinFuncEvals(kmem, &nfeD);
   check_retval(&retval, "KINGetNumLinFuncEvals", 1);
 
-  /* Band linear solver workspace size */
-
-  retval = KINGetLinWorkSpace(kmem, &lenrwB, &leniwB);
-  check_retval(&retval, "KINGetLinWorkSpace", 1);
-
   printf("\nFinal Statistics.. \n\n");
   printf("nni      = %6ld    nfe     = %6ld \n", nni, nfe);
   printf("nje      = %6ld    nfeB    = %6ld \n", nje, nfeD);
   printf("\n");
-  printf("lenrwB   = %6ld    leniwB  = %6ld \n", lenrwB, leniwB);
 }
 
 /*

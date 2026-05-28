@@ -41,6 +41,4 @@
     Avg Krylov subspace dim         =  1.470684E+00
     Num nonlinear solver fails      =       66
     Num linear solver fails         =       67
-    main solver real/int workspace sizes   =     2689          53
-    linear solver real/int workspace sizes =     2454          42
   

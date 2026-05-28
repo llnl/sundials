@@ -1161,14 +1161,10 @@ static void PrintHeader(void)
 
 static int PrintFinalStats(void* cvode_mem)
 {
-  long int lenrw, leniw;
-  long int lenrwLS, leniwLS;
   long int nst, nfe, nsetups, nni, ncfn, netf;
   long int nli, npe, nps, ncfl, nfeLS;
   int retval;
 
-  retval = CVodeGetWorkSpace(cvode_mem, &lenrw, &leniw);
-  if (check_retval(&retval, "CVodeGetWorkSpace", 1, 0)) { return (-1); }
 
   retval = CVodeGetNumSteps(cvode_mem, &nst);
   if (check_retval(&retval, "CVodeGetNumSteps", 1, 0)) { return (-1); }
@@ -1194,8 +1190,6 @@ static int PrintFinalStats(void* cvode_mem)
     return (-1);
   }
 
-  retval = CVodeGetLinWorkSpace(cvode_mem, &lenrwLS, &leniwLS);
-  if (check_retval(&retval, "CVodeGetLinWorkSpace", 1, 0)) { return (-1); }
 
   retval = CVodeGetNumLinIters(cvode_mem, &nli);
   if (check_retval(&retval, "CVodeGetNumLinIters", 1, 0)) { return (-1); }
@@ -1213,8 +1207,6 @@ static int PrintFinalStats(void* cvode_mem)
   if (check_retval(&retval, "CVodeGetNumLinRhsEvals", 1, 0)) { return (-1); }
 
   printf("\nFinal Statistics.. \n\n");
-  printf("lenrw   = %6ld     leniw = %6ld\n", lenrw, leniw);
-  printf("llrw    = %6ld     lliw  = %6ld\n", lenrwLS, leniwLS);
   printf("nst     = %6ld\n", nst);
   printf("nfe     = %6ld     nfel  = %6ld\n", nfe, nfeLS);
   printf("nni     = %6ld     nli   = %6ld\n", nni, nli);

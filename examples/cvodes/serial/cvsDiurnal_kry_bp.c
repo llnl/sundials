@@ -374,16 +374,11 @@ static void PrintOutput(void* cvode_mem, N_Vector u, sunrealtype t)
 
 static void PrintFinalStats(void* cvode_mem)
 {
-  long int lenrw, leniw;
-  long int lenrwLS, leniwLS;
-  long int lenrwBP, leniwBP;
   long int nst, nfe, nsetups, nni, ncfn, netf;
   long int nli, npe, nps, ncfl, nfeLS;
   long int nfeBP;
   int retval;
 
-  retval = CVodeGetWorkSpace(cvode_mem, &lenrw, &leniw);
-  check_retval(&retval, "CVodeGetWorkSpace", 1);
   retval = CVodeGetNumSteps(cvode_mem, &nst);
   check_retval(&retval, "CVodeGetNumSteps", 1);
   retval = CVodeGetNumRhsEvals(cvode_mem, &nfe);
@@ -397,8 +392,6 @@ static void PrintFinalStats(void* cvode_mem)
   retval = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
   check_retval(&retval, "CVodeGetNumNonlinSolvConvFails", 1);
 
-  retval = CVodeGetLinWorkSpace(cvode_mem, &lenrwLS, &leniwLS);
-  check_retval(&retval, "CVodeGetLinWorkSpace", 1);
   retval = CVodeGetNumLinIters(cvode_mem, &nli);
   check_retval(&retval, "CVodeGetNumLinIters", 1);
   retval = CVodeGetNumPrecEvals(cvode_mem, &npe);
@@ -410,16 +403,10 @@ static void PrintFinalStats(void* cvode_mem)
   retval = CVodeGetNumLinRhsEvals(cvode_mem, &nfeLS);
   check_retval(&retval, "CVodeGetNumLinRhsEvals", 1);
 
-  retval = CVBandPrecGetWorkSpace(cvode_mem, &lenrwBP, &leniwBP);
-  check_retval(&retval, "CVBandPrecGetWorkSpace", 1);
   retval = CVBandPrecGetNumRhsEvals(cvode_mem, &nfeBP);
   check_retval(&retval, "CVBandPrecGetNumRhsEvals", 1);
 
   printf("\nFinal Statistics.. \n\n");
-  printf("lenrw   = %5ld     leniw   = %5ld\n", lenrw, leniw);
-  printf("lenrwls = %5ld     leniwls = %5ld\n", lenrwLS, leniwLS);
-  printf("lenrwbp = %5ld     leniwbp = %5ld\n", lenrwBP, leniwBP);
-  printf("nst     = %5ld\n", nst);
   printf("nfe     = %5ld     nfetot  = %5ld\n", nfe, nfe + nfeLS + nfeBP);
   printf("nfeLS   = %5ld     nfeBP   = %5ld\n", nfeLS, nfeBP);
   printf("nni     = %5ld     nli     = %5ld\n", nni, nli);

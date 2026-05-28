@@ -334,8 +334,6 @@ static void PrintFinalStats(void* cvode_mem)
   long int nli, npe, nps, ncfl, nfeLS;
   int retval;
 
-  retval = CVodeGetWorkSpace(cvode_mem, &lenrw, &leniw);
-  check_retval(&retval, "CVodeGetWorkSpace", 1);
   retval = CVodeGetNumSteps(cvode_mem, &nst);
   check_retval(&retval, "CVodeGetNumSteps", 1);
   retval = CVodeGetNumRhsEvals(cvode_mem, &nfe);
@@ -349,8 +347,6 @@ static void PrintFinalStats(void* cvode_mem)
   retval = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
   check_retval(&retval, "CVodeGetNumNonlinSolvConvFails", 1);
 
-  retval = CVodeGetLinWorkSpace(cvode_mem, &lenrwLS, &leniwLS);
-  check_retval(&retval, "CVodeGetLinWorkSpace", 1);
   retval = CVodeGetNumLinIters(cvode_mem, &nli);
   check_retval(&retval, "CVodeGetNumLinIters", 1);
   retval = CVodeGetNumPrecEvals(cvode_mem, &npe);

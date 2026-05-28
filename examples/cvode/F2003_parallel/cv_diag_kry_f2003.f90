@@ -210,10 +210,6 @@ program driver
   integer(c_long) :: nli(1)      ! number of linear iters
   integer(c_long) :: npre(1)     ! number of preconditioner setups
   integer(c_long) :: npsol(1)    ! number of preconditioner solves
-  integer(c_long) :: lenrw(1)    ! main solver real/int workspace size
-  integer(c_long) :: leniw(1)
-  integer(c_long) :: lenrwls(1)  ! linear solver real/int workspace size
-  integer(c_long) :: leniwls(1)
   real(c_double)  :: avdim(1)    ! avg Krylov subspace dim (NLI/NNI)
   integer :: i, ioutput
   real(c_double) :: errmax, erri, gerrmax
@@ -458,18 +454,6 @@ program driver
       call MPI_Abort(comm, 1, ierr)
     end if
 
-    retval = FCVodeGetWorkSpace(cvode_mem, lenrw, leniw)
-    if (retval /= 0) then
-      print *, "Error: FCVodeGetWorkSpace returned ", retval
-      call MPI_Abort(comm, 1, ierr)
-    end if
-
-    retval = FCVodeGetLinWorkSpace(cvode_mem, lenrwls, leniwls)
-    if (retval /= 0) then
-      print *, "Error: FCVodeGetLinWorkSpace returned ", retval
-      call MPI_Abort(comm, 1, ierr)
-    end if
-
     ! Print some final statistics
     if (outproc) then
       write (6, *) "  "
@@ -484,8 +468,6 @@ program driver
       write (6, '(A,i6)') "   Total Convergence Failures - Nonlinear = ", ncfn
       write (6, '(A,i6)') "                              - Linear    = ", ncfl
       write (6, '(A,i6)') "   Total number of error test failures = ", netf
-      write (6, '(A,2i6)') "   Main solver real/int workspace sizes = ", lenrw, leniw
-      write (6, '(A,2i6)') "   Linear solver real/int workspace sizes = ", lenrwls, leniwls
       write (6, '(A)') "    "
       write (6, '(A)') "    "
       write (6, '(A)') "    "

@@ -362,8 +362,8 @@ subroutine PrintFinalStats(kmem)
   type(c_ptr), intent(in) :: kmem
 
   integer(c_int)  :: ierr
-  integer(c_long) :: nni(1), nfe(1), nje(1), nfeB(1), lenrw(1), leniw(1)
-  integer(c_long) :: lenrwB(1), leniwB(1), nbcfails(1), nbacktr(1)
+  integer(c_long) :: nni(1), nfe(1), nje(1), nfeB(1)
+  integer(c_long) :: nbcfails(1), nbacktr(1)
 
   !======= Internals ============
 
@@ -395,14 +395,6 @@ subroutine PrintFinalStats(kmem)
     stop 1
   end if
 
-  ! Main solver workspace size
-
-  ierr = FKINGetWorkSpace(kmem, lenrw, leniw)
-  if (ierr /= 0) then
-    print *, 'Error in FKINGetWorkSpace, ierr = ', ierr, '; halting'
-    stop 1
-  end if
-
   ! Band linear solver statistics
 
   ierr = FKINGetNumJacEvals(kmem, nje)
@@ -417,14 +409,6 @@ subroutine PrintFinalStats(kmem)
     stop 1
   end if
 
-  ! Band linear solver workspace size
-
-  ierr = FKINGetLinWorkSpace(kmem, lenrwB, leniwB)
-  if (ierr /= 0) then
-    print *, 'Error in FKINGetLinWorkSpace, ierr = ', ierr, '; halting'
-    stop 1
-  end if
-
   print *, ' '
   print *, 'Final Statistics..'
   print *, ' '
@@ -432,8 +416,6 @@ subroutine PrintFinalStats(kmem)
   print '(2(A,i6))', 'nbcfails =', nbcfails, '    nbacktr =', nbacktr
   print '(2(A,i6))', 'nje      =', nje, '    nfeB    =', nfeB
   print *, ' '
-  print '(2(A,i6))', 'lenrw    =', lenrw, '    leniw   =', leniw
-  print '(2(A,i6))', 'lenrwB   =', lenrwB, '    leniwB  =', leniwB
 
   return
 

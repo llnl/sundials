@@ -52,8 +52,6 @@ At top right:    c1, c2 =   -1.168e-15    4.163e+11
 
 Final Statistics: 
 
-lenrw   =  2689     leniw   =   144
-lenrwls =  2454     leniwls =   126
 nst     =   487
 nfe     =   618     nfels   =   623
 nni     =   615     nli     =   623
