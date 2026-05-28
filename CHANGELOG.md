@@ -25,7 +25,7 @@ Of these, embedded additive Runge-Kutta methods may be formed using
 `ARKODE_SSP_LSPUM_ERK_3_1_2`+`ARKODE_SSP_LSPUM_SDIRK_3_1_2`,
 and `ARKODE_ASCHER_ERK_3_1_2`+`ARKODE_ASCHER_SDIRK_3_1_2`.
 
-Added the `ARKODE_IMEX_MRI_GARK_ARS222` and `ARKODE_IMEX_MRI_GARK_GIRALDO`
+Added the `ARKODE_IMEX_MRI_GARK_ASCHER_ARK2` and `ARKODE_IMEX_MRI_GARK_ARK2`
 embedded implicit-explicit MRI-GARK coupling tables.
 
 ### Bug Fixes

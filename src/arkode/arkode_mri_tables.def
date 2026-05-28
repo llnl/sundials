@@ -55,8 +55,8 @@
      ARKODE_MRI_GARK_IMPLICIT_MIDPOINT 2       0          ID      Y
      ARKODE_MRI_GARK_ESDIRK34a         3       2          ID      Y
      ARKODE_MRI_GARK_ESDIRK46a         4       3          ID      Y
-     ARKODE_IMEX_MRI_GARK_ARS222       2       1          IED     Y
-     ARKODE_IMEX_MRI_GARK_GIRALDO      2       1          IED     Y
+     ARKODE_IMEX_MRI_GARK_ASCHER_ARK2       2       1          IED     Y
+     ARKODE_IMEX_MRI_GARK_ARK2      2       1          IED     Y
      ARKODE_IMEX_MRI_GARK_EULER        1       0          ID      Y
      ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL  2       0          ID      Y
      ARKODE_IMEX_MRI_GARK_MIDPOINT     2       0          ID      Y
@@ -396,7 +396,7 @@ ARK_MRI_TABLE(ARKODE_MRI_GARK_ESDIRK46a, { /* A. Sandu, SINUM 57:2300-2327, 2019
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARS222, {
+ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ASCHER_ARK2, {
     MRIStepCoupling C = MRIStepCoupling_Alloc(1, 5, MRISTEP_IMEX);
 
     const sunrealtype gamma = ONE - ONE / SUNRsqrt(SUN_RCONST(2.0));
@@ -427,7 +427,7 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARS222, {
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_GIRALDO, {
+ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARK2, {
     MRIStepCoupling C = MRIStepCoupling_Alloc(1, 6, MRISTEP_IMEX);
 
     C->q = 2;

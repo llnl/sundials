@@ -250,8 +250,8 @@ int main(int argc, char* argv[])
   if ((opts.mri_method == "ARKODE_IMEX_MRI_SR21") ||
       (opts.mri_method == "ARKODE_IMEX_MRI_SR32") ||
       (opts.mri_method == "ARKODE_IMEX_MRI_SR43") ||
-      (opts.mri_method == "ARKODE_IMEX_MRI_GARK_ARS222") ||
-      (opts.mri_method == "ARKODE_IMEX_MRI_GARK_GIRALDO"))
+      (opts.mri_method == "ARKODE_IMEX_MRI_GARK_ASCHER_ARK2") ||
+      (opts.mri_method == "ARKODE_IMEX_MRI_GARK_ARK2"))
   {
     slowimex     = SUNTRUE;
     slowimplicit = SUNTRUE;

@@ -638,7 +638,7 @@ MRIStep Statistics:
 Comparing Solver Statistics:
 All checks passed
 
-Testing method ARKODE_IMEX_MRI_GARK_ARS222
+Testing method ARKODE_IMEX_MRI_GARK_ASCHER_ARK2
   type = ImEx MRI
   nmat = 1
   stages = 5
@@ -718,7 +718,7 @@ MRIStep Statistics:
 Comparing Solver Statistics:
 All checks passed
 
-Testing method ARKODE_IMEX_MRI_GARK_GIRALDO
+Testing method ARKODE_IMEX_MRI_GARK_ARK2
   type = ImEx MRI
   nmat = 1
   stages = 6
