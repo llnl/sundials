@@ -86,6 +86,52 @@ def test_idas_ivp(sunctx):
     assert_allclose(N_VGetArrayPointer(sol_yp), N_VGetArrayPointer(yp), rtol=1e-2)
 
 
+def test_idas_get_root_info_updates_numpy_array(sunctx):
+    dae_problem = AnalyticDAE()
+
+    ida = IDACreate(sunctx)
+    yy = N_VNew_Serial(2, sunctx)
+    yp = N_VNew_Serial(2, sunctx)
+    dae_problem.set_init_cond(yy, yp, dae_problem.T0)
+    ls = SUNLinSol_SPGMR(yy, SUN_PREC_LEFT, 0, sunctx)
+
+    def psolve(t, yy, yp, rr, r, z, cj, delta, _):
+        return dae_problem.psolve(t, yy, yp, rr, r, z, cj, delta)
+
+    def rootfn(t, yy, yp, gout, _):
+        gout[0] = N_VGetArrayPointer(yy)[0] - 1.5
+        gout[1] = 1.0
+        return 0
+
+    status = IDAInit(ida.get(), dae_problem.res, 0.0, yy, yp)
+    assert status == IDA_SUCCESS
+
+    status = IDASStolerances(ida.get(), 100 * SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    assert status == IDA_SUCCESS
+
+    status = IDASetLinearSolver(ida.get(), ls, None)
+    assert status == IDA_SUCCESS
+
+    status = IDASetPreconditioner(ida.get(), None, psolve)
+    assert status == IDA_SUCCESS
+
+    status = IDASetMaxNumSteps(ida.get(), 100000)
+    assert status == IDA_SUCCESS
+
+    status = IDARootInit(ida.get(), 2, rootfn)
+    assert status == IDA_SUCCESS
+
+    status, tret = IDASolve(ida.get(), dae_problem.TF, yy, yp, IDA_NORMAL)
+    assert status == IDA_ROOT_RETURN
+    assert tret > 0.0
+
+    rootsfound = np.zeros(2, dtype=np.intc)
+    status = IDAGetRootInfo(ida.get(), rootsfound)
+    assert status == IDA_SUCCESS
+    assert rootsfound[0] != 0
+    assert rootsfound[1] == 0
+
+
 def test_idas_fsa(sunctx):
     dae_problem = AnalyticDAE()
 
