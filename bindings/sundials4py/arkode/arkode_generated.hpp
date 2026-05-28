@@ -479,13 +479,13 @@ m.def(
 
 m.def(
   "ARKodeGetRootInfo",
-  [](void* arkode_mem, std::vector<int> rootsfound_1d) -> int
+  [](void* arkode_mem, sundials4py::IntArray1d rootsfound_1d) -> int
   {
     auto ARKodeGetRootInfo_adapt_arr_ptr_to_std_vector =
-      [](void* arkode_mem, std::vector<int> rootsfound_1d) -> int
+      [](void* arkode_mem, sundials4py::IntArray1d rootsfound_1d) -> int
     {
-      int* rootsfound_1d_ptr = rootsfound_1d.empty() ? nullptr
-                                                     : rootsfound_1d.data();
+      int* rootsfound_1d_ptr = rootsfound_1d.size() == 0 ? nullptr
+                                                         : rootsfound_1d.data();
 
       auto lambda_result = ARKodeGetRootInfo(arkode_mem, rootsfound_1d_ptr);
       return lambda_result;
