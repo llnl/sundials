@@ -55,4 +55,9 @@ ultimately causing a segfault.
 Fixed a CMake bug where Fortran modules were not created for LSRKStep,
 ForcingStep, and SplittingStep.
 
+Corrected the version number used in version added, changed, and deprecated
+notes in the documentation to always use the SUNDIALS version number with the
+package version number as a parenthetical note when it differs from the SUNDIALS
+version number.
+
 **Deprecation Notices**

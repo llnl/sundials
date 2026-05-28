@@ -70,9 +70,9 @@ Enabling or Disabling Relaxation
       the step fails or applying relaxation fails, :c:func:`ARKStepEvolve` will
       return with an error.
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxFn` instead.
 
@@ -99,9 +99,9 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxEtaFail` instead.
 
@@ -125,9 +125,9 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxLowerBound` instead.
 
@@ -151,9 +151,9 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxUpperBound` instead.
 
@@ -175,9 +175,9 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxMaxFails` instead.
 
@@ -203,9 +203,9 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxMaxIters` instead.
 
@@ -224,9 +224,9 @@ relaxation.
                                ``NULL``
    :retval ARK_ILL_INPUT: an invalid solver option was provided
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxSolver` instead.
 
@@ -254,9 +254,9 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxResTol` instead.
 
@@ -285,9 +285,9 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeSetRelaxTol` instead.
 
@@ -310,9 +310,9 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumRelaxFnEvals` instead.
 
@@ -329,9 +329,9 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumRelaxJacEvals` instead.
 
@@ -353,9 +353,9 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumRelaxFails` instead.
 
@@ -373,9 +373,9 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumRelaxBoundFails` instead.
 
@@ -392,9 +392,9 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumRelaxSolveFails` instead.
 
@@ -411,8 +411,8 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 5.6.0
+   .. versionadded:: 6.6.0 (ARKODE 5.6.0)
 
-   .. deprecated:: 6.1.0
+   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeGetNumRelaxSolveIters` instead.
