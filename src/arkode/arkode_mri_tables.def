@@ -429,43 +429,37 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARS222, {
 
 ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_GIRALDO, {
     MRIStepCoupling C = MRIStepCoupling_Alloc(1, 6, MRISTEP_IMEX);
-    const sunrealtype two = SUN_RCONST(2.0);
-    const sunrealtype three = SUN_RCONST(3.0);
-    const sunrealtype four = SUN_RCONST(4.0);
-    const sunrealtype six = SUN_RCONST(6.0);
-    const sunrealtype eight = SUN_RCONST(8.0);
-    const sunrealtype sqrt2 = SUNRsqrt(two);
 
     C->q = 2;
     C->p = 1;
 
-    C->c[1] = two - sqrt2;
-    C->c[2] = two - sqrt2;
+    C->c[1] = SUN_RCONST(0.5857864376269049511983112757903);
+    C->c[2] = SUN_RCONST(0.5857864376269049511983112757903);
     C->c[3] = ONE;
     C->c[4] = ONE;
     C->c[5] = ONE;
 
-    C->W[0][1][0] = two - sqrt2;
-    C->W[0][3][0] = (three - two * sqrt2)/six - (two - sqrt2);
-    C->W[0][3][2] = (three + two * sqrt2)/six;
-    C->W[0][5][0] = ONE/(two * sqrt2) - (three - two * sqrt2)/six;
-    C->W[0][5][2] = ONE/(two * sqrt2) - (three + two * sqrt2)/six;
-    C->W[0][5][4] = ONE - ONE / SUNRsqrt(SUN_RCONST(2.0));
-    C->W[0][6][0] = (four - sqrt2) / eight - (three - two * sqrt2)/six;
-    C->W[0][6][2] = (four - sqrt2) / eight - (three + two * sqrt2)/six;
-    C->W[0][6][4] = ONE / (two * sqrt2);
+    C->W[0][1][0] = SUN_RCONST(0.5857864376269049511983112757903);
+    C->W[0][3][0] = -SUN_RCONST(0.55719095841793663413220751719353);
+    C->W[0][3][2] = SUN_RCONST(0.97140452079103168293389624140323);
+    C->W[0][5][0] = SUN_RCONST(0.32495791138430544513431842245566);
+    C->W[0][5][2] = -SUN_RCONST(0.61785113019775792073347406035081);
+    C->W[0][5][4] = SUN_RCONST(0.29289321881345247559915563789515);
+    C->W[0][6][0] = SUN_RCONST(0.29462782549439480183368515087702);
+    C->W[0][6][2] = -SUN_RCONST(0.64818121608766856403410733192944);
+    C->W[0][6][4] = SUN_RCONST(0.35355339059327376220042218105242);
 
-    C->G[0][1][0] = two - sqrt2;
-    C->G[0][2][0] = ONE - ONE / sqrt2 - (two - sqrt2);
-    C->G[0][2][2] = ONE - ONE / sqrt2;
-    C->G[0][3][0] = ONE / sqrt2 - ONE;
-    C->G[0][3][2] = ONE / sqrt2;
-    C->G[0][4][0] = ONE / (two * sqrt2);
-    C->G[0][4][2] = ONE / (two * sqrt2) - ONE;
-    C->G[0][4][4] = ONE - ONE / sqrt2;
-    C->G[0][6][0] = (four - sqrt2) / eight - ONE / (two * sqrt2);
-    C->G[0][6][2] = (four - sqrt2) / eight - ONE / (two * sqrt2);
-    C->G[0][6][4] = ONE / (two * sqrt2) - (ONE - ONE / sqrt2);
+    C->G[0][1][0] = SUN_RCONST(0.5857864376269049511983112757903);
+    C->G[0][2][0] = -SUN_RCONST(.29289321881345247559915563789515);
+    C->G[0][2][2] = SUN_RCONST(0.29289321881345247559915563789515);
+    C->G[0][3][0] = -SUN_RCONST(0.29289321881345247559915563789515);
+    C->G[0][3][2] = SUN_RCONST(0.70710678118654752440084436210485);
+    C->G[0][4][0] = SUN_RCONST(0.35355339059327376220042218105242);
+    C->G[0][4][2] = -SUN_RCONST(0.64644660940672623779957781894758);
+    C->G[0][4][4] = SUN_RCONST(0.29289321881345247559915563789515);
+    C->G[0][6][0] = -SUN_RCONST(0.030330085889910643300633271578637);
+    C->G[0][6][2] = -SUN_RCONST(0.030330085889910643300633271578637);
+    C->G[0][6][4] = SUN_RCONST(0.060660171779821286601266543157274);
     return C;
   })
 

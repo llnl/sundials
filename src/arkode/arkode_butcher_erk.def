@@ -347,14 +347,14 @@ ARK_BUTCHER_TABLE(ARKODE_SSP_ERK_10_3_4, { /* https://doi.org/10.1016/j.cam.2022
     B->d[8] = SUN_RCONST(0.3);
 
     B->c[1] = t1;
-    B->c[2] = SUN_RCONST(2.0) * t1;
+    B->c[2] = SUN_RCONST(1.0) * t1;
     B->c[3] = SUN_RCONST(3.0) * t1;
     B->c[4] = SUN_RCONST(4.0) * t1;
     B->c[5] = SUN_RCONST(5.0) * t2;
-    B->c[6] = SUN_RCONST(5.0) * t2 + SUN_RCONST(1.0) * t1;
-    B->c[7] = SUN_RCONST(5.0) * t2 + SUN_RCONST(2.0) * t1;
-    B->c[8] = SUN_RCONST(5.0) * t2 + SUN_RCONST(3.0) * t1;
-    B->c[9] = SUN_RCONST(5.0) * t2 + SUN_RCONST(4.0) * t1;
+    B->c[6] = SUN_RCONST(0.5);
+    B->c[7] = SUN_RCONST(2.0) / SUN_RCONST(3.0);
+    B->c[8] = SUN_RCONST(5.0) / SUN_RCONST(6.0);
+    B->c[9] = SUN_RCONST(1.0);
     return B;
   })
 
