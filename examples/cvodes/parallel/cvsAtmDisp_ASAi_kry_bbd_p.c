@@ -1165,7 +1165,6 @@ static int PrintFinalStats(void* cvode_mem)
   long int nli, npe, nps, ncfl, nfeLS;
   int retval;
 
-
   retval = CVodeGetNumSteps(cvode_mem, &nst);
   if (check_retval(&retval, "CVodeGetNumSteps", 1, 0)) { return (-1); }
 
@@ -1189,7 +1188,6 @@ static int PrintFinalStats(void* cvode_mem)
   {
     return (-1);
   }
-
 
   retval = CVodeGetNumLinIters(cvode_mem, &nli);
   if (check_retval(&retval, "CVodeGetNumLinIters", 1, 0)) { return (-1); }

@@ -356,8 +356,6 @@ static void PrintFinalStats(void* kmem)
   retval = KINGetNumBacktrackOps(kmem, &nbacktr);
   check_retval(&retval, "KINGetNumBacktrackOps", 1);
 
-
-
   /* Band linear solver statistics */
 
   retval = KINGetNumJacEvals(kmem, &nje);
