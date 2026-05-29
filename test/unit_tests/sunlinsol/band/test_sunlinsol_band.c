@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
   b = N_VNew_Serial(cols, sunctx);
 
   /* Fill matrix and x vector with uniform random data in [0,1] */
-  /* (if complex-valued, then add [0,1/cols]*i) */
+  /* (if complex-valued, then add [0,1]*i) */
   xdata = N_VGetArrayPointer(x);
   for (j = 0; j < cols; j++)
   {
