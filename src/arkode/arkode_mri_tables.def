@@ -841,7 +841,8 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_SR43, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts,
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_MERK21, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024 (embedding unpublished) */
+ARK_MRI_TABLE(ARKODE_MERK21, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024;
+                                  D.R. Reynolds, S. Amihere, D. Mitchell, V.T. Luan, JCAM, 2026 (embedding) */
     MRIStepCoupling C = MRIStepCoupling_Alloc(2, 3, MRISTEP_MERK);
     sunrealtype c2 = SUN_RCONST(0.5);
 
@@ -864,7 +865,8 @@ ARK_MRI_TABLE(ARKODE_MERK21, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_MERK32, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024 (embedding unpublished) */
+ARK_MRI_TABLE(ARKODE_MERK32, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024;
+                                  D.R. Reynolds, S. Amihere, D. Mitchell, V.T. Luan, JCAM, 2026 (embedding) */
     MRIStepCoupling C = MRIStepCoupling_Alloc(2, 4, MRISTEP_MERK);
     sunrealtype c2 = SUN_RCONST(0.5);
 
@@ -894,7 +896,8 @@ ARK_MRI_TABLE(ARKODE_MERK32, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_MERK43, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024 (embedding unpublished) */
+ARK_MRI_TABLE(ARKODE_MERK43, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024;
+                                  D.R. Reynolds, S. Amihere, D. Mitchell, V.T. Luan, JCAM, 2026 (embedding) */
     MRIStepCoupling C = MRIStepCoupling_Alloc(3, 7, MRISTEP_MERK);
     sunrealtype c2 = SUN_RCONST(0.5);
     sunrealtype c3 = SUN_RCONST(0.5);
@@ -961,7 +964,8 @@ ARK_MRI_TABLE(ARKODE_MERK43, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_MERK54, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024 (embedding unpublished) */
+ARK_MRI_TABLE(ARKODE_MERK54, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024;
+                                  D.R. Reynolds, S. Amihere, D. Mitchell, V.T. Luan, JCAM, 2026 (embedding) */
     MRIStepCoupling C = MRIStepCoupling_Alloc(4, 11, MRISTEP_MERK);
     sunrealtype c2 = SUN_RCONST(0.5);
     sunrealtype c3 = SUN_RCONST(0.5);

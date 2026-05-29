@@ -701,7 +701,7 @@ function.
    documentation of the particular ``SUNMatrix`` type in Chapter
    :numref:`SUNMatrix` for further information).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated functions ``IDADlsSetLinearSolverB`` and
       ``IDASpilsSetLinearSolverB``.
@@ -1006,7 +1006,7 @@ backward problem depends on the forward sensitivities.
      * ``IDALS_LMEM_NULL`` -- The linear solver has not been initialized with a call to :c:func:`IDASetLinearSolverB`.
      * ``IDALS_ILL_INPUT`` -- The parameter ``which`` represented an invalid identifier.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDADlsSetJacFnB``.
 
@@ -1029,7 +1029,7 @@ backward problem depends on the forward sensitivities.
      * ``IDALS_LMEM_NULL`` -- The linear solver has not been initialized with a call to :c:func:`IDASetLinearSolverB`.
      * ``IDALS_ILL_INPUT`` -- The parameter ``which`` represented an invalid identifier.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDADlsSetJacFnBS``.
 
@@ -1091,7 +1091,7 @@ two functions:
      * ``IDALS_NO_ADJ`` -- The function :c:func:`IDAAdjInit` has not been previously called.
      * ``IDALS_ILL_INPUT`` -- The parameter ``which`` represented an invalid identifier.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetJacTimesB``.
 
@@ -1116,7 +1116,7 @@ two functions:
      * ``IDALS_NO_ADJ`` -- The function :c:func:`IDAAdjInit` has not been previously called.
      * ``IDALS_ILL_INPUT`` -- The parameter ``which`` represented an invalid identifier.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetJacTimesBS``.
 
@@ -1152,7 +1152,7 @@ setting increments for the finite-difference approximation, via a call to
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.increment_factor_b".
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetIncrementFactorB``.
 
@@ -1226,7 +1226,7 @@ These may be accomplished through calling the following functions:
       The ``psetupB`` argument may be ``NULL`` if no setup operation is involved
       in the preconditioner.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetPreconditionerB``.
 
@@ -1254,7 +1254,7 @@ These may be accomplished through calling the following functions:
       The ``psetupBS`` argument may be ``NULL`` if no setup operation is
       involved  in the preconditioner.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetPreconditionerBS``.
 
@@ -1288,7 +1288,7 @@ These may be accomplished through calling the following functions:
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.eps_lin_b".
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetEpsLinB``.
 
@@ -1896,7 +1896,7 @@ as follows:
         integration  (:c:func:`IDASolveB` returns ``IDA_LSETUP_FAIL`` and IDALS
         sets ``last_flag`` to  ``IDALS_JACFUNC_UNRECVR``).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDADlsJacFnB``.
 
@@ -1952,7 +1952,7 @@ as follows:
         integration  (:c:func:`IDASolveB` returns ``IDA_LSETUP_FAIL`` and IDALS
         sets ``last_flag`` to  ``IDALS_JACFUNC_UNRECVR``).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDADlsJacFnBS``.
 
@@ -2004,7 +2004,7 @@ these products.
       problem is the adjoint of :math:`{\dot y} = f(t, y)`, then this function
       is to compute :math:`-\left({\partial f}/{\partial y_i}\right)^T v_B`.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsJacTimesVecFnB``.
 
@@ -2044,7 +2044,7 @@ these products.
       equivalent to those passed to a function of type  ``IDALsJacTimesVecFn``
       (see :numref:`IDAS.Usage.SIM.user_supplied.jtimesFn`).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsJacTimesVecFnBS``.
 
@@ -2094,7 +2094,7 @@ function of type :c:type:`IDALsJacTimesSetupFnB` or
       The unit roundoff can be accessed as  ``SUN_UNIT_ROUNDOFF`` defined in
       ``sundials_types.h``.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsJacTimesSetupFnB``.
 
@@ -2135,7 +2135,7 @@ function of type :c:type:`IDALsJacTimesSetupFnB` or
       can be accessed as  ``SUN_UNIT_ROUNDOFF`` defined in ``sundials_types.h``.
       The previous function type ``IDASpilsJacTimesSetupFnBS`` is deprecated.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsJacTimesSetupFnBS``.
 
@@ -2174,7 +2174,7 @@ following two forms:
       which case the step will be retried), or negative for an unrecoverable
       error (in which case the integration is halted).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsPrecSolveFnB``.
 
@@ -2206,7 +2206,7 @@ following two forms:
       which case the step will be retried), or negative for an unrecoverable
       error (in which case the integration is halted).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsPrecSolveFnBS``.
 
@@ -2241,7 +2241,7 @@ function of one of the following two types:
       which case the step will be retried), or negative for an unrecoverable
       error (in which case the integration is halted).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsPrecSetupFnB``.
 
@@ -2270,7 +2270,7 @@ function of one of the following two types:
       which case the step will be retried), or negative for an unrecoverable
       error (in which case the integration is halted).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsPrecSetupFnBS``.
 

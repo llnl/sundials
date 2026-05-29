@@ -3,7 +3,7 @@
 Adjoint Sensitivity Analysis
 ============================
 
-.. versionadded:: 6.3.0
+.. versionadded:: 7.3.0 (ARKODE 6.3.0)
 
 The previous sections discuss using ARKODE for the integration of forward ODE models. This section
 discusses how to use ARKODE for adjoint sensitivity analysis as introduced in
@@ -139,7 +139,7 @@ adjoint sensitivity analysis with methods with ERKStep and ARKStep.
    :retval ARK_MEM_FAIL: if a memory allocation failed.
    :retval ARK_ILL_INPUT: if an argument has an illegal value.
 
-   .. versionadded:: 6.3.0
+   .. versionadded:: 7.3.0 (ARKODE 6.3.0)
 
    .. note::
 
@@ -174,7 +174,7 @@ adjoint sensitivity analysis with methods with ERKStep and ARKStep.
    :retval ARK_MEM_FAIL: if a memory allocation failed.
    :retval ARK_ILL_INPUT: if an argument has an illegal value.
 
-   .. versionadded:: 6.3.0
+   .. versionadded:: 7.3.0 (ARKODE 6.3.0)
 
    .. note::
 

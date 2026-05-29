@@ -221,7 +221,7 @@ Allowable Method Families
       * *ARK_DEE_FAIL* if the call to :c:func:`SUNDomEigEstimator_SetATimes`
         failed
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
    .. note::
 
@@ -328,7 +328,7 @@ Allowable Method Families
       * *ARK_SUCCESS* if successful
       * *ARK_MEM_NULL* if ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
    .. note::
 
@@ -353,7 +353,7 @@ Allowable Method Families
       * *ARK_DEE_FAIL* if the call to
         :c:func:`SUNDomEigEstimator_SetNumPreprocessIters` failed.
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
    .. note::
 
@@ -394,7 +394,7 @@ Allowable Method Families
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.num_ssp_stages".
 
-   .. versionchanged:: 6.7.0
+   .. versionchanged:: 7.7.0 (ARKODE 6.7.0)
 
       The default number of stages for :c:enumerator:`ARKODE_LSRK_SSP_S_2` and
       :c:enumerator:`ARKODE_LSRK_SSP_S_3` were changed from 10 and 9,
@@ -447,7 +447,7 @@ Optional output functions
       * *ARK_MEM_NULL* if the LSRKStep memory was ``NULL``
       * *ARK_ILL_INPUT* if ``nfeDQ`` is illegal
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
    .. note::
 
@@ -468,7 +468,7 @@ Optional output functions
       * *ARK_MEM_NULL* if the LSRKStep memory was ``NULL``
       * *ARK_ILL_INPUT* if ``num_iters`` is illegal
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
 
 .. _ARKODE.Usage.LSRKStep.Reinitialization:
