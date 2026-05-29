@@ -442,8 +442,6 @@ static void PrintOutput(sunrealtype t, sunrealtype umax, long int nst)
 
 static void PrintFinalStats(void* cvode_mem)
 {
-  long lenrw, leniw;
-  long lenrwLS, leniwLS;
   long int nst, nfe, nsetups, nni, ncfn, netf;
   long int nli, npe, nps, ncfl, nfeLS;
   int retval;

@@ -328,8 +328,6 @@ static void PrintOutput(sunrealtype t, sunrealtype umax, long int nst)
 // Get and print some final statistics
 static void PrintFinalStats(void* cvode_mem)
 {
-  long lenrw, leniw;
-  long lenrwLS, leniwLS;
   long int nst, nfe, nsetups, nni, ncfn, netf;
   long int nli, npe, nps, ncfl, nfeLS;
   int retval;
@@ -359,8 +357,6 @@ static void PrintFinalStats(void* cvode_mem)
   check_retval(&retval, "CVodeGetNumLinRhsEvals", 1);
 
   std::cout << "\nFinal Statistics.. \n\n";
-  std::cout << "lenrw   = " << lenrw << "     leniw   = " << leniw << "\n";
-  std::cout << "lenrwLS = " << lenrwLS << "     leniwLS = " << leniwLS << "\n";
   std::cout << "nst     = " << nst << "\n";
   std::cout << "nfe     = " << nfe << "     nfeLS   = " << nfeLS << "\n";
   std::cout << "nni     = " << nni << "     nli     = " << nli << "\n";
