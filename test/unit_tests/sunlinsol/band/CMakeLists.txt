@@ -103,6 +103,12 @@ foreach(example_tuple ${sunlinsol_band_fortran_examples})
       ${example} sundials_nvecserial sundials_fnvecserial_mod
       sundials_sunlinsolband sundials_fsunlinsolband_mod ${EXE_EXTRA_LINK_LIBS})
 
+    # add preprocessor definition when using complex scalar type
+    if(SUNDIALS_SCALAR_TYPE MATCHES "COMPLEX")
+      set_target_properties(${example} PROPERTIES Fortran_PREPROCESS ON)
+      target_compile_definitions(${example} PRIVATE SUNDIALS_SCALAR_TYPE_COMPLEX)
+    endif()
+
     # check if example args are provided and set the test name
     if("${example_args}" STREQUAL "")
       set(test_name ${example})
