@@ -131,6 +131,3 @@ nni     =  2021     nli     =  7604
 nsetups =    77     netf    =    22
 npe     =     8     nps     =  9536
 ncfn    =     4     ncfl    =   950
-
-In ARKBBDPRE: real/integer local work space sizes = 1300, 192
-             no. flocal evals. = 176

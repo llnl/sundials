@@ -131,6 +131,3 @@ nni     =   600     nli     =   758
 nsetups =    94     netf    =    29
 npe     =     9     nps     =  1257
 ncfn    =     0     ncfl    =     0
-
-In CVBBDPRE: real/integer local work space sizes = 1300, 192
-             no. flocal evals. = 198
