@@ -134,7 +134,7 @@ ARK_BUTCHER_TABLE(ARKODE_ARK2_DIRK_3_1_2, { /* ARK2 Implicit Table (A,L stable) 
 
     B->d[0] = beta;
     B->d[1] = beta;
-    B->d[2] = SUN_RCONST(0.3535533905932737622004221810524245196424);
+    B->d[2] = delta;
 
     B->c[1] = twogamma;
     B->c[2] = SUN_RCONST(1.0);
