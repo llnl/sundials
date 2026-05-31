@@ -47,7 +47,7 @@
      ARKODE_BILLINGTON_3_3_2           SDIRK     N         N       Y
      ARKODE_TRBDF2_3_3_2              ESDIRK     N         N       Y
      ARKODE_SSP_LSPUM_SDIRK_3_1_2*     SDIRK     Y         Y       Y
-     ARKODE_ESDIRK_4_2_3*         ESDIRK     Y         Y       Y
+     ARKODE_ESDIRK_4_2_3*             ESDIRK     Y         Y       Y
      ARKODE_KVAERNO_4_2_3             ESDIRK     Y         Y       Y
      ARKODE_ARK324L2SA_DIRK_4_2_3*    ESDIRK     Y         Y       Y
      ARKODE_ESDIRK324L2SA_4_2_3       ESDIRK     Y         Y       Y

@@ -2540,9 +2540,9 @@ where the sector :math:`S(\theta,\rho)` is defined as
    S(\theta,\rho) = \left\{ \eta^I = -a+i b \; :\; a>0,\; b\ge 0,\; |\eta^I|\le \rho,\; \operatorname{atan}\left(\frac{b}{a}\right) \le \theta \right\}.
 
 For each ARK method, we overlay plots of the border of :math:`\mathcal{J}_{\theta,\rho}`
-for values :math:`\theta \in \left\{0^{\circ}, 20^{\circ}, 40^{\circ}, 60^{\circ}, 80^{\circ}\right\}` and
+for values :math:`\theta \in \left\{0^{\circ}, 15^{\circ}, 30^{\circ}, 45^{\circ}, 60^{\circ}, 75^{\circ}, 90^{\circ}\right\}` and
 :math:`\rho=10^8`; roughly corresponding with the shape of the explicit stability region
-under the assumption that the implicit method is :math:`A-\theta` stable;
+under the assumption that the implicit method is :math:`A(\theta)`-stable;
 the joint stability region decreases in area as :math:`\theta` and :math:`\rho` increase.
 
 As with traditional Runge--Kutta methods, the value :math:`\eta^E_0 =
@@ -2599,7 +2599,7 @@ second-order ARK method.
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
    ``ARKODE_ARK2_3_1_2`` method.  All
-   joint stability regions coincide, so only the :math:`80^o` boundary is visible.
+   joint stability regions coincide, so only the :math:`90^{\circ}` boundary is visible.
 
 
 .. _Butcher.ARKODE_ASCHER_ARK_3_1_2:
@@ -2618,7 +2618,7 @@ ARKODE_ASCHER_ARK_3_1_2
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
    ``ARKODE_ASCHER_ARK_3_1_2`` method.
-   All joint stability regions coincide, so only the :math:`80^o` boundary
+   All joint stability regions coincide, so only the :math:`90^{\circ}` boundary
    is visible.
 
 
