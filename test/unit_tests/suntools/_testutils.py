@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ---------------------------------------------------------------
-# Programmer(s): SUNDIALS contributors
+# Programmer(s): Cody J. Balos
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
 # Copyright (c) 2025-2026, Lawrence Livermore National Security,
