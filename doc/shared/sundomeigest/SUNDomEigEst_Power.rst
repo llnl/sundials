@@ -54,7 +54,7 @@ relatively close enough to one another.  That is, for some :ref:`relative tolera
 The default Power iteration implementation estimates complex-valued dominant
 eigenvalues with real arithmetic.  After the iteration phase, a postprocessing 
 step is performed using the two most recent iterate vectors (approximations of 
-the dominant eigenvector).  These vectors are used to construct a 2×2 projection
+the dominant eigenvector).  These vectors are used to construct a :math:`2 \times 2` projection
 of the original matrix.
 
 If the two iterates are (numerically) linearly dependent, this indicates
@@ -63,13 +63,13 @@ real-valued dominant eigenvalue.  In this case, the dominant eigenvalue
 estimate is taken as the Rayleigh quotient of the final iterate.
 
 If the iterates are not linearly dependent, they span a two-dimensional
-subspace.  A 2×2 projection of the original matrix onto this subspace is
+subspace.  A :math:`2 \times 2` projection of the original matrix onto this subspace is
 constructed, and the eigenvalues of this projected matrix are used as the
 dominant eigenvalue estimates.  This allows the method to capture complex
 conjugate dominant eigenvalue pairs.
 
 An option is also provided to estimate only a real-valued dominant
-eigenvalue.  In this mode, the 2×2 projection step is skipped and the
+eigenvalue.  In this mode, the :math:`2 \times 2` projection step is skipped and the
 Rayleigh quotient of the final iterate is returned directly.
 
 If the dominant eigenvalue is strictly greater than all others (in magnitude), 
@@ -148,7 +148,7 @@ routines:
       No matter the value of ``real``, the convergence criterion is based on the relative change in the 
       magnitude of successive eigenvalue estimates (with tolerance set using 
       :c:func:`SUNDomEigEstimator_SetRelTol`).  If ``real`` is ``SUNTRUE``, then the final Power 
-      Iteration estimate is returned.  Otherwise, a postprocessing step is performed to compute 
+      iteration estimate is returned.  Otherwise, a postprocessing step is performed to compute 
       the complex-valued dominant eigenvalue estimate. 
 
       The default value is ``SUNFALSE``.
@@ -184,7 +184,7 @@ routines:
          \mathtt{gram\_det\_tol} = 10 \cdot \max\left(\varepsilon,\; \mathtt{rel\_tol}\right),
 
       where :math:`\varepsilon` denotes machine precision. If the determinant
-      of the 2×2 Gram matrix formed from the two most recent iterates is less
+      of the :math:`2 \times 2` Gram matrix formed from the two most recent iterates is less
       than or equal to ``gram_det_tol``, then the dominant eigenvalue is treated
       as real.
 
@@ -206,7 +206,7 @@ routines:
       Choosing a smaller relative tolerance improves the ability to detect
       weakly complex eigenvalues, but may increase computational cost.
 
-      Acceptable inputs satisfy :math:`0 < \mathtt{rel\_tol} < 1 - \varepsilon`.
+      Acceptable inputs satisfy :math:`0 < \mathtt{rel\_tol} < 1`.
       Values outside this range reset to the default value ``0.005``.
 
 

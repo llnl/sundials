@@ -28,16 +28,17 @@
  * for t in the interval [0.0, 10.0], with initial conditions
  * Y0 = [u0,v0,w0].
  *
- * We have u0=1.2,  v0=3.1,  w0=3,  a=1,  b=3.5,  ep=5.0e-6.
- *    Here, w experiences a fast initial transient, jumping 0.5
- *    within a few steps.  All values proceed smoothly until
- *    around t=6.5, when both u and v undergo a sharp transition,
- *    with u increaseing from around 0.5 to 5 and v decreasing
- *    from around 6 to 1 in less than 0.5 time units.  After this
- *    transition, both u and v continue to evolve somewhat
- *    rapidly for another 1.4 time units, and finish off smoothly.
+ * We use u0=1.2,  v0=3.1,  w0=3,  a=1,  b=3.5,  ep=5.0e-6.
+ *  
+ * In this case, w experiences a fast initial transient, jumping 0.5
+ * within a few steps. All values proceed smoothly until
+ * around t=6.5, when both u and v undergo a sharp transition,
+ * with u increasing from around 0.5 to 5 and v decreasing
+ * from around 6 to 1 in less than 0.5 time units. After this
+ * transition, both u and v continue to evolve somewhat
+ * rapidly for another 1.4 time units, and finish off smoothly.
  *
- * This program solves the problem with the LSRK method using internal
+ * This program solves the problem with an STS method from LSRKStep using a
  * SUNDIALS dominant eigenvalue estimation (DEE) module.
  *
  * 100 outputs are printed at equal intervals, and run statistics
@@ -141,7 +142,7 @@ int main(int argc, char* argv[])
   ydata[1]           = v0;
   ydata[2]           = w0;
 
-  /* Call LSRKStepCreateSTS to initialize the ARK timestepper module and
+  /* Call LSRKStepCreateSTS to initialize the STS timestepper module and
      specify the right-hand side function in y'=f(t,y), the initial time
      T0, and the initial dependent variable vector y. */
   arkode_mem = LSRKStepCreateSTS(f, T0, y, ctx);
@@ -207,7 +208,7 @@ int main(int argc, char* argv[])
   flag = LSRKStepSetDomEigSafetyFactor(arkode_mem, SUN_RCONST(1.01));
   if (check_flag(&flag, "LSRKStepSetDomEigSafetyFactor", 1)) { return 1; }
 
-  /* Specify the Runge--Kutta--Chebyshev LSRK method by name */
+  /* Specify the Runge--Kutta--Legendre LSRK method by name */
   flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKL_2");
   if (check_flag(&flag, "LSRKStepSetSTSMethodByName", 1)) { return 1; }
 

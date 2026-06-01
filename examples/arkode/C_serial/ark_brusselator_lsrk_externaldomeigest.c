@@ -17,25 +17,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  *---------------------------------------------------------------
- * Example problem:
+ * The following example simulates the same problem as
+ * ark_brusselator_lsrk_domeigest.c but attaches a user-supplied dominate
+ * eigenvalue function (dom_eig) instead of a SUNDomEigEstimator object.
  *
- * The following test simulates the same problem as 
- * ark_brusselator_lsrk_domeigest.c.
- * 
- * The only difference with that example is that this one
- * attaches a "user provided" dominant eigenvalue estimate,
- * and where that estimate is provided by a user-constructed
- * SUNDomEigEstimator object (see the dom_eig function below).
- * 
- * While this example and ark_brusselator_lsrk_domeigest.c should provide
- * the same results, the purpose of this example is to show 
- * users how they may manually construct SUNDomEigEstimator
- * objects to query the dominant eigenvalues of a desired 
- * function.  In particular, we note that there is no 
- * requirement for the SUNDomEigEstimator to be used purely
- * for super-time-stepping methods in LSRKStep, so users 
- * interested in other purposes may focus on the contents 
- * of the dom_eig function below as a template.
+ * The user-supplied function wraps a SUNDomEigEstimator to demonstrate how an
+ * estimator can be used in a standalone fashion to estimate the dominant
+ * eigenvalues of a desired function. In particular, we note that there is no
+ * requirement for the SUNDomEigEstimator to be used purely for
+ * super-time-stepping methods in LSRKStep and they may be applied in other
+ * settings.
  *-----------------------------------------------------------------*/
 
 /* Header files */
@@ -169,7 +160,7 @@ int main(int argc, char* argv[])
   ydata[1]           = v0;
   ydata[2]           = w0;
 
-  /* Call LSRKStepCreateSTS to initialize the ARK timestepper module and
+  /* Call LSRKStepCreateSTS to initialize the STS timestepper module and
      specify the right-hand side function in y'=f(t,y), the initial time
      T0, and the initial dependent variable vector y. */
   arkode_mem = LSRKStepCreateSTS(f, T0, y, ctx);
@@ -187,7 +178,7 @@ int main(int argc, char* argv[])
                                   ARK_INTERP_LAGRANGE); /* Specify stiff interpolant */
   if (check_flag(&flag, "ARKodeSetInterpolantType", 1)) { return 1; }
 
-  /* Specify user provided spectral radius */
+  /* Specify user provided dominant eigenvalue function */
   flag = LSRKStepSetDomEigFn(arkode_mem, dom_eig);
   if (check_flag(&flag, "LSRKStepSetDomEigFn", 1)) { return 1; }
 
@@ -203,7 +194,7 @@ int main(int argc, char* argv[])
   flag = LSRKStepSetDomEigSafetyFactor(arkode_mem, SUN_RCONST(1.01));
   if (check_flag(&flag, "LSRKStepSetDomEigSafetyFactor", 1)) { return 1; }
 
-  /* Specify the Runge--Kutta--Chebyshev LSRK method by name */
+  /* Specify the Runge--Kutta--Legendre LSRK method by name */
   flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKL_2");
   if (check_flag(&flag, "LSRKStepSetSTSMethodByName", 1)) { return 1; }
 

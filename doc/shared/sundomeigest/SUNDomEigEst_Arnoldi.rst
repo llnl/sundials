@@ -136,10 +136,10 @@ routines:
       the Arnoldi iteration begins. This avoids restarting Arnoldi repeatedly.
 
       Supplying ``rel_tol < 0`` disables preprocessing-to-tolerance behavior.
-      Inputs satisfying :math:`0 < \mathtt{rel\_tol} < 1 - \varepsilon`
-      enable this behavior and are used directly. Values with
-      :math:`\mathtt{rel\_tol} = 0` or
-      :math:`\mathtt{rel\_tol} > 1 - \varepsilon` reset to the default value
+      Inputs satisfying :math:`0 < \mathtt{rel\_tol} < 1`  
+      enable this behavior and are used directly. Values with  
+      :math:`\mathtt{rel\_tol} = 0` or  
+      :math:`\mathtt{rel\_tol} >= 1` reset to the default value  
       ``0.005``.
 
 
