@@ -604,8 +604,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      use the minimum number of stages (ss = 2) when zR > 0. */
   sunrealtype zR = ark_mem->h * step_mem->lambdaR;
   sunrealtype zI = ark_mem->h * step_mem->lambdaI;
-  sunrealtype ss = zR > ZERO ? SUN_RCONST(2.0)
-                             : SUNRceil(SUNRsqrt(ONE - coefz * zR));
+  int ss = zR > ZERO ? 2 : (int)SUNRceil(SUNRsqrt(ONE - coefz * zR));
   ss             = SUNMAX(ss, 2);
 
   /* Check if number of stages exceeds maximum allowed.
@@ -1047,8 +1046,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   int ss =
     zR > ZERO
       ? 2
-      : (int)SUNRceil((SUNRsqrt(SUN_RCONST(9.0) + SUN_RCONST(8.0) * zRabs) - ONE) /
-                      TWO);
+      : (int)SUNRceil(
+          (SUNRsqrt(SUN_RCONST(9.0) + SUN_RCONST(8.0) * zRabs) - ONE) / TWO);
 
   ss = SUNMAX(ss, 2);
 
@@ -3018,8 +3017,8 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
     const sunrealtype a = (TWO / THREE) * (SUNSQR(ss) - ONE) *
                           (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping) /
                           TWO;
-    const sunrealtype b = a /
-                          (num_stages == 2 ? SUN_RCONST(0.6) : SUN_RCONST(1.825) * ss);
+    const sunrealtype b = a / (num_stages == 2 ? SUN_RCONST(0.6)
+                                               : SUN_RCONST(1.825) * ss);
 
     *stability_norm = SUNRsqrt(SUNSQR((zR + a) / a) + SUNSQR((zI) / b));
   }
