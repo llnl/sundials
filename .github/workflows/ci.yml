@@ -92,8 +92,8 @@ jobs:
           fi
 
           # Check for changes to trigger documentation build checks
-          # Updates in doc, bindings/sundials4py, or tools directories
-          if echo "$CHANGED" | grep -qE '^(doc/|bindings/sundials4py/|tools/)'; then
+          # Updates in doc, bindings/sundials4py, or suntools directories
+          if echo "$CHANGED" | grep -qE '^(doc/|bindings/sundials4py/|suntools/)'; then
             echo "docs=true" >> "$GITHUB_OUTPUT"
           else
             echo "docs=false" >> "$GITHUB_OUTPUT"
@@ -110,7 +110,7 @@ jobs:
 
           # Check for changes to trigger python interface checks
           # Updates in include or bindings/sundials4py directories
-          if echo "$CHANGED" | grep -qE '^(include/|bindings/sundials4py/|examples/python/)'; then
+          if echo "$CHANGED" | grep -qE '^(pyproject.toml|include/|bindings/sundials4py/|examples/python/)'; then
             echo "python=true" >> "$GITHUB_OUTPUT"
           else
             echo "python=false" >> "$GITHUB_OUTPUT"

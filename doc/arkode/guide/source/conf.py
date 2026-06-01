@@ -20,8 +20,8 @@ from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../../shared")))
 
-# Add suntools directory to import python function docstrings with autodoc
-sys.path.append(os.path.abspath("../../../../tools/suntools"))
+# Add the suntools package source parent for autodoc imports.
+sys.path.append(os.path.abspath("../../../../suntools/src/suntools"))
 
 # -- General configuration ----------------------------------------------------
 
@@ -124,22 +124,18 @@ numfig_format = {"section": "§%s"}
 
 rst_prolog = open("../../../shared/global.rst.txt", "r").read()
 
-rst_epilog = """
-.. |YEAR| replace:: {year}
-.. |CVODE_VERSION| replace:: {cvode_version}
-.. |CVODES_VERSION| replace:: {cvodes_version}
-.. |ARKODE_VERSION| replace:: {arkode_version}
-.. |IDA_VERSION| replace:: {ida_version}
-.. |IDAS_VERSION| replace:: {idas_version}
-.. |KINSOL_VERSION| replace:: {kinsol_version}
-""".format(
-    year=year,
-    cvode_version=cvode_version,
-    cvodes_version=cvodes_version,
-    arkode_version=arkode_version,
-    ida_version=ida_version,
-    idas_version=idas_version,
-    kinsol_version=kinsol_version,
+source_replacements = {
+    "|YEAR|": str(year),
+    "|CVODE_VERSION|": cvode_version,
+    "|CVODES_VERSION|": cvodes_version,
+    "|ARKODE_VERSION|": arkode_version,
+    "|IDA_VERSION|": ida_version,
+    "|IDAS_VERSION|": idas_version,
+    "|KINSOL_VERSION|": kinsol_version,
+}
+
+rst_epilog = "\n".join(
+    f".. {name} replace:: {value}" for name, value in source_replacements.items()
 )
 
 # -- Options for HTML output ---------------------------------------------------
@@ -243,13 +239,14 @@ tex_author = r"""
     Daniel R. Reynolds$^1$,
     David J. Gardner$^2$,
     Carol S. Woodward$^2$,
-    Cody J. Balos$^2$
+    Cody J. Balos$^2$, \\
     Rujeko Chinomona$^3$, and
-    Mustafa Aggul$^1$ \\
+    Mustafa Aggul$^4$ \\
     \\
-    {\em $^1$Department of Mathematics, Southern Methodist University} \\
+    {\em $^1$Department of Mathematics and Statistics, University of Maryland Baltimore County} \\
     {\em $^2$Center for Applied Scientific Computing, Lawrence Livermore National Laboratory} \\
-    {\em $^3$Department of Mathematics, Temple University}
+    {\em $^3$Department of Mathematics, Temple University} \\
+    {\em $^4$Department of Mathematics, Southern Methodist University}
     """
 
 latex_documents = [("index", "ark_guide.tex", project, tex_author, "manual", False)]
@@ -273,8 +270,8 @@ latex_elements = {
     # disable frames around code-blocks
     "verbatimwithframe=false,"
     +
-    # do not wrap long lines in code-blocks
-    "verbatimwrapslines=false,"
+    # wrap long lines in code-blocks
+    "verbatimwrapslines=true,"
     +
     # background color for code-blocks
     "VerbatimColor={RGB}{240.0,240.0,240.0},"
