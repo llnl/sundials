@@ -301,24 +301,15 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
     flag = SUNDomEigEstimator_SetRhs(DEE, user_data, f);
     if (check_flag(&flag, "SUNDomEigEstimator_SetRhs", 1)) { return -1; }
 
-    /* Set the linearization vector for the Jacobian-vector products */
-    flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t, y);
-    if (check_flag(&flag, "SUNDomEigEstimator_SetRhsLinearizationPoint", 1))
-    {
-      return -1;
-    }
-
     flag = SUNDomEigEstimator_Initialize(DEE);
     if (check_flag(&flag, "SUNDomEigEstimator_Initialize", 1)) { return 1; }
   }
-  else
+
+  /* Set the linearization vector and time for the Jacobian-vector products */
+  flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t, y);
+  if (check_flag(&flag, "SUNDomEigEstimator_SetRhsLinearizationPoint", 1))
   {
-    /* Update the linearization vector and time for the Jacobian-vector products */
-    flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t, y);
-    if (check_flag(&flag, "SUNDomEigEstimator_SetRhsLinearizationPoint", 1))
-    {
-      return -1;
-    }
+    return -1;
   }
 
   /* Estimate the dominant eigenvalue with power iteration */
