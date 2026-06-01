@@ -24,6 +24,11 @@ import json
 import os
 import sys
 
+from _testutils import add_repo_suntools_to_path
+
+
+add_repo_suntools_to_path()
+
 # Import the logs module
 from suntools import logs
 
