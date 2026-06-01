@@ -706,7 +706,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: estimate
   type(C_FUNPTR), public :: getres
   type(C_FUNPTR), public :: getnumiters
-  type(C_FUNPTR), public :: getnumrhscalls
+  type(C_FUNPTR), public :: getnumrhsevals
   type(C_FUNPTR), public :: getnumatimescalls
   type(C_FUNPTR), public :: write
   type(C_FUNPTR), public :: destroy

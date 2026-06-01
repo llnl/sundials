@@ -75,7 +75,7 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   ops->initialize               = NULL;
   ops->estimate                 = NULL;
   ops->getnumiters              = NULL;
-  ops->getnumrhscalls           = NULL;
+  ops->getnumrhsevals           = NULL;
   ops->getres                   = NULL;
   ops->getnumatimescalls        = NULL;
   ops->write                    = NULL;
@@ -349,9 +349,9 @@ SUNErrCode SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE,
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
-  if (DEE->ops->getnumrhscalls)
+  if (DEE->ops->getnumrhsevals)
   {
-    ier = DEE->ops->getnumrhscalls(DEE, num_rhs_evals);
+    ier = DEE->ops->getnumrhsevals(DEE, num_rhs_evals);
   }
   else
   {

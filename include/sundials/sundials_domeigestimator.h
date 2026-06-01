@@ -62,7 +62,7 @@ struct SUNDomEigEstimator_Ops_
   SUNErrCode (*estimate)(SUNDomEigEstimator, sunrealtype*, sunrealtype*);
   SUNErrCode (*getres)(SUNDomEigEstimator, sunrealtype*);
   SUNErrCode (*getnumiters)(SUNDomEigEstimator, long int*);
-  SUNErrCode (*getnumrhscalls)(SUNDomEigEstimator, long int*);
+  SUNErrCode (*getnumrhsevals)(SUNDomEigEstimator, long int*);
   SUNErrCode (*getnumatimescalls)(SUNDomEigEstimator, long int*);
   SUNErrCode (*write)(SUNDomEigEstimator, FILE*);
   SUNErrCode (*destroy)(SUNDomEigEstimator*);

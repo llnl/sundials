@@ -119,7 +119,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   DEE->ops->estimate          = SUNDomEigEstimator_Estimate_Power;
   DEE->ops->getres            = SUNDomEigEstimator_GetRes_Power;
   DEE->ops->getnumiters       = SUNDomEigEstimator_GetNumIters_Power;
-  DEE->ops->getnumrhscalls    = SUNDomEigEstimator_GetNumRhsEvals_Power;
+  DEE->ops->getnumrhsevals    = SUNDomEigEstimator_GetNumRhsEvals_Power;
   DEE->ops->getnumatimescalls = SUNDomEigEstimator_GetNumATimesCalls_Power;
   DEE->ops->write             = SUNDomEigEstimator_Write_Power;
   DEE->ops->destroy           = SUNDomEigEstimator_Destroy_Power;

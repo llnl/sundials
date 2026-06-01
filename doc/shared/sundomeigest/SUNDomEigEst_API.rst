@@ -548,7 +548,7 @@ The virtual table structure is defined as
 
       The function implementing :c:func:`SUNDomEigEstimator_GetNumIters`
 
-   .. c:member:: long int (*getnumrhscalls)(SUNDomEigEstimator)
+   .. c:member:: long int (*getnumrhsevals)(SUNDomEigEstimator)
 
       The function implementing :c:func:`SUNDomEigEstimator_GetNumRhsEvals`
 

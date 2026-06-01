@@ -120,7 +120,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->ops->initialize        = SUNDomEigEstimator_Initialize_Arnoldi;
   DEE->ops->estimate          = SUNDomEigEstimator_Estimate_Arnoldi;
   DEE->ops->getnumiters       = SUNDomEigEstimator_GetNumIters_Arnoldi;
-  DEE->ops->getnumrhscalls    = SUNDomEigEstimator_GetNumRhsEvals_Arnoldi;
+  DEE->ops->getnumrhsevals    = SUNDomEigEstimator_GetNumRhsEvals_Arnoldi;
   DEE->ops->getnumatimescalls = SUNDomEigEstimator_GetNumATimesCalls_Arnoldi;
   DEE->ops->write             = SUNDomEigEstimator_Write_Arnoldi;
   DEE->ops->destroy           = SUNDomEigEstimator_Destroy_Arnoldi;
