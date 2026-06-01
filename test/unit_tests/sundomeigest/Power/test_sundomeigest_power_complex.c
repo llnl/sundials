@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
   long int max_iters;             /* max power iteration        */
   long int num_iters;             /* cur. number of iterations  */
   long int num_ATimes;            /* number of ATimes calls     */
-  long int num_rhs_calls;         /* number of RHS calls        */
+  long int num_rhs_evals;         /* number of RHS calls        */
   int print_timing;               /* timing output flag         */
   sunrealtype res;                /* current residual           */
   sunrealtype lambdaR, lambdaI;   /* computed domeig parts      */
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
       "    >>> FAILED test -- SUNDomEigEstimator_GetNumIters return value\n");
     fails++;
   }
-  fails += Test_SUNDomEigEstimator_GetNumRhsCalls(DEE, &num_rhs_calls, 0);
+  fails += Test_SUNDomEigEstimator_GetNumRhsEvals(DEE, &num_rhs_evals, 0);
   fails += Test_SUNDomEigEstimator_GetNumATimesCalls(DEE, &num_ATimes, 0);
   fails += Test_SUNDomEigEstimator_Write(DEE, 0);
 

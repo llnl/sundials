@@ -329,7 +329,7 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_GetNumIters_Power``
 
-* ``SUNDomEigEstimator_GetNumRhsCalls_Power``
+* ``SUNDomEigEstimator_GetNumRhsEvals_Power``
 
 * ``SUNDomEigEstimator_GetNumATimesCalls_Power``
 

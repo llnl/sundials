@@ -119,7 +119,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   DEE->ops->estimate          = SUNDomEigEstimator_Estimate_Power;
   DEE->ops->getres            = SUNDomEigEstimator_GetRes_Power;
   DEE->ops->getnumiters       = SUNDomEigEstimator_GetNumIters_Power;
-  DEE->ops->getnumrhscalls    = SUNDomEigEstimator_GetNumRhsCalls_Power;
+  DEE->ops->getnumrhscalls    = SUNDomEigEstimator_GetNumRhsEvals_Power;
   DEE->ops->getnumatimescalls = SUNDomEigEstimator_GetNumATimesCalls_Power;
   DEE->ops->write             = SUNDomEigEstimator_Write_Power;
   DEE->ops->destroy           = SUNDomEigEstimator_Destroy_Power;
@@ -496,16 +496,16 @@ SUNErrCode SUNDomEigEstimator_GetNumIters_Power(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_GetNumRhsCalls_Power(SUNDomEigEstimator DEE,
-                                                   long int* num_rhs_calls)
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals_Power(SUNDomEigEstimator DEE,
+                                                   long int* num_rhs_evals)
 {
   SUNFunctionBegin(DEE->sunctx);
 
   SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
-  SUNAssert(num_rhs_calls, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(num_rhs_evals, SUN_ERR_ARG_CORRUPT);
 
-  *num_rhs_calls = PI_CONTENT(DEE)->nfevals;
+  *num_rhs_evals = PI_CONTENT(DEE)->nfevals;
 
   return SUN_SUCCESS;
 }

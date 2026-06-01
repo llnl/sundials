@@ -115,8 +115,8 @@ SUNErrCode SUNDomEigEstimator_GetNumIters_Arnoldi(SUNDomEigEstimator DEE,
                                                   long int* num_iters);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_GetNumRhsCalls_Arnoldi(SUNDomEigEstimator DEE,
-                                                     long int* num_rhs_calls);
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals_Arnoldi(SUNDomEigEstimator DEE,
+                                                     long int* num_rhs_evals);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumATimesCalls_Arnoldi(SUNDomEigEstimator DEE,

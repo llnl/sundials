@@ -344,18 +344,18 @@ SUNErrCode SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
   return (ier);
 }
 
-SUNErrCode SUNDomEigEstimator_GetNumRhsCalls(SUNDomEigEstimator DEE,
-                                             long int* num_rhs_calls)
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE,
+                                             long int* num_rhs_evals)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->getnumrhscalls)
   {
-    ier = DEE->ops->getnumrhscalls(DEE, num_rhs_calls);
+    ier = DEE->ops->getnumrhscalls(DEE, num_rhs_evals);
   }
   else
   {
-    *num_rhs_calls = 0;
+    *num_rhs_evals = 0;
     ier            = SUN_SUCCESS;
   }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));

@@ -37,7 +37,7 @@ modules:
       - "^SUNDomEigEstimator_Estimate_.*"
       - "^SUNDomEigEstimator_GetRes_.*"
       - "^SUNDomEigEstimator_GetNumIters_.*"
-      - "^SUNDomEigEstimator_GetNumRhsCalls_.*"
+      - "^SUNDomEigEstimator_GetNumRhsEvals_.*"
       - "^SUNDomEigEstimator_GetNumATimesCalls_.*"
       - "^SUNDomEigEstimator_Write_.*"
       - "^SUNDomEigEstimator_Destroy_.*"

@@ -4074,7 +4074,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumIters(SUNDomEigEstimator farg1, l
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumRhsCalls(SUNDomEigEstimator farg1, long *farg2) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator farg1, long *farg2) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   long *arg2 = (long *) 0 ;
@@ -4082,7 +4082,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumRhsCalls(SUNDomEigEstimator farg1
   
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (long *)(farg2);
-  result = (SUNErrCode)SUNDomEigEstimator_GetNumRhsCalls(arg1,arg2);
+  result = (SUNErrCode)SUNDomEigEstimator_GetNumRhsEvals(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
