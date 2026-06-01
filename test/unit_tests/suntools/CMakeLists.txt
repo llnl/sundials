@@ -16,7 +16,7 @@
 # ---------------------------------------------------------------
 
 # Locate suntools module source directory.
-set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/suntools/src")
+set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/suntools/src/suntools")
 
 if(NOT EXISTS "${SUNTOOLS_DIR}/suntools/logs.py")
   message(
