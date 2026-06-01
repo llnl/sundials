@@ -1,3 +1,24 @@
+/* -----------------------------------------------------------------------------
+ * Programmer(s): Cody J. Balos @ LLNL
+ * -----------------------------------------------------------------------------
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
+ * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
+ * All rights reserved.
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
+ * -----------------------------------------------------------------------------
+ * This is the implementation file for the SUNNonlinearSolver module
+ * implementation that automatically switches between Newton and fixed-point
+ * iterations.
+ * ---------------------------------------------------------------------------*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +33,8 @@
 #include "sundials_macros.h"
 
 /* Content structure accessibility macros */
-#define AUTO_CONTENT(S) ((SUNNonlinearSolverContent_Auto)(S->content))
+#define AUTO_CONTENT(S)   ((SUNNonlinearSolverContent_Auto)(S->content))
+#define NEWTON_CONTENT(S) ((SUNNonlinearSolverContent_Newton)(S->content))
 
 /* Default switching parameters */
 #define SUNNLS_AUTO_DEFAULT_NEWT_TO_FP_THRESHOLD SUN_RCONST(2.0)
@@ -97,11 +119,43 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   content->switch_count            = 0;
   content->fp_num_iters_total      = 0;
   content->newton_num_iters_total  = 0;
-  content->auto_ctest_data         = NULL;
-  content->fp_solver               = SUNNonlinSol_FixedPoint(y, m, sunctx);
-  content->newton_solver           = SUNNonlinSol_Newton(y, sunctx);
-  SUNCheckCallNull(
-    SUNNonlinSolSetComputeStiffr_Newton(content->newton_solver, SUNTRUE));
+  content->fp_num_conv_fails_total = 0;
+  content->newton_num_conv_fails_total = 0;
+  content->auto_ctest_data             = NULL;
+  content->fp_solver                   = SUNNonlinSol_FixedPoint(y, m, sunctx);
+  content->newton_solver               = SUNNonlinSol_Newton(y, sunctx);
+  if (content->fp_solver == NULL || content->newton_solver == NULL)
+  {
+    if (content->fp_solver) { SUNNonlinSolFree(content->fp_solver); }
+    if (content->newton_solver) { SUNNonlinSolFree(content->newton_solver); }
+    free(content);
+    NLS->content = NULL;
+    SUNNonlinSolFreeEmpty(NLS);
+    return NULL;
+  }
+
+  content->auto_ctest_data = malloc(sizeof(SUNNonlinSolAutoConvTestData));
+  if (content->auto_ctest_data == NULL)
+  {
+    SUNNonlinSolFree(content->fp_solver);
+    SUNNonlinSolFree(content->newton_solver);
+    free(content);
+    NLS->content = NULL;
+    SUNNonlinSolFreeEmpty(NLS);
+    return NULL;
+  }
+
+  if (SUNNonlinSolSetComputeStiffnessRatio_Newton(content->newton_solver,
+                                                  SUNTRUE) != SUN_SUCCESS)
+  {
+    free(content->auto_ctest_data);
+    SUNNonlinSolFree(content->fp_solver);
+    SUNNonlinSolFree(content->newton_solver);
+    free(content);
+    NLS->content = NULL;
+    SUNNonlinSolFreeEmpty(NLS);
+    return NULL;
+  }
 
   return NLS;
 }
@@ -126,44 +180,71 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
 {
   SUNFunctionBegin(NLS->sunctx);
   int retval;
-  long int iters;
+  long int iters, nconvfails;
+  SUNNonlinearSolver subsolver;
+  SUNNonlinSolAutoType subsolver_type;
+  sunbooleantype sub_callsetup;
+  SUNNonlinearSolverContent_Auto C = AUTO_CONTENT(NLS);
 
   SUNLogInfo(NLS->sunctx->logger, "nonlinear-solver",
              "solver = Auto, active = %s",
-             SUNNonlinSolAutoType_ToString(AUTO_CONTENT(NLS)->active_solver_type));
+             SUNNonlinSolAutoType_ToString(C->active_solver_type));
 
-  AUTO_CONTENT(NLS)->fp_solver->getupdatenormfn     = NLS->getupdatenormfn;
-  AUTO_CONTENT(NLS)->fp_solver->getupdatenorm_data  = NLS->getupdatenorm_data;
-  AUTO_CONTENT(NLS)->newton_solver->getupdatenormfn = NLS->getupdatenormfn;
-  AUTO_CONTENT(NLS)->newton_solver->getupdatenorm_data = NLS->getupdatenorm_data;
+  C->num_iters      = 0;
+  C->num_conv_fails = 0;
 
-  if (AUTO_CONTENT(NLS)->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+  C->fp_solver->norm_fn         = NLS->norm_fn;
+  C->fp_solver->norm_fn_data    = NLS->norm_fn_data;
+  C->newton_solver->norm_fn     = NLS->norm_fn;
+  C->newton_solver->norm_fn_data = NLS->norm_fn_data;
+
+  sub_callsetup = callSetup;
+
+  for (;;)
   {
-    retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->fp_solver, y0, ycor, w, tol,
-                               callSetup, mem);
-    iters  = 0;
-    if (SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->fp_solver, &iters) ==
-        SUN_SUCCESS)
-    {
-      AUTO_CONTENT(NLS)->fp_num_iters_total += iters;
-    }
-  }
-  else
-  {
-    retval = SUNNonlinSolSolve(AUTO_CONTENT(NLS)->newton_solver, y0, ycor, w,
-                               tol, callSetup, mem);
-    iters  = 0;
-    if (SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->newton_solver, &iters) ==
-        SUN_SUCCESS)
-    {
-      AUTO_CONTENT(NLS)->newton_num_iters_total += iters;
-    }
-  }
+    subsolver_type = C->active_solver_type;
+    subsolver      = (subsolver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+                       ? C->fp_solver
+                       : C->newton_solver;
 
-  /* increment solve counter used for switch-delay gating */
-  AUTO_CONTENT(NLS)->num_solves_since_switch++;
+    retval = SUNNonlinSolSolve(subsolver, y0, ycor, w, tol, sub_callsetup, mem);
 
-  return retval;
+    iters = 0;
+    if (SUNNonlinSolGetNumIters(subsolver, &iters) == SUN_SUCCESS)
+    {
+      C->num_iters += iters;
+      if (subsolver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+      {
+        C->fp_num_iters_total += iters;
+      }
+      else { C->newton_num_iters_total += iters; }
+    }
+
+    nconvfails = 0;
+    if (SUNNonlinSolGetNumConvFails(subsolver, &nconvfails) == SUN_SUCCESS)
+    {
+      C->num_conv_fails += nconvfails;
+      if (subsolver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+      {
+        C->fp_num_conv_fails_total += nconvfails;
+      }
+      else { C->newton_num_conv_fails_total += nconvfails; }
+    }
+
+    if (retval == SUN_NLS_SWITCH)
+    {
+      sub_callsetup =
+        (C->active_solver_type == SUNNONLINSOL_AUTO_NEWTON &&
+         NEWTON_CONTENT(C->newton_solver)->LSetup)
+          ? SUNTRUE
+          : SUNFALSE;
+      continue;
+    }
+
+    /* increment solve counter used for switch-delay gating */
+    C->num_solves_since_switch++;
+    return retval;
+  }
 }
 
 static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
@@ -177,8 +258,8 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
   int retval = data->user_ctest_fn(sub_nls, y, del, tol, ewt,
                                    data->user_ctest_data);
 
-  /* We follow the switching strategy outlined in 
-     Nørsett, Syvert P., and Per G. Thomsen. "Switching between modified Newton 
+  /* We follow the switching strategy outlined in
+     Norsett, Syvert P., and Per G. Thomsen. "Switching between modified Newton
      and fix-point iteration for implicit ODE-solvers." BIT Numerical Mathematics
      26, no. 3 (1986): 339-348. https://doi.org/10.1007/BF01933714. */
 
@@ -186,8 +267,8 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
   {
     sunrealtype crate;
 
-    /* In the unlikely event that we are 'diverging', but the integrator-provided
-       convergence test passed, we just exit with success and don't consider any switching. */
+    /* If the integrator-provided convergence test passed, exit with success and
+       don't consider switching. */
     if (retval == SUN_SUCCESS) { return retval; }
 
     if (SUNNonlinSolGetConvRate_FixedPoint(C->fp_solver, &crate) != SUN_SUCCESS)
@@ -195,9 +276,10 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
       return SUN_ERR_ARG_CORRUPT;
     }
 
-    /* Check if we are diverging */
+    /* Check if fixed-point appears to be diverging. */
     sunbooleantype diverging = crate >= C->fp_to_newt_threshold;
-    sunbooleantype dont_delay = C->num_solves_since_switch >= C->fp_to_newt_delay;
+    sunbooleantype dont_delay =
+      C->num_solves_since_switch >= C->fp_to_newt_delay;
 
     if (diverging && dont_delay)
     {
@@ -214,13 +296,15 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
   else
   {
     sunrealtype stiffr;
-    if (SUNNonlinSolGetStiffr_Newton(C->newton_solver, &stiffr) != SUN_SUCCESS)
+    if (SUNNonlinSolGetStiffnessRatio_Newton(C->newton_solver, &stiffr) !=
+        SUN_SUCCESS)
     {
       return SUN_ERR_ARG_CORRUPT;
     }
 
     sunbooleantype contraction = stiffr < C->newt_to_fp_threshold;
-    sunbooleantype dont_delay = C->num_solves_since_switch >= C->newt_to_fp_delay;
+    sunbooleantype dont_delay =
+      C->num_solves_since_switch >= C->newt_to_fp_delay;
 
     if (contraction && dont_delay)
     {
@@ -271,18 +355,11 @@ SUNErrCode SUNNonlinSolFree_Auto(SUNNonlinearSolver NLS)
 }
 
 static SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
-                                            SUNNonlinSolSysFn SysFn)
+                                            SUNDIALS_MAYBE_UNUSED
+                                              SUNNonlinSolSysFn SysFn)
 {
   SUNFunctionBegin(NLS->sunctx);
-  if (AUTO_CONTENT(NLS)->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
-  {
-    SUNCheckCall(SUNNonlinSolSetSysFn(AUTO_CONTENT(NLS)->fp_solver, SysFn));
-  }
-  else
-  {
-    SUNCheckCall(SUNNonlinSolSetSysFn(AUTO_CONTENT(NLS)->newton_solver, SysFn));
-  }
-  return SUN_SUCCESS;
+  return SUN_ERR_NOT_IMPLEMENTED;
 }
 
 SUNErrCode SUNNonlinSolSetSysFns_Auto(SUNNonlinearSolver NLS,
@@ -302,13 +379,6 @@ SUNErrCode SUNNonlinSolSetConvTestFn_Auto(SUNNonlinearSolver NLS,
 {
   SUNFunctionBegin(NLS->sunctx);
   SUNAssert(CTestFn, SUN_ERR_ARG_CORRUPT);
-
-  if (!AUTO_CONTENT(NLS)->auto_ctest_data)
-  {
-    AUTO_CONTENT(NLS)->auto_ctest_data =
-      malloc(sizeof(SUNNonlinSolAutoConvTestData));
-    SUNAssert(AUTO_CONTENT(NLS)->auto_ctest_data, SUN_ERR_MALLOC_FAIL);
-  }
 
   SUNNonlinSolAutoConvTestData* data =
     (SUNNonlinSolAutoConvTestData*)AUTO_CONTENT(NLS)->auto_ctest_data;
@@ -358,9 +428,6 @@ SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
 {
   SUNFunctionBegin(NLS->sunctx);
 
-  SUNAssert(newt_to_fp_threshold <= SUNNLS_AUTO_DEFAULT_NEWT_TO_FP_THRESHOLD,
-            SUN_ERR_ARG_OUTOFRANGE);
-
   AUTO_CONTENT(NLS)->newt_to_fp_threshold =
     (newt_to_fp_threshold < SUN_RCONST(0.0))
       ? SUNNLS_AUTO_DEFAULT_NEWT_TO_FP_THRESHOLD
@@ -382,12 +449,7 @@ SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters)
 {
   SUNFunctionBegin(NLS->sunctx);
-  long int fp_iters   = 0;
-  long int newt_iters = 0;
-  SUNCheckCall(SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->fp_solver, &fp_iters));
-  SUNCheckCall(
-    SUNNonlinSolGetNumIters(AUTO_CONTENT(NLS)->newton_solver, &newt_iters));
-  *niters = fp_iters + newt_iters;
+  *niters = AUTO_CONTENT(NLS)->num_iters;
   return SUN_SUCCESS;
 }
 
@@ -406,6 +468,15 @@ SUNErrCode SUNNonlinSolGetNewtonSolver_Auto(SUNNonlinearSolver NLS,
   SUNFunctionBegin(NLS->sunctx);
   SUNAssert(newton_nls, SUN_ERR_ARG_CORRUPT);
   *newton_nls = AUTO_CONTENT(NLS)->newton_solver;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetActiveSolverType_Auto(
+  SUNNonlinearSolver NLS, SUNNonlinSolAutoType* active_solver_type)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNAssert(active_solver_type, SUN_ERR_ARG_CORRUPT);
+  *active_solver_type = AUTO_CONTENT(NLS)->active_solver_type;
   return SUN_SUCCESS;
 }
 
@@ -439,13 +510,19 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
                                             long int* nconvfails)
 {
   SUNFunctionBegin(NLS->sunctx);
-  long int fp_nconvfails   = 0;
-  long int newt_nconvfails = 0;
-  SUNCheckCall(
-    SUNNonlinSolGetNumConvFails(AUTO_CONTENT(NLS)->fp_solver, &fp_nconvfails));
-  SUNCheckCall(SUNNonlinSolGetNumConvFails(AUTO_CONTENT(NLS)->newton_solver,
-                                           &newt_nconvfails));
-  *nconvfails = fp_nconvfails + newt_nconvfails;
+  *nconvfails = AUTO_CONTENT(NLS)->num_conv_fails;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetTotalNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
+                                                       long int* fp_nconvfails,
+                                                       long int* newt_nconvfails)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNAssert(fp_nconvfails, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(newt_nconvfails, SUN_ERR_ARG_CORRUPT);
+  *fp_nconvfails   = AUTO_CONTENT(NLS)->fp_num_conv_fails_total;
+  *newt_nconvfails = AUTO_CONTENT(NLS)->newton_num_conv_fails_total;
   return SUN_SUCCESS;
 }
 
@@ -453,14 +530,8 @@ SUNErrCode SUNNonlinSolGetNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
                                                   long int* fp_nconvfails,
                                                   long int* newt_nconvfails)
 {
-  SUNFunctionBegin(NLS->sunctx);
-  SUNAssert(fp_nconvfails, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(newt_nconvfails, SUN_ERR_ARG_CORRUPT);
-  SUNCheckCall(
-    SUNNonlinSolGetNumConvFails(AUTO_CONTENT(NLS)->fp_solver, fp_nconvfails));
-  SUNCheckCall(SUNNonlinSolGetNumConvFails(AUTO_CONTENT(NLS)->newton_solver,
-                                           newt_nconvfails));
-  return SUN_SUCCESS;
+  return SUNNonlinSolGetTotalNumConvFailsByType_Auto(
+    NLS, fp_nconvfails, newt_nconvfails);
 }
 
 SUNErrCode SUNNonlinSolGetUpdateNorm_Auto(SUNNonlinearSolver NLS,

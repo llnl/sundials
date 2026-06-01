@@ -1,3 +1,23 @@
+/* -----------------------------------------------------------------------------
+ * Programmer(s): Cody J. Balos @ LLNL
+ * -----------------------------------------------------------------------------
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
+ * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
+ * All rights reserved.
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
+ * -----------------------------------------------------------------------------
+ * This is the header file for the SUNNonlinearSolver module implementation that
+ * automatically switches between Newton and fixed-point iterations.
+ * ---------------------------------------------------------------------------*/
+
 #ifndef SUNDIALS_NONLINSOLAUTO_H_
 #define SUNDIALS_NONLINSOLAUTO_H_
 
@@ -35,6 +55,8 @@ struct SUNNonlinearSolverContent_Auto_
   long int switch_count;
   long int fp_num_iters_total;
   long int newton_num_iters_total;
+  long int fp_num_conv_fails_total;
+  long int newton_num_conv_fails_total;
   void* auto_ctest_data;
 };
 
@@ -92,6 +114,10 @@ SUNErrCode SUNNonlinSolGetNewtonSolver_Auto(SUNNonlinearSolver NLS,
                                             SUNNonlinearSolver* newton_nls);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetActiveSolverType_Auto(
+  SUNNonlinearSolver NLS, SUNNonlinSolAutoType* active_solver_type);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters);
 
 /* Get the iteration counts for each sub-solver separately. */
@@ -107,6 +133,11 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
                                             long int* nconvfails);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetTotalNumConvFailsByType_Auto(
+  SUNNonlinearSolver NLS, long int* fp_nconvfails, long int* newt_nconvfails);
+
+/* Compatibility wrapper for the unreleased pre-review name. */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
                                                   long int* fp_nconvfails,

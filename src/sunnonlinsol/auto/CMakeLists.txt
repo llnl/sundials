@@ -2,7 +2,7 @@
 # Programmer(s): Daniel R. Reynolds @ UMBC
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -14,10 +14,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # ------------------------------------------------------------------------------
-# CMakeLists.txt file for the fixed-point SUNNonlinearSolver library
+# CMakeLists.txt file for the auto SUNNonlinearSolver library
 # ------------------------------------------------------------------------------
-
-install(CODE "MESSAGE(\"\nInstall SUNNONLINSOL_AUTO\n\")")
 
 # Add the library
 sundials_add_library(

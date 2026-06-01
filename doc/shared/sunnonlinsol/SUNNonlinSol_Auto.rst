@@ -21,6 +21,8 @@
 The SUNNonlinSol_Auto implementation
 ====================================
 
+.. versionadded:: x.y.z
+
 This section describes the SUNNonlinSol implementation that can automatically
 switch between :numref:`SUNNonlinSol.FixedPoint` and :numref:`SUNNonlinSol.Newton`
 during a solve. The switching algorithm is based on :cite:p:`norsett1986switching`.
@@ -43,10 +45,10 @@ to the other algorithm based on a runtime switching criterion.
 Switching decisions are checked at every nonlinear iteration by intercepting
 the convergence test function provided by the integrator (see
 :c:func:`SUNNonlinSolSetConvTestFn`). When SUNNonlinSol_Auto decides to switch,
-it returns ``SUN_NLS_SWITCH`` from the convergence test. The underlying
-solver propagates this code back to the integrator. Integrators that support
-automatic nonlinear solver switching will respond by reinitializing the
-nonlinear solver interface and retrying the nonlinear solve. 
+the active sub-solver returns ``SUN_NLS_SWITCH`` from the convergence test.
+SUNNonlinSol_Auto handles this internally by retrying the current nonlinear
+solve with the other sub-solver, so the integrator does not reduce the step
+size solely because the nonlinear algorithm changed.
 
 A full mathematical description of the switching criterion and algorithm can be
 found in :cite:p:`norsett1986switching`. In short, switching from fixed-point to
@@ -109,8 +111,13 @@ The SUNNonlinSol_Auto module follows the generic nonlinear-solver interface
 defined in :numref:`SUNNonlinSol.API.CoreFn`--:numref:`SUNNonlinSol.API.GetFn`.
 Users should normally call the generic SUNNonlinSol API. When solver-specific
 access is needed, the auto module provides ``_Auto`` helper routines for
-switching parameters, accumulated statistics, and access to the underlying
-fixed-point and Newton solvers.
+switching parameters, accumulated statistics, the currently active solver type,
+and access to the underlying fixed-point and Newton solvers. The generic
+:c:func:`SUNNonlinSolSetOptions` routine only applies the Auto-specific
+``switching_parameters`` key and the generic ``max_iters`` key directly to the
+Auto solver; to configure fixed-point- or Newton-specific options separately,
+retrieve the wrapped solver with the getter functions below and call the
+appropriate module-specific setter on that object.
 
 The SUNNonlinSol_Auto module also defines the following function for
 controlling the switching behavior.
@@ -121,7 +128,7 @@ controlling the switching behavior.
    ``SUNNonlinearSolver_Auto`` module.
 
    :param NLS: the nonlinear solver object returned by :c:func:`SUNNonlinSol_Auto`.
-   :param newt_to_fp_threshold: the threshold for switching from Newton to fixed-point (i.e., :math:`\beta`). Values in ``[0, 2.0]`` are accepted; negative values reset the default ``2.0``.
+   :param newt_to_fp_threshold: the threshold for switching from Newton to fixed-point (i.e., :math:`\beta`). Nonnegative values are accepted; negative values reset the default ``2.0``.
    :param newt_to_fp_delay: the minimum number of nonlinear solves after a switch before switching from Newton to fixed-point is allowed. Nonnegative values are accepted; negative values reset the default ``10``.
    :param fp_to_newt_threshold: the threshold for switching from fixed-point to Newton (i.e., :math:`\alpha`). Nonnegative values are accepted; negative values reset the default ``0.8``.
    :param fp_to_newt_delay: the minimum number of nonlinear solves after a switch before switching from fixed-point to Newton is allowed. Nonnegative values are accepted; negative values reset the default ``0``.
@@ -159,10 +166,19 @@ controlling the switching behavior.
 
    :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
 
+.. c:function:: SUNErrCode SUNNonlinSolGetActiveSolverType_Auto(SUNNonlinearSolver NLS, SUNNonlinSolAutoType *active_solver_type)
+
+   This function returns the currently active sub-solver.
+
+   :param NLS: a ``SUNNonlinearSolver`` object returned by :c:func:`SUNNonlinSol_Auto`.
+   :param active_solver_type: the currently active sub-solver type.
+
+   :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
+
 .. c:function:: SUNErrCode SUNNonlinSolGetTotalNumItersByType_Auto(SUNNonlinearSolver NLS, long int *fp_iters, long int *newt_iters)
 
    This function returns the total nonlinear iteration counts accumulated by the
-   fixed-point and Newton sub-solvers.
+   fixed-point and Newton sub-solvers over the life of the solver.
 
    :param NLS: a ``SUNNonlinearSolver`` object returned by :c:func:`SUNNonlinSol_Auto`.
    :param fp_iters: the total number of fixed-point iterations.
@@ -170,10 +186,10 @@ controlling the switching behavior.
 
    :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
 
-.. c:function:: SUNErrCode SUNNonlinSolGetNumConvFailsByType_Auto(SUNNonlinearSolver NLS, long int *fp_nconvfails, long int *newt_nconvfails)
+.. c:function:: SUNErrCode SUNNonlinSolGetTotalNumConvFailsByType_Auto(SUNNonlinearSolver NLS, long int *fp_nconvfails, long int *newt_nconvfails)
 
    This function returns the total nonlinear convergence failures accumulated by
-   the fixed-point and Newton sub-solvers.
+   the fixed-point and Newton sub-solvers over the life of the solver.
 
    :param NLS: a ``SUNNonlinearSolver`` object returned by :c:func:`SUNNonlinSol_Auto`.
    :param fp_nconvfails: the total number of fixed-point convergence failures.
