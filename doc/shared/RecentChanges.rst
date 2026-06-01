@@ -10,6 +10,24 @@ user-defined functions to queue and flush log messages.
 
 Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
 
+Added the ``ARKODE_SSP_ERK_3_1_2``, ``ARKODE_SSP_ERK_4_1_2``,
+``ARKODE_SSP_ERK_4_2_3``, ``ARKODE_SSP_ERK_10_3_4``, ``ARKODE_SSP_LSPUM_ERK_3_1_2``,
+and ``ARKODE_ASCHER_ERK_3_1_2``
+embedded explicit Runge-Kutta Butcher tables.
+
+Added the ``ARKODE_SSP_DIRK_3_1_2``, ``ARKODE_SSP_LSPUM_SDIRK_3_1_2``,
+``ARKODE_ESDIRK_4_2_3``, and ``ARKODE_ASCHER_SDIRK_3_1_2`` embedded diagonally
+implicit Runge-Kutta Butcher tables.
+
+Of these, embedded additive Runge-Kutta methods may be formed using
+``ARKODE_SSP_ERK_3_1_2`` + ``ARKODE_SSP_DIRK_3_1_2``,
+``ARKODE_SSP_ERK_4_2_3`` + ``ARKODE_ESDIRK_4_2_3``,
+``ARKODE_SSP_LSPUM_ERK_3_1_2`` + ``ARKODE_SSP_LSPUM_SDIRK_3_1_2``,
+and ``ARKODE_ASCHER_ERK_3_1_2`` + ``ARKODE_ASCHER_SDIRK_3_1_2``.
+
+Added the ``ARKODE_IMEX_MRI_GARK_ASCHER_ARK2`` and ``ARKODE_IMEX_MRI_GARK_ARK2``
+embedded implicit-explicit MRI-GARK coupling tables.
+
 **Bug Fixes**
 
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
@@ -41,5 +59,14 @@ Corrected the version number used in version added, changed, and deprecated
 notes in the documentation to always use the SUNDIALS version number with the
 package version number as a parenthetical note when it differs from the SUNDIALS
 version number.
+
+Fixed a bug in sundials4py where the :c:func:`CVodeGetRootInfo`,
+:c:func:`ARKodeGetRootInfo`, and :c:func:`IDAGetRootInfo` functions did not
+correctly return the rootsfound array. This addresses `Issue #937
+<https://github.com/llnl/sundials/issues/937>`__.
+
+Fixed a bug in ERKStep where calling :c:func:`ARKodeResize` before
+:c:func:`ARKodeEvolve` or :c:func:`ARKodeInit` would result in a segmentation
+fault.
 
 **Deprecation Notices**
