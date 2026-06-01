@@ -62,6 +62,8 @@ initialization (:c:func:`SUNNonlinSolInitialize`), setup
       The nonlinear solver may use both rootfinding and fixed-point forms and
       can receive both :math:`F(y)` and :math:`G(y)`.
 
+      .. versionadded:: x.y.z
+
 
 .. c:function:: SUNNonlinearSolver_Type SUNNonlinSolGetType(SUNNonlinearSolver NLS)
 
@@ -243,6 +245,8 @@ parameters. Only the routine for setting the nonlinear system defining function
    **Return value:**
       * A :c:type:`SUNErrCode`
 
+      .. versionadded:: x.y.z
+
 
 .. c:function:: SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS, SUNNonlinSolLSetupFn SetupFn)
 
@@ -321,21 +325,23 @@ parameters. Only the routine for setting the nonlinear system defining function
       criteria may set this function to ``NULL``.
 
 
-.. c:function:: SUNErrCode SUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver NLS, SUNNonlinSolUpdateNormFn UpdateNormFn, void* getupdatenorm_data)
+.. c:function:: SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS, SUNNonlinSolNormFn NormFn, void* norm_data)
 
    This *optional* function attaches an integrator-provided callback for
-   computing the nonlinear update norm :math:`\|\delta\|`. Integrators may use
-   this when the nonlinear solver should report an update norm that matches the
-   integrator's own convergence-test norm, such as for sensitivity solves that
-   use wrapped vectors or combined correction norms.
+   computing the nonlinear update norm :math:`\|\delta\|` or nonlinear residual
+   :math:`\|F(y)\|`. Integrators may attach a norm function when the nonlinear solver
+   should utilize a norm that matches the integrator's own convergence-test norm, such
+   as for sensitivity solves that use wrapped vectors or combined correction norms.
 
    **Arguments:**
       * *NLS* -- a SUNNonlinSol object.
-      * *UpdateNormFn* -- the function used to compute the update norm.
-      * *getupdatenorm_data* -- user data passed to *UpdateNormFn*.
+      * *NormFn* -- the function used to compute the requested nonlinear-solver norm.
+      * *norm_data* -- user data passed to *NormFn*.
 
    **Return value:**
       * A :c:type:`SUNErrCode`
+
+      .. versionadded:: x.y.z
 
 
 
@@ -439,6 +445,8 @@ linear solver module; otherwise :c:func:`SUNNonlinSolGetCurIter` is optional.
    **Notes:**
       If the nonlinear solver does not implement this operation, the return
       value will be ``SUN_ERR_NOT_IMPLEMENTED``.
+
+      .. versionadded:: x.y.z
 
 
 .. _SUNNonlinSol.API.SUNSuppliedFn:
@@ -583,9 +591,9 @@ module have types defined in the header file
       own convergence criteria may ignore these functions.
 
 
-.. c:type:: SUNErrCode (*SUNNonlinSolUpdateNormFn)(N_Vector ycor, N_Vector del, N_Vector w, sunrealtype *delnrm, void* mem)
+.. c:type:: SUNErrCode (*SUNNonlinSolNormFn)(N_Vector ycor, N_Vector del, N_Vector w, sunrealtype *delnrm, void* mem)
 
-   These functions compute an integrator-defined nonlinear update norm for use
+   These functions compute an integrator-defined norm for use
    by nonlinear solvers that expose or internally reuse the update norm.
 
    **Arguments:**
@@ -597,6 +605,8 @@ module have types defined in the header file
 
    **Return value:**
       * A :c:type:`SUNErrCode`
+
+      .. versionadded:: x.y.z
 
 
 
@@ -625,8 +635,8 @@ successful call.
    +-----------------------+---------+---------------------------------------------------------------+
    | SUN_NLS_CONV_RECVR    |  902    | the nonlinear solver appears to be diverging, try to recover  |
    +-----------------------+---------+---------------------------------------------------------------+
-   | SUN_NLS_SWITCH        |  903    | the nonlinear solver will switch to a different strategy,     |
-   |                       |         | reinitialize the nonlinear solver and keep iterating          |
+   | SUN_NLS_SWITCH        |  903    | the nonlinear solver requested a strategy switch before       |
+   |                       |         | continuing the current nonlinear solve                        |
    +-----------------------+---------+---------------------------------------------------------------+
 
 

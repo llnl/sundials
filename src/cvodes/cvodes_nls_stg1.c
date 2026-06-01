@@ -33,9 +33,8 @@ static int cvNlsLSolveSensStg1(N_Vector delta, void* cvode_mem);
 static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS, N_Vector ycor,
                                  N_Vector del, sunrealtype tol, N_Vector ewt,
                                  void* cvode_mem);
-static SUNErrCode cvNlsUpdateNormSensStg1(N_Vector ycor, N_Vector delta,
-                                          N_Vector ewt, sunrealtype* delnrm,
-                                          void* cvode_mem);
+static SUNErrCode cvNlsNormSensStg1(N_Vector ycor, N_Vector delta, N_Vector ewt,
+                                    sunrealtype* delnrm, void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -133,12 +132,11 @@ int CVodeSetNonlinearSolverSensStg1(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  retval = SUNNonlinSolSetUpdateNormFn(cv_mem->NLSstg1, cvNlsUpdateNormSensStg1,
-                                       cvode_mem);
+  retval = SUNNonlinSolSetNormFn(cv_mem->NLSstg1, cvNlsNormSensStg1, cvode_mem);
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   "Setting update norm function failed");
+                   "Setting norm function failed");
     return (CV_ILL_INPUT);
   }
 
@@ -322,10 +320,10 @@ static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS,
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode cvNlsUpdateNormSensStg1(SUNDIALS_MAYBE_UNUSED N_Vector ycor,
-                                          N_Vector delta, N_Vector ewt,
-                                          sunrealtype* delnrm,
-                                          SUNDIALS_MAYBE_UNUSED void* cvode_mem)
+static SUNErrCode cvNlsNormSensStg1(SUNDIALS_MAYBE_UNUSED N_Vector ycor,
+                                    N_Vector delta, N_Vector ewt,
+                                    sunrealtype* delnrm,
+                                    SUNDIALS_MAYBE_UNUSED void* cvode_mem)
 {
   *delnrm = N_VWrmsNorm(delta, ewt);
   return SUN_SUCCESS;

@@ -27,6 +27,10 @@
 #include "arkode_impl.h"
 #include "arkode_mristep_impl.h"
 
+/* private functions */
+static SUNErrCode mriStep_NlsNorm(N_Vector y, N_Vector del, N_Vector ewt,
+                                  sunrealtype* delnrm, void* arkode_mem);
+
 /*===============================================================
   Interface routines supplied to ARKODE
   ===============================================================*/
@@ -107,6 +111,14 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "Setting convergence test function failed");
+    return (ARK_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetNormFn(step_mem->NLS, mriStep_NlsNorm, ark_mem);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Setting norm function failed");
     return (ARK_ILL_INPUT);
   }
 
@@ -633,6 +645,14 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
 
   /* return with flag that there is more work to do */
   return (SUN_NLS_CONTINUE);
+}
+
+static SUNErrCode mriStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector del,
+                                  N_Vector ewt, sunrealtype* delnrm,
+                                  SUNDIALS_MAYBE_UNUSED void* arkode_mem)
+{
+  *delnrm = N_VWrmsNorm(del, ewt);
+  return SUN_SUCCESS;
 }
 
 /*===============================================================

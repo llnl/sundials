@@ -251,14 +251,14 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
 
     /* compute the norm of delta, but save the previous value for computing a rate of convergence */
     sunrealtype delnrmp = FP_CONTENT(NLS)->delnrm;
-    if (NLS->getupdatenormfn)
+    if (NLS->norm_fn)
     {
-      retval = NLS->getupdatenormfn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm),
-                                    NLS->getupdatenorm_data);
+      retval =
+        NLS->norm_fn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm), NLS->norm_fn_data);
       if (retval)
       {
         SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
-                   "status = failed getupdatenormfn call, retval = %d", retval);
+                   "status = failed norm_fn call, retval = %d", retval);
         return retval;
       }
     }

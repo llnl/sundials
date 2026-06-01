@@ -45,9 +45,9 @@ static int cvNlsLSolveSensSim(N_Vector deltaSim, void* cvode_mem);
 static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
                                 N_Vector delSim, sunrealtype tol,
                                 N_Vector ewtSim, void* cvode_mem);
-static SUNErrCode cvNlsUpdateNormSensSim(N_Vector ycorSim, N_Vector deltaSim,
-                                         N_Vector ewtSim, sunrealtype* delnrm,
-                                         void* cvode_mem);
+static SUNErrCode cvNlsNormSensSim(N_Vector ycorSim, N_Vector deltaSim,
+                                   N_Vector ewtSim, sunrealtype* delnrm,
+                                   void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -145,12 +145,11 @@ int CVodeSetNonlinearSolverSensSim(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  retval = SUNNonlinSolSetUpdateNormFn(cv_mem->NLSsim, cvNlsUpdateNormSensSim,
-                                       cvode_mem);
+  retval = SUNNonlinSolSetNormFn(cv_mem->NLSsim, cvNlsNormSensSim, cvode_mem);
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   "Setting update norm function failed");
+                   "Setting norm function failed");
     return (CV_ILL_INPUT);
   }
 
@@ -466,9 +465,9 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode cvNlsUpdateNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
-                                         N_Vector deltaSim, N_Vector ewtSim,
-                                         sunrealtype* delnrm, void* cvode_mem)
+static SUNErrCode cvNlsNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
+                                   N_Vector deltaSim, N_Vector ewtSim,
+                                   sunrealtype* delnrm, void* cvode_mem)
 {
   CVodeMem cv_mem;
   sunrealtype del;

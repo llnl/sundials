@@ -85,9 +85,11 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
                                       N_Vector del, sunrealtype tol,
                                       N_Vector ewt, void* mem);
 
-typedef SUNErrCode (*SUNNonlinSolUpdateNormFn)(N_Vector y, N_Vector del,
-                                               N_Vector w, sunrealtype* delnrm,
-                                               void* mem);
+typedef SUNErrCode (*SUNNonlinSolNormFn)(N_Vector y, N_Vector del, N_Vector w,
+                                         sunrealtype* delnrm, void* mem);
+
+/* Compatibility alias for the unreleased pre-review name. */
+typedef SUNNonlinSolNormFn SUNNonlinSolUpdateNormFn;
 
 /* -----------------------------------------------------------------------------
  * SUNNonlinearSolver types
@@ -140,8 +142,8 @@ struct _generic_SUNNonlinearSolver
   void* content;
   void* python;
   SUNNonlinearSolver_Ops ops;
-  SUNNonlinSolUpdateNormFn getupdatenormfn;
-  void* getupdatenorm_data;
+  SUNNonlinSolNormFn norm_fn;
+  void* norm_fn_data;
   SUNContext sunctx;
 };
 
@@ -195,6 +197,12 @@ SUNErrCode SUNNonlinSolSetConvTestFn(SUNNonlinearSolver NLS,
                                      SUNNonlinSolConvTestFn CTestFn,
                                      void* ctest_data);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolNormFn NormFn,
+                                 void* norm_fn_data);
+
+/* Compatibility wrapper for the unreleased pre-review name. */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver NLS,
                                        SUNNonlinSolUpdateNormFn UpdateNormFn,

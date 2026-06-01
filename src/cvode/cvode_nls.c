@@ -43,6 +43,8 @@ static int cvNlsLSetup(sunbooleantype jbad, sunbooleantype* jcur,
 static int cvNlsLSolve(N_Vector delta, void* cvode_mem);
 static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector del,
                          sunrealtype tol, N_Vector ewt, void* cvode_mem);
+static SUNErrCode cvNlsNorm(N_Vector ycor, N_Vector delta, N_Vector ewt,
+                            sunrealtype* delnrm, void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -124,6 +126,14 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "Setting convergence test function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetNormFn(cv_mem->NLS, cvNlsNorm, cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting norm function failed");
     return (CV_ILL_INPUT);
   }
 
@@ -369,6 +379,14 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
 
   /* Not yet converged */
   return (SUN_NLS_CONTINUE);
+}
+
+static SUNErrCode cvNlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector ycor, N_Vector delta,
+                            N_Vector ewt, sunrealtype* delnrm,
+                            SUNDIALS_MAYBE_UNUSED void* cvode_mem)
+{
+  *delnrm = N_VWrmsNorm(delta, ewt);
+  return SUN_SUCCESS;
 }
 
 static int cvNlsResidual(N_Vector ycor, N_Vector res, void* cvode_mem)

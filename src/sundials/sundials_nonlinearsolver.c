@@ -84,12 +84,12 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   ops->getupdatenorm   = NULL;
 
   /* attach context and ops, initialize content to NULL */
-  NLS->sunctx             = sunctx;
-  NLS->ops                = ops;
-  NLS->content            = NULL;
-  NLS->python             = NULL;
-  NLS->getupdatenormfn    = NULL;
-  NLS->getupdatenorm_data = NULL;
+  NLS->sunctx       = sunctx;
+  NLS->ops          = ops;
+  NLS->content      = NULL;
+  NLS->python       = NULL;
+  NLS->norm_fn      = NULL;
+  NLS->norm_fn_data = NULL;
 
   return (NLS);
 }
@@ -289,17 +289,23 @@ SUNErrCode SUNNonlinSolSetConvTestFn(SUNNonlinearSolver NLS,
   else { return (SUN_SUCCESS); }
 }
 
-SUNErrCode SUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver NLS,
-                                       SUNNonlinSolUpdateNormFn UpdateNormFn,
-                                       void* getupdatenorm_data)
+SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolNormFn NormFn, void* norm_fn_data)
 {
   if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
   SUNFunctionBegin(NLS->sunctx);
 
-  NLS->getupdatenormfn    = UpdateNormFn;
-  NLS->getupdatenorm_data = getupdatenorm_data;
+  NLS->norm_fn      = NormFn;
+  NLS->norm_fn_data = norm_fn_data;
 
   return (SUN_SUCCESS);
+}
+
+SUNErrCode SUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver NLS,
+                                       SUNNonlinSolUpdateNormFn UpdateNormFn,
+                                       void* getupdatenorm_data)
+{
+  return SUNNonlinSolSetNormFn(NLS, UpdateNormFn, getupdatenorm_data);
 }
 
 SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,

@@ -214,6 +214,8 @@ user-callable functions.
       This routine will be called by :c:func:`SUNNonlinSolSetOptions` when using the key
       ``NLSid.conv_rate_constant``.
 
+   .. versionadded:: x.y.z
+
 
 .. c:function:: SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS, sunrealtype *crate)
 
@@ -226,6 +228,15 @@ user-callable functions.
 
    **Return value:**
       * A :c:type:`SUNErrCode`
+
+      .. versionadded:: x.y.z
+
+   **Notes:**
+      This value is formed from the same per-iteration correction norms used by
+      the solver. When an integrator attaches a custom norm callback through
+      :c:func:`SUNNonlinSolSetNormFn`, that callback is used here as well, so
+      the reported rate stays consistent with the integrator's convergence-test
+      norm.
 
 
 .. _SUNNonlinSol.FixedPoint.Content:
