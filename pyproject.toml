@@ -87,5 +87,9 @@ MACOSX_DEPLOYMENT_TARGET = "10.15"
 [tool.ruff]
 line-length = 99
 
+[tool.ruff.lint.per-file-ignores]
+"bindings/sundials4py/test/**/*.py" = ["F403", "F405"]
+"examples/python/**/*.py" = ["F403", "F405"]
+
 [tool.ruff.format]
 skip-magic-trailing-comma = true

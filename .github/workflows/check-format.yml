@@ -62,7 +62,7 @@ jobs:
         run: |
           ./scripts/spelling.sh
 
-      - name: Run formatting checks
+      - name: Run formatting and lint checks
         run: |
           ./scripts/format.sh .
 

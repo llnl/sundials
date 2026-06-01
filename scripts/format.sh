@@ -28,6 +28,18 @@ if [ $# -lt 1 ]; then
 fi
 
 paths=( "$@" )
+ruff_lint_excludes=(
+    ".cmake-format.py"
+    "benchmarks"
+    "doc"
+    "examples/arkode"
+    "examples/cvode"
+    "scripts/spack"
+    "test/benchmark_analysis.ipynb"
+    "test/compare_benchmarks.py"
+    "test/compare_examples.py"
+)
+ruff_check_args=()
 
 find "${paths[@]}" -iname '*.h' -o -iname '*.hpp' -o \
      -iname '*.c' -o -iname '*.cpp' -o \
@@ -37,5 +49,11 @@ find "${paths[@]}" -iname '*.f90' | grep -v fmod | xargs fprettify --indent 2 --
 
 find "${paths[@]}" \( -iname '*.cmake' -o -iname 'CMakeLists.txt' \) \
      -exec cmake-format -i {} ';'
+
+for exclude in "${ruff_lint_excludes[@]}"; do
+    ruff_check_args+=( "--exclude" "$exclude" )
+done
+
+ruff check --fix "${ruff_check_args[@]}" "${paths[@]}"
 
 ruff format "${paths[@]}"
