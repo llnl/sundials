@@ -216,8 +216,7 @@ def _iter_filtered_lines(
         # Only treat following non-log lines as a continuation block when the
         # log line is an array/vector dump (payload values parsed as lists).
         continuation_len = max(
-            (len(v) for v in entry.get("payload", {}).values() if isinstance(v, list)),
-            default=0,
+            (len(v) for v in entry.get("payload", {}).values() if isinstance(v, list)), default=0
         )
         if keep:
             for out_line in lines[i : i + 1 + continuation_len]:
