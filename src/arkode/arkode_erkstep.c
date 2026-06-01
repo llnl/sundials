@@ -254,14 +254,17 @@ int erkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   ark_mem->liw1 = liw1;
 
   /* Resize the RHS vectors */
-  for (i = 0; i < step_mem->stages; i++)
+  if (step_mem->F)
   {
-    if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                      &step_mem->F[i]))
+    for (i = 0; i < step_mem->stages; i++)
     {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "Unable to resize vector");
-      return (ARK_MEM_FAIL);
+      if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
+                        &step_mem->F[i]))
+      {
+        arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
+                        "Unable to resize vector");
+        return (ARK_MEM_FAIL);
+      }
     }
   }
 
