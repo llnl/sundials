@@ -60,8 +60,13 @@ notes in the documentation to always use the SUNDIALS version number with the
 package version number as a parenthetical note when it differs from the SUNDIALS
 version number.
 
-Fixed a bug in sundials4py where the `CVodeGetRootInfo`, `ARKodeGetRootInfo`, and `IDAGetRootInfo` functions
-did not correctly return the rootsfound array. This addresses 
-`Issue #937 <https://github.com/llnl/sundials/issues/937>`__.
+Fixed a bug in sundials4py where the :c:func:`CVodeGetRootInfo`,
+:c:func:`ARKodeGetRootInfo`, and :c:func:`IDAGetRootInfo` functions did not
+correctly return the rootsfound array. This addresses `Issue #937
+<https://github.com/llnl/sundials/issues/937>`__.
+
+Fixed a bug in ERKStep where calling :c:func:`ARKodeResize` before
+:c:func:`ARKodeEvolve` or :c:func:`ARKodeInit` would result in a segmentation
+fault.
 
 **Deprecation Notices**
