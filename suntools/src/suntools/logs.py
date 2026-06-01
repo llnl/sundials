@@ -152,20 +152,6 @@ def _split_filter_list(value: str) -> set[str]:
     return {p for p in parts if p}
 
 
-def _is_log_line(line: str) -> bool:
-    return line.startswith("[")
-
-
-def _find_continuation_end(lines: list[str], start_index: int) -> int:
-    """Return the index of the next log line or blank line (exclusive)."""
-    i = start_index + 1
-    while i < len(lines):
-        if _is_log_line(lines[i]) or not lines[i].strip():
-            break
-        i += 1
-    return i
-
-
 def _iter_filtered_lines(
     lines: list[str], selected: set[str], invert: bool = False
 ) -> Iterable[str]:
@@ -176,7 +162,8 @@ def _iter_filtered_lines(
     i = 0
     while i < len(lines):
         line = lines[i]
-        if not _is_log_line(line):
+        entry = _parse_logfile_line(line.rstrip("\n"), i, lines)
+        if not entry:
             # Attribute non-log lines to the current region context.
             cats: set[str] = set()
             if linear_depth > 0:
@@ -192,11 +179,6 @@ def _iter_filtered_lines(
             if keep:
                 yield line
 
-            i += 1
-            continue
-
-        entry = _parse_logfile_line(line.rstrip("\n"), i, lines)
-        if not entry:
             i += 1
             continue
 
@@ -233,10 +215,12 @@ def _iter_filtered_lines(
 
         # Only treat following non-log lines as a continuation block when the
         # log line is an array/vector dump (payload values parsed as lists).
-        is_array_dump = any(isinstance(v, list) for v in entry.get("payload", {}).values())
-        continuation_end = _find_continuation_end(lines, i) if is_array_dump else i + 1
+        continuation_len = max(
+            (len(v) for v in entry.get("payload", {}).values() if isinstance(v, list)),
+            default=0,
+        )
         if keep:
-            for out_line in lines[i:continuation_end]:
+            for out_line in lines[i : i + 1 + continuation_len]:
                 yield out_line
 
         # Update region nesting after processing/printing so the begin line
@@ -259,65 +243,7 @@ def _iter_filtered_lines(
             elif event == "end":
                 linear_depth = max(0, linear_depth - 1)
 
-        i = continuation_end
-
-
-def _get_history(log, key, step_status, time_range, step_range):
-    """Extract the step/time series of the requested value."""
-
-    steps = []
-    times = []
-    values = []
-    levels = []
-
-    for entry in log:
-        step = int(entry["step"])
-        time = float(entry["tn"])
-        level = entry["level"]
-
-        if time_range is not None:
-            if time < time_range[0] or time > time_range[1]:
-                continue
-
-        if step_range is not None:
-            if step < step_range[0] or step > step_range[1]:
-                continue
-
-        save_data = True
-        if step_status is not None:
-            if step_status not in entry["status"]:
-                save_data = False
-
-        if key in entry and save_data:
-            steps.append(step)
-            times.append(time)
-            values.append(entry[key])
-            levels.append(level)
-
-        if "stages" in entry:
-            for s in entry["stages"]:
-                next_level_key = f"time-level-{level + 1}"
-                if next_level_key in s:
-                    sub_steps, sub_times, sub_values, sub_levels = _get_history(
-                        s[next_level_key], key, step_status, time_range, None
-                    )
-                    steps.extend(sub_steps)
-                    times.extend(sub_times)
-                    values.extend(sub_values)
-                    levels.extend(sub_levels)
-
-        if "compute-embedding" in entry:
-            next_level_key = f"time-level-{level + 1}"
-            if next_level_key in entry["compute-embedding"]:
-                sub_steps, sub_times, sub_values, sub_levels = _get_history(
-                    entry["compute-embedding"][next_level_key], key, step_status, time_range, None
-                )
-                steps.extend(sub_steps)
-                times.extend(sub_times)
-                values.extend(sub_values)
-                levels.extend(sub_levels)
-
-    return steps, times, values, levels
+        i += 1 + continuation_len
 
 
 class StepData:
