@@ -604,7 +604,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      use the minimum number of stages (ss = 2) when zR > 0. */
   sunrealtype zR = ark_mem->h * step_mem->lambdaR;
   sunrealtype zI = ark_mem->h * step_mem->lambdaI;
-  int ss = zR > ZERO ? 2 : (int)SUNRceil(SUNRsqrt(ONE - coefz * zR));
+  int ss         = zR > ZERO ? 2 : (int)SUNRceil(SUNRsqrt(ONE - coefz * zR));
   ss             = SUNMAX(ss, 2);
 
   /* Check if number of stages exceeds maximum allowed.
