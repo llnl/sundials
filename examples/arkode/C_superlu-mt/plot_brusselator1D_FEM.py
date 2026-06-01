@@ -18,7 +18,6 @@
 # matplotlib-based plotting script for brusselator1D.c example
 
 # imports
-import sys
 import pylab as plt
 import numpy as np
 

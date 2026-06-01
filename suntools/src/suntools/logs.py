@@ -269,7 +269,7 @@ def log_file_to_list(filename):
                 if level > 0:
                     s.open_list(f"time-level-{level}")
                 if partition > 0:
-                    s.open_list(f"evolve")
+                    s.open_list("evolve")
                 s.update(line_dict["payload"])
                 continue
             elif label == "end-step-attempt":
@@ -368,10 +368,10 @@ def get_history(
         steps_by_level = defaultdict(list)
         times_by_level = defaultdict(list)
         values_by_level = defaultdict(list)
-        for s, t, v, l in zip(steps, times, values, levels):
-            steps_by_level[l].append(s)
-            times_by_level[l].append(t)
-            values_by_level[l].append(v)
+        for s, t, v, level_idx in zip(steps, times, values, levels):
+            steps_by_level[level_idx].append(s)
+            times_by_level[level_idx].append(t)
+            values_by_level[level_idx].append(v)
         return steps_by_level, times_by_level, values_by_level
     else:
         return steps, times, values

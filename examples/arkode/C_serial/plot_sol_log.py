@@ -18,7 +18,6 @@
 # matplotlib-based plotting script for heat2D.cpp example
 
 # imports
-import sys
 import pylab as plt
 import numpy as np
 

@@ -233,7 +233,7 @@ def main():
 
     # Print header with problem information
     print("\nLotka-Volterra ODE (CVODE):")
-    print(f"    initial condition, y0 = [1.0, 1.0]")
+    print("    initial condition, y0 = [1.0, 1.0]")
     print(f"    parameters = {params}")
     print(f"    reltol = {reltol}, abstol = {abstol}\n")
     print("        t           u           v")

@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # ------------------------------------------------------------------------------
 
-import sys, os
+import sys
+import os
 
 sys.path.append(os.path.dirname(os.path.abspath("../../../shared/sundials_vars.py")))
 from sundials_vars import *

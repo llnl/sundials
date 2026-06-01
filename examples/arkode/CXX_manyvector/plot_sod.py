@@ -19,7 +19,8 @@
 # ------------------------------------------------------------------------------
 
 # imports
-import sys, os
+import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec

@@ -18,7 +18,6 @@
 # matplotlib-based plotting script for ODE examples
 
 # imports
-import sys
 import pylab as plt
 import numpy as np
 

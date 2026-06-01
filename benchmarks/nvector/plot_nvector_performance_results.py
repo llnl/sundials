@@ -27,7 +27,8 @@
 def main():
 
     import argparse
-    import os, sys
+    import os
+    import sys
     import shlex
     import glob
 
@@ -36,7 +37,6 @@ def main():
 
     import matplotlib as mpl
     import matplotlib.pyplot as plt
-    import matplotlib.ticker as mtick
 
     parser = argparse.ArgumentParser(description="Plot data from NVector performance tests")
 
@@ -106,16 +106,16 @@ def main():
         ns = int(split_fout[3])
         nt = int(split_fout[4])
 
-        if not ne in nelem:
+        if ne not in nelem:
             nelem.append(ne)
 
-        if not nv in nvec:
+        if nv not in nvec:
             nvec.append(nv)
 
-        if not ns in nsum:
+        if ns not in nsum:
             nsum.append(ns)
 
-        if not nt in ntest:
+        if nt not in ntest:
             ntest.append(nt)
 
     if len(ntest) != 1:

@@ -45,7 +45,6 @@ class AnalyticODE(ODEProblem):
 
     def fS(self, Ns, t, y, ydot, yS, ySdot, _, tmp1, tmp2):
         # Sensitivity RHS: df/dy * yS + df/dp (here, p = y0, so df/dp = 0)
-        yarr = N_VGetArrayPointer(y)
         ySarr = N_VGetArrayPointer(yS[0])
         ySdotarr = N_VGetArrayPointer(ySdot[0])
         # df/dy = lambda
@@ -55,7 +54,6 @@ class AnalyticODE(ODEProblem):
 
     def fB(self, t, y, yB, yBdot, _):
         # Adjoint RHS: -df/dy^T * lambdaB
-        yarr = N_VGetArrayPointer(y)
         yBarr = N_VGetArrayPointer(yB)
         yBdotarr = N_VGetArrayPointer(yBdot)
         lamb = self.lamb
@@ -64,7 +62,6 @@ class AnalyticODE(ODEProblem):
 
     def fBS(self, t, y, yS, yB, yBdot, _):
         # Adjoint RHS: -df/dy^T * lambdaB
-        yarr = N_VGetArrayPointer(y)
         yBarr = N_VGetArrayPointer(yB)
         yBdotarr = N_VGetArrayPointer(yBdot)
         lamb = self.lamb
@@ -199,8 +196,6 @@ class AnalyticDAE:
         z = P^{-1} r
         */
         """
-        yy = N_VGetArrayPointer(yyvec)
-        yp = N_VGetArrayPointer(ypvec)
         r = N_VGetArrayPointer(rvec)
         z = N_VGetArrayPointer(zvec)
         alpha = self.alpha

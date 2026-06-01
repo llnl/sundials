@@ -74,7 +74,7 @@ class Heat1DProblem:
         return 0
 
     def jtv(self, vvec, Jvvec, t, yvec, fyvec, tmpvec, user_data):
-        N, k, dx = self.N, self.k, self.dx
+        k, dx = self.k, self.dx
         V = N_VGetArrayPointer(vvec)
         JV = N_VGetArrayPointer(Jvvec)
         JV[:] = 0.0

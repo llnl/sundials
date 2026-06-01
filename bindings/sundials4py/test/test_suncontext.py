@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import pytest
-import numpy as np
 from sundials4py.core import *
 from sundials4py.test import SUNContext_TestErrHandler
 

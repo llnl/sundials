@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import pytest
 from sundials4py.core import *
 
 

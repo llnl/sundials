@@ -30,7 +30,6 @@
 # solver.
 # -----------------------------------------------------------------
 
-import numpy as np
 from sundials4py.core import *
 from sundials4py.kinsol import *
 

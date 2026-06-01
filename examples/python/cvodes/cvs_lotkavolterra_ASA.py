@@ -133,7 +133,7 @@ def main():
 
     # Output problem setup
     print("\nLotka-Volterra ODE test problem (CVODE, ASA):")
-    print(f"    initial conditions:  y0 = [1.0, 1.0]")
+    print("    initial conditions:  y0 = [1.0, 1.0]")
     print(f"    parameters:  p = {p}")
     print(f"    reltol = {reltol}, abstol = {abstol}\n")
     print("        t           x           y")

@@ -47,7 +47,8 @@ def print_error(msg):
 def main():
 
     import argparse
-    import os, shutil
+    import os
+    import shutil
 
     parser = argparse.ArgumentParser(description="Update output files")
 
@@ -138,7 +139,7 @@ def main():
                         shutil.copy(os.path.join(output, out_file), os.path.join(root, out_file))
                         found = True
                         if args.verbose > 0:
-                            print_success(f"  Answer file updated")
+                            print_success("  Answer file updated")
                         break
                 if found:
                     break

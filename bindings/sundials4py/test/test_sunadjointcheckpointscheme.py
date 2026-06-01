@@ -17,7 +17,6 @@
 # Unit/smoke tests for SUNAdjointCheckpointScheme module
 # -----------------------------------------------------------------
 
-import pytest
 from fixtures import *
 from sundials4py.core import *
 

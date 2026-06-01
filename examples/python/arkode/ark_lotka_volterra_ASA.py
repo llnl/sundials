@@ -70,11 +70,11 @@ class LotkaVolterraODE:
         return np.zeros(self.NP, dtype=sun.sunrealtype)
 
     def adj_rhs(self, t, y, sens, sens_dot, user_data):
-        l = sun.N_VGetSubvector_ManyVector(sens, 0)
+        lambda_vec = sun.N_VGetSubvector_ManyVector(sens, 0)
         ldot = sun.N_VGetSubvector_ManyVector(sens_dot, 0)
         nu = sun.N_VGetSubvector_ManyVector(sens_dot, 1)
-        self.vjp(l, ldot, t, y)
-        self.parameter_vjp(l, nu, t, y)
+        self.vjp(lambda_vec, ldot, t, y)
+        self.parameter_vjp(lambda_vec, nu, t, y)
         return 0
 
     def quad_rhs(self, t, yvec, muvec, qBdotvec, user_data):

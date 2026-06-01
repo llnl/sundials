@@ -33,8 +33,6 @@ generate a nice stack-trace-like plot, if Flamegraph is available in your path.
 
 import argparse
 import hatchet as ht
-import numpy as np
-import pandas as pd
 import subprocess
 import tempfile
 

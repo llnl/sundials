@@ -15,7 +15,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 
-import pytest
 from fixtures import *
 from sundials4py.core import *
 

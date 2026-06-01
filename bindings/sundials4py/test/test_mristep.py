@@ -17,14 +17,10 @@
 # -----------------------------------------------------------------
 
 
-import pytest
-import weakref
-import numpy as np
 from numpy.testing import assert_allclose
 from sundials4py.core import *
 from sundials4py.arkode import *
 from problems import AnalyticMultiscaleODE
-from fixtures import sunctx
 
 
 def test_multirate(sunctx):

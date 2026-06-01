@@ -17,7 +17,6 @@
 # Unit/smoke tests for SUNMemoryHelper module
 # -----------------------------------------------------------------
 
-import pytest
 from fixtures import *
 from sundials4py.core import *
 

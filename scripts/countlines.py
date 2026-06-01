@@ -32,7 +32,6 @@
 def main():
 
     import argparse
-    import sys, os
     import shlex
     from subprocess import call
 

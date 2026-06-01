@@ -20,7 +20,6 @@
 
 # imports
 import glob
-import sys
 import pylab as plt
 import numpy as np
 

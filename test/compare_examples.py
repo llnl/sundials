@@ -17,17 +17,10 @@
 # -----------------------------------------------------------------------------
 
 import os
-import subprocess
-import sys
-import re
 import glob
 import argparse
 import multiprocessing as mp
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 
-import hatchet as ht
 import thicket as tt
 
 

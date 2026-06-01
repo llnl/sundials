@@ -79,7 +79,7 @@ class BrusselatorODE:
 
     def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3, user_data):
         y = N_VGetArrayPointer(yvec)
-        a, b, ep = self.a, self.b, self.ep
+        ep = self.ep
         u, v, w = y[0], y[1], y[2]
         Jdata = SUNDenseMatrix_Data(J)
         Jdata[0, 0] = -(w + 1.0) + 2.0 * u * v

@@ -15,14 +15,10 @@
 # -----------------------------------------------------------------------------
 
 # imports
-import glob
-import sys
 import matplotlib
 
 matplotlib.use("Agg")
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 
 

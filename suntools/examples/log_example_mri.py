@@ -195,9 +195,9 @@ def main():
 
             if len(x_a) == 2:
                 if level_idx == 0:
-                    axes[level_idx].set_title(f"Slow Time Scale")
+                    axes[level_idx].set_title("Slow Time Scale")
                 else:
-                    axes[level_idx].set_title(f"Fast Time Scale")
+                    axes[level_idx].set_title("Fast Time Scale")
             else:
                 axes[level_idx].set_title(f"Level {level_idx}")
 

@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-import re
 import sys
 
 from llnl.util import tty
@@ -799,7 +798,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
                     cmake_cache_path("adiak_DIR", spec["adiak"].prefix.lib.cmake + "/adiak")
                 )
 
-            if not "caliper-dir=none" in spec:
+            if "caliper-dir=none" not in spec:
                 entries.append(
                     self.cache_string_from_variant(
                         "SUNDIALS_TEST_CALIPER_OUTPUT_DIR", "caliper-dir"

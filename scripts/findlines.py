@@ -30,8 +30,7 @@
 def main():
 
     import argparse
-    import sys, os
-    import shlex
+    import os
 
     parser = argparse.ArgumentParser(
         description="Find unique lines in <readfile> containing <key> "

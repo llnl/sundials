@@ -20,11 +20,10 @@
 # ------------------------------------------------------------------------------
 
 # imports
-import sys, os
+import sys
 import shlex
 import numpy as np
 from pylab import *
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.pyplot as plt
 
