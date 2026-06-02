@@ -201,6 +201,10 @@ following structure.
      SUNNonlinSolLSetupFn   LSetup;
      SUNNonlinSolLSolveFn   LSolve;
      SUNNonlinSolConvTestFn CTest;
+     SUNNonlinSolNormFn     norm_fn;
+     void                  *norm_fn_data;
+     SUNNonlinSolConvRateFn conv_rate_fn;
+     void                  *conv_rate_fn_data;
 
      N_Vector       delta;
      sunbooleantype jcur;
@@ -226,6 +230,14 @@ information:
   solve,
 
 * ``CTest`` -- the function for checking convergence of the Newton iteration,
+
+* ``norm_fn`` -- an optional callback for computing the update norm or residual norm,
+
+* ``norm_fn_data`` -- the data pointer passed to ``norm_fn``,
+
+* ``conv_rate_fn`` -- an optional callback for retrieving an integrator-owned convergence-rate estimate,
+
+* ``conv_rate_fn_data`` -- the data pointer passed to ``conv_rate_fn``,
 
 * ``delta`` -- the Newton iteration update vector,
 

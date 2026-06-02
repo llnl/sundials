@@ -118,7 +118,11 @@ and access to the underlying fixed-point and Newton solvers. The generic
 ``switching_parameters`` key and the generic ``max_iters`` key directly to the
 Auto solver; to configure fixed-point- or Newton-specific options separately,
 retrieve the wrapped solver with the getter functions below and call the
-appropriate module-specific setter on that object.
+appropriate module-specific setter on that object. Likewise, calling the generic
+:c:func:`SUNNonlinSolSetNormFn` or :c:func:`SUNNonlinSolSetConvRateFn` on the
+Auto solver forwards those callbacks to the wrapped sub-solvers so that the
+fixed-point and Newton implementations use the same integrator-provided norm
+and convergence-rate information.
 
 The SUNNonlinSol_Auto module also defines the following function for
 controlling the switching behavior.

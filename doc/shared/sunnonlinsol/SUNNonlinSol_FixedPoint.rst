@@ -231,6 +231,10 @@ following structure.
 
      SUNNonlinSolSysFn      Sys;
      SUNNonlinSolConvTestFn CTest;
+     SUNNonlinSolNormFn     norm_fn;
+     void                  *norm_fn_data;
+     SUNNonlinSolConvRateFn conv_rate_fn;
+     void                  *conv_rate_fn_data;
 
      int            m;
      int           *imap;
@@ -263,6 +267,10 @@ allocated:
 
 * ``Sys``        -- function for evaluating the nonlinear system,
 * ``CTest``      -- function for checking convergence of the fixed point iteration,
+* ``norm_fn``    -- optional callback for computing the update norm or residual norm,
+* ``norm_fn_data`` -- user data passed to ``norm_fn``,
+* ``conv_rate_fn`` -- optional callback for retrieving an integrator-owned convergence-rate estimate,
+* ``conv_rate_fn_data`` -- user data passed to ``conv_rate_fn``,
 * ``yprev``      -- ``N_Vector`` used to store previous fixed-point iterate,
 * ``gy``         -- ``N_Vector`` used to store :math:`G(y)` in fixed-point algorithm,
 * ``delta``      -- ``N_Vector`` used to store difference between successive fixed-point iterates,

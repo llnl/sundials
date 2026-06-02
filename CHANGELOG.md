@@ -11,7 +11,8 @@ which uses an algorithm described in https://doi.org/10.1007/BF01933714 to
 switch between a modified Newton iteration and fixed-point iteration based on
 an estimate of stiffness. This solver may be useful to pair with the BDF method
 in CVODE/CVODES, or with DIRK methods in ARKODE, for users who are unsure about
-the stiffness of their problem. See the module documentation for more information.
+the stiffness of their problem. See the module documentation for more information. We also extended the SUNNonlinearSolver API with callback setters
+`SUNNonlinSolSetNormFn`, `SUNNonlinSolSetConvRateFn`, and `SUNNonlinSolSetSysFns`.
 
 Added the function `SUNLogger_SetQueueAndFlushMsgFns` to allow for user-defined
 functions to queue and flush log messages.
