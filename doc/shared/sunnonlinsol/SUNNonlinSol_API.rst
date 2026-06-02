@@ -344,6 +344,25 @@ parameters. Only the routine for setting the nonlinear system defining function
       .. versionadded:: x.y.z
 
 
+.. c:function:: SUNErrCode SUNNonlinSolSetConvRateFn(SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn, void* conv_rate_data)
+
+   This *optional* function attaches an integrator-provided callback for
+   retrieving the current nonlinear convergence-rate estimate :math:`crate`
+   from the integrator's convergence test. Hybrid nonlinear solvers can use
+   this to base fixed-point switching decisions on the same rate estimate that
+   the integrator is already maintaining.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *ConvRateFn* -- the function used to retrieve the current convergence-rate estimate.
+      * *conv_rate_data* -- user data passed to *ConvRateFn*.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+      .. versionadded:: x.y.z
+
+
 
 .. c:function:: SUNErrCode SUNNonlinSolSetMaxIters(SUNNonlinearSolver NLS, int maxiters)
 
@@ -601,6 +620,22 @@ module have types defined in the header file
       * *del* -- is the current nonlinear update.
       * *w* -- is the weight vector passed to :c:func:`SUNNonlinSolSolve`.
       * *delnrm* -- stores the computed update norm.
+      * *mem* -- is integrator-owned callback data.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+      .. versionadded:: x.y.z
+
+
+.. c:type:: SUNErrCode (*SUNNonlinSolConvRateFn)(sunrealtype *crate, void* mem)
+
+   These functions retrieve an integrator-defined nonlinear convergence-rate
+   estimate for use by nonlinear solvers that need the same :math:`crate`
+   quantity maintained by the integrator's convergence test.
+
+   **Arguments:**
+      * *crate* -- stores the current convergence-rate estimate.
       * *mem* -- is integrator-owned callback data.
 
    **Return value:**

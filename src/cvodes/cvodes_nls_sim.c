@@ -48,6 +48,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 static SUNErrCode cvNlsNormSensSim(N_Vector ycorSim, N_Vector deltaSim,
                                    N_Vector ewtSim, sunrealtype* delnrm,
                                    void* cvode_mem);
+static SUNErrCode cvNlsConvRateSensSim(sunrealtype* crate, void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -150,6 +151,15 @@ int CVodeSetNonlinearSolverSensSim(void* cvode_mem, SUNNonlinearSolver NLS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "Setting norm function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval =
+    SUNNonlinSolSetConvRateFn(cv_mem->NLSsim, cvNlsConvRateSensSim, cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting convergence-rate function failed");
     return (CV_ILL_INPUT);
   }
 
@@ -486,6 +496,17 @@ static SUNErrCode cvNlsNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
   del     = N_VWrmsNorm(delta, ewt);
   *delnrm = cvSensUpdateNorm(cv_mem, del, deltaS, ewtS);
 
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode cvNlsConvRateSensSim(sunrealtype* crate, void* cvode_mem)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  *crate = cv_mem->cv_crate;
   return SUN_SUCCESS;
 }
 

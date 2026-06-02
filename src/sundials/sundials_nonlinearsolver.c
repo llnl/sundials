@@ -90,6 +90,8 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   NLS->python       = NULL;
   NLS->norm_fn      = NULL;
   NLS->norm_fn_data = NULL;
+  NLS->conv_rate_fn = NULL;
+  NLS->conv_rate_fn_data = NULL;
 
   return (NLS);
 }
@@ -297,6 +299,19 @@ SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
 
   NLS->norm_fn      = NormFn;
   NLS->norm_fn_data = norm_fn_data;
+
+  return (SUN_SUCCESS);
+}
+
+SUNErrCode SUNNonlinSolSetConvRateFn(SUNNonlinearSolver NLS,
+                                     SUNNonlinSolConvRateFn ConvRateFn,
+                                     void* conv_rate_fn_data)
+{
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+
+  NLS->conv_rate_fn      = ConvRateFn;
+  NLS->conv_rate_fn_data = conv_rate_fn_data;
 
   return (SUN_SUCCESS);
 }

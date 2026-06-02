@@ -30,6 +30,7 @@
 /* private functions */
 static SUNErrCode arkStep_NlsNorm(N_Vector y, N_Vector del, N_Vector ewt,
                                   sunrealtype* delnrm, void* arkode_mem);
+static SUNErrCode arkStep_NlsConvRate(sunrealtype* crate, void* arkode_mem);
 
 /*===============================================================
   Interface routines supplied to ARKODE
@@ -92,6 +93,14 @@ int arkStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "Setting norm function failed");
+    return (ARK_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetConvRateFn(step_mem->NLS, arkStep_NlsConvRate, ark_mem);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Setting convergence-rate function failed");
     return (ARK_ILL_INPUT);
   }
 
@@ -1251,6 +1260,19 @@ static SUNErrCode arkStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector del
                                   SUNDIALS_MAYBE_UNUSED void* arkode_mem)
 {
   *delnrm = N_VWrmsNorm(del, ewt);
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode arkStep_NlsConvRate(sunrealtype* crate, void* arkode_mem)
+{
+  ARKodeMem ark_mem;
+  ARKodeARKStepMem step_mem;
+  int retval;
+
+  retval = arkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
+  if (retval != ARK_SUCCESS) { return SUN_ERR_ARG_CORRUPT; }
+
+  *crate = step_mem->crate;
   return SUN_SUCCESS;
 }
 

@@ -37,6 +37,7 @@ struct SUNNonlinearSolverFunctionTable
   nb::object lsetupfn;
   nb::object lsolvefn;
   nb::object convtestfn;
+  nb::object convratefn;
 };
 
 template<typename... Args>
@@ -76,6 +77,22 @@ inline int sunnonlinearsolver_lsetupfn_wrapper(sunbooleantype jbad,
   auto result = fn(jbad, nullptr);
 
   *jcur = std::get<1>(result);
+
+  return std::get<0>(result);
+}
+
+using SUNNonlinSolConvRateStdFn = std::tuple<SUNErrCode, sunrealtype>(void* mem);
+
+inline int sunnonlinearsolver_convratefn_wrapper(sunrealtype* crate, void* mem)
+{
+  auto fn_table =
+    static_cast<SUNNonlinearSolverFunctionTable*>(mem);
+  auto fn = nb::cast<std::function<SUNNonlinSolConvRateStdFn>>(
+    fn_table->convratefn);
+
+  auto result = fn(nullptr);
+
+  *crate = std::get<1>(result);
 
   return std::get<0>(result);
 }

@@ -52,7 +52,8 @@ size solely because the nonlinear algorithm changed.
 
 A full mathematical description of the switching criterion and algorithm can be
 found in :cite:p:`norsett1986switching`. In short, switching from fixed-point to
-Newton occurs when the fixed-point convergence-rate estimate
+Newton occurs when the fixed-point convergence-rate estimate supplied through
+:c:func:`SUNNonlinSolSetConvRateFn`
 
 .. math::
 

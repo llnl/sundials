@@ -167,6 +167,24 @@ void bind_sunnonlinearsolver(nb::module_& m)
       else { return SUNNonlinSolSetConvTestFn(NLS, nullptr, nullptr); }
     },
     nb::arg("NLS"), nb::arg("CTestFn").none());
+
+  m.def(
+    "SUNNonlinSolSetConvRateFn",
+    [](SUNNonlinearSolver NLS,
+       std::function<SUNNonlinSolConvRateStdFn> ConvRateFn) -> SUNErrCode
+    {
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
+      auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
+      fntable->convratefn = nb::cast(ConvRateFn);
+      if (ConvRateFn)
+      {
+        return SUNNonlinSolSetConvRateFn(NLS,
+                                         sunnonlinearsolver_convratefn_wrapper,
+                                         NLS->python);
+      }
+      else { return SUNNonlinSolSetConvRateFn(NLS, nullptr, nullptr); }
+    },
+    nb::arg("NLS"), nb::arg("ConvRateFn").none());
 }
 
 } // namespace sundials4py

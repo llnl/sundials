@@ -203,6 +203,10 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   C->fp_solver->norm_fn_data     = NLS->norm_fn_data;
   C->newton_solver->norm_fn      = NLS->norm_fn;
   C->newton_solver->norm_fn_data = NLS->norm_fn_data;
+  C->fp_solver->conv_rate_fn     = NLS->conv_rate_fn;
+  C->fp_solver->conv_rate_fn_data = NLS->conv_rate_fn_data;
+  C->newton_solver->conv_rate_fn = NLS->conv_rate_fn;
+  C->newton_solver->conv_rate_fn_data = NLS->conv_rate_fn_data;
 
   sub_callsetup = callSetup;
 
@@ -264,15 +268,17 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
   if (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
     sunrealtype crate;
+    SUNErrCode crate_retval;
 
     /* If the integrator-provided convergence test passed, exit with success and
        don't consider switching. */
     if (retval == SUN_SUCCESS) { return retval; }
 
-    if (SUNNonlinSolGetConvRate_FixedPoint(C->fp_solver, &crate) != SUN_SUCCESS)
-    {
-      return SUN_ERR_ARG_CORRUPT;
-    }
+    if (C->fp_solver->conv_rate_fn == NULL) { return SUN_ERR_NOT_IMPLEMENTED; }
+
+    crate_retval =
+      C->fp_solver->conv_rate_fn(&crate, C->fp_solver->conv_rate_fn_data);
+    if (crate_retval != SUN_SUCCESS) { return crate_retval; }
 
     /* Check if fixed-point appears to be diverging. */
     sunbooleantype diverging = crate >= C->fp_to_newt_threshold;

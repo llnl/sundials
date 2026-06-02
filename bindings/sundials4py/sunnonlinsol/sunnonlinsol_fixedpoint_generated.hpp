@@ -57,25 +57,6 @@ m.def("SUNNonlinSolSetDamping_FixedPoint", SUNNonlinSolSetDamping_FixedPoint,
 m.def("SUNNonlinSolSetConvRateConstant_FixedPoint",
       SUNNonlinSolSetConvRateConstant_FixedPoint, nb::arg("NLS"),
       nb::arg("crate_const"));
-
-m.def(
-  "SUNNonlinSolGetConvRate_FixedPoint",
-  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-  {
-    auto SUNNonlinSolGetConvRate_FixedPoint_adapt_modifiable_immutable_to_return =
-      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-    {
-      sunrealtype crate_adapt_modifiable;
-
-      SUNErrCode r =
-        SUNNonlinSolGetConvRate_FixedPoint(NLS, &crate_adapt_modifiable);
-      return std::make_tuple(r, crate_adapt_modifiable);
-    };
-
-    return SUNNonlinSolGetConvRate_FixedPoint_adapt_modifiable_immutable_to_return(
-      NLS);
-  },
-  nb::arg("NLS"));
 // #ifdef __cplusplus
 //
 // #endif

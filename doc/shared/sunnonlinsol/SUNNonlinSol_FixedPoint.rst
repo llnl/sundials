@@ -217,28 +217,6 @@ user-callable functions.
    .. versionadded:: x.y.z
 
 
-.. c:function:: SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS, sunrealtype *crate)
-
-   This returns the current estimate of the fixed-point nonlinear convergence
-   rate :math:`crate \leftarrow \max\{0.3R, \|\delta_m\| / \|\delta_{m-1}\|\}`.
-
-   **Arguments:**
-      * *NLS* -- a SUNNonlinSol object.
-      * *crate* -- the current fixed-point convergence-rate estimate.
-
-   **Return value:**
-      * A :c:type:`SUNErrCode`
-
-      .. versionadded:: x.y.z
-
-   **Notes:**
-      This value is formed from the same per-iteration correction norms used by
-      the solver. When an integrator attaches a custom norm callback through
-      :c:func:`SUNNonlinSolSetNormFn`, that callback is used here as well, so
-      the reported rate stays consistent with the integrator's convergence-test
-      norm.
-
-
 .. _SUNNonlinSol.FixedPoint.Content:
 
 SUNNonlinSol_FixedPoint content

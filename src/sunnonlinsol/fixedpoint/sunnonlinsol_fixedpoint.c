@@ -455,13 +455,6 @@ SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolGetConvRate_FixedPoint(SUNNonlinearSolver NLS,
-                                              sunrealtype* crate)
-{
-  *crate = FP_CONTENT(NLS)->crate;
-  return SUN_SUCCESS;
-}
-
 SUNErrCode SUNNonlinSolSetOptions_FixedPoint(
   SUNNonlinearSolver NLS, const char* NLSid,
   SUNDIALS_MAYBE_UNUSED const char* file_name, int argc, char* argv[])

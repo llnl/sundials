@@ -88,6 +88,8 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
 typedef SUNErrCode (*SUNNonlinSolNormFn)(N_Vector y, N_Vector del, N_Vector w,
                                          sunrealtype* delnrm, void* mem);
 
+typedef SUNErrCode (*SUNNonlinSolConvRateFn)(sunrealtype* crate, void* mem);
+
 /* Compatibility alias for the unreleased pre-review name. */
 typedef SUNNonlinSolNormFn SUNNonlinSolUpdateNormFn;
 
@@ -144,6 +146,8 @@ struct _generic_SUNNonlinearSolver
   SUNNonlinearSolver_Ops ops;
   SUNNonlinSolNormFn norm_fn;
   void* norm_fn_data;
+  SUNNonlinSolConvRateFn conv_rate_fn;
+  void* conv_rate_fn_data;
   SUNContext sunctx;
 };
 
@@ -201,6 +205,11 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
                                  SUNNonlinSolNormFn NormFn,
                                  void* norm_fn_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetConvRateFn(SUNNonlinearSolver NLS,
+                                     SUNNonlinSolConvRateFn ConvRateFn,
+                                     void* conv_rate_fn_data);
 
 /* Compatibility wrapper for the unreleased pre-review name. */
 SUNDIALS_EXPORT
