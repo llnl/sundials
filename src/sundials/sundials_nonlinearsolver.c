@@ -76,6 +76,8 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   ops->setlsetupfn     = NULL;
   ops->setlsolvefn     = NULL;
   ops->setctestfn      = NULL;
+  ops->setnormfn       = NULL;
+  ops->setconvratefn   = NULL;
   ops->setoptions      = NULL;
   ops->setmaxiters     = NULL;
   ops->getnumiters     = NULL;
@@ -88,10 +90,6 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   NLS->ops          = ops;
   NLS->content      = NULL;
   NLS->python       = NULL;
-  NLS->norm_fn      = NULL;
-  NLS->norm_fn_data = NULL;
-  NLS->conv_rate_fn = NULL;
-  NLS->conv_rate_fn_data = NULL;
 
   return (NLS);
 }
@@ -297,8 +295,10 @@ SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
   if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
   SUNFunctionBegin(NLS->sunctx);
 
-  NLS->norm_fn      = NormFn;
-  NLS->norm_fn_data = norm_fn_data;
+  if (NLS->ops->setnormfn)
+  {
+    return (NLS->ops->setnormfn(NLS, NormFn, norm_fn_data));
+  }
 
   return (SUN_SUCCESS);
 }
@@ -310,8 +310,10 @@ SUNErrCode SUNNonlinSolSetConvRateFn(SUNNonlinearSolver NLS,
   if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
   SUNFunctionBegin(NLS->sunctx);
 
-  NLS->conv_rate_fn      = ConvRateFn;
-  NLS->conv_rate_fn_data = conv_rate_fn_data;
+  if (NLS->ops->setconvratefn)
+  {
+    return (NLS->ops->setconvratefn(NLS, ConvRateFn, conv_rate_fn_data));
+  }
 
   return (SUN_SUCCESS);
 }

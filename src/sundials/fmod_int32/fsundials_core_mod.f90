@@ -522,6 +522,8 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: setlsetupfn
   type(C_FUNPTR), public :: setlsolvefn
   type(C_FUNPTR), public :: setctestfn
+  type(C_FUNPTR), public :: setnormfn
+  type(C_FUNPTR), public :: setconvratefn
   type(C_FUNPTR), public :: setoptions
   type(C_FUNPTR), public :: setmaxiters
   type(C_FUNPTR), public :: getnumiters
@@ -533,11 +535,7 @@ module fsundials_core_mod
  type, bind(C), public :: SUNNonlinearSolver
   type(C_PTR), public :: content
   type(C_PTR), public :: python
- type(C_PTR), public :: ops
-  type(C_FUNPTR), public :: getupdatenormfn
-  type(C_PTR), public :: getupdatenorm_data
-  type(C_FUNPTR), public :: getconvratefn
-  type(C_PTR), public :: getconvrate_data
+  type(C_PTR), public :: ops
   type(C_PTR), public :: sunctx
  end type SUNNonlinearSolver
  public :: FSUNNonlinSolNewEmpty

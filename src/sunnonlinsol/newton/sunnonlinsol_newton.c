@@ -39,6 +39,13 @@
 #define ZERO SUN_RCONST(0.0) /* real 0.0 */
 #define ONE  SUN_RCONST(1.0) /* real 1.0 */
 
+static SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
+                                               SUNNonlinSolNormFn NormFn,
+                                               void* norm_fn_data);
+static SUNErrCode SUNNonlinSolSetConvRateFn_Newton(
+  SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn,
+  void* conv_rate_fn_data);
+
 /*==============================================================================
   Constructor to create a new Newton solver
   ============================================================================*/
@@ -67,6 +74,8 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   NLS->ops->setlsetupfn     = SUNNonlinSolSetLSetupFn_Newton;
   NLS->ops->setlsolvefn     = SUNNonlinSolSetLSolveFn_Newton;
   NLS->ops->setctestfn      = SUNNonlinSolSetConvTestFn_Newton;
+  NLS->ops->setnormfn       = SUNNonlinSolSetNormFn_Newton;
+  NLS->ops->setconvratefn   = SUNNonlinSolSetConvRateFn_Newton;
   NLS->ops->setmaxiters     = SUNNonlinSolSetMaxIters_Newton;
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_Newton;
   NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_Newton;
@@ -89,6 +98,10 @@ SUNNonlinearSolver SUNNonlinSol_Newton(N_Vector y, SUNContext sunctx)
   content->LSetup         = NULL;
   content->LSolve         = NULL;
   content->CTest          = NULL;
+  content->norm_fn        = NULL;
+  content->norm_fn_data   = NULL;
+  content->conv_rate_fn   = NULL;
+  content->conv_rate_fn_data = NULL;
   content->jcur           = SUNFALSE;
   content->curiter        = 0;
   content->maxiters       = 3;
@@ -256,10 +269,11 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
 
       /* compute update/correction norm before calling convergence test so it
          can be queried by the test function if desired */
-      if (NLS->norm_fn)
+      if (NEWTON_CONTENT(NLS)->norm_fn)
       {
-        retval = NLS->norm_fn(ycor, delta, w, &(NEWTON_CONTENT(NLS)->delnrm),
-                              NLS->norm_fn_data);
+        retval = NEWTON_CONTENT(NLS)->norm_fn(
+          ycor, delta, w, &(NEWTON_CONTENT(NLS)->delnrm),
+          NEWTON_CONTENT(NLS)->norm_fn_data);
         if (retval != SUN_SUCCESS) { break; }
       }
       else { NEWTON_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
@@ -308,10 +322,10 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
         sunrealtype delnrm = NEWTON_CONTENT(NLS)->delnrm;
         sunrealtype resnrm;
 
-        if (NLS->norm_fn)
+        if (NEWTON_CONTENT(NLS)->norm_fn)
         {
-          retval =
-            NLS->norm_fn(ycor, delta, w, &resnrm, NLS->norm_fn_data);
+          retval = NEWTON_CONTENT(NLS)->norm_fn(ycor, delta, w, &resnrm,
+                                                NEWTON_CONTENT(NLS)->norm_fn_data);
           if (retval != SUN_SUCCESS) { break; }
         }
         else { resnrm = N_VWrmsNorm(delta, w); }
@@ -432,6 +446,26 @@ SUNErrCode SUNNonlinSolSetConvTestFn_Newton(SUNNonlinearSolver NLS,
   /* attach convergence test data */
   NEWTON_CONTENT(NLS)->ctest_data = ctest_data;
 
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
+                                               SUNNonlinSolNormFn NormFn,
+                                               void* norm_fn_data)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  NEWTON_CONTENT(NLS)->norm_fn      = NormFn;
+  NEWTON_CONTENT(NLS)->norm_fn_data = norm_fn_data;
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode SUNNonlinSolSetConvRateFn_Newton(
+  SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn,
+  void* conv_rate_fn_data)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  NEWTON_CONTENT(NLS)->conv_rate_fn      = ConvRateFn;
+  NEWTON_CONTENT(NLS)->conv_rate_fn_data = conv_rate_fn_data;
   return SUN_SUCCESS;
 }
 

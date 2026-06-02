@@ -34,6 +34,7 @@
 
 /* Content structure accessibility macros */
 #define AUTO_CONTENT(S)   ((SUNNonlinearSolverContent_Auto)(S->content))
+#define FP_CONTENT(S)     ((SUNNonlinearSolverContent_FixedPoint)(S->content))
 #define NEWTON_CONTENT(S) ((SUNNonlinearSolverContent_Newton)(S->content))
 
 /* Default switching parameters 
@@ -54,6 +55,12 @@ static SUNErrCode SUNNonlinSolSetOptions_Auto(SUNNonlinearSolver NLS,
                                               char* argv[]);
 static SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
                                             SUNNonlinSolSysFn SysFn);
+static SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
+                                             SUNNonlinSolNormFn NormFn,
+                                             void* norm_fn_data);
+static SUNErrCode SUNNonlinSolSetConvRateFn_Auto(
+  SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn,
+  void* conv_rate_fn_data);
 static SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS,
                                                int maxiters);
 static SUNErrCode setFromCommandLine_Auto(SUNNonlinearSolver NLS,
@@ -100,6 +107,8 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   NLS->ops->setsysfn        = SUNNonlinSolSetSysFn_Auto;
   NLS->ops->setsysfns       = SUNNonlinSolSetSysFns_Auto;
   NLS->ops->setctestfn      = SUNNonlinSolSetConvTestFn_Auto;
+  NLS->ops->setnormfn       = SUNNonlinSolSetNormFn_Auto;
+  NLS->ops->setconvratefn   = SUNNonlinSolSetConvRateFn_Auto;
   NLS->ops->setlsetupfn     = SUNNonlinSolSetLSetupFn_Auto;
   NLS->ops->setlsolvefn     = SUNNonlinSolSetLSolveFn_Auto;
   NLS->ops->setoptions      = SUNNonlinSolSetOptions_Auto;
@@ -199,15 +208,6 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   C->num_iters      = 0;
   C->num_conv_fails = 0;
 
-  C->fp_solver->norm_fn          = NLS->norm_fn;
-  C->fp_solver->norm_fn_data     = NLS->norm_fn_data;
-  C->newton_solver->norm_fn      = NLS->norm_fn;
-  C->newton_solver->norm_fn_data = NLS->norm_fn_data;
-  C->fp_solver->conv_rate_fn     = NLS->conv_rate_fn;
-  C->fp_solver->conv_rate_fn_data = NLS->conv_rate_fn_data;
-  C->newton_solver->conv_rate_fn = NLS->conv_rate_fn;
-  C->newton_solver->conv_rate_fn_data = NLS->conv_rate_fn_data;
-
   sub_callsetup = callSetup;
 
   for (;;)
@@ -274,10 +274,14 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
        don't consider switching. */
     if (retval == SUN_SUCCESS) { return retval; }
 
-    if (C->fp_solver->conv_rate_fn == NULL) { return SUN_ERR_NOT_IMPLEMENTED; }
+    if (FP_CONTENT(C->fp_solver)->conv_rate_fn == NULL)
+    {
+      return SUN_ERR_NOT_IMPLEMENTED;
+    }
 
-    crate_retval =
-      C->fp_solver->conv_rate_fn(&crate, C->fp_solver->conv_rate_fn_data);
+    crate_retval = FP_CONTENT(C->fp_solver)
+                     ->conv_rate_fn(&crate,
+                                    FP_CONTENT(C->fp_solver)->conv_rate_fn_data);
     if (crate_retval != SUN_SUCCESS) { return crate_retval; }
 
     /* Check if fixed-point appears to be diverging. */
@@ -411,6 +415,30 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
   SUNFunctionBegin(NLS->sunctx);
   SUNCheckCall(
     SUNNonlinSolSetLSolveFn(AUTO_CONTENT(NLS)->newton_solver, LSolveFn));
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
+                                             SUNNonlinSolNormFn NormFn,
+                                             void* norm_fn_data)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNCheckCall(
+    SUNNonlinSolSetNormFn(AUTO_CONTENT(NLS)->fp_solver, NormFn, norm_fn_data));
+  SUNCheckCall(SUNNonlinSolSetNormFn(AUTO_CONTENT(NLS)->newton_solver, NormFn,
+                                     norm_fn_data));
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode SUNNonlinSolSetConvRateFn_Auto(
+  SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn,
+  void* conv_rate_fn_data)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNCheckCall(SUNNonlinSolSetConvRateFn(AUTO_CONTENT(NLS)->fp_solver,
+                                         ConvRateFn, conv_rate_fn_data));
+  SUNCheckCall(SUNNonlinSolSetConvRateFn(AUTO_CONTENT(NLS)->newton_solver,
+                                         ConvRateFn, conv_rate_fn_data));
   return SUN_SUCCESS;
 }
 

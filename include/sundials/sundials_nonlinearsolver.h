@@ -127,6 +127,9 @@ struct _generic_SUNNonlinearSolver_Ops
   SUNErrCode (*setlsetupfn)(SUNNonlinearSolver, SUNNonlinSolLSetupFn);
   SUNErrCode (*setlsolvefn)(SUNNonlinearSolver, SUNNonlinSolLSolveFn);
   SUNErrCode (*setctestfn)(SUNNonlinearSolver, SUNNonlinSolConvTestFn, void*);
+  SUNErrCode (*setnormfn)(SUNNonlinearSolver, SUNNonlinSolNormFn, void*);
+  SUNErrCode (*setconvratefn)(SUNNonlinearSolver, SUNNonlinSolConvRateFn,
+                              void*);
   SUNErrCode (*setoptions)(SUNNonlinearSolver NLS, const char* NLSid,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNNonlinearSolver, int);
@@ -144,10 +147,6 @@ struct _generic_SUNNonlinearSolver
   void* content;
   void* python;
   SUNNonlinearSolver_Ops ops;
-  SUNNonlinSolNormFn norm_fn;
-  void* norm_fn_data;
-  SUNNonlinSolConvRateFn conv_rate_fn;
-  void* conv_rate_fn_data;
   SUNContext sunctx;
 };
 
