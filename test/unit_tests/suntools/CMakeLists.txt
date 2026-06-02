@@ -18,12 +18,6 @@
 # Locate suntools module source directory.
 set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/suntools/src/suntools")
 
-if(NOT EXISTS "${SUNTOOLS_DIR}/logs.py")
-  message(
-    WARNING "Skipped suntools log parser tests (suntools/logs.py not found)")
-  return()
-endif()
-
 # TODO(DJG): Update sundials_add_test to better handle python tests
 
 # Add the test and configure the environment
