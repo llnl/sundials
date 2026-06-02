@@ -36,11 +36,17 @@
 #define AUTO_CONTENT(S)   ((SUNNonlinearSolverContent_Auto)(S->content))
 #define NEWTON_CONTENT(S) ((SUNNonlinearSolverContent_Newton)(S->content))
 
-/* Default switching parameters */
+/* Default switching parameters 
+   2.0 and 0.8 come from the numerical experiments in Norsett & Thomsen 1986,
+   as does the Newton to fixed-point switch delay of 10 solves. 
+   The idea behind setting the fixed-point to Newton switch delay to 1 is to
+   allow the integrator to see at least one failed convergence test, cut the time step,
+   and try fixed-point again before switching to Newton. 
+*/
 #define SUNNLS_AUTO_DEFAULT_NEWT_TO_FP_THRESHOLD SUN_RCONST(2.0)
 #define SUNNLS_AUTO_DEFAULT_FP_TO_NEWT_THRESHOLD SUN_RCONST(0.8)
 #define SUNNLS_AUTO_DEFAULT_NEWT_TO_FP_DELAY     10
-#define SUNNLS_AUTO_DEFAULT_FP_TO_NEWT_DELAY     0
+#define SUNNLS_AUTO_DEFAULT_FP_TO_NEWT_DELAY     1
 
 static SUNErrCode SUNNonlinSolSetOptions_Auto(SUNNonlinearSolver NLS,
                                               const char* NLSid,
@@ -193,9 +199,9 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   C->num_iters      = 0;
   C->num_conv_fails = 0;
 
-  C->fp_solver->norm_fn         = NLS->norm_fn;
-  C->fp_solver->norm_fn_data    = NLS->norm_fn_data;
-  C->newton_solver->norm_fn     = NLS->norm_fn;
+  C->fp_solver->norm_fn          = NLS->norm_fn;
+  C->fp_solver->norm_fn_data     = NLS->norm_fn_data;
+  C->newton_solver->norm_fn      = NLS->norm_fn;
   C->newton_solver->norm_fn_data = NLS->norm_fn_data;
 
   sub_callsetup = callSetup;
@@ -231,15 +237,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
       else { C->newton_num_conv_fails_total += nconvfails; }
     }
 
-    if (retval == SUN_NLS_SWITCH)
-    {
-      sub_callsetup =
-        (C->active_solver_type == SUNNONLINSOL_AUTO_NEWTON &&
-         NEWTON_CONTENT(C->newton_solver)->LSetup)
-          ? SUNTRUE
-          : SUNFALSE;
-      continue;
-    }
+    if (retval == SUN_NLS_SWITCH) { continue; }
 
     /* increment solve counter used for switch-delay gating */
     C->num_solves_since_switch++;
@@ -278,8 +276,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
 
     /* Check if fixed-point appears to be diverging. */
     sunbooleantype diverging = crate >= C->fp_to_newt_threshold;
-    sunbooleantype dont_delay =
-      C->num_solves_since_switch >= C->fp_to_newt_delay;
+    sunbooleantype dont_delay = C->num_solves_since_switch >= C->fp_to_newt_delay;
 
     if (diverging && dont_delay)
     {
@@ -288,8 +285,9 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
       C->switch_count++;
       SUNLogInfo(auto_nls->sunctx->logger, "auto-nonlinear-solver-switch",
                  "from = Fixed-Point, to = Newton, crate = " SUN_FORMAT_G
-                 ", threshold = " SUN_FORMAT_G ", delay = %li",
-                 crate, C->fp_to_newt_threshold, C->fp_to_newt_delay);
+                 ", threshold = " SUN_FORMAT_G
+                 ", delay = %li, user_ctest_retval = %i",
+                 crate, C->fp_to_newt_threshold, C->fp_to_newt_delay, retval);
       return SUN_NLS_SWITCH;
     }
   }
@@ -303,8 +301,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
     }
 
     sunbooleantype contraction = stiffr < C->newt_to_fp_threshold;
-    sunbooleantype dont_delay =
-      C->num_solves_since_switch >= C->newt_to_fp_delay;
+    sunbooleantype dont_delay = C->num_solves_since_switch >= C->newt_to_fp_delay;
 
     if (contraction && dont_delay)
     {
@@ -313,8 +310,9 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
       C->switch_count++;
       SUNLogInfo(auto_nls->sunctx->logger, "auto-nonlinear-solver-switch",
                  "from = Newton, to = Fixed-Point, stiffr = " SUN_FORMAT_G
-                 ", threshold = " SUN_FORMAT_G ", delay = %li",
-                 stiffr, C->newt_to_fp_threshold, C->newt_to_fp_delay);
+                 ", threshold = " SUN_FORMAT_G
+                 ", delay = %li, user_ctest_retval = %i",
+                 stiffr, C->newt_to_fp_threshold, C->newt_to_fp_delay, retval);
       return SUN_NLS_SWITCH;
     }
   }
@@ -354,9 +352,8 @@ SUNErrCode SUNNonlinSolFree_Auto(SUNNonlinearSolver NLS)
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
-                                            SUNDIALS_MAYBE_UNUSED
-                                              SUNNonlinSolSysFn SysFn)
+static SUNErrCode SUNNonlinSolSetSysFn_Auto(
+  SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED SUNNonlinSolSysFn SysFn)
 {
   SUNFunctionBegin(NLS->sunctx);
   return SUN_ERR_NOT_IMPLEMENTED;
@@ -530,8 +527,8 @@ SUNErrCode SUNNonlinSolGetNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
                                                   long int* fp_nconvfails,
                                                   long int* newt_nconvfails)
 {
-  return SUNNonlinSolGetTotalNumConvFailsByType_Auto(
-    NLS, fp_nconvfails, newt_nconvfails);
+  return SUNNonlinSolGetTotalNumConvFailsByType_Auto(NLS, fp_nconvfails,
+                                                     newt_nconvfails);
 }
 
 SUNErrCode SUNNonlinSolGetUpdateNorm_Auto(SUNNonlinearSolver NLS,

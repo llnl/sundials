@@ -7091,14 +7091,13 @@ static int cvNls(CVodeMem cv_mem, int nflag)
   }
 
   /* if the solve failed return */
-  if (flag != SUN_SUCCESS && flag != SUN_NLS_SWITCH)
+  if (flag != SUN_SUCCESS)
   {
     SUNLogInfo(CV_LOGGER, "end-nonlinear-solve",
                "status = failed, flag = %i, iters = %li", flag, nni_inc);
 
     return (flag);
   }
-  else if (flag == SUN_NLS_SWITCH) { flag = SUN_NLS_CONV_RECVR; }
 
   /* solve successful */
 
