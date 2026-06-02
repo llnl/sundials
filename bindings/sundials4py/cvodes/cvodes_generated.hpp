@@ -551,13 +551,13 @@ m.def(
 
 m.def(
   "CVodeGetRootInfo",
-  [](void* cvode_mem, std::vector<int> rootsfound_1d) -> int
+  [](void* cvode_mem, sundials4py::IntArray1d rootsfound_1d) -> int
   {
     auto CVodeGetRootInfo_adapt_arr_ptr_to_std_vector =
-      [](void* cvode_mem, std::vector<int> rootsfound_1d) -> int
+      [](void* cvode_mem, sundials4py::IntArray1d rootsfound_1d) -> int
     {
-      int* rootsfound_1d_ptr = rootsfound_1d.empty() ? nullptr
-                                                     : rootsfound_1d.data();
+      int* rootsfound_1d_ptr = rootsfound_1d.size() == 0 ? nullptr
+                                                         : rootsfound_1d.data();
 
       auto lambda_result = CVodeGetRootInfo(cvode_mem, rootsfound_1d_ptr);
       return lambda_result;
@@ -1185,13 +1185,13 @@ m.def(
 
 m.def(
   "CVodeGetStgrSensNumNonlinSolvIters",
-  [](void* cvode_mem, std::vector<long> nSTGR1niters_1d) -> int
+  [](void* cvode_mem, sundials4py::LongArray1d nSTGR1niters_1d) -> int
   {
     auto CVodeGetStgrSensNumNonlinSolvIters_adapt_arr_ptr_to_std_vector =
-      [](void* cvode_mem, std::vector<long> nSTGR1niters_1d) -> int
+      [](void* cvode_mem, sundials4py::LongArray1d nSTGR1niters_1d) -> int
     {
       long* nSTGR1niters_1d_ptr =
-        nSTGR1niters_1d.empty() ? nullptr : nSTGR1niters_1d.data();
+        nSTGR1niters_1d.size() == 0 ? nullptr : nSTGR1niters_1d.data();
 
       auto lambda_result =
         CVodeGetStgrSensNumNonlinSolvIters(cvode_mem, nSTGR1niters_1d_ptr);
@@ -1205,13 +1205,13 @@ m.def(
 
 m.def(
   "CVodeGetStgrSensNumNonlinSolvConvFails",
-  [](void* cvode_mem, std::vector<long> nSTGR1nfails_1d) -> int
+  [](void* cvode_mem, sundials4py::LongArray1d nSTGR1nfails_1d) -> int
   {
     auto CVodeGetStgrSensNumNonlinSolvConvFails_adapt_arr_ptr_to_std_vector =
-      [](void* cvode_mem, std::vector<long> nSTGR1nfails_1d) -> int
+      [](void* cvode_mem, sundials4py::LongArray1d nSTGR1nfails_1d) -> int
     {
       long* nSTGR1nfails_1d_ptr =
-        nSTGR1nfails_1d.empty() ? nullptr : nSTGR1nfails_1d.data();
+        nSTGR1nfails_1d.size() == 0 ? nullptr : nSTGR1nfails_1d.data();
 
       auto lambda_result =
         CVodeGetStgrSensNumNonlinSolvConvFails(cvode_mem, nSTGR1nfails_1d_ptr);
@@ -1225,17 +1225,17 @@ m.def(
 
 m.def(
   "CVodeGetStgrSensNonlinSolvStats",
-  [](void* cvode_mem, std::vector<long> nSTGR1niters_1d,
-     std::vector<long> nSTGR1nfails_1d) -> int
+  [](void* cvode_mem, sundials4py::LongArray1d nSTGR1niters_1d,
+     sundials4py::LongArray1d nSTGR1nfails_1d) -> int
   {
     auto CVodeGetStgrSensNonlinSolvStats_adapt_arr_ptr_to_std_vector =
-      [](void* cvode_mem, std::vector<long> nSTGR1niters_1d,
-         std::vector<long> nSTGR1nfails_1d) -> int
+      [](void* cvode_mem, sundials4py::LongArray1d nSTGR1niters_1d,
+         sundials4py::LongArray1d nSTGR1nfails_1d) -> int
     {
       long* nSTGR1niters_1d_ptr =
-        nSTGR1niters_1d.empty() ? nullptr : nSTGR1niters_1d.data();
+        nSTGR1niters_1d.size() == 0 ? nullptr : nSTGR1niters_1d.data();
       long* nSTGR1nfails_1d_ptr =
-        nSTGR1nfails_1d.empty() ? nullptr : nSTGR1nfails_1d.data();
+        nSTGR1nfails_1d.size() == 0 ? nullptr : nSTGR1nfails_1d.data();
 
       auto lambda_result = CVodeGetStgrSensNonlinSolvStats(cvode_mem,
                                                            nSTGR1niters_1d_ptr,
@@ -1251,13 +1251,13 @@ m.def(
 
 m.def(
   "CVodeGetNumStepStgrSensSolveFails",
-  [](void* cvode_mem, std::vector<long> nSTGR1ncfails_1d) -> int
+  [](void* cvode_mem, sundials4py::LongArray1d nSTGR1ncfails_1d) -> int
   {
     auto CVodeGetNumStepStgrSensSolveFails_adapt_arr_ptr_to_std_vector =
-      [](void* cvode_mem, std::vector<long> nSTGR1ncfails_1d) -> int
+      [](void* cvode_mem, sundials4py::LongArray1d nSTGR1ncfails_1d) -> int
     {
       long* nSTGR1ncfails_1d_ptr =
-        nSTGR1ncfails_1d.empty() ? nullptr : nSTGR1ncfails_1d.data();
+        nSTGR1ncfails_1d.size() == 0 ? nullptr : nSTGR1ncfails_1d.data();
 
       auto lambda_result =
         CVodeGetNumStepStgrSensSolveFails(cvode_mem, nSTGR1ncfails_1d_ptr);

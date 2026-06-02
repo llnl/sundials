@@ -11,7 +11,36 @@ functions to queue and flush log messages.
 
 Updated `examples/cvode/petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
 
+Added the `ARKODE_SSP_ERK_3_1_2`, `ARKODE_SSP_ERK_4_1_2`,
+`ARKODE_SSP_ERK_4_2_3`, `ARKODE_SSP_ERK_10_3_4`, `ARKODE_SSP_LSPUM_ERK_3_1_2`,
+and `ARKODE_ASCHER_ERK_3_1_2` embedded explicit Runge-Kutta Butcher tables.
+
+Added the `ARKODE_SSP_DIRK_3_1_2`, `ARKODE_SSP_LSPUM_SDIRK_3_1_2`,
+`ARKODE_ESDIRK_4_2_3`, and `ARKODE_ASCHER_SDIRK_3_1_2` embedded diagonally
+implicit Runge-Kutta Butcher tables.
+
+Of these, embedded additive Runge-Kutta methods may be formed using
+`ARKODE_SSP_ERK_3_1_2`+`ARKODE_SSP_DIRK_3_1_2`,
+`ARKODE_SSP_ERK_4_2_3`+`ARKODE_ESDIRK_4_2_3`,
+`ARKODE_SSP_LSPUM_ERK_3_1_2`+`ARKODE_SSP_LSPUM_SDIRK_3_1_2`,
+and `ARKODE_ASCHER_ERK_3_1_2`+`ARKODE_ASCHER_SDIRK_3_1_2`.
+
+Added the `ARKODE_IMEX_MRI_GARK_ASCHER_ARK2` and `ARKODE_IMEX_MRI_GARK_ARK2`
+embedded implicit-explicit MRI-GARK coupling tables.
+
 ### Bug Fixes
+
+Fixed a minor bug where the number of required stages for STS methods
+in the LSRKStep module was incorrectly computed using the spectral
+radius instead of the real part of the Jacobian eigenvalues.
+
+Fixed a minor bug where the negative real extent of the stability region
+for the RKC method was not being properly computed, which could result
+in an underestimation of the number of stages required for stability.
+
+Fixed a minor bug where STS methods were limited to one fewer than
+the maximum allowed number of stages. STS can now use the full maximum
+number of stages.
 
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 `malloc`.
@@ -34,6 +63,21 @@ Fixed a bug where IDAS would incorrectly compute the quadrature predictor when
 IDACalcIC was used. In some cases, this lead to an inconsistent solution in the
 forward solve compared to the forward recomputation from a checkpoint,
 ultimately causing a segfault.
+
+Fixed a CMake bug where Fortran modules were not created for LSRKStep,
+ForcingStep, and SplittingStep.
+
+Corrected the version number used in version added, changed, and deprecated
+notes in the documentation to always use the SUNDIALS version number with the
+package version number as a parenthetical note when it differs from the SUNDIALS
+version number.
+
+Fixed a bug in sundials4py where the `CVodeGetRootInfo`, `ARKodeGetRootInfo`,
+and `IDAGetRootInfo` functions did not correctly return the rootsfound
+array. This addresses [Issue #937](https://github.com/llnl/sundials/issues/937).
+
+Fixed a bug in ERKStep where calling `ARKodeResize` before `ARKodeEvolve` or
+`ARKodeInit` would result in a segmentation fault.
 
 ### Deprecation Notices
 

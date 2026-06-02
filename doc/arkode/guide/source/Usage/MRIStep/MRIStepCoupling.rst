@@ -230,7 +230,7 @@ are defined ``arkode/arkode_mristep.h``.
          C->group[1][1] = 4;
          C->group[2][0] = 3;
 
-   .. versionchanged:: 6.2.0
+   .. versionchanged:: 7.2.0 (ARKODE 6.2.0)
 
       This function now supports a broader range of MRI method types.
 
@@ -357,7 +357,7 @@ are defined ``arkode/arkode_mristep.h``.
    :retval ARK_SUCCESS: if successful.
    :retval ARK_MEM_NULL: if the Butcher table memory was ``NULL``.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -481,6 +481,8 @@ Notes regarding the above table:
    :index:`ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL`  :math:`2^*`        --               1
    :index:`ARKODE_IMEX_MRI_GARK_MIDPOINT`     2                  --               2
    :index:`ARKODE_IMEX_MRI_SR21`              :math:`2^{\circ}`  1                3                :cite:p:`Fish:24`
+   :index:`ARKODE_IMEX_MRI_GARK_ASCHER_ARK2`       2                  1                2
+   :index:`ARKODE_IMEX_MRI_GARK_ARK2`      2                  1                2
    :index:`ARKODE_IMEX_MRI_GARK3a`            :math:`3^*`        --               2                :cite:p:`ChiRen:21`
    :index:`ARKODE_IMEX_MRI_GARK3b`            3                  --               2                :cite:p:`ChiRen:21`
    :index:`ARKODE_IMEX_MRI_SR32`              :math:`3^{\circ}`  2                4                :cite:p:`Fish:24`
