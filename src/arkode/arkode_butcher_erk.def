@@ -620,6 +620,45 @@ ARK_BUTCHER_TABLE(ARKODE_SAYFY_ABURUB_6_3_4, { /* Sayfy-Aburub-4-3-ERK */
     return B;
   })
 
+ARK_BUTCHER_TABLE(ARKODE_KUTTA_RK4a_4_4, { /* Kutta-4-4 */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(4, SUNFALSE);
+    B->q = 4;
+    B->p = 0;
+    B->A[1][0] = SUN_RCONST(0.5);
+    B->A[2][1] = SUN_RCONST(0.5);
+    B->A[3][2] = SUN_RCONST(1.0);
+
+    B->b[0] = SUN_RCONST(1.0)/SUN_RCONST(6.0);
+    B->b[1] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->b[2] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->b[3] = SUN_RCONST(1.0)/SUN_RCONST(6.0);
+
+    B->c[1] = SUN_RCONST(0.5);
+    B->c[2] = SUN_RCONST(0.5);
+    B->c[3] = SUN_RCONST(1.0);
+  })
+
+ARK_BUTCHER_TABLE(ARKODE_KUTTA_RK4b_4_4, { /* Kutta-RK4b-4-4 */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(4, SUNFALSE);
+    B->q = 4;
+    B->p = 0;
+    B->A[1][0] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->A[2][0] = SUN_RCONST(-1.0)/SUN_RCONST(3.0);
+    B->A[2][1] = SUN_RCONST(1.0);
+    B->A[3][0] = SUN_RCONST(1.0);
+    B->A[3][1] = SUN_RCONST(-1.0);
+    B->A[3][2] = SUN_RCONST(1.0);
+
+    B->b[0] = SUN_RCONST(1.0)/SUN_RCONST(8.0);
+    B->b[1] = SUN_RCONST(3.0)/SUN_RCONST(8.0);
+    B->b[2] = SUN_RCONST(3.0)/SUN_RCONST(8.0);
+    B->b[3] = SUN_RCONST(1.0)/SUN_RCONST(8.0);
+
+    B->c[1] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->c[2] = SUN_RCONST(2.0)/SUN_RCONST(3.0);
+    B->c[3] = SUN_RCONST(1.0);
+  })
+
 ARK_BUTCHER_TABLE(ARKODE_TSITOURAS_7_4_5, { /* Tsitouras-ERK */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(7, SUNTRUE);
     B->q = 5;
