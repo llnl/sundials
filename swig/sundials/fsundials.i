@@ -21,6 +21,8 @@
 // By default, wrap all constants as native fortran PARAMETERs
 %fortranconst;
 
+%include <complex.i>
+
 // Inform SWIG of the SUNDIALS_EXPORT macro
 #define SUNDIALS_EXPORT
 #define SUNDIALS_DEPRECATED_EXPORT
@@ -53,7 +55,7 @@
 // Treat array of N_Vectors as an opaque pointer
 %apply void* { N_Vector* };
 
-// Assume sunrealtype* is an array of doubles
+// Treat sunrealtype* as an array of configured double-precision reals
 %apply double[] { sunrealtype* };
 
 #ifdef GENERATE_INT32

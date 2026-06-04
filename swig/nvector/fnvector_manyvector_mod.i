@@ -35,28 +35,28 @@
 
 %insert("wrapper") %{
 #ifdef SUNDIALS_INT32_T
-SWIGEXPORT double * _wrap_FN_VGetSubvectorArrayPointer_ManyVector(N_Vector farg1, int32_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FN_VGetSubvectorArrayPointer_ManyVector(N_Vector farg1, int32_t const *farg2) {
+  sunscalartype * fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype arg2 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (N_Vector)(farg1);
   arg2 = (sunindextype)(*farg2);
-  result = (sunrealtype *)N_VGetSubvectorArrayPointer_ManyVector(arg1,arg2);
+  result = (sunscalartype *)N_VGetSubvectorArrayPointer_ManyVector(arg1,arg2);
   fresult = result;
   return fresult;
 }
 #else
-SWIGEXPORT double * _wrap_FN_VGetSubvectorArrayPointer_ManyVector(N_Vector farg1, int64_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FN_VGetSubvectorArrayPointer_ManyVector(N_Vector farg1, int64_t const *farg2) {
+  sunscalartype * fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype arg2 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (N_Vector)(farg1);
   arg2 = (sunindextype)(*farg2);
-  result = (sunrealtype *)N_VGetSubvectorArrayPointer_ManyVector(arg1,arg2);
+  result = (sunscalartype *)N_VGetSubvectorArrayPointer_ManyVector(arg1,arg2);
   fresult = result;
   return fresult;
 }
@@ -86,7 +86,11 @@ end function
 function FN_VGetSubvectorArrayPointer_ManyVector(v, vec_num) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
+#else
 real(C_DOUBLE), dimension(:), pointer :: swig_result
+#endif
 type(N_Vector), target, intent(inout) :: v
 #ifdef SUNDIALS_INT32_T
 integer(C_INT32_T), intent(in) :: vec_num

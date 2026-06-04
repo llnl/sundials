@@ -37,40 +37,40 @@
 %include "sunmatrix/sunmatrix_band.h"
 
 %insert("wrapper") %{
-SWIGEXPORT double * _wrap_FSUNBandMatrix_Data(SUNMatrix farg1) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FSUNBandMatrix_Data(SUNMatrix farg1) {
+  sunscalartype * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (SUNMatrix)(farg1);
-  result = (sunrealtype *)SUNBandMatrix_Data(arg1);
+  result = (sunscalartype *)SUNBandMatrix_Data(arg1);
   fresult = result;
   return fresult;
 }
 
 #ifdef SUNDIALS_INT32_T
-SWIGEXPORT double * _wrap_FSUNBandMatrix_Column(SUNMatrix farg1, int32_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FSUNBandMatrix_Column(SUNMatrix farg1, int32_t const *farg2) {
+  sunscalartype * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype arg2 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (SUNMatrix)(farg1);
   arg2 = (sunindextype)(*farg2);
-  result = (sunrealtype *)SUNBandMatrix_Column(arg1,arg2);
+  result = (sunscalartype *)SUNBandMatrix_Column(arg1,arg2);
   fresult = result;
   return fresult;
 }
 #else
-SWIGEXPORT double * _wrap_FSUNBandMatrix_Column(SUNMatrix farg1, int64_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FSUNBandMatrix_Column(SUNMatrix farg1, int64_t const *farg2) {
+  sunscalartype * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype arg2 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (SUNMatrix)(farg1);
   arg2 = (sunindextype)(*farg2);
-  result = (sunrealtype *)SUNBandMatrix_Column(arg1,arg2);
+  result = (sunscalartype *)SUNBandMatrix_Column(arg1,arg2);
   fresult = result;
   return fresult;
 }
@@ -109,7 +109,11 @@ end function
 function FSUNBandMatrix_Data(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
+#else
 real(C_DOUBLE), dimension(:), pointer :: swig_result
+#endif
 type(SUNMatrix), target, intent(inout) :: a
 type(C_PTR) :: fresult
 type(C_PTR) :: farg1
@@ -122,7 +126,11 @@ end function
 function FSUNBandMatrix_Column(a, j) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
+#else
 real(C_DOUBLE), dimension(:), pointer :: swig_result
+#endif
 type(SUNMatrix), target, intent(inout) :: a
 #ifdef SUNDIALS_INT32_T
 integer(C_INT32_T), intent(in) :: j
@@ -145,4 +153,3 @@ fresult = swigc_FSUNBandMatrix_Column(farg1, farg2)
 call c_f_pointer(fresult, swig_result, [1])
 end function
 %}
-

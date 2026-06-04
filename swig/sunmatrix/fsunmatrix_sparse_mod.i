@@ -39,13 +39,13 @@
 %include "sunmatrix/sunmatrix_sparse.h"
 
 %insert("wrapper") %{
-SWIGEXPORT double * _wrap_FSUNSparseMatrix_Data(SUNMatrix farg1) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FSUNSparseMatrix_Data(SUNMatrix farg1) {
+  sunscalartype * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (SUNMatrix)(farg1);
-  result = (sunrealtype *)SUNSparseMatrix_Data(arg1);
+  result = (sunscalartype *)SUNSparseMatrix_Data(arg1);
   fresult = result;
   return fresult;
 }
@@ -134,7 +134,11 @@ end function
 function FSUNSparseMatrix_Data(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
+#else
 real(C_DOUBLE), dimension(:), pointer :: swig_result
+#endif
 type(SUNMatrix), target, intent(inout) :: a
 type(C_PTR) :: fresult
 type(C_PTR) :: farg1

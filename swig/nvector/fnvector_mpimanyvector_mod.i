@@ -35,8 +35,8 @@
 
 %insert("wrapper") %{
 #ifdef SUNDIALS_INT32_T
-SWIGEXPORT double * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector farg1, int32_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunrealtype * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector farg1, int32_t const *farg2) {
+  sunrealtype * fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype arg2 ;
   sunrealtype *result = 0 ;
@@ -48,8 +48,8 @@ SWIGEXPORT double * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector fa
   return fresult;
 }
 #else
-SWIGEXPORT double * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector farg1, int64_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunrealtype * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector farg1, int64_t const *farg2) {
+  sunrealtype * fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype arg2 ;
   sunrealtype *result = 0 ;
