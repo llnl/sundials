@@ -16,6 +16,7 @@
 
 import argparse
 import sys
+from typing import List, Optional
 
 from suntools import logs as sunlogs
 
@@ -70,7 +71,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     return int(args.func(args))

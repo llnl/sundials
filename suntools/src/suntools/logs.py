@@ -21,7 +21,7 @@
 
 import re
 import json
-from typing import Iterable
+from typing import Iterable, List, Set
 
 
 def _convert_to_num(s):
@@ -125,7 +125,7 @@ def _label_region_info(label):
 
     :param str label: The SUNLogger label.
     :returns: (event, region_name, is_list) where event is "begin", "end", or None.
-    :rtype: tuple[str|None, str|None, bool]
+    :rtype: tuple
     """
     if not label:
         return None, None, False
@@ -147,13 +147,13 @@ def _label_region_info(label):
     return event, region_name, is_list
 
 
-def _split_filter_list(value: str) -> set[str]:
+def _split_filter_list(value: str) -> Set[str]:
     parts = [p.strip().lower() for p in value.split(",")]
     return {p for p in parts if p}
 
 
 def _iter_filtered_lines(
-    lines: list[str], selected: set[str], invert: bool = False
+    lines: List[str], selected: Set[str], invert: bool = False
 ) -> Iterable[str]:
     step_depth = 0
     nonlinear_depth = 0
@@ -165,7 +165,7 @@ def _iter_filtered_lines(
         entry = _parse_logfile_line(line.rstrip("\n"), i, lines)
         if not entry:
             # Attribute non-log lines to the current region context.
-            cats: set[str] = set()
+            cats: Set[str] = set()
             if linear_depth > 0:
                 cats.add("linear")
             elif nonlinear_depth > 0:
@@ -199,7 +199,7 @@ def _iter_filtered_lines(
         )
         linear_active = linear_depth > 0 or (region_name == "linear-solve" and event == "begin")
 
-        cats: set[str] = set()
+        cats: Set[str] = set()
 
         if linear_active:
             cats.add("linear")
@@ -301,7 +301,7 @@ def log_file_to_list(filename):
 
     :param str filename: The name of the log file to parse.
     :returns: A list of dictionaries, one per step attempt.
-    :rtype: list[dict]
+    :rtype: list
 
     The list returned for a time integrator log file will contain a dictionary for each
     step attempt:
