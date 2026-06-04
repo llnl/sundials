@@ -399,8 +399,8 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   SUNFunctionBegin(S->sunctx);
 
   /* local data and shortcut variables */
-  sunscalartype alpha, beta, omega, beta_denom, beta_num;
-  sunrealtype omega_denom, r_norm, rho;
+  sunscalartype alpha, beta, omega, omega_denom, beta_denom, beta_num;
+  sunrealtype r_norm, rho;
   N_Vector r_star, r, p, q, u, Ap, vtemp;
   sunbooleantype preOnLeft, preOnRight, scale_x, scale_b, converged;
   sunbooleantype* zeroguess;
