@@ -134,40 +134,39 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes         = NULL;
-  content->ATdata         = NULL;
-  content->V              = NULL;
-  content->q              = NULL;
-  content->rhs_linY       = NULL;
-  content->rhs_linT       = ZERO;
-  content->Fy             = NULL;
-  content->work           = NULL;
-  content->kry_dim        = kry_dim;
-  content->num_warmups    = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->num_iters      = 0;
-  content->num_ATimes     = 0;
-  content->init_guess_set = SUNFALSE;
-  content->warmup_to_tol  = SUNFALSE;
-  content->tol_warmup     = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->rhsfn          = NULL;
-  content->rhs_data       = NULL;
-  content->nfevals        = 0;
-  content->LAPACK_A       = NULL;
-  content->LAPACK_wr      = NULL;
-  content->LAPACK_wi      = NULL;
-  content->LAPACK_work    = NULL;
-  content->LAPACK_lwork   = 0;
-  content->LAPACK_arr     = NULL;
-  content->Hes            = NULL;
+  content->ATimes        = NULL;
+  content->ATdata        = NULL;
+  content->V             = NULL;
+  content->q             = NULL;
+  content->rhs_linY      = NULL;
+  content->rhs_linT      = ZERO;
+  content->Fy            = NULL;
+  content->work          = NULL;
+  content->kry_dim       = kry_dim;
+  content->num_warmups   = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->num_iters     = 0;
+  content->num_ATimes    = 0;
+  content->warmup_to_tol = SUNFALSE;
+  content->tol_warmup    = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->rhsfn         = NULL;
+  content->rhs_data      = NULL;
+  content->nfevals       = 0;
+  content->LAPACK_A      = NULL;
+  content->LAPACK_wr     = NULL;
+  content->LAPACK_wi     = NULL;
+  content->LAPACK_work   = NULL;
+  content->LAPACK_lwork  = 0;
+  content->LAPACK_arr    = NULL;
+  content->Hes           = NULL;
 
   /* Allocate content */
   content->q = N_VClone(q);
   SUNCheckLastErrNull();
 
-  N_VScale(ONE, q, content->q);
+  content->V = N_VCloneVectorArray(kry_dim + 1, q);
   SUNCheckLastErrNull();
 
-  content->V = N_VCloneVectorArray(kry_dim + 1, q);
+  N_VScale(ONE, q, content->V[0]);
   SUNCheckLastErrNull();
 
   return (DEE);
@@ -323,21 +322,14 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
     SUNAssert(Arnoldi_CONTENT(DEE)->Hes[k], SUN_ERR_MALLOC_FAIL);
   }
 
-  /* Initialize the vector V[0] if not already initialized */
-  if (!(Arnoldi_CONTENT(DEE)->init_guess_set))
-  {
-    sunrealtype normq = N_VDotProd(Arnoldi_CONTENT(DEE)->q,
-                                   Arnoldi_CONTENT(DEE)->q);
-    SUNCheckLastErr();
+  sunrealtype normV = N_VDotProd(Arnoldi_CONTENT(DEE)->V[0],
+                                 Arnoldi_CONTENT(DEE)->V[0]);
+  SUNCheckLastErr();
 
-    normq = SUNRsqrt(normq);
+  normV = SUNRsqrt(normV);
 
-    N_VScale(ONE / normq, Arnoldi_CONTENT(DEE)->q, Arnoldi_CONTENT(DEE)->V[0]);
-    SUNCheckLastErr();
-
-    /* Reset the initial guess flag to its default value */
-    Arnoldi_CONTENT(DEE)->init_guess_set = SUNFALSE;
-  }
+  N_VScale(ONE / normV, Arnoldi_CONTENT(DEE)->V[0], Arnoldi_CONTENT(DEE)->V[0]);
+  SUNCheckLastErr();
 
   return SUN_SUCCESS;
 }
@@ -402,9 +394,6 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Arnoldi(SUNDomEigEstimator DEE,
   /* set the initial guess */
   N_VScale(ONE / normq, q, Arnoldi_CONTENT(DEE)->V[0]);
   SUNCheckLastErr();
-
-  /* set the initial guess flag to true */
-  Arnoldi_CONTENT(DEE)->init_guess_set = SUNTRUE;
 
   return SUN_SUCCESS;
 }

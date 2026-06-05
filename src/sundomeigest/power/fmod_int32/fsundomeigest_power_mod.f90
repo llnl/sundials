@@ -66,8 +66,6 @@ module fsundomeigest_power_mod
   procedure :: get_rhs_linT => swigf_SUNDomEigEstimatorContent_Power__rhs_linT_get
   procedure :: set_num_ATimes => swigf_SUNDomEigEstimatorContent_Power__num_ATimes_set
   procedure :: get_num_ATimes => swigf_SUNDomEigEstimatorContent_Power__num_ATimes_get
-  procedure :: set_init_guess_set => swigf_SUNDomEigEstimatorContent_Power__init_guess_set_set
-  procedure :: get_init_guess_set => swigf_SUNDomEigEstimatorContent_Power__init_guess_set_get
   procedure :: set_rel_tol => swigf_SUNDomEigEstimatorContent_Power__rel_tol_set
   procedure :: get_rel_tol => swigf_SUNDomEigEstimatorContent_Power__rel_tol_get
   procedure :: set_res => swigf_SUNDomEigEstimatorContent_Power__res_set

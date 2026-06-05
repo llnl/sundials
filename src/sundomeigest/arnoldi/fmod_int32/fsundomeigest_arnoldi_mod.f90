@@ -68,8 +68,6 @@ module fsundomeigest_arnoldi_mod
   procedure :: get_rhs_linT => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_linT_get
   procedure :: set_num_ATimes => swigf_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_set
   procedure :: get_num_ATimes => swigf_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_get
-  procedure :: set_init_guess_set => swigf_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_set
-  procedure :: get_init_guess_set => swigf_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_get
   procedure :: set_rhsfn => swigf_SUNDomEigEstimatorContent_Arnoldi__rhsfn_set
   procedure :: get_rhsfn => swigf_SUNDomEigEstimatorContent_Arnoldi__rhsfn_get
   procedure :: set_rhs_data => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_data_set

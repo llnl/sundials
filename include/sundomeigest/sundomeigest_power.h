@@ -50,8 +50,6 @@ struct SUNDomEigEstimatorContent_Power_
 
   long int num_ATimes; /* Number of ATimes calls */
 
-  sunbooleantype init_guess_set; /* flag to check if the initial guess is set */
-
   sunrealtype rel_tol; /* Convergence criteria for the power iteration */
   sunrealtype res;     /* Residual from the last Estimate call */
 
