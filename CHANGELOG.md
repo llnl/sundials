@@ -42,6 +42,10 @@ Fixed a minor bug where STS methods were limited to one fewer than
 the maximum allowed number of stages. STS can now use the full maximum
 number of stages.
 
+Fixed a bug that caused SUNDomEigEstimator_Initialize to overwrite the 
+user-provided initial guess from SUNDomEigEstimator_SetInitialGuess. These 
+routines are now order-independent.
+
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 `malloc`.
 
