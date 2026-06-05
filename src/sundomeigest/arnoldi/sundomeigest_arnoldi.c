@@ -327,13 +327,12 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   if (!(Arnoldi_CONTENT(DEE)->init_guess_set))
   {
     sunrealtype normq = N_VDotProd(Arnoldi_CONTENT(DEE)->q,
-                                  Arnoldi_CONTENT(DEE)->q);
+                                   Arnoldi_CONTENT(DEE)->q);
     SUNCheckLastErr();
 
     normq = SUNRsqrt(normq);
 
-    N_VScale(ONE / normq, Arnoldi_CONTENT(DEE)->q,
-            Arnoldi_CONTENT(DEE)->V[0]);
+    N_VScale(ONE / normq, Arnoldi_CONTENT(DEE)->q, Arnoldi_CONTENT(DEE)->V[0]);
     SUNCheckLastErr();
 
     /* Reset the initial guess flag to its default value */
