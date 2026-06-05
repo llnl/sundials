@@ -54,6 +54,8 @@ struct SUNDomEigEstimatorContent_Arnoldi_
 
   long int num_ATimes; /* Number of ATimes calls */
 
+  sunbooleantype init_guess_set; /* flag to check if the initial guess is set */
+
   SUNRhsFn rhsfn;   /* User provided RHS function */
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */

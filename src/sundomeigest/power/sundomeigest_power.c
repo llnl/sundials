@@ -133,25 +133,26 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes      = NULL;
-  content->ATdata      = NULL;
-  content->V           = NULL;
-  content->q           = NULL;
-  content->q_prev      = NULL;
-  content->rhs_linY    = NULL;
-  content->rhs_linT    = ZERO;
-  content->Fy          = NULL;
-  content->work        = NULL;
-  content->is_complex  = SUNTRUE;
-  content->max_iters   = max_iters;
-  content->num_warmups = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
-  content->rel_tol     = rel_tol;
-  content->res         = ZERO;
-  content->rhsfn       = NULL;
-  content->rhs_data    = NULL;
-  content->nfevals     = 0;
-  content->num_iters   = 0;
-  content->num_ATimes  = 0;
+  content->ATimes         = NULL;
+  content->ATdata         = NULL;
+  content->V              = NULL;
+  content->q              = NULL;
+  content->q_prev         = NULL;
+  content->rhs_linY       = NULL;
+  content->rhs_linT       = ZERO;
+  content->Fy             = NULL;
+  content->work           = NULL;
+  content->is_complex     = SUNTRUE;
+  content->max_iters      = max_iters;
+  content->num_warmups    = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
+  content->rel_tol        = rel_tol;
+  content->res            = ZERO;
+  content->rhsfn          = NULL;
+  content->rhs_data       = NULL;
+  content->nfevals        = 0;
+  content->num_iters      = 0;
+  content->num_ATimes     = 0;
+  content->init_guess_set = SUNFALSE;
 
   /* Allocate content */
   content->q = N_VClone(q);
@@ -284,14 +285,20 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
     SUNAssert(PI_CONTENT(DEE)->q_prev == NULL, SUN_ERR_ARG_CORRUPT);
   }
 
-  /* Initialize the vector V */
-  sunrealtype normq = N_VDotProd(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q);
-  SUNCheckLastErr();
+  /* Initialize the vector V if not already initialized */
+  if (!PI_CONTENT(DEE)->init_guess_set)
+  {
+    sunrealtype normq = N_VDotProd(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q);
+    SUNCheckLastErr();
 
-  normq = SUNRsqrt(normq);
+    normq = SUNRsqrt(normq);
 
-  N_VScale(ONE / normq, PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->V);
-  SUNCheckLastErr();
+    N_VScale(ONE / normq, PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->V);
+    SUNCheckLastErr();
+
+    /* Reset the initial guess flag to its default value */
+    PI_CONTENT(DEE)->init_guess_set = SUNFALSE;
+  }
 
   return SUN_SUCCESS;
 }
@@ -364,6 +371,9 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
   /* set the initial guess */
   N_VScale(ONE / normq, q, PI_CONTENT(DEE)->V);
   SUNCheckLastErr();
+
+  /* set the initial guess flag to true */
+  PI_CONTENT(DEE)->init_guess_set = SUNTRUE;
 
   return SUN_SUCCESS;
 }
