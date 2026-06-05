@@ -68,6 +68,8 @@ module fsundomeigest_arnoldi_mod
   procedure :: get_rhs_linT => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_linT_get
   procedure :: set_num_ATimes => swigf_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_set
   procedure :: get_num_ATimes => swigf_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_get
+  procedure :: set_init_guess_set => swigf_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_set
+  procedure :: get_init_guess_set => swigf_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_get
   procedure :: set_rhsfn => swigf_SUNDomEigEstimatorContent_Arnoldi__rhsfn_set
   procedure :: get_rhsfn => swigf_SUNDomEigEstimatorContent_Arnoldi__rhsfn_get
   procedure :: set_rhs_data => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_data_set
@@ -348,6 +350,23 @@ use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
 integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_set(farg1, farg2) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_get(farg1) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__rhsfn_set(farg1, farg2) &
@@ -1024,6 +1043,31 @@ type(SwigClassWrapper) :: farg1
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_set(self, init_guess_set)
+use, intrinsic :: ISO_C_BINDING
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+integer(C_INT), intent(in) :: init_guess_set
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = init_guess_set
+call swigc_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__init_guess_set_get(farg1)
 swig_result = fresult
 end function
 
