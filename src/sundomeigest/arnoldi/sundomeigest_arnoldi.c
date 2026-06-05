@@ -324,7 +324,7 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   }
 
   /* Initialize the vector V[0] if not already initialized */
-  if (!PI_CONTENT(DEE)->init_guess_set)
+  if (!(Arnoldi_CONTENT(DEE)->init_guess_set))
   {
     sunrealtype normq = N_VDotProd(Arnoldi_CONTENT(DEE)->q,
                                   Arnoldi_CONTENT(DEE)->q);
