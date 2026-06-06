@@ -2890,6 +2890,15 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
 
   if (step_mem->DEE != NULL)
   {
+    retval = SUNDomEigEstimator_SetRhsLinearizationPoint(step_mem->DEE,
+                                                         ark_mem->tn,
+                                                         ark_mem->yn);
+    if (retval != SUN_SUCCESS)
+    {      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                            "SUNDomEigEstimator_SetRhsLinearizationPoint failed");
+      return ARK_DEE_FAIL;
+    }
+
     retval = SUNDomEigEstimator_Estimate(step_mem->DEE, &step_mem->lambdaR,
                                          &step_mem->lambdaI);
     step_mem->dom_eig_num_evals++;
@@ -3227,89 +3236,6 @@ int lsrkStep_legendre_P_complex(int s, sunrealtype zR, sunrealtype zI,
     *PsR = PkR;
     *PsI = PkI;
   }
-  return ARK_SUCCESS;
-}
-
-/*---------------------------------------------------------------
-  lsrkStep_DQJtimes:
-
-  This routine generates a difference quotient approximation to
-  the Jacobian-vector product f_y(t,y) * v. The approximation is
-  Jv = [f(y + v*sig) - f(y)]/sig, where sig = 1 / ||v||_WRMS,
-  i.e. the WRMS norm of v*sig is 1.
-  ---------------------------------------------------------------*/
-int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
-{
-  ARKodeMem ark_mem;
-  ARKodeLSRKStepMem step_mem;
-
-  sunrealtype sig, siginv;
-  int iter, retval;
-
-  /* access ARKodeLSRKStepMem structure */
-  retval = lsrkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
-                                        &step_mem);
-  if (retval != ARK_SUCCESS) { return retval; }
-
-  sunrealtype t = ark_mem->tn;
-  N_Vector y    = ark_mem->yn;
-  N_Vector work = ark_mem->tempv3;
-
-  /* Compute RHS function, if necessary. */
-  if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
-      (step_mem->step_nst != ark_mem->nst))
-  {
-    /* call the user-supplied pre-RHS function (if supplied) */
-    if (ark_mem->PreRhsFn)
-    {
-      retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
-      if (retval != 0) { return ARK_PRERHSFN_FAIL; }
-    }
-
-    retval = step_mem->fe(t, y, ark_mem->fn, ark_mem->user_data);
-    step_mem->nfeDQ++;
-    if (retval != ARK_SUCCESS)
-    {
-      SUNLogExtraDebugVec(ARK_LOGGER, "DomEig JvTimes RHS", ark_mem->fn,
-                          "F_n(:) =");
-      SUNLogInfo(ARK_LOGGER, "DomEig JvTimes",
-                 "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
-    }
-    ark_mem->fn_is_current = SUNTRUE;
-  }
-
-  /* Initialize perturbation to 1/||v|| */
-  sig = ONE / N_VWrmsNorm(v, ark_mem->ewt);
-
-  for (iter = 0; iter < MAX_DQITERS; iter++)
-  {
-    /* Set work = y + sig*v */
-    N_VLinearSum(sig, v, ONE, y, work);
-
-    /* call the user-supplied pre-RHS function (if supplied) */
-    if (ark_mem->PreRhsFn)
-    {
-      retval = ark_mem->PreRhsFn(t, work, ark_mem->user_data);
-      if (retval != 0) { return ARK_PRERHSFN_FAIL; }
-    }
-    /* Set Jv = f(tn, y+sig*v) */
-    retval = step_mem->fe(t, work, Jv, ark_mem->user_data);
-    step_mem->nfeDQ++;
-    if (retval == 0) { break; }
-    if (retval < 0) { return (-1); }
-
-    /* If f failed recoverably, shrink sig and retry */
-    sig *= SUN_RCONST(0.25);
-  }
-
-  /* If retval still isn't 0, return with a recoverable failure */
-  if (retval > 0) { return (+1); }
-
-  /* Replace Jv by (Jv - fn)/sig */
-  siginv = ONE / sig;
-  N_VLinearSum(siginv, Jv, -siginv, ark_mem->fn, Jv);
-
   return ARK_SUCCESS;
 }
 

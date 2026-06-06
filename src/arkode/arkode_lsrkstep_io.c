@@ -553,12 +553,12 @@ int LSRKStepSetDomEigEstimator(void* arkode_mem, SUNDomEigEstimator DEE)
   /* Attach the DEE pointer to the step memory */
   step_mem->DEE = DEE;
 
-  /* Set the ATimes function for the DEE with A_data = arkode_mem */
-  retval = SUNDomEigEstimator_SetATimes(DEE, arkode_mem, lsrkStep_DQJtimes);
+  /* Set the RHS function for the DEE with user_data */
+  retval = SUNDomEigEstimator_SetRhs(DEE, ark_mem->user_data, step_mem->fe);
   if (retval != SUN_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
-                    "SUNDomEigEstimator_SetATimes failed");
+                    "SUNDomEigEstimator_SetRhs failed");
     return ARK_DEE_FAIL;
   }
 
