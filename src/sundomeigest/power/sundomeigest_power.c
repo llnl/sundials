@@ -297,7 +297,7 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
 
   if (PI_CONTENT(DEE)->is_complex)
   {
-    SUNAssert(PI_CONTENT(DEE)->v_prev == NULL, SUN_ERR_ARG_CORRUPT);
+    SUNAssert(PI_CONTENT(DEE)->v_prev, SUN_ERR_ARG_CORRUPT);
   }
 
   return SUN_SUCCESS;
