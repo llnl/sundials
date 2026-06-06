@@ -372,49 +372,49 @@ SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Power__V_get(SwigClassWrappe
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Power__q_set(SwigClassWrapper const *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Power__Av_set(SwigClassWrapper const *farg1, N_Vector farg2) {
   struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::q", return );
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::Av", return );
   arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
   arg2 = (N_Vector)(farg2);
-  if (arg1) (arg1)->q = arg2;
+  if (arg1) (arg1)->Av = arg2;
 }
 
 
-SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Power__q_get(SwigClassWrapper const *farg1) {
+SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Power__Av_get(SwigClassWrapper const *farg1) {
   N_Vector fresult ;
   struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
   N_Vector result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::q", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::Av", return 0);
   arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
-  result = (N_Vector) ((arg1)->q);
+  result = (N_Vector) ((arg1)->Av);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Power__q_prev_set(SwigClassWrapper const *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Power__v_prev_set(SwigClassWrapper const *farg1, N_Vector farg2) {
   struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::q_prev", return );
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::v_prev", return );
   arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
   arg2 = (N_Vector)(farg2);
-  if (arg1) (arg1)->q_prev = arg2;
+  if (arg1) (arg1)->v_prev = arg2;
 }
 
 
-SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Power__q_prev_get(SwigClassWrapper const *farg1) {
+SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Power__v_prev_get(SwigClassWrapper const *farg1) {
   N_Vector fresult ;
   struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
   N_Vector result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::q_prev", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::v_prev", return 0);
   arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
-  result = (N_Vector) ((arg1)->q_prev);
+  result = (N_Vector) ((arg1)->v_prev);
   fresult = result;
   return fresult;
 }
