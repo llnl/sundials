@@ -168,12 +168,12 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
 
   /* Initialize the vector V[0] */
   sunrealtype normq = N_VDotProd(q, q);
-  SUNCheckLastErr();
+  SUNCheckLastErrNull();
 
   normq = SUNRsqrt(normq);
 
   N_VScale(ONE / normq, q, content->V[0]);
-  SUNCheckLastErr();
+  SUNCheckLastErrNull();
 
   return (DEE);
 }
