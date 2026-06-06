@@ -391,25 +391,22 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
 
   sunbooleantype is_complex = PI_CONTENT(DEE)->is_complex;
 
-  if (is_complex)
-  {
-    SUNAssert(PI_CONTENT(DEE)->v_prev, SUN_ERR_ARG_CORRUPT);
-  }
+  if (is_complex) { SUNAssert(PI_CONTENT(DEE)->v_prev, SUN_ERR_ARG_CORRUPT); }
 
-  N_Vector Av = PI_CONTENT(DEE)->Av;
-  N_Vector V  = PI_CONTENT(DEE)->V;
+  N_Vector Av     = PI_CONTENT(DEE)->Av;
+  N_Vector V      = PI_CONTENT(DEE)->V;
   N_Vector v_prev = PI_CONTENT(DEE)->v_prev;
 
   int num_warmups = PI_CONTENT(DEE)->num_warmups;
 
-  long int *num_ATimes = &(PI_CONTENT(DEE)->num_ATimes);
-  long int *num_iters  = &(PI_CONTENT(DEE)->num_iters);
-  long int max_iters = PI_CONTENT(DEE)->max_iters;
+  long int* num_ATimes = &(PI_CONTENT(DEE)->num_ATimes);
+  long int* num_iters  = &(PI_CONTENT(DEE)->num_iters);
+  long int max_iters   = PI_CONTENT(DEE)->max_iters;
 
   sunrealtype rel_tol = PI_CONTENT(DEE)->rel_tol;
-  sunrealtype *res    = &(PI_CONTENT(DEE)->res);
+  sunrealtype* res    = &(PI_CONTENT(DEE)->res);
 
-  void *ATdata = PI_CONTENT(DEE)->ATdata;
+  void* ATdata = PI_CONTENT(DEE)->ATdata;
 
   SUNATimesFn ATimes = PI_CONTENT(DEE)->ATimes;
 
@@ -425,8 +422,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   /* Set the initial q = A^{num_warmups}q/||A^{num_warmups}q|| */
   for (int i = 0; i < num_warmups; i++)
   {
-    retval = ATimes(ATdata,
-                                     V, Av);
+    retval = ATimes(ATdata, V, Av);
     (*num_ATimes)++;
     (*num_iters)++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
@@ -447,8 +443,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
       SUNCheckLastErr();
     }
 
-    retval = ATimes(ATdata,
-                                     V, Av);
+    retval = ATimes(ATdata, V, Av);
     (*num_ATimes)++;
     (*num_iters)++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
@@ -456,9 +451,8 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     newlambdaR = N_VDotProd(V, Av); //Rayleigh quotient
     SUNCheckLastErr();
 
-    *res = SUNRabs(newlambdaR - oldlambdaR);
-    converged =
-      (*res <= rel_tol * SUNRabs(newlambdaR));
+    *res      = SUNRabs(newlambdaR - oldlambdaR);
+    converged = (*res <= rel_tol * SUNRabs(newlambdaR));
 
     if (converged && !is_complex) { break; }
 
@@ -477,9 +471,8 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   if (is_complex)
   {
     retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR, normw,
-                                                         v_prev,
-                                                         V,
-                                                         lambdaR, lambdaI);
+                                                         v_prev, V, lambdaR,
+                                                         lambdaI);
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
   }
   else
@@ -581,11 +574,11 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   SUNFunctionBegin(DEE->sunctx);
 
   int retval;
-  N_Vector Av = PI_CONTENT(DEE)->Av;
-  SUNATimesFn ATimes = PI_CONTENT(DEE)->ATimes;
-  void* ATdata = PI_CONTENT(DEE)->ATdata;
-  sunrealtype rel_tol = PI_CONTENT(DEE)->rel_tol;
-  long int *num_ATimes = &(PI_CONTENT(DEE)->num_ATimes);
+  N_Vector Av          = PI_CONTENT(DEE)->Av;
+  SUNATimesFn ATimes   = PI_CONTENT(DEE)->ATimes;
+  void* ATdata         = PI_CONTENT(DEE)->ATdata;
+  sunrealtype rel_tol  = PI_CONTENT(DEE)->rel_tol;
+  long int* num_ATimes = &(PI_CONTENT(DEE)->num_ATimes);
 
   sunrealtype cos_qs, gram_det, det_G_inv, h11, h12, h22, p11, p12, p21, p22;
   /* The threshold for identifying real or complex DEE is experimentally 
@@ -762,11 +755,11 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector Fy   = PI_CONTENT(DEE)->Fy;
 
   SUNRhsFn rhsfn = PI_CONTENT(DEE)->rhsfn;
-  void *rhs_data = PI_CONTENT(DEE)->rhs_data;
+  void* rhs_data = PI_CONTENT(DEE)->rhs_data;
 
   sunrealtype rhs_linT = PI_CONTENT(DEE)->rhs_linT;
 
-  long int *nfevals   = &(PI_CONTENT(DEE)->nfevals);
+  long int* nfevals = &(PI_CONTENT(DEE)->nfevals);
 
   retval = rhsfn(rhs_linT, y, Fy, rhs_data);
   (*nfevals)++;

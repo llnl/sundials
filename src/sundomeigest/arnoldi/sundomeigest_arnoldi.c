@@ -286,13 +286,13 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   sunindextype info  = 0;
   sunindextype lwork = -1;
   sunrealtype work   = SUN_RCONST(0.0);
-  sunrealtype* A = Arnoldi_CONTENT(DEE)->LAPACK_A;
-  sunrealtype* wr = Arnoldi_CONTENT(DEE)->LAPACK_wr;
-  sunrealtype* wi = Arnoldi_CONTENT(DEE)->LAPACK_wi;
-  N_Vector V = Arnoldi_CONTENT(DEE)->V[0];
+  sunrealtype* A     = Arnoldi_CONTENT(DEE)->LAPACK_A;
+  sunrealtype* wr    = Arnoldi_CONTENT(DEE)->LAPACK_wr;
+  sunrealtype* wi    = Arnoldi_CONTENT(DEE)->LAPACK_wi;
+  N_Vector V         = Arnoldi_CONTENT(DEE)->V[0];
 
-  xgeev_f77(&jobvl, &jobvr, &N, A, &lda, wr, wi,
-            NULL, &ldvl, NULL, &ldvr, &work, &lwork, &info);
+  xgeev_f77(&jobvl, &jobvr, &N, A, &lda, wr, wi, NULL, &ldvl, NULL, &ldvr,
+            &work, &lwork, &info);
 
   /* The workspace size is returned as the first entry of the work array */
   Arnoldi_CONTENT(DEE)->LAPACK_lwork = (sunindextype)work;
@@ -407,25 +407,25 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   SUNAssert(Arnoldi_CONTENT(DEE)->Hes, SUN_ERR_ARG_CORRUPT);
 
   int retval;
-  int *num_warmups = &(Arnoldi_CONTENT(DEE)->num_warmups);
-  sunindextype n = Arnoldi_CONTENT(DEE)->kry_dim;
+  int* num_warmups = &(Arnoldi_CONTENT(DEE)->num_warmups);
+  sunindextype n   = Arnoldi_CONTENT(DEE)->kry_dim;
   sunrealtype normAv;
-  long int *num_ATimes = &(Arnoldi_CONTENT(DEE)->num_ATimes);
-  long int *num_iters  = &(Arnoldi_CONTENT(DEE)->num_iters);
-  *num_ATimes = 0;
-  *num_iters  = 0;
+  long int* num_ATimes = &(Arnoldi_CONTENT(DEE)->num_ATimes);
+  long int* num_iters  = &(Arnoldi_CONTENT(DEE)->num_iters);
+  *num_ATimes          = 0;
+  *num_iters           = 0;
 
-  N_Vector *V = Arnoldi_CONTENT(DEE)->V;
+  N_Vector* V = Arnoldi_CONTENT(DEE)->V;
   N_Vector Av = V[1];
 
   sunrealtype** Hes = Arnoldi_CONTENT(DEE)->Hes;
 
   SUNATimesFn ATimes = Arnoldi_CONTENT(DEE)->ATimes;
-  void *ATdata = Arnoldi_CONTENT(DEE)->ATdata;
+  void* ATdata       = Arnoldi_CONTENT(DEE)->ATdata;
 
-  sunrealtype* A = Arnoldi_CONTENT(DEE)->LAPACK_A;
-  sunrealtype* wr = Arnoldi_CONTENT(DEE)->LAPACK_wr;
-  sunrealtype* wi = Arnoldi_CONTENT(DEE)->LAPACK_wi;
+  sunrealtype* A    = Arnoldi_CONTENT(DEE)->LAPACK_A;
+  sunrealtype* wr   = Arnoldi_CONTENT(DEE)->LAPACK_wr;
+  sunrealtype* wi   = Arnoldi_CONTENT(DEE)->LAPACK_wi;
   sunrealtype** arr = Arnoldi_CONTENT(DEE)->LAPACK_arr;
 
   sunrealtype res;
@@ -472,13 +472,10 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     (*num_iters)++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
-    SUNCheckCall(SUNModifiedGS(V,
-                               Hes, i + 1, (int)n,
-                               &(Hes[i + 1][i])));
+    SUNCheckCall(SUNModifiedGS(V, Hes, i + 1, (int)n, &(Hes[i + 1][i])));
 
     /* Unitize the computed orthogonal vector */
-    N_VScale(SUN_RCONST(1.0) / Hes[i + 1][i],
-             V[i + 1], V[i + 1]);
+    N_VScale(SUN_RCONST(1.0) / Hes[i + 1][i], V[i + 1], V[i + 1]);
     SUNCheckLastErr();
   }
 
@@ -510,10 +507,8 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   sunindextype ldvr = n;
   sunindextype info;
   sunindextype lwork = Arnoldi_CONTENT(DEE)->LAPACK_lwork;
-  xgeev_f77(&jobvl, &jobvr, &n, A, &lda,
-            wr, wi,
-            NULL, &ldvl, NULL, &ldvr, Arnoldi_CONTENT(DEE)->LAPACK_work, &lwork,
-            &info);
+  xgeev_f77(&jobvl, &jobvr, &n, A, &lda, wr, wi, NULL, &ldvl, NULL, &ldvr,
+            Arnoldi_CONTENT(DEE)->LAPACK_work, &lwork, &info);
 
   if (info != 0) { return SUN_ERR_EXT_FAIL; }
 
@@ -525,8 +520,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   }
 
   /* Sort the array using qsort */
-  qsort(arr, n,
-        sizeof(arr[0]), sundomeigest_Compare);
+  qsort(arr, n, sizeof(arr[0]), sundomeigest_Compare);
 
   /* Substitute the ordered eigenvalues back in LAPACK_w* */
   for (int i = 0; i < n; i++)
