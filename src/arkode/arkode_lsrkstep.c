@@ -2894,8 +2894,9 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
                                                          ark_mem->tn,
                                                          ark_mem->yn);
     if (retval != SUN_SUCCESS)
-    {      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
-                            "SUNDomEigEstimator_SetRhsLinearizationPoint failed");
+    {
+      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                      "SUNDomEigEstimator_SetRhsLinearizationPoint failed");
       return ARK_DEE_FAIL;
     }
 
