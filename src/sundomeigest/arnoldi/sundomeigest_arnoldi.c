@@ -158,10 +158,6 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   content->LAPACK_arr    = NULL;
   content->Hes           = NULL;
 
-  /* Allocate content */
-  content->work = N_VClone(q);
-  SUNCheckLastErrNull();
-
   content->V = N_VCloneVectorArray(kry_dim + 1, q);
   SUNCheckLastErrNull();
 
@@ -422,7 +418,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   *num_iters  = 0;
 
   N_Vector *V = Arnoldi_CONTENT(DEE)->V;
-  N_Vector Av = Arnoldi_CONTENT(DEE)->work;
+  N_Vector Av = V[1];
 
   sunrealtype** Hes = Arnoldi_CONTENT(DEE)->Hes;
 

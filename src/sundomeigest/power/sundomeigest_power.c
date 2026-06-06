@@ -136,6 +136,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   content->ATimes      = NULL;
   content->ATdata      = NULL;
   content->V           = NULL;
+  content->Av          = NULL;
   content->v_prev      = NULL;
   content->rhs_linY    = NULL;
   content->rhs_linT    = ZERO;
@@ -153,7 +154,10 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   content->num_ATimes  = 0;
 
   /* Allocate content */
-  content->work = N_VClone(q);
+  content->Av = N_VClone(q);
+  SUNCheckLastErrNull();
+
+  content->v_prev = N_VClone(q);
   SUNCheckLastErrNull();
 
   content->V = N_VClone(q);
@@ -241,13 +245,20 @@ SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
   /* set the complex flag to the opposite of the real flag */
   PI_CONTENT(DEE)->is_complex = !real;
 
-  /* v_prev is allocated in SUNDomEigEstimator_Initialize_Power, which is expected to be 
-  called after this routine. If the user calls this routine after initialization, we need 
-  to free v_prev here. */
-  if (!(PI_CONTENT(DEE)->is_complex) && PI_CONTENT(DEE)->v_prev)
+  /* v_prev is allocated in the constructor. If the user calls this routine later, 
+  we need to free v_prev here. */
+  if (real && PI_CONTENT(DEE)->v_prev != NULL)
   {
     N_VDestroy(PI_CONTENT(DEE)->v_prev);
     PI_CONTENT(DEE)->v_prev = NULL;
+  }
+
+  /* If the user requests complex eigenvalues, we need to allocate v_prev. */
+  if (!real && PI_CONTENT(DEE)->v_prev == NULL)
+  {
+    /* allocate v_prev vector */
+    PI_CONTENT(DEE)->v_prev = N_VClone(PI_CONTENT(DEE)->Av);
+    SUNCheckLastErr();
   }
 
   return SUN_SUCCESS;
@@ -276,6 +287,7 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
 
   SUNAssert(PI_CONTENT(DEE)->ATimes, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE)->Av, SUN_ERR_ARG_CORRUPT);
 
   if (PI_CONTENT(DEE)->is_complex)
   {
@@ -380,11 +392,16 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
   SUNAssert((PI_CONTENT(DEE)->max_iters >= 0), SUN_ERR_ARG_CORRUPT);
 
-  N_Vector Av = PI_CONTENT(DEE)->work;
+  sunbooleantype is_complex = PI_CONTENT(DEE)->is_complex;
+
+  if (is_complex)
+  {
+    SUNAssert(PI_CONTENT(DEE)->v_prev, SUN_ERR_ARG_CORRUPT);
+  }
+
+  N_Vector Av = PI_CONTENT(DEE)->Av;
   N_Vector V  = PI_CONTENT(DEE)->V;
   N_Vector v_prev = PI_CONTENT(DEE)->v_prev;
-
-  sunbooleantype is_complex = PI_CONTENT(DEE)->is_complex;
 
   int num_warmups = PI_CONTENT(DEE)->num_warmups;
 
@@ -398,13 +415,6 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   void *ATdata = PI_CONTENT(DEE)->ATdata;
 
   SUNATimesFn ATimes = PI_CONTENT(DEE)->ATimes;
-
-  if (is_complex && (v_prev == NULL))
-  {
-    /* allocate v_prev vector */
-    v_prev = N_VClone(Av);
-    SUNCheckLastErr();
-  }
 
   sunrealtype newlambdaR = ZERO;
   sunrealtype oldlambdaR = ZERO;
@@ -574,7 +584,7 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   SUNFunctionBegin(DEE->sunctx);
 
   int retval;
-  N_Vector Av = PI_CONTENT(DEE)->work;
+  N_Vector Av = PI_CONTENT(DEE)->Av;
   SUNATimesFn ATimes = PI_CONTENT(DEE)->ATimes;
   void* ATdata = PI_CONTENT(DEE)->ATdata;
   sunrealtype rel_tol = PI_CONTENT(DEE)->rel_tol;
@@ -664,6 +674,11 @@ SUNErrCode SUNDomEigEstimator_Destroy_Power(SUNDomEigEstimator* DEEptr)
   if (DEE->content)
   {
     /* delete items from within the content structure */
+    if (PI_CONTENT(DEE)->Av)
+    {
+      N_VDestroy(PI_CONTENT(DEE)->Av);
+      PI_CONTENT(DEE)->Av = NULL;
+    }
     if (PI_CONTENT(DEE)->v_prev)
     {
       N_VDestroy(PI_CONTENT(DEE)->v_prev);
