@@ -137,7 +137,6 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   content->ATimes        = NULL;
   content->ATdata        = NULL;
   content->V             = NULL;
-  content->q             = NULL;
   content->rhs_linY      = NULL;
   content->rhs_linT      = ZERO;
   content->Fy            = NULL;
@@ -160,7 +159,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   content->Hes           = NULL;
 
   /* Allocate content */
-  content->q = N_VClone(q);
+  content->work = N_VClone(q);
   SUNCheckLastErrNull();
 
   content->V = N_VCloneVectorArray(kry_dim + 1, q);
@@ -254,7 +253,6 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
 
   SUNAssert(Arnoldi_CONTENT(DEE)->ATimes, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(Arnoldi_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
 
   if (Arnoldi_CONTENT(DEE)->LAPACK_A == NULL)
   {
@@ -286,9 +284,12 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   sunindextype info  = 0;
   sunindextype lwork = -1;
   sunrealtype work   = SUN_RCONST(0.0);
+  sunrealtype* A = Arnoldi_CONTENT(DEE)->LAPACK_A;
+  sunrealtype* wr = Arnoldi_CONTENT(DEE)->LAPACK_wr;
+  sunrealtype* wi = Arnoldi_CONTENT(DEE)->LAPACK_wi;
+  N_Vector V = Arnoldi_CONTENT(DEE)->V[0];
 
-  xgeev_f77(&jobvl, &jobvr, &N, Arnoldi_CONTENT(DEE)->LAPACK_A, &lda,
-            Arnoldi_CONTENT(DEE)->LAPACK_wr, Arnoldi_CONTENT(DEE)->LAPACK_wi,
+  xgeev_f77(&jobvl, &jobvr, &N, A, &lda, wr, wi,
             NULL, &ldvl, NULL, &ldvr, &work, &lwork, &info);
 
   /* The workspace size is returned as the first entry of the work array */
@@ -322,13 +323,12 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
     SUNAssert(Arnoldi_CONTENT(DEE)->Hes[k], SUN_ERR_MALLOC_FAIL);
   }
 
-  sunrealtype normV = N_VDotProd(Arnoldi_CONTENT(DEE)->V[0],
-                                 Arnoldi_CONTENT(DEE)->V[0]);
+  sunrealtype normV = N_VDotProd(V, V);
   SUNCheckLastErr();
 
   normV = SUNRsqrt(normV);
 
-  N_VScale(ONE / normV, Arnoldi_CONTENT(DEE)->V[0], Arnoldi_CONTENT(DEE)->V[0]);
+  N_VScale(ONE / normV, V, V);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
@@ -410,41 +410,53 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   SUNAssert(lambdaI, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->ATimes, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(Arnoldi_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->Hes, SUN_ERR_ARG_CORRUPT);
 
   int retval;
+  int *num_warmups = &(Arnoldi_CONTENT(DEE)->num_warmups);
   sunindextype n = Arnoldi_CONTENT(DEE)->kry_dim;
-  sunrealtype normq;
-  Arnoldi_CONTENT(DEE)->num_ATimes = 0;
-  Arnoldi_CONTENT(DEE)->num_iters  = 0;
+  sunrealtype normAv;
+  long int *num_ATimes = &(Arnoldi_CONTENT(DEE)->num_ATimes);
+  long int *num_iters  = &(Arnoldi_CONTENT(DEE)->num_iters);
+  *num_ATimes = 0;
+  *num_iters  = 0;
+
+  N_Vector *V = Arnoldi_CONTENT(DEE)->V;
+  N_Vector Av = Arnoldi_CONTENT(DEE)->work;
+
+  sunrealtype** Hes = Arnoldi_CONTENT(DEE)->Hes;
+
+  SUNATimesFn ATimes = Arnoldi_CONTENT(DEE)->ATimes;
+  void *ATdata = Arnoldi_CONTENT(DEE)->ATdata;
+
+  sunrealtype* A = Arnoldi_CONTENT(DEE)->LAPACK_A;
+  sunrealtype* wr = Arnoldi_CONTENT(DEE)->LAPACK_wr;
+  sunrealtype* wi = Arnoldi_CONTENT(DEE)->LAPACK_wi;
+  sunrealtype** arr = Arnoldi_CONTENT(DEE)->LAPACK_arr;
 
   sunrealtype res;
   sunrealtype new_lambda = ZERO;
   sunrealtype old_lambda = ZERO;
 
   /* Set the initial q = A^{num_warmups}q/||A^{num_warmups}q|| */
-  for (int i = 0; i < Arnoldi_CONTENT(DEE)->num_warmups; i++)
+  for (int i = 0; i < *num_warmups; i++)
   {
-    retval = Arnoldi_CONTENT(DEE)->ATimes(Arnoldi_CONTENT(DEE)->ATdata,
-                                          Arnoldi_CONTENT(DEE)->V[0],
-                                          Arnoldi_CONTENT(DEE)->q);
-    Arnoldi_CONTENT(DEE)->num_ATimes++;
-    Arnoldi_CONTENT(DEE)->num_iters++;
+    retval = ATimes(ATdata, V[0], Av);
+    (*num_ATimes)++;
+    (*num_iters)++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
-      new_lambda = N_VDotProd(Arnoldi_CONTENT(DEE)->V[0],
-                              Arnoldi_CONTENT(DEE)->q); //Rayleigh quotient
+      new_lambda = N_VDotProd(V[0], Av); //Rayleigh quotient
       SUNCheckLastErr();
     }
 
-    normq = N_VDotProd(Arnoldi_CONTENT(DEE)->q, Arnoldi_CONTENT(DEE)->q);
+    normAv = N_VDotProd(Av, Av);
     SUNCheckLastErr();
 
-    normq = SUNRsqrt(normq);
-    N_VScale(ONE / normq, Arnoldi_CONTENT(DEE)->q, Arnoldi_CONTENT(DEE)->V[0]);
+    normAv = SUNRsqrt(normAv);
+    N_VScale(ONE / normAv, Av, V[0]);
     SUNCheckLastErr();
 
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
@@ -461,20 +473,18 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   for (int i = 0; i < n; i++)
   {
     /* Compute the next Krylov vector */
-    retval = Arnoldi_CONTENT(DEE)->ATimes(Arnoldi_CONTENT(DEE)->ATdata,
-                                          Arnoldi_CONTENT(DEE)->V[i],
-                                          Arnoldi_CONTENT(DEE)->V[i + 1]);
-    Arnoldi_CONTENT(DEE)->num_ATimes++;
-    Arnoldi_CONTENT(DEE)->num_iters++;
+    retval = ATimes(ATdata, V[i], V[i + 1]);
+    (*num_ATimes)++;
+    (*num_iters)++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
-    SUNCheckCall(SUNModifiedGS(Arnoldi_CONTENT(DEE)->V,
-                               Arnoldi_CONTENT(DEE)->Hes, i + 1, (int)n,
-                               &(Arnoldi_CONTENT(DEE)->Hes[i + 1][i])));
+    SUNCheckCall(SUNModifiedGS(V,
+                               Hes, i + 1, (int)n,
+                               &(Hes[i + 1][i])));
 
     /* Unitize the computed orthogonal vector */
-    N_VScale(SUN_RCONST(1.0) / Arnoldi_CONTENT(DEE)->Hes[i + 1][i],
-             Arnoldi_CONTENT(DEE)->V[i + 1], Arnoldi_CONTENT(DEE)->V[i + 1]);
+    N_VScale(SUN_RCONST(1.0) / Hes[i + 1][i],
+             V[i + 1], V[i + 1]);
     SUNCheckLastErr();
   }
 
@@ -484,7 +494,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   {
     for (int i = 0; i < n; i++)
     {
-      Arnoldi_CONTENT(DEE)->LAPACK_A[k] = Arnoldi_CONTENT(DEE)->Hes[i][j];
+      A[k] = Hes[i][j];
       k++;
     }
   }
@@ -506,8 +516,8 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   sunindextype ldvr = n;
   sunindextype info;
   sunindextype lwork = Arnoldi_CONTENT(DEE)->LAPACK_lwork;
-  xgeev_f77(&jobvl, &jobvr, &n, Arnoldi_CONTENT(DEE)->LAPACK_A, &lda,
-            Arnoldi_CONTENT(DEE)->LAPACK_wr, Arnoldi_CONTENT(DEE)->LAPACK_wi,
+  xgeev_f77(&jobvl, &jobvr, &n, A, &lda,
+            wr, wi,
             NULL, &ldvl, NULL, &ldvr, Arnoldi_CONTENT(DEE)->LAPACK_work, &lwork,
             &info);
 
@@ -516,24 +526,24 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   /* order the eigenvalues by their magnitude */
   for (int i = 0; i < n; i++)
   {
-    Arnoldi_CONTENT(DEE)->LAPACK_arr[i][0] = Arnoldi_CONTENT(DEE)->LAPACK_wr[i];
-    Arnoldi_CONTENT(DEE)->LAPACK_arr[i][1] = Arnoldi_CONTENT(DEE)->LAPACK_wi[i];
+    arr[i][0] = wr[i];
+    arr[i][1] = wi[i];
   }
 
   /* Sort the array using qsort */
-  qsort(Arnoldi_CONTENT(DEE)->LAPACK_arr, n,
-        sizeof(Arnoldi_CONTENT(DEE)->LAPACK_arr[0]), sundomeigest_Compare);
+  qsort(arr, n,
+        sizeof(arr[0]), sundomeigest_Compare);
 
   /* Substitute the ordered eigenvalues back in LAPACK_w* */
   for (int i = 0; i < n; i++)
   {
-    Arnoldi_CONTENT(DEE)->LAPACK_wr[i] = Arnoldi_CONTENT(DEE)->LAPACK_arr[i][0];
-    Arnoldi_CONTENT(DEE)->LAPACK_wi[i] = Arnoldi_CONTENT(DEE)->LAPACK_arr[i][1];
+    wr[i] = arr[i][0];
+    wi[i] = arr[i][1];
   }
 
   /* Copy the dominant eigenvalue */
-  *lambdaR = Arnoldi_CONTENT(DEE)->LAPACK_wr[0];
-  *lambdaI = Arnoldi_CONTENT(DEE)->LAPACK_wi[0];
+  *lambdaR = wr[0];
+  *lambdaI = wi[0];
 
   return SUN_SUCCESS;
 }
@@ -610,11 +620,6 @@ SUNErrCode SUNDomEigEstimator_Destroy_Arnoldi(SUNDomEigEstimator* DEEptr)
   if (DEE->content)
   {
     /* delete items from within the content structure */
-    if (Arnoldi_CONTENT(DEE)->q)
-    {
-      N_VDestroy(Arnoldi_CONTENT(DEE)->q);
-      Arnoldi_CONTENT(DEE)->q = NULL;
-    }
     if (Arnoldi_CONTENT(DEE)->rhs_linY)
     {
       N_VDestroy(Arnoldi_CONTENT(DEE)->rhs_linY);
