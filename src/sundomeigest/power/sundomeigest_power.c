@@ -159,8 +159,17 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
 
   content->v_prev = N_VClone(q);
   SUNCheckLastErrNull();
-
+  
   content->V = N_VClone(q);
+  SUNCheckLastErrNull();
+
+  /* Initialize the vector V */
+  sunrealtype normq = N_VDotProd(q, q);
+  SUNCheckLastErrNull();
+
+  normq = SUNRsqrt(normq);
+
+  N_VScale(ONE / normq, q, PI_CONTENT(DEE)->V);
   SUNCheckLastErrNull();
 
   /* Initialize the vector V */
