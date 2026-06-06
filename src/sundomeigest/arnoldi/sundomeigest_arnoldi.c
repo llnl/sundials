@@ -289,7 +289,6 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   sunrealtype* A     = Arnoldi_CONTENT(DEE)->LAPACK_A;
   sunrealtype* wr    = Arnoldi_CONTENT(DEE)->LAPACK_wr;
   sunrealtype* wi    = Arnoldi_CONTENT(DEE)->LAPACK_wi;
-  N_Vector V         = Arnoldi_CONTENT(DEE)->V[0];
 
   xgeev_f77(&jobvl, &jobvr, &N, A, &lda, wr, wi, NULL, &ldvl, NULL, &ldvr,
             &work, &lwork, &info);
