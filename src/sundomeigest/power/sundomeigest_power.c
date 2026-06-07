@@ -111,6 +111,8 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Power;
   DEE->ops->setrhslinearizationpoint =
     SUNDomEigEstimator_SetRhsLinearizationPoint_Power;
+  DEE->ops->setrhsatlinearizationpoint =
+    SUNDomEigEstimator_SetRhsAtLinearizationPoint_Power;
   DEE->ops->setmaxiters = SUNDomEigEstimator_SetMaxIters_Power;
   DEE->ops->setnumpreprocessiters = SUNDomEigEstimator_SetNumPreprocessIters_Power;
   DEE->ops->setreltol         = SUNDomEigEstimator_SetRelTol_Power;
@@ -133,25 +135,26 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes      = NULL;
-  content->ATdata      = NULL;
-  content->V           = NULL;
-  content->Av          = NULL;
-  content->v_prev      = NULL;
-  content->rhs_linY    = NULL;
-  content->rhs_linT    = ZERO;
-  content->Fy          = NULL;
-  content->work        = NULL;
-  content->is_complex  = SUNTRUE;
-  content->max_iters   = max_iters;
-  content->num_warmups = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
-  content->rel_tol     = rel_tol;
-  content->res         = ZERO;
-  content->rhsfn       = NULL;
-  content->rhs_data    = NULL;
-  content->nfevals     = 0;
-  content->num_iters   = 0;
-  content->num_ATimes  = 0;
+  content->ATimes        = NULL;
+  content->ATdata        = NULL;
+  content->V             = NULL;
+  content->Av            = NULL;
+  content->v_prev        = NULL;
+  content->rhs_linY      = NULL;
+  content->rhs_linT      = ZERO;
+  content->Fy            = NULL;
+  content->work          = NULL;
+  content->is_complex    = SUNTRUE;
+  content->Fy_is_current = SUNFALSE;
+  content->max_iters     = max_iters;
+  content->num_warmups   = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
+  content->rel_tol       = rel_tol;
+  content->res           = ZERO;
+  content->rhsfn         = NULL;
+  content->rhs_data      = NULL;
+  content->nfevals       = 0;
+  content->num_iters     = 0;
+  content->num_ATimes    = 0;
 
   /* Allocate content */
   content->Av = N_VClone(q);
@@ -236,6 +239,30 @@ SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
 
   N_VScale(ONE, y, PI_CONTENT(DEE)->rhs_linY);
   SUNCheckLastErr();
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint_Power(
+  SUNDomEigEstimator DEE, N_Vector Fyt)
+{
+  SUNFunctionBegin(DEE->sunctx);
+
+  SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
+  SUNAssert(Fyt, SUN_ERR_ARG_CORRUPT);
+
+  if (PI_CONTENT(DEE)->Fy == NULL)
+  {
+    PI_CONTENT(DEE)->Fy = N_VClone(Fyt);
+    SUNCheckLastErr();
+  }
+
+  N_VScale(ONE, Fyt, PI_CONTENT(DEE)->Fy);
+  SUNCheckLastErr();
+
+  /* Set the flag to indicate that Fy is current */
+  PI_CONTENT(DEE)->Fy_is_current = SUNTRUE;
 
   return SUN_SUCCESS;
 }
@@ -750,6 +777,7 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   sunrealtype sig, siginv;
   int iter, retval;
 
+  sunbooleantype *Fy_is_current = &(PI_CONTENT(DEE)->Fy_is_current);
   N_Vector y    = PI_CONTENT(DEE)->rhs_linY;
   N_Vector work = PI_CONTENT(DEE)->work;
   N_Vector Fy   = PI_CONTENT(DEE)->Fy;
@@ -761,9 +789,14 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
 
   long int* nfevals = &(PI_CONTENT(DEE)->nfevals);
 
-  retval = rhsfn(rhs_linT, y, Fy, rhs_data);
-  (*nfevals)++;
-  if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+  if (!(*Fy_is_current))
+  {
+    /* If Fy is not current, compute it at the linearization point */
+    retval = rhsfn(rhs_linT, y, Fy, rhs_data);
+    (*nfevals)++;
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    *Fy_is_current = SUNTRUE;
+  }
 
   /* Initialize perturbation */
   sunrealtype ydotv   = N_VDotProd(y, v);
@@ -794,5 +827,6 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   siginv = ONE / sig;
   N_VLinearSum(siginv, Jv, -siginv, Fy, Jv);
 
+  *Fy_is_current = SUNFALSE;
   return SUN_SUCCESS;
 }

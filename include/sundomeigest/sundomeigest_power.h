@@ -58,6 +58,7 @@ struct SUNDomEigEstimatorContent_Power_
   long int nfevals; /* Number of RHS evaluations */
 
   sunbooleantype is_complex; /* Flag for complex eigenvalue request */
+  sunbooleantype Fy_is_current; /* Flag to track if Fy is current */
 };
 
 typedef struct SUNDomEigEstimatorContent_Power_* SUNDomEigEstimatorContent_Power;
@@ -98,6 +99,10 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
   SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint_Power(
+  SUNDomEigEstimator DEE, N_Vector Fyt);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,

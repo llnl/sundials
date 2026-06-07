@@ -52,6 +52,8 @@ struct SUNDomEigEstimator_Ops_
   SUNErrCode (*setrhs)(SUNDomEigEstimator, void*, SUNRhsFn);
   SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype,
                                          N_Vector);
+  SUNErrCode (*setrhsatlinearizationpoint)(SUNDomEigEstimator,
+                                           N_Vector);
   SUNErrCode (*setoptions)(SUNDomEigEstimator DEE, const char* Did,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNDomEigEstimator, long int);
@@ -100,6 +102,10 @@ SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE,
                                                        sunrealtype t, N_Vector v);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint(SUNDomEigEstimator DEE,
+                                                         N_Vector Fyt);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetOptions(SUNDomEigEstimator DEE,

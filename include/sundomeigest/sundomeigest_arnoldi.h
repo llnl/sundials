@@ -49,6 +49,7 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   int num_warmups;              /* Number of preprocessing iterations */
   long int num_iters;           /* Number of iterations in last Estimate call */
   sunbooleantype warmup_to_tol; /* Whether to use warmup iterations */
+  sunbooleantype Fy_is_current; /* Flag to track if Fy is current */
   sunrealtype tol_warmup;       /* Tolerance for warmup iterations */
   sunrealtype rhs_linT;         /* Time value for linearization point */
 
@@ -89,6 +90,10 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(
   SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi(SUNDomEigEstimator DEE,
+                                                                 N_Vector Fyt);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,
