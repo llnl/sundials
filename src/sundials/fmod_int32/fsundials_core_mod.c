@@ -318,7 +318,7 @@ SWIGEXPORT void _wrap_FSUNLogErrHandlerFn(int const *farg1, SwigArrayWrapper *fa
   SUNErrCode arg5 ;
   void *arg6 = (void *) 0 ;
   SUNContext arg7 = (SUNContext) 0 ;
-
+  
   arg1 = (int)(*farg1);
   arg2 = (char *)(farg2->data);
   arg3 = (char *)(farg3->data);
@@ -338,7 +338,7 @@ SWIGEXPORT void _wrap_FSUNAbortErrHandlerFn(int const *farg1, SwigArrayWrapper *
   SUNErrCode arg5 ;
   void *arg6 = (void *) 0 ;
   SUNContext arg7 = (SUNContext) 0 ;
-
+  
   arg1 = (int)(*farg1);
   arg2 = (char *)(farg2->data);
   arg3 = (char *)(farg3->data);
@@ -2646,17 +2646,17 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn(SUNNonlinearSolver farg1, SUNNon
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver farg1, SUNNonlinSolUpdateNormFn farg2, void *farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn(SUNNonlinearSolver farg1, SUNNonlinSolNormFn farg2, void *farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolUpdateNormFn arg2 = (SUNNonlinSolUpdateNormFn) 0 ;
+  SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
   
   arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolUpdateNormFn)(farg2);
+  arg2 = (SUNNonlinSolNormFn)(farg2);
   arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetUpdateNormFn(arg1,arg2,arg3);
+  result = (SUNErrCode)SUNNonlinSolSetNormFn(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -2668,10 +2668,27 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetConvRateFn(SUNNonlinearSolver farg1, SUNNon
   SUNNonlinSolConvRateFn arg2 = (SUNNonlinSolConvRateFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
+  
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolConvRateFn)(farg2);
   arg3 = (void *)(farg3);
   result = (SUNErrCode)SUNNonlinSolSetConvRateFn(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver farg1, SUNNonlinSolUpdateNormFn farg2, void *farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolUpdateNormFn arg2 = (SUNNonlinSolUpdateNormFn) 0 ;
+  void *arg3 = (void *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolUpdateNormFn)(farg2);
+  arg3 = (void *)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetUpdateNormFn(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -4187,3 +4204,6 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_Destroy(void *farg1) {
   fresult = (SUNErrCode)(result);
   return fresult;
 }
+
+
+

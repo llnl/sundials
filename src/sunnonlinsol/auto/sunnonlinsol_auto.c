@@ -33,7 +33,7 @@
 #include "sundials_macros.h"
 
 /* Content structure accessibility macros */
-#define AUTO_CONTENT(S)   ((SUNNonlinearSolverContent_Auto)(S->content))
+#define AUTO_CONTENT(S) ((SUNNonlinearSolverContent_Auto)(S->content))
 
 /* Default switching parameters 
    2.0 and 0.8 come from the numerical experiments in Norsett & Thomsen 1986,
@@ -56,9 +56,9 @@ static SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
 static SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
                                              SUNNonlinSolNormFn NormFn,
                                              void* norm_fn_data);
-static SUNErrCode SUNNonlinSolSetConvRateFn_Auto(
-  SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn,
-  void* conv_rate_fn_data);
+static SUNErrCode SUNNonlinSolSetConvRateFn_Auto(SUNNonlinearSolver NLS,
+                                                 SUNNonlinSolConvRateFn ConvRateFn,
+                                                 void* conv_rate_fn_data);
 static SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS,
                                                int maxiters);
 static SUNErrCode setFromCommandLine_Auto(SUNNonlinearSolver NLS,
@@ -274,10 +274,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
        don't consider switching. */
     if (retval == SUN_SUCCESS) { return retval; }
 
-    if (C->conv_rate_fn == NULL)
-    {
-      return SUN_ERR_NOT_IMPLEMENTED;
-    }
+    if (C->conv_rate_fn == NULL) { return SUN_ERR_NOT_IMPLEMENTED; }
 
     crate_retval = C->conv_rate_fn(&crate, C->conv_rate_fn_data);
     if (crate_retval != SUN_SUCCESS) { return crate_retval; }
@@ -428,9 +425,9 @@ static SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetConvRateFn_Auto(
-  SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn,
-  void* conv_rate_fn_data)
+static SUNErrCode SUNNonlinSolSetConvRateFn_Auto(SUNNonlinearSolver NLS,
+                                                 SUNNonlinSolConvRateFn ConvRateFn,
+                                                 void* conv_rate_fn_data)
 {
   SUNFunctionBegin(NLS->sunctx);
   AUTO_CONTENT(NLS)->conv_rate_fn      = ConvRateFn;

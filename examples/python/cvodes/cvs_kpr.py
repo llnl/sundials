@@ -321,7 +321,7 @@ def main(argv=None):
     )
     nls = SUNNonlinSol_Auto(y, args.aa_depth, active_solver_type, sunctx)
     assert nls is not None
-    
+
     status = SUNNonlinSolSetSwitchingParameters_Auto(
         nls,
         args.newt_to_fp_threshold,

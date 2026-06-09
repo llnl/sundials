@@ -85,10 +85,9 @@ using SUNNonlinSolConvRateStdFn = std::tuple<SUNErrCode, sunrealtype>(void* mem)
 
 inline int sunnonlinearsolver_convratefn_wrapper(sunrealtype* crate, void* mem)
 {
-  auto fn_table =
-    static_cast<SUNNonlinearSolverFunctionTable*>(mem);
-  auto fn = nb::cast<std::function<SUNNonlinSolConvRateStdFn>>(
-    fn_table->convratefn);
+  auto fn_table = static_cast<SUNNonlinearSolverFunctionTable*>(mem);
+  auto fn =
+    nb::cast<std::function<SUNNonlinSolConvRateStdFn>>(fn_table->convratefn);
 
   auto result = fn(nullptr);
 

@@ -551,4 +551,5 @@ fresult = swigc_FSUNNonlinSolGetUpdateNorm_FixedPoint(farg1, farg2)
 swig_result = fresult
 end function
 
+
 end module

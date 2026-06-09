@@ -265,9 +265,9 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
          can be queried by the test function if desired */
       if (NEWTON_CONTENT(NLS)->norm_fn)
       {
-        retval = NEWTON_CONTENT(NLS)->norm_fn(
-          ycor, delta, w, &(NEWTON_CONTENT(NLS)->delnrm),
-          NEWTON_CONTENT(NLS)->norm_fn_data);
+        retval = NEWTON_CONTENT(NLS)->norm_fn(ycor, delta, w,
+                                              &(NEWTON_CONTENT(NLS)->delnrm),
+                                              NEWTON_CONTENT(NLS)->norm_fn_data);
         if (retval != SUN_SUCCESS) { break; }
       }
       else { NEWTON_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
@@ -326,8 +326,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
 
         /* Norsett's switching metric compares the next residual to the
            previous Newton update norm. */
-        NEWTON_CONTENT(NLS)->stiffr =
-          (delnrm > ZERO) ? resnrm / delnrm : ZERO;
+        NEWTON_CONTENT(NLS)->stiffr = (delnrm > ZERO) ? resnrm / delnrm : ZERO;
       }
     } /* end of Newton iteration loop */
 

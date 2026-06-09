@@ -141,8 +141,8 @@ int CVodeSetNonlinearSolverSensStg1(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  retval =
-    SUNNonlinSolSetConvRateFn(cv_mem->NLSstg1, cvNlsConvRateSensStg1, cvode_mem);
+  retval = SUNNonlinSolSetConvRateFn(cv_mem->NLSstg1, cvNlsConvRateSensStg1,
+                                     cvode_mem);
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,

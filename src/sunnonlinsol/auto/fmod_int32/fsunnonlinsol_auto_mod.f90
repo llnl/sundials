@@ -53,6 +53,10 @@ module fsunnonlinsol_auto_mod
   procedure :: get_fp_solver => swigf_SUNNonlinearSolverContent_Auto__fp_solver_get
   procedure :: set_newton_solver => swigf_SUNNonlinearSolverContent_Auto__newton_solver_set
   procedure :: get_newton_solver => swigf_SUNNonlinearSolverContent_Auto__newton_solver_get
+  procedure :: set_conv_rate_fn => swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_set
+  procedure :: get_conv_rate_fn => swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_get
+  procedure :: set_conv_rate_fn_data => swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set
+  procedure :: get_conv_rate_fn_data => swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get
   procedure :: set_fp_to_newt_delay => swigf_SUNNonlinearSolverContent_Auto__fp_to_newt_delay_set
   procedure :: get_fp_to_newt_delay => swigf_SUNNonlinearSolverContent_Auto__fp_to_newt_delay_get
   procedure :: set_newt_to_fp_delay => swigf_SUNNonlinearSolverContent_Auto__newt_to_fp_delay_set
@@ -73,6 +77,10 @@ module fsunnonlinsol_auto_mod
   procedure :: get_fp_num_iters_total => swigf_SUNNonlinearSolverContent_Auto__fp_num_iters_total_get
   procedure :: set_newton_num_iters_total => swigf_SUNNonlinearSolverContent_Auto__newton_num_iters_to1WENVP
   procedure :: get_newton_num_iters_total => swigf_SUNNonlinearSolverContent_Auto__newton_num_iters_to1WENLM
+  procedure :: set_fp_num_conv_fails_total => swigf_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_t1FM8HS
+  procedure :: get_fp_num_conv_fails_total => swigf_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_t1FM87P
+  procedure :: set_newton_num_conv_fails_total => swigf_SUNNonlinearSolverContent_Auto__newton_num_conv_fail99GJV
+  procedure :: get_newton_num_conv_fails_total => swigf_SUNNonlinearSolverContent_Auto__newton_num_conv_fail99G9S
   procedure :: set_auto_ctest_data => swigf_SUNNonlinearSolverContent_Auto__auto_ctest_data_set
   procedure :: get_auto_ctest_data => swigf_SUNNonlinearSolverContent_Auto__auto_ctest_data_get
   procedure :: release => swigf_release_SUNNonlinearSolverContent_Auto_
@@ -94,10 +102,12 @@ module fsunnonlinsol_auto_mod
  public :: FSUNNonlinSolSetSwitchingParameters_Auto
  public :: FSUNNonlinSolGetFixedPointSolver_Auto
  public :: FSUNNonlinSolGetNewtonSolver_Auto
+ public :: FSUNNonlinSolGetActiveSolverType_Auto
  public :: FSUNNonlinSolGetNumIters_Auto
  public :: FSUNNonlinSolGetTotalNumItersByType_Auto
  public :: FSUNNonlinSolGetCurIter_Auto
  public :: FSUNNonlinSolGetNumConvFails_Auto
+ public :: FSUNNonlinSolGetTotalNumConvFailsByType_Auto
  public :: FSUNNonlinSolGetNumConvFailsByType_Auto
  public :: FSUNNonlinSolGetUpdateNorm_Auto
 
@@ -147,6 +157,40 @@ end subroutine
 
 function swigc_SUNNonlinearSolverContent_Auto__newton_solver_get(farg1) &
 bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__newton_solver_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
@@ -324,6 +368,40 @@ type(SwigClassWrapper) :: farg1
 integer(C_LONG) :: fresult
 end function
 
+subroutine swigc_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_t1FM8HS(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_total_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_t1FM87P(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_total_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Auto__newton_num_conv_fail99GJV(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__newton_num_conv_fails_total_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Auto__newton_num_conv_fail99G9S(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__newton_num_conv_fails_total_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG) :: fresult
+end function
+
 subroutine swigc_SUNNonlinearSolverContent_Auto__auto_ctest_data_set(farg1, farg2) &
 bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__auto_ctest_data_set")
 use, intrinsic :: ISO_C_BINDING
@@ -481,6 +559,15 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNNonlinSolGetActiveSolverType_Auto(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetActiveSolverType_Auto") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNNonlinSolGetNumIters_Auto(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNumIters_Auto") &
 result(fresult)
@@ -515,6 +602,16 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolGetTotalNumConvFailsByType_Auto(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolGetTotalNumConvFailsByType_Auto") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -615,6 +712,56 @@ type(SwigClassWrapper) :: farg1
 farg1 = self%swigdata
 fresult = swigc_SUNNonlinearSolverContent_Auto__newton_solver_get(farg1)
 call c_f_pointer(fresult, swig_result)
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_set(self, conv_rate_fn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: conv_rate_fn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = conv_rate_fn
+call swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set(self, conv_rate_fn_data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
+type(C_PTR) :: conv_rate_fn_data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = conv_rate_fn_data
+call swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get(farg1)
+swig_result = fresult
 end function
 
 subroutine swigf_SUNNonlinearSolverContent_Auto__fp_to_newt_delay_set(self, fp_to_newt_delay)
@@ -864,6 +1011,56 @@ type(SwigClassWrapper) :: farg1
 
 farg1 = self%swigdata
 fresult = swigc_SUNNonlinearSolverContent_Auto__newton_num_iters_to1WENLM(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_t1FM8HS(self, fp_num_conv_fails_total)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
+integer(C_LONG), intent(in) :: fp_num_conv_fails_total
+type(SwigClassWrapper) :: farg1 
+integer(C_LONG) :: farg2 
+
+farg1 = self%swigdata
+farg2 = fp_num_conv_fails_total
+call swigc_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_t1FM8HS(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_t1FM87P(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_LONG) :: swig_result
+class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
+integer(C_LONG) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Auto__fp_num_conv_fails_t1FM87P(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Auto__newton_num_conv_fail99GJV(self, newton_num_conv_fails_total)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
+integer(C_LONG), intent(in) :: newton_num_conv_fails_total
+type(SwigClassWrapper) :: farg1 
+integer(C_LONG) :: farg2 
+
+farg1 = self%swigdata
+farg2 = newton_num_conv_fails_total
+call swigc_SUNNonlinearSolverContent_Auto__newton_num_conv_fail99GJV(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Auto__newton_num_conv_fail99G9S(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_LONG) :: swig_result
+class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
+integer(C_LONG) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Auto__newton_num_conv_fail99G9S(farg1)
 swig_result = fresult
 end function
 
@@ -1149,6 +1346,22 @@ fresult = swigc_FSUNNonlinSolGetNewtonSolver_Auto(farg1, farg2)
 swig_result = fresult
 end function
 
+function FSUNNonlinSolGetActiveSolverType_Auto(nls, active_solver_type) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+integer(SUNNonlinSolAutoType), target, intent(inout) :: active_solver_type
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = c_loc(active_solver_type)
+fresult = swigc_FSUNNonlinSolGetActiveSolverType_Auto(farg1, farg2)
+swig_result = fresult
+end function
+
 function FSUNNonlinSolGetNumIters_Auto(nls, niters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -1213,6 +1426,25 @@ type(C_PTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = c_loc(nconvfails(1))
 fresult = swigc_FSUNNonlinSolGetNumConvFails_Auto(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolGetTotalNumConvFailsByType_Auto(nls, fp_nconvfails, newt_nconvfails) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+integer(C_LONG), dimension(*), target, intent(inout) :: fp_nconvfails
+integer(C_LONG), dimension(*), target, intent(inout) :: newt_nconvfails
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = c_loc(fp_nconvfails(1))
+farg3 = c_loc(newt_nconvfails(1))
+fresult = swigc_FSUNNonlinSolGetTotalNumConvFailsByType_Auto(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

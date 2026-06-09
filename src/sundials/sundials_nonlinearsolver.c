@@ -86,10 +86,10 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   ops->getupdatenorm   = NULL;
 
   /* attach context and ops, initialize content to NULL */
-  NLS->sunctx       = sunctx;
-  NLS->ops          = ops;
-  NLS->content      = NULL;
-  NLS->python       = NULL;
+  NLS->sunctx  = sunctx;
+  NLS->ops     = ops;
+  NLS->content = NULL;
+  NLS->python  = NULL;
 
   return (NLS);
 }
