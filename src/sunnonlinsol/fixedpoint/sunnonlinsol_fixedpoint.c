@@ -38,9 +38,6 @@ static void FreeContent(SUNNonlinearSolver NLS);
 static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
                                                    SUNNonlinSolNormFn NormFn,
                                                    void* norm_fn_data);
-static SUNErrCode SUNNonlinSolSetConvRateFn_FixedPoint(
-  SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn,
-  void* conv_rate_fn_data);
 
 /* Content structure accessibility macros */
 #define FP_CONTENT(S) ((SUNNonlinearSolverContent_FixedPoint)(S->content))
@@ -80,7 +77,6 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   NLS->ops->setsysfn        = SUNNonlinSolSetSysFn_FixedPoint;
   NLS->ops->setctestfn      = SUNNonlinSolSetConvTestFn_FixedPoint;
   NLS->ops->setnormfn       = SUNNonlinSolSetNormFn_FixedPoint;
-  NLS->ops->setconvratefn   = SUNNonlinSolSetConvRateFn_FixedPoint;
   NLS->ops->setoptions      = SUNNonlinSolSetOptions_FixedPoint;
   NLS->ops->setmaxiters     = SUNNonlinSolSetMaxIters_FixedPoint;
   NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_FixedPoint;
@@ -100,21 +96,19 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   NLS->content = content;
 
   /* Fill general content */
-  content->Sys               = NULL;
-  content->CTest             = NULL;
-  content->norm_fn           = NULL;
-  content->norm_fn_data      = NULL;
-  content->conv_rate_fn      = NULL;
-  content->conv_rate_fn_data = NULL;
-  content->m                 = m;
-  content->damping           = SUNFALSE;
-  content->beta              = ONE;
-  content->crate_const       = SUN_RCONST(0.3);
-  content->curiter           = 0;
-  content->maxiters          = 3;
-  content->niters            = 0;
-  content->nconvfails        = 0;
-  content->ctest_data        = NULL;
+  content->Sys          = NULL;
+  content->CTest        = NULL;
+  content->norm_fn      = NULL;
+  content->norm_fn_data = NULL;
+  content->m            = m;
+  content->damping      = SUNFALSE;
+  content->beta         = ONE;
+  content->crate_const  = SUN_RCONST(0.3);
+  content->curiter      = 0;
+  content->maxiters     = 3;
+  content->niters       = 0;
+  content->nconvfails   = 0;
+  content->ctest_data   = NULL;
 
   /* Fill allocatable content */
   SUNCheckCallNull(AllocateContent(NLS, y));
@@ -261,40 +255,19 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     N_VLinearSum(ONE, ycor, -ONE, yprev, delta);
     SUNCheckLastErr();
 
-    /* compute the norm of delta, but save the previous value for computing a rate of convergence */
-    sunrealtype delnrmp = FP_CONTENT(NLS)->delnrm;
-    if (FP_CONTENT(NLS)->norm_fn)
-    {
-      retval = FP_CONTENT(NLS)->norm_fn(ycor, delta, w,
-                                        &(FP_CONTENT(NLS)->delnrm),
-                                        FP_CONTENT(NLS)->norm_fn_data);
-      if (retval)
-      {
-        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
-                   "status = failed norm_fn call, retval = %d", retval);
-        return retval;
-      }
-    }
-    else { FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
-
-    /* compute the convergence rate using the CVODE method */
-    if (FP_CONTENT(NLS)->curiter > 1)
-    {
-      FP_CONTENT(NLS)->crate =
-        SUNMAX(FP_CONTENT(NLS)->crate_const * FP_CONTENT(NLS)->crate,
-               FP_CONTENT(NLS)->delnrm / delnrmp);
-    }
-    else { FP_CONTENT(NLS)->crate = SUN_RCONST(0.0); }
-
     /* test for convergence */
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
 
     if (retval == SUN_NLS_SWITCH) { return SUN_NLS_SWITCH; }
 
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
+    retval = FP_CONTENT(NLS)->norm_fn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm),
+                                      FP_CONTENT(NLS)->norm_fn_data);
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
                "cur-iter = %d, update-norm = " SUN_FORMAT_G,
                FP_CONTENT(NLS)->niters, FP_CONTENT(NLS)->delnrm);
+#endif
 
     /* return if successful */
     if (retval == 0)
@@ -387,16 +360,6 @@ static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
   SUNFunctionBegin(NLS->sunctx);
   FP_CONTENT(NLS)->norm_fn      = NormFn;
   FP_CONTENT(NLS)->norm_fn_data = norm_fn_data;
-  return SUN_SUCCESS;
-}
-
-static SUNErrCode SUNNonlinSolSetConvRateFn_FixedPoint(
-  SUNNonlinearSolver NLS, SUNNonlinSolConvRateFn ConvRateFn,
-  void* conv_rate_fn_data)
-{
-  SUNFunctionBegin(NLS->sunctx);
-  FP_CONTENT(NLS)->conv_rate_fn      = ConvRateFn;
-  FP_CONTENT(NLS)->conv_rate_fn_data = conv_rate_fn_data;
   return SUN_SUCCESS;
 }
 

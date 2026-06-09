@@ -46,8 +46,6 @@ struct _SUNNonlinearSolverContent_Newton
   SUNNonlinSolConvTestFn CTest; /* nonlinear solver convergence test function */
   SUNNonlinSolNormFn norm_fn;   /* optional update-norm callback              */
   void* norm_fn_data;           /* data for the update-norm callback          */
-  SUNNonlinSolConvRateFn conv_rate_fn; /* optional convergence-rate callback */
-  void* conv_rate_fn_data;      /* data for the convergence-rate callback     */
 
   /* nonlinear solver variables */
   N_Vector delta; /* Newton update vector                                   */

@@ -61,7 +61,7 @@ Newton occurs when the fixed-point convergence-rate estimate supplied through
 
 indicates slow convergence or divergence, i.e., when :math:`R \ge \alpha`, for
 a specified number of nonlinear solves. The implementation default is
-:math:`\alpha = 0.8` with ``fp_to_newt_delay = 0``, consistent with the
+:math:`\alpha = 0.8` with ``fp_to_newt_delay = 1``, consistent with the
 Norsett switching criterion. Switching from Newton to fixed-point occurs when
 the stiffness indicator
 
@@ -119,10 +119,8 @@ and access to the underlying fixed-point and Newton solvers. The generic
 Auto solver; to configure fixed-point- or Newton-specific options separately,
 retrieve the wrapped solver with the getter functions below and call the
 appropriate module-specific setter on that object. Likewise, calling the generic
-:c:func:`SUNNonlinSolSetNormFn` or :c:func:`SUNNonlinSolSetConvRateFn` on the
-Auto solver forwards those callbacks to the wrapped sub-solvers so that the
-fixed-point and Newton implementations use the same integrator-provided norm
-and convergence-rate information.
+:c:func:`SUNNonlinSolSetNormFn` on the Auto solver forwards that callback to the
+wrapped sub-solvers so they use the same integrator-provided norm information.
 
 The SUNNonlinSol_Auto module also defines the following function for
 controlling the switching behavior.
@@ -136,7 +134,7 @@ controlling the switching behavior.
    :param newt_to_fp_threshold: the threshold for switching from Newton to fixed-point (i.e., :math:`\beta`). Nonnegative values are accepted; negative values reset the default ``2.0``.
    :param newt_to_fp_delay: the minimum number of nonlinear solves after a switch before switching from Newton to fixed-point is allowed. Nonnegative values are accepted; negative values reset the default ``10``.
    :param fp_to_newt_threshold: the threshold for switching from fixed-point to Newton (i.e., :math:`\alpha`). Nonnegative values are accepted; negative values reset the default ``0.8``.
-   :param fp_to_newt_delay: the minimum number of nonlinear solves after a switch before switching from fixed-point to Newton is allowed. Nonnegative values are accepted; negative values reset the default ``0``.
+   :param fp_to_newt_delay: the minimum number of nonlinear solves after a switch before switching from fixed-point to Newton is allowed. Nonnegative values are accepted; negative values reset the default ``1``.
 
    :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
 

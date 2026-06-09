@@ -45,6 +45,8 @@ struct SUNNonlinearSolverContent_Auto_
   SUNNonlinSolAutoType active_solver_type;
   SUNNonlinearSolver fp_solver;
   SUNNonlinearSolver newton_solver;
+  SUNNonlinSolConvRateFn conv_rate_fn;
+  void* conv_rate_fn_data;
   long int fp_to_newt_delay;
   long int newt_to_fp_delay;
   long int num_solves_since_switch;

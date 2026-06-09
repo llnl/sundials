@@ -360,6 +360,12 @@ parameters. Only the routine for setting the nonlinear system defining function
    **Return value:**
       * A :c:type:`SUNErrCode`
 
+   **Notes:**
+      This callback is currently used by :numref:`SUNNonlinSol.Auto`.
+      Implementations that do not define this optional operation may ignore the
+      callback; in that case the generic :c:func:`SUNNonlinSolSetConvRateFn`
+      routine returns ``SUN_SUCCESS``.
+
       .. versionadded:: x.y.z
 
 

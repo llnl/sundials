@@ -34,8 +34,6 @@
 
 /* Content structure accessibility macros */
 #define AUTO_CONTENT(S)   ((SUNNonlinearSolverContent_Auto)(S->content))
-#define FP_CONTENT(S)     ((SUNNonlinearSolverContent_FixedPoint)(S->content))
-#define NEWTON_CONTENT(S) ((SUNNonlinearSolverContent_Newton)(S->content))
 
 /* Default switching parameters 
    2.0 and 0.8 come from the numerical experiments in Norsett & Thomsen 1986,
@@ -124,6 +122,8 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   NLS->content = content;
 
   content->active_solver_type      = initial_solver_type;
+  content->conv_rate_fn            = NULL;
+  content->conv_rate_fn_data       = NULL;
   content->num_iters               = 0;
   content->num_conv_fails          = 0;
   content->fp_to_newt_delay        = SUNNLS_AUTO_DEFAULT_FP_TO_NEWT_DELAY;
@@ -274,14 +274,12 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
        don't consider switching. */
     if (retval == SUN_SUCCESS) { return retval; }
 
-    if (FP_CONTENT(C->fp_solver)->conv_rate_fn == NULL)
+    if (C->conv_rate_fn == NULL)
     {
       return SUN_ERR_NOT_IMPLEMENTED;
     }
 
-    crate_retval = FP_CONTENT(C->fp_solver)
-                     ->conv_rate_fn(&crate,
-                                    FP_CONTENT(C->fp_solver)->conv_rate_fn_data);
+    crate_retval = C->conv_rate_fn(&crate, C->conv_rate_fn_data);
     if (crate_retval != SUN_SUCCESS) { return crate_retval; }
 
     /* Check if fixed-point appears to be diverging. */
@@ -435,10 +433,8 @@ static SUNErrCode SUNNonlinSolSetConvRateFn_Auto(
   void* conv_rate_fn_data)
 {
   SUNFunctionBegin(NLS->sunctx);
-  SUNCheckCall(SUNNonlinSolSetConvRateFn(AUTO_CONTENT(NLS)->fp_solver,
-                                         ConvRateFn, conv_rate_fn_data));
-  SUNCheckCall(SUNNonlinSolSetConvRateFn(AUTO_CONTENT(NLS)->newton_solver,
-                                         ConvRateFn, conv_rate_fn_data));
+  AUTO_CONTENT(NLS)->conv_rate_fn      = ConvRateFn;
+  AUTO_CONTENT(NLS)->conv_rate_fn_data = conv_rate_fn_data;
   return SUN_SUCCESS;
 }
 

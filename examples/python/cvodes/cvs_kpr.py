@@ -168,10 +168,8 @@ def make_plots(args, ts, us, vs):
             print(f"\nSkipping plot: matplotlib import failed ({e}).")
             return
 
-        # Import repo-local suntools for parsing SUNLogger output
-        repo_root = Path(__file__).resolve().parents[3]
-        sys.path.insert(0, str(repo_root / "tools"))
         try:
+            import suntools
             from suntools import logs as sunlog
         except Exception as e:
             print(f"\nSolver overlay disabled: failed to import suntools ({e}).")
@@ -323,7 +321,7 @@ def main(argv=None):
     )
     nls = SUNNonlinSol_Auto(y, args.aa_depth, active_solver_type, sunctx)
     assert nls is not None
-
+    
     status = SUNNonlinSolSetSwitchingParameters_Auto(
         nls,
         args.newt_to_fp_threshold,
