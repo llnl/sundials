@@ -1962,7 +1962,7 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
                    __FILE__, MSG_LS_PSOLVE_FAILED);
     return (-1);
     break;
-  case default:
+  default:
     cvProcessError(cv_mem, retval, __LINE__, __func__, __FILE__,
                    "Unrecognized error return value from SUNLinSolSolve");
     return (-1);
