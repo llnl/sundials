@@ -30,6 +30,9 @@ embedded implicit-explicit MRI-GARK coupling tables.
 
 ### Bug Fixes
 
+Fixed a bug where an unrecognized error return flag from a user-provided
+SUNLinearSolver module would register as a successful linear solve.
+
 Fixed a minor bug where the number of required stages for STS methods
 in the LSRKStep module was incorrectly computed using the spectral
 radius instead of the real part of the Jacobian eigenvalues.
@@ -42,8 +45,8 @@ Fixed a minor bug where STS methods were limited to one fewer than
 the maximum allowed number of stages. STS can now use the full maximum
 number of stages.
 
-Fixed a bug that caused SUNDomEigEstimator_Initialize to overwrite the 
-user-provided initial guess from SUNDomEigEstimator_SetInitialGuess. These 
+Fixed a bug that caused SUNDomEigEstimator_Initialize to overwrite the
+user-provided initial guess from SUNDomEigEstimator_SetInitialGuess. These
 routines are now order-independent.
 
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
