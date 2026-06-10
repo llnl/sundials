@@ -3968,9 +3968,9 @@ int arkLsMassSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype nlscoef)
     return (-1);
     break;
   default:
-     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                     "Unrecognized error return value from SUNLinSolSolve");
-     return (-1);
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Unrecognized error return value from SUNLinSolSolve");
+    return (-1);
   }
 
   return (0);
