@@ -21,13 +21,8 @@
 # examples excluded from 'make test' in releases
 
 # Examples using SUNDIALS manyvector nvector
-if(SUNDIALS_SCALAR_TYPE MATCHES "REAL")
-  set(nvector_manyvector_examples "test_nvector_manyvector\;1000 100\;"
-                                  "test_nvector_manyvector\;100 1000\;")
-elseif(SUNDIALS_SCALAR_TYPE MATCHES "COMPLEX")
-  set(nvector_manyvector_examples "test_nvector_manyvector_Z\;1000 100\;"
-                                  "test_nvector_manyvector_Z\;100 1000\;")
-endif()
+set(nvector_manyvector_examples "test_nvector_manyvector\;1000 100\;"
+                                "test_nvector_manyvector\;100 1000\;")
 
 # Dependencies for nvector examples
 set(nvector_examples_dependencies test_nvector)

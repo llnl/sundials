@@ -20,11 +20,7 @@
 # Example lists are tuples "name\;args\;type" where the type is develop for
 # examples excluded from 'make test' in releases
 # Examples using SUNDIALS serial nvector
-if(SUNDIALS_SCALAR_TYPE MATCHES "REAL")
-  set(examples_list "test_nvector_kokkos.cpp\;1000 0\;")
-elseif(SUNDIALS_SCALAR_TYPE MATCHES "COMPLEX")
-  set(examples_list "test_nvector_kokkos_Z.cpp\;1000 0\;")
-endif()
+set(examples_list "test_nvector_kokkos.cpp\;1000 0\;")
 
 include_directories(..)
 

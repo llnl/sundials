@@ -27,11 +27,7 @@ endif()
 add_subdirectory(serial)
 
 # Build the nvector test utilities
-if(SUNDIALS_SCALAR_TYPE MATCHES "REAL")
-  add_library(test_nvector_obj OBJECT test_nvector.c)
-elseif(SUNDIALS_SCALAR_TYPE MATCHES "COMPLEX")
-  add_library(test_nvector_obj OBJECT test_nvector_complex.c)
-endif()
+add_library(test_nvector_obj OBJECT test_nvector.c)
 if(BUILD_SHARED_LIBS)
   # need PIC when shared libs are used since the example executables will link
   # to the shared lib
