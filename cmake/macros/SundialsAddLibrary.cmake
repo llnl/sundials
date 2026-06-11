@@ -535,6 +535,17 @@ macro(sundials_add_f2003_library target)
     VERSION ${sundials_add_f2003_library_VERSION}
     SOVERSION ${sundials_add_f2003_library_SOVERSION}
               ${sundials_add_f2003_library_UNPARSED_ARGUMENTS})
+
+  if(TARGET sundials_swig)
+    foreach(_dep_target ${target}_obj${_STATIC_LIB_SUFFIX}
+                        ${target}${_STATIC_LIB_SUFFIX}
+                        ${target}_obj${_SHARED_LIB_SUFFIX}
+                        ${target}${_SHARED_LIB_SUFFIX})
+      if(TARGET ${_dep_target})
+        add_dependencies(${_dep_target} sundials_swig)
+      endif()
+    endforeach()
+  endif()
 endmacro()
 
 macro(dealias_libraries libs_in libs_out lib_suffix)

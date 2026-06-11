@@ -107,7 +107,9 @@ function(sundials_configure_swig_types int_size scalar_type precision out_var)
       PARENT_SCOPE)
 endfunction()
 
-function(sundials_collect_swig_outputs int_size scalar_type swig_types_file out_var)
+function(sundials_add_swig_targets int_size scalar_type swig_types_file
+         targets_var generated_var)
+  set(swig_targets)
   set(generated_files)
 
   foreach(spec IN LISTS SUNDIALS_SWIG_INTERFACE_SPECS)
@@ -120,24 +122,32 @@ function(sundials_collect_swig_outputs int_size scalar_type swig_types_file out_
     set(output_dir "${SUNDIALS_ROOT}/${output_rel}/fmod_int${int_size}")
     set(output_c "${output_dir}/${output_name}.c")
     set(output_f90 "${output_dir}/${output_name}.f90")
+    set(target_name "sundials_swig_${output_name}")
 
-    add_custom_command(
-      OUTPUT ${output_c} ${output_f90}
+    add_custom_target(
+      ${target_name}
+      COMMAND
+        ${CMAKE_COMMAND} -E make_directory ${output_dir}
       COMMAND
         ${SWIG_EXECUTABLE} -fortran -outdir ${output_dir} -o
         ${output_c} -I${SUNDIALS_SWIG_INCLUDE_DIR}
         -I${CMAKE_CURRENT_BINARY_DIR}/sundials ${interface_file}
-      MAIN_DEPENDENCY ${interface_file}
+      BYPRODUCTS ${output_c} ${output_f90}
       DEPENDS ${swig_types_file}
+              ${interface_file}
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       COMMENT
         "Generating ${output_name} with SWIG"
       VERBATIM)
 
+    list(APPEND swig_targets ${target_name})
     list(APPEND generated_files ${output_c} ${output_f90})
   endforeach()
 
-  set(${out_var}
+  set(${targets_var}
+      "${swig_targets}"
+      PARENT_SCOPE)
+  set(${generated_var}
       "${generated_files}"
       PARENT_SCOPE)
 endfunction()
@@ -171,11 +181,12 @@ if(SUNDIALS_SWIG_STANDALONE)
                                 "${SUNDIALS_PRECISION}"
                                 _sundials_swig_types_file)
 
-  sundials_collect_swig_outputs("${SUNDIALS_INDEX_SIZE}"
-                                "${SUNDIALS_SCALAR_TYPE}"
-                                "${_sundials_swig_types_file}"
-                                _sundials_swig_outputs)
-  add_custom_target(swig ALL DEPENDS ${_sundials_swig_outputs})
+  sundials_add_swig_targets("${SUNDIALS_INDEX_SIZE}"
+                            "${SUNDIALS_SCALAR_TYPE}"
+                            "${_sundials_swig_types_file}"
+                            _sundials_swig_targets
+                            _sundials_swig_outputs)
+  add_custom_target(swig ALL DEPENDS ${_sundials_swig_targets})
 
   message(
     STATUS
@@ -200,11 +211,12 @@ else()
                                 "${SUNDIALS_PRECISION}"
                                 _sundials_swig_types_file)
 
-  sundials_collect_swig_outputs("${SUNDIALS_INDEX_SIZE}"
-                                "${SUNDIALS_SCALAR_TYPE}"
-                                "${_sundials_swig_types_file}"
-                                _sundials_swig_outputs)
-  add_custom_target(sundials_swig ALL DEPENDS ${_sundials_swig_outputs})
+  sundials_add_swig_targets("${SUNDIALS_INDEX_SIZE}"
+                            "${SUNDIALS_SCALAR_TYPE}"
+                            "${_sundials_swig_types_file}"
+                            _sundials_swig_targets
+                            _sundials_swig_outputs)
+  add_custom_target(sundials_swig ALL DEPENDS ${_sundials_swig_targets})
 
   message(
     STATUS
