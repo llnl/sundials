@@ -255,6 +255,20 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     N_VLinearSum(ONE, ycor, -ONE, yprev, delta);
     SUNCheckLastErr();
 
+    if (FP_CONTENT(NLS)->norm_fn)
+    {
+      retval = FP_CONTENT(NLS)->norm_fn(ycor, delta, w,
+                                        &(FP_CONTENT(NLS)->delnrm),
+                                        FP_CONTENT(NLS)->norm_fn_data);
+      if (retval)
+      {
+        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
+                   "status = failed norm_fn call, retval = %d", retval);
+        return retval;
+      }
+    }
+    else { FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
+
     /* test for convergence */
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
@@ -262,8 +276,6 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     if (retval == SUN_NLS_SWITCH) { return SUN_NLS_SWITCH; }
 
 #if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
-    retval = FP_CONTENT(NLS)->norm_fn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm),
-                                      FP_CONTENT(NLS)->norm_fn_data);
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
                "cur-iter = %d, update-norm = " SUN_FORMAT_G,
                FP_CONTENT(NLS)->niters, FP_CONTENT(NLS)->delnrm);
