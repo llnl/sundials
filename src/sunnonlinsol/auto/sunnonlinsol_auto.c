@@ -197,8 +197,6 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   int retval;
   long int iters, nconvfails;
   SUNNonlinearSolver subsolver;
-  SUNNonlinSolAutoType subsolver_type;
-  sunbooleantype sub_callsetup;
   SUNNonlinearSolverContent_Auto C = AUTO_CONTENT(NLS);
 
   SUNLogInfo(NLS->sunctx->logger, "nonlinear-solver",
@@ -208,22 +206,19 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   C->num_iters      = 0;
   C->num_conv_fails = 0;
 
-  sub_callsetup = callSetup;
-
   for (;;)
   {
-    subsolver_type = C->active_solver_type;
-    subsolver      = (subsolver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
-                       ? C->fp_solver
-                       : C->newton_solver;
+    subsolver = (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+                  ? C->fp_solver
+                  : C->newton_solver;
 
-    retval = SUNNonlinSolSolve(subsolver, y0, ycor, w, tol, sub_callsetup, mem);
+    retval = SUNNonlinSolSolve(subsolver, y0, ycor, w, tol, callSetup, mem);
 
     iters = 0;
     if (SUNNonlinSolGetNumIters(subsolver, &iters) == SUN_SUCCESS)
     {
       C->num_iters += iters;
-      if (subsolver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+      if (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
       {
         C->fp_num_iters_total += iters;
       }
@@ -234,7 +229,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
     if (SUNNonlinSolGetNumConvFails(subsolver, &nconvfails) == SUN_SUCCESS)
     {
       C->num_conv_fails += nconvfails;
-      if (subsolver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+      if (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
       {
         C->fp_num_conv_fails_total += nconvfails;
       }
@@ -259,6 +254,8 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
 
   int retval = data->user_ctest_fn(sub_nls, y, del, tol, ewt,
                                    data->user_ctest_data);
+  /* return early if error is unrecoverable */
+  if (retval < 0) { return retval; }
 
   /* We follow the switching strategy outlined in
      Norsett, Syvert P., and Per G. Thomsen. "Switching between modified Newton
