@@ -25,6 +25,15 @@
 #include <sundials/sundials_types.h>
 
 /* define constants */
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+#define NEG_TWO  SUN_CCONST(-2.0, 0.0)
+#define NEG_ONE  SUN_CCONST(-1.0, 0.0)
+#define NEG_HALF SUN_CCONST(-0.5, 0.0)
+#define ZERO     SUN_CCONST(0.0, 0.0)
+#define HALF     SUN_CCONST(0.5, 0.0)
+#define ONE      SUN_CCONST(1.0, 0.0)
+#define TWO      SUN_CCONST(2.0, 0.0)
+#else
 #define NEG_TWO  SUN_RCONST(-2.0)
 #define NEG_ONE  SUN_RCONST(-1.0)
 #define NEG_HALF SUN_RCONST(-0.5)
@@ -32,6 +41,7 @@
 #define HALF     SUN_RCONST(0.5)
 #define ONE      SUN_RCONST(1.0)
 #define TWO      SUN_RCONST(2.0)
+#endif
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
@@ -88,6 +98,7 @@ int Test_N_VAbs(N_Vector X, N_Vector Z, sunindextype local_length, int myid);
 int Test_N_VInv(N_Vector X, N_Vector Z, sunindextype local_length, int myid);
 int Test_N_VAddConst(N_Vector X, N_Vector Z, sunindextype local_length, int myid);
 int Test_N_VDotProd(N_Vector X, N_Vector Y, sunindextype local_length, int myid);
+int Test_N_VDotProdComplex(N_Vector X, N_Vector Y, sunindextype local_length, int myid);
 int Test_N_VMaxNorm(N_Vector X, sunindextype local_length, int myid);
 int Test_N_VWrmsNorm(N_Vector X, N_Vector W, sunindextype local_length, int myid);
 int Test_N_VWrmsNormMask(N_Vector X, N_Vector W, N_Vector ID,

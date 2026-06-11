@@ -71,7 +71,7 @@ contains
       print *, '>>> FAILED test -- FN_VGetArrayPointer, Proc ', myid
       print *, '    Vector data == NULL \n\n'
       failure = 1
-      return; 
+      return;
     end if
 
     call FN_VConst(NEG_HALF, W)
@@ -101,7 +101,11 @@ contains
     type(N_Vector), pointer    :: Y1, Y2, Y3
     type(c_ptr), target        :: V(3)
     type(c_ptr)                :: Vptr
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(C_DOUBLE_COMPLEX)  :: c(3)
+#else
     real(C_DOUBLE)             :: c(3)
+#endif
 
     failure = 0
 
@@ -124,7 +128,12 @@ contains
     !
 
     ! fill vector data
+    c(1) = TWO
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    call FN_VConst((TWO, ZERO), Y1)
+#else
     call FN_VConst(TWO, Y1)
+#endif
 
     ! set scaling factors
     c = HALF
@@ -172,9 +181,9 @@ contains
     end if
 
     ! Free vectors
-    call FN_VDestroy(Y1); 
-    call FN_VDestroy(Y2); 
-    call FN_VDestroy(Y3); 
+    call FN_VDestroy(Y1);
+    call FN_VDestroy(Y2);
+    call FN_VDestroy(Y3);
   end function Test_FN_VLinearCombination
 
 end module

@@ -25,7 +25,6 @@
 #include <sundials/sundials_types.h>
 
 #include "test_nvector.h"
-#include "test_nvector_complex.h"
 
 /* ----------------------------------------------------------------------
  * Main NVector Testing Routine
@@ -133,6 +132,7 @@ int main(int argc, char* argv[])
   fails += Test_N_VInv(X, Z, length, 0);
   fails += Test_N_VAddConst(X, Z, length, 0);
   fails += Test_N_VDotProd(X, Y, length, 0);
+  fails += Test_N_VDotProdComplex(X, Y, length, 0);
   fails += Test_N_VMaxNorm(X, length, 0);
   fails += Test_N_VWrmsNorm(X, Y, length, 0);
   fails += Test_N_VWrmsNormMask(X, Y, Z, length, 0);
@@ -261,7 +261,7 @@ int check_ans(sunscalartype ans, N_Vector X, sunindextype local_length)
   /* check vector data */
   for (i = 0; i < local_length; i++) { failure += SUNCompare(Xdata[i], ans); }
 
-  return (failure > ZERO) ? (1) : (0);
+  return (failure > 0) ? (1) : (0);
 }
 
 sunbooleantype has_data(N_Vector X)
@@ -270,7 +270,7 @@ sunbooleantype has_data(N_Vector X)
   return (N_VGetArrayPointer(X) == NULL) ? SUNFALSE : SUNTRUE;
 }
 
-void set_element(N_Vector X, sunindextype i, sunrealtype val)
+void set_element(N_Vector X, sunindextype i, sunscalartype val)
 {
   /* set i-th element of data array */
   set_element_range(X, i, i, val);
@@ -286,7 +286,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
   for (i = is; i <= ie; i++) { xd[i] = val; }
 }
 
-sunrealtype get_element(N_Vector X, sunindextype i)
+sunscalartype get_element(N_Vector X, sunindextype i)
 {
   /* get i-th element of data array */
   return NV_Ith_S(X, i);

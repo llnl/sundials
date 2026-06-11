@@ -35,6 +35,19 @@ module test_utilities
 
   real(c_double), parameter :: SUN_UNIT_ROUNDOFF = epsilon(1.0d0)
 
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(c_double_complex) :: NEG_TWO = (-2.0d0, 0.0d0)
+  complex(c_double_complex) :: NEG_ONE = (-1.0d0, 0.0d0)
+  complex(c_double_complex) :: NEG_HALF = (-0.50d0, 0.0d0)
+  complex(c_double_complex) :: ZERO = (0.0d0, 0.0d0)
+  complex(c_double_complex) :: HALF = (0.5d0, 0.0d0)
+  complex(c_double_complex) :: ONE = (1.0d0, 0.0d0)
+  complex(c_double_complex) :: TWO = (2.0d0, 0.0d0)
+  complex(c_double_complex) :: THREE = (3.0d0, 0.0d0)
+  complex(c_double_complex) :: FOUR = (4.0d0, 0.0d0)
+  complex(c_double_complex) :: FIVE = (5.0d0, 0.0d0)
+  complex(c_double_complex) :: SIX = (6.0d0, 0.0d0)
+#else
   real(c_double) :: NEG_TWO = -2.0d0
   real(c_double) :: NEG_ONE = -1.0d0
   real(c_double) :: NEG_HALF = -0.50d0
@@ -46,6 +59,7 @@ module test_utilities
   real(c_double) :: FOUR = 4.0d0
   real(c_double) :: FIVE = 5.0d0
   real(c_double) :: SIX = 6.0d0
+#endif
 
   type(c_ptr)    :: sunctx
 
@@ -74,7 +88,12 @@ contains
 
   integer(c_int) function FNEQTOL(a, b, tol) result(nequal)
     implicit none
-    real(c_double) :: a, b, tol
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex) :: a, b
+#else
+    real(c_double) :: a, b
+#endif
+    real(c_double) :: tol
 
     if (a /= a) then
       nequal = 1
@@ -88,7 +107,11 @@ contains
 
   integer(c_int) function FNEQ(a, b) result(nequal)
     implicit none
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex) :: a, b
+#else
     real(c_double) :: a, b
+#endif
 
     if (a /= a) then
       nequal = 1

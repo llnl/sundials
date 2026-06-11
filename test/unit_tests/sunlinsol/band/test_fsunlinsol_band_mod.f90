@@ -38,8 +38,8 @@ contains
 
     implicit none
 
-    type(SUNLinearSolver), pointer :: LS           ! test linear solver
-    type(SUNMatrix), pointer   :: A                  ! test matrices
+    type(SUNLinearSolver), pointer  :: LS           ! test linear solver
+    type(SUNMatrix), pointer  :: A                  ! test matrices
     type(N_Vector), pointer   :: x, y, b            ! test vectors
 #if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
     complex(c_double_complex), pointer :: xdata(:), Adata(:) ! data arrays
@@ -47,10 +47,10 @@ contains
 #else
     real(c_double), pointer   :: xdata(:), Adata(:) ! data arrays
 #endif
-    real(c_double)             :: tmpr               ! temporary real value
+    real(c_double)            :: tmpr               ! temporary real value
     integer(kind=myindextype) :: j, k
     integer(kind=myindextype) :: smu, kstart, kend, offset
-    integer(c_int)             :: tmp
+    integer(c_int)            :: tmp
 
     fails = 0
     smu = 0

@@ -105,6 +105,7 @@ int main(int argc, char* argv[])
     fails += Test_N_VConstrMask(X, Y, Z, length, 0);
     fails += Test_N_VDiv(X, Y, Z, length, 0);
     fails += Test_N_VDotProd(X, Y, length, 0);
+    fails += Test_N_VDotProdComplex(X, Y, length, 0);
     fails += Test_N_VInv(X, Z, length, 0);
     fails += Test_N_VInvTest(X, Z, length, 0);
     fails += Test_N_VL1Norm(X, length, 0);

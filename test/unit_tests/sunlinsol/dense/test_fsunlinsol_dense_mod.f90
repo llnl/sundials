@@ -36,14 +36,20 @@ contains
 
     implicit none
 
-    type(SUNLinearSolver), pointer :: LS                ! test linear solver
-    type(SUNMatrix), pointer :: A, I              ! test matrices
+    type(SUNLinearSolver), pointer :: LS         ! test linear solver
+    type(SUNMatrix), pointer :: A, I             ! test matrices
     type(N_Vector), pointer :: x, b              ! test vectors
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: colj(:), colIj(:) ! matrix column data
+    complex(c_double_complex), pointer :: xdata(:)          ! x vector data
+    complex(c_double_complex), parameter :: SUN_I = (0.0d0, 1.0d0)
+#else
     real(c_double), pointer :: colj(:), colIj(:) ! matrix column data
     real(c_double), pointer :: xdata(:)          ! x vector data
-    real(c_double)                 :: tmpr              ! temporary real value
-    integer(kind=myindextype)     :: j, k
-    integer(c_int)                 :: tmp
+#endif
+    real(c_double)            :: tmpr            ! temporary real value
+    integer(kind=myindextype) :: j, k
+    integer(c_int)            :: tmp
 
     fails = 0
 
@@ -52,12 +58,21 @@ contains
     x => FN_VNew_Serial(N, sunctx)
     b => FN_VNew_Serial(N, sunctx)
 
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+    print *, 'Testing with complex-valued data'
+#endif
+
     ! fill A matrix with uniform random data in [0, 1/N)
+    ! (if complex-valued, then add [0, 1]*i)
     do j = 1, N
       colj => FSUNDenseMatrix_Column(A, j - 1)
       do k = 1, N
         call random_number(tmpr)
         colj(k) = tmpr/N
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+        call random_number(tmpr)
+        colj(k) = colj(k) + tmpr*SUN_I
+#endif
       end do
     end do
 
@@ -83,6 +98,10 @@ contains
     do j = 1, N
       call random_number(tmpr)
       xdata(j) = tmpr
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+      call random_number(tmpr)
+      xdata(j) = xdata(j) + (ONE + tmpr)*SUN_I
+#endif
     end do
 
     ! create RHS vector for linear solve
@@ -123,10 +142,14 @@ integer(c_int) function check_vector(X, Y, tol) result(failure)
   use test_utilities
   implicit none
 
-  type(N_Vector)             :: x, y
-  real(c_double)             :: tol, maxerr
+  type(N_Vector) :: x, y
+  real(c_double) :: tol, maxerr
   integer(kind=myindextype) :: i, xlen, ylen
-  real(c_double), pointer    :: xdata(:), ydata(:)
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(c_double_complex), pointer :: xdata(:), ydata(:)
+#else
+  real(c_double), pointer :: xdata(:), ydata(:)
+#endif
 
   failure = 0
 
@@ -143,13 +166,23 @@ integer(c_int) function check_vector(X, Y, tol) result(failure)
   end if
 
   do i = 1, xlen
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    failure = failure + FNEQTOL(real(xdata(i)), real(ydata(i)), tol) &
+                      + FNEQTOL(aimag(xdata(i)), aimag(ydata(i)), tol)
+#else
     failure = failure + FNEQTOL(xdata(i), ydata(i), tol)
+#endif
   end do
 
   if (failure > 0) then
     maxerr = ZERO
     do i = 1, xlen
-      maxerr = max(abs(xdata(i) - ydata(i))/abs(ydata(i)), maxerr)
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+      maxerr = max(abs(real(xdata(i))-real(ydata(i)))/abs(real(xdata(i))), maxerr)
+      maxerr = max(abs(aimag(xdata(i))-aimag(ydata(i)))/abs(aimag(xdata(i))), maxerr)
+#else
+      maxerr = max(abs(xdata(i) - ydata(i))/abs(xdata(i)), maxerr)
+#endif
     end do
     write (*, '(A,E14.7,A,E14.7,A)') &
       "FAIL: check_vector failure: maxerr = ", maxerr, "  (tol = ", tol, ")"

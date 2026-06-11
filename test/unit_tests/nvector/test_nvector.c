@@ -1397,7 +1397,7 @@ int Test_N_VDotProd(N_Vector X, N_Vector Y, sunindextype local_length, int myid)
   int fails = 0, failure = 0;
   double start_time, stop_time, maxt;
   sunindextype global_length;
-  sunrealtype ans;
+  sunscalartype ans;
 
   /* get global length */
   global_length = N_VGetLength(X);
@@ -1412,7 +1412,7 @@ int Test_N_VDotProd(N_Vector X, N_Vector Y, sunindextype local_length, int myid)
   stop_time = get_time();
 
   /* ans should equal global vector length */
-  failure = SUNRCompare(ans, (sunrealtype)global_length);
+  failure = SUNRCompare(ans, (sunscalartype)global_length);
 
   if (failure)
   {
@@ -1424,6 +1424,46 @@ int Test_N_VDotProd(N_Vector X, N_Vector Y, sunindextype local_length, int myid)
   /* find max time across all processes */
   maxt = max_time(X, stop_time - start_time);
   PRINT_TIME("N_VDotProd", maxt);
+
+  return (fails);
+}
+
+/* ----------------------------------------------------------------------
+ * N_VDotProdComplex Test
+ * --------------------------------------------------------------------*/
+int Test_N_VDotProdComplex(N_Vector X, N_Vector Y, sunindextype local_length,
+                             int myid)
+{
+  int fails = 0, failure = 0;
+  double start_time, stop_time, maxt;
+  sunindextype global_length;
+  sunscalartype ans;
+
+  /* get global length */
+  global_length = N_VGetLength(X);
+
+  /* fill vector data */
+  N_VConst(TWO, X);
+  N_VConst(HALF, Y);
+
+  start_time = get_time();
+  N_VDotProdComplex(X, Y, &ans);
+  sync_device(X);
+  stop_time = get_time();
+
+  /* ans should equal global vector length */
+  failure = SUNCompare(ans, (sunscalartype)global_length);
+
+  if (failure)
+  {
+    printf(">>> FAILED test -- N_VDotProdComplex, Proc %d \n", myid);
+    fails++;
+  }
+  else if (myid == 0) { printf("PASSED test -- N_VDotProd \n"); }
+
+  /* find max time across all processes */
+  maxt = max_time(X, stop_time - start_time);
+  PRINT_TIME("N_VDotProdComplex", maxt);
 
   return (fails);
 }
@@ -1450,7 +1490,7 @@ int Test_N_VMaxNorm(N_Vector X, sunindextype local_length, int myid)
   stop_time = get_time();
 
   /* ans should equal 0 */
-  if (ans < ZERO || ans >= SUN_SMALL_REAL) { failure = 1; }
+  if (ans < SUN_REAL(ZERO) || ans >= SUN_SMALL_REAL) { failure = 1; }
 
   if (failure)
   {
@@ -1481,7 +1521,7 @@ int Test_N_VMaxNorm(N_Vector X, sunindextype local_length, int myid)
   stop_time = get_time();
 
   /* ans should equal 2 */
-  failure = (ans < ZERO) ? 1 : SUNRCompare(ans, TWO);
+  failure = (ans < SUN_REAL(ZERO)) ? 1 : SUNRCompare(ans, TWO);
 
   if (failure)
   {
@@ -1516,7 +1556,7 @@ int Test_N_VWrmsNorm(N_Vector X, N_Vector W, sunindextype local_length, int myid
   stop_time = get_time();
 
   /* ans should equal 1/4 */
-  failure = (ans < ZERO) ? 1 : SUNRCompare(ans, HALF * HALF);
+  failure = (ans < SUN_REAL(ZERO)) ? 1 : SUNRCompare(ans, HALF * HALF);
 
   if (failure)
   {
@@ -1565,7 +1605,7 @@ int Test_N_VWrmsNormMask(N_Vector X, N_Vector W, N_Vector ID,
   stop_time = get_time();
 
   /* check ans */
-  failure = (ans < ZERO) ? 1 : SUNRCompare(ans, fac);
+  failure = (ans < SUN_REAL(ZERO)) ? 1 : SUNRCompare(ans, fac);
 
   if (failure)
   {
@@ -1606,7 +1646,7 @@ int Test_N_VMin(N_Vector X, sunindextype local_length, int myid)
   if (failure)
   {
     printf(">>> FAILED test -- N_VMin Case 1, Proc %d \n", myid);
-    printf("    min = %" FSYM ", expected %" FSYM "\n", ans, HALF);
+    printf("    min = %" FSYM ", expected %" FSYM "\n", ans, SUN_REAL(HALF));
     fails++;
   }
   else if (myid == 0) { printf("PASSED test -- N_VMin \n"); }
@@ -1631,7 +1671,7 @@ int Test_N_VMin(N_Vector X, sunindextype local_length, int myid)
   if (failure)
   {
     printf(">>> FAILED test -- N_VMin, Proc %d \n", myid);
-    printf("    min = %" FSYM ", expected %" FSYM "\n", ans, NEG_TWO);
+    printf("    min = %" FSYM ", expected %" FSYM "\n", ans, SUN_REAL(NEG_TWO));
     fails++;
   }
   else if (myid == 0) { printf("PASSED test -- N_VMin \n"); }
@@ -1666,7 +1706,7 @@ int Test_N_VWL2Norm(N_Vector X, N_Vector W, sunindextype local_length, int myid)
   stop_time = get_time();
 
   /* ans should equal 1/4 * sqrt(global_length) */
-  failure = (ans < ZERO)
+  failure = (ans < SUN_REAL(ZERO))
               ? 1
               : SUNRCompare(ans,
                             HALF * HALF * SUNRsqrt((sunrealtype)global_length));
@@ -1707,7 +1747,7 @@ int Test_N_VL1Norm(N_Vector X, sunindextype local_length, int myid)
   stop_time = get_time();
 
   /* ans should equal global_length */
-  failure = (ans < ZERO) ? 1 : SUNRCompare(ans, (sunrealtype)global_length);
+  failure = (ans < SUN_REAL(ZERO)) ? 1 : SUNRCompare(ans, (sunrealtype)global_length);
 
   if (failure)
   {
@@ -2106,7 +2146,7 @@ int Test_N_VMinQuotient(N_Vector NUM, N_Vector DENOM, sunindextype local_length,
   if (failure)
   {
     printf(">>> FAILED test -- N_VMinQuotient Case 1, Proc %d \n", myid);
-    printf("    min = %" FSYM ", expected %" FSYM "\n", ans, HALF * HALF);
+    printf("    min = %" FSYM ", expected %" FSYM "\n", ans, SUN_REAL(HALF * HALF));
     fails++;
   }
   else if (myid == 0) { printf("PASSED test -- N_VMinQuotient Case 1 \n"); }
@@ -2641,7 +2681,7 @@ int Test_N_VDotProdMulti(N_Vector X, sunindextype local_length, int myid)
   /* dotprod[0] should equal the global vector length */
   if (ierr == 0)
   {
-    failure = SUNRCompare(dotprods[0], (sunrealtype)global_length);
+    failure = SUNRCompare(dotprods[0], (sunscalartype)global_length);
   }
   else { failure = 1; }
 
@@ -2674,9 +2714,9 @@ int Test_N_VDotProdMulti(N_Vector X, sunindextype local_length, int myid)
   /* dotprod[i] should equal -1, +1, and 2 times the global vector length */
   if (ierr == 0)
   {
-    failure = SUNRCompare(dotprods[0], (sunrealtype)-1 * global_length);
-    failure += SUNRCompare(dotprods[1], (sunrealtype)global_length);
-    failure += SUNRCompare(dotprods[2], (sunrealtype)2 * global_length);
+    failure = SUNCompare(dotprods[0], (sunscalartype)-1 * global_length);
+    failure += SUNCompare(dotprods[1], (sunscalartype)global_length);
+    failure += SUNCompare(dotprods[2], (sunscalartype)2 * global_length);
   }
   else { failure = 1; }
 
@@ -3753,7 +3793,7 @@ int Test_N_VWrmsNormVectorArray(N_Vector X, sunindextype local_length, int myid)
   /* nrm should equal 1/4 */
   if (ierr == 0)
   {
-    failure = (nrm[0] < ZERO) ? 1 : SUNRCompare(nrm[0], HALF * HALF);
+    failure = (nrm[0] < SUN_REAL(ZERO)) ? 1 : SUNRCompare(nrm[0], HALF * HALF);
   }
   else { failure = 1; }
 
@@ -3796,9 +3836,9 @@ int Test_N_VWrmsNormVectorArray(N_Vector X, sunindextype local_length, int myid)
   /* ans should equal 1/4, 1, 1/2 */
   if (ierr == 0)
   {
-    failure = (nrm[0] < ZERO) ? 1 : SUNRCompare(nrm[0], HALF * HALF);
-    failure += (nrm[1] < ZERO) ? 1 : SUNRCompare(nrm[1], ONE);
-    failure += (nrm[2] < ZERO) ? 1 : SUNRCompare(nrm[2], HALF);
+    failure = (nrm[0] < SUN_REAL(ZERO)) ? 1 : SUNRCompare(nrm[0], HALF * HALF);
+    failure += (nrm[1] < SUN_REAL(ZERO)) ? 1 : SUNRCompare(nrm[1], ONE);
+    failure += (nrm[2] < SUN_REAL(ZERO)) ? 1 : SUNRCompare(nrm[2], HALF);
   }
   else { failure = 1; }
 
@@ -3872,7 +3912,7 @@ int Test_N_VWrmsNormMaskVectorArray(N_Vector X, sunindextype local_length,
   /* nrm should equal fac/4 */
   if (ierr == 0)
   {
-    failure = (nrm[0] < ZERO) ? 1 : SUNRCompare(nrm[0], fac * HALF * HALF);
+    failure = (nrm[0] < SUN_REAL(ZERO)) ? 1 : SUNRCompare(nrm[0], fac * HALF * HALF);
   }
   else { failure = 1; }
 
@@ -3920,9 +3960,9 @@ int Test_N_VWrmsNormMaskVectorArray(N_Vector X, sunindextype local_length,
   /* ans should equal fac/4, fac, fac/2] */
   if (ierr == 0)
   {
-    failure = (nrm[0] < ZERO) ? 1 : SUNRCompare(nrm[0], fac * HALF * HALF);
-    failure += (nrm[1] < ZERO) ? 1 : SUNRCompare(nrm[1], fac);
-    failure += (nrm[2] < ZERO) ? 1 : SUNRCompare(nrm[2], fac * HALF);
+    failure = (nrm[0] < SUN_REAL(ZERO)) ? 1 : SUNRCompare(nrm[0], fac * HALF * HALF);
+    failure += (nrm[1] < SUN_REAL(ZERO)) ? 1 : SUNRCompare(nrm[1], fac);
+    failure += (nrm[2] < SUN_REAL(ZERO)) ? 1 : SUNRCompare(nrm[2], fac * HALF);
   }
   else { failure = 1; }
 
@@ -4997,10 +5037,10 @@ int Test_N_VDotProdLocal(N_Vector X, N_Vector Y, sunindextype local_length,
 {
   int fails = 0, failure = 0;
   double start_time, stop_time, maxt;
-  sunrealtype ans, rmyid, locleninv;
+  sunscalartype ans, rmyid, locleninv;
 
   /* fill vector data */
-  rmyid     = (sunrealtype)myid;
+  rmyid     = (sunscalartype)myid;
   locleninv = ONE / local_length;
   set_element_range(X, 0, local_length - 1, rmyid);
   set_element_range(Y, 0, local_length - 1, locleninv);
@@ -5016,7 +5056,12 @@ int Test_N_VDotProdLocal(N_Vector X, N_Vector Y, sunindextype local_length,
   if (failure)
   {
     printf(">>> FAILED test -- N_VDotProdLocal, Proc %d\n", myid);
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    printf("ans = %" FSYM " + %" FSYM "i expected = %" FSYM " + %" FSYM "i\n",
+           SUN_REAL(ans), SUN_IMAG(ans), SUN_REAL(rmyid), SUN_IMAG(rmyid));
+#else
     printf("ans = %" FSYM " expected = %" FSYM "\n", ans, rmyid);
+#endif
     fails++;
   }
   else if (myid == 0) { printf("PASSED test -- N_VDotProdLocal\n"); }
@@ -5049,7 +5094,7 @@ int Test_N_VMaxNormLocal(N_Vector X, sunindextype local_length, int myid)
 
   /* ans should equal myidp1 */
   failure =
-    (ans < ZERO) ? 1 : SUNRCompareTol(ans, myidp1, SUNRsqrt(SUN_UNIT_ROUNDOFF));
+    (ans < SUN_REAL(ZERO)) ? 1 : SUNRCompareTol(ans, myidp1, SUNRsqrt(SUN_UNIT_ROUNDOFF));
 
   if (failure)
   {
@@ -5072,10 +5117,10 @@ int Test_N_VMinLocal(N_Vector X, sunindextype local_length, int myid)
 {
   int fails = 0, failure = 0;
   double start_time, stop_time, maxt;
-  sunrealtype ans, negmyid;
+  sunscalartype ans, negmyid;
 
   /* fill vector data */
-  negmyid = (sunrealtype)-myid;
+  negmyid = (sunscalartype)-myid;
   N_VConst(TWO, X);
   set_element(X, local_length - 1, negmyid);
 
@@ -5120,7 +5165,7 @@ int Test_N_VL1NormLocal(N_Vector X, sunindextype local_length, int myid)
   stop_time = get_time();
 
   /* ans should equal myid */
-  failure = (ans < ZERO) ? 1
+  failure = (ans < SUN_REAL(ZERO)) ? 1
                          : SUNRCompareTol(ans, (sunrealtype)myid,
                                           SUNRsqrt(SUN_UNIT_ROUNDOFF));
 
@@ -5160,7 +5205,7 @@ int Test_N_VWSqrSumLocal(N_Vector X, N_Vector W, sunindextype local_length,
   stop_time = get_time();
 
   /* ans should equal myid */
-  failure = (ans < ZERO) ? 1
+  failure = (ans < SUN_REAL(ZERO)) ? 1
                          : SUNRCompareTol(ans, (sunrealtype)myid,
                                           SUNRsqrt(SUN_UNIT_ROUNDOFF));
 
@@ -5204,7 +5249,7 @@ int Test_N_VWSqrSumMaskLocal(N_Vector X, N_Vector W, N_Vector ID,
   stop_time = get_time();
 
   /* ans should equal myid */
-  failure = (ans < ZERO) ? 1
+  failure = (ans < SUN_REAL(ZERO)) ? 1
                          : SUNRCompareTol(ans, (sunrealtype)myid,
                                           SUNRsqrt(SUN_UNIT_ROUNDOFF));
 
@@ -5230,7 +5275,7 @@ int Test_N_VInvTestLocal(N_Vector X, N_Vector Z, sunindextype local_length,
 {
   int fails = 0, failure = 0;
   double start_time, stop_time, maxt;
-  sunrealtype xval;
+  sunscalartype xval;
   sunindextype i;
   sunbooleantype test;
 
@@ -5496,7 +5541,7 @@ int Test_N_VMinQuotientLocal(N_Vector NUM, N_Vector DENOM,
 {
   int fails = 0, failure = 0;
   double start_time, stop_time, maxt;
-  sunrealtype ans;
+  sunscalartype ans;
 
   /*
    * Case 1: Pass
@@ -5513,7 +5558,7 @@ int Test_N_VMinQuotientLocal(N_Vector NUM, N_Vector DENOM,
   stop_time = get_time();
 
   /* ans should equal myid */
-  failure = SUNRCompareTol(ans, (sunrealtype)myid, SUNRsqrt(SUN_UNIT_ROUNDOFF));
+  failure = SUNRCompareTol(ans, (sunscalartype)myid, SUNRsqrt(SUN_UNIT_ROUNDOFF));
 
   if (failure)
   {
@@ -5595,7 +5640,7 @@ int Test_N_VDotProdMultiLocal(N_Vector X, sunindextype local_length, int myid)
   /* dotprod[0] should equal the local vector length */
   if (ierr == 0)
   {
-    failure = SUNRCompare(dotprods[0], (sunrealtype)local_length);
+    failure = SUNCompare(dotprods[0], (sunscalartype)local_length);
   }
   else { failure = 1; }
 
@@ -5631,9 +5676,9 @@ int Test_N_VDotProdMultiLocal(N_Vector X, sunindextype local_length, int myid)
   /* dotprod[i] should equal -1, +1, and 2 times the local vector length */
   if (ierr == 0)
   {
-    failure = SUNRCompare(dotprods[0], (sunrealtype)-1 * local_length);
-    failure += SUNRCompare(dotprods[1], (sunrealtype)local_length);
-    failure += SUNRCompare(dotprods[2], (sunrealtype)2 * local_length);
+    failure = SUNCompare(dotprods[0], (sunscalartype)-1 * local_length);
+    failure += SUNCompare(dotprods[1], (sunscalartype)local_length);
+    failure += SUNCompare(dotprods[2], (sunscalartype)2 * local_length);
   }
   else { failure = 1; }
 
@@ -5695,7 +5740,7 @@ int Test_N_VDotProdMultiAllReduce(N_Vector X, sunindextype local_length, int myi
   /* dotprod[0] should equal the local vector length */
   if (ierr == 0)
   {
-    failure = SUNRCompare(dotprods[0], (sunrealtype)local_length);
+    failure = SUNCompare(dotprods[0], (sunscalartype)local_length);
   }
   else { failure = 1; }
 
@@ -5723,7 +5768,7 @@ int Test_N_VDotProdMultiAllReduce(N_Vector X, sunindextype local_length, int myi
   /* dotprod[0] should equal the global vector length */
   if (ierr == 0)
   {
-    failure = SUNRCompare(dotprods[0], (sunrealtype)global_length);
+    failure = SUNCompare(dotprods[0], (sunscalartype)global_length);
   }
   else { failure = 1; }
 
@@ -5760,9 +5805,9 @@ int Test_N_VDotProdMultiAllReduce(N_Vector X, sunindextype local_length, int myi
   /* dotprod[i] should equal -1, +1, and 2 times the local vector length */
   if (ierr == 0)
   {
-    failure = SUNRCompare(dotprods[0], (sunrealtype)-1 * local_length);
-    failure += SUNRCompare(dotprods[1], (sunrealtype)local_length);
-    failure += SUNRCompare(dotprods[2], (sunrealtype)2 * local_length);
+    failure = SUNCompare(dotprods[0], (sunscalartype)-1 * local_length);
+    failure += SUNCompare(dotprods[1], (sunscalartype)local_length);
+    failure += SUNCompare(dotprods[2], (sunscalartype)2 * local_length);
   }
   else { failure = 1; }
 
@@ -5789,9 +5834,9 @@ int Test_N_VDotProdMultiAllReduce(N_Vector X, sunindextype local_length, int myi
   /* dotprod[i] should equal -1, +1, and 2 times the global vector length */
   if (ierr == 0)
   {
-    failure = SUNRCompare(dotprods[0], (sunrealtype)-1 * global_length);
-    failure += SUNRCompare(dotprods[1], (sunrealtype)global_length);
-    failure += SUNRCompare(dotprods[2], (sunrealtype)2 * global_length);
+    failure = SUNCompare(dotprods[0], (sunscalartype)-1 * global_length);
+    failure += SUNCompare(dotprods[1], (sunscalartype)global_length);
+    failure += SUNCompare(dotprods[2], (sunscalartype)2 * global_length);
   }
   else { failure = 1; }
 
