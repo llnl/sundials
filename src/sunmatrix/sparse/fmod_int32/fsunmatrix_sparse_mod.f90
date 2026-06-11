@@ -220,7 +220,7 @@ function swigc_FSUNMatScaleAdd_Sparse(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatScaleAdd_Sparse") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: farg1
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
@@ -230,7 +230,7 @@ function swigc_FSUNMatScaleAddI_Sparse(farg1, farg2) &
 bind(C, name="_wrap_FSUNMatScaleAddI_Sparse") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: farg1
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -564,11 +564,11 @@ function FSUNMatScaleAdd_Sparse(c, a, b) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-real(C_DOUBLE), intent(in) :: c
+complex(C_DOUBLE_COMPLEX), intent(in) :: c
 type(SUNMatrix), target, intent(inout) :: a
 type(SUNMatrix), target, intent(inout) :: b
 integer(C_INT) :: fresult 
-real(C_DOUBLE) :: farg1 
+complex(C_DOUBLE_COMPLEX) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
@@ -583,10 +583,10 @@ function FSUNMatScaleAddI_Sparse(c, a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-real(C_DOUBLE), intent(in) :: c
+complex(C_DOUBLE_COMPLEX), intent(in) :: c
 type(SUNMatrix), target, intent(inout) :: a
 integer(C_INT) :: fresult 
-real(C_DOUBLE) :: farg1 
+complex(C_DOUBLE_COMPLEX) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = c
@@ -657,7 +657,11 @@ end function
 function FSUNSparseMatrix_Data(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
+#else
 real(C_DOUBLE), dimension(:), pointer :: swig_result
+#endif
 type(SUNMatrix), target, intent(inout) :: a
 type(C_PTR) :: fresult
 type(C_PTR) :: farg1

@@ -206,6 +206,21 @@
 #define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
 
 
+#ifdef __STDC_NO_COMPLEX__
+#error "This generated file requires C complex number support"
+#endif
+
+
+#include <complex.h>
+
+#define SWIG_ccomplex_construct(REAL, IMAG) ((REAL) + I * (IMAG))
+
+
+#include <complex.h>
+
+#define SWIG_ccomplex_construct(REAL, IMAG) ((REAL) + I * (IMAG))
+
+
 #include "sundials/sundials_matrix.h"
 
 
@@ -422,40 +437,40 @@ SWIGEXPORT int _wrap_FSUNMatSpace_Dense(SUNMatrix farg1, long *farg2, long *farg
 
 
 
-SWIGEXPORT double * _wrap_FSUNDenseMatrix_Data(SUNMatrix farg1) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FSUNDenseMatrix_Data(SUNMatrix farg1) {
+  sunscalartype * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (SUNMatrix)(farg1);
-  result = (sunrealtype *)SUNDenseMatrix_Data(arg1);
+  result = (sunscalartype *)SUNDenseMatrix_Data(arg1);
   fresult = result;
   return fresult;
 }
 
 #ifdef SUNDIALS_INT32_T
-SWIGEXPORT double * _wrap_FSUNDenseMatrix_Column(SUNMatrix farg1, int32_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FSUNDenseMatrix_Column(SUNMatrix farg1, int32_t const *farg2) {
+  sunscalartype * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype arg2 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (SUNMatrix)(farg1);
   arg2 = (sunindextype)(*farg2);
-  result = (sunrealtype *)SUNDenseMatrix_Column(arg1,arg2);
+  result = (sunscalartype *)SUNDenseMatrix_Column(arg1,arg2);
   fresult = result;
   return fresult;
 }
 #else
-SWIGEXPORT double * _wrap_FSUNDenseMatrix_Column(SUNMatrix farg1, int64_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FSUNDenseMatrix_Column(SUNMatrix farg1, int64_t const *farg2) {
+  sunscalartype * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype arg2 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (SUNMatrix)(farg1);
   arg2 = (sunindextype)(*farg2);
-  result = (sunrealtype *)SUNDenseMatrix_Column(arg1,arg2);
+  result = (sunscalartype *)SUNDenseMatrix_Column(arg1,arg2);
   fresult = result;
   return fresult;
 }

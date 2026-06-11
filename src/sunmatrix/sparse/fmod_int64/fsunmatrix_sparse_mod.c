@@ -206,6 +206,21 @@
 #define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
 
 
+#ifdef __STDC_NO_COMPLEX__
+#error "This generated file requires C complex number support"
+#endif
+
+
+#include <complex.h>
+
+#define SWIG_ccomplex_construct(REAL, IMAG) ((REAL) + I * (IMAG))
+
+
+#include <complex.h>
+
+#define SWIG_ccomplex_construct(REAL, IMAG) ((REAL) + I * (IMAG))
+
+
 #include "sundials/sundials_matrix.h"
 
 
@@ -524,13 +539,13 @@ SWIGEXPORT int _wrap_FSUNMatSpace_Sparse(SUNMatrix farg1, long *farg2, long *far
 
 
 
-SWIGEXPORT double * _wrap_FSUNSparseMatrix_Data(SUNMatrix farg1) {
-  double * fresult ;
+SWIGEXPORT sunscalartype * _wrap_FSUNSparseMatrix_Data(SUNMatrix farg1) {
+  sunscalartype * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
-  sunrealtype *result = 0 ;
+  sunscalartype *result = 0 ;
 
   arg1 = (SUNMatrix)(farg1);
-  result = (sunrealtype *)SUNSparseMatrix_Data(arg1);
+  result = (sunscalartype *)SUNSparseMatrix_Data(arg1);
   fresult = result;
   return fresult;
 }

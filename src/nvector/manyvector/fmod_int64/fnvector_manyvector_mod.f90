@@ -1535,7 +1535,11 @@ end function
 function FN_VGetSubvectorArrayPointer_ManyVector(v, vec_num) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
+#else
 real(C_DOUBLE), dimension(:), pointer :: swig_result
+#endif
 type(N_Vector), target, intent(inout) :: v
 #ifdef SUNDIALS_INT32_T
 integer(C_INT32_T), intent(in) :: vec_num

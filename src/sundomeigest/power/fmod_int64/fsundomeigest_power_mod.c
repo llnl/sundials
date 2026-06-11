@@ -235,6 +235,21 @@ enum {
 #define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
 
 
+#ifdef __STDC_NO_COMPLEX__
+#error "This generated file requires C complex number support"
+#endif
+
+
+#include <complex.h>
+
+#define SWIG_ccomplex_construct(REAL, IMAG) ((REAL) + I * (IMAG))
+
+
+#include <complex.h>
+
+#define SWIG_ccomplex_construct(REAL, IMAG) ((REAL) + I * (IMAG))
+
+
 #include "sundials/sundials_domeigestimator.h"
 
 

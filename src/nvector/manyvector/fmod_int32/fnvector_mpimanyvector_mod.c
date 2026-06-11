@@ -206,6 +206,21 @@
 #define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
 
 
+#ifdef __STDC_NO_COMPLEX__
+#error "This generated file requires C complex number support"
+#endif
+
+
+#include <complex.h>
+
+#define SWIG_ccomplex_construct(REAL, IMAG) ((REAL) + I * (IMAG))
+
+
+#include <complex.h>
+
+#define SWIG_ccomplex_construct(REAL, IMAG) ((REAL) + I * (IMAG))
+
+
 #include "sundials/sundials_nvector.h"
 
 
@@ -1155,8 +1170,8 @@ SWIGEXPORT int _wrap_FN_VEnableDotProdMultiLocal_MPIManyVector(N_Vector farg1, i
 
 
 #ifdef SUNDIALS_INT32_T
-SWIGEXPORT double * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector farg1, int32_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunrealtype * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector farg1, int32_t const *farg2) {
+  sunrealtype * fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype arg2 ;
   sunrealtype *result = 0 ;
@@ -1168,8 +1183,8 @@ SWIGEXPORT double * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector fa
   return fresult;
 }
 #else
-SWIGEXPORT double * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector farg1, int64_t const *farg2) {
-  double * fresult ;
+SWIGEXPORT sunrealtype * _wrap_FN_VGetSubvectorArrayPointer_MPIManyVector(N_Vector farg1, int64_t const *farg2) {
+  sunrealtype * fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype arg2 ;
   sunrealtype *result = 0 ;

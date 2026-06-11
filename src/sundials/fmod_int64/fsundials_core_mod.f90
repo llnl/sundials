@@ -4822,7 +4822,11 @@ end subroutine
 function FN_VGetArrayPointer(v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
+#else
 real(C_DOUBLE), dimension(:), pointer :: swig_result
+#endif
 type(N_Vector), target, intent(inout) :: v
 type(C_PTR) :: fresult
 type(C_PTR) :: farg1
@@ -4835,7 +4839,11 @@ end function
 function FN_VGetDeviceArrayPointer(v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
+#else
 real(C_DOUBLE), dimension(:), pointer :: swig_result
+#endif
 type(N_Vector), target, intent(inout) :: v
 type(C_PTR) :: fresult
 type(C_PTR) :: farg1
