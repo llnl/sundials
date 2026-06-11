@@ -528,7 +528,11 @@ macro(sundials_add_f2003_library target)
     INCLUDE_DIRECTORIES ${sundials_add_f2003_library_INCLUDE_DIRECTORIES}
                         ${_includes}
     COMPILE_DEFINITIONS ${sundials_add_f2003_library_COMPILE_DEFINITIONS} PUBLIC
-                        "SUNDIALS_INT${SUNDIALS_INDEX_SIZE}_T"
+                        "SUNDIALS_INT${SUNDIALS_INDEX_SIZE}_T=1"
+                        "SUNDIALS_SCALAR_TYPE_${SUNDIALS_SCALAR_TYPE}=1"
+                        "SUNDIALS_${SUNDIALS_PRECISION}_PRECISION=1"
+                        "SUNDIALS_INDEX_TYPE=${SUNDIALS_CINDEX_TYPE}"
+                        "SUNDIALS_COUNTER_TYPE=${SUNDIALS_COUNTER_TYPE}"
     COMPILE_OPTIONS ${sundials_add_f2003_library_COMPILE_OPTIONS}
     PROPERTIES ${sundials_add_f2003_library_PROPERTIES} ${_properties}
     OUTPUT_NAME ${sundials_add_f2003_library_OUTPUT_NAME}
