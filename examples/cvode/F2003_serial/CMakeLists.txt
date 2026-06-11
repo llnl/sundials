@@ -107,32 +107,35 @@ if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
     # parse the example tuple
     list(GET example_tuple 0 example)
     list(GET example_tuple 1 example_type)
+    list(GET example_tuple 2 example_scalartype)
 
     # Install fortran modules to a unique directory to avoid naming collisions
     set(CMAKE_Fortran_MODULE_DIRECTORY
         ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
 
     # example source files
-    sundials_add_executable(${example} ${example}.f90)
+    sundials_add_executable(${example} ${example}.f90
+      SCALAR_TYPE ${example_scalartype})
 
-    set_target_properties(${example} PROPERTIES FOLDER "Examples")
+    if(TARGET ${example})
+      set_target_properties(${example} PROPERTIES FOLDER "Examples")
 
-    # add example to regression tests
-    sundials_add_test(
-      ${example} ${example}
-      ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-      ANSWER_FILE ${example}.out
-      EXAMPLE_TYPE ${example_type})
+      # add example to regression tests
+      sundials_add_test(
+        ${example} ${example}
+        ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+        ANSWER_FILE ${example}.out
+        EXAMPLE_TYPE ${example_type})
 
-    # libraries to link against
-    target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLKLU_LIBS})
+      # libraries to link against
+      target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLKLU_LIBS})
 
-    # install example source and out files
-    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-      install(FILES ${example}.f90 ${example}.out
-              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
+      # install example source and out files
+      if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+        install(FILES ${example}.f90 ${example}.out
+                DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
+      endif()
     endif()
-
   endforeach(example_tuple ${FCVODE_examples_KLU})
 
 endif()
@@ -150,30 +153,36 @@ if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
     # parse the example tuple
     list(GET example_tuple 0 example)
     list(GET example_tuple 1 example_type)
+    list(GET example_tuple 2 example_scalartype)
+
+    # Install fortran modules to a unique directory to avoid naming collisions
+    set(CMAKE_Fortran_MODULE_DIRECTORY
+        ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
 
     # example source files
-    sundials_add_executable(${example} ${example}.f90)
+    sundials_add_executable(${example} ${example}.f90
+      SCALAR_TYPE ${example_scalartype})
 
-    set_target_properties(${example} PROPERTIES FOLDER "Examples")
+    if(TARGET ${example})
+      set_target_properties(${example} PROPERTIES FOLDER "Examples")
 
-    # add example to regression tests
-    sundials_add_test(
-      ${example} ${example}
-      ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-      ANSWER_FILE ${example}.out
-      EXAMPLE_TYPE ${example_type})
+      # add example to regression tests
+      sundials_add_test(
+        ${example} ${example}
+        ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+        ANSWER_FILE ${example}.out
+        EXAMPLE_TYPE ${example_type})
 
-    # libraries to link against
-    target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLLAPACK_LIBS})
+      # libraries to link against
+      target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLLAPACK_LIBS})
 
-    # install example source and out files
-    if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-      install(FILES ${example}.f90 ${example}.out
-              DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
+      # install example source and out files
+      if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+        install(FILES ${example}.f90 ${example}.out
+                DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/F2003_serial)
+      endif()
     endif()
-
   endforeach(example_tuple ${FCVODE_examples_LAPACK})
-
 endif()
 
 # create Makefile and CMakeLists.txt for examples
