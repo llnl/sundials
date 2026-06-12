@@ -54,8 +54,10 @@ contains
     type(UserData), pointer :: probdata   ! problem data
 #if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
     complex(c_double_complex), pointer :: xdata(:)   ! x vector data
+    complex(c_double_complex), parameter :: mat_d = (6.d0, 2.d0)
 #else
     real(c_double), pointer :: xdata(:)   ! x vector data
+    real(c_double), parameter :: mat_d = 5.d0
 #endif
     real(c_double)                 :: tmpr       ! temporary real value
     integer(kind=myindextype)     :: j
@@ -84,7 +86,7 @@ contains
     end do
 
     ! fill Jacobi vector with matrix diagonal
-    call FN_VConst(FIVE, probdata%d)
+    call FN_VConst(mat_d, probdata%d)
 
     ! create SPGMR linear solver
     LS => FSUNLinSol_SPGMR(x, pretype, maxl, sunctx)
@@ -219,9 +221,13 @@ contains
     type(N_Vector) :: vvec, zvec
     type(UserData), pointer :: probdata
 #if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-    complex(c_double_complex), pointer :: v(:), z(:), s1(:), s2(:)
+    complex(c_double_complex), pointer :: v(:), z(:), d(:), s1(:), s2(:)
+    complex(c_double_complex), parameter :: mat_u = (-1.d0, 2.d0)
+    complex(c_double_complex), parameter :: mat_l = (2.d0, -1.d0)
 #else
-    real(c_double), pointer :: v(:), z(:), s1(:), s2(:)
+    real(c_double), pointer :: v(:), z(:), d(:), s1(:), s2(:)
+    real(c_double), parameter :: mat_u = 1.d0
+    real(c_double), parameter :: mat_l = 1.d0
 #endif
     integer(c_long) :: i, N
 
@@ -229,20 +235,21 @@ contains
 
     v => FN_VGetArrayPointer(vvec)
     z => FN_VGetArrayPointer(zvec)
+    d => FN_VGetArrayPointer(probdata%d)
     s1 => FN_VGetArrayPointer(probdata%s1)
     s2 => FN_VGetArrayPointer(probdata%s2)
     N = probdata%N
 
     ! perform product at the left domain boundary (note: v is zero at the boundary)
-    z(1) = (FIVE*v(1)*s2(1) - v(2)*s2(2))/s1(1)
+    z(1) = (d(1)*v(1)*s2(1) - mat_u*v(2)*s2(2))/s1(1)
 
     ! iterate through interior of local domain, performing product
     do i = 2, N - 1
-      z(i) = (-v(i - 1)*s2(i - 1) + FIVE*v(i)*s2(i) - v(i + 1)*s2(i + 1))/s1(i)
+      z(i) = (-mat_l*v(i - 1)*s2(i - 1) + d(i)*v(i)*s2(i) - mat_u*v(i + 1)*s2(i + 1))/s1(i)
     end do
 
     ! perform product at the right domain boundary (note: v is zero at the boundary)
-    z(N) = (-v(N - 1)*s2(N - 1) + FIVE*v(N)*s2(N))/s1(N)
+    z(N) = (-mat_l*v(N - 1)*s2(N - 1) + d(N)*v(N)*s2(N))/s1(N)
 
     ret = 0
   end function ATimes

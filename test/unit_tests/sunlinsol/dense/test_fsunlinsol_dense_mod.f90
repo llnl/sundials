@@ -166,12 +166,7 @@ integer(c_int) function check_vector(X, Y, tol) result(failure)
   end if
 
   do i = 1, xlen
-#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-    failure = failure + FNEQTOL(real(xdata(i)), real(ydata(i)), tol) &
-                      + FNEQTOL(aimag(xdata(i)), aimag(ydata(i)), tol)
-#else
     failure = failure + FNEQTOL(xdata(i), ydata(i), tol)
-#endif
   end do
 
   if (failure > 0) then

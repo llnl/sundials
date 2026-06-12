@@ -56,8 +56,12 @@ contains
     type(UserData), pointer :: probdata   ! problem data
 #if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
     complex(c_double_complex), pointer :: xdata(:)   ! x vector data
+    complex(c_double_complex), parameter :: mat_d = (10.d0, 0.d0)
+    complex(c_double_complex), parameter :: mat_s = (2.5d0, 0.d0)
 #else
     real(c_double), pointer :: xdata(:)   ! x vector data
+    real(c_double), parameter :: mat_d = 5.d0
+    real(c_double), parameter :: mat_s = 2.5d0
 #endif
     real(c_double)                 :: tmpr       ! temporary real value
     integer(kind=myindextype)     :: j
@@ -86,7 +90,7 @@ contains
     end do
 
     ! fill Jacobi vector with matrix diagonal
-    call FN_VConst(FIVE, probdata%d)
+    call FN_VConst(mat_d, probdata%d)
 
     ! create PCG linear solver
     LS => FSUNLinSol_PCG(x, pretype, maxl, sunctx)
@@ -175,11 +179,7 @@ contains
     ! Test 3: Poisson-like solve w/ scaled rows (no preconditioning)
 
     ! set scaling vectors
-    xdata => FN_VGetArrayPointer(probdata%s)
-    do j = 1, N
-      call random_number(tmpr)
-      xdata(j) = ONE + 1000.0d0*tmpr
-    end do
+    call FN_VConst(mat_s, probdata%s)
 
     ! fill x vector with scaled version
     call FN_VProd(xhat, probdata%s, x)
@@ -228,9 +228,13 @@ contains
     type(N_Vector) :: vvec, zvec
     type(UserData), pointer :: probdata
 #if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-    complex(c_double_complex), pointer :: v(:), z(:), s(:)
+    complex(c_double_complex), pointer :: v(:), z(:), s(:), d(:)
+    complex(c_double_complex), parameter :: mat_u = (-1.d0, 2.d0)
+    complex(c_double_complex), parameter :: mat_l = (-1.d0, -2.d0)
 #else
-    real(c_double), pointer :: v(:), z(:), s(:)
+    real(c_double), pointer :: v(:), z(:), s(:), d(:)
+    real(c_double), parameter :: mat_u = 1.d0
+    real(c_double), parameter :: mat_l = 1.d0
 #endif
     integer(c_long) :: i, N
 
@@ -239,18 +243,19 @@ contains
     v => FN_VGetArrayPointer(vvec)
     z => FN_VGetArrayPointer(zvec)
     s => FN_VGetArrayPointer(probdata%s)
+    d => FN_VGetArrayPointer(probdata%d)
     N = probdata%N
 
     ! perform product at the left domain boundary (note: v is zero at the boundary)
-    z(1) = (FIVE*v(1)/s(1) - v(2)/s(2))/s(1)
+    z(1) = (d(1)*v(1)/s(1) - mat_u*v(2)/s(2))/s(1)
 
     ! iterate through interior of local domain, performing product
     do i = 2, N - 1
-      z(i) = (-v(i - 1)/s(i - 1) + FIVE*v(i)/s(i) - v(i + 1)/s(i + 1))/s(i)
+      z(i) = (-mat_l*v(i - 1)/s(i - 1) + d(i)*v(i)/s(i) - mat_u*v(i + 1)/s(i + 1))/s(i)
     end do
 
     ! perform product at the right domain boundary (note: v is zero at the boundary)
-    z(N) = (-v(N - 1)/s(N - 1) + FIVE*v(N)/s(N))/s(N)
+    z(N) = (-mat_l*v(N - 1)/s(N - 1) + d(N)*v(N)/s(N))/s(N)
 
     ret = 0
   end function ATimes
@@ -337,7 +342,7 @@ integer(c_int) function check_vector(X, Y, tol) result(failure)
       maxerr = max(abs(xdata(i) - ydata(i))/abs(xdata(i)), maxerr)
     end do
     write (*, '(A,E14.7,A,E14.7,A)') &
-      "FAIL: check_vector failure: maxerr = ", maxerr, "  (tol = ", FIVE*tol, ")"
+      "FAIL: check_vector failure: maxerr = ", maxerr, "  (tol = ", 5.d0*tol, ")"
   end if
 
 end function check_vector
