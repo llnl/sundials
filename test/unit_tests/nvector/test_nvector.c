@@ -1443,23 +1443,32 @@ int Test_N_VDotProdComplex(N_Vector X, N_Vector Y, sunindextype local_length,
   global_length = N_VGetLength(X);
 
   /* fill vector data */
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  N_VConst(TWO * SUN_I, X);
+  N_VConst(HALF * SUN_I, Y);
+#else
   N_VConst(TWO, X);
   N_VConst(HALF, Y);
+#endif
 
   start_time = get_time();
   N_VDotProdComplex(X, Y, &ans);
   sync_device(X);
   stop_time = get_time();
 
-  /* ans should equal global vector length */
+  /* ans should equal global vector length (possibly multiplied by -1) */
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  failure = SUNCompare(ans, -(sunscalartype)global_length);
+#else
   failure = SUNCompare(ans, (sunscalartype)global_length);
+#endif
 
   if (failure)
   {
     printf(">>> FAILED test -- N_VDotProdComplex, Proc %d \n", myid);
     fails++;
   }
-  else if (myid == 0) { printf("PASSED test -- N_VDotProd \n"); }
+  else if (myid == 0) { printf("PASSED test -- N_VDotProdComplex \n"); }
 
   /* find max time across all processes */
   maxt = max_time(X, stop_time - start_time);
