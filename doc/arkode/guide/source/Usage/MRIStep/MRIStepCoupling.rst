@@ -406,6 +406,12 @@ unique ID having type:
 
 with values specified for each method below (e.g., ``ARKODE_MIS_KW3``).
 
+.. warning::
+
+   When using any of the following methods that do not include embeddings
+   (marked with "Embedding Order" shown as "--"), users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
+
 
 
 .. table:: Explicit MRIStep coupling tables.
