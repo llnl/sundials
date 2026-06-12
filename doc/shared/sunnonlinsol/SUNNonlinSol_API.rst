@@ -233,7 +233,7 @@ parameters. Only the routine for setting the nonlinear system defining function
 
    This *optional* function is used by hybrid nonlinear solvers to receive both
    the root-finding residual :math:`F(y)` and the fixed-point map
-   :math:`G(y)`. Integrators should prefer this routine over
+   :math:`G(y)`. Integrators will prefer this routine over
    :c:func:`SUNNonlinSolSetSysFn` when configuring a
    ``SUNNONLINEARSOLVER_HYBRID`` module.
 
@@ -454,7 +454,7 @@ linear solver module; otherwise :c:func:`SUNNonlinSolGetCurIter` is optional.
 .. c:function:: SUNErrCode SUNNonlinSolGetUpdateNorm(SUNNonlinearSolver NLS, sunrealtype *delnrm)
 
    This *optional* function returns the norm of the most recent nonlinear
-   solver update (often denoted :math:`\|\delta\|`) computed by the
+   solver update (:math:`\|\delta\|`) computed by the
    nonlinear solver. The norm used is left up to the nonlinear solver implementation,
    but typically it is the WRMS norm, with weight vector given by the
    solution error weight vector ``w`` that was passed to
@@ -470,6 +470,8 @@ linear solver module; otherwise :c:func:`SUNNonlinSolGetCurIter` is optional.
    **Notes:**
       If the nonlinear solver does not implement this operation, the return
       value will be ``SUN_ERR_NOT_IMPLEMENTED``.
+      
+      .. versionadded:: x.y.z
 
       .. versionadded:: x.y.z
 
