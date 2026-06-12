@@ -128,8 +128,7 @@ struct _generic_SUNNonlinearSolver_Ops
   SUNErrCode (*setlsolvefn)(SUNNonlinearSolver, SUNNonlinSolLSolveFn);
   SUNErrCode (*setctestfn)(SUNNonlinearSolver, SUNNonlinSolConvTestFn, void*);
   SUNErrCode (*setnormfn)(SUNNonlinearSolver, SUNNonlinSolNormFn, void*);
-  SUNErrCode (*setconvratefn)(SUNNonlinearSolver, SUNNonlinSolConvRateFn,
-                              void*);
+  SUNErrCode (*setconvratefn)(SUNNonlinearSolver, SUNNonlinSolConvRateFn, void*);
   SUNErrCode (*setoptions)(SUNNonlinearSolver NLS, const char* NLSid,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNNonlinearSolver, int);
@@ -202,8 +201,7 @@ SUNErrCode SUNNonlinSolSetConvTestFn(SUNNonlinearSolver NLS,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
-                                 SUNNonlinSolNormFn NormFn,
-                                 void* norm_fn_data);
+                                 SUNNonlinSolNormFn NormFn, void* norm_fn_data);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetConvRateFn(SUNNonlinearSolver NLS,

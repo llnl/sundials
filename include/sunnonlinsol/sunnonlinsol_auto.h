@@ -136,8 +136,9 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Auto(SUNNonlinearSolver NLS,
                                             long int* nconvfails);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetTotalNumConvFailsByType_Auto(
-  SUNNonlinearSolver NLS, long int* fp_nconvfails, long int* newt_nconvfails);
+SUNErrCode SUNNonlinSolGetTotalNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
+                                                       long int* fp_nconvfails,
+                                                       long int* newt_nconvfails);
 
 /* Compatibility wrapper for the unreleased pre-review name. */
 SUNDIALS_EXPORT
