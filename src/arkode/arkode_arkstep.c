@@ -2737,7 +2737,7 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
   if ((step_mem->p < 1) && (!ark_mem->fixedstep))
   {
     arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                    "embedding order < 1!");
+                    "embedding order < 1, but ARKodeSetFixedStep was not called!");
     return (ARK_INVALID_TABLE);
   }
 
@@ -2749,7 +2749,7 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
       if (step_mem->Bi->d == NULL)
       {
         arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
-                        __FILE__, "no implicit embedding!");
+                        __FILE__, "no implicit embedding, but ARKodeSetFixedStep was not called!");
         return (ARK_INVALID_TABLE);
       }
     }
@@ -2758,7 +2758,7 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
       if (step_mem->Be->d == NULL)
       {
         arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
-                        __FILE__, "no explicit embedding!");
+                        __FILE__, "no explicit embedding, but ARKodeSetFixedStep was not called!");
         return (ARK_INVALID_TABLE);
       }
     }
@@ -2820,7 +2820,7 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
     if (step_mem->q < 2)
     {
       arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                      "The Butcher table(s) must be at least second order!");
+                      "The Butcher table(s) must be at least second order when using relaxation!");
       return ARK_INVALID_TABLE;
     }
 
@@ -2833,7 +2833,7 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
         {
           arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
                           __FILE__,
-                          "The explicit Butcher table has a negative b value!");
+                          "The explicit Butcher table has a negative b value but relaxation enabled!");
           return ARK_INVALID_TABLE;
         }
       }
@@ -2848,7 +2848,7 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
         {
           arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
                           __FILE__,
-                          "The implicit Butcher table has a negative b value!");
+                          "The implicit Butcher table has a negative b value but relaxation enabled!");
           return ARK_INVALID_TABLE;
         }
       }
