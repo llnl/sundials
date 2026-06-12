@@ -1,6 +1,4 @@
 # ------------------------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ UMBC
-# ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
 # Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
