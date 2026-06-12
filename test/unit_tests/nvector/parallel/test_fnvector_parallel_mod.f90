@@ -89,6 +89,7 @@ contains
     call FN_VInv_Parallel(x, z)
     call FN_VAddConst_Parallel(x, ONE, z)
     rval = FN_VDotProd_Parallel(x, y)
+    call FN_VDotProdComplex_Parallel(x, y, rval)
     rval = FN_VMaxNorm_Parallel(x)
     rval = FN_VWrmsNorm_Parallel(x, y)
     rval = FN_VWrmsNormMask_Parallel(x, y, z)

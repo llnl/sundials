@@ -158,6 +158,7 @@ int main(int argc, char* argv[])
   fails += Test_N_VInv(X, Z, local_length, myid);
   fails += Test_N_VAddConst(X, Z, local_length, myid);
   fails += Test_N_VDotProd(X, Y, local_length, myid);
+  fails += Test_N_VDotProdComplex(X, Y, local_length, myid);
   fails += Test_N_VMaxNorm(X, local_length, myid);
   fails += Test_N_VWrmsNorm(X, Y, local_length, myid);
   fails += Test_N_VWrmsNormMask(X, Y, Z, local_length, myid);

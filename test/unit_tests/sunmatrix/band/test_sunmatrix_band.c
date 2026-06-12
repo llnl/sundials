@@ -309,12 +309,12 @@ int check_matrix_entry(SUNMatrix A, sunscalartype val, sunrealtype tol)
       {
         failure++;
 #ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
-        printf("j = %li, Acolj[%li] = %" GSYM ", val = %" GSYM "\n",
-               (long int)j, (long int)i, Acolj[i], val);
-#else
         printf("j = %li, Acolj[%li] = %" GSYM " + %" GSYM "I, val = %" GSYM " + %" GSYM "I\n",
                (long int)j, (long int)i, SUN_REAL(Acolj[i]), SUN_IMAG(Acolj[i]),
                SUN_REAL(val), SUN_IMAG(val));
+#else
+        printf("j = %li, Acolj[%li] = %" GSYM ", val = %" GSYM "\n",
+               (long int)j, (long int)i, Acolj[i], val);
 #endif
       }
     }

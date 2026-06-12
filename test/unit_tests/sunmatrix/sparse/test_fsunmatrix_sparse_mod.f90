@@ -127,7 +127,11 @@ contains
     Adata => FSUNDenseMatrix_Data(DA)
     do jj = 1, N
       do ii = 1, N
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+        Adata((jj - 1)*N + ii) = jj*(ii + jj - 2) * (1.d0, 1.d0)
+#else
         Adata((jj - 1)*N + ii) = jj*(ii + jj - 2)
+#endif
       end do
     end do
 
@@ -148,7 +152,11 @@ contains
     ! fill vector x
     xdata => FN_VGetArrayPointer(x)
     do ii = 1, N
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      xdata(ii) = ONE/ii * (1.d0, -1.d0)
+#else
       xdata(ii) = ONE/ii
+#endif
     end do
 
     ! fill vector y
@@ -156,7 +164,11 @@ contains
     do ii = 1, N
       tmp1 = ii - 1
       tmp2 = tmp1 + N - 1
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      ydata(ii) = (tmp2 + 1 - tmp1)*(tmp1 + tmp2)
+#else
       ydata(ii) = HALF*(tmp2 + 1 - tmp1)*(tmp1 + tmp2)
+#endif
     end do
 
     fails = fails + Test_FSUNMatGetID(A, SUNMATRIX_SPARSE, 0)
@@ -196,7 +208,7 @@ program main
 
   fails = unit_tests()
   if (fails /= 0) then
-    print *, 'FAILURE: n unit tests failed'
+    print *, 'FAILURE: ', fails, ' unit tests failed'
     stop 1
   else
     print *, 'SUCCESS: all unit tests passed'
@@ -327,8 +339,13 @@ integer(c_int) function check_matrix_entry(A, c, tol) result(fails)
   do i = 1, Aidxptrs(np)
     if (FNEQTOL(Adata(i), c, tol) /= 0) then
       fails = fails + 1
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      write (*, '(A,I0,A,E14.7,SP,E14.7,"i",A,E14.7,SP,E14.7,"i")') &
+        "Adata( ", i, ") =", Adata(i), " c = ", c
+#else
       write (*, '(A,I0,A,E14.7,A,E14.7)') &
-        'Adata(', i, ') = ', Adata(i), '  c = ', c
+        "Adata( ", i, ") =", Adata(i), " c = ", c
+#endif
     end if
   end do
 

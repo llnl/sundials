@@ -85,6 +85,7 @@ contains
     call FN_VInv_OpenMP(x, z)
     call FN_VAddConst_OpenMP(x, ONE, z)
     rval = FN_VDotProd_OpenMP(x, y)
+    call FN_VDotProdComplex_OpenMP(x, y, rval)
     rval = FN_VMaxNorm_OpenMP(x)
     rval = FN_VWrmsNorm_OpenMP(x, y)
     rval = FN_VWrmsNormMask_OpenMP(x, y, z)

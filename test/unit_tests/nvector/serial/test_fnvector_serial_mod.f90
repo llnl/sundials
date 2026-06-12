@@ -84,6 +84,7 @@ contains
     call FN_VInv_Serial(x, z)
     call FN_VAddConst_Serial(x, ONE, z)
     rval = FN_VDotProd_Serial(x, y)
+    call FN_VDotProdComplex_Serial(x, y, rval)
     rval = FN_VMaxNorm_Serial(x)
     rval = FN_VWrmsNorm_Serial(x, y)
     rval = FN_VWrmsNormMask_Serial(x, y, z)

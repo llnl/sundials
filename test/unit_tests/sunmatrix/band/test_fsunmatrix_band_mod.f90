@@ -140,7 +140,11 @@ contains
       istart = merge(-mu, -(jj - 1), jj > mu) ! above diagonal
       iend = merge(N - jj, ml, jj > N - ml)  ! below diagonal
       do ii = istart, iend
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+        Adata(offset + ii) = ((jj - 1) - ii) * (1.d0, 1.d0)
+#else
         Adata(offset + ii) = (jj - 1) - ii
+#endif
       end do
     end do
 
@@ -150,13 +154,21 @@ contains
     ! Fill vectors
     do jj = 0, N - 1
       ! x vector
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+      xdata(jj + 1) = jj * (1.d0, -1.d0)
+#else
       xdata(jj + 1) = jj
+#endif
       ! y vector
       ydata(jj + 1) = ZERO
       istart = max(0_myindextype, jj - ml)
       iend = min(N - 1, jj + mu)
       do ii = istart, iend
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+        ydata(jj + 1) = ydata(jj + 1) + 2.d0*(ii + ii - jj)*(ii)
+#else
         ydata(jj + 1) = ydata(jj + 1) + (ii + ii - jj)*(ii)
+#endif
       end do
     end do
 
@@ -195,7 +207,7 @@ program main
 
   fails = unit_tests()
   if (fails /= 0) then
-    print *, 'FAILURE: n unit tests failed'
+    print *, 'FAILURE: ', fails, ' unit tests failed'
     stop 1
   else
     print *, 'SUCCESS: all unit tests passed'
@@ -307,8 +319,13 @@ integer(c_int) function check_matrix_entry(A, c, tol) result(fails)
     do ii = istart, iend
       if (FNEQTOL(Adata(offset + ii), c, tol) /= 0) then
         fails = fails + 1
+#ifdef SUNDIALS_SCALAR_TYPE_COMPLEX
+        write (*, '(A,E10.1,A,E14.7,SP,E14.7,"i",A,I9,A,E14.7,SP,E14.7,"i")') &
+          "tol = ", tol, "   c = ", c, "   data[", offset + ii, "] = ", Adata(offset + ii)
+#else
         write (*, '(A,E10.1,A,E14.7,A,I9,A,E14.7)') "tol = ", tol, &
           "   c = ", c, "   data[", offset + ii, "] = ", Adata(offset + ii)
+#endif
       end if
     end do
   end do

@@ -84,6 +84,7 @@ contains
     call FN_VInv_Pthreads(x, z)
     call FN_VAddConst_Pthreads(x, ONE, z)
     rval = FN_VDotProd_Pthreads(x, y)
+    call FN_VDotProdComplex_Pthreads(x, y, rval)
     rval = FN_VMaxNorm_Pthreads(x)
     rval = FN_VWrmsNorm_Pthreads(x, y)
     rval = FN_VWrmsNormMask_Pthreads(x, y, z)
