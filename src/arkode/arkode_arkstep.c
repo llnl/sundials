@@ -2736,8 +2736,8 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
   /* check that embedding order p > 0 */
   if ((step_mem->p < 1) && (!ark_mem->fixedstep))
   {
-    arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                    "embedding order < 1, but ARKodeSetFixedStep was not called!");
+    arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
+                    __FILE__, "embedding order < 1, but ARKodeSetFixedStep was not called!");
     return (ARK_INVALID_TABLE);
   }
 
@@ -2819,8 +2819,8 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
   {
     if (step_mem->q < 2)
     {
-      arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                      "The Butcher table(s) must be at least second order when using relaxation!");
+      arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
+                      __FILE__, "The Butcher table(s) must be at least second order when using relaxation!");
       return ARK_INVALID_TABLE;
     }
 
@@ -2832,8 +2832,7 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
         if (step_mem->Be->b[i] < ZERO)
         {
           arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
-                          __FILE__,
-                          "The explicit Butcher table has a negative b value but relaxation enabled!");
+                          __FILE__, "The explicit Butcher table has a negative b value but relaxation enabled!");
           return ARK_INVALID_TABLE;
         }
       }
@@ -2847,8 +2846,7 @@ int arkStep_CheckButcherTables(ARKodeMem ark_mem)
         if (step_mem->Bi->b[i] < ZERO)
         {
           arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
-                          __FILE__,
-                          "The implicit Butcher table has a negative b value but relaxation enabled!");
+                          __FILE__, "The implicit Butcher table has a negative b value but relaxation enabled!");
           return ARK_INVALID_TABLE;
         }
       }
