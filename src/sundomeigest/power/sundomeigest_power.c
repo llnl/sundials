@@ -157,10 +157,16 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   content->q = N_VClone(q);
   SUNCheckLastErrNull();
 
-  N_VScale(ONE, q, content->q);
+  content->V = N_VClone(q);
   SUNCheckLastErrNull();
 
-  content->V = N_VClone(q);
+  /* Initialize the vector V */
+  sunrealtype normq = N_VDotProd(q, q);
+  SUNCheckLastErrNull();
+
+  normq = SUNRsqrt(normq);
+
+  N_VScale(ONE / normq, q, PI_CONTENT(DEE)->V);
   SUNCheckLastErrNull();
 
   return (DEE);
@@ -283,15 +289,6 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
   {
     SUNAssert(PI_CONTENT(DEE)->q_prev == NULL, SUN_ERR_ARG_CORRUPT);
   }
-
-  /* Initialize the vector V */
-  sunrealtype normq = N_VDotProd(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q);
-  SUNCheckLastErr();
-
-  normq = SUNRsqrt(normq);
-
-  N_VScale(ONE / normq, PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->V);
-  SUNCheckLastErr();
 
   return SUN_SUCCESS;
 }
