@@ -129,11 +129,7 @@ contains
 
     ! fill vector data
     c(1) = TWO
-#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-    call FN_VConst((TWO, ZERO), Y1)
-#else
     call FN_VConst(TWO, Y1)
-#endif
 
     ! set scaling factors
     c = HALF
