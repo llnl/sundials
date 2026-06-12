@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
 /* ----------------------------------------------------------------------
  * Implementation specific utility functions for vector tests
  * --------------------------------------------------------------------*/
-int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
+int check_ans(sunscalartype ans, N_Vector X, sunindextype local_length)
 {
   int failure = 0;
   sunindextype i;
@@ -296,10 +296,10 @@ int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
   if (local_length != x0len + x1len) { return (1); }
 
   /* check vector data */
-  for (i = 0; i < x0len; i++) { failure += SUNRCompare(x0[i], ans); }
-  for (i = 0; i < x1len; i++) { failure += SUNRCompare(x1[i], ans); }
+  for (i = 0; i < x0len; i++) { failure += SUNCompare(x0[i], ans); }
+  for (i = 0; i < x1len; i++) { failure += SUNCompare(x1[i], ans); }
 
-  return (failure > ZERO) ? (1) : (0);
+  return (failure > SUN_REAL(ZERO)) ? (1) : (0);
 }
 
 sunbooleantype has_data(N_Vector X)
@@ -308,7 +308,7 @@ sunbooleantype has_data(N_Vector X)
   return SUNTRUE;
 }
 
-void set_element(N_Vector X, sunindextype i, sunrealtype val)
+void set_element(N_Vector X, sunindextype i, sunscalartype val)
 {
   N_Vector Xsub[2];
   sunindextype x0len;
@@ -323,7 +323,7 @@ void set_element(N_Vector X, sunindextype i, sunrealtype val)
 }
 
 void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
-                       sunrealtype val)
+                       sunscalartype val)
 {
   N_Vector Xsub[2];
   sunindextype x0len, i;
@@ -337,7 +337,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
   for (i = x0len; i <= ie; i++) { NV_Ith_S(Xsub[1], i - x0len) = val; }
 }
 
-sunrealtype get_element(N_Vector X, sunindextype i)
+sunscalartype get_element(N_Vector X, sunindextype i)
 {
   N_Vector Xsub[2];
   sunindextype x0len;

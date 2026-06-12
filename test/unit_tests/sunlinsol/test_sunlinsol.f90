@@ -122,7 +122,7 @@ contains
 
     resnorm = FSUNLinSolResNorm(S)
 
-    if (resnorm < ZERO) then
+    if (resnorm < 0.d0) then
       write (*, '(A,E14.7,A,I0)') &
         ">>> FAILED test -- FSUNLinSolSolve returned ", resnorm, ", Proc ", myid
     else if (myid == 0) then
@@ -165,7 +165,7 @@ contains
     failure = 0
 
     ! try calling SetATimes routine: should pass/fail based on expected input
-    failure = FSUNLinSolSetATimes(S, ATdata, ATimes); 
+    failure = FSUNLinSolSetATimes(S, ATdata, ATimes);
     if (failure /= 0) then
       write (*, '(A,I0,A,I0)') &
         ">>> FAILED test -- FSUNLinSolSetATimes returned ", failure, ", Proc ", myid
@@ -187,7 +187,7 @@ contains
     integer(c_int)                 :: myid
 
     ! try calling SetPreconditioner routine: should pass/fail based on expected input
-    failure = FSUNLinSolSetPreconditioner(S, Pdata, PSetup, PSolve); 
+    failure = FSUNLinSolSetPreconditioner(S, Pdata, PSetup, PSolve);
     if (failure /= 0) then
       write (*, '(A,I0,A,I0)') &
         ">>> FAILED test -- FSUNLinSolSetPreconditioner returned ", failure, ", Proc ", myid

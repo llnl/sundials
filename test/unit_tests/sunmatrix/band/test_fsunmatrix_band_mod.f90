@@ -43,7 +43,11 @@ contains
     ! local variables
     type(SUNMatrix), pointer :: A, B               ! SUNMatrix
     type(N_Vector), pointer :: x, y               ! NVectors
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: matdat(:)          ! matrix data pointer
+#else
     real(c_double), pointer :: matdat(:)          ! matrix data pointer
+#endif
     integer(c_long)          :: lenrw(1), leniw(1) ! matrix real and int work space size
     integer(c_long)          :: val
     type(c_ptr), pointer :: cptr
@@ -108,7 +112,11 @@ contains
 
     type(SUNMatrix), pointer   :: A, I
     type(N_Vector), pointer   :: x, y
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer   :: Adata(:), Idata(:), xdata(:), ydata(:)
+#else
     real(c_double), pointer   :: Adata(:), Idata(:), xdata(:), ydata(:)
+#endif
     integer(kind=myindextype) :: ii, jj, smu, istart, iend, offset
 
     fails = 0
@@ -208,7 +216,11 @@ integer(c_int) function check_matrix(B, A, tol) result(fails)
 
   type(SUNMatrix) :: A, B
   real(c_double)  :: tol
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(c_double_complex), pointer :: Adata(:), Bdata(:)
+#else
   real(c_double), pointer :: Adata(:), Bdata(:)
+#endif
   integer(c_long) :: N, smu, mu, ml, ii, istart, iend, jj, offset
 
   fails = 0
@@ -270,8 +282,14 @@ integer(c_int) function check_matrix_entry(A, c, tol) result(fails)
   implicit none
 
   type(SUNMatrix) :: A
-  real(c_double)  :: c, tol
+  real(c_double)  :: tol
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(c_double_complex)          :: c
+  complex(c_double_complex), pointer :: Adata(:)
+#else
+  real(c_double)          :: c
   real(c_double), pointer :: Adata(:)
+#endif
   integer(c_long) :: N, smu, mu, ml, ii, istart, iend, jj, offset
 
   fails = 0

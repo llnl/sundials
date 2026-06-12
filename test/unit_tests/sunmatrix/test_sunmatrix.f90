@@ -78,7 +78,11 @@ contains
     type(N_Vector)  :: x, y
     real(c_double)  :: tol
     integer(c_long) :: i, xlen, ylen
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: xdata(:), ydata(:)
+#else
     real(c_double), pointer :: xdata(:), ydata(:)
+#endif
 
     failure = 0
 
@@ -95,7 +99,7 @@ contains
     end if
 
     do i = 1, xlen
-      failure = failure + FNEQTOL(xdata(i), ydata(i), tol)
+      failure = failure + FNEQTOL(xdata(i), ydata(i), tol*abs(xdata(i)))
     end do
 
   end function check_vector
@@ -194,7 +198,7 @@ contains
     end if
 
     ! A data should be a vector of zeros
-    failure = check_matrix_entry(B, ZERO, tol); 
+    failure = check_matrix_entry(B, ZERO, tol);
     if (failure /= 0) then
       call TEST_STATUS(">>> FAILED test -- SUNMatZero check ", myid)
       call FSUNMatDestroy(B)
@@ -467,7 +471,7 @@ contains
 
     failure = 0
 
-    failure = FSUNMatSpace(A, lenrw, leniw); 
+    failure = FSUNMatSpace(A, lenrw, leniw);
     if (failure /= 0) then
       call TEST_STATUS(">>> FAILED test -- SUNMatSpace ", myid)
       return

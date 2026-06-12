@@ -49,7 +49,11 @@ contains
 
     type(SUNNonlinearSolver), pointer :: NLS         ! test nonlinear solver
     type(N_Vector), pointer :: ycur, ycor, w ! test vectors
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: data(:)
+#else
     real(c_double), pointer :: data(:)
+#endif
     integer(c_long)                   :: niters(1)
     integer(c_int)                    :: tmp
 
@@ -65,10 +69,10 @@ contains
     data(3) = -0.1d0
 
     ! set initial correction
-    call FN_VConst(0.0d0, ycor)
+    call FN_VConst(ZERO, ycor)
 
     ! set weights
-    call FN_VConst(1.0d0, w)
+    call FN_VConst(ONE, w)
 
     ! create and test NLS
     NLS => FSUNNonlinsol_FixedPoint(y0, 0, sunctx)
@@ -98,7 +102,7 @@ contains
     end if
 
     ! update the initial guess with the final correction
-    call FN_VLinearSum(1.0d0, y0, 1.0d0, ycor, ycur); 
+    call FN_VLinearSum(ONE, y0, ONE, ycor, ycur);
     ! print number of iterations
     retval = FSUNNonlinSolGetNumIters(NLS, niters)
     if (retval /= 0) then
@@ -174,8 +178,13 @@ contains
 
     type(N_Vector)          :: ycor, f
     type(c_ptr), value      :: mem
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: data(:), fdata(:)
+    complex(c_double_complex)          :: x, y, z
+#else
     real(c_double), pointer :: data(:), fdata(:)
     real(c_double)          :: x, y, z
+#endif
 
     data => FN_VGetArrayPointer(ycor)
     fdata => FN_VGetArrayPointer(f)
@@ -188,7 +197,7 @@ contains
     fdata(2) = (1.0d0/9.0d0)*sqrt(x*x + sin(z) + 1.06d0) + 0.9d0
     fdata(3) = -(1/20.d0)*exp(-x*(y - 1.0d0)) - (10.d0*PI - 3.0d0)/60.0d0
 
-    call FN_VLinearSum(1.0d0, f, -1.0d0, y0, f)
+    call FN_VLinearSum(ONE, f, -ONE, y0, f)
 
     retval = 0
 
@@ -202,19 +211,29 @@ contains
     type(N_Vector) :: ycor
     real(c_double), value :: tol
     real(c_double) ::  ex, ey, ez
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: data(:)
+#else
     real(c_double), pointer :: data(:)
+#endif
 
     ! extract and print solution
     data => FN_VGetArrayPointer(ycor)
 
     write (*, *) 'Solution:'
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    write (*, '(A,E14.7,A,E14.7,A)') '    x = ', real(data(1)), ' + ', aimag(data(1)), 'i'
+    write (*, '(A,E14.7,A,E14.7,A)') '    y = ', real(data(2)), ' + ', aimag(data(2)), 'i'
+    write (*, '(A,E14.7,A,E14.7,A)') '    z = ', real(data(3)), ' + ', aimag(data(3)), 'i'
+#else
     write (*, '(A,E14.7)') '    x = ', data(1)
     write (*, '(A,E14.7)') '    y = ', data(2)
     write (*, '(A,E14.7)') '    z = ', data(3)
+#endif
 
-    ex = data(1) - XTRUE
-    ey = data(2) - YTRUE
-    ez = data(3) - ZTRUE
+    ex = abs(data(1) - XTRUE)
+    ey = abs(data(2) - YTRUE)
+    ez = abs(data(3) - ZTRUE)
 
     write (*, *) 'Solution Error:'
     write (*, '(A,E14.7)') '    ex = ', ex

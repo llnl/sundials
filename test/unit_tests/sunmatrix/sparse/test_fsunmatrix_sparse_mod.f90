@@ -39,14 +39,18 @@ contains
     implicit none
 
     ! local variables
-    type(SUNMatrix), pointer            :: A, B               ! SUNMatrix
+    type(SUNMatrix), pointer           :: A, B               ! SUNMatrix
     type(N_Vector), pointer            :: x, y               ! NVectors
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: matdat(:)          ! matrix data pointer
+#else
     real(c_double), pointer            :: matdat(:)          ! matrix data pointer
+#endif
     integer(kind=myindextype), pointer :: inddat(:)          ! indices pointer
-    integer(c_long)                     :: lenrw(1), leniw(1) ! matrix real and int work space size
+    integer(c_long)                    :: lenrw(1), leniw(1) ! matrix real and int work space size
 
     integer(kind=myindextype) :: tmp1
-    integer(c_int)             :: tmp2
+    integer(c_int)            :: tmp2
 
     fails = 0
 
@@ -106,7 +110,11 @@ contains
 
     type(SUNMatrix), pointer :: DA, DI, A, I
     type(N_Vector), pointer :: x, y
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: Adata(:), Idata(:), xdata(:), ydata(:)
+#else
     real(c_double), pointer :: Adata(:), Idata(:), xdata(:), ydata(:)
+#endif
     integer(c_long)          :: ii, jj, tmp1, tmp2
 
     fails = 0
@@ -130,8 +138,8 @@ contains
     end do
 
     ! create sparse versions of A and I
-    A => FSUNSparseFromDenseMatrix(DA, ZERO, SUN_CSR_MAT)
-    I => FSUNSparseFromDenseMatrix(DI, ZERO, SUN_CSR_MAT)
+    A => FSUNSparseFromDenseMatrix(DA, 0.d0, SUN_CSR_MAT)
+    I => FSUNSparseFromDenseMatrix(DI, 0.d0, SUN_CSR_MAT)
 
     ! create vectors
     x => FN_VNew_Serial(N, sunctx)
@@ -209,7 +217,11 @@ integer(c_int) function check_matrix(A, B, tol) result(fails)
 
   type(SUNMatrix)                     :: A, B
   real(c_double)                      :: tol
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(c_double_complex), pointer :: Adata(:), Bdata(:)
+#else
   real(c_double), pointer            :: Adata(:), Bdata(:)
+#endif
   integer(kind=myindextype), pointer :: Aidxvals(:), Bidxvals(:)
   integer(kind=myindextype), pointer :: Aidxptrs(:), Bidxptrs(:)
   integer(kind=myindextype)          :: i, np, Annz, Bnnz
@@ -292,9 +304,15 @@ integer(c_int) function check_matrix_entry(A, c, tol) result(fails)
 
   implicit none
 
-  type(SUNMatrix)                     :: A
-  real(c_double)                      :: c, tol
+  type(SUNMatrix)                    :: A
+  real(c_double)                     :: tol
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(c_double_complex)          :: c
+  complex(c_double_complex), pointer :: Adata(:)
+#else
+  real(c_double)                     :: c
   real(c_double), pointer            :: Adata(:)
+#endif
   integer(kind=myindextype), pointer :: Aidxptrs(:)
   integer(kind=myindextype)          :: i, np
 
