@@ -103,7 +103,6 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   content->m            = m;
   content->damping      = SUNFALSE;
   content->beta         = ONE;
-  content->crate_const  = SUN_RCONST(0.3);
   content->curiter      = 0;
   content->maxiters     = 3;
   content->niters       = 0;
@@ -405,22 +404,6 @@ SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS,
-                                                      sunrealtype crate_const)
-{
-  SUNFunctionBegin(NLS->sunctx);
-  SUNAssert(crate_const <= SUN_RCONST(1.0), SUN_ERR_ARG_OUTOFRANGE);
-
-  if (crate_const < ZERO)
-  {
-    /* This is CRDOWN in CVODE */
-    FP_CONTENT(NLS)->crate_const = SUN_RCONST(0.3);
-  }
-  else { FP_CONTENT(NLS)->crate_const = crate_const; }
-
-  return SUN_SUCCESS;
-}
-
 /*==============================================================================
   Get functions
   ============================================================================*/
@@ -507,19 +490,6 @@ static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
       idx += 1;
       retval = SUNNonlinSolSetDamping_FixedPoint(NLS,
                                                  (sunrealtype)atof(argv[idx]));
-      if (retval != SUN_SUCCESS)
-      {
-        free(prefix);
-        return retval;
-      }
-      continue;
-    }
-
-    if (strcmp(argv[idx] + offset, "conv_rate_constant") == 0)
-    {
-      idx += 1;
-      retval = SUNNonlinSolSetConvRateConstant_FixedPoint(NLS, (sunrealtype)atof(
-                                                                 argv[idx]));
       if (retval != SUN_SUCCESS)
       {
         free(prefix);

@@ -194,27 +194,6 @@ user-callable functions.
       :c:func:`SUNNonlinSolSetOptions` when using the key
       ``NLSid.damping``.
 
-.. c:function:: SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS, sunrealtype crate_const)
-
-   This sets the convergence rate constant used in the fixed-point estimate of
-   the nonlinear convergence rate (``crate``). This corresponds to the
-   ``CRDOWN`` constant used in the CVODE(S) convergence test.
-
-   **Arguments:**
-     * *NLS* -- a SUNNonlinSol object.
-     * *crate_const* -- the convergence rate constant. Values must satisfy
-       :math:`crate\_const \leq 1`. A negative value resets the default.
-
-   **Return value:**
-      * A :c:type:`SUNErrCode`
-
-   **Notes:**
-      By default, ``crate_const`` is ``0.3``.
-
-      This routine will be called by :c:func:`SUNNonlinSolSetOptions` when using the key
-      ``NLSid.conv_rate_constant``.
-
-   .. versionadded:: x.y.z
 
 
 .. _SUNNonlinSol.FixedPoint.Content:

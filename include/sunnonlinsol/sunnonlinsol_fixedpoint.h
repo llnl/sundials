@@ -55,8 +55,6 @@ struct _SUNNonlinearSolverContent_FixedPoint
   sunrealtype* gamma;      /* array of length m                              */
   sunrealtype* cvals;      /* array of length m+1 for fused vector op        */
   sunrealtype delnrm;      /* wrms norm of delta                             */
-  sunrealtype crate;       /* convergence rate                               */
-  sunrealtype crate_const; /* convergence rate constant                      */
   N_Vector* df;            /* vector array of length m                       */
   N_Vector* dg;            /* vector array of length m                       */
   N_Vector* q;             /* vector array of length m                       */
@@ -125,10 +123,6 @@ SUNErrCode SUNNonlinSolSetMaxIters_FixedPoint(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
                                              sunrealtype beta);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetConvRateConstant_FixedPoint(SUNNonlinearSolver NLS,
-                                                      sunrealtype crate_const);
 
 /* get functions */
 SUNDIALS_EXPORT
