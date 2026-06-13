@@ -256,12 +256,25 @@ class StepData:
     def __repr__(self):
         return json.dumps(self.stack[0], indent=2)
 
-    def update(self, data):
-        """Update the active dictionary"""
+    def depth(self):
+        """Return the depth of the active dictionary."""
+        return len(self.stack) - 1
+
+    def update(self, data, overwrite=False):
+        """Update the active dictionary.
+
+        :param dict data: Key-value pairs to merge into the active dictionary.
+        :param bool overwrite: Allow later values to replace existing keys.
+        """
         conflicts = self.stack[-1].keys() & data.keys()
-        if conflicts:
+        if conflicts and not overwrite:
             raise KeyError(f"Cannot update: keys already exist: {conflicts}")
         self.stack[-1].update(data)
+
+    def close_to_depth(self, depth):
+        """Deactivate nested dictionaries/lists until reaching the requested depth."""
+        while self.depth() > depth:
+            self.stack.pop()
 
     def open_dict(self, key):
         """Activate a nested dictionary"""
@@ -284,6 +297,11 @@ class StepData:
     def close_list(self):
         """Deactivate the active list"""
         self.stack.pop()
+
+    def close_current(self):
+        """Deactivate the active dictionary/list if not at root."""
+        if self.depth() > 0:
+            self.stack.pop()
 
     def get_step(self):
         """Get the step dictionary and reset the container"""
@@ -383,6 +401,9 @@ def log_file_to_list(filename):
 
         # Create instance of helper class for building attempt dictionary
         s = StepData()
+        region_stack = []
+        step_depth_stack = []
+        partition_depth_stack = []
 
         for line_number, line in enumerate(all_lines):
             line_dict = _parse_logfile_line(line.rstrip(), line_number, all_lines)
@@ -399,12 +420,16 @@ def log_file_to_list(filename):
                     s.open_list(f"time-level-{level}")
                 if partition > 0:
                     s.open_list(f"evolve")
+                step_depth_stack.append(s.depth())
                 s.update(line_dict["payload"])
                 continue
             elif label == "end-step-attempt":
+                step_depth = step_depth_stack.pop()
+                s.close_to_depth(step_depth)
+                region_stack = [r for r in region_stack if r[2] < step_depth]
                 s.update(line_dict["payload"])
                 if level > 0 or partition > 0:
-                    s.close_list()
+                    s.close_current()
                 else:
                     step_attempts.append(s.get_step())
                 continue
@@ -418,12 +443,16 @@ def log_file_to_list(filename):
 
             if label == "begin-partitions-list":
                 s.open_list("partitions")
+                partition_depth_stack.append(s.depth())
                 s.update(line_dict["payload"])
                 partition += 1
                 continue
             elif label == "end-partitions-list":
+                partition_depth = partition_depth_stack.pop()
+                s.close_to_depth(partition_depth)
+                region_stack = [r for r in region_stack if r[2] <= partition_depth]
                 s.update(line_dict["payload"])
-                s.close_list()
+                s.close_current()
                 partition -= 1
                 continue
 
@@ -432,17 +461,29 @@ def log_file_to_list(filename):
                     s.open_list(region_name)
                 else:
                     s.open_dict(region_name)
+                region_stack.append((region_name, is_list, s.depth()))
                 s.update(line_dict["payload"])
                 continue
             elif event == "end":
+                match_index = None
+                for i in range(len(region_stack) - 1, -1, -1):
+                    if region_stack[i][0] == region_name and region_stack[i][1] == is_list:
+                        match_index = i
+                        break
+                if match_index is not None:
+                    target_depth = region_stack[match_index][2]
+                    s.close_to_depth(target_depth)
+                    region_stack = region_stack[: match_index + 1]
                 s.update(line_dict["payload"])
-                if is_list:
-                    s.close_list()
-                else:
-                    s.close_dict()
+                s.close_current()
+                if match_index is not None:
+                    region_stack = region_stack[:match_index]
                 continue
 
-            s.update(line_dict["payload"])
+            # Plain log records within an active region may repeat keys as the
+            # solver state evolves (e.g., Auto -> Newton/Fixed-Point). Keep the
+            # most recent value instead of treating these as structural errors.
+            s.update(line_dict["payload"], overwrite=True)
 
     return step_attempts
 

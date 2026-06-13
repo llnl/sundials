@@ -165,6 +165,21 @@ def parse_args(argv):
     return args, sundials_argv
 
 
+def _collect_solver_names(node, solvers):
+    if isinstance(node, dict):
+        solver = node.get("solver")
+        active = node.get("active")
+        if solver == "Auto" and active:
+            solvers.add(str(active))
+        elif isinstance(solver, str):
+            solvers.add(solver)
+        for value in node.values():
+            _collect_solver_names(value, solvers)
+    elif isinstance(node, list):
+        for value in node:
+            _collect_solver_names(value, solvers)
+
+
 def make_plots(args, ts, us, vs):
     if not args.no_plot:
         try:
@@ -175,50 +190,52 @@ def make_plots(args, ts, us, vs):
             return
 
         try:
-            import suntools
             from suntools import logs as sunlog
         except Exception as e:
             print(f"\nSolver overlay disabled: failed to import suntools ({e}).")
             sunlog = None
 
-        def solver_segments_from_log(log_path):
-            if sunlog is None:
-                return []
-            if not Path(log_path).exists():
-                return []
+        if sunlog is not None and Path(args.logfile).exists():
             try:
-                log = sunlog.log_file_to_list(log_path)
+                log = sunlog.log_file_to_list(args.logfile)
             except Exception as e:
-                print(f"\nSkipping solver overlay: failed to parse log file '{log_path}' ({e}).")
-                return []
+                print(f"\nSkipping solver overlay: failed to parse log file '{args.logfile}' ({e}).")
+                log = None
+                segments = []
+            else:
+                segments = []
+                for entry in log:
+                    if str(entry.get("status", "")) != "success":
+                        continue
+                    tn = float(entry.get("tn", float("nan")))
+                    h = float(entry.get("h", float("nan")))
+                    if not math.isfinite(tn) or not math.isfinite(h):
+                        continue
 
+                    solvers = set()
+                    _collect_solver_names(entry.get("nonlinear-solve", {}), solvers)
+                    solvers.discard("Auto")
+                    if not solvers:
+                        continue
+                    solver = next(iter(solvers)) if len(solvers) == 1 else "Mixed"
+                    segments.append((tn, tn + h, solver))
+
+                segments.sort(key=lambda x: x[0])
+                merged = []
+                for seg in segments:
+                    if not merged:
+                        merged.append(seg)
+                        continue
+                    a0, a1, aS = merged[-1]
+                    b0, b1, bS = seg
+                    if bS == aS and b0 <= a1:
+                        merged[-1] = (a0, max(a1, b1), aS)
+                    else:
+                        merged.append(seg)
+                segments = merged
+        else:
+            log = None
             segments = []
-            for entry in log:
-                if str(entry.get("status", "")) != "success":
-                    continue
-                tn = float(entry.get("tn", float("nan")))
-                h = float(entry.get("h", float("nan")))
-                nls = entry.get("nonlinear-solve", {})
-                solver = nls.get("solver", None)
-                if not solver or not math.isfinite(tn) or not math.isfinite(h):
-                    continue
-                segments.append((tn, tn + h, str(solver)))
-
-            segments.sort(key=lambda x: x[0])
-            merged = []
-            for seg in segments:
-                if not merged:
-                    merged.append(seg)
-                    continue
-                a0, a1, aS = merged[-1]
-                b0, b1, bS = seg
-                if bS == aS and b0 <= a1:
-                    merged[-1] = (a0, max(a1, b1), aS)
-                else:
-                    merged.append(seg)
-            return merged
-
-        segments = solver_segments_from_log(args.logfile)
 
         colors = {"Newton": "tab:blue", "Fixed-Point": "tab:orange", "Mixed": "0.75"}
 
@@ -259,17 +276,19 @@ def make_plots(args, ts, us, vs):
         plt.savefig(args.plot_file, bbox_inches="tight")
 
         # Step size vs step number plot (from SUNLogger info log)
-        if sunlog is not None and Path(args.logfile).exists():
-            log = sunlog.log_file_to_list(args.logfile)
-            steps, _times, hs = sunlog.get_history(log, "h", "success")
-
-            fig2, ax2 = plt.subplots(figsize=(9, 4.0))
-            ax2.plot(steps, hs, color="tab:green", marker=".", linewidth=1.2)
-            ax2.set_xlabel("step")
-            ax2.set_ylabel("step size (h)")
-            ax2.grid(alpha=0.3, linestyle="--")
-            fig2.tight_layout()
-            plt.savefig(args.stepsize_plot_file, bbox_inches="tight")
+        if log is not None:
+            try:
+                steps, _times, hs = sunlog.get_history(log, "h", "success")
+            except Exception as e:
+                print(f"\nSkipping step size plot: failed to parse log file '{args.logfile}' ({e}).")
+            else:
+                fig2, ax2 = plt.subplots(figsize=(9, 4.0))
+                ax2.plot(steps, hs, color="tab:green", marker=".", linewidth=1.2)
+                ax2.set_xlabel("step")
+                ax2.set_ylabel("step size (h)")
+                ax2.grid(alpha=0.3, linestyle="--")
+                fig2.tight_layout()
+                plt.savefig(args.stepsize_plot_file, bbox_inches="tight")
         else:
             print("\nSkipping step size plot: requires SUNLogger INFO logfile and suntools.")
 
@@ -301,7 +320,6 @@ def main(argv=None):
     assert y is not None
 
     coupling = 0.0
-    # stiffness = -1e2
     stiffness = args.stiffness
     problem = KPRODE(a=stiffness, b=coupling, c=coupling, d=stiffness)
     problem.set_init_cond(y)

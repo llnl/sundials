@@ -947,6 +947,76 @@ class TestLogParsing(unittest.TestCase):
         finally:
             os.unlink(test_log.name)
 
+    def test_duplicate_keys_in_regular_labels_overwrite(self):
+        """Test that repeated plain labels keep the most recent value."""
+        test_log = tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".log")
+        test_log.write(
+            "[INFO][rank 0][TestScope][begin-step-attempt] step = 1, tn = 0.0, h = 0.1\n"
+            "[INFO][rank 0][TestScope][begin-nonlinear-solve] tol = 0.2\n"
+            "[INFO][rank 0][AutoScope][nonlinear-solver] solver = Auto, active = Newton\n"
+            "[INFO][rank 0][NewtonScope][nonlinear-solver] solver = Newton\n"
+            "[INFO][rank 0][TestScope][end-nonlinear-solve] status = success, iters = 2\n"
+            "[INFO][rank 0][TestScope][end-step-attempt] status = success, dsm = 0.1\n"
+        )
+        test_log.close()
+
+        try:
+            data = logs.log_file_to_list(test_log.name)
+            self.assertEqual(len(data), 1)
+
+            step = data[0]
+            self.assertEqual(step["step"], 1)
+            self.assertEqual(step["status"], "success")
+
+            nls = step["nonlinear-solve"]
+            self.assertEqual(nls["tol"], 0.2)
+            self.assertEqual(nls["solver"], "Newton")
+            self.assertEqual(nls["active"], "Newton")
+            self.assertEqual(nls["status"], "success")
+            self.assertEqual(nls["iters"], 2)
+
+        finally:
+            os.unlink(test_log.name)
+
+    def test_end_region_closes_unfinished_nested_regions(self):
+        """Test that parent end markers unwind unfinished nested regions."""
+        test_log = tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".log")
+        test_log.write(
+            "[INFO][rank 0][TestScope][begin-step-attempt] step = 1, tn = 0.0, h = 0.1\n"
+            "[INFO][rank 0][TestScope][begin-nonlinear-solve] tol = 0.2\n"
+            "[INFO][rank 0][AutoScope][nonlinear-solver] solver = Auto, active = Newton\n"
+            "[INFO][rank 0][NewtonScope][nonlinear-solver] solver = Newton\n"
+            "[INFO][rank 0][NewtonScope][begin-iterations-list]\n"
+            "[INFO][rank 0][SwitchScope][auto-nonlinear-solver-switch] from = Newton, to = Fixed-Point\n"
+            "[INFO][rank 0][FixedPointScope][nonlinear-solver] solver = Fixed-Point\n"
+            "[INFO][rank 0][FixedPointScope][begin-iterations-list]\n"
+            "[INFO][rank 0][FixedPointScope][nonlinear-iterate] cur-iter = 1, update-norm = 0.01\n"
+            "[INFO][rank 0][FixedPointScope][end-iterations-list] status = success\n"
+            "[INFO][rank 0][TestScope][end-nonlinear-solve] status = success, iters = 2\n"
+            "[INFO][rank 0][TestScope][end-step-attempt] status = success, dsm = 0.1\n"
+        )
+        test_log.close()
+
+        try:
+            data = logs.log_file_to_list(test_log.name)
+            self.assertEqual(len(data), 1)
+
+            step = data[0]
+            self.assertEqual(step["status"], "success")
+            self.assertEqual(step["dsm"], 0.1)
+
+            nls = step["nonlinear-solve"]
+            self.assertEqual(nls["status"], "success")
+            self.assertEqual(nls["iters"], 2)
+
+            steps, times, hs = logs.get_history(data, "h", "success")
+            self.assertEqual(steps, [1])
+            self.assertEqual(times, [0.0])
+            self.assertEqual(hs, [0.1])
+
+        finally:
+            os.unlink(test_log.name)
+
 
 def run_tests():
     """Run all tests and print summary."""
