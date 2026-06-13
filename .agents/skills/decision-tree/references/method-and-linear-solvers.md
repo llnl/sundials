@@ -49,15 +49,19 @@ When the user is comparing `CV_BDF` against implicit `ARKStep`, use this rule of
 Choose the stepper from the model structure:
 
 - `ERKStep` for explicit RK
-- `ARKStep` for implicit DIRK or IMEX additive RK
-- `MRIStep` for multirate
+- `ARKStep` for implicit DIRK or IMEX additive RK, or for explicit RK when the application involves a non-identity mass matrix
+- `MRIStep` for multirate applications
 - `SPRKStep` for separable Hamiltonian systems
+- `SplittingStep` for multiphysics applications where optimal solvers for each component are known and time adaptivity is not needed
+- `LSRKStep` for low memory explicit RK methods with exploitable structure, such as STS methods for parabolic problems without preconditioners, or SSP methods for hyperbolic problems with shocks
 
 For stiff unsplit ODEs, `ARKStep` is still a live option. Use it when the recommendation is being driven by one-step RK stability or damping properties rather than by an explicit/implicit split.
 
 Within `ARKStep`, decide which part belongs in the explicit vs implicit operator. Put the genuinely stiff portion in the implicit operator and keep the explicit side for the terms that would otherwise restrict stability.
 
 If the problem is fully implicit, say that explicitly and recommend an appropriate DIRK configuration rather than pretending an IMEX split exists.
+
+Within `MRIStep`, decide which part belongs in the fast vs slow operators.  Put the genuinely fast portion in the fast operator and keep the slow operators for terms that can use a larger step size.  For the slow terms, IMEX splittings are possible, and should follow the same logic as above for `ARKStep`.
 
 For many users, the built-in defaults and adaptivity are acceptable starting points. Only reach for custom Butcher tables or custom adaptivity when the user has a concrete reason.
 
@@ -110,7 +114,8 @@ If you recommend a Krylov solver for a hard stiff problem, also discuss the prec
 Push for a user Jacobian, Jacobian-vector routine, or preconditioner when:
 
 - finite differences are too expensive
-- the Jacobian is sparse or banded and the structure is known
+- the Jacobian is sparse, since that cannot be approximated internally using finite differences
+- the Jacobian is banded and the structure is known
 - the problem is large and stiff
 - convergence failures suggest the internal approximation is not good enough
 - residual evaluations are noisy enough that finite-difference Jacobians will be poor

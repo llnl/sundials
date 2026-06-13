@@ -17,6 +17,7 @@ Choose the package from the mathematical problem first.
 | --- | --- | --- |
 | `F(u) = 0` nonlinear algebraic system | `KINSOL` | No time integration; focus is nonlinear solve strategy |
 | `y' = f(t, y)` general ODE IVP | `CVODE` | General-purpose variable-step multistep ODE solver when multistep BDF or Adams behavior is the right fit |
+| `y' = f(t, y)` nonstiff ODE IVP | `ARKODE` | For nonstiff problems explicit methods are generally preferred |
 | `y' = f(t, y)` with sensitivities or quadratures | `CVODES` | `CVODE` plus forward/adjoint sensitivities and quadrature integration APIs |
 | `F(t, y, y') = 0` DAE IVP | `IDA` | Variable-step BDF DAE solver |
 | `F(t, y, y') = 0` with sensitivities or quadratures | `IDAS` | `IDA` plus forward/adjoint sensitivities and quadrature integration APIs |
@@ -24,7 +25,7 @@ Choose the package from the mathematical problem first.
 
 ## ODE packages
 
-Use `CVODE` or `CVODES` when the model is a standard ODE IVP and there is no strong reason to exploit a special split, one-step RK stability property, or a DIRK-specific damping behavior.
+Use `CVODE` or `CVODES` when the model is a standard ODE IVP that is stiff or at least moderately stiff, and there is no strong reason to exploit a special split, one-step RK stability property, or a DIRK-specific damping behavior.
 
 Prefer `CVODES` over `CVODE` when the request includes:
 
@@ -35,6 +36,7 @@ Prefer `CVODES` over `CVODE` when the request includes:
 
 Use `ARKODE` instead of `CVODE(S)` when one of these is true:
 
+- the problem is nonstiff and an explicit method can be used
 - the RHS is naturally split into nonstiff and stiff parts and the split is worth exploiting
 - the problem is genuinely multirate
 - the user wants a one-step Runge-Kutta method instead of a multistep method
@@ -43,7 +45,7 @@ Use `ARKODE` instead of `CVODE(S)` when one of these is true:
 - the problem is Hamiltonian or otherwise structure-preserving integration matters
 - low-storage explicit RK or super-time-stepping is a main requirement
 
-For stiff unsplit ODEs, do not assume `CVODE` wins by default. A fully implicit `ARKStep` DIRK method can be the better recommendation even without IMEX structure when the user cares about stiff decay, order-reduction behavior, or the fact that BDF methods above order 2 are not A-stable.
+For stiff unsplit ODEs, do not assume `CVODE` wins by default. A fully implicit `ARKStep` DIRK method can be the better recommendation even without IMEX structure when the user cares about stiff decay, or the fact that BDF methods above order 2 are not A-stable.  Also, higher-order explicit RK methods from `ERKStep` or `LSRKStep` can be more efficient than Adams methods for nonstiff problems. 
 
 Do not recommend `ARKODE` to satisfy forward-sensitivity requests. Its documented adjoint support is limited to fixed-step discrete ASA for `ERKStep` and compatible explicit `ARKStep`, so general sensitivity workflows still point to `CVODES`.
 
@@ -79,7 +81,7 @@ Choose the narrowest ARKODE stepper that matches the model.
 | Stepper | Use when |
 | --- | --- |
 | `ERKStep` | The ODE is fully explicit and nonstiff enough for explicit RK |
-| `ARKStep` | The ODE is fully implicit DIRK or has an explicit/implicit additive split for IMEX |
+| `ARKStep` | The ODE is fully implicit DIRK, has an explicit/implicit additive split for IMEX, or involves a non-identity mass matrix |
 | `MRIStep` | The problem has true slow/fast multirate structure |
 | `SPRKStep` | The system is separable Hamiltonian and structure preservation matters |
 | `LSRKStep` | Low-storage explicit RK, SSP, or super-time-stepping is the main goal |

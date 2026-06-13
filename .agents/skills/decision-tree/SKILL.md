@@ -9,7 +9,7 @@ description: Guide SUNDIALS users to the right package, time-stepping module, no
 
 Map a user problem to the right SUNDIALS package and give a defensible first-pass configuration. Keep the recommendation concrete: name the package, method family, linear/nonlinear solver approach, starting settings, and the next doc/example file to inspect.
 
-Start by extracting only the facts that actually control package and solver choice. If key facts are missing, ask for the minimum needed to classify the problem: equation type, stiffness, sensitivities, natural splitting, system size, sparsity, and any special structure. Do not treat the `CVODE` versus `ARKODE` choice as purely a question of model structure; numerical stability and damping requirements can decide it even for an unsplit ODE.
+Start by extracting only the facts that actually control package and solver choice. If key facts are missing, ask for the minimum needed to classify the problem: equation type, stiffness, sensitivities, natural splitting, system size, sparsity, and any special structure. Do not treat the `CVODE` versus `ARKODE` choice as purely a question of model structure; stiffness, numerical stability and damping requirements can decide it even for an unsplit ODE.
 
 ## Intake Checklist
 
@@ -21,6 +21,7 @@ Collect these before recommending a package or method:
 - expected stiffness: nonstiff, stiff, or mixed stiff/nonstiff
 - natural model split: explicit/implicit, slow/fast, Hamiltonian, operator splitting
 - whether one-step RK stability properties matter: e.g., need for A-stability or L-stability at order above 2, strong damping of fast modes, or concern about higher-order BDF stability-angle limits
+- whether one-step flexibility matters: e.g., if a spatial mesh will be changed between time steps
 - size and matrix structure: small dense, banded, sparse, or very large matrix-free
 - Jacobian and preconditioner availability
 - important constraints: positivity, algebraic variables, event/rootfinding, fixed output cadence, structure preservation
@@ -59,7 +60,7 @@ Open [method-and-linear-solvers.md](references/method-and-linear-solvers.md) whe
 
 - Use dense direct solvers for small dense systems.
 - Use band direct solvers when the Jacobian bandwidth is small and known.
-- Use sparse direct solvers such as KLU when the Jacobian is sparse and factorization cost is still acceptable.
+- Use sparse direct solvers such as KLU when the Jacobian is sparse and factorization cost is still acceptable, and the Jacobian matrix can be constructed directly.
 - Use Krylov solvers plus preconditioning for large stiff systems or matrix-free settings.
 - Recommend GMRES first when the user needs a generic Krylov choice.
 - Recommend FGMRES when the preconditioner changes between iterations.
@@ -116,4 +117,4 @@ When a user wants code, inspect the closest example under `examples/<package>/` 
 
 Just because a SUNDIALS example uses a method/solver/setting doesn't mean its the right choice. Decisions should be grounded in doc recommendations and published literature on time integrator and solver methods. In particular, do not reduce `CVODE` versus `ARKODE` to "no split" versus "has split": stability region, stiff decay, stage order, and order restrictions also matter.
 
-If the best choice not something SUNDIALS currently supports, acknowledge this.
+If the best choice is not something SUNDIALS currently supports, acknowledge this.

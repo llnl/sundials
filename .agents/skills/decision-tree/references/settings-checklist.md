@@ -38,7 +38,7 @@ Do not set every knob by default.
 
 Use these only when the problem justifies them:
 
-- `SetMaxStep`: cap the step size when there is a known physical, event, or output scale that should not be skipped
+- `SetMaxStep`: cap the step size when there is a known physical, stability, event, or output scale that should not be skipped
 - `SetMinStep`: use sparingly; it can turn recoverable adaptivity problems into hard failures
 - `SetMaxNumSteps`: raise this when the solver legitimately needs more than the package default before the next output time
 - fixed-step options in ARKODE: use only when the user truly wants fixed-step integration or is matching an external scheme
@@ -108,7 +108,8 @@ If you see many linear iterations:
 
 If direct solves are too expensive:
 
-- move from dense or sparse direct factorization to Krylov plus preconditioning
+- move from dense to banded or sparse direct factorization if it works for the problem structure
+- move from dense, banded or sparse direct factorization to Krylov plus preconditioning
 
 If the user is fighting consistent-IC failures in a DAE:
 
