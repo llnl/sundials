@@ -199,7 +199,6 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   SUNNonlinearSolver subsolver;
   SUNNonlinearSolverContent_Auto C = AUTO_CONTENT(NLS);
 
-
   C->num_iters      = 0;
   C->num_conv_fails = 0;
 
@@ -239,8 +238,8 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
 
     if (retval == SUN_NLS_SWITCH)
     {
-      SUNLogInfo(NLS->sunctx->logger, "end-subsolver-solves-list",
-                 "status = switch, next = %s, retval = %i, iters = %li, conv-fails = %li",
+      SUNLogInfo(NLS->sunctx->logger,
+                 "end-subsolver-solves-list", "status = switch, next = %s, retval = %i, iters = %li, conv-fails = %li",
                  SUNNonlinSolAutoType_ToString(C->active_solver_type), retval,
                  iters, nconvfails);
       continue;
