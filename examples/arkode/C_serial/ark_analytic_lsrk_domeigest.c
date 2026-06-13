@@ -237,6 +237,10 @@ int main(int argc, char* argv[])
   flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
   if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
 
+  /* Set real type dominant eigenvalue */
+  flag = SUNDomEigEstimator_SetIsReal_Power(DEE, SUNTRUE);
+  if (check_flag(&flag, "SUNDomEigEstimator_SetIsReal_Power", 1)) { return 1; }
+
   /* Open output stream for results, output comment line */
   UFID = fopen("solution.txt", "w");
   fprintf(UFID, "# t u\n");

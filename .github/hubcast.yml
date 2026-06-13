@@ -1,0 +1,21 @@
+Repo:
+  # Required: organization or user that owns the repo on CZ GitLab
+  dest_org: sundials
+
+  # Required: name of the destination repository on CZ GitLab
+  dest_name: sundials
+
+  # Optional: name of the CI check as reported back to GitHub (default: gitlab-ci)
+  check_name: llnl-lc-gitlab-ci
+
+  # Optional: granularity of CI statuses reported to GitHub (default: [pipeline])
+  # Set to [pipeline] for overall pipeline status only
+  # Set to [jobs] for individual job statuses only
+  # Set to [pipeline, jobs] to report both
+  check_types: [pipeline, jobs]
+
+  # Optional: delete branches from destination when source PR is closed (default: true)
+  delete_closed: true
+
+  # Optional: sync draft PRs/MRs (default: true)
+  sync_drafts: true
