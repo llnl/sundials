@@ -53,10 +53,6 @@ m.def(
 
 m.def("SUNNonlinSolSetDamping_FixedPoint", SUNNonlinSolSetDamping_FixedPoint,
       nb::arg("NLS"), nb::arg("beta"));
-
-m.def("SUNNonlinSolSetConvRateConstant_FixedPoint",
-      SUNNonlinSolSetConvRateConstant_FixedPoint, nb::arg("NLS"),
-      nb::arg("crate_const"));
 // #ifdef __cplusplus
 //
 // #endif

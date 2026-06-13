@@ -272,7 +272,11 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
 
-    if (retval == SUN_NLS_SWITCH) { return SUN_NLS_SWITCH; }
+    if (retval == SUN_NLS_SWITCH)
+    {
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = switch");
+      return SUN_NLS_SWITCH;
+    }
 
 #if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",

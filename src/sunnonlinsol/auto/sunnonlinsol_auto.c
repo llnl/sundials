@@ -199,9 +199,6 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   SUNNonlinearSolver subsolver;
   SUNNonlinearSolverContent_Auto C = AUTO_CONTENT(NLS);
 
-  SUNLogInfo(NLS->sunctx->logger, "nonlinear-solver",
-             "solver = Auto, active = %s",
-             SUNNonlinSolAutoType_ToString(C->active_solver_type));
 
   C->num_iters      = 0;
   C->num_conv_fails = 0;
@@ -211,6 +208,10 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
     subsolver = (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
                   ? C->fp_solver
                   : C->newton_solver;
+
+    SUNLogInfo(NLS->sunctx->logger, "begin-subsolver-solves-list",
+               "requested = %s",
+               SUNNonlinSolAutoType_ToString(C->active_solver_type));
 
     retval = SUNNonlinSolSolve(subsolver, y0, ycor, w, tol, callSetup, mem);
 
@@ -236,7 +237,18 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
       else { C->newton_num_conv_fails_total += nconvfails; }
     }
 
-    if (retval == SUN_NLS_SWITCH) { continue; }
+    if (retval == SUN_NLS_SWITCH)
+    {
+      SUNLogInfo(NLS->sunctx->logger, "end-subsolver-solves-list",
+                 "status = switch, next = %s, retval = %i, iters = %li, conv-fails = %li",
+                 SUNNonlinSolAutoType_ToString(C->active_solver_type), retval,
+                 iters, nconvfails);
+      continue;
+    }
+
+    SUNLogInfo(NLS->sunctx->logger, "end-subsolver-solves-list",
+               "status = complete, retval = %i, iters = %li, conv-fails = %li",
+               retval, iters, nconvfails);
 
     /* increment solve counter used for switch-delay gating */
     C->num_solves_since_switch++;

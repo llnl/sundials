@@ -114,12 +114,7 @@ def parse_args(argv):
         description="Kvaerno-Prothero-Robinson (KPR) ODE test problem using sundials4py.cvodes",
     )
 
-    parser.add_argument(
-        "--stiffness",
-        type=float,
-        default=-1e2,
-        help="Stiffness parameter.",
-    )
+    parser.add_argument("--stiffness", type=float, default=-1e2, help="Stiffness parameter.")
     parser.add_argument("--rtol", type=float, default=1.0e-3, help="Relative tolerance.")
     parser.add_argument("--atol", type=float, default=1.0e-5, help="Absolute tolerance.")
     parser.add_argument("--dtout", type=float, default=1.0, help="Output interval.")
@@ -199,7 +194,9 @@ def make_plots(args, ts, us, vs):
             try:
                 log = sunlog.log_file_to_list(args.logfile)
             except Exception as e:
-                print(f"\nSkipping solver overlay: failed to parse log file '{args.logfile}' ({e}).")
+                print(
+                    f"\nSkipping solver overlay: failed to parse log file '{args.logfile}' ({e})."
+                )
                 log = None
                 segments = []
             else:
@@ -280,7 +277,9 @@ def make_plots(args, ts, us, vs):
             try:
                 steps, _times, hs = sunlog.get_history(log, "h", "success")
             except Exception as e:
-                print(f"\nSkipping step size plot: failed to parse log file '{args.logfile}' ({e}).")
+                print(
+                    f"\nSkipping step size plot: failed to parse log file '{args.logfile}' ({e})."
+                )
             else:
                 fig2, ax2 = plt.subplots(figsize=(9, 4.0))
                 ax2.plot(steps, hs, color="tab:green", marker=".", linewidth=1.2)
