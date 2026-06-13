@@ -114,6 +114,12 @@ def parse_args(argv):
         description="Kvaerno-Prothero-Robinson (KPR) ODE test problem using sundials4py.cvodes",
     )
 
+    parser.add_argument(
+        "--stiffness",
+        type=float,
+        default=-1e2,
+        help="Stiffness parameter.",
+    )
     parser.add_argument("--rtol", type=float, default=1.0e-3, help="Relative tolerance.")
     parser.add_argument("--atol", type=float, default=1.0e-5, help="Absolute tolerance.")
     parser.add_argument("--dtout", type=float, default=1.0, help="Output interval.")
@@ -295,7 +301,8 @@ def main(argv=None):
     assert y is not None
 
     coupling = 0.0
-    stiffness = -1e2
+    # stiffness = -1e2
+    stiffness = args.stiffness
     problem = KPRODE(a=stiffness, b=coupling, c=coupling, d=stiffness)
     problem.set_init_cond(y)
 
