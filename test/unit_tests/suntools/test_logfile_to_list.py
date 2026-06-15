@@ -995,6 +995,7 @@ class TestLogParsing(unittest.TestCase):
         finally:
             os.unlink(test_log.name)
 
+
 def run_tests():
     """Run all tests and print summary."""
     # Create test suite

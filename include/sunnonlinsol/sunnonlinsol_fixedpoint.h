@@ -47,19 +47,19 @@ struct _SUNNonlinearSolverContent_FixedPoint
   void* norm_fn_data;           /* data for the update-norm callback    */
 
   /* nonlinear solver variables */
-  int m;                   /* number of acceleration vectors to use          */
-  int* imap;               /* array of length m                              */
-  sunbooleantype damping;  /* flag to apply dampling in acceleration         */
-  sunrealtype beta;        /* damping parameter                              */
-  sunrealtype* R;          /* array of length m*m                            */
-  sunrealtype* gamma;      /* array of length m                              */
-  sunrealtype* cvals;      /* array of length m+1 for fused vector op        */
-  sunrealtype delnrm;      /* wrms norm of delta                             */
-  N_Vector* df;            /* vector array of length m                       */
-  N_Vector* dg;            /* vector array of length m                       */
-  N_Vector* q;             /* vector array of length m                       */
-  N_Vector* Xvecs;         /* array of length m+1 for fused vector op        */
-  N_Vector yprev;          /* temporary vectors for performing solve         */
+  int m;                  /* number of acceleration vectors to use          */
+  int* imap;              /* array of length m                              */
+  sunbooleantype damping; /* flag to apply dampling in acceleration         */
+  sunrealtype beta;       /* damping parameter                              */
+  sunrealtype* R;         /* array of length m*m                            */
+  sunrealtype* gamma;     /* array of length m                              */
+  sunrealtype* cvals;     /* array of length m+1 for fused vector op        */
+  sunrealtype delnrm;     /* wrms norm of delta                             */
+  N_Vector* df;           /* vector array of length m                       */
+  N_Vector* dg;           /* vector array of length m                       */
+  N_Vector* q;            /* vector array of length m                       */
+  N_Vector* Xvecs;        /* array of length m+1 for fused vector op        */
+  N_Vector yprev;         /* temporary vectors for performing solve         */
   N_Vector gy;
   N_Vector fold;
   N_Vector gold;
