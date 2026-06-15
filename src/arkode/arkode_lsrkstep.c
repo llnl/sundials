@@ -642,7 +642,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Copy ss in case it is needed for falling back to step size adaptivity below */
   int req_stages = ss;
 
-  if (zR < ZERO)
+  if (zR < -SUN_UNIT_ROUNDOFF)
   {
     /* We first check whether the combination of ss, step size, and dominant
       eigenvalue, is stable.  If not, we then check whether it would be stable
@@ -1087,7 +1087,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Copy ss in case it is needed for falling back to step size adaptivity below */
   int req_stages = ss;
 
-  if (zR < ZERO)
+  if (zR < -SUN_UNIT_ROUNDOFF)
   {
     /* To check stability, we evaluate the analytic stability function or an
       inscribed ellipse approximation. If the stability norm is greater than
