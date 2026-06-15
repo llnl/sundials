@@ -2903,7 +2903,8 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
     /* Pass the current RHS vector fn to the dominant eigenvalue estimator */
     if (ark_mem->fn_is_current == SUNTRUE)
     {
-      retval = SUNDomEigEstimator_SetRhsAtLinearizationPoint(step_mem->DEE, ark_mem->fn);
+      retval = SUNDomEigEstimator_SetRhsAtLinearizationPoint(step_mem->DEE,
+                                                             ark_mem->fn);
       if (retval != SUN_SUCCESS)
       {
         arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,

@@ -92,8 +92,8 @@ SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(
   SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi(SUNDomEigEstimator DEE,
-                                                                 N_Vector Fyt);
+SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi(
+  SUNDomEigEstimator DEE, N_Vector Fyt);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,

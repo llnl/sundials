@@ -228,7 +228,10 @@ SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint(SUNDomEigEstimator DEE,
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
-  if (DEE->ops->setrhsatlinearizationpoint) { ier = DEE->ops->setrhsatlinearizationpoint(DEE, Fyt); }
+  if (DEE->ops->setrhsatlinearizationpoint)
+  {
+    ier = DEE->ops->setrhsatlinearizationpoint(DEE, Fyt);
+  }
   else { ier = SUN_SUCCESS; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);

@@ -777,10 +777,10 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   sunrealtype sig, siginv;
   int iter, retval;
 
-  sunbooleantype *Fy_is_current = &(PI_CONTENT(DEE)->Fy_is_current);
-  N_Vector y    = PI_CONTENT(DEE)->rhs_linY;
-  N_Vector work = PI_CONTENT(DEE)->work;
-  N_Vector Fy   = PI_CONTENT(DEE)->Fy;
+  sunbooleantype* Fy_is_current = &(PI_CONTENT(DEE)->Fy_is_current);
+  N_Vector y                    = PI_CONTENT(DEE)->rhs_linY;
+  N_Vector work                 = PI_CONTENT(DEE)->work;
+  N_Vector Fy                   = PI_CONTENT(DEE)->Fy;
 
   SUNRhsFn rhsfn = PI_CONTENT(DEE)->rhsfn;
   void* rhs_data = PI_CONTENT(DEE)->rhs_data;
