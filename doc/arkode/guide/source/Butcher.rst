@@ -236,6 +236,11 @@ Accessible via the string ``"ARKODE_FORWARD_EULER_1_1"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the default 1st order explicit method (from :cite:p:`Euler:68`).
 
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -647,6 +652,11 @@ Accessible via the string ``"ARKODE_KNOTH_WOLKE_3_3"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the default 3th order slow and fast MRIStep method (from
 :cite:p:`KnWo:98`).
+
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
 
 .. math::
 
@@ -1557,6 +1567,11 @@ Accessible via the string ``"ARKODE_BACKWARD_EULER_1_1"`` to
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 This is the default 1st order implicit method.  The method is A-, L-, and B-stable.
 
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -1755,6 +1770,11 @@ Accessible via the string ``"ARKODE_IMPLICIT_MIDPOINT_1_2"`` to
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 The method is A- and B-stable.
 
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -1780,6 +1800,11 @@ Accessible via the string ``"ARKODE_IMPLICIT_TRAPEZOIDAL_2_2"`` to
 :c:func:`ARKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 The method is A-stable.
+
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
 
 .. math::
 
@@ -2793,6 +2818,11 @@ symplectic partitioned Butcher tables are provided in the enumeration
 .. c:enum:: ARKODE_SPRKMethodID
 
 with values specified in :numref:`ARKODE.Butcher.SPRK_properties`.
+
+.. warning::
+
+   When using these non-embedded methods, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
 
 .. _ARKODE.Butcher.SPRK_properties:
 .. table:: Symplectic partitioned Butcher tables. The default method for each

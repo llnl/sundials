@@ -1385,8 +1385,8 @@ int erkStep_CheckButcherTable(ARKodeMem ark_mem)
   /* check that embedding order p > 0 */
   if ((step_mem->p < 1) && (!ark_mem->fixedstep))
   {
-    arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                    "embedding order < 1!");
+    arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
+                    __FILE__, "embedding order < 1, but ARKodeSetFixedStep was not called!");
     return (ARK_INVALID_TABLE);
   }
 
@@ -1396,7 +1396,7 @@ int erkStep_CheckButcherTable(ARKodeMem ark_mem)
     if (step_mem->B->d == NULL)
     {
       arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                      "no embedding!");
+                      "no embedding, but ARKodeSetFixedStep was not called!");
       return (ARK_INVALID_TABLE);
     }
   }
@@ -1422,8 +1422,8 @@ int erkStep_CheckButcherTable(ARKodeMem ark_mem)
   {
     if (step_mem->q < 2)
     {
-      arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                      "The Butcher table must be at least second order!");
+      arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
+                      __FILE__, "The Butcher table must be at least second order when using relaxation!");
       return ARK_INVALID_TABLE;
     }
 
@@ -1432,7 +1432,7 @@ int erkStep_CheckButcherTable(ARKodeMem ark_mem)
       if (step_mem->B->b[i] < ZERO)
       {
         arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
-                        __FILE__, "The Butcher table has a negative b value!");
+                        __FILE__, "The Butcher table has a negative b value but relaxation enabled!");
         return ARK_INVALID_TABLE;
       }
     }

@@ -3463,8 +3463,8 @@ int mriStep_CheckCoupling(ARKodeMem ark_mem)
   /* check that embedding order p > 0 (if adaptive) */
   if ((step_mem->MRIC->p < 1) && (!ark_mem->fixedstep))
   {
-    arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                    "embedding order < 1");
+    arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
+                    __FILE__, "embedding order < 1, but ARKodeSetFixedStep was not called");
     return (ARK_INVALID_TABLE);
   }
 
