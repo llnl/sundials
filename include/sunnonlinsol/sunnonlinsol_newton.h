@@ -115,11 +115,6 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSolver NLS,
                                                        sunbooleantype onoff);
 
-/* Compatibility wrapper for the unreleased pre-review name. */
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetComputeStiffr_Newton(SUNNonlinearSolver NLS,
-                                               sunbooleantype onoff);
-
 /* get functions */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Newton(SUNNonlinearSolver NLS,
@@ -143,11 +138,6 @@ SUNErrCode SUNNonlinSolGetUpdateNorm_Newton(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver NLS,
                                                 sunrealtype* stiffr);
-
-/* Compatibility wrapper for the unreleased pre-review name. */
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetStiffr_Newton(SUNNonlinearSolver NLS,
-                                        sunrealtype* stiffr);
 
 #ifdef __cplusplus
 }

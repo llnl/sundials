@@ -40,14 +40,12 @@ module fsunnonlinsol_newton_mod
  public :: FSUNNonlinSolSetConvTestFn_Newton
  public :: FSUNNonlinSolSetMaxIters_Newton
  public :: FSUNNonlinSolSetComputeStiffnessRatio_Newton
- public :: FSUNNonlinSolSetComputeStiffr_Newton
  public :: FSUNNonlinSolGetNumIters_Newton
  public :: FSUNNonlinSolGetCurIter_Newton
  public :: FSUNNonlinSolGetNumConvFails_Newton
  public :: FSUNNonlinSolGetSysFn_Newton
  public :: FSUNNonlinSolGetUpdateNorm_Newton
  public :: FSUNNonlinSolGetStiffnessRatio_Newton
- public :: FSUNNonlinSolGetStiffr_Newton
 
 ! WRAPPER DECLARATIONS
 interface
@@ -163,15 +161,6 @@ integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNNonlinSolSetComputeStiffr_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetComputeStiffr_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT), intent(in) :: farg2
-integer(C_INT) :: fresult
-end function
-
 function swigc_FSUNNonlinSolGetNumIters_Newton(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNumIters_Newton") &
 result(fresult)
@@ -219,15 +208,6 @@ end function
 
 function swigc_FSUNNonlinSolGetStiffnessRatio_Newton(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetStiffnessRatio_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetStiffr_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetStiffr_Newton") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -444,22 +424,6 @@ fresult = swigc_FSUNNonlinSolSetComputeStiffnessRatio_Newton(farg1, farg2)
 swig_result = fresult
 end function
 
-function FSUNNonlinSolSetComputeStiffr_Newton(nls, onoff) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT), intent(in) :: onoff
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = onoff
-fresult = swigc_FSUNNonlinSolSetComputeStiffr_Newton(farg1, farg2)
-swig_result = fresult
-end function
-
 function FSUNNonlinSolGetNumIters_Newton(nls, niters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -553,22 +517,6 @@ type(C_PTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = c_loc(stiffr(1))
 fresult = swigc_FSUNNonlinSolGetStiffnessRatio_Newton(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetStiffr_Newton(nls, stiffr) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-real(C_DOUBLE), dimension(*), target, intent(inout) :: stiffr
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(stiffr(1))
-fresult = swigc_FSUNNonlinSolGetStiffr_Newton(farg1, farg2)
 swig_result = fresult
 end function
 

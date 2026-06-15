@@ -473,12 +473,6 @@ SUNErrCode SUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNNonlinSolSetComputeStiffr_Newton(SUNNonlinearSolver NLS,
-                                               sunbooleantype onoff)
-{
-  return SUNNonlinSolSetComputeStiffnessRatio_Newton(NLS, onoff);
-}
-
 /*==============================================================================
   Get functions
   ============================================================================*/
@@ -527,10 +521,4 @@ SUNErrCode SUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver NLS,
   /* return the most recently computed stiffness metric */
   *stiffr = NEWTON_CONTENT(NLS)->stiffr;
   return SUN_SUCCESS;
-}
-
-SUNErrCode SUNNonlinSolGetStiffr_Newton(SUNNonlinearSolver NLS,
-                                        sunrealtype* stiffr)
-{
-  return SUNNonlinSolGetStiffnessRatio_Newton(NLS, stiffr);
 }

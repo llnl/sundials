@@ -387,20 +387,6 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSo
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetComputeStiffr_Newton(SUNNonlinearSolver farg1, int const *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  int arg2 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (int)(*farg2);
-  result = (SUNErrCode)SUNNonlinSolSetComputeStiffr_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters_Newton(SUNNonlinearSolver farg1, long *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
@@ -480,20 +466,6 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver fa
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (sunrealtype *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetStiffnessRatio_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetStiffr_Newton(SUNNonlinearSolver farg1, double *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (sunrealtype *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetStiffr_Newton(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
