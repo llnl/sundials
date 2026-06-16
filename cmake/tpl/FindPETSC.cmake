@@ -63,14 +63,16 @@ foreach(_next_lib IN LISTS PKG_PETSC_STATIC_LIBRARIES)
   if(_next_lib MATCHES "kokkoskernels")
     if(NOT TARGET Kokkos::kokkoskernels)
       find_package(KokkosKernels REQUIRED PATHS "${KokkosKernels_DIR}"
-                   "${PKG_PETSC_LIBRARY_DIRS}")
+                   ${PKG_PETSC_LIBRARY_DIRS} ${PKG_PETSC_STATIC_LIBRARY_DIRS}
+                   PATH_SUFFIXES cmake/KokkosKernels)
     endif()
     list(APPEND _petsc_libs "Kokkos::kokkoskernels")
   endif()
   if(_next_lib MATCHES "kokkos")
     if(NOT TARGET Kokkos::kokkos)
       find_package(Kokkos REQUIRED PATHS "${Kokkos_DIR}"
-                   "${PKG_PETSC_LIBRARY_DIRS}")
+                   ${PKG_PETSC_LIBRARY_DIRS} ${PKG_PETSC_STATIC_LIBRARY_DIRS}
+                   PATH_SUFFIXES cmake/Kokkos)
     endif()
     list(APPEND _petsc_libs "Kokkos::kokkos")
   endif()
