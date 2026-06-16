@@ -266,7 +266,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
   SUNNonlinearSolver auto_nls        = data->auto_nls;
   SUNNonlinearSolverContent_Auto C   = AUTO_CONTENT(auto_nls);
 
-  int retval = data->user_ctest_fn(sub_nls, y, delnrm, tol, ewt,
+  int retval = data->user_ctest_fn(sub_nls, y, del, tol, ewt,
                                    data->user_ctest_data);
   /* return early if error is unrecoverable */
   if (retval < 0) { return retval; }

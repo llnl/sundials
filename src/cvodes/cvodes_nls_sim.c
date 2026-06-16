@@ -494,7 +494,6 @@ static SUNErrCode cvNlsNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
                                    sunrealtype* delnrm, void* cvode_mem)
 {
   CVodeMem cv_mem;
-  sunrealtype delnrm;
   N_Vector delta;
   N_Vector ewt;
   N_Vector *deltaS, *ewtS;
@@ -507,8 +506,8 @@ static SUNErrCode cvNlsNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
   ewt    = NV_VEC_SW(ewtSim, 0);
   ewtS   = NV_VECS_SW(ewtSim) + 1;
 
-  delnrm  = N_VWrmsNorm(delta, ewt);
-  *delnrm = cvSensUpdateNorm(cv_mem, delnrm, deltaS, ewtS);
+  *delnrm  = N_VWrmsNorm(delta, ewt);
+  *delnrm = cvSensUpdateNorm(cv_mem, *delnrm, deltaS, ewtS);
 
   return SUN_SUCCESS;
 }
