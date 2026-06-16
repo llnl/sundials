@@ -55,6 +55,12 @@ endforeach()
 # libm is always required
 list(APPEND _petsc_libs "${SUNDIALS_MATH_LIBRARY}")
 
+# Is libpetsc static?
+set(_petsc_static FALSE)
+if(_petsc_lib_petsc AND _petsc_lib_petsc MATCHES "\\.(a|lib)$")
+  set(_petsc_static TRUE)
+endif()
+
 # Substitute MPI target if PETSC is built with MPI
 foreach(_next_lib IN LISTS PKG_PETSC_STATIC_LIBRARIES)
   if(_next_lib MATCHES "mpi")
@@ -79,9 +85,23 @@ foreach(_next_lib IN LISTS PKG_PETSC_STATIC_LIBRARIES)
 endforeach()
 list(REMOVE_DUPLICATES _petsc_libs)
 
+set(_petsc_link_options "")
+if(_petsc_static)
+  foreach(_flag IN LISTS PKG_PETSC_STATIC_LDFLAGS)
+    if(_flag MATCHES "^-l(petsc|mpi|kokkos)")
+      continue()
+    elseif(_flag MATCHES "^-[lL]" OR _flag MATCHES "^/")
+      list(APPEND _petsc_libs "${_flag}")
+    endif()
+  endforeach()
+  list(APPEND _petsc_link_options ${PKG_PETSC_STATIC_LDFLAGS_OTHER})
+endif()
+
 # Set result variables
 set(PETSC_LIBRARIES "${_petsc_libs}")
 unset(_petsc_libs)
+set(PETSC_LINK_OPTIONS "${_petsc_link_options}")
+unset(_petsc_link_options)
 set(PETSC_FOUND ${PKG_PETSC_FOUND})
 set(PETSC_INCLUDE_DIRS ${PKG_PETSC_INCLUDE_DIRS})
 
@@ -124,6 +144,10 @@ if(NOT TARGET SUNDIALS::PETSC)
     SUNDIALS::PETSC
     PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${PETSC_INCLUDE_DIRS}"
                INTERFACE_LINK_LIBRARIES "${PETSC_LIBRARIES}")
+  if(PETSC_LINK_OPTIONS)
+    set_target_properties(SUNDIALS::PETSC PROPERTIES
+                          INTERFACE_LINK_OPTIONS "${PETSC_LINK_OPTIONS}")
+  endif()
 endif()
 
 mark_as_advanced(PETSC_INCLUDE_DIRS PETSC_LIBRARIES PETSC_VERSION_MAJOR
