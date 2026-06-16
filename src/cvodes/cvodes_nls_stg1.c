@@ -31,7 +31,7 @@ static int cvNlsLSetupSensStg1(sunbooleantype jbad, sunbooleantype* jcur,
                                void* cvode_mem);
 static int cvNlsLSolveSensStg1(N_Vector delta, void* cvode_mem);
 static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS, N_Vector ycor,
-                                 N_Vector delnrm, sunrealtype tol, N_Vector ewt,
+                                 N_Vector del, sunrealtype tol, N_Vector ewt,
                                  void* cvode_mem);
 static SUNErrCode cvNlsNormSensStg1(N_Vector ycor, N_Vector delta, N_Vector ewt,
                                     sunrealtype* delnrm, void* cvode_mem);

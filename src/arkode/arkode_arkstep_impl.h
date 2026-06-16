@@ -280,7 +280,7 @@ int arkStep_NlsFPFunction_MassTDep(N_Vector zcor, N_Vector g, void* arkode_mem);
 int arkStep_NlsLSetup(sunbooleantype jbad, sunbooleantype* jcur,
                       void* arkode_mem);
 int arkStep_NlsLSolve(N_Vector delta, void* arkode_mem);
-int arkStep_NlsConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector delnrm,
+int arkStep_NlsConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del,
                         sunrealtype tol, N_Vector ewt, void* arkode_mem);
 
 /* private functions for relaxation */

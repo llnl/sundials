@@ -316,7 +316,7 @@ int mriStep_NlsFPFunction(N_Vector yy, N_Vector res, void* arkode_mem);
 int mriStep_NlsLSetup(sunbooleantype jbad, sunbooleantype* jcur,
                       void* arkode_mem);
 int mriStep_NlsLSolve(N_Vector delta, void* arkode_mem);
-int mriStep_NlsConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector delnrm,
+int mriStep_NlsConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del,
                         sunrealtype tol, N_Vector ewt, void* arkode_mem);
 
 /* Inner stepper functions */

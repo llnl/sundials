@@ -28,7 +28,7 @@
 #include "arkode_mristep_impl.h"
 
 /* private functions */
-static SUNErrCode mriStep_NlsNorm(N_Vector y, N_Vector delnrm, N_Vector ewt,
+static SUNErrCode mriStep_NlsNorm(N_Vector y, N_Vector del, N_Vector ewt,
                                   sunrealtype* delnrm, void* arkode_mem);
 static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm, void* arkode_mem);
 static SUNErrCode mriStep_NlsGetConvRate(sunrealtype* crate, void* arkode_mem);
@@ -613,7 +613,7 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
       is provided.
   ---------------------------------------------------------------*/
 int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y,
-                        SUNDIALS_MAYBE_UNUSED N_Vector delnrm, sunrealtype tol,
+                        SUNDIALS_MAYBE_UNUSED N_Vector del, sunrealtype tol,
                         SUNDIALS_MAYBE_UNUSED N_Vector ewt, void* arkode_mem)
 {
   /* temporary variables */
@@ -668,9 +668,8 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode mriStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y,
-                                  N_Vector delnrm, N_Vector ewt,
-                                  sunrealtype* delnrm,
+static SUNErrCode mriStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector del,
+                                  N_Vector ewt, sunrealtype* delnrm,
                                   SUNDIALS_MAYBE_UNUSED void* arkode_mem)
 {
   *delnrm = N_VWrmsNorm(delnrm, ewt);

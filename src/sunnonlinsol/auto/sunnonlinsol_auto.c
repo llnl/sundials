@@ -76,7 +76,7 @@ typedef struct
 } SUNNonlinSolAutoConvTestData;
 
 static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
-                                     N_Vector delnrm, sunrealtype tol,
+                                     N_Vector del, sunrealtype tol,
                                      N_Vector ewt, void* mem);
 
 SUNDIALS_MAYBE_UNUSED
@@ -259,7 +259,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
 }
 
 static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
-                                     N_Vector delnrm, sunrealtype tol,
+                                     N_Vector del, sunrealtype tol,
                                      N_Vector ewt, void* mem)
 {
   SUNNonlinSolAutoConvTestData* data = (SUNNonlinSolAutoConvTestData*)mem;

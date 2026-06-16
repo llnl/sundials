@@ -41,7 +41,7 @@ static int cvNlsFPFunction(N_Vector ycor, N_Vector res, void* cvode_mem);
 static int cvNlsLSetup(sunbooleantype jbad, sunbooleantype* jcur,
                        void* cvode_mem);
 static int cvNlsLSolve(N_Vector delta, void* cvode_mem);
-static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delnrm,
+static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector del,
                          sunrealtype tol, N_Vector ewt, void* cvode_mem);
 static SUNErrCode cvNlsNorm(N_Vector ycor, N_Vector delta, N_Vector ewt,
                             sunrealtype* delnrm, void* cvode_mem);
