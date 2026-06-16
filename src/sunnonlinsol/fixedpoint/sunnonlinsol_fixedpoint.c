@@ -35,6 +35,8 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
 
 static SUNErrCode AllocateContent(SUNNonlinearSolver NLS, N_Vector tmpl);
 static void FreeContent(SUNNonlinearSolver NLS);
+static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS, N_Vector ycor,
+                                           N_Vector delta, N_Vector w);
 static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
                                                    SUNNonlinSolNormFn NormFn,
                                                    void* norm_fn_data);
@@ -52,6 +54,29 @@ static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
 static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
                                                 const char* NLSid, int argc,
                                                 char* argv[]);
+
+static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS, N_Vector ycor,
+                                           N_Vector delta, N_Vector w)
+{
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (FP_CONTENT(NLS)->getupdatenorm_fn)
+  {
+    return FP_CONTENT(NLS)->getupdatenorm_fn(&(FP_CONTENT(NLS)->delnrm),
+                                             FP_CONTENT(NLS)->getupdatenorm_data);
+  }
+
+  if (FP_CONTENT(NLS)->norm_fn)
+  {
+    return FP_CONTENT(NLS)->norm_fn(ycor, delta, w,
+                                    &(FP_CONTENT(NLS)->delnrm),
+                                    FP_CONTENT(NLS)->norm_fn_data);
+  }
+
+  FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
+  SUNCheckLastErr();
+  return SUN_SUCCESS;
+}
 
 /*==============================================================================
   Constructor to create a new fixed point solver
@@ -270,16 +295,16 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
       return SUN_NLS_SWITCH;
     }
 
-#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_LEVEL_INFO
-    if (FP_CONTENT(NLS)->norm_fn)
     {
-      // TODO(CJB): update norm_fn to remove ycor argument
-      SUNErrCode ierr = FP_CONTENT(NLS)->norm_fn(ycor, delta, w,
-                                                 &(FP_CONTENT(NLS)->delnrm),
-                                                 FP_CONTENT(NLS)->norm_fn_data);
+      SUNErrCode ierr = GetUpdateNorm_FixedPoint(NLS, ycor, delta, w);
+      if (ierr != SUN_SUCCESS)
+      {
+        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
+                   "status = failed update norm, retval = %d", ierr);
+        return ierr;
+      }
     }
-    else { FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
-#endif
+
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
                "cur-iter = %d, update-norm = " SUN_FORMAT_G,
                FP_CONTENT(NLS)->niters, FP_CONTENT(NLS)->delnrm);

@@ -42,9 +42,34 @@
 static SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
                                                SUNNonlinSolNormFn NormFn,
                                                void* norm_fn_data);
+static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector ycor,
+                                       N_Vector delta, N_Vector w);
 static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Newton(
   SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
   void* getupdatenorm_data);
+
+static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector ycor,
+                                       N_Vector delta, N_Vector w)
+{
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (NEWTON_CONTENT(NLS)->getupdatenorm_fn)
+  {
+    return NEWTON_CONTENT(NLS)->getupdatenorm_fn(
+      &(NEWTON_CONTENT(NLS)->delnrm), NEWTON_CONTENT(NLS)->getupdatenorm_data);
+  }
+
+  if (NEWTON_CONTENT(NLS)->norm_fn)
+  {
+    return NEWTON_CONTENT(NLS)->norm_fn(ycor, delta, w,
+                                        &(NEWTON_CONTENT(NLS)->delnrm),
+                                        NEWTON_CONTENT(NLS)->norm_fn_data);
+  }
+
+  NEWTON_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w);
+  SUNCheckLastErr();
+  return SUN_SUCCESS;
+}
 
 /*==============================================================================
   Constructor to create a new Newton solver
@@ -278,17 +303,14 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
 
       NEWTON_CONTENT(NLS)->curiter++;
 
-#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_LEVEL_INFO
-      if (NEWTON_CONTENT(NLS)->norm_fn)
+      SUNErrCode ierr = GetUpdateNorm_Newton(NLS, ycor, delta, w);
+      if (ierr != SUN_SUCCESS)
       {
-        // TODO(CJB): update norm_fn to remove ycor argument
-        SUNErrCode ierr =
-          NEWTON_CONTENT(NLS)->norm_fn(ycor, delta, w,
-                                       &(NEWTON_CONTENT(NLS)->delnrm),
-                                       NEWTON_CONTENT(NLS)->norm_fn_data);
+        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
+                    "status = failed update norm, retval = %d", ierr);
+        return ierr;
       }
-      else { NEWTON_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
-#endif
+
       SUNLogInfo(NLS->sunctx->logger,
                  "nonlinear-iterate", "cur-iter = %i, total-iters = %li, update-norm = " SUN_FORMAT_G,
                  NEWTON_CONTENT(NLS)->curiter, NEWTON_CONTENT(NLS)->niters,
