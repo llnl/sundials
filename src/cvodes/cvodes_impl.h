@@ -193,7 +193,7 @@ extern "C" {
    NLS_MAXCOR  maximum no. of corrector iterations for the nonlinear solver
    CRDOWN      constant used in the estimation of the convergence rate (crate)
                of the iterates for the nonlinear equation
-   RDIV        declare divergence if ratio del/delp > RDIV
+   RDIV        declare divergence if ratio delnrm/delnrm_p > RDIV
 */
 #define NLS_MAXCOR 3
 #define CRDOWN     SUN_RCONST(0.3)

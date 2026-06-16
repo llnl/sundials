@@ -28,7 +28,7 @@
 #include "arkode_impl.h"
 
 /* private functions */
-static SUNErrCode arkStep_NlsNorm(N_Vector y, N_Vector del, N_Vector ewt,
+static SUNErrCode arkStep_NlsNorm(N_Vector y, N_Vector delnrm, N_Vector ewt,
                                   sunrealtype* delnrm, void* arkode_mem);
 static SUNErrCode arkStep_NlsGetUpdateNorm(sunrealtype* delnrm,
                                            void* arkode_mem);
@@ -1200,12 +1200,12 @@ int arkStep_NlsFPFunction_MassTDep(N_Vector zcor, N_Vector g, void* arkode_mem)
   the additive Runge-Kutta method.  We have two modes.
 
   Standard:
-      delnorm = ||del||_WRMS
+      delnorm = ||delnrm||_WRMS
       if (m==0) crate = 1
-      if (m>0)  crate = max(crdown*crate, delnorm/delp)
-      dcon = min(crate, ONE) * del / nlscoef
+      if (m>0)  crate = max(crdown*crate, delnorm/delnrm_p)
+      dcon = min(crate, ONE) * delnrm / nlscoef
       if (dcon<=1)  return convergence
-      if ((m >= 2) && (del > rdiv*delp))  return divergence
+      if ((m >= 2) && (delnrm > rdiv*delnrm_p))  return divergence
 
   Linearly-implicit mode:
       if the user specifies that the problem is linearly
@@ -1213,7 +1213,7 @@ int arkStep_NlsFPFunction_MassTDep(N_Vector zcor, N_Vector g, void* arkode_mem)
       is provided.
   ---------------------------------------------------------------*/
 int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y,
-                        SUNDIALS_MAYBE_UNUSED N_Vector del, sunrealtype tol,
+                        SUNDIALS_MAYBE_UNUSED N_Vector delnrm, sunrealtype tol,
                         SUNDIALS_MAYBE_UNUSED N_Vector ewt, void* arkode_mem)
 {
   /* temporary variables */
@@ -1230,7 +1230,7 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  if (arkStep_NlsNorm(y, del, ewt, &step_mem->delnrm, arkode_mem) != SUN_SUCCESS)
+  if (arkStep_NlsNorm(y, delnrm, ewt, &step_mem->delnrm, arkode_mem) != SUN_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
                     MSG_ARK_NLS_FAIL);
@@ -1245,7 +1245,7 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   if (m > 0)
   {
     step_mem->crate = SUNMAX(step_mem->crdown * step_mem->crate,
-                             step_mem->delnrm / step_mem->delp);
+                             step_mem->delnrm / step_mem->delnrm_p);
   }
 
   /* compute our scaled error norm for testing convergence */
@@ -1255,23 +1255,23 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   if (dcon <= ONE) { return (SUN_SUCCESS); }
 
   /* check for divergence */
-  if ((m >= 1) && (step_mem->delnrm > step_mem->rdiv * step_mem->delp))
+  if ((m >= 1) && (step_mem->delnrm > step_mem->rdiv * step_mem->delnrm_p))
   {
     return (SUN_NLS_CONV_RECVR);
   }
 
   /* save norm of correction for next iteration */
-  step_mem->delp = step_mem->delnrm;
+  step_mem->delnrm_p = step_mem->delnrm;
 
   /* return with flag that there is more work to do */
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode arkStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector del,
+static SUNErrCode arkStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector delnrm,
                                   N_Vector ewt, sunrealtype* delnrm,
                                   SUNDIALS_MAYBE_UNUSED void* arkode_mem)
 {
-  *delnrm = N_VWrmsNorm(del, ewt);
+  *delnrm = N_VWrmsNorm(delnrm, ewt);
   return SUN_SUCCESS;
 }
 

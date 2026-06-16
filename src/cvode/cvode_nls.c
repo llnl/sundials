@@ -28,7 +28,7 @@
      NLS_MAXCOR  maximum no. of corrector iterations for the nonlinear solver
      CRDOWN      constant used in the estimation of the convergence rate (crate)
                  of the iterates for the nonlinear equation
-     RDIV        declare divergence if ratio del/delp > RDIV
+     RDIV        declare divergence if ratio delnrm/delnrm_p > RDIV
  */
 #define NLS_MAXCOR 3
 #define CRDOWN     SUN_RCONST(0.3)
@@ -41,7 +41,7 @@ static int cvNlsFPFunction(N_Vector ycor, N_Vector res, void* cvode_mem);
 static int cvNlsLSetup(sunbooleantype jbad, sunbooleantype* jcur,
                        void* cvode_mem);
 static int cvNlsLSolve(N_Vector delta, void* cvode_mem);
-static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector del,
+static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delnrm,
                          sunrealtype tol, N_Vector ewt, void* cvode_mem);
 static SUNErrCode cvNlsNorm(N_Vector ycor, N_Vector delta, N_Vector ewt,
                             sunrealtype* delnrm, void* cvode_mem);

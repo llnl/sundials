@@ -413,7 +413,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 {
   CVodeMem cv_mem;
   int m, retval;
-  sunrealtype del;
+  sunrealtype delnrm;
   sunrealtype dcon;
   N_Vector ycor, delta, ewt;
 
@@ -441,7 +441,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
                    MSGCV_NLS_FAIL);
     return (CV_NLS_FAIL);
   }
-  del = N_VWrmsNorm(delta, ewt);
+  delnrm = N_VWrmsNorm(delta, ewt);
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
@@ -451,9 +451,9 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
      rate constant is stored in crate, and used in the test.
 
      Recall that, even when errconS=SUNFALSE, all variables are used in the
-     convergence test. Hence, we use cv_delnrm (and not del). However, acnrm is
+     convergence test. Hence, we use cv_delnrm (and not delnrm). However, acnrm is
      used in the error test and thus it has different forms depending on
-     errconS (and this explains why we still carry around del).
+     errconS (and this explains why we still carry around delnrm).
   */
   if (m > 0)
   {
@@ -467,7 +467,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   {
     if (m == 0)
     {
-      cv_mem->cv_acnrm = (cv_mem->cv_errconS) ? cv_mem->cv_delnrm : del;
+      cv_mem->cv_acnrm = (cv_mem->cv_errconS) ? cv_mem->cv_delnrm : delnrm;
     }
     else
     {
@@ -496,7 +496,7 @@ static SUNErrCode cvNlsNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
                                    sunrealtype* delnrm, void* cvode_mem)
 {
   CVodeMem cv_mem;
-  sunrealtype del;
+  sunrealtype delnrm;
   N_Vector delta;
   N_Vector ewt;
   N_Vector *deltaS, *ewtS;
@@ -509,8 +509,8 @@ static SUNErrCode cvNlsNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
   ewt    = NV_VEC_SW(ewtSim, 0);
   ewtS   = NV_VECS_SW(ewtSim) + 1;
 
-  del     = N_VWrmsNorm(delta, ewt);
-  *delnrm = cvSensUpdateNorm(cv_mem, del, deltaS, ewtS);
+  delnrm     = N_VWrmsNorm(delta, ewt);
+  *delnrm = cvSensUpdateNorm(cv_mem, delnrm, deltaS, ewtS);
 
   return SUN_SUCCESS;
 }

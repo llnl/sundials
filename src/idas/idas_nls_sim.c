@@ -37,7 +37,7 @@ static int idaNlsLSetupSensSim(sunbooleantype jbad, sunbooleantype* jcur,
                                void* ida_mem);
 static int idaNlsLSolveSensSim(N_Vector delta, void* ida_mem);
 static int idaNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycor,
-                                 N_Vector del, sunrealtype tol, N_Vector ewt,
+                                 N_Vector delnrm, sunrealtype tol, N_Vector ewt,
                                  void* ida_mem);
 
 /* -----------------------------------------------------------------------------
@@ -420,7 +420,7 @@ static int idaNlsResidualSensSim(N_Vector ycorSim, N_Vector resSim, void* ida_me
 
 static int idaNlsConvTestSensSim(SUNNonlinearSolver NLS,
                                  SUNDIALS_MAYBE_UNUSED N_Vector ycor,
-                                 N_Vector del, sunrealtype tol, N_Vector ewt,
+                                 N_Vector delnrm, sunrealtype tol, N_Vector ewt,
                                  void* ida_mem)
 {
   IDAMem IDA_mem;
@@ -436,7 +436,7 @@ static int idaNlsConvTestSensSim(SUNNonlinearSolver NLS,
   IDA_mem = (IDAMem)ida_mem;
 
   /* compute the norm of the correction */
-  delnrm = N_VWrmsNorm(del, ewt);
+  delnrm = N_VWrmsNorm(delnrm, ewt);
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
