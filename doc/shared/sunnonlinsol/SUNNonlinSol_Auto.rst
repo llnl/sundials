@@ -157,8 +157,7 @@ controlling the switching behavior.
 
    This function returns the underlying fixed-point solver so that users may
    configure fixed-point-specific options directly, e.g.,
-   :c:func:`SUNNonlinSolSetMaxIters` or
-   :c:func:`SUNNonlinSolSetConvRateConstant_FixedPoint`.
+   :c:func:`SUNNonlinSolSetMaxIters`.
 
    :param NLS: a ``SUNNonlinearSolver`` object returned by :c:func:`SUNNonlinSol_Auto`.
    :param fp_nls: a pointer to the underlying fixed-point solver object.
