@@ -45,8 +45,8 @@ struct SUNNonlinearSolverContent_Auto_
   SUNNonlinSolAutoType active_solver_type;
   SUNNonlinearSolver fp_solver;
   SUNNonlinearSolver newton_solver;
-  SUNNonlinSolConvRateFn conv_rate_fn;
-  void* conv_rate_fn_data;
+  SUNNonlinSolGetConvRateFn getconvrate_fn;
+  void* getconvrate_data;
   long int fp_to_newt_delay;
   long int newt_to_fp_delay;
   long int num_solves_since_switch;
@@ -141,15 +141,6 @@ SUNErrCode SUNNonlinSolGetTotalNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
                                                        long int* newt_nconvfails);
 
 /* Compatibility wrapper for the unreleased pre-review name. */
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
-                                                  long int* fp_nconvfails,
-                                                  long int* newt_nconvfails);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetUpdateNorm_Auto(SUNNonlinearSolver NLS,
-                                          sunrealtype* delnrm);
-
 #ifdef __cplusplus
 }
 #endif

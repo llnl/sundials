@@ -88,10 +88,10 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
 typedef SUNErrCode (*SUNNonlinSolNormFn)(N_Vector y, N_Vector del, N_Vector w,
                                          sunrealtype* delnrm, void* mem);
 
-typedef SUNErrCode (*SUNNonlinSolConvRateFn)(sunrealtype* crate, void* mem);
+typedef SUNErrCode (*SUNNonlinSolGetUpdateNormFn)(sunrealtype* delnrm,
+                                                  void* mem);
 
-/* Compatibility alias for the unreleased pre-review name. */
-typedef SUNNonlinSolNormFn SUNNonlinSolUpdateNormFn;
+typedef SUNErrCode (*SUNNonlinSolGetConvRateFn)(sunrealtype* crate, void* mem);
 
 /* -----------------------------------------------------------------------------
  * SUNNonlinearSolver types
@@ -128,14 +128,16 @@ struct _generic_SUNNonlinearSolver_Ops
   SUNErrCode (*setlsolvefn)(SUNNonlinearSolver, SUNNonlinSolLSolveFn);
   SUNErrCode (*setctestfn)(SUNNonlinearSolver, SUNNonlinSolConvTestFn, void*);
   SUNErrCode (*setnormfn)(SUNNonlinearSolver, SUNNonlinSolNormFn, void*);
-  SUNErrCode (*setconvratefn)(SUNNonlinearSolver, SUNNonlinSolConvRateFn, void*);
+  SUNErrCode (*setgetupdatenormfn)(SUNNonlinearSolver,
+                                   SUNNonlinSolGetUpdateNormFn, void*);
+  SUNErrCode (*setgetconvratefn)(SUNNonlinearSolver,
+                                 SUNNonlinSolGetConvRateFn, void*);
   SUNErrCode (*setoptions)(SUNNonlinearSolver NLS, const char* NLSid,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNNonlinearSolver, int);
   SUNErrCode (*getnumiters)(SUNNonlinearSolver, long int*);
   SUNErrCode (*getcuriter)(SUNNonlinearSolver, int*);
   SUNErrCode (*getnumconvfails)(SUNNonlinearSolver, long int*);
-  SUNErrCode (*getupdatenorm)(SUNNonlinearSolver, sunrealtype*);
 };
 
 /* A nonlinear solver is a structure with an implementation-dependent 'content'
@@ -204,15 +206,14 @@ SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
                                  SUNNonlinSolNormFn NormFn, void* norm_fn_data);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetConvRateFn(SUNNonlinearSolver NLS,
-                                     SUNNonlinSolConvRateFn ConvRateFn,
-                                     void* conv_rate_fn_data);
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data);
 
-/* Compatibility wrapper for the unreleased pre-review name. */
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver NLS,
-                                       SUNNonlinSolUpdateNormFn UpdateNormFn,
-                                       void* getupdatenorm_data);
+SUNErrCode SUNNonlinSolSetGetConvRateFn(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetConvRateFn GetConvRateFn,
+  void* getconvrate_data);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,
@@ -231,9 +232,6 @@ SUNErrCode SUNNonlinSolGetCurIter(SUNNonlinearSolver NLS, int* iter);
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumConvFails(SUNNonlinearSolver NLS,
                                        long int* nconvfails);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetUpdateNorm(SUNNonlinearSolver NLS, sunrealtype* delnrm);
 
 /* -----------------------------------------------------------------------------
  * SUNNonlinearSolver return values

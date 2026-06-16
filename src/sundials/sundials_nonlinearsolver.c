@@ -77,13 +77,13 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   ops->setlsolvefn     = NULL;
   ops->setctestfn      = NULL;
   ops->setnormfn       = NULL;
-  ops->setconvratefn   = NULL;
+  ops->setgetupdatenormfn = NULL;
+  ops->setgetconvratefn   = NULL;
   ops->setoptions      = NULL;
   ops->setmaxiters     = NULL;
   ops->getnumiters     = NULL;
   ops->getcuriter      = NULL;
   ops->getnumconvfails = NULL;
-  ops->getupdatenorm   = NULL;
 
   /* attach context and ops, initialize content to NULL */
   NLS->sunctx  = sunctx;
@@ -303,26 +303,35 @@ SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
   return (SUN_SUCCESS);
 }
 
-SUNErrCode SUNNonlinSolSetConvRateFn(SUNNonlinearSolver NLS,
-                                     SUNNonlinSolConvRateFn ConvRateFn,
-                                     void* conv_rate_fn_data)
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data)
 {
   if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
   SUNFunctionBegin(NLS->sunctx);
 
-  if (NLS->ops->setconvratefn)
+  if (NLS->ops->setgetupdatenormfn)
   {
-    return (NLS->ops->setconvratefn(NLS, ConvRateFn, conv_rate_fn_data));
+    return (NLS->ops->setgetupdatenormfn(NLS, GetUpdateNormFn,
+                                         getupdatenorm_data));
   }
 
   return (SUN_SUCCESS);
 }
 
-SUNErrCode SUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver NLS,
-                                       SUNNonlinSolUpdateNormFn UpdateNormFn,
-                                       void* getupdatenorm_data)
+SUNErrCode SUNNonlinSolSetGetConvRateFn(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetConvRateFn GetConvRateFn,
+  void* getconvrate_data)
 {
-  return SUNNonlinSolSetNormFn(NLS, UpdateNormFn, getupdatenorm_data);
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (NLS->ops->setgetconvratefn)
+  {
+    return (NLS->ops->setgetconvratefn(NLS, GetConvRateFn, getconvrate_data));
+  }
+
+  return (SUN_SUCCESS);
 }
 
 SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,
@@ -394,17 +403,4 @@ SUNErrCode SUNNonlinSolGetNumConvFails(SUNNonlinearSolver NLS,
     *nconvfails = 0;
     return (SUN_SUCCESS);
   }
-}
-
-SUNErrCode SUNNonlinSolGetUpdateNorm(SUNNonlinearSolver NLS, sunrealtype* delnrm)
-{
-  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
-  SUNFunctionBegin(NLS->sunctx);
-  SUNAssert(delnrm, SUN_ERR_ARG_CORRUPT);
-  if (NLS->ops->getupdatenorm)
-  {
-    return (NLS->ops->getupdatenorm(NLS, delnrm));
-  }
-  *delnrm = SUN_RCONST(0.0);
-  return SUN_ERR_NOT_IMPLEMENTED;
 }

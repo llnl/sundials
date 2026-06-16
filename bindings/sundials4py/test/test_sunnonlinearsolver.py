@@ -137,13 +137,13 @@ def test_set_sysfns_auto(sunctx, nvec):
     assert ret == SUN_SUCCESS
 
 
-def test_set_convratefn_auto(sunctx, nvec):
+def test_set_getconvratefn_auto(sunctx, nvec):
     nls = SUNNonlinSol_Auto(nvec, 2, SUNNONLINSOL_AUTO_FIXEDPOINT, sunctx)
 
     def conv_rate(_):
         return SUN_SUCCESS, 0.5
 
-    ret = SUNNonlinSolSetConvRateFn(nls, conv_rate)
+    ret = SUNNonlinSolSetGetConvRateFn(nls, conv_rate)
     assert ret == SUN_SUCCESS
 
 

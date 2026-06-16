@@ -36,7 +36,8 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector del,
                          sunrealtype tol, N_Vector ewt, void* cvode_mem);
 static SUNErrCode cvNlsNorm(N_Vector ycor, N_Vector delta, N_Vector ewt,
                             sunrealtype* delnrm, void* cvode_mem);
-static SUNErrCode cvNlsConvRate(sunrealtype* crate, void* cvode_mem);
+static SUNErrCode cvNlsGetUpdateNorm(sunrealtype* delnrm, void* cvode_mem);
+static SUNErrCode cvNlsGetConvRate(sunrealtype* crate, void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -123,15 +124,25 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   "Setting norm function failed");
+                   "Setting convergence-test norm function failed");
     return (CV_ILL_INPUT);
   }
 
-  retval = SUNNonlinSolSetConvRateFn(cv_mem->NLS, cvNlsConvRate, cvode_mem);
+  retval =
+    SUNNonlinSolSetGetUpdateNormFn(cv_mem->NLS, cvNlsGetUpdateNorm, cvode_mem);
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   "Setting convergence-rate function failed");
+                   "Setting update-norm getter failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetGetConvRateFn(cv_mem->NLS, cvNlsGetConvRate,
+                                        cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting convergence-rate getter failed");
     return (CV_ILL_INPUT);
   }
 
@@ -294,6 +305,7 @@ static int cvNlsLSetup(sunbooleantype jbad, sunbooleantype* jcur, void* cvode_me
   cv_mem->cv_gammap     = cv_mem->cv_gamma;
   cv_mem->cv_crate      = ONE;
   cv_mem->cv_crateS     = ONE;
+  cv_mem->cv_delnrm     = SUN_RCONST(0.0);
   cv_mem->cv_nstlp      = cv_mem->cv_nst;
 
   if (retval < 0) { return (CV_LSETUP_FAIL); }
@@ -329,7 +341,6 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
 {
   CVodeMem cv_mem;
   int m, retval;
-  sunrealtype del;
   sunrealtype dcon;
 
   if (cvode_mem == NULL)
@@ -340,7 +351,7 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the correction */
-  if (SUNNonlinSolGetUpdateNorm(NLS, &del) != SUN_SUCCESS)
+  if (cvNlsNorm(ycor, delta, ewt, &cv_mem->cv_delnrm, cvode_mem) != SUN_SUCCESS)
   {
     cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
                    MSGCV_NLS_FAIL);
@@ -355,25 +366,26 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
      rate constant is stored in crate, and used in the test.        */
   if (m > 0)
   {
-    cv_mem->cv_crate = SUNMAX(CRDOWN * cv_mem->cv_crate, del / cv_mem->cv_delp);
+    cv_mem->cv_crate =
+      SUNMAX(CRDOWN * cv_mem->cv_crate, cv_mem->cv_delnrm / cv_mem->cv_delp);
   }
-  dcon = del * SUNMIN(ONE, cv_mem->cv_crate) / tol;
+  dcon = cv_mem->cv_delnrm * SUNMIN(ONE, cv_mem->cv_crate) / tol;
 
   if (dcon <= ONE)
   {
-    cv_mem->cv_acnrm    = (m == 0) ? del : N_VWrmsNorm(ycor, ewt);
+    cv_mem->cv_acnrm    = (m == 0) ? cv_mem->cv_delnrm : N_VWrmsNorm(ycor, ewt);
     cv_mem->cv_acnrmcur = SUNTRUE;
     return (CV_SUCCESS); /* Nonlinear system was solved successfully */
   }
 
   /* check if the iteration seems to be diverging */
-  if ((m >= 1) && (del > RDIV * cv_mem->cv_delp))
+  if ((m >= 1) && (cv_mem->cv_delnrm > RDIV * cv_mem->cv_delp))
   {
     return (SUN_NLS_CONV_RECVR);
   }
 
   /* Save norm of correction and loop again */
-  cv_mem->cv_delp = del;
+  cv_mem->cv_delp = cv_mem->cv_delnrm;
 
   /* Not yet converged */
   return (SUN_NLS_CONTINUE);
@@ -387,7 +399,18 @@ static SUNErrCode cvNlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector ycor, N_Vector delta,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode cvNlsConvRate(sunrealtype* crate, void* cvode_mem)
+static SUNErrCode cvNlsGetUpdateNorm(sunrealtype* delnrm, void* cvode_mem)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  *delnrm = cv_mem->cv_delnrm;
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode cvNlsGetConvRate(sunrealtype* crate, void* cvode_mem)
 {
   CVodeMem cv_mem;
 

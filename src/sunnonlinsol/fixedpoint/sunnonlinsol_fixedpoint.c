@@ -38,6 +38,9 @@ static void FreeContent(SUNNonlinearSolver NLS);
 static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
                                                    SUNNonlinSolNormFn NormFn,
                                                    void* norm_fn_data);
+static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data);
 
 /* Content structure accessibility macros */
 #define FP_CONTENT(S) ((SUNNonlinearSolverContent_FixedPoint)(S->content))
@@ -70,19 +73,19 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  NLS->ops->gettype         = SUNNonlinSolGetType_FixedPoint;
-  NLS->ops->initialize      = SUNNonlinSolInitialize_FixedPoint;
-  NLS->ops->solve           = SUNNonlinSolSolve_FixedPoint;
-  NLS->ops->free            = SUNNonlinSolFree_FixedPoint;
-  NLS->ops->setsysfn        = SUNNonlinSolSetSysFn_FixedPoint;
-  NLS->ops->setctestfn      = SUNNonlinSolSetConvTestFn_FixedPoint;
-  NLS->ops->setnormfn       = SUNNonlinSolSetNormFn_FixedPoint;
-  NLS->ops->setoptions      = SUNNonlinSolSetOptions_FixedPoint;
-  NLS->ops->setmaxiters     = SUNNonlinSolSetMaxIters_FixedPoint;
-  NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_FixedPoint;
-  NLS->ops->getcuriter      = SUNNonlinSolGetCurIter_FixedPoint;
-  NLS->ops->getnumconvfails = SUNNonlinSolGetNumConvFails_FixedPoint;
-  NLS->ops->getupdatenorm   = SUNNonlinSolGetUpdateNorm_FixedPoint;
+  NLS->ops->gettype            = SUNNonlinSolGetType_FixedPoint;
+  NLS->ops->initialize         = SUNNonlinSolInitialize_FixedPoint;
+  NLS->ops->solve              = SUNNonlinSolSolve_FixedPoint;
+  NLS->ops->free               = SUNNonlinSolFree_FixedPoint;
+  NLS->ops->setsysfn           = SUNNonlinSolSetSysFn_FixedPoint;
+  NLS->ops->setctestfn         = SUNNonlinSolSetConvTestFn_FixedPoint;
+  NLS->ops->setnormfn          = SUNNonlinSolSetNormFn_FixedPoint;
+  NLS->ops->setgetupdatenormfn = SUNNonlinSolSetGetUpdateNormFn_FixedPoint;
+  NLS->ops->setoptions         = SUNNonlinSolSetOptions_FixedPoint;
+  NLS->ops->setmaxiters        = SUNNonlinSolSetMaxIters_FixedPoint;
+  NLS->ops->getnumiters        = SUNNonlinSolGetNumIters_FixedPoint;
+  NLS->ops->getcuriter         = SUNNonlinSolGetCurIter_FixedPoint;
+  NLS->ops->getnumconvfails    = SUNNonlinSolGetNumConvFails_FixedPoint;
 
   /* Create nonlinear solver content structure */
   content = NULL;
@@ -96,18 +99,20 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   NLS->content = content;
 
   /* Fill general content */
-  content->Sys          = NULL;
-  content->CTest        = NULL;
-  content->norm_fn      = NULL;
-  content->norm_fn_data = NULL;
-  content->m            = m;
-  content->damping      = SUNFALSE;
-  content->beta         = ONE;
-  content->curiter      = 0;
-  content->maxiters     = 3;
-  content->niters       = 0;
-  content->nconvfails   = 0;
-  content->ctest_data   = NULL;
+  content->Sys                = NULL;
+  content->CTest              = NULL;
+  content->norm_fn            = NULL;
+  content->norm_fn_data       = NULL;
+  content->getupdatenorm_fn   = NULL;
+  content->getupdatenorm_data = NULL;
+  content->m                  = m;
+  content->damping            = SUNFALSE;
+  content->beta               = ONE;
+  content->curiter            = 0;
+  content->maxiters           = 3;
+  content->niters             = 0;
+  content->nconvfails         = 0;
+  content->ctest_data         = NULL;
 
   /* Fill allocatable content */
   SUNCheckCallNull(AllocateContent(NLS, y));
@@ -192,6 +197,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
   SUNFunctionBegin(NLS->sunctx);
   /* local variables */
   int retval;
+  SUNErrCode ier;
   N_Vector yprev, gy, delta;
 
   /* check that all required function pointers have been set */
@@ -254,20 +260,6 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     N_VLinearSum(ONE, ycor, -ONE, yprev, delta);
     SUNCheckLastErr();
 
-    if (FP_CONTENT(NLS)->norm_fn)
-    {
-      retval = FP_CONTENT(NLS)->norm_fn(ycor, delta, w,
-                                        &(FP_CONTENT(NLS)->delnrm),
-                                        FP_CONTENT(NLS)->norm_fn_data);
-      if (retval)
-      {
-        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
-                   "status = failed norm_fn call, retval = %d", retval);
-        return retval;
-      }
-    }
-    else { FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
-
     /* test for convergence */
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
@@ -278,11 +270,19 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
       return SUN_NLS_SWITCH;
     }
 
-#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_LEVEL_INFO
+    if (FP_CONTENT(NLS)->norm_fn)
+    {
+      // TODO(CJB): update norm_fn to remove ycor argument
+      SUNErrCode ierr = FP_CONTENT(NLS)->norm_fn(ycor, delta, w,
+                                                 &(FP_CONTENT(NLS)->delnrm),
+                                                 FP_CONTENT(NLS)->norm_fn_data);
+    }
+    else { FP_CONTENT(NLS)->delnrm = N_VWrmsNorm(delta, w); }
+#endif
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
                "cur-iter = %d, update-norm = " SUN_FORMAT_G,
                FP_CONTENT(NLS)->niters, FP_CONTENT(NLS)->delnrm);
-#endif
 
     /* return if successful */
     if (retval == 0)
@@ -378,6 +378,16 @@ static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
+static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  FP_CONTENT(NLS)->getupdatenorm_fn   = GetUpdateNormFn;
+  FP_CONTENT(NLS)->getupdatenorm_data = getupdatenorm_data;
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNNonlinSolSetMaxIters_FixedPoint(SUNNonlinearSolver NLS, int maxiters)
 {
   SUNFunctionBegin(NLS->sunctx);
@@ -440,13 +450,6 @@ SUNErrCode SUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver NLS,
 {
   /* return the nonlinear system defining function */
   *SysFn = FP_CONTENT(NLS)->Sys;
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
-                                                sunrealtype* delnrm)
-{
-  *delnrm = FP_CONTENT(NLS)->delnrm;
   return SUN_SUCCESS;
 }
 

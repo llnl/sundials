@@ -43,8 +43,10 @@ struct _SUNNonlinearSolverContent_FixedPoint
   /* functions provided by the integrator */
   SUNNonlinSolSysFn Sys;        /* fixed-point iteration function */
   SUNNonlinSolConvTestFn CTest; /* convergence test function      */
-  SUNNonlinSolNormFn norm_fn;   /* optional update-norm callback        */
-  void* norm_fn_data;           /* data for the update-norm callback    */
+  SUNNonlinSolNormFn norm_fn;   /* optional norm callback               */
+  void* norm_fn_data;           /* data for the norm callback           */
+  SUNNonlinSolGetUpdateNormFn getupdatenorm_fn; /* optional update-norm getter */
+  void* getupdatenorm_data;     /* data for the update-norm getter      */
 
   /* nonlinear solver variables */
   int m;                  /* number of acceleration vectors to use          */
@@ -139,10 +141,6 @@ SUNErrCode SUNNonlinSolGetNumConvFails_FixedPoint(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver NLS,
                                            SUNNonlinSolSysFn* SysFn);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
-                                                sunrealtype* delnrm);
 
 #ifdef __cplusplus
 }

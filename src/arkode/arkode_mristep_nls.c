@@ -30,7 +30,9 @@
 /* private functions */
 static SUNErrCode mriStep_NlsNorm(N_Vector y, N_Vector del, N_Vector ewt,
                                   sunrealtype* delnrm, void* arkode_mem);
-static SUNErrCode mriStep_NlsConvRate(sunrealtype* crate, void* arkode_mem);
+static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm,
+                                           void* arkode_mem);
+static SUNErrCode mriStep_NlsGetConvRate(sunrealtype* crate, void* arkode_mem);
 
 /*===============================================================
   Interface routines supplied to ARKODE
@@ -119,15 +121,25 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "Setting norm function failed");
+                    "Setting convergence-test norm function failed");
     return (ARK_ILL_INPUT);
   }
 
-  retval = SUNNonlinSolSetConvRateFn(step_mem->NLS, mriStep_NlsConvRate, ark_mem);
+  retval = SUNNonlinSolSetGetUpdateNormFn(step_mem->NLS,
+                                          mriStep_NlsGetUpdateNorm, ark_mem);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "Setting convergence-rate function failed");
+                    "Setting update-norm getter failed");
+    return (ARK_ILL_INPUT);
+  }
+
+  retval =
+    SUNNonlinSolSetGetConvRateFn(step_mem->NLS, mriStep_NlsGetConvRate, ark_mem);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Setting convergence-rate getter failed");
     return (ARK_ILL_INPUT);
   }
 
@@ -608,7 +620,7 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   /* temporary variables */
   ARKodeMem ark_mem;
   ARKodeMRIStepMem step_mem;
-  sunrealtype delnrm, dcon;
+  sunrealtype dcon;
   int m, retval;
 
   /* access ARKodeMem and ARKodeMRIStepMem structures */
@@ -619,7 +631,7 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  if (SUNNonlinSolGetUpdateNorm(NLS, &delnrm) != SUN_SUCCESS)
+  if (mriStep_NlsNorm(y, del, ewt, &step_mem->delnrm, arkode_mem) != SUN_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
                     MSG_ARK_NLS_FAIL);
@@ -634,23 +646,23 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   if (m > 0)
   {
     step_mem->crate = SUNMAX(step_mem->crdown * step_mem->crate,
-                             delnrm / step_mem->delp);
+                             step_mem->delnrm / step_mem->delp);
   }
 
   /* compute our scaled error norm for testing convergence */
-  dcon = SUNMIN(step_mem->crate, ONE) * delnrm / tol;
+  dcon = SUNMIN(step_mem->crate, ONE) * step_mem->delnrm / tol;
 
   /* check for convergence; if so return with success */
   if (dcon <= ONE) { return (SUN_SUCCESS); }
 
   /* check for divergence */
-  if ((m >= 1) && (delnrm > step_mem->rdiv * step_mem->delp))
+  if ((m >= 1) && (step_mem->delnrm > step_mem->rdiv * step_mem->delp))
   {
     return (SUN_NLS_CONV_RECVR);
   }
 
   /* save norm of correction for next iteration */
-  step_mem->delp = delnrm;
+  step_mem->delp = step_mem->delnrm;
 
   /* return with flag that there is more work to do */
   return (SUN_NLS_CONTINUE);
@@ -664,7 +676,20 @@ static SUNErrCode mriStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector del
   return SUN_SUCCESS;
 }
 
-static SUNErrCode mriStep_NlsConvRate(sunrealtype* crate, void* arkode_mem)
+static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm,
+                                           void* arkode_mem)
+{
+  ARKodeMRIStepMem step_mem;
+  int retval;
+
+  retval = mriStep_AccessStepMem(arkode_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return SUN_ERR_ARG_CORRUPT; }
+
+  *delnrm = step_mem->delnrm;
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode mriStep_NlsGetConvRate(sunrealtype* crate, void* arkode_mem)
 {
   ARKodeMem ark_mem;
   ARKodeMRIStepMem step_mem;

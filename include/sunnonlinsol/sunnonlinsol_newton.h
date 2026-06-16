@@ -44,8 +44,10 @@ struct _SUNNonlinearSolverContent_Newton
   SUNNonlinSolLSetupFn LSetup;  /* linear solver setup function               */
   SUNNonlinSolLSolveFn LSolve;  /* linear solver solve function               */
   SUNNonlinSolConvTestFn CTest; /* nonlinear solver convergence test function */
-  SUNNonlinSolNormFn norm_fn;   /* optional update-norm callback              */
-  void* norm_fn_data;           /* data for the update-norm callback          */
+  SUNNonlinSolNormFn norm_fn;   /* optional norm callback                     */
+  void* norm_fn_data;           /* data for the norm callback                 */
+  SUNNonlinSolGetUpdateNormFn getupdatenorm_fn; /* optional update-norm getter */
+  void* getupdatenorm_data;     /* data for the update-norm getter            */
 
   /* nonlinear solver variables */
   N_Vector delta; /* Newton update vector                                   */
@@ -130,10 +132,6 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Newton(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS,
                                        SUNNonlinSolSysFn* SysFn);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetUpdateNorm_Newton(SUNNonlinearSolver NLS,
-                                            sunrealtype* delnrm);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver NLS,

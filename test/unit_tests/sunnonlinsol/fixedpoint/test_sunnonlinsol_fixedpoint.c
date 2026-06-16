@@ -104,7 +104,11 @@ typedef struct IntegratorMemRec
   N_Vector ycor;
   N_Vector ycur;
   N_Vector w;
+  sunrealtype delnrm;
+  int getupdatenorm_calls;
 }* IntegratorMem;
+
+static SUNErrCode GetUpdateNorm(sunrealtype* delnrm, void* mem);
 
 /* -----------------------------------------------------------------------------
  * Main testing routine
@@ -165,6 +169,9 @@ int main(int argc, char* argv[])
   Imem->w = N_VClone(Imem->y0);
   if (check_retval((void*)Imem->w, "N_VClone", 0)) { return (1); }
 
+  Imem->delnrm              = ZERO;
+  Imem->getupdatenorm_calls = 0;
+
   /* set initial guess */
   data = N_VGetArrayPointer(Imem->y0);
   if (check_retval((void*)data, "N_VGetArrayPointer", 0)) { return (1); }
@@ -188,8 +195,11 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "SUNNonlinSolSetSysFn", 1)) { return (1); }
 
   /* set the convergence test function */
-  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, NULL);
+  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, Imem);
   if (check_retval(&retval, "SUNNonlinSolSetConvTestFn", 1)) { return (1); }
+
+  retval = SUNNonlinSolSetGetUpdateNormFn(NLS, GetUpdateNorm, Imem);
+  if (check_retval(&retval, "SUNNonlinSolSetGetUpdateNormFn", 1)) { return (1); }
 
   /* set the maximum number of nonlinear iterations */
   retval = SUNNonlinSolSetMaxIters(NLS, mxiter);
@@ -210,6 +220,12 @@ int main(int argc, char* argv[])
   /* get the number of linear iterations */
   retval = SUNNonlinSolGetNumIters(NLS, &niters);
   if (check_retval(&retval, "SUNNonlinSolGetNumIters", 1)) { return (1); }
+
+  if (Imem->getupdatenorm_calls <= 0)
+  {
+    printf("ERROR: GetUpdateNorm was never called\n");
+    return (1);
+  }
 
   printf("Number of nonlinear iterations: %ld\n", niters);
 
@@ -232,13 +248,31 @@ int main(int argc, char* argv[])
 int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del, sunrealtype tol,
              N_Vector ewt, void* mem)
 {
-  sunrealtype delnrm;
+  IntegratorMem Imem;
+
+  (void)NLS;
+  (void)y;
+  if (mem == NULL) { return (-1); }
+  Imem = (IntegratorMem)mem;
 
   /* compute the norm of the correction */
-  delnrm = N_VMaxNorm(del);
+  Imem->delnrm = N_VMaxNorm(del);
 
-  if (delnrm <= tol) { return (SUN_SUCCESS); /* success       */ }
+  if (Imem->delnrm <= tol) { return (SUN_SUCCESS); /* success       */ }
   else { return (SUN_NLS_CONTINUE); /* not converged */ }
+}
+
+static SUNErrCode GetUpdateNorm(sunrealtype* delnrm, void* mem)
+{
+  IntegratorMem Imem;
+
+  if (mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  Imem = (IntegratorMem)mem;
+
+  Imem->getupdatenorm_calls++;
+  *delnrm = Imem->delnrm;
+
+  return SUN_SUCCESS;
 }
 
 /* -----------------------------------------------------------------------------
