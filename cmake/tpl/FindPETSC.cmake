@@ -129,8 +129,8 @@ if(NOT TARGET SUNDIALS::PETSC)
     PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${PETSC_INCLUDE_DIRS}"
                INTERFACE_LINK_LIBRARIES "${PETSC_LIBRARIES}")
   if(PETSC_LINK_OPTIONS)
-    set_target_properties(SUNDIALS::PETSC PROPERTIES
-                          INTERFACE_LINK_OPTIONS "${PETSC_LINK_OPTIONS}")
+    set_target_properties(SUNDIALS::PETSC PROPERTIES INTERFACE_LINK_OPTIONS
+                                                     "${PETSC_LINK_OPTIONS}")
   endif()
 endif()
 
