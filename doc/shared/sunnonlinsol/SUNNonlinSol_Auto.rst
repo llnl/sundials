@@ -53,7 +53,7 @@ size solely because the nonlinear algorithm changed.
 A full mathematical description of the switching criterion and algorithm can be
 found in :cite:p:`norsett1986switching`. In short, switching from fixed-point to
 Newton occurs when the fixed-point convergence-rate estimate supplied through
-:c:func:`SUNNonlinSolSetConvRateFn`
+:c:func:`SUNNonlinSolSetGetConvRateFn`
 
 .. math::
 
@@ -119,8 +119,10 @@ and access to the underlying fixed-point and Newton solvers. The generic
 Auto solver; to configure fixed-point- or Newton-specific options separately,
 retrieve the wrapped solver with the getter functions below and call the
 appropriate module-specific setter on that object. Likewise, calling the generic
-:c:func:`SUNNonlinSolSetNormFn` on the Auto solver forwards that callback to the
-wrapped sub-solvers so they use the same integrator-provided norm information.
+:c:func:`SUNNonlinSolSetNormFn`, :c:func:`SUNNonlinSolSetGetUpdateNormFn`, or
+:c:func:`SUNNonlinSolSetGetConvRateFn` on the Auto solver forwards that callback
+to the wrapped sub-solvers so they use the same integrator-provided convergence
+information.
 
 The SUNNonlinSol_Auto module also defines the following function for
 controlling the switching behavior.
