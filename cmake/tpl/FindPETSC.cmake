@@ -42,6 +42,7 @@ unset(_pkg_version_spec)
 
 # Find the PETSC libraries
 set(_petsc_libs)
+set(_petsc_static FALSE)
 foreach(_next_lib IN LISTS PKG_PETSC_LIBRARIES)
   find_library(
     _petsc_lib_${_next_lib}
@@ -49,17 +50,14 @@ foreach(_next_lib IN LISTS PKG_PETSC_LIBRARIES)
     PATHS ${PKG_PETSC_LIBRARY_DIRS})
   if(_petsc_lib_${_next_lib})
     list(APPEND _petsc_libs "${_petsc_lib_${_next_lib}}")
+    if(_petsc_lib_${_next_lib} MATCHES "\\.(a|lib)$")
+      set(_petsc_static TRUE)
+    endif()
   endif()
 endforeach()
 
 # libm is always required
 list(APPEND _petsc_libs "${SUNDIALS_MATH_LIBRARY}")
-
-# Is libpetsc static?
-set(_petsc_static FALSE)
-if(_petsc_lib_petsc AND _petsc_lib_petsc MATCHES "\\.(a|lib)$")
-  set(_petsc_static TRUE)
-endif()
 
 set(_petsc_link_options "")
 if(_petsc_static)
