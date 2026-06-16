@@ -126,6 +126,25 @@ m.def("SUNNonlinSolGetActiveSolverType_Auto",
       nb::arg("active_solver_type"));
 
 m.def(
+  "SUNNonlinSolGetSwitchCount_Auto",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long>
+  {
+    auto SUNNonlinSolGetSwitchCount_Auto_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long>
+    {
+      long switch_count_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNNonlinSolGetSwitchCount_Auto(NLS, &switch_count_adapt_modifiable);
+      return std::make_tuple(r, switch_count_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetSwitchCount_Auto_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
+
+m.def(
   "SUNNonlinSolGetTotalNumItersByType_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
   {

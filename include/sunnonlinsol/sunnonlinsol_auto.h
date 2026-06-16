@@ -120,6 +120,10 @@ SUNErrCode SUNNonlinSolGetActiveSolverType_Auto(
   SUNNonlinearSolver NLS, SUNNonlinSolAutoType* active_solver_type);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetSwitchCount_Auto(SUNNonlinearSolver NLS,
+                                           long int* switch_count);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver NLS, long int* niters);
 
 /* Get the iteration counts for each sub-solver separately. */

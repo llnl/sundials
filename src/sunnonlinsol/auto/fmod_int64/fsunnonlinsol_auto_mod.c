@@ -963,6 +963,20 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetActiveSolverType_Auto(SUNNonlinearSolver fa
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolGetSwitchCount_Auto(SUNNonlinearSolver farg1, long *farg2) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  long *arg2 = (long *) 0 ;
+  SUNErrCode result;
+
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (long *)(farg2);
+  result = (SUNErrCode)SUNNonlinSolGetSwitchCount_Auto(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters_Auto(SUNNonlinearSolver farg1, long *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
@@ -1035,6 +1049,4 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetTotalNumConvFailsByType_Auto(SUNNonlinearSo
   fresult = (SUNErrCode)(result);
   return fresult;
 }
-
-
 

@@ -103,6 +103,7 @@ module fsunnonlinsol_auto_mod
  public :: FSUNNonlinSolGetFixedPointSolver_Auto
  public :: FSUNNonlinSolGetNewtonSolver_Auto
  public :: FSUNNonlinSolGetActiveSolverType_Auto
+ public :: FSUNNonlinSolGetSwitchCount_Auto
  public :: FSUNNonlinSolGetNumIters_Auto
  public :: FSUNNonlinSolGetTotalNumItersByType_Auto
  public :: FSUNNonlinSolGetCurIter_Auto
@@ -559,6 +560,15 @@ end function
 
 function swigc_FSUNNonlinSolGetActiveSolverType_Auto(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetActiveSolverType_Auto") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolGetSwitchCount_Auto(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolGetSwitchCount_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -1338,6 +1348,22 @@ type(C_PTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = c_loc(active_solver_type)
 fresult = swigc_FSUNNonlinSolGetActiveSolverType_Auto(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolGetSwitchCount_Auto(nls, switch_count) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+integer(C_LONG), dimension(*), target, intent(inout) :: switch_count
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
+
+farg1 = c_loc(nls)
+farg2 = c_loc(switch_count(1))
+fresult = swigc_FSUNNonlinSolGetSwitchCount_Auto(farg1, farg2)
 swig_result = fresult
 end function
 

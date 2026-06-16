@@ -114,11 +114,16 @@ Users should normally call the generic SUNNonlinSol API. When solver-specific
 access is needed, the auto module provides ``_Auto`` helper routines for
 switching parameters, accumulated statistics, the currently active solver type,
 and access to the underlying fixed-point and Newton solvers. The generic
+:c:func:`SUNNonlinSolSetMaxIters` routine forwards the same nonlinear-iteration
+limit to both wrapped sub-solvers. Likewise, the generic
+:c:func:`SUNNonlinSolGetNumConvFails` routine returns the sum of the wrapped
+solvers' convergence failures from the most recent Auto solve. The generic
 :c:func:`SUNNonlinSolSetOptions` routine only applies the Auto-specific
 ``switching_parameters`` key and the generic ``max_iters`` key directly to the
-Auto solver; to configure fixed-point- or Newton-specific options separately,
-retrieve the wrapped solver with the getter functions below and call the
-appropriate module-specific setter on that object. Likewise, calling the generic
+Auto solver; the ``max_iters`` key therefore updates both wrapped sub-solvers.
+To configure other fixed-point- or Newton-specific options separately, retrieve
+the wrapped solver with the getter functions below and call the appropriate
+module-specific setter on that object. Likewise, calling the generic
 :c:func:`SUNNonlinSolSetNormFn`, :c:func:`SUNNonlinSolSetGetUpdateNormFn`, or
 :c:func:`SUNNonlinSolSetGetConvRateFn` on the Auto solver forwards that callback
 to the wrapped sub-solvers so they use the same integrator-provided convergence
@@ -177,6 +182,16 @@ controlling the switching behavior.
 
    :param NLS: a ``SUNNonlinearSolver`` object returned by :c:func:`SUNNonlinSol_Auto`.
    :param active_solver_type: the currently active sub-solver type.
+
+   :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
+
+.. c:function:: SUNErrCode SUNNonlinSolGetSwitchCount_Auto(SUNNonlinearSolver NLS, long int *switch_count)
+
+   This function returns the number of automatic switches between the
+   fixed-point and Newton sub-solvers over the life of the solver.
+
+   :param NLS: a ``SUNNonlinearSolver`` object returned by :c:func:`SUNNonlinSol_Auto`.
+   :param switch_count: the total number of automatic solver switches.
 
    :returns: ``SUN_SUCCESS`` if successful, otherwise an error code.
 

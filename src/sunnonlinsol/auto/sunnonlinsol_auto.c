@@ -163,6 +163,25 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
     return NULL;
   }
 
+  ((SUNNonlinSolAutoConvTestData*)content->auto_ctest_data)->auto_nls = NLS;
+  ((SUNNonlinSolAutoConvTestData*)content->auto_ctest_data)->user_ctest_fn = NULL;
+  ((SUNNonlinSolAutoConvTestData*)content->auto_ctest_data)->user_ctest_data =
+    NULL;
+
+  if (SUNNonlinSolSetConvTestFn(content->fp_solver, SUNNonlinSolConvTest_Auto,
+                                content->auto_ctest_data) != SUN_SUCCESS ||
+      SUNNonlinSolSetConvTestFn(content->newton_solver, SUNNonlinSolConvTest_Auto,
+                                content->auto_ctest_data) != SUN_SUCCESS)
+  {
+    free(content->auto_ctest_data);
+    SUNNonlinSolFree(content->fp_solver);
+    SUNNonlinSolFree(content->newton_solver);
+    free(content);
+    NLS->content = NULL;
+    SUNNonlinSolFreeEmpty(NLS);
+    return NULL;
+  }
+
   if (SUNNonlinSolSetComputeStiffnessRatio_Newton(content->newton_solver,
                                                   SUNTRUE) != SUN_SUCCESS)
   {
@@ -201,15 +220,17 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   long int iters, nconvfails;
   SUNNonlinearSolver subsolver;
   SUNNonlinearSolverContent_Auto C = AUTO_CONTENT(NLS);
+  SUNNonlinSolAutoType solve_solver_type;
 
   C->num_iters      = 0;
   C->num_conv_fails = 0;
 
   for (;;)
   {
-    subsolver = (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
-                  ? C->fp_solver
-                  : C->newton_solver;
+    solve_solver_type = C->active_solver_type;
+    subsolver         = (solve_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+                          ? C->fp_solver
+                          : C->newton_solver;
 
     SUNLogInfo(NLS->sunctx->logger, "begin-subsolver-solves-list",
                "requested = %s",
@@ -221,7 +242,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
     if (SUNNonlinSolGetNumIters(subsolver, &iters) == SUN_SUCCESS)
     {
       C->num_iters += iters;
-      if (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+      if (solve_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
       {
         C->fp_num_iters_total += iters;
       }
@@ -232,7 +253,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
     if (SUNNonlinSolGetNumConvFails(subsolver, &nconvfails) == SUN_SUCCESS)
     {
       C->num_conv_fails += nconvfails;
-      if (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
+      if (solve_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
       {
         C->fp_num_conv_fails_total += nconvfails;
       }
@@ -263,8 +284,12 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
                                      N_Vector ewt, void* mem)
 {
   SUNNonlinSolAutoConvTestData* data = (SUNNonlinSolAutoConvTestData*)mem;
-  SUNNonlinearSolver auto_nls        = data->auto_nls;
-  SUNNonlinearSolverContent_Auto C   = AUTO_CONTENT(auto_nls);
+  if (data == NULL || data->user_ctest_fn == NULL)
+  {
+    return SUN_ERR_ARG_CORRUPT;
+  }
+  SUNNonlinearSolver auto_nls      = data->auto_nls;
+  SUNNonlinearSolverContent_Auto C = AUTO_CONTENT(auto_nls);
 
   int retval = data->user_ctest_fn(sub_nls, y, del, tol, ewt,
                                    data->user_ctest_data);
@@ -398,11 +423,6 @@ SUNErrCode SUNNonlinSolSetConvTestFn_Auto(SUNNonlinearSolver NLS,
   data->auto_nls        = NLS;
   data->user_ctest_fn   = CTestFn;
   data->user_ctest_data = ctest_data;
-
-  SUNCheckCall(SUNNonlinSolSetConvTestFn(AUTO_CONTENT(NLS)->fp_solver,
-                                         SUNNonlinSolConvTest_Auto, data));
-  SUNCheckCall(SUNNonlinSolSetConvTestFn(AUTO_CONTENT(NLS)->newton_solver,
-                                         SUNNonlinSolConvTest_Auto, data));
   return SUN_SUCCESS;
 }
 
@@ -526,6 +546,15 @@ SUNErrCode SUNNonlinSolGetActiveSolverType_Auto(
   SUNFunctionBegin(NLS->sunctx);
   SUNAssert(active_solver_type, SUN_ERR_ARG_CORRUPT);
   *active_solver_type = AUTO_CONTENT(NLS)->active_solver_type;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNNonlinSolGetSwitchCount_Auto(SUNNonlinearSolver NLS,
+                                           long int* switch_count)
+{
+  SUNFunctionBegin(NLS->sunctx);
+  SUNAssert(switch_count, SUN_ERR_ARG_CORRUPT);
+  *switch_count = AUTO_CONTENT(NLS)->switch_count;
   return SUN_SUCCESS;
 }
 
