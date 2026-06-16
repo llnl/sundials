@@ -262,10 +262,6 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
 
     if (retval == SUN_NLS_SWITCH)
     {
-      SUNLogInfo(NLS->sunctx->logger,
-                 "end-subsolver-solves-list", "status = switch, next = %s, retval = %i, iters = %li, conv-fails = %li",
-                 SUNNonlinSolAutoType_ToString(C->active_solver_type), retval,
-                 iters, nconvfails);
       continue;
     }
 
@@ -308,7 +304,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
 
     /* If the integrator-provided convergence test passed, exit with success and
        don't consider switching. */
-    if (retval == SUN_SUCCESS) { return retval; }
+    if (retval == SUN_SUCCESS) { return SUN_SUCCESS; }
 
     if (C->getconvrate_fn == NULL) { return SUN_ERR_NOT_IMPLEMENTED; }
 
@@ -354,7 +350,10 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
                  ", threshold = " SUN_FORMAT_G
                  ", delay = %li, user_ctest_retval = %i",
                  stiffr, C->newt_to_fp_threshold, C->newt_to_fp_delay, retval);
-      return SUN_NLS_SWITCH;
+
+      /* If the integrator-provided convergence test passed, exit with success */
+      if (retval == SUN_SUCCESS) { return SUN_SUCCESS; }
+      else { return SUN_NLS_SWITCH; }
     }
   }
 
