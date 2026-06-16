@@ -31,24 +31,24 @@ Van der Pol oscillator (CVODE):
   220.000000    1.512739   -0.011684
   230.000000    1.379580   -0.015280
   240.000000    1.176470   -0.030506
-  250.000000   -1.956787    0.006912
+  250.000000   -1.956787    0.006880
    -----------------------------------
-Current time                  = 250.001267045546
-Steps                         = 4053
-Error test fails              = 254
+Current time                  = 250.000894103839
+Steps                         = 4050
+Error test fails              = 258
 NLS step fails                = 3
 Constraint fails              = 0
 Constraint corrections        = 0
 Initial step size             = 2.04083345024543e-07
-Last step size                = 0.00261066111674004
-Current step size             = 0.00261066111674004
+Last step size                = 0.00164224543845974
+Current step size             = 0.00164224543845974
 Last method order             = 1
 Current method order          = 1
 Stab. lim. order reductions   = 0
-RHS fn evals                  = 4492
-NLS iters                     = 4489
+RHS fn evals                  = 4493
+NLS iters                     = 4490
 NLS fails                     = 14
-NLS iters per step            = 1.10757463607205
+NLS iters per step            = 1.10864197530864
 LS setups                     = 73
 Jac fn evals                  = 15
 LS RHS fn evals               = 0
@@ -59,7 +59,7 @@ LS fails                      = 0
 Jac-times setups              = 0
 Jac-times evals               = 0
 LS iters per NLS iter         = 0
-Jac evals per NLS iter        = 0.00334150144798396
+Jac evals per NLS iter        = 0.00334075723830735
 Prec evals per NLS iter       = 0
 Root fn evals                 = 0
-   Auto nonlinear solver iteration totals: newton = 299, fixed-point = 4190
+   Auto nonlinear solver iteration totals: newton = 299, fixed-point = 4191
