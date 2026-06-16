@@ -506,7 +506,7 @@ static SUNErrCode cvNlsNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
   ewt    = NV_VEC_SW(ewtSim, 0);
   ewtS   = NV_VECS_SW(ewtSim) + 1;
 
-  *delnrm  = N_VWrmsNorm(delta, ewt);
+  *delnrm = N_VWrmsNorm(delta, ewt);
   *delnrm = cvSensUpdateNorm(cv_mem, *delnrm, deltaS, ewtS);
 
   return SUN_SUCCESS;

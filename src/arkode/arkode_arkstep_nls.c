@@ -1229,8 +1229,7 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  if (arkStep_NlsNorm(y, del, ewt, &step_mem->delnrm, arkode_mem) !=
-      SUN_SUCCESS)
+  if (arkStep_NlsNorm(y, del, ewt, &step_mem->delnrm, arkode_mem) != SUN_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
                     MSG_ARK_NLS_FAIL);
