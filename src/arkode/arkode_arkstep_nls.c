@@ -1270,7 +1270,7 @@ static SUNErrCode arkStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector del
                                   N_Vector ewt, sunrealtype* delnrm,
                                   SUNDIALS_MAYBE_UNUSED void* arkode_mem)
 {
-  *delnrm = N_VWrmsNorm(delnrm, ewt);
+  *delnrm = N_VWrmsNorm(del, ewt);
   return SUN_SUCCESS;
 }
 
