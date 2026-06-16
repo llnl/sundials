@@ -55,8 +55,9 @@ static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector ycor,
 
   if (NEWTON_CONTENT(NLS)->getupdatenorm_fn)
   {
-    return NEWTON_CONTENT(NLS)->getupdatenorm_fn(
-      &(NEWTON_CONTENT(NLS)->delnrm), NEWTON_CONTENT(NLS)->getupdatenorm_data);
+    return NEWTON_CONTENT(NLS)
+      ->getupdatenorm_fn(&(NEWTON_CONTENT(NLS)->delnrm),
+                         NEWTON_CONTENT(NLS)->getupdatenorm_data);
   }
 
   if (NEWTON_CONTENT(NLS)->norm_fn)
@@ -307,7 +308,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       if (ierr != SUN_SUCCESS)
       {
         SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
-                    "status = failed update norm, retval = %d", ierr);
+                   "status = failed update norm, retval = %d", ierr);
         return ierr;
       }
 

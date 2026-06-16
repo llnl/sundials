@@ -68,8 +68,7 @@ static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS, N_Vector ycor
 
   if (FP_CONTENT(NLS)->norm_fn)
   {
-    return FP_CONTENT(NLS)->norm_fn(ycor, delta, w,
-                                    &(FP_CONTENT(NLS)->delnrm),
+    return FP_CONTENT(NLS)->norm_fn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm),
                                     FP_CONTENT(NLS)->norm_fn_data);
   }
 

@@ -260,10 +260,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
       else { C->newton_num_conv_fails_total += nconvfails; }
     }
 
-    if (retval == SUN_NLS_SWITCH)
-    {
-      continue;
-    }
+    if (retval == SUN_NLS_SWITCH) { continue; }
 
     SUNLogInfo(NLS->sunctx->logger, "end-subsolver-solves-list",
                "status = complete, retval = %i, iters = %li, conv-fails = %li",
