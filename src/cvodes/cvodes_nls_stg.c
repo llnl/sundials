@@ -39,8 +39,7 @@ static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
 static SUNErrCode cvNlsNormSensStg(N_Vector ycorStg, N_Vector deltaStg,
                                    N_Vector ewtStg, sunrealtype* delnrm,
                                    void* cvode_mem);
-static SUNErrCode cvNlsGetUpdateNormSensStg(sunrealtype* delnrm,
-                                            void* cvode_mem);
+static SUNErrCode cvNlsGetUpdateNormSensStg(sunrealtype* delnrm, void* cvode_mem);
 static SUNErrCode cvNlsGetConvRateSensStg(sunrealtype* crate, void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
@@ -148,8 +147,7 @@ int CVodeSetNonlinearSolverSensStg(void* cvode_mem, SUNNonlinearSolver NLS)
   }
 
   retval = SUNNonlinSolSetGetUpdateNormFn(cv_mem->NLSstg,
-                                          cvNlsGetUpdateNormSensStg,
-                                          cvode_mem);
+                                          cvNlsGetUpdateNormSensStg, cvode_mem);
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -157,8 +155,8 @@ int CVodeSetNonlinearSolverSensStg(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  retval = SUNNonlinSolSetGetConvRateFn(cv_mem->NLSstg,
-                                        cvNlsGetConvRateSensStg, cvode_mem);
+  retval = SUNNonlinSolSetGetConvRateFn(cv_mem->NLSstg, cvNlsGetConvRateSensStg,
+                                        cvode_mem);
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -383,8 +381,8 @@ static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
   */
   if (m > 0)
   {
-    cv_mem->cv_crateS =
-      SUNMAX(CRDOWN * cv_mem->cv_crateS, cv_mem->cv_delnrm / cv_mem->cv_delp);
+    cv_mem->cv_crateS = SUNMAX(CRDOWN * cv_mem->cv_crateS,
+                               cv_mem->cv_delnrm / cv_mem->cv_delp);
   }
   dcon = cv_mem->cv_delnrm * SUNMIN(ONE, cv_mem->cv_crateS) / tol;
 
@@ -393,8 +391,8 @@ static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
   {
     if (cv_mem->cv_errconS)
     {
-      cv_mem->cv_acnrmS =
-        (m == 0) ? cv_mem->cv_delnrm : cvSensNorm(cv_mem, ycorS, ewtS);
+      cv_mem->cv_acnrmS    = (m == 0) ? cv_mem->cv_delnrm
+                                      : cvSensNorm(cv_mem, ycorS, ewtS);
       cv_mem->cv_acnrmScur = SUNTRUE;
     }
     return (CV_SUCCESS);
@@ -430,8 +428,7 @@ static SUNErrCode cvNlsNormSensStg(SUNDIALS_MAYBE_UNUSED N_Vector ycorStg,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode cvNlsGetUpdateNormSensStg(sunrealtype* delnrm,
-                                            void* cvode_mem)
+static SUNErrCode cvNlsGetUpdateNormSensStg(sunrealtype* delnrm, void* cvode_mem)
 {
   CVodeMem cv_mem;
 

@@ -128,8 +128,8 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  retval =
-    SUNNonlinSolSetGetUpdateNormFn(cv_mem->NLS, cvNlsGetUpdateNorm, cvode_mem);
+  retval = SUNNonlinSolSetGetUpdateNormFn(cv_mem->NLS, cvNlsGetUpdateNorm,
+                                          cvode_mem);
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -137,8 +137,7 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  retval = SUNNonlinSolSetGetConvRateFn(cv_mem->NLS, cvNlsGetConvRate,
-                                        cvode_mem);
+  retval = SUNNonlinSolSetGetConvRateFn(cv_mem->NLS, cvNlsGetConvRate, cvode_mem);
   if (retval != CV_SUCCESS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -366,8 +365,8 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
      rate constant is stored in crate, and used in the test.        */
   if (m > 0)
   {
-    cv_mem->cv_crate =
-      SUNMAX(CRDOWN * cv_mem->cv_crate, cv_mem->cv_delnrm / cv_mem->cv_delp);
+    cv_mem->cv_crate = SUNMAX(CRDOWN * cv_mem->cv_crate,
+                              cv_mem->cv_delnrm / cv_mem->cv_delp);
   }
   dcon = cv_mem->cv_delnrm * SUNMIN(ONE, cv_mem->cv_crate) / tol;
 

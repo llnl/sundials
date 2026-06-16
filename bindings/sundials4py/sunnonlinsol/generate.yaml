@@ -40,7 +40,6 @@ modules:
       - "^SUNNonlinSolGetNumIters_.*"
       - "^SUNNonlinSolGetCurIter_.*"
       - "^SUNNonlinSolGetNumConvFails_.*"
-      - "^SUNNonlinSolGetUpdateNorm_.*"
   sunnonlinsol_fixedpoint:
     path: sunnonlinsol/sunnonlinsol_fixedpoint_generated.hpp
     headers:

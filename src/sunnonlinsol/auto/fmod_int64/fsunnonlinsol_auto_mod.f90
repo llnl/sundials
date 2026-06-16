@@ -53,10 +53,10 @@ module fsunnonlinsol_auto_mod
   procedure :: get_fp_solver => swigf_SUNNonlinearSolverContent_Auto__fp_solver_get
   procedure :: set_newton_solver => swigf_SUNNonlinearSolverContent_Auto__newton_solver_set
   procedure :: get_newton_solver => swigf_SUNNonlinearSolverContent_Auto__newton_solver_get
-  procedure :: set_conv_rate_fn => swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_set
-  procedure :: get_conv_rate_fn => swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_get
-  procedure :: set_conv_rate_fn_data => swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set
-  procedure :: get_conv_rate_fn_data => swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get
+  procedure :: set_getconvrate_fn => swigf_SUNNonlinearSolverContent_Auto__getconvrate_fn_set
+  procedure :: get_getconvrate_fn => swigf_SUNNonlinearSolverContent_Auto__getconvrate_fn_get
+  procedure :: set_getconvrate_data => swigf_SUNNonlinearSolverContent_Auto__getconvrate_data_set
+  procedure :: get_getconvrate_data => swigf_SUNNonlinearSolverContent_Auto__getconvrate_data_get
   procedure :: set_fp_to_newt_delay => swigf_SUNNonlinearSolverContent_Auto__fp_to_newt_delay_set
   procedure :: get_fp_to_newt_delay => swigf_SUNNonlinearSolverContent_Auto__fp_to_newt_delay_get
   procedure :: set_newt_to_fp_delay => swigf_SUNNonlinearSolverContent_Auto__newt_to_fp_delay_set
@@ -108,8 +108,6 @@ module fsunnonlinsol_auto_mod
  public :: FSUNNonlinSolGetCurIter_Auto
  public :: FSUNNonlinSolGetNumConvFails_Auto
  public :: FSUNNonlinSolGetTotalNumConvFailsByType_Auto
- public :: FSUNNonlinSolGetNumConvFailsByType_Auto
- public :: FSUNNonlinSolGetUpdateNorm_Auto
 
 ! WRAPPER DECLARATIONS
 interface
@@ -164,16 +162,16 @@ type(SwigClassWrapper) :: farg1
 type(C_PTR) :: fresult
 end function
 
-subroutine swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_set(farg1, farg2) &
-bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_set")
+subroutine swigc_SUNNonlinearSolverContent_Auto__getconvrate_fn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__getconvrate_fn_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 end subroutine
 
-function swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_get(farg1) &
-bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_get") &
+function swigc_SUNNonlinearSolverContent_Auto__getconvrate_fn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__getconvrate_fn_get") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
@@ -181,16 +179,16 @@ type(SwigClassWrapper) :: farg1
 type(C_FUNPTR) :: fresult
 end function
 
-subroutine swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set(farg1, farg2) &
-bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set")
+subroutine swigc_SUNNonlinearSolverContent_Auto__getconvrate_data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__getconvrate_data_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 end subroutine
 
-function swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get(farg1) &
-bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get") &
+function swigc_SUNNonlinearSolverContent_Auto__getconvrate_data_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__getconvrate_data_get") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
@@ -615,25 +613,6 @@ type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNNonlinSolGetNumConvFailsByType_Auto(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolGetNumConvFailsByType_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetUpdateNorm_Auto(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetUpdateNorm_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
 end interface
 
 
@@ -714,19 +693,19 @@ fresult = swigc_SUNNonlinearSolverContent_Auto__newton_solver_get(farg1)
 call c_f_pointer(fresult, swig_result)
 end function
 
-subroutine swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_set(self, conv_rate_fn)
+subroutine swigf_SUNNonlinearSolverContent_Auto__getconvrate_fn_set(self, getconvrate_fn)
 use, intrinsic :: ISO_C_BINDING
 class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
-type(C_FUNPTR), intent(in), value :: conv_rate_fn
+type(C_FUNPTR), intent(in), value :: getconvrate_fn
 type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 
 farg1 = self%swigdata
-farg2 = conv_rate_fn
-call swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_set(farg1, farg2)
+farg2 = getconvrate_fn
+call swigc_SUNNonlinearSolverContent_Auto__getconvrate_fn_set(farg1, farg2)
 end subroutine
 
-function swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_get(self) &
+function swigf_SUNNonlinearSolverContent_Auto__getconvrate_fn_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_FUNPTR) :: swig_result
@@ -735,23 +714,23 @@ type(C_FUNPTR) :: fresult
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
-fresult = swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_get(farg1)
+fresult = swigc_SUNNonlinearSolverContent_Auto__getconvrate_fn_get(farg1)
 swig_result = fresult
 end function
 
-subroutine swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set(self, conv_rate_fn_data)
+subroutine swigf_SUNNonlinearSolverContent_Auto__getconvrate_data_set(self, getconvrate_data)
 use, intrinsic :: ISO_C_BINDING
 class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
-type(C_PTR) :: conv_rate_fn_data
+type(C_PTR) :: getconvrate_data
 type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = self%swigdata
-farg2 = conv_rate_fn_data
-call swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set(farg1, farg2)
+farg2 = getconvrate_data
+call swigc_SUNNonlinearSolverContent_Auto__getconvrate_data_set(farg1, farg2)
 end subroutine
 
-function swigf_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get(self) &
+function swigf_SUNNonlinearSolverContent_Auto__getconvrate_data_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
@@ -760,7 +739,7 @@ type(C_PTR) :: fresult
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
-fresult = swigc_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get(farg1)
+fresult = swigc_SUNNonlinearSolverContent_Auto__getconvrate_data_get(farg1)
 swig_result = fresult
 end function
 
@@ -1445,41 +1424,6 @@ farg1 = c_loc(nls)
 farg2 = c_loc(fp_nconvfails(1))
 farg3 = c_loc(newt_nconvfails(1))
 fresult = swigc_FSUNNonlinSolGetTotalNumConvFailsByType_Auto(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetNumConvFailsByType_Auto(nls, fp_nconvfails, newt_nconvfails) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_LONG), dimension(*), target, intent(inout) :: fp_nconvfails
-integer(C_LONG), dimension(*), target, intent(inout) :: newt_nconvfails
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(fp_nconvfails(1))
-farg3 = c_loc(newt_nconvfails(1))
-fresult = swigc_FSUNNonlinSolGetNumConvFailsByType_Auto(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetUpdateNorm_Auto(nls, delnrm) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-real(C_DOUBLE), dimension(*), target, intent(inout) :: delnrm
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(delnrm(1))
-fresult = swigc_FSUNNonlinSolGetUpdateNorm_Auto(farg1, farg2)
 swig_result = fresult
 end function
 

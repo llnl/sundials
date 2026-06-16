@@ -46,7 +46,7 @@ struct _SUNNonlinearSolverContent_FixedPoint
   SUNNonlinSolNormFn norm_fn;   /* optional norm callback               */
   void* norm_fn_data;           /* data for the norm callback           */
   SUNNonlinSolGetUpdateNormFn getupdatenorm_fn; /* optional update-norm getter */
-  void* getupdatenorm_data;     /* data for the update-norm getter      */
+  void* getupdatenorm_data; /* data for the update-norm getter      */
 
   /* nonlinear solver variables */
   int m;                  /* number of acceleration vectors to use          */

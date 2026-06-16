@@ -523,13 +523,13 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: setlsolvefn
   type(C_FUNPTR), public :: setctestfn
   type(C_FUNPTR), public :: setnormfn
-  type(C_FUNPTR), public :: setconvratefn
+  type(C_FUNPTR), public :: setgetupdatenormfn
+  type(C_FUNPTR), public :: setgetconvratefn
   type(C_FUNPTR), public :: setoptions
   type(C_FUNPTR), public :: setmaxiters
   type(C_FUNPTR), public :: getnumiters
   type(C_FUNPTR), public :: getcuriter
   type(C_FUNPTR), public :: getnumconvfails
-  type(C_FUNPTR), public :: getupdatenorm
  end type SUNNonlinearSolver_Ops
  ! struct struct _generic_SUNNonlinearSolver
  type, bind(C), public :: SUNNonlinearSolver
@@ -551,13 +551,12 @@ module fsundials_core_mod
  public :: FSUNNonlinSolSetLSolveFn
  public :: FSUNNonlinSolSetConvTestFn
  public :: FSUNNonlinSolSetNormFn
- public :: FSUNNonlinSolSetConvRateFn
- public :: FSUNNonlinSolSetUpdateNormFn
+ public :: FSUNNonlinSolSetGetUpdateNormFn
+ public :: FSUNNonlinSolSetGetConvRateFn
  public :: FSUNNonlinSolSetMaxIters
  public :: FSUNNonlinSolGetNumIters
  public :: FSUNNonlinSolGetCurIter
  public :: FSUNNonlinSolGetNumConvFails
- public :: FSUNNonlinSolGetUpdateNorm
  integer(C_INT), parameter, public :: SUN_NLS_CONTINUE = +901_C_INT
  integer(C_INT), parameter, public :: SUN_NLS_CONV_RECVR = +902_C_INT
  integer(C_INT), parameter, public :: SUN_NLS_SWITCH = +903_C_INT
@@ -2244,8 +2243,8 @@ type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNNonlinSolSetConvRateFn(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetConvRateFn") &
+function swigc_FSUNNonlinSolSetGetUpdateNormFn(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetGetUpdateNormFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -2254,8 +2253,8 @@ type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNNonlinSolSetUpdateNormFn(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetUpdateNormFn") &
+function swigc_FSUNNonlinSolSetGetConvRateFn(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetGetConvRateFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -2293,15 +2292,6 @@ end function
 
 function swigc_FSUNNonlinSolGetNumConvFails(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNumConvFails") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetUpdateNorm(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetUpdateNorm") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -5969,31 +5959,12 @@ fresult = swigc_FSUNNonlinSolSetNormFn(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FSUNNonlinSolSetConvRateFn(nls, convratefn, conv_rate_fn_data) &
+function FSUNNonlinSolSetGetUpdateNormFn(nls, getupdatenormfn, getupdatenorm_data) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: convratefn
-type(C_PTR) :: conv_rate_fn_data
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = convratefn
-farg3 = conv_rate_fn_data
-fresult = swigc_FSUNNonlinSolSetConvRateFn(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetUpdateNormFn(nls, updatenormfn, getupdatenorm_data) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: updatenormfn
+type(C_FUNPTR), intent(in), value :: getupdatenormfn
 type(C_PTR) :: getupdatenorm_data
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
@@ -6001,9 +5972,28 @@ type(C_FUNPTR) :: farg2
 type(C_PTR) :: farg3 
 
 farg1 = c_loc(nls)
-farg2 = updatenormfn
+farg2 = getupdatenormfn
 farg3 = getupdatenorm_data
-fresult = swigc_FSUNNonlinSolSetUpdateNormFn(farg1, farg2, farg3)
+fresult = swigc_FSUNNonlinSolSetGetUpdateNormFn(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetGetConvRateFn(nls, getconvratefn, getconvrate_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: getconvratefn
+type(C_PTR) :: getconvrate_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = getconvratefn
+farg3 = getconvrate_data
+fresult = swigc_FSUNNonlinSolSetGetConvRateFn(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
@@ -6068,22 +6058,6 @@ type(C_PTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = c_loc(nconvfails(1))
 fresult = swigc_FSUNNonlinSolGetNumConvFails(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetUpdateNorm(nls, delnrm) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-real(C_DOUBLE), dimension(*), target, intent(inout) :: delnrm
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(delnrm(1))
-fresult = swigc_FSUNNonlinSolGetUpdateNorm(farg1, farg2)
 swig_result = fresult
 end function
 

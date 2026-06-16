@@ -88,23 +88,6 @@ m.def(
     return SUNNonlinSolGetNumConvFails_adapt_modifiable_immutable_to_return(NLS);
   },
   nb::arg("NLS"));
-
-m.def(
-  "SUNNonlinSolGetUpdateNorm",
-  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-  {
-    auto SUNNonlinSolGetUpdateNorm_adapt_modifiable_immutable_to_return =
-      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
-    {
-      sunrealtype delnrm_adapt_modifiable;
-
-      SUNErrCode r = SUNNonlinSolGetUpdateNorm(NLS, &delnrm_adapt_modifiable);
-      return std::make_tuple(r, delnrm_adapt_modifiable);
-    };
-
-    return SUNNonlinSolGetUpdateNorm_adapt_modifiable_immutable_to_return(NLS);
-  },
-  nb::arg("NLS"));
 m.attr("SUN_NLS_CONTINUE")   = +901;
 m.attr("SUN_NLS_CONV_RECVR") = +902;
 m.attr("SUN_NLS_SWITCH")     = +903;

@@ -109,15 +109,15 @@ typedef struct ARKodeARKStepMemRec
   sunrealtype gamrat;     /* gamma / gammap                           */
   sunrealtype dgmax;      /* call lsetup if |gamma/gammap-1| >= dgmax */
 
-  int predictor;       /* implicit prediction method to use        */
-  sunrealtype crdown;  /* nonlinear conv rate estimation constant  */
-  sunrealtype rdiv;    /* nonlin divergence if delnrm/delnrm_p > rdiv     */
-  sunrealtype crate;   /* estimated nonlin convergence rate        */
-  sunrealtype delnrm_p;    /* norm of previous nonlinear solver update */
-  sunrealtype delnrm;  /* norm of current nonlinear solver update  */
-  sunrealtype eRNrm;   /* estimated residual norm, used in nonlin
+  int predictor;        /* implicit prediction method to use        */
+  sunrealtype crdown;   /* nonlinear conv rate estimation constant  */
+  sunrealtype rdiv;     /* nonlin divergence if delnrm/delnrm_p > rdiv     */
+  sunrealtype crate;    /* estimated nonlin convergence rate        */
+  sunrealtype delnrm_p; /* norm of previous nonlinear solver update */
+  sunrealtype delnrm;   /* norm of current nonlinear solver update  */
+  sunrealtype eRNrm;    /* estimated residual norm, used in nonlin
                             and linear solver convergence tests      */
-  sunrealtype nlscoef; /* coefficient in nonlin. convergence test  */
+  sunrealtype nlscoef;  /* coefficient in nonlin. convergence test  */
 
   int msbp;       /* positive => max # steps between lsetup
                             negative => call at each Newton iter     */

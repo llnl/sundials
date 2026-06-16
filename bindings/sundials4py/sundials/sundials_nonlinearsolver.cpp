@@ -151,6 +151,41 @@ void bind_sunnonlinearsolver(nb::module_& m)
     nb::arg("NLS"), nb::arg("SolveFn").none());
 
   m.def(
+    "SUNNonlinSolSetNormFn",
+    [](SUNNonlinearSolver NLS,
+       std::function<SUNNonlinSolNormStdFn> NormFn) -> SUNErrCode
+    {
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
+      auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
+      fntable->normfn = nb::cast(NormFn);
+      if (NormFn)
+      {
+        return SUNNonlinSolSetNormFn(NLS, sunnonlinearsolver_normfn_wrapper,
+                                     NLS->python);
+      }
+      else { return SUNNonlinSolSetNormFn(NLS, nullptr, nullptr); }
+    },
+    nb::arg("NLS"), nb::arg("NormFn").none());
+
+  m.def(
+    "SUNNonlinSolSetGetUpdateNormFn",
+    [](SUNNonlinearSolver NLS,
+       std::function<SUNNonlinSolGetUpdateNormStdFn> GetUpdateNormFn) -> SUNErrCode
+    {
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
+      auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
+      fntable->getupdatenormfn = nb::cast(GetUpdateNormFn);
+      if (GetUpdateNormFn)
+      {
+        return SUNNonlinSolSetGetUpdateNormFn(NLS,
+                                              sunnonlinearsolver_getupdatenormfn_wrapper,
+                                              NLS->python);
+      }
+      else { return SUNNonlinSolSetGetUpdateNormFn(NLS, nullptr, nullptr); }
+    },
+    nb::arg("NLS"), nb::arg("GetUpdateNormFn").none());
+
+  m.def(
     "SUNNonlinSolSetConvTestFn",
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolConvTestFn>> CTestFn) -> SUNErrCode
@@ -169,22 +204,22 @@ void bind_sunnonlinearsolver(nb::module_& m)
     nb::arg("NLS"), nb::arg("CTestFn").none());
 
   m.def(
-    "SUNNonlinSolSetConvRateFn",
+    "SUNNonlinSolSetGetConvRateFn",
     [](SUNNonlinearSolver NLS,
-       std::function<SUNNonlinSolConvRateStdFn> ConvRateFn) -> SUNErrCode
+       std::function<SUNNonlinSolGetConvRateStdFn> GetConvRateFn) -> SUNErrCode
     {
       if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
-      fntable->convratefn = nb::cast(ConvRateFn);
-      if (ConvRateFn)
+      fntable->getconvratefn = nb::cast(GetConvRateFn);
+      if (GetConvRateFn)
       {
-        return SUNNonlinSolSetConvRateFn(NLS,
-                                         sunnonlinearsolver_convratefn_wrapper,
-                                         NLS->python);
+        return SUNNonlinSolSetGetConvRateFn(NLS,
+                                            sunnonlinearsolver_getconvratefn_wrapper,
+                                            NLS->python);
       }
-      else { return SUNNonlinSolSetConvRateFn(NLS, nullptr, nullptr); }
+      else { return SUNNonlinSolSetGetConvRateFn(NLS, nullptr, nullptr); }
     },
-    nb::arg("NLS"), nb::arg("ConvRateFn").none());
+    nb::arg("NLS"), nb::arg("GetConvRateFn").none());
 }
 
 } // namespace sundials4py

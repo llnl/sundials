@@ -2662,33 +2662,33 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn(SUNNonlinearSolver farg1, SUNNonlinS
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetConvRateFn(SUNNonlinearSolver farg1, SUNNonlinSolConvRateFn farg2, void *farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver farg1, SUNNonlinSolGetUpdateNormFn farg2, void *farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolConvRateFn arg2 = (SUNNonlinSolConvRateFn) 0 ;
+  SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
   
   arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolConvRateFn)(farg2);
+  arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
   arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetConvRateFn(arg1,arg2,arg3);
+  result = (SUNErrCode)SUNNonlinSolSetGetUpdateNormFn(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetUpdateNormFn(SUNNonlinearSolver farg1, SUNNonlinSolUpdateNormFn farg2, void *farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver farg1, SUNNonlinSolGetConvRateFn farg2, void *farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolUpdateNormFn arg2 = (SUNNonlinSolUpdateNormFn) 0 ;
+  SUNNonlinSolGetConvRateFn arg2 = (SUNNonlinSolGetConvRateFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
   
   arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolUpdateNormFn)(farg2);
+  arg2 = (SUNNonlinSolGetConvRateFn)(farg2);
   arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetUpdateNormFn(arg1,arg2,arg3);
+  result = (SUNErrCode)SUNNonlinSolSetGetConvRateFn(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -2745,20 +2745,6 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails(SUNNonlinearSolver farg1, long
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetNumConvFails(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetUpdateNorm(SUNNonlinearSolver farg1, double *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (sunrealtype *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetUpdateNorm(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

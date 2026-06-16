@@ -88,8 +88,7 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
 typedef SUNErrCode (*SUNNonlinSolNormFn)(N_Vector y, N_Vector del, N_Vector w,
                                          sunrealtype* delnrm, void* mem);
 
-typedef SUNErrCode (*SUNNonlinSolGetUpdateNormFn)(sunrealtype* delnrm,
-                                                  void* mem);
+typedef SUNErrCode (*SUNNonlinSolGetUpdateNormFn)(sunrealtype* delnrm, void* mem);
 
 typedef SUNErrCode (*SUNNonlinSolGetConvRateFn)(sunrealtype* crate, void* mem);
 
@@ -130,8 +129,8 @@ struct _generic_SUNNonlinearSolver_Ops
   SUNErrCode (*setnormfn)(SUNNonlinearSolver, SUNNonlinSolNormFn, void*);
   SUNErrCode (*setgetupdatenormfn)(SUNNonlinearSolver,
                                    SUNNonlinSolGetUpdateNormFn, void*);
-  SUNErrCode (*setgetconvratefn)(SUNNonlinearSolver,
-                                 SUNNonlinSolGetConvRateFn, void*);
+  SUNErrCode (*setgetconvratefn)(SUNNonlinearSolver, SUNNonlinSolGetConvRateFn,
+                                 void*);
   SUNErrCode (*setoptions)(SUNNonlinearSolver NLS, const char* NLSid,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNNonlinearSolver, int);
@@ -206,14 +205,14 @@ SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
                                  SUNNonlinSolNormFn NormFn, void* norm_fn_data);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetGetUpdateNormFn(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
-  void* getupdatenorm_data);
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver NLS,
+                                          SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+                                          void* getupdatenorm_data);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetGetConvRateFn(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetConvRateFn GetConvRateFn,
-  void* getconvrate_data);
+SUNErrCode SUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolGetConvRateFn GetConvRateFn,
+                                        void* getconvrate_data);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,

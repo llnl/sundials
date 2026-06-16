@@ -372,49 +372,49 @@ SWIGEXPORT SUNNonlinearSolver _wrap_SUNNonlinearSolverContent_Auto__newton_solve
 }
 
 
-SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_set(SwigClassWrapper const *farg1, SUNNonlinSolConvRateFn farg2) {
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Auto__getconvrate_fn_set(SwigClassWrapper const *farg1, SUNNonlinSolGetConvRateFn farg2) {
   struct SUNNonlinearSolverContent_Auto_ *arg1 = (struct SUNNonlinearSolverContent_Auto_ *) 0 ;
-  SUNNonlinSolConvRateFn arg2 = (SUNNonlinSolConvRateFn) 0 ;
+  SUNNonlinSolGetConvRateFn arg2 = (SUNNonlinSolGetConvRateFn) 0 ;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Auto_ *", "SUNNonlinearSolverContent_Auto_", "SUNNonlinearSolverContent_Auto_::conv_rate_fn", return );
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Auto_ *", "SUNNonlinearSolverContent_Auto_", "SUNNonlinearSolverContent_Auto_::getconvrate_fn", return );
   arg1 = (struct SUNNonlinearSolverContent_Auto_ *)(farg1->cptr);
-  arg2 = (SUNNonlinSolConvRateFn)(farg2);
-  if (arg1) (arg1)->conv_rate_fn = arg2;
+  arg2 = (SUNNonlinSolGetConvRateFn)(farg2);
+  if (arg1) (arg1)->getconvrate_fn = arg2;
 }
 
 
-SWIGEXPORT SUNNonlinSolConvRateFn _wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_get(SwigClassWrapper const *farg1) {
-  SUNNonlinSolConvRateFn fresult ;
+SWIGEXPORT SUNNonlinSolGetConvRateFn _wrap_SUNNonlinearSolverContent_Auto__getconvrate_fn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolGetConvRateFn fresult ;
   struct SUNNonlinearSolverContent_Auto_ *arg1 = (struct SUNNonlinearSolverContent_Auto_ *) 0 ;
-  SUNNonlinSolConvRateFn result;
+  SUNNonlinSolGetConvRateFn result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Auto_ *", "SUNNonlinearSolverContent_Auto_", "SUNNonlinearSolverContent_Auto_::conv_rate_fn", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Auto_ *", "SUNNonlinearSolverContent_Auto_", "SUNNonlinearSolverContent_Auto_::getconvrate_fn", return 0);
   arg1 = (struct SUNNonlinearSolverContent_Auto_ *)(farg1->cptr);
-  result = (SUNNonlinSolConvRateFn) ((arg1)->conv_rate_fn);
+  result = (SUNNonlinSolGetConvRateFn) ((arg1)->getconvrate_fn);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_set(SwigClassWrapper const *farg1, void *farg2) {
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Auto__getconvrate_data_set(SwigClassWrapper const *farg1, void *farg2) {
   struct SUNNonlinearSolverContent_Auto_ *arg1 = (struct SUNNonlinearSolverContent_Auto_ *) 0 ;
   void *arg2 = (void *) 0 ;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Auto_ *", "SUNNonlinearSolverContent_Auto_", "SUNNonlinearSolverContent_Auto_::conv_rate_fn_data", return );
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Auto_ *", "SUNNonlinearSolverContent_Auto_", "SUNNonlinearSolverContent_Auto_::getconvrate_data", return );
   arg1 = (struct SUNNonlinearSolverContent_Auto_ *)(farg1->cptr);
   arg2 = (void *)(farg2);
-  if (arg1) (arg1)->conv_rate_fn_data = arg2;
+  if (arg1) (arg1)->getconvrate_data = arg2;
 }
 
 
-SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_Auto__conv_rate_fn_data_get(SwigClassWrapper const *farg1) {
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_Auto__getconvrate_data_get(SwigClassWrapper const *farg1) {
   void * fresult ;
   struct SUNNonlinearSolverContent_Auto_ *arg1 = (struct SUNNonlinearSolverContent_Auto_ *) 0 ;
   void *result = 0 ;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Auto_ *", "SUNNonlinearSolverContent_Auto_", "SUNNonlinearSolverContent_Auto_::conv_rate_fn_data", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Auto_ *", "SUNNonlinearSolverContent_Auto_", "SUNNonlinearSolverContent_Auto_::getconvrate_data", return 0);
   arg1 = (struct SUNNonlinearSolverContent_Auto_ *)(farg1->cptr);
-  result = (void *) ((arg1)->conv_rate_fn_data);
+  result = (void *) ((arg1)->getconvrate_data);
   fresult = result;
   return fresult;
 }
@@ -1032,36 +1032,6 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetTotalNumConvFailsByType_Auto(SUNNonlinearSo
   arg2 = (long *)(farg2);
   arg3 = (long *)(farg3);
   result = (SUNErrCode)SUNNonlinSolGetTotalNumConvFailsByType_Auto(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFailsByType_Auto(SUNNonlinearSolver farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolGetNumConvFailsByType_Auto(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetUpdateNorm_Auto(SUNNonlinearSolver farg1, double *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (sunrealtype *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetUpdateNorm_Auto(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

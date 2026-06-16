@@ -8580,8 +8580,8 @@ static int IDASensRes1DQ(SUNDIALS_MAYBE_UNUSED int Ns, sunrealtype t, N_Vector y
   IDA_mem = (IDAMem)user_dataS;
 
   /* Set base perturbation delnrm */
-  delnrm  = SUNRsqrt(SUNMAX(IDA_mem->ida_rtol, IDA_mem->ida_uround));
-  rdel = ONE / delnrm;
+  delnrm = SUNRsqrt(SUNMAX(IDA_mem->ida_rtol, IDA_mem->ida_uround));
+  rdel   = ONE / delnrm;
 
   pbari = IDA_mem->ida_pbar[is];
 
@@ -8589,11 +8589,11 @@ static int IDASensRes1DQ(SUNDIALS_MAYBE_UNUSED int Ns, sunrealtype t, N_Vector y
 
   psave = IDA_mem->ida_p[which];
 
-  delnrm_p  = pbari * delnrm;
-  rDelp = ONE / delnrm_p;
-  norms = N_VWrmsNorm(yyS, IDA_mem->ida_ewt) * pbari;
-  rDely = SUNMAX(norms, rdel) / pbari;
-  Dely  = ONE / rDely;
+  delnrm_p = pbari * delnrm;
+  rDelp    = ONE / delnrm_p;
+  norms    = N_VWrmsNorm(yyS, IDA_mem->ida_ewt) * pbari;
+  rDely    = SUNMAX(norms, rdel) / pbari;
+  Dely     = ONE / rDely;
 
   if (IDA_mem->ida_DQrhomax == ZERO)
   {
@@ -8618,8 +8618,8 @@ static int IDASensRes1DQ(SUNDIALS_MAYBE_UNUSED int Ns, sunrealtype t, N_Vector y
   {
   case CENTERED1:
 
-    delnrm   = SUNMIN(Dely, delnrm_p);
-    r2Del = HALF / delnrm;
+    delnrm = SUNMIN(Dely, delnrm_p);
+    r2Del  = HALF / delnrm;
 
     /* Forward perturb y, y' and parameter */
     N_VLinearSum(delnrm, yyS, ONE, yy, ytemp);
@@ -8698,8 +8698,8 @@ static int IDASensRes1DQ(SUNDIALS_MAYBE_UNUSED int Ns, sunrealtype t, N_Vector y
 
   case FORWARD1:
 
-    delnrm  = SUNMIN(Dely, delnrm_p);
-    rDel = ONE / delnrm;
+    delnrm = SUNMIN(Dely, delnrm_p);
+    rDel   = ONE / delnrm;
 
     /* Forward perturb y, y' and parameter */
     N_VLinearSum(delnrm, yyS, ONE, yy, ytemp);
@@ -8797,8 +8797,8 @@ static int IDAQuadSensRhs1InternalDQ(IDAMem IDA_mem, int is, sunrealtype t,
   sunrealtype delnrm, r2Del;
   sunrealtype norms;
 
-  delnrm  = SUNRsqrt(SUNMAX(IDA_mem->ida_rtol, IDA_mem->ida_uround));
-  rdel = ONE / delnrm;
+  delnrm = SUNRsqrt(SUNMAX(IDA_mem->ida_rtol, IDA_mem->ida_uround));
+  rdel   = ONE / delnrm;
 
   pbari = IDA_mem->ida_pbar[is];
 
@@ -8806,10 +8806,10 @@ static int IDAQuadSensRhs1InternalDQ(IDAMem IDA_mem, int is, sunrealtype t,
 
   psave = IDA_mem->ida_p[which];
 
-  delnrm_p  = pbari * delnrm;
-  norms = N_VWrmsNorm(yyS, IDA_mem->ida_ewt) * pbari;
-  rDely = SUNMAX(norms, rdel) / pbari;
-  Dely  = ONE / rDely;
+  delnrm_p = pbari * delnrm;
+  norms    = N_VWrmsNorm(yyS, IDA_mem->ida_ewt) * pbari;
+  rDely    = SUNMAX(norms, rdel) / pbari;
+  Dely     = ONE / rDely;
 
   method = (IDA_mem->ida_DQtype == IDA_CENTERED) ? CENTERED1 : FORWARD1;
 
@@ -8817,8 +8817,8 @@ static int IDAQuadSensRhs1InternalDQ(IDAMem IDA_mem, int is, sunrealtype t,
   {
   case CENTERED1:
 
-    delnrm   = SUNMIN(Dely, delnrm_p);
-    r2Del = HALF / delnrm;
+    delnrm = SUNMIN(Dely, delnrm_p);
+    r2Del  = HALF / delnrm;
 
     N_VLinearSum(ONE, yy, delnrm, yyS, yytmp);
     N_VLinearSum(ONE, yp, delnrm, ypS, yptmp);
@@ -8843,8 +8843,8 @@ static int IDAQuadSensRhs1InternalDQ(IDAMem IDA_mem, int is, sunrealtype t,
 
   case FORWARD1:
 
-    delnrm  = SUNMIN(Dely, delnrm_p);
-    rdel = ONE / delnrm;
+    delnrm = SUNMIN(Dely, delnrm_p);
+    rdel   = ONE / delnrm;
 
     N_VLinearSum(ONE, yy, delnrm, yyS, yytmp);
     N_VLinearSum(ONE, yp, delnrm, ypS, yptmp);

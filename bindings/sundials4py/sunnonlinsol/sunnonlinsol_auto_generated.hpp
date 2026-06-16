@@ -169,29 +169,6 @@ m.def(
       NLS);
   },
   nb::arg("NLS"));
-
-m.def(
-  "SUNNonlinSolGetNumConvFailsByType_Auto",
-  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
-  {
-    auto SUNNonlinSolGetNumConvFailsByType_Auto_adapt_modifiable_immutable_to_return =
-      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
-    {
-      long fp_nconvfails_adapt_modifiable;
-      long newt_nconvfails_adapt_modifiable;
-
-      SUNErrCode r =
-        SUNNonlinSolGetNumConvFailsByType_Auto(NLS,
-                                               &fp_nconvfails_adapt_modifiable,
-                                               &newt_nconvfails_adapt_modifiable);
-      return std::make_tuple(r, fp_nconvfails_adapt_modifiable,
-                             newt_nconvfails_adapt_modifiable);
-    };
-
-    return SUNNonlinSolGetNumConvFailsByType_Auto_adapt_modifiable_immutable_to_return(
-      NLS);
-  },
-  nb::arg("NLS"));
 // #ifdef __cplusplus
 //
 // #endif

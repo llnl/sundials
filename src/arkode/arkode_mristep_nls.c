@@ -30,8 +30,7 @@
 /* private functions */
 static SUNErrCode mriStep_NlsNorm(N_Vector y, N_Vector delnrm, N_Vector ewt,
                                   sunrealtype* delnrm, void* arkode_mem);
-static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm,
-                                           void* arkode_mem);
+static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm, void* arkode_mem);
 static SUNErrCode mriStep_NlsGetConvRate(sunrealtype* crate, void* arkode_mem);
 
 /*===============================================================
@@ -134,8 +133,8 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
     return (ARK_ILL_INPUT);
   }
 
-  retval =
-    SUNNonlinSolSetGetConvRateFn(step_mem->NLS, mriStep_NlsGetConvRate, ark_mem);
+  retval = SUNNonlinSolSetGetConvRateFn(step_mem->NLS, mriStep_NlsGetConvRate,
+                                        ark_mem);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -631,7 +630,8 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  if (mriStep_NlsNorm(y, delnrm, ewt, &step_mem->delnrm, arkode_mem) != SUN_SUCCESS)
+  if (mriStep_NlsNorm(y, delnrm, ewt, &step_mem->delnrm, arkode_mem) !=
+      SUN_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
                     MSG_ARK_NLS_FAIL);
@@ -668,16 +668,16 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode mriStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector delnrm,
-                                  N_Vector ewt, sunrealtype* delnrm,
+static SUNErrCode mriStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y,
+                                  N_Vector delnrm, N_Vector ewt,
+                                  sunrealtype* delnrm,
                                   SUNDIALS_MAYBE_UNUSED void* arkode_mem)
 {
   *delnrm = N_VWrmsNorm(delnrm, ewt);
   return SUN_SUCCESS;
 }
 
-static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm,
-                                           void* arkode_mem)
+static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm, void* arkode_mem)
 {
   ARKodeMRIStepMem step_mem;
   int retval;

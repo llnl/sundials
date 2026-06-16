@@ -108,7 +108,7 @@ typedef struct ARKodeMRIStepMemRec
   sunrealtype crdown;     /* nonlinear conv rate estimation constant  */
   sunrealtype rdiv;       /* nonlin divergence if delnrm/delnrm_p > rdiv     */
   sunrealtype crate;      /* estimated nonlin convergence rate        */
-  sunrealtype delnrm_p;       /* norm of previous nonlinear solver update */
+  sunrealtype delnrm_p;   /* norm of previous nonlinear solver update */
   sunrealtype delnrm;     /* norm of current nonlinear solver update  */
   sunrealtype eRNrm;      /* estimated residual norm, used in nonlin
                              and linear solver convergence tests      */
