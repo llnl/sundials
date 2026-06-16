@@ -339,7 +339,7 @@ static int idaNlsConvTest(SUNNonlinearSolver NLS,
   IDA_mem = (IDAMem)ida_mem;
 
   /* compute the norm of the correction */
-  delnrm = N_VWrmsNorm(delnrm, ewt);
+  delnrm = N_VWrmsNorm(del, ewt);
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
