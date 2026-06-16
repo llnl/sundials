@@ -245,7 +245,7 @@ parameters. Only the routine for setting the nonlinear system defining function
    **Return value:**
       * A :c:type:`SUNErrCode`
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 
 .. c:function:: SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS, SUNNonlinSolLSetupFn SetupFn)
@@ -341,7 +341,7 @@ parameters. Only the routine for setting the nonlinear system defining function
    **Return value:**
       * A :c:type:`SUNErrCode`
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 
 .. c:function:: SUNErrCode SUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn, void* getupdatenorm_data)
@@ -364,7 +364,7 @@ parameters. Only the routine for setting the nonlinear system defining function
       callback; in that case the generic
       :c:func:`SUNNonlinSolSetGetUpdateNormFn` routine returns ``SUN_SUCCESS``.
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 
 .. c:function:: SUNErrCode SUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver NLS, SUNNonlinSolGetConvRateFn GetConvRateFn, void* getconvrate_data)
@@ -389,7 +389,7 @@ parameters. Only the routine for setting the nonlinear system defining function
       callback; in that case the generic
       :c:func:`SUNNonlinSolSetGetConvRateFn` routine returns ``SUN_SUCCESS``.
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 
 
@@ -632,7 +632,7 @@ module have types defined in the header file
    **Return value:**
       * A :c:type:`SUNErrCode`
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 
 .. c:type:: SUNErrCode (*SUNNonlinSolGetUpdateNormFn)(sunrealtype *delnrm, void* mem)
@@ -648,7 +648,7 @@ module have types defined in the header file
    **Return value:**
       * A :c:type:`SUNErrCode`
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 
 .. c:type:: SUNErrCode (*SUNNonlinSolGetConvRateFn)(sunrealtype *crate, void* mem)
@@ -664,7 +664,7 @@ module have types defined in the header file
    **Return value:**
       * A :c:type:`SUNErrCode`
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 
 

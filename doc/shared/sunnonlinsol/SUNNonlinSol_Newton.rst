@@ -169,7 +169,7 @@ user-callable functions.
       enabled when the Newton solver is used from within the ``SUNNonlinSol_Auto``
       module (see :numref:`SUNNonlinSol.Auto`).
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 .. c:function:: SUNErrCode SUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver NLS, sunrealtype *stiffr)
 
@@ -182,7 +182,7 @@ user-callable functions.
    **Return value:**
       * A :c:type:`SUNErrCode`
 
-      .. versionadded:: x.y.z
+   .. versionadded:: x.y.z
 
 
 .. _SUNNonlinSol.Newton.Content:
