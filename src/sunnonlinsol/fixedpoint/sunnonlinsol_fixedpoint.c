@@ -221,7 +221,6 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
   SUNFunctionBegin(NLS->sunctx);
   /* local variables */
   int retval;
-  SUNErrCode ier;
   N_Vector yprev, gy, delta;
 
   /* check that all required function pointers have been set */
