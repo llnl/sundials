@@ -108,12 +108,14 @@ SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
   long int fp_to_newt_delay);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetFixedPointSolver_Auto(SUNNonlinearSolver NLS,
-                                                SUNNonlinearSolver* fp_nls);
+SUNErrCode SUNNonlinSolGetFixedPointSolver_Auto(
+  SUNNonlinearSolver NLS,
+  SUNNonlinearSolver* fp_nls); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNewtonSolver_Auto(SUNNonlinearSolver NLS,
-                                            SUNNonlinearSolver* newton_nls);
+SUNErrCode SUNNonlinSolGetNewtonSolver_Auto(
+  SUNNonlinearSolver NLS,
+  SUNNonlinearSolver* newton_nls); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetActiveSolverType_Auto(
