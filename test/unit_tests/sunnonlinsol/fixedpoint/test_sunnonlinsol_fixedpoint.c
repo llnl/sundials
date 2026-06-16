@@ -199,7 +199,10 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "SUNNonlinSolSetConvTestFn", 1)) { return (1); }
 
   retval = SUNNonlinSolSetGetUpdateNormFn(NLS, GetUpdateNorm, Imem);
-  if (check_retval(&retval, "SUNNonlinSolSetGetUpdateNormFn", 1)) { return (1); }
+  if (check_retval(&retval, "SUNNonlinSolSetGetUpdateNormFn", 1))
+  {
+    return (1);
+  }
 
   /* set the maximum number of nonlinear iterations */
   retval = SUNNonlinSolSetMaxIters(NLS, mxiter);
