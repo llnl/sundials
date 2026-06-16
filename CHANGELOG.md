@@ -30,6 +30,9 @@ embedded implicit-explicit MRI-GARK coupling tables.
 
 ### Bug Fixes
 
+Fixed a bug in the sundials4py wrappers for user-provided SUNStepper evolve
+and one_step functions.
+
 Fixed a bug where an unrecognized error return flag from a user-provided
 SUNLinearSolver module would register as a successful linear solve.
 
