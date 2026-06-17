@@ -411,7 +411,6 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 {
   CVodeMem cv_mem;
   int m, retval;
-  sunrealtype delnrm;
   sunrealtype dcon;
   N_Vector ycor, delta, ewt;
 
@@ -439,7 +438,6 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
                    MSGCV_NLS_FAIL);
     return (CV_NLS_FAIL);
   }
-  delnrm = N_VWrmsNorm(delta, ewt);
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);

@@ -309,7 +309,12 @@ static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the state and sensitivity corrections */
-  cv_mem->cv_delnrm = N_VWrmsNorm(delta, ewt);
+  if (cvNlsNormSensStg1(ycor, delta, ewt, &cv_mem->cv_delnrm, cvode_mem) != SUN_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
+                   MSGCV_NLS_FAIL);
+    return (CV_NLS_FAIL);
+  }
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
