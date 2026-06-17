@@ -286,7 +286,7 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
 
   int retval = data->user_ctest_fn(sub_nls, y, del, tol, ewt,
                                    data->user_ctest_data);
-  /* return early if error is unrecoverable */
+  /* Return early if convergence test error is unrecoverable */
   if (retval < 0) { return retval; }
 
   /* We follow the switching strategy outlined in
@@ -300,15 +300,14 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
     SUNErrCode crate_retval;
 
     /* If the integrator-provided convergence test passed, exit with success and
-       don't consider switching. */
+       don't consider switching, since fixed-point is still converging fine. */
     if (retval == SUN_SUCCESS) { return SUN_SUCCESS; }
 
+    /* Get the convergence rate from the user-provided function */
     if (C->getconvrate_fn == NULL) { return SUN_ERR_NOT_IMPLEMENTED; }
-
     crate_retval = C->getconvrate_fn(&crate, C->getconvrate_data);
     if (crate_retval != SUN_SUCCESS) { return crate_retval; }
 
-    /* Check if fixed-point appears to be diverging. */
     sunbooleantype diverging = crate >= C->fp_to_newt_threshold;
     sunbooleantype dont_delay = C->num_solves_since_switch >= C->fp_to_newt_delay;
 
@@ -322,17 +321,20 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
                  ", threshold = " SUN_FORMAT_G
                  ", delay = %li, user_ctest_retval = %i",
                  crate, C->fp_to_newt_threshold, C->fp_to_newt_delay, retval);
+      /* Return SUN_NLS_SWITCH so that the solver loop continues but with Newton */
       return SUN_NLS_SWITCH;
     }
   }
   else
   {
-    sunrealtype stiffr;
-    if (SUNNonlinSolGetStiffnessRatio_Newton(C->newton_solver, &stiffr) !=
-        SUN_SUCCESS)
-    {
-      return SUN_ERR_ARG_CORRUPT;
-    }
+    /* Since Newton is active, check if we should switch to fixed-point regardless
+       of if the convergence test passed. */
+
+    /* Get the stiffness ratio from the Newton solver */
+    sunrealtype stiffr = SUN_RCONST(0.0);
+    SUNErrCode stiffr_retval =
+      SUNNonlinSolGetStiffnessRatio_Newton(C->newton_solver, &stiffr);
+    if (stiffr_retval != SUN_SUCCESS) { return stiffr_retval; }
 
     sunbooleantype contraction = stiffr < C->newt_to_fp_threshold;
     sunbooleantype dont_delay = C->num_solves_since_switch >= C->newt_to_fp_delay;
@@ -348,7 +350,10 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
                  ", delay = %li, user_ctest_retval = %i",
                  stiffr, C->newt_to_fp_threshold, C->newt_to_fp_delay, retval);
 
-      /* If the integrator-provided convergence test passed, exit with success */
+      /* If the integrator-provided convergence test passed, then we return with success
+         so that the solve loop is stopped. The switch to fixed-point will happen on
+         the next time step. If the convergence test failed, we return SUN_NLS_SWITCH
+         so that the solver loop continues but with fixed-point iteration. */
       if (retval == SUN_SUCCESS) { return SUN_SUCCESS; }
       else { return SUN_NLS_SWITCH; }
     }
