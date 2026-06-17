@@ -87,7 +87,6 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
     retval = SUNNonlinSolFree(cv_mem->NLS);
   }
 
-  /* set SUNNonlinearSolver pointer */
   cv_mem->NLS = NLS;
 
   /* Set NLS ownership flag. If this function was called to attach the default
@@ -121,7 +120,6 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  /* set convergence test function */
   retval = SUNNonlinSolSetConvTestFn(cv_mem->NLS, cvNlsConvTest, cvode_mem);
   if (retval != CV_SUCCESS)
   {
@@ -155,7 +153,6 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  /* set max allowed nonlinear iterations */
   retval = SUNNonlinSolSetMaxIters(cv_mem->NLS, NLS_MAXCOR);
   if (retval != CV_SUCCESS)
   {
@@ -164,7 +161,6 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
     return (CV_ILL_INPUT);
   }
 
-  /* Reset the acnrmcur flag to SUNFALSE */
   cv_mem->cv_acnrmcur = SUNFALSE;
 
   /* Set the nonlinear system RHS function */
