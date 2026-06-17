@@ -287,20 +287,12 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
 
-    if (retval == SUN_NLS_SWITCH)
+    SUNErrCode ierr = GetUpdateNorm_FixedPoint(NLS, ycor, delta, w);
+    if (ierr != SUN_SUCCESS)
     {
-      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = switch");
-      return SUN_NLS_SWITCH;
-    }
-
-    {
-      SUNErrCode ierr = GetUpdateNorm_FixedPoint(NLS, ycor, delta, w);
-      if (ierr != SUN_SUCCESS)
-      {
-        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
-                   "status = failed update norm, retval = %d", ierr);
-        return ierr;
-      }
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
+                 "status = failed update norm, retval = %d", ierr);
+      return ierr;
     }
 
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
@@ -312,6 +304,11 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     {
       SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = success");
       return SUN_SUCCESS;
+    }
+    else if (retval == SUN_NLS_SWITCH)
+    {
+      SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = switch");
+      return SUN_NLS_SWITCH;
     }
 
     /* check if the iterations should continue; otherwise increment the
