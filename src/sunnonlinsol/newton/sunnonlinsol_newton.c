@@ -39,15 +39,6 @@
 #define ZERO SUN_RCONST(0.0) /* real 0.0 */
 #define ONE  SUN_RCONST(1.0) /* real 1.0 */
 
-static SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
-                                               SUNNonlinSolNormFn NormFn,
-                                               void* norm_fn_data);
-static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector ycor,
-                                       N_Vector delta, N_Vector w);
-static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Newton(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
-  void* getupdatenorm_data);
-
 static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector ycor,
                                        N_Vector delta, N_Vector w)
 {
@@ -296,12 +287,6 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       retval = NEWTON_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                           NEWTON_CONTENT(NLS)->ctest_data);
 
-      if (retval == SUN_NLS_SWITCH)
-      {
-        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = switch");
-        return SUN_NLS_SWITCH;
-      }
-
       NEWTON_CONTENT(NLS)->curiter++;
 
       SUNErrCode ierr = GetUpdateNorm_Newton(NLS, ycor, delta, w);
@@ -317,6 +302,12 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
                  NEWTON_CONTENT(NLS)->curiter, NEWTON_CONTENT(NLS)->niters,
                  NEWTON_CONTENT(NLS)->delnrm);
 
+      if (retval == SUN_NLS_SWITCH)
+      {
+        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = switch");
+        return SUN_NLS_SWITCH;
+      }
+
       /* if successful update Jacobian status and return */
       if (retval == SUN_SUCCESS)
       {
@@ -324,6 +315,15 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
                    "status = success");
         NEWTON_CONTENT(NLS)->jcur = SUNFALSE;
         return SUN_SUCCESS;
+      }
+      else
+      {
+        if (retval == SUN_NLS_SWITCH)
+        {
+          SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
+                     "status = switch");
+          return SUN_NLS_SWITCH;
+        }
       }
 
       /* check if the iteration should continue; otherwise exit Newton loop */
@@ -354,7 +354,10 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
                                                 NEWTON_CONTENT(NLS)->norm_fn_data);
           if (retval != SUN_SUCCESS) { break; }
         }
-        else { resnrm = N_VWrmsNorm(delta, w); }
+        else
+        {
+          resnrm = N_VWrmsNorm(delta, w);
+        }
 
         /* Norsett's switching metric compares the next residual to the
            previous Newton update norm. */
@@ -474,9 +477,9 @@ SUNErrCode SUNNonlinSolSetConvTestFn_Newton(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
-                                               SUNNonlinSolNormFn NormFn,
-                                               void* norm_fn_data)
+SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolNormFn NormFn,
+                                        void* norm_fn_data)
 {
   SUNFunctionBegin(NLS->sunctx);
   NEWTON_CONTENT(NLS)->norm_fn      = NormFn;
@@ -484,7 +487,7 @@ static SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Newton(
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Newton(
   SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
   void* getupdatenorm_data)
 {

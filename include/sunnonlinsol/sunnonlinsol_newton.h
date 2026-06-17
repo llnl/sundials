@@ -117,6 +117,16 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSolver NLS,
                                                        sunbooleantype onoff);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Newton(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolNormFn NormFn,
+                                        void* norm_fn_data);
+
 /* get functions */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Newton(SUNNonlinearSolver NLS,

@@ -47,23 +47,22 @@
 #define SUNNLS_AUTO_DEFAULT_NEWT_TO_FP_DELAY     10
 #define SUNNLS_AUTO_DEFAULT_FP_TO_NEWT_DELAY     1
 
-static SUNErrCode SUNNonlinSolSetOptions_Auto(SUNNonlinearSolver NLS,
-                                              const char* NLSid,
-                                              const char* file_name, int argc,
-                                              char* argv[]);
-static SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
-                                            SUNNonlinSolSysFn SysFn);
-static SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
-                                             SUNNonlinSolNormFn NormFn,
-                                             void* norm_fn_data);
-static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Auto(
+SUNErrCode SUNNonlinSolSetOptions_Auto(SUNNonlinearSolver NLS,
+                                       const char* NLSid, const char* file_name,
+                                       int argc, char* argv[]);
+SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
+                                     SUNNonlinSolSysFn SysFn);
+SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
+                                      SUNNonlinSolNormFn NormFn,
+                                      void* norm_fn_data);
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Auto(
   SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
   void* getupdatenorm_data);
-static SUNErrCode SUNNonlinSolSetGetConvRateFn_Auto(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetConvRateFn GetConvRateFn,
-  void* getconvrate_data);
-static SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS,
-                                               int maxiters);
+SUNErrCode SUNNonlinSolSetGetConvRateFn_Auto(SUNNonlinearSolver NLS,
+                                             SUNNonlinSolGetConvRateFn GetConvRateFn,
+                                             void* getconvrate_data);
+SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters);
+
 static SUNErrCode setFromCommandLine_Auto(SUNNonlinearSolver NLS,
                                           const char* NLSid, int argc,
                                           char* argv[]);
@@ -105,7 +104,6 @@ SUNNonlinearSolver SUNNonlinSol_Auto(N_Vector y, int m,
   NLS->ops->initialize         = SUNNonlinSolInitialize_Auto;
   NLS->ops->solve              = SUNNonlinSolSolve_Auto;
   NLS->ops->free               = SUNNonlinSolFree_Auto;
-  NLS->ops->setsysfn           = SUNNonlinSolSetSysFn_Auto;
   NLS->ops->setsysfns          = SUNNonlinSolSetSysFns_Auto;
   NLS->ops->setctestfn         = SUNNonlinSolSetConvTestFn_Auto;
   NLS->ops->setnormfn          = SUNNonlinSolSetNormFn_Auto;
@@ -246,7 +244,10 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
       {
         C->fp_num_iters_total += iters;
       }
-      else { C->newton_num_iters_total += iters; }
+      else
+      {
+        C->newton_num_iters_total += iters;
+      }
     }
 
     nconvfails = 0;
@@ -257,7 +258,10 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
       {
         C->fp_num_conv_fails_total += nconvfails;
       }
-      else { C->newton_num_conv_fails_total += nconvfails; }
+      else
+      {
+        C->newton_num_conv_fails_total += nconvfails;
+      }
     }
 
     if (retval == SUN_NLS_SWITCH) { continue; }
@@ -272,9 +276,9 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   }
 }
 
-static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
-                                     N_Vector del, sunrealtype tol,
-                                     N_Vector ewt, void* mem)
+int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
+                              N_Vector del, sunrealtype tol, N_Vector ewt,
+                              void* mem)
 {
   SUNNonlinSolAutoConvTestData* data = (SUNNonlinSolAutoConvTestData*)mem;
   if (data == NULL || data->user_ctest_fn == NULL)
@@ -350,7 +354,10 @@ static int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
 
       /* If the integrator-provided convergence test passed, exit with success */
       if (retval == SUN_SUCCESS) { return SUN_SUCCESS; }
-      else { return SUN_NLS_SWITCH; }
+      else
+      {
+        return SUN_NLS_SWITCH;
+      }
     }
   }
 
@@ -387,13 +394,6 @@ SUNErrCode SUNNonlinSolFree_Auto(SUNNonlinearSolver NLS)
   }
   free(NLS);
   return SUN_SUCCESS;
-}
-
-static SUNErrCode SUNNonlinSolSetSysFn_Auto(
-  SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED SUNNonlinSolSysFn SysFn)
-{
-  SUNFunctionBegin(NLS->sunctx);
-  return SUN_ERR_NOT_IMPLEMENTED;
 }
 
 SUNErrCode SUNNonlinSolSetSysFns_Auto(SUNNonlinearSolver NLS,
@@ -440,9 +440,9 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
-                                             SUNNonlinSolNormFn NormFn,
-                                             void* norm_fn_data)
+SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
+                                      SUNNonlinSolNormFn NormFn,
+                                      void* norm_fn_data)
 {
   SUNFunctionBegin(NLS->sunctx);
   SUNCheckCall(
@@ -452,7 +452,7 @@ static SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Auto(
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Auto(
   SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
   void* getupdatenorm_data)
 {
@@ -466,9 +466,9 @@ static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Auto(
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetGetConvRateFn_Auto(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetConvRateFn GetConvRateFn,
-  void* getconvrate_data)
+SUNErrCode SUNNonlinSolSetGetConvRateFn_Auto(SUNNonlinearSolver NLS,
+                                             SUNNonlinSolGetConvRateFn GetConvRateFn,
+                                             void* getconvrate_data)
 {
   SUNFunctionBegin(NLS->sunctx);
   AUTO_CONTENT(NLS)->getconvrate_fn   = GetConvRateFn;
@@ -476,8 +476,7 @@ static SUNErrCode SUNNonlinSolSetGetConvRateFn_Auto(
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS,
-                                               int maxiters)
+SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters)
 {
   SUNFunctionBegin(NLS->sunctx);
   SUNCheckCall(SUNNonlinSolSetMaxIters(AUTO_CONTENT(NLS)->fp_solver, maxiters));
@@ -630,7 +629,10 @@ static SUNErrCode setFromCommandLine_Auto(SUNNonlinearSolver NLS,
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   SUNAssert(prefix, SUN_ERR_MALLOC_FAIL);
   if (NLSid != NULL && strlen(NLSid) > 0) { strcpy(prefix, NLSid); }
-  else { strcpy(prefix, default_id); }
+  else
+  {
+    strcpy(prefix, default_id);
+  }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)

@@ -126,6 +126,16 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
                                              sunrealtype beta);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
+                                            SUNNonlinSolNormFn NormFn,
+                                            void* norm_fn_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data);
+
 /* get functions */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_FixedPoint(SUNNonlinearSolver NLS,
