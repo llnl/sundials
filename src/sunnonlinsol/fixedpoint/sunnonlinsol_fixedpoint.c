@@ -35,7 +35,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
 
 static SUNErrCode AllocateContent(SUNNonlinearSolver NLS, N_Vector tmpl);
 static void FreeContent(SUNNonlinearSolver NLS);
-static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS, N_Vector ycor,
+static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                            N_Vector delta, N_Vector w);
 static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
                                                    SUNNonlinSolNormFn NormFn,
@@ -55,7 +55,7 @@ static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
                                                 const char* NLSid, int argc,
                                                 char* argv[]);
 
-static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS, N_Vector ycor,
+static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                            N_Vector delta, N_Vector w)
 {
   SUNFunctionBegin(NLS->sunctx);
@@ -68,7 +68,7 @@ static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS, N_Vector ycor
 
   if (FP_CONTENT(NLS)->norm_fn)
   {
-    return FP_CONTENT(NLS)->norm_fn(ycor, delta, w, &(FP_CONTENT(NLS)->delnrm),
+    return FP_CONTENT(NLS)->norm_fn(delta, w, &(FP_CONTENT(NLS)->delnrm),
                                     FP_CONTENT(NLS)->norm_fn_data);
   }
 
@@ -287,7 +287,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
 
-    SUNErrCode ierr = GetUpdateNorm_FixedPoint(NLS, ycor, delta, w);
+    SUNErrCode ierr = GetUpdateNorm_FixedPoint(NLS, delta, w);
     if (ierr != SUN_SUCCESS)
     {
       SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",

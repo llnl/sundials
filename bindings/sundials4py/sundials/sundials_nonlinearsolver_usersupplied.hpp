@@ -85,18 +85,17 @@ inline int sunnonlinearsolver_lsetupfn_wrapper(sunbooleantype jbad,
 
 using SUNNonlinSolConvRateStdFn = std::tuple<SUNErrCode, sunrealtype>(void* mem);
 
-using SUNNonlinSolNormStdFn = std::tuple<SUNErrCode, sunrealtype>(N_Vector y,
-                                                                  N_Vector del,
+using SUNNonlinSolNormStdFn = std::tuple<SUNErrCode, sunrealtype>(N_Vector del,
                                                                   N_Vector w,
                                                                   void* mem);
 
-inline int sunnonlinearsolver_normfn_wrapper(N_Vector y, N_Vector del, N_Vector w,
+inline int sunnonlinearsolver_normfn_wrapper(N_Vector del, N_Vector w,
                                              sunrealtype* delnrm, void* mem)
 {
   auto fn_table = static_cast<SUNNonlinearSolverFunctionTable*>(mem);
   auto fn = nb::cast<std::function<SUNNonlinSolNormStdFn>>(fn_table->normfn);
 
-  auto result = fn(y, del, w, nullptr);
+  auto result = fn(del, w, nullptr);
 
   *delnrm = std::get<1>(result);
 

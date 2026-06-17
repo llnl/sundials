@@ -85,7 +85,7 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
                                       N_Vector del, sunrealtype tol,
                                       N_Vector ewt, void* mem);
 
-typedef SUNErrCode (*SUNNonlinSolNormFn)(N_Vector y, N_Vector del, N_Vector w,
+typedef SUNErrCode (*SUNNonlinSolNormFn)(N_Vector del, N_Vector w,
                                          sunrealtype* delnrm, void* mem);
 
 typedef SUNErrCode (*SUNNonlinSolGetUpdateNormFn)(sunrealtype* delnrm, void* mem);

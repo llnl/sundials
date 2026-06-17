@@ -36,9 +36,8 @@ static int cvNlsLSolveSensStg(N_Vector deltaStg, void* cvode_mem);
 static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
                                 N_Vector delStg, sunrealtype tol,
                                 N_Vector ewtStg, void* cvode_mem);
-static SUNErrCode cvNlsNormSensStg(N_Vector ycorStg, N_Vector deltaStg,
-                                   N_Vector ewtStg, sunrealtype* delnrm,
-                                   void* cvode_mem);
+static SUNErrCode cvNlsNormSensStg(N_Vector deltaStg, N_Vector ewtStg,
+                                   sunrealtype* delnrm, void* cvode_mem);
 static SUNErrCode cvNlsGetUpdateNormSensStg(sunrealtype* delnrm, void* cvode_mem);
 static SUNErrCode cvNlsGetConvRateSensStg(sunrealtype* crate, void* cvode_mem);
 
@@ -360,8 +359,8 @@ static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
   ewtS = NV_VECS_SW(ewtStg);
 
   /* compute the norm of the state and sensitivity corrections */
-  if (cvNlsNormSensStg(ycorStg, deltaStg, ewtStg, &cv_mem->cv_delnrm,
-                       cvode_mem) != SUN_SUCCESS)
+  if (cvNlsNormSensStg(deltaStg, ewtStg, &cv_mem->cv_delnrm, cvode_mem) !=
+      SUN_SUCCESS)
   {
     cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
                    MSGCV_NLS_FAIL);
@@ -411,8 +410,7 @@ static int cvNlsConvTestSensStg(SUNNonlinearSolver NLS, N_Vector ycorStg,
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode cvNlsNormSensStg(SUNDIALS_MAYBE_UNUSED N_Vector ycorStg,
-                                   N_Vector deltaStg, N_Vector ewtStg,
+static SUNErrCode cvNlsNormSensStg(N_Vector deltaStg, N_Vector ewtStg,
                                    sunrealtype* delnrm, void* cvode_mem)
 {
   CVodeMem cv_mem;

@@ -28,7 +28,7 @@
 #include "arkode_impl.h"
 
 /* private functions */
-static SUNErrCode arkStep_NlsNorm(N_Vector y, N_Vector del, N_Vector ewt,
+static SUNErrCode arkStep_NlsNorm(N_Vector del, N_Vector ewt,
                                   sunrealtype* delnrm, void* arkode_mem);
 static SUNErrCode arkStep_NlsGetUpdateNorm(sunrealtype* delnrm, void* arkode_mem);
 static SUNErrCode arkStep_NlsGetConvRate(sunrealtype* crate, void* arkode_mem);
@@ -1229,7 +1229,7 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  if (arkStep_NlsNorm(y, del, ewt, &step_mem->delnrm, arkode_mem) != SUN_SUCCESS)
+  if (arkStep_NlsNorm(del, ewt, &step_mem->delnrm, arkode_mem) != SUN_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
                     MSG_ARK_NLS_FAIL);
@@ -1266,8 +1266,7 @@ int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode arkStep_NlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector del,
-                                  N_Vector ewt, sunrealtype* delnrm,
+static SUNErrCode arkStep_NlsNorm(N_Vector del, N_Vector ewt, sunrealtype* delnrm,
                                   SUNDIALS_MAYBE_UNUSED void* arkode_mem)
 {
   *delnrm = N_VWrmsNorm(del, ewt);

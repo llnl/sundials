@@ -42,14 +42,14 @@
 static SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
                                                SUNNonlinSolNormFn NormFn,
                                                void* norm_fn_data);
-static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector ycor,
-                                       N_Vector delta, N_Vector w);
+static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector delta,
+                                       N_Vector w);
 static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Newton(
   SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
   void* getupdatenorm_data);
 
-static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector ycor,
-                                       N_Vector delta, N_Vector w)
+static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector delta,
+                                       N_Vector w)
 {
   SUNFunctionBegin(NLS->sunctx);
 
@@ -62,8 +62,7 @@ static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector ycor,
 
   if (NEWTON_CONTENT(NLS)->norm_fn)
   {
-    return NEWTON_CONTENT(NLS)->norm_fn(ycor, delta, w,
-                                        &(NEWTON_CONTENT(NLS)->delnrm),
+    return NEWTON_CONTENT(NLS)->norm_fn(delta, w, &(NEWTON_CONTENT(NLS)->delnrm),
                                         NEWTON_CONTENT(NLS)->norm_fn_data);
   }
 
@@ -304,7 +303,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
 
       NEWTON_CONTENT(NLS)->curiter++;
 
-      SUNErrCode ierr = GetUpdateNorm_Newton(NLS, ycor, delta, w);
+      SUNErrCode ierr = GetUpdateNorm_Newton(NLS, delta, w);
       if (ierr != SUN_SUCCESS)
       {
         SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
@@ -350,7 +349,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
 
         if (NEWTON_CONTENT(NLS)->norm_fn)
         {
-          retval = NEWTON_CONTENT(NLS)->norm_fn(ycor, delta, w, &resnrm,
+          retval = NEWTON_CONTENT(NLS)->norm_fn(delta, w, &resnrm,
                                                 NEWTON_CONTENT(NLS)->norm_fn_data);
           if (retval != SUN_SUCCESS) { break; }
         }

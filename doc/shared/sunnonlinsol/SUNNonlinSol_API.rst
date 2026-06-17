@@ -616,14 +616,13 @@ module have types defined in the header file
       own convergence criteria may ignore these functions.
 
 
-.. c:type:: SUNErrCode (*SUNNonlinSolNormFn)(N_Vector ycor, N_Vector del, N_Vector w, sunrealtype *delnrm, void* mem)
+.. c:type:: SUNErrCode (*SUNNonlinSolNormFn)(N_Vector del, N_Vector w, sunrealtype *delnrm, void* mem)
 
    These functions compute an integrator-defined norm for use by nonlinear
    solvers that must match the norm used by the integrator's convergence test
    or related residual-based logic.
 
    **Arguments:**
-      * *ycor* -- is the current nonlinear correction or iterate.
       * *del* -- is the current nonlinear update.
       * *w* -- is the weight vector passed to :c:func:`SUNNonlinSolSolve`.
       * *delnrm* -- stores the computed norm.

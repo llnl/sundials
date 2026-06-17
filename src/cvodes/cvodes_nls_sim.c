@@ -45,9 +45,8 @@ static int cvNlsLSolveSensSim(N_Vector deltaSim, void* cvode_mem);
 static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
                                 N_Vector delSim, sunrealtype tol,
                                 N_Vector ewtSim, void* cvode_mem);
-static SUNErrCode cvNlsNormSensSim(N_Vector ycorSim, N_Vector deltaSim,
-                                   N_Vector ewtSim, sunrealtype* delnrm,
-                                   void* cvode_mem);
+static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
+                                   sunrealtype* delnrm, void* cvode_mem);
 static SUNErrCode cvNlsGetUpdateNormSensSim(sunrealtype* delnrm, void* cvode_mem);
 static SUNErrCode cvNlsGetConvRateSensSim(sunrealtype* crate, void* cvode_mem);
 
@@ -432,8 +431,8 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   ewt = NV_VEC_SW(ewtSim, 0);
 
   /* compute the norm of the state and sensitivity corrections */
-  if (cvNlsNormSensSim(ycorSim, deltaSim, ewtSim, &cv_mem->cv_delnrm,
-                       cvode_mem) != SUN_SUCCESS)
+  if (cvNlsNormSensSim(deltaSim, ewtSim, &cv_mem->cv_delnrm, cvode_mem) !=
+      SUN_SUCCESS)
   {
     cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
                    MSGCV_NLS_FAIL);
@@ -489,8 +488,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode cvNlsNormSensSim(SUNDIALS_MAYBE_UNUSED N_Vector ycorSim,
-                                   N_Vector deltaSim, N_Vector ewtSim,
+static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
                                    sunrealtype* delnrm, void* cvode_mem)
 {
   CVodeMem cv_mem;

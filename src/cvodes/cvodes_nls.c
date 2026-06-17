@@ -34,8 +34,8 @@ static int cvNlsLSetup(sunbooleantype jbad, sunbooleantype* jcur,
 static int cvNlsLSolve(N_Vector delta, void* cvode_mem);
 static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector del,
                          sunrealtype tol, N_Vector ewt, void* cvode_mem);
-static SUNErrCode cvNlsNorm(N_Vector ycor, N_Vector delta, N_Vector ewt,
-                            sunrealtype* delnrm, void* cvode_mem);
+static SUNErrCode cvNlsNorm(N_Vector delta, N_Vector ewt, sunrealtype* delnrm,
+                            void* cvode_mem);
 static SUNErrCode cvNlsGetUpdateNorm(sunrealtype* delnrm, void* cvode_mem);
 static SUNErrCode cvNlsGetConvRate(sunrealtype* crate, void* cvode_mem);
 
@@ -350,7 +350,7 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the correction */
-  if (cvNlsNorm(ycor, delta, ewt, &cv_mem->cv_delnrm, cvode_mem) != SUN_SUCCESS)
+  if (cvNlsNorm(delta, ewt, &cv_mem->cv_delnrm, cvode_mem) != SUN_SUCCESS)
   {
     cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
                    MSGCV_NLS_FAIL);
@@ -390,8 +390,7 @@ static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode cvNlsNorm(SUNDIALS_MAYBE_UNUSED N_Vector ycor, N_Vector delta,
-                            N_Vector ewt, sunrealtype* delnrm,
+static SUNErrCode cvNlsNorm(N_Vector delta, N_Vector ewt, sunrealtype* delnrm,
                             SUNDIALS_MAYBE_UNUSED void* cvode_mem)
 {
   *delnrm = N_VWrmsNorm(delta, ewt);

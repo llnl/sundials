@@ -33,7 +33,7 @@ static int cvNlsLSolveSensStg1(N_Vector delta, void* cvode_mem);
 static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS, N_Vector ycor,
                                  N_Vector del, sunrealtype tol, N_Vector ewt,
                                  void* cvode_mem);
-static SUNErrCode cvNlsNormSensStg1(N_Vector ycor, N_Vector delta, N_Vector ewt,
+static SUNErrCode cvNlsNormSensStg1(N_Vector delta, N_Vector ewt,
                                     sunrealtype* delnrm, void* cvode_mem);
 static SUNErrCode cvNlsGetUpdateNormSensStg1(sunrealtype* delnrm,
                                              void* cvode_mem);
@@ -341,8 +341,7 @@ static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS,
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode cvNlsNormSensStg1(SUNDIALS_MAYBE_UNUSED N_Vector ycor,
-                                    N_Vector delta, N_Vector ewt,
+static SUNErrCode cvNlsNormSensStg1(N_Vector delta, N_Vector ewt,
                                     sunrealtype* delnrm,
                                     SUNDIALS_MAYBE_UNUSED void* cvode_mem)
 {

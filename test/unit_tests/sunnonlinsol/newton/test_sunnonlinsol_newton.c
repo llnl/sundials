@@ -74,7 +74,7 @@ typedef struct IntegratorMemRec
   SUNMatrix A;
   SUNLinearSolver LS;
   sunrealtype delnrm;
-  int getupdatenorm_calls;
+  int normfn_calls;
 }* IntegratorMem;
 
 /* Linear solver setup interface function */
@@ -87,8 +87,9 @@ static int LSolve(N_Vector b, void* mem);
 static int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del,
                     sunrealtype tol, N_Vector ewt, void* mem);
 
-/* Callback used by the nonlinear solver when it needs the current update norm. */
-static SUNErrCode GetUpdateNorm(sunrealtype* delnrm, void* mem);
+/* Callback used by the nonlinear solver to compute the current update norm. */
+static SUNErrCode NormFn(N_Vector del, N_Vector w, sunrealtype* delnrm,
+                         void* mem);
 
 /* -----------------------------------------------------------------------------
  * Main testing routine
@@ -124,8 +125,8 @@ int main(int argc, char* argv[])
   Imem->x = N_VClone(Imem->y0);
   if (check_retval((void*)Imem->x, "N_VClone", 0)) { return (1); }
 
-  Imem->delnrm              = ZERO;
-  Imem->getupdatenorm_calls = 0;
+  Imem->delnrm       = ZERO;
+  Imem->normfn_calls = 0;
 
   /* set initial guess for the state */
   NV_Ith_S(Imem->y0, 0) = HALF;
@@ -172,11 +173,8 @@ int main(int argc, char* argv[])
   retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, Imem);
   if (check_retval(&retval, "SUNNonlinSolSetConvTestFn", 1)) { return (1); }
 
-  retval = SUNNonlinSolSetGetUpdateNormFn(NLS, GetUpdateNorm, Imem);
-  if (check_retval(&retval, "SUNNonlinSolSetGetUpdateNormFn", 1))
-  {
-    return (1);
-  }
+  retval = SUNNonlinSolSetNormFn(NLS, NormFn, Imem);
+  if (check_retval(&retval, "SUNNonlinSolSetNormFn", 1)) { return (1); }
 
   /* set the maximum number of nonlinear iterations */
   retval = SUNNonlinSolSetMaxIters(NLS, MAXIT);
@@ -206,9 +204,9 @@ int main(int argc, char* argv[])
   retval = SUNNonlinSolGetNumIters(NLS, &niters);
   if (check_retval(&retval, "SUNNonlinSolGetNumIters", 1)) { return (1); }
 
-  if (Imem->getupdatenorm_calls <= 0)
+  if (Imem->normfn_calls <= 0)
   {
-    printf("ERROR: GetUpdateNorm was never called\n");
+    printf("ERROR: NormFn was never called\n");
     return (1);
   }
 
@@ -278,15 +276,15 @@ int LSolve(N_Vector b, void* mem)
   return (retval);
 }
 
-static SUNErrCode GetUpdateNorm(sunrealtype* delnrm, void* mem)
+static SUNErrCode NormFn(N_Vector del, N_Vector w, sunrealtype* delnrm, void* mem)
 {
   IntegratorMem Imem;
 
   if (mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
   Imem = (IntegratorMem)mem;
 
-  Imem->getupdatenorm_calls++;
-  *delnrm = Imem->delnrm;
+  Imem->normfn_calls++;
+  *delnrm = N_VWrmsNorm(del, w);
 
   return SUN_SUCCESS;
 }
