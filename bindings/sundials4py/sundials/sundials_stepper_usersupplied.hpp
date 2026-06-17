@@ -42,11 +42,12 @@ struct SUNStepperFunctionTable
   nb::object get_num_steps;
 };
 
-using SUNStepperEvolveStdFn = std::tuple<int, sunrealtype>(
-  SUNStepper stepper, sunrealtype tout, N_Vector vret);
+using SUNStepperEvolveStdFn = std::tuple<int, sunrealtype>(SUNStepper stepper,
+                                                           sunrealtype tout,
+                                                           N_Vector vret);
 
 inline int sunstepper_evolve_wrapper(SUNStepper stepper, sunrealtype tout,
-  N_Vector vret, sunrealtype *tret)
+                                     N_Vector vret, sunrealtype* tret)
 {
   auto fn_table = static_cast<SUNStepperFunctionTable*>(stepper->python);
   auto fn = nb::cast<std::function<SUNStepperEvolveStdFn>>(fn_table->evolve);
@@ -58,11 +59,12 @@ inline int sunstepper_evolve_wrapper(SUNStepper stepper, sunrealtype tout,
   return std::get<0>(result);
 }
 
-using SUNStepperOneStepStdFn = std::tuple<int, sunrealtype>(
-  SUNStepper stepper, sunrealtype tout, N_Vector vret);
+using SUNStepperOneStepStdFn = std::tuple<int, sunrealtype>(SUNStepper stepper,
+                                                            sunrealtype tout,
+                                                            N_Vector vret);
 
 inline int sunstepper_one_step_wrapper(SUNStepper stepper, sunrealtype tout,
-  N_Vector vret, sunrealtype *tret)
+                                       N_Vector vret, sunrealtype* tret)
 {
   auto fn_table = static_cast<SUNStepperFunctionTable*>(stepper->python);
   auto fn = nb::cast<std::function<SUNStepperOneStepStdFn>>(fn_table->one_step);
