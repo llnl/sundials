@@ -35,6 +35,12 @@
 /* Content structure accessibility macros */
 #define AUTO_CONTENT(S) ((SUNNonlinearSolverContent_Auto)(S->content))
 
+/* this is effectively the maximum number of times we would allow 
+   switching to happen within a single solve. It is unlikely to 
+   ever be reached, but it prevents an infinite switchign loop from
+   being  possible. */
+#define SUNNLS_AUTO_MAX_SOLVE_ATTEMPTS 3
+
 /* Default switching parameters 
    2.0 and 0.8 come from the numerical experiments in Norsett & Thomsen 1986,
    as does the Newton to fixed-point switch delay of 10 solves. 
@@ -217,7 +223,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
 {
   SUNFunctionBegin(NLS->sunctx);
   int retval;
-  long int iters, nconvfails;
+  long int attempts, iters, nconvfails;
   SUNNonlinearSolver subsolver;
   SUNNonlinearSolverContent_Auto C = AUTO_CONTENT(NLS);
   SUNNonlinSolAutoType solve_solver_type;
@@ -225,7 +231,7 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
   C->num_iters      = 0;
   C->num_conv_fails = 0;
 
-  for (;;)
+  for (attempts = 0; attempts < SUNNLS_AUTO_MAX_SOLVE_ATTEMPTS; attempts++)
   {
     solve_solver_type = C->active_solver_type;
     subsolver         = (solve_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
