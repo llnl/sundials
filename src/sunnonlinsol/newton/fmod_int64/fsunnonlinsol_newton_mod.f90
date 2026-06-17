@@ -40,6 +40,8 @@ module fsunnonlinsol_newton_mod
  public :: FSUNNonlinSolSetConvTestFn_Newton
  public :: FSUNNonlinSolSetMaxIters_Newton
  public :: FSUNNonlinSolSetComputeStiffnessRatio_Newton
+ public :: FSUNNonlinSolSetGetUpdateNormFn_Newton
+ public :: FSUNNonlinSolSetNormFn_Newton
  public :: FSUNNonlinSolGetNumIters_Newton
  public :: FSUNNonlinSolGetCurIter_Newton
  public :: FSUNNonlinSolGetNumConvFails_Newton
@@ -157,6 +159,26 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 integer(C_INT), intent(in) :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetGetUpdateNormFn_Newton(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetGetUpdateNormFn_Newton") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetNormFn_Newton(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetNormFn_Newton") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -411,6 +433,44 @@ integer(C_INT) :: farg2
 farg1 = c_loc(nls)
 farg2 = onoff
 fresult = swigc_FSUNNonlinSolSetComputeStiffnessRatio_Newton(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetGetUpdateNormFn_Newton(nls, getupdatenormfn, getupdatenorm_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: getupdatenormfn
+type(C_PTR) :: getupdatenorm_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = getupdatenormfn
+farg3 = getupdatenorm_data
+fresult = swigc_FSUNNonlinSolSetGetUpdateNormFn_Newton(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetNormFn_Newton(nls, normfn, norm_fn_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: normfn
+type(C_PTR) :: norm_fn_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = normfn
+farg3 = norm_fn_data
+fresult = swigc_FSUNNonlinSolSetNormFn_Newton(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

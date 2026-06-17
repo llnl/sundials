@@ -439,6 +439,38 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver farg1
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver farg1, SUNNonlinSolNormFn farg2, void *farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
+  void *arg3 = (void *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolNormFn)(farg2);
+  arg3 = (void *)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetNormFn_FixedPoint(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn_FixedPoint(SUNNonlinearSolver farg1, SUNNonlinSolGetUpdateNormFn farg2, void *farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
+  void *arg3 = (void *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
+  arg3 = (void *)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetGetUpdateNormFn_FixedPoint(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters_FixedPoint(SUNNonlinearSolver farg1, long *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
