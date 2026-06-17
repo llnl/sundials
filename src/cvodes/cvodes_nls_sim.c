@@ -425,7 +425,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   ycor = NV_VEC_SW(ycorSim, 0);
 
   /* extract state and sensitivity deltas */
-  delta = NV_VEC_SW(deltaSim, 0);
+  delta  = NV_VEC_SW(deltaSim, 0);
   deltaS = NV_VECS_SW(deltaSim) + 1;
 
   /* extract state and sensitivity error weights */
@@ -433,8 +433,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   ewtS = NV_VECS_SW(ewtSim) + 1;
 
   /* compute the norm of the state corrections */
-  if (cvNlsNormSensSim(delta, ewt, &cv_mem->cv_delnrm, cvode_mem) !=
-      SUN_SUCCESS)
+  if (cvNlsNormSensSim(delta, ewt, &cv_mem->cv_delnrm, cvode_mem) != SUN_SUCCESS)
   {
     cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
                    MSGCV_NLS_FAIL);
