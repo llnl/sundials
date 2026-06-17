@@ -212,17 +212,19 @@ int main(int argc, char* argv[])
     tlambdaI = ZERO;
   }
 
-  printf("\ncomputed dominant eigenvalue = " SUN_FORMAT_G " + " SUN_FORMAT_G
+  printf("\ncomputed dominant eigenvalue = " SUN_FORMAT_G " ± " SUN_FORMAT_G
          " i\n",
          lambdaR, lambdaI);
-  printf("    true dominant eigenvalue = " SUN_FORMAT_G " + " SUN_FORMAT_G
+  printf("    true dominant eigenvalue = " SUN_FORMAT_G " ± " SUN_FORMAT_G
          " i\n",
          tlambdaR, tlambdaI);
 
   /* Compare the estimated dom_eig with the tlambdaR and tlambdaI*/
-  rel_error = SUNRsqrt((lambdaR - tlambdaR) * (lambdaR - tlambdaR) +
-                       (lambdaI - tlambdaI) * (lambdaI - tlambdaI));
-
+  /* Make sure the complex conjugate pair is handled correctly in the relative error calculation */
+  rel_error = SUNMIN(SUNRsqrt((lambdaR - tlambdaR) * (lambdaR - tlambdaR) +
+                              (lambdaI - tlambdaI) * (lambdaI - tlambdaI)),
+                     SUNRsqrt((lambdaR - tlambdaR) * (lambdaR - tlambdaR) +
+                              (lambdaI + tlambdaI) * (lambdaI + tlambdaI)));
   rel_error /= norm_of_dom_eig;
 
   if (rel_error < rel_tol)
