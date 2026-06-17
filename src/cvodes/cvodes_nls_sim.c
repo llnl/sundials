@@ -411,7 +411,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   CVodeMem cv_mem;
   int m, retval;
   sunrealtype dcon, delnrm_S;
-  N_Vector ycor, delta, ewt;
+  N_Vector ycor, ewt;
   N_Vector *deltaS, *ewtS;
 
   if (cvode_mem == NULL)
@@ -425,7 +425,6 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   ycor = NV_VEC_SW(ycorSim, 0);
 
   /* extract state and sensitivity deltas */
-  delta  = NV_VEC_SW(deltaSim, 0);
   deltaS = NV_VECS_SW(deltaSim) + 1;
 
   /* extract state and sensitivity error weights */
@@ -493,14 +492,11 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 }
 
 static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
-                                   sunrealtype* delnrm, void* cvode_mem)
+                                   sunrealtype* delnrm,
+                                   SUNDIALS_MAYBE_UNUSED void* cvode_mem)
 {
-  CVodeMem cv_mem;
   N_Vector delta;
   N_Vector ewt;
-
-  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
-  cv_mem = (CVodeMem)cvode_mem;
 
   delta = NV_VEC_SW(deltaSim, 0);
   ewt   = NV_VEC_SW(ewtSim, 0);

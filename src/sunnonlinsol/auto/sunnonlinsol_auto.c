@@ -270,10 +270,12 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
                "status = complete, retval = %i, iters = %li, conv-fails = %li",
                retval, iters, nconvfails);
 
-    /* increment solve counter used for switch-delay gating */
     C->num_solves_since_switch++;
+
     return retval;
   }
+
+  return SUN_SUCCESS;
 }
 
 int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
