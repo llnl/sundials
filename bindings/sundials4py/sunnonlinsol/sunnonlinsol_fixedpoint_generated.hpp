@@ -53,6 +53,13 @@ m.def(
 
 m.def("SUNNonlinSolSetDamping_FixedPoint", SUNNonlinSolSetDamping_FixedPoint,
       nb::arg("NLS"), nb::arg("beta"));
+
+m.def("SUNNonlinSolSetNormFn_FixedPoint", SUNNonlinSolSetNormFn_FixedPoint,
+      nb::arg("NLS"), nb::arg("NormFn"), nb::arg("norm_fn_data"));
+
+m.def("SUNNonlinSolSetGetUpdateNormFn_FixedPoint",
+      SUNNonlinSolSetGetUpdateNormFn_FixedPoint, nb::arg("NLS"),
+      nb::arg("GetUpdateNormFn"), nb::arg("getupdatenorm_data"));
 // #ifdef __cplusplus
 //
 // #endif
