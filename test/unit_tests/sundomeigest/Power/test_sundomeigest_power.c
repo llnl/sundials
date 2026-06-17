@@ -121,7 +121,12 @@ int main(int argc, char* argv[])
   sunscalartype* qd = N_VGetArrayPointer(q);
   for (int i = 0; i < ProbData.N; i++)
   {
-    qd[i] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+    qd[i] = (sunrealtype)rand() / (sunrealtype)RAND_MAX
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
+    ;
+#else
+    + SUN_I * ((sunrealtype)rand() / (sunrealtype)RAND_MAX);
+#endif
   }
 
   /* Fill matrix diagonal and problem data */
@@ -244,7 +249,8 @@ int main(int argc, char* argv[])
 int ATimes(void* Data, N_Vector v_vec, N_Vector z_vec)
 {
   /* local variables */
-  sunrealtype *v, *z, *diag, a11, a12;
+  sunscalartype *v, *z, *diag;
+  sunrealtype a11, a12;
   sunindextype i, N;
   UserData* ProbData;
 

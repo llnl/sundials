@@ -23,7 +23,7 @@
 # Examples using SUNDIALS Arnoldi dominant eigenvalue estimator
 set(sundomeigest_arnoldi_examples
     "test_sundomeigest_arnoldi\;100 3 20 0\;"
-    "test_sundomeigest_arnoldi\;1000 3 20 0\;"
+    "test_sundomeigest_arnoldi\;1000 3 22 0\;"
     "test_sundomeigest_arnoldi\;10000 3 20 0\;"
     "test_sundomeigest_arnoldi\;100000 3 20 0\;")
 

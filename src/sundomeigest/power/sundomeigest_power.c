@@ -27,8 +27,8 @@
 #include "sundials_logger_impl.h"
 #include "sundials_macros.h"
 
-#define ZERO SUN_RCONST(0.0)
-#define ONE  SUN_RCONST(1.0)
+#define ZERO SUN_CCONST(0.0, 0.0)
+#define ONE  SUN_CCONST(1.0, 0.0)
 
 /* Default estimator parameters */
 #define DEE_NUM_OF_WARMUPS_PI_DEFAULT 100
@@ -74,7 +74,9 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   SUNAssertNull(q->ops->nvscale, SUN_ERR_ARG_INCOMPATIBLE);
 
   /* Check if q != 0 vector */
-  SUNAssertNull(N_VDotProd(q, q) > SUN_SMALL_REAL, SUN_ERR_ARG_INCOMPATIBLE);
+  sunscalartype qdotq;
+  SUNCheckCallNull(N_VDotProdComplex(q, q, &qdotq));
+  SUNAssertNull(SUN_REAL(qdotq) > SUN_SMALL_REAL, SUN_ERR_ARG_INCOMPATIBLE);
 
   /* check for max_iters values; if illegal use defaults */
   if (max_iters <= 0) { max_iters = DEE_MAX_ITER_DEFAULT; }
@@ -117,7 +119,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   content->max_iters   = max_iters;
   content->num_warmups = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
   content->rel_tol     = rel_tol;
-  content->res         = ZERO;
+  content->res         = SUN_RCONST(0.0);
   content->num_iters   = 0;
   content->num_ATimes  = 0;
 
@@ -181,10 +183,9 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
 
   /* Initialize the vector V */
-  sunrealtype normq = N_VDotProd(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q);
-  SUNCheckLastErr();
-
-  normq = SUNRsqrt(normq);
+  sunscalartype qdotq;
+  SUNCheckCall(N_VDotProdComplex(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q, &qdotq));
+  sunrealtype normq = SUNRsqrt(SUN_REAL(qdotq));
 
   N_VScale(ONE / normq, PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->V);
   SUNCheckLastErr();
@@ -249,10 +250,9 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
   SUNAssert(q, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
-  sunrealtype normq = N_VDotProd(q, q);
-  SUNCheckLastErr();
-
-  normq = SUNRsqrt(normq);
+  sunscalartype qdotq;
+  SUNCheckCall(N_VDotProdComplex(q, q, &qdotq));
+  sunrealtype normq = SUNRsqrt(SUN_REAL(qdotq));
 
   /* set the initial guess */
   N_VScale(ONE / normq, q, PI_CONTENT(DEE)->V);
@@ -276,11 +276,12 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
   SUNAssert((PI_CONTENT(DEE)->max_iters >= 0), SUN_ERR_ARG_CORRUPT);
 
-  sunrealtype newlambdaR = ZERO;
-  sunrealtype oldlambdaR = ZERO;
+  sunscalartype newlambdaR = ZERO;
+  sunscalartype oldlambdaR = ZERO;
 
   int retval;
   sunrealtype normq;
+  sunscalartype qdotq;
   PI_CONTENT(DEE)->num_ATimes = 0;
   PI_CONTENT(DEE)->num_iters  = 0;
 
@@ -292,10 +293,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     PI_CONTENT(DEE)->num_iters++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
-    normq = N_VDotProd(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q);
-    SUNCheckLastErr();
+    SUNCheckCall(N_VDotProdComplex(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q, &qdotq));
+    normq = SUNRsqrt(SUN_REAL(qdotq));
 
-    normq = SUNRsqrt(normq);
     N_VScale(ONE / normq, PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->V);
     SUNCheckLastErr();
   }
@@ -308,26 +308,31 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     PI_CONTENT(DEE)->num_iters++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
-    newlambdaR = N_VDotProd(PI_CONTENT(DEE)->V,
-                            PI_CONTENT(DEE)->q); //Rayleigh quotient
-    SUNCheckLastErr();
 
-    PI_CONTENT(DEE)->res = SUNRabs(newlambdaR - oldlambdaR) / SUNRabs(newlambdaR);
+    SUNCheckCall(N_VDotProdComplex(PI_CONTENT(DEE)->V,
+                                   PI_CONTENT(DEE)->q,
+                                   &newlambdaR)); //Rayleigh quotient
+
+    PI_CONTENT(DEE)->res = SUNCabs(newlambdaR - oldlambdaR) / SUNCabs(newlambdaR);
 
     if (PI_CONTENT(DEE)->res < PI_CONTENT(DEE)->rel_tol) { break; }
 
-    normq = N_VDotProd(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q);
-    SUNCheckLastErr();
+    SUNCheckCall(N_VDotProdComplex(PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->q, &qdotq));
+    normq = SUNRsqrt(SUN_REAL(qdotq));
 
-    normq = SUNRsqrt(normq);
     N_VScale(ONE / normq, PI_CONTENT(DEE)->q, PI_CONTENT(DEE)->V);
     SUNCheckLastErr();
 
     oldlambdaR = newlambdaR;
   }
 
-  *lambdaI = ZERO;
-  *lambdaR = newlambdaR;
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
+  *lambdaR = SUN_REAL(newlambdaR);
+  *lambdaI = SUN_RCONST(0.0);
+#elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  *lambdaR = SUN_REAL(newlambdaR);
+  *lambdaI = SUN_IMAG(newlambdaR);
+#endif
 
   return SUN_SUCCESS;
 }

@@ -65,11 +65,13 @@ extern "C" {
 #define zgbtrs_f77 SUNDIALS_LAPACK_FUNC(zgbtrs, ZGBTRS)
 #define zgetrf_f77 SUNDIALS_LAPACK_FUNC(zgetrf, ZGETRF)
 #define zgetrs_f77 SUNDIALS_LAPACK_FUNC(zgetrs, ZGETRS)
+#define zgeev_f77  SUNDIALS_LAPACK_FUNC(zgeev, ZGEEV)
 
 #define cgbtrf_f77 SUNDIALS_LAPACK_FUNC(cgbtrf, CGBTRF)
 #define cgbtrs_f77 SUNDIALS_LAPACK_FUNC(cgbtrs, CGBTRS)
 #define cgetrf_f77 SUNDIALS_LAPACK_FUNC(cgetrf, CGETRF)
 #define cgetrs_f77 SUNDIALS_LAPACK_FUNC(cgetrs, CGETRS)
+#define cgeev_f77  SUNDIALS_LAPACK_FUNC(cgeev, CGEEV)
 
 #else
 
@@ -89,11 +91,13 @@ extern "C" {
 #define zgbtrs_f77 zgbtrs_
 #define zgetrf_f77 zgetrf_
 #define zgetrs_f77 zgetrs_
+#define zgeev_f77  zgeev_
 
 #define cgbtrf_f77 cgbtrf_
 #define cgbtrs_f77 cgbtrs_
 #define cgetrf_f77 cgetrf_
 #define cgetrs_f77 cgetrs_
+#define cgeev_f77  cgeev_
 
 #endif
 
@@ -168,6 +172,12 @@ extern void zgetrs_f77(const char* trans, const sunindextype* n,
                        const sunindextype* lda, sunindextype* ipiv, suncomplexdouble* b,
                        const sunindextype* ldb, sunindextype* info);
 
+extern void zgeev_f77(const char* jobvl, const char* jobvr, const sunindextype* n,
+                      suncomplexdouble* a, const sunindextype* lda, suncomplexdouble* w,
+                      suncomplexdouble* vl, const sunindextype* ldvl, suncomplexdouble* vr,
+                      const sunindextype* ldvr, suncomplexdouble* work,
+                      const sunindextype* lwork, sunrealtype* rwork, sunindextype* info);
+
 extern void cgbtrf_f77(const sunindextype* m, const sunindextype* n,
                        const sunindextype* kl, const sunindextype* ku,
                        suncomplexfloat* ab, sunindextype* ldab, sunindextype* ipiv,
@@ -186,6 +196,12 @@ extern void cgetrs_f77(const char* trans, const sunindextype* n,
                        const sunindextype* nrhs, suncomplexfloat* a,
                        const sunindextype* lda, sunindextype* ipiv, suncomplexfloat* b,
                        const sunindextype* ldb, sunindextype* info);
+
+extern void cgeev_f77(const char* jobvl, const char* jobvr, const sunindextype* n,
+                      suncomplexfloat* a, const sunindextype* lda, suncomplexfloat* w,
+                      suncomplexfloat* vl, const sunindextype* ldvl, suncomplexfloat* vr,
+                      const sunindextype* ldvr, suncomplexfloat* work,
+                      const sunindextype* lwork, sunrealtype* rwork, sunindextype* info);
 
 #ifdef __cplusplus
 }
