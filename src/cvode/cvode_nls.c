@@ -74,7 +74,7 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
 
   /* check for required nonlinear solver functions */
   if (NLS->ops->gettype == NULL || NLS->ops->solve == NULL ||
-      NLS->ops->setsysfn == NULL)
+      (NLS->ops->setsysfn == NULL && NLS->ops->setsysfns == NULL))
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "NLS does not support required operations");

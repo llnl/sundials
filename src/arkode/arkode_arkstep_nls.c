@@ -60,8 +60,8 @@ int arkStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   }
 
   /* check for required nonlinear solver functions */
-  if ((NLS->ops->gettype == NULL) || (NLS->ops->solve == NULL) ||
-      (NLS->ops->setsysfn == NULL))
+  if (NLS->ops->gettype == NULL || NLS->ops->solve == NULL ||
+      (NLS->ops->setsysfn == NULL && NLS->ops->setsysfns == NULL))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "NLS does not support required operations");
@@ -1212,7 +1212,7 @@ int arkStep_NlsFPFunction_MassTDep(N_Vector zcor, N_Vector g, void* arkode_mem)
   ---------------------------------------------------------------*/
 int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y,
                         SUNDIALS_MAYBE_UNUSED N_Vector del, sunrealtype tol,
-                      N_Vector ewt, void* arkode_mem)
+                        N_Vector ewt, void* arkode_mem)
 {
   /* temporary variables */
   ARKodeMem ark_mem;

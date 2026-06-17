@@ -77,7 +77,7 @@ int CVodeSetNonlinearSolverSensSim(void* cvode_mem, SUNNonlinearSolver NLS)
 
   /* check for required nonlinear solver functions */
   if (NLS->ops->gettype == NULL || NLS->ops->solve == NULL ||
-      NLS->ops->setsysfn == NULL)
+      (NLS->ops->setsysfn == NULL && NLS->ops->setsysfns == NULL))
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "NLS does not support required operations");
@@ -425,7 +425,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   ycor = NV_VEC_SW(ycorSim, 0);
 
   /* extract state and sensitivity deltas */
-  delta = NV_VEC_SW(deltaSim, 0);
+  delta  = NV_VEC_SW(deltaSim, 0);
   deltaS = NV_VECS_SW(deltaSim) + 1;
 
   /* extract state and sensitivity error weights */
@@ -502,8 +502,8 @@ static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
   if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
   cv_mem = (CVodeMem)cvode_mem;
 
-  delta  = NV_VEC_SW(deltaSim, 0);
-  ewt    = NV_VEC_SW(ewtSim, 0);
+  delta = NV_VEC_SW(deltaSim, 0);
+  ewt   = NV_VEC_SW(ewtSim, 0);
 
   *delnrm = N_VWrmsNorm(delta, ewt);
 

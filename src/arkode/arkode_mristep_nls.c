@@ -60,8 +60,8 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   }
 
   /* check for required nonlinear solver functions */
-  if ((NLS->ops->gettype == NULL) || (NLS->ops->solve == NULL) ||
-      (NLS->ops->setsysfn == NULL))
+  if (NLS->ops->gettype == NULL || NLS->ops->solve == NULL ||
+      (NLS->ops->setsysfn == NULL && NLS->ops->setsysfns == NULL))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "NLS does not support required operations");
