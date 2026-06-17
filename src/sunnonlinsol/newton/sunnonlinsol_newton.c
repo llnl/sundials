@@ -353,10 +353,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
                                                 NEWTON_CONTENT(NLS)->norm_fn_data);
           if (retval != SUN_SUCCESS) { break; }
         }
-        else
-        {
-          resnrm = N_VWrmsNorm(delta, w);
-        }
+        else { resnrm = N_VWrmsNorm(delta, w); }
 
         /* Norsett's switching metric compares the next residual to the
            previous Newton update norm. */

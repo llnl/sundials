@@ -497,10 +497,7 @@ static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   SUNAssert(prefix, SUN_ERR_MALLOC_FAIL);
   if (NLSid != NULL && strlen(NLSid) > 0) { strcpy(prefix, NLSid); }
-  else
-  {
-    strcpy(prefix, default_id);
-  }
+  else { strcpy(prefix, default_id); }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -707,10 +704,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
   {
     for (j = i + 1; j < lAA; j++) { gamma[i] -= R[j * maa + i] * gamma[j]; }
     if (gamma[i] == ZERO) { gamma[i] = ZERO; }
-    else
-    {
-      gamma[i] /= R[i * maa + i];
-    }
+    else { gamma[i] /= R[i * maa + i]; }
     cvals[nvec] = -gamma[i];
     Xvecs[nvec] = dg[ipt_map[i]];
     nvec += 1;
