@@ -62,6 +62,8 @@ Fixed a CMake issue that prevented finding third-party libraries installed in
 default search locations e.g., paths included in `CMAKE_INSTALL_PREFIX`
 ([Issue #935](https://github.com/llnl/sundials/issues/935)).
 
+Fixed a CMake issue that prevented automatically finding PETSc dependencies.
+
 Fixed empty `elseif()` cases in the CMake files for the Fortran interfaces to
 the ManyVector and MPIPlusX vectors which could results in a missing include
 path when compiling if an MPI compiler wrapper is not found.
