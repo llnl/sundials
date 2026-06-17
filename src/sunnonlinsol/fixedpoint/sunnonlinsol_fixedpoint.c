@@ -37,12 +37,6 @@ static SUNErrCode AllocateContent(SUNNonlinearSolver NLS, N_Vector tmpl);
 static void FreeContent(SUNNonlinearSolver NLS);
 static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                            N_Vector delta, N_Vector w);
-static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
-                                                   SUNNonlinSolNormFn NormFn,
-                                                   void* norm_fn_data);
-static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
-  void* getupdatenorm_data);
 
 /* Content structure accessibility macros */
 #define FP_CONTENT(S) ((SUNNonlinearSolverContent_FixedPoint)(S->content))
@@ -388,9 +382,9 @@ SUNErrCode SUNNonlinSolSetConvTestFn_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
-                                                   SUNNonlinSolNormFn NormFn,
-                                                   void* norm_fn_data)
+SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
+                                            SUNNonlinSolNormFn NormFn,
+                                            void* norm_fn_data)
 {
   SUNFunctionBegin(NLS->sunctx);
   FP_CONTENT(NLS)->norm_fn      = NormFn;
@@ -398,7 +392,7 @@ static SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
   return SUN_SUCCESS;
 }
 
-static SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
   SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
   void* getupdatenorm_data)
 {
@@ -503,7 +497,10 @@ static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   SUNAssert(prefix, SUN_ERR_MALLOC_FAIL);
   if (NLSid != NULL && strlen(NLSid) > 0) { strcpy(prefix, NLSid); }
-  else { strcpy(prefix, default_id); }
+  else
+  {
+    strcpy(prefix, default_id);
+  }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
@@ -710,7 +707,10 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
   {
     for (j = i + 1; j < lAA; j++) { gamma[i] -= R[j * maa + i] * gamma[j]; }
     if (gamma[i] == ZERO) { gamma[i] = ZERO; }
-    else { gamma[i] /= R[i * maa + i]; }
+    else
+    {
+      gamma[i] /= R[i * maa + i];
+    }
     cvals[nvec] = -gamma[i];
     Xvecs[nvec] = dg[ipt_map[i]];
     nvec += 1;

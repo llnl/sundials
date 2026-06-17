@@ -410,9 +410,9 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 {
   CVodeMem cv_mem;
   int m, retval;
-  sunrealtype delnrm;
-  sunrealtype dcon;
+  sunrealtype dcon, delnrm_S;
   N_Vector ycor, delta, ewt;
+  N_Vector *deltaS, *ewtS;
 
   if (cvode_mem == NULL)
   {
@@ -426,11 +426,13 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 
   /* extract state and sensitivity deltas */
   delta = NV_VEC_SW(deltaSim, 0);
+  deltaS = NV_VECS_SW(deltaSim) + 1;
 
   /* extract state and sensitivity error weights */
-  ewt = NV_VEC_SW(ewtSim, 0);
+  ewt  = NV_VEC_SW(ewtSim, 0);
+  ewtS = NV_VECS_SW(ewtSim) + 1;
 
-  /* compute the norm of the state and sensitivity corrections */
+  /* compute the norm of the state corrections */
   if (cvNlsNormSensSim(deltaSim, ewtSim, &cv_mem->cv_delnrm, cvode_mem) !=
       SUN_SUCCESS)
   {
@@ -438,7 +440,9 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
                    MSGCV_NLS_FAIL);
     return (CV_NLS_FAIL);
   }
-  delnrm = N_VWrmsNorm(delta, ewt);
+
+  /* compute the norm of the sensitivity corrections */
+  delnrm_S = cvSensUpdateNorm(cv_mem, cv_mem->cv_delnrm, deltaS, ewtS);
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
@@ -464,7 +468,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   {
     if (m == 0)
     {
-      cv_mem->cv_acnrm = (cv_mem->cv_errconS) ? cv_mem->cv_delnrm : delnrm;
+      cv_mem->cv_acnrm = (cv_mem->cv_errconS) ? delnrm_S : cv_mem->cv_delnrm;
     }
     else
     {
@@ -494,18 +498,14 @@ static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
   CVodeMem cv_mem;
   N_Vector delta;
   N_Vector ewt;
-  N_Vector *deltaS, *ewtS;
 
   if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
   cv_mem = (CVodeMem)cvode_mem;
 
   delta  = NV_VEC_SW(deltaSim, 0);
-  deltaS = NV_VECS_SW(deltaSim) + 1;
   ewt    = NV_VEC_SW(ewtSim, 0);
-  ewtS   = NV_VECS_SW(ewtSim) + 1;
 
   *delnrm = N_VWrmsNorm(delta, ewt);
-  *delnrm = cvSensUpdateNorm(cv_mem, *delnrm, deltaS, ewtS);
 
   return SUN_SUCCESS;
 }
