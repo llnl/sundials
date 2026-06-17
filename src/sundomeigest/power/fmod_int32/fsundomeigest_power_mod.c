@@ -756,6 +756,30 @@ SWIGEXPORT int _wrap_SUNDomEigEstimatorContent_Power__is_complex_get(SwigClassWr
 }
 
 
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Power__Fy_is_current_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::Fy_is_current", return );
+  arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->Fy_is_current = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNDomEigEstimatorContent_Power__Fy_is_current_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::Fy_is_current", return 0);
+  arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
+  result = (int) ((arg1)->Fy_is_current);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT SwigClassWrapper _wrap_new_SUNDomEigEstimatorContent_Power_() {
   SwigClassWrapper fresult ;
   struct SUNDomEigEstimatorContent_Power_ *result = 0 ;
@@ -904,6 +928,20 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint_Power(SUNDomEi
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
   result = (SUNErrCode)SUNDomEigEstimator_SetRhsLinearizationPoint_Power(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsAtLinearizationPoint_Power(SUNDomEigEstimator farg1, N_Vector farg2) {
+  int fresult ;
+  SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNDomEigEstimator)(farg1);
+  arg2 = (N_Vector)(farg2);
+  result = (SUNErrCode)SUNDomEigEstimator_SetRhsAtLinearizationPoint_Power(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
