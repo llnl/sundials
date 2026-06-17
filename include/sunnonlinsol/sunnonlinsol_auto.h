@@ -146,7 +146,6 @@ SUNErrCode SUNNonlinSolGetTotalNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
                                                        long int* fp_nconvfails,
                                                        long int* newt_nconvfails);
 
-/* Compatibility wrapper for the unreleased pre-review name. */
 #ifdef __cplusplus
 }
 #endif

@@ -19,7 +19,6 @@
 
 #include "cvode_impl.h"
 #include "sundials/sundials_math.h"
-#include "sunnonlinsol/sunnonlinsol_auto.h"
 
 /* constant macros */
 #define ONE SUN_RCONST(1.0) /* real 1.0 */

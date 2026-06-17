@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sundials/sundials_math.h>
-#include <sunnonlinsol/sunnonlinsol_auto.h>
 
 #include "arkode_impl.h"
 #include "arkode_mristep_impl.h"
@@ -600,9 +599,9 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
   this solve-decoupled implicit MRI stage.  We have two modes.
 
   Standard:
-      delnorm = ||delnrm||_WRMS
+      delnrm = ||del||_WRMS
       if (m==0) crate = 1
-      if (m>0)  crate = max(crdown*crate, delnorm/delnrm_p)
+      if (m>0)  crate = max(crdown*crate, delnrm/delnrm_p)
       dcon = min(crate, ONE) * delnrm / nlscoef
       if (dcon<=1)  return convergence
       if ((m >= 2) && (delnrm > rdiv*delnrm_p))  return divergence
@@ -614,7 +613,7 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
   ---------------------------------------------------------------*/
 int mriStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y,
                         SUNDIALS_MAYBE_UNUSED N_Vector del, sunrealtype tol,
-                        SUNDIALS_MAYBE_UNUSED N_Vector ewt, void* arkode_mem)
+                        N_Vector ewt, void* arkode_mem)
 {
   /* temporary variables */
   ARKodeMem ark_mem;

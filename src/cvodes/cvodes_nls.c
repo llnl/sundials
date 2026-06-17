@@ -20,7 +20,6 @@
 #include "cvodes_impl.h"
 #include "sundials/sundials_math.h"
 #include "sundials/sundials_nvector_senswrapper.h"
-#include "sunnonlinsol/sunnonlinsol_auto.h"
 
 /* constant macros */
 #define ONE SUN_RCONST(1.0)
