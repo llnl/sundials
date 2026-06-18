@@ -125,11 +125,11 @@ static SUNErrCode sunLoggerGetFilePointer(SUNLogger logger, SUNLogLevel lvl,
 {
   switch (lvl)
   {
-    case SUN_LOGLEVEL_DEBUG: *fp = logger->debug_fp; break;
-    case SUN_LOGLEVEL_WARNING: *fp = logger->warning_fp; break;
-    case SUN_LOGLEVEL_INFO: *fp = logger->info_fp; break;
-    case SUN_LOGLEVEL_ERROR: *fp = logger->error_fp; break;
-    default: return SUN_ERR_UNREACHABLE;
+  case SUN_LOGLEVEL_DEBUG: *fp = logger->debug_fp; break;
+  case SUN_LOGLEVEL_WARNING: *fp = logger->warning_fp; break;
+  case SUN_LOGLEVEL_INFO: *fp = logger->info_fp; break;
+  case SUN_LOGLEVEL_ERROR: *fp = logger->error_fp; break;
+  default: return SUN_ERR_UNREACHABLE;
   }
 
   return SUN_SUCCESS;
@@ -202,7 +202,7 @@ static SUNErrCode sunFlushLogMessage(SUNLogger logger, SUNLogLevel lvl,
   else
   {
     FILE* fp = NULL;
-    retval = sunLoggerGetFilePointer(logger, lvl, &fp);
+    retval   = sunLoggerGetFilePointer(logger, lvl, &fp);
     if (retval == SUN_SUCCESS && fp) { fflush(fp); }
   }
 
@@ -520,20 +520,14 @@ SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,
 
 #if SUNDIALS_LOGGING_LEVEL > 0
   {
-    if (logger->queue_msg == NULL) {
-      return retval;
-    }
+    if (logger->queue_msg == NULL) { return retval; }
 
     int rank = 0;
-    if (!sunLoggerIsOutputRank(logger, &rank)) {
-      return retval;
-    }
+    if (!sunLoggerIsOutputRank(logger, &rank)) { return retval; }
 
-    FILE *fp;
+    FILE* fp;
     retval = sunLoggerGetFilePointer(logger, lvl, &fp);
-    if (retval != SUN_SUCCESS || fp == NULL) {
-      return retval;
-    }
+    if (retval != SUN_SUCCESS || fp == NULL) { return retval; }
 
     const char* prefix = NULL;
     if (lvl == SUN_LOGLEVEL_DEBUG) { prefix = "DEBUG"; }
@@ -547,8 +541,8 @@ SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,
     sunCreateLogPayload(rank, msg_txt, args, &payload);
     va_end(args);
 
-    retval = logger->queue_msg(logger, lvl, prefix, rank, scope, label,
-                                payload, logger->content);
+    retval = logger->queue_msg(logger, lvl, prefix, rank, scope, label, payload,
+                               logger->content);
 
     free(payload);
   }
