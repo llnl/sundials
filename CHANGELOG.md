@@ -28,6 +28,14 @@ and `ARKODE_ASCHER_ERK_3_1_2`+`ARKODE_ASCHER_SDIRK_3_1_2`.
 Added the `ARKODE_IMEX_MRI_GARK_ASCHER_ARK2` and `ARKODE_IMEX_MRI_GARK_ARK2`
 embedded implicit-explicit MRI-GARK coupling tables.
 
+When info or debug logging is enabled, i.e., `SUNDIALS_LOGGING_LEVEL` is at
+least 3, it will now print to `stdout` by default. Previously, the default was
+to produce no output, and this behavior can be restored by setting the
+environment variables `SUNLOGGER_INFO_FILENAME` and `SUNLOGGER_DEBUG_FILENAME`
+to an empty string.
+
+Improved the performance of logging when enabled but no file pointer was set.
+
 ### Bug Fixes
 
 Fixed a bug where an unrecognized error return flag from a user-provided
