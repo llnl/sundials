@@ -120,6 +120,21 @@ static void sunCloseLogFile(void* fp)
   if (fp && fp != stdout && fp != stderr) { fclose((FILE*)fp); }
 }
 
+static SUNErrCode sunLoggerGetFilePointer(SUNLogger logger, SUNLogLevel lvl,
+                                          FILE** fp)
+{
+  switch (lvl)
+  {
+    case SUN_LOGLEVEL_DEBUG: *fp = logger->debug_fp; break;
+    case SUN_LOGLEVEL_WARNING: *fp = logger->warning_fp; break;
+    case SUN_LOGLEVEL_INFO: *fp = logger->info_fp; break;
+    case SUN_LOGLEVEL_ERROR: *fp = logger->error_fp; break;
+    default: return SUN_ERR_UNREACHABLE;
+  }
+
+  return SUN_SUCCESS;
+}
+
 static sunbooleantype sunLoggerIsOutputRank(SUNDIALS_MAYBE_UNUSED SUNLogger logger,
                                             int* rank_ref)
 {
@@ -158,28 +173,16 @@ static SUNErrCode sunQueueLogMessage(SUNLogger logger, SUNLogLevel lvl,
                                      const char* payload,
                                      SUNDIALS_MAYBE_UNUSED void* content)
 {
-  SUNErrCode retval = SUN_SUCCESS;
-  char* log_msg     = NULL;
-  sunCreateLogMessage(prefix, rank, scope, label, payload, &log_msg);
-
-  switch (lvl)
+  FILE* fp          = NULL;
+  SUNErrCode retval = sunLoggerGetFilePointer(logger, lvl, &fp);
+  // The caller already validates lvl and fp!=NULL, so this is a secondary check
+  if (retval == SUN_SUCCESS && fp != NULL)
   {
-  case (SUN_LOGLEVEL_DEBUG):
-    if (logger->debug_fp) { fprintf(logger->debug_fp, "%s", log_msg); }
-    break;
-  case (SUN_LOGLEVEL_WARNING):
-    if (logger->warning_fp) { fprintf(logger->warning_fp, "%s", log_msg); }
-    break;
-  case (SUN_LOGLEVEL_INFO):
-    if (logger->info_fp) { fprintf(logger->info_fp, "%s", log_msg); }
-    break;
-  case (SUN_LOGLEVEL_ERROR):
-    if (logger->error_fp) { fprintf(logger->error_fp, "%s", log_msg); }
-    break;
-  default: retval = SUN_ERR_UNREACHABLE;
+    char* log_msg = NULL;
+    sunCreateLogMessage(prefix, rank, scope, label, payload, &log_msg);
+    fprintf(fp, "%s", log_msg);
+    free(log_msg);
   }
-
-  free(log_msg);
 
   return retval;
 }
@@ -188,28 +191,21 @@ static SUNErrCode sunFlushLogMessage(SUNLogger logger, SUNLogLevel lvl,
                                      SUNDIALS_MAYBE_UNUSED void* content)
 {
   SUNErrCode retval = SUN_SUCCESS;
-  switch (lvl)
+
+  if (lvl == SUN_LOGLEVEL_ALL)
   {
-  case (SUN_LOGLEVEL_DEBUG):
-    if (logger->debug_fp) { fflush(logger->debug_fp); }
-    break;
-  case (SUN_LOGLEVEL_WARNING):
-    if (logger->warning_fp) { fflush(logger->warning_fp); }
-    break;
-  case (SUN_LOGLEVEL_INFO):
-    if (logger->info_fp) { fflush(logger->info_fp); }
-    break;
-  case (SUN_LOGLEVEL_ERROR):
-    if (logger->error_fp) { fflush(logger->error_fp); }
-    break;
-  case (SUN_LOGLEVEL_ALL):
     if (logger->debug_fp) { fflush(logger->debug_fp); }
     if (logger->warning_fp) { fflush(logger->warning_fp); }
     if (logger->info_fp) { fflush(logger->info_fp); }
     if (logger->error_fp) { fflush(logger->error_fp); }
-    break;
-  default: retval = SUN_ERR_UNREACHABLE;
   }
+  else
+  {
+    FILE* fp = NULL;
+    retval = sunLoggerGetFilePointer(logger, lvl, &fp);
+    if (retval == SUN_SUCCESS && fp) { fflush(fp); }
+  }
+
   return retval;
 }
 
@@ -516,38 +512,45 @@ SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,
                               const char* msg_txt, ...)
 {
   SUNErrCode retval = SUN_SUCCESS;
+  if (!logger)
+  {
+    retval = SUN_ERR_ARG_CORRUPT;
+    return retval;
+  }
 
 #if SUNDIALS_LOGGING_LEVEL > 0
   {
-    if (!logger)
-    {
-      retval = SUN_ERR_ARG_CORRUPT;
+    if (logger->queue_msg == NULL) {
       return retval;
     }
 
-    if (logger->queue_msg)
-    {
-      int rank = 0;
-      if (sunLoggerIsOutputRank(logger, &rank))
-      {
-        const char* prefix = NULL;
-        if (lvl == SUN_LOGLEVEL_DEBUG) { prefix = "DEBUG"; }
-        else if (lvl == SUN_LOGLEVEL_WARNING) { prefix = "WARNING"; }
-        else if (lvl == SUN_LOGLEVEL_INFO) { prefix = "INFO"; }
-        else if (lvl == SUN_LOGLEVEL_ERROR) { prefix = "ERROR"; }
-
-        char* payload = NULL;
-        va_list args;
-        va_start(args, msg_txt);
-        sunCreateLogPayload(rank, msg_txt, args, &payload);
-        va_end(args);
-
-        retval = logger->queue_msg(logger, lvl, prefix, rank, scope, label,
-                                   payload, logger->content);
-
-        free(payload);
-      }
+    int rank = 0;
+    if (!sunLoggerIsOutputRank(logger, &rank)) {
+      return retval;
     }
+
+    FILE *fp;
+    retval = sunLoggerGetFilePointer(logger, lvl, &fp);
+    if (retval != SUN_SUCCESS || fp == NULL) {
+      return retval;
+    }
+
+    const char* prefix = NULL;
+    if (lvl == SUN_LOGLEVEL_DEBUG) { prefix = "DEBUG"; }
+    else if (lvl == SUN_LOGLEVEL_WARNING) { prefix = "WARNING"; }
+    else if (lvl == SUN_LOGLEVEL_INFO) { prefix = "INFO"; }
+    else if (lvl == SUN_LOGLEVEL_ERROR) { prefix = "ERROR"; }
+
+    char* payload = NULL;
+    va_list args;
+    va_start(args, msg_txt);
+    sunCreateLogPayload(rank, msg_txt, args, &payload);
+    va_end(args);
+
+    retval = logger->queue_msg(logger, lvl, prefix, rank, scope, label,
+                                payload, logger->content);
+
+    free(payload);
   }
 #else
   /* silence warnings when all logging is disabled */
