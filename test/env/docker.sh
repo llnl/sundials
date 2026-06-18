@@ -156,7 +156,8 @@ export SUNDIALS_MONITORING=ON
 export SUNDIALS_PROFILING=ON
 
 # Sundials logging
-export SUNDIALS_LOGGING_LEVEL=2
+export SUNDIALS_LOGGING_LEVEL=3
+export SUNLOGGER_INFO_FILENAME=""
 
 # Answer files
 if [ -z "${SUNDIALS_TEST_ANSWER_DIR}" ]; then
