@@ -290,8 +290,8 @@ SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger_ptr
   logger->filenames  = NULL;
   logger->error_fp   = stderr;
   logger->warning_fp = stdout;
-  logger->debug_fp   = NULL;
-  logger->info_fp    = NULL;
+  logger->debug_fp   = stdout;
+  logger->info_fp    = stdout;
 #if SUNDIALS_LOGGING_LEVEL > 0
   if (sunLoggerIsOutputRank(logger, NULL))
   {
