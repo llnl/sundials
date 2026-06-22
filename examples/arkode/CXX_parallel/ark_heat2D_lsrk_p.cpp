@@ -313,19 +313,19 @@ int main(int argc, char* argv[])
     if (check_flag(&flag, "PrintUserData", 1)) { return 1; }
   }
 
-  if (udata->diagnostics)
-  {
-    SUNLogger logger = NULL;
+  SUNLogger logger = NULL;
 
-    flag = SUNContext_GetLogger(ctx, &logger);
-    if (check_flag(&flag, "SUNContext_GetLogger", 1)) { return 1; }
+  flag = SUNContext_GetLogger(ctx, &logger);
+  if (check_flag(&flag, "SUNContext_GetLogger", 1)) { return 1; }
 
-    flag = SUNLogger_SetInfoFilename(logger, "diagnostics.txt");
-    if (check_flag(&flag, "SUNLogger_SetInfoFilename", 1)) { return 1; }
+  flag = SUNLogger_SetInfoFilename(logger,
+                                   udata->diagnostics ? "diagnostics.txt" : NULL);
+  if (check_flag(&flag, "SUNLogger_SetInfoFilename", 1)) { return 1; }
 
-    flag = SUNLogger_SetDebugFilename(logger, "diagnostics.txt");
-    if (check_flag(&flag, "SUNLogger_SetDebugFilename", 1)) { return 1; }
-  }
+  flag = SUNLogger_SetDebugFilename(logger, udata->diagnostics
+                                              ? "diagnostics.txt"
+                                              : NULL);
+  if (check_flag(&flag, "SUNLogger_SetDebugFilename", 1)) { return 1; }
 
   // ------------------------
   // Create parallel vectors
