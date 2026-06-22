@@ -20,14 +20,14 @@ env:
 
 jobs:
   build_and_test:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - uses: fortran-lang/setup-fortran@v1
       id: setup-fortran
       with:
         compiler: intel
-        version: '2025.0'
+        version: '2025.2'
 
     - name: Install Ninja
       run: choco install ninja
