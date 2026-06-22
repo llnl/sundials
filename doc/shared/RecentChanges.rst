@@ -28,22 +28,36 @@ and ``ARKODE_ASCHER_ERK_3_1_2`` + ``ARKODE_ASCHER_SDIRK_3_1_2``.
 Added the ``ARKODE_IMEX_MRI_GARK_ASCHER_ARK2`` and ``ARKODE_IMEX_MRI_GARK_ARK2``
 embedded implicit-explicit MRI-GARK coupling tables.
 
+When info or debug logging is enabled, i.e., ``SUNDIALS_LOGGING_LEVEL`` is at
+least 3, it will now print to ``stdout`` by default. Previously, the default was
+to produce no output, and this behavior can be restored by setting the
+environment variables ``SUNLOGGER_INFO_FILENAME`` and
+``SUNLOGGER_DEBUG_FILENAME`` to an empty string.
+
+Improved the performance of logging when enabled but no file pointer was set.
+
 **Bug Fixes**
 
-Fixed a minor bug where the number of required stages for STS methods 
-in the LSRKStep module was incorrectly computed using the spectral 
+Fixed a bug in the sundials4py wrappers for user-provided SUNStepper evolve
+and one_step functions.
+
+Fixed a bug where an unrecognized error return flag from a user-provided
+SUNLinearSolver module would register as a successful linear solve.
+
+Fixed a minor bug where the number of required stages for STS methods
+in the LSRKStep module was incorrectly computed using the spectral
 radius instead of the real part of the Jacobian eigenvalues.
 
 Fixed a minor bug where the negative real extent of the stability region
-for the RKC method was not being properly computed, which could result 
+for the RKC method was not being properly computed, which could result
 in an underestimation of the number of stages required for stability.
 
 Fixed a minor bug where STS methods were limited to one fewer than
 the maximum allowed number of stages. STS can now use the full maximum
 number of stages.
 
-Fixed a bug that caused SUNDomEigEstimator_Initialize to overwrite the 
-user-provided initial guess from SUNDomEigEstimator_SetInitialGuess. These 
+Fixed a bug that caused SUNDomEigEstimator_Initialize to overwrite the
+user-provided initial guess from SUNDomEigEstimator_SetInitialGuess. These
 routines are now order-independent.
 
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed

@@ -40,11 +40,11 @@ def sunstepper(sunctx):
     status, stepper = SUNStepper_Create(sunctx)
 
     # Dummy callback implementations
-    def evolve_fn(stepper, tout, vret, tret):
-        return 0
+    def evolve_fn(stepper, tout, vret):
+        return 0, 0.0
 
-    def one_step_fn(stepper, tout, vret, tret):
-        return 0
+    def one_step_fn(stepper, tout, vret):
+        return 0, 0.0
 
     def full_rhs_fn(stepper, t, v, f, mode):
         return 0
