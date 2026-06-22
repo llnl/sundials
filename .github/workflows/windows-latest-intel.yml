@@ -20,14 +20,14 @@ env:
 
 jobs:
   build_and_test:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - uses: fortran-lang/setup-fortran@v1
       id: setup-fortran
       with:
         compiler: intel
-        version: '2025.0'
+        version: '2025.2'
 
     - name: Install Ninja
       run: choco install ninja
@@ -53,3 +53,20 @@ jobs:
     - name: Test (Shared)
       working-directory: ${{github.workspace}}/build_shared
       run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+
+    - name: Archive build files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: build_files_intel_${{ env.BUILD_TYPE }}
+        path: |
+          ${{ github.workspace }}/build_*
+          !${{ github.workspace }}/build_*/Testing/output
+
+    - name: Archive output files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: output_files_intel_${{ env.BUILD_TYPE }}
+        path: |
+          ${{ github.workspace }}/build_*/Testing/
