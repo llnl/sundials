@@ -22,7 +22,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Configure CMake
       run: cmake -W error=dev -G "Visual Studio 18 2026" -A x64 -B ${{github.workspace}}/build -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=ON -DEXAMPLES_ENABLE_CXX=ON
