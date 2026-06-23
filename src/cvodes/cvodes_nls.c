@@ -313,6 +313,7 @@ static int cvNlsLSetup(sunbooleantype jbad, sunbooleantype* jcur, void* cvode_me
   cv_mem->cv_crate      = ONE;
   cv_mem->cv_crateS     = ONE;
   cv_mem->cv_delnrm     = SUN_RCONST(0.0);
+  cv_mem->cv_delnrmS    = SUN_RCONST(0.0);
   cv_mem->cv_nstlp      = cv_mem->cv_nst;
 
   if (retval < 0) { return (CV_LSETUP_FAIL); }
