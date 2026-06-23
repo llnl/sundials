@@ -281,6 +281,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     retval = FP_CONTENT(NLS)->CTest(NLS, ycor, delta, tol, w,
                                     FP_CONTENT(NLS)->ctest_data);
 
+#if SUNDIALS_LOGGING_LEVEL >= SUNDIALS_LOGGING_INFO
     SUNErrCode ierr = GetUpdateNorm_FixedPoint(NLS, delta, w);
     if (ierr != SUN_SUCCESS)
     {
@@ -288,6 +289,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
                  "status = failed update norm, retval = %d", ierr);
       return ierr;
     }
+#endif
 
     SUNLogInfo(NLS->sunctx->logger, "nonlinear-iterate",
                "cur-iter = %d, update-norm = " SUN_FORMAT_G,
