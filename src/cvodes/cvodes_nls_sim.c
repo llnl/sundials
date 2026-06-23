@@ -436,7 +436,12 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   cv_mem->cv_delnrm = N_VWrmsNorm(delta, ewt);
 
   /* compute the norm of the sensitivity corrections */
-  cv_mem->cv_delnrmS = cvSensUpdateNorm(cv_mem, cv_mem->cv_delnrm, deltaS, ewtS);
+  if(cvNlsNormSensSim(deltaSim, ewtSim, &(cv_mem->cv_delnrmS), cvode_mem) != SUN_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
+                   MSGCV_NLS_FAIL);
+    return (CV_NLS_FAIL);
+  }
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
@@ -487,16 +492,28 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   return (SUN_NLS_CONTINUE);
 }
 
-static SUNErrCode cvNlsNormSensSim(N_Vector delta, N_Vector ewt,
-                                   sunrealtype* delnrmS,
-                                   SUNDIALS_MAYBE_UNUSED void* cvode_mem)
+static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
+                                   sunrealtype* delnrmS, void* cvode_mem)
 {
   CVodeMem cv_mem;
 
   if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
   cv_mem = (CVodeMem)cvode_mem;
 
-  *delnrmS = cv_mem->cv_delnrmS;
+  /* extract state and sensitivity deltas */
+  N_Vector delta  = NV_VEC_SW(deltaSim, 0);
+  N_Vector* deltaS = NV_VECS_SW(deltaSim) + 1;
+
+  /* extract state and sensitivity error weights */
+  N_Vector ewt  = NV_VEC_SW(ewtSim, 0);
+  N_Vector* ewtS = NV_VECS_SW(ewtSim) + 1;
+
+  /* compute and save the norm of the state corrections */
+  cv_mem->cv_delnrm = N_VWrmsNorm(delta, ewt);
+
+  /* compute the norm of the sensitivity corrections */
+  *cv_delnrmS = cvSensUpdateNorm(cv_mem, cv_mem->cv_delnrm, deltaS, ewtS);
+
   return SUN_SUCCESS;
 }
 
