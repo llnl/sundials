@@ -234,7 +234,10 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
       {
         C->fp_num_iters_total += iters;
       }
-      else { C->newton_num_iters_total += iters; }
+      else
+      {
+        C->newton_num_iters_total += iters;
+      }
     }
 
     nconvfails = 0;
@@ -245,7 +248,10 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
       {
         C->fp_num_conv_fails_total += nconvfails;
       }
-      else { C->newton_num_conv_fails_total += nconvfails; }
+      else
+      {
+        C->newton_num_conv_fails_total += nconvfails;
+      }
     }
 
     SUNLogInfo(NLS->sunctx->logger, "end-subsolver-solves-list",
@@ -253,7 +259,6 @@ int SUNNonlinSolSolve_Auto(SUNNonlinearSolver NLS, N_Vector y0, N_Vector ycor,
                retval, iters, nconvfails);
 
     if (retval == SUN_NLS_SWITCH) { continue; }
-
 
     C->num_solves_since_switch++;
 
@@ -346,7 +351,10 @@ int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
          the next time step. If the convergence test failed, we return SUN_NLS_SWITCH
          so that the solver loop continues but with fixed-point iteration. */
       if (retval == SUN_SUCCESS) { return SUN_SUCCESS; }
-      else { return SUN_NLS_SWITCH; }
+      else
+      {
+        return SUN_NLS_SWITCH;
+      }
     }
   }
 
@@ -611,7 +619,10 @@ static SUNErrCode setFromCommandLine_Auto(SUNNonlinearSolver NLS,
   char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
   SUNAssert(prefix, SUN_ERR_MALLOC_FAIL);
   if (NLSid != NULL && strlen(NLSid) > 0) { strcpy(prefix, NLSid); }
-  else { strcpy(prefix, default_id); }
+  else
+  {
+    strcpy(prefix, default_id);
+  }
   strcat(prefix, ".");
 
   for (int idx = 1; idx < argc; idx++)
