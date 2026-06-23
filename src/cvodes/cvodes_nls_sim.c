@@ -410,9 +410,8 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 {
   CVodeMem cv_mem;
   int m, retval;
-  sunrealtype dcon, delnrmS;
+  sunrealtype dcon;
   N_Vector delta, ycor, ewt;
-  N_Vector *deltaS, *ewtS;
 
   if (cvode_mem == NULL)
   {
@@ -424,19 +423,18 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   /* extract the current state and sensitivity corrections */
   ycor = NV_VEC_SW(ycorSim, 0);
 
-  /* extract state and sensitivity deltas */
-  delta  = NV_VEC_SW(deltaSim, 0);
-  deltaS = NV_VECS_SW(deltaSim) + 1;
+  /* extract state delta */
+  delta = NV_VEC_SW(deltaSim, 0);
 
-  /* extract state and sensitivity error weights */
-  ewt  = NV_VEC_SW(ewtSim, 0);
-  ewtS = NV_VECS_SW(ewtSim) + 1;
+  /* extract state error weights */
+  ewt = NV_VEC_SW(ewtSim, 0);
 
   /* compute the norm of the state corrections */
   cv_mem->cv_delnrm = N_VWrmsNorm(delta, ewt);
 
   /* compute the norm of the sensitivity corrections */
-  if(cvNlsNormSensSim(deltaSim, ewtSim, &(cv_mem->cv_delnrmS), cvode_mem) != SUN_SUCCESS)
+  if (cvNlsNormSensSim(deltaSim, ewtSim, &(cv_mem->cv_delnrmS), cvode_mem) !=
+      SUN_SUCCESS)
   {
     cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
                    MSGCV_NLS_FAIL);
@@ -501,18 +499,20 @@ static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* extract state and sensitivity deltas */
-  N_Vector delta  = NV_VEC_SW(deltaSim, 0);
+  N_Vector delta   = NV_VEC_SW(deltaSim, 0);
   N_Vector* deltaS = NV_VECS_SW(deltaSim) + 1;
 
   /* extract state and sensitivity error weights */
-  N_Vector ewt  = NV_VEC_SW(ewtSim, 0);
+  N_Vector ewt   = NV_VEC_SW(ewtSim, 0);
   N_Vector* ewtS = NV_VECS_SW(ewtSim) + 1;
 
   /* compute and save the norm of the state corrections */
   cv_mem->cv_delnrm = N_VWrmsNorm(delta, ewt);
 
   /* compute the norm of the sensitivity corrections */
-  *cv_delnrmS = cvSensUpdateNorm(cv_mem, cv_mem->cv_delnrm, deltaS, ewtS);
+  cv_mem->cv_delnrmS = cvSensUpdateNorm(cv_mem, cv_mem->cv_delnrm, deltaS, ewtS);
+
+  *delnrmS = cv_mem->cv_delnrmS;
 
   return SUN_SUCCESS;
 }
@@ -524,7 +524,7 @@ static SUNErrCode cvNlsGetUpdateNormSensSim(sunrealtype* delnrm, void* cvode_mem
   if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
   cv_mem = (CVodeMem)cvode_mem;
 
-  *delnrmS = cv_mem->cv_delnrmS;
+  *delnrm = cv_mem->cv_delnrmS;
   return SUN_SUCCESS;
 }
 
