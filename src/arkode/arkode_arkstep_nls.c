@@ -152,7 +152,10 @@ int arkStep_SetNlsRhsFn(ARKodeMem ark_mem, ARKRhsFn nls_fi)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   if (nls_fi) { step_mem->nls_fi = nls_fi; }
-  else { step_mem->nls_fi = step_mem->fi; }
+  else
+  {
+    step_mem->nls_fi = step_mem->fi;
+  }
 
   return (ARK_SUCCESS);
 }
@@ -310,7 +313,10 @@ int arkStep_NlsInit(ARKodeMem ark_mem)
   {
     retval = SUNNonlinSolSetLSetupFn(step_mem->NLS, arkStep_NlsLSetup);
   }
-  else { retval = SUNNonlinSolSetLSetupFn(step_mem->NLS, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSetupFn(step_mem->NLS, NULL);
+  }
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -323,7 +329,10 @@ int arkStep_NlsInit(ARKodeMem ark_mem)
   {
     retval = SUNNonlinSolSetLSolveFn(step_mem->NLS, arkStep_NlsLSolve);
   }
-  else { retval = SUNNonlinSolSetLSolveFn(step_mem->NLS, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSolveFn(step_mem->NLS, NULL);
+  }
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -1210,9 +1219,9 @@ int arkStep_NlsFPFunction_MassTDep(N_Vector zcor, N_Vector g, void* arkode_mem)
       implicit, then we just declare 'success' no matter what
       is provided.
   ---------------------------------------------------------------*/
-int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y,
-                        N_Vector del, sunrealtype tol,
-                        N_Vector ewt, void* arkode_mem)
+int arkStep_NlsConvTest(SUNNonlinearSolver NLS,
+                        SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector del,
+                        sunrealtype tol, N_Vector ewt, void* arkode_mem)
 {
   /* temporary variables */
   ARKodeMem ark_mem;

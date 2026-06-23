@@ -195,7 +195,10 @@ int CVodeSetNlsRhsFn(void* cvode_mem, CVRhsFn f)
   cv_mem = (CVodeMem)cvode_mem;
 
   if (f) { cv_mem->nls_f = f; }
-  else { cv_mem->nls_f = cv_mem->cv_f; }
+  else
+  {
+    cv_mem->nls_f = cv_mem->cv_f;
+  }
 
   return (CV_SUCCESS);
 }
@@ -246,7 +249,10 @@ int cvNlsInit(CVodeMem cvode_mem)
   {
     retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLS, cvNlsLSetup);
   }
-  else { retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLS, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLS, NULL);
+  }
 
   if (retval != CV_SUCCESS)
   {
@@ -260,7 +266,10 @@ int cvNlsInit(CVodeMem cvode_mem)
   {
     retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLS, cvNlsLSolve);
   }
-  else { retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLS, NULL); }
+  else
+  {
+    retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLS, NULL);
+  }
 
   if (retval != CV_SUCCESS)
   {
@@ -340,9 +349,8 @@ static int cvNlsLSolve(N_Vector delta, void* cvode_mem)
   return (CV_SUCCESS);
 }
 
-static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor,
-                         N_Vector delta, sunrealtype tol,
-                         N_Vector ewt, void* cvode_mem)
+static int cvNlsConvTest(SUNNonlinearSolver NLS, N_Vector ycor, N_Vector delta,
+                         sunrealtype tol, N_Vector ewt, void* cvode_mem)
 {
   CVodeMem cv_mem;
   int m, retval;
