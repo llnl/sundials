@@ -35,6 +35,8 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
 
 static SUNErrCode AllocateContent(SUNNonlinearSolver NLS, N_Vector tmpl);
 static void FreeContent(SUNNonlinearSolver NLS);
+
+SUNDIALS_MAYBE_UNUSED
 static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                            N_Vector delta, N_Vector w);
 
@@ -49,6 +51,7 @@ static SUNErrCode setFromCommandLine_FixedPoint(SUNNonlinearSolver NLS,
                                                 const char* NLSid, int argc,
                                                 char* argv[]);
 
+SUNDIALS_MAYBE_UNUSED
 static SUNErrCode GetUpdateNorm_FixedPoint(SUNNonlinearSolver NLS,
                                            N_Vector delta, N_Vector w)
 {
