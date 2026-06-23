@@ -99,6 +99,18 @@ module fsunnonlinsol_auto_mod
  public :: FSUNNonlinSolSetConvTestFn_Auto
  public :: FSUNNonlinSolSetLSetupFn_Auto
  public :: FSUNNonlinSolSetLSolveFn_Auto
+ type, public :: SWIGTYPE_p_p_char
+  type(SwigClassWrapper), public :: swigdata
+ end type
+ type, bind(C) :: SwigArrayWrapper
+  type(C_PTR), public :: data = C_NULL_PTR
+  integer(C_SIZE_T), public :: size = 0
+ end type
+ public :: FSUNNonlinSolSetOptions_Auto
+ public :: FSUNNonlinSolSetNormFn_Auto
+ public :: FSUNNonlinSolSetMaxIters_Auto
+ public :: FSUNNonlinSolSetGetConvRateFn_Auto
+ public :: FSUNNonlinSolSetGetUpdateNormFn_Auto
  public :: FSUNNonlinSolSetSwitchingParameters_Auto
  public :: FSUNNonlinSolGetFixedPointSolver_Auto
  public :: FSUNNonlinSolGetNewtonSolver_Auto
@@ -525,6 +537,59 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetOptions_Auto(farg1, farg2, farg3, farg4, farg5) &
+bind(C, name="_wrap_FSUNNonlinSolSetOptions_Auto") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigarraywrapper
+import :: swigclasswrapper
+type(C_PTR), value :: farg1
+type(SwigArrayWrapper) :: farg2
+type(SwigArrayWrapper) :: farg3
+integer(C_INT), intent(in) :: farg4
+type(SwigClassWrapper) :: farg5
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetNormFn_Auto(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetNormFn_Auto") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetMaxIters_Auto(farg1, farg2) &
+bind(C, name="_wrap_FSUNNonlinSolSetMaxIters_Auto") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT), intent(in) :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetGetConvRateFn_Auto(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetGetConvRateFn_Auto") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetGetUpdateNormFn_Auto(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetGetUpdateNormFn_Auto") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1274,6 +1339,124 @@ type(C_FUNPTR) :: farg2
 farg1 = c_loc(nls)
 farg2 = lsolvefn
 fresult = swigc_FSUNNonlinSolSetLSolveFn_Auto(farg1, farg2)
+swig_result = fresult
+end function
+
+
+subroutine SWIG_string_to_chararray(string, chars, wrap)
+  use, intrinsic :: ISO_C_BINDING
+  character(kind=C_CHAR, len=*), intent(IN) :: string
+  character(kind=C_CHAR), dimension(:), target, allocatable, intent(OUT) :: chars
+  type(SwigArrayWrapper), intent(OUT) :: wrap
+  integer :: i
+
+  allocate(character(kind=C_CHAR) :: chars(len(string) + 1))
+  do i=1,len(string)
+    chars(i) = string(i:i)
+  end do
+  i = len(string) + 1
+  chars(i) = C_NULL_CHAR ! C string compatibility
+  wrap%data = c_loc(chars)
+  wrap%size = len(string)
+end subroutine
+
+function FSUNNonlinSolSetOptions_Auto(nls, nlsid, file_name, argc, argv) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+character(kind=C_CHAR, len=*), target :: nlsid
+character(kind=C_CHAR), dimension(:), allocatable, target :: farg2_chars
+character(kind=C_CHAR, len=*), target :: file_name
+character(kind=C_CHAR), dimension(:), allocatable, target :: farg3_chars
+integer(C_INT), intent(in) :: argc
+class(SWIGTYPE_p_p_char), intent(in) :: argv
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(SwigArrayWrapper) :: farg2 
+type(SwigArrayWrapper) :: farg3 
+integer(C_INT) :: farg4 
+type(SwigClassWrapper) :: farg5 
+
+farg1 = c_loc(nls)
+call SWIG_string_to_chararray(nlsid, farg2_chars, farg2)
+call SWIG_string_to_chararray(file_name, farg3_chars, farg3)
+farg4 = argc
+farg5 = argv%swigdata
+fresult = swigc_FSUNNonlinSolSetOptions_Auto(farg1, farg2, farg3, farg4, farg5)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetNormFn_Auto(nls, normfn, norm_fn_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: normfn
+type(C_PTR) :: norm_fn_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = normfn
+farg3 = norm_fn_data
+fresult = swigc_FSUNNonlinSolSetNormFn_Auto(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetMaxIters_Auto(nls, maxiters) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+integer(C_INT), intent(in) :: maxiters
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = c_loc(nls)
+farg2 = maxiters
+fresult = swigc_FSUNNonlinSolSetMaxIters_Auto(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetGetConvRateFn_Auto(nls, getconvratefn, getconvrate_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: getconvratefn
+type(C_PTR) :: getconvrate_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = getconvratefn
+farg3 = getconvrate_data
+fresult = swigc_FSUNNonlinSolSetGetConvRateFn_Auto(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetGetUpdateNormFn_Auto(nls, getupdatenormfn, getupdatenorm_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: getupdatenormfn
+type(C_PTR) :: getupdatenorm_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = getupdatenormfn
+farg3 = getupdatenorm_data
+fresult = swigc_FSUNNonlinSolSetGetUpdateNormFn_Auto(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
