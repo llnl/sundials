@@ -289,10 +289,7 @@ int cvNlsInitSensSim(CVodeMem cvode_mem)
   {
     retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLSsim, cvNlsLSetupSensSim);
   }
-  else
-  {
-    retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLSsim, NULL);
-  }
+  else { retval = SUNNonlinSolSetLSetupFn(cvode_mem->NLSsim, NULL); }
 
   if (retval != CV_SUCCESS)
   {
@@ -306,10 +303,7 @@ int cvNlsInitSensSim(CVodeMem cvode_mem)
   {
     retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLSsim, cvNlsLSolveSensSim);
   }
-  else
-  {
-    retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLSsim, NULL);
-  }
+  else { retval = SUNNonlinSolSetLSolveFn(cvode_mem->NLSsim, NULL); }
 
   if (retval != CV_SUCCESS)
   {

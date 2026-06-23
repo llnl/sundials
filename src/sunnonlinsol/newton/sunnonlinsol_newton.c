@@ -311,8 +311,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       }
       else if (retval == SUN_NLS_SWITCH)
       {
-        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
-                   "status = switch");
+        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = switch");
         return SUN_NLS_SWITCH;
       }
 
