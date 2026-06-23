@@ -53,22 +53,6 @@
 #define SUNNLS_AUTO_DEFAULT_NEWT_TO_FP_DELAY     10
 #define SUNNLS_AUTO_DEFAULT_FP_TO_NEWT_DELAY     1
 
-SUNErrCode SUNNonlinSolSetOptions_Auto(SUNNonlinearSolver NLS,
-                                       const char* NLSid, const char* file_name,
-                                       int argc, char* argv[]);
-SUNErrCode SUNNonlinSolSetSysFn_Auto(SUNNonlinearSolver NLS,
-                                     SUNNonlinSolSysFn SysFn);
-SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
-                                      SUNNonlinSolNormFn NormFn,
-                                      void* norm_fn_data);
-SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Auto(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
-  void* getupdatenorm_data);
-SUNErrCode SUNNonlinSolSetGetConvRateFn_Auto(SUNNonlinearSolver NLS,
-                                             SUNNonlinSolGetConvRateFn GetConvRateFn,
-                                             void* getconvrate_data);
-SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters);
-
 static SUNErrCode setFromCommandLine_Auto(SUNNonlinearSolver NLS,
                                           const char* NLSid, int argc,
                                           char* argv[]);

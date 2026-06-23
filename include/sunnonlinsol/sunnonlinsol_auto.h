@@ -102,6 +102,27 @@ SUNErrCode SUNNonlinSolSetLSolveFn_Auto(SUNNonlinearSolver NLS,
                                         SUNNonlinSolLSolveFn LSolveFn);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetOptions_Auto(SUNNonlinearSolver NLS,
+                                       const char* NLSid, const char* file_name,
+                                       int argc, char* argv[]);
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetNormFn_Auto(SUNNonlinearSolver NLS,
+                                      SUNNonlinSolNormFn NormFn,
+                                      void* norm_fn_data);
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetMaxIters_Auto(SUNNonlinearSolver NLS, int maxiters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetConvRateFn_Auto(SUNNonlinearSolver NLS,
+                                             SUNNonlinSolGetConvRateFn GetConvRateFn,
+                                             void* getconvrate_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Auto(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetSwitchingParameters_Auto(
   SUNNonlinearSolver NLS, sunrealtype newt_to_fp_threshold,
   long int newt_to_fp_delay, sunrealtype fp_to_newt_threshold,
