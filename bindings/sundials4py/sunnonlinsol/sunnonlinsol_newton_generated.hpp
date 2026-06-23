@@ -55,13 +55,6 @@ m.def("SUNNonlinSolSetComputeStiffnessRatio_Newton",
       SUNNonlinSolSetComputeStiffnessRatio_Newton, nb::arg("NLS"),
       nb::arg("onoff"));
 
-m.def("SUNNonlinSolSetGetUpdateNormFn_Newton",
-      SUNNonlinSolSetGetUpdateNormFn_Newton, nb::arg("NLS"),
-      nb::arg("GetUpdateNormFn"), nb::arg("getupdatenorm_data"));
-
-m.def("SUNNonlinSolSetNormFn_Newton", SUNNonlinSolSetNormFn_Newton,
-      nb::arg("NLS"), nb::arg("NormFn"), nb::arg("norm_fn_data"));
-
 m.def(
   "SUNNonlinSolGetStiffnessRatio_Newton",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
