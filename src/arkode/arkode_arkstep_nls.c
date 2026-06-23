@@ -1211,7 +1211,7 @@ int arkStep_NlsFPFunction_MassTDep(N_Vector zcor, N_Vector g, void* arkode_mem)
       is provided.
   ---------------------------------------------------------------*/
 int arkStep_NlsConvTest(SUNNonlinearSolver NLS, SUNDIALS_MAYBE_UNUSED N_Vector y,
-                        SUNDIALS_MAYBE_UNUSED N_Vector del, sunrealtype tol,
+                        N_Vector del, sunrealtype tol,
                         N_Vector ewt, void* arkode_mem)
 {
   /* temporary variables */

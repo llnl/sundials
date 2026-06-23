@@ -23,7 +23,6 @@ sundials_add_library(
   INCLUDE_SUBDIR sunnonlinsol
   LINK_LIBRARIES PUBLIC sundials_core sundials_sunnonlinsolnewton
                  sundials_sunnonlinsolfixedpoint
-  OBJECT_LIBRARIES
   OUTPUT_NAME sundials_sunnonlinsolauto
   VERSION ${sunnonlinsollib_VERSION}
   SOVERSION ${sunnonlinsollib_SOVERSION})

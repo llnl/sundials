@@ -301,12 +301,6 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
                  NEWTON_CONTENT(NLS)->curiter, NEWTON_CONTENT(NLS)->niters,
                  NEWTON_CONTENT(NLS)->delnrm);
 
-      if (retval == SUN_NLS_SWITCH)
-      {
-        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list", "status = switch");
-        return SUN_NLS_SWITCH;
-      }
-
       /* if successful update Jacobian status and return */
       if (retval == SUN_SUCCESS)
       {
@@ -315,14 +309,11 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
         NEWTON_CONTENT(NLS)->jcur = SUNFALSE;
         return SUN_SUCCESS;
       }
-      else
+      else if (retval == SUN_NLS_SWITCH)
       {
-        if (retval == SUN_NLS_SWITCH)
-        {
-          SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
-                     "status = switch");
-          return SUN_NLS_SWITCH;
-        }
+        SUNLogInfo(NLS->sunctx->logger, "end-iterations-list",
+                   "status = switch");
+        return SUN_NLS_SWITCH;
       }
 
       /* check if the iteration should continue; otherwise exit Newton loop */
