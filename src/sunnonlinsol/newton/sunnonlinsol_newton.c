@@ -39,6 +39,7 @@
 #define ZERO SUN_RCONST(0.0) /* real 0.0 */
 #define ONE  SUN_RCONST(1.0) /* real 1.0 */
 
+/* Retrieve the update norm if its available, otherwise compute it. */
 static SUNErrCode GetUpdateNorm_Newton(SUNNonlinearSolver NLS, N_Vector delta,
                                        N_Vector w)
 {
