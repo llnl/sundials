@@ -38,7 +38,7 @@
 /* this is effectively the maximum number of times we would allow 
    switching to happen within a single solve. It is unlikely to 
    ever be reached, but it prevents an infinite switchign loop from
-   being  possible. */
+   being possible. */
 #define SUNNLS_AUTO_MAX_SOLVE_ATTEMPTS 3
 
 /* Default switching parameters 
@@ -379,15 +379,8 @@ SUNErrCode SUNNonlinSolFree_Auto(SUNNonlinearSolver NLS)
       free(AUTO_CONTENT(NLS)->auto_ctest_data);
       AUTO_CONTENT(NLS)->auto_ctest_data = NULL;
     }
-    if (AUTO_CONTENT(NLS)->fp_solver)
-    {
-      AUTO_CONTENT(NLS)->fp_solver->ops->free(AUTO_CONTENT(NLS)->fp_solver);
-    }
-    if (AUTO_CONTENT(NLS)->newton_solver)
-    {
-      AUTO_CONTENT(NLS)->newton_solver->ops->free(
-        AUTO_CONTENT(NLS)->newton_solver);
-    }
+    SUNNonlinSolFree(AUTO_CONTENT(NLS)->fp_solver);
+    SUNNonlinSolFree(AUTO_CONTENT(NLS)->newton_solver);
     free(NLS->content);
     NLS->content = NULL;
   }
