@@ -668,7 +668,7 @@ for ((j=0;j<ntestdirs;j++)); do
 
         echo "START CMAKE"
 
-        time cmake -C sundials.cmake ../../. | tee -a configure.log
+        time cmake -W error=dev -C sundials.cmake ../../. | tee -a configure.log
 
         rc=${PIPESTATUS[0]}
         echo -e "\ncmake returned $rc\n" | tee -a configure.log

@@ -83,14 +83,14 @@ individual packages. The name of the distribution archive is of the form
 ``cvodes``, ``arkode``, ``ida``, ``idas``, or ``kinsol``, and ``a.b.c``
 represents the version number of the SUNDIALS suite or of the individual
 package. After downloading the relevant archives, uncompress and expand the
-sources. For example, if you downloaded ``sundials-7.7.0.tar.gz``, running the
+sources. For example, if you downloaded ``sundials-x.y.z.tar.gz``, running the
 command
 
 .. code-block:: bash
 
-   tar -zxf sundials-7.7.0.tar.gz
+   tar -zxf sundials-x.y.z.tar.gz
 
-will extract the source files under the ``sundials-7.7.0`` directory.
+will extract the source files under the ``sundials-x.y.z`` directory.
 
 In the installation steps below we will refer to the following directories:
 
@@ -794,6 +794,26 @@ Fortran Interfaces
    .. versionadded:: 7.7.0
 
       Replaces the deprecated option ``BUILD_FORTRAN_MODULE_INTERFACE``
+
+.. _Installation.Options.Python:
+
+Python Interfaces
+^^^^^^^^^^^^^^^^^
+
+.. cmakeoption:: SUNDIALS_ENABLE_PYTHON
+
+   Enable SUNDIALS Python interfaces
+
+   Default: ``OFF``
+
+   .. note::
+
+      The recommended method of installing the SUNDIALS python interfaces is
+      ``pip install sundials4py``, or, from the root of the SUNDIALS repository,
+      ``pip install .``.
+
+   .. versionadded:: 7.6.0
+
 
 .. _Installation.Options.ErrorChecking:
 

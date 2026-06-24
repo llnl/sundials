@@ -28,12 +28,12 @@ or by opening an issue on our `GitHub <https://github.com/LLNL/sundials>`_.
 Installation
 ------------
 
-.. collapse:: I have the sundials source, how do I build it?
+.. dropdown:: I have the sundials source, how do I build it?
 
    See the :ref:`Installation.CMake` section.
 
 
-.. collapse:: Can I use a non-default compiler to build SUNDIALS?
+.. dropdown:: Can I use a non-default compiler to build SUNDIALS?
 
    Yes, specific compilers can be specified on the CMake command line.
    The following example specifies gcc and g++ for the C and CXX compilers, respectively:
@@ -47,7 +47,7 @@ Installation
       with a fresh build directory and specify the compiler on the command line as shown.
 
 
-.. collapse:: How do I install SUNDIALS on Windows systems?
+.. dropdown:: How do I install SUNDIALS on Windows systems?
 
    One way of obtaining Windows libraries for the SUNDIALS solvers is to use
    `cygwin <https://www.cygwin.com/>`__, in which case the installation
@@ -58,7 +58,7 @@ Installation
    section.
 
 
-.. collapse:: Everything installed fine! How do I link the SUNDIALS libraries to my own application?
+.. dropdown:: Everything installed fine! How do I link the SUNDIALS libraries to my own application?
 
    Refer to :ref:`Installation.UsingSUNDIALS`.
 
@@ -66,7 +66,7 @@ Installation
 CVODE(S) / IDA(S) / ARKODE
 --------------------------
 
-.. collapse:: How do I choose tolerances?
+.. dropdown:: How do I choose tolerances?
 
    The same advice applies to CVODE(S), IDA(S), and ARKODE:
 
@@ -100,7 +100,7 @@ CVODE(S) / IDA(S) / ARKODE
    are reduced.
 
 
-.. collapse:: How do I choose what linear solver to use for the stiff case?
+.. dropdown:: How do I choose what linear solver to use for the stiff case?
 
    If the problem size is fairly small (say :math:`N < 100`), then using the dense solver is
    probably best; it is the simplest to use, and reasonably inexpensive for small :math:`N`. For larger :math:`N`, it
@@ -123,7 +123,7 @@ CVODE(S) / IDA(S) / ARKODE
    time-dependent partial differential equation systems, there is considerable discussion in the
    paper :cite:p:`BrHi:89`.
 
-.. collapse:: How do I handle a data-defined function within the RHS or residual function?
+.. dropdown:: How do I handle a data-defined function within the RHS or residual function?
 
    Often the RHS or residual function depends on some function :math:`A(t)` that is data-defined,
    i.e. defined only at a set of discrete set of times :math:`t`. The solver must be able to obtain values of
@@ -136,7 +136,7 @@ CVODE(S) / IDA(S) / ARKODE
    data-defined function :math:`A(y)` that involves one or more components of the dependent variable
    vector :math:`y`. Of course, if more that one component is involved, the fit is more complicated.
 
-.. collapse:: How do I control unphysical negative values?
+.. dropdown:: How do I control unphysical negative values?
 
    In many applications, some components in the true solution are always positive
    or non-negative, though at times very small. In the numerical solution, however,
@@ -175,7 +175,7 @@ CVODE(S) / IDA(S) / ARKODE
    computed values is unsuccessful, because they involve some extra overhead cost.
 
 
-.. collapse:: How do I treat discontinuities in the RHS or residual function?
+.. dropdown:: How do I treat discontinuities in the RHS or residual function?
 
    If the jumps at the discontinuities are relatively small, simply keep them in the RHS (or residual) function,
    and let the integrator respond to them (possibly taking smaller steps through each point of
@@ -190,7 +190,7 @@ CVODE(S) / IDA(S) / ARKODE
    (which have jumped).
 
 
-.. collapse:: When is it advantageous to supply my own error weight function?
+.. dropdown:: When is it advantageous to supply my own error weight function?
 
    The main situation where supplying an ``EwtFn`` function is a good idea is where the problem needs something "in between" the
    cases covered by scalar and vector absolute tolerances. Namely, suppose there are a few groups of
@@ -201,7 +201,7 @@ CVODE(S) / IDA(S) / ARKODE
    values of ``reltol`` to different variables (or groups of variables).
 
 
-.. collapse:: How do switch on/off forward sensitivity computations in CVODES?
+.. dropdown:: How do switch on/off forward sensitivity computations in CVODES?
 
    If you want to turn on and off forward sensitivity calculations during several successive
    integrations (such as if you were using CVODES within a dynamically-constrained optimization loop,
@@ -209,7 +209,7 @@ CVODE(S) / IDA(S) / ARKODE
    computed), it is most efficient to use :c:func:`CVodeSensToggleOff`.
 
 
-.. collapse:: What is the role of plist in CVODES?
+.. dropdown:: What is the role of plist in CVODES?
 
    The argument ``plist`` to :c:func:`CVodeSetSensParams` is used to specify the problem parameters with
    respect to which solution sensitivities are to be computed.
@@ -232,7 +232,7 @@ CVODE(S) / IDA(S) / ARKODE
    are desired, a ``NULL`` pointer can be passed to :c:func:`CVodeSetSensParams`.
 
 
-.. collapse:: What is the role of pbar in CVODES?
+.. dropdown:: What is the role of pbar in CVODES?
 
    The argument ``pbar`` to :c:func:`CVodeSetSensParams` is used to specify scaling factors for the
    problem parameters.
@@ -265,7 +265,7 @@ CVODE(S) / IDA(S) / ARKODE
    :c:func:`CVodeSetSensParams`.
 
 
-.. collapse:: What is pure quadrature integration?
+.. dropdown:: What is pure quadrature integration?
 
    Suppose your ODE is :math:`y'=f(t,y)` and you integrate it from :math:`0` to :math:`T` and that you are also interested in computing an integral of the form
 
@@ -291,7 +291,7 @@ CVODE(S) / IDA(S) / ARKODE
    integrals (very often a large number of them) need to be computed for adjoint sensitivity.
 
 
-.. collapse:: When should I select a non-default temporal adaptivity controller in ARKODE?
+.. dropdown:: When should I select a non-default temporal adaptivity controller in ARKODE?
 
    The default temporal adaptivity controller in ARKODE was selected due to its robust performance on test
    problems that ranged in difficulty and stiffness, and when running with a wide range of solution tolerances
@@ -338,7 +338,7 @@ CVODE(S) / IDA(S) / ARKODE
 KINSOL
 ------
 
-.. collapse:: How do I reinitialize KINSOL within a C/C++ program?
+.. dropdown:: How do I reinitialize KINSOL within a C/C++ program?
 
    Although KINSOL does not provide a reinitialization function, it is possible to reinitialize the
    solver (meaning reuse a KINSOL object), but only if the problem size remains unchanged. To
@@ -349,7 +349,7 @@ KINSOL
    nonlinear algebraic system.
 
 
-.. collapse:: Why is the system function being evaluated at points that violate the constraints?
+.. dropdown:: Why is the system function being evaluated at points that violate the constraints?
 
    If you have not supplied a function to compute either :math:`J(u)` (of type :c:type:`KINLsJacFn`) or :math:`J(u) v`
    (of type :c:type:`KINLsJacTimesVecFn`), then the internal function may be the culprit. The
@@ -361,7 +361,7 @@ KINSOL
 Miscellaneous
 -------------
 
-.. collapse:: How do I determine which version of SUNDIALS I have?
+.. dropdown:: How do I determine which version of SUNDIALS I have?
 
    If you still have access to the distribution files, then the SUNDIALS release number is indicated
    in the top-level ``README.md`` and the corresponding solver versions can be determined by
@@ -371,7 +371,7 @@ Miscellaneous
 
 
 
-.. collapse:: SUNDIALS Wiki
+.. dropdown:: SUNDIALS Wiki
 
    Some additional information might be found at `http://sundials.wikidot.com
    <http://sundials.wikidot.com/>`_ however the wikidot page has not been maintained in many years so

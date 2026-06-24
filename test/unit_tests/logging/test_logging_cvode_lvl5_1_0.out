@@ -30,12 +30,11 @@ Using GMRES iterative linear solver
  1.224744869258150e+00
  1.732049582942250e+00
 [INFO][rank 0][cvNls][end-nonlinear-solve] status = success, iters = 2
-[DEBUG][rank 0][cvDoErrorTest][error-test] dsm = 0.249962190573285
-[INFO][rank 0][cvStep][end-step-attempt] status = success, dsm = 0.249962190573285
 [DEBUG][rank 0][cvCompleteStep][new solution] y_new(:) =
  1.224744869258150e+00
  1.732049582942250e+00
 [DEBUG][rank 0][cvPrepareNextStep][return] eta = 1, hprime = 0.000102986025609508, qprime = 1, qwait = 1
+[INFO][rank 0][cvStep][end-step-attempt] status = success, dsm = 0.249962190573285
  1.029860256095084e-04    1.224744869258150e+00    1.732049582942250e+00    1.050956877080012e-09    6.122820268572582e-07
 [INFO][rank 0][cvStep][begin-step-attempt] step = 2, tn = 0.000102986025609508, h = 0.000102986025609508, q = 1
 [DEBUG][rank 0][cvPredict][predictor] y_predicted(:) =
@@ -63,12 +62,11 @@ Using GMRES iterative linear solver
  1.224744864928434e+00
  1.732047133690926e+00
 [INFO][rank 0][cvNls][end-nonlinear-solve] status = success, iters = 2
-[DEBUG][rank 0][cvDoErrorTest][error-test] dsm = 0.249962018704248
-[INFO][rank 0][cvStep][end-step-attempt] status = success, dsm = 0.249962018704248
 [DEBUG][rank 0][cvCompleteStep][new solution] y_new(:) =
  1.224744864928434e+00
  1.732047133690926e+00
 [DEBUG][rank 0][cvPrepareNextStep][return] eta = 10, hprime = 0.00102986025609508, qprime = 2, qwait = 2
+[INFO][rank 0][cvStep][end-step-attempt] status = success, dsm = 0.249962018704248
  2.059720512190168e-04    1.224744864928434e+00    1.732047133690926e+00    2.133223819811292e-09    1.224500849161814e-06
 [INFO][rank 0][cvStep][begin-step-attempt] step = 3, tn = 0.000205972051219017, h = 0.00102986025609508, q = 2
 [DEBUG][rank 0][cvPredict][predictor] y_predicted(:) =
@@ -96,7 +94,6 @@ Using GMRES iterative linear solver
  1.224744697830902e+00
  1.731941012902024e+00
 [INFO][rank 0][cvNls][end-nonlinear-solve] status = success, iters = 2
-[DEBUG][rank 0][cvDoErrorTest][error-test] dsm = 8.19847341436515
 [DEBUG][rank 0][cvDoErrorTest][new-step-eta] eta = 0.272921950943932
 [INFO][rank 0][cvStep][end-step-attempt] status = failed error test, dsm = 8.19847341436515, eflag = 5
 [INFO][rank 0][cvStep][begin-step-attempt] step = 3, tn = 0.000205972051219017, h = 0.000281071470293087, q = 2
@@ -125,12 +122,11 @@ Using GMRES iterative linear solver
  1.224744842672905e+00
  1.732034367979995e+00
 [INFO][rank 0][cvNls][end-nonlinear-solve] status = success, iters = 2
-[DEBUG][rank 0][cvDoErrorTest][error-test] dsm = 0.588592093330628
-[INFO][rank 0][cvStep][end-step-attempt] status = success, dsm = 0.588592093330628
 [DEBUG][rank 0][cvCompleteStep][new solution] y_new(:) =
  1.224744842672905e+00
  1.732034367979995e+00
 [DEBUG][rank 0][cvPrepareNextStep][return] eta = 1, hprime = 0.000281071470293087, qprime = 2, qwait = 2
+[INFO][rank 0][cvStep][end-step-attempt] status = success, dsm = 0.588592093330628
  4.870435215121043e-04    1.224744842672905e+00    1.732034367979995e+00    4.508398321334539e-09    2.744236933471811e-06
 ------------------------------------------------------------------------------------------------------------------------------
 Current time                  = 0.000487043521512104

@@ -87,61 +87,69 @@ In addition, SUNDIALS provides a memory management helper module
 (see :numref:`SUNMemory`) to support applications which implement their own
 memory management or memory pooling.
 
+.. tabularcolumns:: |\Y{0.25}|\Y{0.15}|\Y{0.15}|\Y{0.15}|\Y{0.15}|\Y{0.15}|
+
 .. _Usage.GPU.NVectorTable:
 .. table:: List of SUNDIALS GPU-enabled :c:type:`N_Vector` Modules
 
    ==========================================================  ===========  ===========  ===========  ================  ===========
-   Module                                                      CUDA         ROCm/HIP     oneAPI       Unmanaged Memory  UVM
+   NVector                                                     CUDA         ROCm/HIP     oneAPI       Unmanaged Memory  UVM
    ==========================================================  ===========  ===========  ===========  ================  ===========
-   :ref:`NVECTOR_CUDA <NVectors.CUDA>`                         X                                      X                 X
-   :ref:`NVECTOR_HIP  <NVectors.HIP>`                          X            X                         X                 X
-   :ref:`NVECTOR_SYCL <NVectors.SYCL>`                         X\ :sup:`3`  X\ :sup:`3`  X            X                 X
-   :ref:`NVECTOR_RAJA <NVectors.RAJA>`                         X            X            X            X                 X
-   :ref:`NVECTOR_KOKKOS <NVectors.Kokkos>`                     X            X            X            X                 X
-   :ref:`NVECTOR_OPENMPDEV <NVectors.OPENMPDEV>`               X            X\ :sup:`2`  X\ :sup:`2`  X
+   :ref:`CUDA <NVectors.CUDA>`                                 X                                      X                 X
+   :ref:`HIP  <NVectors.HIP>`                                  X            X                         X                 X
+   :ref:`SYCL <NVectors.SYCL>`                                 X\ :sup:`3`  X\ :sup:`3`  X            X                 X
+   :ref:`RAJA <NVectors.RAJA>`                                 X            X            X            X                 X
+   :ref:`KOKKOS <NVectors.Kokkos>`                             X            X            X            X                 X
+   :ref:`OPENMPDEV <NVectors.OPENMPDEV>`                       X            X\ :sup:`2`  X\ :sup:`2`  X
    ==========================================================  ===========  ===========  ===========  ================  ===========
+
+.. tabularcolumns:: |\Y{0.25}|\Y{0.15}|\Y{0.15}|\Y{0.15}|\Y{0.15}|\Y{0.15}|
 
 .. _Usage.GPU.SUNMatrixTable:
 .. table:: List of SUNDIALS GPU-enabled :c:type:`SUNMatrix` Modules
 
    ==========================================================  ===========  ===========  ===========  ================  ===========
-   Module                                                      CUDA         ROCm/HIP     oneAPI       Unmanaged Memory  UVM
+   SUNMatrix                                                   CUDA         ROCm/HIP     oneAPI       Unmanaged Memory  UVM
    ==========================================================  ===========  ===========  ===========  ================  ===========
-   :ref:`SUNMATRIX_CUSPARSE <SUNMatrix.cuSparse>`              X                                      X                 X
-   :ref:`SUNMATRIX_ONEMKLDENSE <SUNMatrix.OneMklDense>`        X\ :sup:`3`  X\ :sup:`3`  X            X                 X
-   :ref:`SUNMATRIX_MAGMADENSE <SUNMatrix.MagmaDense>`          X            X                         X                 X
-   :ref:`SUNMATRIX_GINKGO <SUNMatrix.Ginkgo>`                  X            X                         X                 X
-   :ref:`SUNMATRIX_KOKKOSDENSE <SUNMatrix.Kokkos>`             X            X                         X                 X
+   :ref:`CUSPARSE <SUNMatrix.cuSparse>`                        X                                      X                 X
+   :ref:`ONEMKLDENSE <SUNMatrix.OneMklDense>`                  X\ :sup:`3`  X\ :sup:`3`  X            X                 X
+   :ref:`MAGMADENSE <SUNMatrix.MagmaDense>`                    X            X                         X                 X
+   :ref:`GINKGO <SUNMatrix.Ginkgo>`                            X            X                         X                 X
+   :ref:`KOKKOSDENSE <SUNMatrix.Kokkos>`                       X            X                         X                 X
    ==========================================================  ===========  ===========  ===========  ================  ===========
+
+.. tabularcolumns:: |\Y{0.25}|\Y{0.15}|\Y{0.15}|\Y{0.15}|\Y{0.15}|\Y{0.15}|
 
 .. _Usage.GPU.SUNLinSolTable:
 .. table:: List of SUNDIALS GPU-enabled :c:type:`SUNLinearSolver` Modules
 
    ==========================================================  ===========  ===========  ===========  ================  ===========
-   Module                                                      CUDA         ROCm/HIP     oneAPI       Unmanaged Memory  UVM
+   SUNLinearSolver                                             CUDA         ROCm/HIP     oneAPI       Unmanaged Memory  UVM
    ==========================================================  ===========  ===========  ===========  ================  ===========
-   :ref:`SUNLINSOL_CUSOLVERSP <SUNLinSol.cuSolverSp>`          X                                      X                 X
-   :ref:`SUNLINSOL_ONEMKLDENSE <SUNLinSol.OneMklDense>`        X\ :sup:`3`  X\ :sup:`3`  X            X                 X
-   :ref:`SUNLINSOL_MAGMADENSE <SUNLinSol.MagmaDense>`          X                                      X                 X
-   :ref:`SUNLINSOL_GINKGO <SUNLinSol.Ginkgo>`                  X            X                         X                 X
-   :ref:`SUNLINSOL_KOKKOSDENSE <SUNLinSol.Kokkos>`             X            X                         X                 X
-   :ref:`SUNLINSOL_SPGMR <SUNLinSol.SPGMR>`                    X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
-   :ref:`SUNLINSOL_SPFGMR <SUNLinSol.SPFGMR>`                  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
-   :ref:`SUNLINSOL_SPTFQMR <SUNLinSol.SPTFQMR>`                X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
-   :ref:`SUNLINSOL_SPBCGS <SUNLinSol.SPBCGS>`                  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
-   :ref:`SUNLINSOL_PCG <SUNLinSol.PCG>`                        X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
+   :ref:`CUSOLVERSP <SUNLinSol.cuSolverSp>`                    X                                      X                 X
+   :ref:`ONEMKLDENSE <SUNLinSol.OneMklDense>`                  X\ :sup:`3`  X\ :sup:`3`  X            X                 X
+   :ref:`MAGMADENSE <SUNLinSol.MagmaDense>`                    X                                      X                 X
+   :ref:`GINKGO <SUNLinSol.Ginkgo>`                            X            X                         X                 X
+   :ref:`KOKKOSDENSE <SUNLinSol.Kokkos>`                       X            X                         X                 X
+   :ref:`SPGMR <SUNLinSol.SPGMR>`                              X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
+   :ref:`SPFGMR <SUNLinSol.SPFGMR>`                            X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
+   :ref:`SPTFQMR <SUNLinSol.SPTFQMR>`                          X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
+   :ref:`SPBCGS <SUNLinSol.SPBCGS>`                            X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
+   :ref:`PCG <SUNLinSol.PCG>`                                  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
    ==========================================================  ===========  ===========  ===========  ================  ===========
 
 .. ifconfig:: package_name != 'kinsol'
+
+   .. tabularcolumns:: |\Y{0.25}|\Y{0.15}|\Y{0.15}|\Y{0.15}|\Y{0.15}|\Y{0.15}|
 
    .. _Usage.GPU.SUNNonlinSolTable:
    .. table:: List of SUNDIALS GPU-enabled :c:type:`SUNNonlinearSolver` Modules
 
       ==========================================================  ===========  ===========  ===========  ================  ===========
-      Module                                                      CUDA         ROCm/HIP     oneAPI       Unmanaged Memory  UVM
+      SUNNonlinearSolver                                          CUDA         ROCm/HIP     oneAPI       Unmanaged Memory  UVM
       ==========================================================  ===========  ===========  ===========  ================  ===========
-      :ref:`SUNNONLINSOL_NEWTON <SUNNonlinSol.Newton>`            X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
-      :ref:`SUNNONLINSOL_FIXEDPOINT <SUNNonlinSol.FixedPoint>`    X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
+      :ref:`NEWTON <SUNNonlinSol.Newton>`                         X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
+      :ref:`FIXEDPOINT <SUNNonlinSol.FixedPoint>`                 X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`  X\ :sup:`1`       X\ :sup:`1`
       ==========================================================  ===========  ===========  ===========  ================  ===========
 
 Notes regarding the above tables:

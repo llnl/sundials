@@ -87,7 +87,6 @@ def main():
     fig, ax = plt.subplots()
 
     for i, datafile in enumerate(args.datafiles):
-
         quantities = None
         with open(datafile) as fn:
             # read the file line by line

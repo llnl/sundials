@@ -98,7 +98,6 @@ def main():
 
     # parse file names to get input parameters
     for f in output:
-
         split_fout = f.split("/")[-1]
         split_fout = split_fout.split("_")
 
@@ -142,7 +141,6 @@ def main():
 
     # read output files
     for f in output:
-
         if args.debug:
             print("Reading:", f)
 
@@ -156,7 +154,6 @@ def main():
 
         with open(f) as fout:
             for line in fout:
-
                 # split line into list
                 split_line = shlex.split(line)
 
@@ -170,7 +167,6 @@ def main():
 
                 # check if the operation is the one we want and get data
                 if args.op == split_line[0]:
-
                     i = nvec.index(nv)
                     j = nelem.index(ne)
 
@@ -283,7 +279,6 @@ def main():
     # Heat Map
     # --------------------------------------------------------------------------
     if args.heatmap:
-
         x = np.arange(len(nelem) + 1) - 0.5  # x = log2(number of elements) = 0,1,2,...
         y = np.arange(len(nvec) + 1) + 1.5  # y = number of vectors = 2,3,4,...
         # y = np.arange(len(nvec)+1)+0.5  # y = number of vectors = 1,2,3,...
@@ -350,7 +345,6 @@ def main():
     # Time vs Number of Elements Plots
     # --------------------------------------------------------------------------
     if args.timevelem:
-
         colors = [
             "#000000",
             "#a6cee3",
@@ -376,7 +370,6 @@ def main():
         ax = fig.add_subplot(111)
 
         for nv in nvec:
-
             i = nvec.index(nv)
 
             if args.loglog:

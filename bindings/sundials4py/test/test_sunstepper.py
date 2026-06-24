@@ -60,9 +60,9 @@ def test_stepper_set_evolve_fn(sunctx, nvec):
     s = make_stepper(sunctx)
     called = {"flag": False}
 
-    def evolve_fn(stepper, tout, vret, tret):
+    def evolve_fn(stepper, tout, vret):
         called["flag"] = True
-        return 0
+        return 0, 0.0
 
     err = SUNStepper_SetEvolveFn(s, evolve_fn)
     assert err == SUN_SUCCESS
@@ -75,9 +75,9 @@ def test_stepper_set_one_step_fn(sunctx, nvec):
     s = make_stepper(sunctx)
     called = {"flag": False}
 
-    def one_step_fn(stepper, tout, vret, tret):
+    def one_step_fn(stepper, tout, vret):
         called["flag"] = True
-        return 0
+        return 0, 0.0
 
     err = SUNStepper_SetOneStepFn(s, one_step_fn)
     assert err == SUN_SUCCESS

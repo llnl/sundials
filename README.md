@@ -60,6 +60,20 @@ Warning to users who receive more than one of the individual packages at
 different times: Mixing old and new versions of SUNDIALS may fail. To avoid such
 failures, obtain all desired package at the same time.
 
+### Python
+
+sundials4py can be installed with pip with wheels available through pypi,
+
+```
+pip install sundials4py
+```
+
+or from source
+
+```
+pip install git+https://github.com/llnl/sundials.git
+```
+
 ## Support ##
 
 Full user guides for all of the SUNDIALS packages are available [online](https://sundials.readthedocs.io).

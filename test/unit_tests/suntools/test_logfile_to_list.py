@@ -24,8 +24,13 @@ import json
 import os
 import sys
 
+from _testutils import add_repo_suntools_to_path
+
+
+add_repo_suntools_to_path()
+
 # Import the logs module
-import logs
+from suntools import logs
 
 
 class TestLogParsing(unittest.TestCase):
