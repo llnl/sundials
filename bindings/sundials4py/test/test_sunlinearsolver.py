@@ -52,6 +52,16 @@ def test_create_sptfqmr(sunctx, nvec):
     assert LS is not None
 
 
+def test_create_klu_if_available(sunctx, nvec):
+    if "SUNLinSol_KLU" not in globals():
+        pytest.skip("SUNLinSol_KLU is unavailable in this build")
+
+    n = N_VGetLength(nvec)
+    A = SUNSparseMatrix(n, n, n, SUN_CSC_MAT, sunctx)
+    LS = SUNLinSol_KLU(nvec, A, sunctx)
+    assert LS is not None
+
+
 def test_get_type_and_id(sunctx, nvec):
     A = SUNDenseMatrix(N_VGetLength(nvec), N_VGetLength(nvec), sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
