@@ -19,6 +19,7 @@ import pytest
 import sys
 import importlib
 from fixtures import *
+import sundials4py.core as s4py_core
 from sundials4py.core import *
 
 
@@ -91,7 +92,7 @@ def test_create_klu_if_available(sunctx, nvec):
 
 
 def test_create_superlumt_if_available(sunctx, nvec):
-    if not hasattr(importlib.import_module("sundials4py.core"), "SUNLinSol_SuperLUMT"):
+    if not hasattr(s4py_core, "SUNLinSol_SuperLUMT"):
         pytest.skip("SUNLinSol_SuperLUMT is not enabled in this build")
 
     n = N_VGetLength(nvec)
