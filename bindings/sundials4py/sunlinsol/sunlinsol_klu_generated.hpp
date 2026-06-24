@@ -1,8 +1,3 @@
-// #ifndef _SUNLINSOL_KLU_H
-//
-// #ifdef __cplusplus
-// #endif
-//
 m.attr("SUNKLU_ORDERING_DEFAULT") = SUNKLU_ORDERING_DEFAULT;
 
 m.attr("SUNKLU_REINIT_FULL") = SUNKLU_REINIT_FULL;
@@ -31,17 +26,10 @@ m.def(
 
     return SUNLinSol_KLU_adapt_return_type_to_shared_ptr(y, A, sunctx);
   },
-  nb::arg("y"), nb::arg("A"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
-  nb::keep_alive<0, 3>());
+  nb::arg("y"), nb::arg("A"), nb::arg("sunctx"), nb::keep_alive<0, 3>());
 
 m.def("SUNLinSol_KLUReInit", SUNLinSol_KLUReInit, nb::arg("S"), nb::arg("A"),
       nb::arg("nnz"), nb::arg("reinit_type"));
 
 m.def("SUNLinSol_KLUSetOrdering", SUNLinSol_KLUSetOrdering, nb::arg("S"),
       nb::arg("ordering_choice"));
-// #ifdef __cplusplus
-//
-// #endif
-//
-// #endif
-//

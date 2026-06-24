@@ -16,6 +16,7 @@
 # -----------------------------------------------------------------
 
 import pytest
+import sys
 from fixtures import *
 from sundials4py.core import *
 
@@ -53,11 +54,12 @@ def test_create_sptfqmr(sunctx, nvec):
 
 
 def test_create_klu_if_available(sunctx, nvec):
-    if "SUNLinSol_KLU" not in globals():
+    if not hasattr(sys.modules[__name__], "SUNLinSol_KLU"):
         pytest.skip("SUNLinSol_KLU is unavailable in this build")
 
     n = N_VGetLength(nvec)
     A = SUNSparseMatrix(n, n, n, SUN_CSC_MAT, sunctx)
+    assert A is not None
     LS = SUNLinSol_KLU(nvec, A, sunctx)
     assert LS is not None
 
