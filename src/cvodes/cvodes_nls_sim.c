@@ -423,14 +423,8 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   /* extract the current state and sensitivity corrections */
   ycor = NV_VEC_SW(ycorSim, 0);
 
-  /* extract state delta */
-  delta = NV_VEC_SW(deltaSim, 0);
 
-  /* extract state error weights */
-  ewt = NV_VEC_SW(ewtSim, 0);
 
-  /* compute the norm of the state corrections */
-  cv_mem->cv_delnrm = N_VWrmsNorm(delta, ewt);
 
   /* compute the norm of the sensitivity corrections */
   if (cvNlsNormSensSim(deltaSim, ewtSim, &(cv_mem->cv_delnrmS), cvode_mem) !=
@@ -449,9 +443,9 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
      rate constant is stored in crate, and used in the test.
 
      Recall that, even when errconS=SUNFALSE, all variables are used in the
-     convergence test. Hence, we use cv_delnrm (and not delnrm). However, acnrm is
+     convergence test. Hence, we use cv_delnrmS (and not cv_delnrm). However, acnrm is
      used in the error test and thus it has different forms depending on
-     errconS (and this explains why we still carry around delnrm).
+     errconS (and this explains why we still carry around cv_delnrm).
   */
   if (m > 0)
   {
