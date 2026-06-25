@@ -2,8 +2,6 @@
 
 ## Changes to SUNDIALS in release 7.8.0
 
-### Major Features
-
 ### New Features and Enhancements
 
 We added a new SUNNonlinearSolver implementation, `SUNNonlinearSolver_Auto`,
@@ -106,8 +104,6 @@ array. This addresses [Issue #937](https://github.com/llnl/sundials/issues/937).
 
 Fixed a bug in ERKStep where calling `ARKodeResize` before `ARKodeEvolve` or
 `ARKodeInit` would result in a segmentation fault.
-
-### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.7.0
 

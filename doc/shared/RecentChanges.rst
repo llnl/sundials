@@ -1,8 +1,6 @@
 .. For package-specific references use :ref: rather than :numref: so intersphinx
    links to the appropriate place on read the docs
 
-**Major Features**
-
 **New Features and Enhancements**
 
 We added a new SUNNonlinearSolver implementation,
@@ -110,5 +108,3 @@ correctly return the rootsfound array. This addresses `Issue #937
 Fixed a bug in ERKStep where calling :c:func:`ARKodeResize` before
 :c:func:`ARKodeEvolve` or :c:func:`ARKodeInit` would result in a segmentation
 fault.
-
-**Deprecation Notices**
