@@ -1,0 +1,33 @@
+spack:
+  packages:
+    all:
+      providers:
+        target: [x86_64]
+        blas:
+        - openblas
+        mpi:
+        - openmpi
+  specs:
+  - cmake arch=x86_64
+  - hypre~int64~internal-superlu arch=x86_64
+  - petsc+double~int64~superlu-dist arch=x86_64
+  - openmpi arch=x86_64
+  - openblas~ilp64 arch=x86_64
+  - suite-sparse arch=x86_64
+  - superlu-mt~int64~blas arch=x86_64
+  - superlu-dist~int64 ^parmetis~int64 arch=x86_64
+  - trilinos+tpetra gotype=int arch=x86_64
+  - xbraid arch=x86_64
+  config:
+    install_tree: /opt/software
+  mirrors:
+    local: /var/cache/spack-mirror
+  upstreams: {}
+  concretizer:
+    unify: true
+  view:
+    default:
+      root: /opt/view
+      projections:
+        superlu-mt: '{name}'
+        superlu-dist: '{name}'

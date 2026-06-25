@@ -1,0 +1,177 @@
+name: Third Party Library Updates
+
+on:
+  workflow_dispatch:
+  push: # TODO: remove before merging
+    - feature/tpl-update-workflow 
+  schedule:
+  - cron: '15 06 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build_and_test:
+    name: Ubuntu latest / GCC / int${{ matrix.indexsize }} / ${{ matrix.precision }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    strategy:
+      fail-fast: false
+      matrix:
+        indexsize: [32, 64]
+        precision: ['double']
+    env:
+      IMAGE_TAG: sundials-tpl-update-int${{ matrix.indexsize }}-${{ matrix.precision }}:${{ github.run_id }}-${{ github.run_attempt }}
+      MANIFEST_DIR: ${{ github.workspace }}/dependency-manifest-int${{ matrix.indexsize }}-${{ matrix.precision }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - name: VM hardware info
+        run: |
+          cat /proc/cpuinfo
+          uname -a
+
+      - name: Resolve latest stable Spack release
+        id: spack-release
+        run: |
+          set -euo pipefail
+          version="$(
+            git ls-remote --tags --refs https://github.com/spack/spack.git 'v*' \
+              | awk '{ ref=$2; sub("^refs/tags/", "", ref); if (ref ~ /^v[0-9]+(\.[0-9]+)*$/) print ref }' \
+              | sort -V \
+              | tail -n 1
+          )"
+          if [ -z "$version" ]; then
+            echo "Failed to resolve latest stable Spack release" >&2
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Using Spack ${version}"
+
+      - name: Resolve latest spack-packages commit
+        id: spack-packages
+        run: |
+          set -euo pipefail
+          commit="$(
+            git ls-remote https://github.com/spack/spack-packages.git refs/heads/develop \
+              | awk '{ print $1 }'
+          )"
+          if [ -z "$commit" ]; then
+            echo "Failed to resolve spack-packages develop commit" >&2
+            exit 1
+          fi
+          echo "commit=${commit}" >> "$GITHUB_OUTPUT"
+          echo "Using spack-packages ${commit}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build TPL test image
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: ./docker/sundials-ci/spack-release-packages-develop
+          build-args: |
+            spack_version=${{ steps.spack-release.outputs.version }}
+            spack_packages_ref=develop
+            spack_packages_commit=${{ steps.spack-packages.outputs.commit }}
+            spack_yaml=./int${{ matrix.indexsize }}-${{ matrix.precision }}/spack.yaml
+          load: true
+          tags: ${{ env.IMAGE_TAG }}
+          cache-from: type=gha,scope=tpl-update-int${{ matrix.indexsize }}-${{ matrix.precision }}
+          cache-to: type=gha,mode=max,scope=tpl-update-int${{ matrix.indexsize }}-${{ matrix.precision }}
+
+      - name: Collect dependency manifest
+        run: |
+          set -euo pipefail
+          mkdir -p "$MANIFEST_DIR"
+          docker run --rm \
+            -e GITHUB_WORKSPACE="$GITHUB_WORKSPACE" \
+            -e MANIFEST_DIR="$MANIFEST_DIR" \
+            -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+            -w "$GITHUB_WORKSPACE" \
+            --entrypoint /bin/bash \
+            "$IMAGE_TAG" \
+            -lc '
+              set -euo pipefail
+              source /etc/profile
+              eval "$(/opt/spack/bin/spack env activate --sh /opt/spack-environment)"
+              {
+                echo "Ubuntu release:"
+                cat /etc/os-release
+                echo
+                echo "GCC version:"
+                gcc --version
+                echo
+                echo "Spack version:"
+                /opt/spack/bin/spack --version
+                git -C /opt/spack log -1 --pretty="spack commit: %H"
+                echo
+                echo "spack-packages version:"
+                git -C /opt/spack-packages log -1 --pretty="spack-packages commit: %H"
+                echo
+                echo "Spack repositories:"
+                /opt/spack/bin/spack repo list
+                echo
+                echo "Installed specs:"
+                /opt/spack/bin/spack find -v
+                echo
+                echo "Concretized specs:"
+                /opt/spack/bin/spack find --format "{name}@{version}%{compiler.name}@{compiler.version} {hash}"
+              } > "${MANIFEST_DIR}/manifest.txt"
+            '
+
+      - name: Run test_driver.sh
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -e GITHUB_WORKSPACE="$GITHUB_WORKSPACE" \
+            -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+            -w "$GITHUB_WORKSPACE" \
+            --entrypoint /bin/bash \
+            "$IMAGE_TAG" \
+            -lc '
+              set -euo pipefail
+              source /etc/profile
+              git config --global --add safe.directory "$GITHUB_WORKSPACE"
+              cd "$GITHUB_WORKSPACE/test"
+              ./test_driver.sh \
+                --testtype CUSTOM \
+                --env env/docker.sh \
+                --tpls ON \
+                --sunrealtype ${{ matrix.precision }} \
+                --indexsize ${{ matrix.indexsize }}
+            '
+
+      - name: Upload dependency manifest
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: dependency-manifest-int${{ matrix.indexsize }}-${{ matrix.precision }}
+          path: ${{ env.MANIFEST_DIR }}
+          if-no-files-found: ignore
+
+      - name: Archive build files from failed build
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: build-files-int${{ matrix.indexsize }}-${{ matrix.precision }}
+          path: |
+            ${{ github.workspace }}/test/build_*
+            !${{ github.workspace }}/test/build_*/Testing/output
+          if-no-files-found: ignore
+
+      - name: Archive output files from failed build
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: output-files-int${{ matrix.indexsize }}-${{ matrix.precision }}
+          path: |
+            ${{ github.workspace }}/test/build_*/Testing/
+          if-no-files-found: ignore
