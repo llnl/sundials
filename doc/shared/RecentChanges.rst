@@ -13,11 +13,6 @@ extended the :ref:`SUNNonlinearSolver API <SUNNonlinSol.API>` with callback sett
 :c:func:`SUNNonlinSolSetNormFn`, :c:func:`SUNNonlinSolSetGetUpdateNormFn`, and
 :c:func:`SUNNonlinSolSetGetConvRateFn`.
 
-Added the function :c:func:`SUNLogger_SetQueueAndFlushMsgFns` to allow for
-user-defined functions to queue and flush log messages.
-
-Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
-
 Added the ``ARKODE_SSP_ERK_3_1_2``, ``ARKODE_SSP_ERK_4_1_2``,
 ``ARKODE_SSP_ERK_4_2_3``, ``ARKODE_SSP_ERK_10_3_4``, ``ARKODE_SSP_LSPUM_ERK_3_1_2``,
 and ``ARKODE_ASCHER_ERK_3_1_2``
@@ -44,35 +39,54 @@ environment variables ``SUNLOGGER_INFO_FILENAME`` and
 
 Improved the performance of logging when enabled but no file pointer was set.
 
-**Bug Fixes**
+Added the function :c:func:`SUNLogger_SetQueueAndFlushMsgFns` to allow for
+user-defined functions to queue and flush log messages.
 
-Fixed a bug in the sundials4py wrappers for user-provided SUNStepper evolve
-and one_step functions.
+Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
+
+**Bug Fixes**
 
 Fixed a bug where an unrecognized error return flag from a user-provided
 SUNLinearSolver module would register as a successful linear solve.
 
-Fixed a minor bug where the number of required stages for STS methods
-in the LSRKStep module was incorrectly computed using the spectral
-radius instead of the real part of the Jacobian eigenvalues.
-
-Fixed a minor bug where the negative real extent of the stability region
-for the RKC method was not being properly computed, which could result
-in an underestimation of the number of stages required for stability.
-
-Fixed a minor bug where STS methods were limited to one fewer than
-the maximum allowed number of stages. STS can now use the full maximum
-number of stages.
-
-Fixed a bug that caused SUNDomEigEstimator_Initialize to overwrite the
-user-provided initial guess from SUNDomEigEstimator_SetInitialGuess. These
-routines are now order-independent.
+Fixed a bug that caused :c:func:`SUNDomEigEstimator_Initialize` to overwrite the
+user-provided initial guess from
+:c:func:`SUNDomEigEstimator_SetInitialGuess`. These routines are now
+order-independent.
 
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 ``malloc``.
 
-Fixed minor bug in reporting the maximum number of stages in
+Fixed a bug in ERKStep where calling :c:func:`ARKodeResize` before
+:c:func:`ARKodeEvolve` or :c:func:`ARKodeInit` would result in a segmentation
+fault.
+
+Fixed a bug where the number of required stages for STS methods in the LSRKStep
+module was incorrectly computed using the spectral radius instead of the real
+part of the Jacobian eigenvalues.
+
+Fixed a bug where the negative real extent of the stability region for the RKC
+method was not being properly computed, which could result in an underestimation
+of the number of stages required for stability.
+
+Fixed a bug where STS methods were limited to one fewer than the maximum allowed
+number of stages. STS can now use the full maximum number of stages.
+
+Fixed a bug in reporting the maximum number of stages in
 :c:func:`ARKodeGetStageIndex` when running SSP methods in LSRKStep.
+
+Fixed a bug where IDAS would incorrectly compute the quadrature predictor when
+:c:func:`IDACalcIC` was used. In some cases, this lead to an inconsistent
+solution in the forward solve compared to the forward recomputation from a
+checkpoint, ultimately causing a segfault.
+
+Fixed a bug in the sundials4py wrappers for user-provided SUNStepper evolve and
+one_step functions.
+
+Fixed a bug in sundials4py where the :c:func:`CVodeGetRootInfo`,
+:c:func:`ARKodeGetRootInfo`, and :c:func:`IDAGetRootInfo` functions did not
+correctly return the rootsfound array. This addresses `Issue #937
+<https://github.com/llnl/sundials/issues/937>`__.
 
 Removed duplicate logging output that would cause the Python logging tools to
 fail with a repeated key error.
@@ -87,11 +101,6 @@ Fixed empty ``elseif()`` cases in the CMake files for the Fortran interfaces to
 the ManyVector and MPIPlusX vectors which could results in a missing include
 path when compiling if an MPI compiler wrapper is not found.
 
-Fixed a bug where IDAS would incorrectly compute the quadrature predictor when
-IDACalcIC was used. In some cases, this lead to an inconsistent solution in the
-forward solve compared to the forward recomputation from a checkpoint,
-ultimately causing a segfault.
-
 Fixed a CMake bug where Fortran modules were not created for LSRKStep,
 ForcingStep, and SplittingStep.
 
@@ -99,12 +108,3 @@ Corrected the version number used in version added, changed, and deprecated
 notes in the documentation to always use the SUNDIALS version number with the
 package version number as a parenthetical note when it differs from the SUNDIALS
 version number.
-
-Fixed a bug in sundials4py where the :c:func:`CVodeGetRootInfo`,
-:c:func:`ARKodeGetRootInfo`, and :c:func:`IDAGetRootInfo` functions did not
-correctly return the rootsfound array. This addresses `Issue #937
-<https://github.com/llnl/sundials/issues/937>`__.
-
-Fixed a bug in ERKStep where calling :c:func:`ARKodeResize` before
-:c:func:`ARKodeEvolve` or :c:func:`ARKodeInit` would result in a segmentation
-fault.
