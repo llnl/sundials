@@ -411,7 +411,7 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   CVodeMem cv_mem;
   int m, retval;
   sunrealtype dcon;
-  N_Vector delta, ycor, ewt;
+  N_Vector ycor, ewt;
 
   if (cvode_mem == NULL)
   {
@@ -422,6 +422,9 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 
   /* extract the current state and sensitivity corrections */
   ycor = NV_VEC_SW(ycorSim, 0);
+
+  /* extract the current error weight vector */
+  ewt = NV_VEC_SW(ewtSim, 0);
 
   /* compute the norm of the sensitivity corrections */
   if (cvNlsNormSensSim(deltaSim, ewtSim, &(cv_mem->cv_delnrmS), cvode_mem) !=
