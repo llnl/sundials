@@ -68,6 +68,7 @@ void bind_sunmatrix_sparse(nb::module_& m);
 
 void bind_sunnonlinsol_fixedpoint(nb::module_& m);
 void bind_sunnonlinsol_newton(nb::module_& m);
+void bind_sunnonlinsol_auto(nb::module_& m);
 
 } // namespace sundials4py
 
@@ -149,4 +150,5 @@ NB_MODULE(sundials4py, m)
 
   sundials4py::bind_sunnonlinsol_fixedpoint(core_m);
   sundials4py::bind_sunnonlinsol_newton(core_m);
+  sundials4py::bind_sunnonlinsol_auto(core_m);
 }

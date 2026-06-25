@@ -44,6 +44,10 @@ struct _SUNNonlinearSolverContent_Newton
   SUNNonlinSolLSetupFn LSetup;  /* linear solver setup function               */
   SUNNonlinSolLSolveFn LSolve;  /* linear solver solve function               */
   SUNNonlinSolConvTestFn CTest; /* nonlinear solver convergence test function */
+  SUNNonlinSolNormFn norm_fn;   /* optional norm callback                     */
+  void* norm_fn_data;           /* data for the norm callback                 */
+  SUNNonlinSolGetUpdateNormFn getupdatenorm_fn; /* optional update-norm getter */
+  void* getupdatenorm_data; /* data for the update-norm getter            */
 
   /* nonlinear solver variables */
   N_Vector delta; /* Newton update vector                                   */
@@ -53,6 +57,9 @@ struct _SUNNonlinearSolverContent_Newton
   long int niters; /* total number of nonlinear iterations across all solves */
   long int nconvfails; /* total number of convergence failures across all solves
                         */
+  sunbooleantype compute_stiffr; /* enable stiffness-metric updates           */
+  sunrealtype stiffr; /* ratio ||F_m|| / || delta_m || to monitor stiffness */
+  sunrealtype delnrm; /* wrms norm of delta from last iteration            */
   void* ctest_data; /* data to pass to convergence test function              */
 };
 
@@ -106,6 +113,20 @@ SUNErrCode SUNNonlinSolSetConvTestFn_Newton(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetMaxIters_Newton(SUNNonlinearSolver NLS, int maxiters);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSolver NLS,
+                                                       sunbooleantype onoff);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Newton(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolNormFn NormFn,
+                                        void* norm_fn_data);
+
 /* get functions */
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetNumIters_Newton(SUNNonlinearSolver NLS,
@@ -121,6 +142,10 @@ SUNErrCode SUNNonlinSolGetNumConvFails_Newton(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS,
                                        SUNNonlinSolSysFn* SysFn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver NLS,
+                                                sunrealtype* stiffr);
 
 #ifdef __cplusplus
 }

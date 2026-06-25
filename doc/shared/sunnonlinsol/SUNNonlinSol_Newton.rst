@@ -131,7 +131,7 @@ in :numref:`SUNNonlinSol.API.CoreFn`--:numref:`SUNNonlinSol.API.GetFn`
 should be called in favor of the SUNNonlinSol_Newton-specific implementations.
 
 The SUNNonlinSol_Newton module also defines the following
-user-callable function.
+user-callable functions.
 
 
 .. c:function:: SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS, SUNNonlinSolSysFn *SysFn)
@@ -151,6 +151,39 @@ user-callable function.
       SUNNonlinSol_Newton module.  We note that SUNNonlinSol_Newton
       will not leverage the results from any user calls to *SysFn*.
 
+.. c:function:: SUNErrCode SUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSolver NLS, sunbooleantype onoff)
+
+   This enables or disables the additional residual norm evaluation used to
+   compute the stiffness ratio ``stiffr`` from :cite:p:`norsett1986switching`.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *onoff* -- ``SUNTRUE`` to compute ``stiffr`` after each continued
+        Newton iteration, or ``SUNFALSE`` to disable that extra work.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   **Notes:**
+      By default the stiffness ratio computation is disabled. This is automatically
+      enabled when the Newton solver is used from within the ``SUNNonlinSol_Auto``
+      module (see :numref:`SUNNonlinSol.Auto`).
+
+   .. versionadded:: x.y.z
+
+.. c:function:: SUNErrCode SUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver NLS, sunrealtype *stiffr)
+
+   This returns the most recently computed stiffness ratio.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *stiffr* -- the stiffness metric :math:`\|F(y^m)\| / \|\delta_m\|`.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   .. versionadded:: x.y.z
+
 
 .. _SUNNonlinSol.Newton.Content:
 
@@ -168,6 +201,8 @@ following structure.
      SUNNonlinSolLSetupFn   LSetup;
      SUNNonlinSolLSolveFn   LSolve;
      SUNNonlinSolConvTestFn CTest;
+     SUNNonlinSolNormFn     norm_fn;
+     void                  *norm_fn_data;
 
      N_Vector       delta;
      sunbooleantype jcur;
@@ -175,6 +210,9 @@ following structure.
      int            maxiters;
      long int       niters;
      long int       nconvfails;
+     sunbooleantype compute_stiffr;
+     sunrealtype    stiffr;
+     sunrealtype    delnrm;
      void*          ctest_data;
    };
 
@@ -191,6 +229,10 @@ information:
 
 * ``CTest`` -- the function for checking convergence of the Newton iteration,
 
+* ``norm_fn`` -- an optional callback for computing the update norm or residual norm,
+
+* ``norm_fn_data`` -- the data pointer passed to ``norm_fn``,
+
 * ``delta`` -- the Newton iteration update vector,
 
 * ``jcur`` -- the Jacobian status (``SUNTRUE`` = current, ``SUNFALSE`` = stale),
@@ -203,5 +245,12 @@ information:
 
 * ``nconvfails`` -- the total number of nonlinear convergence failures across
   all solves,
+
+* ``compute_stiffr`` -- a flag indicating whether to compute the
+  stiffness ratio after continued iterations,
+
+* ``stiffr`` -- the most recently computed stiffness ratio,
+
+* ``delnrm`` -- the WRMS norm of the most recent Newton update,
 
 * ``ctest_data`` -- the data pointer passed to the convergence test function,
