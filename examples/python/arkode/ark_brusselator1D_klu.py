@@ -287,9 +287,11 @@ def main():
 
     np.savetxt("bruss_mesh.txt", np.linspace(0.0, 1.0, N), fmt="%.16e")
     ydata = N_VGetArrayPointer(y)
-    with open("bruss_u.txt", "w") as ufid, open("bruss_v.txt", "w") as vfid, open(
-        "bruss_w.txt", "w"
-    ) as wfid:
+    with (
+        open("bruss_u.txt", "w") as ufid,
+        open("bruss_v.txt", "w") as vfid,
+        open("bruss_w.txt", "w") as wfid,
+    ):
         np.savetxt(ufid, ydata[0::3][None, :], fmt="%.16e")
         np.savetxt(vfid, ydata[1::3][None, :], fmt="%.16e")
         np.savetxt(wfid, ydata[2::3][None, :], fmt="%.16e")
