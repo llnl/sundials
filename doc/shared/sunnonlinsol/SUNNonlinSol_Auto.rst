@@ -21,7 +21,7 @@
 The SUNNonlinSol_Auto implementation
 ====================================
 
-.. versionadded:: x.y.z
+.. versionadded:: 7.8.0
 
 This section describes the SUNNonlinSol implementation that can automatically
 switch between :numref:`SUNNonlinSol.FixedPoint` and :numref:`SUNNonlinSol.Newton`
