@@ -3,7 +3,8 @@ name: Third Party Library Updates
 on:
   workflow_dispatch:
   push: # TODO: remove before merging
-    - feature/tpl-update-workflow 
+    branches:
+      - feature/tpl-update-workflow 
   schedule:
   - cron: '15 06 * * *'
 
