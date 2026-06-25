@@ -423,9 +423,6 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   /* extract the current state and sensitivity corrections */
   ycor = NV_VEC_SW(ycorSim, 0);
 
-
-
-
   /* compute the norm of the sensitivity corrections */
   if (cvNlsNormSensSim(deltaSim, ewtSim, &(cv_mem->cv_delnrmS), cvode_mem) !=
       SUN_SUCCESS)
