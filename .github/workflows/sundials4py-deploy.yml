@@ -1,5 +1,9 @@
 name: sundials4py-deploy
 
+env:
+  TWINE_USERNAME: __token__
+  TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
 on:
   # Allows this workflow to be called by other workflows
   workflow_call:
