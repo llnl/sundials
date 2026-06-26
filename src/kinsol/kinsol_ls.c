@@ -1296,6 +1296,9 @@ int kinLsSolve(KINMem kin_mem, N_Vector xx, N_Vector bb, sunrealtype* sJpnorm,
       KINProcessError(kin_mem, SUNLS_PSOLVE_FAIL_UNREC, __LINE__, __func__,
                       __FILE__, MSG_LS_PSOLVE_FAILED);
       break;
+    default:
+      KINProcessError(kin_mem, retval, __LINE__, __func__, __FILE__,
+                      "Unrecognized error return value from SUNLinSolSolve");
     }
     return (retval);
   }

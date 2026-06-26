@@ -163,6 +163,7 @@ Release Procedure
          wget -O objects-python.inv https://docs.python.org/3/objects.inv
          wget -O objects-numpy.inv https://numpy.org/doc/stable/objects.inv
          wget -O objects-scipy.inv https://docs.scipy.org/doc/scipy/objects.inv
+         wget -O objects-cmake.inv https://www.cmake.org/cmake/help/latest/objects.inv
          popd
 
 #. Draft the `release on GitHub <https://github.com/LLNL/sundials/releases>`__.
