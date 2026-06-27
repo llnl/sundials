@@ -406,6 +406,12 @@ unique ID having type:
 
 with values specified for each method below (e.g., ``ARKODE_MIS_KW3``).
 
+.. warning::
+
+   When using any of the following methods that do not include embeddings
+   (marked with "Embedding Order" shown as "--"), users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
+
 
 
 .. table:: Explicit MRIStep coupling tables.
@@ -481,8 +487,8 @@ Notes regarding the above table:
    :index:`ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL`  :math:`2^*`        --               1
    :index:`ARKODE_IMEX_MRI_GARK_MIDPOINT`     2                  --               2
    :index:`ARKODE_IMEX_MRI_SR21`              :math:`2^{\circ}`  1                3                :cite:p:`Fish:24`
-   :index:`ARKODE_IMEX_MRI_GARK_ASCHER_ARK2`       2                  1                2
-   :index:`ARKODE_IMEX_MRI_GARK_ARK2`      2                  1                2
+   :index:`ARKODE_IMEX_MRI_GARK_ASCHER_ARK2`  2                  1                2
+   :index:`ARKODE_IMEX_MRI_GARK_ARK2`         2                  1                2
    :index:`ARKODE_IMEX_MRI_GARK3a`            :math:`3^*`        --               2                :cite:p:`ChiRen:21`
    :index:`ARKODE_IMEX_MRI_GARK3b`            3                  --               2                :cite:p:`ChiRen:21`
    :index:`ARKODE_IMEX_MRI_SR32`              :math:`3^{\circ}`  2                4                :cite:p:`Fish:24`

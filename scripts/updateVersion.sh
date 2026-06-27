@@ -22,7 +22,7 @@
 # development releases the label string is of the form "-dev.#" and for full
 # releases the label string is "".
 sun_major=${1:-7}
-sun_minor=${2:-7}
+sun_minor=${2:-8}
 sun_patch=${3:-0}
 sun_label=${4:-""}
 month=${5:-$(date +"%b")}
@@ -378,18 +378,36 @@ sedi '26 a\
 
 # Update CITATIONS.md
 fn="../CITATIONS.md"
-sedi '71s/.*/\ \ year   = {'${year}'},/' $fn
-sedi '72s/.*/\ \ note   = {v'${ark_ver}'}/' $fn
-sedi '80s/.*/\ \ year   = {'${year}'},/' $fn
-sedi '81s/.*/\ \ note   = {v'${cv_ver}'}/' $fn
-sedi '89s/.*/\ \ year   = {'${year}'},/' $fn
-sedi '90s/.*/\ \ note   = {v'${cvs_ver}'}/' $fn
-sedi '98s/.*/\ \ year   = {'${year}'},/' $fn
-sedi '99s/.*/\ \ note   = {v'${ida_ver}'}/' $fn
-sedi '107s/.*/\ \ year   = {'${year}'},/' $fn
-sedi '108s/.*/\ \ note   = {v'${idas_ver}'}/' $fn
-sedi '116s/.*/\ \ year   = {'${year}'},/' $fn
-sedi '117s/.*/\ \ note   = {v'${kin_ver}'}/' $fn
+
+sedi '/@Misc{arkodeDocumentation,/,/^}/{
+  s/\(year[[:space:]]*=[[:space:]]*{\)[0-9]*}/\1'"${year}"'}/
+  s/\(note[[:space:]]*=[[:space:]]*{\)[^}]*}/\1'"v${ark_ver}"'}/
+}' "$fn"
+
+sedi '/@Misc{cvodeDocumentation,/,/^}/{
+  s/\(year[[:space:]]*=[[:space:]]*{\)[0-9]*}/\1'"${year}"'}/
+  s/\(note[[:space:]]*=[[:space:]]*{\)[^}]*}/\1'"v${cv_ver}"'}/
+}' "$fn"
+
+sedi '/@Misc{cvodesDocumentation,/,/^}/{
+  s/\(year[[:space:]]*=[[:space:]]*{\)[0-9]*}/\1'"${year}"'}/
+  s/\(note[[:space:]]*=[[:space:]]*{\)[^}]*}/\1'"v${cvs_ver}"'}/
+}' "$fn"
+
+sedi '/@Misc{idaDocumentation,/,/^}/{
+  s/\(year[[:space:]]*=[[:space:]]*{\)[0-9]*}/\1'"${year}"'}/
+  s/\(note[[:space:]]*=[[:space:]]*{\)[^}]*}/\1'"v${ida_ver}"'}/
+}' "$fn"
+
+sedi '/@Misc{idasDocumentation,/,/^}/{
+  s/\(year[[:space:]]*=[[:space:]]*{\)[0-9]*}/\1'"${year}"'}/
+  s/\(note[[:space:]]*=[[:space:]]*{\)[^}]*}/\1'"v${idas_ver}"'}/
+}' "$fn"
+
+sedi '/@Misc{kinsolDocumentation,/,/^}/{
+  s/\(year[[:space:]]*=[[:space:]]*{\)[0-9]*}/\1'"${year}"'}/
+  s/\(note[[:space:]]*=[[:space:]]*{\)[^}]*}/\1'"v${kin_ver}"'}/
+}' "$fn"
 
 # Update all occurrences of x.y.z and X.Y.Z to the current version number
 fn="../CHANGELOG.md"
@@ -406,6 +424,8 @@ do
     sedi "s/x.y.z/${sun_ver}/gI" $fn
 done
 
+fn="../doc/arkode/guide/source/Introduction.rst"
+sedi "s/x.y.z/${sun_ver}/gI" $fn
 for fn in $(grep -Iirl "x.y.z" ../doc/arkode/guide/source/*)
 do
     sedi "s/x.y.z/${sun_ver} (${ark_ver})/gI" $fn
@@ -426,6 +446,8 @@ do
     sedi "s/x.y.z/${ida_ver}/gI" $fn
 done
 
+fn="../doc/idas/guide/source/Introduction.rst"
+sedi "s/x.y.z/${sun_ver}/gI" $fn
 for fn in $(grep -Iirl "x.y.z" ../doc/idas/guide/source/*)
 do
     sedi "s/x.y.z/${sun_ver} (${idas_ver})/gI" $fn

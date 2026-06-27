@@ -42,6 +42,7 @@ unset(_pkg_version_spec)
 
 # Find the PETSC libraries
 set(_petsc_libs)
+set(_petsc_static FALSE)
 foreach(_next_lib IN LISTS PKG_PETSC_LIBRARIES)
   find_library(
     _petsc_lib_${_next_lib}
@@ -49,37 +50,42 @@ foreach(_next_lib IN LISTS PKG_PETSC_LIBRARIES)
     PATHS ${PKG_PETSC_LIBRARY_DIRS})
   if(_petsc_lib_${_next_lib})
     list(APPEND _petsc_libs "${_petsc_lib_${_next_lib}}")
+    if(_petsc_lib_${_next_lib} MATCHES "\\.(a|lib)$")
+      set(_petsc_static TRUE)
+    endif()
   endif()
 endforeach()
 
 # libm is always required
 list(APPEND _petsc_libs "${SUNDIALS_MATH_LIBRARY}")
 
-# Substitute MPI target if PETSC is built with MPI
-foreach(_next_lib IN LISTS PKG_PETSC_STATIC_LIBRARIES)
-  if(_next_lib MATCHES "mpi")
-    list(APPEND _petsc_libs "MPI::MPI_C")
-  endif()
-  if(_next_lib MATCHES "kokkoskernels")
-    if(NOT TARGET Kokkos::kokkoskernels)
-      find_package(KokkosKernels REQUIRED PATHS "${KokkosKernels_DIR}"
-                   "${PKG_PETSC_LIBRARY_DIRS}")
+set(_petsc_link_options "")
+if(_petsc_static)
+  # Names already resolved from the public Libs (skip to avoid double-link)
+  set(_petsc_public ${PKG_PETSC_LIBRARIES})
+  foreach(_flag IN LISTS PKG_PETSC_STATIC_LDFLAGS)
+    if(_flag MATCHES "^-l(.+)$")
+      if(CMAKE_MATCH_1 IN_LIST _petsc_public)
+        continue()
+      endif()
     endif()
-    list(APPEND _petsc_libs "Kokkos::kokkoskernels")
-  endif()
-  if(_next_lib MATCHES "kokkos")
-    if(NOT TARGET Kokkos::kokkos)
-      find_package(Kokkos REQUIRED PATHS "${Kokkos_DIR}"
-                   "${PKG_PETSC_LIBRARY_DIRS}")
+    if(_flag MATCHES "^-L")
+      list(APPEND _petsc_link_options "${_flag}")
+    elseif(_flag MATCHES "^-l" OR _flag MATCHES "^/")
+      list(APPEND _petsc_libs "${_flag}")
+    else()
+      list(APPEND _petsc_link_options "${_flag}")
     endif()
-    list(APPEND _petsc_libs "Kokkos::kokkos")
-  endif()
-endforeach()
-list(REMOVE_DUPLICATES _petsc_libs)
+  endforeach()
+  list(APPEND _petsc_link_options ${PKG_PETSC_STATIC_LDFLAGS_OTHER})
+  unset(_petsc_public)
+endif()
 
 # Set result variables
 set(PETSC_LIBRARIES "${_petsc_libs}")
 unset(_petsc_libs)
+set(PETSC_LINK_OPTIONS "${_petsc_link_options}")
+unset(_petsc_link_options)
 set(PETSC_FOUND ${PKG_PETSC_FOUND})
 set(PETSC_INCLUDE_DIRS ${PKG_PETSC_INCLUDE_DIRS})
 
@@ -122,6 +128,10 @@ if(NOT TARGET SUNDIALS::PETSC)
     SUNDIALS::PETSC
     PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${PETSC_INCLUDE_DIRS}"
                INTERFACE_LINK_LIBRARIES "${PETSC_LIBRARIES}")
+  if(PETSC_LINK_OPTIONS)
+    set_target_properties(SUNDIALS::PETSC PROPERTIES INTERFACE_LINK_OPTIONS
+                                                     "${PETSC_LINK_OPTIONS}")
+  endif()
 endif()
 
 mark_as_advanced(PETSC_INCLUDE_DIRS PETSC_LIBRARIES PETSC_VERSION_MAJOR

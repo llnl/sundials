@@ -163,10 +163,16 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   content->q = N_VClone(q);
   SUNCheckLastErrNull();
 
-  N_VScale(ONE, q, content->q);
+  content->V = N_VCloneVectorArray(kry_dim + 1, q);
   SUNCheckLastErrNull();
 
-  content->V = N_VCloneVectorArray(kry_dim + 1, q);
+  /* Initialize the vector V[0] */
+  sunrealtype normq = N_VDotProd(q, q);
+  SUNCheckLastErrNull();
+
+  normq = SUNRsqrt(normq);
+
+  N_VScale(ONE / normq, q, content->V[0]);
   SUNCheckLastErrNull();
 
   return (DEE);
@@ -321,15 +327,6 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
       (sunrealtype*)malloc(Arnoldi_CONTENT(DEE)->kry_dim * sizeof(sunrealtype));
     SUNAssert(Arnoldi_CONTENT(DEE)->Hes[k], SUN_ERR_MALLOC_FAIL);
   }
-
-  sunrealtype normq = N_VDotProd(Arnoldi_CONTENT(DEE)->q,
-                                 Arnoldi_CONTENT(DEE)->q);
-  SUNCheckLastErr();
-
-  normq = SUNRsqrt(normq);
-
-  N_VScale(ONE / normq, Arnoldi_CONTENT(DEE)->q, Arnoldi_CONTENT(DEE)->V[0]);
-  SUNCheckLastErr();
 
   return SUN_SUCCESS;
 }
