@@ -243,7 +243,7 @@ Daniel R. Reynolds$^2$, and
 Carol S. Woodward$^1$
 \\\\
 {\em $^1$Center for Applied Scientific Computing, Lawrence Livermore National Laboratory}\\
-{\em $^2$Department of Mathematics, Southern Methodist University}
+{\em $^2$Department of Mathematics and Statistics, University of Maryland Baltimore County}
 """
 
 latex_documents = [("index", "INSTALL_GUIDE.tex", project, tex_author, "manual", False)]
@@ -262,15 +262,20 @@ latex_elements = {
     # arguments to the sphinxsetup macro
     "sphinxsetup":
     # the color for titles
-    "TitleColor={RGB}{0,0,0}," +
+    "TitleColor={RGB}{0,0,0},"
+    +
     # disable frames around code-blocks
-    "verbatimwithframe=false," +
+    "verbatimwithframe=false,"
+    +
     # do not wrap long lines in code-blocks
-    "verbatimwrapslines=false," +
+    "verbatimwrapslines=false,"
+    +
     # background color for code-blocks
-    "VerbatimColor={RGB}{240.0,240.0,240.0}," +
+    "VerbatimColor={RGB}{240.0,240.0,240.0},"
+    +
     # font used by heading
-    "HeaderFamily=\\rmfamily\\bfseries," +
+    "HeaderFamily=\\rmfamily\\bfseries,"
+    +
     # line breaks are allowed inside inline literals
     "inlineliteralwraps=true",
     # disable the fncychap package

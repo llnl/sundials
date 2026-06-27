@@ -26,7 +26,7 @@ jobs:
       python: ${{ steps.changes.outputs.python }}
       fortran: ${{ steps.changes.outputs.fortran }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         # Get full history for git diff
         with:
           fetch-depth: 0
@@ -79,9 +79,21 @@ jobs:
 
           CHANGED="$(git diff --name-only "$BASE" "$HEAD")"
 
+          # If a CI workflow file changed, run everything
+          if echo "$CHANGED" | grep -qE '^(.github/workflows/)'; then
+            echo "Workflow updates detected, running all jobs"
+            {
+              echo "docs=true"
+              echo "src=true"
+              echo "python=true"
+              echo "fortran=true"
+             } >> "$GITHUB_OUTPUT"
+             exit 0
+          fi
+
           # Check for changes to trigger documentation build checks
-          # Updates in doc, bindings/sundials4py, or tools directories
-          if echo "$CHANGED" | grep -qE '^(doc/|bindings/sundials4py/|tools/)'; then
+          # Updates in doc, bindings/sundials4py, or suntools directories
+          if echo "$CHANGED" | grep -qE '^(doc/|bindings/sundials4py/|suntools/)'; then
             echo "docs=true" >> "$GITHUB_OUTPUT"
           else
             echo "docs=false" >> "$GITHUB_OUTPUT"
@@ -98,7 +110,7 @@ jobs:
 
           # Check for changes to trigger python interface checks
           # Updates in include or bindings/sundials4py directories
-          if echo "$CHANGED" | grep -qE '^(include/|bindings/sundials4py/|examples/python/)'; then
+          if echo "$CHANGED" | grep -qE '^(pyproject.toml|include/|bindings/sundials4py/|examples/python/)'; then
             echo "python=true" >> "$GITHUB_OUTPUT"
           else
             echo "python=false" >> "$GITHUB_OUTPUT"

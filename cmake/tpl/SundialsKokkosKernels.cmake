@@ -30,7 +30,7 @@ include_guard(GLOBAL)
 # -----------------------------------------------------------------------------
 # Section 3: Find the TPL
 # -----------------------------------------------------------------------------
-find_package(KokkosKernels REQUIRED HINTS "${KokkosKernels_DIR}")
+find_package(KokkosKernels REQUIRED PATHS "${KokkosKernels_DIR}")
 
 message(STATUS "Kokkos Kernels VERSION: ${KokkosKernels_VERSION}")
 

@@ -38,15 +38,17 @@ Moreover, advanced users can provide a customized :c:type:`SUNDomEigEstimator`
 implementation to any SUNDIALS package, particularly in cases where they
 provide their own :c:type:`N_Vector`.
 
-While Krylov-based estimators preset the number of Krylov subspace
-dimensions, resulting in a tolerance-free estimation, SUNDIALS requires
-that iterative estimators stop when the residual meets a prescribed
-tolerance, :math:`\tau`,
+For convergence-based estimators, convergence is determined using a
+magnitude-based relative tolerance criterion. Given successive eigenvalue
+estimates :math:`\lambda_k` and :math:`\lambda_{k-1}`, convergence is achieved
+when
 
 .. math::
-  :name: pi_rel_tol
+   :name: pi_rel_tol
 
-  \frac{\left|\lambda_k - \lambda_{k-1}\right|}{\left|\lambda_k \right|} < \tau.
+   \left|\lambda_k - \lambda_{k-1}\right| <= \tau \left|\lambda_k\right|,
+
+where :math:`\tau` is a prescribed tolerance.
 
 For users interested in providing their own :c:func:`SUNDomEigEstimator`, the
 following section presents the :c:type:`SUNDomEigEstimator` class and its implementation

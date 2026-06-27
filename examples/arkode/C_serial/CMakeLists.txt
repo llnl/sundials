@@ -42,6 +42,8 @@ set(ARKODE_examples
     "ark_analytic_ssprk.c\;\;develop"
     "ark_brusselator_1D_mri.c\;\;develop"
     "ark_brusselator_fp.c\;\;exclude-single"
+    "ark_brusselator_lsrk_domeigest.c\;\;develop"
+    "ark_brusselator_lsrk_externaldomeigest.c\;\;develop"
     "ark_brusselator_mri.c\;\;develop"
     "ark_brusselator.c\;\;develop"
     "ark_brusselator1D_imexmri.c\;0 0.001\;exclude-single"

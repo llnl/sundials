@@ -86,7 +86,7 @@ SplittingStep initialization functions
       * ``examples/arkode/C_serial/ark_advection_diffusion_reaction_splitting.c``
       * ``examples/arkode/C_serial/ark_analytic_partitioned.c``
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 Optional inputs for IVP method selection
@@ -118,7 +118,7 @@ Optional inputs for IVP method selection
 
       This should not be used with :c:func:`ARKodeSetOrder`.
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. _ARKODE.Usage.SplittingStep.OptionalOutputs:
@@ -142,7 +142,7 @@ Optional output functions
    :retval ARK_MEM_NULL: if the SplittingStep memory was ``NULL``
    :retval ARK_ILL_INPUT: if *partition* was out of bounds
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 SplittingStep re-initialization function
@@ -217,4 +217,4 @@ the ODE and the :c:type:`SUNStepper` objects used to evolve each partition.
       previously set options are retained but may be updated by calling the
       appropriate "Set" functions.
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)

@@ -27,12 +27,13 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory.
       run: |
         cmake \
+        -W error=dev \
         -B ${{github.workspace}}/build \
         -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
         -D ENABLE_ALL_WARNINGS=ON \

@@ -3,249 +3,108 @@
 
 **New Features and Enhancements**
 
-The default number of stages for the SSP Runge-Kutta methods
-:c:enumerator:`ARKODE_LSRK_SSP_S_2` and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in
-LSRKStep were changed from 10 and 9, respectively, to their minimum allowable
-values of 2 and 4. Users may revert to the previous values by calling
-:c:func:`LSRKStepSetNumSSPStages`.
+We added a new SUNNonlinearSolver implementation,
+:ref:`SUNNonlinearSolver_Auto <SUNNonlinSol.Auto>`, which uses an algorithm described in
+:cite:p:`norsett1986switching` to switch between a modified Newton iteration and fixed-point
+iteration based on an estimate of stiffness. This solver may be useful to pair with the BDF method
+in CVODE/CVODES, or with DIRK methods in ARKODE, for users who are unsure about
+the stiffness of their problem. See the module documentation for more information. We also 
+extended the :ref:`SUNNonlinearSolver API <SUNNonlinSol.API>` with callback setters
+:c:func:`SUNNonlinSolSetNormFn`, :c:func:`SUNNonlinSolSetGetUpdateNormFn`, and
+:c:func:`SUNNonlinSolSetGetConvRateFn`.
 
-Added the optional function :c:func:`ARKodeInit` to ARKODE to enable data
-allocation before the first call to :c:func:`ARKodeEvolve` (but after all other
-optional input routines have been called), to support users who measure memory
-usage before beginning a simulation.
+Added the ``ARKODE_SSP_ERK_3_1_2``, ``ARKODE_SSP_ERK_4_1_2``,
+``ARKODE_SSP_ERK_4_2_3``, ``ARKODE_SSP_ERK_10_3_4``, ``ARKODE_SSP_LSPUM_ERK_3_1_2``,
+and ``ARKODE_ASCHER_ERK_3_1_2``
+embedded explicit Runge-Kutta Butcher tables.
 
-Added the function :c:func:`ARKodeGetStageIndex` that returns the index of the
-stage currently being processed, and the total number of stages in the method,
-for users who wish to compute auxiliary quantities in their IVP right-hand side
-functions during some stages and not others (e.g., in all but the first or last
-stage).
+Added the ``ARKODE_SSP_DIRK_3_1_2``, ``ARKODE_SSP_LSPUM_SDIRK_3_1_2``,
+``ARKODE_ESDIRK_4_2_3``, and ``ARKODE_ASCHER_SDIRK_3_1_2`` embedded diagonally
+implicit Runge-Kutta Butcher tables.
 
-Added the functions :c:func:`ARKodeGetLastTime` and :c:func:`ARKodeGetLastState`
-to return the last successful time and state achieved by ARKODE, respectively.
+Of these, embedded additive Runge-Kutta methods may be formed using
+``ARKODE_SSP_ERK_3_1_2`` + ``ARKODE_SSP_DIRK_3_1_2``,
+``ARKODE_SSP_ERK_4_2_3`` + ``ARKODE_ESDIRK_4_2_3``,
+``ARKODE_SSP_LSPUM_ERK_3_1_2`` + ``ARKODE_SSP_LSPUM_SDIRK_3_1_2``,
+and ``ARKODE_ASCHER_ERK_3_1_2`` + ``ARKODE_ASCHER_SDIRK_3_1_2``.
 
-ARKODE now allows users to supply functions that will be called before each
-internal time step attempt (:c:func:`ARKodeSetPreStepFn`), after each successful
-time step (:c:func:`ARKodeSetPostStepFn`), before right-hand side routines are
-called on an updated state (:c:func:`ARKodeSetPreRhsFn`), and/or once each
-internal step/stage is computed (:c:func:`ARKodeSetPostprocessStepFn`/
-:c:func:`ARKodeSetPostprocessStageFn`). These are considered **advanced**
-functions, as they should treat the state vector as read-only, otherwise all
-theoretical guarantees of solution accuracy and stability will be lost.  As a
-result of these new functions, the values of multiple ARKODE return codes (e.g.,
-``ARK_INTERP_FAIL``) have been updated; users who key off of the named constants
-will not be affected, but users who rely on the values themselves should update
-their codes accordingly.
+Added the ``ARKODE_IMEX_MRI_GARK_ASCHER_ARK2`` and ``ARKODE_IMEX_MRI_GARK_ARK2``
+embedded implicit-explicit MRI-GARK coupling tables.
 
-Note to users utilizing the previously undocumented
-:c:func:`ARKodeSetPostprocessStepFn` function, the supplied function is now
-called on the newly computed state vector for all step attempts not just
-successful steps. To obtain the previous behavior of only calling a function on
-successful steps, switch to using :c:func:`ARKodeSetPostStepFn`.
+When info or debug logging is enabled, i.e., ``SUNDIALS_LOGGING_LEVEL`` is at
+least 3, it will now print to ``stdout`` by default. Previously, the default was
+to produce no output, and this behavior can be restored by setting the
+environment variables ``SUNLOGGER_INFO_FILENAME`` and
+``SUNLOGGER_DEBUG_FILENAME`` to an empty string.
 
-Added ``SUNLogger_Set{Error,Warning,Info,Debug}File`` functions to allow setting
-logger output streams with a ``FILE*``.
+Improved the performance of logging when enabled but no file pointer was set.
 
-Updated the Kokkos N_Vector to support Kokkos 5.x versions.
+Added the function :c:func:`SUNLogger_SetQueueAndFlushMsgFns` to allow for
+user-defined functions to queue and flush log messages.
+
+Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
 
 **Bug Fixes**
 
-Fixed a CMake bug where the SuperLU_MT interface would not be built and
-installed without setting the ``SUPERLUMT_WORKS`` option to ``TRUE``.
+Fixed a bug where an unrecognized error return flag from a user-provided
+SUNLinearSolver module would register as a successful linear solve.
 
-Fixed the embedded coefficients for the ``ARKODE_TSITOURAS_7_4_5`` Butcher
-table.
+Fixed a bug that caused :c:func:`SUNDomEigEstimator_Initialize` to overwrite the
+user-provided initial guess from
+:c:func:`SUNDomEigEstimator_SetInitialGuess`. These routines are now
+order-independent.
 
-Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
-user-supplied dominant eigenvalue function on the first step unless the output
-vector passed to :c:func:`ARKodeEvolve` contained the initial condition and when
-an eigenvalue estimate is requested on the first step in a subsequent call to
-:c:func:`ARKodeEvolve` unless the output vector passed contained the most
-recently returned solution.
+Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
+``malloc``.
 
-Fixed a potential bug in LSRKStep's :c:enumerator:`ARKODE_LSRK_SSP_S_3` method,
-where a real number was used instead of an integer, potentially resulting in a
-rounding error.
+Fixed a bug in ERKStep where calling :c:func:`ARKodeResize` before
+:c:func:`ARKodeEvolve` or :c:func:`ARKodeInit` would result in a segmentation
+fault.
 
-Fixed a bug in MRIStep for estimating the first "slow" time step in an adaptive
-multirate calculation.
+Fixed a bug where the number of required stages for STS methods in the LSRKStep
+module was incorrectly computed using the spectral radius instead of the real
+part of the Jacobian eigenvalues.
 
-Fixed a bug in MRIStep when using a custom inner integrator that relies on the
-input state being the initial condition for the fast integration rather than
-retaining the result from the last inner integration or most recent reset call
-and the output vector passed to :c:func:`ARKodeEvolve` does not contain the
-initial condition on the first call or the last returned solution on subsequent
-calls.
+Fixed a bug where the negative real extent of the stability region for the RKC
+method was not being properly computed, which could result in an underestimation
+of the number of stages required for stability.
 
-Added a missing call to :c:func:`SUNNonlinSolSetup` in MRIStep when using an
-IMEX-MRI-SR method.
+Fixed a bug where STS methods were limited to one fewer than the maximum allowed
+number of stages. STS can now use the full maximum number of stages.
 
-Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
-state would be stored on the first step if the output vector passed to
-:c:func:`ARKodeEvolve` did not contain the initial condition on the first call.
+Fixed a bug in reporting the maximum number of stages in
+:c:func:`ARKodeGetStageIndex` when running SSP methods in LSRKStep.
 
-Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP``
-mode.
+Fixed a bug where IDAS would incorrectly compute the quadrature predictor when
+:c:func:`IDACalcIC` was used. In some cases, this lead to an inconsistent
+solution in the forward solve compared to the forward recomputation from a
+checkpoint, ultimately causing a segfault.
 
-Removed an extraneous copy of the output vector in each step with SplittingStep.
+Fixed a bug in the sundials4py wrappers for user-provided SUNStepper evolve and
+one_step functions.
 
-Fixed a bug in logging output from ARKODE, where for some time stepping modules,
-the current "time" output in the logger was incorrect.
+Fixed a bug in sundials4py where the :c:func:`CVodeGetRootInfo`,
+:c:func:`ARKodeGetRootInfo`, and :c:func:`IDAGetRootInfo` functions did not
+correctly return the rootsfound array. This addresses `Issue #937
+<https://github.com/llnl/sundials/issues/937>`__.
 
-Fixed a bug where passing an empty string to
-``SUNLogger_Set{Error,Warning,Info,Debug}Filename`` did not disable the
-corresponding logging stream `Issue #844
-<https://github.com/llnl/sundials/issues/844>`__.
+Removed duplicate logging output that would cause the Python logging tools to
+fail with a repeated key error.
 
-**Deprecation Notices**
+Fixed a CMake issue that prevented finding third-party libraries installed in
+default search locations e.g., paths included in ``CMAKE_INSTALL_PREFIX``
+(`Issue #935 <https://github.com/llnl/sundials/issues/935>`__).
 
-The ``CVodeSetMonitorFn`` and ``CVodeSetMonitorFrequency`` functions have been
-deprecated and will be removed in the next major release.
+Fixed a CMake issue that prevented automatically finding PETSc dependencies.
 
-Several CMake options have been deprecated in favor of namespaced versions
-prefixed with ``SUNDIALS_`` to avoid naming collisions in applications that
-include SUNDIALS directly within their CMake builds. Additionally, a consistent
-naming convention (``SUNDIALS_ENABLE``) is now used for all boolean options. The
-table below lists the old CMake option names and the new replacements.
+Fixed empty ``elseif()`` cases in the CMake files for the Fortran interfaces to
+the ManyVector and MPIPlusX vectors which could results in a missing include
+path when compiling if an MPI compiler wrapper is not found.
 
-+-------------------------------------------+---------------------------------------------------------+
-| Old Option                                | New Option                                              |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BUILD_ARKODE``                          | :cmakeop:`SUNDIALS_ENABLE_ARKODE`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BUILD_CVODE``                           | :cmakeop:`SUNDIALS_ENABLE_CVODE`                        |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BUILD_CVODES``                          | :cmakeop:`SUNDIALS_ENABLE_CVODES`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BUILD_IDA``                             | :cmakeop:`SUNDIALS_ENABLE_IDA`                          |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BUILD_IDAS``                            | :cmakeop:`SUNDIALS_ENABLE_IDAS`                         |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BUILD_KINSOL``                          | :cmakeop:`SUNDIALS_ENABLE_KINSOL`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_MPI``                            | :cmakeop:`SUNDIALS_ENABLE_MPI`                          |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_OPENMP``                         | :cmakeop:`SUNDIALS_ENABLE_OPENMP`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_OPENMP_DEVICE``                  | :cmakeop:`SUNDIALS_ENABLE_OPENMP_DEVICE`                |
-+-------------------------------------------+---------------------------------------------------------+
-| ``OPENMP_DEVICE_WORKS``                   | :cmakeop:`SUNDIALS_ENABLE_OPENMP_DEVICE_CHECKS`         |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_PTHREAD``                        | :cmakeop:`SUNDIALS_ENABLE_PTHREAD`                      |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_CUDA``                           | :cmakeop:`SUNDIALS_ENABLE_CUDA`                         |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_HIP``                            | :cmakeop:`SUNDIALS_ENABLE_HIP`                          |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_SYCL``                           | :cmakeop:`SUNDIALS_ENABLE_SYCL`                         |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_LAPACK``                         | :cmakeop:`SUNDIALS_ENABLE_LAPACK`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``LAPACK_WORKS``                          | :cmakeop:`SUNDIALS_ENABLE_LAPACK_CHECKS`                |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_GINKGO``                         | :cmakeop:`SUNDIALS_ENABLE_GINKGO`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``GINKGO_WORKS``                          | :cmakeop:`SUNDIALS_ENABLE_GINKGO_CHECKS`                |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_MAGMA``                          | :cmakeop:`SUNDIALS_ENABLE_MAGMA`                        |
-+-------------------------------------------+---------------------------------------------------------+
-| ``MAGMA_WORKS``                           | :cmakeop:`SUNDIALS_ENABLE_MAGMA_CHECKS`                 |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_SUPERLUDIST``                    | :cmakeop:`SUNDIALS_ENABLE_SUPERLUDIST`                  |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUPERLUDIST_WORKS``                     | :cmakeop:`SUNDIALS_ENABLE_SUPERLUDIST_CHECKS`           |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_SUPERLUMT``                      | :cmakeop:`SUNDIALS_ENABLE_SUPERLUMT`                    |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUPERLUMT_WORKS``                       | :cmakeop:`SUNDIALS_ENABLE_SUPERLUMT_CHECKS`             |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_KLU``                            | :cmakeop:`SUNDIALS_ENABLE_KLU`                          |
-+-------------------------------------------+---------------------------------------------------------+
-| ``KLU_WORKS``                             | :cmakeop:`SUNDIALS_ENABLE_KLU_CHECKS`                   |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_HYPRE``                          | :cmakeop:`SUNDIALS_ENABLE_HYPRE`                        |
-+-------------------------------------------+---------------------------------------------------------+
-| ``HYPRE_WORKS``                           | :cmakeop:`SUNDIALS_ENABLE_HYPRE_CHECKS`                 |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_PETSC``                          | :cmakeop:`SUNDIALS_ENABLE_PETSC`                        |
-+-------------------------------------------+---------------------------------------------------------+
-| ``PETSC_WORKS``                           | :cmakeop:`SUNDIALS_ENABLE_PETSC_CHECKS`                 |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_TRILINOS``                       | :cmakeop:`SUNDIALS_ENABLE_TRILINOS`                     |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_RAJA``                           | :cmakeop:`SUNDIALS_ENABLE_RAJA`                         |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_XBRAID``                         | :cmakeop:`SUNDIALS_ENABLE_XBRAID`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``XBRAID_WORKS``                          | :cmakeop:`SUNDIALS_ENABLE_XBRAID_CHECKS`                |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_ONEMKL``                         | :cmakeop:`SUNDIALS_ENABLE_ONEMKL`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ONEMKL_WORKS``                          | :cmakeop:`SUNDIALS_ENABLE_ONEMKL_CHECKS`                |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_CALIPER``                        | :cmakeop:`SUNDIALS_ENABLE_CALIPER`                      |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_ADIAK``                          | :cmakeop:`SUNDIALS_ENABLE_ADIAK`                        |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_KOKKOS``                         | :cmakeop:`SUNDIALS_ENABLE_KOKKOS`                       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``KOKKOS_WORKS``                          | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_CHECKS`                |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_KOKKOS_KERNELS``                 | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS`               |
-+-------------------------------------------+---------------------------------------------------------+
-| ``KOKKOS_KERNELS_WORKS``                  | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BUILD_FORTRAN_MODULE_INTERFACE``        | :cmakeop:`SUNDIALS_ENABLE_FORTRAN`                      |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUNDIALS_BUILD_WITH_PROFILING``         | :cmakeop:`SUNDIALS_ENABLE_PROFILING`                    |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUNDIALS_BUILD_WITH_MONITORING``        | :cmakeop:`SUNDIALS_ENABLE_MONITORING`                   |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``  | :cmakeop:`SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`        |
-+-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_ENABLE_C``                     | :cmakeop:`SUNDIALS_ENABLE_C_EXAMPLES`                   |
-+-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_ENABLE_CXX``                   | :cmakeop:`SUNDIALS_ENABLE_CXX_EXAMPLES`                 |
-+-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_ENABLE_F2003``                 | :cmakeop:`SUNDIALS_ENABLE_FORTRAN_EXAMPLES`             |
-+-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_ENABLE_CUDA``                  | :cmakeop:`SUNDIALS_ENABLE_CUDA_EXAMPLES`                |
-+-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_INSTALL``                      | :cmakeop:`SUNDIALS_ENABLE_EXAMPLES_INSTALL`             |
-+-------------------------------------------+---------------------------------------------------------+
-| ``EXAMPLES_INSTALL_PATH``                 | :cmakeop:`SUNDIALS_EXAMPLES_INSTALL_PATH`               |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BUILD_BENCHMARKS``                      | :cmakeop:`SUNDIALS_ENABLE_BENCHMARKS`                   |
-+-------------------------------------------+---------------------------------------------------------+
-| ``BENCHMARKS_INSTALL_PATH``               | :cmakeop:`SUNDIALS_BENCHMARKS_INSTALL_PATH`             |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUNDIALS_BENCHMARK_OUTPUT_DIR``         | :cmakeop:`SUNDIALS_BENCHMARKS_OUTPUT_DIR`               |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR`` | :cmakeop:`SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR`       |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUNDIALS_BENCHMARK_NUM_CPUS``           | :cmakeop:`SUNDIALS_BENCHMARKS_NUM_CPUS`                 |
-+-------------------------------------------+---------------------------------------------------------+
-| ``SUNDIALS_BENCHMARK_NUM_GPUS``           | :cmakeop:`SUNDIALS_BENCHMARKS_NUM_GPUS`                 |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_ALL_WARNINGS``                   | :cmakeop:`SUNDIALS_ENABLE_ALL_WARNINGS`                 |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_WARNINGS_AS_ERRORS``             | :cmakeop:`CMAKE_COMPILE_WARNING_AS_ERROR`               |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_ADDRESS_SANITIZER``              | :cmakeop:`SUNDIALS_ENABLE_ADDRESS_SANITIZER`            |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_MEMORY_SANITIZER``               | :cmakeop:`SUNDIALS_ENABLE_MEMORY_SANITIZER`             |
-+-------------------------------------------+---------------------------------------------------------+
-| ``ENABLE_LEAK_SANITIZER``                 | :cmakeop:`SUNDIALS_ENABLE_LEAK_SANITIZER`               |
-+-------------------------------------------+---------------------------------------------------------+
+Fixed a CMake bug where Fortran modules were not created for LSRKStep,
+ForcingStep, and SplittingStep.
 
-Following the updated CMake options, the macros listed below have been
-deprecated and replaced with versions that align with the new CMake options.
-
-+------------------------------------------+-------------------------------------------+
-| Old Macro                                | New Macro                                 |
-+------------------------------------------+-------------------------------------------+
-| ``SUNDIALS_BUILD_WITH_PROFILING``        | ``SUNDIALS_ENABLE_PROFILING``             |
-+------------------------------------------+-------------------------------------------+
-| ``SUNDIALS_BUILD_WITH_MONITORING``       | ``SUNDIALS_ENABLE_MONITORING``            |
-+------------------------------------------+-------------------------------------------+
-| ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS`` | ``SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS`` |
-+------------------------------------------+-------------------------------------------+
+Corrected the version number used in version added, changed, and deprecated
+notes in the documentation to always use the SUNDIALS version number with the
+package version number as a parenthetical note when it differs from the SUNDIALS
+version number.

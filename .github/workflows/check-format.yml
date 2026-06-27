@@ -31,11 +31,11 @@ jobs:
       - name: Print codespell version
         run: codespell --version
 
-      - name: Install black
-        run: pip install black
+      - name: Install ruff
+        run: pip install ruff
 
-      - name: Print black version
-        run: black --version
+      - name: Print ruff version
+        run: ruff --version
 
       - name: Install cmake-format
         run: pip install cmakelang
@@ -53,7 +53,7 @@ jobs:
         run: clang-format --version
 
       - name: Check out repository code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Add safe directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"

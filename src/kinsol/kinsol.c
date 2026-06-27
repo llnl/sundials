@@ -391,9 +391,9 @@ int KINInit(void* kinmem, KINSysFn func, N_Vector tmpl)
   {
     KINProcessError(kin_mem, KIN_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_MEM_FAIL);
+    SUNDIALS_MARK_FUNCTION_END(KIN_PROFILER);
     free(kin_mem);
     kin_mem = NULL;
-    SUNDIALS_MARK_FUNCTION_END(KIN_PROFILER);
     return (KIN_MEM_FAIL);
   }
 

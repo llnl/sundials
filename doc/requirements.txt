@@ -1,11 +1,11 @@
 numpydoc
-# TODO(CJB): Update range when sphinx-toolbox supports Sphinx 9
-sphinx >=6.0.0,<9
+six # missing dependency for sphinx-fortran
+sphinx >=6.0.0
 sphinx_rtd_theme
 sphinx-copybutton
+sphinx-design
 sphinx-fortran
 sphinx-multitoc-numbering
-sphinx-toolbox
 sphinxcontrib-googleanalytics
 sphinxcontrib.bibtex
 sphinxcontrib-moderncmakedomain
