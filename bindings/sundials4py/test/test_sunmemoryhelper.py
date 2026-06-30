@@ -25,3 +25,13 @@ from sundials4py.core import *
 def test_create_memory_helper_sys(sunctx):
     mem_helper = SUNMemoryHelper_Sys(sunctx)  # noqa: F405
     assert mem_helper is not None
+
+
+@pytest.mark.skipif(
+    "SUNMemoryHelper_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
+def test_create_memory_helper_cuda(sunctx):
+    mem_helper = SUNMemoryHelper_Cuda(sunctx)  # noqa: F405
+    if mem_helper is None:
+        pytest.skip("CUDA memory helper creation failed")
+    assert mem_helper is not None

@@ -78,6 +78,95 @@ def test_make_nvector(vector_type, sunctx):
     assert_allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
 
 
+@pytest.mark.skipif("N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled")
+def test_create_nvector_cuda(sunctx):
+    try:
+        nvec = N_VNew_Cuda(5, sunctx)
+    except RuntimeError as err:
+        pytest.skip(f"CUDA vector allocation failed: {err}")
+
+    if nvec is None:
+        pytest.skip("CUDA vector allocation failed")
+
+    assert N_VGetLength(nvec) == 5
+    assert N_VGetLength_Cuda(nvec) == 5
+    assert N_VGetDeviceArrayPointer_Cuda(nvec) != 0
+
+    arr = N_VGetHostArrayPointer_Cuda(nvec)
+    arr[:] = np.array([5.0, 4.0, 3.0, 2.0, 1.0], dtype=sunrealtype)
+
+    N_VCopyToDevice_Cuda(nvec)
+    N_VConst(2.0, nvec)
+    N_VCopyFromDevice_Cuda(nvec)
+
+    assert_allclose(arr, 2.0)
+
+
+def _torch_dtype():
+    import torch
+
+    if sunrealtype == np.float32:
+        return torch.float32
+    if sunrealtype == np.float64:
+        return torch.float64
+    return torch.longdouble
+
+
+@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
+def test_make_nvector_cuda_cupy_array(sunctx):
+    cupy = pytest.importorskip("cupy")
+
+    h_arr = np.zeros(5, dtype=sunrealtype)
+    d_arr = cupy.arange(5, dtype=sunrealtype)
+
+    nvec = N_VMake_Cuda(5, h_arr, d_arr, sunctx)
+    N_VConst(3.0, nvec)
+    N_VCopyFromDevice_Cuda(nvec)
+
+    assert_allclose(cupy.asnumpy(d_arr), 3.0)
+    assert_allclose(h_arr, 3.0)
+
+    view = cupy.from_dlpack(N_VGetDeviceArray_Cuda(nvec))
+    assert_allclose(cupy.asnumpy(view), 3.0)
+
+
+@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
+def test_make_nvector_cuda_torch_tensor(sunctx):
+    torch = pytest.importorskip("torch")
+    if not torch.cuda.is_available():
+        pytest.skip("PyTorch CUDA is not available")
+
+    h_arr = np.zeros(5, dtype=sunrealtype)
+    d_arr = torch.arange(5, device="cuda", dtype=_torch_dtype())
+
+    nvec = N_VMake_Cuda(5, h_arr, d_arr, sunctx)
+    N_VConst(4.0, nvec)
+    N_VCopyFromDevice_Cuda(nvec)
+
+    assert_allclose(d_arr.cpu().numpy(), 4.0)
+    assert_allclose(h_arr, 4.0)
+
+    view = torch.utils.dlpack.from_dlpack(N_VGetDeviceArray_Cuda(nvec))
+    assert_allclose(view.cpu().numpy(), 4.0)
+
+
+@pytest.mark.skipif(
+    "N_VSetDeviceArrayPointer_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
+def test_set_nvector_cuda_torch_tensor(sunctx):
+    torch = pytest.importorskip("torch")
+    if not torch.cuda.is_available():
+        pytest.skip("PyTorch CUDA is not available")
+
+    nvec = N_VNew_Cuda(5, sunctx)
+    d_arr = torch.arange(5, device="cuda", dtype=_torch_dtype())
+
+    N_VSetDeviceArrayPointer_Cuda(d_arr, nvec)
+    N_VConst(5.0, nvec)
+
+    assert_allclose(d_arr.cpu().numpy(), 5.0)
+
+
 # Test an operation that involves vector arrays
 @pytest.mark.parametrize("vector_type", ["serial"])
 def test_nvlinearcombination(vector_type, sunctx):
