@@ -32,6 +32,19 @@
 # centered differences, with the data distributed over N points
 # on a uniform spatial grid.
 #
+# The final solution is checked against the exact solution of this
+# semi-discrete ODE system.  With zero Dirichlet boundaries, the
+# interior finite-difference Laplacian is diagonalized by the discrete
+# sine basis.  For zero initial data and a constant point source b, the
+# interior solution is
+#
+#    u(t) = Phi * diag((exp(lambda_m*t) - 1) / lambda_m) * Phi^T * b,
+#
+# where Phi contains the orthonormal sine modes and lambda_m are the
+# corresponding finite-difference Laplacian eigenvalues.  This validates
+# the time integration error without introducing error from a continuous
+# PDE approximation.
+#
 # This program solves the problem with either an ERK or DIRK
 # method.  For the DIRK method, we use a Newton iteration with
 # the SUNLinSol_PCG linear solver, and a user-supplied Jacobian-vector
@@ -44,6 +57,22 @@
 import numpy as np
 import sundials4py.arkode as ark
 import sundials4py.core as sun
+
+
+def exact_semidiscrete_solution(n, k, t):
+    dx = 1.0 / (n - 1)
+    i = np.arange(1, n - 1)
+    m = np.arange(1, n - 1)
+
+    phi = np.sqrt(2.0 / (n - 1)) * np.sin(np.outer(i, m) * np.pi / (n - 1))
+    lambdas = -4.0 * k / dx**2 * np.sin(0.5 * m * np.pi / (n - 1)) ** 2
+
+    source = np.zeros(n - 2)
+    source[(n // 2) - 1] = 0.01 / dx
+
+    u = np.zeros(n)
+    u[1:-1] = phi @ (((np.exp(lambdas * t) - 1.0) / lambdas) * (phi.T @ source))
+    return u
 
 
 class Heat1DCudaProblem:
@@ -123,6 +152,7 @@ class TorchBackend:
 
 def solve_heat1d(backend):
     n = 101
+    k = 0.01
     tf = 1.0
     nt = 10
     reltol = 1e-6
@@ -135,7 +165,7 @@ def solve_heat1d(backend):
     device_data = backend.zeros(n)
     y = sun.N_VMake_Cuda(n, host_data, device_data, sunctx)
 
-    problem = Heat1DCudaProblem(backend, n=n)
+    problem = Heat1DCudaProblem(backend, n=n, k=k)
     problem.set_init_cond(y)
 
     stepper = ark.ARKStepCreate(problem.f, None, 0.0, y, sunctx)
@@ -164,6 +194,11 @@ def solve_heat1d(backend):
         rms = np.sqrt(np.dot(host_data, host_data) / n)
         print(f"  {t:10.6f}  {rms:10.6f}")
         tout = min(tout + tf / nt, tf)
+
+    uexact = exact_semidiscrete_solution(n, k, tf)
+    max_error = np.max(np.abs(host_data - uexact))
+    print(f"\nFinal max error vs exact semi-discrete solution = {max_error:.6e}")
+    np.testing.assert_allclose(host_data, uexact, rtol=1e-4, atol=1e-8)
 
     return host_data.copy(), backend.to_numpy(device_data)
 
