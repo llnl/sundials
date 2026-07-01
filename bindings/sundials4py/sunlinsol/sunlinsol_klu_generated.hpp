@@ -1,8 +1,12 @@
-m.attr("SUNKLU_ORDERING_DEFAULT") = SUNKLU_ORDERING_DEFAULT;
-
-m.attr("SUNKLU_REINIT_FULL") = SUNKLU_REINIT_FULL;
-
-m.attr("SUNKLU_REINIT_PARTIAL") = SUNKLU_REINIT_PARTIAL;
+// #ifndef _SUNLINSOL_KLU_H
+//
+// #ifndef _KLU_H
+//
+// #endif
+//
+// #ifdef __cplusplus
+// #endif
+//
 
 auto pyClass_SUNLinearSolverContent_KLU =
   nb::class_<_SUNLinearSolverContent_KLU>(m, "_SUNLinearSolverContent_KLU", "")
@@ -26,10 +30,23 @@ m.def(
 
     return SUNLinSol_KLU_adapt_return_type_to_shared_ptr(y, A, sunctx);
   },
-  nb::arg("y"), nb::arg("A"), nb::arg("sunctx"), nb::keep_alive<0, 3>());
+  nb::arg("y"), nb::arg("A"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
+  nb::keep_alive<0, 3>());
 
 m.def("SUNLinSol_KLUReInit", SUNLinSol_KLUReInit, nb::arg("S"), nb::arg("A"),
       nb::arg("nnz"), nb::arg("reinit_type"));
 
 m.def("SUNLinSol_KLUSetOrdering", SUNLinSol_KLUSetOrdering, nb::arg("S"),
       nb::arg("ordering_choice"));
+
+m.def("SUNLinSol_KLUGetSymbolic", SUNLinSol_KLUGetSymbolic, nb::arg("S"));
+
+m.def("SUNLinSol_KLUGetNumeric", SUNLinSol_KLUGetNumeric, nb::arg("S"));
+
+m.def("SUNLinSol_KLUGetCommon", SUNLinSol_KLUGetCommon, nb::arg("S"));
+// #ifdef __cplusplus
+//
+// #endif
+//
+// #endif
+//
