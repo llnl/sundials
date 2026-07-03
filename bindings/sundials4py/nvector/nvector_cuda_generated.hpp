@@ -15,8 +15,6 @@ m.def("N_VCopyToDevice_Cuda", N_VCopyToDevice_Cuda, nb::arg("v"));
 
 m.def("N_VCopyFromDevice_Cuda", N_VCopyFromDevice_Cuda, nb::arg("v"));
 
-m.def("N_VGetLength_Cuda", N_VGetLength_Cuda, nb::arg("x"));
-
 m.def("N_VEnableFusedOps_Cuda", N_VEnableFusedOps_Cuda, nb::arg("v"),
       nb::arg("tf"));
 
