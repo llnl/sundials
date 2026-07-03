@@ -35,6 +35,7 @@
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_profiler.h>
 #include <sundials/sundials_stepper.h>
+#include <sundials/sundials_vecstack.h>
 #include <sundials/sundials_types.h>
 #include <sundials/sundials_version.h>
 

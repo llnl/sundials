@@ -42,6 +42,7 @@ struct SUNContext_
   SUNErrHandler err_handler;
   SUNComm comm;
   SUNVecStack temp_vec_stack;
+  sunbooleantype own_temp_vec_stack;
 };
 
 #ifdef __cplusplus

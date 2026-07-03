@@ -63,6 +63,7 @@ set(sundials_HEADERS
     sundials_profiler.hpp
     sundials_stepper.h
     sundials_stepper.hpp
+    sundials_vecstack.h
     sundials_types_deprecated.h
     sundials_types.h
     sundials_version.h)
@@ -117,6 +118,7 @@ set(sundials_SOURCES
     sundials_nvector.c
     sundials_stepper.c
     sundials_profiler.c
+    sundials_vecstack.c
     sundials_version.c)
 
 if(SUNDIALS_ENABLE_MPI)

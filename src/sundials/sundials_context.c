@@ -29,6 +29,7 @@
 #include <sundials/sundials_logger.h>
 #include <sundials/sundials_profiler.h>
 #include <sundials/sundials_types.h>
+#include <sundials/sundials_vecstack.h>
 
 #include "sundials_adiak_metadata.h"
 #include "sundials_macros.h"
@@ -37,6 +38,30 @@
 #if defined(SUNDIALS_ENABLE_PYTHON)
 void SUNContextFunctionTable_Destroy(void* ptr);
 #endif
+
+static SUNErrCode SUNContext_SetVecStackImpl(SUNContext sunctx, SUNVecStack stack,
+                                             sunbooleantype own)
+{
+  if (!sunctx) { return SUN_ERR_SUNCTX_CORRUPT; }
+
+  SUNFunctionBegin(sunctx);
+
+  if (sunctx->temp_vec_stack == stack)
+  {
+    sunctx->own_temp_vec_stack = own;
+    return SUN_SUCCESS;
+  }
+
+  if (sunctx->temp_vec_stack && sunctx->own_temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_Destroy(&sunctx->temp_vec_stack);
+    if (err != SUN_SUCCESS) { return err; }
+  }
+
+  sunctx->temp_vec_stack     = stack;
+  sunctx->own_temp_vec_stack = own;
+  return SUN_SUCCESS;
+}
 
 SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
 {
@@ -107,6 +132,8 @@ SUNErrCode SUNContext_Create(SUNComm comm, SUNContext* sunctx_out)
     sunctx->last_err     = SUN_SUCCESS;
     sunctx->err_handler  = eh;
     sunctx->comm         = comm;
+    sunctx->temp_vec_stack     = NULL;
+    sunctx->own_temp_vec_stack = SUNFALSE;
   }
   while (0);
 
@@ -261,14 +288,12 @@ SUNErrCode SUNContext_SetLogger(SUNContext sunctx, SUNLogger logger)
 
 SUNErrCode SUNContext_SetVecStack(SUNContext sunctx, SUNVecStack stack)
 {
-  if (!sunctx) { return SUN_ERR_SUNCTX_CORRUPT; }
-  SUNFunctionBegin(sunctx);
+  return SUNContext_SetVecStackImpl(sunctx, stack, SUNFALSE);
+}
 
-  /* Check if any vectors are checked out before overwriting the current stack */
-  if (sunctx->temp_vec_stack) { return SUN_ERR_MEM_FAIL; }
-  sunctx->temp_vec_stack = stack;
-
-  return SUN_SUCCESS;
+SUNErrCode SUNContext_SetVecStackOwned(SUNContext sunctx, SUNVecStack stack)
+{
+  return SUNContext_SetVecStackImpl(sunctx, stack, SUNTRUE);
 }
 
 SUNErrCode SUNContext_GetVecStack(SUNContext sunctx, SUNVecStack* stack)
@@ -320,6 +345,15 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
   {
     SUNLogger_Destroy(&(*sunctx)->logger);
   }
+
+  if ((*sunctx)->temp_vec_stack && (*sunctx)->own_temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_Destroy(&(*sunctx)->temp_vec_stack);
+    if (err != SUN_SUCCESS) { return err; }
+  }
+
+  (*sunctx)->temp_vec_stack     = NULL;
+  (*sunctx)->own_temp_vec_stack = SUNFALSE;
 
   SUNContext_ClearErrHandlers(*sunctx);
 
