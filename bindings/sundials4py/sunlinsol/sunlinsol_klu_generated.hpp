@@ -13,6 +13,12 @@ auto pyClass_SUNLinearSolverContent_KLU =
     .def(nb::init<>()) // implicit default constructor
   ;
 
+nb::class_<sun_klu_symbolic>(m, "sun_klu_symbolic", "");
+
+nb::class_<sun_klu_numeric>(m, "sun_klu_numeric", "");
+
+nb::class_<sun_klu_common>(m, "sun_klu_common", "");
+
 m.def(
   "SUNLinSol_KLU",
   [](N_Vector y, SUNMatrix A,
@@ -39,11 +45,14 @@ m.def("SUNLinSol_KLUReInit", SUNLinSol_KLUReInit, nb::arg("S"), nb::arg("A"),
 m.def("SUNLinSol_KLUSetOrdering", SUNLinSol_KLUSetOrdering, nb::arg("S"),
       nb::arg("ordering_choice"));
 
-m.def("SUNLinSol_KLUGetSymbolic", SUNLinSol_KLUGetSymbolic, nb::arg("S"));
+m.def("SUNLinSol_KLUGetSymbolic", SUNLinSol_KLUGetSymbolic, nb::arg("S"),
+      nb::rv_policy::reference);
 
-m.def("SUNLinSol_KLUGetNumeric", SUNLinSol_KLUGetNumeric, nb::arg("S"));
+m.def("SUNLinSol_KLUGetNumeric", SUNLinSol_KLUGetNumeric, nb::arg("S"),
+      nb::rv_policy::reference);
 
-m.def("SUNLinSol_KLUGetCommon", SUNLinSol_KLUGetCommon, nb::arg("S"));
+m.def("SUNLinSol_KLUGetCommon", SUNLinSol_KLUGetCommon, nb::arg("S"),
+      nb::rv_policy::reference);
 // #ifdef __cplusplus
 //
 // #endif
