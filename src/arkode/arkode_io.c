@@ -3924,6 +3924,55 @@ int arkSetAdaptivityFn(void* arkode_mem, ARKAdaptFn hfun, void* h_data)
   return (ARK_SUCCESS);
 }
 
+/* -----------------------------------------------------------------------------
+ * Workspace Vector Stack Functions
+ * ---------------------------------------------------------------------------*/
+
+int ARKodeSetVecStack(void* arkode_mem, SUNVecStack stack)
+{
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return ARK_MEM_NULL;
+  }
+  ARKodeMem ark_mem = (ARKodeMem)arkode_mem;
+
+  if (ark_mem->temp_vec_stack && ark_mem->own_temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_Destroy(&ark_mem->temp_vec_stack);
+    if (err != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "Unable to deallocate existing vector stack");
+      return ARK_MEM_FAIL;
+    }
+  }
+
+  ark_mem->temp_vec_stack     = stack;
+  ark_mem->own_temp_vec_stack = SUNTRUE;
+
+  return ARK_SUCCESS;
+}
+
+int ARKodeGetVecStack(void* arkode_mem, SUNVecStack* stack)
+{
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return ARK_MEM_NULL;
+  }
+  ARKodeMem ark_mem = (ARKodeMem)arkode_mem;
+
+  *stack = ark_mem->temp_vec_stack;
+
+  return SUN_SUCCESS;
+}
+
+
+
+
 /*===============================================================
   EOF
   ===============================================================*/

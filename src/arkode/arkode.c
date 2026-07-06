@@ -1301,6 +1301,13 @@ void ARKodeFree(void** arkode_mem)
     ark_mem->relax_mem = NULL;
   }
 
+  if (ark_mem->temp_vec_stack && ark_mem->own_temp_vec_stack)
+  {
+    (void)SUNVecStack_Destroy(&(ark_mem->temp_vec_stack));
+    ark_mem->temp_vec_stack = NULL;
+    ark_mem->own_temp_vec_stack = SUNFALSE;
+  }
+
 #if defined(SUNDIALS_ENABLE_PYTHON)
   arkode_user_supplied_fn_table_destroy(ark_mem->python);
 #endif
@@ -1686,6 +1693,10 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->load_checkpoint_fail = SUNFALSE;
   ark_mem->do_adjoint           = SUNFALSE;
 
+  /* Stack of workspace vectors */
+  ark_mem->temp_vec_stack = NULL;
+  ark_mem->own_temp_vec_stack = SUNFALSE;
+
   /* Return pointer to ARKODE memory block */
   return (ark_mem);
 }
@@ -1823,6 +1834,18 @@ int arkInit(ARKodeMem ark_mem, sunrealtype t0, N_Vector y0, int init_type)
     }
     ark_mem->lrw1 = lrw1;
     ark_mem->liw1 = liw1;
+
+    if (ark_mem->temp_vec_stack == NULL)
+    {
+      SUNErrCode err = SUNVecStack_Create(y0, &(ark_mem->temp_vec_stack));
+      if (err != SUN_SUCCESS)
+      {
+        arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
+                        "Unable to allocate vector stack");
+        return ARK_MEM_FAIL;
+      }
+      ark_mem->own_temp_vec_stack = SUNTRUE;
+    }
 
     /* Allocate the solver vectors (using y0 as a template) */
     allocOK = arkAllocVectors(ark_mem, y0);
@@ -3680,17 +3703,19 @@ sunbooleantype arkAllocVectors(ARKodeMem ark_mem, N_Vector tmpl)
   /* Allocate yn if needed */
   if (!arkAllocVec(ark_mem, tmpl, &ark_mem->yn)) { return (SUNFALSE); }
 
-  /* Allocate tempv1 if needed */
-  if (!arkAllocVec(ark_mem, tmpl, &ark_mem->tempv1)) { return (SUNFALSE); }
+  SUNErrCode err = SUN_SUCCESS;
 
-  /* Allocate tempv2 if needed */
-  if (!arkAllocVec(ark_mem, tmpl, &ark_mem->tempv2)) { return (SUNFALSE); }
+  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv1);
+  if (err != SUN_SUCCESS) { return SUNFALSE; }
 
-  /* Allocate tempv3 if needed */
-  if (!arkAllocVec(ark_mem, tmpl, &ark_mem->tempv3)) { return (SUNFALSE); }
+  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv2);
+  if (err != SUN_SUCCESS) { return SUNFALSE; }
 
-  /* Allocate tempv4 if needed */
-  if (!arkAllocVec(ark_mem, tmpl, &ark_mem->tempv4)) { return (SUNFALSE); }
+  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv3);
+  if (err != SUN_SUCCESS) { return SUNFALSE; }
+
+  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv4);
+  if (err != SUN_SUCCESS) { return SUNFALSE; }
 
   return (SUNTRUE);
 }
@@ -3806,10 +3831,12 @@ void arkFreeVectors(ARKodeMem ark_mem)
 {
   arkFreeVec(ark_mem, &ark_mem->ewt);
   if (!ark_mem->rwt_is_ewt) { arkFreeVec(ark_mem, &ark_mem->rwt); }
-  arkFreeVec(ark_mem, &ark_mem->tempv1);
-  arkFreeVec(ark_mem, &ark_mem->tempv2);
-  arkFreeVec(ark_mem, &ark_mem->tempv3);
-  arkFreeVec(ark_mem, &ark_mem->tempv4);
+
+  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv1);
+  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv2);
+  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv3);
+  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv4);
+
   arkFreeVec(ark_mem, &ark_mem->tempv5);
   arkFreeVec(ark_mem, &ark_mem->yn);
   arkFreeVec(ark_mem, &ark_mem->fn);

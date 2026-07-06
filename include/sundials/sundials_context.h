@@ -22,7 +22,6 @@
 #ifndef _SUNDIALS_CONTEXT_H
 #define _SUNDIALS_CONTEXT_H
 
-#include <sundials/sundials_vecstack.h>
 #include <sundials/priv/sundials_context_impl.h>
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
@@ -61,15 +60,6 @@ SUNErrCode SUNContext_GetLogger(SUNContext sunctx,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNContext_SetLogger(SUNContext sunctx, SUNLogger logger);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNContext_SetVecStack(SUNContext sunctx, SUNVecStack stack);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNContext_SetVecStackOwned(SUNContext sunctx, SUNVecStack stack);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNContext_GetVecStack(SUNContext sunctx, SUNVecStack* stack);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNContext_Free(SUNContext* ctx);

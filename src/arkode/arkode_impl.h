@@ -36,6 +36,7 @@
 #include <sundials/sundials_context.h>
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_types.h>
+#include <sundials/sundials_vecstack.h>
 
 #include "arkode_adapt_impl.h"
 #include "arkode_relaxation_impl.h"
@@ -608,6 +609,10 @@ struct ARKodeMemRec
                               force_pass is true and is used by the XBraid
                               interface to determine if a time step passed or
                               failed the time step error test.  */
+
+  /* Stack of workspace vectors */
+  SUNVecStack temp_vec_stack;
+  sunbooleantype own_temp_vec_stack;
 };
 
 /*===============================================================
