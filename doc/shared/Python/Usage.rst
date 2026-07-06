@@ -124,8 +124,7 @@ highlight some of the differences to using SUNDIALS from C/C++. The items
 highlighted below similarly apply to using other SUNDIALS packages. For more
 information on usage differences, continue to the :ref:`next section
 <Python.Usage.Differences>`. Additional examples can be found in the
-``examples/python`` directory of the :examples:`SUNDIALS GitHub repository
-.
+``examples/python`` directory of the :examples:`SUNDIALS GitHub repository.
 
 This example demonstrates how to use CVODES to solve the Lotka-Volterra
 equations, a model of predator-prey dynamics in ecology, given by
