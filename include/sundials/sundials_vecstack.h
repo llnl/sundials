@@ -27,16 +27,18 @@
 extern "C" {
 #endif
 
-SUNDIALS_EXPORT SUNErrCode SUNVecStack_Create(N_Vector tmpl,
-                                              SUNVecStack* stack_out);
+SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_Create(N_Vector tmpl, int init_size, SUNContext sunctx,
+                              SUNVecStack* stack_out);
 
-SUNDIALS_EXPORT SUNErrCode SUNVecStack_Destroy(SUNVecStack* stack_in);
+SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_Destroy(SUNVecStack* stack_in);
 
-SUNDIALS_EXPORT SUNErrCode SUNVecStack_Pop(SUNVecStack stack,
-                                           N_Vector* vec_out);
+SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_Pop(SUNVecStack stack, N_Vector* vec_out);
 
-SUNDIALS_EXPORT SUNErrCode SUNVecStack_Push(SUNVecStack stack,
-                                           N_Vector* vec_in);
+SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_Push(SUNVecStack stack, N_Vector* vec_in);
 
 #ifdef __cplusplus
 }

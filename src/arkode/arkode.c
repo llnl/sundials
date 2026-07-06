@@ -1837,7 +1837,8 @@ int arkInit(ARKodeMem ark_mem, sunrealtype t0, N_Vector y0, int init_type)
 
     if (ark_mem->temp_vec_stack == NULL)
     {
-      SUNErrCode err = SUNVecStack_Create(y0, &(ark_mem->temp_vec_stack));
+      SUNErrCode err = SUNVecStack_Create(y0, 0, ark_mem->sunctx,
+                                          &(ark_mem->temp_vec_stack));
       if (err != SUN_SUCCESS)
       {
         arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,

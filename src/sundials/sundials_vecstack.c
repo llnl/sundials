@@ -29,6 +29,7 @@
 
 struct SUNVecStack_
 {
+  SUNContext sunctx;
   N_Vector tmpl;
   SUNStlVector_N_Vector vecs;
   int64_t num_owned;
@@ -45,24 +46,48 @@ static SUNErrCode SUNVecStack_DestroyValue(N_Vector* vec)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNVecStack_Create(N_Vector tmpl, SUNVecStack* stack_out)
+SUNErrCode SUNVecStack_Create(N_Vector tmpl, int init_size, SUNContext sunctx,
+                              SUNVecStack* stack_out)
 {
-  if (!tmpl || !stack_out) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(sunctx);
+  SUNAssert(tmpl, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(init_size, SUN_ERR_ARG_OUTOFRANGE);
+  SUNAssert(stack_out, SUN_ERR_ARG_CORRUPT);
 
   *stack_out = NULL;
 
   SUNVecStack stack = (SUNVecStack)malloc(sizeof(*stack));
   if (!stack) { return SUN_ERR_MALLOC_FAIL; }
 
+  stack->sunctx          = sunctx;
   stack->tmpl            = tmpl;
   stack->num_owned       = 0;
   stack->num_checked_out = 0;
-  stack->vecs            = SUNStlVector_N_Vector_New(0, SUNVecStack_DestroyValue);
+  stack->vecs            = SUNStlVector_N_Vector_New(init_size, SUNVecStack_DestroyValue);
 
   if (!stack->vecs)
   {
-    free(stack);
+    SUNVecStack_Destroy(&stack);
     return SUN_ERR_MALLOC_FAIL;
+  }
+
+  for (int i = 0; i < init_size; i++)
+  {
+    N_Vector vec = N_VClone(tmpl);
+    if (vec == NULL)
+    {
+      SUNVecStack_Destroy(&stack);
+      return SUN_ERR_MALLOC_FAIL;
+    }
+    stack->num_owned++;
+    stack->num_checked_out++;
+
+    SUNErrCode err = SUNVecStack_Push(stack, &vec);
+    if (err != SUN_SUCCESS)
+    {
+      SUNVecStack_Destroy(&stack);
+      return SUN_ERR_MALLOC_FAIL;
+    }
   }
 
   *stack_out = stack;
@@ -80,8 +105,7 @@ SUNErrCode SUNVecStack_Destroy(SUNVecStack* stack_in)
   }
   if (stack->num_checked_out != 0) { return SUN_ERR_MEM_FAIL; }
 
-  SUNErrCode err = SUNStlVector_N_Vector_Destroy(&stack->vecs);
-  if (err != SUN_SUCCESS) { return err; }
+  SUNCheckCall(SUNStlVector_N_Vector_Destroy(&stack->vecs));
 
   free(stack);
   *stack_in = NULL;
@@ -90,7 +114,8 @@ SUNErrCode SUNVecStack_Destroy(SUNVecStack* stack_in)
 
 SUNErrCode SUNVecStack_Pop(SUNVecStack stack, N_Vector* vec_out)
 {
-  if (!stack || !vec_out) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(stack->sunctx);
+  SUNAssert(vec_out, SUN_ERR_ARG_CORRUPT);
 
   *vec_out = NULL;
 
@@ -98,8 +123,7 @@ SUNErrCode SUNVecStack_Pop(SUNVecStack stack, N_Vector* vec_out)
   if (cached)
   {
     *vec_out = *cached;
-    SUNErrCode err = SUNStlVector_N_Vector_PopBack(stack->vecs);
-    if (err != SUN_SUCCESS) { return err; }
+    SUNCheckCall(SUNStlVector_N_Vector_PopBack(stack->vecs));
   }
   else
   {
@@ -114,33 +138,25 @@ SUNErrCode SUNVecStack_Pop(SUNVecStack stack, N_Vector* vec_out)
 
 SUNErrCode SUNVecStack_Push(SUNVecStack stack, N_Vector* vec_in)
 {
-  if (!stack || !vec_in || !*vec_in) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(stack->sunctx);
+  SUNAssert(vec_in, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(*vec_in, SUN_ERR_ARG_CORRUPT);
 
-  int64_t idle = SUNStlVector_N_Vector_Size(stack->vecs);
-  if (idle < 0) { return SUN_ERR_CORRUPT; }
-  if (stack->num_owned < 0 || stack->num_checked_out < 0)
-  {
-    return SUN_ERR_CORRUPT;
-  }
-  if (stack->num_checked_out <= 0) { return SUN_ERR_MEM_FAIL; }
-  if (stack->num_checked_out > stack->num_owned) { return SUN_ERR_CORRUPT; }
-  if (idle + stack->num_checked_out != stack->num_owned)
-  {
-    return SUN_ERR_CORRUPT;
-  }
-  if (idle >= stack->num_owned) { return SUN_ERR_MEM_FAIL; }
+  SUNAssert(stack->num_owned > 0, SUN_ERR_CORRUPT);
+  SUNAssert(stack->num_checked_out > 0, SUN_ERR_CORRUPT);
+  SUNAssert(stack->num_checked_out <= stack->num_owned, SUN_ERR_CORRUPT);
 
-  SUNErrCode err = SUNStlVector_N_Vector_PushBack(stack->vecs, *vec_in);
-  if (err != SUN_SUCCESS) { return err; }
+  SUNAssert(SUNStlVector_N_Vector_Size(stack->vecs) + stack->num_checked_out ==
+              stack->num_owned,
+            SUN_ERR_CORRUPT);
 
+  SUNCheckCall(SUNStlVector_N_Vector_PushBack(stack->vecs, *vec_in));
   *vec_in = NULL;
   stack->num_checked_out--;
 
-  idle = SUNStlVector_N_Vector_Size(stack->vecs);
-  if (idle + stack->num_checked_out != stack->num_owned)
-  {
-    return SUN_ERR_CORRUPT;
-  }
+  SUNAssert(SUNStlVector_N_Vector_Size(stack->vecs) + stack->num_checked_out ==
+              stack->num_owned,
+            SUN_ERR_CORRUPT);
 
   return SUN_SUCCESS;
 }
