@@ -44,39 +44,39 @@ class Brusselator1DProblem:
         self.R = None
 
     def set_init_cond(self, yvec):
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetArrayPointer(yvec).reshape((self.N, 3))
         x = np.linspace(0.0, 1.0, self.N)
         s = 0.1 * np.sin(np.pi * x)
-        y[0::3] = self.a + s
-        y[1::3] = self.b / self.a + s
-        y[2::3] = self.b + s
+        y[:, 0] = self.a + s
+        y[:, 1] = self.b / self.a + s
+        y[:, 2] = self.b + s
         return 0
 
     def f(self, t, yvec, ydotvec, user_data):
-        y = N_VGetArrayPointer(yvec)
-        ydot = N_VGetArrayPointer(ydotvec)
-        ydot[:] = 0.0
+        y = N_VGetArrayPointer(yvec).reshape((self.N, 3))
+        ydot = N_VGetArrayPointer(ydotvec).reshape((self.N, 3))
+        ydot[:, :] = 0.0
 
-        u = y[0::3]
-        v = y[1::3]
-        w = y[2::3]
+        u = y[:, 0]
+        v = y[:, 1]
+        w = y[:, 2]
 
         uconst = self.du / self.dx / self.dx
         vconst = self.dv / self.dx / self.dx
         wconst = self.dw / self.dx / self.dx
 
-        ydot[3:-3:3] = (
+        ydot[1:-1, 0] = (
             (u[0:-2] - 2.0 * u[1:-1] + u[2:]) * uconst
             + self.a
             - (w[1:-1] + 1.0) * u[1:-1]
             + v[1:-1] * u[1:-1] * u[1:-1]
         )
-        ydot[4:-2:3] = (
+        ydot[1:-1, 1] = (
             (v[0:-2] - 2.0 * v[1:-1] + v[2:]) * vconst
             + w[1:-1] * u[1:-1]
             - v[1:-1] * u[1:-1] * u[1:-1]
         )
-        ydot[5:-1:3] = (
+        ydot[1:-1, 2] = (
             (w[0:-2] - 2.0 * w[1:-1] + w[2:]) * wconst
             + (self.b - w[1:-1]) / self.ep
             - w[1:-1] * u[1:-1]
@@ -150,7 +150,7 @@ class Brusselator1DProblem:
 
     def reaction_jac(self, yvec, A):
         N = self.N
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetArrayPointer(yvec).reshape((self.N, 3))
         colptrs = SUNSparseMatrix_IndexPointers(A)
         rowvals = SUNSparseMatrix_IndexValues(A)
         data = SUNSparseMatrix_Data(A)
@@ -162,9 +162,9 @@ class Brusselator1DProblem:
         colptrs[IDX(0, 2)] = 0
 
         for i in range(1, N - 1):
-            u = y[IDX(i, 0)]
-            v = y[IDX(i, 1)]
-            w = y[IDX(i, 2)]
+            u = y[i, 0]
+            v = y[i, 1]
+            w = y[i, 2]
 
             colptrs[IDX(i, 0)] = nz
             rowvals[nz] = IDX(i, 0)
@@ -257,10 +257,9 @@ def main():
     umask_data = N_VGetArrayPointer(umask)
     vmask_data = N_VGetArrayPointer(vmask)
     wmask_data = N_VGetArrayPointer(wmask)
-    for i in range(N):
-        umask_data[IDX(i, 0)] = 1.0
-        vmask_data[IDX(i, 1)] = 1.0
-        wmask_data[IDX(i, 2)] = 1.0
+    umask_data.reshape((N, 3))[:, 0] = 1.0
+    vmask_data.reshape((N, 3))[:, 1] = 1.0
+    wmask_data.reshape((N, 3))[:, 2] = 1.0
 
     ark = ARKStepCreate(None, problem.f, T0, y, sunctx)
     assert ark is not None
@@ -276,7 +275,7 @@ def main():
     assert status == ARK_SUCCESS
     status = ARKodeSetJacFn(ark.get(), problem.jac)
     assert status == ARK_SUCCESS
-    status = ARKodeSetAutonomous(ark.get(), SUNTRUE)
+    status = ARKodeSetAutonomous(ark.get(), 1)
     assert status == ARK_SUCCESS
 
     print("\n1D Brusselator PDE test problem (KLU solver):")
@@ -286,15 +285,15 @@ def main():
     print(f"    reltol = {reltol:.1e},  abstol = {abstol:.1e}\n")
 
     np.savetxt("bruss_mesh.txt", np.linspace(0.0, 1.0, N), fmt="%.16e")
-    ydata = N_VGetArrayPointer(y)
+    ydata = N_VGetArrayPointer(y).reshape((N, 3))
     with (
         open("bruss_u.txt", "w") as ufid,
         open("bruss_v.txt", "w") as vfid,
         open("bruss_w.txt", "w") as wfid,
     ):
-        np.savetxt(ufid, ydata[0::3][None, :], fmt="%.16e")
-        np.savetxt(vfid, ydata[1::3][None, :], fmt="%.16e")
-        np.savetxt(wfid, ydata[2::3][None, :], fmt="%.16e")
+        np.savetxt(ufid, ydata[:, 0][None, :], fmt="%.16e")
+        np.savetxt(vfid, ydata[:, 1][None, :], fmt="%.16e")
+        np.savetxt(wfid, ydata[:, 2][None, :], fmt="%.16e")
 
         t = T0
         dt_out = (Tf - T0) / Nt
@@ -303,7 +302,7 @@ def main():
         print("   ----------------------------------------------")
         for _ in range(Nt):
             status, t = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
-            ydata = N_VGetArrayPointer(y)
+            ydata = N_VGetArrayPointer(y).reshape((N, 3))
             u = N_VWL2Norm(y, umask)
             u = np.sqrt(u * u / N)
             v = N_VWL2Norm(y, vmask)
@@ -318,9 +317,9 @@ def main():
                 print("Solver failure, stopping integration")
                 break
 
-            np.savetxt(ufid, ydata[0::3][None, :], fmt="%.16e")
-            np.savetxt(vfid, ydata[1::3][None, :], fmt="%.16e")
-            np.savetxt(wfid, ydata[2::3][None, :], fmt="%.16e")
+            np.savetxt(ufid, ydata[:, 0][None, :], fmt="%.16e")
+            np.savetxt(vfid, ydata[:, 1][None, :], fmt="%.16e")
+            np.savetxt(wfid, ydata[:, 2][None, :], fmt="%.16e")
         print("   ----------------------------------------------")
 
     status, nst = ARKodeGetNumSteps(ark.get())
