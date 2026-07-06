@@ -9,6 +9,7 @@ auto pyEnumSUNNonlinearSolver_Type =
                                      nb::is_arithmetic(), "")
     .value("SUNNONLINEARSOLVER_ROOTFIND", SUNNONLINEARSOLVER_ROOTFIND, "")
     .value("SUNNONLINEARSOLVER_FIXEDPOINT", SUNNONLINEARSOLVER_FIXEDPOINT, "")
+    .value("SUNNONLINEARSOLVER_HYBRID", SUNNONLINEARSOLVER_HYBRID, "")
     .export_values();
 // #ifndef SWIG
 //
@@ -89,6 +90,7 @@ m.def(
   nb::arg("NLS"));
 m.attr("SUN_NLS_CONTINUE")   = +901;
 m.attr("SUN_NLS_CONV_RECVR") = +902;
+m.attr("SUN_NLS_SWITCH")     = +903;
 // #ifdef __cplusplus
 //
 // #endif

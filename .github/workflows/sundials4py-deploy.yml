@@ -1,5 +1,9 @@
 name: sundials4py-deploy
 
+env:
+  TWINE_USERNAME: __token__
+  TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
 on:
   # Allows this workflow to be called by other workflows
   workflow_call:
@@ -24,27 +28,6 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     uses: ./.github/workflows/sundials4py-build-and-test.yml
 
-  sundials4py-deploy-to-gh-release:
-    name: Attach sundials4py wheels to GitHub release
-    needs: [sundials4py-deploy-build-and-test]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
-
-    steps:
-    - name: Download wheel artifacts
-      uses: actions/download-artifact@v8
-      with:
-        path: dist
-        pattern: dist-*
-        merge-multiple: true
-
-    - name: Upload wheels to release
-      uses: softprops/action-gh-release@v3
-      with:
-        files: dist/**/*.whl
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   sundials4py-deploy-to-pypi:
     name: Publish sundials4py to pypi if release
     needs: [sundials4py-deploy-build-and-test]
@@ -68,3 +51,4 @@ jobs:
       env:
         PYPI_TOKEN: ${{ secrets.pypi_password }}
       run: ./scripts/publish_sundials4py_wheels.sh --dist-dir dist --include-sdist
+
