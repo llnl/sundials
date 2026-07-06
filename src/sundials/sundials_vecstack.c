@@ -160,3 +160,33 @@ SUNErrCode SUNVecStack_Push(SUNVecStack stack, N_Vector* vec_in)
 
   return SUN_SUCCESS;
 }
+
+SUNErrCode SUNVecStack_GetNumVecs(SUNVecStack stack, int64_t* num_vecs)
+{
+  SUNFunctionBegin(stack->sunctx);
+  SUNAssert(num_vecs, SUN_ERR_ARG_CORRUPT);
+
+  *num_vecs = stack->num_owned;
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNVecStack_GetNumActiveVecs(SUNVecStack stack, int64_t* num_active_vecs)
+{
+  SUNFunctionBegin(stack->sunctx);
+  SUNAssert(num_active_vecs, SUN_ERR_ARG_CORRUPT);
+
+  *num_active_vecs = stack->num_checked_out;
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNVecStack_GetNumIdleVecs(SUNVecStack stack, int64_t* num_idle_vecs)
+{
+  SUNFunctionBegin(stack->sunctx);
+  SUNAssert(num_idle_vecs, SUN_ERR_ARG_CORRUPT);
+
+  *num_idle_vecs = SUNStlVector_N_Vector_Size(stack->vecs);
+
+  return SUN_SUCCESS;
+}

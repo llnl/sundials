@@ -40,6 +40,17 @@ SUNErrCode SUNVecStack_Pop(SUNVecStack stack, N_Vector* vec_out);
 SUNDIALS_EXPORT
 SUNErrCode SUNVecStack_Push(SUNVecStack stack, N_Vector* vec_in);
 
+SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_GetNumVecs(SUNVecStack stack, int64_t* num_vecs);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_GetNumActiveVecs(SUNVecStack stack,
+                                        int64_t* num_active_vecs);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_GetNumIdleVecs(SUNVecStack stack,
+                                      int64_t* num_idle_vecs);
+
 #ifdef __cplusplus
 }
 #endif
