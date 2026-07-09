@@ -193,7 +193,7 @@ extern "C" {
    NLS_MAXCOR  maximum no. of corrector iterations for the nonlinear solver
    CRDOWN      constant used in the estimation of the convergence rate (crate)
                of the iterates for the nonlinear equation
-   RDIV        declare divergence if ratio del/delp > RDIV
+   RDIV        declare divergence if ratio delnrm/delnrm_p > RDIV
 */
 #define NLS_MAXCOR 3
 #define CRDOWN     SUN_RCONST(0.3)
@@ -417,6 +417,8 @@ typedef struct CVodeMemRec
   sunrealtype cv_crate;        /* estimated corrector convergence rate        */
   sunrealtype cv_crateS;       /* estimated corrector convergence rate (Stgr) */
   sunrealtype cv_delp;         /* norm of previous nonlinear solver update    */
+  sunrealtype cv_delnrm;       /* norm of current nonlinear solver update     */
+  sunrealtype cv_delnrmS;      /* norm of current NLS update (Sens)           */
   sunrealtype cv_acnrm;        /* | acor |                                    */
   sunbooleantype cv_acnrmcur;  /* is | acor | current?                        */
   sunrealtype cv_acnrmQ;       /* | acorQ |                                   */
