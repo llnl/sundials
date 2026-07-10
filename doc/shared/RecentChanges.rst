@@ -7,4 +7,6 @@
 
 **Bug Fixes**
 
+Fixed a bug where the factor provided by ``ARKodeSetEpsLin`` was scaled by 0.1.
+
 **Deprecation Notices**

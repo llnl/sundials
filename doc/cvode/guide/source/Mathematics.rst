@@ -227,11 +227,9 @@ The default stopping test for nonlinear solver iterations is related to
 the subsequent local error test, with the goal of keeping the nonlinear
 iteration errors from interfering with local error control. As described
 below, the final computed value :math:`y^{n(m)}` will have to satisfy a
-local error test :math:`\|y^{n(m)} - y^{n(0)}\| \leq \epsilon`. Letting
-:math:`y^n` denote the exact solution of :eq:`CVODE_nonlinear`, we want to ensure that the iteration
-error :math:`y^n - y^{n(m)}` is small relative to :math:`\epsilon`,
-specifically that it is less than :math:`0.1 \epsilon`. (The safety
-factor :math:`0.1` can be changed by the user.) For this, we also
+local error test :math:`\|y^{n(m)} - y^{n(0)}\| \leq 1`. Letting :math:`y^n`
+denote the exact solution of :eq:`CVODE_nonlinear`, we want to ensure that the
+iteration error :math:`y^n - y^{n(m)}` is "small". For this, we also
 estimate the linear convergence rate constant :math:`R` as follows. We
 initialize :math:`R` to 1, and reset :math:`R = 1` when :math:`M` or
 :math:`P` is updated. After computing a correction
@@ -249,16 +247,17 @@ Now we use the estimate
 
 Therefore the convergence (stopping) test is
 
-.. math:: R \|\delta_m\| < 0.1 \epsilon \, .
+.. math:: R \|\delta_m\| < \epsilon_N \, .
 
-We allow at most 3 iterations (but this limit can be changed by the user). We
-also declare the iteration diverged if any
-:math:`\|\delta_m\| / \|\delta_{m-1}\| > 2` with :math:`m > 1`. If convergence
-fails with :math:`J` or :math:`P` current, we are forced to reduce the step
-size, and we replace :math:`h_n` by :math:`h_n = \eta_{\mathrm{cf}} * h_n` where
-the default is :math:`\eta_{\mathrm{cf}} = 0.25`. The integration is halted
-after a preset number of convergence failures; the default value of this
-limit is 10, but this can be changed by the user.
+where the factor :math:`\epsilon_N` has default value 0.1.  We allow at most 3
+iterations (but this limit can be changed by the user). We also declare the
+iteration diverged if any :math:`\|\delta_m\| / \|\delta_{m-1}\| > 2` with
+:math:`m > 1`. If convergence fails with :math:`J` or :math:`P` current, we are
+forced to reduce the step size, and we replace :math:`h_n` by
+:math:`h_n = \eta_{\mathrm{cf}} * h_n` where the default is
+:math:`\eta_{\mathrm{cf}} = 0.25`. The integration is halted after a preset
+number of convergence failures; the default value of this limit is 10, but this
+can be changed by the user.
 
 When an iterative method is used to solve the linear system, its errors
 must also be controlled, and this also involves the local error test
@@ -267,7 +266,8 @@ constant. The linear iteration error in the solution vector
 Thus to ensure (or attempt to ensure) that the linear iteration errors
 do not interfere with the nonlinear error and local integration error
 controls, we require that the norm of the preconditioned residual be
-less than :math:`0.05 \cdot (0.1 \epsilon)`.
+less than :math:`\epsilon_L \epsilon_N`, with :math:`\epsilon_L = 0.05` by
+default.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix

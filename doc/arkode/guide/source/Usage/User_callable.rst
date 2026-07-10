@@ -2458,7 +2458,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
 
 .. c:function:: int ARKodeSetNonlinConvCoef(void* arkode_mem, sunrealtype nlscoef)
 
-   Specifies the safety factor :math:`\epsilon` used within the nonlinear
+   Specifies the safety factor :math:`\epsilon_N` used within the nonlinear
    solver convergence test :eq:`ARKODE_NonlinearTolerance`.
 
    :param arkode_mem: pointer to the ARKODE memory block.
@@ -3199,10 +3199,11 @@ ARKLS interface requires that iterative linear solvers stop when
 the norm of the preconditioned residual satisfies
 
 .. math::
-   \|r\| \le \frac{\epsilon_L \epsilon}{10}
+   \|r\| \le \epsilon_L \epsilon_N
 
-where the default :math:`\epsilon_L = 0.05` may be modified by
-the user through the :c:func:`ARKodeSetEpsLin` function.
+where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
+:math:`\epsilon_L = 0.05` may be modified by the user through the
+:c:func:`ARKodeSetEpsLin` function.
 
 
 .. c:function:: int ARKodeSetPreconditioner(void* arkode_mem, ARKLsPrecSetupFn psetup, ARKLsPrecSolveFn psolve)

@@ -2031,15 +2031,15 @@ Therefore our convergence (stopping) test for the nonlinear iteration
 for each stage is
 
 .. math::
-   R_i \left\|\delta^{(m)} \right\| < \epsilon,
+   R_i \left\|\delta^{(m)} \right\| < \epsilon_N,
    :label: ARKODE_NonlinearTolerance
 
-where the factor :math:`\epsilon` has default value 0.1.  We default
+where the factor :math:`\epsilon_N` has default value 0.1.  We default
 to a maximum of 3 nonlinear iterations.  We also declare the
 nonlinear iteration to be divergent if any of the ratios
 
 .. math::
-   `\|\delta^{(m)}\| / \|\delta^{(m-1)}\| > r_{div}`
+   \|\delta^{(m)}\| / \|\delta^{(m-1)}\| > r_{div}
    :label: ARKODE_NonlinearDivergence
 
 with :math:`m>0`, where :math:`r_{div}` defaults to 2.3.
@@ -2070,19 +2070,17 @@ and local time integration error controls, we require that the norm of
 the preconditioned linear residual satisfies
 
 .. math::
-   \|r\| \le \frac{\epsilon_L \epsilon}{10}.
+   \|r\| \le \epsilon_L \epsilon_N.
    :label: ARKODE_LinearTolerance
 
-Here :math:`\epsilon` is the same value as that is used above for the
-nonlinear error control.  The factor of 10 is used to ensure that the
-linear solver error does not adversely affect the nonlinear solver
-convergence.  Smaller values for the parameter :math:`\epsilon_L` are
-typically useful for strongly nonlinear or very stiff ODE systems,
-while easier ODE systems may benefit from a value closer to 1.  The
-default value is :math:`\epsilon_L = 0.05`, which may be modified by
-the user.  We note that for linearly
-implicit problems the tolerance :eq:`ARKODE_LinearTolerance` is similarly
-used for the single Newton iteration.
+Here :math:`\epsilon_N` is the same value as that is used above for the
+nonlinear error control.  Smaller values for the parameter :math:`\epsilon_L`
+are typically useful for strongly nonlinear or very stiff ODE systems, while
+easier ODE systems may benefit from a value closer to 1.  The default values
+are :math:`\epsilon_L = 0.05` and :math:`\epsilon_N = 0.1`, so the default
+linear residual tolerance is :math:`0.005`; :math:`\epsilon_L` may be modified
+by the user.  We note that for linearly implicit problems the tolerance
+:eq:`ARKODE_LinearTolerance` is similarly used for the single Newton iteration.
 
 
 
@@ -2416,10 +2414,10 @@ iterative mass matrix linear solver, we require that the norm of the
 preconditioned linear residual satisfies
 
 .. math::
-   \|r\| \le \epsilon_L \epsilon,
+   \|r\| \le \epsilon_L \epsilon_N,
    :label: ARKODE_MassLinearTolerance
 
-where again, :math:`\epsilon` is the nonlinear solver tolerance
+where again, :math:`\epsilon_N` is the nonlinear solver tolerance
 parameter from :eq:`ARKODE_NonlinearTolerance`.  When using iterative system
 and mass matrix linear solvers, :math:`\epsilon_L` may be specified
 separately for both tolerances :eq:`ARKODE_LinearTolerance` and

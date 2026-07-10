@@ -208,21 +208,22 @@ iteration :math:`m=1,2,\ldots`. The nonlinear solver iteration is halted if
 :math:`R>0.9`.  The convergence test at the :math:`m`-th iteration is then
 
 .. math::
-   S \| \delta_m \| < 0.33 \, ,
+   S \| \delta_m \| < \epsilon_N \, ,
    :label: IDA_DAE_nls_test
 
 where :math:`S = R/(R-1)` whenever :math:`m>1` and :math:`R\le 0.9`. The user
 has the option of changing the constant in the convergence test from its default
-value of :math:`0.33`.  The quantity :math:`S` is set to :math:`S=20` initially
-and whenever :math:`J` or :math:`P` is updated, and it is reset to :math:`S=100`
-on a step with :math:`\alpha \neq \bar\alpha`.  Note that at :math:`m=1`, the
-convergence test :eq:`IDA_DAE_nls_test` uses an old value for :math:`S`. Therefore,
-at the first nonlinear solver iteration, we make an additional test and stop the
-iteration if :math:`\|\delta_1\| < 0.33 \cdot 10^{-4}` (since such a
-:math:`\delta_1` is probably just noise and therefore not appropriate for use in
-evaluating :math:`R`).  We allow only a small number (default value 4) of
-nonlinear iterations.  If convergence fails with :math:`J` or :math:`P` current,
-we are forced to reduce the step size :math:`h_n`, and we replace :math:`h_n` by
+value :math:`\epsilon_N = 0.33`.  The quantity :math:`S` is set to :math:`S=20`
+initially and whenever :math:`J` or :math:`P` is updated, and it is reset to
+:math:`S=100` on a step with :math:`\alpha \neq \bar\alpha`.  Note that at
+:math:`m=1`, the convergence test :eq:`IDA_DAE_nls_test` uses an old value for
+:math:`S`. Therefore, at the first nonlinear solver iteration, we make an
+additional test and stop the iteration if
+:math:`\|\delta_1\| < \epsilon_N \cdot 10^{-4}` (since such a :math:`\delta_1`
+is probably just noise and therefore not appropriate for use in evaluating
+:math:`R`).  We allow only a small number (default value 4) of nonlinear
+iterations.  If convergence fails with :math:`J` or :math:`P` current, we are
+forced to reduce the step size :math:`h_n`, and we replace :math:`h_n` by
 :math:`h_n \eta_{\mathrm{cf}}` (by default :math:`\eta_{\mathrm{cf}} = 0.25`). The
 integration is halted after a preset number (default value 10) of convergence
 failures. Both the maximum number of allowable nonlinear iterations and the
@@ -232,8 +233,9 @@ their default values.
 When an iterative method is used to solve the linear system, to minimize the
 effect of linear iteration errors on the nonlinear and local integration error
 controls, we require the preconditioned linear residual to be small relative to
-the allowed error in the nonlinear iteration, i.e., :math:`\| P^{-1}(Jx+G) \| <
-0.05 \cdot 0.33`.  The safety factor :math:`0.05` can be changed by the user.
+the allowed error in the nonlinear iteration, i.e.,
+:math:`\| P^{-1}(Jx+G) \| < \epsilon_L \epsilon_N`, where the default
+:math:`\epsilon_L = 0.05` can be changed by the user.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix objects,

@@ -1629,17 +1629,17 @@ requires that iterative linear solvers stop when the norm of the preconditioned
 residual satisfies
 
 .. math::
-   \|r\| \le \frac{\epsilon_L \epsilon}{10}
+   \|r\| \le \epsilon_L \epsilon_N
 
-where :math:`\epsilon` is the nonlinear solver tolerance, and the default
+where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
 :math:`\epsilon_L = 0.05`; this value may be modified by the user through the
 :c:func:`IDASetEpsLin` function.
 
 .. c:function:: int IDASetEpsLin(void * ida_mem, sunrealtype eplifac)
 
-   The function ``IDASetEpsLin`` specifies the factor by which the Krylov linear
-   solver's convergence test constant is reduced from the nonlinear iteration
-   test constant.
+   The function ``IDASetEpsLin`` specifies the factor :math:`\epsilon_L` by
+   which the Krylov linear solver's convergence test constant is reduced from
+   the nonlinear iteration test constant.
 
    **Arguments:**
       * ``ida_mem`` -- pointer to the IDA solver object.
@@ -1677,10 +1677,10 @@ where :math:`\epsilon` is the nonlinear solver tolerance, and the default
 
         * If ``nrmfac > 0``, the provided value is used.
         * If ``nrmfac = 0`` then the conversion factor is computed using the
-          vector length i.e., ``nrmfac = N_VGetLength(y)`` (*default*).
+          vector length i.e., ``nrmfac = sqrt(N_VGetLength(y))`` (*default*).
         * If ``nrmfac < 0`` then the conversion factor is computed using the
-          vector dot product ``nrmfac = N_VDotProd(v,v)`` where all the entries of
-          ``v`` are one.
+          vector dot product ``nrmfac = sqrt(N_VDotProd(v,v))`` where all the
+          entries of ``v`` are one.
 
    **Return value:**
       * ``IDA_SUCCESS`` -- The optional value has been successfully set.
@@ -1766,8 +1766,9 @@ nonlinear solver.
 
 .. c:function:: int IDASetNonlinConvCoef(void * ida_mem, sunrealtype nlscoef)
 
-   The function ``IDASetNonlinConvCoef`` specifies the safety factor in the
-   nonlinear convergence test; see :eq:`IDA_DAE_nls_test`.
+   The function ``IDASetNonlinConvCoef`` specifies the safety factor
+   :math:`\epsilon_N` in the nonlinear convergence test; see
+   :eq:`IDA_DAE_nls_test`.
 
    **Arguments:**
       * ``ida_mem`` -- pointer to the IDA solver object.

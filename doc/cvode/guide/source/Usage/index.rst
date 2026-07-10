@@ -1698,9 +1698,9 @@ preconditioned residual satisfies
 
 .. math::
 
-   \|r\| \le \frac{\epsilon_L \epsilon}{10}
+   \|r\| \le \epsilon_L \epsilon_N
 
-where :math:`\epsilon` is the nonlinear solver tolerance, and the default
+where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
 :math:`\epsilon_L = 0.05`; this value may be modified by the user through
 the :c:func:`CVodeSetEpsLin` function.
 
@@ -1736,7 +1736,7 @@ the :c:func:`CVodeSetEpsLin` function.
 
 .. c:function:: int CVodeSetEpsLin(void* cvode_mem, sunrealtype eplifac)
 
-   The function ``CVodeSetEpsLin`` specifies the factor by  which the Krylov linear solver's convergence test constant is  reduced from the nonlinear solver test constant.
+   The function ``CVodeSetEpsLin`` specifies the factor :math:`\epsilon_L` by which the Krylov linear solver's convergence test constant is  reduced from the nonlinear solver test constant.
 
    **Arguments:**
      * ``cvode_mem`` -- pointer to the CVODE memory block.
@@ -1765,15 +1765,15 @@ the :c:func:`CVodeSetEpsLin` function.
 
 .. c:function:: int CVodeSetLSNormFactor(void* cvode_mem, sunrealtype nrmfac)
 
-   The function ``CVodeSetLSNormFactor`` specifies the factor to use when  converting from the integrator tolerance (WRMS norm) to the linear solver  tolerance (L2 norm) for Newton linear system solves e.g.,  ``tol_L2 = fac * tol_WRMS``.
+   The function ``CVodeSetLSNormFactor`` specifies the factor to use when converting from the integrator tolerance (WRMS norm) to the linear solver  tolerance (L2 norm) for Newton linear system solves e.g.,  ``tol_L2 = fac * tol_WRMS``.
 
    **Arguments:**
      * ``cvode_mem`` -- pointer to the CVODE memory block.
      * ``nrmfac`` -- the norm conversion factor. If ``nrmfac`` is:
 
        - :math:`> 0` then the provided value is used.
-       - :math:`= 0` then the conversion factor is computed using the vector length, i.e., ``nrmfac = N_VGetLength(y)`` (*default*).
-       - :math:`< 0` then the conversion factor is computed using the vector dot product, i.e., ``nrmfac = N_VDotProd(v,v)`` where all the entries of ``v`` are one.
+       - :math:`= 0` then the conversion factor is computed using the vector length, i.e., ``nrmfac = sqrt(N_VGetLength(y))`` (*default*).
+       - :math:`< 0` then the conversion factor is computed using the vector dot product, i.e., ``nrmfac = sqrt(N_VDotProd(v,v))`` where all the entries of ``v`` are one.
 
    **Return value:**
      * ``CV_SUCCESS`` -- The optional value has been successfully set.
@@ -1782,7 +1782,7 @@ the :c:func:`CVodeSetEpsLin` function.
    **Notes:**
       This function must be called after the CVLS linear solver  interface has been initialized through a call to :c:func:`CVodeSetLinearSolver`.
 
-      Prior to the introduction of ``N_VGetLength`` in SUNDIALS v5.0.0  (CVODE v5.0.0) the value of ``nrmfac`` was computed using the vector  dot product i.e., the ``nrmfac < 0`` case.
+      Prior to the introduction of ``N_VGetLength`` in SUNDIALS v5.0.0 (CVODE v5.0.0) the value of ``nrmfac`` was computed using the vector  dot product i.e., the ``nrmfac < 0`` case.
 
       This routine will be called by :c:func:`CVodeSetOptions`
       when using the key "cvid.ls_norm_factor".
@@ -1855,7 +1855,7 @@ nonlinear solver.
 
 .. c:function:: int CVodeSetNonlinConvCoef(void* cvode_mem, sunrealtype nlscoef)
 
-   The function ``CVodeSetNonlinConvCoef`` specifies the safety factor used in the nonlinear convergence test (see :numref:`CVODE.Mathematics.ivp_sol`).
+   The function ``CVodeSetNonlinConvCoef`` specifies the safety factor :math:`\epsilon_N` used in the nonlinear convergence test (see :numref:`CVODE.Mathematics.ivp_sol`).
 
    **Arguments:**
      * ``cvode_mem`` -- pointer to the CVODE memory block.
