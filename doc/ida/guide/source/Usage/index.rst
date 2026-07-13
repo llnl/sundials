@@ -1625,15 +1625,16 @@ global data in the program.
 
 
 Also, as described in :numref:`IDA.Mathematics.ivp_sol`, the IDALS interface
-requires that iterative linear solvers stop when the norm of the preconditioned
-residual satisfies
+targets a preconditioned residual satisfying
 
 .. math::
    \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N
 
 where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
 :math:`\epsilon_L = 0.05`; this value may be modified by the user through the
-:c:func:`IDASetEpsLin` function.
+:c:func:`IDASetEpsLin` function.  The attached ``SUNLinearSolver`` may use
+scaling vectors or a converted :math:`L_2` tolerance instead of testing this WRMS
+norm directly; see :numref:`SUNLinSol.IDA.Iterative.Tolerance`.
 
 .. c:function:: int IDASetEpsLin(void * ida_mem, sunrealtype eplifac)
 
@@ -1669,7 +1670,8 @@ where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
    The function ``IDASetLSNormFactor`` specifies the factor to use when
    converting from the integrator tolerance (WRMS norm) to the linear solver
    tolerance (L2 norm) for Newton linear system solves e.g.,
-   ``tol_L2 = fac * tol_WRMS``.
+   ``tol_L2 = fac * tol_WRMS``.  See :numref:`SUNLinSol.IDA.Iterative.Tolerance`
+   for how this tolerance is used in the linear solver convergence test.
 
    **Arguments:**
       * ``ida_mem`` -- pointer to the IDA solver object.

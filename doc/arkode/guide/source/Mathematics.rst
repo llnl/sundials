@@ -2068,12 +2068,17 @@ e.g. :math:`r = P{\mathcal A}\delta^{(m)} + PG` for the case of left
 preconditioning (the role of the preconditioner is further elaborated
 in the next section).  In an attempt to ensure that the linear
 iteration errors do not interfere with the nonlinear solution error
-and local time integration error controls, we require that the norm of
-the preconditioned linear residual satisfies
+and local time integration error controls, we set the integrator-level
+target for the preconditioned linear residual to
 
 .. math::
    \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N.
    :label: ARKODE_LinearTolerance
+
+The attached ``SUNLinearSolver`` may not evaluate this WRMS norm
+directly.  The ARKLS interface provides scaling vectors when supported,
+or otherwise converts this target to the norm used by the linear solver;
+see :numref:`SUNLinSol.Iterative.Tolerance`.
 
 Here :math:`\epsilon_N` is the same value as that is used above for the
 nonlinear error control.  Smaller values for the parameter :math:`\epsilon_L`
@@ -2412,12 +2417,15 @@ When matrix-free methods are selected, a routine must be supplied to
 perform the mass-matrix-vector product, :math:`Mv`.  As with iterative
 solvers for the Newton systems, preconditioning may be applied to aid
 in solution of the mass matrix systems :eq:`ARKODE_mass_solve`.  When using an
-iterative mass matrix linear solver, we require that the norm of the
-preconditioned linear residual satisfies
+iterative mass matrix linear solver, we use the integrator-level target
 
 .. math::
    \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N,
    :label: ARKODE_MassLinearTolerance
+
+As for Newton linear systems, the ARKLS interface translates this WRMS
+target to the convergence test used by the attached ``SUNLinearSolver``;
+see :numref:`SUNLinSol.Iterative.Tolerance`.
 
 where again, :math:`\epsilon_N` is the nonlinear solver tolerance
 parameter from :eq:`ARKODE_NonlinearTolerance`.  When using iterative system

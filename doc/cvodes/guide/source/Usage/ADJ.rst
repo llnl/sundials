@@ -1188,7 +1188,9 @@ potentially non-differentiable factor.
    The function :c:func:`CVodeSetLSNormFactorB` specifies the factor to use when
    converting from the integrator tolerance (WRMS norm) to the linear solver
    tolerance (L2 norm) for Newton linear system solves e.g.,  ``tol_L2 = fac *
-   tol_WRMS``.  This routine can be used in both the cases wherethe backward
+   tol_WRMS``. See :numref:`SUNLinSol.CVODES.Iterative.Tolerance` for how this
+   tolerance is used in the linear solver convergence test. This routine can be
+   used in both the cases where the backward
    problem  does and does not depend on the forward sensitivities.
 
    **Arguments:**

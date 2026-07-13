@@ -231,10 +231,14 @@ their default values.
 
 When an iterative method is used to solve the linear system, to minimize the
 effect of linear iteration errors on the nonlinear and local integration error
-controls, we require the preconditioned linear residual to be small relative to
-the allowed error in the nonlinear iteration, i.e.,
+controls, we set the integrator-level target for the preconditioned linear
+residual relative to the allowed error in the nonlinear iteration, i.e.,
 :math:`\| P^{-1}(Jx+G) \|_{\text{WRMS}} < \epsilon_L \epsilon_N`, where the
-default :math:`\epsilon_L = 0.05` can be changed by the user.
+default :math:`\epsilon_L = 0.05` can be changed by the user.  The attached
+``SUNLinearSolver`` may not evaluate this WRMS norm directly; the IDALS
+interface provides scaling vectors when supported, or otherwise converts this
+target to the norm used by the linear solver.  See
+:numref:`SUNLinSol.IDA.Iterative.Tolerance`.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix objects,

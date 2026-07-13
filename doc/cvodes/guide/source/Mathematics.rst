@@ -272,9 +272,12 @@ constant. The linear iteration error in the solution vector
 :math:`\delta_m` is approximated by the preconditioned residual vector.
 Thus to ensure (or attempt to ensure) that the linear iteration errors
 do not interfere with the nonlinear error and local integration error
-controls, we require that the norm of the preconditioned residual satisfies
+controls, we set the integrator-level target for the preconditioned residual to
 :math:`\|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N`, with
-:math:`\epsilon_L = 0.05` by default.
+:math:`\epsilon_L = 0.05` by default.  The attached ``SUNLinearSolver`` may
+not evaluate this WRMS norm directly; the CVLS interface provides scaling
+vectors when supported, or otherwise converts this target to the norm used by
+the linear solver.  See :numref:`SUNLinSol.CVODES.Iterative.Tolerance`.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix

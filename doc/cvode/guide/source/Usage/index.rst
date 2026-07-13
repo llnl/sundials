@@ -1693,8 +1693,7 @@ problem data and access it during the execution of the user-supplied
 preconditioner functions without using global data in the program.
 
 Also, as described in :numref:`CVODE.Mathematics.ivp_sol`, the CVLS interface
-requires that iterative linear solvers stop when the norm of the
-preconditioned residual satisfies
+targets a preconditioned residual satisfying
 
 .. math::
 
@@ -1702,7 +1701,9 @@ preconditioned residual satisfies
 
 where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
 :math:`\epsilon_L = 0.05`; this value may be modified by the user through
-the :c:func:`CVodeSetEpsLin` function.
+the :c:func:`CVodeSetEpsLin` function.  The attached ``SUNLinearSolver`` may use
+scaling vectors or a converted :math:`L_2` tolerance instead of testing this WRMS
+norm directly; see :numref:`SUNLinSol.CVODE.Iterative.Tolerance`.
 
 
 .. c:function:: int CVodeSetPreconditioner(void* cvode_mem, CVLsPrecSetupFn psetup, CVLsPrecSolveFn psolve)
@@ -1765,7 +1766,7 @@ the :c:func:`CVodeSetEpsLin` function.
 
 .. c:function:: int CVodeSetLSNormFactor(void* cvode_mem, sunrealtype nrmfac)
 
-   The function ``CVodeSetLSNormFactor`` specifies the factor to use when converting from the integrator tolerance (WRMS norm) to the linear solver  tolerance (L2 norm) for Newton linear system solves e.g.,  ``tol_L2 = fac * tol_WRMS``.
+   The function ``CVodeSetLSNormFactor`` specifies the factor to use when converting from the integrator tolerance (WRMS norm) to the linear solver  tolerance (L2 norm) for Newton linear system solves e.g.,  ``tol_L2 = fac * tol_WRMS``.  See :numref:`SUNLinSol.CVODE.Iterative.Tolerance` for how this tolerance is used in the linear solver convergence test.
 
    **Arguments:**
      * ``cvode_mem`` -- pointer to the CVODE memory block.
