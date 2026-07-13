@@ -1063,10 +1063,10 @@ Error norms
 In the process of controlling errors at various levels (time
 integration, nonlinear solution, linear solution), the methods in
 ARKODE use a :index:`weighted root-mean-square norm`, denoted
-:math:`\|\cdot\|_\text{WRMS}`, for all error-like quantities,
+:math:`\|\cdot\|_{\text{WRMS}}`, for all error-like quantities,
 
 .. math::
-   \|v\|_\text{WRMS} = \left( \frac{1}{N} \sum_{i=1}^N \left(v_i\,
+   \|v\|_{\text{WRMS}} = \left( \frac{1}{N} \sum_{i=1}^N \left(v_i\,
    w_i\right)^2\right)^{1/2}.
    :label: ARKODE_WRMS_NORM
 
@@ -1083,8 +1083,7 @@ absolute tolerances, namely
 
 Since :math:`1/w_i` represents a tolerance in the :math:`i`-th component of the
 solution vector :math:`y`, a vector whose WRMS norm is 1 is regarded
-as "small."  For brevity, unless specified otherwise we will drop the
-subscript WRMS on norms in the remainder of this section.
+as "small."
 
 Additionally, for problems involving a non-identity mass matrix,
 :math:`M\ne I`, the units of equation :eq:`ARKODE_IMEX_IVP` may differ from the
@@ -1129,8 +1128,8 @@ method and embedding, hence each admit local truncation errors
 satisfying :cite:p:`HWN:87`
 
 .. math::
-   \| y_n - y(t_n) \| = C h_n^{q+1} + \mathcal O(h_n^{q+2}), \\
-   \| \tilde{y}_n - y(t_n) \| = D h_n^{p+1} + \mathcal O(h_n^{p+2}),
+   \| y_n - y(t_n) \|_{\text{WRMS}} = C h_n^{q+1} + \mathcal O(h_n^{q+2}), \\
+   \| \tilde{y}_n - y(t_n) \|_{\text{WRMS}} = D h_n^{p+1} + \mathcal O(h_n^{p+2}),
    :label: ARKODE_AsymptoticErrors
 
 where :math:`C` and :math:`D` are constants independent of
@@ -1139,8 +1138,9 @@ the step, i.e. :math:`y_{n-1} = y(t_{n-1})`. Combining these
 estimates, we have
 
 .. math::
-   \| y_n - \tilde{y}_n \| = \| y_n - y(t_n) - \tilde{y}_n + y(t_n) \|
-   \le \| y_n - y(t_n) \| + \| \tilde{y}_n - y(t_n) \|
+   \| y_n - \tilde{y}_n \|_{\text{WRMS}} =
+   \| y_n - y(t_n) - \tilde{y}_n + y(t_n) \|_{\text{WRMS}}
+   \le \| y_n - y(t_n) \|_{\text{WRMS}} + \| \tilde{y}_n - y(t_n) \|_{\text{WRMS}}
    \le D h_n^{p+1} + \mathcal O(h_n^{p+2}).
 
 We therefore use the norm of the difference between :math:`y_n` and
@@ -1159,7 +1159,7 @@ the default value of this constant is :math:`\beta = 1.5`, which may
 be modified by the user.
 
 With this LTE estimate, the local error test is simply
-:math:`\|T_n\| < 1` since this norm includes the user-specified
+:math:`\|T_n\|_{\text{WRMS}} \leq 1` since this norm includes the user-specified
 tolerances.  If this error test passes, the step is considered
 successful, and the estimate is subsequently used to determine the next
 step size, the algorithms used for this purpose are described in
@@ -1227,7 +1227,7 @@ step size :math:`h'` based on the asymptotic local error estimates
 :math:`\varepsilon_{n-1}` and :math:`\varepsilon_{n-2}` as
 
 .. math::
-   \varepsilon_k \ \equiv \ \|T_k\| \ = \ \beta \|y_k - \tilde{y}_k\|,
+   \varepsilon_k \ \equiv \ \|T_k\|_{\text{WRMS}} \ = \ \beta \|y_k - \tilde{y}_k\|_{\text{WRMS}},
 
 corresponding to the local error estimates for three consecutive
 steps, :math:`t_{n-3} \to t_{n-2} \to t_{n-1} \to t_n`.  These local
@@ -1339,7 +1339,7 @@ Fast temporal error estimation
 MRI temporal adaptivity requires estimation of the temporal errors that
 arise at *both* the slow and fast time scales, which we denote here as
 :math:`\varepsilon^S` and :math:`\varepsilon^F`, respectively.  While the
-slow error may be estimated as :math:`\varepsilon^S = \|y_n - \tilde{y}_n\|`,
+slow error may be estimated as :math:`\varepsilon^S = \|y_n - \tilde{y}_n\|_{\text{WRMS}}`,
 non-intrusive approaches for estimating :math:`\varepsilon^F` are more
 challenging.  ARKODE provides several strategies to help provide this estimate, all
 of which assume the fast integrator is temporally adaptive and, at each of its
@@ -1351,19 +1351,19 @@ that it may have used a potentially different relative solution tolerance,
 estimates using either a "maximum accumulation" strategy,
 
 .. math::
-   \varepsilon^F_{max} = \text{RTOL}^F \max_{m\in \mathcal{S}} \|\varepsilon^F_{n,m}\|_{WRMS},
+   \varepsilon^F_{max} = \text{RTOL}^F \max_{m\in \mathcal{S}} \|\varepsilon^F_{n,m}\|_{\text{WRMS}},
    :label: maximum_accumulation
 
 an "additive accumulation" strategy,
 
 .. math::
-   \varepsilon^F_{sum} = \text{RTOL}^F \sum_{m\in \mathcal{S}} \|\varepsilon^F_{n,m}\|_{WRMS},
+   \varepsilon^F_{sum} = \text{RTOL}^F \sum_{m\in \mathcal{S}} \|\varepsilon^F_{n,m}\|_{\text{WRMS}},
    :label: additive_accumulation
 
 or using an "averaged accumulation" strategy,
 
 .. math::
-   \varepsilon^F_{avg} = \frac{\text{RTOL}^F}{\Delta t_{\mathcal{S}}} \sum_{m\in \mathcal{S}} h_{n,m} \|\varepsilon^F_{n,m}\|_{WRMS},
+   \varepsilon^F_{avg} = \frac{\text{RTOL}^F}{\Delta t_{\mathcal{S}}} \sum_{m\in \mathcal{S}} h_{n,m} \|\varepsilon^F_{n,m}\|_{\text{WRMS}},
    :label: average_accumulation
 
 where :math:`h_{n,m}` is the step size that gave rise to :math:`\varepsilon^F_{n,m}`,
@@ -1417,7 +1417,8 @@ typically attempts to determine a step size such that an explicit Euler method
 for :eq:`IVP_single` would be sufficiently accurate, i.e.,
 
 .. math::
-   \|y(t_0+h_0) - \left(y_0 + h_0 f(t_0,y_0)\right)\| \approx \left\|\frac{h^2}{2} \frac{\mathrm d}{\mathrm dt} f(t_0,y_0)\right\| < 1,
+   \|y(t_0+h_0) - \left(y_0 + h_0 f(t_0,y_0)\right)\|_{\text{WRMS}}
+   \approx \left\|\frac{h^2}{2} \frac{\mathrm d}{\mathrm dt} f(t_0,y_0)\right\|_{\text{WRMS}} < 1,
 
 where we have assumed that :math:`y(t)` is sufficiently differentiable, and that the
 norms include user-specified tolerances such that an error with norm less than one is
@@ -1425,7 +1426,7 @@ deemed "acceptable."  Satisfying this inequality with a value of :math:`\frac12`
 solving for :math:`h_0`, we have
 
 .. math::
-   |h_0| = \frac{1}{\left\|\frac{\mathrm d}{\mathrm dt} f(t_0,y_0)\right\|^{1/2}}.
+   |h_0| = \frac{1}{\left\|\frac{\mathrm d}{\mathrm dt} f(t_0,y_0)\right\|_{\text{WRMS}}^{1/2}}.
 
 Finally, by estimating the time derivative with finite-differences,
 
@@ -1435,7 +1436,7 @@ Finally, by estimating the time derivative with finite-differences,
 we obtain
 
 .. math::
-   |h_0| = \frac{{\delta t}^{1/2}}{\|f(t_0+\delta t,y_0+\delta t f(t_0,y_0)) - f(t_0,y_0)\|^{1/2}}.
+   |h_0| = \frac{{\delta t}^{1/2}}{\|f(t_0+\delta t,y_0+\delta t f(t_0,y_0)) - f(t_0,y_0)\|_{\text{WRMS}}^{1/2}}.
    :label: H0_TSExp1
 
 Initial step size estimation based on the simpler Taylor expansion :eq:`TSExp0`
@@ -1443,12 +1444,13 @@ instead assumes that the first calculated time step should be "close" to the
 initial state,
 
 .. math::
-   \|y(t_0+h_0) - y_0 \| \approx \left\|h_0 f(t_0,y_0)\right\| < 1,
+   \|y(t_0+h_0) - y_0 \|_{\text{WRMS}}
+   \approx \left\|h_0 f(t_0,y_0)\right\|_{\text{WRMS}} < 1,
 
 where we again satisfy the inequality with a value of :math:`\frac12` to obtain
 
 .. math::
-   |h_0| = \frac{1}{2\left\| f(t_0,y_0)\right\|}.
+   |h_0| = \frac{1}{2\left\| f(t_0,y_0)\right\|_{\text{WRMS}}}.
    :label: H0_TSExp0
 
 
@@ -1914,8 +1916,8 @@ derivative:
 .. math::
    J(t,z)\,v \approx \frac{f^I(t,z+\sigma v) - f^I(t,z)}{\sigma},
 
-where we use the increment :math:`\sigma = 1/\|v\|` to ensure that
-:math:`\|\sigma v\| = 1`.
+where we use the increment :math:`\sigma = 1/\|v\|_{\text{WRMS}}` to ensure that
+:math:`\|\sigma v\|_{\text{WRMS}} = 1`.
 
 As with the modified Newton method that reused :math:`{\mathcal A}`
 between solves, the inexact Newton iteration may also recompute
@@ -2010,7 +2012,7 @@ updated.  After computing a nonlinear correction :math:`\delta^{(m)} =
 z_i^{(m)} - z_i^{(m-1)}`, if :math:`m>0` we update :math:`R_i` as
 
 .. math::
-   R_i \leftarrow \max\left\{ c_r R_i, \left\|\delta^{(m)}\right\| / \left\|\delta^{(m-1)}\right\| \right\}.
+   R_i \leftarrow \max\left\{ c_r R_i, \left\|\delta^{(m)}\right\|_{\text{WRMS}} / \left\|\delta^{(m-1)}\right\|_{\text{WRMS}} \right\}.
    :label: ARKODE_NonlinearCRate
 
 where the default factor :math:`c_r=0.3` is user-modifiable.
@@ -2022,16 +2024,16 @@ constructed using *exact* nonlinear stage solutions.  We then use the
 estimate
 
 .. math::
-   \left\| y_n^{(\infty)} - y_n^{(m)} \right\| \approx
-   \max_i \left\| z_i^{(m+1)} - z_i^{(m)} \right\| \approx
-   \max_i R_i \left\| z_i^{(m)} - z_i^{(m-1)} \right\| =
-   \max_i R_i \left\| \delta^{(m)} \right\|.
+   \left\| y_n^{(\infty)} - y_n^{(m)} \right\|_{\text{WRMS}} \approx
+   \max_i \left\| z_i^{(m+1)} - z_i^{(m)} \right\|_{\text{WRMS}} \approx
+   \max_i R_i \left\| z_i^{(m)} - z_i^{(m-1)} \right\|_{\text{WRMS}} =
+   \max_i R_i \left\| \delta^{(m)} \right\|_{\text{WRMS}}.
 
 Therefore our convergence (stopping) test for the nonlinear iteration
 for each stage is
 
 .. math::
-   R_i \left\|\delta^{(m)} \right\| < \epsilon_N,
+   R_i \left\|\delta^{(m)} \right\|_{\text{WRMS}} < \epsilon_N,
    :label: ARKODE_NonlinearTolerance
 
 where the factor :math:`\epsilon_N` has default value 0.1.  We default
@@ -2039,7 +2041,7 @@ to a maximum of 3 nonlinear iterations.  We also declare the
 nonlinear iteration to be divergent if any of the ratios
 
 .. math::
-   \|\delta^{(m)}\| / \|\delta^{(m-1)}\| > r_{div}
+   \|\delta^{(m)}\|_{\text{WRMS}} / \|\delta^{(m-1)}\|_{\text{WRMS}} > r_{div}
    :label: ARKODE_NonlinearDivergence
 
 with :math:`m>0`, where :math:`r_{div}` defaults to 2.3.
@@ -2070,7 +2072,7 @@ and local time integration error controls, we require that the norm of
 the preconditioned linear residual satisfies
 
 .. math::
-   \|r\| \le \epsilon_L \epsilon_N.
+   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N.
    :label: ARKODE_LinearTolerance
 
 Here :math:`\epsilon_N` is the same value as that is used above for the
@@ -2414,7 +2416,7 @@ iterative mass matrix linear solver, we require that the norm of the
 preconditioned linear residual satisfies
 
 .. math::
-   \|r\| \le \epsilon_L \epsilon_N,
+   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N,
    :label: ARKODE_MassLinearTolerance
 
 where again, :math:`\epsilon_N` is the nonlinear solver tolerance

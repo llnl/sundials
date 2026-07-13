@@ -1106,7 +1106,7 @@ Main solver optional input functions
      * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
    **Notes:**
-      By default, CVODES estimates the initial step size to be the solution :math:`h` of the equation :math:`0.5 h^2 \ddot{y} = 1`,  where :math:`\ddot{y}` is an estimated second derivative of the solution at :math:`t_0`.
+      By default, CVODES estimates the initial step size to be the solution :math:`h` of the equation :math:`0.5 h^2 \|\ddot{y}\|_{\text{WRMS}} = 1`,  where :math:`\ddot{y}` is an estimated second derivative of the solution at :math:`t_0`.
 
       This routine will be called by :c:func:`CVodeSetOptions`
       when using the key "cvid.init_step".
@@ -1689,7 +1689,7 @@ preconditioned residual satisfies
 
 .. math::
 
-   \|r\| \le \epsilon_L \epsilon_N
+   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N
 
 where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
 :math:`\epsilon_L = 0.05`; this value may be modified by the user through
@@ -3765,7 +3765,7 @@ weights in the WRMS norm
 
 .. math::
 
-   \|\ v \|_{\mbox{WRMS}} = \sqrt{\frac1N \sum_{i=1}^N (W_i \cdot v_i)^2}.
+   \|\ v \|_{\text{WRMS}} = \sqrt{\frac1N \sum_{i=1}^N (W_i \cdot v_i)^2}.
 
 These weights will be used in place of those defined by Eq.
 :eq:`CVODES_errwt`. The function type is defined as follows:

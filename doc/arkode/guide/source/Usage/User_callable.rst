@@ -114,7 +114,7 @@ This vector is used in all error and convergence tests, which use a
 weighted RMS norm on all error-like vectors :math:`v`:
 
 .. math::
-    \|v\|_{WRMS} = \left( \frac{1}{N} \sum_{i=1}^N (v_i\; ewt_i)^2 \right)^{1/2},
+    \|v\|_{\text{WRMS}} = \left( \frac{1}{N} \sum_{i=1}^N (v_i\; ewt_i)^2 \right)^{1/2},
 
 where :math:`N` is the problem dimension.
 
@@ -207,7 +207,7 @@ convergence tests, which similarly use a weighted RMS norm on all
 residual-like vectors :math:`v`:
 
 .. math::
-    \|v\|_{WRMS} = \left( \frac{1}{N} \sum_{i=1}^N (v_i\; rwt_i)^2 \right)^{1/2},
+    \|v\|_{\text{WRMS}} = \left( \frac{1}{N} \sum_{i=1}^N (v_i\; rwt_i)^2 \right)^{1/2},
 
 where :math:`N` is the problem dimension.
 
@@ -1276,7 +1276,7 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
       allowed when using a time-stepping module that supports temporal adaptivity.
 
       By default, ARKODE estimates the initial step size to be
-      :math:`h = \sqrt{\dfrac{2}{\left\| \ddot{y}\right\|}}`, where
+      :math:`h = \sqrt{\dfrac{2}{\left\| \ddot{y}\right\|_{\text{WRMS}}}}`, where
       :math:`\ddot{y}` is estimate of the second derivative of the solution
       at :math:`t_0`.
 
@@ -2127,15 +2127,15 @@ tolerance.
 
    .. c:enumerator:: ARK_ACCUMERROR_MAX
 
-      Computes :math:`\text{reltol} \max\limits_{i \in \mathcal{S}} \|y_i - \tilde{y}_i\|_{WRMS}`
+      Computes :math:`\text{reltol} \max\limits_{i \in \mathcal{S}} \|y_i - \tilde{y}_i\|_{\text{WRMS}}`
 
    .. c:enumerator:: ARK_ACCUMERROR_SUM
 
-      Computes :math:`\text{reltol} \sum\limits_{i \in \mathcal{S}} \|y_i - \tilde{y}_i\|_{WRMS}`
+      Computes :math:`\text{reltol} \sum\limits_{i \in \mathcal{S}} \|y_i - \tilde{y}_i\|_{\text{WRMS}}`
 
    .. c:enumerator:: ARK_ACCUMERROR_AVG
 
-      Computes :math:`\frac{\text{reltol}}{\Delta t_{\mathcal{S}}} \sum\limits_{i \in \mathcal{S}} h_i \|y_i - \tilde{y}_i\|_{WRMS}`,
+      Computes :math:`\frac{\text{reltol}}{\Delta t_{\mathcal{S}}} \sum\limits_{i \in \mathcal{S}} h_i \|y_i - \tilde{y}_i\|_{\text{WRMS}}`,
       where :math:`h_i` is the step size used when computing :math:`y_i`, and
       :math:`\Delta t_{\mathcal{S}}` denotes the elapsed time over which
       :math:`\mathcal{S}` is taken.
@@ -3199,7 +3199,7 @@ ARKLS interface requires that iterative linear solvers stop when
 the norm of the preconditioned residual satisfies
 
 .. math::
-   \|r\| \le \epsilon_L \epsilon_N
+   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N
 
 where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
 :math:`\epsilon_L = 0.05` may be modified by the user through the
@@ -3352,7 +3352,7 @@ measured in the WRMS norm :eq:`ARKODE_WRMS_NORM`, the ARKLS interface internally
 converts between these quantities when interfacing with linear solvers,
 
 .. math::
-   \text{tol}_{L2} = \textit{nrmfac}\ \ \text{tol}_{WRMS}.
+   \text{tol}_{L2} = \textit{nrmfac}\ \ \text{tol}_{\text{WRMS}}.
    :label: ARKODE_NRMFAC
 
 Prior to the introduction of :c:func:`N_VGetLength` in SUNDIALS v5.0.0 the

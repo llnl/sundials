@@ -1092,7 +1092,7 @@ Main solver optional input functions
 
    **Notes:**
       By default, IDA estimates the initial step as the solution of
-      :math:`\|h \dot{y} \|_{{\scriptsize WRMS}} = 1/2`, with an added restriction
+      :math:`\|h \dot{y} \|_{\text{WRMS}} = 1/2`, with an added restriction
       that :math:`|h| \leq .001|t_{\text{out}} - t_0|`.
 
       This routine will be called by :c:func:`IDASetOptions`
@@ -1629,7 +1629,7 @@ requires that iterative linear solvers stop when the norm of the preconditioned
 residual satisfies
 
 .. math::
-   \|r\| \le \epsilon_L \epsilon_N
+   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N
 
 where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
 :math:`\epsilon_L = 0.05`; this value may be modified by the user through the

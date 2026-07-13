@@ -111,7 +111,7 @@ where
 
 In the process of controlling errors at various levels, CVODES uses a
 weighted root-mean-square norm, denoted
-:math:`|\cdot|_{\text{WRMS}}`, for all error-like
+:math:`\|\cdot\|_{\text{WRMS}}`, for all error-like
 quantities. The multiplicative weights used are based on the current
 solution and on the relative and absolute tolerances input by the user,
 namely
@@ -121,9 +121,7 @@ namely
    :label: CVODES_errwt
 
 Because :math:`1/W_i` represents a tolerance in the component
-:math:`y_i`, a vector whose norm is 1 is regarded as “small.” For
-brevity, we will usually drop the subscript WRMS on norms in what
-follows.
+:math:`y_i`, a vector whose WRMS norm is 1 is regarded as “small.”
 
 .. _CVODES.Mathematics.nls:
 
@@ -236,7 +234,7 @@ The default stopping test for nonlinear solver iterations is related to
 the subsequent local error test, with the goal of keeping the nonlinear
 iteration errors from interfering with local error control. As described
 below, the final computed value :math:`y^{n(m)}` will have to satisfy a
-local error test :math:`\|y^{n(m)} - y^{n(0)}\| \leq 1`. Letting :math:`y^n`
+local error test :math:`\|y^{n(m)} - y^{n(0)}\|_{\text{WRMS}} \leq 1`. Letting :math:`y^n`
 denote the exact solution of :eq:`CVODES_nonlinear`, we want to ensure that the
 iteration error :math:`y^n - y^{n(m)}` is "small". For this, we also
 estimate the linear convergence rate constant :math:`R` as follows. We
@@ -245,22 +243,22 @@ initialize :math:`R` to 1, and reset :math:`R = 1` when :math:`M` or
 :math:`\delta_m = y^{n(m)}-y^{n(m-1)}`, we update :math:`R` if
 :math:`m > 1` as
 
-.. math:: R \leftarrow \max\{0.3R , \|\delta_m\| / \|\delta_{m-1}\| \} \, .
+.. math:: R \leftarrow \max\{0.3R , \|\delta_m\|_{\text{WRMS}} / \|\delta_{m-1}\|_{\text{WRMS}} \} \, .
 
 Now we use the estimate
 
 .. math::
 
-   \| y^n - y^{n(m)} \| \approx \| y^{n(m+1)} - y^{n(m)} \|
-     \approx R \| y^{n(m)} - y^{n(m-1)} \|  =  R \|\delta_m \| \, .
+   \| y^n - y^{n(m)} \|_{\text{WRMS}} \approx \| y^{n(m+1)} - y^{n(m)} \|_{\text{WRMS}}
+     \approx R \| y^{n(m)} - y^{n(m-1)} \|_{\text{WRMS}}  =  R \|\delta_m \|_{\text{WRMS}} \, .
 
 Therefore the convergence (stopping) test is
 
-.. math:: R \|\delta_m\| < \epsilon_N \, .
+.. math:: R \|\delta_m\|_{\text{WRMS}} < \epsilon_N \, .
 
 where the factor :math:`\epsilon_N` has default value 0.1.  We allow at most 3
 iterations (but this limit can be changed by the user). We also declare the
-iteration diverged if any :math:`\|\delta_m\| / \|\delta_{m-1}\| > 2` with
+iteration diverged if any :math:`\|\delta_m\|_{\text{WRMS}} / \|\delta_{m-1}\|_{\text{WRMS}} > 2` with
 :math:`m > 1`. If convergence fails with :math:`J` or :math:`P` current, we are
 forced to reduce the step size, and we replace :math:`h_n` by
 :math:`h_n = \eta_{\mathrm{cf}} * h_n` where the default is
@@ -274,9 +272,9 @@ constant. The linear iteration error in the solution vector
 :math:`\delta_m` is approximated by the preconditioned residual vector.
 Thus to ensure (or attempt to ensure) that the linear iteration errors
 do not interfere with the nonlinear error and local integration error
-controls, we require that the norm of the preconditioned residual be
-less than :math:`\epsilon_L \epsilon_N`, with :math:`\epsilon_L = 0.05` by
-default.
+controls, we require that the norm of the preconditioned residual satisfies
+:math:`\|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N`, with
+:math:`\epsilon_L = 0.05` by default.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix
@@ -311,8 +309,8 @@ is not supplied, these products are computed as
    Jv = [f(t,y+\sigma v) - f(t,y)]/\sigma \, .
    :label: CVODES_jacobv
 
-The increment :math:`\sigma` is :math:`1/\|v\|`, so that
-:math:`\sigma v` has norm 1.
+The increment :math:`\sigma` is :math:`1/\|v\|_{\text{WRMS}}`, so that
+:math:`\sigma v` has WRMS norm 1.
 
 .. _CVODES.Mathematics.err_test:
 
@@ -340,7 +338,7 @@ above, it is performed on the predictor-corrector difference
 :math:`\Delta_n \equiv y^{n(m)} - y^{n(0)}` (with :math:`y^{n(m)}` the
 final iterate computed), and takes the form
 
-.. math:: \|\Delta_n\| \leq \epsilon \equiv 1/|C'| \, .
+.. math:: \|\Delta_n\|_{\text{WRMS}} \leq \epsilon \equiv 1/|C'| \, .
 
 .. _CVODES.Mathematics.step_order_select:
 
@@ -351,7 +349,7 @@ If the local error test passes, the step is considered successful. If it fails,
 the step is rejected and a new step size :math:`h'` is computed based on the
 asymptotic behavior of the local error, namely by the equation
 
-.. math:: (h'/h)^{q+1} \|\Delta_n\| = \epsilon/6 \, .
+.. math:: (h'/h)^{q+1} \|\Delta_n\|_{\text{WRMS}} = \epsilon/6 \, .
 
 Here 1/6 is a safety factor. A new attempt at the step is made, and the
 error test repeated. If it fails three times, the order :math:`q` is
@@ -372,7 +370,7 @@ completed, no change in step size or order is done. At the current order
 :math:`q`, selecting a new step size is done exactly as when the error
 test fails, giving a tentative step size ratio
 
-.. math:: h'/h = (\epsilon / 6 \|\Delta_n\| )^{1/(q+1)} \equiv \eta_q \, .
+.. math:: h'/h = (\epsilon / 6 \|\Delta_n\|_{\text{WRMS}} )^{1/(q+1)} \equiv \eta_q \, .
 
 We consider changing order only after taking :math:`q+1` steps at order
 :math:`q`, and then we consider only orders :math:`q' = q - 1` (if
@@ -383,11 +381,11 @@ this error, LTE\ :math:`(q')`, behaves asymptotically as
 :math:`h^{q'+1}`. With safety factors of 1/6 and 1/10 respectively,
 these ratios are:
 
-.. math:: h'/h = [1 / 6 \|\mbox{LTE}(q-1)\| ]^{1/q} \equiv \eta_{q-1}
+.. math:: h'/h = [1 / 6 \|\mbox{LTE}(q-1)\|_{\text{WRMS}} ]^{1/q} \equiv \eta_{q-1}
 
 and
 
-.. math:: h'/h = [1 / 10 \|\mbox{LTE}(q+1)\| ]^{1/(q+2)} \equiv \eta_{q+1} \, .
+.. math:: h'/h = [1 / 10 \|\mbox{LTE}(q+1)\|_{\text{WRMS}} ]^{1/(q+2)} \equiv \eta_{q+1} \, .
 
 The new order and step size are then set according to
 
@@ -475,7 +473,7 @@ the solution of the nonlinear constrained least squares problem
 
 .. math::
    \begin{split}
-     \text{minimize}   &\quad \| y_n - \tilde{y}_n \| \\
+     \text{minimize}   &\quad \| y_n - \tilde{y}_n \|_{\text{WRMS}} \\
      \text{subject to} &\quad g(t_n,y_n) = 0.
    \end{split}
    :label: CVODES_proj
@@ -491,7 +489,7 @@ least-norm problem
 
 .. math::
    \begin{split}
-       \text{minimize}   &\quad \| \delta y_n^{(i)} \| \\
+       \text{minimize}   &\quad \| \delta y_n^{(i)} \|_{\text{WRMS}} \\
        \text{subject to} &\quad G(t_n,y_n^{(i)}) \; \delta y_n^{(i)} = -g(t_n,y_n^{(i)})
    \end{split}
    :label: CVODES_leastnorm
@@ -1009,7 +1007,7 @@ side of :eq:`CVODES_sens_eqns` can be evaluated either separately:
 
 .. math::
    \sigma_i = |{\bar p}_i| \sqrt{\max( \mbox{rtol} , U)} \, , \quad
-   \sigma_y = \frac{1}{\max(1/\sigma_i, \|s_i\|/|{\bar p}_i|)} \, ,
+   \sigma_y = \frac{1}{\max(1/\sigma_i, \|s_i\|_{\text{WRMS}}/|{\bar p}_i|)} \, ,
 
 or simultaneously:
 

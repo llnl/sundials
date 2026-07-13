@@ -113,8 +113,7 @@ solution and on the relative and absolute tolerances input by the user, namely
    :label: IDAS_errwt
 
 Because :math:`1/W_i` represents a tolerance in the component :math:`y_i`, a
-vector whose norm is 1 is regarded as “small.” For brevity, we will usually drop
-the subscript WRMS on norms in what follows.
+vector whose WRMS norm is 1 is regarded as “small.”
 
 .. _IDAS.Mathematics.nls:
 
@@ -215,14 +214,14 @@ the iteration error :math:`y_n - y_{n(m)}` is small relative to :math:`y`
 itself. For this, we estimate the linear convergence rate at all iterations
 :math:`m>1` as
 
-.. math:: R = \left( \frac{\delta_m}{\delta_1} \right)^{\frac{1}{m-1}} \, ,
+.. math:: R = \left( \frac{\|\delta_m\|_{\text{WRMS}}}{\|\delta_1\|_{\text{WRMS}}} \right)^{\frac{1}{m-1}} \, ,
 
 where the :math:`\delta_m = y_{n(m)} - y_{n(m-1)}` is the correction at
 iteration :math:`m=1,2,\ldots`. The nonlinear solver iteration is halted if
 :math:`R>0.9`.  The convergence test at the :math:`m`-th iteration is then
 
 .. math::
-   S \| \delta_m \| < \epsilon_N \, ,
+   S \| \delta_m \|_{\text{WRMS}} < \epsilon_N \, ,
    :label: IDAS_DAE_nls_test
 
 where :math:`S = R/(R-1)` whenever :math:`m>1` and :math:`R\le 0.9`. The user
@@ -233,7 +232,7 @@ initially and whenever :math:`J` or :math:`P` is updated, and it is reset to
 :math:`m=1`, the convergence test :eq:`IDAS_DAE_nls_test` uses an old value for
 :math:`S`. Therefore, at the first nonlinear solver iteration, we make an
 additional test and stop the iteration if
-:math:`\|\delta_1\| < \epsilon_N \cdot 10^{-4}` (since such a
+:math:`\|\delta_1\|_{\text{WRMS}} < \epsilon_N \cdot 10^{-4}` (since such a
 :math:`\delta_1` is probably just noise and therefore not appropriate for use in
 evaluating :math:`R`).  We allow only a small number (default value 4) of
 nonlinear iterations.  If convergence fails with :math:`J` or :math:`P` current,
@@ -248,8 +247,8 @@ When an iterative method is used to solve the linear system, to minimize the
 effect of linear iteration errors on the nonlinear and local integration error
 controls, we require the preconditioned linear residual to be small relative to
 the allowed error in the nonlinear iteration, i.e.,
-:math:`\| P^{-1}(Jx+G) \| < \epsilon_L \epsilon_N`, where the default
-:math:`\epsilon_L = 0.05` can be changed by the user.
+:math:`\| P^{-1}(Jx+G) \|_{\text{WRMS}} < \epsilon_L \epsilon_N`, where the
+default :math:`\epsilon_L = 0.05` can be changed by the user.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix objects,
@@ -274,7 +273,7 @@ supplied, such products are approximated by
 
 .. math:: Jv = [F(t,y+\sigma v,\dot{y}+\alpha\sigma v) - F(t,y,\dot{y})]/\sigma \, ,
 
-where the increment :math:`\sigma = 1/\|v\|`. As an option, the user can specify
+where the increment :math:`\sigma = 1/\|v\|_{\text{WRMS}}`. As an option, the user can specify
 a constant factor that is inserted into this expression for :math:`\sigma`.
 
 .. _IDAS.Mathematics.err_test:
@@ -294,14 +293,14 @@ y_n-y_{n(0)}`.  Thus there is a constant :math:`C` such that
 
 .. math:: \text{LTE} = C \Delta_n + O(h^{q+2}) \, ,
 
-and so the norm of LTE is estimated as :math:`|C| \cdot \|\Delta_n\|`.  In
+and so the norm of LTE is estimated as :math:`|C| \cdot \|\Delta_n\|_{\text{WRMS}}`.  In
 addition, IDAS requires that the error in the associated polynomial interpolant
 over the current step be bounded by 1 in norm. The leading term of the norm of
-this error is bounded by :math:`\bar{C} \|\Delta_n\|` for another constant
+this error is bounded by :math:`\bar{C} \|\Delta_n\|_{\text{WRMS}}` for another constant
 :math:`\bar{C}`. Thus the local error test in IDAS is
 
 .. math::
-   \max\{ |C|, \bar{C} \} \|\Delta_n\| \leq 1 \, .
+   \max\{ |C|, \bar{C} \} \|\Delta_n\|_{\text{WRMS}} \leq 1 \, .
    :label: IDAS_lerrtest
 
 A user option is available by which the algebraic components of the error vector
@@ -325,17 +324,17 @@ of the local error in the case of fixed step sizes.  At each of the orders
 :math:`C(q')` such that the norm of the local truncation error at order
 :math:`q'` satisfies
 
-.. math:: \text{LTE}(q') = C(q') \| \phi(q'+1) \| + O(h^{q'+2}) \, ,
+.. math:: \text{LTE}(q') = C(q') \| \phi(q'+1) \|_{\text{WRMS}} + O(h^{q'+2}) \, ,
 
 where :math:`\phi(k)` is a modified divided difference of order :math:`k` that
 is retained by IDAS (and behaves asymptotically as :math:`h^k`).  Thus the local
-truncation errors are estimated as ELTE\ :math:`(q') = C(q')\|\phi(q'+1)\|` to
+truncation errors are estimated as ELTE\ :math:`(q') = C(q')\|\phi(q'+1)\|_{\text{WRMS}}` to
 select step sizes. But the choice of order in IDAS is based on the requirement
-that the scaled derivative norms, :math:`\|h^k y^{(k)}\|`, are monotonically
+that the scaled derivative norms, :math:`\|h^k y^{(k)}\|_{\text{WRMS}}`, are monotonically
 decreasing with :math:`k`, for :math:`k` near :math:`q`. These norms are again
 estimated using the :math:`\phi(k)`, and in fact
 
-.. math:: \|h^{q'+1} y^{(q'+1)}\| \approx T(q') \equiv (q'+1) \text{ELTE}(q') \, .
+.. math:: \|h^{q'+1} y^{(q'+1)}\|_{\text{WRMS}} \approx T(q') \equiv (q'+1) \text{ELTE}(q') \, .
 
 The step/order selection begins with a test for monotonicity that is made even
 *before* the local error test is performed. Namely, the order is reset to
@@ -446,7 +445,7 @@ P_R^{-1}`, instead of :math:`A`.  However, within IDAS, preconditioning is
 allowed *only* on the left, so that the iterative method is applied to systems
 :math:`(P^{-1}J)\Delta y = -P^{-1}G`.  Left preconditioning is required to make
 the norm of the linear residual in the nonlinear iteration meaningful; in
-general, :math:`\| J \Delta y + G \|` is meaningless, since the weights used in
+general, :math:`\| J \Delta y + G \|_{\text{WRMS}}` is meaningless, since the weights used in
 the WRMS-norm correspond to :math:`y`.
 
 In order to improve the convergence of the Krylov iteration, the preconditioner
@@ -797,7 +796,7 @@ in :eq:`IDAS_sens_eqns` can be evaluated either separately:
 
 .. math::
    \sigma_i = |{\bar p}_i| \sqrt{\max( \mbox{rtol} , U)} \, , \quad
-   \sigma_y = \frac{1}{\max(1/\sigma_i, \|s_i\|_{\mbox{WRMS}}/|{\bar p}_i|)} \,
+   \sigma_y = \frac{1}{\max(1/\sigma_i, \|s_i\|_{\text{WRMS}}/|{\bar p}_i|)} \,
 
 or simultaneously:
 
