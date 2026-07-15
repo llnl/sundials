@@ -21,8 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "nanobind >= 2.9.2",
-    "numpy >= 2.0.0",
-    "suntools = 7.6.0"
+    "numpy >= 2.0.0"
 ]
 
 [project.optional-dependencies]
