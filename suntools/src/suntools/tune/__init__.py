@@ -14,15 +14,22 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
 
-"""
-This is a Python library of utilities SUNDIALS developer may find useful.
-Right now it consists of the following modules:
+"""Tune SUNDIALS applications by sweeping SetOptions key/value pairs."""
 
-- `logs`: this module has functions for parsing logs produced by `SUNLogger`.
-- `table`: this module has functions for parsing stats output by SUNDIALS
-           integrators in the table format.
-- `csv`: this module has functions for parsing stats output by SUNDIALS
-         integrators in the CSV format.
-- `tune`: this module has functions for tuning SUNDIALS executables by
-          appending SetOptions parameters.
-"""
+from suntools.tune.models import (
+    BackendConfig,
+    ExecutableConfig,
+    ObjectiveConfig,
+    ParameterSpec,
+    SearchConfig,
+    TuneConfig,
+)
+
+__all__ = [
+    "BackendConfig",
+    "ExecutableConfig",
+    "ObjectiveConfig",
+    "ParameterSpec",
+    "SearchConfig",
+    "TuneConfig",
+]

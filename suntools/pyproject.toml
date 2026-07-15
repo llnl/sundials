@@ -8,6 +8,11 @@ version = "7.7.0"
 description = "Utilities designed to assist users of the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
 readme = "README.md"
 requires-python = ">=3.8"
+dependencies = [
+  "deephyper>=0.13.2,<0.14",
+  "PyYAML>=6.0",
+  "pydantic>=2.10",
+]
 license = { text = "BSD-3-Clause" }
 authors = [
   { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }

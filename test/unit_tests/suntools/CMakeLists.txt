@@ -16,7 +16,7 @@
 # ---------------------------------------------------------------
 
 # Locate suntools module source directory.
-set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/suntools/src/suntools")
+set(SUNTOOLS_DIR "${CMAKE_SOURCE_DIR}/suntools/src")
 
 # TODO(DJG): Update sundials_add_test to better handle python tests
 
@@ -56,4 +56,11 @@ set_tests_properties(
   test_cli_parse_logs PROPERTIES ENVIRONMENT "PYTHONPATH=${SUNTOOLS_DIR}"
                                  LABELS "suntools;logging")
 
-message(STATUS "Added suntools log parser tests")
+# Add the test and configure the environment
+add_test(NAME suntools_tune
+         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_tune.py)
+
+set_tests_properties(suntools_tune PROPERTIES ENVIRONMENT "PYTHONPATH=${SUNTOOLS_DIR}"
+                                              LABELS "suntools;tune")
+
+message(STATUS "Added suntools tests")
