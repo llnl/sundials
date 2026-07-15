@@ -32,6 +32,7 @@ extern "C" {
 
 #define STAGE_MAX_LIMIT_DEFAULT          200
 #define DOM_EIG_SAFETY_DEFAULT           SUN_RCONST(1.01)
+#define RKC_DAMPING_DEFAULT              SUN_RCONST(2.0) / SUN_RCONST(13.0)
 #define DOM_EIG_FREQ_DEFAULT             25
 #define DOM_EIG_NUM_WARMUPS_DEFAULT      0
 #define DOM_EIG_NUM_INIT_WARMUPS_DEFAULT -1 /* use DEE's default value */
@@ -119,6 +120,29 @@ extern "C" {
 #endif
 #endif
 
+/*
+ * -----------------------------------------------------------------
+ * Function : SUNRacosh
+ * -----------------------------------------------------------------
+ * Usage : sunrealtype acosh_x;
+ *         acosh_x = SUNRacosh(x);
+ * -----------------------------------------------------------------
+ * SUNRacosh(x) returns acosh(x) (the hyperbolic arcosine of x).
+ * -----------------------------------------------------------------
+ */
+#ifndef SUNRacosh
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SUNRacosh(x) (acosh((x)))
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SUNRacosh(x) (acoshf((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define SUNRacosh(x) (acoshl((x)))
+#else
+#error \
+  "SUNDIALS precision not defined, report to github.com/LLNL/sundials/issues"
+#endif
+#endif
+
 /*===============================================================
   LSRK time step module data structure
   ===============================================================*/
@@ -139,7 +163,8 @@ typedef struct ARKodeLSRKStepMemRec
   int q; /* method order               */
   int p; /* embedding order            */
 
-  int req_stages; /* number of requested stages   */
+  int istage;     /* current stage            */
+  int req_stages; /* number of stages in step */
 
   ARKODE_LSRKMethodType LSRKmethod;
 
@@ -160,6 +185,7 @@ typedef struct ARKodeLSRKStepMemRec
   sunrealtype spectral_radius_max; /* max spectral radius*/
   sunrealtype spectral_radius_min; /* min spectral radius*/
   sunrealtype dom_eig_safety; /* some safety factor for the user provided dom_eig*/
+  sunrealtype rkc_damping;    /* damping parameter for RKC methods*/
   long int dom_eig_freq; /* indicates dom_eig update after dom_eig_freq successful steps*/
   int num_init_warmups; /* number of warm-ups in the first DEE estimates */
   int num_warmups;      /* number of warm-ups in succeeding DEE estimates */
@@ -170,8 +196,9 @@ typedef struct ARKodeLSRKStepMemRec
   sunbooleantype dom_eig_update; /* flag indicating new dom_eig is needed */
   sunbooleantype const_Jac;      /* flag indicating Jacobian is constant */
   sunbooleantype dom_eig_is_current; /* SUNTRUE if dom_eig has been evaluated at tn */
-  sunbooleantype is_SSP;             /* flag indicating SSP method*/
-  sunbooleantype init_warmup;        /* flag indicating initial warm-up*/
+  sunbooleantype use_ellipse; /* flag indicating whether to use ellipse or exact stability region for stability checks */
+  sunbooleantype is_SSP;      /* flag indicating SSP method*/
+  sunbooleantype init_warmup; /* flag indicating initial warm-up*/
 
   /* Reusable fused vector operation arrays */
   sunrealtype* cvals;
@@ -189,7 +216,7 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
                               SUNContext sunctx);
 int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
                             N_Vector y0);
-int lsrkStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int lsrkStep_Init(ARKodeMem ark_mem, int init_type);
 int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
                      int mode);
 int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
@@ -209,6 +236,7 @@ void lsrkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int lsrkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
                             long int* rhs_evals);
 int lsrkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele);
+int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
 int lsrkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
@@ -216,8 +244,16 @@ int lsrkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
 int lsrkStep_AccessStepMem(ARKodeMem ark_mem, const char* fname,
                            ARKodeLSRKStepMem* step_mem);
 void lsrkStep_DomEigUpdateLogic(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
-                                sunrealtype dsm);
+                                sunrealtype dsm, N_Vector fnew);
 int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem);
+int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
+                                    sunrealtype h, sunrealtype* stability_norm);
+int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
+                                    sunrealtype h, sunrealtype* stability_norm);
+int lsrkStep_cheb_T_complex(int s, sunrealtype zR, sunrealtype zI,
+                            sunrealtype* TsR, sunrealtype* TsI);
+int lsrkStep_legendre_P_complex(int s, sunrealtype zR, sunrealtype zI,
+                                sunrealtype* PsR, sunrealtype* PsI);
 int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv);
 
 /*===============================================================

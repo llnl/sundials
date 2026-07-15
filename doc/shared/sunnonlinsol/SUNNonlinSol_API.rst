@@ -57,6 +57,13 @@ initialization (:c:func:`SUNNonlinSolInitialize`), setup
 
       The nonlinear solver expects systems in fixed-point form :math:`G(y) = y`.
 
+   .. c:enumerator:: SUNNONLINEARSOLVER_HYBRID
+
+      The nonlinear solver may use both rootfinding and fixed-point forms and
+      can receive both :math:`F(y)` and :math:`G(y)`.
+
+      .. versionadded:: 7.8.0
+
 
 .. c:function:: SUNNonlinearSolver_Type SUNNonlinSolGetType(SUNNonlinearSolver NLS)
 
@@ -222,6 +229,25 @@ parameters. Only the routine for setting the nonlinear system defining function
       * A :c:type:`SUNErrCode`
 
 
+.. c:function:: SUNErrCode SUNNonlinSolSetSysFns(SUNNonlinearSolver NLS, SUNNonlinSolSysFn root_fn, SUNNonlinSolSysFn fixed_point_fn)
+
+   This *optional* function is used by hybrid nonlinear solvers to receive both
+   the root-finding residual :math:`F(y)` and the fixed-point map
+   :math:`G(y)`. Integrators will prefer this routine over
+   :c:func:`SUNNonlinSolSetSysFn` when configuring a
+   ``SUNNONLINEARSOLVER_HYBRID`` module.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *root_fn* -- the function defining the nonlinear residual :math:`F(y)`.
+      * *fixed_point_fn* -- the function defining the fixed-point map :math:`G(y)`.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   .. versionadded:: 7.8.0
+
+
 .. c:function:: SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS, SUNNonlinSolLSetupFn SetupFn)
 
    This *optional* function is called by SUNDIALS integrators to provide
@@ -297,6 +323,73 @@ parameters. Only the routine for setting the nonlinear system defining function
    **Notes:**
       SUNNonlinSol implementations utilizing their own convergence test
       criteria may set this function to ``NULL``.
+
+
+.. c:function:: SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS, SUNNonlinSolNormFn NormFn, void* norm_data)
+
+   This *optional* function attaches an integrator-provided callback for
+   computing the nonlinear update norm :math:`\|\delta\|` or nonlinear residual
+   :math:`\|F(y)\|`. Integrators may attach a norm function when the nonlinear solver
+   should utilize a norm that matches the integrator's own convergence-test norm, such
+   as for sensitivity solves that use wrapped vectors or combined correction norms.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *NormFn* -- the function used to compute the requested nonlinear-solver norm.
+      * *norm_data* -- user data passed to *NormFn*.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   .. versionadded:: 7.8.0
+
+
+.. c:function:: SUNErrCode SUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn, void* getupdatenorm_data)
+
+   This *optional* function attaches an integrator-provided callback for
+   retrieving the nonlinear update norm :math:`\|\delta\|` currently used by
+   the integrator's convergence test. Nonlinear solvers can use this when they
+   need the same update norm after the convergence test has run.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *GetUpdateNormFn* -- the function used to retrieve the current update norm.
+      * *getupdatenorm_data* -- user data passed to *GetUpdateNormFn*.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   **Notes:**
+      Implementations that do not define this optional operation may ignore the
+      callback; in that case the generic
+      :c:func:`SUNNonlinSolSetGetUpdateNormFn` routine returns ``SUN_SUCCESS``.
+
+   .. versionadded:: 7.8.0
+
+
+.. c:function:: SUNErrCode SUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver NLS, SUNNonlinSolGetConvRateFn GetConvRateFn, void* getconvrate_data)
+
+   This *optional* function attaches an integrator-provided callback for
+   retrieving the current nonlinear convergence-rate estimate :math:`crate`
+   from the integrator's convergence test. Hybrid nonlinear solvers can use
+   this to base fixed-point switching decisions on the same rate estimate that
+   the integrator is already maintaining.
+
+   **Arguments:**
+      * *NLS* -- a SUNNonlinSol object.
+      * *GetConvRateFn* -- the function used to retrieve the current convergence-rate estimate.
+      * *getconvrate_data* -- user data passed to *GetConvRateFn*.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   **Notes:**
+      This callback is currently used by :numref:`SUNNonlinSol.Auto`.
+      Implementations that do not define this optional operation may ignore the
+      callback; in that case the generic
+      :c:func:`SUNNonlinSolSetGetConvRateFn` routine returns ``SUN_SUCCESS``.
+
+   .. versionadded:: 7.8.0
 
 
 
@@ -523,6 +616,56 @@ module have types defined in the header file
       own convergence criteria may ignore these functions.
 
 
+.. c:type:: SUNErrCode (*SUNNonlinSolNormFn)(N_Vector del, N_Vector w, sunrealtype *delnrm, void* mem)
+
+   These functions compute an integrator-defined norm for use by nonlinear
+   solvers that must match the norm used by the integrator's convergence test
+   or related residual-based logic.
+
+   **Arguments:**
+      * *del* -- is the current nonlinear update.
+      * *w* -- is the weight vector passed to :c:func:`SUNNonlinSolSolve`.
+      * *delnrm* -- stores the computed norm.
+      * *mem* -- is integrator-owned callback data.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   .. versionadded:: 7.8.0
+
+
+.. c:type:: SUNErrCode (*SUNNonlinSolGetUpdateNormFn)(sunrealtype *delnrm, void* mem)
+
+   These functions retrieve the update norm currently maintained by the
+   integrator's convergence test for use by nonlinear solvers that need that
+   same value after the convergence test has been evaluated.
+
+   **Arguments:**
+      * *delnrm* -- stores the current update norm.
+      * *mem* -- is integrator-owned callback data.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   .. versionadded:: 7.8.0
+
+
+.. c:type:: SUNErrCode (*SUNNonlinSolGetConvRateFn)(sunrealtype *crate, void* mem)
+
+   These functions retrieve an integrator-defined nonlinear convergence-rate
+   estimate for use by nonlinear solvers that need the same :math:`crate`
+   quantity maintained by the integrator's convergence test.
+
+   **Arguments:**
+      * *crate* -- stores the current convergence-rate estimate.
+      * *mem* -- is integrator-owned callback data.
+
+   **Return value:**
+      * A :c:type:`SUNErrCode`
+
+   .. versionadded:: 7.8.0
+
+
 
 .. _SUNNonlinSol.API.ReturnCodes:
 
@@ -548,6 +691,9 @@ successful call.
    | SUN_NLS_CONTINUE      |  901    | the nonlinear solver is not converged, keep iterating         |
    +-----------------------+---------+---------------------------------------------------------------+
    | SUN_NLS_CONV_RECVR    |  902    | the nonlinear solver appears to be diverging, try to recover  |
+   +-----------------------+---------+---------------------------------------------------------------+
+   | SUN_NLS_SWITCH        |  903    | the nonlinear solver requested a strategy switch before       |
+   |                       |         | continuing the current nonlinear solve                        |
    +-----------------------+---------+---------------------------------------------------------------+
 
 
@@ -688,6 +834,11 @@ A SUNNonlinSol implementation *must* do the following:
 
 * Define and implement a user-callable constructor to create a
   ``SUNNonlinearSolver`` object.
+
+* If the implementation depends on a linear solver, then it must evaluate
+  the nonlinear system function passed to :c:func:`SUNNonlinSolSetSysFn`
+  *before* setting up the linear solver (signaled by the `callLSetup` flag
+  to :c:func:`SUNNonlinSolSolve`).
 
 To aid in the creation of custom ``SUNNonlinearSolver`` modules, the generic
 ``SUNNonlinearSolver`` module provides the utility functions

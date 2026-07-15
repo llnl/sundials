@@ -55,6 +55,7 @@ def main():
     parser.add_argument(
         "destination", type=str, help="Full path of sundials location to write files to"
     )
+    parser.add_argument("--log", "-l", type=str, help="Alternative path to failed test log")
     parser.add_argument("--all", "-a", action="store_true", help="Update all output files")
     parser.add_argument(
         "--copy", "-c", action="store_true", help="Copy file to destination if not found"
@@ -88,7 +89,15 @@ def main():
             if f.endswith(".out"):
                 output_files.append(f)
     else:
-        failed = os.path.join(args.source, "Testing", "Temporary", "LastTestsFailed.log")
+        if args.log:
+            # Useful when running make test from a subdirectory as the failed test log
+            # is created there instead of under to top level Testing directory
+            failed = os.path.join(args.log, "Testing", "Temporary", "LastTestsFailed.log")
+        else:
+            failed = os.path.join(args.source, "Testing", "Temporary", "LastTestsFailed.log")
+        if not os.path.isfile(failed):
+            print_error(f"Error: could not find {failed}")
+            return -1
 
         # extract test names from list and append .out
         with open(failed, "r") as f:

@@ -27,6 +27,10 @@ modules:
     - "Space" # Space functions are deprecated, so don't expose them in Python
     # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
     - "SetOptions" 
+    # TODO(CJB): Making d_1d a nullopt argument causes this error 
+    # `Critical nanobind error: Negative ndarray sizes are not allowed here!`
+    # So we manually bind it for now.
+    - "ARKodeButcherTable_Create"
     macro_define_include_by_name__regex:
     - "^SUN_"
     - "^ARK_"
@@ -35,6 +39,7 @@ modules:
     fn_params_optional_with_default_null:
       "SetLinearSolver":
       - "A" 
+      - "d_1d"
   arkode:
     path: arkode/arkode_generated.hpp
     headers:
@@ -78,6 +83,10 @@ modules:
     - "^ARKStepCreate$"
     - "^ARKStepCreateAdjointStepper$"
     - "^ARKStepReInit$"
+    fn_params_optional_with_default_null:
+      "ARKStepSetTables":
+      - "Be"
+      - "Bi" 
   erkstep:
     path: arkode/arkode_erkstep_generated.hpp
     headers:

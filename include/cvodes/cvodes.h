@@ -141,6 +141,7 @@ typedef int (*CVRootFn)(sunrealtype t, N_Vector y, sunrealtype* gout_1d,
 
 typedef int (*CVEwtFn)(N_Vector y, N_Vector ewt, void* user_data);
 
+/* DEPRECATION NOTICE: this will be removed in v8.0.0 */
 typedef int (*CVMonitorFn)(void* cvode_mem, void* user_data);
 
 typedef int (*CVQuadRhsFn)(sunrealtype t, N_Vector y, N_Vector yQdot,
@@ -210,8 +211,10 @@ SUNDIALS_EXPORT int CVodeSetMaxNumSteps(void* cvode_mem, long int mxsteps);
 SUNDIALS_EXPORT int CVodeSetMaxOrd(void* cvode_mem, int maxord);
 SUNDIALS_EXPORT int CVodeSetMaxStep(void* cvode_mem, sunrealtype hmax);
 SUNDIALS_EXPORT int CVodeSetMinStep(void* cvode_mem, sunrealtype hmin);
-SUNDIALS_EXPORT int CVodeSetMonitorFn(void* cvode_mem, CVMonitorFn fn);
-SUNDIALS_EXPORT int CVodeSetMonitorFrequency(void* cvode_mem, long int nst);
+SUNDIALS_DEPRECATED_EXPORT
+int CVodeSetMonitorFn(void* cvode_mem, CVMonitorFn fn);
+SUNDIALS_DEPRECATED_EXPORT
+int CVodeSetMonitorFrequency(void* cvode_mem, long int nst);
 SUNDIALS_EXPORT int CVodeSetNlsRhsFn(void* cvode_mem, CVRhsFn f);
 SUNDIALS_EXPORT int CVodeSetNonlinConvCoef(void* cvode_mem, sunrealtype nlscoef);
 SUNDIALS_EXPORT int CVodeSetNonlinearSolver(void* cvode_mem,

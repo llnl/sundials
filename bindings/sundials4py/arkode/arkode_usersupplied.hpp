@@ -45,6 +45,9 @@ struct arkode_user_supplied_fn_table
   nb::object ewtn;
   nb::object rwtn;
   nb::object vecresizefn;
+  nb::object prerhsfn;
+  nb::object prestepfn;
+  nb::object poststepfn;
   nb::object postprocessstepfn;
   nb::object postprocessstagefn;
   nb::object stagepredictfn;
@@ -157,6 +160,30 @@ inline int arkode_vecresizefn_wrapper(Args... args)
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKVecResizeFn>, arkode_user_supplied_fn_table,
     ARKodeMem, 1>(&arkode_user_supplied_fn_table::vecresizefn, args...);
+}
+
+template<typename... Args>
+inline int arkode_prerhsfn_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<ARKPreRhsFn>, arkode_user_supplied_fn_table,
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::prerhsfn, args...);
+}
+
+template<typename... Args>
+inline int arkode_prestepfn_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<ARKPreStepFn>, arkode_user_supplied_fn_table,
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::prestepfn, args...);
+}
+
+template<typename... Args>
+inline int arkode_poststepfn_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<ARKPostStepFn>, arkode_user_supplied_fn_table,
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::poststepfn, args...);
 }
 
 template<typename... Args>

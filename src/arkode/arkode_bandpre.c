@@ -538,7 +538,12 @@ static int ARKBandPDQJac(ARKBandPrecData pdata, sunrealtype t, N_Vector y,
       ytemp_data[j] += inc;
     }
 
-    /* Evaluate f with incremented y. */
+    /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(t, ytemp, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
     retval = fi(t, ytemp, ftemp, ark_mem->user_data);
     pdata->nfeBP++;
     if (retval != 0) { return (retval); }

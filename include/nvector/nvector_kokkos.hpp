@@ -409,6 +409,15 @@ sunrealtype N_VMinQuotient_Kokkos(N_Vector num, N_Vector denom)
     },
     Kokkos::Min<sunrealtype>(gpu_result));
 
+  // Kokkos 5 (possibly earlier) ignores the initial value of gpu_result and
+  // uses the default for a min reduction, +infinity, so in the case where all
+  // denominators are zero this returns infinity instead of the max real
+  if (gpu_result == std::numeric_limits<sunrealtype>::infinity())
+  {
+    // Align return result with the documentation
+    gpu_result = std::numeric_limits<sunrealtype>::max();
+  }
+
   return gpu_result;
 }
 

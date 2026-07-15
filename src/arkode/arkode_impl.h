@@ -204,8 +204,7 @@ typedef int (*ARKMassSolveFn)(ARKodeMem ark_mem, N_Vector b,
 typedef int (*ARKMassFreeFn)(ARKodeMem ark_mem);
 
 /* time stepper interface functions -- general */
-typedef int (*ARKTimestepInitFn)(ARKodeMem ark_mem, sunrealtype tout,
-                                 int init_type);
+typedef int (*ARKTimestepInitFn)(ARKodeMem ark_mem, int init_type);
 typedef int (*ARKTimestepFullRHSFn)(ARKodeMem ark_mem, sunrealtype t,
                                     N_Vector y, N_Vector f, int mode);
 typedef int (*ARKTimestepStepFn)(ARKodeMem ark_mem, sunrealtype* dsm, int* nflag);
@@ -229,8 +228,12 @@ typedef int (*ARKTimestepSetUseCompensatedSums)(ARKodeMem ark_mem,
                                                 sunbooleantype onoff);
 typedef int (*ARKTimestepSetOptions)(ARKodeMem ark_mem, int* argidx, char* argv[],
                                      size_t offset, sunbooleantype* arg_used);
+typedef int (*ARKTimestepGetStageIndex)(ARKodeMem ark_mem, int* stage,
+                                        int* max_stages);
 
 /* time stepper interface functions -- temporal adaptivity */
+typedef int (*ARKTimestepComputeH0)(ARKodeMem ark_mem, sunrealtype tout,
+                                    sunrealtype* hin);
 typedef int (*ARKTimestepGetEstLocalErrors)(ARKodeMem ark_mem, N_Vector ele);
 typedef int (*ARKSetAdaptControllerFn)(ARKodeMem ark_mem, SUNAdaptController C);
 
@@ -422,9 +425,11 @@ struct ARKodeMemRec
   ARKTimestepSetStepDirection step_setstepdirection;
   ARKTimestepSetUseCompensatedSums step_setusecompensatedsums;
   ARKTimestepSetOptions step_setoptions;
+  ARKTimestepGetStageIndex step_getstageindex;
 
   /* Time stepper module -- temporal adaptivity */
   sunbooleantype step_supports_adaptive;
+  ARKTimestepComputeH0 step_H0;
   ARKSetAdaptControllerFn step_setadaptcontroller;
   ARKTimestepGetEstLocalErrors step_getestlocalerrors;
 
@@ -478,6 +483,8 @@ struct ARKodeMemRec
   N_Vector ycur;                /* pointer to user-provided solution memory;
                                    used as evolving solution by the time stepper
                                    modules */
+  sunbooleantype ensure_ycur;   /* SUNTRUE if stepper expects ycur=yn on
+                                   entry to its takestep routine */
   N_Vector yn;                  /* solution from the last successful step     */
   N_Vector fn;                  /* full IVP right-hand side from last step    */
   sunbooleantype fn_is_current; /* SUNTRUE if fn has been evaluated at yn     */
@@ -551,6 +558,9 @@ struct ARKodeMemRec
   sunbooleantype firststage;   /* denotes first stage in simulation          */
   sunbooleantype initialized;  /* denotes arkInitialSetup has been done      */
   sunbooleantype call_fullrhs; /* denotes the full RHS fn will be called     */
+  sunbooleantype preallocated; /* SUNTRUE if ARKodeInit has been
+                                    called to preallocate data
+                                    prior to ARKodeEvolve */
 
   /* Rootfinding Data */
   ARKodeRootMem root_mem; /* root-finding structure */
@@ -564,12 +574,16 @@ struct ARKodeMemRec
   sunbooleantype relax_enabled; /* is relaxation enabled?    */
   ARKodeRelaxMem relax_mem;     /* relaxation data structure */
 
-  /* User-supplied step solution post-processing function */
-  ARKPostProcessFn ProcessStep;
-  void* ps_data; /* pointer to user_data */
+  /* User-supplied step solution pre/post-processing functions */
+  ARKPreStepFn PreStepFn;
+  ARKPostStepFn PostStepFn;
 
-  /* User-supplied stage solution post-processing function */
-  ARKPostProcessFn ProcessStage;
+  /* User-supplied RHS function pre-processing function */
+  ARKPreRhsFn PreRhsFn;
+
+  /* User-supplied stage and step solution post-processing function */
+  ARKPostProcessFn PostProcessStepFn;
+  ARKPostProcessFn PostProcessStageFn;
 
   sunbooleantype use_compensated_sums;
 
@@ -720,7 +734,7 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
 #define MSG_ARK_NO_MEM         "arkode_mem = NULL illegal."
 #define MSG_ARK_ARKMEM_FAIL    "Allocation of arkode_mem failed."
 #define MSG_ARK_MEM_FAIL       "A memory request failed."
-#define MSG_ARK_NO_MALLOC      "Attempt to call before ARKodeInit."
+#define MSG_ARK_NO_MALLOC      "Attempt to call before ARKODE initialized."
 #define MSG_ARK_BAD_HMIN_HMAX  "Inconsistent step size limits: hmin > hmax."
 #define MSG_ARK_BAD_RELTOL     "reltol < 0 illegal."
 #define MSG_ARK_BAD_ABSTOL     "abstol has negative component(s) (illegal)."
@@ -810,12 +824,18 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
 #define MSG_ARK_VECTOROP_ERR "At " MSG_TIME ", a vector operation failed."
 #define MSG_ARK_INNERSTEP_FAILED \
   "At " MSG_TIME ", the inner stepper failed in an unrecoverable manner."
+#define MSG_ARK_PRESTEPFN_FAIL \
+  "At " MSG_TIME ", the pre-step function failed in an unrecoverable manner."
+#define MSG_ARK_POSTSTEPFN_FAIL \
+  "At " MSG_TIME ", the post-step function failed in an unrecoverable manner."
 #define MSG_ARK_POSTPROCESS_STEP_FAIL \
   "At " MSG_TIME                      \
   ", the step postprocessing routine failed in an unrecoverable manner."
 #define MSG_ARK_POSTPROCESS_STAGE_FAIL \
   "At " MSG_TIME                       \
   ", the stage postprocessing routine failed in an unrecoverable manner."
+#define MSG_ARK_PRERHSFN_FAIL \
+  "At " MSG_TIME ", the pre-RHS function failed in an unrecoverable manner."
 #define MSG_ARK_NULL_SUNCTX "sunctx = NULL illegal."
 #define MSG_ARK_CONTEXT_MISMATCH \
   "Outer and inner steppers have different contexts."
@@ -1015,12 +1035,19 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
   ARKTimestepInitFn
 
   This routine is called just prior to performing internal time
-  steps (after all user "set" routines have been called) from
-  within arkInitialSetup. It should complete initializations for
-  a specific ARKODE time stepping module, such as verifying
-  compatibility of user-specified linear and nonlinear solver
-  objects. The input init_type flag indicates if the call is
-  for (re-)initializing, resizing, or resetting the problem.
+  steps (after all user "set" routines have been called), either
+  from within arkInitialSetup or ARKodeInit.
+  It should perform initializations for a specific ARKODE time
+  stepping module, such as verifying compatibility of user-
+  specified linear and nonlinear solver objects.
+
+  The input init_type flag indicates the type of call:
+  * FIRST_INIT -- called during arkInitialSetup or ARKodeInit for
+    the first time step of a simulation.
+  * RESIZE_INIT -- called during ARKodeResize to resize
+    internal stepper data structures after a change in problem size.
+  * RESET_INIT -- called during ARKodeReset to reset the current
+    (t,y) state in the stepper.
 
   This routine should return 0 if it has successfully initialized
   the ARKODE time stepper module and a negative value otherwise.
@@ -1241,6 +1268,13 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
   This optional routine allows the stepper to accept any user-
   requested method order parameter that was passed to
   ARKodeSetOrder.
+
+  ---------------------------------------------------------------
+
+  ARKTimestepSetOptions
+
+  This optional routine allows the stepper to accept any user-
+  requested method options that were passed to ARKodeSetOptions.
 
   ===============================================================
 

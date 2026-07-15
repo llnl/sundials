@@ -8,6 +8,5 @@ import spack.pkg.builtin.ginkgo
 
 
 class Ginkgo(spack.pkg.builtin.ginkgo.Ginkgo):
-
     # The version of Spack we are using does not include Ginkgo 1.9.0
     version("1.9.0", commit="20cfd68795f58078898da9890baa311b46845a8b")
