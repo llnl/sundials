@@ -150,18 +150,15 @@ int main(int argc, char* argv[])
     if (check_retval(&retval, "SetupProblem", 1)) { MPI_Abort(comm, 1); }
 
     /* Setup diagnostic logging if it is enabled */
-    if (uopt.monitor)
-    {
-      SUNLogger logger;
+    SUNLogger logger;
 
-      sprintf(fname, "%s/diagnostics.%06d.txt", uopt.outputdir, udata.myid);
+    sprintf(fname, "%s/diagnostics.%06d.txt", uopt.outputdir, udata.myid);
 
-      retval = SUNContext_GetLogger(ctx, &logger);
-      if (check_retval(&retval, "SUNContext_GetLogger", 1)) { return 1; }
+    retval = SUNContext_GetLogger(ctx, &logger);
+    if (check_retval(&retval, "SUNContext_GetLogger", 1)) { return 1; }
 
-      retval = SUNLogger_SetInfoFilename(logger, fname);
-      if (check_retval(&retval, "SUNLogger_SetInfoFilename", 1)) { return 1; }
-    }
+    retval = SUNLogger_SetInfoFilename(logger, uopt.monitor ? fname : NULL);
+    if (check_retval(&retval, "SUNLogger_SetInfoFilename", 1)) { return 1; }
 
     /* Create solution vector */
     y = N_VMake_MPIPlusX(udata.comm, LocalNvector(udata.NEQ, ctx), ctx);

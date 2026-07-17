@@ -1630,6 +1630,10 @@ int idaLsSolve(IDAMem IDA_mem, N_Vector b, N_Vector weight, N_Vector ycur,
                     __FILE__, MSG_LS_PSOLVE_FAILED);
     return (-1);
     break;
+  default:
+    IDAProcessError(IDA_mem, retval, __LINE__, __func__, __FILE__,
+                    "Unrecognized error return value from SUNLinSolSolve");
+    return (-1);
   }
 
   return (0);

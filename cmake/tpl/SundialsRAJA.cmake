@@ -49,19 +49,13 @@ endif()
 # find the library configuration file
 find_file(
   RAJA_CONFIGHPP_PATH config.hpp
-  HINTS "${RAJA_DIR}"
+  PATHS "${RAJA_DIR}"
   PATH_SUFFIXES include include/RAJA)
 mark_as_advanced(FORCE RAJA_CONFIGHPP_PATH)
 
 # Look for CMake configuration file in RAJA installation
-find_package(
-  RAJA
-  CONFIG
-  PATHS
-  "${RAJA_DIR}"
-  "${RAJA_DIR}/share/raja/cmake"
-  NO_DEFAULT_PATH
-  REQUIRED)
+find_package(RAJA CONFIG PATHS "${RAJA_DIR}" "${RAJA_DIR}/share/raja/cmake"
+             REQUIRED)
 
 # determine the backends
 foreach(_backend CUDA HIP OPENMP TARGET_OPENMP SYCL)

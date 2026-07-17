@@ -795,6 +795,26 @@ Fortran Interfaces
 
       Replaces the deprecated option ``BUILD_FORTRAN_MODULE_INTERFACE``
 
+.. _Installation.Options.Python:
+
+Python Interfaces
+^^^^^^^^^^^^^^^^^
+
+.. cmakeoption:: SUNDIALS_ENABLE_PYTHON
+
+   Enable SUNDIALS Python interfaces
+
+   Default: ``OFF``
+
+   .. note::
+
+      The recommended method of installing the SUNDIALS python interfaces is
+      ``pip install sundials4py``, or, from the root of the SUNDIALS repository,
+      ``pip install .``.
+
+   .. versionadded:: 7.6.0
+
+
 .. _Installation.Options.ErrorChecking:
 
 Error Checking
@@ -4116,6 +4136,29 @@ to link to the library below when using those packages.
    | Headers      | ``sunnonlinsol/sunnonlinsol_fixedpoint.h``   |
    +--------------+----------------------------------------------+
    | CMake target | ``SUNDIALS::sunnonlinsolfixedpoint``         |
+   +--------------+----------------------------------------------+
+
+.. _Installation.LibrariesAndHeaders.NonlinearSolver.Auto:
+
+Auto
+""""
+
+To use the :ref:`automatic-switching SUNNonlinearSolver <SUNNonlinSol.Auto>`,
+include the header file and link to the library given below.
+
+When using SUNDIALS time integration packages, the Auto SUNNonlinearSolver is
+bundled with the package library and it is not necessary to link to the library
+below when using those packages.
+
+.. table:: The Auto SUNNonlinearSolver library, header file, and CMake target
+   :align: center
+
+   +--------------+----------------------------------------------+
+   | Libraries    | ``libsundials_sunnonlinsolauto.LIB``         |
+   +--------------+----------------------------------------------+
+   | Headers      | ``sunnonlinsol/sunnonlinsol_auto.h``         |
+   +--------------+----------------------------------------------+
+   | CMake target | ``SUNDIALS::sunnonlinsolauto``               |
    +--------------+----------------------------------------------+
 
 .. _Installation.LibrariesAndHeaders.NonlinearSolver.PETScSNES:

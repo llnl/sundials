@@ -90,7 +90,7 @@ def main():
     # Enforce len(labels) == len(logfiles)
     if args.labels is not None and len(args.labels) != len(args.logfiles):
         parser.error(
-            f"--labels expects {len(args.logfiles)} values " f"(you passed {len(args.labels)})"
+            f"--labels expects {len(args.logfiles)} values (you passed {len(args.labels)})"
         )
 
     # Delay making the plot axes until we know how many times levels to plot
@@ -99,7 +99,6 @@ def main():
     colors = plt.get_cmap("tab10")
 
     for log_idx, logfile in enumerate(args.logfiles):
-
         # parse log file
         log = sunlog.log_file_to_list(logfile)
 
@@ -155,7 +154,6 @@ def main():
             print(f"File: {args.logfiles[log_idx]}")
 
         for level_idx in range(len(x_a)):
-
             # plot step attempts
             if args.scatter:
                 axes[level_idx].scatter(
@@ -215,14 +213,14 @@ def main():
                 print()
                 print(f"Level {level_idx}")
                 print(f"Step attempts: {nattempted:,}")
-                print(f"Successful steps: {npassed:,} ({100 * npassed/nattempted:.2f}%)")
-                print(f"Failed steps: {nfailed:,} ({100 * nfailed/nattempted:.2f}%)")
+                print(f"Successful steps: {npassed:,} ({100 * npassed / nattempted:.2f}%)")
+                print(f"Failed steps: {nfailed:,} ({100 * nfailed / nattempted:.2f}%)")
                 print(f"Max step size: {np.max(vals_s[level_idx])}")
                 print(f"Min step size: {np.min(vals_s[level_idx])}")
                 print(f"Avg step size: {np.average(vals_s[level_idx])}")
                 if level_idx > 0:
                     print(
-                        f"Avg level {level_idx} attempts per level {level_idx - 1} attempts: {len(vals_a[level_idx])/len(vals_a[level_idx - 1]):.2f}"
+                        f"Avg level {level_idx} attempts per level {level_idx - 1} attempts: {len(vals_a[level_idx]) / len(vals_a[level_idx - 1]):.2f}"
                     )
 
         if args.xlabel:

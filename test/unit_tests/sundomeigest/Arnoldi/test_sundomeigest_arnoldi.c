@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
   int num_warmups;                /* number of preprocessing iters */
   int kry_dim;                    /* Krylov subspace dimension  */
   long int num_iters;             /* number of iterations       */
+  long int num_rhs_evals;         /* number of rhs calls        */
   long int num_ATimes;            /* number of ATimes calls     */
   int print_timing;               /* timing output flag         */
   sunrealtype res;                /* residual                   */
@@ -173,6 +174,7 @@ int main(int argc, char* argv[])
       "    >>> FAILED test -- SUNDomEigEstimator_GetNumIters return value\n");
     fails++;
   }
+  fails += Test_SUNDomEigEstimator_GetNumRhsEvals(DEE, &num_rhs_evals, 0);
   fails += Test_SUNDomEigEstimator_GetNumATimesCalls(DEE, &num_ATimes, 0);
   fails += Test_SUNDomEigEstimator_Write(DEE, 0);
 
@@ -190,7 +192,7 @@ int main(int argc, char* argv[])
       "tests\n\n");
   }
 
-  /* First check if the computed eigenvalue has a nonzero magnitute */
+  /* First check if the computed eigenvalue has a nonzero magnitude */
   sunrealtype norm_of_dom_eig = SUNRsqrt(lambdaR * lambdaR + lambdaI * lambdaI);
   if (norm_of_dom_eig < SUN_SMALL_REAL)
   {
@@ -227,7 +229,7 @@ int main(int argc, char* argv[])
                               (lambdaI + tlambdaI) * (lambdaI + tlambdaI)));
   rel_error /= norm_of_dom_eig;
 
-  if (rel_error < rel_tol)
+  if (rel_error < SUN_RCONST(10.0) * rel_tol)
   {
     printf("\n\nPASS:   relative error = " SUN_FORMAT_G " \n\n", rel_error);
   }

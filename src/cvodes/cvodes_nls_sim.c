@@ -45,6 +45,10 @@ static int cvNlsLSolveSensSim(N_Vector deltaSim, void* cvode_mem);
 static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
                                 N_Vector delSim, sunrealtype tol,
                                 N_Vector ewtSim, void* cvode_mem);
+static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
+                                   sunrealtype* delnrm, void* cvode_mem);
+static SUNErrCode cvNlsGetUpdateNormSensSim(sunrealtype* delnrm, void* cvode_mem);
+static SUNErrCode cvNlsGetConvRateSensSim(sunrealtype* crate, void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -73,7 +77,7 @@ int CVodeSetNonlinearSolverSensSim(void* cvode_mem, SUNNonlinearSolver NLS)
 
   /* check for required nonlinear solver functions */
   if (NLS->ops->gettype == NULL || NLS->ops->solve == NULL ||
-      NLS->ops->setsysfn == NULL)
+      (NLS->ops->setsysfn == NULL && NLS->ops->setsysfns == NULL))
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "NLS does not support required operations");
@@ -139,6 +143,32 @@ int CVodeSetNonlinearSolverSensSim(void* cvode_mem, SUNNonlinearSolver NLS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "Setting convergence test function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetNormFn(cv_mem->NLSsim, cvNlsNormSensSim, cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting convergence-test norm function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetGetUpdateNormFn(cv_mem->NLSsim,
+                                          cvNlsGetUpdateNormSensSim, cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting update-norm getter failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetGetConvRateFn(cv_mem->NLSsim, cvNlsGetConvRateSensSim,
+                                        cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting convergence-rate getter failed");
     return (CV_ILL_INPUT);
   }
 
@@ -380,10 +410,8 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
 {
   CVodeMem cv_mem;
   int m, retval;
-  sunrealtype del, delS, Del;
   sunrealtype dcon;
-  N_Vector ycor, delta, ewt;
-  N_Vector *deltaS, *ewtS;
+  N_Vector ycor, ewt;
 
   if (cvode_mem == NULL)
   {
@@ -395,20 +423,17 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   /* extract the current state and sensitivity corrections */
   ycor = NV_VEC_SW(ycorSim, 0);
 
-  /* extract state and sensitivity deltas */
-  delta  = NV_VEC_SW(deltaSim, 0);
-  deltaS = NV_VECS_SW(deltaSim) + 1;
+  /* extract the current error weight vector */
+  ewt = NV_VEC_SW(ewtSim, 0);
 
-  /* extract state and sensitivity error weights */
-  ewt  = NV_VEC_SW(ewtSim, 0);
-  ewtS = NV_VECS_SW(ewtSim) + 1;
-
-  /* compute the norm of the state and sensitivity corrections */
-  del  = N_VWrmsNorm(delta, ewt);
-  delS = cvSensUpdateNorm(cv_mem, del, deltaS, ewtS);
-
-  /* norm used in error test */
-  Del = delS;
+  /* compute the norm of the sensitivity corrections */
+  if (cvNlsNormSensSim(deltaSim, ewtSim, &(cv_mem->cv_delnrmS), cvode_mem) !=
+      SUN_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
+                   MSGCV_NLS_FAIL);
+    return (CV_NLS_FAIL);
+  }
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
@@ -418,20 +443,25 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
      rate constant is stored in crate, and used in the test.
 
      Recall that, even when errconS=SUNFALSE, all variables are used in the
-     convergence test. Hence, we use Del (and not del). However, acnrm is used
-     in the error test and thus it has different forms depending on errconS
-     (and this explains why we have to carry around del and delS).
+     convergence test. Hence, we use cv_delnrmS (and not cv_delnrm). However, acnrm is
+     used in the error test and thus it has different forms depending on
+     errconS (and this explains why we still carry around cv_delnrm).
   */
   if (m > 0)
   {
-    cv_mem->cv_crate = SUNMAX(CRDOWN * cv_mem->cv_crate, Del / cv_mem->cv_delp);
+    cv_mem->cv_crate = SUNMAX(CRDOWN * cv_mem->cv_crate,
+                              cv_mem->cv_delnrmS / cv_mem->cv_delp);
   }
-  dcon = Del * SUNMIN(ONE, cv_mem->cv_crate) / tol;
+  dcon = cv_mem->cv_delnrmS * SUNMIN(ONE, cv_mem->cv_crate) / tol;
 
   /* check if nonlinear system was solved successfully */
   if (dcon <= ONE)
   {
-    if (m == 0) { cv_mem->cv_acnrm = (cv_mem->cv_errconS) ? delS : del; }
+    if (m == 0)
+    {
+      cv_mem->cv_acnrm = (cv_mem->cv_errconS) ? cv_mem->cv_delnrmS
+                                              : cv_mem->cv_delnrm;
+    }
     else
     {
       cv_mem->cv_acnrm = (cv_mem->cv_errconS) ? N_VWrmsNorm(ycorSim, ewtSim)
@@ -442,16 +472,65 @@ static int cvNlsConvTestSensSim(SUNNonlinearSolver NLS, N_Vector ycorSim,
   }
 
   /* check if the iteration seems to be diverging */
-  if ((m >= 1) && (Del > RDIV * cv_mem->cv_delp))
+  if ((m >= 1) && (cv_mem->cv_delnrmS > RDIV * cv_mem->cv_delp))
   {
     return (SUN_NLS_CONV_RECVR);
   }
 
   /* Save norm of correction and loop again */
-  cv_mem->cv_delp = Del;
+  cv_mem->cv_delp = cv_mem->cv_delnrmS;
 
   /* Not yet converged */
   return (SUN_NLS_CONTINUE);
+}
+
+static SUNErrCode cvNlsNormSensSim(N_Vector deltaSim, N_Vector ewtSim,
+                                   sunrealtype* delnrmS, void* cvode_mem)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  /* extract state and sensitivity deltas */
+  N_Vector delta   = NV_VEC_SW(deltaSim, 0);
+  N_Vector* deltaS = NV_VECS_SW(deltaSim) + 1;
+
+  /* extract state and sensitivity error weights */
+  N_Vector ewt   = NV_VEC_SW(ewtSim, 0);
+  N_Vector* ewtS = NV_VECS_SW(ewtSim) + 1;
+
+  /* compute and save the norm of the state corrections */
+  cv_mem->cv_delnrm = N_VWrmsNorm(delta, ewt);
+
+  /* compute the norm of the sensitivity corrections */
+  cv_mem->cv_delnrmS = cvSensUpdateNorm(cv_mem, cv_mem->cv_delnrm, deltaS, ewtS);
+
+  *delnrmS = cv_mem->cv_delnrmS;
+
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode cvNlsGetUpdateNormSensSim(sunrealtype* delnrm, void* cvode_mem)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  *delnrm = cv_mem->cv_delnrmS;
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode cvNlsGetConvRateSensSim(sunrealtype* crate, void* cvode_mem)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  *crate = cv_mem->cv_crate;
+  return SUN_SUCCESS;
 }
 
 static int cvNlsResidualSensSim(N_Vector ycorSim, N_Vector resSim, void* cvode_mem)

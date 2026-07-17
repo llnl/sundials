@@ -750,7 +750,7 @@ void mriStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
   fprintf(outfile, "MRIStep: gammap = " SUN_FORMAT_G "\n", step_mem->gammap);
   fprintf(outfile, "MRIStep: gamrat = " SUN_FORMAT_G "\n", step_mem->gamrat);
   fprintf(outfile, "MRIStep: crate = " SUN_FORMAT_G "\n", step_mem->crate);
-  fprintf(outfile, "MRIStep: delp = " SUN_FORMAT_G "\n", step_mem->delp);
+  fprintf(outfile, "MRIStep: delnrm_p = " SUN_FORMAT_G "\n", step_mem->delnrm_p);
   fprintf(outfile, "MRIStep: eRNrm = " SUN_FORMAT_G "\n", step_mem->eRNrm);
   fprintf(outfile, "MRIStep: nlscoef = " SUN_FORMAT_G "\n", step_mem->nlscoef);
   fprintf(outfile, "MRIStep: crdown = " SUN_FORMAT_G "\n", step_mem->crdown);
@@ -3464,8 +3464,8 @@ int mriStep_CheckCoupling(ARKodeMem ark_mem)
   /* check that embedding order p > 0 (if adaptive) */
   if ((step_mem->MRIC->p < 1) && (!ark_mem->fixedstep))
   {
-    arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__, __FILE__,
-                    "embedding order < 1");
+    arkProcessError(ark_mem, ARK_INVALID_TABLE, __LINE__, __func__,
+                    __FILE__, "embedding order < 1, but ARKodeSetFixedStep was not called");
     return (ARK_INVALID_TABLE);
   }
 

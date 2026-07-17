@@ -27,6 +27,7 @@
 
 #include <sundials/sundials_core.h>
 
+#include "sundials/sundials_export.h"
 #include "sundials/sundials_types.h"
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
@@ -42,6 +43,10 @@ struct _SUNNonlinearSolverContent_FixedPoint
   /* functions provided by the integrator */
   SUNNonlinSolSysFn Sys;        /* fixed-point iteration function */
   SUNNonlinSolConvTestFn CTest; /* convergence test function      */
+  SUNNonlinSolNormFn norm_fn;   /* optional norm callback               */
+  void* norm_fn_data;           /* data for the norm callback           */
+  SUNNonlinSolGetUpdateNormFn getupdatenorm_fn; /* optional update-norm getter */
+  void* getupdatenorm_data; /* data for the update-norm getter      */
 
   /* nonlinear solver variables */
   int m;                  /* number of acceleration vectors to use          */
@@ -51,6 +56,7 @@ struct _SUNNonlinearSolverContent_FixedPoint
   sunscalartype* R;       /* array of length m*m                            */
   sunscalartype* gamma;   /* array of length m                              */
   sunscalartype* cvals;   /* array of length m+1 for fused vector op        */
+  sunrealtype delnrm;     /* wrms norm of delta                             */
   N_Vector* df;           /* vector array of length m                       */
   N_Vector* dg;           /* vector array of length m                       */
   N_Vector* q;            /* vector array of length m                       */
@@ -98,6 +104,12 @@ SUNErrCode SUNNonlinSolFree_FixedPoint(SUNNonlinearSolver NLS);
 
 /* set functions */
 SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetOptions_FixedPoint(SUNNonlinearSolver NLS,
+                                             const char* NLSid,
+                                             const char* file_name, int argc,
+                                             char* argv[]);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetSysFn_FixedPoint(SUNNonlinearSolver NLS,
                                            SUNNonlinSolSysFn SysFn);
 
@@ -113,6 +125,16 @@ SUNErrCode SUNNonlinSolSetMaxIters_FixedPoint(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
                                              sunrealtype beta);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
+                                            SUNNonlinSolNormFn NormFn,
+                                            void* norm_fn_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data);
 
 /* get functions */
 SUNDIALS_EXPORT

@@ -41,6 +41,14 @@ enum SUNLogLevel
 typedef enum SUNLogLevel SUNLogLevel;
 #endif
 
+typedef SUNErrCode (*SUNLoggerQueueMsgFn)(SUNLogger logger, SUNLogLevel lvl,
+                                          const char* prefix, int rank,
+                                          const char* scope, const char* label,
+                                          const char* payload, void* content);
+
+typedef SUNErrCode (*SUNLoggerFlushMsgFn)(SUNLogger logger, SUNLogLevel lvl,
+                                          void* content);
+
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger);
 
@@ -55,11 +63,17 @@ SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetErrorFile(SUNLogger logger, FILE* error_fp);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNLogger_GetErrorFile(SUNLogger logger, FILE** error_fp);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
                                         const char* warning_filename);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetWarningFile(SUNLogger logger, FILE* warning_fp);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_GetWarningFile(SUNLogger logger, FILE** warning_fp);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger,
@@ -69,10 +83,22 @@ SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetDebugFile(SUNLogger logger, FILE* debug_fp);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNLogger_GetDebugFile(SUNLogger logger, FILE** debug_fp);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetInfoFile(SUNLogger logger, FILE* info_fp);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_GetInfoFile(SUNLogger logger, FILE** info_fp);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger,
+                                            SUNLoggerQueueMsgFn queue_msg,
+                                            SUNLoggerFlushMsgFn flush_msg,
+                                            void* lptr);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,

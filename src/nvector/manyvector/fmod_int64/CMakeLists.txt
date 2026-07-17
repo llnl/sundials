@@ -39,7 +39,7 @@ if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
   if(MPI_C_COMPILER)
     # use MPI wrapper as the compiler
     set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-  elseif()
+  else()
     # add MPI_INCLUDE_PATH to include directories
     include_directories(${MPI_INCLUDE_PATH})
   endif()

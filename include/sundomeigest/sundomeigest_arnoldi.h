@@ -43,21 +43,28 @@ struct SUNDomEigEstimatorContent_Arnoldi_
 
   /* Krylov subspace vectors */
   N_Vector* V;
-  N_Vector q;
+  N_Vector q, rhs_linY, Fy, work;
 
-  int kry_dim;        /* Krylov subspace dimension */
-  int num_warmups;    /* Number of preprocessing iterations */
-  long int num_iters; /* Number of iterations in last Estimate call */
+  int kry_dim;                  /* Krylov subspace dimension */
+  int num_warmups;              /* Number of preprocessing iterations */
+  long int num_iters;           /* Number of iterations in last Estimate call */
+  sunbooleantype warmup_to_tol; /* Whether to use warmup iterations */
+  sunrealtype tol_warmup;       /* Tolerance for warmup iterations */
+  sunrealtype rhs_linT;         /* Time value for linearization point */
 
   long int num_ATimes; /* Number of ATimes calls */
 
+  SUNRhsFn rhsfn;   /* User provided RHS function */
+  void* rhs_data;   /* RHS function data */
+  long int nfevals; /* Number of RHS evaluations */
+
   sunscalartype* LAPACK_A; /* The vector which holds rows of the Hessenberg matrix in the given order */
-  sunscalartype* LAPACK_wr;    /* Real parts of eigenvalues */
-  sunscalartype* LAPACK_wi;    /* Imaginary parts of eigenvalues */
-  sunscalartype* LAPACK_work;  /* Workspace array */
-  sunindextype LAPACK_lwork; /* Dimension of the workspace array */
-  sunrealtype* LAPACK_rwork; /* Workspace array for complex LAPACK routines */
-  sunscalartype** LAPACK_arr;  /* an array to sort eigenvalues*/
+  sunscalartype* LAPACK_wr;   /* Real parts of eigenvalues */
+  sunscalartype* LAPACK_wi;   /* Imaginary parts of eigenvalues */
+  sunscalartype* LAPACK_work; /* Workspace array */
+  sunindextype LAPACK_lwork;  /* Dimension of the workspace array */
+  sunrealtype* LAPACK_rwork;  /* Workspace array for complex LAPACK routines */
+  sunscalartype** LAPACK_arr; /* an array to sort eigenvalues*/
 
   sunscalartype** Hes; /* Hessenberg matrix Hes */
 };
@@ -77,8 +84,20 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
                                                 void* A_data, SUNATimesFn ATimes);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
+                                             void* rhs_data, SUNRhsFn RHSfn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,
                                                             int num_iters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE,
+                                                sunrealtype tol);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetInitialGuess_Arnoldi(SUNDomEigEstimator DEE,
@@ -95,6 +114,10 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumIters_Arnoldi(SUNDomEigEstimator DEE,
                                                   long int* num_iters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals_Arnoldi(SUNDomEigEstimator DEE,
+                                                     long int* num_rhs_evals);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumATimesCalls_Arnoldi(SUNDomEigEstimator DEE,

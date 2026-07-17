@@ -142,6 +142,9 @@ foreach(test_tuple ${unit_tests})
                 sundials_sunlinsolband_obj
                 sundials_sunlinsoldense_obj
                 sundials_sunlinsolspgmr_obj
+                # Use only the auto object files directly here since the auto
+                # object library already links the Newton/fixed-point objects.
+                $<TARGET_OBJECTS:sundials_sunnonlinsolauto_obj>
                 sundials_sunnonlinsolnewton_obj
                 sundials_sunnonlinsolfixedpoint_obj
                 sundials_sunadaptcontrollerimexgus_obj
@@ -150,9 +153,9 @@ foreach(test_tuple ${unit_tests})
                 sundials_adjointcheckpointscheme_fixed_obj
                 ${EXE_EXTRA_LINK_LIBS})
 
-    # Tell CMake that we depend on the ARKODE library since it does not pick
-    # that up from $<TARGET_OBJECTS:sundials_arkode_obj>.
-    add_dependencies(${test_target} sundials_arkode_obj)
+      # Tell CMake that we depend on the ARKODE library since it does not pick
+      # that up from $<TARGET_OBJECTS:sundials_arkode_obj>.
+      add_dependencies(${test_target} sundials_arkode_obj)
     endif()
   endif()
 

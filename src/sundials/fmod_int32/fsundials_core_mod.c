@@ -753,6 +753,20 @@ SWIGEXPORT int _wrap_FSUNLogger_SetErrorFile(void *farg1, void *farg2) {
 }
 
 
+SWIGEXPORT int _wrap_FSUNLogger_GetErrorFile(void *farg1, void *farg2) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  FILE **arg2 = (FILE **) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (FILE **)(farg2);
+  result = (SUNErrCode)SUNLogger_GetErrorFile(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNLogger_SetWarningFilename(void *farg1, SwigArrayWrapper *farg2) {
   int fresult ;
   SUNLogger arg1 = (SUNLogger) 0 ;
@@ -776,6 +790,20 @@ SWIGEXPORT int _wrap_FSUNLogger_SetWarningFile(void *farg1, void *farg2) {
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNLogger_SetWarningFile(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNLogger_GetWarningFile(void *farg1, void *farg2) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  FILE **arg2 = (FILE **) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (FILE **)(farg2);
+  result = (SUNErrCode)SUNLogger_GetWarningFile(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -809,6 +837,20 @@ SWIGEXPORT int _wrap_FSUNLogger_SetDebugFile(void *farg1, void *farg2) {
 }
 
 
+SWIGEXPORT int _wrap_FSUNLogger_GetDebugFile(void *farg1, void *farg2) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  FILE **arg2 = (FILE **) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (FILE **)(farg2);
+  result = (SUNErrCode)SUNLogger_GetDebugFile(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNLogger_SetInfoFilename(void *farg1, SwigArrayWrapper *farg2) {
   int fresult ;
   SUNLogger arg1 = (SUNLogger) 0 ;
@@ -832,6 +874,38 @@ SWIGEXPORT int _wrap_FSUNLogger_SetInfoFile(void *farg1, void *farg2) {
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNLogger_SetInfoFile(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNLogger_GetInfoFile(void *farg1, void *farg2) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  FILE **arg2 = (FILE **) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (FILE **)(farg2);
+  result = (SUNErrCode)SUNLogger_GetInfoFile(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNLogger_SetQueueAndFlushMsgFns(void *farg1, SUNLoggerQueueMsgFn farg2, SUNLoggerFlushMsgFn farg3, void *farg4) {
+  int fresult ;
+  SUNLogger arg1 = (SUNLogger) 0 ;
+  SUNLoggerQueueMsgFn arg2 = (SUNLoggerQueueMsgFn) 0 ;
+  SUNLoggerFlushMsgFn arg3 = (SUNLoggerFlushMsgFn) 0 ;
+  void *arg4 = (void *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNLogger)(farg1);
+  arg2 = (SUNLoggerQueueMsgFn)(farg2);
+  arg3 = (SUNLoggerFlushMsgFn)(farg3);
+  arg4 = (void *)(farg4);
+  result = (SUNErrCode)SUNLogger_SetQueueAndFlushMsgFns(arg1,arg2,arg3,arg4);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -2578,6 +2652,22 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn(SUNNonlinearSolver farg1, SUNNonlinSo
 }
 
 
+SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFns(SUNNonlinearSolver farg1, SUNNonlinSolSysFn farg2, SUNNonlinSolSysFn farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
+  SUNNonlinSolSysFn arg3 = (SUNNonlinSolSysFn) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolSysFn)(farg2);
+  arg3 = (SUNNonlinSolSysFn)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetSysFns(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNNonlinSolSetLSetupFn(SUNNonlinearSolver farg1, SUNNonlinSolLSetupFn farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
@@ -2617,6 +2707,54 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn(SUNNonlinearSolver farg1, SUNNon
   arg2 = (SUNNonlinSolConvTestFn)(farg2);
   arg3 = (void *)(farg3);
   result = (SUNErrCode)SUNNonlinSolSetConvTestFn(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn(SUNNonlinearSolver farg1, SUNNonlinSolNormFn farg2, void *farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
+  void *arg3 = (void *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolNormFn)(farg2);
+  arg3 = (void *)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetNormFn(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver farg1, SUNNonlinSolGetUpdateNormFn farg2, void *farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
+  void *arg3 = (void *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
+  arg3 = (void *)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetGetUpdateNormFn(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver farg1, SUNNonlinSolGetConvRateFn farg2, void *farg3) {
+  int fresult ;
+  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
+  SUNNonlinSolGetConvRateFn arg2 = (SUNNonlinSolGetConvRateFn) 0 ;
+  void *arg3 = (void *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNNonlinearSolver)(farg1);
+  arg2 = (SUNNonlinSolGetConvRateFn)(farg2);
+  arg3 = (void *)(farg3);
+  result = (SUNErrCode)SUNNonlinSolSetGetConvRateFn(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -3922,6 +4060,38 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetATimes(SUNDomEigEstimator farg1, voi
 }
 
 
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs(SUNDomEigEstimator farg1, void *farg2, SUNRhsFn farg3) {
+  int fresult ;
+  SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
+  void *arg2 = (void *) 0 ;
+  SUNRhsFn arg3 = (SUNRhsFn) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNDomEigEstimator)(farg1);
+  arg2 = (void *)(farg2);
+  arg3 = (SUNRhsFn)(farg3);
+  result = (SUNErrCode)SUNDomEigEstimator_SetRhs(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator farg1, double const *farg2, N_Vector farg3) {
+  int fresult ;
+  SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
+  sunrealtype arg2 ;
+  N_Vector arg3 = (N_Vector) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNDomEigEstimator)(farg1);
+  arg2 = (sunrealtype)(*farg2);
+  arg3 = (N_Vector)(farg3);
+  result = (SUNErrCode)SUNDomEigEstimator_SetRhsLinearizationPoint(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetMaxIters(SUNDomEigEstimator farg1, long const *farg2) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
@@ -4029,6 +4199,20 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumIters(SUNDomEigEstimator farg1, l
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNDomEigEstimator_GetNumIters(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator farg1, long *farg2) {
+  int fresult ;
+  SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
+  long *arg2 = (long *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNDomEigEstimator)(farg1);
+  arg2 = (long *)(farg2);
+  result = (SUNErrCode)SUNDomEigEstimator_GetNumRhsEvals(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

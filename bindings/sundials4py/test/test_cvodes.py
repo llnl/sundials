@@ -68,6 +68,46 @@ def test_cvodes_ivp(sunctx):
     assert num_steps > 0
 
 
+def test_cvodes_get_root_info_updates_numpy_array(sunctx):
+    y = N_VNew_Serial(1, sunctx)
+    yarr = N_VGetArrayPointer(y)
+    yarr[0] = 0.0
+
+    ls = SUNLinSol_SPGMR(y, 0, 0, sunctx)
+    cvode = CVodeCreate(CV_BDF, sunctx)
+
+    def rhs(t, yvec, ydotvec, _):
+        N_VGetArrayPointer(ydotvec)[0] = 1.0
+        return 0
+
+    def rootfn(t, yvec, gout, _):
+        gout[0] = N_VGetArrayPointer(yvec)[0] - 0.5
+        gout[1] = 1.0
+        return 0
+
+    status = CVodeInit(cvode.get(), rhs, 0.0, y)
+    assert status == CV_SUCCESS
+
+    status = CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    assert status == CV_SUCCESS
+
+    status = CVodeSetLinearSolver(cvode.get(), ls, None)
+    assert status == CV_SUCCESS
+
+    status = CVodeRootInit(cvode.get(), 2, rootfn)
+    assert status == CV_SUCCESS
+
+    status, tret = CVode(cvode.get(), 1.0, y, CV_NORMAL)
+    assert status == CV_ROOT_RETURN
+    assert tret > 0.0
+
+    rootsfound = np.zeros(2, dtype=np.intc)
+    status = CVodeGetRootInfo(cvode.get(), rootsfound)
+    assert status == CV_SUCCESS
+    assert rootsfound[0] != 0
+    assert rootsfound[1] == 0
+
+
 def test_cvodes_fsa(sunctx):
     # Forward Sensitivity Analysis (FSA) with respect to initial condition
     NEQ = 1
