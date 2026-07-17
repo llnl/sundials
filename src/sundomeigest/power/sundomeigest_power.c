@@ -31,8 +31,8 @@
 #define MAX_DQITERS 3
 #endif
 
-#define ZERO SUN_CCONST(0.0, 0.0)
-#define ONE  SUN_CCONST(1.0, 0.0)
+#define ZERO SUN_RCONST(0.0)
+#define ONE  SUN_RCONST(1.0)
 
 /* Default estimator parameters */
 #define DEE_NUM_OF_WARMUPS_PI_DEFAULT 100
