@@ -75,6 +75,7 @@ set(SUNDIALS_SWIG_INTERFACE_SPECS
     "sunlinsol/fsunlinsol_sptfqmr_mod.i|src/sunlinsol/sptfqmr|fsunlinsol_sptfqmr_mod"
     "sunlinsol/fsunlinsol_pcg_mod.i|src/sunlinsol/pcg|fsunlinsol_pcg_mod"
     "sunnonlinsol/fsunnonlinsol_newton_mod.i|src/sunnonlinsol/newton|fsunnonlinsol_newton_mod"
+    "sunnonlinsol/fsunnonlinsol_auto_mod.i|src/sunnonlinsol/auto|fsunnonlinsol_auto_mod"
     "sunnonlinsol/fsunnonlinsol_fixedpoint_mod.i|src/sunnonlinsol/fixedpoint|fsunnonlinsol_fixedpoint_mod"
     "sunadaptcontroller/fsunadaptcontroller_imexgus_mod.i|src/sunadaptcontroller/imexgus|fsunadaptcontroller_imexgus_mod"
     "sunadaptcontroller/fsunadaptcontroller_soderlind_mod.i|src/sunadaptcontroller/soderlind|fsunadaptcontroller_soderlind_mod"
