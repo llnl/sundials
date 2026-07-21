@@ -21,6 +21,9 @@
  * -----------------------------------------------------------------
  */
 
+#ifndef SUNDIALS_TEST_SUNMATRIX_H
+#define SUNDIALS_TEST_SUNMATRIX_H
+
 #include <math.h>
 #include <sundials/sundials_core.h>
 
@@ -89,3 +92,5 @@ void SetPrintAllRanks(int onoff);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // SUNDIALS_TEST_SUNMATRIX_H

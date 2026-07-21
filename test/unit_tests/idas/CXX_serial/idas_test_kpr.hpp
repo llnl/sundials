@@ -17,6 +17,9 @@
  * Kvaerno-Prothero-Robinson ODE test problem, see .cpp file for details
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_IDAS_TEST_KPR_HPP
+#define SUNDIALS_IDAS_TEST_KPR_HPP
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -233,3 +236,5 @@ static int ReadInputs(vector<string>& args, TestOptions& opts, SUNContext ctx)
 }
 
 /*---- end of file ----*/
+
+#endif // SUNDIALS_IDAS_TEST_KPR_HPP
