@@ -43,7 +43,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: true
       - name: Run test_driver.sh
@@ -52,6 +52,7 @@ jobs:
           indexsize: ${{ matrix.indexsize }}
           precision: ${{ matrix.precision }}
           tpls: ${{ matrix.tpls }}
+          phase: ${{ matrix.precision == 'extended' && 'BUILD' || '' }}
         env:
           CMAKE_BUILD_TYPE: ${{ matrix.buildtype }}
       - name: Archive build files from failed build

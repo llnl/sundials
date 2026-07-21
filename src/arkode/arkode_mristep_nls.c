@@ -26,6 +26,12 @@
 #include "arkode_impl.h"
 #include "arkode_mristep_impl.h"
 
+/* private functions */
+static SUNErrCode mriStep_NlsNorm(N_Vector del, N_Vector ewt,
+                                  sunrealtype* delnrm, void* arkode_mem);
+static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm, void* arkode_mem);
+static SUNErrCode mriStep_NlsGetConvRate(sunrealtype* crate, void* arkode_mem);
+
 /*===============================================================
   Interface routines supplied to ARKODE
   ===============================================================*/
@@ -54,8 +60,8 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   }
 
   /* check for required nonlinear solver functions */
-  if ((NLS->ops->gettype == NULL) || (NLS->ops->solve == NULL) ||
-      (NLS->ops->setsysfn == NULL))
+  if (NLS->ops->gettype == NULL || NLS->ops->solve == NULL ||
+      (NLS->ops->setsysfn == NULL && NLS->ops->setsysfns == NULL))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "NLS does not support required operations");
@@ -81,6 +87,11 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   {
     retval = SUNNonlinSolSetSysFn(step_mem->NLS, mriStep_NlsFPFunction);
   }
+  else if (SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_HYBRID)
+  {
+    retval = SUNNonlinSolSetSysFns(step_mem->NLS, mriStep_NlsResidual,
+                                   mriStep_NlsFPFunction);
+  }
   else
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -101,6 +112,32 @@ int mriStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "Setting convergence test function failed");
+    return (ARK_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetNormFn(step_mem->NLS, mriStep_NlsNorm, ark_mem);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Setting convergence-test norm function failed");
+    return (ARK_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetGetUpdateNormFn(step_mem->NLS,
+                                          mriStep_NlsGetUpdateNorm, ark_mem);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Setting update-norm getter failed");
+    return (ARK_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetGetConvRateFn(step_mem->NLS, mriStep_NlsGetConvRate,
+                                        ark_mem);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Setting convergence-rate getter failed");
     return (ARK_ILL_INPUT);
   }
 
@@ -474,7 +511,12 @@ int mriStep_NlsResidual(N_Vector zcor, N_Vector r, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute slow implicit RHS and save for later */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fsi(ark_mem->tcur, ark_mem->ycur,
                              step_mem->Fsi[step_mem->stage_map[step_mem->istage]],
                              ark_mem->user_data);
@@ -529,7 +571,12 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute slow implicit RHS and save for later */
+  /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+  }
   retval = step_mem->nls_fsi(ark_mem->tcur, ark_mem->ycur,
                              step_mem->Fsi[step_mem->stage_map[step_mem->istage]],
                              ark_mem->user_data);
@@ -552,12 +599,12 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
   this solve-decoupled implicit MRI stage.  We have two modes.
 
   Standard:
-      delnorm = ||del||_WRMS
+      delnrm = ||del||_WRMS
       if (m==0) crate = 1
-      if (m>0)  crate = max(crdown*crate, delnorm/delp)
-      dcon = min(crate, ONE) * del / nlscoef
+      if (m>0)  crate = max(crdown*crate, delnrm/delnrm_p)
+      dcon = min(crate, ONE) * delnrm / nlscoef
       if (dcon<=1)  return convergence
-      if ((m >= 2) && (del > rdiv*delp))  return divergence
+      if ((m >= 2) && (delnrm > rdiv*delnrm_p))  return divergence
 
   Linearly-implicit mode:
       if the user specifies that the problem is linearly
@@ -571,7 +618,7 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS,
   /* temporary variables */
   ARKodeMem ark_mem;
   ARKodeMRIStepMem step_mem;
-  sunrealtype delnrm, dcon;
+  sunrealtype dcon;
   int m, retval;
 
   /* access ARKodeMem and ARKodeMRIStepMem structures */
@@ -582,7 +629,12 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS,
   if (step_mem->linear) { return (SUN_SUCCESS); }
 
   /* compute the norm of the correction */
-  delnrm = N_VWrmsNorm(del, ewt);
+  if (mriStep_NlsNorm(del, ewt, &step_mem->delnrm, arkode_mem) != SUN_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NLS_FAIL);
+    return (ARK_NLS_OP_ERR);
+  }
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
@@ -592,26 +644,58 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS,
   if (m > 0)
   {
     step_mem->crate = SUNMAX(step_mem->crdown * step_mem->crate,
-                             delnrm / step_mem->delp);
+                             step_mem->delnrm / step_mem->delnrm_p);
   }
 
   /* compute our scaled error norm for testing convergence */
-  dcon = SUNMIN(step_mem->crate, ONE) * delnrm / tol;
+  dcon = SUNMIN(step_mem->crate, ONE) * step_mem->delnrm / tol;
 
   /* check for convergence; if so return with success */
   if (dcon <= ONE) { return (SUN_SUCCESS); }
 
   /* check for divergence */
-  if ((m >= 1) && (delnrm > step_mem->rdiv * step_mem->delp))
+  if ((m >= 1) && (step_mem->delnrm > step_mem->rdiv * step_mem->delnrm_p))
   {
     return (SUN_NLS_CONV_RECVR);
   }
 
   /* save norm of correction for next iteration */
-  step_mem->delp = delnrm;
+  step_mem->delnrm_p = step_mem->delnrm;
 
   /* return with flag that there is more work to do */
   return (SUN_NLS_CONTINUE);
+}
+
+static SUNErrCode mriStep_NlsNorm(N_Vector del, N_Vector ewt, sunrealtype* delnrm,
+                                  SUNDIALS_MAYBE_UNUSED void* arkode_mem)
+{
+  *delnrm = N_VWrmsNorm(del, ewt);
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode mriStep_NlsGetUpdateNorm(sunrealtype* delnrm, void* arkode_mem)
+{
+  ARKodeMRIStepMem step_mem;
+  int retval;
+
+  retval = mriStep_AccessStepMem(arkode_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return SUN_ERR_ARG_CORRUPT; }
+
+  *delnrm = step_mem->delnrm;
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode mriStep_NlsGetConvRate(sunrealtype* crate, void* arkode_mem)
+{
+  ARKodeMem ark_mem;
+  ARKodeMRIStepMem step_mem;
+  int retval;
+
+  retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
+  if (retval != ARK_SUCCESS) { return SUN_ERR_ARG_CORRUPT; }
+
+  *crate = step_mem->crate;
+  return SUN_SUCCESS;
 }
 
 /*===============================================================

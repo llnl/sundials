@@ -151,7 +151,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = failed solve, nflag = 4
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = failed step, kflag = 3
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 0.000102986025609508, h = 0.00872354880550418
-[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.0349971812476262
+[INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 0, implicit = 0, tcur = 0.000102986025609508
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-stages-list] stage = 1, implicit = 1, tcur = 0.00225770258056904
 [INFO][rank 0][arkStep_Nls][begin-nonlinear-solve] tol = 0.1

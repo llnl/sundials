@@ -65,8 +65,7 @@ static int forcingStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
   This routine is called just prior to performing internal time steps (after
   all user "set" routines have been called) from within arkInitialSetup.
   ----------------------------------------------------------------------------*/
-static int forcingStep_Init(ARKodeMem ark_mem,
-                            SUNDIALS_MAYBE_UNUSED sunrealtype tout, int init_type)
+static int forcingStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeForcingStepMem step_mem = NULL;
   int retval = forcingStep_AccessStepMem(ark_mem, __func__, &step_mem);

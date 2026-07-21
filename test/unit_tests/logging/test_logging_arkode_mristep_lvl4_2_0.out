@@ -22,7 +22,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.000770752153918627
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.000770752153918627
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.000149600681952621
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 10000
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.41930360141754e-19
@@ -39,7 +39,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162683034720563
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162683034720563
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00299201363905243
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 7.15097454573916e-09
@@ -56,7 +56,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162594315662662
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162594315662662
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00572501758975284
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.60651543415442e-08
@@ -69,7 +69,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 4.47758963639177
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.001381168840331406
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.00138116884033141
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][mriStepInnerStepper_Reset][reset-inner-state] tR = 0.000435866521508459
@@ -89,7 +89,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162503255542463
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162503255542463
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0056413347849154
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.07735349674236e-08
@@ -99,10 +99,10 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 12.14796270582734
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 12.1479627058273
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.003729401476738584
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.00372940147673858
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][mriStepInnerStepper_Reset][reset-inner-state] tR = 0.00071793326075423
@@ -122,7 +122,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162415572852567
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162415572852567
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0056413347849154
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.09697160431106e-08
@@ -132,10 +132,10 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 23.56857053287391
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 23.5685705328739
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.007204341456196956
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.00720434145619696
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][mriStepInnerStepper_Reset][reset-inner-state] tR = 0.001
@@ -163,7 +163,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162292127421249
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162292127421249
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00871733043016917
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 5.2026455278835e-07
@@ -173,10 +173,10 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 25.02295754400716
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 25.0229575440072
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.007673490841839432
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.00767349084183943
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][mriStepInnerStepper_Reset][reset-inner-state] tR = 0.00143586652150846
@@ -196,7 +196,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162207111572455
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162207111572455
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0056413347849154
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.14382590428549e-08
@@ -206,10 +206,10 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 45.98839423695283
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 45.9883942369528
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.01409326137946229
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.0140932613794623
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][mriStepInnerStepper_Reset][reset-inner-state] tR = 0.00171793326075423
@@ -229,7 +229,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162130720617912
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162130720617912
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0056413347849154
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.16107123355052e-08
@@ -239,10 +239,10 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 70.70326789489287
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 70.7032678948929
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.02163921128615576
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.0216392112861558
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][mriStepInnerStepper_Reset][reset-inner-state] tR = 0.002
@@ -270,7 +270,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162022888902801
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162022888902801
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00871733043016917
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 5.2373134186928e-07
@@ -280,7 +280,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 45.56773766986903
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 45.567737669869
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.0139640883068901
@@ -303,7 +303,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0161950672834469
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0161950672834469
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00564133478491541
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.2018783064235e-08
@@ -313,10 +313,10 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 79.82720625171295
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 79.827206251713
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.02445379030804438
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.0244537903080444
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][mriStepInnerStepper_Reset][reset-inner-state] tR = 0.00271793326075423
@@ -336,7 +336,7 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.016188532498279
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.016188532498279
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00564133478491541
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.21674530387736e-08
@@ -346,10 +346,10 @@ Using fixed-point nonlinear solver
 [INFO][rank 0][mriStep_Nls][begin-nonlinear-solve] tol = 0.1
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-solver] solver = Fixed-Point
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 117.8348216736332
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 1, update-norm = 117.834821673633
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][begin-iterations-list] 
-[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.03606875840854498
+[INFO][rank 0][SUNNonlinSolSolve_FixedPoint][nonlinear-iterate] cur-iter = 2, update-norm = 0.036068758408545
 [INFO][rank 0][SUNNonlinSolSolve_FixedPoint][end-iterations-list] status = success
 [INFO][rank 0][mriStep_Nls][end-nonlinear-solve] status = success, iters = 2
 [DEBUG][rank 0][mriStepInnerStepper_Reset][reset-inner-state] tR = 0.003

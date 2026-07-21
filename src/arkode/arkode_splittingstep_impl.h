@@ -28,6 +28,7 @@ typedef struct ARKodeSplittingStepMemRec
   SplittingStepCoefficients coefficients;
   long int* n_stepper_evolves;
 
+  int istage;
   int partitions;
   int order;
 }* ARKodeSplittingStepMem;

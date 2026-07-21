@@ -77,7 +77,7 @@ Using dense direct linear solver
  1.224744871391589e+00
  1.732050807568870e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.000684232821674337
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.000684232821674337
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.000114408635496083
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 10000
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 7.81663103431959e-20
@@ -139,7 +139,7 @@ Using dense direct linear solver
  1.224744871391589e+00
  1.732050051704758e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162693212800236
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162693212800236
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00228817270992167
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 2.44544264770262e-09
@@ -201,7 +201,7 @@ Using dense direct linear solver
  1.224744871391589e+00
  1.732044392578396e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162624929099858
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162624929099858
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.004378265139474
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 3.2835207774456e-08
@@ -222,7 +222,7 @@ Using dense direct linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 2.617700683091286
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 2.61770068309129
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
@@ -304,7 +304,7 @@ Using dense direct linear solver
  1.224744798369490e+00
  1.732025147744635e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162521789603192
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162521789603192
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.76957346563232e-07
@@ -325,12 +325,12 @@ Using dense direct linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 10.47064411630075
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 10.4706441163008
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.004452567171009446
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.00445256717100945
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [DEBUG][rank 0][mriStep_Nls][correction] zcor(:) =
 -8.826159308473692e-08
@@ -407,7 +407,7 @@ Using dense direct linear solver
  1.224744858300415e+00
  1.731993073510034e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162417851962173
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162417851962173
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.77410749724022e-07
@@ -428,12 +428,12 @@ Using dense direct linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 23.55851273840083
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 23.5585127384008
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.01002676147685142
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.0100267614768514
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [DEBUG][rank 0][mriStep_Nls][correction] zcor(:) =
 -1.020620443202777e-07
@@ -526,7 +526,7 @@ Using dense direct linear solver
  1.224744701288171e+00
  1.731948170579155e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.016231816453558
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.016231816453558
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.7784697743036e-07
@@ -552,7 +552,7 @@ Using dense direct linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.007796994789490233
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.00779699478949023
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [DEBUG][rank 0][mriStep_Nls][correction] zcor(:) =
 -9.768237010686826e-08
@@ -629,7 +629,7 @@ Using dense direct linear solver
  1.224744560224724e+00
  1.731890439939910e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162223018947247
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162223018947247
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.78264581493567e-07
@@ -650,12 +650,12 @@ Using dense direct linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 41.88133272968303
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 41.881332729683
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.01782130916736245
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 2, total-iters = 2, update-norm = 0.0178213091673625
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [DEBUG][rank 0][mriStep_Nls][correction] zcor(:) =
 -2.243443038600327e-07
@@ -732,7 +732,7 @@ Using dense direct linear solver
  1.224744552114247e+00
  1.731819882900633e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.016213243191967
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.016213243191967
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.78663317197943e-07
@@ -753,7 +753,7 @@ Using dense direct linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 70.67317810828131
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 70.6731781082813
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = continue
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
@@ -851,7 +851,7 @@ Using dense direct linear solver
  1.224744327060725e+00
  1.731736501021379e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162045996475567
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162045996475567
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.79044818839001e-07
@@ -872,7 +872,7 @@ Using dense direct linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 34.02874272231963
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 34.0287427223196
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [DEBUG][rank 0][mriStep_Nls][correction] zcor(:) =
 -1.657163001854720e-07
@@ -949,7 +949,7 @@ Using dense direct linear solver
  1.224744117974688e+00
  1.731640331584135e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0161964008149803
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0161964008149803
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.79407633648632e-07
@@ -1047,7 +1047,7 @@ Using dense direct linear solver
  1.224744041793993e+00
  1.731531382202137e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0161886493178031
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0161886493178031
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.79751498510991e-07
@@ -1068,7 +1068,7 @@ Using dense direct linear solver
 [INFO][rank 0][SUNNonlinSolSolve_Newton][begin-iterations-list] 
 [INFO][rank 0][arkLsSolve][begin-linear-solve] iterative = 0
 [INFO][rank 0][arkLsSolve][end-linear-solve] status = success, iters = 0, p-solves = 0, resnorm = 0
-[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 117.7390695187308
+[INFO][rank 0][SUNNonlinSolSolve_Newton][nonlinear-iterate] cur-iter = 1, total-iters = 1, update-norm = 117.739069518731
 [INFO][rank 0][SUNNonlinSolSolve_Newton][end-iterations-list] status = success
 [DEBUG][rank 0][mriStep_Nls][correction] zcor(:) =
 -5.102739818166436e-07

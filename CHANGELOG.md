@@ -6,6 +6,160 @@
 
 ### New Features and Enhancements
 
+### Bug Fixes
+
+### Deprecation Notices
+
+## Changes to SUNDIALS in release 7.8.0
+
+### New Features and Enhancements
+
+We added a new SUNNonlinearSolver implementation, `SUNNonlinearSolver_Auto`,
+which uses an algorithm described in https://doi.org/10.1007/BF01933714 to
+switch between a modified Newton iteration and fixed-point iteration based on an
+estimate of stiffness. This solver may be useful to pair with the BDF method in
+CVODE/CVODES, or with DIRK methods in ARKODE, for users who are unsure about the
+stiffness of their problem. See the module documentation for more
+information. We also extended the SUNNonlinearSolver API with callback setters
+`SUNNonlinSolSetNormFn`, `SUNNonlinSolSetGetUpdateNormFn`, and
+`SUNNonlinSolSetGetConvRateFn`.
+
+Added the `ARKODE_SSP_ERK_3_1_2`, `ARKODE_SSP_ERK_4_1_2`,
+`ARKODE_SSP_ERK_4_2_3`, `ARKODE_SSP_ERK_10_3_4`, `ARKODE_SSP_LSPUM_ERK_3_1_2`,
+and `ARKODE_ASCHER_ERK_3_1_2` embedded explicit Runge-Kutta Butcher tables.
+
+Added the `ARKODE_SSP_DIRK_3_1_2`, `ARKODE_SSP_LSPUM_SDIRK_3_1_2`,
+`ARKODE_ESDIRK_4_2_3`, and `ARKODE_ASCHER_SDIRK_3_1_2` embedded diagonally
+implicit Runge-Kutta Butcher tables.
+
+Of these, embedded additive Runge-Kutta methods may be formed using
+`ARKODE_SSP_ERK_3_1_2`+`ARKODE_SSP_DIRK_3_1_2`,
+`ARKODE_SSP_ERK_4_2_3`+`ARKODE_ESDIRK_4_2_3`,
+`ARKODE_SSP_LSPUM_ERK_3_1_2`+`ARKODE_SSP_LSPUM_SDIRK_3_1_2`, and
+`ARKODE_ASCHER_ERK_3_1_2`+`ARKODE_ASCHER_SDIRK_3_1_2`.
+
+Added the `ARKODE_IMEX_MRI_GARK_ASCHER_ARK2` and `ARKODE_IMEX_MRI_GARK_ARK2`
+embedded implicit-explicit MRI-GARK coupling tables.
+
+When info or debug logging is enabled, i.e., `SUNDIALS_LOGGING_LEVEL` is at
+least 3, it will now print to `stdout` by default. Previously, the default was
+to produce no output, and this behavior can be restored by setting the
+environment variables `SUNLOGGER_INFO_FILENAME` and `SUNLOGGER_DEBUG_FILENAME`
+to an empty string.
+
+Improved the performance of logging when enabled but no file pointer was set.
+
+Added the function `SUNLogger_SetQueueAndFlushMsgFns` to allow for user-defined
+functions to queue and flush log messages.
+
+Updated `examples/cvode/petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
+
+### Bug Fixes
+
+Fixed a bug where an unrecognized error return flag from a user-provided
+SUNLinearSolver module would register as a successful linear solve.
+
+Fixed a bug that caused `SUNDomEigEstimator_Initialize` to overwrite the
+user-provided initial guess from `SUNDomEigEstimator_SetInitialGuess`. These
+routines are now order-independent.
+
+Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
+`malloc`.
+
+Fixed a bug in ERKStep where calling `ARKodeResize` before `ARKodeEvolve` or
+`ARKodeInit` would result in a segmentation fault.
+
+Fixed a bug where the number of required stages for STS methods in the LSRKStep
+module was incorrectly computed using the spectral radius instead of the real
+part of the Jacobian eigenvalues.
+
+Fixed a bug where the negative real extent of the stability region for the RKC
+method was not properly computed, which could result in an underestimation of
+the number of stages required for stability.
+
+Fixed a bug where STS methods were limited to one fewer than the maximum allowed
+number of stages. STS can now use the full maximum number of stages.
+
+Fixed a bug in reporting the maximum number of stages in `ARKodeGetStageIndex`
+when running SSP methods in LSRKStep.
+
+Fixed a bug where IDAS would incorrectly compute the quadrature predictor when
+`IDACalcIC` was used. In some cases, this lead to an inconsistent solution in
+the forward solve compared to the forward recomputation from a checkpoint,
+ultimately causing a segfault.
+
+Fixed a bug in the sundials4py wrappers for user-provided SUNStepper evolve and
+one_step functions.
+
+Fixed a bug in sundials4py where the `CVodeGetRootInfo`, `ARKodeGetRootInfo`,
+and `IDAGetRootInfo` functions did not correctly return the rootsfound
+array. This addresses [Issue #937](https://github.com/llnl/sundials/issues/937).
+
+Removed duplicate logging output that would cause the Python logging tools to
+fail with a repeated key error.
+
+Fixed a CMake issue that prevented finding third-party libraries installed in
+default search locations e.g., paths included in `CMAKE_INSTALL_PREFIX` ([Issue
+#935](https://github.com/llnl/sundials/issues/935)).
+
+Fixed a CMake issue that prevented automatically finding PETSc dependencies.
+
+Fixed empty `elseif()` cases in the CMake files for the Fortran interfaces to
+the ManyVector and MPIPlusX vectors which could results in a missing include
+path when compiling if an MPI compiler wrapper is not found.
+
+Fixed a CMake bug where Fortran modules were not created for LSRKStep,
+ForcingStep, and SplittingStep.
+
+Corrected the version number used in version added, changed, and deprecated
+notes in the documentation to always use the SUNDIALS version number with the
+package version number as a parenthetical note when it differs from the SUNDIALS
+version number.
+
+## Changes to SUNDIALS in release 7.7.0
+
+### New Features and Enhancements
+
+The default number of stages for the SSP Runge-Kutta methods
+`ARKODE_LSRK_SSP_S_2` and `ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10
+and 9, respectively, to their minimum allowable values of 2 and 4. Users may
+revert to the previous values by calling `LSRKStepSetNumSSPStages`.
+
+Added the optional function `ARKodeInit` to ARKODE to enable data allocation
+before the first call to `ARKodeEvolve` (but after all other optional input
+routines have been called), to support users who measure memory usage before
+beginning a simulation.
+
+Added the function `ARKodeGetStageIndex` that returns the index of the stage
+currently being processed, and the total number of stages in the method, for
+users who wish to compute auxiliary quantities in their IVP right-hand side
+functions during some stages and not others (e.g., in all but the first or last
+stage).
+
+Added the functions `ARKodeGetLastTime` and `ARKodeGetLastState` to return the
+last successful time and state achieved by ARKODE, respectively.
+
+ARKODE now allows users to supply functions that will be called before each
+internal time step attempt (`ARKodeSetPreStepFn`), after each successful time
+step (`ARKodeSetPostStepFn`), before right-hand side routines are called on an
+updated state (`ARKodeSetPreRhsFn`), and/or once each internal step/stage is
+computed (`ARKodeSetPostprocessStepFn`/ `ARKodeSetPostprocessStageFn`). These
+are considered **advanced** functions, as they should treat the state vector as
+read-only, otherwise all theoretical guarantees of solution accuracy and
+stability will be lost.  As a result of these new functions, the values of
+multiple ARKODE return codes (e.g., ``ARK_INTERP_FAIL``) have been updated;
+users who key off of the named constants will not be affected, but users who
+rely on the values themselves should update their codes accordingly.
+
+Note to users utilizing the previously undocumented `ARKodeSetPostprocessStepFn`
+function, the supplied function is now called on the newly computed state vector
+for all step attempts not just successful steps. To obtain the previous behavior
+of only calling a function on successful steps, switch to using
+`ARKodeSetPostStepFn`.
+
+Added `SUNLogger_Set{Error,Warning,Info,Debug}File` functions to allow setting
+logger output streams with a `FILE*`.
+
 Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 
 ### Bug Fixes
@@ -15,11 +169,50 @@ installed without setting the `SUPERLUMT_WORKS` option to `TRUE`.
 
 Fixed the embedded coefficients for the `ARKODE_TSITOURAS_7_4_5` Butcher table.
 
-Fixed a bug where passing an empty string to `SUNLogger_Set{Error,Warning,Info,Debug}Filename`
-did not disable the corresponding logging stream ([Issue
+Fixed a bug in LSRKStep where an incorrect state vector could be passed to a
+user-supplied dominant eigenvalue function on the first step unless the output
+vector passed to `ARKodeEvolve` contained the initial condition and when an
+eigenvalue estimate is requested on the first step in a subsequent call to
+`ARKodeEvolve` unless the output vector passed contained the most recently
+returned solution.
+
+Fixed a potential bug in LSRKStep's `ARKODE_LSRK_SSP_S_3` method, where a real
+number was used instead of an integer, potentially resulting in a rounding
+error.
+
+Fixed a bug in MRIStep for estimating the first "slow" time step in an adaptive
+multirate calculation.
+
+Fixed a bug in MRIStep when using a custom inner integrator that relies on the
+input state being the initial condition for the fast integration rather than
+retaining the result from the last inner integration or most recent reset call
+and the output vector passed to `ARKodeEvolve` does not contain the initial
+condition on the first call or the last returned solution on subsequent calls.
+
+Added a missing call to `SUNNonlinSolSetup` in MRIStep when using an IMEX-MRI-SR
+method.
+
+Fixed a bug in the ARKODE discrete adjoint checkpointing where an incorrect
+state would be stored on the first step if the output vector passed to
+`ARKodeEvolve` did not contain the initial condition on the first call.
+
+Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP``
+mode.
+
+Removed an extraneous copy of the output vector in each step with SplittingStep.
+
+Fixed a bug in logging output from ARKODE, where for some time stepping modules,
+the current "time" output in the logger was incorrect.
+
+Fixed a bug where passing an empty string to
+`SUNLogger_Set{Error,Warning,Info,Debug}Filename` did not disable the
+corresponding logging stream ([Issue
 #844](https://github.com/llnl/sundials/issues/844)).
 
 ### Deprecation Notices
+
+The `CVodeSetMonitorFn` and `CVodeSetMonitorFrequency` functions have been
+deprecated and will be removed in the next major release.
 
 Several CMake options have been deprecated in favor of namespaced versions
 prefixed with `SUNDIALS_` to avoid naming collisions in applications that
@@ -199,6 +392,9 @@ The `Convert` methods on the `sundials::kokkos:Vector`,
 `sundials::ginkgo::LinearSolver`, and `sundials::ginkgo::BatchLinearSolver`
 classes have been deprecated and will be removed in the next major release. The
 method `get`, should be used instead.
+
+The `CVodeSetMonitorFn` and `CVodeSetMonitorFrequency` functions have been deprecated and will be
+removed in the next major release.
 
 ## Changes to SUNDIALS in release 7.5.0
 

@@ -79,6 +79,7 @@ int ARKodeSetDefaults(void* arkode_mem)
   ark_mem->maxnef    = MAXNEF;         /* max error test fails */
   ark_mem->maxncf    = MAXNCF;         /* max convergence fails */
   ark_mem->maxconstrfails = MAXCONSTRFAILS; /* max number of constraint fails */
+  ark_mem->preallocated   = SUNFALSE;       /* data was not preallocated */
   ark_mem->hin            = ZERO;       /* determine initial step on-the-fly */
   ark_mem->hmin           = ZERO;       /* no minimum step size */
   ark_mem->hmax_inv       = ZERO;       /* no maximum step size */
@@ -873,9 +874,6 @@ int ARKodeSetUserData(void* arkode_mem, void* user_data)
   /* Set data for root finding */
   if (ark_mem->root_mem != NULL) { ark_mem->root_mem->root_data = user_data; }
 
-  /* Set data for post-processing a step */
-  if (ark_mem->ProcessStep != NULL) { ark_mem->ps_data = user_data; }
-
   /* Set user data into stepper (if provided) */
   if (ark_mem->step_setuserdata)
   {
@@ -1489,17 +1487,101 @@ int ARKodeSetNoInactiveRootWarn(void* arkode_mem)
   return (ARK_SUCCESS);
 }
 
-/*---------------------------------------------------------------
-  ARKodeSetPostprocessStepFn:
+/*------------------------------------------------------------------------------
+  ARKodeSetPreStepFn:
+  ARKodeSetPostStepFn:
 
-  Specifies a user-provided step postprocessing function having
-  type ARKPostProcessFn.  A NULL input function disables step
-  postprocessing.
+  Specifies user-provided step pre- and post-step functions.
 
-  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
-  THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
-  STABILITY ARE LOST.
+  The pre-step function is called just prior to taking a step and the post-step
+  function is called immediately after completing a successful step.
+
+  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
+  THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+  ----------------------------------------------------------------------------*/
+int ARKodeSetPreStepFn(void* arkode_mem, ARKPreStepFn prestep_fn)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument disables the pre-step function */
+  ark_mem->PreStepFn = prestep_fn;
+
+  return (ARK_SUCCESS);
+}
+
+int ARKodeSetPostStepFn(void* arkode_mem, ARKPostStepFn poststep_fn)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument disables the post-step function */
+  ark_mem->PostStepFn = poststep_fn;
+
+  return (ARK_SUCCESS);
+}
+
+/*------------------------------------------------------------------------------
+  ARKodeSetPreRhsFn:
+
+  Specifies user-provided pre-RHS function.
+
+  The pre-RHS function is called on a state vector just prior to computing the
+  RHS. For problems with partitioned RHS functions that are called with
+  identical inputs, this is only called before the first RHS evaluation.
+
+  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
+  THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
   ---------------------------------------------------------------*/
+int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn prerhs_fn)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument disables the pre-RHS function */
+  ark_mem->PreRhsFn = prerhs_fn;
+
+  return (ARK_SUCCESS);
+}
+
+/*------------------------------------------------------------------------------
+  ARKodeSetPostprocessStepFn:
+  ARKodeSetPostprocessStageFn:
+
+  Specifies user-provided step and stage post-processing functions.
+
+  These functions are called immediately after computing a stage or the new step
+  solution (before error checks or other post-step actions e.g., constraint
+  handling or relaxation).
+
+  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
+  THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+
+  While it is possible to perform stage postprocessing when
+  ARKodeSetDeduceImplicitRhs is enabled, this can cause implicit RHS evaluations
+  to be inconsistent with the postprocessed values (this similarly applies when
+  using step post processing with FSAL methods). It is strongly recommended to
+  disable ARKodeSetDeduceImplicitRhs in order to guarantee postprocessing
+  constraints are enforced.
+  ----------------------------------------------------------------------------*/
 int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 {
   ARKodeMem ark_mem;
@@ -1511,31 +1593,12 @@ int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  /* NULL argument sets default, otherwise set inputs */
-  ark_mem->ProcessStep = ProcessStep;
-  ark_mem->ps_data     = ark_mem->user_data;
+  /* NULL argument disables the postprocessing function */
+  ark_mem->PostProcessStepFn = ProcessStep;
 
   return (ARK_SUCCESS);
 }
 
-/*---------------------------------------------------------------
-  ARKodeSetPostprocessStageFn:
-
-  Specifies a user-provided stage postprocessing function having
-  type ARKPostProcessFn.  A NULL input function disables
-  stage postprocessing.
-
-  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
-  THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
-  STABILITY ARE LOST.
-
-  While it is possible to perform postprocessing when
-  ARKodeSetDeduceImplicitRhs is enabled, this can cause implicit
-  RHS evaluations to be inconsistent with the postprocessed stage
-  values.  It is strongly recommended to disable
-  ARKodeSetDeduceImplicitRhs in order to guarantee
-  postprocessing constraints are enforced.
-  ---------------------------------------------------------------*/
 int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 {
   ARKodeMem ark_mem;
@@ -1547,8 +1610,8 @@ int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  /* NULL argument sets default, otherwise set inputs */
-  ark_mem->ProcessStage = ProcessStage;
+  /* NULL argument disables the postprocessing function */
+  ark_mem->PostProcessStageFn = ProcessStage;
 
   return (ARK_SUCCESS);
 }
@@ -2157,6 +2220,13 @@ int ARKodeResetAccumulatedError(void* arkode_mem)
   return (ARK_SUCCESS);
 }
 
+/*---------------------------------------------------------------
+  ARKodeSetAdjointCheckpointScheme:
+  ARKodeSetAdjointCheckpointIndex:
+
+  Specifies the checkpointing scheme and index to be used for adjoint
+  sensitivity analysis.
+  ---------------------------------------------------------------*/
 int ARKodeSetAdjointCheckpointScheme(void* arkode_mem,
                                      SUNAdjointCheckpointScheme checkpoint_scheme)
 
@@ -2198,6 +2268,12 @@ int ARKodeSetAdjointCheckpointIndex(void* arkode_mem, suncountertype step_index)
   return (ARK_SUCCESS);
 }
 
+/*---------------------------------------------------------------
+  ARKodeSetUseCompensatedSums:
+
+  Specifies that ARKode should use compensated summation to reduce
+  the effects of floating-point roundoff.
+  ---------------------------------------------------------------*/
 int ARKodeSetUseCompensatedSums(void* arkode_mem, sunbooleantype onoff)
 {
   ARKodeMem ark_mem;
@@ -2218,6 +2294,54 @@ int ARKodeSetUseCompensatedSums(void* arkode_mem, sunbooleantype onoff)
   }
 
   return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  ARKodeInit:
+
+  Allocates internal data structures for an ARKODE stepper module
+  before the first call to ARKodeEvolve.
+
+  **THIS MUST BE CALLED AFTER ALL "SET" ROUTINES.**
+  ---------------------------------------------------------------*/
+int ARKodeInit(void* arkode_mem)
+{
+  ARKodeMem ark_mem;
+  int retval;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* For now, prohibit the user from calling this after data has
+     already been initialized */
+  if (ark_mem->initialized)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Time stepper data has already been allocated");
+    return (ARK_ILL_INPUT);
+  }
+
+  /* Call step_init routine with "FIRST_INIT" flag, requesting
+     that the time stepper module allocate any remaining internal
+     data */
+  if (ark_mem->step_init == NULL)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Time stepper module is missing");
+    return (ARK_ILL_INPUT);
+  }
+  retval = ark_mem->step_init(ark_mem, FIRST_INIT);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Error in initialization of time stepper module");
+  }
+  ark_mem->preallocated = SUNTRUE;
+  return (retval);
 }
 
 /*===============================================================
@@ -2433,6 +2557,46 @@ int ARKodeGetEstLocalErrors(void* arkode_mem, N_Vector ele)
                     __FILE__, "time-stepping module does provide a temporal error estimate");
     return (ARK_STEPPER_UNSUPPORTED);
   }
+}
+
+/*---------------------------------------------------------------
+  ARKodeGetLastTime:
+
+  Returns the last saved value of the independent variable
+  ---------------------------------------------------------------*/
+int ARKodeGetLastTime(void* arkode_mem, sunrealtype* tn)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  *tn = ark_mem->tn;
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  ARKodeGetLastState:
+
+  Returns the last saved time step solution.
+  ---------------------------------------------------------------*/
+int ARKodeGetLastState(void* arkode_mem, N_Vector* yn)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  *yn = ark_mem->yn;
+  return (ARK_SUCCESS);
 }
 
 /*---------------------------------------------------------------
@@ -3050,6 +3214,40 @@ int ARKodeGetUserData(void* arkode_mem, void** user_data)
   return (ARK_SUCCESS);
 }
 
+/*---------------------------------------------------------------
+  ARKodeGetStageIndex:
+
+  Returns the index of the current stage and the total number of
+  stages. If this is not supplied by the time-stepping module
+  then an error is returned and the values are set to (-1, -1).
+  ---------------------------------------------------------------*/
+int ARKodeGetStageIndex(void* arkode_mem, int* stage, int* max_stages)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* Call stepper routine to compute the state (if provided) */
+  if (ark_mem->step_getstageindex)
+  {
+    return (ark_mem->step_getstageindex(ark_mem, stage, max_stages));
+  }
+  else
+  {
+    *stage      = -1;
+    *max_stages = -1;
+    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
+                    __FILE__,
+                    "time-stepping module does not support this function");
+    return (ARK_STEPPER_UNSUPPORTED);
+  }
+}
+
 /*-----------------------------------------------------------------
   ARKodePrintAllStats
 
@@ -3170,6 +3368,9 @@ char* ARKodeGetReturnFlagName(long int flag)
   case ARK_POSTPROCESS_STAGE_FAIL:
     sprintf(name, "ARK_POSTPROCESS_STAGE_FAIL");
     break;
+  case ARK_PRESTEPFN_FAIL: sprintf(name, "ARK_PRESTEPFN_FAIL"); break;
+  case ARK_POSTSTEPFN_FAIL: sprintf(name, "ARK_POSTSTEPFN_FAIL"); break;
+  case ARK_PRERHSFN_FAIL: sprintf(name, "ARK_PRERHSFN_FAIL"); break;
   case ARK_USER_PREDICT_FAIL: sprintf(name, "ARK_USER_PREDICT_FAIL"); break;
   case ARK_INTERP_FAIL: sprintf(name, "ARK_INTERP_FAIL"); break;
   case ARK_INVALID_TABLE: sprintf(name, "ARK_INVALID_TABLE"); break;
@@ -3190,6 +3391,7 @@ char* ARKodeGetReturnFlagName(long int flag)
   case ARK_SUNSTEPPER_ERR: sprintf(name, "ARK_SUNSTEPPER_ERR"); break;
   case ARK_STEP_DIRECTION_ERR: sprintf(name, "ARK_STEP_DIRECTION_ERR"); break;
   case ARK_UNRECOGNIZED_ERROR: sprintf(name, "ARK_UNRECOGNIZED_ERROR"); break;
+  case ARK_STEP_H0_FAIL: sprintf(name, "ARK_STEP_H0_FAIL"); break;
   default: sprintf(name, "NONE");
   }
 

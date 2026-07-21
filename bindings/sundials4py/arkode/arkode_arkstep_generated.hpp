@@ -10,8 +10,33 @@ m.def("ARKStepSetImplicit", ARKStepSetImplicit, nb::arg("arkode_mem"));
 
 m.def("ARKStepSetImEx", ARKStepSetImEx, nb::arg("arkode_mem"));
 
-m.def("ARKStepSetTables", ARKStepSetTables, nb::arg("arkode_mem"), nb::arg("q"),
-      nb::arg("p"), nb::arg("Bi"), nb::arg("Be"));
+m.def(
+  "ARKStepSetTables",
+  [](void* arkode_mem, int q, int p,
+     std::optional<ARKodeButcherTable> Bi = std::nullopt,
+     std::optional<ARKodeButcherTable> Be = std::nullopt) -> int
+  {
+    auto ARKStepSetTables_adapt_optional_arg_with_default_null =
+      [](void* arkode_mem, int q, int p,
+         std::optional<ARKodeButcherTable> Bi = std::nullopt,
+         std::optional<ARKodeButcherTable> Be = std::nullopt) -> int
+    {
+      ARKodeButcherTable Bi_adapt_default_null = nullptr;
+      if (Bi.has_value()) Bi_adapt_default_null = Bi.value();
+      ARKodeButcherTable Be_adapt_default_null = nullptr;
+      if (Be.has_value()) Be_adapt_default_null = Be.value();
+
+      auto lambda_result = ARKStepSetTables(arkode_mem, q, p,
+                                            Bi_adapt_default_null,
+                                            Be_adapt_default_null);
+      return lambda_result;
+    };
+
+    return ARKStepSetTables_adapt_optional_arg_with_default_null(arkode_mem, q,
+                                                                 p, Bi, Be);
+  },
+  nb::arg("arkode_mem"), nb::arg("q"), nb::arg("p"),
+  nb::arg("Bi").none() = nb::none(), nb::arg("Be").none() = nb::none());
 
 m.def("ARKStepSetTableNum", ARKStepSetTableNum, nb::arg("arkode_mem"),
       nb::arg("itable"), nb::arg("etable"));

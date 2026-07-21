@@ -20,7 +20,6 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <ranges>
 #include <vector>
 
 #include <sundials/sundials_context.h>

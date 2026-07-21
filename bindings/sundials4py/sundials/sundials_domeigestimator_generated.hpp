@@ -89,6 +89,25 @@ m.def(
   nb::arg("DEE"));
 
 m.def(
+  "SUNDomEigEstimator_GetNumRhsEvals",
+  [](SUNDomEigEstimator DEE) -> std::tuple<SUNErrCode, long>
+  {
+    auto SUNDomEigEstimator_GetNumRhsEvals_adapt_modifiable_immutable_to_return =
+      [](SUNDomEigEstimator DEE) -> std::tuple<SUNErrCode, long>
+    {
+      long num_rhs_evals_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNDomEigEstimator_GetNumRhsEvals(DEE, &num_rhs_evals_adapt_modifiable);
+      return std::make_tuple(r, num_rhs_evals_adapt_modifiable);
+    };
+
+    return SUNDomEigEstimator_GetNumRhsEvals_adapt_modifiable_immutable_to_return(
+      DEE);
+  },
+  nb::arg("DEE"));
+
+m.def(
   "SUNDomEigEstimator_GetNumATimesCalls",
   [](SUNDomEigEstimator DEE) -> std::tuple<SUNErrCode, long>
   {

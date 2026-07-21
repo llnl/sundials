@@ -124,38 +124,43 @@ extern "C" {
 #define ARK_INNERTOOUTER_FAIL    -36
 
 /* ARK_POSTPROCESS_FAIL equals ARK_POSTPROCESS_STEP_FAIL
-   for backwards compatibility */
+   for backwards compatibility. */
 #define ARK_POSTPROCESS_FAIL       -37
 #define ARK_POSTPROCESS_STEP_FAIL  -37
 #define ARK_POSTPROCESS_STAGE_FAIL -38
+#define ARK_PRESTEPFN_FAIL         -39
+#define ARK_POSTSTEPFN_FAIL        -40
+#define ARK_PRERHSFN_FAIL          -41
 
-#define ARK_USER_PREDICT_FAIL -39
-#define ARK_INTERP_FAIL       -40
+#define ARK_USER_PREDICT_FAIL -42
+#define ARK_INTERP_FAIL       -43
 
-#define ARK_INVALID_TABLE -41
+#define ARK_INVALID_TABLE -44
 
-#define ARK_CONTEXT_ERR -42
+#define ARK_CONTEXT_ERR -45
 
-#define ARK_RELAX_FAIL      -43
-#define ARK_RELAX_MEM_NULL  -44
-#define ARK_RELAX_FUNC_FAIL -45
-#define ARK_RELAX_JAC_FAIL  -46
+#define ARK_RELAX_FAIL      -46
+#define ARK_RELAX_MEM_NULL  -47
+#define ARK_RELAX_FUNC_FAIL -48
+#define ARK_RELAX_JAC_FAIL  -49
 
-#define ARK_CONTROLLER_ERR -47
+#define ARK_CONTROLLER_ERR -50
 
-#define ARK_STEPPER_UNSUPPORTED -48
+#define ARK_STEPPER_UNSUPPORTED -51
 
-#define ARK_DOMEIG_FAIL          -49
-#define ARK_MAX_STAGE_LIMIT_FAIL -50
+#define ARK_DOMEIG_FAIL          -52
+#define ARK_MAX_STAGE_LIMIT_FAIL -53
 
-#define ARK_SUNSTEPPER_ERR     -51
-#define ARK_STEP_DIRECTION_ERR -52
+#define ARK_SUNSTEPPER_ERR     -54
+#define ARK_STEP_DIRECTION_ERR -55
 
-#define ARK_ADJ_CHECKPOINT_FAIL -53
-#define ARK_ADJ_RECOMPUTE_FAIL  -54
-#define ARK_SUNADJSTEPPER_ERR   -55
+#define ARK_ADJ_CHECKPOINT_FAIL -56
+#define ARK_ADJ_RECOMPUTE_FAIL  -57
+#define ARK_SUNADJSTEPPER_ERR   -58
 
-#define ARK_DEE_FAIL -56
+#define ARK_DEE_FAIL -59
+
+#define ARK_STEP_H0_FAIL -60
 
 #define ARK_UNRECOGNIZED_ERROR -99
 
@@ -183,7 +188,15 @@ typedef int (*ARKExpStabFn)(N_Vector y, sunrealtype t, sunrealtype* hstab,
 
 typedef int (*ARKVecResizeFn)(N_Vector y, N_Vector ytemplate, void* user_data);
 
+typedef int (*ARKPreStepFn)(sunrealtype t, N_Vector y, long int step,
+                            int attempt, void* user_data);
+
+typedef int (*ARKPostStepFn)(sunrealtype t, N_Vector y, long int step,
+                             void* user_data);
+
 typedef int (*ARKPostProcessFn)(sunrealtype t, N_Vector y, void* user_data);
+
+typedef int (*ARKPreRhsFn)(sunrealtype t, N_Vector y, void* user_data);
 
 typedef int (*ARKStagePredictFn)(sunrealtype t, N_Vector zpred, void* user_data);
 
@@ -242,6 +255,9 @@ SUNDIALS_EXPORT int ARKodeResize(void* arkode_mem, N_Vector ynew,
                                  ARKVecResizeFn resize, void* resize_data);
 SUNDIALS_EXPORT int ARKodeReset(void* arkode_mem, sunrealtype tR, N_Vector yR);
 
+/* Optional data allocation function */
+SUNDIALS_EXPORT int ARKodeInit(void* arkode_mem);
+
 /* Utility to wrap ARKODE as an MRIStepInnerStepper */
 SUNDIALS_EXPORT int ARKodeCreateMRIStepInnerStepper(void* arkode_mem,
                                                     MRIStepInnerStepper* stepper);
@@ -276,6 +292,10 @@ SUNDIALS_EXPORT int ARKodeClearStopTime(void* arkode_mem);
 SUNDIALS_EXPORT int ARKodeSetFixedStep(void* arkode_mem, sunrealtype hfixed);
 SUNDIALS_EXPORT int ARKodeSetStepDirection(void* arkode_mem, sunrealtype stepdir);
 SUNDIALS_EXPORT int ARKodeSetUserData(void* arkode_mem, void* user_data);
+SUNDIALS_EXPORT int ARKodeSetPreStepFn(void* arkode_mem, ARKPreStepFn prestep_fn);
+SUNDIALS_EXPORT int ARKodeSetPostStepFn(void* arkode_mem,
+                                        ARKPostStepFn poststep_fn);
+SUNDIALS_EXPORT int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn prerhs_fn);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStepFn(void* arkode_mem,
                                                ARKPostProcessFn ProcessStep);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStageFn(void* arkode_mem,
@@ -374,6 +394,8 @@ SUNDIALS_EXPORT int ARKodePrintAllStats(void* arkode_mem, FILE* outfile,
                                         SUNOutputFormat fmt);
 SUNDIALS_EXPORT char* ARKodeGetReturnFlagName(long int flag);
 SUNDIALS_EXPORT int ARKodeWriteParameters(void* arkode_mem, FILE* fp);
+SUNDIALS_EXPORT int ARKodeGetStageIndex(void* arkode_mem, int* stage,
+                                        int* max_stages);
 
 /* Optional output functions (temporal adaptivity) */
 SUNDIALS_EXPORT int ARKodeGetNumExpSteps(void* arkode_mem, long int* expsteps);
@@ -396,6 +418,9 @@ SUNDIALS_EXPORT int ARKodeGetAccumulatedError(void* arkode_mem,
 /* Optional output functions (implicit solver) */
 SUNDIALS_EXPORT int ARKodeGetNumLinSolvSetups(void* arkode_mem,
                                               long int* nlinsetups);
+SUNDIALS_EXPORT int ARKodeGetLastTime(void* arkode_mem, sunrealtype* tn);
+SUNDIALS_EXPORT int ARKodeGetLastState(void* arkode_mem,
+                                       N_Vector* state); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetCurrentTime(void* arkode_mem, sunrealtype* tcur);
 SUNDIALS_EXPORT int ARKodeGetCurrentState(void* arkode_mem,
                                           N_Vector* state); // nb::rv_policy::reference

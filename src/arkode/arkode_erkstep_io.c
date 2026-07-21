@@ -399,6 +399,26 @@ int erkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele)
 }
 
 /*---------------------------------------------------------------
+  erkStep_GetStageIndex:
+
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+int erkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
+{
+  ARKodeERKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeARKStepMem structure */
+  retval = erkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  *stage      = step_mem->istage;
+  *max_stages = step_mem->stages;
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
   erkStep_PrintAllStats:
 
   Prints integrator statistics

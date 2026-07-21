@@ -29,7 +29,9 @@ LATEXDIRS = $(DIRS:%=latexpdf-%) latexpdf-install_guide
 HTMLDIRS = $(DIRS:%=html-%) html-superbuild
 CLEANDIRS = $(DIRS:%=clean-%) clean-superbuild clean-install_guide
 
-latexpdf: $(LATEXDIRS)
+# build html-superbuild first so a local, up-to-date objects.inv exists for
+# cross-references to other packages in the change log work
+latexpdf: html-superbuild $(LATEXDIRS)
 $(LATEXDIRS):
 	$(MAKE) -C $(@:latexpdf-%=%) latexpdf
 

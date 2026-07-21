@@ -76,7 +76,11 @@ static inline SUNStlVectorTtype MAKE_NAME(SUNStlVectorTtype,
   SUNStlVectorTtype self = (SUNStlVectorTtype)malloc(sizeof(*self));
   if (!self) { return NULL; }
   self->values = (TTYPE*)malloc(sizeof(TTYPE) * init_capacity);
-  if (!(self->values)) { return NULL; }
+  if (!(self->values))
+  {
+    free(self);
+    return NULL;
+  }
   self->size         = 0;
   self->capacity     = init_capacity;
   self->destroyValue = destroyValue;

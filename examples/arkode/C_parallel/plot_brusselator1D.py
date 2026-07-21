@@ -61,7 +61,6 @@ maxval = np.array([umax, vmax, wmax]).max()
 
 # generate plots of results
 for tstep in range(nt):
-
     # set string constants for output plots, current time, mesh size
     pname = "solution." + repr(tstep).zfill(3) + ".png"
     tstr = repr(tstep)

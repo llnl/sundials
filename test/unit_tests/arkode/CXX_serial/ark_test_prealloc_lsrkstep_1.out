@@ -1,0 +1,26 @@
+Start LSRKStep preallocation test
+                      t                      y                  y err
+---------------------------------------------------------------------
+  0.000000000000000e+00  0.000000000000000e+00  0.000000000000000e+00
+  6.103515625000001e-12  6.103515624999988e-12  1.211690350419474e-26
+  6.104125976562500e-08  6.104125976562487e-08  5.293955920339377e-23
+  1.281744384765625e-06  1.281744384765308e-06  3.851882327638931e-19
+---------------------------------------------------------------------
+Current time                  = 1.28174438476563e-06
+Steps                         = 3
+Step attempts                 = 3
+Stability limited steps       = 0
+Accuracy limited steps        = 3
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 6.103515625e-12
+Last step size                = 1.220703125e-06
+Current step size             = 2.44140625e-05
+RHS fn evals                  = 9
+Number of dom_eig updates     = 1
+Max. num. of stages used      = 2
+Max. num. of stages allowed   = 200
+Max. spectral radius          = 999.9
+Min. spectral radius          = 999.9
+End LSRKStep preallocation test

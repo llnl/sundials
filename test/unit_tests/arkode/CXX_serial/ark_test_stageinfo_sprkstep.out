@@ -1,0 +1,64 @@
+Start SPRKStep StageInfo test
+           t                        q1                       q2                     q3                       q4               
+------------------------------------------------------------------------------------------------------------------------------
+ 0.000000000000000e+00    4.000000000000000e-01    0.000000000000000e+00    0.000000000000000e+00    2.000000000000000e+00
+    [Pre-step at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), step = 0, attempt = 1, ||y||_2 = 2.0396078054e+00]
+    [Pre-RHS (stage 0 of 4) at t = 1.34e-04 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 2.0396078054e+00]
+    [Pre-RHS (stage 0 of 4) at t = 5.15e-04 (tn = 0.00e+00 , tcur = 1.34e-04), ||y||_2 = 2.0396079787e+00]
+    [Post-stage processing (stage 0 of 4) at t = 1.34e-04 (tn = 0.00e+00 , tcur = 1.34e-04), ||y||_2 = 2.0396081541e+00]
+    [Pre-RHS (stage 1 of 4) at t = -9.03e-05 (tn = 0.00e+00 , tcur = 1.34e-04), ||y||_2 = 2.0396081541e+00]
+    [Pre-RHS (stage 1 of 4) at t = 4.30e-04 (tn = 0.00e+00 , tcur = -9.03e-05), ||y||_2 = 2.0396116094e+00]
+    [Post-stage processing (stage 1 of 4) at t = -9.03e-05 (tn = 0.00e+00 , tcur = -9.03e-05), ||y||_2 = 2.0396115204e+00]
+    [Pre-RHS (stage 2 of 4) at t = 6.66e-04 (tn = 0.00e+00 , tcur = -9.03e-05), ||y||_2 = 2.0396115204e+00]
+    [Pre-RHS (stage 2 of 4) at t = 8.71e-04 (tn = 0.00e+00 , tcur = 6.66e-04), ||y||_2 = 2.0396057340e+00]
+    [Post-stage processing (stage 2 of 4) at t = 6.66e-04 (tn = 0.00e+00 , tcur = 6.66e-04), ||y||_2 = 2.0396059367e+00]
+    [Pre-RHS (stage 3 of 4) at t = 1.00e-03 (tn = 0.00e+00 , tcur = 6.66e-04), ||y||_2 = 2.0396059367e+00]
+    [Pre-RHS (stage 3 of 4) at t = 1.00e-03 (tn = 0.00e+00 , tcur = 1.00e-03), ||y||_2 = 2.0396023491e+00]
+    [Postprocess-step at t = 1.00e-03 (tn = 0.00e+00 , tcur = 1.00e-03),||y||_2 = 2.0396024276e+00]
+    [Post-step at t = 1.00e-03 (tn = 0.00e+00 , tcur = 1.00e-03), step = 0, ||y||_2 = 2.0396024276e+00]
+      1.0000000000e-03         3.9999687501e-01         1.9999947917e-03        -6.2499544275e-03         1.9999843751e+00
+    [Pre-step at t = 1.00e-03 (tn = 1.00e-03 , tcur = 1.00e-03), step = 1, attempt = 1, ||y||_2 = 2.0396024276e+00]
+    [Pre-RHS (stage 0 of 4) at t = 1.13e-03 (tn = 1.00e-03 , tcur = 1.00e-03), ||y||_2 = 2.0396024276e+00]
+    [Pre-RHS (stage 0 of 4) at t = 1.52e-03 (tn = 1.00e-03 , tcur = 1.13e-03), ||y||_2 = 2.0396010553e+00]
+    [Post-stage processing (stage 0 of 4) at t = 1.13e-03 (tn = 1.00e-03 , tcur = 1.13e-03), ||y||_2 = 2.0396016098e+00]
+    [Pre-RHS (stage 1 of 4) at t = 9.10e-04 (tn = 1.00e-03 , tcur = 1.13e-03), ||y||_2 = 2.0396016098e+00]
+    [Pre-RHS (stage 1 of 4) at t = 1.43e-03 (tn = 1.00e-03 , tcur = 9.10e-04), ||y||_2 = 2.0396076483e+00]
+    [Post-stage processing (stage 1 of 4) at t = 9.10e-04 (tn = 1.00e-03 , tcur = 9.10e-04), ||y||_2 = 2.0396074962e+00]
+    [Pre-RHS (stage 2 of 4) at t = 1.67e-03 (tn = 1.00e-03 , tcur = 9.10e-04), ||y||_2 = 2.0396074962e+00]
+    [Pre-RHS (stage 2 of 4) at t = 1.87e-03 (tn = 1.00e-03 , tcur = 1.67e-03), ||y||_2 = 2.0395930192e+00]
+    [Post-stage processing (stage 2 of 4) at t = 1.67e-03 (tn = 1.00e-03 , tcur = 1.67e-03), ||y||_2 = 2.0395935467e+00]
+    [Pre-RHS (stage 3 of 4) at t = 2.00e-03 (tn = 1.00e-03 , tcur = 1.67e-03), ||y||_2 = 2.0395935467e+00]
+    [Pre-RHS (stage 3 of 4) at t = 2.00e-03 (tn = 1.00e-03 , tcur = 2.00e-03), ||y||_2 = 2.0395861214e+00]
+    [Postprocess-step at t = 2.00e-03 (tn = 1.00e-03 , tcur = 2.00e-03),||y||_2 = 2.0395862946e+00]
+    [Post-step at t = 2.00e-03 (tn = 1.00e-03 , tcur = 2.00e-03), step = 1, ||y||_2 = 2.0395862946e+00]
+      2.0000000000e-03         3.9998750018e-01         3.9999583342e-03        -1.2499635430e-02         1.9999375021e+00
+    [Pre-step at t = 2.00e-03 (tn = 2.00e-03 , tcur = 2.00e-03), step = 2, attempt = 1, ||y||_2 = 2.0395862946e+00]
+    [Pre-RHS (stage 0 of 4) at t = 2.13e-03 (tn = 2.00e-03 , tcur = 2.00e-03), ||y||_2 = 2.0395862946e+00]
+    [Pre-RHS (stage 0 of 4) at t = 2.52e-03 (tn = 2.00e-03 , tcur = 2.13e-03), ||y||_2 = 2.0395833769e+00]
+    [Post-stage processing (stage 0 of 4) at t = 2.13e-03 (tn = 2.00e-03 , tcur = 2.13e-03), ||y||_2 = 2.0395843104e+00]
+    [Pre-RHS (stage 1 of 4) at t = 1.91e-03 (tn = 2.00e-03 , tcur = 2.13e-03), ||y||_2 = 2.0395843104e+00]
+    [Pre-RHS (stage 1 of 4) at t = 2.43e-03 (tn = 2.00e-03 , tcur = 1.91e-03), ||y||_2 = 2.0395929317e+00]
+    [Post-stage processing (stage 1 of 4) at t = 1.91e-03 (tn = 2.00e-03 , tcur = 1.91e-03), ||y||_2 = 2.0395927166e+00]
+    [Pre-RHS (stage 2 of 4) at t = 2.67e-03 (tn = 2.00e-03 , tcur = 1.91e-03), ||y||_2 = 2.0395927166e+00]
+    [Pre-RHS (stage 2 of 4) at t = 2.87e-03 (tn = 2.00e-03 , tcur = 2.67e-03), ||y||_2 = 2.0395695501e+00]
+    [Post-stage processing (stage 2 of 4) at t = 2.67e-03 (tn = 2.00e-03 , tcur = 2.67e-03), ||y||_2 = 2.0395704024e+00]
+    [Pre-RHS (stage 3 of 4) at t = 3.00e-03 (tn = 2.00e-03 , tcur = 2.67e-03), ||y||_2 = 2.0395704024e+00]
+    [Pre-RHS (stage 3 of 4) at t = 3.00e-03 (tn = 2.00e-03 , tcur = 3.00e-03), ||y||_2 = 2.0395591399e+00]
+    [Postprocess-step at t = 3.00e-03 (tn = 2.00e-03 , tcur = 3.00e-03),||y||_2 = 2.0395594079e+00]
+    [Post-step at t = 3.00e-03 (tn = 2.00e-03 , tcur = 3.00e-03), step = 2, ||y||_2 = 2.0395594079e+00]
+      3.0000000000e-03         3.9997187592e-01         5.9998593813e-03        -1.8748769629e-02         1.9998593855e+00
+------------------------------------------------------------------------------------------------------------------------------
+Current time                  = 0.003
+Steps                         = 3
+Step attempts                 = 3
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.001
+Last step size                = 0.001
+Current step size             = 0.001
+f1 RHS fn evals               = 12
+f2 RHS fn evals               = 12
+End SPRKStep StageInfo test

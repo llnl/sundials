@@ -230,7 +230,7 @@ are defined ``arkode/arkode_mristep.h``.
          C->group[1][1] = 4;
          C->group[2][0] = 3;
 
-   .. versionchanged:: 6.2.0
+   .. versionchanged:: 7.2.0 (ARKODE 6.2.0)
 
       This function now supports a broader range of MRI method types.
 
@@ -357,7 +357,7 @@ are defined ``arkode/arkode_mristep.h``.
    :retval ARK_SUCCESS: if successful.
    :retval ARK_MEM_NULL: if the Butcher table memory was ``NULL``.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -406,6 +406,12 @@ unique ID having type:
 
 with values specified for each method below (e.g., ``ARKODE_MIS_KW3``).
 
+.. warning::
+
+   When using any of the following methods that do not include embeddings
+   (marked with "Embedding Order" shown as "--"), users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
+
 
 
 .. table:: Explicit MRIStep coupling tables.
@@ -417,14 +423,14 @@ with values specified for each method below (e.g., ``ARKODE_MIS_KW3``).
    :index:`ARKODE_MRI_GARK_ERK22a`         2                   1                2               :cite:p:`Sandu:19`
    :index:`ARKODE_MRI_GARK_ERK22b`         :math:`2^{*\circ}`  1                2               :cite:p:`Sandu:19`
    :index:`ARKODE_MRI_GARK_RALSTON2`       2                   1                2               :cite:p:`Roberts:22`
-   :index:`ARKODE_MERK21`                  2                   1                2               :cite:p:`Luan:20`
+   :index:`ARKODE_MERK21`                  2                   1                2               :cite:p:`RAML:26`
    :index:`ARKODE_MIS_KW3`                 :math:`3^*`         --               3               :cite:p:`Schlegel:09`
    :index:`ARKODE_MRI_GARK_ERK33a`         :math:`3^{\circ}`   2                3               :cite:p:`Sandu:19`
    :index:`ARKODE_MRI_GARK_RALSTON3`       3                   2                3               :cite:p:`Roberts:22`
-   :index:`ARKODE_MERK32`                  3                   2                3               :cite:p:`Luan:20`
+   :index:`ARKODE_MERK32`                  3                   2                3               :cite:p:`RAML:26`
    :index:`ARKODE_MRI_GARK_ERK45a`         :math:`4^{*\circ}`  3                5               :cite:p:`Sandu:19`
-   :index:`ARKODE_MERK43`                  4                   3                6               :cite:p:`Luan:20`
-   :index:`ARKODE_MERK54`                  :math:`5^{A}`       4                10              :cite:p:`Luan:20`
+   :index:`ARKODE_MERK43`                  4                   3                6               :cite:p:`RAML:26`
+   :index:`ARKODE_MERK54`                  :math:`5^{A}`       4                10              :cite:p:`RAML:26`
    ======================================  ==================  ===============  ==============  =====================
 
 
@@ -481,6 +487,8 @@ Notes regarding the above table:
    :index:`ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL`  :math:`2^*`        --               1
    :index:`ARKODE_IMEX_MRI_GARK_MIDPOINT`     2                  --               2
    :index:`ARKODE_IMEX_MRI_SR21`              :math:`2^{\circ}`  1                3                :cite:p:`Fish:24`
+   :index:`ARKODE_IMEX_MRI_GARK_ASCHER_ARK2`  2                  1                2
+   :index:`ARKODE_IMEX_MRI_GARK_ARK2`         2                  1                2
    :index:`ARKODE_IMEX_MRI_GARK3a`            :math:`3^*`        --               2                :cite:p:`ChiRen:21`
    :index:`ARKODE_IMEX_MRI_GARK3b`            3                  --               2                :cite:p:`ChiRen:21`
    :index:`ARKODE_IMEX_MRI_SR32`              :math:`3^{\circ}`  2                4                :cite:p:`Fish:24`
