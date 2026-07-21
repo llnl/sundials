@@ -20,6 +20,9 @@
  * -----------------------------------------------------------------
  */
 
+#ifndef SUNDIALS_TEST_SUNDOMEIGEST_H
+#define SUNDIALS_TEST_SUNDOMEIGEST_H
+
 #include <sundials/sundials_core.h>
 
 /* define constants */
@@ -60,3 +63,5 @@ void SetTiming(int onoff);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // SUNDIALS_TEST_SUNDOMEIGEST_H
