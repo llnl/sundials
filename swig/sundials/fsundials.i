@@ -58,6 +58,8 @@
 // Treat sunrealtype* as an array of configured double-precision reals
 %apply double[] { sunrealtype* };
 
+%apply double complex[] { sunscalartype* }; 
+
 #ifdef GENERATE_INT32
 %apply int[] { sunindextype* };
 #else
