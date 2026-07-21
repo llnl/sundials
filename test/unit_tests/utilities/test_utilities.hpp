@@ -18,6 +18,9 @@
  * Utility functions for C++ unit tests.
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_TEST_UTILITIES_HPP
+#define SUNDIALS_TEST_UTILITIES_HPP
+
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -111,3 +114,5 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
     args.erase(it, it + 2);
   }
 }
+
+#endif // SUNDIALS_TEST_UTILITIES_HPP
