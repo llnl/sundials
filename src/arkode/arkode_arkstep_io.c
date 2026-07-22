@@ -601,8 +601,8 @@ int ARKStepGetCurrentButcherTables(void* arkode_mem, ARKodeButcherTable* Bi,
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* get tables from step_mem */
-  *Bi = step_mem->Bi;
-  *Be = step_mem->Be;
+  if (Bi != NULL) *Bi = step_mem->Bi;
+  if (Be != NULL) *Be = step_mem->Be;
   return (ARK_SUCCESS);
 }
 
