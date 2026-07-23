@@ -78,15 +78,11 @@ def test_make_nvector(vector_type, sunctx):
     assert_allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
 
 
-@pytest.mark.skipif("N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled")
+@pytest.mark.skipif(
+    "N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
 def test_create_nvector_cuda(sunctx):
-    try:
-        nvec = N_VNew_Cuda(5, sunctx)
-    except RuntimeError as err:
-        pytest.skip(f"CUDA vector allocation failed: {err}")
-
-    if nvec is None:
-        pytest.skip("CUDA vector allocation failed")
+    nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
 
     assert N_VGetLength(nvec) == 5
     assert N_VGetLength_Cuda(nvec) == 5
@@ -102,6 +98,55 @@ def test_create_nvector_cuda(sunctx):
     assert_allclose(arr, 2.0)
 
 
+def _cuda_nvector_or_skip(factory):
+    try:
+        nvec = factory()
+    except RuntimeError as err:
+        pytest.skip(f"CUDA vector allocation failed: {err}")
+
+    if nvec is None:
+        pytest.skip("CUDA vector allocation failed")
+    return nvec
+
+
+def _check_cuda_nvector_const(nvec, value):
+    assert N_VGetLength(nvec) == 5
+    assert N_VGetLength_Cuda(nvec) == 5
+    assert N_VGetDeviceArrayPointer_Cuda(nvec) != 0
+
+    arr = N_VGetHostArrayPointer_Cuda(nvec)
+    arr[:] = np.arange(5, dtype=sunrealtype)
+
+    N_VCopyToDevice_Cuda(nvec)
+    N_VConst(value, nvec)
+    N_VCopyFromDevice_Cuda(nvec)
+
+    assert_allclose(arr, value)
+
+
+@pytest.mark.skipif(
+    "N_VNewManaged_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
+def test_create_nvector_cuda_managed(sunctx):
+    nvec = _cuda_nvector_or_skip(lambda: N_VNewManaged_Cuda(5, sunctx))
+    _check_cuda_nvector_const(nvec, 3.0)
+
+
+@pytest.mark.skipif(
+    "N_VNewWithMemHelp_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
+@pytest.mark.parametrize("use_managed_mem", [False, True])
+def test_create_nvector_cuda_with_memhelp(use_managed_mem, sunctx):
+    mem_helper = SUNMemoryHelper_Cuda(sunctx)
+    if mem_helper is None:
+        pytest.skip("CUDA memory helper creation failed")
+
+    nvec = _cuda_nvector_or_skip(
+        lambda: N_VNewWithMemHelp_Cuda(5, use_managed_mem, mem_helper, sunctx)
+    )
+    _check_cuda_nvector_const(nvec, 4.0)
+
+
 def _torch_dtype():
     import torch
 
@@ -112,7 +157,9 @@ def _torch_dtype():
     return torch.longdouble
 
 
-@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
+@pytest.mark.skipif(
+    "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
 def test_make_nvector_cuda_cupy_array(sunctx):
     cupy = pytest.importorskip("cupy")
 
@@ -130,7 +177,9 @@ def test_make_nvector_cuda_cupy_array(sunctx):
     assert_allclose(cupy.asnumpy(view), 3.0)
 
 
-@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
+@pytest.mark.skipif(
+    "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
 def test_make_nvector_cuda_torch_tensor(sunctx):
     torch = pytest.importorskip("torch")
     if not torch.cuda.is_available():
@@ -151,7 +200,8 @@ def test_make_nvector_cuda_torch_tensor(sunctx):
 
 
 @pytest.mark.skipif(
-    "N_VSetDeviceArrayPointer_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+    "N_VSetDeviceArrayPointer_Cuda" not in globals(),
+    reason="CUDA bindings are not enabled",
 )
 def test_set_nvector_cuda_torch_tensor(sunctx):
     torch = pytest.importorskip("torch")
@@ -222,7 +272,9 @@ def test_nvscaleaddmultivectorarray_serial(sunctx):
     # Check Z_2d[s][v] = c_1d[s] * X_1d[v] + Y_2d[s][v]
     for s in range(nsum):
         for v in range(nvec):
-            expected = c_1d[s] * N_VGetArrayPointer(X_1d[v]) + N_VGetArrayPointer(Y_2d[s][v])
+            expected = c_1d[s] * N_VGetArrayPointer(X_1d[v]) + N_VGetArrayPointer(
+                Y_2d[s][v]
+            )
             actual = N_VGetArrayPointer(Z_2d[s][v])
             assert_allclose(actual, expected)
 
