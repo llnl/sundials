@@ -286,12 +286,21 @@ int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
 
   if (C->active_solver_type == SUNNONLINSOL_AUTO_FIXEDPOINT)
   {
+    int curiter;
     sunrealtype crate;
+    SUNErrCode iter_retval;
     SUNErrCode crate_retval;
 
     /* If the integrator-provided convergence test passed, exit with success and
        don't consider switching, since fixed-point is still converging fine. */
     if (retval == SUN_SUCCESS) { return SUN_SUCCESS; }
+
+    /* The convergence rate estimate is not meaningful on the first nonlinear
+       iteration. Integrators initialize crate to 1 and only update it after an
+       iteration pair is available. */
+    iter_retval = SUNNonlinSolGetCurIter(sub_nls, &curiter);
+    if (iter_retval != SUN_SUCCESS) { return iter_retval; }
+    if (curiter == 0) { return retval; }
 
     /* Get the convergence rate from the user-provided function */
     if (C->getconvrate_fn == NULL) { return SUN_ERR_NOT_IMPLEMENTED; }

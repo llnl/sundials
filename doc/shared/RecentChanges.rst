@@ -7,4 +7,7 @@
 
 **Bug Fixes**
 
+Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point
+due to convergence rate check occurring after only one iteration.
+
 **Deprecation Notices**

@@ -33,9 +33,12 @@
 typedef struct
 {
   int convtest_calls;
+  int convrate_calls;
+  int continue_calls;
 }* TestMem;
 
 static int check_retval(void* flagvalue, const char* funcname, int opt);
+static int SetupProblem(SUNNonlinearSolver NLS, TestMem mem, int continue_calls);
 static int FPFunction(N_Vector ycor, N_Vector gy, void* mem);
 static int Res(N_Vector ycor, N_Vector f, void* mem);
 static int LSolve(N_Vector b, void* mem);
@@ -59,6 +62,9 @@ int main(void)
   long int fp_nconvfails   = 0;
   long int newt_nconvfails = 0;
   SUNNonlinSolAutoType active_solver_type;
+  SUNNonlinearSolverContent_Auto content;
+  SUNNonlinearSolverContent_FixedPoint fp_content;
+  SUNNonlinearSolverContent_Newton newton_content;
 
   retval = SUNContext_Create(SUN_COMM_NULL, &sunctx);
   if (check_retval(&retval, "SUNContext_Create", 1)) { return 1; }
@@ -66,6 +72,8 @@ int main(void)
   mem = (TestMem)malloc(sizeof(*mem));
   if (check_retval(mem, "malloc", 0)) { return 1; }
   mem->convtest_calls = 0;
+  mem->convrate_calls = 0;
+  mem->continue_calls = 0;
 
   y0 = N_VNew_Serial(1, sunctx);
   if (check_retval(y0, "N_VNew_Serial", 0)) { return 1; }
@@ -83,63 +91,96 @@ int main(void)
   NLS = SUNNonlinSol_Auto(y0, 0, SUNNONLINSOL_AUTO_FIXEDPOINT, sunctx);
   if (check_retval(NLS, "SUNNonlinSol_Auto", 0)) { return 1; }
 
+  content = (SUNNonlinearSolverContent_Auto)NLS->content;
+  fp_content = (SUNNonlinearSolverContent_FixedPoint)content->fp_solver->content;
+  newton_content =
+    (SUNNonlinearSolverContent_Newton)content->newton_solver->content;
+
+  if (fp_content->CTest == NULL || fp_content->ctest_data == NULL)
   {
-    SUNNonlinearSolverContent_Auto content =
-      (SUNNonlinearSolverContent_Auto)NLS->content;
-    SUNNonlinearSolverContent_FixedPoint fp_content =
-      (SUNNonlinearSolverContent_FixedPoint)content->fp_solver->content;
-    SUNNonlinearSolverContent_Newton newton_content =
-      (SUNNonlinearSolverContent_Newton)content->newton_solver->content;
-
-    if (fp_content->CTest == NULL || fp_content->ctest_data == NULL)
-    {
-      printf(
-        "ERROR: fixed-point subsolver wrapper callback was not installed\n");
-      return 1;
-    }
-
-    if (newton_content->CTest == NULL || newton_content->ctest_data == NULL)
-    {
-      printf("ERROR: Newton subsolver wrapper callback was not installed\n");
-      return 1;
-    }
+    printf("ERROR: fixed-point subsolver wrapper callback was not installed\n");
+    return 1;
   }
 
-  retval = SUNNonlinSolSetMaxIters(NLS, 1);
-  if (check_retval(&retval, "SUNNonlinSolSetMaxIters", 1)) { return 1; }
-
+  if (newton_content->CTest == NULL || newton_content->ctest_data == NULL)
   {
-    SUNNonlinearSolverContent_Auto content =
-      (SUNNonlinearSolverContent_Auto)NLS->content;
-    SUNNonlinearSolverContent_FixedPoint fp_content =
-      (SUNNonlinearSolverContent_FixedPoint)content->fp_solver->content;
-    SUNNonlinearSolverContent_Newton newton_content =
-      (SUNNonlinearSolverContent_Newton)content->newton_solver->content;
-
-    if (fp_content->maxiters != 1 || newton_content->maxiters != 1)
-    {
-      printf("ERROR: Auto max-iter setter did not update both subsolvers\n");
-      return 1;
-    }
+    printf("ERROR: Newton subsolver wrapper callback was not installed\n");
+    return 1;
   }
 
-  retval = SUNNonlinSolSetSysFns(NLS, Res, FPFunction);
-  if (check_retval(&retval, "SUNNonlinSolSetSysFns", 1)) { return 1; }
-
-  retval = SUNNonlinSolSetLSolveFn(NLS, LSolve);
-  if (check_retval(&retval, "SUNNonlinSolSetLSolveFn", 1)) { return 1; }
-
-  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, mem);
-  if (check_retval(&retval, "SUNNonlinSolSetConvTestFn", 1)) { return 1; }
-
-  retval = SUNNonlinSolSetGetConvRateFn(NLS, GetConvRate, mem);
-  if (check_retval(&retval, "SUNNonlinSolSetGetConvRateFn", 1)) { return 1; }
+  retval = SetupProblem(NLS, mem, 1);
+  if (check_retval(&retval, "SetupProblem", 1)) { return 1; }
 
   retval = SUNNonlinSolSetSwitchingParameters_Auto(NLS, HALF, 1, HALF, 0);
   if (check_retval(&retval, "SUNNonlinSolSetSwitchingParameters_Auto", 1))
   {
     return 1;
   }
+
+  retval = SUNNonlinSolSetMaxIters(NLS, 1);
+  if (check_retval(&retval, "SUNNonlinSolSetMaxIters", 1)) { return 1; }
+
+  if (fp_content->maxiters != 1 || newton_content->maxiters != 1)
+  {
+    printf("ERROR: Auto max-iter setter did not update both subsolvers\n");
+    return 1;
+  }
+
+  retval = SUNNonlinSolSolve(NLS, y0, ycor, w, ONE, SUNFALSE, mem);
+  if (retval != SUN_NLS_CONV_RECVR)
+  {
+    printf("ERROR: expected fixed-point convergence failure without a switch, "
+           "got %d\n",
+           retval);
+    return 1;
+  }
+
+  retval = SUNNonlinSolGetActiveSolverType_Auto(NLS, &active_solver_type);
+  if (check_retval(&retval, "SUNNonlinSolGetActiveSolverType_Auto", 1))
+  {
+    return 1;
+  }
+
+  if (active_solver_type != SUNNONLINSOL_AUTO_FIXEDPOINT)
+  {
+    printf(
+      "ERROR: expected fixed-point to remain active after first iteration\n");
+    return 1;
+  }
+
+  retval = SUNNonlinSolGetSwitchCount_Auto(NLS, &switch_count);
+  if (check_retval(&retval, "SUNNonlinSolGetSwitchCount_Auto", 1)) { return 1; }
+
+  if (switch_count != 0)
+  {
+    printf("ERROR: expected no automatic solver switch, got %ld\n", switch_count);
+    return 1;
+  }
+
+  if (mem->convrate_calls != 0)
+  {
+    printf("ERROR: expected no first-iteration convergence rate query, got "
+           "%d\n",
+           mem->convrate_calls);
+    return 1;
+  }
+
+  SUNNonlinSolFree(NLS);
+
+  NLS = SUNNonlinSol_Auto(y0, 0, SUNNONLINSOL_AUTO_FIXEDPOINT, sunctx);
+  if (check_retval(NLS, "SUNNonlinSol_Auto", 0)) { return 1; }
+
+  retval = SetupProblem(NLS, mem, 2);
+  if (check_retval(&retval, "SetupProblem", 1)) { return 1; }
+
+  retval = SUNNonlinSolSetSwitchingParameters_Auto(NLS, HALF, 1, HALF, 0);
+  if (check_retval(&retval, "SUNNonlinSolSetSwitchingParameters_Auto", 1))
+  {
+    return 1;
+  }
+
+  retval = SUNNonlinSolSetMaxIters(NLS, 2);
+  if (check_retval(&retval, "SUNNonlinSolSetMaxIters", 1)) { return 1; }
 
   retval = SUNNonlinSolSolve(NLS, y0, ycor, w, ONE, SUNFALSE, mem);
   if (check_retval(&retval, "SUNNonlinSolSolve", 1)) { return 1; }
@@ -172,11 +213,18 @@ int main(void)
     return 1;
   }
 
-  if (fp_iters != 1 || newt_iters != 1)
+  if (fp_iters != 2 || newt_iters != 1)
   {
-    printf("ERROR: expected one iteration from each subsolver, got fp=%ld "
-           "newt=%ld\n",
+    printf("ERROR: expected two fixed-point iterations and one Newton "
+           "iteration, got fp=%ld newt=%ld\n",
            fp_iters, newt_iters);
+    return 1;
+  }
+
+  if (mem->convrate_calls != 1)
+  {
+    printf("ERROR: expected one convergence rate query, got %d\n",
+           mem->convrate_calls);
     return 1;
   }
 
@@ -207,6 +255,26 @@ int main(void)
 
   printf("SUCCESS\n");
   return 0;
+}
+
+static int SetupProblem(SUNNonlinearSolver NLS, TestMem mem, int continue_calls)
+{
+  int retval;
+
+  mem->convtest_calls = 0;
+  mem->convrate_calls = 0;
+  mem->continue_calls = continue_calls;
+
+  retval = SUNNonlinSolSetSysFns(NLS, Res, FPFunction);
+  if (retval != SUN_SUCCESS) { return retval; }
+
+  retval = SUNNonlinSolSetLSolveFn(NLS, LSolve);
+  if (retval != SUN_SUCCESS) { return retval; }
+
+  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, mem);
+  if (retval != SUN_SUCCESS) { return retval; }
+
+  return SUNNonlinSolSetGetConvRateFn(NLS, GetConvRate, mem);
 }
 
 static int FPFunction(N_Vector ycor, N_Vector gy, void* mem)
@@ -243,12 +311,14 @@ static int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del,
   (void)ewt;
 
   test_mem->convtest_calls++;
-  return (test_mem->convtest_calls == 1) ? SUN_NLS_CONTINUE : SUN_SUCCESS;
+  return (test_mem->convtest_calls <= test_mem->continue_calls) ? SUN_NLS_CONTINUE
+                                                                : SUN_SUCCESS;
 }
 
 static SUNErrCode GetConvRate(sunrealtype* crate, void* mem)
 {
-  (void)mem;
+  TestMem test_mem = (TestMem)mem;
+  test_mem->convrate_calls++;
   *crate = ONE;
   return SUN_SUCCESS;
 }
