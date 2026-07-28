@@ -104,6 +104,20 @@ class Heat1DCudaProblem:
         self.backend.synchronize()
         return 0
 
+    def jtv(self, vvec, Jvvec, t, yvec, fyvec, user_data, tmpvec):
+        k, dx = self.k, self.dx
+        V = self.device_array(vvec)
+        JV = self.device_array(Jvvec)
+
+        JV[:] = 0.0
+        c1 = k / dx / dx
+        c2 = -2.0 * k / dx / dx
+        JV[1:-1] = c1 * V[:-2] + c2 * V[1:-1] + c1 * V[2:]
+        JV[0] = 0.0
+        JV[-1] = 0.0
+        return 0
+
+
 
 class CupyBackend:
     name = "cupy"
@@ -168,13 +182,25 @@ def solve_heat1d(backend):
     problem = Heat1DCudaProblem(backend, n=n, k=k)
     problem.set_init_cond(y)
 
-    stepper = ark.ARKStepCreate(problem.f, None, 0.0, y, sunctx)
+    stepper = ark.ARKStepCreate(None, problem.f, 0.0, y, sunctx)
     assert stepper is not None
 
     status = ark.ARKodeSStolerances(stepper.get(), reltol, abstol)
     assert status == ark.ARK_SUCCESS
 
     status = ark.ARKodeSetMaxNumSteps(stepper.get(), 100000)
+    assert status == ark.ARK_SUCCESS
+
+    # PCG linear solver with no preconditioning, with up to n iterations
+    LS = sun.SUNLinSol_PCG(y, sun.SUN_PREC_NONE, n, sunctx)
+
+    status = ark.ARKodeSetLinearSolver(stepper.get(), LS, None)  
+    assert status == ark.ARK_SUCCESS
+
+    status = ark.ARKodeSetJacTimes(stepper.get(), None, problem.jtv)
+    assert status == ark.ARK_SUCCESS
+
+    status = ark.ARKodeSetLinear(stepper.get(), 0)
     assert status == ark.ARK_SUCCESS
 
     t = 0.0
@@ -199,6 +225,41 @@ def solve_heat1d(backend):
     max_error = np.max(np.abs(host_data - uexact))
     print(f"\nFinal max error vs exact semi-discrete solution = {max_error:.6e}")
     np.testing.assert_allclose(host_data, uexact, rtol=1e-4, atol=1e-8)
+
+    # Print statistics
+    status, nst = ARKodeGetNumSteps(ark.get())
+    assert status == ARK_SUCCESS
+    status, nst_a = ARKodeGetNumStepAttempts(ark.get())
+    assert status == ARK_SUCCESS
+    status, nfe = ARKodeGetNumRhsEvals(ark.get(), 0)
+    assert status == ARK_SUCCESS
+    status, nfi = ARKodeGetNumRhsEvals(ark.get(), 1)
+    assert status == ARK_SUCCESS
+    status, nsetups = ARKodeGetNumLinSolvSetups(ark.get())
+    assert status == ARK_SUCCESS
+    status, nli = ARKodeGetNumLinIters(ark.get())
+    assert status == ARK_SUCCESS
+    status, nJv = ARKodeGetNumJtimesEvals(ark.get())
+    assert status == ARK_SUCCESS
+    status, nlcf = ARKodeGetNumLinConvFails(ark.get())
+    assert status == ARK_SUCCESS
+    status, nni = ARKodeGetNumNonlinSolvIters(ark.get())
+    assert status == ARK_SUCCESS
+    status, ncfn = ARKodeGetNumNonlinSolvConvFails(ark.get())
+    assert status == ARK_SUCCESS
+    status, netf = ARKodeGetNumErrTestFails(ark.get())
+    assert status == ARK_SUCCESS
+
+    print("\nFinal Solver Statistics:")
+    print(f"   Internal solver steps = {nst} (attempted = {nst_a})")
+    print(f"   Total RHS evals:  Fe = {nfe},  Fi = {nfi}")
+    print(f"   Total linear solver setups = {nsetups}")
+    print(f"   Total linear iterations = {nli}")
+    print(f"   Total number of Jacobian-vector products = {nJv}")
+    print(f"   Total number of linear solver convergence failures = {nlcf}")
+    print(f"   Total number of Newton iterations = {nni}")
+    print(f"   Total number of nonlinear solver convergence failures = {ncfn}")
+    print(f"   Total number of error test failures = {netf}")
 
     return host_data.copy(), backend.to_numpy(device_data)
 
