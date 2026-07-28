@@ -22,12 +22,130 @@
 
 #include "sundials4py.hpp"
 
+#include <cstdint>
+
 #include <sundials/sundials_nvector.hpp>
+#include "sundials/sundials_config.h"
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
 namespace sundials4py {
+
+namespace {
+
+#ifndef SUNDIALS_NVECTOR_CUDA
+enum class ArrayDevice
+{
+  Cpu,
+  Cuda
+};
+
+bool object_is_none(nb::object obj) { return obj.ptr() == Py_None; }
+
+std::string optional_string(nb::object value, const char* name)
+{
+  if (object_is_none(value)) { return ""; }
+  try
+  {
+    return nb::cast<std::string>(value);
+  }
+  catch (const nb::cast_error&)
+  {
+    throw sundials4py::error_returned(std::string(name) +
+                                      " must be a string or None");
+  }
+}
+
+ArrayDevice parse_device(nb::object device, N_Vector /*v*/)
+{
+  auto value = optional_string(device, "device");
+  if (value.empty() || value == "cpu" || value == "host")
+  {
+    return ArrayDevice::Cpu;
+  }
+  if (value == "cuda") { return ArrayDevice::Cuda; }
+
+  throw sundials4py::error_returned(
+    "device must be 'cpu', 'host', 'cuda', or None");
+}
+
+void validate_copy_from(nb::object copy_from)
+{
+  auto value = optional_string(copy_from, "copy_from");
+  if (value.empty() || value == "cpu") { return; }
+  if (value == "device")
+  {
+    throw sundials4py::error_returned(
+      "copy_from='device' requires a CUDA N_Vector");
+  }
+
+  throw sundials4py::error_returned(
+    "copy_from must be 'cpu', 'device', or None");
+}
+
+sundials4py::Array1d host_array(N_Vector v)
+{
+  auto ptr = N_VGetArrayPointer(v);
+  if (!ptr)
+  {
+    throw sundials4py::error_returned("Failed to get array pointer");
+  }
+  auto owner = nb::find(v);
+  size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
+  return sundials4py::Array1d(ptr, 1, shape, owner);
+}
+
+nb::object get_numpy_array(N_Vector v, nb::object device, nb::object copy_from)
+{
+  if (parse_device(device, v) == ArrayDevice::Cuda)
+  {
+    throw sundials4py::error_returned(
+      "N_VGetNumpyArray does not support device='cuda'");
+  }
+  validate_copy_from(copy_from);
+  return nb::cast(host_array(v));
+}
+
+nb::object get_torch_tensor(N_Vector v, nb::object device, nb::object copy_from)
+{
+  if (parse_device(device, v) == ArrayDevice::Cuda)
+  {
+    throw sundials4py::error_returned(
+      "CUDA tensor access requires a CUDA-enabled sundials4py build");
+  }
+  validate_copy_from(copy_from);
+  return nb::module_::import_("torch").attr("from_numpy")(nb::cast(host_array(v)));
+}
+
+nb::object get_cupy_array(N_Vector v, nb::object device, nb::object copy_from)
+{
+  (void)v;
+  if (parse_device(device, v) == ArrayDevice::Cpu)
+  {
+    throw sundials4py::error_returned(
+      "N_VGetCupyArray requires a CUDA N_Vector");
+  }
+  validate_copy_from(copy_from);
+  throw sundials4py::error_returned(
+    "CUDA array access requires a CUDA-enabled sundials4py build");
+}
+
+nb::object get_jax_array(N_Vector v, nb::object device, nb::object copy_from)
+{
+  if (parse_device(device, v) == ArrayDevice::Cuda)
+  {
+    throw sundials4py::error_returned(
+      "CUDA array access requires a CUDA-enabled sundials4py build");
+  }
+  validate_copy_from(copy_from);
+  return nb::module_::import_("jax").attr("dlpack").attr(
+    "from_dlpack")(nb::cast(host_array(v)), nb::none(), nb::none());
+}
+
+#endif
+
+} // namespace
 
 void bind_nvector(nb::module_& m)
 {
@@ -48,20 +166,36 @@ void bind_nvector(nb::module_& m)
     },
     nb::rv_policy::reference);
 
+#ifndef SUNDIALS_NVECTOR_CUDA
   m.def(
     "N_VGetDeviceArrayPointer",
-    [](N_Vector v)
+    [](N_Vector v) -> std::uintptr_t
     {
       auto ptr = N_VGetDeviceArrayPointer(v);
       if (!ptr)
       {
-        throw sundials4py::error_returned("Failed to get array pointer");
+        throw sundials4py::error_returned("Failed to get device array pointer");
       }
-      auto owner = nb::find(v);
-      size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
-      return sundials4py::Array1d(ptr, 1, shape, owner);
+      return reinterpret_cast<std::uintptr_t>(ptr);
     },
-    nb::rv_policy::reference);
+    nb::arg("v"));
+
+  m.def("N_VGetNumpyArray", &get_numpy_array, nb::arg("v"),
+        nb::arg("device").none()    = nb::none(),
+        nb::arg("copy_from").none() = nb::none());
+
+  m.def("N_VGetJaxArray", &get_jax_array, nb::arg("v"),
+        nb::arg("device").none()    = nb::none(),
+        nb::arg("copy_from").none() = nb::none());
+
+  m.def("N_VGetCupyArray", &get_cupy_array, nb::arg("v"),
+        nb::arg("device").none()    = nb::none(),
+        nb::arg("copy_from").none() = nb::none());
+
+  m.def("N_VGetTorchTensor", &get_torch_tensor, nb::arg("v"),
+        nb::arg("device").none()    = nb::none(),
+        nb::arg("copy_from").none() = nb::none());
+#endif
 
   m.def("N_VSetArrayPointer",
         [](sundials4py::Array1d arr, N_Vector v)

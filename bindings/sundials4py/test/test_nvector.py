@@ -22,6 +22,13 @@ from fixtures import *
 from sundials4py.core import *
 
 
+def test_nvector_array_helpers_are_always_available():
+    assert "N_VGetNumpyArray" in globals()
+    assert "N_VGetJaxArray" in globals()
+    assert "N_VGetCupyArray" in globals()
+    assert "N_VGetTorchTensor" in globals()
+
+
 def test_create_manyvector(sunctx):
     y = N_VNew_Serial(5, sunctx)
     z = N_VNew_Serial(5, sunctx)
@@ -78,6 +85,57 @@ def test_make_nvector(vector_type, sunctx):
     assert_allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
 
 
+def test_nvector_array_helpers_serial(sunctx):
+    nvec = N_VNew_Serial(5, sunctx)
+    N_VConst(1.0, nvec)
+
+    arr = N_VGetNumpyArray(nvec)
+    assert_allclose(arr, 1.0)
+
+    arr[:] = np.arange(5, dtype=sunrealtype)
+    assert_allclose(N_VGetArrayPointer(nvec), np.arange(5, dtype=sunrealtype))
+    assert_allclose(N_VGetNumpyArray(nvec, device="host"), arr)
+
+    with pytest.raises(RuntimeError):
+        N_VGetNumpyArray(nvec, device="cuda")
+    with pytest.raises(RuntimeError):
+        N_VGetCupyArray(nvec)
+    with pytest.raises(RuntimeError):
+        N_VGetNumpyArray(nvec, copy_from="device")
+    with pytest.raises(RuntimeError):
+        N_VGetNumpyArray(nvec, device="gpu")
+    with pytest.raises(RuntimeError):
+        N_VGetNumpyArray(nvec, copy_from="host")
+
+
+def test_nvector_array_helpers_serial_jax(sunctx):
+    jax = pytest.importorskip("jax")
+
+    nvec = N_VNew_Serial(5, sunctx)
+    N_VConst(3.0, nvec)
+
+    array = N_VGetJaxArray(nvec)
+    assert array.device.platform == "cpu"
+    assert_allclose(np.asarray(array), 3.0)
+
+    N_VConst(4.0, nvec)
+    array = N_VGetJaxArray(nvec, device="host")
+    assert_allclose(np.asarray(array), 4.0)
+
+
+def test_nvector_array_helpers_serial_torch(sunctx):
+    torch = pytest.importorskip("torch")
+
+    nvec = N_VNew_Serial(5, sunctx)
+    N_VConst(2.0, nvec)
+
+    tensor = N_VGetTorchTensor(nvec)
+    assert_allclose(tensor.numpy(), 2.0)
+
+    tensor[:] = torch.arange(5, dtype=tensor.dtype)
+    assert_allclose(N_VGetArrayPointer(nvec), np.arange(5, dtype=sunrealtype))
+
+
 @pytest.mark.skipif(
     "N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled"
 )
@@ -85,8 +143,7 @@ def test_create_nvector_cuda(sunctx):
     nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
 
     assert N_VGetLength(nvec) == 5
-    assert N_VGetLength_Cuda(nvec) == 5
-    assert N_VGetDeviceArrayPointer_Cuda(nvec) != 0
+    assert int(N_VGetDeviceArrayPointer(nvec)) != 0
 
     arr = N_VGetHostArrayPointer_Cuda(nvec)
     arr[:] = np.array([5.0, 4.0, 3.0, 2.0, 1.0], dtype=sunrealtype)
@@ -111,8 +168,7 @@ def _cuda_nvector_or_skip(factory):
 
 def _check_cuda_nvector_const(nvec, value):
     assert N_VGetLength(nvec) == 5
-    assert N_VGetLength_Cuda(nvec) == 5
-    assert N_VGetDeviceArrayPointer_Cuda(nvec) != 0
+    assert int(N_VGetDeviceArrayPointer(nvec)) != 0
 
     arr = N_VGetHostArrayPointer_Cuda(nvec)
     arr[:] = np.arange(5, dtype=sunrealtype)
@@ -157,6 +213,27 @@ def _torch_dtype():
     return torch.longdouble
 
 
+def _jax_cuda_device_or_skip(jax):
+    try:
+        devices = [
+            device for device in jax.devices() if device.platform in ("cuda", "gpu")
+        ]
+    except RuntimeError as err:
+        pytest.skip(f"JAX CUDA/GPU backend is not available: {err}")
+
+    if not devices:
+        pytest.skip("JAX CUDA/GPU backend is not available")
+    return devices[0]
+
+
+def _jax_dtype(jnp):
+    if sunrealtype == np.float32:
+        return jnp.float32
+    if sunrealtype == np.float64:
+        return jnp.float64
+    return jnp.longdouble
+
+
 @pytest.mark.skipif(
     "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
 )
@@ -173,8 +250,11 @@ def test_make_nvector_cuda_cupy_array(sunctx):
     assert_allclose(cupy.asnumpy(d_arr), 3.0)
     assert_allclose(h_arr, 3.0)
 
-    view = cupy.from_dlpack(N_VGetDeviceArray_Cuda(nvec))
+    view = N_VGetCupyArray(nvec)
     assert_allclose(cupy.asnumpy(view), 3.0)
+
+    with pytest.raises(RuntimeError):
+        N_VGetCupyArray(nvec, device="cpu")
 
 
 @pytest.mark.skipif(
@@ -195,8 +275,67 @@ def test_make_nvector_cuda_torch_tensor(sunctx):
     assert_allclose(d_arr.cpu().numpy(), 4.0)
     assert_allclose(h_arr, 4.0)
 
-    view = torch.utils.dlpack.from_dlpack(N_VGetDeviceArray_Cuda(nvec))
+    view = N_VGetTorchTensor(nvec)
     assert_allclose(view.cpu().numpy(), 4.0)
+
+    h_arr[:] = np.arange(5, dtype=sunrealtype)
+    view = N_VGetTorchTensor(nvec, copy_from="cpu")
+    assert_allclose(view.cpu().numpy(), h_arr)
+
+    host_view = N_VGetTorchTensor(nvec, device="host", copy_from="device")
+    assert_allclose(host_view.numpy(), h_arr)
+
+
+@pytest.mark.skipif(
+    "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
+def test_make_nvector_cuda_jax_array(sunctx):
+    jax = pytest.importorskip("jax")
+    if np.dtype(sunrealtype) == np.dtype(np.float64):
+        jax.config.update("jax_enable_x64", True)
+
+    import jax.numpy as jnp
+
+    device = _jax_cuda_device_or_skip(jax)
+    h_arr = np.zeros(5, dtype=sunrealtype)
+    d_arr = jax.device_put(jnp.arange(5, dtype=_jax_dtype(jnp)), device)
+    d_arr.block_until_ready()
+
+    nvec = N_VMake_Cuda(5, h_arr, d_arr, sunctx)
+    assert int(N_VGetDeviceArrayPointer(nvec)) == d_arr.unsafe_buffer_pointer()
+
+    view = N_VGetJaxArray(nvec)
+    assert_allclose(np.asarray(view), np.asarray(d_arr))
+
+    host_view = N_VGetJaxArray(nvec, device="cpu", copy_from="device")
+    assert host_view.device.platform == "cpu"
+    assert_allclose(np.asarray(host_view), np.asarray(d_arr))
+
+    N_VConst(6.0, nvec)
+    N_VCopyFromDevice_Cuda(nvec)
+
+    assert_allclose(h_arr, 6.0)
+
+
+@pytest.mark.skipif(
+    "N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled"
+)
+def test_nvector_array_helpers_cuda_host(sunctx):
+    nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
+
+    with pytest.raises(RuntimeError):
+        N_VGetNumpyArray(nvec)
+    with pytest.raises(RuntimeError):
+        N_VGetNumpyArray(nvec, device="cuda")
+
+    host = N_VGetNumpyArray(nvec, device="cpu")
+    host[:] = np.arange(5, dtype=sunrealtype)
+
+    N_VCopyToDevice_Cuda(nvec)
+    N_VConst(8.0, nvec)
+
+    synced_host = N_VGetNumpyArray(nvec, device="host", copy_from="device")
+    assert_allclose(synced_host, 8.0)
 
 
 @pytest.mark.skipif(
@@ -215,6 +354,32 @@ def test_set_nvector_cuda_torch_tensor(sunctx):
     N_VConst(5.0, nvec)
 
     assert_allclose(d_arr.cpu().numpy(), 5.0)
+
+
+@pytest.mark.skipif(
+    "N_VSetDeviceArrayPointer_Cuda" not in globals(),
+    reason="CUDA bindings are not enabled",
+)
+def test_set_nvector_cuda_jax_array(sunctx):
+    jax = pytest.importorskip("jax")
+    if np.dtype(sunrealtype) == np.dtype(np.float64):
+        jax.config.update("jax_enable_x64", True)
+
+    import jax.numpy as jnp
+
+    device = _jax_cuda_device_or_skip(jax)
+    nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
+    h_arr = N_VGetHostArrayPointer_Cuda(nvec)
+    d_arr = jax.device_put(jnp.arange(5, dtype=_jax_dtype(jnp)), device)
+    d_arr.block_until_ready()
+
+    N_VSetDeviceArrayPointer_Cuda(d_arr, nvec)
+    assert int(N_VGetDeviceArrayPointer(nvec)) == d_arr.unsafe_buffer_pointer()
+
+    N_VConst(7.0, nvec)
+    N_VCopyFromDevice_Cuda(nvec)
+
+    assert_allclose(h_arr, 7.0)
 
 
 # Test an operation that involves vector arrays
