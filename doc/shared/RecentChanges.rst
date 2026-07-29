@@ -7,4 +7,7 @@
 
 **Bug Fixes**
 
+Fixed duplicate keys in IDA and IDAS logging output from consistent initial
+condition solves and order selection diagnostics.
+
 **Deprecation Notices**
