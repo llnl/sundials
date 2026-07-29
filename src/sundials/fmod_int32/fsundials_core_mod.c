@@ -1094,6 +1094,16 @@ SWIGEXPORT void _wrap_FN_VSetArrayPointer(double *farg1, N_Vector farg2) {
 }
 
 
+SWIGEXPORT void _wrap_FN_VSetDeviceArrayPointer(double *farg1, N_Vector farg2) {
+  sunrealtype *arg1 = (sunrealtype *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+
+  arg1 = (sunrealtype *)(farg1);
+  arg2 = (N_Vector)(farg2);
+  N_VSetDeviceArrayPointer(arg1,arg2);
+}
+
+
 SWIGEXPORT int _wrap_FN_VGetCommunicator(N_Vector farg1) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
@@ -4080,6 +4090,5 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_Destroy(void *farg1) {
   fresult = (SUNErrCode)(result);
   return fresult;
 }
-
 
 
