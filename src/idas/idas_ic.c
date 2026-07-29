@@ -1194,8 +1194,8 @@ static int IDASensNewtonIC(IDAMem IDA_mem)
   {
     /* Call the linear solve function to get the Newton step, delta. */
     if (is == 0) { SUNLogInfo(IDA_LOGGER, "begin-iterations-list", ""); }
-    SUNLogInfo(IDA_LOGGER, "begin-sensitivity-linear-solve-list",
-               "index = %i", is);
+    SUNLogInfo(IDA_LOGGER, "begin-sensitivity-linear-solve-list", "index = %i",
+               is);
     retval = IDA_mem->ida_lsolve(IDA_mem, IDA_mem->ida_deltaS[is],
                                  IDA_mem->ida_ewtS[is], IDA_mem->ida_yy0,
                                  IDA_mem->ida_yp0, IDA_mem->ida_delta);
@@ -1416,8 +1416,8 @@ static int IDASensfnorm(IDAMem IDA_mem, sunrealtype* fnorm)
   /* Call linear solve function */
   for (is = 0; is < IDA_mem->ida_Ns; is++)
   {
-    SUNLogInfo(IDA_LOGGER, "begin-sensitivity-linear-solve-list",
-               "index = %i", is);
+    SUNLogInfo(IDA_LOGGER, "begin-sensitivity-linear-solve-list", "index = %i",
+               is);
     retval = IDA_mem->ida_lsolve(IDA_mem, IDA_mem->ida_delnewS[is],
                                  IDA_mem->ida_ewtS[is], IDA_mem->ida_yy0,
                                  IDA_mem->ida_yp0, IDA_mem->ida_delta);

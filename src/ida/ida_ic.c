@@ -356,8 +356,8 @@ static int IDANlsIC(IDAMem IDA_mem)
     }
 
     /* Call the Newton iteration routine, and return if successful.  */
-    SUNLogInfo(IDA_LOGGER, "begin-initial-condition-solve-list",
-               "attempt = %i", nj);
+    SUNLogInfo(IDA_LOGGER, "begin-initial-condition-solve-list", "attempt = %i",
+               nj);
     retval = IDANewtonIC(IDA_mem);
     SUNLogInfo(IDA_LOGGER, "end-initial-condition-solve-list",
                "status = %s, retval = %i",
