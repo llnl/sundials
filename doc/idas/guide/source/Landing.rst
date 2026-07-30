@@ -37,20 +37,3 @@
    Cosmin Petra, Steven B. Roberts, H. Hunter Schwartz, Jean M. Sexton, Dan
    Shumaker, Steve G. Smith, Shahbaj Sohal, Allan G. Taylor, Hilari C. Tiedeman,
    Chris White, Ting Yan, and Ulrike M. Yang.
-
-   .. ifconfig:: package_name != 'super'
-
-      **Citing**
-
-      .. include:: ../../../shared/cite_sundials.rst
-
-      The IDAS documentation can be cited:
-
-      .. parsed-literal::
-
-         @Misc{idasDocumentation,
-            author = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-            title  = {User Documentation for IDAS},
-            year   = {|YEAR|},
-            note   = {|IDAS_VERSION|}
-         }

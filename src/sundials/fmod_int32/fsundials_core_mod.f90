@@ -507,9 +507,10 @@ module fsundials_core_mod
  enum, bind(c)
   enumerator :: SUNNONLINEARSOLVER_ROOTFIND
   enumerator :: SUNNONLINEARSOLVER_FIXEDPOINT
+  enumerator :: SUNNONLINEARSOLVER_HYBRID
  end enum
  integer, parameter, public :: SUNNonlinearSolver_Type = kind(SUNNONLINEARSOLVER_ROOTFIND)
- public :: SUNNONLINEARSOLVER_ROOTFIND, SUNNONLINEARSOLVER_FIXEDPOINT
+ public :: SUNNONLINEARSOLVER_ROOTFIND, SUNNONLINEARSOLVER_FIXEDPOINT, SUNNONLINEARSOLVER_HYBRID
  ! struct struct _generic_SUNNonlinearSolver_Ops
  type, bind(C), public :: SUNNonlinearSolver_Ops
   type(C_FUNPTR), public :: gettype
@@ -518,9 +519,13 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: solve
   type(C_FUNPTR), public :: free
   type(C_FUNPTR), public :: setsysfn
+  type(C_FUNPTR), public :: setsysfns
   type(C_FUNPTR), public :: setlsetupfn
   type(C_FUNPTR), public :: setlsolvefn
   type(C_FUNPTR), public :: setctestfn
+  type(C_FUNPTR), public :: setnormfn
+  type(C_FUNPTR), public :: setgetupdatenormfn
+  type(C_FUNPTR), public :: setgetconvratefn
   type(C_FUNPTR), public :: setoptions
   type(C_FUNPTR), public :: setmaxiters
   type(C_FUNPTR), public :: getnumiters
@@ -542,15 +547,20 @@ module fsundials_core_mod
  public :: FSUNNonlinSolSolve
  public :: FSUNNonlinSolFree
  public :: FSUNNonlinSolSetSysFn
+ public :: FSUNNonlinSolSetSysFns
  public :: FSUNNonlinSolSetLSetupFn
  public :: FSUNNonlinSolSetLSolveFn
  public :: FSUNNonlinSolSetConvTestFn
+ public :: FSUNNonlinSolSetNormFn
+ public :: FSUNNonlinSolSetGetUpdateNormFn
+ public :: FSUNNonlinSolSetGetConvRateFn
  public :: FSUNNonlinSolSetMaxIters
  public :: FSUNNonlinSolGetNumIters
  public :: FSUNNonlinSolGetCurIter
  public :: FSUNNonlinSolGetNumConvFails
  integer(C_INT), parameter, public :: SUN_NLS_CONTINUE = +901_C_INT
  integer(C_INT), parameter, public :: SUN_NLS_CONV_RECVR = +902_C_INT
+ integer(C_INT), parameter, public :: SUN_NLS_SWITCH = +903_C_INT
  ! enum SUNAdaptController_Type
  enum, bind(c)
   enumerator :: SUN_ADAPTCONTROLLER_NONE
@@ -696,6 +706,8 @@ module fsundials_core_mod
  ! struct struct SUNDomEigEstimator_Ops_
  type, bind(C), public :: SUNDomEigEstimator_Ops
   type(C_FUNPTR), public :: setatimes
+  type(C_FUNPTR), public :: setrhs
+  type(C_FUNPTR), public :: setrhslinearizationpoint
   type(C_FUNPTR), public :: setoptions
   type(C_FUNPTR), public :: setmaxiters
   type(C_FUNPTR), public :: setnumpreprocessiters
@@ -705,6 +717,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: estimate
   type(C_FUNPTR), public :: getres
   type(C_FUNPTR), public :: getnumiters
+  type(C_FUNPTR), public :: getnumrhsevals
   type(C_FUNPTR), public :: getnumatimescalls
   type(C_FUNPTR), public :: write
   type(C_FUNPTR), public :: destroy
@@ -719,6 +732,8 @@ module fsundials_core_mod
  public :: FSUNDomEigEstimator_NewEmpty
  public :: FSUNDomEigEstimator_FreeEmpty
  public :: FSUNDomEigEstimator_SetATimes
+ public :: FSUNDomEigEstimator_SetRhs
+ public :: FSUNDomEigEstimator_SetRhsLinearizationPoint
  public :: FSUNDomEigEstimator_SetMaxIters
  public :: FSUNDomEigEstimator_SetNumPreprocessIters
  public :: FSUNDomEigEstimator_SetRelTol
@@ -727,6 +742,7 @@ module fsundials_core_mod
  public :: FSUNDomEigEstimator_Estimate
  public :: FSUNDomEigEstimator_GetRes
  public :: FSUNDomEigEstimator_GetNumIters
+ public :: FSUNDomEigEstimator_GetNumRhsEvals
  public :: FSUNDomEigEstimator_GetNumATimesCalls
  public :: FSUNDomEigEstimator_Write
  public :: FSUNDomEigEstimator_Destroy
@@ -2187,6 +2203,16 @@ type(C_FUNPTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNNonlinSolSetSysFns(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetSysFns") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_FUNPTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNNonlinSolSetLSetupFn(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetLSetupFn") &
 result(fresult)
@@ -2207,6 +2233,36 @@ end function
 
 function swigc_FSUNNonlinSolSetConvTestFn(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolSetConvTestFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetNormFn(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetNormFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetGetUpdateNormFn(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetGetUpdateNormFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNNonlinSolSetGetConvRateFn(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNNonlinSolSetGetConvRateFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -3035,6 +3091,26 @@ type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNDomEigEstimator_SetRhs(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetRhs") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_FUNPTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNDomEigEstimator_SetMaxIters(farg1, farg2) &
 bind(C, name="_wrap_FSUNDomEigEstimator_SetMaxIters") &
 result(fresult)
@@ -3100,6 +3176,15 @@ end function
 
 function swigc_FSUNDomEigEstimator_GetNumIters(farg1, farg2) &
 bind(C, name="_wrap_FSUNDomEigEstimator_GetNumIters") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNDomEigEstimator_GetNumRhsEvals(farg1, farg2) &
+bind(C, name="_wrap_FSUNDomEigEstimator_GetNumRhsEvals") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -5805,6 +5890,25 @@ fresult = swigc_FSUNNonlinSolSetSysFn(farg1, farg2)
 swig_result = fresult
 end function
 
+function FSUNNonlinSolSetSysFns(nls, root_fn, fixed_point_fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: root_fn
+type(C_FUNPTR), intent(in), value :: fixed_point_fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_FUNPTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = root_fn
+farg3 = fixed_point_fn
+fresult = swigc_FSUNNonlinSolSetSysFns(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
 function FSUNNonlinSolSetLSetupFn(nls, setupfn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -5853,6 +5957,63 @@ farg1 = c_loc(nls)
 farg2 = ctestfn
 farg3 = ctest_data
 fresult = swigc_FSUNNonlinSolSetConvTestFn(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetNormFn(nls, normfn, norm_fn_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: normfn
+type(C_PTR) :: norm_fn_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = normfn
+farg3 = norm_fn_data
+fresult = swigc_FSUNNonlinSolSetNormFn(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetGetUpdateNormFn(nls, getupdatenormfn, getupdatenorm_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: getupdatenormfn
+type(C_PTR) :: getupdatenorm_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = getupdatenormfn
+farg3 = getupdatenorm_data
+fresult = swigc_FSUNNonlinSolSetGetUpdateNormFn(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNNonlinSolSetGetConvRateFn(nls, getconvratefn, getconvrate_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNNonlinearSolver), target, intent(inout) :: nls
+type(C_FUNPTR), intent(in), value :: getconvratefn
+type(C_PTR) :: getconvrate_data
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(nls)
+farg2 = getconvratefn
+farg3 = getconvrate_data
+fresult = swigc_FSUNNonlinSolSetGetConvRateFn(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
@@ -7387,6 +7548,44 @@ fresult = swigc_FSUNDomEigEstimator_SetATimes(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
+function FSUNDomEigEstimator_SetRhs(dee, rhs_data, rhsfn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+type(C_PTR) :: rhs_data
+type(C_FUNPTR), intent(in), value :: rhsfn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_FUNPTR) :: farg3 
+
+farg1 = c_loc(dee)
+farg2 = rhs_data
+farg3 = rhsfn
+fresult = swigc_FSUNDomEigEstimator_SetRhs(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNDomEigEstimator_SetRhsLinearizationPoint(dee, t, v) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+real(C_DOUBLE), intent(in) :: t
+type(N_Vector), target, intent(inout) :: v
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+real(C_DOUBLE) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(dee)
+farg2 = t
+farg3 = c_loc(v)
+fresult = swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
 function FSUNDomEigEstimator_SetMaxIters(dee, max_iters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -7512,6 +7711,22 @@ type(C_PTR) :: farg2
 farg1 = c_loc(dee)
 farg2 = c_loc(num_iters(1))
 fresult = swigc_FSUNDomEigEstimator_GetNumIters(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNDomEigEstimator_GetNumRhsEvals(dee, num_rhs_evals) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+integer(C_LONG), dimension(*), target, intent(inout) :: num_rhs_evals
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(dee)
+farg2 = c_loc(num_rhs_evals(1))
+fresult = swigc_FSUNDomEigEstimator_GetNumRhsEvals(farg1, farg2)
 swig_result = fresult
 end function
 

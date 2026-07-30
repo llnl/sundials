@@ -30,35 +30,3 @@
    Cosmin Petra, Steven B. Roberts, H. Hunter Schwartz, Jean M. Sexton, Dan
    Shumaker, Steve G. Smith, Shahbaj Sohal, Allan G. Taylor, Hilari C. Tiedeman,
    Chris White, Ting Yan, and Ulrike M. Yang.
-
-   .. ifconfig:: package_name != 'super'
-
-      **Citing**
-
-      .. include:: ../../../shared/cite_sundials.rst
-
-      Please also cite the following paper when using ARKODE:
-
-      .. code-block:: latex
-
-         @article{reynolds2023arkode,
-           title   = {{ARKODE: A flexible IVP solver infrastructure for one-step methods}},
-           author  = {Reynolds, Daniel R and Gardner, David J and Woodward, Carol S and Chinomona, Rujeko},
-           journal = {ACM Transactions on Mathematical Software},
-           volume  = {49},
-           number  = {2},
-           pages   = {1--26},
-           year    = {2023},
-           doi     = {10.1145/3594632}
-         }
-
-      The ARKODE documentation can be cited:
-
-      .. parsed-literal::
-
-         @Misc{arkodeDocumentation,
-            author = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward and Cody J. Balos},
-            title  = {User Documentation for ARKODE},
-            year   = {|YEAR|},
-            note   = {|ARKODE_VERSION|}
-         }

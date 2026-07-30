@@ -27,7 +27,8 @@ Mathematical motivation
 
 The MRIHTol implementation of the SUNAdaptController class,
 SUNAdaptController_MRIHTol, implements a general structure for telescopic
-multirate temporal control.  A SUNAdaptController_MRIHTol object is constructed
+multirate temporal control, as introduced in :cite:p:`RAML:26`.
+A SUNAdaptController_MRIHTol object is constructed
 using two single-rate controller objects, *HControl* and *TolControl*.  The
 MRIHTol controller assumes that overall solution error at a given time scale
 results from two types of error:
@@ -159,11 +160,11 @@ also provides the following additional user-callable routines:
    :param inner_max_tolfac: the parameter :math:`\text{tolfac}_{max}` (must be :math:`> 0`).
 
    :returns: :c:type:`SUNErrCode` indicating success or failure.
-   
+
    .. versionchanged:: 7.5.0
-   
+
       Removed the requirement that ``inner_max_tolfac`` must be :math:`\le 1`
-   
+
 
    .. note::
 

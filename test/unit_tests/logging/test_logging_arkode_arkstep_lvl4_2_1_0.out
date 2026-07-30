@@ -110,7 +110,7 @@ Using GMRES iterative linear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0388017031394358
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0388017031394358
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0349215328254922
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 339.090013609264
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 4.9626087705981e-11
@@ -304,7 +304,7 @@ Using GMRES iterative linear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0385258800615029
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0385258800615029
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0346732920553526
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 0.992891469816629
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.675091934590672
@@ -534,7 +534,7 @@ Using GMRES iterative linear solver
 [INFO][rank 0][arkStep_TakeStep_Z][end-stages-list] status = success
 [INFO][rank 0][arkStep_TakeStep_Z][begin-compute-solution] mass type = 0
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0368118367061883
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0368118367061883
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0331306530355695
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 0.955509300434453
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.787100817234017

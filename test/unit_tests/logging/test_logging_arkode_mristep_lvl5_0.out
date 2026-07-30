@@ -75,7 +75,7 @@ Using Ex-MRI-GARK method
  1.224744871391589e+00
  1.732050807568870e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.000684232821674337
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.000684232821674337
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.000114408635496083
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 10000
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 7.81663103431959e-20
@@ -137,7 +137,7 @@ Using Ex-MRI-GARK method
  1.224744871391589e+00
  1.732050051704758e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162693212800236
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162693212800236
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00228817270992167
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 2.44544264770262e-09
@@ -199,7 +199,7 @@ Using Ex-MRI-GARK method
  1.224744871391589e+00
  1.732044392578396e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162624929099858
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162624929099858
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.004378265139474
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 3.2835207774456e-08
@@ -274,7 +274,7 @@ Using Ex-MRI-GARK method
  1.224744807581532e+00
  1.732018331921229e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.016249898196684
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.016249898196684
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00833333333333333
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 4.32267371275195e-07
@@ -349,7 +349,7 @@ Using Ex-MRI-GARK method
  1.224744769329543e+00
  1.731993073504213e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162414372114837
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162414372114837
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.005
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 5.61386810222308e-08
@@ -435,7 +435,7 @@ Using Ex-MRI-GARK method
  1.224744701288167e+00
  1.731948170562873e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162318165797592
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162318165797592
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.77846971899371e-07
@@ -510,7 +510,7 @@ Using Ex-MRI-GARK method
  1.224744552426413e+00
  1.731874003074508e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162202632453612
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162202632453612
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00833333333333333
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 4.3543510588853e-07
@@ -585,7 +585,7 @@ Using Ex-MRI-GARK method
  1.224744463143411e+00
  1.731819882857615e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162129875004671
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162129875004671
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.005
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 5.65337563928649e-08
@@ -671,7 +671,7 @@ Using Ex-MRI-GARK method
  1.224744327060693e+00
  1.731736500946985e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162045995221856
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162045995221856
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00666666666666666
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.79044824379909e-07
@@ -746,7 +746,7 @@ Using Ex-MRI-GARK method
  1.224744093147317e+00
  1.731614241463561e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0161945980453625
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0161945980453625
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.00833333333333332
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 4.38201984966595e-07
@@ -821,7 +821,7 @@ Using Ex-MRI-GARK method
  1.224743952833347e+00
  1.731531270273565e+00
 [INFO][rank 0][arkStep_TakeStep_Z][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0161884827797336
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0161884827797336
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.005
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 5.6876837984125e-08

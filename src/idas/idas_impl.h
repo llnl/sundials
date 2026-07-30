@@ -317,12 +317,14 @@ typedef struct IDAMemRec
   sunrealtype ida_cjold; /* cj value saved from last call to lsetup           */
   sunrealtype ida_cjratio; /* ratio of cj values: cj/cjold                      */
   sunrealtype ida_ss; /* scalar used in Newton iteration convergence test  */
+  sunrealtype ida_delnrm; /* norm of current nonlinear solver update           */
   sunrealtype ida_oldnrm; /* norm of previous nonlinear solver update          */
   sunrealtype ida_epsNewt; /* test constant in Newton convergence test          */
   sunrealtype ida_epcon; /* coefficient of the Newton convergence test          */
   sunrealtype ida_toldel; /* tolerance in direct test on Newton corrections    */
 
   sunrealtype ida_ssS; /* scalar ss for staggered sensitivities             */
+  sunrealtype ida_delnrmS; /* norm of current staggered sensitivity update      */
 
   /*------
     Limits

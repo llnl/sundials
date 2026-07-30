@@ -1,5 +1,6 @@
 # /
 /.cache
+/.agents/scratch
 /.project
 /builddir
 /build*
@@ -85,9 +86,7 @@ uberenv_libs
 # swig
 /swig/swig
 
-# tools
-/tools/suntools/__pycache__
-
 # python
 .pytest_cache
 __pycache__
+*.egg-info

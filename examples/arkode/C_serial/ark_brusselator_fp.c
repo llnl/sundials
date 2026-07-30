@@ -124,11 +124,8 @@ int main(int argc, char* argv[])
   flag = SUNLogger_Create(SUN_COMM_NULL, 0, &logger);
   if (check_flag(&flag, "SUNLogger_Create", 1)) { return 1; }
 
-  if (monitor)
-  {
-    flag = SUNLogger_SetInfoFilename(logger, info_fname);
-    if (check_flag(&flag, "SUNLogger_SetInfoFilename", 1)) { return 1; }
-  }
+  flag = SUNLogger_SetInfoFilename(logger, monitor ? info_fname : NULL);
+  if (check_flag(&flag, "SUNLogger_SetInfoFilename", 1)) { return 1; }
 
   flag = SUNContext_SetLogger(ctx, logger);
   if (check_flag(&flag, "SUNContext_SetLogger", 1)) { return 1; }
