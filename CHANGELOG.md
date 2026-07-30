@@ -6,6 +6,9 @@
 
 ### New Features and Enhancements
 
+Added the `SUNDIALS_ENABLE_DEPRECATED_WARNINGS` CMake option to allow users to
+disable compiler warnings emitted by deprecated SUNDIALS API annotations.
+
 ### Bug Fixes
 
 ### Deprecation Notices
