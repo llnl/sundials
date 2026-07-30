@@ -208,6 +208,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: nvgetarraypointer
   type(C_FUNPTR), public :: nvgetdevicearraypointer
   type(C_FUNPTR), public :: nvsetarraypointer
+  type(C_FUNPTR), public :: nvsetdevicearraypointer
   type(C_FUNPTR), public :: nvgetcommunicator
   type(C_FUNPTR), public :: nvgetlength
   type(C_FUNPTR), public :: nvgetlocallength
@@ -4136,8 +4137,8 @@ subroutine FN_VSetDeviceArrayPointer(d_vdata_1d, v)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE), dimension(*), target, intent(inout) :: d_vdata_1d
 type(N_Vector), target, intent(inout) :: v
-type(C_PTR) :: farg1
-type(C_PTR) :: farg2
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
 
 farg1 = c_loc(d_vdata_1d(1))
 farg2 = c_loc(v)
