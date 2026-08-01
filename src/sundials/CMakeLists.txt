@@ -169,10 +169,12 @@ endif()
 include(GenerateExportHeader)
 generate_export_header(
   sundials_core
-  BASE_NAME SUNDIALS
+  BASE_NAME
+  SUNDIALS
   # Rename the deprecated macro so it is not used on accident since it does not
   # support a message. SUNDIALS_DEPRECATED_EXPORT_MSG should be used instead.
-  DEPRECATED_MACRO_NAME SUNDIALS_DEPRECATED_ATTRIBUTE
+  DEPRECATED_MACRO_NAME
+  SUNDIALS_DEPRECATED_ATTRIBUTE
   EXPORT_FILE_NAME
   "${PROJECT_BINARY_DIR}/include/sundials/sundials_export.h")
 
