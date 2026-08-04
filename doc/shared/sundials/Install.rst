@@ -4138,6 +4138,29 @@ to link to the library below when using those packages.
    | CMake target | ``SUNDIALS::sunnonlinsolfixedpoint``         |
    +--------------+----------------------------------------------+
 
+.. _Installation.LibrariesAndHeaders.NonlinearSolver.Auto:
+
+Auto
+""""
+
+To use the :ref:`automatic-switching SUNNonlinearSolver <SUNNonlinSol.Auto>`,
+include the header file and link to the library given below.
+
+When using SUNDIALS time integration packages, the Auto SUNNonlinearSolver is
+bundled with the package library and it is not necessary to link to the library
+below when using those packages.
+
+.. table:: The Auto SUNNonlinearSolver library, header file, and CMake target
+   :align: center
+
+   +--------------+----------------------------------------------+
+   | Libraries    | ``libsundials_sunnonlinsolauto.LIB``         |
+   +--------------+----------------------------------------------+
+   | Headers      | ``sunnonlinsol/sunnonlinsol_auto.h``         |
+   +--------------+----------------------------------------------+
+   | CMake target | ``SUNDIALS::sunnonlinsolauto``               |
+   +--------------+----------------------------------------------+
+
 .. _Installation.LibrariesAndHeaders.NonlinearSolver.PETScSNES:
 
 PETSc SNES

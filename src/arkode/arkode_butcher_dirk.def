@@ -38,12 +38,16 @@
      imeth                              type  A-stable  L-stable  QP
     -----------------------------------------------------------------
      ARKODE_BACKWARD_EULER_1_1         SDIRK     Y         Y       Y
-     ARKODE_SDIRK_2_1_2                SDIRK     Y         N       Y
-     ARKODE_ARK2_DIRK_3_1_2           ESDIRK     Y         Y       Y
      ARKODE_IMPLICIT_MIDPOINT_1_2      SDIRK     Y         N       Y
      ARKODE_IMPLICIT_TRAPEZOIDAL_2_2  ESDIRK     Y         N       Y
+     ARKODE_SDIRK_2_1_2                SDIRK     Y         N       Y
+     ARKODE_ARK2_DIRK_3_1_2*          ESDIRK     Y         Y       Y
+     ARKODE_ASCHER_SDIRK_3_1_2*        SDIRK     Y         Y       Y
+     ARKODE_SSP_DIRK_3_1_2*             DIRK     Y         N       Y
      ARKODE_BILLINGTON_3_3_2           SDIRK     N         N       Y
      ARKODE_TRBDF2_3_3_2              ESDIRK     N         N       Y
+     ARKODE_SSP_LSPUM_SDIRK_3_1_2*     SDIRK     Y         Y       Y
+     ARKODE_ESDIRK_4_2_3*             ESDIRK     Y         Y       Y
      ARKODE_KVAERNO_4_2_3             ESDIRK     Y         Y       Y
      ARKODE_ARK324L2SA_DIRK_4_2_3*    ESDIRK     Y         Y       Y
      ARKODE_ESDIRK324L2SA_4_2_3       ESDIRK     Y         Y       Y
@@ -107,13 +111,13 @@ ARK_BUTCHER_TABLE(ARKODE_ARK2_DIRK_3_1_2, { /* ARK2 Implicit Table (A,L stable) 
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
 
     /* 1 - 1 / sqrt(2) */
-    const sunrealtype gamma = SUN_RCONST(1.0) - SUN_RCONST(1.0) / SUNRsqrt(SUN_RCONST(2.0));
+    const sunrealtype gamma = SUN_RCONST(0.29289321881345247559915563789515096071516);
     /* 1 / (2 sqrt(2)) */
-    const sunrealtype delta = SUN_RCONST(1.0) / (SUN_RCONST(2.0) * SUNRsqrt(SUN_RCONST(2.0)));
+    const sunrealtype delta = SUN_RCONST(0.3535533905932737622004221810524245196424);
     /* 2 - sqrt(2) */
-    const sunrealtype twogamma = SUN_RCONST(2.0) - SUNRsqrt(SUN_RCONST(2.0));
+    const sunrealtype twogamma = SUN_RCONST(2.0)*gamma;
     /* (4 - sqrt(2)) / 8 */
-    const sunrealtype beta = (SUN_RCONST(4.0) - SUNRsqrt(SUN_RCONST(2.0))) / SUN_RCONST(8.0);
+    const sunrealtype beta = SUN_RCONST(0.3232233047033631188997889094737877401788);
 
     B->q = 2;
     B->p = 1;
@@ -130,11 +134,57 @@ ARK_BUTCHER_TABLE(ARKODE_ARK2_DIRK_3_1_2, { /* ARK2 Implicit Table (A,L stable) 
 
     B->d[0] = beta;
     B->d[1] = beta;
-    B->d[2] = SUN_RCONST(1.0) / (SUN_RCONST(2.0) * SUNRsqrt(SUN_RCONST(2.0)));
+    B->d[2] = delta;
 
     B->c[1] = twogamma;
     B->c[2] = SUN_RCONST(1.0);
 
+    return B;
+  })
+
+ARK_BUTCHER_TABLE(ARKODE_ASCHER_SDIRK_3_1_2, { /* https://doi.org/10.1016/S0168-9274(97)00056-1 (custom embedding) */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
+    const sunrealtype gamma = SUN_RCONST(0.29289321881345247559915563789515096071516);
+    B->q = 2;
+    B->p = 1;
+    B->A[1][1] = gamma;
+    B->A[2][1] = SUN_RCONST(1.0)-gamma;
+    B->A[2][2] = gamma;
+
+    B->b[1] = SUN_RCONST(1.0)-gamma;
+    B->b[2] = gamma;
+
+    B->d[1] = SUN_RCONST(3.0)/SUN_RCONST(5.0);
+    B->d[2] = SUN_RCONST(2.0)/SUN_RCONST(5.0);
+
+    B->c[1] = gamma;
+    B->c[2] = SUN_RCONST(1.0);
+    return B;
+  })
+
+ARK_BUTCHER_TABLE(ARKODE_SSP_DIRK_3_1_2, { /* https://doi.org/10.1007/BF02728986 (custom embedding) */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
+
+    B->q = 2;
+    B->p = 1;
+
+    B->A[0][0] = SUN_RCONST(0.25);
+    B->A[1][1] = SUN_RCONST(0.25);
+    B->A[2][0] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->A[2][1] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->A[2][2] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+
+    B->b[0] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->b[1] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->b[2] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+
+    B->d[0] = SUN_RCONST(7.0)/SUN_RCONST(30.0);
+    B->d[1] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->d[2] = SUN_RCONST(13.0)/SUN_RCONST(30.0);
+
+    B->c[0] = SUN_RCONST(0.25);
+    B->c[1] = SUN_RCONST(0.25);
+    B->c[2] = SUN_RCONST(1.0);
     return B;
   })
 
@@ -213,6 +263,66 @@ ARK_BUTCHER_TABLE(ARKODE_TRBDF2_3_3_2, { /* TRBDF2-ESDIRK */
 
     B->c[1] = SUN_RCONST(2.0)-SUNRsqrt(SUN_RCONST(2.0));
     B->c[2] = SUN_RCONST(1.0);
+    return B;
+  })
+
+ARK_BUTCHER_TABLE(ARKODE_SSP_LSPUM_SDIRK_3_1_2, {
+    /* Method from https://doi.org/10.1016/j.cam.2014.05.011 */
+    /* Custom embedding */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
+    B->q = 2;
+    B->p = 1;
+
+    B->A[0][0] = SUN_RCONST(2.0)/SUN_RCONST(11.0);
+    B->A[1][0] = SUN_RCONST(205.0)/SUN_RCONST(462.0);
+    B->A[1][1] = SUN_RCONST(2.0)/SUN_RCONST(11.0);
+    B->A[2][0] = SUN_RCONST(2033.0)/SUN_RCONST(4620.0);
+    B->A[2][1] = SUN_RCONST(21.0)/SUN_RCONST(110.0);
+    B->A[2][2] = SUN_RCONST(2.0)/SUN_RCONST(11.0);
+
+    B->b[0] = SUN_RCONST(24.0)/SUN_RCONST(55.0);
+    B->b[1] = SUN_RCONST(1.0)/SUN_RCONST(5.0);
+    B->b[2] = SUN_RCONST(4.0)/SUN_RCONST(11.0);
+
+    B->d[0] = SUN_RCONST(4247.0)/SUN_RCONST(9840.0);
+    B->d[1] = SUN_RCONST(21343.0)/SUN_RCONST(108240.0);
+    B->d[2] = SUN_RCONST(49.0)/SUN_RCONST(132.0);
+
+    B->c[0] = SUN_RCONST(2.0)/SUN_RCONST(11.0);
+    B->c[1] = SUN_RCONST(289.0)/SUN_RCONST(462.0);
+    B->c[2] = SUN_RCONST(751.0)/SUN_RCONST(924.0);
+    return B;
+  })
+
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK_4_2_3, { /* custom */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(4, SUNTRUE);
+    sunrealtype gam = SUN_RCONST(0.43586652150845899941601945119355684);
+
+    B->q = 3;
+    B->p = 2;
+    B->A[1][0] = SUN_RCONST(0.064133478491541000583980548806443157);
+    B->A[1][1] = gam;
+    B->A[2][0] = SUN_RCONST(0.39641166139746771164632267806938966);
+    B->A[2][1] = SUN_RCONST(0.16772181709407328893765787073705349);
+    B->A[2][2] = gam;
+    B->A[3][0] = -SUN_RCONST(0.49838612606484063319986117825862669);
+    B->A[3][1] = SUN_RCONST(1.3860128578277056960456083134296045);
+    B->A[3][2] = -SUN_RCONST(0.8234932532713240622617665863645347);
+    B->A[3][3] = gam;
+
+    B->b[0] = SUN_RCONST(1.0)/SUN_RCONST(6.0);
+    B->b[1] = SUN_RCONST(1.0)/SUN_RCONST(6.0);
+    B->b[2] = SUN_RCONST(1.0)/SUN_RCONST(6.0);
+    B->b[3] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
+
+    B->d[0] = SUN_RCONST(1.0)/SUN_RCONST(4.0);
+    B->d[1] = SUN_RCONST(1.0)/SUN_RCONST(4.0);
+    B->d[2] = SUN_RCONST(1.0)/SUN_RCONST(4.0);
+    B->d[3] = SUN_RCONST(1.0)/SUN_RCONST(4.0);
+
+    B->c[1] = SUN_RCONST(0.5);
+    B->c[2] = SUN_RCONST(1.0);
+    B->c[3] = SUN_RCONST(0.5);
     return B;
   })
 

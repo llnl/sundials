@@ -479,13 +479,13 @@ m.def(
 
 m.def(
   "ARKodeGetRootInfo",
-  [](void* arkode_mem, std::vector<int> rootsfound_1d) -> int
+  [](void* arkode_mem, sundials4py::IntArray1d rootsfound_1d) -> int
   {
     auto ARKodeGetRootInfo_adapt_arr_ptr_to_std_vector =
-      [](void* arkode_mem, std::vector<int> rootsfound_1d) -> int
+      [](void* arkode_mem, sundials4py::IntArray1d rootsfound_1d) -> int
     {
-      int* rootsfound_1d_ptr = rootsfound_1d.empty() ? nullptr
-                                                     : rootsfound_1d.data();
+      int* rootsfound_1d_ptr = rootsfound_1d.size() == 0 ? nullptr
+                                                         : rootsfound_1d.data();
 
       auto lambda_result = ARKodeGetRootInfo(arkode_mem, rootsfound_1d_ptr);
       return lambda_result;
@@ -1621,6 +1621,12 @@ auto pyEnumARKODE_ERKTableID =
            ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2, "")
     .value("ARKODE_RALSTON_3_1_2", ARKODE_RALSTON_3_1_2, "")
     .value("ARKODE_TSITOURAS_7_4_5", ARKODE_TSITOURAS_7_4_5, "")
+    .value("ARKODE_SSP_ERK_3_1_2", ARKODE_SSP_ERK_3_1_2, "")
+    .value("ARKODE_SSP_ERK_4_1_2", ARKODE_SSP_ERK_4_1_2, "")
+    .value("ARKODE_SSP_ERK_4_2_3", ARKODE_SSP_ERK_4_2_3, "")
+    .value("ARKODE_SSP_ERK_10_3_4", ARKODE_SSP_ERK_10_3_4, "")
+    .value("ARKODE_SSP_LSPUM_ERK_3_1_2", ARKODE_SSP_LSPUM_ERK_3_1_2, "")
+    .value("ARKODE_ASCHER_ERK_3_1_2", ARKODE_ASCHER_ERK_3_1_2, "")
     .value("ARKODE_MAX_ERK_NUM", ARKODE_MAX_ERK_NUM, "")
     .export_values();
 // #ifndef SWIG
@@ -1712,6 +1718,10 @@ auto pyEnumARKODE_DIRKTableID =
     .value("ARKODE_BACKWARD_EULER_1_1", ARKODE_BACKWARD_EULER_1_1, "")
     .value("ARKODE_IMPLICIT_MIDPOINT_1_2", ARKODE_IMPLICIT_MIDPOINT_1_2, "")
     .value("ARKODE_IMPLICIT_TRAPEZOIDAL_2_2", ARKODE_IMPLICIT_TRAPEZOIDAL_2_2, "")
+    .value("ARKODE_SSP_DIRK_3_1_2", ARKODE_SSP_DIRK_3_1_2, "")
+    .value("ARKODE_SSP_LSPUM_SDIRK_3_1_2", ARKODE_SSP_LSPUM_SDIRK_3_1_2, "")
+    .value("ARKODE_ESDIRK_4_2_3", ARKODE_ESDIRK_4_2_3, "")
+    .value("ARKODE_ASCHER_SDIRK_3_1_2", ARKODE_ASCHER_SDIRK_3_1_2, "")
     .value("ARKODE_MAX_DIRK_NUM", ARKODE_MAX_DIRK_NUM, "")
     .export_values();
 // #ifndef SWIG

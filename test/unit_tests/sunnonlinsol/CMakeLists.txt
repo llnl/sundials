@@ -23,6 +23,7 @@ if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
 endif()
 
 # Always add the Newton and fixed point examples
+add_subdirectory(auto)
 add_subdirectory(newton)
 add_subdirectory(fixedpoint)
 

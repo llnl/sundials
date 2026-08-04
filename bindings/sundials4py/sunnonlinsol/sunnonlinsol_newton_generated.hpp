@@ -50,6 +50,29 @@ m.def(
   },
   nb::arg("count"), nb::arg("y"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
   nb::keep_alive<0, 3>());
+
+m.def("SUNNonlinSolSetComputeStiffnessRatio_Newton",
+      SUNNonlinSolSetComputeStiffnessRatio_Newton, nb::arg("NLS"),
+      nb::arg("onoff"));
+
+m.def(
+  "SUNNonlinSolGetStiffnessRatio_Newton",
+  [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNNonlinSolGetStiffnessRatio_Newton_adapt_modifiable_immutable_to_return =
+      [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
+    {
+      sunrealtype stiffr_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNNonlinSolGetStiffnessRatio_Newton(NLS, &stiffr_adapt_modifiable);
+      return std::make_tuple(r, stiffr_adapt_modifiable);
+    };
+
+    return SUNNonlinSolGetStiffnessRatio_Newton_adapt_modifiable_immutable_to_return(
+      NLS);
+  },
+  nb::arg("NLS"));
 // #ifdef __cplusplus
 //
 // #endif

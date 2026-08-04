@@ -567,13 +567,13 @@ m.def(
 
 m.def(
   "IDAGetRootInfo",
-  [](void* ida_mem, std::vector<int> rootsfound_1d) -> int
+  [](void* ida_mem, sundials4py::IntArray1d rootsfound_1d) -> int
   {
     auto IDAGetRootInfo_adapt_arr_ptr_to_std_vector =
-      [](void* ida_mem, std::vector<int> rootsfound_1d) -> int
+      [](void* ida_mem, sundials4py::IntArray1d rootsfound_1d) -> int
     {
-      int* rootsfound_1d_ptr = rootsfound_1d.empty() ? nullptr
-                                                     : rootsfound_1d.data();
+      int* rootsfound_1d_ptr = rootsfound_1d.size() == 0 ? nullptr
+                                                         : rootsfound_1d.data();
 
       auto lambda_result = IDAGetRootInfo(ida_mem, rootsfound_1d_ptr);
       return lambda_result;

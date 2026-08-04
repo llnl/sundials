@@ -66,20 +66,24 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   SUNAssertNull(ops, SUN_ERR_MALLOC_FAIL);
 
   /* initialize operations to NULL */
-  ops->gettype         = NULL;
-  ops->initialize      = NULL;
-  ops->setup           = NULL;
-  ops->solve           = NULL;
-  ops->free            = NULL;
-  ops->setsysfn        = NULL;
-  ops->setlsetupfn     = NULL;
-  ops->setlsolvefn     = NULL;
-  ops->setctestfn      = NULL;
-  ops->setoptions      = NULL;
-  ops->setmaxiters     = NULL;
-  ops->getnumiters     = NULL;
-  ops->getcuriter      = NULL;
-  ops->getnumconvfails = NULL;
+  ops->gettype            = NULL;
+  ops->initialize         = NULL;
+  ops->setup              = NULL;
+  ops->solve              = NULL;
+  ops->free               = NULL;
+  ops->setsysfn           = NULL;
+  ops->setsysfns          = NULL;
+  ops->setlsetupfn        = NULL;
+  ops->setlsolvefn        = NULL;
+  ops->setctestfn         = NULL;
+  ops->setnormfn          = NULL;
+  ops->setgetupdatenormfn = NULL;
+  ops->setgetconvratefn   = NULL;
+  ops->setoptions         = NULL;
+  ops->setmaxiters        = NULL;
+  ops->getnumiters        = NULL;
+  ops->getcuriter         = NULL;
+  ops->getnumconvfails    = NULL;
 
   /* attach context and ops, initialize content to NULL */
   NLS->sunctx  = sunctx;
@@ -230,6 +234,18 @@ SUNErrCode SUNNonlinSolSetSysFn(SUNNonlinearSolver NLS, SUNNonlinSolSysFn SysFn)
   return (NLS->ops->setsysfn(NLS, SysFn));
 }
 
+/* set both the root and fixed-point system functions (optional) */
+SUNErrCode SUNNonlinSolSetSysFns(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolSysFn root_fn,
+                                 SUNNonlinSolSysFn fixed_point_fn)
+{
+  if (NLS->ops->setsysfns)
+  {
+    return (NLS->ops->setsysfns(NLS, root_fn, fixed_point_fn));
+  }
+  else { return SUN_SUCCESS; }
+}
+
 /* set the linear solver setup function (optional) */
 SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS,
                                    SUNNonlinSolLSetupFn LSetupFn)
@@ -256,6 +272,51 @@ SUNErrCode SUNNonlinSolSetConvTestFn(SUNNonlinearSolver NLS,
     return (NLS->ops->setctestfn(NLS, CTestFn, ctest_data));
   }
   else { return (SUN_SUCCESS); }
+}
+
+SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolNormFn NormFn, void* norm_fn_data)
+{
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (NLS->ops->setnormfn)
+  {
+    return (NLS->ops->setnormfn(NLS, NormFn, norm_fn_data));
+  }
+
+  return (SUN_SUCCESS);
+}
+
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver NLS,
+                                          SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+                                          void* getupdatenorm_data)
+{
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (NLS->ops->setgetupdatenormfn)
+  {
+    return (
+      NLS->ops->setgetupdatenormfn(NLS, GetUpdateNormFn, getupdatenorm_data));
+  }
+
+  return (SUN_SUCCESS);
+}
+
+SUNErrCode SUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolGetConvRateFn GetConvRateFn,
+                                        void* getconvrate_data)
+{
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (NLS->ops->setgetconvratefn)
+  {
+    return (NLS->ops->setgetconvratefn(NLS, GetConvRateFn, getconvrate_data));
+  }
+
+  return (SUN_SUCCESS);
 }
 
 SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,

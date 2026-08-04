@@ -19,7 +19,7 @@ jobs:
     name: Build SDist
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
@@ -47,11 +47,11 @@ jobs:
       if: contains(matrix.os, 'macos')
       run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> "$GITHUB_ENV"
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
-    - uses: pypa/cibuildwheel@v3.4
+    - uses: pypa/cibuildwheel@v4.1
       env:
         # Default (Linux/macOS): install matplotlib and run both test suites
         CIBW_TEST_REQUIRES: "pytest matplotlib"
@@ -82,12 +82,12 @@ jobs:
       if: contains(matrix.os, 'macos')
       run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> "$GITHUB_ENV"
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
     # Double precision - run all tests
-    - uses: pypa/cibuildwheel@v3.4
+    - uses: pypa/cibuildwheel@v4.1
       if: matrix.precision == 'double'
       env:
         CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
@@ -95,7 +95,7 @@ jobs:
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test {project}/examples/python"
 
     # Single precision - skip examples
-    - uses: pypa/cibuildwheel@v3.4
+    - uses: pypa/cibuildwheel@v4.1
       if: matrix.precision == 'single'
       env:
         CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
@@ -114,4 +114,4 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         path: wheelhouse/*.whl
-        name: dist-extra-${{ matrix.os }}-${{ matrix.precision }}-${{ matrix.index }}
+        name: extra-dist-${{ matrix.os }}-${{ matrix.precision }}-${{ matrix.index }}

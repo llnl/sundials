@@ -31,7 +31,7 @@ jobs:
             texlive-plain-generic
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install python dependencies
         run: |
@@ -89,7 +89,7 @@ jobs:
             texlive-plain-generic
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install python dependencies
         run: |
@@ -150,7 +150,7 @@ jobs:
             texlive-plain-generic
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install sphinx
         run: |
@@ -197,7 +197,7 @@ jobs:
             texlive-plain-generic
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build docs
         run: cd doc/${{matrix.package}} && make ex

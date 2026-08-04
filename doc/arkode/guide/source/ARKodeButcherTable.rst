@@ -171,7 +171,7 @@ ARKodeButcherTable functions
       * The name associated with *emethod*.
       * ``NULL`` pointer if *emethod* was invalid.
    
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 .. c:function:: ARKodeButcherTable ARKodeButcherTable_LoadDIRK(ARKODE_DIRKTableID imethod)
 
@@ -222,7 +222,7 @@ ARKodeButcherTable functions
       * The name associated with *imethod*.
       * ``NULL`` pointer if *imethod* was invalid.
    
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: ARKodeButcherTable ARKodeButcherTable_Alloc(int stages, sunbooleantype embedded)
@@ -288,7 +288,7 @@ ARKodeButcherTable functions
       * *ARK_SUCCESS* if successful.
       * *ARK_MEM_NULL* if the Butcher table memory was ``NULL``.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -322,7 +322,7 @@ ARKodeButcherTable functions
       * ``SUNTRUE`` if the method is "stiffly accurate", otherwise returns
         ``SUNFALSE``
 
-   .. versionadded:: v5.7.0
+   .. versionadded:: 6.7.0 (ARKODE 5.7.0)
 
 .. c:function:: int ARKodeButcherTable_CheckOrder(ARKodeButcherTable B, int* q, int* p, FILE* outfile)
 

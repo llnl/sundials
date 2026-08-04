@@ -25,7 +25,11 @@ set(sundomeigest_power_examples
     "test_sundomeigest_power\;100 100 0 0\;"
     "test_sundomeigest_power\;1000 100 0 0\;"
     "test_sundomeigest_power\;10000 100 0 0\;"
-    "test_sundomeigest_power\;100000 100 0 0\;")
+    "test_sundomeigest_power\;100000 100 0 0\;"
+    "test_sundomeigest_power_complex\;100 100 0 0\;"
+    "test_sundomeigest_power_complex\;1000 100 0 0\;"
+    "test_sundomeigest_power_complex\;10000 100 100 0\;"
+    "test_sundomeigest_power_complex\;100000 100 100 0\;")
 
 # Dependencies for dominant eigenvalue examples
 set(sundomeigest_power_dependencies test_sundomeigest)

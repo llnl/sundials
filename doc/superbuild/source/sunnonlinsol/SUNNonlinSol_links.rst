@@ -15,4 +15,5 @@
 
 .. include:: ../../../shared/sunnonlinsol/SUNNonlinSol_Newton.rst
 .. include:: ../../../shared/sunnonlinsol/SUNNonlinSol_FixedPoint.rst
+.. include:: ../../../shared/sunnonlinsol/SUNNonlinSol_Auto.rst
 .. include:: ../../../shared/sunnonlinsol/SUNNonlinSol_PetscSNES.rst

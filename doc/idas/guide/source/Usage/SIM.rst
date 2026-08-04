@@ -593,7 +593,7 @@ pertinent to their choice of linear solver.
       the documentation of the particular ``SUNMatrix`` in Chapter
       :numref:`SUNMatrix` for further information).
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDADlsSetLinearSolver``.
 
@@ -1012,7 +1012,7 @@ Main solver optional input functions
       File-based options are not yet supported, so the ``file_name`` argument
       should be set to either ``NULL`` or the empty string ``""``.
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (IDAS 6.5.0)
 
 .. c:function:: int IDASetUserData(void * ida_mem, void * user_data)
 
@@ -1123,7 +1123,7 @@ Main solver optional input functions
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.min_step".
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 .. c:function:: int IDASetMaxStep(void * ida_mem, sunrealtype hmax)
 
@@ -1192,7 +1192,7 @@ Main solver optional input functions
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.clear_stop_time".
 
-   .. versionadded:: 6.5.1
+   .. versionadded:: 7.5.1 (IDAS 6.5.1)
 
 .. c:function:: int IDASetMaxErrTestFails(void * ida_mem, int maxnef)
 
@@ -1308,7 +1308,7 @@ Main solver optional input functions
      * ``IDA_SUCCESS`` -- The optional value has been successfully set.
      * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionadded:: 6.6.0
+   .. versionadded:: 7.6.0 (IDAS 6.6.0)
 
 
 .. _IDAS.Usage.SIM.user_callable.optional_input.ls:
@@ -1390,7 +1390,7 @@ in the program. The pointer ``user_data`` may be specified through
       ``jac``, this default function is used.  An error will occur if no ``jac`` is
       supplied when using other matrix types.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDADlsSetJacFn``.
 
@@ -1427,7 +1427,7 @@ that updates the matrix using the current :math:`\alpha` as part of the solve.
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.delta_cj_lsetup".
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 .. c:function:: int IDASetLinearSolutionScaling(void * ida_mem, sunbooleantype onoff)
 
@@ -1504,7 +1504,7 @@ without using global data in the program.
       solver interface has been initialized through a call to
       :c:func:`IDASetLinearSolver`.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetJacTimes``.
 
@@ -1547,7 +1547,7 @@ finite-difference approximation, via a call to :c:func:`IDASetIncrementFactor`.
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.increment_factor".
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetIncrementFactor``.
 
@@ -1629,7 +1629,7 @@ global data in the program.
       function must be called after the IDALS linear solver interface has been
       initialized through a call to :c:func:`IDASetLinearSolver`.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetPreconditioner``.
 
@@ -1670,7 +1670,7 @@ where :math:`\epsilon` is the nonlinear solver tolerance, and the default
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.eps_lin".
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsSetEpsLin``.
 
@@ -2078,7 +2078,7 @@ step size adaptivity.
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.eta_fixed_step_bounds".
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 .. c:function:: int IDASetEtaMax(void* ida_mem, sunrealtype eta_max)
 
@@ -2099,7 +2099,7 @@ step size adaptivity.
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.eta_max".
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 .. c:function:: int IDASetEtaMin(void* ida_mem, sunrealtype eta_min)
 
@@ -2123,7 +2123,7 @@ step size adaptivity.
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.eta_min".
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 .. c:function:: int IDASetEtaLow(void* ida_mem, sunrealtype eta_low)
 
@@ -2147,7 +2147,7 @@ step size adaptivity.
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.eta_low".
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 .. c:function:: int IDASetEtaMinErrFail(void* ida_mem, sunrealtype eta_min_ef)
 
@@ -2171,7 +2171,7 @@ step size adaptivity.
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.eta_min_err_fail".
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 .. c:function:: int IDASetEtaConvFail(void* ida_mem, sunrealtype eta_cf)
 
@@ -2195,7 +2195,7 @@ step size adaptivity.
       This routine will be called by :c:func:`IDASetOptions`
       when using the key "idaid.eta_conv_fail".
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 
 .. _IDAS.Usage.SIM.user_callable.optional_input.root:
@@ -2507,7 +2507,7 @@ described next.
       sensitivity integration is enabled. See :numref:`IDAS.Usage.Purequad.quad_init`
       and :numref:`IDAS.Usage.FSA.user_callable.sensi_init` for more details.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (IDAS 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -2580,7 +2580,7 @@ described next.
       * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
       * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionchanged:: 6.6.0
+   .. versionchanged:: 7.6.0 (IDAS 6.6.0)
 
       In prior versions, inequality constraint failures were included with the
       number of step failures due to a nonlinear solver failure. These failures
@@ -2598,7 +2598,7 @@ described next.
       * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
       * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionadded:: 6.6.0
+   .. versionadded:: 7.6.0 (IDAS 6.6.0)
 
 .. c:function:: int IDAGetNumConstraintCorrections(void* ida_mem, long int* num_corrections_out)
 
@@ -2613,7 +2613,7 @@ described next.
       * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
       * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionadded:: 6.6.0
+   .. versionadded:: 7.6.0 (IDAS 6.6.0)
 
 .. c:function:: int IDAGetLastOrder(void * ida_mem, int * klast)
 
@@ -2844,7 +2844,7 @@ described next.
      * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
      * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
 
-   .. versionadded:: 5.3.0
+   .. versionadded:: 6.3.0 (IDAS 5.3.0)
 
 .. c:function:: int IDAPrintAllStats(void* ida_mem, FILE* outfile, SUNOutputFormat fmt)
 
@@ -2871,7 +2871,7 @@ described next.
       the data from a SUNDIALS CSV output file using the key and value pair
       format.
 
-   .. versionadded:: 5.2.0
+   .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
 .. c:function:: char* IDAGetReturnFlagName(long int flag)
 
@@ -3070,12 +3070,12 @@ The following optional outputs are available from the IDALS modules:
       ``SUNLinearSolver`` object attached to it.  The template Jacobian
       matrix allocated by the user outside of IDALS is not included in this report.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated functions ``IDADlsGetWorkspace`` and
       ``IDASpilsGetWorkspace``.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (IDAS 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -3093,7 +3093,7 @@ The following optional outputs are available from the IDALS modules:
       * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
       * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDADlsGetNumJacEvals``.
 
@@ -3117,7 +3117,7 @@ The following optional outputs are available from the IDALS modules:
       The value ``nrevalsLS`` is incremented only if one of the default internal
       difference quotient functions is used.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated functions ``IDADlsGetNumRhsEvals`` and
       ``IDASpilsGetNumRhsEvals``.
@@ -3136,7 +3136,7 @@ The following optional outputs are available from the IDALS modules:
       * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
       * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsGetNumLinIters``.
 
@@ -3154,7 +3154,7 @@ The following optional outputs are available from the IDALS modules:
       * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
       * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsGetNumConvFails``.
 
@@ -3172,7 +3172,7 @@ The following optional outputs are available from the IDALS modules:
       * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
       * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsGetNumPrecEvals``.
 
@@ -3190,7 +3190,7 @@ The following optional outputs are available from the IDALS modules:
       * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
       * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsGetNumPrecSolves``.
 
@@ -3208,7 +3208,7 @@ The following optional outputs are available from the IDALS modules:
       * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
       * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsGetNumJTSetupEvals``.
 
@@ -3226,7 +3226,7 @@ The following optional outputs are available from the IDALS modules:
       * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
       * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated function ``IDASpilsGetNumJtimesEvals``.
 
@@ -3266,7 +3266,7 @@ The following optional outputs are available from the IDALS modules:
       (SPGMR and SPFGMR only); or ``SUN_ERR_EXT_FAIL``, indicating an
       unrecoverable failure in an external iterative linear solver package.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated functions ``IDADlsGetLastFlag`` and
       ``IDASpilsGetLastFlag``.
@@ -3288,7 +3288,7 @@ The following optional outputs are available from the IDALS modules:
 
       The user is responsible for freeing the returned string.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated functions ``IDADlsGetReturnFlagName`` and
       ``IDASpilsGetReturnFlagName``.
@@ -3636,7 +3636,7 @@ user may provide a function of type :c:type:`IDALsJacFn` defined as follows:
       ``SUNMATRIX_SPARSE`` type and accessor macros are documented in
       :numref:`SUNMatrix.Sparse`.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDADlsJacFn``.
 
@@ -3693,7 +3693,7 @@ the default is a difference quotient approximation to these products.
       :numref:`IDAS.Usage.SIM.user_callable.optional_output.main`. The unit roundoff can be
       accessed as ``SUN_UNIT_ROUNDOFF`` defined in ``sundials_types.h``.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsJacTimesVecFn``.
 
@@ -3745,7 +3745,7 @@ follows:
       :numref:`IDAS.Usage.SIM.user_callable.optional_output.main`. The unit roundoff can be
       accessed as ``SUN_UNIT_ROUNDOFF`` defined in ``sundials_types.h``.
 
-   .. versionadded:: 3.0.0
+   .. versionadded:: 4.0.0 (IDAS 3.0.0)
 
       Replaces the deprecated type ``IDASpilsJacTimesSetupFn``
 
@@ -4631,7 +4631,7 @@ IDABBDPRE module:
       are local to each process.  The workspaces referred to here exist in addition
       to those given by the corresponding function :c:func:`IDAGetLinWorkSpace`.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (IDAS 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 

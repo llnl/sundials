@@ -22,10 +22,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Configure CMake
-      run: cmake -W error=dev -G "Visual Studio 17 2022" -B ${{github.workspace}}/build -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=ON -DEXAMPLES_ENABLE_CXX=ON
+      run: cmake -W error=dev -G "Visual Studio 18 2026" -A x64 -B ${{github.workspace}}/build -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=ON -DEXAMPLES_ENABLE_CXX=ON
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --verbose
@@ -33,3 +33,20 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+
+    - name: Archive build files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: build_files_msvc_${{ env.BUILD_TYPE }}
+        path: |
+          ${{ github.workspace }}/build
+          !${{ github.workspace }}/build/Testing/output
+
+    - name: Archive output files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: output_files_msvc_${{ env.BUILD_TYPE }}
+        path: |
+          ${{ github.workspace }}/build/Testing/

@@ -955,5 +955,215 @@ Fe RHS evals:
   expected: 26
 --------------------
 
+========================
+ARKODE_SSP_ERK_3_1_2
+  stages:             3
+  order:              2
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   3
+  expected: 3
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   6
+  expected: 6
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   9
+  expected: 9
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   10
+  expected: 10
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+
+========================
+ARKODE_SSP_ERK_4_1_2
+  stages:             4
+  order:              2
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   4
+  expected: 4
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   8
+  expected: 8
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   13
+  expected: 13
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   16
+  expected: 16
+--------------------
+
+========================
+ARKODE_SSP_ERK_4_2_3
+  stages:             4
+  order:              3
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   4
+  expected: 4
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   8
+  expected: 8
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   13
+  expected: 13
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   16
+  expected: 16
+--------------------
+
+========================
+ARKODE_SSP_ERK_10_3_4
+  stages:             10
+  order:              4
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   10
+  expected: 10
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   20
+  expected: 20
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   30
+  expected: 30
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   31
+  expected: 31
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   40
+  expected: 40
+--------------------
+
+========================
+ARKODE_SSP_LSPUM_ERK_3_1_2
+  stages:             3
+  order:              2
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   3
+  expected: 3
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   6
+  expected: 6
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   9
+  expected: 9
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   10
+  expected: 10
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+
+========================
+ARKODE_ASCHER_ERK_3_1_2
+  stages:             3
+  order:              2
+  explicit 1st stage: 1
+  stiffly accurate:   1
+  first same as last: 1
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   3
+  expected: 3
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   5
+  expected: 5
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   7
+  expected: 7
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   7
+  expected: 7
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   9
+  expected: 9
+--------------------
+
 
 All tests passed!

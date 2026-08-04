@@ -131,7 +131,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
    :return: A :c:type:`SplittingStepCoefficients` structure if successful or a
       ``NULL`` pointer if ``method`` was invalid or an allocation error occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 
@@ -149,7 +149,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
 
       This function is case sensitive.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: const char* SplittingStepCoefficients_IDToName(ARKODE_SplittingCoefficientsID method)
@@ -163,7 +163,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
    :return: A :c:type:`SplittingStepCoefficients` structure if successful or a
       ``NULL`` pointer if ``method`` was invalid or an allocation error occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_LieTrotter(int partitions)
@@ -176,7 +176,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if ``partitions`` was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_Strang(int partitions)
@@ -189,7 +189,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if ``partitions`` was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_Parallel(int partitions)
@@ -205,7 +205,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if ``partitions`` was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_SymmetricParallel(int partitions)
@@ -224,7 +224,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if ``partitions`` was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_ThirdOrderSuzuki(int partitions)
@@ -244,7 +244,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if ``partitions`` was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_TripleJump(int partitions, int order)
@@ -267,7 +267,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if an argument was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_SuzukiFractal(int partitions, int order)
@@ -291,7 +291,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if an argument was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_Alloc(int sequential_methods, int stages, int partitions)
@@ -306,7 +306,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if an argument was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_Create(int sequential_methods, int stages, int partitions, int order, sunrealtype* alpha, sunrealtype* beta)
@@ -343,7 +343,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       ``NULL`` pointer if an argument was invalid or an allocation error
       occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: SplittingStepCoefficients SplittingStepCoefficients_Copy(SplittingStepCoefficients coefficients)
@@ -354,7 +354,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
    :return: A :c:type:`SplittingStepCoefficients` structure if successful or a
       ``NULL`` pointer if an allocation error occurred.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: void SplittingStepCoefficients_Destroy(SplittingStepCoefficients* coefficients)
@@ -363,7 +363,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
 
    :param coefficients: A pointer to the splitting coefficients.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: void SplittingStepCoefficients_Write(SplittingStepCoefficients coefficients, FILE* outfile)
@@ -375,7 +375,7 @@ integer constants are defined ``arkode/arkode_splittingstep.h``.
       can be ``stdout`` or ``stderr``, or it may point to a specific file
       created using ``fopen``.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. _ARKODE.Usage.SplittingStep.SplittingStepCoefficients.Coefficients:

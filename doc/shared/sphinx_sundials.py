@@ -16,6 +16,17 @@
 # -----------------------------------------------------------------------------
 
 from sphinx.application import Sphinx
+from sphinx.domains.changeset import VersionChange
+
+
+class SundialsVersionChange(VersionChange):
+    def run(self):
+        # Join all arguments into the version string so the full text appears before the
+        # colon, e.g., "7.3.0 (ARKODE 6.3.0)". This requires the description to be on a
+        # different line from the version text.
+        self.arguments[0] = " ".join(self.arguments)
+        self.arguments = [self.arguments[0]]
+        return super().run()
 
 
 def source_replacements_handler(app, docname, source):
@@ -33,3 +44,7 @@ def setup(app: Sphinx):
     # This allows for replacing strings anywhere e.g., inside ..code-block instead of
     # just parsed-literal using rst_epilog
     app.connect("source-read", source_replacements_handler)
+    # Override the built-in directives
+    app.add_directive("versionchanged", SundialsVersionChange, override=True)
+    app.add_directive("versionadded", SundialsVersionChange, override=True)
+    app.add_directive("deprecated", SundialsVersionChange, override=True)

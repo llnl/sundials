@@ -235,6 +235,8 @@ and flushing behavior:
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
 
+   .. versionadded:: 7.8.0
+
 .. c:type:: SUNErrCode (*SUNLoggerFlushMsgFn)(SUNLogger logger, SUNLogLevel lvl, void* content)
 
    Function pointer type for custom message flushing implementations.
@@ -246,6 +248,8 @@ and flushing behavior:
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
+
+   .. versionadded:: 7.8.0
 
 The :c:type:`SUNLogger` class provides the following methods.
 
@@ -493,6 +497,8 @@ The :c:type:`SUNLogger` class provides the following methods.
 
    **Returns:**
       * Returns zero if successful, or non-zero if an error occurred.
+
+   .. versionadded:: 7.8.0
 
 .. c:function:: SUNErrCode SUNLogger_GetOutputRank(SUNLogger logger, int* output_rank)
 

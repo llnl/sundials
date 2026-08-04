@@ -42,20 +42,38 @@ struct SUNStepperFunctionTable
   nb::object get_num_steps;
 };
 
-template<typename... Args>
-inline SUNErrCode sunstepper_evolve_wrapper(Args... args)
+using SUNStepperEvolveStdFn = std::tuple<int, sunrealtype>(SUNStepper stepper,
+                                                           sunrealtype tout,
+                                                           N_Vector vret);
+
+inline int sunstepper_evolve_wrapper(SUNStepper stepper, sunrealtype tout,
+                                     N_Vector vret, sunrealtype* tret)
 {
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<SUNStepperEvolveFn>, SUNStepperFunctionTable,
-    SUNStepper>(&SUNStepperFunctionTable::evolve, std::forward<Args>(args)...);
+  auto fn_table = static_cast<SUNStepperFunctionTable*>(stepper->python);
+  auto fn = nb::cast<std::function<SUNStepperEvolveStdFn>>(fn_table->evolve);
+
+  auto result = fn(stepper, tout, vret);
+
+  *tret = std::get<1>(result);
+
+  return std::get<0>(result);
 }
 
-template<typename... Args>
-inline SUNErrCode sunstepper_one_step_wrapper(Args... args)
+using SUNStepperOneStepStdFn = std::tuple<int, sunrealtype>(SUNStepper stepper,
+                                                            sunrealtype tout,
+                                                            N_Vector vret);
+
+inline int sunstepper_one_step_wrapper(SUNStepper stepper, sunrealtype tout,
+                                       N_Vector vret, sunrealtype* tret)
 {
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<SUNStepperOneStepFn>, SUNStepperFunctionTable,
-    SUNStepper>(&SUNStepperFunctionTable::one_step, std::forward<Args>(args)...);
+  auto fn_table = static_cast<SUNStepperFunctionTable*>(stepper->python);
+  auto fn = nb::cast<std::function<SUNStepperOneStepStdFn>>(fn_table->one_step);
+
+  auto result = fn(stepper, tout, vret);
+
+  *tret = std::get<1>(result);
+
+  return std::get<0>(result);
 }
 
 template<typename... Args>

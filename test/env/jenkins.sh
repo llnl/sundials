@@ -124,6 +124,7 @@ export SUNDIALS_PROFILING=ON
 
 # Sundials logging
 export SUNDIALS_LOGGING_LEVEL=3
+export SUNLOGGER_INFO_FILENAME=""
 
 # Uncomment to override the default output file comparison precisions. The float
 # precision is number of digits to compare (0 = all digits) and the integer

@@ -48,7 +48,7 @@ extern "C" {
 #define CRDOWN SUN_RCONST(0.3)
 /*   if |gamma/gammap-1| > DGMAX then call lsetup */
 #define DGMAX SUN_RCONST(0.2)
-/*   declare divergence if ratio del/delp > RDIV */
+/*   declare divergence if ratio delnrm/delnrm_p > RDIV */
 #define RDIV SUN_RCONST(2.3)
 /*   max no. of steps between lsetup calls */
 #define MSBP 20
@@ -106,9 +106,10 @@ typedef struct ARKodeMRIStepMemRec
   sunrealtype dgmax;      /* call lsetup if |gamma/gammap-1| >= dgmax */
   int predictor;          /* implicit prediction method to use        */
   sunrealtype crdown;     /* nonlinear conv rate estimation constant  */
-  sunrealtype rdiv;       /* nonlin divergence if del/delp > rdiv     */
+  sunrealtype rdiv;       /* nonlin divergence if delnrm/delnrm_p > rdiv     */
   sunrealtype crate;      /* estimated nonlin convergence rate        */
-  sunrealtype delp;       /* norm of previous nonlinear solver update */
+  sunrealtype delnrm_p;   /* norm of previous nonlinear solver update */
+  sunrealtype delnrm;     /* norm of current nonlinear solver update  */
   sunrealtype eRNrm;      /* estimated residual norm, used in nonlin
                              and linear solver convergence tests      */
   sunrealtype nlscoef;    /* coefficient in nonlin. convergence test  */

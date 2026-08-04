@@ -32,9 +32,14 @@ using namespace sundials::experimental;
 struct SUNNonlinearSolverFunctionTable
 {
   nb::object sysfn;
+  nb::object rootsysfn;
+  nb::object fixedpointsysfn;
   nb::object lsetupfn;
   nb::object lsolvefn;
   nb::object convtestfn;
+  nb::object normfn;
+  nb::object getupdatenormfn;
+  nb::object getconvratefn;
 };
 
 template<typename... Args>
@@ -43,6 +48,23 @@ inline int sunnonlinearsolver_sysfn_wrapper(Args... args)
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<SUNNonlinSolSysFn>, SUNNonlinearSolverFunctionTable,
     1>(&SUNNonlinearSolverFunctionTable::sysfn, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline int sunnonlinearsolver_rootsysfn_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNNonlinSolSysFn>, SUNNonlinearSolverFunctionTable,
+    1>(&SUNNonlinearSolverFunctionTable::rootsysfn, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline int sunnonlinearsolver_fixedpointsysfn_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNNonlinSolSysFn>, SUNNonlinearSolverFunctionTable,
+    1>(&SUNNonlinearSolverFunctionTable::fixedpointsysfn,
+       std::forward<Args>(args)...);
 }
 
 using SUNNonlinSolLSetupStdFn = std::tuple<int, sunbooleantype>(sunbooleantype jbad,
@@ -57,6 +79,57 @@ inline int sunnonlinearsolver_lsetupfn_wrapper(sunbooleantype jbad,
   auto result = fn(jbad, nullptr);
 
   *jcur = std::get<1>(result);
+
+  return std::get<0>(result);
+}
+
+using SUNNonlinSolConvRateStdFn = std::tuple<SUNErrCode, sunrealtype>(void* mem);
+
+using SUNNonlinSolNormStdFn = std::tuple<SUNErrCode, sunrealtype>(N_Vector del,
+                                                                  N_Vector w,
+                                                                  void* mem);
+
+inline int sunnonlinearsolver_normfn_wrapper(N_Vector del, N_Vector w,
+                                             sunrealtype* delnrm, void* mem)
+{
+  auto fn_table = static_cast<SUNNonlinearSolverFunctionTable*>(mem);
+  auto fn = nb::cast<std::function<SUNNonlinSolNormStdFn>>(fn_table->normfn);
+
+  auto result = fn(del, w, nullptr);
+
+  *delnrm = std::get<1>(result);
+
+  return std::get<0>(result);
+}
+
+using SUNNonlinSolGetUpdateNormStdFn =
+  std::tuple<SUNErrCode, sunrealtype>(void* mem);
+
+inline int sunnonlinearsolver_getupdatenormfn_wrapper(sunrealtype* delnrm,
+                                                      void* mem)
+{
+  auto fn_table = static_cast<SUNNonlinearSolverFunctionTable*>(mem);
+  auto fn       = nb::cast<std::function<SUNNonlinSolGetUpdateNormStdFn>>(
+    fn_table->getupdatenormfn);
+
+  auto result = fn(nullptr);
+
+  *delnrm = std::get<1>(result);
+
+  return std::get<0>(result);
+}
+
+using SUNNonlinSolGetConvRateStdFn = std::tuple<SUNErrCode, sunrealtype>(void* mem);
+
+inline int sunnonlinearsolver_getconvratefn_wrapper(sunrealtype* crate, void* mem)
+{
+  auto fn_table = static_cast<SUNNonlinearSolverFunctionTable*>(mem);
+  auto fn       = nb::cast<std::function<SUNNonlinSolGetConvRateStdFn>>(
+    fn_table->getconvratefn);
+
+  auto result = fn(nullptr);
+
+  *crate = std::get<1>(result);
 
   return std::get<0>(result);
 }

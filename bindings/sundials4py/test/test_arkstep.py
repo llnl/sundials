@@ -62,6 +62,39 @@ def test_explicit(sunctx):
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)
 
 
+def test_arkstep_get_root_info_updates_numpy_array(sunctx):
+    y = N_VNew_Serial(1, sunctx)
+    yarr = N_VGetArrayPointer(y)
+    yarr[0] = 0.0
+
+    def rhs(t, yvec, ydotvec, _):
+        N_VGetArrayPointer(ydotvec)[0] = 1.0
+        return 0
+
+    def rootfn(t, yvec, gout, _):
+        gout[0] = N_VGetArrayPointer(yvec)[0] - 0.5
+        gout[1] = 1.0
+        return 0
+
+    ark = ARKStepCreate(rhs, None, 0.0, y, sunctx)
+
+    status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    assert status == ARK_SUCCESS
+
+    status = ARKodeRootInit(ark.get(), 2, rootfn)
+    assert status == ARK_SUCCESS
+
+    status, tret = ARKodeEvolve(ark.get(), 1.0, y, ARK_NORMAL)
+    assert status == ARK_ROOT_RETURN
+    assert tret > 0.0
+
+    rootsfound = np.zeros(2, dtype=np.intc)
+    status = ARKodeGetRootInfo(ark.get(), rootsfound)
+    assert status == ARK_SUCCESS
+    assert rootsfound[0] != 0
+    assert rootsfound[1] == 0
+
+
 def test_implicit(sunctx):
     y = N_VNew_Serial(1, sunctx)
     ls = SUNLinSol_SPGMR(y, 0, 0, sunctx)

@@ -21,6 +21,7 @@
 
 import re
 import json
+from typing import Iterable, List, Set
 
 
 def _convert_to_num(s):
@@ -111,6 +112,139 @@ def _parse_logfile_line(line, line_number, all_lines):
     return line_dict
 
 
+def _label_region_info(label):
+    """Return hierarchical region info derived from a SUNLogger label.
+
+    The `log_file_to_list` parser treats labels of the form:
+
+    - `begin-<region>` / `end-<region>` as dictionary regions
+    - `begin-<region>-list` / `end-<region>-list` as list-of-dicts regions
+
+    This helper centralizes the label parsing logic so other tools (e.g., the
+    `suntools` CLI) can stay consistent with :py:func:`log_file_to_list`.
+
+    :param str label: The SUNLogger label.
+    :returns: (event, region_name, is_list) where event is "begin", "end", or None.
+    :rtype: tuple
+    """
+    if not label:
+        return None, None, False
+
+    label_split = label.split("-")
+    if not label_split:
+        return None, None, False
+
+    event = label_split[0]
+    if event not in {"begin", "end"}:
+        return None, None, False
+
+    is_list = label_split[-1] == "list"
+    if is_list:
+        region_name = "-".join(label_split[1:-1])
+    else:
+        region_name = "-".join(label_split[1:])
+
+    return event, region_name, is_list
+
+
+def _split_filter_list(value: str) -> Set[str]:
+    parts = [p.strip().lower() for p in value.split(",")]
+    return {p for p in parts if p}
+
+
+def _iter_filtered_lines(
+    lines: List[str], selected: Set[str], invert: bool = False
+) -> Iterable[str]:
+    step_depth = 0
+    nonlinear_depth = 0
+    linear_depth = 0
+
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        entry = _parse_logfile_line(line.rstrip("\n"), i, lines)
+        if not entry:
+            # Attribute non-log lines to the current region context.
+            cats: Set[str] = set()
+            if linear_depth > 0:
+                cats.add("linear")
+            elif nonlinear_depth > 0:
+                cats.add("nonlinear")
+            elif step_depth > 0:
+                cats.add("integrator")
+
+            keep = bool(cats & selected)
+            if invert:
+                keep = not keep
+            if keep:
+                yield line
+
+            i += 1
+            continue
+
+        label = entry.get("label", "")
+        event, region_name, _ = _label_region_info(label)
+
+        # Hierarchical region tracking:
+        # - everything between begin/end-nonlinear-solve is "nonlinear"
+        # - everything between begin/end-linear-solve is "linear"
+        # - when filtering "nonlinear", exclude any nested "linear" region
+        # - "integrator" is everything within begin/end-step-attempt excluding
+        #   nonlinear/linear regions.
+        #
+        # Treat begin/end markers as part of their own region.
+        step_active = step_depth > 0 or (region_name == "step-attempt" and event is not None)
+        nonlinear_active = nonlinear_depth > 0 or (
+            region_name == "nonlinear-solve" and event == "begin"
+        )
+        linear_active = linear_depth > 0 or (region_name == "linear-solve" and event == "begin")
+
+        cats: Set[str] = set()
+
+        if linear_active:
+            cats.add("linear")
+        elif nonlinear_active:
+            cats.add("nonlinear")
+
+        if step_active and ("linear" not in cats) and ("nonlinear" not in cats):
+            cats.add("integrator")
+
+        keep = bool(cats & selected)
+        if invert:
+            keep = not keep
+
+        # Only treat following non-log lines as a continuation block when the
+        # log line is an array/vector dump (payload values parsed as lists).
+        continuation_len = max(
+            (len(v) for v in entry.get("payload", {}).values() if isinstance(v, list)), default=0
+        )
+        if keep:
+            for out_line in lines[i : i + 1 + continuation_len]:
+                yield out_line
+
+        # Update region nesting after processing/printing so the begin line
+        # itself is considered part of the region.
+        if region_name == "step-attempt":
+            if event == "begin":
+                step_depth += 1
+            elif event == "end":
+                step_depth = max(0, step_depth - 1)
+
+        if region_name == "nonlinear-solve":
+            if event == "begin":
+                nonlinear_depth += 1
+            elif event == "end":
+                nonlinear_depth = max(0, nonlinear_depth - 1)
+
+        if region_name == "linear-solve":
+            if event == "begin":
+                linear_depth += 1
+            elif event == "end":
+                linear_depth = max(0, linear_depth - 1)
+
+        i += 1 + continuation_len
+
+
 class StepData:
     """Helper class for parsing a step attempt from a log file into a hierarchical
     dictionary where entries may be lists of dictionaries.
@@ -167,7 +301,7 @@ def log_file_to_list(filename):
 
     :param str filename: The name of the log file to parse.
     :returns: A list of dictionaries, one per step attempt.
-    :rtype: list[dict]
+    :rtype: list
 
     The list returned for a time integrator log file will contain a dictionary for each
     step attempt:
@@ -257,12 +391,7 @@ def log_file_to_list(filename):
                 continue
 
             label = line_dict["label"]
-            label_split = label.split("-")
-            list_or_dict = label_split[-1]
-            if list_or_dict == "list":
-                region_name = "-".join(label_split[1:-1])
-            else:
-                region_name = "-".join(label_split[1:])
+            event, region_name, is_list = _label_region_info(label)
 
             if label == "begin-step-attempt":
                 line_dict["payload"]["level"] = level
@@ -298,16 +427,16 @@ def log_file_to_list(filename):
                 partition -= 1
                 continue
 
-            if label_split[0] == "begin":
-                if list_or_dict == "list":
+            if event == "begin":
+                if is_list:
                     s.open_list(region_name)
                 else:
                     s.open_dict(region_name)
                 s.update(line_dict["payload"])
                 continue
-            elif label_split[0] == "end":
+            elif event == "end":
                 s.update(line_dict["payload"])
-                if list_or_dict == "list":
+                if is_list:
                     s.close_list()
                 else:
                     s.close_dict()
@@ -386,6 +515,9 @@ def _get_history(log, key, step_status, time_range, step_range):
     levels = []
 
     for entry in log:
+        if "step" not in entry:
+            continue
+
         step = int(entry["step"])
         time = float(entry["tn"])
         level = entry["level"]

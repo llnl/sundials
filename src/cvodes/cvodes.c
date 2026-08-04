@@ -201,6 +201,7 @@
 
 #include "cvodes_impl.h"
 #include "cvodes_ls_impl.h"
+#include "sundials/sundials_nonlinearsolver.h"
 #include "sundials_utils.h"
 
 /*=================================================================*/
