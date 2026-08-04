@@ -36,6 +36,7 @@ set(ARKODE_unit_tests
     "ark_test_interp\;-10000"
     "ark_test_interp\;-1000000"
     "ark_test_mass\;"
+    "ark_test_pdaestep_api\;"
     "ark_test_reset\;"
     "ark_test_splittingstep_coefficients\;"
     "ark_test_tstop\;")

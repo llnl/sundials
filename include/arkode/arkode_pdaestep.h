@@ -20,9 +20,9 @@
 #ifndef ARKODE_PDAESTEP_H_
 #define ARKODE_PDAESTEP_H_
 
-#include <sundials/sundials_nvector.h>
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_nonlinearsolver.h>
+#include <sundials/sundials_nvector.h>
 #include <sundials/sundials_stepper.h>
 #include <sundials/sundials_types.h>
 
@@ -42,12 +42,13 @@ extern "C" {
  * - Is w split across ranks?
  */
 typedef int (*PDAEStepComponentResFn)(sunrealtype t, N_Vector y, N_Vector w,
-                             N_Vector yp, N_Vector res, void* user_data);
+                                      N_Vector yp, N_Vector res, void* user_data);
 
 // TODO(SBR): Could add tmp vectors and f/res if needed
-typedef int (*PDAEStepLsComponentJacFn)(sunrealtype t, sunrealtype c_j, N_Vector y,
-                               N_Vector w, N_Vector yp, N_Vector r,
-                               SUNMatrix Jac, void *user_data);
+typedef int (*PDAEStepLsComponentJacFn)(sunrealtype t, sunrealtype c_j,
+                                        N_Vector y, N_Vector w, N_Vector yp,
+                                        N_Vector r, SUNMatrix Jac,
+                                        void* user_data);
 
 /* y is a manyvector so the residual can use all z^{r}. res is also a manyvector
  * This include h and g functions so we can defer the exploiting of structure to
@@ -58,29 +59,28 @@ typedef int (*PDAEStepAlgebraicResFn)(sunrealtype t, N_Vector y, N_Vector w,
 
 // TODO(SBR): Could add tmp vectors and f/res if needed
 typedef int (*PDAEStepLsAlgebraicJacFn)(sunrealtype t, N_Vector y, N_Vector w,
-                                     SUNMatrix Jac, void *user_data);
+                                        SUNMatrix Jac, void* user_data);
 
 // y0 and yp0 are manyvectors with 2*n_partitions+1 subvectors
-SUNDIALS_EXPORT void* PDAEStepCreate(PDAEStepComponentResFn *componenet_res_fns,
+SUNDIALS_EXPORT void* PDAEStepCreate(PDAEStepComponentResFn* componenet_res_fns,
                                      PDAEStepAlgebraicResFn algebraic_res_fn,
-                                     sunrealtype t0,
-                                     N_Vector y0,
-                                     N_Vector yp0,
+                                     sunrealtype t0, N_Vector y0, N_Vector yp0,
                                      int n_partitions, SUNContext sunctx);
 
-SUNDIALS_EXPORT int PDAEStepGetNumPartitions(void *arkode_mem, int *partitions);
+SUNDIALS_EXPORT int PDAEStepGetNumPartitions(void* arkode_mem, int* partitions);
 
-SUNDIALS_EXPORT int PDAEStepGetPartitionVectorTemplate(void *arkode_mem,
+SUNDIALS_EXPORT int PDAEStepGetPartitionVectorTemplate(void* arkode_mem,
                                                        int partition,
-                                                       N_Vector *y);
+                                                       N_Vector* y);
 
-SUNDIALS_EXPORT int PDAEStepGetPartitionIntegrator(void *arkode_mem,
-                                                   int partition,
-                                                   void **ida_mem);
+SUNDIALS_EXPORT int PDAEStepGetPartitionIntegrator(void* arkode_mem,
+                                                   int partition, void** ida_mem);
 
-SUNDIALS_EXPORT int PDAEStepSetPartitionJacobian(void *arkode_mem, int partition, PDAEStepLsComponentJacFn jac);
+SUNDIALS_EXPORT int PDAEStepSetPartitionJacobian(void* arkode_mem, int partition,
+                                                 PDAEStepLsComponentJacFn jac);
 
-SUNDIALS_EXPORT int PDAEStepSetCouplingJacobian(void *arkode_mem, PDAEStepLsAlgebraicJacFn jac);
+SUNDIALS_EXPORT int PDAEStepSetCouplingJacobian(void* arkode_mem,
+                                                PDAEStepLsAlgebraicJacFn jac);
 
 /* We provide PDAE-specific (non)linear solver functions because there are
  * customizations we need to use that are not easily supported by the default
@@ -89,14 +89,42 @@ SUNDIALS_EXPORT int PDAEStepSetCouplingJacobian(void *arkode_mem, PDAEStepLsAlge
  * variables. Second, the system is purely algebraic or as if there is a 0 mass
  * matrix.
  */
-SUNDIALS_EXPORT int PDAEStepSetNonlinearSolver(void *arkode_mem, SUNNonlinearSolver nls);
+SUNDIALS_EXPORT int PDAEStepSetNonlinearSolver(void* arkode_mem,
+                                               SUNNonlinearSolver nls);
 
-SUNDIALS_EXPORT int PDAEStepSetLinearSolver(void *arkode_mem, SUNLinearSolver ls, SUNMatrix j);
+SUNDIALS_EXPORT int PDAEStepSetLinearSolver(void* arkode_mem,
+                                            SUNLinearSolver ls, SUNMatrix j);
 
-SUNDIALS_EXPORT N_Vector PDAEStepManyVector(N_Vector *x, N_Vector *z,
+SUNDIALS_EXPORT int PDAEStepSetMaxNonlinIters(void* arkode_mem, int maxcor);
+
+SUNDIALS_EXPORT int PDAEStepSetNonlinConvCoef(void* arkode_mem,
+                                              sunrealtype nlscoef);
+
+SUNDIALS_EXPORT int PDAEStepSetNonlinCRDown(void* arkode_mem, sunrealtype crdown);
+
+SUNDIALS_EXPORT int PDAEStepSetNonlinRDiv(void* arkode_mem, sunrealtype rdiv);
+
+SUNDIALS_EXPORT int PDAEStepGetNumLinSolvSetups(void* arkode_mem,
+                                                long int* nlinsetups);
+
+SUNDIALS_EXPORT int PDAEStepGetNumNonlinSolvIters(void* arkode_mem,
+                                                  long int* nniters);
+
+SUNDIALS_EXPORT int PDAEStepGetNumNonlinSolvConvFails(void* arkode_mem,
+                                                      long int* nnfails);
+
+SUNDIALS_EXPORT int PDAEStepGetNonlinSolvStats(void* arkode_mem,
+                                               long int* nniters,
+                                               long int* nnfails);
+
+SUNDIALS_EXPORT int PDAEStepGetAlgebraicVectorTemplate(void* arkode_mem,
+                                                       N_Vector* y);
+
+SUNDIALS_EXPORT N_Vector PDAEStepManyVector(N_Vector* x, N_Vector* z,
                                             N_Vector w, int partitions);
 SUNDIALS_EXPORT N_Vector PDAEStepGetCouplingSubvector(N_Vector y);
-SUNDIALS_EXPORT N_Vector PDAEStepGetDifferentialSubvector(N_Vector y, int partition);
+SUNDIALS_EXPORT N_Vector PDAEStepGetDifferentialSubvector(N_Vector y,
+                                                          int partition);
 SUNDIALS_EXPORT N_Vector PDAEStepGetAlgebraicSubvector(N_Vector y, int partition);
 
 /* TODO(SBR): For setting tolerances, we probably want ARKodeSSTolerances to
@@ -105,8 +133,6 @@ SUNDIALS_EXPORT N_Vector PDAEStepGetAlgebraicSubvector(N_Vector y, int partition
  */
 
 // TODO(SBR): Add reinit function? Probably not needed
-
-// TODO(SBR): add getter functions for statistics
 
 #ifdef __cplusplus
 }

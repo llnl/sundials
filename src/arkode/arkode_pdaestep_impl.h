@@ -24,15 +24,17 @@
 #include "arkode_impl.h"
 
 #define DEFAULT_MAX_COR 5
-#define DEFAULT_ORDER 1
+#define DEFAULT_ORDER   1
 #define DEFAULT_NLSCOEF SUN_RCONST(0.1)
+#define DEFAULT_CRDOWN  SUN_RCONST(0.3)
+#define DEFAULT_RDIV    SUN_RCONST(2.3)
 
 /* This struct wraps user data provided to the overall PDAEStep integrator and
  * includes additional members needed by an IDA instance
  */
 typedef struct
 {
-  void *ark_mem;
+  void* ark_mem;
   PDAEStepComponentResFn component_res_fn;
   PDAEStepLsComponentJacFn component_res_jac;
 
@@ -48,22 +50,39 @@ typedef struct
   PDAEStepAlgebraicResFn algebraic_res_fn;
   PDAEStepLsAlgebraicJacFn algebraic_res_jac;
   N_Vector yp;
-  void **ida_mems;
-  IDAUserData *user_datas;
+  N_Vector alg;
+  N_Vector alg_pred;
+  N_Vector alg_cor;
+  N_Vector alg_res;
+  N_Vector alg_fcur;
+  N_Vector alg_tmp;
+  N_Vector alg_linsol_x;
+  N_Vector alg_ewt;
+  void** ida_mems;
+  IDAUserData* user_datas;
   SUNNonlinearSolver NLS;
+  SUNLinearSolver LS;
+  SUNMatrix J;
 
   sunrealtype nlscoef;
+  sunrealtype crdown;
+  sunrealtype rdiv;
+  sunrealtype crate;
+  sunrealtype delnrm;
+  sunrealtype delnrm_p;
 
   long int nsetups;
   long int nls_iters;
   long int nls_fails;
+  long int nfeDQ;
 
   long int nh;
-  
+
   int partitions;
   int order;
   int maxcor;
-  
+
+  sunbooleantype jcur;
   sunbooleantype ownNLS;
 }* ARKodePDAEStepMem;
 
@@ -73,9 +92,11 @@ int pdaeStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
 
 /* Internal utility routines */
 int pdaeStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
-                                 ARKodeMem* ark_mem,
-                                 ARKodePDAEStepMem* step_mem);
+                                 ARKodeMem* ark_mem, ARKodePDAEStepMem* step_mem);
 int pdaeStep_AccessStepMem(ARKodeMem ark_mem, const char* fname,
                            ARKodePDAEStepMem* step_mem);
+
+int pdaeStep_NlsInit(ARKodeMem ark_mem);
+int pdaeStep_Nls(ARKodeMem ark_mem, int nflag);
 
 #endif
