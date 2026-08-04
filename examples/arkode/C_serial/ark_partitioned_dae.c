@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <math.h>
 #include <arkode/arkode.h>
+#include <ida/ida.h>
 #include <arkode/arkode_pdaestep.h>
 #include <nvector/nvector_serial.h>
 #include <nvector/nvector_manyvector.h>
+#include <sunlinsol/sunlinsol_spgmr.h>
 
 #define PARTITIONS 2
 
@@ -32,10 +34,11 @@ static int component_res(sunrealtype t, N_Vector y_vec, N_Vector w_vec, N_Vector
   sunrealtype xp = N_VGetArrayPointer(N_VGetSubvector_ManyVector(yp_vec, 0))[0];
   sunrealtype w = N_VGetArrayPointer(w_vec)[0];
 
-  sunrealtype *res = N_VGetArrayPointer(res_vec);
+  sunrealtype *x_res = N_VGetArrayPointer(N_VGetSubvector_ManyVector(res_vec, 0));
+  sunrealtype *z_res = N_VGetArrayPointer(N_VGetSubvector_ManyVector(res_vec, 1));
 
-  res[0] = f(x, z, w, xp);
-  res[1] = g(x, z, w);
+  *x_res = f(x, z, w, xp);
+  *z_res = g(x, z, w);
 
   return 0;
 }
@@ -53,10 +56,13 @@ static int algebraic_res(sunrealtype t, N_Vector y_vec, N_Vector w_vec, N_Vector
   sunrealtype z2 = N_VGetArrayPointer(PDAEStepGetAlgebraicSubvector(y_vec, 1))[0];
   sunrealtype w = N_VGetArrayPointer(w_vec)[0];
 
-  sunrealtype *res = N_VGetArrayPointer(res_vec);
-  res[0] = g(x1, z1, w);
-  res[1] = g(x1, z1, w);
-  res[2] = h(x1, x2, z1, z2, w);
+  // TODO(SBR): make helper functions to extract components
+  sunrealtype *z1_res = N_VGetArrayPointer(N_VGetSubvector_ManyVector(res_vec, 0));
+  sunrealtype *z2_res = N_VGetArrayPointer(N_VGetSubvector_ManyVector(res_vec, 1));
+  sunrealtype *w_res = N_VGetArrayPointer(N_VGetSubvector_ManyVector(res_vec, 2));
+  *z1_res = g(x1, z1, w);
+  *z2_res = g(x2, z2, w);
+  *w_res = h(x1, x2, z1, z2, w);
 
   return 0;
 }
@@ -94,8 +100,21 @@ int main(void) {
   void *arkode_mem = PDAEStepCreate(component_res_fns, algebraic_res_fn, tspan[0], y, yp, PARTITIONS, sunctx);
   ARKodeSetFixedStep(arkode_mem, SUN_RCONST(0.01));
 
+  SUNLinearSolver linear_solvers[PARTITIONS] = {NULL};
+  for (int i = 0; i < PARTITIONS; i++) {
+    N_Vector linear_solver_temp = NULL;
+    PDAEStepGetPartitionVectorTemplate(arkode_mem, i, &linear_solver_temp);
+    linear_solvers[i] = SUNLinSol_SPGMR(linear_solver_temp, SUN_PREC_NONE, 0, sunctx);
+    void *ida_mem = NULL;
+    PDAEStepGetPartitionIntegrator(arkode_mem, i, &ida_mem);
+    IDASetLinearSolver(ida_mem, linear_solvers[i], NULL);
+  }
+
   sunrealtype tret;
-  ARKodeEvolve(arkode_mem, tspan[1], y, &tret, ARK_NORMAL);
+  if (ARKodeEvolve(arkode_mem, tspan[1], y, &tret, ARK_NORMAL))
+  {
+    return 1;
+  }
 
   N_VPrint(y);
 
@@ -104,6 +123,7 @@ int main(void) {
     N_VDestroy(z[i]);
     N_VDestroy(xp[i]);
     N_VDestroy(zp[i]);
+    SUNLinSolFree(linear_solvers[i]);
   }
   N_VDestroy(w);
   N_VDestroy(wp);

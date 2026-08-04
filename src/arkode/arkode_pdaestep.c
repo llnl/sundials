@@ -116,7 +116,7 @@ static int pdaeStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
     retval = IDASolve(ida_mem, tout, &tout, step_mem->user_datas[i].y,
             step_mem->user_datas[i].yp, IDA_NORMAL);
 
-    if (retval != IDA_SUCCESS) {
+    if (retval < IDA_SUCCESS) {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
                       MSG_ARK_INNERSTEP_FAILED, ark_mem->tcur);
       return ARK_INNERSTEP_FAIL;
@@ -386,6 +386,7 @@ void* PDAEStepCreate(PDAEStepComponentResFn *componenet_res_fns,
       step_mem->user_datas[i].y, step_mem->user_datas[i].yp);
     IDASetUserData(step_mem->ida_mems[i], &step_mem->user_datas[i]);
     IDASetMaxNumSteps(step_mem->ida_mems[i], -1);
+    IDASStolerances(step_mem->ida_mems[i], ark_mem->reltol, ark_mem->Sabstol);
   }
 
   return ark_mem;
@@ -406,6 +407,34 @@ int PDAEStepGetNumPartitions(void *arkode_mem, int *partitions)
   }
 
   *partitions = step_mem->partitions;
+
+  return ARK_SUCCESS;
+}
+
+int PDAEStepGetPartitionVectorTemplate(void *arkode_mem, int partition,
+                                       N_Vector *y)
+{
+  ARKodeMem ark_mem          = NULL;
+  ARKodePDAEStepMem step_mem = NULL;
+  int retval = pdaeStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                            &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  if (partition < 0 || partition >= step_mem->partitions)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "The partition index is %i but must be between 0 and %i",
+                    partition, step_mem->partitions - 1);
+    return ARK_ILL_INPUT;
+  }
+
+  if (y == NULL) {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "y is NULL");
+    return ARK_ILL_INPUT;
+  }
+
+  *y = step_mem->user_datas[partition].y;
 
   return ARK_SUCCESS;
 }

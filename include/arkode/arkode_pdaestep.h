@@ -70,6 +70,10 @@ SUNDIALS_EXPORT void* PDAEStepCreate(PDAEStepComponentResFn *componenet_res_fns,
 
 SUNDIALS_EXPORT int PDAEStepGetNumPartitions(void *arkode_mem, int *partitions);
 
+SUNDIALS_EXPORT int PDAEStepGetPartitionVectorTemplate(void *arkode_mem,
+                                                       int partition,
+                                                       N_Vector *y);
+
 SUNDIALS_EXPORT int PDAEStepGetPartitionIntegrator(void *arkode_mem,
                                                    int partition,
                                                    void **ida_mem);
