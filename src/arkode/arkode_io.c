@@ -3950,7 +3950,7 @@ int ARKodeSetVecStack(void* arkode_mem, SUNVecStack stack)
   }
 
   ark_mem->temp_vec_stack     = stack;
-  ark_mem->own_temp_vec_stack = SUNTRUE;
+  ark_mem->own_temp_vec_stack = SUNFALSE;
 
   return ARK_SUCCESS;
 }
