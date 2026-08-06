@@ -142,7 +142,7 @@ def solve_heat1d():
     # PCG linear solver with no preconditioning, with up to n iterations
     LS = sun.SUNLinSol_PCG(y, sun.SUN_PREC_NONE, n, sunctx)
 
-    status = ark.ARKodeSetLinearSolver(stepper.get(), LS, None)  
+    status = ark.ARKodeSetLinearSolver(stepper.get(), LS, None)
     assert status == ark.ARK_SUCCESS
 
     status = ark.ARKodeSetJacTimes(stepper.get(), None, problem.jtv)

@@ -175,9 +175,7 @@ class CupyHeat1DProblem:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--n", type=int, default=101, help="number of spatial grid points"
-    )
+    parser.add_argument("--n", type=int, default=101, help="number of spatial grid points")
     args = parser.parse_args()
     if args.n < 3:
         parser.error("--n must be at least 3")
@@ -195,9 +193,7 @@ def main():
     y = sun.N_VMake_Cuda(args.n, host_data, device_data, sunctx)
 
     problem = CupyHeat1DProblem(cupy, n=args.n)
-    host_result, y = solve_heat1d(
-        "cupy cuda backend", y, host_data, problem, sunctx, n=args.n
-    )
+    host_result, y = solve_heat1d("cupy cuda backend", y, host_data, problem, sunctx, n=args.n)
     device_result = cupy.asnumpy(sun.N_VGetCupyArray(y))
     np.testing.assert_allclose(host_result, device_result)
 

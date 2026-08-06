@@ -193,14 +193,9 @@ class TorchHeat1DProblem:
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--n", type=int, default=101, help="number of spatial grid points")
     parser.add_argument(
-        "--n", type=int, default=101, help="number of spatial grid points"
-    )
-    parser.add_argument(
-        "--device",
-        choices=("auto", "cpu", "cuda"),
-        default="auto",
-        help="PyTorch device to use",
+        "--device", choices=("auto", "cpu", "cuda"), default="auto", help="PyTorch device to use"
     )
     args = parser.parse_args()
     if args.n < 3:
@@ -209,11 +204,7 @@ def main():
     import torch
 
     device = select_device(args.device, torch)
-    dtype = (
-        torch.float32
-        if np.dtype(sun.sunrealtype) == np.dtype(np.float32)
-        else torch.float64
-    )
+    dtype = torch.float32 if np.dtype(sun.sunrealtype) == np.dtype(np.float32) else torch.float64
     status, sunctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
     assert status == sun.SUN_SUCCESS
 
@@ -232,9 +223,7 @@ def main():
     )
 
     if device == "cuda":
-        device_result = sun.N_VGetTorchTensor(
-            y, device="cpu", copy_from="device"
-        ).numpy()
+        device_result = sun.N_VGetTorchTensor(y, device="cpu", copy_from="device").numpy()
     else:
         device_result = device_data.numpy()
     np.testing.assert_allclose(host_result, device_result)

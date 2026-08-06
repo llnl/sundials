@@ -132,9 +132,7 @@ def solve_heat1d(name, y, host_data, problem, sunctx, device, n=101, k=0.01):
 
 
 def select_device(requested, jax):
-    cuda_devices = [
-        device for device in jax.devices() if device.platform in ("cuda", "gpu")
-    ]
+    cuda_devices = [device for device in jax.devices() if device.platform in ("cuda", "gpu")]
     if requested == "auto":
         if hasattr(sun, "N_VMake_Cuda") and cuda_devices:
             return cuda_devices[0]
@@ -203,14 +201,9 @@ class JaxHeat1DProblem:
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--n", type=int, default=101, help="number of spatial grid points")
     parser.add_argument(
-        "--n", type=int, default=101, help="number of spatial grid points"
-    )
-    parser.add_argument(
-        "--device",
-        choices=("auto", "cpu", "cuda"),
-        default="auto",
-        help="JAX device to use",
+        "--device", choices=("auto", "cpu", "cuda"), default="auto", help="JAX device to use"
     )
     args = parser.parse_args()
     if args.n < 3:
@@ -225,20 +218,14 @@ def main():
 
     device = select_device(args.device, jax)
     array_device = "cuda" if device.platform in ("cuda", "gpu") else "cpu"
-    dtype = (
-        jnp.float32
-        if np.dtype(sun.sunrealtype) == np.dtype(np.float32)
-        else jnp.float64
-    )
+    dtype = jnp.float32 if np.dtype(sun.sunrealtype) == np.dtype(np.float32) else jnp.float64
 
     status, sunctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
     assert status == sun.SUN_SUCCESS
 
     if array_device == "cuda":
         host_data = np.zeros(args.n, dtype=sun.sunrealtype)
-        device_data = jax.device_put(
-            jnp.zeros(args.n, dtype=dtype), device
-        ).block_until_ready()
+        device_data = jax.device_put(jnp.zeros(args.n, dtype=dtype), device).block_until_ready()
         y = sun.N_VMake_Cuda(args.n, host_data, device_data, sunctx)
     else:
         y = sun.N_VNew_Serial(args.n, sunctx)
@@ -246,19 +233,11 @@ def main():
 
     problem = JaxHeat1DProblem(jax, jnp, device, dtype, n=args.n)
     host_result, y = solve_heat1d(
-        f"jax {array_device} backend",
-        y,
-        host_data,
-        problem,
-        sunctx,
-        array_device,
-        n=args.n,
+        f"jax {array_device} backend", y, host_data, problem, sunctx, array_device, n=args.n
     )
 
     if array_device == "cuda":
-        device_result = np.asarray(
-            sun.N_VGetJaxArray(y, device="cpu", copy_from="device")
-        )
+        device_result = np.asarray(sun.N_VGetJaxArray(y, device="cpu", copy_from="device"))
     else:
         device_result = np.asarray(sun.N_VGetJaxArray(y, device="cpu"))
     np.testing.assert_allclose(host_result, device_result)

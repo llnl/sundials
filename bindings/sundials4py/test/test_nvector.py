@@ -136,9 +136,7 @@ def test_nvector_array_helpers_serial_torch(sunctx):
     assert_allclose(N_VGetArrayPointer(nvec), np.arange(5, dtype=sunrealtype))
 
 
-@pytest.mark.skipif(
-    "N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled"
-)
+@pytest.mark.skipif("N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_create_nvector_cuda(sunctx):
     nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
 
@@ -180,9 +178,7 @@ def _check_cuda_nvector_const(nvec, value):
     assert_allclose(arr, value)
 
 
-@pytest.mark.skipif(
-    "N_VNewManaged_Cuda" not in globals(), reason="CUDA bindings are not enabled"
-)
+@pytest.mark.skipif("N_VNewManaged_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_create_nvector_cuda_managed(sunctx):
     nvec = _cuda_nvector_or_skip(lambda: N_VNewManaged_Cuda(5, sunctx))
     _check_cuda_nvector_const(nvec, 3.0)
@@ -215,9 +211,7 @@ def _torch_dtype():
 
 def _jax_cuda_device_or_skip(jax):
     try:
-        devices = [
-            device for device in jax.devices() if device.platform in ("cuda", "gpu")
-        ]
+        devices = [device for device in jax.devices() if device.platform in ("cuda", "gpu")]
     except RuntimeError as err:
         pytest.skip(f"JAX CUDA/GPU backend is not available: {err}")
 
@@ -234,9 +228,7 @@ def _jax_dtype(jnp):
     return jnp.longdouble
 
 
-@pytest.mark.skipif(
-    "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
-)
+@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_make_nvector_cuda_cupy_array(sunctx):
     cupy = pytest.importorskip("cupy")
 
@@ -257,9 +249,7 @@ def test_make_nvector_cuda_cupy_array(sunctx):
         N_VGetCupyArray(nvec, device="cpu")
 
 
-@pytest.mark.skipif(
-    "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
-)
+@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_make_nvector_cuda_torch_tensor(sunctx):
     torch = pytest.importorskip("torch")
     if not torch.cuda.is_available():
@@ -286,9 +276,7 @@ def test_make_nvector_cuda_torch_tensor(sunctx):
     assert_allclose(host_view.numpy(), h_arr)
 
 
-@pytest.mark.skipif(
-    "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
-)
+@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_make_nvector_cuda_jax_array(sunctx):
     jax = pytest.importorskip("jax")
     if np.dtype(sunrealtype) == np.dtype(np.float64):
@@ -317,9 +305,7 @@ def test_make_nvector_cuda_jax_array(sunctx):
     assert_allclose(h_arr, 6.0)
 
 
-@pytest.mark.skipif(
-    "N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled"
-)
+@pytest.mark.skipif("N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_nvector_array_helpers_cuda_host(sunctx):
     nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
 
@@ -339,8 +325,7 @@ def test_nvector_array_helpers_cuda_host(sunctx):
 
 
 @pytest.mark.skipif(
-    "N_VSetDeviceArrayPointer_Cuda" not in globals(),
-    reason="CUDA bindings are not enabled",
+    "N_VSetDeviceArrayPointer_Cuda" not in globals(), reason="CUDA bindings are not enabled"
 )
 def test_set_nvector_cuda_torch_tensor(sunctx):
     torch = pytest.importorskip("torch")
@@ -357,8 +342,7 @@ def test_set_nvector_cuda_torch_tensor(sunctx):
 
 
 @pytest.mark.skipif(
-    "N_VSetDeviceArrayPointer_Cuda" not in globals(),
-    reason="CUDA bindings are not enabled",
+    "N_VSetDeviceArrayPointer_Cuda" not in globals(), reason="CUDA bindings are not enabled"
 )
 def test_set_nvector_cuda_jax_array(sunctx):
     jax = pytest.importorskip("jax")
@@ -437,9 +421,7 @@ def test_nvscaleaddmultivectorarray_serial(sunctx):
     # Check Z_2d[s][v] = c_1d[s] * X_1d[v] + Y_2d[s][v]
     for s in range(nsum):
         for v in range(nvec):
-            expected = c_1d[s] * N_VGetArrayPointer(X_1d[v]) + N_VGetArrayPointer(
-                Y_2d[s][v]
-            )
+            expected = c_1d[s] * N_VGetArrayPointer(X_1d[v]) + N_VGetArrayPointer(Y_2d[s][v])
             actual = N_VGetArrayPointer(Z_2d[s][v])
             assert_allclose(actual, expected)
 
