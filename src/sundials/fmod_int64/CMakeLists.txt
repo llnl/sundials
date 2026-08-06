@@ -25,4 +25,12 @@ endif()
 
 set(sundials_SOURCES fsundials_core_mod.c fsundials_core_mod.f90)
 
-sundials_add_f2003_library(sundials_fcore_mod SOURCES ${sundials_SOURCES})
+set(sundials_COMPILE_DEFINITIONS)
+if(SUNDIALS_ENABLE_MPI)
+  list(APPEND sundials_COMPILE_DEFINITIONS PUBLIC SUNDIALS_MPI_ENABLED=1)
+endif()
+
+sundials_add_f2003_library(
+  sundials_fcore_mod
+  SOURCES ${sundials_SOURCES}
+  COMPILE_DEFINITIONS ${sundials_COMPILE_DEFINITIONS})
