@@ -21,9 +21,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sundials/sundials_math.h>
 
 #include "arkode_impl.h"
+#include "sundials_utils.h"
 
 #define MAX_ORDER 10
 
@@ -555,7 +557,7 @@ static sunbooleantype rowsum(ARKodeButcherTable table, sunrealtype* inf_norm,
     {
       if (outfile != NULL)
       {
-        fprintf(outfile, "  row %i sum fails with residual %" RSYM "\n", i,
+        fprintf(outfile, "  row %i sum fails with residual " SUN_FORMAT_G "\n", i,
                 residual);
       }
       return SUNFALSE;
@@ -616,7 +618,11 @@ static tree_props get_tree_props(int* tree, tree_generator* gen, int color,
   if (root)
   {
     props.phi = dot_prod(table->b, props.Phi, s);
-    if (table->d != NULL) { props.phi_hat = dot_prod(table->d, props.Phi, s); }
+    if (tables[0]->d != NULL)
+    {
+      sunrealtype* d = (table->d != NULL) ? table->d : tables[0]->d;
+      props.phi_hat  = dot_prod(d, props.Phi, s);
+    }
   }
   else { props.Phi = mat_vec(table->A, props.Phi, &buf[s], s); }
   return props;
@@ -624,8 +630,8 @@ static tree_props get_tree_props(int* tree, tree_generator* gen, int color,
 
 static int compare_orders(int given, int computed, int retval)
 {
-  if (given > computed || retval == 1) { return 1; }
-  else if (given < computed || retval == -1) { return -1; }
+  if (given > computed || retval == -1) { return -1; }
+  else if (given < computed || retval == 1) { return 1; }
   else { return 0; }
 }
 
@@ -681,7 +687,7 @@ static int check_order(ARKodeButcherTable* tables, sunbooleantype ark, int* q,
             fprintf(outfile, "  method fails order %d condition for tree ",
                     props.order);
             tree_print(gen.current, &gen, outfile);
-            fprintf(outfile, " with residual %" RSYM "\n", residual);
+            fprintf(outfile, " with residual " SUN_FORMAT_G "\n", residual);
           }
         }
       }
@@ -698,7 +704,7 @@ static int check_order(ARKodeButcherTable* tables, sunbooleantype ark, int* q,
             fprintf(outfile, "  embedding fails order %d condition for tree ",
                     props.order);
             tree_print(gen.current, &gen, outfile);
-            fprintf(outfile, " with residual %" RSYM "\n", embedded_residual);
+            fprintf(outfile, " with residual " SUN_FORMAT_G "\n", embedded_residual);
           }
         }
       }
@@ -717,10 +723,12 @@ static int check_tables(ARKodeButcherTable* tables, sunbooleantype ark, int* q,
   {
     return -2;
   }
+  if (ark && tables[0]->stages != tables[1]->stages) { return -2; }
 
   if (outfile) { fprintf(outfile, "Order Conditions Check:\n"); }
 
-  *q = *p              = -1;
+  *q                   = -1;
+  *p                   = (tables[0]->d == NULL) ? 0 : -1;
   sunrealtype inf_norm = ZERO;
   if (rowsum(tables[0], &inf_norm, outfile) &&
       (!ark || rowsum(tables[1], &inf_norm, outfile)))
