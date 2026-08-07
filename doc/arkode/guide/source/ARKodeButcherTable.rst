@@ -379,9 +379,8 @@ ARKodeButcherTable functions
         *maximum order* possible with this function and the values of *q* and
         *p* in the provided Butcher tables table are higher.
       * *-1* -- failure, the values of *q* and *p* in the provided Butcher tables
-        are *higher* than the measured values.
-      * *-2* -- failure, the input Butcher tables or critical table contents are
-        ``NULL``.
+        are *higher* than the measured values, or the input Butcher tables or
+        critical table contents are ``NULL``.
 
    **Notes:**
       For embedded methods, if the return flags for *q* and *p* would

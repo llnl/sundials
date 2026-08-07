@@ -557,8 +557,8 @@ static sunbooleantype rowsum(ARKodeButcherTable table, sunrealtype* inf_norm,
     {
       if (outfile != NULL)
       {
-        fprintf(outfile, "  row %i sum fails with residual " SUN_FORMAT_G "\n", i,
-                residual);
+        fprintf(outfile, "  row %i sum fails with residual " SUN_FORMAT_G "\n",
+                i, residual);
       }
       return SUNFALSE;
     }
@@ -704,7 +704,8 @@ static int check_order(ARKodeButcherTable* tables, sunbooleantype ark, int* q,
             fprintf(outfile, "  embedding fails order %d condition for tree ",
                     props.order);
             tree_print(gen.current, &gen, outfile);
-            fprintf(outfile, " with residual " SUN_FORMAT_G "\n", embedded_residual);
+            fprintf(outfile, " with residual " SUN_FORMAT_G "\n",
+                    embedded_residual);
           }
         }
       }
@@ -800,8 +801,7 @@ int ARKodeButcherTable_CheckOrder(ARKodeButcherTable B, int* q, int* p,
         order, or method achieves maximum order possible with this
         routine and internal {q,p} are higher.
     -1 (failure): internal p and q values are higher than analytical
-         order
-    -2 (failure): NULL-valued B1, B2 (or critical contents)
+         order, or NULL-valued B1, B2 (or critical contents)
 
   Note: for embedded methods, if the return flags for p and q would
   differ, failure takes precedence over warning, which takes
@@ -811,5 +811,8 @@ int ARKodeButcherTable_CheckARKOrder(ARKodeButcherTable B1, ARKodeButcherTable B
                                      int* q, int* p, FILE* outfile)
 {
   ARKodeButcherTable tables[] = {B1, B2};
-  return check_tables(tables, SUNTRUE, q, p, outfile);
+  int retval                  = check_tables(tables, SUNTRUE, q, p, outfile);
+  // TODO(SBR): remove this for SUNDIALS 8 to make this consistent with non-ARK
+  // version of this function
+  return (retval == -2) ? -1 : retval;
 }
