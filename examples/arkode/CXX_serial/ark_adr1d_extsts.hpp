@@ -15,7 +15,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
  * Header file for extsts advection-diffusion-reaction equation example, see
- * extsts_advection_diffusion_reaction.cpp for more details.
+ * ark_adr1d_extsts.cpp for more details.
  * ---------------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -89,30 +89,9 @@ struct UserData
   // Number of equations
   sunindextype neq = NSPECIES * nx;
 
-  // Temporary workspace vector and matrix
-  N_Vector temp_v  = nullptr;
-  SUNMatrix temp_J = nullptr;
-
   // Inner stepper memory
   MRIStepInnerStepper sts_mem = nullptr;
-
-  ~UserData();
 };
-
-UserData::~UserData()
-{
-  if (temp_v)
-  {
-    N_VDestroy(temp_v);
-    temp_v = nullptr;
-  }
-
-  if (temp_J)
-  {
-    SUNMatDestroy(temp_J);
-    temp_J = nullptr;
-  }
-}
 
 // -----------------------------------------------------------------------------
 // Problem options
@@ -125,7 +104,7 @@ struct UserOptions
 
   // MRI method name, or Butcher table name plus flag to build MRI table
   // as an MIS method
-  string mri_method = "ARKODE_IMEX_MRI_GARK_ARS222";
+  string mri_method = "ARKODE_IMEX_MRI_GARK_GIRALDO2";
   bool build_mri_table = false;
 
   // Relative and absolute tolerances

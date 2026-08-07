@@ -40,11 +40,11 @@ set(ARKODE_examples
     "ark_kpr_Mt.cpp\;0 4 0 -10 0 10 1\;develop"
     "ark_kpr_nestedmri.cpp\;\;exclude-single"
     "ark_pendulum.cpp\;\;develop"
-    "extsts_advection_diffusion_reaction.cpp\;\;develop")
+    "ark_adr1d_extsts.cpp\;\;develop")
 
 # Header files to install
 set(ARKODE_headers
-    "extsts_advection_diffusion_reaction.hpp")
+    "ark_adr1d_extsts.hpp")
 
 if(SUNDIALS_ENABLE_CVODE)
   list(APPEND ARKODE_examples "ark_advection_diffusion_reaction.cpp\;\;develop")

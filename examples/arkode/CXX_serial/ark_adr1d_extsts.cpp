@@ -47,7 +47,7 @@
  * and integrator settings. Use the flag --help for more information.
  * ---------------------------------------------------------------------------*/
 
-#include "extsts_advection_diffusion_reaction.hpp"
+#include "ark_adr1d_extsts.hpp"
 
 int main(int argc, char* argv[])
 {
