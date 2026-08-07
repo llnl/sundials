@@ -10,9 +10,8 @@ Updated the MRIStep module in ARKODE to support *extended
 Super Time Stepping* (ExtSTS) methods for multi-physics simulations involving
 parabolic components, through the `MRIStepCreateExtSTS` function.
 See the documentation section on the mathematical methods in MRIStep
-for more details on structure of ExtSTS methods, and the documentation
-mathematical formulation of these methods, and the documentation section on
-a skeleton of usage for MRIStep for details on its usage.
+for more details on the structure of ExtSTS methods, and the documentation
+section on a skeleton of usage for MRIStep for details on its usage.
 
 ### Bug Fixes
 
