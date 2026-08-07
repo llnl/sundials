@@ -62,6 +62,7 @@ struct SUNDomEigEstimator_Ops_
   SUNErrCode (*estimate)(SUNDomEigEstimator, sunrealtype*, sunrealtype*);
   SUNErrCode (*getres)(SUNDomEigEstimator, sunrealtype*);
   SUNErrCode (*getnumiters)(SUNDomEigEstimator, long int*);
+  SUNErrCode (*getnumrhsevals)(SUNDomEigEstimator, long int*);
   SUNErrCode (*getnumatimescalls)(SUNDomEigEstimator, long int*);
   SUNErrCode (*write)(SUNDomEigEstimator, FILE*);
   SUNErrCode (*destroy)(SUNDomEigEstimator*);
@@ -133,6 +134,10 @@ SUNErrCode SUNDomEigEstimator_GetRes(SUNDomEigEstimator DEE, sunrealtype* res);
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
                                           long int* num_iters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE,
+                                             long int* num_rhs_evals);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator DEE,

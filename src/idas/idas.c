@@ -266,6 +266,7 @@ static void IDAQuadSensFreeVectors(IDAMem ida_mem);
 /* Initial setup */
 
 int IDAInitialSetup(IDAMem IDA_mem);
+static int IDAQuadSetup(IDAMem IDA_mem);
 
 static int IDAEwtSetSS(IDAMem IDA_mem, N_Vector ycur, N_Vector weight);
 static int IDAEwtSetSV(IDAMem IDA_mem, N_Vector ycur, N_Vector weight);
@@ -2628,6 +2629,13 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
       IDA_mem->ida_SetupDone = SUNTRUE;
     }
 
+    ier = IDAQuadSetup(IDA_mem);
+    if (ier != IDA_SUCCESS)
+    {
+      SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
+      return ier;
+    }
+
     /* On first call, check for tout - tn too small, set initial hh,
        check for approach to tstop, and scale phi[1], phiQ[1], and phiS[1] by hh.
        Also check for zeros of root function g at and near t0.    */
@@ -4914,9 +4922,10 @@ static void IDAQuadSensFreeVectors(IDAMem IDA_mem)
 /*
  * IDAInitialSetup
  *
- * This routine is called by IDASolve once at the first step.
- * It performs all checks on optional inputs and inputs to
- * IDAInit/IDAReInit that could not be done before.
+ * This routine is called by IDASolve once at the first step or when
+ * computing consistent initial conditions. It performs all checks
+ * on optional inputs and inputs to IDAInit/IDAReInit that could not
+ * be done before.
  *
  * If no error is encountered, IDAInitialSetup returns IDA_SUCCESS.
  * Otherwise, it returns an error flag and reported to the error
@@ -4979,24 +4988,6 @@ int IDAInitialSetup(IDAMem IDA_mem)
 
   if (IDA_mem->ida_quadr)
   {
-    /* Evaluate quadrature rhs and set phiQ[1] */
-    ier = IDA_mem->ida_rhsQ(IDA_mem->ida_tn, IDA_mem->ida_phi[0],
-                            IDA_mem->ida_phi[1], IDA_mem->ida_phiQ[1],
-                            IDA_mem->ida_user_data);
-    IDA_mem->ida_nrQe++;
-    if (ier < 0)
-    {
-      IDAProcessError(IDA_mem, IDA_QRHS_FAIL, __LINE__, __func__, __FILE__,
-                      MSG_QRHSFUNC_FAILED);
-      return (IDA_QRHS_FAIL);
-    }
-    else if (ier > 0)
-    {
-      IDAProcessError(IDA_mem, IDA_FIRST_QRHS_ERR, __LINE__, __func__, __FILE__,
-                      MSG_QRHSFUNC_FIRST);
-      return (IDA_FIRST_QRHS_ERR);
-    }
-
     if (IDA_mem->ida_errconQ)
     {
       /* Did the user specify tolerances? */
@@ -5042,27 +5033,6 @@ int IDAInitialSetup(IDAMem IDA_mem)
 
   if (IDA_mem->ida_quadr_sensi)
   {
-    /* store the quadrature sensitivity residual. */
-    ier = IDA_mem->ida_rhsQS(IDA_mem->ida_Ns, IDA_mem->ida_tn,
-                             IDA_mem->ida_phi[0], IDA_mem->ida_phi[1],
-                             IDA_mem->ida_phiS[0], IDA_mem->ida_phiS[1],
-                             IDA_mem->ida_phiQ[1], IDA_mem->ida_phiQS[1],
-                             IDA_mem->ida_user_dataQS, IDA_mem->ida_tmpS1,
-                             IDA_mem->ida_tmpS2, IDA_mem->ida_tmpS3);
-    IDA_mem->ida_nrQSe++;
-    if (ier < 0)
-    {
-      IDAProcessError(IDA_mem, IDA_QSRHS_FAIL, __LINE__, __func__, __FILE__,
-                      MSG_QSRHSFUNC_FAILED);
-      return (IDA_QRHS_FAIL);
-    }
-    else if (ier > 0)
-    {
-      IDAProcessError(IDA_mem, IDA_FIRST_QSRHS_ERR, __LINE__, __func__,
-                      __FILE__, MSG_QSRHSFUNC_FIRST);
-      return (IDA_FIRST_QSRHS_ERR);
-    }
-
     /* If using the internal DQ functions, we must have access to fQ
      * (i.e. quadrature integration must be enabled) and to the problem parameters */
 
@@ -5182,6 +5152,69 @@ int IDAInitialSetup(IDAMem IDA_mem)
   }
 
   return (IDA_SUCCESS);
+}
+
+/*
+ * IDAQuadSetup
+ *
+ * This routine is called by IDASolve once at the first step. It
+ * fills in phiQ[1] and phiQS[1] since they are not provided by
+ * the user. It is important this is NOT done in IDAInitialSetup as
+ * IDACalcIC will call IDAInitialSetup in which case inconsistent initial
+ * conditions will be used to compute phiQ[1] and phiQS[1] (if
+ * IDAQuadInit is called BEFORE IDACalcIC) or phiQ[1] and phiQS[1]
+ * will not be initialized (if IDAQuadInit is called AFTER IDACalcIC).
+ */
+static int IDAQuadSetup(IDAMem IDA_mem)
+{
+  int ier;
+
+  if (IDA_mem->ida_quadr)
+  {
+    /* Evaluate quadrature rhs and set phiQ[1] */
+    ier = IDA_mem->ida_rhsQ(IDA_mem->ida_tn, IDA_mem->ida_phi[0],
+                            IDA_mem->ida_phi[1], IDA_mem->ida_phiQ[1],
+                            IDA_mem->ida_user_data);
+    IDA_mem->ida_nrQe++;
+    if (ier < 0)
+    {
+      IDAProcessError(IDA_mem, IDA_QRHS_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_QRHSFUNC_FAILED);
+      return (IDA_QRHS_FAIL);
+    }
+    else if (ier > 0)
+    {
+      IDAProcessError(IDA_mem, IDA_FIRST_QRHS_ERR, __LINE__, __func__, __FILE__,
+                      MSG_QRHSFUNC_FIRST);
+      return (IDA_FIRST_QRHS_ERR);
+    }
+  }
+
+  if (IDA_mem->ida_quadr_sensi)
+  {
+    /* store the quadrature sensitivity residual. */
+    ier = IDA_mem->ida_rhsQS(IDA_mem->ida_Ns, IDA_mem->ida_tn,
+                             IDA_mem->ida_phi[0], IDA_mem->ida_phi[1],
+                             IDA_mem->ida_phiS[0], IDA_mem->ida_phiS[1],
+                             IDA_mem->ida_phiQ[1], IDA_mem->ida_phiQS[1],
+                             IDA_mem->ida_user_dataQS, IDA_mem->ida_tmpS1,
+                             IDA_mem->ida_tmpS2, IDA_mem->ida_tmpS3);
+    IDA_mem->ida_nrQSe++;
+    if (ier < 0)
+    {
+      IDAProcessError(IDA_mem, IDA_QSRHS_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_QSRHSFUNC_FAILED);
+      return (IDA_QRHS_FAIL);
+    }
+    else if (ier > 0)
+    {
+      IDAProcessError(IDA_mem, IDA_FIRST_QSRHS_ERR, __LINE__, __func__,
+                      __FILE__, MSG_QSRHSFUNC_FIRST);
+      return (IDA_FIRST_QSRHS_ERR);
+    }
+  }
+
+  return IDA_SUCCESS;
 }
 
 /*
@@ -6156,10 +6189,6 @@ static int IDAStep(IDAMem IDA_mem)
 
   } /* end loop */
 
-  SUNLogInfo(IDA_LOGGER, "end-step-attempt",
-             "status = success, dsm = " SUN_FORMAT_G,
-             ck * err_k / IDA_mem->ida_sigma[IDA_mem->ida_kk]);
-
   /* Nonlinear system solve and error test were both successful;
      update data, and consider change of step and/or order */
 
@@ -6177,6 +6206,10 @@ static int IDAStep(IDAMem IDA_mem)
   */
 
   N_VScale(ck, IDA_mem->ida_ee, IDA_mem->ida_ee);
+
+  SUNLogInfo(IDA_LOGGER, "end-step-attempt",
+             "status = success, dsm = " SUN_FORMAT_G,
+             ck * err_k / IDA_mem->ida_sigma[IDA_mem->ida_kk]);
 
   return (IDA_SUCCESS);
 }
@@ -6866,9 +6899,6 @@ static int IDATestError(IDAMem IDA_mem, sunrealtype ck, sunrealtype* err_k,
     }
   }
 
-  SUNLogDebug(IDA_LOGGER, "new-order", "kk = %i, knew = %i", IDA_mem->ida_kk,
-              IDA_mem->ida_knew);
-
   SUNLogDebug(IDA_LOGGER, "error-estimate", "ck_enorm_k = " SUN_FORMAT_G,
               ck * enorm_k);
 
@@ -7358,6 +7388,8 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
     (*nefPtr)++;  /* local counter for error test failures */
     (*netfPtr)++; /* global counter for error test failures */
 
+    SUNLogDebug(IDA_LOGGER, "error-test-fail", "nef = %i", *nefPtr);
+
     if (*nefPtr == 1)
     {
       /* On first error test failure, keep current order or lower order by one.
@@ -7374,10 +7406,6 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
                                 IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
       IDA_mem->ida_hh *= IDA_mem->ida_eta;
 
-      SUNLogDebug(IDA_LOGGER, "first-error-test_fail",
-                  "kk = %i, eta = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
-                  IDA_mem->ida_kk, IDA_mem->ida_eta, IDA_mem->ida_hh);
-
       return (PREDICT_AGAIN);
     }
     else if (*nefPtr == 2)
@@ -7390,10 +7418,6 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
                                 IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
       IDA_mem->ida_hh *= IDA_mem->ida_eta;
 
-      SUNLogDebug(IDA_LOGGER, "second-error-test-fail",
-                  "kk = %i, eta = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
-                  IDA_mem->ida_kk, IDA_mem->ida_eta, IDA_mem->ida_hh);
-
       return (PREDICT_AGAIN);
     }
     else if (*nefPtr < IDA_mem->ida_maxnef)
@@ -7404,10 +7428,6 @@ static int IDAHandleNFlag(IDAMem IDA_mem, int nflag, sunrealtype err_k,
       IDA_mem->ida_eta = SUNMAX(IDA_mem->ida_eta_min_ef,
                                 IDA_mem->ida_hmin / SUNRabs(IDA_mem->ida_hh));
       IDA_mem->ida_hh *= IDA_mem->ida_eta;
-
-      SUNLogDebug(IDA_LOGGER, "error-test-fail",
-                  "kk = %i, eta = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
-                  IDA_mem->ida_kk, IDA_mem->ida_eta, IDA_mem->ida_hh);
 
       return (PREDICT_AGAIN);
     }

@@ -317,11 +317,11 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
 }
 
 /*---------------------------------------------------------------
-  LSRKStepSetUseAnalyticStabRegion sets whether to use the ellipse or the exact 
+  LSRKStepSetUseAnalyticStabilityRegion sets whether to use the ellipse or the exact
   stability region for stability checks.
   ---------------------------------------------------------------*/
-int LSRKStepSetUseAnalyticStabRegion(void* arkode_mem,
-                                     sunbooleantype use_analytic_stab_region)
+int LSRKStepSetUseAnalyticStabilityRegion(void* arkode_mem,
+                                          sunbooleantype use_analytic_stab_region)
 {
   ARKodeMem ark_mem;
   ARKodeLSRKStepMem step_mem;
@@ -707,7 +707,8 @@ int lsrkStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
      {"num_ssp_stages", LSRKStepSetNumSSPStages},
      {"num_dom_eig_est_init_preprocess_iters",
       LSRKStepSetNumDomEigEstInitPreprocessIters},
-     {"num_dom_eig_est_preprocess_iters", LSRKStepSetNumDomEigEstPreprocessIters}};
+     {"num_dom_eig_est_preprocess_iters", LSRKStepSetNumDomEigEstPreprocessIters},
+     {"use_analytic_stability_region", LSRKStepSetUseAnalyticStabilityRegion}};
   static const int num_int_keys = sizeof(int_pairs) / sizeof(*int_pairs);
 
   static const struct sunKeyRealPair real_pairs[] = {
@@ -812,7 +813,7 @@ int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   *stage      = step_mem->istage;
-  *max_stages = step_mem->req_stages + 1;
+  *max_stages = step_mem->req_stages + (step_mem->is_SSP ? 0 : 1);
 
   return (ARK_SUCCESS);
 }
@@ -920,6 +921,8 @@ int lsrkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp)
             step_mem->spectral_radius);
     fprintf(fp, "  Safety factor for the dom eig = " SUN_FORMAT_G "\n",
             step_mem->dom_eig_safety);
+    fprintf(fp, "  Use elliptical stability region = %i\n",
+            step_mem->use_ellipse);
     fprintf(fp, "  Damping factor for RKC = " SUN_FORMAT_G "\n",
             step_mem->rkc_damping);
     fprintf(fp, "  Max num of successful steps before new dom eig update = %li\n",

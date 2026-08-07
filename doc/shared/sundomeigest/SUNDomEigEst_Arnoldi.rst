@@ -43,11 +43,23 @@ approximate some of the eigenvalues of :math:`A`; the dominant eigenvalue of :ma
 well-approximated by the dominant eigenvalue of :math:`H_m`.
 
 Arnoldi iteration works for matrices with both real and complex eigenvalues.  It supports
-estimations with a user-specified fixed Krylov subspace dimension (at least 3).  While
-the choice of dimension results in a prefixed amount of memory, it strictly
-determines the quality of the estimate.  To improve the estimation accuracy, we have found that
-preprocessing with a number of Power iterations is particularly useful.
-This operation is free from any additional memory requirement and is further explained below.
+estimations with a user-specified fixed Krylov subspace dimension (at least 3).  This
+choice guarantees a bounded memory footprint, which is essential for large-scale
+problems, while strongly influencing the quality of the estimate.  To improve the
+estimation accuracy, we have found that preprocessing with a number of power
+iterations is particularly useful.  This operation requires no additional Krylov
+storage and is further explained below.
+
+Unlike the power iteration, these implementations do not perform tolerance-based
+convergence checks at every Arnoldi step, since repeating an Arnoldi iteration due
+to failed convergence would be computationally expensive.  Instead, the
+magnitude-based convergence criterion defined in :ref:`relative tolerance <pi_rel_tol>`
+is used as a preliminary screening mechanism before invoking the Krylov-based estimator.
+
+While this approach is slightly less robust than explicitly monitoring both the
+real and imaginary components of the eigenvalue residual during Arnoldi iteration,
+it significantly reduces computational cost.  This trade-off is particularly
+advantageous for large-scale problems, where each Arnoldi cycle may be expensive.
 
 The matrix :math:`A` is not required explicitly; only a routine that provides an
 approximation of the matrix-vector product, :math:`Av`, is required.
@@ -101,6 +113,36 @@ routines:
       :c:func:`SUNDomEigEstimator_SetInitialGuess`.
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator DEE, sunrealtype rel_tol)
+
+   This routine sets the relative tolerance used during the preprocessing phase
+   of the Arnoldi implementation.
+
+   :param DEE: the dominant eigenvalue estimator object.
+   :param rel_tol: requested relative tolerance.
+
+   :returns: ``SUN_SUCCESS`` if successful, otherwise an appropriate error code.
+
+   .. note::
+
+      In the Arnoldi implementation, ``rel_tol`` is used only to assess the
+      preprocessing Power iterations. Once the preprocessing estimate satisfies
+
+      .. math::
+
+         \left|\lambda_{k} - \lambda_{k-1}\right|
+         \le \mathtt{rel\_tol} \cdot |\lambda_{k}|,
+
+      the Arnoldi iteration begins. This avoids restarting Arnoldi repeatedly.
+
+      Supplying ``rel_tol < 0`` disables preprocessing-to-tolerance behavior.
+      Inputs satisfying :math:`0 < \mathtt{rel\_tol} < 1`
+      enable this behavior and are used directly. Values with
+      :math:`\mathtt{rel\_tol} = 0` or
+      :math:`\mathtt{rel\_tol} >= 1` reset to the default value
+      ``0.005``.
+
+
 .. _SUNDomEigEst.Arnoldi.Description:
 
 SUNDomEigEstimator_Arnoldi Description
@@ -123,7 +165,7 @@ The SUNDomEigEstimator_Arnoldi module defines the *content* field of a
      int num_warmups;
      long int num_iters;
      sunbooleantype warmup_to_tol;
-     sunrealtype tol_preprocess;
+     sunrealtype tol_warmup;
      sunrealtype rhs_linT;
      long int num_ATimes;
      SUNRhsFn rhsfn;
@@ -155,14 +197,14 @@ information:
 * ``num_iters`` - number of iterations (preprocessing and estimation) in the
   last :c:func:`SUNDomEigEstimator_Estimate` call,
 
-* ``warmup_to_tol`` - type of warmup iterations (default is ``SUNFALSE``)
+* ``warmup_to_tol`` - enable warmup iterations (default is ``SUNFALSE``)
 
-* ``tol_preprocess`` - tolerance for preprocessing iterations (default is 0.005; 
+* ``tol_warmup`` - tolerance for preprocessing iterations (default is 0.005;
   only used if ``warmup_to_tol`` is ``SUNTRUE``),
 
 * ``rhs_linY`` - state vector for linearization point,
 
-* ``rhs_linT`` - time value for linearization point (default is 0.0),
+* ``rhs_linT`` - time value for linearization point,
 
 * ``rhsfn`` - user provided RHS function,
 
@@ -206,8 +248,10 @@ This estimator is constructed to perform the following operations:
 
   (see :c:func:`LSRKStepSetNumDomEigEstInitPreprocessIters` and
   :c:func:`LSRKStepSetNumDomEigEstPreprocessIters` for setting the number of
-  preprocessing iterations). Then, the Arnoldi iteration is performed to compute
-  the estimate.
+  preprocessing iterations). If tolerance-based warmup checking is enabled via
+  :c:func:`SUNDomEigEstimator_SetRelTol_Arnoldi`, this preprocessing phase may
+  terminate early once the warmup estimate satisfies the requested relative
+  tolerance. Then, the Arnoldi iteration is performed to compute the estimate.
 
 The SUNDomEigEstimator_Arnoldi module defines implementations of all dominant
 eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
@@ -221,6 +265,8 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 * ``SUNDomEigEstimator_Estimate_Arnoldi``
 
 * ``SUNDomEigEstimator_GetNumIters_Arnoldi``
+
+* ``SUNDomEigEstimator_GetNumRhsEvals_Arnoldi``
 
 * ``SUNDomEigEstimator_GetNumATimesCalls_Arnoldi``
 

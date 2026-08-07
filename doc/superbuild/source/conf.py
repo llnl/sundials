@@ -20,8 +20,8 @@ from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../shared")))
 
-# Add suntools directory to import python function docstrings with autodoc
-sys.path.append(os.path.abspath("../../../tools/suntools"))
+# Add the suntools package source parent for autodoc imports.
+sys.path.append(os.path.abspath("../../../suntools/src/suntools"))
 
 # -- General configuration ----------------------------------------------------
 
@@ -40,7 +40,7 @@ extensions = [
     "sphinx_multitoc_numbering",
     "sphinx_rtd_theme",
     "sphinx_sundials",
-    "sphinx_toolbox.collapse",
+    "sphinx_design",
     "sphinx.ext.autodoc",
     "sphinx.ext.extlinks",
     "sphinx.ext.graphviz",

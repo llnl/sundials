@@ -168,9 +168,17 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2` | 2      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`                 | 3      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_4_1_2`                 | 4      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`              | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`                | 3      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`              | 3      | 1              | 2     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2`           | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_BOGACKI_SHAMPINE_4_2_3`        | 4      | 2              | 3*    |
    +------------------------------------------------------+--------+----------------+-------+
@@ -179,6 +187,10 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    | :c:enumerator:`ARKODE_SHU_OSHER_3_2_3`               | 3      | 2              | 3     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_KNOTH_WOLKE_3_3`               | 3      | ---            | 3     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_4_2_3`                 | 4      | 2              | 3     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_10_3_4`                | 10     | 3              | 4     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SOFRONIOU_SPALETTA_5_3_4`      | 5      | 3              | 4*    |
    +------------------------------------------------------+--------+----------------+-------+
@@ -226,6 +238,11 @@ Accessible via the string ``"ARKODE_FORWARD_EULER_1_1"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the default 1st order explicit method (from :cite:p:`Euler:68`).
 
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -253,7 +270,7 @@ Accessible via the string ``"ARKODE_RALSTON_3_1_2"`` to
 This is the default 2nd order explicit method
 (primary method from :cite:p:`Ralston:62`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Added as the default 2nd order explicit method
 
@@ -287,7 +304,7 @@ Accessible via the string ``"ARKODE_HEUN_EULER_2_1_2"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (primary method from :cite:p:`Runge:95`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_RALSTON_3_1_2`` as the default 2nd order explicit method
 
@@ -368,6 +385,75 @@ Accessible via the string ``"ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2"`` to
    region is outlined in blue; the embedding's region is in red.
 
 
+.. c:enumerator:: ARKODE_SSP_ERK_3_1_2
+
+Accessible via the constant ``ARKODE_SSP_ERK_3_1_2`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_SSP_ERK_3_1_2"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the "SSPERK(3,2)" method from :cite:p:`FCS:22`.
+Both the method and its embedding have optimal SSP coefficient
+equal to 2.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     0 & 0 & 0 & 0 \\
+     \frac12 & \frac12 & 0 & 0 \\
+     1 & \frac12 & \frac12 & 0 \\
+     \hline
+     2 & \frac13 & \frac13 & \frac13 \\
+     1 & \frac49 & \frac13 & \frac29\\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_ERK_3_1_2_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-ERK-3-1-2 method. The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
+.. c:enumerator:: ARKODE_SSP_ERK_4_1_2
+
+Accessible via the constant ``ARKODE_SSP_ERK_4_1_2`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_SSP_ERK_4_1_2"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the "SSPERK(4,2)" method from :cite:p:`FCS:22`.
+Both the method and its embedding have optimal SSP coefficient
+equal to 3.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+     0 & 0 & 0 & 0& 0 \\
+     \frac13 & \frac13 & 0 & 0 & 0\\
+     \frac23 & \frac13 & \frac13 & 0 & 0\\
+     1 & \frac13 & \frac13 & \frac13 & 0\\
+     \hline
+     2 & \frac14 & \frac14 & \frac14 & \frac14\\
+     1 & \frac{5}{16} & \frac14 & \frac14 & \frac{3}{16}\\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_ERK_4_1_2_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-ERK-4-1-2 method. The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
 .. c:enumerator:: ARKODE_ARS222_ERK_3_1_2
 
 Accessible via the constant ``ARKODE_ARS222_ERK_3_1_2`` to
@@ -428,6 +514,77 @@ explicit portion of the ARK2 method from :cite:p:`giraldo2013implicit`).
 
    Linear stability region for the ARK2-ERK method. The method's
    region is outlined in blue; the embedding's region is in red.
+
+
+.. c:enumerator:: ARKODE_ASCHER_ERK_3_1_2
+
+Accessible via the constant ``ARKODE_ASCHER_ERK_3_1_2`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_ASCHER_ERK_3_1_2"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+The method is the explicit portion of the "(2,2,2)" additive Runge--Kutta
+method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented specifically for
+ARKODE.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     0 & 0 & 0 & 0 \\
+     \gamma & \gamma & 0 & 0 \\
+     1 & \delta & 1-\delta & 0 \\
+     \hline
+     2 & \delta & 1-\delta & 0 \\
+     1 & 0 & \frac35 & \frac25 \\
+   \end{array}
+
+where :math:`\gamma = \frac{2-\sqrt{2}}{2}` and :math:`\delta = 1-\frac{1}{2\gamma}`.
+
+.. figure:: /figs/arkode/ARKODE_ASCHER_ERK_3_1_2_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the Ascher-ERK-3-1-2 method. The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
+.. c:enumerator:: ARKODE_SSP_LSPUM_ERK_3_1_2
+
+Accessible via the constant ``ARKODE_SSP_LSPUM_ERK_3_1_2`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_SSP_LSPUM_ERK_3_1_2"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+The method is the explicit portion of the "SSP2(3,3,2)-LSPUM" additive
+Runge--Kutta method from :cite:p:`H:14`; the embedding was invented
+specifically for ARKODE.  The method has SSP coefficient equal to 1.2,
+and the embedding has SSP coefficient equal to 1.15.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     0 & 0 & 0 & 0 \\
+     \frac56 & \frac56 & 0 & 0 \\
+     \frac{11}{12} & \frac{11}{24} & \frac{11}{24} & 0 \\
+     \hline
+     2 & \frac{24}{55} & \frac{1}{5} & \frac{4}{11} \\
+     1 & \frac{4247}{9840} & \frac{21343}{108240} & \frac{49}{132}
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_LSPUM_ERK_3_1_2_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-LSPUM-ERK-3-1-2 method.  The method's
+   region is outlined in red; the embedding's region is in blue dashed.
 
 
 .. c:enumerator:: ARKODE_BOGACKI_SHAMPINE_4_2_3
@@ -533,6 +690,13 @@ Accessible via the constant ``ARKODE_KNOTH_WOLKE_3_3`` to
 Accessible via the string ``"ARKODE_KNOTH_WOLKE_3_3"`` to
 :c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName`, or
 :c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the default 3th order slow and fast MRIStep method (from
+:cite:p:`KnWo:98`).
+
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
 
 .. math::
 
@@ -553,6 +717,154 @@ Accessible via the string ``"ARKODE_KNOTH_WOLKE_3_3"`` to
    :cite:p:`KnWo:98`.
 
 
+.. c:enumerator:: ARKODE_SSP_ERK_4_2_3
+
+Accessible via the constant ``ARKODE_SSP_ERK_4_2_3`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_SSP_ERK_4_2_3"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName`, or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the "SSPERK(4,3)" method from :cite:p:`FCS:22`.
+Both the method and its embedding have SSP coefficient equal to 2.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+           0 & 0       & 0       & 0       & 0 \\
+     \frac12 & \frac12 & 0       & 0       & 0 \\
+           1 & \frac12 & \frac12 & 0       & 0 \\
+     \frac12 & \frac16 & \frac16 & \frac16 & 0 \\
+     \hline
+           3 & \frac16 & \frac16 & \frac16 & \frac12\\
+           2 & \frac14 & \frac14 & \frac14 & \frac14
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_ERK_4_2_3_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-ERK-4-2-3 method.  The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
+.. c:enumerator:: ARKODE_SSP_ERK_10_3_4
+
+Accessible via the constant ``ARKODE_SSP_ERK_10_3_4`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_SSP_ERK_10_3_4"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName`, or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the "SSPERK(10,4)" method from :cite:p:`FCS:22`.
+The method has SSP coefficient equal to 6.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccccccccc}
+     0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0& 0 \\
+     \frac16 & \frac16      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+     \frac13 & \frac16      & \frac16      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+     \frac12 & \frac16      & \frac16      & \frac16      & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+     \frac23 & \frac16      & \frac16      & \frac16      & \frac16      & 0 & 0 & 0 & 0 & 0 & 0\\
+     \frac13 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & 0 & 0 & 0 & 0 & 0\\
+     \frac12 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16      & 0 & 0 & 0 & 0\\
+     \frac23 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16      & \frac16      & 0 & 0 & 0\\
+     \frac56 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16      & \frac16      & \frac16      & 0 & 0\\
+     1 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16      & \frac16      & \frac16      & \frac16 & 0\\
+     \hline
+     4 & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10}\\
+     3 & \frac15      & 0            & 0            & \frac{3}{10} & 0            & 0            & \frac15      & 0            & \frac{3}{10} & 0
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_ERK_10_3_4_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-ERK-10-3-4 method.  The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
+.. c:enumerator:: ARKODE_SSP_ERK_4_2_3
+
+Accessible via the constant ``ARKODE_SSP_ERK_4_2_3`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_SSP_ERK_4_2_3"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName`, or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the "SSPERK(4,3)" method from :cite:p:`FCS:22`.
+Both the method and its embedding have SSP coefficient equal to 2.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+           0 & 0       & 0       & 0       & 0 \\
+     \frac12 & \frac12 & 0       & 0       & 0 \\
+           1 & \frac12 & \frac12 & 0       & 0 \\
+     \frac12 & \frac16 & \frac16 & \frac16 & 0 \\
+     \hline
+           3 & \frac16 & \frac16 & \frac16 & \frac12\\
+           2 & \frac14 & \frac14 & \frac14 & \frac14
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_ERK_4_2_3_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-ERK-4-2-3 method.  The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
+.. c:enumerator:: ARKODE_SSP_ERK_10_3_4
+
+Accessible via the constant ``ARKODE_SSP_ERK_10_3_4`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.
+Accessible via the string ``"ARKODE_SSP_ERK_10_3_4"`` to
+:c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName`, or
+:c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the "SSPERK(10,4)" method from :cite:p:`FCS:22`.
+The method has SSP coefficient equal to 6.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccccccccc}
+     0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0& 0 \\
+     \frac16 & \frac16      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+     \frac13 & \frac16      & \frac16      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+     \frac12 & \frac16      & \frac16      & \frac16      & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+     \frac23 & \frac16      & \frac16      & \frac16      & \frac16      & 0 & 0 & 0 & 0 & 0 & 0\\
+     \frac13 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & 0 & 0 & 0 & 0 & 0\\
+     \frac12 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16      & 0 & 0 & 0 & 0\\
+     \frac23 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16      & \frac16      & 0 & 0 & 0\\
+     \frac56 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16      & \frac16      & \frac16      & 0 & 0\\
+     1 & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac{1}{15} & \frac16      & \frac16      & \frac16      & \frac16 & 0\\
+     \hline
+     4 & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10} & \frac{1}{10}\\
+     3 & \frac15      & 0            & 0            & \frac{3}{10} & 0            & 0            & \frac15      & 0            & \frac{3}{10} & 0
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_ERK_10_3_4_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-ERK-10-3-4 method.  The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
 .. c:enumerator:: ARKODE_SOFRONIOU_SPALETTA_5_3_4
 
 Accessible via the constant ``ARKODE_SOFRONIOU_SPALETTA_5_3_4`` to
@@ -564,7 +876,7 @@ Accessible via the string ``"ARKODE_SOFRONIOU_SPALETTA_5_3_4"`` to
 This is the default 4th order explicit method.
 (from :cite:p:`Sof:04`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 4th order explicit method
 
@@ -600,7 +912,7 @@ Accessible via the string ``"ARKODE_ZONNEVELD_5_3_4"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (from :cite:p:`Zon:63`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_SOFRONIOU_SPALETTA_5_3_4`` as the default 4th order explicit method
 
@@ -637,7 +949,7 @@ Accessible via the string ``"ARKODE_ARK436L2SA_ERK_6_3_4"`` to
 This is the explicit portion of the ARK4(3)6L[2]SA method from
 :cite:p:`KenCarp:03`.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ARK437L2SA_ERK_7_3_4`` as the explicit portion of the default 4th order additive method
 
@@ -675,7 +987,7 @@ Accessible via the string ``"ARKODE_ARK437L2SA_ERK_7_3_4"`` to
 This is the explicit portion of the default 4th order additive method and the
 explicit portion of the ARK4(3)7L[2]SA method from :cite:p:`KenCarp:19`.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the explicit portion of the default 4th order additive method
 
@@ -752,7 +1064,7 @@ Accessible via the string ``"ARKODE_TSITOURAS_7_4_5"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the default 5th order explicit method (from :cite:p:`Tsitouras:11`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Added as the default 5th order explicit method
 
@@ -805,7 +1117,7 @@ Accessible via the string ``"ARKODE_CASH_KARP_6_4_5"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (from :cite:p:`CashKarp:90`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_TSITOURAS_7_4_5`` as the default 5th order explicit method
 
@@ -910,7 +1222,7 @@ Accessible via the string ``"ARKODE_ARK548L2SA_ERK_8_4_5"`` to
 This is the explicit portion of the ARK5(4)8L[2]SA method from
 :cite:p:`KenCarp:03`.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ARK548L2SAb_ERK_8_4_5`` as the explicit portion of the default 5th order additive method
 
@@ -958,7 +1270,7 @@ This is the explicit portion of the default 5th order additive method and the
 explicit portion of the 5th order ARK5(4)8L[2]SA method from
 :cite:p:`KenCarp:19`.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the explicit portion of the default 5th order additive method
 
@@ -1005,7 +1317,7 @@ Accessible via the string ``"ARKODE_VERNER_9_5_6"`` to
 This is the default 6th order explicit method
 (method IIIXb-6(5) from :cite:p:`Ver:10`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 6th order explicit method
 
@@ -1054,7 +1366,7 @@ Accessible via the string ``"ARKODE_VERNER_8_5_6"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (from :cite:p:`HEJ:76`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_VERNER_9_5_6`` as the default 6th order explicit method
 
@@ -1138,7 +1450,7 @@ Accessible via the string ``"ARKODE_VERNER_13_7_8"`` to
 This is the default 8th order explicit method
 (method IIIX-8(7) from :cite:p:`Ver:10`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 8th order explicit method
 
@@ -1190,7 +1502,7 @@ Accessible via the string ``"ARKODE_FEHLBERG_13_7_8"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 (from :cite:p:`Butcher:08`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_VERNER_13_7_8`` as the default 8th order explicit method
 
@@ -1308,6 +1620,12 @@ with values specified in :numref:`ARKODE.Butcher.DIRK_properties`.
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SDIRK_2_1_2`              | 2      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`       | 3      | 1              | 2     |
+   +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`           | 3      | 1              | 2     |
+   +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_LSPUM_SDIRK_3_1_2`    | 3      | 1              | 2     |
+   +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_IMPLICIT_MIDPOINT_1_2`    | 1      | ---            | 2     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_IMPLICIT_TRAPEZOIDAL_2_2` | 2      | ---            | 2     |
@@ -1317,6 +1635,8 @@ with values specified in :numref:`ARKODE.Butcher.DIRK_properties`.
    | :c:enumerator:`ARKODE_TRBDF2_3_3_2`             | 3      | 3              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ESDIRK325L2SA_5_2_3`      | 5      | 2              | 3*    |
+   +-------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ESDIRK_4_2_3`             | 4      | 2              | 3     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ESDIRK324L2SA_4_2_3`      | 4      | 2              | 3     |
    +-------------------------------------------------+--------+----------------+-------+
@@ -1368,6 +1688,11 @@ Accessible via the string ``"ARKODE_BACKWARD_EULER_1_1"`` to
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 This is the default 1st order implicit method.  The method is A-, L-, and B-stable.
 
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -1396,7 +1721,7 @@ This is the default 2nd order implicit method and the implicit portion of the
 default 2nd order additive method
 (the implicit portion of the ARK2 method from :cite:p:`giraldo2013implicit`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 2nd order implicit method
 
@@ -1460,7 +1785,7 @@ Accessible via the string ``"ARKODE_SDIRK_2_1_2"`` to
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 Both the method and embedding are A- and B-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ARK2_DIRK_3_1_2`` as the default 2nd order implicit method
 
@@ -1483,6 +1808,114 @@ Both the method and embedding are A- and B-stable.
    region is outlined in blue; the embedding's region is in red.
 
 
+.. c:enumerator:: ARKODE_ASCHER_SDIRK_3_1_2
+
+Accessible via the constant ``ARKODE_ASCHER_SDIRK_3_1_2`` to
+:c:func:`ARKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadDIRK`.
+Accessible via the string ``"ARKODE_ASCHER_SDIRK_3_1_2"`` to
+:c:func:`ARKStepSetTableName`, or
+:c:func:`ARKodeButcherTable_LoadDIRKByName`.
+The method is the implicit portion of the "(2,2,2)" additive Runge--Kutta
+method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented
+specifically for ARKODE.  The method is both A- and L-stable, and the
+embedding is A-stable.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     0 & 0 & 0 & 0 \\
+     \gamma & 0 & \gamma & 0 \\
+     1 & 0 & 1-\gamma & \gamma \\
+     \hline
+     2 & 0 & 1-\gamma & \gamma \\
+     1 & 0 & \frac35 & \frac25 \\
+   \end{array}
+
+where :math:`\gamma = \frac{2-\sqrt{2}}{2}`.
+
+.. figure:: /figs/arkode/ARKODE_ASCHER_SDIRK_3_1_2_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the Ascher-SDIRK-3-1-2 method. The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
+.. c:enumerator:: ARKODE_SSP_DIRK_3_1_2
+
+Accessible via the constant ``ARKODE_SSP_DIRK_3_1_2`` to
+:c:func:`ARKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadDIRK`.
+Accessible via the string ``"ARKODE_SSP_DIRK_3_1_2"`` to
+:c:func:`ARKStepSetTableName`, or
+:c:func:`ARKodeButcherTable_LoadDIRKByName`.
+The original method is the "IMEX-SSP2(3,3,2)" stiffly accurate method from
+:cite:p:`PR:2005`, with an embedding invented specifically for ARKODE.  The method
+is both A- and L-stable, while the embedding is A-stable.  Both the method and
+embedding have SSP coefficient equal to 2.4.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     \frac14 & \frac14 & 0       & 0 \\
+     \frac14 & 0       & \frac14 & 0 \\
+     1       & \frac13 & \frac13 & \frac13 \\
+     \hline
+     2 & \frac13 & \frac13 & \frac13 \\
+     1 & \frac{7}{30} & \frac13 & \frac{13}{30} \\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_DIRK_3_1_2_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-DIRK-3-1-2 method. The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
+.. c:enumerator:: ARKODE_SSP_LSPUM_SDIRK_3_1_2
+
+Accessible via the constant ``ARKODE_SSP_LSPUM_SDIRK_3_1_2`` to
+:c:func:`ARKStepSetTableNum` or
+:c:func:`ARKodeButcherTable_LoadDIRK`.
+Accessible via the string ``"ARKODE_SSP_LSPUM_SDIRK_3_1_2"`` to
+:c:func:`ARKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadDIRKByName`.
+The method is the implicit portion of the "SSP2(3,3,2)-LSPUM" additive
+Runge--Kutta method from :cite:p:`H:14`; the embedding was invented
+specifically for ARKODE.  The method is both A- and L-stable,
+while the embedding is A-stable.  Both the method and embedding have SSP
+coefficient equal to 3.81.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|ccc}
+     \frac{2}{11}    & \frac{2}{11}      & 0 & 0 \\
+     \frac{289}{462} & \frac{205}{462}   & \frac{2}{11}   & 0 \\
+     \frac{751}{924} & \frac{2033}{4620} & \frac{21}{110} & \frac{2}{11} \\
+     \hline
+     2 & \frac{24}{55} & \frac{1}{5} & \frac{4}{11} \\
+     1 & \frac{4247}{9840} & \frac{21343}{108240} & \frac{49}{132}
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_SSP_LSPUM_SDIRK_3_1_2_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-LSPUM-SDIRK-3-1-2 method.  The method's
+   region is outlined in red; the embedding's region is in blue dashed.
+
+
 .. c:enumerator:: ARKODE_IMPLICIT_MIDPOINT_1_2
 
 Accessible via the constant ``ARKODE_IMPLICIT_MIDPOINT_1_2`` to
@@ -1492,6 +1925,11 @@ Accessible via the string ``"ARKODE_IMPLICIT_MIDPOINT_1_2"`` to
 :c:func:`ARKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 The method is A- and B-stable.
+
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
 
 .. math::
 
@@ -1518,6 +1956,11 @@ Accessible via the string ``"ARKODE_IMPLICIT_TRAPEZOIDAL_2_2"`` to
 :c:func:`ARKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 The method is A-stable.
+
+.. warning::
+
+   When using this non-embedded table, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
 
 .. math::
 
@@ -1609,7 +2052,7 @@ This is the default 3rd order implicit method and the ESDIRK3(2)5L[2]SA method
 from :cite:p:`KenCarp:16`.
 Both the method and embedding are A- and L-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 3rd order implicit method
 
@@ -1619,6 +2062,44 @@ Both the method and embedding are A- and L-stable.
 
    Linear stability region for the ESDIRK325L2SA-5-2-3 method method.  The method's
    region is outlined in blue; the embedding's region is in red.
+
+
+.. c:enumerator:: ARKODE_ESDIRK_4_2_3
+
+Accessible via the constant ``ARKODE_ESDIRK_4_2_3`` to
+:c:func:`ARKStepSetTableNum` or :c:func:`ARKodeButcherTable_LoadDIRK`.
+Accessible via the string ``"ARKODE_ESDIRK_4_2_3"`` to
+:c:func:`ARKStepSetTableName` or
+:c:func:`ARKodeButcherTable_LoadDIRKByName`.
+This method was invented specifically for ARKODE as an implicit method to
+pair with ``ARKODE_SSP_ERK_4_2_3`` for an embedded additive
+Runge--Kutta method.  The method is both A- and L-stable, and the
+embedding is A-stable.
+
+.. versionadded:: 7.8.0 (6.8.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+     0       & 0 & 0 & 0 & 0 \\
+     \frac12 & \frac12-\gamma & \gamma    & 0 & 0 \\
+     1       & 1-\alpha-\gamma & \alpha & \gamma & 0 \\
+     \frac12 & \frac12-\beta-\eta-\gamma & \beta & \eta & \gamma \\
+     \hline
+     3       & \frac16 & \frac16 & \frac16 & \frac12 \\
+     2       & \frac14 & \frac14 & \frac14 & \frac14
+   \end{array}
+
+where :math:`\gamma =  0.435866521508459`, :math:`\alpha = 0.1677218170940733`,
+:math:`\beta = 1.386012857827706`, and :math:`\eta = -0.8234932532713241`.
+
+.. figure:: /figs/arkode/ARKODE_ESDIRK_4_2_3_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the SSP-ESDIRK-4-2-3 method.  The method's
+   region is outlined in red; the embedding's region is in blue dashed.
 
 
 .. c:enumerator:: ARKODE_ESDIRK324L2SA_4_2_3
@@ -1702,7 +2183,7 @@ method and embedding are A-stable; additionally the method is L-stable
 (this is the implicit portion of the ARK3(2)4L[2]SA method from
 :cite:p:`KenCarp:03`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ESDIRK325L2SA_5_2_3`` as the default 3rd order implicit method
 
@@ -1737,7 +2218,7 @@ Accessible via the string ``"ARKODE_ESDIRK436L2SA_6_3_4"`` to
 This is the default 4th order implicit method and the ESDIRK4(3)6L[2]SA method
 from :cite:p:`KenCarp:16`. Both the method and embedding are A- and L-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 4th order implicit method
 
@@ -1826,7 +2307,7 @@ Accessible via the string ``"ARKODE_SDIRK_5_3_4"`` to
 Here, the method is both A- and L-stable, although the embedding has reduced
 stability (from :cite:p:`HaWa:91`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ESDIRK436L2SA_6_3_4`` as the default 4th order implicit method
 
@@ -1903,7 +2384,7 @@ Both the method and embedding are A-stable; additionally the method is L-stable
 (this is the implicit portion of the ARK4(3)6L[2]SA method from
 :cite:p:`KenCarp:03`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ARK437L2SA_DIRK_7_3_4`` as the implicit portion of the default 4th order additive method
 
@@ -1942,7 +2423,7 @@ This is the implicit portion of the default 4th order additive method and the
 implicit portion of the 4th order ARK4(3)7L[2]SA method from
 :cite:p:`KenCarp:19`.  Both the method and embedding are A- and L-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the implicit portion of the default 4th order additive method
 
@@ -2034,7 +2515,7 @@ Accessible via the string ``"ARKODE_ESDIRK547L2SA2_7_4_5"`` to
 This is the default 5th order implicit method and the ESDIRK5(4)7L[2]SA2 method
 from :cite:p:`KenCarp:19b`. Both the method and embedding are A- and L-stable.
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 5th order implicit method
 
@@ -2099,7 +2580,7 @@ Accessible via the string ``"ARKODE_ARK548L2SA_DIRK_8_4_5"`` to
 Both the method and embedding are A-stable; additionally the method is L-stable
 (the implicit portion of the ARK5(4)8L[2]SA method from :cite:p:`KenCarp:03`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Replaced by ``ARKODE_ESDIRK547L2SA2_7_4_5`` as the default 5th order implicit method and replaced by ``ARKODE_ARK548L2SAb_DIRK_8_4_5`` as the implicit portion of the default 5th order additive method
 
@@ -2148,7 +2629,7 @@ Both the method and embedding are A-stable; additionally the method is L-stable
 (this is the implicit portion of the 5th order ARK5(4)8L[2]SA method from
 :cite:p:`KenCarp:19`).
 
-.. versionchanged:: 6.3.0
+.. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the implicit portion of the default 5th order additive method
 
@@ -2209,8 +2690,51 @@ Additive Butcher tables
 
 In the category of additive Runge--Kutta methods for split implicit and
 explicit calculations, ARKODE includes methods that have orders 2
-through 5, with embeddings that are of orders 1 through 4.  These
-Butcher table pairs are as follows:
+through 5, with embeddings that are of orders 1 through 4.
+
+Additionally, for each ARK method we provide a plot of the joint linear
+stability region in the complex plane, as introduced in :cite:p:`Z:15`.  This
+analysis considers the additive Dahlquist test problem
+
+.. math::
+
+   \dot{y}(t) = \lambda^I y + \lambda^E y, \quad y(0) = 1,
+
+where the additive Runge--Kutta method applies the partition
+:math:`f^I(t,y) = \lambda^I y` and :math:`f^E(t,y) = \lambda^E y`.  Using a
+step size of :math:`h`, with corresponding scaled values
+:math:`\eta^I = h\lambda^I` and :math:`\eta^E = h\lambda^E`, this gives rise
+to the ARK stability function
+
+.. math::
+
+   R(\eta^I,\eta^E) = 1 + \left(\eta^I b^I + \eta^E b^E\right) [I - \eta^I A^I - \eta^E A^E]^{-1} e.
+
+Then for a given angle :math:`\theta \in \left[0,\frac{\pi}{2}\right]` and radius :math:`\rho>0`, we may define the joint linear stability region
+
+.. math::
+
+   \mathcal{J}_{\theta,\rho} = \left\{ \eta^E \in \mathbb{C}\; :\; \left| R(\eta^I,\eta^E) \right| \le 1,\; \forall \eta^I\in S(\theta,\rho)\right\},
+
+where the sector :math:`S(\theta,\rho)` is defined as
+
+.. math::
+
+   S(\theta,\rho) = \left\{ \eta^I = -a+i b \; :\; a>0,\; b\ge 0,\; |\eta^I|\le \rho,\; \operatorname{atan}\left(\frac{b}{a}\right) \le \theta \right\}.
+
+For each ARK method, we overlay plots of the border of :math:`\mathcal{J}_{\theta,\rho}`
+for values :math:`\theta \in \left\{0^{\circ}, 15^{\circ}, 30^{\circ}, 45^{\circ}, 60^{\circ}, 75^{\circ}, 90^{\circ}\right\}` and
+:math:`\rho=10^8`; roughly corresponding with the shape of the explicit stability region
+under the assumption that the implicit method is :math:`A(\theta)`-stable;
+the joint stability region decreases in area as :math:`\theta` and :math:`\rho` increase.
+
+As with traditional Runge--Kutta methods, the value :math:`\eta^E_0 =
+-\varepsilon + 0i` is always within the joint stability region.  So in each
+of the following pictures, the interior of the stability region is the
+connected region that includes :math:`\eta_0`.
+
+These ARK Butcher table pairs, and their corresponding joint stability regions,
+are as follows.
 
 .. _ARKODE.Butcher.ARK_properties:
 .. table:: Additive Butcher tables. The default method for each order is marked
@@ -2221,9 +2745,17 @@ Butcher table pairs are as follows:
    +==============================================+===============================================+========+================+=======+
    | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`        | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`        | 3      | 1              | 2*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`      | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`     | 3      | 1              | 2     |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`         | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`         | 3      | 1              | 2     |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2`   | :c:enumerator:`ARKODE_SSP_LSPUM_SDIRK_3_1_2`  | 3      | 1              | 2     |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`      | :c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`    | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK324L2SA_ERK_4_2_3`  | :c:enumerator:`ARKODE_ARK324L2SA_DIRK_4_2_3`  | 4      | 2              | 3*    |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_4_2_3`         | :c:enumerator:`ARKODE_ESDIRK_4_2_3`           | 4      | 2              | 3     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK437L2SA_ERK_7_3_4`  | :c:enumerator:`ARKODE_ARK437L2SA_DIRK_7_3_4`  | 7      | 3              | 4*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
@@ -2234,6 +2766,204 @@ Butcher table pairs are as follows:
    | :c:enumerator:`ARKODE_ARK548L2SA_ERK_8_4_5`  | :c:enumerator:`ARKODE_ARK548L2SA_DIRK_8_4_5`  | 8      | 5              | 5     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
 
+
+.. _Butcher.ARKODE_ARK2_3_1_2:
+
+ARKODE_ARK2_3_1_2
+^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_ARK2_3_1_2 ARK method
+
+2nd-order method that combines :c:enumerator:`ARKODE_ARK2_ERK_3_1_2` with
+:c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`.  This is the default
+second-order ARK method.
+
+.. figure:: /figs/arkode/ARKODE_ARK2_3_1_2_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_ARK2_3_1_2`` method.  All
+   joint stability regions coincide, so only the :math:`90^{\circ}` boundary is visible.
+
+
+.. _Butcher.ARKODE_ASCHER_ARK_3_1_2:
+
+ARKODE_ASCHER_ARK_3_1_2
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_ASCHER_ARK_3_1_2 ARK method
+
+2nd-order method that combines :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2` with
+:c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`.
+
+.. figure:: /figs/arkode/ARKODE_ASCHER_ARK_3_1_2_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_ASCHER_ARK_3_1_2`` method.
+   All joint stability regions coincide, so only the :math:`90^{\circ}` boundary
+   is visible.
+
+
+.. _Butcher.ARKODE_SSP_ARK_3_1_2:
+
+ARKODE_SSP_ARK_3_1_2
+^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_SSP_ARK_3_1_2 ARK method
+
+2nd-order method that combines :c:enumerator:`ARKODE_SSP_ERK_3_1_2` with
+:c:enumerator:`ARKODE_SSP_DIRK_3_1_2`.
+
+.. figure:: /figs/arkode/ARKODE_SSP_ARK_3_1_2_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_SSP_ARK_3_1_2`` method.
+
+
+.. _Butcher.ARKODE_SSP_LSPUM_ARK_3_1_2:
+
+ARKODE_SSP_LSPUM_ARK_3_1_2
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_SSP_LSPUM_ARK_3_1_2 ARK method
+
+2nd-order method that combines :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2` with
+:c:enumerator:`ARKODE_SSP_LSPUM_SDIRK_3_1_2`.
+
+.. figure:: /figs/arkode/ARKODE_SSP_LSPUM_ARK_3_1_2_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_SSP_LSPUM_ARK_3_1_2`` method.
+
+
+.. _Butcher.ARKODE_ARK324L2SA_ARK_4_2_3:
+
+ARKODE_ARK324L2SA_ARK_4_2_3
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_ARK324L2SA_ARK_4_2_3 ARK method
+
+3rd-order method that combines :c:enumerator:`ARKODE_ARK324L2SA_ERK_4_2_3`
+with :c:enumerator:`ARKODE_ARK324L2SA_DIRK_4_2_3`.
+This is the default third-order ARK method.
+
+.. figure:: /figs/arkode/ARKODE_ARK324L2SA_4_2_3_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_ARK324L2SA_ARK_4_2_3`` method.  The joint stability regions only
+   differ near the imaginary axis, so for most of the region only the
+   :math:`80^o` boundary is visible.
+
+
+.. _Butcher.ARKODE_SSP_ARK_4_2_3:
+
+ARKODE_SSP_ARK_4_2_3
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_SSP_ARK_4_2_3 ARK method
+
+3rd-order method that combines :c:enumerator:`ARKODE_SSP_ERK_4_2_3` with
+:c:enumerator:`ARKODE_ESDIRK_4_2_3`.
+
+.. figure:: /figs/arkode/ARKODE_SSP_ARK_4_2_3_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_SSP_ARK_4_2_3`` method.
+
+
+.. figure:: /figs/arkode/ARKODE_SSP_ARK_4_2_3_joint_stab_region_rho1.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,1}` for the
+   ``ARKODE_SSP_ARK_4_2_3`` method.  Note that when the implicit partition
+   is nonstiff, the joint stability region more closely aligns with the
+   ``ARKODE_SSP_ERK_4_2_3`` stability region.
+
+
+.. _Butcher.ARKODE_ARK436L2SA_ARK_6_3_4:
+
+ARKODE_ARK436L2SA_ARK_6_3_4
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_ARK436L2SA_ARK_6_3_4 ARK method
+
+4th-order method that combines :c:enumerator:`ARKODE_ARK436L2SA_ERK_6_3_4` with
+:c:enumerator:`ARKODE_ARK436L2SA_DIRK_6_3_4`.
+This is the default fourth-order ARK method.
+
+.. figure:: /figs/arkode/ARKODE_ARK436L2SA_6_3_4_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_ARK436L2SA_ARK_6_3_4`` method.
+
+
+.. _Butcher.ARKODE_ARK437L2SA_ARK_7_3_4:
+
+ARKODE_ARK437L2SA_ARK_7_3_4
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_ARK437L2SA_ARK_7_3_4 ARK method
+
+4th-order method that combines :c:enumerator:`ARKODE_ARK437L2SA_ERK_7_3_4` with
+:c:enumerator:`ARKODE_ARK437L2SA_DIRK_7_3_4`.
+
+.. figure:: /figs/arkode/ARKODE_ARK437L2SA_7_3_4_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_ARK437L2SA_ARK_7_3_4`` method.
+
+
+.. _Butcher.ARKODE_ARK548L2SA_ARK_8_4_5:
+
+ARKODE_ARK548L2SA_ARK_8_4_5
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_ARK548L2SA_ARK_8_4_5 ARK method
+
+5th-order method that combines :c:enumerator:`ARKODE_ARK548L2SA_ERK_8_4_5` with
+:c:enumerator:`ARKODE_ARK548L2SA_DIRK_8_4_5`.
+This is the default fifth-order ARK method.
+
+.. figure:: /figs/arkode/ARKODE_ARK548L2SA_8_4_5_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_ARK548L2SA_ARK_8_4_5`` method.
+
+
+.. _Butcher.ARKODE_ARK548L2SAb_ARK_8_4_5:
+
+ARKODE_ARK548L2SAb_ARK_8_4_5
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. index:: ARKODE_ARK548L2SAb_ARK_8_4_5 ARK method
+
+5th-order method that combines :c:enumerator:`ARKODE_ARK548L2SAb_ERK_8_4_5` with
+:c:enumerator:`ARKODE_ARK548L2SAb_DIRK_8_4_5`.
+
+.. figure:: /figs/arkode/ARKODE_ARK548L2SAb_8_4_5_joint_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
+   ``ARKODE_ARK548L2SAb_ARK_8_4_5`` method.
 
 
 .. _Butcher.sprk:
@@ -2248,6 +2978,11 @@ symplectic partitioned Butcher tables are provided in the enumeration
 .. c:enum:: ARKODE_SPRKMethodID
 
 with values specified in :numref:`ARKODE.Butcher.SPRK_properties`.
+
+.. warning::
+
+   When using these non-embedded methods, users must specify the
+   time step by calling :c:func:`ARKodeSetFixedStep`.
 
 .. _ARKODE.Butcher.SPRK_properties:
 .. table:: Symplectic partitioned Butcher tables. The default method for each

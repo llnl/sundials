@@ -56,7 +56,7 @@ module farkode_lsrkstep_mod
  public :: FLSRKStepSetDomEigFrequency
  public :: FLSRKStepSetMaxNumStages
  public :: FLSRKStepSetDomEigSafetyFactor
- public :: FLSRKStepSetUseAnalyticStabRegion
+ public :: FLSRKStepSetUseAnalyticStabilityRegion
  public :: FLSRKStepSetNumDomEigEstInitPreprocessIters
  public :: FLSRKStepSetNumDomEigEstPreprocessIters
  public :: FLSRKStepSetNumSSPStages
@@ -194,8 +194,8 @@ real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FLSRKStepSetUseAnalyticStabRegion(farg1, farg2) &
-bind(C, name="_wrap_FLSRKStepSetUseAnalyticStabRegion") &
+function swigc_FLSRKStepSetUseAnalyticStabilityRegion(farg1, farg2) &
+bind(C, name="_wrap_FLSRKStepSetUseAnalyticStabilityRegion") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -279,11 +279,11 @@ type(C_FUNPTR), intent(in), value :: rhs
 real(C_DOUBLE), intent(in) :: t0
 type(N_Vector), target, intent(inout) :: y0
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_FUNPTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
+type(C_PTR) :: fresult
+type(C_FUNPTR) :: farg1
+real(C_DOUBLE) :: farg2
+type(C_PTR) :: farg3
+type(C_PTR) :: farg4
 
 farg1 = rhs
 farg2 = t0
@@ -301,11 +301,11 @@ type(C_FUNPTR), intent(in), value :: rhs
 real(C_DOUBLE), intent(in) :: t0
 type(N_Vector), target, intent(inout) :: y0
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_FUNPTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
+type(C_PTR) :: fresult
+type(C_FUNPTR) :: farg1
+real(C_DOUBLE) :: farg2
+type(C_PTR) :: farg3
+type(C_PTR) :: farg4
 
 farg1 = rhs
 farg2 = t0
@@ -323,11 +323,11 @@ type(C_PTR) :: arkode_mem
 type(C_FUNPTR), intent(in), value :: rhs
 real(C_DOUBLE), intent(in) :: t0
 type(N_Vector), target, intent(inout) :: y0
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_FUNPTR) :: farg2
+real(C_DOUBLE) :: farg3
+type(C_PTR) :: farg4
 
 farg1 = arkode_mem
 farg2 = rhs
@@ -345,11 +345,11 @@ type(C_PTR) :: arkode_mem
 type(C_FUNPTR), intent(in), value :: rhs
 real(C_DOUBLE), intent(in) :: t0
 type(N_Vector), target, intent(inout) :: y0
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_FUNPTR) :: farg2
+real(C_DOUBLE) :: farg3
+type(C_PTR) :: farg4
 
 farg1 = arkode_mem
 farg2 = rhs
@@ -365,9 +365,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(ARKODE_LSRKMethodType), intent(in) :: method
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_INT) :: farg2
 
 farg1 = arkode_mem
 farg2 = method
@@ -381,9 +381,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(ARKODE_LSRKMethodType), intent(in) :: method
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_INT) :: farg2
 
 farg1 = arkode_mem
 farg2 = method
@@ -416,9 +416,9 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 character(kind=C_CHAR, len=*), target :: emethod
 character(kind=C_CHAR), dimension(:), allocatable, target :: farg2_chars
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(SwigArrayWrapper) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(SwigArrayWrapper) :: farg2
 
 farg1 = arkode_mem
 call SWIG_string_to_chararray(emethod, farg2_chars, farg2)
@@ -433,9 +433,9 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 character(kind=C_CHAR, len=*), target :: emethod
 character(kind=C_CHAR), dimension(:), allocatable, target :: farg2_chars
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(SwigArrayWrapper) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(SwigArrayWrapper) :: farg2
 
 farg1 = arkode_mem
 call SWIG_string_to_chararray(emethod, farg2_chars, farg2)
@@ -449,9 +449,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 type(C_FUNPTR), intent(in), value :: dom_eig
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_FUNPTR) :: farg2
 
 farg1 = arkode_mem
 farg2 = dom_eig
@@ -465,9 +465,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 type(SUNDomEigEstimator), target, intent(inout) :: dee
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
 
 farg1 = arkode_mem
 farg2 = c_loc(dee)
@@ -481,9 +481,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_LONG), intent(in) :: nsteps
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_LONG) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_LONG) :: farg2
 
 farg1 = arkode_mem
 farg2 = nsteps
@@ -497,9 +497,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_INT), intent(in) :: stage_max_limit
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_INT) :: farg2
 
 farg1 = arkode_mem
 farg2 = stage_max_limit
@@ -513,9 +513,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 real(C_DOUBLE), intent(in) :: dom_eig_safety
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+real(C_DOUBLE) :: farg2
 
 farg1 = arkode_mem
 farg2 = dom_eig_safety
@@ -523,19 +523,19 @@ fresult = swigc_FLSRKStepSetDomEigSafetyFactor(farg1, farg2)
 swig_result = fresult
 end function
 
-function FLSRKStepSetUseAnalyticStabRegion(arkode_mem, analytic_stab_region) &
+function FLSRKStepSetUseAnalyticStabilityRegion(arkode_mem, analytic_stab_region) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_INT), intent(in) :: analytic_stab_region
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_INT) :: farg2
 
 farg1 = arkode_mem
 farg2 = analytic_stab_region
-fresult = swigc_FLSRKStepSetUseAnalyticStabRegion(farg1, farg2)
+fresult = swigc_FLSRKStepSetUseAnalyticStabilityRegion(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -545,9 +545,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_INT), intent(in) :: num_iters
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_INT) :: farg2
 
 farg1 = arkode_mem
 farg2 = num_iters
@@ -561,9 +561,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_INT), intent(in) :: num_iters
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_INT) :: farg2
 
 farg1 = arkode_mem
 farg2 = num_iters
@@ -577,9 +577,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_INT), intent(in) :: num_of_stages
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_INT) :: farg2
 
 farg1 = arkode_mem
 farg2 = num_of_stages
@@ -593,9 +593,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_LONG), dimension(*), target, intent(inout) :: dom_eig_num_evals
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
 
 farg1 = arkode_mem
 farg2 = c_loc(dom_eig_num_evals(1))
@@ -609,9 +609,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_INT), dimension(*), target, intent(inout) :: stage_max
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
 
 farg1 = arkode_mem
 farg2 = c_loc(stage_max(1))
@@ -625,9 +625,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_LONG), dimension(*), target, intent(inout) :: nfedq
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
 
 farg1 = arkode_mem
 farg2 = c_loc(nfedq(1))
@@ -641,9 +641,9 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 integer(C_LONG), dimension(*), target, intent(inout) :: num_iters
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
 
 farg1 = arkode_mem
 farg2 = c_loc(num_iters(1))

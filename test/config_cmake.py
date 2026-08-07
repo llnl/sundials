@@ -24,8 +24,10 @@ def main():
 
     import argparse
 
-    parser = argparse.ArgumentParser(description="""Create a SUNDIALS CMake
-                                     cache file""")
+    parser = argparse.ArgumentParser(
+        description="""Create a SUNDIALS CMake
+                                     cache file"""
+    )
 
     parser.add_argument(
         "--filetype",
@@ -1286,7 +1288,6 @@ def read_env(args):
     args_dict = args.__dict__
 
     for a in args_dict:
-
         # skip non-cmake input args
         if type(args_dict[a]) is not dict:
             continue
@@ -1405,7 +1406,6 @@ def write_cmake(fn, args):
     args_dict = args.__dict__
 
     for a in args_dict:
-
         # skip non-cmake input args
         if type(args_dict[a]) is not dict:
             continue
@@ -1423,7 +1423,6 @@ def write_cmake(fn, args):
         depends_on = args_dict[a]["depends_on"]
 
         if depends_on is not None:
-
             depends_on = depends_on[2:].replace("-", "_")
             depends_on_val = args_dict[depends_on]["value"]
 
@@ -1438,7 +1437,7 @@ def write_cmake(fn, args):
         cmake_msg = args_dict[a]["msg"]
 
         if args.filetype == "cache":
-            cmd = f'set({cmake_var} "{value}" CACHE {cmake_type} ' f'"{cmake_msg}")\n'
+            cmd = f'set({cmake_var} "{value}" CACHE {cmake_type} "{cmake_msg}")\n'
         else:
             cmd = f' \\\n      -D {cmake_var}="{value}"'
         fn.write(cmd)

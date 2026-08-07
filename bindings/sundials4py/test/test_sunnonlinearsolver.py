@@ -109,6 +109,44 @@ def test_get_num_conv_fails(solver_type, sunctx, nvec):
     assert isinstance(nconvfails, int)
 
 
+def test_set_sysfns_auto(sunctx, nvec):
+    nls = SUNNonlinSol_Auto(nvec, 2, SUNNONLINSOL_AUTO_FIXEDPOINT, sunctx)
+
+    def ctest(nls, u, delta, tol, ewt, _):
+        return 0
+
+    def root_fn(u, g, _):
+        return 0
+
+    def fixedpoint_fn(u, g, _):
+        return 0
+
+    def lsolve(u, _):
+        return 0
+
+    ret = SUNNonlinSolSetConvTestFn(nls, ctest)
+    assert ret == SUN_SUCCESS
+
+    ret = SUNNonlinSolSetLSolveFn(nls, lsolve)
+    assert ret == SUN_SUCCESS
+
+    ret = SUNNonlinSolSetSysFns(nls, root_fn, fixedpoint_fn)
+    assert ret == SUN_SUCCESS
+
+    ret = SUNNonlinSolInitialize(nls)
+    assert ret == SUN_SUCCESS
+
+
+def test_set_getconvratefn_auto(sunctx, nvec):
+    nls = SUNNonlinSol_Auto(nvec, 2, SUNNONLINSOL_AUTO_FIXEDPOINT, sunctx)
+
+    def conv_rate(_):
+        return SUN_SUCCESS, 0.5
+
+    ret = SUNNonlinSolSetGetConvRateFn(nls, conv_rate)
+    assert ret == SUN_SUCCESS
+
+
 def test_fixedpoint_setup_and_solve(sunctx):
     from problems import AnalyticNonlinearSys
 
@@ -130,7 +168,6 @@ def test_fixedpoint_setup_and_solve(sunctx):
 
     # Create the problem
     with AnalyticNonlinearSys(u0) as problem:
-
         # Create the solver
         nls = SUNNonlinSol_FixedPoint(u0, 2, sunctx)
 

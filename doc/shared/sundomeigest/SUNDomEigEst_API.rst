@@ -192,11 +192,9 @@ instead of supplying a dummy routine.
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data, SUNATimesFn ATimes)
 
-   This function provides a :c:type:`SUNATimesFn` function for performing
+   This *optional* function provides a :c:type:`SUNATimesFn` function for performing
    matrix-vector products, as well as a ``void*`` pointer to a data structure
-   used by this routine, to the dominant eigenvalue estimator. This function is
-   *required* when using the matrix-vector product function provided by a
-   SUNDIALS integrator, otherwise the function is *optional*.
+   used by this routine, to the dominant eigenvalue estimator.
 
    **Arguments:**
 
@@ -211,19 +209,22 @@ instead of supplying a dummy routine.
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data, SUNRhsFn RHSfn)
 
-   This *optional* function provides a :c:type:`SUNRhsFn` function for performing
-   evaluations of the right-hand side function, as well as a ``void*`` pointer to a data structure
-   used by this routine, to the dominant eigenvalue estimator. This function allows the estimator to
-   perform a discrete Jacobian-vector product using quotient approximations of the Jacobian and estimate
-   dominant eigenvalues of the Jacobian without requiring the user to provide a matrix-vector product 
-   function. This can be useful when the user does not have access to the Jacobian or its matrix-vector 
-   product, but can evaluate the right-hand side function.
+   For applications that do not provide a :c:type:`SUNATimesFn` function to :c:func:`SUNDomEigEstimator_SetATimes`,
+   the action of this matrix-vector product may be approximated internally.  If the matrix corresponds with
+   the Jacobian of a vector-valued function, :math:`A = \frac{\partial f_{RHS}}{\partial y}(t,y)`, then the
+   function :math:`f_{RHS}` may optionally be input via this routine, and the Jacobian-vector products will
+   be approximated as
+
+   .. math::
+      Av \approx \frac{1}{\sigma}\left[ f_{RHS}(t,y+\sigma v) - f_{RHS}(t,y)\right]
+
+   The linearization point :math:`(t,y)` should be separately supplied by calling :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`.
 
    **Arguments:**
 
       * *DEE* -- a SUNDomEigEstimator object.
       * *rhs_data* -- pointer to structure for ``RHSfn``.
-      * *RHSfn* -- function pointer to perform right-hand side evaluations.
+      * *RHSfn* -- function pointer to perform right-hand side evaluations.  This is typically the same as the problem-defining function supplied to CVODE or ARKODE.
 
    **Return value:**
 
@@ -233,8 +234,7 @@ instead of supplying a dummy routine.
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
 
    This *optional* function sets the linearization point for the right-hand side function when using
-   :c:func:`SUNDomEigEstimator_SetRhs`. This allows the estimator to perform a discrete Jacobian-vector product using 
-   quotient approximations of the Jacobian at a specified linearization point.
+   :c:func:`SUNDomEigEstimator_SetRhs`.
 
    **Arguments:**
 
@@ -298,58 +298,10 @@ instead of supplying a dummy routine.
 
    .. note::
 
-      The relative tolerance is used as a stopping criterion for the Power Iteration method. Specifically,
-      it defines the acceptable relative change between successive dominant eigenvalue estimates. It also
-      serves as a threshold for determining whether the dominant eigenvalue is real or complex.
-
-      A threshold, with :math:`\varepsilon` representing the machine precision,
-
-      .. math::
-         \mathtt{gram\_det\_tol} = 10 \cdot \max\left(\varepsilon,\; \mathtt{rel\_tol}\right)
-
-      is used to assess the numerical rank of the 2×2 Gram matrix formed by the current and previous
-      iterates in the Power Iteration method. If the determinant of this Gram matrix is less than or equal to
-      this threshold, the iterates are considered nearly linearly dependent, and the dominant eigenvalue is
-      treated as real.
-
-      To ensure that the Power Iteration method captures small imaginary parts of the dominant eigenvalue,
-      the relative tolerance should not be chosen too large. In practice, the smallest reliably detectable
-      imaginary part is proportional to the chosen relative tolerance, i.e.,
-
-      .. math::
-         |\beta| \gtrsim \mathcal{O}(\mathtt{rel\_tol}).
-
-      Therefore, to resolve an expected imaginary part of magnitude :math:`|\beta|`, it is recommended to choose
-
-      .. math::
-         \mathtt{rel\_tol} \ll |\beta|.
-
-      Choosing a smaller relative tolerance improves the ability to detect weakly complex eigenvalues,
-      but may increase computational cost.
-
-      When used in combination with Arnoldi Iteration, this routine sets the stopping criterion for 
-      the preprocessing Power Iteration phase. In this workflow, Power Iteration is first applied to 
-      perform an initial convergence check for the dominant eigenvalue estimate. The convergence
-      criterion is based on the change in magnitude between successive estimates and is defined as
-
-      .. math::
-
-         \left|\,|\lambda_{k}| - |\lambda_{k-1}|\,\right|
-         \le \mathtt{rel\_tol} \cdot |\lambda_{k}|.
-
-      The implementation performs this inexpensive preprocessing check using only the magnitude of 
-      the eigenvalue estimates. Arnoldi Iteration is executed only after this convergence criterion is 
-      satisfied. This approach ensures that Arnoldi is performed only once, rather than repeatedly 
-      running Arnoldi and checking convergence based on its complex-valued results. By relying on 
-      the cheaper magnitude-based preprocessing step, the routine avoids multiple Arnoldi runs that would
-      yield only marginal improvements in accuracy while incurring significantly higher computational cost.
-
-      When this routine is used in combination with Power Iteration, for ``rel_tol <= 0`` or 
-      ``rel_tol >= (1 - \varepsilon)``, a default value of ``rel_tol = 0.005`` is applied.
-
-      In the case of Arnoldi Iteration, this routine sets ``rel_tol = 0.005`` for the preprocessing 
-      Power Iteration phase for ``rel_tol = 0`` or ``rel_tol >= (1 - \varepsilon)``, and disables 
-      preprocessing when ``rel_tol < 0``.
+      The interpretation of ``rel_tol``, its acceptable range, the default
+      value, and the way it is used are implementation-specific. For details,
+      see :c:func:`SUNDomEigEstimator_SetRelTol_Power` and
+      :c:func:`SUNDomEigEstimator_SetRelTol_Arnoldi`.
 
       This routine will be called by :c:func:`SUNDomEigEstimator_SetOptions`
       when using the key "Did.rel_tol".
@@ -442,6 +394,27 @@ dominant eigenvalue estimator.  *All routines are optional.*
          retval = SUNDomEigEstimator_GetNumIters(DEE, &num_iters);
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE, long int* num_rhs_evals)
+
+   This *optional* routine should return the number of calls to the :c:type:`SUNRhsFn` function.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *num_rhs_evals* -- the number of calls to the ``RHS`` function.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+   **Usage:**
+
+      .. code-block:: c
+
+         long int num_rhs_evals;
+         retval = SUNDomEigEstimator_GetNumRhsEvals(DEE, &num_rhs_evals);
+
+
 .. c:function:: SUNErrCode SUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator DEE, long int* num_ATimes)
 
    This *optional* routine should return the number of calls to the :c:type:`SUNATimesFn` function.
@@ -480,23 +453,36 @@ dominant eigenvalue estimator.  *All routines are optional.*
 
 .. _SUNDomEigEst.SUNSuppliedFn:
 
-Functions provided by SUNDIALS packages
+SUNDomEigEstimator callback functions
 ---------------------------------------------
 
-To interface with SUNDomEigEst modules, the SUNDIALS packages supply
-:c:type:`SUNATimesFn` and :c:type:`SUNRhsFn` functions for evaluating the matrix-vector 
-product. This package-provided routine translates between the user-supplied ODE or DAE 
-systems and the generic dominant eigenvalue estimator API. The function types for these
-routines are defined in the header file ``sundials/sundials_iterative.h``.
+To interface with SUNDomEigEst modules, the SUNDIALS packages supply a
+:c:type:`SUNATimesFn` function for evaluating the matrix-vector
+product. This package-provided routine translates between the user-supplied ODE
+systems and the generic dominant eigenvalue estimator API. The function type
+:c:type:`SUNATimesFn` is defined in the header file ``sundials/sundials_iterative.h``.
+
+Users who wish to use a SUNDomEigEst module in "standalone" mode, however, must
+provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described below.
 
 
 .. c:type:: int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)
 
-   Used to compute the right-hand side of an ODE or DAE system. This function is used 
-   when the dominant eigenvalue estimator is configured to perform a discrete 
+   Used to compute the right-hand side of an ODE system. This function is used
+   when the dominant eigenvalue estimator is configured to perform a discrete
    Jacobian-vector product using quotient approximations of the Jacobian. The parameter
-   *rhs_data* is a pointer to any information about RHS which the function needs in order 
-   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left 
+   *rhs_data* is a pointer to any information about RHS which the function needs in order
+   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left
+   unchanged.
+
+
+.. c:type:: int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)
+
+   Used to compute the right-hand side of an ODE or DAE system. This function is used
+   when the dominant eigenvalue estimator is configured to perform a discrete
+   Jacobian-vector product using quotient approximations of the Jacobian. The parameter
+   *rhs_data* is a pointer to any information about RHS which the function needs in order
+   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left
    unchanged.
 
 
@@ -571,6 +557,10 @@ The virtual table structure is defined as
    .. c:member:: int (*getnumiters)(SUNDomEigEstimator)
 
       The function implementing :c:func:`SUNDomEigEstimator_GetNumIters`
+
+   .. c:member:: long int (*getnumrhsevals)(SUNDomEigEstimator)
+
+      The function implementing :c:func:`SUNDomEigEstimator_GetNumRhsEvals`
 
    .. c:member:: long int (*getnumatimescalls)(SUNDomEigEstimator)
 
@@ -656,6 +646,8 @@ implementation detail for the interested reader.
    | :c:func:`SUNDomEigEstimator_GetRes`\ :sup:`2`      |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_GetNumIters`           |          O          |          O          |
+   +----------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_GetNumRhsEvals`        |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_GetNumATimesCalls`     |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+

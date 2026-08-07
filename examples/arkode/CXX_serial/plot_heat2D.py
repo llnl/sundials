@@ -34,10 +34,8 @@ import matplotlib.pyplot as plt
 infofile = "heat2d_info.txt"
 
 with open(infofile) as fn:
-
     # read the file line by line
     for line in fn:
-
         # split line into list
         text = shlex.split(line)
 
@@ -77,7 +75,6 @@ else:
     plottype = ["solution"]
 
 for pt in plottype:
-
     # fill array with data
     time = np.zeros(nt)
     result = np.zeros((nt, ny, nx))
@@ -104,7 +101,6 @@ for pt in plottype:
 
     # generate plots
     for tstep in range(nt):
-
         # set string constants for output plots, current time, mesh size
         pname = "heat2d_surf_" + pt + "." + repr(tstep).zfill(3) + ".png"
         tstr = str(time[tstep])

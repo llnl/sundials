@@ -64,17 +64,22 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   SUNAssertNull(ops, SUN_ERR_MALLOC_FAIL);
 
   /* initialize operations to NULL */
-  ops->setatimes             = NULL;
-  ops->setoptions            = NULL;
-  ops->setmaxiters           = NULL;
-  ops->setreltol             = NULL;
-  ops->setnumpreprocessiters = NULL;
-  ops->initialize            = NULL;
-  ops->estimate              = NULL;
-  ops->getnumiters           = NULL;
-  ops->getres                = NULL;
-  ops->write                 = NULL;
-  ops->destroy               = NULL;
+  ops->setatimes                = NULL;
+  ops->setrhs                   = NULL;
+  ops->setrhslinearizationpoint = NULL;
+  ops->setoptions               = NULL;
+  ops->setmaxiters              = NULL;
+  ops->setreltol                = NULL;
+  ops->setnumpreprocessiters    = NULL;
+  ops->setinitialguess          = NULL;
+  ops->initialize               = NULL;
+  ops->estimate                 = NULL;
+  ops->getnumiters              = NULL;
+  ops->getnumrhsevals           = NULL;
+  ops->getres                   = NULL;
+  ops->getnumatimescalls        = NULL;
+  ops->write                    = NULL;
+  ops->destroy                  = NULL;
 
   /* attach ops and initialize content and context to NULL */
   DEE->ops     = ops;
@@ -334,6 +339,24 @@ SUNErrCode SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
   {
     *num_iters = 0;
     ier        = SUN_SUCCESS;
+  }
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
+  return (ier);
+}
+
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE,
+                                             long int* num_rhs_evals)
+{
+  SUNErrCode ier;
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
+  if (DEE->ops->getnumrhsevals)
+  {
+    ier = DEE->ops->getnumrhsevals(DEE, num_rhs_evals);
+  }
+  else
+  {
+    *num_rhs_evals = 0;
+    ier            = SUN_SUCCESS;
   }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);

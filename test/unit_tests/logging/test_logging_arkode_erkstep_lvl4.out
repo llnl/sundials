@@ -15,7 +15,7 @@ Start ERKStep Logging test
 [INFO][rank 0][erkStep_TakeStep][end-stages-list] status = success
 [INFO][rank 0][erkStep_TakeStep][begin-compute-solution] 
 [INFO][rank 0][erkStep_TakeStep][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0162975186047054
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0162975186047054
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0161345434186583
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 156.667308240786
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.59451001562519e-09
@@ -33,7 +33,7 @@ Start ERKStep Logging test
 [INFO][rank 0][erkStep_TakeStep][end-stages-list] status = success
 [INFO][rank 0][erkStep_TakeStep][begin-compute-solution] 
 [INFO][rank 0][erkStep_TakeStep][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0161218780948838
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0161218780948838
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.015960659313935
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 0.989222867966487
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = failed error test, dsm = 1.00314609906058, kflag = 5
@@ -50,7 +50,7 @@ Start ERKStep Logging test
 [INFO][rank 0][erkStep_TakeStep][end-stages-list] status = success
 [INFO][rank 0][erkStep_TakeStep][begin-compute-solution] 
 [INFO][rank 0][erkStep_TakeStep][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0161209523644735
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0161209523644735
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0159597428408288
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 0.99994257924512
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.960816674267978
@@ -68,7 +68,7 @@ Start ERKStep Logging test
 [INFO][rank 0][erkStep_TakeStep][end-stages-list] status = success
 [INFO][rank 0][erkStep_TakeStep][begin-compute-solution] 
 [INFO][rank 0][erkStep_TakeStep][end-compute-solution] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.0168271510629514
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.0168271510629514
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 0.0166588795523219
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 1.04380626420274
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0.809209891771717

@@ -73,7 +73,7 @@ Enabling or Disabling Relaxation
       the step fails or applying relaxation fails, :c:func:`ARKodeEvolve` will
       return with an error.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 Optional Input Functions
 ------------------------
@@ -97,7 +97,7 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetRelaxLowerBound(void* arkode_mem, sunrealtype lower)
@@ -119,7 +119,7 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetRelaxUpperBound(void* arkode_mem, sunrealtype upper)
@@ -141,7 +141,7 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetRelaxMaxFails(void* arkode_mem, int max_fails)
@@ -161,7 +161,7 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetRelaxMaxIters(void* arkode_mem, int max_iters)
@@ -185,7 +185,7 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetRelaxSolver(void* arkode_mem, ARKRelaxSolver solver)
@@ -204,7 +204,7 @@ relaxation.
                                ``NULL``
    :retval ARK_ILL_INPUT: an invalid solver option was provided
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetRelaxResTol(void* arkode_mem, sunrealtype res_tol)
@@ -230,7 +230,7 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetRelaxTol(void* arkode_mem, sunrealtype rel_tol, sunrealtype abs_tol)
@@ -257,7 +257,7 @@ relaxation.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 Optional Output Functions
@@ -278,7 +278,7 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumRelaxJacEvals(void* arkode_mem, long int* J_evals)
@@ -293,7 +293,7 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumRelaxFails(void* arkode_mem, long int* fails)
@@ -313,7 +313,7 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumRelaxBoundFails(void* arkode_mem, long int* fails)
@@ -329,7 +329,7 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumRelaxSolveFails(void* arkode_mem, long int* fails)
@@ -344,7 +344,7 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumRelaxSolveIters(void* arkode_mem, long int* iters)
@@ -359,4 +359,4 @@ about the performance of the relaxation method.
    :retval ARK_RELAX_MEM_NULL: the internal relaxation memory structure was
                                ``NULL``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)

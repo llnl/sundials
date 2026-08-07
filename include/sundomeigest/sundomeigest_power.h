@@ -61,7 +61,7 @@ struct SUNDomEigEstimatorContent_Power_
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */
 
-  sunbooleantype complex; /* Flag for complex eigenvalue request */
+  sunbooleantype is_complex; /* Flag for complex eigenvalue request */
 };
 
 typedef struct SUNDomEigEstimatorContent_Power_* SUNDomEigEstimatorContent_Power;
@@ -122,6 +122,10 @@ SUNErrCode SUNDomEigEstimator_GetRes_Power(SUNDomEigEstimator DEE,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumIters_Power(SUNDomEigEstimator DEE,
                                                 long int* num_iters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals_Power(SUNDomEigEstimator DEE,
+                                                   long int* num_rhs_evals);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumATimesCalls_Power(SUNDomEigEstimator DEE,

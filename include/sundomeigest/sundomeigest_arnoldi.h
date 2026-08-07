@@ -52,8 +52,8 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   int kry_dim;                  /* Krylov subspace dimension */
   int num_warmups;              /* Number of preprocessing iterations */
   long int num_iters;           /* Number of iterations in last Estimate call */
-  sunbooleantype warmup_to_tol; /* Type of warmup iterations */
-  sunrealtype tol_preprocess;   /* Tolerance for preprocessing iterations */
+  sunbooleantype warmup_to_tol; /* Whether to use warmup iterations */
+  sunrealtype tol_warmup;       /* Tolerance for warmup iterations */
   sunrealtype rhs_linT;         /* Time value for linearization point */
 
   long int num_ATimes; /* Number of ATimes calls */
@@ -117,6 +117,10 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumIters_Arnoldi(SUNDomEigEstimator DEE,
                                                   long int* num_iters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals_Arnoldi(SUNDomEigEstimator DEE,
+                                                     long int* num_rhs_evals);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumATimesCalls_Arnoldi(SUNDomEigEstimator DEE,

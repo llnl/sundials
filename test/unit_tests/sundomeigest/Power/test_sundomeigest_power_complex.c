@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -60,6 +60,7 @@ int main(int argc, char* argv[])
   long int max_iters;             /* max power iteration        */
   long int num_iters;             /* cur. number of iterations  */
   long int num_ATimes;            /* number of ATimes calls     */
+  long int num_rhs_evals;         /* number of RHS calls        */
   int print_timing;               /* timing output flag         */
   sunrealtype res;                /* current residual           */
   sunrealtype lambdaR, lambdaI;   /* computed domeig parts      */
@@ -164,14 +165,13 @@ int main(int argc, char* argv[])
       "    >>> FAILED test -- SUNDomEigEstimator_GetNumIters return value\n");
     fails++;
   }
+  fails += Test_SUNDomEigEstimator_GetNumRhsEvals(DEE, &num_rhs_evals, 0);
   fails += Test_SUNDomEigEstimator_GetNumATimesCalls(DEE, &num_ATimes, 0);
   fails += Test_SUNDomEigEstimator_Write(DEE, 0);
 
   if (fails)
   {
-    printf("FAIL: SUNDomEigEstimator_Power module failed %i initialization "
-           "tests\n\n",
-           fails);
+    printf("FAIL: SUNDomEigEstimator_Power module failed %i tests\n\n", fails);
     return 1;
   }
   else
@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
            "tests\n\n");
   }
 
-  /* First check if the computed eigenvalue has a nonzero magnitute */
+  /* First check if the computed eigenvalue has a nonzero magnitude */
   sunrealtype norm_of_dom_eig = SUNRsqrt(lambdaR * lambdaR + lambdaI * lambdaI);
   if (norm_of_dom_eig < SUN_SMALL_REAL)
   {

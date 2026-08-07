@@ -17,25 +17,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  *---------------------------------------------------------------
- * Example problem:
+ * The following example simulates the same problem as
+ * ark_brusselator_lsrk_domeigest.c but attaches a user-supplied dominate
+ * eigenvalue function (dom_eig) instead of a SUNDomEigEstimator object.
  *
- * The following test simulates the same problem as 
- * ark_brusselator_lsrk_domeigest.c.
- * 
- * The only difference with that example is that this one
- * attaches a "user provided" dominant eigenvalue estimate,
- * and where that estimate is provided by a user-constructed
- * SUNDomEigEstimator object (see the dom_eig function below).
- * 
- * While this example and ark_brusselator_lsrk_domeigest.c should provide
- * the same results, the purpose of this example is to show 
- * users how they may manually construct SUNDomEigEstimator
- * objects to query the dominant eigenvalues of a desired 
- * function.  In particular, we note that there is no 
- * requirement for the SUNDomEigEstimator to be used purely
- * for super-time-stepping methods in LSRKStep, so users 
- * interested in other purposes may focus on the contents 
- * of the dom_eig function below as a template.
+ * The user-supplied function wraps a SUNDomEigEstimator to demonstrate how an
+ * estimator can be used in a standalone fashion to estimate the dominant
+ * eigenvalues of a desired function. In particular, we note that there is no
+ * requirement for the SUNDomEigEstimator to be used purely for
+ * super-time-stepping methods in LSRKStep and they may be applied in other
+ * settings.
  *-----------------------------------------------------------------*/
 
 /* Header files */
@@ -163,11 +154,13 @@ int main(int argc, char* argv[])
   ProbData.max_iters = 100;
   y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
-  NV_Ith_S(y, 0) = u0; /* Set initial conditions */
-  NV_Ith_S(y, 1) = v0;
-  NV_Ith_S(y, 2) = w0;
 
-  /* Call LSRKStepCreateSTS to initialize the ARK timestepper module and
+  sunrealtype* ydata = N_VGetArrayPointer(y);
+  ydata[0]           = u0; /* Set initial conditions */
+  ydata[1]           = v0;
+  ydata[2]           = w0;
+
+  /* Call LSRKStepCreateSTS to initialize the STS timestepper module and
      specify the right-hand side function in y'=f(t,y), the initial time
      T0, and the initial dependent variable vector y. */
   arkode_mem = LSRKStepCreateSTS(f, T0, y, ctx);
@@ -185,13 +178,9 @@ int main(int argc, char* argv[])
                                   ARK_INTERP_LAGRANGE); /* Specify stiff interpolant */
   if (check_flag(&flag, "ARKodeSetInterpolantType", 1)) { return 1; }
 
-  /* Specify user provided spectral radius */
+  /* Specify user provided dominant eigenvalue function */
   flag = LSRKStepSetDomEigFn(arkode_mem, dom_eig);
   if (check_flag(&flag, "LSRKStepSetDomEigFn", 1)) { return 1; }
-
-  /* Specify after how many successful steps dom_eig is recomputed */
-  flag = LSRKStepSetDomEigFrequency(arkode_mem, 0);
-  if (check_flag(&flag, "LSRKStepSetDomEigFrequency", 1)) { return 1; }
 
   /* Specify max number of stages allowed */
   flag = LSRKStepSetMaxNumStages(arkode_mem, 200);
@@ -205,7 +194,7 @@ int main(int argc, char* argv[])
   flag = LSRKStepSetDomEigSafetyFactor(arkode_mem, SUN_RCONST(1.01));
   if (check_flag(&flag, "LSRKStepSetDomEigSafetyFactor", 1)) { return 1; }
 
-  /* Specify the Runge--Kutta--Chebyshev LSRK method by name */
+  /* Specify the Runge--Kutta--Legendre LSRK method by name */
   flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKL_2");
   if (check_flag(&flag, "LSRKStepSetSTSMethodByName", 1)) { return 1; }
 
@@ -305,35 +294,27 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
 
     /* Create power iteration dominant eigenvalue estimator (DEE) */
     DEE = SUNDomEigEstimator_Power(temp1, data->max_iters, data->rel_tol, ctx);
-    if (check_flag(DEE, "SUNDomEigEstimator_Power", 0)) { return 1; }
+    if (check_flag(DEE, "SUNDomEigEstimator_Power", 0)) { return -1; }
     data->DEE = DEE;
 
     /* Set the ODE right-hand side function at t for the Jacobian-vector products */
     flag = SUNDomEigEstimator_SetRhs(DEE, user_data, f);
-    if (check_flag(&flag, "SUNDomEigEstimator_SetRhs", 1)) { return 1; }
-
-    /* Set the linearization vector for the Jacobian-vector products */
-    flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t,
-                                                       y); // set the time t as well
-    if (check_flag(&flag, "SUNDomEigEstimator_SetRhsLinearizationPoint", 1))
-    {
-      return 1;
-    }
+    if (check_flag(&flag, "SUNDomEigEstimator_SetRhs", 1)) { return -1; }
 
     flag = SUNDomEigEstimator_Initialize(DEE);
     if (check_flag(&flag, "SUNDomEigEstimator_Initialize", 1)) { return 1; }
   }
 
-  /* Update the linearization vector and time for the Jacobian-vector products */
+  /* Set the linearization vector and time for the Jacobian-vector products */
   flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t, y);
   if (check_flag(&flag, "SUNDomEigEstimator_SetRhsLinearizationPoint", 1))
   {
-    return 1;
+    return -1;
   }
 
   /* Estimate the dominant eigenvalue with power iteration */
   flag = SUNDomEigEstimator_Estimate(DEE, lambdaR, lambdaI);
-  if (check_flag(&flag, "SUNDomEigEstimator_Estimate", 1)) { return 1; }
+  if (check_flag(&flag, "SUNDomEigEstimator_Estimate", 1)) { return -1; }
 
   return 0; /* return with success */
 }

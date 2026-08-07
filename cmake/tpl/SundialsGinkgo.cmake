@@ -35,7 +35,7 @@ endif()
 # Section 3: Find the TPL
 # -----------------------------------------------------------------------------
 
-find_package(Ginkgo REQUIRED HINTS "${Ginkgo_DIR}")
+find_package(Ginkgo REQUIRED PATHS "${Ginkgo_DIR}")
 
 message(STATUS "GINKGO VERSION:     ${GINKGO_PROJECT_VERSION}")
 message(STATUS "GINKGO BUILD TYPE:  ${GINKGO_BUILD_TYPE}")

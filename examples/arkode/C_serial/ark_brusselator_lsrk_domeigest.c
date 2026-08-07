@@ -28,30 +28,17 @@
  * for t in the interval [0.0, 10.0], with initial conditions
  * Y0 = [u0,v0,w0].
  *
- * We have 3 different testing scenarios:
+ * We use u0=1.2,  v0=3.1,  w0=3,  a=1,  b=3.5,  ep=5.0e-6.
  *
- * Test 1:  u0=3.9,  v0=1.1,  w0=2.8,  a=1.2,  b=2.5,  ep=1.0e-5
- *    Here, all three components exhibit a rapid transient change
- *    during the first 0.2 time units, followed by a slow and
- *    smooth evolution.
+ * In this case, w experiences a fast initial transient, jumping 0.5
+ * within a few steps. All values proceed smoothly until
+ * around t=6.5, when both u and v undergo a sharp transition,
+ * with u increasing from around 0.5 to 5 and v decreasing
+ * from around 6 to 1 in less than 0.5 time units. After this
+ * transition, both u and v continue to evolve somewhat
+ * rapidly for another 1.4 time units, and finish off smoothly.
  *
- * Test 2:  u0=1.2,  v0=3.1,  w0=3,  a=1,  b=3.5,  ep=5.0e-6
- *    Here, w experiences a fast initial transient, jumping 0.5
- *    within a few steps.  All values proceed smoothly until
- *    around t=6.5, when both u and v undergo a sharp transition,
- *    with u increaseing from around 0.5 to 5 and v decreasing
- *    from around 6 to 1 in less than 0.5 time units.  After this
- *    transition, both u and v continue to evolve somewhat
- *    rapidly for another 1.4 time units, and finish off smoothly.
- *
- * Test 3:  u0=3,  v0=3,  w0=3.5,  a=0.5,  b=3,  ep=5.0e-4
- *    Here, all components undergo very rapid initial transients
- *    during the first 0.3 time units, and all then proceed very
- *    smoothly for the remainder of the simulation.
- *
- * This file is hard-coded to use test 2.
- *
- * This program solves the problem with the LSRK method using internal
+ * This program solves the problem with an STS method from LSRKStep using a
  * SUNDIALS dominant eigenvalue estimation (DEE) module.
  *
  * 100 outputs are printed at equal intervals, and run statistics
@@ -92,7 +79,6 @@ int main(int argc, char* argv[])
   sunrealtype dTout = SUN_RCONST(1.0);       /* time between outputs */
   sunindextype NEQ  = 3;                     /* number of dependent vars. */
   int Nt            = (int)ceil(Tf / dTout); /* number of output times */
-  int test          = 2;                     /* test problem to run */
   sunrealtype a, b, ep, u0, v0, w0;
 
 #if defined(SUNDIALS_DOUBLE_PRECISION)
@@ -126,34 +112,13 @@ int main(int argc, char* argv[])
   flag = SUNContext_Create(SUN_COMM_NULL, &ctx);
   if (check_flag(&flag, "SUNContext_Create", 1)) { return 1; }
 
-  /* set up the test problem according to the desired test */
-  if (test == 1)
-  {
-    u0 = SUN_RCONST(3.9);
-    v0 = SUN_RCONST(1.1);
-    w0 = SUN_RCONST(2.8);
-    a  = SUN_RCONST(1.2);
-    b  = SUN_RCONST(2.5);
-    ep = SUN_RCONST(1.0e-5);
-  }
-  else if (test == 3)
-  {
-    u0 = SUN_RCONST(3.0);
-    v0 = SUN_RCONST(3.0);
-    w0 = SUN_RCONST(3.5);
-    a  = SUN_RCONST(0.5);
-    b  = SUN_RCONST(3.0);
-    ep = SUN_RCONST(5.0e-4);
-  }
-  else
-  {
-    u0 = SUN_RCONST(1.2);
-    v0 = SUN_RCONST(3.1);
-    w0 = SUN_RCONST(3.0);
-    a  = SUN_RCONST(1.0);
-    b  = SUN_RCONST(3.5);
-    ep = SUN_RCONST(5.0e-6);
-  }
+  /* set up the test problem */
+  u0 = SUN_RCONST(1.2);
+  v0 = SUN_RCONST(3.1);
+  w0 = SUN_RCONST(3.0);
+  a  = SUN_RCONST(1.0);
+  b  = SUN_RCONST(3.5);
+  ep = SUN_RCONST(5.0e-6);
 
   /* Initial problem output */
   printf("\nBrusselator ODE test problem:\n");
@@ -171,11 +136,13 @@ int main(int argc, char* argv[])
   rdata[2] = ep;
   y        = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
-  NV_Ith_S(y, 0) = u0; /* Set initial conditions */
-  NV_Ith_S(y, 1) = v0;
-  NV_Ith_S(y, 2) = w0;
 
-  /* Call LSRKStepCreateSTS to initialize the ARK timestepper module and
+  sunrealtype* ydata = N_VGetArrayPointer(y);
+  ydata[0]           = u0; /* Set initial conditions */
+  ydata[1]           = v0;
+  ydata[2]           = w0;
+
+  /* Call LSRKStepCreateSTS to initialize the STS timestepper module and
      specify the right-hand side function in y'=f(t,y), the initial time
      T0, and the initial dependent variable vector y. */
   arkode_mem = LSRKStepCreateSTS(f, T0, y, ctx);
@@ -229,10 +196,6 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  /* Specify after how many successful steps dom_eig is recomputed */
-  flag = LSRKStepSetDomEigFrequency(arkode_mem, 0);
-  if (check_flag(&flag, "LSRKStepSetDomEigFrequency", 1)) { return 1; }
-
   /* Specify max number of stages allowed */
   flag = LSRKStepSetMaxNumStages(arkode_mem, 200);
   if (check_flag(&flag, "LSRKStepSetMaxNumStages", 1)) { return 1; }
@@ -245,7 +208,7 @@ int main(int argc, char* argv[])
   flag = LSRKStepSetDomEigSafetyFactor(arkode_mem, SUN_RCONST(1.01));
   if (check_flag(&flag, "LSRKStepSetDomEigSafetyFactor", 1)) { return 1; }
 
-  /* Specify the Runge--Kutta--Chebyshev LSRK method by name */
+  /* Specify the Runge--Kutta--Legendre LSRK method by name */
   flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKL_2");
   if (check_flag(&flag, "LSRKStepSetSTSMethodByName", 1)) { return 1; }
 
