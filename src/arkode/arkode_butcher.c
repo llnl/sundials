@@ -750,8 +750,7 @@ static int check_tables(ARKodeButcherTable* tables, sunbooleantype ark, int* q,
 /*---------------------------------------------------------------
   Routine to determine the analytical order of accuracy for a
   specified Butcher table.  We check the analytical [necessary]
-  order conditions up through order 6.  After that, we revert to
-  the [sufficient] Butcher simplifying assumptions.
+  rooted-tree order conditions up through MAX_ORDER.
 
   Inputs:
      B: Butcher table to check
@@ -784,7 +783,7 @@ int ARKodeButcherTable_CheckOrder(ARKodeButcherTable B, int* q, int* p,
 /*---------------------------------------------------------------
   Routine to determine the analytical order of accuracy for a
   specified pair of Butcher tables in an ARK pair.  We check the
-  analytical order conditions up through order 6.
+  analytical rooted-tree order conditions up through MAX_ORDER.
 
   Inputs:
      B1, B2: Butcher tables to check
@@ -796,14 +795,17 @@ int ARKodeButcherTable_CheckOrder(ARKodeButcherTable B, int* q, int* p,
      p: measured order of accuracy for embedding [0 if not present]
 
   Return values:
-     0 (success): completed checks
+     0 (success): internal {q,p} values match analytical order
      1 (warning): internal {q,p} values are lower than analytical
         order, or method achieves maximum order possible with this
         routine and internal {q,p} are higher.
-    -1 (failure): NULL-valued B1, B2 (or critical contents)
+    -1 (failure): internal p and q values are higher than analytical
+         order
+    -2 (failure): NULL-valued B1, B2 (or critical contents)
 
   Note: for embedded methods, if the return flags for p and q would
-  differ, warning takes precedence over success.
+  differ, failure takes precedence over warning, which takes
+  precedence over success.
   ---------------------------------------------------------------*/
 int ARKodeButcherTable_CheckARKOrder(ARKodeButcherTable B1, ARKodeButcherTable B2,
                                      int* q, int* p, FILE* outfile)
