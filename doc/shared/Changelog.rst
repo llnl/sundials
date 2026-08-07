@@ -29,8 +29,6 @@ Changelog
 Changes to SUNDIALS in release X.Y.Z
 ====================================
 
-**Bug Fixes**
-
 .. include:: RecentChanges_link.rst
 
 .. _Changelog.7.8.0:
