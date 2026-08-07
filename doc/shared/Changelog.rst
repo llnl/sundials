@@ -31,10 +31,6 @@ Changes to SUNDIALS in release X.Y.Z
 
 **Bug Fixes**
 
-Fixed a minor bug where the number of required stages for STS methods 
-in the LSRKStep module was incorrectly computed using the spectral 
-radius instead of the real part of the Jacobian eigenvalues.
-
 .. include:: RecentChanges_link.rst
 
 .. _Changelog.7.8.0:
@@ -52,7 +48,7 @@ We added a new SUNNonlinearSolver implementation,
 :cite:p:`norsett1986switching` to switch between a modified Newton iteration and fixed-point
 iteration based on an estimate of stiffness. This solver may be useful to pair with the BDF method
 in CVODE/CVODES, or with DIRK methods in ARKODE, for users who are unsure about
-the stiffness of their problem. See the module documentation for more information. We also 
+the stiffness of their problem. See the module documentation for more information. We also
 extended the :ref:`SUNNonlinearSolver API <SUNNonlinSol.API>` with callback setters
 :c:func:`SUNNonlinSolSetNormFn`, :c:func:`SUNNonlinSolSetGetUpdateNormFn`, and
 :c:func:`SUNNonlinSolSetGetConvRateFn`.

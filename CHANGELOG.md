@@ -15,10 +15,6 @@ section on a skeleton of usage for MRIStep for details on its usage.
 
 ### Bug Fixes
 
-Fixed a minor bug where the number of required stages for STS methods
-in the LSRKStep module was incorrectly computed using the spectral
-radius instead of the real part of the Jacobian eigenvalues.
-
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.8.0
@@ -130,8 +126,6 @@ version number.
 ## Changes to SUNDIALS in release 7.7.0
 
 ### New Features and Enhancements
-
-Updated the Kokkos N_Vector to support Kokkos 5.x versions.
 
 The default number of stages for the SSP Runge-Kutta methods
 `ARKODE_LSRK_SSP_S_2` and `ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10

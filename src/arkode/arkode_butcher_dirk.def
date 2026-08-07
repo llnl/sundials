@@ -38,8 +38,6 @@
      imeth                              type  A-stable  L-stable  QP
     -----------------------------------------------------------------
      ARKODE_BACKWARD_EULER_1_1         SDIRK     Y         Y       Y
-     ARKODE_SDIRK_2_1_2                SDIRK     Y         N       Y
-     ARKODE_ARK2_DIRK_3_1_2           ESDIRK     Y         Y       Y
      ARKODE_ARS222_ESDIRK_3_1_2       ESDIRK     Y         Y       Y
      ARKODE_IMPLICIT_MIDPOINT_1_2      SDIRK     Y         N       Y
      ARKODE_IMPLICIT_TRAPEZOIDAL_2_2  ESDIRK     Y         N       Y
