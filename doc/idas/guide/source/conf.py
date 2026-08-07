@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -20,8 +20,8 @@ from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../../shared")))
 
-# Add suntools directory to import python function docstings with autodoc
-sys.path.append(os.path.abspath("../../../../tools/suntools"))
+# Add the suntools package source parent for autodoc imports.
+sys.path.append(os.path.abspath("../../../../suntools/src/suntools"))
 
 # -- General configuration ----------------------------------------------------
 
@@ -36,6 +36,7 @@ needs_sphinx = "4.0"
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     "sphinx_rtd_theme",
+    "sphinx.ext.extlinks",
     "sphinx.ext.ifconfig",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
@@ -45,6 +46,11 @@ extensions = [
     "sphinx_sundials",
     "sphinx.ext.autodoc",
 ]
+
+extlinks = {
+    "github": (f"https://github.com/LLNL/sundials/%s", None),
+    "examples": (f"https://github.com/LLNL/sundials/tree/{sundials_version}/examples/%s", None),
+}
 
 intersphinx_mapping = {
     "sundials": (
@@ -118,22 +124,18 @@ numfig_format = {"section": "§%s"}
 
 rst_prolog = open("../../../shared/global.rst.txt", "r").read()
 
-rst_epilog = """
-.. |YEAR| replace:: {year}
-.. |CVODE_VERSION| replace:: {cvode_version}
-.. |CVODES_VERSION| replace:: {cvodes_version}
-.. |ARKODE_VERSION| replace:: {arkode_version}
-.. |IDA_VERSION| replace:: {ida_version}
-.. |IDAS_VERSION| replace:: {idas_version}
-.. |KINSOL_VERSION| replace:: {kinsol_version}
-""".format(
-    year=year,
-    cvode_version=cvode_version,
-    cvodes_version=cvodes_version,
-    arkode_version=arkode_version,
-    ida_version=ida_version,
-    idas_version=idas_version,
-    kinsol_version=kinsol_version,
+source_replacements = {
+    "|YEAR|": str(year),
+    "|CVODE_VERSION|": cvode_version,
+    "|CVODES_VERSION|": cvodes_version,
+    "|ARKODE_VERSION|": arkode_version,
+    "|IDA_VERSION|": ida_version,
+    "|IDAS_VERSION|": idas_version,
+    "|KINSOL_VERSION|": kinsol_version,
+}
+
+rst_epilog = "\n".join(
+    f".. {name} replace:: {value}" for name, value in source_replacements.items()
 )
 
 # -- Options for HTML output ---------------------------------------------------
@@ -244,7 +246,7 @@ Daniel R. Reynolds$^2$, and
 Carol S. Woodward$^1$
 \\\\
 {\em $^1$Center for Applied Scientific Computing, Lawrence Livermore National Laboratory}\\
-{\em $^2$Department of Mathematics, Southern Methodist University}
+{\em $^2$Department of Mathematics and Statistics, University of Maryland Baltimore County}
 """
 
 latex_documents = [("index", "idas_guide.tex", project, tex_author, "manual", False)]
@@ -263,15 +265,20 @@ latex_elements = {
     # arguments to the sphinxsetup macro
     "sphinxsetup":
     # the color for titles
-    "TitleColor={RGB}{0,0,0}," +
+    "TitleColor={RGB}{0,0,0},"
+    +
     # disable frames around code-blocks
-    "verbatimwithframe=false," +
-    # do not wrap long lines in code-blocks
-    "verbatimwrapslines=false," +
+    "verbatimwithframe=false,"
+    +
+    # wrap long lines in code-blocks
+    "verbatimwrapslines=true,"
+    +
     # background color for code-blocks
-    "VerbatimColor={RGB}{240.0,240.0,240.0}," +
+    "VerbatimColor={RGB}{240.0,240.0,240.0},"
+    +
     # font used by heading
-    "HeaderFamily=\\rmfamily\\bfseries," +
+    "HeaderFamily=\\rmfamily\\bfseries,"
+    +
     # line breaks are allowed inside inline literals
     "inlineliteralwraps=true",
     # disable the fncychap package
@@ -338,3 +345,9 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+# Generate rst files with autofunction directives for sundials4py functions
+from generate_autofunctions import generate_autofunctions_for_submodule
+
+generate_autofunctions_for_submodule("core")
+generate_autofunctions_for_submodule("idas")

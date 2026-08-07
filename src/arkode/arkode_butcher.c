@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -2892,7 +2892,7 @@ static int arkode_butcher_vv(sunrealtype* x, sunrealtype* y, int s, sunrealtype*
 static int arkode_butcher_vp(sunrealtype* x, int l, int s, sunrealtype* z)
 {
   int i;
-  if ((x == NULL) || (z == NULL) || (s < 1) || (s < 0)) { return (1); }
+  if ((x == NULL) || (z == NULL) || (s < 1)) { return (1); }
   for (i = 0; i < s; i++) { z[i] = SUNRpowerI(x[i], l); }
   return (0);
 }

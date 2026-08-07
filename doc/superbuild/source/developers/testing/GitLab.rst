@@ -1,7 +1,7 @@
 ..
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -60,12 +60,12 @@ the templates provided in the
 `radiuss-shared-ci <https://radiuss-shared-ci.readthedocs.io/en/latest/>`__ repo.
 Here we briefly outline the relevant files:
 
-The ``.gitlab-ci.yml`` file in the root of the repository is the starting point for
-defining the SUNDIALS GitLab CI pipelines. The only thing that is typically changed
-in this file is the ``SPACK_REF`` variable in the ``variables`` section (this
-is done when we update the version of Spack we use for installing dependencies).
-Currently, we also override the `.build-and-test` job defined in this file so
-that we can pull in some files from our fork of `radiuss-shared-ci`
+The gitlab configuration file is in ``.gitlab/gitlab-ci-llnl-lc.yml``. 
+The only thing that is typically changed in the main pipeline file is the 
+``SPACK_REF`` variable in the ``variables`` section (this is done when we update 
+the version of Spack we use for installing dependencies). Currently, we also override 
+the `.build-and-test` job defined in ``.gitlab/gitlab-ci-llnl-lc.yml`` so that we can 
+pull in some files from our fork of `radiuss-shared-ci`
 (maintained `here <https://lc.llnl.gov/gitlab/sundials/radiuss-shared-ci>`__)
 instead of the upstream repository.
 
@@ -133,10 +133,10 @@ Updating Spack
 ^^^^^^^^^^^^^^
 
 To update the spack commit used for the CI simply replace the commit hash in the
-``SPACK_REF`` variable inside the ``.gitlab-ci.yml`` file with the new commit hash.
-The first time a pipeline runs with a new ``SPACK_REF`` the pipeline will take longer than
-normal as a new Spack build cache must be created and populated (so all packages will be
-built from source).
+``SPACK_REF`` variable inside ``.gitlab/gitlab-ci-llnl-lc.yml`` with the new commit
+hash. The first time a pipeline runs with a new ``SPACK_REF`` the pipeline will
+take longer than normal as a new Spack build cache must be created and populated
+(so all packages will be built from source).
 
 
 Benchmark Jobs

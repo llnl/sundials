@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -236,6 +236,10 @@ int main(int argc, char* argv[])
   /* Override any current settings with command-line options */
   flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
   if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
+
+  /* Set real type dominant eigenvalue */
+  flag = SUNDomEigEstimator_SetIsReal_Power(DEE, SUNTRUE);
+  if (check_flag(&flag, "SUNDomEigEstimator_SetIsReal_Power", 1)) { return 1; }
 
   /* Open output stream for results, output comment line */
   UFID = fopen("solution.txt", "w");

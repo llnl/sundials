@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -41,16 +41,23 @@ struct SUNDomEigEstimatorContent_Power_
   SUNATimesFn ATimes; /* User provided ATimes function */
   void* ATdata;       /* ATimes function data*/
 
-  N_Vector V, q; /* workspace vectors */
+  N_Vector V, q, q_prev, rhs_linY, Fy, work; /* workspace vectors */
 
-  int num_warmups;    /* Number of preprocessing iterations */
-  long int max_iters; /* Maximum number of power iterations */
-  long int num_iters; /* Number of iterations in last Estimate call */
+  int num_warmups;      /* Number of preprocessing iterations */
+  long int max_iters;   /* Maximum number of power iterations */
+  long int num_iters;   /* Number of iterations in last Estimate call */
+  sunrealtype rhs_linT; /* Time value for linearization point */
 
   long int num_ATimes; /* Number of ATimes calls */
 
   sunrealtype rel_tol; /* Convergence criteria for the power iteration */
   sunrealtype res;     /* Residual from the last Estimate call */
+
+  SUNRhsFn rhsfn;   /* User provided RHS function */
+  void* rhs_data;   /* RHS function data */
+  long int nfevals; /* Number of RHS evaluations */
+
+  sunbooleantype is_complex; /* Flag for complex eigenvalue request */
 };
 
 typedef struct SUNDomEigEstimatorContent_Power_* SUNDomEigEstimatorContent_Power;
@@ -69,6 +76,10 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
                                               void* A_data, SUNATimesFn ATimes);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
+                                           void* rhs_data, SUNRhsFn RHSfn);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetMaxIters_Power(SUNDomEigEstimator DEE,
                                                 long int max_iters);
 
@@ -85,6 +96,14 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
                                                     N_Vector q);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
+                                              sunbooleantype real);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE);
 
 SUNDIALS_EXPORT
@@ -99,6 +118,10 @@ SUNErrCode SUNDomEigEstimator_GetRes_Power(SUNDomEigEstimator DEE,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumIters_Power(SUNDomEigEstimator DEE,
                                                 long int* num_iters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals_Power(SUNDomEigEstimator DEE,
+                                                   long int* num_rhs_evals);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumATimesCalls_Power(SUNDomEigEstimator DEE,

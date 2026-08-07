@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -21,8 +21,12 @@
 #define _SUNDIALS_NVECTOR_HPP
 
 #include <memory>
+#include <utility>
+
 #include <sundials/sundials_base.hpp>
+#include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_nvector.h>
+#include "sundials/priv/sundials_context_impl.h"
 
 namespace sundials {
 namespace impl {
@@ -30,15 +34,13 @@ using BaseNVector = BaseObject<_generic_N_Vector, _generic_N_Vector_Ops>;
 } // namespace impl
 
 namespace experimental {
-struct NVectorDeleter
+
+struct N_VectorDeleter
 {
-  void operator()(N_Vector v)
-  {
-    if (v) { N_VDestroy(v); }
-  }
+  void operator()(N_Vector v) { N_VDestroy(v); }
 };
 
-using NVectorView = ClassView<N_Vector, NVectorDeleter>;
+using N_VectorView = ClassView<N_Vector, N_VectorDeleter>;
 } // namespace experimental
 } // namespace sundials
 

@@ -2,7 +2,7 @@
  * Programmer: Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -27,7 +27,7 @@
 extern "C" {
 #endif
 
-typedef enum
+enum SUNLogLevel
 {
   SUN_LOGLEVEL_ALL     = -1,
   SUN_LOGLEVEL_NONE    = 0,
@@ -35,7 +35,19 @@ typedef enum
   SUN_LOGLEVEL_WARNING = 2,
   SUN_LOGLEVEL_INFO    = 3,
   SUN_LOGLEVEL_DEBUG   = 4
-} SUNLogLevel;
+};
+
+#ifndef SWIG
+typedef enum SUNLogLevel SUNLogLevel;
+#endif
+
+typedef SUNErrCode (*SUNLoggerQueueMsgFn)(SUNLogger logger, SUNLogLevel lvl,
+                                          const char* prefix, int rank,
+                                          const char* scope, const char* label,
+                                          const char* payload, void* content);
+
+typedef SUNErrCode (*SUNLoggerFlushMsgFn)(SUNLogger logger, SUNLogLevel lvl,
+                                          void* content);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_Create(SUNComm comm, int output_rank, SUNLogger* logger);
@@ -48,15 +60,45 @@ SUNErrCode SUNLogger_SetErrorFilename(SUNLogger logger,
                                       const char* error_filename);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetErrorFile(SUNLogger logger, FILE* error_fp);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_GetErrorFile(SUNLogger logger, FILE** error_fp);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetWarningFilename(SUNLogger logger,
                                         const char* warning_filename);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetWarningFile(SUNLogger logger, FILE* warning_fp);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_GetWarningFile(SUNLogger logger, FILE** warning_fp);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetDebugFilename(SUNLogger logger,
                                       const char* debug_filename);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetDebugFile(SUNLogger logger, FILE* debug_fp);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_GetDebugFile(SUNLogger logger, FILE** debug_fp);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNLogger_SetInfoFilename(SUNLogger logger, const char* info_filename);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetInfoFile(SUNLogger logger, FILE* info_fp);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_GetInfoFile(SUNLogger logger, FILE** info_fp);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNLogger_SetQueueAndFlushMsgFns(SUNLogger logger,
+                                            SUNLoggerQueueMsgFn queue_msg,
+                                            SUNLoggerFlushMsgFn flush_msg,
+                                            void* lptr);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,

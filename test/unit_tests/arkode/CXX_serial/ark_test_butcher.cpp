@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -41,8 +41,14 @@ int main()
 {
   std::vector<ARK_Table> ark_tables =
     {{"ARKODE_ARK2_3_1_2", "ARKODE_ARK2_ERK_3_1_2", "ARKODE_ARK2_DIRK_3_1_2"},
+     {"ARKODE_ASCHER_ARK_3_1_2", "ARKODE_ASCHER_ERK_3_1_2",
+      "ARKODE_ASCHER_SDIRK_3_1_2"},
+     {"ARKODE_SSP_ARK_3_1_2", "ARKODE_SSP_ERK_3_1_2", "ARKODE_SSP_DIRK_3_1_2"},
+     {"ARKODE_SSP_LSPUM_ARK_3_1_2", "ARKODE_SSP_LSPUM_ERK_3_1_2",
+      "ARKODE_SSP_LSPUM_SDIRK_3_1_2"},
      {"ARKODE_ARK324L2SA_4_2_3", "ARKODE_ARK324L2SA_ERK_4_2_3",
       "ARKODE_ARK324L2SA_DIRK_4_2_3"},
+     {"ARKODE_SSP_ARK_4_2_3", "ARKODE_SSP_ERK_4_2_3", "ARKODE_ESDIRK_4_2_3"},
      {"ARKODE_ARK436L2SA_6_3_4", "ARKODE_ARK436L2SA_ERK_6_3_4",
       "ARKODE_ARK436L2SA_DIRK_6_3_4"},
      {"ARKODE_ARK437L2SA_7_3_4", "ARKODE_ARK437L2SA_ERK_7_3_4",

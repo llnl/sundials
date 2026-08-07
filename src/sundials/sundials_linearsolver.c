@@ -4,7 +4,7 @@
  *                Slaven Peles @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -29,11 +29,16 @@
 #include <sundials/sundials_errors.h>
 #include "sundials_logger_impl.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNLinearSolver S)
 {
   return (S->sunctx->profiler);
 }
+#endif
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNLinearSolverFunctionTable_Destroy(void* ptr);
 #endif
 
 /* internal function prototypes */
@@ -84,6 +89,7 @@ SUNLinearSolver SUNLinSolNewEmpty(SUNContext sunctx)
   /* attach ops and initialize content and context to NULL */
   LS->ops     = ops;
   LS->content = NULL;
+  LS->python  = NULL;
   LS->sunctx  = sunctx;
 
   return (LS);
@@ -97,11 +103,14 @@ void SUNLinSolFreeEmpty(SUNLinearSolver S)
 {
   if (S == NULL) { return; }
 
-  /* free non-NULL ops structure */
-  if (S->ops) { free(S->ops); }
+  free(S->ops);
   S->ops = NULL;
 
-  /* free overall N_Vector object and return */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNLinearSolverFunctionTable_Destroy(S->python);
+#endif
+  S->python = NULL;
+
   free(S);
   return;
 }
@@ -318,16 +327,17 @@ SUNErrCode SUNLinSolFree(SUNLinearSolver S)
 
   /* if we reach this point, either ops == NULL or free == NULL,
      try to cleanup by freeing the content, ops, and solver */
-  if (S->content)
-  {
-    free(S->content);
-    S->content = NULL;
-  }
-  if (S->ops)
-  {
-    free(S->ops);
-    S->ops = NULL;
-  }
+  free(S->content);
+  S->content = NULL;
+
+  free(S->ops);
+  S->ops = NULL;
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNLinearSolverFunctionTable_Destroy(S->python);
+#endif
+  S->python = NULL;
+
   free(S);
   S = NULL;
 

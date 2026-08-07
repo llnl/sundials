@@ -3,7 +3,7 @@
 #                Cody Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -18,7 +18,7 @@
 # test/unit_tests/sunmatrix level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-if(ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
   include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
@@ -38,28 +38,28 @@ if(BUILD_SHARED_LIBS)
 endif()
 target_link_libraries(test_sunmatrix_obj PRIVATE sundials_sunmatrixdense)
 
-if(BUILD_SUNMATRIX_CUSPARSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_CUSPARSE)
   if(SUNDIALS_INDEX_SIZE MATCHES "32")
     add_subdirectory(cusparse)
   endif()
 endif()
 
-if(BUILD_SUNMATRIX_GINKGO)
+if(SUNDIALS_ENABLE_SUNMATRIX_GINKGO)
   add_subdirectory(ginkgo)
 endif()
 
-if(BUILD_SUNMATRIX_KOKKOSDENSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_KOKKOSDENSE)
   add_subdirectory(kokkos)
 endif()
 
-if(BUILD_SUNMATRIX_MAGMADENSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_MAGMADENSE)
   add_subdirectory(magmadense)
 endif()
 
-if(BUILD_SUNMATRIX_ONEMKLDENSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_ONEMKLDENSE)
   add_subdirectory(onemkldense)
 endif()
 
-if(BUILD_SUNMATRIX_SLUNRLOC)
+if(SUNDIALS_ENABLE_SUNMATRIX_SLUNRLOC)
   add_subdirectory(slunrloc)
 endif()

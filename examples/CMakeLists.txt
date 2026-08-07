@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner and Slaven Peles @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -17,16 +17,16 @@
 # examples level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-# We need this to ensure the installed templates have MPI when ENABLE_MPI=TRUE,
-# at least until we convert all of the templates to use the SUNDIALS CMake
-# target.
+# We need this to ensure the installed templates have MPI when
+# SUNDIALS_ENABLE_MPI=TRUE, at least until we convert all of the templates to
+# use the SUNDIALS CMake target.
 
 # ===================================================================
 # Configure compilers for installed examples
 # ===================================================================
 
 foreach(lang ${_SUNDIALS_ENABLED_LANGS})
-  if(ENABLE_MPI)
+  if(SUNDIALS_ENABLE_MPI)
     if(DEFINED MPI_${lang}_COMPILER)
       set(_EXAMPLES_${lang}_COMPILER
           "${MPI_${lang}_COMPILER}"
@@ -40,7 +40,7 @@ foreach(lang ${_SUNDIALS_ENABLED_LANGS})
 endforeach()
 
 # Disable some warnings for examples
-if(ENABLE_ALL_WARNINGS)
+if(SUNDIALS_ENABLE_ALL_WARNINGS)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
 endif()
@@ -52,7 +52,7 @@ set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 # Set variables used in generating CMake and Makefiles for examples
 # ===================================================================
 
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   set(SHELL "sh")
   set(prefix "${CMAKE_INSTALL_PREFIX}")
@@ -116,31 +116,31 @@ endif()
 # ===================================================================
 
 # Add ARKode examples
-if(BUILD_ARKODE)
+if(SUNDIALS_ENABLE_ARKODE)
   add_subdirectory(arkode)
 endif()
 
 # Add CVODE examples
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   add_subdirectory(cvode)
 endif()
 
 # Add CVODES Examples
-if(BUILD_CVODES)
+if(SUNDIALS_ENABLE_CVODES)
   add_subdirectory(cvodes)
 endif()
 
 # Add IDA examples
-if(BUILD_IDA)
+if(SUNDIALS_ENABLE_IDA)
   add_subdirectory(ida)
 endif()
 
 # Add IDAS examples
-if(BUILD_IDAS)
+if(SUNDIALS_ENABLE_IDAS)
   add_subdirectory(idas)
 endif()
 
 # Add KINSOL examples
-if(BUILD_KINSOL)
+if(SUNDIALS_ENABLE_KINSOL)
   add_subdirectory(kinsol)
 endif()

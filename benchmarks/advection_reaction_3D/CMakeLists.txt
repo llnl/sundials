@@ -2,7 +2,7 @@
 # Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -15,10 +15,12 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-if(ENABLE_RAJA)
+# Check for RAJA not NVECTOR_RAJA because other GPU-enabled vectors are used in
+# the benchmark and RAJA is needed for the user-supplied functions
+if(SUNDIALS_ENABLE_RAJA)
   add_subdirectory(raja)
 endif()
 
-if(ENABLE_KOKKOS AND BUILD_NVECTOR_KOKKOS)
+if(SUNDIALS_ENABLE_NVECTOR_KOKKOS)
   add_subdirectory(kokkos)
 endif()

@@ -4,7 +4,7 @@
  *                Steven B. Roberts @ LLNL
  * ---------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -55,6 +55,8 @@
      ARKODE_MRI_GARK_IMPLICIT_MIDPOINT 2       0          ID      Y
      ARKODE_MRI_GARK_ESDIRK34a         3       2          ID      Y
      ARKODE_MRI_GARK_ESDIRK46a         4       3          ID      Y
+     ARKODE_IMEX_MRI_GARK_ASCHER_ARK2       2       1          IED     Y
+     ARKODE_IMEX_MRI_GARK_ARK2      2       1          IED     Y
      ARKODE_IMEX_MRI_GARK_EULER        1       0          ID      Y
      ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL  2       0          ID      Y
      ARKODE_IMEX_MRI_GARK_MIDPOINT     2       0          ID      Y
@@ -391,6 +393,73 @@ ARK_MRI_TABLE(ARKODE_MRI_GARK_ESDIRK46a, { /* A. Sandu, SINUM 57:2300-2327, 2019
     C->G[1][10][4] =  SUN_RCONST(71.0)/SUN_RCONST(300.0);
     C->G[1][10][6] =  SUN_RCONST(71.0)/SUN_RCONST(300.0);
     C->G[1][10][8] = -SUN_RCONST(149.0)/SUN_RCONST(300.0);
+    return C;
+  })
+
+ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ASCHER_ARK2, {
+    MRIStepCoupling C = MRIStepCoupling_Alloc(1, 5, MRISTEP_IMEX);
+
+    const sunrealtype gamma = ONE - ONE / SUNRsqrt(SUN_RCONST(2.0));
+    const sunrealtype delta = ONE - ONE / (SUN_RCONST(2.0)*gamma);
+    C->q = 2;
+    C->p = 1;
+
+    C->c[1] = gamma;
+    C->c[2] = gamma;
+    C->c[3] = ONE;
+    C->c[4] = ONE;
+
+    C->W[0][1][0] = gamma;
+    C->W[0][3][0] = delta - gamma;
+    C->W[0][3][2] = ONE - delta;
+    C->W[0][5][0] = -delta;
+    C->W[0][5][2] = delta - SUN_RCONST(0.4);
+    C->W[0][5][4] = SUN_RCONST(0.4);
+
+    C->G[0][1][0] =  gamma;
+    C->G[0][2][0] = -gamma;
+    C->G[0][2][2] =  gamma;
+    C->G[0][3][2] =  ONE - gamma;
+    C->G[0][4][2] = -gamma;
+    C->G[0][4][4] =  gamma;
+    C->G[0][5][2] = -SUN_RCONST(0.4);
+    C->G[0][5][4] =  SUN_RCONST(0.4);
+    return C;
+  })
+
+ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARK2, {
+    MRIStepCoupling C = MRIStepCoupling_Alloc(1, 6, MRISTEP_IMEX);
+
+    C->q = 2;
+    C->p = 1;
+
+    C->c[1] = SUN_RCONST(0.5857864376269049511983112757903);
+    C->c[2] = SUN_RCONST(0.5857864376269049511983112757903);
+    C->c[3] = ONE;
+    C->c[4] = ONE;
+    C->c[5] = ONE;
+
+    C->W[0][1][0] = SUN_RCONST(0.5857864376269049511983112757903);    /* 2 - sqrt(2) */
+    C->W[0][3][0] = -SUN_RCONST(0.55719095841793663413220751719353);  /* (3 - 2 * sqrt(2))/6 - (2 - sqrt(2)) */
+    C->W[0][3][2] = SUN_RCONST(0.97140452079103168293389624140323);   /* (3 + 2 * sqrt(2))/6 */
+    C->W[0][5][0] = SUN_RCONST(0.32495791138430544513431842245566);   /* 1/(2 * sqrt(2)) - (3 - 2 * sqrt(2))/6 */
+    C->W[0][5][2] = -SUN_RCONST(0.61785113019775792073347406035081);  /* 1/(2 * sqrt(2)) - (3 + 2 * sqrt(2))/6 */
+    C->W[0][5][4] = SUN_RCONST(0.29289321881345247559915563789515);   /* 1 - 1 / sqrt(2)) */
+    C->W[0][6][0] = SUN_RCONST(0.29462782549439480183368515087702);   /* (4 - sqrt(2)) / 8 - (3 - 2 * sqrt(2))/6 */
+    C->W[0][6][2] = -SUN_RCONST(0.64818121608766856403410733192944);  /* (4 - sqrt(2)) / 8 - (3 + 2 * sqrt(2))/6 */
+    C->W[0][6][4] = SUN_RCONST(0.35355339059327376220042218105242);   /* 1 / (2 * sqrt(2)) */
+
+    C->G[0][1][0] = SUN_RCONST(0.5857864376269049511983112757903);     /* 2 - sqrt(2) */
+    C->G[0][2][0] = -SUN_RCONST(.29289321881345247559915563789515);    /* 1 - 1 / sqrt(2) - (2 - sqrt(2)) */
+    C->G[0][2][2] = SUN_RCONST(0.29289321881345247559915563789515);    /* 1 - 1 / sqrt(2) */
+    C->G[0][3][0] = -SUN_RCONST(0.29289321881345247559915563789515);   /* 1 / sqrt(2) - 1 */
+    C->G[0][3][2] = SUN_RCONST(0.70710678118654752440084436210485);    /* 1 / sqrt(2) */
+    C->G[0][4][0] = SUN_RCONST(0.35355339059327376220042218105242);    /* 1 / (2 * sqrt(2)) */
+    C->G[0][4][2] = -SUN_RCONST(0.64644660940672623779957781894758);   /* 1 / (2 * sqrt(2)) - 1 */
+    C->G[0][4][4] = SUN_RCONST(0.29289321881345247559915563789515);    /* 1 - 1 / sqrt(2) */
+    C->G[0][6][0] = -SUN_RCONST(0.030330085889910643300633271578637);  /* (4 - sqrt(2)) / 8 - 1 / (2 * sqrt(2)) */
+    C->G[0][6][2] = -SUN_RCONST(0.030330085889910643300633271578637);  /* (4 - sqrt(2)) / 8 - 1 / (2 * sqrt(2)) */
+    C->G[0][6][4] = SUN_RCONST(0.060660171779821286601266543157274);   /* 1 / (2 * sqrt(2)) - (1 - 1 / sqrt(2)) */
     return C;
   })
 
@@ -841,7 +910,8 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_SR43, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts,
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_MERK21, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024 (embedding unpublished) */
+ARK_MRI_TABLE(ARKODE_MERK21, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024;
+                                  D.R. Reynolds, S. Amihere, D. Mitchell, V.T. Luan, JCAM, 2026 (embedding) */
     MRIStepCoupling C = MRIStepCoupling_Alloc(2, 3, MRISTEP_MERK);
     sunrealtype c2 = SUN_RCONST(0.5);
 
@@ -864,7 +934,8 @@ ARK_MRI_TABLE(ARKODE_MERK21, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_MERK32, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024 (embedding unpublished) */
+ARK_MRI_TABLE(ARKODE_MERK32, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024;
+                                  D.R. Reynolds, S. Amihere, D. Mitchell, V.T. Luan, JCAM, 2026 (embedding) */
     MRIStepCoupling C = MRIStepCoupling_Alloc(2, 4, MRISTEP_MERK);
     sunrealtype c2 = SUN_RCONST(0.5);
 
@@ -894,7 +965,8 @@ ARK_MRI_TABLE(ARKODE_MERK32, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_MERK43, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024 (embedding unpublished) */
+ARK_MRI_TABLE(ARKODE_MERK43, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024;
+                                  D.R. Reynolds, S. Amihere, D. Mitchell, V.T. Luan, JCAM, 2026 (embedding) */
     MRIStepCoupling C = MRIStepCoupling_Alloc(3, 7, MRISTEP_MERK);
     sunrealtype c2 = SUN_RCONST(0.5);
     sunrealtype c3 = SUN_RCONST(0.5);
@@ -961,7 +1033,8 @@ ARK_MRI_TABLE(ARKODE_MERK43, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_MERK54, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024 (embedding unpublished) */
+ARK_MRI_TABLE(ARKODE_MERK54, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 438:115534, 2024;
+                                  D.R. Reynolds, S. Amihere, D. Mitchell, V.T. Luan, JCAM, 2026 (embedding) */
     MRIStepCoupling C = MRIStepCoupling_Alloc(4, 11, MRISTEP_MERK);
     sunrealtype c2 = SUN_RCONST(0.5);
     sunrealtype c3 = SUN_RCONST(0.5);

@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -305,11 +305,11 @@ For C++ users a RAII safe class, ``sundials::Context``, is provided:
    Context& operator=(const Context&) = delete;
    Context& operator=(Context&&) = default;
 
-   SUNContext Convert() override
+   SUNContext get() override
    {
       return *sunctx_.get();
    }
-   SUNContext Convert() const override
+   SUNContext get() const override
    {
       return *sunctx_.get();
    }

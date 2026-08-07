@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -97,7 +97,7 @@ message(
 # Configure compiler for installed examples
 # ===============================================================
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   set(_EXAMPLES_CUDA_HOST_COMPILER
       "${MPI_CXX_COMPILER}"
       CACHE INTERNAL "${lang} compiler for installed examples")

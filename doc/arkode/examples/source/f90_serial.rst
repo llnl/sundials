@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -55,7 +55,7 @@ Numerical method
 
 Since this driver and utility functions are written in Fortran-90,
 this example demonstrates the use of the FARKODE interface for the
-ARKode solver.  For time integration, this example uses the
+ARKODE solver.  For time integration, this example uses the
 fourth-order additive Runge-Kutta IMEX method, where the right-hand
 sides are broken up as
 
@@ -108,5 +108,3 @@ This problem is mathematically identical to the C example problem
 :ref:`ark_brusselator1D_FEM_slu`, but is written in Fortran 90, stores
 the sparse Jacobian and mass matrices in compressed-sparse-row format,
 and uses the KLU sparse-direct linear solver.
-
-

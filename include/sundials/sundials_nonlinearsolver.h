@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner, and Cody J. Balos @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -85,15 +85,27 @@ typedef int (*SUNNonlinSolConvTestFn)(SUNNonlinearSolver NLS, N_Vector y,
                                       N_Vector del, sunrealtype tol,
                                       N_Vector ewt, void* mem);
 
+typedef SUNErrCode (*SUNNonlinSolNormFn)(N_Vector del, N_Vector w,
+                                         sunrealtype* delnrm, void* mem);
+
+typedef SUNErrCode (*SUNNonlinSolGetUpdateNormFn)(sunrealtype* delnrm, void* mem);
+
+typedef SUNErrCode (*SUNNonlinSolGetConvRateFn)(sunrealtype* crate, void* mem);
+
 /* -----------------------------------------------------------------------------
  * SUNNonlinearSolver types
  * ---------------------------------------------------------------------------*/
 
-typedef enum
+enum SUNNonlinearSolver_Type
 {
   SUNNONLINEARSOLVER_ROOTFIND,
-  SUNNONLINEARSOLVER_FIXEDPOINT
-} SUNNonlinearSolver_Type;
+  SUNNONLINEARSOLVER_FIXEDPOINT,
+  SUNNONLINEARSOLVER_HYBRID
+};
+
+#ifndef SWIG
+typedef enum SUNNonlinearSolver_Type SUNNonlinearSolver_Type;
+#endif
 
 /* -----------------------------------------------------------------------------
  * Generic definition of SUNNonlinearSolver
@@ -109,9 +121,16 @@ struct _generic_SUNNonlinearSolver_Ops
                sunbooleantype, void*);
   SUNErrCode (*free)(SUNNonlinearSolver);
   SUNErrCode (*setsysfn)(SUNNonlinearSolver, SUNNonlinSolSysFn);
+  SUNErrCode (*setsysfns)(SUNNonlinearSolver, SUNNonlinSolSysFn,
+                          SUNNonlinSolSysFn);
   SUNErrCode (*setlsetupfn)(SUNNonlinearSolver, SUNNonlinSolLSetupFn);
   SUNErrCode (*setlsolvefn)(SUNNonlinearSolver, SUNNonlinSolLSolveFn);
   SUNErrCode (*setctestfn)(SUNNonlinearSolver, SUNNonlinSolConvTestFn, void*);
+  SUNErrCode (*setnormfn)(SUNNonlinearSolver, SUNNonlinSolNormFn, void*);
+  SUNErrCode (*setgetupdatenormfn)(SUNNonlinearSolver,
+                                   SUNNonlinSolGetUpdateNormFn, void*);
+  SUNErrCode (*setgetconvratefn)(SUNNonlinearSolver, SUNNonlinSolGetConvRateFn,
+                                 void*);
   SUNErrCode (*setoptions)(SUNNonlinearSolver NLS, const char* NLSid,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNNonlinearSolver, int);
@@ -126,6 +145,7 @@ struct _generic_SUNNonlinearSolver_Ops
 struct _generic_SUNNonlinearSolver
 {
   void* content;
+  void* python;
   SUNNonlinearSolver_Ops ops;
   SUNContext sunctx;
 };
@@ -163,6 +183,11 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetSysFn(SUNNonlinearSolver NLS, SUNNonlinSolSysFn SysFn);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetSysFns(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolSysFn root_fn,
+                                 SUNNonlinSolSysFn fixed_point_fn);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS,
                                    SUNNonlinSolLSetupFn SetupFn);
 
@@ -174,6 +199,20 @@ SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetConvTestFn(SUNNonlinearSolver NLS,
                                      SUNNonlinSolConvTestFn CTestFn,
                                      void* ctest_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolNormFn NormFn, void* norm_fn_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver NLS,
+                                          SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+                                          void* getupdatenorm_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolGetConvRateFn GetConvRateFn,
+                                        void* getconvrate_data);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,
@@ -200,6 +239,7 @@ SUNErrCode SUNNonlinSolGetNumConvFails(SUNNonlinearSolver NLS,
 /* Recoverable */
 #define SUN_NLS_CONTINUE   +901 /* not converged, keep iterating      */
 #define SUN_NLS_CONV_RECVR +902 /* convergece failure, try to recover */
+#define SUN_NLS_SWITCH     +903 /* auto solver decided to switch algorithms */
 
 #ifdef __cplusplus
 }

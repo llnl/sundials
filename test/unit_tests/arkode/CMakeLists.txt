@@ -2,7 +2,7 @@
 # Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -26,12 +26,12 @@ if(CXX_FOUND)
   if(SUNDIALS_TEST_ENABLE_GTEST)
     add_subdirectory(gtest)
   endif()
-  if(ENABLE_MPI AND MPI_CXX_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(CXX_parallel)
   endif()
 endif()
 
 # F2003 unit tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory(F2003_serial)
 endif()

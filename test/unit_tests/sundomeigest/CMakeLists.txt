@@ -2,7 +2,7 @@
 # Programmer(s): Mustafa Aggul @ SMU
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -17,7 +17,7 @@
 # test/unit_tests/sundomeigest level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-if(ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
+if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
   include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
@@ -37,6 +37,6 @@ target_link_libraries(test_sundomeigest_obj PRIVATE sundials_sundomeigestpower)
 add_subdirectory(Power)
 
 # Add the Arnoldi iteration examples if LAPACK is enabled
-if(ENABLE_LAPACK)
+if(SUNDIALS_ENABLE_LAPACK)
   add_subdirectory(Arnoldi)
 endif()

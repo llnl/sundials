@@ -4,7 +4,7 @@
  *                Cody Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -60,7 +60,7 @@ extern "C" {
  * Implemented SUNMatrix types
  * ----------------------------------------------------------------- */
 
-typedef enum
+enum SUNMatrix_ID
 {
   SUNMATRIX_DENSE,
   SUNMATRIX_MAGMADENSE,
@@ -73,7 +73,11 @@ typedef enum
   SUNMATRIX_GINKGOBATCH,
   SUNMATRIX_KOKKOSDENSE,
   SUNMATRIX_CUSTOM
-} SUNMatrix_ID;
+};
+
+#ifndef SWIG
+typedef enum SUNMatrix_ID SUNMatrix_ID;
+#endif
 
 /* -----------------------------------------------------------------
  * Generic definition of SUNMatrix

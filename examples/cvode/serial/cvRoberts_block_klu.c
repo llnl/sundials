@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
 
   /* Create sparse SUNMatrix for use in linear solves */
   nnz = GROUPSIZE * GROUPSIZE * ngroups;
-  A   = SUNSparseMatrix(neq, neq, nnz, CSR_MAT, sunctx);
+  A   = SUNSparseMatrix(neq, neq, nnz, SUN_CSR_MAT, sunctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
   /* Create KLU solver object for use by CVode */

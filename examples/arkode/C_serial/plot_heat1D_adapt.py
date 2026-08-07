@@ -3,7 +3,7 @@
 # Programmer(s): Daniel R. Reynolds @ UMBC
 # ----------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -65,7 +65,6 @@ else:
 
 # generate plots of results
 for tstep in range(nt):
-
     # set string constants for output plots, current time, mesh size
     pname = "heat1d." + repr(tstep).zfill(3) + ".png"
     tstr = repr(tstep)

@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -56,7 +56,7 @@ endif()
 set(SUNDIALS_CONFIGH_BUILDS "")
 foreach(_item ${SUNDIALS_BUILD_LIST})
   if(${${_item}})
-    string(REPLACE "BUILD_" "" _module ${_item})
+    string(REPLACE "SUNDIALS_ENABLE_" "" _module ${_item})
     string(APPEND SUNDIALS_CONFIGH_BUILDS "#define SUNDIALS_${_module} 1\n")
   endif()
 endforeach()
@@ -68,7 +68,7 @@ foreach(tpl ${SUNDIALS_TPL_LIST})
 endforeach()
 
 # prepare substitution variable SUNDIALS_TRILINOS_HAVE_MPI for sundials_config.h
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   set(SUNDIALS_TRILINOS_HAVE_MPI TRUE)
 endif()
 

@@ -3,7 +3,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -94,8 +94,7 @@ def main():
     fail = False
     errors = []
     for i, bf in enumerate(buildfiles):
-
-        print(f"[{i+1} of {total}] Building: {bf}")
+        print(f"[{i + 1} of {total}] Building: {bf}")
 
         # move to example directory
         os.chdir(os.path.dirname(bf))

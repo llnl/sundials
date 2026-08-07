@@ -1,7 +1,37 @@
 # Citing SUNDIALS
 
-We ask users of SUNDIALS to cite the following papers in any publications
-reporting work done with SUNDIALS:
+As an open-source software library, the most measurable metric we have regarding
+the impact of our work is citations in academic journals.  Thus, if you find our
+software useful for your own work, we ask that you cite one or more of the
+following papers in your publications that use SUNDIALS:
+
+```bibtex
+@article{roberts2026sundials,
+  title     = {New {Time} {Integrators} and {Capabilities} in {SUNDIALS} {Versions} 6.2.0-7.4.0},
+  author    = {Roberts, Steven B and Aggul, Mustafa and Reynolds, Daniel R and Balos, Cody J and Gardner, David J and Woodward, Carol S},
+  journal   = {ACM Transactions on Mathematical Software (TOMS)},
+  publisher = {ACM},
+  volume    = {52},
+  number    = {1},
+  pages     = {8:1--8:14},
+  year      = {2026},
+  doi       = {10.1145/3797888}
+}
+```
+
+```bibtex
+@article{reynolds2023arkode,
+  title   = {{ARKODE: A flexible IVP solver infrastructure for one-step methods}},
+  author  = {Reynolds, Daniel R and Gardner, David J and Woodward, Carol S and Chinomona, Rujeko},
+  journal   = {ACM Transactions on Mathematical Software (TOMS)},
+  publisher = {ACM},
+  volume  = {49},
+  number  = {2},
+  pages   = {1--26},
+  year    = {2023},
+  doi     = {10.1145/3594632}
+}
+```
 
 ```bibtex
 @article{gardner2022sundials,
@@ -31,45 +61,16 @@ reporting work done with SUNDIALS:
 }
 ```
 
-If any GPU features of SUNDIALS were utilized, please also cite:
-
-```bibtex
-@article{balos2021enabling,
-  title     = {{Enabling GPU accelerated computing in the SUNDIALS time integration library}},
-  author    = {Balos, Cody J and Gardner, David J and Woodward, Carol S and Reynolds, Daniel R},
-  journal   = {Parallel Computing},
-  publisher = {Elsevier},
-  volume    = {108},
-  pages     = {102836},
-  year      = {2021},
-  doi       = {10.1016/j.parco.2021.102836}
-}
-```
-
-When using the ARKODE package from SUNDIALS, please also cite:
-
-```bibtex
-@article{reynolds2023arkode,
-  title   = {{ARKODE: A flexible IVP solver infrastructure for one-step methods}},
-  author  = {Reynolds, Daniel R and Gardner, David J and Woodward, Carol S and Chinomona, Rujeko},
-  journal = {ACM Transactions on Mathematical Software},
-  volume  = {49},
-  number  = {2},
-  pages   = {1--26},
-  year    = {2023},
-  doi     = {10.1145/3594632}
-}
-```
-
-We also ask that users cite the documentation for the package and version that
-they are using rather than the combined SUNDIALS online guide:
+Furthermore, since SUNDIALS is continually evolving, we also ask that you cite the
+documentation for the SUNDIALS package and version that you use in your work, as a
+service to your own readers.  The relevant SUNDIALS documentation guides are:
 
 ```bibtex
 @Misc{arkodeDocumentation,
   author = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward and Cody J. Balos},
   title  = {User Documentation for ARKODE},
-  year   = {2025},
-  note   = {v6.5.0}
+  year   = {2026},
+  note   = {v6.8.0}
 }
 ```
 
@@ -77,8 +78,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{cvodeDocumentation,
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for CVODE},
-  year   = {2025},
-  note   = {v7.5.0}
+  year   = {2026},
+  note   = {v7.8.0}
 }
 ```
 
@@ -86,8 +87,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{cvodesDocumentation,
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for CVODES},
-  year   = {2025},
-  note   = {v7.5.0}
+  year   = {2026},
+  note   = {v7.8.0}
 }
 ```
 
@@ -95,8 +96,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{idaDocumentation,
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for IDA},
-  year   = {2025},
-  note   = {v7.5.0}
+  year   = {2026},
+  note   = {v7.8.0}
 }
 ```
 
@@ -104,8 +105,8 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{idasDocumentation,
   author = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for IDAS},
-  year   = {2025},
-  note   = {v6.5.0}
+  year   = {2026},
+  note   = {v6.8.0}
 }
 ```
 
@@ -113,7 +114,7 @@ they are using rather than the combined SUNDIALS online guide:
 @Misc{kinsolDocumentation,
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for KINSOL},
-  year   = {2025},
-  note   = {v7.5.0}
+  year   = {2026},
+  note   = {v7.8.0}
 }
 ```

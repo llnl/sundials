@@ -1,0 +1,43 @@
+# -----------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# This YAML file is used to instruct the generate.py script on
+# how to generate some of the nanobind code needed for the
+# core module of sundials4py.
+# -----------------------------------------------------------------
+
+modules:
+  all:
+    macro_define_include_by_name__regex:
+      - "^SUN_"
+    fn_exclude_by_name__regex:
+      # Don't interface the implementation specific overrides of the generic routines
+      - "^SUNAdaptController_GetType.*"
+      - "^SUNAdjointCheckpointScheme_NeedsSaving_.*"
+      - "^SUNAdjointCheckpointScheme_InsertVector_.*"
+      - "^SUNAdjointCheckpointScheme_LoadVector_.*"
+      - "^SUNAdjointCheckpointScheme_Destroy_.*"
+      - "^SUNAdjointCheckpointScheme_EnableDense_.*"
+  sunadjointcheckpointscheme_fixed:
+    path: sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed_generated.hpp
+    headers:
+    - ../../include/sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed.h
+    fn_exclude_by_name__regex:
+    # SUNAdjointCheckpointScheme_Create_Fixed takes both a SUNMemoryHelper and SUNContext
+    # which must be kept alive as long as the SUNAdjointCheckpointScheme object.
+    # Currently, our adapt_sundials_type_returns.py litgen extension cannot handle cases
+    # where there are two patients in the Nurse,Patient scheme. So we wrap this one manually.
+    - "^SUNAdjointCheckpointScheme_Create_Fixed$"

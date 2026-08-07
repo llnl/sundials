@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -58,6 +58,7 @@ typedef struct ARKodeERKStepMemRec
   N_Vector* F;          /* explicit RHS at each stage */
   int q;                /* method order               */
   int p;                /* embedding order            */
+  int istage;           /* current stage              */
   int stages;           /* number of stages           */
   ARKodeButcherTable B; /* ERK Butcher table          */
 
@@ -84,7 +85,7 @@ typedef struct ARKodeERKStepMemRec
   ===============================================================*/
 
 /* Interface routines supplied to ARKODE */
-int erkStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type);
+int erkStep_Init(ARKodeMem ark_mem, int init_type);
 int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
                     int mode);
 int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
@@ -106,6 +107,7 @@ int erkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
 int erkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele);
 int erkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
                             sunrealtype tscale, N_Vector* f, int nvecs);
+int erkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
 int erkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,

@@ -3,7 +3,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -35,7 +35,7 @@ F90LIBS  = @LIBS@
 # ------------------------------------------------------------------------------
 
 INCLUDES  = -I${includedir}
-LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ ${F90LIBS}
+LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ -lsundials_fcore_mod -lsundials_core ${F90LIBS}
 LINKFLAGS = -Wl,-rpath,@libdir@
 
 INCLUDES_KLU  = ${INCLUDES} -I@KLU_INCLUDE_DIR@

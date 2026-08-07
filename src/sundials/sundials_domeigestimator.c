@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -26,11 +26,16 @@
 
 #include <sundials/sundials_domeigestimator.h>
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNDomEigEstimator DEE)
 {
   return (DEE->sunctx->profiler);
 }
+#endif
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNDomEigEstimatorFunctionTable_Destroy(void* ptr);
 #endif
 
 /* internal function prototypes */
@@ -59,21 +64,27 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   SUNAssertNull(ops, SUN_ERR_MALLOC_FAIL);
 
   /* initialize operations to NULL */
-  ops->setatimes             = NULL;
-  ops->setoptions            = NULL;
-  ops->setmaxiters           = NULL;
-  ops->setreltol             = NULL;
-  ops->setnumpreprocessiters = NULL;
-  ops->initialize            = NULL;
-  ops->estimate              = NULL;
-  ops->getnumiters           = NULL;
-  ops->getres                = NULL;
-  ops->write                 = NULL;
-  ops->destroy               = NULL;
+  ops->setatimes                = NULL;
+  ops->setrhs                   = NULL;
+  ops->setrhslinearizationpoint = NULL;
+  ops->setoptions               = NULL;
+  ops->setmaxiters              = NULL;
+  ops->setreltol                = NULL;
+  ops->setnumpreprocessiters    = NULL;
+  ops->setinitialguess          = NULL;
+  ops->initialize               = NULL;
+  ops->estimate                 = NULL;
+  ops->getnumiters              = NULL;
+  ops->getnumrhsevals           = NULL;
+  ops->getres                   = NULL;
+  ops->getnumatimescalls        = NULL;
+  ops->write                    = NULL;
+  ops->destroy                  = NULL;
 
   /* attach ops and initialize content and context to NULL */
   DEE->ops     = ops;
   DEE->content = NULL;
+  DEE->python  = NULL;
   DEE->sunctx  = sunctx;
 
   return (DEE);
@@ -90,6 +101,11 @@ void SUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator DEE)
   /* free non-NULL ops structure */
   if (DEE->ops) { free(DEE->ops); }
   DEE->ops = NULL;
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNDomEigEstimatorFunctionTable_Destroy(DEE->python);
+#endif
+  DEE->python = NULL;
 
   /* free overall SUNDomEigEstimator object and return */
   free(DEE);
@@ -177,6 +193,31 @@ SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data,
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->setatimes) { ier = DEE->ops->setatimes(DEE, A_data, ATimes); }
+  else { ier = SUN_SUCCESS; }
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
+  return (ier);
+}
+
+SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
+                                     SUNRhsFn RHSfn)
+{
+  SUNErrCode ier;
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
+  if (DEE->ops->setrhs) { ier = DEE->ops->setrhs(DEE, rhs_data, RHSfn); }
+  else { ier = SUN_SUCCESS; }
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
+  return (ier);
+}
+
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE,
+                                                       sunrealtype t, N_Vector v)
+{
+  SUNErrCode ier;
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
+  if (DEE->ops->setrhslinearizationpoint)
+  {
+    ier = DEE->ops->setrhslinearizationpoint(DEE, t, v);
+  }
   else { ier = SUN_SUCCESS; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
@@ -298,6 +339,24 @@ SUNErrCode SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
   {
     *num_iters = 0;
     ier        = SUN_SUCCESS;
+  }
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
+  return (ier);
+}
+
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE,
+                                             long int* num_rhs_evals)
+{
+  SUNErrCode ier;
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
+  if (DEE->ops->getnumrhsevals)
+  {
+    ier = DEE->ops->getnumrhsevals(DEE, num_rhs_evals);
+  }
+  else
+  {
+    *num_rhs_evals = 0;
+    ier            = SUN_SUCCESS;
   }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);

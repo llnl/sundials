@@ -3,7 +3,7 @@
 #                Shelby Lockhart @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -19,80 +19,78 @@
 # ---------------------------------------------------------------
 
 # C examples
-if(EXAMPLES_ENABLE_C)
+if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(serial)
-  if(ENABLE_OPENMP AND OPENMP_FOUND)
+  if(SUNDIALS_ENABLE_OPENMP)
     add_subdirectory(C_openmp)
   endif()
-  if(ENABLE_OPENMP_DEVICE
-     AND OPENMP_FOUND
-     AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
+  if(SUNDIALS_ENABLE_OPENMP_DEVICE AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
     add_subdirectory(C_openmpdev)
   endif()
-  if(ENABLE_MPI AND MPI_C_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(parallel)
-    if(BUILD_NVECTOR_MPIMANYVECTOR)
+    if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
       add_subdirectory(C_mpimanyvector)
     endif()
   endif()
-  if(ENABLE_HYPRE AND HYPRE_FOUND)
+  if(SUNDIALS_ENABLE_HYPRE)
     add_subdirectory(parhyp)
   endif()
-  if(ENABLE_PETSC AND PETSC_FOUND)
+  if(SUNDIALS_ENABLE_PETSC)
     add_subdirectory(petsc)
   endif()
 endif()
 
 # CXX examples
-if(EXAMPLES_ENABLE_CXX)
+if(SUNDIALS_ENABLE_CXX_EXAMPLES)
   add_subdirectory(CXX_serial)
-  if(ENABLE_HIP)
+  if(SUNDIALS_ENABLE_HIP)
     add_subdirectory(hip)
   endif()
-  if(ENABLE_MAGMA AND MAGMA_FOUND)
+  if(SUNDIALS_ENABLE_MAGMA)
     add_subdirectory(magma)
   endif()
-  if(ENABLE_GINKGO AND Ginkgo_FOUND)
+  if(SUNDIALS_ENABLE_GINKGO)
     add_subdirectory(ginkgo)
   endif()
-  if(BUILD_SUNLINSOL_KOKKOSDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE)
     add_subdirectory(kokkos)
   endif()
-  if(BUILD_SUNLINSOL_ONEMKLDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE)
     add_subdirectory(CXX_onemkl)
   endif()
-  if(ENABLE_RAJA AND RAJA_FOUND)
+  if(SUNDIALS_ENABLE_RAJA)
     add_subdirectory(raja)
   endif()
-  if(BUILD_NVECTOR_SYCL)
+  if(SUNDIALS_ENABLE_NVECTOR_SYCL)
     add_subdirectory(CXX_sycl)
   endif()
   # MPI based examples
-  if(ENABLE_MPI AND MPI_CXX_FOUND)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(CXX_parallel)
     # hypre examples
-    if(ENABLE_HYPRE AND HYPRE_FOUND)
+    if(SUNDIALS_ENABLE_HYPRE)
       add_subdirectory(CXX_parhyp)
     endif()
     # SuperLU_DIST examples
-    if(ENABLE_SUPERLUDIST AND SUPERLUDIST_FOUND)
+    if(SUNDIALS_ENABLE_SUPERLUDIST)
       add_subdirectory(superludist)
     endif()
   endif()
 endif()
 
 # Fortran examples
-if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
   add_subdirectory(F2003_serial)
-  if(ENABLE_MPI)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(F2003_parallel)
   endif()
 endif()
 
 # CUDA examples
-if(EXAMPLES_ENABLE_CUDA)
+if(SUNDIALS_ENABLE_CUDA_EXAMPLES)
 
-  if(ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
+  if(SUNDIALS_ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
     add_subdirectory(cuda)
   endif()
 

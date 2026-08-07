@@ -2,7 +2,7 @@
    Programmer(s): Mustafa Aggul @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -221,7 +221,7 @@ Allowable Method Families
       * *ARK_DEE_FAIL* if the call to :c:func:`SUNDomEigEstimator_SetATimes`
         failed
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
    .. note::
 
@@ -315,6 +315,52 @@ Allowable Method Families
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.dom_eig_safety_factor".
 
+.. c:function:: int LSRKStepSetUseAnalyticStabilityRegion(void* arkode_mem, sunbooleantype analytic_stab_region);
+
+   Specifies whether to use the analytic stability region for determining the number of stages in STS methods.
+
+   **Arguments:**
+      * *arkode_mem* -- pointer to the LSRKStep memory block.
+      * *analytic_stab_region* -- Use the analytic stability region if ``SUNTRUE``; use the inscribed ellipse stability region if ``SUNFALSE``.
+      
+   **Return value:**
+      * *ARK_SUCCESS* if successful
+      * *ARK_MEM_NULL* if ``arkode_mem`` was ``NULL``.
+
+   .. note::
+
+      This input is only used for RKC and RKL methods.
+      
+      If :c:func:`LSRKStepSetUseAnalyticStabilityRegion` is not called, then the default
+      ``analytic_stab_region`` is set to ``SUNFALSE``.  This routine will be called by
+      :c:func:`ARKodeSetOptions` when using the key "arkid.use_analytic_stability_region".
+
+      :c:func:`LSRKStepSetUseAnalyticStabilityRegion` sets whether to use the exact stability region or an 
+      ellipse that is fully inscribed in the stability region for determining stability in RKC and RKL 
+      methods.  Whichever region is selected, LSRKStep will ensure that the complex number 
+      :math:`z=h\lambda`, where :math:`h` is the current time step size and :math:`\lambda` is the 
+      estimated dominant eigenvalue, is in this region.  Since the ellipse is smaller than the analytical
+      stability region it provides a more conservative estimate, which may be appropriate for problems 
+      wherein sub-dominant eigenvalues may also limit stability of the method.  Thus, the ellipse may 
+      result in a smaller time step size, more internal stages, or both, when compared to using the 
+      analytical stability region. We note that in either case, since LSRKStep does not examine the 
+      full eigenvalue spectrum, there is always some risk of instability.  For applications where 
+      this is a concern, we recommend calling :c:func:`LSRKStepSetDomEigSafetyFactor` with a `dom_eig_safety` 
+      value significantly larger than 1.
+
+      If a stable step cannot be achieved even with the maximum allowed number of stages, LSRKStep
+      adjusts the time step size to maintain stability. Even if the analytic stability region is
+      employed by calling this function, it uses an inscribed ellipse to determine the maximum
+      stable time step once this stage limit is reached.
+
+      If :c:func:`LSRKStepSetUseAnalyticStabilityRegion` is called during integration, the change will take effect 
+      at the next step attempt. Both analytic and ellipse stability regions of RKC and RKL methods with 10 stages
+      are shown in the figure below. 
+
+      .. figure:: ../../../../../shared/figs/arkode/STS2_region_s10.png
+         :alt: Stability region of RKL method with 10 stages
+         :align: center
+         :width: 50%
 
 .. c:function:: int LSRKStepSetNumDomEigEstInitPreprocessIters(void* arkode_mem, int num_iters);
 
@@ -328,7 +374,7 @@ Allowable Method Families
       * *ARK_SUCCESS* if successful
       * *ARK_MEM_NULL* if ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
    .. note::
 
@@ -353,7 +399,7 @@ Allowable Method Families
       * *ARK_DEE_FAIL* if the call to
         :c:func:`SUNDomEigEstimator_SetNumPreprocessIters` failed.
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
    .. note::
 
@@ -387,12 +433,19 @@ Allowable Method Families
       If :c:func:`LSRKStepSetNumSSPStages` is not called, the default ``num_of_stages``
       is set. Calling this function with ``num_of_stages <= 0`` resets the default values:
 
-      * ``num_of_stages = 10`` for :c:enumerator:`ARKODE_LSRK_SSP_S_2`
-      * ``num_of_stages = 9`` for :c:enumerator:`ARKODE_LSRK_SSP_S_3`
+      * ``num_of_stages = 2`` for :c:enumerator:`ARKODE_LSRK_SSP_S_2`
+      * ``num_of_stages = 4`` for :c:enumerator:`ARKODE_LSRK_SSP_S_3`
       * ``num_of_stages = 10`` for :c:enumerator:`ARKODE_LSRK_SSP_10_4`
 
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.num_ssp_stages".
+
+   .. versionchanged:: 7.7.0 (ARKODE 6.7.0)
+
+      The default number of stages for :c:enumerator:`ARKODE_LSRK_SSP_S_2` and
+      :c:enumerator:`ARKODE_LSRK_SSP_S_3` were changed from 10 and 9,
+      respectively, to their minimum allowable values of 2 and 4.
+
 
 .. _ARKODE.Usage.LSRKStep.OptionalOutputs:
 
@@ -440,7 +493,7 @@ Optional output functions
       * *ARK_MEM_NULL* if the LSRKStep memory was ``NULL``
       * *ARK_ILL_INPUT* if ``nfeDQ`` is illegal
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
    .. note::
 
@@ -461,7 +514,7 @@ Optional output functions
       * *ARK_MEM_NULL* if the LSRKStep memory was ``NULL``
       * *ARK_ILL_INPUT* if ``num_iters`` is illegal
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
 
 .. _ARKODE.Usage.LSRKStep.Reinitialization:

@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -190,6 +190,11 @@ user-callable functions.
       A ``beta`` value should satisfy :math:`0 < \beta < 1` if
       damping is to be used. A value of one or more will disable damping.
 
+      If supported by the SUNNonlinearSolver implementation, this routine will be called by
+      :c:func:`SUNNonlinSolSetOptions` when using the key
+      ``NLSid.damping``.
+
+
 
 .. _SUNNonlinSol.FixedPoint.Content:
 
@@ -205,28 +210,33 @@ following structure.
 
      SUNNonlinSolSysFn      Sys;
      SUNNonlinSolConvTestFn CTest;
+     SUNNonlinSolNormFn     norm_fn;
+     void                  *norm_fn_data;
 
      int            m;
-     int            *imap;
-     sunrealtype    *R;
-     sunbooleantype damping
-     sunrealtype    beta
+     int           *imap;
+     sunrealtype   *R;
+     sunbooleantype damping;
+     sunrealtype    beta;
      sunrealtype    *gamma;
      sunrealtype    *cvals;
-     N_Vector       *df;
-     N_Vector       *dg;
-     N_Vector       *q;
-     N_Vector       *Xvecs;
-     N_Vector        yprev;
-     N_Vector        gy;
-     N_Vector        fold;
-     N_Vector        gold;
-     N_Vector        delta;
-     int             curiter;
-     int             maxiters;
-     long int        niters;
-     long int        nconvfails;
-     void           *ctest_data;
+     sunrealtype    delnrm;
+     sunrealtype    crate;
+     sunrealtype    crate_const;
+     N_Vector      *df;
+     N_Vector      *dg;
+     N_Vector      *q;
+     N_Vector      *Xvecs;
+     N_Vector       yprev;
+     N_Vector       gy;
+     N_Vector       fold;
+     N_Vector       gold;
+     N_Vector       delta;
+     int            curiter;
+     int            maxiters;
+     long int       niters;
+     long int       nconvfails;
+     void          *ctest_data;
    };
 
 The following entries of the *content* field are always
@@ -234,9 +244,14 @@ allocated:
 
 * ``Sys``        -- function for evaluating the nonlinear system,
 * ``CTest``      -- function for checking convergence of the fixed point iteration,
+* ``norm_fn``    -- optional callback for computing the update norm or residual norm,
+* ``norm_fn_data`` -- user data passed to ``norm_fn``,
 * ``yprev``      -- ``N_Vector`` used to store previous fixed-point iterate,
 * ``gy``         -- ``N_Vector`` used to store :math:`G(y)` in fixed-point algorithm,
 * ``delta``      -- ``N_Vector`` used to store difference between successive fixed-point iterates,
+* ``delnrm``     -- WRMS norm of the most recent fixed-point update,
+* ``crate``      -- estimated nonlinear convergence rate,
+* ``crate_const`` -- convergence rate constant used in the ``crate`` estimate,
 * ``curiter``    -- the current number of iterations in the solve attempt,
 * ``maxiters``   -- the maximum number of fixed-point iterations allowed in
   a solve,

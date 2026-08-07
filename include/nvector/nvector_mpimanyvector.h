@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -70,11 +70,11 @@ typedef struct _N_VectorContent_MPIManyVector* N_VectorContent_MPIManyVector;
 
 SUNDIALS_EXPORT
 N_Vector N_VMake_MPIManyVector(MPI_Comm comm, sunindextype num_subvectors,
-                               N_Vector* vec_array, SUNContext sunctx);
+                               N_Vector* vec_array_1d, SUNContext sunctx);
 
 SUNDIALS_EXPORT
-N_Vector N_VNew_MPIManyVector(sunindextype num_subvectors, N_Vector* vec_array,
-                              SUNContext sunctx);
+N_Vector N_VNew_MPIManyVector(sunindextype num_subvectors,
+                              N_Vector* vec_array_1d, SUNContext sunctx);
 
 SUNDIALS_EXPORT
 N_Vector N_VGetSubvector_MPIManyVector(N_Vector v, sunindextype vec_num);
@@ -84,7 +84,7 @@ sunrealtype* N_VGetSubvectorArrayPointer_MPIManyVector(N_Vector v,
                                                        sunindextype vec_num);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VSetSubvectorArrayPointer_MPIManyVector(sunrealtype* v_data,
+SUNErrCode N_VSetSubvectorArrayPointer_MPIManyVector(sunrealtype* v_data_1d,
                                                      N_Vector v,
                                                      sunindextype vec_num);
 

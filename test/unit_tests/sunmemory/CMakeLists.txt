@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -15,14 +15,14 @@
 
 add_subdirectory(sys)
 
-if(ENABLE_CUDA)
+if(SUNDIALS_ENABLE_CUDA)
   add_subdirectory(cuda)
 endif()
 
-if(ENABLE_HIP)
+if(SUNDIALS_ENABLE_HIP)
   add_subdirectory(hip)
 endif()
 
-if(ENABLE_SYCL)
+if(SUNDIALS_ENABLE_SYCL)
   add_subdirectory(sycl)
 endif()

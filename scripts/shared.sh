@@ -3,7 +3,7 @@
 # Programmer(s): Radu Serban, David J. Gardner, Cody J. Balos @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -24,14 +24,13 @@ set -o pipefail
 tarfile=$1
 distrobase=$2
 doc=$3
-doc_sundials=$4
 
 echo ">>>>>>"
 echo $distrobase
 echo ">>>>>>"
 
 # all remaining inputs are for tar command
-shift 4
+shift 3
 tar=$*
 
 echo "   --- Add top-level files to $tarfile"
@@ -45,19 +44,10 @@ $tar $tarfile $distrobase/CONTRIBUTING.md
 $tar $tarfile $distrobase/LICENSE
 $tar $tarfile $distrobase/NOTICE
 $tar $tarfile $distrobase/README.md
-$tar $tarfile $distrobase/.readthedocs.yaml
 
 if [ $doc = "T" ]; then
     $tar $tarfile $distrobase/INSTALL_GUIDE.pdf
 fi
-
-if [ $doc_sundials = "T" ]; then
-    $tar $tarfile $distrobase/doc/superbuild/Makefile
-    $tar $tarfile $distrobase/doc/superbuild/source
-fi
-
-$tar $tarfile $distrobase/doc/shared
-$tar $tarfile $distrobase/doc/requirements.txt
 
 echo "   --- Add benchmark files to $tarfile"
 $tar $tarfile $distrobase/benchmarks
@@ -102,5 +92,5 @@ $tar $tarfile $distrobase/test/unit_tests/
 echo "   --- Add external files to $tarfile"
 $tar $tarfile $distrobase/external/
 
-echo "   --- Add tools to $tarfile"
-$tar $tarfile $distrobase/tools/
+echo "   --- Add suntools to $tarfile"
+$tar $tarfile $distrobase/suntools/

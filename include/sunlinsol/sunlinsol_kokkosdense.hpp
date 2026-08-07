@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -203,16 +203,16 @@ public:
   // Override the ConvertibleTo methods
 
   // Implicit conversion to a SUNLinearSolver
-  operator SUNLinearSolver() override { return object_.get(); }
+  operator SUNLinearSolver() noexcept override { return object_.get(); }
 
   // Implicit conversion to SUNLinearSolver
-  operator SUNLinearSolver() const override { return object_.get(); }
+  operator SUNLinearSolver() const noexcept override { return object_.get(); }
 
   // Explicit conversion to a SUNLinearSolver
-  SUNLinearSolver Convert() override { return object_.get(); }
+  SUNLinearSolver get() noexcept override { return object_.get(); }
 
   // Explicit conversion to a SUNLinearSolver
-  SUNLinearSolver Convert() const override { return object_.get(); }
+  SUNLinearSolver get() const noexcept override { return object_.get(); }
 
 private:
   void initSUNLinearSolver()

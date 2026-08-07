@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -104,6 +104,7 @@ typedef struct IntegratorMemRec
   N_Vector ycor;
   N_Vector ycur;
   N_Vector w;
+  sunrealtype delnrm;
 }* IntegratorMem;
 
 /* -----------------------------------------------------------------------------
@@ -165,6 +166,8 @@ int main(int argc, char* argv[])
   Imem->w = N_VClone(Imem->y0);
   if (check_retval((void*)Imem->w, "N_VClone", 0)) { return (1); }
 
+  Imem->delnrm = ZERO;
+
   /* set initial guess */
   data = N_VGetArrayPointer(Imem->y0);
   if (check_retval((void*)data, "N_VGetArrayPointer", 0)) { return (1); }
@@ -188,7 +191,7 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "SUNNonlinSolSetSysFn", 1)) { return (1); }
 
   /* set the convergence test function */
-  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, NULL);
+  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, Imem);
   if (check_retval(&retval, "SUNNonlinSolSetConvTestFn", 1)) { return (1); }
 
   /* set the maximum number of nonlinear iterations */
@@ -232,12 +235,17 @@ int main(int argc, char* argv[])
 int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del, sunrealtype tol,
              N_Vector ewt, void* mem)
 {
-  sunrealtype delnrm;
+  IntegratorMem Imem;
+
+  (void)NLS;
+  (void)y;
+  if (mem == NULL) { return (-1); }
+  Imem = (IntegratorMem)mem;
 
   /* compute the norm of the correction */
-  delnrm = N_VMaxNorm(del);
+  Imem->delnrm = N_VMaxNorm(del);
 
-  if (delnrm <= tol) { return (SUN_SUCCESS); /* success       */ }
+  if (Imem->delnrm <= tol) { return (SUN_SUCCESS); /* success       */ }
   else { return (SUN_NLS_CONTINUE); /* not converged */ }
 }
 

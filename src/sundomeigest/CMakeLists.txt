@@ -2,7 +2,7 @@
 # Programmer(s): Mustafa Aggul @ SMU
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -20,6 +20,6 @@
 # required native dominant eigenvalue estimators
 add_subdirectory(power)
 
-if(ENABLE_LAPACK)
+if(SUNDIALS_ENABLE_LAPACK)
   add_subdirectory(arnoldi)
 endif()

@@ -3,7 +3,7 @@ Start SPRKStep Logging test
 ------------------------------------------------------------------------------------------------------------------------------
  0.000000000000000e+00    4.000000000000000e-01    0.000000000000000e+00    0.000000000000000e+00    2.000000000000000e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 1, tn = 0, h = 0.001
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 0, t = 0.000515352837431123, that = 0.000134496199277431
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 0, t = 0.000515352837431123, that = 0.000134496199277431
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_0(:) =
  4.000000000000000e-01
  0.000000000000000e+00
@@ -24,8 +24,8 @@ Start SPRKStep Logging test
  2.000000000000000e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 1, t = 0.000429570818018149, that = -9.03236038019897e-05
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 1, t = 0.000429570818018149, that = -9.03236038019897e-05
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_1(:) =
  3.999995667937630e-01
  1.030705674862246e-03
@@ -46,8 +46,8 @@ Start SPRKStep Logging test
  2.000003620648310e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 2, t = 0.000871153841634616, that = 0.000665996396713679
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 2, t = 0.000871153841634616, that = 0.000665996396713679
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_2(:) =
  3.999995183688203e-01
  8.591413254497749e-04
@@ -68,8 +68,8 @@ Start SPRKStep Logging test
  1.999993467779273e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 3, t = 0.001, that = 0.001
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 3, t = 0.001, that = 0.001
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_3(:) =
  3.999976802940111e-01
  1.742304488164928e-03
@@ -90,7 +90,7 @@ Start SPRKStep Logging test
  1.999984375130207e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][updated solution] ycur(:) =
  3.999968750113932e-01
  1.999994791691249e-03
@@ -99,7 +99,7 @@ Start SPRKStep Logging test
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success
  1.000000000000000e-03    3.999968750113932e-01    1.999994791691249e-03   -6.249954427477658e-03    1.999984375130207e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 0.001, h = 0.001
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 0, t = 0.00151535283743112, that = 0.00113449619927743
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 0, t = 0.00151535283743112, that = 0.00113449619927743
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_0(:) =
  3.999968750113932e-01
  1.999994791691249e-03
@@ -120,8 +120,8 @@ Start SPRKStep Logging test
  1.999980172194029e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 1, t = 0.00142957081801815, that = 0.00090967639619801
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 1, t = 0.00142957081801815, that = 0.00090967639619801
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_1(:) =
  3.999932208828844e-01
  3.030690248237427e-03
@@ -142,8 +142,8 @@ Start SPRKStep Logging test
  1.999990818055839e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 2, t = 0.00187115384163462, that = 0.00166599639671368
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 2, t = 0.00187115384163462, that = 0.00166599639671368
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_2(:) =
  3.999937085954305e-01
  2.859126997057192e-03
@@ -164,8 +164,8 @@ Start SPRKStep Logging test
  1.999957031317613e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 3, t = 0.002, that = 0.002
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 3, t = 0.002, that = 0.002
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_3(:) =
  3.999891107122935e-01
  3.742274070049436e-03
@@ -186,7 +186,7 @@ Start SPRKStep Logging test
  1.999937502083256e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][updated solution] ycur(:) =
  3.999875001822875e-01
  3.999958334163726e-03
@@ -195,7 +195,7 @@ Start SPRKStep Logging test
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success
  2.000000000000000e-03    3.999875001822875e-01    3.999958334163726e-03   -1.249963542950928e-02    1.999937502083256e+00
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 3, tn = 0.002, h = 0.001
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 0, t = 0.00251535283743112, that = 0.00213449619927743
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 0, t = 0.00251535283743112, that = 0.00213449619927743
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_0(:) =
  3.999875001822875e-01
  3.999958334163726e-03
@@ -216,8 +216,8 @@ Start SPRKStep Logging test
  1.999929096631170e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 1, t = 0.00242957081801815, that = 0.00190967639619801
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 1, t = 0.00242957081801815, that = 0.00190967639619801
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_1(:) =
  3.999806252913683e-01
  5.030627468773662e-03
@@ -238,8 +238,8 @@ Start SPRKStep Logging test
  1.999946766641994e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 2, t = 0.00287115384163462, that = 0.00266599639671368
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 2, t = 0.00287115384163462, that = 0.00266599639671368
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_2(:) =
  3.999816491200660e-01
  4.859067996412664e-03
@@ -260,8 +260,8 @@ Start SPRKStep Logging test
  1.999889349412967e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
-[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stage] stage = 3, t = 0.003, that = 0.003
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][begin-stages-list] stage = 3, t = 0.003, that = 0.003
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][stage] z2_3(:) =
  3.999742916297437e-01
  5.742185182224810e-03
@@ -282,7 +282,7 @@ Start SPRKStep Logging test
  1.999859385545991e+00
  0.000000000000000e+00
  0.000000000000000e+00
-[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stage] status = success
+[INFO][rank 0][sprkStep_TakeStep_Compensated][end-stages-list] status = success
 [DEBUG][rank 0][sprkStep_TakeStep_Compensated][updated solution] ycur(:) =
  3.999718759228029e-01
  5.999859381323370e-03

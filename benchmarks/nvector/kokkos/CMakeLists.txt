@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -27,6 +27,6 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
                              PRIVATE USE_${backend})
 
   install(TARGETS test_nvector_performance_kokkos.${backend}
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/")
+          DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/")
 
 endforeach()

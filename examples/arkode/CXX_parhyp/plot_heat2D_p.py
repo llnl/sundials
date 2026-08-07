@@ -4,7 +4,7 @@
 #                 David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -34,10 +34,8 @@ import matplotlib.pyplot as plt
 infofile = "heat2d_info.00000.txt"
 
 with open(infofile) as fn:
-
     # read the file line by line
     for line in fn:
-
         # split line into list
         text = shlex.split(line)
 
@@ -77,14 +75,11 @@ with open(infofile) as fn:
 subdomains = np.zeros((nprocs, 4), dtype=np.int)
 
 for i in range(nprocs):
-
     infofile = "heat2d_info." + repr(i).zfill(5) + ".txt"
 
     with open(infofile) as fn:
-
         # read the file line by line
         for line in fn:
-
             # split line into list
             text = shlex.split(line)
 
@@ -119,13 +114,11 @@ else:
     plottype = ["solution"]
 
 for pt in plottype:
-
     # fill array with data
     time = np.zeros(nt)
     result = np.zeros((nt, ny, nx))
 
     for i in range(nprocs):
-
         datafile = "heat2d_" + pt + "." + repr(i).zfill(5) + ".txt"
 
         # load data
@@ -161,7 +154,6 @@ for pt in plottype:
 
     # generate plots
     for tstep in range(nt):
-
         # set string constants for output plots, current time, mesh size
         pname = "heat2d_surf_" + pt + "." + repr(tstep).zfill(3) + ".png"
         tstr = str(time[tstep])

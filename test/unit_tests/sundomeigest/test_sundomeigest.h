@@ -3,7 +3,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -48,6 +48,8 @@ int Test_SUNDomEigEstimator_GetRes(SUNDomEigEstimator DEE, sunrealtype* cur_res,
                                    int myid);
 int Test_SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
                                         long int* curniter, int myid);
+int Test_SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE,
+                                           long int* num_rhs_evals, int myid);
 int Test_SUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator DEE,
                                               long int* num_ATimes, int myid);
 int Test_SUNDomEigEstimator_Write(SUNDomEigEstimator DEE, int myid);

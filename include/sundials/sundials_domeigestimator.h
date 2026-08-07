@@ -2,7 +2,7 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -32,6 +32,9 @@
 extern "C" {
 #endif
 
+typedef int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot,
+                        void* user_data);
+
 /* -----------------------------------------------------------------
  * Generic definition of SUNDomEigEstimator (DEE)
  * ----------------------------------------------------------------- */
@@ -46,6 +49,9 @@ typedef _SUNDIALS_STRUCT_ SUNDomEigEstimator_* SUNDomEigEstimator;
 struct SUNDomEigEstimator_Ops_
 {
   SUNErrCode (*setatimes)(SUNDomEigEstimator, void*, SUNATimesFn);
+  SUNErrCode (*setrhs)(SUNDomEigEstimator, void*, SUNRhsFn);
+  SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype,
+                                         N_Vector);
   SUNErrCode (*setoptions)(SUNDomEigEstimator DEE, const char* Did,
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNDomEigEstimator, long int);
@@ -56,6 +62,7 @@ struct SUNDomEigEstimator_Ops_
   SUNErrCode (*estimate)(SUNDomEigEstimator, sunrealtype*, sunrealtype*);
   SUNErrCode (*getres)(SUNDomEigEstimator, sunrealtype*);
   SUNErrCode (*getnumiters)(SUNDomEigEstimator, long int*);
+  SUNErrCode (*getnumrhsevals)(SUNDomEigEstimator, long int*);
   SUNErrCode (*getnumatimescalls)(SUNDomEigEstimator, long int*);
   SUNErrCode (*write)(SUNDomEigEstimator, FILE*);
   SUNErrCode (*destroy)(SUNDomEigEstimator*);
@@ -67,6 +74,7 @@ struct SUNDomEigEstimator_Ops_
 struct SUNDomEigEstimator_
 {
   void* content;
+  void* python;
   SUNDomEigEstimator_Ops ops;
   SUNContext sunctx;
 };
@@ -84,6 +92,14 @@ void SUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator DEE);
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data,
                                         SUNATimesFn ATimes);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
+                                     SUNRhsFn RHSfn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE,
+                                                       sunrealtype t, N_Vector v);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetOptions(SUNDomEigEstimator DEE,
@@ -118,6 +134,10 @@ SUNErrCode SUNDomEigEstimator_GetRes(SUNDomEigEstimator DEE, sunrealtype* res);
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumIters(SUNDomEigEstimator DEE,
                                           long int* num_iters);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE,
+                                             long int* num_rhs_evals);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator DEE,

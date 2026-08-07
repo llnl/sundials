@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner @ LLNL
  * ---------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -348,7 +348,9 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
                     {"ARKODE_IMEX_MRI_GARK_MIDPOINT", false},
                     {"ARKODE_IMEX_MRI_GARK3a", false},
                     {"ARKODE_IMEX_MRI_GARK3b", false},
-                    {"ARKODE_IMEX_MRI_GARK4", false}});
+                    {"ARKODE_IMEX_MRI_GARK4", false},
+                    {"ARKODE_IMEX_MRI_GARK_ASCHER_ARK2", true},
+                    {"ARKODE_IMEX_MRI_GARK_ARK2", false}});
   }
   else if (type == MRISTEP_SR)
   {

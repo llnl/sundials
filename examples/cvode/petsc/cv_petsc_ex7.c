@@ -4,7 +4,7 @@
  * Acknowledgement: This example is based on the PETSc TS ex7.c
  *-----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -154,7 +154,11 @@ int main(int argc, char** argv)
                         (PetscErrorCode(*)(SNES, PetscInt, PetscReal,
                                            void*))MySNESMonitor,
                         vf,
+#if PETSC_VERSION_GE(3, 25, 0)
+                        (PetscCtxDestroyFn*)PetscViewerAndFormatDestroy);
+#else
                         (PetscErrorCode(*)(void**))PetscViewerAndFormatDestroy);
+#endif
   CHKERRQ(ierr);
 
   /* use matrix free */

@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -33,8 +33,8 @@ Enabling Profiling
 ------------------
 
 To enable profiling, SUNDIALS must be built with the CMake option
-:cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` set to ``ON``. To utilize Caliper
-support, the CMake option :cmakeop:`ENABLE_CALIPER` must also be set to ``ON``.
+:cmakeop:`SUNDIALS_ENABLE_PROFILING` set to ``ON``. To utilize Caliper
+support, the CMake option :cmakeop:`SUNDIALS_ENABLE_CALIPER` must also be set to ``ON``.
 More details in regards to configuring SUNDIALS with CMake can be found in
 :numref:`Installation`.
 

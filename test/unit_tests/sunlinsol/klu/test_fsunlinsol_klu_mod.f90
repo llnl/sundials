@@ -2,7 +2,7 @@
 ! Programmer(s): Cody J. Balos @ LLNL
 ! -----------------------------------------------------------------
 ! SUNDIALS Copyright Start
-! Copyright (c) 2025, Lawrence Livermore National Security,
+! Copyright (c) 2025-2026, Lawrence Livermore National Security,
 ! University of Maryland Baltimore County, and the SUNDIALS contributors.
 ! Copyright (c) 2013-2025, Lawrence Livermore National Security
 ! and Southern Methodist University.
@@ -81,7 +81,7 @@ contains
     end do
 
     ! Create sprae matrix from dense, and and destroy D
-    A => FSUNSparseFromDenseMatrix(D, ZERO, CSC_MAT)
+    A => FSUNSparseFromDenseMatrix(D, ZERO, SUN_CSC_MAT)
     call FSUNMatDestroy(D)
 
     ! create RHS vector for linear solve

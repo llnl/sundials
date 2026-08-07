@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -52,8 +52,9 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
       COMMENT "Running ${PACKAGE} installation tests"
       WORKING_DIRECTORY ${TEST_INSTALL_DIR}/${PACKAGE}/${TESTDIR}
       VERBATIM
-      COMMAND ${CMAKE_COMMAND} ${EXAMPLES_INSTALL_PATH}/${PACKAGE}/${TESTDIR} >
-              cmake.out
+      COMMAND
+        ${CMAKE_COMMAND} ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${PACKAGE}/${TESTDIR}
+        > cmake.out
       COMMAND ${CMAKE_COMMAND} --build ${TEST_INSTALL_DIR}/${PACKAGE}/${TESTDIR}
               --target ${SUNDIALS_ADD_TEST_INSTALL_EXECUTABLE} > make.out
       COMMAND ${CMAKE_CTEST_COMMAND} -R
@@ -79,8 +80,8 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
     COMMENT "Running ${PACKAGE} installation tests"
     WORKING_DIRECTORY ${TEST_INSTALL_ALL_DIR}/${PACKAGE}/${TESTDIR}
     VERBATIM
-    COMMAND ${CMAKE_COMMAND} ${EXAMPLES_INSTALL_PATH}/${PACKAGE}/${TESTDIR} >
-            cmake.out
+    COMMAND ${CMAKE_COMMAND}
+            ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${PACKAGE}/${TESTDIR} > cmake.out
     COMMAND ${CMAKE_COMMAND} --build
             ${TEST_INSTALL_ALL_DIR}/${PACKAGE}/${TESTDIR} > make.out)
   # In the future add "COMMAND ${CMAKE_CTEST_COMMAND}" here to run ctest with

@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -32,7 +32,11 @@ target_link_libraries(
           sundials_nvecserial_obj
           sundials_sunlinsolband_obj
           sundials_sunlinsoldense_obj
+          # Use only the auto object files directly here since the auto object
+          # library already links the Newton/fixed-point objects.
+          $<TARGET_OBJECTS:sundials_sunnonlinsolauto_obj>
           sundials_sunnonlinsolnewton_obj
+          sundials_sunnonlinsolfixedpoint_obj
           ${EXE_EXTRA_LINK_LIBS})
 
 # Tell CMake that we depend on the KINSOL library since it does not pick that up

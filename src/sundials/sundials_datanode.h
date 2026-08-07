@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -33,12 +33,16 @@ extern "C" {
 
 typedef int64_t sundataindex;
 
-typedef enum
+enum SUNDataNodeType
 {
   SUNDATANODE_LEAF,
   SUNDATANODE_LIST,
   SUNDATANODE_OBJECT
-} SUNDataNodeType;
+};
+
+#ifndef SWIG
+typedef enum SUNDataNodeType SUNDataNodeType;
+#endif
 
 typedef struct SUNDataNode_Ops_* SUNDataNode_Ops;
 typedef struct SUNDataNode_* SUNDataNode;

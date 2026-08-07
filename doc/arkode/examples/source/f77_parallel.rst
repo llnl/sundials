@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -31,8 +31,8 @@ Parallel Fortran 77 example problems
 fark_diag_kry_bbd_p
 ===================================================
 
-This problem is an ARKode clone of the CVODE problem,
-``fcv_diag_kry_bbd_p``.  As described in [HSR2017]_, this problem
+This problem is an ARKODE clone of the CVODE problem,
+``fcv_diag_kry_bbd_p``.  As described in :cite:p:`cvode_ug`, this problem
 models a stiff, linear, diagonal ODE system,
 
 .. math::
@@ -78,8 +78,8 @@ errors and final performance counters are printed on completion.
 fark_diag_non_p
 ===================================================
 
-This problem is an ARKode clone of the CVODE problem,
-``fcv_diag_non_p``.  As described in [HSR2017]_, this problem models a
+This problem is an ARKODE clone of the CVODE problem,
+``fcv_diag_non_p``.  As described in :cite:p:`cvode_ug`, this problem models a
 nonstiff, linear, diagonal ODE system,
 
 .. math::

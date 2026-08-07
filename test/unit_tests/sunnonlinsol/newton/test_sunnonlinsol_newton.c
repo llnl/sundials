@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -73,6 +73,8 @@ typedef struct IntegratorMemRec
   N_Vector x;
   SUNMatrix A;
   SUNLinearSolver LS;
+  sunrealtype delnrm;
+  int normfn_calls;
 }* IntegratorMem;
 
 /* Linear solver setup interface function */
@@ -84,6 +86,10 @@ static int LSolve(N_Vector b, void* mem);
 /* Convergence test function */
 static int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del,
                     sunrealtype tol, N_Vector ewt, void* mem);
+
+/* Callback used by the nonlinear solver to compute the current update norm. */
+static SUNErrCode NormFn(N_Vector del, N_Vector w, sunrealtype* delnrm,
+                         void* mem);
 
 /* -----------------------------------------------------------------------------
  * Main testing routine
@@ -118,6 +124,9 @@ int main(int argc, char* argv[])
 
   Imem->x = N_VClone(Imem->y0);
   if (check_retval((void*)Imem->x, "N_VClone", 0)) { return (1); }
+
+  Imem->delnrm       = ZERO;
+  Imem->normfn_calls = 0;
 
   /* set initial guess for the state */
   NV_Ith_S(Imem->y0, 0) = HALF;
@@ -161,8 +170,11 @@ int main(int argc, char* argv[])
   retval = SUNNonlinSolSetLSolveFn(NLS, LSolve);
   if (check_retval(&retval, "SUNNonlinSolSetSolveFn", 1)) { return (1); }
 
-  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, NULL);
+  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, Imem);
   if (check_retval(&retval, "SUNNonlinSolSetConvTestFn", 1)) { return (1); }
+
+  retval = SUNNonlinSolSetNormFn(NLS, NormFn, Imem);
+  if (check_retval(&retval, "SUNNonlinSolSetNormFn", 1)) { return (1); }
 
   /* set the maximum number of nonlinear iterations */
   retval = SUNNonlinSolSetMaxIters(NLS, MAXIT);
@@ -191,6 +203,12 @@ int main(int argc, char* argv[])
   /* get the number of linear iterations */
   retval = SUNNonlinSolGetNumIters(NLS, &niters);
   if (check_retval(&retval, "SUNNonlinSolGetNumIters", 1)) { return (1); }
+
+  if (Imem->normfn_calls <= 0)
+  {
+    printf("ERROR: NormFn was never called\n");
+    return (1);
+  }
 
   printf("Number of nonlinear iterations: %ld\n", niters);
 
@@ -258,16 +276,34 @@ int LSolve(N_Vector b, void* mem)
   return (retval);
 }
 
+static SUNErrCode NormFn(N_Vector del, N_Vector w, sunrealtype* delnrm, void* mem)
+{
+  IntegratorMem Imem;
+
+  if (mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  Imem = (IntegratorMem)mem;
+
+  Imem->normfn_calls++;
+  *delnrm = N_VWrmsNorm(del, w);
+
+  return SUN_SUCCESS;
+}
+
 /* Proxy for integrator convergence test function */
 int ConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del, sunrealtype tol,
              N_Vector ewt, void* mem)
 {
-  sunrealtype delnrm;
+  IntegratorMem Imem;
+
+  (void)NLS;
+  (void)y;
+  if (mem == NULL) { return (-1); }
+  Imem = (IntegratorMem)mem;
 
   /* compute the norm of the correction */
-  delnrm = N_VWrmsNorm(del, ewt);
+  Imem->delnrm = N_VWrmsNorm(del, ewt);
 
-  if (delnrm <= tol) { return (SUN_SUCCESS); /* success       */ }
+  if (Imem->delnrm <= tol) { return (SUN_SUCCESS); /* success       */ }
   else { return (SUN_NLS_CONTINUE); /* not converged */ }
 }
 

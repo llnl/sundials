@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner @ LLNL
  * ---------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -334,21 +334,21 @@ int main(int argc, char* argv[])
   Be = nullptr;
   Bi = nullptr;
 
-  const char* ark_methods_erk[6] = {"ARKODE_ARK2_ERK_3_1_2",
-                                    "ARKODE_ARK324L2SA_ERK_4_2_3",
-                                    "ARKODE_ARK436L2SA_ERK_6_3_4",
-                                    "ARKODE_ARK437L2SA_ERK_7_3_4",
-                                    "ARKODE_ARK548L2SA_ERK_8_4_5",
-                                    "ARKODE_ARK548L2SAb_ERK_8_4_5"};
+  const char* ark_methods_erk[10] =
+    {"ARKODE_ARK2_ERK_3_1_2",       "ARKODE_ASCHER_ERK_3_1_2",
+     "ARKODE_SSP_ERK_3_1_2",        "ARKODE_SSP_LSPUM_ERK_3_1_2",
+     "ARKODE_ARK324L2SA_ERK_4_2_3", "ARKODE_SSP_ERK_4_2_3",
+     "ARKODE_ARK436L2SA_ERK_6_3_4", "ARKODE_ARK437L2SA_ERK_7_3_4",
+     "ARKODE_ARK548L2SA_ERK_8_4_5", "ARKODE_ARK548L2SAb_ERK_8_4_5"};
 
-  const char* ark_methods_dirk[6] = {"ARKODE_ARK2_DIRK_3_1_2",
-                                     "ARKODE_ARK324L2SA_DIRK_4_2_3",
-                                     "ARKODE_ARK436L2SA_DIRK_6_3_4",
-                                     "ARKODE_ARK437L2SA_DIRK_7_3_4",
-                                     "ARKODE_ARK548L2SA_DIRK_8_4_5",
-                                     "ARKODE_ARK548L2SAb_DIRK_8_4_5"};
+  const char* ark_methods_dirk[10] =
+    {"ARKODE_ARK2_DIRK_3_1_2",       "ARKODE_ASCHER_SDIRK_3_1_2",
+     "ARKODE_SSP_DIRK_3_1_2",        "ARKODE_SSP_LSPUM_SDIRK_3_1_2",
+     "ARKODE_ARK324L2SA_DIRK_4_2_3", "ARKODE_ESDIRK_4_2_3",
+     "ARKODE_ARK436L2SA_DIRK_6_3_4", "ARKODE_ARK437L2SA_DIRK_7_3_4",
+     "ARKODE_ARK548L2SA_DIRK_8_4_5", "ARKODE_ARK548L2SAb_DIRK_8_4_5"};
 
-  for (int i = 0; i < 6; i++)
+  for (int i = 0; i < 10; i++)
   {
     Be = ARKodeButcherTable_LoadERKByName(ark_methods_erk[i]);
     Bi = ARKodeButcherTable_LoadDIRKByName(ark_methods_dirk[i]);

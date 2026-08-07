@@ -1,6 +1,11 @@
-sphinx >=4.0.0
-sphinx-fortran
+numpydoc
+six # missing dependency for sphinx-fortran
+sphinx >=6.0.0
 sphinx_rtd_theme
-sphinxcontrib.bibtex
 sphinx-copybutton
-sphinx-toolbox
+sphinx_design
+sphinx-fortran
+sphinx-multitoc-numbering
+sphinxcontrib-googleanalytics
+sphinxcontrib.bibtex
+sphinxcontrib-moderncmakedomain

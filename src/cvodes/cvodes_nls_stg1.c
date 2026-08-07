@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -33,6 +33,11 @@ static int cvNlsLSolveSensStg1(N_Vector delta, void* cvode_mem);
 static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS, N_Vector ycor,
                                  N_Vector del, sunrealtype tol, N_Vector ewt,
                                  void* cvode_mem);
+static SUNErrCode cvNlsNormSensStg1(N_Vector delta, N_Vector ewt,
+                                    sunrealtype* delnrm, void* cvode_mem);
+static SUNErrCode cvNlsGetUpdateNormSensStg1(sunrealtype* delnrm,
+                                             void* cvode_mem);
+static SUNErrCode cvNlsGetConvRateSensStg1(sunrealtype* crate, void* cvode_mem);
 
 /* -----------------------------------------------------------------------------
  * Exported functions
@@ -61,7 +66,7 @@ int CVodeSetNonlinearSolverSensStg1(void* cvode_mem, SUNNonlinearSolver NLS)
 
   /* check for required nonlinear solver functions */
   if (NLS->ops->gettype == NULL || NLS->ops->solve == NULL ||
-      NLS->ops->setsysfn == NULL)
+      (NLS->ops->setsysfn == NULL && NLS->ops->setsysfns == NULL))
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "NLS does not support required operations");
@@ -127,6 +132,32 @@ int CVodeSetNonlinearSolverSensStg1(void* cvode_mem, SUNNonlinearSolver NLS)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    "Setting convergence test function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetNormFn(cv_mem->NLSstg1, cvNlsNormSensStg1, cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting convergence-test norm function failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetGetUpdateNormFn(cv_mem->NLSstg1,
+                                          cvNlsGetUpdateNormSensStg1, cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting update-norm getter failed");
+    return (CV_ILL_INPUT);
+  }
+
+  retval = SUNNonlinSolSetGetConvRateFn(cv_mem->NLSstg1,
+                                        cvNlsGetConvRateSensStg1, cvode_mem);
+  if (retval != CV_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Setting convergence-rate getter failed");
     return (CV_ILL_INPUT);
   }
 
@@ -268,7 +299,6 @@ static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS,
 {
   CVodeMem cv_mem;
   int m, retval;
-  sunrealtype del;
   sunrealtype dcon;
 
   if (cvode_mem == NULL)
@@ -279,7 +309,12 @@ static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS,
   cv_mem = (CVodeMem)cvode_mem;
 
   /* compute the norm of the state and sensitivity corrections */
-  del = N_VWrmsNorm(delta, ewt);
+  if (cvNlsNormSensStg1(delta, ewt, &cv_mem->cv_delnrm, cvode_mem) != SUN_SUCCESS)
+  {
+    cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
+                   MSGCV_NLS_FAIL);
+    return (CV_NLS_FAIL);
+  }
 
   /* get the current nonlinear solver iteration count */
   retval = SUNNonlinSolGetCurIter(NLS, &m);
@@ -290,24 +325,55 @@ static int cvNlsConvTestSensStg1(SUNNonlinearSolver NLS,
   */
   if (m > 0)
   {
-    cv_mem->cv_crateS = SUNMAX(CRDOWN * cv_mem->cv_crateS, del / cv_mem->cv_delp);
+    cv_mem->cv_crateS = SUNMAX(CRDOWN * cv_mem->cv_crateS,
+                               cv_mem->cv_delnrm / cv_mem->cv_delp);
   }
-  dcon = del * SUNMIN(ONE, cv_mem->cv_crateS) / tol;
+  dcon = cv_mem->cv_delnrm * SUNMIN(ONE, cv_mem->cv_crateS) / tol;
 
   /* check if nonlinear system was solved successfully */
   if (dcon <= ONE) { return (CV_SUCCESS); }
 
   /* check if the iteration seems to be diverging */
-  if ((m >= 1) && (del > RDIV * cv_mem->cv_delp))
+  if ((m >= 1) && (cv_mem->cv_delnrm > RDIV * cv_mem->cv_delp))
   {
     return (SUN_NLS_CONV_RECVR);
   }
 
   /* Save norm of correction and loop again */
-  cv_mem->cv_delp = del;
+  cv_mem->cv_delp = cv_mem->cv_delnrm;
 
   /* Not yet converged */
   return (SUN_NLS_CONTINUE);
+}
+
+static SUNErrCode cvNlsNormSensStg1(N_Vector delta, N_Vector ewt,
+                                    sunrealtype* delnrm,
+                                    SUNDIALS_MAYBE_UNUSED void* cvode_mem)
+{
+  *delnrm = N_VWrmsNorm(delta, ewt);
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode cvNlsGetUpdateNormSensStg1(sunrealtype* delnrm, void* cvode_mem)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  *delnrm = cv_mem->cv_delnrm;
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode cvNlsGetConvRateSensStg1(sunrealtype* crate, void* cvode_mem)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  cv_mem = (CVodeMem)cvode_mem;
+
+  *crate = cv_mem->cv_crateS;
+  return SUN_SUCCESS;
 }
 
 static int cvNlsResidualSensStg1(N_Vector ycor, N_Vector res, void* cvode_mem)

@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -78,7 +78,7 @@ For functions to create an ARKODE stepper instance see :c:func:`ARKStepCreate`,
    :param arkode_mem: pointer to the ARKODE stepper memory block.
    :return: none
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
       This function replaces stepper specific versions in ARKStep, ERKStep,
       MRIStep, and SPRKStep.
@@ -141,7 +141,7 @@ Alternatively, the user may supply a custom function to supply the
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.scalar_tolerances".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSVtolerances(void* arkode_mem, sunrealtype reltol, N_Vector abstol)
@@ -160,7 +160,7 @@ Alternatively, the user may supply a custom function to supply the
    :retval ARK_NO_MALLOC:  ``arkode_mem`` was not allocated.
    :retval ARK_ILL_INPUT: an argument had an illegal value (e.g. a negative tolerance).
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeWFtolerances(void* arkode_mem, ARKEwtFn efun)
@@ -176,7 +176,7 @@ Alternatively, the user may supply a custom function to supply the
    :retval ARK_MEM_NULL:  ``arkode_mem`` was ``NULL``.
    :retval ARK_NO_MALLOC:  ``arkode_mem`` was not allocated.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 Moreover, for problems involving a non-identity mass matrix
@@ -230,7 +230,7 @@ these functions is provided below.
    :retval ARK_NO_MALLOC:  ``arkode_mem`` was not allocated.
    :retval ARK_ILL_INPUT: an argument had an illegal value (e.g. a negative tolerance).
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeResVtolerance(void* arkode_mem, N_Vector rabstol)
@@ -246,7 +246,7 @@ these functions is provided below.
    :retval ARK_NO_MALLOC:  ``arkode_mem`` was not allocated.
    :retval ARK_ILL_INPUT: an argument had an illegal value (e.g. a negative tolerance).
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeResFtolerance(void* arkode_mem, ARKRwtFn rfun)
@@ -262,7 +262,7 @@ these functions is provided below.
    :retval ARK_MEM_NULL:  ``arkode_mem`` was ``NULL``.
    :retval ARK_NO_MALLOC:  ``arkode_mem`` was not allocated.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 General advice on the choice of tolerances
@@ -496,7 +496,7 @@ pertinent to their choice of linear solver.
       insufficient to store :math:`\mathcal{A}` then it will need to be
       resized internally by ARKODE.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -612,7 +612,7 @@ Newton and mass matrix systems, these must have the same type:
       mass-matrix-times-vector product routine (see
       :c:type:`ARKLsMassTimesVecFn` and :c:func:`ARKodeSetMassTimes`).
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -663,7 +663,7 @@ function attaches the nonlinear solver to the main ARKODE integrator.
       default; a call to this routine replaces that module with the
       supplied *NLS* object.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -713,7 +713,7 @@ called prior to a continuation call to :c:func:`ARKodeEvolve`.
       problem but the prior one did, then call *ARKodeRootInit* with
       *nrtfn = 0*.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -841,7 +841,7 @@ the user has set a stop time (with a call to the optional input function
       On all other error returns, *tret* and *yout* are left unchanged
       from those provided to the routine.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -892,7 +892,7 @@ Optional input                                     Function name                
 =================================================  ==========================================  =======================
 Set ARKODE options from the command line or file   :c:func:`ARKodeSetOptions`                  internal
 Return ARKODE parameters to their defaults         :c:func:`ARKodeSetDefaults`                 internal
-Set integrator method order                        :c:func:`ARKodeSetOrder`                    4
+Set integrator method order                        :c:func:`ARKodeSetOrder`                    stepper-specific
 Set dense output interpolation type                :c:func:`ARKodeSetInterpolantType`          stepper-specific
 Set dense output polynomial degree                 :c:func:`ARKodeSetInterpolantDegree`        method-dependent
 Disable time step adaptivity (fixed-step mode)     :c:func:`ARKodeSetFixedStep`                disabled
@@ -911,8 +911,8 @@ Set inequality constraints on solution             :c:func:`ARKodeSetConstraints
 Set max number of constraint failures              :c:func:`ARKodeSetMaxNumConstrFails`        10
 Set the checkpointing scheme to use (for adjoint)  :c:func:`ARKodeSetAdjointCheckpointScheme`  ``NULL``
 Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointCheckpointIndex`   0
+Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensatedSums`       ``SUNFALSE``
 =================================================  ==========================================  =======================
-
 
 
 .. c:function:: int ARKodeSetOptions(void* arkode_mem, const char* arkid, const char* file_name, int argc, char* argv[])
@@ -989,7 +989,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       File-based options are not yet supported, so the ``file_name`` argument
       should be set to either ``NULL`` or the empty string ``""``.
 
-   .. versionadded:: 6.5.0
+   .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
 
 .. c:function:: int ARKodeSetDefaults(void* arkode_mem)
@@ -1011,7 +1011,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       Also leaves alone any data structures or options related to
       root-finding (those can be reset using :c:func:`ARKodeRootInit`).
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetOrder(void* arkode_mem, int ord)
@@ -1028,11 +1028,30 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
    .. note::
 
-      For explicit methods, the allowed values are :math:`2 \le`
-      *ord* :math:`\le 8`.  For implicit methods, the allowed values are
-      :math:`2\le` *ord* :math:`\le 5`, and for ImEx methods the allowed
-      values are :math:`2 \le` *ord* :math:`\le 5`.  Any illegal input
-      will result in the default value of 4.
+      The range of supported orders and the default order are stepper-specific:
+
+      * For explicit methods, :math:`1 \le` *ord* :math:`\le 9`, and the default
+        value is 4.
+
+      * For implicit methods, :math:`1 \le` *ord* :math:`\le 5`, and the default
+        value is 4.
+
+      * For ImEx methods, :math:`2 \le` *ord* :math:`\le 5`, and the default
+        value is 4.
+
+      * ForcingStep does not support this function.
+
+      * LSRKStep does not support this function. Use
+        :c:func:`LSRKStepSetSTSMethod` and :c:func:`LSRKStepSetSSPMethod`
+        instead.
+
+      * For MRIStep, :math:`1 \le` *ord* :math:`\le 5`, and the default
+        value is 3.
+
+      * For SplittingStep, :math:`1 \le` *ord*, and the default value is 1.
+
+      * For SPRKStep, *ord* :math:`\in \{1,2,3,4,5,6,8,10\}`, and the default
+        value is 4.
 
       Since *ord* affects the memory requirements for the internal
       ARKODE memory block, it cannot be changed after the first call to
@@ -1041,7 +1060,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.order".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetInterpolantType(void* arkode_mem, int itype)
@@ -1093,7 +1112,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.interpolant_type".
 
-   .. versionchanged:: 6.1.0
+   .. versionchanged:: 7.1.0 (ARKODE 6.1.0)
 
       This function replaces stepper specific versions in ARKStep, ERKStep,
       MRIStep, and SPRKStep.
@@ -1143,7 +1162,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.interpolant_degree".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetFixedStep(void* arkode_mem, sunrealtype hfixed)
@@ -1203,7 +1222,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.fixed_step".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetStepDirection(void* arkode_mem, sunrealtype stepdir)
@@ -1235,7 +1254,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.step_direction".
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 
@@ -1266,7 +1285,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.init_step".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -1297,7 +1316,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_hnil_warns".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -1324,7 +1343,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_num_steps".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMaxStep(void* arkode_mem, sunrealtype hmax)
@@ -1349,7 +1368,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_step".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMinStep(void* arkode_mem, sunrealtype hmin)
@@ -1374,7 +1393,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.min_step".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetStopTime(void* arkode_mem, sunrealtype tstop)
@@ -1404,7 +1423,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.stop_time".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetInterpolateStopTime(void* arkode_mem, sunbooleantype interp)
@@ -1424,7 +1443,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.interpolate_stop_time".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeClearStopTime(void* arkode_mem)
@@ -1444,7 +1463,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.clear_stop_time".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetUserData(void* arkode_mem, void* user_data)
@@ -1469,7 +1488,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       this function must be made *before* any calls to
       :c:func:`ARKodeSetLinearSolver` and/or :c:func:`ARKodeSetMassLinearSolver`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMaxErrTestFails(void* arkode_mem, int maxnef)
@@ -1496,7 +1515,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_err_test_fails".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
@@ -1544,7 +1563,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       and :c:func:`ARKodeSetFixedStep` are incompatible, and should not be used
       simultaneously.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMaxNumConstrFails(void* arkode_mem, int maxfails)
@@ -1570,7 +1589,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_num_constr_fails".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetAdjointCheckpointScheme(void* arkode_mem, SUNAdjointCheckpointScheme checkpoint_scheme)
@@ -1585,7 +1604,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.3.0
+   .. versionadded:: 7.3.0 (ARKODE 6.3.0)
 
 
 .. c:function:: int ARKodeSetAdjointCheckpointIndex(void* arkode_mem, suncountertype step_index)
@@ -1601,7 +1620,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.3.0
+   .. versionadded:: 7.3.0 (ARKODE 6.3.0)
 
 
 .. c:function:: int ARKodeSetUseCompensatedSums(void* arkode_mem, sunbooleantype onoff)
@@ -1626,6 +1645,7 @@ Set the checkpointing step index (for adjoint)     :c:func:`ARKodeSetAdjointChec
 
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.use_compensated_sums".
+
 
 .. _ARKODE.Usage.ARKodeAdaptivityInputTable:
 
@@ -1686,9 +1706,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       :c:type:`SUNAdaptController_Type` type ``SUN_ADAPTCONTROLLER_H``, only MRIStep supports
       inputs with type ``SUN_ADAPTCONTROLLER_MRI_H_TOL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. versionchanged:: 6.3.0
+   .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
       The default controller was changed from PID to I.
 
@@ -1722,7 +1742,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       the :c:type:`SUNAdaptController` object manually, and then call
       :c:func:`ARKodeSetAdaptController`.
 
-   .. versionadded:: 6.3.0
+   .. versionadded:: 7.3.0 (ARKODE 6.3.0)
 
 
 .. c:function:: int ARKodeSetAdaptivityAdjustment(void* arkode_mem, int adjust)
@@ -1751,9 +1771,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.adaptivity_adjustment".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. versionchanged:: 6.3.0
+   .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
       The default value was changed from -1 to 0
 
@@ -1781,9 +1801,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.cfl_fraction".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. versionchanged:: 6.4.0
+   .. versionchanged:: 7.4.0 (ARKODE 6.4.0)
 
       The restriction that ``cfl_frac`` is less than one has been removed.
 
@@ -1816,9 +1836,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.error_bias".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. versionchanged:: 6.3.0
+   .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
       The default value was changed from 1.5 to 1.0
 
@@ -1846,9 +1866,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.fixed_step_bounds".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. versionchanged:: 6.3.0
+   .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
       The default upper bound was changed from 1.5 to 1.0
 
@@ -1878,7 +1898,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_cfail_growth".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMaxEFailGrowth(void* arkode_mem, sunrealtype etamxf)
@@ -1904,7 +1924,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_efail_growth".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMaxFirstGrowth(void* arkode_mem, sunrealtype etamx1)
@@ -1931,7 +1951,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_first_growth".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMaxGrowth(void* arkode_mem, sunrealtype mx_growth)
@@ -1958,7 +1978,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_growth".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMinReduction(void* arkode_mem, sunrealtype eta_min)
@@ -1987,7 +2007,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.min_reduction".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetSafetyFactor(void* arkode_mem, sunrealtype safety)
@@ -2014,9 +2034,9 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.safety_factor".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. versionchanged:: 6.3.0
+   .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
       The default default was changed from 0.96 to 0.9. The maximum value is now
       exactly 1.0 rather than strictly less than 1.0.
@@ -2046,7 +2066,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.small_num_efails".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetStabilityFn(void* arkode_mem, ARKExpStabFn EStab, void* estab_data)
@@ -2076,7 +2096,7 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       be quite useful for problems where the explicit right-hand side
       function :math:`f^E(t,y)` contains stiff terms.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 The following routines are used to control algorithms that ARKODE can use to estimate
@@ -2099,7 +2119,7 @@ tolerance.
 
    The type of error accumulation that ARKODE should use.
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
    .. c:enumerator:: ARK_ACCUMERROR_NONE
 
@@ -2143,7 +2163,7 @@ tolerance.
    :retval ARK_STEPPER_UNSUPPORTED: temporal error estimation is not supported
                                     by the current time-stepping module.
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: int ARKodeResetAccumulatedError(void* arkode_mem)
@@ -2163,7 +2183,7 @@ tolerance.
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.reset_accumulated_error".
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 
@@ -2231,7 +2251,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       stage.  Thus one must balance the relative costs of such recomputation
       against the benefits of requiring only a single Newton linear solve.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetNonlinear(void* arkode_mem)
@@ -2259,7 +2279,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.nonlinear".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetAutonomous(void* arkode_mem, sunbooleantype autonomous)
@@ -2314,7 +2334,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.autonomous".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetPredictorMethod(void* arkode_mem, int method)
@@ -2352,7 +2372,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.predictor_method".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetStagePredictFn(void* arkode_mem, ARKStagePredictFn PredictStage)
@@ -2376,7 +2396,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       See :numref:`ARKODE.Usage.StagePredictFn` for more information on
       this user-supplied routine.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetNlsRhsFn(void* arkode_mem, ARKRhsFn nls_fi)
@@ -2405,7 +2425,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       When using a non-default nonlinear solver, this function must be called
       *after* :c:func:`ARKodeSetNonlinearSolver`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMaxNonlinIters(void* arkode_mem, int maxcor)
@@ -2433,7 +2453,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_nonlin_iters".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetNonlinConvCoef(void* arkode_mem, sunrealtype nlscoef)
@@ -2460,7 +2480,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.nonlin_conv_coef".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetNonlinCRDown(void* arkode_mem, sunrealtype crdown)
@@ -2485,7 +2505,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.nonlin_crdown".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetNonlinRDiv(void* arkode_mem, sunrealtype rdiv)
@@ -2512,7 +2532,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.nonlin_rdiv".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMaxConvFails(void* arkode_mem, int maxncf)
@@ -2547,7 +2567,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.max_conv_fails".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetDeduceImplicitRhs(void *arkode_mem, sunbooleantype deduce)
@@ -2573,7 +2593,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.deduce_implicit_rhs".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. _ARKODE.Usage.ARKLsInputs:
@@ -2683,7 +2703,7 @@ is recomputed using the current :math:`\gamma` value.
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.delta_gamma_max".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 .. index::
    single: optional input; linear solver setup frequency (ARKODE)
@@ -2714,7 +2734,7 @@ is recomputed using the current :math:`\gamma` value.
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.lsetup_frequency".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. index::
@@ -2759,7 +2779,7 @@ is recomputed using the current :math:`\gamma` value.
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.jac_eval_frequency".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -2856,7 +2876,7 @@ data in the program. The user data pointer may be specified through
       The function type :c:func:`ARKLsJacFn` is described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetLinSysFn(void* arkode_mem, ARKLsLinSysFn linsys)
@@ -2888,7 +2908,7 @@ data in the program. The user data pointer may be specified through
       The function type :c:func:`ARKLsLinSysFn` is described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMassFn(void* arkode_mem, ARKLsMassFn mass)
@@ -2920,7 +2940,7 @@ data in the program. The user data pointer may be specified through
       The function type :c:func:`ARKLsMassFn` is described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetLinearSolutionScaling(void* arkode_mem, sunbooleantype onoff)
@@ -2949,7 +2969,7 @@ data in the program. The user data pointer may be specified through
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.linear_solution_scaling".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. _ARKODE.Usage.ARKLsInputs.MatrixFree:
@@ -3029,7 +3049,7 @@ time they are called.
       :c:type:`ARKLsJacTimesVecFn` are described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 When using the internal difference quotient the user may optionally supply
@@ -3073,7 +3093,7 @@ this through calls to *both* :c:func:`ARKodeSetJacTimesRhsFn` and
       This function must be called *after* the ARKLS system solver interface has
       been initialized through a call to :c:func:`ARKodeSetLinearSolver`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 Similarly, if a problem involves a non-identity mass matrix,
@@ -3130,7 +3150,7 @@ function of type :c:type:`ARKLsMassTimesSetupFn` (see
       :c:type:`ARKLsMassTimesVecFn` are described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -3219,7 +3239,7 @@ the user through the :c:func:`ARKodeSetEpsLin` function.
       :c:func:`ARKLsPrecSolveFn` are described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMassPreconditioner(void* arkode_mem, ARKLsMassPrecSetupFn psetup, ARKLsMassPrecSolveFn psolve)
@@ -3256,7 +3276,7 @@ the user through the :c:func:`ARKodeSetEpsLin` function.
       :c:func:`ARKLsMassPrecSolveFn` are described in
       :numref:`ARKODE.Usage.UserSupplied`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetEpsLin(void* arkode_mem, sunrealtype eplifac)
@@ -3289,7 +3309,7 @@ the user through the :c:func:`ARKodeSetEpsLin` function.
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.eps_lin".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMassEpsLin(void* arkode_mem, sunrealtype eplifac)
@@ -3322,7 +3342,7 @@ the user through the :c:func:`ARKodeSetEpsLin` function.
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.mass_eps_lin".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 Since iterative linear solver libraries typically consider linear residual
@@ -3373,7 +3393,7 @@ allow for additional user control over these conversion factors.
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.ls_norm_factor".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetMassLSNormFactor(void* arkode_mem, sunrealtype nrmfac)
@@ -3409,7 +3429,7 @@ allow for additional user control over these conversion factors.
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.mass_ls_norm_factor".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -3456,7 +3476,7 @@ Disable inactive root warnings          :c:func:`ARKodeSetNoInactiveRootWarn`  e
 
       The default behavior is to monitor for both zero-crossing directions.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeSetNoInactiveRootWarn(void* arkode_mem)
@@ -3482,7 +3502,338 @@ Disable inactive root warnings          :c:func:`ARKodeSetNoInactiveRootWarn`  e
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.no_inactive_root_warn".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
+
+
+
+
+.. _ARKODE.Usage.ARKodeProcessingInputTable:
+
+Pre-step, Post-step, Pre-RHS, and Post-processing optional inputs (ADVANCED)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ARKODE provides multiple options for user-supplied callback routines that can be
+called at various times within the time-stepping process. Each of these
+callback functions has a similar structure, wherein the callback function will
+be provided with the current time, current solution, and the *user_data*
+structure that was provided to :c:func:`ARKodeSetUserData`; some functions are
+also provided the current time step counter, or even a counter indicating how
+many times this step has been attempted previously. More specifically, users may
+provide callback functions for the following events within a time step:
+
+* just prior to starting a time step attempt
+  (:c:func:`ARKodeSetPreStepFn`),
+
+* at the end of a successful time step (:c:func:`ARKodeSetPostStepFn`),
+
+* just prior to evaluating user-provided right-hand side (RHS)
+  functions (:c:func:`ARKodeSetPreRhsFn`),
+
+* immediately after each stage is completed within a time step
+  (:c:func:`ARKodeSetPostprocessStageFn`), and
+
+* immedaiately after computing the new step but before the step is
+  accepted or rejected (:c:func:`ARKodeSetPostprocessStepFn`).
+
+For users who wish to perform different actions at individual internal
+stages within an ARKODE method, they may obtain the current stage index by
+calling :c:func:`ARKodeGetStageIndex`
+in their stage-level callback routines provided to
+:c:func:`ARKodeSetPreRhsFn` and :c:func:`ARKodeSetPostprocessStageFn`.
+
+The specific ordering of these functions within a given step depends on whether
+each stage is explicit (as in ERKStep) or implicit (as in ARKStep or MRIStep).
+Denoting the most-recent "saved" time step as :math:`(t_n,y_n)`, the
+time-evolving temporary state within a step as :math:`(t_{cur},y_{cur})`, the
+functions provided to the five above functions as ``PreStep``, ``PostStep``,
+``PreRHS``, ``PostprocessStage``, and ``PostprocessStep``, and denoting the IVP
+right hand side function as ``RHS``, then the flow of a 3-stage explicit method
+would proceed as:
+
+0. Initialize ``attempt`` counter to 0
+
+1. Call ``PreStep`` with :math:`(t_{n},y_{n})`
+
+2. Stage 0
+
+   a. If this is not the first step and the method is FSAL (First Same As Last
+      -- the last stage of the prior step is the current solution and the first
+      stage is explicit) or the ``RHS`` has already been computed at
+      :math:`(t_{n},y_{n})`, proceed to stage 1.
+
+   b. Call ``PreRHS`` with :math:`(t_{n},y_{n})`
+
+   c. Evaluate ``RHS`` at :math:`(t_{n},y_{n})`
+
+3. Stage 1
+
+   a. Compute the stage solution :math:`(t_{cur},y_{cur})`
+
+   b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   d. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+
+4. Stage 2
+
+   a. Compute the stage solution :math:`(t_{cur},y_{cur})`
+
+   b. If the method is FSAL call ``PostprocessStep`` with
+      :math:`(t_{cur},y_{cur})`, else call ``PostprocessStage`` with
+      :math:`(t_{cur},y_{cur})`
+
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   d. Evaluate ``RHS`` at :math:`(t_{cur},y_{cur})`
+
+5. If the method is not FSAL, compute the new time step solution
+   :math:`(t_{cur},y_{cur})` and call ``PostprocessStep`` with
+   :math:`(t_{cur},y_{cur})`
+
+6. Check the local error
+
+   a. If the step is successful then call ``PostStep`` with
+      :math:`(t_{cur},y_{cur})`, determine the next internal step size
+      :math:`h_n`, and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
+
+   b. Else rewind :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`, increment the
+      ``attempt`` counter, determine the next internal step size :math:`h_n`,
+      and return to step 1
+
+Alternately, the flow of a 3-stage method that must perform a solve of some sort
+for each stage (i.e., a DIRK or ARK method in ARKStep, or a multirate method
+with MRIstep) would proceed as follows. Here, we show the implicit-explicit
+approach since that also shows the relationship between both the implicit
+right-hand side function ``RHS_i`` and the explicit right-hand side function
+``RHS_e``:
+
+0. Initialize ``attempt`` counter to 0
+
+1. Call ``PreStep`` with :math:`(t_{n},y_{n})`
+
+2. Stage 0
+
+   a. If the first stage is explicit:
+
+      i. If this is not the first step and the method is FSAL or ``RHS_i`` and
+         ``RHS_e`` have already been computed at :math:`(t_{n},y_{n})`, proceed
+         to stage 1.
+
+      ii. Call ``PreRHS`` with :math:`(t_{n},y_{n})`
+
+      iii. Evaluate ``RHS_i`` and ``RHS_e`` at :math:`(t_{n},y_{n})`
+
+   b. Else the first stage is implicit:
+
+      i. Solve the implicit system, calling ``PreRHS`` and then ``RHS_i`` with
+         :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+         iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+      ii. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+      iii. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+      iv. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
+
+3. Stage 1
+
+   a. Solve the implicit system, calling ``PreRHS`` and then ``RHS_i`` with
+      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+   b. Call ``PostprocessStage`` with :math:`(t_{cur},y_{cur})`
+
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
+
+4. Stage 2
+
+   a. Solve implicit system, calling ``PreRHS`` and then ``RHS_i`` with
+      :math:`(t_{cur},y_{cur})` at each solver iteration; at the end of this
+      iteration :math:`(t_{cur},y_{cur})` holds the updated stage solution
+
+   b. If the method is stiffly accurate, call ``PostprocessStep`` with
+      :math:`(t_{cur},y_{cur})`, else call ``PostprocessStage`` with
+      :math:`(t_{cur},y_{cur})`,
+
+   c. Call ``PreRHS`` with :math:`(t_{cur},y_{cur})`
+
+   d. Evaluate ``RHS_i`` and then ``RHS_e`` at :math:`(t_{cur},y_{cur})`
+
+5. If the method is not stiffly accurate, compute the new time step solution
+   :math:`(t_{cur},y_{cur})` and call ``PostprocessStep`` with
+   :math:`(t_{cur},y_{cur})`
+
+6. Check the local error.
+
+   a. If the step is successful then call ``PostStep`` with
+      :math:`(t_{cur},y_{cur})`, determine the next internal step size
+      :math:`h_n`, and update :math:`(t_n,y_n) \gets (t_{cur},y_{cur})`
+
+   b. Else rewind :math:`(t_{cur},y_{cur}) \gets (t_n,y_n)`, increment
+      ``attempt`` counter, determine the next internal step size :math:`h_n`,
+      and return to step 1
+
+We consider these functions as "advanced" because of their danger, although the
+callback functions are provided with the internally-evolving state, users should
+**not** adjust entries of this state vector, since doing so will destroy all
+theoretical guarantees of solution accuracy and numerical stability. The only
+"supported" approach for user modifications to the state vector is if this
+occurs between calls to :c:func:`ARKodeEvolve`, and if the user calls
+:c:func:`ARKodeReset` after every modification to the state vector so that
+ARKODE can reset its saved solution.
+
+
+.. cssclass:: table-bordered
+
+=================================================  ==========================================  =======================
+Optional input                                     Function name                               Default
+=================================================  ==========================================  =======================
+Set pre time step function                         :c:func:`ARKodeSetPreStepFn`                ``NULL``
+Set post time step function                        :c:func:`ARKodeSetPostStepFn`               ``NULL``
+Set pre right-hand side function                   :c:func:`ARKodeSetPreRhsFn`                 ``NULL``
+Set stage postprocessing function                  :c:func:`ARKodeSetPostprocessStageFn`       ``NULL``
+Set time step postprocessing function              :c:func:`ARKodeSetPostprocessStepFn`        ``NULL``
+=================================================  ==========================================  =======================
+
+
+
+.. c:function:: int ARKodeSetPreStepFn(void* arkode_mem, ARKPreStepFn prestep_fn)
+
+   [ADVANCED] Provide a function to be called before each step attempt.
+
+   The attached function allows users to set up auxiliary data structures that
+   only need to be updated at the start of a step and can be reused within the
+   time step (e.g., in their right-hand side function(s)).
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param prestep_fn: the user-supplied function to call. A ``NULL`` input
+                      function disables calling a prestep function.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
+
+
+.. c:function:: int ARKodeSetPostStepFn(void* arkode_mem, ARKPostStepFn poststep_fn)
+
+   [ADVANCED] Provide a function to be called following each successful time
+   step.
+
+   The attached function allows users to compute relevant diagnostic information
+   after each step.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param poststep_fn: the user-supplied function to call. A ``NULL`` input
+                       function disables calling a poststep function.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
+
+      This function replaces the undocumented
+      :c:func:`ARKodeSetPostprocessStepFn` used in earlier versions for
+      attaching a function to be called after each successful step.
+
+
+.. c:function:: int ARKodeSetPreRhsFn(void* arkode_mem, ARKPreRhsFn prerhs_fn)
+
+   [ADVANCED] Provides a function to be called prior to evaluating user-provided
+   right-hand side (RHS) functions. For partitioned methods with multiple RHS
+   functions (e.g., ARKStep or MRIStep), when multiple RHS functions will be
+   called in succession with identical inputs, this function is called only once
+   prior to the RHS function evaluations.
+
+   The attached function allows users to set up auxiliary data structures that
+   will be used within the RHS evaluations (e.g., MPI communication to fill and
+   send exchange buffers).
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param prerhs_fn: the user-supplied function to call. A ``NULL`` input
+                     function disables calling a pre-RHS function.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
+
+
+.. c:function:: int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
+
+   [ADVANCED] Provides a function to be called immediately after computing a new
+   step but before the step is accepted/rejected.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param ProcessStep: the user-supplied function to call.  A ``NULL`` input
+                       function disables step postprocessing.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
+
+      This function existed in earlier versions as an undocumented feature and
+      the attached function was called after each successful step. Starting with
+      version 6.7.0, use :c:func:`ARKodeSetPostStepFn` to attach a function to
+      be called after each successful step.
+
+   .. warning::
+
+      This function is currently incompatible with discrete adjoint capabilities
+      in ARKODE (:c:func:`ARKodeSetAdjointCheckpointScheme` and
+      :c:func:`ARKodeSetAdjointCheckpointIndex`).
+
+
+.. c:function:: int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
+
+   [ADVANCED] Provides a function to be called immediately after each stage is
+   completed within ARKODE's multi-stage methods.
+
+   .. danger::
+
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param ProcessStage: the user-supplied function to call. A ``NULL`` input
+                        function disables stage postprocessing.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
+
+      This function existed in earlier versions as an undocumented feature.
+
+   .. warning::
+
+      This function is currently incompatible with discrete adjoint capabilities
+      in ARKODE (:c:func:`ARKodeSetAdjointCheckpointScheme` and
+      :c:func:`ARKodeSetAdjointCheckpointIndex`).
 
 
 
@@ -3542,7 +3893,7 @@ polynomial model may be evaluated upon request.
       functions :c:func:`ARKodeGetCurrentTime` and
       :c:func:`ARKodeGetLastStep`, respectively.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -3623,6 +3974,8 @@ Actual initial time step size used                     :c:func:`ARKodeGetActualI
 Step size used for the last successful step            :c:func:`ARKodeGetLastStep`
 Step size to be attempted on the next step             :c:func:`ARKodeGetCurrentStep`
 Integration direction, e.g., forward or backward       :c:func:`ARKodeGetStepDirection`
+Last saved time reached by the solver                  :c:func:`ARKodeGetLastTime`
+Last saved solution reached by the solver              :c:func:`ARKodeGetLastState`
 Current internal time reached by the solver            :c:func:`ARKodeGetCurrentTime`
 Current internal solution reached by the solver        :c:func:`ARKodeGetCurrentState`
 Current :math:`\gamma` value used by the solver        :c:func:`ARKodeGetCurrentGamma`
@@ -3642,6 +3995,7 @@ Estimated local truncation error vector                :c:func:`ARKodeGetEstLoca
 Number of constraint test failures                     :c:func:`ARKodeGetNumConstrFails`
 Retrieve a pointer for user data                       :c:func:`ARKodeGetUserData`
 Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumulatedError`
+Current stage index, and total number of stages        :c:func:`ARKodeGetStageIndex`
 =====================================================  ============================================
 
 
@@ -3658,9 +4012,9 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -3676,7 +4030,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetActualInitStep(void* arkode_mem, sunrealtype* hinused)
@@ -3699,7 +4053,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
       local error test condition, or to ensure convergence of the
       nonlinear solver.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetLastStep(void* arkode_mem, sunrealtype* hlast)
@@ -3713,7 +4067,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetCurrentStep(void* arkode_mem, sunrealtype* hcur)
@@ -3726,7 +4080,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetStepDirection(void *arkode_mem, sunrealtype *stepdir)
@@ -3742,7 +4096,39 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
+
+
+.. c:function:: int ARKodeGetLastTime(void* arkode_mem, sunrealtype* tn)
+
+   Returns the last saved time reached by the solver.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param tn: last saved time reached.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
+
+
+.. c:function:: int ARKodeGetLastState(void *arkode_mem, N_Vector *yn)
+
+   Returns the last saved solution reached by the solver.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param yn: last saved solution.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. danger::
+
+      Users should exercise extreme caution when using this function,
+      as altering values of *yn* may lead to undesirable behavior, depending
+      on the particular use case and on when this routine is called.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
 
 
 .. c:function:: int ARKodeGetCurrentTime(void* arkode_mem, sunrealtype* tcur)
@@ -3755,7 +4141,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetCurrentState(void *arkode_mem, N_Vector *ycur)
@@ -3774,7 +4160,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
       as altering values of *ycur* may lead to undesirable behavior, depending
       on the particular use case and on when this routine is called.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetCurrentGamma(void *arkode_mem, sunrealtype *gamma)
@@ -3794,7 +4180,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
 
       This is only compatible with time-stepping modules that support implicit algebraic solvers.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetTolScaleFactor(void* arkode_mem, sunrealtype* tolsfac)
@@ -3809,7 +4195,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetErrWeights(void* arkode_mem, N_Vector eweight)
@@ -3827,7 +4213,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
       The user must allocate space for *eweight*, that will be
       filled in by this function.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetResWeights(void* arkode_mem, N_Vector rweight)
@@ -3849,7 +4235,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
       The user must allocate space for *rweight*, that will be
       filled in by this function.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetStepStats(void* arkode_mem, long int* nsteps, sunrealtype* hinused, sunrealtype* hlast, sunrealtype* hcur, sunrealtype* tcur)
@@ -3866,7 +4252,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodePrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt)
@@ -3889,11 +4275,11 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
 
    .. note::
 
-      The Python module ``tools/suntools`` provides utilities to read and output
+      The Python package ``suntools`` provides utilities to read and output
       the data from a SUNDIALS CSV output file using the key and value pair
       format.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: char* ARKodeGetReturnFlagName(long int flag)
@@ -3910,7 +4296,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
 
       The user is responsible for freeing the returned string.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumExpSteps(void* arkode_mem, long int* expsteps)
@@ -3932,7 +4318,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
 
       This is only compatible with time-stepping modules that support temporal adaptivity.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumAccSteps(void* arkode_mem, long int* accsteps)
@@ -3952,7 +4338,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
 
       This is only compatible with time-stepping modules that support temporal adaptivity.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumStepAttempts(void* arkode_mem, long int* step_attempts)
@@ -3965,7 +4351,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumRhsEvals(void* arkode_mem, int partition_index, long int* num_rhs_evals)
@@ -3998,7 +4384,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_ILL_INPUT: if ``num_partiton`` was invalid for the stepper or
                           ``num_rhs_evals`` was ``NULL``
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: int ARKodeGetNumErrTestFails(void* arkode_mem, long int* netfails)
@@ -4016,7 +4402,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
 
       This is only compatible with time-stepping modules that support temporal adaptivity.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumStepSolveFails(void* arkode_mem, long int* ncnf)
@@ -4035,7 +4421,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
 
       This is only compatible with time-stepping modules that support implicit algebraic solvers.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetEstLocalErrors(void* arkode_mem, N_Vector ele)
@@ -4066,7 +4452,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
       failures, the components causing the failures are those with largest
       values for the products, denoted loosely as ``eweight[i]*ele[i]``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumConstrFails(void* arkode_mem, long int* nconstrfails)
@@ -4085,7 +4471,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
 
       This is only compatible with time-stepping modules that support temporal adaptivity.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetUserData(void* arkode_mem, void** user_data)
@@ -4099,7 +4485,7 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetAccumulatedError(void* arkode_mem, sunrealtype* accum_error)
@@ -4115,7 +4501,37 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
    :retval ARK_STEPPER_UNSUPPORTED: temporal error estimation is not supported
                                     by the current time-stepping module.
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
+
+
+.. c:function:: int ARKodeGetStageIndex(void* arkode_mem, int* stage, int *max_stages)
+
+   Returns the index of the current stage (0-based) and the total number of
+   stages in the method i.e., for an :math:`s`-stage method `stage`
+   :math:`\in 0,\dots,s-1` and `max_stages` :math:`= s`.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param stage: pointer to storage for the current stage index.
+   :param max_stages: pointer to storage for the number of stages in the method.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+   :retval ARK_STEPPER_UNSUPPORTED: stage indexing is not supported by the
+                                    current time-stepping module.
+
+   .. note::
+
+      For temporally adaptive computations in MRIStep, the "embedding" stage is
+      indicated using `stage` **equal to** `max_stages`.
+
+      For the super time stepping methods in LSRKStep the number of "stages"
+      in each method, `s`, corresponds with the number of solution updates,
+      and thus this is one larger than what `s` denotes for explicit
+      Runge--Kutta methods.  Thus when calling `ARKodeGetStageIndex` while
+      using LSRKStep for STS methods, `stage` will range from 0 to `s` (inclusive),
+      and `max_stages` will be `s+1`.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
 
 
 
@@ -4164,7 +4580,7 @@ Single accessor to all nonlinear solver statistics   :c:func:`ARKodeGetNonlinSol
       solver object; the counter is reset whenever a new nonlinear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumNonlinSolvIters(void* arkode_mem, long int* nniters)
@@ -4189,7 +4605,7 @@ Single accessor to all nonlinear solver statistics   :c:func:`ARKodeGetNonlinSol
       solver object; the counter is reset whenever a new nonlinear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumNonlinSolvConvFails(void* arkode_mem, long int* nncfails)
@@ -4213,7 +4629,7 @@ Single accessor to all nonlinear solver statistics   :c:func:`ARKodeGetNonlinSol
       solver object; the counter is reset whenever a new nonlinear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNonlinSolvStats(void* arkode_mem, long int* nniters, long int* nncfails)
@@ -4238,7 +4654,7 @@ Single accessor to all nonlinear solver statistics   :c:func:`ARKodeGetNonlinSol
       solver object; the counters are reset whenever a new nonlinear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. _ARKODE.Usage.ARKodeRootOutputs:
@@ -4283,7 +4699,7 @@ No. of calls to user root function                   :c:func:`ARKodeGetNumGEvals
       zero-crossing.  A value of +1 indicates that :math:`g_i` is
       increasing, while a value of -1 indicates a decreasing :math:`g_i`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumGEvals(void* arkode_mem, long int* ngevals)
@@ -4297,7 +4713,7 @@ No. of calls to user root function                   :c:func:`ARKodeGetNumGEvals
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -4370,7 +4786,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       This function is provided for debugging purposes and the values in the
       returned matrix should not be altered.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetJacTime(void* arkode_mem, sunrealtype* t_J)
@@ -4410,7 +4826,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
 
       This is only compatible with time-stepping modules that support implicit algebraic solvers.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetLinWorkSpace(void* arkode_mem, long int* lenrwLS, long int* leniwLS)
@@ -4440,9 +4856,9 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       In a parallel setting, the above values are global (i.e. summed over all
       processors).
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -4468,7 +4884,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumPrecEvals(void* arkode_mem, long int* npevals)
@@ -4494,7 +4910,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumPrecSolves(void* arkode_mem, long int* npsolves)
@@ -4519,7 +4935,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumLinIters(void* arkode_mem, long int* nliters)
@@ -4543,7 +4959,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumLinConvFails(void* arkode_mem, long int* nlcfails)
@@ -4567,7 +4983,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumJTSetupEvals(void* arkode_mem, long int* njtsetup)
@@ -4592,7 +5008,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumJtimesEvals(void* arkode_mem, long int* njvevals)
@@ -4617,7 +5033,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumLinRhsEvals(void* arkode_mem, long int* nfevalsLS)
@@ -4647,7 +5063,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       solver object; the counter is reset whenever a new linear solver
       module is "attached" to ARKODE, or when ARKODE is resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetLastLinFlag(void* arkode_mem, long int* lsflag)
@@ -4703,7 +5119,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       *SUN_ERR_EXT_FAIL*, indicating an unrecoverable failure in
       an external iterative linear solver package.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: char* ARKodeGetLinReturnFlagName(long int lsflag)
@@ -4726,7 +5142,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       This is only compatible with time-stepping modules that support implicit algebraic solvers.
 
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetMassWorkSpace(void* arkode_mem, long int* lenrwMLS, long int* leniwMLS)
@@ -4756,9 +5172,9 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       In a parallel setting, the above values are global (i.e. summed over all
       processors).
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -4787,7 +5203,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumMassMultSetups(void* arkode_mem, long int* nmvsetups)
@@ -4813,7 +5229,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumMassMult(void* arkode_mem, long int* nmmults)
@@ -4840,7 +5256,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumMassSolves(void* arkode_mem, long int* nmsolves)
@@ -4865,7 +5281,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumMassPrecEvals(void* arkode_mem, long int* nmpevals)
@@ -4891,7 +5307,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumMassPrecSolves(void* arkode_mem, long int* nmpsolves)
@@ -4917,7 +5333,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumMassIters(void* arkode_mem, long int* nmiters)
@@ -4942,7 +5358,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumMassConvFails(void* arkode_mem, long int* nmcfails)
@@ -4967,7 +5383,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetNumMTSetups(void* arkode_mem, long int* nmtsetup)
@@ -4993,7 +5409,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       linear solver module is "attached" to ARKODE, or when ARKODE is
       resized.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: int ARKodeGetLastMassFlag(void* arkode_mem, long int* mlsflag)
@@ -5018,7 +5434,7 @@ Last return from a mass matrix solver function                     :c:func:`ARKo
       will match those described above for the function
       :c:func:`ARKodeGetLastLinFlag`.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -5067,8 +5483,42 @@ Output all ARKODE solver parameters   :c:func:`ARKodeWriteParameters`
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.write_parameters".
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
+
+.. _ARKODE.Usage.Preallocation:
+
+ARKODE data preallocation function
+----------------------------------
+
+Since the multi-stage structure of most ARKODE methods results in data
+requirements that depend on the number of stages, ARKODE generally defers
+allocation of stage-related internal data until the first call to
+:c:func:`ARKodeEvolve`.  However, in some cases the user may wish to
+preallocate this data earlier, for example to measure the memory footprint
+before beginning a calculation, or to check for allocation errors at an
+earlier time.  To request that that ARKODE preallocate all stage-related
+internal data before the first call to :c:func:`ARKodeEvolve`, the user
+may call the function :c:func:`ARKodeInit`.
+
+
+.. c:function:: int ARKodeInit(void* arkode_mem)
+
+   Optionally allocates internal data for the current ARKODE time-stepper module.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL:  ``arkode_mem`` was ``NULL``.
+   :retval ARK_MEM_FAIL:  a memory allocation failed.
+
+   .. warning::
+
+      This must be called **after** all other optional input routines have been called,
+      and **before** the first call to :c:func:`ARKodeEvolve`.  This routine should
+      be called at most once per ARKODE memory block.
+
+   .. versionadded:: 7.7.0 (ARKODE 6.7.0)
 
 
 .. _ARKODE.Usage.Reset:
@@ -5146,7 +5596,7 @@ vector.
       Calling :c:func:`ARKodeReset` during forward integration of an IVP with
       checkpointing for adjoint sensitivity analysis is not supported.
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 
@@ -5254,7 +5704,7 @@ rescale the upcoming time step by the specified factor.  If a value
 
       * ``examples/arkode/C_serial/ark_heat1D_adapt.c``
 
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. _ARKODE.Usage.MRIStepInterface:
@@ -5333,4 +5783,4 @@ block as a :c:type:`SUNStepper`.
       :c:func:`SUNStepper_SetForcing` function only if ``inner_arkode_mem`` is
       an ARKStep, ERKStep, or MRIStep integrator.
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)

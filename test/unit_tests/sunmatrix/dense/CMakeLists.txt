@@ -3,7 +3,7 @@
 #                David J. Gardner and Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -30,7 +30,7 @@ set(sunmatrix_dense_examples
 set(sunmatrix_dense_dependencies test_sunmatrix)
 
 # If building F2003 tests
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(sunmatrix_dense_fortran_examples "test_fsunmatrix_dense_mod\;\;")
 endif()
 

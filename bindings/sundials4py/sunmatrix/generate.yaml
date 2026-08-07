@@ -1,0 +1,57 @@
+# -----------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# This YAML file is used to instruct the generate.py script on
+# how to generate some of the nanobind code needed for the
+# core module of sundials4py.
+# -----------------------------------------------------------------
+
+modules:
+  all:
+    macro_define_include_by_name__regex:
+    - "^SUN_"
+    fn_exclude_by_name__regex:
+    # Don't interface the implementation specific overrides of the generic routines
+    - "^SUNMat.*"
+  sunmatrix_band:
+    path: sunmatrix/sunmatrix_band_generated.hpp
+    headers:
+    - ../../include/sunmatrix/sunmatrix_band.h
+    fn_exclude_by_name__regex:
+    # We need to wrap the Data function ourselves to ensure translation to a numpy array
+    - "^SUNBandMatrix_Data$"
+    # We don't interface these function in Python. Instead users can index the numpy array returned by Data.
+    - "^SUNBandMatrix_Cols$"
+    - "^SUNBandMatrix_Column$"
+  sunmatrix_dense:
+      path: sunmatrix/sunmatrix_dense_generated.hpp
+      headers:
+      - ../../include/sunmatrix/sunmatrix_dense.h
+      fn_exclude_by_name__regex:
+      # We need to wrap the Data function ourselves to ensure translation to a numpy array
+      - "^SUNDenseMatrix_Data$"
+      # We don't interface these functions to Python. Instead users can index the numpy array returned by Data.
+      - "^SUNDenseMatrix_Cols$"
+      - "^SUNDenseMatrix_Column$"
+  sunmatrix_sparse:
+      path: sunmatrix/sunmatrix_sparse_generated.hpp
+      headers:
+      - ../../include/sunmatrix/sunmatrix_sparse.h
+      fn_exclude_by_name__regex:
+      # We need to wrap the Data function ourselves to ensure translation to a numpy array
+      - "^SUNSparseMatrix_Data$"
+      - "^SUNSparseMatrix_IndexValues$"
+      - "^SUNSparseMatrix_IndexPointers$"

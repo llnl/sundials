@@ -4,7 +4,7 @@
  *                Radu Serban and Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -432,11 +432,11 @@ static int cvBandPrecSetup(sunrealtype t, N_Vector y, N_Vector fy,
 
   The parameters of cvBandPrecSolve used here are as follows:
 
-  r       is the right-hand side vector of the linear system.
+  r is the right-hand side vector of the linear system.
 
   bp_data is a pointer to preconditioner data (set by CVBandPrecInit)
 
-  z       is the output vector computed by cvBandPrecSolve.
+  z is the output vector computed by cvBandPrecSolve.
 
   The value returned by the cvBandPrecSolve function is always 0,
   indicating success.
@@ -514,7 +514,7 @@ static int cvBandPrecDQJac(CVBandPrecData pdata, sunrealtype t, N_Vector y,
   ftemp_data = N_VGetArrayPointer(ftemp);
   y_data     = N_VGetArrayPointer(y);
   ytemp_data = N_VGetArrayPointer(ytemp);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -542,7 +542,7 @@ static int cvBandPrecDQJac(CVBandPrecData pdata, sunrealtype t, N_Vector y,
       yj  = y_data[j];
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -572,7 +572,7 @@ static int cvBandPrecDQJac(CVBandPrecData pdata, sunrealtype t, N_Vector y,
       inc           = SUNMAX(srur * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) as before. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)

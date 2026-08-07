@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -24,10 +24,13 @@ set(examples
     "test_sunmatrix_ginkgo.cpp\;100 100 1\;"
     "test_sunmatrix_ginkgo.cpp\;100 10 1\;"
     "test_sunmatrix_ginkgo.cpp\;10 100 1\;"
-    "test_sunmatrix_ginkgo_batch.cpp\;10 10 10 0\;"
     "test_sunmatrix_ginkgo_batch.cpp\;10 10 10 1\;"
-    "test_sunmatrix_ginkgo_batch.cpp\;10 100 10 0\;"
     "test_sunmatrix_ginkgo_batch.cpp\;10 100 10 1\;")
+
+if(SUNDIALS_INDEX_SIZE STREQUAL "32")
+  list(APPEND examples "test_sunmatrix_ginkgo_batch.cpp\;10 10 10 0\;"
+       "test_sunmatrix_ginkgo_batch.cpp\;10 100 10 0\;")
+endif()
 
 # Add source directory to include directories
 include_directories(..)

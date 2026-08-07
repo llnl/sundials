@@ -2,7 +2,7 @@
 # Programmer(s):  Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -16,9 +16,9 @@
 # ---------------------------------------------------------------
 
 # Add the build targets for each backend
-if(BUILD_ARKODE
-   AND BUILD_CVODE
-   AND BUILD_IDA)
+if(SUNDIALS_ENABLE_ARKODE
+   AND SUNDIALS_ENABLE_CVODE
+   AND SUNDIALS_ENABLE_IDA)
   foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
 
     # set benchmark target name
@@ -56,12 +56,14 @@ if(BUILD_ARKODE
 
     install(
       TARGETS ${benchmark_target}
-      DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/kokkos")
+      DESTINATION
+        "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/kokkos")
 
     install(
       FILES README.md ../scripts/compare_error.py ../scripts/compute_error.py
             ../scripts/pickle_solution_output.py
-      DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/kokkos")
+      DESTINATION
+        "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/kokkos")
 
   endforeach()
 endif()

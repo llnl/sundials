@@ -1,0 +1,48 @@
+Start LSRKStep StageInfo test
+Using RKC method
+                      t                      y                  y err
+---------------------------------------------------------------------
+  0.000000000000000e+00  0.000000000000000e+00  0.000000000000000e+00
+    [Pre-RHS (stage 0 of 1) at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 0.0000000000e+00]
+    [Pre-RHS (stage 0 of 1) at t = 1.49e-12 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 1.4901161194e-12]
+    [Pre-RHS (stage 0 of 1) at t = 1.22e-11 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 1.2207031250e-11]
+    [Pre-step at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), step = 0, attempt = 1, ||y||_2 = 0.0000000000e+00]
+    [Post-stage processing (stage 1 of 3) at t = 1.47e-12 (tn = 0.00e+00 , tcur = 1.47e-12), ||y||_2 = 1.4693648727e-12]
+    [Pre-RHS (stage 1 of 3) at t = 1.47e-12 (tn = 0.00e+00 , tcur = 1.47e-12), ||y||_2 = 1.4693648727e-12]
+    [Postprocess-step at t = 6.10e-12 (tn = 0.00e+00 , tcur = 6.10e-12),||y||_2 = 6.1035156250e-12]
+    [Pre-RHS (stage 2 of 3) at t = 6.10e-12 (tn = 0.00e+00 , tcur = 6.10e-12), ||y||_2 = 6.1035156250e-12]
+    [Post-step at t = 6.10e-12 (tn = 0.00e+00 , tcur = 6.10e-12), step = 0, ||y||_2 = 6.1035156250e-12]
+       6.1035156250e-12       6.1035156250e-12       1.2116903504e-26
+    [Pre-step at t = 6.10e-12 (tn = 6.10e-12 , tcur = 6.10e-12), step = 1, attempt = 1, ||y||_2 = 6.1035156250e-12]
+    [Post-stage processing (stage 1 of 3) at t = 1.47e-08 (tn = 6.10e-12 , tcur = 1.47e-08), ||y||_2 = 1.4699752242e-08]
+    [Pre-RHS (stage 1 of 3) at t = 1.47e-08 (tn = 6.10e-12 , tcur = 1.47e-08), ||y||_2 = 1.4699752242e-08]
+    [Postprocess-step at t = 6.10e-08 (tn = 6.10e-12 , tcur = 6.10e-08),||y||_2 = 6.1041259766e-08]
+    [Pre-RHS (stage 2 of 3) at t = 6.10e-08 (tn = 6.10e-12 , tcur = 6.10e-08), ||y||_2 = 6.1041259766e-08]
+    [Post-step at t = 6.10e-08 (tn = 6.10e-12 , tcur = 6.10e-08), step = 1, ||y||_2 = 6.1041259766e-08]
+       6.1041259766e-08       6.1041259766e-08       5.2939559203e-23
+    [Pre-step at t = 6.10e-08 (tn = 6.10e-08 , tcur = 6.10e-08), step = 2, attempt = 1, ||y||_2 = 6.1041259766e-08]
+    [Post-stage processing (stage 1 of 3) at t = 3.55e-07 (tn = 6.10e-08 , tcur = 3.55e-07), ||y||_2 = 3.5491423430e-07]
+    [Pre-RHS (stage 1 of 3) at t = 3.55e-07 (tn = 6.10e-08 , tcur = 3.55e-07), ||y||_2 = 3.5491423430e-07]
+    [Postprocess-step at t = 1.28e-06 (tn = 6.10e-08 , tcur = 1.28e-06),||y||_2 = 1.2817443848e-06]
+    [Pre-RHS (stage 2 of 3) at t = 1.28e-06 (tn = 6.10e-08 , tcur = 1.28e-06), ||y||_2 = 1.2817443848e-06]
+    [Post-step at t = 1.28e-06 (tn = 6.10e-08 , tcur = 1.28e-06), step = 2, ||y||_2 = 1.2817443848e-06]
+       1.2817443848e-06       1.2817443848e-06       3.8518823276e-19
+---------------------------------------------------------------------
+Current time                  = 1.28174438476563e-06
+Steps                         = 3
+Step attempts                 = 3
+Stability limited steps       = 0
+Accuracy limited steps        = 3
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 6.103515625e-12
+Last step size                = 1.220703125e-06
+Current step size             = 2.44140625e-05
+RHS fn evals                  = 9
+Number of dom_eig updates     = 1
+Max. num. of stages used      = 2
+Max. num. of stages allowed   = 200
+Max. spectral radius          = 999.9
+Min. spectral radius          = 999.9
+End LSRKStep StageInfo test

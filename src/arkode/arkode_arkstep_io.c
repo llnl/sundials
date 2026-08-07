@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -464,7 +464,14 @@ int ARKStepSetTableNum(void* arkode_mem, ARKODE_DIRKTableID itable,
           (itable == ARKODE_ARK548L2SA_DIRK_8_4_5)) &&
         !((etable == ARKODE_ARK548L2SAb_ERK_8_4_5) &&
           (itable == ARKODE_ARK548L2SAb_DIRK_8_4_5)) &&
-        !((etable == ARKODE_ARK2_ERK_3_1_2) && (itable == ARKODE_ARK2_DIRK_3_1_2)))
+        !((etable == ARKODE_ARK2_ERK_3_1_2) && (itable == ARKODE_ARK2_DIRK_3_1_2)) &&
+        !((etable == ARKODE_ASCHER_ERK_3_1_2) &&
+          (itable == ARKODE_ASCHER_SDIRK_3_1_2)) &&
+        /*New Embedded IMEX-SSP Methods*/
+        !((etable == ARKODE_SSP_ERK_3_1_2) && (itable == ARKODE_SSP_DIRK_3_1_2)) &&
+        !((etable == ARKODE_SSP_LSPUM_ERK_3_1_2) &&
+          (itable == ARKODE_SSP_LSPUM_SDIRK_3_1_2)) &&
+        !((etable == ARKODE_SSP_ERK_4_2_3) && (itable == ARKODE_ESDIRK_4_2_3)))
     {
       arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                       "Incompatible Butcher tables for ARK method");
@@ -1294,6 +1301,26 @@ int arkStep_GetNonlinSolvStats(ARKodeMem ark_mem, long int* nniters,
 
   *nniters = step_mem->nls_iters;
   *nnfails = step_mem->nls_fails;
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  arkStep_GetStageIndex:
+
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+int arkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
+{
+  ARKodeARKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeARKStepMem structure */
+  retval = arkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  *stage      = step_mem->istage;
+  *max_stages = step_mem->stages;
 
   return (ARK_SUCCESS);
 }

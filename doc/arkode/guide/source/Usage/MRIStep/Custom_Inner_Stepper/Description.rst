@@ -2,7 +2,7 @@
    Programmer(s): David J. Gardner @ LLNL
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -105,7 +105,7 @@ Creating and Destroying an Object
       MRIStepInnerStepper inner_stepper = NULL;
       flag = MRIStepInnerStepper_CreateFromSUNStepper(sunstepper, &inner_stepper);
 
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. c:function:: int MRIStepInnerStepper_Free(MRIStepInnerStepper *stepper)
@@ -451,7 +451,7 @@ following member functions:
    **Example codes:**
       * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
 
-   .. versionchanged:: v5.7.0
+   .. versionchanged:: 6.7.0 (ARKODE 5.7.0)
 
       Supplying a full right-hand side function was made optional.
 

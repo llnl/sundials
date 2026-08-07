@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -19,10 +19,37 @@ CVODES Documentation
 
 .. include:: Landing.rst
 
+When using the CVODES package from SUNDIALS, please cite:
+
+.. code-block:: latex
+
+   @article{hindmarsh2005sundials,
+     title     = {{SUNDIALS}: Suite of nonlinear and differential/algebraic equation solvers},
+     author    = {Hindmarsh, Alan C and Brown, Peter N and Grant, Keith E and Lee, Steven L and Serban, Radu and Shumaker, Dan E and Woodward, Carol S},
+     journal   = {ACM Transactions on Mathematical Software (TOMS)},
+     publisher = {ACM},
+     volume    = {31},
+     number    = {3},
+     pages     = {363--396},
+     year      = {2005},
+     doi       = {10.1145/1089014.1089020}
+   }
+
+The CVODES documentation can be cited as:
+
+.. code-block:: latex
+
+   @Misc{cvodesDocumentation,
+     author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
+     title  = {User Documentation for CVODES},
+     year   = {|YEAR|},
+     note   = {|CVODES_VERSION|}
+   }
+
+
 .. only:: html
 
    **Table of Contents**
-
 
 .. toctree::
    :numbered:
@@ -40,6 +67,9 @@ CVODES Documentation
    sunmemory/index.rst
    sundials/Install_link.rst
    Constants
+   Fortran/index.rst
+   Python/index.rst
+   Publications_link.rst
    History_link.rst
    Changelog_link.rst
    References

@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -29,7 +29,7 @@ set(all_examples
 # Specify libraries to link against
 set(SUNDIALS_LIBS sundials_cvode sundials_nvechip)
 
-if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(SUNDIALS_LIBS ${SUNDIALS_LIBS} sundials_cvode_fused_hip)
 endif()
 
@@ -77,9 +77,9 @@ foreach(example_tuple ${all_examples})
 endforeach(example_tuple ${all_examples})
 
 # Install the targets
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
-  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_kernels_if_enabled cvode_fused_hip)
   else()
     set(_fused_kernels_if_enabled)

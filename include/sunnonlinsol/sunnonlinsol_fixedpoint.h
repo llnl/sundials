@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  * ---------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -27,6 +27,7 @@
 
 #include <sundials/sundials_core.h>
 
+#include "sundials/sundials_export.h"
 #include "sundials/sundials_types.h"
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
@@ -42,15 +43,20 @@ struct _SUNNonlinearSolverContent_FixedPoint
   /* functions provided by the integrator */
   SUNNonlinSolSysFn Sys;        /* fixed-point iteration function */
   SUNNonlinSolConvTestFn CTest; /* convergence test function      */
+  SUNNonlinSolNormFn norm_fn;   /* optional norm callback               */
+  void* norm_fn_data;           /* data for the norm callback           */
+  SUNNonlinSolGetUpdateNormFn getupdatenorm_fn; /* optional update-norm getter */
+  void* getupdatenorm_data; /* data for the update-norm getter      */
 
   /* nonlinear solver variables */
   int m;                  /* number of acceleration vectors to use          */
   int* imap;              /* array of length m                              */
   sunbooleantype damping; /* flag to apply dampling in acceleration         */
-  sunrealtype beta;       /* damping parameter                               */
+  sunrealtype beta;       /* damping parameter                              */
   sunrealtype* R;         /* array of length m*m                            */
   sunrealtype* gamma;     /* array of length m                              */
   sunrealtype* cvals;     /* array of length m+1 for fused vector op        */
+  sunrealtype delnrm;     /* wrms norm of delta                             */
   N_Vector* df;           /* vector array of length m                       */
   N_Vector* dg;           /* vector array of length m                       */
   N_Vector* q;            /* vector array of length m                       */
@@ -98,6 +104,12 @@ SUNErrCode SUNNonlinSolFree_FixedPoint(SUNNonlinearSolver NLS);
 
 /* set functions */
 SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetOptions_FixedPoint(SUNNonlinearSolver NLS,
+                                             const char* NLSid,
+                                             const char* file_name, int argc,
+                                             char* argv[]);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetSysFn_FixedPoint(SUNNonlinearSolver NLS,
                                            SUNNonlinSolSysFn SysFn);
 
@@ -113,6 +125,16 @@ SUNErrCode SUNNonlinSolSetMaxIters_FixedPoint(SUNNonlinearSolver NLS,
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
                                              sunrealtype beta);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
+                                            SUNNonlinSolNormFn NormFn,
+                                            void* norm_fn_data);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
+  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+  void* getupdatenorm_data);
 
 /* get functions */
 SUNDIALS_EXPORT

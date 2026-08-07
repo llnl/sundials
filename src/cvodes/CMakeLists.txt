@@ -3,7 +3,7 @@
 #                Radu Serban, Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -39,8 +39,14 @@ set(cvodes_SOURCES
     cvodes_resize.c)
 
 # Add variable cvodes_HEADERS with the exported CVODES header files
-set(cvodes_HEADERS cvodes.h cvodes_bandpre.h cvodes_bbdpre.h cvodes_diag.h
-                   cvodes_ls.h cvodes_proj.h)
+set(cvodes_HEADERS
+    cvodes.h
+    cvodes.hpp
+    cvodes_bandpre.h
+    cvodes_bbdpre.h
+    cvodes_diag.h
+    cvodes_ls.h
+    cvodes_proj.h)
 
 # Add prefix with complete path to the CVODES header files
 add_prefix(${SUNDIALS_SOURCE_DIR}/include/cvodes/ cvodes_HEADERS)
@@ -65,6 +71,7 @@ sundials_add_library(
     sundials_sunlinsolspgmr_obj
     sundials_sunlinsolsptfqmr_obj
     sundials_sunlinsolpcg_obj
+    sundials_sunnonlinsolauto_obj
     sundials_sunnonlinsolnewton_obj
     sundials_sunnonlinsolfixedpoint_obj
   OUTPUT_NAME sundials_cvodes
@@ -75,6 +82,6 @@ sundials_add_library(
 message(STATUS "Added CVODES module")
 
 # Add F2003 module if the interface is enabled
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
 endif()

@@ -5,7 +5,7 @@
  * Gardner (LLNL))
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -313,19 +313,19 @@ int main(int argc, char* argv[])
     if (check_flag(&flag, "PrintUserData", 1)) { return 1; }
   }
 
-  if (udata->diagnostics)
-  {
-    SUNLogger logger = NULL;
+  SUNLogger logger = NULL;
 
-    flag = SUNContext_GetLogger(ctx, &logger);
-    if (check_flag(&flag, "SUNContext_GetLogger", 1)) { return 1; }
+  flag = SUNContext_GetLogger(ctx, &logger);
+  if (check_flag(&flag, "SUNContext_GetLogger", 1)) { return 1; }
 
-    flag = SUNLogger_SetInfoFilename(logger, "diagnostics.txt");
-    if (check_flag(&flag, "SUNLogger_SetInfoFilename", 1)) { return 1; }
+  flag = SUNLogger_SetInfoFilename(logger,
+                                   udata->diagnostics ? "diagnostics.txt" : NULL);
+  if (check_flag(&flag, "SUNLogger_SetInfoFilename", 1)) { return 1; }
 
-    flag = SUNLogger_SetDebugFilename(logger, "diagnostics.txt");
-    if (check_flag(&flag, "SUNLogger_SetDebugFilename", 1)) { return 1; }
-  }
+  flag = SUNLogger_SetDebugFilename(logger, udata->diagnostics
+                                              ? "diagnostics.txt"
+                                              : NULL);
+  if (check_flag(&flag, "SUNLogger_SetDebugFilename", 1)) { return 1; }
 
   // ------------------------
   // Create parallel vectors

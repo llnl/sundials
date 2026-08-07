@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -24,7 +24,7 @@ include(CTest)
 # Check if the test runner is needed
 #
 if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT OR (SUNDIALS_TEST_ENABLE_PROFILING
-                                        AND ENABLE_CALIPER))
+                                        AND SUNDIALS_ENABLE_CALIPER))
   set(SUNDIALS_TEST_USE_RUNNER TRUE)
   # Python is needed to use the test runner
   find_package(Python3 REQUIRED)
@@ -74,7 +74,7 @@ endif()
 #
 # Print Caliper profiling settings
 #
-if(SUNDIALS_TEST_ENABLE_PROFILING AND ENABLE_CALIPER)
+if(SUNDIALS_TEST_ENABLE_PROFILING AND SUNDIALS_ENABLE_CALIPER)
   message(STATUS "Enabled test profiling with Caliper")
   if(NOT EXISTS ${SUNDIALS_TEST_CALIPER_OUTPUT_DIR})
     file(MAKE_DIRECTORY ${SUNDIALS_TEST_CALIPER_OUTPUT_DIR})
@@ -160,13 +160,22 @@ endif()
 # Check if GTest is needed
 #
 if(SUNDIALS_TEST_ENABLE_GTEST)
+  # Prevent installing gtest targets
+  set(INSTALL_GTEST
+      OFF
+      CACHE BOOL "" FORCE)
   # find_package(GTest)
   if(NOT (TARGET GTest::gtest_main OR TARGET GTest::Main))
     include(FetchContent)
     FetchContent_Declare(
       googletest
-      URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-      GIT_TAG v1.14.0)
+      # Use commit with fix for implicit conversion warning with Clang 21+
+      # TODO(DJG): Update to v1.18.0 when available URL
+      # https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
+      # URL_HASH
+      # SHA256=a9607c9215866bd425a725610c5e0f739eeb50887a57903df48891446ce6fb3c)
+      URL https://github.com/google/googletest/archive/fa8438ae6b70c57010177de47a9f13d7041a6328.zip
+    )
     if(WIN32)
       # For Windows: Prevent overriding the parent project's compiler/linker
       # settings
@@ -182,7 +191,7 @@ endif()
 #
 # Create `make test_install` and `make test_install_all`
 #
-if(EXAMPLES_INSTALL)
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
   # Directories for installation testing
   set(TEST_INSTALL_DIR ${PROJECT_BINARY_DIR}/Testing_Install)

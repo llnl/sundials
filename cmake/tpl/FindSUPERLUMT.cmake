@@ -2,7 +2,7 @@
 # Programmer(s): Eddy Banks and David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -87,14 +87,8 @@ endif()
 # find library
 if(NOT SUPERLUMT_LIBRARY)
   # search user provided directory path
-  find_library(
-    SUPERLUMT_LIBRARY ${SUPERLUMT_LIBRARY_NAME}
-    PATHS ${SUPERLUMT_LIBRARY_DIR}
-    NO_DEFAULT_PATH)
-  # if user didn't provide a path, search anywhere
-  if(NOT (SUPERLUMT_LIBRARY_DIR OR SUPERLUMT_LIBRARY))
-    find_library(SUPERLUMT_LIBRARY ${SUPERLUMT_LIBRARY_NAME})
-  endif()
+  find_library(SUPERLUMT_LIBRARY ${SUPERLUMT_LIBRARY_NAME}
+               PATHS ${SUPERLUMT_LIBRARY_DIR})
   mark_as_advanced(SUPERLUMT_LIBRARY)
 endif()
 

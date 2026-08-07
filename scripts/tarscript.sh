@@ -3,7 +3,7 @@
 # Programmer(s): Radu Serban, David J. Gardner, Cody J. Balos @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -60,13 +60,13 @@ function print_usage
 # VERSION NUMBERS
 #---------------------------------------------------------
 
-SUN_VER="7.5.0"
-CV_VER="7.5.0"
-CVS_VER="7.5.0"
-IDA_VER="7.5.0"
-IDAS_VER="6.5.0"
-KIN_VER="7.5.0"
-ARK_VER="6.5.0"
+SUN_VER="7.8.0"
+CV_VER="7.8.0"
+CVS_VER="7.8.0"
+IDA_VER="7.8.0"
+IDAS_VER="6.8.0"
+KIN_VER="7.8.0"
+ARK_VER="6.8.0"
 
 #---------------------------------------------------------
 # Test if the script is executed from within its directory
@@ -210,7 +210,7 @@ mkdir $tmpdir/examples
 mkdir $tmpdir/include
 mkdir $tmpdir/src
 mkdir $tmpdir/test
-mkdir $tmpdir/tools
+mkdir $tmpdir/suntools
 
 #----------------------------------
 # Copy appropriate files in $tmpdir
@@ -224,14 +224,9 @@ cp $sundialsdir/CONTRIBUTING.md $tmpdir/
 cp $sundialsdir/LICENSE $tmpdir/
 cp $sundialsdir/NOTICE $tmpdir/
 cp $sundialsdir/README.md $tmpdir/
-cp $sundialsdir/.readthedocs.yaml $tmpdir/
 
 cp -r $sundialsdir/benchmarks $tmpdir/
 cp -r $sundialsdir/cmake $tmpdir/
-
-cp -r $sundialsdir/doc/shared $tmpdir/doc
-cp -r $sundialsdir/doc/superbuild $tmpdir/doc
-cp -r $sundialsdir/doc/requirements.txt $tmpdir/doc
 
 cp    $sundialsdir/examples/CMakeLists.txt $tmpdir/examples/
 cp -r $sundialsdir/examples/utilities $tmpdir/examples/
@@ -263,7 +258,7 @@ cp -r $sundialsdir/src/sundomeigest $tmpdir/src/
 cp    $sundialsdir/test/testRunner $tmpdir/test/
 cp -r $sundialsdir/test/unit_tests $tmpdir/test/
 
-cp -r $sundialsdir/tools $tmpdir/
+cp -r $sundialsdir/suntools $tmpdir/
 
 # Clean up tmpdir
 rm -rf $tmpdir/doc/shared/__pycache__
@@ -274,7 +269,7 @@ find $tmpdir -name ".DS_Store" -delete
 
 # Remove ignored or untracked files that may have been added
 cd $sundialsdir
-for f in $(git ls-files --others --directory benchmarks cmake doc examples external include src test tools); do
+for f in $(git ls-files --others --directory benchmarks cmake doc examples external include src test suntools); do
     rm -rf $tmpdir/$f
 done
 cd -
@@ -298,28 +293,32 @@ if [ $doc = "T" ]; then
     cd -
 fi
 
-if [ $do_sundials = "T" -o $do_arkode = "T" ]; then
-    cp -r $sundialsdir/include/arkode $tmpdir/include/
-    cp -r $sundialsdir/src/arkode $tmpdir/src/
-    cp -r $sundialsdir/examples/arkode $tmpdir/examples/
-    mkdir -p $tmpdir/doc/arkode
-    cp -r $sundialsdir/doc/arkode/guide $tmpdir/doc/arkode
-    if [ $doc = "T" ]; then
-        echo -e "--- ARKODE documentation"
-        cd $sundialsdir/doc/arkode/guide
-        make clean
-        make latexpdf
-        cp build/latex/ark_guide.pdf $tmpdir/doc/arkode/
-        cd -
-        cd $sundialsdir/doc/arkode/examples
-        make clean
-        make latexpdf
-        cp build/latex/ark_examples.pdf $tmpdir/doc/arkode/
-        cd -
+declare -a packages_rst=('arkode' 'kinsol')
+for pkg in "${packages_rst[@]}";
+do
+    do_package=do_${pkg}
+    if [ $do_sundials = "T" -o ${!do_package} = "T" ]; then
+        cp -r $sundialsdir/include/$pkg $tmpdir/include/
+        cp -r $sundialsdir/src/$pkg $tmpdir/src/
+        cp -r $sundialsdir/examples/$pkg $tmpdir/examples/
+        mkdir -p $tmpdir/doc/$pkg
+        if [ $doc = "T" ]; then
+            echo -e "--- ${pkg} documentation"
+            cd $sundialsdir/doc/$pkg/guide
+            make clean
+            make latexpdf
+            cp build/latex/*_guide.pdf $tmpdir/doc/$pkg/
+            cd -
+            cd $sundialsdir/doc/$pkg/examples
+            make clean
+            make latexpdf
+            cp build/latex/*_examples.pdf $tmpdir/doc/$pkg/
+            cd -
+        fi
     fi
-fi
+done
 
-declare -a packages=('cvode' 'cvodes' 'ida' 'idas' 'kinsol')
+declare -a packages=('cvode' 'cvodes' 'ida' 'idas')
 for pkg in "${packages[@]}";
 do
     do_package=do_${pkg}
@@ -328,7 +327,6 @@ do
         cp -r $sundialsdir/src/$pkg $tmpdir/src/
         cp -r $sundialsdir/examples/$pkg $tmpdir/examples/
         mkdir -p $tmpdir/doc/$pkg
-        cp -r $sundialsdir/doc/$pkg/guide $tmpdir/doc/$pkg
         if [ $doc = "T" ]; then
             echo -e "--- ${pkg} documentation"
             cd $sundialsdir/doc/$pkg/guide
@@ -363,7 +361,7 @@ if [ $do_sundials = "T" ]; then
     filename="sundials-"$SUN_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "T" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/arkode.sh $tarfile $distrobase $doc $tar
     $scriptdir/cvode.sh  $tarfile $distrobase $doc $tar
     $scriptdir/cvodes.sh $tarfile $distrobase $doc $tar
@@ -386,7 +384,7 @@ if [ $do_arkode = "T" ]; then
     filename="arkode-"$ARK_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/arkode.sh $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -400,7 +398,7 @@ if [ $do_cvode = "T" ]; then
     filename="cvode-"$CV_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/cvode.sh  $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -414,7 +412,7 @@ if [ $do_cvodes = "T" ]; then
     filename="cvodes-"$CVS_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/cvodes.sh $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -428,7 +426,7 @@ if [ $do_ida = "T" ]; then
     filename="ida-"$IDA_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/ida.sh    $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -442,7 +440,7 @@ if [ $do_idas = "T" ]; then
     filename="idas-"$IDAS_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/idas.sh   $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi
@@ -456,7 +454,7 @@ if [ $do_kinsol = "T" ]; then
     filename="kinsol-"$KIN_VER
 
     tarfile=$filename".tar"
-    $scriptdir/shared.sh $tarfile $distrobase $doc "F" $tar
+    $scriptdir/shared.sh $tarfile $distrobase $doc $tar
     $scriptdir/kinsol.sh $tarfile $distrobase $doc $tar
     gzip $tarfile
 fi

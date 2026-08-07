@@ -2,7 +2,7 @@
    Programmer(s): Steven B. Roberts @ LLNL
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -88,7 +88,7 @@ ForcingStep initialization functions
    **Example codes:**
       * ``examples/arkode/C_serial/ark_analytic_partitioned.c``
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 .. _ARKODE.Usage.ForcingStep.OptionalOutputs:
@@ -111,7 +111,7 @@ Optional output functions
    :retval ARK_MEM_NULL: if the ForcingStep memory was ``NULL``
    :retval ARK_ILL_INPUT: if *partition* was out of bounds
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 
 
 ForcingStep re-initialization function
@@ -185,4 +185,4 @@ the ODE and the :c:type:`SUNStepper` objects used to evolve each partition.
       All previously set options are retained but may be updated by calling
       the appropriate "Set" functions.
    
-   .. versionadded:: 6.2.0
+   .. versionadded:: 7.2.0 (ARKODE 6.2.0)

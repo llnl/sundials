@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  * ----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -249,7 +249,9 @@ int main(int argc, char* argv[])
   }
   if ((opts.mri_method == "ARKODE_IMEX_MRI_SR21") ||
       (opts.mri_method == "ARKODE_IMEX_MRI_SR32") ||
-      (opts.mri_method == "ARKODE_IMEX_MRI_SR43"))
+      (opts.mri_method == "ARKODE_IMEX_MRI_SR43") ||
+      (opts.mri_method == "ARKODE_IMEX_MRI_GARK_ASCHER_ARK2") ||
+      (opts.mri_method == "ARKODE_IMEX_MRI_GARK_ARK2"))
   {
     slowimex     = SUNTRUE;
     slowimplicit = SUNTRUE;

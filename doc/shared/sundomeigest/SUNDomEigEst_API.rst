@@ -2,7 +2,7 @@
    Mustafa Aggul @ SMU
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -192,17 +192,55 @@ instead of supplying a dummy routine.
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetATimes(SUNDomEigEstimator DEE, void* A_data, SUNATimesFn ATimes)
 
-   This function provides a :c:type:`SUNATimesFn` function for performing
+   This *optional* function provides a :c:type:`SUNATimesFn` function for performing
    matrix-vector products, as well as a ``void*`` pointer to a data structure
-   used by this routine, to the dominant eigenvalue estimator. This function is
-   *required* when using the matrix-vector product function provided by a
-   SUNDIALS integrator, otherwise the function is *optional*.
+   used by this routine, to the dominant eigenvalue estimator.
 
    **Arguments:**
 
       * *DEE* -- a SUNDomEigEstimator object.
       * *A_data* -- pointer to structure for ``ATimes``.
       * *ATimes* -- function pointer to perform :math:`Av` product.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data, SUNRhsFn RHSfn)
+
+   For applications that do not provide a :c:type:`SUNATimesFn` function to :c:func:`SUNDomEigEstimator_SetATimes`, 
+   the action of this matrix-vector product may be approximated internally.  If the matrix corresponds with 
+   the Jacobian of a vector-valued function, :math:`A = \frac{\partial f_{RHS}}{\partial y}(t,y)`, then the 
+   function :math:`f_{RHS}` may optionally be input via this routine, and the Jacobian-vector products will 
+   be approximated as 
+   
+   .. math::
+      Av \approx \frac{1}{\sigma}\left[ f_{RHS}(t,y+\sigma v) - f_{RHS}(t,y)\right]
+      
+   The linearization point :math:`(t,y)` should be separately supplied by calling :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *rhs_data* -- pointer to structure for ``RHSfn``.
+      * *RHSfn* -- function pointer to perform right-hand side evaluations.  This is typically the same as the problem-defining function supplied to CVODE or ARKODE.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
+
+   This *optional* function sets the linearization point for the right-hand side function when using
+   :c:func:`SUNDomEigEstimator_SetRhs`.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *t* -- the time at which the linearization point is specified.
+      * *y* -- the linearization point for the right-hand side function.
 
    **Return value:**
 
@@ -244,6 +282,7 @@ instead of supplying a dummy routine.
       This routine will be called by :c:func:`SUNDomEigEstimator_SetOptions`
       when using the key "Did.num_preprocess_iters".
 
+
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRelTol(SUNDomEigEstimator DEE, sunrealtype rel_tol)
 
    This *optional* routine sets the estimator's :ref:`relative tolerance <pi_rel_tol>`.
@@ -258,6 +297,11 @@ instead of supplying a dummy routine.
       A :c:type:`SUNErrCode`.
 
    .. note::
+
+      The interpretation of ``rel_tol``, its acceptable range, the default
+      value, and the way it is used are implementation-specific. For details,
+      see :c:func:`SUNDomEigEstimator_SetRelTol_Power` and
+      :c:func:`SUNDomEigEstimator_SetRelTol_Arnoldi`.
 
       This routine will be called by :c:func:`SUNDomEigEstimator_SetOptions`
       when using the key "Did.rel_tol".
@@ -350,6 +394,27 @@ dominant eigenvalue estimator.  *All routines are optional.*
          retval = SUNDomEigEstimator_GetNumIters(DEE, &num_iters);
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator DEE, long int* num_rhs_evals)
+
+   This *optional* routine should return the number of calls to the :c:type:`SUNRhsFn` function.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *num_rhs_evals* -- the number of calls to the ``RHS`` function.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+   **Usage:**
+
+      .. code-block:: c
+
+         long int num_rhs_evals;
+         retval = SUNDomEigEstimator_GetNumRhsEvals(DEE, &num_rhs_evals);
+
+
 .. c:function:: SUNErrCode SUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator DEE, long int* num_ATimes)
 
    This *optional* routine should return the number of calls to the :c:type:`SUNATimesFn` function.
@@ -388,14 +453,27 @@ dominant eigenvalue estimator.  *All routines are optional.*
 
 .. _SUNDomEigEst.SUNSuppliedFn:
 
-Functions provided by SUNDIALS packages
+SUNDomEigEstimator callback functions
 ---------------------------------------------
 
 To interface with SUNDomEigEst modules, the SUNDIALS packages supply a
-:c:type:`SUNATimesFn` function for evaluating the matrix-vector product. This
-package-provided routine translates between the user-supplied ODE or DAE systems
-and the generic dominant eigenvalue estimator API. The function types for these
-routines are defined in the header file ``sundials/sundials_iterative.h``.
+:c:type:`SUNATimesFn` function for evaluating the matrix-vector 
+product. This package-provided routine translates between the user-supplied ODE
+systems and the generic dominant eigenvalue estimator API. The function type 
+:c:type:`SUNATimesFn` is defined in the header file ``sundials/sundials_iterative.h``.
+
+Users who wish to use a SUNDomEigEst module in "standalone" mode, however, must 
+provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described below.
+
+
+.. c:type:: int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)
+
+   Used to compute the right-hand side of an ODE system. This function is used 
+   when the dominant eigenvalue estimator is configured to perform a discrete 
+   Jacobian-vector product using quotient approximations of the Jacobian. The parameter
+   *rhs_data* is a pointer to any information about RHS which the function needs in order 
+   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left 
+   unchanged.
 
 
 .. _SUNDomEigEst.Generic:
@@ -469,6 +547,10 @@ The virtual table structure is defined as
    .. c:member:: int (*getnumiters)(SUNDomEigEstimator)
 
       The function implementing :c:func:`SUNDomEigEstimator_GetNumIters`
+
+   .. c:member:: long int (*getnumrhsevals)(SUNDomEigEstimator)
+
+      The function implementing :c:func:`SUNDomEigEstimator_GetNumRhsEvals`
 
    .. c:member:: long int (*getnumatimescalls)(SUNDomEigEstimator)
 
@@ -554,6 +636,8 @@ implementation detail for the interested reader.
    | :c:func:`SUNDomEigEstimator_GetRes`\ :sup:`2`      |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_GetNumIters`           |          O          |          O          |
+   +----------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_GetNumRhsEvals`        |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_GetNumATimesCalls`     |          O          |          O          |
    +----------------------------------------------------+---------------------+---------------------+

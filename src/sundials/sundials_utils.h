@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -29,6 +29,11 @@
 
 /* width of name field in sunfprintf_<type> for aligning table output */
 #define SUN_TABLE_WIDTH 29
+
+static inline sunbooleantype sunIsNullOrEmpty(const char* str)
+{
+  return str == NULL || str[0] == '\0';
+}
 
 static inline char* sunSignedToString(int64_t val)
 {

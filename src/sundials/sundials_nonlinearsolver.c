@@ -2,7 +2,7 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -27,11 +27,16 @@
 #include <sundials/sundials_core.h>
 #include "sundials_logger_impl.h"
 
-#if defined(SUNDIALS_BUILD_WITH_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING)
 static SUNProfiler getSUNProfiler(SUNNonlinearSolver NLS)
 {
   return (NLS->sunctx->profiler);
 }
+#endif
+
+/* Forward declaration of function used to destroy any data allocated for Python */
+#if defined(SUNDIALS_ENABLE_PYTHON)
+void SUNNonlinearSolverFunctionTable_Destroy(void* ptr);
 #endif
 
 /* internal function prototypes */
@@ -61,25 +66,30 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   SUNAssertNull(ops, SUN_ERR_MALLOC_FAIL);
 
   /* initialize operations to NULL */
-  ops->gettype         = NULL;
-  ops->initialize      = NULL;
-  ops->setup           = NULL;
-  ops->solve           = NULL;
-  ops->free            = NULL;
-  ops->setsysfn        = NULL;
-  ops->setlsetupfn     = NULL;
-  ops->setlsolvefn     = NULL;
-  ops->setctestfn      = NULL;
-  ops->setoptions      = NULL;
-  ops->setmaxiters     = NULL;
-  ops->getnumiters     = NULL;
-  ops->getcuriter      = NULL;
-  ops->getnumconvfails = NULL;
+  ops->gettype            = NULL;
+  ops->initialize         = NULL;
+  ops->setup              = NULL;
+  ops->solve              = NULL;
+  ops->free               = NULL;
+  ops->setsysfn           = NULL;
+  ops->setsysfns          = NULL;
+  ops->setlsetupfn        = NULL;
+  ops->setlsolvefn        = NULL;
+  ops->setctestfn         = NULL;
+  ops->setnormfn          = NULL;
+  ops->setgetupdatenormfn = NULL;
+  ops->setgetconvratefn   = NULL;
+  ops->setoptions         = NULL;
+  ops->setmaxiters        = NULL;
+  ops->getnumiters        = NULL;
+  ops->getcuriter         = NULL;
+  ops->getnumconvfails    = NULL;
 
   /* attach context and ops, initialize content to NULL */
   NLS->sunctx  = sunctx;
   NLS->ops     = ops;
   NLS->content = NULL;
+  NLS->python  = NULL;
 
   return (NLS);
 }
@@ -93,8 +103,13 @@ void SUNNonlinSolFreeEmpty(SUNNonlinearSolver NLS)
   if (NLS == NULL) { return; }
 
   /* free non-NULL ops structure */
-  if (NLS->ops) { free(NLS->ops); }
+  free(NLS->ops);
   NLS->ops = NULL;
+
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNNonlinearSolverFunctionTable_Destroy(NLS->python);
+#endif
+  NLS->python = NULL;
 
   /* free overall N_Vector object and return */
   free(NLS);
@@ -152,16 +167,14 @@ SUNErrCode SUNNonlinSolFree(SUNNonlinearSolver NLS)
 
   /* if we reach this point, either ops == NULL or free == NULL,
      try to cleanup by freeing the content, ops, and solver */
-  if (NLS->content)
-  {
-    free(NLS->content);
-    NLS->content = NULL;
-  }
-  if (NLS->ops)
-  {
-    free(NLS->ops);
-    NLS->ops = NULL;
-  }
+  free(NLS->content);
+  NLS->content = NULL;
+  free(NLS->ops);
+  NLS->ops = NULL;
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNNonlinearSolverFunctionTable_Destroy(NLS->python);
+#endif
+  NLS->python = NULL;
   free(NLS);
   NLS = NULL;
 
@@ -221,6 +234,18 @@ SUNErrCode SUNNonlinSolSetSysFn(SUNNonlinearSolver NLS, SUNNonlinSolSysFn SysFn)
   return (NLS->ops->setsysfn(NLS, SysFn));
 }
 
+/* set both the root and fixed-point system functions (optional) */
+SUNErrCode SUNNonlinSolSetSysFns(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolSysFn root_fn,
+                                 SUNNonlinSolSysFn fixed_point_fn)
+{
+  if (NLS->ops->setsysfns)
+  {
+    return (NLS->ops->setsysfns(NLS, root_fn, fixed_point_fn));
+  }
+  else { return SUN_SUCCESS; }
+}
+
 /* set the linear solver setup function (optional) */
 SUNErrCode SUNNonlinSolSetLSetupFn(SUNNonlinearSolver NLS,
                                    SUNNonlinSolLSetupFn LSetupFn)
@@ -247,6 +272,51 @@ SUNErrCode SUNNonlinSolSetConvTestFn(SUNNonlinearSolver NLS,
     return (NLS->ops->setctestfn(NLS, CTestFn, ctest_data));
   }
   else { return (SUN_SUCCESS); }
+}
+
+SUNErrCode SUNNonlinSolSetNormFn(SUNNonlinearSolver NLS,
+                                 SUNNonlinSolNormFn NormFn, void* norm_fn_data)
+{
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (NLS->ops->setnormfn)
+  {
+    return (NLS->ops->setnormfn(NLS, NormFn, norm_fn_data));
+  }
+
+  return (SUN_SUCCESS);
+}
+
+SUNErrCode SUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver NLS,
+                                          SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
+                                          void* getupdatenorm_data)
+{
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (NLS->ops->setgetupdatenormfn)
+  {
+    return (
+      NLS->ops->setgetupdatenormfn(NLS, GetUpdateNormFn, getupdatenorm_data));
+  }
+
+  return (SUN_SUCCESS);
+}
+
+SUNErrCode SUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver NLS,
+                                        SUNNonlinSolGetConvRateFn GetConvRateFn,
+                                        void* getconvrate_data)
+{
+  if (NLS == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(NLS->sunctx);
+
+  if (NLS->ops->setgetconvratefn)
+  {
+    return (NLS->ops->setgetconvratefn(NLS, GetConvRateFn, getconvrate_data));
+  }
+
+  return (SUN_SUCCESS);
 }
 
 SUNErrCode SUNNonlinSolSetOptions(SUNNonlinearSolver NLS, const char* NLSid,

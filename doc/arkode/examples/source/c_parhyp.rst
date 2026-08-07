@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -38,7 +38,7 @@ spatial dimensions,
 
 .. math::
 
-   \frac{\partial c_i}{\partial t} &=
+   \frac{\partial c_i}{\partial t} =
      K_h \frac{\partial^2 c_i}{\partial x^2} +
      V \frac{\partial     c_i}{\partial x} +
      \frac{\partial}{\partial y}\left( K_v(y)

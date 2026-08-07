@@ -2,7 +2,7 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -26,7 +26,7 @@ endif()
 sundials_option(BENCHMARK_NVECTOR BOOL "NVector benchmarks are on" ON)
 
 # Disable some warnings for benchmarks
-if(ENABLE_ALL_WARNINGS)
+if(SUNDIALS_ENABLE_ALL_WARNINGS)
   set(CMAKE_C_FLAGS
       "${CMAKE_C_FLAGS} -Wno-unused-parameter -Wno-unused-function")
   set(CMAKE_CXX_FLAGS
@@ -37,7 +37,7 @@ endif()
 # Add specific benchmarks
 # ----------------------------------------
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(diffusion_2D)
   add_subdirectory(advection_reaction_3D)
 endif()

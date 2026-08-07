@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -527,13 +527,14 @@ LSRKStep currently supports two families of second-order, explicit, and temporal
 Runge--Kutta--Chebyshev (RKC), :cite:p:`VSH:04` and Runge--Kutta--Legendre (RKL), :cite:p:`MBA:14`.   These methods have the form
 
 .. math::
-   z_0 &= y_n,\\
-   z_1 &= z_0 + h_n \tilde{\mu}_1 f(t_n,z_0),\\
-   z_j &= (1-\mu_j-\nu_j)z_0 + \mu_j z_{j-1} + \nu_jz_{j-2} + h_n \tilde{\gamma}_j f(t_n,z_0) + h_n \tilde{\mu}_j f(t_n + c_{j-1}h, z_{j-1}) \\
-   y_{n+1} &= z_s.
+   z_1 &= y_n,\\
+   z_2 &= z_1 + h_n \tilde{\mu}_2 f(t_n,z_1),\\
+   z_j &= (1-\mu_j-\nu_j)z_1 + \mu_j z_{j-1} + \nu_jz_{j-2} + h_n \tilde{\gamma}_j f(t_n,z_1) + h_n \tilde{\mu}_j f(t_n + c_{j-1}h, z_{j-1}), \quad j = 3,\ldots,s+1 \\
+   y_{n+1} &= z_{s+1}.
    :label: ARKODE_RKC_RKL
 
-The corresponding coefficients can be found in :cite:p:`VSH:04` and :cite:p:`MBA:14`, respectively.
+The corresponding coefficients can be found in :cite:p:`VSH:04` and :cite:p:`MBA:14`, respectively, and extension of
+these methods for time adaptivity can be found in :cite:p:`RARBGW:26`.
 
 LSRK methods of STS type are designed for stiff problems characterized by
 having Jacobians with eigenvalues that have large real and small imaginary parts.
@@ -597,7 +598,7 @@ For cases with only a single slow right-hand side function (i.e., :math:`f^E
 step (MIS) :cite:p:`Schlegel:09, Schlegel:12a, Schlegel:12b`, first through
 fourth order multirate infinitesimal GARK (MRI-GARK) :cite:p:`Sandu:19`, and
 second through fifth order multirate exponential Runge--Kutta (MERK)
-:cite:p:`Luan:20` methods. For problems with an additively split slow right-hand
+:cite:p:`Luan:20, RAML:26` methods. For problems with an additively split slow right-hand
 side, MRIStep provides first through fourth order implicit-explicit MRI-GARK
 (IMEX-MRI-GARK) :cite:p:`ChiRen:21` and second through fourth order
 implicit-explicit multirate infinitesimal stage-restart (IMEX-MRI-SR)
@@ -2712,12 +2713,12 @@ Now, suppose we have a functional :math:`g(t_f, y(t_f), p)` for which we would l
 gradients
 
 .. math::
-   \frac{dg(t_f,y(t_n),p)}{dy}, \quad \text{and optionally}, \quad \frac{dg(t_f,y(t_n),p)}{dp}.
+   \frac{dg(t_f,y(t_f),p)}{dy}, \quad \text{and optionally}, \quad \frac{dg(t_f,y(t_f),p)}{dp}.
 
 This most often arises in the form of an optimization problem such as
 
 .. math::
-   \min_{y(t_0), p} g(t_f, y(t_n), p).
+   \min_{y(t_0), p} g(t_f, y(t_f), p).
    :label: ARKODE_OPTIMIZATION_PROBLEM
 
 The adjoint method is one approach to obtaining the gradients that is particularly efficient when
@@ -2735,17 +2736,18 @@ done with a one-step time integration scheme :math:`\varphi` so that
 Reformulating the optimization problem for the discrete case, we have
 
 .. math::
-   \min_{y_0, p} g(t_f, y_n, p).
+   \min_{y_0, p} g(t_N, y_N, p),
    :label: ARKODE_DISCRETE_OPTIMIZATION_PROBLEM
 
+where :math:`N` is the index of the final time step so that :math:`t_N = t_f` and :math:`y_N \approx y(t_f)`.
 The gradients of :eq:`ARKODE_DISCRETE_OPTIMIZATION_PROBLEM` can be computed using the transposed chain
-rule backwards in time to obtain the discete adjoint variables :math:`\lambda_n, \lambda_{n-1}, \cdots, \lambda_0`
-and :math:`\mu_n, \mu_{n-1}, \cdots, \mu_0`, where
+rule backwards in time to obtain the discete adjoint variables :math:`\lambda_N, \lambda_{N-1}, \cdots, \lambda_0`
+and :math:`\mu_N, \mu_{N-1}, \cdots, \mu_0`, where
 
 .. math::
-   \lambda_n &= g_y^*(t_f, y_n, p), \quad \lambda_k = \left(\frac{\partial \varphi}{\partial y_k}(y_k, p)\right)^* \lambda_{k+1} \\
-   \mu_n     &= g_p^*(t_f, y_n, p), \quad \mu_k     = \left(\frac{\partial \varphi}{\partial p}(y_k, p)\right)^* \lambda_{k+1},
-    \quad k = n - 1, \cdots, 0.
+   \lambda_N &= g_y^*(t_N, y_N, p), \quad \lambda_n = \left(\frac{\partial \varphi}{\partial y_k}(y_n, p)\right)^* \lambda_{n+1} \\
+   \mu_N     &= g_p^*(t_N, y_N, p), \quad \mu_n     = \left(\frac{\partial \varphi}{\partial p}(y_n, p)\right)^* \lambda_{n+1},
+    \quad n = N - 1, \cdots, 0.
    :label: ARKODE_DISCRETE_ADJOINT
 
 .. warning::
@@ -2757,7 +2759,7 @@ and :math:`\mu_n, \mu_{n-1}, \cdots, \mu_0`, where
 The discrete adjoint variables represent the gradients of the discrete cost function
 
 .. math::
-   \frac{dg}{dy_n} = \lambda_n^* , \quad \frac{dg}{dp} = \mu_n^* + \lambda_n^* \left(\frac{\partial y_0}{\partial p} \right).
+   \frac{dg}{dy_0} = \lambda_0^* , \quad \frac{dg}{dp} = \mu_0^* + \lambda_0^* \left(\frac{\partial y_0}{\partial p} \right).
    :label: ARKODE_DISCRETE_ADJOINT_GRADIENTS
 
 

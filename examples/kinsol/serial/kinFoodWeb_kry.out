@@ -1,5 +1,4 @@
-
-Predator-prey test problem --  KINSol (serial version)
+Predator-prey test problem -- KINSol (serial version)
 
 Mesh dimensions = 8 X 8
 Number of species = 6
@@ -8,7 +7,7 @@ Total system size = 384
 Flag globalstrategy = 0 (0 = None, 1 = Linesearch)
 Linear solver is SPGMR with maxl = 15, maxlrst = 2
 Preconditioning uses interaction-only block-diagonal matrix
-Positivity constraints imposed on all components 
+Positivity constraints imposed on all components
 Tolerance parameters:  fnormtol = 1e-07   scsteptol = 1e-13
 
 Initial profile of concentration
@@ -23,7 +22,7 @@ At bottom left:
 At top right:
  1.25797 1.25797 1.25797 37736.7 37736.7 37736.7
 
-Final Statistics.. 
+Final Statistics..
 nni    =     9    nli   =   329
 nfe    =    10    nfeSG =   338
 nps    =   338    npe   =     1     ncfl  =     6

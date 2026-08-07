@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -15,7 +15,7 @@
 
 # List of test tuples of the form "name\;args"
 set(unit_tests "test_sundials_datanode\;" "test_sundials_stlvector\;"
-               "test_sundials_hashmap\;")
+               "test_sundials_hashmap\;" "test_sundials_logger\;")
 
 if(SUNDIALS_ENABLE_ERROR_CHECKS)
   list(APPEND unit_tests "test_sundials_errors\;")
@@ -34,6 +34,10 @@ if(TARGET GTest::gtest_main AND TARGET GTest::gmock)
       ${test} PRIVATE sundials_core sundials_nvecserial sundials_sunmemsys_obj
                       GTest::gtest_main GTest::gmock)
 
-    gtest_discover_tests(${test})
+    if(test STREQUAL "test_sundials_logger")
+      gtest_discover_tests(${test} PROPERTIES LABELS "logging")
+    else()
+      gtest_discover_tests(${test})
+    endif()
   endforeach()
 endif()

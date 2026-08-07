@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -70,7 +70,7 @@ extern "C" {
  * the condition being an opaque function call, which we have a lot of).
  * -----------------------------------------------------------------*/
 
-#if __cplusplus >= 202302L
+#if defined(__cplusplus) && __cplusplus >= 202302L
 #define SUNAssume(...) [[assume(__VA_ARGS__)]]
 #elif defined(SUNDIALS_C_COMPILER_HAS_ATTRIBUTE_ASSUME)
 #define SUNAssume(...) __attribute__((assume(__VA_ARGS__)))

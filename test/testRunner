@@ -6,7 +6,7 @@
 # Acknowledgement: Based on code from Chris White @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -19,7 +19,7 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # Sundials test runner for CTest. Note examples must be enabled
-# to use the test runner (e.g. EXAMPLES_ENABLE_C=ON).
+# to use the test runner (e.g. SUNDIALS_ENABLE_C_EXAMPLES=ON).
 #
 # All output from the test runner output will be collected in
 # <build directory>/Testing/Temporary/LastTest.log

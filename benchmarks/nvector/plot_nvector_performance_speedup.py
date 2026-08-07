@@ -3,7 +3,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -100,7 +100,6 @@ def main():
 
     # parse file names to get input parameters
     for f in output:
-
         split_fout = f.split("/")[-1]
         split_fout = split_fout.split("_")
 
@@ -283,7 +282,6 @@ def main():
     # Speedup v. Number of Elements Plots
     # --------------------------------------------------------------------------
     if not args.noplots:
-
         colors = [
             "#000000",
             "#a6cee3",

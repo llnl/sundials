@@ -2,7 +2,7 @@
    Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -31,14 +31,14 @@ ark_diurnal_kry_bbd_p
 ===================================================
 
 
-This problem is an ARKode clone of the CVODE problem,
-``cv_diurnal_kry_bbd_p``.  As described in [HSR2017]_, this problem
+This problem is an ARKODE clone of the CVODE problem,
+``cv_diurnal_kry_bbd_p``.  As described in :cite:p:`cvode_ug`, this problem
 models a two-species diurnal kinetics advection-diffusion PDE system
 in two spatial dimensions,
 
 .. math::
 
-   \frac{\partial c_i}{\partial t} &=
+   \frac{\partial c_i}{\partial t} =
      K_h \frac{\partial^2 c_i}{\partial x^2} +
      V \frac{\partial     c_i}{\partial x} +
      \frac{\partial}{\partial y}\left( K_v(y)
@@ -79,7 +79,7 @@ We employ a method of lines approach, wherein we first
 semi-discretize in space to convert the system of 2 PDEs into a larger
 system of ODEs.  To this end, the spatial derivatives are computed
 using second-order centered differences, with the data distributed
-over :math:`Mx*My` points on a uniform spatial grid.  As a result, ARKode
+over :math:`Mx*My` points on a uniform spatial grid.  As a result, ARKODE
 approaches the problem as one involving :math:`2*Mx*My` coupled ODEs.
 
 The problem is decomposed in parallel into uniformly-sized subdomains,
@@ -112,14 +112,14 @@ on completion.
 ark_diurnal_kry_p
 ===================================================
 
-This problem is an ARKode clone of the CVODE problem,
-``cv_diurnal_kry_p``.  As described in [HSR2017]_, this test problem
+This problem is an ARKODE clone of the CVODE problem,
+``cv_diurnal_kry_p``.  As described in :cite:p:`cvode_ug`, this test problem
 models a two-species diurnal kinetics advection-diffusion PDE system
 in two spatial dimensions,
 
 .. math::
 
-   \frac{\partial c_i}{\partial t} &=
+   \frac{\partial c_i}{\partial t} =
      K_h \frac{\partial^2 c_i}{\partial x^2} +
      V \frac{\partial     c_i}{\partial x} +
      \frac{\partial}{\partial y}\left( K_v(y)
@@ -160,7 +160,7 @@ We employ a method of lines approach, wherein we first semi-discretize
 in space to convert the system of 2 PDEs into a larger system of ODEs.
 To this end, the spatial derivatives are computed using second-order
 centered differences, with the data distributed over :math:`Mx*My`
-points on a uniform spatial grid.  As a result, ARKode approaches the
+points on a uniform spatial grid.  As a result, ARKODE approaches the
 problem as one involving :math:`2*Mx*My` coupled ODEs.
 
 The problem is decomposed in parallel into uniformly-sized subdomains,

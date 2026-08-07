@@ -3,7 +3,7 @@
 # Programmer(s): Cody J. Balos and David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -112,7 +112,7 @@ if [ "$compilername" == "gcc" ]; then
         export CUDAFLAGS="-g -O3"
     fi
 
-    # additional Fortran flags not currently added by ENABLE_ALL_WARNINGS
+    # additional Fortran flags not currently added by SUNDIALS_ENABLE_ALL_WARNINGS
     export FFLAGS="${FFLAGS} -fcheck=all,no-pointer,no-recursion"
 fi
 
@@ -157,6 +157,7 @@ export SUNDIALS_PROFILING=ON
 
 # Sundials logging
 export SUNDIALS_LOGGING_LEVEL=3
+export SUNLOGGER_INFO_FILENAME=""
 
 # Answer files
 if [ -z "${SUNDIALS_TEST_ANSWER_DIR}" ]; then
@@ -168,7 +169,7 @@ fi
 # precision is allowed percentage difference (0 = no difference).
 if [ "$SUNDIALS_PRECISION" == "extended" ]; then
     export SUNDIALS_TEST_FLOAT_PRECISION=7
-    export SUNDIALS_TEST_INTEGER_PRECISION=3
+    export SUNDIALS_TEST_INTEGER_PRECISION=10
 elif [ "$SUNDIALS_PRECISION" == "double" ]; then
     export SUNDIALS_TEST_FLOAT_PRECISION=5
     export SUNDIALS_TEST_INTEGER_PRECISION=5

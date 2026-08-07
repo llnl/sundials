@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -40,12 +40,16 @@ extern "C" {
  *    MRI_H_TOL - controls slow step and fast relative tolerances
  * ----------------------------------------------------------------- */
 
-typedef enum
+enum SUNAdaptController_Type
 {
   SUN_ADAPTCONTROLLER_NONE,
   SUN_ADAPTCONTROLLER_H,
   SUN_ADAPTCONTROLLER_MRI_H_TOL
-} SUNAdaptController_Type;
+};
+
+#ifndef SWIG
+typedef enum SUNAdaptController_Type SUNAdaptController_Type;
+#endif
 
 /* -----------------------------------------------------------------
  * Generic definition of SUNAdaptController

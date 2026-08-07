@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -18,18 +18,20 @@
 # ------------------------------------------------------------------------------
 
 DIRS = arkode/guide arkode/examples \
-       cvode/guide \
-       cvodes/guide \
-       ida/guide \
-       idas/guide \
-       kinsol/guide
+       cvode/guide cvode/examples \
+       cvodes/guide cvodes/examples \
+       ida/guide ida/examples \
+       idas/guide idas/examples \
+       kinsol/guide kinsol/examples
 
 # prefix with desired command to create unique dependencies/targets
 LATEXDIRS = $(DIRS:%=latexpdf-%) latexpdf-install_guide
 HTMLDIRS = $(DIRS:%=html-%) html-superbuild
 CLEANDIRS = $(DIRS:%=clean-%) clean-superbuild clean-install_guide
 
-latexpdf: $(LATEXDIRS)
+# build html-superbuild first so a local, up-to-date objects.inv exists for
+# cross-references to other packages in the change log work
+latexpdf: html-superbuild $(LATEXDIRS)
 $(LATEXDIRS):
 	$(MAKE) -C $(@:latexpdf-%=%) latexpdf
 

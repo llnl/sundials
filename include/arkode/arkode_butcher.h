@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -30,6 +30,7 @@ extern "C" {
 /*---------------------------------------------------------------
   Types : struct ARKodeButcherTableMem, ARKodeButcherTable
   ---------------------------------------------------------------*/
+
 struct ARKodeButcherTableMem
 {
   int q;           /* method order of accuracy       */
@@ -44,13 +45,14 @@ struct ARKodeButcherTableMem
 typedef _SUNDIALS_STRUCT_ ARKodeButcherTableMem* ARKodeButcherTable;
 
 /* Utility routines to allocate/free/output Butcher table structures */
+
 SUNDIALS_EXPORT ARKodeButcherTable
 ARKodeButcherTable_Alloc(int stages, sunbooleantype embedded);
 SUNDIALS_EXPORT ARKodeButcherTable ARKodeButcherTable_Create(int s, int q, int p,
-                                                             sunrealtype* c,
-                                                             sunrealtype* A,
-                                                             sunrealtype* b,
-                                                             sunrealtype* d);
+                                                             sunrealtype* c_1d,
+                                                             sunrealtype* A_1d,
+                                                             sunrealtype* b_1d,
+                                                             sunrealtype* d_1d);
 SUNDIALS_EXPORT ARKodeButcherTable ARKodeButcherTable_Copy(ARKodeButcherTable B);
 
 SUNDIALS_DEPRECATED_EXPORT_MSG(

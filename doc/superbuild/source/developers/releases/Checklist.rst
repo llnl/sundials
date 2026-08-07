@@ -2,7 +2,7 @@
    Author(s): David J. Gardner, Cody J. Balos @ LLNL
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -68,7 +68,14 @@ This is a list of tasks that need to be done before a SUNDIALS release.
 The order is bottom-up starting with solver source files and ending with
 web pages.
 
-#. Create release branch ``release/vX.Y.Z`` from ``develop`` in the git repo.
+#. Create the release branch ``release/vX.Y.Z`` from ``develop`` in the git
+   repo.
+
+   .. code-block:: shell
+
+      git checkout develop
+      git pull # develop should be up to date with origin/develop now
+      git checkout -b release/vX.Y.Z
 
 #. Update version numbers in ``scripts/updateVerson.sh``.
 
@@ -78,16 +85,15 @@ web pages.
 
       pushd scripts/ && ./updateVersion.sh && popd
 
-#. If this is a major release, search the SUNDIALS code for
-   'DEPRECATION NOTICE' and 'SUNDIALS_DEPRECATED'. All deprecated
-   functions should be removed (unless this is the first version
-   that they are deprecated).
+#. If this is a major release, search the SUNDIALS code for 'DEPRECATION NOTICE'
+   and 'SUNDIALS_DEPRECATED'. All deprecated functions should be removed (unless
+   this is the first version that they are deprecated).
 
 #. Remove any empty sections from the ``CHANGELOG.md`` and
    ``doc/shared/RecentChanges.rst`` files.
 
-#. Update version numbers of third party libraries in the Install Guide
-   in doc directory.
+#. Update version numbers of third party libraries in the Install Guide in doc
+   directory.
 
 #. Open a pull request from the release branch to ``develop`` with the title
    "Release: vX.Y.Z" and description "SUNDIALS Release vX.Y.Z". Add the pull
@@ -96,11 +102,13 @@ web pages.
 Release Procedure
 =================
 
-#. Once the release PR is passing all tests and has been approved, merge it. Like all
-   merges to ``develop``, this should be done with the "Squash and merge" option.
+#. Once the release PR is passing all tests and has been approved, merge
+   it. Like all merges to ``develop``, this should be done with the "Squash and
+   merge" option.
 
-#. Sync the main branch with develop. This merge is done locally rather than through
-   a GitHub PR (so that the merge is a fast-forward). The steps are as follows:
+#. Sync the main branch with develop. This merge is done locally rather than
+   through a GitHub PR (so that the merge is a fast-forward). The steps are as
+   follows:
 
    .. code-block:: shell
 
@@ -120,28 +128,64 @@ Release Procedure
 
    .. danger::
 
-      Remember to remove this exception to the branch protection rules after making
-      the push to update ``main``.
+      Remember to remove this exception to the branch protection rules after
+      making the push to update ``main``.
 
-#. Once readthedocs finishes building the new release, create the tarballs *on a Linux machine*.
-   Use the ``tarscript.sh`` shell script under the ``scripts`` directory. This also compiles the documents
-   (user guides and example docs) and creates all tarballs in their final form, appropriate for uploading
-   as artifacts to the GitHub release.
+#. Once readthedocs finishes building the `"latest" release documentation
+   <https://app.readthedocs.org/projects/sundials/>`__, create the release
+   tarballs *on a Linux machine*.
+
+   .. code-block:: shell
+
+      pushd scripts/ && ./tarscript.sh && popd
 
    .. warning::
 
-      Creating the tarballs on a Mac can cause issues. Furthermore, it is important to wait
-      to create the tarballs until readthedocs finishes building the new release docs so
-      that cross-references have valid links.
+      Creating the tarballs on a Mac can cause issues. Furthermore, it is
+      important to wait to create the tarballs until readthedocs finishes
+      building the latest release docs so that cross-references have valid
+      links.
 
-#. Draft the release on GitHub with the title "SUNDIALS vX.Y.Z" and attach the tarballs
-   as well as the example documentation PDFs. The description of the release is just a
-   copy of the ``CHANGELOG.md`` notes for the release with hard line-wraps removed.
+   The script will compile the documentation PDFs (user guides and example docs)
+   and create all the tarballs in their final form, appropriate for uploading as
+   artifacts to the GitHub release, in the top-level ``tarballs`` directory.
+
+   .. note::
+
+      If you get an error about downloading the Sphinx ``objects.inv`` files
+      during the "superbuild" documentation build, you can manually download the
+      files with the command
+
+      .. code-block:: shell
+
+         pushd doc/superbuild
+         wget -O objects-sphinx.inv https://www.sphinx-doc.org/en/master/objects.inv
+         wget -O objects-python.inv https://docs.python.org/3/objects.inv
+         wget -O objects-numpy.inv https://numpy.org/doc/stable/objects.inv
+         wget -O objects-scipy.inv https://docs.scipy.org/doc/scipy/objects.inv
+         wget -O objects-cmake.inv https://www.cmake.org/cmake/help/latest/objects.inv
+         popd
+
+#. Draft the `release on GitHub <https://github.com/LLNL/sundials/releases>`__.
+   Select the tag for ``vX.Y.Z`` and use the title "SUNDIALS vX.Y.Z". The
+   description of the release is just a copy of the ``CHANGELOG.md`` notes for
+   the release with hard line-wraps removed. Attach the tarballs as well as the
+   example documentation PDFs as binary artifacts.
 
 #. On the `GitHub milestones page
-   <https://github.com/LLNL/sundials/milestones>`__ page rename the "SUNDIALS
-   Next" milestone "SUNDIALS X.Y.Z", close the renamed milestone, and create a
-   new "SUNDIALS Next" milestone.
+   <https://github.com/LLNL/sundials/milestones>`__ rename the "SUNDIALS Next"
+   milestone "SUNDIALS X.Y.Z", close the renamed milestone, and create a new
+   "SUNDIALS Next" milestone.
+
+#. Open a pull request to the `spack-packages
+   <https://github.com/spack/spack-packages>`__ repo to add the latest release
+   to the list of versions in the `SUNDIALS package
+   <https://github.com/spack/spack-packages/blob/develop/repos/spack_repo/builtin/packages/sundials/package.py>`__
+   e.g.,
+
+   .. code-block:: python
+
+      version("X.Y.Z", tag="vX.Y.Z", commit="vX.Y.Z commit hash")
 
 #. Update Internal Drupal Web pages for SUNDIALS:
    https://computing-staging.llnl.gov/user

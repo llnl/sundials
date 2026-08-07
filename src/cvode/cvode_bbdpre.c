@@ -5,7 +5,7 @@
  *    Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -38,19 +38,19 @@
 #define ONE          SUN_RCONST(1.0)
 #define TWO          SUN_RCONST(2.0)
 
-/* Prototypes of functions CVBBDPrecSetup and CVBBDPrecSolve */
-static int CVBBDPrecSetup(sunrealtype t, N_Vector y, N_Vector fy,
+/* Prototypes of functions cvBBDPrecSetup and cvBBDPrecSolve */
+static int cvBBDPrecSetup(sunrealtype t, N_Vector y, N_Vector fy,
                           sunbooleantype jok, sunbooleantype* jcurPtr,
                           sunrealtype gamma, void* bbd_data);
-static int CVBBDPrecSolve(sunrealtype t, N_Vector y, N_Vector fy, N_Vector r,
+static int cvBBDPrecSolve(sunrealtype t, N_Vector y, N_Vector fy, N_Vector r,
                           N_Vector z, sunrealtype gamma, sunrealtype delta,
                           int lr, void* bbd_data);
 
-/* Prototype for CVBBDPrecFree */
-static int CVBBDPrecFree(CVodeMem cv_mem);
+/* Prototype for cvBBDPrecFree */
+static int cvBBDPrecFree(CVodeMem cv_mem);
 
 /* Prototype for difference quotient Jacobian calculation routine */
-static int CVBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
+static int cvBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
                       N_Vector gy, N_Vector ytemp, N_Vector gtemp);
 
 /*-----------------------------------------------------------------
@@ -297,10 +297,10 @@ int CVBBDPrecInit(void* cvode_mem, sunindextype Nlocal, sunindextype mudq,
   cvls_mem->P_data = pdata;
 
   /* Attach the pfree function */
-  cvls_mem->pfree = CVBBDPrecFree;
+  cvls_mem->pfree = cvBBDPrecFree;
 
   /* Attach preconditioner solve and setup functions */
-  flag = CVodeSetPreconditioner(cvode_mem, CVBBDPrecSetup, CVBBDPrecSolve);
+  flag = CVodeSetPreconditioner(cvode_mem, cvBBDPrecSetup, cvBBDPrecSolve);
   return (flag);
 }
 
@@ -425,17 +425,17 @@ int CVBBDPrecGetNumGfnEvals(void* cvode_mem, long int* ngevalsBBDP)
 }
 
 /*-----------------------------------------------------------------
-  Function : CVBBDPrecSetup
+  Function : cvBBDPrecSetup
   -----------------------------------------------------------------
-  CVBBDPrecSetup generates and factors a banded block of the
+  cvBBDPrecSetup generates and factors a banded block of the
   preconditioner matrix on each processor, via calls to the
   user-supplied gloc and cfn functions. It uses difference
   quotient approximations to the Jacobian elements.
 
-  CVBBDPrecSetup calculates a new J,if necessary, then calculates
+  cvBBDPrecSetup calculates a new J,if necessary, then calculates
   P = I - gamma*J, and does an LU factorization of P.
 
-  The parameters of CVBBDPrecSetup used here are as follows:
+  The parameters of cvBBDPrecSetup used here are as follows:
 
   t       is the current value of the independent variable.
 
@@ -466,11 +466,11 @@ int CVBBDPrecGetNumGfnEvals(void* cvode_mem, long int* ngevalsBBDP)
            CVBBDPrecInit
 
   Return value:
-  The value returned by this CVBBDPrecSetup function is the int
+  The value returned by this cvBBDPrecSetup function is the int
     0  if successful,
     1  for a recoverable error (step will be retried).
   -----------------------------------------------------------------*/
-static int CVBBDPrecSetup(sunrealtype t, N_Vector y,
+static int cvBBDPrecSetup(sunrealtype t, N_Vector y,
                           SUNDIALS_MAYBE_UNUSED N_Vector fy, sunbooleantype jok,
                           sunbooleantype* jcurPtr, sunrealtype gamma,
                           void* bbd_data)
@@ -495,7 +495,7 @@ static int CVBBDPrecSetup(sunrealtype t, N_Vector y,
     }
     if (retval > 0) { return (1); }
 
-    /* Otherwise call CVBBDDQJac for new J value */
+    /* Otherwise call cvBBDDQJac for new J value */
   }
   else
   {
@@ -509,7 +509,7 @@ static int CVBBDPrecSetup(sunrealtype t, N_Vector y,
     }
     if (retval > 0) { return (1); }
 
-    retval = CVBBDDQJac(pdata, t, y, pdata->tmp1, pdata->tmp2, pdata->tmp3);
+    retval = cvBBDDQJac(pdata, t, y, pdata->tmp1, pdata->tmp2, pdata->tmp3);
     if (retval < 0)
     {
       cvProcessError(cv_mem, -1, __LINE__, __func__, __FILE__,
@@ -542,25 +542,25 @@ static int CVBBDPrecSetup(sunrealtype t, N_Vector y,
 }
 
 /*-----------------------------------------------------------------
-  Function : CVBBDPrecSolve
+  Function : cvBBDPrecSolve
   -----------------------------------------------------------------
-  CVBBDPrecSolve solves a linear system P z = r, with the
+  cvBBDPrecSolve solves a linear system P z = r, with the
   band-block-diagonal preconditioner matrix P generated and
-  factored by CVBBDPrecSetup.
+  factored by cvBBDPrecSetup.
 
-  The parameters of CVBBDPrecSolve used here are as follows:
+  The parameters of cvBBDPrecSolve used here are as follows:
 
   r is the right-hand side vector of the linear system.
 
   bbd_data is a pointer to the preconditioner data set by
     CVBBDPrecInit.
 
-  z is the output vector computed by CVBBDPrecSolve.
+  z is the output vector computed by cvBBDPrecSolve.
 
-  The value returned by the CVBBDPrecSolve function is always 0,
+  The value returned by the cvBBDPrecSolve function is always 0,
   indicating success.
   -----------------------------------------------------------------*/
-static int CVBBDPrecSolve(SUNDIALS_MAYBE_UNUSED sunrealtype t,
+static int cvBBDPrecSolve(SUNDIALS_MAYBE_UNUSED sunrealtype t,
                           SUNDIALS_MAYBE_UNUSED N_Vector y,
                           SUNDIALS_MAYBE_UNUSED N_Vector fy, N_Vector r,
                           N_Vector z, SUNDIALS_MAYBE_UNUSED sunrealtype gamma,
@@ -587,7 +587,7 @@ static int CVBBDPrecSolve(SUNDIALS_MAYBE_UNUSED sunrealtype t,
   return (retval);
 }
 
-static int CVBBDPrecFree(CVodeMem cv_mem)
+static int cvBBDPrecFree(CVodeMem cv_mem)
 {
   CVLsMem cvls_mem;
   CVBBDPrecData pdata;
@@ -614,7 +614,7 @@ static int CVBBDPrecFree(CVodeMem cv_mem)
 }
 
 /*-----------------------------------------------------------------
-  Function : CVBBDDQJac
+  Function : cvBBDDQJac
   -----------------------------------------------------------------
   This routine generates a banded difference quotient approximation
   to the local block of the Jacobian of g(t,y). It assumes that a
@@ -627,7 +627,7 @@ static int CVBBDPrecFree(CVodeMem cv_mem)
   This routine also assumes that the local elements of a vector are
   stored contiguously.
   -----------------------------------------------------------------*/
-static int CVBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
+static int cvBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
                       N_Vector gy, N_Vector ytemp, N_Vector gtemp)
 {
   CVodeMem cv_mem;
@@ -662,7 +662,7 @@ static int CVBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
   ewt_data   = N_VGetArrayPointer(cv_mem->cv_ewt);
   ytemp_data = N_VGetArrayPointer(ytemp);
   gtemp_data = N_VGetArrayPointer(gtemp);
-  if (cv_mem->cv_constraintsSet)
+  if (cv_mem->cv_constraints)
   {
     cns_data = N_VGetArrayPointer(cv_mem->cv_constraints);
   }
@@ -687,7 +687,7 @@ static int CVBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
       yj  = y_data[j];
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -717,7 +717,7 @@ static int CVBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
       inc = SUNMAX(pdata->dqrely * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
       /* Adjust sign(inc) as before. */
-      if (cv_mem->cv_constraintsSet)
+      if (cv_mem->cv_constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)

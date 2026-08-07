@@ -2,7 +2,7 @@
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -18,7 +18,7 @@
 # List of test tuples of the form "name\;args"
 set(unit_tests)
 
-if(BUILD_ARKODE)
+if(SUNDIALS_ENABLE_ARKODE)
   # ARKStep
   list(APPEND unit_tests "test_logging_arkode_arkstep.cpp\;0") # ERK
   list(APPEND unit_tests "test_logging_arkode_arkstep.cpp\;1 1 1") # DIRK Newton
@@ -86,29 +86,30 @@ if(BUILD_ARKODE)
                                                                 # sum
 endif()
 
-if(BUILD_CVODE)
+if(SUNDIALS_ENABLE_CVODE)
   list(APPEND unit_tests "test_logging_cvode.cpp\;1 1") # Newton + Dense
   list(APPEND unit_tests "test_logging_cvode.cpp\;1 0") # Newton + GMRES
   list(APPEND unit_tests "test_logging_cvode.cpp\;0") # Fixed-point
 endif()
 
-if(BUILD_CVODES)
+if(SUNDIALS_ENABLE_CVODES)
   list(APPEND unit_tests "test_logging_cvodes.cpp\;1 1") # Newton + Dense
   list(APPEND unit_tests "test_logging_cvodes.cpp\;1 0") # Newton + GMRES
   list(APPEND unit_tests "test_logging_cvodes.cpp\;0") # Fixed-point
 endif()
 
-if(BUILD_IDA)
+if(SUNDIALS_ENABLE_IDA)
   list(APPEND unit_tests "test_logging_ida.cpp\;1") # Newton + Dense
   list(APPEND unit_tests "test_logging_ida.cpp\;0") # Newton + GMRES
 endif()
 
-if(BUILD_IDAS)
+if(SUNDIALS_ENABLE_IDAS)
   list(APPEND unit_tests "test_logging_idas.cpp\;1") # Newton + Dense
   list(APPEND unit_tests "test_logging_idas.cpp\;0") # Newton + GMRES
 endif()
 
-# if(BUILD_KINSOL) list(APPEND unit_tests "test_logging_kinsol.cpp\;") endif()
+# if(SUNDIALS_ENABLE_KINSOL) list(APPEND unit_tests "test_logging_kinsol.cpp\;")
+# endif()
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})

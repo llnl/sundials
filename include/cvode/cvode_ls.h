@@ -4,7 +4,7 @@
  *                Radu Serban @ LLNL
  * ----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -104,7 +104,8 @@ SUNDIALS_EXPORT int CVodeSetLinSysFn(void* cvode_mem, CVLsLinSysFn linsys);
   Optional outputs from the CVLS linear solver interface
   -----------------------------------------------------------------*/
 
-SUNDIALS_EXPORT int CVodeGetJac(void* cvode_mem, SUNMatrix* J);
+SUNDIALS_EXPORT int CVodeGetJac(void* cvode_mem,
+                                SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int CVodeGetJacTime(void* cvode_mem, sunrealtype* t_J);
 SUNDIALS_EXPORT int CVodeGetJacNumSteps(void* cvode_mem, long int* nst_J);
 SUNDIALS_DEPRECATED_EXPORT_MSG(

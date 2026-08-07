@@ -2,7 +2,7 @@
 # Programmer(s): Yu Pan @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -62,7 +62,7 @@ function(sundials_add_benchmark NAME EXECUTABLE BASE_BENCHMARK_NAME)
 
   # make the the output directory if it doesn't exist
   set(_output_dir
-      "${SUNDIALS_BENCHMARK_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}")
+      "${SUNDIALS_BENCHMARKS_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}")
   if(NOT EXISTS ${_output_dir})
     file(MAKE_DIRECTORY ${_output_dir})
   endif()
@@ -72,9 +72,9 @@ function(sundials_add_benchmark NAME EXECUTABLE BASE_BENCHMARK_NAME)
       "--verbose" "--executablename=$<TARGET_FILE:${EXECUTABLE}>"
       "--outputdir=${_output_dir}" "--nodiff")
 
-  if(ENABLE_CALIPER)
+  if(SUNDIALS_ENABLE_CALIPER)
     set(_caliper_dir
-        "${SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}"
+        "${SUNDIALS_BENCHMARKS_CALIPER_OUTPUT_DIR}/${BASE_BENCHMARK_NAME}/${TARGET_NAME}"
     )
     if(NOT EXISTS ${_caliper_dir})
       file(MAKE_DIRECTORY ${_caliper_dir})

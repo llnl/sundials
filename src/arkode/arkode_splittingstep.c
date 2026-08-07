@@ -2,7 +2,7 @@
  * Programmer(s): Steven B. Roberts @ LLNL
  *------------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -119,9 +119,7 @@ static int splittingStep_SetCoefficients(ARKodeMem ark_mem,
 
   With other initialization types, this routine does nothing.
   ----------------------------------------------------------------------------*/
-static int splittingStep_Init(ARKodeMem ark_mem,
-                              SUNDIALS_MAYBE_UNUSED sunrealtype tout,
-                              int init_type)
+static int splittingStep_Init(ARKodeMem ark_mem, int init_type)
 {
   ARKodeSplittingStepMem step_mem = NULL;
   int retval = splittingStep_AccessStepMem(ark_mem, __func__, &step_mem);
@@ -140,6 +138,9 @@ static int splittingStep_Init(ARKodeMem ark_mem,
       }
     }
   }
+
+  /* inform arkode to ensure that ycur==yn upon entry to TakeStep function */
+  ark_mem->ensure_ycur = SUNTRUE;
 
   /* immediately return if resize or reset */
   if (init_type == RESIZE_INIT || init_type == RESET_INIT)
@@ -220,7 +221,7 @@ static int splittingStep_SequentialMethod(ARKodeMem ark_mem,
 
   for (int j = 0; j < coefficients->stages; j++)
   {
-    SUNLogInfo(ARK_LOGGER, "begin-stage", "stage = %i", j);
+    SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i", j);
 
     for (int k = 0; k < coefficients->partitions; k++)
     {
@@ -232,7 +233,7 @@ static int splittingStep_SequentialMethod(ARKodeMem ark_mem,
       sunrealtype t_start = ark_mem->tn + beta_start * ark_mem->h;
       sunrealtype t_end   = ark_mem->tn + beta_end * ark_mem->h;
 
-      SUNLogInfo(ARK_LOGGER, "begin-partition",
+      SUNLogInfo(ARK_LOGGER, "begin-partitions-list",
                  "partition = %i, t_start = " SUN_FORMAT_G
                  ", t_end = " SUN_FORMAT_G,
                  k, t_start, t_end);
@@ -246,9 +247,9 @@ static int splittingStep_SequentialMethod(ARKodeMem ark_mem,
       SUNErrCode err = SUNStepper_Reset(stepper, t_start, y);
       if (err != SUN_SUCCESS)
       {
-        SUNLogInfo(ARK_LOGGER, "end-partition",
+        SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                    "status = failed stepper reset, err = %i", err);
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed partition, err = %i", err);
         return ARK_SUNSTEPPER_ERR;
       }
@@ -256,9 +257,9 @@ static int splittingStep_SequentialMethod(ARKodeMem ark_mem,
       err = SUNStepper_SetStepDirection(stepper, t_end - t_start);
       if (err != SUN_SUCCESS)
       {
-        SUNLogInfo(ARK_LOGGER, "end-partition",
+        SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                    "status = failed set direction, err = %i", err);
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed partition, err = %i", err);
         return ARK_SUNSTEPPER_ERR;
       }
@@ -266,9 +267,9 @@ static int splittingStep_SequentialMethod(ARKodeMem ark_mem,
       err = SUNStepper_SetStopTime(stepper, t_end);
       if (err != SUN_SUCCESS)
       {
-        SUNLogInfo(ARK_LOGGER, "end-partition",
+        SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                    "status = failed set stop time, err = %i", err);
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed partition, err = %i", err);
         return ARK_SUNSTEPPER_ERR;
       }
@@ -278,17 +279,17 @@ static int splittingStep_SequentialMethod(ARKodeMem ark_mem,
       SUNLogExtraDebugVec(ARK_LOGGER, "partition state", y, "y_par(:) =");
       if (err != SUN_SUCCESS)
       {
-        SUNLogInfo(ARK_LOGGER, "end-partition",
+        SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                    "status = failed evolve, err = %i", err);
-        SUNLogInfo(ARK_LOGGER, "end-stage",
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed partition, err = %i", err);
         return ARK_SUNSTEPPER_ERR;
       }
       step_mem->n_stepper_evolves[k]++;
 
-      SUNLogInfo(ARK_LOGGER, "end-partition", "status = success");
+      SUNLogInfo(ARK_LOGGER, "end-partitions-list", "status = success");
     }
-    SUNLogInfo(ARK_LOGGER, "end-stage", "status = success");
+    SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   }
 
   return ARK_SUCCESS;
@@ -309,15 +310,16 @@ static int splittingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 
   SplittingStepCoefficients coefficients = step_mem->coefficients;
 
-  SUNLogInfo(ARK_LOGGER, "begin-sequential-method", "sequential method = 0");
+  SUNLogInfo(ARK_LOGGER, "begin-sequential-methods-list",
+             "sequential method = 0");
 
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
   retval = splittingStep_SequentialMethod(ark_mem, step_mem, 0, ark_mem->ycur);
   SUNLogExtraDebugVec(ARK_LOGGER, "sequential state", ark_mem->ycur,
                       "y_seq(:) =");
   if (retval != ARK_SUCCESS)
   {
-    SUNLogInfo(ARK_LOGGER, "end-sequential-method",
+    SUNLogInfo(ARK_LOGGER, "end-sequential-methods-list",
                "status = failed sequential method, retval = %i", retval);
     return retval;
   }
@@ -327,12 +329,13 @@ static int splittingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
     N_VScale(coefficients->alpha[0], ark_mem->ycur, ark_mem->ycur);
   }
   SUNLogExtraDebugVec(ARK_LOGGER, "current state", ark_mem->ycur, "y_cur(:) =");
-  SUNLogInfo(ARK_LOGGER, "end-sequential-method", "status = success");
+  SUNLogInfo(ARK_LOGGER, "end-sequential-methods-list", "status = success");
 
   for (int i = 1; i < coefficients->sequential_methods; i++)
   {
-    SUNLogInfo(ARK_LOGGER, "begin-sequential-method", "sequential method = %i",
-               i);
+    step_mem->istage = i;
+    SUNLogInfo(ARK_LOGGER, "begin-sequential-methods-list",
+               "sequential method = %i", i);
 
     N_VScale(ONE, ark_mem->yn, ark_mem->tempv1);
     retval = splittingStep_SequentialMethod(ark_mem, step_mem, i,
@@ -341,7 +344,7 @@ static int splittingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
                         "y_seq(:) =");
     if (retval != ARK_SUCCESS)
     {
-      SUNLogInfo(ARK_LOGGER, "end-sequential-method",
+      SUNLogInfo(ARK_LOGGER, "end-sequential-methods-list",
                  "status = failed sequential method, retval = %i", retval);
       return retval;
     }
@@ -349,7 +352,7 @@ static int splittingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
                  ark_mem->ycur);
 
     SUNLogExtraDebugVec(ARK_LOGGER, "current state", ark_mem->ycur, "y_cur(:) =");
-    SUNLogInfo(ARK_LOGGER, "end-sequential-method", "status = success");
+    SUNLogInfo(ARK_LOGGER, "end-sequential-methods-list", "status = success");
   }
 
   SUNLogExtraDebugVec(ARK_LOGGER, "current state", ark_mem->ycur, "y_cur(:) =");
@@ -423,6 +426,7 @@ static void splittingStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
   if (retval != ARK_SUCCESS) { return; }
 
   /* output integer quantities */
+  fprintf(outfile, "SplittingStep: istage = %i\n", step_mem->istage);
   fprintf(outfile, "SplittingStep: partitions = %i\n", step_mem->partitions);
   fprintf(outfile, "SplittingStep: order = %i\n", step_mem->order);
 
@@ -453,6 +457,34 @@ static int splittingStep_SetOrder(ARKodeMem ark_mem, int order)
   SplittingStepCoefficients_Destroy(&step_mem->coefficients);
 
   return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+static int splittingStep_GetStageIndex(ARKodeMem ark_mem, int* istage,
+                                       int* num_stages)
+{
+  ARKodeSplittingStepMem step_mem;
+  int retval = splittingStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  /* if coefficients structure is not yet available, return defaults */
+  if (step_mem->coefficients == NULL)
+  {
+    *istage     = -1;
+    *num_stages = -1;
+    arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    "coefficient table not allocated");
+    return retval;
+  }
+  else
+  {
+    *istage     = step_mem->istage;
+    *num_stages = step_mem->coefficients->sequential_methods;
+  }
+
+  return (ARK_SUCCESS);
 }
 
 /*------------------------------------------------------------------------------
@@ -643,6 +675,7 @@ void* SplittingStepCreate(SUNStepper* steppers, int partitions, sunrealtype t0,
   step_mem->steppers          = NULL;
   step_mem->n_stepper_evolves = NULL;
   step_mem->coefficients      = NULL;
+  step_mem->istage            = 0;
   retval = splittingStep_InitStepMem(ark_mem, step_mem, steppers, partitions);
   if (retval != ARK_SUCCESS)
   {
@@ -661,6 +694,7 @@ void* SplittingStepCreate(SUNStepper* steppers, int partitions, sunrealtype t0,
   ark_mem->step_setoptions      = splittingStep_SetOptions;
   ark_mem->step_setdefaults     = splittingStep_SetDefaults;
   ark_mem->step_setorder        = splittingStep_SetOrder;
+  ark_mem->step_getstageindex   = splittingStep_GetStageIndex;
   ark_mem->step_mem             = (void*)step_mem;
 
   /* Set default values for ARKStep optional inputs */

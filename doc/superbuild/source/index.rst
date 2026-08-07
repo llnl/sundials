@@ -2,7 +2,7 @@
    Programmer(s): Cody J. Balos @ LLNL
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -54,89 +54,6 @@ Citing
 
 .. include:: ../../shared/cite_sundials.rst
 
-When using the ARKODE package from SUNDIALS, please also cite:
-
-.. code-block:: latex
-
-   @article{reynolds2023arkode,
-     title   = {{ARKODE: A flexible IVP solver infrastructure for one-step methods}},
-     author  = {Reynolds, Daniel R and Gardner, David J and Woodward, Carol S and Chinomona, Rujeko},
-     journal = {ACM Transactions on Mathematical Software},
-     volume  = {49},
-     number  = {2},
-     pages   = {1--26},
-     year    = {2023},
-     doi     = {10.1145/3594632}
-   }
-
-We also ask that users cite the documentation for the package and version that
-they are using rather than the combined SUNDIALS online guide:
-
-.. parsed-literal::
-
-   @Misc{arkodeDocumentation,
-      author       = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward, Rujeko Chinomona and Cody J. Balos},
-      title        = {User Documentation for ARKODE},
-      year         = {|YEAR|},
-      note         = {|ARKODE_VERSION|},
-      url          = {https://sundials.readthedocs.io/en/latest/arkode},
-      howpublished = {\url{https://sundials.readthedocs.io/en/latest/arkode}}
-   }
-
-.. parsed-literal::
-
-   @Misc{cvodeDocumentation,
-      author       = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-      title        = {User Documentation for CVODE},
-      year         = {|YEAR|},
-      note         = {|CVODE_VERSION|},
-      url          = {https://sundials.readthedocs.io/en/latest/cvode},
-      howpublished = {\url{https://sundials.readthedocs.io/en/latest/cvode}}
-   }
-
-.. parsed-literal::
-
-   @Misc{cvodesDocumentation,
-      author       = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-      title        = {User Documentation for CVODES},
-      year         = {|YEAR|},
-      note         = {|CVODES_VERSION|},
-      url          = {https://sundials.readthedocs.io/en/latest/cvodes},
-      howpublished = {\url{https://sundials.readthedocs.io/en/latest/cvodes}}
-   }
-
-.. parsed-literal::
-
-   @Misc{idaDocumentation,
-      author       = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-      title        = {User Documentation for IDA},
-      year         = {|YEAR|},
-      note         = {|IDA_VERSION|},
-      url          = {https://sundials.readthedocs.io/en/latest/ida},
-      howpublished = {\url{https://sundials.readthedocs.io/en/latest/ida}}
-   }
-
-.. parsed-literal::
-
-   @Misc{idasDocumentation,
-      author       = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-      title        = {User Documentation for IDAS},
-      year         = {|YEAR|},
-      note         = {|IDAS_VERSION|},
-      url          = {https://sundials.readthedocs.io/en/latest/idas},
-      howpublished = {\url{https://sundials.readthedocs.io/en/latest/idas}}
-   }
-
-.. parsed-literal::
-
-   @Misc{kinsolDocumentation,
-      author       = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-      title        = {User Documentation for KINSOL},
-      year         = {|YEAR|},
-      note         = {|KINSOL_VERSION|},
-      url          = {https://sundials.readthedocs.io/en/latest/kinsol},
-      howpublished = {\url{https://sundials.readthedocs.io/en/latest/kinsol}}
-   }
 
 Contributors
 ============
@@ -197,9 +114,31 @@ SUNDIALS License and Notices
    sunstepper/index.rst
    sunadjoint/index.rst
    sunmemory/index.rst
+   Publications_link.rst
    History_link.rst
    Changelog_link.rst
    FAQ_link.rst
+
+.. toctree::
+   :caption: INTERFACES
+   :maxdepth: 1
+   :numbered:
+   :hidden:
+
+   Fortran/index.rst
+   Python/index.rst
+
+.. toctree::
+   :caption: EXAMPLES
+   :maxdepth: 1
+   :hidden:
+
+   examples/arkode/index-superbuild.rst
+   examples/cvode/index-superbuild.rst
+   examples/cvodes/index-superbuild.rst
+   examples/ida/index-superbuild.rst
+   examples/idas/index-superbuild.rst
+   examples/kinsol/index-superbuild.rst
 
 .. toctree::
    :caption: DEVELOPMENT

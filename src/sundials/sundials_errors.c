@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -98,6 +98,41 @@ void SUNAbortErrHandlerFn(int line, const char* func, const char* file,
                      "error handler to avoid program termination.\n");
   free(file_and_line);
   abort();
+}
+
+static void sunCreateLogMessage(SUNLogLevel lvl, int rank, const char* scope,
+                                const char* label, const char* txt,
+                                va_list args, char** log_msg)
+{
+  const char* prefix;
+  char* formatted_txt;
+  int msg_length;
+
+  prefix        = NULL;
+  formatted_txt = NULL;
+  msg_length    = 0;
+  *log_msg      = NULL;
+
+  msg_length = sunvasnprintf(&formatted_txt, txt, args);
+  if (msg_length < 0)
+  {
+    char* fileAndLine = sunCombineFileAndLine(__LINE__ + 1, __FILE__);
+    fprintf(stderr, "[ERROR][rank %d][%s][%s] %s\n", rank, fileAndLine,
+            __func__, "FATAL LOGGER ERROR: message size too large");
+    free(fileAndLine);
+  }
+
+  if (lvl == SUN_LOGLEVEL_DEBUG) { prefix = "DEBUG"; }
+  else if (lvl == SUN_LOGLEVEL_WARNING) { prefix = "WARNING"; }
+  else if (lvl == SUN_LOGLEVEL_INFO) { prefix = "INFO"; }
+  else if (lvl == SUN_LOGLEVEL_ERROR) { prefix = "ERROR"; }
+
+  msg_length = snprintf(NULL, 0, "[%s][rank %d][%s][%s] %s\n", prefix, rank,
+                        scope, label, formatted_txt);
+  *log_msg   = (char*)malloc(msg_length + 1);
+  snprintf(*log_msg, msg_length + 1, "[%s][rank %d][%s][%s] %s\n", prefix, rank,
+           scope, label, formatted_txt);
+  free(formatted_txt);
 }
 
 void SUNGlobalFallbackErrHandler(int line, const char* func, const char* file,

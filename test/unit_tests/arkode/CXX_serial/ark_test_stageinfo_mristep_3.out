@@ -1,0 +1,58 @@
+Start MRIStep StageInfo test
+Using Ex-MRI-SR method
+           t                        u                        v                      u err                    v err            
+------------------------------------------------------------------------------------------------------------------------------
+ 0.000000000000000e+00    1.224744871391589e+00    1.732050807568877e+00    0.000000000000000e+00    0.000000000000000e+00
+    [Pre-step at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), step = 0, attempt = 1, ||y||_2 = 2.1213203436e+00]
+    [Pre-RHS (stage 0 of 5) at t = 0.00e+00 (tn = 0.00e+00 , tcur = 0.00e+00), ||y||_2 = 2.1213203436e+00]
+    [Post-stage processing (stage 1 of 5) at t = 6.76e-04 (tn = 0.00e+00 , tcur = 6.76e-04), ||y||_2 = 2.1212987717e+00]
+    [Pre-RHS (stage 1 of 5) at t = 6.76e-04 (tn = 0.00e+00 , tcur = 6.76e-04), ||y||_2 = 2.1212987717e+00]
+    [Post-stage processing (stage 2 of 5) at t = 8.00e-04 (tn = 0.00e+00 , tcur = 8.00e-04), ||y||_2 = 2.1212901822e+00]
+    [Pre-RHS (stage 2 of 5) at t = 8.00e-04 (tn = 0.00e+00 , tcur = 8.00e-04), ||y||_2 = 2.1212901822e+00]
+    [Post-stage processing (stage 3 of 5) at t = 1.13e-03 (tn = 0.00e+00 , tcur = 1.13e-03), ||y||_2 = 2.1212596852e+00]
+    [Pre-RHS (stage 3 of 5) at t = 1.13e-03 (tn = 0.00e+00 , tcur = 1.13e-03), ||y||_2 = 2.1212596852e+00]
+    [Postprocess-step at t = 1.00e-03 (tn = 0.00e+00 , tcur = 1.00e-03),||y||_2 = 2.1212731452e+00]
+    [Post-step at t = 1.00e-03 (tn = 0.00e+00 , tcur = 1.00e-03), step = 0, ||y||_2 = 2.1212731452e+00]
+      1.0000000000e-03         1.2247447693e+00         1.7319930735e+00         7.9936057773e-15         1.3744561045e-13
+    [Pre-step at t = 1.00e-03 (tn = 1.00e-03 , tcur = 1.00e-03), step = 1, attempt = 1, ||y||_2 = 2.1212731452e+00]
+    [Pre-RHS (stage 0 of 5) at t = 1.00e-03 (tn = 1.00e-03 , tcur = 1.00e-03), ||y||_2 = 2.1212731452e+00]
+    [Post-stage processing (stage 1 of 5) at t = 1.68e-03 (tn = 1.00e-03 , tcur = 1.68e-03), ||y||_2 = 2.1211877224e+00]
+    [Pre-RHS (stage 1 of 5) at t = 1.68e-03 (tn = 1.00e-03 , tcur = 1.68e-03), ||y||_2 = 2.1211877224e+00]
+    [Post-stage processing (stage 2 of 5) at t = 1.80e-03 (tn = 1.00e-03 , tcur = 1.80e-03), ||y||_2 = 2.1211674743e+00]
+    [Pre-RHS (stage 2 of 5) at t = 1.80e-03 (tn = 1.00e-03 , tcur = 1.80e-03), ||y||_2 = 2.1211674743e+00]
+    [Post-stage processing (stage 3 of 5) at t = 2.13e-03 (tn = 1.00e-03 , tcur = 2.13e-03), ||y||_2 = 2.1211055205e+00]
+    [Pre-RHS (stage 3 of 5) at t = 2.13e-03 (tn = 1.00e-03 , tcur = 2.13e-03), ||y||_2 = 2.1211055205e+00]
+    [Postprocess-step at t = 2.00e-03 (tn = 1.00e-03 , tcur = 2.00e-03),||y||_2 = 2.1211315628e+00]
+    [Post-step at t = 2.00e-03 (tn = 1.00e-03 , tcur = 2.00e-03), step = 1, ||y||_2 = 2.1211315628e+00]
+      2.0000000000e-03         1.2247444631e+00         1.7318198829e+00         1.5987211555e-14         2.6245672302e-13
+    [Pre-step at t = 2.00e-03 (tn = 2.00e-03 , tcur = 2.00e-03), step = 2, attempt = 1, ||y||_2 = 2.1211315628e+00]
+    [Pre-RHS (stage 0 of 5) at t = 2.00e-03 (tn = 2.00e-03 , tcur = 2.00e-03), ||y||_2 = 2.1211315628e+00]
+    [Post-stage processing (stage 1 of 5) at t = 2.68e-03 (tn = 2.00e-03 , tcur = 2.68e-03), ||y||_2 = 2.1209823117e+00]
+    [Pre-RHS (stage 1 of 5) at t = 2.68e-03 (tn = 2.00e-03 , tcur = 2.68e-03), ||y||_2 = 2.1209823117e+00]
+    [Post-stage processing (stage 2 of 5) at t = 2.80e-03 (tn = 2.00e-03 , tcur = 2.80e-03), ||y||_2 = 2.1209504105e+00]
+    [Pre-RHS (stage 2 of 5) at t = 2.80e-03 (tn = 2.00e-03 , tcur = 2.80e-03), ||y||_2 = 2.1209504105e+00]
+    [Post-stage processing (stage 3 of 5) at t = 3.13e-03 (tn = 2.00e-03 , tcur = 3.13e-03), ||y||_2 = 2.1208570163e+00]
+    [Pre-RHS (stage 3 of 5) at t = 3.13e-03 (tn = 2.00e-03 , tcur = 3.13e-03), ||y||_2 = 2.1208570163e+00]
+    [Postprocess-step at t = 3.00e-03 (tn = 2.00e-03 , tcur = 3.00e-03),||y||_2 = 2.1208956339e+00]
+    [Post-step at t = 3.00e-03 (tn = 2.00e-03 , tcur = 3.00e-03), step = 2, ||y||_2 = 2.1208956339e+00]
+      3.0000000000e-03         1.2247439528e+00         1.7315312703e+00         2.4202861937e-14         3.7436720390e-13
+------------------------------------------------------------------------------------------------------------------------------
+Current time                  = 0.003
+Steps                         = 3
+Step attempts                 = 3
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.001
+Last step size                = 0.001
+Current step size             = 0.001
+Explicit slow RHS fn evals    = 12
+Implicit slow RHS fn evals    = 0
+Inner stepper failures        = 0
+NLS iters                     = 0
+NLS fails                     = 0
+NLS iters per step            = 0
+LS setups                     = 0
+End MRIStep StageInfo test

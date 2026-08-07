@@ -2,7 +2,7 @@
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -28,14 +28,17 @@
 extern "C" {
 #endif
 
-typedef enum
+enum SUNMemoryType
 {
   SUNMEMTYPE_HOST,   /* pageable memory accessible on the host     */
   SUNMEMTYPE_PINNED, /* page-locked memory accessible on the host   */
   SUNMEMTYPE_DEVICE, /* memory accessible from the device          */
   SUNMEMTYPE_UVM     /* memory accessible from the host or device  */
-} SUNMemoryType;
+};
 
+#ifndef SWIG
+typedef enum SUNMemoryType SUNMemoryType;
+#endif
 /*
  * SUNMemory is a simple abstraction of a pointer to some
  * contiguous memory, so that we can keep track of its type

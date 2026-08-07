@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -169,7 +169,7 @@ Output formatting type
 
    .. note::
 
-      The Python module ``tools/suntools`` provides utilities to read and output
+      The Python package ``suntools`` provides utilities to read and output
       the data from a SUNDIALS CSV output file using the key and value pair
       format.
 

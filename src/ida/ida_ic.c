@@ -2,7 +2,7 @@
  * Programmers: Alan C. Hindmarsh, and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -62,7 +62,7 @@
 
 extern int IDAInitialSetup(IDAMem IDA_mem);
 
-static int IDAnlsIC(IDAMem IDA_mem);
+static int IDANlsIC(IDAMem IDA_mem);
 static int IDANewtonIC(IDAMem IDA_mem);
 static int IDALineSrch(IDAMem IDA_mem, sunrealtype* delnorm, sunrealtype* fnorm);
 static int IDAfnorm(IDAMem IDA_mem, sunrealtype* fnorm);
@@ -235,7 +235,7 @@ int IDACalcIC(void* ida_mem, int icopt, sunrealtype tout1)
     for (nh = 1; nh <= mxnh; nh++)
     {
       /* Call the IC nonlinear solver function. */
-      retval = IDAnlsIC(IDA_mem);
+      retval = IDANlsIC(IDA_mem);
 
       /* Cut h and loop on recoverable IDA_YA_YDP_INIT failure; else break. */
       if (retval == IDA_SUCCESS) { break; }
@@ -299,9 +299,9 @@ int IDACalcIC(void* ida_mem, int icopt, sunrealtype tout1)
 
 /*
  * -----------------------------------------------------------------
- * IDAnlsIC
+ * IDANlsIC
  * -----------------------------------------------------------------
- * IDAnlsIC solves a nonlinear system for consistent initial
+ * IDANlsIC solves a nonlinear system for consistent initial
  * conditions.  It calls IDANewtonIC to do most of the work.
  *
  * The return value is IDA_SUCCESS = 0 if no error occurred.
@@ -322,7 +322,7 @@ int IDACalcIC(void* ida_mem, int icopt, sunrealtype tout1)
  * -----------------------------------------------------------------
  */
 
-static int IDAnlsIC(IDAMem IDA_mem)
+static int IDANlsIC(IDAMem IDA_mem)
 {
   int retval, nj;
   N_Vector tv1, tv2, tv3;
@@ -331,12 +331,14 @@ static int IDAnlsIC(IDAMem IDA_mem)
   tv2 = IDA_mem->ida_tempv2;
   tv3 = IDA_mem->ida_phi[2];
 
+  /* Evaluate RHS. */
   retval = IDA_mem->ida_res(IDA_mem->ida_t0, IDA_mem->ida_yy0, IDA_mem->ida_yp0,
                             IDA_mem->ida_delta, IDA_mem->ida_user_data);
   IDA_mem->ida_nre++;
   if (retval < 0) { return (IDA_RES_FAIL); }
   if (retval > 0) { return (IDA_FIRST_RES_FAIL); }
 
+  /* Save the residual. */
   N_VScale(ONE, IDA_mem->ida_delta, IDA_mem->ida_savres);
 
   /* Loop over nj = number of linear solve Jacobian setups. */
@@ -494,7 +496,7 @@ static int IDALineSrch(IDAMem IDA_mem, sunrealtype* delnorm, sunrealtype* fnorm)
   ratio              = ONE;
 
   /* If there are constraints, check and reduce step if necessary. */
-  if (IDA_mem->ida_constraintsSet)
+  if (IDA_mem->ida_constraints)
   {
     /* Update y and check constraints. */
     IDANewy(IDA_mem);
@@ -675,7 +677,7 @@ static int IDANewy(IDAMem IDA_mem)
  * IDAICFailFlag
  * -----------------------------------------------------------------
  * IDAICFailFlag prints a message and sets the IDACalcIC return
- * value appropriate to the flag retval returned by IDAnlsIC.
+ * value appropriate to the flag retval returned by IDANlsIC.
  * -----------------------------------------------------------------
  */
 

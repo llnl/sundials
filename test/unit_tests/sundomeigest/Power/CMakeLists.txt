@@ -2,7 +2,7 @@
 # Programmer(s): Mustafa Aggul @ SMU
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -25,7 +25,11 @@ set(sundomeigest_power_examples
     "test_sundomeigest_power\;100 100 0 0\;"
     "test_sundomeigest_power\;1000 100 0 0\;"
     "test_sundomeigest_power\;10000 100 0 0\;"
-    "test_sundomeigest_power\;100000 100 0 0\;")
+    "test_sundomeigest_power\;100000 100 0 0\;"
+    "test_sundomeigest_power_complex\;100 100 0 0\;"
+    "test_sundomeigest_power_complex\;1000 100 0 0\;"
+    "test_sundomeigest_power_complex\;10000 100 100 0\;"
+    "test_sundomeigest_power_complex\;100000 100 100 0\;")
 
 # Dependencies for dominant eigenvalue examples
 set(sundomeigest_power_dependencies test_sundomeigest)

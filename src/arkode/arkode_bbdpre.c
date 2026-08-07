@@ -2,7 +2,7 @@
  * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2025, Lawrence Livermore National Security,
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
  * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
@@ -625,8 +625,8 @@ static int ARKBBDDQJac(ARKBBDPrecData pdata, sunrealtype t, N_Vector y,
   ewt_data   = N_VGetArrayPointer(ark_mem->ewt);
   ytemp_data = N_VGetArrayPointer(ytemp);
   gtemp_data = N_VGetArrayPointer(gtemp);
-  cns_data = (ark_mem->constraintsSet) ? N_VGetArrayPointer(ark_mem->constraints)
-                                       : NULL;
+  cns_data   = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
+                                      : NULL;
 
   /* Set minimum increment based on uround and norm of g */
   gnorm  = N_VWrmsNorm(gy, ark_mem->rwt);
@@ -648,7 +648,7 @@ static int ARKBBDDQJac(ARKBBDPrecData pdata, sunrealtype t, N_Vector y,
       yj  = y_data[j];
 
       /* Adjust sign(inc) again if yj has an inequality constraint. */
-      if (ark_mem->constraintsSet)
+      if (ark_mem->constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
@@ -677,7 +677,7 @@ static int ARKBBDDQJac(ARKBBDPrecData pdata, sunrealtype t, N_Vector y,
       col_j         = SUNBandMatrix_Column(pdata->savedJ, j);
       inc = SUNMAX(pdata->dqrely * SUNRabs(y_data[j]), minInc / ewt_data[j]);
 
-      if (ark_mem->constraintsSet)
+      if (ark_mem->constraints)
       {
         conj = cns_data[j];
         if (SUNRabs(conj) == ONE)
