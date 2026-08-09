@@ -89,8 +89,8 @@ int main(int argc, char* argv[])
   void* arkode_mem = nullptr;
 
   // Matrix and linear solver for IMEX or ExtSTS integrators
-  SUNMatrix A           = nullptr;
-  SUNLinearSolver LS    = nullptr;
+  SUNMatrix A        = nullptr;
+  SUNLinearSolver LS = nullptr;
 
   // Create integrator
   ARKRhsFn fe_RHS;   // explicit RHS function
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
   // Select STS method
   ARKODE_LSRKMethodType ststype = (uopts.sts_method == 0) ? ARKODE_LSRK_RKC_2
                                                           : ARKODE_LSRK_RKL_2;
-  flag = LSRKStepSetSTSMethod(sts_mem, ststype);
+  flag                          = LSRKStepSetSTSMethod(sts_mem, ststype);
   if (check_flag(flag, "LSRKStepSetSTSMethod")) { return 1; }
 
   // Set dominant eigenvalue function and frequency
@@ -184,9 +184,10 @@ int main(int argc, char* argv[])
   {
     ARKodeButcherTable B = nullptr;
     if (udata.reaction)
-    { B = ARKodeButcherTable_LoadDIRKByName(uopts.mri_method.c_str()); }
-    else
-    { B = ARKodeButcherTable_LoadERKByName(uopts.mri_method.c_str()); }
+    {
+      B = ARKodeButcherTable_LoadDIRKByName(uopts.mri_method.c_str());
+    }
+    else { B = ARKodeButcherTable_LoadERKByName(uopts.mri_method.c_str()); }
     if (check_ptr(B, "ARKodeButcherTable_Load")) { return 1; }
     C = MRIStepCoupling_MIStoMRI(B, B->q, B->p);
     if (check_ptr(C, "MRIStepCoupling_MIStoMRI")) { return 1; }
@@ -211,7 +212,6 @@ int main(int argc, char* argv[])
   // Set stopping time
   flag = ARKodeSetStopTime(arkode_mem, udata.tf);
   if (check_flag(flag, "ARKodeSetStopTime")) { return 1; }
-
 
   // ----------------------
   // Evolve problem in time
@@ -277,7 +277,6 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-
 
 // -----------------------------------------------------------------------------
 // Functions called by the integrator

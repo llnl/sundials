@@ -64,10 +64,10 @@ extern "C" {
 typedef struct _extSTSInnerStepper
 {
   MRIStepInnerStepper inner_stepper; /* pointer to inner stepper object */
-  ARKRhsFn f_diffusion; /* diffusion RHS function pointer */
+  ARKRhsFn f_diffusion;              /* diffusion RHS function pointer */
   ARKDomEigFn dom_eig; /* user-provided dominant eigenvalue estimator */
-  void* sts_mem;   /* LSRKStep memory structure */
-  void* user_data; /* user data pointer */
+  void* sts_mem;       /* LSRKStep memory structure */
+  void* user_data;     /* user data pointer */
 }* extSTSInnerStepper;
 
 /* Macros to access content from extSTSInnerStepper content
@@ -90,8 +90,8 @@ int extSTSInnerStepper_fd_forcing(sunrealtype t, N_Vector y, N_Vector f,
                                   void* user_data);
 int extSTSInnerStepper_dom_eig(sunrealtype t, N_Vector y, N_Vector fn,
                                sunrealtype* lambdaR, sunrealtype* lambdaI,
-                               void* user_data, N_Vector temp1,
-                               N_Vector temp2, N_Vector temp3);
+                               void* user_data, N_Vector temp1, N_Vector temp2,
+                               N_Vector temp3);
 
 /*===============================================================
   MRI time step module data structure

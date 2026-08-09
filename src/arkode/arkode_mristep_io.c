@@ -165,15 +165,14 @@ int MRIStepExtSTSSetDomEigFn(void* arkode_mem, ARKDomEigFn dom_eig)
     extsts->dom_eig = dom_eig;
 
     /* attach the interface dominant eigenvalue function to LSRKStep */
-    retval = LSRKStepSetDomEigFn(extsts->sts_mem,
-                                 extSTSInnerStepper_dom_eig);
+    retval = LSRKStepSetDomEigFn(extsts->sts_mem, extSTSInnerStepper_dom_eig);
   }
   else
   {
     /* if the input is NULL, set the dominant eigenvalue estimator to NULL in the
        interface and pass NULL to LSRKStep */
     extsts->dom_eig = NULL;
-    retval = LSRKStepSetDomEigFn(extsts->sts_mem, NULL);
+    retval          = LSRKStepSetDomEigFn(extsts->sts_mem, NULL);
   }
   return (retval);
 }

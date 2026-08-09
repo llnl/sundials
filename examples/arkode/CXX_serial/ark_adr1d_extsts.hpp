@@ -59,7 +59,7 @@ using namespace std;
 struct UserData
 {
   // RHS options
-  bool reaction = true;
+  bool reaction  = true;
   bool advection = true;
 
   // Advection and diffusion coefficients
@@ -104,7 +104,7 @@ struct UserOptions
 
   // MRI method name, or Butcher table name plus flag to build MRI table
   // as an MIS method
-  string mri_method = "ARKODE_IMEX_MRI_GARK_GIRALDO2";
+  string mri_method    = "ARKODE_IMEX_MRI_GARK_GIRALDO2";
   bool build_mri_table = false;
 
   // Relative and absolute tolerances
@@ -117,7 +117,7 @@ struct UserOptions
   int maxsteps      = 10000; // max steps between outputs
   int ls_setup_freq = 0;     // linear solver setup frequency
 
-  bool calc_error = false;
+  bool calc_error     = false;
   bool write_solution = false;
 
   int output = 1;  // 0 = none, 1 = stats, 2 = disk, 3 = disk with tstop
@@ -140,9 +140,8 @@ int J_reaction(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 
 // Dominant eigenvalue function (for diffusion operator in LSRKStep)
 int diffusion_domeig(sunrealtype t, N_Vector y, N_Vector fn,
-                     sunrealtype* lambdaR, sunrealtype* lambdaI,
-                     void* user_data, N_Vector temp1, N_Vector temp2,
-                     N_Vector temp3);
+                     sunrealtype* lambdaR, sunrealtype* lambdaI, void* user_data,
+                     N_Vector temp1, N_Vector temp2, N_Vector temp3);
 
 // -----------------------------------------------------------------------------
 // Helper functions
@@ -340,7 +339,7 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
   cout << "  integrator       = ExtSTS" << endl;
   if (udata.advection) { cout << "  advection        = Explicit" << endl; }
   else { cout << "  advection        = OFF" << endl; }
-  if (udata.reaction) {  cout << "  reaction         = Implicit" << endl; }
+  if (udata.reaction) { cout << "  reaction         = Implicit" << endl; }
   else { cout << "  reaction         = OFF" << endl; }
   cout << "  diffusion        = Explicit" << endl;
 
@@ -351,16 +350,12 @@ static int PrintSetup(UserData& udata, UserOptions& uopts)
   cout << " --------------------------------- " << endl;
   if (uopts.build_mri_table)
   {
-    cout << "  MRI method constructed from Butcher table " << uopts.mri_method << endl;
+    cout << "  MRI method constructed from Butcher table " << uopts.mri_method
+         << endl;
   }
-  else
-  {
-    cout << "  MRI method       = " << uopts.mri_method << endl;
-  }
-  if (uopts.sts_method == 0)
-  { cout << "  STS method       = RKC" << endl; }
-  else
-  { cout << "  STS method       = RKL" << endl; }
+  else { cout << "  MRI method       = " << uopts.mri_method << endl; }
+  if (uopts.sts_method == 0) { cout << "  STS method       = RKC" << endl; }
+  else { cout << "  STS method       = RKL" << endl; }
   cout << " --------------------------------- " << endl;
   cout << "  output           = " << uopts.output << endl;
   cout << " --------------------------------- " << endl;
@@ -379,16 +374,10 @@ static int OpenOutput(UserData& udata, UserOptions& uopts)
     cout << setprecision(numeric_limits<sunrealtype>::digits10);
     cout << "          t           ";
     cout << "          ||y||_rms      ";
-    if (uopts.calc_error)
-    {
-      cout << "   ||yerr||_rms";
-    }
+    if (uopts.calc_error) { cout << "   ||yerr||_rms"; }
     cout << endl;
     cout << " ---------------------";
-    if (uopts.calc_error)
-    {
-      cout << "---------------";
-    }
+    if (uopts.calc_error) { cout << "---------------"; }
     cout << "-------------------------" << endl;
   }
 
@@ -451,10 +440,7 @@ static int CloseOutput(UserOptions& uopts)
   if (uopts.output)
   {
     cout << " ---------------------";
-    if (uopts.calc_error)
-    {
-      cout << "---------------";
-    }
+    if (uopts.calc_error) { cout << "---------------"; }
     cout << "-------------------------" << endl;
     cout << endl;
   }
