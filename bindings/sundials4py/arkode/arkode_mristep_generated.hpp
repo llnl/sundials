@@ -53,6 +53,10 @@ auto pyEnumARKODE_MRITableID =
     .value("ARKODE_IMEX_MRI_GARK_ASCHER_ARK2", ARKODE_IMEX_MRI_GARK_ASCHER_ARK2,
            "")
     .value("ARKODE_IMEX_MRI_GARK_ARK2", ARKODE_IMEX_MRI_GARK_ARK2, "")
+    .value("ARKODE_MRI_GARK_EXP_ARS222", ARKODE_MRI_GARK_EXP_ARS222, "")
+    .value("ARKODE_IMEX_MRI_GARK_ARS222", ARKODE_IMEX_MRI_GARK_ARS222, "")
+    .value("ARKODE_MRI_GARK_EXP_GIRALDO2", ARKODE_MRI_GARK_EXP_GIRALDO2, "")
+    .value("ARKODE_IMEX_MRI_GARK_GIRALDO2", ARKODE_IMEX_MRI_GARK_GIRALDO2, "")
     .value("ARKODE_MAX_MRI_NUM", ARKODE_MAX_MRI_NUM, "")
     .export_values();
 // #ifndef SWIG
@@ -183,8 +187,17 @@ m.def(
 m.def("MRIStepCoupling_Write", MRIStepCoupling_Write, nb::arg("MRIC"),
       nb::arg("outfile"));
 
+m.def("MRIStepCreateExtSTS", MRIStepCreateExtSTS, nb::arg("fd"), nb::arg("fe"),
+      nb::arg("fi"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"));
+
+m.def("MRIStepReInitExtSTS", MRIStepReInitExtSTS, nb::arg("arkode_mem"),
+      nb::arg("fd"), nb::arg("fe"), nb::arg("fi"), nb::arg("t0"), nb::arg("y0"));
+
 m.def("MRIStepSetCoupling", MRIStepSetCoupling, nb::arg("arkode_mem"),
       nb::arg("MRIC"));
+
+m.def("MRIStepExtSTSSetDomEigFn", MRIStepExtSTSSetDomEigFn,
+      nb::arg("arkode_mem"), nb::arg("dom_eig"));
 
 m.def(
   "MRIStepGetCurrentCoupling",
@@ -242,6 +255,8 @@ m.def(
       arkode_mem);
   },
   nb::arg("arkode_mem"));
+
+m.def("MRIStepGetSTSStepper", MRIStepGetSTSStepper, nb::arg("arkode_mem"));
 
 m.def("MRIStepInnerStepper_AddForcing", MRIStepInnerStepper_AddForcing,
       nb::arg("stepper"), nb::arg("t"), nb::arg("f"));
