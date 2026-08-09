@@ -1218,7 +1218,6 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARS222, { /* custom */
     const sunrealtype one   = SUN_RCONST(1.0);
     const sunrealtype gamma = one - one / SUNRsqrt(SUN_RCONST(2.0));
     const sunrealtype delta = one - one / (SUN_RCONST(2.0) * gamma);
-    const sunrealtype three = SUN_RCONST(3.0);
 
     C->q = 2;
     C->p = 1;

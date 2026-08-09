@@ -237,6 +237,7 @@ int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
   }
 
   /* Reinitialize the LSRKStep integrator */
+  step_mem->extsts_inner_stepper->f_diffusion = fd;
   retval = LSRKStepReInitSTS(step_mem->extsts_inner_stepper->sts_mem,
                              extSTSInnerStepper_fd_forcing, t0, y0);
   if (retval)
@@ -318,7 +319,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
 }
 
 int extSTSInnerStepper_FullRhs(MRIStepInnerStepper sts_mem, sunrealtype t,
-                               N_Vector y, N_Vector f, int mode)
+                               N_Vector y, N_Vector f, SUNDIALS_MAYBE_UNUSED int mode)
 {
   /* Call diffusion RHS function */
   int retval = EXTSTS_FD(sts_mem)(t, y, f, EXTSTS_UDATA(sts_mem));
