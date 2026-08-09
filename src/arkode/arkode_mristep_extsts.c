@@ -319,7 +319,8 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
 }
 
 int extSTSInnerStepper_FullRhs(MRIStepInnerStepper sts_mem, sunrealtype t,
-                               N_Vector y, N_Vector f, SUNDIALS_MAYBE_UNUSED int mode)
+                               N_Vector y, N_Vector f,
+                               SUNDIALS_MAYBE_UNUSED int mode)
 {
   /* Call diffusion RHS function */
   int retval = EXTSTS_FD(sts_mem)(t, y, f, EXTSTS_UDATA(sts_mem));
