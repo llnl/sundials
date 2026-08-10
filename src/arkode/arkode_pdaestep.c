@@ -33,6 +33,9 @@
 static int pdaeStep_Jac(sunrealtype t, sunrealtype c_j, N_Vector y, N_Vector yp,
                         N_Vector r, SUNMatrix Jac, void* user_data,
                         N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
+static int pdaeStep_JacTimes(sunrealtype t, N_Vector y, N_Vector yp, N_Vector r,
+                             N_Vector v, N_Vector Jv, sunrealtype c_j,
+                             void* user_data, N_Vector tmp1, N_Vector tmp2);
 static int pdaeStep_ReInitPartitions(ARKodeMem ark_mem);
 
 static N_Vector pdaeStep_CreateAlgebraicVector(N_Vector y, int partitions,
@@ -157,6 +160,20 @@ static int pdaeStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED int init_type)
         arkProcessError(ark_mem, ARK_INNERSTEP_ATTACH_ERR, __LINE__, __func__,
                         __FILE__,
                         "Unable to set IDA Jacobian function for partition %i",
+                        i);
+        return ARK_INNERSTEP_ATTACH_ERR;
+      }
+    }
+
+    if (step_mem->user_datas[i].component_res_jtimes != NULL)
+    {
+      retval = IDASetJacTimes(step_mem->ida_mems[i], NULL, pdaeStep_JacTimes);
+      if (retval != IDA_SUCCESS)
+      {
+        arkProcessError(ark_mem, ARK_INNERSTEP_ATTACH_ERR, __LINE__, __func__,
+                        __FILE__,
+                        "Unable to set IDA Jacobian-times function for "
+                        "partition %i",
                         i);
         return ARK_INNERSTEP_ATTACH_ERR;
       }
@@ -308,6 +325,21 @@ static int pdaeStep_Jac(sunrealtype t, sunrealtype c_j, N_Vector y, N_Vector yp,
                                           w, yp, r, Jac, arkode_user_data);
 }
 
+static int pdaeStep_JacTimes(sunrealtype t, N_Vector y, N_Vector yp, N_Vector r,
+                             N_Vector v, N_Vector Jv, sunrealtype c_j,
+                             void* user_data, N_Vector tmp1, N_Vector tmp2)
+{
+  IDAUserData* ida_user_data = (IDAUserData*)user_data;
+  void* arkode_user_data     = ((ARKodeMem)ida_user_data->ark_mem)->user_data;
+  // TODO(SBR): generalize w to polynomial. This is using w=w_n for now
+  N_Vector w =
+    PDAEStepGetCouplingSubvector(((ARKodeMem)ida_user_data->ark_mem)->yn);
+
+  return ida_user_data->component_res_jtimes(ida_user_data->partition, t, y, w,
+                                             yp, r, v, Jv, c_j,
+                                             arkode_user_data, tmp1, tmp2);
+}
+
 static int pdaeStep_ReInitPartitions(ARKodeMem ark_mem)
 {
   ARKodePDAEStepMem step_mem = NULL;
@@ -416,9 +448,10 @@ void* PDAEStepCreate(PDAEStepComponentResFn component_res_fn,
   ark_mem->step_supports_relaxation = SUNFALSE;
   ark_mem->step_mem                 = (void*)step_mem;
 
-  step_mem->algebraic_res_fn  = algebraic_res_fn;
-  step_mem->algebraic_res_jac = NULL;
-  step_mem->yp                = N_VClone(yp0);
+  step_mem->algebraic_res_fn     = algebraic_res_fn;
+  step_mem->algebraic_res_jac    = NULL;
+  step_mem->algebraic_res_jtimes = NULL;
+  step_mem->yp                   = N_VClone(yp0);
   if (step_mem->yp == NULL)
   {
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -545,10 +578,11 @@ void* PDAEStepCreate(PDAEStepComponentResFn component_res_fn,
       step_mem->user_datas[i].yp = ypi;
     }
 
-    step_mem->user_datas[i].ark_mem           = ark_mem;
-    step_mem->user_datas[i].partition         = i;
-    step_mem->user_datas[i].component_res_fn  = component_res_fn;
-    step_mem->user_datas[i].component_res_jac = NULL;
+    step_mem->user_datas[i].ark_mem              = ark_mem;
+    step_mem->user_datas[i].partition            = i;
+    step_mem->user_datas[i].component_res_fn     = component_res_fn;
+    step_mem->user_datas[i].component_res_jac    = NULL;
+    step_mem->user_datas[i].component_res_jtimes = NULL;
 
     retval = IDAInit(step_mem->ida_mems[i], pdaeStep_Residual, t0,
                      step_mem->user_datas[i].y, step_mem->user_datas[i].yp);
@@ -683,6 +717,23 @@ int PDAEStepSetPartitionJacobian(void* arkode_mem, PDAEStepLsComponentJacFn jac)
   for (int partition = 0; partition < step_mem->partitions; partition++)
   {
     step_mem->user_datas[partition].component_res_jac = jac;
+  }
+
+  return ARK_SUCCESS;
+}
+
+int PDAEStepSetPartitionJacTimes(void* arkode_mem,
+                                 PDAEStepLsComponentJacTimesVecFn jtimes)
+{
+  ARKodeMem ark_mem          = NULL;
+  ARKodePDAEStepMem step_mem = NULL;
+  int retval = pdaeStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                            &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  for (int partition = 0; partition < step_mem->partitions; partition++)
+  {
+    step_mem->user_datas[partition].component_res_jtimes = jtimes;
   }
 
   return ARK_SUCCESS;

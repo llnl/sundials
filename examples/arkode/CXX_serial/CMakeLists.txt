@@ -86,8 +86,7 @@ foreach(example_tuple ${ARKODE_examples})
     endif()
 
     if("${example_target}" STREQUAL "ark_inverter_chain_ida")
-      target_link_libraries(${example_target} sundials_ida sundials_sunmatrixdense
-                            sundials_sunlinsoldense sundials_nvecmanyvector
+      target_link_libraries(${example_target} sundials_ida sundials_nvecmanyvector
                             sundials_sunlinsolspgmr
                             sundials_sunnonlinsolnewton)
     endif()

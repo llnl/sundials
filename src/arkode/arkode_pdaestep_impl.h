@@ -38,6 +38,7 @@ typedef struct
   int partition;
   PDAEStepComponentResFn component_res_fn;
   PDAEStepLsComponentJacFn component_res_jac;
+  PDAEStepLsComponentJacTimesVecFn component_res_jtimes;
 
   /* Manyvectors with two componenets (diff/alg). These don't own the subvectors
    * but instead have pointers to the subvectors of PDAE state
@@ -50,6 +51,7 @@ typedef struct
 {
   PDAEStepAlgebraicResFn algebraic_res_fn;
   PDAEStepLsAlgebraicJacFn algebraic_res_jac;
+  PDAEStepLsAlgebraicJacTimesVecFn algebraic_res_jtimes;
   N_Vector yp;
   N_Vector alg;
   N_Vector alg_pred;

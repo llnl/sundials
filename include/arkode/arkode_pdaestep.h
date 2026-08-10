@@ -51,6 +51,13 @@ typedef int (*PDAEStepLsComponentJacFn)(int partition, sunrealtype t,
                                         N_Vector yp, N_Vector r, SUNMatrix Jac,
                                         void* user_data);
 
+typedef int (*PDAEStepLsComponentJacTimesVecFn)(int partition, sunrealtype t,
+                                                N_Vector y, N_Vector w,
+                                                N_Vector yp, N_Vector r,
+                                                N_Vector v, N_Vector Jv,
+                                                sunrealtype c_j, void* user_data,
+                                                N_Vector tmp1, N_Vector tmp2);
+
 /* y is a manyvector so the residual can use all z^{r}. res is also a manyvector
  * This include h and g functions so we can defer the exploiting of structure to
  * the (non)linear solver
@@ -61,6 +68,11 @@ typedef int (*PDAEStepAlgebraicResFn)(sunrealtype t, N_Vector y, N_Vector w,
 // TODO(SBR): Could add tmp vectors and f/res if needed
 typedef int (*PDAEStepLsAlgebraicJacFn)(sunrealtype t, N_Vector y, N_Vector w,
                                         SUNMatrix Jac, void* user_data);
+
+typedef int (*PDAEStepLsAlgebraicJacTimesVecFn)(sunrealtype t, N_Vector y,
+                                                N_Vector w, N_Vector v,
+                                                N_Vector Jv, void* user_data,
+                                                N_Vector tmp);
 
 // y0 and yp0 are manyvectors with 2*n_partitions+1 subvectors
 SUNDIALS_EXPORT void* PDAEStepCreate(PDAEStepComponentResFn component_res_fn,
@@ -80,8 +92,14 @@ SUNDIALS_EXPORT int PDAEStepGetPartitionIntegrator(void* arkode_mem,
 SUNDIALS_EXPORT int PDAEStepSetPartitionJacobian(void* arkode_mem,
                                                  PDAEStepLsComponentJacFn jac);
 
+SUNDIALS_EXPORT int PDAEStepSetPartitionJacTimes(
+  void* arkode_mem, PDAEStepLsComponentJacTimesVecFn jtimes);
+
 SUNDIALS_EXPORT int PDAEStepSetCouplingJacobian(void* arkode_mem,
                                                 PDAEStepLsAlgebraicJacFn jac);
+
+SUNDIALS_EXPORT int PDAEStepSetCouplingJacTimes(
+  void* arkode_mem, PDAEStepLsAlgebraicJacTimesVecFn jtimes);
 
 /* We provide PDAE-specific (non)linear solver functions because there are
  * customizations we need to use that are not easily supported by the default

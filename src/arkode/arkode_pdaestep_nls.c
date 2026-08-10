@@ -31,6 +31,7 @@ static int pdaeStep_NlsResidual(N_Vector alg_cor, N_Vector r, void* arkode_mem);
 static int pdaeStep_NlsLSetup(sunbooleantype jbad, sunbooleantype* jcur,
                               void* arkode_mem);
 static int pdaeStep_NlsLSolve(N_Vector b, void* arkode_mem);
+static int pdaeStep_AlgJtimes(void* arkode_mem, N_Vector v, N_Vector Jv);
 static int pdaeStep_AlgDQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv);
 static int pdaeStep_AttachNlsCallbacks(ARKodeMem ark_mem,
                                        ARKodePDAEStepMem step_mem);
@@ -143,7 +144,10 @@ int PDAEStepSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix J)
 
   if (LS->ops->setatimes)
   {
-    retval = SUNLinSolSetATimes(LS, ark_mem, pdaeStep_AlgDQJtimes);
+    retval = SUNLinSolSetATimes(LS, ark_mem,
+                                (step_mem->algebraic_res_jtimes == NULL)
+                                  ? pdaeStep_AlgDQJtimes
+                                  : pdaeStep_AlgJtimes);
     if (retval != SUN_SUCCESS)
     {
       arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -170,6 +174,39 @@ int PDAEStepSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix J)
 
     retval = SUNNonlinSolSetLSolveFn(step_mem->NLS, pdaeStep_NlsLSolve);
     if (retval != SUN_SUCCESS) { return ARK_NLS_OP_ERR; }
+  }
+
+  return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
+  PDAEStepSetCouplingJacTimes:
+
+  Attaches a Jacobian-vector product to the PDAEStep Newton solve.
+  ---------------------------------------------------------------*/
+int PDAEStepSetCouplingJacTimes(void* arkode_mem,
+                                PDAEStepLsAlgebraicJacTimesVecFn jtimes)
+{
+  ARKodeMem ark_mem          = NULL;
+  ARKodePDAEStepMem step_mem = NULL;
+  int retval = pdaeStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                            &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  step_mem->algebraic_res_jtimes = jtimes;
+
+  if ((step_mem->LS != NULL) && (step_mem->LS->ops != NULL) &&
+      (step_mem->LS->ops->setatimes != NULL))
+  {
+    retval = SUNLinSolSetATimes(step_mem->LS, ark_mem,
+                                (jtimes == NULL) ? pdaeStep_AlgDQJtimes
+                                                 : pdaeStep_AlgJtimes);
+    if (retval != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "Error in calling SUNLinSolSetATimes");
+      return ARK_ILL_INPUT;
+    }
   }
 
   return ARK_SUCCESS;
@@ -521,6 +558,25 @@ static int pdaeStep_NlsLSolve(N_Vector b, void* arkode_mem)
   if (retval < 0) { return ARK_LSOLVE_FAIL; }
 
   return CONV_FAIL;
+}
+
+static int pdaeStep_AlgJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
+{
+  ARKodeMem ark_mem          = NULL;
+  ARKodePDAEStepMem step_mem = NULL;
+  int retval = pdaeStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                            &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  retval =
+    step_mem->algebraic_res_jtimes(ark_mem->tcur, ark_mem->ycur,
+                                   PDAEStepGetCouplingSubvector(ark_mem->ycur),
+                                   v, Jv, ark_mem->user_data, step_mem->alg_tmp);
+
+  if (retval < 0) { return -1; }
+  if (retval > 0) { return 1; }
+
+  return 0;
 }
 
 static int pdaeStep_AlgDQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)

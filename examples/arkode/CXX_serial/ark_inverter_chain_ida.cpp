@@ -46,9 +46,7 @@
 #include <sundials/sundials_core.hpp>
 #include <sundials/sundials_math.h>
 #include <sundials/sundials_types.h>
-#include <sunlinsol/sunlinsol_dense.h>
 #include <sunlinsol/sunlinsol_spgmr.h>
-#include <sunmatrix/sunmatrix_dense.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
 struct UserData
@@ -81,6 +79,9 @@ static constexpr sunrealtype ONE  = SUN_RCONST(1.0);
 static sunrealtype InputVoltage(sunrealtype t);
 static sunrealtype InverterRhsValue(sunrealtype uleft, sunrealtype u,
                                     const UserData& data);
+static void InverterJacobianRow(sunrealtype uleft, sunrealtype u,
+                                const UserData& data, sunrealtype cj,
+                                sunrealtype& diag, sunrealtype& left);
 static void InverterRhs(sunrealtype t, N_Vector u, N_Vector udot,
                         const UserData& data);
 static void PartitionLayout(sunindextype n, int partitions,
@@ -89,31 +90,37 @@ static void PartitionLayout(sunindextype n, int partitions,
 static int PdaeComponentResidualForPartition(int partition, sunrealtype t,
                                              N_Vector y, N_Vector w, N_Vector yp,
                                              N_Vector res, void* user_data);
-static int PdaeComponentJacobianForPartition(int partition, sunrealtype t,
-                                             sunrealtype cj, N_Vector y,
-                                             N_Vector w, N_Vector yp,
-                                             N_Vector res, SUNMatrix J,
-                                             void* user_data);
+static int PdaeComponentJacTimesForPartition(int partition, sunrealtype t,
+                                             N_Vector y, N_Vector w,
+                                             N_Vector yp, N_Vector res,
+                                             N_Vector v, N_Vector Jv,
+                                             sunrealtype cj, void* user_data,
+                                             N_Vector tmp1, N_Vector tmp2);
 
 static int PdaeAlgebraicResidual(sunrealtype t, N_Vector y, N_Vector w,
                                  N_Vector res, void* user_data);
+static int PdaeAlgebraicJacTimes(sunrealtype t, N_Vector y, N_Vector w,
+                                 N_Vector v, N_Vector Jv, void* user_data,
+                                 N_Vector tmp);
 static void CopyPdaeSolution(N_Vector y, const PdaeUserData& data, N_Vector u);
 static int Residual(sunrealtype t, N_Vector u, N_Vector up, N_Vector res,
                     void* user_data);
-static int Jacobian(sunrealtype t, sunrealtype cj, N_Vector u, N_Vector up,
-                    N_Vector res, SUNMatrix J, void* user_data, N_Vector tmp1,
-                    N_Vector tmp2, N_Vector tmp3);
+static int JacTimes(sunrealtype t, N_Vector u, N_Vector up, N_Vector res,
+                    N_Vector v, N_Vector Jv, sunrealtype cj, void* user_data,
+                    N_Vector tmp1, N_Vector tmp2);
 static void PrintHeader();
 static void PrintSolution(int step, sunrealtype t, N_Vector u);
+static int PrintL1Error(N_Vector u, N_Vector uref);
 static int PrintIdaFinalStats(void* ida_mem);
 static int PrintPdaeFinalStats(void* arkode_mem,
                                const std::vector<void*>& ida_mems);
 static int RunIda(const UserData& data, sunrealtype t0, sunrealtype tf,
                   sunrealtype reltol, sunrealtype abstol, int nout,
-                  SUNContext ctx);
+                  SUNContext ctx, N_Vector ufinal = NULL,
+                  bool print_output = true, bool max_order_one = true);
 static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
                    sunrealtype tf, sunrealtype reltol, sunrealtype abstol,
-                   int nout, SUNContext ctx);
+                   int nout, N_Vector uref, SUNContext ctx);
 static int ParseArgs(std::vector<std::string>& args, UserData& data,
                      sunrealtype& tf, sunrealtype& reltol, sunrealtype& abstol,
                      int& nout, Options& opts);
@@ -123,44 +130,69 @@ int main(int argc, char* argv[])
   sundials::Context ctx;
 
   UserData data;
-  data.n     = 500;
+  data.n     = 10;
   data.u0    = ZERO;
   data.uop   = SUN_RCONST(5.0);
   data.ut    = ONE;
-  data.gamma = SUN_RCONST(100.0);
+  data.gamma = SUN_RCONST(1.0);
 
   sunrealtype t0     = ZERO;
-  sunrealtype tf     = SUN_RCONST(120.0);
+  sunrealtype tf     = SUN_RCONST(20.0);
   sunrealtype reltol = SUN_RCONST(1.0e-4);
-  sunrealtype abstol = SUN_RCONST(1.0e-6);
+  sunrealtype abstol = SUN_RCONST(1.0e-10);
   int nout           = 6;
   Options opts;
   opts.solver     = "ida";
-  opts.partitions = 6;
+  opts.partitions = 2;
   opts.pdae_h     = SUN_RCONST(1.0e-2);
 
   std::vector<std::string> args(argv + 1, argv + argc);
   int flag = ParseArgs(args, data, tf, reltol, abstol, nout, opts);
   if (flag != 0) { return flag; }
 
-  if (opts.solver == "pdae")
+  N_Vector uref = N_VNew_Serial(data.n, ctx);
+  if (check_ptr(uref, "N_VNew_Serial")) { return 1; }
+
+  sunrealtype ref_reltol = SUN_RCONST(1.0e-8);
+  sunrealtype ref_abstol = SUN_RCONST(1.0e-10);
+  flag = RunIda(data, t0, tf, ref_reltol, ref_abstol, nout, ctx, uref, false,
+                false);
+
+  if (flag == 0 && opts.solver == "pdae")
   {
-    return RunPdae(data, opts, t0, tf, reltol, abstol, nout, ctx);
+    flag = RunPdae(data, opts, t0, tf, reltol, abstol, nout, uref, ctx);
+  }
+  else if (flag == 0)
+  {
+    N_Vector u = N_VNew_Serial(data.n, ctx);
+    if (check_ptr(u, "N_VNew_Serial")) { flag = 1; }
+    else
+    {
+      flag = RunIda(data, t0, tf, reltol, abstol, nout, ctx, u, true);
+      if (flag == 0) { flag = PrintL1Error(u, uref); }
+      N_VDestroy(u);
+    }
   }
 
-  return RunIda(data, t0, tf, reltol, abstol, nout, ctx);
+  N_VDestroy(uref);
+
+  return flag;
 }
 
 static int RunIda(const UserData& data, sunrealtype t0, sunrealtype tf,
                   sunrealtype reltol, sunrealtype abstol, int nout,
-                  SUNContext ctx)
+                  SUNContext ctx, N_Vector ufinal, bool print_output,
+                  bool max_order_one)
 {
-  std::cout << "\nInverter chain problem solved with IDA:\n";
-  std::cout << "   number of inverters = " << data.n << "\n";
-  std::cout << "   t0                  = " << t0 << "\n";
-  std::cout << "   tf                  = " << tf << "\n";
-  std::cout << "   reltol              = " << reltol << "\n";
-  std::cout << "   abstol              = " << abstol << "\n\n";
+  if (print_output)
+  {
+    std::cout << "\nInverter chain problem solved with IDA:\n";
+    std::cout << "   number of inverters = " << data.n << "\n";
+    std::cout << "   t0                  = " << t0 << "\n";
+    std::cout << "   tf                  = " << tf << "\n";
+    std::cout << "   reltol              = " << reltol << "\n";
+    std::cout << "   abstol              = " << abstol << "\n\n";
+  }
 
   N_Vector u = N_VNew_Serial(data.n, ctx);
   if (check_ptr(u, "N_VNew_Serial")) { return 1; }
@@ -180,8 +212,11 @@ static int RunIda(const UserData& data, sunrealtype t0, sunrealtype tf,
   flag = IDASetUserData(ida_mem, const_cast<UserData*>(&data));
   if (check_flag(flag, "IDASetUserData")) { return 1; }
 
-  flag = IDASetMaxOrd(ida_mem, 1);
-  if (check_flag(flag, "IDASetMaxOrd")) { return 1; }
+  if (max_order_one)
+  {
+    flag = IDASetMaxOrd(ida_mem, 1);
+    if (check_flag(flag, "IDASetMaxOrd")) { return 1; }
+  }
 
   flag = IDASStolerances(ida_mem, reltol, abstol);
   if (check_flag(flag, "IDASStolerances")) { return 1; }
@@ -189,21 +224,18 @@ static int RunIda(const UserData& data, sunrealtype t0, sunrealtype tf,
   flag = IDASetMaxNumSteps(ida_mem, -1);
   if (check_flag(flag, "IDASetMaxNumSteps")) { return 1; }
 
-  SUNMatrix J = SUNDenseMatrix(data.n, data.n, ctx);
-  if (check_ptr(J, "SUNDenseMatrix")) { return 1; }
+  SUNLinearSolver LS = SUNLinSol_SPGMR(u, SUN_PREC_NONE, 10, ctx);
+  if (check_ptr(LS, "SUNLinSol_SPGMR")) { return 1; }
 
-  SUNLinearSolver LS = SUNLinSol_Dense(u, J, ctx);
-  if (check_ptr(LS, "SUNLinSol_Dense")) { return 1; }
-
-  flag = IDASetLinearSolver(ida_mem, LS, J);
+  flag = IDASetLinearSolver(ida_mem, LS, NULL);
   if (check_flag(flag, "IDASetLinearSolver")) { return 1; }
 
-  flag = IDASetJacFn(ida_mem, Jacobian);
-  if (check_flag(flag, "IDASetJacFn")) { return 1; }
+  flag = IDASetJacTimes(ida_mem, NULL, JacTimes);
+  if (check_flag(flag, "IDASetJacTimes")) { return 1; }
 
-  PrintHeader();
+  if (print_output) { PrintHeader(); }
 
-  PrintSolution(0, t0, u);
+  if (print_output) { PrintSolution(0, t0, u); }
 
   sunrealtype tret = t0;
   for (int iout = 1; iout <= nout; iout++)
@@ -217,15 +249,20 @@ static int RunIda(const UserData& data, sunrealtype t0, sunrealtype tf,
     flag = IDASolve(ida_mem, tout, &tret, u, up, IDA_NORMAL);
     if (check_flag(flag, "IDASolve")) { return 1; }
 
-    PrintSolution(iout, tret, u);
+    if (print_output) { PrintSolution(iout, tret, u); }
   }
 
-  std::cout << "\n";
-  flag = PrintIdaFinalStats(ida_mem);
+  if (ufinal) { N_VScale(ONE, u, ufinal); }
+
+  if (print_output)
+  {
+    std::cout << "\n";
+    flag = PrintIdaFinalStats(ida_mem);
+  }
+  else { flag = 0; }
 
   IDAFree(&ida_mem);
   SUNLinSolFree(LS);
-  SUNMatDestroy(J);
   N_VDestroy(up);
   N_VDestroy(u);
 
@@ -248,6 +285,24 @@ static sunrealtype InverterRhsValue(sunrealtype uleft, sunrealtype u,
   sunrealtype load  = SUNMAX(uleft - data.u0 - data.ut, ZERO);
 
   return data.uop - u + data.gamma * (drive * drive - load * load);
+}
+
+static void InverterJacobianRow(sunrealtype uleft, sunrealtype u,
+                                const UserData& data, sunrealtype cj,
+                                sunrealtype& diag, sunrealtype& left)
+{
+  sunrealtype drive_arg = uleft - u - data.ut;
+  sunrealtype load_arg  = uleft - data.u0 - data.ut;
+  sunrealtype drive     = SUNMAX(drive_arg, ZERO);
+  sunrealtype load      = SUNMAX(load_arg, ZERO);
+
+  diag = cj + ONE +
+         ((drive_arg > ZERO) ? SUN_RCONST(2.0) * data.gamma * drive : ZERO);
+
+  sunrealtype dfdu_left =
+    SUN_RCONST(2.0) * data.gamma *
+    (((drive_arg > ZERO) ? drive : ZERO) - ((load_arg > ZERO) ? load : ZERO));
+  left = -dfdu_left;
 }
 
 static void InverterRhs(sunrealtype t, N_Vector u, N_Vector udot,
@@ -343,50 +398,80 @@ static int PdaeAlgebraicResidual(sunrealtype t, N_Vector y, N_Vector w,
   return 0;
 }
 
-static int PdaeComponentJacobianForPartition(int partition, sunrealtype t,
-                                             sunrealtype cj, N_Vector y,
-                                             N_Vector w, N_Vector yp,
-                                             N_Vector res, SUNMatrix J,
-                                             void* user_data)
+static int PdaeAlgebraicJacTimes(sunrealtype t, N_Vector y, N_Vector w,
+                                 N_Vector v, N_Vector Jv, void* user_data,
+                                 N_Vector tmp)
+{
+  PdaeUserData* data = static_cast<PdaeUserData*>(user_data);
+
+  (void)t;
+  (void)y;
+  (void)w;
+  (void)tmp;
+
+  N_Vector vw_vec = N_VGetSubvector_ManyVector(v, data->partitions);
+  N_Vector Jw_vec = N_VGetSubvector_ManyVector(Jv, data->partitions);
+  sunrealtype* vw = N_VGetArrayPointer(vw_vec);
+  sunrealtype* Jw = N_VGetArrayPointer(Jw_vec);
+
+  for (int p = 0; p < data->partitions; p++)
+  {
+    N_Vector vz_vec = N_VGetSubvector_ManyVector(v, p);
+    N_Vector Jz_vec = N_VGetSubvector_ManyVector(Jv, p);
+    sunrealtype* vz = N_VGetArrayPointer(vz_vec);
+    sunrealtype* Jz = N_VGetArrayPointer(Jz_vec);
+
+    Jz[0] = vz[0] - ((p == 0) ? ZERO : vw[p - 1]);
+  }
+
+  for (int p = 0; p < data->partitions - 1; p++) { Jw[p] = vw[p]; }
+
+  return 0;
+}
+
+static int PdaeComponentJacTimesForPartition(int partition, sunrealtype t,
+                                             N_Vector y, N_Vector w,
+                                             N_Vector yp, N_Vector res,
+                                             N_Vector v, N_Vector Jv,
+                                             sunrealtype cj, void* user_data,
+                                             N_Vector tmp1, N_Vector tmp2)
 {
   PdaeUserData* data = static_cast<PdaeUserData*>(user_data);
   if (partition < 0 || partition >= data->partitions) { return -1; }
 
-  int flag = SUNMatZero(J);
-  if (flag != SUN_SUCCESS) { return -1; }
+  (void)t;
+  (void)w;
+  (void)yp;
+  (void)res;
+  (void)tmp1;
+  (void)tmp2;
 
-  N_Vector x_vec = N_VGetSubvector_ManyVector(y, 0);
-  N_Vector z_vec = N_VGetSubvector_ManyVector(y, 1);
+  N_Vector x_vec  = N_VGetSubvector_ManyVector(y, 0);
+  N_Vector z_vec  = N_VGetSubvector_ManyVector(y, 1);
+  N_Vector vx_vec = N_VGetSubvector_ManyVector(v, 0);
+  N_Vector vz_vec = N_VGetSubvector_ManyVector(v, 1);
+  N_Vector Jx_vec = N_VGetSubvector_ManyVector(Jv, 0);
+  N_Vector Jz_vec = N_VGetSubvector_ManyVector(Jv, 1);
 
-  sunrealtype* x = N_VGetArrayPointer(x_vec);
-  sunrealtype* z = N_VGetArrayPointer(z_vec);
+  sunrealtype* x  = N_VGetArrayPointer(x_vec);
+  sunrealtype* z  = N_VGetArrayPointer(z_vec);
+  sunrealtype* vx = N_VGetArrayPointer(vx_vec);
+  sunrealtype* vz = N_VGetArrayPointer(vz_vec);
+  sunrealtype* Jx = N_VGetArrayPointer(Jx_vec);
+  sunrealtype* Jz = N_VGetArrayPointer(Jz_vec);
 
   const sunindextype n = data->sizes[partition];
   for (sunindextype i = 0; i < n; i++)
   {
     sunrealtype uleft = (i == 0) ? z[0] : x[i - 1];
+    sunrealtype diag  = ZERO;
+    sunrealtype left  = ZERO;
+    InverterJacobianRow(uleft, x[i], data->model, cj, diag, left);
 
-    sunrealtype drive_arg = uleft - x[i] - data->model.ut;
-    sunrealtype load_arg  = uleft - data->model.u0 - data->model.ut;
-    sunrealtype drive     = SUNMAX(drive_arg, ZERO);
-    sunrealtype load      = SUNMAX(load_arg, ZERO);
-
-    SM_ELEMENT_D(J, i, i) =
-      cj + ONE +
-      ((drive_arg > ZERO) ? SUN_RCONST(2.0) * data->model.gamma * drive : ZERO);
-
-    sunrealtype dfdu_left =
-      SUN_RCONST(2.0) * data->model.gamma *
-      (((drive_arg > ZERO) ? drive : ZERO) - ((load_arg > ZERO) ? load : ZERO));
-
-    if (i == 0) { SM_ELEMENT_D(J, i, n) = -dfdu_left; }
-    else
-    {
-      SM_ELEMENT_D(J, i, i - 1) = -dfdu_left;
-    }
+    Jx[i] = diag * vx[i] + left * ((i == 0) ? vz[0] : vx[i - 1]);
   }
 
-  SM_ELEMENT_D(J, n, n) = ONE;
+  Jz[0] = vz[0];
 
   return 0;
 }
@@ -416,37 +501,30 @@ static int Residual(sunrealtype t, N_Vector u, N_Vector up, N_Vector res,
   return 0;
 }
 
-static int Jacobian(sunrealtype t, sunrealtype cj, N_Vector u, N_Vector up,
-                    N_Vector res, SUNMatrix J, void* user_data, N_Vector tmp1,
-                    N_Vector tmp2, N_Vector tmp3)
+static int JacTimes(sunrealtype t, N_Vector u, N_Vector up, N_Vector res,
+                    N_Vector v, N_Vector Jv, sunrealtype cj, void* user_data,
+                    N_Vector tmp1, N_Vector tmp2)
 {
   UserData* data     = static_cast<UserData*>(user_data);
   sunrealtype* udata = N_VGetArrayPointer(u);
+  sunrealtype* vdata = N_VGetArrayPointer(v);
+  sunrealtype* Jdata = N_VGetArrayPointer(Jv);
   sunrealtype uleft  = InputVoltage(t);
-  int retval         = SUNMatZero(J);
-  if (retval != SUN_SUCCESS) { return -1; }
+
+  (void)up;
+  (void)res;
+  (void)tmp1;
+  (void)tmp2;
 
   for (sunindextype i = 0; i < data->n; i++)
   {
     if (i > 0) { uleft = udata[i - 1]; }
 
-    sunrealtype drive_arg = uleft - udata[i] - data->ut;
-    sunrealtype load_arg  = uleft - data->u0 - data->ut;
-    sunrealtype drive     = SUNMAX(drive_arg, ZERO);
-    sunrealtype load      = SUNMAX(load_arg, ZERO);
+    sunrealtype diag = ZERO;
+    sunrealtype left = ZERO;
+    InverterJacobianRow(uleft, udata[i], *data, cj, diag, left);
 
-    SM_ELEMENT_D(J, i, i) =
-      cj + ONE +
-      ((drive_arg > ZERO) ? SUN_RCONST(2.0) * data->gamma * drive : ZERO);
-
-    if (i > 0)
-    {
-      sunrealtype dfdu_left = SUN_RCONST(2.0) * data->gamma *
-                              (((drive_arg > ZERO) ? drive : ZERO) -
-                               ((load_arg > ZERO) ? load : ZERO));
-
-      SM_ELEMENT_D(J, i, i - 1) = -dfdu_left;
-    }
+    Jdata[i] = diag * vdata[i] + ((i > 0) ? left * vdata[i - 1] : ZERO);
   }
 
   return 0;
@@ -478,12 +556,27 @@ static void PrintSolution(int step, sunrealtype t, N_Vector u)
             << *minmax.second << "\n";
 }
 
+static int PrintL1Error(N_Vector u, N_Vector uref)
+{
+  N_Vector err = N_VClone(u);
+  if (check_ptr(err, "N_VClone")) { return 1; }
+
+  N_VLinearSum(ONE, u, -ONE, uref, err);
+  std::cout << "   Final solution 1-norm error = " << N_VL1Norm(err) << "\n";
+
+  N_VDestroy(err);
+
+  return 0;
+}
+
 static int PrintIdaFinalStats(void* ida_mem)
 {
   long int nst     = 0;
   long int nre     = 0;
   long int nsetups = 0;
   long int nje     = 0;
+  long int njv     = 0;
+  long int nli     = 0;
   long int netf    = 0;
   long int nni     = 0;
   long int ncfn    = 0;
@@ -500,6 +593,12 @@ static int PrintIdaFinalStats(void* ida_mem)
   flag = IDAGetNumJacEvals(ida_mem, &nje);
   if (check_flag(flag, "IDAGetNumJacEvals")) { return 1; }
 
+  flag = IDAGetNumJtimesEvals(ida_mem, &njv);
+  if (check_flag(flag, "IDAGetNumJtimesEvals")) { return 1; }
+
+  flag = IDAGetNumLinIters(ida_mem, &nli);
+  if (check_flag(flag, "IDAGetNumLinIters")) { return 1; }
+
   flag = IDAGetNumErrTestFails(ida_mem, &netf);
   if (check_flag(flag, "IDAGetNumErrTestFails")) { return 1; }
 
@@ -514,6 +613,8 @@ static int PrintIdaFinalStats(void* ida_mem)
   std::cout << "   Total residual evaluations = " << nre << "\n";
   std::cout << "   Total linear solver setups = " << nsetups << "\n";
   std::cout << "   Total Jacobian evaluations = " << nje << "\n";
+  std::cout << "   Total J-times evaluations = " << njv << "\n";
+  std::cout << "   Total linear iterations = " << nli << "\n";
   std::cout << "   Total error test failures = " << netf << "\n";
   std::cout << "   Total nonlinear iterations = " << nni << "\n";
   std::cout << "   Total nonlinear convergence failures = " << ncfn << "\n";
@@ -531,12 +632,16 @@ static int PrintPdaeFinalStats(void* arkode_mem,
   long int ida_nst      = 0;
   long int ida_nre      = 0;
   long int ida_nsetups  = 0;
+  long int ida_njv      = 0;
+  long int ida_nli      = 0;
   long int ida_netf     = 0;
   long int ida_nni      = 0;
   long int ida_ncfn     = 0;
   long int ida_nst_tmp  = 0;
   long int ida_nre_tmp  = 0;
   long int ida_nls_tmp  = 0;
+  long int ida_njv_tmp  = 0;
+  long int ida_nli_tmp  = 0;
   long int ida_netf_tmp = 0;
   long int ida_nni_tmp  = 0;
   long int ida_ncfn_tmp = 0;
@@ -558,6 +663,10 @@ static int PrintPdaeFinalStats(void* arkode_mem,
     if (check_flag(flag, "IDAGetNumResEvals")) { return 1; }
     flag = IDAGetNumLinSolvSetups(ida_mem, &ida_nls_tmp);
     if (check_flag(flag, "IDAGetNumLinSolvSetups")) { return 1; }
+    flag = IDAGetNumJtimesEvals(ida_mem, &ida_njv_tmp);
+    if (check_flag(flag, "IDAGetNumJtimesEvals")) { return 1; }
+    flag = IDAGetNumLinIters(ida_mem, &ida_nli_tmp);
+    if (check_flag(flag, "IDAGetNumLinIters")) { return 1; }
     flag = IDAGetNumErrTestFails(ida_mem, &ida_netf_tmp);
     if (check_flag(flag, "IDAGetNumErrTestFails")) { return 1; }
     flag = IDAGetNumNonlinSolvIters(ida_mem, &ida_nni_tmp);
@@ -568,6 +677,8 @@ static int PrintPdaeFinalStats(void* arkode_mem,
     ida_nst += ida_nst_tmp;
     ida_nre += ida_nre_tmp;
     ida_nsetups += ida_nls_tmp;
+    ida_njv += ida_njv_tmp;
+    ida_nli += ida_nli_tmp;
     ida_netf += ida_netf_tmp;
     ida_nni += ida_nni_tmp;
     ida_ncfn += ida_ncfn_tmp;
@@ -583,6 +694,8 @@ static int PrintPdaeFinalStats(void* arkode_mem,
   std::cout << "   Total partition residual evaluations = " << ida_nre << "\n";
   std::cout << "   Total partition linear solver setups = " << ida_nsetups
             << "\n";
+  std::cout << "   Total partition J-times evaluations = " << ida_njv << "\n";
+  std::cout << "   Total partition linear iterations = " << ida_nli << "\n";
   std::cout << "   Total partition error test failures = " << ida_netf << "\n";
   std::cout << "   Total partition nonlinear iterations = " << ida_nni << "\n";
   std::cout << "   Total partition nonlinear convergence failures = " << ida_ncfn
@@ -593,7 +706,7 @@ static int PrintPdaeFinalStats(void* arkode_mem,
 
 static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
                    sunrealtype tf, sunrealtype reltol, sunrealtype abstol,
-                   int nout, SUNContext ctx)
+                   int nout, N_Vector uref, SUNContext ctx)
 {
   PdaeUserData pdae_data;
   pdae_data.model      = data;
@@ -604,7 +717,6 @@ static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
   std::vector<N_Vector> z(opts.partitions, NULL);
   std::vector<N_Vector> xp(opts.partitions, NULL);
   std::vector<N_Vector> zp(opts.partitions, NULL);
-  std::vector<SUNMatrix> partition_jac(opts.partitions, NULL);
   std::vector<SUNLinearSolver> partition_ls(opts.partitions, NULL);
   std::vector<void*> ida_mems(opts.partitions, NULL);
 
@@ -674,9 +786,9 @@ static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
   int flag = ARKodeSetUserData(arkode_mem, &pdae_data);
   if (check_flag(flag, "ARKodeSetUserData")) { return 1; }
 
-  flag = PDAEStepSetPartitionJacobian(arkode_mem,
-                                      PdaeComponentJacobianForPartition);
-  if (check_flag(flag, "PDAEStepSetPartitionJacobian")) { return 1; }
+  flag = PDAEStepSetPartitionJacTimes(arkode_mem,
+                                      PdaeComponentJacTimesForPartition);
+  if (check_flag(flag, "PDAEStepSetPartitionJacTimes")) { return 1; }
 
   flag = ARKodeSStolerances(arkode_mem, reltol, abstol);
   if (check_flag(flag, "ARKodeSStolerances")) { return 1; }
@@ -698,8 +810,10 @@ static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
   flag = PDAEStepSetNonlinearSolver(arkode_mem, alg_nls);
   if (check_flag(flag, "PDAEStepSetNonlinearSolver")) { return 1; }
 
-  alg_ls = SUNLinSol_SPGMR(alg_template, SUN_PREC_NONE, 0, ctx);
+  alg_ls = SUNLinSol_SPGMR(alg_template, SUN_PREC_NONE, 10, ctx);
   if (check_ptr(alg_ls, "SUNLinSol_SPGMR")) { return 1; }
+  flag = PDAEStepSetCouplingJacTimes(arkode_mem, PdaeAlgebraicJacTimes);
+  if (check_flag(flag, "PDAEStepSetCouplingJacTimes")) { return 1; }
   flag = PDAEStepSetLinearSolver(arkode_mem, alg_ls, NULL);
   if (check_flag(flag, "PDAEStepSetLinearSolver")) { return 1; }
 
@@ -709,11 +823,7 @@ static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
     flag = PDAEStepGetPartitionVectorTemplate(arkode_mem, p, &partition_template);
     if (check_flag(flag, "PDAEStepGetPartitionVectorTemplate")) { return 1; }
 
-    partition_jac[p] = SUNDenseMatrix(pdae_data.sizes[p] + 1,
-                                      pdae_data.sizes[p] + 1, ctx);
-    if (check_ptr(partition_jac[p], "SUNDenseMatrix")) { return 1; }
-
-    partition_ls[p] = SUNLinSol_SPGMR(partition_template, SUN_PREC_NONE, 0, ctx);
+    partition_ls[p] = SUNLinSol_SPGMR(partition_template, SUN_PREC_NONE, 10, ctx);
     if (check_ptr(partition_ls[p], "SUNLinSol_SPGMR")) { return 1; }
 
     flag = PDAEStepGetPartitionIntegrator(arkode_mem, p, &ida_mems[p]);
@@ -725,7 +835,7 @@ static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
     flag = IDASetMaxOrd(ida_mems[p], 1);
     if (check_flag(flag, "IDASetMaxOrd")) { return 1; }
 
-    flag = IDASetLinearSolver(ida_mems[p], partition_ls[p], partition_jac[p]);
+    flag = IDASetLinearSolver(ida_mems[p], partition_ls[p], NULL);
     if (check_flag(flag, "IDASetLinearSolver")) { return 1; }
   }
 
@@ -759,12 +869,18 @@ static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
 
   sunrealtype alg_res_norm = N_VMaxNorm(alg_res);
   std::cout << "\nFinal algebraic residual max norm = " << alg_res_norm << "\n";
-  if (alg_res_norm > SUNMAX(SUN_RCONST(1.0e-8), SUN_RCONST(100.0) * abstol))
+  if (uref)
+  {
+    flag = PrintL1Error(u, uref);
+  }
+
+  if (flag == 0 &&
+      alg_res_norm > SUNMAX(SUN_RCONST(1.0e-8), SUN_RCONST(100.0) * abstol))
   {
     std::cerr << "ERROR: final algebraic residual norm is too large\n";
     flag = 1;
   }
-  else
+  else if (flag == 0)
   {
     flag = PrintPdaeFinalStats(arkode_mem, ida_mems);
   }
@@ -777,7 +893,6 @@ static int RunPdae(const UserData& data, const Options& opts, sunrealtype t0,
   for (int p = 0; p < opts.partitions; p++)
   {
     if (partition_ls[p]) { SUNLinSolFree(partition_ls[p]); }
-    if (partition_jac[p]) { SUNMatDestroy(partition_jac[p]); }
     N_VDestroy(x[p]);
     N_VDestroy(z[p]);
     N_VDestroy(xp[p]);
