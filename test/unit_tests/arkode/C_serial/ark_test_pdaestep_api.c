@@ -30,7 +30,8 @@
 #define ONE  SUN_RCONST(1.0)
 
 #define CHECK_RET(flag, expected, name)                               \
-  do {                                                                \
+  do                                                                  \
+  {                                                                   \
     int _flag = (flag);                                               \
     if (_flag != (expected))                                          \
     {                                                                 \
@@ -42,7 +43,8 @@
   while (0)
 
 #define CHECK_TRUE(cond, name)                \
-  do {                                        \
+  do                                          \
+  {                                           \
     if (!(cond))                              \
     {                                         \
       fprintf(stderr, "%s failed\n", (name)); \
@@ -51,9 +53,10 @@
   }                                           \
   while (0)
 
-static int component_res(sunrealtype t, N_Vector y, N_Vector w, N_Vector yp,
-                         N_Vector res, void* user_data)
+static int component_res(int partition, sunrealtype t, N_Vector y, N_Vector w,
+                         N_Vector yp, N_Vector res, void* user_data)
 {
+  (void)partition;
   N_VConst(ZERO, res);
   return 0;
 }
@@ -69,8 +72,6 @@ static int create_problem(SUNContext sunctx, void** arkode_mem, N_Vector* x,
                           N_Vector* z, N_Vector* w, N_Vector* xp, N_Vector* zp,
                           N_Vector* wp, N_Vector* y, N_Vector* yp)
 {
-  PDAEStepComponentResFn component_res_fns[1] = {component_res};
-
   *x  = N_VNew_Serial(1, sunctx);
   *z  = N_VNew_Serial(1, sunctx);
   *w  = N_VNew_Serial(1, sunctx);
@@ -90,8 +91,8 @@ static int create_problem(SUNContext sunctx, void** arkode_mem, N_Vector* x,
   *yp = PDAEStepManyVector(xp, zp, *wp, 1);
   if (!*y || !*yp) { return 1; }
 
-  *arkode_mem = PDAEStepCreate(component_res_fns, algebraic_res, ZERO, *y, *yp,
-                               1, sunctx);
+  *arkode_mem = PDAEStepCreate(component_res, algebraic_res, ZERO, *y, *yp, 1,
+                               sunctx);
   if (!*arkode_mem) { return 1; }
 
   return 0;

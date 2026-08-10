@@ -49,6 +49,10 @@ if(SUNDIALS_ENABLE_CVODE)
   list(APPEND ARKODE_headers "ark_advection_diffusion_reaction.hpp")
 endif()
 
+if(SUNDIALS_ENABLE_IDA)
+  list(APPEND ARKODE_examples "ark_inverter_chain_ida.cpp\;\;develop")
+endif()
+
 # Auxiliary files to install
 set(ARKODE_extras plot_heat2D.py plot_sol.py)
 
@@ -80,6 +84,13 @@ foreach(example_tuple ${ARKODE_examples})
     if(SUNDIALS_ENABLE_CVODE)
       target_link_libraries(${example_target} sundials_cvode)
     endif()
+
+    if("${example_target}" STREQUAL "ark_inverter_chain_ida")
+      target_link_libraries(${example_target} sundials_ida sundials_sunmatrixdense
+                            sundials_sunlinsoldense sundials_nvecmanyvector
+                            sundials_sunlinsolspgmr
+                            sundials_sunnonlinsolnewton)
+    endif()
   endif()
 
   # check if example args are provided and set the test name
@@ -108,11 +119,22 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     endif()
   endif()
 
+  if(SUNDIALS_ENABLE_IDA)
+    set(_include_ida
+        ida
+        nvecmanyvector
+        sunlinsolspgmr
+        sunnonlinsolnewton
+        sunmatrixdense
+        sunlinsoldense)
+  endif()
+
   sundials_install_examples(
     arkode ARKODE_examples
     CMAKE_TEMPLATE cmakelists_CXX_ex.in
     MAKE_TEMPLATE makefile_serial_CXX_ex.in
     SUNDIALS_TARGETS nvecserial arkode ${_include_cvode} ${_include_cvode_stubs}
+                    ${_include_ida}
     DESTINATION arkode/CXX_serial
     EXTRA_FILES README ${ARKODE_extras} ${ARKODE_headers}
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"

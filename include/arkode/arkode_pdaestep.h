@@ -41,13 +41,14 @@ extern "C" {
  * - Multiple processes per partition or multiple partitions per process?
  * - Is w split across ranks?
  */
-typedef int (*PDAEStepComponentResFn)(sunrealtype t, N_Vector y, N_Vector w,
-                                      N_Vector yp, N_Vector res, void* user_data);
+typedef int (*PDAEStepComponentResFn)(int partition, sunrealtype t, N_Vector y,
+                                      N_Vector w, N_Vector yp, N_Vector res,
+                                      void* user_data);
 
 // TODO(SBR): Could add tmp vectors and f/res if needed
-typedef int (*PDAEStepLsComponentJacFn)(sunrealtype t, sunrealtype c_j,
-                                        N_Vector y, N_Vector w, N_Vector yp,
-                                        N_Vector r, SUNMatrix Jac,
+typedef int (*PDAEStepLsComponentJacFn)(int partition, sunrealtype t,
+                                        sunrealtype c_j, N_Vector y, N_Vector w,
+                                        N_Vector yp, N_Vector r, SUNMatrix Jac,
                                         void* user_data);
 
 /* y is a manyvector so the residual can use all z^{r}. res is also a manyvector
@@ -62,7 +63,7 @@ typedef int (*PDAEStepLsAlgebraicJacFn)(sunrealtype t, N_Vector y, N_Vector w,
                                         SUNMatrix Jac, void* user_data);
 
 // y0 and yp0 are manyvectors with 2*n_partitions+1 subvectors
-SUNDIALS_EXPORT void* PDAEStepCreate(PDAEStepComponentResFn* componenet_res_fns,
+SUNDIALS_EXPORT void* PDAEStepCreate(PDAEStepComponentResFn component_res_fn,
                                      PDAEStepAlgebraicResFn algebraic_res_fn,
                                      sunrealtype t0, N_Vector y0, N_Vector yp0,
                                      int n_partitions, SUNContext sunctx);
@@ -76,7 +77,7 @@ SUNDIALS_EXPORT int PDAEStepGetPartitionVectorTemplate(void* arkode_mem,
 SUNDIALS_EXPORT int PDAEStepGetPartitionIntegrator(void* arkode_mem,
                                                    int partition, void** ida_mem);
 
-SUNDIALS_EXPORT int PDAEStepSetPartitionJacobian(void* arkode_mem, int partition,
+SUNDIALS_EXPORT int PDAEStepSetPartitionJacobian(void* arkode_mem,
                                                  PDAEStepLsComponentJacFn jac);
 
 SUNDIALS_EXPORT int PDAEStepSetCouplingJacobian(void* arkode_mem,

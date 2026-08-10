@@ -36,9 +36,11 @@ static sunrealtype g(sunrealtype x, sunrealtype z, sunrealtype w)
   return x * x + z * z + w * w - SUN_RCONST(5.0);
 }
 
-static int component_res(sunrealtype t, N_Vector y_vec, N_Vector w_vec,
-                         N_Vector yp_vec, N_Vector res_vec, void* user_data)
+static int component_res(int partition, sunrealtype t, N_Vector y_vec,
+                         N_Vector w_vec, N_Vector yp_vec, N_Vector res_vec,
+                         void* user_data)
 {
+  (void)partition;
   // TODO(SBR): make helper functions to extract components
   sunrealtype x  = N_VGetArrayPointer(N_VGetSubvector_ManyVector(y_vec, 0))[0];
   sunrealtype z  = N_VGetArrayPointer(N_VGetSubvector_ManyVector(y_vec, 1))[0];
@@ -145,10 +147,9 @@ int main(void)
   if (check_retval((void*)yp, "PDAEStepManyVector", 0)) { return 1; }
   const sunrealtype tspan[] = {SUN_RCONST(0.0), SUN_RCONST(1.0)};
 
-  PDAEStepComponentResFn component_res_fns[] = {component_res, component_res};
-  PDAEStepAlgebraicResFn algebraic_res_fn    = algebraic_res;
-  arkode_mem = PDAEStepCreate(component_res_fns, algebraic_res_fn, tspan[0], y,
-                              yp, PARTITIONS, sunctx);
+  PDAEStepAlgebraicResFn algebraic_res_fn = algebraic_res;
+  arkode_mem = PDAEStepCreate(component_res, algebraic_res_fn, tspan[0], y, yp,
+                              PARTITIONS, sunctx);
   if (check_retval((void*)arkode_mem, "PDAEStepCreate", 0)) { return 1; }
   flag = ARKodeSStolerances(arkode_mem, SUN_RCONST(1.0e-6), SUN_RCONST(1.0e-6));
   if (check_retval(&flag, "ARKodeSStolerances", 1)) { return 1; }

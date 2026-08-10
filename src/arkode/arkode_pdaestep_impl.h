@@ -35,6 +35,7 @@
 typedef struct
 {
   void* ark_mem;
+  int partition;
   PDAEStepComponentResFn component_res_fn;
   PDAEStepLsComponentJacFn component_res_jac;
 

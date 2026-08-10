@@ -33,6 +33,7 @@
 static int pdaeStep_Jac(sunrealtype t, sunrealtype c_j, N_Vector y, N_Vector yp,
                         N_Vector r, SUNMatrix Jac, void* user_data,
                         N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
+static int pdaeStep_ReInitPartitions(ARKodeMem ark_mem);
 
 static N_Vector pdaeStep_CreateAlgebraicVector(N_Vector y, int partitions,
                                                SUNContext sunctx)
@@ -201,6 +202,9 @@ static int pdaeStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagP
   if (*nflagPtr < 0) { return *nflagPtr; }
   if (*nflagPtr > 0) { return TRY_AGAIN; }
 
+  retval = pdaeStep_ReInitPartitions(ark_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
   return ARK_SUCCESS;
 }
 
@@ -284,7 +288,8 @@ static int pdaeStep_Residual(sunrealtype t, N_Vector y, N_Vector yp,
   N_Vector w =
     PDAEStepGetCouplingSubvector(((ARKodeMem)ida_user_data->ark_mem)->yn);
 
-  return ida_user_data->component_res_fn(t, y, w, yp, res, arkode_user_data);
+  return ida_user_data->component_res_fn(ida_user_data->partition, t, y, w, yp,
+                                         res, arkode_user_data);
 }
 
 static int pdaeStep_Jac(sunrealtype t, sunrealtype c_j, N_Vector y, N_Vector yp,
@@ -299,31 +304,45 @@ static int pdaeStep_Jac(sunrealtype t, sunrealtype c_j, N_Vector y, N_Vector yp,
   N_Vector w =
     PDAEStepGetCouplingSubvector(((ARKodeMem)ida_user_data->ark_mem)->yn);
 
-  return ida_user_data->component_res_jac(t, c_j, y, w, yp, r, Jac,
-                                          arkode_user_data);
+  return ida_user_data->component_res_jac(ida_user_data->partition, t, c_j, y,
+                                          w, yp, r, Jac, arkode_user_data);
+}
+
+static int pdaeStep_ReInitPartitions(ARKodeMem ark_mem)
+{
+  ARKodePDAEStepMem step_mem = NULL;
+  int retval = pdaeStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  for (int i = 0; i < step_mem->partitions; i++)
+  {
+    // printf("-----------------------\ni = %d\nstep = %ld\n", i, ark_mem->nst);
+    // IDAPrintAllStats(step_mem->ida_mems[i], stdout, SUN_OUTPUTFORMAT_TABLE);
+    retval = IDAReInit(step_mem->ida_mems[i], ark_mem->tcur,
+                       step_mem->user_datas[i].y, step_mem->user_datas[i].yp);
+    if (retval != IDA_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
+                      "Unable to reinitialize IDA for partition %i", i);
+      return ARK_INNERSTEP_FAIL;
+    }
+  }
+
+  return ARK_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------
   Creates the PDAEStep integrator
   ----------------------------------------------------------------------------*/
-void* PDAEStepCreate(PDAEStepComponentResFn* componenet_res_fns,
+void* PDAEStepCreate(PDAEStepComponentResFn component_res_fn,
                      PDAEStepAlgebraicResFn algebraic_res_fn, sunrealtype t0,
                      N_Vector y0, N_Vector yp0, int partitions, SUNContext sunctx)
 {
-  if (componenet_res_fns == NULL)
+  if (component_res_fn == NULL)
   {
     arkProcessError(NULL, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "componenet_res_fns must be a non-NULL array");
-    return (NULL);
-  }
-  for (int i = 0; i < partitions; i++)
-  {
-    if (componenet_res_fns[i] == NULL)
-    {
-      arkProcessError(NULL, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                      "componenet_res_fns[%i] must be a non-NULL", i);
-      return (NULL);
-    }
+                    "component_res_fn must be non-NULL");
+    return NULL;
   }
 
   if (algebraic_res_fn == NULL)
@@ -527,7 +546,8 @@ void* PDAEStepCreate(PDAEStepComponentResFn* componenet_res_fns,
     }
 
     step_mem->user_datas[i].ark_mem           = ark_mem;
-    step_mem->user_datas[i].component_res_fn  = componenet_res_fns[i];
+    step_mem->user_datas[i].partition         = i;
+    step_mem->user_datas[i].component_res_fn  = component_res_fn;
     step_mem->user_datas[i].component_res_jac = NULL;
 
     retval = IDAInit(step_mem->ida_mems[i], pdaeStep_Residual, t0,
@@ -652,8 +672,7 @@ int PDAEStepGetPartitionIntegrator(void* arkode_mem, int partition, void** ida_m
   return ARK_SUCCESS;
 }
 
-int PDAEStepSetPartitionJacobian(void* arkode_mem, int partition,
-                                 PDAEStepLsComponentJacFn jac)
+int PDAEStepSetPartitionJacobian(void* arkode_mem, PDAEStepLsComponentJacFn jac)
 {
   ARKodeMem ark_mem          = NULL;
   ARKodePDAEStepMem step_mem = NULL;
@@ -661,15 +680,10 @@ int PDAEStepSetPartitionJacobian(void* arkode_mem, int partition,
                                             &step_mem);
   if (retval != ARK_SUCCESS) { return retval; }
 
-  if (partition < 0 || partition >= step_mem->partitions)
+  for (int partition = 0; partition < step_mem->partitions; partition++)
   {
-    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "The partition index is %i but must be between 0 and %i",
-                    partition, step_mem->partitions - 1);
-    return ARK_ILL_INPUT;
+    step_mem->user_datas[partition].component_res_jac = jac;
   }
-
-  step_mem->user_datas[partition].component_res_jac = jac;
 
   return ARK_SUCCESS;
 }
