@@ -219,7 +219,6 @@ int main(int argc, char* argv[])
 
   // Initial time, time between outputs, output time
   sunrealtype t     = ZERO;
-  sunrealtype t2    = ZERO;
   sunrealtype dTout = udata.tf / uopts.nout;
   sunrealtype tout  = dTout;
 
