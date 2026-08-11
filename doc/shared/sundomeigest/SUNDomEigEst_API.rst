@@ -247,6 +247,21 @@ instead of supplying a dummy routine.
       A :c:type:`SUNErrCode`.
 
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint(SUNDomEigEstimator DEE, N_Vector Fyt)
+
+   This *optional* function sets the value of the right-hand side function at the linearization point when using
+   :c:func:`SUNDomEigEstimator_SetRhs`.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *Fyt* -- the value of the right-hand side function at the linearization point.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE, int num_iters)
 
    This *optional* routine sets the number of preprocessing matrix-vector
