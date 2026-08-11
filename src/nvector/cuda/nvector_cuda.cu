@@ -149,6 +149,7 @@ N_Vector N_VNewEmpty_Cuda(SUNContext sunctx)
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Cuda;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Cuda;
   v->ops->nvsetarraypointer       = N_VSetHostArrayPointer_Cuda;
+  v->ops->nvsetdevicearraypointer = N_VSetDeviceArrayPointer_Cuda;
 
   /* standard vector operations */
   v->ops->nvlinearsum    = N_VLinearSum_Cuda;

@@ -5,6 +5,9 @@
 
 **New Features and Enhancements**
 
+Added the function :c:func:`N_VSetDeviceArrayPointer` to the N_Vector API to set
+the device data pointer for vector implementations with a device memory space.
+
 **Bug Fixes**
 
 **Deprecation Notices**
