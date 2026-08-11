@@ -6,6 +6,9 @@
 
 ### New Features and Enhancements
 
+Added the function `N_VSetDeviceArrayPointer` to the N_Vector API to set the
+device data pointer for vector implementations with a device memory space.
+
 ### Bug Fixes
 
 Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point
