@@ -36,7 +36,9 @@ endif()
 
 # Turn off the CMake 4.4+ warning about absolute paths in install destinations.
 # We allow installing examples outside of the CMAKE_INSTALL_PREFIX.
-cmake_diagnostic(SET CMD_INSTALL_ABSOLUTE_DESTINATION IGNORE)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.4")
+  cmake_diagnostic(SET CMD_INSTALL_ABSOLUTE_DESTINATION IGNORE)
+endif()
 
 # Project SUNDIALS (initially only C supported) sets PROJECT_SOURCE_DIR and
 # PROJECT_BINARY_DIR variables.
