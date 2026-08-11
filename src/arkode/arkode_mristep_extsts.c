@@ -211,6 +211,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     ARKodeFree(&sts_mem);
     return NULL;
   }
+  MRIStepCoupling_Free(MRIC);
 
   /* return with the constructed MRIStep object */
   return arkode_mem;

@@ -688,6 +688,17 @@ void mriStep_Free(ARKodeMem ark_mem)
     }
     step_mem->nfusedopvecs = 0;
 
+    /* free the extsts_inner_stepper (if applicable) */
+    if (step_mem->extsts_inner_stepper != NULL)
+    {
+      ARKodeFree(&step_mem->extsts_inner_stepper->sts_mem);
+      step_mem->extsts_inner_stepper->sts_mem = NULL;
+      MRIStepInnerStepper_Free(&step_mem->extsts_inner_stepper->inner_stepper);
+      step_mem->extsts_inner_stepper->inner_stepper = NULL;
+      free(step_mem->extsts_inner_stepper);
+      step_mem->extsts_inner_stepper = NULL;
+    }
+
     /* free the time stepper module itself */
     free(ark_mem->step_mem);
     ark_mem->step_mem = NULL;

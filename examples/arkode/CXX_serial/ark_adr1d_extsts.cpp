@@ -191,6 +191,7 @@ int main(int argc, char* argv[])
     if (check_ptr(B, "ARKodeButcherTable_Load")) { return 1; }
     C = MRIStepCoupling_MIStoMRI(B, B->q, B->p);
     if (check_ptr(C, "MRIStepCoupling_MIStoMRI")) { return 1; }
+    ARKodeButcherTable_Free(B);
   }
   else
   {
@@ -269,10 +270,10 @@ int main(int argc, char* argv[])
   // Clean up
   // --------
 
-  ARKodeFree(&arkode_mem);
   N_VDestroy(y);
   SUNMatDestroy(A);
   SUNLinSolFree(LS);
+  ARKodeFree(&arkode_mem);
 
   return 0;
 }
