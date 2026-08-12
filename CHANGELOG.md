@@ -6,6 +6,9 @@
 
 ### New Features and Enhancements
 
+Added the function `N_VSetDeviceArrayPointer` to the N_Vector API to set the
+device data pointer for vector implementations with a device memory space.
+
 ### Bug Fixes
 
 Fixed duplicate keys in IDA and IDAS logging output from consistent initial
