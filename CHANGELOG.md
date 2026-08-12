@@ -1,5 +1,18 @@
 # SUNDIALS Changelog
 
+## Changes to SUNDIALS in release X.Y.Z
+
+### Major Features
+
+### New Features and Enhancements
+
+Added the function `N_VSetDeviceArrayPointer` to the N_Vector API to set the
+device data pointer for vector implementations with a device memory space.
+
+### Bug Fixes
+
+### Deprecation Notices
+
 ## Changes to SUNDIALS in release 7.8.0
 
 ### New Features and Enhancements
