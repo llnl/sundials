@@ -208,6 +208,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: nvgetarraypointer
   type(C_FUNPTR), public :: nvgetdevicearraypointer
   type(C_FUNPTR), public :: nvsetarraypointer
+  type(C_FUNPTR), public :: nvsetdevicearraypointer
   type(C_FUNPTR), public :: nvgetcommunicator
   type(C_FUNPTR), public :: nvgetlength
   type(C_FUNPTR), public :: nvgetlocallength
@@ -272,6 +273,7 @@ module fsundials_core_mod
  public :: FN_VDestroy
  public :: FN_VSpace
  public :: FN_VSetArrayPointer
+ public :: FN_VSetDeviceArrayPointer
  public :: FN_VGetCommunicator
  public :: FN_VGetLength
  public :: FN_VGetLocalLength
@@ -1243,6 +1245,13 @@ end subroutine
 
 subroutine swigc_FN_VSetArrayPointer(farg1, farg2) &
 bind(C, name="_wrap_FN_VSetArrayPointer")
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+subroutine swigc_FN_VSetDeviceArrayPointer(farg1, farg2) &
+bind(C, name="_wrap_FN_VSetDeviceArrayPointer")
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
@@ -4133,6 +4142,18 @@ type(C_PTR) :: farg2
 farg1 = c_loc(v_data_1d(1))
 farg2 = c_loc(v)
 call swigc_FN_VSetArrayPointer(farg1, farg2)
+end subroutine
+
+subroutine FN_VSetDeviceArrayPointer(d_vdata_1d, v)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(*), target, intent(inout) :: d_vdata_1d
+type(N_Vector), target, intent(inout) :: v
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(d_vdata_1d(1))
+farg2 = c_loc(v)
+call swigc_FN_VSetDeviceArrayPointer(farg1, farg2)
 end subroutine
 
 function FN_VGetCommunicator(v) &
