@@ -305,7 +305,7 @@ sunbooleantype ARKodeButcherTable_IsStifflyAccurate(ARKodeButcherTable B)
   int i;
   for (i = 0; i < B->stages; i++)
   {
-    if (SUNRabs(B->b[i] - B->A[B->stages - 1][i]) > SUN_UNIT_ROUNDOFF)
+    if (SUNRabs(B->b[i] - B->A[B->stages - 1][i]) > 100 * SUN_UNIT_ROUNDOFF)
     {
       return SUNFALSE;
     }
@@ -417,7 +417,7 @@ static int tree_generator_push(tree_generator* gen)
   return ARK_SUCCESS;
 }
 
-/* A utility function to write a tree in text for with t representing a leaf and
+/* A utility function to write a tree in text, with t representing a leaf and
  * [...] representing joining of subtrees to a shared root */
 static void tree_print(int* tree, tree_generator* gen, FILE* outfile)
 {
@@ -812,7 +812,10 @@ int ARKodeButcherTable_CheckARKOrder(ARKodeButcherTable B1, ARKodeButcherTable B
 {
   ARKodeButcherTable tables[] = {B1, B2};
   int retval                  = check_tables(tables, SUNTRUE, q, p, outfile);
-  // TODO(SBR): remove this for SUNDIALS 8 to make this consistent with non-ARK
-  // version of this function
+  // TODO(SBR): Currently ARKodeButcherTable_CheckARKOrder handles invalid
+  // tables differently than ARKodeButcherTable_CheckOrder. In SUNDIALS 8, have
+  // this function return -2 (or better yet a named return code) when B1 or B2
+  // are invalid. The following retval check is a "hack" to maintain backwards
+  // compatibility.
   return (retval == -2) ? -1 : retval;
 }
