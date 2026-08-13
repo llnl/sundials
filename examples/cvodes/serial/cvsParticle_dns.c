@@ -322,6 +322,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   UserData udata     = (UserData)user_data;
   sunrealtype* Jdata = SUNDenseMatrix_Data(J);
 
+  /* Jdata is column-major */
   Jdata[0] = ZERO;
   Jdata[1] = (udata->alpha);
   Jdata[2] = -(udata->alpha);
