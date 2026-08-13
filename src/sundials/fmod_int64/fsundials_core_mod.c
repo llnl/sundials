@@ -4020,6 +4020,22 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs(SUNDomEigEstimator farg1, void *
 }
 
 
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetPreprocessRhs(SUNDomEigEstimator farg1, void *farg2, SUNPreRhsFn farg3) {
+  int fresult ;
+  SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
+  void *arg2 = (void *) 0 ;
+  SUNPreRhsFn arg3 = (SUNPreRhsFn) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (SUNDomEigEstimator)(farg1);
+  arg2 = (void *)(farg2);
+  arg3 = (SUNPreRhsFn)(farg3);
+  result = (SUNErrCode)SUNDomEigEstimator_SetPreprocessRhs(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator farg1, double const *farg2, N_Vector farg3) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;

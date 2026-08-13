@@ -87,6 +87,7 @@ module fsundials_core_mod
   enumerator :: SUN_ERR_DESTROY_FAIL
   enumerator :: SUN_ERR_NOT_IMPLEMENTED
   enumerator :: SUN_ERR_USER_FCN_FAIL
+  enumerator :: SUN_ERR_USER_PRERHSFN_FAIL
   enumerator :: SUN_ERR_DATANODE_NODENOTFOUND
   enumerator :: SUN_ERR_PROFILER_MAPFULL
   enumerator :: SUN_ERR_PROFILER_MAPGET
@@ -108,10 +109,11 @@ module fsundials_core_mod
  public :: SUN_ERR_MINIMUM, SUN_ERR_ARG_CORRUPT, SUN_ERR_ARG_INCOMPATIBLE, SUN_ERR_ARG_OUTOFRANGE, SUN_ERR_ARG_WRONGTYPE, &
     SUN_ERR_ARG_DIMSMISMATCH, SUN_ERR_GENERIC, SUN_ERR_CORRUPT, SUN_ERR_OUTOFRANGE, SUN_ERR_FILE_OPEN, SUN_ERR_OP_FAIL, &
     SUN_ERR_MEM_FAIL, SUN_ERR_MALLOC_FAIL, SUN_ERR_EXT_FAIL, SUN_ERR_DESTROY_FAIL, SUN_ERR_NOT_IMPLEMENTED, &
-    SUN_ERR_USER_FCN_FAIL, SUN_ERR_DATANODE_NODENOTFOUND, SUN_ERR_PROFILER_MAPFULL, SUN_ERR_PROFILER_MAPGET, &
-    SUN_ERR_PROFILER_MAPINSERT, SUN_ERR_PROFILER_MAPKEYNOTFOUND, SUN_ERR_PROFILER_MAPSORT, SUN_ERR_ADJOINT_STEPPERFAILED, &
-    SUN_ERR_ADJOINT_STEPPERINVALIDSTOP, SUN_ERR_CHECKPOINT_NOT_FOUND, SUN_ERR_CHECKPOINT_MISMATCH, SUN_ERR_SUNCTX_CORRUPT, &
-    SUN_ERR_MPI_FAIL, SUN_ERR_UNREACHABLE, SUN_ERR_UNKNOWN, SUN_ERR_MAXIMUM, SUN_SUCCESS
+    SUN_ERR_USER_FCN_FAIL, SUN_ERR_USER_PRERHSFN_FAIL, SUN_ERR_DATANODE_NODENOTFOUND, SUN_ERR_PROFILER_MAPFULL, &
+    SUN_ERR_PROFILER_MAPGET, SUN_ERR_PROFILER_MAPINSERT, SUN_ERR_PROFILER_MAPKEYNOTFOUND, SUN_ERR_PROFILER_MAPSORT, &
+    SUN_ERR_ADJOINT_STEPPERFAILED, SUN_ERR_ADJOINT_STEPPERINVALIDSTOP, SUN_ERR_CHECKPOINT_NOT_FOUND, &
+    SUN_ERR_CHECKPOINT_MISMATCH, SUN_ERR_SUNCTX_CORRUPT, SUN_ERR_MPI_FAIL, SUN_ERR_UNREACHABLE, SUN_ERR_UNKNOWN, &
+    SUN_ERR_MAXIMUM, SUN_SUCCESS
  type, bind(C) :: SwigArrayWrapper
   type(C_PTR), public :: data = C_NULL_PTR
   integer(C_SIZE_T), public :: size = 0
@@ -708,6 +710,7 @@ module fsundials_core_mod
  type, bind(C), public :: SUNDomEigEstimator_Ops
   type(C_FUNPTR), public :: setatimes
   type(C_FUNPTR), public :: setrhs
+  type(C_FUNPTR), public :: setpreprocessrhs
   type(C_FUNPTR), public :: setrhslinearizationpoint
   type(C_FUNPTR), public :: setrhsatlinearizationpoint
   type(C_FUNPTR), public :: setoptions
@@ -735,6 +738,7 @@ module fsundials_core_mod
  public :: FSUNDomEigEstimator_FreeEmpty
  public :: FSUNDomEigEstimator_SetATimes
  public :: FSUNDomEigEstimator_SetRhs
+ public :: FSUNDomEigEstimator_SetPreprocessRhs
  public :: FSUNDomEigEstimator_SetRhsLinearizationPoint
  public :: FSUNDomEigEstimator_SetRhsAtLinearizationPoint
  public :: FSUNDomEigEstimator_SetMaxIters
@@ -3096,6 +3100,16 @@ end function
 
 function swigc_FSUNDomEigEstimator_SetRhs(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNDomEigEstimator_SetRhs") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_FUNPTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNDomEigEstimator_SetPreprocessRhs(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetPreprocessRhs") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -7576,6 +7590,25 @@ farg1 = c_loc(dee)
 farg2 = rhs_data
 farg3 = rhsfn
 fresult = swigc_FSUNDomEigEstimator_SetRhs(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNDomEigEstimator_SetPreprocessRhs(dee, preprocess_rhs_data, preprocessrhsfn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+type(C_PTR) :: preprocess_rhs_data
+type(C_FUNPTR), intent(in), value :: preprocessrhsfn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_FUNPTR) :: farg3 
+
+farg1 = c_loc(dee)
+farg2 = preprocess_rhs_data
+farg3 = preprocessrhsfn
+fresult = swigc_FSUNDomEigEstimator_SetPreprocessRhs(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
