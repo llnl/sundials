@@ -107,8 +107,8 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Power;
-  DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Power;
+  DEE->ops->setatimes        = SUNDomEigEstimator_SetATimes_Power;
+  DEE->ops->setrhs           = SUNDomEigEstimator_SetRhs_Power;
   DEE->ops->setpreprocessrhs = SUNDomEigEstimator_SetPreprocessRhs_Power;
   DEE->ops->setrhslinearizationpoint =
     SUNDomEigEstimator_SetRhsLinearizationPoint_Power;
@@ -222,8 +222,8 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
 }
 
 SUNErrCode SUNDomEigEstimator_SetPreprocessRhs_Power(SUNDomEigEstimator DEE,
-                                                    void* preprocess_rhs_data,
-                                                    SUNPreRhsFn PreprocessRHSfn)
+                                                     void* preprocess_rhs_data,
+                                                     SUNPreRhsFn PreprocessRHSfn)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -257,6 +257,9 @@ SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
 
   N_VScale(ONE, y, PI_CONTENT(DEE)->rhs_linY);
   SUNCheckLastErr();
+
+  /* Update the cached RHS flag */
+  PI_CONTENT(DEE)->Fy_is_current = SUNFALSE;
 
   return SUN_SUCCESS;
 }
@@ -800,9 +803,9 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work                 = PI_CONTENT(DEE)->work;
   N_Vector Fy                   = PI_CONTENT(DEE)->Fy;
 
-  SUNRhsFn rhsfn = PI_CONTENT(DEE)->rhsfn;
+  SUNRhsFn rhsfn               = PI_CONTENT(DEE)->rhsfn;
   SUNPreRhsFn preprocess_rhsfn = PI_CONTENT(DEE)->preprocess_rhsfn;
-  void* rhs_data = PI_CONTENT(DEE)->rhs_data;
+  void* rhs_data               = PI_CONTENT(DEE)->rhs_data;
 
   sunrealtype rhs_linT = PI_CONTENT(DEE)->rhs_linT;
 

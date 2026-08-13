@@ -34,8 +34,7 @@ extern "C" {
 
 typedef int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot,
                         void* user_data);
-typedef int (*SUNPreRhsFn)(sunrealtype t, N_Vector y,
-                           void* user_data);
+typedef int (*SUNPreRhsFn)(sunrealtype t, N_Vector y, void* user_data);
 
 /* -----------------------------------------------------------------
  * Generic definition of SUNDomEigEstimator (DEE)

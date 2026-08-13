@@ -109,8 +109,8 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Arnoldi;
-  DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Arnoldi;
+  DEE->ops->setatimes        = SUNDomEigEstimator_SetATimes_Arnoldi;
+  DEE->ops->setrhs           = SUNDomEigEstimator_SetRhs_Arnoldi;
   DEE->ops->setpreprocessrhs = SUNDomEigEstimator_SetPreprocessRhs_Arnoldi;
   DEE->ops->setrhslinearizationpoint =
     SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi;
@@ -218,9 +218,9 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNDomEigEstimator_SetPreprocessRhs_Arnoldi(
-  SUNDomEigEstimator DEE, void* preprocess_rhs_data,
-  SUNPreRhsFn PreprocessRHSfn)
+SUNErrCode SUNDomEigEstimator_SetPreprocessRhs_Arnoldi(SUNDomEigEstimator DEE,
+                                                       void* preprocess_rhs_data,
+                                                       SUNPreRhsFn PreprocessRHSfn)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -254,6 +254,9 @@ SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(
 
   N_VScale(ONE, y, Arnoldi_CONTENT(DEE)->rhs_linY);
   SUNCheckLastErr();
+
+  /* Update the cached RHS flag */
+  Arnoldi_CONTENT(DEE)->Fy_is_current = SUNFALSE;
 
   return SUN_SUCCESS;
 }
@@ -781,9 +784,9 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work                 = Arnoldi_CONTENT(DEE)->work;
   N_Vector Fy                   = Arnoldi_CONTENT(DEE)->Fy;
 
-  SUNRhsFn rhsfn = Arnoldi_CONTENT(DEE)->rhsfn;
+  SUNRhsFn rhsfn               = Arnoldi_CONTENT(DEE)->rhsfn;
   SUNPreRhsFn preprocess_rhsfn = Arnoldi_CONTENT(DEE)->preprocess_rhsfn;
-  void* rhs_data = Arnoldi_CONTENT(DEE)->rhs_data;
+  void* rhs_data               = Arnoldi_CONTENT(DEE)->rhs_data;
 
   sunrealtype rhs_linT = Arnoldi_CONTENT(DEE)->rhs_linT;
 

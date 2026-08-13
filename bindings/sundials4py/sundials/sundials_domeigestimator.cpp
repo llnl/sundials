@@ -107,8 +107,7 @@ void bind_sundomeigestimator(nb::module_& m)
   m.def(
     "SUNDomEigEstimator_SetPreprocessRhs",
     [](SUNDomEigEstimator DEE,
-       std::function<std::remove_pointer_t<SUNPreRhsFn>> PreRhsFn)
-      -> SUNErrCode
+       std::function<std::remove_pointer_t<SUNPreRhsFn>> PreRhsFn) -> SUNErrCode
     {
       if (!DEE->python) { DEE->python = new SUNDomEigEstimatorFunctionTable; }
 
@@ -118,8 +117,8 @@ void bind_sundomeigestimator(nb::module_& m)
 
       if (PreRhsFn)
       {
-        return SUNDomEigEstimator_SetPreprocessRhs(
-          DEE, fntable, sundomeigestimator_preprocessrhs_wrapper);
+        return SUNDomEigEstimator_SetPreprocessRhs(DEE, fntable,
+                                                   sundomeigestimator_preprocessrhs_wrapper);
       }
       else
       {
