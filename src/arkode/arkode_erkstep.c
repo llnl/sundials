@@ -1449,17 +1449,16 @@ int erkStep_CheckButcherTable(ARKodeMem ark_mem)
   also computes the error estimate ||y-ytilde||_WRMS, where ytilde
   is the embedded solution, and the norm weights come from
   ark_ewt.  This norm value is returned.  The vector form of this
-  estimated error (y-ytilde) is stored in ark_tempv1, in case the
+  estimated error (y-ytilde) is stored in ark_mem->lte, in case the
   calling routine wishes to examine the error locations.
 
-  Note: at this point in the step, the vector ark_tempv1 may be
+  Note: at this point in the step, the vector ark_mem->lte may be
   used as a temporary vector.
   ---------------------------------------------------------------*/
 int erkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
 {
   /* local data */
   int retval, j, nvec;
-  N_Vector y, yerr;
   sunrealtype* cvals;
   N_Vector* Xvecs;
   ARKodeERKStepMem step_mem;
@@ -1472,10 +1471,6 @@ int erkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     return (ARK_MEM_NULL);
   }
   step_mem = (ARKodeERKStepMem)ark_mem->step_mem;
-
-  /* set N_Vector shortcuts */
-  y    = ark_mem->ycur;
-  yerr = ark_mem->tempv1;
 
   /* local shortcuts for fused vector operations */
   cvals = step_mem->cvals;
@@ -1516,7 +1511,7 @@ int erkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
 
     /* call fused vector operation to do the work */
-    retval = N_VLinearCombination(nvec, cvals, Xvecs, y);
+    retval = N_VLinearCombination(nvec, cvals, Xvecs, ark_mem->ycur);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
     /* apply user-supplied step postprocessing function (if supplied) */
@@ -1528,7 +1523,7 @@ int erkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
   }
 
-  /* Compute yerr (if step adaptivity or error accumulation enabled) */
+  /* Compute yerr (if step adaptivity or error accumulation enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
   {
     /* set arrays for fused vector operation */
@@ -1554,11 +1549,11 @@ int erkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
 
     /* call fused vector operation to do the work */
-    retval = N_VLinearCombination(nvec, cvals, Xvecs, yerr);
+    retval = N_VLinearCombination(nvec, cvals, Xvecs, ark_mem->lte);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
     /* fill error norm */
-    *dsmPtr = N_VWrmsNorm(yerr, ark_mem->ewt);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
 
   return (ARK_SUCCESS);

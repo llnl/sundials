@@ -1425,6 +1425,11 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
   if (ark_mem->fn) { N_VPrintFile(ark_mem->fn, outfile); }
   fprintf(outfile, "constraints:\n");
   N_VPrintFile(ark_mem->constraints, outfile);
+  if (ark_mem->lte)
+  {
+    fprintf(outfile, "lte:\n");
+    N_VPrintFile(ark_mem->lte, outfile);
+  }
 #endif
 
   /* Call stepper PrintMem function (if provided) */
@@ -3734,6 +3739,9 @@ sunbooleantype arkAllocVectors(ARKodeMem ark_mem, N_Vector tmpl)
 
   SUNErrCode err = SUN_SUCCESS;
 
+  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte);
+  if (err != SUN_SUCCESS) { return SUNFALSE; }
+
   err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv1);
   if (err != SUN_SUCCESS) { return SUNFALSE; }
 
@@ -3816,6 +3824,13 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
     return (SUNFALSE);
   }
 
+  /* lte */
+  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
+                    &ark_mem->lte))
+  {
+    return (SUNFALSE);
+  }
+
   /* tempv* */
   if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
                     &ark_mem->tempv1))
@@ -3863,6 +3878,7 @@ void arkFreeVectors(ARKodeMem ark_mem)
   arkFreeVec(ark_mem, &ark_mem->ewt);
   if (!ark_mem->rwt_is_ewt) { arkFreeVec(ark_mem, &ark_mem->rwt); }
 
+  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->lte);
   (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv1);
   (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv2);
   (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv3);

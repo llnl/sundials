@@ -1787,7 +1787,7 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
   If timestep adaptivity is enabled, this routine also computes
   the error estimate y-ytilde, where ytilde is the
   embedded solution, and the norm weights come from ark_ewt.
-  This estimate is stored in ark_mem->tempv1, in case the calling
+  This estimate is stored in ark_mem->lte, in case the calling
   routine wishes to examine the error locations.
 
   The output variable dsmPtr should contain a scalar-valued
@@ -2317,11 +2317,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
 
     /* Compute temporal error estimate via difference between step
-       solution and embedding, store in ark_mem->tempv1, and take norm. */
+       solution and embedding, store in ark_mem->lte, and take norm. */
     if (do_embedding)
     {
-      N_VLinearSum(ONE, ark_mem->tempv4, -ONE, ark_mem->ycur, ark_mem->tempv1);
-      *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+      N_VLinearSum(ONE, ark_mem->tempv4, -ONE, ark_mem->ycur, ark_mem->lte);
+      *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
     }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
@@ -2345,7 +2345,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   If timestep adaptivity is enabled, this routine also computes
   the error estimate y-ytilde, where ytilde is the
   embedded solution, and the norm weights come from ark_ewt.
-  This estimate is stored in ark_mem->tempv1, in case the calling
+  This estimate is stored in ark_mem->lte, in case the calling
   routine wishes to examine the error locations.
 
   The output variable dsmPtr should contain a scalar-valued
@@ -2833,12 +2833,12 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   } /* loop over stages */
 
   /* if temporal error estimation is enabled: compute estimate via difference between
-     step solution and embedding, store in ark_mem->tempv1, store norm in dsmPtr, and
+     step solution and embedding, store in ark_mem->lte, store norm in dsmPtr, and
      copy solution back to ycur */
   if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
   {
-    N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->tempv1);
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->lte);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
     N_VScale(ONE, ytilde, ark_mem->ycur);
   }
 
@@ -2859,7 +2859,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   If timestep adaptivity is enabled, this routine also computes
   the error estimate y-ytilde, where ytilde is the
   embedded solution, and the norm weights come from ark_ewt.
-  This estimate is stored in ark_mem->tempv1, in case the calling
+  This estimate is stored in ark_mem->lte, in case the calling
   routine wishes to examine the error locations.
 
   The output variable dsmPtr should contain a scalar-valued
@@ -3232,11 +3232,11 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
 
   /* if temporal error estimation is enabled: compute estimate via difference between
-     step solution and embedding, store in ark_mem->tempv1, and store norm in dsmPtr */
+     step solution and embedding, store in ark_mem->lte, and store norm in dsmPtr */
   if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
   {
-    N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->tempv1);
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->lte);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
 
   return (ARK_SUCCESS);

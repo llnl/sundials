@@ -317,7 +317,7 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
 }
 
 /*---------------------------------------------------------------
-  LSRKStepSetUseAnalyticStabilityRegion sets whether to use the ellipse or the exact 
+  LSRKStepSetUseAnalyticStabilityRegion sets whether to use the ellipse or the exact
   stability region for stability checks.
   ---------------------------------------------------------------*/
 int LSRKStepSetUseAnalyticStabilityRegion(void* arkode_mem,
@@ -993,7 +993,7 @@ int lsrkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele)
   if (ark_mem->fixedstep) { return ARK_STEPPER_UNSUPPORTED; }
 
   /* otherwise, copy local truncation error vector to output */
-  N_VScale(ONE, ark_mem->tempv1, ele);
+  N_VScale(ONE, ark_mem->lte, ele);
   return ARK_SUCCESS;
 }
 
