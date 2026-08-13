@@ -136,26 +136,28 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes        = NULL;
-  content->ATdata        = NULL;
-  content->V             = NULL;
-  content->Av            = NULL;
-  content->v_prev        = NULL;
-  content->rhs_linY      = NULL;
-  content->rhs_linT      = ZERO;
-  content->Fy            = NULL;
-  content->work          = NULL;
-  content->is_complex    = SUNTRUE;
-  content->Fy_is_current = SUNFALSE;
-  content->max_iters     = max_iters;
-  content->num_warmups   = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
-  content->rel_tol       = rel_tol;
-  content->res           = ZERO;
-  content->rhsfn         = NULL;
-  content->rhs_data      = NULL;
-  content->nfevals       = 0;
-  content->num_iters     = 0;
-  content->num_ATimes    = 0;
+  content->ATimes              = NULL;
+  content->ATdata              = NULL;
+  content->V                   = NULL;
+  content->Av                  = NULL;
+  content->v_prev              = NULL;
+  content->rhs_linY            = NULL;
+  content->rhs_linT            = ZERO;
+  content->Fy                  = NULL;
+  content->work                = NULL;
+  content->is_complex          = SUNTRUE;
+  content->Fy_is_current       = SUNFALSE;
+  content->max_iters           = max_iters;
+  content->num_warmups         = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
+  content->rel_tol             = rel_tol;
+  content->res                 = ZERO;
+  content->rhsfn               = NULL;
+  content->rhs_data            = NULL;
+  content->preprocess_rhsfn    = NULL;
+  content->preprocess_rhs_data = NULL;
+  content->nfevals             = 0;
+  content->num_iters           = 0;
+  content->num_ATimes          = 0;
 
   /* Allocate content */
   content->Av = N_VClone(q);
@@ -806,6 +808,7 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   SUNRhsFn rhsfn               = PI_CONTENT(DEE)->rhsfn;
   SUNPreRhsFn preprocess_rhsfn = PI_CONTENT(DEE)->preprocess_rhsfn;
   void* rhs_data               = PI_CONTENT(DEE)->rhs_data;
+  void* preprocess_rhs_data    = PI_CONTENT(DEE)->preprocess_rhs_data;
 
   sunrealtype rhs_linT = PI_CONTENT(DEE)->rhs_linT;
 
@@ -816,7 +819,7 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
     /* If Fy is not current, preprocess and compute it at the linearization point */
     if (preprocess_rhsfn != NULL)
     {
-      retval = preprocess_rhsfn(rhs_linT, y, rhs_data);
+      retval = preprocess_rhsfn(rhs_linT, y, preprocess_rhs_data);
       if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
     }
     retval = rhsfn(rhs_linT, y, Fy, rhs_data);
@@ -840,7 +843,7 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
     /* Preprocess RHS and set Jv = f(tn, y+sig*v) */
     if (preprocess_rhsfn != NULL)
     {
-      retval = preprocess_rhsfn(rhs_linT, work, rhs_data);
+      retval = preprocess_rhsfn(rhs_linT, work, preprocess_rhs_data);
       if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
     }
     retval = rhsfn(rhs_linT, work, Jv, rhs_data);

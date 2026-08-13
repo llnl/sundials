@@ -787,6 +787,7 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
   SUNRhsFn rhsfn               = Arnoldi_CONTENT(DEE)->rhsfn;
   SUNPreRhsFn preprocess_rhsfn = Arnoldi_CONTENT(DEE)->preprocess_rhsfn;
   void* rhs_data               = Arnoldi_CONTENT(DEE)->rhs_data;
+  void* preprocess_rhs_data    = Arnoldi_CONTENT(DEE)->preprocess_rhs_data;
 
   sunrealtype rhs_linT = Arnoldi_CONTENT(DEE)->rhs_linT;
 
@@ -797,7 +798,7 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
     /* If Fy is not current, preprocess and compute it at the linearization point */
     if (preprocess_rhsfn != NULL)
     {
-      retval = preprocess_rhsfn(rhs_linT, y, rhs_data);
+      retval = preprocess_rhsfn(rhs_linT, y, preprocess_rhs_data);
       if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
     }
     retval = rhsfn(rhs_linT, y, Fy, rhs_data);
@@ -821,7 +822,7 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
     /* Preprocess RHS and set Jv = f(tn, y+sig*v) */
     if (preprocess_rhsfn != NULL)
     {
-      retval = preprocess_rhsfn(rhs_linT, work, rhs_data);
+      retval = preprocess_rhsfn(rhs_linT, work, preprocess_rhs_data);
       if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
     }
     retval = rhsfn(rhs_linT, work, Jv, rhs_data);
