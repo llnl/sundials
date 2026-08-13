@@ -1787,8 +1787,9 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
   If temporal error estimation is enabled, this routine also computes
   the error estimate y-ytilde, where ytilde is the
   embedded solution, and the norm weights come from ark_ewt.
-  This estimate is stored in ark_mem->lte, in case the calling
-  routine wishes to examine the error locations.
+  ytilde is temporarily stored in ark_mem->lte, which is eventually
+  replaced with the error estimate, in case the calling routine
+  wishes to examine the error locations.
 
   The output variable dsmPtr should contain a scalar-valued
   estimate of the temporal error from this step, ||y-ytilde||_WRMS
@@ -2378,7 +2379,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   ARKodeMRIStepMem step_mem;          /* outer stepper memory       */
   int stage, j;                       /* stage indices              */
   int retval;                         /* reusable return flag       */
-  N_Vector ytilde;                    /* embedded solution          */
   N_Vector ytemp;                     /* temporary vector           */
   SUNAdaptController_Type adapt_type; /* timestep adaptivity type   */
   sunbooleantype embedding;           /* flag indicating embedding  */
@@ -2406,8 +2406,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
 
   /* set N_Vector shortcuts */
-  ytilde = ark_mem->lte;
-  ytemp  = ark_mem->tempv2;
+  ytemp = ark_mem->tempv2;
 
   /* initialize the current stage index */
   step_mem->istage = step_mem->cur_stage = 0;
@@ -2534,8 +2533,17 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                  : step_mem->stages + 1;
 
   /* Loop over stages */
-  for (stage = 1; stage < max_stages; stage++)
+  for (int stage_idx = 1; stage_idx < max_stages; stage_idx++)
   {
+    /* Set the current stage index, swapping embedding and solution
+       stages so that embedding is computed before the solution */
+    stage = stage_idx;
+    if (stage_idx == step_mem->stages - 1) {
+      stage = step_mem->stages;
+    } else if (stage_idx == step_mem->stages) {
+      stage = step_mem->stages - 1;
+    }
+
     /* Determine if this is an "embedding" or "solution" stage */
     solution  = (stage == step_mem->stages - 1);
     embedding = (stage == step_mem->stages);
@@ -2835,7 +2843,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* If this is the solution stage and temporal error estimation is enabled, archive for error estimation */
-    if (solution && (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE)))
+    if (embedding && (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE)))
     { N_VScale(ONE, ark_mem->ycur, ark_mem->lte); }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
@@ -2847,9 +2855,8 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      copy solution back to ycur */
   if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
   {
-    N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->lte);
+    N_VLinearSum(ONE, ark_mem->lte, -ONE, ark_mem->ycur, ark_mem->lte);
     *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
-    N_VScale(ONE, ytilde, ark_mem->ycur);
   }
 
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
@@ -2869,8 +2876,9 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   If timestep adaptivity is enabled, this routine also computes
   the error estimate y-ytilde, where ytilde is the
   embedded solution, and the norm weights come from ark_ewt.
-  This estimate is stored in ark_mem->lte, in case the calling
-  routine wishes to examine the error locations.
+  ytilde is temporarily stored in ark_mem->lte, which is eventually
+  replaced with the error estimate, in case the calling routine
+  wishes to examine the error locations.
 
   The output variable dsmPtr should contain a scalar-valued
   estimate of the temporal error from this step, ||y-ytilde||_WRMS
@@ -2901,7 +2909,6 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   int is;                             /* stage index in group       */
   int stage, nextstage;               /* current/next stages        */
   int retval;                         /* reusable return flag       */
-  N_Vector ytilde;                    /* embedded solution          */
   N_Vector ytemp;                     /* temporary vector           */
   SUNAdaptController_Type adapt_type; /* timestep adaptivity type   */
   sunrealtype t0, tf;                 /* start/end of each stage    */
@@ -2922,8 +2929,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   *dsmPtr   = ZERO;
 
   /* set N_Vector shortcuts */
-  ytilde = ark_mem->tempv4;
-  ytemp  = ark_mem->tempv2;
+  ytemp = ark_mem->tempv2;
 
   /* initial time for step */
   t0 = ark_mem->tn;
@@ -3229,7 +3235,10 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
 
       /* If this is the embedding stage, archive solution for error estimation */
-      if (embedding) { N_VScale(ONE, ark_mem->ycur, ytilde); }
+      if (embedding) {
+        if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+        N_VScale(ONE, ark_mem->ycur, ark_mem->lte);
+      }
 
       SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -3245,9 +3254,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      step solution and embedding, store in ark_mem->lte, and store norm in dsmPtr */
   if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
   {
-    /* Access the local error vector from the temporary vector stack */
-    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
-    N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->lte);
+    N_VLinearSum(ONE, ark_mem->lte, -ONE, ark_mem->ycur, ark_mem->lte);
     *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
 
