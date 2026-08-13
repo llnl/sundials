@@ -150,9 +150,9 @@ void bind_arkode_mristep(nb::module_& m)
   m.def(
     "MRIStepCreateExtSTS",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> fd,
-      std::function<std::remove_pointer_t<ARKRhsFn>> fse,
-      std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
-      N_Vector y0, SUNContext sunctx)
+       std::function<std::remove_pointer_t<ARKRhsFn>> fse,
+       std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
+       N_Vector y0, SUNContext sunctx)
     {
       auto fd_wrapper  = fd ? mristep_fd_wrapper : nullptr;
       auto fse_wrapper = fse ? mristep_fse_wrapper : nullptr;
@@ -187,7 +187,7 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("fd").none(), nb::arg("fse").none(), nb::arg("fsi").none(),
     nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
-  }
+}
 
 } // namespace sundials4py
 
