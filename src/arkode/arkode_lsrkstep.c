@@ -2890,6 +2890,7 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
 
   if (step_mem->DEE != NULL)
   {
+    /* Pass the current time and solution to the dominant eigenvalue estimator */
     retval = SUNDomEigEstimator_SetRhsLinearizationPoint(step_mem->DEE,
                                                          ark_mem->tn,
                                                          ark_mem->yn);
@@ -2909,6 +2910,19 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
       {
         arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
                         "SUNDomEigEstimator_SetRhsAtLinearizationPoint failed");
+        return ARK_DEE_FAIL;
+      }
+    }
+
+    /* Set the preprocessing function if available */
+    if (ark_mem->PreRhsFn != NULL)
+    {
+      retval = SUNDomEigEstimator_SetPreprocessRhs(step_mem->DEE, ark_mem->user_data,
+                                                  ark_mem->PreRhsFn);
+      if (retval != SUN_SUCCESS)
+      {
+        arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                        "SUNDomEigEstimator_SetPreprocessRhs failed");
         return ARK_DEE_FAIL;
       }
     }

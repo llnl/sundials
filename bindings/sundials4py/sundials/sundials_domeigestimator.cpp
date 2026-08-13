@@ -103,6 +103,30 @@ void bind_sundomeigestimator(nb::module_& m)
       else { return SUNDomEigEstimator_SetRhs(DEE, fntable, nullptr); }
     },
     nb::arg("DEE"), nb::arg("RHSfn").none());
+
+  m.def(
+    "SUNDomEigEstimator_SetPreprocessRhs",
+    [](SUNDomEigEstimator DEE,
+       std::function<std::remove_pointer_t<SUNPreRhsFn>> PreRhsFn)
+      -> SUNErrCode
+    {
+      if (!DEE->python) { DEE->python = new SUNDomEigEstimatorFunctionTable; }
+
+      auto fntable = static_cast<SUNDomEigEstimatorFunctionTable*>(DEE->python);
+
+      fntable->preprocessrhs = nb::cast(PreRhsFn);
+
+      if (PreRhsFn)
+      {
+        return SUNDomEigEstimator_SetPreprocessRhs(
+          DEE, fntable, sundomeigestimator_preprocessrhs_wrapper);
+      }
+      else
+      {
+        return SUNDomEigEstimator_SetPreprocessRhs(DEE, fntable, nullptr);
+      }
+    },
+    nb::arg("DEE"), nb::arg("PreRhsFn").none());
 }
 
 } // namespace sundials4py

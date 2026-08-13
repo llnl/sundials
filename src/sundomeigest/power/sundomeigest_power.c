@@ -109,6 +109,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   /* Attach operations */
   DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Power;
   DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Power;
+  DEE->ops->setpreprocessrhs = SUNDomEigEstimator_SetPreprocessRhs_Power;
   DEE->ops->setrhslinearizationpoint =
     SUNDomEigEstimator_SetRhsLinearizationPoint_Power;
   DEE->ops->setrhsatlinearizationpoint =
@@ -216,6 +217,23 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
 
   DEE->ops->setatimes(DEE, (void*)DEE, dee_DQJtimes_Power);
   SUNCheckLastErr();
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNDomEigEstimator_SetPreprocessRhs_Power(SUNDomEigEstimator DEE,
+                                                    void* preprocess_rhs_data,
+                                                    SUNPreRhsFn PreprocessRHSfn)
+{
+  SUNFunctionBegin(DEE->sunctx);
+
+  SUNAssert(DEE, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(PI_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
+
+  /* set function pointers to integrator-supplied Preprocess RHS routine
+     and data, and return with success */
+  PI_CONTENT(DEE)->preprocess_rhsfn    = PreprocessRHSfn;
+  PI_CONTENT(DEE)->preprocess_rhs_data = preprocess_rhs_data;
 
   return SUN_SUCCESS;
 }
@@ -783,6 +801,7 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector Fy                   = PI_CONTENT(DEE)->Fy;
 
   SUNRhsFn rhsfn = PI_CONTENT(DEE)->rhsfn;
+  SUNPreRhsFn preprocess_rhsfn = PI_CONTENT(DEE)->preprocess_rhsfn;
   void* rhs_data = PI_CONTENT(DEE)->rhs_data;
 
   sunrealtype rhs_linT = PI_CONTENT(DEE)->rhs_linT;
@@ -791,7 +810,12 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
 
   if (!(*Fy_is_current))
   {
-    /* If Fy is not current, compute it at the linearization point */
+    /* If Fy is not current, preprocess and compute it at the linearization point */
+    if (preprocess_rhsfn != NULL)
+    {
+      retval = preprocess_rhsfn(rhs_linT, y, rhs_data);
+      if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
+    }
     retval = rhsfn(rhs_linT, y, Fy, rhs_data);
     (*nfevals)++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
@@ -810,7 +834,12 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
     /* Set work = y + sig*v */
     N_VLinearSum(sig, v, ONE, y, work);
 
-    /* Set Jv = f(tn, y+sig*v) */
+    /* Preprocess RHS and set Jv = f(tn, y+sig*v) */
+    if (preprocess_rhsfn != NULL)
+    {
+      retval = preprocess_rhsfn(rhs_linT, work, rhs_data);
+      if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
+    }
     retval = rhsfn(rhs_linT, work, Jv, rhs_data);
     (*nfevals)++;
     if (retval == 0) { break; }

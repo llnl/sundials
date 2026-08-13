@@ -59,6 +59,9 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */
 
+  SUNPreRhsFn preprocess_rhsfn; /* User provided Preprocess RHS function */
+  void* preprocess_rhs_data;     /* Preprocess RHS function data */
+
   sunrealtype* LAPACK_A; /* The vector which holds rows of the Hessenberg matrix in the given order */
   sunrealtype* LAPACK_wr;    /* Real parts of eigenvalues */
   sunrealtype* LAPACK_wi;    /* Imaginary parts of eigenvalues */
@@ -86,6 +89,11 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Arnoldi(SUNDomEigEstimator DEE,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
                                              void* rhs_data, SUNRhsFn RHSfn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetPreprocessRhs_Arnoldi(SUNDomEigEstimator DEE,
+                                                  void* preprocess_rhs_data,
+                                                  SUNPreRhsFn PreprocessRHSfn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(

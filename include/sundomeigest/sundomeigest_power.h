@@ -57,6 +57,9 @@ struct SUNDomEigEstimatorContent_Power_
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */
 
+  SUNPreRhsFn preprocess_rhsfn; /* User provided Preprocess RHS function */
+  void* preprocess_rhs_data;     /* Preprocess RHS function data */
+
   sunbooleantype is_complex;    /* Flag for complex eigenvalue request */
   sunbooleantype Fy_is_current; /* Flag to track if Fy is current */
 };
@@ -79,6 +82,11 @@ SUNErrCode SUNDomEigEstimator_SetATimes_Power(SUNDomEigEstimator DEE,
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
                                            void* rhs_data, SUNRhsFn RHSfn);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetPreprocessRhs_Power(SUNDomEigEstimator DEE,
+                                                     void* preprocess_rhs_data,
+                                                     SUNPreRhsFn PreprocessRHSfn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetMaxIters_Power(SUNDomEigEstimator DEE,

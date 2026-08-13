@@ -230,6 +230,22 @@ instead of supplying a dummy routine.
 
       A :c:type:`SUNErrCode`.
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetPreprocessRhs(SUNDomEigEstimator DEE, void* preprocess_rhs_data, SUNPreRhsFn PreprocessRHSfn)
+
+   This *optional* function provides a :c:type:`SUNPreRhsFn` function for performing
+   preprocessing of the right-hand side function, as well as a ``void*`` pointer to a data structure
+   used by this routine, to the dominant eigenvalue estimator.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *preprocess_rhs_data* -- pointer to structure for ``PreprocessRHSfn``.
+      * *PreprocessRHSfn* -- function pointer to perform preprocessing of the right-hand side evaluations.  This is typically the same as the problem-defining function supplied to CVODE or ARKODE.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
 
@@ -250,7 +266,8 @@ instead of supplying a dummy routine.
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint(SUNDomEigEstimator DEE, N_Vector Fyt)
 
    This *optional* function sets the value of the right-hand side function at the linearization point when using
-   :c:func:`SUNDomEigEstimator_SetRhs`.
+   :c:func:`SUNDomEigEstimator_SetRhs`.  When this is supplied, the *DEE* module 
+   will use the value instead of re-evaluating the RHS at the linearization point.
 
    **Arguments:**
 
