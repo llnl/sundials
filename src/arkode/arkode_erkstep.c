@@ -1451,9 +1451,6 @@ int erkStep_CheckButcherTable(ARKodeMem ark_mem)
   ark_ewt.  This norm value is returned.  The vector form of this
   estimated error (y-ytilde) is stored in ark_mem->lte, in case the
   calling routine wishes to examine the error locations.
-
-  Note: at this point in the step, the vector ark_mem->lte may be
-  used as a temporary vector.
   ---------------------------------------------------------------*/
 int erkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
 {
@@ -1523,9 +1520,12 @@ int erkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
   }
 
-  /* Compute yerr (if step adaptivity or error accumulation enabled), and store in ark_mem->lte */
+  /* Compute yerr (if temporal error estimation is enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
   {
+    /* Access the local error vector from the temporary vector stack */
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+
     /* set arrays for fused vector operation */
     nvec = 0;
     for (j = 0; j < step_mem->stages; j++)
