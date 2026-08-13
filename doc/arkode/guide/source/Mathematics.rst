@@ -68,17 +68,18 @@ of time-stepping modules supplied with ARKODE, including
 * ERKStep that is optimized for :ref:`explicit Runge--Kutta methods
   <ARKODE.Mathematics.ERK>`
 
-* ExtSTSStep for :ref:`extended Super Time Stepping methods
-  <ARKODE.Mathematics.ExtSTSStep>`
-
 * ForcingStep for :ref:`a forcing method <ARKODE.Mathematics.ForcingStep>`
 
 * LSRKStep that supports :ref:`low-storage Runge--Kutta methods
   <ARKODE.Mathematics.LSRK>`
 
 * MRIStep for :ref:`multirate infinitesimal step (MIS), multirate infinitesimal
-  GARK (MRI-GARK), and implicit-explicit MRI-GARK (IMEX-MRI-GARK) methods
-  <ARKODE.Mathematics.MRIStep>`
+  GARK (MRI-GARK), implicit-explicit MRI-GARK (IMEX-MRI-GARK) methods
+  <ARKODE.Mathematics.MRIStep.MRIGARK>`, :ref:`implicit-explicit stage-restart
+  MRI (IMEX-MRI-SR) methods methods <ARKODE.Mathematics.MRIStep.MRISR>`,
+  :ref:`mulriate exponential Runge--Kutta (MERK) methods
+  <ARKODE.Mathematics.MRIStep.MERK>`, and :ref:`extended Super Time Stepping methods
+  <ARKODE.Mathematics.MRIStep.ExtSTS>`
 
 * SplittingStep for :ref:`operator splitting methods
   <ARKODE.Mathematics.SplittingStep>`
@@ -676,7 +677,7 @@ information, please see the references listed above.
 MIS, MRI-GARK, and IMEX-MRI-GARK Methods
 ----------------------------------------
 
-The methods in IMEX-MRI-GARK family, which includes MIS and MRI-GARK methods,
+The methods in the IMEX-MRI-GARK family, which includes MIS and MRI-GARK methods,
 are defined by a vector of slow stage time abscissae, :math:`c^S \in
 \mathbb{R}^{s}`, and a set of coupling tensors,
 :math:`\Omega\in\mathbb{R}^{(s+1)\times s \times k}` and
@@ -832,8 +833,9 @@ and finally finishing the IVP solve to :math:`t_{n-1}+h^S_n` to obtain :math:`\t
 Extended super time stepping (ExtSTS) methods
 ---------------------------------------------
 
-MRIStep may also be used to implement a class of methods we refer to as "extended super
-time stepping" (ExtSTS) methods, which are designed for problems of the form
+MRIStep may also be used to implement a class of methods we called "extended super
+time stepping" (ExtSTS) methods :cite:p:`Reynolds:26`, which are designed for problems
+of the form
 
 .. math::
    \dot{y} = f^D(t,y) + f^E(t,y) + f^I(t,y), \qquad y(t_0) = y_0.
