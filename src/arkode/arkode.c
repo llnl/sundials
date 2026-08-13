@@ -714,6 +714,13 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     return (ARK_ILL_INPUT);
   }
 
+  /* Return the local error vector to the temporary vector stack if currently in use */
+  if (ark_mem->lte)
+  {
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+  }
+
+
   /* start profiler */
   SUNDIALS_MARK_FUNCTION_BEGIN(ARK_PROFILER);
 
@@ -925,6 +932,12 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
                                       attempts, ark_mem->user_data);
         }
         if (retval != 0) { return (ARK_PRESTEPFN_FAIL); }
+      }
+
+      /* Return the local error vector to the temporary vector stack if currently in use */
+      if (ark_mem->lte)
+      {
+        if (SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
       }
 
       /* Call time stepper module to attempt a step:
@@ -3739,9 +3752,6 @@ sunbooleantype arkAllocVectors(ARKodeMem ark_mem, N_Vector tmpl)
 
   SUNErrCode err = SUN_SUCCESS;
 
-  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte);
-  if (err != SUN_SUCCESS) { return SUNFALSE; }
-
   err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv1);
   if (err != SUN_SUCCESS) { return SUNFALSE; }
 
@@ -3824,13 +3834,6 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
     return (SUNFALSE);
   }
 
-  /* lte */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->lte))
-  {
-    return (SUNFALSE);
-  }
-
   /* tempv* */
   if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
                     &ark_mem->tempv1))
@@ -3878,7 +3881,6 @@ void arkFreeVectors(ARKodeMem ark_mem)
   arkFreeVec(ark_mem, &ark_mem->ewt);
   if (!ark_mem->rwt_is_ewt) { arkFreeVec(ark_mem, &ark_mem->rwt); }
 
-  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->lte);
   (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv1);
   (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv2);
   (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv3);

@@ -3218,7 +3218,6 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
 {
   /* local data */
   int retval, j, nvec;
-  N_Vector y, yerr;
   sunrealtype* cj;
   sunrealtype* bj;
   sunrealtype* dj;
@@ -3235,10 +3234,6 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     return (ARK_MEM_NULL);
   }
   step_mem = (ARKodeARKStepMem)ark_mem->step_mem;
-
-  /* set N_Vector shortcuts, and shortcut to time at end of step */
-  y    = ark_mem->ycur;
-  yerr = ark_mem->lte;
 
   /* local shortcuts for fused vector operations */
   cvals = step_mem->cvals;
@@ -3316,7 +3311,7 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
 
     /*   call fused vector operation to do the work */
-    retval = N_VLinearCombination(nvec, cvals, Xvecs, y);
+    retval = N_VLinearCombination(nvec, cvals, Xvecs, ark_mem->ycur);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
     if (ark_mem->PostProcessStepFn)
@@ -3327,9 +3322,12 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
   }
 
-  /* Compute yerr (if temporal error estimation is enabled). */
+  /* Compute yerr (if temporal error estimation is enabled), and store it in ark_mem->lte. */
   if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
   {
+    /* Access the local error vector from the temporary vector stack */
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+
     /* set arrays for fused vector operation */
     nvec = 0;
     for (j = 0; j < step_mem->stages; j++)
@@ -3375,11 +3373,11 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
 
     /* call fused vector operation to do the work */
-    retval = N_VLinearCombination(nvec, cvals, Xvecs, yerr);
+    retval = N_VLinearCombination(nvec, cvals, Xvecs, ark_mem->lte);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
     /* fill error norm */
-    *dsmPtr = N_VWrmsNorm(yerr, ark_mem->ewt);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
 
   return (ARK_SUCCESS);
@@ -3402,7 +3400,6 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
 {
   /* local data */
   int retval, j, nvec;
-  N_Vector y, yerr;
   sunbooleantype stiffly_accurate;
   sunrealtype* cvals;
   N_Vector* Xvecs;
@@ -3416,10 +3413,6 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     return (ARK_MEM_NULL);
   }
   step_mem = (ARKodeARKStepMem)ark_mem->step_mem;
-
-  /* set N_Vector shortcuts, and shortcut to time at end of step */
-  y    = ark_mem->ycur;
-  yerr = ark_mem->lte;
 
   /* local shortcuts for fused vector operations */
   cvals = step_mem->cvals;
@@ -3471,20 +3464,20 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
 
     /*   call fused vector operation to compute RHS */
-    retval = N_VLinearCombination(nvec, cvals, Xvecs, y);
+    retval = N_VLinearCombination(nvec, cvals, Xvecs, ark_mem->ycur);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
     /* solve for y update (stored in y) */
-    retval = step_mem->msolve((void*)ark_mem, y, step_mem->nlscoef);
+    retval = step_mem->msolve((void*)ark_mem, ark_mem->ycur, step_mem->nlscoef);
     if (retval < 0)
     {
       *dsmPtr = SUN_RCONST(2.0); /* indicate too much error, step with smaller step */
-      N_VScale(ONE, ark_mem->yn, y); /* place old solution into y */
+      N_VScale(ONE, ark_mem->yn, ark_mem->ycur); /* place old solution into ycur */
       return (CONV_FAIL);
     }
 
     /* compute y = yn + update */
-    N_VLinearSum(ONE, ark_mem->yn, ONE, y, y);
+    N_VLinearSum(ONE, ark_mem->yn, ONE, ark_mem->ycur, ark_mem->ycur);
 
     if (ark_mem->PostProcessStepFn)
     {
@@ -3494,9 +3487,12 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
   }
 
-  /* compute yerr (if step adaptivity enabled) */
-  if (!ark_mem->fixedstep)
+  /* compute yerr (if temporal error estimation is enabled) */
+  if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
   {
+    /* Access the local error vector from the temporary vector stack */
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+
     /* compute yerr RHS vector */
     /*   set arrays for fused vector operation */
     nvec = 0;
@@ -3517,11 +3513,11 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     }
 
     /*   call fused vector operation to compute yerr RHS */
-    retval = N_VLinearCombination(nvec, cvals, Xvecs, yerr);
+    retval = N_VLinearCombination(nvec, cvals, Xvecs, ark_mem->lte);
     if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
     /* solve for yerr */
-    retval = step_mem->msolve((void*)ark_mem, yerr, step_mem->nlscoef);
+    retval = step_mem->msolve((void*)ark_mem, ark_mem->lte, step_mem->nlscoef);
     if (retval < 0)
     {
       *dsmPtr = SUN_RCONST(2.0); /* next attempt will reduce step by 'etacf';
@@ -3529,7 +3525,7 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
       return (CONV_FAIL);
     }
     /* fill error norm */
-    *dsmPtr = N_VWrmsNorm(yerr, ark_mem->ewt);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
 
   return (ARK_SUCCESS);

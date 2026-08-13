@@ -968,6 +968,9 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
   {
+    /* Access the local error vector from the temporary vector stack */
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+
     /* Estimate the local error and compute its weighted RMS norm */
     cvals[0] = p8;
     Xvecs[0] = ark_mem->yn;
@@ -1401,6 +1404,9 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
   {
+    /* Access the local error vector from the temporary vector stack */
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+
     /* Estimate the local error and compute its weighted RMS norm */
     cvals[0] = p8;
     Xvecs[0] = ark_mem->yn;
@@ -1481,6 +1487,12 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   const sunrealtype hrsinv  = ark_mem->h * rsinv;
   sunrealtype hbt1, hbt2, hbt3;
 
+  /* Conditionally access the local error vector from the temporary vector stack */
+  if (!ark_mem->fixedstep)
+  {
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+  }
+
   /* Embedding coefficients differ when req_stages == 2 */
   if (step_mem->req_stages == 2)
   {
@@ -1532,7 +1544,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin stage 1 and accumulate embedding into lte */
+  /* Begin stage 1 (optionally accumulate embedding into lte) */
   ark_mem->tcur    = ark_mem->tn + hsm1inv;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -1588,7 +1600,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-    /* Begin stage j (update the state and embedding) */
+    /* Begin stage j (update the state and optionally the embedding) */
     step_mem->istage = j;
     ark_mem->tcur    = ark_mem->tn + j * hsm1inv;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -1740,6 +1752,12 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   const sunrealtype hrsinv = ark_mem->h / rs;
   const int in             = (int)SUNRround(rn);
 
+  /* Conditionally access the local error vector from the temporary vector stack */
+  if (!ark_mem->fixedstep)
+  {
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+  }
+
   /* Begin stage 0 */
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
@@ -1777,7 +1795,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin stage 1 and accumulate embedding into lte */
+  /* Begin stage 1 and (optionally accumulate embedding into lte) */
   ark_mem->tcur    = ark_mem->tn + hrat;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -1833,7 +1851,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-    /* Begin stage j (update the state and embedding) */
+    /* Begin stage j (update the state and optionally the embedding) */
     ark_mem->tcur    = ark_mem->tn + j * hrat;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -1841,8 +1859,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     N_VLinearSum(ONE, ark_mem->ycur, hrat, ark_mem->tempv3, ark_mem->ycur);
     if (!ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3,
-                   ark_mem->lte);
+      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
@@ -1894,7 +1911,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-    /* Begin stage j (update the state and embedding) */
+    /* Begin stage j (update the state and optionally the embedding) */
     ark_mem->tcur    = ark_mem->tn + j * hrat;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -1902,8 +1919,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     N_VLinearSum(ONE, ark_mem->ycur, hrat, ark_mem->tempv3, ark_mem->ycur);
     if (!ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3,
-                   ark_mem->lte);
+      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
@@ -1964,6 +1980,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
                "status = failed vector op, retval = %i", retval);
     return ARK_VECTOROP_ERR;
   }
+  /* Optionally update the embedding */
   if (!ark_mem->fixedstep)
   {
     N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
@@ -2014,7 +2031,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-    /* Begin stage j (update the state and embedding) */
+    /* Begin stage j (update the state and optionally the embedding) */
     ark_mem->tcur    = ark_mem->tn + (j - in) * hrat;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2022,8 +2039,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     N_VLinearSum(ONE, ark_mem->ycur, hrat, ark_mem->tempv3, ark_mem->ycur);
     if (!ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3,
-                   ark_mem->lte);
+      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
     }
 
     /* apply user-supplied stage or step postprocessing function (if supplied) */
@@ -2120,6 +2136,12 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   const sunrealtype hp5    = ark_mem->h * SUN_RCONST(0.5);
   const sunrealtype hrsinv = ark_mem->h / rs;
 
+  /* Conditionally access the local error vector from the temporary vector stack */
+  if (!ark_mem->fixedstep)
+  {
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+  }
+
   /* Begin stage 0 */
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
@@ -2157,7 +2179,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin stage 1 and accumulate embedding into lte */
+  /* Begin stage 1 (and optionally accumulate embedding into lte) */
   ark_mem->tcur    = ark_mem->tn + hp5;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2207,7 +2229,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin stage 2 */
+  /* Begin stage 2 (and optionally accumulate embedding into lte) */
   ark_mem->tcur    = ark_mem->tn + ark_mem->h;
   step_mem->istage = 2;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2258,7 +2280,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin stage 3 */
+  /* Begin stage 3 (and optionally accumulate embedding into lte) */
   ark_mem->tcur    = ark_mem->tn + hp5;
   step_mem->istage = 3;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2344,7 +2366,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
 
-  /* Compute yerr (if step adaptivity enabled) */
+  /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
   {
     N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
@@ -2405,6 +2427,12 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   const sunrealtype hsixth = ark_mem->h / SIX;
   const sunrealtype hfifth = ark_mem->h / FIVE;
 
+  /* Conditionally access the local error vector from the temporary vector stack */
+  if (!ark_mem->fixedstep)
+  {
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
+  }
+
   /* Begin stage 0 */
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
@@ -2445,7 +2473,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Copy yn into tempv2 for use in later stages */
   N_VScale(ONE, ark_mem->yn, ark_mem->tempv2);
 
-  /* Begin stage 1 and accumulate embedding into lte */
+  /* Begin stage 1 (and optionally accumulate embedding into lte) */
   ark_mem->tcur    = ark_mem->tn + hsixth;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2502,7 +2530,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-    /* Begin stage j (update the state and embedding) */
+    /* Begin stage j (update the state and optionally theembedding) */
     if (j == 5) { ark_mem->tcur = ark_mem->tn + 2 * hsixth; }
     else { ark_mem->tcur = ark_mem->tn + j * hsixth; }
     step_mem->istage = j;
@@ -2571,7 +2599,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-    /* Begin stage j (update the state and embedding) */
+    /* Begin stage j (update the state and optionally the embedding) */
     ark_mem->tcur    = ark_mem->tn + (j - 3) * hsixth;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2664,7 +2692,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
 
-  /* Compute yerr (if step adaptivity enabled) */
+  /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
   {
     SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->lte,
