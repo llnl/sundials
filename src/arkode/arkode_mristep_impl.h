@@ -293,7 +293,7 @@ int mriStep_SetCoupling(ARKodeMem ark_mem);
 int mriStep_CheckCoupling(ARKodeMem ark_mem);
 int mriStep_StageERKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
                          sunrealtype t0, sunrealtype tf, N_Vector ycur,
-                         N_Vector ytemp, sunbooleantype get_inner_dsm);
+                         sunbooleantype get_inner_dsm);
 int mriStep_StageERKNoFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem, int is);
 int mriStep_StageDIRKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem, int is,
                           int* nflagPtr);
