@@ -421,14 +421,21 @@ int mriStep_NlsLSetup(sunbooleantype jbad, sunbooleantype* jcur, void* arkode_me
   /* update convfail based on jbad flag */
   if (jbad) { step_mem->convfail = ARK_FAIL_BAD_J; }
 
-  /* Use ARKODE's tempv1, tempv2 and tempv3 as
-     temporary vectors for the linear solver setup routine */
+  /* Retrieve temporary vectors from the stack for the linear solver setup routine */
+  N_Vector tmp1 = NULL;
+  N_Vector tmp2 = NULL;
+  N_Vector tmp3 = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp3)) { return ARK_MEM_FAIL; }
   step_mem->nsetups++;
   retval = step_mem->lsetup(ark_mem, step_mem->convfail, ark_mem->tcur,
                             ark_mem->ycur,
                             step_mem->Fsi[step_mem->stage_map[step_mem->istage]],
-                            &(step_mem->jcur), ark_mem->tempv1, ark_mem->tempv2,
-                            ark_mem->tempv3);
+                            &(step_mem->jcur), tmp1, tmp2, tmp3);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp3)) { return ARK_MEM_FAIL; }
 
   /* update Jacobian status */
   *jcur = step_mem->jcur;
