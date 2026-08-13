@@ -279,7 +279,7 @@ int ARKodeSStolerances(void* arkode_mem, sunrealtype reltol, sunrealtype abstol)
   }
 
   /* Ensure that vector supports N_VAddConst */
-  if (!ark_mem->tempv1->ops->nvaddconst)
+  if (!ark_mem->ycur->ops->nvaddconst)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "N_VAddConst unimplemented (required for scalar abstol)");
@@ -461,7 +461,7 @@ int ARKodeResStolerance(void* arkode_mem, sunrealtype rabstol)
   }
 
   /* Ensure that vector supports N_VAddConst */
-  if (!ark_mem->tempv1->ops->nvaddconst)
+  if (!ark_mem->ycur->ops->nvaddconst)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "N_VAddConst unimplemented (required for scalar rabstol)");
@@ -1423,16 +1423,6 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
   N_VPrintFile(ark_mem->yn, outfile);
   fprintf(outfile, "fn:\n");
   if (ark_mem->fn) { N_VPrintFile(ark_mem->fn, outfile); }
-  fprintf(outfile, "tempv1:\n");
-  N_VPrintFile(ark_mem->tempv1, outfile);
-  fprintf(outfile, "tempv2:\n");
-  N_VPrintFile(ark_mem->tempv2, outfile);
-  fprintf(outfile, "tempv3:\n");
-  N_VPrintFile(ark_mem->tempv3, outfile);
-  fprintf(outfile, "tempv4:\n");
-  N_VPrintFile(ark_mem->tempv4, outfile);
-  fprintf(outfile, "tempv5:\n");
-  N_VPrintFile(ark_mem->tempv5, outfile);
   fprintf(outfile, "constraints:\n");
   N_VPrintFile(ark_mem->constraints, outfile);
 #endif
@@ -1731,8 +1721,8 @@ int arkRwtSet(N_Vector y, N_Vector weight, void* data)
   /* return if rwt is just ewt */
   if (ark_mem->rwt_is_ewt) { return (0); }
 
-  /* put M*y into ark_tempv1 */
-  My = ark_mem->tempv1;
+  /* get a temporary vector to store M*y */
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &My)) { return ARK_MEM_FAIL; }
   if (ark_mem->step_mmult != NULL)
   {
     flag = ark_mem->step_mmult((void*)ark_mem, y, My);
@@ -1749,6 +1739,9 @@ int arkRwtSet(N_Vector y, N_Vector weight, void* data)
   case ARK_SS: flag = arkRwtSetSS(ark_mem, My, weight); break;
   case ARK_SV: flag = arkRwtSetSV(ark_mem, My, weight); break;
   }
+
+  /* return the temporary vector to the stack */
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &My)) { return ARK_MEM_FAIL; }
 
   return (flag);
 }
@@ -1982,14 +1975,14 @@ sunbooleantype arkCheckNvectorOptional(ARKodeMem ark_mem)
   /* If using a built-in routine for error/residual weights with abstol==0,
      ensure that N_VMin is available */
   if ((!ark_mem->user_efun) && (ark_mem->atolmin0) &&
-      (!ark_mem->tempv1->ops->nvmin))
+      (!ark_mem->ycur->ops->nvmin))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "N_VMin unimplemented (required by error-weight function)");
     return (SUNFALSE);
   }
   if ((!ark_mem->user_rfun) && (!ark_mem->rwt_is_ewt) && (ark_mem->Ratolmin0) &&
-      (!ark_mem->tempv1->ops->nvmin))
+      (!ark_mem->ycur->ops->nvmin))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
                     __FILE__, "N_VMin unimplemented (required by residual-weight function)");
@@ -1999,14 +1992,14 @@ sunbooleantype arkCheckNvectorOptional(ARKodeMem ark_mem)
   /* If the user has not specified a step size (and it will be estimated
      internally), ensure that N_VDiv and N_VMaxNorm are available */
   if ((ark_mem->h0u == ZERO) && (ark_mem->hin == ZERO) &&
-      (!ark_mem->tempv1->ops->nvdiv))
+      (!ark_mem->ycur->ops->nvdiv))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
                     __FILE__, "N_VDiv unimplemented (required for initial step estimation)");
     return (SUNFALSE);
   }
   if ((ark_mem->h0u == ZERO) && (ark_mem->hin == ZERO) &&
-      (!ark_mem->tempv1->ops->nvmaxnorm))
+      (!ark_mem->ycur->ops->nvmaxnorm))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
                     __FILE__, "N_VMaxNorm unimplemented (required for initial step estimation)");
@@ -2015,14 +2008,14 @@ sunbooleantype arkCheckNvectorOptional(ARKodeMem ark_mem)
 
   /* If using a scalar-valued absolute tolerance (for either the state or
      residual), then ensure that N_VAddConst is available */
-  if ((ark_mem->itol == ARK_SS) && (!ark_mem->tempv1->ops->nvaddconst))
+  if ((ark_mem->itol == ARK_SS) && (!ark_mem->ycur->ops->nvaddconst))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "N_VAddConst unimplemented (required for scalar abstol)");
     return (SUNFALSE);
   }
   if ((!ark_mem->rwt_is_ewt) && (ark_mem->ritol == ARK_SS) &&
-      (!ark_mem->tempv1->ops->nvaddconst))
+      (!ark_mem->ycur->ops->nvaddconst))
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "N_VAddConst unimplemented (required for scalar rabstol)");
@@ -2097,13 +2090,17 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
   /* Check to see if y0 satisfies constraints */
   if (ark_mem->constraints)
   {
-    conOK = N_VConstrMask(ark_mem->constraints, ark_mem->yn, ark_mem->tempv1);
+    /* Use a temporary vector to store the constraint violations */
+    N_Vector viol = NULL;
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &viol)) { return ARK_MEM_FAIL; }
+    conOK = N_VConstrMask(ark_mem->constraints, ark_mem->yn, viol);
     if (!conOK)
     {
       arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                       MSG_ARK_Y0_FAIL_CONSTR);
       return (ARK_ILL_INPUT);
     }
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &viol)) { return ARK_MEM_FAIL; }
   }
 
   /* Load initial error weights */
@@ -2702,11 +2699,15 @@ sunrealtype arkUpperBoundH0(ARKodeMem ark_mem, sunrealtype tdist)
   sunrealtype hub_inv, hub;
   N_Vector temp1, temp2;
 
+  /* Check out temporary vectors */
+  SUNVecStack_Pop(ark_mem->temp_vec_stack, &temp1);
+  SUNAssertNoRet(temp1 != NULL, SUN_ERR_MEM_FAIL);
+  SUNVecStack_Pop(ark_mem->temp_vec_stack, &temp2);
+  SUNAssertNoRet(temp2 != NULL, SUN_ERR_MEM_FAIL);
+
   /* Bound based on |y0|/|y0'| -- allow at most an increase of
    * H0_UBFACTOR in y0 (based on a forward Euler step). The weight
    * factor is used as a safeguard against zero components in y0. */
-  temp1 = ark_mem->tempv1;
-  temp2 = ark_mem->tempv2;
 
   N_VAbs(ark_mem->yn, temp2);
   ark_mem->efun(ark_mem->yn, temp1, ark_mem->e_data);
@@ -2717,6 +2718,10 @@ sunrealtype arkUpperBoundH0(ARKodeMem ark_mem, sunrealtype tdist)
 
   N_VDiv(temp2, temp1, temp1);
   hub_inv = N_VMaxNorm(temp1);
+
+  /* Return temporary vectors to the stack */
+  SUNVecStack_Push(ark_mem->temp_vec_stack, &temp1);
+  SUNVecStack_Push(ark_mem->temp_vec_stack, &temp2);
 
   /* bound based on tdist -- allow at most a step of magnitude
    * H0_UBFACTOR * tdist */
@@ -2737,24 +2742,30 @@ sunrealtype arkUpperBoundH0(ARKodeMem ark_mem, sunrealtype tdist)
 int arkYddNorm(ARKodeMem ark_mem, sunrealtype hg, sunrealtype* yddnrm)
 {
   int retval;
+  N_Vector ftemp;
+
+  /* Get a temporary vector for RHS evaluations*/
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ftemp)) { return ARK_MEM_FAIL; }
 
   /* increment y with a multiple of f */
   N_VLinearSum(hg, ark_mem->fn, ONE, ark_mem->yn, ark_mem->ycur);
 
   /* compute y', via the ODE RHS routine */
   retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tcur + hg, ark_mem->ycur,
-                                 ark_mem->tempv1, ARK_FULLRHS_OTHER);
+                                 ftemp, ARK_FULLRHS_OTHER);
   if (retval != 0) { return (ARK_RHSFUNC_FAIL); }
 
   /* difference new f and original f to estimate y'' */
-  N_VLinearSum(ONE / hg, ark_mem->tempv1, -ONE / hg, ark_mem->fn,
-               ark_mem->tempv1);
+  N_VLinearSum(ONE / hg, ftemp, -ONE / hg, ark_mem->fn, ftemp);
 
   /* reset ycur to equal yn (unnecessary?) */
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
   /* compute norm of y'' */
-  *yddnrm = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+  *yddnrm = N_VWrmsNorm(ftemp, ark_mem->ewt);
+
+  /* Return temporary vector to the stack */
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &ftemp)) { return ARK_MEM_FAIL; }
 
   return (ARK_SUCCESS);
 }
@@ -3043,14 +3054,17 @@ int arkHandleFailure(ARKodeMem ark_mem, int flag)
 int arkEwtSetSS(N_Vector ycur, N_Vector weight, void* arkode_mem)
 {
   ARKodeMem ark_mem = (ARKodeMem)arkode_mem;
-  N_VAbs(ycur, ark_mem->tempv1);
-  N_VScale(ark_mem->reltol, ark_mem->tempv1, ark_mem->tempv1);
-  N_VAddConst(ark_mem->tempv1, ark_mem->Sabstol, ark_mem->tempv1);
+  N_Vector temp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
+  N_VAbs(ycur, temp);
+  N_VScale(ark_mem->reltol, temp, temp);
+  N_VAddConst(temp, ark_mem->Sabstol, temp);
   if (ark_mem->atolmin0)
   {
-    if (N_VMin(ark_mem->tempv1) <= ZERO) { return (-1); }
+    if (N_VMin(temp) <= ZERO) { return (-1); }
   }
-  N_VInv(ark_mem->tempv1, weight);
+  N_VInv(temp, weight);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
   return (0);
 }
 
@@ -3070,14 +3084,16 @@ int arkEwtSetSS(N_Vector ycur, N_Vector weight, void* arkode_mem)
 int arkEwtSetSV(N_Vector ycur, N_Vector weight, void* arkode_mem)
 {
   ARKodeMem ark_mem = (ARKodeMem)arkode_mem;
-  N_VAbs(ycur, ark_mem->tempv1);
-  N_VLinearSum(ark_mem->reltol, ark_mem->tempv1, ONE, ark_mem->Vabstol,
-               ark_mem->tempv1);
+  N_Vector temp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
+  N_VAbs(ycur, temp);
+  N_VLinearSum(ark_mem->reltol, temp, ONE, ark_mem->Vabstol, temp);
   if (ark_mem->atolmin0)
   {
-    if (N_VMin(ark_mem->tempv1) <= ZERO) { return (-1); }
+    if (N_VMin(temp) <= ZERO) { return (-1); }
   }
-  N_VInv(ark_mem->tempv1, weight);
+  N_VInv(temp, weight);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
   return (0);
 }
 
@@ -3111,14 +3127,17 @@ int arkEwtSetSmallReal(SUNDIALS_MAYBE_UNUSED N_Vector ycur, N_Vector weight,
   ---------------------------------------------------------------*/
 int arkRwtSetSS(ARKodeMem ark_mem, N_Vector My, N_Vector weight)
 {
-  N_VAbs(My, ark_mem->tempv1);
-  N_VScale(ark_mem->reltol, ark_mem->tempv1, ark_mem->tempv1);
-  N_VAddConst(ark_mem->tempv1, ark_mem->SRabstol, ark_mem->tempv1);
+  N_Vector temp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
+  N_VAbs(My, temp);
+  N_VScale(ark_mem->reltol, temp, temp);
+  N_VAddConst(temp, ark_mem->SRabstol, temp);
   if (ark_mem->Ratolmin0)
   {
-    if (N_VMin(ark_mem->tempv1) <= ZERO) { return (-1); }
+    if (N_VMin(temp) <= ZERO) { return (-1); }
   }
-  N_VInv(ark_mem->tempv1, weight);
+  N_VInv(temp, weight);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
   return (0);
 }
 
@@ -3133,14 +3152,16 @@ int arkRwtSetSS(ARKodeMem ark_mem, N_Vector My, N_Vector weight)
   ---------------------------------------------------------------*/
 int arkRwtSetSV(ARKodeMem ark_mem, N_Vector My, N_Vector weight)
 {
-  N_VAbs(My, ark_mem->tempv1);
-  N_VLinearSum(ark_mem->reltol, ark_mem->tempv1, ONE, ark_mem->VRabstol,
-               ark_mem->tempv1);
+  N_Vector temp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
+  N_VAbs(My, temp);
+  N_VLinearSum(ark_mem->reltol, temp, ONE, ark_mem->VRabstol, temp);
   if (ark_mem->Ratolmin0)
   {
-    if (N_VMin(ark_mem->tempv1) <= ZERO) { return (-1); }
+    if (N_VMin(temp) <= ZERO) { return (-1); }
   }
-  N_VInv(ark_mem->tempv1, weight);
+  N_VInv(temp, weight);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
   return (0);
 }
 
@@ -3386,8 +3407,11 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   SUNLogInfo(ARK_LOGGER, "begin-constraint-check", "");
 
   sunbooleantype constraintsPassed;
-  N_Vector mm  = ark_mem->tempv4;
-  N_Vector tmp = ark_mem->tempv3;
+  N_Vector mm, tmp;
+
+  /* Get temporary vectors from the stack */
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &mm)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
 
   /* Check constraints and get mask vector mm for where constraints failed */
   constraintsPassed = N_VConstrMask(ark_mem->constraints, ark_mem->ycur, mm);
@@ -3430,6 +3454,10 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   N_VProd(mm, tmp, tmp);
   ark_mem->eta = SUN_RCONST(0.9) * N_VMinQuotient(ark_mem->yn, tmp);
   ark_mem->eta = SUNMAX(ark_mem->eta, TENTH);
+
+  /* Push the temporary vectors back onto the stack */
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &mm)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
 
   /* Signal for Jacobian/preconditioner setup */
   *nflag = PREV_CONV_FAIL;
@@ -3818,6 +3846,8 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
   {
     return (SUNFALSE);
   }
+
+  /* ToDo: resize the ARKODE vector stack? */
 
   return (SUNTRUE);
 }
