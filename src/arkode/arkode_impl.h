@@ -478,6 +478,7 @@ struct ARKodeMemRec
   ARKTimestepSetForcingFn step_setforcing;
 
   /* N_Vector storage */
+  N_Vector lte;                 /* local truncation error vector               */
   N_Vector ewt;                 /* error weight vector                        */
   N_Vector rwt;                 /* residual weight vector                     */
   sunbooleantype rwt_is_ewt;    /* SUNTRUE if rwt is a pointer to ewt         */

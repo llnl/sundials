@@ -3208,7 +3208,7 @@ int arkStep_StageSetup(ARKodeMem ark_mem, sunbooleantype implicit)
   also computes the error estimate ||y-ytilde||_WRMS, where ytilde
   is the embedded solution, and the norm weights come from
   ark_ewt.  This norm value is returned.  The vector form of this
-  estimated error (y-ytilde) is stored in ark_mem->tempv1, in case
+  estimated error (y-ytilde) is stored in ark_mem->lte, in case
   the calling routine wishes to examine the error locations.
 
   This version assumes either an identity or time-dependent mass
@@ -3238,7 +3238,7 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
 
   /* set N_Vector shortcuts, and shortcut to time at end of step */
   y    = ark_mem->ycur;
-  yerr = ark_mem->tempv1;
+  yerr = ark_mem->lte;
 
   /* local shortcuts for fused vector operations */
   cvals = step_mem->cvals;
@@ -3393,7 +3393,7 @@ int arkStep_ComputeSolutions(ARKodeMem ark_mem, sunrealtype* dsmPtr)
   also computes the error estimate ||y-ytilde||_WRMS, where ytilde
   is the embedded solution, and the norm weights come from
   ark_ewt.  This norm value is returned.  The vector form of this
-  estimated error (y-ytilde) is stored in ark_mem->tempv1, in case
+  estimated error (y-ytilde) is stored in ark_mem->lte, in case
   the calling routine wishes to examine the error locations.
 
   This version assumes a fixed mass matrix.
@@ -3419,7 +3419,7 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
 
   /* set N_Vector shortcuts, and shortcut to time at end of step */
   y    = ark_mem->ycur;
-  yerr = ark_mem->tempv1;
+  yerr = ark_mem->lte;
 
   /* local shortcuts for fused vector operations */
   cvals = step_mem->cvals;

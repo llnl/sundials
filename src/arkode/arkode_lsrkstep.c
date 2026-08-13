@@ -965,7 +965,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (retval < 0) { return ARK_RHSFUNC_FAIL; }
   if (retval > 0) { return RHSFUNC_RECVR; }
 
-  /* Compute yerr (if step adaptivity enabled) */
+  /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
   {
     /* Estimate the local error and compute its weighted RMS norm */
@@ -978,14 +978,14 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     cvals[3] = p4 * ark_mem->h;
     Xvecs[3] = ark_mem->tempv2;
 
-    retval = N_VLinearCombination(4, cvals, Xvecs, ark_mem->tempv1);
+    retval = N_VLinearCombination(4, cvals, Xvecs, ark_mem->lte);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-compute-embedding",
                  "status = failed vector op, retval = %i", retval);
       return ARK_VECTOROP_ERR;
     }
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
   lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv2);
 
@@ -1398,7 +1398,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (retval < 0) { return ARK_RHSFUNC_FAIL; }
   if (retval > 0) { return RHSFUNC_RECVR; }
 
-  /* Compute yerr (if step adaptivity enabled) */
+  /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
   {
     /* Estimate the local error and compute its weighted RMS norm */
@@ -1410,14 +1410,14 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     Xvecs[2] = ark_mem->fn;
     cvals[3] = p4 * ark_mem->h;
     Xvecs[3] = ark_mem->tempv2;
-    retval   = N_VLinearCombination(4, cvals, Xvecs, ark_mem->tempv1);
+    retval   = N_VLinearCombination(4, cvals, Xvecs, ark_mem->lte);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-compute-embedding",
                  "status = failed vector op, retval = %i", retval);
       return ARK_VECTOROP_ERR;
     }
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
     lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv2);
   }
   else
@@ -1532,7 +1532,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin stage 1 and accumulate embedding into tempv1 */
+  /* Begin stage 1 and accumulate embedding into lte */
   ark_mem->tcur    = ark_mem->tn + hsm1inv;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -1540,7 +1540,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   N_VLinearSum(ONE, ark_mem->yn, hsm1inv, ark_mem->fn, ark_mem->ycur);
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->yn, hbt1, ark_mem->fn, ark_mem->tempv1);
+    N_VLinearSum(ONE, ark_mem->yn, hbt1, ark_mem->fn, ark_mem->lte);
   }
 
   /* apply user-supplied stage postprocessing function (if supplied) */
@@ -1596,7 +1596,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     N_VLinearSum(ONE, ark_mem->ycur, hsm1inv, ark_mem->tempv2, ark_mem->ycur);
     if (!ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->tempv1, hbt2, ark_mem->tempv2, ark_mem->tempv1);
+      N_VLinearSum(ONE, ark_mem->lte, hbt2, ark_mem->tempv2, ark_mem->lte);
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
@@ -1673,14 +1673,14 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
 
-  /* Compute yerr (if step adaptivity enabled) */
+  /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->tempv1, hbt3, ark_mem->tempv2, ark_mem->tempv1);
-    SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->tempv1,
+    N_VLinearSum(ONE, ark_mem->lte, hbt3, ark_mem->tempv2, ark_mem->lte);
+    SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->lte,
                         "y_embedded(:) =");
-    N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->tempv1, ark_mem->tempv1);
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->lte, ark_mem->lte);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
 
   return ARK_SUCCESS;
@@ -1777,7 +1777,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin stage 1 and accumulate embedding into tempv1 */
+  /* Begin stage 1 and accumulate embedding into lte */
   ark_mem->tcur    = ark_mem->tn + hrat;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -1785,7 +1785,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   N_VLinearSum(ONE, ark_mem->yn, hrat, ark_mem->fn, ark_mem->ycur);
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->yn, hrsinv, ark_mem->fn, ark_mem->tempv1);
+    N_VLinearSum(ONE, ark_mem->yn, hrsinv, ark_mem->fn, ark_mem->lte);
   }
 
   /* apply user-supplied stage postprocessing function (if supplied) */
@@ -1841,8 +1841,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     N_VLinearSum(ONE, ark_mem->ycur, hrat, ark_mem->tempv3, ark_mem->ycur);
     if (!ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->tempv1, hrsinv, ark_mem->tempv3,
-                   ark_mem->tempv1);
+      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3,
+                   ark_mem->lte);
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
@@ -1902,8 +1902,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     N_VLinearSum(ONE, ark_mem->ycur, hrat, ark_mem->tempv3, ark_mem->ycur);
     if (!ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->tempv1, hrsinv, ark_mem->tempv3,
-                   ark_mem->tempv1);
+      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3,
+                   ark_mem->lte);
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
@@ -1966,7 +1966,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   }
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->tempv1, hrsinv, ark_mem->tempv3, ark_mem->tempv1);
+    N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
   }
 
   /* apply user-supplied stage postprocessing function (if supplied) */
@@ -2022,8 +2022,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     N_VLinearSum(ONE, ark_mem->ycur, hrat, ark_mem->tempv3, ark_mem->ycur);
     if (!ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->tempv1, hrsinv, ark_mem->tempv3,
-                   ark_mem->tempv1);
+      N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3,
+                   ark_mem->lte);
     }
 
     /* apply user-supplied stage or step postprocessing function (if supplied) */
@@ -2054,14 +2054,14 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
 
-  /* Compute yerr (if step adaptivity enabled) */
+  /* Compute yerr (if step adaptivity enabled), and store in lte */
   SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
   if (!ark_mem->fixedstep)
   {
-    SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->tempv1,
+    SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->lte,
                         "y_embedded(:) =");
-    N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->tempv1, ark_mem->tempv1);
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->lte, ark_mem->lte);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
   SUNLogInfo(ARK_LOGGER, "end-compute-embedding", "status = success");
 
@@ -2157,7 +2157,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
-  /* Begin stage 1 and accumulate embedding into tempv1 */
+  /* Begin stage 1 and accumulate embedding into lte */
   ark_mem->tcur    = ark_mem->tn + hp5;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2165,7 +2165,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   N_VLinearSum(ONE, ark_mem->yn, hp5, ark_mem->fn, ark_mem->ycur);
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->yn, hrsinv, ark_mem->fn, ark_mem->tempv1);
+    N_VLinearSum(ONE, ark_mem->yn, hrsinv, ark_mem->fn, ark_mem->lte);
   }
 
   /* apply user-supplied stage postprocessing function (if supplied) */
@@ -2215,7 +2215,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   N_VLinearSum(ONE, ark_mem->ycur, hp5, ark_mem->tempv3, ark_mem->ycur);
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->tempv1, hrsinv, ark_mem->tempv3, ark_mem->tempv1);
+    N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
   }
 
   /* apply user-supplied stage postprocessing function (if supplied) */
@@ -2278,7 +2278,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   }
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->tempv1, hrsinv, ark_mem->tempv3, ark_mem->tempv1);
+    N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
   }
 
   /* apply user-supplied stage postprocessing function (if supplied) */
@@ -2347,12 +2347,12 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* Compute yerr (if step adaptivity enabled) */
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->tempv1, hrsinv, ark_mem->tempv3, ark_mem->tempv1);
-    SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->tempv1,
+    N_VLinearSum(ONE, ark_mem->lte, hrsinv, ark_mem->tempv3, ark_mem->lte);
+    SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->lte,
                         "y_embedded(:) =");
 
-    N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->tempv1, ark_mem->tempv1);
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->lte, ark_mem->lte);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
 
   return ARK_SUCCESS;
@@ -2445,7 +2445,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Copy yn into tempv2 for use in later stages */
   N_VScale(ONE, ark_mem->yn, ark_mem->tempv2);
 
-  /* Begin stage 1 and accumulate embedding into tempv1 */
+  /* Begin stage 1 and accumulate embedding into lte */
   ark_mem->tcur    = ark_mem->tn + hsixth;
   step_mem->istage = 1;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2453,7 +2453,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   N_VLinearSum(ONE, ark_mem->yn, hsixth, ark_mem->fn, ark_mem->ycur);
   if (!ark_mem->fixedstep)
   {
-    N_VLinearSum(ONE, ark_mem->yn, hfifth, ark_mem->fn, ark_mem->tempv1);
+    N_VLinearSum(ONE, ark_mem->yn, hfifth, ark_mem->fn, ark_mem->lte);
   }
 
   /* Evaluate stages j = 2,...,5 */
@@ -2511,8 +2511,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     N_VLinearSum(ONE, ark_mem->ycur, hsixth, ark_mem->tempv3, ark_mem->ycur);
     if (j == 4 && !ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->tempv1, SUN_RCONST(0.3) * ark_mem->h,
-                   ark_mem->tempv3, ark_mem->tempv1);
+      N_VLinearSum(ONE, ark_mem->lte, SUN_RCONST(0.3) * ark_mem->h,
+                   ark_mem->tempv3, ark_mem->lte);
     }
   }
 
@@ -2580,13 +2580,13 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
     if (j == 7 && !ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->tempv1, hfifth, ark_mem->tempv3,
-                   ark_mem->tempv1);
+      N_VLinearSum(ONE, ark_mem->lte, hfifth, ark_mem->tempv3,
+                   ark_mem->lte);
     }
     if (j == 9 && !ark_mem->fixedstep)
     {
-      N_VLinearSum(ONE, ark_mem->tempv1, SUN_RCONST(0.3) * ark_mem->h,
-                   ark_mem->tempv3, ark_mem->tempv1);
+      N_VLinearSum(ONE, ark_mem->lte, SUN_RCONST(0.3) * ark_mem->h,
+                   ark_mem->tempv3, ark_mem->lte);
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
@@ -2667,10 +2667,10 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Compute yerr (if step adaptivity enabled) */
   if (!ark_mem->fixedstep)
   {
-    SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->tempv1,
+    SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->lte,
                         "y_embedded(:) =");
-    N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->tempv1, ark_mem->tempv1);
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->lte, ark_mem->lte);
+    *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
   }
 
   return ARK_SUCCESS;
