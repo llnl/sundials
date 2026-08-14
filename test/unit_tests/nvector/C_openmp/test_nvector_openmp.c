@@ -243,7 +243,10 @@ int main(int argc, char* argv[])
 
   /* Print result */
   if (fails) { printf("FAIL: NVector module failed %i tests \n\n", fails); }
-  else { printf("SUCCESS: NVector module passed all tests \n\n"); }
+  else
+  {
+    printf("SUCCESS: NVector module passed all tests \n\n");
+  }
 
   Test_Finalize();
   return (fails);
@@ -252,18 +255,18 @@ int main(int argc, char* argv[])
 /* ----------------------------------------------------------------------
  * Implementation specific utility functions for vector tests
  * --------------------------------------------------------------------*/
-int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
+int check_ans(sunscalartype ans, N_Vector X, sunindextype local_length)
 {
   int failure = 0;
   sunindextype i;
-  sunrealtype* Xdata;
+  sunscalartype* Xdata;
 
   Xdata = N_VGetArrayPointer(X);
 
   /* check vector data */
-  for (i = 0; i < local_length; i++) { failure += SUNRCompare(Xdata[i], ans); }
+  for (i = 0; i < local_length; i++) { failure += SUNCompare(Xdata[i], ans); }
 
-  return (failure > ZERO) ? (1) : (0);
+  return (failure > 0) ? (1) : (0);
 }
 
 sunbooleantype has_data(N_Vector X)
@@ -272,14 +275,14 @@ sunbooleantype has_data(N_Vector X)
   return (N_VGetArrayPointer(X) == NULL) ? SUNFALSE : SUNTRUE;
 }
 
-void set_element(N_Vector X, sunindextype i, sunrealtype val)
+void set_element(N_Vector X, sunindextype i, sunscalartype val)
 {
   /* set i-th element of data array */
   set_element_range(X, i, i, val);
 }
 
 void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
-                       sunrealtype val)
+                       sunscalartype val)
 {
   sunindextype i;
 
@@ -288,7 +291,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
   for (i = is; i <= ie; i++) { xd[i] = val; }
 }
 
-sunrealtype get_element(N_Vector X, sunindextype i)
+sunscalartype get_element(N_Vector X, sunindextype i)
 {
   /* get i-th element of data array */
   return NV_Ith_OMP(X, i);

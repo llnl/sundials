@@ -62,7 +62,7 @@ struct _N_VectorContent_OpenMP
 {
   sunindextype length;     /* vector length            */
   sunbooleantype own_data; /* data ownership flag      */
-  sunrealtype* data;       /* data array               */
+  sunscalartype* data;     /* data array               */
   int num_threads;         /* number of OpenMP threads */
 };
 
@@ -102,7 +102,7 @@ N_Vector N_VNewEmpty_OpenMP(sunindextype vec_length, int num_threads,
                             SUNContext sunctx);
 
 SUNDIALS_EXPORT
-N_Vector N_VMake_OpenMP(sunindextype vec_length, sunrealtype* v_data_1d,
+N_Vector N_VMake_OpenMP(sunindextype vec_length, sunscalartype* v_data_1d,
                         int num_threads, SUNContext sunctx);
 
 SUNDIALS_EXPORT
@@ -134,15 +134,15 @@ SUNDIALS_EXPORT
 sunscalartype* N_VGetArrayPointer_OpenMP(N_Vector v);
 
 SUNDIALS_EXPORT
-void N_VSetArrayPointer_OpenMP(sunrealtype* v_data, N_Vector v);
+void N_VSetArrayPointer_OpenMP(sunscalartype* v_data, N_Vector v);
 
 /* standard vector operations */
 SUNDIALS_EXPORT
-void N_VLinearSum_OpenMP(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
-                         N_Vector z);
+void N_VLinearSum_OpenMP(sunscalartype a, N_Vector x, sunscalartype b,
+                         N_Vector y, N_Vector z);
 
 SUNDIALS_EXPORT
-void N_VConst_OpenMP(sunrealtype c, N_Vector z);
+void N_VConst_OpenMP(sunscalartype c, N_Vector z);
 
 SUNDIALS_EXPORT
 void N_VProd_OpenMP(N_Vector x, N_Vector y, N_Vector z);
@@ -151,7 +151,7 @@ SUNDIALS_EXPORT
 void N_VDiv_OpenMP(N_Vector x, N_Vector y, N_Vector z);
 
 SUNDIALS_EXPORT
-void N_VScale_OpenMP(sunrealtype c, N_Vector x, N_Vector z);
+void N_VScale_OpenMP(sunscalartype c, N_Vector x, N_Vector z);
 
 SUNDIALS_EXPORT
 void N_VAbs_OpenMP(N_Vector x, N_Vector z);
@@ -160,10 +160,14 @@ SUNDIALS_EXPORT
 void N_VInv_OpenMP(N_Vector x, N_Vector z);
 
 SUNDIALS_EXPORT
-void N_VAddConst_OpenMP(N_Vector x, sunrealtype b, N_Vector z);
+void N_VAddConst_OpenMP(N_Vector x, sunscalartype b, N_Vector z);
 
 SUNDIALS_EXPORT
 sunrealtype N_VDotProd_OpenMP(N_Vector x, N_Vector y);
+
+SUNDIALS_EXPORT
+SUNErrCode N_VDotProdComplex_OpenMP(N_Vector x, N_Vector y,
+                                    sunscalartype* result);
 
 SUNDIALS_EXPORT
 sunrealtype N_VMaxNorm_OpenMP(N_Vector x);
@@ -198,30 +202,30 @@ sunrealtype N_VMinQuotient_OpenMP(N_Vector num, N_Vector denom);
 /* fused vector operations */
 
 SUNDIALS_EXPORT
-SUNErrCode N_VLinearCombination_OpenMP(int nvec, sunrealtype* c, N_Vector* V,
+SUNErrCode N_VLinearCombination_OpenMP(int nvec, sunscalartype* c, N_Vector* V,
                                        N_Vector z);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VScaleAddMulti_OpenMP(int nvec, sunrealtype* a, N_Vector x,
+SUNErrCode N_VScaleAddMulti_OpenMP(int nvec, sunscalartype* a, N_Vector x,
                                    N_Vector* Y, N_Vector* Z);
 
 SUNDIALS_EXPORT
 SUNErrCode N_VDotProdMulti_OpenMP(int nvec, N_Vector x, N_Vector* Y,
-                                  sunrealtype* dotprods);
+                                  sunscalartype* dotprods);
 
 /* vector array operations */
 
 SUNDIALS_EXPORT
-SUNErrCode N_VLinearSumVectorArray_OpenMP(int nvec, sunrealtype a, N_Vector* X,
-                                          sunrealtype b, N_Vector* Y,
-                                          N_Vector* Z);
+SUNErrCode N_VLinearSumVectorArray_OpenMP(int nvec, sunscalartype a,
+                                          N_Vector* X, sunscalartype b,
+                                          N_Vector* Y, N_Vector* Z);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VScaleVectorArray_OpenMP(int nvec, sunrealtype* c, N_Vector* X,
+SUNErrCode N_VScaleVectorArray_OpenMP(int nvec, sunscalartype* c, N_Vector* X,
                                       N_Vector* Z);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VConstVectorArray_OpenMP(int nvecs, sunrealtype c, N_Vector* Z);
+SUNErrCode N_VConstVectorArray_OpenMP(int nvecs, sunscalartype c, N_Vector* Z);
 
 SUNDIALS_EXPORT
 SUNErrCode N_VWrmsNormVectorArray_OpenMP(int nvecs, N_Vector* X, N_Vector* W,
@@ -231,12 +235,12 @@ SUNErrCode N_VWrmsNormMaskVectorArray_OpenMP(int nvecs, N_Vector* X, N_Vector* W
                                              N_Vector id, sunrealtype* nrm);
 SUNDIALS_EXPORT
 SUNErrCode N_VScaleAddMultiVectorArray_OpenMP(int nvec, int nsum,
-                                              sunrealtype* a, N_Vector* X,
+                                              sunscalartype* a, N_Vector* X,
                                               N_Vector** Y, N_Vector** Z);
 SUNDIALS_EXPORT
 SUNErrCode N_VLinearCombinationVectorArray_OpenMP(int nvec, int nsum,
-                                                  sunrealtype* c, N_Vector** X,
-                                                  N_Vector* Z);
+                                                  sunscalartype* c,
+                                                  N_Vector** X, N_Vector* Z);
 
 /* OPTIONAL local reduction kernels (no parallel communication) */
 
