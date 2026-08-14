@@ -197,10 +197,13 @@ static int forcingStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y,
   int retval = forcingStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return retval; }
 
+  N_Vector ftmp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &ftmp)) { return ARK_MEM_FAIL; }
+
   /* TODO(SBR): Possible optimization in FULLRHS_START mode. Currently that
    * mode is not forwarded to the SUNSteppers */
   SUNErrCode err = SUNStepper_FullRhs(step_mem->stepper[0], t, y,
-                                      ark_mem->tempv1, SUN_FULLRHS_OTHER);
+                                      ftmp, SUN_FULLRHS_OTHER);
   if (err != SUN_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
@@ -217,7 +220,8 @@ static int forcingStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y,
                     MSG_ARK_RHSFUNC_FAILED, t);
     return ARK_RHSFUNC_FAIL;
   }
-  N_VLinearSum(SUN_RCONST(1.0), f, SUN_RCONST(1.0), ark_mem->tempv1, f);
+  N_VLinearSum(SUN_RCONST(1.0), f, SUN_RCONST(1.0), ftmp, f);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &ftmp)) { return ARK_MEM_FAIL; }
 
   return ARK_SUCCESS;
 }
@@ -282,11 +286,13 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
     return ARK_SUNSTEPPER_ERR;
   }
 
-  /* Write tendency (ycur - yn)/h into stepper 1 forcing */
+  /* Write tendency (ycur - yn)/h into stepper 1 forcing temporary vector*/
   sunrealtype hinv = SUN_RCONST(1.0) / ark_mem->h;
-  N_VLinearSum(hinv, ark_mem->ycur, -hinv, ark_mem->yn, ark_mem->tempv1);
-  err = SUNStepper_SetForcing(s1, ZERO, ZERO, &ark_mem->tempv1, 1);
-  SUNLogExtraDebugVec(ARK_LOGGER, "forcing", ark_mem->tempv1, "forcing(:) =");
+  N_Vector force = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &force)) { return ARK_MEM_FAIL; }
+  N_VLinearSum(hinv, ark_mem->ycur, -hinv, ark_mem->yn, force);
+  err = SUNStepper_SetForcing(s1, ZERO, ZERO, &force, 1);
+  SUNLogExtraDebugVec(ARK_LOGGER, "forcing", force, "forcing(:) =");
   if (err != SUN_SUCCESS)
   {
     SUNLogInfo(ARK_LOGGER, "end-partitions-list",
@@ -306,6 +312,7 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   step_mem->n_stepper_evolves[1]++;
 
   /* Clear the forcing so it doesn't get included in a fullRhs call */
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &force)) { return ARK_MEM_FAIL; }
   err = SUNStepper_SetForcing(s1, ZERO, ZERO, NULL, 0);
   if (err != SUN_SUCCESS)
   {
