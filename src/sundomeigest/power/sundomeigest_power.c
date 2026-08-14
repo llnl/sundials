@@ -862,6 +862,5 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   siginv = ONE / sig;
   N_VLinearSum(siginv, Jv, -siginv, Fy, Jv);
 
-  *Fy_is_current = SUNFALSE;
   return SUN_SUCCESS;
 }

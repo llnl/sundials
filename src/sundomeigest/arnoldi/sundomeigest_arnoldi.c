@@ -137,30 +137,32 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes        = NULL;
-  content->ATdata        = NULL;
-  content->V             = NULL;
-  content->rhs_linY      = NULL;
-  content->rhs_linT      = ZERO;
-  content->Fy            = NULL;
-  content->work          = NULL;
-  content->kry_dim       = kry_dim;
-  content->num_warmups   = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->num_iters     = 0;
-  content->num_ATimes    = 0;
-  content->warmup_to_tol = SUNFALSE;
-  content->Fy_is_current = SUNFALSE;
-  content->tol_warmup    = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->rhsfn         = NULL;
-  content->rhs_data      = NULL;
-  content->nfevals       = 0;
-  content->LAPACK_A      = NULL;
-  content->LAPACK_wr     = NULL;
-  content->LAPACK_wi     = NULL;
-  content->LAPACK_work   = NULL;
-  content->LAPACK_lwork  = 0;
-  content->LAPACK_arr    = NULL;
-  content->Hes           = NULL;
+  content->ATimes              = NULL;
+  content->ATdata              = NULL;
+  content->V                   = NULL;
+  content->rhs_linY            = NULL;
+  content->rhs_linT            = ZERO;
+  content->Fy                  = NULL;
+  content->work                = NULL;
+  content->kry_dim             = kry_dim;
+  content->num_warmups         = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->num_iters           = 0;
+  content->num_ATimes          = 0;
+  content->warmup_to_tol       = SUNFALSE;
+  content->Fy_is_current       = SUNFALSE;
+  content->tol_warmup          = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->rhsfn               = NULL;
+  content->rhs_data            = NULL;
+  content->preprocess_rhsfn    = NULL;
+  content->preprocess_rhs_data = NULL;
+  content->nfevals             = 0;
+  content->LAPACK_A            = NULL;
+  content->LAPACK_wr           = NULL;
+  content->LAPACK_wi           = NULL;
+  content->LAPACK_work         = NULL;
+  content->LAPACK_lwork        = 0;
+  content->LAPACK_arr          = NULL;
+  content->Hes                 = NULL;
 
   content->V = N_VCloneVectorArray(kry_dim + 1, q);
   SUNCheckLastErrNull();
@@ -841,6 +843,5 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
   siginv = ONE / sig;
   N_VLinearSum(siginv, Jv, -siginv, Fy, Jv);
 
-  *Fy_is_current = SUNFALSE;
   return SUN_SUCCESS;
 }
