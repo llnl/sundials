@@ -49,6 +49,34 @@ endif()
 # RPath settings
 # ===============================================================
 
+if(SKBUILD AND SUNDIALS_ENABLE_PYTHON)
+  if(WIN32)
+    # Python extension modules can load DLL dependencies from their own
+    # directory, so place SUNDIALS DLLs beside sundials4py.pyd in wheels.
+    if(CMAKE_INSTALL_BINDIR STREQUAL "bin")
+      set(CMAKE_INSTALL_BINDIR
+          "."
+          CACHE PATH "User executables (bin)" FORCE)
+    endif()
+  elseif(APPLE)
+    # SUNDIALS shared libraries are installed together in CMAKE_INSTALL_LIBDIR.
+    # Use @rpath install names and let the extension add that directory as an
+    # rpath.
+    if(NOT CMAKE_INSTALL_RPATH)
+      set(CMAKE_INSTALL_RPATH "@loader_path")
+    endif()
+    if(NOT CMAKE_INSTALL_NAME_DIR)
+      set(CMAKE_INSTALL_NAME_DIR "@rpath")
+    endif()
+  elseif(UNIX)
+    # For bundled wheel libraries, $ORIGIN is the directory containing each
+    # installed shared library.
+    if(NOT CMAKE_INSTALL_RPATH)
+      set(CMAKE_INSTALL_RPATH "$ORIGIN")
+    endif()
+  endif()
+endif()
+
 # only apply rpath settings for builds using shared libs
 if(BUILD_SHARED_LIBS)
   # use, i.e. don't skip the full RPATH for the build tree
@@ -57,8 +85,12 @@ if(BUILD_SHARED_LIBS)
   # when building, don't use the install RPATH already (but later on when
   # installing)
   set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
-  set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+  if(NOT CMAKE_INSTALL_RPATH)
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+  endif()
+  if(NOT CMAKE_INSTALL_NAME_DIR)
+    set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+  endif()
 
   # add the automatically determined parts of the RPATH which point to
   # directories outside the build tree to the install RPATH
@@ -68,7 +100,7 @@ if(BUILD_SHARED_LIBS)
   # directory
   list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
        "${CMAKE_INSTALL_FULL_LIBDIR}" isSystemDir)
-  if("${isSystemDir}" STREQUAL "-1")
+  if("${isSystemDir}" STREQUAL "-1" AND NOT CMAKE_INSTALL_RPATH)
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
   endif()
 endif()

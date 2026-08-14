@@ -124,6 +124,19 @@ endif()
 # Create the Python sundials library
 nanobind_add_module(sundials4py STABLE_ABI NB_STATIC ${sundials_SOURCES})
 
+if(SKBUILD)
+  if(APPLE)
+    set_target_properties(
+      sundials4py PROPERTIES INSTALL_NAME_DIR "@rpath"
+                             INSTALL_RPATH "@loader_path/${CMAKE_INSTALL_LIBDIR}"
+                             INSTALL_RPATH_USE_LINK_PATH TRUE)
+  elseif(UNIX)
+    set_target_properties(
+      sundials4py PROPERTIES INSTALL_RPATH "$ORIGIN/${CMAKE_INSTALL_LIBDIR}"
+                             INSTALL_RPATH_USE_LINK_PATH TRUE)
+  endif()
+endif()
+
 # Include private header locations
 target_include_directories(
   sundials4py
