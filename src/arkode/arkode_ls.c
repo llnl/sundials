@@ -97,8 +97,8 @@ int ARKodeSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
                  (LSType != SUNLINEARSOLVER_MATRIX_EMBEDDED));
 
   /* Test if vector is compatible with LS interface */
-  if ((ark_mem->tempv1->ops->nvconst == NULL) ||
-      (ark_mem->tempv1->ops->nvwrmsnorm == NULL))
+  if ((ark_mem->ycur->ops->nvconst == NULL) ||
+      (ark_mem->ycur->ops->nvwrmsnorm == NULL))
   {
     arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_LS_BAD_NVECTOR);
@@ -116,7 +116,7 @@ int ARKodeSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
   /* Check for compatible LS type, matrix and "atimes" support */
   if (iterative)
   {
-    if (ark_mem->tempv1->ops->nvgetlength == NULL)
+    if (ark_mem->ycur->ops->nvgetlength == NULL)
     {
       arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                       MSG_LS_BAD_NVECTOR);
@@ -257,7 +257,7 @@ int ARKodeSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
   }
 
   /* Allocate memory for ytemp and x */
-  if (!arkAllocVec(ark_mem, ark_mem->tempv1, &(arkls_mem->ytemp)))
+  if (!arkAllocVec(ark_mem, ark_mem->ycur, &(arkls_mem->ytemp)))
   {
     arkProcessError(ark_mem, ARKLS_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_LS_MEM_FAIL);
@@ -266,7 +266,7 @@ int ARKodeSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
     return (ARKLS_MEM_FAIL);
   }
 
-  if (!arkAllocVec(ark_mem, ark_mem->tempv1, &(arkls_mem->x)))
+  if (!arkAllocVec(ark_mem, ark_mem->ycur, &(arkls_mem->x)))
   {
     arkProcessError(ark_mem, ARKLS_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_LS_MEM_FAIL);
@@ -359,8 +359,8 @@ int ARKodeSetMassLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix M,
                  (LSType != SUNLINEARSOLVER_MATRIX_EMBEDDED));
 
   /* Test if vector is compatible with LS interface */
-  if ((ark_mem->tempv1->ops->nvconst == NULL) ||
-      (ark_mem->tempv1->ops->nvwrmsnorm == NULL))
+  if ((ark_mem->ycur->ops->nvconst == NULL) ||
+      (ark_mem->ycur->ops->nvwrmsnorm == NULL))
   {
     arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_LS_BAD_NVECTOR);
@@ -378,7 +378,7 @@ int ARKodeSetMassLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix M,
   /* Check for compatible LS type, matrix and "atimes" support */
   if (iterative)
   {
-    if (ark_mem->tempv1->ops->nvgetlength == NULL)
+    if (ark_mem->ycur->ops->nvgetlength == NULL)
     {
       arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                       MSG_LS_BAD_NVECTOR);
@@ -506,7 +506,7 @@ int ARKodeSetMassLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix M,
   }
 
   /* Allocate memory for x */
-  if (!arkAllocVec(ark_mem, ark_mem->tempv1, &(arkls_mem->x)))
+  if (!arkAllocVec(ark_mem, ark_mem->ycur, &(arkls_mem->x)))
   {
     arkProcessError(ark_mem, ARKLS_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_LS_MEM_FAIL);
@@ -727,7 +727,7 @@ int ARKodeSetLSNormFactor(void* arkode_mem, sunrealtype nrmfac)
   else if (nrmfac < ZERO)
   {
     /* Ensure that vector support N_VDotProd */
-    if (ark_mem->tempv1->ops->nvdotprod == NULL)
+    if (ark_mem->ycur->ops->nvdotprod == NULL)
     {
       arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__,
                       __FILE__, "N_VDotProd unimplemented (required for ARKodeSetLSNormFactor)");
@@ -735,13 +735,16 @@ int ARKodeSetLSNormFactor(void* arkode_mem, sunrealtype nrmfac)
     }
 
     /* compute factor for WRMS norm with dot product */
-    N_VConst(ONE, ark_mem->tempv1);
-    arkls_mem->nrmfac = SUNRsqrt(N_VDotProd(ark_mem->tempv1, ark_mem->tempv1));
+    N_Vector tmp = NULL;
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return (ARKLS_MEM_FAIL); }
+    N_VConst(ONE, tmp);
+    arkls_mem->nrmfac = SUNRsqrt(N_VDotProd(tmp, tmp));
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return (ARKLS_MEM_FAIL); }
   }
   else
   {
     /* compute default factor for WRMS norm from vector length */
-    arkls_mem->nrmfac = SUNRsqrt(N_VGetLength(ark_mem->tempv1));
+    arkls_mem->nrmfac = SUNRsqrt(N_VGetLength(ark_mem->ycur));
   }
 
   return (ARKLS_SUCCESS);
@@ -1687,7 +1690,7 @@ int ARKodeSetMassLSNormFactor(void* arkode_mem, sunrealtype nrmfac)
   else if (nrmfac < ZERO)
   {
     /* Ensure that vector support N_VDotProd */
-    if (ark_mem->tempv1->ops->nvdotprod == NULL)
+    if (ark_mem->ycur->ops->nvdotprod == NULL)
     {
       arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__,
                       __FILE__, "N_VDotProd unimplemented (required for ARKodeSetMassLSNormFactor)");
@@ -1695,13 +1698,16 @@ int ARKodeSetMassLSNormFactor(void* arkode_mem, sunrealtype nrmfac)
     }
 
     /* compute factor for WRMS norm with dot product */
-    N_VConst(ONE, ark_mem->tempv1);
-    arkls_mem->nrmfac = SUNRsqrt(N_VDotProd(ark_mem->tempv1, ark_mem->tempv1));
+    N_Vector tmp = NULL;
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return (ARKLS_MEM_FAIL); }
+    N_VConst(ONE, tmp);
+    arkls_mem->nrmfac = SUNRsqrt(N_VDotProd(tmp, tmp));
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return (ARKLS_MEM_FAIL); }
   }
   else
   {
     /* compute default factor for WRMS norm from vector length */
-    arkls_mem->nrmfac = SUNRsqrt(N_VGetLength(ark_mem->tempv1));
+    arkls_mem->nrmfac = SUNRsqrt(N_VGetLength(ark_mem->ycur));
   }
 
   return (ARKLS_SUCCESS);
@@ -1871,9 +1877,9 @@ int ARKodeGetMassWorkSpace(void* arkode_mem, long int* lenrw, long int* leniw)
   *leniw = 23;
 
   /* add NVector sizes */
-  if (ark_mem->tempv1->ops->nvspace)
+  if (ark_mem->ycur->ops->nvspace)
   {
-    N_VSpace(ark_mem->tempv1, &lrw1, &liw1);
+    N_VSpace(ark_mem->ycur, &lrw1, &liw1);
     *lenrw += lrw1;
     *leniw += liw1;
   }
@@ -2595,13 +2601,13 @@ int arkLsDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   }
 
   /* Verify that N_Vector supports required routines */
-  if (ark_mem->tempv1->ops->nvcloneempty == NULL ||
-      ark_mem->tempv1->ops->nvwrmsnorm == NULL ||
-      ark_mem->tempv1->ops->nvlinearsum == NULL ||
-      ark_mem->tempv1->ops->nvdestroy == NULL ||
-      ark_mem->tempv1->ops->nvscale == NULL ||
-      ark_mem->tempv1->ops->nvgetarraypointer == NULL ||
-      ark_mem->tempv1->ops->nvsetarraypointer == NULL)
+  if (ark_mem->ycur->ops->nvcloneempty == NULL ||
+      ark_mem->ycur->ops->nvwrmsnorm == NULL ||
+      ark_mem->ycur->ops->nvlinearsum == NULL ||
+      ark_mem->ycur->ops->nvdestroy == NULL ||
+      ark_mem->ycur->ops->nvscale == NULL ||
+      ark_mem->ycur->ops->nvgetarraypointer == NULL ||
+      ark_mem->ycur->ops->nvsetarraypointer == NULL)
   {
     arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_LS_BAD_NVECTOR);
