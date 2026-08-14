@@ -54,8 +54,8 @@ if(TARGET SUNDIALS::KLU)
     set(_KLU_TARGET "${_KLU_ALIASED_TARGET}")
   endif()
 
-  foreach(_KLU_INCLUDE_PROPERTY
-          INTERFACE_INCLUDE_DIRECTORIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
+  foreach(_KLU_INCLUDE_PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+                                INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
     get_target_property(_KLU_TARGET_INCLUDE_DIRS "${_KLU_TARGET}"
                         "${_KLU_INCLUDE_PROPERTY}")
     if(_KLU_TARGET_INCLUDE_DIRS)
@@ -131,12 +131,11 @@ if(SUNDIALS_ENABLE_KLU_CHECKS)
   set(TEST_DIR ${PROJECT_BINARY_DIR}/KLU_TEST)
 
   # Create a C source file which calls a KLU function
-  file(WRITE ${TEST_DIR}/test.c
-       "#include <klu.h>\n"
-       "int main(void) {\n"
-       "  klu_common Common; (void)Common;\n"
-       "  return klu_defaults(&Common) ? 0 : 1;\n"
-       "}\n")
+  file(
+    WRITE ${TEST_DIR}/test.c
+    "#include <klu.h>\n" "int main(void) {\n"
+    "  klu_common Common; (void)Common;\n"
+    "  return klu_defaults(&Common) ? 0 : 1;\n" "}\n")
 
   # Link against the resolved imported target when available. Avoid passing a
   # SUNDIALS::KLU alias to try_compile because alias targets to imported
@@ -144,8 +143,7 @@ if(SUNDIALS_ENABLE_KLU_CHECKS)
   string(REPLACE ";" "\\;" _KLU_INCLUDE_DIRS_ARG "${_KLU_INCLUDE_DIRS}")
   set(TEST_BINARY_DIR "${TEST_DIR}/build")
   try_compile(
-    COMPILE_OK
-    "${TEST_BINARY_DIR}"
+    COMPILE_OK "${TEST_BINARY_DIR}"
     "${TEST_DIR}/test.c"
     CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${_KLU_INCLUDE_DIRS_ARG}"
     LINK_LIBRARIES ${_KLU_LINK_LIBRARIES}

@@ -42,13 +42,13 @@ if(NOT
   find_package(KLU CONFIG)
 
   if(TARGET SuiteSparse::KLU)
-    # Some upstream SuiteSparse config packages create SuiteSparse::KLU but
-    # omit other SuiteSparse component targets (e.g., SuiteSparse::AMD). In
-    # that case we prefer to fall back to creating our own imported target
-    # using the discovered library paths rather than aliasing the possibly
-    # incomplete upstream targets which can cause generator-expression
-    # evaluation errors later. Only alias the upstream target if the key
-    # companion targets are also present.
+    # Some upstream SuiteSparse config packages create SuiteSparse::KLU but omit
+    # other SuiteSparse component targets (e.g., SuiteSparse::AMD). In that case
+    # we prefer to fall back to creating our own imported target using the
+    # discovered library paths rather than aliasing the possibly incomplete
+    # upstream targets which can cause generator-expression evaluation errors
+    # later. Only alias the upstream target if the key companion targets are
+    # also present.
     if(TARGET SuiteSparse::AMD AND NOT TARGET SUNDIALS::KLU)
       # For static-only builds of SuiteSparse, SuiteSparse::KLU will itself be
       # an ALIAS target which can't be aliased.
@@ -62,7 +62,10 @@ if(NOT
       mark_as_advanced(KLU_SUITESPARSE_TARGET)
       return()
     else()
-      message(STATUS "Found SuiteSparse::KLU but companion SuiteSparse targets are missing; falling back to manual imported target creation")
+      message(
+        STATUS
+          "Found SuiteSparse::KLU but companion SuiteSparse targets are missing; falling back to manual imported target creation"
+      )
     endif()
   endif()
 endif()
@@ -132,8 +135,8 @@ set(KLU_LIBRARIES ${KLU_LIBRARY} ${AMD_LIBRARY} ${COLAMD_LIBRARY}
                   ${BTF_LIBRARY} ${SUITESPARSECONFIG_LIBRARY})
 
 # Manual library discovery does not get the transitive SuiteSparse link
-# interface from an upstream config package. Add BLAS when available so KLU
-# link checks and consumers can resolve SuiteSparse components such as CHOLMOD.
+# interface from an upstream config package. Add BLAS when available so KLU link
+# checks and consumers can resolve SuiteSparse components such as CHOLMOD.
 find_package(BLAS)
 if(BLAS_FOUND)
   list(APPEND KLU_LIBRARIES ${BLAS_LIBRARIES})
