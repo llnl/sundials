@@ -4020,7 +4020,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs(SUNDomEigEstimator farg1, void *
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetPreprocessRhs(SUNDomEigEstimator farg1, void *farg2, SUNPreRhsFn farg3) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator farg1, void *farg2, SUNPreRhsFn farg3) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   void *arg2 = (void *) 0 ;
@@ -4030,7 +4030,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetPreprocessRhs(SUNDomEigEstimator far
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (void *)(farg2);
   arg3 = (SUNPreRhsFn)(farg3);
-  result = (SUNErrCode)SUNDomEigEstimator_SetPreprocessRhs(arg1,arg2,arg3);
+  result = (SUNErrCode)SUNDomEigEstimator_SetPreRhsFn(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

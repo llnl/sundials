@@ -27,7 +27,7 @@ modules:
       # Don't interface the implementation specific overrides of the generic routines
       - "^SUNDomEigEstimator_SetATimes_.*"
       - "^SUNDomEigEstimator_SetRhs_.*"
-      - "^SUNDomEigEstimator_SetPreprocessRhs_.*"
+      - "^SUNDomEigEstimator_SetPreRhsFn_.*"
       - "^SUNDomEigEstimator_SetOptions_.*"
       - "^SUNDomEigEstimator_SetMaxIters_.*"
       - "^SUNDomEigEstimator_SetNumPreprocessIters_.*"

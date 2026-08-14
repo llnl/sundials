@@ -101,9 +101,9 @@ SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
                                      SUNRhsFn RHSfn);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetPreprocessRhs(SUNDomEigEstimator DEE,
-                                               void* preprocess_rhs_data,
-                                               SUNPreRhsFn PreprocessRHSfn);
+SUNErrCode SUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator DEE,
+                                          void* prerhs_fn_data,
+                                          SUNPreRhsFn prerhs_fn);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE,

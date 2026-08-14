@@ -211,15 +211,15 @@ SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
   return (ier);
 }
 
-SUNErrCode SUNDomEigEstimator_SetPreprocessRhs(SUNDomEigEstimator DEE,
-                                               void* preprocess_rhs_data,
-                                               SUNPreRhsFn PreprocessRHSfn)
+SUNErrCode SUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator DEE,
+                                               void* prerhs_fn_data,
+                                               SUNPreRhsFn prerhs_fn)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->setpreprocessrhs)
   {
-    ier = DEE->ops->setpreprocessrhs(DEE, preprocess_rhs_data, PreprocessRHSfn);
+    ier = DEE->ops->setpreprocessrhs(DEE, prerhs_fn_data, prerhs_fn);
   }
   else { ier = SUN_SUCCESS; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));

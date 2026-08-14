@@ -105,7 +105,7 @@ void bind_sundomeigestimator(nb::module_& m)
     nb::arg("DEE"), nb::arg("RHSfn").none());
 
   m.def(
-    "SUNDomEigEstimator_SetPreprocessRhs",
+    "SUNDomEigEstimator_SetPreRhsFn",
     [](SUNDomEigEstimator DEE,
        std::function<std::remove_pointer_t<SUNPreRhsFn>> PreRhsFn) -> SUNErrCode
     {
@@ -117,12 +117,12 @@ void bind_sundomeigestimator(nb::module_& m)
 
       if (PreRhsFn)
       {
-        return SUNDomEigEstimator_SetPreprocessRhs(DEE, fntable,
-                                                   sundomeigestimator_preprocessrhs_wrapper);
+        return SUNDomEigEstimator_SetPreRhsFn(DEE, fntable,
+                                              sundomeigestimator_preprocessrhs_wrapper);
       }
       else
       {
-        return SUNDomEigEstimator_SetPreprocessRhs(DEE, fntable, nullptr);
+        return SUNDomEigEstimator_SetPreRhsFn(DEE, fntable, nullptr);
       }
     },
     nb::arg("DEE"), nb::arg("PreRhsFn").none());

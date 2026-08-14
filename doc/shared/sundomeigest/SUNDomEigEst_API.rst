@@ -230,7 +230,7 @@ instead of supplying a dummy routine.
 
       A :c:type:`SUNErrCode`.
 
-.. c:function:: SUNErrCode SUNDomEigEstimator_SetPreprocessRhs(SUNDomEigEstimator DEE, void* preprocess_rhs_data, SUNPreRhsFn PreprocessRHSfn)
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator DEE, void* prerhs_fn_data, SUNPreRhsFn prerhs_fn)
 
    This *optional* function provides a :c:type:`SUNPreRhsFn` function for performing
    preprocessing of the right-hand side function, as well as a ``void*`` pointer to a data structure
@@ -239,8 +239,8 @@ instead of supplying a dummy routine.
    **Arguments:**
 
       * *DEE* -- a SUNDomEigEstimator object.
-      * *preprocess_rhs_data* -- pointer to structure for ``PreprocessRHSfn``.
-      * *PreprocessRHSfn* -- function pointer to perform preprocessing of the right-hand side evaluations.  This is typically the same as the problem-defining function supplied to CVODE or ARKODE.
+      * *prerhs_fn_data* -- pointer to structure for ``prerhs_fn``.
+      * *prerhs_fn* -- function pointer to perform preprocessing of the right-hand side evaluations.  This is typically the same as the problem-defining function supplied to CVODE or ARKODE.
 
    **Return value:**
 

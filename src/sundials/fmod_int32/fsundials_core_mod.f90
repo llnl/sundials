@@ -738,7 +738,7 @@ module fsundials_core_mod
  public :: FSUNDomEigEstimator_FreeEmpty
  public :: FSUNDomEigEstimator_SetATimes
  public :: FSUNDomEigEstimator_SetRhs
- public :: FSUNDomEigEstimator_SetPreprocessRhs
+ public :: FSUNDomEigEstimator_SetPreRhsFn
  public :: FSUNDomEigEstimator_SetRhsLinearizationPoint
  public :: FSUNDomEigEstimator_SetRhsAtLinearizationPoint
  public :: FSUNDomEigEstimator_SetMaxIters
@@ -3108,8 +3108,8 @@ type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNDomEigEstimator_SetPreprocessRhs(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNDomEigEstimator_SetPreprocessRhs") &
+function swigc_FSUNDomEigEstimator_SetPreRhsFn(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetPreRhsFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -7593,22 +7593,22 @@ fresult = swigc_FSUNDomEigEstimator_SetRhs(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FSUNDomEigEstimator_SetPreprocessRhs(dee, preprocess_rhs_data, preprocessrhsfn) &
+function FSUNDomEigEstimator_SetPreRhsFn(dee, prerhs_fn_data, prerhs_fn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(SUNDomEigEstimator), target, intent(inout) :: dee
-type(C_PTR) :: preprocess_rhs_data
-type(C_FUNPTR), intent(in), value :: preprocessrhsfn
+type(C_PTR) :: prerhs_fn_data
+type(C_FUNPTR), intent(in), value :: prerhs_fn
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 type(C_FUNPTR) :: farg3 
 
 farg1 = c_loc(dee)
-farg2 = preprocess_rhs_data
-farg3 = preprocessrhsfn
-fresult = swigc_FSUNDomEigEstimator_SetPreprocessRhs(farg1, farg2, farg3)
+farg2 = prerhs_fn_data
+farg3 = prerhs_fn
+fresult = swigc_FSUNDomEigEstimator_SetPreRhsFn(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

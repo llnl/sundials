@@ -2917,13 +2917,13 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
     /* Set the preprocessing function if available */
     if (ark_mem->PreRhsFn != NULL)
     {
-      retval = SUNDomEigEstimator_SetPreprocessRhs(step_mem->DEE,
-                                                   ark_mem->user_data,
-                                                   ark_mem->PreRhsFn);
+      retval = SUNDomEigEstimator_SetPreRhsFn(step_mem->DEE,
+                                              ark_mem->user_data,
+                                              ark_mem->PreRhsFn);
       if (retval != SUN_SUCCESS)
       {
         arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
-                        "SUNDomEigEstimator_SetPreprocessRhs failed");
+                        "SUNDomEigEstimator_SetPreRhsFn failed");
         return ARK_DEE_FAIL;
       }
     }
