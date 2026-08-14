@@ -70,7 +70,7 @@ int ARKBandPrecInit(void* arkode_mem, sunindextype N, sunindextype mu,
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Test compatibility of NVECTOR package with the BAND preconditioner */
-  if (ark_mem->tempv1->ops->nvgetarraypointer == NULL)
+  if (ark_mem->ycur->ops->nvgetarraypointer == NULL)
   {
     arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_BP_BAD_NVECTOR);
@@ -124,7 +124,7 @@ int ARKBandPrecInit(void* arkode_mem, sunindextype N, sunindextype mu,
 
   /* Allocate memory for banded linear solver */
   pdata->LS = NULL;
-  pdata->LS = SUNLinSol_Band(ark_mem->tempv1, pdata->savedP, ark_mem->sunctx);
+  pdata->LS = SUNLinSol_Band(ark_mem->ycur, pdata->savedP, ark_mem->sunctx);
   if (pdata->LS == NULL)
   {
     SUNMatDestroy(pdata->savedP);
@@ -138,7 +138,7 @@ int ARKBandPrecInit(void* arkode_mem, sunindextype N, sunindextype mu,
 
   /* allocate memory for temporary N_Vectors */
   pdata->tmp1 = NULL;
-  if (!arkAllocVec(ark_mem, ark_mem->tempv1, &(pdata->tmp1)))
+  if (!arkAllocVec(ark_mem, ark_mem->ycur, &(pdata->tmp1)))
   {
     SUNLinSolFree(pdata->LS);
     SUNMatDestroy(pdata->savedP);
@@ -151,7 +151,7 @@ int ARKBandPrecInit(void* arkode_mem, sunindextype N, sunindextype mu,
   }
 
   pdata->tmp2 = NULL;
-  if (!arkAllocVec(ark_mem, ark_mem->tempv1, &(pdata->tmp2)))
+  if (!arkAllocVec(ark_mem, ark_mem->ycur, &(pdata->tmp2)))
   {
     SUNLinSolFree(pdata->LS);
     SUNMatDestroy(pdata->savedP);
@@ -220,9 +220,9 @@ int ARKBandPrecGetWorkSpace(void* arkode_mem, long int* lenrwBP, long int* leniw
   /* sum space requirements for all objects in pdata */
   *leniwBP = 4;
   *lenrwBP = 0;
-  if (ark_mem->tempv1->ops->nvspace)
+  if (ark_mem->ycur->ops->nvspace)
   {
-    N_VSpace(ark_mem->tempv1, &lrw1, &liw1);
+    N_VSpace(ark_mem->ycur, &lrw1, &liw1);
     *leniwBP += 2 * liw1;
     *lenrwBP += 2 * lrw1;
   }
