@@ -115,3 +115,35 @@ jobs:
       with:
         path: wheelhouse/*.whl
         name: extra-dist-${{ matrix.os }}-${{ matrix.precision }}-${{ matrix.index }}
+
+  sundials4py-test-klu:
+    name: Test sundials4py with KLU
+    runs-on: ubuntu-latest
+    # Use the CI container that includes SuiteSparse/KLU
+    container:
+      image: ghcr.io/llnl/sundials-ci-int64-double:latest
+      options: --user root
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        submodules: true
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.14'
+
+    - name: Install build tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install build scikit-build-core nanobind numpy pytest
+
+    - name: Build wheel
+      run: python -m build -o wheelhouse
+
+    - name: Install wheel
+      run: pip install wheelhouse/*.whl --force-reinstall
+
+    - name: Run KLU example
+      run: python examples/python/arkode/ark_brusselator1D_klu.py
