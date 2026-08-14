@@ -471,9 +471,11 @@ int arkRootCheck1(void* arkode_mem)
   hratio = SUNMAX(rootmem->ttol / SUNRabs(ark_mem->h), TENTH);
   smallh = hratio * ark_mem->h;
   tplus  = rootmem->tlo + smallh;
-  N_VLinearSum(ONE, ark_mem->yn, smallh, ark_mem->fn, ark_mem->tempv4);
-  retval = rootmem->gfun(tplus, ark_mem->tempv4, rootmem->ghi,
-                         rootmem->root_data);
+  N_Vector tmp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+  N_VLinearSum(ONE, ark_mem->yn, smallh, ark_mem->fn, tmp);
+  retval = rootmem->gfun(tplus, tmp, rootmem->ghi, rootmem->root_data);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
   rootmem->nge++;
   if (retval != 0)
   {
@@ -534,12 +536,13 @@ int arkRootCheck2(void* arkode_mem)
   /* return if no roots in previous step */
   if (rootmem->irfnd == 0) { return (ARK_SUCCESS); }
 
-  /* Set tempv4 = y(tlo) */
-  (void)ARKodeGetDky(ark_mem, rootmem->tlo, 0, ark_mem->tempv4);
+  /* Set tmp = y(tlo) */
+  N_Vector tmp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+  (void)ARKodeGetDky(ark_mem, rootmem->tlo, 0, tmp);
 
   /* Evaluate root-finding function: glo = g(tlo, y(tlo)) */
-  retval = rootmem->gfun(rootmem->tlo, ark_mem->tempv4, rootmem->glo,
-                         rootmem->root_data);
+  retval = rootmem->gfun(rootmem->tlo, tmp, rootmem->glo, rootmem->root_data);
   rootmem->nge++;
   if (retval != 0) { return (ARK_RTFUNC_FAIL); }
 
@@ -570,13 +573,14 @@ int arkRootCheck2(void* arkode_mem)
   if ((tplus - ark_mem->tcur) * ark_mem->h >= ZERO)
   {
     /* hratio = smallh/ark_mem->h; */
-    N_VLinearSum(ONE, ark_mem->tempv4, smallh, ark_mem->fn, ark_mem->ycur);
+    N_VLinearSum(ONE, tmp, smallh, ark_mem->fn, ark_mem->ycur);
   }
   else
   {
     /*   set ark_ycur = y(tplus) via interpolation */
     (void)ARKodeGetDky(ark_mem, tplus, 0, ark_mem->ycur);
   }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
   /*     set ghi = g(tplus,y(tplus)) */
   retval = rootmem->gfun(tplus, ark_mem->ycur, rootmem->ghi, rootmem->root_data);
   rootmem->nge++;
@@ -630,29 +634,31 @@ int arkRootCheck3(void* arkode_mem, sunrealtype tout, int itask)
   rootmem = ark_mem->root_mem;
 
   /* Set thi = tn or tout, whichever comes first; set y = y(thi). */
+  N_Vector tmp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
   if (itask == ARK_ONE_STEP)
   {
     rootmem->thi = ark_mem->tcur;
-    N_VScale(ONE, ark_mem->yn, ark_mem->tempv4);
+    N_VScale(ONE, ark_mem->yn, tmp);
   }
   if (itask == ARK_NORMAL)
   {
     if ((tout - ark_mem->tcur) * ark_mem->h >= ZERO)
     {
       rootmem->thi = ark_mem->tcur;
-      N_VScale(ONE, ark_mem->yn, ark_mem->tempv4);
+      N_VScale(ONE, ark_mem->yn, tmp);
     }
     else
     {
       rootmem->thi = tout;
-      (void)ARKodeGetDky(ark_mem, rootmem->thi, 0, ark_mem->tempv4);
+      (void)ARKodeGetDky(ark_mem, rootmem->thi, 0, tmp);
     }
   }
 
   /* Set rootmem->ghi = g(thi) and call arkRootfind to search (tlo,thi) for roots. */
-  retval = rootmem->gfun(rootmem->thi, ark_mem->tempv4, rootmem->ghi,
-                         rootmem->root_data);
+  retval = rootmem->gfun(rootmem->thi, tmp, rootmem->ghi, rootmem->root_data);
   rootmem->nge++;
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
   if (retval != 0) { return (ARK_RTFUNC_FAIL); }
 
   rootmem->ttol = (SUNRabs(ark_mem->tcur) + SUNRabs(ark_mem->h)) *
@@ -862,9 +868,11 @@ int arkRootfind(void* arkode_mem)
       tmid    = rootmem->thi - fracsub * (rootmem->thi - rootmem->tlo);
     }
 
-    (void)ARKodeGetDky(ark_mem, tmid, 0, ark_mem->tempv4);
-    retval = rootmem->gfun(tmid, ark_mem->tempv4, rootmem->grout,
-                           rootmem->root_data);
+    N_Vector tmp = NULL;
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+    (void)ARKodeGetDky(ark_mem, tmid, 0, tmp);
+    retval = rootmem->gfun(tmid, tmp, rootmem->grout, rootmem->root_data);
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
     rootmem->nge++;
     if (retval != 0) { return (ARK_RTFUNC_FAIL); }
 
