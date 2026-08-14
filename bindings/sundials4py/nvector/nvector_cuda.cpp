@@ -473,33 +473,36 @@ void bind_nvector_cuda(nb::module_& m)
     },
     nb::arg("h_vdata_1d"), nb::arg("v"));
 
+  // Expose the generic N_VSetDeviceArrayPointer to Python with CUDA-aware
+  // overloads. This replaces the previous CUDA-specific Python binding
+  // N_VSetDeviceArrayPointer_Cuda which is removed intentionally.
   m.def(
-    "N_VSetDeviceArrayPointer_Cuda",
+    "N_VSetDeviceArrayPointer",
     [](std::uintptr_t d_vdata, N_Vector v)
     {
       release_python_device_array(v);
-      N_VSetDeviceArrayPointer_Cuda(reinterpret_cast<sunrealtype*>(d_vdata), v);
+      N_VSetDeviceArrayPointer(reinterpret_cast<sunrealtype*>(d_vdata), v);
     },
     nb::arg("d_vdata"), nb::arg("v"));
 
   m.def(
-    "N_VSetDeviceArrayPointer_Cuda",
+    "N_VSetDeviceArrayPointer",
     [](CudaArray1d d_vdata_1d, N_Vector v)
     {
       check_length(N_VGetLength(v), d_vdata_1d);
-      N_VSetDeviceArrayPointer_Cuda(d_vdata_1d.data(), v);
+      N_VSetDeviceArrayPointer(d_vdata_1d.data(), v);
       retain_python_device_array(v, d_vdata_1d.cast());
     },
     nb::arg("d_vdata_1d").noconvert(), nb::arg("v"), nb::keep_alive<2, 1>());
 
   m.def(
-    "N_VSetDeviceArrayPointer_Cuda",
+    "N_VSetDeviceArrayPointer",
     [](nb::object d_vdata_1d, N_Vector v)
     {
       check_length(N_VGetLength(v), d_vdata_1d);
-      N_VSetDeviceArrayPointer_Cuda(reinterpret_cast<sunrealtype*>(
-                                      device_array_pointer(d_vdata_1d)),
-                                    v);
+      N_VSetDeviceArrayPointer(reinterpret_cast<sunrealtype*>(
+                                  device_array_pointer(d_vdata_1d)),
+                                v);
       retain_python_device_array(v, std::move(d_vdata_1d));
     },
     nb::arg("d_vdata_1d"), nb::arg("v"), nb::keep_alive<2, 1>());

@@ -148,7 +148,7 @@ def select_device(requested, jax):
 
 # JAX arrays are immutable. The callbacks compute a new array; the CPU path
 # copies that array back into the serial N_Vector, while the CUDA path replaces
-# the N_Vector device pointer with N_VSetDeviceArrayPointer_Cuda.
+    # the N_Vector device pointer with N_VSetDeviceArrayPointer.
 class JaxHeat1DProblem:
     def __init__(self, jax, jnp, device, dtype, n=101, k=0.01):
         self.jax = jax
@@ -165,7 +165,7 @@ class JaxHeat1DProblem:
         array = self.jnp.zeros(sun.N_VGetLength(yvec), dtype=self.dtype)
         array = self.jax.device_put(array, self.device).block_until_ready()
         if self.array_device == "cuda":
-            sun.N_VSetDeviceArrayPointer_Cuda(array, yvec)
+            sun.N_VSetDeviceArrayPointer(array, yvec)
         else:
             sun.N_VGetNumpyArray(yvec)[:] = np.asarray(array)
 
@@ -179,7 +179,7 @@ class JaxHeat1DProblem:
         result = result.at[self.isource].add(0.01 / self.dx)
         result = result.block_until_ready()
         if self.array_device == "cuda":
-            sun.N_VSetDeviceArrayPointer_Cuda(result, ydotvec)
+            sun.N_VSetDeviceArrayPointer(result, ydotvec)
         else:
             sun.N_VGetNumpyArray(ydotvec)[:] = np.asarray(result)
         return 0
@@ -193,7 +193,7 @@ class JaxHeat1DProblem:
         result = result.at[1:-1].set(c1 * v[:-2] + c2 * v[1:-1] + c1 * v[2:])
         result = result.block_until_ready()
         if self.array_device == "cuda":
-            sun.N_VSetDeviceArrayPointer_Cuda(result, Jvvec)
+            sun.N_VSetDeviceArrayPointer(result, Jvvec)
         else:
             sun.N_VGetNumpyArray(Jvvec)[:] = np.asarray(result)
         return 0

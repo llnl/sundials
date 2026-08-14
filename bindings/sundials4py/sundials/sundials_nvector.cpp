@@ -180,6 +180,18 @@ void bind_nvector(nb::module_& m)
     },
     nb::arg("v"));
 
+  // Provide a generic N_VSetDeviceArrayPointer binding for non-CUDA builds
+  // that accepts a host-side Array1d. CUDA-aware builds provide richer
+  // overloads in nvector_cuda.cpp.
+  m.def(
+    "N_VSetDeviceArrayPointer",
+    [](sundials4py::Array1d d_vdata_1d, N_Vector v)
+    {
+      auto ptr = d_vdata_1d.size() == 0 ? nullptr : d_vdata_1d.data();
+      N_VSetDeviceArrayPointer(ptr, v);
+    },
+    nb::arg("d_vdata_1d"), nb::arg("v"));
+
   m.def("N_VGetNumpyArray", &get_numpy_array, nb::arg("v"),
         nb::arg("device").none()    = nb::none(),
         nb::arg("copy_from").none() = nb::none());
