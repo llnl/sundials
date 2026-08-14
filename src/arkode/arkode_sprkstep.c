@@ -706,10 +706,10 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   retval = sprkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* Vector shortcuts */
-  delta_Yi         = ark_mem->tempv1;
-  yn_plus_delta_Yi = ark_mem->tempv2;
-  diff             = ark_mem->tempv3;
+  /* temporary vector shortcuts */
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &delta_Yi)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &yn_plus_delta_Yi)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &diff)) { return ARK_MEM_FAIL; }
 
   /* [ \Delta P_0 ] = [ 0 ]
      [ \Delta Q_0 ] = [ 0 ] */
@@ -821,6 +821,9 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   N_VLinearSum(ONE, ark_mem->yn, ONE, delta_Yi, ark_mem->ycur);
   N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->yn, diff);
   N_VLinearSum(ONE, diff, -ONE, delta_Yi, step_mem->yerr);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &delta_Yi)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &yn_plus_delta_Yi)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &diff)) { return ARK_MEM_FAIL; }
 
   *nflagPtr = 0;
   *dsmPtr   = SUN_RCONST(0.0);
