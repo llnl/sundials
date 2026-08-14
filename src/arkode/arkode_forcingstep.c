@@ -208,6 +208,7 @@ static int forcingStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y,
   {
     arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                     MSG_ARK_RHSFUNC_FAILED, t);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ftmp);
     return ARK_RHSFUNC_FAIL;
   }
 
@@ -218,6 +219,7 @@ static int forcingStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y,
   {
     arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                     MSG_ARK_RHSFUNC_FAILED, t);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ftmp);
     return ARK_RHSFUNC_FAIL;
   }
   N_VLinearSum(SUN_RCONST(1.0), f, SUN_RCONST(1.0), ftmp, f);
@@ -297,12 +299,14 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   {
     SUNLogInfo(ARK_LOGGER, "end-partitions-list",
                "status = failed set forcing, err = %i", err);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &force);
     return ARK_SUNSTEPPER_ERR;
   }
 
   /* Evolve stepper 1 with the forcing */
   err = SUNStepper_Evolve(s1, tout, ark_mem->ycur, &tret);
   SUNLogExtraDebugVec(ARK_LOGGER, "partition state", ark_mem->ycur, "y_par(:) =");
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &force)) { return ARK_MEM_FAIL; }
   if (err != SUN_SUCCESS)
   {
     SUNLogInfo(ARK_LOGGER, "end-partitions-list",
@@ -312,7 +316,6 @@ static int forcingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   step_mem->n_stepper_evolves[1]++;
 
   /* Clear the forcing so it doesn't get included in a fullRhs call */
-  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &force)) { return ARK_MEM_FAIL; }
   err = SUNStepper_SetForcing(s1, ZERO, ZERO, NULL, 0);
   if (err != SUN_SUCCESS)
   {

@@ -1744,7 +1744,10 @@ int arkRwtSet(N_Vector y, N_Vector weight, void* data)
   if (ark_mem->step_mmult != NULL)
   {
     flag = ark_mem->step_mmult((void*)ark_mem, y, My);
-    if (flag != ARK_SUCCESS) { return (ARK_MASSMULT_FAIL); }
+    if (flag != ARK_SUCCESS) {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &My);
+      return (ARK_MASSMULT_FAIL);
+    }
   }
   else
   { /* this condition should not apply, but just in case */
@@ -2112,13 +2115,13 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
     N_Vector viol = NULL;
     if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &viol)) { return ARK_MEM_FAIL; }
     conOK = N_VConstrMask(ark_mem->constraints, ark_mem->yn, viol);
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &viol)) { return ARK_MEM_FAIL; }
     if (!conOK)
     {
       arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                       MSG_ARK_Y0_FAIL_CONSTR);
       return (ARK_ILL_INPUT);
     }
-    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &viol)) { return ARK_MEM_FAIL; }
   }
 
   /* Load initial error weights */
@@ -2771,7 +2774,10 @@ int arkYddNorm(ARKodeMem ark_mem, sunrealtype hg, sunrealtype* yddnrm)
   /* compute y', via the ODE RHS routine */
   retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tcur + hg, ark_mem->ycur,
                                  ftemp, ARK_FULLRHS_OTHER);
-  if (retval != 0) { return (ARK_RHSFUNC_FAIL); }
+  if (retval != 0) {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ftemp);
+    return (ARK_RHSFUNC_FAIL);
+  }
 
   /* difference new f and original f to estimate y'' */
   N_VLinearSum(ONE / hg, ftemp, -ONE / hg, ark_mem->fn, ftemp);
@@ -3079,7 +3085,10 @@ int arkEwtSetSS(N_Vector ycur, N_Vector weight, void* arkode_mem)
   N_VAddConst(temp, ark_mem->Sabstol, temp);
   if (ark_mem->atolmin0)
   {
-    if (N_VMin(temp) <= ZERO) { return (-1); }
+    if (N_VMin(temp) <= ZERO) {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &temp);
+      return (-1);
+    }
   }
   N_VInv(temp, weight);
   if (SUNVecStack_Push(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
@@ -3108,7 +3117,10 @@ int arkEwtSetSV(N_Vector ycur, N_Vector weight, void* arkode_mem)
   N_VLinearSum(ark_mem->reltol, temp, ONE, ark_mem->Vabstol, temp);
   if (ark_mem->atolmin0)
   {
-    if (N_VMin(temp) <= ZERO) { return (-1); }
+    if (N_VMin(temp) <= ZERO) {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &temp);
+      return (-1);
+    }
   }
   N_VInv(temp, weight);
   if (SUNVecStack_Push(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
@@ -3152,7 +3164,10 @@ int arkRwtSetSS(ARKodeMem ark_mem, N_Vector My, N_Vector weight)
   N_VAddConst(temp, ark_mem->SRabstol, temp);
   if (ark_mem->Ratolmin0)
   {
-    if (N_VMin(temp) <= ZERO) { return (-1); }
+    if (N_VMin(temp) <= ZERO) {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &temp);
+      return (-1);
+    }
   }
   N_VInv(temp, weight);
   if (SUNVecStack_Push(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
@@ -3176,7 +3191,10 @@ int arkRwtSetSV(ARKodeMem ark_mem, N_Vector My, N_Vector weight)
   N_VLinearSum(ark_mem->reltol, temp, ONE, ark_mem->VRabstol, temp);
   if (ark_mem->Ratolmin0)
   {
-    if (N_VMin(temp) <= ZERO) { return (-1); }
+    if (N_VMin(temp) <= ZERO) {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &temp);
+      return (-1);
+    }
   }
   N_VInv(temp, weight);
   if (SUNVecStack_Push(ark_mem->temp_vec_stack, &temp)) { return ARK_MEM_FAIL; }
@@ -3436,6 +3454,8 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   if (constraintsPassed)
   {
     SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = success");
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &mm);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
     return (ARK_SUCCESS);
   }
 
@@ -3450,6 +3470,8 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   {
     SUNLogInfo(ARK_LOGGER, "end-constraint-check",
                "status = failed max attempts");
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &mm);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
     return (ARK_CONSTR_FAIL);
   }
 
@@ -3457,6 +3479,8 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   if (ark_mem->fixedstep)
   {
     SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = failed fixed step");
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &mm);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
     return (ARK_CONSTR_FAIL);
   }
 
@@ -3464,6 +3488,8 @@ int arkCheckConstraints(ARKodeMem ark_mem, int* constrfails, int* nflag)
   if (SUNRabs(ark_mem->h) <= ark_mem->hmin * ONEPSM)
   {
     SUNLogInfo(ARK_LOGGER, "end-constraint-check", "status = failed min step");
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &mm);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
     return (ARK_CONSTR_FAIL);
   }
 

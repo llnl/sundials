@@ -1380,6 +1380,7 @@ int mriStep_ComputeH0(ARKodeMem ark_mem, sunrealtype tout, sunrealtype* hin)
   {
     arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                     "error calling slow RHS function(s)");
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
     return (ARK_RHSFUNC_FAIL);
   }
   retval = mriStep_Hin(ark_mem, ark_mem->tn, tout, tmp1, hin);
@@ -1547,6 +1548,7 @@ int mriStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       {
         arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                         MSG_ARK_RHSFUNC_FAILED, t);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
         return (ARK_RHSFUNC_FAIL);
       }
       step_mem->cvals[nvec] = ONE;
@@ -2441,6 +2443,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to reset the inner stepper error estimate");
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return (ARK_INNERSTEP_FAIL);
     }
     retval = mriStepInnerStepper_SetRTol(step_mem->stepper,
@@ -2450,6 +2453,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to set the inner stepper tolerance");
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return (ARK_INNERSTEP_FAIL);
     }
   }
@@ -2463,6 +2467,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to reset the inner stepper");
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return (ARK_INNERSTEP_FAIL);
     }
   }
@@ -2477,8 +2482,12 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       N_VConst(ZERO, tmp1); /* set guess to 0 */
       retval = SUNNonlinSolSetup(step_mem->NLS, tmp1, ark_mem);
       if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
-      if (retval < 0) { return (ARK_NLS_SETUP_FAIL); }
-      if (retval > 0) { return (ARK_NLS_SETUP_RECVR); }
+      if (retval != 0)
+      {
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
+        if (retval < 0) { return (ARK_NLS_SETUP_FAIL); }
+        if (retval > 0) { return (ARK_NLS_SETUP_RECVR); }
+      }
     }
   }
 
@@ -2502,6 +2511,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed update F0 eval, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return ARK_RHSFUNC_FAIL;
     }
 
@@ -2525,6 +2535,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed full rhs eval, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return ARK_RHSFUNC_FAIL;
     }
   }
@@ -2580,6 +2591,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed forcing computation, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return retval;
     }
 
@@ -2595,6 +2607,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                    "status = failed reset, retval = %i", retval);
         arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__,
                         __FILE__, "Unable to reset the inner stepper");
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
         return (ARK_INNERSTEP_FAIL);
       }
     }
@@ -2608,6 +2621,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       *nflagPtr = CONV_FAIL;
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed fast ERK stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return retval;
     }
 
@@ -2630,6 +2644,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed predict, retval = %i", retval);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (retval);
         }
 
@@ -2643,8 +2658,12 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
           SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                        "status = failed predict, retval = %i", retval);
-          if (retval < 0) { return (ARK_USER_PREDICT_FAIL); }
-          if (retval > 0) { return (TRY_AGAIN); }
+          if (retval != 0)
+          {
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
+            if (retval < 0) { return (ARK_USER_PREDICT_FAIL); }
+            if (retval > 0) { return (TRY_AGAIN); }
+          }
         }
 
         SUNLogExtraDebugVec(ARK_LOGGER, "predictor", step_mem->zpred,
@@ -2666,6 +2685,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed vector op, retval = %i", retval);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (ARK_VECTOROP_ERR);
         }
 
@@ -2685,6 +2705,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed solve, nflag = %i", *nflagPtr);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (TRY_AGAIN);
         }
       }
@@ -2704,6 +2725,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed vector op, retval = %i", retval);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (ARK_VECTOROP_ERR);
         }
       }
@@ -2722,6 +2744,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
       retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
@@ -2732,6 +2755,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                    "status = failed reset, retval = %i", retval);
         arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__,
                         __FILE__, "Unable to reset the inner stepper");
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
         return (ARK_INNERSTEP_FAIL);
       }
     }
@@ -2743,6 +2767,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess step, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
         return (ARK_POSTPROCESS_STEP_FAIL);
       }
       retval = mriStepInnerStepper_Reset(step_mem->stepper, ark_mem->tcur,
@@ -2753,6 +2778,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                    "status = failed reset, retval = %i", retval);
         arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__,
                         __FILE__, "Unable to reset the inner stepper");
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
         return (ARK_INNERSTEP_FAIL);
       }
     }
@@ -2772,6 +2798,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
                        "status = failed preprocess rhs, retval = %i", retval);
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
             return (ARK_PRERHSFN_FAIL);
           }
         }
@@ -2790,9 +2817,12 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                               step_mem->Fsi[stage], "Fsi_%i(:) =", stage);
           SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                        "status = failed implicit rhs eval, retval = %i", retval);
-
-          if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
-          if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+          if (retval != 0)
+          {
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
+            if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
+            if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+          }
 
           /* Add external forcing to Fsi[stage], if applicable */
           if (step_mem->impforcing)
@@ -2827,9 +2857,12 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                             step_mem->Fse[stage], "Fse_%i(:) =", stage);
         SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                      "status = failed explicit rhs eval, retval = %i", retval);
-
-        if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
-        if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+        if (retval != 0)
+        {
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
+          if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
+          if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+        }
 
         /* Add external forcing to Fse[stage], if applicable */
         if (step_mem->expforcing)
@@ -2961,6 +2994,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to reset the inner stepper error estimate");
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return (ARK_INNERSTEP_FAIL);
     }
     retval = mriStepInnerStepper_SetRTol(step_mem->stepper,
@@ -2970,6 +3004,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to set the inner stepper tolerance");
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return (ARK_INNERSTEP_FAIL);
     }
   }
@@ -2983,6 +3018,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to reset the inner stepper");
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return (ARK_INNERSTEP_FAIL);
     }
   }
@@ -3006,6 +3042,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed update F0 eval, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return ARK_RHSFUNC_FAIL;
     }
   }
@@ -3017,6 +3054,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed full rhs eval, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return ARK_RHSFUNC_FAIL;
     }
   }
@@ -3055,6 +3093,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-groups-list",
                  "status = failed forcing computation, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
       return (retval);
     }
 
@@ -3118,6 +3157,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                      "status = failed stage computation, retval = %i", retval);
           arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__,
                           __FILE__, "Unable to reset the inner stepper");
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (ARK_INNERSTEP_FAIL);
         }
       }
@@ -3133,6 +3173,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         SUNLogInfo(ARK_LOGGER, "end-groups-list",
                    "status = failed stage computation, retval = %i", retval);
         *nflagPtr = CONV_FAIL;
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
         return retval;
       }
 
@@ -3157,6 +3198,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                      "status = failed postprocess stage, retval = %i", retval);
           SUNLogInfo(ARK_LOGGER, "end-groups-list",
                      "status = failed stage computation, retval = %i", retval);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (ARK_POSTPROCESS_STAGE_FAIL);
         }
 
@@ -3170,6 +3212,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                      "status = failed stage computation, retval = %i", retval);
           arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__,
                           __FILE__, "Unable to reset the inner stepper");
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (ARK_INNERSTEP_FAIL);
         }
       }
@@ -3183,6 +3226,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                      "status = failed postprocess step, retval = %i", retval);
           SUNLogInfo(ARK_LOGGER, "end-groups-list",
                      "status = failed stage computation, retval = %i", retval);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (ARK_POSTPROCESS_STEP_FAIL);
         }
 
@@ -3196,6 +3240,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                      "status = failed stage computation, retval = %i", retval);
           arkProcessError(ark_mem, ARK_INNERSTEP_FAIL, __LINE__, __func__,
                           __FILE__, "Unable to reset the inner stepper");
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
           return (ARK_INNERSTEP_FAIL);
         }
       }
@@ -3214,6 +3259,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                        "status = failed preprocess rhs, retval = %i", retval);
             SUNLogInfo(ARK_LOGGER, "end-groups-list",
                        "status = failed stage computation, retval = %i", retval);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
             return (ARK_PRERHSFN_FAIL);
           }
         }
@@ -3230,8 +3276,12 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-groups-list",
                      "status = failed stage computation, retval = %i", retval);
 
-        if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
-        if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+        if (retval != 0)
+        {
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ytilde);
+          if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
+          if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+        }
 
         /* Add external forcing to Fse[stage], if applicable */
         if (step_mem->expforcing)

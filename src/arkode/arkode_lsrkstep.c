@@ -613,7 +613,12 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (step_mem->dom_eig_update)
   {
     retval = lsrkStep_ComputeNewDomEig(ark_mem, step_mem);
-    if (retval != ARK_SUCCESS) { return retval; }
+    if (retval != ARK_SUCCESS)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return retval;
+    }
   }
 
   /* Compute the number of stages based on the current step size and dominant
@@ -640,6 +645,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                step_mem->spectral_radius, ss, step_mem->stage_max,
                step_mem->stage_max_limit);
 
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
     if (!ark_mem->fixedstep)
     {
       hmax = ark_mem->hadapt_mem->safety *
@@ -676,7 +683,12 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       steps. */
     retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
                                              &stability_norm);
-    if (retval != ARK_SUCCESS) { return retval; }
+    if (retval != ARK_SUCCESS)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return retval;
+    }
 
     if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
     {
@@ -688,7 +700,12 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         retval = lsrkStep_RKC_CheckStabilityNorm(step_mem,
                                                  step_mem->stage_max_limit,
                                                  ark_mem->h, &stability_norm);
-        if (retval != ARK_SUCCESS) { return retval; }
+        if (retval != ARK_SUCCESS)
+        {
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+          return retval;
+        }
 
         max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
         stability_norm      = initial_stability_norm;
@@ -702,12 +719,19 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           req_stages += 1;
           retval = lsrkStep_RKC_CheckStabilityNorm(step_mem, req_stages,
                                                    ark_mem->h, &stability_norm);
-          if (retval != ARK_SUCCESS) { return retval; }
+          if (retval != ARK_SUCCESS)
+          {
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+            return retval;
+          }
         }
       }
 
       if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
       {
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         if (!ark_mem->fixedstep)
         {
           /* For adaptive simulations, we adjust the step size by the ellipse approximation */
@@ -763,6 +787,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -776,7 +802,9 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return ARK_RHSFUNC_FAIL;
     }
     ark_mem->fn_is_current = SUNTRUE;
   }
@@ -814,6 +842,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -841,6 +871,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -854,8 +886,13 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+      if (retval > 0) { return RHSFUNC_RECVR; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -888,6 +925,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed vector op, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_VECTOROP_ERR;
     }
 
@@ -900,6 +939,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -911,6 +952,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess step, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STEP_FAIL;
       }
     }
@@ -957,6 +1000,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-compute-embedding",
                  "status = failed preprocess rhs, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_PRERHSFN_FAIL;
     }
   }
@@ -969,8 +1013,12 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-compute-embedding",
                "status = failed rhs eval, retval = %i", retval);
 
-  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-  if (retval > 0) { return RHSFUNC_RECVR; }
+  if (retval != 0)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+  }
 
   /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
@@ -993,6 +1041,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-compute-embedding",
                  "status = failed vector op, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_VECTOROP_ERR;
     }
     *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
@@ -1070,7 +1119,12 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (step_mem->dom_eig_update)
   {
     retval = lsrkStep_ComputeNewDomEig(ark_mem, step_mem);
-    if (retval != ARK_SUCCESS) { return retval; }
+    if (retval != ARK_SUCCESS)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return retval;
+    }
   }
 
   /* Compute the number of stages based on the current step size and dominant
@@ -1084,12 +1138,10 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype zR    = ark_mem->h * step_mem->lambdaR;
   sunrealtype zI    = ark_mem->h * step_mem->lambdaI;
   sunrealtype zRabs = SUNRabs(zR);
-  int ss =
-    zR > ZERO
-      ? 2
-      : (int)SUNRceil(
-          (SUNRsqrt(SUN_RCONST(9.0) + SUN_RCONST(8.0) * zRabs) - ONE) / TWO);
-
+  int ss = zR > ZERO
+         ? 2
+         : (int)SUNRceil(
+            (SUNRsqrt(SUN_RCONST(9.0) + SUN_RCONST(8.0) * zRabs) - ONE) / TWO);
   ss = SUNMAX(ss, 2);
 
   /* Check if number of stages exceeds maximum allowed.
@@ -1104,6 +1156,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                step_mem->spectral_radius, ss, step_mem->stage_max,
                step_mem->stage_max_limit);
 
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
     if (!ark_mem->fixedstep)
     {
       hmax =
@@ -1140,7 +1194,12 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       keep the existing fixed-step error and adaptive-step eta update logic. */
     retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
                                              &stability_norm);
-    if (retval != ARK_SUCCESS) { return retval; }
+    if (retval != ARK_SUCCESS)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return retval;
+    }
 
     if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
     {
@@ -1152,7 +1211,12 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         retval = lsrkStep_RKL_CheckStabilityNorm(step_mem,
                                                  step_mem->stage_max_limit,
                                                  ark_mem->h, &stability_norm);
-        if (retval != ARK_SUCCESS) { return retval; }
+        if (retval != ARK_SUCCESS)
+        {
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+          return retval;
+        }
 
         max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF);
         stability_norm      = initial_stability_norm;
@@ -1166,12 +1230,19 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           req_stages += 1;
           retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages,
                                                    ark_mem->h, &stability_norm);
-          if (retval != ARK_SUCCESS) { return retval; }
+          if (retval != ARK_SUCCESS)
+          {
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+            return retval;
+          }
         }
       }
 
       if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)
       {
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         if (!ark_mem->fixedstep)
         {
           const sunrealtype aspect_ratio[7] = {
@@ -1238,6 +1309,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -1249,7 +1322,9 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return ARK_RHSFUNC_FAIL;
     }
     ark_mem->fn_is_current = SUNTRUE;
   }
@@ -1282,6 +1357,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -1299,6 +1376,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -1312,8 +1391,13 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+      if (retval > 0) { return RHSFUNC_RECVR; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -1344,6 +1428,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed vector op, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_VECTOROP_ERR;
     }
 
@@ -1356,6 +1442,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1367,6 +1455,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess step, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STEP_FAIL;
       }
     }
@@ -1404,6 +1494,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-compute-embedding",
                  "status = failed preprocess rhs, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_PRERHSFN_FAIL;
     }
   }
@@ -1415,8 +1506,12 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-compute-embedding",
                "status = failed rhs eval, retval = %i", retval);
 
-  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-  if (retval > 0) { return RHSFUNC_RECVR; }
+  if (retval != 0)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+  }
 
   /* Compute yerr (if step adaptivity enabled), and store in ark_mem->lte */
   if (!ark_mem->fixedstep)
@@ -1438,6 +1533,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-compute-embedding",
                  "status = failed vector op, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_VECTOROP_ERR;
     }
     *dsmPtr = N_VWrmsNorm(ark_mem->lte, ark_mem->ewt);
@@ -1549,6 +1645,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -1560,7 +1657,8 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      return ARK_RHSFUNC_FAIL;
     }
     ark_mem->fn_is_current = SUNTRUE;
   }
@@ -1588,6 +1686,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -1606,6 +1705,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -1618,8 +1718,12 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+      if (retval > 0) { return RHSFUNC_RECVR; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -1643,6 +1747,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1656,6 +1761,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed preprocess rhs, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_PRERHSFN_FAIL;
     }
   }
@@ -1667,8 +1773,12 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                "status = failed rhs eval, retval = %i", retval);
 
-  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-  if (retval > 0) { return RHSFUNC_RECVR; }
+  if (retval != 0)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+  }
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -1688,6 +1798,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   {
     SUNLogInfo(ARK_LOGGER, "end-stages-list",
                "status = failed vector op, retval = %i", retval);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
     return ARK_VECTOROP_ERR;
   }
 
@@ -1700,6 +1811,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess step, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_POSTPROCESS_STEP_FAIL;
     }
   }
@@ -1806,6 +1918,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -1818,7 +1932,9 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return ARK_RHSFUNC_FAIL;
     }
     ark_mem->fn_is_current = SUNTRUE;
   }
@@ -1846,6 +1962,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -1864,6 +1982,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -1877,8 +1997,13 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+      if (retval > 0) { return RHSFUNC_RECVR; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -1902,6 +2027,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1924,6 +2051,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -1937,8 +2066,13 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+      if (retval > 0) { return RHSFUNC_RECVR; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -1962,6 +2096,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1975,6 +2111,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed preprocess rhs, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_PRERHSFN_FAIL;
     }
   }
@@ -1988,8 +2126,13 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                "status = failed rhs eval, retval = %i", retval);
 
-  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-  if (retval > 0) { return RHSFUNC_RECVR; }
+  if (retval != 0)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+  }
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2009,6 +2152,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   {
     SUNLogInfo(ARK_LOGGER, "end-stages-list",
                "status = failed vector op, retval = %i", retval);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
     return ARK_VECTOROP_ERR;
   }
   /* Optionally update the embedding */
@@ -2026,6 +2171,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -2044,6 +2191,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -2057,8 +2206,13 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+      if (retval > 0) { return RHSFUNC_RECVR; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2082,6 +2236,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -2093,6 +2249,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess step, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STEP_FAIL;
       }
     }
@@ -2198,6 +2356,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -2210,7 +2369,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      return ARK_RHSFUNC_FAIL;
     }
     ark_mem->fn_is_current = SUNTRUE;
   }
@@ -2238,6 +2398,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -2250,6 +2411,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed preprocess rhs, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_PRERHSFN_FAIL;
     }
   }
@@ -2263,8 +2425,12 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                "status = failed rhs eval, retval = %i", retval);
 
-  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-  if (retval > 0) { return RHSFUNC_RECVR; }
+  if (retval != 0)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+  }
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2288,6 +2454,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -2302,6 +2469,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed preprocess rhs, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_PRERHSFN_FAIL;
     }
   }
@@ -2314,8 +2482,12 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                "status = failed rhs eval, retval = %i", retval);
 
-  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-  if (retval > 0) { return RHSFUNC_RECVR; }
+  if (retval != 0)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+  }
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2335,6 +2507,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   {
     SUNLogInfo(ARK_LOGGER, "end-stages-list",
                "status = failed vector op, retval = %i", retval);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
     return ARK_VECTOROP_ERR;
   }
   if (!ark_mem->fixedstep)
@@ -2351,6 +2524,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -2365,6 +2539,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed preprocess rhs, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_PRERHSFN_FAIL;
     }
   }
@@ -2377,8 +2552,12 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                "status = failed rhs eval, retval = %i", retval);
 
-  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-  if (retval > 0) { return RHSFUNC_RECVR; }
+  if (retval != 0)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+  }
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2398,6 +2577,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess step, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
       return ARK_POSTPROCESS_STEP_FAIL;
     }
   }
@@ -2498,6 +2678,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -2510,6 +2692,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return (ARK_RHSFUNC_FAIL);
     }
     ark_mem->fn_is_current = SUNTRUE;
@@ -2547,6 +2731,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -2560,6 +2746,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -2572,8 +2760,13 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+      if (retval > 0) { return RHSFUNC_RECVR; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2608,6 +2801,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -2626,6 +2821,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed preprocess rhs, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_PRERHSFN_FAIL;
       }
     }
@@ -2639,8 +2836,13 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
 
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+      if (retval > 0) { return RHSFUNC_RECVR; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2670,6 +2872,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -2685,6 +2889,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed preprocess rhs, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return ARK_PRERHSFN_FAIL;
     }
   }
@@ -2697,8 +2903,13 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                "status = failed rhs eval, retval = %i", retval);
 
-  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-  if (retval > 0) { return RHSFUNC_RECVR; }
+  if (retval != 0)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+  }
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2713,16 +2924,14 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   cvals[2]         = SUN_RCONST(0.1) * ark_mem->h;
   Xvecs[2]         = tmp1;
   retval           = N_VLinearCombination(3, cvals, Xvecs, ark_mem->ycur);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
   if (retval != 0)
   {
     SUNLogInfo(ARK_LOGGER, "end-stages-list",
                "status = failed vector op, retval = %i", retval);
     return ARK_VECTOROP_ERR;
   }
-
-  /* Return the temporary vectors to the stack */
-  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
-  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
 
   /* apply user-supplied step postprocessing function (if supplied) */
   if (ark_mem->PostProcessStepFn)
@@ -3381,7 +3590,11 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
     if (ark_mem->PreRhsFn)
     {
       retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
-      if (retval != 0) { return ARK_PRERHSFN_FAIL; }
+      if (retval != 0)
+      {
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &work);
+        return ARK_PRERHSFN_FAIL;
+      }
     }
 
     retval = step_mem->fe_wrap(t, y, ark_mem->fn, step_mem->user_data_wrap);
@@ -3392,7 +3605,8 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
                           "F_n(:) =");
       SUNLogInfo(ARK_LOGGER, "DomEig JvTimes",
                  "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &work);
+      return ARK_RHSFUNC_FAIL;
     }
     ark_mem->fn_is_current = SUNTRUE;
   }
@@ -3409,13 +3623,21 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
     if (ark_mem->PreRhsFn)
     {
       retval = ark_mem->PreRhsFn(t, work, ark_mem->user_data);
-      if (retval != 0) { return ARK_PRERHSFN_FAIL; }
+      if (retval != 0)
+      {
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &work);
+        return ARK_PRERHSFN_FAIL;
+      }
     }
     /* Set Jv = f(tn, y+sig*v) */
     retval = step_mem->fe_wrap(t, work, Jv, step_mem->user_data_wrap);
     step_mem->nfeDQ++;
     if (retval == 0) { break; }
-    if (retval < 0) { return (-1); }
+    if (retval < 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &work);
+      return (-1);
+    }
 
     /* If f failed recoverably, shrink sig and retry */
     sig *= SUN_RCONST(0.25);

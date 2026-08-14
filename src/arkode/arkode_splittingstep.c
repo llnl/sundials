@@ -204,6 +204,7 @@ static int splittingStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y,
     {
       arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                       MSG_ARK_RHSFUNC_FAILED, t);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ftmp);
       return ARK_RHSFUNC_FAIL;
     }
     if (i > 0) { N_VLinearSum(ONE, f, ONE, ftmp, f); }
@@ -352,6 +353,7 @@ static int splittingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
     {
       SUNLogInfo(ARK_LOGGER, "end-sequential-methods-list",
                  "status = failed sequential method, retval = %i", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &yseq);
       return retval;
     }
     N_VLinearSum(ONE, ark_mem->ycur, coefficients->alpha[i], yseq, ark_mem->ycur);

@@ -1108,7 +1108,11 @@ int erkStep_TakeStep_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagP
 
     /* h b_i \lambda_{n+1} + h sum_{j=i}^{s} A_{ji} \Lambda_{j} */
     retval = N_VLinearCombination(nvec, cvals, Xvecs, sens_tmp_Lambda);
-    if (retval != 0) { return (ARK_VECTOROP_ERR); }
+    if (retval != 0) {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return (ARK_VECTOROP_ERR);
+    }
 
     /* Compute the stages \Lambda_i and \nu_i by evaluating f_{y}^*(t_i, z_i, p) and
        f_{p}^*(t_i, z_i, p) and applying them to sens_tmp_Lambda (in sens_tmp). This is
@@ -1158,27 +1162,41 @@ int erkStep_TakeStep_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagP
                             __FILE__,
                             "SUNAdjointStepper_RecomputeFwd returned %d",
                             errcode);
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
             return (ARK_ADJ_RECOMPUTE_FAIL);
           }
           SUNLogDebug(ARK_LOGGER, "end-recompute",
                       "start_step = %li, stop_step = %li, t0 = %" SUN_FORMAT_G
                       ", tf = %" SUN_FORMAT_G "",
                       start_step, stop_step, t0, tf);
-          return erkStep_TakeStep_Adjoint(ark_mem, dsmPtr, nflagPtr);
+          errcode = erkStep_TakeStep_Adjoint(ark_mem, dsmPtr, nflagPtr);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+          return errcode;
         }
       }
       if (errcode != SUN_SUCCESS)
       {
         arkProcessError(ark_mem, ARK_ADJ_RECOMPUTE_FAIL, __LINE__, __func__,
                         __FILE__, "Could not load or recompute missing step");
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
         return (ARK_ADJ_RECOMPUTE_FAIL);
       }
     }
-    else if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+    else if (retval > 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
+      return (ARK_UNREC_RHSFUNC_ERR);
+    }
     else if (retval < 0)
     {
       arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                       "The right hand side function failed returned %d", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
       return (ARK_RHSFUNC_FAIL);
     }
   }
@@ -1196,6 +1214,8 @@ int erkStep_TakeStep_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagP
     arkProcessError(ark_mem, ARK_ADJ_CHECKPOINT_FAIL, __LINE__, __func__,
                     __FILE__,
                     "SUNAdjointCheckpointScheme_LoadVector returned %d", errcode);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2);
     return ARK_ADJ_CHECKPOINT_FAIL;
   }
 
@@ -1217,13 +1237,12 @@ int erkStep_TakeStep_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagP
   /* \lambda_n = \lambda_{n+1} + \sum_{j=1}^{s} \Lambda_j
      \mu_n     = \mu_{n+1} + \sum_{j=1}^{s} \nu_j */
   retval = N_VLinearCombination(nvec, cvals, Xvecs, sens_n);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
   if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
   *dsmPtr   = ZERO;
   *nflagPtr = 0;
-
-  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
-  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
 
   return (ARK_SUCCESS);
 }
@@ -1593,6 +1612,8 @@ int erkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
   {
     arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
                     MSG_ERKSTEP_NO_MEM);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &z_stage);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
     return ARK_MEM_NULL;
   }
   step_mem = (ARKodeERKStepMem)(ark_mem->step_mem);
@@ -1621,13 +1642,23 @@ int erkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
     }
 
     retval = N_VLinearCombination(nvec, cvals, Xvecs, z_stage);
-    if (retval) { return ARK_VECTOROP_ERR; }
+    if (retval)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &z_stage);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
+      return ARK_VECTOROP_ERR;
+    }
 
     /* Evaluate the Jacobian at z_i */
     retval = relax_jac_fn(z_stage, J_relax, ark_mem->user_data);
     (*num_relax_jac_evals)++;
-    if (retval < 0) { return ARK_RELAX_JAC_FAIL; }
-    if (retval > 0) { return ARK_RELAX_JAC_RECV; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &z_stage);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
+      if (retval < 0) { return ARK_RELAX_JAC_FAIL; }
+      if (retval > 0) { return ARK_RELAX_JAC_RECV; }
+    }
 
     /* Update estimates */
     if (J_relax->ops->nvdotprodlocal && J_relax->ops->nvdotprodmultiallreduce)
@@ -1644,7 +1675,12 @@ int erkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
   if (J_relax->ops->nvdotprodlocal && J_relax->ops->nvdotprodmultiallreduce)
   {
     retval = N_VDotProdMultiAllReduce(1, J_relax, delta_e_out);
-    if (retval) { return ARK_VECTOROP_ERR; }
+    if (retval)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &z_stage);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
+      return ARK_VECTOROP_ERR;
+    }
   }
 
   *delta_e_out *= ark_mem->h;
@@ -1706,6 +1742,7 @@ int erkStep_fe_Adj(sunrealtype t, N_Vector sens_partial_stage,
   if (errcode == SUN_ERR_CHECKPOINT_NOT_FOUND)
   {
     ark_mem->load_checkpoint_fail = SUNTRUE;
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
     return +1;
   }
 
