@@ -95,6 +95,11 @@ struct ARKodeRelaxMemRec
   long int nls_iters;    /* total nonlinear iterations           */
   long int nls_fails;    /* number of nonlinear solver fails     */
   long int bound_fails;  /* number of relax param bound fails    */
+
+  /* temporary vectors */
+  N_Vector delta_y;      /* update direction vector             */
+  N_Vector y_relax;      /* relaxed solution vector             */
+  N_Vector J_relax;      /* Jacobian of the relaxation function */
 };
 
 /* -----------------------------------------------------------------------------
