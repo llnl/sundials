@@ -16,11 +16,6 @@
  * -----------------------------------------------------------------------------
  * This is the implementation file for ARKODE's relaxation (in time)
  * functionality
- *
- * Temporary vectors utilized in the functions below:
- *   tempv2 - holds delta_y, the update direction vector
- *   tempv3 - holds y_relax, the relaxed solution vector
- *   tempv4 - holds J_relax, the Jacobian of the relaxation function
  * ---------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -65,8 +60,8 @@ static int arkRelaxResidual(sunrealtype relax_param, sunrealtype* relax_res,
   int retval;
   sunrealtype e_old   = ark_mem->relax_mem->e_old;
   sunrealtype delta_e = ark_mem->relax_mem->delta_e;
-  N_Vector delta_y    = ark_mem->tempv2;
-  N_Vector y_relax    = ark_mem->tempv3;
+  N_Vector delta_y    = ark_mem->relax_mem->delta_y;
+  N_Vector y_relax    = ark_mem->relax_mem->y_relax;
   void* user_data     = ark_mem->user_data;
 
   /* y_relax = y_n + r * delta_y */
@@ -89,9 +84,9 @@ static int arkRelaxResidualJacobian(sunrealtype relax_param,
                                     sunrealtype* relax_jac, ARKodeMem ark_mem)
 {
   int retval;
-  N_Vector delta_y    = ark_mem->tempv2;
-  N_Vector y_relax    = ark_mem->tempv3;
-  N_Vector J_relax    = ark_mem->tempv4;
+  N_Vector delta_y    = ark_mem->relax_mem->delta_y;
+  N_Vector y_relax    = ark_mem->relax_mem->y_relax;
+  N_Vector J_relax    = ark_mem->relax_mem->J_relax;
   sunrealtype delta_e = ark_mem->relax_mem->delta_e;
   void* user_data     = ark_mem->user_data;
 
@@ -345,10 +340,10 @@ static int arkRelaxSolve(ARKodeMem ark_mem, ARKodeRelaxMem relax_mem,
   SUNLogExtraDebug(ARK_LOGGER, "compute delta e", "delta_e = " SUN_FORMAT_G,
                    relax_mem->delta_e);
 
-  /* Get the change in state (delta_y = tempv2) */
-  N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->yn, ark_mem->tempv2);
+  /* Get the change in state (delta_y) */
+  N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->yn, ark_mem->relax_mem->delta_y);
 
-  SUNLogExtraDebugVec(ARK_LOGGER, "compute delta y", ark_mem->tempv2,
+  SUNLogExtraDebugVec(ARK_LOGGER, "compute delta y", ark_mem->relax_mem->delta_y,
                       "delta_y(:) =");
 
   /* Store the current relaxation function value */
@@ -415,7 +410,7 @@ int ARKodeSetRelaxFn(void* arkode_mem, ARKRelaxFn rfn, ARKRelaxJacFn rjac)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* Ensure that the current N_Vector supports N_VDotProd */
-  if (ark_mem->tempv1->ops->nvdotprod == NULL)
+  if (ark_mem->ycur->ops->nvdotprod == NULL)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "N_VDotProd unimplemented (required for relaxation)");
@@ -867,8 +862,19 @@ int arkRelax(ARKodeMem ark_mem, int* relax_fails, sunrealtype* dsm_inout)
     return ARK_RELAX_MEM_NULL;
   }
 
+  /* Retrieve temporary vectors to use for relaxation */
+  relax_mem->delta_y = NULL;
+  relax_mem->y_relax = NULL;
+  relax_mem->J_relax = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &(relax_mem->delta_y))) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &(relax_mem->y_relax))) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &(relax_mem->J_relax))) { return ARK_MEM_FAIL; }
+
   /* Compute the relaxation parameter */
   retval = arkRelaxSolve(ark_mem, relax_mem, &relax_val);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &(relax_mem->delta_y))) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &(relax_mem->y_relax))) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &(relax_mem->J_relax))) { return ARK_MEM_FAIL; }
   if (retval < 0) { return retval; }
   if (retval > 0)
   {
