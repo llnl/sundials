@@ -501,8 +501,8 @@ void bind_nvector_cuda(nb::module_& m)
     {
       check_length(N_VGetLength(v), d_vdata_1d);
       N_VSetDeviceArrayPointer(reinterpret_cast<sunrealtype*>(
-                                  device_array_pointer(d_vdata_1d)),
-                                v);
+                                 device_array_pointer(d_vdata_1d)),
+                               v);
       retain_python_device_array(v, std::move(d_vdata_1d));
     },
     nb::arg("d_vdata_1d"), nb::arg("v"), nb::keep_alive<2, 1>());

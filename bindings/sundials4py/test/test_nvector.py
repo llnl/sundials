@@ -325,9 +325,7 @@ def test_nvector_array_helpers_cuda_host(sunctx):
     assert_allclose(synced_host, 8.0)
 
 
-@pytest.mark.skipif(
-    "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
-)
+@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_set_nvector_cuda_torch_tensor(sunctx):
     torch = pytest.importorskip("torch")
     if not torch.cuda.is_available():
@@ -342,9 +340,7 @@ def test_set_nvector_cuda_torch_tensor(sunctx):
     assert_allclose(d_arr.cpu().numpy(), 5.0)
 
 
-@pytest.mark.skipif(
-    "N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled"
-)
+@pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_set_nvector_cuda_jax_array(sunctx):
     jax = pytest.importorskip("jax")
     if np.dtype(sunrealtype) == np.dtype(np.float64):
