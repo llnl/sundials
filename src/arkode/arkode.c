@@ -3729,12 +3729,12 @@ sunbooleantype arkResizeVecArray(ARKVecResizeFn resize, void* resize_data,
 /*---------------------------------------------------------------
   arkAllocVectors:
 
-  This routine allocates the ARKODE vectors ewt, yn, tempv* and
-  ftemp. If any of these vectors already exist, they are left
-  alone. Otherwise, it will allocate each vector by cloning the
-  input vector. This routine also updates the optional outputs
-  lrw and liw, which are (respectively) the lengths of the real
-  and integer work spaces.
+  This routine allocates the ARKODE vectors ewt, yn, and ftemp.
+  If any of these vectors already exist, they are left alone.
+  Otherwise, it will allocate each vector by cloning the input
+  vector. This routine also updates the optional outputs lrw and
+  liw, which are (respectively) the lengths of the real and
+  integer work spaces.
 
   If all memory allocations are successful, arkAllocVectors
   returns SUNTRUE, otherwise it returns SUNFALSE.
@@ -3751,18 +3751,6 @@ sunbooleantype arkAllocVectors(ARKodeMem ark_mem, N_Vector tmpl)
   if (!arkAllocVec(ark_mem, tmpl, &ark_mem->yn)) { return (SUNFALSE); }
 
   SUNErrCode err = SUN_SUCCESS;
-
-  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv1);
-  if (err != SUN_SUCCESS) { return SUNFALSE; }
-
-  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv2);
-  if (err != SUN_SUCCESS) { return SUNFALSE; }
-
-  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv3);
-  if (err != SUN_SUCCESS) { return SUNFALSE; }
-
-  err = SUNVecStack_Pop(ark_mem->temp_vec_stack, &ark_mem->tempv4);
-  if (err != SUN_SUCCESS) { return SUNFALSE; }
 
   return (SUNTRUE);
 }
@@ -3834,37 +3822,6 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
     return (SUNFALSE);
   }
 
-  /* tempv* */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv1))
-  {
-    return (SUNFALSE);
-  }
-
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv2))
-  {
-    return (SUNFALSE);
-  }
-
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv3))
-  {
-    return (SUNFALSE);
-  }
-
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv4))
-  {
-    return (SUNFALSE);
-  }
-
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv5))
-  {
-    return (SUNFALSE);
-  }
-
   /* ToDo: resize the ARKODE vector stack? */
 
   return (SUNTRUE);
@@ -3881,12 +3838,6 @@ void arkFreeVectors(ARKodeMem ark_mem)
   arkFreeVec(ark_mem, &ark_mem->ewt);
   if (!ark_mem->rwt_is_ewt) { arkFreeVec(ark_mem, &ark_mem->rwt); }
 
-  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv1);
-  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv2);
-  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv3);
-  (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->tempv4);
-
-  arkFreeVec(ark_mem, &ark_mem->tempv5);
   arkFreeVec(ark_mem, &ark_mem->yn);
   arkFreeVec(ark_mem, &ark_mem->fn);
   arkFreeVec(ark_mem, &ark_mem->Vabstol);

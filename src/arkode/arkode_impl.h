@@ -490,11 +490,6 @@ struct ARKodeMemRec
   N_Vector yn;                  /* solution from the last successful step     */
   N_Vector fn;                  /* full IVP right-hand side from last step    */
   sunbooleantype fn_is_current; /* SUNTRUE if fn has been evaluated at yn     */
-  N_Vector tempv1;              /* temporary storage vectors (for local use   */
-  N_Vector tempv2;              /* and by time-stepping modules)              */
-  N_Vector tempv3;
-  N_Vector tempv4;
-  N_Vector tempv5;
 
   /* Temporal interpolation module */
   ARKInterp interp;
