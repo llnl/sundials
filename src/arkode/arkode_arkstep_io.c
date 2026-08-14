@@ -936,23 +936,6 @@ int arkStep_SetAutonomous(ARKodeMem ark_mem, sunbooleantype autonomous)
     return ARK_ILL_INPUT;
   }
 
-  /* This will be better handled when the temp vector stack is added */
-  if (autonomous)
-  {
-    /* Allocate tempv5 if needed */
-    if (!arkAllocVec(ark_mem, ark_mem->yn, &ark_mem->tempv5))
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      MSG_ARK_MEM_FAIL);
-      return ARK_MEM_FAIL;
-    }
-  }
-  else
-  {
-    /* Free tempv5 if necessary */
-    arkFreeVec(ark_mem, &ark_mem->tempv5);
-  }
-
   return ARK_SUCCESS;
 }
 

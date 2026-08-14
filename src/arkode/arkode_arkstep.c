@@ -1163,8 +1163,16 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     /* Call msetup (if it exists) */
     if (step_mem->msetup != NULL)
     {
-      retval = step_mem->msetup((void*)ark_mem, ark_mem->tcur, ark_mem->tempv1,
-                                ark_mem->tempv2, ark_mem->tempv3);
+      N_Vector tmp1 = NULL;
+      N_Vector tmp2 = NULL;
+      N_Vector tmp3 = NULL;
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp3)) { return ARK_MEM_FAIL; }
+      retval = step_mem->msetup((void*)ark_mem, ark_mem->tcur, tmp1, tmp2, tmp3);
+      if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+      if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
+      if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp3)) { return ARK_MEM_FAIL; }
       if (retval != 0)
       {
         arkProcessError(ark_mem, ARK_MASSSETUP_FAIL, __LINE__, __func__,
@@ -1281,6 +1289,8 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   sunbooleantype recomputeRHS;
   sunrealtype* cvals;
   N_Vector* Xvecs;
+  N_Vector tmp1 = NULL;
+  N_Vector tmp2 = NULL;
   sunrealtype stage_coefs = ONE;
 
   /* access ARKodeARKStepMem structure */
@@ -1294,8 +1304,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   /* setup mass-matrix if required (use output f as a temporary) */
   if ((step_mem->mass_type == MASS_TIMEDEP) && (step_mem->msetup != NULL))
   {
-    retval = step_mem->msetup((void*)ark_mem, t, f, ark_mem->tempv2,
-                              ark_mem->tempv3);
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
+    retval = step_mem->msetup((void*)ark_mem, t, f, tmp1, tmp2);
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
     if (retval != ARK_SUCCESS) { return (ARK_MASSSETUP_FAIL); }
   }
 
@@ -1590,10 +1603,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       }
     }
 
-    /* compute the explicit component and store in ark_tempv2 */
+    /* compute the explicit component and store in tmp1 */
     if (step_mem->explicit)
     {
-      retval = step_mem->fe(t, y, ark_mem->tempv2, ark_mem->user_data);
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+      retval = step_mem->fe(t, y, tmp1, ark_mem->user_data);
       step_mem->nfe++;
       if (retval != 0)
       {
@@ -1606,7 +1620,7 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     /* combine RHS vector(s) into output */
     if (step_mem->explicit && step_mem->implicit)
     { /* ImEx */
-      N_VLinearSum(ONE, step_mem->sdata, ONE, ark_mem->tempv2, f);
+      N_VLinearSum(ONE, step_mem->sdata, ONE, tmp1, f);
     }
     else if (step_mem->implicit)
     { /* implicit */
@@ -1614,7 +1628,12 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     }
     else
     { /* explicit */
-      N_VScale(ONE, ark_mem->tempv2, f);
+      N_VScale(ONE, tmp1, f);
+    }
+
+    if (tmp1)
+    {
+      if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
     }
 
     /* compute M^{-1} f for output but do not store */
@@ -1690,7 +1709,11 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunbooleantype save_fn_for_residual;
   sunbooleantype eval_rhs;
   ARKodeARKStepMem step_mem;
-  N_Vector zcor0;
+  N_Vector zcor0 = NULL;
+  N_Vector tmp1 = NULL;
+  N_Vector tmp2 = NULL;
+  N_Vector tmp3 = NULL;
+  N_Vector tmp5 = NULL;
 
   /* access ARKodeARKStepMem structure */
   retval = arkStep_AccessStepMem(ark_mem, __func__, &step_mem);
@@ -1710,10 +1733,10 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   {
     if ((step_mem->NLS)->ops->setup)
     {
-      zcor0 = ark_mem->tempv3;
-      N_VConst(ZERO,
-               zcor0); /* set guess to all 0 (since using predictor-corrector form) */
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &zcor0)) { return ARK_MEM_FAIL; }
+      N_VConst(ZERO, zcor0); /* set guess to all 0 (predictor-corrector form) */
       retval = SUNNonlinSolSetup(step_mem->NLS, zcor0, ark_mem);
+      if (SUNVecStack_Push(ark_mem->temp_vec_stack, &zcor0)) { return ARK_MEM_FAIL; }
 
       SUNLogInfoIf(retval != 0, ARK_LOGGER, "setup-nonlinear-solver",
                    "status = failed nonlinear solver setup, retval = %i", retval);
@@ -1901,8 +1924,9 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       if (imex_method || step_mem->mass_type == MASS_FIXED)
       {
         /* Copy from Fi[0] as fn includes fe or M^{-1} */
-        N_VScale(ONE, step_mem->Fi[0], ark_mem->tempv5);
-        step_mem->fn_implicit = ark_mem->tempv5;
+        if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp5)) { return ARK_MEM_FAIL; }
+        N_VScale(ONE, step_mem->Fi[0], tmp5);
+        step_mem->fn_implicit = tmp5;
       }
       else
       {
@@ -1948,8 +1972,13 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* setup time-dependent mass matrix */
     if ((step_mem->mass_type == MASS_TIMEDEP) && (step_mem->msetup != NULL))
     {
-      retval = step_mem->msetup((void*)ark_mem, ark_mem->tcur, ark_mem->tempv1,
-                                ark_mem->tempv2, ark_mem->tempv3);
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp3)) { return ARK_MEM_FAIL; }
+      retval = step_mem->msetup((void*)ark_mem, ark_mem->tcur, tmp1, tmp2, tmp3);
+      if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+      if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp2)) { return ARK_MEM_FAIL; }
+      if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp3)) { return ARK_MEM_FAIL; }
       if (retval != ARK_SUCCESS)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2149,8 +2178,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         if (step_mem->mass_type == MASS_FIXED)
         {
-          retval = step_mem->mmult((void*)ark_mem, step_mem->zcor,
-                                   ark_mem->tempv1);
+          if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
+          retval = step_mem->mmult((void*)ark_mem, step_mem->zcor, tmp1);
           if (retval != ARK_SUCCESS)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2158,8 +2187,9 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
             return (ARK_MASSMULT_FAIL);
           }
 
-          N_VLinearSum(ONE / step_mem->gamma, ark_mem->tempv1,
-                       -ONE / step_mem->gamma, step_mem->sdata, step_mem->Fi[is]);
+          N_VLinearSum(ONE / step_mem->gamma, tmp1, -ONE / step_mem->gamma,
+                       step_mem->sdata, step_mem->Fi[is]);
+          if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1)) { return ARK_MEM_FAIL; }
         }
         else
         {
@@ -2225,6 +2255,11 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   } /* loop over stages */
+
+  if (tmp5)
+  {
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5)) { return ARK_MEM_FAIL; }
+  }
 
   SUNLogInfo(ARK_LOGGER, "begin-compute-solution", "mass type = %i",
              step_mem->mass_type);
@@ -2327,6 +2362,8 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   N_Vector sens_tmp_Lambda      = N_VGetSubvector_ManyVector(sens_tmp, 0);
   N_Vector sens_np1_lambda      = N_VGetSubvector_ManyVector(sens_np1, 0);
   N_Vector* stage_values        = step_mem->Fe;
+  N_Vector tmp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
 
   /* which adjoint step is being processed */
   ark_mem->adj_step_idx = adj_stepper->final_step_idx - ark_mem->nst;
@@ -2385,7 +2422,7 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
        solution, then recompute from there. */
     if (ark_mem->load_checkpoint_fail)
     {
-      N_Vector checkpoint = N_VGetSubvector_ManyVector(ark_mem->tempv2, 0);
+      N_Vector checkpoint = N_VGetSubvector_ManyVector(tmp, 0);
       suncountertype curr_step, start_step;
       curr_step = start_step = ark_mem->adj_step_idx;
 
@@ -2448,7 +2485,7 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 
   /* Throw away the step solution */
   sunrealtype checkpoint_t = ZERO;
-  N_Vector checkpoint      = N_VGetSubvector_ManyVector(ark_mem->tempv2, 0);
+  N_Vector checkpoint      = N_VGetSubvector_ManyVector(tmp, 0);
 
   SUNErrCode errcode =
     SUNAdjointCheckpointScheme_LoadVector(ark_mem->checkpoint_scheme,
@@ -2482,6 +2519,8 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
      \mu_n     = \mu_{n+1} + \sum_{j=1}^{s} \nu_j */
   retval = N_VLinearCombination(nvec, cvals, Xvecs, sens_n);
   if (retval != 0) { return (ARK_VECTOROP_ERR); }
+
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
 
   *dsmPtr   = ZERO;
   *nflagPtr = 0;
@@ -3148,8 +3187,11 @@ int arkStep_StageSetup(ARKodeMem ark_mem, sunbooleantype implicit)
   /* If implicit with fixed M!=I, update sdata with M*sdata */
   if (implicit && (step_mem->mass_type == MASS_FIXED))
   {
-    N_VScale(ONE, step_mem->sdata, ark_mem->tempv1);
-    retval = step_mem->mmult((void*)ark_mem, ark_mem->tempv1, step_mem->sdata);
+    N_Vector tmp = NULL;
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+    N_VScale(ONE, step_mem->sdata, tmp);
+    retval = step_mem->mmult((void*)ark_mem, tmp, step_mem->sdata);
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
     if (retval != ARK_SUCCESS) { return (ARK_MASSMULT_FAIL); }
   }
 
@@ -3562,7 +3604,9 @@ int arkStep_fe_Adj(sunrealtype t, N_Vector sens_partial_stage,
   ARKodeARKStepMem step_mem = (ARKodeARKStepMem)ark_mem->step_mem;
   void* user_data           = adj_stepper->user_data;
 
-  N_Vector checkpoint      = N_VGetSubvector_ManyVector(ark_mem->tempv2, 0);
+  N_Vector tmp = NULL;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+  N_Vector checkpoint      = N_VGetSubvector_ManyVector(tmp, 0);
   sunrealtype checkpoint_t = SUN_RCONST(0.0);
 
   ark_mem->load_checkpoint_fail = SUNFALSE;
@@ -3580,8 +3624,10 @@ int arkStep_fe_Adj(sunrealtype t, N_Vector sens_partial_stage,
   }
 
   /* Evaluate f_{y}^*(t_i, z_i, p) \Lambda_i and f_{p}^*(t_i, z_i, p) \nu_i */
-  return step_mem->adj_fe(t, checkpoint, sens_partial_stage,
-                          sens_complete_stage, user_data);
+  int retval = step_mem->adj_fe(t, checkpoint, sens_partial_stage,
+                                sens_complete_stage, user_data);
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+  return retval;
 }
 
 int arkStepCompatibleWithAdjointSolver(ARKodeMem ark_mem,
@@ -4044,10 +4090,13 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
   sunrealtype* cvals;
   N_Vector* Xvecs;
   ARKodeARKStepMem step_mem;
-  N_Vector z_stage = ark_mem->tempv2;
-  N_Vector J_relax = ark_mem->tempv3;
+  N_Vector tmp = NULL;
+  N_Vector J_relax = NULL;
   N_Vector rhs_tmp = NULL;
   sunrealtype bi   = ONE;
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &J_relax)) { return ARK_MEM_FAIL; }
+  N_Vector z_stage = tmp;
 
   /* Access the stepper memory structure */
   if (!(ark_mem->step_mem))
@@ -4148,6 +4197,9 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
   }
 
   *delta_e_out *= ark_mem->h;
+
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+  if (SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax)) { return ARK_MEM_FAIL; }
 
   return ARK_SUCCESS;
 }
