@@ -76,11 +76,16 @@ class Brusselator1DProblem:
             + w[1:-1] * u[1:-1]
             - v[1:-1] * u[1:-1] * u[1:-1]
         )
+
         ydot[1:-1, 2] = (
             (w[0:-2] - 2.0 * w[1:-1] + w[2:]) * wconst
             + (self.b - w[1:-1]) / self.ep
             - w[1:-1] * u[1:-1]
         )
+
+        # enforce stationary boundary conditions
+        ydot[0, :] = np.zeros((1, 3))
+
         return 0
 
     def laplace_matrix(self, A):
