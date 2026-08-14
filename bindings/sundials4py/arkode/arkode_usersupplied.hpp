@@ -91,6 +91,7 @@ struct arkode_user_supplied_fn_table
   nb::object mristep_fd;
   nb::object mristep_fse;
   nb::object mristep_fsi;
+  nb::object mristep_domeig;
   nb::object mristep_preinnerfn;
   nb::object mristep_postinnerfn;
 };
@@ -498,6 +499,23 @@ inline int mristep_fsi_wrapper(sunrealtype t, N_Vector y, N_Vector ydot,
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::mristep_fsi, t, y, ydot, user_data);
+}
+
+inline int mristep_domeig_wrapper(sunrealtype t, N_Vector y, N_Vector fn,
+                                  sunrealtype* lambdaR, sunrealtype* lambdaI,
+                                  void* user_data, N_Vector temp1,
+                                  N_Vector temp2, N_Vector temp3)
+{
+  auto fn_table = get_arkode_fn_table(user_data);
+  auto callback =
+    nb::cast<std::function<ARKDomEigStdFn>>(fn_table->mristep_domeig);
+
+  auto result = callback(t, y, fn, nullptr, temp1, temp2, temp3);
+
+  *lambdaR = std::get<1>(result);
+  *lambdaI = std::get<2>(result);
+
+  return std::get<0>(result);
 }
 
 using MRIStepPreInnerStdFn = int(sunrealtype t, std::vector<N_Vector> f,

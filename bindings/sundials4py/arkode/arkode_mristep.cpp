@@ -187,6 +187,45 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("fd").none(), nb::arg("fse").none(), nb::arg("fsi").none(),
     nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
+
+  m.def(
+    "MRIStepReInitExtSTS",
+    [](void* arkode_mem, std::function<std::remove_pointer_t<ARKRhsFn>> fd,
+       std::function<std::remove_pointer_t<ARKRhsFn>> fse,
+       std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
+       N_Vector y0)
+    {
+      auto fn_table         = get_arkode_fn_table(arkode_mem);
+      fn_table->mristep_fd  = nb::cast(fd);
+      fn_table->mristep_fse = nb::cast(fse);
+      fn_table->mristep_fsi = nb::cast(fsi);
+
+      auto fd_wrapper  = fd ? mristep_fd_wrapper : nullptr;
+      auto fse_wrapper = fse ? mristep_fse_wrapper : nullptr;
+      auto fsi_wrapper = fsi ? mristep_fsi_wrapper : nullptr;
+
+      return MRIStepReInitExtSTS(arkode_mem, fd_wrapper, fse_wrapper, fsi_wrapper,
+                                 t0, y0);
+    },
+    nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
+    nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
+
+  m.def(
+    "MRIStepExtSTSSetDomEigFn",
+    [](void* arkode_mem, std::function<std::remove_pointer_t<ARKDomEigFn>> fn)
+    {
+      auto fn_table             = get_arkode_fn_table(arkode_mem);
+      fn_table->mristep_domeig  = nb::cast(fn);
+      if (fn)
+      {
+        return MRIStepExtSTSSetDomEigFn(arkode_mem, mristep_domeig_wrapper);
+      }
+      else
+      {
+        return MRIStepExtSTSSetDomEigFn(arkode_mem, nullptr);
+      }
+    },
+    nb::arg("arkode_mem"), nb::arg("dom_eig").none());
 }
 
 } // namespace sundials4py
