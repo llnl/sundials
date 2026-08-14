@@ -727,6 +727,9 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
                     __FILE__,
                     "Compensated summation is not compatible with stage "
                     "Pre- or PostProcessing!\n");
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &delta_Yi);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &yn_plus_delta_Yi);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &diff);
     return (ARK_POSTPROCESS_STAGE_FAIL);
   }
 
@@ -768,6 +771,9 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed rhs eval, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &delta_Yi);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &yn_plus_delta_Yi);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &diff);
         return (ARK_RHSFUNC_FAIL);
       }
 
@@ -801,6 +807,9 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed rhs eval, retval = %i", retval);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &delta_Yi);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &yn_plus_delta_Yi);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &diff);
         return (ARK_RHSFUNC_FAIL);
       }
 

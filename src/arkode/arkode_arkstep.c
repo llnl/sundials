@@ -1613,6 +1613,7 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       {
         arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                         MSG_ARK_RHSFUNC_FAILED, t);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp1);
         return (ARK_RHSFUNC_FAIL);
       }
     }
@@ -1983,6 +1984,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed mass setup, retval = %i", retval);
+        if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
         return (ARK_MASSSETUP_FAIL);
       }
     }
@@ -1996,6 +1998,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed predict, retval = %i", retval);
+        if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
         return (retval);
       }
 
@@ -2009,8 +2012,12 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
         SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                      "status = failed predict, retval = %i", retval);
-        if (retval < 0) { return (ARK_USER_PREDICT_FAIL); }
-        if (retval > 0) { return (TRY_AGAIN); }
+        if (retval != 0)
+        {
+          if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
+          if (retval < 0) { return (ARK_USER_PREDICT_FAIL); }
+          if (retval > 0) { return (TRY_AGAIN); }
+        }
       }
 
       SUNLogExtraDebugVec(ARK_LOGGER, "predictor", step_mem->zpred, "zpred(:) =");
@@ -2022,6 +2029,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed stage setup, retval = %i", retval);
+      if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
       return (retval);
     }
 
@@ -2037,6 +2045,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed solve, nflag = %i", *nflagPtr);
+        if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
         return (TRY_AGAIN);
       }
 
@@ -2057,6 +2066,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed mass solve, nflag = %i", *nflagPtr);
+          if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
           return (TRY_AGAIN);
         }
       }
@@ -2083,6 +2093,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess step, retval = %i", retval);
+        if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
         return (ARK_POSTPROCESS_STEP_FAIL);
       }
     }
@@ -2094,6 +2105,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
                    "status = failed postprocess stage, retval = %i", retval);
+        if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
@@ -2117,6 +2129,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                         __FILE__,
                         "SUNAdjointCheckpointScheme_NeedsSaving returned %d",
                         errcode);
+        if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
         return ARK_ADJ_CHECKPOINT_FAIL;
       }
 
@@ -2134,6 +2147,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                           __FILE__,
                           "SUNAdjointCheckpointScheme_InsertVector returned %d",
                           errcode);
+          if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
           return ARK_ADJ_CHECKPOINT_FAIL;
         }
       }
@@ -2152,6 +2166,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed preprocess rhs, retval = %i", retval);
+          if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
           return (ARK_PRERHSFN_FAIL);
         }
       }
@@ -2171,8 +2186,12 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                      "status = failed implicit rhs eval, retval = %i", retval);
 
-        if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
-        if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+        if (retval != 0)
+        {
+          if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
+          if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
+          if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+        }
       }
       else
       {
@@ -2184,6 +2203,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           {
             SUNLogInfo(ARK_LOGGER, "end-stages-list",
                        "status = failed mass mult, retval = %i", retval);
+            if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
             return (ARK_MASSMULT_FAIL);
           }
 
@@ -2214,8 +2234,12 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                    "status = failed explicit rhs eval, retval = %i", retval);
 
-      if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
-      if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+      if (retval != 0)
+      {
+        if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
+        if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
+        if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+      }
     }
 
     /* if using a time-dependent mass matrix, update Fe[is] and/or Fi[is] with M(t)^{-1} */
@@ -2234,6 +2258,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed mass solve, nflag = %i", *nflagPtr);
+          if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
           return (TRY_AGAIN);
         }
       }
@@ -2247,6 +2272,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed mass solve, nflag = %i", *nflagPtr);
+          if (tmp5) { (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp5); }
           return (TRY_AGAIN);
         }
       }
@@ -2408,7 +2434,11 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 
     /* h be_i \lambda_{n+1} + h sum_{j=i}^{s} Ae_{ji} \Lambda_{j} */
     retval = N_VLinearCombination(nvec, cvals, Xvecs, sens_tmp_Lambda);
-    if (retval != 0) { return (ARK_VECTOROP_ERR); }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+      return (ARK_VECTOROP_ERR);
+    }
 
     /* Compute the stages \Lambda_i and \nu_i by evaluating f_{y}^*(t_i, z_i, p) and
        f_{p}^*(t_i, z_i, p) and applying them to sens_tmp_Lambda (in sens_tmp). This is
@@ -2458,12 +2488,14 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
                             __FILE__,
                             "SUNAdjointStepper_RecomputeFwd returned %d",
                             errcode);
+            (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
             return (ARK_ADJ_RECOMPUTE_FAIL);
           }
           SUNLogDebug(ARK_LOGGER, "end-recompute",
                       "start_step = %li, stop_step = %li, t0 = %" SUN_FORMAT_G
                       ", tf = %" SUN_FORMAT_G "",
                       start_step, stop_step, t0, tf);
+          (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
           return arkStep_TakeStep_ERK_Adjoint(ark_mem, dsmPtr, nflagPtr);
         }
       }
@@ -2471,14 +2503,20 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
       {
         arkProcessError(ark_mem, ARK_ADJ_RECOMPUTE_FAIL, __LINE__, __func__,
                         __FILE__, "Could not load or recompute missing step");
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
         return (ARK_ADJ_RECOMPUTE_FAIL);
       }
     }
-    else if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+    else if (retval > 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+      return (ARK_UNREC_RHSFUNC_ERR);
+    }
     else if (retval < 0)
     {
       arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
                       "The right hand side function failed returned %d", retval);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
       return (ARK_RHSFUNC_FAIL);
     }
   }
@@ -2497,6 +2535,7 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
     arkProcessError(ark_mem, ARK_ADJ_CHECKPOINT_FAIL, __LINE__, __func__,
                     __FILE__,
                     "SUNAdjointCheckpointScheme_LoadVector returned %d", errcode);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
     return ARK_ADJ_CHECKPOINT_FAIL;
   }
 
@@ -2518,9 +2557,8 @@ int arkStep_TakeStep_ERK_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   /* \lambda_n = \lambda_{n+1} + \sum_{j=1}^{s} \Lambda_j
      \mu_n     = \mu_{n+1} + \sum_{j=1}^{s} \nu_j */
   retval = N_VLinearCombination(nvec, cvals, Xvecs, sens_n);
-  if (retval != 0) { return (ARK_VECTOROP_ERR); }
-
   if (SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp)) { return ARK_MEM_FAIL; }
+  if (retval != 0) { return (ARK_VECTOROP_ERR); }
 
   *dsmPtr   = ZERO;
   *nflagPtr = 0;
@@ -3620,6 +3658,7 @@ int arkStep_fe_Adj(sunrealtype t, N_Vector sens_partial_stage,
   if (errcode == SUN_ERR_CHECKPOINT_NOT_FOUND)
   {
     ark_mem->load_checkpoint_fail = SUNTRUE;
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
     return +1;
   }
 
@@ -4103,6 +4142,8 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
   {
     arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
                     MSG_ARKSTEP_NO_MEM);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
     return ARK_MEM_NULL;
   }
   step_mem = (ARKodeARKStepMem)(ark_mem->step_mem);
@@ -4138,14 +4179,24 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
       }
 
       retval = N_VLinearCombination(nvec, cvals, Xvecs, z_stage);
-      if (retval) { return ARK_VECTOROP_ERR; }
+      if (retval)
+      {
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
+        return ARK_VECTOROP_ERR;
+      }
     }
 
     /* Evaluate the Jacobian at z_i */
     retval = relax_jac_fn(z_stage, J_relax, ark_mem->user_data);
     (*num_relax_jac_evals)++;
-    if (retval < 0) { return ARK_RELAX_JAC_FAIL; }
-    if (retval > 0) { return ARK_RELAX_JAC_RECV; }
+    if (retval != 0)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
+      if (retval < 0) { return ARK_RELAX_JAC_FAIL; }
+      if (retval > 0) { return ARK_RELAX_JAC_RECV; }
+    }
 
     /* Reset temporary RHS alias */
     rhs_tmp = z_stage;
@@ -4179,7 +4230,12 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
     if (step_mem->mass_type == MASS_FIXED)
     {
       retval = step_mem->msolve((void*)ark_mem, rhs_tmp, step_mem->nlscoef);
-      if (retval) { return ARK_MASSSOLVE_FAIL; }
+      if (retval)
+      {
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+        (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
+        return ARK_MASSSOLVE_FAIL;
+      }
     }
 
     /* Update estimate of relaxation function change */
@@ -4193,7 +4249,12 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
   if (J_relax->ops->nvdotprodlocal && J_relax->ops->nvdotprodmultiallreduce)
   {
     retval = N_VDotProdMultiAllReduce(1, J_relax, delta_e_out);
-    if (retval) { return ARK_VECTOROP_ERR; }
+    if (retval)
+    {
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &J_relax);
+      return ARK_VECTOROP_ERR;
+    }
   }
 
   *delta_e_out *= ark_mem->h;

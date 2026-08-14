@@ -544,7 +544,10 @@ int arkRootCheck2(void* arkode_mem)
   /* Evaluate root-finding function: glo = g(tlo, y(tlo)) */
   retval = rootmem->gfun(rootmem->tlo, tmp, rootmem->glo, rootmem->root_data);
   rootmem->nge++;
-  if (retval != 0) { return (ARK_RTFUNC_FAIL); }
+  if (retval != 0) {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+    return (ARK_RTFUNC_FAIL);
+  }
 
   /* reset root-finding flags (overall, and for specific eqns) */
   zroot = SUNFALSE;
@@ -560,7 +563,10 @@ int arkRootCheck2(void* arkode_mem)
       rootmem->iroots[i] = 1;
     }
   }
-  if (!zroot) { return (ARK_SUCCESS); /* return if no roots */ }
+  if (!zroot) {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &tmp);
+    return (ARK_SUCCESS); /* return if no roots */
+  }
 
   /* One or more g_i has a zero at tlo.  Check g at tlo+smallh. */
   /*     set time tolerance */
