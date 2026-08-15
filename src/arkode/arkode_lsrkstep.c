@@ -2914,17 +2914,14 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
       }
     }
 
-    /* Set the preprocessing function if available */
-    if (ark_mem->PreRhsFn != NULL)
+    /* Synchronize the preprocessing functions */
+    retval = SUNDomEigEstimator_SetPreRhsFn(step_mem->DEE, ark_mem->user_data,
+                                            ark_mem->PreRhsFn);
+    if (retval != SUN_SUCCESS)
     {
-      retval = SUNDomEigEstimator_SetPreRhsFn(step_mem->DEE, ark_mem->user_data,
-                                              ark_mem->PreRhsFn);
-      if (retval != SUN_SUCCESS)
-      {
-        arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
-                        "SUNDomEigEstimator_SetPreRhsFn failed");
-        return ARK_DEE_FAIL;
-      }
+      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                      "SUNDomEigEstimator_SetPreRhsFn failed");
+      return ARK_DEE_FAIL;
     }
 
     retval = SUNDomEigEstimator_Estimate(step_mem->DEE, &step_mem->lambdaR,
