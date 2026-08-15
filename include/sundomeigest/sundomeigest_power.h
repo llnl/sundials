@@ -58,7 +58,7 @@ struct SUNDomEigEstimatorContent_Power_
   long int nfevals; /* Number of RHS evaluations */
 
   SUNPreRhsFn prerhs_fn; /* User provided Preprocess RHS function */
-  void* prerhs_fn_data;    /* Preprocess RHS function data */
+  void* prerhs_fn_data;  /* Preprocess RHS function data */
 
   sunbooleantype is_complex;    /* Flag for complex eigenvalue request */
   sunbooleantype Fy_is_current; /* Flag to track if Fy is current */

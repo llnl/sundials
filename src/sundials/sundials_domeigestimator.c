@@ -212,8 +212,8 @@ SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
 }
 
 SUNErrCode SUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator DEE,
-                                               void* prerhs_fn_data,
-                                               SUNPreRhsFn prerhs_fn)
+                                          void* prerhs_fn_data,
+                                          SUNPreRhsFn prerhs_fn)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));

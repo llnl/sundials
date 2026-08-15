@@ -2917,8 +2917,7 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
     /* Set the preprocessing function if available */
     if (ark_mem->PreRhsFn != NULL)
     {
-      retval = SUNDomEigEstimator_SetPreRhsFn(step_mem->DEE,
-                                              ark_mem->user_data,
+      retval = SUNDomEigEstimator_SetPreRhsFn(step_mem->DEE, ark_mem->user_data,
                                               ark_mem->PreRhsFn);
       if (retval != SUN_SUCCESS)
       {

@@ -137,32 +137,32 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes              = NULL;
-  content->ATdata              = NULL;
-  content->V                   = NULL;
-  content->rhs_linY            = NULL;
-  content->rhs_linT            = ZERO;
-  content->Fy                  = NULL;
-  content->work                = NULL;
-  content->kry_dim             = kry_dim;
-  content->num_warmups         = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->num_iters           = 0;
-  content->num_ATimes          = 0;
-  content->warmup_to_tol       = SUNFALSE;
-  content->Fy_is_current       = SUNFALSE;
-  content->tol_warmup          = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->rhsfn               = NULL;
-  content->rhs_data            = NULL;
-  content->prerhs_fn    = NULL;
+  content->ATimes         = NULL;
+  content->ATdata         = NULL;
+  content->V              = NULL;
+  content->rhs_linY       = NULL;
+  content->rhs_linT       = ZERO;
+  content->Fy             = NULL;
+  content->work           = NULL;
+  content->kry_dim        = kry_dim;
+  content->num_warmups    = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->num_iters      = 0;
+  content->num_ATimes     = 0;
+  content->warmup_to_tol  = SUNFALSE;
+  content->Fy_is_current  = SUNFALSE;
+  content->tol_warmup     = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->rhsfn          = NULL;
+  content->rhs_data       = NULL;
+  content->prerhs_fn      = NULL;
   content->prerhs_fn_data = NULL;
-  content->nfevals             = 0;
-  content->LAPACK_A            = NULL;
-  content->LAPACK_wr           = NULL;
-  content->LAPACK_wi           = NULL;
-  content->LAPACK_work         = NULL;
-  content->LAPACK_lwork        = 0;
-  content->LAPACK_arr          = NULL;
-  content->Hes                 = NULL;
+  content->nfevals        = 0;
+  content->LAPACK_A       = NULL;
+  content->LAPACK_wr      = NULL;
+  content->LAPACK_wi      = NULL;
+  content->LAPACK_work    = NULL;
+  content->LAPACK_lwork   = 0;
+  content->LAPACK_arr     = NULL;
+  content->Hes            = NULL;
 
   content->V = N_VCloneVectorArray(kry_dim + 1, q);
   SUNCheckLastErrNull();
@@ -221,8 +221,8 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
 }
 
 SUNErrCode SUNDomEigEstimator_SetPreRhsFn_Arnoldi(SUNDomEigEstimator DEE,
-                                                       void* prerhs_fn_data,
-                                                       SUNPreRhsFn prerhs_fn)
+                                                  void* prerhs_fn_data,
+                                                  SUNPreRhsFn prerhs_fn)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -231,7 +231,7 @@ SUNErrCode SUNDomEigEstimator_SetPreRhsFn_Arnoldi(SUNDomEigEstimator DEE,
 
   /* set function pointers to integrator-supplied Preprocess RHS routine
      and data, and return with success */
-  Arnoldi_CONTENT(DEE)->prerhs_fn    = prerhs_fn;
+  Arnoldi_CONTENT(DEE)->prerhs_fn      = prerhs_fn;
   Arnoldi_CONTENT(DEE)->prerhs_fn_data = prerhs_fn_data;
 
   return SUN_SUCCESS;
@@ -786,10 +786,10 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work                 = Arnoldi_CONTENT(DEE)->work;
   N_Vector Fy                   = Arnoldi_CONTENT(DEE)->Fy;
 
-  SUNRhsFn rhsfn               = Arnoldi_CONTENT(DEE)->rhsfn;
+  SUNRhsFn rhsfn        = Arnoldi_CONTENT(DEE)->rhsfn;
   SUNPreRhsFn prerhs_fn = Arnoldi_CONTENT(DEE)->prerhs_fn;
-  void* rhs_data               = Arnoldi_CONTENT(DEE)->rhs_data;
-  void* prerhs_fn_data    = Arnoldi_CONTENT(DEE)->prerhs_fn_data;
+  void* rhs_data        = Arnoldi_CONTENT(DEE)->rhs_data;
+  void* prerhs_fn_data  = Arnoldi_CONTENT(DEE)->prerhs_fn_data;
 
   sunrealtype rhs_linT = Arnoldi_CONTENT(DEE)->rhs_linT;
 

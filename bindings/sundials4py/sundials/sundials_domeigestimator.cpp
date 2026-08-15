@@ -120,10 +120,7 @@ void bind_sundomeigestimator(nb::module_& m)
         return SUNDomEigEstimator_SetPreRhsFn(DEE, fntable,
                                               sundomeigestimator_preprocessrhs_wrapper);
       }
-      else
-      {
-        return SUNDomEigEstimator_SetPreRhsFn(DEE, fntable, nullptr);
-      }
+      else { return SUNDomEigEstimator_SetPreRhsFn(DEE, fntable, nullptr); }
     },
     nb::arg("DEE"), nb::arg("PreRhsFn").none());
 }

@@ -136,28 +136,28 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes              = NULL;
-  content->ATdata              = NULL;
-  content->V                   = NULL;
-  content->Av                  = NULL;
-  content->v_prev              = NULL;
-  content->rhs_linY            = NULL;
-  content->rhs_linT            = ZERO;
-  content->Fy                  = NULL;
-  content->work                = NULL;
-  content->is_complex          = SUNTRUE;
-  content->Fy_is_current       = SUNFALSE;
-  content->max_iters           = max_iters;
-  content->num_warmups         = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
-  content->rel_tol             = rel_tol;
-  content->res                 = ZERO;
-  content->rhsfn               = NULL;
-  content->rhs_data            = NULL;
-  content->prerhs_fn    = NULL;
+  content->ATimes         = NULL;
+  content->ATdata         = NULL;
+  content->V              = NULL;
+  content->Av             = NULL;
+  content->v_prev         = NULL;
+  content->rhs_linY       = NULL;
+  content->rhs_linT       = ZERO;
+  content->Fy             = NULL;
+  content->work           = NULL;
+  content->is_complex     = SUNTRUE;
+  content->Fy_is_current  = SUNFALSE;
+  content->max_iters      = max_iters;
+  content->num_warmups    = DEE_NUM_OF_WARMUPS_PI_DEFAULT;
+  content->rel_tol        = rel_tol;
+  content->res            = ZERO;
+  content->rhsfn          = NULL;
+  content->rhs_data       = NULL;
+  content->prerhs_fn      = NULL;
   content->prerhs_fn_data = NULL;
-  content->nfevals             = 0;
-  content->num_iters           = 0;
-  content->num_ATimes          = 0;
+  content->nfevals        = 0;
+  content->num_iters      = 0;
+  content->num_ATimes     = 0;
 
   /* Allocate content */
   content->Av = N_VClone(q);
@@ -224,8 +224,8 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
 }
 
 SUNErrCode SUNDomEigEstimator_SetPreRhsFn_Power(SUNDomEigEstimator DEE,
-                                                     void* prerhs_fn_data,
-                                                     SUNPreRhsFn prerhs_fn)
+                                                void* prerhs_fn_data,
+                                                SUNPreRhsFn prerhs_fn)
 {
   SUNFunctionBegin(DEE->sunctx);
 
@@ -234,7 +234,7 @@ SUNErrCode SUNDomEigEstimator_SetPreRhsFn_Power(SUNDomEigEstimator DEE,
 
   /* set function pointers to integrator-supplied Preprocess RHS routine
      and data, and return with success */
-  PI_CONTENT(DEE)->prerhs_fn    = prerhs_fn;
+  PI_CONTENT(DEE)->prerhs_fn      = prerhs_fn;
   PI_CONTENT(DEE)->prerhs_fn_data = prerhs_fn_data;
 
   return SUN_SUCCESS;
@@ -805,10 +805,10 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work                 = PI_CONTENT(DEE)->work;
   N_Vector Fy                   = PI_CONTENT(DEE)->Fy;
 
-  SUNRhsFn rhsfn               = PI_CONTENT(DEE)->rhsfn;
+  SUNRhsFn rhsfn        = PI_CONTENT(DEE)->rhsfn;
   SUNPreRhsFn prerhs_fn = PI_CONTENT(DEE)->prerhs_fn;
-  void* rhs_data               = PI_CONTENT(DEE)->rhs_data;
-  void* prerhs_fn_data    = PI_CONTENT(DEE)->prerhs_fn_data;
+  void* rhs_data        = PI_CONTENT(DEE)->rhs_data;
+  void* prerhs_fn_data  = PI_CONTENT(DEE)->prerhs_fn_data;
 
   sunrealtype rhs_linT = PI_CONTENT(DEE)->rhs_linT;
 
