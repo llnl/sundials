@@ -51,7 +51,7 @@ struct SUNDomEigEstimator_Ops_
 {
   SUNErrCode (*setatimes)(SUNDomEigEstimator, void*, SUNATimesFn);
   SUNErrCode (*setrhs)(SUNDomEigEstimator, void*, SUNRhsFn);
-  SUNErrCode (*setpreprocessrhs)(SUNDomEigEstimator, void*, SUNPreRhsFn);
+  SUNErrCode (*setprerhs)(SUNDomEigEstimator, void*, SUNPreRhsFn);
   SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype,
                                          N_Vector);
   SUNErrCode (*setrhsatlinearizationpoint)(SUNDomEigEstimator, N_Vector);

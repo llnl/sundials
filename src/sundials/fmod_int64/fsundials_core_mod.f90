@@ -711,7 +711,7 @@ module fsundials_core_mod
  type, bind(C), public :: SUNDomEigEstimator_Ops
   type(C_FUNPTR), public :: setatimes
   type(C_FUNPTR), public :: setrhs
-  type(C_FUNPTR), public :: setpreprocessrhs
+  type(C_FUNPTR), public :: setprerhs
   type(C_FUNPTR), public :: setrhslinearizationpoint
   type(C_FUNPTR), public :: setrhsatlinearizationpoint
   type(C_FUNPTR), public :: setoptions

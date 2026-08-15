@@ -66,7 +66,7 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   /* initialize operations to NULL */
   ops->setatimes                  = NULL;
   ops->setrhs                     = NULL;
-  ops->setpreprocessrhs           = NULL;
+  ops->setprerhs                  = NULL;
   ops->setrhslinearizationpoint   = NULL;
   ops->setrhsatlinearizationpoint = NULL;
   ops->setoptions                 = NULL;
@@ -217,9 +217,9 @@ SUNErrCode SUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator DEE,
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
-  if (DEE->ops->setpreprocessrhs)
+  if (DEE->ops->setprerhs)
   {
-    ier = DEE->ops->setpreprocessrhs(DEE, prerhs_fn_data, prerhs_fn);
+    ier = DEE->ops->setprerhs(DEE, prerhs_fn_data, prerhs_fn);
   }
   else { ier = SUN_SUCCESS; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
