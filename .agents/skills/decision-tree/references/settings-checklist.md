@@ -45,7 +45,7 @@ Use these only when the problem justifies them:
 
 Useful default facts from the package guides:
 
-- `CVODE` and `IDA(S)` default to a maximum of `500` internal steps before the next output time
+- `CVODE`, `IDA(S)`, and `ARKODE` default to a maximum of `500` internal steps before the next output time
 
 If that limit is hit, explain the possible causes:
 

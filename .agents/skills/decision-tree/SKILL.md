@@ -76,7 +76,7 @@ Open [method-and-linear-solvers.md](references/method-and-linear-solvers.md) whe
 - Suggest `IDASetId` and `IDACalcIC` for semi-explicit index-one DAEs when consistent initial conditions are not already available.
 - Suggest user Jacobians or Jacobian-vector routines when the problem is sparse, banded, expensive, or noisy under finite differences.
 - Suggest `SetMaxStep` only when there is a known physical or event scale that should cap the step size.
-- If the solver hits the default internal-step limit, point out that the package default is often `500` steps before the next output time and explain whether the fix is larger limits, different tolerances, or a different method.
+- If `CVODE`, `IDA(S)`, or `ARKODE` hits the default internal-step limit, point out that the package default is `500` steps before the next output time and explain whether the fix is larger limits, different tolerances, or a different method.
 
 Open [settings-checklist.md](references/settings-checklist.md) when the user mainly needs tolerances, IC handling, step limits, Jacobian/preconditioner guidance, or failure triage.
 
