@@ -11,5 +11,7 @@ the device data pointer for vector implementations with a device memory space.
 **Bug Fixes**
 
 Fixed a bug where the factor provided by ``ARKodeSetEpsLin`` was scaled by 0.1.
+To restore the original behavior, call ``ARKodeSetEpsLin`` with an arguemnt of
+0.005.
 
 **Deprecation Notices**
