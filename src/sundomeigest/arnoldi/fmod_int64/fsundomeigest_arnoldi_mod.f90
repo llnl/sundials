@@ -76,8 +76,8 @@ module fsundomeigest_arnoldi_mod
   procedure :: get_nfevals => swigf_SUNDomEigEstimatorContent_Arnoldi__nfevals_get
   procedure :: set_prerhs_fn => swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_set
   procedure :: get_prerhs_fn => swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_get
-  procedure :: set_prerhs_fn_data => swigf_SUNDomEigEstimatorContent_Arnoldi__preprocess_rhs_d1EMQ1E
-  procedure :: get_prerhs_fn_data => swigf_SUNDomEigEstimatorContent_Arnoldi__preprocess_rhs_d1EMPRB
+  procedure :: set_prerhs_fn_data => swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set
+  procedure :: get_prerhs_fn_data => swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get
   procedure :: set_LAPACK_A => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_set
   procedure :: get_LAPACK_A => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_get
   procedure :: set_LAPACK_wr => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_set
@@ -424,7 +424,7 @@ type(SwigClassWrapper) :: farg1
 type(C_FUNPTR) :: fresult
 end function
 
-subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__preprocess_rhs_d1EMQ1E(farg1, farg2) &
+subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set(farg1, farg2) &
 bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
@@ -432,7 +432,7 @@ type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 end subroutine
 
-function swigc_SUNDomEigEstimatorContent_Arnoldi__preprocess_rhs_d1EMPRB(farg1) &
+function swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get(farg1) &
 bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
@@ -1186,7 +1186,7 @@ fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_get(farg1)
 swig_result = fresult
 end function
 
-subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__preprocess_rhs_d1EMQ1E(self, prerhs_fn_data)
+subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set(self, prerhs_fn_data)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
 type(C_PTR) :: prerhs_fn_data
@@ -1195,10 +1195,10 @@ type(C_PTR) :: farg2
 
 farg1 = self%swigdata
 farg2 = prerhs_fn_data
-call swigc_SUNDomEigEstimatorContent_Arnoldi__preprocess_rhs_d1EMQ1E(farg1, farg2)
+call swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set(farg1, farg2)
 end subroutine
 
-function swigf_SUNDomEigEstimatorContent_Arnoldi__preprocess_rhs_d1EMPRB(self) &
+function swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
@@ -1207,7 +1207,7 @@ type(C_PTR) :: fresult
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
-fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__preprocess_rhs_d1EMPRB(farg1)
+fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get(farg1)
 swig_result = fresult
 end function
 
