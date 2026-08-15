@@ -2427,11 +2427,10 @@ As for Newton linear systems, the ARKLS interface translates this WRMS
 target to the convergence test used by the attached ``SUNLinearSolver``;
 see :numref:`SUNLinSol.Iterative.Tolerance`.
 
-where again, :math:`\epsilon_N` is the nonlinear solver tolerance
-parameter from :eq:`ARKODE_NonlinearTolerance`.  When using iterative system
-and mass matrix linear solvers, :math:`\epsilon_L` may be specified
-separately for both tolerances :eq:`ARKODE_LinearTolerance` and
-:eq:`ARKODE_MassLinearTolerance`.
+Again, :math:`\epsilon_N` is the nonlinear solver tolerance parameter from
+:eq:`ARKODE_NonlinearTolerance`.  When using iterative system and mass matrix
+linear solvers, :math:`\epsilon_L` may be specified separately for both
+tolerances :eq:`ARKODE_LinearTolerance` and :eq:`ARKODE_MassLinearTolerance`.
 
 
 In the algorithmic descriptions above there are five locations
