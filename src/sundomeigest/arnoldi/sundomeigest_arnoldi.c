@@ -109,9 +109,9 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  DEE->ops->setatimes        = SUNDomEigEstimator_SetATimes_Arnoldi;
-  DEE->ops->setrhs           = SUNDomEigEstimator_SetRhs_Arnoldi;
-  DEE->ops->setprerhs        = SUNDomEigEstimator_SetPreRhsFn_Arnoldi;
+  DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Arnoldi;
+  DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Arnoldi;
+  DEE->ops->setprerhs = SUNDomEigEstimator_SetPreRhsFn_Arnoldi;
   DEE->ops->setrhslinearizationpoint =
     SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi;
   DEE->ops->setrhsatlinearizationpoint =

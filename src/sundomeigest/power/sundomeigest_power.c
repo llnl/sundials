@@ -107,9 +107,9 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  DEE->ops->setatimes        = SUNDomEigEstimator_SetATimes_Power;
-  DEE->ops->setrhs           = SUNDomEigEstimator_SetRhs_Power;
-  DEE->ops->setprerhs        = SUNDomEigEstimator_SetPreRhsFn_Power;
+  DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Power;
+  DEE->ops->setrhs    = SUNDomEigEstimator_SetRhs_Power;
+  DEE->ops->setprerhs = SUNDomEigEstimator_SetPreRhsFn_Power;
   DEE->ops->setrhslinearizationpoint =
     SUNDomEigEstimator_SetRhsLinearizationPoint_Power;
   DEE->ops->setrhsatlinearizationpoint =
