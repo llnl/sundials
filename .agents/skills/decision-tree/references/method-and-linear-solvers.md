@@ -9,6 +9,8 @@
 
 ## Time Integration Method Choice
 
+Use this section after the package choice is known or mostly known. For the first package-level classification, especially `IDA` vs `IDAS` for DAE problems, use [package-selection.md](package-selection.md).
+
 ### CVODE and CVODES
 
 `CVODE` and `CVODES` expose two multistep choices:
@@ -44,6 +46,8 @@ When the user is comparing `CV_BDF` against implicit `ARKStep`, use this rule of
 - whether direct factorization is affordable
 - whether a preconditioned Krylov method is needed
 
+Use [Linear Solver Choice](#linear-solver-choice) below for the dense, banded, sparse, or Krylov decision.
+
 ### ARKODE
 
 Choose the stepper from the model structure:
@@ -60,6 +64,8 @@ For stiff unsplit ODEs, `ARKStep` is still a live option. Use it when the recomm
 Within `ARKStep`, decide which part belongs in the explicit vs implicit operator. Put the genuinely stiff portion in the implicit operator and keep the explicit side for the terms that would otherwise restrict stability.
 
 If the problem is fully implicit, say that explicitly and recommend an appropriate DIRK configuration rather than pretending an IMEX split exists.
+
+For implicit `ARKStep` configurations, choose the dense, banded, sparse, or Krylov solve strategy with [Linear Solver Choice](#linear-solver-choice) below.
 
 Within `MRIStep`, decide which part belongs in the fast vs slow operators.  Put the genuinely fast portion in the fast operator and keep the slow operators for terms that can use a larger step size.  For the slow terms, IMEX splittings are possible, and should follow the same logic as above for `ARKStep`.
 
