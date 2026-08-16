@@ -143,6 +143,7 @@ N_Vector N_VNewEmpty_Raja(SUNContext sunctx)
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Raja;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Raja;
   v->ops->nvsetarraypointer       = N_VSetHostArrayPointer_Raja;
+  v->ops->nvsetdevicearraypointer = N_VSetDeviceArrayPointer_Raja;
 
   /* standard vector operations */
   v->ops->nvlinearsum    = N_VLinearSum_Raja;

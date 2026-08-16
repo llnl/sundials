@@ -286,6 +286,7 @@ typedef struct CVodeMemRec
 
   sunrealtype cv_crate;       /* estimated corrector convergence rate        */
   sunrealtype cv_delp;        /* norm of previous nonlinear solver update    */
+  sunrealtype cv_delnrm;      /* norm of current nonlinear solver update     */
   sunrealtype cv_acnrm;       /* | acor |                                    */
   sunbooleantype cv_acnrmcur; /* is | acor | current?                        */
   sunrealtype cv_nlscoef;     /* coefficient in nonlinear convergence test    */

@@ -71,6 +71,7 @@ sundials_add_library(
     sundials_sunlinsolspgmr_obj
     sundials_sunlinsolsptfqmr_obj
     sundials_sunlinsolpcg_obj
+    sundials_sunnonlinsolauto_obj
     sundials_sunnonlinsolnewton_obj
     sundials_sunnonlinsolfixedpoint_obj
   OUTPUT_NAME sundials_cvodes

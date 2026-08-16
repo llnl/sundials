@@ -175,4 +175,17 @@ if [[ "${skip_existing}" == "T" ]]; then
     upload_args+=(--skip-existing)
 fi
 
-"${python_cmd}" -m twine upload "${upload_args[@]}" "${artifacts[@]}"
+failed_artifacts=()
+for artifact in "${artifacts[@]}"; do
+    echo "Uploading ${artifact##*/}"
+    if ! "${python_cmd}" -m twine upload --verbose "${upload_args[@]}" "${artifact}"; then
+        echo "Error: failed to upload ${artifact##*/}" >&2
+        failed_artifacts+=("${artifact}")
+    fi
+done
+
+if (( ${#failed_artifacts[@]} > 0 )); then
+    echo "Error: failed to upload ${#failed_artifacts[@]} artifact(s):" >&2
+    printf '  %s\n' "${failed_artifacts[@]##*/}" >&2
+    exit 1
+fi

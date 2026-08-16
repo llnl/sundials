@@ -395,6 +395,8 @@ This is the "SSPERK(3,2)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have optimal SSP coefficient
 equal to 2.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -426,6 +428,8 @@ Accessible via the string ``"ARKODE_SSP_ERK_4_1_2"`` to
 This is the "SSPERK(4,2)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have optimal SSP coefficient
 equal to 3.
+
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
@@ -491,6 +495,8 @@ The method is the explicit portion of the "(2,2,2)" additive Runge--Kutta
 method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented specifically for
 ARKODE.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -526,6 +532,7 @@ Runge--Kutta method from :cite:p:`H:14`; the embedding was invented
 specifically for ARKODE.  The method has SSP coefficient equal to 1.2,
 and the embedding has SSP coefficient equal to 1.15.
 
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
@@ -687,6 +694,8 @@ Accessible via the string ``"ARKODE_SSP_ERK_4_2_3"`` to
 This is the "SSPERK(4,3)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have SSP coefficient equal to 2.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -718,6 +727,8 @@ Accessible via the string ``"ARKODE_SSP_ERK_10_3_4"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the "SSPERK(10,4)" method from :cite:p:`FCS:22`.
 The method has SSP coefficient equal to 6.
+
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
@@ -1670,6 +1681,8 @@ method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented
 specifically for ARKODE.  The method is both A- and L-stable, and the
 embedding is A-stable.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -1705,6 +1718,8 @@ The original method is the "IMEX-SSP2(3,3,2)" stiffly accurate method from
 is both A- and L-stable, while the embedding is A-stable.  Both the method and
 embedding have SSP coefficient equal to 2.4.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -1739,6 +1754,7 @@ specifically for ARKODE.  The method is both A- and L-stable,
 while the embedding is A-stable.  Both the method and embedding have SSP
 coefficient equal to 3.81.
 
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
@@ -1919,6 +1935,8 @@ This method was invented specifically for ARKODE as an implicit method to
 pair with ``ARKODE_SSP_ERK_4_2_3`` for an embedded additive
 Runge--Kutta method.  The method is both A- and L-stable, and the
 embedding is A-stable.
+
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
