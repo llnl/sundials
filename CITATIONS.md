@@ -70,7 +70,7 @@ service to your own readers.  The relevant SUNDIALS documentation guides are:
   author = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward and Cody J. Balos},
   title  = {User Documentation for ARKODE},
   year   = {2026},
-  note   = {v6.7.0}
+  note   = {v6.8.0}
 }
 ```
 
@@ -79,7 +79,7 @@ service to your own readers.  The relevant SUNDIALS documentation guides are:
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for CVODE},
   year   = {2026},
-  note   = {v7.7.0}
+  note   = {v7.8.0}
 }
 ```
 
@@ -88,7 +88,7 @@ service to your own readers.  The relevant SUNDIALS documentation guides are:
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for CVODES},
   year   = {2026},
-  note   = {v7.7.0}
+  note   = {v7.8.0}
 }
 ```
 
@@ -97,7 +97,7 @@ service to your own readers.  The relevant SUNDIALS documentation guides are:
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for IDA},
   year   = {2026},
-  note   = {v7.7.0}
+  note   = {v7.8.0}
 }
 ```
 
@@ -106,7 +106,7 @@ service to your own readers.  The relevant SUNDIALS documentation guides are:
   author = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for IDAS},
   year   = {2026},
-  note   = {v6.7.0}
+  note   = {v6.8.0}
 }
 ```
 
@@ -115,6 +115,6 @@ service to your own readers.  The relevant SUNDIALS documentation guides are:
   author = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
   title  = {User Documentation for KINSOL},
   year   = {2026},
-  note   = {v7.7.0}
+  note   = {v7.8.0}
 }
 ```
