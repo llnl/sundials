@@ -11,11 +11,11 @@ over broad summaries.
 
 Before leaving review comments, read the relevant guide files:
 
-- `doc/developers/source_code/Rules.rst`
-- `doc/developers/source_code/Style.rst`
-- `doc/developers/source_code/Naming.rst`
-- `doc/developers/documentation/Style.rst`
-- `doc/developers/documentation/Setup.rst` when reviewing documentation layout,
+- `doc/superbuild/source/developers/source_code/Rules.rst`
+- `doc/superbuild/source/developers/source_code/Style.rst`
+- `doc/superbuild/source/developers/source_code/Naming.rst`
+- `doc/superbuild/source/developers/documentation/Style.rst`
+- `doc/superbuild/source/developers/documentation/Setup.rst` when reviewing documentation layout,
   build instructions, includes, figures, shared documentation, or citations
 
 ## Source Review Checklist
