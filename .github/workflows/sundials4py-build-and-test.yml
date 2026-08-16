@@ -119,18 +119,19 @@ jobs:
   sundials4py-test-klu:
     name: Test sundials4py with KLU
     runs-on: ubuntu-latest
-    # Use the CI container that includes SuiteSparse/KLU
-    container:
-      image: ghcr.io/llnl/sundials-ci-int64-double:latest
-      options: --user root
 
     steps:
     - uses: actions/checkout@v7
       with:
         submodules: true
 
+    - name: Install KLU
+      run: |
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y libsuitesparse-dev
+
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v7
       with:
         python-version: '3.14'
 
@@ -140,6 +141,8 @@ jobs:
         pip install build scikit-build-core nanobind numpy pytest
 
     - name: Build wheel
+      env:
+        CMAKE_ARGS: "-DSUNDIALS_ENABLE_KLU=ON"
       run: python -m build -o wheelhouse
 
     - name: Install wheel
