@@ -168,7 +168,10 @@ def parse_args(argv):
         help="Nonlinear solver to use.",
     )
     parser.add_argument(
-        "--aa-depth", type=int, default=0, help="Anderson acceleration depth for fixed-point paths."
+        "--aa-depth",
+        type=int,
+        default=0,
+        help="Anderson acceleration depth for fixed-point paths.",
     )
     parser.add_argument(
         "--auto-init",
@@ -491,10 +494,7 @@ def main(argv=None):
 
     print("\nProthero-Robinson ODE test problem (sundials4py.cvodes):")
     print(f"    stiffness profile = {args.stiffness_profile}")
-    print(
-        f"    a({T0:g}) = {problem.stiffness(T0):.6g}, "
-        f"a({Tf:g}) = {problem.stiffness(Tf):.6g}"
-    )
+    print(f"    a({T0:g}) = {problem.stiffness(T0):.6g}, a({Tf:g}) = {problem.stiffness(Tf):.6g}")
     print(f"    nonlinear solver = {args.solver}")
     if args.solver == "auto":
         print(f"    auto init = {args.auto_init}, aa_depth = {args.aa_depth}")
