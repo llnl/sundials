@@ -1,5 +1,5 @@
 ---
-name: sundials-users-decision-tree
+name: sundials-guide
 description: Guide SUNDIALS users to the right package, time-stepping module, nonlinear/linear solver strategy, and initial tuning choices. Use when a request asks which SUNDIALS package to use (CVODE, CVODES, IDA, IDAS, ARKODE, KINSOL), whether to choose explicit vs implicit vs IMEX or multirate methods, how to pick dense/band/sparse/Krylov solvers and preconditioners, or what tolerances, step limits, initial-condition handling, and other starting settings to try.
 ---
 
