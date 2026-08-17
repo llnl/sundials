@@ -201,6 +201,7 @@ SUNErrCode SUNVecStack_PushArray(SUNVecStack stack, int count, N_Vector** vec_in
   {
     SUNCheckCall(SUNVecStack_Push(stack, &((*vec_in)[j])));
   }
+  *vec_in = NULL;
   return SUN_SUCCESS;
 }
 

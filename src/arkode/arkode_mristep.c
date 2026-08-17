@@ -654,17 +654,15 @@ void mriStep_Free(ARKodeMem ark_mem)
     /* free the RHS vectors */
     if (step_mem->Fse)
     {
-      arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fse),
-                      ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                      &(ark_mem->liw));
+      (void)SUNVecStack_PushArray(ark_mem->temp_vec_stack, step_mem->nstages_allocated,
+                                    &step_mem->Fse);
       if (step_mem->unify_Fs) { step_mem->Fsi = NULL; }
     }
 
     if (step_mem->Fsi)
     {
-      arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fsi),
-                      ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                      &(ark_mem->liw));
+      (void)SUNVecStack_PushArray(ark_mem->temp_vec_stack, step_mem->nstages_allocated,
+                                    &step_mem->Fsi);
     }
 
     /* free the reusable arrays for fused vector interface */
@@ -1159,42 +1157,37 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
       {
         if (step_mem->explicit_rhs)
         {
-          arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fse),
-                          ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                          &(ark_mem->liw));
+          (void)SUNVecStack_PushArray(ark_mem->temp_vec_stack, step_mem->nstages_allocated,
+                                      &(step_mem->Fse));
           if (step_mem->unify_Fs) { step_mem->Fsi = NULL; }
         }
         if (step_mem->implicit_rhs)
         {
-          arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fsi),
-                          ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                          &(ark_mem->liw));
+          (void)SUNVecStack_PushArray(ark_mem->temp_vec_stack, step_mem->nstages_allocated,
+                                      &(step_mem->Fsi));
           if (step_mem->unify_Fs) { step_mem->Fse = NULL; }
         }
       }
       if (step_mem->explicit_rhs && !step_mem->unify_Fs)
       {
-        if (!arkAllocVecArray(step_mem->nstages_active, ark_mem->ewt,
-                              &(step_mem->Fse), ark_mem->lrw1, &(ark_mem->lrw),
-                              ark_mem->liw1, &(ark_mem->liw)))
+        if (SUNVecStack_PopArray(ark_mem->temp_vec_stack, step_mem->nstages_active,
+                                &(step_mem->Fse)))
         {
           return (ARK_MEM_FAIL);
         }
       }
       if (step_mem->implicit_rhs && !step_mem->unify_Fs)
       {
-        if (!arkAllocVecArray(step_mem->nstages_active, ark_mem->ewt,
-                              &(step_mem->Fsi), ark_mem->lrw1, &(ark_mem->lrw),
-                              ark_mem->liw1, &(ark_mem->liw)))
+        if (SUNVecStack_PopArray(ark_mem->temp_vec_stack, step_mem->nstages_active,
+                                &(step_mem->Fsi)))
         {
           return (ARK_MEM_FAIL);
         }
       }
       if (step_mem->unify_Fs)
       {
-        if (!arkAllocVecArray(step_mem->nstages_active, ark_mem->ewt,
-                              &(step_mem->Fse), ark_mem->lrw1, &(ark_mem->lrw),
-                              ark_mem->liw1, &(ark_mem->liw)))
+        if (SUNVecStack_PopArray(ark_mem->temp_vec_stack, step_mem->nstages_active,
+                                &(step_mem->Fse)))
         {
           return (ARK_MEM_FAIL);
         }
