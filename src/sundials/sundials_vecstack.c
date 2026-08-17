@@ -161,6 +161,49 @@ SUNErrCode SUNVecStack_Push(SUNVecStack stack, N_Vector* vec_in)
   return SUN_SUCCESS;
 }
 
+SUNErrCode SUNVecStack_PopArray(SUNVecStack stack, int count, N_Vector** vec_out)
+{
+  SUNFunctionBegin(stack->sunctx);
+  SUNAssert(vec_out, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(count > 0, SUN_ERR_ARG_OUTOFRANGE);
+
+  *vec_out = NULL;
+  *vec_out = (N_Vector*)malloc(count * sizeof(N_Vector*));
+  SUNAssert(vec_out, SUN_ERR_MALLOC_FAIL);
+
+  SUNErrCode err = SUN_SUCCESS;
+  for (int j=0; j < count; j++)
+  {
+    err = SUNVecStack_Pop(stack, &((*vec_out)[j]));
+    if (err != SUN_SUCCESS)
+    {
+      for (int k=0; k < j; k++)
+      {
+        SUNVecStack_Push(stack, &((*vec_out)[k]));
+      }
+      free(*vec_out);
+      *vec_out = NULL;
+      return err;
+    }
+  }
+
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNVecStack_PushArray(SUNVecStack stack, int count, N_Vector** vec_in)
+{
+  SUNFunctionBegin(stack->sunctx);
+  SUNAssert(vec_in, SUN_ERR_ARG_CORRUPT);
+  SUNAssert(count > 0, SUN_ERR_ARG_OUTOFRANGE);
+
+  if (*vec_in == NULL) { return SUN_SUCCESS; }
+  for (int j=0; j < count; j++)
+  {
+    SUNCheckCall(SUNVecStack_Push(stack, &((*vec_in)[j])));
+  }
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNVecStack_GetNumVecs(SUNVecStack stack, int64_t* num_vecs)
 {
   SUNFunctionBegin(stack->sunctx);

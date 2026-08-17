@@ -41,6 +41,12 @@ SUNDIALS_EXPORT
 SUNErrCode SUNVecStack_Push(SUNVecStack stack, N_Vector* vec_in);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_PopArray(SUNVecStack stack, int count, N_Vector** vec_out);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_PushArray(SUNVecStack stack, int count, N_Vector** vec_in);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNVecStack_GetNumVecs(SUNVecStack stack, int64_t* num_vecs);
 
 SUNDIALS_EXPORT
