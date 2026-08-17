@@ -640,18 +640,15 @@ void mriStep_Free(ARKodeMem ark_mem)
     /* free the sdata, zpred and zcor vectors */
     if (step_mem->sdata != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->sdata);
-      step_mem->sdata = NULL;
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &step_mem->sdata);
     }
     if (step_mem->zpred != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->zpred);
-      step_mem->zpred = NULL;
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &step_mem->zpred);
     }
     if (step_mem->zcor != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->zcor);
-      step_mem->zcor = NULL;
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &step_mem->zcor);
     }
 
     /* free the RHS vectors */
@@ -1213,15 +1210,15 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
        SUNTRUE if an implicit table has been user-provided. */
     if (step_mem->implicit_rhs)
     {
-      if (!arkAllocVec(ark_mem, ark_mem->ewt, &(step_mem->sdata)))
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &(step_mem->sdata)))
       {
         return (ARK_MEM_FAIL);
       }
-      if (!arkAllocVec(ark_mem, ark_mem->ewt, &(step_mem->zpred)))
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &(step_mem->zpred)))
       {
         return (ARK_MEM_FAIL);
       }
-      if (!arkAllocVec(ark_mem, ark_mem->ewt, &(step_mem->zcor)))
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &(step_mem->zcor)))
       {
         return (ARK_MEM_FAIL);
       }
