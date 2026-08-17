@@ -1,5 +1,5 @@
 ---
-name: devs-address-pr-comments
+name: sundials-devs-address-pr-comments
 description: Fetch and apply GitHub pull-request review comments locally, especially when the task includes reconciling new review traffic, following reply chains from specific reviewers/authors, and keeping a scratch notes file that maps comment IDs to fixes.
 ---
 
