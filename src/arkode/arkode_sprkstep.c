@@ -107,7 +107,7 @@ void* SPRKStepCreate(ARKRhsFn f1, ARKRhsFn f2, sunrealtype t0, N_Vector y0,
 
   if (ark_mem->use_compensated_sums)
   {
-    if (!arkAllocVec(ark_mem, y0, &(step_mem->yerr)))
+    if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &(step_mem->yerr)))
     {
       ARKodeFree((void**)&ark_mem);
       return (NULL);
@@ -275,19 +275,6 @@ int sprkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
     return (ARK_MEM_FAIL);
   }
 
-  if (step_mem->yerr)
-  {
-    if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                      &step_mem->yerr))
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "Unable to resize vector");
-      return (ARK_MEM_FAIL);
-    }
-    /* Zero yerr for compensated summation */
-    N_VConst(ZERO, step_mem->yerr);
-  }
-
   return (ARK_SUCCESS);
 }
 
@@ -338,8 +325,7 @@ void sprkStep_Free(ARKodeMem ark_mem)
 
     if (step_mem->yerr != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->yerr);
-      step_mem->yerr = NULL;
+      (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &step_mem->yerr);
     }
 
     ARKodeSPRKTable_Free(step_mem->method);
