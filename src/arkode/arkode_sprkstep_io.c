@@ -363,7 +363,7 @@ int sprkStep_SetUseCompensatedSums(ARKodeMem ark_mem, sunbooleantype onoff)
     ark_mem->step = sprkStep_TakeStep_Compensated;
     if (!step_mem->yerr)
     {
-      if (!arkAllocVec(ark_mem, ark_mem->yn, &(step_mem->yerr)))
+      if (SUNVecStack_Pop(ark_mem->temp_vec_stack, &(step_mem->yerr)))
       {
         return ARK_MEM_FAIL;
       }
