@@ -3755,7 +3755,7 @@ sunbooleantype arkResizeVecArray(ARKVecResizeFn resize, void* resize_data,
 /*---------------------------------------------------------------
   arkAllocVectors:
 
-  This routine allocates the ARKODE vectors ewt, yn, and ftemp.
+  This routine allocates the ARKODE vectors ewt, rwt, and yn.
   If any of these vectors already exist, they are left alone.
   Otherwise, it will allocate each vector by cloning the input
   vector. This routine also updates the optional outputs lrw and
