@@ -208,6 +208,16 @@ def main():
 
     add_arg(
         group,
+        "--deprecated-warnings",
+        "SUNDIALS_ENABLE_DEPRECATED_WARNINGS",
+        "SUNDIALS_ENABLE_DEPRECATED_WARNINGS",
+        "ON",
+        "BOOL",
+        "Enable compiler warnings for deprecated SUNDIALS APIs",
+    )
+
+    add_arg(
+        group,
         "--address-sanitizer",
         "SUNDIALS_ENABLE_ADDRESS_SANITIZER",
         "ENABLE_ADDRESS_SANITIZER",
