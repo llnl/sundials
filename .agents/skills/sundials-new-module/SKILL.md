@@ -1,5 +1,5 @@
 ---
-name: new-module
+name: sundials-new-module
 description: Add a new SUNDIALS module (e.g., NVECTOR_*, SUNMATRIX_*, SUNLINSOL_*, SUNNONLINSOL_*, SUNMEMORY_*, or a new shared component) including source/header layout, CMake wiring, enable/disable options, exported CMake targets, installed component registration, and developer tests/examples/docs updates.
 ---
 

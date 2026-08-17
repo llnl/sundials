@@ -4,7 +4,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/sundials4py?label=sundials4py)](https://pypi.org/project/sundials4py/)
 [![track SUNDIALS downloads](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml/badge.svg)](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml)
 
-### Version 7.7.0 (Apr 2026) ###
+### Version 7.8.0 (Jun 2026) ###
 
 **Center for Applied Scientific Computing, Lawrence Livermore National Laboratory**
 
@@ -51,8 +51,16 @@ nonlinear algebraic systems:
 
 ## Installation ##
 
-For installation directions, see the [getting started](https://sundials.readthedocs.io/en/latest/sundials/index.html#getting-started)
-section in the online documentation. In the [released tarballs](https://github.com/LLNL/sundials/releases),
+We recommend cloning SUNDIALS:
+
+```
+git clone https://github.com/llnl/sundials.git
+```
+
+but [released tarballs](https://github.com/LLNL/sundials/releases) are available for download as well.
+
+For complete installation directions, see the [getting started](https://sundials.readthedocs.io/en/latest/sundials/index.html#getting-started) section in the online documentation.
+In the [released tarballs](https://github.com/LLNL/sundials/releases),
 installation directions are also available in `INSTALL_GUIDE.pdf` and the
 installation chapter of the user guides in the `doc` directory.
 
@@ -72,6 +80,14 @@ or from source
 
 ```
 pip install git+https://github.com/llnl/sundials.git
+```
+
+### Spack
+
+SUNDIALS can be installed with [Spack](https://spack.io/):
+
+```
+spack install sundials
 ```
 
 ## Support ##
@@ -94,6 +110,11 @@ systems with nonphysical solutions or discontinuities see the SUNDIALS
 If you have a question not covered in the FAQ or usage notes, please submit your
 question as a [GitHub issue](https://github.com/LLNL/sundials/issues) or to the
 SUNDIALS [mailing list](https://computing.llnl.gov/projects/sundials/mailing-list).
+
+### sundials-guide Agent Skill
+
+Users who employ coding agents can take advantage of the [sundials-guide](./.agents/skills/sundials-guide/SKILL.md) agent skill.
+This skill can help you make integrator and solver choices for your problem.
 
 ## Contributing ##
 

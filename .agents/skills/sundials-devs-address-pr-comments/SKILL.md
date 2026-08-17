@@ -1,5 +1,5 @@
 ---
-name: devs-address-pr-comments
+name: sundials-devs-address-pr-comments
 description: Fetch and apply GitHub pull-request review comments locally, especially when the task includes reconciling new review traffic, following reply chains from specific reviewers/authors, and keeping a scratch notes file that maps comment IDs to fixes.
 ---
 
@@ -37,6 +37,7 @@ If the user already supplied these, do not ask again.
 
    If `gh` is available, `gh api repos/<owner>/<repo>/pulls/<pr>/comments --paginate` is fine.
    If `gh` is not available, suggest that the user installs it.
+   If `gh` is available, and it fails, stop and report the error and ask the user if they want to try the `curl` command instead.
 
 2. Extract the actionable threads.
 
