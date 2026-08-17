@@ -567,35 +567,17 @@ void arkStep_Free(ARKodeMem ark_mem)
     /* free the RHS vectors */
     if (step_mem->Fe != NULL)
     {
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        arkFreeVec(ark_mem, &step_mem->Fe[j]);
-      }
-      free(step_mem->Fe);
-      step_mem->Fe = NULL;
-      ark_mem->liw -= step_mem->stages;
+      (void)SUNVecStack_PushArray(ark_mem->temp_vec_stack, step_mem->stages, &(step_mem->Fe));
     }
     if (step_mem->Fi != NULL)
     {
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        arkFreeVec(ark_mem, &step_mem->Fi[j]);
-      }
-      free(step_mem->Fi);
-      step_mem->Fi = NULL;
-      ark_mem->liw -= step_mem->stages;
+      (void)SUNVecStack_PushArray(ark_mem->temp_vec_stack, step_mem->stages, &(step_mem->Fi));
     }
 
     /* free stage vectors */
     if (step_mem->z != NULL)
     {
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        arkFreeVec(ark_mem, &step_mem->z[j]);
-      }
-      free(step_mem->z);
-      step_mem->z = NULL;
-      ark_mem->liw -= step_mem->stages;
+      (void)SUNVecStack_PushArray(ark_mem->temp_vec_stack, step_mem->stages, &(step_mem->z));
     }
 
     /* free the reusable arrays for fused vector interface */
@@ -1042,9 +1024,7 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     /*   Allocate Fe[0] ... Fe[stages-1] if needed */
     if (step_mem->explicit)
     {
-      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fe),
-                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                            &(ark_mem->liw)))
+      if (SUNVecStack_PopArray(ark_mem->temp_vec_stack, step_mem->stages, &(step_mem->Fe)))
       {
         return (ARK_MEM_FAIL);
       }
@@ -1053,9 +1033,7 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     /*   Allocate Fi[0] ... Fi[stages-1] if needed */
     if (step_mem->implicit)
     {
-      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fi),
-                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                            &(ark_mem->liw)))
+      if (SUNVecStack_PopArray(ark_mem->temp_vec_stack, step_mem->stages, &(step_mem->Fi)))
       {
         return (ARK_MEM_FAIL);
       }
@@ -1066,9 +1044,7 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     if (ark_mem->relax_enabled &&
         (step_mem->implicit || step_mem->mass_type == MASS_FIXED))
     {
-      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->z),
-                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                            &(ark_mem->liw)))
+      if (SUNVecStack_PopArray(ark_mem->temp_vec_stack, step_mem->stages, &(step_mem->z)))
       {
         return (ARK_MEM_FAIL);
       }
