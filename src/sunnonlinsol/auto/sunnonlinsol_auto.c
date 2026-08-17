@@ -296,8 +296,7 @@ int SUNNonlinSolConvTest_Auto(SUNNonlinearSolver sub_nls, N_Vector y,
     if (retval == SUN_SUCCESS) { return SUN_SUCCESS; }
 
     /* The convergence rate estimate is not meaningful on the first nonlinear
-       iteration. Integrators initialize crate to 1 and only update it after an
-       iteration pair is available. */
+       iteration as integrators only update it after an iteration pair is available. */
     iter_retval = SUNNonlinSolGetCurIter(sub_nls, &curiter);
     if (iter_retval != SUN_SUCCESS) { return iter_retval; }
     if (curiter == 0) { return retval; }
