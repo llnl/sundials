@@ -245,5 +245,4 @@ not adhere to all of these rules.
 
 #. Agent skills that are specifically for SUNDIALS developers should be named with the prefix ``sundials-devs-``. 
    For example, the ``sundials-devs-address-pr-comments`` skill is to help SUNDIALS developers address pull 
-   request comments. Skills that are for general users should be named with the prefix ``sundials-users-``. 
-   Skills that are for both developers and users should be named with the prefix ``sundials-``.
+   request comments. Skills that are for general users should be named with the prefix ``sundials-``. 
