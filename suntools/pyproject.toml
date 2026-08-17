@@ -12,6 +12,7 @@ dependencies = [
   "deephyper>=0.13.2,<0.14",
   "PyYAML>=6.0",
   "pydantic>=2.10",
+  "ytopt",
 ]
 license = { text = "BSD-3-Clause" }
 authors = [

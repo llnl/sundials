@@ -9,6 +9,7 @@
 /TPLs
 /tarballs
 /thirdparty
+/artifacts
 
 # IDE/tool created
 /autom4te.cache

@@ -48,10 +48,10 @@ def _cmd_tune(args: argparse.Namespace) -> int:
     try:
         from suntools.tune.cli import run_from_args
     except ModuleNotFoundError as err:
-        if err.name in ("pydantic", "yaml", "deephyper"):
+        if err.name in ("pydantic", "yaml", "deephyper", "ytopt"):
             sys.stderr.write(
                 "error: suntools tune requires the suntools project dependencies "
-                "(pydantic, PyYAML, and DeepHyper)\n"
+                "(pydantic, PyYAML, DeepHyper, and Ytopt)\n"
             )
             return 2
         raise
@@ -121,7 +121,10 @@ def build_parser() -> argparse.ArgumentParser:
     tune.add_argument(
         "--backend",
         default="deephyper",
-        help='Optimization backend name (default: "deephyper").',
+        help=(
+            'Optimization backend name: "deephyper" or "ytopt" '
+            '(default: "deephyper").'
+        ),
     )
     tune.add_argument(
         "--backend-option",

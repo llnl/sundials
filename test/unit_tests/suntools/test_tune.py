@@ -23,7 +23,9 @@ import subprocess
 import sys
 import tempfile
 import textwrap
+import types
 import unittest
+from unittest.mock import patch
 
 from _testutils import add_repo_suntools_to_path
 
@@ -35,9 +37,17 @@ TUNE_SKIP_REASON = ""
 try:
     from suntools.cli import build_parser
     from suntools.tune.config import config_from_args, load_config, parse_parameter_spec
+    from suntools.tune.cli import _create_backend
     from suntools.tune.deephyper_backend import to_deephyper_problem
-    from suntools.tune.models import ExecutableConfig, ObjectiveConfig, ParameterSpec, TuneConfig
+    from suntools.tune.models import (
+        BackendConfig,
+        ExecutableConfig,
+        ObjectiveConfig,
+        ParameterSpec,
+        TuneConfig,
+    )
     from suntools.tune.runner import build_trial_argv, run_trial
+    from suntools.tune.ytopt_backend import to_ytopt_problem
 except ModuleNotFoundError as err:
     if err.name in ("pydantic", "yaml"):
         HAS_TUNE_DEPS = False
@@ -257,6 +267,58 @@ class TestTune(unittest.TestCase):
         self.assertIn("cvode.nlscoef", str(problem))
         self.assertIn("arkode.order", str(problem))
         self.assertIn("mode", str(problem))
+
+    def test_ytopt_backend_can_be_selected(self):
+        config = TuneConfig(
+            backend=BackendConfig(name="ytopt"),
+            executable=ExecutableConfig(command="./exe"),
+            parameters=[
+                ParameterSpec(name="cvode.nlscoef", type="float", bounds=(1.0e-4, 0.3))
+            ],
+        )
+        self.assertEqual(_create_backend(config).__class__.__name__, "YtoptBackend")
+
+    def test_ytopt_problem_conversion_with_problem_api(self):
+        class FakeProblem:
+            def __init__(self):
+                self.dimensions = []
+                self.objectives = []
+
+            def add_dim(self, name, domain):
+                self.dimensions.append((name, domain))
+
+            def add_objective(self, name):
+                self.objectives.append(name)
+
+            def __str__(self):
+                return repr((self.dimensions, self.objectives))
+
+        fake_ytopt = types.ModuleType("ytopt")
+        fake_problem = types.ModuleType("ytopt.problem")
+        fake_problem.Problem = FakeProblem
+
+        modules = {
+            "ytopt": fake_ytopt,
+            "ytopt.problem": fake_problem,
+        }
+
+        with patch.dict(sys.modules, modules):
+            problem = to_ytopt_problem(
+                [
+                    ParameterSpec(
+                        name="cvode.nlscoef",
+                        type="float",
+                        bounds=(1.0e-4, 0.3),
+                        scale="log",
+                    ),
+                    ParameterSpec(name="arkode.order", type="int", bounds=(2, 5)),
+                    ParameterSpec(name="mode", type="choice", values=["a", "b"]),
+                ]
+            )
+        self.assertIn("cvode.nlscoef", str(problem))
+        self.assertIn("arkode.order", str(problem))
+        self.assertIn("mode", str(problem))
+        self.assertEqual(problem.objectives, ["objective"])
 
     def test_cli_integration_if_deephyper_available(self):
         try:

@@ -24,14 +24,13 @@ from pydantic import ValidationError
 from suntools.tune.config import config_from_args
 from suntools.tune.deephyper_backend import DeepHyperBackend
 from suntools.tune.runner import format_command, select_best
+from suntools.tune.ytopt_backend import YtoptBackend
 
 
 def run_from_args(args: Any) -> int:
     try:
         config = config_from_args(args)
-        if config.backend.name != "deephyper":
-            raise ValueError("unsupported tune backend: %s" % config.backend.name)
-        backend = DeepHyperBackend(config)
+        backend = _create_backend(config)
         results = backend.run()
     except (RuntimeError, ValueError, ValidationError) as err:
         sys.stderr.write("error: %s\n" % err)
@@ -48,3 +47,12 @@ def run_from_args(args: Any) -> int:
     sys.stdout.write("Command: %s\n" % format_command(best.command))
     sys.stdout.write("Results: %s\n" % config.search.output_dir)
     return 0
+
+
+def _create_backend(config: Any) -> Any:
+    backend_name = config.backend.name.lower()
+    if backend_name == "deephyper":
+        return DeepHyperBackend(config)
+    if backend_name == "ytopt":
+        return YtoptBackend(config)
+    raise ValueError("unsupported tune backend: %s" % config.backend.name)
