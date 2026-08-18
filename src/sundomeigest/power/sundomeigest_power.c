@@ -856,7 +856,7 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   }
 
   /* If retval still isn't 0, return with a recoverable failure */
-  if (retval > 0) { return SUN_ERR_USER_FCN_RECVR; }
+  if (retval > 0) { return SUN_ERR_USER_FCN_FAIL; }
 
   /* Replace Jv by (Jv - fn)/sig */
   siginv = ONE / sig;
