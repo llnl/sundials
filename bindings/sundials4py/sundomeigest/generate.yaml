@@ -34,6 +34,7 @@ modules:
       - "^SUNDomEigEstimator_SetRelTol_.*"
       - "^SUNDomEigEstimator_SetInitialGuess_.*"
       - "^SUNDomEigEstimator_SetRhsLinearizationPoint_.*"
+      - "^SUNDomEigEstimator_SetRhsAtLinearizationPoint_.*"
       - "^SUNDomEigEstimator_Initialize_.*"
       - "^SUNDomEigEstimator_Estimate_.*"
       - "^SUNDomEigEstimator_GetRes_.*"
