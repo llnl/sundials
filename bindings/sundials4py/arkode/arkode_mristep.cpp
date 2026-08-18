@@ -204,8 +204,8 @@ void bind_arkode_mristep(nb::module_& m)
       auto fse_wrapper = fse ? mristep_fse_wrapper : nullptr;
       auto fsi_wrapper = fsi ? mristep_fsi_wrapper : nullptr;
 
-      return MRIStepReInitExtSTS(arkode_mem, fd_wrapper, fse_wrapper, fsi_wrapper,
-                                 t0, y0);
+      return MRIStepReInitExtSTS(arkode_mem, fd_wrapper, fse_wrapper,
+                                 fsi_wrapper, t0, y0);
     },
     nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
     nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
@@ -214,16 +214,13 @@ void bind_arkode_mristep(nb::module_& m)
     "MRIStepExtSTSSetDomEigFn",
     [](void* arkode_mem, std::function<std::remove_pointer_t<ARKDomEigFn>> fn)
     {
-      auto fn_table             = get_arkode_fn_table(arkode_mem);
-      fn_table->mristep_domeig  = nb::cast(fn);
+      auto fn_table            = get_arkode_fn_table(arkode_mem);
+      fn_table->mristep_domeig = nb::cast(fn);
       if (fn)
       {
         return MRIStepExtSTSSetDomEigFn(arkode_mem, mristep_domeig_wrapper);
       }
-      else
-      {
-        return MRIStepExtSTSSetDomEigFn(arkode_mem, nullptr);
-      }
+      else { return MRIStepExtSTSSetDomEigFn(arkode_mem, nullptr); }
     },
     nb::arg("arkode_mem"), nb::arg("dom_eig").none());
 }
