@@ -41,7 +41,7 @@ def exact_semidiscrete_solution(n, k, t):
     return u
 
 
-def solve_heat1d(name, y, host_data, problem, sunctx, device, n=101, k=0.01):
+def solve_heat1d(name, y, problem, sunctx, n=101, k=0.01):
     tf = 1.0
     nt = 10
     reltol = 1e-6
@@ -83,8 +83,7 @@ def solve_heat1d(name, y, host_data, problem, sunctx, device, n=101, k=0.01):
         if status != ark.ARK_SUCCESS:
             raise RuntimeError(f"ARKodeEvolve failed with status {status}")
 
-        if device == "cuda":
-            host_data = sun.N_VGetNumpyArray(y, device="cpu", copy_from="device")
+        host_data = sun.N_VGetTorchTensor(y, device="cpu").numpy()
         rms = np.sqrt(np.dot(host_data, host_data) / n)
         print(f"  {t:10.6f}  {rms:10.6f}")
         tout = min(tout + tf / nt, tf)
@@ -209,23 +208,16 @@ def main():
     assert status == sun.SUN_SUCCESS
 
     if device == "cuda":
-        host_data = np.zeros(args.n, dtype=sun.sunrealtype)
+        host_buffer = np.zeros(args.n, dtype=sun.sunrealtype)
         device_data = torch.zeros(args.n, device="cuda", dtype=dtype)
-        y = sun.N_VMake_Cuda(args.n, host_data, device_data, sunctx)
+        y = sun.N_VMake_Cuda(args.n, host_buffer, device_data, sunctx)
     else:
         y = sun.N_VNew_Serial(args.n, sunctx)
-        host_data = sun.N_VGetNumpyArray(y)
-        device_data = sun.N_VGetTorchTensor(y, device="cpu")
 
     problem = TorchHeat1DProblem(torch, device, n=args.n)
-    host_result, y = solve_heat1d(
-        f"torch {device} backend", y, host_data, problem, sunctx, device, n=args.n
-    )
+    host_result, y = solve_heat1d(f"torch {device} backend", y, problem, sunctx, n=args.n)
 
-    if device == "cuda":
-        device_result = sun.N_VGetTorchTensor(y, device="cpu", copy_from="device").numpy()
-    else:
-        device_result = device_data.numpy()
+    device_result = sun.N_VGetTorchTensor(y, device="cpu").numpy()
     np.testing.assert_allclose(host_result, device_result)
 
 

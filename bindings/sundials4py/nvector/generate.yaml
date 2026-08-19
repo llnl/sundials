@@ -121,6 +121,10 @@ modules:
     - "^N_VSetDeviceArrayPointer_Cuda$"
     - "^N_VGetHostArrayPointer_Cuda$"
     - "^N_VGetDeviceArrayPointer_Cuda$"
+    # Array accessors synchronize host/device data without exposing explicit
+    # transfer operations in Python.
+    - "^N_VCopyToDevice_Cuda$"
+    - "^N_VCopyFromDevice_Cuda$"
     # Kernel execution policies are C++ CUDA objects that are not currently
     # exposed through sundials4py.
     - "^N_VSetKernelExecPolicy_Cuda$"

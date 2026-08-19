@@ -41,7 +41,7 @@ def exact_semidiscrete_solution(n, k, t):
     return u
 
 
-def solve_heat1d(name, y, host_data, problem, sunctx, device, n=101, k=0.01):
+def solve_heat1d(name, y, problem, sunctx, n=101, k=0.01):
     tf = 1.0
     nt = 10
     reltol = 1e-6
@@ -83,8 +83,7 @@ def solve_heat1d(name, y, host_data, problem, sunctx, device, n=101, k=0.01):
         if status != ark.ARK_SUCCESS:
             raise RuntimeError(f"ARKodeEvolve failed with status {status}")
 
-        if device == "cuda":
-            host_data = sun.N_VGetNumpyArray(y, device="cpu", copy_from="device")
+        host_data = np.asarray(sun.N_VGetJaxArray(y, device="cpu"))
         rms = np.sqrt(np.dot(host_data, host_data) / n)
         print(f"  {t:10.6f}  {rms:10.6f}")
         tout = min(tout + tf / nt, tf)
@@ -146,9 +145,8 @@ def select_device(requested, jax):
     return jax.devices("cpu")[0]
 
 
-# JAX arrays are immutable. The callbacks compute a new array; the CPU path
-# copies that array back into the serial N_Vector, while the CUDA path stores
-# the computed array with N_VSetDeviceArrayPointer.
+# JAX arrays are immutable. The callbacks compute a new array and then either
+# install its CUDA pointer or copy it into the existing serial N_Vector data.
 class JaxHeat1DProblem:
     def __init__(self, jax, jnp, device, dtype, n=101, k=0.01):
         self.jax = jax
@@ -161,13 +159,16 @@ class JaxHeat1DProblem:
         self.array_device = "cuda" if device.platform in ("cuda", "gpu") else "cpu"
         self.dtype = dtype
 
+    def store_array(self, array, nvec):
+        if self.array_device == "cuda":
+            sun.N_VSetDeviceArrayPointer(array, nvec)
+        else:
+            sun.N_VGetArrayPointer(nvec)[:] = np.asarray(array)
+
     def set_init_cond(self, yvec):
         array = self.jnp.zeros(sun.N_VGetLength(yvec), dtype=self.dtype)
         array = self.jax.device_put(array, self.device).block_until_ready()
-        if self.array_device == "cuda":
-            sun.N_VSetDeviceArrayPointer(array, yvec)
-        else:
-            sun.N_VGetNumpyArray(yvec)[:] = np.asarray(array)
+        self.store_array(array, yvec)
 
     def f(self, t, yvec, ydotvec, user_data):
         y = sun.N_VGetJaxArray(yvec, device=self.array_device)
@@ -180,10 +181,7 @@ class JaxHeat1DProblem:
         result = result.at[-1].set(0.0)
         result = result.at[self.isource].add(0.01 / self.dx)
         result = result.block_until_ready()
-        if self.array_device == "cuda":
-            sun.N_VSetDeviceArrayPointer(result, ydotvec)
-        else:
-            sun.N_VGetNumpyArray(ydotvec)[:] = np.asarray(result)
+        self.store_array(result, ydotvec)
         return 0
 
     def jtv(self, vvec, Jvvec, t, yvec, fyvec, user_data, tmpvec):
@@ -196,10 +194,7 @@ class JaxHeat1DProblem:
         result = result.at[0].set(0.0)
         result = result.at[-1].set(0.0)
         result = result.block_until_ready()
-        if self.array_device == "cuda":
-            sun.N_VSetDeviceArrayPointer(result, Jvvec)
-        else:
-            sun.N_VGetNumpyArray(Jvvec)[:] = np.asarray(result)
+        self.store_array(result, Jvvec)
         return 0
 
 
@@ -228,22 +223,16 @@ def main():
     assert status == sun.SUN_SUCCESS
 
     if array_device == "cuda":
-        host_data = np.zeros(args.n, dtype=sun.sunrealtype)
+        host_buffer = np.zeros(args.n, dtype=sun.sunrealtype)
         device_data = jax.device_put(jnp.zeros(args.n, dtype=dtype), device).block_until_ready()
-        y = sun.N_VMake_Cuda(args.n, host_data, device_data, sunctx)
+        y = sun.N_VMake_Cuda(args.n, host_buffer, device_data, sunctx)
     else:
         y = sun.N_VNew_Serial(args.n, sunctx)
-        host_data = sun.N_VGetNumpyArray(y)
 
     problem = JaxHeat1DProblem(jax, jnp, device, dtype, n=args.n)
-    host_result, y = solve_heat1d(
-        f"jax {array_device} backend", y, host_data, problem, sunctx, array_device, n=args.n
-    )
+    host_result, y = solve_heat1d(f"jax {array_device} backend", y, problem, sunctx, n=args.n)
 
-    if array_device == "cuda":
-        device_result = np.asarray(sun.N_VGetJaxArray(y, device="cpu", copy_from="device"))
-    else:
-        device_result = np.asarray(sun.N_VGetJaxArray(y, device="cpu"))
+    device_result = np.asarray(sun.N_VGetJaxArray(y, device="cpu"))
     np.testing.assert_allclose(host_result, device_result)
 
 

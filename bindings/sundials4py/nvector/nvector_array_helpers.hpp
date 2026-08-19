@@ -27,17 +27,10 @@
 namespace sundials4py {
 namespace nvector_detail {
 
-enum class MemoryType
+enum class ArrayDevice
 {
   Cpu,
   Cuda
-};
-
-enum class CopyFrom
-{
-  None,
-  Cpu,
-  Device
 };
 
 inline bool object_is_none(nanobind::object obj)
@@ -63,29 +56,18 @@ inline bool is_cuda_nvector(N_Vector v)
   return N_VGetVectorID(v) == SUNDIALS_NVEC_CUDA;
 }
 
-inline MemoryType parse_memory_type(nanobind::object memory_type, N_Vector v)
+inline ArrayDevice parse_device(nanobind::object device, N_Vector v)
 {
-  auto value = optional_string(memory_type);
+  auto value = optional_string(device);
   if (value.empty())
   {
-    return is_cuda_nvector(v) ? MemoryType::Cuda : MemoryType::Cpu;
+    return is_cuda_nvector(v) ? ArrayDevice::Cuda : ArrayDevice::Cpu;
   }
-  if (value == "cpu" || value == "host") { return MemoryType::Cpu; }
-  if (value == "cuda") { return MemoryType::Cuda; }
+  if (value == "cpu" || value == "host") { return ArrayDevice::Cpu; }
+  if (value == "cuda") { return ArrayDevice::Cuda; }
 
   throw sundials4py::error_returned(
-    "memory_type must be 'cpu', 'host', 'cuda', or None");
-}
-
-inline CopyFrom parse_copy_from(nanobind::object copy_from)
-{
-  auto value = optional_string(copy_from);
-  if (value.empty()) { return CopyFrom::None; }
-  if (value == "cpu") { return CopyFrom::Cpu; }
-  if (value == "device") { return CopyFrom::Device; }
-
-  throw sundials4py::error_returned(
-    "copy_from must be 'cpu', 'device', or None");
+    "device must be 'cpu', 'host', 'cuda', or None");
 }
 
 inline sundials4py::Array1d host_array(N_Vector v)
