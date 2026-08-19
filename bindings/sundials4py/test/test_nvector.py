@@ -95,16 +95,16 @@ def test_nvector_array_helpers_serial(sunctx):
 
     arr[:] = np.arange(5, dtype=sunrealtype)
     assert_allclose(N_VGetArrayPointer(nvec), np.arange(5, dtype=sunrealtype))
-    assert_allclose(N_VGetNumpyArray(nvec, device="host"), arr)
+    assert_allclose(N_VGetNumpyArray(nvec, memory_type="host"), arr)
 
     with pytest.raises(RuntimeError):
-        N_VGetNumpyArray(nvec, device="cuda")
+        N_VGetNumpyArray(nvec, memory_type="cuda")
     with pytest.raises(RuntimeError):
         N_VGetCupyArray(nvec)
     with pytest.raises(RuntimeError):
         N_VGetNumpyArray(nvec, copy_from="device")
     with pytest.raises(RuntimeError):
-        N_VGetNumpyArray(nvec, device="gpu")
+        N_VGetNumpyArray(nvec, memory_type="gpu")
     with pytest.raises(RuntimeError):
         N_VGetNumpyArray(nvec, copy_from="host")
 
@@ -120,7 +120,7 @@ def test_nvector_array_helpers_serial_jax(sunctx):
     assert_allclose(np.asarray(array), 3.0)
 
     N_VConst(4.0, nvec)
-    array = N_VGetJaxArray(nvec, device="host")
+    array = N_VGetJaxArray(nvec, memory_type="host")
     assert_allclose(np.asarray(array), 4.0)
 
 
@@ -247,7 +247,7 @@ def test_make_nvector_cuda_cupy_array(sunctx):
     assert_allclose(cupy.asnumpy(view), 3.0)
 
     with pytest.raises(RuntimeError):
-        N_VGetCupyArray(nvec, device="cpu")
+        N_VGetCupyArray(nvec, memory_type="cpu")
 
 
 @pytest.mark.skipif("N_VMake_Cuda" not in globals(), reason="CUDA bindings are not enabled")
@@ -273,7 +273,7 @@ def test_make_nvector_cuda_torch_tensor(sunctx):
     view = N_VGetTorchTensor(nvec, copy_from="cpu")
     assert_allclose(view.cpu().numpy(), h_arr)
 
-    host_view = N_VGetTorchTensor(nvec, device="host", copy_from="device")
+    host_view = N_VGetTorchTensor(nvec, memory_type="host", copy_from="device")
     assert_allclose(host_view.numpy(), h_arr)
 
 
@@ -296,7 +296,7 @@ def test_make_nvector_cuda_jax_array(sunctx):
     view = N_VGetJaxArray(nvec)
     assert_allclose(np.asarray(view), np.asarray(d_arr))
 
-    host_view = N_VGetJaxArray(nvec, device="cpu", copy_from="device")
+    host_view = N_VGetJaxArray(nvec, memory_type="cpu", copy_from="device")
     assert host_view.device.platform == "cpu"
     assert_allclose(np.asarray(host_view), np.asarray(d_arr))
 
@@ -313,15 +313,15 @@ def test_nvector_array_helpers_cuda_host(sunctx):
     with pytest.raises(RuntimeError):
         N_VGetNumpyArray(nvec)
     with pytest.raises(RuntimeError):
-        N_VGetNumpyArray(nvec, device="cuda")
+        N_VGetNumpyArray(nvec, memory_type="cuda")
 
-    host = N_VGetNumpyArray(nvec, device="cpu")
+    host = N_VGetNumpyArray(nvec, memory_type="cpu")
     host[:] = np.arange(5, dtype=sunrealtype)
 
     N_VCopyToDevice_Cuda(nvec)
     N_VConst(8.0, nvec)
 
-    synced_host = N_VGetNumpyArray(nvec, device="host", copy_from="device")
+    synced_host = N_VGetNumpyArray(nvec, memory_type="host", copy_from="device")
     assert_allclose(synced_host, 8.0)
 
 

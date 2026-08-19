@@ -6,6 +6,7 @@
 #include <nvector/nvector_cuda.h>
 #include <sundials/sundials_nvector.hpp>
 
+#include "nvector_array_helpers.hpp"
 #include "sundials/sundials_classview.hpp"
 
 namespace nb = nanobind;
@@ -14,6 +15,13 @@ using namespace sundials::experimental;
 namespace sundials4py {
 
 namespace {
+
+using nvector_detail::CopyFrom;
+using nvector_detail::host_array;
+using nvector_detail::is_cuda_nvector;
+using nvector_detail::MemoryType;
+using nvector_detail::parse_copy_from;
+using nvector_detail::parse_memory_type;
 
 using CudaArray1d =
   nb::ndarray<sunrealtype, nb::device::cuda, nb::ndim<1>, nb::c_contig>;
@@ -150,65 +158,6 @@ int device_id_for_pointer(void* ptr)
   return device_id;
 }
 
-enum class ArrayDevice
-{
-  Cpu,
-  Cuda
-};
-
-enum class CopyFrom
-{
-  None,
-  Cpu,
-  Device
-};
-
-bool object_is_none(nb::object obj) { return obj.ptr() == Py_None; }
-
-bool is_cuda_nvector(N_Vector v)
-{
-  return N_VGetVectorID(v) == SUNDIALS_NVEC_CUDA;
-}
-
-std::string optional_string(nb::object value, const char* name)
-{
-  if (object_is_none(value)) { return ""; }
-  try
-  {
-    return nb::cast<std::string>(value);
-  }
-  catch (const nb::cast_error&)
-  {
-    throw sundials4py::error_returned(std::string(name) +
-                                      " must be a string or None");
-  }
-}
-
-ArrayDevice parse_device(nb::object device, N_Vector v)
-{
-  auto value = optional_string(device, "device");
-  if (value.empty())
-  {
-    return is_cuda_nvector(v) ? ArrayDevice::Cuda : ArrayDevice::Cpu;
-  }
-  if (value == "cpu" || value == "host") { return ArrayDevice::Cpu; }
-  if (value == "cuda") { return ArrayDevice::Cuda; }
-
-  throw sundials4py::error_returned(
-    "device must be 'cpu', 'host', 'cuda', or None");
-}
-
-CopyFrom parse_copy_from(nb::object copy_from)
-{
-  auto value = optional_string(copy_from, "copy_from");
-  if (value.empty()) { return CopyFrom::None; }
-  if (value == "cpu") { return CopyFrom::Cpu; }
-  if (value == "device") { return CopyFrom::Device; }
-
-  throw sundials4py::error_returned(
-    "copy_from must be 'cpu', 'device', or None");
-}
-
 void require_cuda_nvector(N_Vector v)
 {
   if (!is_cuda_nvector(v))
@@ -218,33 +167,21 @@ void require_cuda_nvector(N_Vector v)
   }
 }
 
-void apply_copy_from(N_Vector v, ArrayDevice device, CopyFrom copy_from)
+void apply_copy_from(N_Vector v, MemoryType memory_type, CopyFrom copy_from)
 {
   if (copy_from == CopyFrom::None) { return; }
 
   if (copy_from == CopyFrom::Cpu)
   {
-    if (device == ArrayDevice::Cpu) { return; }
+    if (memory_type == MemoryType::Cpu) { return; }
     require_cuda_nvector(v);
     N_VCopyToDevice_Cuda(v);
     return;
   }
 
-  if (device == ArrayDevice::Cuda) { return; }
+  if (memory_type == MemoryType::Cuda) { return; }
   require_cuda_nvector(v);
   N_VCopyFromDevice_Cuda(v);
-}
-
-sundials4py::Array1d host_array(N_Vector v)
-{
-  auto ptr = N_VGetArrayPointer(v);
-  if (!ptr)
-  {
-    throw sundials4py::error_returned("Failed to get array pointer");
-  }
-  auto owner = nb::find(v);
-  size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
-  return sundials4py::Array1d(ptr, 1, shape, owner);
 }
 
 struct CudaDeviceArrayPointer
@@ -291,38 +228,40 @@ nb::object device_pointer_object(N_Vector v)
   return nb::cast(CudaDeviceArrayPointer(v));
 }
 
-nb::object get_numpy_array(N_Vector v, nb::object device, nb::object copy_from)
+nb::object get_numpy_array(N_Vector v, nb::object memory_type,
+                           nb::object copy_from)
 {
-  auto target = parse_device(device, v);
-  if (target == ArrayDevice::Cuda)
+  auto target = parse_memory_type(memory_type, v);
+  if (target == MemoryType::Cuda)
   {
     throw sundials4py::error_returned(
-      "N_VGetNumpyArray does not support device='cuda'");
+      "N_VGetNumpyArray does not support memory_type='cuda'");
   }
   apply_copy_from(v, target, parse_copy_from(copy_from));
   return nb::cast(host_array(v));
 }
 
-nb::object get_cupy_array(N_Vector v, nb::object device, nb::object copy_from)
+nb::object get_cupy_array(N_Vector v, nb::object memory_type, nb::object copy_from)
 {
-  auto target = parse_device(device, v);
-  if (target == ArrayDevice::Cpu)
+  auto target = parse_memory_type(memory_type, v);
+  if (target == MemoryType::Cpu)
   {
     throw sundials4py::error_returned(
-      "N_VGetCupyArray does not support device='cpu'");
+      "N_VGetCupyArray does not support memory_type='cpu'");
   }
   apply_copy_from(v, target, parse_copy_from(copy_from));
   return nb::module_::import_("cupy").attr("from_dlpack")(
     device_pointer_object(v));
 }
 
-nb::object get_torch_tensor(N_Vector v, nb::object device, nb::object copy_from)
+nb::object get_torch_tensor(N_Vector v, nb::object memory_type,
+                            nb::object copy_from)
 {
-  auto target = parse_device(device, v);
+  auto target = parse_memory_type(memory_type, v);
   apply_copy_from(v, target, parse_copy_from(copy_from));
 
   auto torch = nb::module_::import_("torch");
-  if (target == ArrayDevice::Cpu)
+  if (target == MemoryType::Cpu)
   {
     return torch.attr("from_numpy")(nb::cast(host_array(v)));
   }
@@ -331,12 +270,12 @@ nb::object get_torch_tensor(N_Vector v, nb::object device, nb::object copy_from)
     device_pointer_object(v));
 }
 
-nb::object get_jax_array(N_Vector v, nb::object device, nb::object copy_from)
+nb::object get_jax_array(N_Vector v, nb::object memory_type, nb::object copy_from)
 {
-  auto target = parse_device(device, v);
+  auto target = parse_memory_type(memory_type, v);
   apply_copy_from(v, target, parse_copy_from(copy_from));
 
-  if (target == ArrayDevice::Cpu)
+  if (target == MemoryType::Cpu)
   {
     return nb::module_::import_("jax").attr("dlpack").attr(
       "from_dlpack")(nb::cast(host_array(v)), nb::none(), nb::none());
@@ -527,20 +466,20 @@ void bind_nvector_cuda(nb::module_& m)
     [](N_Vector x) { return CudaDeviceArrayPointer(x); }, nb::arg("x"));
 
   m.def("N_VGetNumpyArray", &get_numpy_array, nb::arg("v"),
-        nb::arg("device").none()    = nb::none(),
-        nb::arg("copy_from").none() = nb::none());
+        nb::arg("memory_type").none() = nb::none(),
+        nb::arg("copy_from").none()   = nb::none());
 
   m.def("N_VGetJaxArray", &get_jax_array, nb::arg("v"),
-        nb::arg("device").none()    = nb::none(),
-        nb::arg("copy_from").none() = nb::none());
+        nb::arg("memory_type").none() = nb::none(),
+        nb::arg("copy_from").none()   = nb::none());
 
   m.def("N_VGetCupyArray", &get_cupy_array, nb::arg("v"),
-        nb::arg("device").none()    = nb::none(),
-        nb::arg("copy_from").none() = nb::none());
+        nb::arg("memory_type").none() = nb::none(),
+        nb::arg("copy_from").none()   = nb::none());
 
   m.def("N_VGetTorchTensor", &get_torch_tensor, nb::arg("v"),
-        nb::arg("device").none()    = nb::none(),
-        nb::arg("copy_from").none() = nb::none());
+        nb::arg("memory_type").none() = nb::none(),
+        nb::arg("copy_from").none()   = nb::none());
 }
 
 } // namespace sundials4py

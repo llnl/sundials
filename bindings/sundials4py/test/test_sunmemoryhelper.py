@@ -33,5 +33,5 @@ def test_create_memory_helper_sys(sunctx):
 def test_create_memory_helper_cuda(sunctx):
     mem_helper = SUNMemoryHelper_Cuda(sunctx)  # noqa: F405
     if mem_helper is None:
-        pytest.skip("CUDA memory helper creation failed")
+        pytest.fail("CUDA memory helper creation failed")
     assert mem_helper is not None
