@@ -298,7 +298,6 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   int* kry_dim     = &(Arnoldi_CONTENT(DEE)->kry_dim);
   int* num_warmups = &(Arnoldi_CONTENT(DEE)->num_warmups);
 
-  if (*kry_dim < 2) { *kry_dim = DEE_KRYLOV_DIM_DEFAULT; }
   if (*num_warmups < 0) { *num_warmups = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT; }
 
   if (Arnoldi_CONTENT(DEE)->LAPACK_A == NULL)
@@ -479,7 +478,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V[0], Av);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return retval; }
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
@@ -511,7 +510,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V[i], V[i + 1]);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return retval; }
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     SUNCheckCall(SUNModifiedGS(V, Hes, i + 1, (int)n, &(Hes[i + 1][i])));
 
