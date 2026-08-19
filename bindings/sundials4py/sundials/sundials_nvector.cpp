@@ -23,7 +23,9 @@
 #include "sundials4py.hpp"
 
 #include <cstdint>
+#include <cstdlib>
 
+#include <nvector/nvector_serial.h>
 #include <sundials/sundials_nvector.hpp>
 #include "sundials/sundials_config.h"
 
@@ -35,6 +37,77 @@ using namespace sundials::experimental;
 namespace sundials4py {
 
 namespace {
+
+void replace_host_array_pointer(N_Vector v, sunrealtype* ptr, nb::object owner)
+{
+  auto vector_id = N_VGetVectorID(v);
+  if (vector_id == SUNDIALS_NVEC_SERIAL)
+  {
+    auto content = static_cast<N_VectorContent_Serial>(v->content);
+    if (content->length == 0 || content->data == ptr) { return; }
+
+    nvector_detail::prepare_python_array_owners(v);
+    if (content->own_data && content->data) { std::free(content->data); }
+    content->data     = ptr;
+    content->own_data = SUNFALSE;
+    nvector_detail::retain_python_host_array(v, std::move(owner));
+    return;
+  }
+
+#ifdef SUNDIALS_NVECTOR_CUDA
+  if (vector_id == SUNDIALS_NVEC_CUDA)
+  {
+    nvector_detail::replace_cuda_array_pointer(v, ptr,
+                                               nvector_detail::ArrayDevice::Cpu,
+                                               std::move(owner));
+    return;
+  }
+#endif
+
+  throw sundials4py::error_returned(
+    "Ownership-safe host pointer replacement is not supported for this "
+    "N_Vector implementation");
+}
+
+void check_host_array_length(N_Vector v, size_t length)
+{
+  if (length != static_cast<size_t>(N_VGetLength(v)))
+  {
+    throw sundials4py::error_returned(
+      "Array shape does not match vector length");
+  }
+}
+
+void set_jax_host_array(nb::object data, N_Vector v)
+{
+  if (!PyObject_HasAttrString(data.ptr(), "unsafe_buffer_pointer") ||
+      !PyObject_HasAttrString(data.ptr(), "device"))
+  {
+    throw sundials4py::error_returned(
+      "Host array must be a NumPy array or a JAX CPU array");
+  }
+
+  auto platform = nb::cast<std::string>(data.attr("device").attr("platform"));
+  if (platform != "cpu")
+  {
+    throw sundials4py::error_returned(
+      "N_VSetArrayPointer requires a host-accessible array");
+  }
+
+  auto numpy_view = nb::module_::import_("numpy").attr("asarray")(data);
+  auto array      = nb::cast<sundials4py::Array1d>(numpy_view);
+  check_host_array_length(v, array.shape(0));
+
+  auto source_ptr =
+    nb::cast<std::uintptr_t>(data.attr("unsafe_buffer_pointer")());
+  if (source_ptr != reinterpret_cast<std::uintptr_t>(array.data()))
+  {
+    throw sundials4py::error_returned(
+      "Converting the host array would require a copy");
+  }
+
+  replace_host_array_pointer(v, array.data(), std::move(numpy_view));
+}
 
 #ifndef SUNDIALS_NVECTOR_CUDA
 using nvector_detail::ArrayDevice;
@@ -113,10 +186,11 @@ void bind_nvector(nb::module_& m)
   // overloads in nvector_cuda.cpp.
   m.def(
     "N_VSetDeviceArrayPointer",
-    [](sundials4py::Array1d d_vdata_1d, N_Vector v)
+    [](sundials4py::Array1d /* d_vdata_1d */, N_Vector /* v */)
     {
-      auto ptr = d_vdata_1d.size() == 0 ? nullptr : d_vdata_1d.data();
-      N_VSetDeviceArrayPointer(ptr, v);
+      throw sundials4py::error_returned(
+        "Device pointer replacement requires a CUDA-enabled sundials4py "
+        "build");
     },
     nb::arg("d_vdata_1d"), nb::arg("v"));
 
@@ -131,16 +205,20 @@ void bind_nvector(nb::module_& m)
         nb::arg("device").none() = nb::none());
 #endif
 
-  m.def("N_VSetArrayPointer",
-        [](sundials4py::Array1d arr, N_Vector v)
-        {
-          if (arr.shape(0) != N_VGetLength(v))
-          {
-            throw sundials4py::error_returned(
-              "Array shape does not match vector length");
-          }
-          N_VSetArrayPointer(arr.data(), v);
-        });
+  m.def(
+    "N_VSetArrayPointer",
+    [](sundials4py::Array1d arr, N_Vector v)
+    {
+      check_host_array_length(v, arr.shape(0));
+      replace_host_array_pointer(v, arr.data(), arr.cast());
+    },
+    nb::arg("arr"), nb::arg("v"),
+    "Replace owned host storage with a borrowed NumPy array and retain its "
+    "owner.");
+
+  m.def("N_VSetArrayPointer", &set_jax_host_array, nb::arg("arr"), nb::arg("v"),
+        "Replace owned host storage with a borrowed JAX CPU array and retain "
+        "its owner.");
 
   m.def(
     "N_VScaleAddMultiVectorArray",

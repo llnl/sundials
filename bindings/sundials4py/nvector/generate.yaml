@@ -91,6 +91,9 @@ modules:
     path: nvector/nvector_serial_generated.hpp
     headers:
     - ../../include/nvector/nvector_serial.h
+    fn_exclude_by_name__regex:
+    # N_VMake_Serial borrows its data pointer and must retain the Python owner.
+    - "^N_VMake_Serial$"
   nvector_manyvector:
     path: nvector/nvector_manyvector_generated.hpp
     headers:

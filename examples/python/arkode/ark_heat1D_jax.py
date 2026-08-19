@@ -131,7 +131,9 @@ def solve_heat1d(name, y, problem, sunctx, n=101, k=0.01):
 
 
 def select_device(requested, jax):
-    cuda_devices = [device for device in jax.devices() if device.platform in ("cuda", "gpu")]
+    cuda_devices = [
+        device for device in jax.devices() if device.platform in ("cuda", "gpu")
+    ]
     if requested == "auto":
         if hasattr(sun, "N_VMake_Cuda") and cuda_devices:
             return cuda_devices[0]
@@ -145,8 +147,8 @@ def select_device(requested, jax):
     return jax.devices("cpu")[0]
 
 
-# JAX arrays are immutable. The callbacks compute a new array and then either
-# install its CUDA pointer or copy it into the existing serial N_Vector data.
+# JAX arrays are immutable. The callbacks compute a new array and install its
+# borrowed host or device pointer in the N_Vector.
 class JaxHeat1DProblem:
     def __init__(self, jax, jnp, device, dtype, n=101, k=0.01):
         self.jax = jax
@@ -163,7 +165,7 @@ class JaxHeat1DProblem:
         if self.array_device == "cuda":
             sun.N_VSetDeviceArrayPointer(array, nvec)
         else:
-            sun.N_VGetArrayPointer(nvec)[:] = np.asarray(array)
+            sun.N_VSetArrayPointer(array, nvec)
 
     def set_init_cond(self, yvec):
         array = self.jnp.zeros(sun.N_VGetLength(yvec), dtype=self.dtype)
@@ -200,9 +202,14 @@ class JaxHeat1DProblem:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--n", type=int, default=101, help="number of spatial grid points")
     parser.add_argument(
-        "--device", choices=("auto", "cpu", "cuda"), default="auto", help="JAX device to use"
+        "--n", type=int, default=101, help="number of spatial grid points"
+    )
+    parser.add_argument(
+        "--device",
+        choices=("auto", "cpu", "cuda"),
+        default="auto",
+        help="JAX device to use",
     )
     args = parser.parse_args()
     if args.n < 3:
@@ -217,20 +224,28 @@ def main():
 
     device = select_device(args.device, jax)
     array_device = "cuda" if device.platform in ("cuda", "gpu") else "cpu"
-    dtype = jnp.float32 if np.dtype(sun.sunrealtype) == np.dtype(np.float32) else jnp.float64
+    dtype = (
+        jnp.float32
+        if np.dtype(sun.sunrealtype) == np.dtype(np.float32)
+        else jnp.float64
+    )
 
     status, sunctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
     assert status == sun.SUN_SUCCESS
 
     if array_device == "cuda":
         host_buffer = np.zeros(args.n, dtype=sun.sunrealtype)
-        device_data = jax.device_put(jnp.zeros(args.n, dtype=dtype), device).block_until_ready()
+        device_data = jax.device_put(
+            jnp.zeros(args.n, dtype=dtype), device
+        ).block_until_ready()
         y = sun.N_VMake_Cuda(args.n, host_buffer, device_data, sunctx)
     else:
         y = sun.N_VNew_Serial(args.n, sunctx)
 
     problem = JaxHeat1DProblem(jax, jnp, device, dtype, n=args.n)
-    host_result, y = solve_heat1d(f"jax {array_device} backend", y, problem, sunctx, n=args.n)
+    host_result, y = solve_heat1d(
+        f"jax {array_device} backend", y, problem, sunctx, n=args.n
+    )
 
     device_result = np.asarray(sun.N_VGetJaxArray(y, device="cpu"))
     np.testing.assert_allclose(host_result, device_result)
