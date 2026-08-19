@@ -365,7 +365,7 @@ void N_VSetArrayPointer(sunscalartype* v_data, N_Vector v)
   return;
 }
 
-void N_VSetDeviceArrayPointer(sunrealtype* d_vdata, N_Vector v)
+void N_VSetDeviceArrayPointer(sunscalartype* d_vdata, N_Vector v)
 {
   if (v->ops->nvsetdevicearraypointer)
   {
