@@ -127,7 +127,7 @@ modules:
     # it to where we cannot access our python function table stored in user_data in generic way
     # (you'd have to call the integrator's GetUserData function, but we don't know which integrator is being used).
     - "Set.*Fn"
-    sundials_nvector:
+  sundials_nvector:
     path: sundials/sundials_nvector_generated.hpp
     headers:
     - ../../include/sundials/sundials_nvector.h
