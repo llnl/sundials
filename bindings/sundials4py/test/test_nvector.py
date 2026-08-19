@@ -139,7 +139,7 @@ def test_nvector_array_helpers_serial_torch(sunctx):
 
 @pytest.mark.skipif("N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_create_nvector_cuda(sunctx):
-    nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
+    nvec = _cuda_nvector_or_fail(lambda: N_VNew_Cuda(5, sunctx))
 
     assert N_VGetLength(nvec) == 5
     assert int(N_VGetDeviceArrayPointer(nvec)) != 0
@@ -154,14 +154,14 @@ def test_create_nvector_cuda(sunctx):
     assert_allclose(arr, 2.0)
 
 
-def _cuda_nvector_or_skip(factory):
+def _cuda_nvector_or_fail(factory):
     try:
         nvec = factory()
     except RuntimeError as err:
-        pytest.skip(f"CUDA vector allocation failed: {err}")
+        pytest.fail(f"CUDA vector allocation failed: {err}")
 
     if nvec is None:
-        pytest.skip("CUDA vector allocation failed")
+        pytest.fail("CUDA vector allocation failed")
     return nvec
 
 
@@ -181,7 +181,7 @@ def _check_cuda_nvector_const(nvec, value):
 
 @pytest.mark.skipif("N_VNewManaged_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_create_nvector_cuda_managed(sunctx):
-    nvec = _cuda_nvector_or_skip(lambda: N_VNewManaged_Cuda(5, sunctx))
+    nvec = _cuda_nvector_or_fail(lambda: N_VNewManaged_Cuda(5, sunctx))
     _check_cuda_nvector_const(nvec, 3.0)
 
 
@@ -192,9 +192,9 @@ def test_create_nvector_cuda_managed(sunctx):
 def test_create_nvector_cuda_with_memhelp(use_managed_mem, sunctx):
     mem_helper = SUNMemoryHelper_Cuda(sunctx)
     if mem_helper is None:
-        pytest.skip("CUDA memory helper creation failed")
+        pytest.fail("CUDA memory helper creation failed")
 
-    nvec = _cuda_nvector_or_skip(
+    nvec = _cuda_nvector_or_fail(
         lambda: N_VNewWithMemHelp_Cuda(5, use_managed_mem, mem_helper, sunctx)
     )
     _check_cuda_nvector_const(nvec, 4.0)
@@ -308,7 +308,7 @@ def test_make_nvector_cuda_jax_array(sunctx):
 
 @pytest.mark.skipif("N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled")
 def test_nvector_array_helpers_cuda_host(sunctx):
-    nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
+    nvec = _cuda_nvector_or_fail(lambda: N_VNew_Cuda(5, sunctx))
 
     with pytest.raises(RuntimeError):
         N_VGetNumpyArray(nvec)
@@ -349,7 +349,7 @@ def test_set_nvector_cuda_jax_array(sunctx):
     import jax.numpy as jnp
 
     device = _jax_cuda_device_or_skip(jax)
-    nvec = _cuda_nvector_or_skip(lambda: N_VNew_Cuda(5, sunctx))
+    nvec = _cuda_nvector_or_fail(lambda: N_VNew_Cuda(5, sunctx))
     h_arr = N_VGetHostArrayPointer_Cuda(nvec)
     d_arr = jax.device_put(jnp.arange(5, dtype=_jax_dtype(jnp)), device)
     d_arr.block_until_ready()
