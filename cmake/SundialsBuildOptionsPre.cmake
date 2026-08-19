@@ -293,6 +293,10 @@ sundials_option(
   DEPRECATED_NAMES
   ENABLE_ALL_WARNINGS)
 
+sundials_option(
+  SUNDIALS_ENABLE_DEPRECATED_WARNINGS BOOL
+  "Enable compiler warnings for deprecated SUNDIALS APIs" ON ADVANCED)
+
 # CMake 3.24 added the native option, CMAKE_COMPILE_WARNING_AS_ERROR
 sundials_option(
   CMAKE_COMPILE_WARNING_AS_ERROR

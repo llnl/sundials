@@ -120,6 +120,7 @@ struct _generic_N_Vector_Ops
   sunscalartype* (*nvgetarraypointer)(N_Vector);
   sunscalartype* (*nvgetdevicearraypointer)(N_Vector);
   void (*nvsetarraypointer)(sunscalartype*, N_Vector);
+  void (*nvsetdevicearraypointer)(sunscalartype*, N_Vector);
   SUNComm (*nvgetcommunicator)(N_Vector);
   sunindextype (*nvgetlength)(N_Vector);
   sunindextype (*nvgetlocallength)(N_Vector);
@@ -233,6 +234,8 @@ void N_VSpace(N_Vector v, sunindextype* lrw, sunindextype* liw);
 SUNDIALS_EXPORT sunscalartype* N_VGetArrayPointer(N_Vector v);
 SUNDIALS_EXPORT sunscalartype* N_VGetDeviceArrayPointer(N_Vector v);
 SUNDIALS_EXPORT void N_VSetArrayPointer(sunscalartype* v_data_1d, N_Vector v);
+SUNDIALS_EXPORT void N_VSetDeviceArrayPointer(sunscalartype* d_vdata_1d,
+                                              N_Vector v);
 SUNDIALS_EXPORT SUNComm N_VGetCommunicator(N_Vector v);
 SUNDIALS_EXPORT sunindextype N_VGetLength(N_Vector v);
 SUNDIALS_EXPORT sunindextype N_VGetLocalLength(N_Vector v);

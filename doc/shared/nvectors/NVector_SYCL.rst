@@ -153,7 +153,8 @@ host and device, unless managed (shared) memory is used.
 
 .. cpp:function:: void N_VSetDeviceArrayPointer_Sycl(sunscalartype* d_vdata, N_Vector v)
 
-   This function sets the device array pointer in the vector ``v``.
+   This function sets the vector data pointer on the device. It does not free
+   the existing pointer.
 
 
 .. cpp:function:: void N_VCopyToDevice_Sycl(N_Vector v)

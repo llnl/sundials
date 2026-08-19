@@ -140,7 +140,7 @@ operations below.
 
    .. code-block:: c
 
-      vdata = N_VGetArrayPointer(v);
+      vdata = N_VGetDeviceArrayPointer(v);
 
 
 .. c:function:: void N_VSetArrayPointer(sunscalartype* vdata, N_Vector v)
@@ -157,6 +157,24 @@ operations below.
    .. code-block:: c
 
       N_VSetArrayPointer(vdata,v);
+
+
+.. c:function:: void N_VSetDeviceArrayPointer(sunrealtype* d_vdata, N_Vector v)
+
+   Replaces the device data array pointer in an ``N_Vector`` with a given
+   device-accessible array of ``sunrealtype``. Note that this assumes that the
+   internal data in the ``N_Vector`` is a contiguous array of ``sunrealtype``
+   and is accessible from the device (e.g., GPU).
+
+   This operation is *optional* and is only meaningful for vector
+   implementations that manage data in a device memory space. If the vector
+   implementation does not define this operation, this routine has no effect.
+
+   Usage:
+
+   .. code-block:: c
+
+      N_VSetDeviceArrayPointer(d_vdata,v);
 
 
 .. c:function:: SUNComm N_VGetCommunicator(N_Vector v)

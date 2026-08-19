@@ -78,6 +78,7 @@ N_Vector N_VNewEmpty(SUNContext sunctx)
   ops->nvgetarraypointer       = NULL;
   ops->nvgetdevicearraypointer = NULL;
   ops->nvsetarraypointer       = NULL;
+  ops->nvsetdevicearraypointer = NULL;
   ops->nvgetcommunicator       = NULL;
   ops->nvgetlength             = NULL;
 
@@ -203,6 +204,7 @@ SUNErrCode N_VCopyOps(N_Vector w, N_Vector v)
   v->ops->nvgetarraypointer       = w->ops->nvgetarraypointer;
   v->ops->nvgetdevicearraypointer = w->ops->nvgetdevicearraypointer;
   v->ops->nvsetarraypointer       = w->ops->nvsetarraypointer;
+  v->ops->nvsetdevicearraypointer = w->ops->nvsetdevicearraypointer;
   v->ops->nvgetcommunicator       = w->ops->nvgetcommunicator;
   v->ops->nvgetlength             = w->ops->nvgetlength;
   v->ops->nvgetlocallength        = w->ops->nvgetlocallength;
@@ -360,6 +362,15 @@ sunscalartype* N_VGetDeviceArrayPointer(N_Vector v)
 void N_VSetArrayPointer(sunscalartype* v_data, N_Vector v)
 {
   if (v->ops->nvsetarraypointer) { v->ops->nvsetarraypointer(v_data, v); }
+  return;
+}
+
+void N_VSetDeviceArrayPointer(sunrealtype* d_vdata, N_Vector v)
+{
+  if (v->ops->nvsetdevicearraypointer)
+  {
+    v->ops->nvsetdevicearraypointer(d_vdata, v);
+  }
   return;
 }
 
