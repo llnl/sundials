@@ -711,7 +711,7 @@ SWIGEXPORT void * _wrap_FMRIStepCreate(ARKRhsFn farg1, ARKRhsFn farg2, double co
   ARKRhsFn arg2 = (ARKRhsFn) 0 ;
   sunrealtype arg3 ;
   N_Vector arg4 = (N_Vector) 0 ;
-  MRIStepInnerStepper arg5 = (MRIStepInnerStepper) 0 ;
+  SUNStepper arg5 = (SUNStepper) 0 ;
   SUNContext arg6 = (SUNContext) 0 ;
   void *result = 0 ;
   
@@ -719,7 +719,7 @@ SWIGEXPORT void * _wrap_FMRIStepCreate(ARKRhsFn farg1, ARKRhsFn farg2, double co
   arg2 = (ARKRhsFn)(farg2);
   arg3 = (sunrealtype)(*farg3);
   arg4 = (N_Vector)(farg4);
-  arg5 = (MRIStepInnerStepper)(farg5);
+  arg5 = (SUNStepper)(farg5);
   arg6 = (SUNContext)(farg6);
   result = (void *)MRIStepCreate(arg1,arg2,arg3,arg4,arg5,arg6);
   fresult = result;
@@ -826,194 +826,6 @@ SWIGEXPORT int _wrap_FMRIStepGetNumInnerStepperFails(void *farg1, long *farg2) {
   arg1 = (void *)(farg1);
   arg2 = (long *)(farg2);
   result = (int)MRIStepGetNumInnerStepperFails(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_Create(void *farg1, void *farg2) {
-  int fresult ;
-  SUNContext arg1 = (SUNContext) 0 ;
-  MRIStepInnerStepper *arg2 = (MRIStepInnerStepper *) 0 ;
-  int result;
-  
-  arg1 = (SUNContext)(farg1);
-  arg2 = (MRIStepInnerStepper *)(farg2);
-  result = (int)MRIStepInnerStepper_Create(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_CreateFromSUNStepper(void *farg1, void *farg2) {
-  int fresult ;
-  SUNStepper arg1 = (SUNStepper) 0 ;
-  MRIStepInnerStepper *arg2 = (MRIStepInnerStepper *) 0 ;
-  int result;
-  
-  arg1 = (SUNStepper)(farg1);
-  arg2 = (MRIStepInnerStepper *)(farg2);
-  result = (int)MRIStepInnerStepper_CreateFromSUNStepper(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_Free(void *farg1) {
-  int fresult ;
-  MRIStepInnerStepper *arg1 = (MRIStepInnerStepper *) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper *)(farg1);
-  result = (int)MRIStepInnerStepper_Free(arg1);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_SetContent(void *farg1, void *farg2) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  void *arg2 = (void *) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (void *)(farg2);
-  result = (int)MRIStepInnerStepper_SetContent(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_GetContent(void *farg1, void *farg2) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  void **arg2 = (void **) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (void **)(farg2);
-  result = (int)MRIStepInnerStepper_GetContent(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_SetEvolveFn(void *farg1, MRIStepInnerEvolveFn farg2) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  MRIStepInnerEvolveFn arg2 = (MRIStepInnerEvolveFn) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (MRIStepInnerEvolveFn)(farg2);
-  result = (int)MRIStepInnerStepper_SetEvolveFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_SetFullRhsFn(void *farg1, MRIStepInnerFullRhsFn farg2) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  MRIStepInnerFullRhsFn arg2 = (MRIStepInnerFullRhsFn) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (MRIStepInnerFullRhsFn)(farg2);
-  result = (int)MRIStepInnerStepper_SetFullRhsFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_SetResetFn(void *farg1, MRIStepInnerResetFn farg2) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  MRIStepInnerResetFn arg2 = (MRIStepInnerResetFn) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (MRIStepInnerResetFn)(farg2);
-  result = (int)MRIStepInnerStepper_SetResetFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_SetAccumulatedErrorGetFn(void *farg1, MRIStepInnerGetAccumulatedError farg2) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  MRIStepInnerGetAccumulatedError arg2 = (MRIStepInnerGetAccumulatedError) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (MRIStepInnerGetAccumulatedError)(farg2);
-  result = (int)MRIStepInnerStepper_SetAccumulatedErrorGetFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_SetAccumulatedErrorResetFn(void *farg1, MRIStepInnerResetAccumulatedError farg2) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  MRIStepInnerResetAccumulatedError arg2 = (MRIStepInnerResetAccumulatedError) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (MRIStepInnerResetAccumulatedError)(farg2);
-  result = (int)MRIStepInnerStepper_SetAccumulatedErrorResetFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_SetRTolFn(void *farg1, MRIStepInnerSetRTol farg2) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  MRIStepInnerSetRTol arg2 = (MRIStepInnerSetRTol) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (MRIStepInnerSetRTol)(farg2);
-  result = (int)MRIStepInnerStepper_SetRTolFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_AddForcing(void *farg1, double const *farg2, N_Vector farg3) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  sunrealtype arg2 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
-  result = (int)MRIStepInnerStepper_AddForcing(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FMRIStepInnerStepper_GetForcingData(void *farg1, double *farg2, double *farg3, void *farg4, int *farg5) {
-  int fresult ;
-  MRIStepInnerStepper arg1 = (MRIStepInnerStepper) 0 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  sunrealtype *arg3 = (sunrealtype *) 0 ;
-  N_Vector **arg4 = (N_Vector **) 0 ;
-  int *arg5 = (int *) 0 ;
-  int result;
-  
-  arg1 = (MRIStepInnerStepper)(farg1);
-  arg2 = (sunrealtype *)(farg2);
-  arg3 = (sunrealtype *)(farg3);
-  arg4 = (N_Vector **)(farg4);
-  arg5 = (int *)(farg5);
-  result = (int)MRIStepInnerStepper_GetForcingData(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
 }

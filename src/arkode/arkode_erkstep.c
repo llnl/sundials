@@ -1943,7 +1943,7 @@ int ERKStepCreateAdjointStepper(void* arkode_mem, SUNAdjRhsFn adj_f,
 }
 
 /*---------------------------------------------------------------
-  Utility routines for ERKStep to serve as an MRIStepInnerStepper
+  Utility routines for ERKStep to serve as a SUNStepper
   ---------------------------------------------------------------*/
 
 /*------------------------------------------------------------------------------

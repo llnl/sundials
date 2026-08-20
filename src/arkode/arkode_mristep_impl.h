@@ -137,7 +137,14 @@ typedef struct ARKodeMRIStepMemRec
   void* lmem;
 
   /* Inner stepper */
-  MRIStepInnerStepper stepper;
+  SUNStepper stepper;
+
+  /* Inner forcing data owned by MRIStep */
+  N_Vector* inner_forcing;
+  int ninner_forcing;
+  int ninner_forcing_allocated;
+  sunrealtype inner_tshift;
+  sunrealtype inner_tscale;
 
   /* User-supplied pre and post inner evolve functions */
   MRIStepPreInnerFn pre_inner_evolve;
@@ -170,51 +177,6 @@ typedef struct ARKodeMRIStepMemRec
   N_Vector* Xvecs;
 
 }* ARKodeMRIStepMem;
-
-/*===============================================================
-  MRI innter time stepper data structure
-  ===============================================================*/
-
-typedef struct _MRIStepInnerStepper_Ops* MRIStepInnerStepper_Ops;
-
-struct _MRIStepInnerStepper_Ops
-{
-  MRIStepInnerEvolveFn evolve;
-  MRIStepInnerFullRhsFn fullrhs;
-  MRIStepInnerResetFn reset;
-  MRIStepInnerGetAccumulatedError geterror;
-  MRIStepInnerResetAccumulatedError reseterror;
-  MRIStepInnerSetRTol setrtol;
-};
-
-struct _MRIStepInnerStepper
-{
-  /* stepper specific content and operations */
-  void* content;
-  void* python;
-  MRIStepInnerStepper_Ops ops;
-
-  /* stepper context */
-  SUNContext sunctx;
-
-  /* base class data */
-  N_Vector* forcing;      /* array of forcing vectors            */
-  int nforcing;           /* number of forcing vectors active    */
-  int nforcing_allocated; /* number of forcing vectors allocated */
-  int last_flag;          /* last stepper return flag            */
-  sunrealtype tshift;     /* time normalization shift            */
-  sunrealtype tscale;     /* time normalization scaling          */
-
-  /* fused op workspace */
-  sunrealtype* vals;
-  N_Vector* vecs;
-
-  /* Space requirements */
-  sunindextype lrw1; /* no. of sunrealtype words in 1 N_Vector          */
-  sunindextype liw1; /* no. of integer words in 1 N_Vector           */
-  long int lrw;      /* no. of sunrealtype words in ARKODE work vectors */
-  long int liw;      /* no. of integer words in ARKODE work vectors  */
-};
 
 /*===============================================================
   MRI time step module private function prototypes
@@ -320,34 +282,25 @@ int mriStep_NlsConvTest(SUNNonlinearSolver NLS, N_Vector y, N_Vector del,
                         sunrealtype tol, N_Vector ewt, void* arkode_mem);
 
 /* Inner stepper functions */
-int mriStepInnerStepper_HasRequiredOps(MRIStepInnerStepper stepper);
-sunbooleantype mriStepInnerStepper_SupportsRTolAdaptivity(
-  MRIStepInnerStepper stepper);
-int mriStepInnerStepper_Evolve(MRIStepInnerStepper stepper, sunrealtype t0,
-                               sunrealtype tout, N_Vector y);
-int mriStepInnerStepper_EvolveSUNStepper(MRIStepInnerStepper stepper,
-                                         sunrealtype t0, sunrealtype tout,
-                                         N_Vector y);
-int mriStepInnerStepper_FullRhs(MRIStepInnerStepper stepper, sunrealtype t,
-                                N_Vector y, N_Vector f, int mode);
-int mriStepInnerStepper_FullRhsSUNStepper(MRIStepInnerStepper stepper,
-                                          sunrealtype t, N_Vector y, N_Vector f,
-                                          int mode);
-int mriStepInnerStepper_Reset(MRIStepInnerStepper stepper, sunrealtype tR,
-                              N_Vector yR);
-int mriStepInnerStepper_GetAccumulatedError(MRIStepInnerStepper stepper,
+int mriStepInnerStepper_HasRequiredOps(SUNStepper stepper);
+sunbooleantype mriStepInnerStepper_SupportsRTolAdaptivity(SUNStepper stepper);
+int mriStepInnerStepper_Evolve(ARKodeMRIStepMem step_mem, sunrealtype tout,
+                               N_Vector y);
+int mriStepInnerStepper_FullRhs(SUNStepper stepper, sunrealtype t, N_Vector y,
+                                N_Vector f, int mode);
+int mriStepInnerStepper_Reset(SUNStepper stepper, sunrealtype tR, N_Vector yR);
+int mriStepInnerStepper_GetAccumulatedError(SUNStepper stepper,
                                             sunrealtype* accum_error);
-int mriStepInnerStepper_ResetAccumulatedError(MRIStepInnerStepper stepper);
-int mriStepInnerStepper_SetRTol(MRIStepInnerStepper stepper, sunrealtype rtol);
-int mriStepInnerStepper_ResetSUNStepper(MRIStepInnerStepper stepper,
-                                        sunrealtype tR, N_Vector yR);
-int mriStepInnerStepper_AllocVecs(MRIStepInnerStepper stepper, int count,
-                                  N_Vector tmpl);
-int mriStepInnerStepper_Resize(MRIStepInnerStepper stepper, ARKVecResizeFn resize,
-                               void* resize_data, sunindextype lrw_diff,
-                               sunindextype liw_diff, N_Vector tmpl);
-int mriStepInnerStepper_FreeVecs(MRIStepInnerStepper stepper);
-void mriStepInnerStepper_PrintMem(MRIStepInnerStepper stepper, FILE* outfile);
+int mriStepInnerStepper_ResetAccumulatedError(SUNStepper stepper);
+int mriStepInnerStepper_SetRTol(SUNStepper stepper, sunrealtype rtol);
+int mriStepInnerStepper_AllocVecs(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                                  int count, N_Vector tmpl);
+int mriStepInnerStepper_Resize(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                               ARKVecResizeFn resize, void* resize_data,
+                               sunindextype lrw_diff, sunindextype liw_diff,
+                               N_Vector tmpl);
+int mriStepInnerStepper_FreeVecs(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem);
+void mriStepInnerStepper_PrintMem(ARKodeMRIStepMem step_mem, FILE* outfile);
 
 /* Compute forcing for inner stepper */
 int mriStep_ComputeInnerForcing(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,

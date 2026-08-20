@@ -4,6 +4,14 @@
 
 ### Major Features
 
+Replaced the ARKODE `MRIStepInnerStepper` interface with `SUNStepper`.
+`MRIStepCreate` now accepts a `SUNStepper`, which can created by
+`ARKodeCreateSUNStepper` or manually. `SUNStepper_Evolve` and
+`SUNStepperEvolveFn` now return an integer status where zero is success,
+positive values are recoverable failures, and negative values are fatal
+failures. Added accumulated error get/reset and relative tolerance operations
+to `SUNStepper` to support `SUNAdaptController_MRIHTol`.
+
 ### New Features and Enhancements
 
 Added the `SUNDIALS_ENABLE_DEPRECATED_WARNINGS` CMake option to allow users to

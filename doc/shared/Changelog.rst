@@ -2508,9 +2508,8 @@ nonlinear system function evaluations:
 * :c:func:`CVodeSetNlsRhsFn`
 * :c:func:`IDASetNlsResFn`
 
-Support for user-defined inner (fast) integrators has been to the MRIStep
-module. See :ref:`ARKODE.Usage.MRIStep.CustomInnerStepper` for more information on providing
-a user-defined integration method.
+Support for user-defined inner (fast) integrators has been added to the MRIStep
+module.
 
 Added specialized fused HIP kernels to CVODE which may offer better performance
 on smaller problems when using CVODE with the HIP vector. See the optional input

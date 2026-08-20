@@ -94,16 +94,6 @@ struct arkode_user_supplied_fn_table
   nb::object mristep_postinnerfn;
 };
 
-struct mristepinnerstepper_user_supplied_fn_table
-{
-  nb::object mristepinner_evolvefn;
-  nb::object mristepinner_fullrhsfn;
-  nb::object mristepinner_resetfn;
-  nb::object mristepinner_getaccumulatederrorfn;
-  nb::object mristepinner_resetaccumulatederrorfn;
-  nb::object mristepinner_setrtolfn;
-};
-
 ///////////////////////////////////////////////////////////////////////////////
 // ARKODE user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
@@ -512,89 +502,6 @@ inline int mristep_postinnerfn_wrapper(Args... args)
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<MRIStepPostInnerFn>, arkode_user_supplied_fn_table,
     ARKodeMem, 1>(&arkode_user_supplied_fn_table::mristep_postinnerfn, args...);
-}
-
-inline int mristepinner_evolvefn_wrapper(MRIStepInnerStepper stepper,
-                                         sunrealtype t0, sunrealtype tout,
-                                         N_Vector y)
-{
-  void* user_data = nullptr;
-  MRIStepInnerStepper_GetContent(stepper, &user_data);
-
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<MRIStepInnerEvolveFn>, mristepinnerstepper_user_supplied_fn_table,
-    MRIStepInnerStepper>(&mristepinnerstepper_user_supplied_fn_table::mristepinner_evolvefn,
-                         stepper, t0, tout, y);
-}
-
-inline int mristepinner_fullrhsfn_wrapper(MRIStepInnerStepper stepper,
-                                          sunrealtype t, N_Vector y, N_Vector f,
-                                          int mode)
-{
-  void* user_data = nullptr;
-  MRIStepInnerStepper_GetContent(stepper, &user_data);
-
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<MRIStepInnerFullRhsFn>, mristepinnerstepper_user_supplied_fn_table,
-    MRIStepInnerStepper>(&mristepinnerstepper_user_supplied_fn_table::mristepinner_fullrhsfn,
-                         stepper, t, y, f, mode);
-}
-
-inline int mristepinner_resetfn_wrapper(MRIStepInnerStepper stepper,
-                                        sunrealtype tR, N_Vector yR)
-{
-  void* user_data = nullptr;
-  MRIStepInnerStepper_GetContent(stepper, &user_data);
-
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<MRIStepInnerResetFn>, mristepinnerstepper_user_supplied_fn_table,
-    MRIStepInnerStepper>(&mristepinnerstepper_user_supplied_fn_table::mristepinner_resetfn,
-                         stepper, tR, yR);
-}
-
-using MRIStepInnerGetAccumulatedErrorStdFn =
-  std::tuple<int, sunrealtype>(MRIStepInnerStepper stepper);
-
-inline int mristepinner_getaccumulatederrorfn_wrapper(MRIStepInnerStepper stepper,
-                                                      sunrealtype* accum_error)
-{
-  void* user_data = nullptr;
-  MRIStepInnerStepper_GetContent(stepper, &user_data);
-
-  auto fn_table =
-    static_cast<mristepinnerstepper_user_supplied_fn_table*>(user_data);
-  auto fn = nb::cast<std::function<MRIStepInnerGetAccumulatedErrorStdFn>>(
-    fn_table->mristepinner_getaccumulatederrorfn);
-
-  auto result = fn(stepper);
-
-  *accum_error = std::get<1>(result);
-
-  return std::get<0>(result);
-}
-
-inline int mristepinner_resetaccumulatederrorfn_wrapper(MRIStepInnerStepper stepper)
-{
-  void* user_data = nullptr;
-  MRIStepInnerStepper_GetContent(stepper, &user_data);
-
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<MRIStepInnerResetAccumulatedError>,
-    mristepinnerstepper_user_supplied_fn_table,
-    MRIStepInnerStepper>(&mristepinnerstepper_user_supplied_fn_table::mristepinner_resetaccumulatederrorfn,
-                         stepper);
-}
-
-inline int mristepinner_setrtolfn_wrapper(MRIStepInnerStepper stepper,
-                                          sunrealtype rtol)
-{
-  void* user_data = nullptr;
-  MRIStepInnerStepper_GetContent(stepper, &user_data);
-
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<MRIStepInnerSetRTol>, mristepinnerstepper_user_supplied_fn_table,
-    MRIStepInnerStepper>(&mristepinnerstepper_user_supplied_fn_table::mristepinner_setrtolfn,
-                         stepper, rtol);
 }
 
 #endif

@@ -46,12 +46,12 @@ unchanged from the skeleton program presented in
      the stepper as normal following the steps detailed in the section for the desired
      stepper.
 
-     Once the ARKODE stepper object is setup, create an ``MRIStepInnerStepper`` object
-     with :c:func:`ARKodeCreateMRIStepInnerStepper`.
+     Once the ARKODE stepper object is setup, create a :c:type:`SUNStepper`
+     object with :c:func:`ARKodeCreateSUNStepper`.
 
    * If supplying a user-defined fast (inner) integrator, create the
-     ``MRIStepInnerStepper`` object as described in section
-     :numref:`ARKODE.Usage.MRIStep.CustomInnerStepper`.
+     :c:type:`SUNStepper` object as described in section
+     :numref:`SUNStepper.Implementing`.
 
    .. note::
 
@@ -85,7 +85,7 @@ unchanged from the skeleton program presented in
 #. Create an MRIStep object for the slow (outer) integration
 
    Create the MRIStep object by calling  :c:func:`MRIStepCreate`. One of the
-   inputs to :c:func:`MRIStepCreate` is the ``MRIStepInnerStepper`` object for
+   inputs to :c:func:`MRIStepCreate` is the :c:type:`SUNStepper` object for
    solving the fast (inner) IVP created in the previous step.
 
 #. If using fixed step sizes, then set the slow step size by calling
@@ -132,12 +132,12 @@ unchanged from the skeleton program presented in
 #. Free solver memory
 
    * If ARKStep was used as the fast (inner) IVP integrator, call
-     :c:func:`MRIStepInnerStepper_Free` and :c:func:`ARKodeFree` to free the
+     :c:func:`SUNStepper_Destroy` and :c:func:`ARKodeFree` to free the
      memory allocated for the fast (inner) integrator.
 
    * If a user-defined fast (inner) integrator was supplied, free the integrator
-     content and call :c:func:`MRIStepInnerStepper_Free` to free the
-     ``MRIStepInnerStepper`` object.
+     content and call :c:func:`SUNStepper_Destroy` to free the
+     :c:type:`SUNStepper` object.
 
    * Call :c:func:`ARKodeFree` to free the memory allocated for the MRIStep
      slow integration object.

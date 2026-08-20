@@ -78,12 +78,12 @@ int main(void)
   sunrealtype atol   = SUN_RCONST(1e-6);
 
   /* general problem variables */
-  N_Vector y                        = NULL;
-  SUNMatrix A                       = NULL;
-  SUNLinearSolver LS                = NULL;
-  void* arkode_mem                  = NULL;
-  void* mristep_mem                 = NULL;
-  MRIStepInnerStepper inner_stepper = NULL;
+  N_Vector y               = NULL;
+  SUNMatrix A              = NULL;
+  SUNLinearSolver LS       = NULL;
+  void* arkode_mem         = NULL;
+  void* mristep_mem        = NULL;
+  SUNStepper inner_stepper = NULL;
   int retval;
   sunrealtype t;
 
@@ -298,8 +298,8 @@ int main(void)
   if (check_retval(&retval, "ARKodeSStolerances", 1)) { return 1; }
   retval = ARKodeSetMaxNumSteps(arkode_mem, 100);
   check_retval(&retval, "ARKodeSetMaxNumSteps", 1);
-  retval = ARKodeCreateMRIStepInnerStepper(arkode_mem, &inner_stepper);
-  if (check_retval(&retval, "ARKodeCreateMRIStepInnerStepper", 1)) { return 1; }
+  retval = ARKodeCreateSUNStepper(arkode_mem, &inner_stepper);
+  if (check_retval(&retval, "ARKodeCreateSUNStepper", 1)) { return 1; }
   mristep_mem = MRIStepCreate(NULL, f, t, y, inner_stepper, ctx);
   if (check_retval((void*)mristep_mem, "MRIStepCreate", 0)) { return 1; }
   retval = ARKodeSetUserData(mristep_mem, (void*)&lambda);
@@ -385,7 +385,7 @@ int main(void)
 
   /* Free MRIStep and ARKStep memory structures */
   ARKodeFree(&mristep_mem);
-  MRIStepInnerStepper_Free(&inner_stepper);
+  SUNStepper_Destroy(&inner_stepper);
   ARKodeFree(&arkode_mem);
   arkode_mem = NULL;
 

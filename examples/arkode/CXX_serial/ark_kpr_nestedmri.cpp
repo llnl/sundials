@@ -453,9 +453,9 @@ int main(int argc, char* argv[])
   if (check_flag(retval, "ARKodeSetUserData")) return 1;
 
   // Create inner stepper
-  MRIStepInnerStepper inner_stepper = nullptr;
-  retval = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-  if (check_flag(retval, "ARKodeCreateMRIStepInnerStepper")) return 1;
+  SUNStepper inner_stepper = nullptr;
+  retval = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
+  if (check_flag(retval, "ARKodeCreateSUNStepper")) return 1;
 
   // Create intermediate and slow controller objects, and select orders of accuracy as relevant
   SUNAdaptController scontrol     = nullptr;
@@ -875,9 +875,9 @@ int main(int argc, char* argv[])
   }
 
   // Create intermediate stepper
-  MRIStepInnerStepper intermediate_stepper = nullptr;
-  retval = ARKodeCreateMRIStepInnerStepper(mid_arkode_mem, &intermediate_stepper);
-  if (check_flag(retval, "ARKodeCreateMRIStepInnerStepper")) return 1;
+  SUNStepper intermediate_stepper = nullptr;
+  retval = ARKodeCreateSUNStepper(mid_arkode_mem, &intermediate_stepper);
+  if (check_flag(retval, "ARKodeCreateSUNStepper")) return 1;
 
   // Create MRI (slow) integrator
   void* arkode_mem = MRIStepCreate(f_se, f_si, T0, y, intermediate_stepper,
@@ -1127,10 +1127,10 @@ int main(int argc, char* argv[])
   SUNAdaptController_Destroy(mcontrol_H);
   SUNAdaptController_Destroy(mcontrol_Tol);
   SUNAdaptController_Destroy(fcontrol);
-  ARKodeFree(&inner_arkode_mem); // Free fast integrator memory
-  ARKodeFree(&mid_arkode_mem);   // Free intermediate integrator memory
-  MRIStepInnerStepper_Free(&inner_stepper); // Free inner stepper structures
-  MRIStepInnerStepper_Free(&intermediate_stepper);
+  ARKodeFree(&inner_arkode_mem);      // Free fast integrator memory
+  ARKodeFree(&mid_arkode_mem);        // Free intermediate integrator memory
+  SUNStepper_Destroy(&inner_stepper); // Free inner stepper structures
+  SUNStepper_Destroy(&intermediate_stepper);
   ARKodeFree(&arkode_mem); // Free slow integrator memory
   ARKodeFree(&arkode_ref); // Free reference solver memory
 

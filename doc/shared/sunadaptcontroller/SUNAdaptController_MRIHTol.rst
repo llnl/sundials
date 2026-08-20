@@ -183,15 +183,15 @@ controllers, there are a few steps required when setting this up in an applicati
 #. *Create an inner stepper object to solve the fast (inner) IVP*
 
 #. Configure the inner stepper to use temporal adaptivity.  For example, when using
-   an ARKODE inner stepper and the :c:func:`ARKodeCreateMRIStepInnerStepper`
+   an ARKODE inner stepper and the :c:func:`ARKodeCreateSUNStepper`
    function, then either use its default adaptivity approach or supply a
    single-rate SUNAdaptController object, e.g.
 
    .. code:: C
 
       void* inner_arkode_mem = ERKStepCreate(f_f, T0, y, sunctx);
-      MRIStepInnerStepper inner_stepper = nullptr;
-      retval = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
+      SUNStepper inner_stepper = nullptr;
+      retval = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
       SUNAdaptController fcontrol = SUNAdaptController_PID(sunctx);
       retval = ARKodeSetAdaptController(inner_arkode_mem, fcontrol);
 

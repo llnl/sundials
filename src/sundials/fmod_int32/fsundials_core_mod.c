@@ -213,15 +213,15 @@
  * the fortran.cxx file.
  */
 #define SWIG_contract_assert(RETURNNULL, EXPR, MSG) \
- if (!(EXPR)) { SWIG_exception_impl("$decl", SWIG_ValueError, MSG, RETURNNULL); } 
+ if (!(EXPR)) { SWIG_exception_impl("$decl", SWIG_ValueError, MSG, RETURNNULL); }
 
 
-#define SWIGVERSION 0x040000 
+#define SWIGVERSION 0x040000
 #define SWIG_VERSION SWIGVERSION
 
 
-#define SWIG_as_voidptr(a) (void *)((const void *)(a)) 
-#define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
+#define SWIG_as_voidptr(a) (void *)((const void *)(a))
+#define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a))
 
 
 #include <stdint.h>
@@ -318,7 +318,7 @@ SWIGEXPORT void _wrap_FSUNLogErrHandlerFn(int const *farg1, SwigArrayWrapper *fa
   SUNErrCode arg5 ;
   void *arg6 = (void *) 0 ;
   SUNContext arg7 = (SUNContext) 0 ;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (char *)(farg2->data);
   arg3 = (char *)(farg3->data);
@@ -338,7 +338,7 @@ SWIGEXPORT void _wrap_FSUNAbortErrHandlerFn(int const *farg1, SwigArrayWrapper *
   SUNErrCode arg5 ;
   void *arg6 = (void *) 0 ;
   SUNContext arg7 = (SUNContext) 0 ;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (char *)(farg2->data);
   arg3 = (char *)(farg3->data);
@@ -354,7 +354,7 @@ SWIGEXPORT SwigArrayWrapper _wrap_FSUNGetErrMsg(int const *farg1) {
   SwigArrayWrapper fresult ;
   SUNErrCode arg1 ;
   char *result = 0 ;
-  
+
   arg1 = (SUNErrCode)(*farg1);
   result = (char *)SUNGetErrMsg(arg1);
   fresult.size = strlen((const char*)(result));
@@ -368,7 +368,7 @@ SWIGEXPORT int _wrap_FSUNContext_Create(int const *farg1, void *farg2) {
   SUNComm arg1 ;
   SUNContext *arg2 = (SUNContext *) 0 ;
   SUNErrCode result;
-  
+
 #if SUNDIALS_MPI_ENABLED
   int flag = 0;
   MPI_Initialized(&flag);
@@ -391,7 +391,7 @@ SWIGEXPORT int _wrap_FSUNContext_GetLastError(void *farg1) {
   int fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNErrCode)SUNContext_GetLastError(arg1);
   fresult = (SUNErrCode)(result);
@@ -403,7 +403,7 @@ SWIGEXPORT int _wrap_FSUNContext_PeekLastError(void *farg1) {
   int fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNErrCode)SUNContext_PeekLastError(arg1);
   fresult = (SUNErrCode)(result);
@@ -417,7 +417,7 @@ SWIGEXPORT int _wrap_FSUNContext_PushErrHandler(void *farg1, SUNErrHandlerFn far
   SUNErrHandlerFn arg2 = (SUNErrHandlerFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   arg2 = (SUNErrHandlerFn)(farg2);
   arg3 = (void *)(farg3);
@@ -431,7 +431,7 @@ SWIGEXPORT int _wrap_FSUNContext_PopErrHandler(void *farg1) {
   int fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNErrCode)SUNContext_PopErrHandler(arg1);
   fresult = (SUNErrCode)(result);
@@ -443,7 +443,7 @@ SWIGEXPORT int _wrap_FSUNContext_ClearErrHandlers(void *farg1) {
   int fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNErrCode)SUNContext_ClearErrHandlers(arg1);
   fresult = (SUNErrCode)(result);
@@ -456,7 +456,7 @@ SWIGEXPORT int _wrap_FSUNContext_GetProfiler(void *farg1, void *farg2) {
   SUNContext arg1 = (SUNContext) 0 ;
   SUNProfiler *arg2 = (SUNProfiler *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   arg2 = (SUNProfiler *)(farg2);
   result = (SUNErrCode)SUNContext_GetProfiler(arg1,arg2);
@@ -470,7 +470,7 @@ SWIGEXPORT int _wrap_FSUNContext_SetProfiler(void *farg1, void *farg2) {
   SUNContext arg1 = (SUNContext) 0 ;
   SUNProfiler arg2 = (SUNProfiler) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   arg2 = (SUNProfiler)(farg2);
   result = (SUNErrCode)SUNContext_SetProfiler(arg1,arg2);
@@ -484,7 +484,7 @@ SWIGEXPORT int _wrap_FSUNContext_GetLogger(void *farg1, void *farg2) {
   SUNContext arg1 = (SUNContext) 0 ;
   SUNLogger *arg2 = (SUNLogger *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   arg2 = (SUNLogger *)(farg2);
   result = (SUNErrCode)SUNContext_GetLogger(arg1,arg2);
@@ -498,7 +498,7 @@ SWIGEXPORT int _wrap_FSUNContext_SetLogger(void *farg1, void *farg2) {
   SUNContext arg1 = (SUNContext) 0 ;
   SUNLogger arg2 = (SUNLogger) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   arg2 = (SUNLogger)(farg2);
   result = (SUNErrCode)SUNContext_SetLogger(arg1,arg2);
@@ -511,7 +511,7 @@ SWIGEXPORT int _wrap_FSUNContext_Free(void *farg1) {
   int fresult ;
   SUNContext *arg1 = (SUNContext *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext *)(farg1);
   result = (SUNErrCode)SUNContext_Free(arg1);
   fresult = (SUNErrCode)(result);
@@ -525,7 +525,7 @@ SWIGEXPORT int _wrap_FSUNProfiler_Create(int const *farg1, SwigArrayWrapper *far
   char *arg2 = (char *) 0 ;
   SUNProfiler *arg3 = (SUNProfiler *) 0 ;
   SUNErrCode result;
-  
+
 #if SUNDIALS_MPI_ENABLED
   int flag = 0;
   MPI_Initialized(&flag);
@@ -549,7 +549,7 @@ SWIGEXPORT int _wrap_FSUNProfiler_Free(void *farg1) {
   int fresult ;
   SUNProfiler *arg1 = (SUNProfiler *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNProfiler *)(farg1);
   result = (SUNErrCode)SUNProfiler_Free(arg1);
   fresult = (SUNErrCode)(result);
@@ -562,7 +562,7 @@ SWIGEXPORT int _wrap_FSUNProfiler_Begin(void *farg1, SwigArrayWrapper *farg2) {
   SUNProfiler arg1 = (SUNProfiler) 0 ;
   char *arg2 = (char *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNProfiler)(farg1);
   arg2 = (char *)(farg2->data);
   result = (SUNErrCode)SUNProfiler_Begin(arg1,(char const *)arg2);
@@ -576,7 +576,7 @@ SWIGEXPORT int _wrap_FSUNProfiler_End(void *farg1, SwigArrayWrapper *farg2) {
   SUNProfiler arg1 = (SUNProfiler) 0 ;
   char *arg2 = (char *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNProfiler)(farg1);
   arg2 = (char *)(farg2->data);
   result = (SUNErrCode)SUNProfiler_End(arg1,(char const *)arg2);
@@ -590,7 +590,7 @@ SWIGEXPORT int _wrap_FSUNProfiler_GetTimerResolution(void *farg1, double *farg2)
   SUNProfiler arg1 = (SUNProfiler) 0 ;
   double *arg2 = (double *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNProfiler)(farg1);
   arg2 = (double *)(farg2);
   result = (SUNErrCode)SUNProfiler_GetTimerResolution(arg1,arg2);
@@ -605,7 +605,7 @@ SWIGEXPORT int _wrap_FSUNProfiler_GetElapsedTime(void *farg1, SwigArrayWrapper *
   char *arg2 = (char *) 0 ;
   double *arg3 = (double *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNProfiler)(farg1);
   arg2 = (char *)(farg2->data);
   arg3 = (double *)(farg3);
@@ -620,7 +620,7 @@ SWIGEXPORT int _wrap_FSUNProfiler_Print(void *farg1, void *farg2) {
   SUNProfiler arg1 = (SUNProfiler) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNProfiler)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNProfiler_Print(arg1,arg2);
@@ -633,7 +633,7 @@ SWIGEXPORT int _wrap_FSUNProfiler_Reset(void *farg1) {
   int fresult ;
   SUNProfiler arg1 = (SUNProfiler) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNProfiler)(farg1);
   result = (SUNErrCode)SUNProfiler_Reset(arg1);
   fresult = (SUNErrCode)(result);
@@ -647,7 +647,7 @@ SWIGEXPORT int _wrap_FSUNLogger_Create(int const *farg1, int const *farg2, void 
   int arg2 ;
   SUNLogger *arg3 = (SUNLogger *) 0 ;
   SUNErrCode result;
-  
+
 #if SUNDIALS_MPI_ENABLED
   int flag = 0;
   MPI_Initialized(&flag);
@@ -672,7 +672,7 @@ SWIGEXPORT int _wrap_FSUNLogger_CreateFromEnv(int const *farg1, void *farg2) {
   SUNComm arg1 ;
   SUNLogger *arg2 = (SUNLogger *) 0 ;
   SUNErrCode result;
-  
+
 #if SUNDIALS_MPI_ENABLED
   int flag = 0;
   MPI_Initialized(&flag);
@@ -696,7 +696,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetErrorFilename(void *farg1, SwigArrayWrapper *
   SUNLogger arg1 = (SUNLogger) 0 ;
   char *arg2 = (char *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (char *)(farg2->data);
   result = (SUNErrCode)SUNLogger_SetErrorFilename(arg1,(char const *)arg2);
@@ -710,7 +710,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetErrorFile(void *farg1, void *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNLogger_SetErrorFile(arg1,arg2);
@@ -724,7 +724,7 @@ SWIGEXPORT int _wrap_FSUNLogger_GetErrorFile(void *farg1, void *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   FILE **arg2 = (FILE **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE **)(farg2);
   result = (SUNErrCode)SUNLogger_GetErrorFile(arg1,arg2);
@@ -738,7 +738,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetWarningFilename(void *farg1, SwigArrayWrapper
   SUNLogger arg1 = (SUNLogger) 0 ;
   char *arg2 = (char *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (char *)(farg2->data);
   result = (SUNErrCode)SUNLogger_SetWarningFilename(arg1,(char const *)arg2);
@@ -752,7 +752,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetWarningFile(void *farg1, void *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNLogger_SetWarningFile(arg1,arg2);
@@ -766,7 +766,7 @@ SWIGEXPORT int _wrap_FSUNLogger_GetWarningFile(void *farg1, void *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   FILE **arg2 = (FILE **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE **)(farg2);
   result = (SUNErrCode)SUNLogger_GetWarningFile(arg1,arg2);
@@ -780,7 +780,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetDebugFilename(void *farg1, SwigArrayWrapper *
   SUNLogger arg1 = (SUNLogger) 0 ;
   char *arg2 = (char *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (char *)(farg2->data);
   result = (SUNErrCode)SUNLogger_SetDebugFilename(arg1,(char const *)arg2);
@@ -794,7 +794,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetDebugFile(void *farg1, void *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNLogger_SetDebugFile(arg1,arg2);
@@ -808,7 +808,7 @@ SWIGEXPORT int _wrap_FSUNLogger_GetDebugFile(void *farg1, void *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   FILE **arg2 = (FILE **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE **)(farg2);
   result = (SUNErrCode)SUNLogger_GetDebugFile(arg1,arg2);
@@ -822,7 +822,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetInfoFilename(void *farg1, SwigArrayWrapper *f
   SUNLogger arg1 = (SUNLogger) 0 ;
   char *arg2 = (char *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (char *)(farg2->data);
   result = (SUNErrCode)SUNLogger_SetInfoFilename(arg1,(char const *)arg2);
@@ -836,7 +836,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetInfoFile(void *farg1, void *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNLogger_SetInfoFile(arg1,arg2);
@@ -850,7 +850,7 @@ SWIGEXPORT int _wrap_FSUNLogger_GetInfoFile(void *farg1, void *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   FILE **arg2 = (FILE **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (FILE **)(farg2);
   result = (SUNErrCode)SUNLogger_GetInfoFile(arg1,arg2);
@@ -866,7 +866,7 @@ SWIGEXPORT int _wrap_FSUNLogger_SetQueueAndFlushMsgFns(void *farg1, SUNLoggerQue
   SUNLoggerFlushMsgFn arg3 = (SUNLoggerFlushMsgFn) 0 ;
   void *arg4 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (SUNLoggerQueueMsgFn)(farg2);
   arg3 = (SUNLoggerFlushMsgFn)(farg3);
@@ -886,7 +886,7 @@ SWIGEXPORT int _wrap_FSUNLogger_QueueMsg(void *farg1, int const *farg2, SwigArra
   char *arg5 = (char *) 0 ;
   void *arg6 = 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (SUNLogLevel)(*farg2);
   arg3 = (char *)(farg3->data);
@@ -903,7 +903,7 @@ SWIGEXPORT int _wrap_FSUNLogger_Flush(void *farg1, int const *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   SUNLogLevel arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (SUNLogLevel)(*farg2);
   result = (SUNErrCode)SUNLogger_Flush(arg1,arg2);
@@ -917,7 +917,7 @@ SWIGEXPORT int _wrap_FSUNLogger_GetOutputRank(void *farg1, int *farg2) {
   SUNLogger arg1 = (SUNLogger) 0 ;
   int *arg2 = (int *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger)(farg1);
   arg2 = (int *)(farg2);
   result = (SUNErrCode)SUNLogger_GetOutputRank(arg1,arg2);
@@ -930,7 +930,7 @@ SWIGEXPORT int _wrap_FSUNLogger_Destroy(void *farg1) {
   int fresult ;
   SUNLogger *arg1 = (SUNLogger *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLogger *)(farg1);
   result = (SUNErrCode)SUNLogger_Destroy(arg1);
   fresult = (SUNErrCode)(result);
@@ -944,7 +944,7 @@ SWIGEXPORT int _wrap_FSUNFileOpen(SwigArrayWrapper *farg1, SwigArrayWrapper *far
   char *arg2 = (char *) 0 ;
   FILE **arg3 = (FILE **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (char *)(farg1->data);
   arg2 = (char *)(farg2->data);
   arg3 = (FILE **)(farg3);
@@ -960,7 +960,7 @@ SWIGEXPORT int _wrap_FSUNDIALSFileOpen(SwigArrayWrapper *farg1, SwigArrayWrapper
   char *arg2 = (char *) 0 ;
   FILE **arg3 = (FILE **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (char *)(farg1->data);
   arg2 = (char *)(farg2->data);
   arg3 = (FILE **)(farg3);
@@ -974,7 +974,7 @@ SWIGEXPORT int _wrap_FSUNFileClose(void *farg1) {
   int fresult ;
   FILE **arg1 = (FILE **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (FILE **)(farg1);
   result = (SUNErrCode)SUNFileClose(arg1);
   fresult = (SUNErrCode)(result);
@@ -986,7 +986,7 @@ SWIGEXPORT int _wrap_FSUNDIALSFileClose(void *farg1) {
   int fresult ;
   FILE **arg1 = (FILE **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (FILE **)(farg1);
   result = (SUNErrCode)SUNDIALSFileClose(arg1);
   fresult = (SUNErrCode)(result);
@@ -998,7 +998,7 @@ SWIGEXPORT N_Vector _wrap_FN_VNewEmpty(void *farg1) {
   N_Vector fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   N_Vector result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (N_Vector)N_VNewEmpty(arg1);
   fresult = result;
@@ -1008,7 +1008,7 @@ SWIGEXPORT N_Vector _wrap_FN_VNewEmpty(void *farg1) {
 
 SWIGEXPORT void _wrap_FN_VFreeEmpty(N_Vector farg1) {
   N_Vector arg1 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   N_VFreeEmpty(arg1);
 }
@@ -1019,7 +1019,7 @@ SWIGEXPORT int _wrap_FN_VCopyOps(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (SUNErrCode)N_VCopyOps(arg1,arg2);
@@ -1032,7 +1032,7 @@ SWIGEXPORT int _wrap_FN_VGetVectorID(N_Vector farg1) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector_ID result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (N_Vector_ID)N_VGetVectorID(arg1);
   fresult = (int)(result);
@@ -1044,7 +1044,7 @@ SWIGEXPORT N_Vector _wrap_FN_VClone(N_Vector farg1) {
   N_Vector fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (N_Vector)N_VClone(arg1);
   fresult = result;
@@ -1056,7 +1056,7 @@ SWIGEXPORT N_Vector _wrap_FN_VCloneEmpty(N_Vector farg1) {
   N_Vector fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (N_Vector)N_VCloneEmpty(arg1);
   fresult = result;
@@ -1066,7 +1066,7 @@ SWIGEXPORT N_Vector _wrap_FN_VCloneEmpty(N_Vector farg1) {
 
 SWIGEXPORT void _wrap_FN_VDestroy(N_Vector farg1) {
   N_Vector arg1 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   N_VDestroy(arg1);
 }
@@ -1076,7 +1076,7 @@ SWIGEXPORT void _wrap_FN_VSpace(N_Vector farg1, int32_t *farg2, int32_t *farg3) 
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype *arg2 = (sunindextype *) 0 ;
   sunindextype *arg3 = (sunindextype *) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (sunindextype *)(farg2);
   arg3 = (sunindextype *)(farg3);
@@ -1087,7 +1087,7 @@ SWIGEXPORT void _wrap_FN_VSpace(N_Vector farg1, int32_t *farg2, int32_t *farg3) 
 SWIGEXPORT void _wrap_FN_VSetArrayPointer(double *farg1, N_Vector farg2) {
   sunrealtype *arg1 = (sunrealtype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
-  
+
   arg1 = (sunrealtype *)(farg1);
   arg2 = (N_Vector)(farg2);
   N_VSetArrayPointer(arg1,arg2);
@@ -1097,7 +1097,7 @@ SWIGEXPORT void _wrap_FN_VSetArrayPointer(double *farg1, N_Vector farg2) {
 SWIGEXPORT void _wrap_FN_VSetDeviceArrayPointer(double *farg1, N_Vector farg2) {
   sunrealtype *arg1 = (sunrealtype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
-  
+
   arg1 = (sunrealtype *)(farg1);
   arg2 = (N_Vector)(farg2);
   N_VSetDeviceArrayPointer(arg1,arg2);
@@ -1108,7 +1108,7 @@ SWIGEXPORT int _wrap_FN_VGetCommunicator(N_Vector farg1) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   SUNComm result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (SUNComm)N_VGetCommunicator(arg1);
 #if SUNDIALS_MPI_ENABLED
@@ -1130,7 +1130,7 @@ SWIGEXPORT int32_t _wrap_FN_VGetLength(N_Vector farg1) {
   int32_t fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = N_VGetLength(arg1);
   fresult = (sunindextype)(result);
@@ -1142,7 +1142,7 @@ SWIGEXPORT int32_t _wrap_FN_VGetLocalLength(N_Vector farg1) {
   int32_t fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = N_VGetLocalLength(arg1);
   fresult = (sunindextype)(result);
@@ -1156,7 +1156,7 @@ SWIGEXPORT void _wrap_FN_VLinearSum(double const *farg1, N_Vector farg2, double 
   sunrealtype arg3 ;
   N_Vector arg4 = (N_Vector) 0 ;
   N_Vector arg5 = (N_Vector) 0 ;
-  
+
   arg1 = (sunrealtype)(*farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (sunrealtype)(*farg3);
@@ -1169,7 +1169,7 @@ SWIGEXPORT void _wrap_FN_VLinearSum(double const *farg1, N_Vector farg2, double 
 SWIGEXPORT void _wrap_FN_VConst(double const *farg1, N_Vector farg2) {
   sunrealtype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
-  
+
   arg1 = (sunrealtype)(*farg1);
   arg2 = (N_Vector)(farg2);
   N_VConst(arg1,arg2);
@@ -1180,7 +1180,7 @@ SWIGEXPORT void _wrap_FN_VProd(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1192,7 +1192,7 @@ SWIGEXPORT void _wrap_FN_VDiv(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1204,7 +1204,7 @@ SWIGEXPORT void _wrap_FN_VScale(double const *farg1, N_Vector farg2, N_Vector fa
   sunrealtype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
-  
+
   arg1 = (sunrealtype)(*farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1215,7 +1215,7 @@ SWIGEXPORT void _wrap_FN_VScale(double const *farg1, N_Vector farg2, N_Vector fa
 SWIGEXPORT void _wrap_FN_VAbs(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   N_VAbs(arg1,arg2);
@@ -1225,7 +1225,7 @@ SWIGEXPORT void _wrap_FN_VAbs(N_Vector farg1, N_Vector farg2) {
 SWIGEXPORT void _wrap_FN_VInv(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   N_VInv(arg1,arg2);
@@ -1236,7 +1236,7 @@ SWIGEXPORT void _wrap_FN_VAddConst(N_Vector farg1, double const *farg2, N_Vector
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -1249,7 +1249,7 @@ SWIGEXPORT double _wrap_FN_VDotProd(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (sunrealtype)N_VDotProd(arg1,arg2);
@@ -1262,7 +1262,7 @@ SWIGEXPORT double _wrap_FN_VMaxNorm(N_Vector farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (sunrealtype)N_VMaxNorm(arg1);
   fresult = (sunrealtype)(result);
@@ -1275,7 +1275,7 @@ SWIGEXPORT double _wrap_FN_VWrmsNorm(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (sunrealtype)N_VWrmsNorm(arg1,arg2);
@@ -1290,7 +1290,7 @@ SWIGEXPORT double _wrap_FN_VWrmsNormMask(N_Vector farg1, N_Vector farg2, N_Vecto
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1304,7 +1304,7 @@ SWIGEXPORT double _wrap_FN_VMin(N_Vector farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (sunrealtype)N_VMin(arg1);
   fresult = (sunrealtype)(result);
@@ -1317,7 +1317,7 @@ SWIGEXPORT double _wrap_FN_VWL2Norm(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (sunrealtype)N_VWL2Norm(arg1,arg2);
@@ -1330,7 +1330,7 @@ SWIGEXPORT double _wrap_FN_VL1Norm(N_Vector farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (sunrealtype)N_VL1Norm(arg1);
   fresult = (sunrealtype)(result);
@@ -1342,7 +1342,7 @@ SWIGEXPORT void _wrap_FN_VCompare(double const *farg1, N_Vector farg2, N_Vector 
   sunrealtype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
-  
+
   arg1 = (sunrealtype)(*farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1355,7 +1355,7 @@ SWIGEXPORT int _wrap_FN_VInvTest(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (int)N_VInvTest(arg1,arg2);
@@ -1370,7 +1370,7 @@ SWIGEXPORT int _wrap_FN_VConstrMask(N_Vector farg1, N_Vector farg2, N_Vector far
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   int result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1385,7 +1385,7 @@ SWIGEXPORT double _wrap_FN_VMinQuotient(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (sunrealtype)N_VMinQuotient(arg1,arg2);
@@ -1401,7 +1401,7 @@ SWIGEXPORT int _wrap_FN_VLinearCombination(int const *farg1, double *farg2, void
   N_Vector *arg3 = (N_Vector *) 0 ;
   N_Vector arg4 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector *)(farg3);
@@ -1420,7 +1420,7 @@ SWIGEXPORT int _wrap_FN_VScaleAddMulti(int const *farg1, double *farg2, N_Vector
   N_Vector *arg4 = (N_Vector *) 0 ;
   N_Vector *arg5 = (N_Vector *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1439,7 +1439,7 @@ SWIGEXPORT int _wrap_FN_VDotProdMulti(int const *farg1, N_Vector farg2, void *fa
   N_Vector *arg3 = (N_Vector *) 0 ;
   sunrealtype *arg4 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector *)(farg3);
@@ -1459,7 +1459,7 @@ SWIGEXPORT int _wrap_FN_VLinearSumVectorArray(int const *farg1, double const *fa
   N_Vector *arg5 = (N_Vector *) 0 ;
   N_Vector *arg6 = (N_Vector *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector *)(farg3);
@@ -1479,7 +1479,7 @@ SWIGEXPORT int _wrap_FN_VScaleVectorArray(int const *farg1, double *farg2, void 
   N_Vector *arg3 = (N_Vector *) 0 ;
   N_Vector *arg4 = (N_Vector *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector *)(farg3);
@@ -1496,7 +1496,7 @@ SWIGEXPORT int _wrap_FN_VConstVectorArray(int const *farg1, double const *farg2,
   sunrealtype arg2 ;
   N_Vector *arg3 = (N_Vector *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector *)(farg3);
@@ -1513,7 +1513,7 @@ SWIGEXPORT int _wrap_FN_VWrmsNormVectorArray(int const *farg1, void *farg2, void
   N_Vector *arg3 = (N_Vector *) 0 ;
   sunrealtype *arg4 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (N_Vector *)(farg2);
   arg3 = (N_Vector *)(farg3);
@@ -1532,7 +1532,7 @@ SWIGEXPORT int _wrap_FN_VWrmsNormMaskVectorArray(int const *farg1, void *farg2, 
   N_Vector arg4 = (N_Vector) 0 ;
   sunrealtype *arg5 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (N_Vector *)(farg2);
   arg3 = (N_Vector *)(farg3);
@@ -1549,7 +1549,7 @@ SWIGEXPORT double _wrap_FN_VDotProdLocal(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (sunrealtype)N_VDotProdLocal(arg1,arg2);
@@ -1562,7 +1562,7 @@ SWIGEXPORT double _wrap_FN_VMaxNormLocal(N_Vector farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (sunrealtype)N_VMaxNormLocal(arg1);
   fresult = (sunrealtype)(result);
@@ -1574,7 +1574,7 @@ SWIGEXPORT double _wrap_FN_VMinLocal(N_Vector farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (sunrealtype)N_VMinLocal(arg1);
   fresult = (sunrealtype)(result);
@@ -1586,7 +1586,7 @@ SWIGEXPORT double _wrap_FN_VL1NormLocal(N_Vector farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   result = (sunrealtype)N_VL1NormLocal(arg1);
   fresult = (sunrealtype)(result);
@@ -1599,7 +1599,7 @@ SWIGEXPORT double _wrap_FN_VWSqrSumLocal(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (sunrealtype)N_VWSqrSumLocal(arg1,arg2);
@@ -1614,7 +1614,7 @@ SWIGEXPORT double _wrap_FN_VWSqrSumMaskLocal(N_Vector farg1, N_Vector farg2, N_V
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1629,7 +1629,7 @@ SWIGEXPORT int _wrap_FN_VInvTestLocal(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (int)N_VInvTestLocal(arg1,arg2);
@@ -1644,7 +1644,7 @@ SWIGEXPORT int _wrap_FN_VConstrMaskLocal(N_Vector farg1, N_Vector farg2, N_Vecto
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   int result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -1659,7 +1659,7 @@ SWIGEXPORT double _wrap_FN_VMinQuotientLocal(N_Vector farg1, N_Vector farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (sunrealtype)N_VMinQuotientLocal(arg1,arg2);
@@ -1675,7 +1675,7 @@ SWIGEXPORT int _wrap_FN_VDotProdMultiLocal(int const *farg1, N_Vector farg2, voi
   N_Vector *arg3 = (N_Vector *) 0 ;
   sunrealtype *arg4 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector *)(farg3);
@@ -1692,7 +1692,7 @@ SWIGEXPORT int _wrap_FN_VDotProdMultiAllReduce(int const *farg1, N_Vector farg2,
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype *arg3 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (sunrealtype *)(farg3);
@@ -1707,7 +1707,7 @@ SWIGEXPORT int _wrap_FN_VBufSize(N_Vector farg1, int32_t *farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype *arg2 = (sunindextype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (sunindextype *)(farg2);
   result = (SUNErrCode)N_VBufSize(arg1,arg2);
@@ -1721,7 +1721,7 @@ SWIGEXPORT int _wrap_FN_VBufPack(N_Vector farg1, void *farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   void *arg2 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (void *)(farg2);
   result = (SUNErrCode)N_VBufPack(arg1,arg2);
@@ -1735,7 +1735,7 @@ SWIGEXPORT int _wrap_FN_VBufUnpack(N_Vector farg1, void *farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   void *arg2 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (void *)(farg2);
   result = (SUNErrCode)N_VBufUnpack(arg1,arg2);
@@ -1749,7 +1749,7 @@ SWIGEXPORT void * _wrap_FN_VNewVectorArray(int const *farg1, void *farg2) {
   int arg1 ;
   SUNContext arg2 = (SUNContext) 0 ;
   N_Vector *result = 0 ;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (SUNContext)(farg2);
   result = (N_Vector *)N_VNewVectorArray(arg1,arg2);
@@ -1763,7 +1763,7 @@ SWIGEXPORT void * _wrap_FN_VCloneEmptyVectorArray(int const *farg1, N_Vector far
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector *result = 0 ;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (N_Vector)(farg2);
   result = (N_Vector *)N_VCloneEmptyVectorArray(arg1,arg2);
@@ -1777,7 +1777,7 @@ SWIGEXPORT void * _wrap_FN_VCloneVectorArray(int const *farg1, N_Vector farg2) {
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector *result = 0 ;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (N_Vector)(farg2);
   result = (N_Vector *)N_VCloneVectorArray(arg1,arg2);
@@ -1789,7 +1789,7 @@ SWIGEXPORT void * _wrap_FN_VCloneVectorArray(int const *farg1, N_Vector farg2) {
 SWIGEXPORT void _wrap_FN_VDestroyVectorArray(void *farg1, int const *farg2) {
   N_Vector *arg1 = (N_Vector *) 0 ;
   int arg2 ;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (int)(*farg2);
   N_VDestroyVectorArray(arg1,arg2);
@@ -1801,7 +1801,7 @@ SWIGEXPORT N_Vector _wrap_FN_VGetVecAtIndexVectorArray(void *farg1, int const *f
   N_Vector *arg1 = (N_Vector *) 0 ;
   int arg2 ;
   N_Vector result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (int)(*farg2);
   result = (N_Vector)N_VGetVecAtIndexVectorArray(arg1,arg2);
@@ -1814,7 +1814,7 @@ SWIGEXPORT void _wrap_FN_VSetVecAtIndexVectorArray(void *farg1, int const *farg2
   N_Vector *arg1 = (N_Vector *) 0 ;
   int arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -1824,7 +1824,7 @@ SWIGEXPORT void _wrap_FN_VSetVecAtIndexVectorArray(void *farg1, int const *farg2
 
 SWIGEXPORT void _wrap_FN_VPrint(N_Vector farg1) {
   N_Vector arg1 = (N_Vector) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   N_VPrint(arg1);
 }
@@ -1833,7 +1833,7 @@ SWIGEXPORT void _wrap_FN_VPrint(N_Vector farg1) {
 SWIGEXPORT void _wrap_FN_VPrintFile(N_Vector farg1, void *farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   FILE *arg2 = (FILE *) 0 ;
-  
+
   arg1 = (N_Vector)(farg1);
   arg2 = (FILE *)(farg2);
   N_VPrintFile(arg1,arg2);
@@ -1866,7 +1866,7 @@ SWIGEXPORT SUNMatrix _wrap_FSUNMatNewEmpty(void *farg1) {
   SUNMatrix fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNMatrix result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNMatrix)SUNMatNewEmpty(arg1);
   fresult = result;
@@ -1876,7 +1876,7 @@ SWIGEXPORT SUNMatrix _wrap_FSUNMatNewEmpty(void *farg1) {
 
 SWIGEXPORT void _wrap_FSUNMatFreeEmpty(SUNMatrix farg1) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
-  
+
   arg1 = (SUNMatrix)(farg1);
   SUNMatFreeEmpty(arg1);
 }
@@ -1887,7 +1887,7 @@ SWIGEXPORT int _wrap_FSUNMatCopyOps(SUNMatrix farg1, SUNMatrix farg2) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   arg2 = (SUNMatrix)(farg2);
   result = (SUNErrCode)SUNMatCopyOps(arg1,arg2);
@@ -1900,7 +1900,7 @@ SWIGEXPORT int _wrap_FSUNMatGetID(SUNMatrix farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix_ID result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   result = (SUNMatrix_ID)SUNMatGetID(arg1);
   fresult = (int)(result);
@@ -1912,7 +1912,7 @@ SWIGEXPORT SUNMatrix _wrap_FSUNMatClone(SUNMatrix farg1) {
   SUNMatrix fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   result = (SUNMatrix)SUNMatClone(arg1);
   fresult = result;
@@ -1922,7 +1922,7 @@ SWIGEXPORT SUNMatrix _wrap_FSUNMatClone(SUNMatrix farg1) {
 
 SWIGEXPORT void _wrap_FSUNMatDestroy(SUNMatrix farg1) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
-  
+
   arg1 = (SUNMatrix)(farg1);
   SUNMatDestroy(arg1);
 }
@@ -1932,7 +1932,7 @@ SWIGEXPORT int _wrap_FSUNMatZero(SUNMatrix farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   result = (SUNErrCode)SUNMatZero(arg1);
   fresult = (SUNErrCode)(result);
@@ -1945,7 +1945,7 @@ SWIGEXPORT int _wrap_FSUNMatCopy(SUNMatrix farg1, SUNMatrix farg2) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   arg2 = (SUNMatrix)(farg2);
   result = (SUNErrCode)SUNMatCopy(arg1,arg2);
@@ -1960,7 +1960,7 @@ SWIGEXPORT int _wrap_FSUNMatScaleAdd(double const *farg1, SUNMatrix farg2, SUNMa
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNMatrix arg3 = (SUNMatrix) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (sunrealtype)(*farg1);
   arg2 = (SUNMatrix)(farg2);
   arg3 = (SUNMatrix)(farg3);
@@ -1975,7 +1975,7 @@ SWIGEXPORT int _wrap_FSUNMatScaleAddI(double const *farg1, SUNMatrix farg2) {
   sunrealtype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (sunrealtype)(*farg1);
   arg2 = (SUNMatrix)(farg2);
   result = (SUNErrCode)SUNMatScaleAddI(arg1,arg2);
@@ -1988,7 +1988,7 @@ SWIGEXPORT int _wrap_FSUNMatMatvecSetup(SUNMatrix farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   result = (SUNErrCode)SUNMatMatvecSetup(arg1);
   fresult = (SUNErrCode)(result);
@@ -2002,7 +2002,7 @@ SWIGEXPORT int _wrap_FSUNMatMatvec(SUNMatrix farg1, N_Vector farg2, N_Vector far
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2018,7 +2018,7 @@ SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec(SUNMatrix farg1, N_Vector farg
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2034,7 +2034,7 @@ SWIGEXPORT int _wrap_FSUNMatSpace(SUNMatrix farg1, long *farg2, long *farg3) {
   long *arg2 = (long *) 0 ;
   long *arg3 = (long *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMatrix)(farg1);
   arg2 = (long *)(farg2);
   arg3 = (long *)(farg3);
@@ -2052,7 +2052,7 @@ SWIGEXPORT int _wrap_FSUNModifiedGS(void *farg1, void *farg2, int const *farg3, 
   int arg4 ;
   sunrealtype *arg5 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype **)(farg2);
   arg3 = (int)(*farg3);
@@ -2074,7 +2074,7 @@ SWIGEXPORT int _wrap_FSUNClassicalGS(void *farg1, void *farg2, int const *farg3,
   sunrealtype *arg6 = (sunrealtype *) 0 ;
   N_Vector *arg7 = (N_Vector *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype **)(farg2);
   arg3 = (int)(*farg3);
@@ -2095,7 +2095,7 @@ SWIGEXPORT int _wrap_FSUNQRfact(int const *farg1, void *farg2, double *farg3, in
   sunrealtype *arg3 = (sunrealtype *) 0 ;
   int arg4 ;
   int result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype **)(farg2);
   arg3 = (sunrealtype *)(farg3);
@@ -2113,7 +2113,7 @@ SWIGEXPORT int _wrap_FSUNQRsol(int const *farg1, void *farg2, double *farg3, dou
   sunrealtype *arg3 = (sunrealtype *) 0 ;
   sunrealtype *arg4 = (sunrealtype *) 0 ;
   int result;
-  
+
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype **)(farg2);
   arg3 = (sunrealtype *)(farg3);
@@ -2133,7 +2133,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_MGS(void *farg1, double *farg2, N_Vector farg3, i
   int arg5 ;
   void *arg6 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2155,7 +2155,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_ICWY(void *farg1, double *farg2, N_Vector farg3, 
   int arg5 ;
   void *arg6 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2177,7 +2177,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_ICWY_SB(void *farg1, double *farg2, N_Vector farg
   int arg5 ;
   void *arg6 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2199,7 +2199,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_CGS2(void *farg1, double *farg2, N_Vector farg3, 
   int arg5 ;
   void *arg6 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2221,7 +2221,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2(void *farg1, double *farg2, N_Vector farg3,
   int arg5 ;
   void *arg6 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2243,7 +2243,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2_SB(void *farg1, double *farg2, N_Vector far
   int arg5 ;
   void *arg6 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2260,7 +2260,7 @@ SWIGEXPORT SUNLinearSolver _wrap_FSUNLinSolNewEmpty(void *farg1) {
   SUNLinearSolver fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNLinearSolver result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNLinearSolver)SUNLinSolNewEmpty(arg1);
   fresult = result;
@@ -2270,7 +2270,7 @@ SWIGEXPORT SUNLinearSolver _wrap_FSUNLinSolNewEmpty(void *farg1) {
 
 SWIGEXPORT void _wrap_FSUNLinSolFreeEmpty(SUNLinearSolver farg1) {
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   SUNLinSolFreeEmpty(arg1);
 }
@@ -2280,7 +2280,7 @@ SWIGEXPORT int _wrap_FSUNLinSolGetType(SUNLinearSolver farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNLinearSolver_Type result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   result = (SUNLinearSolver_Type)SUNLinSolGetType(arg1);
   fresult = (int)(result);
@@ -2292,7 +2292,7 @@ SWIGEXPORT int _wrap_FSUNLinSolGetID(SUNLinearSolver farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNLinearSolver_ID result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   result = (SUNLinearSolver_ID)SUNLinSolGetID(arg1);
   fresult = (int)(result);
@@ -2306,7 +2306,7 @@ SWIGEXPORT int _wrap_FSUNLinSolSetATimes(SUNLinearSolver farg1, void *farg2, SUN
   void *arg2 = (void *) 0 ;
   SUNATimesFn arg3 = (SUNATimesFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   arg2 = (void *)(farg2);
   arg3 = (SUNATimesFn)(farg3);
@@ -2323,7 +2323,7 @@ SWIGEXPORT int _wrap_FSUNLinSolSetPreconditioner(SUNLinearSolver farg1, void *fa
   SUNPSetupFn arg3 = (SUNPSetupFn) 0 ;
   SUNPSolveFn arg4 = (SUNPSolveFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   arg2 = (void *)(farg2);
   arg3 = (SUNPSetupFn)(farg3);
@@ -2340,7 +2340,7 @@ SWIGEXPORT int _wrap_FSUNLinSolSetScalingVectors(SUNLinearSolver farg1, N_Vector
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2355,7 +2355,7 @@ SWIGEXPORT int _wrap_FSUNLinSolSetZeroGuess(SUNLinearSolver farg1, int const *fa
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   int arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNLinSolSetZeroGuess(arg1,arg2);
@@ -2368,7 +2368,7 @@ SWIGEXPORT int _wrap_FSUNLinSolInitialize(SUNLinearSolver farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   result = (SUNErrCode)SUNLinSolInitialize(arg1);
   fresult = (SUNErrCode)(result);
@@ -2381,7 +2381,7 @@ SWIGEXPORT int _wrap_FSUNLinSolSetup(SUNLinearSolver farg1, SUNMatrix farg2) {
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   int result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   arg2 = (SUNMatrix)(farg2);
   result = (int)SUNLinSolSetup(arg1,arg2);
@@ -2398,7 +2398,7 @@ SWIGEXPORT int _wrap_FSUNLinSolSolve(SUNLinearSolver farg1, SUNMatrix farg2, N_V
   N_Vector arg4 = (N_Vector) 0 ;
   sunrealtype arg5 ;
   int result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   arg2 = (SUNMatrix)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2414,7 +2414,7 @@ SWIGEXPORT int _wrap_FSUNLinSolNumIters(SUNLinearSolver farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   int result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   result = (int)SUNLinSolNumIters(arg1);
   fresult = (int)(result);
@@ -2426,7 +2426,7 @@ SWIGEXPORT double _wrap_FSUNLinSolResNorm(SUNLinearSolver farg1) {
   double fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   sunrealtype result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   result = (sunrealtype)SUNLinSolResNorm(arg1);
   fresult = (sunrealtype)(result);
@@ -2438,7 +2438,7 @@ SWIGEXPORT N_Vector _wrap_FSUNLinSolResid(SUNLinearSolver farg1) {
   N_Vector fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   N_Vector result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   result = (N_Vector)SUNLinSolResid(arg1);
   fresult = result;
@@ -2450,7 +2450,7 @@ SWIGEXPORT int32_t _wrap_FSUNLinSolLastFlag(SUNLinearSolver farg1) {
   int32_t fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   sunindextype result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   result = SUNLinSolLastFlag(arg1);
   fresult = (sunindextype)(result);
@@ -2464,7 +2464,7 @@ SWIGEXPORT int _wrap_FSUNLinSolSpace(SUNLinearSolver farg1, long *farg2, long *f
   long *arg2 = (long *) 0 ;
   long *arg3 = (long *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   arg2 = (long *)(farg2);
   arg3 = (long *)(farg3);
@@ -2478,7 +2478,7 @@ SWIGEXPORT int _wrap_FSUNLinSolFree(SUNLinearSolver farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNLinearSolver)(farg1);
   result = (SUNErrCode)SUNLinSolFree(arg1);
   fresult = (SUNErrCode)(result);
@@ -2490,7 +2490,7 @@ SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSolNewEmpty(void *farg1) {
   SUNNonlinearSolver fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNNonlinearSolver result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNNonlinearSolver)SUNNonlinSolNewEmpty(arg1);
   fresult = result;
@@ -2500,7 +2500,7 @@ SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSolNewEmpty(void *farg1) {
 
 SWIGEXPORT void _wrap_FSUNNonlinSolFreeEmpty(SUNNonlinearSolver farg1) {
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   SUNNonlinSolFreeEmpty(arg1);
 }
@@ -2510,7 +2510,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetType(SUNNonlinearSolver farg1) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinearSolver_Type result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   result = (SUNNonlinearSolver_Type)SUNNonlinSolGetType(arg1);
   fresult = (int)(result);
@@ -2522,7 +2522,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolInitialize(SUNNonlinearSolver farg1) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   result = (SUNErrCode)SUNNonlinSolInitialize(arg1);
   fresult = (SUNErrCode)(result);
@@ -2536,7 +2536,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetup(SUNNonlinearSolver farg1, N_Vector farg2
   N_Vector arg2 = (N_Vector) 0 ;
   void *arg3 = (void *) 0 ;
   int result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (void *)(farg3);
@@ -2556,7 +2556,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSolve(SUNNonlinearSolver farg1, N_Vector farg2
   int arg6 ;
   void *arg7 = (void *) 0 ;
   int result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
@@ -2574,7 +2574,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolFree(SUNNonlinearSolver farg1) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   result = (SUNErrCode)SUNNonlinSolFree(arg1);
   fresult = (SUNErrCode)(result);
@@ -2587,7 +2587,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn(SUNNonlinearSolver farg1, SUNNonlinSo
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolSysFn)(farg2);
   result = (SUNErrCode)SUNNonlinSolSetSysFn(arg1,arg2);
@@ -2602,7 +2602,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFns(SUNNonlinearSolver farg1, SUNNonlinS
   SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
   SUNNonlinSolSysFn arg3 = (SUNNonlinSolSysFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolSysFn)(farg2);
   arg3 = (SUNNonlinSolSysFn)(farg3);
@@ -2617,7 +2617,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetLSetupFn(SUNNonlinearSolver farg1, SUNNonli
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolLSetupFn arg2 = (SUNNonlinSolLSetupFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolLSetupFn)(farg2);
   result = (SUNErrCode)SUNNonlinSolSetLSetupFn(arg1,arg2);
@@ -2631,7 +2631,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetLSolveFn(SUNNonlinearSolver farg1, SUNNonli
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolLSolveFn arg2 = (SUNNonlinSolLSolveFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolLSolveFn)(farg2);
   result = (SUNErrCode)SUNNonlinSolSetLSolveFn(arg1,arg2);
@@ -2646,7 +2646,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn(SUNNonlinearSolver farg1, SUNNon
   SUNNonlinSolConvTestFn arg2 = (SUNNonlinSolConvTestFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolConvTestFn)(farg2);
   arg3 = (void *)(farg3);
@@ -2662,7 +2662,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn(SUNNonlinearSolver farg1, SUNNonlinS
   SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolNormFn)(farg2);
   arg3 = (void *)(farg3);
@@ -2678,7 +2678,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver farg1, S
   SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
   arg3 = (void *)(farg3);
@@ -2694,7 +2694,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver farg1, SUN
   SUNNonlinSolGetConvRateFn arg2 = (SUNNonlinSolGetConvRateFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (SUNNonlinSolGetConvRateFn)(farg2);
   arg3 = (void *)(farg3);
@@ -2709,7 +2709,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetMaxIters(SUNNonlinearSolver farg1, int cons
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   int arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNNonlinSolSetMaxIters(arg1,arg2);
@@ -2723,7 +2723,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters(SUNNonlinearSolver farg1, long *fa
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   long *arg2 = (long *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetNumIters(arg1,arg2);
@@ -2737,7 +2737,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetCurIter(SUNNonlinearSolver farg1, int *farg
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   int *arg2 = (int *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (int *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetCurIter(arg1,arg2);
@@ -2751,7 +2751,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails(SUNNonlinearSolver farg1, long
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   long *arg2 = (long *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNNonlinearSolver)(farg1);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetNumConvFails(arg1,arg2);
@@ -2764,7 +2764,7 @@ SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_NewEmpty(void *farg1) {
   SUNAdaptController fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_NewEmpty(arg1);
   fresult = result;
@@ -2774,7 +2774,7 @@ SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_NewEmpty(void *farg1) {
 
 SWIGEXPORT void _wrap_FSUNAdaptController_DestroyEmpty(SUNAdaptController farg1) {
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   SUNAdaptController_DestroyEmpty(arg1);
 }
@@ -2784,7 +2784,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_GetType(SUNAdaptController farg1) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNAdaptController_Type result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   result = (SUNAdaptController_Type)SUNAdaptController_GetType(arg1);
   fresult = (int)(result);
@@ -2796,7 +2796,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_Destroy(SUNAdaptController farg1) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   result = (SUNErrCode)SUNAdaptController_Destroy(arg1);
   fresult = (SUNErrCode)(result);
@@ -2812,7 +2812,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStep(SUNAdaptController farg1, 
   sunrealtype arg4 ;
   sunrealtype *arg5 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (int)(*farg3);
@@ -2835,7 +2835,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStepTol(SUNAdaptController farg
   sunrealtype *arg7 = (sunrealtype *) 0 ;
   sunrealtype *arg8 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
@@ -2854,7 +2854,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_Reset(SUNAdaptController farg1) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   result = (SUNErrCode)SUNAdaptController_Reset(arg1);
   fresult = (SUNErrCode)(result);
@@ -2866,7 +2866,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetDefaults(SUNAdaptController farg1) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   result = (SUNErrCode)SUNAdaptController_SetDefaults(arg1);
   fresult = (SUNErrCode)(result);
@@ -2879,7 +2879,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_Write(SUNAdaptController farg1, void *f
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNAdaptController_Write(arg1,arg2);
@@ -2893,7 +2893,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetErrorBias(SUNAdaptController farg1, 
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   arg2 = (sunrealtype)(*farg2);
   result = (SUNErrCode)SUNAdaptController_SetErrorBias(arg1,arg2);
@@ -2908,7 +2908,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_UpdateH(SUNAdaptController farg1, doubl
   sunrealtype arg2 ;
   sunrealtype arg3 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
@@ -2926,7 +2926,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_UpdateMRIHTol(SUNAdaptController farg1,
   sunrealtype arg4 ;
   sunrealtype arg5 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
@@ -2944,7 +2944,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_Space(SUNAdaptController farg1, long *f
   long *arg2 = (long *) 0 ;
   long *arg3 = (long *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdaptController)(farg1);
   arg2 = (long *)(farg2);
   arg3 = (long *)(farg3);
@@ -2959,7 +2959,7 @@ SWIGEXPORT int _wrap_FSUNStepper_Create(void *farg1, void *farg2) {
   SUNContext arg1 = (SUNContext) 0 ;
   SUNStepper *arg2 = (SUNStepper *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   arg2 = (SUNStepper *)(farg2);
   result = (SUNErrCode)SUNStepper_Create(arg1,arg2);
@@ -2972,7 +2972,7 @@ SWIGEXPORT int _wrap_FSUNStepper_Destroy(void *farg1) {
   int fresult ;
   SUNStepper *arg1 = (SUNStepper *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper *)(farg1);
   result = (SUNErrCode)SUNStepper_Destroy(arg1);
   fresult = (SUNErrCode)(result);
@@ -2986,14 +2986,14 @@ SWIGEXPORT int _wrap_FSUNStepper_Evolve(void *farg1, double const *farg2, N_Vect
   sunrealtype arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
   sunrealtype *arg4 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
+  int result;
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
   arg4 = (sunrealtype *)(farg4);
-  result = (SUNErrCode)SUNStepper_Evolve(arg1,arg2,arg3,arg4);
-  fresult = (SUNErrCode)(result);
+  result = (int)SUNStepper_Evolve(arg1,arg2,arg3,arg4);
+  fresult = (int)(result);
   return fresult;
 }
 
@@ -3005,7 +3005,7 @@ SWIGEXPORT int _wrap_FSUNStepper_OneStep(void *farg1, double const *farg2, N_Vec
   N_Vector arg3 = (N_Vector) 0 ;
   sunrealtype *arg4 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -3024,7 +3024,7 @@ SWIGEXPORT int _wrap_FSUNStepper_FullRhs(void *farg1, double const *farg2, N_Vec
   N_Vector arg4 = (N_Vector) 0 ;
   SUNFullRhsMode arg5 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -3042,7 +3042,7 @@ SWIGEXPORT int _wrap_FSUNStepper_ReInit(void *farg1, double const *farg2, N_Vect
   sunrealtype arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -3058,7 +3058,7 @@ SWIGEXPORT int _wrap_FSUNStepper_Reset(void *farg1, double const *farg2, N_Vecto
   sunrealtype arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -3073,7 +3073,7 @@ SWIGEXPORT int _wrap_FSUNStepper_ResetCheckpointIndex(void *farg1, long const *f
   SUNStepper arg1 = (SUNStepper) 0 ;
   suncountertype arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (suncountertype)(*farg2);
   result = (SUNErrCode)SUNStepper_ResetCheckpointIndex(arg1,arg2);
@@ -3087,7 +3087,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetStopTime(void *farg1, double const *farg2) {
   SUNStepper arg1 = (SUNStepper) 0 ;
   sunrealtype arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   result = (SUNErrCode)SUNStepper_SetStopTime(arg1,arg2);
@@ -3101,7 +3101,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetStepDirection(void *farg1, double const *far
   SUNStepper arg1 = (SUNStepper) 0 ;
   sunrealtype arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   result = (SUNErrCode)SUNStepper_SetStepDirection(arg1,arg2);
@@ -3118,7 +3118,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetForcing(void *farg1, double const *farg2, do
   N_Vector *arg4 = (N_Vector *) 0 ;
   int arg5 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
@@ -3130,12 +3130,34 @@ SWIGEXPORT int _wrap_FSUNStepper_SetForcing(void *farg1, double const *farg2, do
 }
 
 
+SWIGEXPORT int _wrap_FSUNStepper_AddForcing(double const *farg1, double const *farg2, double const *farg3, void *farg4, int const *farg5, N_Vector farg6) {
+  int fresult ;
+  sunrealtype arg1 ;
+  sunrealtype arg2 ;
+  sunrealtype arg3 ;
+  N_Vector *arg4 = (N_Vector *) 0 ;
+  int arg5 ;
+  N_Vector arg6 = (N_Vector) 0 ;
+  SUNErrCode result;
+
+  arg1 = (sunrealtype)(*farg1);
+  arg2 = (sunrealtype)(*farg2);
+  arg3 = (sunrealtype)(*farg3);
+  arg4 = (N_Vector *)(farg4);
+  arg5 = (int)(*farg5);
+  arg6 = (N_Vector)(farg6);
+  result = (SUNErrCode)SUNStepper_AddForcing(arg1,arg2,arg3,arg4,arg5,arg6);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNStepper_SetContent(void *farg1, void *farg2) {
   int fresult ;
   SUNStepper arg1 = (SUNStepper) 0 ;
   void *arg2 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (void *)(farg2);
   result = (SUNErrCode)SUNStepper_SetContent(arg1,arg2);
@@ -3149,7 +3171,7 @@ SWIGEXPORT int _wrap_FSUNStepper_GetContent(void *farg1, void *farg2) {
   SUNStepper arg1 = (SUNStepper) 0 ;
   void **arg2 = (void **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (void **)(farg2);
   result = (SUNErrCode)SUNStepper_GetContent(arg1,arg2);
@@ -3163,7 +3185,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetLastFlag(void *farg1, int const *farg2) {
   SUNStepper arg1 = (SUNStepper) 0 ;
   int arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNStepper_SetLastFlag(arg1,arg2);
@@ -3177,7 +3199,7 @@ SWIGEXPORT int _wrap_FSUNStepper_GetLastFlag(void *farg1, int *farg2) {
   SUNStepper arg1 = (SUNStepper) 0 ;
   int *arg2 = (int *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (int *)(farg2);
   result = (SUNErrCode)SUNStepper_GetLastFlag(arg1,arg2);
@@ -3191,10 +3213,50 @@ SWIGEXPORT int _wrap_FSUNStepper_GetNumSteps(void *farg1, long *farg2) {
   SUNStepper arg1 = (SUNStepper) 0 ;
   suncountertype *arg2 = (suncountertype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (suncountertype *)(farg2);
   result = (SUNErrCode)SUNStepper_GetNumSteps(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNStepper_GetAccumulatedError(void *farg1, double *farg2) {
+  int fresult ;
+  SUNStepper arg1 = (SUNStepper) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  SUNErrCode result;
+
+  arg1 = (SUNStepper)(farg1);
+  arg2 = (sunrealtype *)(farg2);
+  result = (SUNErrCode)SUNStepper_GetAccumulatedError(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNStepper_ResetAccumulatedError(void *farg1) {
+  int fresult ;
+  SUNStepper arg1 = (SUNStepper) 0 ;
+  SUNErrCode result;
+
+  arg1 = (SUNStepper)(farg1);
+  result = (SUNErrCode)SUNStepper_ResetAccumulatedError(arg1);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNStepper_SetRTol(void *farg1, double const *farg2) {
+  int fresult ;
+  SUNStepper arg1 = (SUNStepper) 0 ;
+  sunrealtype arg2 ;
+  SUNErrCode result;
+
+  arg1 = (SUNStepper)(farg1);
+  arg2 = (sunrealtype)(*farg2);
+  result = (SUNErrCode)SUNStepper_SetRTol(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -3205,7 +3267,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetEvolveFn(void *farg1, SUNStepperEvolveFn far
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperEvolveFn arg2 = (SUNStepperEvolveFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperEvolveFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetEvolveFn(arg1,arg2);
@@ -3219,7 +3281,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetOneStepFn(void *farg1, SUNStepperOneStepFn f
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperOneStepFn arg2 = (SUNStepperOneStepFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperOneStepFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetOneStepFn(arg1,arg2);
@@ -3233,7 +3295,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetFullRhsFn(void *farg1, SUNStepperFullRhsFn f
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperFullRhsFn arg2 = (SUNStepperFullRhsFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperFullRhsFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetFullRhsFn(arg1,arg2);
@@ -3247,7 +3309,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetReInitFn(void *farg1, SUNStepperReInitFn far
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperReInitFn arg2 = (SUNStepperReInitFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperReInitFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetReInitFn(arg1,arg2);
@@ -3261,7 +3323,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetResetFn(void *farg1, SUNStepperResetFn farg2
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperResetFn arg2 = (SUNStepperResetFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperResetFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetResetFn(arg1,arg2);
@@ -3275,7 +3337,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetResetCheckpointIndexFn(void *farg1, SUNStepp
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperResetCheckpointIndexFn arg2 = (SUNStepperResetCheckpointIndexFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperResetCheckpointIndexFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetResetCheckpointIndexFn(arg1,arg2);
@@ -3289,7 +3351,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetStopTimeFn(void *farg1, SUNStepperSetStopTim
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperSetStopTimeFn arg2 = (SUNStepperSetStopTimeFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperSetStopTimeFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetStopTimeFn(arg1,arg2);
@@ -3303,7 +3365,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetStepDirectionFn(void *farg1, SUNStepperSetSt
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperSetStepDirectionFn arg2 = (SUNStepperSetStepDirectionFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperSetStepDirectionFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetStepDirectionFn(arg1,arg2);
@@ -3317,7 +3379,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetForcingFn(void *farg1, SUNStepperSetForcingF
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperSetForcingFn arg2 = (SUNStepperSetForcingFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperSetForcingFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetForcingFn(arg1,arg2);
@@ -3331,10 +3393,52 @@ SWIGEXPORT int _wrap_FSUNStepper_SetGetNumStepsFn(void *farg1, SUNStepperGetNumS
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperGetNumStepsFn arg2 = (SUNStepperGetNumStepsFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperGetNumStepsFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetGetNumStepsFn(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNStepper_SetGetAccumulatedErrorFn(void *farg1, SUNStepperGetAccumulatedErrorFn farg2) {
+  int fresult ;
+  SUNStepper arg1 = (SUNStepper) 0 ;
+  SUNStepperGetAccumulatedErrorFn arg2 = (SUNStepperGetAccumulatedErrorFn) 0 ;
+  SUNErrCode result;
+
+  arg1 = (SUNStepper)(farg1);
+  arg2 = (SUNStepperGetAccumulatedErrorFn)(farg2);
+  result = (SUNErrCode)SUNStepper_SetGetAccumulatedErrorFn(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNStepper_SetResetAccumulatedErrorFn(void *farg1, SUNStepperResetAccumulatedErrorFn farg2) {
+  int fresult ;
+  SUNStepper arg1 = (SUNStepper) 0 ;
+  SUNStepperResetAccumulatedErrorFn arg2 = (SUNStepperResetAccumulatedErrorFn) 0 ;
+  SUNErrCode result;
+
+  arg1 = (SUNStepper)(farg1);
+  arg2 = (SUNStepperResetAccumulatedErrorFn)(farg2);
+  result = (SUNErrCode)SUNStepper_SetResetAccumulatedErrorFn(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FSUNStepper_SetRTolFn(void *farg1, SUNStepperSetRTolFn farg2) {
+  int fresult ;
+  SUNStepper arg1 = (SUNStepper) 0 ;
+  SUNStepperSetRTolFn arg2 = (SUNStepperSetRTolFn) 0 ;
+  SUNErrCode result;
+
+  arg1 = (SUNStepper)(farg1);
+  arg2 = (SUNStepperSetRTolFn)(farg2);
+  result = (SUNErrCode)SUNStepper_SetRTolFn(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -3345,7 +3449,7 @@ SWIGEXPORT int _wrap_FSUNStepper_SetDestroyFn(void *farg1, SUNStepperDestroyFn f
   SUNStepper arg1 = (SUNStepper) 0 ;
   SUNStepperDestroyFn arg2 = (SUNStepperDestroyFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (SUNStepperDestroyFn)(farg2);
   result = (SUNErrCode)SUNStepper_SetDestroyFn(arg1,arg2);
@@ -3358,7 +3462,7 @@ SWIGEXPORT void * _wrap_FSUNMemoryNewEmpty(void *farg1) {
   void * fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNMemory result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNMemory)SUNMemoryNewEmpty(arg1);
   fresult = result;
@@ -3371,7 +3475,7 @@ SWIGEXPORT void * _wrap_FSUNMemoryHelper_Alias(SUNMemoryHelper farg1, void *farg
   SUNMemoryHelper arg1 = (SUNMemoryHelper) 0 ;
   SUNMemory arg2 = (SUNMemory) 0 ;
   SUNMemory result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (SUNMemory)(farg2);
   result = (SUNMemory)SUNMemoryHelper_Alias(arg1,arg2);
@@ -3386,7 +3490,7 @@ SWIGEXPORT void * _wrap_FSUNMemoryHelper_Wrap(SUNMemoryHelper farg1, void *farg2
   void *arg2 = (void *) 0 ;
   SUNMemoryType arg3 ;
   SUNMemory result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (void *)(farg2);
   arg3 = (SUNMemoryType)(*farg3);
@@ -3404,7 +3508,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_Alloc(SUNMemoryHelper farg1, void *farg2, 
   SUNMemoryType arg4 ;
   void *arg5 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (SUNMemory *)(farg2);
   arg3 = (size_t)(*farg3);
@@ -3425,7 +3529,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_AllocStrided(SUNMemoryHelper farg1, void *
   SUNMemoryType arg5 ;
   void *arg6 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (SUNMemory *)(farg2);
   arg3 = (size_t)(*farg3);
@@ -3444,7 +3548,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_Dealloc(SUNMemoryHelper farg1, void *farg2
   SUNMemory arg2 = (SUNMemory) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (SUNMemory)(farg2);
   arg3 = (void *)(farg3);
@@ -3462,7 +3566,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_Copy(SUNMemoryHelper farg1, void *farg2, v
   size_t arg4 ;
   void *arg5 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (SUNMemory)(farg2);
   arg3 = (SUNMemory)(farg3);
@@ -3482,7 +3586,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_CopyAsync(SUNMemoryHelper farg1, void *far
   size_t arg4 ;
   void *arg5 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (SUNMemory)(farg2);
   arg3 = (SUNMemory)(farg3);
@@ -3503,7 +3607,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_GetAllocStats(SUNMemoryHelper farg1, int c
   size_t *arg5 = (size_t *) 0 ;
   size_t *arg6 = (size_t *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (SUNMemoryType)(*farg2);
   arg3 = (unsigned long *)(farg3);
@@ -3520,7 +3624,7 @@ SWIGEXPORT SUNMemoryHelper _wrap_FSUNMemoryHelper_Clone(SUNMemoryHelper farg1) {
   SUNMemoryHelper fresult ;
   SUNMemoryHelper arg1 = (SUNMemoryHelper) 0 ;
   SUNMemoryHelper result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   result = (SUNMemoryHelper)SUNMemoryHelper_Clone(arg1);
   fresult = result;
@@ -3532,7 +3636,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_Destroy(SUNMemoryHelper farg1) {
   int fresult ;
   SUNMemoryHelper arg1 = (SUNMemoryHelper) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   result = (SUNErrCode)SUNMemoryHelper_Destroy(arg1);
   fresult = (SUNErrCode)(result);
@@ -3545,7 +3649,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_SetDefaultQueue(SUNMemoryHelper farg1, voi
   SUNMemoryHelper arg1 = (SUNMemoryHelper) 0 ;
   void *arg2 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (void *)(farg2);
   result = (SUNErrCode)SUNMemoryHelper_SetDefaultQueue(arg1,arg2);
@@ -3558,7 +3662,7 @@ SWIGEXPORT SUNMemoryHelper _wrap_FSUNMemoryHelper_NewEmpty(void *farg1) {
   SUNMemoryHelper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNMemoryHelper result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNMemoryHelper)SUNMemoryHelper_NewEmpty(arg1);
   fresult = result;
@@ -3571,7 +3675,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_CopyOps(SUNMemoryHelper farg1, SUNMemoryHe
   SUNMemoryHelper arg1 = (SUNMemoryHelper) 0 ;
   SUNMemoryHelper arg2 = (SUNMemoryHelper) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   arg2 = (SUNMemoryHelper)(farg2);
   result = (SUNErrCode)SUNMemoryHelper_CopyOps(arg1,arg2);
@@ -3584,7 +3688,7 @@ SWIGEXPORT int _wrap_FSUNMemoryHelper_ImplementsRequiredOps(SUNMemoryHelper farg
   int fresult ;
   SUNMemoryHelper arg1 = (SUNMemoryHelper) 0 ;
   int result;
-  
+
   arg1 = (SUNMemoryHelper)(farg1);
   result = (int)SUNMemoryHelper_ImplementsRequiredOps(arg1);
   fresult = (int)(result);
@@ -3597,7 +3701,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_NewEmpty(void *farg1, void *far
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdjointCheckpointScheme *arg2 = (SUNAdjointCheckpointScheme *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNContext)(farg1);
   arg2 = (SUNAdjointCheckpointScheme *)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_NewEmpty(arg1,arg2);
@@ -3611,7 +3715,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_SetNeedsSavingFn(void *farg1, S
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   SUNAdjointCheckpointSchemeNeedsSavingFn arg2 = (SUNAdjointCheckpointSchemeNeedsSavingFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (SUNAdjointCheckpointSchemeNeedsSavingFn)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_SetNeedsSavingFn(arg1,arg2);
@@ -3625,7 +3729,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_SetInsertVectorFn(void *farg1, 
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   SUNAdjointCheckpointSchemeInsertVectorFn arg2 = (SUNAdjointCheckpointSchemeInsertVectorFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (SUNAdjointCheckpointSchemeInsertVectorFn)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_SetInsertVectorFn(arg1,arg2);
@@ -3639,7 +3743,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_SetLoadVectorFn(void *farg1, SU
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   SUNAdjointCheckpointSchemeLoadVectorFn arg2 = (SUNAdjointCheckpointSchemeLoadVectorFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (SUNAdjointCheckpointSchemeLoadVectorFn)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_SetLoadVectorFn(arg1,arg2);
@@ -3653,7 +3757,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_SetDestroyFn(void *farg1, SUNAd
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   SUNAdjointCheckpointSchemeDestroyFn arg2 = (SUNAdjointCheckpointSchemeDestroyFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (SUNAdjointCheckpointSchemeDestroyFn)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_SetDestroyFn(arg1,arg2);
@@ -3667,7 +3771,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_SetEnableDenseFn(void *farg1, S
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   SUNAdjointCheckpointSchemeEnableDenseFn arg2 = (SUNAdjointCheckpointSchemeEnableDenseFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (SUNAdjointCheckpointSchemeEnableDenseFn)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_SetEnableDenseFn(arg1,arg2);
@@ -3681,7 +3785,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_SetContent(void *farg1, void *f
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   void *arg2 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (void *)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_SetContent(arg1,arg2);
@@ -3695,7 +3799,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_GetContent(void *farg1, void *f
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   void **arg2 = (void **) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (void **)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_GetContent(arg1,arg2);
@@ -3712,7 +3816,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_NeedsSaving(void *farg1, long c
   sunrealtype arg4 ;
   int *arg5 = (int *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (suncountertype)(*farg2);
   arg3 = (suncountertype)(*farg3);
@@ -3732,7 +3836,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_InsertVector(void *farg1, long 
   sunrealtype arg4 ;
   N_Vector arg5 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (suncountertype)(*farg2);
   arg3 = (suncountertype)(*farg3);
@@ -3753,7 +3857,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_LoadVector(void *farg1, long co
   N_Vector *arg5 = (N_Vector *) 0 ;
   sunrealtype *arg6 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (suncountertype)(*farg2);
   arg3 = (suncountertype)(*farg3);
@@ -3770,7 +3874,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_Destroy(void *farg1) {
   int fresult ;
   SUNAdjointCheckpointScheme *arg1 = (SUNAdjointCheckpointScheme *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme *)(farg1);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_Destroy(arg1);
   fresult = (SUNErrCode)(result);
@@ -3783,7 +3887,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_EnableDense(void *farg1, int co
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   int arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_EnableDense(arg1,arg2);
@@ -3805,7 +3909,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_Create(void *farg1, int const *farg2, vo
   SUNContext arg9 = (SUNContext) 0 ;
   SUNAdjointStepper *arg10 = (SUNAdjointStepper *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNStepper)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (SUNStepper)(farg3);
@@ -3830,7 +3934,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_ReInit(void *farg1, double const *farg2,
   sunrealtype arg4 ;
   N_Vector arg5 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -3849,7 +3953,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_Evolve(void *farg1, double const *farg2,
   N_Vector arg3 = (N_Vector) 0 ;
   sunrealtype *arg4 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -3867,7 +3971,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_OneStep(void *farg1, double const *farg2
   N_Vector arg3 = (N_Vector) 0 ;
   sunrealtype *arg4 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -3886,7 +3990,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_RecomputeFwd(void *farg1, long const *fa
   N_Vector arg4 = (N_Vector) 0 ;
   sunrealtype arg5 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (suncountertype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
@@ -3903,7 +4007,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_SetUserData(void *farg1, void *farg2) {
   SUNAdjointStepper arg1 = (SUNAdjointStepper) 0 ;
   void *arg2 = (void *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (void *)(farg2);
   result = (SUNErrCode)SUNAdjointStepper_SetUserData(arg1,arg2);
@@ -3917,7 +4021,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_GetNumSteps(void *farg1, long *farg2) {
   SUNAdjointStepper arg1 = (SUNAdjointStepper) 0 ;
   suncountertype *arg2 = (suncountertype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (suncountertype *)(farg2);
   result = (SUNErrCode)SUNAdjointStepper_GetNumSteps(arg1,arg2);
@@ -3931,7 +4035,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_GetNumRecompute(void *farg1, long *farg2
   SUNAdjointStepper arg1 = (SUNAdjointStepper) 0 ;
   suncountertype *arg2 = (suncountertype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (suncountertype *)(farg2);
   result = (SUNErrCode)SUNAdjointStepper_GetNumRecompute(arg1,arg2);
@@ -3946,7 +4050,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_PrintAllStats(void *farg1, void *farg2, 
   FILE *arg2 = (FILE *) 0 ;
   SUNOutputFormat arg3 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (FILE *)(farg2);
   arg3 = (SUNOutputFormat)(*farg3);
@@ -3960,7 +4064,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_Destroy(void *farg1) {
   int fresult ;
   SUNAdjointStepper *arg1 = (SUNAdjointStepper *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointStepper *)(farg1);
   result = (SUNErrCode)SUNAdjointStepper_Destroy(arg1);
   fresult = (SUNErrCode)(result);
@@ -3972,7 +4076,7 @@ SWIGEXPORT SUNDomEigEstimator _wrap_FSUNDomEigEstimator_NewEmpty(void *farg1) {
   SUNDomEigEstimator fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNDomEigEstimator result;
-  
+
   arg1 = (SUNContext)(farg1);
   result = (SUNDomEigEstimator)SUNDomEigEstimator_NewEmpty(arg1);
   fresult = result;
@@ -3982,7 +4086,7 @@ SWIGEXPORT SUNDomEigEstimator _wrap_FSUNDomEigEstimator_NewEmpty(void *farg1) {
 
 SWIGEXPORT void _wrap_FSUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator farg1) {
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   SUNDomEigEstimator_FreeEmpty(arg1);
 }
@@ -3994,7 +4098,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetATimes(SUNDomEigEstimator farg1, voi
   void *arg2 = (void *) 0 ;
   SUNATimesFn arg3 = (SUNATimesFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (void *)(farg2);
   arg3 = (SUNATimesFn)(farg3);
@@ -4010,7 +4114,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs(SUNDomEigEstimator farg1, void *
   void *arg2 = (void *) 0 ;
   SUNRhsFn arg3 = (SUNRhsFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (void *)(farg2);
   arg3 = (SUNRhsFn)(farg3);
@@ -4026,7 +4130,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstim
   sunrealtype arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
@@ -4041,7 +4145,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetMaxIters(SUNDomEigEstimator farg1, l
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   long arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (long)(*farg2);
   result = (SUNErrCode)SUNDomEigEstimator_SetMaxIters(arg1,arg2);
@@ -4055,7 +4159,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimato
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   int arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNDomEigEstimator_SetNumPreprocessIters(arg1,arg2);
@@ -4069,7 +4173,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRelTol(SUNDomEigEstimator farg1, dou
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   sunrealtype arg2 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (sunrealtype)(*farg2);
   result = (SUNErrCode)SUNDomEigEstimator_SetRelTol(arg1,arg2);
@@ -4083,7 +4187,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator farg
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (SUNErrCode)SUNDomEigEstimator_SetInitialGuess(arg1,arg2);
@@ -4096,7 +4200,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_Initialize(SUNDomEigEstimator farg1) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   result = (SUNErrCode)SUNDomEigEstimator_Initialize(arg1);
   fresult = (SUNErrCode)(result);
@@ -4110,7 +4214,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_Estimate(SUNDomEigEstimator farg1, doub
   sunrealtype *arg2 = (sunrealtype *) 0 ;
   sunrealtype *arg3 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (sunrealtype *)(farg3);
@@ -4125,7 +4229,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetRes(SUNDomEigEstimator farg1, double
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (sunrealtype *)(farg2);
   result = (SUNErrCode)SUNDomEigEstimator_GetRes(arg1,arg2);
@@ -4139,7 +4243,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumIters(SUNDomEigEstimator farg1, l
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   long *arg2 = (long *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNDomEigEstimator_GetNumIters(arg1,arg2);
@@ -4153,7 +4257,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumRhsEvals(SUNDomEigEstimator farg1
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   long *arg2 = (long *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNDomEigEstimator_GetNumRhsEvals(arg1,arg2);
@@ -4167,7 +4271,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_GetNumATimesCalls(SUNDomEigEstimator fa
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   long *arg2 = (long *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNDomEigEstimator_GetNumATimesCalls(arg1,arg2);
@@ -4181,7 +4285,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_Write(SUNDomEigEstimator farg1, void *f
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNDomEigEstimator_Write(arg1,arg2);
@@ -4194,7 +4298,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_Destroy(void *farg1) {
   int fresult ;
   SUNDomEigEstimator *arg1 = (SUNDomEigEstimator *) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNDomEigEstimator *)(farg1);
   result = (SUNErrCode)SUNDomEigEstimator_Destroy(arg1);
   fresult = (SUNErrCode)(result);

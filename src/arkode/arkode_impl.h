@@ -694,18 +694,6 @@ int arkSetAdaptivityFn(void* arkode_mem, ARKAdaptFn hfun, void* h_data);
 ARKODE_DIRKTableID arkButcherTableDIRKNameToID(const char* imethod);
 ARKODE_ERKTableID arkButcherTableERKNameToID(const char* emethod);
 
-/* utility functions for wrapping ARKODE as an MRIStep inner stepper */
-int ark_MRIStepInnerEvolve(MRIStepInnerStepper stepper, sunrealtype t0,
-                           sunrealtype tout, N_Vector y);
-int ark_MRIStepInnerFullRhs(MRIStepInnerStepper stepper, sunrealtype t,
-                            N_Vector y, N_Vector f, int mode);
-int ark_MRIStepInnerReset(MRIStepInnerStepper stepper, sunrealtype tR,
-                          N_Vector yR);
-int ark_MRIStepInnerGetAccumulatedError(MRIStepInnerStepper stepper,
-                                        sunrealtype* accum_error);
-int ark_MRIStepInnerResetAccumulatedError(MRIStepInnerStepper stepper);
-int ark_MRIStepInnerSetRTol(MRIStepInnerStepper stepper, sunrealtype rtol);
-
 /* utility functions for wrapping ARKODE as a SUNStepper */
 SUNErrCode arkSUNStepperSelfDestruct(SUNStepper stepper);
 

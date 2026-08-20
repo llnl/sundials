@@ -37,14 +37,14 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 /* Main program */
 int main(int argc, char* argv[])
 {
-  int retval                        = 0;
-  SUNContext sunctx                 = NULL;
-  N_Vector y                        = NULL;
-  void* arkode_mem                  = NULL;
-  void* arkode_inner_mem            = NULL;
-  MRIStepInnerStepper inner_stepper = NULL;
-  int udata_in                      = 1;
-  void* udata_out                   = NULL;
+  int retval               = 0;
+  SUNContext sunctx        = NULL;
+  N_Vector y               = NULL;
+  void* arkode_mem         = NULL;
+  void* arkode_inner_mem   = NULL;
+  SUNStepper inner_stepper = NULL;
+  int udata_in             = 1;
+  void* udata_out          = NULL;
 
   /* Create the SUNDIALS context object for this simulation. */
   retval = SUNContext_Create(SUN_COMM_NULL, &sunctx);
@@ -168,10 +168,10 @@ int main(int argc, char* argv[])
   }
 
   /* Create inner stepper */
-  retval = ARKodeCreateMRIStepInnerStepper(arkode_inner_mem, &inner_stepper);
+  retval = ARKodeCreateSUNStepper(arkode_inner_mem, &inner_stepper);
   if (retval)
   {
-    fprintf(stderr, "ARKodeCreateMRIStepInnerStepper returned %i", retval);
+    fprintf(stderr, "ARKodeCreateSUNStepper returned %i", retval);
     return 1;
   }
 
@@ -217,7 +217,7 @@ int main(int argc, char* argv[])
   /* Free integrator memory */
   ARKodeFree(&arkode_mem);
   ARKodeFree(&arkode_inner_mem);
-  MRIStepInnerStepper_Free(&inner_stepper);
+  SUNStepper_Destroy(&inner_stepper);
 
   /* Clean up */
   N_VDestroy(y);

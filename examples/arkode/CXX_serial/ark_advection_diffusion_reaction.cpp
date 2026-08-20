@@ -193,7 +193,7 @@ int main(int argc, char* argv[])
   SUNLinearSolver LS_fast = nullptr;
 
   // Fast integrator for MRIStep
-  MRIStepInnerStepper fast_mem = nullptr;
+  SUNStepper fast_mem = nullptr;
 
   // Create integrator
   switch (uopts.integrator)
@@ -285,20 +285,20 @@ int main(int argc, char* argv[])
   case (2):
   {
     void* inner_arkode_mem = nullptr;
-    MRIStepInnerStepper_GetContent(fast_mem, &inner_arkode_mem);
+    SUNStepper_GetContent(fast_mem, &inner_arkode_mem);
     ARKodeFree(&inner_arkode_mem);
-    MRIStepInnerStepper_Free(&fast_mem);
+    SUNStepper_Destroy(&fast_mem);
     ARKodeFree(&arkode_mem);
     break;
   }
   case (3):
   {
     void* inner_content = nullptr;
-    MRIStepInnerStepper_GetContent(fast_mem, &inner_content);
+    SUNStepper_GetContent(fast_mem, &inner_content);
     CVodeInnerStepperContent* content = (CVodeInnerStepperContent*)inner_content;
     CVodeFree(&(content->cvode_mem));
     delete content;
-    MRIStepInnerStepper_Free(&fast_mem);
+    SUNStepper_Destroy(&fast_mem);
     ARKodeFree(&arkode_mem);
     break;
   }
@@ -630,8 +630,7 @@ int SetupARK(SUNContext ctx, UserData& udata, UserOptions& uopts, N_Vector y,
 
 int SetupMRIARK(SUNContext ctx, UserData& udata, UserOptions& uopts, N_Vector y,
                 SUNMatrix* A, SUNLinearSolver* LS, SUNMatrix* A_fast,
-                SUNLinearSolver* LS_fast, MRIStepInnerStepper* fast_mem,
-                void** arkode_mem)
+                SUNLinearSolver* LS_fast, SUNStepper* fast_mem, void** arkode_mem)
 {
   // Problem configuration
   ARKRhsFn fse_RHS;   // slow explicit RHS function
@@ -752,9 +751,9 @@ int SetupMRIARK(SUNContext ctx, UserData& udata, UserOptions& uopts, N_Vector y,
   flag = ARKodeSetMaxNumSteps(fast_arkode_mem, uopts.maxsteps);
   if (check_flag(flag, "ARKodeSetMaxNumSteps")) { return 1; }
 
-  // Wrap ARKODE as an MRIStepInnerStepper
-  flag = ARKodeCreateMRIStepInnerStepper(fast_arkode_mem, fast_mem);
-  if (check_flag(flag, "ARKodeCreateMRIStepInnerStepper")) { return 1; }
+  // Wrap ARKODE as a SUNStepper
+  flag = ARKodeCreateSUNStepper(fast_arkode_mem, fast_mem);
+  if (check_flag(flag, "ARKodeCreateSUNStepper")) { return 1; }
 
   // -------------------------
   // Setup the slow integrator
@@ -829,7 +828,7 @@ int SetupMRIARK(SUNContext ctx, UserData& udata, UserOptions& uopts, N_Vector y,
 int SetupMRICVODE(SUNContext ctx, UserData& udata, UserOptions& uopts,
                   N_Vector y, SUNMatrix* A, SUNLinearSolver* LS,
                   SUNMatrix* A_fast, SUNLinearSolver* LS_fast,
-                  MRIStepInnerStepper* fast_mem, void** arkode_mem)
+                  SUNStepper* fast_mem, void** arkode_mem)
 {
   // Problem configuration
   ARKRhsFn fse_RHS;   // slow explicit RHS function
@@ -920,8 +919,8 @@ int SetupMRICVODE(SUNContext ctx, UserData& udata, UserOptions& uopts,
   if (check_flag(flag, "CVodeSetMaxNumSteps")) { return 1; }
 
   // Create the inner stepper wrapper
-  flag = MRIStepInnerStepper_Create(ctx, fast_mem);
-  if (check_flag(flag, "MRIStepInnerStepper_Create")) { return 1; }
+  flag = SUNStepper_Create(ctx, fast_mem);
+  if (check_flag(flag, "SUNStepper_Create")) { return 1; }
 
   // Attach memory and operations
   CVodeInnerStepperContent* inner_content = new CVodeInnerStepperContent;
@@ -932,17 +931,20 @@ int SetupMRICVODE(SUNContext ctx, UserData& udata, UserOptions& uopts,
   inner_content->save_hcur   = uopts.save_hcur;
   inner_content->hcur_factor = uopts.hcur_factor;
 
-  flag = MRIStepInnerStepper_SetContent(*fast_mem, inner_content);
-  if (check_flag(flag, "MRIStepInnerStepper_SetContent")) { return 1; }
+  flag = SUNStepper_SetContent(*fast_mem, inner_content);
+  if (check_flag(flag, "SUNStepper_SetContent")) { return 1; }
 
-  flag = MRIStepInnerStepper_SetEvolveFn(*fast_mem, CVodeInnerStepper_Evolve);
-  if (check_flag(flag, "MRIStepInnerStepper_SetEvolve")) { return 1; }
+  flag = SUNStepper_SetEvolveFn(*fast_mem, CVodeInnerStepper_Evolve);
+  if (check_flag(flag, "SUNStepper_SetEvolve")) { return 1; }
 
-  flag = MRIStepInnerStepper_SetFullRhsFn(*fast_mem, CVodeInnerStepper_FullRhs);
-  if (check_flag(flag, "MRIStepInnerStepper_SetFullRhsFn")) { return 1; }
+  flag = SUNStepper_SetFullRhsFn(*fast_mem, CVodeInnerStepper_FullRhs);
+  if (check_flag(flag, "SUNStepper_SetFullRhsFn")) { return 1; }
 
-  flag = MRIStepInnerStepper_SetResetFn(*fast_mem, CVodeInnerStepper_Reset);
-  if (check_flag(flag, "MRIStepInnerStepper_SetResetFn")) { return 1; }
+  flag = SUNStepper_SetResetFn(*fast_mem, CVodeInnerStepper_Reset);
+  if (check_flag(flag, "SUNStepper_SetResetFn")) { return 1; }
+
+  flag = SUNStepper_SetForcingFn(*fast_mem, CVodeInnerStepper_SetForcing);
+  if (check_flag(flag, "SUNStepper_SetForcingFn")) { return 1; }
 
   // Attach inner stepper memory to user data
   udata.fast_mem = *fast_mem;
@@ -1022,12 +1024,12 @@ int SetupMRICVODE(SUNContext ctx, UserData& udata, UserOptions& uopts,
 // -----------------------------------------------------------------------------
 
 // Advance the fast ODE in time
-int CVodeInnerStepper_Evolve(MRIStepInnerStepper fast_mem, sunrealtype t0,
-                             sunrealtype tout, N_Vector y)
+int CVodeInnerStepper_Evolve(SUNStepper fast_mem, sunrealtype tout, N_Vector y,
+                             sunrealtype* tret)
 {
   void* inner_content = nullptr;
-  int flag = MRIStepInnerStepper_GetContent(fast_mem, &inner_content);
-  if (check_flag(flag, "MRIStepInnerStepper_GetContent")) { return -1; }
+  int flag            = SUNStepper_GetContent(fast_mem, &inner_content);
+  if (check_flag(flag, "SUNStepper_GetContent")) { return -1; }
 
   CVodeInnerStepperContent* content = (CVodeInnerStepperContent*)inner_content;
 
@@ -1048,8 +1050,7 @@ int CVodeInnerStepper_Evolve(MRIStepInnerStepper fast_mem, sunrealtype t0,
   flag = CVodeSetStopTime(content->cvode_mem, tout);
   if (check_flag(flag, "CVodeSetStopTime")) { return -1; }
 
-  sunrealtype tret;
-  flag = CVode(content->cvode_mem, tout, y, &tret, CV_NORMAL);
+  flag = CVode(content->cvode_mem, tout, y, tret, CV_NORMAL);
   if (flag < 0) { return -1; }
 
   // Save the initial step size
@@ -1070,12 +1071,12 @@ int CVodeInnerStepper_Evolve(MRIStepInnerStepper fast_mem, sunrealtype t0,
 }
 
 // Compute the RHS of the fast ODE
-int CVodeInnerStepper_FullRhs(MRIStepInnerStepper fast_mem, sunrealtype t,
-                              N_Vector y, N_Vector f, int mode)
+SUNErrCode CVodeInnerStepper_FullRhs(SUNStepper fast_mem, sunrealtype t,
+                                     N_Vector y, N_Vector f, SUNFullRhsMode mode)
 {
   void* inner_content = nullptr;
-  int flag = MRIStepInnerStepper_GetContent(fast_mem, &inner_content);
-  if (check_flag(flag, "MRIStepInnerStepper_GetContent")) { return -1; }
+  int flag            = SUNStepper_GetContent(fast_mem, &inner_content);
+  if (check_flag(flag, "SUNStepper_GetContent")) { return -1; }
 
   CVodeInnerStepperContent* content = (CVodeInnerStepperContent*)inner_content;
 
@@ -1086,12 +1087,12 @@ int CVodeInnerStepper_FullRhs(MRIStepInnerStepper fast_mem, sunrealtype t,
 }
 
 // Reset the fast integrator to the given time and state
-int CVodeInnerStepper_Reset(MRIStepInnerStepper fast_mem, sunrealtype tR,
-                            N_Vector yR)
+SUNErrCode CVodeInnerStepper_Reset(SUNStepper fast_mem, sunrealtype tR,
+                                   N_Vector yR)
 {
   void* inner_content = nullptr;
-  int flag = MRIStepInnerStepper_GetContent(fast_mem, &inner_content);
-  if (check_flag(flag, "MRIStepInnerStepper_GetContent")) { return -1; }
+  int flag            = SUNStepper_GetContent(fast_mem, &inner_content);
+  if (check_flag(flag, "SUNStepper_GetContent")) { return -1; }
 
   CVodeInnerStepperContent* content = (CVodeInnerStepperContent*)inner_content;
 
@@ -1104,6 +1105,24 @@ int CVodeInnerStepper_Reset(MRIStepInnerStepper fast_mem, sunrealtype tR,
   if (check_flag(flag, "CVodeReInit")) { return -1; }
 
   return 0;
+}
+
+// Save the forcing vectors supplied and owned by MRIStep
+SUNErrCode CVodeInnerStepper_SetForcing(SUNStepper fast_mem, sunrealtype tshift,
+                                        sunrealtype tscale, N_Vector* forcing,
+                                        int nforcing)
+{
+  void* inner_content = nullptr;
+  SUNErrCode flag     = SUNStepper_GetContent(fast_mem, &inner_content);
+  if (check_flag(flag, "SUNStepper_GetContent")) { return flag; }
+
+  CVodeInnerStepperContent* content = (CVodeInnerStepperContent*)inner_content;
+  content->tshift                   = tshift;
+  content->tscale                   = tscale;
+  content->forcing                  = forcing;
+  content->nforcing                 = nforcing;
+
+  return SUN_SUCCESS;
 }
 
 // -----------------------------------------------------------------------------
@@ -1522,16 +1541,21 @@ int J_adv_diff_react(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 // Reaction RHS function with MRI forcing
 int f_react_forcing(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
 {
-  // Access problem data
-  UserData* udata = (UserData*)user_data;
+  // Access problem and inner stepper data
+  UserData* udata     = (UserData*)user_data;
+  void* inner_content = nullptr;
+  SUNErrCode err  = SUNStepper_GetContent(udata->fast_mem, &inner_content);
+  if (check_flag(err, "SUNStepper_GetContent")) { return -1; }
+  CVodeInnerStepperContent* content = (CVodeInnerStepperContent*)inner_content;
 
   // Compute reaction RHS
   int flag = f_reaction(t, y, f, user_data);
   if (flag) { return flag; }
 
-  // Apply inner forcing for MRI + CVODE
-  flag = MRIStepInnerStepper_AddForcing(udata->fast_mem, t, f);
-  if (check_flag(flag, "MRIStepInnerStepper_AddForcing")) { return -1; }
+  // Apply the polynomial MRI forcing supplied by MRIStep
+  err = SUNStepper_AddForcing(t, content->tshift, content->tscale,
+                                  content->forcing, content->nforcing, f);
+  if (check_flag(err, "SUNStepper_AddForcing")) { return -1; }
 
   return 0;
 }

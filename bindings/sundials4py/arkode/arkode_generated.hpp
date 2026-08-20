@@ -115,38 +115,16 @@ m.def("ARKodeInit", ARKodeInit, nb::arg("arkode_mem"),
       "Optional data allocation function");
 
 m.def(
-  "ARKodeCreateMRIStepInnerStepper",
+  "ARKodeCreateSUNStepper",
   [](void* arkode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<MRIStepInnerStepper>>>
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNStepper>>>
   {
-    auto ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return =
-      [](void* arkode_mem) -> std::tuple<int, MRIStepInnerStepper>
-    {
-      MRIStepInnerStepper stepper_adapt_modifiable;
-
-      int r = ARKodeCreateMRIStepInnerStepper(arkode_mem,
-                                              &stepper_adapt_modifiable);
-      return std::make_tuple(r, stepper_adapt_modifiable);
-    };
-    auto ARKodeCreateMRIStepInnerStepper_adapt_return_type_to_shared_ptr =
-      [&ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return](
-        void* arkode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<MRIStepInnerStepper>>>
-    {
-      auto lambda_result =
-        ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return(
-          arkode_mem);
-
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
-                                             MRIStepInnerStepperDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return ARKodeCreateMRIStepInnerStepper_adapt_return_type_to_shared_ptr(
-      arkode_mem);
+    SUNStepper stepper;
+    int r = ARKodeCreateSUNStepper(arkode_mem, &stepper);
+    return std::make_tuple(r, our_make_shared<std::remove_pointer_t<SUNStepper>,
+                                              SUNStepperDeleter>(stepper));
   },
-  nb::arg("arkode_mem"), "Utility to wrap ARKODE as an MRIStepInnerStepper",
+  nb::arg("arkode_mem"), "Utility to wrap ARKODE as a SUNStepper",
   nb::rv_policy::reference);
 
 m.def("ARKodeSStolerances", ARKodeSStolerances, nb::arg("arkode_mem"),

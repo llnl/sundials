@@ -889,9 +889,9 @@ program main
   end if
 
   ! Create inner stepper */
-  retval = FARKodeCreateMRIStepInnerStepper(inner_arkode_mem, inner_stepper)
+  retval = FARKodeCreateSUNStepper(inner_arkode_mem, inner_stepper)
   if (retval /= 0) then
-    print *, 'ERROR: FARKodeCreateMRIStepInnerStepper failed'
+    print *, 'ERROR: FARKodeCreateSUNStepper failed'
     stop 1
   end if
 
@@ -1119,7 +1119,7 @@ program main
   if (associated(MATs)) call FSUNMatDestroy(MATs)    ! Free slow matrix
   if (associated(LSs)) retval = FSUNLinSolFree(LSs)  ! Free slow linear solver
   call FARKodeFree(inner_arkode_mem)                 ! Free fast integrator memory
-  retval = FMRIStepInnerStepper_Free(inner_stepper)  ! Free inner stepper
+  retval = FSUNStepper_Destroy(inner_stepper)  ! Free inner stepper
   call FARKodeFree(arkode_mem)                       ! Free slow integrator memory
   retval = FSUNContext_Free(sunctx)                  ! Free context
 

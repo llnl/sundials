@@ -30,11 +30,9 @@
 // Load the typedefs and generate a "use" statements in the module
 %import "farkode_mod.i"
 
-// Treat MRIStepInnerStepper and MRIStepCoupling as void*
-%apply void* { MRIStepInnerStepper };
+// Treat MRIStepCoupling as void*
 %apply void* { MRIStepCoupling };
 
 // Process definitions from these files
 %include "arkode/arkode_mristep.h"
 %include "arkode/arkode_mristep_deprecated.h"
-

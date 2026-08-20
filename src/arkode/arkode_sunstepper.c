@@ -25,9 +25,8 @@
 #include "sundials/sundials_types.h"
 #include "sundials_macros.h"
 
-static SUNErrCode arkSUNStepperEvolveHelper(SUNStepper stepper,
-                                            sunrealtype tout, N_Vector y,
-                                            sunrealtype* tret, int mode)
+static int arkSUNStepperEvolveHelper(SUNStepper stepper, sunrealtype tout,
+                                     N_Vector y, sunrealtype* tret, int mode)
 {
   SUNFunctionBegin(stepper->sunctx);
   /* extract the ARKODE memory struct */
@@ -36,13 +35,22 @@ static SUNErrCode arkSUNStepperEvolveHelper(SUNStepper stepper,
 
   /* evolve inner ODE */
   stepper->last_flag = ARKodeEvolve(arkode_mem, tout, y, tret, mode);
-  if (stepper->last_flag < 0) { return SUN_ERR_OP_FAIL; }
 
-  return SUN_SUCCESS;
+  /* Positive ARKODE flags indicate a successful return (e.g., a root or stop
+     time). Map failures that may succeed after reducing the outer step to the
+     SUNStepper recoverable-failure convention. */
+  if (stepper->last_flag >= ARK_SUCCESS) { return 0; }
+  if (stepper->last_flag == ARK_TOO_MUCH_WORK ||
+      stepper->last_flag == ARK_CONV_FAILURE ||
+      stepper->last_flag == ARK_ERR_FAILURE)
+  {
+    return 1;
+  }
+  return -1;
 }
 
-static SUNErrCode arkSUNStepperEvolve(SUNStepper stepper, sunrealtype tout,
-                                      N_Vector y, sunrealtype* tret)
+static int arkSUNStepperEvolve(SUNStepper stepper, sunrealtype tout, N_Vector y,
+                               sunrealtype* tret)
 {
   return arkSUNStepperEvolveHelper(stepper, tout, y, tret, ARK_NORMAL);
 }
@@ -195,6 +203,46 @@ static SUNErrCode arkSUNStepperGetNumSteps(SUNStepper stepper, suncountertype* n
   return SUN_SUCCESS;
 }
 
+static SUNErrCode arkSUNStepperGetAccumulatedError(SUNStepper stepper,
+                                                   sunrealtype* accum_error)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  void* arkode_mem;
+  SUNCheckCall(SUNStepper_GetContent(stepper, &arkode_mem));
+
+  stepper->last_flag = ARKodeGetAccumulatedError(arkode_mem, accum_error);
+  if (stepper->last_flag != ARK_SUCCESS) { return SUN_ERR_OP_FAIL; }
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode arkSUNStepperResetAccumulatedError(SUNStepper stepper)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  void* arkode_mem;
+  SUNCheckCall(SUNStepper_GetContent(stepper, &arkode_mem));
+
+  stepper->last_flag = ARKodeResetAccumulatedError(arkode_mem);
+  if (stepper->last_flag != ARK_SUCCESS) { return SUN_ERR_OP_FAIL; }
+  return SUN_SUCCESS;
+}
+
+static SUNErrCode arkSUNStepperSetRTol(SUNStepper stepper, sunrealtype rtol)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  void* arkode_mem;
+  SUNCheckCall(SUNStepper_GetContent(stepper, &arkode_mem));
+
+  if (rtol <= ZERO)
+  {
+    stepper->last_flag = ARK_ILL_INPUT;
+    return SUN_ERR_ARG_OUTOFRANGE;
+  }
+  ARKodeMem ark_mem  = (ARKodeMem)arkode_mem;
+  ark_mem->reltol    = rtol;
+  stepper->last_flag = ARK_SUCCESS;
+  return SUN_SUCCESS;
+}
+
 int ARKodeCreateSUNStepper(void* arkode_mem, SUNStepper* stepper)
 {
   /* unpack ark_mem */
@@ -292,6 +340,17 @@ int ARKodeCreateSUNStepper(void* arkode_mem, SUNStepper* stepper)
                     "Failed to set SUNStepper get number of steps function");
     return ARK_SUNSTEPPER_ERR;
   }
+
+  err = SUNStepper_SetGetAccumulatedErrorFn(*stepper,
+                                            arkSUNStepperGetAccumulatedError);
+  if (err != SUN_SUCCESS) { return ARK_SUNSTEPPER_ERR; }
+
+  err = SUNStepper_SetResetAccumulatedErrorFn(*stepper,
+                                              arkSUNStepperResetAccumulatedError);
+  if (err != SUN_SUCCESS) { return ARK_SUNSTEPPER_ERR; }
+
+  err = SUNStepper_SetRTolFn(*stepper, arkSUNStepperSetRTol);
+  if (err != SUN_SUCCESS) { return ARK_SUNSTEPPER_ERR; }
 
   return ARK_SUCCESS;
 }

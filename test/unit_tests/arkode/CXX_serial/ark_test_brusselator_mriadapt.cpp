@@ -415,9 +415,9 @@ int main(int argc, char* argv[])
   if (check_flag(retval, "ARKodeSetUserData")) return 1;
 
   // Create inner stepper
-  MRIStepInnerStepper inner_stepper = NULL; // inner stepper
-  retval = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-  if (check_flag(retval, "ARKodeCreateMRIStepInnerStepper")) return 1;
+  SUNStepper inner_stepper = NULL; // inner stepper
+  retval = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
+  if (check_flag(retval, "ARKodeCreateSUNStepper")) return 1;
 
   // Create slow controller object, and select orders of accuracy as relevant
   SUNAdaptController scontrol     = NULL;
@@ -921,11 +921,11 @@ int main(int argc, char* argv[])
   if (scontrol_H) { SUNAdaptController_Destroy(scontrol_H); }
   if (scontrol_Tol) { SUNAdaptController_Destroy(scontrol_Tol); }
   if (fcontrol) { SUNAdaptController_Destroy(fcontrol); }
-  ARKodeFree(&inner_arkode_mem);            // Free fast integrator memory
-  MRIStepInnerStepper_Free(&inner_stepper); // Free inner stepper structure
-  ARKodeFree(&arkode_mem);                  // Free slow integrator memory
-  ARKodeFree(&arkode_ref);                  // Free reference solver memory
-  SUNLogger_Destroy(&logger);               // Free logger
+  ARKodeFree(&inner_arkode_mem);      // Free fast integrator memory
+  SUNStepper_Destroy(&inner_stepper); // Free inner stepper structure
+  ARKodeFree(&arkode_mem);            // Free slow integrator memory
+  ARKodeFree(&arkode_ref);            // Free reference solver memory
+  SUNLogger_Destroy(&logger);         // Free logger
 
   return 0;
 }

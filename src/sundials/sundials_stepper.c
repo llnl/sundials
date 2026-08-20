@@ -14,7 +14,6 @@
  * -----------------------------------------------------------------*/
 
 #include <stdlib.h>
-#include <string.h>
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_core.h>
 
@@ -44,14 +43,20 @@ SUNErrCode SUNStepper_Create(SUNContext sunctx, SUNStepper* stepper_ptr)
   stepper->ops = malloc(sizeof(*(stepper->ops)));
   SUNAssert(stepper->ops, SUN_ERR_MALLOC_FAIL);
 
-  stepper->ops->evolve           = NULL;
-  stepper->ops->onestep          = NULL;
-  stepper->ops->fullrhs          = NULL;
-  stepper->ops->reset            = NULL;
-  stepper->ops->setstoptime      = NULL;
-  stepper->ops->setstepdirection = NULL;
-  stepper->ops->setforcing       = NULL;
-  stepper->ops->destroy          = NULL;
+  stepper->ops->evolve                = NULL;
+  stepper->ops->onestep               = NULL;
+  stepper->ops->fullrhs               = NULL;
+  stepper->ops->reinit                = NULL;
+  stepper->ops->reset                 = NULL;
+  stepper->ops->resetcheckpointindex  = NULL;
+  stepper->ops->setstoptime           = NULL;
+  stepper->ops->setstepdirection      = NULL;
+  stepper->ops->setforcing            = NULL;
+  stepper->ops->getnumsteps           = NULL;
+  stepper->ops->getaccumulatederror   = NULL;
+  stepper->ops->resetaccumulatederror = NULL;
+  stepper->ops->setrtol               = NULL;
+  stepper->ops->destroy               = NULL;
 
   *stepper_ptr = stepper;
 
@@ -76,8 +81,8 @@ SUNErrCode SUNStepper_Destroy(SUNStepper* stepper_ptr)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNStepper_Evolve(SUNStepper stepper, sunrealtype tout, N_Vector y,
-                             sunrealtype* tret)
+int SUNStepper_Evolve(SUNStepper stepper, sunrealtype tout, N_Vector y,
+                      sunrealtype* tret)
 {
   SUNFunctionBegin(stepper->sunctx);
   if (stepper->ops->evolve)
@@ -166,6 +171,31 @@ SUNErrCode SUNStepper_SetForcing(SUNStepper stepper, sunrealtype tshift,
   return SUN_ERR_NOT_IMPLEMENTED;
 }
 
+SUNErrCode SUNStepper_AddForcing(sunrealtype t, sunrealtype tshift,
+                                 sunrealtype tscale, N_Vector* forcing,
+                                 int nforcing, N_Vector f)
+{
+  if (f == NULL) { return SUN_ERR_ARG_CORRUPT; }
+  SUNFunctionBegin(f->sunctx);
+  SUNCheck(nforcing >= 0, SUN_ERR_ARG_OUTOFRANGE);
+  if (nforcing == 0) { return SUN_SUCCESS; }
+  SUNCheck(forcing, SUN_ERR_ARG_CORRUPT);
+  SUNCheck(nforcing == 1 || tscale != SUN_RCONST(0.0),
+           SUN_ERR_ARG_OUTOFRANGE);
+
+  sunrealtype tau  = (nforcing > 1) ? (t - tshift) / tscale : SUN_RCONST(0.0);
+  sunrealtype taui = SUN_RCONST(1.0);
+
+  for (int i = 0; i < nforcing; i++)
+  {
+    SUNCheck(forcing[i], SUN_ERR_ARG_CORRUPT);
+    N_VLinearSum(SUN_RCONST(1.0), f, taui, forcing[i], f);
+    taui *= tau;
+  }
+
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNStepper_SetContent(SUNStepper stepper, void* content)
 {
   SUNFunctionBegin(stepper->sunctx);
@@ -187,6 +217,34 @@ SUNErrCode SUNStepper_GetNumSteps(SUNStepper stepper, suncountertype* nst)
   {
     return stepper->ops->getnumsteps(stepper, nst);
   }
+  return SUN_ERR_NOT_IMPLEMENTED;
+}
+
+SUNErrCode SUNStepper_GetAccumulatedError(SUNStepper stepper,
+                                          sunrealtype* accum_error)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  if (stepper->ops->getaccumulatederror)
+  {
+    return stepper->ops->getaccumulatederror(stepper, accum_error);
+  }
+  return SUN_ERR_NOT_IMPLEMENTED;
+}
+
+SUNErrCode SUNStepper_ResetAccumulatedError(SUNStepper stepper)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  if (stepper->ops->resetaccumulatederror)
+  {
+    return stepper->ops->resetaccumulatederror(stepper);
+  }
+  return SUN_ERR_NOT_IMPLEMENTED;
+}
+
+SUNErrCode SUNStepper_SetRTol(SUNStepper stepper, sunrealtype rtol)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  if (stepper->ops->setrtol) { return stepper->ops->setrtol(stepper, rtol); }
   return SUN_ERR_NOT_IMPLEMENTED;
 }
 
@@ -274,6 +332,29 @@ SUNErrCode SUNStepper_SetGetNumStepsFn(SUNStepper stepper,
 {
   SUNFunctionBegin(stepper->sunctx);
   stepper->ops->getnumsteps = fn;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNStepper_SetGetAccumulatedErrorFn(SUNStepper stepper,
+                                               SUNStepperGetAccumulatedErrorFn fn)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  stepper->ops->getaccumulatederror = fn;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNStepper_SetResetAccumulatedErrorFn(
+  SUNStepper stepper, SUNStepperResetAccumulatedErrorFn fn)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  stepper->ops->resetaccumulatederror = fn;
+  return SUN_SUCCESS;
+}
+
+SUNErrCode SUNStepper_SetRTolFn(SUNStepper stepper, SUNStepperSetRTolFn fn)
+{
+  SUNFunctionBegin(stepper->sunctx);
+  stepper->ops->setrtol = fn;
   return SUN_SUCCESS;
 }
 

@@ -122,26 +122,6 @@ static const int MRISTEP_DEFAULT_IMEX_SD_2_AD = ARKODE_IMEX_MRI_SR21;
 static const int MRISTEP_DEFAULT_IMEX_SD_3_AD = ARKODE_IMEX_MRI_SR32;
 static const int MRISTEP_DEFAULT_IMEX_SD_4_AD = ARKODE_IMEX_MRI_SR43;
 
-/* ------------------------------------
- * MRIStep Inner Stepper Function Types
- * ------------------------------------ */
-
-typedef int (*MRIStepInnerEvolveFn)(MRIStepInnerStepper stepper, sunrealtype t0,
-                                    sunrealtype tout, N_Vector y);
-
-typedef int (*MRIStepInnerFullRhsFn)(MRIStepInnerStepper stepper, sunrealtype t,
-                                     N_Vector y, N_Vector f, int mode);
-
-typedef int (*MRIStepInnerResetFn)(MRIStepInnerStepper stepper, sunrealtype tR,
-                                   N_Vector yR);
-
-typedef int (*MRIStepInnerGetAccumulatedError)(MRIStepInnerStepper stepper,
-                                               sunrealtype* accum_error);
-
-typedef int (*MRIStepInnerResetAccumulatedError)(MRIStepInnerStepper stepper);
-
-typedef int (*MRIStepInnerSetRTol)(MRIStepInnerStepper stepper, sunrealtype rtol);
-
 /*---------------------------------------------------------------
   MRI coupling data structure and associated utility routines
   ---------------------------------------------------------------*/
@@ -202,7 +182,7 @@ typedef int (*MRIStepPostInnerFn)(sunrealtype t, N_Vector y, void* user_data);
 
 /* Creation and Reinitialization functions */
 SUNDIALS_EXPORT void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0,
-                                    N_Vector y0, MRIStepInnerStepper stepper,
+                                    N_Vector y0, SUNStepper stepper,
                                     SUNContext sunctx);
 SUNDIALS_EXPORT int MRIStepReInit(void* arkode_mem, ARKRhsFn fse, ARKRhsFn fsi,
                                   sunrealtype t0, N_Vector y0);
@@ -221,36 +201,6 @@ SUNDIALS_EXPORT int MRIStepGetCurrentCoupling(
 SUNDIALS_EXPORT int MRIStepGetLastInnerStepFlag(void* arkode_mem, int* flag);
 SUNDIALS_EXPORT int MRIStepGetNumInnerStepperFails(void* arkode_mem,
                                                    long int* inner_fails);
-
-/* Custom inner stepper functions */
-SUNDIALS_EXPORT int MRIStepInnerStepper_Create(SUNContext sunctx,
-                                               MRIStepInnerStepper* stepper);
-
-SUNDIALS_EXPORT int MRIStepInnerStepper_CreateFromSUNStepper(
-  SUNStepper sunstepper, MRIStepInnerStepper* stepper);
-
-SUNDIALS_EXPORT int MRIStepInnerStepper_Free(MRIStepInnerStepper* stepper);
-SUNDIALS_EXPORT int MRIStepInnerStepper_SetContent(MRIStepInnerStepper stepper,
-                                                   void* content);
-SUNDIALS_EXPORT int MRIStepInnerStepper_GetContent(MRIStepInnerStepper stepper,
-                                                   void** content);
-SUNDIALS_EXPORT int MRIStepInnerStepper_SetEvolveFn(MRIStepInnerStepper stepper,
-                                                    MRIStepInnerEvolveFn fn);
-SUNDIALS_EXPORT int MRIStepInnerStepper_SetFullRhsFn(MRIStepInnerStepper stepper,
-                                                     MRIStepInnerFullRhsFn fn);
-SUNDIALS_EXPORT int MRIStepInnerStepper_SetResetFn(MRIStepInnerStepper stepper,
-                                                   MRIStepInnerResetFn fn);
-SUNDIALS_EXPORT int MRIStepInnerStepper_SetAccumulatedErrorGetFn(
-  MRIStepInnerStepper stepper, MRIStepInnerGetAccumulatedError fn);
-SUNDIALS_EXPORT int MRIStepInnerStepper_SetAccumulatedErrorResetFn(
-  MRIStepInnerStepper stepper, MRIStepInnerResetAccumulatedError fn);
-SUNDIALS_EXPORT int MRIStepInnerStepper_SetRTolFn(MRIStepInnerStepper stepper,
-                                                  MRIStepInnerSetRTol fn);
-SUNDIALS_EXPORT int MRIStepInnerStepper_AddForcing(MRIStepInnerStepper stepper,
-                                                   sunrealtype t, N_Vector f);
-SUNDIALS_EXPORT int MRIStepInnerStepper_GetForcingData(
-  MRIStepInnerStepper stepper, sunrealtype* tshift, sunrealtype* tscale,
-  N_Vector** forcing, int* nforcing);
 
 #ifdef __cplusplus
 }

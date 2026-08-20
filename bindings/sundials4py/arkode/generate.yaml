@@ -120,25 +120,16 @@ modules:
     - ../../include/arkode/arkode_mristep.h
     sundials_pointer_types:
     - "MRIStepCoupling"
-    - "MRIStepInnerStepper"
     fn_exclude_by_name__regex:
     # we don't allow alloc to be used from Python
     - "^MRIStepCoupling_Alloc$"
     # we do custom handling of Create routines
     - "^MRIStepCreate$"
-    - "^MRIStepInnerStepper_Create$"
-    - "^MRIStepInnerStepper_CreateFromSUNStepper$"
     # reinit also requires custom handling due to function pointers
     - "^MRIStepReInit$"
-    # We steal the MRIStepInnerStepper content for the callback table, so don't interface the set/get
-    - "^MRIStepInnerStepper_GetContent$"
-    - "^MRIStepInnerStepper_SetContent$"
     # we have to do custom things to handle setting function pointers
-    - "^MRIStepInnerStepper_Set.*Fn$"
     - "^MRIStepSetPreInnerFn$"
     - "^MRIStepSetPostInnerFn$"
-    # This function takes a pointer to a pointer which the generator cannot yet handle, so we do custom handling
-    - "^MRIStepInnerStepper_GetForcingData$"
   forcingstep:
     path: arkode/arkode_forcingstep_generated.hpp
     headers:

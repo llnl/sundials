@@ -662,7 +662,7 @@ the method family. Generally, the forcing functions and data, are constructed
 using evaluations of the slow RHS functions, :math:`f^E` and :math:`f^I`, at
 preceding stages, :math:`z_j`. The fast IVP solves can be carried out using any
 valid ARKODE integrator or a user-defined integration method (see section
-:numref:`ARKODE.Usage.MRIStep.CustomInnerStepper`).
+:numref:`SUNStepper`).
 
 Below we summarize the details for each method family. For additional
 information, please see the references listed above.

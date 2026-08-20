@@ -39,9 +39,8 @@ ARKStep supports *all categories*:
 * relaxation Runge--Kutta methods
 
 ARKStep also has forcing function support when converted to a
-:c:type:`SUNStepper` or :c:type:`MRIStepInnerStepper`. See
-:c:func:`ARKodeCreateSUNStepper` and :c:func:`ARKStepCreateMRIStepInnerStepper`
-for additional details.
+:c:type:`SUNStepper`. See :c:func:`ARKodeCreateSUNStepper` for additional
+details.
 
 
 .. _ARKODE.Usage.ARKStep.Initialization:
@@ -4400,58 +4399,3 @@ ARKStep system resize function
    .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
       Use :c:func:`ARKodeResize` instead.
-
-
-.. _ARKStep_CInterface.MRIStepInterface:
-
-Interfacing with MRIStep
-------------------------
-
-When using ARKStep as the inner (fast) integrator with MRIStep, the
-utility function :c:func:`ARKStepCreateMRIStepInnerStepper` should be used to
-wrap an ARKStep memory block as an :c:type:`MRIStepInnerStepper`.
-
-.. c:function:: int ARKStepCreateMRIStepInnerStepper(void *inner_arkode_mem, MRIStepInnerStepper *stepper)
-
-   Wraps an ARKStep memory block as an :c:type:`MRIStepInnerStepper` for use
-   with MRIStep.
-
-   **Arguments:**
-      * *arkode_mem* -- pointer to the ARKStep memory block.
-      * *stepper* -- the :c:type:`MRIStepInnerStepper` object.
-
-   **Return value:**
-      * *ARK_SUCCESS* if successful
-      * *ARK_MEM_FAIL* if a memory allocation failed
-      * *ARK_ILL_INPUT* if an argument had an illegal value.
-
-   **Example usage:**
-      .. code-block:: C
-
-         /* fast (inner) and slow (outer) ARKODE objects */
-         void *inner_arkode_mem = NULL;
-         void *outer_arkode_mem = NULL;
-
-         /* MRIStepInnerStepper to wrap the inner (fast) ARKStep object */
-         MRIStepInnerStepper stepper = NULL;
-
-         /* create an ARKStep object, setting fast (inner) right-hand side
-            functions and the initial condition */
-         inner_arkode_mem = ARKStepCreate(ffe, ffi, t0, y0, sunctx);
-
-         /* setup ARKStep */
-         . . .
-
-         /* create MRIStepInnerStepper wrapper for the ARKStep memory block */
-         flag = ARKStepCreateMRIStepInnerStepper(inner_arkode_mem, &stepper);
-
-         /* create an MRIStep object, setting the slow (outer) right-hand side
-            functions and the initial condition */
-         outer_arkode_mem = MRIStepCreate(fse, fsi, t0, y0, stepper, sunctx);
-
-   **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
-
-   .. deprecated:: 7.2.0 (ARKODE 6.2.0)
-
-      Use :c:func:`ARKodeCreateMRIStepInnerStepper` instead.

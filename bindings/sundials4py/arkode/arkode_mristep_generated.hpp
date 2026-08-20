@@ -243,8 +243,6 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def("MRIStepInnerStepper_AddForcing", MRIStepInnerStepper_AddForcing,
-      nb::arg("stepper"), nb::arg("t"), nb::arg("f"));
 // #ifdef __cplusplus
 //
 // #endif

@@ -52,16 +52,15 @@ m.def(
 m.def(
   "SUNStepper_Evolve",
   [](SUNStepper stepper, sunrealtype tout,
-     N_Vector vret) -> std::tuple<SUNErrCode, sunrealtype>
+     N_Vector vret) -> std::tuple<int, sunrealtype>
   {
     auto SUNStepper_Evolve_adapt_modifiable_immutable_to_return =
       [](SUNStepper stepper, sunrealtype tout,
-         N_Vector vret) -> std::tuple<SUNErrCode, sunrealtype>
+         N_Vector vret) -> std::tuple<int, sunrealtype>
     {
       sunrealtype tret_adapt_modifiable;
 
-      SUNErrCode r = SUNStepper_Evolve(stepper, tout, vret,
-                                       &tret_adapt_modifiable);
+      int r = SUNStepper_Evolve(stepper, tout, vret, &tret_adapt_modifiable);
       return std::make_tuple(r, tret_adapt_modifiable);
     };
 
@@ -132,6 +131,29 @@ m.def(
   nb::arg("stepper"), nb::arg("tshift"), nb::arg("tscale"),
   nb::arg("forcing_1d"), nb::arg("nforcing"));
 
+m.def(
+  "SUNStepper_AddForcing",
+  [](sunrealtype t, sunrealtype tshift, sunrealtype tscale,
+     std::vector<N_Vector> forcing_1d, int nforcing, N_Vector f) -> SUNErrCode
+  {
+    auto SUNStepper_AddForcing_adapt_arr_ptr_to_std_vector =
+      [](sunrealtype t, sunrealtype tshift, sunrealtype tscale,
+         std::vector<N_Vector> forcing_1d, int nforcing,
+         N_Vector f) -> SUNErrCode
+    {
+      N_Vector* forcing_1d_ptr = forcing_1d.empty() ? nullptr : forcing_1d.data();
+
+      auto lambda_result = SUNStepper_AddForcing(t, tshift, tscale,
+                                                 forcing_1d_ptr, nforcing, f);
+      return lambda_result;
+    };
+
+    return SUNStepper_AddForcing_adapt_arr_ptr_to_std_vector(
+      t, tshift, tscale, forcing_1d, nforcing, f);
+  },
+  nb::arg("t"), nb::arg("tshift"), nb::arg("tscale"), nb::arg("forcing_1d"),
+  nb::arg("nforcing"), nb::arg("f"));
+
 m.def("SUNStepper_SetLastFlag", SUNStepper_SetLastFlag, nb::arg("stepper"),
       nb::arg("last_flag"));
 
@@ -168,6 +190,22 @@ m.def(
     return SUNStepper_GetNumSteps_adapt_modifiable_immutable_to_return(stepper);
   },
   nb::arg("stepper"));
+
+m.def(
+  "SUNStepper_GetAccumulatedError",
+  [](SUNStepper stepper) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    sunrealtype accumulated_error;
+    SUNErrCode r = SUNStepper_GetAccumulatedError(stepper, &accumulated_error);
+    return std::make_tuple(r, accumulated_error);
+  },
+  nb::arg("stepper"));
+
+m.def("SUNStepper_ResetAccumulatedError", SUNStepper_ResetAccumulatedError,
+      nb::arg("stepper"));
+
+m.def("SUNStepper_SetRTol", SUNStepper_SetRTol, nb::arg("stepper"),
+      nb::arg("rtol"));
 // #ifdef __cplusplus
 //
 // #endif

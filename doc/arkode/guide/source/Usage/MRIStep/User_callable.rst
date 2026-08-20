@@ -38,9 +38,8 @@ MRIStep supports the following categories:
 * implicit nonlinear and/or linear solvers
 
 MRIStep also has forcing function support when converted to a
-:c:type:`SUNStepper` or :c:type:`MRIStepInnerStepper`. See
-:c:func:`ARKodeCreateSUNStepper` and :c:func:`ARKStepCreateMRIStepInnerStepper`
-for additional details.
+:c:type:`SUNStepper`. See :c:func:`ARKodeCreateSUNStepper` for additional
+details.
 
 
 .. _ARKODE.Usage.MRIStep.Initialization:
@@ -49,7 +48,7 @@ MRIStep initialization and deallocation functions
 ------------------------------------------------------
 
 
-.. c:function:: void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0, MRIStepInnerStepper stepper, SUNContext sunctx)
+.. c:function:: void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0, SUNStepper stepper, SUNContext sunctx)
 
    This function allocates and initializes memory for a problem to
    be solved using the MRIStep time-stepping module in ARKODE.
@@ -62,7 +61,7 @@ MRIStep initialization and deallocation functions
                :math:`\dot{y} = f^E(t,y) + f^I(t,y) + f^F(t,y)`.
    :param t0: the initial value of :math:`t`.
    :param y0: the initial condition vector :math:`y(t_0)`.
-   :param stepper: an :c:type:`MRIStepInnerStepper` for integrating the fast
+   :param stepper: an :c:type:`SUNStepper` for integrating the fast
                    time scale.
    :param sunctx: the :c:type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`)
 
@@ -79,8 +78,8 @@ MRIStep initialization and deallocation functions
          void *inner_arkode_mem = NULL;
          void *outer_arkode_mem = NULL;
 
-         /* MRIStepInnerStepper to wrap the inner (fast) object */
-         MRIStepInnerStepper stepper = NULL;
+         /* SUNStepper to wrap the inner (fast) object */
+         SUNStepper stepper = NULL;
 
          /* create an ARKODE object, setting fast (inner) right-hand side
             functions and the initial condition */
@@ -89,8 +88,8 @@ MRIStep initialization and deallocation functions
          /* configure the inner integrator */
          retval = ARKodeSet*(inner_arkode_mem, ...);
 
-         /* create MRIStepInnerStepper wrapper for the ARKODE integrator */
-         flag = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &stepper);
+         /* create SUNStepper wrapper for the ARKODE integrator */
+         flag = ARKodeCreateSUNStepper(inner_arkode_mem, &stepper);
 
          /* create an MRIStep object, setting the slow (outer) right-hand side
             functions and the initial condition */
@@ -106,6 +105,11 @@ MRIStep initialization and deallocation functions
       * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
       * ``examples/arkode/CXX_serial/ark_test_kpr_nestedmri.cpp``
         (uses MRIStep within itself)
+
+   .. versionchanged:: X.Y.Z
+
+      The inner stepper argument is now a :c:type:`SUNStepper`. The
+      ``MRIStepInnerStepper`` interface has been removed.
 
 
 .. c:function:: void MRIStepFree(void** arkode_mem)
@@ -2518,8 +2522,8 @@ MRIStep reset function
 
    .. versionchanged:: 6.3.0 (ARKODE 5.3.0)
 
-      This now calls the corresponding :c:type:`MRIStepInnerResetFn` with the same
-      (*tR*, *yR*) arguments for the :c:type:`MRIStepInnerStepper` object that is
+      This now calls the corresponding :c:type:`SUNStepperResetFn` with the same
+      (*tR*, *yR*) arguments for the :c:type:`SUNStepper` object that is
       used to evolve the MRI "fast" time scale subproblems.
 
    .. deprecated:: 7.1.0 (ARKODE 6.1.0)

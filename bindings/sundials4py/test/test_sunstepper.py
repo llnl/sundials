@@ -71,6 +71,19 @@ def test_stepper_set_evolve_fn(sunctx, nvec):
     assert called["flag"]
 
 
+@pytest.mark.parametrize("callback_status", [0, 1, -1])
+def test_stepper_evolve_status(sunctx, nvec, callback_status):
+    s = make_stepper(sunctx)
+
+    def evolve_fn(stepper, tout, vret):
+        return callback_status, tout
+
+    assert SUNStepper_SetEvolveFn(s, evolve_fn) == SUN_SUCCESS
+    status, tret = SUNStepper_Evolve(s, 1.0, nvec)
+    assert status == callback_status
+    assert tret == 1.0
+
+
 def test_stepper_set_one_step_fn(sunctx, nvec):
     s = make_stepper(sunctx)
     called = {"flag": False}
@@ -186,6 +199,44 @@ def test_stepper_set_forcing_fn(sunctx, nvec):
     assert called["flag"]
 
 
+def test_stepper_add_forcing(sunctx):
+    forcing = [N_VNew_Serial(3, sunctx), N_VNew_Serial(3, sunctx)]
+    f = N_VNew_Serial(3, sunctx)
+    N_VConst(2.0, forcing[0])
+    N_VConst(3.0, forcing[1])
+    N_VConst(1.0, f)
+
+    assert SUNStepper_AddForcing(3.0, 1.0, 2.0, forcing, 2, f) == SUN_SUCCESS
+    assert all(N_VGetArrayPointer(f) == 6.0)
+
+
+def test_stepper_add_constant_forcing_with_zero_scale(sunctx):
+    forcing = N_VNew_Serial(3, sunctx)
+    f = N_VNew_Serial(3, sunctx)
+    N_VConst(2.0, forcing)
+    N_VConst(1.0, f)
+
+    assert SUNStepper_AddForcing(3.0, 1.0, 0.0, [forcing], 1, f) == SUN_SUCCESS
+    assert all(N_VGetArrayPointer(f) == 3.0)
+
+
+def test_stepper_add_no_forcing(sunctx):
+    f = N_VNew_Serial(3, sunctx)
+    N_VConst(1.0, f)
+
+    assert SUNStepper_AddForcing(3.0, 1.0, 0.0, [], 0, f) == SUN_SUCCESS
+    assert all(N_VGetArrayPointer(f) == 1.0)
+
+
+def test_stepper_add_forcing_invalid_arguments(sunctx):
+    forcing = N_VNew_Serial(3, sunctx)
+    f = N_VNew_Serial(3, sunctx)
+
+    assert SUNStepper_AddForcing(0.0, 0.0, 1.0, [], -1, f) == SUN_ERR_ARG_OUTOFRANGE
+    assert SUNStepper_AddForcing(0.0, 0.0, 0.0, [forcing, forcing], 2, f) == SUN_ERR_ARG_OUTOFRANGE
+    assert SUNStepper_AddForcing(0.0, 0.0, 1.0, [], 1, f) == SUN_ERR_ARG_CORRUPT
+
+
 def test_stepper_set_get_num_steps_fn(sunctx):
     s = make_stepper(sunctx)
     called = {"flag": False}
@@ -201,3 +252,32 @@ def test_stepper_set_get_num_steps_fn(sunctx):
     assert called["flag"]
     assert isinstance(nst, int)
     assert nst == 1
+
+
+def test_stepper_accumulated_error_callbacks(sunctx):
+    s = make_stepper(sunctx)
+    calls = {"get": False, "reset": False, "rtol": False}
+
+    def get_error_fn(stepper):
+        calls["get"] = True
+        return SUN_SUCCESS, 0.25
+
+    def reset_error_fn(stepper):
+        calls["reset"] = True
+        return SUN_SUCCESS
+
+    def set_rtol_fn(stepper, rtol):
+        calls["rtol"] = True
+        assert rtol == 1e-4
+        return SUN_SUCCESS
+
+    assert SUNStepper_SetGetAccumulatedErrorFn(s, get_error_fn) == SUN_SUCCESS
+    assert SUNStepper_SetResetAccumulatedErrorFn(s, reset_error_fn) == SUN_SUCCESS
+    assert SUNStepper_SetRTolFn(s, set_rtol_fn) == SUN_SUCCESS
+
+    status, error = SUNStepper_GetAccumulatedError(s)
+    assert status == SUN_SUCCESS
+    assert error == 0.25
+    assert SUNStepper_ResetAccumulatedError(s) == SUN_SUCCESS
+    assert SUNStepper_SetRTol(s, 1e-4) == SUN_SUCCESS
+    assert all(calls.values())

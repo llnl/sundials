@@ -316,14 +316,14 @@ static int check_flag(void* flagvalue, const string funcname, int opt);
 
 int main(int argc, char* argv[])
 {
-  int flag;                                 // reusable error-checking flag
-  N_Vector u                        = NULL; // vector for storing solution
-  SUNLinearSolver LS                = NULL; // linear solver memory structure
-  SUNLinearSolver LSf               = NULL; // linear solver memory structure
-  void* arkode_mem                  = NULL; // ARKode memory structure
-  void* inner_arkode_mem            = NULL; // ARKode memory structure
-  MRIStepInnerStepper inner_stepper = NULL; // inner stepper
-  MRIStepCoupling C                 = NULL; // slow coupling coefficients
+  int flag;                        // reusable error-checking flag
+  N_Vector u               = NULL; // vector for storing solution
+  SUNLinearSolver LS       = NULL; // linear solver memory structure
+  SUNLinearSolver LSf      = NULL; // linear solver memory structure
+  void* arkode_mem         = NULL; // ARKode memory structure
+  void* inner_arkode_mem   = NULL; // ARKode memory structure
+  SUNStepper inner_stepper = NULL; // inner stepper
+  MRIStepCoupling C        = NULL; // slow coupling coefficients
 
   // Timing variables
   double t1 = 0.0;
@@ -458,8 +458,8 @@ int main(int argc, char* argv[])
     if (check_flag(&flag, "ARKodeSetMaxNumSteps", 1)) { return 1; }
 
     // Create inner stepper
-    flag = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-    if (check_flag(&flag, "ARKodeCreateMRIStepInnerStepper", 1)) { return 1; }
+    flag = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
+    if (check_flag(&flag, "ARKodeCreateSUNStepper", 1)) { return 1; }
 
     // -----------------------------------------------
     // Set up MRIStep slow integrator and set options
@@ -610,14 +610,14 @@ int main(int argc, char* argv[])
     if (check_flag(&flag, "HYPRE_Finalize", 1)) { return 1; }
 #endif
 
-    ARKodeFree(&arkode_mem);                  // Free slow integrator memory
-    ARKodeFree(&inner_arkode_mem);            // Free fast integrator memory
-    MRIStepInnerStepper_Free(&inner_stepper); // Free inner stepper
-    MRIStepCoupling_Free(C);                  // Free coupling coefficients
-    SUNLinSolFree(LS);                        // Free linear solver
-    SUNLinSolFree(LSf);                       // Free linear solver
-    N_VDestroy(u);                            // Free vectors
-    FreeUserData(&udata);                     // Free user data
+    ARKodeFree(&arkode_mem);            // Free slow integrator memory
+    ARKodeFree(&inner_arkode_mem);      // Free fast integrator memory
+    SUNStepper_Destroy(&inner_stepper); // Free inner stepper
+    MRIStepCoupling_Free(C);            // Free coupling coefficients
+    SUNLinSolFree(LS);                  // Free linear solver
+    SUNLinSolFree(LSf);                 // Free linear solver
+    N_VDestroy(u);                      // Free vectors
+    FreeUserData(&udata);               // Free user data
   }
 
   // Finalize MPI

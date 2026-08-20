@@ -204,12 +204,6 @@ typedef int (*ARKRelaxFn)(N_Vector y, sunrealtype* r, void* user_data);
 
 typedef int (*ARKRelaxJacFn)(N_Vector y, N_Vector J, void* user_data);
 
-/* ------------------------------------------------
- * MRIStep Inner Stepper Type (forward declaration)
- * ------------------------------------------------ */
-
-typedef _SUNDIALS_STRUCT_ _MRIStepInnerStepper* MRIStepInnerStepper;
-
 /* --------------------------
  * Relaxation Solver Options
  * -------------------------- */
@@ -257,10 +251,6 @@ SUNDIALS_EXPORT int ARKodeReset(void* arkode_mem, sunrealtype tR, N_Vector yR);
 
 /* Optional data allocation function */
 SUNDIALS_EXPORT int ARKodeInit(void* arkode_mem);
-
-/* Utility to wrap ARKODE as an MRIStepInnerStepper */
-SUNDIALS_EXPORT int ARKodeCreateMRIStepInnerStepper(void* arkode_mem,
-                                                    MRIStepInnerStepper* stepper);
 
 /* Tolerance input functions */
 SUNDIALS_EXPORT int ARKodeSStolerances(void* arkode_mem, sunrealtype reltol,
