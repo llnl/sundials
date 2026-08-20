@@ -222,7 +222,7 @@ Arrays
 ``N_Vector`` objects in sundials4py are compatible with numpy's
 ``ndarray``. Each ``N_Vector`` can work on a numpy arrays without copies, and
 you can access and modify the underlying data directly using
-``N_VGetArrayPointer``, which returns a numpy ``ndarray`` view of the data.
+``N_VGetNumpyArray``, which returns a numpy ``ndarray`` view of the data.
 
 SUNDIALS matrix types (dense, banded, sparse) are also exposed as Python objects
 that provide access to their underlying data as numpy arrays (e.g., via
@@ -236,7 +236,7 @@ also represented as numpy arrays.
 .. code-block:: python
 
    y_nvec = N_VNew_Serial(10, sunctx)
-   y = N_VGetArrayPointer(y_nvec)
+   y = N_VGetNumpyArray(y_nvec)
    y[:] = np.linspace(0, 1, 10)  # Set values using numpy
 
 **Example: Using a matrix as a numpy array**
@@ -250,6 +250,14 @@ also represented as numpy arrays.
 This allows you to use numpy operations for vector and matrix data, and to pass
 numpy arrays to and from SUNDIALS routines efficiently and without unnecessary
 copies.
+
+For CPU ``N_Vector`` objects, ``N_VGetNumpyArray`` and
+``N_VGetTorchTensor`` create lightweight zero-copy views. ``N_VGetJaxArray``
+also exposes the vector data without copying, but importing an external buffer
+into the JAX runtime has appreciably higher fixed overhead. In performance
+sensitive CPU callbacks or Python loops, obtain a JAX view once and reuse it
+rather than creating a new view for every operation. JAX is generally most
+effective when its JIT compilation or GPU execution amortizes this setup cost.
 
 
 User-Supplied Callback Functions
@@ -282,8 +290,8 @@ return-by-pointer parameters for other functions are handled)
    # int(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
    def rhs(t, y_nvector, ydot_nvector, _): # note _ in place of user_data
       # Compute ydot = f(t, y)
-      y = N_VGetArrayPointer(y_nvector)
-      ydot = N_VGetArrayPointer(ydot_nvector)
+      y = N_VGetNumpyArray(y_nvector)
+      ydot = N_VGetNumpyArray(ydot_nvector)
       ydot[:] = -y
       return 0
 
@@ -297,8 +305,8 @@ return-by-pointer parameters for other functions are handled)
    # int(N_Vector u, N_Vector g, void* user_data)
    def fp_function(u_nvector, g_nvector, _): # note _ in place of user_data
       # Compute g = F(u)
-      u = N_VGetArrayPointer(u_nvector)
-      g = N_VGetArrayPointer(g_nvector)
+      u = N_VGetNumpyArray(u_nvector)
+      g = N_VGetNumpyArray(g_nvector)
       g[:] = u**2 - 1
       return 0
 

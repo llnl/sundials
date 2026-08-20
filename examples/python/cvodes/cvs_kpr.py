@@ -75,14 +75,14 @@ class KPRODE:
 
     def set_init_cond(self, yvec):
         u0, v0 = self.true_sol(0.0)
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         y[0] = u0
         y[1] = v0
         return 0
 
     def f(self, t, yvec, ydotvec, _user_data):
-        y = N_VGetArrayPointer(yvec)
-        ydot = N_VGetArrayPointer(ydotvec)
+        y = N_VGetNumpyArray(yvec)
+        ydot = N_VGetNumpyArray(ydotvec)
 
         u = float(y[0])
         v = float(y[1])
@@ -95,7 +95,7 @@ class KPRODE:
         return 0
 
     def jac(self, t, yvec, _fyvec, J, _user_data, _tmp1, _tmp2, _tmp3):
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         u = float(y[0])
         v = float(y[1])
 
@@ -372,7 +372,7 @@ def main(argv=None):
     status = CVodeSetOptions(cvode.get(), "", "", len(cvode_argv), cvode_argv)
     assert status == CV_SUCCESS
 
-    yarr = N_VGetArrayPointer(y)
+    yarr = N_VGetNumpyArray(y)
     utrue0, vtrue0 = problem.true_sol(T0)
 
     print("\nKvaerno-Prothero-Robinson ODE test problem (sundials4py.cvodes):")
@@ -408,7 +408,7 @@ def main(argv=None):
             assert status == CV_SUCCESS
 
             utrue, vtrue = problem.true_sol(tret)
-            yarr = N_VGetArrayPointer(y)
+            yarr = N_VGetNumpyArray(y)
 
             uerr = abs(yarr[0] - utrue)
             verr = abs(yarr[1] - vtrue)

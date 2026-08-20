@@ -82,12 +82,12 @@ class Heat1DProblem:
         self.isource = n // 2
 
     def set_init_cond(self, yvec):
-        y = sun.N_VGetArrayPointer(yvec)
+        y = sun.N_VGetNumpyArray(yvec)
         y[:] = 0.0
 
     def f(self, t, yvec, ydotvec, user_data):
-        y = sun.N_VGetArrayPointer(yvec)
-        ydot = sun.N_VGetArrayPointer(ydotvec)
+        y = sun.N_VGetNumpyArray(yvec)
+        ydot = sun.N_VGetNumpyArray(ydotvec)
 
         ydot[:] = 0.0
         c1 = self.k / self.dx / self.dx
@@ -100,8 +100,8 @@ class Heat1DProblem:
 
     def jtv(self, vvec, Jvvec, t, yvec, fyvec, user_data, tmpvec):
         k, dx = self.k, self.dx
-        V = sun.N_VGetArrayPointer(vvec)
-        JV = sun.N_VGetArrayPointer(Jvvec)
+        V = sun.N_VGetNumpyArray(vvec)
+        JV = sun.N_VGetNumpyArray(Jvvec)
 
         JV[:] = 0.0
         c1 = k / dx / dx
@@ -125,7 +125,7 @@ def solve_heat1d():
 
     y = sun.N_VNew_Serial(n, sunctx)
     assert y is not None
-    yarr = sun.N_VGetArrayPointer(y)
+    yarr = sun.N_VGetNumpyArray(y)
 
     problem = Heat1DProblem(n=n, k=k)
     problem.set_init_cond(y)

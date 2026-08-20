@@ -41,21 +41,21 @@ class VanDerPolODE:
         self.y20 = y20
 
     def set_init_cond(self, yvec):
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         y[0] = self.y10
         y[1] = self.y20
         return 0
 
     def f(self, t, yvec, ydotvec):
-        y = N_VGetArrayPointer(yvec)
-        ydot = N_VGetArrayPointer(ydotvec)
+        y = N_VGetNumpyArray(yvec)
+        ydot = N_VGetNumpyArray(ydotvec)
         mu = self.mu
         ydot[0] = y[1]
         ydot[1] = mu * (1.0 - y[0] ** 2) * y[1] - y[0]
         return 0
 
     def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3):
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         mu = self.mu
         Jdata = SUNDenseMatrix_Data(J)
         Jdata[0, 0] = 0.0
@@ -158,7 +158,7 @@ def main(argv=None):
     status = CVodeSetOptions(cvode.get(), "", "", len(cvode_argv), cvode_argv)
     assert status == CV_SUCCESS
 
-    yarr = N_VGetArrayPointer(y)
+    yarr = N_VGetNumpyArray(y)
     print("\nVan der Pol oscillator solved with sundials4py.cvodes:")
     print(f"    initial conditions: y1 = {y10}, y2 = {y20}")
     print(f"    mu = {mu}")
@@ -178,7 +178,7 @@ def main(argv=None):
         tout = T0 + dTout
         for iout in range(Nt):
             status, tret = CVode(cvode.get(), tout, y, CV_NORMAL)
-            yarr = N_VGetArrayPointer(y)
+            yarr = N_VGetNumpyArray(y)
             print(f"  {tret:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}")
             UFID.write(f" {tret:.16e} {yarr[0]:.16e} {yarr[1]:.16e}\n")
             ts.append(float(tret))
