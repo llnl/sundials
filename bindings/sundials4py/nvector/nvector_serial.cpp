@@ -11,15 +11,6 @@ using namespace sundials::experimental;
 
 namespace sundials4py {
 
-namespace {
-
-std::shared_ptr<std::remove_pointer_t<N_Vector>> wrap_nvector(N_Vector v)
-{
-  return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(v);
-}
-
-} // namespace
-
 void bind_nvector_serial(nb::module_& m)
 {
 #include "nvector_serial_generated.hpp"
@@ -29,17 +20,14 @@ void bind_nvector_serial(nb::module_& m)
     [](sunindextype vec_length, sundials4py::Array1d data,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
-      if (data.shape(0) != static_cast<size_t>(vec_length))
-      {
-        throw sundials4py::error_returned(
-          "Array shape does not match vector length");
-      }
+      nvector_detail::require_vector_length(vec_length, data);
       auto v = N_VMake_Serial(vec_length, data.data(), sunctx);
-      nvector_detail::retain_python_host_array(v, data.cast());
-      return wrap_nvector(v);
+      return nvector_detail::wrap_nvector(v);
     },
     nb::arg("vec_length"), nb::arg("data"), nb::arg("sunctx"),
-    nb::keep_alive<0, 3>());
+    // Constructor arguments have the same lifetime as the returned wrapper, so
+    // keep_alive avoids the explicit owner registry used by later replacements.
+    nb::keep_alive<0, 2>(), nb::keep_alive<0, 3>());
 }
 
 } // namespace sundials4py

@@ -22,12 +22,21 @@
 
 #include "sundials4py.hpp"
 
+#include <memory>
+#include <type_traits>
 #include <unordered_map>
 
 #include <sundials/sundials_nvector.h>
+#include <sundials/sundials_nvector.hpp>
 
 namespace sundials4py {
 namespace nvector_detail {
+
+inline std::shared_ptr<std::remove_pointer_t<N_Vector>> wrap_nvector(N_Vector v)
+{
+  return sundials::experimental::our_make_shared<
+    std::remove_pointer_t<N_Vector>, sundials::experimental::N_VectorDeleter>(v);
+}
 
 enum class ArrayDevice
 {
@@ -46,8 +55,8 @@ struct PythonArrayOwners
 
 inline std::unordered_map<N_Vector, PythonArrayOwners>& python_array_owners()
 {
-  // Intentionally keep this map alive until process exit. Destroying a static
-  // map of Python objects after Python finalization is unsafe.
+  // Intentionally process-lifetime: destroying Python objects after interpreter
+  // finalization is unsafe. Entries are still erased when each N_Vector dies.
   static auto* owners = new std::unordered_map<N_Vector, PythonArrayOwners>;
   return *owners;
 }
@@ -97,6 +106,8 @@ inline PythonArrayOwners& prepare_python_array_owners(N_Vector v)
 
 inline void retain_python_host_array(N_Vector v, nanobind::object array)
 {
+  // Post-construction zero-copy replacement cannot use return-value keep_alive;
+  // retain the JAX Ref here to prevent early free without affecting hot paths.
   prepare_python_array_owners(v).host_array = std::move(array);
 }
 
@@ -105,30 +116,30 @@ inline void retain_python_device_array(N_Vector v, nanobind::object array)
   prepare_python_array_owners(v).device_array = std::move(array);
 }
 
-inline void release_python_array(N_Vector v, ArrayDevice device)
-{
-  auto& owners = python_array_owners();
-  auto it      = owners.find(v);
-  if (it == owners.end()) { return; }
-
-  if (device == ArrayDevice::Cpu)
-  {
-    it->second.host_array = nanobind::object();
-  }
-  else { it->second.device_array = nanobind::object(); }
-
-  if (it->second.host_array.ptr() || it->second.device_array.ptr()) { return; }
-
-  if (v && v->ops && v->ops->nvdestroy == destroy_nvector_with_python_arrays)
-  {
-    v->ops->nvdestroy = it->second.destroy;
-  }
-  owners.erase(it);
-}
-
 inline bool object_is_none(nanobind::object obj)
 {
   return obj.ptr() == Py_None;
+}
+
+inline bool is_jax_object(nanobind::handle obj)
+{
+  auto module = nanobind::cast<std::string>(obj.type().attr("__module__"));
+  return module == "jax" || module.rfind("jax.", 0) == 0 ||
+         module == "jaxlib" || module.rfind("jaxlib.", 0) == 0;
+}
+
+inline bool is_jax_ref(nanobind::handle obj)
+{
+  if (!is_jax_object(obj)) { return false; }
+  auto jax = nanobind::module_::import_("jax");
+  return nanobind::isinstance(obj, jax.attr("ref").attr("Ref"));
+}
+
+inline bool is_jax_array(nanobind::handle obj)
+{
+  if (!is_jax_object(obj)) { return false; }
+  auto jax = nanobind::module_::import_("jax");
+  return nanobind::isinstance(obj, jax.attr("Array"));
 }
 
 inline std::string optional_string(nanobind::object value)
@@ -175,9 +186,40 @@ inline sundials4py::Array1d host_array(N_Vector v)
   return sundials4py::Array1d(ptr, 1, shape, owner);
 }
 
+template<typename Array>
+inline void require_vector_length(sunindextype vec_length, const Array& array,
+                                  const char* array_name = "Array")
+{
+  if (array.shape(0) != static_cast<size_t>(vec_length))
+  {
+    throw sundials4py::error_returned(std::string(array_name) +
+                                      " shape does not match vector length");
+  }
+}
+
+inline void require_vector_length(sunindextype vec_length, nanobind::object array,
+                                  const char* array_name = "Device array")
+{
+  if (!PyObject_HasAttrString(array.ptr(), "shape"))
+  {
+    throw sundials4py::error_returned(std::string(array_name) +
+                                      " does not have a shape");
+  }
+
+  auto shape = nanobind::cast<nanobind::tuple>(array.attr("shape"));
+  if (shape.size() != 1 ||
+      nanobind::cast<size_t>(shape[0]) != static_cast<size_t>(vec_length))
+  {
+    throw sundials4py::error_returned(std::string(array_name) +
+                                      " shape does not match vector length");
+  }
+}
+
 #ifdef SUNDIALS_NVECTOR_CUDA
-void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr, ArrayDevice device,
-                                nanobind::object owner = nanobind::object());
+void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
+                                ArrayDevice device, nanobind::object owner);
+void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
+                                ArrayDevice source_device);
 #endif
 
 } // namespace nvector_detail

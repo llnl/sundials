@@ -24,6 +24,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 
 #include <nvector/nvector_serial.h>
 #include <sundials/sundials_nvector.hpp>
@@ -69,44 +70,142 @@ void replace_host_array_pointer(N_Vector v, sunrealtype* ptr, nb::object owner)
     "N_Vector implementation");
 }
 
-void check_host_array_length(N_Vector v, size_t length)
+nvector_detail::ArrayDevice check_jax_array(N_Vector v, nb::object data, bool copy)
 {
-  if (length != static_cast<size_t>(N_VGetLength(v)))
+  if (copy && !nvector_detail::is_jax_array(data))
   {
     throw sundials4py::error_returned(
-      "Array shape does not match vector length");
+      "N_VSetJaxArray with copy=True requires a jax.Array");
   }
+  if (!copy && !nvector_detail::is_jax_ref(data))
+  {
+    throw sundials4py::error_returned(
+      "N_VSetJaxArray with copy=False requires a jax.ref.Ref");
+  }
+
+  std::string platform;
+  if (copy)
+  {
+    auto devices = nb::cast<nb::list>(
+      nb::module_::import_("builtins").attr("list")(data.attr("devices")()));
+    if (devices.size() != 1)
+    {
+      throw sundials4py::error_returned(
+        "N_VSetJaxArray requires a single-device jax.Array");
+    }
+    platform = nb::cast<std::string>(devices[0].attr("platform"));
+  }
+  else
+  {
+    auto devices = nb::cast<nb::list>(
+      nb::module_::import_("builtins")
+        .attr("list")(data.attr("sharding").attr("device_set")));
+    if (devices.size() != 1)
+    {
+      throw sundials4py::error_returned(
+        "N_Vector storage requires a single-device JAX Ref");
+    }
+    platform = nb::cast<std::string>(devices[0].attr("platform"));
+  }
+
+  nvector_detail::ArrayDevice device;
+  if (platform == "cpu") { device = nvector_detail::ArrayDevice::Cpu; }
+  else if (platform == "cuda" || platform == "gpu")
+  {
+    device = nvector_detail::ArrayDevice::Cuda;
+  }
+  else
+  {
+    throw sundials4py::error_returned(
+      "N_VSetJaxArray only supports JAX CPU and CUDA devices");
+  }
+
+  auto shape = nb::cast<nb::tuple>(data.attr("shape"));
+  if (shape.size() != 1)
+  {
+    throw sundials4py::error_returned(
+      "N_VSetJaxArray requires a one-dimensional array");
+  }
+  nvector_detail::require_vector_length(N_VGetLength(v), data, "JAX array");
+
+  auto dtype = data.attr("dtype");
+  if (nb::cast<std::string>(dtype.attr("kind")) != "f")
+  {
+    throw sundials4py::error_returned(
+      "N_VSetJaxArray requires a floating-point dtype");
+  }
+  if (nb::cast<size_t>(dtype.attr("itemsize")) != sizeof(sunrealtype))
+  {
+    throw sundials4py::error_returned(
+      "JAX array dtype does not match SUNDIALS precision");
+  }
+
+  return device;
 }
 
-void set_jax_host_array(nb::object data, N_Vector v)
+void set_jax_array(nb::object data, N_Vector v, bool copy)
 {
-  if (!PyObject_HasAttrString(data.ptr(), "unsafe_buffer_pointer") ||
-      !PyObject_HasAttrString(data.ptr(), "device"))
-  {
-    throw sundials4py::error_returned(
-      "Host array must be a NumPy array or a JAX CPU array");
-  }
+  auto device = check_jax_array(v, data, copy);
+  auto jax    = nb::module_::import_("jax");
+  if (copy) { data.attr("block_until_ready")(); }
+  else { jax.attr("effects_barrier")(); }
 
-  auto platform = nb::cast<std::string>(data.attr("device").attr("platform"));
-  if (platform != "cpu")
-  {
-    throw sundials4py::error_returned(
-      "N_VSetArrayPointer requires a host-accessible array");
-  }
-
-  auto numpy_view = nb::module_::import_("numpy").attr("asarray")(data);
-  auto array      = nb::cast<sundials4py::Array1d>(numpy_view);
-  check_host_array_length(v, array.shape(0));
-
-  auto source_ptr =
+  auto source_address =
     nb::cast<std::uintptr_t>(data.attr("unsafe_buffer_pointer")());
-  if (source_ptr != reinterpret_cast<std::uintptr_t>(array.data()))
+  auto source    = reinterpret_cast<sunrealtype*>(source_address);
+  auto vector_id = N_VGetVectorID(v);
+
+  if (vector_id == SUNDIALS_NVEC_SERIAL)
   {
-    throw sundials4py::error_returned(
-      "Converting the host array would require a copy");
+    if (device != nvector_detail::ArrayDevice::Cpu)
+    {
+      throw sundials4py::error_returned(
+        "A serial N_Vector requires a JAX array on the CPU");
+    }
+
+    if (copy)
+    {
+      auto destination = N_VGetArrayPointer(v);
+      auto length      = N_VGetLength(v);
+      if (length > 0 && !destination)
+      {
+        throw sundials4py::error_returned(
+          "Serial N_Vector does not have host storage");
+      }
+      if (length > 0 && !source)
+      {
+        throw sundials4py::error_returned("JAX array pointer must not be null");
+      }
+      if (length > 0)
+      {
+        std::memcpy(destination, source, length * sizeof(sunrealtype));
+      }
+    }
+    else { replace_host_array_pointer(v, source, std::move(data)); }
+    return;
   }
 
-  replace_host_array_pointer(v, array.data(), std::move(numpy_view));
+#ifdef SUNDIALS_NVECTOR_CUDA
+  if (vector_id == SUNDIALS_NVEC_CUDA)
+  {
+    if (copy) { nvector_detail::copy_to_cuda_array_pointer(v, source, device); }
+    else
+    {
+      if (device != nvector_detail::ArrayDevice::Cuda)
+      {
+        throw sundials4py::error_returned(
+          "A CUDA N_Vector requires a JAX Ref on a CUDA device");
+      }
+      nvector_detail::replace_cuda_array_pointer(v, source,
+                                                 nvector_detail::ArrayDevice::Cuda,
+                                                 std::move(data));
+    }
+    return;
+  }
+#endif
+
+  throw sundials4py::error_returned(
+    "N_VSetJaxArray only supports serial and CUDA N_Vectors");
 }
 
 #ifndef SUNDIALS_NVECTOR_CUDA
@@ -154,17 +253,7 @@ void bind_nvector(nb::module_& m)
 
   m.def(
     "N_VGetArrayPointer",
-    [](N_Vector v)
-    {
-      auto ptr = N_VGetArrayPointer(v);
-      if (!ptr)
-      {
-        throw sundials4py::error_returned("Failed to get array pointer");
-      }
-      auto owner = nb::find(v);
-      size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
-      return sundials4py::Array1d(ptr, 1, shape, owner);
-    },
+    [](N_Vector v) { return nvector_detail::host_array(v); },
     nb::rv_policy::reference);
 
 #ifndef SUNDIALS_NVECTOR_CUDA
@@ -181,19 +270,6 @@ void bind_nvector(nb::module_& m)
     },
     nb::arg("v"));
 
-  // Provide a generic N_VSetDeviceArrayPointer binding for non-CUDA builds
-  // that accepts a host-side Array1d. CUDA-aware builds provide richer
-  // overloads in nvector_cuda.cpp.
-  m.def(
-    "N_VSetDeviceArrayPointer",
-    [](sundials4py::Array1d /* d_vdata_1d */, N_Vector /* v */)
-    {
-      throw sundials4py::error_returned(
-        "Device pointer replacement requires a CUDA-enabled sundials4py "
-        "build");
-    },
-    nb::arg("d_vdata_1d"), nb::arg("v"));
-
   m.def("N_VGetNumpyArray", &get_numpy_array, nb::arg("v"));
 
   m.def("N_VGetJaxArray", &get_jax_array, nb::arg("v"),
@@ -205,20 +281,11 @@ void bind_nvector(nb::module_& m)
         nb::arg("device").none() = nb::none());
 #endif
 
-  m.def(
-    "N_VSetArrayPointer",
-    [](sundials4py::Array1d arr, N_Vector v)
-    {
-      check_host_array_length(v, arr.shape(0));
-      replace_host_array_pointer(v, arr.data(), arr.cast());
-    },
-    nb::arg("arr"), nb::arg("v"),
-    "Replace owned host storage with a borrowed NumPy array and retain its "
-    "owner.");
-
-  m.def("N_VSetArrayPointer", &set_jax_host_array, nb::arg("arr"), nb::arg("v"),
-        "Replace owned host storage with a borrowed JAX CPU array and retain "
-        "its owner.");
+  m.def("N_VSetJaxArray", &set_jax_array, nb::arg("array"), nb::arg("v"),
+        nb::kw_only(), nb::arg("copy") = true,
+        "Set an N_Vector from a JAX array. By default, copy an immutable "
+        "jax.Array into existing N_Vector storage. With copy=False, borrow the "
+        "storage of a jax.ref.Ref and retain the Ref as its owner.");
 
   m.def(
     "N_VScaleAddMultiVectorArray",

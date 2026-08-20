@@ -15,7 +15,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-# 1D heat equation example preserving JAX array immutability on CPU or CUDA.
+# 1D heat equation example using mutable JAX ArrayRefs on CPU or CUDA.
 # -----------------------------------------------------------------
 
 import argparse
@@ -147,7 +147,7 @@ def select_device(requested, jax):
     return jax.devices("cpu")[0]
 
 
-class JaxHeat1DProblem:
+class JaxRefHeat1DProblem:
     def __init__(self, jax, jnp, device, dtype, n=101, k=0.01):
         self.jax = jax
         self.jnp = jnp
@@ -158,34 +158,64 @@ class JaxHeat1DProblem:
         self.isource = n // 2
         self.array_device = "cuda" if device.platform in ("cuda", "gpu") else "cpu"
         self.dtype = dtype
+        self.refs = {}
+
+        def initialize(out_ref):
+            out_ref[...] = self.jnp.zeros(self.n, dtype=self.dtype)
+            return out_ref[0]
+
+        def rhs(y, out_ref):
+            c1 = self.k / self.dx / self.dx
+            c2 = -2.0 * self.k / self.dx / self.dx
+            result = self.jnp.zeros_like(y)
+            result = result.at[1:-1].set(c1 * y[:-2] + c2 * y[1:-1] + c1 * y[2:])
+            result = result.at[0].set(0.0)
+            result = result.at[-1].set(0.0)
+            result = result.at[self.isource].add(0.01 / self.dx)
+            out_ref[...] = result
+            return out_ref[0]
+
+        def jtv(v, out_ref):
+            c1 = self.k / self.dx / self.dx
+            c2 = -2.0 * self.k / self.dx / self.dx
+            result = self.jnp.zeros_like(v)
+            result = result.at[1:-1].set(c1 * v[:-2] + c2 * v[1:-1] + c1 * v[2:])
+            result = result.at[0].set(0.0)
+            result = result.at[-1].set(0.0)
+            out_ref[...] = result
+            return out_ref[0]
+
+        self.initialize_ref = self.jax.jit(initialize)
+        self.rhs_ref = self.jax.jit(rhs)
+        self.jtv_ref = self.jax.jit(jtv)
+
+    def ref_for(self, nvec):
+        ref = self.refs.get(nvec)
+        if ref is not None:
+            return ref
+
+        initial = self.jax.device_put(
+            self.jnp.zeros(sun.N_VGetLength(nvec), dtype=self.dtype), self.device
+        ).block_until_ready()
+        ref = self.jax.ref.new_ref(initial)
+        ref[...].block_until_ready()
+
+        sun.N_VSetJaxArray(ref, nvec, copy=False)
+
+        self.refs[nvec] = ref
+        return ref
 
     def set_init_cond(self, yvec):
-        array = self.jax.device_put(
-            self.jnp.zeros(self.n, dtype=self.dtype), self.device
-        )
-        sun.N_VSetJaxArray(array, yvec)
+        self.initialize_ref(self.ref_for(yvec)).block_until_ready()
 
     def f(self, t, yvec, ydotvec, user_data):
         y = sun.N_VGetJaxArray(yvec, device=self.array_device)
-        c1 = self.k / self.dx / self.dx
-        c2 = -2.0 * self.k / self.dx / self.dx
-        result = self.jnp.zeros_like(y)
-        result = result.at[1:-1].set(c1 * y[:-2] + c2 * y[1:-1] + c1 * y[2:])
-        result = result.at[0].set(0.0)
-        result = result.at[-1].set(0.0)
-        result = result.at[self.isource].add(0.01 / self.dx)
-        sun.N_VSetJaxArray(result, ydotvec)
+        self.rhs_ref(y, self.ref_for(ydotvec)).block_until_ready()
         return 0
 
     def jtv(self, vvec, Jvvec, t, yvec, fyvec, user_data, tmpvec):
         v = sun.N_VGetJaxArray(vvec, device=self.array_device)
-        c1 = self.k / self.dx / self.dx
-        c2 = -2.0 * self.k / self.dx / self.dx
-        result = self.jnp.zeros_like(v)
-        result = result.at[1:-1].set(c1 * v[:-2] + c2 * v[1:-1] + c1 * v[2:])
-        result = result.at[0].set(0.0)
-        result = result.at[-1].set(0.0)
-        sun.N_VSetJaxArray(result, Jvvec)
+        self.jtv_ref(v, self.ref_for(Jvvec)).block_until_ready()
         return 0
 
 
@@ -228,13 +258,9 @@ def main():
         else sun.N_VNew_Serial(args.n, sunctx)
     )
 
-    problem = JaxHeat1DProblem(jax, jnp, device, dtype, n=args.n)
+    problem = JaxRefHeat1DProblem(jax, jnp, device, dtype, n=args.n)
     host_result, y = solve_heat1d(
-        f"jax immutable-array {array_device} backend",
-        y,
-        problem,
-        sunctx,
-        n=args.n,
+        f"jax ArrayRef {array_device} backend", y, problem, sunctx, n=args.n
     )
 
     device_result = np.asarray(sun.N_VGetJaxArray(y, device="cpu"))

@@ -107,7 +107,7 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
     }
   }
 
-  if (owner.ptr()) { prepare_python_array_owners(v); }
+  prepare_python_array_owners(v);
 
   auto stream = cuda_stream(v);
   auto status = cudaStreamSynchronize(
@@ -133,29 +133,17 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
 
   if (managed)
   {
-    if (owner.ptr())
-    {
-      auto& owners        = prepare_python_array_owners(v);
-      owners.host_array   = nb::object();
-      owners.device_array = nb::object();
-      if (device == ArrayDevice::Cpu) { owners.host_array = std::move(owner); }
-      else { owners.device_array = std::move(owner); }
-    }
-    else
-    {
-      release_python_array(v, ArrayDevice::Cpu);
-      release_python_array(v, ArrayDevice::Cuda);
-    }
+    auto& owners        = prepare_python_array_owners(v);
+    owners.host_array   = nb::object();
+    owners.device_array = nb::object();
+    if (device == ArrayDevice::Cpu) { owners.host_array = std::move(owner); }
+    else { owners.device_array = std::move(owner); }
   }
-  else if (owner.ptr())
+  else if (device == ArrayDevice::Cpu)
   {
-    if (device == ArrayDevice::Cpu)
-    {
-      retain_python_host_array(v, std::move(owner));
-    }
-    else { retain_python_device_array(v, std::move(owner)); }
+    retain_python_host_array(v, std::move(owner));
   }
-  else { release_python_array(v, device); }
+  else { retain_python_device_array(v, std::move(owner)); }
 
   SUNErrCode dealloc_status = SUN_SUCCESS;
   if (managed)
@@ -179,6 +167,75 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
   }
 }
 
+void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
+                                ArrayDevice source_device)
+{
+  require_cuda_nvector(v);
+
+  auto length = N_VGetLength(v);
+  if (length == 0) { return; }
+  if (!ptr)
+  {
+    throw sundials4py::error_returned("JAX array pointer must not be null");
+  }
+
+  SUNMemoryType source_type = SUNMEMTYPE_HOST;
+  if (source_device == ArrayDevice::Cuda)
+  {
+    cudaPointerAttributes attrs;
+    auto status = cudaPointerGetAttributes(&attrs, ptr);
+    if (status != cudaSuccess || (attrs.type != cudaMemoryTypeDevice &&
+                                  attrs.type != cudaMemoryTypeManaged))
+    {
+      cudaGetLastError();
+      throw sundials4py::error_returned(
+        "JAX array pointer is not CUDA-accessible");
+    }
+    source_type = attrs.type == cudaMemoryTypeManaged ? SUNMEMTYPE_UVM
+                                                      : SUNMEMTYPE_DEVICE;
+  }
+
+  auto content = static_cast<N_VectorContent_Cuda>(v->content);
+  if (!content->device_data)
+  {
+    throw sundials4py::error_returned(
+      "CUDA N_Vector does not have device storage");
+  }
+
+  auto source = SUNMemoryHelper_Wrap(content->mem_helper,
+                                     const_cast<sunrealtype*>(ptr), source_type);
+  if (!source)
+  {
+    throw sundials4py::error_returned("Failed to wrap the JAX array pointer");
+  }
+
+  auto stream      = cuda_stream(v);
+  auto cuda_status = cudaStreamSynchronize(
+    stream ? *static_cast<const cudaStream_t*>(stream) : cudaStream_t{});
+  SUNErrCode copy_status = SUN_SUCCESS;
+  if (cuda_status == cudaSuccess)
+  {
+    copy_status = SUNMemoryHelper_Copy(content->mem_helper,
+                                       content->device_data, source,
+                                       length * sizeof(sunrealtype), stream);
+    if (copy_status == SUN_SUCCESS)
+    {
+      cuda_status = cudaStreamSynchronize(
+        stream ? *static_cast<const cudaStream_t*>(stream) : cudaStream_t{});
+    }
+  }
+
+  auto dealloc_status = SUNMemoryHelper_Dealloc(content->mem_helper, source,
+                                                stream);
+  if (cuda_status != cudaSuccess || copy_status != SUN_SUCCESS ||
+      dealloc_status != SUN_SUCCESS)
+  {
+    cudaGetLastError();
+    throw sundials4py::error_returned(
+      "Failed to copy JAX array data into the CUDA N_Vector");
+  }
+}
+
 } // namespace nvector_detail
 
 namespace {
@@ -189,42 +246,6 @@ using nvector_detail::is_cuda_nvector;
 using nvector_detail::parse_device;
 using nvector_detail::replace_cuda_array_pointer;
 using nvector_detail::require_cuda_nvector;
-using nvector_detail::retain_python_device_array;
-using nvector_detail::retain_python_host_array;
-
-void check_length(sunindextype vec_length, sundials4py::Array1d data)
-{
-  if (data.shape(0) != static_cast<size_t>(vec_length))
-  {
-    throw sundials4py::error_returned(
-      "Array shape does not match vector length");
-  }
-}
-
-void check_length(sunindextype vec_length, CudaArray1d data)
-{
-  if (data.shape(0) != static_cast<size_t>(vec_length))
-  {
-    throw sundials4py::error_returned(
-      "CUDA array shape does not match vector length");
-  }
-}
-
-void check_length(sunindextype vec_length, nb::object data)
-{
-  if (!PyObject_HasAttrString(data.ptr(), "shape"))
-  {
-    throw sundials4py::error_returned("Device array does not have a shape");
-  }
-
-  auto shape = nb::cast<nb::tuple>(data.attr("shape"));
-  if (shape.size() != 1 ||
-      nb::cast<size_t>(shape[0]) != static_cast<size_t>(vec_length))
-  {
-    throw sundials4py::error_returned(
-      "Device array shape does not match vector length");
-  }
-}
 
 std::uintptr_t device_array_pointer(nb::object data)
 {
@@ -259,6 +280,21 @@ int device_id_for_pointer(void* ptr)
 void sync_to_host(N_Vector v)
 {
   if (is_cuda_nvector(v)) { N_VCopyFromDevice_Cuda(v); }
+}
+
+void sync_device(N_Vector v)
+{
+  require_cuda_nvector(v);
+  auto content = static_cast<N_VectorContent_Cuda>(v->content);
+  auto stream  = content->stream_exec_policy
+                   ? *content->stream_exec_policy->stream()
+                   : cudaStream_t{};
+  if (cudaStreamSynchronize(stream) != cudaSuccess)
+  {
+    cudaGetLastError();
+    throw sundials4py::error_returned(
+      "Failed to synchronize CUDA N_Vector data");
+  }
 }
 
 struct CudaDeviceArrayPointer
@@ -307,6 +343,8 @@ nb::object device_pointer_object(N_Vector v)
 
 nb::object get_numpy_array(N_Vector v)
 {
+  // Keep CUDA accessors specialized to make synchronization explicit and avoid
+  // runtime backend dispatch on this performance-sensitive path.
   sync_to_host(v);
   return nb::cast(host_array(v));
 }
@@ -314,6 +352,7 @@ nb::object get_numpy_array(N_Vector v)
 nb::object get_cupy_array(N_Vector v)
 {
   require_cuda_nvector(v);
+  sync_device(v);
   return nb::module_::import_("cupy").attr("from_dlpack")(
     device_pointer_object(v));
 }
@@ -330,6 +369,7 @@ nb::object get_torch_tensor(N_Vector v, nb::object device)
   }
 
   require_cuda_nvector(v);
+  sync_device(v);
   return torch.attr("utils").attr("dlpack").attr("from_dlpack")(
     device_pointer_object(v));
 }
@@ -346,13 +386,9 @@ nb::object get_jax_array(N_Vector v, nb::object device)
   }
 
   require_cuda_nvector(v);
+  sync_device(v);
   return nb::module_::import_("jax").attr("dlpack").attr(
     "from_dlpack")(device_pointer_object(v), nb::none(), false);
-}
-
-std::shared_ptr<std::remove_pointer_t<N_Vector>> wrap_nvector(N_Vector v)
-{
-  return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(v);
 }
 
 } // namespace
@@ -377,21 +413,23 @@ void bind_nvector_cuda(nb::module_& m)
   m.def(
     "N_VNewEmpty_Cuda",
     [](SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-    { return wrap_nvector(N_VNewEmpty_Cuda(sunctx)); },
+    { return nvector_detail::wrap_nvector(N_VNewEmpty_Cuda(sunctx)); },
     nb::arg("sunctx"), nb::keep_alive<0, 1>());
 
   m.def(
     "N_VNew_Cuda",
     [](sunindextype vec_length,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-    { return wrap_nvector(N_VNew_Cuda(vec_length, sunctx)); },
+    { return nvector_detail::wrap_nvector(N_VNew_Cuda(vec_length, sunctx)); },
     nb::arg("vec_length"), nb::arg("sunctx"), nb::keep_alive<0, 2>());
 
   m.def(
     "N_VNewManaged_Cuda",
     [](sunindextype vec_length,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-    { return wrap_nvector(N_VNewManaged_Cuda(vec_length, sunctx)); },
+    {
+      return nvector_detail::wrap_nvector(N_VNewManaged_Cuda(vec_length, sunctx));
+    },
     nb::arg("vec_length"), nb::arg("sunctx"), nb::keep_alive<0, 2>());
 
   m.def(
@@ -400,7 +438,7 @@ void bind_nvector_cuda(nb::module_& m)
        SUNMemoryHelper helper,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
-      return wrap_nvector(
+      return nvector_detail::wrap_nvector(
         N_VNewWithMemHelp_Cuda(vec_length, use_managed_mem, helper, sunctx));
     },
     nb::arg("vec_length"), nb::arg("use_managed_mem"), nb::arg("helper"),
@@ -412,14 +450,15 @@ void bind_nvector_cuda(nb::module_& m)
        std::uintptr_t d_vdata,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
-      check_length(vec_length, h_vdata_1d);
+      nvector_detail::require_vector_length(vec_length, h_vdata_1d);
       auto v = N_VMake_Cuda(vec_length, h_vdata_1d.data(),
                             reinterpret_cast<sunrealtype*>(d_vdata), sunctx);
-      retain_python_host_array(v, h_vdata_1d.cast());
-      return wrap_nvector(v);
+      return nvector_detail::wrap_nvector(v);
     },
     nb::arg("vec_length"), nb::arg("h_vdata_1d"), nb::arg("d_vdata"),
-    nb::arg("sunctx"), nb::keep_alive<0, 4>());
+    // Constructor arguments have the same lifetime as the returned wrapper, so
+    // keep_alive avoids the explicit owner registry used by later replacements.
+    nb::arg("sunctx"), nb::keep_alive<0, 2>(), nb::keep_alive<0, 4>());
 
   m.def(
     "N_VMake_Cuda",
@@ -427,16 +466,15 @@ void bind_nvector_cuda(nb::module_& m)
        CudaArray1d d_vdata_1d,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
-      check_length(vec_length, h_vdata_1d);
-      check_length(vec_length, d_vdata_1d);
+      nvector_detail::require_vector_length(vec_length, h_vdata_1d);
+      nvector_detail::require_vector_length(vec_length, d_vdata_1d, "CUDA array");
       auto v = N_VMake_Cuda(vec_length, h_vdata_1d.data(), d_vdata_1d.data(),
                             sunctx);
-      retain_python_host_array(v, h_vdata_1d.cast());
-      retain_python_device_array(v, d_vdata_1d.cast());
-      return wrap_nvector(v);
+      return nvector_detail::wrap_nvector(v);
     },
     nb::arg("vec_length"), nb::arg("h_vdata_1d").noconvert(),
-    nb::arg("d_vdata_1d").noconvert(), nb::arg("sunctx"), nb::keep_alive<0, 4>());
+    nb::arg("d_vdata_1d").noconvert(), nb::arg("sunctx"),
+    nb::keep_alive<0, 2>(), nb::keep_alive<0, 3>(), nb::keep_alive<0, 4>());
 
   m.def(
     "N_VMake_Cuda",
@@ -444,97 +482,29 @@ void bind_nvector_cuda(nb::module_& m)
        nb::object d_vdata_1d,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
-      check_length(vec_length, h_vdata_1d);
-      check_length(vec_length, d_vdata_1d);
+      nvector_detail::require_vector_length(vec_length, h_vdata_1d);
+      nvector_detail::require_vector_length(vec_length, d_vdata_1d);
       auto v = N_VMake_Cuda(vec_length, h_vdata_1d.data(),
                             reinterpret_cast<sunrealtype*>(
                               device_array_pointer(d_vdata_1d)),
                             sunctx);
-      retain_python_host_array(v, h_vdata_1d.cast());
-      retain_python_device_array(v, std::move(d_vdata_1d));
-      return wrap_nvector(v);
+      return nvector_detail::wrap_nvector(v);
     },
     nb::arg("vec_length"), nb::arg("h_vdata_1d").noconvert(),
-    nb::arg("d_vdata_1d"), nb::arg("sunctx"), nb::keep_alive<0, 4>());
+    nb::arg("d_vdata_1d"), nb::arg("sunctx"), nb::keep_alive<0, 2>(),
+    nb::keep_alive<0, 3>(), nb::keep_alive<0, 4>());
 
   m.def(
     "N_VMakeManaged_Cuda",
     [](sunindextype vec_length, std::uintptr_t vdata,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
-      return wrap_nvector(
+      return nvector_detail::wrap_nvector(
         N_VMakeManaged_Cuda(vec_length, reinterpret_cast<sunrealtype*>(vdata),
                             sunctx));
     },
     nb::arg("vec_length"), nb::arg("vdata"), nb::arg("sunctx"),
     nb::keep_alive<0, 3>());
-
-  m.def(
-    "N_VSetHostArrayPointer_Cuda",
-    [](sundials4py::Array1d h_vdata_1d, N_Vector v)
-    {
-      check_length(N_VGetLength(v), h_vdata_1d);
-      replace_cuda_array_pointer(v, h_vdata_1d.data(), ArrayDevice::Cpu,
-                                 h_vdata_1d.cast());
-    },
-    nb::arg("h_vdata_1d"), nb::arg("v"),
-    "Replace the CUDA N_Vector host pointer with borrowed Python-owned "
-    "storage.");
-
-  // Expose the generic N_VSetDeviceArrayPointer to Python with CUDA-aware
-  // overloads. This replaces the previous CUDA-specific Python binding
-  // N_VSetDeviceArrayPointer_Cuda which is removed intentionally.
-  m.def(
-    "N_VSetDeviceArrayPointer",
-    [](std::uintptr_t d_vdata, N_Vector v)
-    {
-      replace_cuda_array_pointer(v, reinterpret_cast<sunrealtype*>(d_vdata),
-                                 ArrayDevice::Cuda);
-    },
-    nb::arg("d_vdata"), nb::arg("v"),
-    "Replace owned device storage with a borrowed raw pointer. The caller "
-    "must keep the allocation alive.");
-
-  m.def(
-    "N_VSetDeviceArrayPointer",
-    [](CudaArray1d d_vdata_1d, N_Vector v)
-    {
-      check_length(N_VGetLength(v), d_vdata_1d);
-      replace_cuda_array_pointer(v, d_vdata_1d.data(), ArrayDevice::Cuda,
-                                 d_vdata_1d.cast());
-    },
-    nb::arg("d_vdata_1d").noconvert(), nb::arg("v"),
-    "Replace owned device storage with a borrowed Python array and retain "
-    "its owner.");
-
-  m.def(
-    "N_VSetDeviceArrayPointer",
-    [](nb::object d_vdata_1d, N_Vector v)
-    {
-      check_length(N_VGetLength(v), d_vdata_1d);
-      replace_cuda_array_pointer(v,
-                                 reinterpret_cast<sunrealtype*>(
-                                   device_array_pointer(d_vdata_1d)),
-                                 ArrayDevice::Cuda, std::move(d_vdata_1d));
-    },
-    nb::arg("d_vdata_1d"), nb::arg("v"),
-    "Replace owned device storage with a borrowed Python array and retain "
-    "its owner.");
-
-  m.def(
-    "N_VGetHostArrayPointer_Cuda",
-    [](N_Vector x)
-    {
-      auto ptr = N_VGetHostArrayPointer_Cuda(x);
-      if (!ptr)
-      {
-        throw sundials4py::error_returned("Failed to get host array pointer");
-      }
-      auto owner = nb::find(x);
-      size_t shape[1]{static_cast<size_t>(N_VGetLength(x))};
-      return sundials4py::Array1d(ptr, 1, shape, owner);
-    },
-    nb::rv_policy::reference);
 
   m.def(
     "N_VGetDeviceArrayPointer",
