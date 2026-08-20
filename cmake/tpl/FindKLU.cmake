@@ -139,8 +139,8 @@ set(KLU_LIBRARIES ${KLU_LIBRARY} ${AMD_LIBRARY} ${COLAMD_LIBRARY}
 # checks and consumers can resolve SuiteSparse components such as CHOLMOD.
 find_package(BLAS)
 if(BLAS_FOUND)
-  list(APPEND KLU_LIBRARIES ${BLAS_LIBRARIES})
-  message(STATUS "Found BLAS libraries: ${BLAS_LIBRARIES}")
+  list(APPEND KLU_LIBRARIES BLAS::BLAS)
+  message(STATUS "Found BLAS target: BLAS::BLAS")
 else()
   message(
     STATUS
