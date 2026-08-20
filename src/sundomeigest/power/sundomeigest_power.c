@@ -475,7 +475,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V, Av);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return retval; }
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     normw = N_VDotProd(Av, Av);
     SUNCheckLastErr();
@@ -496,7 +496,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V, Av);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return retval; }
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     newlambdaR = N_VDotProd(V, Av); //Rayleigh quotient
     SUNCheckLastErr();
@@ -523,7 +523,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR, normw,
                                                          v_prev, V, lambdaR,
                                                          lambdaI);
-    if (retval != 0) { return retval; }
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
   }
   else
   {
@@ -665,7 +665,7 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
 
     retval = ATimes(ATdata, v, Av);
     (*num_ATimes)++;
-    if (retval != 0) { return retval; }
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     h12 = N_VDotProd(v_prev, Av);
     SUNCheckLastErr();

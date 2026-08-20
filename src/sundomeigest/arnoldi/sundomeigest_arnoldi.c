@@ -478,7 +478,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V[0], Av);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return retval; }
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
@@ -510,7 +510,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V[i], V[i + 1]);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return retval; }
+    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
 
     SUNCheckCall(SUNModifiedGS(V, Hes, i + 1, (int)n, &(Hes[i + 1][i])));
 
