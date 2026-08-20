@@ -68,7 +68,7 @@
 
 int sundomeigest_Compare(const void* a, const void* b);
 
-SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv);
+int dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv);
 
 /*
  * -----------------------------------------------------------------
@@ -478,7 +478,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V[0], Av);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval != 0) { return retval; }
 
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
@@ -510,7 +510,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V[i], V[i + 1]);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval != 0) { return retval; }
 
     SUNCheckCall(SUNModifiedGS(V, Hes, i + 1, (int)n, &(Hes[i + 1][i])));
 
@@ -746,7 +746,7 @@ int sundomeigest_Compare(const void* a, const void* b)
       sig = sign(y^T v) * sqrt(unit roundoff)
             * max(|y^T v|, ||v||_1) / (v^T v).
   ---------------------------------------------------------------*/
-SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
+int dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
 {
   SUNDomEigEstimator DEE = (SUNDomEigEstimator)voidstarDEE;
   SUNFunctionBegin(DEE->sunctx);
@@ -800,11 +800,11 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
     if (prerhs_fn != NULL)
     {
       retval = prerhs_fn(rhs_linT, y, prerhs_fn_data);
-      if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
+      if (retval != 0) { return -1; }
     }
     retval = rhsfn(rhs_linT, y, Fy, rhs_data);
     (*nfevals)++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval != 0) { return -1; }
     *Fy_is_current = SUNTRUE;
   }
 
@@ -824,19 +824,19 @@ SUNErrCode dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
     if (prerhs_fn != NULL)
     {
       retval = prerhs_fn(rhs_linT, work, prerhs_fn_data);
-      if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
+      if (retval != 0) { return -1; }
     }
     retval = rhsfn(rhs_linT, work, Jv, rhs_data);
     (*nfevals)++;
     if (retval == 0) { break; }
-    if (retval < 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval < 0) { return -1; }
 
     /* If f failed recoverably, shrink sig and retry */
     sig *= SUN_RCONST(0.25);
   }
 
   /* If retval still isn't 0, return with a recoverable failure */
-  if (retval > 0) { return SUN_ERR_USER_FCN_FAIL; }
+  if (retval > 0) { return +1; }
 
   /* Replace Jv by (Jv - fn)/sig */
   siginv = ONE / sig;

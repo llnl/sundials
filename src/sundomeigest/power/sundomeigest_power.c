@@ -65,7 +65,7 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   SUNDomEigEstimator DEE, sunrealtype lambdaR, sunrealtype h21, N_Vector v_prev,
   N_Vector v, sunrealtype* lambdaR_out, sunrealtype* lambdaI_out);
 
-SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv);
+int dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv);
 
 /* ----------------------------------------------------------------------------
  * Function to create a new PI estimator
@@ -475,7 +475,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V, Av);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval != 0) { return retval; }
 
     normw = N_VDotProd(Av, Av);
     SUNCheckLastErr();
@@ -496,7 +496,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     retval = ATimes(ATdata, V, Av);
     (*num_ATimes)++;
     (*num_iters)++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval != 0) { return retval; }
 
     newlambdaR = N_VDotProd(V, Av); //Rayleigh quotient
     SUNCheckLastErr();
@@ -665,7 +665,7 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
 
     retval = ATimes(ATdata, v, Av);
     (*num_ATimes)++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval != 0) { return retval; }
 
     h12 = N_VDotProd(v_prev, Av);
     SUNCheckLastErr();
@@ -766,7 +766,7 @@ SUNErrCode SUNDomEigEstimator_Destroy_Power(SUNDomEigEstimator* DEEptr)
       sig = sign(y^T v) * sqrt(unit roundoff)
             * max(|y^T v|, ||v||_1) / (v^T v).
   ---------------------------------------------------------------*/
-SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
+int dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
 {
   SUNDomEigEstimator DEE = (SUNDomEigEstimator)voidstarDEE;
   SUNFunctionBegin(DEE->sunctx);
@@ -820,11 +820,11 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
     if (prerhs_fn != NULL)
     {
       retval = prerhs_fn(rhs_linT, y, prerhs_fn_data);
-      if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
+      if (retval != 0) { return -1; }
     }
     retval = rhsfn(rhs_linT, y, Fy, rhs_data);
     (*nfevals)++;
-    if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval != 0) { return -1; }
     *Fy_is_current = SUNTRUE;
   }
 
@@ -844,19 +844,19 @@ SUNErrCode dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
     if (prerhs_fn != NULL)
     {
       retval = prerhs_fn(rhs_linT, work, prerhs_fn_data);
-      if (retval != 0) { return SUN_ERR_USER_PRERHSFN_FAIL; }
+      if (retval != 0) { return -1; }
     }
     retval = rhsfn(rhs_linT, work, Jv, rhs_data);
     (*nfevals)++;
     if (retval == 0) { break; }
-    if (retval < 0) { return SUN_ERR_USER_FCN_FAIL; }
+    if (retval < 0) { return -1; }
 
     /* If f failed recoverably, shrink sig and retry */
     sig *= SUN_RCONST(0.25);
   }
 
   /* If retval still isn't 0, return with a recoverable failure */
-  if (retval > 0) { return SUN_ERR_USER_FCN_FAIL; }
+  if (retval > 0) { return +1; }
 
   /* Replace Jv by (Jv - fn)/sig */
   siginv = ONE / sig;

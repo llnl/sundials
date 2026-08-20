@@ -50,8 +50,7 @@
   ENTRY(SUN_ERR_NOT_IMPLEMENTED,                                               \
         "operation is not implemented: function pointer is NULL")              \
   ENTRY(SUN_ERR_USER_FCN_FAIL, "the user provided callback function failed")   \
-  ENTRY(SUN_ERR_USER_PRERHSFN_FAIL,                                            \
-        "the user provided preprocess RHS function failed")                    \
+                                                                               \
   ENTRY(SUN_ERR_DATANODE_NODENOTFOUND, "the data node could not be found")     \
                                                                                \
   ENTRY(SUN_ERR_PROFILER_MAPFULL,                                              \
