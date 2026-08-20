@@ -465,9 +465,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
 
   int retval;
   sunbooleantype converged;
-  sunrealtype normw;
-  *num_ATimes = 0;
-  *num_iters  = 0;
+  sunrealtype normw = ZERO;
+  *num_ATimes       = 0;
+  *num_iters        = 0;
 
   /* Set the initial q = A^{num_warmups}q/||A^{num_warmups}q|| */
   for (int i = 0; i < num_warmups; i++)
