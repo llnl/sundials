@@ -22,6 +22,9 @@ device data pointer for vector implementations with a device memory space.
 
 ### Bug Fixes
 
+Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point
+due to convergence rate check occurring after only one iteration.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.8.0
