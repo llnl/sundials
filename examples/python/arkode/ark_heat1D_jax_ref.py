@@ -131,9 +131,7 @@ def solve_heat1d(name, y, problem, sunctx, n=101, k=0.01):
 
 
 def select_device(requested, jax):
-    cuda_devices = [
-        device for device in jax.devices() if device.platform in ("cuda", "gpu")
-    ]
+    cuda_devices = [device for device in jax.devices() if device.platform in ("cuda", "gpu")]
     if requested == "auto":
         if hasattr(sun, "N_VMake_Cuda") and cuda_devices:
             return cuda_devices[0]
@@ -221,14 +219,9 @@ class JaxRefHeat1DProblem:
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--n", type=int, default=101, help="number of spatial grid points")
     parser.add_argument(
-        "--n", type=int, default=101, help="number of spatial grid points"
-    )
-    parser.add_argument(
-        "--device",
-        choices=("auto", "cpu", "cuda"),
-        default="auto",
-        help="JAX device to use",
+        "--device", choices=("auto", "cpu", "cuda"), default="auto", help="JAX device to use"
     )
     args = parser.parse_args()
     if args.n < 3:
@@ -243,11 +236,7 @@ def main():
 
     device = select_device(args.device, jax)
     array_device = "cuda" if device.platform in ("cuda", "gpu") else "cpu"
-    dtype = (
-        jnp.float32
-        if np.dtype(sun.sunrealtype) == np.dtype(np.float32)
-        else jnp.float64
-    )
+    dtype = jnp.float32 if np.dtype(sun.sunrealtype) == np.dtype(np.float32) else jnp.float64
 
     status, sunctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
     assert status == sun.SUN_SUCCESS
