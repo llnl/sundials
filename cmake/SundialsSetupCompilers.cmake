@@ -50,6 +50,9 @@ endif()
 # ===============================================================
 
 if(SKBUILD AND SUNDIALS_ENABLE_PYTHON)
+  # Include directories of external libraries linked into a wheel in its RPATH.
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
   if(WIN32)
     # Python extension modules can load DLL dependencies from their own
     # directory, so place SUNDIALS DLLs beside sundials4py.pyd in wheels.

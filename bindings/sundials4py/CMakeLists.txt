@@ -129,12 +129,10 @@ if(SKBUILD)
     set_target_properties(
       sundials4py
       PROPERTIES INSTALL_NAME_DIR "@rpath"
-                 INSTALL_RPATH "@loader_path/${CMAKE_INSTALL_LIBDIR}"
-                 INSTALL_RPATH_USE_LINK_PATH TRUE)
+                 INSTALL_RPATH "@loader_path/${CMAKE_INSTALL_LIBDIR}")
   elseif(UNIX)
     set_target_properties(
-      sundials4py PROPERTIES INSTALL_RPATH "$ORIGIN/${CMAKE_INSTALL_LIBDIR}"
-                             INSTALL_RPATH_USE_LINK_PATH TRUE)
+      sundials4py PROPERTIES INSTALL_RPATH "$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
   endif()
 endif()
 
