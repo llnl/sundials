@@ -134,12 +134,19 @@ endif()
 set(KLU_LIBRARIES ${KLU_LIBRARY} ${AMD_LIBRARY} ${COLAMD_LIBRARY}
                   ${BTF_LIBRARY} ${SUITESPARSECONFIG_LIBRARY})
 
+# Keep the library list usable by the generated example makefiles and
+# CMakeLists.txt files. Imported targets are valid in a SUNDIALS build, but
+# those installed examples are standalone projects and cannot use a target
+# such as BLAS::BLAS without defining it themselves.
+set(KLU_LINK_LIBRARIES ${KLU_LIBRARIES})
+
 # Manual library discovery does not get the transitive SuiteSparse link
 # interface from an upstream config package. Add BLAS when available so KLU link
 # checks and consumers can resolve SuiteSparse components such as CHOLMOD.
 find_package(BLAS)
 if(BLAS_FOUND)
-  list(APPEND KLU_LIBRARIES BLAS::BLAS)
+  list(APPEND KLU_LIBRARIES ${BLAS_LIBRARIES})
+  list(APPEND KLU_LINK_LIBRARIES BLAS::BLAS)
   message(STATUS "Found BLAS target: BLAS::BLAS")
 else()
   message(
@@ -162,7 +169,7 @@ if(KLU_FOUND)
   set_target_properties(
     SUNDIALS::KLU
     PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${KLU_INCLUDE_DIR}"
-               INTERFACE_LINK_LIBRARIES "${KLU_LIBRARIES}"
+               INTERFACE_LINK_LIBRARIES "${KLU_LINK_LIBRARIES}"
                IMPORTED_LOCATION "${KLU_LIBRARY}")
 
 endif()
