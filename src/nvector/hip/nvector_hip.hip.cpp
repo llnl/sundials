@@ -125,6 +125,7 @@ N_Vector N_VNewEmpty_Hip(SUNContext sunctx)
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Hip;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Hip;
   v->ops->nvsetarraypointer       = N_VSetHostArrayPointer_Hip;
+  v->ops->nvsetdevicearraypointer = N_VSetDeviceArrayPointer_Hip;
 
   /* standard vector operations */
   v->ops->nvlinearsum    = N_VLinearSum_Hip;
