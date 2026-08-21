@@ -186,6 +186,44 @@ inline sundials4py::Array1d host_array(N_Vector v)
   return sundials4py::Array1d(ptr, 1, shape, owner);
 }
 
+template<typename GetNumpyArray, typename GetJaxArray, typename GetCupyArray,
+         typename GetTorchTensor>
+inline void bind_nvector_array_accessors(nanobind::module_& m,
+                                         GetNumpyArray get_numpy_array,
+                                         GetJaxArray get_jax_array,
+                                         GetCupyArray get_cupy_array,
+                                         GetTorchTensor get_torch_tensor)
+{
+  m.def("N_VGetNumpyArray", get_numpy_array, nanobind::arg("v"),
+        "Return a NumPy view of an N_Vector's host data.\n\n"
+        "The returned one-dimensional array shares storage with the N_Vector, "
+        "so modifying the array modifies the vector. For a CUDA N_Vector, "
+        "device data is copied to host storage before the view is returned.");
+
+  m.def("N_VGetJaxArray", get_jax_array, nanobind::arg("v"),
+        nanobind::arg("device").none() = nanobind::none(),
+        "Return a JAX array view of an N_Vector's data.\n\n"
+        "The device argument may be 'cpu', 'host', or 'cuda' when supported "
+        "by the build and N_Vector. If it is None, the N_Vector's native "
+        "device is used. The returned array shares storage with the "
+        "N_Vector. JAX arrays are immutable; use N_VSetJaxArray to copy "
+        "values into an N_Vector or to attach mutable JAX Ref storage.");
+
+  m.def("N_VGetCupyArray", get_cupy_array, nanobind::arg("v"),
+        "Return a CuPy view of a CUDA N_Vector's device data.\n\n"
+        "This function requires a CUDA N_Vector and a CUDA-enabled "
+        "sundials4py build. The returned array shares device storage with "
+        "the N_Vector.");
+
+  m.def("N_VGetTorchTensor", get_torch_tensor, nanobind::arg("v"),
+        nanobind::arg("device").none() = nanobind::none(),
+        "Return a PyTorch tensor view of an N_Vector's data.\n\n"
+        "The device argument may be 'cpu', 'host', or 'cuda' when supported "
+        "by the build and N_Vector. If it is None, the N_Vector's native "
+        "device is used. The returned tensor shares storage with the "
+        "N_Vector.");
+}
+
 template<typename Array>
 inline void require_vector_length(sunindextype vec_length, const Array& array,
                                   const char* array_name = "Array")
