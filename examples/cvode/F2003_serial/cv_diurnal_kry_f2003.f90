@@ -390,8 +390,8 @@ contains
       p21 = p(2, 1, i)
       det = p11*p22 - p12*p21
       if (det == 0.d0) then
-         ierr=1
-         return
+        ierr = 1
+        return
       end if
 
       p(1, 1, i) = p22/det
