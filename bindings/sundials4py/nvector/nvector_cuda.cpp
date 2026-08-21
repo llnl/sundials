@@ -510,15 +510,32 @@ void bind_nvector_cuda(nb::module_& m)
     "N_VGetDeviceArrayPointer",
     [](N_Vector x) { return CudaDeviceArrayPointer(x); }, nb::arg("x"));
 
-  m.def("N_VGetNumpyArray", &get_numpy_array, nb::arg("v"));
+  m.def("N_VGetNumpyArray", &get_numpy_array, nb::arg("v"),
+        "Return a NumPy view of an N_Vector's host data.\n\n"
+        "The returned one-dimensional array shares storage with the N_Vector, "
+        "so modifying the array modifies the vector. For a CUDA N_Vector, "
+        "device data is copied to host storage before the view is returned.");
 
   m.def("N_VGetJaxArray", &get_jax_array, nb::arg("v"),
-        nb::arg("device").none() = nb::none());
+        nb::arg("device").none() = nb::none(),
+        "Return a JAX array view of an N_Vector's data.\n\n"
+        "The device argument may be 'cpu', 'host', or 'cuda'. If it is None, "
+        "the N_Vector's native device is used. The returned array shares "
+        "storage with the N_Vector. JAX arrays are immutable; use "
+        "N_VSetJaxArray to copy values into an N_Vector or attach mutable "
+        "JAX Ref storage.");
 
-  m.def("N_VGetCupyArray", &get_cupy_array, nb::arg("v"));
+  m.def("N_VGetCupyArray", &get_cupy_array, nb::arg("v"),
+        "Return a CuPy view of a CUDA N_Vector's device data.\n\n"
+        "This function requires a CUDA N_Vector. The returned array shares "
+        "device storage with the N_Vector.");
 
   m.def("N_VGetTorchTensor", &get_torch_tensor, nb::arg("v"),
-        nb::arg("device").none() = nb::none());
+        nb::arg("device").none() = nb::none(),
+        "Return a PyTorch tensor view of an N_Vector's data.\n\n"
+        "The device argument may be 'cpu', 'host', or 'cuda'. If it is None, "
+        "the N_Vector's native device is used. The returned tensor shares "
+        "storage with the N_Vector.");
 }
 
 } // namespace sundials4py
