@@ -90,6 +90,7 @@ module diurnal_mod
   integer(c_int), parameter  :: maxL = 0
   integer(c_long), parameter :: mxsteps = 1000
   real(c_double) :: p_p(2, 2, mx, my)
+  real(c_double) :: p_bd(2, 2, mx, my)
 
   ! ODE non-constant parameters
   real(c_double) :: q3
@@ -235,7 +236,6 @@ contains
 
     ! temporary variables
     real(c_double), pointer, dimension(2, mx, my) :: u(:, :, :)
-    real(c_double) :: p_bd(2, 2, mx, my)
     u(1:2, 1:mx, 1:my) => FN_VGetArrayPointer(sunvec_u)
 
     ! initialize return value to success
