@@ -136,8 +136,8 @@ set(KLU_LIBRARIES ${KLU_LIBRARY} ${AMD_LIBRARY} ${COLAMD_LIBRARY}
 
 # Keep the library list usable by the generated example makefiles and
 # CMakeLists.txt files. Imported targets are valid in a SUNDIALS build, but
-# those installed examples are standalone projects and cannot use a target
-# such as BLAS::BLAS without defining it themselves.
+# those installed examples are standalone projects and cannot use a target such
+# as BLAS::BLAS without defining it themselves.
 set(KLU_LINK_LIBRARIES ${KLU_LIBRARIES})
 
 # Manual library discovery does not get the transitive SuiteSparse link
