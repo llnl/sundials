@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <optional>
 
 #include <nvector/nvector_serial.h>
 #include <sundials/sundials_nvector.hpp>
@@ -143,11 +144,24 @@ nvector_detail::ArrayDevice check_jax_array(N_Vector v, nb::object data, bool co
   return device;
 }
 
-void set_jax_array(nb::object data, N_Vector v, bool copy)
+void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
 {
-  auto device = check_jax_array(v, data, copy);
-  auto jax    = nb::module_::import_("jax");
-  if (copy) { data.attr("block_until_ready")(); }
+  if (!copy.has_value())
+  {
+    if (nvector_detail::is_jax_array(data)) { copy = true; }
+    else if (nvector_detail::is_jax_ref(data)) { copy = false; }
+    else
+    {
+      throw sundials4py::error_returned(
+        "N_VSetJaxArray requires a jax.Array or jax.ref.Ref when "
+        "copy=None");
+    }
+  }
+
+  const bool copy_array = *copy;
+  auto device           = check_jax_array(v, data, copy_array);
+  auto jax              = nb::module_::import_("jax");
+  if (copy_array) { data.attr("block_until_ready")(); }
   else { jax.attr("effects_barrier")(); }
 
   auto source_address =
@@ -163,7 +177,7 @@ void set_jax_array(nb::object data, N_Vector v, bool copy)
         "A serial N_Vector requires a JAX array on the CPU");
     }
 
-    if (copy)
+    if (copy_array)
     {
       auto destination = N_VGetArrayPointer(v);
       auto length      = N_VGetLength(v);
@@ -188,7 +202,10 @@ void set_jax_array(nb::object data, N_Vector v, bool copy)
 #ifdef SUNDIALS_NVECTOR_CUDA
   if (vector_id == SUNDIALS_NVEC_CUDA)
   {
-    if (copy) { nvector_detail::copy_to_cuda_array_pointer(v, source, device); }
+    if (copy_array)
+    {
+      nvector_detail::copy_to_cuda_array_pointer(v, source, device);
+    }
     else
     {
       if (device != nvector_detail::ArrayDevice::Cuda)
@@ -299,9 +316,11 @@ void bind_nvector(nb::module_& m)
 #endif
 
   m.def("N_VSetJaxArray", &set_jax_array, nb::arg("array"), nb::arg("v"),
-        nb::kw_only(), nb::arg("copy") = true,
+        nb::kw_only(), nb::arg("copy").none() = nb::none(),
         "Set an N_Vector from a JAX array.\n\n"
-        "With copy=True, array must be a one-dimensional jax.Array whose "
+        "If copy is None, its value is inferred from array: jax.Array uses "
+        "copy=True and jax.ref.Ref uses copy=False. With copy=True, array "
+        "must be a one-dimensional jax.Array whose "
         "length and floating-point dtype match the N_Vector. Its values are "
         "copied into the existing N_Vector storage. With copy=False, array "
         "must be a one-dimensional jax.ref.Ref; its storage is attached to "

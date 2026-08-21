@@ -198,7 +198,7 @@ class JaxRefHeat1DProblem:
         ref = self.jax.ref.new_ref(initial)
         ref[...].block_until_ready()
 
-        sun.N_VSetJaxArray(ref, nvec, copy=False)
+        sun.N_VSetJaxArray(ref, nvec)
 
         self.refs[nvec] = ref
         return ref

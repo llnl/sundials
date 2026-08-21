@@ -190,13 +190,13 @@ def test_set_nvector_serial_jax_ref(sunctx):
     ref[...].block_until_ready()
     nvec = N_VNew_Serial(5, sunctx)
 
-    with pytest.raises(RuntimeError, match="copy=True requires a jax.Array"):
-        N_VSetJaxArray(ref, nvec)
-
     ref_pointer = ref.unsafe_buffer_pointer()
     ref_weak = weakref.ref(ref)
-    N_VSetJaxArray(ref, nvec, copy=False)
+    N_VSetJaxArray(ref, nvec)
     assert N_VGetArrayPointer(nvec).ctypes.data == ref_pointer
+
+    with pytest.raises(RuntimeError, match="copy=True requires a jax.Array"):
+        N_VSetJaxArray(ref, nvec, copy=True)
 
     del array, ref
     gc.collect()
@@ -474,14 +474,15 @@ def test_set_nvector_cuda_jax_ref(sunctx):
         jax.device_put(jnp.zeros(5, dtype=_jax_dtype(jnp)), jax.devices("cpu")[0])
     )
 
-    with pytest.raises(RuntimeError, match="copy=True requires a jax.Array"):
-        N_VSetJaxArray(ref, nvec)
     with pytest.raises(RuntimeError, match="requires a JAX Ref on a CUDA device"):
         N_VSetJaxArray(cpu_ref, nvec, copy=False)
 
     ref_weak = weakref.ref(ref)
-    N_VSetJaxArray(ref, nvec, copy=False)
+    N_VSetJaxArray(ref, nvec)
     assert int(N_VGetDeviceArrayPointer(nvec)) == ref.unsafe_buffer_pointer()
+
+    with pytest.raises(RuntimeError, match="copy=True requires a jax.Array"):
+        N_VSetJaxArray(ref, nvec, copy=True)
 
     del d_arr, ref
     gc.collect()
