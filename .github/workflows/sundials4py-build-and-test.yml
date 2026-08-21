@@ -66,6 +66,9 @@ jobs:
         path: wheelhouse/*.whl
         name: dist-${{ matrix.os }}
 
+  sundials4py-test-array-backends:
+    name: Test CPU array backends
+    uses: ./.github/workflows/sundials4py-test-array-backends.yml
 
   sundials4py-build-wheels-extra:
     name: Build extra wheels on ${{ matrix.os }} (${{ matrix.precision }}/${{ matrix.index }})
