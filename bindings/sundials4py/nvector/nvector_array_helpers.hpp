@@ -142,7 +142,7 @@ inline bool is_jax_array(nanobind::handle obj)
   return nanobind::isinstance(obj, jax.attr("Array"));
 }
 
-inline std::string optional_string(nanobind::object value)
+inline std::string read_optional_string(nanobind::object value)
 {
   if (object_is_none(value)) { return ""; }
   try
@@ -162,7 +162,7 @@ inline bool is_cuda_nvector(N_Vector v)
 
 inline ArrayDevice parse_device(nanobind::object device, N_Vector v)
 {
-  auto value = optional_string(device);
+  auto value = read_optional_string(device);
   if (value.empty())
   {
     return is_cuda_nvector(v) ? ArrayDevice::Cuda : ArrayDevice::Cpu;
