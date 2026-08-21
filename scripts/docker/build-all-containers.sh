@@ -6,10 +6,6 @@
 #   :spack-vX.Y.Z  - built against a pinned Spack release
 #   :spack-develop - built against Spack develop
 #
-# These tags intentionally do NOT overwrite the existing :latest tag. The
-# existing :latest containers remain available while the new containers are
-# validated. Once validated, re-tag the new containers as :latest.
-#
 # Update SPACK_RELEASE when a new Spack version is tagged. Also update the
 # spack-public mirror URL in each spack.yaml to match.
 # ------------------------------------------------------------------------------
