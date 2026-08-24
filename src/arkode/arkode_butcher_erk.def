@@ -51,7 +51,6 @@
      ARKODE_ARK2_ERK_3_1_2*               Y
      ARKODE_ASCHER_ERK_3_1_2*             Y
      ARKODE_SSP_LSPUM_ERK_3_1_2*          Y
-     ARKODE_ARS222_ERK_3_1_2              Y
      ARKODE_BOGACKI_SHAMPINE_4_2_3        Y
      ARKODE_ARK324L2SA_ERK_4_2_3*         Y
      ARKODE_SHU_OSHER_3_2_3               Y
@@ -161,35 +160,6 @@ ARK_BUTCHER_TABLE(ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2, { /* Explicit-Midpoint-E
     B->c[1] = SUN_RCONST(1.0) / SUN_RCONST(2.0);
     return B;
  })
-
-ARK_BUTCHER_TABLE(ARKODE_ARS222_ERK_3_1_2, {
-/* explicit table of ARK(2,2,2) method from https://doi.org/10.1016/S0168-9274(97)00056-1
-   with custom embedding */
-    ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
-
-    /* 1 - 1 / sqrt(2) */
-    const sunrealtype gamma = SUN_RCONST(1.0) - SUN_RCONST(1.0) / SUNRsqrt(SUN_RCONST(2.0));
-    /* 1 - 1/(2*gamma) */
-    const sunrealtype delta = SUN_RCONST(1.0) - SUN_RCONST(1.0) / (SUN_RCONST(2.0) * gamma);
-
-    B->q = 2;
-    B->p = 1;
-
-    B->A[1][0] = gamma;
-    B->A[2][0] = delta;
-    B->A[2][1] = SUN_RCONST(1.0) - delta;
-
-    B->b[0] = delta;
-    B->b[1] = SUN_RCONST(1.0) - delta;
-
-    B->d[1] = SUN_RCONST(0.6);
-    B->d[2] = SUN_RCONST(0.4);
-
-    B->c[1] = gamma;
-    B->c[2] = SUN_RCONST(1.0);
-
-    return B;
-  })
 
 ARK_BUTCHER_TABLE(ARKODE_ARK2_ERK_3_1_2, { /* ARK2 Explicit Table */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);

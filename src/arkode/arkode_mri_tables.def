@@ -1200,7 +1200,7 @@ ARK_MRI_TABLE(ARKODE_MERK54, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
   })
 
 ARK_MRI_TABLE(ARKODE_MRI_GARK_EXP_ARS222, { /* custom */
-    ARKodeButcherTable B = ARKodeButcherTable_LoadERK(ARKODE_ARS222_ERK_3_1_2);
+    ARKodeButcherTable B = ARKodeButcherTable_LoadERK(ARKODE_ASCHER_ERK_3_1_2);
     MRIStepCoupling C = MRIStepCoupling_MIStoMRI(B, B->q, B->p);
     ARKodeButcherTable_Free(B);
     return C;
