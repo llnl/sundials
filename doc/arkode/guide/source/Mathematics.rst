@@ -851,7 +851,7 @@ where the three right hand side terms are:
   be integrated using an explicit method (e.g., advective transport), and
 
 * :math:`f^I(t,y)` contains the components of the system that should
-  be integrated using an L-stable implicit method (e.g., reaction terms).
+  be integrated using an implicit method (e.g., reaction terms).
 
 ExtSTS methods require :math:`f^D` and at least one of :math:`f^E`
 or :math:`f^I`, since applications without :math:`f^D` can be handled

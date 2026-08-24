@@ -39,17 +39,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     return NULL;
   }
 
-  /*   RKC method */
-  int retval = LSRKStepSetSTSMethod(sts_mem, ARKODE_LSRK_RKC_2);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set RKC method for ExtSTS method.");
-    ARKodeFree(&sts_mem);
-    return NULL;
-  }
-
-  /*   Increase the maximum number of internal stages */
+  /* Increase the maximum number of internal stages */
   retval = LSRKStepSetMaxNumStages(sts_mem, 10000);
   if (retval != ARK_SUCCESS)
   {

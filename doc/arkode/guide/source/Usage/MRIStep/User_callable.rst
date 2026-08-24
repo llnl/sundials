@@ -110,7 +110,7 @@ MRIStep initialization and deallocation functions
 .. c:function:: void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0, SUNContext sunctx)
 
    This function allocates and initializes memory for a problem to be solved
-   using a MRIStep to perform an ExtSTS time-stepping method.
+   using an ExtSTS time-stepping method.
 
    :param fd: the user-defined function for the diffusive dynamics (required).
    :param fe: the user-defined function for the explicit dynamics
@@ -149,7 +149,7 @@ MRIStep initialization and deallocation functions
          retval = ARKodeSet*(sts_mem, ...);
 
    **Example codes:**
-      * ``examples/arkode/CXX_serial/ark_xxx.cpp``
+      * ``examples/arkode/CXX_serial/ark_adr1d_extsts.cpp``
 
    .. versionadded:: x.y.z
 
@@ -804,13 +804,13 @@ Optional inputs for MRIStep
    :param arkode_mem: pointer to the MRIStep memory block.
    :param dom_eig: the name of user-supplied dominant eigenvalue approximation function.
 
-      :retval ARK_SUCCESS: if successful
-      :retval ARK_MEM_NULL: if ``arkode_mem`` was ``NULL``.
+   :retval ARK_SUCCESS: if successful
+   :retval ARK_MEM_NULL: if ``arkode_mem`` was ``NULL``.
 
    .. note::
 
       When using ExtSTS methods, users must either call :c:func:`MRIStepExtSTSSetDomEigFn`
-      to supply a :c:type:`ARKDomEigFn` function, or or attach a dominant eigenvalue
+      to supply a :c:type:`ARKDomEigFn` function, or attach a dominant eigenvalue
       estimator to the inner LSRKStep solver by first calling :c:func:`MRIStepGetSTSStepper`
       and then calling :c:func:`LSRKStepSetDomEigEstimator`.
 

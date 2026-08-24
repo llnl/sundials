@@ -157,7 +157,7 @@ A skeleton of the user's main program for ExtSTS methods
 ========================================================
 
 When using MRIStep to construct an extended super time stepping (ExtSTS)
-method, it's usage differs somewhat from the standard MRIStep usage.
+method, its usage differs somewhat from the standard MRIStep usage.
 Namely, since ExtSTS methods are a special case of MRIStep methods, but
 where the inner integrator consists of a single step of a STS method,
 some of the "setup" for MRIStep is simplified.  Steps that are unchanged
@@ -174,19 +174,20 @@ from the skeleton program presented above are *italicized*.
 #. *Set vector of initial values*
 
 #. Create the MRIStep object for ExtSTS methods by calling
-   func:`MRIStepCreateExtSTS`.
+   :c:func:`MRIStepCreateExtSTS`.
 
 #. Set optional inputs
 
    * If an implicit partition is present, or if the user wishes to adjust
-     configuration of the MRI aspects of the ExtSTS solver, they may
+     the configuration of the MRI aspects of the ExtSTS solver, they may
      configure these by calling the relevant MRIStep configuration
      functions directly on the MRIStep object, e.g.,
      :c:func:`MRIStepSetCoupling` or :c:func:`ARKodeSetNonlinearSolver`.
 
-   * If the user wishes to adjust configuration of the LSRKStep component
+   * If the user wishes to adjust the configuration of the LSRKStep component
      inside the ExtSTS solver object, access the LSRKStep object by calling
-     :c:func:`MRIStepGetSTSStepper` and configure it as normal.
+     :c:func:`MRIStepGetSTSStepper` and configure the returned solver object
+     as normal using ``ARKodeSet`` or ``LSRKStepSet`` functions.
 
 #. *Specify rootfinding problem*
 
