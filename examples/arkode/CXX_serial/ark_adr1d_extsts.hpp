@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
- * Header file for extsts advection-diffusion-reaction equation example, see
+ * Header file for ExtSTS advection-diffusion-reaction equation example, see
  * ark_adr1d_extsts.cpp for more details.
  * ---------------------------------------------------------------------------*/
 

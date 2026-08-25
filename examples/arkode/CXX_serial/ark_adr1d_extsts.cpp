@@ -141,10 +141,6 @@ int main(int argc, char* argv[])
   flag = ARKodeSStolerances(arkode_mem, uopts.rtol, uopts.atol);
   if (check_flag(flag, "ARKodeSStolerances")) { return 1; }
 
-  // Attach user data
-  flag = ARKodeSetUserData(arkode_mem, &udata);
-  if (check_flag(flag, "ARKodeSetUserData")) { return 1; }
-
   // If implicit, setup solvers
   if (udata.reaction)
   {

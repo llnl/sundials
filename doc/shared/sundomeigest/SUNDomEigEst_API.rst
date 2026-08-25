@@ -476,16 +476,6 @@ provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described bel
    unchanged.
 
 
-.. c:type:: int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)
-
-   Used to compute the right-hand side of an ODE or DAE system. This function is used
-   when the dominant eigenvalue estimator is configured to perform a discrete
-   Jacobian-vector product using quotient approximations of the Jacobian. The parameter
-   *rhs_data* is a pointer to any information about RHS which the function needs in order
-   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left
-   unchanged.
-
-
 .. _SUNDomEigEst.Generic:
 
 The generic SUNDomEigEstimator module
