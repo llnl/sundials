@@ -62,6 +62,7 @@ module fnvector_manyvector_mod
  public :: FN_VWrmsNormVectorArray_ManyVector
  public :: FN_VWrmsNormMaskVectorArray_ManyVector
  public :: FN_VDotProdLocal_ManyVector
+ public :: FN_VDotProdComplex_ManyVector
  public :: FN_VMaxNormLocal_ManyVector
  public :: FN_VMinLocal_ManyVector
  public :: FN_VL1NormLocal_ManyVector
@@ -392,6 +393,16 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 real(C_DOUBLE) :: fresult
+end function
+
+function swigc_FN_VDotProdComplex_ManyVector(farg1, farg2, farg3) &
+bind(C, name="_wrap_FN_VDotProdComplex_ManyVector") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
 end function
 
 function swigc_FN_VMaxNormLocal_ManyVector(farg1) &
@@ -1173,6 +1184,25 @@ type(C_PTR) :: farg2
 farg1 = c_loc(x)
 farg2 = c_loc(y)
 fresult = swigc_FN_VDotProdLocal_ManyVector(farg1, farg2)
+swig_result = fresult
+end function
+
+function FN_VDotProdComplex_ManyVector(x, y, result) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(N_Vector), target, intent(inout) :: x
+type(N_Vector), target, intent(inout) :: y
+real(C_DOUBLE), dimension(*), target, intent(inout) :: result
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = c_loc(x)
+farg2 = c_loc(y)
+farg3 = c_loc(result(1))
+fresult = swigc_FN_VDotProdComplex_ManyVector(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

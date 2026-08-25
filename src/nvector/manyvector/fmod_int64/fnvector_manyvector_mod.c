@@ -698,6 +698,22 @@ SWIGEXPORT double _wrap_FN_VDotProdLocal_ManyVector(N_Vector farg1, N_Vector far
 }
 
 
+SWIGEXPORT int _wrap_FN_VDotProdComplex_ManyVector(N_Vector farg1, N_Vector farg2, double *farg3) {
+  int fresult ;
+  N_Vector arg1 = (N_Vector) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  sunscalartype *arg3 = (sunscalartype *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (N_Vector)(farg1);
+  arg2 = (N_Vector)(farg2);
+  arg3 = (sunscalartype *)(farg3);
+  result = (SUNErrCode)N_VDotProdComplex_ManyVector(arg1,arg2,arg3);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT double _wrap_FN_VMaxNormLocal_ManyVector(N_Vector farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;

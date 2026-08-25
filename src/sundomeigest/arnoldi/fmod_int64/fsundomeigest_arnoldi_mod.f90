@@ -84,6 +84,8 @@ module fsundomeigest_arnoldi_mod
   procedure :: get_LAPACK_work => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_work_get
   procedure :: set_LAPACK_lwork => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_lwork_set
   procedure :: get_LAPACK_lwork => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_lwork_get
+  procedure :: set_LAPACK_rwork => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_set
+  procedure :: get_LAPACK_rwork => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_get
   procedure :: set_LAPACK_arr => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_arr_set
   procedure :: get_LAPACK_arr => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_arr_get
   procedure :: set_Hes => swigf_SUNDomEigEstimatorContent_Arnoldi__Hes_set
@@ -484,6 +486,23 @@ use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
 integer(C_INT64_T) :: fresult
+end function
+
+subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_set(farg1, farg2) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_get(farg1) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__LAPACK_arr_set(farg1, farg2) &
@@ -1225,6 +1244,31 @@ type(SwigClassWrapper) :: farg1
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__LAPACK_lwork_get(farg1)
 swig_result = fresult
+end function
+
+subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_set(self, lapack_rwork)
+use, intrinsic :: ISO_C_BINDING
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: lapack_rwork
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(lapack_rwork(1))
+call swigc_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__LAPACK_rwork_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
 end function
 
 subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_arr_set(self, lapack_arr)

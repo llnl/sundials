@@ -1110,10 +1110,10 @@ SWIGEXPORT void _wrap_FN_VSetArrayPointer(double *farg1, N_Vector farg2) {
 
 
 SWIGEXPORT void _wrap_FN_VSetDeviceArrayPointer(double *farg1, N_Vector farg2) {
-  sunrealtype *arg1 = (sunrealtype *) 0 ;
+  sunscalartype *arg1 = (sunscalartype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
-  arg1 = (sunrealtype *)(farg1);
+  arg1 = (sunscalartype *)(farg1);
   arg2 = (N_Vector)(farg2);
   N_VSetDeviceArrayPointer(arg1,arg2);
 }
