@@ -62,7 +62,7 @@ struct _N_VectorContent_Parallel
   sunindextype local_length;  /* local vector length         */
   sunindextype global_length; /* global vector length        */
   sunbooleantype own_data;    /* ownership of data           */
-  sunrealtype* data;          /* local data array            */
+  sunscalartype* data;        /* local data array            */
   MPI_Comm comm;              /* pointer to MPI communicator */
 };
 
@@ -105,7 +105,7 @@ N_Vector N_VNewEmpty_Parallel(MPI_Comm comm, sunindextype local_length,
 
 SUNDIALS_EXPORT
 N_Vector N_VMake_Parallel(MPI_Comm comm, sunindextype local_length,
-                          sunindextype global_length, sunrealtype* v_data_1d,
+                          sunindextype global_length, sunscalartype* v_data_1d,
                           SUNContext sunctx);
 
 SUNDIALS_EXPORT
@@ -140,7 +140,7 @@ SUNDIALS_EXPORT
 sunscalartype* N_VGetArrayPointer_Parallel(N_Vector v);
 
 SUNDIALS_EXPORT
-void N_VSetArrayPointer_Parallel(sunrealtype* v_data, N_Vector v);
+void N_VSetArrayPointer_Parallel(sunscalartype* v_data, N_Vector v);
 
 SUNDIALS_EXPORT
 MPI_Comm N_VGetCommunicator_Parallel(N_Vector v);
@@ -148,11 +148,11 @@ MPI_Comm N_VGetCommunicator_Parallel(N_Vector v);
 /* standard vector operations */
 
 SUNDIALS_EXPORT
-void N_VLinearSum_Parallel(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
-                           N_Vector z);
+void N_VLinearSum_Parallel(sunscalartype a, N_Vector x, sunscalartype b,
+                           N_Vector y, N_Vector z);
 
 SUNDIALS_EXPORT
-void N_VConst_Parallel(sunrealtype c, N_Vector z);
+void N_VConst_Parallel(sunscalartype c, N_Vector z);
 
 SUNDIALS_EXPORT
 void N_VProd_Parallel(N_Vector x, N_Vector y, N_Vector z);
@@ -161,7 +161,7 @@ SUNDIALS_EXPORT
 void N_VDiv_Parallel(N_Vector x, N_Vector y, N_Vector z);
 
 SUNDIALS_EXPORT
-void N_VScale_Parallel(sunrealtype c, N_Vector x, N_Vector z);
+void N_VScale_Parallel(sunscalartype c, N_Vector x, N_Vector z);
 
 SUNDIALS_EXPORT
 void N_VAbs_Parallel(N_Vector x, N_Vector z);
@@ -170,10 +170,14 @@ SUNDIALS_EXPORT
 void N_VInv_Parallel(N_Vector x, N_Vector z);
 
 SUNDIALS_EXPORT
-void N_VAddConst_Parallel(N_Vector x, sunrealtype b, N_Vector z);
+void N_VAddConst_Parallel(N_Vector x, sunscalartype b, N_Vector z);
 
 SUNDIALS_EXPORT
 sunrealtype N_VDotProd_Parallel(N_Vector x, N_Vector y);
+
+SUNDIALS_EXPORT
+SUNErrCode N_VDotProdComplex_Parallel(N_Vector x, N_Vector y,
+                                      sunscalartype* result);
 
 SUNDIALS_EXPORT
 sunrealtype N_VMaxNorm_Parallel(N_Vector x);
@@ -207,26 +211,26 @@ sunrealtype N_VMinQuotient_Parallel(N_Vector num, N_Vector denom);
 
 /* fused vector operations */
 SUNDIALS_EXPORT
-SUNErrCode N_VLinearCombination_Parallel(int nvec, sunrealtype* c, N_Vector* V,
-                                         N_Vector z);
+SUNErrCode N_VLinearCombination_Parallel(int nvec, sunscalartype* c,
+                                         N_Vector* V, N_Vector z);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VScaleAddMulti_Parallel(int nvec, sunrealtype* a, N_Vector x,
+SUNErrCode N_VScaleAddMulti_Parallel(int nvec, sunscalartype* a, N_Vector x,
                                      N_Vector* Y, N_Vector* Z);
 SUNDIALS_EXPORT
 SUNErrCode N_VDotProdMulti_Parallel(int nvec, N_Vector x, N_Vector* Y,
-                                    sunrealtype* dotprods);
+                                    sunscalartype* dotprods);
 
 /* vector array operations */
 SUNDIALS_EXPORT
-SUNErrCode N_VLinearSumVectorArray_Parallel(int nvec, sunrealtype a,
-                                            N_Vector* X, sunrealtype b,
+SUNErrCode N_VLinearSumVectorArray_Parallel(int nvec, sunscalartype a,
+                                            N_Vector* X, sunscalartype b,
                                             N_Vector* Y, N_Vector* Z);
 SUNDIALS_EXPORT
-SUNErrCode N_VScaleVectorArray_Parallel(int nvec, sunrealtype* c, N_Vector* X,
+SUNErrCode N_VScaleVectorArray_Parallel(int nvec, sunscalartype* c, N_Vector* X,
                                         N_Vector* Z);
 SUNDIALS_EXPORT
-SUNErrCode N_VConstVectorArray_Parallel(int nvecs, sunrealtype c, N_Vector* Z);
+SUNErrCode N_VConstVectorArray_Parallel(int nvecs, sunscalartype c, N_Vector* Z);
 
 SUNDIALS_EXPORT
 SUNErrCode N_VWrmsNormVectorArray_Parallel(int nvecs, N_Vector* X, N_Vector* W,
@@ -236,11 +240,11 @@ SUNErrCode N_VWrmsNormMaskVectorArray_Parallel(int nvec, N_Vector* X, N_Vector* 
                                                N_Vector id, sunrealtype* nrm);
 SUNDIALS_EXPORT
 SUNErrCode N_VScaleAddMultiVectorArray_Parallel(int nvec, int nsum,
-                                                sunrealtype* a, N_Vector* X,
+                                                sunscalartype* a, N_Vector* X,
                                                 N_Vector** Y, N_Vector** Z);
 SUNDIALS_EXPORT
 SUNErrCode N_VLinearCombinationVectorArray_Parallel(int nvec, int nsum,
-                                                    sunrealtype* c,
+                                                    sunscalartype* c,
                                                     N_Vector** X, N_Vector* Z);
 
 /* OPTIONAL local reduction kernels (no parallel communication) */
@@ -276,11 +280,11 @@ sunrealtype N_VMinQuotientLocal_Parallel(N_Vector num, N_Vector denom);
 
 SUNDIALS_EXPORT
 SUNErrCode N_VDotProdMultiLocal_Parallel(int nvec, N_Vector x, N_Vector* Y,
-                                         sunrealtype* dotprods);
+                                         sunscalartype* dotprods);
 
 SUNDIALS_EXPORT
 SUNErrCode N_VDotProdMultiAllReduce_Parallel(int nvec_total, N_Vector x,
-                                             sunrealtype* dotprods);
+                                             sunscalartype* dotprods);
 
 /* OPTIONAL XBraid interface operations */
 

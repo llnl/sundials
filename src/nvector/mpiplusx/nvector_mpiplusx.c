@@ -60,12 +60,12 @@ N_Vector_ID N_VGetVectorID_MPIPlusX(SUNDIALS_MAYBE_UNUSED N_Vector v)
 sunscalartype* N_VGetArrayPointer_MPIPlusX(N_Vector v)
 {
   SUNFunctionBegin(v->sunctx);
-  sunrealtype* arr = N_VGetSubvectorArrayPointer_MPIManyVector(v, 0);
+  sunscalartype* arr = N_VGetSubvectorArrayPointer_MPIManyVector(v, 0);
   SUNCheckLastErrNull();
   return arr;
 }
 
-void N_VSetArrayPointer_MPIPlusX(sunrealtype* vdata, N_Vector v)
+void N_VSetArrayPointer_MPIPlusX(sunscalartype* vdata, N_Vector v)
 {
   SUNFunctionBegin(v->sunctx);
   N_VSetSubvectorArrayPointer_MPIManyVector(vdata, v, 0);

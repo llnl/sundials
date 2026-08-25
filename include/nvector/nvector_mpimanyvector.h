@@ -152,6 +152,10 @@ SUNDIALS_EXPORT
 sunrealtype N_VDotProd_MPIManyVector(N_Vector x, N_Vector y);
 
 SUNDIALS_EXPORT
+SUNErrCode N_VDotProdComplex_MPIManyVector(N_Vector x, N_Vector y,
+                                           sunscalartype* result);
+
+SUNDIALS_EXPORT
 sunrealtype N_VMaxNorm_MPIManyVector(N_Vector x);
 
 SUNDIALS_EXPORT
@@ -199,7 +203,7 @@ SUNErrCode N_VDotProdMultiLocal_MPIManyVector(int nvec, N_Vector x, N_Vector* Y,
 
 SUNDIALS_EXPORT
 SUNErrCode N_VDotProdMultiAllReduce_MPIManyVector(int nvec_total, N_Vector x,
-                                                  sunrealtype* sum);
+                                                  sunscalartype* sum);
 
 /* vector array operations */
 SUNDIALS_EXPORT

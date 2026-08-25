@@ -70,6 +70,8 @@ static N_Vector ManyVectorClone(N_Vector w, sunbooleantype cloneempty);
 #ifdef MANYVECTOR_BUILD_WITH_MPI
 static int SubvectorMPIRank(N_Vector w);
 #endif
+static SUNErrCode MVAPPEND(VdotProdLocalComplex)(N_Vector x, N_Vector y,
+                                                 sunscalartype* result);
 
 /* -----------------------------------------------------------------
    ManyVector API routines
@@ -122,6 +124,7 @@ N_Vector N_VMake_MPIManyVector(MPI_Comm comm, sunindextype num_subvectors,
   v->ops->nvinv          = N_VInv_MPIManyVector;
   v->ops->nvaddconst     = N_VAddConst_MPIManyVector;
   v->ops->nvdotprod      = N_VDotProd_MPIManyVector;
+  v->ops->nvdotprodcomplex = N_VDotProdComplex_MPIManyVector;
   v->ops->nvmaxnorm      = N_VMaxNorm_MPIManyVector;
   v->ops->nvwrmsnorm     = N_VWrmsNorm_MPIManyVector;
   v->ops->nvwrmsnormmask = N_VWrmsNormMask_MPIManyVector;
@@ -144,6 +147,7 @@ N_Vector N_VMake_MPIManyVector(MPI_Comm comm, sunindextype num_subvectors,
 
   /* local reduction operations */
   v->ops->nvdotprodlocal     = N_VDotProdLocal_MPIManyVector;
+  v->ops->nvdotprodlocalcomplex = VdotProdLocalComplex_MPIManyVector;
   v->ops->nvmaxnormlocal     = N_VMaxNormLocal_MPIManyVector;
   v->ops->nvminlocal         = N_VMinLocal_MPIManyVector;
   v->ops->nvl1normlocal      = N_VL1NormLocal_MPIManyVector;
@@ -342,6 +346,7 @@ N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array,
   v->ops->nvinv          = N_VInv_ManyVector;
   v->ops->nvaddconst     = N_VAddConst_ManyVector;
   v->ops->nvdotprod      = N_VDotProdLocal_ManyVector;
+  v->ops->nvdotprodcomplex = N_VDotProdComplex_ManyVector;
   v->ops->nvmaxnorm      = N_VMaxNormLocal_ManyVector;
   v->ops->nvwrmsnorm     = N_VWrmsNorm_ManyVector;
   v->ops->nvwrmsnormmask = N_VWrmsNormMask_ManyVector;
@@ -364,6 +369,7 @@ N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array,
 
   /* local reduction operations */
   v->ops->nvdotprodlocal     = N_VDotProdLocal_ManyVector;
+  v->ops->nvdotprodlocalcomplex = VdotProdLocalComplex_ManyVector;
   v->ops->nvmaxnormlocal     = N_VMaxNormLocal_ManyVector;
   v->ops->nvminlocal         = N_VMinLocal_ManyVector;
   v->ops->nvl1normlocal      = N_VL1NormLocal_ManyVector;
@@ -816,6 +822,72 @@ sunrealtype N_VDotProd_MPIManyVector(N_Vector x, N_Vector y)
                                        MPI_SUM, MANYVECTOR_COMM(x)));
   }
   return (gsum);
+}
+#endif
+
+/* Computes the local complex dot product of two ManyVectors by accumulating
+   the corresponding local dot products of their subvectors. */
+static SUNErrCode MVAPPEND(VdotProdLocalComplex)(N_Vector x, N_Vector y,
+                                                 sunscalartype* result)
+{
+  SUNFunctionBegin(x->sunctx);
+  sunindextype i;
+  sunscalartype sum = ZERO, contrib;
+
+  for (i = 0; i < MANYVECTOR_NUM_SUBVECS(x); i++)
+  {
+    N_Vector subx = MANYVECTOR_SUBVEC(x, i);
+    N_Vector suby = MANYVECTOR_SUBVEC(y, i);
+
+    if (subx->ops->nvdotprodlocalcomplex)
+    {
+      SUNCheckCall(N_VDotProdLocalComplex(subx, suby, &contrib));
+      sum += contrib;
+    }
+    else
+    {
+#ifdef MANYVECTOR_BUILD_WITH_MPI
+      int rank = SubvectorMPIRank(subx);
+      if (rank < 0) { return SUN_ERR_MPI_FAIL; }
+      if (rank == 0)
+      {
+        SUNCheckCall(N_VDotProdComplex(subx, suby, &contrib));
+        sum += contrib;
+      }
+#else
+      SUNCheckCall(N_VDotProdComplex(subx, suby, &contrib));
+      sum += contrib;
+#endif
+    }
+  }
+
+  *result = sum;
+  return SUN_SUCCESS;
+}
+
+#ifdef MANYVECTOR_BUILD_WITH_MPI
+SUNErrCode N_VDotProdComplex_MPIManyVector(N_Vector x, N_Vector y,
+                                           sunscalartype* result)
+{
+  SUNFunctionBegin(x->sunctx);
+  sunscalartype lsum;
+
+  SUNCheckCall(VdotProdLocalComplex_MPIManyVector(x, y, &lsum));
+  if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
+  {
+    SUNCheckMPICall(MPI_Allreduce(&lsum, result, 1, MPI_SUNSCALARTYPE,
+                                  MPI_SUM, MANYVECTOR_COMM(x)));
+  }
+  else { *result = lsum; }
+
+  return SUN_SUCCESS;
+}
+#else
+SUNErrCode N_VDotProdComplex_ManyVector(N_Vector x, N_Vector y,
+                                        sunscalartype* result)
+{
+  SUNFunctionBegin(x->sunctx);
+  return VdotProdLocalComplex_ManyVector(x, y, result);
 }
 #endif
 
@@ -1451,15 +1523,16 @@ SUNErrCode MVAPPEND(N_VDotProdMultiLocal)(int nvec, N_Vector x, N_Vector* Y,
 
 #ifdef MANYVECTOR_BUILD_WITH_MPI
 SUNErrCode N_VDotProdMultiAllReduce_MPIManyVector(int nvec_total, N_Vector x,
-                                                  sunrealtype* sum)
+                                                  sunscalartype* sum)
 {
   SUNFunctionBegin(x->sunctx);
 
   /* accumulate totals and return */
   if (MANYVECTOR_COMM(x) == MPI_COMM_NULL) { return SUN_ERR_ARG_CORRUPT; }
 
-  SUNCheckMPICall(MPI_Allreduce(MPI_IN_PLACE, sum, nvec_total, MPI_SUNREALTYPE,
-                                MPI_SUM, MANYVECTOR_COMM(x)));
+  SUNCheckMPICall(MPI_Allreduce(MPI_IN_PLACE, sum, nvec_total,
+                                MPI_SUNSCALARTYPE, MPI_SUM,
+                                MANYVECTOR_COMM(x)));
 
   return SUN_SUCCESS;
 }
@@ -1548,7 +1621,8 @@ SUNErrCode MVAPPEND(N_VScaleAddMulti)(int nvec, sunscalartype* a, N_Vector x,
   return SUN_SUCCESS;
 }
 
-/* Performs the DotProdMulti operation by calling N_VDotProdLocal and combining results.
+/* Performs the DotProdMulti operation by calling N_VDotProdLocalComplex and
+   combining results.
    This routine does not check that x, or the components of Y, are ManyVectors, if
    they have the same number of subvectors, or if these subvectors are compatible.
 
@@ -1562,19 +1636,19 @@ SUNErrCode MVAPPEND(N_VDotProdMulti)(int nvec, N_Vector x, N_Vector* Y,
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
 
-  /* call N_VDotProdLocal for each <x,Y[i]> pair */
+  /* call N_VDotProdLocalComplex for each <x,Y[i]> pair */
   for (i = 0; i < nvec; i++)
   {
-    dotprods[i] = N_VDotProdLocal(x, Y[i]);
-    SUNCheckLastErr();
+    SUNCheckCall(N_VDotProdLocalComplex(x, Y[i], &dotprods[i]));
   }
 
 #ifdef MANYVECTOR_BUILD_WITH_MPI
   /* accumulate totals and return */
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
   {
-    SUNCheckMPICall(MPI_Allreduce(MPI_IN_PLACE, dotprods, nvec, MPI_SUNREALTYPE,
-                                  MPI_SUM, MANYVECTOR_COMM(x)));
+    SUNCheckMPICall(MPI_Allreduce(MPI_IN_PLACE, dotprods, nvec,
+                                  MPI_SUNSCALARTYPE, MPI_SUM,
+                                  MANYVECTOR_COMM(x)));
   }
 #endif
 

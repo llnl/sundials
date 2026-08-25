@@ -43,7 +43,7 @@ SUNDIALS_EXPORT
 sunscalartype* N_VGetArrayPointer_MPIPlusX(N_Vector v);
 
 SUNDIALS_EXPORT
-void N_VSetArrayPointer_MPIPlusX(sunrealtype* vdata, N_Vector v);
+void N_VSetArrayPointer_MPIPlusX(sunscalartype* vdata, N_Vector v);
 
 SUNDIALS_EXPORT
 N_Vector N_VGetLocalVector_MPIPlusX(N_Vector v);
