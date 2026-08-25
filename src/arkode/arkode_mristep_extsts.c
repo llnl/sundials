@@ -40,7 +40,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   }
 
   /* Increase the maximum number of internal stages */
-  retval = LSRKStepSetMaxNumStages(sts_mem, 10000);
+  int retval = LSRKStepSetMaxNumStages(sts_mem, 10000);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
@@ -250,17 +250,18 @@ int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
 }
 
 /* Accessor routine for the inner LSRKStep solver from an ExtSTS method */
-void* MRIStepGetSTSStepper(void* arkode_mem)
+int MRIStepExtSTSGetSTS(void* arkode_mem, void** sts_mem)
 {
   /* access ARKodeMem and ARKodeMRIStepMem structures */
   ARKodeMem ark_mem         = NULL;
   ARKodeMRIStepMem step_mem = NULL;
   int retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
                                            &step_mem);
-  if (retval != ARK_SUCCESS) { return NULL; }
+  if (retval) { return retval; }
 
-  /* return pointer to STS integrator */
-  return (void*)step_mem->extsts_inner_stepper->sts_mem;
+  /* store return pointer to STS integrator */
+  *sts_mem = (void*)step_mem->extsts_inner_stepper->sts_mem;
+  return ARK_SUCCESS;
 }
 
 /* Inner stepper utility routines */

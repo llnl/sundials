@@ -1641,14 +1641,16 @@ Main solver optional output functions
 
 
 
-.. c:function:: void* MRIStepGetSTSStepper(void* arkode_mem)
+.. c:function:: int MRIStepExtSTSGetSTS(void* arkode_mem, void** stsptr)
 
    Returns a pointer to the LSRKStep super-time-stepping object
    used within the MRIStep module when performing ExtSTS time-stepping.
 
    :param arkode_mem: pointer to the MRIStep memory block.
+   :param stsptr: pointer to the LSRKStep super-time-stepping object.
 
-   :return: If successful, a pointer to the LSRKStep memory block. If unsuccessful, a ``NULL`` pointer will be returned.
+   :retval ARK_SUCCESS: if successful
+   :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
    .. versionadded:: x.y.z
 

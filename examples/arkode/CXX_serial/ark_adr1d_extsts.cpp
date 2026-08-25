@@ -87,6 +87,7 @@ int main(int argc, char* argv[])
 
   // ARKODE memory structures
   void* arkode_mem = nullptr;
+  void* sts_mem    = nullptr;
 
   // Matrix and linear solver for IMEX or ExtSTS integrators
   SUNMatrix A        = nullptr;
@@ -110,8 +111,8 @@ int main(int argc, char* argv[])
   if (check_ptr(arkode_mem, "MRIStepCreateExtSTS")) { return 1; }
 
   // Access inner LSRKStep solver
-  void* sts_mem = MRIStepGetSTSStepper(arkode_mem);
-  if (check_ptr(sts_mem, "MRIStepGetSTSStepper")) { return 1; }
+  flag = MRIStepExtSTSGetSTS(arkode_mem, &sts_mem);
+  if (check_flag(flag, "MRIStepExtSTSGetSTS")) { return 1; }
 
   // Attach user data (this attaches to both MRIStep and LSRKStep)
   flag = ARKodeSetUserData(arkode_mem, &udata);
