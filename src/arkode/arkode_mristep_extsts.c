@@ -26,7 +26,7 @@
 #include "arkode_mristep_impl.h"
 
 /* MRIStep ExtSTS constructor routine */
-void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
+void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
                           N_Vector y0, SUNContext sunctx)
 {
   /* Create LSRKStep integrator and configure with ExtSTS defaults */
@@ -208,7 +208,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
 }
 
 /* MRIStep ExtSTS reinitialization routine */
-int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
+int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
                         sunrealtype t0, N_Vector y0)
 {
   /* access ARKodeMem and ARKodeMRIStepMem structures */
@@ -307,7 +307,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
     return retval;
   }
 
-  return 0;
+  return ARK_SUCCESS;
 }
 
 int extSTSInnerStepper_FullRhs(MRIStepInnerStepper sts_mem, sunrealtype t,
@@ -324,7 +324,7 @@ int extSTSInnerStepper_FullRhs(MRIStepInnerStepper sts_mem, sunrealtype t,
     return retval;
   }
 
-  return 0;
+  return ARK_SUCCESS;
 }
 
 int extSTSInnerStepper_Reset(MRIStepInnerStepper sts_mem, sunrealtype tR,
@@ -336,14 +336,15 @@ int extSTSInnerStepper_Reset(MRIStepInnerStepper sts_mem, sunrealtype tR,
   {
     arkProcessError(EXTSTS_STSARKMEM(sts_mem), retval, __LINE__, __func__,
                     __FILE__, "Failed to reset LSRKStep for ExtSTS method.");
+    return retval;
   }
-  return 0;
+  return ARK_SUCCESS;
 }
 
 int extSTSInnerStepper_Free(MRIStepInnerStepper* sts_mem)
 {
   /* If the input is NULL, do nothing */
-  if (sts_mem == NULL || *sts_mem == NULL) { return 0; }
+  if (sts_mem == NULL || *sts_mem == NULL) { return ARK_SUCCESS; }
 
   /* Access the inner stepper content */
   extSTSInnerStepper inner_content = (extSTSInnerStepper)(*sts_mem)->content;
@@ -356,7 +357,7 @@ int extSTSInnerStepper_Free(MRIStepInnerStepper* sts_mem)
 
   /* Set the input pointer to NULL */
   *sts_mem = NULL;
-  return 0;
+  return ARK_SUCCESS;
 }
 
 int extSTSInnerStepper_fd_forcing(sunrealtype t, N_Vector y, N_Vector f,

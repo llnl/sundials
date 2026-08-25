@@ -174,7 +174,7 @@ from the skeleton program presented above are *italicized*.
 #. *Set vector of initial values*
 
 #. Create the MRIStep object for ExtSTS methods by calling
-   :c:func:`MRIStepCreateExtSTS`.
+   :c:func:`MRIStepExtSTSCreate`.
 
 #. Set optional inputs
 
@@ -186,7 +186,7 @@ from the skeleton program presented above are *italicized*.
 
    * If the user wishes to adjust the configuration of the LSRKStep component
      inside the ExtSTS solver object, access the LSRKStep object by calling
-     :c:func:`MRIStepGetSTSStepper` and configure the returned solver object
+     :c:func:`MRIStepExtSTSGetSTS` and configure the returned solver object
      as normal using ``ARKodeSet`` or ``LSRKStepSet`` functions.
 
 #. *Specify rootfinding problem*

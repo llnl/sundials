@@ -211,10 +211,10 @@ SUNDIALS_EXPORT void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0,
                                     SUNContext sunctx);
 SUNDIALS_EXPORT int MRIStepReInit(void* arkode_mem, ARKRhsFn fse, ARKRhsFn fsi,
                                   sunrealtype t0, N_Vector y0);
-SUNDIALS_EXPORT void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
+SUNDIALS_EXPORT void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
                                           sunrealtype t0, N_Vector y0,
                                           SUNContext sunctx);
-SUNDIALS_EXPORT int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd,
+SUNDIALS_EXPORT int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd,
                                         ARKRhsFn fe, ARKRhsFn fi,
                                         sunrealtype t0, N_Vector y0);
 

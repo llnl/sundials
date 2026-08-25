@@ -204,7 +204,7 @@ Allowable Method Families
 
    .. danger::
 
-      When using LSRKStep within an ExtSTS method (i.e., when using :c:func:`MRIStepCreateExtSTS`),
+      When using LSRKStep within an ExtSTS method (i.e., when using :c:func:`MRIStepExtSTSCreate`),
       users who wish to attach ``dom_eig`` should call :c:func:`MRIStepExtSTSSetDomEigFn` instead
       of :c:func:`LSRKStepSetDomEigFn`.
 

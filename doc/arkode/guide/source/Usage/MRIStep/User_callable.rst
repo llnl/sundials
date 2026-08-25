@@ -107,7 +107,8 @@ MRIStep initialization and deallocation functions
         (uses MRIStep within itself)
 
 
-.. c:function:: void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0, SUNContext sunctx)
+
+.. c:function:: void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0, SUNContext sunctx)
 
    This function allocates and initializes memory for a problem to be solved
    using an ExtSTS time-stepping method.
@@ -135,10 +136,10 @@ MRIStep initialization and deallocation functions
          void *sts_mem = NULL;
 
          /* create ExtSTS instantiation of MRIStep object */
-         extsts_mem = MRIStepCreateExtSTS(fd, fe, fi, t0, y0, sunctx);
+         extsts_mem = MRIStepExtSTSCreate(fd, fe, fi, t0, y0, sunctx);
 
          /* access the inner STS stepper object */
-         sts_mem = MRIStepGetSTSStepper(extsts_mem);
+         sts_mem = MRIStepExtSTSGetSTS(extsts_mem);
 
          /* configure ExtSTS integrator */
          retval = MRIStepSet*(extsts_mem, ...);
@@ -799,7 +800,7 @@ Optional inputs for MRIStep
    Specifies the user-supplied dominant eigenvalue approximation routine to
    be used for determining the number of stages that will be used by STS method
    within an ExtSTS MRIStep time step.  This is only applicable when MRIStep has
-   been constructed using :c:func:`MRIStepCreateExtSTS()`.
+   been constructed using :c:func:`MRIStepExtSTSCreate()`.
 
    :param arkode_mem: pointer to the MRIStep memory block.
    :param dom_eig: the name of user-supplied dominant eigenvalue approximation function.
@@ -2501,12 +2502,12 @@ MRIStep re-initialization function
 
 To reinitialize the MRIStep module for the solution of a new problem,
 where a prior call to :c:func:`MRIStepCreate()` or
-:c:func:`MRIStepCreateExtSTS()` has been made, the user must call the
-function :c:func:`MRIStepReInit()` or :c:func:`MRIStepReInitExtSTS()`, as
-appropriate.  Since instructions for both cases are the same, we next
+:c:func:`MRIStepExtSTSCreate()` has been made, the user must call the
+function :c:func:`MRIStepReInit()` or :c:func:`MRIStepExtSTSReInit()`, as
+appropriate.  Since instructions for both cases are the same, the next
 few paragraphs discuss only the case for general MRIStep methods, but
 apply to ExtSTS methods as well.
-the new problem must have the same size as the previous one.  This routine
+The new problem must have the same size as the previous one.  This routine
 retains the current settings for all MRIStep module options and
 performs the same input checking and initializations that are done in
 :c:func:`MRIStepCreate()`, but it performs no memory allocation as is
@@ -2575,7 +2576,8 @@ vector.
 
 
 
-.. c:function:: int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0)
+
+.. c:function:: int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0)
 
    Provides required problem specifications and re-initializes
    MRIStep for an Extended Super Time Stepping (ExtSTS) method.
@@ -2605,7 +2607,7 @@ vector.
       All previously set options are retained but may be updated by calling
       the appropriate "Set" functions.
 
-      If an error occurred, :c:func:`MRIStepReInitExtSTS()` also
+      If an error occurred, :c:func:`MRIStepExtSTSReInit()` also
       sends an error message to the error handler function.
 
 

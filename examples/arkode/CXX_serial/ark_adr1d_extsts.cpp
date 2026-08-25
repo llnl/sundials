@@ -38,7 +38,7 @@
  *   v_t(t,0) = v_t(t,1) = 0,
  *   w_t(t,0) = w_t(t,1) = 0.
  *
- * The system is advanced in time an Extended Super Time Stepping (ExtSTS)
+ * The system is advanced in time with an Extended Super Time Stepping (ExtSTS)
  * method, wherein diffusion is treated explicitly using a STS method, advection
  * is treated explicitly using the ExtSTS method, and reaction is treated
  * implicitly using the ExtSTS method.
@@ -107,8 +107,8 @@ int main(int argc, char* argv[])
   // -------------------------------
 
   // Create MRIStep ExtSTS solver memory
-  arkode_mem = MRIStepCreateExtSTS(f_diffusion, fe_RHS, fi_RHS, ZERO, y, ctx);
-  if (check_ptr(arkode_mem, "MRIStepCreateExtSTS")) { return 1; }
+  arkode_mem = MRIStepExtSTSCreate(f_diffusion, fe_RHS, fi_RHS, ZERO, y, ctx);
+  if (check_ptr(arkode_mem, "MRIStepExtSTSCreate")) { return 1; }
 
   // Access inner LSRKStep solver
   flag = MRIStepExtSTSGetSTS(arkode_mem, &sts_mem);
