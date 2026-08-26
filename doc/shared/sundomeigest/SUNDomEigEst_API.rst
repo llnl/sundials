@@ -234,13 +234,15 @@ instead of supplying a dummy routine.
 
    This *optional* function provides a :c:type:`SUNPreRhsFn` function for performing
    preprocessing of the right-hand side function, as well as a ``void*`` pointer to a data structure
-   used by this routine, to the dominant eigenvalue estimator.
+   used by this routine, to the dominant eigenvalue estimator.  This *advanced* feature is similar to
+   the ARKODE routine :c:func:`ARKPreRhsFn` -- we recommend that users read the warnings for 
+   that function before using this optional routine.
 
    **Arguments:**
 
       * *DEE* -- a SUNDomEigEstimator object.
       * *prerhs_fn_data* -- pointer to structure for ``prerhs_fn``.
-      * *prerhs_fn* -- function pointer to perform preprocessing of the right-hand side evaluations.  This is typically the same as the problem-defining function supplied to CVODE or ARKODE.
+      * *prerhs_fn* -- function pointer to perform preprocessing of the right-hand side evaluations.
 
    **Return value:**
 
@@ -267,7 +269,7 @@ instead of supplying a dummy routine.
 
    This *optional* function sets the value of the right-hand side function at the linearization point when using
    :c:func:`SUNDomEigEstimator_SetRhs`.  When this is supplied, the *DEE* module 
-   will use the value instead of re-evaluating the RHS at the linearization point.
+   will use the provided vector instead of re-evaluating the RHS at the linearization point.
 
    **Arguments:**
 
@@ -510,10 +512,10 @@ provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described bel
 .. c:type:: int (*SUNPreRhsFn)(sunrealtype t, N_Vector y, void* prerhs_fn_data)
 
    Used to perform any preprocessing of the right-hand side function before
-   performing a discrete Jacobian-vector product using quotient approximations of the Jacobian.
-   The parameter *prerhs_fn_data* is a pointer to any information about RHS which the function needs in order 
-   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left 
-   unchanged.
+   performing a Jacobian-vector product using difference quotient approximations.
+   The parameter *prerhs_fn_data* is a pointer to any problem-defining information
+   that this function needs in order to do its job. Both the time parameter
+   :math:`t` and the vector :math:`y` inputs should be left unchanged.
 
 .. _SUNDomEigEst.Generic:
 
