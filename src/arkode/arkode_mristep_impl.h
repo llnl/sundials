@@ -63,11 +63,10 @@ extern "C" {
 
 typedef struct _extSTSInnerStepper
 {
-  MRIStepInnerStepper inner_stepper; /* pointer to inner stepper object */
-  ARKRhsFn f_diffusion;              /* diffusion RHS function pointer */
-  ARKDomEigFn dom_eig; /* user-provided dominant eigenvalue estimator */
-  void* sts_mem;       /* LSRKStep memory structure */
-  void* user_data;     /* user data pointer */
+  ARKRhsFn f_diffusion; /* diffusion RHS function pointer */
+  ARKDomEigFn dom_eig;  /* user-provided dominant eigenvalue estimator */
+  void* sts_mem;        /* LSRKStep memory structure */
+  void* user_data;      /* user data pointer */
 }* extSTSInnerStepper;
 
 /* Macros to access content from extSTSInnerStepper content

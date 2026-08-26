@@ -72,8 +72,8 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   inner_content->sts_mem       = sts_mem;
   inner_content->f_diffusion   = fd;
   inner_content->dom_eig       = NULL;
-  inner_content->inner_stepper = NULL;
-  retval = MRIStepInnerStepper_Create(sunctx, &(inner_content->inner_stepper));
+  MRIStepInnerStepper inner_stepper = NULL;
+  retval = MRIStepInnerStepper_Create(sunctx, &inner_stepper);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__,
@@ -82,66 +82,64 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     ARKodeFree(&sts_mem);
     return NULL;
   }
-  retval = MRIStepInnerStepper_SetContent(inner_content->inner_stepper,
-                                          inner_content);
+  retval = MRIStepInnerStepper_SetContent(inner_stepper, inner_content);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
                     "Failed to set MRIStep inner stepper content.");
-    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    MRIStepInnerStepper_Free(&inner_stepper);
     free(inner_content);
     ARKodeFree(&sts_mem);
     return NULL;
   }
-  retval = MRIStepInnerStepper_SetEvolveFn(inner_content->inner_stepper,
+  retval = MRIStepInnerStepper_SetEvolveFn(inner_stepper,
                                            extSTSInnerStepper_Evolve);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
                     "Failed to set MRIStep inner stepper evolve function.");
-    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    MRIStepInnerStepper_Free(&inner_stepper);
     free(inner_content);
     ARKodeFree(&sts_mem);
     return NULL;
   }
-  retval = MRIStepInnerStepper_SetFullRhsFn(inner_content->inner_stepper,
+  retval = MRIStepInnerStepper_SetFullRhsFn(inner_stepper,
                                             extSTSInnerStepper_FullRhs);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
                     "Failed to set MRIStep inner stepper full RHS function.");
-    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    MRIStepInnerStepper_Free(&inner_stepper);
     free(inner_content);
     ARKodeFree(&sts_mem);
     return NULL;
   }
-  retval = MRIStepInnerStepper_SetResetFn(inner_content->inner_stepper,
+  retval = MRIStepInnerStepper_SetResetFn(inner_stepper,
                                           extSTSInnerStepper_Reset);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
                     "Failed to set MRIStep inner stepper reset function.");
-    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    MRIStepInnerStepper_Free(&inner_stepper);
     free(inner_content);
     ARKodeFree(&sts_mem);
     return NULL;
   }
 
-  /* LSRKStep user data should point to the extSTSInnerStepper structure */
-  retval = ARKodeSetUserData(sts_mem, inner_content);
+  /* LSRKStep user data should point to the MRIStepInnerStepper structure */
+  retval = ARKodeSetUserData(sts_mem, inner_stepper);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
                     "Failed to set LSRKStep user data for ExtSTS method.");
-    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    MRIStepInnerStepper_Free(&inner_stepper);
     free(inner_content);
     ARKodeFree(&sts_mem);
     return NULL;
   }
 
   /* Create the MRIStep integrator, attaching the inner stepper for diffusion */
-  void* arkode_mem = MRIStepCreate(fe, fi, t0, y0, inner_content->inner_stepper,
-                                   sunctx);
+  void* arkode_mem = MRIStepCreate(fe, fi, t0, y0, inner_stepper, sunctx);
   if (arkode_mem == NULL)
   {
     arkProcessError(NULL, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -158,7 +156,7 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
                     "Failed to access stepper memory from MRIStep.");
     ARKodeFree(&arkode_mem);
-    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    MRIStepInnerStepper_Free(&inner_stepper);
     free(inner_content);
     ARKodeFree(&sts_mem);
     return NULL;
@@ -185,7 +183,7 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__,
                     __FILE__, "Failed to create MRIStep coupling table for ExtSTS method.");
     ARKodeFree(&arkode_mem);
-    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    MRIStepInnerStepper_Free(&inner_stepper);
     free(inner_content);
     ARKodeFree(&sts_mem);
     return NULL;
@@ -196,7 +194,7 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
                     "Failed to set MRIStep coupling table for ExtSTS method.");
     ARKodeFree(&arkode_mem);
-    MRIStepInnerStepper_Free(&(inner_content->inner_stepper));
+    MRIStepInnerStepper_Free(&inner_stepper);
     free(inner_content);
     ARKodeFree(&sts_mem);
     return NULL;
@@ -239,9 +237,8 @@ int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
     return retval;
   }
 
-  /* Ensure that LSRKStep user data points to the extSTSInnerStepper structure */
-  retval = ARKodeSetUserData(inner_content->sts_mem,
-                             inner_content);
+  /* Ensure that LSRKStep user data points to the MRIStepInnerStepper structure */
+  retval = ARKodeSetUserData(inner_content->sts_mem, step_mem->stepper);
   if (retval)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
@@ -366,14 +363,15 @@ int extSTSInnerStepper_fd_forcing(sunrealtype t, N_Vector y, N_Vector f,
                                   void* user_data)
 {
   /* Access problem data */
-  extSTSInnerStepper extsts = (extSTSInnerStepper)user_data;
+  MRIStepInnerStepper inner_stepper = (MRIStepInnerStepper)user_data;
+  extSTSInnerStepper extsts = (extSTSInnerStepper)inner_stepper->content;
 
   /* Compute diffusion RHS */
   int retval = extsts->f_diffusion(t, y, f, extsts->user_data);
   if (retval) { return retval; }
 
   /* Apply inner forcing for MRI + LSRKStep */
-  retval = MRIStepInnerStepper_AddForcing(extsts->inner_stepper, t, f);
+  retval = MRIStepInnerStepper_AddForcing(inner_stepper, t, f);
   return (retval);
 }
 
@@ -383,7 +381,8 @@ int extSTSInnerStepper_dom_eig(sunrealtype t, N_Vector y, N_Vector fn,
                                N_Vector temp3)
 {
   /* Access problem data */
-  extSTSInnerStepper extsts = (extSTSInnerStepper)user_data;
+  MRIStepInnerStepper inner_stepper = (MRIStepInnerStepper)user_data;
+  extSTSInnerStepper extsts = (extSTSInnerStepper)inner_stepper->content;
 
   /* Call user-provided dominant eigenvalue estimator */
   int retval = extsts->dom_eig(t, y, fn, lambdaR, lambdaI, extsts->user_data,

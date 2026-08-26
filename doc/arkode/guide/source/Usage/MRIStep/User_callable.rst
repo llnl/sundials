@@ -154,7 +154,7 @@ MRIStep initialization and deallocation functions
 
    .. warning::
 
-      Although ExtSTS methods are packaged within MRIStep, the inner STS solver is not subcycled as with other MRI methods.  Although users may request the STS solver to configure relevant options (e.g., STS method to use, maximum number of STS stages to use per step, etc.), they should never change any LSRKStep settings related to time step adaptivity.  Similarly, users should not employ "H-Tol" multirate time step controllers on the object returned using :c:func:`MRIStepExtSTSCreate`.
+      Although ExtSTS methods are packaged within MRIStep, the inner STS solver is not subcycled as with other MRI methods.  Although users may request the STS solver to configure relevant options (e.g., STS method to use, maximum number of STS stages to use per step, etc.), they should never change any LSRKStep settings related to time step adaptivity, nor should they configure options that would request the STS solver to stop a time step prematurely (e.g., through calls to :c:func:`ARKodeRootInit` or :c:func:`ARKodeSetConstraints`).  Similarly, users should not employ "H-Tol" multirate time step controllers on the object returned using :c:func:`MRIStepExtSTSCreate`.
 
    .. versionadded:: x.y.z
 

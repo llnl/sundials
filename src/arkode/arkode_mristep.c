@@ -694,9 +694,9 @@ void mriStep_Free(ARKodeMem ark_mem)
       extSTSInnerStepper inner_content = (extSTSInnerStepper) step_mem->stepper->content;
       ARKodeFree(&inner_content->sts_mem);
       inner_content->sts_mem = NULL;
-      MRIStepInnerStepper_Free(&inner_content->inner_stepper);
-      inner_content->inner_stepper = NULL;
       free(inner_content);
+      MRIStepInnerStepper_Free(&step_mem->stepper);
+      step_mem->stepper = NULL;
     }
 
     /* free the time stepper module itself */
