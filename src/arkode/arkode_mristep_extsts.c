@@ -163,7 +163,7 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     ARKodeFree(&sts_mem);
     return NULL;
   }
-  step_mem->extsts_inner_stepper = inner_content;
+  step_mem->extsts_inner_stepper = SUNTRUE;
 
   /* Configure the MRIStep integrator with ExtSTS defaults */
   /*   Select default ExtSTS method based on provided RHS functions */
@@ -228,8 +228,9 @@ int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
   }
 
   /* Reinitialize the LSRKStep integrator */
-  step_mem->extsts_inner_stepper->f_diffusion = fd;
-  retval = LSRKStepReInitSTS(step_mem->extsts_inner_stepper->sts_mem,
+  extSTSInnerStepper inner_content = (extSTSInnerStepper) step_mem->stepper->content;
+  inner_content->f_diffusion = fd;
+  retval = LSRKStepReInitSTS(inner_content->sts_mem,
                              extSTSInnerStepper_fd_forcing, t0, y0);
   if (retval)
   {
@@ -239,8 +240,8 @@ int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
   }
 
   /* Ensure that LSRKStep user data points to the extSTSInnerStepper structure */
-  retval = ARKodeSetUserData(step_mem->extsts_inner_stepper->sts_mem,
-                             step_mem->extsts_inner_stepper);
+  retval = ARKodeSetUserData(inner_content->sts_mem,
+                             inner_content);
   if (retval)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
@@ -259,8 +260,9 @@ int MRIStepExtSTSGetSTS(void* arkode_mem, void** sts_mem)
                                            &step_mem);
   if (retval) { return retval; }
 
-  /* store return pointer to STS integrator */
-  *sts_mem = (void*)step_mem->extsts_inner_stepper->sts_mem;
+  /* return pointer to stored STS integrator */
+  extSTSInnerStepper inner_content = (extSTSInnerStepper) step_mem->stepper->content;
+  *sts_mem = (void*)inner_content->sts_mem;
   return ARK_SUCCESS;
 }
 

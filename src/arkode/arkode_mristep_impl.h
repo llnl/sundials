@@ -207,8 +207,8 @@ typedef struct ARKodeMRIStepMemRec
   sunrealtype* cvals;
   N_Vector* Xvecs;
 
-  /* ExtSTS inner stepper content */
-  extSTSInnerStepper extsts_inner_stepper;
+  /* flag indicating that MRIStep implements an ExtSTS method */
+  sunbooleantype extsts_inner_stepper;
 
 }* ARKodeMRIStepMem;
 

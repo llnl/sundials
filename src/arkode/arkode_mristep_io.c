@@ -155,7 +155,7 @@ int MRIStepExtSTSSetDomEigFn(void* arkode_mem, ARKDomEigFn dom_eig)
                     "MRIStep does not implement an ExtSTS method");
     return (ARK_ILL_INPUT);
   }
-  extSTSInnerStepper extsts = step_mem->extsts_inner_stepper;
+  extSTSInnerStepper extsts = (extSTSInnerStepper) step_mem->stepper->content;
 
   /* If the input is non-NULL, attach the user-provided dominant eigenvalue
      estimator to the interface and pass the wrapper function to LSRKStep */
@@ -393,7 +393,8 @@ int mriStep_SetUserData(ARKodeMem ark_mem, void* user_data)
      user_data pointer in the extSTSInnerStepper object */
   if (step_mem->extsts_inner_stepper)
   {
-    step_mem->extsts_inner_stepper->user_data = user_data;
+    extSTSInnerStepper inner_content = (extSTSInnerStepper) step_mem->stepper->content;
+    inner_content->user_data = user_data;
   }
 
   return (ARK_SUCCESS);
