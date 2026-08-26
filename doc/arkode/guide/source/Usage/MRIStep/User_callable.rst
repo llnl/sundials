@@ -152,6 +152,10 @@ MRIStep initialization and deallocation functions
    **Example codes:**
       * ``examples/arkode/CXX_serial/ark_adr1d_extsts.cpp``
 
+   .. warning::
+
+      Although ExtSTS methods are packaged within MRIStep, the inner STS solver is not subcycled as with other MRI methods.  Although users may request the STS solver to configure relevant options (e.g., STS method to use, maximum number of STS stages to use per step, etc.), they should never change any LSRKStep settings related to time step adaptivity.  Similarly, users should not employ "H-Tol" multirate time step controllers on the object returned using :c:func:`MRIStepExtSTSCreate`.
+
    .. versionadded:: x.y.z
 
 
@@ -812,7 +816,7 @@ Optional inputs for MRIStep
 
       When using ExtSTS methods, users must either call :c:func:`MRIStepExtSTSSetDomEigFn`
       to supply a :c:type:`ARKDomEigFn` function, or attach a dominant eigenvalue
-      estimator to the inner LSRKStep solver by first calling :c:func:`MRIStepGetSTSStepper`
+      estimator to the inner LSRKStep solver by first calling :c:func:`MRIStepExtSTSGetSTS`
       and then calling :c:func:`LSRKStepSetDomEigEstimator`.
 
    .. versionadded:: x.y.z
@@ -1652,6 +1656,10 @@ Main solver optional output functions
 
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
+
+   .. warning::
+
+      Users should never call :c:func:`ARKodeSetUserData` on the returned STS object.  Instead, users should call :c:func:`ARKodeSetUserData` on the object returned from :c:func:`MRIStepExtSTSCreate`.
 
    .. versionadded:: x.y.z
 
