@@ -283,7 +283,7 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
   }
 
   /* Initialize pointer for ExtSTS inner stepper */
-  step_mem->extsts_inner_stepper = SUNFALSE;
+  step_mem->extsts_method = SUNFALSE;
 
   /* return ARKODE memory */
   return ((void*)ark_mem);
@@ -688,8 +688,8 @@ void mriStep_Free(ARKodeMem ark_mem)
     }
     step_mem->nfusedopvecs = 0;
 
-    /* free the extsts_inner_stepper (if applicable) */
-    if (step_mem->extsts_inner_stepper)
+    /* free the ExtSTS helper structure (if applicable) */
+    if (step_mem->extsts_method)
     {
       extSTSInnerStepper inner_content = (extSTSInnerStepper) step_mem->stepper->content;
       ARKodeFree(&inner_content->sts_mem);

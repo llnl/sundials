@@ -163,7 +163,7 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     ARKodeFree(&sts_mem);
     return NULL;
   }
-  step_mem->extsts_inner_stepper = SUNTRUE;
+  step_mem->extsts_method = SUNTRUE;
 
   /* Configure the MRIStep integrator with ExtSTS defaults */
   /*   Select default ExtSTS method based on provided RHS functions */

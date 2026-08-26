@@ -208,7 +208,7 @@ typedef struct ARKodeMRIStepMemRec
   N_Vector* Xvecs;
 
   /* flag indicating that MRIStep implements an ExtSTS method */
-  sunbooleantype extsts_inner_stepper;
+  sunbooleantype extsts_method;
 
 }* ARKodeMRIStepMem;
 

@@ -149,7 +149,7 @@ int MRIStepExtSTSSetDomEigFn(void* arkode_mem, ARKDomEigFn dom_eig)
 
   /* Access the extSTSInnerStepper object; if it is not present then
      MRIStep was not configured for an ExtSTS method, so return an error */
-  if (!step_mem->extsts_inner_stepper)
+  if (!step_mem->extsts_method)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     "MRIStep does not implement an ExtSTS method");
@@ -391,7 +391,7 @@ int mriStep_SetUserData(ARKodeMem ark_mem, void* user_data)
 
   /* if MRIStep implements an ExtSTS method, store the
      user_data pointer in the extSTSInnerStepper object */
-  if (step_mem->extsts_inner_stepper)
+  if (step_mem->extsts_method)
   {
     extSTSInnerStepper inner_content = (extSTSInnerStepper) step_mem->stepper->content;
     inner_content->user_data = user_data;
