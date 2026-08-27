@@ -1,5 +1,5 @@
 ---
-name: sundials4py-userfn-wrapper
+name: sundials-devs-python-callbacks
 description: >
   Generate nanobind C++ wrapper code for user-supplied callback functions in the
   sundials4py Python bindings. Use this skill whenever adding a new
