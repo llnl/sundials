@@ -196,9 +196,6 @@ m.def("MRIStepExtSTSReInit", MRIStepExtSTSReInit, nb::arg("arkode_mem"),
 m.def("MRIStepSetCoupling", MRIStepSetCoupling, nb::arg("arkode_mem"),
       nb::arg("MRIC"));
 
-m.def("MRIStepExtSTSSetDomEigFn", MRIStepExtSTSSetDomEigFn,
-      nb::arg("arkode_mem"), nb::arg("dom_eig"));
-
 m.def(
   "MRIStepGetCurrentCoupling",
   [](void* arkode_mem) -> std::tuple<int, MRIStepCoupling>
@@ -256,7 +253,7 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def("MRIStepGetSTSStepper", MRIStepGetSTSStepper, nb::arg("arkode_mem"));
+m.def("MRIStepExtSTSGetSTS", MRIStepExtSTSGetSTS, nb::arg("arkode_mem"));
 
 m.def("MRIStepInnerStepper_AddForcing", MRIStepInnerStepper_AddForcing,
       nb::arg("stepper"), nb::arg("t"), nb::arg("f"));

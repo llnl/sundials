@@ -210,19 +210,6 @@ void bind_arkode_mristep(nb::module_& m)
     nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
     nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
 
-  m.def(
-    "MRIStepExtSTSSetDomEigFn",
-    [](void* arkode_mem, std::function<std::remove_pointer_t<ARKDomEigFn>> fn)
-    {
-      auto fn_table            = get_arkode_fn_table(arkode_mem);
-      fn_table->mristep_domeig = nb::cast(fn);
-      if (fn)
-      {
-        return MRIStepExtSTSSetDomEigFn(arkode_mem, mristep_domeig_wrapper);
-      }
-      else { return MRIStepExtSTSSetDomEigFn(arkode_mem, nullptr); }
-    },
-    nb::arg("arkode_mem"), nb::arg("dom_eig").none());
 }
 
 } // namespace sundials4py
