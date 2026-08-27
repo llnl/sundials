@@ -248,6 +248,8 @@ instead of supplying a dummy routine.
 
       A :c:type:`SUNErrCode`.
 
+   .. versionadded:: x.y.z
+
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
 
@@ -279,6 +281,8 @@ instead of supplying a dummy routine.
    **Return value:**
 
       A :c:type:`SUNErrCode`.
+
+   .. versionadded:: x.y.z
 
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE, int num_iters)
@@ -516,6 +520,8 @@ provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described bel
    The parameter *prerhs_fn_data* is a pointer to any problem-defining information
    that this function needs in order to do its job. Both the time parameter
    :math:`t` and the vector :math:`y` inputs should be left unchanged.
+   
+   .. versionadded:: x.y.z
 
 .. _SUNDomEigEst.Generic:
 

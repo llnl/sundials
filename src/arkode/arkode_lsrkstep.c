@@ -581,6 +581,38 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   N_Vector tmp1      = ark_mem->tempv1;
   N_Vector tmp2      = ark_mem->tempv2;
 
+  /* Compute RHS function for the start of the step, if necessary. This ensures 
+  that the function value is up-to-date and can be used by the dominant eigenvalue
+  estimator as well. */
+  if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
+      (step_mem->step_nst != ark_mem->nst))
+  {
+    /* call the user-supplied pre-rhs function (if supplied) */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(ark_mem->tn, ark_mem->yn, ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed preprocess rhs, retval = %i", retval);
+        return ARK_PRERHSFN_FAIL;
+      }
+    }
+
+    /* call fe */
+    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                          ark_mem->user_data);
+    step_mem->nfe++;
+    if (retval != ARK_SUCCESS)
+    {
+      SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                 "status = failed rhs eval, retval = %i", retval);
+      return (ARK_RHSFUNC_FAIL);
+    }
+    ark_mem->fn_is_current = SUNTRUE;
+  }
+
   const sunrealtype coefz =
     THREE / TWO / (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping);
 
@@ -723,37 +755,6 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
-
-  /* Compute RHS function for the start of the step, if necessary. */
-  if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
-      (step_mem->step_nst != ark_mem->nst))
-  {
-    /* call the user-supplied pre-rhs function (if supplied) */
-    if (ark_mem->PreRhsFn)
-    {
-      retval = ark_mem->PreRhsFn(ark_mem->tn, ark_mem->yn, ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                   "status = failed preprocess rhs, retval = %i", retval);
-        return ARK_PRERHSFN_FAIL;
-      }
-    }
-
-    /* call fe */
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
-    step_mem->nfe++;
-    if (retval != ARK_SUCCESS)
-    {
-      SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
-      SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                 "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
-    }
-    ark_mem->fn_is_current = SUNTRUE;
-  }
-
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -1021,6 +1022,36 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   N_Vector tmp1      = ark_mem->tempv1;
   N_Vector tmp2      = ark_mem->tempv2;
 
+  /* Compute RHS function for the start of the step, if necessary. This ensures 
+  that the function value is up-to-date and can be used by the dominant eigenvalue
+  estimator as well. */
+  if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
+      (step_mem->step_nst != ark_mem->nst))
+  {
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(ark_mem->tn, ark_mem->yn, ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed preprocess rhs, retval = %i", retval);
+        return ARK_PRERHSFN_FAIL;
+      }
+    }
+    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                          ark_mem->user_data);
+    step_mem->nfe++;
+    if (retval != ARK_SUCCESS)
+    {
+      SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                 "status = failed rhs eval, retval = %i", retval);
+      return (ARK_RHSFUNC_FAIL);
+    }
+    ark_mem->fn_is_current = SUNTRUE;
+  }
+
   /* Initialize the current stage index */
   step_mem->istage     = 0;
   step_mem->req_stages = step_mem->stage_max_limit;
@@ -1178,35 +1209,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
-
-  /* Compute RHS function for the start of the step, if necessary. */
-  if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
-      (step_mem->step_nst != ark_mem->nst))
-  {
-    /* call the user-supplied pre-RHS function (if supplied) */
-    if (ark_mem->PreRhsFn)
-    {
-      retval = ark_mem->PreRhsFn(ark_mem->tn, ark_mem->yn, ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                   "status = failed preprocess rhs, retval = %i", retval);
-        return ARK_PRERHSFN_FAIL;
-      }
-    }
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
-    step_mem->nfe++;
-    if (retval != ARK_SUCCESS)
-    {
-      SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
-      SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                 "status = failed rhs eval, retval = %i", retval);
-      return (ARK_RHSFUNC_FAIL);
-    }
-    ark_mem->fn_is_current = SUNTRUE;
-  }
-
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2901,17 +2903,16 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
       return ARK_DEE_FAIL;
     }
 
-    /* Pass the current RHS vector fn to the dominant eigenvalue estimator */
-    if (ark_mem->fn_is_current == SUNTRUE)
+    /* Pass the current RHS vector fn to the dominant eigenvalue estimator.
+    Since the function value is up-to-date at this point, we can directly
+    pass it to the estimator */
+    retval = SUNDomEigEstimator_SetRhsAtLinearizationPoint(step_mem->DEE,
+                                                            ark_mem->fn);
+    if (retval != SUN_SUCCESS)
     {
-      retval = SUNDomEigEstimator_SetRhsAtLinearizationPoint(step_mem->DEE,
-                                                             ark_mem->fn);
-      if (retval != SUN_SUCCESS)
-      {
-        arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
-                        "SUNDomEigEstimator_SetRhsAtLinearizationPoint failed");
-        return ARK_DEE_FAIL;
-      }
+      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                      "SUNDomEigEstimator_SetRhsAtLinearizationPoint failed");
+      return ARK_DEE_FAIL;
     }
 
     /* Synchronize the preprocessing functions */
