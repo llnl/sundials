@@ -26,8 +26,8 @@ modules:
     - "Destroy"
     - "Space" # Space functions are deprecated, so don't expose them in Python
     # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
-    - "SetOptions" 
-    # TODO(CJB): Making d_1d a nullopt argument causes this error 
+    - "SetOptions"
+    # TODO(CJB): Making d_1d a nullopt argument causes this error
     # `Critical nanobind error: Negative ndarray sizes are not allowed here!`
     # So we manually bind it for now.
     - "ARKodeButcherTable_Create"
@@ -38,7 +38,7 @@ modules:
     - "^ARKODE_"
     fn_params_optional_with_default_null:
       "SetLinearSolver":
-      - "A" 
+      - "A"
       - "d_1d"
   arkode:
     path: arkode/arkode_generated.hpp
@@ -57,10 +57,10 @@ modules:
     - "^ARKodeButcherTable_Alloc$"
     - "^ARKodeSPRKTable_Alloc$"
     # we use user_data for sneaking in python contexts, so we don't interface these
-    - "^ARKodeGetUserData$" 
-    - "^ARKodeSetUserData$" 
+    - "^ARKodeGetUserData$"
+    - "^ARKodeSetUserData$"
     # generator cannot handle setting of function pointers, so we do something custom
-    - "^ARKodeSet.*Fn$" 
+    - "^ARKodeSet.*Fn$"
     - "^ARKodeSetWFtolerances$"
     - "^ARKodeSet.*Preconditioner$"
     - "^ARKodeSet.*Times$"
@@ -68,7 +68,7 @@ modules:
     - "^ARKodeResFtolerance$"
     - "^ARKodeRootInit$"
     - "^ARKodeResize$"
-    # generator cannot handle functions with optional (i.e. NULLable) parameters that is not 
+    # generator cannot handle functions with optional (i.e. NULLable) parameters that is not
     # followed by only optional parameters, so we have to do something custom
     - "^ARKodeSetMassLinearSolver$"
     # TODO(CJB): interface this (in the future?)
@@ -86,7 +86,7 @@ modules:
     fn_params_optional_with_default_null:
       "ARKStepSetTables":
       - "Be"
-      - "Bi" 
+      - "Bi"
   erkstep:
     path: arkode/arkode_erkstep_generated.hpp
     headers:
@@ -128,8 +128,10 @@ modules:
     - "^MRIStepCreate$"
     - "^MRIStepInnerStepper_Create$"
     - "^MRIStepInnerStepper_CreateFromSUNStepper$"
+    - "^MRIStepExtSTSCreate$"
     # reinit also requires custom handling due to function pointers
     - "^MRIStepReInit$"
+    - "^MRIStepExtSTSReInit$"
     # We steal the MRIStepInnerStepper content for the callback table, so don't interface the set/get
     - "^MRIStepInnerStepper_GetContent$"
     - "^MRIStepInnerStepper_SetContent$"
@@ -137,8 +139,9 @@ modules:
     - "^MRIStepInnerStepper_Set.*Fn$"
     - "^MRIStepSetPreInnerFn$"
     - "^MRIStepSetPostInnerFn$"
-    # This function takes a pointer to a pointer which the generator cannot yet handle, so we do custom handling
+    # These functions take a pointer to a pointer which the generator cannot yet handle, so we do custom handling
     - "^MRIStepInnerStepper_GetForcingData$"
+    - "^MRIStepExtSTSGetSTS$"
   forcingstep:
     path: arkode/arkode_forcingstep_generated.hpp
     headers:

@@ -187,12 +187,6 @@ m.def(
 m.def("MRIStepCoupling_Write", MRIStepCoupling_Write, nb::arg("MRIC"),
       nb::arg("outfile"));
 
-m.def("MRIStepExtSTSCreate", MRIStepExtSTSCreate, nb::arg("fd"), nb::arg("fe"),
-      nb::arg("fi"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"));
-
-m.def("MRIStepExtSTSReInit", MRIStepExtSTSReInit, nb::arg("arkode_mem"),
-      nb::arg("fd"), nb::arg("fe"), nb::arg("fi"), nb::arg("t0"), nb::arg("y0"));
-
 m.def("MRIStepSetCoupling", MRIStepSetCoupling, nb::arg("arkode_mem"),
       nb::arg("MRIC"));
 
@@ -252,8 +246,6 @@ m.def(
       arkode_mem);
   },
   nb::arg("arkode_mem"));
-
-m.def("MRIStepExtSTSGetSTS", MRIStepExtSTSGetSTS, nb::arg("arkode_mem"));
 
 m.def("MRIStepInnerStepper_AddForcing", MRIStepInnerStepper_AddForcing,
       nb::arg("stepper"), nb::arg("t"), nb::arg("f"));
