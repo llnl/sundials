@@ -975,14 +975,9 @@ static int IDAfnorm(IDAMem IDA_mem, sunrealtype* fnorm)
     /* Call the linear solve function to get J-inverse deltaS. */
     for (is = 0; is < IDA_mem->ida_Ns; is++)
     {
-      SUNLogInfo(IDA_LOGGER, "begin-sensitivity-linear-solve-list",
-                 "index = %i", is);
       retval = IDA_mem->ida_lsolve(IDA_mem, IDA_mem->ida_delnewS[is],
                                    IDA_mem->ida_ewtS[is], IDA_mem->ida_ynew,
                                    IDA_mem->ida_ypnew, IDA_mem->ida_savres);
-      SUNLogInfo(IDA_LOGGER, "end-sensitivity-linear-solve-list",
-                 "status = %s, retval = %i",
-                 retval == IDA_SUCCESS ? "success" : "failed", retval);
       if (retval < 0) { return (IDA_LSOLVE_FAIL); }
       if (retval > 0) { return (IC_FAIL_RECOV); }
     }
@@ -1429,14 +1424,9 @@ static int IDASensfnorm(IDAMem IDA_mem, sunrealtype* fnorm)
   /* Call linear solve function */
   for (is = 0; is < IDA_mem->ida_Ns; is++)
   {
-    SUNLogInfo(IDA_LOGGER, "begin-sensitivity-linear-solve-list", "index = %i",
-               is);
     retval = IDA_mem->ida_lsolve(IDA_mem, IDA_mem->ida_delnewS[is],
                                  IDA_mem->ida_ewtS[is], IDA_mem->ida_yy0,
                                  IDA_mem->ida_yp0, IDA_mem->ida_delta);
-    SUNLogInfo(IDA_LOGGER, "end-sensitivity-linear-solve-list",
-               "status = %s, retval = %i",
-               retval == IDA_SUCCESS ? "success" : "failed", retval);
     if (retval < 0) { return (IDA_LSOLVE_FAIL); }
     if (retval > 0) { return (IC_FAIL_RECOV); }
   }
