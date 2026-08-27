@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core[pyproject] >=0.4.3", "nanobind"]
+requires = ["scikit-build-core[pyproject] >=0.4.3", "nanobind >= 2.9.2, <3"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -20,7 +20,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics"
 ]
 dependencies = [
-    "nanobind >= 2.9.2",
+    "nanobind >= 2.9.2, <3",
     "numpy >= 2.0.0"
 ]
 
