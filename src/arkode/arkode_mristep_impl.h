@@ -56,41 +56,14 @@ extern "C" {
 #define NLSCOEF SUN_RCONST(0.1)
 
 /*===============================================================
-  ExtSTS inner stepper structure -- this is used to insert a
+  ExtSTS inner stepper routines -- these are used to insert a
   single time step from an LSRKStep STS method as the inner
   stepper for MRIStep.
   ===============================================================*/
 
-typedef struct _extSTSInnerStepper
-{
-  ARKRhsFn f_diffusion; /* diffusion RHS function pointer */
-  ARKDomEigFn dom_eig;  /* user-provided dominant eigenvalue estimator */
-  void* sts_mem;        /* LSRKStep memory structure */
-  void* user_data;      /* user data pointer */
-}* extSTSInnerStepper;
-
-/* Macros to access content from extSTSInnerStepper content
-   inside of an MRIStepInnerStepper object */
-#define EXTSTS_INNER(C)     (((extSTSInnerStepper)(C->content))->inner_stepper)
-#define EXTSTS_FD(C)        (((extSTSInnerStepper)(C->content))->f_diffusion)
-#define EXTSTS_DOMEIG(C)    (((extSTSInnerStepper)(C->content))->dom_eig)
-#define EXTSTS_STS(C)       (((extSTSInnerStepper)(C->content))->sts_mem)
-#define EXTSTS_STSARKMEM(C) ((ARKodeMem)(EXTSTS_STS(C)))
-#define EXTSTS_UDATA(C)     (((extSTSInnerStepper)(C->content))->user_data)
-
 int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
                               sunrealtype tout, N_Vector y);
-int extSTSInnerStepper_FullRhs(MRIStepInnerStepper sts_mem, sunrealtype t,
-                               N_Vector y, N_Vector f, int mode);
-int extSTSInnerStepper_Reset(MRIStepInnerStepper sts_mem, sunrealtype tR,
-                             N_Vector yR);
 int extSTSInnerStepper_Free(MRIStepInnerStepper* sts_mem);
-int extSTSInnerStepper_fd_forcing(sunrealtype t, N_Vector y, N_Vector f,
-                                  void* user_data);
-int extSTSInnerStepper_dom_eig(sunrealtype t, N_Vector y, N_Vector fn,
-                               sunrealtype* lambdaR, sunrealtype* lambdaI,
-                               void* user_data, N_Vector temp1, N_Vector temp2,
-                               N_Vector temp3);
 
 /*===============================================================
   MRI time step module data structure

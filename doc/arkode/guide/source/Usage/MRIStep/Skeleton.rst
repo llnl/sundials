@@ -176,6 +176,13 @@ from the skeleton program presented above are *italicized*.
 #. Create the MRIStep object for ExtSTS methods by calling
    :c:func:`MRIStepExtSTSCreate`.
 
+#. Call :c:func:`MRIStepExtSTSGetSTS` to retrieve the LSRKStep component
+   from inside the ExtSTS solver object, and provide either a dominant
+   eigenvalue estimation function, or a SUNDomEigEstimator object, to the
+   LSRKStep component by calling either :c:func:`LSRKStepSetDomEigFn` or
+   :c:func:`LSRKStepSetDomEigEstimator`.  This is required for the LSRKStep
+   component to determine the number of stages to use for each inner step.
+
 #. Set optional inputs
 
    * If an implicit partition is present, or if the user wishes to adjust
@@ -184,10 +191,10 @@ from the skeleton program presented above are *italicized*.
      functions directly on the MRIStep object, e.g.,
      :c:func:`MRIStepSetCoupling` or :c:func:`ARKodeSetNonlinearSolver`.
 
-   * If the user wishes to adjust the configuration of the LSRKStep component
-     inside the ExtSTS solver object, access the LSRKStep object by calling
-     :c:func:`MRIStepExtSTSGetSTS` and configure the returned solver object
-     as normal using ``ARKodeSet`` or ``LSRKStepSet`` functions.
+   * If the user wishes to adjust other aspects of the configuration of
+     the LSRKStep component inside the ExtSTS solver object, call the
+     relevant ``ARKodeSet`` or ``LSRKStepSet`` functions on the object returned
+     by :c:func:`MRIStepExtSTSGetSTS` above.
 
 #. *Specify rootfinding problem*
 

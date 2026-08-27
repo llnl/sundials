@@ -799,29 +799,6 @@ Optional inputs for MRIStep
    :retval ARK_MEM_NULL: if the MRIStep memory is ``NULL``
 
 
-.. c:function:: int MRIStepExtSTSSetDomEigFn(void* arkode_mem, ARKDomEigFn dom_eig)
-
-   Specifies the user-supplied dominant eigenvalue approximation routine to
-   be used for determining the number of stages that will be used by STS method
-   within an ExtSTS MRIStep time step.  This is only applicable when MRIStep has
-   been constructed using :c:func:`MRIStepExtSTSCreate()`.
-
-   :param arkode_mem: pointer to the MRIStep memory block.
-   :param dom_eig: the name of user-supplied dominant eigenvalue approximation function.
-
-   :retval ARK_SUCCESS: if successful
-   :retval ARK_MEM_NULL: if ``arkode_mem`` was ``NULL``.
-
-   .. note::
-
-      When using ExtSTS methods, users must either call :c:func:`MRIStepExtSTSSetDomEigFn`
-      to supply a :c:type:`ARKDomEigFn` function, or attach a dominant eigenvalue
-      estimator to the inner LSRKStep solver by first calling :c:func:`MRIStepExtSTSGetSTS`
-      and then calling :c:func:`LSRKStepSetDomEigEstimator`.
-
-   .. versionadded:: x.y.z
-
-
 
 
 .. _ARKODE.Usage.MRIStep.MRIStepMethodInput:
@@ -1659,7 +1636,12 @@ Main solver optional output functions
 
    .. warning::
 
-      Users should never call :c:func:`ARKodeSetUserData` on the returned STS object.  Instead, users should call :c:func:`ARKodeSetUserData` on the object returned from :c:func:`MRIStepExtSTSCreate`.
+      If the user wishes to set different ``user_data`` pointers for the
+      MRIStep and LSRKStep components of the ExtSTS solver, they should first
+      call :c:func:`ARKodeSetUserData` on the MRIStep object, and then call
+      :c:func:`ARKodeSetUserData` on the LSRKStep object returned from
+      :c:func:`MRIStepExtSTSCreate`.  By default, the LSRKStep object will
+      inherit the ``user_data`` pointer from the MRIStep object.
 
    .. versionadded:: x.y.z
 

@@ -691,10 +691,8 @@ void mriStep_Free(ARKodeMem ark_mem)
     /* free the ExtSTS helper structure (if applicable) */
     if (step_mem->extsts_method)
     {
-      extSTSInnerStepper inner_content = (extSTSInnerStepper) step_mem->stepper->content;
-      ARKodeFree(&inner_content->sts_mem);
-      inner_content->sts_mem = NULL;
-      free(inner_content);
+      ARKodeFree(&step_mem->stepper->content);
+      step_mem->stepper->content = NULL;
       MRIStepInnerStepper_Free(&step_mem->stepper);
       step_mem->stepper = NULL;
     }

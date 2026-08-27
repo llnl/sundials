@@ -160,8 +160,8 @@ typedef struct ARKodeLSRKStepMemRec
   ARKRhsFn fe;
   ARKDomEigFn dom_eig_fn;
 
-  int q; /* method order               */
-  int p; /* embedding order            */
+  int q; /* method order    */
+  int p; /* embedding order */
 
   int istage;     /* current stage            */
   int req_stages; /* number of stages in step */
@@ -205,6 +205,14 @@ typedef struct ARKodeLSRKStepMemRec
   N_Vector* Xvecs;
   int nfusedopvecs; /* length of cvals and Xvecs arrays */
 
+  /* Data for using LSRKStep with external polynomial forcing */
+  ARKRhsFn fe_wrap;         /* wrapper fcn for feion          */
+  void* user_data_wrap;     /* new user_data pointer for fe   */
+  sunrealtype tshift;       /* time normalization shift       */
+  sunrealtype tscale;       /* time normalization scaling     */
+  N_Vector* forcing;        /* array of forcing vectors       */
+  int nforcing;             /* number of forcing vectors      */
+
 }* ARKodeLSRKStepMem;
 
 /*===============================================================
@@ -229,6 +237,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 int lsrkStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
                         size_t offset, sunbooleantype* arg_used);
 int lsrkStep_SetDefaults(ARKodeMem ark_mem);
+int lsrkStep_SetUserData(ARKodeMem ark_mem, void* user_data);
 int lsrkStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt);
 int lsrkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp);
 void lsrkStep_Free(ARKodeMem ark_mem);
@@ -236,6 +245,8 @@ void lsrkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int lsrkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
                             long int* rhs_evals);
 int lsrkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele);
+int lsrkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
+                             sunrealtype tscale, N_Vector* f, int nvecs);
 int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
