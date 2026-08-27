@@ -87,7 +87,8 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     MRIStepInnerStepper_Free(&inner_stepper);
     return NULL;
   }
-  retval = MRIStepInnerStepper_SetFullRhsFn(inner_stepper, ark_MRIStepInnerFullRhs);
+  retval = MRIStepInnerStepper_SetFullRhsFn(inner_stepper,
+                                            ark_MRIStepInnerFullRhs);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
@@ -147,8 +148,8 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   }
   if (MRIC == NULL)
   {
-    arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                    "Failed to create MRIStep coupling table for ExtSTS method.");
+    arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__,
+                    __FILE__, "Failed to create MRIStep coupling table for ExtSTS method.");
     ARKodeFree(&arkode_mem);
     ARKodeFree(&sts_mem);
     MRIStepInnerStepper_Free(&inner_stepper);
@@ -227,7 +228,8 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   N_Vector* forcing;
   int nforcing;
   int retval;
-  retval = MRIStepInnerStepper_GetForcingData(sts_mem, &tshift, &tscale, &forcing, &nforcing);
+  retval = MRIStepInnerStepper_GetForcingData(sts_mem, &tshift, &tscale,
+                                              &forcing, &nforcing);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,

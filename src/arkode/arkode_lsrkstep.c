@@ -298,7 +298,7 @@ int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
   }
 
   /* Copy the input parameters into ARKODE state */
-  step_mem->fe = rhs;
+  step_mem->fe      = rhs;
   step_mem->fe_wrap = rhs;
 
   /* Initialize main ARKODE infrastructure */
@@ -832,7 +832,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    retval = step_mem->fe_wrap(ark_mem->tcur, tmp2, ark_mem->ycur, step_mem->user_data_wrap);
+    retval = step_mem->fe_wrap(ark_mem->tcur, tmp2, ark_mem->ycur,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->ycur,
@@ -3353,17 +3354,18 @@ int lsrkStep_f_forcing(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Add forcing terms to f via a call to N_VLinearCombination */
-  step_mem->cvals[0] = ONE;
-  step_mem->Xvecs[0] = f;
+  step_mem->cvals[0]    = ONE;
+  step_mem->Xvecs[0]    = f;
   const sunrealtype tau = (t - step_mem->tshift) / (step_mem->tscale);
-  sunrealtype taui = ONE;
+  sunrealtype taui      = ONE;
   for (int i = 0; i < step_mem->nforcing; i++)
   {
     step_mem->cvals[i + 1] = taui;
     step_mem->Xvecs[i + 1] = step_mem->forcing[i];
     taui *= tau;
   }
-  N_VLinearCombination(step_mem->nforcing + 1, step_mem->cvals, step_mem->Xvecs, f);
+  N_VLinearCombination(step_mem->nforcing + 1, step_mem->cvals, step_mem->Xvecs,
+                       f);
 
   return ARK_SUCCESS;
 }
@@ -3402,7 +3404,7 @@ int lsrkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
     step_mem->nforcing = nvecs;
 
     /* wrap the problem-defining RHS function and user data */
-    step_mem->fe_wrap = lsrkStep_f_forcing;
+    step_mem->fe_wrap        = lsrkStep_f_forcing;
     step_mem->user_data_wrap = (void*)ark_mem;
 
     /* verify that cvals and Xvecs are long enough to accommodate forcing */
@@ -3440,7 +3442,7 @@ int lsrkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
     step_mem->nforcing = 0;
 
     /* unwrap the problem-defining RHS function and user data */
-    step_mem->fe_wrap = step_mem->fe;
+    step_mem->fe_wrap        = step_mem->fe;
     step_mem->user_data_wrap = ark_mem->user_data;
   }
 

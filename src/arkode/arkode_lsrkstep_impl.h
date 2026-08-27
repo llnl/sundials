@@ -206,12 +206,12 @@ typedef struct ARKodeLSRKStepMemRec
   int nfusedopvecs; /* length of cvals and Xvecs arrays */
 
   /* Data for using LSRKStep with external polynomial forcing */
-  ARKRhsFn fe_wrap;         /* wrapper fcn for feion          */
-  void* user_data_wrap;     /* new user_data pointer for fe   */
-  sunrealtype tshift;       /* time normalization shift       */
-  sunrealtype tscale;       /* time normalization scaling     */
-  N_Vector* forcing;        /* array of forcing vectors       */
-  int nforcing;             /* number of forcing vectors      */
+  ARKRhsFn fe_wrap;     /* wrapper fcn for feion          */
+  void* user_data_wrap; /* new user_data pointer for fe   */
+  sunrealtype tshift;   /* time normalization shift       */
+  sunrealtype tscale;   /* time normalization scaling     */
+  N_Vector* forcing;    /* array of forcing vectors       */
+  int nforcing;         /* number of forcing vectors      */
 
 }* ARKodeLSRKStepMem;
 
