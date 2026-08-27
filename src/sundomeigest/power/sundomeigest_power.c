@@ -391,7 +391,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
 
   int retval;
   sunbooleantype converged;
-  sunrealtype normq;
+  sunrealtype normq           = ZERO;
   PI_CONTENT(DEE)->num_ATimes = 0;
   PI_CONTENT(DEE)->num_iters  = 0;
 
