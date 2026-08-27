@@ -741,14 +741,13 @@ static int IDANewtonIC(IDAMem IDA_mem)
   } /* End of Newton iteration loop */
 
   /* Return either IC_SLOW_CONVRG or recoverable fail flag. */
-  if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0) { return (IC_SLOW_CONVRG); }
-if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0)
-{
-  SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed slow convergence");
-  return (IC_SLOW_CONVRG); 
-}
-SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed max iters");
-return (IC_CONV_FAIL);
+  if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0)
+  {
+    SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed slow convergence");
+    return (IC_SLOW_CONVRG);
+  }
+  SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed max iters");
+  return (IC_CONV_FAIL);
 }
 
 /*
@@ -1191,7 +1190,7 @@ static int IDASensNewtonIC(IDAMem IDA_mem)
   int retval, is, mnewt;
   sunrealtype delnorm, fnorm, fnorm0, oldfnrm, rate;
 
-  SUNLogInfo(IDA_LOGGER, "begin-iterations-list", ""); }
+  SUNLogInfo(IDA_LOGGER, "begin-iterations-list", "");
 
   for (is = 0; is < IDA_mem->ida_Ns; is++)
   {
@@ -1234,7 +1233,7 @@ static int IDASensNewtonIC(IDAMem IDA_mem)
   /* Newton iteration loop */
   for (mnewt = 0; mnewt < IDA_mem->ida_maxnit; mnewt++)
   {
-    SUNLogInfoIf(mnewt > 0, IDA_LOGGER, "begin-iterations-list", ""); }
+    SUNLogInfoIf(mnewt > 0, IDA_LOGGER, "begin-iterations-list", "");
 
     IDA_mem->ida_nniS++;
     delnorm = fnorm;
@@ -1257,7 +1256,7 @@ static int IDASensNewtonIC(IDAMem IDA_mem)
     }
 
     /* If not converged, copy new step vectors, and loop. */
-    SUNLogInfoIf(mnewt < IDA_mem->maxnit - 1, IDA_LOGGER, "end-iterations-list", "status = continue");
+    SUNLogInfoIf(mnewt < IDA_mem->ida_maxnit - 1, IDA_LOGGER, "end-iterations-list", "status = continue");
     for (is = 0; is < IDA_mem->ida_Ns; is++)
     {
       N_VScale(ONE, IDA_mem->ida_delnewS[is], IDA_mem->ida_deltaS[is]);
@@ -1266,14 +1265,13 @@ static int IDASensNewtonIC(IDAMem IDA_mem)
   } /* End of Newton iteration loop */
 
   /* Return either IC_SLOW_CONVRG or recoverable fail flag. */
-  if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0) { return (IC_SLOW_CONVRG); }
-if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0)
-{
-  SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed slow convergence");
-  return (IC_SLOW_CONVRG);
-}
-SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed max iters");
-return (IC_CONV_FAIL);
+  if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0)
+  {
+    SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed slow convergence");
+    return (IC_SLOW_CONVRG);
+  }
+  SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed max iters");
+  return (IC_CONV_FAIL);
 }
 
 /*
