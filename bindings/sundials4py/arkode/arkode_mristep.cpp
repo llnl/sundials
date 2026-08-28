@@ -209,6 +209,24 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
     nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
+
+  m.def(
+    "MRIStepExtSTSGetSTS",
+    [](void* arkode_mem)
+    {
+      void* sts_mem = nullptr;
+      int status    = MRIStepExtSTSGetSTS(arkode_mem, &sts_mem);
+
+      std::shared_ptr<ARKodeBorrowedView> sts;
+      if (status == ARK_SUCCESS && sts_mem != nullptr)
+      {
+        sts = std::make_shared<ARKodeBorrowedView>(sts_mem);
+      }
+
+      return std::make_tuple(status, sts);
+    },
+    nb::arg("arkode_mem"),
+    nb::call_policy<sundials4py::returns_references_to<1, 1>>());
 }
 
 } // namespace sundials4py

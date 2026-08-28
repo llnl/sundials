@@ -34,6 +34,25 @@ struct ARKodeDeleter
 
 using ARKodeView = ClassView<void*, ARKodeDeleter>;
 
+class ARKodeBorrowedView : public sundials::ConvertibleTo<void*>
+{
+public:
+  explicit ARKodeBorrowedView(void* object = nullptr) noexcept
+    : object_(object)
+  {}
+
+  void* get() noexcept override { return object_; }
+
+  void* get() const noexcept override { return object_; }
+
+  operator void*() noexcept override { return object_; }
+
+  operator void*() const noexcept override { return object_; }
+
+private:
+  void* object_;
+};
+
 struct ARKodeButcherTableDeleter
 {
   void operator()(ARKodeButcherTable t) { ARKodeButcherTable_Free(t); }

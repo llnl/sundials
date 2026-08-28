@@ -87,6 +87,10 @@ void bind_arkode(nb::module_& m)
     .def("get", nb::overload_cast<>(&ARKodeView::get, nb::const_),
          nb::rv_policy::reference);
 
+  nb::class_<ARKodeBorrowedView>(m, "ARKodeBorrowedView")
+    .def("get", nb::overload_cast<>(&ARKodeBorrowedView::get, nb::const_),
+         nb::rv_policy::reference);
+
   /////////////////////////////////////////////////////////////////////////////
   // ARKODE user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
