@@ -209,7 +209,6 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
     nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
-
 }
 
 } // namespace sundials4py
