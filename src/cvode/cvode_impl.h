@@ -28,6 +28,7 @@
 #include <sundials/priv/sundials_context_impl.h>
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_math.h>
+#include <sundials/sundials_vecstack.h>
 
 #include "cvode_proj_impl.h"
 #include "sundials_logger_impl.h"
@@ -473,6 +474,13 @@ typedef struct CVodeMemRec
     ----------------*/
 
   sunbooleantype first_step_after_resize; /* Flag to signal a resize happened */
+
+  /*----------------------------
+    Temporary Vector Stack
+    ----------------------------*/
+
+  SUNVecStack cv_temp_vec_stack;
+  sunbooleantype cv_own_temp_vec_stack;
 
 }* CVodeMem;
 
