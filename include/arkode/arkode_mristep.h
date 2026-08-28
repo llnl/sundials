@@ -224,8 +224,6 @@ SUNDIALS_EXPORT int MRIStepSetPreInnerFn(void* arkode_mem,
                                          MRIStepPreInnerFn prefn);
 SUNDIALS_EXPORT int MRIStepSetPostInnerFn(void* arkode_mem,
                                           MRIStepPostInnerFn postfn);
-SUNDIALS_EXPORT int MRIStepExtSTSSetDomEigFn(void* arkode_mem,
-                                             ARKDomEigFn dom_eig);
 
 /* Optional output functions */
 SUNDIALS_EXPORT int MRIStepGetCurrentCoupling(
