@@ -339,6 +339,10 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   /* Initialize resize variables */
   cv_mem->first_step_after_resize = SUNFALSE;
 
+  /* Initialize temporary vector stack */
+  cv_mem->cv_temp_vec_stack     = NULL;
+  cv_mem->cv_own_temp_vec_stack = SUNFALSE;
+
   /* Set the saved value for qmax_alloc */
 
   cv_mem->cv_qmax_alloc = maxord;
@@ -434,6 +438,22 @@ int CVodeInit(void* cvode_mem, CVRhsFn f, sunrealtype t0, N_Vector y0)
   }
   cv_mem->cv_lrw1 = lrw1;
   cv_mem->cv_liw1 = liw1;
+
+  /* Allocate the temporary vector stack if not provided by the user */
+
+  if (cv_mem->cv_temp_vec_stack == NULL)
+  {
+    SUNErrCode err = SUNVecStack_Create(y0, 0, cv_mem->cv_sunctx,
+                                        &(cv_mem->cv_temp_vec_stack));
+    if (err != SUN_SUCCESS)
+    {
+      cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
+                     "Unable to allocate vector stack");
+      SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
+      return (CV_MEM_FAIL);
+    }
+    cv_mem->cv_own_temp_vec_stack = SUNTRUE;
+  }
 
   /* Allocate the vectors (using y0 as a template) */
 
@@ -1827,6 +1847,13 @@ void CVodeFree(void** cvode_mem)
   }
 
   if (cv_mem->proj_mem) { cvProjFree(&(cv_mem->proj_mem)); }
+
+  if (cv_mem->cv_temp_vec_stack && cv_mem->cv_own_temp_vec_stack)
+  {
+    (void)SUNVecStack_Destroy(&(cv_mem->cv_temp_vec_stack));
+    cv_mem->cv_temp_vec_stack     = NULL;
+    cv_mem->cv_own_temp_vec_stack = SUNFALSE;
+  }
 
   free(*cvode_mem);
   *cvode_mem = NULL;
