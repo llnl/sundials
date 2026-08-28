@@ -23,6 +23,8 @@
 #include "cvode/cvode.h"
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_vecstack.h"
+#include "sunlinsol/sunlinsol_dense.h"
+#include "sunmatrix/sunmatrix_dense.h"
 
 #define ZERO SUN_RCONST(0.0)
 #define ONE  SUN_RCONST(1.0)
@@ -47,10 +49,16 @@ static int check_flag(const char* name, int flag)
 int main(int argc, char* argv[])
 {
   int flag                = 0;
+  int64_t num_active_vecs = 0;
+  int64_t num_idle_vecs   = 0;
   int64_t num_vecs        = 0;
+  sunrealtype tret        = ZERO;
   SUNContext sunctx       = NULL;
+  SUNLinearSolver LS      = NULL;
+  SUNMatrix A             = NULL;
   SUNVecStack stack       = NULL;
   SUNVecStack stack_check = NULL;
+  N_Vector ele            = NULL;
   N_Vector y              = NULL;
   void* cvode_mem         = NULL;
 
@@ -135,21 +143,87 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+  /* The checked-out CVODE workspace vectors should now be active in the
+     user-owned stack. This includes acor so local-error queries remain valid
+     while CVODE is alive. */
+  flag = SUNVecStack_GetNumActiveVecs(stack, &num_active_vecs);
+  if (check_flag("SUNVecStack_GetNumActiveVecs", flag)) { return 1; }
+  if (num_active_vecs != 6)
+  {
+    fprintf(stderr, "Expected six active workspace vectors after CVodeInit\n");
+    return 1;
+  }
+
+  /* Advance the problem once, then query the estimated local error. This checks
+     that cv_acor still has the required post-CVode lifetime even though its
+     storage came from SUNVecStack. */
+  flag = CVodeSStolerances(cvode_mem, SUN_RCONST(1.0e-4), SUN_RCONST(1.0e-8));
+  if (check_flag("CVodeSStolerances", flag)) { return 1; }
+
+  A = SUNDenseMatrix(1, 1, sunctx);
+  if (!A)
+  {
+    fprintf(stderr, "SUNDenseMatrix returned NULL\n");
+    return 1;
+  }
+
+  LS = SUNLinSol_Dense(y, A, sunctx);
+  if (!LS)
+  {
+    fprintf(stderr, "SUNLinSol_Dense returned NULL\n");
+    return 1;
+  }
+
+  flag = CVodeSetLinearSolver(cvode_mem, LS, A);
+  if (check_flag("CVodeSetLinearSolver", flag)) { return 1; }
+
+  ele = N_VClone(y);
+  if (!ele)
+  {
+    fprintf(stderr, "N_VClone returned NULL\n");
+    return 1;
+  }
+
+  flag = CVode(cvode_mem, SUN_RCONST(0.1), y, &tret, CV_NORMAL);
+  if (check_flag("CVode", flag)) { return 1; }
+
+  flag = CVodeGetEstLocalErrors(cvode_mem, ele);
+  if (check_flag("CVodeGetEstLocalErrors", flag)) { return 1; }
+
   /* CVodeFree must not destroy a user-owned stack. The caller should still be
      able to query and destroy it after the CVODE memory is gone. */
   CVodeFree(&cvode_mem);
 
   flag = SUNVecStack_GetNumVecs(stack, &num_vecs);
   if (check_flag("SUNVecStack_GetNumVecs", flag)) { return 1; }
-  if (num_vecs != 1)
+  if (num_vecs != 6)
   {
     fprintf(stderr, "Expected user stack to remain valid after CVodeFree\n");
+    return 1;
+  }
+
+  flag = SUNVecStack_GetNumActiveVecs(stack, &num_active_vecs);
+  if (check_flag("SUNVecStack_GetNumActiveVecs", flag)) { return 1; }
+  if (num_active_vecs != 0)
+  {
+    fprintf(stderr, "Expected all user stack vectors to be returned\n");
+    return 1;
+  }
+
+  flag = SUNVecStack_GetNumIdleVecs(stack, &num_idle_vecs);
+  if (check_flag("SUNVecStack_GetNumIdleVecs", flag)) { return 1; }
+  if (num_idle_vecs != num_vecs)
+  {
+    fprintf(stderr, "Expected all user stack vectors to be idle\n");
     return 1;
   }
 
   flag = SUNVecStack_Destroy(&stack);
   if (check_flag("SUNVecStack_Destroy", flag)) { return 1; }
 
+  N_VDestroy(ele);
+  SUNLinSolFree(LS);
+  SUNMatDestroy(A);
   N_VDestroy(y);
   SUNContext_Free(&sunctx);
 

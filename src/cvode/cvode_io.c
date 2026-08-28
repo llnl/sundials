@@ -1809,6 +1809,13 @@ int CVodeSetVecStack(void* cvode_mem, SUNVecStack stack)
 
   cv_mem = (CVodeMem)cvode_mem;
 
+  if (cv_mem->cv_MallocDone)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Cannot replace vector stack after CVodeInit");
+    return (CV_ILL_INPUT);
+  }
+
   if (cv_mem->cv_temp_vec_stack && cv_mem->cv_own_temp_vec_stack)
   {
     SUNErrCode err = SUNVecStack_Destroy(&(cv_mem->cv_temp_vec_stack));
