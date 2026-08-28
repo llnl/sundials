@@ -243,16 +243,21 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
     return retval;
   }
 
-  /* Reset STS integrator to current state */
-  ark_mem->tn = ark_mem->tcur = t0;
-  ark_mem->h = ark_mem->hin = h;
-  ark_mem->ycur             = y;
-  ark_mem->eta              = ONE;
-  ark_mem->fixedstep        = SUNTRUE;
-  ark_mem->fn_is_current    = SUNFALSE;
-  N_VScale(ONE, y, ark_mem->yn);
+  /* Reset LSRKStep to current state, using ARKodeReset so first-call
+     setup invariants are preserved. */
+  retval = ARKodeReset(ark_mem, t0, y);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Failed to reset LSRKStep for ExtSTS method.");
+    return retval;
+  }
 
-  /* Initialize the inner STS integrator on the first call */
+  /* Set step size to reach tout in a single fixed step */
+  ark_mem->h = ark_mem->hin = h;
+  ark_mem->fixedstep        = SUNTRUE;
+
+  /* Run setup before enabling forcing since setup may allocate stepper data. */
   if (ark_mem->initsetup)
   {
     retval = arkInitialSetup(ark_mem, tout);
@@ -264,12 +269,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
     }
   }
 
-  /* Ensure the direct step uses the requested interval with forcing enabled */
-  ark_mem->h = ark_mem->hin = h;
-  ark_mem->eta              = ONE;
-  ark_mem->fn_is_current    = SUNFALSE;
-
-  /* Set the inner forcing data */
+  /* Set the inner forcing data. */
   retval = ark_mem->step_setforcing(ark_mem, tshift, tscale, forcing, nforcing);
   if (retval != ARK_SUCCESS)
   {
@@ -278,8 +278,13 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
     return retval;
   }
 
+  /* The forcing wrapper changes the RHS, so recompute the start RHS. */
+  ark_mem->fn_is_current = SUNFALSE;
+
   /* Call the user-supplied pre-step function (if supplied) */
-  if (ark_mem->PreStepFn)
+  ark_mem->tcur = ark_mem->tn;
+  if (ark_mem->ensure_ycur) { N_VScale(ONE, ark_mem->yn, ark_mem->ycur); }
+  if (retval == ARK_SUCCESS && ark_mem->PreStepFn)
   {
     retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst, 1,
                                 ark_mem->user_data);
@@ -290,6 +295,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   /* Take a single inner STS step */
   if (retval == ARK_SUCCESS)
   {
+    /* Let ExtSTS translate this recoverable failure after forcing is disabled. */
     lsrkstep_mem->suppress_max_stage_limit_error = SUNTRUE;
     retval = ark_mem->step(ark_mem, &dsm, &nflag);
     lsrkstep_mem->suppress_max_stage_limit_error = SUNFALSE;
@@ -305,7 +311,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
     return forcing_retval;
   }
 
-  /* If LSRKStep failed due to insufficient stages, tell MRIStep to reduce step and retry */
+  /* If LSRKStep failed due to insufficient stages, tell MRIStep to reduce step and retry. */
   if (retval == ARK_MAX_STAGE_LIMIT_FAIL) { return ARK_RETRY_STEP; }
 
   /* Complete successful steps to update stats and call the inner PostStepFn. */
