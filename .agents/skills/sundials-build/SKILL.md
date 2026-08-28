@@ -1,5 +1,5 @@
 ---
-name: building
+name: sundials-build
 description: Build, install, and test SUNDIALS from source as an end user or as a SUNDIALS developer. Use when a request involves configuring CMake, selecting compilers/options (MPI, GPU backends, Fortran), building/installing, running CTest, enabling dev/unit tests, or troubleshooting common build/test issues.
 ---
 

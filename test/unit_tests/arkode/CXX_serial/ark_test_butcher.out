@@ -12,13 +12,7 @@ Testing method ARKODE_FEHLBERG_6_4_5:  table matches predicted method/embedding 
 Testing method ARKODE_DORMAND_PRINCE_7_4_5:  table matches predicted method/embedding orders of 5/4
 Testing method ARKODE_ARK548L2SA_ERK_8_4_5:  table matches predicted method/embedding orders of 5/4
 Testing method ARKODE_VERNER_8_5_6:  table matches predicted method/embedding orders of 6/5
-Testing method ARKODE_FEHLBERG_13_7_8:  WARNING:
-ARKodeButcherTable_CheckOrder:
-  method order >= 6; reverting to simplifying assumptions
-  method order = 6
-
-  embedding order >= 6; reverting to simplifying assumptions
-  embedding order = 6
+Testing method ARKODE_FEHLBERG_13_7_8:  table matches predicted method/embedding orders of 8/7
 Testing method ARKODE_KNOTH_WOLKE_3_3:  table matches predicted method/embedding orders of 3/0
 Testing method ARKODE_ARK437L2SA_ERK_7_3_4:  table matches predicted method/embedding orders of 4/3
 Testing method ARKODE_ARK548L2SAb_ERK_8_4_5:  table matches predicted method/embedding orders of 5/4
@@ -26,27 +20,9 @@ Testing method ARKODE_ARK2_ERK_3_1_2:  table matches predicted method/embedding 
 Testing method ARKODE_SOFRONIOU_SPALETTA_5_3_4:  table matches predicted method/embedding orders of 4/3
 Testing method ARKODE_SHU_OSHER_3_2_3:  table matches predicted method/embedding orders of 3/2
 Testing method ARKODE_VERNER_9_5_6:  table matches predicted method/embedding orders of 6/5
-Testing method ARKODE_VERNER_10_6_7:  WARNING:
-ARKodeButcherTable_CheckOrder:
-  method order >= 6; reverting to simplifying assumptions
-  method order = 6
-
-  embedding order >= 6; reverting to simplifying assumptions
-  embedding order = 6
-Testing method ARKODE_VERNER_13_7_8:  WARNING:
-ARKodeButcherTable_CheckOrder:
-  method order >= 6; reverting to simplifying assumptions
-  method order = 6
-
-  embedding order >= 6; reverting to simplifying assumptions
-  embedding order = 6
-Testing method ARKODE_VERNER_16_8_9:  WARNING:
-ARKodeButcherTable_CheckOrder:
-  method order >= 6; reverting to simplifying assumptions
-  method order = 6
-
-  embedding order >= 6; reverting to simplifying assumptions
-  embedding order = 6
+Testing method ARKODE_VERNER_10_6_7:  table matches predicted method/embedding orders of 7/6
+Testing method ARKODE_VERNER_13_7_8:  table matches predicted method/embedding orders of 8/7
+Testing method ARKODE_VERNER_16_8_9:  table matches predicted method/embedding orders of 9/8
 Testing method ARKODE_FORWARD_EULER_1_1:  table matches predicted method/embedding orders of 1/0
 Testing method ARKODE_RALSTON_EULER_2_1_2:  table matches predicted method/embedding orders of 2/1
 Testing method ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2:  table matches predicted method/embedding orders of 2/1
