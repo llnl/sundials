@@ -3938,6 +3938,13 @@ int ARKodeSetVecStack(void* arkode_mem, SUNVecStack stack)
   }
   ARKodeMem ark_mem = (ARKodeMem)arkode_mem;
 
+  if (ark_mem->MallocDone)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Cannot replace vector stack after ARKodeInit");
+    return ARK_ILL_INPUT;
+  }
+
   if (ark_mem->temp_vec_stack && ark_mem->own_temp_vec_stack)
   {
     SUNErrCode err = SUNVecStack_Destroy(&ark_mem->temp_vec_stack);
