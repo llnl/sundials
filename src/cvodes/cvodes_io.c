@@ -2742,6 +2742,63 @@ int CVodeGetUserData(void* cvode_mem, void** user_data)
 
 /*-----------------------------------------------------------------*/
 
+int CVodeSetVecStack(void* cvode_mem, SUNVecStack stack)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+
+  cv_mem = (CVodeMem)cvode_mem;
+
+  if (cv_mem->cv_MallocDone)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "Cannot replace vector stack after CVodeInit");
+    return (CV_ILL_INPUT);
+  }
+
+  if (cv_mem->cv_temp_vec_stack && cv_mem->cv_own_temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_Destroy(&(cv_mem->cv_temp_vec_stack));
+    if (err != SUN_SUCCESS)
+    {
+      cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
+                     "Unable to deallocate existing vector stack");
+      return (CV_MEM_FAIL);
+    }
+  }
+
+  cv_mem->cv_temp_vec_stack     = stack;
+  cv_mem->cv_own_temp_vec_stack = SUNFALSE;
+
+  return (CV_SUCCESS);
+}
+
+/*-----------------------------------------------------------------*/
+
+int CVodeGetVecStack(void* cvode_mem, SUNVecStack* stack)
+{
+  CVodeMem cv_mem;
+
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+
+  cv_mem = (CVodeMem)cvode_mem;
+
+  *stack = cv_mem->cv_temp_vec_stack;
+
+  return (CV_SUCCESS);
+}
+
+/*-----------------------------------------------------------------*/
+
 char* CVodeGetReturnFlagName(long int flag)
 {
   char* name;

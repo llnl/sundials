@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "cvode/cvode.h"
+#include "cvodes/cvodes.h"
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_vecstack.h"
 #include "sunlinsol/sunlinsol_dense.h"
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
   N_Vector y              = NULL;
   void* cvode_mem         = NULL;
 
-  /* Create the shared SUNDIALS context used by CVODE, the N_Vector, and the
+  /* Create the shared SUNDIALS context used by CVODES, the N_Vector, and the
      user-owned vector stack created later in this test. */
   flag = SUNContext_Create(SUN_COMM_NULL, &sunctx);
   if (check_flag("SUNContext_Create", flag)) { return 1; }
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
   }
   N_VConst(ONE, y);
 
-  /* First check the default path. CVODE should not create an internal vector
+  /* First check the default path. CVODES should not create an internal vector
      stack until CVodeInit has a template vector available. */
   cvode_mem = CVodeCreate(CV_BDF, sunctx);
   if (!cvode_mem)
@@ -107,12 +107,12 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  /* Free the first CVODE memory block. Since CVODE created the stack above,
+  /* Free the first CVODES memory block. Since CVODES created the stack above,
      CVodeFree is responsible for destroying it. */
   CVodeFree(&cvode_mem);
 
-  /* Next check the user-supplied path. This new CVODE memory block will receive
-     a stack owned by the caller before CVodeInit is called. */
+  /* Next check the user-supplied path. This new CVODES memory block will
+     receive a stack owned by the caller before CVodeInit is called. */
   cvode_mem = CVodeCreate(CV_BDF, sunctx);
   if (!cvode_mem)
   {
@@ -121,11 +121,11 @@ int main(int argc, char* argv[])
   }
 
   /* Seed the user-owned stack with one vector so we can verify after CVodeFree
-     that the stack still exists and has not been destroyed by CVODE. */
+     that the stack still exists and has not been destroyed by CVODES. */
   flag = SUNVecStack_Create(y, 1, sunctx, &stack);
   if (check_flag("SUNVecStack_Create", flag)) { return 1; }
 
-  /* Attach the user-owned stack. CVODE should store this pointer but leave
+  /* Attach the user-owned stack. CVODES should store this pointer but leave
      ownership with the caller. */
   flag = CVodeSetVecStack(cvode_mem, stack);
   if (check_flag("CVodeSetVecStack", flag)) { return 1; }
@@ -143,9 +143,9 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  /* The checked-out CVODE workspace vectors should now be active in the
+  /* The checked-out CVODES workspace vectors should now be active in the
      user-owned stack. This includes acor so local-error queries remain valid
-     while CVODE is alive. */
+     while CVODES is alive. */
   flag = SUNVecStack_GetNumActiveVecs(stack, &num_active_vecs);
   if (check_flag("SUNVecStack_GetNumActiveVecs", flag)) { return 1; }
   if (num_active_vecs != 6)
@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
   if (check_flag("CVodeGetEstLocalErrors", flag)) { return 1; }
 
   /* CVodeFree must not destroy a user-owned stack. The caller should still be
-     able to query and destroy it after the CVODE memory is gone. */
+     able to query and destroy it after the CVODES memory is gone. */
   CVodeFree(&cvode_mem);
 
   flag = SUNVecStack_GetNumVecs(stack, &num_vecs);

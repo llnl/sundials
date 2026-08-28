@@ -24,6 +24,7 @@
 #include <cvodes/cvodes_proj.h>
 #include <stdio.h>
 #include <sundials/sundials_core.h>
+#include <sundials/sundials_vecstack.h>
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
@@ -329,6 +330,12 @@ SUNDIALS_EXPORT int CVodeGetUserData(void* cvode_mem, void** user_data);
 SUNDIALS_EXPORT int CVodePrintAllStats(void* cvode_mem, FILE* outfile,
                                        SUNOutputFormat fmt);
 SUNDIALS_EXPORT char* CVodeGetReturnFlagName(long int flag);
+
+/* Attach stack of workspace vectors */
+SUNDIALS_EXPORT int CVodeSetVecStack(void* cvode_mem, SUNVecStack stack);
+
+/* Retrieve stack of workspace vectors */
+SUNDIALS_EXPORT int CVodeGetVecStack(void* cvode_mem, SUNVecStack* stack);
 
 /* Free function */
 SUNDIALS_EXPORT void CVodeFree(void** cvode_mem);
