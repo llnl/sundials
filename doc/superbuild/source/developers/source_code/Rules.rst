@@ -242,3 +242,7 @@ not adhere to all of these rules.
    :ref:`Style.Output`.
 
 #. Follow the logging style detailed in :ref:`Style.Logging`.
+
+#. Agent skills that are specifically for SUNDIALS developers should be named with the prefix ``sundials-devs-``. 
+   For example, the ``sundials-devs-address-pr-comments`` skill is to help SUNDIALS developers address pull 
+   request comments. Skills that are for general users should be named with the prefix ``sundials-``. 
