@@ -37,8 +37,7 @@ using ARKodeView = ClassView<void*, ARKodeDeleter>;
 class ARKodeBorrowedView : public sundials::ConvertibleTo<void*>
 {
 public:
-  explicit ARKodeBorrowedView(void* object = nullptr) noexcept
-    : object_(object)
+  explicit ARKodeBorrowedView(void* object = nullptr) noexcept : object_(object)
   {}
 
   void* get() noexcept override { return object_; }
