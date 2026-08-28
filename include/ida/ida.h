@@ -24,6 +24,7 @@
 #include <ida/ida_ls.h>
 #include <stdio.h>
 #include <sundials/sundials_core.h>
+#include <sundials/sundials_vecstack.h>
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
@@ -139,6 +140,8 @@ SUNDIALS_EXPORT int IDASetMaxBacksIC(void* ida_mem, int maxbacks);
 
 SUNDIALS_EXPORT int IDASetDeltaCjLSetup(void* ida_max, sunrealtype dcj);
 SUNDIALS_EXPORT int IDASetUserData(void* ida_mem, void* user_data);
+SUNDIALS_EXPORT int IDASetVecStack(void* ida_mem, SUNVecStack stack);
+SUNDIALS_EXPORT int IDAGetVecStack(void* ida_mem, SUNVecStack* stack);
 SUNDIALS_EXPORT int IDASetMaxOrd(void* ida_mem, int maxord);
 SUNDIALS_EXPORT int IDASetMaxNumSteps(void* ida_mem, long int mxsteps);
 SUNDIALS_EXPORT int IDASetInitStep(void* ida_mem, sunrealtype hin);
