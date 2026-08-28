@@ -57,8 +57,9 @@ def test_create_klu_if_available(sunctx, nvec):
     if not hasattr(sys.modules[__name__], "SUNLinSol_KLU"):
         pytest.skip("SUNLinSol_KLU is unavailable in this build")
 
-    sunklu_reinit_full = 1
-    sunklu_reinit_partial = 2
+    assert SUNKLU_ORDERING_DEFAULT == 1
+    assert SUNKLU_REINIT_FULL == 1
+    assert SUNKLU_REINIT_PARTIAL == 2
     n = N_VGetLength(nvec)
     A = SUNSparseMatrix(n, n, n, SUN_CSC_MAT, sunctx)
     assert A is not None
@@ -75,16 +76,16 @@ def test_create_klu_if_available(sunctx, nvec):
     assert SUNLinSolGetType(LS) == SUNLINEARSOLVER_DIRECT
     assert SUNLinSolGetID(LS) == SUNLINEARSOLVER_KLU
 
-    assert SUNLinSol_KLUSetOrdering(LS, 0) == SUN_SUCCESS
+    assert SUNLinSol_KLUSetOrdering(LS, SUNKLU_ORDERING_DEFAULT) == SUN_SUCCESS
     assert SUNLinSol_KLUGetCommon(LS) is not None
     assert SUNLinSolInitialize(LS) == SUN_SUCCESS
     assert SUNLinSolSetup(LS, A) == SUN_SUCCESS
     assert SUNLinSol_KLUGetSymbolic(LS) is not None
     assert SUNLinSol_KLUGetNumeric(LS) is not None
 
-    assert SUNLinSol_KLUReInit(LS, A, n, sunklu_reinit_partial) == SUN_SUCCESS
+    assert SUNLinSol_KLUReInit(LS, A, n, SUNKLU_REINIT_PARTIAL) == SUN_SUCCESS
     assert SUNLinSolSetup(LS, A) == SUN_SUCCESS
-    assert SUNLinSol_KLUReInit(LS, A, n, sunklu_reinit_full) == SUN_SUCCESS
+    assert SUNLinSol_KLUReInit(LS, A, n, SUNKLU_REINIT_FULL) == SUN_SUCCESS
     assert SUNSparseMatrix_NNZ(A) == n
 
 

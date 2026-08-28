@@ -23,6 +23,7 @@ modules:
   all:
     macro_define_include_by_name__regex:
       - "^SUN_"
+      - "^SUNKLU_"
     fn_exclude_by_name__regex:
       # Don't interface the implementation specific overrides of the generic routines
       - "^SUNLinSolGetType_.*"
