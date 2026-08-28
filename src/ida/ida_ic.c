@@ -470,20 +470,22 @@ static int IDANewtonIC(IDAMem IDA_mem)
     }
 
     /* If not converged, copy new step vector, and loop. */
-    SUNLogInfoIf(mnewt < IDA_mem->ida_maxnit - 1, IDA_LOGGER, "end-iterations-list", "status = continue");
+    SUNLogInfoIf(mnewt < IDA_mem->ida_maxnit - 1, IDA_LOGGER,
+                 "end-iterations-list", "status = continue");
     N_VScale(ONE, IDA_mem->ida_delnew, IDA_mem->ida_delta);
 
   } /* End of Newton iteration loop */
 
   /* Return either IC_SLOW_CONVRG or recoverable fail flag. */
   if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0) { return (IC_SLOW_CONVRG); }
-if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0)
-{ 
-  SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed slow convergence");
-  return (IC_SLOW_CONVRG);
-}
-SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed max iters");
-return (IC_CONV_FAIL);
+  if (rate <= ICRATEMAX || fnorm < PT1 * fnorm0)
+  {
+    SUNLogInfo(IDA_LOGGER, "end-iterations-list",
+               "status = failed slow convergence");
+    return (IC_SLOW_CONVRG);
+  }
+  SUNLogInfo(IDA_LOGGER, "end-iterations-list", "status = failed max iters");
+  return (IC_CONV_FAIL);
 }
 
 /*
