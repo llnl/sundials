@@ -3930,6 +3930,8 @@ int arkSetAdaptivityFn(void* arkode_mem, ARKAdaptFn hfun, void* h_data)
 
 int ARKodeSetVecStack(void* arkode_mem, SUNVecStack stack)
 {
+  int64_t num_active_vecs = 0;
+
   if (arkode_mem == NULL)
   {
     arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
@@ -3938,11 +3940,23 @@ int ARKodeSetVecStack(void* arkode_mem, SUNVecStack stack)
   }
   ARKodeMem ark_mem = (ARKodeMem)arkode_mem;
 
-  if (ark_mem->MallocDone)
+  if (ark_mem->temp_vec_stack)
   {
-    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "Cannot replace vector stack after ARKodeInit");
-    return ARK_ILL_INPUT;
+    SUNErrCode err = SUNVecStack_GetNumActiveVecs(ark_mem->temp_vec_stack,
+                                                  &num_active_vecs);
+    if (err != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "Unable to check existing vector stack");
+      return ARK_MEM_FAIL;
+    }
+
+    if (num_active_vecs > 0)
+    {
+      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
+                      __FILE__, "Cannot replace vector stack while vectors are checked out");
+      return ARK_ILL_INPUT;
+    }
   }
 
   if (ark_mem->temp_vec_stack && ark_mem->own_temp_vec_stack)
@@ -3976,9 +3990,6 @@ int ARKodeGetVecStack(void* arkode_mem, SUNVecStack* stack)
 
   return SUN_SUCCESS;
 }
-
-
-
 
 /*===============================================================
   EOF

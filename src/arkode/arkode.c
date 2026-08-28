@@ -720,7 +720,6 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     if (SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->lte)) { return ARK_MEM_FAIL; }
   }
 
-
   /* start profiler */
   SUNDIALS_MARK_FUNCTION_BEGIN(ARK_PROFILER);
 
@@ -1312,6 +1311,11 @@ void ARKodeFree(void** arkode_mem)
   {
     (void)arkRelaxDestroy(ark_mem->relax_mem);
     ark_mem->relax_mem = NULL;
+  }
+
+  if (ark_mem->lte)
+  {
+    (void)SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->lte);
   }
 
   if (ark_mem->temp_vec_stack && ark_mem->own_temp_vec_stack)
