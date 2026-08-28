@@ -220,13 +220,14 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
   step_mem->DEE = NULL;
 
   /* Initialize all the counters */
-  step_mem->nfe               = 0;
-  step_mem->nfeDQ             = 0;
-  step_mem->stage_max         = 0;
-  step_mem->dom_eig_num_evals = 0;
-  step_mem->stage_max_limit   = STAGE_MAX_LIMIT_DEFAULT;
-  step_mem->dom_eig_nst       = 0;
-  step_mem->num_dee_iters     = 0;
+  step_mem->nfe                            = 0;
+  step_mem->nfeDQ                          = 0;
+  step_mem->stage_max                      = 0;
+  step_mem->dom_eig_num_evals              = 0;
+  step_mem->stage_max_limit                = STAGE_MAX_LIMIT_DEFAULT;
+  step_mem->dom_eig_nst                    = 0;
+  step_mem->num_dee_iters                  = 0;
+  step_mem->suppress_max_stage_limit_error = SUNFALSE;
 
   /* Initialize fused op work space */
   step_mem->cvals        = NULL;
@@ -311,20 +312,21 @@ int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
   }
 
   /* Initialize all the counters, flags and stats */
-  step_mem->nfe                 = 0;
-  step_mem->nfeDQ               = 0;
-  step_mem->dom_eig_num_evals   = 0;
-  step_mem->stage_max           = 0;
-  step_mem->lambdaR             = ZERO;
-  step_mem->lambdaI             = ZERO;
-  step_mem->spectral_radius     = ZERO;
-  step_mem->spectral_radius_max = 0;
-  step_mem->spectral_radius_min = 0;
-  step_mem->dom_eig_nst         = 0;
-  step_mem->num_dee_iters       = 0;
-  step_mem->dom_eig_update      = SUNTRUE;
-  step_mem->dom_eig_is_current  = SUNFALSE;
-  step_mem->init_warmup         = SUNTRUE;
+  step_mem->nfe                            = 0;
+  step_mem->nfeDQ                          = 0;
+  step_mem->dom_eig_num_evals              = 0;
+  step_mem->stage_max                      = 0;
+  step_mem->lambdaR                        = ZERO;
+  step_mem->lambdaI                        = ZERO;
+  step_mem->spectral_radius                = ZERO;
+  step_mem->spectral_radius_max            = 0;
+  step_mem->spectral_radius_min            = 0;
+  step_mem->dom_eig_nst                    = 0;
+  step_mem->num_dee_iters                  = 0;
+  step_mem->dom_eig_update                 = SUNTRUE;
+  step_mem->dom_eig_is_current             = SUNFALSE;
+  step_mem->init_warmup                    = SUNTRUE;
+  step_mem->suppress_max_stage_limit_error = SUNFALSE;
 
   return ARK_SUCCESS;
 }
@@ -645,10 +647,13 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else
     {
-      arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                      __FILE__,
-                      "Unable to achieve stable results: Either reduce the "
-                      "step size or increase the stage_max_limit");
+      if (!step_mem->suppress_max_stage_limit_error)
+      {
+        arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                        __FILE__,
+                        "Unable to achieve stable results: Either reduce the "
+                        "step size or increase the stage_max_limit");
+      }
       return ARK_MAX_STAGE_LIMIT_FAIL;
     }
   }
@@ -715,10 +720,13 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         }
         else
         {
-          arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                          __FILE__,
-                          "Unable to achieve stable results: Either reduce the "
-                          "step size or increase the stage_max_limit");
+          if (!step_mem->suppress_max_stage_limit_error)
+          {
+            arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__,
+                            __func__, __FILE__,
+                            "Unable to achieve stable results: Either reduce "
+                            "the step size or increase the stage_max_limit");
+          }
           return ARK_MAX_STAGE_LIMIT_FAIL;
         }
       }
@@ -1091,10 +1099,13 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else
     {
-      arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                      __FILE__,
-                      "Unable to achieve stable results: Either reduce the "
-                      "step size or increase the stage_max_limit");
+      if (!step_mem->suppress_max_stage_limit_error)
+      {
+        arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                        __FILE__,
+                        "Unable to achieve stable results: Either reduce the "
+                        "step size or increase the stage_max_limit");
+      }
       return ARK_MAX_STAGE_LIMIT_FAIL;
     }
   }
@@ -1171,10 +1182,13 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         }
         else
         {
-          arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                          __FILE__,
-                          "Unable to achieve stable results: Either reduce the "
-                          "step size or increase the stage_max_limit");
+          if (!step_mem->suppress_max_stage_limit_error)
+          {
+            arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__,
+                            __func__, __FILE__,
+                            "Unable to achieve stable results: Either reduce "
+                            "the step size or increase the stage_max_limit");
+          }
           return ARK_MAX_STAGE_LIMIT_FAIL;
         }
       }

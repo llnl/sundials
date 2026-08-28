@@ -177,6 +177,7 @@ typedef struct ARKodeLSRKStepMemRec
   long int dom_eig_nst; /* num of step at which the last domainant eigenvalue was computed  */
   long int step_nst;      /* The number of successful steps. */
   long int num_dee_iters; /* number of iterations in the DEE estimates */
+  sunbooleantype suppress_max_stage_limit_error; /* suppress max stage errors */
 
   /* Spectral info */
   sunrealtype lambdaR;         /* Real part of the dominated eigenvalue*/

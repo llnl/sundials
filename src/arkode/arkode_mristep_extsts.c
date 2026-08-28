@@ -23,6 +23,7 @@
 
 #include <arkode/arkode_lsrkstep.h>
 #include "arkode_impl.h"
+#include "arkode_lsrkstep_impl.h"
 #include "arkode_mristep_impl.h"
 
 /* MRIStep ExtSTS constructor routine */
@@ -223,11 +224,16 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
                               sunrealtype tout, N_Vector y)
 {
   /* Get the forcing data */
-  ARKodeMem ark_mem = (ARKodeMem)sts_mem->content;
-  sunrealtype tshift, tscale;
+  ARKodeMem ark_mem              = (ARKodeMem)sts_mem->content;
+  ARKodeLSRKStepMem lsrkstep_mem = NULL;
+  sunrealtype tshift, tscale, dsm;
   N_Vector* forcing;
-  int nforcing;
-  int retval;
+  const sunrealtype h = tout - t0;
+  int nforcing, nflag, retval, forcing_retval;
+
+  retval = lsrkStep_AccessStepMem(ark_mem, __func__, &lsrkstep_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
   retval = MRIStepInnerStepper_GetForcingData(sts_mem, &tshift, &tscale,
                                               &forcing, &nforcing);
   if (retval != ARK_SUCCESS)
@@ -236,6 +242,32 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
                     "Failed to retrieve forcing data for ExtSTS method.");
     return retval;
   }
+
+  /* Reset STS integrator to current state */
+  ark_mem->tn = ark_mem->tcur = t0;
+  ark_mem->h = ark_mem->hin = h;
+  ark_mem->ycur             = y;
+  ark_mem->eta              = ONE;
+  ark_mem->fixedstep        = SUNTRUE;
+  ark_mem->fn_is_current    = SUNFALSE;
+  N_VScale(ONE, y, ark_mem->yn);
+
+  /* Initialize the inner STS integrator on the first call */
+  if (ark_mem->initsetup)
+  {
+    retval = arkInitialSetup(ark_mem, tout);
+    if (retval != ARK_SUCCESS)
+    {
+      arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                      "Failed to initialize LSRKStep for ExtSTS method.");
+      return retval;
+    }
+  }
+
+  /* Ensure the direct step uses the requested interval with forcing enabled */
+  ark_mem->h = ark_mem->hin = h;
+  ark_mem->eta              = ONE;
+  ark_mem->fn_is_current    = SUNFALSE;
 
   /* Set the inner forcing data */
   retval = ark_mem->step_setforcing(ark_mem, tshift, tscale, forcing, nforcing);
@@ -246,53 +278,48 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
     return retval;
   }
 
-  /* Reset STS integrator to current state */
-  retval = ARKodeReset(ark_mem, t0, y);
-  if (retval != ARK_SUCCESS)
+  /* Call the user-supplied pre-step function (if supplied) */
+  if (ark_mem->PreStepFn)
   {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to reset LSRKStep for ExtSTS method.");
-    return retval;
+    retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst, 1,
+                                ark_mem->user_data);
+    /* Preserve the failure flag but continue to disable forcing below. */
+    if (retval != 0) { retval = ARK_PRESTEPFN_FAIL; }
   }
 
-  /* Set step size to reach tout in a single step */
-  retval = ARKodeSetFixedStep(ark_mem, tout - t0);
-  if (retval != ARK_SUCCESS)
+  /* Take a single inner STS step */
+  if (retval == ARK_SUCCESS)
   {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set LSRKStep step size for ExtSTS method.");
-    return retval;
-  }
-
-  /* Set stop time */
-  retval = ARKodeSetStopTime(ark_mem, tout);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set LSRKStep stop time for ExtSTS method.");
-    return retval;
-  }
-
-  /* Evolve a single time step */
-  sunrealtype tret;
-  retval = ARKodeEvolve(ark_mem, tout, y, &tret, ARK_ONE_STEP);
-  if (retval < 0)
-  {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to evolve LSRKStep for ExtSTS method.");
-    return retval;
+    lsrkstep_mem->suppress_max_stage_limit_error = SUNTRUE;
+    retval = ark_mem->step(ark_mem, &dsm, &nflag);
+    lsrkstep_mem->suppress_max_stage_limit_error = SUNFALSE;
+    ark_mem->nst_attempts++;
   }
 
   /* Disable inner forcing */
-  retval = ark_mem->step_setforcing(ark_mem, ZERO, ONE, NULL, 0);
-  if (retval != ARK_SUCCESS)
+  forcing_retval = ark_mem->step_setforcing(ark_mem, ZERO, ONE, NULL, 0);
+  if (forcing_retval != ARK_SUCCESS)
   {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+    arkProcessError(ark_mem, forcing_retval, __LINE__, __func__, __FILE__,
                     "Failed to reset LSRKStep forcing for ExtSTS method.");
-    return retval;
+    return forcing_retval;
   }
 
-  return ARK_SUCCESS;
+  /* If LSRKStep failed due to insufficient stages, tell MRIStep to reduce step and retry */
+  if (retval == ARK_MAX_STAGE_LIMIT_FAIL) { return ARK_RETRY_STEP; }
+
+  /* Complete successful steps to update stats and call the inner PostStepFn. */
+  if (retval == ARK_SUCCESS)
+  {
+    retval = arkCompleteStep(ark_mem, dsm);
+    if (retval != ARK_SUCCESS)
+    {
+      arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                      "Failed to complete LSRKStep for ExtSTS method.");
+    }
+  }
+
+  return retval;
 }
 
 int extSTSInnerStepper_Free(MRIStepInnerStepper* sts_mem)
