@@ -188,6 +188,77 @@ static int cvPredictY(int order, N_Vector* zn, N_Vector ypred)
 }
 
 /* -----------------------------------------------------------------------------
+ * Return CVODES workspace vectors to the vector stack
+ * ---------------------------------------------------------------------------*/
+
+static void cvPushWorkspaceVectors(CVodeMem cv_mem)
+{
+  if (cv_mem->cv_acor && cv_mem->cv_temp_vec_stack)
+  {
+    (void)SUNVecStack_Push(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_acor));
+  }
+  if (cv_mem->cv_tempv && cv_mem->cv_temp_vec_stack)
+  {
+    (void)SUNVecStack_Push(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_tempv));
+  }
+  if (cv_mem->cv_ftemp && cv_mem->cv_temp_vec_stack)
+  {
+    (void)SUNVecStack_Push(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_ftemp));
+  }
+  if (cv_mem->cv_vtemp1 && cv_mem->cv_temp_vec_stack)
+  {
+    (void)SUNVecStack_Push(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_vtemp1));
+  }
+  if (cv_mem->cv_vtemp2 && cv_mem->cv_temp_vec_stack)
+  {
+    (void)SUNVecStack_Push(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_vtemp2));
+  }
+  if (cv_mem->cv_vtemp3 && cv_mem->cv_temp_vec_stack)
+  {
+    (void)SUNVecStack_Push(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_vtemp3));
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Check out CVODES workspace vectors from the vector stack
+ * ---------------------------------------------------------------------------*/
+
+static int cvPopWorkspaceVectors(CVodeMem cv_mem)
+{
+  if (SUNVecStack_Pop(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_acor)))
+  {
+    return CV_MEM_FAIL;
+  }
+  if (SUNVecStack_Pop(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_tempv)))
+  {
+    cvPushWorkspaceVectors(cv_mem);
+    return CV_MEM_FAIL;
+  }
+  if (SUNVecStack_Pop(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_ftemp)))
+  {
+    cvPushWorkspaceVectors(cv_mem);
+    return CV_MEM_FAIL;
+  }
+  if (SUNVecStack_Pop(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_vtemp1)))
+  {
+    cvPushWorkspaceVectors(cv_mem);
+    return CV_MEM_FAIL;
+  }
+  if (SUNVecStack_Pop(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_vtemp2)))
+  {
+    cvPushWorkspaceVectors(cv_mem);
+    return CV_MEM_FAIL;
+  }
+  if (SUNVecStack_Pop(cv_mem->cv_temp_vec_stack, &(cv_mem->cv_vtemp3)))
+  {
+    cvPushWorkspaceVectors(cv_mem);
+    return CV_MEM_FAIL;
+  }
+
+  return CV_SUCCESS;
+}
+
+/* -----------------------------------------------------------------------------
  * Resize CVODE and build new history array
  * ---------------------------------------------------------------------------*/
 
@@ -206,6 +277,20 @@ int CVodeResizeHistory(void* cvode_mem, sunrealtype* t_hist, N_Vector* y_hist,
     return CV_MEM_NULL;
   }
   CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  if (cv_mem->cv_MallocDone == SUNFALSE)
+  {
+    cvProcessError(cv_mem, CV_NO_MALLOC, __LINE__, __func__, __FILE__,
+                   MSGCV_NO_MALLOC);
+    return CV_NO_MALLOC;
+  }
+
+  if (cv_mem->cv_temp_vec_stack && !cv_mem->cv_own_temp_vec_stack)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "CVodeResizeHistory requires an internally owned vector stack");
+    return CV_ILL_INPUT;
+  }
 
   if (!t_hist)
   {
@@ -283,54 +368,30 @@ int CVodeResizeHistory(void* cvode_mem, sunrealtype* t_hist, N_Vector* y_hist,
     return CV_MEM_FAIL;
   }
 
-  N_VDestroy(cv_mem->cv_acor);
-  cv_mem->cv_acor = N_VClone(y_hist[0]);
-  if (!(cv_mem->cv_acor))
+  cvPushWorkspaceVectors(cv_mem);
+
+  if (cv_mem->cv_own_temp_vec_stack)
   {
-    cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
-                   "A vector allocation failed");
-    return CV_MEM_FAIL;
+    retval = SUNVecStack_Destroy(&(cv_mem->cv_temp_vec_stack));
+    if (retval)
+    {
+      cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
+                     "Destroying the vector stack failed");
+      return CV_MEM_FAIL;
+    }
+
+    retval = SUNVecStack_Create(y_hist[0], 0, cv_mem->cv_sunctx,
+                                &(cv_mem->cv_temp_vec_stack));
+    if (retval)
+    {
+      cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
+                     "A vector stack allocation failed");
+      return CV_MEM_FAIL;
+    }
   }
 
-  N_VDestroy(cv_mem->cv_tempv);
-  cv_mem->cv_tempv = N_VClone(y_hist[0]);
-  if (!(cv_mem->cv_tempv))
-  {
-    cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
-                   "A vector allocation failed");
-    return CV_MEM_FAIL;
-  }
-
-  N_VDestroy(cv_mem->cv_ftemp);
-  cv_mem->cv_ftemp = N_VClone(y_hist[0]);
-  if (!(cv_mem->cv_ftemp))
-  {
-    cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
-                   "A vector allocation failed");
-    return CV_MEM_FAIL;
-  }
-
-  N_VDestroy(cv_mem->cv_vtemp1);
-  cv_mem->cv_vtemp1 = N_VClone(y_hist[0]);
-  if (!(cv_mem->cv_vtemp1))
-  {
-    cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
-                   "A vector allocation failed");
-    return CV_MEM_FAIL;
-  }
-
-  N_VDestroy(cv_mem->cv_vtemp2);
-  cv_mem->cv_vtemp2 = N_VClone(y_hist[0]);
-  if (!(cv_mem->cv_vtemp2))
-  {
-    cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
-                   "A vector allocation failed");
-    return CV_MEM_FAIL;
-  }
-
-  N_VDestroy(cv_mem->cv_vtemp3);
-  cv_mem->cv_vtemp3 = N_VClone(y_hist[0]);
-  if (!(cv_mem->cv_vtemp3))
+  retval = cvPopWorkspaceVectors(cv_mem);
+  if (retval)
   {
     cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
                    "A vector allocation failed");

@@ -686,6 +686,13 @@ typedef struct CVodeMemRec
 
   sunbooleantype first_step_after_resize; /* Flag to signal a resize happened */
 
+  /*----------------------------
+    Temporary Vector Stack
+    ----------------------------*/
+
+  SUNVecStack cv_temp_vec_stack;
+  sunbooleantype cv_own_temp_vec_stack;
+
   /*------------------------
     Adjoint sensitivity data
     ------------------------*/
