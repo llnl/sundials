@@ -35,6 +35,9 @@ SUNDIALS_EXPORT
 SUNErrCode SUNVecStack_Destroy(SUNVecStack* stack_in);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNVecStack_ResetTemplate(SUNVecStack stack, N_Vector tmpl);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNVecStack_Pop(SUNVecStack stack, N_Vector* vec_out);
 
 SUNDIALS_EXPORT

@@ -112,6 +112,52 @@ SUNErrCode SUNVecStack_Destroy(SUNVecStack* stack_in)
   return SUN_SUCCESS;
 }
 
+/*
+  Reset the vector stack template after the caller has changed vector sizes.
+
+  This destroys all idle vectors currently cached in the stack and updates the
+  template used for future vector clones.  Any vectors that are checked out when
+  this is called remain owned by the stack but are not resized or destroyed
+  here, since the stack does not retain their pointers while they are checked
+  out.  The caller is responsible for resizing, recreating, or otherwise
+  handling those checked-out vectors before they are used with the new template.
+
+  After resetting the template, newly popped vectors are cloned from the new
+  template, while previously checked-out vectors may still be pushed back to the
+  stack by the caller when their lifetime ends.
+*/
+SUNErrCode SUNVecStack_ResetTemplate(SUNVecStack stack, N_Vector tmpl)
+{
+  SUNFunctionBegin(stack->sunctx);
+  SUNAssert(tmpl, SUN_ERR_ARG_CORRUPT);
+
+  if (stack->num_checked_out < 0 || stack->num_owned < 0)
+  {
+    return SUN_ERR_CORRUPT;
+  }
+
+  int64_t num_idle = SUNStlVector_N_Vector_Size(stack->vecs);
+  SUNAssert(num_idle + stack->num_checked_out == stack->num_owned,
+            SUN_ERR_CORRUPT);
+
+  SUNStlVector_N_Vector new_vecs =
+    SUNStlVector_N_Vector_New(0, SUNVecStack_DestroyValue);
+  if (!new_vecs) { return SUN_ERR_MALLOC_FAIL; }
+
+  SUNErrCode err = SUNStlVector_N_Vector_Destroy(&stack->vecs);
+  if (err != SUN_SUCCESS)
+  {
+    (void)SUNStlVector_N_Vector_Destroy(&new_vecs);
+    return err;
+  }
+
+  stack->tmpl      = tmpl;
+  stack->num_owned = stack->num_checked_out;
+  stack->vecs      = new_vecs;
+
+  return SUN_SUCCESS;
+}
+
 SUNErrCode SUNVecStack_Pop(SUNVecStack stack, N_Vector* vec_out)
 {
   SUNFunctionBegin(stack->sunctx);

@@ -107,12 +107,40 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
   }
 
   /* Check for legal input parameters */
-  if ((ark_mem->ycur = y0) == NULL)
+  if (y0 == NULL)
   {
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_ARK_NULL_Y0);
     return (ARK_ILL_INPUT);
   }
+
+  if (ark_mem->temp_vec_stack && !ark_mem->own_temp_vec_stack)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "ARKodeResize requires an internally owned vector stack");
+    return ARK_ILL_INPUT;
+  }
+
+  if (ark_mem->lte)
+  {
+    if (SUNVecStack_Push(ark_mem->temp_vec_stack, &ark_mem->lte))
+    {
+      return ARK_MEM_FAIL;
+    }
+  }
+
+  if (ark_mem->temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_ResetTemplate(ark_mem->temp_vec_stack, y0);
+    if (err != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "Unable to reset vector stack");
+      return ARK_MEM_FAIL;
+    }
+  }
+
+  ark_mem->ycur = y0;
 
   /* Copy the input parameters into ARKODE state */
   ark_mem->tcur = t0;
@@ -3851,8 +3879,6 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
   {
     return (SUNFALSE);
   }
-
-  /* ToDo: resize the ARKODE vector stack? */
 
   return (SUNTRUE);
 }
