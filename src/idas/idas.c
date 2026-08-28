@@ -527,6 +527,10 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_idMallocDone    = SUNFALSE;
   IDA_mem->ida_MallocDone      = SUNFALSE;
 
+  /* Initialize temporary vector stack */
+  IDA_mem->ida_temp_vec_stack     = NULL;
+  IDA_mem->ida_own_temp_vec_stack = SUNFALSE;
+
   IDA_mem->ida_VatolQMallocDone = SUNFALSE;
   IDA_mem->ida_quadMallocDone   = SUNFALSE;
 
@@ -641,6 +645,21 @@ int IDAInit(void* ida_mem, IDAResFn res, sunrealtype t0, N_Vector yy0,
   IDA_mem->ida_lrw1 = lrw1;
   IDA_mem->ida_liw1 = liw1;
 
+  /* Create an internal temporary vector stack if the user did not supply one */
+  if (IDA_mem->ida_temp_vec_stack == NULL)
+  {
+    SUNErrCode err = SUNVecStack_Create(yy0, 0, IDA_mem->ida_sunctx,
+                                        &(IDA_mem->ida_temp_vec_stack));
+    if (err != SUN_SUCCESS)
+    {
+      IDAProcessError(IDA_mem, IDA_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "A vector stack allocation failed");
+      SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
+      return (IDA_MEM_FAIL);
+    }
+    IDA_mem->ida_own_temp_vec_stack = SUNTRUE;
+  }
+
   /* Allocate the vectors (using yy0 as a template) */
 
   allocOK = IDAAllocVectors(IDA_mem, yy0);
@@ -648,6 +667,12 @@ int IDAInit(void* ida_mem, IDAResFn res, sunrealtype t0, N_Vector yy0,
   {
     IDAProcessError(IDA_mem, IDA_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_MEM_FAIL);
+    if (IDA_mem->ida_temp_vec_stack && IDA_mem->ida_own_temp_vec_stack)
+    {
+      (void)SUNVecStack_Destroy(&(IDA_mem->ida_temp_vec_stack));
+      IDA_mem->ida_temp_vec_stack     = NULL;
+      IDA_mem->ida_own_temp_vec_stack = SUNFALSE;
+    }
     SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
     return (IDA_MEM_FAIL);
   }
@@ -4086,6 +4111,13 @@ void IDAFree(void** ida_mem)
 
   if (IDA_mem->ida_lfree != NULL) { IDA_mem->ida_lfree(IDA_mem); }
 
+  if (IDA_mem->ida_temp_vec_stack && IDA_mem->ida_own_temp_vec_stack)
+  {
+    (void)SUNVecStack_Destroy(&(IDA_mem->ida_temp_vec_stack));
+    IDA_mem->ida_temp_vec_stack     = NULL;
+    IDA_mem->ida_own_temp_vec_stack = SUNFALSE;
+  }
+
   if (IDA_mem->ida_nrtfn > 0)
   {
     free(IDA_mem->ida_glo);
@@ -4273,8 +4305,9 @@ static sunbooleantype IDACheckNvector(N_Vector tmpl)
 /*
  * IDAAllocVectors
  *
- * This routine allocates the IDA vectors ewt, tempv1, tempv2, and
- * phi[0], ..., phi[maxord].
+ * This routine allocates the IDA vectors ewt and phi[0], ..., phi[maxord],
+ * and checks out ee, delta, yypredict, yppredict, savres, and tempv1-tempv3
+ * from the vector stack.
  * If all memory allocations are successful, IDAAllocVectors returns
  * SUNTRUE. Otherwise all allocated memory is freed and IDAAllocVectors
  * returns SUNFALSE.
@@ -4287,92 +4320,93 @@ static sunbooleantype IDAAllocVectors(IDAMem IDA_mem, N_Vector tmpl)
 {
   int i, j, maxcol;
 
-  /* Allocate ewt, ee, delta, yypredict, yppredict, savres, tempv1, tempv2, tempv3 */
+  /* Allocate ewt and check out ee, delta, yypredict, yppredict, savres,
+     tempv1, tempv2, and tempv3 */
 
   IDA_mem->ida_ewt = N_VClone(tmpl);
   if (IDA_mem->ida_ewt == NULL) { return (SUNFALSE); }
 
-  IDA_mem->ida_ee = N_VClone(tmpl);
-  if (IDA_mem->ida_ee == NULL)
+  if (SUNVecStack_Pop(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee))
   {
     N_VDestroy(IDA_mem->ida_ewt);
+    IDA_mem->ida_ewt = NULL;
     return (SUNFALSE);
   }
 
-  IDA_mem->ida_delta = N_VClone(tmpl);
-  if (IDA_mem->ida_delta == NULL)
+  if (SUNVecStack_Pop(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta))
   {
     N_VDestroy(IDA_mem->ida_ewt);
-    N_VDestroy(IDA_mem->ida_ee);
+    IDA_mem->ida_ewt = NULL;
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
     return (SUNFALSE);
   }
 
-  IDA_mem->ida_yypredict = N_VClone(tmpl);
-  if (IDA_mem->ida_yypredict == NULL)
+  if (SUNVecStack_Pop(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yypredict))
   {
     N_VDestroy(IDA_mem->ida_ewt);
-    N_VDestroy(IDA_mem->ida_ee);
-    N_VDestroy(IDA_mem->ida_delta);
+    IDA_mem->ida_ewt = NULL;
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
     return (SUNFALSE);
   }
 
-  IDA_mem->ida_yppredict = N_VClone(tmpl);
-  if (IDA_mem->ida_yppredict == NULL)
+  if (SUNVecStack_Pop(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yppredict))
   {
     N_VDestroy(IDA_mem->ida_ewt);
-    N_VDestroy(IDA_mem->ida_ee);
-    N_VDestroy(IDA_mem->ida_delta);
-    N_VDestroy(IDA_mem->ida_yypredict);
+    IDA_mem->ida_ewt = NULL;
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yypredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
     return (SUNFALSE);
   }
 
-  IDA_mem->ida_savres = N_VClone(tmpl);
-  if (IDA_mem->ida_savres == NULL)
+  if (SUNVecStack_Pop(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_savres))
   {
     N_VDestroy(IDA_mem->ida_ewt);
-    N_VDestroy(IDA_mem->ida_ee);
-    N_VDestroy(IDA_mem->ida_delta);
-    N_VDestroy(IDA_mem->ida_yypredict);
-    N_VDestroy(IDA_mem->ida_yppredict);
+    IDA_mem->ida_ewt = NULL;
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yppredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yypredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
     return (SUNFALSE);
   }
 
-  IDA_mem->ida_tempv1 = N_VClone(tmpl);
-  if (IDA_mem->ida_tempv1 == NULL)
+  if (SUNVecStack_Pop(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv1))
   {
     N_VDestroy(IDA_mem->ida_ewt);
-    N_VDestroy(IDA_mem->ida_ee);
-    N_VDestroy(IDA_mem->ida_delta);
-    N_VDestroy(IDA_mem->ida_yypredict);
-    N_VDestroy(IDA_mem->ida_yppredict);
-    N_VDestroy(IDA_mem->ida_savres);
+    IDA_mem->ida_ewt = NULL;
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_savres);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yppredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yypredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
     return (SUNFALSE);
   }
 
-  IDA_mem->ida_tempv2 = N_VClone(tmpl);
-  if (IDA_mem->ida_tempv2 == NULL)
+  if (SUNVecStack_Pop(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv2))
   {
     N_VDestroy(IDA_mem->ida_ewt);
-    N_VDestroy(IDA_mem->ida_ee);
-    N_VDestroy(IDA_mem->ida_delta);
-    N_VDestroy(IDA_mem->ida_yypredict);
-    N_VDestroy(IDA_mem->ida_yppredict);
-    N_VDestroy(IDA_mem->ida_savres);
-    N_VDestroy(IDA_mem->ida_tempv1);
+    IDA_mem->ida_ewt = NULL;
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv1);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_savres);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yppredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yypredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
     return (SUNFALSE);
   }
 
-  IDA_mem->ida_tempv3 = N_VClone(tmpl);
-  if (IDA_mem->ida_tempv3 == NULL)
+  if (SUNVecStack_Pop(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv3))
   {
     N_VDestroy(IDA_mem->ida_ewt);
-    N_VDestroy(IDA_mem->ida_ee);
-    N_VDestroy(IDA_mem->ida_delta);
-    N_VDestroy(IDA_mem->ida_yypredict);
-    N_VDestroy(IDA_mem->ida_yppredict);
-    N_VDestroy(IDA_mem->ida_savres);
-    N_VDestroy(IDA_mem->ida_tempv1);
-    N_VDestroy(IDA_mem->ida_tempv2);
+    IDA_mem->ida_ewt = NULL;
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv2);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv1);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_savres);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yppredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yypredict);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta);
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
     return (SUNFALSE);
   }
 
@@ -4386,14 +4420,17 @@ static sunbooleantype IDAAllocVectors(IDAMem IDA_mem, N_Vector tmpl)
     if (IDA_mem->ida_phi[j] == NULL)
     {
       N_VDestroy(IDA_mem->ida_ewt);
-      N_VDestroy(IDA_mem->ida_ee);
-      N_VDestroy(IDA_mem->ida_delta);
-      N_VDestroy(IDA_mem->ida_yypredict);
-      N_VDestroy(IDA_mem->ida_yppredict);
-      N_VDestroy(IDA_mem->ida_savres);
-      N_VDestroy(IDA_mem->ida_tempv1);
-      N_VDestroy(IDA_mem->ida_tempv2);
-      N_VDestroy(IDA_mem->ida_tempv3);
+      IDA_mem->ida_ewt = NULL;
+      (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
+      (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta);
+      (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack,
+                             &IDA_mem->ida_yypredict);
+      (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack,
+                             &IDA_mem->ida_yppredict);
+      (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_savres);
+      (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv1);
+      (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv2);
+      (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv3);
       for (i = 0; i < j; i++) { N_VDestroy(IDA_mem->ida_phi[i]); }
       return (SUNFALSE);
     }
@@ -4412,32 +4449,52 @@ static sunbooleantype IDAAllocVectors(IDAMem IDA_mem, N_Vector tmpl)
 /*
  * IDAfreeVectors
  *
- * This routine frees the IDA vectors allocated for IDA.
+ * This routine frees the IDA vectors allocated for IDA and returns the
+ * workspace vectors to the vector stack.
  */
 
 static void IDAFreeVectors(IDAMem IDA_mem)
 {
   int j, maxcol;
 
-  N_VDestroy(IDA_mem->ida_ewt);
-  IDA_mem->ida_ewt = NULL;
-  N_VDestroy(IDA_mem->ida_ee);
-  IDA_mem->ida_ee = NULL;
-  N_VDestroy(IDA_mem->ida_delta);
-  IDA_mem->ida_delta = NULL;
-  N_VDestroy(IDA_mem->ida_yypredict);
-  IDA_mem->ida_yypredict = NULL;
-  N_VDestroy(IDA_mem->ida_yppredict);
-  IDA_mem->ida_yppredict = NULL;
-  N_VDestroy(IDA_mem->ida_savres);
-  IDA_mem->ida_savres = NULL;
-  N_VDestroy(IDA_mem->ida_tempv1);
-  IDA_mem->ida_tempv1 = NULL;
-  N_VDestroy(IDA_mem->ida_tempv2);
-  IDA_mem->ida_tempv2 = NULL;
-  N_VDestroy(IDA_mem->ida_tempv3);
-  IDA_mem->ida_tempv3 = NULL;
-  maxcol              = SUNMAX(IDA_mem->ida_maxord_alloc, 3);
+  if (IDA_mem->ida_ewt)
+  {
+    N_VDestroy(IDA_mem->ida_ewt);
+    IDA_mem->ida_ewt = NULL;
+  }
+  if (IDA_mem->ida_ee)
+  {
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_ee);
+  }
+  if (IDA_mem->ida_delta)
+  {
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_delta);
+  }
+  if (IDA_mem->ida_yypredict)
+  {
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yypredict);
+  }
+  if (IDA_mem->ida_yppredict)
+  {
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_yppredict);
+  }
+  if (IDA_mem->ida_savres)
+  {
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_savres);
+  }
+  if (IDA_mem->ida_tempv1)
+  {
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv1);
+  }
+  if (IDA_mem->ida_tempv2)
+  {
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv2);
+  }
+  if (IDA_mem->ida_tempv3)
+  {
+    (void)SUNVecStack_Push(IDA_mem->ida_temp_vec_stack, &IDA_mem->ida_tempv3);
+  }
+  maxcol = SUNMAX(IDA_mem->ida_maxord_alloc, 3);
   for (j = 0; j <= maxcol; j++)
   {
     N_VDestroy(IDA_mem->ida_phi[j]);

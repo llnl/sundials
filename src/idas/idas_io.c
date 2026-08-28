@@ -78,6 +78,83 @@ int IDASetUserData(void* ida_mem, void* user_data)
 
 /*-----------------------------------------------------------------*/
 
+int IDASetVecStack(void* ida_mem, SUNVecStack stack)
+{
+  IDAMem IDA_mem;
+  int64_t num_active_vecs = 0;
+
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+
+  IDA_mem = (IDAMem)ida_mem;
+
+  if (stack == NULL)
+  {
+    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Cannot attach a NULL vector stack");
+    return (IDA_ILL_INPUT);
+  }
+
+  if (IDA_mem->ida_temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_GetNumActiveVecs(IDA_mem->ida_temp_vec_stack,
+                                                  &num_active_vecs);
+    if (err != SUN_SUCCESS)
+    {
+      IDAProcessError(IDA_mem, IDA_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "Unable to query vector stack");
+      return (IDA_MEM_FAIL);
+    }
+
+    if (num_active_vecs > 0)
+    {
+      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__,
+                      __FILE__, "Cannot replace vector stack while vectors are checked out");
+      return (IDA_ILL_INPUT);
+    }
+  }
+
+  if (IDA_mem->ida_temp_vec_stack && IDA_mem->ida_own_temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_Destroy(&(IDA_mem->ida_temp_vec_stack));
+    if (err != SUN_SUCCESS)
+    {
+      IDAProcessError(IDA_mem, IDA_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "Unable to deallocate existing vector stack");
+      return (IDA_MEM_FAIL);
+    }
+  }
+
+  IDA_mem->ida_temp_vec_stack     = stack;
+  IDA_mem->ida_own_temp_vec_stack = SUNFALSE;
+
+  return (IDA_SUCCESS);
+}
+
+/*-----------------------------------------------------------------*/
+
+int IDAGetVecStack(void* ida_mem, SUNVecStack* stack)
+{
+  IDAMem IDA_mem;
+
+  if (ida_mem == NULL)
+  {
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (IDA_MEM_NULL);
+  }
+
+  IDA_mem = (IDAMem)ida_mem;
+
+  *stack = IDA_mem->ida_temp_vec_stack;
+
+  return (IDA_SUCCESS);
+}
+
+/*-----------------------------------------------------------------*/
+
 int IDASetEtaFixedStepBounds(void* ida_mem, sunrealtype eta_min_fx,
                              sunrealtype eta_max_fx)
 {

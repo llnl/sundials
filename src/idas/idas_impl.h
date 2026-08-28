@@ -216,10 +216,12 @@ typedef struct IDAMemRec
   N_Vector ida_tempv1;    /* work space vector                              */
   N_Vector ida_tempv2;    /* work space vector                              */
   N_Vector ida_tempv3;    /* work space vector                              */
-  N_Vector ida_ynew;      /* work vector for y in IDACalcIC (= tempv2)      */
-  N_Vector ida_ypnew;     /* work vector for yp in IDACalcIC (= ee)         */
-  N_Vector ida_delnew;    /* work vector for delta in IDACalcIC (= phi[2])  */
-  N_Vector ida_dtemp;     /* work vector in IDACalcIC (= phi[3])            */
+  SUNVecStack ida_temp_vec_stack; /* stack of temporary vectors               */
+  sunbooleantype ida_own_temp_vec_stack; /* SUNTRUE if IDAS owns the stack     */
+  N_Vector ida_ynew;   /* work vector for y in IDACalcIC (= tempv2)      */
+  N_Vector ida_ypnew;  /* work vector for yp in IDACalcIC (= ee)         */
+  N_Vector ida_delnew; /* work vector for delta in IDACalcIC (= phi[2])  */
+  N_Vector ida_dtemp;  /* work vector in IDACalcIC (= phi[3])            */
 
   /*----------------------------
     Quadrature Related N_Vectors
