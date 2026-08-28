@@ -160,8 +160,8 @@ module farkode_mristep_mod
  public :: FMRIStepCoupling_Write
  public :: FMRIStepCreate
  public :: FMRIStepReInit
- public :: FMRIStepCreateExtSTS
- public :: FMRIStepReInitExtSTS
+ public :: FMRIStepExtSTSCreate
+ public :: FMRIStepExtSTSReInit
  public :: FMRIStepSetCoupling
  public :: FMRIStepSetPreInnerFn
  public :: FMRIStepSetPostInnerFn
@@ -172,7 +172,7 @@ module farkode_mristep_mod
  public :: FMRIStepGetCurrentCoupling
  public :: FMRIStepGetLastInnerStepFlag
  public :: FMRIStepGetNumInnerStepperFails
- public :: FMRIStepGetSTSStepper
+ public :: FMRIStepExtSTSGetSTS
  public :: FMRIStepInnerStepper_Create
  public :: FMRIStepInnerStepper_CreateFromSUNStepper
  public :: FMRIStepInnerStepper_Free
@@ -573,8 +573,8 @@ type(C_PTR), value :: farg5
 integer(C_INT) :: fresult
 end function
 
-function swigc_FMRIStepCreateExtSTS(farg1, farg2, farg3, farg4, farg5, farg6) &
-bind(C, name="_wrap_FMRIStepCreateExtSTS") &
+function swigc_FMRIStepExtSTSCreate(farg1, farg2, farg3, farg4, farg5, farg6) &
+bind(C, name="_wrap_FMRIStepExtSTSCreate") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_FUNPTR), value :: farg1
@@ -586,8 +586,8 @@ type(C_PTR), value :: farg6
 type(C_PTR) :: fresult
 end function
 
-function swigc_FMRIStepReInitExtSTS(farg1, farg2, farg3, farg4, farg5, farg6) &
-bind(C, name="_wrap_FMRIStepReInitExtSTS") &
+function swigc_FMRIStepExtSTSReInit(farg1, farg2, farg3, farg4, farg5, farg6) &
+bind(C, name="_wrap_FMRIStepExtSTSReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -663,12 +663,13 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FMRIStepGetSTSStepper(farg1) &
-bind(C, name="_wrap_FMRIStepGetSTSStepper") &
+function swigc_FMRIStepExtSTSGetSTS(farg1, farg2) &
+bind(C, name="_wrap_FMRIStepExtSTSGetSTS") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
 end function
 
 function swigc_FMRIStepInnerStepper_Create(farg1, farg2) &
@@ -2096,7 +2097,7 @@ fresult = swigc_FMRIStepReInit(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
 
-function FMRIStepCreateExtSTS(fd, fe, fi, t0, y0, sunctx) &
+function FMRIStepExtSTSCreate(fd, fe, fi, t0, y0, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
@@ -2120,11 +2121,11 @@ farg3 = fi
 farg4 = t0
 farg5 = c_loc(y0)
 farg6 = sunctx
-fresult = swigc_FMRIStepCreateExtSTS(farg1, farg2, farg3, farg4, farg5, farg6)
+fresult = swigc_FMRIStepExtSTSCreate(farg1, farg2, farg3, farg4, farg5, farg6)
 swig_result = fresult
 end function
 
-function FMRIStepReInitExtSTS(arkode_mem, fd, fe, fi, t0, y0) &
+function FMRIStepExtSTSReInit(arkode_mem, fd, fe, fi, t0, y0) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
@@ -2148,7 +2149,7 @@ farg3 = fe
 farg4 = fi
 farg5 = t0
 farg6 = c_loc(y0)
-fresult = swigc_FMRIStepReInitExtSTS(farg1, farg2, farg3, farg4, farg5, farg6)
+fresult = swigc_FMRIStepExtSTSReInit(farg1, farg2, farg3, farg4, farg5, farg6)
 swig_result = fresult
 end function
 
@@ -2264,16 +2265,19 @@ fresult = swigc_FMRIStepGetNumInnerStepperFails(farg1, farg2)
 swig_result = fresult
 end function
 
-function FMRIStepGetSTSStepper(arkode_mem) &
+function FMRIStepExtSTSGetSTS(arkode_mem, stsptr) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR) :: swig_result
+integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(C_PTR) :: fresult 
+type(C_PTR), target, intent(inout) :: stsptr
+integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
 
 farg1 = arkode_mem
-fresult = swigc_FMRIStepGetSTSStepper(farg1)
+farg2 = c_loc(stsptr)
+fresult = swigc_FMRIStepExtSTSGetSTS(farg1, farg2)
 swig_result = fresult
 end function
 

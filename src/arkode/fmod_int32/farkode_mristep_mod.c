@@ -747,7 +747,7 @@ SWIGEXPORT int _wrap_FMRIStepReInit(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3,
 }
 
 
-SWIGEXPORT void * _wrap_FMRIStepCreateExtSTS(ARKRhsFn farg1, ARKRhsFn farg2, ARKRhsFn farg3, double const *farg4, N_Vector farg5, void *farg6) {
+SWIGEXPORT void * _wrap_FMRIStepExtSTSCreate(ARKRhsFn farg1, ARKRhsFn farg2, ARKRhsFn farg3, double const *farg4, N_Vector farg5, void *farg6) {
   void * fresult ;
   ARKRhsFn arg1 = (ARKRhsFn) 0 ;
   ARKRhsFn arg2 = (ARKRhsFn) 0 ;
@@ -763,13 +763,13 @@ SWIGEXPORT void * _wrap_FMRIStepCreateExtSTS(ARKRhsFn farg1, ARKRhsFn farg2, ARK
   arg4 = (sunrealtype)(*farg4);
   arg5 = (N_Vector)(farg5);
   arg6 = (SUNContext)(farg6);
-  result = (void *)MRIStepCreateExtSTS(arg1,arg2,arg3,arg4,arg5,arg6);
+  result = (void *)MRIStepExtSTSCreate(arg1,arg2,arg3,arg4,arg5,arg6);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FMRIStepReInitExtSTS(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3, ARKRhsFn farg4, double const *farg5, N_Vector farg6) {
+SWIGEXPORT int _wrap_FMRIStepExtSTSReInit(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3, ARKRhsFn farg4, double const *farg5, N_Vector farg6) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   ARKRhsFn arg2 = (ARKRhsFn) 0 ;
@@ -785,7 +785,7 @@ SWIGEXPORT int _wrap_FMRIStepReInitExtSTS(void *farg1, ARKRhsFn farg2, ARKRhsFn 
   arg4 = (ARKRhsFn)(farg4);
   arg5 = (sunrealtype)(*farg5);
   arg6 = (N_Vector)(farg6);
-  result = (int)MRIStepReInitExtSTS(arg1,arg2,arg3,arg4,arg5,arg6);
+  result = (int)MRIStepExtSTSReInit(arg1,arg2,arg3,arg4,arg5,arg6);
   fresult = (int)(result);
   return fresult;
 }
@@ -890,14 +890,16 @@ SWIGEXPORT int _wrap_FMRIStepGetNumInnerStepperFails(void *farg1, long *farg2) {
 }
 
 
-SWIGEXPORT void * _wrap_FMRIStepGetSTSStepper(void *farg1) {
-  void * fresult ;
+SWIGEXPORT int _wrap_FMRIStepExtSTSGetSTS(void *farg1, void *farg2) {
+  int fresult ;
   void *arg1 = (void *) 0 ;
-  void *result = 0 ;
+  void **arg2 = (void **) 0 ;
+  int result;
   
   arg1 = (void *)(farg1);
-  result = (void *)MRIStepGetSTSStepper(arg1);
-  fresult = result;
+  arg2 = (void **)(farg2);
+  result = (int)MRIStepExtSTSGetSTS(arg1,arg2);
+  fresult = (int)(result);
   return fresult;
 }
 

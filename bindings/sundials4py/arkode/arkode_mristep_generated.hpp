@@ -190,6 +190,9 @@ m.def("MRIStepCoupling_Write", MRIStepCoupling_Write, nb::arg("MRIC"),
 m.def("MRIStepSetCoupling", MRIStepSetCoupling, nb::arg("arkode_mem"),
       nb::arg("MRIC"));
 
+m.def("MRIStepExtSTSSetDomEigFn", MRIStepExtSTSSetDomEigFn,
+      nb::arg("arkode_mem"), nb::arg("dom_eig"));
+
 m.def(
   "MRIStepGetCurrentCoupling",
   [](void* arkode_mem) -> std::tuple<int, MRIStepCoupling>
