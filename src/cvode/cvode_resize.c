@@ -372,20 +372,11 @@ int CVodeResizeHistory(void* cvode_mem, sunrealtype* t_hist, N_Vector* y_hist,
 
   if (cv_mem->cv_own_temp_vec_stack)
   {
-    retval = SUNVecStack_Destroy(&(cv_mem->cv_temp_vec_stack));
+    retval = SUNVecStack_ResetTemplate(cv_mem->cv_temp_vec_stack, y_hist[0]);
     if (retval)
     {
       cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
-                     "Destroying the vector stack failed");
-      return CV_MEM_FAIL;
-    }
-
-    retval = SUNVecStack_Create(y_hist[0], 0, cv_mem->cv_sunctx,
-                                &(cv_mem->cv_temp_vec_stack));
-    if (retval)
-    {
-      cvProcessError(cv_mem, CV_MEM_FAIL, __LINE__, __func__, __FILE__,
-                     "A vector stack allocation failed");
+                     "Resetting the vector stack template failed");
       return CV_MEM_FAIL;
     }
   }
