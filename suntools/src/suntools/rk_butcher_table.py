@@ -67,8 +67,9 @@ def _trim_with_error(coefficients, error):
     significant = np.nonzero(resolved(coefficients, error))[0]
     if significant.size == 0:
         # Cannot happen for a consistent method, whose p and q both have constant term 1.
-        return np.zeros(1)
-    return coefficients[int(significant[0]) :]
+        return np.zeros(1), error[-1:]
+    top = int(significant[0])
+    return coefficients[top:], error[top:]
 
 
 def _pq_from_weights(A, weights, stages, explicit):
@@ -98,13 +99,14 @@ def _pq_from_weights(A, weights, stages, explicit):
             Ak_ones = A @ Ak_ones
             bound = abs_A @ bound + (stages + 1) * EPS * (abs_A @ magnitude)
             magnitude = abs_A @ magnitude
-        return np.poly1d(_trim_with_error(coeffs[::-1], error[::-1])), np.poly1d([1.0])
+        p, p_error = _trim_with_error(coeffs[::-1], error[::-1])
+        return np.poly1d(p), np.poly1d([1.0]), p_error, np.zeros(1)
 
     I = np.eye(stages)
     ones = np.ones(stages)
-    p = _det_poly(lambda z: I - z * A + z * np.outer(ones, weights), stages)
-    q = _det_poly(lambda z: I - z * A, stages)
-    return np.poly1d(p), np.poly1d(q)
+    p, p_error = _det_poly(lambda z: I - z * A + z * np.outer(ones, weights), stages)
+    q, q_error = _det_poly(lambda z: I - z * A, stages)
+    return np.poly1d(p), np.poly1d(q), p_error, q_error
 
 
 class ButcherTable:

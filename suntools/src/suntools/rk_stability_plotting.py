@@ -22,11 +22,19 @@ from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import patheffects
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+from matplotlib.transforms import ScaledTranslation
 
 from .rk_butcher_table import ButcherTable
-from .rk_stability import stability_magnitude
+from .rk_stability import (
+    TOL,
+    axis_extent,
+    imag_stable_intervals,
+    max_axis_crossing,
+    stability_magnitude,
+)
 
 # ---------------------------------------------------------------------------
 # Output canvas
@@ -69,6 +77,9 @@ class PlotOptions:
     shade_embedding: bool = False
     suppress_tiny_islands: bool = True
     font_size: float = 14
+    show_axis_extent: bool = True
+    highlight_imag_axis_intervals: bool = False
+    label_detached_imag_axis_intervals: bool = False
 
     def __post_init__(self):
         if self.shade and self.shade_embedding:
@@ -95,6 +106,9 @@ class RegionStyle:
     boundary_lw: float
     boundary_ls: str
     shade_label: str
+    # side = +1 for the main method and side = -1 for the embedding; every mirrored label
+    # offset is derived from it, so the two annotation passes share one code path.
+    side: int
     legend_fill_alpha: float | None = None
     # Shade mode only: the boundary sits on the colormap rather than a flat fill, so the main
     # region overrides its to stay readable. Unset means keep boundary_color.
@@ -112,6 +126,7 @@ MAIN_REGION_STYLE = RegionStyle(
     boundary_lw=1.8,
     boundary_ls="-",
     shade_label=r"$|R(z)|$ within the main stable region",
+    side=+1,
     shade_boundary_color="k",
 )
 
@@ -122,16 +137,31 @@ EMBEDDED_REGION_STYLE = RegionStyle(
     boundary_lw=1.6,
     boundary_ls="--",
     shade_label=r"$|\tilde{R}(z)|$ within the embedded stable region",
+    side=-1,
     legend_fill_alpha=0.7,
 )
 
 _SHADE_LEVELS = np.linspace(0.0, 1.0, 21)
 
+# An origin-attached imaginary interval shorter than this is drawn with a compact single
+# label instead of two: below this length the +/- endpoints are visually indistinguishable
+# from a mere tangency at the origin.
+_MIN_IMAG_EXTENT_LABEL = 1e-2
+
+# Annotation geometry, in points; all mirrored by RegionStyle.side.
+_REAL_LABEL_DY = -11
+_IMAG_LABEL_DX = 7
+_SMALL_IMAG_LABEL_DY = 10
+_IMAG_RAIL_DX = 4.0
+_IMAG_RAIL_LW = 4.0
+_AXIS_LABEL_FONTSIZE = 8
+_AXIS_MARKER_SIZE = 5
+
 # Auto-framing: scan a coarse grid wide enough to hold every bounded feature, then crop.
 _BOUNDS_SCAN_POINTS = 420
 _BOUNDS_MIN_SPAN = 10.0
 _BOUNDS_STAGE_PAD = 4.0
-_BOUNDS_GROWTH = 2.0
+_BOUNDS_CROSSING_PAD = 1.3
 _BOUNDS_MAX_SPAN = 80.0
 _BOUNDS_PAD_FRAC = 0.20
 _BOUNDS_PAD_MIN = 0.5
@@ -141,6 +171,8 @@ _BOUNDS_FALLBACK_STAGE_PAD = 2.0
 # Any value above 1 is unstable; used to paint over suppressed tiny islands.
 _UNSTABLE_FILL = 2.0
 _ISLAND_MIN_RADIUS = 0.06
+
+_AXIS_LABEL_BOX = dict(boxstyle="round,pad=0.15", fc="white", ec="0.6", lw=0.5, alpha=0.85)
 
 
 # ---------------------------------------------------------------------------
@@ -265,6 +297,17 @@ def _auto_bounds(table: ButcherTable, include_embedding: bool = True):
     if emb is not None:
         methods.append(emb)
 
+    crossings = [max_axis_crossing(phi) for phi in methods]
+    span = max(
+        [_BOUNDS_MIN_SPAN, table.stages + _BOUNDS_STAGE_PAD]
+        + [_BOUNDS_CROSSING_PAD * c for c in crossings if c > 0]
+    )
+    span = min(span, _BOUNDS_MAX_SPAN)
+
+    axis = np.linspace(-span, span, _BOUNDS_SCAN_POINTS)
+    X, Y = np.meshgrid(axis, axis)
+    Z = X + 1j * Y
+
     def touches_edge(mask) -> bool:
         """True if any flagged cell is on the outer row or column of the grid (not fully closed)."""
         return bool(mask[0, :].any() or mask[-1, :].any() or mask[:, 0].any() or mask[:, -1].any())
@@ -277,16 +320,7 @@ def _auto_bounds(table: ButcherTable, include_embedding: bool = True):
                 return mask
         return None
 
-    # Start with a window sized off the stage count, then grow it until any features fit.
-    span = min(max(_BOUNDS_MIN_SPAN, table.stages + _BOUNDS_STAGE_PAD), _BOUNDS_MAX_SPAN)
-    while True:
-        axis = np.linspace(-span, span, _BOUNDS_SCAN_POINTS)
-        X, Y = np.meshgrid(axis, axis)
-        masks = [m for m in (feature_mask(phi, X + 1j * Y) for phi in methods) if m is not None]
-        # Stop once every method has a closed shape or the window reaches the max size.
-        if len(masks) == len(methods) or span >= _BOUNDS_MAX_SPAN:
-            break
-        span = min(_BOUNDS_GROWTH * span, _BOUNDS_MAX_SPAN)
+    masks = [m for m in (feature_mask(phi, Z) for phi in methods) if m is not None]
 
     # Union of the method and embedding feature regions
     features = np.logical_or.reduce(masks) if masks else None
@@ -352,6 +386,117 @@ def _fit_bounds_to_aspect(bounds, aspect: float):
 # ---------------------------------------------------------------------------
 # Axis annotations
 # ---------------------------------------------------------------------------
+
+
+def _plot_axis_markers(ax, xs, ys, color):
+    ax.plot(xs, ys, marker="D", color=color, ms=_AXIS_MARKER_SIZE, ls="none", zorder=6)
+
+
+def _annotate_axis_label(ax, text, xy, offset, *, ha, va, color):
+    ax.annotate(
+        text,
+        xy=xy,
+        xytext=offset,
+        textcoords="offset points",
+        ha=ha,
+        va=va,
+        fontsize=_AXIS_LABEL_FONTSIZE,
+        color=color,
+        bbox=_AXIS_LABEL_BOX,
+        zorder=6,
+    )
+
+
+def _imag_endpoint_label_specs(t: float):
+    """(y, text, dy, va) for the +/- labels of an imaginary-axis endpoint at height t."""
+    return ((t, f"${t:.2f}\\,i$", 4, "bottom"), (-t, f"$-{t:.2f}\\,i$", -4, "top"))
+
+
+def _small_imag_extent_label(value: float, precision: int = 2) -> str:
+    mantissa, exponent = f"{value:.{precision}e}".split("e")
+    return f"$\\pm{mantissa} \\times 10^{{{int(exponent)}}}\\,i$"
+
+
+def _highlight_imag_axis_intervals(ax, intervals, style: RegionStyle):
+    """Draw offset vertical rails marking finite imaginary-axis stability intervals."""
+    dx_points = _IMAG_RAIL_DX * style.side
+    transform = ax.transData + ScaledTranslation(dx_points / 72.0, 0.0, ax.figure.dpi_scale_trans)
+    effects = [patheffects.withStroke(linewidth=6.0, foreground="white", alpha=0.95)]
+
+    for t_left, t_right in intervals:
+        if t_left <= TOL.root_zero:
+            rails = [(-t_right, t_right)]
+        else:
+            rails = [(t_left, t_right), (-t_right, -t_left)]
+        for y0, y1 in rails:
+            (line,) = ax.plot(
+                [0.0, 0.0],
+                [y0, y1],
+                transform=transform,
+                color=style.boundary_color,
+                lw=_IMAG_RAIL_LW,
+                ls=style.boundary_ls,
+                solid_capstyle="round",
+                zorder=5.5,
+            )
+            line.set_path_effects(effects)
+
+
+def _mark_axis_extents(ax, phi, style: RegionStyle, options: PlotOptions):
+    """Mark and label the real/imaginary stability interval endpoints for one method."""
+    side = style.side
+    color = style.boundary_color
+    imag_dx = _IMAG_LABEL_DX * side
+    imag_ha = "left" if side > 0 else "right"
+
+    intervals = imag_stable_intervals(phi)
+    if not options.label_detached_imag_axis_intervals:
+        intervals = [iv for iv in intervals if iv[0] <= TOL.root_zero]
+
+    real_extent = axis_extent(phi, "real")
+    if real_extent:
+        real_dy = _REAL_LABEL_DY * side
+        _plot_axis_markers(ax, [-real_extent], [0.0], color)
+        _annotate_axis_label(
+            ax,
+            f"$-{real_extent:.2f}$",
+            (-real_extent, 0.0),
+            (0, real_dy),
+            ha="center",
+            va="top" if real_dy < 0 else "bottom",
+            color=color,
+        )
+
+    if options.highlight_imag_axis_intervals:
+        _highlight_imag_axis_intervals(ax, intervals, style)
+
+    for t_left, t_right in intervals:
+        attached_to_origin = t_left <= TOL.root_zero
+
+        if attached_to_origin and t_right <= _MIN_IMAG_EXTENT_LABEL:
+            # Too short to label at its endpoints: one compact label at the origin.
+            small_dy = _SMALL_IMAG_LABEL_DY * side
+            _plot_axis_markers(ax, [0.0], [0.0], color)
+            _annotate_axis_label(
+                ax,
+                _small_imag_extent_label(t_right),
+                (0.0, 0.0),
+                (imag_dx, small_dy),
+                ha=imag_ha,
+                va="bottom" if small_dy > 0 else "top",
+                color=color,
+            )
+            continue
+
+        endpoints = (t_right,) if attached_to_origin else (t_left, t_right)
+        _plot_axis_markers(
+            ax, [0.0] * (2 * len(endpoints)), [s * t for t in endpoints for s in (1, -1)], color
+        )
+        for t in endpoints:
+            for y, text, dy, va in _imag_endpoint_label_specs(t):
+                _annotate_axis_label(
+                    ax, text, (0.0, y), (imag_dx, dy), ha=imag_ha, va=va, color=color
+                )
 
 
 def _draw_zeros_poles(ax, phi, options: PlotOptions):
@@ -487,6 +632,11 @@ def plot_stability_region(
     # Real and imaginary axes
     ax.axhline(0.0, color="0.4", lw=0.8)
     ax.axvline(0.0, color="0.4", lw=0.8)
+
+    if options.show_axis_extent:
+        _mark_axis_extents(ax, phi, MAIN_REGION_STYLE, options)
+        if emb is not None:
+            _mark_axis_extents(ax, emb, EMBEDDED_REGION_STYLE, options)
 
     show_region = options.shade or shade_emb or len(region_handles) > 1
     _decorate_axes(
