@@ -230,11 +230,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="overlay the embedded method's stability region",
     )
     ap.add_argument(
+        "--axis-extent",
+        dest="show_axis_extent",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="label the real/imaginary stability interval endpoints",
+    )
+    ap.add_argument(
         "--suppress-islands",
         dest="suppress_tiny_islands",
         action=argparse.BooleanOptionalAction,
         default=True,
         help="hide tiny disconnected stable islands around zeros of phi (render as stray dots)",
+    )
+    ap.add_argument(
+        "--highlight-imag-axis-intervals",
+        action="store_true",
+        help="highlight finite stable intervals on the imaginary axis; "
+        "ignored with --no-axis-extent",
+    )
+    ap.add_argument(
+        "--label-detached-imag-axis-intervals",
+        action="store_true",
+        help="also label detached finite stable intervals on the imaginary axis; "
+        "ignored with --no-axis-extent",
     )
     shade_group = ap.add_mutually_exclusive_group()
     shade_group.add_argument(
