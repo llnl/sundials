@@ -295,33 +295,30 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   SUNAssert(Arnoldi_CONTENT(DEE)->ATimes, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
 
-  int* kry_dim     = &(Arnoldi_CONTENT(DEE)->kry_dim);
-  int* num_warmups = &(Arnoldi_CONTENT(DEE)->num_warmups);
-
-  if (*num_warmups < 0) { *num_warmups = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT; }
+  const int kry_dim     = Arnoldi_CONTENT(DEE)->kry_dim;
 
   if (Arnoldi_CONTENT(DEE)->LAPACK_A == NULL)
   {
     Arnoldi_CONTENT(DEE)->LAPACK_A =
-      (sunrealtype*)malloc((*kry_dim * *kry_dim) * sizeof(sunrealtype));
+      (sunrealtype*)malloc((kry_dim * kry_dim) * sizeof(sunrealtype));
     SUNAssert(Arnoldi_CONTENT(DEE)->LAPACK_A, SUN_ERR_MALLOC_FAIL);
   }
   if (Arnoldi_CONTENT(DEE)->LAPACK_wr == NULL)
   {
-    Arnoldi_CONTENT(DEE)->LAPACK_wr = malloc(*kry_dim * sizeof(sunrealtype));
+    Arnoldi_CONTENT(DEE)->LAPACK_wr = malloc(kry_dim * sizeof(sunrealtype));
     SUNAssert(Arnoldi_CONTENT(DEE)->LAPACK_wr, SUN_ERR_MALLOC_FAIL);
   }
   if (Arnoldi_CONTENT(DEE)->LAPACK_wi == NULL)
   {
-    Arnoldi_CONTENT(DEE)->LAPACK_wi = malloc(*kry_dim * sizeof(sunrealtype));
+    Arnoldi_CONTENT(DEE)->LAPACK_wi = malloc(kry_dim * sizeof(sunrealtype));
     SUNAssert(Arnoldi_CONTENT(DEE)->LAPACK_wi, SUN_ERR_MALLOC_FAIL);
   }
 
   /* query the workspace size (call with lwork = -1) */
   char jobvl         = 'N';
   char jobvr         = 'N';
-  sunindextype N     = *kry_dim;
-  sunindextype lda   = *kry_dim;
+  sunindextype N     = kry_dim;
+  sunindextype lda   = kry_dim;
   sunindextype ldvl  = 1;
   sunindextype ldvr  = 1;
   sunindextype info  = 0;
@@ -335,18 +332,19 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
             &work, &lwork, &info);
 
   /* The workspace size is returned as the first entry of the work array */
-  Arnoldi_CONTENT(DEE)->LAPACK_lwork = (sunindextype)work;
+  lwork = (sunindextype)work;
+  Arnoldi_CONTENT(DEE)->LAPACK_lwork = lwork;
 
-  Arnoldi_CONTENT(DEE)->LAPACK_work =
-    (sunrealtype*)malloc(((sunindextype)work) * sizeof(sunrealtype));
+  Arnoldi_CONTENT(DEE)->LAPACK_work = 
+    (sunrealtype*)malloc(lwork * sizeof(sunrealtype));
   SUNAssert(Arnoldi_CONTENT(DEE)->LAPACK_work, SUN_ERR_MALLOC_FAIL);
 
   /* LAPACK array */
   Arnoldi_CONTENT(DEE)->LAPACK_arr =
-    (sunrealtype**)malloc(*kry_dim * sizeof(sunrealtype*));
+    (sunrealtype**)malloc(kry_dim * sizeof(sunrealtype*));
   SUNAssert(Arnoldi_CONTENT(DEE)->LAPACK_arr, SUN_ERR_MALLOC_FAIL);
 
-  for (int k = 0; k < Arnoldi_CONTENT(DEE)->kry_dim; k++)
+  for (int k = 0; k < kry_dim; k++)
   {
     Arnoldi_CONTENT(DEE)->LAPACK_arr[k] =
       (sunrealtype*)malloc(2 * sizeof(sunrealtype));
@@ -355,13 +353,13 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
 
   /* Hessenberg matrix Hes */
   Arnoldi_CONTENT(DEE)->Hes =
-    (sunrealtype**)malloc((*kry_dim + 1) * sizeof(sunrealtype*));
+    (sunrealtype**)malloc((kry_dim + 1) * sizeof(sunrealtype*));
   SUNAssert(Arnoldi_CONTENT(DEE)->Hes, SUN_ERR_MALLOC_FAIL);
 
-  for (int k = 0; k <= *kry_dim; k++)
+  for (int k = 0; k <= kry_dim; k++)
   {
     Arnoldi_CONTENT(DEE)->Hes[k] =
-      (sunrealtype*)malloc(*kry_dim * sizeof(sunrealtype));
+      (sunrealtype*)malloc(kry_dim * sizeof(sunrealtype));
     SUNAssert(Arnoldi_CONTENT(DEE)->Hes[k], SUN_ERR_MALLOC_FAIL);
   }
 
@@ -447,8 +445,8 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   SUNAssert(Arnoldi_CONTENT(DEE)->Hes, SUN_ERR_ARG_CORRUPT);
 
   int retval;
-  int* num_warmups = &(Arnoldi_CONTENT(DEE)->num_warmups);
-  sunindextype n   = Arnoldi_CONTENT(DEE)->kry_dim;
+  const int num_warmups = Arnoldi_CONTENT(DEE)->num_warmups;
+  const sunindextype n   = Arnoldi_CONTENT(DEE)->kry_dim;
   sunrealtype normAv;
   long int* num_ATimes = &(Arnoldi_CONTENT(DEE)->num_ATimes);
   long int* num_iters  = &(Arnoldi_CONTENT(DEE)->num_iters);
@@ -473,7 +471,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   sunrealtype old_lambda = ZERO;
 
   /* Set the initial q = A^{num_warmups}q/||A^{num_warmups}q|| */
-  for (int i = 0; i < *num_warmups; i++)
+  for (int i = 0; i < num_warmups; i++)
   {
     retval = ATimes(ATdata, V[0], Av);
     (*num_ATimes)++;
