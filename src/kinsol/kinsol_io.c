@@ -69,6 +69,91 @@ int KINSetUserData(void* kinmem, void* user_data)
 
 /*
  * -----------------------------------------------------------------
+ * Function : KINSetVecStack
+ * -----------------------------------------------------------------
+ */
+
+int KINSetVecStack(void* kinmem, SUNVecStack stack)
+{
+  KINMem kin_mem;
+  int64_t num_active_vecs = 0;
+
+  if (kinmem == NULL)
+  {
+    KINProcessError(NULL, KIN_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (KIN_MEM_NULL);
+  }
+
+  kin_mem = (KINMem)kinmem;
+
+  if (stack == NULL)
+  {
+    KINProcessError(kin_mem, KIN_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Cannot attach a NULL vector stack");
+    return (KIN_ILL_INPUT);
+  }
+
+  if (kin_mem->kin_temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_GetNumActiveVecs(kin_mem->kin_temp_vec_stack,
+                                                  &num_active_vecs);
+    if (err != SUN_SUCCESS)
+    {
+      KINProcessError(kin_mem, KIN_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "Unable to query vector stack");
+      return (KIN_MEM_FAIL);
+    }
+
+    if (num_active_vecs > 0)
+    {
+      KINProcessError(kin_mem, KIN_ILL_INPUT, __LINE__, __func__,
+                      __FILE__, "Cannot replace vector stack while vectors are checked out");
+      return (KIN_ILL_INPUT);
+    }
+  }
+
+  if (kin_mem->kin_temp_vec_stack && kin_mem->kin_own_temp_vec_stack)
+  {
+    SUNErrCode err = SUNVecStack_Destroy(&(kin_mem->kin_temp_vec_stack));
+    if (err != SUN_SUCCESS)
+    {
+      KINProcessError(kin_mem, KIN_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "Unable to deallocate existing vector stack");
+      return (KIN_MEM_FAIL);
+    }
+  }
+
+  kin_mem->kin_temp_vec_stack     = stack;
+  kin_mem->kin_own_temp_vec_stack = SUNFALSE;
+
+  return (KIN_SUCCESS);
+}
+
+/*
+ * -----------------------------------------------------------------
+ * Function : KINGetVecStack
+ * -----------------------------------------------------------------
+ */
+
+int KINGetVecStack(void* kinmem, SUNVecStack* stack)
+{
+  KINMem kin_mem;
+
+  if (kinmem == NULL)
+  {
+    KINProcessError(NULL, KIN_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return (KIN_MEM_NULL);
+  }
+
+  kin_mem = (KINMem)kinmem;
+
+  *stack = kin_mem->kin_temp_vec_stack;
+
+  return (KIN_SUCCESS);
+}
+
+/*
+ * -----------------------------------------------------------------
  * Function : KINSetDamping
  * -----------------------------------------------------------------
  */

@@ -248,69 +248,71 @@ void* KINCreate(SUNContext sunctx)
 
   /* set default values for solver optional inputs */
 
-  kin_mem->kin_func             = NULL;
-  kin_mem->kin_user_data        = NULL;
-  kin_mem->kin_uu               = NULL;
-  kin_mem->kin_unew             = NULL;
-  kin_mem->kin_fval             = NULL;
-  kin_mem->kin_gval             = NULL;
-  kin_mem->kin_uscale           = NULL;
-  kin_mem->kin_fscale           = NULL;
-  kin_mem->kin_pp               = NULL;
-  kin_mem->kin_constraints      = NULL;
-  kin_mem->kin_vtemp1           = NULL;
-  kin_mem->kin_vtemp2           = NULL;
-  kin_mem->kin_vtemp3           = NULL;
-  kin_mem->kin_fold_aa          = NULL;
-  kin_mem->kin_gold_aa          = NULL;
-  kin_mem->kin_df_aa            = NULL;
-  kin_mem->kin_dg_aa            = NULL;
-  kin_mem->kin_q_aa             = NULL;
-  kin_mem->kin_T_aa             = NULL;
-  kin_mem->kin_gamma_aa         = NULL;
-  kin_mem->kin_R_aa             = NULL;
-  kin_mem->kin_cv               = NULL;
-  kin_mem->kin_Xv               = NULL;
-  kin_mem->kin_lmem             = NULL;
-  kin_mem->kin_beta             = ONE;
-  kin_mem->kin_damping          = SUNFALSE;
-  kin_mem->kin_m_aa             = 0;
-  kin_mem->kin_m_aa_alloc       = 0;
-  kin_mem->kin_delay_aa         = 0;
-  kin_mem->kin_current_depth    = 0;
-  kin_mem->kin_damping_fn       = NULL;
-  kin_mem->kin_depth_fn         = NULL;
-  kin_mem->kin_orth_aa          = KIN_ORTH_MGS;
-  kin_mem->kin_orth_aa_alloc    = 0;
-  kin_mem->kin_qr_func          = NULL;
-  kin_mem->kin_qr_data          = NULL;
-  kin_mem->kin_beta_aa          = ONE;
-  kin_mem->kin_damping_aa       = SUNFALSE;
-  kin_mem->kin_dot_prod_sb      = SUNFALSE;
-  kin_mem->kin_constraintsSet   = SUNFALSE;
-  kin_mem->kin_ret_newest       = SUNFALSE;
-  kin_mem->kin_mxiter           = MXITER_DEFAULT;
-  kin_mem->kin_noInitSetup      = SUNFALSE;
-  kin_mem->kin_msbset           = MSBSET_DEFAULT;
-  kin_mem->kin_noResMon         = SUNFALSE;
-  kin_mem->kin_msbset_sub       = MSBSET_SUB_DEFAULT;
-  kin_mem->kin_update_fnorm_sub = SUNFALSE;
-  kin_mem->kin_mxnbcf           = MXNBCF_DEFAULT;
-  kin_mem->kin_sthrsh           = TWO;
-  kin_mem->kin_noMinEps         = SUNFALSE;
-  kin_mem->kin_mxnstepin        = ZERO;
-  kin_mem->kin_sqrt_relfunc     = SUNRsqrt(uround);
-  kin_mem->kin_scsteptol        = SUNRpowerR(uround, TWOTHIRDS);
-  kin_mem->kin_fnormtol         = SUNRpowerR(uround, ONETHIRD);
-  kin_mem->kin_etaflag          = KIN_ETACHOICE1;
-  kin_mem->kin_eta              = POINT1; /* default for KIN_ETACONSTANT */
-  kin_mem->kin_eta_alpha        = TWO;    /* default for KIN_ETACHOICE2  */
-  kin_mem->kin_eta_gamma        = POINT9; /* default for KIN_ETACHOICE2  */
-  kin_mem->kin_MallocDone       = SUNFALSE;
-  kin_mem->kin_eval_omega       = SUNTRUE;
-  kin_mem->kin_omega            = ZERO; /* default to using min/max    */
-  kin_mem->kin_omega_min        = OMEGA_MIN;
-  kin_mem->kin_omega_max        = OMEGA_MAX;
+  kin_mem->kin_func               = NULL;
+  kin_mem->kin_user_data          = NULL;
+  kin_mem->kin_uu                 = NULL;
+  kin_mem->kin_unew               = NULL;
+  kin_mem->kin_fval               = NULL;
+  kin_mem->kin_gval               = NULL;
+  kin_mem->kin_uscale             = NULL;
+  kin_mem->kin_fscale             = NULL;
+  kin_mem->kin_pp                 = NULL;
+  kin_mem->kin_constraints        = NULL;
+  kin_mem->kin_vtemp1             = NULL;
+  kin_mem->kin_vtemp2             = NULL;
+  kin_mem->kin_vtemp3             = NULL;
+  kin_mem->kin_temp_vec_stack     = NULL;
+  kin_mem->kin_own_temp_vec_stack = SUNFALSE;
+  kin_mem->kin_fold_aa            = NULL;
+  kin_mem->kin_gold_aa            = NULL;
+  kin_mem->kin_df_aa              = NULL;
+  kin_mem->kin_dg_aa              = NULL;
+  kin_mem->kin_q_aa               = NULL;
+  kin_mem->kin_T_aa               = NULL;
+  kin_mem->kin_gamma_aa           = NULL;
+  kin_mem->kin_R_aa               = NULL;
+  kin_mem->kin_cv                 = NULL;
+  kin_mem->kin_Xv                 = NULL;
+  kin_mem->kin_lmem               = NULL;
+  kin_mem->kin_beta               = ONE;
+  kin_mem->kin_damping            = SUNFALSE;
+  kin_mem->kin_m_aa               = 0;
+  kin_mem->kin_m_aa_alloc         = 0;
+  kin_mem->kin_delay_aa           = 0;
+  kin_mem->kin_current_depth      = 0;
+  kin_mem->kin_damping_fn         = NULL;
+  kin_mem->kin_depth_fn           = NULL;
+  kin_mem->kin_orth_aa            = KIN_ORTH_MGS;
+  kin_mem->kin_orth_aa_alloc      = 0;
+  kin_mem->kin_qr_func            = NULL;
+  kin_mem->kin_qr_data            = NULL;
+  kin_mem->kin_beta_aa            = ONE;
+  kin_mem->kin_damping_aa         = SUNFALSE;
+  kin_mem->kin_dot_prod_sb        = SUNFALSE;
+  kin_mem->kin_constraintsSet     = SUNFALSE;
+  kin_mem->kin_ret_newest         = SUNFALSE;
+  kin_mem->kin_mxiter             = MXITER_DEFAULT;
+  kin_mem->kin_noInitSetup        = SUNFALSE;
+  kin_mem->kin_msbset             = MSBSET_DEFAULT;
+  kin_mem->kin_noResMon           = SUNFALSE;
+  kin_mem->kin_msbset_sub         = MSBSET_SUB_DEFAULT;
+  kin_mem->kin_update_fnorm_sub   = SUNFALSE;
+  kin_mem->kin_mxnbcf             = MXNBCF_DEFAULT;
+  kin_mem->kin_sthrsh             = TWO;
+  kin_mem->kin_noMinEps           = SUNFALSE;
+  kin_mem->kin_mxnstepin          = ZERO;
+  kin_mem->kin_sqrt_relfunc       = SUNRsqrt(uround);
+  kin_mem->kin_scsteptol          = SUNRpowerR(uround, TWOTHIRDS);
+  kin_mem->kin_fnormtol           = SUNRpowerR(uround, ONETHIRD);
+  kin_mem->kin_etaflag            = KIN_ETACHOICE1;
+  kin_mem->kin_eta                = POINT1; /* default for KIN_ETACONSTANT */
+  kin_mem->kin_eta_alpha          = TWO;    /* default for KIN_ETACHOICE2  */
+  kin_mem->kin_eta_gamma          = POINT9; /* default for KIN_ETACHOICE2  */
+  kin_mem->kin_MallocDone         = SUNFALSE;
+  kin_mem->kin_eval_omega         = SUNTRUE;
+  kin_mem->kin_omega              = ZERO; /* default to using min/max    */
+  kin_mem->kin_omega_min          = OMEGA_MIN;
+  kin_mem->kin_omega_max          = OMEGA_MAX;
 
   /* initialize lrw and liw */
 
@@ -384,6 +386,21 @@ int KINInit(void* kinmem, KINSysFn func, N_Vector tmpl)
     kin_mem->kin_liw1 = 0;
   }
 
+  /* create an internal temporary vector stack if the user did not supply one */
+  if (kin_mem->kin_temp_vec_stack == NULL)
+  {
+    SUNErrCode err = SUNVecStack_Create(tmpl, 0, kin_mem->kin_sunctx,
+                                        &(kin_mem->kin_temp_vec_stack));
+    if (err != SUN_SUCCESS)
+    {
+      KINProcessError(kin_mem, KIN_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      "A vector stack allocation failed");
+      SUNDIALS_MARK_FUNCTION_END(KIN_PROFILER);
+      return (KIN_MEM_FAIL);
+    }
+    kin_mem->kin_own_temp_vec_stack = SUNTRUE;
+  }
+
   /* allocate necessary vectors */
 
   allocOK = KINAllocVectors(kin_mem, tmpl);
@@ -391,6 +408,12 @@ int KINInit(void* kinmem, KINSysFn func, N_Vector tmpl)
   {
     KINProcessError(kin_mem, KIN_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_MEM_FAIL);
+    if (kin_mem->kin_temp_vec_stack && kin_mem->kin_own_temp_vec_stack)
+    {
+      (void)SUNVecStack_Destroy(&(kin_mem->kin_temp_vec_stack));
+      kin_mem->kin_temp_vec_stack     = NULL;
+      kin_mem->kin_own_temp_vec_stack = SUNFALSE;
+    }
     SUNDIALS_MARK_FUNCTION_END(KIN_PROFILER);
     free(kin_mem);
     kin_mem = NULL;
@@ -599,8 +622,7 @@ int KINSol(void* kinmem, N_Vector u, int strategy_in, N_Vector u_scale,
   {
     if (kin_mem->kin_gval == NULL)
     {
-      kin_mem->kin_gval = N_VClone(kin_mem->kin_unew);
-      if (kin_mem->kin_gval == NULL)
+      if (SUNVecStack_Pop(kin_mem->kin_temp_vec_stack, &kin_mem->kin_gval))
       {
         KINProcessError(kin_mem, KIN_MEM_FAIL, __LINE__, __func__, __FILE__,
                         MSG_MEM_FAIL);
@@ -799,6 +821,13 @@ void KINFree(void** kinmem)
   /* free orthogonalization workspace */
   KINFreeOrth(kin_mem);
 
+  if (kin_mem->kin_temp_vec_stack && kin_mem->kin_own_temp_vec_stack)
+  {
+    (void)SUNVecStack_Destroy(&(kin_mem->kin_temp_vec_stack));
+    kin_mem->kin_temp_vec_stack     = NULL;
+    kin_mem->kin_own_temp_vec_stack = SUNFALSE;
+  }
+
 #if defined(SUNDIALS_ENABLE_PYTHON)
   kinsol_user_supplied_fn_table_destroy(kin_mem->python);
 #endif
@@ -854,79 +883,107 @@ static sunbooleantype KINCheckNvector(N_Vector tmpl)
 
 static sunbooleantype KINAllocVectors(KINMem kin_mem, N_Vector tmpl)
 {
-  /* allocate unew, fval, pp, vtemp1 and vtemp2. */
+  sunbooleantype pop_unew   = SUNFALSE;
+  sunbooleantype pop_fval   = SUNFALSE;
+  sunbooleantype pop_pp     = SUNFALSE;
+  sunbooleantype pop_vtemp1 = SUNFALSE;
+  int npopped               = 0;
+
+  /* check out unew, fval, pp, vtemp1 and vtemp2. */
   /* allocate df, dg, q, for Anderson Acceleration, Broyden and EN */
   /* allocate L, for Low Sync Anderson Acceleration */
 
   if (kin_mem->kin_unew == NULL)
   {
-    kin_mem->kin_unew = N_VClone(tmpl);
-    if (kin_mem->kin_unew == NULL) { return (SUNFALSE); }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
+    if (SUNVecStack_Pop(kin_mem->kin_temp_vec_stack, &kin_mem->kin_unew))
+    {
+      return (SUNFALSE);
+    }
+    pop_unew = SUNTRUE;
+    npopped++;
   }
 
   if (kin_mem->kin_fval == NULL)
   {
-    kin_mem->kin_fval = N_VClone(tmpl);
-    if (kin_mem->kin_fval == NULL)
+    if (SUNVecStack_Pop(kin_mem->kin_temp_vec_stack, &kin_mem->kin_fval))
     {
-      N_VDestroy(kin_mem->kin_unew);
-      kin_mem->kin_liw -= kin_mem->kin_liw1;
-      kin_mem->kin_lrw -= kin_mem->kin_lrw1;
+      if (pop_unew)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_unew);
+      }
       return (SUNFALSE);
     }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
+    pop_fval = SUNTRUE;
+    npopped++;
   }
 
   if (kin_mem->kin_pp == NULL)
   {
-    kin_mem->kin_pp = N_VClone(tmpl);
-    if (kin_mem->kin_pp == NULL)
+    if (SUNVecStack_Pop(kin_mem->kin_temp_vec_stack, &kin_mem->kin_pp))
     {
-      N_VDestroy(kin_mem->kin_unew);
-      N_VDestroy(kin_mem->kin_fval);
-      kin_mem->kin_liw -= 2 * kin_mem->kin_liw1;
-      kin_mem->kin_lrw -= 2 * kin_mem->kin_lrw1;
+      if (pop_fval)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_fval);
+      }
+      if (pop_unew)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_unew);
+      }
       return (SUNFALSE);
     }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
+    pop_pp = SUNTRUE;
+    npopped++;
   }
 
   if (kin_mem->kin_vtemp1 == NULL)
   {
-    kin_mem->kin_vtemp1 = N_VClone(tmpl);
-    if (kin_mem->kin_vtemp1 == NULL)
+    if (SUNVecStack_Pop(kin_mem->kin_temp_vec_stack, &kin_mem->kin_vtemp1))
     {
-      N_VDestroy(kin_mem->kin_unew);
-      N_VDestroy(kin_mem->kin_fval);
-      N_VDestroy(kin_mem->kin_pp);
-      kin_mem->kin_liw -= 3 * kin_mem->kin_liw1;
-      kin_mem->kin_lrw -= 3 * kin_mem->kin_lrw1;
+      if (pop_pp)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_pp);
+      }
+      if (pop_fval)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_fval);
+      }
+      if (pop_unew)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_unew);
+      }
       return (SUNFALSE);
     }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
+    pop_vtemp1 = SUNTRUE;
+    npopped++;
   }
 
   if (kin_mem->kin_vtemp2 == NULL)
   {
-    kin_mem->kin_vtemp2 = N_VClone(tmpl);
-    if (kin_mem->kin_vtemp2 == NULL)
+    if (SUNVecStack_Pop(kin_mem->kin_temp_vec_stack, &kin_mem->kin_vtemp2))
     {
-      N_VDestroy(kin_mem->kin_unew);
-      N_VDestroy(kin_mem->kin_fval);
-      N_VDestroy(kin_mem->kin_pp);
-      N_VDestroy(kin_mem->kin_vtemp1);
-      kin_mem->kin_liw -= 4 * kin_mem->kin_liw1;
-      kin_mem->kin_lrw -= 4 * kin_mem->kin_lrw1;
+      if (pop_vtemp1)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_vtemp1);
+      }
+      if (pop_pp)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_pp);
+      }
+      if (pop_fval)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_fval);
+      }
+      if (pop_unew)
+      {
+        (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_unew);
+      }
       return (SUNFALSE);
     }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
+    npopped++;
   }
+
+  kin_mem->kin_liw += npopped * kin_mem->kin_liw1;
+  kin_mem->kin_lrw += npopped * kin_mem->kin_lrw1;
 
   return (SUNTRUE);
 }
@@ -934,56 +991,50 @@ static sunbooleantype KINAllocVectors(KINMem kin_mem, N_Vector tmpl)
 /*
  * KINFreeVectors
  *
- * This routine frees the KINSol vectors allocated by
- * KINAllocVectors.
+ * This routine frees the KINSol vectors allocated by KINAllocVectors and
+ * returns workspace vectors to the vector stack.
  */
 
 static void KINFreeVectors(KINMem kin_mem)
 {
   if (kin_mem->kin_unew != NULL)
   {
-    N_VDestroy(kin_mem->kin_unew);
-    kin_mem->kin_unew = NULL;
+    (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_unew);
     kin_mem->kin_lrw -= kin_mem->kin_lrw1;
     kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_fval != NULL)
   {
-    N_VDestroy(kin_mem->kin_fval);
-    kin_mem->kin_fval = NULL;
+    (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_fval);
     kin_mem->kin_lrw -= kin_mem->kin_lrw1;
     kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_pp != NULL)
   {
-    N_VDestroy(kin_mem->kin_pp);
-    kin_mem->kin_pp = NULL;
+    (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_pp);
     kin_mem->kin_lrw -= kin_mem->kin_lrw1;
     kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_vtemp1 != NULL)
   {
-    N_VDestroy(kin_mem->kin_vtemp1);
-    kin_mem->kin_vtemp1 = NULL;
+    (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_vtemp1);
     kin_mem->kin_lrw -= kin_mem->kin_lrw1;
     kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_vtemp2 != NULL)
   {
-    N_VDestroy(kin_mem->kin_vtemp2);
-    kin_mem->kin_vtemp2 = NULL;
+    (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_vtemp2);
     kin_mem->kin_lrw -= kin_mem->kin_lrw1;
     kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_gval != NULL)
   {
-    N_VDestroy(kin_mem->kin_gval);
-    kin_mem->kin_gval = NULL;
+    (void)SUNVecStack_Push(kin_mem->kin_temp_vec_stack, &kin_mem->kin_gval);
     kin_mem->kin_lrw -= kin_mem->kin_lrw1;
     kin_mem->kin_liw -= kin_mem->kin_liw1;
   }

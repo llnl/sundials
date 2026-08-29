@@ -24,6 +24,7 @@
 #include <kinsol/kinsol_ls.h>
 #include <stdio.h>
 #include <sundials/sundials_core.h>
+#include <sundials/sundials_vecstack.h>
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
@@ -140,6 +141,8 @@ SUNDIALS_EXPORT int KINSetFuncNormTol(void* kinmem, sunrealtype fnormtol);
 SUNDIALS_EXPORT int KINSetScaledStepTol(void* kinmem, sunrealtype scsteptol);
 SUNDIALS_EXPORT int KINSetConstraints(void* kinmem, N_Vector constraints);
 SUNDIALS_EXPORT int KINSetSysFunc(void* kinmem, KINSysFn func);
+SUNDIALS_EXPORT int KINSetVecStack(void* kinmem, SUNVecStack stack);
+SUNDIALS_EXPORT int KINGetVecStack(void* kinmem, SUNVecStack* stack);
 
 /* Optional output functions */
 SUNDIALS_DEPRECATED_EXPORT_MSG(

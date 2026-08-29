@@ -167,6 +167,8 @@ typedef struct KINMemRec
   N_Vector kin_vtemp1; /* scratch vector #1                               */
   N_Vector kin_vtemp2; /* scratch vector #2                               */
   N_Vector kin_vtemp3; /* scratch vector #3                               */
+  SUNVecStack kin_temp_vec_stack; /* stack of temporary vectors               */
+  sunbooleantype kin_own_temp_vec_stack; /* SUNTRUE if KINSOL owns the stack   */
 
   /* fixed point and Picard options */
   sunbooleantype kin_ret_newest; /* return the newest FP iteration     */
