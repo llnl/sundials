@@ -680,8 +680,7 @@ This is the default 3th order slow and fast MRIStep method (from
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Knoth-Wolke method from
-   :cite:p:`KnWo:98`.
+   Linear stability region for the Knoth-Wolke method.
 
 
 .. c:enumerator:: ARKODE_SSP_ERK_4_2_3
