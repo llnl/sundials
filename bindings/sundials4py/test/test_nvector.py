@@ -125,7 +125,7 @@ def test_nvector_array_helpers_serial(sunctx):
         N_VGetCupyArray(nvec)
     with pytest.raises(TypeError):
         N_VGetNumpyArray(nvec, device="cuda")
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TypeError):
         N_VGetTorchTensor(nvec, device="cuda")
 
 
@@ -140,8 +140,11 @@ def test_nvector_array_helpers_serial_jax(sunctx):
     assert_allclose(np.asarray(array), 3.0)
 
     N_VConst(4.0, nvec)
-    array = N_VGetJaxArray(nvec, device="cpu")
+    array = N_VGetJaxArray(nvec)
     assert_allclose(np.asarray(array), 4.0)
+
+    with pytest.raises(TypeError):
+        N_VGetJaxArray(nvec, device="cpu")
 
 
 def test_set_nvector_serial_jax_array(sunctx):
@@ -232,9 +235,6 @@ def test_create_nvector_cuda(sunctx):
 
     N_VConst(2.0, nvec)
 
-    arr = N_VGetNumpyArray(nvec)
-    assert_allclose(arr, 2.0)
-
 
 def _cuda_nvector_or_fail(factory):
     try:
@@ -252,9 +252,6 @@ def _check_cuda_nvector_const(nvec, value):
     assert int(N_VGetDeviceArrayPointer(nvec)) != 0
 
     N_VConst(value, nvec)
-
-    arr = N_VGetNumpyArray(nvec)
-    assert_allclose(arr, value)
 
 
 @pytest.mark.skipif("N_VNewManaged_Cuda" not in globals(), reason="CUDA bindings are not enabled")
@@ -325,8 +322,6 @@ def test_make_nvector_cuda_cupy_array(sunctx):
     N_VConst(3.0, nvec)
 
     assert_allclose(cupy.asnumpy(d_arr_ref()), 3.0)
-    N_VGetNumpyArray(nvec)
-    assert_allclose(h_arr_ref(), 3.0)
 
     view = N_VGetCupyArray(nvec)
     assert_allclose(cupy.asnumpy(view), 3.0)
@@ -364,11 +359,11 @@ def test_make_nvector_cuda_torch_tensor(sunctx):
     view = N_VGetTorchTensor(nvec)
     assert_allclose(view.cpu().numpy(), 4.0)
 
-    host_view = N_VGetTorchTensor(nvec, device="cpu")
-    assert_allclose(host_view.numpy(), 4.0)
-    assert_allclose(h_arr_ref(), 4.0)
+    host_copy = view.cpu()
+    assert_allclose(host_copy.numpy(), 4.0)
+    assert_allclose(h_arr_ref(), 0.0)
 
-    del view, host_view, nvec
+    del view, host_copy, nvec
     gc.collect()
     assert h_arr_ref() is None
     assert d_arr_ref() is None
@@ -400,30 +395,26 @@ def test_make_nvector_cuda_jax_array(sunctx):
     view = N_VGetJaxArray(nvec)
     assert_allclose(np.asarray(view), np.asarray(d_arr_ref()))
 
-    host_view = N_VGetJaxArray(nvec, device="cpu")
-    assert host_view.device.platform == "cpu"
-    assert_allclose(np.asarray(host_view), np.asarray(d_arr_ref()))
+    host_copy = np.asarray(view)
+    assert_allclose(host_copy, np.asarray(d_arr_ref()))
 
     N_VConst(6.0, nvec)
 
-    N_VGetNumpyArray(nvec)
-    assert_allclose(h_arr_ref(), 6.0)
+    updated_host_copy = np.asarray(N_VGetJaxArray(nvec))
+    assert_allclose(updated_host_copy, 6.0)
 
-    del view, host_view, nvec
+    del view, host_copy, updated_host_copy, nvec
     gc.collect()
     assert h_arr_ref() is None
     assert d_arr_ref() is None
 
 
 @pytest.mark.skipif("N_VNew_Cuda" not in globals(), reason="CUDA bindings are not enabled")
-def test_nvector_array_helpers_cuda_host(sunctx):
+def test_nvector_array_helpers_cuda_reject_numpy(sunctx):
     nvec = _cuda_nvector_or_fail(lambda: N_VNew_Cuda(5, sunctx))
 
-    N_VConst(8.0, nvec)
-
-    synced_host = N_VGetNumpyArray(nvec)
-    assert_allclose(synced_host, 8.0)
-
+    with pytest.raises(RuntimeError, match="not supported for CUDA N_Vectors"):
+        N_VGetNumpyArray(nvec)
     with pytest.raises(TypeError):
         N_VGetNumpyArray(nvec, device="cuda")
 
@@ -465,7 +456,6 @@ def test_set_nvector_cuda_jax_ref(sunctx):
 
     device = _jax_cuda_device_or_skip(jax)
     nvec = _cuda_nvector_or_fail(lambda: N_VNew_Cuda(5, sunctx))
-    h_arr = N_VGetNumpyArray(nvec)
     d_arr = jax.device_put(jnp.arange(5, dtype=_jax_dtype(jnp)), device)
     d_arr.block_until_ready()
     ref = jax.ref.new_ref(d_arr)
@@ -492,10 +482,10 @@ def test_set_nvector_cuda_jax_ref(sunctx):
 
     N_VGetJaxArray(nvec).block_until_ready()
     assert_allclose(np.asarray(ref_weak()[...]), 7.0)
-    N_VGetNumpyArray(nvec)
-    assert_allclose(h_arr, 7.0)
+    host_copy = np.asarray(N_VGetJaxArray(nvec))
+    assert_allclose(host_copy, 7.0)
 
-    del h_arr, nvec
+    del host_copy, nvec
     gc.collect()
     assert ref_weak() is None
 
