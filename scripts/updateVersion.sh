@@ -193,9 +193,12 @@ sedi() {
 }
 
 # ------------------------------------------------------------------------------
-# Update the pyproject.toml file
+# Update pyproject.toml files
 # ------------------------------------------------------------------------------
 fn="../pyproject.toml"
+sedi "/^version =/ s/version = \".*\"/version = \"${sun_ver}\"/" $fn
+
+fn="../suntools/pyproject.toml"
 sedi "/^version =/ s/version = \".*\"/version = \"${sun_ver}\"/" $fn
 
 # ------------------------------------------------------------------------------
