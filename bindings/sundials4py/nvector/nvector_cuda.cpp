@@ -309,11 +309,6 @@ int device_id_for_pointer(void* ptr)
   return device_id;
 }
 
-void copy_to_host(N_Vector v)
-{
-  if (is_cuda_nvector(v)) { N_VCopyFromDevice_Cuda(v); }
-}
-
 void sync_device(N_Vector v)
 {
   require_cuda_nvector(v);
@@ -382,9 +377,6 @@ nb::object get_numpy_array(N_Vector v)
       "array accessor instead");
   }
 
-  // Keep CUDA accessors specialized to make synchronization explicit and avoid
-  // runtime backend dispatch on this performance-sensitive path.
-  copy_to_host(v);
   return nb::cast(host_array(v));
 }
 

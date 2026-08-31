@@ -283,8 +283,7 @@ converted to NumPy explicitly with:
    host_array = tensor.cpu().numpy()
 
 Similarly, use ``cupy_array.get()`` for CuPy or
-``np.asarray(N_VGetJaxArray(y_nvec))`` for JAX. These explicit
-conversions make the device-to-host transfer visible to the user.
+``np.asarray(N_VGetJaxArray(y_nvec))`` for JAX.
 
 For CPU ``N_Vector`` objects, ``N_VGetNumpyArray`` and
 ``N_VGetTorchTensor`` create lightweight zero-copy views. ``N_VGetJaxArray``
@@ -296,9 +295,8 @@ effective when its JIT compilation or GPU execution amortizes this setup cost.
 
 The CUDA Python interface currently treats ``cuda`` as a device type rather
 than accepting a CUDA device ordinal. A CUDA ``N_Vector`` uses the device
-selected by its CUDA configuration, and the Python accessors report the
-underlying device through the array framework. Selecting and validating among
-multiple CUDA devices is a future enhancement.
+selected by its CUDA configuration. Support for multiple CUDA devices is a
+future enhancement.
 
 An ``N_Vector`` is one-dimensional by definition, so the Python accessors
 require one-dimensional arrays. Applications that need a multidimensional
