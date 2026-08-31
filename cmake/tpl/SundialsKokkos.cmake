@@ -30,7 +30,7 @@ include_guard(GLOBAL)
 # -----------------------------------------------------------------------------
 # Section 3: Find the TPL
 # -----------------------------------------------------------------------------
-find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}")
+find_package(Kokkos REQUIRED PATHS "${Kokkos_DIR}")
 
 # We should be able to use Kokkos_DEVICES directly but it seems to get removed
 # or unset in some CMake versions

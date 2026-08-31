@@ -1,0 +1,4 @@
+interface:
+  display_name: "SUNDIALS Guide"
+  short_description: "A guide that helps you choose SUNDIALS integrator and solvers for your problem"
+  default_prompt: "Use $sundials-guide to choose the right SUNDIALS package, method, and starting solver settings for my model. Explain why they are the right choices."

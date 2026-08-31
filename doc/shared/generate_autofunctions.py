@@ -58,7 +58,6 @@ if os.getenv("SPHINX_MOCK_SUNDIALS4PY", "").lower() in ("true", "1", "yes", "on"
     sys.modules["sundials4py.idas"].__all__ = []
 
 else:
-
     try:
         import sundials4py
     except ModuleNotFoundError as e:

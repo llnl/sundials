@@ -33,6 +33,7 @@ using namespace sundials::experimental;
 struct SUNDomEigEstimatorFunctionTable
 {
   nb::object atimes;
+  nb::object deerhs;
 };
 
 template<typename... Args>
@@ -41,6 +42,14 @@ SUNErrCode sundomeigestimator_atimes_wrapper(Args... args)
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<SUNATimesFn>, SUNDomEigEstimatorFunctionTable,
     3>(&SUNDomEigEstimatorFunctionTable::atimes, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+SUNErrCode sundomeigestimator_setrhs_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNRhsFn>, SUNDomEigEstimatorFunctionTable,
+    1>(&SUNDomEigEstimatorFunctionTable::deerhs, std::forward<Args>(args)...);
 }
 
 #endif

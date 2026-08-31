@@ -33,12 +33,14 @@ jobs:
           - msystem: MINGW64
             target-prefix: mingw-w64-x86_64
             install-tpls: true
+            enable-fortran: true
           - msystem: MINGW32
             target-prefix: mingw-w64-i686
             install-tpls: false
+            enable-fortran: false
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - uses: msys2/setup-msys2@v2
       with:
@@ -49,7 +51,7 @@ jobs:
             base-devel
             ${{ matrix.target-prefix }}-cmake
             ${{ matrix.target-prefix }}-gcc
-            ${{ matrix.target-prefix }}-gcc-fortran
+            ${{ matrix.enable-fortran && format('{0}-gcc-fortran', matrix.target-prefix) || '' }}
             ${{ matrix.install-tpls && format('{0}-openblas', matrix.target-prefix) || '' }}
             ${{ matrix.install-tpls && format('{0}-suitesparse', matrix.target-prefix) || '' }}
 
@@ -57,11 +59,12 @@ jobs:
       # Configure CMake in a 'build' subdirectory
       run: |
         cmake \
+          -W error=dev \
           -G "MSYS Makefiles" \
           -B ${GITHUB_WORKSPACE}/build_static \
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-          -DCMAKE_C_FLAGS=-Wno-deprecated-declarations \
-          -DBUILD_FORTRAN_MODULE_INTERFACE=ON \
+          -DSUNDIALS_ENABLE_DEPRECATED_WARNINGS=OFF \
+          -DBUILD_FORTRAN_MODULE_INTERFACE=${{ matrix.enable-fortran && 'ON' || 'OFF' }} \
           -DBUILD_SHARED_LIBS=OFF \
           -DSUNDIALS_BUILD_WITH_PROFILING=ON \
           -DSUNDIALS_LOGGING_LEVEL=2 \
@@ -84,10 +87,11 @@ jobs:
       # Configure CMake in a 'build' subdirectory
       run: |
         cmake \
+          -W error=dev \
           -G "MSYS Makefiles" \
           -B ${GITHUB_WORKSPACE}/build_shared \
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-          -DCMAKE_C_FLAGS=-Wno-deprecated-declarations \
+          -DSUNDIALS_ENABLE_DEPRECATED_WARNINGS=OFF \
           -DBUILD_FORTRAN_MODULE_INTERFACE=OFF \
           -DBUILD_STATIC_LIBS=OFF \
           -DSUNDIALS_BUILD_WITH_PROFILING=ON \
@@ -104,3 +108,20 @@ jobs:
       working-directory: ${{github.workspace}}/build_shared
       # Execute tests
       run: ctest --output-on-failure
+
+    - name: Archive build files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: build_files_mingw_${{ matrix.msystem }}_${{ env.BUILD_TYPE }}
+        path: |
+          ${{ github.workspace }}/build_*
+          !${{ github.workspace }}/build_*/Testing/output
+
+    - name: Archive output files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: output_files_mingw_${{ matrix.msystem }}_${{ env.BUILD_TYPE }}
+        path: |
+          ${{ github.workspace }}/build_*/Testing/

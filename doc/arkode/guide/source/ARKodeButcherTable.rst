@@ -171,7 +171,7 @@ ARKodeButcherTable functions
       * The name associated with *emethod*.
       * ``NULL`` pointer if *emethod* was invalid.
    
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 .. c:function:: ARKodeButcherTable ARKodeButcherTable_LoadDIRK(ARKODE_DIRKTableID imethod)
 
@@ -222,7 +222,7 @@ ARKodeButcherTable functions
       * The name associated with *imethod*.
       * ``NULL`` pointer if *imethod* was invalid.
    
-   .. versionadded:: 6.1.0
+   .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
 .. c:function:: ARKodeButcherTable ARKodeButcherTable_Alloc(int stages, sunbooleantype embedded)
@@ -288,7 +288,7 @@ ARKodeButcherTable functions
       * *ARK_SUCCESS* if successful.
       * *ARK_MEM_NULL* if the Butcher table memory was ``NULL``.
 
-   .. deprecated:: 6.3.0
+   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
 
       Work space functions will be removed in version 8.0.0.
 
@@ -322,14 +322,13 @@ ARKodeButcherTable functions
       * ``SUNTRUE`` if the method is "stiffly accurate", otherwise returns
         ``SUNFALSE``
 
-   .. versionadded:: v5.7.0
+   .. versionadded:: 6.7.0 (ARKODE 5.7.0)
 
 .. c:function:: int ARKodeButcherTable_CheckOrder(ARKodeButcherTable B, int* q, int* p, FILE* outfile)
 
    Determine the analytic order of accuracy for the specified Butcher
-   table. The analytic (necessary) conditions are checked up to order 6. For
-   orders greater than 6 the Butcher simplifying (sufficient) assumptions are
-   used.
+   table. The analytic (necessary) rooted-tree conditions are checked up to
+   order 10.
 
    **Arguments:**
       * *B* -- the Butcher table.
@@ -359,8 +358,9 @@ ARKodeButcherTable functions
 
 .. c:function:: int ARKodeButcherTable_CheckARKOrder(ARKodeButcherTable B1, ARKodeButcherTable B2, int *q, int *p, FILE *outfile)
 
-   Determine the analytic order of accuracy (up to order 6) for a specified
-   ARK pair of Butcher tables.
+   Determine the analytic order of accuracy for a specified ARK pair of
+   Butcher tables. The analytic (necessary) rooted-tree conditions are checked
+   up to order 10.
 
    **Arguments:**
       * *B1* -- a Butcher table in the ARK pair.
@@ -378,9 +378,11 @@ ARKodeButcherTable functions
         are *lower* than the measured values, or the measured values achieve the
         *maximum order* possible with this function and the values of *q* and
         *p* in the provided Butcher tables table are higher.
-      * *-1* -- failure, the input Butcher tables or critical table contents are
-        ``NULL``.
+      * *-1* -- failure, the values of *q* and *p* in the provided Butcher tables
+        are *higher* than the measured values, or the input Butcher tables or
+        critical table contents are ``NULL``.
 
    **Notes:**
       For embedded methods, if the return flags for *q* and *p* would
-      differ, warning takes precedence over success.
+      differ, failure takes precedence over warning, which takes precedence over
+      success.

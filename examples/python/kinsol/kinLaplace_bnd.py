@@ -100,7 +100,7 @@ class Laplace2D:
             yval = j * self.dy
             print(f"{yval:<8.5f}    ", end="")
             for i in range(1, self.NX + 1, SKIP):
-                print(f"{y[i-1,j-1]:<8.5f} ", end="")
+                print(f"{y[i - 1, j - 1]:<8.5f} ", end="")
             print()
 
 

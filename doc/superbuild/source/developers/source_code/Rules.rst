@@ -34,9 +34,9 @@ not adhere to all of these rules.
 #. All new code added to SUNDIALS should be formatted with `clang-format
    <https://clang.llvm.org/docs/ClangFormat.html>`_ for C/C++, `fprettify
    <https://github.com/fortran-lang/fprettify>`_ for Fortran, `cmake-format
-   <https://cmake-format.readthedocs.io>`_ for CMake, and `black
-   <https://black.readthedocs.io>`_ for Python. See :ref:`SourceCode.Style` for
-   details.
+   <https://cmake-format.readthedocs.io>`_ for CMake, and `ruff format
+   <https://docs.astral.sh/ruff/formatter/>`_ for Python. See
+   :ref:`SourceCode.Style` for details.
 
 #. Spaces not tabs.
 
@@ -242,3 +242,7 @@ not adhere to all of these rules.
    :ref:`Style.Output`.
 
 #. Follow the logging style detailed in :ref:`Style.Logging`.
+
+#. Agent skills that are specifically for SUNDIALS developers should be named with the prefix ``sundials-devs-``. 
+   For example, the ``sundials-devs-address-pr-comments`` skill is to help SUNDIALS developers address pull 
+   request comments. Skills that are for general users should be named with the prefix ``sundials-``. 

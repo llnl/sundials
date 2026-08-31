@@ -31,19 +31,20 @@ jobs:
     container: intel/oneapi-basekit:${{ matrix.ONEAPI_VERSION }}
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Configure CMake
       run: |
         cmake \
+        -W error=dev \
         -B ${{github.workspace}}/build \
         -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
         -D CMAKE_C_COMPILER="$(which icx)" \
         -D CMAKE_CXX_COMPILER="$(which icpx)" \
         -D CMAKE_CXX_FLAGS="-fsycl" \
         -D SUNDIALS_BUILD_WITH_PROFILING=ON \
-        -D ENABLE_ALL_WARNINGS=ON \
-        -D ENABLE_WARNINGS_AS_ERRORS=ON \
+        -D SUNDIALS_ENABLE_ALL_WARNINGS=ON \
+        -D CMAKE_COMPILE_WARNING_AS_ERROR=ON \
         -D ENABLE_SYCL=ON
 
     - name: Build

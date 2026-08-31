@@ -22,7 +22,7 @@ Start LSRKStep Logging test
 [DEBUG][rank 0][lsrkStep_TakeStepRKC][solution RHS] F_n(:) =
  1.000000000000000e+00
 [INFO][rank 0][lsrkStep_TakeStepRKC][end-compute-embedding] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 1.32867729993966e-06
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 1.32867729993966e-06
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 6.103515625e-08
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 10000
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 9.69352280335579e-17
@@ -47,7 +47,7 @@ Start LSRKStep Logging test
 [DEBUG][rank 0][lsrkStep_TakeStepRKC][solution RHS] F_n(:) =
  9.999999999999962e-01
 [INFO][rank 0][lsrkStep_TakeStepRKC][end-compute-embedding] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.00150897933254336
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.00150897933254336
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 1.220703125e-06
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 6.61744449652746e-14
@@ -72,7 +72,7 @@ Start LSRKStep Logging test
 [DEBUG][rank 0][lsrkStep_TakeStepRKC][solution RHS] F_n(:) =
  9.999999999983568e-01
 [INFO][rank 0][lsrkStep_TakeStepRKC][end-compute-embedding] status = success
-[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc = 0.000691316646993381
+[DEBUG][rank 0][arkAdapt][new-step-before-bounds] h_acc_controller = 0.000691316646993381
 [DEBUG][rank 0][arkAdapt][new-step-after-max-min-bounds] h_acc = 2.44140625e-05
 [DEBUG][rank 0][arkAdapt][new-step-eta] eta = 20
 [INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 5.50552988590603e-09

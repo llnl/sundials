@@ -19,7 +19,6 @@
 
 
 class ODEProblem:
-
     def set_init_cond(self, y0vec):
         raise NotImplementedError("Subclasses must implement the set_init_cond method.")
 

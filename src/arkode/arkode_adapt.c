@@ -142,8 +142,8 @@ int arkAdapt(ARKodeMem ark_mem, ARKodeHAdaptMem hadapt_mem, N_Vector ycur,
     return (ARK_CONTROLLER_ERR);
   }
 
-  SUNLogDebug(ARK_LOGGER, "new-step-before-bounds", "h_acc = " SUN_FORMAT_G,
-              h_acc);
+  SUNLogDebug(ARK_LOGGER, "new-step-before-bounds",
+              "h_acc_controller = " SUN_FORMAT_G, h_acc);
 
   /* enforce safety factors */
   h_acc *= hadapt_mem->safety;

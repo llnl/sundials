@@ -20,22 +20,22 @@ env:
 
 jobs:
   build_and_test:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - uses: fortran-lang/setup-fortran@v1
       id: setup-fortran
       with:
         compiler: intel
-        version: '2025.0'
+        version: '2025.2'
 
     - name: Install Ninja
       run: choco install ninja
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Configure CMake (Static)
-      run: cmake -G "Ninja" -B ${{github.workspace}}/build_static -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_FLAGS=-Wno-deprecated-declarations -DCMAKE_C_COMPILER=icx-cl -DCMAKE_CXX_COMPILER=icx-cl -DCMAKE_Fortran_COMPILER=ifx -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_FORTRAN_MODULE_INTERFACE=ON -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=OFF -DEXAMPLES_ENABLE_CXX=ON
+      run: cmake -W error=dev -G "Ninja" -B ${{github.workspace}}/build_static -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DSUNDIALS_ENABLE_DEPRECATED_WARNINGS=OFF -DCMAKE_C_COMPILER=icx-cl -DCMAKE_CXX_COMPILER=icx-cl -DCMAKE_Fortran_COMPILER=ifx -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_FORTRAN_MODULE_INTERFACE=ON -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=OFF -DEXAMPLES_ENABLE_CXX=ON
 
     - name: Build (Static)
       run: cmake --build ${{github.workspace}}/build_static --verbose
@@ -45,7 +45,7 @@ jobs:
       run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
 
     - name: Configure CMake (Shared)
-      run: cmake -G "Ninja" -B ${{github.workspace}}/build_shared -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_FLAGS=-Wno-deprecated-declarations -DCMAKE_C_COMPILER=icx-cl -DCMAKE_CXX_COMPILER=icx-cl -DCMAKE_Fortran_COMPILER=ifx -DBUILD_STATIC_LIBS=OFF -DBUILD_SHARED_LIBS=ON -DBUILD_FORTRAN_MODULE_INTERFACE=ON -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=OFF -DEXAMPLES_ENABLE_CXX=ON
+      run: cmake -W error=dev -G "Ninja" -B ${{github.workspace}}/build_shared -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DSUNDIALS_ENABLE_DEPRECATED_WARNINGS=OFF -DCMAKE_C_COMPILER=icx-cl -DCMAKE_CXX_COMPILER=icx-cl -DCMAKE_Fortran_COMPILER=ifx -DBUILD_STATIC_LIBS=OFF -DBUILD_SHARED_LIBS=ON -DBUILD_FORTRAN_MODULE_INTERFACE=ON -DSUNDIALS_BUILD_WITH_PROFILING=ON -DSUNDIALS_TEST_ENABLE_UNIT_TESTS=OFF -DEXAMPLES_ENABLE_CXX=ON
 
     - name: Build (Shared)
       run: cmake --build ${{github.workspace}}/build_shared --verbose
@@ -53,3 +53,20 @@ jobs:
     - name: Test (Shared)
       working-directory: ${{github.workspace}}/build_shared
       run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+
+    - name: Archive build files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: build_files_intel_${{ env.BUILD_TYPE }}
+        path: |
+          ${{ github.workspace }}/build_*
+          !${{ github.workspace }}/build_*/Testing/output
+
+    - name: Archive output files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: output_files_intel_${{ env.BUILD_TYPE }}
+        path: |
+          ${{ github.workspace }}/build_*/Testing/
