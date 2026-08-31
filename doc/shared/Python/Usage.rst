@@ -56,6 +56,14 @@ when running pip. For example:
 Other SUNDIALS options can also be accessed in this way. Review
 :numref:`Installation.Options` for more information on the available options.
 
+To build sundials4py with KLU support enabled, pass CMake options for KLU (see :numref:`Installation.Options.KLU`) through ``CMAKE_ARGS`` when building from
+source:
+
+.. code-block:: bash
+
+   export CMAKE_ARGS="-DSUNDIALS_ENABLE_KLU=ON -DKLU_ROOT=/path/to/suitesparse/installation"
+   pip install sundials4py --no-binary=sundials4py
+
 .. _Python.Usage.Modules:
 
 Modules
@@ -104,7 +112,7 @@ same capabilities plus continuous forward and adjoint sensitivity analysis.
 .. note::
 
    Not all SUNDIALS features are supported by the Python interfaces. In
-   particular, third-party libraries are not yet supported.
+   particular, third-party libraries are only partially supported.
 
 .. _Python.Usage.Example:
 
@@ -116,8 +124,7 @@ highlight some of the differences to using SUNDIALS from C/C++. The items
 highlighted below similarly apply to using other SUNDIALS packages. For more
 information on usage differences, continue to the :ref:`next section
 <Python.Usage.Differences>`. Additional examples can be found in the
-``examples/python`` directory of the :examples:`SUNDIALS GitHub repository
-<python>`.
+``examples/python`` directory of the :examples:`SUNDIALS GitHub repository <python>`.
 
 This example demonstrates how to use CVODES to solve the Lotka-Volterra
 equations, a model of predator-prey dynamics in ecology, given by
