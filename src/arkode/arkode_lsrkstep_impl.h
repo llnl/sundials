@@ -254,7 +254,6 @@ int lsrkStep_cheb_T_complex(int s, sunrealtype zR, sunrealtype zI,
                             sunrealtype* TsR, sunrealtype* TsI);
 int lsrkStep_legendre_P_complex(int s, sunrealtype zR, sunrealtype zI,
                                 sunrealtype* PsR, sunrealtype* PsI);
-int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv);
 
 /*===============================================================
   Reusable LSRKStep Error Messages

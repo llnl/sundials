@@ -230,6 +230,26 @@ instead of supplying a dummy routine.
 
       A :c:type:`SUNErrCode`.
 
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator DEE, void* prerhs_fn_data, SUNPreRhsFn prerhs_fn)
+
+   This *optional* function provides a :c:type:`SUNPreRhsFn` function for performing
+   preprocessing of the right-hand side function, as well as a ``void*`` pointer to a data structure
+   used by this routine, to the dominant eigenvalue estimator.  This *advanced* feature is similar to
+   the ARKODE routine :c:func:`ARKPreRhsFn` -- we recommend that users read the warnings for 
+   that function before using this optional routine.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *prerhs_fn_data* -- pointer to structure for ``prerhs_fn``.
+      * *prerhs_fn* -- function pointer to perform preprocessing of the right-hand side evaluations.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+   .. versionadded:: x.y.z
+
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
 
@@ -245,6 +265,24 @@ instead of supplying a dummy routine.
    **Return value:**
 
       A :c:type:`SUNErrCode`.
+
+
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsAtLinearizationPoint(SUNDomEigEstimator DEE, N_Vector Fyt)
+
+   This *optional* function sets the value of the right-hand side function at the linearization point when using
+   :c:func:`SUNDomEigEstimator_SetRhs`.  When this is supplied, the *DEE* module 
+   will use the provided vector instead of re-evaluating the RHS at the linearization point.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *Fyt* -- the value of the right-hand side function at the linearization point.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+   .. versionadded:: x.y.z
 
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE, int num_iters)
@@ -475,6 +513,15 @@ provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described bel
    to do its job. The time parameter :math:`t` and the vector :math:`y` should be left 
    unchanged.
 
+.. c:type:: int (*SUNPreRhsFn)(sunrealtype t, N_Vector y, void* prerhs_fn_data)
+
+   Used to perform any preprocessing of the right-hand side function before
+   performing a Jacobian-vector product using difference quotient approximations.
+   The parameter *prerhs_fn_data* is a pointer to any problem-defining information
+   that this function needs in order to do its job. Both the time parameter
+   :math:`t` and the vector :math:`y` inputs should be left unchanged.
+   
+   .. versionadded:: x.y.z
 
 .. _SUNDomEigEst.Generic:
 
@@ -515,6 +562,26 @@ The virtual table structure is defined as
    .. c:member:: SUNErrCode (*setatimes)(SUNDomEigEstimator, void*, SUNATimesFn)
 
       The function implementing :c:func:`SUNDomEigEstimator_SetATimes`
+
+   .. c:member:: SUNErrCode (*setrhs)(SUNDomEigEstimator, void*, SUNRhsFn)
+
+      The function implementing :c:func:`SUNDomEigEstimator_SetRhs`
+
+   .. c:member:: SUNErrCode (*setprerhs)(SUNDomEigEstimator, void*, SUNPreRhsFn)
+
+      The function implementing :c:func:`SUNDomEigEstimator_SetPreRhsFn`
+
+   .. c:member:: SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype, N_Vector)
+
+      The function implementing :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`
+
+   .. c:member:: SUNErrCode (*setrhsatlinearizationpoint)(SUNDomEigEstimator, N_Vector)
+
+      The function implementing :c:func:`SUNDomEigEstimator_SetRhsAtLinearizationPoint`
+
+   .. c:member:: SUNErrCode (*setoptions)(SUNDomEigEstimator, const char*, const char*, int, char*[])
+
+      The function implementing :c:func:`SUNDomEigEstimator_SetOptions`
 
    .. c:member:: SUNErrCode (*setmaxiters)(SUNDomEigEstimator, int)
 
@@ -610,54 +677,72 @@ implementation detail for the interested reader.
 .. _SUNDomEigEst.Intended.Usage:
 .. table:: List of SUNDomEigEst functions called by a SUNDIALS module dominant eigenvalue
            estimator interface.  Functions marked with "X" are required;
+           exactly one of the functions marked with “@” must be provided;
            functions marked with "O" are only called if they are non-``NULL`` and
            functions marked with "N/A" are not applicable in the ``SUNDomEigEstimator``
            implementation that is being used.
    :align: center
 
-   +----------------------------------------------------+---------------------+---------------------+
-   | Routine                                            |   Power Iteration   |  Arnoldi Iteration  |
-   |                                                    |                     |                     |
-   +====================================================+=====================+=====================+
-   | :c:func:`SUNDomEigEstimator_SetATimes`             |          X          |          X          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_SetMaxIters`\ :sup:`1` |          O          |         N/A         |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_SetNumPreprocessIters` |          O          |          O          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_SetRelTol`\ :sup:`1`   |          O          |         N/A         |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_SetInitialGuess`       |          O          |          O          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_Initialize`            |          X          |          X          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_Estimate`              |          X          |          X          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_GetRes`\ :sup:`2`      |          O          |          O          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_GetNumIters`           |          O          |          O          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_GetNumRhsEvals`        |          O          |          O          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_GetNumATimesCalls`     |          O          |          O          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_Write`                 |          O          |          O          |
-   +----------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_Destroy`\ :sup:`3`     |                     |                     |
-   +----------------------------------------------------+---------------------+---------------------+
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | Routine                                                         |   Power Iteration   |  Arnoldi Iteration  |
+   |                                                                 |                     |                     |
+   +=================================================================+=====================+=====================+
+   | :c:func:`SUNDomEigEstimator_SetATimes`                          |          @          |          @          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetRhs`                             |          @          |          @          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetPreRhsFn`                        |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`\ :sup:`1` |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetRhsAtLinearizationPoint`         |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetOptions`                         |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetMaxIters`\ :sup:`2`              |          O          |         N/A         |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetNumPreprocessIters`              |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetRelTol`\ :sup:`2`                |          O          |          0          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetInitialGuess`                    |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_Initialize`                         |          X          |          X          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_Estimate`                           |          X          |          X          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_GetRes`\ :sup:`3`                   |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_GetNumIters`                        |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_GetNumRhsEvals`                     |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_GetNumATimesCalls`                  |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_Write`                              |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_Destroy`\ :sup:`4`                  |                     |                     |
+   +-----------------------------------------------------------------+---------------------+---------------------+
 
 Notes:
 
-1. :c:func:`SUNDomEigEstimator_SetMaxIters` and
+1. :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint` is required if 
+   :c:func:`SUNDomEigEstimator_SetRhs` is used, and
+   :c:func:`SUNDomEigEstimator_SetRhsAtLinearizationPoint` is optional if
+   :c:func:`SUNDomEigEstimator_SetRhs` is used and the value of the right-hand
+   side function at the linearization point is known.  If the linearization
+   point is not known, then these routines should be left as ``NULL``.
+
+2. :c:func:`SUNDomEigEstimator_SetMaxIters` and
    :c:func:`SUNDomEigEstimator_SetRelTol` might or might not be required
    depending on ``SUNDomEigEstimator`` implementation that is being used. These
    operations should be left as ``NULL`` if it is not applicable for an
    estimator.
 
-2. Although :c:func:`SUNDomEigEstimator_GetRes` is optional, if it is not
+3. Although :c:func:`SUNDomEigEstimator_GetRes` is optional, if it is not
    implemented by the ``SUNDomEigEstimator`` then the interface will consider
    all estimates a being *exact*.
 
-3. Although the interface does not call :c:func:`SUNDomEigEstimator_Destroy`
+4. Although the interface does not call :c:func:`SUNDomEigEstimator_Destroy`
    directly, this routine should be available for users to call when cleaning up
    from a simulation.

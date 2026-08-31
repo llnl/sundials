@@ -239,6 +239,8 @@ The SUNDomEigEstimator_Power module defines the *content* field of a
      sunrealtype res;
      SUNRhsFn rhsfn;
      void* rhs_data;
+     SUNPreRhsFn prerhsfn;
+     void* prerhs_data;
      long int nfevals;
      sunbooleantype is_complex;
    };
@@ -275,6 +277,10 @@ information:
 
 * ``rhs_data`` - pointer to the data structure for ``rhsfn``,
 
+* ``prerhsfn`` - user provided preprocessing RHS function,
+
+* ``prerhs_data`` - pointer to the data structure for ``prerhsfn``,
+
 * ``nfevals`` - number of RHS evaluations,
 
 * ``is_complex`` - flag indicating whether the dominant eigenvalue is 
@@ -290,7 +296,11 @@ This estimator is constructed to perform the following operations:
   estimator parameters.
 
 * SUNDIALS packages will call :c:func:`SUNDomEigEstimator_SetATimes` to supply
-  the ``ATimes`` function pointer and the related data ``ATData``.
+  the ``ATimes`` function pointer and the related data ``ATData``. Or, the user
+  may call :c:func:`SUNDomEigEstimator_SetRhs` to supply the RHS function and
+  related data. This approach internally constructs an ``ATimes`` function that
+  uses the RHS function to compute the matrix-vector product :math:`Av` for
+  the Jacobian of the RHS function.
 
 * In :c:func:`SUNDomEigEstimator_Initialize`, the estimator parameters are
   checked for validity and the initial eigenvector is normalized.
@@ -311,6 +321,14 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_SetATimes_Power``
 
+* ``SUNDomEigEstimator_SetRhs_Power``
+
+* ``SUNDomEigEstimator_SetPreRhs_Power``
+
+* ``SUNDomEigEstimator_SetRhsLinearizationPoint_Power``
+
+* ``SUNDomEigEstimator_SetRhsAtLinearizationPoint_Power``
+
 * ``SUNDomEigEstimator_SetMaxIters_Power``
 
 * ``SUNDomEigEstimator_SetNumPreprocessIters_Power``
@@ -319,11 +337,11 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_SetIsReal_Power``
 
+* ``SUNDomEigEstimator_SetInitialGuess_Power``
+
 * ``SUNDomEigEstimator_Initialize_Power``
 
 * ``SUNDomEigEstimator_Estimate_Power``
-
-* ``SUNDomEigEstimator_SetInitialGuess_Power``
 
 * ``SUNDomEigEstimator_GetRes_Power``
 

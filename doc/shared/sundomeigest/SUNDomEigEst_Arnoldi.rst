@@ -170,6 +170,8 @@ The SUNDomEigEstimator_Arnoldi module defines the *content* field of a
      long int num_ATimes;
      SUNRhsFn rhsfn;
      void* rhs_data;
+     SUNPreRhsFn prerhsfn;
+     void* prerhs_data;
      long int nfevals;
      sunrealtype* LAPACK_A;
      sunrealtype* LAPACK_wr;
@@ -210,6 +212,10 @@ information:
 
 * ``rhs_data`` - pointer to the data structure for ``rhsfn``,
 
+* ``prerhsfn`` - user provided preprocessing RHS function,
+
+* ``prerhs_data`` - pointer to the data structure for ``prerhsfn``,
+
 * ``nfevals`` - number of RHS evaluations,
 
 * ``num_ATimes`` - number of calls to the ``ATimes`` function,
@@ -233,7 +239,11 @@ This estimator is constructed to perform the following operations:
   estimator parameters.
 
 * SUNDIALS packages will call :c:func:`SUNDomEigEstimator_SetATimes` to supply
-  the ``ATimes`` function pointer and the related data ``ATData``.
+  the ``ATimes`` function pointer and the related data ``ATData``. Or, the user
+  may call :c:func:`SUNDomEigEstimator_SetRhs` to supply the RHS function and
+  related data. This approach internally constructs an ``ATimes`` function that
+  uses the RHS function to compute the matrix-vector product :math:`Av` for
+  the Jacobian of the RHS function.
 
 * In :c:func:`SUNDomEigEstimator_Initialize`, the estimator parameters are
   checked for validity and the remaining Arnoldi estimator memory such as LAPACK
@@ -258,7 +268,19 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_SetATimes_Arnoldi``
 
+*  ``SUNDomEigEstimator_SetRhs_Arnoldi``
+
+* ``SUNDomEigEstimator_SetPreRhs_Arnoldi``
+
+* ``SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi``
+
+*  ``SUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi``
+
 * ``SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi``
+
+*  ``SUNDomEigEstimator_SetRelTol_Arnoldi``
+
+*  ``SUNDomEigEstimator_SetInitialGuess_Arnoldi``
 
 * ``SUNDomEigEstimator_Initialize_Arnoldi``
 

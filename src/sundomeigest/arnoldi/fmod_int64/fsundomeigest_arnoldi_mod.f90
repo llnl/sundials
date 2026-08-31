@@ -46,8 +46,6 @@ module fsundomeigest_arnoldi_mod
   procedure :: get_ATdata => swigf_SUNDomEigEstimatorContent_Arnoldi__ATdata_get
   procedure :: set_V => swigf_SUNDomEigEstimatorContent_Arnoldi__V_set
   procedure :: get_V => swigf_SUNDomEigEstimatorContent_Arnoldi__V_get
-  procedure :: set_q => swigf_SUNDomEigEstimatorContent_Arnoldi__q_set
-  procedure :: get_q => swigf_SUNDomEigEstimatorContent_Arnoldi__q_get
   procedure :: set_rhs_linY => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_set
   procedure :: get_rhs_linY => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_get
   procedure :: set_Fy => swigf_SUNDomEigEstimatorContent_Arnoldi__Fy_set
@@ -62,6 +60,8 @@ module fsundomeigest_arnoldi_mod
   procedure :: get_num_iters => swigf_SUNDomEigEstimatorContent_Arnoldi__num_iters_get
   procedure :: set_warmup_to_tol => swigf_SUNDomEigEstimatorContent_Arnoldi__warmup_to_tol_set
   procedure :: get_warmup_to_tol => swigf_SUNDomEigEstimatorContent_Arnoldi__warmup_to_tol_get
+  procedure :: set_Fy_is_current => swigf_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_set
+  procedure :: get_Fy_is_current => swigf_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_get
   procedure :: set_tol_warmup => swigf_SUNDomEigEstimatorContent_Arnoldi__tol_warmup_set
   procedure :: get_tol_warmup => swigf_SUNDomEigEstimatorContent_Arnoldi__tol_warmup_get
   procedure :: set_rhs_linT => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_linT_set
@@ -74,6 +74,10 @@ module fsundomeigest_arnoldi_mod
   procedure :: get_rhs_data => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_data_get
   procedure :: set_nfevals => swigf_SUNDomEigEstimatorContent_Arnoldi__nfevals_set
   procedure :: get_nfevals => swigf_SUNDomEigEstimatorContent_Arnoldi__nfevals_get
+  procedure :: set_prerhs_fn => swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_set
+  procedure :: get_prerhs_fn => swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_get
+  procedure :: set_prerhs_fn_data => swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set
+  procedure :: get_prerhs_fn_data => swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get
   procedure :: set_LAPACK_A => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_set
   procedure :: get_LAPACK_A => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_get
   procedure :: set_LAPACK_wr => swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_set
@@ -98,7 +102,9 @@ module fsundomeigest_arnoldi_mod
  public :: FSUNDomEigEstimator_Arnoldi
  public :: FSUNDomEigEstimator_SetATimes_Arnoldi
  public :: FSUNDomEigEstimator_SetRhs_Arnoldi
+ public :: FSUNDomEigEstimator_SetPreRhsFn_Arnoldi
  public :: FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi
+ public :: FSUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi
  public :: FSUNDomEigEstimator_SetNumPreprocessIters_Arnoldi
  public :: FSUNDomEigEstimator_SetRelTol_Arnoldi
  public :: FSUNDomEigEstimator_SetInitialGuess_Arnoldi
@@ -156,23 +162,6 @@ end subroutine
 
 function swigc_SUNDomEigEstimatorContent_Arnoldi__V_get(farg1) &
 bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__V_get") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-import :: swigclasswrapper
-type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
-end function
-
-subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__q_set(farg1, farg2) &
-bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__q_set")
-use, intrinsic :: ISO_C_BINDING
-import :: swigclasswrapper
-type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
-end subroutine
-
-function swigc_SUNDomEigEstimatorContent_Arnoldi__q_get(farg1) &
-bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__q_get") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
@@ -299,6 +288,23 @@ type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
+subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_set(farg1, farg2) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_get(farg1) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
 subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__tol_warmup_set(farg1, farg2) &
 bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__tol_warmup_set")
 use, intrinsic :: ISO_C_BINDING
@@ -399,6 +405,40 @@ use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
 integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_get(farg1) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get(farg1) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_set(farg1, farg2) &
@@ -573,6 +613,16 @@ type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNDomEigEstimator_SetPreRhsFn_Arnoldi(farg1, farg2, farg3) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetPreRhsFn_Arnoldi") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_FUNPTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi") &
 result(fresult)
@@ -580,6 +630,15 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi(farg1, farg2) &
+bind(C, name="_wrap_FSUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -750,31 +809,6 @@ type(SwigClassWrapper) :: farg1
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__V_get(farg1)
 swig_result = fresult
-end function
-
-subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__q_set(self, q)
-use, intrinsic :: ISO_C_BINDING
-class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
-type(N_Vector), target, intent(inout) :: q
-type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = self%swigdata
-farg2 = c_loc(q)
-call swigc_SUNDomEigEstimatorContent_Arnoldi__q_set(farg1, farg2)
-end subroutine
-
-function swigf_SUNDomEigEstimatorContent_Arnoldi__q_get(self) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
-class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
-type(C_PTR) :: fresult 
-type(SwigClassWrapper) :: farg1 
-
-farg1 = self%swigdata
-fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__q_get(farg1)
-call c_f_pointer(fresult, swig_result)
 end function
 
 subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_set(self, rhs_liny)
@@ -952,6 +986,31 @@ fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__warmup_to_tol_get(farg1)
 swig_result = fresult
 end function
 
+subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_set(self, fy_is_current)
+use, intrinsic :: ISO_C_BINDING
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+integer(C_INT), intent(in) :: fy_is_current
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = fy_is_current
+call swigc_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__Fy_is_current_get(farg1)
+swig_result = fresult
+end function
+
 subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__tol_warmup_set(self, tol_warmup)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
@@ -1099,6 +1158,56 @@ type(SwigClassWrapper) :: farg1
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__nfevals_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_set(self, prerhs_fn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: prerhs_fn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = prerhs_fn
+call swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set(self, prerhs_fn_data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+type(C_PTR) :: prerhs_fn_data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = prerhs_fn_data
+call swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__prerhs_fn_data_get(farg1)
 swig_result = fresult
 end function
 
@@ -1371,6 +1480,25 @@ fresult = swigc_FSUNDomEigEstimator_SetRhs_Arnoldi(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
+function FSUNDomEigEstimator_SetPreRhsFn_Arnoldi(dee, prerhs_fn_data, prerhs_fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+type(C_PTR) :: prerhs_fn_data
+type(C_FUNPTR), intent(in), value :: prerhs_fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_FUNPTR) :: farg3 
+
+farg1 = c_loc(dee)
+farg2 = prerhs_fn_data
+farg3 = prerhs_fn
+fresult = swigc_FSUNDomEigEstimator_SetPreRhsFn_Arnoldi(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
 function FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(dee, t, v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -1387,6 +1515,22 @@ farg1 = c_loc(dee)
 farg2 = t
 farg3 = c_loc(v)
 fresult = swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi(dee, fyt) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(SUNDomEigEstimator), target, intent(inout) :: dee
+type(N_Vector), target, intent(inout) :: fyt
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(dee)
+farg2 = c_loc(fyt)
+fresult = swigc_FSUNDomEigEstimator_SetRhsAtLinearizationPoint_Arnoldi(farg1, farg2)
 swig_result = fresult
 end function
 
