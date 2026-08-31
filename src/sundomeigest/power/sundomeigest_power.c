@@ -417,9 +417,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   int retval;
   sunbooleantype converged;
   sunrealtype normAv = ZERO;
-  *num_ATimes       = 0;
-  *nfevals          = 0;
-  *num_iters        = 0;
+  *num_ATimes        = 0;
+  *nfevals           = 0;
+  *num_iters         = 0;
 
   /* Set the initial q = A^{num_warmups}q/||A^{num_warmups}q|| */
   for (int i = 0; i < num_warmups; i++)
@@ -472,9 +472,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
 
   if (is_complex)
   {
-    retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR, normAv,
-                                                         v_prev, V, lambdaR,
-                                                         lambdaI);
+    retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR,
+                                                         normAv, v_prev, V,
+                                                         lambdaR, lambdaI);
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
   }
   else
@@ -585,8 +585,9 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   sunrealtype cos_qs, gram_det, det_G_inv, h11, h12, h22, p11, p12, p21, p22;
   /* The threshold for identifying real or complex DEE is experimentally 
   determined based on the relative tolerance rel_tol */
-  sunrealtype gram_det_tol = SUN_RCONST(10.0) * SUNMAX(SUN_UNIT_ROUNDOFF, rel_tol);
-  cos_qs                   = N_VDotProd(v_prev, v);
+  sunrealtype gram_det_tol = SUN_RCONST(10.0) *
+                             SUNMAX(SUN_UNIT_ROUNDOFF, rel_tol);
+  cos_qs = N_VDotProd(v_prev, v);
   SUNCheckLastErr();
 
   /* Safety against roundoff in dot product */
@@ -755,8 +756,8 @@ int dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work = PI_CONTENT(DEE)->work;
   N_Vector Fy   = PI_CONTENT(DEE)->Fy;
 
-  SUNRhsFn rhsfn        = PI_CONTENT(DEE)->rhsfn;
-  void* rhs_data        = PI_CONTENT(DEE)->rhs_data;
+  SUNRhsFn rhsfn = PI_CONTENT(DEE)->rhsfn;
+  void* rhs_data = PI_CONTENT(DEE)->rhs_data;
 
   sunrealtype rhs_linT = PI_CONTENT(DEE)->rhs_linT;
 

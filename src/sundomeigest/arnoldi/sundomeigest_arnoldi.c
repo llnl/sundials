@@ -247,7 +247,7 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   SUNAssert(Arnoldi_CONTENT(DEE)->ATimes, SUN_ERR_ARG_CORRUPT);
   SUNAssert(Arnoldi_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
 
-  const int kry_dim     = Arnoldi_CONTENT(DEE)->kry_dim;
+  const int kry_dim = Arnoldi_CONTENT(DEE)->kry_dim;
 
   if (Arnoldi_CONTENT(DEE)->LAPACK_A == NULL)
   {
@@ -284,10 +284,10 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
             &work, &lwork, &info);
 
   /* The workspace size is returned as the first entry of the work array */
-  lwork = (sunindextype)work;
+  lwork                              = (sunindextype)work;
   Arnoldi_CONTENT(DEE)->LAPACK_lwork = lwork;
 
-  Arnoldi_CONTENT(DEE)->LAPACK_work = 
+  Arnoldi_CONTENT(DEE)->LAPACK_work =
     (sunrealtype*)malloc(lwork * sizeof(sunrealtype));
   SUNAssert(Arnoldi_CONTENT(DEE)->LAPACK_work, SUN_ERR_MALLOC_FAIL);
 
@@ -398,7 +398,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
 
   int retval;
   const int num_warmups = Arnoldi_CONTENT(DEE)->num_warmups;
-  const sunindextype n   = Arnoldi_CONTENT(DEE)->kry_dim;
+  const sunindextype n  = Arnoldi_CONTENT(DEE)->kry_dim;
   sunrealtype normAv;
   long int* num_ATimes = &(Arnoldi_CONTENT(DEE)->num_ATimes);
   long int* nfevals    = &(Arnoldi_CONTENT(DEE)->nfevals);
@@ -736,8 +736,8 @@ int dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
   N_Vector work = Arnoldi_CONTENT(DEE)->work;
   N_Vector Fy   = Arnoldi_CONTENT(DEE)->Fy;
 
-  SUNRhsFn rhsfn        = Arnoldi_CONTENT(DEE)->rhsfn;
-  void* rhs_data        = Arnoldi_CONTENT(DEE)->rhs_data;
+  SUNRhsFn rhsfn = Arnoldi_CONTENT(DEE)->rhsfn;
+  void* rhs_data = Arnoldi_CONTENT(DEE)->rhs_data;
 
   sunrealtype rhs_linT = Arnoldi_CONTENT(DEE)->rhs_linT;
 
