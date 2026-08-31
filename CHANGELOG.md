@@ -19,6 +19,9 @@ The SUNLinearSolver interface to SuperLU_DIST now supports single precision.
 Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point
 due to convergence rate check occurring after only one iteration.
 
+Fixed duplicate keys in IDA and IDAS logging output from consistent initial
+condition solves and order selection diagnostics.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.8.0
