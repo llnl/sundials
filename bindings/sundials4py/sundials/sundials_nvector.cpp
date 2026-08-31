@@ -148,8 +148,8 @@ void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
 {
   if (!copy.has_value())
   {
-    if (nvector_detail::is_jax_array(data)) { copy = true; }
-    else if (nvector_detail::is_jax_ref(data)) { copy = false; }
+    if (nvector_detail::is_jax_ref(data)) { copy = false; }
+    else if (nvector_detail::is_jax_array(data)) { copy = true; }
     else
     {
       throw sundials4py::error_returned(
@@ -228,17 +228,11 @@ void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
 #ifndef SUNDIALS_NVECTOR_CUDA
 using nvector_detail::ArrayDevice;
 using nvector_detail::host_array;
-using nvector_detail::parse_device;
 
 nb::object get_numpy_array(N_Vector v) { return nb::cast(host_array(v)); }
 
-nb::object get_torch_tensor(N_Vector v, nb::object device)
+nb::object get_torch_tensor(N_Vector v)
 {
-  if (parse_device(device, v) == ArrayDevice::Cuda)
-  {
-    throw sundials4py::error_returned(
-      "CUDA tensor access requires a CUDA-enabled sundials4py build");
-  }
   return nb::module_::import_("torch").attr("from_numpy")(nb::cast(host_array(v)));
 }
 
@@ -249,13 +243,8 @@ nb::object get_cupy_array(N_Vector v)
     "CUDA array access requires a CUDA-enabled sundials4py build");
 }
 
-nb::object get_jax_array(N_Vector v, nb::object device)
+nb::object get_jax_array(N_Vector v)
 {
-  if (parse_device(device, v) == ArrayDevice::Cuda)
-  {
-    throw sundials4py::error_returned(
-      "CUDA array access requires a CUDA-enabled sundials4py build");
-  }
   return nb::module_::import_("jax").attr("dlpack").attr(
     "from_dlpack")(nb::cast(host_array(v)), nb::none(), nb::none());
 }

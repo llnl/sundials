@@ -1,3 +1,25 @@
+/* -----------------------------------------------------------------
+ * Programmer(s): Cody J. Balos @ LLNL
+ * -----------------------------------------------------------------
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
+ * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
+ * All rights reserved.
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
+ * -----------------------------------------------------------------
+ * This file is the entrypoint for the Python binding code for the
+ * SUNDIALS CUDA N_Vector class. It contains hand-written code for
+ * functions that require special treatment, and includes the generated code
+ * produced with the generate.py script.
+ * -----------------------------------------------------------------*/
+
 #include "sundials4py.hpp"
 
 #include <cstdint>
@@ -46,29 +68,40 @@ void require_compatible_pointer(N_Vector v, sunrealtype* ptr, ArrayDevice device
     throw sundials4py::error_returned("Array pointer must not be null");
   }
 
+  // Host pointers do not need CUDA pointer-attribute validation. Managed
+  // vectors are the exception because both of their aliases must remain UVM.
+  if (!N_VIsManagedMemory_Cuda(v) && device == ArrayDevice::Cpu) { return; }
+
   cudaPointerAttributes attrs;
   auto status = cudaPointerGetAttributes(&attrs, ptr);
+  if (status != cudaSuccess)
+  {
+    cudaGetLastError();
+    if (N_VIsManagedMemory_Cuda(v))
+    {
+      throw sundials4py::error_returned(
+        "Managed CUDA N_Vector replacement requires managed memory");
+    }
+    throw sundials4py::error_returned(
+      "Device array pointer is not CUDA-accessible");
+  }
+
   if (N_VIsManagedMemory_Cuda(v))
   {
-    if (status != cudaSuccess || attrs.type != cudaMemoryTypeManaged)
+    if (attrs.type != cudaMemoryTypeManaged)
     {
-      cudaGetLastError();
       throw sundials4py::error_returned(
         "Managed CUDA N_Vector replacement requires managed memory");
     }
     return;
   }
 
-  if (device == ArrayDevice::Cuda &&
-      (status != cudaSuccess || (attrs.type != cudaMemoryTypeDevice &&
-                                 attrs.type != cudaMemoryTypeManaged)))
+  if (device == ArrayDevice::Cuda && (attrs.type != cudaMemoryTypeDevice &&
+                                      attrs.type != cudaMemoryTypeManaged))
   {
-    cudaGetLastError();
     throw sundials4py::error_returned(
       "Device array pointer is not CUDA-accessible");
   }
-
-  if (status != cudaSuccess) { cudaGetLastError(); }
 }
 
 } // namespace
@@ -176,10 +209,11 @@ void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
   if (length == 0) { return; }
   if (!ptr)
   {
-    throw sundials4py::error_returned("JAX array pointer must not be null");
+    throw sundials4py::error_returned("Array pointer must not be null");
   }
 
-  SUNMemoryType source_type = SUNMEMTYPE_HOST;
+  SUNMemoryType source_type =
+    source_device == ArrayDevice::Cuda ? SUNMEMTYPE_DEVICE : SUNMEMTYPE_HOST;
   if (source_device == ArrayDevice::Cuda)
   {
     cudaPointerAttributes attrs;
@@ -188,8 +222,7 @@ void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
                                   attrs.type != cudaMemoryTypeManaged))
     {
       cudaGetLastError();
-      throw sundials4py::error_returned(
-        "JAX array pointer is not CUDA-accessible");
+      throw sundials4py::error_returned("Array pointer is not CUDA-accessible");
     }
     source_type = attrs.type == cudaMemoryTypeManaged ? SUNMEMTYPE_UVM
                                                       : SUNMEMTYPE_DEVICE;
@@ -206,7 +239,7 @@ void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
                                      const_cast<sunrealtype*>(ptr), source_type);
   if (!source)
   {
-    throw sundials4py::error_returned("Failed to wrap the JAX array pointer");
+    throw sundials4py::error_returned("Failed to wrap the array pointer");
   }
 
   auto stream      = cuda_stream(v);
@@ -232,7 +265,7 @@ void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
   {
     cudaGetLastError();
     throw sundials4py::error_returned(
-      "Failed to copy JAX array data into the CUDA N_Vector");
+      "Failed to copy array data into the CUDA N_Vector");
   }
 }
 
@@ -243,7 +276,6 @@ namespace {
 using nvector_detail::ArrayDevice;
 using nvector_detail::host_array;
 using nvector_detail::is_cuda_nvector;
-using nvector_detail::parse_device;
 using nvector_detail::replace_cuda_array_pointer;
 using nvector_detail::require_cuda_nvector;
 
@@ -277,7 +309,7 @@ int device_id_for_pointer(void* ptr)
   return device_id;
 }
 
-void sync_to_host(N_Vector v)
+void copy_to_host(N_Vector v)
 {
   if (is_cuda_nvector(v)) { N_VCopyFromDevice_Cuda(v); }
 }
@@ -343,9 +375,16 @@ nb::object device_pointer_object(N_Vector v)
 
 nb::object get_numpy_array(N_Vector v)
 {
+  if (is_cuda_nvector(v))
+  {
+    throw sundials4py::error_returned(
+      "N_VGetNumpyArray is not supported for CUDA N_Vectors; use a CUDA "
+      "array accessor instead");
+  }
+
   // Keep CUDA accessors specialized to make synchronization explicit and avoid
   // runtime backend dispatch on this performance-sensitive path.
-  sync_to_host(v);
+  copy_to_host(v);
   return nb::cast(host_array(v));
 }
 
@@ -357,14 +396,11 @@ nb::object get_cupy_array(N_Vector v)
     device_pointer_object(v));
 }
 
-nb::object get_torch_tensor(N_Vector v, nb::object device)
+nb::object get_torch_tensor(N_Vector v)
 {
-  auto target = parse_device(device, v);
-
   auto torch = nb::module_::import_("torch");
-  if (target == ArrayDevice::Cpu)
+  if (!is_cuda_nvector(v))
   {
-    sync_to_host(v);
     return torch.attr("from_numpy")(nb::cast(host_array(v)));
   }
 
@@ -374,21 +410,19 @@ nb::object get_torch_tensor(N_Vector v, nb::object device)
     device_pointer_object(v));
 }
 
-nb::object get_jax_array(N_Vector v, nb::object device)
+nb::object get_jax_array(N_Vector v)
 {
-  auto target = parse_device(device, v);
-
-  if (target == ArrayDevice::Cpu)
+  auto jax = nb::module_::import_("jax");
+  if (!is_cuda_nvector(v))
   {
-    sync_to_host(v);
-    return nb::module_::import_("jax").attr("dlpack").attr(
-      "from_dlpack")(nb::cast(host_array(v)), nb::none(), nb::none());
+    return jax.attr("dlpack").attr("from_dlpack")(nb::cast(host_array(v)),
+                                                  nb::none(), nb::none());
   }
 
   require_cuda_nvector(v);
   sync_device(v);
-  return nb::module_::import_("jax").attr("dlpack").attr(
-    "from_dlpack")(device_pointer_object(v), nb::none(), false);
+  return jax.attr("dlpack").attr("from_dlpack")(device_pointer_object(v),
+                                                nb::none(), false);
 }
 
 } // namespace
