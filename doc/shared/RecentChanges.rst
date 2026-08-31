@@ -26,4 +26,7 @@ the device data pointer for vector implementations with a device memory space.
 Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point
 due to convergence rate check occurring after only one iteration.
 
+Fixed duplicate keys in IDA and IDAS logging output from consistent initial
+condition solves and order selection diagnostics.
+
 **Deprecation Notices**
