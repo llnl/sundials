@@ -1,7 +1,5 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Carol Woodward.
- *                Daniel R. Reynolds @ UMBC
- *      Based on cvRoberts_dns.c and modified to use KLU.
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -19,7 +17,7 @@
  * Example problem:
  *
  * The following is a simple example problem, with the coding
- * needed for its solution by CVODE. The problem is from
+ * needed for its solution by CVODES. The problem is from
  * chemical kinetics, and consists of the following three rate
  * equations:
  *    dy1/dt = -.04*y1 + 1.e4*y2*y3
@@ -31,13 +29,13 @@
  * feature to find the points at which y1 = 1e-4 or at which
  * y3 = 0.01. This program solves the problem with the BDF method,
  * Newton iteration with the KLU sparse direct linear solver, and
- * CVODE's internal sparse difference-quotient Jacobian approximation.
+ * CVODES' internal sparse difference-quotient Jacobian approximation.
  * It uses a scalar relative tolerance and a vector absolute
  * tolerance. Output is printed in decades from t = .4 to t = 4.e10.
  * Run statistics (optional outputs) are printed at the end.
  * -----------------------------------------------------------------*/
 
-#include <cvode/cvode.h>            /* prototypes for CVODE fcts., consts. */
+#include <cvodes/cvodes.h>          /* prototypes for CVODES fcts., consts. */
 #include <nvector/nvector_serial.h> /* access to serial N_Vector           */
 #include <stdio.h>
 #include <sunlinsol/sunlinsol_klu.h> /* access to KLU sparse direct solver  */
@@ -175,7 +173,7 @@ int main(void)
   retval = CVodeSetLinearSolver(cvode_mem, LS, A);
   if (check_retval(&retval, "CVodeSetLinearSolver", 1)) { return (1); }
 
-  /* Use CVODE's internal sparse difference-quotient Jacobian approximation */
+  /* Use CVODES' internal sparse difference-quotient Jacobian approximation */
   retval = CVodeSetJacFn(cvode_mem, NULL);
   if (check_retval(&retval, "CVodeSetJacFn", 1)) { return (1); }
 
@@ -213,7 +211,7 @@ int main(void)
   /* Free memory */
   N_VDestroy(y);            /* Free y vector */
   N_VDestroy(abstol);       /* Free abstol vector */
-  CVodeFree(&cvode_mem);    /* Free CVODE memory */
+  CVodeFree(&cvode_mem);    /* Free CVODES memory */
   SUNLinSolFree(LS);        /* Free the linear solver memory */
   SUNMatDestroy(A);         /* Free the matrix memory */
   SUNContext_Free(&sunctx); /* Free the SUNDIALS context */

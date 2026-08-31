@@ -14,16 +14,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
- * Unit test for CVODE's internal sparse difference-quotient Jacobian routine.
+ * Unit test for CVODES' internal sparse difference-quotient Jacobian routine.
  * ---------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "cvode/cvode.h"
-#include "cvode/cvode_impl.h"
-#include "cvode/cvode_ls.h"
-#include "cvode/cvode_ls_impl.h"
+#include "cvodes/cvodes.h"
+#include "cvodes/cvodes_impl.h"
+#include "cvodes/cvodes_ls.h"
+#include "cvodes/cvodes_ls_impl.h"
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_linearsolver.h"
 #include "sundials/sundials_logger.h"

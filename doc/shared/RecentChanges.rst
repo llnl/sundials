@@ -12,8 +12,9 @@ annotations.
 Added the function :c:func:`N_VSetDeviceArrayPointer` to the N_Vector API to set
 the device data pointer for vector implementations with a device memory space.
 
-Added support for ARKODE and CVODE to compute internal difference-quotient Jacobian
-approximations with user-provided CSC sparse matrix patterns.
+Added support for ARKODE, CVODE, and CVODES to compute internal
+difference-quotient Jacobian approximations with user-provided CSC sparse
+matrix patterns.
 
 **Bug Fixes**
 

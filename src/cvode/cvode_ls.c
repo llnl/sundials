@@ -1273,8 +1273,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   per group.
   -----------------------------------------------------------------*/
 int cvLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
-                    CVodeMem cv_mem, N_Vector tmp1, N_Vector tmp2,
-                    N_Vector tmp3)
+                    CVodeMem cv_mem, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   N_Vector ftemp, ytemp;
   sunbooleantype conflict;
@@ -1356,8 +1355,9 @@ int cvLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   y_data     = N_VGetArrayPointer(y);
   ytemp_data = N_VGetArrayPointer(ytemp);
   inc_data   = N_VGetArrayPointer(tmp3);
-  cns_data = (cv_mem->cv_constraints) ? N_VGetArrayPointer(cv_mem->cv_constraints)
-                                      : NULL;
+  cns_data   = (cv_mem->cv_constraints)
+                 ? N_VGetArrayPointer(cv_mem->cv_constraints)
+                 : NULL;
 
   if ((cvls_mem->sparseDQgroups == NULL) ||
       (cvls_mem->sparseDQrowmarks == NULL) || (cvls_mem->sparseDQM != M) ||

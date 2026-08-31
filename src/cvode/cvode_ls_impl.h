@@ -162,8 +162,7 @@ int cvLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
 int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
                   CVodeMem cv_mem, N_Vector tmp1, N_Vector tmp2);
 int cvLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
-                    CVodeMem cv_mem, N_Vector tmp1, N_Vector tmp2,
-                    N_Vector tmp3);
+                    CVodeMem cv_mem, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
 /* Generic linit/lsetup/lsolve/lfree interface routines for CVode to call */
 int cvLsInitialize(CVodeMem cv_mem);
