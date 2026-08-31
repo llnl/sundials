@@ -156,30 +156,39 @@ class JaxHeat1DProblem:
         self.isource = n // 2
         self.dtype = dtype
 
+        def rhs(y):
+            c1 = self.k / self.dx / self.dx
+            c2 = -2.0 * self.k / self.dx / self.dx
+            result = self.jnp.zeros_like(y)
+            result = result.at[1:-1].set(c1 * y[:-2] + c2 * y[1:-1] + c1 * y[2:])
+            result = result.at[0].set(0.0)
+            result = result.at[-1].set(0.0)
+            return result.at[self.isource].add(0.01 / self.dx)
+
+        def jtv(v):
+            c1 = self.k / self.dx / self.dx
+            c2 = -2.0 * self.k / self.dx / self.dx
+            result = self.jnp.zeros_like(v)
+            result = result.at[1:-1].set(c1 * v[:-2] + c2 * v[1:-1] + c1 * v[2:])
+            result = result.at[0].set(0.0)
+            return result.at[-1].set(0.0)
+
+        self.rhs_jit = self.jax.jit(rhs)
+        self.jtv_jit = self.jax.jit(jtv)
+
     def set_init_cond(self, yvec):
         array = self.jax.device_put(self.jnp.zeros(self.n, dtype=self.dtype), self.device)
         sun.N_VSetJaxArray(array, yvec)
 
     def f(self, t, yvec, ydotvec, user_data):
         y = sun.N_VGetJaxArray(yvec)
-        c1 = self.k / self.dx / self.dx
-        c2 = -2.0 * self.k / self.dx / self.dx
-        result = self.jnp.zeros_like(y)
-        result = result.at[1:-1].set(c1 * y[:-2] + c2 * y[1:-1] + c1 * y[2:])
-        result = result.at[0].set(0.0)
-        result = result.at[-1].set(0.0)
-        result = result.at[self.isource].add(0.01 / self.dx)
+        result = self.rhs_jit(y)
         sun.N_VSetJaxArray(result, ydotvec)
         return 0
 
     def jtv(self, vvec, Jvvec, t, yvec, fyvec, user_data, tmpvec):
         v = sun.N_VGetJaxArray(vvec)
-        c1 = self.k / self.dx / self.dx
-        c2 = -2.0 * self.k / self.dx / self.dx
-        result = self.jnp.zeros_like(v)
-        result = result.at[1:-1].set(c1 * v[:-2] + c2 * v[1:-1] + c1 * v[2:])
-        result = result.at[0].set(0.0)
-        result = result.at[-1].set(0.0)
+        result = self.jtv_jit(v)
         sun.N_VSetJaxArray(result, Jvvec)
         return 0
 
