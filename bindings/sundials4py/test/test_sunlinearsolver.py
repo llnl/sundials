@@ -90,7 +90,7 @@ def test_create_klu_if_available(sunctx, nvec):
     assert SUNSparseMatrix_NNZ(A) == n
 
 
-def test_create_superlumt(sunctx, nvec):
+def test_create_superlumt_if_available(sunctx, nvec):
     if not hasattr(importlib.import_module("sundials4py.core"), "SUNLinSol_SuperLUMT"):
         pytest.skip("SUNLinSol_SuperLUMT is not enabled in this build")
 
