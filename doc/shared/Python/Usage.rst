@@ -64,6 +64,16 @@ source:
    export CMAKE_ARGS="-DSUNDIALS_ENABLE_KLU=ON -DKLU_ROOT=/path/to/suitesparse/installation"
    pip install sundials4py --no-binary=sundials4py
 
+To build sundials4py with SuperLU_MT support enabled, pass CMake options for
+SuperLU_MT (see :numref:`Installation.Options.SuperLU_MT`) through
+``CMAKE_ARGS`` when building from source:
+
+.. code-block:: bash
+
+   export CMAKE_ARGS="-DSUNDIALS_ENABLE_SUPERLUMT=ON -DSUPERLUMT_INCLUDE_DIR=/path/to/superlumt/installation/include/dir -DSUPERLUMT_LIBRARY_DIR=/path/to/superlumt/installation/library/dir -DSUPERLUMT_THREAD_TYPE=Pthread"
+   pip install sundials4py --no-binary=sundials4py
+
+
 .. _Python.Usage.Modules:
 
 Modules

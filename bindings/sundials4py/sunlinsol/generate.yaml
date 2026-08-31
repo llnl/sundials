@@ -74,3 +74,7 @@ modules:
     path: sunlinsol/sunlinsol_pcg_generated.hpp
     headers:
     - ../../include/sunlinsol/sunlinsol_pcg.h
+  sunlinsol_superlumt:
+    path: sunlinsol/sunlinsol_superlumt_generated.hpp
+    headers:
+    - ../../include/sunlinsol/sunlinsol_superlumt.h

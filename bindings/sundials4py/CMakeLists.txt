@@ -121,6 +121,10 @@ if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
   list(APPEND sundials_SOURCES sunlinsol/sunlinsol_klu.cpp)
 endif()
 
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
+  list(APPEND sundials_SOURCES sunlinsol/sunlinsol_superlumt.cpp)
+endif()
+
 # Create the Python sundials library
 nanobind_add_module(sundials4py STABLE_ABI NB_STATIC ${sundials_SOURCES})
 
@@ -169,6 +173,10 @@ target_link_libraries(
 
 if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
   target_link_libraries(sundials4py PRIVATE sundials_sunlinsolklu)
+endif()
+
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
+  target_link_libraries(sundials4py PRIVATE sundials_sunlinsolsuperlumt)
 endif()
 
 # Install directive for scikit-build-core

@@ -61,6 +61,9 @@ void bind_sunlinsol_spbcgs(nb::module_& m);
 void bind_sunlinsol_spfgmr(nb::module_& m);
 void bind_sunlinsol_spgmr(nb::module_& m);
 void bind_sunlinsol_sptfqmr(nb::module_& m);
+#if defined(SUNDIALS_SUPERLUMT_ENABLED)
+void bind_sunlinsol_superlumt(nb::module_& m);
+#endif
 
 void bind_sunmatrix_band(nb::module_& m);
 void bind_sunmatrix_dense(nb::module_& m);
@@ -141,6 +144,9 @@ NB_MODULE(sundials4py, m)
   sundials4py::bind_sunlinsol_spfgmr(core_m);
   sundials4py::bind_sunlinsol_spgmr(core_m);
   sundials4py::bind_sunlinsol_sptfqmr(core_m);
+#if defined(SUNDIALS_SUPERLUMT_ENABLED)
+  sundials4py::bind_sunlinsol_superlumt(core_m);
+#endif
 
   sundials4py::bind_sunmatrix_band(core_m);
   sundials4py::bind_sunmatrix_dense(core_m);

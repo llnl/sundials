@@ -17,6 +17,7 @@
 
 import pytest
 import sys
+import importlib
 from fixtures import *
 from sundials4py.core import *
 
@@ -87,6 +88,28 @@ def test_create_klu_if_available(sunctx, nvec):
     assert SUNLinSolSetup(LS, A) == SUN_SUCCESS
     assert SUNLinSol_KLUReInit(LS, A, n, SUNKLU_REINIT_FULL) == SUN_SUCCESS
     assert SUNSparseMatrix_NNZ(A) == n
+
+
+def test_create_superlumt(sunctx, nvec):
+    if not hasattr(importlib.import_module("sundials4py.core"), "SUNLinSol_SuperLUMT"):
+        pytest.skip("SUNLinSol_SuperLUMT is not enabled in this build")
+
+    n = N_VGetLength(nvec)
+    A = SUNSparseMatrix(n, n, n, SUN_CSR_MAT, sunctx)
+    data = SUNSparseMatrix_Data(A)
+    colinds = SUNSparseMatrix_IndexValues(A)
+    rowptrs = SUNSparseMatrix_IndexPointers(A)
+    data[:] = [1.0] * n
+    colinds[:] = list(range(n))
+    rowptrs[:] = list(range(n + 1))
+
+    LS = SUNLinSol_SuperLUMT(nvec, A, 1, sunctx)
+    assert LS is not None
+    assert SUNLinSolGetType(LS) == SUNLINEARSOLVER_DIRECT
+    assert SUNLinSolGetID(LS) == SUNLINEARSOLVER_SUPERLUMT
+    assert SUNLinSol_SuperLUMTSetOrdering(LS, 3) == SUN_SUCCESS
+    assert SUNLinSolInitialize(LS) == SUN_SUCCESS
+    assert SUNLinSolSetup(LS, A) == SUN_SUCCESS
 
 
 def test_get_type_and_id(sunctx, nvec):

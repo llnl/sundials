@@ -55,6 +55,9 @@ cmake.args = [
     "-DSUNDIALS_ENABLE_C_EXAMPLES:BOOL=OFF",
     "-DSUNDIALS_ENABLE_CXX_EXAMPLES:BOOL=OFF",
     "-DSUNDIALS_ENABLE_PYTHON:BOOL=ON",
+    # Include linked external library directories in the install RPATH when
+    # supported. Platform-specific wheel-relative RPATHs are set in CMake.
+    "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON",
 ]
 
 cmake.build-type = "RelWithDebInfo"
