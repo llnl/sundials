@@ -652,10 +652,6 @@ subroutine CVodeStats(cvode_mem)
   integer(c_long) :: nliters(1)    ! linear solver iterations
   integer(c_long) :: ncf(1)        ! num convergence failures nonlinear
   integer(c_long) :: ncfl(1)       ! num convergence failures linear
-  integer(c_long) :: lenrw(1)      ! main solver real/int workspace size
-  integer(c_long) :: leniw(1)
-  integer(c_long) :: lenrwls(1)    ! linear solver real/int workspace size
-  integer(c_long) :: leniwls(1)
   real(c_double)  :: avdim(1)      ! avg Krylov subspace dim (NLI/NNI)
 
   !======= Internals ============
@@ -716,18 +712,6 @@ subroutine CVodeStats(cvode_mem)
     stop 1
   end if
 
-  ierr = FCVodeGetWorkSpace(cvode_mem, lenrw, leniw)
-  if (ierr /= 0) then
-    print *, 'Error in FCVodeGetWorkSpace, ierr = ', ierr, '; halting'
-    stop 1
-  end if
-
-  ierr = FCVodeGetLinWorkSpace(cvode_mem, lenrwls, leniwls)
-  if (ierr /= 0) then
-    print *, 'Error in FCVodeGetLinWorkSpace, ierr = ', ierr, '; halting'
-    stop 1
-  end if
-
   print *, ' '
   print *, ' General Solver Stats:'
   print '(4x,A,i9)', 'Total internal steps taken      =', nsteps
@@ -740,8 +724,6 @@ subroutine CVodeStats(cvode_mem)
   print '(4x,A,es14.6)', 'Avg Krylov subspace dim         =', avdim
   print '(4x,A,i9)', 'Num nonlinear solver fails      =', ncf
   print '(4x,A,i9)', 'Num linear solver fails         =', ncfl
-  print '(4x,A,2(i9,3x))', 'main solver real/int workspace sizes   =', lenrw, leniw
-  print '(4x,A,2(i9,3x))', 'linear solver real/int workspace sizes =', lenrwls, leniwls
   print *, ' '
 
   return
