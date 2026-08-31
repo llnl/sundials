@@ -79,8 +79,8 @@ if(SKBUILD AND SUNDIALS_ENABLE_PYTHON)
     endif()
   endif()
 elseif(BUILD_SHARED_LIBS)
-  # only apply rpath settings for builds using shared libs
-  # use, i.e. don't skip the full RPATH for the build tree
+  # only apply rpath settings for builds using shared libs use, i.e. don't skip
+  # the full RPATH for the build tree
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
   # when building, don't use the install RPATH already (but later on when
@@ -96,7 +96,7 @@ elseif(BUILD_SHARED_LIBS)
   # the RPATH to be used when installing, but only if it's not a system
   # directory
   list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
-      "${CMAKE_INSTALL_FULL_LIBDIR}" isSystemDir)
+       "${CMAKE_INSTALL_FULL_LIBDIR}" isSystemDir)
   if("${isSystemDir}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
   endif()
