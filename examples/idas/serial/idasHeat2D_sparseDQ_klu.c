@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
- * Example problem for IDA: 2D heat equation, serial, sparse.
+ * Example problem for IDASS: 2D heat equation, serial, sparse.
  *
  * This example solves a discretized 2D heat equation problem.
  * This version uses the KLU solver and IDACalcIC.
@@ -28,8 +28,8 @@
  * equations u = 0 at the boundaries are appended, to form a DAE
  * system of size N = MGRID^2. Here MGRID = 10.
  *
- * The system is solved with IDA using the KLU linear system solver and
- * IDA's internal sparse difference-quotient Jacobian approximation.
+ * The system is solved with IDAS using the KLU linear system solver and
+ * IDAS's internal sparse difference-quotient Jacobian approximation.
  * For purposes of illustration,
  * IDACalcIC is called to compute correct values at the boundary,
  * given incorrect values as input initial guesses. The constraints
@@ -38,7 +38,7 @@
  * IDACalcIC cost statistics only.)
  * -----------------------------------------------------------------*/
 
-#include <ida/ida.h> /* prototypes for IDA fcts., consts.    */
+#include <idas/idas.h> /* prototypes for IDA fcts., consts.    */
 #include <math.h>
 #include <nvector/nvector_serial.h> /* access to serial N_Vector            */
 #include <stdio.h>
@@ -577,8 +577,8 @@ static int SetInitialProfile(UserData data, N_Vector uu, N_Vector up,
 
 static void PrintHeader(sunrealtype rtol, sunrealtype atol)
 {
-  printf("\nidaHeat2D_sparseDQ_klu: Heat equation, serial example problem for "
-         "IDA\n");
+  printf("\nidasHeat2D_sparseDQ_klu: Heat equation, serial example problem for "
+         "IDAS\n");
   printf("          Discretized heat equation on 2D unit square.\n");
   printf("          Zero boundary conditions,");
   printf(" polynomial initial conditions.\n");

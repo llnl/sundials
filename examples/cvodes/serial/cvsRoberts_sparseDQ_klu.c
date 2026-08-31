@@ -173,10 +173,6 @@ int main(void)
   retval = CVodeSetLinearSolver(cvode_mem, LS, A);
   if (check_retval(&retval, "CVodeSetLinearSolver", 1)) { return (1); }
 
-  /* Use CVODES' internal sparse difference-quotient Jacobian approximation */
-  retval = CVodeSetJacFn(cvode_mem, NULL);
-  if (check_retval(&retval, "CVodeSetJacFn", 1)) { return (1); }
-
   /* In loop, call CVode, print results, and test for error.
      Break out of loop when NOUT preset output times have been reached.  */
   printf(" \n3-species kinetics problem\n\n");

@@ -45,8 +45,10 @@ set(IDAS_examples_BL)
 
 # Examples using KLU linear solver
 set(IDAS_examples_KLU
+    "idasHeat2D_sparseDQ_klu\;\;develop"
     "idasRoberts_ASAi_klu\;\;develop"
-    "idasRoberts_FSA_klu\;-sensi stg t\;develop" "idasRoberts_klu\;\;develop")
+    "idasRoberts_FSA_klu\;-sensi stg t\;develop"
+    "idasRoberts_klu\;\;develop")
 
 # Examples using SuperLU_MT linear solver
 set(IDAS_examples_SUPERLUMT
