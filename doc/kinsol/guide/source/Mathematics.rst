@@ -312,7 +312,7 @@ band case, the columns of :math:`J` are computed in groups, by the Curtis-Powell
 :math:`F` evaluations equal to the bandwidth. The parameter :math:`U` above can (optionally) be replaced by a
 user-specified value, ``relfunc``.
 
-We note that with sparse and user-supplied matrix-based linear solvers, the Jacobian *must* be supplied by a user
+We note that with user-supplied and CSR sparse matrix-based linear solvers, the Jacobian *must* be supplied by a user
 routine, i.e. it is not approximated internally within KINSOL.
 
 In the case of a matrix-free iterative linear solver, Jacobian information is needed only as matrix-vector products

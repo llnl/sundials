@@ -250,7 +250,7 @@ latter case, we use the approximation
 
 where :math:`U` is the unit roundoff, :math:`h` is the current step size, and
 :math:`W_j` is the error weight for the component :math:`y_j` defined by
-:eq:`IDA_errwt`.  We note that with sparse and user-supplied matrix objects,
+:eq:`IDA_errwt`.  We note that with user-supplied and CSR sparse matrix objects,
 the Jacobian *must* be supplied by a user routine.
 
 In the case of an iterative linear solver, if a routine for :math:`Jv` is not

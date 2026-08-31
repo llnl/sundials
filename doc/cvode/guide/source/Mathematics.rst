@@ -289,7 +289,7 @@ the band case, the columns of :math:`J` are computed in groups, by the
 Curtis-Powell-Reid algorithm, with the number of :math:`f` evaluations
 equal to the bandwidth.
 
-We note that with sparse and user-supplied ``SUNMatrix`` objects, the
+We note that with user-supplied and CSR sparse ``SUNMatrix`` objects, the
 Jacobian *must* be supplied by a user routine.
 
 In the case of a Krylov method, preconditioning may be used on the left,

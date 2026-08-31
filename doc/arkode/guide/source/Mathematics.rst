@@ -1881,7 +1881,7 @@ band case, the columns of :math:`J` are computed in groups, using the
 Curtis-Powell-Reid algorithm, with the number of :math:`f^I`
 evaluations equal to the matrix bandwidth.
 
-We note that with sparse and user-supplied SUNMatrix objects, the
+We note that with user-supplied and CSR sparse SUNMatrix objects, the
 Jacobian *must* be supplied by a user routine.
 
 
