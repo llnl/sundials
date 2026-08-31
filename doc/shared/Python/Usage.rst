@@ -56,6 +56,28 @@ when running pip. For example:
 Other SUNDIALS options can also be accessed in this way. Review
 :numref:`Installation.Options` for more information on the available options.
 
+CUDA support
+^^^^^^^^^^^^
+
+CUDA support is optional and must be enabled when building sundials4py from
+source. The CUDA N_Vector module is enabled by default when CUDA support is
+enabled. For example:
+
+.. code-block:: bash
+
+   export CMAKE_ARGS="-DSUNDIALS_ENABLE_CUDA=ON"
+   pip install sundials4py --no-binary=sundials4py
+
+With a CUDA-enabled build, the Python interface supports the following array
+backends for CUDA N_Vectors:
+
+- CuPy device views through ``N_VGetCupyArray``
+- PyTorch native-device tensor views through ``N_VGetTorchTensor``
+- JAX native-device array views through ``N_VGetJaxArray``
+
+The required array framework must be installed separately. CPU-only builds
+continue to support NumPy and the CPU modes of PyTorch and JAX.
+
 .. _Python.Usage.Modules:
 
 Modules
@@ -219,9 +241,9 @@ Python:
 Arrays
 ^^^^^^
 
-``N_Vector`` objects in sundials4py are compatible with numpy's
-``ndarray``. Each ``N_Vector`` can work on a numpy arrays without copies, and
-you can access and modify the underlying data directly using
+CPU ``N_Vector`` objects in sundials4py are compatible with numpy's
+``ndarray``. Each CPU ``N_Vector`` can work on a numpy array without copies,
+and you can access and modify the underlying data directly using
 ``N_VGetNumpyArray``, which returns a numpy ``ndarray`` view of the data.
 
 SUNDIALS matrix types (dense, banded, sparse) are also exposed as Python objects
@@ -251,6 +273,19 @@ This allows you to use numpy operations for vector and matrix data, and to pass
 numpy arrays to and from SUNDIALS routines efficiently and without unnecessary
 copies.
 
+For CUDA ``N_Vector`` objects, ``N_VGetNumpyArray`` is not supported. Use the
+backend-specific accessor instead. For example, a PyTorch CUDA tensor can be
+converted to NumPy explicitly with:
+
+.. code-block:: python
+
+   tensor = N_VGetTorchTensor(y_nvec)
+   host_array = tensor.cpu().numpy()
+
+Similarly, use ``cupy_array.get()`` for CuPy or
+``np.asarray(N_VGetJaxArray(y_nvec))`` for JAX. These explicit
+conversions make the device-to-host transfer visible to the user.
+
 For CPU ``N_Vector`` objects, ``N_VGetNumpyArray`` and
 ``N_VGetTorchTensor`` create lightweight zero-copy views. ``N_VGetJaxArray``
 also exposes the vector data without copying, but importing an external buffer
@@ -258,6 +293,17 @@ into the JAX runtime has appreciably higher fixed overhead. In performance
 sensitive CPU callbacks or Python loops, obtain a JAX view once and reuse it
 rather than creating a new view for every operation. JAX is generally most
 effective when its JIT compilation or GPU execution amortizes this setup cost.
+
+The CUDA Python interface currently treats ``cuda`` as a device type rather
+than accepting a CUDA device ordinal. A CUDA ``N_Vector`` uses the device
+selected by its CUDA configuration, and the Python accessors report the
+underlying device through the array framework. Selecting and validating among
+multiple CUDA devices is a future enhancement.
+
+An ``N_Vector`` is one-dimensional by definition, so the Python accessors
+require one-dimensional arrays. Applications that need a multidimensional
+view can reshape the returned contiguous array in Python while keeping the
+underlying vector storage one-dimensional.
 
 
 User-Supplied Callback Functions

@@ -6,6 +6,13 @@
 
 ### New Features and Enhancements
 
+Added CUDA support to the sundials4py Python interface. CUDA N_Vectors can be
+used with CUDA device arrays from CuPy, PyTorch and JAX when built with
+`SUNDIALS_ENABLE_CUDA` set to `ON`.
+
+sundials4py now has a `N_VGetNumpyArray` function which should be used instead
+of `N_VGetArrayPointer`.
+
 Added the `SUNDIALS_ENABLE_DEPRECATED_WARNINGS` CMake option to allow users to
 disable compiler warnings emitted by deprecated SUNDIALS API annotations.
 
