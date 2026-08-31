@@ -79,6 +79,14 @@ typedef struct CVLsMemRec
   N_Vector ycur;      /* CVODE current y vector in Newton Iteration   */
   N_Vector fcur;      /* fcur = f(tn, ycur)                           */
 
+  /* Sparse difference-quotient Jacobian workspace */
+  sunindextype* sparseDQgroups;
+  sunindextype* sparseDQrowmarks;
+  sunindextype sparseDQngroups;
+  sunindextype sparseDQM;
+  sunindextype sparseDQN;
+  sunindextype sparseDQnnz;
+
   /* Statistics and associated parameters */
   long int msbj;     /* max num steps between jac/pset calls         */
   long int nje;      /* nje = no. of calls to jac                    */
@@ -153,6 +161,9 @@ int cvLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
                    CVodeMem cv_mem, N_Vector tmp1);
 int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
                   CVodeMem cv_mem, N_Vector tmp1, N_Vector tmp2);
+int cvLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
+                    CVodeMem cv_mem, N_Vector tmp1, N_Vector tmp2,
+                    N_Vector tmp3);
 
 /* Generic linit/lsetup/lsolve/lfree interface routines for CVode to call */
 int cvLsInitialize(CVodeMem cv_mem);

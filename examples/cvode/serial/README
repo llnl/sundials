@@ -13,4 +13,5 @@ List of serial CVODE examples
   cvRoberts_dns_uw           : dense example with user ewt function
   cvRoberts_klu              : dense example with KLU sparse linear solver
   cvRoberts_block_klu        : block diagonal example with KLU sparse linear solver
+  cvRoberts_sparseDQ_klu     : KLU sparse example with internal DQ Jacobian
   cvRoberts_sps              : dense example with SuperLUMT sparse linear solver
