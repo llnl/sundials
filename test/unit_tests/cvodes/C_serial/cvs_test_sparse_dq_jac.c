@@ -113,9 +113,6 @@ int main(void)
   retval = CVodeSetLinearSolver(cvode_mem, LS, Jac);
   if (check_retval(&retval, "CVodeSetLinearSolver", 1)) return 1;
 
-  retval = CVodeSetJacFn(cvode_mem, NULL);
-  if (check_retval(&retval, "CVodeSetJacFn", 1)) return 1;
-
   cv_mem = (CVodeMem)cvode_mem;
   N_VConst(ONE, cv_mem->cv_ewt);
   cv_mem->cv_h = ONE;
@@ -221,9 +218,6 @@ static int test_bad_sparse_template(SUNContext sunctx, UserData udata)
 
   retval = CVodeSetLinearSolver(cvode_mem, LS, Jac);
   if (check_retval(&retval, "CVodeSetLinearSolver", 1)) fails++;
-
-  retval = CVodeSetJacFn(cvode_mem, NULL);
-  if (check_retval(&retval, "CVodeSetJacFn", 1)) fails++;
 
   cv_mem = (CVodeMem)cvode_mem;
 

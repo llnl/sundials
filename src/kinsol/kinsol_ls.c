@@ -152,7 +152,9 @@ int KINSetLinearSolver(void* kinmem, SUNLinearSolver LS, SUNMatrix A)
   memset(kinls_mem, 0, sizeof(struct KINLsMemRec));
 
   /* set SUNLinearSolver pointer */
-  kinls_mem->LS = LS;
+  kinls_mem->LS               = LS;
+  kinls_mem->sparseDQgroups   = NULL;
+  kinls_mem->sparseDQrowmarks = NULL;
 
   /* Set defaults for Jacobian-related fields */
   if (A != NULL)
@@ -742,6 +744,10 @@ int kinLsDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, void* kinmem,
   {
     retval = kinLsBandDQJac(u, fu, Jac, kin_mem, tmp1, tmp2);
   }
+  else if (SUNMatGetID(Jac) == SUNMATRIX_SPARSE)
+  {
+    retval = kinLsSparseDQJac(u, fu, Jac, kin_mem, tmp1, tmp2);
+  }
   else
   {
     KINProcessError(kin_mem, KIN_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -927,6 +933,214 @@ int kinLsBandDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
 }
 
 /*------------------------------------------------------------------
+  kinLsSparseDQJac
+
+  This routine generates a sparse difference quotient approximation
+  to the Jacobian of F(u), retaining the input CSC SUNMatrix sparsity
+  pattern. Columns are grouped so that no two perturbed columns in a
+  group share a row index, allowing one function evaluation per group.
+  ------------------------------------------------------------------*/
+int kinLsSparseDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
+                     N_Vector tmp1, N_Vector tmp2)
+{
+  N_Vector futemp, utemp;
+  sunbooleantype conflict;
+  sunrealtype inc, inc_inv;
+  sunrealtype *data, *fu_data, *futemp_data, *u_data, *utemp_data, *uscale_data;
+  sunindextype *colptrs, *rowvals, *groups, *rowmarks;
+  sunindextype group, groupsize, i, j, k, M, N, nnz, ngroups;
+  KINLsMem kinls_mem;
+  int retval = 0;
+
+  /* Sparse DQ currently operates on CSC matrices only */
+  if (SUNSparseMatrix_SparseType(Jac) != SUN_CSC_MAT)
+  {
+    KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "kinLsSparseDQJac requires a CSC SUNMatrix");
+    return (KINLS_ILL_INPUT);
+  }
+
+  /* Access LsMem interface structure */
+  kinls_mem = (KINLsMem)kin_mem->kin_lmem;
+
+  /* Access matrix data */
+  M       = SUNSparseMatrix_Rows(Jac);
+  N       = SUNSparseMatrix_Columns(Jac);
+  nnz     = SUNSparseMatrix_NNZ(Jac);
+  colptrs = SUNSparseMatrix_IndexPointers(Jac);
+  rowvals = SUNSparseMatrix_IndexValues(Jac);
+  data    = SUNSparseMatrix_Data(Jac);
+
+  if (colptrs == NULL || rowvals == NULL || data == NULL)
+  {
+    KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Sparse SUNMatrix has NULL data or index arrays");
+    return (KINLS_ILL_INPUT);
+  }
+
+  if ((colptrs[0] != 0) || (colptrs[N] > nnz))
+  {
+    KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Sparse SUNMatrix has an invalid sparsity pattern");
+    return (KINLS_ILL_INPUT);
+  }
+
+  for (j = 0; j < N; j++)
+  {
+    if (colptrs[j] > colptrs[j + 1])
+    {
+      KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "Sparse SUNMatrix has an invalid sparsity pattern");
+      return (KINLS_ILL_INPUT);
+    }
+    for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+    {
+      if (rowvals[k] < 0 || rowvals[k] >= M)
+      {
+        KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                        "Sparse SUNMatrix has an invalid row index");
+        return (KINLS_ILL_INPUT);
+      }
+    }
+  }
+
+  /* Rename work vectors for use as temporary values of F and u */
+  futemp = tmp1;
+  utemp  = tmp2;
+
+  /* Obtain pointers to the vector data */
+  fu_data     = N_VGetArrayPointer(fu);
+  futemp_data = N_VGetArrayPointer(futemp);
+  u_data      = N_VGetArrayPointer(u);
+  utemp_data  = N_VGetArrayPointer(utemp);
+  uscale_data = N_VGetArrayPointer(kin_mem->kin_uscale);
+
+  if ((kinls_mem->sparseDQgroups == NULL) ||
+      (kinls_mem->sparseDQrowmarks == NULL) || (kinls_mem->sparseDQM != M) ||
+      (kinls_mem->sparseDQN != N) || (kinls_mem->sparseDQnnz != colptrs[N]))
+  {
+    free(kinls_mem->sparseDQgroups);
+    free(kinls_mem->sparseDQrowmarks);
+    kinls_mem->sparseDQgroups   = NULL;
+    kinls_mem->sparseDQrowmarks = NULL;
+    kinls_mem->sparseDQngroups  = 0;
+    kinls_mem->sparseDQM        = 0;
+    kinls_mem->sparseDQN        = 0;
+    kinls_mem->sparseDQnnz      = 0;
+
+    /* Allocate workspace for column groups */
+    groups = (sunindextype*)malloc(N * sizeof(sunindextype));
+    if (groups == NULL)
+    {
+      KINProcessError(kin_mem, KINLS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_LS_MEM_FAIL);
+      return (KINLS_MEM_FAIL);
+    }
+
+    rowmarks = (sunindextype*)malloc(M * sizeof(sunindextype));
+    if (rowmarks == NULL)
+    {
+      free(groups);
+      KINProcessError(kin_mem, KINLS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_LS_MEM_FAIL);
+      return (KINLS_MEM_FAIL);
+    }
+
+    for (j = 0; j < N; j++)
+    {
+      groups[j] = (colptrs[j] < colptrs[j + 1]) ? -1 : -2;
+    }
+    for (i = 0; i < M; i++) { rowmarks[i] = -1; }
+
+    /* Greedily group structurally orthogonal columns */
+    ngroups = 0;
+    for (;;)
+    {
+      groupsize = 0;
+      for (j = 0; j < N; j++)
+      {
+        if (groups[j] != -1) { continue; }
+
+        conflict = SUNFALSE;
+        for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+        {
+          if (rowmarks[rowvals[k]] == ngroups)
+          {
+            conflict = SUNTRUE;
+            break;
+          }
+        }
+        if (conflict) { continue; }
+
+        groups[j] = ngroups;
+        groupsize++;
+        for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+        {
+          rowmarks[rowvals[k]] = ngroups;
+        }
+      }
+
+      if (groupsize == 0) { break; }
+      ngroups++;
+    }
+
+    kinls_mem->sparseDQgroups   = groups;
+    kinls_mem->sparseDQrowmarks = rowmarks;
+    kinls_mem->sparseDQngroups  = ngroups;
+    kinls_mem->sparseDQM        = M;
+    kinls_mem->sparseDQN        = N;
+    kinls_mem->sparseDQnnz      = colptrs[N];
+  }
+  else
+  {
+    groups  = kinls_mem->sparseDQgroups;
+    ngroups = kinls_mem->sparseDQngroups;
+  }
+
+  /* Initialize utemp. */
+  N_VScale(ONE, u, utemp);
+
+  /* Loop over column groups */
+  for (group = 0; group < ngroups; group++)
+  {
+    /* Increment all u[j] for j in this group. */
+    for (j = 0; j < N; j++)
+    {
+      if (groups[j] != group) { continue; }
+
+      inc = kin_mem->kin_sqrt_relfunc *
+            SUNMAX(SUNRabs(u_data[j]), ONE / SUNRabs(uscale_data[j]));
+      utemp_data[j] += inc;
+    }
+
+    /* Evaluate F with incremented u. */
+    retval = kin_mem->kin_func(utemp, futemp, kin_mem->kin_user_data);
+    if (retval != 0) { return (retval); }
+
+    /* Restore utemp, then form and load difference quotients. */
+    for (j = 0; j < N; j++)
+    {
+      if (groups[j] != group) { continue; }
+
+      utemp_data[j] = u_data[j];
+      inc           = kin_mem->kin_sqrt_relfunc *
+            SUNMAX(SUNRabs(u_data[j]), ONE / SUNRabs(uscale_data[j]));
+      inc_inv = ONE / inc;
+
+      for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+      {
+        data[k] = inc_inv * (futemp_data[rowvals[k]] - fu_data[rowvals[k]]);
+      }
+    }
+  }
+
+  /* Increment counter nfeDQ */
+  kinls_mem->nfeDQ += ngroups;
+
+  return (0);
+}
+
+/*------------------------------------------------------------------
   kinLsDQJtimes
 
   This routine generates the matrix-vector product z = J*v using a
@@ -1028,13 +1242,15 @@ int kinLsInitialize(KINMem kin_mem)
   else if (kinls_mem->jacDQ)
   {
     /* If J is non-NULL, and 'jac' is not user-supplied:
-       - if A is dense or band, ensure that our DQ approx. is used
+       - if A is dense, band, or CSC sparse, ensure that our DQ approx. is used
        - otherwise => error */
     retval = 0;
     if (kinls_mem->J->ops->getid)
     {
       if ((SUNMatGetID(kinls_mem->J) == SUNMATRIX_DENSE) ||
-          (SUNMatGetID(kinls_mem->J) == SUNMATRIX_BAND))
+          (SUNMatGetID(kinls_mem->J) == SUNMATRIX_BAND) ||
+          ((SUNMatGetID(kinls_mem->J) == SUNMATRIX_SPARSE) &&
+           (SUNSparseMatrix_SparseType(kinls_mem->J) == SUN_CSC_MAT)))
       {
         kinls_mem->jac    = kinLsDQJac;
         kinls_mem->J_data = kin_mem;
@@ -1168,7 +1384,10 @@ int kinLsSetup(KINMem kin_mem)
     /* Clear the linear system matrix if necessary */
     if (SUNLinSolGetType(kinls_mem->LS) == SUNLINEARSOLVER_DIRECT)
     {
-      retval = SUNMatZero(kinls_mem->J);
+      retval = (kinls_mem->jacDQ &&
+                (SUNMatGetID(kinls_mem->J) == SUNMATRIX_SPARSE))
+                 ? SUN_SUCCESS
+                 : SUNMatZero(kinls_mem->J);
       if (retval != 0)
       {
         KINProcessError(kin_mem, KINLS_SUNMAT_FAIL, __LINE__, __func__,
@@ -1357,6 +1576,10 @@ int kinLsFree(KINMem kin_mem)
 
   /* Nullify SUNMatrix pointer */
   kinls_mem->J = NULL;
+
+  /* Free sparse DQ Jacobian workspace */
+  free(kinls_mem->sparseDQgroups);
+  free(kinls_mem->sparseDQrowmarks);
 
   /* Free preconditioner memory (if applicable) */
   if (kinls_mem->pfree) { kinls_mem->pfree(kin_mem); }

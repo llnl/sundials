@@ -14,16 +14,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
- * Unit test for ARKODE's internal sparse difference-quotient Jacobian routine.
+ * Unit test for KINSOL's internal sparse difference-quotient Jacobian routine.
  * ---------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "arkode/arkode_arkstep.h"
-#include "arkode/arkode_impl.h"
-#include "arkode/arkode_ls.h"
-#include "arkode/arkode_ls_impl.h"
+#include "kinsol/kinsol.h"
+#include "kinsol/kinsol_impl.h"
+#include "kinsol/kinsol_ls.h"
+#include "kinsol/kinsol_ls_impl.h"
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_linearsolver.h"
 #include "sundials/sundials_logger.h"
@@ -32,6 +32,9 @@
 
 #define NEQ 10
 #define NNZ 30
+
+#define ZERO SUN_RCONST(0.0)
+#define ONE  SUN_RCONST(1.0)
 
 typedef struct UserData_
 {
@@ -42,7 +45,7 @@ typedef struct UserData_
 
 static int check_retval(void* flagvalue, const char* funcname, int opt);
 static int test_bad_sparse_template(SUNContext sunctx, UserData udata);
-static int rhs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
+static int sysfn(N_Vector u, N_Vector f, void* user_data);
 static int fill_matrix(SUNMatrix A, UserData udata, sunbooleantype copy_data);
 static sunrealtype matrix_value(sunindextype row, sunindextype col);
 static SUNLinearSolver test_linsol(SUNContext sunctx);
@@ -57,16 +60,16 @@ int main(void)
   int retval             = 0;
   sunrealtype max_error  = ZERO;
   SUNContext sunctx      = NULL;
-  N_Vector y             = NULL;
-  N_Vector fy            = NULL;
+  N_Vector u             = NULL;
+  N_Vector fu            = NULL;
+  N_Vector scale         = NULL;
   N_Vector tmp1          = NULL;
   N_Vector tmp2          = NULL;
-  N_Vector tmp3          = NULL;
   SUNMatrix Jac          = NULL;
   SUNLinearSolver LS     = NULL;
-  void* arkode_mem       = NULL;
-  ARKodeMem ark_mem      = NULL;
-  ARKLsMem arkls_mem     = NULL;
+  void* kin_mem          = NULL;
+  KINMem kin_mem_priv    = NULL;
+  KINLsMem kinls_mem     = NULL;
   sunindextype* groups   = NULL;
   sunindextype* rowmarks = NULL;
 
@@ -75,16 +78,19 @@ int main(void)
   retval = SUNContext_Create(SUN_COMM_NULL, &sunctx);
   if (check_retval(&retval, "SUNContext_Create", 1)) return 1;
 
-  y = N_VNew_Serial(NEQ, sunctx);
-  if (check_retval(y, "N_VNew_Serial", 0)) return 1;
-  fy = N_VClone(y);
-  if (check_retval(fy, "N_VClone", 0)) return 1;
-  tmp1 = N_VClone(y);
+  u = N_VNew_Serial(NEQ, sunctx);
+  if (check_retval(u, "N_VNew_Serial", 0)) return 1;
+  fu = N_VClone(u);
+  if (check_retval(fu, "N_VClone", 0)) return 1;
+  scale = N_VClone(u);
+  if (check_retval(scale, "N_VClone", 0)) return 1;
+  tmp1 = N_VClone(u);
   if (check_retval(tmp1, "N_VClone", 0)) return 1;
-  tmp2 = N_VClone(y);
+  tmp2 = N_VClone(u);
   if (check_retval(tmp2, "N_VClone", 0)) return 1;
-  tmp3 = N_VClone(y);
-  if (check_retval(tmp3, "N_VClone", 0)) return 1;
+
+  N_VConst(ZERO, u);
+  N_VConst(ONE, scale);
 
   Jac = SUNSparseMatrix(NEQ, NEQ, NNZ, SUN_CSC_MAT, sunctx);
   if (check_retval(Jac, "SUNSparseMatrix", 0)) return 1;
@@ -92,47 +98,46 @@ int main(void)
   retval = fill_matrix(Jac, &udata, SUNFALSE);
   if (check_retval(&retval, "fill_matrix", 1)) return 1;
 
-  arkode_mem = ARKStepCreate(NULL, rhs, ZERO, y, sunctx);
-  if (check_retval(arkode_mem, "ARKStepCreate", 0)) return 1;
+  kin_mem = KINCreate(sunctx);
+  if (check_retval(kin_mem, "KINCreate", 0)) return 1;
 
-  retval = ARKodeSetUserData(arkode_mem, &udata);
-  if (check_retval(&retval, "ARKodeSetUserData", 1)) return 1;
+  retval = KINInit(kin_mem, sysfn, u);
+  if (check_retval(&retval, "KINInit", 1)) return 1;
 
-  retval = ARKodeSStolerances(arkode_mem, SUN_RCONST(1.0e-8),
-                              SUN_RCONST(1.0e-12));
-  if (check_retval(&retval, "ARKodeSStolerances", 1)) return 1;
+  retval = KINSetUserData(kin_mem, &udata);
+  if (check_retval(&retval, "KINSetUserData", 1)) return 1;
 
   LS = test_linsol(sunctx);
   if (check_retval(LS, "test_linsol", 0)) return 1;
 
-  retval = ARKodeSetLinearSolver(arkode_mem, LS, Jac);
-  if (check_retval(&retval, "ARKodeSetLinearSolver", 1)) return 1;
+  retval = KINSetLinearSolver(kin_mem, LS, Jac);
+  if (check_retval(&retval, "KINSetLinearSolver", 1)) return 1;
 
-  ark_mem = (ARKodeMem)arkode_mem;
-  N_VConst(ONE, ark_mem->ewt);
-  N_VConst(ONE, ark_mem->rwt);
-  ark_mem->h = ONE;
+  kin_mem_priv                   = (KINMem)kin_mem;
+  kin_mem_priv->kin_uscale       = scale;
+  kin_mem_priv->kin_fscale       = scale;
+  kin_mem_priv->kin_sqrt_relfunc = SUNRsqrt(SUN_UNIT_ROUNDOFF);
 
-  retval = rhs(ZERO, y, fy, &udata);
-  if (check_retval(&retval, "rhs", 1)) return 1;
+  retval = sysfn(u, fu, &udata);
+  if (check_retval(&retval, "sysfn", 1)) return 1;
 
-  retval = arkLsInitialize(ark_mem);
-  if (check_retval(&retval, "arkLsInitialize", 1)) return 1;
+  retval = kinLsInitialize(kin_mem_priv);
+  if (check_retval(&retval, "kinLsInitialize", 1)) return 1;
 
-  arkls_mem = (ARKLsMem)ark_mem->step_getlinmem(ark_mem);
-  if (check_retval(arkls_mem, "step_getlinmem", 0)) return 1;
+  kinls_mem = (KINLsMem)kin_mem_priv->kin_lmem;
+  if (check_retval(kinls_mem, "kin_lmem", 0)) return 1;
 
-  retval = arkLsDQJac(ZERO, y, fy, Jac, arkode_mem, tmp1, tmp2, tmp3);
-  if (check_retval(&retval, "arkLsDQJac", 1)) return 1;
+  retval = kinLsDQJac(u, fu, Jac, kin_mem, tmp1, tmp2);
+  if (check_retval(&retval, "kinLsDQJac", 1)) return 1;
 
-  groups   = arkls_mem->sparseDQgroups;
-  rowmarks = arkls_mem->sparseDQrowmarks;
+  groups   = kinls_mem->sparseDQgroups;
+  rowmarks = kinls_mem->sparseDQrowmarks;
 
-  retval = arkLsDQJac(ZERO, y, fy, Jac, arkode_mem, tmp1, tmp2, tmp3);
-  if (check_retval(&retval, "arkLsDQJac", 1)) return 1;
+  retval = kinLsDQJac(u, fu, Jac, kin_mem, tmp1, tmp2);
+  if (check_retval(&retval, "kinLsDQJac", 1)) return 1;
 
-  if ((groups != arkls_mem->sparseDQgroups) ||
-      (rowmarks != arkls_mem->sparseDQrowmarks))
+  if ((groups != kinls_mem->sparseDQgroups) ||
+      (rowmarks != kinls_mem->sparseDQrowmarks))
   {
     fprintf(stderr, "Sparse DQ Jacobian grouping workspace was not reused\n");
     fails++;
@@ -158,9 +163,10 @@ int main(void)
     }
   }
 
-  if (arkls_mem->nfeDQ <= 0)
+  if (kinls_mem->nfeDQ <= 0)
   {
-    fprintf(stderr, "Expected internal sparse DQ Jacobian RHS evaluations\n");
+    fprintf(stderr,
+            "Expected internal sparse DQ Jacobian function evaluations\n");
     fails++;
   }
 
@@ -168,14 +174,14 @@ int main(void)
 
   fails += test_bad_sparse_template(sunctx, &udata);
 
-  ARKodeFree(&arkode_mem);
+  KINFree(&kin_mem);
   SUNLinSolFree(LS);
   SUNMatDestroy(Jac);
-  N_VDestroy(tmp3);
   N_VDestroy(tmp2);
   N_VDestroy(tmp1);
-  N_VDestroy(fy);
-  N_VDestroy(y);
+  N_VDestroy(scale);
+  N_VDestroy(fu);
+  N_VDestroy(u);
   SUNContext_Free(&sunctx);
 
   return fails;
@@ -183,20 +189,25 @@ int main(void)
 
 static int test_bad_sparse_template(SUNContext sunctx, UserData udata)
 {
-  int fails              = 0;
-  int init_retval        = 0;
-  int retval             = 0;
-  N_Vector y             = NULL;
-  SUNMatrix Jac          = NULL;
-  SUNLinearSolver LS     = NULL;
-  SUNLogger logger       = NULL;
-  FILE* errfp            = NULL;
-  void* arkode_mem       = NULL;
-  ARKodeMem ark_mem      = NULL;
-  sunbooleantype cleanup = SUNFALSE;
+  int fails           = 0;
+  int init_retval     = 0;
+  int retval          = 0;
+  N_Vector u          = NULL;
+  N_Vector scale      = NULL;
+  SUNMatrix Jac       = NULL;
+  SUNLinearSolver LS  = NULL;
+  SUNLogger logger    = NULL;
+  FILE* errfp         = NULL;
+  void* kin_mem       = NULL;
+  KINMem kin_mem_priv = NULL;
 
-  y = N_VNew_Serial(NEQ, sunctx);
-  if (check_retval(y, "N_VNew_Serial", 0)) return 1;
+  u = N_VNew_Serial(NEQ, sunctx);
+  if (check_retval(u, "N_VNew_Serial", 0)) return 1;
+  scale = N_VClone(u);
+  if (check_retval(scale, "N_VClone", 0)) return 1;
+
+  N_VConst(ZERO, u);
+  N_VConst(ONE, scale);
 
   Jac = SUNSparseMatrix(NEQ, NEQ, NNZ, SUN_CSR_MAT, sunctx);
   if (check_retval(Jac, "SUNSparseMatrix", 0)) return 1;
@@ -204,17 +215,21 @@ static int test_bad_sparse_template(SUNContext sunctx, UserData udata)
   LS = test_linsol(sunctx);
   if (check_retval(LS, "test_linsol", 0)) return 1;
 
-  arkode_mem = ARKStepCreate(NULL, rhs, ZERO, y, sunctx);
-  if (check_retval(arkode_mem, "ARKStepCreate", 0)) return 1;
-  cleanup = SUNTRUE;
+  kin_mem = KINCreate(sunctx);
+  if (check_retval(kin_mem, "KINCreate", 0)) return 1;
 
-  retval = ARKodeSetUserData(arkode_mem, udata);
-  if (check_retval(&retval, "ARKodeSetUserData", 1)) fails++;
+  retval = KINInit(kin_mem, sysfn, u);
+  if (check_retval(&retval, "KINInit", 1)) fails++;
 
-  retval = ARKodeSetLinearSolver(arkode_mem, LS, Jac);
-  if (check_retval(&retval, "ARKodeSetLinearSolver", 1)) fails++;
+  retval = KINSetUserData(kin_mem, udata);
+  if (check_retval(&retval, "KINSetUserData", 1)) fails++;
 
-  ark_mem = (ARKodeMem)arkode_mem;
+  retval = KINSetLinearSolver(kin_mem, LS, Jac);
+  if (check_retval(&retval, "KINSetLinearSolver", 1)) fails++;
+
+  kin_mem_priv             = (KINMem)kin_mem;
+  kin_mem_priv->kin_uscale = scale;
+  kin_mem_priv->kin_fscale = scale;
 
   retval = SUNContext_GetLogger(sunctx, &logger);
   if (check_retval(&retval, "SUNContext_GetLogger", 1)) fails++;
@@ -225,43 +240,44 @@ static int test_bad_sparse_template(SUNContext sunctx, UserData udata)
   retval = SUNLogger_SetErrorFile(logger, NULL);
   if (check_retval(&retval, "SUNLogger_SetErrorFile", 1)) fails++;
 
-  init_retval = arkLsInitialize(ark_mem);
+  init_retval = kinLsInitialize(kin_mem_priv);
 
   retval = SUNLogger_SetErrorFile(logger, errfp);
   if (check_retval(&retval, "SUNLogger_SetErrorFile", 1)) fails++;
 
-  if (init_retval != ARKLS_ILL_INPUT)
+  if (init_retval != KINLS_ILL_INPUT)
   {
     fprintf(stderr,
-            "Expected arkLsInitialize to reject CSR sparse DQ template with "
-            "ARKLS_ILL_INPUT, retval = %d\n",
+            "Expected kinLsInitialize to reject CSR sparse DQ template with "
+            "KINLS_ILL_INPUT, retval = %d\n",
             init_retval);
     fails++;
   }
 
-  if (cleanup) { ARKodeFree(&arkode_mem); }
+  KINFree(&kin_mem);
   SUNLinSolFree(LS);
   SUNMatDestroy(Jac);
-  N_VDestroy(y);
+  N_VDestroy(scale);
+  N_VDestroy(u);
 
   return fails;
 }
 
-static int rhs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
+static int sysfn(N_Vector u, N_Vector f, void* user_data)
 {
-  UserData udata     = (UserData)user_data;
-  sunrealtype* ydata = N_VGetArrayPointer(y);
-  sunrealtype* fdata = N_VGetArrayPointer(ydot);
-  sunindextype j     = 0;
-  sunindextype p     = 0;
+  UserData udata         = (UserData)user_data;
+  sunrealtype* udata_arr = N_VGetArrayPointer(u);
+  sunrealtype* fdata     = N_VGetArrayPointer(f);
+  sunindextype j         = 0;
+  sunindextype p         = 0;
 
-  N_VConst(ZERO, ydot);
+  N_VConst(ZERO, f);
 
   for (j = 0; j < NEQ; j++)
   {
     for (p = udata->colptrs[j]; p < udata->colptrs[j + 1]; p++)
     {
-      fdata[udata->rowvals[p]] += udata->data[p] * ydata[j];
+      fdata[udata->rowvals[p]] += udata->data[p] * udata_arr[j];
     }
   }
 

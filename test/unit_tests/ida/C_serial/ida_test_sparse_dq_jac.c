@@ -126,9 +126,6 @@ int main(void)
   retval = IDASetLinearSolver(ida_mem, LS, Jac);
   if (check_retval(&retval, "IDASetLinearSolver", 1)) return 1;
 
-  retval = IDASetJacFn(ida_mem, NULL);
-  if (check_retval(&retval, "IDASetJacFn", 1)) return 1;
-
   IDA_mem = (IDAMem)ida_mem;
   N_VConst(ONE, IDA_mem->ida_ewt);
   IDA_mem->ida_hh = ONE;
@@ -240,9 +237,6 @@ static int test_bad_sparse_template(SUNContext sunctx, UserData udata)
 
   retval = IDASetLinearSolver(ida_mem, LS, Jac);
   if (check_retval(&retval, "IDASetLinearSolver", 1)) fails++;
-
-  retval = IDASetJacFn(ida_mem, NULL);
-  if (check_retval(&retval, "IDASetJacFn", 1)) fails++;
 
   IDA_mem = (IDAMem)ida_mem;
 

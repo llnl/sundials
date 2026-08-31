@@ -57,6 +57,14 @@ typedef struct KINLsMemRec
   SUNLinearSolver LS; /* generic iterative linear solver object        */
   SUNMatrix J;        /* problem Jacobian                              */
 
+  /* Sparse DQ Jacobian approximation workspace */
+  sunindextype* sparseDQgroups;   /* column group for each sparse column */
+  sunindextype* sparseDQrowmarks; /* workspace for sparse column grouping */
+  sunindextype sparseDQngroups;   /* number of sparse column groups       */
+  sunindextype sparseDQM;         /* sparse DQ matrix rows                */
+  sunindextype sparseDQN;         /* sparse DQ matrix columns             */
+  sunindextype sparseDQnnz;       /* sparse DQ active nonzeros            */
+
   /* Solver tolerance adjustment factor (if needed, see kinLsSolve)     */
   sunrealtype tol_fac;
 
@@ -125,6 +133,9 @@ int kinLsDenseDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
 
 int kinLsBandDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
                    N_Vector tmp1, N_Vector tmp2);
+
+int kinLsSparseDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
+                     N_Vector tmp1, N_Vector tmp2);
 
 /* Generic linit/lsetup/lsolve/lfree interface routines for KINSOL to call */
 int kinLsInitialize(KINMem kin_mem);

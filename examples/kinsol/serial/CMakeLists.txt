@@ -48,7 +48,8 @@ set(KINSOL_examples
 set(KINSOL_examples_BL)
 
 # Examples using KLU linear solver
-set(KINSOL_examples_KLU "kinFerTron_klu\;develop")
+set(KINSOL_examples_KLU "kinFerTron_klu\;develop"
+                        "kinFerTron_sparseDQ_klu\;develop")
 
 # Examples using SuperLU_MT linear solver
 set(KINSOL_examples_SUPERLUMT "kinRoboKin_slu\;develop")
