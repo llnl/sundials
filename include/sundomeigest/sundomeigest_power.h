@@ -41,7 +41,7 @@ struct SUNDomEigEstimatorContent_Power_
   SUNATimesFn ATimes; /* User provided ATimes function */
   void* ATdata;       /* ATimes function data*/
 
-  N_Vector V, q, q_prev, rhs_linY, Fy, work; /* workspace vectors */
+  N_Vector V, Av, v_prev, rhs_linY, Fy, work; /* workspace vectors */
 
   int num_warmups;      /* Number of preprocessing iterations */
   long int max_iters;   /* Maximum number of power iterations */
