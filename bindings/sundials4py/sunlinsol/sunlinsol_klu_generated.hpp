@@ -7,7 +7,6 @@
 // #ifdef __cplusplus
 // #endif
 //
-
 m.attr("SUNKLU_ORDERING_DEFAULT") = 1;
 m.attr("SUNKLU_REINIT_FULL")      = 1;
 m.attr("SUNKLU_REINIT_PARTIAL")   = 2;
