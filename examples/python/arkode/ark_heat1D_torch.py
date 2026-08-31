@@ -83,7 +83,7 @@ def solve_heat1d(name, y, problem, sunctx, n=101, k=0.01):
         if status != ark.ARK_SUCCESS:
             raise RuntimeError(f"ARKodeEvolve failed with status {status}")
 
-        host_data = sun.N_VGetTorchTensor(y, device="cpu").numpy()
+        host_data = sun.N_VGetTorchTensor(y).cpu().numpy()
         rms = np.sqrt(np.dot(host_data, host_data) / n)
         print(f"  {t:10.6f}  {rms:10.6f}")
         tout = min(tout + tf / nt, tf)
@@ -155,14 +155,14 @@ class TorchHeat1DProblem:
         self.isource = n // 2
 
     def set_init_cond(self, yvec):
-        y = sun.N_VGetTorchTensor(yvec, device=self.device)
+        y = sun.N_VGetTorchTensor(yvec)
         y[:] = 0.0
         if self.device == "cuda":
             self.torch.cuda.synchronize()
 
     def f(self, t, yvec, ydotvec, user_data):
-        y = sun.N_VGetTorchTensor(yvec, device=self.device)
-        ydot = sun.N_VGetTorchTensor(ydotvec, device=self.device)
+        y = sun.N_VGetTorchTensor(yvec)
+        ydot = sun.N_VGetTorchTensor(ydotvec)
 
         ydot[:] = 0.0
         c1 = self.k / self.dx / self.dx
@@ -176,8 +176,8 @@ class TorchHeat1DProblem:
         return 0
 
     def jtv(self, vvec, Jvvec, t, yvec, fyvec, user_data, tmpvec):
-        v = sun.N_VGetTorchTensor(vvec, device=self.device)
-        Jv = sun.N_VGetTorchTensor(Jvvec, device=self.device)
+        v = sun.N_VGetTorchTensor(vvec)
+        Jv = sun.N_VGetTorchTensor(Jvvec)
 
         Jv[:] = 0.0
         c1 = self.k / self.dx / self.dx
@@ -217,7 +217,7 @@ def main():
     problem = TorchHeat1DProblem(torch, device, n=args.n)
     host_result, y = solve_heat1d(f"torch {device} backend", y, problem, sunctx, n=args.n)
 
-    device_result = sun.N_VGetTorchTensor(y, device="cpu").numpy()
+    device_result = sun.N_VGetTorchTensor(y).cpu().numpy()
     np.testing.assert_allclose(host_result, device_result)
 
 

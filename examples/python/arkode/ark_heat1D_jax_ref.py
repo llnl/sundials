@@ -83,7 +83,7 @@ def solve_heat1d(name, y, problem, sunctx, n=101, k=0.01):
         if status != ark.ARK_SUCCESS:
             raise RuntimeError(f"ARKodeEvolve failed with status {status}")
 
-        host_data = np.asarray(sun.N_VGetJaxArray(y, device="cpu"))
+        host_data = np.asarray(sun.N_VGetJaxArray(y))
         rms = np.sqrt(np.dot(host_data, host_data) / n)
         print(f"  {t:10.6f}  {rms:10.6f}")
         tout = min(tout + tf / nt, tf)
@@ -154,7 +154,6 @@ class JaxRefHeat1DProblem:
         self.k = k
         self.dx = 1.0 / (n - 1)
         self.isource = n // 2
-        self.array_device = "cuda" if device.platform in ("cuda", "gpu") else "cpu"
         self.dtype = dtype
         self.refs = {}
 
@@ -207,12 +206,12 @@ class JaxRefHeat1DProblem:
         self.initialize_ref(self.ref_for(yvec)).block_until_ready()
 
     def f(self, t, yvec, ydotvec, user_data):
-        y = sun.N_VGetJaxArray(yvec, device=self.array_device)
+        y = sun.N_VGetJaxArray(yvec)
         self.rhs_ref(y, self.ref_for(ydotvec)).block_until_ready()
         return 0
 
     def jtv(self, vvec, Jvvec, t, yvec, fyvec, user_data, tmpvec):
-        v = sun.N_VGetJaxArray(vvec, device=self.array_device)
+        v = sun.N_VGetJaxArray(vvec)
         self.jtv_ref(v, self.ref_for(Jvvec)).block_until_ready()
         return 0
 
@@ -252,7 +251,7 @@ def main():
         f"jax ArrayRef {array_device} backend", y, problem, sunctx, n=args.n
     )
 
-    device_result = np.asarray(sun.N_VGetJaxArray(y, device="cpu"))
+    device_result = np.asarray(sun.N_VGetJaxArray(y))
     np.testing.assert_allclose(host_result, device_result)
 
 
