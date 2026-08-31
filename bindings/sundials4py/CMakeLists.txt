@@ -116,8 +116,25 @@ set(sundials_SOURCES
     sunnonlinsol/sunnonlinsol_newton.cpp
     test/sundials4py_test.cpp)
 
+# Conditionally add KLU bindings
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
+  list(APPEND sundials_SOURCES sunlinsol/sunlinsol_klu.cpp)
+endif()
+
 # Create the Python sundials library
 nanobind_add_module(sundials4py STABLE_ABI NB_STATIC ${sundials_SOURCES})
+
+if(SKBUILD)
+  if(APPLE)
+    set_target_properties(
+      sundials4py
+      PROPERTIES INSTALL_NAME_DIR "@rpath"
+                 INSTALL_RPATH "@loader_path/${CMAKE_INSTALL_LIBDIR}")
+  elseif(UNIX)
+    set_target_properties(
+      sundials4py PROPERTIES INSTALL_RPATH "$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
+  endif()
+endif()
 
 # Include private header locations
 target_include_directories(
@@ -149,6 +166,10 @@ target_link_libraries(
           sundials_sunmatrixsparse
           sundials_sundomeigestpower
           sundials_core)
+
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
+  target_link_libraries(sundials4py PRIVATE sundials_sunlinsolklu)
+endif()
 
 # Install directive for scikit-build-core
 install(TARGETS sundials4py LIBRARY DESTINATION .)

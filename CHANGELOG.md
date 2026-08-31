@@ -14,6 +14,8 @@ device data pointer for vector implementations with a device memory space.
 
 The SUNLinearSolver interface to SuperLU_DIST now supports single precision.
 
+The KLU SUNLinearSolver is now available in sundials4py.
+
 ### Bug Fixes
 
 Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point
