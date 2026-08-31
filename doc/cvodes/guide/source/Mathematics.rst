@@ -298,8 +298,14 @@ the band case, the columns of :math:`J` are computed in groups, by the
 Curtis-Powell-Reid algorithm, with the number of :math:`f` evaluations
 equal to the bandwidth.
 
-We note that with user-supplied and CSR sparse ``SUNMatrix`` objects, the
-Jacobian *must* be supplied by a user routine.
+We note that with user-supplied and CSR sparse SUNMatrix objects, the
+Jacobian *must* be supplied by a user routine.  When using dense or banded
+matrices, the Jacobian can be either supplied by a user routine or approximated
+internally.  When using CSC sparse matrices, the Jacobian can be either
+supplied by a user routine or approximated internally.  When it is approximated,
+however, the CVODES linear solver interface must be initialized with a template
+Jacobian matrix that already encodes the sparsity pattern for the Jacobian --
+the entries themselves may be arbitrary, but the sparsity pattern must be correct.
 
 In the case of a Krylov method, preconditioning may be used on the left,
 on the right, or both, with user-supplied routines for the
