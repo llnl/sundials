@@ -39,8 +39,9 @@
 #include <sundials/sundials_matrix.h>
 #include <sundials/sundials_nvector.h>
 #include <sunmatrix/sunmatrix_slunrloc.h>
-#include <superlu_ddefs.h>
 
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#include <superlu_ddefs.h>
 #define xLUstructInit        dLUstructInit
 #define xScalePermstructInit dScalePermstructInit
 #define xScalePermstructFree dScalePermstructFree
@@ -49,6 +50,19 @@
 #define xScalePermstruct_t   dScalePermstruct_t
 #define xLUstruct_t          dLUstruct_t
 #define xSOLVEstruct_t       dSOLVEstruct_t
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#include <superlu_sdefs.h>
+#define xLUstructInit        sLUstructInit
+#define xScalePermstructInit sScalePermstructInit
+#define xScalePermstructFree sScalePermstructFree
+#define xLUstructFree        sLUstructFree
+#define xDestroy_LU          sDestroy_LU
+#define xScalePermstruct_t   sScalePermstruct_t
+#define xLUstruct_t          sLUstruct_t
+#define xSOLVEstruct_t       sSOLVEstruct_t
+#else
+#error "Incompatible sunrealtype for SuperLU_DIST"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
