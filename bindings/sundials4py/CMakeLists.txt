@@ -177,7 +177,7 @@ if(SUNDIALS_ENABLE_NVECTOR_CUDA)
   target_link_libraries(sundials4py PRIVATE sundials_nveccuda CUDA::cudart)
   target_include_directories(sundials4py PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
 endif()
-  
+
 if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
   target_link_libraries(sundials4py PRIVATE sundials_sunlinsolklu)
 endif()
