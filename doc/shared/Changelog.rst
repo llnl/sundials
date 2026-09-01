@@ -92,9 +92,6 @@ user-provided initial guess from
 :c:func:`SUNDomEigEstimator_SetInitialGuess`. These routines are now
 order-independent.
 
-Fixed a bug in LSRKStep where the total number of function evaluations for
-:c:type:`SUNDomEigEstimator` was reported incorrectly. 
-
 Fixed memory leaks in CVODES, IDAS, and KINSOL in the unlikely event of a failed
 ``malloc``.
 

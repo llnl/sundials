@@ -34,9 +34,6 @@ due to convergence rate check occurring after only one iteration.
 Fixed duplicate keys in IDA and IDAS logging output from consistent initial
 condition solves and order selection diagnostics.
 
-Fixed a bug in LSRKStep where the total number of function evaluations for
-`SUNDomEigEstimator` was reported incorrectly.
-
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.8.0
