@@ -42,7 +42,7 @@ int CVodeSetOptions(void* cvode_mem, const char* cvid, const char* file_name,
 {
   if (file_name != NULL && strlen(file_name) > 0)
   {
-    int retval = CV_ILL_INPUT;
+    // int retval = CV_ILL_INPUT;
     cvProcessError(cvode_mem, retval, __LINE__, __func__, __FILE__,
                    "file-based options are not currently supported.");
     return retval;
