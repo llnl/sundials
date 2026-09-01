@@ -19,6 +19,10 @@ disable compiler warnings emitted by deprecated SUNDIALS API annotations.
 Added the function `N_VSetDeviceArrayPointer` to the N_Vector API to set the
 device data pointer for vector implementations with a device memory space.
 
+Added Butcher tables for the classical RK4 (`ARKODE_KUTTA_RK4a_4_4`) and
+3/8-rule (`ARKODE_KUTTA_RK4b_4_4`) methods.
+||||||| 8e251eab2
+
 The KLU SUNLinearSolver is now available in sundials4py.
 
 ### Bug Fixes
