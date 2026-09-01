@@ -1165,5 +1165,75 @@ Fe RHS evals:
   expected: 9
 --------------------
 
+========================
+ARKODE_KUTTA_RK4a_4_4
+  stages:             4
+  order:              4
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   4
+  expected: 4
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   8
+  expected: 8
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   16
+  expected: 16
+--------------------
+
+========================
+ARKODE_KUTTA_RK4b_4_4
+  stages:             4
+  order:              4
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   4
+  expected: 4
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   8
+  expected: 8
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   16
+  expected: 16
+--------------------
+
 
 All tests passed!
