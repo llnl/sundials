@@ -16,6 +16,8 @@ Added Butcher tables for the classical RK4
 (:c:enumerator:`ARKODE_KUTTA_RK4a_4_4`) and 3/8-rule
 (:c:enumerator:`ARKODE_KUTTA_RK4b_4_4`) methods.
 
+The KLU SUNLinearSolver is now available in sundials4py.
+
 **Bug Fixes**
 
 Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point

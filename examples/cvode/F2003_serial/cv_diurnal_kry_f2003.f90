@@ -90,6 +90,7 @@ module diurnal_mod
   integer(c_int), parameter  :: maxL = 0
   integer(c_long), parameter :: mxsteps = 1000
   real(c_double) :: p_p(2, 2, mx, my)
+  real(c_double) :: p_bd(2, 2, mx, my)
 
   ! ODE non-constant parameters
   real(c_double) :: q3
@@ -206,9 +207,7 @@ contains
   ! ----------------------------------------------------------------
 
   ! ----------------------------------------------------------------
-  ! PreSet provides the setup function for the Preconditioner of the
-  ! ODE: dc1/dt = f1(t,c1,c2)
-  !      dc2/dt = f2(t,c1,c2)
+  ! PreSet provides the setup function for the Preconditioner
   !
   ! Return values:
   !    0 = success,
@@ -235,7 +234,6 @@ contains
 
     ! temporary variables
     real(c_double), pointer, dimension(2, mx, my) :: u(:, :, :)
-    real(c_double) :: p_bd(2, 2, mx, my)
     u(1:2, 1:mx, 1:my) => FN_VGetArrayPointer(sunvec_u)
 
     ! initialize return value to success
@@ -256,8 +254,8 @@ contains
     ! copy bd to p and scale by -gamma
     p_p = -gamma*p_bd
 
-    ! Perform LU decomposition
-    call Prec_LU(mm, p_p, ierr)
+    ! Compute block inverses
+    call Prec_Inv(mm, p_p, ierr)
 
     ! return success
     ierr = 0
@@ -267,9 +265,7 @@ contains
   ! ----------------------------------------------------------------
 
   ! ----------------------------------------------------------------
-  ! PreSolve provides the solver function for the Preconditioner of
-  ! the ODE: dc1/dt = f1(t,c1,c2)
-  !          dc2/dt = f2(t,c1,c2)
+  ! PreSolve provides the solve function for the Preconditioner
   !
   ! Return values:
   !    0 = success,
@@ -363,17 +359,15 @@ contains
   ! ----------------------------------------------------------------
 
   ! ----------------------------------------------------------------
-  ! Prec_LU provides the LU Decomposition (2 x 2 inverse) routine
-  ! for the Preconditioner of the ODE, specifically the PreSet
-  ! function, where the ODE is: dc1/dt = f1(t,c1,c2)
-  !                             dc2/dt = f2(t,c1,c2)
+  ! Prec_Inv computes the inverse of the 2 x 2 blocks for the
+  ! Preconditioner using Cramer's rule
   !
   ! Return values:
   !    0 = success,
   !    1 = recoverable error,
   !   -1 = non-recoverable error
   ! ----------------------------------------------------------------
-  subroutine Prec_LU(mmm, p, ierr)
+  subroutine Prec_Inv(mmm, p, ierr)
 
     implicit none
 
@@ -388,24 +382,27 @@ contains
     ! initialize return value to success
     ierr = 0
 
-    ! add identity matrix and do lu decompositions on blocks, in place.
+    ! add identity matrix and compute inverse on blocks, in place.
     do i = 1, mmm
       p11 = p(1, 1, i) + 1.0d0
       p22 = p(2, 2, i) + 1.0d0
       p12 = p(1, 2, i)
-      p21 = p(1, 2, i)
+      p21 = p(2, 1, i)
       det = p11*p22 - p12*p21
-      if (det == 0.d0) return
+      if (det == 0.d0) then
+        ierr = 1
+        return
+      end if
 
       p(1, 1, i) = p22/det
       p(2, 2, i) = p11/det
-      p(1, 2, i) = -p21/det
-      p(2, 1, i) = -p12/det
+      p(1, 2, i) = -p12/det
+      p(2, 1, i) = -p21/det
     end do
 
     return
 
-  end subroutine Prec_LU
+  end subroutine Prec_Inv
   ! ----------------------------------------------------------------
 
   ! ----------------------------------------------------------------
