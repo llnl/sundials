@@ -520,7 +520,7 @@ The virtual table structure is defined as
 
       The function implementing :c:func:`SUNDomEigEstimator_SetRhs`
 
-   .. c:member:: SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, N_Vector, sunrealtype)
+   .. c:member:: SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype, N_Vector)
 
       The function implementing :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`
 
@@ -644,7 +644,7 @@ implementation detail for the interested reader.
    +-----------------------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_SetNumPreprocessIters`              |          O          |          O          |
    +-----------------------------------------------------------------+---------------------+---------------------+
-   | :c:func:`SUNDomEigEstimator_SetRelTol`\ :sup:`2`                |          O          |          0          |
+   | :c:func:`SUNDomEigEstimator_SetRelTol`\ :sup:`2`                |          O          |          O          |
    +-----------------------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_SetInitialGuess`                    |          O          |          O          |
    +-----------------------------------------------------------------+---------------------+---------------------+

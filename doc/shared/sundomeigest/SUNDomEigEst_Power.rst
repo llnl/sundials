@@ -225,8 +225,8 @@ The SUNDomEigEstimator_Power module defines the *content* field of a
      SUNATimesFn ATimes;
      void* ATdata;
      N_Vector* V;
-     N_Vector q;
-     N_Vector q_prev;
+     N_Vector Av;
+     N_Vector v_prev;
      N_Vector rhs_linY;
      N_Vector Fy;
      N_Vector work;
@@ -249,9 +249,9 @@ information:
 
 * ``ATimes`` - function pointer to perform the product :math:`Av`,
 
-* ``ATData`` - pointer to structure for ``ATimes``,
+* ``ATdata`` - pointer to structure for ``ATimes``,
 
-* ``V, q, q_prev, Fy, work``   - ``N_Vector`` used for workspace.
+* ``V, Av, v_prev, Fy, work``   - ``N_Vector`` used for workspace.
 
 * ``num_warmups`` - number of preprocessing iterations (default is 100),
 
