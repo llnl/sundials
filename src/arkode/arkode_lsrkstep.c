@@ -227,6 +227,8 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
   step_mem->stage_max_limit                = STAGE_MAX_LIMIT_DEFAULT;
   step_mem->dom_eig_nst                    = 0;
   step_mem->num_dee_iters                  = 0;
+
+  /* Initialize the flag regarding the maximum stage limit error */
   step_mem->suppress_max_stage_limit_error = SUNFALSE;
 
   /* Initialize fused op work space */
@@ -326,7 +328,6 @@ int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
   step_mem->dom_eig_update                 = SUNTRUE;
   step_mem->dom_eig_is_current             = SUNFALSE;
   step_mem->init_warmup                    = SUNTRUE;
-  step_mem->suppress_max_stage_limit_error = SUNFALSE;
 
   return ARK_SUCCESS;
 }
@@ -3296,7 +3297,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
       if (retval != 0) { return ARK_PRERHSFN_FAIL; }
     }
 
-    retval = step_mem->fe(t, y, ark_mem->fn, ark_mem->user_data);
+    retval = step_mem->fe_wrap(t, y, ark_mem->fn, ark_mem->user_data);
     step_mem->nfeDQ++;
     if (retval != ARK_SUCCESS)
     {
@@ -3324,7 +3325,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
       if (retval != 0) { return ARK_PRERHSFN_FAIL; }
     }
     /* Set Jv = f(tn, y+sig*v) */
-    retval = step_mem->fe(t, work, Jv, ark_mem->user_data);
+    retval = step_mem->fe_wrap(t, work, Jv, ark_mem->user_data);
     step_mem->nfeDQ++;
     if (retval == 0) { break; }
     if (retval < 0) { return (-1); }
@@ -3352,6 +3353,12 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
 
   Wrapper function for the user-supplied RHS function that incorporates
   external polynomial forcing.
+
+  Note for potential future improvement: when used in ExtSTS methods the
+  formulation below is optimal.  However, in the general MRI case with an
+  adaptive step STS method at the fast time scale, the STS methods could
+  benefit from the same RHS reuse across fast integrations as in ERKStep and
+  ARKStep since they are FSAL because of the embedding.
   ----------------------------------------------------------------------------*/
 
 int lsrkStep_f_forcing(sunrealtype t, N_Vector y, N_Vector f, void* user_data)

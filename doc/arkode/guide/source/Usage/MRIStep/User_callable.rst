@@ -127,34 +127,40 @@ MRIStep initialization and deallocation functions
       If unsuccessful, a ``NULL`` pointer will be returned, and an error
       message will be printed to ``stderr``.
 
+   .. warning::
+
+      Although ExtSTS methods are packaged within MRIStep, the inner STS solver
+      is not subcycled as with other MRI methods.  By default, the inner STS
+      solver is configured to be of Runge--Kutta--Chebyshev type, with a maximum
+      of 10000 stages per step.  Although users may request the STS solver to
+      change these defaults or configure other relevant options, they should never
+      change any LSRKStep settings related to time step adaptivity or
+      interpolated output, nor should they configure options that would
+      request the STS solver to stop a time step prematurely (e.g., through
+      calls to :c:func:`ARKodeRootInit` or :c:func:`ARKodeSetConstraints`).
+      Similarly, users should not employ "H-Tol" multirate time step
+      controllers on the object returned using :c:func:`MRIStepExtSTSCreate`.
+
    **Example usage:**
 
       .. code-block:: C
 
-         /* ExtSTS and inner STS ARKODE objects */
-         void *extsts_mem = NULL;
-         void *sts_mem = NULL;
-
          /* create ExtSTS instantiation of MRIStep object */
-         extsts_mem = MRIStepExtSTSCreate(fd, fe, fi, t0, y0, sunctx);
+         void* extsts_mem = MRIStepExtSTSCreate(fd, fe, fi, t0, y0, sunctx);
 
          /* access the inner STS stepper object */
-         sts_mem = MRIStepExtSTSGetSTS(extsts_mem);
+         void* sts_mem = NULL;
+         retval = MRIStepExtSTSGetSTS(extsts_mem, &sts_mem);
 
          /* configure ExtSTS integrator */
          retval = MRIStepSet*(extsts_mem, ...);
          retval = ARKodeSet*(extsts_mem, ...);
 
-         /* configure STS method */
+         /* configure inner STS integrator */
          retval = LSRKStepSet*(sts_mem, ...);
-         retval = ARKodeSet*(sts_mem, ...);
 
    **Example codes:**
       * ``examples/arkode/CXX_serial/ark_adr1d_extsts.cpp``
-
-   .. warning::
-
-      Although ExtSTS methods are packaged within MRIStep, the inner STS solver is not subcycled as with other MRI methods.  Although users may request the STS solver to configure relevant options (e.g., STS method to use, maximum number of STS stages to use per step, etc.), they should never change any LSRKStep settings related to time step adaptivity, nor should they configure options that would request the STS solver to stop a time step prematurely (e.g., through calls to :c:func:`ARKodeRootInit` or :c:func:`ARKodeSetConstraints`).  Similarly, users should not employ "H-Tol" multirate time step controllers on the object returned using :c:func:`MRIStepExtSTSCreate`.
 
    .. versionadded:: x.y.z
 
@@ -2600,6 +2606,7 @@ vector.
       If an error occurred, :c:func:`MRIStepExtSTSReInit()` also
       sends an error message to the error handler function.
 
+   .. versionadded:: x.y.z
 
 
 .. _ARKODE.Usage.MRIStep.Reset:

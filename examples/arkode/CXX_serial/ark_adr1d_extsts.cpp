@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
   void* arkode_mem = nullptr;
   void* sts_mem    = nullptr;
 
-  // Matrix and linear solver for IMEX or ExtSTS integrators
+  // Matrix and linear solver for ExtSTS integrators
   SUNMatrix A        = nullptr;
   SUNLinearSolver LS = nullptr;
 

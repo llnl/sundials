@@ -114,6 +114,8 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   {
     arkProcessError(NULL, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                     "Failed to create MRIStep integrator.");
+    ARKodeFree(&sts_mem);
+    MRIStepInnerStepper_Free(&inner_stepper);
     return NULL;
   }
 
@@ -284,22 +286,40 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   /* Call the user-supplied pre-step function (if supplied) */
   ark_mem->tcur = ark_mem->tn;
   if (ark_mem->ensure_ycur) { N_VScale(ONE, ark_mem->yn, ark_mem->ycur); }
-  if (retval == ARK_SUCCESS && ark_mem->PreStepFn)
+  if (ark_mem->PreStepFn)
   {
     retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst, 1,
                                 ark_mem->user_data);
-    /* Preserve the failure flag but continue to disable forcing below. */
+    /* Preserve the failure flag but continue, so that we only need to disable
+       forcing once below. */
     if (retval != 0) { retval = ARK_PRESTEPFN_FAIL; }
   }
 
   /* Take a single inner STS step */
   if (retval == ARK_SUCCESS)
   {
+    ark_mem->nst_attempts++;
+
+    SUNLogInfo(ARK_LOGGER, "begin-step-attempt",
+               "step = %li, tn = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
+               ark_mem->nst + 1, ark_mem->tn, ark_mem->h);
+
     /* Let ExtSTS translate this recoverable failure after forcing is disabled. */
     lsrkstep_mem->suppress_max_stage_limit_error = SUNTRUE;
     retval = ark_mem->step(ark_mem, &dsm, &nflag);
     lsrkstep_mem->suppress_max_stage_limit_error = SUNFALSE;
-    ark_mem->nst_attempts++;
+
+    /* Log inner-stepper errors here */
+    if (retval != ARK_SUCCESS)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-step-attempt",
+                 "status = failed step, kflag = %i", retval);
+    }
+    else
+    {
+      SUNLogInfo(ARK_LOGGER, "end-step-attempt",
+                 "status = success, dsm = " SUN_FORMAT_G, ZERO);
+    }
   }
 
   /* Disable inner forcing */
@@ -326,19 +346,6 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   }
 
   return retval;
-}
-
-int extSTSInnerStepper_Free(MRIStepInnerStepper* sts_mem)
-{
-  /* If the input is NULL, do nothing */
-  if (sts_mem == NULL || *sts_mem == NULL) { return ARK_SUCCESS; }
-
-  /* Free the LSRKStep memory */
-  ARKodeFree(&((*sts_mem)->content));
-
-  /* Set the input pointer to NULL */
-  *sts_mem = NULL;
-  return ARK_SUCCESS;
 }
 
 /*===============================================================

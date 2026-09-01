@@ -174,6 +174,7 @@ void bind_arkode_mristep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(fn_table);
+        ARKodeFree(&ark_mem);
         throw sundials4py::error_returned(
           "Failed to set user data in ARKODE memory");
       }
