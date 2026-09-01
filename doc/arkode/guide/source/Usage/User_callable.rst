@@ -3198,13 +3198,16 @@ Also, as described in :numref:`ARKODE.Mathematics.Error.Linear`, the
 ARKLS interface targets a preconditioned residual satisfying
 
 .. math::
-   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N
+   \|\tilde{r}\|_{2} \le tol.
 
-where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
-:math:`\epsilon_L = 0.05` may be modified by the user through the
-:c:func:`ARKodeSetEpsLin` function.  The attached ``SUNLinearSolver`` may use
-scaling vectors or a converted :math:`L_2` tolerance instead of testing this WRMS
-norm directly; see :numref:`SUNLinSol.Iterative.Tolerance`.
+where :math:`\tilde{r}` is the scaled linear residual. The tolerance is
+:math:`tol = C \epsilon_L \epsilon_N` where :math:`\epsilon_N` is the nonlinear
+solver tolerance, :math:`\epsilon_L` is the linear tolerance factor (the default
+is 0.05 and may be modified by calling :c:func:`ARKodeSetEpsLin`), and
+:math:`C = \sqrt{N}` where :math:`N` is the vector length (but this factor may
+be modified with :c:func:`ARKStepSetLSNormFactor` for other norms). If the
+solver does not support scaling, the tolerance is modified as described in
+:numref:`SUNLinSol.Iterative.Tolerance`.
 
 
 .. c:function:: int ARKodeSetPreconditioner(void* arkode_mem, ARKLsPrecSetupFn psetup, ARKLsPrecSolveFn psolve)

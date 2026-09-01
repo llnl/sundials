@@ -2060,34 +2060,40 @@ consideration, these default constants may all be modified by the user.
 Linear iteration error control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When a Krylov method is used to solve the linear Newton systems
+When an iterative method is used to solve the linear Newton systems
 :eq:`ARKODE_Newton_system`, its errors must also be controlled.  To this end,
 we approximate the linear iteration error in the solution vector
-:math:`\delta^{(m)}` using the preconditioned residual vector,
-e.g. :math:`r = P{\mathcal A}\delta^{(m)} + PG` for the case of left
-preconditioning (the role of the preconditioner is further elaborated
-in the next section).  In an attempt to ensure that the linear
-iteration errors do not interfere with the nonlinear solution error
-and local time integration error controls, we set the integrator-level
-target for the preconditioned linear residual to
+:math:`\delta^{(m)}` using the preconditioned residual vector, e.g.
+:math:`r = P^{-1} \, {\mathcal A} \, \delta^{(m)} + P^{-1} \, G` for the case of
+left preconditioning (the role of the preconditioner is further elaborated in
+the next section). This error should be at least as small as the nonlinear
+iteration errors so that the linear solver does not interfere with the nonlinear
+solver and local time integration error controls. Most iterative linear solver
+libraries measure error in the :math:`L_2` norm rather than the WRMS norm, so we
+define the linear solver tolerance as
 
 .. math::
-   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N.
+   \|\tilde{r}\|_2 \le \text{tol}, \qquad
+   \text{tol} = C \epsilon_L \epsilon_N.
    :label: ARKODE_LinearTolerance
 
-The attached ``SUNLinearSolver`` may not evaluate this WRMS norm
-directly.  The ARKLS interface provides scaling vectors when supported,
-or otherwise converts this target to the norm used by the linear solver;
-see :numref:`SUNLinSol.Iterative.Tolerance`.
+The constant :math:`C` is a norm conversion factor that defaults to
+:math:`\sqrt{N}` but can be modified with :c:func:`ARKodeSetLSNormFactor`.
+If the linear solver supports scaling vectors, we take
+:math:`\tilde{r}_i = w_i r_i`, where the weight vector :math:`w` is supplied
+from :eq:`ARKODE_RWT`. This essentially converts the linear solver's :math:`L_2`
+norm to a WRMS norm. If the linear solver does not support scaling vectors, we
+instead use :math:`\tilde{r}_i = r_i / \|x\|_{\text{WRMS}}`.
 
-Here :math:`\epsilon_N` is the same value as that is used above for the
-nonlinear error control.  Smaller values for the parameter :math:`\epsilon_L`
-are typically useful for strongly nonlinear or very stiff ODE systems, while
-easier ODE systems may benefit from a value closer to 1.  The default values
-are :math:`\epsilon_L = 0.05` and :math:`\epsilon_N = 0.1`, so the default
-linear residual tolerance is :math:`0.005`; :math:`\epsilon_L` may be modified
-by the user.  We note that for linearly implicit problems the tolerance
-:eq:`ARKODE_LinearTolerance` is similarly used for the single Newton iteration.
+The factor :math:`\epsilon_N` is the nonlinear solver tolerance from
+:eq:`ARKODE_NonlinearTolerance`, while :math:`\epsilon_L` sets the desired
+ratio between the linear and nonlinear tolerances.  Smaller values of
+:math:`\epsilon_L` are typically useful for strongly nonlinear or very stiff
+ODE systems, while easier ODE systems may benefit from a value closer to 1.
+The default values are :math:`\epsilon_L = 0.05` and :math:`\epsilon_N = 0.1`
+but may be modified by the user.  We note that for linearly implicit problems,
+the tolerance :eq:`ARKODE_LinearTolerance` is similarly used for the single
+Newton iteration.
 
 
 
