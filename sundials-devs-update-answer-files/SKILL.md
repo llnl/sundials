@@ -1,6 +1,6 @@
 ---
 name: sundials-devs-update-answer-files
-description: Update or add SUNDIALS expected-output answer files after intentional test output changes. Use when Codex needs to refresh .out files embedded in examples, update the sundials-codes/answers repository or test/answers submodule, consume GitHub Actions or Jenkins output_files artifacts, configure SUNDIALS_TEST_ANSWER_DIR or SUNDIALS_TEST_OUTPUT_DIR, or follow the documented workflow in doc/developers/testing/Answers.rst.
+description: Update or add SUNDIALS expected-output answer files after intentional test output changes. Use to refresh .out files embedded in examples, update the sundials-codes/answers repository or test/answers submodule, consume GitHub Actions or Jenkins output_files artifacts, configure SUNDIALS_TEST_ANSWER_DIR or SUNDIALS_TEST_OUTPUT_DIR, or follow the documented workflow in doc/developers/testing/Answers.rst.
 ---
 
 # Update Answer Files
