@@ -139,15 +139,15 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   MRIStepCoupling MRIC = NULL;
   if (fe == NULL && fi != NULL) /* Implicit ExtSTS method */
   {
-    MRIC = MRIStepCoupling_LoadTable(ARKODE_IMEX_MRI_GARK_GIRALDO2);
+    MRIC = MRIStepCoupling_LoadTable(ARKODE_IMEX_MRI_GARK_ARK2);
   }
   else if (fe != NULL && fi == NULL) /* Explicit ExtSTS method */
   {
-    MRIC = MRIStepCoupling_LoadTable(ARKODE_MRI_GARK_EXP_GIRALDO2);
+    MRIC = MRIStepCoupling_LoadTable(ARKODE_MRI_GARK_EXP_GKC21);
   }
   else /* ImEx ExtSTS method */
   {
-    MRIC = MRIStepCoupling_LoadTable(ARKODE_IMEX_MRI_GARK_GIRALDO2);
+    MRIC = MRIStepCoupling_LoadTable(ARKODE_IMEX_MRI_GARK_ARK2);
   }
   if (MRIC == NULL)
   {
@@ -290,59 +290,50 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   {
     retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst, 1,
                                 ark_mem->user_data);
-    /* Preserve the failure flag but continue, so that we only need to disable
-       forcing once below. */
-    if (retval != 0) { retval = ARK_PRESTEPFN_FAIL; }
+    if (retval != 0) {
+      arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                      "Failure in user-supplied PreStepFn for ExtSTS method.");
+      return retval;
+    }
   }
 
   /* Take a single inner STS step */
-  if (retval == ARK_SUCCESS)
+  ark_mem->nst_attempts++;
+  SUNLogInfo(ARK_LOGGER, "begin-step-attempt",
+             "step = %li, tn = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
+             ark_mem->nst + 1, ark_mem->tn, ark_mem->h);
+  lsrkstep_mem->suppress_max_stage_limit_error = SUNTRUE;
+  retval = ark_mem->step(ark_mem, &dsm, &nflag);
+  lsrkstep_mem->suppress_max_stage_limit_error = SUNFALSE;
+
+  if (retval != ARK_SUCCESS)
   {
-    ark_mem->nst_attempts++;
-
-    SUNLogInfo(ARK_LOGGER, "begin-step-attempt",
-               "step = %li, tn = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
-               ark_mem->nst + 1, ark_mem->tn, ark_mem->h);
-
-    /* Let ExtSTS translate this recoverable failure after forcing is disabled. */
-    lsrkstep_mem->suppress_max_stage_limit_error = SUNTRUE;
-    retval = ark_mem->step(ark_mem, &dsm, &nflag);
-    lsrkstep_mem->suppress_max_stage_limit_error = SUNFALSE;
-
-    /* Log inner-stepper errors here */
-    if (retval != ARK_SUCCESS)
-    {
-      SUNLogInfo(ARK_LOGGER, "end-step-attempt",
-                 "status = failed step, kflag = %i", retval);
-    }
-    else
-    {
-      SUNLogInfo(ARK_LOGGER, "end-step-attempt",
-                 "status = success, dsm = " SUN_FORMAT_G, ZERO);
-    }
+    SUNLogInfo(ARK_LOGGER, "end-step-attempt",
+               "status = failed step, kflag = %i", retval);
+    if (retval == ARK_MAX_STAGE_LIMIT_FAIL) { return ARK_RETRY_STEP; }
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Failure in LSRKStep step function for ExtSTS method.");
+    return retval;
   }
+
+  SUNLogInfo(ARK_LOGGER, "end-step-attempt",
+             "status = success, dsm = " SUN_FORMAT_G, ZERO);
 
   /* Disable inner forcing */
-  forcing_retval = ark_mem->step_setforcing(ark_mem, ZERO, ONE, NULL, 0);
-  if (forcing_retval != ARK_SUCCESS)
+  retval = ark_mem->step_setforcing(ark_mem, ZERO, ONE, NULL, 0);
+  if (retval != ARK_SUCCESS)
   {
-    arkProcessError(ark_mem, forcing_retval, __LINE__, __func__, __FILE__,
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
                     "Failed to reset LSRKStep forcing for ExtSTS method.");
-    return forcing_retval;
+    return retval;
   }
 
-  /* If LSRKStep failed due to insufficient stages, tell MRIStep to reduce step and retry. */
-  if (retval == ARK_MAX_STAGE_LIMIT_FAIL) { return ARK_RETRY_STEP; }
-
   /* Complete successful steps to update stats and call the inner PostStepFn. */
-  if (retval == ARK_SUCCESS)
+  retval = arkCompleteStep(ark_mem, dsm);
+  if (retval != ARK_SUCCESS)
   {
-    retval = arkCompleteStep(ark_mem, dsm);
-    if (retval != ARK_SUCCESS)
-    {
-      arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                      "Failed to complete LSRKStep for ExtSTS method.");
-    }
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Failed to complete LSRKStep for ExtSTS method.");
   }
 
   return retval;

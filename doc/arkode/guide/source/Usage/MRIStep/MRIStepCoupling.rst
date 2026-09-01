@@ -424,7 +424,7 @@ with values specified for each method below (e.g., ``ARKODE_MIS_KW3``).
    :index:`ARKODE_MRI_GARK_ERK22b`         :math:`2^{*\circ}`  1                2               :cite:p:`Sandu:19`
    :index:`ARKODE_MRI_GARK_RALSTON2`       2                   1                2               :cite:p:`Roberts:22`
    :index:`ARKODE_MRI_GARK_EXP_ARS222`     2                   1                3               :cite:p:`Reynolds:26`
-   :index:`ARKODE_MRI_GARK_EXP_GIRALDO2`   2                   1                3               :cite:p:`Reynolds:26`
+   :index:`ARKODE_MRI_GARK_EXP_GKC21`      2                   1                3               :cite:p:`Reynolds:26`
    :index:`ARKODE_MERK21`                  2                   1                2               :cite:p:`RAML:26`
    :index:`ARKODE_MIS_KW3`                 :math:`3^*`         --               3               :cite:p:`Schlegel:09`
    :index:`ARKODE_MRI_GARK_ERK33a`         :math:`3^{\circ}`   2                3               :cite:p:`Sandu:19`
@@ -489,7 +489,6 @@ Notes regarding the above table:
    :index:`ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL`  :math:`2^*`        --               1
    :index:`ARKODE_IMEX_MRI_GARK_MIDPOINT`     2                  --               2
    :index:`ARKODE_IMEX_MRI_GARK_ARS222`       2                  1                2
-   :index:`ARKODE_IMEX_MRI_GARK_GIRALDO2`     2                  1                2
    :index:`ARKODE_IMEX_MRI_SR21`              :math:`2^{\circ}`  1                3                :cite:p:`Fish:24`
    :index:`ARKODE_IMEX_MRI_GARK_ASCHER_ARK2`  2                  1                2
    :index:`ARKODE_IMEX_MRI_GARK_ARK2`         2                  1                2

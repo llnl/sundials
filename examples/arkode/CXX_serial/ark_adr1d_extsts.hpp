@@ -105,7 +105,7 @@ struct UserOptions
 
   // MRI method name, or Butcher table name plus flag to build MRI table
   // as an MIS method
-  string mri_method    = "ARKODE_IMEX_MRI_GARK_GIRALDO2";
+  string mri_method    = "ARKODE_IMEX_MRI_GARK_ARK2";
   bool build_mri_table = false;
 
   // Relative and absolute tolerances
