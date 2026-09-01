@@ -290,7 +290,7 @@ This estimator is constructed to perform the following operations:
   estimator parameters.
 
 * SUNDIALS packages will call :c:func:`SUNDomEigEstimator_SetATimes` to supply
-  the ``ATimes`` function pointer and the related data ``ATData``. Or, the user
+  the ``ATimes`` function pointer and the related data ``ATdata``. Or, the user
   may call :c:func:`SUNDomEigEstimator_SetRhs` to supply the RHS function and
   related data. This approach internally constructs an ``ATimes`` function that
   uses the RHS function to compute the matrix-vector product :math:`Av` for

@@ -166,7 +166,19 @@ int main(int argc, char* argv[])
     fails++;
   }
   fails += Test_SUNDomEigEstimator_GetNumRhsEvals(DEE, &num_rhs_evals, 0);
+  if (num_rhs_evals < 0)
+  {
+    printf(
+      "    >>> FAILED test -- SUNDomEigEstimator_GetNumRhsEvals return value\n");
+    fails++;
+  }
   fails += Test_SUNDomEigEstimator_GetNumATimesCalls(DEE, &num_ATimes, 0);
+  if (num_ATimes < 0)
+  {
+    printf(
+      "    >>> FAILED test -- SUNDomEigEstimator_GetNumATimesCalls return value\n");
+    fails++;
+  }
   fails += Test_SUNDomEigEstimator_Write(DEE, 0);
 
   if (fails)

@@ -43,14 +43,14 @@ struct SUNDomEigEstimatorContent_Power_
 
   N_Vector V, Av, v_prev, rhs_linY, Fy, work; /* workspace vectors */
 
-  int num_warmups;      /* Number of preprocessing iterations */
-  long int max_iters;   /* Maximum number of power iterations */
-  long int num_iters;   /* Number of iterations in last Estimate call */
-  long int num_ATimes;  /* Number of ATimes calls */
+  int num_warmups;     /* Number of preprocessing iterations */
+  long int max_iters;  /* Maximum number of power iterations */
+  long int num_iters;  /* Number of iterations in last Estimate call */
+  long int num_ATimes; /* Number of ATimes calls */
 
   sunrealtype rhs_linT; /* Time value for linearization point */
-  sunrealtype rel_tol; /* Convergence criteria for the power iteration */
-  sunrealtype res;     /* Residual from the last Estimate call */
+  sunrealtype rel_tol;  /* Convergence criteria for the power iteration */
+  sunrealtype res;      /* Residual from the last Estimate call */
 
   SUNRhsFn rhsfn;   /* User provided RHS function */
   void* rhs_data;   /* RHS function data */
