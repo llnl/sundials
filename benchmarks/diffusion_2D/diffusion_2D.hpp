@@ -55,7 +55,7 @@
 #define SLU_X                          SLU_S
 #define xCreate_CompRowLoc_Matrix_dist sCreate_CompRowLoc_Matrix_dist
 #else
-#error Incompatible sunrealtype for SuperLU_DIST
+#error "Incompatible sunrealtype for SuperLU_DIST"
 #endif
 #endif
 

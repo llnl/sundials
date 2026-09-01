@@ -55,7 +55,7 @@
 #define xScaleAdd_CompRowLoc_Matrix_dist   sScaleAdd_CompRowLoc_Matrix_dist
 #define xScaleAddId_CompRowLoc_Matrix_dist sScaleAddId_CompRowLoc_Matrix_dist
 #else
-#error Incompatible sunrealtype for SuperLU_DIST
+#error "Incompatible sunrealtype for SuperLU_DIST"
 #endif
 
 /*

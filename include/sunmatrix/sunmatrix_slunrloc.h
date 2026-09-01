@@ -32,7 +32,7 @@
 #include <superlu_sdefs.h>
 #define pxgsmv_comm_t psgsmv_comm_t
 #else
-#error Incompatible sunrealtype for SuperLU_DIST
+#error "Incompatible sunrealtype for SuperLU_DIST"
 #endif
 
 #ifdef __cplusplus

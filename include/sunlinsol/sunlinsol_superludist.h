@@ -61,7 +61,7 @@
 #define xLUstruct_t          sLUstruct_t
 #define xSOLVEstruct_t       sSOLVEstruct_t
 #else
-#error Incompatible sunrealtype for SuperLU_DIST
+#error "Incompatible sunrealtype for SuperLU_DIST"
 #endif
 
 #ifdef __cplusplus

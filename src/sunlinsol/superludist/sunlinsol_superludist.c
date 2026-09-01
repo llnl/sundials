@@ -39,7 +39,7 @@
 #define xSolveFinalize sSolveFinalize
 #define pxgssvx        psgssvx
 #else
-#error Incompatible sunrealtype for LAPACK; disable LAPACK and rebuild
+#error "Incompatible sunrealtype for LAPACK; disable LAPACK and rebuild"
 #endif
 
 /*
