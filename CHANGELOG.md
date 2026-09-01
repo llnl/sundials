@@ -6,6 +6,13 @@
 
 ### New Features and Enhancements
 
+Added CUDA support to the sundials4py Python interface. CUDA N_Vectors can be
+used with CUDA device arrays from CuPy, PyTorch and JAX when built with
+`SUNDIALS_ENABLE_CUDA` set to `ON`.
+
+sundials4py now has a `N_VGetNumpyArray` function which should be used instead
+of `N_VGetArrayPointer`.
+
 Updated the MRIStep module in ARKODE to support *extended
 Super Time Stepping* (ExtSTS) methods for multi-physics simulations involving
 parabolic components, through the `MRIStepExtSTSCreate` function.
@@ -18,6 +25,8 @@ disable compiler warnings emitted by deprecated SUNDIALS API annotations.
 
 Added the function `N_VSetDeviceArrayPointer` to the N_Vector API to set the
 device data pointer for vector implementations with a device memory space.
+
+The KLU SUNLinearSolver is now available in sundials4py.
 
 ### Bug Fixes
 
