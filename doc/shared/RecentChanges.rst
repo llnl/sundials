@@ -19,6 +19,8 @@ annotations.
 Added the function :c:func:`N_VSetDeviceArrayPointer` to the N_Vector API to set
 the device data pointer for vector implementations with a device memory space.
 
+The KLU SUNLinearSolver is now available in sundials4py.
+
 **Bug Fixes**
 
 Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point

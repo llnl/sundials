@@ -59,6 +59,9 @@ void bind_sundomeigest_power(nb::module_& m);
 
 void bind_sunlinsol_band(nb::module_& m);
 void bind_sunlinsol_dense(nb::module_& m);
+#if defined(SUNDIALS_KLU_ENABLED)
+void bind_sunlinsol_klu(nb::module_& m);
+#endif
 void bind_sunlinsol_pcg(nb::module_& m);
 void bind_sunlinsol_spbcgs(nb::module_& m);
 void bind_sunlinsol_spfgmr(nb::module_& m);
@@ -139,6 +142,9 @@ NB_MODULE(sundials4py, m)
 
   sundials4py::bind_sunlinsol_band(core_m);
   sundials4py::bind_sunlinsol_dense(core_m);
+#if defined(SUNDIALS_KLU_ENABLED)
+  sundials4py::bind_sunlinsol_klu(core_m);
+#endif
   sundials4py::bind_sunlinsol_pcg(core_m);
   sundials4py::bind_sunlinsol_spbcgs(core_m);
   sundials4py::bind_sunlinsol_spfgmr(core_m);
