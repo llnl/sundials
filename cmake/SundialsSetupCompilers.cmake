@@ -49,9 +49,38 @@ endif()
 # RPath settings
 # ===============================================================
 
-# only apply rpath settings for builds using shared libs
-if(BUILD_SHARED_LIBS)
-  # use, i.e. don't skip the full RPATH for the build tree
+if(SKBUILD AND SUNDIALS_ENABLE_PYTHON)
+  # Include directories of external libraries linked into a wheel in its RPATH.
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+  if(WIN32)
+    # Python extension modules can load DLL dependencies from their own
+    # directory, so place SUNDIALS DLLs beside sundials4py.pyd in wheels.
+    if(CMAKE_INSTALL_BINDIR STREQUAL "bin")
+      set(CMAKE_INSTALL_BINDIR
+          "."
+          CACHE PATH "User executables (bin)" FORCE)
+    endif()
+  elseif(APPLE)
+    # SUNDIALS shared libraries are installed together in CMAKE_INSTALL_LIBDIR.
+    # Use @rpath install names and let the extension add that directory as an
+    # rpath.
+    if(NOT CMAKE_INSTALL_RPATH)
+      set(CMAKE_INSTALL_RPATH "@loader_path")
+    endif()
+    if(NOT CMAKE_INSTALL_NAME_DIR)
+      set(CMAKE_INSTALL_NAME_DIR "@rpath")
+    endif()
+  elseif(UNIX)
+    # For bundled wheel libraries, $ORIGIN is the directory containing each
+    # installed shared library.
+    if(NOT CMAKE_INSTALL_RPATH)
+      set(CMAKE_INSTALL_RPATH "$ORIGIN")
+    endif()
+  endif()
+elseif(BUILD_SHARED_LIBS)
+  # only apply rpath settings for builds using shared libs use, i.e. don't skip
+  # the full RPATH for the build tree
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
   # when building, don't use the install RPATH already (but later on when
