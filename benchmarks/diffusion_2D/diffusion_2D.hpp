@@ -48,6 +48,15 @@
 #if defined(USE_SUPERLU_DIST)
 #include "sunlinsol/sunlinsol_superludist.h"
 #include "sunmatrix/sunmatrix_slunrloc.h"
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#define SLU_X                          SLU_D
+#define xCreate_CompRowLoc_Matrix_dist dCreate_CompRowLoc_Matrix_dist
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#define SLU_X                          SLU_S
+#define xCreate_CompRowLoc_Matrix_dist sCreate_CompRowLoc_Matrix_dist
+#else
+#error "Incompatible sunrealtype for SuperLU_DIST"
+#endif
 #endif
 
 // Macros for problem constants
