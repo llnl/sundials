@@ -1,6 +1,8 @@
 name: CI Containers - spack@develop
 
 on:
+  # Temporary for testing -- remove before PR
+  push:
   # Allows manual triggering
   workflow_dispatch:
     inputs:
@@ -65,7 +67,7 @@ jobs:
 
   test_ci_containers:
     needs: build_ci_containers
-    if: github.event_name == 'schedule' || inputs.run_tests
+    if: github.event_name == 'schedule' || github.event_name == 'push' || inputs.run_tests
     uses: ./.github/workflows/ubuntu-latest.yml
     with:
       container_tag: spack-develop
