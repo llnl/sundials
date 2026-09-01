@@ -62,10 +62,10 @@ module fsundomeigest_power_mod
   procedure :: get_max_iters => swigf_SUNDomEigEstimatorContent_Power__max_iters_get
   procedure :: set_num_iters => swigf_SUNDomEigEstimatorContent_Power__num_iters_set
   procedure :: get_num_iters => swigf_SUNDomEigEstimatorContent_Power__num_iters_get
-  procedure :: set_rhs_linT => swigf_SUNDomEigEstimatorContent_Power__rhs_linT_set
-  procedure :: get_rhs_linT => swigf_SUNDomEigEstimatorContent_Power__rhs_linT_get
   procedure :: set_num_ATimes => swigf_SUNDomEigEstimatorContent_Power__num_ATimes_set
   procedure :: get_num_ATimes => swigf_SUNDomEigEstimatorContent_Power__num_ATimes_get
+  procedure :: set_rhs_linT => swigf_SUNDomEigEstimatorContent_Power__rhs_linT_set
+  procedure :: get_rhs_linT => swigf_SUNDomEigEstimatorContent_Power__rhs_linT_get
   procedure :: set_rel_tol => swigf_SUNDomEigEstimatorContent_Power__rel_tol_set
   procedure :: get_rel_tol => swigf_SUNDomEigEstimatorContent_Power__rel_tol_get
   procedure :: set_res => swigf_SUNDomEigEstimatorContent_Power__res_set
@@ -292,23 +292,6 @@ type(SwigClassWrapper) :: farg1
 integer(C_LONG) :: fresult
 end function
 
-subroutine swigc_SUNDomEigEstimatorContent_Power__rhs_linT_set(farg1, farg2) &
-bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__rhs_linT_set")
-use, intrinsic :: ISO_C_BINDING
-import :: swigclasswrapper
-type(SwigClassWrapper) :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-end subroutine
-
-function swigc_SUNDomEigEstimatorContent_Power__rhs_linT_get(farg1) &
-bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__rhs_linT_get") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-import :: swigclasswrapper
-type(SwigClassWrapper) :: farg1
-real(C_DOUBLE) :: fresult
-end function
-
 subroutine swigc_SUNDomEigEstimatorContent_Power__num_ATimes_set(farg1, farg2) &
 bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__num_ATimes_set")
 use, intrinsic :: ISO_C_BINDING
@@ -324,6 +307,23 @@ use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
 integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNDomEigEstimatorContent_Power__rhs_linT_set(farg1, farg2) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__rhs_linT_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNDomEigEstimatorContent_Power__rhs_linT_get(farg1) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__rhs_linT_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Power__rel_tol_set(farg1, farg2) &
@@ -888,31 +888,6 @@ fresult = swigc_SUNDomEigEstimatorContent_Power__num_iters_get(farg1)
 swig_result = fresult
 end function
 
-subroutine swigf_SUNDomEigEstimatorContent_Power__rhs_linT_set(self, rhs_lint)
-use, intrinsic :: ISO_C_BINDING
-class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-real(C_DOUBLE), intent(in) :: rhs_lint
-type(SwigClassWrapper) :: farg1 
-real(C_DOUBLE) :: farg2 
-
-farg1 = self%swigdata
-farg2 = rhs_lint
-call swigc_SUNDomEigEstimatorContent_Power__rhs_linT_set(farg1, farg2)
-end subroutine
-
-function swigf_SUNDomEigEstimatorContent_Power__rhs_linT_get(self) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE) :: swig_result
-class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-real(C_DOUBLE) :: fresult 
-type(SwigClassWrapper) :: farg1 
-
-farg1 = self%swigdata
-fresult = swigc_SUNDomEigEstimatorContent_Power__rhs_linT_get(farg1)
-swig_result = fresult
-end function
-
 subroutine swigf_SUNDomEigEstimatorContent_Power__num_ATimes_set(self, num_atimes)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
@@ -935,6 +910,31 @@ type(SwigClassWrapper) :: farg1
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Power__num_ATimes_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNDomEigEstimatorContent_Power__rhs_linT_set(self, rhs_lint)
+use, intrinsic :: ISO_C_BINDING
+class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: rhs_lint
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = rhs_lint
+call swigc_SUNDomEigEstimatorContent_Power__rhs_linT_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNDomEigEstimatorContent_Power__rhs_linT_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNDomEigEstimatorContent_Power__rhs_linT_get(farg1)
 swig_result = fresult
 end function
 
