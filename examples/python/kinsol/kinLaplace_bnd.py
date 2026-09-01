@@ -56,14 +56,14 @@ class Laplace2D:
         self.vdc = ONE / (self.dy * self.dy)
 
     def set_init_cond(self, yvec):
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         # Initial guess: zero everywhere
         y[:] = ZERO
         return 0
 
     def func(self, uvec, fvec, user_data):
-        u = N_VGetArrayPointer(uvec)
-        f = N_VGetArrayPointer(fvec)
+        u = N_VGetNumpyArray(uvec)
+        f = N_VGetNumpyArray(fvec)
 
         NX, NY = self.NX, self.NY
         hdc, vdc = self.hdc, self.vdc
@@ -90,7 +90,7 @@ class Laplace2D:
         return 0
 
     def print_output(self, yvec):
-        y = N_VGetArrayPointer(yvec).reshape((self.NX, self.NY))
+        y = N_VGetNumpyArray(yvec).reshape((self.NX, self.NY))
         print("            ", end="")
         for i in range(1, self.NX + 1, SKIP):
             x = i * self.dx
