@@ -61,15 +61,15 @@ class BrusselatorODE:
         self.ep = ep
 
     def set_init_cond(self, yvec):
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         y[0] = self.u0
         y[1] = self.v0
         y[2] = self.w0
         return 0
 
     def f(self, t, yvec, ydotvec, user_data):
-        y = N_VGetArrayPointer(yvec)
-        ydot = N_VGetArrayPointer(ydotvec)
+        y = N_VGetNumpyArray(yvec)
+        ydot = N_VGetNumpyArray(ydotvec)
         a, b, ep = self.a, self.b, self.ep
         u, v, w = y[0], y[1], y[2]
         ydot[0] = a - (w + 1.0) * u + v * u * u
@@ -78,7 +78,7 @@ class BrusselatorODE:
         return 0
 
     def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3, user_data):
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         a, b, ep = self.a, self.b, self.ep
         u, v, w = y[0], y[1], y[2]
         Jdata = SUNDenseMatrix_Data(J)
@@ -146,7 +146,7 @@ def main():
     assert status == ARK_SUCCESS
 
     # Initial problem output
-    yarr = N_VGetArrayPointer(y)
+    yarr = N_VGetNumpyArray(y)
     print("\nBrusselator ODE test problem:")
     print(f"    initial conditions:  u0 = {u0},  v0 = {v0},  w0 = {w0}")
     print(f"    problem parameters:  a = {a},  b = {b},  ep = {ep}")
@@ -164,7 +164,7 @@ def main():
         tout = T0 + dTout
         for iout in range(Nt):
             status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
-            yarr = N_VGetArrayPointer(y)
+            yarr = N_VGetNumpyArray(y)
             print(f"  {tret:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}  {yarr[2]:10.6f}")
             UFID.write(f" {tret:.16e} {yarr[0]:.16e} {yarr[1]:.16e} {yarr[2]:.16e}\n")
             if status == ARK_SUCCESS:
