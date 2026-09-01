@@ -11,7 +11,7 @@ permissions:
   packages: write
 
 env:
-  SPACK_RELEASE: 1.1.1
+  SPACK_RELEASE: 1.2.2
   REGISTRY: ghcr.io
 
 jobs:
