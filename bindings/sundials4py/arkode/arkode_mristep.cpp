@@ -148,7 +148,7 @@ void bind_arkode_mristep(nb::module_& m)
     nb::arg("inner_stepper"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
 
   m.def(
-    "MRIStepExtSTSCreate",
+    "MRIStepCreateExtSTS",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> fd,
        std::function<std::remove_pointer_t<ARKRhsFn>> fse,
        std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
@@ -158,11 +158,11 @@ void bind_arkode_mristep(nb::module_& m)
       auto fse_wrapper = fse ? mristep_fse_wrapper : nullptr;
       auto fsi_wrapper = fsi ? mristep_fsi_wrapper : nullptr;
 
-      void* ark_mem = MRIStepExtSTSCreate(fd_wrapper, fse_wrapper, fsi_wrapper,
+      void* ark_mem = MRIStepCreateExtSTS(fd_wrapper, fse_wrapper, fsi_wrapper,
                                           t0, y0, sunctx);
       if (ark_mem == nullptr)
       {
-        throw sundials4py::error_returned("MRIStepExtSTSCreate returned NULL");
+        throw sundials4py::error_returned("MRIStepCreateExtSTS returned NULL");
       }
 
       // Create the user-supplied function table to store the Python user functions
@@ -190,7 +190,7 @@ void bind_arkode_mristep(nb::module_& m)
     nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
 
   m.def(
-    "MRIStepExtSTSReInit",
+    "MRIStepReInitExtSTS",
     [](void* arkode_mem, std::function<std::remove_pointer_t<ARKRhsFn>> fd,
        std::function<std::remove_pointer_t<ARKRhsFn>> fse,
        std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
@@ -205,18 +205,18 @@ void bind_arkode_mristep(nb::module_& m)
       auto fse_wrapper = fse ? mristep_fse_wrapper : nullptr;
       auto fsi_wrapper = fsi ? mristep_fsi_wrapper : nullptr;
 
-      return MRIStepExtSTSReInit(arkode_mem, fd_wrapper, fse_wrapper,
+      return MRIStepReInitExtSTS(arkode_mem, fd_wrapper, fse_wrapper,
                                  fsi_wrapper, t0, y0);
     },
     nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
     nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
 
   m.def(
-    "MRIStepExtSTSGetSTS",
+    "MRIStepGetSTS",
     [](void* arkode_mem)
     {
       void* sts_mem = nullptr;
-      int status    = MRIStepExtSTSGetSTS(arkode_mem, &sts_mem);
+      int status    = MRIStepGetSTS(arkode_mem, &sts_mem);
 
       std::shared_ptr<ARKodeBorrowedView> sts;
       if (status == ARK_SUCCESS && sts_mem != nullptr)

@@ -27,7 +27,7 @@
 #include "arkode_mristep_impl.h"
 
 /* MRIStep ExtSTS constructor routine */
-void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
+void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
                           N_Vector y0, SUNContext sunctx)
 {
   /* Create LSRKStep integrator and configure with ExtSTS defaults */
@@ -175,7 +175,7 @@ void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
 }
 
 /* MRIStep ExtSTS reinitialization routine */
-int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
+int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
                         sunrealtype t0, N_Vector y0)
 {
   /* access ARKodeMem and ARKodeMRIStepMem structures */
@@ -207,7 +207,7 @@ int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
 }
 
 /* Accessor routine for the inner LSRKStep solver from an ExtSTS method */
-int MRIStepExtSTSGetSTS(void* arkode_mem, void** sts_mem)
+int MRIStepGetSTS(void* arkode_mem, void** sts_mem)
 {
   /* access ARKodeMem and ARKodeMRIStepMem structures */
   ARKodeMem ark_mem         = NULL;

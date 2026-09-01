@@ -128,10 +128,10 @@ modules:
     - "^MRIStepCreate$"
     - "^MRIStepInnerStepper_Create$"
     - "^MRIStepInnerStepper_CreateFromSUNStepper$"
-    - "^MRIStepExtSTSCreate$"
+    - "^MRIStepCreateExtSTS$"
     # reinit also requires custom handling due to function pointers
     - "^MRIStepReInit$"
-    - "^MRIStepExtSTSReInit$"
+    - "^MRIStepReInitExtSTS$"
     # We steal the MRIStepInnerStepper content for the callback table, so don't interface the set/get
     - "^MRIStepInnerStepper_GetContent$"
     - "^MRIStepInnerStepper_SetContent$"
@@ -141,7 +141,7 @@ modules:
     - "^MRIStepSetPostInnerFn$"
     # These functions take a pointer to a pointer which the generator cannot yet handle, so we do custom handling
     - "^MRIStepInnerStepper_GetForcingData$"
-    - "^MRIStepExtSTSGetSTS$"
+    - "^MRIStepGetSTS$"
   forcingstep:
     path: arkode/arkode_forcingstep_generated.hpp
     headers:

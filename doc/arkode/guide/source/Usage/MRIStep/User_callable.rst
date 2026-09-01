@@ -108,7 +108,7 @@ MRIStep initialization and deallocation functions
 
 
 
-.. c:function:: void* MRIStepExtSTSCreate(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0, SUNContext sunctx)
+.. c:function:: void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0, SUNContext sunctx)
 
    This function allocates and initializes memory for a problem to be solved
    using an ExtSTS time-stepping method.
@@ -139,18 +139,18 @@ MRIStep initialization and deallocation functions
       request the STS solver to stop a time step prematurely (e.g., through
       calls to :c:func:`ARKodeRootInit` or :c:func:`ARKodeSetConstraints`).
       Similarly, users should not employ "H-Tol" multirate time step
-      controllers on the object returned using :c:func:`MRIStepExtSTSCreate`.
+      controllers on the object returned using :c:func:`MRIStepCreateExtSTS`.
 
    **Example usage:**
 
       .. code-block:: C
 
          /* create ExtSTS instantiation of MRIStep object */
-         void* extsts_mem = MRIStepExtSTSCreate(fd, fe, fi, t0, y0, sunctx);
+         void* extsts_mem = MRIStepCreateExtSTS(fd, fe, fi, t0, y0, sunctx);
 
          /* access the inner STS stepper object */
          void* sts_mem = NULL;
-         retval = MRIStepExtSTSGetSTS(extsts_mem, &sts_mem);
+         retval = MRIStepGetSTS(extsts_mem, &sts_mem);
 
          /* configure ExtSTS integrator */
          retval = MRIStepSet*(extsts_mem, ...);
@@ -1629,7 +1629,7 @@ Main solver optional output functions
 
 
 
-.. c:function:: int MRIStepExtSTSGetSTS(void* arkode_mem, void** stsptr)
+.. c:function:: int MRIStepGetSTS(void* arkode_mem, void** stsptr)
 
    Returns a pointer to the LSRKStep super-time-stepping object
    used within the MRIStep module when performing ExtSTS time-stepping.
@@ -1646,7 +1646,7 @@ Main solver optional output functions
       MRIStep and LSRKStep components of the ExtSTS solver, they should first
       call :c:func:`ARKodeSetUserData` on the MRIStep object, and then call
       :c:func:`ARKodeSetUserData` on the LSRKStep object returned from
-      :c:func:`MRIStepExtSTSCreate`.  By default, the LSRKStep object will
+      :c:func:`MRIStepCreateExtSTS`.  By default, the LSRKStep object will
       inherit the ``user_data`` pointer from the MRIStep object.
 
    .. versionadded:: x.y.z
@@ -2498,8 +2498,8 @@ MRIStep re-initialization function
 
 To reinitialize the MRIStep module for the solution of a new problem,
 where a prior call to :c:func:`MRIStepCreate()` or
-:c:func:`MRIStepExtSTSCreate()` has been made, the user must call the
-function :c:func:`MRIStepReInit()` or :c:func:`MRIStepExtSTSReInit()`, as
+:c:func:`MRIStepCreateExtSTS()` has been made, the user must call the
+function :c:func:`MRIStepReInit()` or :c:func:`MRIStepReInitExtSTS()`, as
 appropriate.  Since instructions for both cases are the same, the next
 few paragraphs discuss only the case for general MRIStep methods, but
 apply to ExtSTS methods as well.
@@ -2573,7 +2573,7 @@ vector.
 
 
 
-.. c:function:: int MRIStepExtSTSReInit(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0)
+.. c:function:: int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0)
 
    Provides required problem specifications and re-initializes
    MRIStep for an Extended Super Time Stepping (ExtSTS) method.
@@ -2603,7 +2603,7 @@ vector.
       All previously set options are retained but may be updated by calling
       the appropriate "Set" functions.
 
-      If an error occurred, :c:func:`MRIStepExtSTSReInit()` also
+      If an error occurred, :c:func:`MRIStepReInitExtSTS()` also
       sends an error message to the error handler function.
 
    .. versionadded:: x.y.z
