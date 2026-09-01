@@ -22,7 +22,7 @@ Problem parameters and options:
   fixed h          = 0
   ls setup freq    = 0
  ---------------------------------
-  MRI method       = ARKODE_IMEX_MRI_GARK_ARK2
+  MRI method       = ARKODE_IMEX_MRI_GARK_GKC21
   STS method       = RKC
  ---------------------------------
   output           = 1

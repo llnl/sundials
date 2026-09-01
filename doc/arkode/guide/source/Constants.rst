@@ -141,7 +141,7 @@ contains the ARKODE output constants.
    |                                               | :c:enumerator:`ARKODE_BACKWARD_EULER_1_1`.                 |
    +-----------------------------------------------+------------------------------------------------------------+
    | :index:`ARKSTEP_DEFAULT_DIRK_2`               | Use ARKStep's default second-order DIRK method             |
-   |                                               | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`.                    |
+   |                                               | :c:enumerator:`ARKODE_GKC21_DIRK_3_1_2`.                   |
    +-----------------------------------------------+------------------------------------------------------------+
    | :index:`ARKSTEP_DEFAULT_DIRK_3`               | Use ARKStep's default third-order DIRK method              |
    |                                               | :c:enumerator:`ARKODE_ESDIRK325L2SA_5_2_3`.                |
@@ -157,7 +157,7 @@ contains the ARKODE output constants.
    | **Default ImEx Butcher tables**               |                                                            |
    +-----------------------------------------------+------------------------------------------------------------+
    | :index:`ARKSTEP_DEFAULT_ARK_ETABLE_2` &       | Use ARKStep's default second-order ARK method              |
-   | :index:`ARKSTEP_DEFAULT_ARK_ITABLE_2`         | (ARKODE_ARK2_ERK_3_1_2 and ARKODE_ARK2_DIRK_3_1_2).        |
+   | :index:`ARKSTEP_DEFAULT_ARK_ITABLE_2`         | (ARKODE_GKC21_ERK_3_1_2 and ARKODE_GKC21_DIRK_3_1_2).      |
    +-----------------------------------------------+------------------------------------------------------------+
    | :index:`ARKSTEP_DEFAULT_ARK_ETABLE_3` &       | Use ARKStep's default third-order ARK method               |
    | :index:`ARKSTEP_DEFAULT_ARK_ITABLE_3`         | (ARKODE_ARK324L2SA_ERK_4_2_3 and                           |

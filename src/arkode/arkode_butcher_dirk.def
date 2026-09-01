@@ -41,7 +41,7 @@
      ARKODE_IMPLICIT_MIDPOINT_1_2      SDIRK     Y         N       Y
      ARKODE_IMPLICIT_TRAPEZOIDAL_2_2  ESDIRK     Y         N       Y
      ARKODE_SDIRK_2_1_2                SDIRK     Y         N       Y
-     ARKODE_ARK2_DIRK_3_1_2*          ESDIRK     Y         Y       Y
+     ARKODE_GKC21_DIRK_3_1_2*         ESDIRK     Y         Y       Y
      ARKODE_ASCHER_SDIRK_3_1_2*        SDIRK     Y         Y       Y
      ARKODE_SSP_DIRK_3_1_2*             DIRK     Y         N       Y
      ARKODE_BILLINGTON_3_3_2           SDIRK     N         N       Y
@@ -107,7 +107,7 @@ ARK_BUTCHER_TABLE(ARKODE_SDIRK_2_1_2, { /* SDIRK-2-1 (A,B stable) */
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ARK2_DIRK_3_1_2, { /* ARK2 Implicit Table (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_GKC21_DIRK_3_1_2, { /* GKC21 Implicit Table (A,L stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
 
     /* 1 - 1 / sqrt(2) */

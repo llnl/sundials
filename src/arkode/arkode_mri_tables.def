@@ -58,7 +58,7 @@
      ARKODE_MRI_GARK_ESDIRK34a         3       2          ID      Y
      ARKODE_MRI_GARK_ESDIRK46a         4       3          ID      Y
      ARKODE_IMEX_MRI_GARK_ASCHER_ARK2  2       1          IED     Y
-     ARKODE_IMEX_MRI_GARK_ARK2         2       1          IED     Y
+     ARKODE_IMEX_MRI_GARK_GKC21        2       1          IED     Y
      ARKODE_IMEX_MRI_GARK_EULER        1       0          ID      Y
      ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL  2       0          ID      Y
      ARKODE_IMEX_MRI_GARK_MIDPOINT     2       0          ID      Y
@@ -430,7 +430,7 @@ ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ASCHER_ARK2, {
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARK2, {
+ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_GKC21, {
     MRIStepCoupling C = MRIStepCoupling_Alloc(1, 6, MRISTEP_IMEX);
 
     C->q = 2;
@@ -1206,7 +1206,7 @@ ARK_MRI_TABLE(ARKODE_MRI_GARK_EXP_ARS222, { /* custom */
   })
 
 ARK_MRI_TABLE(ARKODE_MRI_GARK_EXP_GKC21, { /* custom */
-    ARKodeButcherTable B = ARKodeButcherTable_LoadERK(ARKODE_ARK2_ERK_3_1_2);
+    ARKodeButcherTable B = ARKodeButcherTable_LoadERK(ARKODE_GKC21_ERK_3_1_2);
     MRIStepCoupling C = MRIStepCoupling_MIStoMRI(B, B->q, B->p);
     ARKodeButcherTable_Free(B);
     return C;

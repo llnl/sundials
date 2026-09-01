@@ -48,7 +48,7 @@
      ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2 Y
      ARKODE_SSP_ERK_3_1_2*                Y
      ARKODE_SSP_ERK_4_1_2                 Y
-     ARKODE_ARK2_ERK_3_1_2*               Y
+     ARKODE_GKC21_ERK_3_1_2*              Y
      ARKODE_ASCHER_ERK_3_1_2*             Y
      ARKODE_SSP_LSPUM_ERK_3_1_2*          Y
      ARKODE_BOGACKI_SHAMPINE_4_2_3        Y
@@ -161,7 +161,7 @@ ARK_BUTCHER_TABLE(ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2, { /* Explicit-Midpoint-E
     return B;
  })
 
-ARK_BUTCHER_TABLE(ARKODE_ARK2_ERK_3_1_2, { /* ARK2 Explicit Table */
+ARK_BUTCHER_TABLE(ARKODE_GKC21_ERK_3_1_2, { /* GKC21 Explicit Table */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
 
     /* 1 - 1 / sqrt(2) */

@@ -39,3 +39,11 @@ Fixed duplicate keys in IDA and IDAS logging output from consistent initial
 condition solves and order selection diagnostics.
 
 **Deprecation Notices**
+
+Renamed the ``ARKODE_ARK2_ERK_3_1_2`` and ``ARKODE_ARK2_DIRK_3_1_2`` Butcher tables to
+``ARKODE_GKC21_ERK_3_1_2`` and ``ARKODE_GKC21_DIRK_3_1_2`` to reflect the method's origin.
+The previous table names are deprecated and will be removed in a future release.
+
+Renamed the ``ARKODE_IMEX_MRI_GARK_ARK2`` multirate coupling table to
+``ARKODE_IMEX_MRI_GARK_GKC21`` to reflect the method's origin. The previous table name is
+deprecated and will be removed in a future release.

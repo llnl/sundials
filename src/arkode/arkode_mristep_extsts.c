@@ -139,7 +139,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   MRIStepCoupling MRIC = NULL;
   if (fe == NULL && fi != NULL) /* Implicit ExtSTS method */
   {
-    MRIC = MRIStepCoupling_LoadTable(ARKODE_IMEX_MRI_GARK_ARK2);
+    MRIC = MRIStepCoupling_LoadTable(ARKODE_IMEX_MRI_GARK_GKC21);
   }
   else if (fe != NULL && fi == NULL) /* Explicit ExtSTS method */
   {
@@ -147,7 +147,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   }
   else /* ImEx ExtSTS method */
   {
-    MRIC = MRIStepCoupling_LoadTable(ARKODE_IMEX_MRI_GARK_ARK2);
+    MRIC = MRIStepCoupling_LoadTable(ARKODE_IMEX_MRI_GARK_GKC21);
   }
   if (MRIC == NULL)
   {
