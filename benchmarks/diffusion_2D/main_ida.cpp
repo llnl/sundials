@@ -166,9 +166,9 @@ int main(int argc, char* argv[])
     // SuperLU-DIST objects
     SuperMatrix A_super;
     gridinfo_t grid;
-    dLUstruct_t A_lu;
-    dScalePermstruct_t A_scaleperm;
-    dSOLVEstruct_t A_solve;
+    xLUstruct_t A_lu;
+    xScalePermstruct_t A_scaleperm;
+    xSOLVEstruct_t A_solve;
     SuperLUStat_t A_stat;
     superlu_dist_options_t A_opts;
     sunrealtype* A_data      = nullptr;
@@ -208,11 +208,11 @@ int main(int argc, char* argv[])
       if (check_flag((void*)A_row_ptrs, "malloc Arowptr", 0)) return 1;
 
       // SuperLU_DIST structures
-      dCreate_CompRowLoc_Matrix_dist(&A_super, udata.nodes, udata.nodes, nnz_loc,
+      xCreate_CompRowLoc_Matrix_dist(&A_super, udata.nodes, udata.nodes, nnz_loc,
                                      udata.nodes_loc, 0, A_data, A_col_idxs,
-                                     A_row_ptrs, SLU_NR_loc, SLU_D, SLU_GE);
-      dScalePermstructInit(udata.nodes, udata.nodes, &A_scaleperm);
-      dLUstructInit(udata.nodes, &A_lu);
+                                     A_row_ptrs, SLU_NR_loc, SLU_X, SLU_GE);
+      xScalePermstructInit(udata.nodes, udata.nodes, &A_scaleperm);
+      xLUstructInit(udata.nodes, &A_lu);
       PStatInit(&A_stat);
       set_default_options_dist(&A_opts);
       A_opts.PrintStat = NO;
@@ -367,8 +367,8 @@ int main(int argc, char* argv[])
     if (uopts.ls == "sludist")
     {
       PStatFree(&A_stat);
-      dScalePermstructFree(&A_scaleperm);
-      dLUstructFree(&A_lu);
+      xScalePermstructFree(&A_scaleperm);
+      xLUstructFree(&A_lu);
       Destroy_CompRowLoc_Matrix_dist(&A_super);
       superlu_gridexit(&grid);
     }
