@@ -78,11 +78,9 @@ if(SKBUILD AND SUNDIALS_ENABLE_PYTHON)
       set(CMAKE_INSTALL_RPATH "$ORIGIN")
     endif()
   endif()
-endif()
-
-# only apply rpath settings for builds using shared libs
-if(BUILD_SHARED_LIBS)
-  # use, i.e. don't skip the full RPATH for the build tree
+elseif(BUILD_SHARED_LIBS)
+  # only apply rpath settings for builds using shared libs use, i.e. don't skip
+  # the full RPATH for the build tree
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
   # when building, don't use the install RPATH already (but later on when

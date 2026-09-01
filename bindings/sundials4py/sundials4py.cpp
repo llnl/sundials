@@ -40,8 +40,14 @@ void bind_kinsol(nb::module_& m);
 
 void bind_nvector_serial(nb::module_& m);
 void bind_nvector_manyvector(nb::module_& m);
+#ifdef SUNDIALS_NVECTOR_CUDA
+void bind_nvector_cuda(nb::module_& m);
+#endif
 
 void bind_sumemoryhelper_sys(nb::module_& m);
+#ifdef SUNDIALS_NVECTOR_CUDA
+void bind_sunmemoryhelper_cuda(nb::module_& m);
+#endif
 
 void bind_sunadaptcontroller_imexgus(nb::module_& m);
 void bind_sunadaptcontroller_mrihtol(nb::module_& m);
@@ -125,6 +131,9 @@ NB_MODULE(sundials4py, m)
 
   sundials4py::bind_nvector_serial(core_m);
   sundials4py::bind_nvector_manyvector(core_m);
+#ifdef SUNDIALS_NVECTOR_CUDA
+  sundials4py::bind_nvector_cuda(core_m);
+#endif
 
   sundials4py::bind_sunadaptcontroller_imexgus(core_m);
   sundials4py::bind_sunadaptcontroller_mrihtol(core_m);
@@ -153,6 +162,9 @@ NB_MODULE(sundials4py, m)
   sundials4py::bind_sunmatrix_sparse(core_m);
 
   sundials4py::bind_sumemoryhelper_sys(core_m);
+#ifdef SUNDIALS_NVECTOR_CUDA
+  sundials4py::bind_sunmemoryhelper_cuda(core_m);
+#endif
 
   sundials4py::bind_sunnonlinsol_fixedpoint(core_m);
   sundials4py::bind_sunnonlinsol_newton(core_m);

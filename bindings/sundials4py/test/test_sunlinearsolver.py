@@ -17,7 +17,6 @@
 
 import pytest
 import sys
-import importlib
 from fixtures import *
 from sundials4py.core import *
 

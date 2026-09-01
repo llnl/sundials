@@ -80,7 +80,7 @@ typedef struct
   sunrealtype dx, hdcoef, hacoef;
   int npes, my_pe;
   MPI_Comm comm;
-  sunrealtype z[100];
+  sunrealtype* z; /* work array of length local_N + 2 (local values + 2 halo) */
 }* UserData;
 
 /* Private Helper Functions */
@@ -155,6 +155,10 @@ int main(int argc, char* argv[])
   data->comm  = comm;
   data->npes  = npes;
   data->my_pe = my_pe;
+
+  /* Work array holds the local segment of u plus one halo value at each end. */
+  data->z = (sunrealtype*)malloc((local_N + 2) * sizeof(sunrealtype));
+  if (check_retval((void*)data->z, "malloc", 2, my_pe)) { MPI_Abort(comm, 1); }
 
   reltol = ZERO; /* Set the tolerances */
   abstol = ATOL;
