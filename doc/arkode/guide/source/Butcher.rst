@@ -188,6 +188,10 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_4_2_3`                 | 4      | 2              | 3     |
    +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_KUTTA_RK4a_4_4`                | 4      | ---            | 4     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_KUTTA_RK4b_4_4`                | 4      | ---            | 4     |
+   +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_10_3_4`                | 10     | 3              | 4     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SOFRONIOU_SPALETTA_5_3_4`      | 5      | 3              | 4*    |
@@ -395,6 +399,8 @@ This is the "SSPERK(3,2)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have optimal SSP coefficient
 equal to 2.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -426,6 +432,8 @@ Accessible via the string ``"ARKODE_SSP_ERK_4_1_2"`` to
 This is the "SSPERK(4,2)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have optimal SSP coefficient
 equal to 3.
+
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
@@ -491,6 +499,8 @@ The method is the explicit portion of the "(2,2,2)" additive Runge--Kutta
 method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented specifically for
 ARKODE.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -526,6 +536,7 @@ Runge--Kutta method from :cite:p:`H:14`; the embedding was invented
 specifically for ARKODE.  The method has SSP coefficient equal to 1.2,
 and the embedding has SSP coefficient equal to 1.15.
 
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
@@ -687,6 +698,8 @@ Accessible via the string ``"ARKODE_SSP_ERK_4_2_3"`` to
 This is the "SSPERK(4,3)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have SSP coefficient equal to 2.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -708,6 +721,64 @@ Both the method and its embedding have SSP coefficient equal to 2.
    region is outlined in red; the embedding's region is in blue dashed.
 
 
+.. c:enumerator:: ARKODE_KUTTA_RK4a_4_4
+
+Accessible via the constant ``ARKODE_KUTTA_RK4a_4_4`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.  Accessible via the string
+``"ARKODE_KUTTA_RK4a_4_4"`` to :c:func:`ARKStepSetTableName`,
+:c:func:`ERKStepSetTableName`, or :c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the classical RK4 method :cite:p:`K:01`.
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+           0 & 0       & 0       & 0       & 0 \\
+     \frac12 & \frac12 & 0       & 0       & 0 \\
+     \frac12 & 0       & \frac12 & 0       & 0 \\
+           1 & 0       & 0       & 1       & 0 \\
+     \hline
+           4 & \frac16 & \frac13 & \frac13 & \frac16\\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_KUTTA_RK4a_4_4_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the RK4 method. The method's region is shaded
+   in blue.
+
+
+.. c:enumerator:: ARKODE_KUTTA_RK4b_4_4
+
+Accessible via the constant ``ARKODE_KUTTA_RK4b_4_4`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.  Accessible via the string
+``"ARKODE_KUTTA_RK4b_4_4"`` to :c:func:`ARKStepSetTableName`,
+:c:func:`ERKStepSetTableName`, or :c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the classical 3/8-rule :cite:p:`K:01`.
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+           0 & 0        & 0       & 0       & 0 \\
+     \frac13 & \frac13  & 0       & 0       & 0 \\
+     \frac23 & -\frac13 & 1       & 0       & 0 \\
+           1 & 1        & -1      & 1       & 0 \\
+     \hline
+           4 & \frac18 & \frac38 & \frac38 & \frac18\\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_KUTTA_RK4b_4_4_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the 3/8-rule method. The method's region is
+   shaded in blue.
+
+
 .. c:enumerator:: ARKODE_SSP_ERK_10_3_4
 
 Accessible via the constant ``ARKODE_SSP_ERK_10_3_4`` to
@@ -718,6 +789,8 @@ Accessible via the string ``"ARKODE_SSP_ERK_10_3_4"`` to
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the "SSPERK(10,4)" method from :cite:p:`FCS:22`.
 The method has SSP coefficient equal to 6.
+
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
@@ -1670,6 +1743,8 @@ method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented
 specifically for ARKODE.  The method is both A- and L-stable, and the
 embedding is A-stable.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -1705,6 +1780,8 @@ The original method is the "IMEX-SSP2(3,3,2)" stiffly accurate method from
 is both A- and L-stable, while the embedding is A-stable.  Both the method and
 embedding have SSP coefficient equal to 2.4.
 
+.. versionadded:: 7.8.0 (6.8.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -1739,6 +1816,7 @@ specifically for ARKODE.  The method is both A- and L-stable,
 while the embedding is A-stable.  Both the method and embedding have SSP
 coefficient equal to 3.81.
 
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 
@@ -1919,6 +1997,8 @@ This method was invented specifically for ARKODE as an implicit method to
 pair with ``ARKODE_SSP_ERK_4_2_3`` for an embedded additive
 Runge--Kutta method.  The method is both A- and L-stable, and the
 embedding is A-stable.
+
+.. versionadded:: 7.8.0 (6.8.0)
 
 .. math::
 

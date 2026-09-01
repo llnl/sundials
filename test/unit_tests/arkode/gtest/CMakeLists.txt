@@ -33,7 +33,11 @@ target_link_libraries(
           sundials_nvecmanyvector_obj
           sundials_sunlinsolband_obj
           sundials_sunlinsoldense_obj
+          # Use only the auto object files directly here since the auto object
+          # library already links the Newton/fixed-point objects.
+          $<TARGET_OBJECTS:sundials_sunnonlinsolauto_obj>
           sundials_sunnonlinsolnewton_obj
+          sundials_sunnonlinsolfixedpoint_obj
           sundials_sunadaptcontrollerimexgus_obj
           sundials_sunadaptcontrollersoderlind_obj
           ${EXE_EXTRA_LINK_LIBS})

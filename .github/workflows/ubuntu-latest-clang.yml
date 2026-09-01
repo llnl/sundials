@@ -31,7 +31,7 @@ jobs:
         logging_level: [0, 1, 2, 3, 4, 5]
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory.
@@ -44,8 +44,8 @@ jobs:
         -D CMAKE_CXX_COMPILER="$(which clang++)" \
         -D CMAKE_CXX_STANDARD=17 \
         -D SUNDIALS_LOGGING_LEVEL=${{matrix.logging_level}} \
-        -D ENABLE_ALL_WARNINGS=ON \
-        -D ENABLE_WARNINGS_AS_ERRORS=ON \
+        -D SUNDIALS_ENABLE_ALL_WARNINGS=ON \
+        -D CMAKE_COMPILE_WARNING_AS_ERROR=ON \
         -D SUNDIALS_TEST_ENABLE_DEV_TESTS=ON \
         -D SUNDIALS_TEST_ENABLE_UNIT_TESTS=ON \
         -D SUNDIALS_TEST_ENABLE_GTEST=ON \
@@ -89,7 +89,7 @@ jobs:
         profiling: ['OFF', 'ON']
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory.
@@ -101,8 +101,8 @@ jobs:
         -D CMAKE_C_COMPILER="$(which clang)" \
         -D CMAKE_CXX_COMPILER="$(which clang++)" \
         -D SUNDIALS_BUILD_WITH_PROFILING=${{matrix.profiling}} \
-        -D ENABLE_ALL_WARNINGS=ON \
-        -D ENABLE_WARNINGS_AS_ERRORS=ON
+        -D SUNDIALS_ENABLE_ALL_WARNINGS=ON \
+        -D CMAKE_COMPILE_WARNING_AS_ERROR=ON
 
     - name: Build
       # Build your program with the given configuration

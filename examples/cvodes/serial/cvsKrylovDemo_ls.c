@@ -219,11 +219,8 @@ int main(int argc, char* argv[])
   retval = SUNLogger_Create(SUN_COMM_NULL, 0, &logger);
   if (check_retval(&retval, "SUNLogger_Create", 1)) { return 1; }
 
-  if (monitor)
-  {
-    retval = SUNLogger_SetInfoFilename(logger, info_fname);
-    if (check_retval(&retval, "SUNLogger_SetInfoFilename", 1)) { return 1; }
-  }
+  retval = SUNLogger_SetInfoFilename(logger, monitor ? info_fname : NULL);
+  if (check_retval(&retval, "SUNLogger_SetInfoFilename", 1)) { return 1; }
 
   retval = SUNContext_SetLogger(sunctx, logger);
   if (check_retval(&retval, "SUNContext_SetLogger", 1)) { return 1; }
