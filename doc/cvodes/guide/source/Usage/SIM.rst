@@ -1687,14 +1687,18 @@ Also, as described in :numref:`CVODES.Mathematics.ivp_sol`, the CVLS interface
 targets a preconditioned residual satisfying
 
 .. math::
+   \|\tilde{r}\|_{2} \le tol.
 
-   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N
-
-where :math:`\epsilon_N` is the nonlinear solver tolerance, and the default
-:math:`\epsilon_L = 0.05`; this value may be modified by the user through
-the :c:func:`CVodeSetEpsLin` function.  The attached ``SUNLinearSolver`` may use
-scaling vectors or a converted :math:`L_2` tolerance instead of testing this WRMS
-norm directly; see :numref:`SUNLinSol.CVODES.Iterative.Tolerance`.
+where :math:`\tilde{r}` is the scaled linear residual. The tolerance is
+:math:`tol = C \epsilon_L \epsilon_N \epsilon` where :math:`\epsilon_L` is the
+linear tolerance factor (the default is 0.05 and may be modified by calling
+:c:func:`CVodeSetEpsLin`), :math:`\epsilon_N` is the nonlinear solver tolerance,
+and :math:`\epsilon` is a constant relating the nonlinear solver error to
+CVODE's error estimate. The constant :math:`C = \sqrt{N}` where :math:`N` is the
+vector length (but this factor may be modified with
+:c:func:`CVodeSetLSNormFactor` for other norms). If the solver does not support
+scaling, the tolerance is modified as described in
+:numref:`SUNLinSol.CVODES.Iterative.Tolerance`.
 
 
 .. c:function:: int CVodeSetPreconditioner(void* cvode_mem, CVLsPrecSetupFn psetup, CVLsPrecSolveFn psolve)

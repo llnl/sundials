@@ -257,18 +257,37 @@ forced to reduce the step size, and we replace :math:`h_n` by
 number of convergence failures; the default value of this limit is 10, but this
 can be changed by the user.
 
-When an iterative method is used to solve the linear system, its errors
-must also be controlled, and this also involves the local error test
-constant. The linear iteration error in the solution vector
-:math:`\delta_m` is approximated by the preconditioned residual vector.
-Thus to ensure (or attempt to ensure) that the linear iteration errors
-do not interfere with the nonlinear error and local integration error
-controls, we set the integrator-level target for the preconditioned residual to
-:math:`\|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N`, with
-:math:`\epsilon_L = 0.05` by default.  The attached ``SUNLinearSolver`` may
-not evaluate this WRMS norm directly; the CVLS interface provides scaling
-vectors when supported, or otherwise converts this target to the norm used by
-the linear solver.  See :numref:`SUNLinSol.CVODE.Iterative.Tolerance`.
+When an iterative method is used to solve the linear Newton systems
+:eq:`CVODE_Newton`, its errors must also be controlled. To this end,
+we approximate the linear iteration error in the correction vector
+:math:`\delta_m` using the scaled, preconditioned residual vector. With left
+preconditioning, this is :math:`\tilde{r} = S P^{-1} r`, where
+:math:`r = M \delta_m + F(y^{n(m)})` is the unscaled residual and the diagonal
+matrix :math:`S` has entries :math:`S_{i,i} = W_i` as defined in
+:eq:`CVODE_errwt`. The linear iteration error should be at least as small as
+the nonlinear iteration error so that the linear solver does not interfere with
+the nonlinear solver and local time integration error controls. Most iterative
+linear solver libraries measure error in the :math:`L_2` norm rather than the
+WRMS norm, so we define the linear solver tolerance as
+
+.. math::
+   \|\tilde{r}\|_2 \le \text{tol}, \qquad
+   \text{tol} = C \epsilon_L \epsilon_N \epsilon.
+   :label: CVODE_LinearTolerance
+
+The constant :math:`C` is a norm conversion factor that defaults to
+:math:`\sqrt{N}` but can be modified with :c:func:`CVodeSetLSNormFactor`.
+The factor :math:`\epsilon_N` is the nonlinear solver tolerance from the
+nonlinear convergence test above, while :math:`\epsilon_L` sets the desired
+ratio between the linear and nonlinear tolerances.  Smaller values of
+:math:`\epsilon_L` are typically useful for strongly nonlinear or very stiff
+ODE systems, while easier ODE systems may benefit from a value closer to 1.
+The default values are :math:`\epsilon_L = 0.05` and :math:`\epsilon_N = 0.1`
+but may be modified by the user. Finally, :math:`\epsilon` is a constant
+relating the nonlinear solver error to CVODE's error estimate. If the linear
+solver does not support scaling, it is not performed, and instead, the tolerance
+is scaled by :math:`1 / \|x\|_{\text{WRMS}}` where :math:`x \in \mathbb{R}^N` is
+a vector of ones.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix

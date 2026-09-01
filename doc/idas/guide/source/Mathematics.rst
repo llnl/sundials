@@ -243,16 +243,36 @@ failures. Both the maximum number of allowable nonlinear iterations and the
 maximum number of nonlinear convergence failures can be changed by the user from
 their default values.
 
-When an iterative method is used to solve the linear system, to minimize the
-effect of linear iteration errors on the nonlinear and local integration error
-controls, we set the integrator-level target for the preconditioned linear
-residual relative to the allowed error in the nonlinear iteration, i.e.,
-:math:`\| P^{-1}(Jx+G) \|_{\text{WRMS}} < \epsilon_L \epsilon_N`, where the
-default :math:`\epsilon_L = 0.05` can be changed by the user.  The attached
-``SUNLinearSolver`` may not evaluate this WRMS norm directly; the IDALS
-interface provides scaling vectors when supported, or otherwise converts this
-target to the norm used by the linear solver.  See
-:numref:`SUNLinSol.IDAS.Iterative.Tolerance`.
+When an iterative method is used to solve the linear Newton systems
+:eq:`IDAS_DAE_Newtoncorr`, its errors must also be controlled. To this end,
+we approximate the linear iteration error in the correction vector
+:math:`\Delta y` using the scaled, preconditioned residual vector
+:math:`\tilde{r} = S P^{-1} r`, where :math:`r = J \Delta y + G` is the
+unscaled residual. The diagonal matrix :math:`S` has entries
+:math:`S_{i,i} = W_i` as defined in :eq:`IDAS_errwt`. The linear iteration error
+should be at least as small as the nonlinear iteration error so that the linear
+solver does not interfere with the nonlinear solver and local time integration
+error controls. Most iterative linear solver libraries measure error in the
+:math:`L_2` norm rather than the WRMS norm, so we define the linear solver
+tolerance as
+
+.. math::
+   \|\tilde{r}\|_2 \le \text{tol}, \qquad
+   \text{tol} = C \epsilon_L \epsilon_N.
+   :label: IDAS_LinearTolerance
+
+The constant :math:`C` is a norm conversion factor that defaults to
+:math:`\sqrt{N}` but can be modified with :c:func:`IDASetLSNormFactor`.
+The factor :math:`\epsilon_N` is the nonlinear solver tolerance from
+:eq:`IDAS_DAE_nls_test`, while :math:`\epsilon_L` sets the desired
+ratio between the linear and nonlinear tolerances. Smaller values of
+:math:`\epsilon_L` are typically useful for strongly nonlinear or very stiff
+DAE systems, while easier DAE systems may benefit from a value closer to 1.
+The default values are :math:`\epsilon_L = 0.05` and :math:`\epsilon_N = 0.33`
+but may be modified by the user. If the linear solver does not support scaling,
+it is not performed, and instead, the tolerance is scaled by
+:math:`1 / \|x\|_{\text{WRMS}}` where :math:`x \in \mathbb{R}^N` is a vector of
+ones.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix objects,

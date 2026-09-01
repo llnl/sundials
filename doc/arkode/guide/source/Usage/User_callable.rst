@@ -3201,13 +3201,13 @@ ARKLS interface targets a preconditioned residual satisfying
    \|\tilde{r}\|_{2} \le tol.
 
 where :math:`\tilde{r}` is the scaled linear residual. The tolerance is
-:math:`tol = C \epsilon_L \epsilon_N` where :math:`\epsilon_N` is the nonlinear
-solver tolerance, :math:`\epsilon_L` is the linear tolerance factor (the default
-is 0.05 and may be modified by calling :c:func:`ARKodeSetEpsLin`), and
-:math:`C = \sqrt{N}` where :math:`N` is the vector length (but this factor may
-be modified with :c:func:`ARKStepSetLSNormFactor` for other norms). If the
-solver does not support scaling, the tolerance is modified as described in
-:numref:`SUNLinSol.Iterative.Tolerance`.
+:math:`tol = C \epsilon_L \epsilon_N` where :math:`\epsilon_L` is the linear
+tolerance factor (the default is 0.05 and may be modified by calling
+:c:func:`ARKodeSetEpsLin`), :math:`\epsilon_N` is the nonlinear solver
+tolerance, and :math:`C = \sqrt{N}` where :math:`N` is the vector length (but
+this factor may be modified with :c:func:`ARKodeSetLSNormFactor` for other
+norms). If the solver does not support scaling, the tolerance is modified as
+described in :numref:`SUNLinSol.Iterative.Tolerance`.
 
 
 .. c:function:: int ARKodeSetPreconditioner(void* arkode_mem, ARKLsPrecSetupFn psetup, ARKLsPrecSolveFn psolve)
