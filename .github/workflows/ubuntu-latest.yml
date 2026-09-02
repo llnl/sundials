@@ -4,12 +4,22 @@ name: Build and Test - Ubuntu/gcc (TPLs, no GPUs)
 on:
   # Allows this workflow to be called by other workflows
   workflow_call:
+    inputs:
+      container_tag:
+        description: 'Tag of the sundials-ci images to test against'
+        type: string
+        default: 'spack-v1.2.2'
   # Allows manual triggering
   workflow_dispatch:
+    inputs:
+      container_tag:
+        description: 'Tag of the sundials-ci images to test against'
+        type: string
+        default: 'spack-v1.2.2'
 
 # Cancel any in-progress workflow runs
 concurrency:
-  group: ubuntu-gcc-${{ github.head_ref || github.ref_name }}
+  group: ubuntu-gcc-${{ inputs.container_tag }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 permissions:
@@ -19,7 +29,7 @@ jobs:
   build_and_test:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/llnl/sundials-ci-int${{ matrix.indexsize }}-${{ matrix.precision }}:spack-v1.2.2
+      image: ghcr.io/llnl/sundials-ci-int${{ matrix.indexsize }}-${{ matrix.precision }}:${{ inputs.container_tag }}
       options: --user root
     strategy:
       fail-fast: false
