@@ -21,7 +21,7 @@ User-supplied functions
 =============================
 
 In addition to the required :c:type:`ARKRhsFn` arguments that define the IVP,
-RKL and RKC methods additionally require an :c:type:`ARKDomEigFn` function to
+RKL, RKC and RKG methods additionally require an :c:type:`ARKDomEigFn` function to
 estimate the dominant eigenvalue.
 
 
@@ -32,7 +32,7 @@ estimate the dominant eigenvalue.
 The dominant eigenvalue estimation
 ----------------------------------
 
-When running LSRKStep with either the RKC or RKL methods, the user must supply
+When running LSRKStep with either the RKC, RKL or RKG methods, the user must supply
 a dominant eigenvalue estimation function of type :c:type:`ARKDomEigFn`:
 
 .. c:type:: int (*ARKDomEigFn)(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR, sunrealtype* lambdaI, void* user_data, N_Vector temp1, N_Vector temp2, N_Vector temp3);
