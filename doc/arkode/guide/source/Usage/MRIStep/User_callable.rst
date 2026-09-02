@@ -1413,7 +1413,9 @@ Optional inputs for iterative ``SUNLinearSolver`` modules
 
    Specifies the factor to use when converting from the integrator tolerance
    (WRMS norm) to the linear solver tolerance (L2 norm) for Newton linear system
-   solves e.g., ``tol_L2 = fac * tol_WRMS``.
+   solves e.g., ``tol_L2 = fac * tol_WRMS``. See
+   :numref:`SUNLinSol.Iterative.Tolerance` for how this tolerance is used in the
+   linear solver convergence test.
 
    :param arkode_mem: pointer to the MRIStep memory block.
    :param nrmfac: the norm conversion factor. If *nrmfac* is:

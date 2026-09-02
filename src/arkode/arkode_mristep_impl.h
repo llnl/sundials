@@ -110,8 +110,6 @@ typedef struct ARKodeMRIStepMemRec
   sunrealtype crate;      /* estimated nonlin convergence rate        */
   sunrealtype delnrm_p;   /* norm of previous nonlinear solver update */
   sunrealtype delnrm;     /* norm of current nonlinear solver update  */
-  sunrealtype eRNrm;      /* estimated residual norm, used in nonlin
-                             and linear solver convergence tests      */
   sunrealtype nlscoef;    /* coefficient in nonlin. convergence test  */
   int msbp;               /* positive => max # steps between lsetup
                              negative => call at each Newton iter     */
