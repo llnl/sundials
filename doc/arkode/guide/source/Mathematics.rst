@@ -2421,7 +2421,6 @@ solvers for the Newton systems, preconditioning may be applied to aid
 in solution of the mass matrix systems :eq:`ARKODE_mass_solve`.  Like with the
 Newton linear system in :numref:`ARKODE.Mathematics.Error.Linear`, when using
 an iterative mass matrix linear solver, we consider the scaled, preconditioned residual
-iterative mass matrix linear solver, we use the integrator-level target
 
 .. math::
    \|\tilde{r}\|_2 \le C \epsilon_L \epsilon_N,
