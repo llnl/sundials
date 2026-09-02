@@ -3297,7 +3297,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
       if (retval != 0) { return ARK_PRERHSFN_FAIL; }
     }
 
-    retval = step_mem->fe_wrap(t, y, ark_mem->fn, ark_mem->user_data);
+    retval = step_mem->fe_wrap(t, y, ark_mem->fn, step_mem->user_data_wrap);
     step_mem->nfeDQ++;
     if (retval != ARK_SUCCESS)
     {
@@ -3325,7 +3325,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
       if (retval != 0) { return ARK_PRERHSFN_FAIL; }
     }
     /* Set Jv = f(tn, y+sig*v) */
-    retval = step_mem->fe_wrap(t, work, Jv, ark_mem->user_data);
+    retval = step_mem->fe_wrap(t, work, Jv, step_mem->user_data_wrap);
     step_mem->nfeDQ++;
     if (retval == 0) { break; }
     if (retval < 0) { return (-1); }
