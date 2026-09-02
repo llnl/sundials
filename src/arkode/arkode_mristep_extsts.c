@@ -231,7 +231,7 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   sunrealtype tshift, tscale, dsm;
   N_Vector* forcing;
   const sunrealtype h = tout - t0;
-  int nforcing, nflag, retval, forcing_retval;
+  int nforcing, nflag, retval;
 
   retval = lsrkStep_AccessStepMem(ark_mem, __func__, &lsrkstep_mem);
   if (retval != ARK_SUCCESS) { return retval; }
