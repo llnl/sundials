@@ -303,17 +303,17 @@ int main(int argc, char* argv[])
   /* 1 for primary solution and 1 for embedded solution. The first step is
    * computing y'_0 = M^{-1} f(y_0), which is needed for Hermite interpolation,
    * but not Lagrange. Optimally, could be 2 solves */
-  retval += solve("ARKODE_GKC21_DIRK_3_1_2", "ARKODE_GKC21_ERK_3_1_2", 1,
+  retval += solve("ARKODE_GKC21_ESDIRK_3_1_2", "ARKODE_GKC21_ERK_3_1_2", 1,
                   SUNFALSE, SUNFALSE, 3);
   /* Same comment as previous */
-  retval += solve("ARKODE_GKC21_DIRK_3_1_2", "ARKODE_GKC21_ERK_3_1_2", 1,
+  retval += solve("ARKODE_GKC21_ESDIRK_3_1_2", "ARKODE_GKC21_ERK_3_1_2", 1,
                   SUNFALSE, SUNTRUE, 3);
   /* 1 per implicit and explicit stage */
-  retval += solve("ARKODE_GKC21_DIRK_3_1_2", "ARKODE_GKC21_ERK_3_1_2", 1,
+  retval += solve("ARKODE_GKC21_ESDIRK_3_1_2", "ARKODE_GKC21_ERK_3_1_2", 1,
                   SUNTRUE, SUNFALSE, 6);
   /* 1 per explicit stage and 1 for the first stage of implicit method.
    * Optimal */
-  retval += solve("ARKODE_GKC21_DIRK_3_1_2", "ARKODE_GKC21_ERK_3_1_2", 1,
+  retval += solve("ARKODE_GKC21_ESDIRK_3_1_2", "ARKODE_GKC21_ERK_3_1_2", 1,
                   SUNTRUE, SUNTRUE, 4);
 
   /* IMEX 2 */

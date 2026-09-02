@@ -39,7 +39,7 @@ module farkode_arkstep_mod
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ERK_8 = ARKODE_VERNER_13_7_8
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ERK_9 = ARKODE_VERNER_16_8_9
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_DIRK_1 = ARKODE_BACKWARD_EULER_1_1
- integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_DIRK_2 = ARKODE_GKC21_DIRK_3_1_2
+ integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_DIRK_2 = ARKODE_GKC21_ESDIRK_3_1_2
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_DIRK_3 = ARKODE_ESDIRK325L2SA_5_2_3
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_DIRK_4 = ARKODE_ESDIRK436L2SA_6_3_4
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_DIRK_5 = ARKODE_ESDIRK547L2SA2_7_4_5
@@ -47,7 +47,7 @@ module farkode_arkstep_mod
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ARK_ETABLE_3 = ARKODE_ARK324L2SA_ERK_4_2_3
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ARK_ETABLE_4 = ARKODE_ARK437L2SA_ERK_7_3_4
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ARK_ETABLE_5 = ARKODE_ARK548L2SAb_ERK_8_4_5
- integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ARK_ITABLE_2 = ARKODE_GKC21_DIRK_3_1_2
+ integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ARK_ITABLE_2 = ARKODE_GKC21_ESDIRK_3_1_2
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ARK_ITABLE_3 = ARKODE_ARK324L2SA_DIRK_4_2_3
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ARK_ITABLE_4 = ARKODE_ARK437L2SA_DIRK_7_3_4
  integer(C_INT), parameter, public :: ARKSTEP_DEFAULT_ARK_ITABLE_5 = ARKODE_ARK548L2SAb_DIRK_8_4_5

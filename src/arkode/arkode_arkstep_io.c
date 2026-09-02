@@ -465,9 +465,9 @@ int ARKStepSetTableNum(void* arkode_mem, ARKODE_DIRKTableID itable,
         !((etable == ARKODE_ARK548L2SAb_ERK_8_4_5) &&
           (itable == ARKODE_ARK548L2SAb_DIRK_8_4_5)) &&
         !((etable == ARKODE_GKC21_ERK_3_1_2) &&
-          (itable == ARKODE_GKC21_DIRK_3_1_2)) &&
+          (itable == ARKODE_GKC21_ESDIRK_3_1_2)) &&
         !((etable == ARKODE_ARS222_ERK_3_1_2) &&
-          (itable == ARKODE_ARS222_SDIRK_3_1_2)) &&
+          (itable == ARKODE_ARS222_ESDIRK_3_1_2)) &&
         /*New Embedded IMEX-SSP Methods*/
         !((etable == ARKODE_SSP_ERK_3_1_2) && (itable == ARKODE_SSP_DIRK_3_1_2)) &&
         !((etable == ARKODE_SSP_LSPUM_ERK_3_1_2) &&

@@ -62,14 +62,14 @@ Testing method ARKODE_QESDIRK436L2SA_6_3_4:  table matches predicted method/embe
 Testing method ARKODE_ESDIRK437L2SA_7_3_4:  table matches predicted method/embedding orders of 4/3
 Testing method ARKODE_ESDIRK547L2SA_7_4_5:  table matches predicted method/embedding orders of 5/4
 Testing method ARKODE_ESDIRK547L2SA2_7_4_5:  table matches predicted method/embedding orders of 5/4
-Testing method ARKODE_GKC21_DIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
+Testing method ARKODE_GKC21_ESDIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
 Testing method ARKODE_BACKWARD_EULER_1_1:  table matches predicted method/embedding orders of 1/0
 Testing method ARKODE_IMPLICIT_MIDPOINT_1_2:  table matches predicted method/embedding orders of 2/0
 Testing method ARKODE_IMPLICIT_TRAPEZOIDAL_2_2:  table matches predicted method/embedding orders of 2/0
 Testing method ARKODE_SSP_DIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
 Testing method ARKODE_SSP_LSPUM_SDIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
 Testing method ARKODE_ESDIRK_4_2_3:  table matches predicted method/embedding orders of 3/2
-Testing method ARKODE_ARS222_SDIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
+Testing method ARKODE_ARS222_ESDIRK_3_1_2:  table matches predicted method/embedding orders of 2/1
 
 Testing ARK pairs:
 
