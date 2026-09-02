@@ -30,6 +30,38 @@ using namespace sundials::experimental;
 
 namespace sundials4py {
 
+static int ensure_extsts_sts_fn_table(void* arkode_mem, void* sts_mem)
+{
+  if (sts_mem == nullptr) { return ARK_SUCCESS; }
+
+  auto sts_ark_mem          = static_cast<ARKodeMem>(sts_mem);
+  bool created_sts_fn_table = false;
+
+  if (sts_ark_mem->python == nullptr)
+  {
+    sts_ark_mem->python  = new arkode_user_supplied_fn_table;
+    created_sts_fn_table = true;
+  }
+
+  // MRIStepCreateExtSTS creates the inner LSRKStep object in C, so it does
+  // not get a Python callback table. Give the borrowed STS object its own
+  // table, and synchronize the diffusion RHS callback from the outer MRIStep
+  // table in case MRIStepReInitExtSTS supplied a new one.
+  auto mri_fn_table = get_arkode_fn_table(arkode_mem);
+  auto sts_fn_table =
+    static_cast<arkode_user_supplied_fn_table*>(sts_ark_mem->python);
+  sts_fn_table->mristep_fd = mri_fn_table->mristep_fd;
+
+  int status = ARKodeSetUserData(sts_mem, sts_mem);
+  if (status != ARK_SUCCESS && created_sts_fn_table)
+  {
+    delete sts_fn_table;
+    sts_ark_mem->python = nullptr;
+  }
+
+  return status;
+}
+
 void bind_arkode_mristep(nb::module_& m)
 {
 #include "arkode_mristep_generated.hpp"
@@ -205,8 +237,15 @@ void bind_arkode_mristep(nb::module_& m)
       auto fse_wrapper = fse ? mristep_fse_wrapper : nullptr;
       auto fsi_wrapper = fsi ? mristep_fsi_wrapper : nullptr;
 
-      return MRIStepReInitExtSTS(arkode_mem, fd_wrapper, fse_wrapper,
-                                 fsi_wrapper, t0, y0);
+      int status = MRIStepReInitExtSTS(arkode_mem, fd_wrapper, fse_wrapper,
+                                       fsi_wrapper, t0, y0);
+      if (status != ARK_SUCCESS) { return status; }
+
+      void* sts_mem = nullptr;
+      status        = MRIStepGetSTS(arkode_mem, &sts_mem);
+      if (status != ARK_SUCCESS) { return status; }
+
+      return ensure_extsts_sts_fn_table(arkode_mem, sts_mem);
     },
     nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
     nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
@@ -221,6 +260,9 @@ void bind_arkode_mristep(nb::module_& m)
       std::shared_ptr<ARKodeBorrowedView> sts;
       if (status == ARK_SUCCESS && sts_mem != nullptr)
       {
+        status = ensure_extsts_sts_fn_table(arkode_mem, sts_mem);
+        if (status != ARK_SUCCESS) { return std::make_tuple(status, sts); }
+
         sts = std::make_shared<ARKodeBorrowedView>(sts_mem);
       }
 
