@@ -2418,11 +2418,13 @@ perform any requisite mass matrix-vector products :eq:`ARKODE_mass_multiply`.
 When matrix-free methods are selected, a routine must be supplied to
 perform the mass-matrix-vector product, :math:`Mv`.  As with iterative
 solvers for the Newton systems, preconditioning may be applied to aid
-in solution of the mass matrix systems :eq:`ARKODE_mass_solve`.  When using an
+in solution of the mass matrix systems :eq:`ARKODE_mass_solve`.  Like with the
+Newton linear system in :numref:`ARKODE.Mathematics.Error.Linear`, when using
+an iterative mass matrix linear solver, we consider the scaled, preconditioned residual
 iterative mass matrix linear solver, we use the integrator-level target
 
 .. math::
-   \|r\|_{\text{WRMS}} \le \epsilon_L \epsilon_N,
+   \|\tilde{r}\|_2 \le C \epsilon_L \epsilon_N,
    :label: ARKODE_MassLinearTolerance
 
 As for Newton linear systems, the ARKLS interface translates this WRMS
@@ -2430,10 +2432,11 @@ target to the convergence test used by the attached ``SUNLinearSolver``;
 see :numref:`SUNLinSol.Iterative.Tolerance`.
 
 Again, :math:`\epsilon_N` is the nonlinear solver tolerance parameter from
-:eq:`ARKODE_NonlinearTolerance`.  When using iterative system and mass matrix
-linear solvers, :math:`\epsilon_L` may be specified separately for both
+:eq:`ARKODE_NonlinearTolerance`. :math:`C` is a norm conversion factor
+that defaults to :math:`\sqrt{N}` but can be modified with
+:c:func:`ARKodeSetMassLSNormFactor`. When using iterative system and
+mass matrix linear solvers, :math:`\epsilon_L` may be specified separately for both
 tolerances :eq:`ARKODE_LinearTolerance` and :eq:`ARKODE_MassLinearTolerance`.
-
 
 In the algorithmic descriptions above there are five locations
 where a linear solve of the form :eq:`ARKODE_mass_solve` is required: (a) at each

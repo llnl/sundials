@@ -1640,7 +1640,7 @@ targets a preconditioned residual satisfying
 .. math::
    \|\tilde{r}\|_{2} \le tol.
 
-where :math:`\tilde{r}` is the scaled linear residual. The tolerance is
+where :math:`\tilde{r}` is the scaled, preconditioned linear residual. The tolerance is
 :math:`tol = C \epsilon_L \epsilon_N` where :math:`\epsilon_L` is the linear
 tolerance factor (the default is 0.05 and may be modified by calling
 :c:func:`IDASetEpsLin`), :math:`\epsilon_N` is the nonlinear solver tolerance,

@@ -245,9 +245,10 @@ Now we use the estimate
 
 Therefore the convergence (stopping) test is
 
-.. math:: R \|\delta_m\|_{\text{WRMS}} < \epsilon_N \, .
+.. math:: R \|\delta_m\|_{\text{WRMS}} < \epsilon_N \epsilon \, .
 
-where the factor :math:`\epsilon_N` has default value 0.1.  We allow at most 3
+where the factor :math:`\epsilon_N` has default value 0.1 and :math:`\epsilon` is a
+constant relating the nonlinear solver error to CVODE's error estimate. We allow at most 3
 iterations (but this limit can be changed by the user). We also declare the
 iteration diverged if any :math:`\|\delta_m\|_{\text{WRMS}} / \|\delta_{m-1}\|_{\text{WRMS}} > 2` with
 :math:`m > 1`. If convergence fails with :math:`J` or :math:`P` current, we are
