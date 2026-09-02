@@ -2426,10 +2426,6 @@ an iterative mass matrix linear solver, we consider the scaled, preconditioned r
    \|\tilde{r}\|_2 \le C \epsilon_L \epsilon_N,
    :label: ARKODE_MassLinearTolerance
 
-As for Newton linear systems, the ARKLS interface translates this WRMS
-target to the convergence test used by the attached ``SUNLinearSolver``;
-see :numref:`SUNLinSol.Iterative.Tolerance`.
-
 Again, :math:`\epsilon_N` is the nonlinear solver tolerance parameter from
 :eq:`ARKODE_NonlinearTolerance`. :math:`C` is a norm conversion factor
 that defaults to :math:`\sqrt{N}` but can be modified with
