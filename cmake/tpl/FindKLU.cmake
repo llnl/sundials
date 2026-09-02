@@ -42,7 +42,14 @@ if(NOT
   find_package(KLU CONFIG)
 
   if(TARGET SuiteSparse::KLU)
-    if(NOT TARGET SUNDIALS::KLU)
+    # Some upstream SuiteSparse config packages create SuiteSparse::KLU but omit
+    # other SuiteSparse component targets (e.g., SuiteSparse::AMD). In that case
+    # we prefer to fall back to creating our own imported target using the
+    # discovered library paths rather than aliasing the possibly incomplete
+    # upstream targets which can cause generator-expression evaluation errors
+    # later. Only alias the upstream target if the key companion targets are
+    # also present.
+    if(TARGET SuiteSparse::AMD AND NOT TARGET SUNDIALS::KLU)
       # For static-only builds of SuiteSparse, SuiteSparse::KLU will itself be
       # an ALIAS target which can't be aliased.
       get_target_property(klu_aliased_target SuiteSparse::KLU ALIASED_TARGET)
@@ -53,8 +60,13 @@ if(NOT
       endif()
       set(KLU_SUITESPARSE_TARGET ON)
       mark_as_advanced(KLU_SUITESPARSE_TARGET)
+      return()
+    else()
+      message(
+        STATUS
+          "Found SuiteSparse::KLU but companion SuiteSparse targets are missing; falling back to manual imported target creation"
+      )
     endif()
-    return()
   endif()
 endif()
 
@@ -122,6 +134,27 @@ endif()
 set(KLU_LIBRARIES ${KLU_LIBRARY} ${AMD_LIBRARY} ${COLAMD_LIBRARY}
                   ${BTF_LIBRARY} ${SUITESPARSECONFIG_LIBRARY})
 
+# Keep the library list usable by the generated example makefiles and
+# CMakeLists.txt files. Imported targets are valid in a SUNDIALS build, but
+# those installed examples are standalone projects and cannot use a target such
+# as BLAS::BLAS without defining it themselves.
+set(KLU_LINK_LIBRARIES ${KLU_LIBRARIES})
+
+# Manual library discovery does not get the transitive SuiteSparse link
+# interface from an upstream config package. Add BLAS when available so KLU link
+# checks and consumers can resolve SuiteSparse components such as CHOLMOD.
+find_package(BLAS)
+if(BLAS_FOUND)
+  list(APPEND KLU_LIBRARIES ${BLAS_LIBRARIES})
+  list(APPEND KLU_LINK_LIBRARIES BLAS::BLAS)
+  message(STATUS "Found BLAS target: BLAS::BLAS")
+else()
+  message(
+    STATUS
+      "BLAS not found by CMake; linking KLU may fail if SuiteSparse components require BLAS"
+  )
+endif()
+
 # set package variables including KLU_FOUND
 find_package_handle_standard_args(KLU REQUIRED_VARS KLU_LIBRARY KLU_LIBRARIES
                                                     KLU_INCLUDE_DIR)
@@ -136,7 +169,7 @@ if(KLU_FOUND)
   set_target_properties(
     SUNDIALS::KLU
     PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${KLU_INCLUDE_DIR}"
-               INTERFACE_LINK_LIBRARIES "${KLU_LIBRARIES}"
+               INTERFACE_LINK_LIBRARIES "${KLU_LINK_LIBRARIES}"
                IMPORTED_LOCATION "${KLU_LIBRARY}")
 
 endif()
