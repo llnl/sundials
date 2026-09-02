@@ -1626,7 +1626,7 @@ auto pyEnumARKODE_ERKTableID =
     .value("ARKODE_SSP_ERK_4_2_3", ARKODE_SSP_ERK_4_2_3, "")
     .value("ARKODE_SSP_ERK_10_3_4", ARKODE_SSP_ERK_10_3_4, "")
     .value("ARKODE_SSP_LSPUM_ERK_3_1_2", ARKODE_SSP_LSPUM_ERK_3_1_2, "")
-    .value("ARKODE_ASCHER_ERK_3_1_2", ARKODE_ASCHER_ERK_3_1_2, "")
+    .value("ARKODE_ARS222_ERK_3_1_2", ARKODE_ARS222_ERK_3_1_2, "")
     .value("ARKODE_MAX_ERK_NUM", ARKODE_MAX_ERK_NUM, "")
     .export_values();
 // #ifndef SWIG
@@ -1721,7 +1721,7 @@ auto pyEnumARKODE_DIRKTableID =
     .value("ARKODE_SSP_DIRK_3_1_2", ARKODE_SSP_DIRK_3_1_2, "")
     .value("ARKODE_SSP_LSPUM_SDIRK_3_1_2", ARKODE_SSP_LSPUM_SDIRK_3_1_2, "")
     .value("ARKODE_ESDIRK_4_2_3", ARKODE_ESDIRK_4_2_3, "")
-    .value("ARKODE_ASCHER_SDIRK_3_1_2", ARKODE_ASCHER_SDIRK_3_1_2, "")
+    .value("ARKODE_ARS222_SDIRK_3_1_2", ARKODE_ARS222_SDIRK_3_1_2, "")
     .value("ARKODE_MAX_DIRK_NUM", ARKODE_MAX_DIRK_NUM, "")
     .export_values();
 // #ifndef SWIG

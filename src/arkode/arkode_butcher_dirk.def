@@ -42,7 +42,7 @@
      ARKODE_IMPLICIT_TRAPEZOIDAL_2_2  ESDIRK     Y         N       Y
      ARKODE_SDIRK_2_1_2                SDIRK     Y         N       Y
      ARKODE_GKC21_DIRK_3_1_2*         ESDIRK     Y         Y       Y
-     ARKODE_ASCHER_SDIRK_3_1_2*        SDIRK     Y         Y       Y
+     ARKODE_ARS222_SDIRK_3_1_2*        SDIRK     Y         Y       Y
      ARKODE_SSP_DIRK_3_1_2*             DIRK     Y         N       Y
      ARKODE_BILLINGTON_3_3_2           SDIRK     N         N       Y
      ARKODE_TRBDF2_3_3_2              ESDIRK     N         N       Y
@@ -142,7 +142,7 @@ ARK_BUTCHER_TABLE(ARKODE_GKC21_DIRK_3_1_2, { /* GKC21 Implicit Table (A,L stable
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ASCHER_SDIRK_3_1_2, { /* https://doi.org/10.1016/S0168-9274(97)00056-1 (custom embedding) */
+ARK_BUTCHER_TABLE(ARKODE_ARS222_SDIRK_3_1_2, { /* https://doi.org/10.1016/S0168-9274(97)00056-1 (custom embedding) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
     const sunrealtype gamma = SUN_RCONST(0.29289321881345247559915563789515096071516);
     B->q = 2;

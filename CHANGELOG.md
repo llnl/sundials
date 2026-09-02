@@ -38,6 +38,17 @@ condition solves and order selection diagnostics.
 
 ### Deprecation Notices
 
+Renamed the `ARKODE_ARK2_ERK_3_1_2`, `ARKODE_ARK2_DIRK_3_1_2`, `ARKODE_ASCHER_ERK_3_1_2`,
+and `ARKODE_ASCHER_SDIRK_3_1_2` Butcher tables to `ARKODE_GKC21_ERK_3_1_2`,
+`ARKODE_GKC21_DIRK_3_1_2`, `ARKODE_ARS222_ERK_3_1_2`, and `ARKODE_ARS222_SDIRK_3_1_2`,
+respectively, to reflect the original inventors of each method.  The previous table names are
+deprecated and will be removed in a future release.
+
+Renamed the `ARKODE_IMEX_MRI_GARK_ARK2` and `ARKODE_IMEX_MRI_GARK_ASCHER_ARK2` multirate
+coupling tables to `ARKODE_IMEX_MRI_GARK_GKC21` and `ARKODE_IMEX_MRI_GARK_ARS222` to reflect
+the original inventors of the base Runge--Kutta tables on which these are based.  The previous
+table names are deprecated and will be removed in a future release.
+
 ## Changes to SUNDIALS in release 7.8.0
 
 ### New Features and Enhancements

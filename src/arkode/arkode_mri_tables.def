@@ -57,7 +57,6 @@
      ARKODE_MRI_GARK_IMPLICIT_MIDPOINT 2       0          ID      Y
      ARKODE_MRI_GARK_ESDIRK34a         3       2          ID      Y
      ARKODE_MRI_GARK_ESDIRK46a         4       3          ID      Y
-     ARKODE_IMEX_MRI_GARK_ASCHER_ARK2  2       1          IED     Y
      ARKODE_IMEX_MRI_GARK_GKC21        2       1          IED     Y
      ARKODE_IMEX_MRI_GARK_EULER        1       0          ID      Y
      ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL  2       0          ID      Y
@@ -396,37 +395,6 @@ ARK_MRI_TABLE(ARKODE_MRI_GARK_ESDIRK46a, { /* A. Sandu, SINUM 57:2300-2327, 2019
     C->G[1][10][4] =  SUN_RCONST(71.0)/SUN_RCONST(300.0);
     C->G[1][10][6] =  SUN_RCONST(71.0)/SUN_RCONST(300.0);
     C->G[1][10][8] = -SUN_RCONST(149.0)/SUN_RCONST(300.0);
-    return C;
-  })
-
-ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ASCHER_ARK2, {
-    MRIStepCoupling C = MRIStepCoupling_Alloc(1, 5, MRISTEP_IMEX);
-
-    const sunrealtype gamma = ONE - ONE / SUNRsqrt(SUN_RCONST(2.0));
-    const sunrealtype delta = ONE - ONE / (SUN_RCONST(2.0)*gamma);
-    C->q = 2;
-    C->p = 1;
-
-    C->c[1] = gamma;
-    C->c[2] = gamma;
-    C->c[3] = ONE;
-    C->c[4] = ONE;
-
-    C->W[0][1][0] = gamma;
-    C->W[0][3][0] = delta - gamma;
-    C->W[0][3][2] = ONE - delta;
-    C->W[0][5][0] = -delta;
-    C->W[0][5][2] = delta - SUN_RCONST(0.4);
-    C->W[0][5][4] = SUN_RCONST(0.4);
-
-    C->G[0][1][0] =  gamma;
-    C->G[0][2][0] = -gamma;
-    C->G[0][2][2] =  gamma;
-    C->G[0][3][2] =  ONE - gamma;
-    C->G[0][4][2] = -gamma;
-    C->G[0][4][4] =  gamma;
-    C->G[0][5][2] = -SUN_RCONST(0.4);
-    C->G[0][5][4] =  SUN_RCONST(0.4);
     return C;
   })
 
@@ -1199,7 +1167,7 @@ ARK_MRI_TABLE(ARKODE_MERK54, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
   })
 
 ARK_MRI_TABLE(ARKODE_MRI_GARK_EXP_ARS222, { /* custom */
-    ARKodeButcherTable B = ARKodeButcherTable_LoadERK(ARKODE_ASCHER_ERK_3_1_2);
+    ARKodeButcherTable B = ARKodeButcherTable_LoadERK(ARKODE_ARS222_ERK_3_1_2);
     MRIStepCoupling C = MRIStepCoupling_MIStoMRI(B, B->q, B->p);
     ARKodeButcherTable_Free(B);
     return C;
