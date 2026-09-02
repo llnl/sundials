@@ -220,13 +220,13 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
   step_mem->DEE = NULL;
 
   /* Initialize all the counters */
-  step_mem->nfe                            = 0;
-  step_mem->nfeDQ                          = 0;
-  step_mem->stage_max                      = 0;
-  step_mem->dom_eig_num_evals              = 0;
-  step_mem->stage_max_limit                = STAGE_MAX_LIMIT_DEFAULT;
-  step_mem->dom_eig_nst                    = 0;
-  step_mem->num_dee_iters                  = 0;
+  step_mem->nfe               = 0;
+  step_mem->nfeDQ             = 0;
+  step_mem->stage_max         = 0;
+  step_mem->dom_eig_num_evals = 0;
+  step_mem->stage_max_limit   = STAGE_MAX_LIMIT_DEFAULT;
+  step_mem->dom_eig_nst       = 0;
+  step_mem->num_dee_iters     = 0;
 
   /* Initialize the flag regarding the maximum stage limit error */
   step_mem->suppress_max_stage_limit_error = SUNFALSE;
@@ -314,20 +314,20 @@ int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
   }
 
   /* Initialize all the counters, flags and stats */
-  step_mem->nfe                            = 0;
-  step_mem->nfeDQ                          = 0;
-  step_mem->dom_eig_num_evals              = 0;
-  step_mem->stage_max                      = 0;
-  step_mem->lambdaR                        = ZERO;
-  step_mem->lambdaI                        = ZERO;
-  step_mem->spectral_radius                = ZERO;
-  step_mem->spectral_radius_max            = 0;
-  step_mem->spectral_radius_min            = 0;
-  step_mem->dom_eig_nst                    = 0;
-  step_mem->num_dee_iters                  = 0;
-  step_mem->dom_eig_update                 = SUNTRUE;
-  step_mem->dom_eig_is_current             = SUNFALSE;
-  step_mem->init_warmup                    = SUNTRUE;
+  step_mem->nfe                 = 0;
+  step_mem->nfeDQ               = 0;
+  step_mem->dom_eig_num_evals   = 0;
+  step_mem->stage_max           = 0;
+  step_mem->lambdaR             = ZERO;
+  step_mem->lambdaI             = ZERO;
+  step_mem->spectral_radius     = ZERO;
+  step_mem->spectral_radius_max = 0;
+  step_mem->spectral_radius_min = 0;
+  step_mem->dom_eig_nst         = 0;
+  step_mem->num_dee_iters       = 0;
+  step_mem->dom_eig_update      = SUNTRUE;
+  step_mem->dom_eig_is_current  = SUNFALSE;
+  step_mem->init_warmup         = SUNTRUE;
 
   return ARK_SUCCESS;
 }

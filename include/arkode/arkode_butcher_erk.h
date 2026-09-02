@@ -74,7 +74,7 @@ enum ARKODE_ERKTableID
 };
 
 /* deprecated names */
-static const int ARKODE_ARK2_ERK_3_1_2 = ARKODE_GKC21_ERK_3_1_2;
+static const int ARKODE_ARK2_ERK_3_1_2   = ARKODE_GKC21_ERK_3_1_2;
 static const int ARKODE_ASCHER_ERK_3_1_2 = ARKODE_ARS222_ERK_3_1_2;
 
 #ifndef SWIG

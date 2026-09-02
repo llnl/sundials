@@ -290,7 +290,8 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   {
     retval = ark_mem->PreStepFn(ark_mem->tcur, ark_mem->ycur, ark_mem->nst, 1,
                                 ark_mem->user_data);
-    if (retval != 0) {
+    if (retval != 0)
+    {
       arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
                       "Failure in user-supplied PreStepFn for ExtSTS method.");
       return retval;

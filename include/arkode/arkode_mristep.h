@@ -101,7 +101,7 @@ typedef enum ARKODE_MRITableID ARKODE_MRITableID;
 #endif
 
 /* deprecated names */
-static const int ARKODE_IMEX_MRI_GARK_ARK2 = ARKODE_IMEX_MRI_GARK_GKC21;
+static const int ARKODE_IMEX_MRI_GARK_ARK2        = ARKODE_IMEX_MRI_GARK_GKC21;
 static const int ARKODE_IMEX_MRI_GARK_ASCHER_ARK2 = ARKODE_IMEX_MRI_GARK_ARS222;
 
 /* Default MRI coupling tables for each order and type */
