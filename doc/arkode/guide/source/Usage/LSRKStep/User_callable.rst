@@ -1,5 +1,5 @@
 .. ----------------------------------------------------------------
-   Programmer(s): Mustafa Aggul @ UMBC
+   Programmer(s): Mustafa Aggul and Sylvia Amihere @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
    Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -132,6 +132,10 @@ Allowable Method Families
 
       Second order Runge--Kutta--Legendre method
 
+   .. c:enumerator:: ARKODE_LSRK_RKG_2
+
+      Second order Runge--Kutta--Gegenbauer method
+
    .. c:enumerator:: ARKODE_LSRK_SSP_S_2
 
       Second order, s-stage SSP(s,2) method
@@ -187,7 +191,7 @@ Allowable Method Families
 
    Specifies the user-supplied dominant eigenvalue approximation routine to
    be used for determining the number of stages that will be used by either the
-   RKC or RKL methods.
+   RKC, RKL or RKG methods.
 
    **Arguments:**
       * *arkode_mem* -- pointer to the LSRKStep memory block.
@@ -199,14 +203,14 @@ Allowable Method Families
 
    .. note::
 
-      When using RKC or RKL methods, users must supply a :c:type:`ARKDomEigFn` function
+      When using RKC, RKL or RKG methods, users must supply a :c:type:`ARKDomEigFn` function
       or attach a dominant eigenvalue estimator with :c:func:`LSRKStepSetDomEigEstimator`.
 
 
 .. c:function:: int LSRKStepSetDomEigEstimator(void* arkode_mem, SUNDomEigEstimator DEE);
 
    Specifies the dominant eigenvalue estimator (DEE) used to determine the number of
-   stages in an RKC or RKL method. This function is an alternative to supplying a
+   stages in an RKC, RKL or RKG method. This function is an alternative to supplying a
    dominant eigenvalue function with :c:func:`LSRKStepSetDomEigFn`.
 
    **Arguments:**
@@ -225,7 +229,7 @@ Allowable Method Families
 
    .. note::
 
-      When using RKC or RKL methods, users must supply a :c:type:`ARKDomEigFn`
+      When using RKC, RKL or RKG methods, users must supply a :c:type:`ARKDomEigFn`
       function or attach a dominant eigenvalue estimator with
       :c:func:`LSRKStepSetDomEigEstimator`.  If both are provided then the
       estimator ``DEE`` will be used and the function ignored.
@@ -240,7 +244,7 @@ Allowable Method Families
 .. c:function:: int LSRKStepSetDomEigFrequency(void* arkode_mem, long int nsteps);
 
    Specifies the number of steps after which the dominant eigenvalue information is
-   considered out-of-date, and should be recomputed. This only applies to RKL and RKC methods.
+   considered out-of-date, and should be recomputed. This only applies to RKC, RKL and RKG methods.
 
    **Arguments:**
       * *arkode_mem* -- pointer to the LSRKStep memory block.
@@ -267,7 +271,7 @@ Allowable Method Families
 .. c:function:: int LSRKStepSetMaxNumStages(void* arkode_mem, int stage_max_limit);
 
    Specifies the maximum number of stages allowed within each time step.  This bound only applies to
-   RKL and RKC methods.
+   RKC, RKL and RKG methods.
 
    **Arguments:**
       * *arkode_mem* -- pointer to the LSRKStep memory block.
@@ -295,8 +299,8 @@ Allowable Method Families
 
    Specifies a safety factor to use for the result of the dominant eigenvalue estimation function.
    This value is used to scale the magnitude of the dominant eigenvalue, in the hope of ensuring
-   a sufficient number of stages for the method to be stable.  This input is only used for RKC
-   and RKL methods.
+   a sufficient number of stages for the method to be stable.  This input is only used for RKC, 
+   RKL and RKG methods.
 
    **Arguments:**
       * *arkode_mem* -- pointer to the LSRKStep memory block.
@@ -329,14 +333,14 @@ Allowable Method Families
 
    .. note::
 
-      This input is only used for RKC and RKL methods.
+      This input is only used for RKC, RKL and RKG methods.
       
       If :c:func:`LSRKStepSetUseAnalyticStabilityRegion` is not called, then the default
       ``analytic_stab_region`` is set to ``SUNFALSE``.  This routine will be called by
       :c:func:`ARKodeSetOptions` when using the key "arkid.use_analytic_stability_region".
 
       :c:func:`LSRKStepSetUseAnalyticStabilityRegion` sets whether to use the exact stability region or an 
-      ellipse that is fully inscribed in the stability region for determining stability in RKC and RKL 
+      ellipse that is fully inscribed in the stability region for determining stability in RKC, RKL and RKG 
       methods.  Whichever region is selected, LSRKStep will ensure that the complex number 
       :math:`z=h\lambda`, where :math:`h` is the current time step size and :math:`\lambda` is the 
       estimated dominant eigenvalue, is in this region.  Since the ellipse is smaller than the analytical
@@ -361,6 +365,13 @@ Allowable Method Families
          :alt: Stability region of RKL method with 10 stages
          :align: center
          :width: 50%
+      
+      The corresponding region for the RKG method with 10 stages is shown in the figure below.
+      .. figure:: ../../../../../shared/figs/arkode/STS_RKG2_region_s10.png
+         :alt: Stability region of RKG method with 10 stages
+         :align: center
+         :width: 50%
+
 
 .. c:function:: int LSRKStepSetNumDomEigEstInitPreprocessIters(void* arkode_mem, int num_iters);
 
