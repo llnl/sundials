@@ -523,17 +523,17 @@ requires that problems have an identity mass matrix (i.e., :math:`M(t)=I`)
 and that the right-hand side function is not split into separate
 components.
 
-LSRKStep currently supports two families of second-order, explicit, and temporally adaptive STS methods:
-Runge--Kutta--Chebyshev (RKC), :cite:p:`VSH:04` and Runge--Kutta--Legendre (RKL), :cite:p:`MBA:14`.   These methods have the form
+LSRKStep currently supports three families of second-order, explicit, and temporally adaptive STS methods:
+Runge--Kutta--Chebyshev (RKC), :cite:p:`VSH:04`, Runge--Kutta--Legendre (RKL), :cite:p:`MBA:14`, and Runge--Kutta--Gegenbauer (RKG), :cite:p:`OSULLIVAN:19, SSMA:21`.   These methods have the form
 
 .. math::
    z_1 &= y_n,\\
    z_2 &= z_1 + h_n \tilde{\mu}_2 f(t_n,z_1),\\
    z_j &= (1-\mu_j-\nu_j)z_1 + \mu_j z_{j-1} + \nu_jz_{j-2} + h_n \tilde{\gamma}_j f(t_n,z_1) + h_n \tilde{\mu}_j f(t_n + c_{j-1}h, z_{j-1}), \quad j = 3,\ldots,s+1 \\
    y_{n+1} &= z_{s+1}.
-   :label: ARKODE_RKC_RKL
+   :label: ARKODE_RKC_RKL_RKG
 
-The corresponding coefficients can be found in :cite:p:`VSH:04` and :cite:p:`MBA:14`, respectively, and extension of
+The corresponding coefficients can be found in :cite:p:`VSH:04`, :cite:p:`MBA:14` and :cite:p:`OSULLIVAN:19, SSMA:21`, respectively, and extension of
 these methods for time adaptivity can be found in :cite:p:`RARBGW:26`.
 
 LSRK methods of STS type are designed for stiff problems characterized by
