@@ -206,9 +206,6 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
   step_mem->lfree  = NULL;
   step_mem->lmem   = NULL;
 
-  /* Initialize error norm  */
-  step_mem->eRNrm = ONE;
-
   /* Initialize all the counters */
   step_mem->nfse        = 0;
   step_mem->nfsi        = 0;
@@ -762,7 +759,6 @@ void mriStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
   fprintf(outfile, "MRIStep: gamrat = " SUN_FORMAT_G "\n", step_mem->gamrat);
   fprintf(outfile, "MRIStep: crate = " SUN_FORMAT_G "\n", step_mem->crate);
   fprintf(outfile, "MRIStep: delnrm_p = " SUN_FORMAT_G "\n", step_mem->delnrm_p);
-  fprintf(outfile, "MRIStep: eRNrm = " SUN_FORMAT_G "\n", step_mem->eRNrm);
   fprintf(outfile, "MRIStep: nlscoef = " SUN_FORMAT_G "\n", step_mem->nlscoef);
   fprintf(outfile, "MRIStep: crdown = " SUN_FORMAT_G "\n", step_mem->crdown);
   fprintf(outfile, "MRIStep: rdiv = " SUN_FORMAT_G "\n", step_mem->rdiv);
