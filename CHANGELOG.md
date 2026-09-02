@@ -28,7 +28,7 @@ The KLU SUNLinearSolver is now available in sundials4py.
 
 ### Bug Fixes
 
-Fixed a bug where the factor provided by `ARKodeSetEpsLin` was scaled by 0.1
+Fixed a bug where the factor provided by `ARKodeSetEpsLin` was scaled by 0.1.
 To restore the original behavior, call `ARKodeSetEpsLin` with an argument of
 0.005.
 
