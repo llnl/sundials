@@ -31,6 +31,19 @@
 # centered differences, with the data distributed over N points
 # on a uniform spatial grid.
 #
+# The final solution is checked against the exact solution of this
+# semi-discrete ODE system.  With zero Dirichlet boundaries, the
+# interior finite-difference Laplacian is diagonalized by the discrete
+# sine basis.  For zero initial data and a constant point source b, the
+# interior solution is
+#
+#    u(t) = Phi * diag((exp(lambda_m*t) - 1) / lambda_m) * Phi^T * b,
+#
+# where Phi contains the orthonormal sine modes and lambda_m are the
+# corresponding finite-difference Laplacian eigenvalues.  This validates
+# the time integration error without introducing error from a continuous
+# PDE approximation.
+#
 # This program solves the problem with either an ERK or DIRK
 # method.  For the DIRK method, we use a Newton iteration with
 # the SUNLinSol_PCG linear solver, and a user-supplied Jacobian-vector
@@ -41,153 +54,146 @@
 # -----------------------------------------------------------------
 
 import numpy as np
-from sundials4py.core import *
-from sundials4py.arkode import *
+import sundials4py.arkode as ark
+import sundials4py.core as sun
+
+
+def exact_semidiscrete_solution(n, k, t):
+    dx = 1.0 / (n - 1)
+    i = np.arange(1, n - 1)
+    m = np.arange(1, n - 1)
+
+    phi = np.sqrt(2.0 / (n - 1)) * np.sin(np.outer(i, m) * np.pi / (n - 1))
+    lambdas = -4.0 * k / dx**2 * np.sin(0.5 * m * np.pi / (n - 1)) ** 2
+
+    source = np.zeros(n - 2)
+    source[(n // 2) - 1] = 0.01 / dx
+
+    u = np.zeros(n)
+    u[1:-1] = phi @ (((np.exp(lambdas * t) - 1.0) / lambdas) * (phi.T @ source))
+    return u
 
 
 class Heat1DProblem:
-    def __init__(self, N, k):
-        self.N = N
+    def __init__(self, n=101, k=0.01):
+        self.n = n
         self.k = k
-        self.dx = 1.0 / (N - 1)
+        self.dx = 1.0 / (n - 1)
+        self.isource = n // 2
 
     def set_init_cond(self, yvec):
-        y = N_VGetArrayPointer(yvec)
+        y = sun.N_VGetNumpyArray(yvec)
         y[:] = 0.0
-        return 0
 
     def f(self, t, yvec, ydotvec, user_data):
-        N, k, dx = self.N, self.k, self.dx
-        Y = N_VGetArrayPointer(yvec)
-        Ydot = N_VGetArrayPointer(ydotvec)
-        Ydot[:] = 0.0
-        c1 = k / dx / dx
-        c2 = -2.0 * k / dx / dx
-        # Vectorized Laplacian
-        Ydot[1:-1] = c1 * Y[:-2] + c2 * Y[1:-1] + c1 * Y[2:]
-        # Dirichlet BCs
-        Ydot[0] = 0.0
-        Ydot[-1] = 0.0
-        # Point source
-        isource = N // 2
-        Ydot[isource] += 0.01 / dx
+        y = sun.N_VGetNumpyArray(yvec)
+        ydot = sun.N_VGetNumpyArray(ydotvec)
+
+        ydot[:] = 0.0
+        c1 = self.k / self.dx / self.dx
+        c2 = -2.0 * self.k / self.dx / self.dx
+        ydot[1:-1] = c1 * y[:-2] + c2 * y[1:-1] + c1 * y[2:]
+        ydot[0] = 0.0
+        ydot[-1] = 0.0
+        ydot[self.isource] += 0.01 / self.dx
         return 0
 
-    def jtv(self, vvec, Jvvec, t, yvec, fyvec, tmpvec, user_data):
-        N, k, dx = self.N, self.k, self.dx
-        V = N_VGetArrayPointer(vvec)
-        JV = N_VGetArrayPointer(Jvvec)
+    def jtv(self, vvec, Jvvec, t, yvec, fyvec, user_data, tmpvec):
+        k, dx = self.k, self.dx
+        V = sun.N_VGetNumpyArray(vvec)
+        JV = sun.N_VGetNumpyArray(Jvvec)
+
         JV[:] = 0.0
         c1 = k / dx / dx
         c2 = -2.0 * k / dx / dx
-        # Vectorized tridiagonal product
         JV[1:-1] = c1 * V[:-2] + c2 * V[1:-1] + c1 * V[2:]
         JV[0] = 0.0
         JV[-1] = 0.0
         return 0
 
 
-def main():
-    # Problem parameters
-    N = 201
-    k = 0.5
-    T0 = 0.0
-    Tf = 1.0
-    Nt = 10
+def solve_heat1d():
+    n = 101
+    k = 0.01
+    tf = 1.0
+    nt = 10
     reltol = 1e-6
     abstol = 1e-10
 
-    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
-    assert status == SUN_SUCCESS
-    assert sunctx is not None
+    status, sunctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
+    assert status == sun.SUN_SUCCESS
 
-    y = N_VNew_Serial(N, sunctx)
+    y = sun.N_VNew_Serial(n, sunctx)
     assert y is not None
+    yarr = sun.N_VGetNumpyArray(y)
 
-    problem = Heat1DProblem(N, k)
+    problem = Heat1DProblem(n=n, k=k)
     problem.set_init_cond(y)
 
-    # Call ARKStepCreate to initialize the ARK timestepper module and
-    # specify the right-hand side function in y'=f(t,y), the initial time
-    # T0, and the initial dependent variable vector y.  Note: since this
-    # problem is fully implicit, we set f_E to None and f_I to f. */
-    ark = ARKStepCreate(None, problem.f, T0, y, sunctx)  # f_E (explicit)
-    assert ark is not None
+    stepper = ark.ARKStepCreate(None, problem.f, 0.0, y, sunctx)
+    assert stepper is not None
 
-    # Set routines
-    status = ARKodeSStolerances(ark.get(), reltol, abstol)
-    assert status == ARK_SUCCESS
+    status = ark.ARKodeSStolerances(stepper.get(), reltol, abstol)
+    assert status == ark.ARK_SUCCESS
 
-    status = ARKodeSetMaxNumSteps(ark.get(), 10000)
-    assert status == ARK_SUCCESS
+    status = ark.ARKodeSetMaxNumSteps(stepper.get(), 100000)
+    assert status == ark.ARK_SUCCESS
 
-    status = ARKodeSetPredictorMethod(ark.get(), 1)
-    assert status == ARK_SUCCESS
+    # PCG linear solver with no preconditioning, with up to n iterations
+    LS = sun.SUNLinSol_PCG(y, sun.SUN_PREC_NONE, n, sunctx)
 
-    # PCG linear solver with no preconditioning, with up to N iterations
-    LS = SUNLinSol_PCG(y, SUN_PREC_NONE, N, sunctx)
-    status = ARKodeSetLinearSolver(ark.get(), LS, None)
-    assert status == ARK_SUCCESS
+    status = ark.ARKodeSetLinearSolver(stepper.get(), LS, None)
+    assert status == ark.ARK_SUCCESS
 
-    status = ARKodeSetJacTimes(ark.get(), None, problem.jtv)
-    assert status == ARK_SUCCESS
+    status = ark.ARKodeSetJacTimes(stepper.get(), None, problem.jtv)
+    assert status == ark.ARK_SUCCESS
 
-    status = ARKodeSetLinear(ark.get(), 0)
-    assert status == ARK_SUCCESS
+    status = ark.ARKodeSetLinear(stepper.get(), 0)
+    assert status == ark.ARK_SUCCESS
 
-    # Output mesh
-    with open("heat_mesh.txt", "w") as FID:
-        for i in range(N):
-            FID.write(f"  {problem.dx * i:.16e}\n")
+    t = 0.0
+    tout = tf / nt
 
-    yarr = N_VGetArrayPointer(y)
-    with open("heat1D.txt", "w") as UFID:
-        # Output initial condition
-        UFID.write(" ".join(f"{val:.16e}" for val in yarr) + "\n")
+    print("        t      ||u||_rms")
+    print("   -------------------------")
+    print(f"  {t:10.6f}  {0.0:10.6f}")
 
-        # Main time-stepping loop
-        t = T0
-        dTout = (Tf - T0) / Nt
-        tout = T0 + dTout
-        print("        t      ||u||_rms")
-        print("   -------------------------")
-        print(f"  {t:10.6f}  {np.sqrt(np.dot(yarr, yarr) / N):10.6f}")
-        for iout in range(Nt):
-            status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
-            yarr = N_VGetArrayPointer(y)
-            print(f"  {tret:10.6f}  {np.sqrt(np.dot(yarr, yarr) / N):10.6f}")
-            UFID.write(" ".join(f"{val:.16e}" for val in yarr) + "\n")
-            if status == ARK_SUCCESS:
-                tout += dTout
-                tout = min(tout, Tf)
-            else:
-                print("Solver failure, stopping integration")
-                break
-        print("   -------------------------")
+    for _ in range(nt):
+        status, t = ark.ARKodeEvolve(stepper.get(), tout, y, ark.ARK_NORMAL)
+        if status != ark.ARK_SUCCESS:
+            raise RuntimeError(f"ARKodeEvolve failed with status {status}")
+
+        print(f"  {t:10.6f}  {np.sqrt(np.dot(yarr, yarr) / n):10.6f}")
+        tout = min(tout + tf / nt, tf)
+
+    uexact = exact_semidiscrete_solution(n, k, tf)
+    max_error = np.max(np.abs(yarr - uexact))
+    print(f"\nFinal max error vs exact semi-discrete solution = {max_error:.6e}")
+    np.testing.assert_allclose(yarr, uexact, rtol=1e-4, atol=1e-8)
 
     # Print statistics
-    status, nst = ARKodeGetNumSteps(ark.get())
-    assert status == ARK_SUCCESS
-    status, nst_a = ARKodeGetNumStepAttempts(ark.get())
-    assert status == ARK_SUCCESS
-    status, nfe = ARKodeGetNumRhsEvals(ark.get(), 0)
-    assert status == ARK_SUCCESS
-    status, nfi = ARKodeGetNumRhsEvals(ark.get(), 1)
-    assert status == ARK_SUCCESS
-    status, nsetups = ARKodeGetNumLinSolvSetups(ark.get())
-    assert status == ARK_SUCCESS
-    status, nli = ARKodeGetNumLinIters(ark.get())
-    assert status == ARK_SUCCESS
-    status, nJv = ARKodeGetNumJtimesEvals(ark.get())
-    assert status == ARK_SUCCESS
-    status, nlcf = ARKodeGetNumLinConvFails(ark.get())
-    assert status == ARK_SUCCESS
-    status, nni = ARKodeGetNumNonlinSolvIters(ark.get())
-    assert status == ARK_SUCCESS
-    status, ncfn = ARKodeGetNumNonlinSolvConvFails(ark.get())
-    assert status == ARK_SUCCESS
-    status, netf = ARKodeGetNumErrTestFails(ark.get())
-    assert status == ARK_SUCCESS
+    status, nst = ark.ARKodeGetNumSteps(stepper.get())
+    assert status == ark.ARK_SUCCESS
+    status, nst_a = ark.ARKodeGetNumStepAttempts(stepper.get())
+    assert status == ark.ARK_SUCCESS
+    status, nfe = ark.ARKodeGetNumRhsEvals(stepper.get(), 0)
+    assert status == ark.ARK_SUCCESS
+    status, nfi = ark.ARKodeGetNumRhsEvals(stepper.get(), 1)
+    assert status == ark.ARK_SUCCESS
+    status, nsetups = ark.ARKodeGetNumLinSolvSetups(stepper.get())
+    assert status == ark.ARK_SUCCESS
+    status, nli = ark.ARKodeGetNumLinIters(stepper.get())
+    assert status == ark.ARK_SUCCESS
+    status, nJv = ark.ARKodeGetNumJtimesEvals(stepper.get())
+    assert status == ark.ARK_SUCCESS
+    status, nlcf = ark.ARKodeGetNumLinConvFails(stepper.get())
+    assert status == ark.ARK_SUCCESS
+    status, nni = ark.ARKodeGetNumNonlinSolvIters(stepper.get())
+    assert status == ark.ARK_SUCCESS
+    status, ncfn = ark.ARKodeGetNumNonlinSolvConvFails(stepper.get())
+    assert status == ark.ARK_SUCCESS
+    status, netf = ark.ARKodeGetNumErrTestFails(stepper.get())
+    assert status == ark.ARK_SUCCESS
 
     print("\nFinal Solver Statistics:")
     print(f"   Internal solver steps = {nst} (attempted = {nst_a})")
@@ -199,6 +205,12 @@ def main():
     print(f"   Total number of Newton iterations = {nni}")
     print(f"   Total number of nonlinear solver convergence failures = {ncfn}")
     print(f"   Total number of error test failures = {netf}")
+
+    return yarr.copy()
+
+
+def main():
+    solve_heat1d()
 
 
 # This function allows pytest to discover the example as a test

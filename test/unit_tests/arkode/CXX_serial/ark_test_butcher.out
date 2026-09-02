@@ -34,6 +34,8 @@ Testing method ARKODE_SSP_ERK_4_2_3:  table matches predicted method/embedding o
 Testing method ARKODE_SSP_ERK_10_3_4:  table matches predicted method/embedding orders of 4/3
 Testing method ARKODE_SSP_LSPUM_ERK_3_1_2:  table matches predicted method/embedding orders of 2/1
 Testing method ARKODE_ASCHER_ERK_3_1_2:  table matches predicted method/embedding orders of 2/1
+Testing method ARKODE_KUTTA_RK4a_4_4:  table matches predicted method/embedding orders of 4/0
+Testing method ARKODE_KUTTA_RK4b_4_4:  table matches predicted method/embedding orders of 4/0
 
 Testing individual DIRK methods:
 

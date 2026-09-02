@@ -191,3 +191,12 @@ nitpick_ignore = [
     ("c:func", "SUNSparseMatrix_ToCSC"),
     ("c:func", "SUNSparseMatrix_ToCSR"),
 ]
+
+# Python bindings that do not wrap a corresponding SUNDIALS C API function.
+python_only_functions = {
+    "N_VGetCupyArray",
+    "N_VGetJaxArray",
+    "N_VGetNumpyArray",
+    "N_VGetTorchTensor",
+    "N_VSetJaxArray",
+}

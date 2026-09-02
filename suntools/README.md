@@ -2,8 +2,8 @@
 
 This directory contains the `suntools` Python package which provides utilities for
 
-- parsing SUNDIALS log files
-- more to come...
+- parsing and filtering SUNDIALS log files
+- parsing table and CSV statistics output
 
 ## Install
 

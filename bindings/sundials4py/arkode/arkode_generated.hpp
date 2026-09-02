@@ -1605,6 +1605,8 @@ auto pyEnumARKODE_ERKTableID =
     .value("ARKODE_SSP_ERK_10_3_4", ARKODE_SSP_ERK_10_3_4, "")
     .value("ARKODE_SSP_LSPUM_ERK_3_1_2", ARKODE_SSP_LSPUM_ERK_3_1_2, "")
     .value("ARKODE_ASCHER_ERK_3_1_2", ARKODE_ASCHER_ERK_3_1_2, "")
+    .value("ARKODE_KUTTA_RK4a_4_4", ARKODE_KUTTA_RK4a_4_4, "")
+    .value("ARKODE_KUTTA_RK4b_4_4", ARKODE_KUTTA_RK4b_4_4, "")
     .value("ARKODE_MAX_ERK_NUM", ARKODE_MAX_ERK_NUM, "")
     .export_values();
 // #ifndef SWIG
