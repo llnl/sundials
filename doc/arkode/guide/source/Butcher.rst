@@ -188,6 +188,10 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_4_2_3`                 | 4      | 2              | 3     |
    +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_KUTTA_RK4a_4_4`                | 4      | ---            | 4     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_KUTTA_RK4b_4_4`                | 4      | ---            | 4     |
+   +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_10_3_4`                | 10     | 3              | 4     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SOFRONIOU_SPALETTA_5_3_4`      | 5      | 3              | 4*    |
@@ -725,6 +729,64 @@ Both the method and its embedding have SSP coefficient equal to 2.
 
    Linear stability region for the SSP-ERK-4-2-3 method.  The method's
    region is outlined in red; the embedding's region is in blue dashed.
+
+
+.. c:enumerator:: ARKODE_KUTTA_RK4a_4_4
+
+Accessible via the constant ``ARKODE_KUTTA_RK4a_4_4`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.  Accessible via the string
+``"ARKODE_KUTTA_RK4a_4_4"`` to :c:func:`ARKStepSetTableName`,
+:c:func:`ERKStepSetTableName`, or :c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the classical RK4 method :cite:p:`K:01`.
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+           0 & 0       & 0       & 0       & 0 \\
+     \frac12 & \frac12 & 0       & 0       & 0 \\
+     \frac12 & 0       & \frac12 & 0       & 0 \\
+           1 & 0       & 0       & 1       & 0 \\
+     \hline
+           4 & \frac16 & \frac13 & \frac13 & \frac16\\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_KUTTA_RK4a_4_4_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the RK4 method. The method's region is shaded
+   in blue.
+
+
+.. c:enumerator:: ARKODE_KUTTA_RK4b_4_4
+
+Accessible via the constant ``ARKODE_KUTTA_RK4b_4_4`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.  Accessible via the string
+``"ARKODE_KUTTA_RK4b_4_4"`` to :c:func:`ARKStepSetTableName`,
+:c:func:`ERKStepSetTableName`, or :c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the classical 3/8-rule :cite:p:`K:01`.
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+           0 & 0        & 0       & 0       & 0 \\
+     \frac13 & \frac13  & 0       & 0       & 0 \\
+     \frac23 & -\frac13 & 1       & 0       & 0 \\
+           1 & 1        & -1      & 1       & 0 \\
+     \hline
+           4 & \frac18 & \frac38 & \frac38 & \frac18\\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_KUTTA_RK4b_4_4_stab_region.png
+   :width: 50 %
+   :align: center
+
+   Linear stability region for the 3/8-rule method. The method's region is
+   shaded in blue.
 
 
 .. c:enumerator:: ARKODE_SSP_ERK_10_3_4

@@ -28,6 +28,12 @@ annotations.
 Added the function :c:func:`N_VSetDeviceArrayPointer` to the N_Vector API to set
 the device data pointer for vector implementations with a device memory space.
 
+The SUNLinearSolver interface to SuperLU_DIST now supports single precision.
+
+Added Butcher tables for the classical RK4
+(:c:enumerator:`ARKODE_KUTTA_RK4a_4_4`) and 3/8-rule
+(:c:enumerator:`ARKODE_KUTTA_RK4b_4_4`) methods.
+
 The KLU SUNLinearSolver is now available in sundials4py.
 
 **Bug Fixes**
