@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------
- * Programmer(s): Mustafa Aggul @ UMBC
+ * Programmer(s): Mustafa Aggul and Sylvia Amihere @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -39,6 +39,7 @@
   LSRKStepSetSTSMethod sets method
     ARKODE_LSRK_RKC_2
     ARKODE_LSRK_RKL_2
+    ARKODE_LSRK_RKG_2
   ---------------------------------------------------------------*/
 int LSRKStepSetSTSMethod(void* arkode_mem, ARKODE_LSRKMethodType method)
 {
@@ -63,6 +64,14 @@ int LSRKStepSetSTSMethod(void* arkode_mem, ARKODE_LSRKMethodType method)
     break;
   case ARKODE_LSRK_RKL_2:
     ark_mem->step          = lsrkStep_TakeStepRKL;
+    step_mem->is_SSP       = SUNFALSE;
+    step_mem->nfusedopvecs = 5;
+    step_mem->q = ark_mem->hadapt_mem->q = 2;
+    step_mem->p = ark_mem->hadapt_mem->p = 2;
+    step_mem->step_nst                   = 0;
+    break;
+  case ARKODE_LSRK_RKG_2:
+    ark_mem->step          = lsrkStep_TakeStepRKG;
     step_mem->is_SSP       = SUNFALSE;
     step_mem->nfusedopvecs = 5;
     step_mem->q = ark_mem->hadapt_mem->q = 2;
@@ -109,6 +118,7 @@ int LSRKStepSetSSPMethod(void* arkode_mem, ARKODE_LSRKMethodType method)
   {
   case ARKODE_LSRK_RKC_2:
   case ARKODE_LSRK_RKL_2:
+  case ARKODE_LSRK_RKG_2:
     arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
                     __FILE__, "Invalid method option: Call LSRKStepCreateSTS to create an STS method first.");
     break;
@@ -158,6 +168,10 @@ int LSRKStepSetSTSMethodByName(void* arkode_mem, const char* emethod)
   {
     return LSRKStepSetSTSMethod(arkode_mem, ARKODE_LSRK_RKL_2);
   }
+  if (strcmp(emethod, "ARKODE_LSRK_RKG_2") == 0)
+  {
+    return LSRKStepSetSTSMethod(arkode_mem, ARKODE_LSRK_RKG_2);
+  }
   if ((strcmp(emethod, "ARKODE_LSRK_SSP_S_2") == 0) ||
       (strcmp(emethod, "ARKODE_LSRK_SSP_S_3") == 0) ||
       (strcmp(emethod, "ARKODE_LSRK_SSP_10_4") == 0))
@@ -175,7 +189,8 @@ int LSRKStepSetSTSMethodByName(void* arkode_mem, const char* emethod)
 int LSRKStepSetSSPMethodByName(void* arkode_mem, const char* emethod)
 {
   if ((strcmp(emethod, "ARKODE_LSRK_RKC_2") == 0) ||
-      (strcmp(emethod, "ARKODE_LSRK_RKL_2") == 0))
+      (strcmp(emethod, "ARKODE_LSRK_RKL_2") == 0) ||
+      (strcmp(emethod, "ARKODE_LSRK_RKG_2") == 0))
   {
     arkProcessError(NULL, ARK_ILL_INPUT, __LINE__, __func__,
                     __FILE__, "Invalid method option: Call LSRKStepCreateSSP to create an SSP method first.");
@@ -202,7 +217,7 @@ int LSRKStepSetSSPMethodByName(void* arkode_mem, const char* emethod)
 /*---------------------------------------------------------------
   LSRKStepSetDomEigFn specifies the dom_eig function.
   Specifies the dominant eigenvalue approximation routine to be used for determining
-  the number of stages that will be used by either the RKC or RKL methods.
+  the number of stages that will be used by either the RKC, RKL or RKG methods.
   ---------------------------------------------------------------*/
 int LSRKStepSetDomEigFn(void* arkode_mem, ARKDomEigFn dom_eig)
 {
@@ -291,8 +306,8 @@ int LSRKStepSetMaxNumStages(void* arkode_mem, int stage_max_limit)
   LSRKStepSetDomEigSafetyFactor sets the safety factor for the DomEigs.
   Specifies a safety factor to use for the result of the dominant eigenvalue estimation function.
   This value is used to scale the magnitude of the dominant eigenvalue, in the hope of ensuring
-  a sufficient number of stages for the method to be stable.  This input is only used for RKC
-  and RKL methods.
+  a sufficient number of stages for the method to be stable.  This input is only used for RKC, 
+  RKL and RKG methods.
 
   Calling this function with dom_eig_safety < 0 resets the default value
   ---------------------------------------------------------------*/
@@ -884,6 +899,9 @@ int lsrkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp)
     break;
   case ARKODE_LSRK_RKL_2:
     fprintf(fp, "LSRKStep RKL time step module parameters:\n");
+    break;
+  case ARKODE_LSRK_RKG_2:
+    fprintf(fp, "LSRKStep RKG time step module parameters:\n");
     break;
   case ARKODE_LSRK_SSP_S_2:
     fprintf(fp, "LSRKStep SSP(s,2) time step module parameters:\n");

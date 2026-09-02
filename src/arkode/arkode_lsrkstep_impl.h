@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------
- * Programmer(s): Mustafa Aggul @ UMBC
+ * Programmer(s): Mustafa Aggul and Sylvia Amihere @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -221,6 +221,7 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
                      int mode);
 int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
 int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
+int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
 int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
 int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
 int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
@@ -250,10 +251,14 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
                                     sunrealtype h, sunrealtype* stability_norm);
 int lsrkStep_RKL_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
                                     sunrealtype h, sunrealtype* stability_norm);
+int lsrkStep_RKG_CheckStabilityNorm(ARKodeLSRKStepMem step_mem, int num_stages,
+                                    sunrealtype h, sunrealtype* stability_norm);
 int lsrkStep_cheb_T_complex(int s, sunrealtype zR, sunrealtype zI,
                             sunrealtype* TsR, sunrealtype* TsI);
 int lsrkStep_legendre_P_complex(int s, sunrealtype zR, sunrealtype zI,
                                 sunrealtype* PsR, sunrealtype* PsI);
+int lsrkStep_gegenbauer_C_complex(int s, sunrealtype zR, sunrealtype zI,
+                                  sunrealtype* CsR, sunrealtype* CsI);
 int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv);
 
 /*===============================================================
