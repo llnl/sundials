@@ -74,8 +74,12 @@ of time-stepping modules supplied with ARKODE, including
   <ARKODE.Mathematics.LSRK>`
 
 * MRIStep for :ref:`multirate infinitesimal step (MIS), multirate infinitesimal
-  GARK (MRI-GARK), and implicit-explicit MRI-GARK (IMEX-MRI-GARK) methods
-  <ARKODE.Mathematics.MRIStep>`
+  GARK (MRI-GARK), implicit-explicit MRI-GARK (IMEX-MRI-GARK) methods
+  <ARKODE.Mathematics.MRIStep.MRIGARK>`, :ref:`implicit-explicit stage-restart
+  MRI (IMEX-MRI-SR) methods methods <ARKODE.Mathematics.MRIStep.MRISR>`,
+  :ref:`mulriate exponential Runge--Kutta (MERK) methods
+  <ARKODE.Mathematics.MRIStep.MERK>`, and :ref:`extended Super Time Stepping methods
+  <ARKODE.Mathematics.MRIStep.ExtSTS>`
 
 * SplittingStep for :ref:`operator splitting methods
   <ARKODE.Mathematics.SplittingStep>`
@@ -668,10 +672,12 @@ Below we summarize the details for each method family. For additional
 information, please see the references listed above.
 
 
+.. _ARKODE.Mathematics.MRIStep.MRIGARK:
+
 MIS, MRI-GARK, and IMEX-MRI-GARK Methods
 ----------------------------------------
 
-The methods in IMEX-MRI-GARK family, which includes MIS and MRI-GARK methods,
+The methods in the IMEX-MRI-GARK family, which includes MIS and MRI-GARK methods,
 are defined by a vector of slow stage time abscissae, :math:`c^S \in
 \mathbb{R}^{s}`, and a set of coupling tensors,
 :math:`\Omega\in\mathbb{R}^{(s+1)\times s \times k}` and
@@ -730,6 +736,8 @@ is coupled to the fast evolution. At present, only "solve-decoupled"
 diagonally-implicit MRI-GARK and IMEX-MRI-GARK methods are supported.
 
 
+.. _ARKODE.Mathematics.MRIStep.MRISR:
+
 IMEX-MRI-SR Methods
 -------------------
 
@@ -775,6 +783,7 @@ algorithm for stage index :math:`s+1`, under the definition that :math:`c_{s+1}^
 :math:`[\tilde{t}_{0}, \tilde{t}_{F}] = [t_{n-1}, t_{n}]`).
 
 
+.. _ARKODE.Mathematics.MRIStep.MERK:
 
 MERK Methods
 ------------
@@ -818,6 +827,59 @@ and finally finishing the IVP solve to :math:`t_{n-1}+h^S_n` to obtain :math:`\t
    date have shown :index:`ARKODE_MERK54` to achieve fifth order for nonlinear problems,
    and so we conjecture that it also satisfies the nonlinear fifth order conditions.
 
+
+.. _ARKODE.Mathematics.MRIStep.ExtSTS:
+
+Extended super time stepping (ExtSTS) methods
+---------------------------------------------
+
+MRIStep may also be used to implement a class of methods we called "extended super
+time stepping" (ExtSTS) methods :cite:p:`Reynolds:26`, which are designed for problems
+of the form
+
+.. math::
+   \dot{y} = f^D(t,y) + f^E(t,y) + f^I(t,y), \qquad y(t_0) = y_0.
+   :label: ARKODE_ADR
+
+where the three right hand side terms are:
+
+* :math:`f^D(t,y)` contains the components of the system that should
+  be integrated using a *super time stepping* (SSP) method (e.g.,
+  diffusion terms),
+
+* :math:`f^E(t,y)` contains the components of the system that should
+  be integrated using an explicit method (e.g., advective transport), and
+
+* :math:`f^I(t,y)` contains the components of the system that should
+  be integrated using an implicit method (e.g., reaction terms).
+
+ExtSTS methods require :math:`f^D` and at least one of :math:`f^E`
+or :math:`f^I`, since applications without :math:`f^D` can be handled
+using ARKStep, and applications with only :math:`f^D` can be handled
+directly with LSRKStep.
+
+In the context of MRI methods, the "fast" function :math:`f^F` corresponds
+with :math:`f^D`, while the explicit and implicit "slow" functions :math:`f^E`
+and :math:`f^I` match those here.
+
+ExtSTS methods are formed by applying a single time step of a super time
+stepping method from LSRKStep to tackle the modified IVPs :eq:`MRI_fast_IVP`
+and :eq:`MRI_embedding_fast_IVP`.  Due to the limitation of LSRKStep's SSP
+methods to second order accuracy, ExtSTS methods are at most second order,
+although practitioners are free to leverage higher-order MRI methods if the
+diffusive terms in their applications only contribute weakly to the overall
+solution error.
+
+Aside from their use of STS methods for the modified IVP solves, ExtSTS
+methods introduce no additional constraints on the MRI and STS methods on
+which they rely, and therefore support the full range of method options
+available to MRIStep (e.g., temporal adaptivity, implicit solvers, etc.) and
+LSRKStep's STS methods (e.g., RKC vs RKL, dominant eigenvalue estimation,
+etc.).  Upon construction of an ExtSTS method, it will select default MRI and
+STS methods to use based on the combination of user-supplied functions
+:math:`f^D`, :math:`f^I`, and :math:`f^E`; however, users may directly modify
+these defaults in the MRIStep integrator itself, and they may access the
+internally-constructed LSRKStep object to modify options there as well.
 
 
 .. _ARKODE.Mathematics.SplittingStep:

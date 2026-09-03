@@ -1,5 +1,6 @@
 /*---------------------------------------------------------------
- * Programmer(s): Mustafa Aggul @ UMBC
+ * Programmer(s): Mustafa Aggul @ SMU
+ *                Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -172,6 +173,7 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
   ark_mem->step_init              = lsrkStep_Init;
   ark_mem->step_fullrhs           = lsrkStep_FullRHS;
   ark_mem->step                   = lsrkStep_TakeStepRKC;
+  ark_mem->step_setuserdata       = lsrkStep_SetUserData;
   ark_mem->step_printallstats     = lsrkStep_PrintAllStats;
   ark_mem->step_writeparameters   = lsrkStep_WriteParameters;
   ark_mem->step_free              = lsrkStep_Free;
@@ -180,6 +182,7 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
   ark_mem->step_setdefaults       = lsrkStep_SetDefaults;
   ark_mem->step_getnumrhsevals    = lsrkStep_GetNumRhsEvals;
   ark_mem->step_getestlocalerrors = lsrkStep_GetEstLocalErrors;
+  ark_mem->step_setforcing        = lsrkStep_SetInnerForcing;
   ark_mem->step_getstageindex     = lsrkStep_GetStageIndex;
   ark_mem->step_mem               = (void*)step_mem;
   ark_mem->step_supports_adaptive = SUNTRUE;
@@ -224,6 +227,19 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
   step_mem->stage_max_limit   = STAGE_MAX_LIMIT_DEFAULT;
   step_mem->dom_eig_nst       = 0;
   step_mem->num_dee_iters     = 0;
+
+  /* Initialize the flag regarding the maximum stage limit error */
+  step_mem->suppress_max_stage_limit_error = SUNFALSE;
+
+  /* Initialize fused op work space */
+  step_mem->cvals        = NULL;
+  step_mem->Xvecs        = NULL;
+  step_mem->nfusedopvecs = 0;
+
+  /* Initialize external polynomial forcing data */
+  step_mem->fe_wrap  = rhs;
+  step_mem->forcing  = NULL;
+  step_mem->nforcing = 0;
 
   /* Initialize main ARKODE infrastructure */
   retval = arkInit(ark_mem, t0, y0, FIRST_INIT);
@@ -285,7 +301,8 @@ int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
   }
 
   /* Copy the input parameters into ARKODE state */
-  step_mem->fe = rhs;
+  step_mem->fe      = rhs;
+  step_mem->fe_wrap = rhs;
 
   /* Initialize main ARKODE infrastructure */
   retval = arkInit(arkode_mem, t0, y0, FIRST_INIT);
@@ -457,7 +474,7 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
         retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
         if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
       }
-      retval = step_mem->fe(t, y, f, ark_mem->user_data);
+      retval = step_mem->fe_wrap(t, y, f, step_mem->user_data_wrap);
       step_mem->nfe++;
       if (retval != 0)
       {
@@ -482,7 +499,7 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
         retval = ark_mem->PreRhsFn(t, y, ark_mem->user_data);
         if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
       }
-      retval = step_mem->fe(t, y, ark_mem->fn, ark_mem->user_data);
+      retval = step_mem->fe_wrap(t, y, ark_mem->fn, step_mem->user_data_wrap);
       step_mem->nfe++;
       if (retval != 0)
       {
@@ -506,7 +523,7 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     }
 
     /* call f */
-    retval = step_mem->fe(t, y, f, ark_mem->user_data);
+    retval = step_mem->fe_wrap(t, y, f, step_mem->user_data_wrap);
     step_mem->nfe++;
     if (retval != 0)
     {
@@ -631,10 +648,13 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else
     {
-      arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                      __FILE__,
-                      "Unable to achieve stable results: Either reduce the "
-                      "step size or increase the stage_max_limit");
+      if (!step_mem->suppress_max_stage_limit_error)
+      {
+        arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                        __FILE__,
+                        "Unable to achieve stable results: Either reduce the "
+                        "step size or increase the stage_max_limit");
+      }
       return ARK_MAX_STAGE_LIMIT_FAIL;
     }
   }
@@ -701,10 +721,13 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         }
         else
         {
-          arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                          __FILE__,
-                          "Unable to achieve stable results: Either reduce the "
-                          "step size or increase the stage_max_limit");
+          if (!step_mem->suppress_max_stage_limit_error)
+          {
+            arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__,
+                            __func__, __FILE__,
+                            "Unable to achieve stable results: Either reduce "
+                            "the step size or increase the stage_max_limit");
+          }
           return ARK_MAX_STAGE_LIMIT_FAIL;
         }
       }
@@ -741,8 +764,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* call fe */
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
     {
@@ -818,7 +841,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, tmp2, ark_mem->ycur, ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tcur, tmp2, ark_mem->ycur,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->ycur,
@@ -930,8 +954,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
   }
 
-  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
-                        ark_mem->user_data);
+  retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
+                             step_mem->user_data_wrap);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "solution RHS", ark_mem->tempv2, "F_n(:) =");
@@ -1076,10 +1100,13 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else
     {
-      arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                      __FILE__,
-                      "Unable to achieve stable results: Either reduce the "
-                      "step size or increase the stage_max_limit");
+      if (!step_mem->suppress_max_stage_limit_error)
+      {
+        arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                        __FILE__,
+                        "Unable to achieve stable results: Either reduce the "
+                        "step size or increase the stage_max_limit");
+      }
       return ARK_MAX_STAGE_LIMIT_FAIL;
     }
   }
@@ -1156,10 +1183,13 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         }
         else
         {
-          arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
-                          __FILE__,
-                          "Unable to achieve stable results: Either reduce the "
-                          "step size or increase the stage_max_limit");
+          if (!step_mem->suppress_max_stage_limit_error)
+          {
+            arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__,
+                            __func__, __FILE__,
+                            "Unable to achieve stable results: Either reduce "
+                            "the step size or increase the stage_max_limit");
+          }
           return ARK_MAX_STAGE_LIMIT_FAIL;
         }
       }
@@ -1194,8 +1224,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         return ARK_PRERHSFN_FAIL;
       }
     }
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
     {
@@ -1256,7 +1286,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, tmp2, ark_mem->ycur, ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tcur, tmp2, ark_mem->ycur,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->ycur,
@@ -1356,8 +1387,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       return ARK_PRERHSFN_FAIL;
     }
   }
-  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
-                        ark_mem->user_data);
+  retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
+                             step_mem->user_data_wrap);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "solution RHS", ark_mem->tempv2, "F_n(:) =");
@@ -1486,8 +1517,8 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
     {
@@ -1543,8 +1574,8 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv2,
@@ -1593,8 +1624,8 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       return ARK_PRERHSFN_FAIL;
     }
   }
-  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
-                        ark_mem->user_data);
+  retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
+                             step_mem->user_data_wrap);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv2,
@@ -1730,8 +1761,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
     {
@@ -1788,8 +1819,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3,
@@ -1849,8 +1880,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3,
@@ -1901,8 +1932,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     }
   }
 
-  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                        ark_mem->user_data);
+  retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                             step_mem->user_data_wrap);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3,
@@ -1969,8 +2000,8 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3,
@@ -2110,8 +2141,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       }
     }
 
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
     {
@@ -2163,8 +2194,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   }
 
   /* Evaluate stage RHS */
-  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                        ark_mem->user_data);
+  retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                             step_mem->user_data_wrap);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_1(:) =");
@@ -2214,8 +2245,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     }
   }
 
-  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                        ark_mem->user_data);
+  retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                             step_mem->user_data_wrap);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_2(:) =");
@@ -2277,8 +2308,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     }
   }
 
-  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                        ark_mem->user_data);
+  retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                             step_mem->user_data_wrap);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_3(:) =");
@@ -2395,8 +2426,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       }
     }
 
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
     {
@@ -2457,8 +2488,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3,
@@ -2526,8 +2557,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       }
     }
 
-    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                          ark_mem->user_data);
+    retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                               step_mem->user_data_wrap);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3,
@@ -2586,8 +2617,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
   }
 
-  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                        ark_mem->user_data);
+  retval = step_mem->fe_wrap(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                             step_mem->user_data_wrap);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3, "F_9(:) =");
@@ -3266,7 +3297,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
       if (retval != 0) { return ARK_PRERHSFN_FAIL; }
     }
 
-    retval = step_mem->fe(t, y, ark_mem->fn, ark_mem->user_data);
+    retval = step_mem->fe_wrap(t, y, ark_mem->fn, step_mem->user_data_wrap);
     step_mem->nfeDQ++;
     if (retval != ARK_SUCCESS)
     {
@@ -3294,7 +3325,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
       if (retval != 0) { return ARK_PRERHSFN_FAIL; }
     }
     /* Set Jv = f(tn, y+sig*v) */
-    retval = step_mem->fe(t, work, Jv, ark_mem->user_data);
+    retval = step_mem->fe_wrap(t, work, Jv, step_mem->user_data_wrap);
     step_mem->nfeDQ++;
     if (retval == 0) { break; }
     if (retval < 0) { return (-1); }
@@ -3311,6 +3342,132 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
   N_VLinearSum(siginv, Jv, -siginv, ark_mem->fn, Jv);
 
   return ARK_SUCCESS;
+}
+
+/*----------------------------------------------------------------
+  Utility routines for LSRKStep to serve as an MRIStepInnerStepper
+  ----------------------------------------------------------------*/
+
+/*------------------------------------------------------------------------------
+  lsrkStep_f_forcing
+
+  Wrapper function for the user-supplied RHS function that incorporates
+  external polynomial forcing.
+
+  Note for potential future improvement: when used in ExtSTS methods the
+  formulation below is optimal.  However, in the general MRI case with an
+  adaptive step STS method at the fast time scale, the STS methods could
+  benefit from the same RHS reuse across fast integrations as in ERKStep and
+  ARKStep since they are FSAL because of the embedding.
+  ----------------------------------------------------------------------------*/
+
+int lsrkStep_f_forcing(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
+{
+  /* Unpack step_mem from user_data pointer */
+  ARKodeMem ark_mem;
+  ARKodeLSRKStepMem step_mem;
+  int retval = lsrkStep_AccessARKODEStepMem(user_data, __func__, &ark_mem,
+                                            &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  /* Call the user-supplied RHS function and store in f */
+  retval = step_mem->fe(t, y, f, ark_mem->user_data);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  /* Add forcing terms to f via a call to N_VLinearCombination */
+  step_mem->cvals[0]    = ONE;
+  step_mem->Xvecs[0]    = f;
+  const sunrealtype tau = (t - step_mem->tshift) / (step_mem->tscale);
+  sunrealtype taui      = ONE;
+  for (int i = 0; i < step_mem->nforcing; i++)
+  {
+    step_mem->cvals[i + 1] = taui;
+    step_mem->Xvecs[i + 1] = step_mem->forcing[i];
+    taui *= tau;
+  }
+  N_VLinearCombination(step_mem->nforcing + 1, step_mem->cvals, step_mem->Xvecs,
+                       f);
+
+  return ARK_SUCCESS;
+}
+
+/*------------------------------------------------------------------------------
+  lsrkStep_SetInnerForcing
+
+  Sets an array of coefficient vectors for a time-dependent external polynomial
+  forcing term in the ODE RHS i.e., y' = f(t,y) + p(t). This function is
+  primarily intended for use with multirate integration methods (e.g., MRIStep)
+  where LSRKStep is used to solve a modified ODE at a fast time scale. The
+  polynomial is of the form
+
+  p(t) = sum_{i = 0}^{nvecs - 1} forcing[i] * ((t - tshift) / (tscale))^i
+
+  where tshift and tscale are used to normalize the time t (e.g., with MRIGARK
+  methods).
+  ----------------------------------------------------------------------------*/
+
+int lsrkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
+                             sunrealtype tscale, N_Vector* forcing, int nvecs)
+{
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeLSRKStepMem structure */
+  retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  if (nvecs > 0)
+  {
+    /* store forcing inputs */
+    step_mem->tshift   = tshift;
+    step_mem->tscale   = tscale;
+    step_mem->forcing  = forcing;
+    step_mem->nforcing = nvecs;
+
+    /* wrap the problem-defining RHS function and user data */
+    step_mem->fe_wrap        = lsrkStep_f_forcing;
+    step_mem->user_data_wrap = (void*)ark_mem;
+
+    /* verify that cvals and Xvecs are long enough to accommodate forcing */
+    if (step_mem->nfusedopvecs < (nvecs + 1))
+    {
+      /* free current work space */
+      if (step_mem->cvals != NULL)
+      {
+        free(step_mem->cvals);
+        step_mem->cvals = NULL;
+      }
+      if (step_mem->Xvecs != NULL)
+      {
+        free(step_mem->Xvecs);
+        step_mem->Xvecs = NULL;
+      }
+
+      /* allocate reusable arrays for fused vector operations */
+      step_mem->nfusedopvecs = nvecs + 1;
+
+      step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
+                                             sizeof(sunrealtype));
+      if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
+      step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
+                                          sizeof(N_Vector));
+      if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
+    }
+  }
+  else
+  {
+    /* disable forcing */
+    step_mem->tshift   = ZERO;
+    step_mem->tscale   = ONE;
+    step_mem->forcing  = NULL;
+    step_mem->nforcing = 0;
+
+    /* unwrap the problem-defining RHS function and user data */
+    step_mem->fe_wrap        = step_mem->fe;
+    step_mem->user_data_wrap = ark_mem->user_data;
+  }
+
+  return (ARK_SUCCESS);
 }
 
 /*===============================================================

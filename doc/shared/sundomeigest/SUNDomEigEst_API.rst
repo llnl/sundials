@@ -209,15 +209,15 @@ instead of supplying a dummy routine.
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data, SUNRhsFn RHSfn)
 
-   For applications that do not provide a :c:type:`SUNATimesFn` function to :c:func:`SUNDomEigEstimator_SetATimes`, 
-   the action of this matrix-vector product may be approximated internally.  If the matrix corresponds with 
-   the Jacobian of a vector-valued function, :math:`A = \frac{\partial f_{RHS}}{\partial y}(t,y)`, then the 
-   function :math:`f_{RHS}` may optionally be input via this routine, and the Jacobian-vector products will 
-   be approximated as 
-   
+   For applications that do not provide a :c:type:`SUNATimesFn` function to :c:func:`SUNDomEigEstimator_SetATimes`,
+   the action of this matrix-vector product may be approximated internally.  If the matrix corresponds with
+   the Jacobian of a vector-valued function, :math:`A = \frac{\partial f_{RHS}}{\partial y}(t,y)`, then the
+   function :math:`f_{RHS}` may optionally be input via this routine, and the Jacobian-vector products will
+   be approximated as
+
    .. math::
       Av \approx \frac{1}{\sigma}\left[ f_{RHS}(t,y+\sigma v) - f_{RHS}(t,y)\right]
-      
+
    The linearization point :math:`(t,y)` should be separately supplied by calling :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`.
 
    **Arguments:**
@@ -457,22 +457,22 @@ SUNDomEigEstimator callback functions
 ---------------------------------------------
 
 To interface with SUNDomEigEst modules, the SUNDIALS packages supply a
-:c:type:`SUNATimesFn` function for evaluating the matrix-vector 
+:c:type:`SUNATimesFn` function for evaluating the matrix-vector
 product. This package-provided routine translates between the user-supplied ODE
-systems and the generic dominant eigenvalue estimator API. The function type 
+systems and the generic dominant eigenvalue estimator API. The function type
 :c:type:`SUNATimesFn` is defined in the header file ``sundials/sundials_iterative.h``.
 
-Users who wish to use a SUNDomEigEst module in "standalone" mode, however, must 
+Users who wish to use a SUNDomEigEst module in "standalone" mode, however, must
 provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described below.
 
 
 .. c:type:: int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot, void* rhs_data)
 
-   Used to compute the right-hand side of an ODE system. This function is used 
-   when the dominant eigenvalue estimator is configured to perform a discrete 
+   Used to compute the right-hand side of an ODE system. This function is used
+   when the dominant eigenvalue estimator is configured to perform a discrete
    Jacobian-vector product using quotient approximations of the Jacobian. The parameter
-   *rhs_data* is a pointer to any information about RHS which the function needs in order 
-   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left 
+   *rhs_data* is a pointer to any information about RHS which the function needs in order
+   to do its job. The time parameter :math:`t` and the vector :math:`y` should be left
    unchanged.
 
 

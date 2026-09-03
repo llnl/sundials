@@ -251,7 +251,7 @@ SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,
   /* set the complex flag to the opposite of the real flag */
   PI_CONTENT(DEE)->is_complex = !real;
 
-  /* v_prev is allocated in the constructor. If the user calls this routine later, 
+  /* v_prev is allocated in the constructor. If the user calls this routine later,
   we need to free v_prev here. */
   if (real && PI_CONTENT(DEE)->v_prev != NULL)
   {
@@ -583,7 +583,7 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   long int* num_ATimes = &(PI_CONTENT(DEE)->num_ATimes);
 
   sunrealtype cos_qs, gram_det, det_G_inv, h11, h12, h22, p11, p12, p21, p22;
-  /* The threshold for identifying real or complex DEE is experimentally 
+  /* The threshold for identifying real or complex DEE is experimentally
   determined based on the relative tolerance rel_tol */
   sunrealtype gram_det_tol = SUN_RCONST(10.0) *
                              SUNMAX(SUN_UNIT_ROUNDOFF, rel_tol);

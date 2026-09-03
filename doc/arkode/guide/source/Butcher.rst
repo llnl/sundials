@@ -172,9 +172,9 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_4_1_2`                 | 4      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`                | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_GKC21_ERK_3_1_2`               | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`              | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`              | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2`           | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
@@ -456,16 +456,21 @@ equal to 3.
    region is outlined in red; the embedding's region is in blue dashed.
 
 
-.. c:enumerator:: ARKODE_ARK2_ERK_3_1_2
+.. c:enumerator:: ARKODE_GKC21_ERK_3_1_2
 
-Accessible via the constant ``ARKODE_ARK2_ERK_3_1_2`` to
+Accessible via the constant ``ARKODE_GKC21_ERK_3_1_2`` to
 :c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
 :c:func:`ARKodeButcherTable_LoadERK`.
-Accessible via the string ``"ARKODE_ARK2_ERK_3_1_2"`` to
+Accessible via the string ``"ARKODE_GKC21_ERK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the explicit portion of the default 2nd order additive method (the
 explicit portion of the ARK2 method from :cite:p:`giraldo2013implicit`).
+
+.. versionchanged:: x.y.z
+
+   The ARKODE table was originally named ``ARKODE_ARK2_ERK_3_1_2``; it was renamed
+   to ``ARKODE_GKC21_ERK_3_1_2`` to reflect the method's origin.
 
 .. math::
 
@@ -483,16 +488,16 @@ explicit portion of the ARK2 method from :cite:p:`giraldo2013implicit`).
    :scale: 65 %
    :align: center
 
-   Linear stability region for the ARK2-ERK method. The method's
+   Linear stability region for the GKC21-ERK method. The method's
    region is outlined in blue; the embedding's region is in red.
 
 
-.. c:enumerator:: ARKODE_ASCHER_ERK_3_1_2
+.. c:enumerator:: ARKODE_ARS222_ERK_3_1_2
 
-Accessible via the constant ``ARKODE_ASCHER_ERK_3_1_2`` to
+Accessible via the constant ``ARKODE_ARS222_ERK_3_1_2`` to
 :c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
 :c:func:`ARKodeButcherTable_LoadERK`.
-Accessible via the string ``"ARKODE_ASCHER_ERK_3_1_2"`` to
+Accessible via the string ``"ARKODE_ARS222_ERK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 The method is the explicit portion of the "(2,2,2)" additive Runge--Kutta
@@ -500,6 +505,11 @@ method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented specific
 ARKODE.
 
 .. versionadded:: 7.8.0 (6.8.0)
+
+.. versionchanged:: x.y.z
+
+   The ARKODE table was originally named ``ARKODE_ASCHER_ERK_3_1_2``; it was renamed
+   to ``ARKODE_ARS222_ERK_3_1_2`` to reflect the method's origin.
 
 .. math::
 
@@ -684,7 +694,7 @@ This is the default 3th order slow and fast MRIStep method (from
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Knoth-Wolke method
+   Linear stability region for the Knoth-Wolke method.
 
 
 .. c:enumerator:: ARKODE_SSP_ERK_4_2_3
@@ -1568,11 +1578,11 @@ with values specified in :numref:`ARKODE.Butcher.DIRK_properties`.
    +=================================================+========+================+=======+
    | :c:enumerator:`ARKODE_BACKWARD_EULER_1_1`       | 1      | ---            | 1*    |
    +-------------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`          | 3      | 1              | 2*    |
+   | :c:enumerator:`ARKODE_GKC21_ESDIRK_3_1_2`       | 3      | 1              | 2*    |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SDIRK_2_1_2`              | 2      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`       | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`      | 3      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`           | 3      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
@@ -1661,12 +1671,12 @@ This is the default 1st order implicit method.  The method is A-, L-, and B-stab
    Linear stability region for the backward Euler method.
 
 
-.. c:enumerator:: ARKODE_ARK2_DIRK_3_1_2
+.. c:enumerator:: ARKODE_GKC21_ESDIRK_3_1_2
 
-Accessible via the constant ``ARKODE_ARK2_DIRK_3_1_2`` to
+Accessible via the constant ``ARKODE_GKC21_ESDIRK_3_1_2`` to
 :c:func:`ARKStepSetTableNum`, or
 :c:func:`ARKodeButcherTable_LoadDIRK`.
-Accessible via the string ``"ARKODE_ARK2_DIRK_3_1_2"`` to
+Accessible via the string ``"ARKODE_GKC21_ESDIRK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 This is the default 2nd order implicit method and the implicit portion of the
@@ -1676,6 +1686,11 @@ default 2nd order additive method
 .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 2nd order implicit method
+
+.. versionchanged:: x.y.z
+
+   Renamed from ``ARKODE_ARK2_DIRK_3_1_2`` to ``ARKODE_GKC21_ESDIRK_3_1_2`` to reflect
+   the method's origin.
 
 .. math::
 
@@ -1693,7 +1708,7 @@ default 2nd order additive method
    :scale: 65 %
    :align: center
 
-   Linear stability region for the ARK2-DIRK method. The method's
+   Linear stability region for the GKC21-DIRK method. The method's
    region is outlined in blue; the embedding's region is in red.
 
 
@@ -1709,7 +1724,7 @@ Both the method and embedding are A- and B-stable.
 
 .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
-   Replaced by ``ARKODE_ARK2_DIRK_3_1_2`` as the default 2nd order implicit method
+   Replaced by ``ARKODE_GKC21_ESDIRK_3_1_2`` as the default 2nd order implicit method
 
 .. math::
 
@@ -1730,12 +1745,12 @@ Both the method and embedding are A- and B-stable.
    region is outlined in blue; the embedding's region is in red.
 
 
-.. c:enumerator:: ARKODE_ASCHER_SDIRK_3_1_2
+.. c:enumerator:: ARKODE_ARS222_ESDIRK_3_1_2
 
-Accessible via the constant ``ARKODE_ASCHER_SDIRK_3_1_2`` to
+Accessible via the constant ``ARKODE_ARS222_ESDIRK_3_1_2`` to
 :c:func:`ARKStepSetTableNum`, or
 :c:func:`ARKodeButcherTable_LoadDIRK`.
-Accessible via the string ``"ARKODE_ASCHER_SDIRK_3_1_2"`` to
+Accessible via the string ``"ARKODE_ARS222_ESDIRK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 The method is the implicit portion of the "(2,2,2)" additive Runge--Kutta
@@ -1744,6 +1759,11 @@ specifically for ARKODE.  The method is both A- and L-stable, and the
 embedding is A-stable.
 
 .. versionadded:: 7.8.0 (6.8.0)
+
+.. versionchanged:: x.y.z
+
+   Renamed from ``ARKODE_ASCHER_SDIRK_3_1_2`` to ``ARKODE_ARS222_ESDIRK_3_1_2`` to reflect
+   the method's origin.
 
 .. math::
 
@@ -2665,9 +2685,9 @@ are as follows.
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | ERK Method ID                                | DIRK Method ID                                | Stages | Embedded Order | Order |
    +==============================================+===============================================+========+================+=======+
-   | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`        | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`        | 3      | 1              | 2*    |
+   | :c:enumerator:`ARKODE_GKC21_ERK_3_1_2`       | :c:enumerator:`ARKODE_GKC21_ESDIRK_3_1_2`     | 3      | 1              | 2*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`      | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`     | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`      | :c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`    | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`         | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`         | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
@@ -2687,15 +2707,15 @@ are as follows.
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
 
 
-.. _Butcher.ARKODE_ARK2_3_1_2:
+.. _Butcher.ARKODE_GKC21_3_1_2:
 
-ARKODE_ARK2_3_1_2
-^^^^^^^^^^^^^^^^^
+ARKODE_GKC21_3_1_2
+^^^^^^^^^^^^^^^^^^
 
-.. index:: ARKODE_ARK2_3_1_2 ARK method
+.. index:: ARKODE_GKC21_3_1_2 ARK method
 
-2nd-order method that combines :c:enumerator:`ARKODE_ARK2_ERK_3_1_2` with
-:c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`.  This is the default
+2nd-order method that combines :c:enumerator:`ARKODE_GKC21_ERK_3_1_2` with
+:c:enumerator:`ARKODE_GKC21_ESDIRK_3_1_2`.  This is the default
 second-order ARK method.
 
 .. figure:: /figs/arkode/ARKODE_ARK2_3_1_2_joint_stab_region.png
@@ -2703,26 +2723,26 @@ second-order ARK method.
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
-   ``ARKODE_ARK2_3_1_2`` method.  All
+   ``ARKODE_GKC21_3_1_2`` method.  All
    joint stability regions coincide, so only the :math:`90^{\circ}` boundary is visible.
 
 
-.. _Butcher.ARKODE_ASCHER_ARK_3_1_2:
+.. _Butcher.ARKODE_ARS222_ARK_3_1_2:
 
-ARKODE_ASCHER_ARK_3_1_2
+ARKODE_ARS222_ARK_3_1_2
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. index:: ARKODE_ASCHER_ARK_3_1_2 ARK method
+.. index:: ARKODE_ARS222_ARK_3_1_2 ARK method
 
-2nd-order method that combines :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2` with
-:c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`.
+2nd-order method that combines :c:enumerator:`ARKODE_ARS222_ERK_3_1_2` with
+:c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`.
 
 .. figure:: /figs/arkode/ARKODE_ASCHER_ARK_3_1_2_joint_stab_region.png
    :width: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
-   ``ARKODE_ASCHER_ARK_3_1_2`` method.
+   ``ARKODE_ARS222_ARK_3_1_2`` method.
    All joint stability regions coincide, so only the :math:`90^{\circ}` boundary
    is visible.
 
