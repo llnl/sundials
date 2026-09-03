@@ -399,7 +399,7 @@ This is the "SSPERK(3,2)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have optimal SSP coefficient
 equal to 2.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -433,7 +433,7 @@ This is the "SSPERK(4,2)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have optimal SSP coefficient
 equal to 3.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -467,7 +467,7 @@ Accessible via the string ``"ARKODE_GKC21_ERK_3_1_2"`` to
 This is the explicit portion of the default 2nd order additive method (the
 explicit portion of the ARK2 method from :cite:p:`giraldo2013implicit`).
 
-.. versionchanged:: x.y.z
+.. versionchanged:: 7.9.0 (ARKODE 6.9.0)
 
    The ARKODE table was originally named ``ARKODE_ARK2_ERK_3_1_2``; it was renamed
    to ``ARKODE_GKC21_ERK_3_1_2`` to reflect the method's origin.
@@ -504,9 +504,9 @@ The method is the explicit portion of the "(2,2,2)" additive Runge--Kutta
 method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented specifically for
 ARKODE.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
-.. versionchanged:: x.y.z
+.. versionchanged:: 7.9.0 (ARKODE 6.9.0)
 
    The ARKODE table was originally named ``ARKODE_ASCHER_ERK_3_1_2``; it was renamed
    to ``ARKODE_ARS222_ERK_3_1_2`` to reflect the method's origin.
@@ -546,7 +546,7 @@ Runge--Kutta method from :cite:p:`H:14`; the embedding was invented
 specifically for ARKODE.  The method has SSP coefficient equal to 1.2,
 and the embedding has SSP coefficient equal to 1.15.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -708,7 +708,7 @@ Accessible via the string ``"ARKODE_SSP_ERK_4_2_3"`` to
 This is the "SSPERK(4,3)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have SSP coefficient equal to 2.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -740,6 +740,8 @@ Accessible via the constant ``ARKODE_KUTTA_RK4a_4_4`` to
 :c:func:`ERKStepSetTableName`, or :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the classical RK4 method :cite:p:`K:01`.
 
+.. versionadded:: 7.9.0 (ARKODE 6.9.0)
+
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
@@ -768,6 +770,8 @@ Accessible via the constant ``ARKODE_KUTTA_RK4b_4_4`` to
 ``"ARKODE_KUTTA_RK4b_4_4"`` to :c:func:`ARKStepSetTableName`,
 :c:func:`ERKStepSetTableName`, or :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the classical 3/8-rule :cite:p:`K:01`.
+
+.. versionadded:: 7.9.0 (ARKODE 6.9.0)
 
 .. math::
 
@@ -800,7 +804,7 @@ Accessible via the string ``"ARKODE_SSP_ERK_10_3_4"`` to
 This is the "SSPERK(10,4)" method from :cite:p:`FCS:22`.
 The method has SSP coefficient equal to 6.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -1687,7 +1691,7 @@ default 2nd order additive method
 
    Made the default 2nd order implicit method
 
-.. versionchanged:: x.y.z
+.. versionchanged:: 7.9.0 (6.9.0)
 
    Renamed from ``ARKODE_ARK2_DIRK_3_1_2`` to ``ARKODE_GKC21_ESDIRK_3_1_2`` to reflect
    the method's origin.
@@ -1760,7 +1764,7 @@ embedding is A-stable.
 
 .. versionadded:: 7.8.0 (6.8.0)
 
-.. versionchanged:: x.y.z
+.. versionchanged:: 7.9.0 (6.9.0)
 
    Renamed from ``ARKODE_ASCHER_SDIRK_3_1_2`` to ``ARKODE_ARS222_ESDIRK_3_1_2`` to reflect
    the method's origin.

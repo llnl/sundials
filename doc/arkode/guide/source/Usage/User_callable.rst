@@ -3316,6 +3316,9 @@ described in :numref:`SUNLinSol.Iterative.Tolerance`.
 
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
+   .. versionchanged:: 7.9.0 (ARKODE 6.9.0)
+
+      A bug was fixed where the input value was scaled by 0.1.
 
 .. c:function:: int ARKodeSetMassEpsLin(void* arkode_mem, sunrealtype eplifac)
 
