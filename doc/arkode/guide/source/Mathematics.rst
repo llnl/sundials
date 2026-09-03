@@ -533,8 +533,11 @@ Runge--Kutta--Chebyshev (RKC), :cite:p:`VSH:04`, Runge--Kutta--Legendre (RKL), :
    y_{n+1} &= z_{s+1}.
    :label: ARKODE_RKC_RKL_RKG
 
-The corresponding coefficients can be found in :cite:p:`VSH:04`, :cite:p:`MBA:14` and :cite:p:`OSULLIVAN:19, SSMA:21`, respectively, and extension of
-these methods for time adaptivity can be found in :cite:p:`RARBGW:26`.
+The corresponding coefficients can be found in :cite:p:`VSH:04`, :cite:p:`MBA:14` and :cite:p:`SSMA:21`, respectively, and extension of
+these methods for time adaptivity can be found in :cite:p:`RARBGW:26`. The RKG stability polynomials are the shifted Gegenbauer polynomials 
+with :math:`\alpha = 3/2`, a particular instantiation of the class introduced in :cite:p:`OSULLIVAN:19`.  Unlike RKC and RKL, RKG preserves 
+the convex monotone property in the presence of Dirichlet boundary conditions, making it suitable for problems hwere non-oscillatory behaviour 
+is required :cite:p:`SSMA:21`.
 
 LSRK methods of STS type are designed for stiff problems characterized by
 having Jacobians with eigenvalues that have large real and small imaginary parts.
