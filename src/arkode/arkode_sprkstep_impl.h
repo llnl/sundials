@@ -78,7 +78,6 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
                                   int* nflagPtr);
 int sprkStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
                         size_t offset, sunbooleantype* arg_used);
-int sprkStep_SetUserData(ARKodeMem ark_mem, void* user_data);
 int sprkStep_SetDefaults(ARKodeMem ark_mem);
 int sprkStep_SetOrder(ARKodeMem ark_mem, int ord);
 int sprkStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt);
@@ -88,7 +87,6 @@ int sprkStep_Reset(ARKodeMem ark_mem, sunrealtype tR, N_Vector yR);
 int sprkStep_Resize(ARKodeMem ark_mem, N_Vector y0, sunrealtype hscale,
                     sunrealtype t0, ARKVecResizeFn resize, void* resize_data);
 void sprkStep_Free(ARKodeMem ark_mem);
-void sprkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int sprkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
                             long int* rhs_evals);
 int sprkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);

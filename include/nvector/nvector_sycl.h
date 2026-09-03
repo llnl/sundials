@@ -163,14 +163,6 @@ SUNDIALS_EXPORT SUNErrCode N_VScaleAddMultiVectorArray_Sycl(
   int nvec, int nsum, sunrealtype* a, N_Vector* X, N_Vector** Y, N_Vector** Z);
 SUNDIALS_EXPORT SUNErrCode N_VLinearCombinationVectorArray_Sycl(
   int nvec, int nsum, sunrealtype* c, N_Vector** X, N_Vector* Z);
-SUNDIALS_EXPORT SUNErrCode N_VWrmsNormVectorArray_Sycl(int nvec, N_Vector* X,
-                                                       N_Vector* W,
-                                                       sunrealtype* nrm);
-SUNDIALS_EXPORT SUNErrCode N_VWrmsNormMaskVectorArray_Sycl(int nvec, N_Vector* X,
-                                                           N_Vector* W,
-                                                           N_Vector id,
-                                                           sunrealtype* nrm);
-
 /* OPTIONAL local reduction kernels (no parallel communication) */
 SUNDIALS_EXPORT sunrealtype N_VWSqrSumLocal_Sycl(N_Vector x, N_Vector w);
 SUNDIALS_EXPORT sunrealtype N_VWSqrSumMaskLocal_Sycl(N_Vector x, N_Vector w,
@@ -195,19 +187,12 @@ SUNDIALS_EXPORT SUNErrCode N_VEnableLinearCombination_Sycl(N_Vector v,
                                                            sunbooleantype tf);
 SUNDIALS_EXPORT SUNErrCode N_VEnableScaleAddMulti_Sycl(N_Vector v,
                                                        sunbooleantype tf);
-SUNDIALS_EXPORT SUNErrCode N_VEnableDotProdMulti_Sycl(N_Vector v,
-                                                      sunbooleantype tf);
-
 SUNDIALS_EXPORT SUNErrCode N_VEnableLinearSumVectorArray_Sycl(N_Vector v,
                                                               sunbooleantype tf);
 SUNDIALS_EXPORT SUNErrCode N_VEnableScaleVectorArray_Sycl(N_Vector v,
                                                           sunbooleantype tf);
 SUNDIALS_EXPORT SUNErrCode N_VEnableConstVectorArray_Sycl(N_Vector v,
                                                           sunbooleantype tf);
-SUNDIALS_EXPORT SUNErrCode N_VEnableWrmsNormVectorArray_Sycl(N_Vector v,
-                                                             sunbooleantype tf);
-SUNDIALS_EXPORT
-SUNErrCode N_VEnableWrmsNormMaskVectorArray_Sycl(N_Vector v, sunbooleantype tf);
 SUNDIALS_EXPORT
 SUNErrCode N_VEnableScaleAddMultiVectorArray_Sycl(N_Vector v, sunbooleantype tf);
 SUNDIALS_EXPORT

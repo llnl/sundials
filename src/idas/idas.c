@@ -124,7 +124,6 @@
  *       IDARootfind
  *   IDA Error message handling functions
  *       IDAProcessError
- *       IDAErrHandler
  *   Internal DQ approximations for sensitivity RHS
  *       IDASensResDQ
  *       IDASensRes1DQ
