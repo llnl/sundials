@@ -35,6 +35,10 @@ The KLU SUNLinearSolver is now available in sundials4py.
 
 ### Bug Fixes
 
+Fixed a bug where the factor provided by `ARKodeSetEpsLin` was scaled by 0.1.
+To restore the original behavior, call `ARKodeSetEpsLin` with an argument of
+0.005.
+
 Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point
 due to convergence rate check occurring after only one iteration.
 

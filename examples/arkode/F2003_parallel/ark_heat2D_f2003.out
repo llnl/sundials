@@ -29,18 +29,18 @@
     0.210000    0.014287
     0.225000    0.014291
     0.240000    0.014293
-    0.255000    0.014294
-    0.270000    0.014296
+    0.255000    0.014295
+    0.270000    0.014295
     0.285000    0.014296
     0.300000    0.014296
     ----------------------
    
  Final Solver Statistics:
-   Internal solver steps =     27 (attempted =     34)
-   Total RHS evals:  Fe =      0,  Fi =    343
-   Total linear iterations =   2946
-   Total number of Preconditioner setups =     30
-   Total number of Preconditioner solves =   2946
-   Total number of linear solver convergence failures =    141
-   Total number of Newton iterations =    170
-   Total number of error test failures =      7
+   Internal solver steps =     25 (attempted =     30)
+   Total RHS evals:  Fe =      0,  Fi =    303
+   Total linear iterations =   2499
+   Total number of Preconditioner setups =     28
+   Total number of Preconditioner solves =   2499
+   Total number of linear solver convergence failures =    114
+   Total number of Newton iterations =    150
+   Total number of error test failures =      5
