@@ -250,6 +250,15 @@ def print_stats(arkode, sts):
     print(stats_text(sts), end="")
 
 
+def load_mri_coupling(method):
+    method_value = getattr(ark, method, method)
+
+    if isinstance(method_value, int):
+        return ark.MRIStepCoupling_LoadTable(method_value)
+
+    return ark.MRIStepCoupling_LoadTableByName(method_value)
+
+
 def main(argv=None):
     args = parse_args(argv)
 
@@ -314,7 +323,7 @@ def main(argv=None):
     status = ark.ARKodeSetLinearSolver(arkode.get(), LS, J)
     assert status == ark.ARK_SUCCESS
 
-    coupling = ark.MRIStepCoupling_LoadTableByName(args.mri_method)
+    coupling = load_mri_coupling(args.mri_method)
     assert coupling is not None
 
     status = ark.MRIStepSetCoupling(arkode.get(), coupling)

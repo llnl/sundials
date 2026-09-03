@@ -66,6 +66,57 @@ void bind_arkode_mristep(nb::module_& m)
 {
 #include "arkode_mristep_generated.hpp"
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Manual attributes to capture static const int declarations that nanobind
+  // does not catch
+  /////////////////////////////////////////////////////////////////////////////
+
+  m.attr("MRISTEP_DEFAULT_EXPL_1") = static_cast<int>(MRISTEP_DEFAULT_EXPL_1);
+  m.attr("MRISTEP_DEFAULT_EXPL_2") = static_cast<int>(MRISTEP_DEFAULT_EXPL_2);
+  m.attr("MRISTEP_DEFAULT_EXPL_3") = static_cast<int>(MRISTEP_DEFAULT_EXPL_3);
+  m.attr("MRISTEP_DEFAULT_EXPL_4") = static_cast<int>(MRISTEP_DEFAULT_EXPL_4);
+  m.attr("MRISTEP_DEFAULT_EXPL_2_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_EXPL_2_AD);
+  m.attr("MRISTEP_DEFAULT_EXPL_3_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_EXPL_3_AD);
+  m.attr("MRISTEP_DEFAULT_EXPL_4_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_EXPL_4_AD);
+  m.attr("MRISTEP_DEFAULT_EXPL_5_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_EXPL_5_AD);
+  m.attr("MRISTEP_DEFAULT_IMPL_SD_1") =
+    static_cast<int>(MRISTEP_DEFAULT_IMPL_SD_1);
+  m.attr("MRISTEP_DEFAULT_IMPL_SD_2") =
+    static_cast<int>(MRISTEP_DEFAULT_IMPL_SD_2);
+  m.attr("MRISTEP_DEFAULT_IMPL_SD_3") =
+    static_cast<int>(MRISTEP_DEFAULT_IMPL_SD_3);
+  m.attr("MRISTEP_DEFAULT_IMPL_SD_4") =
+    static_cast<int>(MRISTEP_DEFAULT_IMPL_SD_4);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_1") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_1);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_2") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_2);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_3") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_3);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_4") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_4);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_2_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_2_AD);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_3_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_3_AD);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_4_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_4_AD);
+
+  // deprecated constants. These should be removed in a future release.
+  m.attr("ARKODE_IMEX_MRI_GARK_ARK2") =
+    static_cast<int>(ARKODE_IMEX_MRI_GARK_ARK2);
+  m.attr("ARKODE_IMEX_MRI_GARK_ASCHER_ARK2") =
+    static_cast<int>(ARKODE_IMEX_MRI_GARK_ASCHER_ARK2);
+
+
+  /////////////////////////////////////////////////////////////////////////////
+  // MRIStep user-supplied function setters
+  /////////////////////////////////////////////////////////////////////////////
+
   // _MRIStepInnerStepper is a opaque/private class forward declared in a public header but
   // defined in a source file elsewhere. As such, we need to declare it here since its
   // not picked up in any header files by the generator.

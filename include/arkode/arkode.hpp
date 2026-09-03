@@ -23,6 +23,8 @@
 #include <sundials/sundials_classview.hpp>
 
 #include <arkode/arkode.h>
+#include <arkode/arkode_butcher_dirk.h>
+#include <arkode/arkode_butcher_erk.h>
 
 namespace sundials {
 namespace experimental {
