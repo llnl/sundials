@@ -50,7 +50,6 @@ condition solves and order selection diagnostics.
 
 Renamed the ``ARKODE_ARK2_ERK_3_1_2``, ``ARKODE_ARK2_DIRK_3_1_2``,
 ``ARKODE_ASCHER_ERK_3_1_2``, and ``ARKODE_ASCHER_SDIRK_3_1_2`` Butcher tables to
-``ARKODE_GKC21_ERK_3_1_2``, and ``ARKODE_ASCHER_SDIRK_3_1_2`` Butcher tables to
 :c:enumerator:`ARKODE_GKC21_ERK_3_1_2`,
 :c:enumerator:`ARKODE_GKC21_ESDIRK_3_1_2`,
 :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`, and
