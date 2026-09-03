@@ -160,8 +160,8 @@ typedef struct ARKodeLSRKStepMemRec
   ARKRhsFn fe;
   ARKDomEigFn dom_eig_fn;
 
-  int q; /* method order               */
-  int p; /* embedding order            */
+  int q; /* method order    */
+  int p; /* embedding order */
 
   int istage;     /* current stage            */
   int req_stages; /* number of stages in step */
@@ -177,6 +177,7 @@ typedef struct ARKodeLSRKStepMemRec
   long int dom_eig_nst; /* num of step at which the last domainant eigenvalue was computed  */
   long int step_nst;      /* The number of successful steps. */
   long int num_dee_iters; /* number of iterations in the DEE estimates */
+  sunbooleantype suppress_max_stage_limit_error; /* suppress max stage errors */
 
   /* Spectral info */
   sunrealtype lambdaR;         /* Real part of the dominated eigenvalue*/
@@ -205,6 +206,14 @@ typedef struct ARKodeLSRKStepMemRec
   N_Vector* Xvecs;
   int nfusedopvecs; /* length of cvals and Xvecs arrays */
 
+  /* Data for using LSRKStep with external polynomial forcing */
+  ARKRhsFn fe_wrap;     /* wrapper fcn for feion          */
+  void* user_data_wrap; /* new user_data pointer for fe   */
+  sunrealtype tshift;   /* time normalization shift       */
+  sunrealtype tscale;   /* time normalization scaling     */
+  N_Vector* forcing;    /* array of forcing vectors       */
+  int nforcing;         /* number of forcing vectors      */
+
 }* ARKodeLSRKStepMem;
 
 /*===============================================================
@@ -229,6 +238,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr,
 int lsrkStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
                         size_t offset, sunbooleantype* arg_used);
 int lsrkStep_SetDefaults(ARKodeMem ark_mem);
+int lsrkStep_SetUserData(ARKodeMem ark_mem, void* user_data);
 int lsrkStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt);
 int lsrkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp);
 void lsrkStep_Free(ARKodeMem ark_mem);
@@ -236,6 +246,8 @@ void lsrkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int lsrkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
                             long int* rhs_evals);
 int lsrkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele);
+int lsrkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
+                             sunrealtype tscale, N_Vector* f, int nvecs);
 int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
@@ -243,6 +255,7 @@ int lsrkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,
                                  ARKodeMem* ark_mem, ARKodeLSRKStepMem* step_mem);
 int lsrkStep_AccessStepMem(ARKodeMem ark_mem, const char* fname,
                            ARKodeLSRKStepMem* step_mem);
+int lsrkStep_f_forcing(sunrealtype t, N_Vector y, N_Vector f, void* user_data);
 void lsrkStep_DomEigUpdateLogic(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                 sunrealtype dsm, N_Vector fnew);
 int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem);

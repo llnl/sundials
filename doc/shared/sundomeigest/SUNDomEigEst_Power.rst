@@ -30,9 +30,9 @@ any ``N_Vector`` implementation that supports a minimal subset of operations
 :c:func:`N_VDestroy()`).
 
 Power iteration is useful for large, sparse matrices whose dominant eigenvalue
-has algebraic multiplicity one, or if the dominant eigenvalues are a complex 
+has algebraic multiplicity one, or if the dominant eigenvalues are a complex
 conjugate pair, then that pair has algebraic multiplicity one.  The algorithm
-starts with a non-zero vector :math:`\mathbf{v}_{0}`.  It then  iteratively 
+starts with a non-zero vector :math:`\mathbf{v}_{0}`.  It then  iteratively
 updates this via
 
 .. math::
@@ -52,8 +52,8 @@ The iteration continues until the two successive eigenvalue approximations are
 relatively close enough to one another.  That is, for some :ref:`relative tolerance <pi_rel_tol>`.
 
 The default Power iteration implementation estimates complex-valued dominant
-eigenvalues with real arithmetic.  After the iteration phase, a postprocessing 
-step is performed using the two most recent iterate vectors (approximations of 
+eigenvalues with real arithmetic.  After the iteration phase, a postprocessing
+step is performed using the two most recent iterate vectors (approximations of
 the dominant eigenvector).  These vectors are used to construct a :math:`2 \times 2` projection
 of the original matrix.
 
@@ -72,8 +72,8 @@ An option is also provided to estimate only a real-valued dominant
 eigenvalue.  In this mode, the :math:`2 \times 2` projection step is skipped and the
 Rayleigh quotient of the final iterate is returned directly.
 
-If the dominant eigenvalue is strictly greater than all others (in magnitude), 
-convergence is guaranteed.  The speed of convergence depends on the ratios of 
+If the dominant eigenvalue is strictly greater than all others (in magnitude),
+convergence is guaranteed.  The speed of convergence depends on the ratios of
 the magnitude of the first two dominant eigenvalues.
 
 The matrix :math:`A` is not required explicitly; only a routine that provides
@@ -134,22 +134,22 @@ routines:
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE, sunbooleantype real)
 
-   This routine informs the Power iteration that the dominant eigenvalue is 
-   real-valued, so that the complex projection described in Section 
+   This routine informs the Power iteration that the dominant eigenvalue is
+   real-valued, so that the complex projection described in Section
    :numref:`SUNDomEigEst.Power` can be omitted.
 
    :param DEE: the dominant eigenvalue estimator object.
    :param real: flag indicating that the dominant eigenvalue is real-valued.
 
-   :returns: ``SUN_SUCCESS`` if successful, otherwise an appropriate error code. 
+   :returns: ``SUN_SUCCESS`` if successful, otherwise an appropriate error code.
 
    .. note::
 
-      No matter the value of ``real``, the convergence criterion is based on the relative change in the 
-      magnitude of successive eigenvalue estimates (with tolerance set using 
-      :c:func:`SUNDomEigEstimator_SetRelTol`).  If ``real`` is ``SUNTRUE``, then the final Power 
-      iteration estimate is returned.  Otherwise, a postprocessing step is performed to compute 
-      the complex-valued dominant eigenvalue estimate. 
+      No matter the value of ``real``, the convergence criterion is based on the relative change in the
+      magnitude of successive eigenvalue estimates (with tolerance set using
+      :c:func:`SUNDomEigEstimator_SetRelTol`).  If ``real`` is ``SUNTRUE``, then the final Power
+      iteration estimate is returned.  Otherwise, a postprocessing step is performed to compute
+      the complex-valued dominant eigenvalue estimate.
 
       The default value is ``SUNFALSE``.
 
@@ -225,8 +225,8 @@ The SUNDomEigEstimator_Power module defines the *content* field of a
      SUNATimesFn ATimes;
      void* ATdata;
      N_Vector* V;
-     N_Vector q;
-     N_Vector q_prev;
+     N_Vector Av;
+     N_Vector v_prev;
      N_Vector rhs_linY;
      N_Vector Fy;
      N_Vector work;
@@ -249,9 +249,9 @@ information:
 
 * ``ATimes`` - function pointer to perform the product :math:`Av`,
 
-* ``ATData`` - pointer to structure for ``ATimes``,
+* ``ATdata`` - pointer to structure for ``ATimes``,
 
-* ``V, q, q_prev, Fy, work``   - ``N_Vector`` used for workspace.
+* ``V, Av, v_prev, Fy, work``   - ``N_Vector`` used for workspace.
 
 * ``num_warmups`` - number of preprocessing iterations (default is 100),
 
@@ -277,7 +277,7 @@ information:
 
 * ``nfevals`` - number of RHS evaluations,
 
-* ``is_complex`` - flag indicating whether the dominant eigenvalue is 
+* ``is_complex`` - flag indicating whether the dominant eigenvalue is
   complex-valued (default is ``SUNTRUE``).
 
 This estimator is constructed to perform the following operations:
@@ -290,7 +290,11 @@ This estimator is constructed to perform the following operations:
   estimator parameters.
 
 * SUNDIALS packages will call :c:func:`SUNDomEigEstimator_SetATimes` to supply
-  the ``ATimes`` function pointer and the related data ``ATData``.
+  the ``ATimes`` function pointer and the related data ``ATdata``. Or, the user
+  may call :c:func:`SUNDomEigEstimator_SetRhs` to supply the RHS function and
+  related data. This approach internally constructs an ``ATimes`` function that
+  uses the RHS function to compute the matrix-vector product :math:`Av` for
+  the Jacobian of the RHS function.
 
 * In :c:func:`SUNDomEigEstimator_Initialize`, the estimator parameters are
   checked for validity and the initial eigenvector is normalized.
@@ -311,19 +315,23 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_SetATimes_Power``
 
-* ``SUNDomEigEstimator_SetMaxIters_Power``
+* ``SUNDomEigEstimator_SetRhs_Power``
+
+* ``SUNDomEigEstimator_SetRhsLinearizationPoint_Power``
 
 * ``SUNDomEigEstimator_SetNumPreprocessIters_Power``
 
+* ``SUNDomEigEstimator_SetMaxIters_Power``
+
 * ``SUNDomEigEstimator_SetRelTol_Power``
+
+* ``SUNDomEigEstimator_SetInitialGuess_Power``
 
 * ``SUNDomEigEstimator_SetIsReal_Power``
 
 * ``SUNDomEigEstimator_Initialize_Power``
 
 * ``SUNDomEigEstimator_Estimate_Power``
-
-* ``SUNDomEigEstimator_SetInitialGuess_Power``
 
 * ``SUNDomEigEstimator_GetRes_Power``
 

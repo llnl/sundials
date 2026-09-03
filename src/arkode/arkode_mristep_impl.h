@@ -56,6 +56,15 @@ extern "C" {
 #define NLSCOEF SUN_RCONST(0.1)
 
 /*===============================================================
+  ExtSTS inner stepper routines -- these are used to insert a
+  single time step from an LSRKStep STS method as the inner
+  stepper for MRIStep.
+  ===============================================================*/
+
+int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
+                              sunrealtype tout, N_Vector y);
+
+/*===============================================================
   MRI time step module data structure
   ===============================================================*/
 
@@ -110,8 +119,6 @@ typedef struct ARKodeMRIStepMemRec
   sunrealtype crate;      /* estimated nonlin convergence rate        */
   sunrealtype delnrm_p;   /* norm of previous nonlinear solver update */
   sunrealtype delnrm;     /* norm of current nonlinear solver update  */
-  sunrealtype eRNrm;      /* estimated residual norm, used in nonlin
-                             and linear solver convergence tests      */
   sunrealtype nlscoef;    /* coefficient in nonlin. convergence test  */
   int msbp;               /* positive => max # steps between lsetup
                              negative => call at each Newton iter     */
@@ -168,6 +175,9 @@ typedef struct ARKodeMRIStepMemRec
   /* Reusable arrays for fused vector operations */
   sunrealtype* cvals;
   N_Vector* Xvecs;
+
+  /* flag indicating that MRIStep implements an ExtSTS method */
+  sunbooleantype extsts_method;
 
 }* ARKodeMRIStepMem;
 

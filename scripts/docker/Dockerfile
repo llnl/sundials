@@ -14,8 +14,8 @@ ARG UPDATE_SPACK_PACKAGES=false
 # Update the builtin package repo to the latest develop branch so we pick up the
 # newest package recipes.
 RUN if [ "${UPDATE_SPACK_PACKAGES}" = "true" ]; then \
-      BUILTIN_PATH=$(spack repo list | awk '/builtin/{print $NF}') && \
-      git -C "${BUILTIN_PATH}" pull --ff-only origin develop; \
+      spack repo update --branch develop builtin && \
+      spack repo list; \
     fi
 
 # Install python environment for docs

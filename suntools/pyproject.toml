@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "suntools"
-version = "7.8.0"
+version = "7.9.0"
 description = "Utilities designed to assist users of the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
 authors = [
   { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }

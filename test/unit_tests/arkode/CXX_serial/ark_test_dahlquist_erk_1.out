@@ -536,7 +536,7 @@ Fe RHS evals:
 --------------------
 
 ========================
-ARKODE_ARK2_ERK_3_1_2
+ARKODE_GKC21_ERK_3_1_2
   stages:             3
   order:              2
   explicit 1st stage: 1
@@ -1131,7 +1131,7 @@ Fe RHS evals:
 --------------------
 
 ========================
-ARKODE_ASCHER_ERK_3_1_2
+ARKODE_ARS222_ERK_3_1_2
   stages:             3
   order:              2
   explicit 1st stage: 1

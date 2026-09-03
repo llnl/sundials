@@ -80,11 +80,27 @@ void bind_arkode(nb::module_& m)
 #include "arkode_generated.hpp"
 
   /////////////////////////////////////////////////////////////////////////////
+  // Manual attributes to capture static const int declarations for deprecated
+  // constants that nanobind does not catch.  These should be removed in a
+  // future release.
+  /////////////////////////////////////////////////////////////////////////////
+
+  m.attr("ARKODE_ARK2_ERK_3_1_2")   = static_cast<int>(ARKODE_ARK2_ERK_3_1_2);
+  m.attr("ARKODE_ASCHER_ERK_3_1_2") = static_cast<int>(ARKODE_ASCHER_ERK_3_1_2);
+  m.attr("ARKODE_ARK2_DIRK_3_1_2")  = static_cast<int>(ARKODE_ARK2_DIRK_3_1_2);
+  m.attr("ARKODE_ASCHER_SDIRK_3_1_2") =
+    static_cast<int>(ARKODE_ASCHER_SDIRK_3_1_2);
+
+  /////////////////////////////////////////////////////////////////////////////
   // Interface view classes for ARKODE level objects
   /////////////////////////////////////////////////////////////////////////////
 
   nb::class_<ARKodeView>(m, "ARKodeView")
     .def("get", nb::overload_cast<>(&ARKodeView::get, nb::const_),
+         nb::rv_policy::reference);
+
+  nb::class_<ARKodeBorrowedView>(m, "ARKodeBorrowedView")
+    .def("get", nb::overload_cast<>(&ARKodeBorrowedView::get, nb::const_),
          nb::rv_policy::reference);
 
   /////////////////////////////////////////////////////////////////////////////
