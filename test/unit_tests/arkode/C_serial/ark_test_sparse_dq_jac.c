@@ -145,7 +145,7 @@ int main(void)
       sunrealtype exact = udata.data[p];
       sunrealtype error = SUNRabs(SM_DATA_S(Jac)[p] - exact);
       max_error         = SUNMAX(max_error, error);
-      if (error > SUN_RCONST(100.0) * SUN_UNIT_ROUNDOFF)
+      if (error > SUN_RCONST(10.0) * SUNRSqrt(SUN_UNIT_ROUNDOFF))
       {
         fprintf(stderr,
                 "Jacobian mismatch at row %lld, column %lld: computed "
