@@ -5,7 +5,7 @@
 
 **New Features and Enhancements**
 
-The SuperLU_MT SUNLinearSolver is now available in sundials4py.
+Added SuperLU_MT linear solver support in sundials4py.
 
 **Bug Fixes**
 
