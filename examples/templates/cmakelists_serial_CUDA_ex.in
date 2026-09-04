@@ -139,8 +139,10 @@ endif()
 # Create targets for each example
 foreach(example ${examples})
 
+  get_filename_component(example_target ${example} NAME)
+
   # example source files
-  add_executable(${example} ${example}.cu ${examples_dependencies})
+  add_executable(${example_target} ${example}.cu ${examples_dependencies})
 
   # set c++11
   target_compile_features(${example} PRIVATE cxx_std_14)
@@ -152,7 +154,7 @@ foreach(example ${examples})
   target_link_libraries(${example} ${SUNDIALS_LIBRARIES})
 
   # add the example to ctest
-  add_test(NAME ${example} COMMAND ${example})
+  add_test(NAME ${example_target} COMMAND ${example_target})
 
 endforeach()
 
@@ -177,8 +179,10 @@ set(SUNDIALS_LIBRARIES
 # Create targets for each example
 foreach(example ${examples_cusolver})
 
+  get_filename_component(example_target ${example} NAME)
+
   # example source files
-  add_executable(${example} ${example}.cu ${examples_dependencies})
+  add_executable(${example_target} ${example}.cu ${examples_dependencies})
 
   # set c++11
   target_compile_features(${example} PRIVATE cxx_std_14)
@@ -192,6 +196,6 @@ foreach(example ${examples_cusolver})
   target_link_libraries(${example} ${CUDA_cusparse_LIBRARY})
 
   # add the example to ctest
-  add_test(NAME ${example} COMMAND ${example})
+  add_test(NAME ${example_target} COMMAND ${example_target})
 
 endforeach()

@@ -31,8 +31,9 @@ where
 The following lists summarize all examples distributed with {\cvode}.
 
 \vspace{0.2in}\noindent
-Supplied in the {\em srcdir}\id{/examples/cvode/serial} directory are the
-following serial examples (using the {\nvecs} module):
+Supplied in individual directories under
+{\em srcdir}\id{/examples/cvode/c} are the following serial C examples
+(using the {\nvecs} module):
 
 \begin{itemize}
 \item \id{cvRoberts\_dns}
@@ -147,9 +148,9 @@ following serial examples (using the {\nvecs} module):
   runs with constraints, a user-supplied projection function is applied.
 \end{itemize}
 
-\vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/parallel} directory are the following
-four parallel examples (using the {\nvecp} module):
+\vspace{0.2in}\noindent The following four parallel C examples (using the
+{\nvecp} module) are also supplied in individual directories under
+{\em srcdir}\id{/examples/cvode/c}:
 \begin{itemize}
 \item \id{cvAdvDiff\_non\_p} solves the semi-discrete form of a 1-D
   advection-diffusion equation.
@@ -168,24 +169,24 @@ four parallel examples (using the {\nvecp} module):
 \end{itemize}
 
 \vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/C\_openmp} directory is an example
+{\em srcdir}\id{/examples/cvode/c/cvAdvDiff\_bnd\_omp} directory is an example
 \id{cvAdvDiff\_bnd\_omp}, which solves the same problem as
 \id{cvAdvDiff\_bnd} but with the OpenMP {\nvector} module.
 
 \vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/C\_mpimanyvector} directory is an example
+{\em srcdir}\id{/examples/cvode/c/cvDiurnal\_kry\_mpimanyvec} directory is an example
 \id{cvDiurnal\_kry\_mpimanyvec}, which solves the same problem as
 \id{cvDiurnal\_kry\_p}, but with the MPIManyVector module.
 
 \vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/parhyp} directory is an example
+{\em srcdir}\id{/examples/cvode/c/cvAdvDiff\_non\_ph} directory is an example
 \id{cvAdvDiff\_non\_ph}, which solves the same problem as
 \id{cvAdvDiff\_non\_p} but with {\hypre} vectors instead of
 {\sundials} parallel vectors.
 
-\vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/cuda} directory are the following
-examples, all using the \id{cuda} {\nvector} module:
+\vspace{0.2in}\noindent Supplied in individual directories under
+{\em srcdir}\id{/examples/cvode/cuda} are the following examples, all using
+the \id{cuda} {\nvector} module:
 \begin{itemize}
 \item \id{cvAdvDiff\_diag\_cuda} solves the same problem as
   \id{cvAdvDiff\_non\_p}, but with the Diagonal linear solver.
@@ -195,9 +196,9 @@ examples, all using the \id{cuda} {\nvector} module:
   \id{cvAdvDiff\_kry\_cuda} but uses managed memory for the vector data.
 \end{itemize}
 
-\vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/petsc} directory are the following
-examples, using the Petsc SNES module:
+\vspace{0.2in}\noindent Supplied in individual directories under
+{\em srcdir}\id{/examples/cvode/c} are the following examples using the
+PETSc SNES module:
 \begin{itemize}
 \item \id{cvAdvDiff\_petsc} solves the same problem as
   \id{cvAdvDiff\_non\_p}.
@@ -205,10 +206,9 @@ examples, using the Petsc SNES module:
   nonlinear system derived from a time-dependent PDE in 2D.
 \end{itemize}
 
-\vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/F2003\_serial} directory are the
-following examples, all in Fortran90 and using the {\sundials} Fortran
-interface modules:
+\vspace{0.2in}\noindent Supplied in individual directories under
+{\em srcdir}\id{/examples/cvode/fortran} are the following serial examples,
+all in Fortran 2003 and using the {\sundials} Fortran interface modules:
 \begin{itemize}
 \item \id{cv\_analytic\_fp\_f2003} solves the same problem as
   \id{cvAnalytic\_mels}, using the fixed-point nonlinear solver.
@@ -236,10 +236,10 @@ interface modules:
   \id{cv\_roberts\_klu}.
 \end{itemize}
 
-\vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/F2003\_parallel} directory are the
-following examples, all in Fortran90 and using the {\sundials} Fortran
-interface modules, and solved in parallel using MPI:
+\vspace{0.2in}\noindent The following examples are also supplied in individual
+directories under {\em srcdir}\id{/examples/cvode/fortran}. They are written
+in Fortran 2003 using the {\sundials} Fortran interface modules and are solved
+in parallel using MPI:
 \begin{itemize}
 \item \id{cv\_diag\_non\_p\_f2003} solves a simple diagonal nonstiff
   ODE system.
@@ -249,38 +249,30 @@ interface modules, and solved in parallel using MPI:
   using the BBD preconditioner.
 \end{itemize}
 
-The following is a list of directories and example names that
-are written in C++.  Each is based on an example listed earlier,
-except where noted.
+The following is a list of example names that are written in C++ or an
+accelerator programming model. Each example is supplied in its own directory
+under {\em srcdir}\id{/examples/cvode/cpp},
+{\em srcdir}\id{/examples/cvode/hip}, or
+{\em srcdir}\id{/examples/cvode/sycl}, as appropriate. Each is based on an
+example listed earlier, except where noted.
 
 \begin{itemize}
-\item The directory {\em srcdir}\id{/examples/cvode/raja}
-  contains an example \id{cvAdvDiff\_kry\_raja}.
-\item The directory {\em srcdir}\id{/examples/cvode/superludist}
-  contains an example \item \id{cvAdvDiff\_sludist}.
-\item The directory {\em srcdir}\id{/examples/cvode/CXX\_serial}
-  contains two examples -- \id{cv\_heat2D} and \id{cv\_kpr}.  The latter
+\item The \id{cvAdvDiff\_kry\_raja} example uses RAJA.
+\item The \id{cvAdvDiff\_sludist} example uses SuperLU\_DIST.
+\item The \id{cv\_heat2D} and \id{cv\_kpr} examples are serial. The latter
   solves a size-2 system, the Kvaerno-Prothero-Robinson test.
-\item The directory {\em srcdir}\id{/examples/cvode/CXX\_parallel}
-contains an example \id{cv\_heat2D\_p}.
-\item The directory {\em srcdir}\id{/examples/cvode/CXX\_parhyp}
-  contains two examples -- \id{cv\_heat2D\_hypre\_ls} and
-  \id{cv\_heat2D\_hypre\_pfmg}.
-\item The directory {\em srcdir}\id{/examples/cvode/CXX\_sycl}
-  contains an example \id{cvAdvDiff\_kry\_sycl}.
-\item The directory {\em srcdir}\id{/examples/cvode/CXX\_onemkl}
-  contains an example \id{cvRoberts\_blockdiag\_onemkl}.
-\item The directory {\em srcdir}\id{/examples/cvode/ginkgo}
-  contains two examples -- \id{cv\_heat2D\_ginkgo} and
-  \id{cv\_kpr\_ginkgo}.
-\item The directory {\em srcdir}\id{/examples/cvode/hip}
-  contains two examples -- \id{cvAdvDiff\_diag\_hip} and
+\item The \id{cv\_heat2D\_p} example uses MPI.
+\item The \id{cv\_heat2D\_hypre\_ls} and
+  \id{cv\_heat2D\_hypre\_pfmg} examples use hypre.
+\item The \id{cvAdvDiff\_kry\_sycl} example uses SYCL.
+\item The \id{cvRoberts\_blockdiag\_onemkl} example uses oneMKL.
+\item The \id{cv\_heat2D\_ginkgo} and
+  \id{cv\_kpr\_ginkgo} examples use Ginkgo.
+\item The HIP examples are \id{cvAdvDiff\_diag\_hip} and
   \id{cvAdvDiff\_kry\_hip}.
-\item The directory {\em srcdir}\id{/examples/cvode/kokkos}
-  contains two examples -- \id{cv\_bruss\_batched\_kokkos} and
+\item The Kokkos examples are \id{cv\_bruss\_batched\_kokkos} and
   \id{cv\_bruss\_batched\_kokkos\_2D}.
-\item The directory {\em srcdir}\id{/examples/cvode/magma}
-contains an example \id{cv\_bruss\_batched\_magma}.
+\item The \id{cv\_bruss\_batched\_magma} example uses MAGMA.
 
 \end{itemize}
 
