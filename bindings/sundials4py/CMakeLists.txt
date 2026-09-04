@@ -175,6 +175,7 @@ target_link_libraries(
           sundials_sunmatrixdense
           sundials_sunmatrixsparse
           sundials_sundomeigestpower
+          sundials_core)
 
 if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
   target_link_libraries(sundials4py PRIVATE sundials_sunlinsolsuperlumt)
