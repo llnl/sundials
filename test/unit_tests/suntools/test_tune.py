@@ -82,6 +82,22 @@ class TestTune(unittest.TestCase):
         self.assertEqual(choice_spec.type, "choice")
         self.assertEqual(choice_spec.values, ["dense", "spgmr"])
 
+    def test_multi_value_choice_parameter_spec(self):
+        spec = parse_parameter_spec(
+            "arkode.table_names",
+            "choice:ARKODE_DIRK_NONE ARKODE_ERK_NONE,"
+            "ARKODE_DIRK_NONE ARKODE_ARK324L2SA_ERK_4_2_3,"
+            "ARKODE_ARK324L2SA_DIRK_4_2_3 ARKODE_ARK324L2SA_ERK_4_2_3",
+        )
+        self.assertEqual(
+            spec.values,
+            [
+                "ARKODE_DIRK_NONE ARKODE_ERK_NONE",
+                "ARKODE_DIRK_NONE ARKODE_ARK324L2SA_ERK_4_2_3",
+                "ARKODE_ARK324L2SA_DIRK_4_2_3 ARKODE_ARK324L2SA_ERK_4_2_3",
+            ],
+        )
+
     def test_invalid_parameter_spec_raises(self):
         with self.assertRaises(ValueError):
             parse_parameter_spec("cvode.nlscoef", "1e-4:0.3:badscale")
@@ -166,6 +182,25 @@ class TestTune(unittest.TestCase):
                 "arkode.order",
                 "4",
             ],
+        )
+
+    def test_build_trial_argv_expands_multi_value_choice(self):
+        parameters = [
+            ParameterSpec(
+                name="arkode.table_names",
+                type="choice",
+                values=[
+                    "ARKODE_DIRK_NONE ARKODE_ERK_NONE",
+                    "ARKODE_DIRK_NONE ARKODE_ARK324L2SA_ERK_4_2_3",
+                    "ARKODE_ARK324L2SA_DIRK_4_2_3 ARKODE_ARK324L2SA_ERK_4_2_3",
+                ],
+            )
+        ]
+        argv = build_trial_argv(
+            "./exe", [], parameters, {"arkode.table_names": "ARKODE_DIRK_NONE ARKODE_ERK_NONE"}
+        )
+        self.assertEqual(
+            argv, ["./exe", "arkode.table_names", "ARKODE_DIRK_NONE", "ARKODE_ERK_NONE"]
         )
 
     def test_wall_time_objective(self):

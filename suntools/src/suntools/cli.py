@@ -98,7 +98,8 @@ def build_parser() -> argparse.ArgumentParser:
         metavar=("KEY", "SPEC"),
         help=(
             "Tunable SetOptions parameter. SPEC is LOW:HIGH, LOW:HIGH:log, "
-            "int:LOW:HIGH, or choice:v1,v2,v3. May be repeated."
+            "int:LOW:HIGH, or choice:v1,v2,v3. Choice values may contain "
+            "whitespace-separated SetOptions values. May be repeated."
         ),
     )
     tune.add_argument(

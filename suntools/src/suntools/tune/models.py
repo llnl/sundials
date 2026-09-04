@@ -54,7 +54,7 @@ class ParameterSpec(BaseModel):
     ) -> Optional[List[str]]:
         if value is not None and not value:
             raise ValueError("choice parameters require at least one value")
-        if value is not None and any(item == "" for item in value):
+        if value is not None and any(not item.split() for item in value):
             raise ValueError("choice values must not be empty")
         return value
 
@@ -85,6 +85,18 @@ class ParameterSpec(BaseModel):
         if self.type == "int":
             return str(int(value))
         return str(value)
+
+    def format_values(self, value: Any) -> List[str]:
+        """Return one or more command-line values for a sampled value.
+
+        Choice values may contain whitespace-separated values when a
+        SetOptions key accepts more than one argument, for example
+        ``"ARKODE_DIRK_NONE ARKODE_ERK_NONE"`` for ``table_names``.
+        """
+
+        if self.type == "choice":
+            return self.format_value(value).split()
+        return [self.format_value(value)]
 
 
 class BackendConfig(BaseModel):

@@ -52,7 +52,7 @@ def build_trial_argv(
     argv.extend(str(arg) for arg in args)
     for parameter in parameters:
         argv.append(parameter.name)
-        argv.append(parameter.format_value(values[parameter.name]))
+        argv.extend(parameter.format_values(values[parameter.name]))
     return argv
 
 
