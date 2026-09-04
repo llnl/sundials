@@ -301,10 +301,7 @@ def test_custom_nonlinear_solver_through_cvode(sunctx):
 
     cvode = CVodeCreate(CV_BDF, sunctx)
     assert CVodeInit(cvode.get(), problem.f, 0.0, y) == CV_SUCCESS
-    assert (
-        CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
-        == CV_SUCCESS
-    )
+    assert CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL) == CV_SUCCESS
 
     A = SUNDenseMatrix(1, 1, sunctx)
     LS = SUNLinSol_Dense(y, A, sunctx)
