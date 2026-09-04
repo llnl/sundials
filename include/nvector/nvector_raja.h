@@ -118,7 +118,6 @@ SUNDIALS_EXPORT void N_VDestroy_Raja(N_Vector v);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")
 void N_VSpace_Raja(N_Vector v, sunindextype* lrw, sunindextype* liw);
-SUNDIALS_EXPORT void N_VSetArrayPointer_Raja(sunrealtype* v_data, N_Vector v);
 
 /* standard vector operations */
 SUNDIALS_EXPORT void N_VLinearSum_Raja(sunrealtype a, N_Vector x, sunrealtype b,
