@@ -85,17 +85,15 @@ namespace nanobind::detail {
           auto* custom = nb::cast<sundials4py::CUSTOM_CLASS*>(src);              \
           value        = custom->_get_sundials_handle(src).get();                \
         }                                                                        \
-        catch (const std::exception& e)                                          \
+        catch (const std::exception&)                                            \
         {                                                                        \
-          /* from_python is noexcept, so materialization failures must be      \
-             converted into a set Python error plus a false return. */ \
-          PyErr_SetString(PyExc_RuntimeError, e.what());                         \
+          /* A false result means that this overload cannot accept src. Leave  \
+             the Python error indicator clear so nanobind can report its       \
+             normal argument-conversion TypeError. */ \
           return false;                                                          \
         }                                                                        \
         catch (...)                                                              \
         {                                                                        \
-          PyErr_SetString(PyExc_RuntimeError,                                    \
-                          "unknown error materializing custom " WHAT);           \
           return false;                                                          \
         }                                                                        \
         return value != nullptr;                                                 \
