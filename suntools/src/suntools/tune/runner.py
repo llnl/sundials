@@ -16,12 +16,14 @@
 
 from __future__ import annotations
 
+import asyncio
 import csv
 import json
 import os
 import re
 import shlex
 import subprocess
+import threading
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -44,10 +46,7 @@ class TrialResult:
 
 
 def build_trial_argv(
-    command: str,
-    args: Iterable[str],
-    parameters: Iterable[ParameterSpec],
-    values: Dict[str, Any],
+    command: str, args: Iterable[str], parameters: Iterable[ParameterSpec], values: Dict[str, Any]
 ) -> List[str]:
     argv = [command]
     argv.extend(str(arg) for arg in args)
@@ -59,50 +58,76 @@ def build_trial_argv(
 
 def run_trial(config: TuneConfig, values: Dict[str, Any]) -> TrialResult:
     argv = build_trial_argv(
-        config.executable.command,
-        config.executable.args,
-        config.parameters,
-        values,
+        config.executable.command, config.executable.args, config.parameters, values
     )
     env = os.environ.copy()
     env.update(config.executable.env)
 
     start = time.perf_counter()
     proc = subprocess.run(
-        argv,
-        cwd=str(config.executable.cwd),
-        env=env,
-        text=True,
-        capture_output=True,
-        check=False,
+        argv, cwd=str(config.executable.cwd), env=env, text=True, capture_output=True, check=False
     )
     wall_time = time.perf_counter() - start
 
+    return _make_trial_result(
+        config, values, argv, wall_time, proc.returncode, proc.stdout, proc.stderr
+    )
+
+
+async def run_trial_async(config: TuneConfig, values: Dict[str, Any]) -> TrialResult:
+    """Run a trial without blocking an asyncio-based tuning evaluator."""
+
+    result: List[TrialResult] = []
+    error: List[BaseException] = []
+
+    def run() -> None:
+        try:
+            result.append(run_trial(config, values))
+        except BaseException as err:  # propagate trial startup failures
+            error.append(err)
+
+    thread = threading.Thread(target=run)
+    thread.start()
+    while thread.is_alive():
+        await asyncio.sleep(0.01)
+    thread.join()
+
+    if error:
+        raise error[0]
+    return result[0]
+
+
+def _make_trial_result(
+    config: TuneConfig,
+    values: Dict[str, Any],
+    argv: List[str],
+    wall_time: float,
+    returncode: int,
+    stdout: str,
+    stderr: str,
+) -> TrialResult:
+
     metric: Optional[float] = None
     error: Optional[str] = None
-    if proc.returncode == 0:
+    if returncode == 0:
         try:
             metric = extract_objective(
-                config.objective,
-                proc.stdout,
-                proc.stderr,
-                wall_time,
-                config.executable.cwd,
+                config.objective, stdout, stderr, wall_time, config.executable.cwd
             )
         except ValueError as err:
             error = str(err)
     else:
-        error = "trial command exited with status %d" % proc.returncode
+        error = "trial command exited with status %d" % returncode
 
     return TrialResult(
         parameters=dict(values),
         metric=metric,
         wall_time=wall_time,
-        returncode=proc.returncode,
-        stdout=proc.stdout,
-        stderr=proc.stderr,
+        returncode=returncode,
+        stdout=stdout,
+        stderr=stderr,
         command=argv,
-        success=proc.returncode == 0 and metric is not None,
+        success=returncode == 0 and metric is not None,
         error=error,
     )
 

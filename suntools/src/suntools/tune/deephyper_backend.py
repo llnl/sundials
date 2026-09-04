@@ -25,7 +25,7 @@ from suntools.tune.models import ParameterSpec, TuneConfig
 from suntools.tune.runner import (
     TrialResult,
     objective_to_score,
-    run_trial,
+    run_trial_async,
     select_best,
     write_results,
 )
@@ -113,13 +113,15 @@ class DeepHyperBackend:
         results: List[TrialResult] = []
         lock = threading.Lock()
 
-        def objective(sampled_values: Dict[str, Any]) -> float:
-            trial_result = run_trial(self.config, sampled_values)
+        async def objective(sampled_values: Dict[str, Any]) -> float:
+            # DeepHyper 0.13 passes a RunningJob to evaluator callbacks while
+            # older versions pass the sampled parameter dictionary directly.
+            if not isinstance(sampled_values, dict) and hasattr(sampled_values, "parameters"):
+                sampled_values = sampled_values.parameters
+            trial_result = await run_trial_async(self.config, sampled_values)
             with lock:
                 results.append(trial_result)
-            return objective_to_score(
-                self.config.objective.direction, trial_result.metric
-            )
+            return objective_to_score(self.config.objective.direction, trial_result.metric)
 
         evaluator = _create_evaluator(Evaluator, objective, self.config.search.workers)
         output_dir = Path(self.config.search.output_dir)
@@ -143,6 +145,4 @@ class DeepHyperBackend:
 def _create_evaluator(
     Evaluator: Any, objective: Callable[[Dict[str, Any]], float], workers: int
 ) -> Any:
-    return Evaluator.create(
-        objective, method="thread", method_kwargs={"num_workers": workers}
-    )
+    return Evaluator.create(objective, method="serial", method_kwargs={"num_workers": workers})
