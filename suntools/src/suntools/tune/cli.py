@@ -37,13 +37,13 @@ def run_from_args(args: Any) -> int:
         sys.stderr.write("error: %s\n" % err)
         return 2
 
+    _report_header(config)
     baseline = getattr(backend, "baseline", None)
     if baseline is not None:
         _report_result("Baseline", baseline, config)
 
     best = select_best(results, config.objective.direction)
     if best is None:
-        sys.stdout.write("Results: %s\n" % config.search.output_dir)
         if config.constraint is None:
             sys.stderr.write("error: no successful tune trials completed\n")
         else:
@@ -54,30 +54,58 @@ def run_from_args(args: Any) -> int:
     worst = getattr(backend, "worst", None)
     if worst is not None:
         _report_result("Worst", worst, config)
-    sys.stdout.write("Results: %s\n" % config.search.output_dir)
     return 0
 
 
+def _report_header(config: Any) -> None:
+    sys.stdout.write("suntools tune\n")
+    sys.stdout.write("=============\n\n")
+    sys.stdout.write(
+        "Objective   : %s (%s)\n"
+        % (config.objective.metric, config.objective.direction)
+    )
+    if config.constraint is not None:
+        sys.stdout.write(
+            "Constraint  : %s <= %s\n"
+            % (config.constraint.metric, config.constraint.upper_bound)
+        )
+    sys.stdout.write(
+        "Search      : %d evaluations, %d repetitions, %d worker%s\n"
+        % (
+            config.search.max_evals,
+            config.search.repetitions,
+            config.search.workers,
+            "" if config.search.workers == 1 else "s",
+        )
+    )
+    sys.stdout.write("Results     : %s\n\n" % config.search.output_dir)
+
+
 def _report_result(label: str, result: Any, config: Any) -> None:
+    sys.stdout.write("%s\n" % label)
+    sys.stdout.write("%s\n" % ("-" * len(label)))
+    sys.stdout.write("  Repetitions : %s\n" % result.repetitions)
     if result.metric is None:
         sys.stdout.write(
-            "%s %s: failed (%s)\n"
-            % (label, config.objective.metric, result.error or "metric unavailable")
+            "  Status      : failed (%s)\n"
+            % (result.error or "metric unavailable")
         )
     else:
-        sys.stdout.write("%s %s: %s\n" % (label, config.objective.metric, result.metric))
+        sys.stdout.write("  Metric      : %s\n" % result.metric)
     if config.constraint is not None and result.constraint_metric is not None:
         sys.stdout.write(
-            "  Constraint %s: %s <= %s\n"
+            "  Constraint  : %s = %s (limit %s)\n"
             % (
                 config.constraint.metric,
                 result.constraint_metric,
                 config.constraint.upper_bound,
             )
         )
-    for name in sorted(result.parameters):
-        sys.stdout.write("  %s = %s\n" % (name, result.parameters[name]))
-    sys.stdout.write("  Command: %s\n" % format_command(result.command))
+    if result.parameters:
+        sys.stdout.write("  Parameters  :\n")
+        for name in sorted(result.parameters):
+            sys.stdout.write("    %s = %s\n" % (name, result.parameters[name]))
+    sys.stdout.write("  Command     : %s\n\n" % format_command(result.command))
 
 
 def _create_backend(config: Any) -> Any:
