@@ -6,23 +6,19 @@ build-backend = "hatchling.build"
 name = "suntools"
 version = "7.9.0"
 description = "Utilities designed to assist users of the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
-readme = "README.md"
-requires-python = ">=3.8"
 dependencies = [
   "deephyper>=0.13.2,<0.14",
   "gptune",
   "PyYAML>=6.0",
   "pydantic>=2.10",
-  "ytopt",
 ]
 license = { text = "BSD-3-Clause" }
+license-files = ["LICENSE", "NOTICE"]
 authors = [
   { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }
 ]
-license = "BSD-3-Clause"
-license-files = ["LICENSE", "NOTICE"]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 classifiers = [
   "Programming Language :: Python :: 3",
   "Operating System :: OS Independent"
@@ -31,6 +27,9 @@ classifiers = [
 [project.optional-dependencies]
 dev = [
   "ruff",
+]
+ytopt = [
+  "ytopt",
 ]
 
 [project.urls]

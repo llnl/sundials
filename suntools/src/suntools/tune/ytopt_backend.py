@@ -41,7 +41,7 @@ def to_ytopt_problem(
     except ModuleNotFoundError as err:
         raise RuntimeError(
             "Ytopt is required for the ytopt tune backend. "
-            "Install suntools with its project dependencies."
+            'Install suntools with the "ytopt" extra: python -m pip install "suntools[ytopt]".'
         ) from err
 
     problem = Problem()
@@ -97,7 +97,7 @@ def _import_ytopt() -> Tuple[Any, Any]:
     except ModuleNotFoundError as err:
         raise RuntimeError(
             "Ytopt is required for the ytopt tune backend. "
-            "Install suntools with its project dependencies."
+            'Install suntools with the "ytopt" extra: python -m pip install "suntools[ytopt]".'
         ) from err
 
     try:
@@ -108,7 +108,7 @@ def _import_ytopt() -> Tuple[Any, Any]:
         except ModuleNotFoundError as err:
             raise RuntimeError(
                 "Ytopt is required for the ytopt tune backend. "
-                "Install suntools with its project dependencies."
+                'Install suntools with the "ytopt" extra: python -m pip install "suntools[ytopt]".'
             ) from err
 
     return AMBS, Evaluator

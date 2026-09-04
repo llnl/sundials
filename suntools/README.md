@@ -13,6 +13,12 @@ From this directory:
 python -m pip install -e .
 ```
 
+To enable the optional Ytopt tuning backend, install its extra:
+
+```bash
+python -m pip install -e ".[ytopt]"
+```
+
 Then import as:
 
 ```python
