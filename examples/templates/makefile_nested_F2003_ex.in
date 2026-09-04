@@ -1,0 +1,54 @@
+# -*- mode: makefile -*-
+# Makefile for nested @SOLVER@ Fortran examples.
+
+FC = @FC_COMPILER@
+FFLAGS = @CMAKE_Fortran_FLAGS@ -DSUNDIALS_INT@SUNDIALS_INDEX_SIZE@_T @CMAKE_Fortran_COMPILE_OPTIONS_PREPROCESS_ON@
+prefix = @prefix@
+includedir = @includedir@
+libdir = @libdir@
+INCLUDES = -I${includedir} -I${prefix}/@Fortran_INSTALL_MODDIR@
+LINKFLAGS = -Wl,-rpath,@libdir@
+
+LIBRARIES = -L${libdir} -l@SOLVER_FLIB@ -l@SOLVER_LIB@ \
+            -lsundials_fnvecserial_mod -lsundials_nvecserial \
+            -lsundials_fcore_mod -lsundials_core @LIBS@
+LIBRARIES_KLU = ${LIBRARIES} -lsundials_fsunmatrixsparse_mod \
+                -lsundials_sunmatrixsparse -lsundials_fsunlinsolklu_mod \
+                -lsundials_sunlinsolklu @KLU_LIBS@
+LIBRARIES_LAPACK = ${LIBRARIES} -lsundials_fsunlinsollapackdense_mod \
+                   -lsundials_sunlinsollapackdense @LAPACK_LIBS@
+LIBRARIES_PARALLEL = ${LIBRARIES} -lsundials_fnvecparallel_mod \
+                     -lsundials_nvecparallel @MPI_LIBRARIES@
+
+EXAMPLES = @EXAMPLES@
+EXAMPLES_KLU = @EXAMPLES_KLU@
+EXAMPLES_LAPACK = @EXAMPLES_LAPACK@
+PARALLEL_EXAMPLES = @PARALLEL_EXAMPLES@
+ALL_EXAMPLES = ${EXAMPLES} ${EXAMPLES_KLU} ${EXAMPLES_LAPACK} ${PARALLEL_EXAMPLES}
+OBJECTS = ${ALL_EXAMPLES:=.o}
+
+all: ${ALL_EXAMPLES}
+
+${EXAMPLES}: %: %.o
+	${FC} -o $@ $< ${FFLAGS} ${INCLUDES} ${LIBRARIES} ${LINKFLAGS}
+
+ifneq ($(strip ${EXAMPLES_KLU}),)
+${EXAMPLES_KLU}: %: %.o
+	${FC} -o $@ $< ${FFLAGS} ${INCLUDES} ${LIBRARIES_KLU} ${LINKFLAGS}
+endif
+
+ifneq ($(strip ${EXAMPLES_LAPACK}),)
+${EXAMPLES_LAPACK}: %: %.o
+	${FC} -o $@ $< ${FFLAGS} ${INCLUDES} ${LIBRARIES_LAPACK} ${LINKFLAGS}
+endif
+
+ifneq ($(strip ${PARALLEL_EXAMPLES}),)
+${PARALLEL_EXAMPLES}: %: %.o
+	${FC} -o $@ $< ${FFLAGS} ${INCLUDES} ${LIBRARIES_PARALLEL} ${LINKFLAGS}
+endif
+
+%.o: %.f90
+	${FC} ${FFLAGS} ${INCLUDES} -c $< -o $@
+
+clean:
+	rm -f ${OBJECTS} ${ALL_EXAMPLES}

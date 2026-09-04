@@ -49,50 +49,14 @@ endif()
 # Add source directory to include directories
 include_directories(.)
 
-# Add the build and install targets for each CVODE example
-foreach(example_tuple ${all_examples})
-
-  # parse the example tuple
-  list(GET example_tuple 0 example)
-  list(GET example_tuple 1 example_args)
-  list(GET example_tuple 2 example_type)
-
-  set_source_files_properties(${example}.cu
-                              PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-
-  if(NOT TARGET ${example})
-    # example source files
-    sundials_add_executable(${example} ${example}.cu)
-
-    # folder for IDEs
-    set_target_properties(${example} PROPERTIES FOLDER "Examples")
-
-    # libraries to link against
-    target_link_libraries(${example} PRIVATE ${SUNDIALS_LIBS}
-                                             ${EXE_EXTRA_LINK_LIBS})
-  endif()
-
-  # check if example args are provided and set the test name
-  if("${example_args}" STREQUAL "")
-    set(test_name ${example})
-  else()
-    string(REGEX REPLACE " " "_" test_name ${example}_${example_args})
-  endif()
-
-  # add example to regression tests
-  sundials_add_test(
-    ${test_name} ${example}
-    TEST_ARGS ${example_args}
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ${test_name}.out
-    EXAMPLE_TYPE ${example_type})
-
-  # install example source and out files
-  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-    install(FILES ${example}.cu ${test_name}.out
-            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cuda)
-  endif()
-endforeach(example_tuple ${CVODE_examples})
+# Build each example in its own directory. The example lists remain here for
+# the installed CMake/Makefile templates below.
+add_subdirectory(cvAdvDiff_kry_cuda)
+add_subdirectory(cvAdvDiff_kry_cuda_managed)
+add_subdirectory(cvAdvDiff_diag_cuda)
+if(SUNDIALS_INDEX_SIZE MATCHES "32")
+  add_subdirectory(cvRoberts_block_cusolversp_batchqr)
+endif()
 
 # create Makefile and CMakeLists.txt for examples
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
@@ -108,12 +72,20 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     set(LIBS "-lsundials_cvode_fused_cuda ${LIBS}")
   endif()
 
-  examples2string(CVODE_examples EXAMPLES)
+  set(CVODE_examples_install
+      "cvAdvDiff_kry_cuda/cvAdvDiff_kry_cuda\;\;develop"
+      "cvAdvDiff_kry_cuda_managed/cvAdvDiff_kry_cuda_managed\;\;develop"
+      "cvAdvDiff_diag_cuda/cvAdvDiff_diag_cuda\;0 0\;develop"
+      "cvAdvDiff_diag_cuda/cvAdvDiff_diag_cuda\;0 1\;develop"
+      "cvAdvDiff_diag_cuda/cvAdvDiff_diag_cuda\;1 1\;develop")
+  examples2string(CVODE_examples_install EXAMPLES)
 
   if(SUNDIALS_INDEX_SIZE MATCHES "32")
     set(SUNLS_LIB "sundials_sunlinsolcusolversp")
     set(SUNMAT_LIB "sundials_sunmatrixcusparse")
-    examples2string(CVODE_examples_cusolver EXAMPLES_CUSOLVER)
+    set(CVODE_examples_cusolver_install
+        "cvRoberts_block_cusolversp_batchqr/cvRoberts_block_cusolversp_batchqr\;\;develop")
+    examples2string(CVODE_examples_cusolver_install EXAMPLES_CUSOLVER)
   endif()
 
   # Regardless of the platform we're on, we will generate and install

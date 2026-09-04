@@ -36,48 +36,15 @@ endif()
 # Add source directory to include directories
 include_directories(.)
 
-# Add the build and install targets for each CVODE example
-foreach(example_tuple ${all_examples})
-
-  # parse the example tuple
-  list(GET example_tuple 0 example)
-  list(GET example_tuple 1 example_args)
-  list(GET example_tuple 2 example_type)
-
-  # extract the file name without extension
-  get_filename_component(example_target ${example} NAME_WE)
-
-  if(NOT TARGET ${example_target})
-    # example source files
-    sundials_add_executable(${example_target} ${example})
-
-    # folder for IDEs
-    set_target_properties(${example_target} PROPERTIES FOLDER "Examples")
-
-    # libraries to link against
-    target_link_libraries(
-      ${example_target} PRIVATE hip::device ${SUNDIALS_LIBS}
-                                ${EXE_EXTRA_LINK_LIBS})
-  endif()
-
-  # check if example args are provided and set the test name
-  if("${example_args}" STREQUAL "")
-    set(test_name ${example_target})
-  else()
-    string(REGEX REPLACE " " "_" test_name ${example_target}_${example_args})
-  endif()
-
-  # add example to regression tests
-  sundials_add_test(
-    ${test_name} ${example_target}
-    TEST_ARGS ${example_args}
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ${test_name}.out
-    EXAMPLE_TYPE ${example_type})
-endforeach(example_tuple ${all_examples})
+# Build each example in its own directory. The example list remains here for
+# the installed CMake template below.
+add_subdirectory(cvAdvDiff_kry_hip)
+add_subdirectory(cvAdvDiff_diag_hip)
 
 # Install the targets
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+
+  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/hip)
 
   if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
     set(_fused_kernels_if_enabled cvode_fused_hip)
@@ -85,10 +52,33 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     set(_fused_kernels_if_enabled)
   endif()
 
-  sundials_install_examples(
-    cvode all_examples
-    CMAKE_TEMPLATE cmakelists_HIP_ex.in
-    SUNDIALS_TARGETS cvode nvechip ${_fused_kernels_if_enabled}
-    DESTINATION cvode/hip)
+  # Sources and answer files are installed by the leaf directories. Generate
+  # the category-level installed CMake template here without asking the
+  # install helper to look for the now-nested source files.
+  set(SOLVER CVODE)
+  set(EXAMPLES_DEPENDENCIES "")
+  set(EXTRA_INCLUDES "")
+  set(LIBS "")
+  set(all_examples_install
+      "cvAdvDiff_kry_hip/cvAdvDiff_kry_hip.cpp\;\;develop"
+      "cvAdvDiff_diag_hip/cvAdvDiff_diag_hip.cpp\;0 0\;develop"
+      "cvAdvDiff_diag_hip/cvAdvDiff_diag_hip.cpp\;0 1\;develop"
+      "cvAdvDiff_diag_hip/cvAdvDiff_diag_hip.cpp\;1 1\;develop")
+  examples2string(all_examples_install EXAMPLES)
+  set(_components cvode nvechip ${_fused_kernels_if_enabled})
+  set(EXAMPLES_CMAKE_COMPONENTS "")
+  list2string(_components EXAMPLES_CMAKE_COMPONENTS)
+  set(_targets "")
+  foreach(_target ${_components})
+    list(APPEND _targets SUNDIALS::${_target})
+  endforeach()
+  set(EXAMPLES_CMAKE_TARGETS "")
+  list2string(_targets EXAMPLES_CMAKE_TARGETS)
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_HIP_ex.in
+    ${PROJECT_BINARY_DIR}/examples/cvode/hip/CMakeLists.txt @ONLY)
+  install(FILES ${PROJECT_BINARY_DIR}/examples/cvode/hip/CMakeLists.txt
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/hip)
+  sundials_add_test_install(cvode hip)
 
 endif()

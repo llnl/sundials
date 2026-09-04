@@ -1,0 +1,64 @@
+# -----------------------------------------------------------------
+# CMakeLists.txt for nested @SOLVER@ Fortran examples.
+# This file is generated for the installed example hierarchy.
+# -----------------------------------------------------------------
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+
+set(CMAKE_Fortran_COMPILER @_EXAMPLES_Fortran_COMPILER@
+    CACHE FILEPATH "Fortran compiler")
+set(CMAKE_Fortran_FLAGS "@CMAKE_Fortran_FLAGS@"
+    CACHE STRING "Fortran compiler flags")
+project(@SOLVER@_F2003_examples Fortran)
+set(CMAKE_Fortran_PREPROCESS ON)
+include(CTest)
+
+set(SUNDIALS_DIR
+    "@CMAKE_INSTALL_PREFIX@/@SUNDIALS_INSTALL_CMAKEDIR@"
+    CACHE PATH "Location of SUNDIALSConfig.cmake")
+set(_components fcvode_mod fnvecserial_mod)
+if("@EXAMPLES_KLU@")
+  list(APPEND _components fsunlinsolklu_mod)
+endif()
+if("@EXAMPLES_LAPACK@")
+  list(APPEND _components fsunlinsollapackdense_mod)
+endif()
+if("@PARALLEL_EXAMPLES@")
+  list(APPEND _components fnvecparallel_mod)
+  find_package(MPI REQUIRED COMPONENTS Fortran)
+endif()
+if("@SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS@")
+  list(APPEND _components cvode_fused_stubs)
+endif()
+find_package(SUNDIALS REQUIRED COMPONENTS ${_components}
+             HINTS "${SUNDIALS_DIR}" NO_DEFAULT_PATH)
+
+set(_common_libraries SUNDIALS::fcvode_mod SUNDIALS::fnvecserial_mod)
+if("@SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS@")
+  list(APPEND _common_libraries SUNDIALS::cvode_fused_stubs)
+endif()
+
+function(add_cvode_fortran_examples examples libraries)
+  foreach(example ${${examples}})
+    get_filename_component(example_target ${example} NAME)
+    set(CMAKE_Fortran_MODULE_DIRECTORY
+        ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example_target}.dir)
+    add_executable(${example_target} ${example}.f90)
+    target_link_libraries(${example_target} PRIVATE ${_common_libraries}
+                          ${libraries})
+    add_test(NAME ${example_target} COMMAND ${example_target})
+  endforeach()
+endfunction()
+
+set(serial_examples @EXAMPLES@)
+add_cvode_fortran_examples(serial_examples "")
+
+set(klu_examples @EXAMPLES_KLU@)
+add_cvode_fortran_examples(klu_examples SUNDIALS::fsunlinsolklu_mod)
+
+set(lapack_examples @EXAMPLES_LAPACK@)
+add_cvode_fortran_examples(lapack_examples
+                           SUNDIALS::fsunlinsollapackdense_mod)
+
+set(parallel_examples @PARALLEL_EXAMPLES@)
+add_cvode_fortran_examples(parallel_examples
+                           "MPI::MPI_Fortran;SUNDIALS::fnvecparallel_mod")
