@@ -747,6 +747,50 @@ SWIGEXPORT int _wrap_FMRIStepReInit(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3,
 }
 
 
+SWIGEXPORT void * _wrap_FMRIStepCreateExtSTS(ARKRhsFn farg1, ARKRhsFn farg2, ARKRhsFn farg3, double const *farg4, N_Vector farg5, void *farg6) {
+  void * fresult ;
+  ARKRhsFn arg1 = (ARKRhsFn) 0 ;
+  ARKRhsFn arg2 = (ARKRhsFn) 0 ;
+  ARKRhsFn arg3 = (ARKRhsFn) 0 ;
+  sunrealtype arg4 ;
+  N_Vector arg5 = (N_Vector) 0 ;
+  SUNContext arg6 = (SUNContext) 0 ;
+  void *result = 0 ;
+  
+  arg1 = (ARKRhsFn)(farg1);
+  arg2 = (ARKRhsFn)(farg2);
+  arg3 = (ARKRhsFn)(farg3);
+  arg4 = (sunrealtype)(*farg4);
+  arg5 = (N_Vector)(farg5);
+  arg6 = (SUNContext)(farg6);
+  result = (void *)MRIStepCreateExtSTS(arg1,arg2,arg3,arg4,arg5,arg6);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FMRIStepReInitExtSTS(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3, ARKRhsFn farg4, double const *farg5, N_Vector farg6) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  ARKRhsFn arg2 = (ARKRhsFn) 0 ;
+  ARKRhsFn arg3 = (ARKRhsFn) 0 ;
+  ARKRhsFn arg4 = (ARKRhsFn) 0 ;
+  sunrealtype arg5 ;
+  N_Vector arg6 = (N_Vector) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (ARKRhsFn)(farg2);
+  arg3 = (ARKRhsFn)(farg3);
+  arg4 = (ARKRhsFn)(farg4);
+  arg5 = (sunrealtype)(*farg5);
+  arg6 = (N_Vector)(farg6);
+  result = (int)MRIStepReInitExtSTS(arg1,arg2,arg3,arg4,arg5,arg6);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FMRIStepSetCoupling(void *farg1, void *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -826,6 +870,20 @@ SWIGEXPORT int _wrap_FMRIStepGetNumInnerStepperFails(void *farg1, long *farg2) {
   arg1 = (void *)(farg1);
   arg2 = (long *)(farg2);
   result = (int)MRIStepGetNumInnerStepperFails(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FMRIStepGetSTS(void *farg1, void *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  void **arg2 = (void **) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (void **)(farg2);
+  result = (int)MRIStepGetSTS(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }

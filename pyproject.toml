@@ -1,36 +1,36 @@
 [build-system]
-requires = ["scikit-build-core[pyproject] >=0.4.3", "nanobind"]
+requires = ["scikit-build-core[pyproject] >=0.4.3", "nanobind >= 2.9.2, <3"]
 build-backend = "scikit_build_core.build"
 
 [project]
 name = "sundials4py"
-version = "7.8.0"
+version = "7.9.0"
 description = "Official Python bindings for the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
 authors = [
-    { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }
+  { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }
 ]
-license = { file = "LICENSE" }
+license = "BSD-3-Clause"
+license-files = ["LICENSE", "NOTICE"]
 readme = "README.md"
 requires-python = ">=3.12"
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: BSD License",
-    "Operating System :: OS Independent",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Mathematics"
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Mathematics"
 ]
 dependencies = [
-    "nanobind >= 2.9.2",
-    "numpy >= 2.0.0"
+  "nanobind >= 2.9.2, <3",
+  "numpy >= 2.0.0"
 ]
 
 [project.optional-dependencies]
 dev = [
-    "ruff",
-    "isort",
-    "pytest",
-    "pytest-random-order",
-    "pyyaml",
+  "ruff",
+  "isort",
+  "pytest",
+  "pytest-random-order",
+  "pyyaml",
 ]
 
 [project.urls]
@@ -49,12 +49,12 @@ build-dir = "build_sundials4py/{wheel_tag}"
 wheel.py-api = "cp312"
 
 cmake.args = [
-    "-DBUILD_SHARED_LIBS:BOOL=OFF",
-    "-DSUNDIALS_ENABLE_CVODE:BOOL=OFF",
-    "-DSUNDIALS_ENABLE_IDA:BOOL=OFF",
-    "-DSUNDIALS_ENABLE_C_EXAMPLES:BOOL=OFF",
-    "-DSUNDIALS_ENABLE_CXX_EXAMPLES:BOOL=OFF",
-    "-DSUNDIALS_ENABLE_PYTHON:BOOL=ON"
+  "-DBUILD_SHARED_LIBS:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_CVODE:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_IDA:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_C_EXAMPLES:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_CXX_EXAMPLES:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_PYTHON:BOOL=ON"
 ]
 
 cmake.build-type = "RelWithDebInfo"
@@ -62,14 +62,14 @@ cmake.build-type = "RelWithDebInfo"
 [tool.pytest.ini_options]
 python_files = ["*.py"]
 addopts = [
-    "--import-mode=importlib"
+  "--import-mode=importlib"
 ]
 pythonpath = [
   "bindings/sundials4py", "bindings/sundials4py/test"
 ]
 testpaths = [
-    "bindings/sundials4py/test",
-    "examples/python"
+  "bindings/sundials4py/test",
+  "examples/python"
 ]
 
 [tool.cibuildwheel]

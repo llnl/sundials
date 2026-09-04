@@ -29,7 +29,7 @@
  * Y0 = [u0,v0,w0].
  *
  * We use u0=1.2,  v0=3.1,  w0=3,  a=1,  b=3.5,  ep=5.0e-6.
- *  
+ *
  * In this case, w experiences a fast initial transient, jumping 0.5
  * within a few steps. All values proceed smoothly until
  * around t=6.5, when both u and v undergo a sharp transition,

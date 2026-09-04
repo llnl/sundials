@@ -502,6 +502,17 @@ Fortran Compiler
 
    Default: ``-Os``
 
+Compiler Diagnostics
+""""""""""""""""""""
+
+.. cmakeoption:: SUNDIALS_ENABLE_DEPRECATED_WARNINGS
+
+   Enable compiler warnings for use of deprecated SUNDIALS APIs.
+
+   Default: ``ON``
+
+   .. versionadded:: 7.9.0
+
 .. _Installation.Options.InstallLocation:
 
 Install Location

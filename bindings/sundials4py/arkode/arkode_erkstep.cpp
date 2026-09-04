@@ -34,6 +34,25 @@ void bind_arkode_erkstep(nb::module_& m)
 {
 #include "arkode_erkstep_generated.hpp"
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Manual attributes to capture static const int declarations that nanobind
+  // does not catch
+  /////////////////////////////////////////////////////////////////////////////
+
+  m.attr("ERKSTEP_DEFAULT_1") = static_cast<int>(ERKSTEP_DEFAULT_1);
+  m.attr("ERKSTEP_DEFAULT_2") = static_cast<int>(ERKSTEP_DEFAULT_2);
+  m.attr("ERKSTEP_DEFAULT_3") = static_cast<int>(ERKSTEP_DEFAULT_3);
+  m.attr("ERKSTEP_DEFAULT_4") = static_cast<int>(ERKSTEP_DEFAULT_4);
+  m.attr("ERKSTEP_DEFAULT_5") = static_cast<int>(ERKSTEP_DEFAULT_5);
+  m.attr("ERKSTEP_DEFAULT_6") = static_cast<int>(ERKSTEP_DEFAULT_6);
+  m.attr("ERKSTEP_DEFAULT_7") = static_cast<int>(ERKSTEP_DEFAULT_7);
+  m.attr("ERKSTEP_DEFAULT_8") = static_cast<int>(ERKSTEP_DEFAULT_8);
+  m.attr("ERKSTEP_DEFAULT_9") = static_cast<int>(ERKSTEP_DEFAULT_9);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // ERKStep user-supplied function setters
+  /////////////////////////////////////////////////////////////////////////////
+
   m.def(
     "ERKStepCreate",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
