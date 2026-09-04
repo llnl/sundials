@@ -39,6 +39,8 @@ try:
     from suntools.tune.config import config_from_args, load_config, parse_parameter_spec
     from suntools.tune.cli import _create_backend
     from suntools.tune.deephyper_backend import to_deephyper_problem
+    from suntools.tune.gptune_backend import GPTuneBackend
+    from suntools.tune.gptune_backend import to_gptune_problem
     from suntools.tune.models import (
         BackendConfig,
         ExecutableConfig,
@@ -277,6 +279,228 @@ class TestTune(unittest.TestCase):
             ],
         )
         self.assertEqual(_create_backend(config).__class__.__name__, "YtoptBackend")
+
+    def test_gptune_backend_can_be_selected(self):
+        config = TuneConfig(
+            backend=BackendConfig(name="gptune"),
+            executable=ExecutableConfig(command="./exe"),
+            parameters=[
+                ParameterSpec(name="cvode.nlscoef", type="float", bounds=(1.0e-4, 0.3))
+            ],
+        )
+        self.assertEqual(_create_backend(config).__class__.__name__, "GPTuneBackend")
+
+    def test_gptune_problem_conversion_with_problem_api(self):
+        class FakeDimension:
+            def __init__(self, *args, **kwargs):
+                self.args = args
+                self.kwargs = kwargs
+                self.name = kwargs.get("name")
+
+            def __repr__(self):
+                return repr((self.args, self.kwargs))
+
+        class FakeSpace:
+            def __init__(self, dimensions):
+                self.dimensions = dimensions
+
+            def __iter__(self):
+                return iter(self.dimensions)
+
+            def __str__(self):
+                return repr(self.dimensions)
+
+        class FakeTuningProblem:
+            def __init__(
+                self,
+                input_space,
+                parameter_space,
+                output_space,
+                objective,
+                constraints,
+                models,
+            ):
+                self.input_space = input_space
+                self.parameter_space = parameter_space
+                self.output_space = output_space
+                self.objective = objective
+                self.constraints = constraints
+                self.models = models
+
+            def __str__(self):
+                return repr(
+                    (
+                        self.input_space.dimensions,
+                        self.parameter_space.dimensions,
+                        self.output_space.dimensions,
+                    )
+                )
+
+        fake_autotune = types.ModuleType("autotune")
+        fake_problem = types.ModuleType("autotune.problem")
+        fake_space = types.ModuleType("autotune.space")
+        fake_gptune = types.ModuleType("GPTune")
+        fake_data = types.ModuleType("GPTune.data")
+
+        fake_problem.TuningProblem = FakeTuningProblem
+        fake_space.Space = FakeSpace
+        fake_space.Real = FakeDimension
+        fake_space.Integer = FakeDimension
+        fake_space.Categorical = FakeDimension
+        fake_data.Categoricalnorm = FakeDimension
+
+        modules = {
+            "autotune": fake_autotune,
+            "autotune.problem": fake_problem,
+            "autotune.space": fake_space,
+            "GPTune": fake_gptune,
+            "GPTune.data": fake_data,
+        }
+
+        with patch.dict(sys.modules, modules):
+            problem = to_gptune_problem(
+                [
+                    ParameterSpec(
+                        name="cvode.nlscoef",
+                        type="float",
+                        bounds=(1.0e-4, 0.3),
+                        scale="log",
+                    ),
+                    ParameterSpec(name="arkode.order", type="int", bounds=(2, 5)),
+                    ParameterSpec(name="mode", type="choice", values=["a", "b"]),
+                ]
+            )
+        self.assertIn("cvode.nlscoef", str(problem))
+        self.assertIn("arkode.order", str(problem))
+        self.assertIn("mode", str(problem))
+        self.assertEqual(
+            problem.parameter_space.dimensions[0].kwargs["prior"], "log-uniform"
+        )
+        self.assertEqual(problem.output_space.dimensions[0].kwargs["name"], "objective")
+
+    def test_gptune_backend_run_with_fake_runtime(self):
+        class FakeDimension:
+            def __init__(self, *args, **kwargs):
+                self.args = args
+                self.kwargs = kwargs
+                self.name = kwargs.get("name")
+
+        class FakeSpace:
+            def __init__(self, dimensions):
+                self.dimensions = dimensions
+
+        class FakeTuningProblem:
+            def __init__(
+                self,
+                input_space,
+                parameter_space,
+                output_space,
+                objective,
+                constraints,
+                models,
+            ):
+                self.input_space = input_space
+                self.parameter_space = parameter_space
+                self.output_space = output_space
+                self.objective = objective
+                self.constraints = constraints
+                self.models = models
+
+        class FakeComputer:
+            def __init__(self, nodes=1, cores=1, hosts=None):
+                self.nodes = nodes
+                self.cores = cores
+                self.hosts = hosts
+
+        class FakeData:
+            def __init__(self, problem):
+                self.problem = problem
+
+        class FakeOptions(dict):
+            def validate(self, computer):
+                self["validated"] = computer.cores
+
+        class FakeGPTune:
+            def __init__(self, problem, computer, data, options, **kwargs):
+                self.problem = problem
+                self.computer = computer
+                self.data = data
+                self.options = options
+                self.kwargs = kwargs
+
+            def MLA(self, NS, NS1, Tgiven, NI):
+                samples = [0.2, 0.1]
+                for index in range(NS):
+                    self.problem.objective({"cvode.nlscoef": samples[index]})
+                return self.data, None, {}
+
+        fake_autotune = types.ModuleType("autotune")
+        fake_problem = types.ModuleType("autotune.problem")
+        fake_space = types.ModuleType("autotune.space")
+        fake_gptune = types.ModuleType("GPTune")
+        fake_computer = types.ModuleType("GPTune.computer")
+        fake_data = types.ModuleType("GPTune.data")
+        fake_gptune_mod = types.ModuleType("GPTune.gptune")
+        fake_options = types.ModuleType("GPTune.options")
+
+        fake_problem.TuningProblem = FakeTuningProblem
+        fake_space.Space = FakeSpace
+        fake_space.Real = FakeDimension
+        fake_space.Integer = FakeDimension
+        fake_space.Categorical = FakeDimension
+        fake_computer.Computer = FakeComputer
+        fake_data.Categoricalnorm = FakeDimension
+        fake_data.Data = FakeData
+        fake_gptune_mod.GPTune = FakeGPTune
+        fake_options.Options = FakeOptions
+
+        modules = {
+            "autotune": fake_autotune,
+            "autotune.problem": fake_problem,
+            "autotune.space": fake_space,
+            "GPTune": fake_gptune,
+            "GPTune.computer": fake_computer,
+            "GPTune.data": fake_data,
+            "GPTune.gptune": fake_gptune_mod,
+            "GPTune.options": fake_options,
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir, patch.dict(sys.modules, modules):
+            script = _write_script(
+                tmpdir,
+                "metric.py",
+                """
+                import sys
+                values = dict(zip(sys.argv[1::2], sys.argv[2::2]))
+                print("objective=%s" % values["cvode.nlscoef"])
+                """,
+            )
+            output_dir = os.path.join(tmpdir, "out")
+            config = TuneConfig(
+                backend=BackendConfig(name="gptune"),
+                search={"max_evals": 2, "workers": 3, "output_dir": output_dir},
+                executable=ExecutableConfig(
+                    command=sys.executable, args=[script], cwd=tmpdir
+                ),
+                parameters=[
+                    ParameterSpec(
+                        name="cvode.nlscoef", type="float", bounds=(1.0e-4, 0.3)
+                    )
+                ],
+                objective=ObjectiveConfig(
+                    metric="objective",
+                    direction="minimize",
+                    source="stdout",
+                    regex=r"objective=([0-9.eE+-]+)",
+                    group=1,
+                ),
+            )
+            results = GPTuneBackend(config).run()
+
+            self.assertEqual(len(results), 2)
+            with open(os.path.join(output_dir, "best.json"), "r") as fp:
+                best = json.load(fp)
+            self.assertEqual(best["parameters"]["cvode.nlscoef"], 0.1)
 
     def test_ytopt_problem_conversion_with_problem_api(self):
         class FakeProblem:

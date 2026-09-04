@@ -10,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
   "deephyper>=0.13.2,<0.14",
+  "gptune",
   "PyYAML>=6.0",
   "pydantic>=2.10",
   "ytopt",

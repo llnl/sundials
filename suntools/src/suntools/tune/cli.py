@@ -17,12 +17,13 @@
 from __future__ import annotations
 
 import sys
-from typing import Any, List, Optional
+from typing import Any
 
 from pydantic import ValidationError
 
 from suntools.tune.config import config_from_args
 from suntools.tune.deephyper_backend import DeepHyperBackend
+from suntools.tune.gptune_backend import GPTuneBackend
 from suntools.tune.runner import format_command, select_best
 from suntools.tune.ytopt_backend import YtoptBackend
 
@@ -53,6 +54,8 @@ def _create_backend(config: Any) -> Any:
     backend_name = config.backend.name.lower()
     if backend_name == "deephyper":
         return DeepHyperBackend(config)
+    if backend_name == "gptune":
+        return GPTuneBackend(config)
     if backend_name == "ytopt":
         return YtoptBackend(config)
     raise ValueError("unsupported tune backend: %s" % config.backend.name)
