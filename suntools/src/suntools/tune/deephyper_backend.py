@@ -25,8 +25,10 @@ from suntools.tune.models import ParameterSpec, TuneConfig
 from suntools.tune.runner import (
     TrialResult,
     objective_to_score,
+    run_baseline,
     run_trial_async,
     select_best,
+    select_worst,
     write_results,
 )
 
@@ -98,6 +100,8 @@ def _make_configspace_hyperparameter(parameter: ParameterSpec) -> Any:
 class DeepHyperBackend:
     def __init__(self, config: TuneConfig):
         self.config = config
+        self.baseline = None
+        self.worst = None
 
     def run(self) -> List[TrialResult]:
         try:
@@ -109,6 +113,7 @@ class DeepHyperBackend:
                 "Install suntools with its project dependencies."
             ) from err
 
+        self.baseline = run_baseline(self.config)
         problem = to_deephyper_problem(self.config.parameters)
         results: List[TrialResult] = []
         lock = threading.Lock()
@@ -121,7 +126,11 @@ class DeepHyperBackend:
             trial_result = await run_trial_async(self.config, sampled_values)
             with lock:
                 results.append(trial_result)
-            return objective_to_score(self.config.objective.direction, trial_result.metric)
+            return objective_to_score(
+                self.config.objective.direction,
+                trial_result.metric,
+                trial_result.feasible,
+            )
 
         evaluator = _create_evaluator(Evaluator, objective, self.config.search.workers)
         output_dir = Path(self.config.search.output_dir)
@@ -138,7 +147,8 @@ class DeepHyperBackend:
             search.search(max_evals=self.config.search.max_evals)
 
         best = select_best(results, self.config.objective.direction)
-        write_results(output_dir, results, best)
+        self.worst = select_worst(results, self.config.objective.direction)
+        write_results(output_dir, results, best, self.baseline, self.worst)
         return results
 
 

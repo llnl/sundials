@@ -23,7 +23,14 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from suntools.tune.models import ParameterSpec, TuneConfig
-from suntools.tune.runner import TrialResult, run_trial, select_best, write_results
+from suntools.tune.runner import (
+    TrialResult,
+    run_baseline,
+    run_trial,
+    select_best,
+    select_worst,
+    write_results,
+)
 
 
 def to_gptune_problem(
@@ -52,10 +59,13 @@ def to_gptune_problem(
 class GPTuneBackend:
     def __init__(self, config: TuneConfig):
         self.config = config
+        self.baseline = None
+        self.worst = None
 
     def run(self) -> List[TrialResult]:
         GPTune, Computer, Data, Options = _import_gptune_runtime()
 
+        self.baseline = run_baseline(self.config)
         results: List[TrialResult] = []
         lock = threading.Lock()
 
@@ -66,7 +76,9 @@ class GPTuneBackend:
                 results.append(trial_result)
             return [
                 _metric_to_gptune_objective(
-                    self.config.objective.direction, trial_result.metric
+                    self.config.objective.direction,
+                    trial_result.metric,
+                    trial_result.feasible,
                 )
             ]
 
@@ -96,7 +108,8 @@ class GPTuneBackend:
             os.chdir(previous_cwd)
 
         best = select_best(results, self.config.objective.direction)
-        write_results(output_dir, results, best)
+        self.worst = select_worst(results, self.config.objective.direction)
+        write_results(output_dir, results, best, self.baseline, self.worst)
         return results
 
 
@@ -168,8 +181,10 @@ def _point_to_parameter_values(
     return values
 
 
-def _metric_to_gptune_objective(direction: str, metric: Any) -> float:
-    if metric is None:
+def _metric_to_gptune_objective(
+    direction: str, metric: Any, feasible: bool = True
+) -> float:
+    if metric is None or not feasible:
         return float("inf")
     value = float(metric)
     if direction == "maximize":

@@ -37,17 +37,47 @@ def run_from_args(args: Any) -> int:
         sys.stderr.write("error: %s\n" % err)
         return 2
 
+    baseline = getattr(backend, "baseline", None)
+    if baseline is not None:
+        _report_result("Baseline", baseline, config)
+
     best = select_best(results, config.objective.direction)
     if best is None:
-        sys.stderr.write("error: no successful tune trials completed\n")
+        sys.stdout.write("Results: %s\n" % config.search.output_dir)
+        if config.constraint is None:
+            sys.stderr.write("error: no successful tune trials completed\n")
+        else:
+            sys.stderr.write("error: no feasible successful tune trials completed\n")
         return 1
 
-    sys.stdout.write("Best %s: %s\n" % (config.objective.metric, best.metric))
-    for name in sorted(best.parameters):
-        sys.stdout.write("  %s = %s\n" % (name, best.parameters[name]))
-    sys.stdout.write("Command: %s\n" % format_command(best.command))
+    _report_result("Best", best, config)
+    worst = getattr(backend, "worst", None)
+    if worst is not None:
+        _report_result("Worst", worst, config)
     sys.stdout.write("Results: %s\n" % config.search.output_dir)
     return 0
+
+
+def _report_result(label: str, result: Any, config: Any) -> None:
+    if result.metric is None:
+        sys.stdout.write(
+            "%s %s: failed (%s)\n"
+            % (label, config.objective.metric, result.error or "metric unavailable")
+        )
+    else:
+        sys.stdout.write("%s %s: %s\n" % (label, config.objective.metric, result.metric))
+    if config.constraint is not None and result.constraint_metric is not None:
+        sys.stdout.write(
+            "  Constraint %s: %s <= %s\n"
+            % (
+                config.constraint.metric,
+                result.constraint_metric,
+                config.constraint.upper_bound,
+            )
+        )
+    for name in sorted(result.parameters):
+        sys.stdout.write("  %s = %s\n" % (name, result.parameters[name]))
+    sys.stdout.write("  Command: %s\n" % format_command(result.command))
 
 
 def _create_backend(config: Any) -> Any:

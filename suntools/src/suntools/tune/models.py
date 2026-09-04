@@ -25,6 +25,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 ParameterType = Literal["float", "int", "choice"]
 ParameterScale = Literal["linear", "log"]
 ObjectiveDirection = Literal["minimize", "maximize"]
+MetricAggregation = Literal["sum", "mean"]
 
 
 class ParameterSpec(BaseModel):
@@ -111,6 +112,7 @@ class SearchConfig(BaseModel):
 
     max_evals: int = Field(default=40, gt=0)
     workers: int = Field(default=1, gt=0)
+    repetitions: int = Field(default=1, gt=0)
     output_dir: Path = Path("suntools-tune")
 
 
@@ -130,28 +132,54 @@ class ExecutableConfig(BaseModel):
         return value
 
 
-class ObjectiveConfig(BaseModel):
+class MetricConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    metric: str = "wall_time"
-    direction: ObjectiveDirection = "minimize"
+    metric: str
     source: Optional[str] = None
-    regex: Optional[str] = None
+    regex: Optional[Union[str, List[str]]] = None
     group: Union[int, str] = 1
+    aggregation: MetricAggregation = "sum"
 
     @field_validator("metric")
     @classmethod
     def _metric_must_not_be_empty(cls, value: str) -> str:
         if not value:
-            raise ValueError("objective metric must not be empty")
+            raise ValueError("metric must not be empty")
+        return value
+
+    @field_validator("regex")
+    @classmethod
+    def _regex_must_not_be_empty(
+        cls, value: Optional[Union[str, List[str]]]
+    ) -> Optional[Union[str, List[str]]]:
+        if isinstance(value, list) and (not value or any(not item for item in value)):
+            raise ValueError("metric regex values must not be empty")
         return value
 
     @model_validator(mode="after")
-    def _validate_objective(self) -> "ObjectiveConfig":
+    def _set_default_source(self) -> "MetricConfig":
         if self.regex and self.source is None:
             self.source = "stdout"
         if not self.regex and self.metric != "wall_time":
-            raise ValueError("non-wall_time objectives require regex")
+            raise ValueError("non-wall_time metrics require regex")
+        return self
+
+
+class ObjectiveConfig(MetricConfig):
+    metric: str = "wall_time"
+    direction: ObjectiveDirection = "minimize"
+
+
+class ConstraintConfig(MetricConfig):
+    """An upper-bound constraint on a metric extracted from trial output."""
+
+    upper_bound: float
+
+    @model_validator(mode="after")
+    def _validate_constraint(self) -> "ConstraintConfig":
+        if not self.regex:
+            raise ValueError("constraints require a metric regex")
         return self
 
 
@@ -163,6 +191,7 @@ class TuneConfig(BaseModel):
     executable: ExecutableConfig
     parameters: List[ParameterSpec]
     objective: ObjectiveConfig = Field(default_factory=ObjectiveConfig)
+    constraint: Optional[ConstraintConfig] = None
 
     @field_validator("parameters")
     @classmethod

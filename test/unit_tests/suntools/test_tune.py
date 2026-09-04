@@ -43,12 +43,22 @@ try:
     from suntools.tune.gptune_backend import to_gptune_problem
     from suntools.tune.models import (
         BackendConfig,
+        ConstraintConfig,
         ExecutableConfig,
         ObjectiveConfig,
         ParameterSpec,
         TuneConfig,
     )
-    from suntools.tune.runner import build_trial_argv, run_trial
+    from suntools.tune.runner import (
+        TrialResult,
+        build_trial_argv,
+        expand_environment_variables,
+        objective_to_score,
+        run_baseline,
+        run_trial,
+        select_best,
+        select_worst,
+    )
     from suntools.tune.ytopt_backend import to_ytopt_problem
 except ModuleNotFoundError as err:
     if err.name in ("pydantic", "yaml"):
@@ -114,6 +124,14 @@ class TestTune(unittest.TestCase):
                 "1e-4:0.3:log",
                 "--max-evals",
                 "4",
+                "--repetitions",
+                "2",
+                "--constraint-metric",
+                "error",
+                "--constraint-regex",
+                r"error=([0-9.eE+-]+)",
+                "--constraint-upper-bound",
+                "1e-6",
                 "./exe",
                 "--rtol",
                 "1e-6",
@@ -121,9 +139,12 @@ class TestTune(unittest.TestCase):
         )
         config = config_from_args(args)
         self.assertEqual(config.search.max_evals, 4)
+        self.assertEqual(config.search.repetitions, 2)
         self.assertEqual(config.executable.command, "./exe")
         self.assertEqual(config.executable.args, ["--rtol", "1e-6"])
         self.assertEqual(config.parameters[0].name, "cvode.nlscoef")
+        self.assertEqual(config.constraint.metric, "error")
+        self.assertEqual(config.constraint.upper_bound, 1.0e-6)
 
     def test_yaml_validation(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -138,6 +159,7 @@ class TestTune(unittest.TestCase):
                         search:
                           max_evals: 3
                           workers: 1
+                          repetitions: 2
                           output_dir: tune-out
                         executable:
                           command: ./exe
@@ -152,13 +174,21 @@ class TestTune(unittest.TestCase):
                         objective:
                           metric: wall_time
                           direction: minimize
+                        constraint:
+                          metric: error
+                          source: stdout
+                          regex: "error=([0-9.eE+-]+)"
+                          upper_bound: 1.0e-6
                         """
                     )
                 )
             config = load_config(config_path)
             self.assertEqual(config.backend.options["surrogate_model"], "ET")
+            self.assertEqual(config.search.repetitions, 2)
             self.assertEqual(config.parameters[0].scale, "log")
             self.assertEqual(config.search.output_dir, Path(tmpdir) / "tune-out")
+            self.assertIsInstance(config.constraint, ConstraintConfig)
+            self.assertEqual(config.constraint.upper_bound, 1.0e-6)
 
     def test_build_trial_argv_appends_setoptions_pairs(self):
         parameters = [
@@ -228,6 +258,144 @@ class TestTune(unittest.TestCase):
             self.assertIsNotNone(result.metric)
             self.assertGreaterEqual(result.metric, 0.0)
 
+    def test_baseline_runs_without_tune_parameters(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            script = _write_script(
+                tmpdir,
+                "metric.py",
+                """
+                import sys
+                print(f"objective={len(sys.argv[1:])}")
+                """,
+            )
+            config = TuneConfig(
+                search={"repetitions": 3},
+                executable=ExecutableConfig(
+                    command=sys.executable, args=[script], cwd=tmpdir
+                ),
+                parameters=[
+                    ParameterSpec(name="x", type="float", bounds=(0.0, 1.0))
+                ],
+                objective=ObjectiveConfig(
+                    metric="argument_count",
+                    source="stdout",
+                    regex=r"objective=([0-9]+)",
+                ),
+            )
+            result = run_baseline(config)
+            self.assertTrue(result.success, result.error)
+            self.assertEqual(result.parameters, {})
+            self.assertEqual(result.metric, 0.0)
+            self.assertEqual(result.repetitions, 3)
+
+    def test_repetitions_average_objective_and_constraint_metrics(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            script = _write_script(
+                tmpdir,
+                "metric.py",
+                """
+                from pathlib import Path
+                counter = Path("counter")
+                count = int(counter.read_text()) if counter.exists() else 0
+                counter.write_text(str(count + 1))
+                print(f"objective={count + 1}.0")
+                print(f"error={0.1 + 0.02 * count}")
+                """,
+            )
+            config = TuneConfig(
+                search={"repetitions": 2},
+                executable=ExecutableConfig(
+                    command=sys.executable, args=[script], cwd=tmpdir
+                ),
+                parameters=[
+                    ParameterSpec(name="x", type="float", bounds=(0.0, 1.0))
+                ],
+                objective=ObjectiveConfig(
+                    metric="runtime",
+                    source="stdout",
+                    regex=r"objective=([0-9.eE+-]+)",
+                ),
+                constraint=ConstraintConfig(
+                    metric="error",
+                    source="stdout",
+                    regex=r"error=([0-9.eE+-]+)",
+                    upper_bound=0.2,
+                ),
+            )
+
+            result = run_trial(config, {"x": 0.5})
+            self.assertTrue(result.success, result.error)
+            self.assertTrue(result.feasible)
+            self.assertEqual(result.repetitions, 2)
+            self.assertEqual(result.metric, 1.5)
+            self.assertAlmostEqual(result.constraint_metric, 0.11)
+
+    def test_command_path_expands_environment_variables(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            script = _write_script(
+                tmpdir,
+                "metric.py",
+                """
+                print("ok")
+                """,
+            )
+            config = TuneConfig(
+                executable=ExecutableConfig(
+                    command="$PYTHON_BIN",
+                    args=[script],
+                    cwd=tmpdir,
+                    env={"PYTHON_BIN": sys.executable, "TOOL_ROOT": tmpdir},
+                ),
+                parameters=[
+                    ParameterSpec(
+                        name="cvode.nlscoef", type="float", bounds=(1.0e-4, 0.3)
+                    )
+                ],
+            )
+            result = run_trial(config, {"cvode.nlscoef": 0.1})
+            self.assertTrue(result.success, result.error)
+            self.assertEqual(result.command[0], sys.executable)
+
+            self.assertEqual(
+                expand_environment_variables(
+                    "${TOOL_ROOT}/metric.py", {"TOOL_ROOT": tmpdir}
+                ),
+                script,
+            )
+
+    def test_trial_uses_isolated_working_directory_for_file_metrics(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            script = _write_script(
+                tmpdir,
+                "metric.py",
+                """
+                from pathlib import Path
+                Path("metric.txt").write_text("metric=2.5\\n")
+                print(Path.cwd())
+                """,
+            )
+            config = TuneConfig(
+                executable=ExecutableConfig(
+                    command=sys.executable, args=[script], cwd=tmpdir
+                ),
+                parameters=[
+                    ParameterSpec(
+                        name="cvode.nlscoef", type="float", bounds=(1.0e-4, 0.3)
+                    )
+                ],
+                objective=ObjectiveConfig(
+                    metric="file_metric",
+                    source="metric.txt",
+                    regex=r"metric=([0-9.eE+-]+)",
+                ),
+            )
+
+            result = run_trial(config, {"cvode.nlscoef": 0.1})
+            self.assertTrue(result.success, result.error)
+            self.assertEqual(result.metric, 2.5)
+            self.assertNotIn(str(Path(tmpdir)), result.stdout)
+            self.assertFalse(Path(tmpdir, "metric.txt").exists())
+
     def test_parsed_stdout_metric(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             script = _write_script(
@@ -258,6 +426,114 @@ class TestTune(unittest.TestCase):
             self.assertTrue(result.success, result.error)
             self.assertEqual(result.metric, 3.25)
 
+    def test_sum_of_multiple_stdout_metric_terms(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            script = _write_script(
+                tmpdir,
+                "metric.py",
+                """
+                print("Fe=2")
+                print("Fi=5")
+                print("nfeLS=3")
+                print("nje=7")
+                """,
+            )
+            config = TuneConfig(
+                executable=ExecutableConfig(
+                    command=sys.executable, args=[script], cwd=tmpdir
+                ),
+                parameters=[
+                    ParameterSpec(
+                        name="cvode.nlscoef", type="float", bounds=(1.0e-4, 0.3)
+                    )
+                ],
+                objective=ObjectiveConfig(
+                    metric="solver_work",
+                    source="stdout",
+                    regex=[
+                        r"Fe=([0-9]+)",
+                        r"Fi=([0-9]+)",
+                        r"nfeLS=([0-9]+)",
+                        r"nje=([0-9]+)",
+                    ],
+                    aggregation="sum",
+                ),
+            )
+            result = run_trial(config, {"cvode.nlscoef": 0.1})
+            self.assertTrue(result.success, result.error)
+            self.assertEqual(result.metric, 17.0)
+
+    def test_constraint_metric_filters_infeasible_trials(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            script = _write_script(
+                tmpdir,
+                "metric.py",
+                """
+                import sys
+                values = dict(zip(sys.argv[1::2], sys.argv[2::2]))
+                value = float(values["x"])
+                print(f"objective={value}")
+                print(f"error={2.0 * value}")
+                """,
+            )
+            config = TuneConfig(
+                executable=ExecutableConfig(
+                    command=sys.executable, args=[script], cwd=tmpdir
+                ),
+                parameters=[
+                    ParameterSpec(name="x", type="float", bounds=(0.0, 1.0))
+                ],
+                objective=ObjectiveConfig(
+                    metric="runtime",
+                    source="stdout",
+                    regex=r"objective=([0-9.eE+-]+)",
+                ),
+                constraint=ConstraintConfig(
+                    metric="error",
+                    source="stdout",
+                    regex=r"error=([0-9.eE+-]+)",
+                    upper_bound=0.15,
+                ),
+            )
+
+            infeasible = run_trial(config, {"x": 0.1})
+            self.assertTrue(infeasible.success, infeasible.error)
+            self.assertFalse(infeasible.feasible)
+            self.assertEqual(infeasible.metric, 0.1)
+            self.assertEqual(infeasible.constraint_metric, 0.2)
+
+            feasible = run_trial(config, {"x": 0.05})
+            self.assertTrue(feasible.success, feasible.error)
+            self.assertTrue(feasible.feasible)
+            self.assertEqual(feasible.constraint_metric, 0.1)
+
+    def test_infeasible_results_are_excluded_from_best_and_score(self):
+        infeasible = TrialResult(
+            parameters={},
+            metric=0.1,
+            wall_time=0.1,
+            returncode=0,
+            stdout="",
+            stderr="",
+            command=[],
+            success=True,
+            feasible=False,
+        )
+        feasible = TrialResult(
+            parameters={},
+            metric=1.0,
+            wall_time=1.0,
+            returncode=0,
+            stdout="",
+            stderr="",
+            command=[],
+            success=True,
+            feasible=True,
+        )
+        self.assertIs(select_best([infeasible, feasible], "minimize"), feasible)
+        self.assertIs(select_worst([infeasible, feasible], "minimize"), feasible)
+        self.assertEqual(objective_to_score("minimize", 0.1, False), float("-inf"))
+
     def test_failed_trial(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             script = _write_script(
@@ -280,6 +556,7 @@ class TestTune(unittest.TestCase):
             )
             result = run_trial(config, {"cvode.nlscoef": 0.1})
             self.assertFalse(result.success)
+            self.assertFalse(result.feasible)
             self.assertEqual(result.returncode, 7)
             self.assertIsNone(result.metric)
 
@@ -507,7 +784,7 @@ class TestTune(unittest.TestCase):
                 """
                 import sys
                 values = dict(zip(sys.argv[1::2], sys.argv[2::2]))
-                print("objective=%s" % values["cvode.nlscoef"])
+                print("objective=%s" % values.get("cvode.nlscoef", "0.3"))
                 """,
             )
             output_dir = os.path.join(tmpdir, "out")
@@ -536,6 +813,13 @@ class TestTune(unittest.TestCase):
             with open(os.path.join(output_dir, "best.json"), "r") as fp:
                 best = json.load(fp)
             self.assertEqual(best["parameters"]["cvode.nlscoef"], 0.1)
+            with open(os.path.join(output_dir, "baseline.json"), "r") as fp:
+                baseline = json.load(fp)
+            self.assertEqual(baseline["parameters"], {})
+            self.assertEqual(baseline["metric"], 0.3)
+            with open(os.path.join(output_dir, "worst.json"), "r") as fp:
+                worst = json.load(fp)
+            self.assertEqual(worst["parameters"]["cvode.nlscoef"], 0.2)
 
     def test_ytopt_problem_conversion_with_problem_api(self):
         class FakeProblem:
@@ -592,7 +876,7 @@ class TestTune(unittest.TestCase):
                 """
                 import sys
                 values = dict(zip(sys.argv[1::2], sys.argv[2::2]))
-                x = float(values["cvode.nlscoef"])
+                x = float(values.get("cvode.nlscoef", "0.3"))
                 print(f"objective={x}")
                 """,
             )

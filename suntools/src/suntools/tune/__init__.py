@@ -18,6 +18,7 @@
 
 from suntools.tune.models import (
     BackendConfig,
+    ConstraintConfig,
     ExecutableConfig,
     ObjectiveConfig,
     ParameterSpec,
@@ -27,6 +28,7 @@ from suntools.tune.models import (
 
 __all__ = [
     "BackendConfig",
+    "ConstraintConfig",
     "ExecutableConfig",
     "ObjectiveConfig",
     "ParameterSpec",

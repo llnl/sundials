@@ -25,8 +25,10 @@ from suntools.tune.models import ParameterSpec, TuneConfig
 from suntools.tune.runner import (
     TrialResult,
     objective_to_score,
+    run_baseline,
     run_trial,
     select_best,
+    select_worst,
     write_results,
 )
 
@@ -54,10 +56,13 @@ def to_ytopt_problem(
 class YtoptBackend:
     def __init__(self, config: TuneConfig):
         self.config = config
+        self.baseline = None
+        self.worst = None
 
     def run(self) -> List[TrialResult]:
         AMBS, Evaluator = _import_ytopt()
 
+        self.baseline = run_baseline(self.config)
         problem = to_ytopt_problem(self.config.parameters, self.config.objective.metric)
         results: List[TrialResult] = []
         lock = threading.Lock()
@@ -68,7 +73,9 @@ class YtoptBackend:
             with lock:
                 results.append(trial_result)
             return objective_to_score(
-                self.config.objective.direction, trial_result.metric
+                self.config.objective.direction,
+                trial_result.metric,
+                trial_result.feasible,
             )
 
         _attach_objective(problem, objective)
@@ -87,7 +94,8 @@ class YtoptBackend:
         _run_search(search, self.config.search.max_evals)
 
         best = select_best(results, self.config.objective.direction)
-        write_results(output_dir, results, best)
+        self.worst = select_worst(results, self.config.objective.direction)
+        write_results(output_dir, results, best, self.baseline, self.worst)
         return results
 
 

@@ -23,6 +23,7 @@ import yaml
 
 from suntools.tune.models import (
     BackendConfig,
+    ConstraintConfig,
     ExecutableConfig,
     ObjectiveConfig,
     ParameterSpec,
@@ -127,6 +128,22 @@ def config_from_args(args: Any) -> TuneConfig:
         group=parse_regex_group(args.objective_group),
     )
 
+    constraint = None
+    constraint_args = (
+        args.constraint_metric,
+        args.constraint_source,
+        args.constraint_regex,
+        args.constraint_upper_bound,
+    )
+    if any(value is not None for value in constraint_args):
+        constraint = ConstraintConfig(
+            metric=args.constraint_metric,
+            source=args.constraint_source,
+            regex=args.constraint_regex,
+            group=parse_regex_group(args.constraint_group),
+            upper_bound=args.constraint_upper_bound,
+        )
+
     return TuneConfig(
         backend=BackendConfig(
             name=args.backend,
@@ -135,6 +152,7 @@ def config_from_args(args: Any) -> TuneConfig:
         search=SearchConfig(
             max_evals=args.max_evals,
             workers=args.workers,
+            repetitions=args.repetitions,
             output_dir=Path(args.output_dir),
         ),
         executable=ExecutableConfig(
@@ -145,4 +163,5 @@ def config_from_args(args: Any) -> TuneConfig:
         ),
         parameters=parameters,
         objective=objective,
+        constraint=constraint,
     )

@@ -1,0 +1,44 @@
+# Tune ark_analytic across valid implicit DIRK tables.
+# Run from this directory:
+#   suntools tune --config ark_analytic_tune.yaml
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 40
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-ark-analytic-dirk-yaml
+
+executable:
+  command: $builddir/examples/arkode/C_serial/ark_analytic
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: arkode.table_names
+    type: choice
+    values:
+      - "ARKODE_BILLINGTON_3_3_2 ARKODE_ERK_NONE"
+      - "ARKODE_TRBDF2_3_3_2 ARKODE_ERK_NONE"
+      - "ARKODE_CASH_5_2_4 ARKODE_ERK_NONE"
+      - "ARKODE_CASH_5_3_4 ARKODE_ERK_NONE"
+      - "ARKODE_SDIRK_5_3_4 ARKODE_ERK_NONE"
+      - "ARKODE_ARK436L2SA_DIRK_6_3_4 ARKODE_ERK_NONE"
+      - "ARKODE_ESDIRK436L2SA_6_3_4 ARKODE_ERK_NONE"
+      - "ARKODE_ESDIRK547L2SA_7_4_5 ARKODE_ERK_NONE"
+
+objective:
+  metric: solver_work
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex:
+    - 'Total RHS evals:\s+Fe = ([0-9]+),\s+Fi = [0-9]+'
+    - 'Total RHS evals:\s+Fe = [0-9]+,\s+Fi = ([0-9]+)'
+    - 'Total RHS evals for setting up the linear system = ([0-9]+)'
+    - 'Total number of Jacobian evaluations = ([0-9]+)'

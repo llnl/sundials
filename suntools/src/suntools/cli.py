@@ -115,6 +115,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Number of worker threads for backend evaluations.",
     )
     tune.add_argument(
+        "--repetitions",
+        type=int,
+        default=1,
+        help="Number of times to run each sampled configuration.",
+    )
+    tune.add_argument(
         "--output-dir",
         default="suntools-tune",
         help="Directory for tune results.",
@@ -167,6 +173,32 @@ def build_parser() -> argparse.ArgumentParser:
         "--objective-group",
         default=1,
         help="Regex group index or name used for the objective value.",
+    )
+    tune.add_argument(
+        "--constraint-metric",
+        default=None,
+        help="Constraint metric name. Requires the constraint regex and upper bound.",
+    )
+    tune.add_argument(
+        "--constraint-source",
+        default=None,
+        help='Source for the constraint regex: "stdout", "stderr", or a file path.',
+    )
+    tune.add_argument(
+        "--constraint-regex",
+        default=None,
+        help="Regular expression used to extract the constraint metric.",
+    )
+    tune.add_argument(
+        "--constraint-group",
+        default=1,
+        help="Regex group index or name used for the constraint value.",
+    )
+    tune.add_argument(
+        "--constraint-upper-bound",
+        type=float,
+        default=None,
+        help="Maximum allowed constraint metric value.",
     )
     tune.add_argument(
         "executable",
