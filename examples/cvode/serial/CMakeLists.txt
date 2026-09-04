@@ -51,9 +51,9 @@ set(CVODE_examples_BL "cvAdvDiff_bndL\;\;exclude-single"
                       "cvRoberts_dnsL\;\;exclude-single")
 
 # Examples using KLU linear solver
-set(CVODE_examples_KLU "cvRoberts_block_klu\;\;develop"
-                       "cvRoberts_klu\;\;develop"
-                       "cvRoberts_sparseDQ_klu\;\;develop")
+set(CVODE_examples_KLU
+    "cvRoberts_block_klu\;\;develop" "cvRoberts_klu\;\;develop"
+    "cvRoberts_sparseDQ_klu\;\;develop")
 
 # Examples using SuperLU_MT linear solver
 set(CVODE_examples_SUPERLUMT "cvRoberts_sps\;\;develop")

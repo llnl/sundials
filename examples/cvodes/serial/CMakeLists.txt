@@ -65,8 +65,7 @@ set(CVODES_examples_BL "cvsAdvDiff_bndL\;\;exclude-single"
 # Examples using KLU linear solver
 set(CVODES_examples_KLU
     "cvsRoberts_ASAi_klu\;\;develop"
-    "cvsRoberts_FSA_klu\;-sensi stg1 t\;develop"
-    "cvsRoberts_klu\;\;develop"
+    "cvsRoberts_FSA_klu\;-sensi stg1 t\;develop" "cvsRoberts_klu\;\;develop"
     "cvsRoberts_sparseDQ_klu\;\;develop")
 
 # Examples using SuperLU_MT linear solver

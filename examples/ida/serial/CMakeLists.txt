@@ -40,8 +40,7 @@ set(IDA_examples_BL)
 
 # Examples using KLU linear solver
 set(IDA_examples_KLU
-    "idaHeat2D_klu\;\;develop"
-    "idaHeat2D_sparseDQ_klu\;\;develop"
+    "idaHeat2D_klu\;\;develop" "idaHeat2D_sparseDQ_klu\;\;develop"
     "idaRoberts_klu\;\;develop")
 
 # Examples using SuperLU_MT linear solver

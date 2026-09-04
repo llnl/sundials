@@ -66,8 +66,8 @@ foreach(test_tuple ${unit_tests})
                 sundials_sunnonlinsolfixedpoint_obj
                 ${EXE_EXTRA_LINK_LIBS})
 
-      # Tell CMake that we depend on the IDA library since it does not pick
-      # that up from $<TARGET_OBJECTS:sundials_ida_obj>.
+      # Tell CMake that we depend on the IDA library since it does not pick that
+      # up from $<TARGET_OBJECTS:sundials_ida_obj>.
       add_dependencies(${test} sundials_ida_obj)
 
     else()
