@@ -30,9 +30,91 @@ using namespace sundials::experimental;
 
 namespace sundials4py {
 
+static int ensure_extsts_sts_fn_table(void* arkode_mem, void* sts_mem)
+{
+  if (sts_mem == nullptr) { return ARK_SUCCESS; }
+
+  auto sts_ark_mem          = static_cast<ARKodeMem>(sts_mem);
+  bool created_sts_fn_table = false;
+
+  if (sts_ark_mem->python == nullptr)
+  {
+    sts_ark_mem->python  = new arkode_user_supplied_fn_table;
+    created_sts_fn_table = true;
+  }
+
+  // MRIStepCreateExtSTS creates the inner LSRKStep object in C, so it does
+  // not get a Python callback table. Give the borrowed STS object its own
+  // table, and synchronize the diffusion RHS callback from the outer MRIStep
+  // table in case MRIStepReInitExtSTS supplied a new one.
+  auto mri_fn_table = get_arkode_fn_table(arkode_mem);
+  auto sts_fn_table =
+    static_cast<arkode_user_supplied_fn_table*>(sts_ark_mem->python);
+  sts_fn_table->mristep_fd = mri_fn_table->mristep_fd;
+
+  int status = ARKodeSetUserData(sts_mem, sts_mem);
+  if (status != ARK_SUCCESS && created_sts_fn_table)
+  {
+    delete sts_fn_table;
+    sts_ark_mem->python = nullptr;
+  }
+
+  return status;
+}
+
 void bind_arkode_mristep(nb::module_& m)
 {
 #include "arkode_mristep_generated.hpp"
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Manual attributes to capture static const int declarations that nanobind
+  // does not catch
+  /////////////////////////////////////////////////////////////////////////////
+
+  m.attr("MRISTEP_DEFAULT_EXPL_1") = static_cast<int>(MRISTEP_DEFAULT_EXPL_1);
+  m.attr("MRISTEP_DEFAULT_EXPL_2") = static_cast<int>(MRISTEP_DEFAULT_EXPL_2);
+  m.attr("MRISTEP_DEFAULT_EXPL_3") = static_cast<int>(MRISTEP_DEFAULT_EXPL_3);
+  m.attr("MRISTEP_DEFAULT_EXPL_4") = static_cast<int>(MRISTEP_DEFAULT_EXPL_4);
+  m.attr("MRISTEP_DEFAULT_EXPL_2_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_EXPL_2_AD);
+  m.attr("MRISTEP_DEFAULT_EXPL_3_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_EXPL_3_AD);
+  m.attr("MRISTEP_DEFAULT_EXPL_4_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_EXPL_4_AD);
+  m.attr("MRISTEP_DEFAULT_EXPL_5_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_EXPL_5_AD);
+  m.attr("MRISTEP_DEFAULT_IMPL_SD_1") =
+    static_cast<int>(MRISTEP_DEFAULT_IMPL_SD_1);
+  m.attr("MRISTEP_DEFAULT_IMPL_SD_2") =
+    static_cast<int>(MRISTEP_DEFAULT_IMPL_SD_2);
+  m.attr("MRISTEP_DEFAULT_IMPL_SD_3") =
+    static_cast<int>(MRISTEP_DEFAULT_IMPL_SD_3);
+  m.attr("MRISTEP_DEFAULT_IMPL_SD_4") =
+    static_cast<int>(MRISTEP_DEFAULT_IMPL_SD_4);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_1") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_1);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_2") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_2);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_3") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_3);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_4") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_4);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_2_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_2_AD);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_3_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_3_AD);
+  m.attr("MRISTEP_DEFAULT_IMEX_SD_4_AD") =
+    static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_4_AD);
+
+  // deprecated constants. These should be removed in a future release.
+  m.attr("ARKODE_IMEX_MRI_GARK_ARK2") =
+    static_cast<int>(ARKODE_IMEX_MRI_GARK_ARK2);
+  m.attr("ARKODE_IMEX_MRI_GARK_ASCHER_ARK2") =
+    static_cast<int>(ARKODE_IMEX_MRI_GARK_ASCHER_ARK2);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // MRIStep user-supplied function setters
+  /////////////////////////////////////////////////////////////////////////////
 
   // _MRIStepInnerStepper is a opaque/private class forward declared in a public header but
   // defined in a source file elsewhere. As such, we need to declare it here since its
@@ -146,6 +228,98 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("fse").none(), nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"),
     nb::arg("inner_stepper"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
+
+  m.def(
+    "MRIStepCreateExtSTS",
+    [](std::function<std::remove_pointer_t<ARKRhsFn>> fd,
+       std::function<std::remove_pointer_t<ARKRhsFn>> fse,
+       std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
+       N_Vector y0, SUNContext sunctx)
+    {
+      auto fd_wrapper  = fd ? mristep_fd_wrapper : nullptr;
+      auto fse_wrapper = fse ? mristep_fse_wrapper : nullptr;
+      auto fsi_wrapper = fsi ? mristep_fsi_wrapper : nullptr;
+
+      void* ark_mem = MRIStepCreateExtSTS(fd_wrapper, fse_wrapper, fsi_wrapper,
+                                          t0, y0, sunctx);
+      if (ark_mem == nullptr)
+      {
+        throw sundials4py::error_returned("MRIStepCreateExtSTS returned NULL");
+      }
+
+      // Create the user-supplied function table to store the Python user functions
+      auto fn_table = new arkode_user_supplied_fn_table;
+
+      // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
+      static_cast<ARKodeMem>(ark_mem)->python = fn_table;
+      int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
+      if (ark_status != ARK_SUCCESS)
+      {
+        free(fn_table);
+        ARKodeFree(&ark_mem);
+        throw sundials4py::error_returned(
+          "Failed to set user data in ARKODE memory");
+      }
+
+      // Finally, set the RHS function
+      fn_table->mristep_fd  = nb::cast(fd);
+      fn_table->mristep_fse = nb::cast(fse);
+      fn_table->mristep_fsi = nb::cast(fsi);
+
+      return std::make_shared<ARKodeView>(ark_mem);
+    },
+    nb::arg("fd").none(), nb::arg("fse").none(), nb::arg("fsi").none(),
+    nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
+
+  m.def(
+    "MRIStepReInitExtSTS",
+    [](void* arkode_mem, std::function<std::remove_pointer_t<ARKRhsFn>> fd,
+       std::function<std::remove_pointer_t<ARKRhsFn>> fse,
+       std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
+       N_Vector y0)
+    {
+      auto fn_table         = get_arkode_fn_table(arkode_mem);
+      fn_table->mristep_fd  = nb::cast(fd);
+      fn_table->mristep_fse = nb::cast(fse);
+      fn_table->mristep_fsi = nb::cast(fsi);
+
+      auto fd_wrapper  = fd ? mristep_fd_wrapper : nullptr;
+      auto fse_wrapper = fse ? mristep_fse_wrapper : nullptr;
+      auto fsi_wrapper = fsi ? mristep_fsi_wrapper : nullptr;
+
+      int status = MRIStepReInitExtSTS(arkode_mem, fd_wrapper, fse_wrapper,
+                                       fsi_wrapper, t0, y0);
+      if (status != ARK_SUCCESS) { return status; }
+
+      void* sts_mem = nullptr;
+      status        = MRIStepGetSTS(arkode_mem, &sts_mem);
+      if (status != ARK_SUCCESS) { return status; }
+
+      return ensure_extsts_sts_fn_table(arkode_mem, sts_mem);
+    },
+    nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
+    nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
+
+  m.def(
+    "MRIStepGetSTS",
+    [](void* arkode_mem)
+    {
+      void* sts_mem = nullptr;
+      int status    = MRIStepGetSTS(arkode_mem, &sts_mem);
+
+      std::shared_ptr<ARKodeBorrowedView> sts;
+      if (status == ARK_SUCCESS && sts_mem != nullptr)
+      {
+        status = ensure_extsts_sts_fn_table(arkode_mem, sts_mem);
+        if (status != ARK_SUCCESS) { return std::make_tuple(status, sts); }
+
+        sts = std::make_shared<ARKodeBorrowedView>(sts_mem);
+      }
+
+      return std::make_tuple(status, sts);
+    },
+    nb::arg("arkode_mem"),
+    nb::call_policy<sundials4py::returns_references_to<1, 1>>());
 }
 
 } // namespace sundials4py

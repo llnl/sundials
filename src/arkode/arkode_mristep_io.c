@@ -125,7 +125,7 @@ int MRIStepSetPostInnerFn(void* arkode_mem, MRIStepPostInnerFn postfn)
   retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* Set pre inner evolve function */
+  /* Set post inner evolve function */
   step_mem->post_inner_evolve = postfn;
 
   return (ARK_SUCCESS);
@@ -336,11 +336,19 @@ int mriStep_SetUserData(ARKodeMem ark_mem, void* user_data)
   retval = mriStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* set user data in ARKODELS mem */
-  if (step_mem->lmem != NULL)
+  /* set user data in ARKLS mem */
+  if (step_mem->lmem)
   {
     retval = arkLSSetUserData(ark_mem, user_data);
     if (retval != ARKLS_SUCCESS) { return (retval); }
+  }
+
+  /* if MRIStep implements an ExtSTS method, pass the
+     user_data pointer to the inner LSRKStep integrator */
+  if (step_mem->extsts_method)
+  {
+    retval = ARKodeSetUserData(step_mem->stepper->content, user_data);
+    if (retval != ARK_SUCCESS) { return (retval); }
   }
 
   return (ARK_SUCCESS);

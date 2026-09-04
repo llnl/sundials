@@ -2660,7 +2660,8 @@ Optional inputs for iterative ``SUNLinearSolver`` modules
 
    Specifies the factor to use when converting from the integrator tolerance
    (WRMS norm) to the linear solver tolerance (L2 norm) for Newton linear system
-   solves.
+   solves. See :numref:`SUNLinSol.Iterative.Tolerance` for how this tolerance is
+   used in the linear solver convergence test.
 
    **Arguments:**
       * *arkode_mem* -- pointer to the ARKStep memory block.
@@ -2692,7 +2693,8 @@ Optional inputs for iterative ``SUNLinearSolver`` modules
 
    Specifies the factor to use when converting from the integrator tolerance
    (WRMS norm) to the linear solver tolerance (L2 norm) for mass matrix linear
-   system solves.
+   system solves. See :numref:`SUNLinSol.Iterative.Tolerance` for how this
+   tolerance is used in the linear solver convergence test.
 
    **Arguments:**
       * *arkode_mem* -- pointer to the ARKStep memory block.

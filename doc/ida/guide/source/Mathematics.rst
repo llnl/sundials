@@ -99,8 +99,7 @@ solution and on the relative and absolute tolerances input by the user, namely
    :label: IDA_errwt
 
 Because :math:`1/W_i` represents a tolerance in the component :math:`y_i`, a
-vector whose norm is 1 is regarded as “small.” For brevity, we will usually drop
-the subscript WRMS on norms in what follows.
+vector whose WRMS norm is 1 is regarded as “small.”
 
 .. _IDA.Mathematics.nls:
 
@@ -201,39 +200,65 @@ the iteration error :math:`y_n - y_{n(m)}` is small relative to :math:`y`
 itself. For this, we estimate the linear convergence rate at all iterations
 :math:`m>1` as
 
-.. math:: R = \left( \frac{\delta_m}{\delta_1} \right)^{\frac{1}{m-1}} \, ,
+.. math:: R = \left( \frac{\|\delta_m\|_{\text{WRMS}}}{\|\delta_1\|_{\text{WRMS}}} \right)^{\frac{1}{m-1}} \, ,
 
 where the :math:`\delta_m = y_{n(m)} - y_{n(m-1)}` is the correction at
 iteration :math:`m=1,2,\ldots`. The nonlinear solver iteration is halted if
 :math:`R>0.9`.  The convergence test at the :math:`m`-th iteration is then
 
 .. math::
-   S \| \delta_m \| < 0.33 \, ,
+   S \| \delta_m \|_{\text{WRMS}} < \epsilon_N \, ,
    :label: IDA_DAE_nls_test
 
 where :math:`S = R/(R-1)` whenever :math:`m>1` and :math:`R\le 0.9`. The user
 has the option of changing the constant in the convergence test from its default
-value of :math:`0.33`.  The quantity :math:`S` is set to :math:`S=20` initially
-and whenever :math:`J` or :math:`P` is updated, and it is reset to :math:`S=100`
-on a step with :math:`\alpha \neq \bar\alpha`.  Note that at :math:`m=1`, the
-convergence test :eq:`IDA_DAE_nls_test` uses an old value for :math:`S`. Therefore,
-at the first nonlinear solver iteration, we make an additional test and stop the
-iteration if :math:`\|\delta_1\| < 0.33 \cdot 10^{-4}` (since such a
-:math:`\delta_1` is probably just noise and therefore not appropriate for use in
-evaluating :math:`R`).  We allow only a small number (default value 4) of
-nonlinear iterations.  If convergence fails with :math:`J` or :math:`P` current,
-we are forced to reduce the step size :math:`h_n`, and we replace :math:`h_n` by
+value :math:`\epsilon_N = 0.33`.  The quantity :math:`S` is set to :math:`S=20`
+initially and whenever :math:`J` or :math:`P` is updated, and it is reset to
+:math:`S=100` on a step with :math:`\alpha \neq \bar\alpha`.  Note that at
+:math:`m=1`, the convergence test :eq:`IDA_DAE_nls_test` uses an old value for
+:math:`S`. Therefore, at the first nonlinear solver iteration, we make an
+additional test and stop the iteration if
+:math:`\|\delta_1\|_{\text{WRMS}} < \epsilon_N \cdot 10^{-4}` (since such a :math:`\delta_1`
+is probably just noise and therefore not appropriate for use in evaluating
+:math:`R`).  We allow only a small number (default value 4) of nonlinear
+iterations.  If convergence fails with :math:`J` or :math:`P` current, we are
+forced to reduce the step size :math:`h_n`, and we replace :math:`h_n` by
 :math:`h_n \eta_{\mathrm{cf}}` (by default :math:`\eta_{\mathrm{cf}} = 0.25`). The
 integration is halted after a preset number (default value 10) of convergence
 failures. Both the maximum number of allowable nonlinear iterations and the
 maximum number of nonlinear convergence failures can be changed by the user from
 their default values.
 
-When an iterative method is used to solve the linear system, to minimize the
-effect of linear iteration errors on the nonlinear and local integration error
-controls, we require the preconditioned linear residual to be small relative to
-the allowed error in the nonlinear iteration, i.e., :math:`\| P^{-1}(Jx+G) \| <
-0.05 \cdot 0.33`.  The safety factor :math:`0.05` can be changed by the user.
+When an iterative method is used to solve the linear Newton systems
+:eq:`IDA_DAE_Newtoncorr`, its errors must also be controlled. To this end,
+we approximate the linear iteration error in the correction vector
+:math:`\Delta y` using the scaled, preconditioned residual vector
+:math:`\tilde{r} = S P^{-1} r`, where :math:`r = J \Delta y + G` is the
+unscaled residual. The diagonal matrix :math:`S` has entries
+:math:`S_{i,i} = W_i` as defined in :eq:`IDA_errwt`. The linear iteration error
+should be at least as small as the nonlinear iteration error so that the linear
+solver does not interfere with the nonlinear solver and local time integration
+error controls. Most iterative linear solver libraries measure error in the
+:math:`L_2` norm rather than the WRMS norm, so we define the linear solver
+tolerance as
+
+.. math::
+   \|\tilde{r}\|_2 \le \text{tol}, \qquad
+   \text{tol} = C \epsilon_L \epsilon_N.
+   :label: IDA_LinearTolerance
+
+The constant :math:`C` is a norm conversion factor that defaults to
+:math:`\sqrt{N}` but can be modified with :c:func:`IDASetLSNormFactor`.
+The factor :math:`\epsilon_N` is the nonlinear solver tolerance from
+:eq:`IDA_DAE_nls_test`, while :math:`\epsilon_L` sets the desired
+ratio between the linear and nonlinear tolerances.  Smaller values of
+:math:`\epsilon_L` are typically useful for strongly nonlinear or very stiff
+DAE systems, while easier DAE systems may benefit from a value closer to 1.
+The default values are :math:`\epsilon_L = 0.05` and :math:`\epsilon_N = 0.33`
+but may be modified by the user. If the linear solver does not support scaling,
+it is not performed, and instead, the tolerance is scaled by
+:math:`1 / \|x\|_{\text{WRMS}}` where :math:`x \in \mathbb{R}^N` is a vector of
+ones.
 
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix objects,
@@ -266,7 +291,7 @@ supplied, such products are approximated by
 
 .. math:: Jv = [F(t,y+\sigma v,\dot{y}+\alpha\sigma v) - F(t,y,\dot{y})]/\sigma \, ,
 
-where the increment :math:`\sigma = 1/\|v\|`. As an option, the user can specify
+where the increment :math:`\sigma = 1/\|v\|_{\text{WRMS}}`. As an option, the user can specify
 a constant factor that is inserted into this expression for :math:`\sigma`.
 
 .. _IDA.Mathematics.err_test:
@@ -286,14 +311,14 @@ y_n-y_{n(0)}`.  Thus there is a constant :math:`C` such that
 
 .. math:: \text{LTE} = C \Delta_n + O(h^{q+2}) \, ,
 
-and so the norm of LTE is estimated as :math:`|C| \cdot \|\Delta_n\|`.  In
+and so the norm of LTE is estimated as :math:`|C| \cdot \|\Delta_n\|_{\text{WRMS}}`.  In
 addition, IDA requires that the error in the associated polynomial interpolant
 over the current step be bounded by 1 in norm. The leading term of the norm of
-this error is bounded by :math:`\bar{C} \|\Delta_n\|` for another constant
+this error is bounded by :math:`\bar{C} \|\Delta_n\|_{\text{WRMS}}` for another constant
 :math:`\bar{C}`. Thus the local error test in IDA is
 
 .. math::
-   \max\{ |C|, \bar{C} \} \|\Delta_n\| \leq 1 \, .
+   \max\{ |C|, \bar{C} \} \|\Delta_n\|_{\text{WRMS}} \leq 1 \, .
    :label: IDA_lerrtest
 
 A user option is available by which the algebraic components of the error vector
@@ -317,17 +342,17 @@ of the local error in the case of fixed step sizes.  At each of the orders
 :math:`C(q')` such that the norm of the local truncation error at order
 :math:`q'` satisfies
 
-.. math:: \text{LTE}(q') = C(q') \| \phi(q'+1) \| + O(h^{q'+2}) \, ,
+.. math:: \text{LTE}(q') = C(q') \| \phi(q'+1) \|_{\text{WRMS}} + O(h^{q'+2}) \, ,
 
 where :math:`\phi(k)` is a modified divided difference of order :math:`k` that
 is retained by IDA (and behaves asymptotically as :math:`h^k`).  Thus the local
-truncation errors are estimated as ELTE\ :math:`(q') = C(q')\|\phi(q'+1)\|` to
+truncation errors are estimated as ELTE\ :math:`(q') = C(q')\|\phi(q'+1)\|_{\text{WRMS}}` to
 select step sizes. But the choice of order in IDA is based on the requirement
-that the scaled derivative norms, :math:`\|h^k y^{(k)}\|`, are monotonically
+that the scaled derivative norms, :math:`\|h^k y^{(k)}\|_{\text{WRMS}}`, are monotonically
 decreasing with :math:`k`, for :math:`k` near :math:`q`. These norms are again
 estimated using the :math:`\phi(k)`, and in fact
 
-.. math:: \|h^{q'+1} y^{(q'+1)}\| \approx T(q') \equiv (q'+1) \text{ELTE}(q') \, .
+.. math:: \|h^{q'+1} y^{(q'+1)}\|_{\text{WRMS}} \approx T(q') \equiv (q'+1) \text{ELTE}(q') \, .
 
 The step/order selection begins with a test for monotonicity that is made even
 *before* the local error test is performed. Namely, the order is reset to
@@ -438,7 +463,7 @@ P_R^{-1}`, instead of :math:`A`.  However, within IDA, preconditioning is
 allowed *only* on the left, so that the iterative method is applied to systems
 :math:`(P^{-1}J)\Delta y = -P^{-1}G`.  Left preconditioning is required to make
 the norm of the linear residual in the nonlinear iteration meaningful; in
-general, :math:`\| J \Delta y + G \|` is meaningless, since the weights used in
+general, :math:`\| J \Delta y + G \|_{\text{WRMS}}` is meaningless, since the weights used in
 the WRMS-norm correspond to :math:`y`.
 
 In order to improve the convergence of the Krylov iteration, the preconditioner

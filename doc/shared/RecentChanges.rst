@@ -5,31 +5,9 @@
 
 **New Features and Enhancements**
 
-Added CUDA support to the sundials4py Python interface. CUDA N_Vectors can be
-used with CUDA device arrays from CuPy, PyTorch and JAX when built with
-:cmakeop:`SUNDIALS_ENABLE_CUDA` set to ``ON``.
-
-sundials4py now has a ``N_VGetNumpyArray`` function which should be used instead
-of ``N_VGetArrayPointer``.
-
-Added the :cmakeop:`SUNDIALS_ENABLE_DEPRECATED_WARNINGS` CMake option to allow
-users to disable compiler warnings emitted by deprecated SUNDIALS API
-annotations.
-
-Added the function :c:func:`N_VSetDeviceArrayPointer` to the N_Vector API to set
-the device data pointer for vector implementations with a device memory space.
-
-The KLU SUNLinearSolver is now available in sundials4py.
-
 Added support to compute internal difference-quotient approximations to sparse
 Jacobians (CSC format only) for all SUNDIALS packages.
 
 **Bug Fixes**
-
-Fixed bug in SUNNonlinearSolver_Auto which resulted in premature switch to Newton from fixed point
-due to convergence rate check occurring after only one iteration.
-
-Fixed duplicate keys in IDA and IDAS logging output from consistent initial
-condition solves and order selection diagnostics.
 
 **Deprecation Notices**

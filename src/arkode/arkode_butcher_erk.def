@@ -48,8 +48,8 @@
      ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2 Y
      ARKODE_SSP_ERK_3_1_2*                Y
      ARKODE_SSP_ERK_4_1_2                 Y
-     ARKODE_ARK2_ERK_3_1_2*               Y
-     ARKODE_ASCHER_ERK_3_1_2*             Y
+     ARKODE_GKC21_ERK_3_1_2*              Y
+     ARKODE_ARS222_ERK_3_1_2*             Y
      ARKODE_SSP_LSPUM_ERK_3_1_2*          Y
      ARKODE_BOGACKI_SHAMPINE_4_2_3        Y
      ARKODE_ARK324L2SA_ERK_4_2_3*         Y
@@ -161,7 +161,7 @@ ARK_BUTCHER_TABLE(ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2, { /* Explicit-Midpoint-E
     return B;
  })
 
-ARK_BUTCHER_TABLE(ARKODE_ARK2_ERK_3_1_2, { /* ARK2 Explicit Table */
+ARK_BUTCHER_TABLE(ARKODE_GKC21_ERK_3_1_2, { /* GKC21 Explicit Table */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
 
     /* 1 - 1 / sqrt(2) */
@@ -273,7 +273,7 @@ ARK_BUTCHER_TABLE(ARKODE_SSP_ERK_4_1_2, { /* TODO(DRR): Add citation */
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ASCHER_ERK_3_1_2, { /* https://doi.org/10.1016/S0168-9274(97)00056-1 (custom embedding) */
+ARK_BUTCHER_TABLE(ARKODE_ARS222_ERK_3_1_2, { /* https://doi.org/10.1016/S0168-9274(97)00056-1 (custom embedding) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
     const sunrealtype gamma = SUN_RCONST(0.2928932188134524755991556378951509607152);
     const sunrealtype delta = -SUN_RCONST(0.7071067811865475244008443621048490392848);
@@ -617,6 +617,47 @@ ARK_BUTCHER_TABLE(ARKODE_SAYFY_ABURUB_6_3_4, { /* Sayfy-Aburub-4-3-ERK */
     B->c[3] = SUN_RCONST(1.0);
     B->c[4] = SUN_RCONST(1.0)/SUN_RCONST(2.0);
     B->c[5] = SUN_RCONST(1.0);
+    return B;
+  })
+
+ARK_BUTCHER_TABLE(ARKODE_KUTTA_RK4a_4_4, { /* Kutta-4-4 */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(4, SUNFALSE);
+    B->q = 4;
+    B->p = 0;
+    B->A[1][0] = SUN_RCONST(0.5);
+    B->A[2][1] = SUN_RCONST(0.5);
+    B->A[3][2] = SUN_RCONST(1.0);
+
+    B->b[0] = SUN_RCONST(1.0)/SUN_RCONST(6.0);
+    B->b[1] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->b[2] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->b[3] = SUN_RCONST(1.0)/SUN_RCONST(6.0);
+
+    B->c[1] = SUN_RCONST(0.5);
+    B->c[2] = SUN_RCONST(0.5);
+    B->c[3] = SUN_RCONST(1.0);
+    return B;
+  })
+
+ARK_BUTCHER_TABLE(ARKODE_KUTTA_RK4b_4_4, { /* Kutta-RK4b-4-4 */
+    ARKodeButcherTable B = ARKodeButcherTable_Alloc(4, SUNFALSE);
+    B->q = 4;
+    B->p = 0;
+    B->A[1][0] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->A[2][0] = SUN_RCONST(-1.0)/SUN_RCONST(3.0);
+    B->A[2][1] = SUN_RCONST(1.0);
+    B->A[3][0] = SUN_RCONST(1.0);
+    B->A[3][1] = SUN_RCONST(-1.0);
+    B->A[3][2] = SUN_RCONST(1.0);
+
+    B->b[0] = SUN_RCONST(1.0)/SUN_RCONST(8.0);
+    B->b[1] = SUN_RCONST(3.0)/SUN_RCONST(8.0);
+    B->b[2] = SUN_RCONST(3.0)/SUN_RCONST(8.0);
+    B->b[3] = SUN_RCONST(1.0)/SUN_RCONST(8.0);
+
+    B->c[1] = SUN_RCONST(1.0)/SUN_RCONST(3.0);
+    B->c[2] = SUN_RCONST(2.0)/SUN_RCONST(3.0);
+    B->c[3] = SUN_RCONST(1.0);
     return B;
   })
 

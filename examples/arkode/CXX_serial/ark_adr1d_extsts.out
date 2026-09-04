@@ -1,0 +1,96 @@
+
+Problem parameters and options:
+ --------------------------------- 
+  c                = 0.01
+  d                = 0.1
+  A                = 0.6
+  B                = 2
+  eps              = 0.01
+ --------------------------------- 
+  tf               = 3
+  xl               = 0
+  xu               = 1
+  nx               = 512
+  dx               = 0.00195695
+ --------------------------------- 
+  integrator       = ExtSTS
+  advection        = Explicit
+  reaction         = Implicit
+  diffusion        = Explicit
+  rtol             = 0.0001
+  atol             = 1e-09
+  fixed h          = 0
+  ls setup freq    = 0
+ --------------------------------- 
+  MRI method       = ARKODE_IMEX_MRI_GARK_GKC21
+  STS method       = RKC
+ --------------------------------- 
+  output           = 1
+ --------------------------------- 
+
+          t                     ||y||_rms      
+ ----------------------------------------------
+ 0.000000000000000e+00    4.029895706298216e+00
+ 3.000000000000000e-01    3.940363411545147e+00
+ 6.000000000000000e-01    3.900349977597364e+00
+ 8.999999999999999e-01    3.872826471786403e+00
+ 1.200000000000000e+00    3.854131597132854e+00
+ 1.500000000000000e+00    3.843915299411139e+00
+ 1.800000000000000e+00    3.839524752011370e+00
+ 2.100000000000000e+00    3.839959230334776e+00
+ 2.400000000000000e+00    3.843634972497522e+00
+ 2.700000000000000e+00    3.849672648189411e+00
+ 3.000000000000000e+00    3.856861606955529e+00
+ ----------------------------------------------
+
+Final integrator statistics:
+
+ExtSTS Integrator:
+Current time                  = 3
+Steps                         = 26
+Step attempts                 = 26
+Stability limited steps       = 0
+Accuracy limited steps        = 26
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.000285136376195514
+Last step size                = 0.152903035252868
+Current step size             = 0.152903035252868
+Explicit slow RHS fn evals    = 80
+Implicit slow RHS fn evals    = 140
+Inner stepper failures        = 0
+NLS iters                     = 112
+NLS fails                     = 0
+NLS iters per step            = 4.30769230769231
+LS setups                     = 14
+Jac fn evals                  = 14
+LS RHS fn evals               = 0
+Prec setup evals              = 0
+Prec solves                   = 0
+LS iters                      = 0
+LS fails                      = 0
+Jac-times setups              = 0
+Jac-times evals               = 0
+LS iters per NLS iter         = 0
+Jac evals per NLS iter        = 0.125
+Prec evals per NLS iter       = 0
+
+Inner STS Method:
+Current time                  = 3
+Steps                         = 52
+Step attempts                 = 52
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.000167029022049415
+Last step size                = 0.0633345109297494
+Current step size             = 0
+RHS fn evals                  = 4297
+Number of dom_eig updates     = 1
+Max. num. of stages used      = 154
+Max. num. of stages allowed   = 10000
+Max. spectral radius          = 105492.884
+Min. spectral radius          = 105492.884

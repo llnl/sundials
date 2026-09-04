@@ -25,6 +25,7 @@
 #include <arkode/arkode_butcher_dirk.h>
 #include <arkode/arkode_butcher_erk.h>
 #include <arkode/arkode_ls.h>
+#include <arkode/arkode_lsrkstep.h>
 #include <arkode/arkode_mristep_deprecated.h>
 #include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
 #include <sundials/sundials_stepper.h>
@@ -88,14 +89,20 @@ enum ARKODE_MRITableID
   ARKODE_IMEX_MRI_SR21,
   ARKODE_IMEX_MRI_SR32,
   ARKODE_IMEX_MRI_SR43,
-  ARKODE_IMEX_MRI_GARK_ASCHER_ARK2,
-  ARKODE_IMEX_MRI_GARK_ARK2,
-  ARKODE_MAX_MRI_NUM = ARKODE_IMEX_MRI_GARK_ARK2
+  ARKODE_IMEX_MRI_GARK_GKC21,
+  ARKODE_MRI_GARK_EXP_ARS222,
+  ARKODE_IMEX_MRI_GARK_ARS222,
+  ARKODE_MRI_GARK_EXP_GKC21,
+  ARKODE_MAX_MRI_NUM = ARKODE_MRI_GARK_EXP_GKC21
 };
 
 #ifndef SWIG
 typedef enum ARKODE_MRITableID ARKODE_MRITableID;
 #endif
+
+/* deprecated names */
+static const int ARKODE_IMEX_MRI_GARK_ARK2        = ARKODE_IMEX_MRI_GARK_GKC21;
+static const int ARKODE_IMEX_MRI_GARK_ASCHER_ARK2 = ARKODE_IMEX_MRI_GARK_ARS222;
 
 /* Default MRI coupling tables for each order and type */
 static const int MRISTEP_DEFAULT_EXPL_1 = ARKODE_MRI_GARK_FORWARD_EULER;
@@ -206,6 +213,12 @@ SUNDIALS_EXPORT void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0,
                                     SUNContext sunctx);
 SUNDIALS_EXPORT int MRIStepReInit(void* arkode_mem, ARKRhsFn fse, ARKRhsFn fsi,
                                   sunrealtype t0, N_Vector y0);
+SUNDIALS_EXPORT void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
+                                          sunrealtype t0, N_Vector y0,
+                                          SUNContext sunctx);
+SUNDIALS_EXPORT int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd,
+                                        ARKRhsFn fe, ARKRhsFn fi,
+                                        sunrealtype t0, N_Vector y0);
 
 /* Optional input functions -- must be called AFTER MRIStepCreate */
 SUNDIALS_EXPORT int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC);
@@ -221,6 +234,7 @@ SUNDIALS_EXPORT int MRIStepGetCurrentCoupling(
 SUNDIALS_EXPORT int MRIStepGetLastInnerStepFlag(void* arkode_mem, int* flag);
 SUNDIALS_EXPORT int MRIStepGetNumInnerStepperFails(void* arkode_mem,
                                                    long int* inner_fails);
+SUNDIALS_EXPORT int MRIStepGetSTS(void* arkode_mem, void** stsptr);
 
 /* Custom inner stepper functions */
 SUNDIALS_EXPORT int MRIStepInnerStepper_Create(SUNContext sunctx,
