@@ -19,8 +19,8 @@
  * compatibility for ARKODE's previous "ARKAdaptFn"
  * -----------------------------------------------------------------*/
 
-#ifndef _ARK_USERCONTROL_H
-#define _ARK_USERCONTROL_H
+#ifndef SUNDIALS_ARKODE_USER_CONTROLLER_H
+#define SUNDIALS_ARKODE_USER_CONTROLLER_H
 
 #include <stdio.h>
 #include <sundials/sundials_adaptcontroller.h>

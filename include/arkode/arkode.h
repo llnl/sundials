@@ -28,8 +28,8 @@
  * modules.
  * -----------------------------------------------------------------*/
 
-#ifndef _ARKODE_H
-#define _ARKODE_H
+#ifndef SUNDIALS_ARKODE_H
+#define SUNDIALS_ARKODE_H
 
 #include <arkode/arkode_butcher.h>
 #include <stdio.h>

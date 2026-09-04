@@ -18,8 +18,8 @@
  * module.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNADAPTCONTROLLER_SODERLIND_H
-#define _SUNADAPTCONTROLLER_SODERLIND_H
+#ifndef SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H
+#define SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H
 
 #include <stdio.h>
 #include <sundials/sundials_adaptcontroller.h>
@@ -148,4 +148,4 @@ SUNAdaptController SUNAdaptController_H312(SUNContext sunctx);
 }
 #endif
 
-#endif /* _SUNADAPTCONTROLLER_SODERLIND_H */
+#endif /* SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H */

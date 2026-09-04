@@ -18,8 +18,8 @@
  * NVECTOR module.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_SYCL_H
-#define _NVECTOR_SYCL_H
+#ifndef SUNDIALS_NVECTOR_SYCL_H
+#define SUNDIALS_NVECTOR_SYCL_H
 
 #include <stdio.h>
 #include <sundials/sundials_config.h>

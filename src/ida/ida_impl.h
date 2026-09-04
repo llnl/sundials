@@ -19,8 +19,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _IDA_IMPL_H
-#define _IDA_IMPL_H
+#ifndef SUNDIALS_IDA_IMPL_H
+#define SUNDIALS_IDA_IMPL_H
 
 #include <stdarg.h>
 

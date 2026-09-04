@@ -32,8 +32,8 @@
  *   Partition 2 = ode_rhs_2 = y^2
  * ---------------------------------------------------------------------------*/
 
-#ifndef ESTEP_HPP_
-#define ESTEP_HPP_
+#ifndef SUNDIALS_ESTEP_HPP
+#define SUNDIALS_ESTEP_HPP
 
 #include <sundials/sundials_core.hpp>
 

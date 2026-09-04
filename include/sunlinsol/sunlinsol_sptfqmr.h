@@ -27,8 +27,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNLINSOL_SPTFQMR_H
-#define _SUNLINSOL_SPTFQMR_H
+#ifndef SUNDIALS_SUNLINSOL_SPTFQMR_H
+#define SUNDIALS_SUNLINSOL_SPTFQMR_H
 
 #include <sundials/sundials_linearsolver.h>
 #include <sundials/sundials_matrix.h>
