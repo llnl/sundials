@@ -1,4 +1,0 @@
-List of PETSc CVODE examples
-
-  cvAdvDiff_petsc   : 1-D advection-diffusion (nonstiff)
-  cv_petsc_ex7      : Nonlinear time-dependent PDE in 2D based on PETSc TS example ex7

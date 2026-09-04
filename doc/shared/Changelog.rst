@@ -1780,7 +1780,7 @@ Updated :c:func:`MRIStepReset` to call the corresponding
 :c:type:`MRIStepInnerStepper` object that is used to evolve the MRI "fast" time
 scale subproblems.
 
-Added a new example (``examples/cvode/serial/cvRocket_dns.c``) which
+Added a new example (``examples/cvode/c/cvRocket_dns/cvRocket_dns.c``) which
 demonstrates using CVODE with a discontinuous right-hand-side function and
 rootfinding.
 
