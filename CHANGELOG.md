@@ -33,6 +33,17 @@ Added Butcher tables for the classical RK4 (`ARKODE_KUTTA_RK4a_4_4`) and
 
 The KLU SUNLinearSolver is now available in sundials4py.
 
+sundials4py now supports implementing SUNDIALS classes in Python. The new
+`CustomSUNMatrix`, `CustomSUNLinearSolver`, `CustomSUNNonlinearSolver`,
+`CustomSUNHController`, and `CustomSUNMRIController` base classes may be
+subclassed to provide a `SUNMatrix`, `SUNLinearSolver`, `SUNNonlinearSolver`, or
+`SUNAdaptController` implementation written in Python, and instances of such a
+subclass may be passed to any sundials4py function that expects the
+corresponding SUNDIALS object. See the "Implementing SUNDIALS Objects in Python"
+section of the documentation for details, and the `cvs_custom_nonlinsol.py`,
+`kin_custom_linsol.py`, and `ark_custom_adaptcontroller.py` examples for
+annotated templates.
+
 ### Bug Fixes
 
 Fixed a bug where the factor provided by `ARKodeSetEpsLin` was scaled by 0.1.
