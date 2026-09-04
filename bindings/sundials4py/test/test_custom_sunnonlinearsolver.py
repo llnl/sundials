@@ -167,12 +167,12 @@ def test_custom_sunnonlinearsolver_setup_and_solve(sunctx):
 
     assert SUNNonlinSolInitialize(NLS) == SUN_SUCCESS
     assert SUNNonlinSolSetup(NLS, y0) == SUN_SUCCESS
-    assert SUNNonlinSolSolve(NLS, y0, y, w, 1.0e-9, True) == SUN_SUCCESS
+    assert SUNNonlinSolSolve(NLS, y0, y, w, 1.0e-8, True) == SUN_SUCCESS
 
     assert NLS.calls["initialize"] == 1
     assert NLS.calls["setup"] == 1
     assert NLS.calls["solve"] == 1
-    assert NLS.last_tol == 1.0e-9
+    assert NLS.last_tol == float(sunrealtype(1.0e-8))
     assert NLS.last_call_lsetup
     assert_allclose(N_VGetArrayPointer(y), [3.0, 7.0])
 

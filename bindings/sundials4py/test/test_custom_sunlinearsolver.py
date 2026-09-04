@@ -152,7 +152,7 @@ def test_custom_sunlinearsolver_initialize_setup_and_solve(sunctx):
     assert LS.calls["solve"] == 1
     assert LS.last_setup_matrix is None
     assert LS.last_solve_matrix is None
-    assert LS.last_tol == 1.0e-8
+    assert LS.last_tol == float(sunrealtype(1.0e-8))
     assert_allclose(N_VGetArrayPointer(x), [2.0, 5.0])
 
 
