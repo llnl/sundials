@@ -141,6 +141,8 @@ MRIStep initialization and deallocation functions
       Similarly, users should not employ "H-Tol" multirate time step
       controllers on the object returned using :c:func:`MRIStepCreateExtSTS`.
 
+   .. versionadded:: 7.9.0 (ARKODE 6.9.0)
+
    **Example usage:**
 
       .. code-block:: C
@@ -161,9 +163,6 @@ MRIStep initialization and deallocation functions
 
    **Example codes:**
       * ``examples/arkode/CXX_serial/ark_adr1d_extsts.cpp``
-
-   .. versionadded:: x.y.z
-
 
 
 .. c:function:: void MRIStepFree(void** arkode_mem)
@@ -1651,7 +1650,7 @@ Main solver optional output functions
       :c:func:`MRIStepCreateExtSTS`.  By default, the LSRKStep object will
       inherit the ``user_data`` pointer from the MRIStep object.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.9.0 (ARKODE 6.9.0)
 
 
 
@@ -2608,7 +2607,7 @@ vector.
       If an error occurred, :c:func:`MRIStepReInitExtSTS()` also
       sends an error message to the error handler function.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.9.0 (ARKODE 6.9.0)
 
 
 .. _ARKODE.Usage.MRIStep.Reset:
