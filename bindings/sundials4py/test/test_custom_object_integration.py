@@ -318,7 +318,12 @@ def test_custom_nonlinear_solver_through_cvode(sunctx):
 
     expected = N_VNew_Serial(1, sunctx)
     problem.solution(None, expected, tf)
-    assert_allclose(N_VGetArrayPointer(y), N_VGetArrayPointer(expected), rtol=1.0e-4, atol=1.0e-6)
+    assert_allclose(
+        N_VGetArrayPointer(y),
+        N_VGetArrayPointer(expected),
+        rtol=10 * SUNREALTYPE_RTOL,
+        atol=10 * SUNREALTYPE_ATOL,
+    )
 
     # CVODE drove the Python solver rather than falling back to its own.
     assert NLS.num_iters > 0
