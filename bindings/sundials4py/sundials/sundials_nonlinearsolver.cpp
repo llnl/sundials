@@ -45,7 +45,9 @@ void bind_sunnonlinearsolver(nb::module_& m)
          nb::arg("sunctx"), nb::arg("solver_type"))
     .def("_materialization_count",
          &CustomSUNNonlinearSolver::_materialization_count)
-    .def_prop_ro("sunctx", &CustomSUNNonlinearSolver::sunctx)
+    .def_prop_ro("sunctx", &CustomSUNNonlinearSolver::sunctx,
+                 nb::sig("def sunctx(self) -> object"),
+                 "The SUNDIALS context owned by this object.")
     .def("initialize", [](CustomSUNNonlinearSolver&)
          { return CustomSUNNonlinearSolver::base_method_int("initialize"); })
     .def("setup", [](CustomSUNNonlinearSolver&, nb::object)

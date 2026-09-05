@@ -46,7 +46,9 @@ void bind_sunlinearsolver(nb::module_& m)
                   SUNLinearSolver_Type>(),
          nb::arg("sunctx"), nb::arg("solver_type"))
     .def("_materialization_count", &CustomSUNLinearSolver::_materialization_count)
-    .def_prop_ro("sunctx", &CustomSUNLinearSolver::sunctx)
+    .def_prop_ro("sunctx", &CustomSUNLinearSolver::sunctx,
+                 nb::sig("def sunctx(self) -> object"),
+                 "The SUNDIALS context owned by this object.")
     .def("set_atimes", [](CustomSUNLinearSolver&, nb::object)
          { return CustomSUNLinearSolver::base_method_int("set_atimes"); })
     .def("set_preconditioner", [](CustomSUNLinearSolver&, nb::object, nb::object)

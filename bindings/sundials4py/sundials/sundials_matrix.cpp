@@ -41,7 +41,9 @@ void bind_sunmatrix(nb::module_& m)
     // This is intentionally private-facing: tests use it to verify that
     // transparent conversion materializes the native handle exactly once.
     .def("_materialization_count", &CustomSUNMatrix::_materialization_count)
-    .def_prop_ro("sunctx", &CustomSUNMatrix::sunctx)
+    .def_prop_ro("sunctx", &CustomSUNMatrix::sunctx,
+                 nb::sig("def sunctx(self) -> object"),
+                 "The SUNDIALS context owned by this object.")
     .def("clone", [](CustomSUNMatrix&)
          { return CustomSUNMatrix::base_method_status("clone"); })
     .def("zero", [](CustomSUNMatrix&)

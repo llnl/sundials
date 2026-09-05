@@ -39,7 +39,9 @@ void bind_sunadaptcontroller(nb::module_& m)
                                        nb::dynamic_attr())
     .def("_materialization_count",
          &CustomSUNAdaptController::_materialization_count)
-    .def_prop_ro("sunctx", &CustomSUNAdaptController::sunctx)
+    .def_prop_ro("sunctx", &CustomSUNAdaptController::sunctx,
+                 nb::sig("def sunctx(self) -> object"),
+                 "The SUNDIALS context owned by this object.")
     .def("estimate_step",
          [](CustomSUNAdaptController&, sunrealtype, int, sunrealtype) {
            return CustomSUNAdaptController::base_method_status("estimate_step");
