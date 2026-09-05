@@ -18,7 +18,8 @@
 # ---------------------------------------------------------------
 
 # List of example tuples, "name\;args\;type"
-set(examples_list "ark_brusselator1D_klu.c\;\;develop")
+set(examples_list "ark_brusselator1D_klu.c\;\;develop"
+                  "ark_brusselator1D_sparseDQ_klu.c\;\;develop")
 
 foreach(example_tuple ${examples_list})
 

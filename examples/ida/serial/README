@@ -5,6 +5,7 @@ List of serial IDA examples
   idaHeat2D_bnd    : 2-D heat equation, banded Jacobian
   idaHeat2D_kry    : 2-D heat equation, diagonal preconditioner
   idaHeat2D_klu    : heat equation with KLU sparse linear solver
+  idaHeat2D_sparseDQ_klu : heat equation with KLU and internal DQ Jacobian
   idaHeat2D_sps    : heat equation with SuperLUMT sparse linear solver
   idaKrylovDemo_ls : demonstration program with 3 Krylov solvers
   idaRoberts_dns   : 3-species Robertson kinetics system

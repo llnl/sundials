@@ -2,6 +2,7 @@ List of serial KINSOL examples
 
   kinFerTron_dns:          Ferraris-Tronconi example (DENSE)
   kinFerTron_klu:          Ferraris-Tronconi example with KLU sparse linear solver
+  kinFerTron_sparseDQ_klu: Ferraris-Tronconi example with internal sparse DQ Jacobian
   kinFoodWeb_kry:          2-D food web system, block-diagonal preconditioner
   kinKrylovDemo_ls:        demonstration program with 3 Krylov solvers
   kinLaplace_bnd:          2-D elliptic PDE (BAND)

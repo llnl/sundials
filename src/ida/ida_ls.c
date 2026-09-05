@@ -170,6 +170,10 @@ int IDASetLinearSolver(void* ida_mem, SUNLinearSolver LS, SUNMatrix A)
   /* set SUNLinearSolver pointer */
   idals_mem->LS = LS;
 
+  /* Sparse DQ Jacobian workspace is allocated on first use */
+  idals_mem->sparseDQgroups   = NULL;
+  idals_mem->sparseDQrowmarks = NULL;
+
   /* Linear solver type information */
   idals_mem->iterative   = iterative;
   idals_mem->matrixbased = matrixbased;
@@ -935,6 +939,10 @@ int idaLsDQJac(sunrealtype t, sunrealtype c_j, N_Vector y, N_Vector yp,
   {
     retval = idaLsBandDQJac(t, c_j, y, yp, r, Jac, IDA_mem, tmp1, tmp2, tmp3);
   }
+  else if (SUNMatGetID(Jac) == SUNMATRIX_SPARSE)
+  {
+    retval = idaLsSparseDQJac(t, c_j, y, yp, r, Jac, IDA_mem, tmp1, tmp2, tmp3);
+  }
   else
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -1192,6 +1200,273 @@ int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
 }
 
 /*---------------------------------------------------------------
+  idaLsSparseDQJac
+
+  This routine generates a sparse difference quotient approximation
+  to the DAE system Jacobian F_y + c_j*F_y', retaining the input
+  CSC SUNMatrix sparsity pattern. Columns are grouped so that no
+  two perturbed columns in a group share a row index, allowing one
+  residual evaluation per group.
+  ---------------------------------------------------------------*/
+int idaLsSparseDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
+                     N_Vector rr, SUNMatrix Jac, IDAMem IDA_mem, N_Vector tmp1,
+                     N_Vector tmp2, N_Vector tmp3)
+{
+  N_Vector rtemp, ytemp, yptemp;
+  sunbooleantype conflict;
+  sunrealtype inc, inc_inv, yj, ypj, srur, conj, ewtj;
+  sunrealtype *data, *ewt_data, *r_data, *rtemp_data, *y_data, *yp_data;
+  sunrealtype *ytemp_data, *yptemp_data, *cns_data;
+  sunindextype *colptrs, *rowvals, *groups, *rowmarks;
+  sunindextype group, groupsize, i, j, k, N, M, nnz, ngroups;
+  IDALsMem idals_mem;
+  int retval = 0;
+
+  /* Sparse DQ currently operates on CSC matrices only */
+  if (SUNSparseMatrix_SparseType(Jac) != SUN_CSC_MAT)
+  {
+    IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "idaLsSparseDQJac requires a CSC SUNMatrix");
+    return (IDALS_ILL_INPUT);
+  }
+
+  /* Access LsMem interface structure */
+  idals_mem = (IDALsMem)IDA_mem->ida_lmem;
+
+  /* Access matrix data */
+  M       = SUNSparseMatrix_Rows(Jac);
+  N       = SUNSparseMatrix_Columns(Jac);
+  nnz     = SUNSparseMatrix_NNZ(Jac);
+  colptrs = SUNSparseMatrix_IndexPointers(Jac);
+  rowvals = SUNSparseMatrix_IndexValues(Jac);
+  data    = SUNSparseMatrix_Data(Jac);
+
+  if (colptrs == NULL || rowvals == NULL || data == NULL)
+  {
+    IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Sparse SUNMatrix has NULL data or index arrays");
+    return (IDALS_ILL_INPUT);
+  }
+
+  if ((colptrs[0] != 0) || (colptrs[N] > nnz))
+  {
+    IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Sparse SUNMatrix has an invalid sparsity pattern");
+    return (IDALS_ILL_INPUT);
+  }
+
+  for (j = 0; j < N; j++)
+  {
+    if (colptrs[j] > colptrs[j + 1])
+    {
+      IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "Sparse SUNMatrix has an invalid sparsity pattern");
+      return (IDALS_ILL_INPUT);
+    }
+    for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+    {
+      if (rowvals[k] < 0 || rowvals[k] >= M)
+      {
+        IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                        "Sparse SUNMatrix has an invalid row index");
+        return (IDALS_ILL_INPUT);
+      }
+    }
+  }
+
+  if (tmp3 == NULL)
+  {
+    IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "idaLsSparseDQJac requires three work vectors");
+    return (IDALS_ILL_INPUT);
+  }
+
+  /* Rename work vectors for use as temporary values of r, y and yp */
+  rtemp  = tmp1;
+  ytemp  = tmp2;
+  yptemp = tmp3;
+
+  /* Obtain pointers to the vector data */
+  ewt_data    = N_VGetArrayPointer(IDA_mem->ida_ewt);
+  r_data      = N_VGetArrayPointer(rr);
+  rtemp_data  = N_VGetArrayPointer(rtemp);
+  y_data      = N_VGetArrayPointer(yy);
+  yp_data     = N_VGetArrayPointer(yp);
+  ytemp_data  = N_VGetArrayPointer(ytemp);
+  yptemp_data = N_VGetArrayPointer(yptemp);
+  cns_data    = (IDA_mem->ida_constraints)
+                  ? N_VGetArrayPointer(IDA_mem->ida_constraints)
+                  : NULL;
+
+  if ((idals_mem->sparseDQgroups == NULL) ||
+      (idals_mem->sparseDQrowmarks == NULL) || (idals_mem->sparseDQM != M) ||
+      (idals_mem->sparseDQN != N) || (idals_mem->sparseDQnnz != colptrs[N]))
+  {
+    free(idals_mem->sparseDQgroups);
+    free(idals_mem->sparseDQrowmarks);
+    idals_mem->sparseDQgroups   = NULL;
+    idals_mem->sparseDQrowmarks = NULL;
+    idals_mem->sparseDQngroups  = 0;
+    idals_mem->sparseDQM        = 0;
+    idals_mem->sparseDQN        = 0;
+    idals_mem->sparseDQnnz      = 0;
+
+    /* Allocate workspace for column groups */
+    groups = (sunindextype*)malloc(N * sizeof(sunindextype));
+    if (groups == NULL)
+    {
+      IDAProcessError(IDA_mem, IDALS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_LS_MEM_FAIL);
+      return (IDALS_MEM_FAIL);
+    }
+
+    rowmarks = (sunindextype*)malloc(M * sizeof(sunindextype));
+    if (rowmarks == NULL)
+    {
+      free(groups);
+      IDAProcessError(IDA_mem, IDALS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_LS_MEM_FAIL);
+      return (IDALS_MEM_FAIL);
+    }
+
+    for (j = 0; j < N; j++)
+    {
+      groups[j] = (colptrs[j] < colptrs[j + 1]) ? -1 : -2;
+    }
+    for (i = 0; i < M; i++) { rowmarks[i] = -1; }
+
+    /* Greedily group structurally orthogonal columns */
+    ngroups = 0;
+    for (;;)
+    {
+      groupsize = 0;
+      for (j = 0; j < N; j++)
+      {
+        if (groups[j] != -1) { continue; }
+
+        conflict = SUNFALSE;
+        for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+        {
+          if (rowmarks[rowvals[k]] == ngroups)
+          {
+            conflict = SUNTRUE;
+            break;
+          }
+        }
+        if (conflict) { continue; }
+
+        groups[j] = ngroups;
+        groupsize++;
+        for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+        {
+          rowmarks[rowvals[k]] = ngroups;
+        }
+      }
+
+      if (groupsize == 0) { break; }
+      ngroups++;
+    }
+
+    idals_mem->sparseDQgroups   = groups;
+    idals_mem->sparseDQrowmarks = rowmarks;
+    idals_mem->sparseDQngroups  = ngroups;
+    idals_mem->sparseDQM        = M;
+    idals_mem->sparseDQN        = N;
+    idals_mem->sparseDQnnz      = colptrs[N];
+  }
+  else
+  {
+    groups  = idals_mem->sparseDQgroups;
+    ngroups = idals_mem->sparseDQngroups;
+  }
+
+  /* Initialize ytemp and yptemp. */
+  N_VScale(ONE, yy, ytemp);
+  N_VScale(ONE, yp, yptemp);
+
+  /* Compute miscellaneous values for the Jacobian computation. */
+  srur = SUNRsqrt(IDA_mem->ida_uround);
+
+  /* Loop over column groups */
+  for (group = 0; group < ngroups; group++)
+  {
+    /* Increment all yy[j] and yp[j] for j in this group. */
+    for (j = 0; j < N; j++)
+    {
+      if (groups[j] != group) { continue; }
+
+      yj   = y_data[j];
+      ypj  = yp_data[j];
+      ewtj = ewt_data[j];
+
+      /* Set increment using the same formula as the dense/band DQ routines. */
+      inc = SUNMAX(srur * SUNMAX(SUNRabs(yj), SUNRabs(IDA_mem->ida_hh * ypj)),
+                   ONE / ewtj);
+      if (IDA_mem->ida_hh * ypj < ZERO) { inc = -inc; }
+      inc = (yj + inc) - yj;
+
+      /* Adjust sign(inc) again if yj has an inequality constraint. */
+      if (IDA_mem->ida_constraints)
+      {
+        conj = cns_data[j];
+        if (SUNRabs(conj) == ONE)
+        {
+          if ((yj + inc) * conj < ZERO) { inc = -inc; }
+        }
+        else if (SUNRabs(conj) == TWO)
+        {
+          if ((yj + inc) * conj <= ZERO) { inc = -inc; }
+        }
+      }
+
+      ytemp_data[j] += inc;
+      yptemp_data[j] += c_j * inc;
+    }
+
+    /* Call res routine with incremented arguments. */
+    retval = IDA_mem->ida_res(tt, ytemp, yptemp, rtemp, IDA_mem->ida_user_data);
+    idals_mem->nreDQ++;
+    if (retval != 0) { break; }
+
+    /* Restore ytemp/yptemp, then form and load difference quotients. */
+    for (j = 0; j < N; j++)
+    {
+      if (groups[j] != group) { continue; }
+
+      yj = ytemp_data[j] = y_data[j];
+      ypj = yptemp_data[j] = yp_data[j];
+      ewtj                 = ewt_data[j];
+
+      /* Set increment inc exactly as above. */
+      inc = SUNMAX(srur * SUNMAX(SUNRabs(yj), SUNRabs(IDA_mem->ida_hh * ypj)),
+                   ONE / ewtj);
+      if (IDA_mem->ida_hh * ypj < ZERO) { inc = -inc; }
+      inc = (yj + inc) - yj;
+      if (IDA_mem->ida_constraints)
+      {
+        conj = cns_data[j];
+        if (SUNRabs(conj) == ONE)
+        {
+          if ((yj + inc) * conj < ZERO) { inc = -inc; }
+        }
+        else if (SUNRabs(conj) == TWO)
+        {
+          if ((yj + inc) * conj <= ZERO) { inc = -inc; }
+        }
+      }
+
+      inc_inv = ONE / inc;
+      for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+      {
+        data[k] = inc_inv * (rtemp_data[rowvals[k]] - r_data[rowvals[k]]);
+      }
+    }
+  }
+
+  return (retval);
+}
+
+/*---------------------------------------------------------------
   idaLsDQJtimes
 
   This routine generates a difference quotient approximation to
@@ -1285,13 +1560,15 @@ int idaLsInitialize(IDAMem IDA_mem)
   else if (idals_mem->jacDQ)
   {
     /* If J is non-NULL, and 'jac' is not user-supplied:
-       - if J is dense or band, ensure that our DQ approx. is used
+       - if J is dense, band, or CSC sparse, ensure that our DQ approx. is used
        - otherwise => error */
     retval = 0;
     if (idals_mem->J->ops->getid)
     {
       if ((SUNMatGetID(idals_mem->J) == SUNMATRIX_DENSE) ||
-          (SUNMatGetID(idals_mem->J) == SUNMATRIX_BAND))
+          (SUNMatGetID(idals_mem->J) == SUNMATRIX_BAND) ||
+          ((SUNMatGetID(idals_mem->J) == SUNMATRIX_SPARSE) &&
+           (SUNSparseMatrix_SparseType(idals_mem->J) == SUN_CSC_MAT)))
       {
         idals_mem->jac    = idaLsDQJac;
         idals_mem->J_data = IDA_mem;
@@ -1392,7 +1669,10 @@ int idaLsSetup(IDAMem IDA_mem, N_Vector y, N_Vector yp, N_Vector r,
     /* Clear the linear system matrix if necessary */
     if (SUNLinSolGetType(idals_mem->LS) == SUNLINEARSOLVER_DIRECT)
     {
-      retval = SUNMatZero(idals_mem->J);
+      retval = (idals_mem->jacDQ &&
+                (SUNMatGetID(idals_mem->J) == SUNMATRIX_SPARSE))
+                 ? SUN_SUCCESS
+                 : SUNMatZero(idals_mem->J);
       if (retval != 0)
       {
         IDAProcessError(IDA_mem, IDALS_SUNMAT_FAIL, __LINE__, __func__,
@@ -1724,6 +2004,12 @@ int idaLsFree(IDAMem IDA_mem)
     N_VDestroy(idals_mem->x);
     idals_mem->x = NULL;
   }
+
+  /* Free sparse DQ Jacobian workspace */
+  free(idals_mem->sparseDQgroups);
+  idals_mem->sparseDQgroups = NULL;
+  free(idals_mem->sparseDQrowmarks);
+  idals_mem->sparseDQrowmarks = NULL;
 
   /* Nullify other N_Vector pointers */
   idals_mem->ycur  = NULL;
