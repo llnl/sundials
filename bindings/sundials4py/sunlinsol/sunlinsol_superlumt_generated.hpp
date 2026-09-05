@@ -29,7 +29,7 @@ m.def(
                                                                sunctx);
   },
   nb::arg("y"), nb::arg("A"), nb::arg("num_threads"), nb::arg("sunctx"),
-  nb::keep_alive<0, 4>());
+  "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
 m.def("SUNLinSol_SuperLUMTSetOrdering", SUNLinSol_SuperLUMTSetOrdering,
       nb::arg("S"), nb::arg("ordering_choice"));
