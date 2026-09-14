@@ -88,7 +88,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, N_Vector atol)
  *--------------------------------------------------------------------
  */
 
-int main(void)
+int main(int argc, char* argv[])
 {
   void* mem;
   N_Vector yy, yp, avtol;
@@ -184,6 +184,10 @@ int main(void)
   /* Attach the nonlinear solver */
   retval = IDASetNonlinearSolver(mem, NLS);
   if (check_retval(&retval, "IDASetNonlinearSolver", 1)) { return (1); }
+
+  /* Override any current settings with command-line options */
+  retval = IDASetOptions(mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "IDASetOptions", 1)) { return (1); }
 
   /* In loop, call IDASolve, print results, and test for error.
      Break out of loop when NOUT preset output times have been reached. */

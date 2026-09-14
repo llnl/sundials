@@ -113,7 +113,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, N_Vector atol)
  *-------------------------------
  */
 
-int main(void)
+int main(int argc, char* argv[])
 {
   SUNContext sunctx;
   sunrealtype t, tout;
@@ -189,6 +189,10 @@ int main(void)
   /* Set the user-supplied Jacobian routine Jac */
   retval = CVodeSetJacFn(cvode_mem, Jac);
   if (check_retval(&retval, "CVodeSetJacFn", 1)) { return (1); }
+
+  /* Override any current settings with command-line options */
+  retval = CVodeSetOptions(cvode_mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "CVodeSetOptions", 1)) { return (1); }
 
   /* In loop, call CVode, print results, and test for error.
      Break out of loop when NOUT preset output times have been reached.  */

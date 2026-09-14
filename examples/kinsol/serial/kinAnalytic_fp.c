@@ -251,6 +251,10 @@ int main(int argc, char* argv[])
     if (check_retval(&retval, "KINSetDepthFn", 1)) { return (1); }
   }
 
+  /* Override any current settings with command-line options */
+  retval = KINSetOptions(kmem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "KINSetOptions", 1)) { return (1); }
+
   /* -------------
    * Initial guess
    * ------------- */
@@ -515,6 +519,11 @@ static int ReadInputs(int* argc, char*** argv, UserOpt uopt)
     {
       InputHelp();
       return (-1);
+    }
+    else if (strncmp((*argv)[arg_index], "kinsol.", 7) == 0)
+    {
+      /* KINSetOptions processes these key/value arguments after setup. */
+      arg_index += 2;
     }
     else
     {
