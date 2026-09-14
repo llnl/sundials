@@ -67,7 +67,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol,
                      sunrealtype atol);
 
 /* Main Program */
-int main(void)
+int main(int argc, char* argv[])
 {
   /* general problem parameters */
   sunrealtype T0     = SUN_RCONST(0.0);    /* initial time */
@@ -125,6 +125,10 @@ int main(void)
   /* Specify linearly implicit RHS, with non-time-dependent Jacobian */
   retval = ARKodeSetLinear(arkode_mem, 0);
   if (check_retval(&retval, "ARKodeSetLinear", 1)) { return 1; }
+
+  /* Override any current settings with command-line options */
+  retval = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "ARKodeSetOptions", 1)) { return 1; }
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached. */

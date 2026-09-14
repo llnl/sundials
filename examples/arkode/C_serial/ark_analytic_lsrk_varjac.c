@@ -91,7 +91,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol,
 static int compute_error(N_Vector y, sunrealtype t);
 
 /* Main Program */
-int main(void)
+int main(int argc, char* argv[])
 {
   /* general problem parameters */
   sunrealtype T0    = SUN_RCONST(0.0);  /* initial time */
@@ -184,6 +184,10 @@ int main(void)
   /* Specify the Runge--Kutta--Chebyshev LSRK method by name */
   flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKC_2");
   if (check_flag(&flag, "LSRKStepSetSTSMethodByName", 1)) { return 1; }
+
+  /* Override any current settings with command-line options */
+  flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
+  if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
 
   /* Open output stream for results, output comment line */
   UFID = fopen("solution.txt", "w");

@@ -92,7 +92,7 @@ static int check_retval(void* returnvalue, const char* funcname, int opt);
  *--------------------------------------------------------------------
  */
 
-int main(void)
+int main(int argc, char* argv[])
 {
   UserData data;
 
@@ -162,6 +162,10 @@ int main(void)
   retval = IDAQuadInit(mem, rhsQ, q);
   retval = IDAQuadSStolerances(mem, RTOLQ, ATOLQ);
   retval = IDASetQuadErrCon(mem, SUNTRUE);
+
+  /* Override any current settings with command-line options */
+  retval = IDASetOptions(mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "IDASetOptions", 1)) { return (1); }
 
   PrintHeader(RTOLF, ATOLF, yy);
 

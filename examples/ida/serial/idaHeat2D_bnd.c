@@ -87,7 +87,7 @@ static int check_retval(void* returnvalue, const char* funcname, int opt);
  *--------------------------------------------------------------------
  */
 
-int main(void)
+int main(int argc, char* argv[])
 {
   void* mem;
   UserData data;
@@ -175,6 +175,10 @@ int main(void)
   /* Attach the matrix and linear solver */
   retval = IDASetLinearSolver(mem, LS, A);
   if (check_retval(&retval, "IDASetLinearSolver", 1)) { return (1); }
+
+  /* Override any current settings with command-line options */
+  retval = IDASetOptions(mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "IDASetOptions", 1)) { return (1); }
 
   /* Call IDACalcIC to correct the initial values. */
 

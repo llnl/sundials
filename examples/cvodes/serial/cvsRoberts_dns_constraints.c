@@ -120,7 +120,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, N_Vector atol)
  *-------------------------------
  */
 
-int main(void)
+int main(int argc, char* argv[])
 {
   SUNContext sunctx;
   sunrealtype t, tout;
@@ -208,6 +208,10 @@ int main(void)
   retval = CVodeSetConstraints(cvode_mem, constraints);
   if (check_retval(&retval, "CVodeSetConstraints", 1)) { return (1); }
   N_VDestroy(constraints);
+
+  /* Override any current settings with command-line options */
+  retval = CVodeSetOptions(cvode_mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "CVodeSetOptions", 1)) { return (1); }
 
   /* In loop, call CVode, print results, and test for error.
      Break out of loop when NOUT preset output times have been reached.  */

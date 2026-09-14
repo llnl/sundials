@@ -212,6 +212,10 @@ int main(int argc, char* argv[])
   retval = CVodeSetMaxNumSteps(cvode_mem, 100000);
   if (check_retval(&retval, "CVodeSetMaxNumSteps", 1)) { return (1); }
 
+  /* Override any current settings with command-line options */
+  retval = CVodeSetOptions(cvode_mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "CVodeSetOptions", 1)) { return (1); }
+
   /* Output problem setup */
   retval = PrintUserData(udata);
   if (check_retval(&retval, "PrintUserData", 1)) { return (1); }
@@ -439,6 +443,11 @@ static int InitUserData(int* argc, char*** argv, UserData udata)
     {
       InputHelp();
       return (-1);
+    }
+    else if (strncmp((*argv)[arg_idx], "cvodes.", 7) == 0)
+    {
+      /* CVodeSetOptions processes these key/value arguments after setup. */
+      arg_idx += 2;
     }
     else
     {

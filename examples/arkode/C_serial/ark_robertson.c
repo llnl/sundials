@@ -65,7 +65,7 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol,
                      sunrealtype atol);
 
 /* Main Program */
-int main(void)
+int main(int argc, char* argv[])
 {
   /* general problem parameters */
   sunrealtype T0    = SUN_RCONST(0.0);       /* initial time */
@@ -148,6 +148,10 @@ int main(void)
   if (check_flag(&flag, "ARKodeSetLinearSolver", 1)) { return 1; }
   flag = ARKodeSetJacFn(arkode_mem, Jac); /* Set the Jacobian routine */
   if (check_flag(&flag, "ARKodeSetJacFn", 1)) { return 1; }
+
+  /* Override any current settings with command-line options */
+  flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);
+  if (check_flag(&flag, "ARKodeSetOptions", 1)) { return 1; }
 
   /* Open output stream for results, output comment line */
   UFID = fopen("solution.txt", "w");

@@ -115,7 +115,7 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout);
 /* Utility functions */
 static int ReadInputs(int* argc, char*** argv, sunrealtype* rtol,
                       sunrealtype* atol, sunrealtype* tf, int* nout,
-                      sunbooleantype* projerr);
+                      sunbooleantype* projerr, sunbooleantype* tol_sweep);
 static void InputHelp(void);
 static int check_retval(void* returnvalue, const char* funcname, int opt);
 
@@ -129,12 +129,13 @@ static SUNContext sunctx = NULL;
 int main(int argc, char* argv[])
 {
   int i;
-  int retval;                                  /* reusable return flag    */
-  int nout               = 1;                  /* number of outputs       */
-  sunrealtype rtol       = SUN_RCONST(1.0e-5); /* base relative tolerance */
-  sunrealtype atol       = SUN_RCONST(1.0e-5); /* base absolute tolerance */
-  sunrealtype tf         = SUN_RCONST(30.0);   /* final integration time  */
-  sunbooleantype projerr = SUNTRUE;            /* enable error projection */
+  int retval;                                    /* reusable return flag    */
+  int nout                 = 1;                  /* number of outputs       */
+  sunrealtype rtol         = SUN_RCONST(1.0e-5); /* base relative tolerance */
+  sunrealtype atol         = SUN_RCONST(1.0e-5); /* base absolute tolerance */
+  sunrealtype tf           = SUN_RCONST(30.0);   /* final integration time  */
+  sunbooleantype projerr   = SUNTRUE;            /* enable error projection */
+  sunbooleantype tol_sweep = SUNTRUE;            /* test five tolerances     */
 
   void* cvode_mem      = NULL; /* CVODES memory             */
   N_Vector yy0         = NULL; /* initial condition vector  */
@@ -148,7 +149,8 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "SUNContext_Create", 1)) { return (1); }
 
   /* Read command line inputs */
-  retval = ReadInputs(&argc, &argv, &rtol, &atol, &tf, &nout, &projerr);
+  retval = ReadInputs(&argc, &argv, &rtol, &atol, &tf, &nout, &projerr,
+                      &tol_sweep);
   if (check_retval(&retval, "ReadInputs", 1)) { return (1); }
 
   /* Compute reference solution */
@@ -197,8 +199,12 @@ int main(int argc, char* argv[])
   retval = CVodeSetMaxNumSteps(cvode_mem, 50000);
   if (check_retval(&retval, "CVodeSetMaxNumSteps", 1)) { return (1); }
 
+  /* Override any current settings with command-line options */
+  retval = CVodeSetOptions(cvode_mem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "CVodeSetOptions", 1)) { return (1); }
+
   /* Compute the solution with various tolerances */
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < (tol_sweep ? 5 : 1); i++)
   {
     /* Output tolerance and output header for this run */
     printf("\n\nrtol = %8.2" ESYM ", atol = %8.2" ESYM "\n", rtol, atol);
@@ -685,7 +691,7 @@ static int proj(sunrealtype t, N_Vector yy, N_Vector corr, sunrealtype epsProj,
 /* Read command line unputs */
 static int ReadInputs(int* argc, char*** argv, sunrealtype* rtol,
                       sunrealtype* atol, sunrealtype* tf, int* nout,
-                      sunbooleantype* projerr)
+                      sunbooleantype* projerr, sunbooleantype* tol_sweep)
 {
   int arg_idx = 1;
 
@@ -713,6 +719,16 @@ static int ReadInputs(int* argc, char*** argv, sunrealtype* rtol,
       arg_idx++;
       *projerr = SUNFALSE;
     }
+    else if (strcmp((*argv)[arg_idx], "--no-tol-sweep") == 0)
+    {
+      arg_idx++;
+      *tol_sweep = SUNFALSE;
+    }
+    else if (strncmp((*argv)[arg_idx], "cvodes.", 7) == 0)
+    {
+      /* CVodeSetOptions processes these key/value arguments after setup. */
+      arg_idx += 2;
+    }
     else if (strcmp((*argv)[arg_idx], "--help") == 0)
     {
       InputHelp();
@@ -737,6 +753,7 @@ static void InputHelp(void)
   printf("  --tf <time>         : final simulation time\n");
   printf("  --nout <outputs>    : number of outputs\n");
   printf("  --noerrproj         : disable error projection\n");
+  printf("  --no-tol-sweep      : run only the requested tolerance\n");
 
   return;
 }

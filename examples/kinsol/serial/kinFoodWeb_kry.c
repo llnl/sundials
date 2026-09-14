@@ -193,7 +193,7 @@ static int check_retval(void* retvalvalue, const char* funcname, int opt);
  *--------------------------------------------------------------------
  */
 
-int main(void)
+int main(int argc, char* argv[])
 {
   /* Reusable return flag */
   int retval = 0;
@@ -277,6 +277,10 @@ int main(void)
   /* Specify the preconditioner setup and solve routines */
   retval = KINSetPreconditioner(kmem, PrecSetupBD, PrecSolveBD);
   if (check_retval(&retval, "KINSetPreconditioner", 1)) { return (1); }
+
+  /* Override any current settings with command-line options */
+  retval = KINSetOptions(kmem, NULL, NULL, argc, argv);
+  if (check_retval(&retval, "KINSetOptions", 1)) { return (1); }
 
   /* Print out the problem size, solution parameters, initial guess. */
   PrintHeader(globalstrategy, maxl, maxlrst, fnormtol, scsteptol);
