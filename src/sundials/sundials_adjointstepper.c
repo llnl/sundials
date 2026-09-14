@@ -55,14 +55,14 @@ SUNErrCode SUNAdjointStepper_Create(
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdjointStepper_ReInit(SUNAdjointStepper self, sunrealtype t0,
-                                    N_Vector y0, sunrealtype tf, N_Vector sf)
+SUNErrCode SUNAdjointStepper_ReInit(SUNAdjointStepper self, sunrealtype tf,
+                                    N_Vector sf, suncountertype final_step_idx)
 {
   SUNFunctionBegin(self->sunctx);
-  self->tf         = tf;
-  self->nrecompute = 0;
-  SUNStepper_ReInit(self->adj_sunstepper, tf, sf);
-  SUNStepper_ReInit(self->fwd_sunstepper, t0, y0);
+  SUNCheckCall(SUNStepper_ReInit(self->adj_sunstepper, tf, sf));
+  self->tf             = tf;
+  self->final_step_idx = final_step_idx;
+  self->nrecompute     = 0;
   return SUN_SUCCESS;
 }
 

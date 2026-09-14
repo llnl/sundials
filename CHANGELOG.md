@@ -17,6 +17,11 @@ to `SUNStepper` to support `SUNAdaptController_MRIHTol`.
 Added `SUNAdjointCheckpointScheme_Enable` to temporarily disable and re-enable
 checkpointing while preserving the configured checkpointing strategy.
 
+Changed the `SUNAdjointStepper_ReInit` signature to remove the forward initial
+time and state arguments and add the final forward step index. This is a
+breaking API change; callers must now reinitialize and evolve the forward
+stepper before calling `SUNAdjointStepper_ReInit`.
+
 ### Bug Fixes
 
 ### Deprecation Notices

@@ -53,16 +53,18 @@ The :c:type:`SUNAdjointStepper` class has the following methods:
    :return: A :c:type:`SUNErrCode` indicating failure or success.
 
 
-.. c:function:: SUNErrCode SUNAdjointStepper_ReInit(SUNAdjointStepper self, sunrealtype t0, \
-                                                    N_Vector y0,  sunrealtype tf, N_Vector sf)
+.. c:function:: SUNErrCode SUNAdjointStepper_ReInit(SUNAdjointStepper self, sunrealtype tf, \
+                                                    N_Vector sf, suncountertype final_step_idx)
 
    Reinitializes the adjoint stepper to solve a new problem of the same size.
+   The caller is responsible for reinitializing and evolving the associated
+   forward stepper before calling this function.
 
-   :param adj_stepper: The adjoint solver object.
-   :param t0: The new initial time.
-   :param y0: The new initial condition.
+   :param self: The adjoint solver object.
    :param tf: The time to start integrating the adjoint system from.
    :param sf: The terminal condition vector of sensitivity solutions :math:`\partial g/\partial y_0` and :math:`\partial g/\partial p`.
+   :param final_step_idx: The index of the step corresponding to ``tf`` for the
+      forward ODE.
 
    :return: A :c:type:`SUNErrCode` indicating failure or success.
 

@@ -289,6 +289,9 @@ int main(int argc, char* argv[])
   N_VPrint(u);
 
   forward_solution(sunctx, arkode_mem, t0, tf, dt, u);
+  long int nst = 0;
+  if (ARKodeGetNumSteps(arkode_mem, &nst) != ARK_SUCCESS) { return 1; }
+  suncountertype final_step_idx = nst - 1;
 
   //
   // Create the adjoint stepper
@@ -336,10 +339,16 @@ int main(int argc, char* argv[])
     N_VPrint(u);
     ERKStepReInit(arkode_mem, ode_rhs, t0, u);
     forward_solution(sunctx, arkode_mem, t0, tf, dt, u);
+    if (ARKodeGetNumSteps(arkode_mem, &nst) != ARK_SUCCESS) { return 1; }
+    final_step_idx = nst - 1;
   }
   dgdu(u, sensu0, params, tf);
   dgdp(u, sensp, params, tf);
-  SUNAdjointStepper_ReInit(adj_stepper, t0, u, tf, sf);
+  if (SUNAdjointStepper_ReInit(adj_stepper, tf, sf, final_step_idx) !=
+      SUN_SUCCESS)
+  {
+    return 1;
+  }
   adjoint_solution(sunctx, adj_stepper, tf, t0, sf);
 
   //
