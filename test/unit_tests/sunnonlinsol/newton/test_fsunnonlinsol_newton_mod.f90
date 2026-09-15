@@ -56,7 +56,11 @@ contains
     implicit none
 
     type(SUNNonlinearSolver), pointer :: NLS        ! test nonlinear solver
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(C_DOUBLE_COMPLEX), pointer :: ydata(:)
+#else
     real(c_double), pointer :: ydata(:)
+#endif
     integer(c_long)                   :: niters(1)
     integer(c_int)                    :: tmp
     type(IntegratorMem), pointer :: Imem
@@ -215,7 +219,7 @@ contains
     call c_f_pointer(mem, Imem)
 
     retval = FSUNLinSolSolve(Imem%LS, Imem%A, Imem%x, b, 0.d0)
-    call FN_VScale(1.0d0, Imem%x, b)
+    call FN_VScale(ONE, Imem%x, b)
 
   end function
 
@@ -250,8 +254,13 @@ contains
 
     type(N_Vector)               :: ycor, f
     type(c_ptr), value           :: mem
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: ydata(:), fdata(:)
+    complex(c_double_complex)          :: y1, y2, y3
+#else
     real(c_double), pointer      :: ydata(:), fdata(:)
     real(c_double)               :: y1, y2, y3
+#endif
     type(IntegratorMem), pointer :: Imem
 
     ! get the Integrator memory Fortran type out
@@ -287,8 +296,13 @@ contains
     type(N_Vector)          :: y, fy, tmp1, tmp2, tmp3
     type(SUNMatrix)         :: J
     type(c_ptr), value   :: user_data
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex), pointer :: ydata(:), Jdata(:)
+    complex(c_double_complex)          :: y1, y2, y3
+#else
     real(c_double), pointer :: ydata(:), Jdata(:)
     real(c_double)          :: y1, y2, y3
+#endif
 
     ydata => FN_VGetArrayPointer(y)
     Jdata => FSUNDenseMatrix_Data(J)
