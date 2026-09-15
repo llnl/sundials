@@ -15,12 +15,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-# TEMPLATE: implementing a SUNAdaptController in Python.
-#
-# This file is a starting point, not a finished example. The scaffolding -- the
-# problem, the ARKODE setup, the output -- is complete; the parts marked
-# `TODO(you):` are where your time step controller goes. Fill them in, delete the
-# pytest.skip() at the bottom, and run the file.
+# EXAMPLE: implementing a SUNAdaptController in Python.
 #
 # The test problem is the scalar ODE
 #
@@ -53,7 +48,6 @@
 # -----------------------------------------------------------------
 
 import numpy as np
-import pytest
 from sundials4py.arkode import *
 from sundials4py.core import *
 
@@ -82,17 +76,18 @@ class NonlinearODE:
 class MyController(CustomSUNHController):
     """A SUNAdaptController implemented in Python.
 
-    Reference implementations worth reading alongside this template:
+    Reference implementations worth comparing against:
       src/sunadaptcontroller/soderlind/sunadaptcontroller_soderlind.c
         (the I, PI, PID, and Soderlind controllers, all one family)
       src/sunadaptcontroller/imexgus/sunadaptcontroller_imexgus.c
     """
 
     def __init__(self, sunctx, safety=0.9):
-        # TODO(you): store your parameters and any history the controller needs.
-        # A pure I-controller needs no history at all; a PI or PID controller
-        # keeps the error measures from the previous one or two steps, which is
-        # exactly the state reset() below has to clear.
+        # A pure I-controller needs no history at all -- each new step size
+        # depends only on the error measure from the step just taken. A PI or
+        # PID controller would keep the error measures from the previous one
+        # or two steps here instead, which is exactly the state reset() below
+        # would have to clear.
         self.safety = safety
         self.bias = 1.0
 
@@ -119,27 +114,22 @@ class MyController(CustomSUNHController):
         applies its own step size bounds and change ratio limits to whatever you
         return, so the controller does not need to enforce them itself.
         """
-        # TODO(you): compute the new step size.
+        # Guard the error measure away from zero: an exact step would
+        # otherwise ask for an infinite increase.
+        e = max(self.bias * dsm, 1.0e-10)
+
+        # Asymptotically the error scales like h^(p+1), so scaling h by
+        # e^(-1/(p+1)) targets dsm == 1. The safety factor keeps the next
+        # attempt on the accurate side of that target.
         #
-        # The textbook I-controller, for orientation:
-        #
-        #   # Guard the error measure away from zero: an exact step would
-        #   # otherwise ask for an infinite increase.
-        #   e = max(self.bias * dsm, 1.0e-10)
-        #
-        #   # Asymptotically the error scales like h^(p+1), so scaling h by
-        #   # e^(-1/(p+1)) targets dsm == 1. The safety factor keeps the next
-        #   # attempt on the accurate side of that target.
-        #   hnew = self.safety * h * e ** (-1.0 / (p + 1))
-        #
-        #   self.history.append((h, p, dsm, hnew))
-        #   return SUN_SUCCESS, hnew
-        #
-        # A PI or PID controller replaces the single exponent with a product of
-        # powers of the last few error measures; see the Soderlind source named
-        # above for the general form and for how to handle the first step, when
-        # no history exists yet.
-        raise NotImplementedError("TODO(you): implement MyController.estimate_step")
+        # A PI or PID controller replaces this single exponent with a product
+        # of powers of the last few error measures; see the Soderlind source
+        # named above for the general form and for how to handle the first
+        # step, when no history exists yet.
+        hnew = self.safety * h * e ** (-1.0 / (p + 1))
+
+        self.history.append((h, p, dsm, hnew))
+        return SUN_SUCCESS, hnew
 
     # -- optional operations -------------------------------------------------
 
@@ -147,15 +137,14 @@ class MyController(CustomSUNHController):
         # Discard accumulated history. ARKODE calls this when the integration is
         # reinitialized, so anything remembered from before is no longer about
         # the problem being solved. A controller that keeps history and does not
-        # implement reset() will make bad predictions after a reset.
-        #
-        # TODO(you): clear whatever estimate_step() accumulates.
+        # implement reset() will make bad predictions after a reset. An
+        # I-controller has no such history to discard; this only clears the
+        # bookkeeping this example keeps for its own printout.
         self.history.clear()
         return SUN_SUCCESS
 
     def set_defaults(self):
         # Restore the parameters to their default values, undoing any tuning.
-        # TODO(you): reset your parameters here.
         self.bias = 1.0
         return SUN_SUCCESS
 
@@ -170,9 +159,8 @@ class MyController(CustomSUNHController):
         # Called after a step attempt is ACCEPTED, reporting the step and error
         # that were kept. This is where a controller with history records it --
         # estimate_step() is also called for rejected attempts, so accumulating
-        # history there would fold discarded steps into the prediction.
-        #
-        # TODO(you): record (h, dsm) if your controller keeps history.
+        # history there would fold discarded steps into the prediction. An
+        # I-controller needs no such record, so there is nothing to do here.
         return SUN_SUCCESS
 
 
@@ -236,9 +224,6 @@ def main():
 
 
 def test_ark_custom_adaptcontroller():
-    # This is a template, so there is nothing complete for CI to verify yet.
-    # Delete this skip once you have filled in the TODO(you) sections.
-    pytest.skip("template example: fill in the TODO(you) sections first")
     main()
 
 
