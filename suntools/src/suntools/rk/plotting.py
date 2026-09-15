@@ -25,8 +25,8 @@ import numpy as np
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
-from .rk_butcher_table import ButcherTable
-from .rk_stability import stability_magnitude
+from .butcher_table import ButcherTable
+from .stability import stability_magnitude
 
 # ---------------------------------------------------------------------------
 # Output canvas

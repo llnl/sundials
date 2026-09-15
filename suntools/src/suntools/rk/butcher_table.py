@@ -22,8 +22,8 @@ from functools import cached_property
 
 import numpy as np
 
-from .rk_stability import StabilityFunction
-from .utils import EPS, resolved, roundoff_tol
+from .stability import StabilityFunction
+from ..utils import EPS, resolved, roundoff_tol
 
 
 def _det_poly(build_matrix, stages: int):
@@ -111,7 +111,7 @@ class ButcherTable:
     """Runge-Kutta Butcher table.
 
     Besides the tableau arrays (A, b, c) this class builds the method's linear stability function,
-    see :class:`~suntools.rk_stability.StabilityFunction`.
+    see :class:`~suntools.rk.stability.StabilityFunction`.
 
     Attributes
     ----------

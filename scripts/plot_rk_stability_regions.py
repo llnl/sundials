@@ -35,13 +35,11 @@ suntools_src = os.path.join(repo_root, "suntools", "src")
 if suntools_src not in sys.path:
     sys.path.insert(0, suntools_src)
 
-from suntools.rk_butcher_table import ButcherTable  # noqa: E402
-from suntools.rk_stability_plotting import PlotOptions, plot_stability_region  # noqa: E402
-from suntools.rk_table_parser import parse_butcher_tables  # noqa: E402
+import suntools.rk as rk  # noqa: E402
 
 # Field names match the argparse destinations so the two stay in step without the option list being
 # written out a third time.
-_OPTION_FIELDS = {f.name for f in fields(PlotOptions)}
+_OPTION_FIELDS = {f.name for f in fields(rk.PlotOptions)}
 
 
 # ---------------------------------------------------------------------------
@@ -53,7 +51,7 @@ def _poly_str(poly: np.poly1d, var: str = "z") -> str:
     return str(np.poly1d(poly.c, variable=var))
 
 
-def describe(table: ButcherTable) -> None:
+def describe(table: rk.ButcherTable) -> None:
     """Print the tableau and stability function(s) for one method."""
     print(table)
     print()
@@ -84,11 +82,11 @@ def describe(table: ButcherTable) -> None:
 # ---------------------------------------------------------------------------
 
 
-def load_tables(paths: list[str]) -> dict[str, ButcherTable]:
-    tables: dict[str, ButcherTable] = {}
+def load_tables(paths: list[str]) -> dict[str, rk.ButcherTable]:
+    tables: dict[str, rk.ButcherTable] = {}
     sources: dict[str, str] = {}
     for path in paths:
-        parsed = parse_butcher_tables(path)
+        parsed = rk.parse_butcher_tables(path)
         if not parsed:
             raise SystemExit(f"No Butcher tables found in {path!r}")
         for name, table in parsed.items():
@@ -102,7 +100,7 @@ def load_tables(paths: list[str]) -> dict[str, ButcherTable]:
     return tables
 
 
-def list_methods(tables: dict[str, ButcherTable], source: str) -> None:
+def list_methods(tables: dict[str, rk.ButcherTable], source: str) -> None:
     """Print a one-line summary of every method in the file."""
     print(f"{len(tables)} methods defined in {source}:\n")
     for name, table in tables.items():
@@ -111,7 +109,7 @@ def list_methods(tables: dict[str, ButcherTable], source: str) -> None:
 
 
 def plot_one(
-    tables: dict[str, ButcherTable], method: str, outfile: str | None, options: PlotOptions
+    tables: dict[str, rk.ButcherTable], method: str, outfile: str | None, options: rk.PlotOptions
 ) -> None:
     """Describe and plot a single named method."""
     if method not in tables:
@@ -119,19 +117,19 @@ def plot_one(
     table = tables[method]
     describe(table)
     outfile = outfile or f"{method}_stab_region.png"
-    plot_stability_region(table, options, filename=outfile, close=True)
+    rk.plot_stability_region(table, options, filename=outfile, close=True)
     print(f"Saved stability region plot to: {outfile}")
 
 
 def plot_all(
-    tables: dict[str, ButcherTable], source: str, outdir: str, options: PlotOptions
+    tables: dict[str, rk.ButcherTable], source: str, outdir: str, options: rk.PlotOptions
 ) -> None:
     """Write one plot per method in the file into *outdir*."""
     os.makedirs(outdir, exist_ok=True)
     print(f"Plotting all {len(tables)} methods from {source} into {outdir}/\n")
     for i, (name, table) in enumerate(tables.items(), 1):
         outfile = os.path.join(outdir, f"{name}_stab_region.png")
-        plot_stability_region(table, options, filename=outfile, close=True)
+        rk.plot_stability_region(table, options, filename=outfile, close=True)
         print(f"  [{i:2d}/{len(tables)}] {name:<40s} -> {outfile}")
     print(f"\nDone. {len(tables)} plots written to {outdir}/")
 
@@ -184,31 +182,31 @@ def build_parser() -> argparse.ArgumentParser:
         "--grid",
         dest="grid_points",
         type=int,
-        default=PlotOptions.grid_points,
-        help=f"grid resolution per axis (default: {PlotOptions.grid_points})",
+        default=rk.PlotOptions.grid_points,
+        help=f"grid resolution per axis (default: {rk.PlotOptions.grid_points})",
     )
     ap.add_argument(
         "--figsize",
         dest="figure_size",
         type=float,
         nargs=2,
-        default=PlotOptions.figure_size,
+        default=rk.PlotOptions.figure_size,
         metavar=("W", "H"),
         help="output canvas in inches; every plot is written at this size "
-        f"(default: {PlotOptions.figure_size[0]:g} {PlotOptions.figure_size[1]:g})",
+        f"(default: {rk.PlotOptions.figure_size[0]:g} {rk.PlotOptions.figure_size[1]:g})",
     )
     ap.add_argument(
         "--dpi",
         type=int,
-        default=PlotOptions.dpi,
-        help=f"output resolution; pixel size is figsize x dpi (default: {PlotOptions.dpi})",
+        default=rk.PlotOptions.dpi,
+        help=f"output resolution; pixel size is figsize x dpi (default: {rk.PlotOptions.dpi})",
     )
     ap.add_argument(
         "--font-size",
         dest="font_size",
         type=float,
-        default=PlotOptions.font_size,
-        help=f"font size in points (default: {PlotOptions.font_size})",
+        default=rk.PlotOptions.font_size,
+        help=f"font size in points (default: {rk.PlotOptions.font_size})",
     )
     ap.add_argument(
         "--zeros",
@@ -260,7 +258,7 @@ def main(argv=None):
 
     # PlotOptions field names mirror the argparse destinations, so the option list is
     # written out once and flows through unchanged.
-    options = PlotOptions(**{k: v for k, v in vars(args).items() if k in _OPTION_FIELDS})
+    options = rk.PlotOptions(**{k: v for k, v in vars(args).items() if k in _OPTION_FIELDS})
 
     if args.method is not None:
         methods = args.method

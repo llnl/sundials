@@ -23,7 +23,7 @@ import re
 
 import numpy as np
 
-from .rk_butcher_table import ButcherTable
+from .butcher_table import ButcherTable
 
 # ---------------------------------------------------------------------------
 # Parsing the .def file
