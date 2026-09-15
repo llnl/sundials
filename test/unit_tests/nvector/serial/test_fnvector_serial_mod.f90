@@ -37,12 +37,12 @@ contains
     integer(c_long)            :: ival               ! integer work value
     real(c_double)             :: rval               ! real work value
 #if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-    complex(c_double_complex)  :: sval               ! scalar type work value
+    complex(c_double_complex)  :: sval(1)            ! scalar type work value
     complex(c_double_complex)  :: Xdata(N)           ! vector data array
     complex(c_double_complex), pointer :: xptr(:)    ! pointer to vector data array
     complex(c_double_complex)  :: nvarr(nv)          ! array of nv scalartype constants to go with vector array
 #else
-    real(c_double)             :: sval               ! scalar type work value
+    real(c_double)             :: sval(1)            ! scalar type work value
     real(c_double)             :: xdata(N)           ! vector data array
     real(c_double), pointer    :: xptr(:)            ! pointer to vector data array
     real(c_double)             :: nvarr(nv)          ! array of nv scalartype constants to go with vector array
@@ -94,7 +94,7 @@ contains
     call FN_VInv_Serial(x, z)
     call FN_VAddConst_Serial(x, ONE, z)
     rval = FN_VDotProd_Serial(x, y)
-    rval = FN_VDotProdComplex_Serial(x, y, sval)
+    ival = FN_VDotProdComplex_Serial(x, y, sval)
     rval = FN_VMaxNorm_Serial(x)
     rval = FN_VWrmsNorm_Serial(x, y)
     rval = FN_VWrmsNormMask_Serial(x, y, z)
@@ -193,7 +193,11 @@ logical function has_data(X) result(failure)
   implicit none
 
   type(N_Vector)          :: X
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(C_DOUBLE_COMPLEX), pointer :: xptr(:)
+#else
   real(C_DOUBLE), pointer :: xptr(:)
+#endif
 
   xptr => FN_VGetArrayPointer(x)
   failure = associated(xptr)
