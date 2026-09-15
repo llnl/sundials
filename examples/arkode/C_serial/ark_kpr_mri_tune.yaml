@@ -1,0 +1,67 @@
+# Tune MRI coupling, inner explicit table, and inner fixed step for
+# ark_kpr_mri at a fixed Kvaerno-Prothero-Robinson problem configuration.
+#
+# Why these parameters:
+# - The two outer coupling tables are compatible with the already-constructed
+#   implicit slow stack and compare different slow method/order costs.
+# - The inner explicit tables span useful order-versus-stage-cost alternatives
+#   without changing the inner solver structure.
+# - The inner fixed step dominates fast RHS work. Its logarithmic range covers
+#   0.5x through 20x the 1e-5 example default, since ratios are more meaningful
+#   than additive spacing for a step size.
+# The outer step remains fixed at 1e-3 to preserve the representative macro
+# workload. The objective sums slow and fast RHS evaluations, while the total-
+# error constraint rejects faster but inaccurate scale combinations.
+# Results are specific to these executable arguments, build, and machine.
+#
+# Run from this directory:
+#   suntools tune --config ark_kpr_mri_tune.yaml
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 18
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-ark-kpr-mri-yaml
+
+executable:
+  command: $builddir/examples/arkode/C_serial/ark_kpr_mri
+  args: ["8", "3", "0.001", "-100", "100", "0.5", "1"]
+  cwd: .
+  env: {}
+
+parameters:
+  - name: outer.coupling_table_name
+    type: choice
+    values:
+      - "ARKODE_MRI_GARK_IRK21a"
+      - "ARKODE_MRI_GARK_ESDIRK34a"
+  - name: inner.table_names
+    type: choice
+    values:
+      - "ARKODE_DIRK_NONE ARKODE_BOGACKI_SHAMPINE_4_2_3"
+      - "ARKODE_DIRK_NONE ARKODE_ARK436L2SA_ERK_6_3_4"
+      - "ARKODE_DIRK_NONE ARKODE_DORMAND_PRINCE_7_4_5"
+  - name: inner.fixed_step
+    type: float
+    bounds: [5.0e-6, 2.0e-4]
+    scale: log
+
+objective:
+  metric: rhs_evals
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex:
+    - 'Total RHS evals:\s+Fs = ([0-9]+),\s+Ff = [0-9]+'
+    - 'Total RHS evals:\s+Fs = [0-9]+,\s+Ff = ([0-9]+)'
+
+constraint:
+  metric: total_error
+  source: stdout
+  regex: 'total error = ([0-9.eE+-]+)'
+  upper_bound: 1.0e-7

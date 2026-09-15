@@ -1,0 +1,60 @@
+# Tune ark_analytic_lsrk across the RKC2 and RKL2 STS methods.
+#
+# Why these parameters:
+# - RKC2 and RKL2 are the two STS families compatible with this existing
+#   LSRKStep stack and can require different stage counts for the same problem.
+# - The dominant-eigenvalue safety factor trades extra stability margin for
+#   additional stages; [1.0, 1.2] covers the valid, useful range near the 1.01
+#   example default without intentionally underestimating the eigenvalue.
+# - The analytic-region switch compares the exact stability region with the
+#   more conservative inscribed ellipse used for stage/step selection.
+# RHS evaluations are used instead of noisy wall time for this short example,
+# and the final-error constraint prevents reduced work from winning by losing
+# accuracy. Results are specific to this problem, build, and machine.
+#
+# Run from this directory:
+#   suntools tune --config ark_analytic_lsrk_tune.yaml
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 24
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-ark-analytic-lsrk-yaml
+
+executable:
+  command: $builddir/examples/arkode/C_serial/ark_analytic_lsrk
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: arkode.sts_method_name
+    type: choice
+    values:
+      - "ARKODE_LSRK_RKC_2"
+      - "ARKODE_LSRK_RKL_2"
+  - name: arkode.dom_eig_safety_factor
+    type: float
+    bounds: [1.0, 1.2]
+  - name: arkode.use_analytic_stability_region
+    type: int
+    bounds: [0, 1]
+
+objective:
+  metric: rhs_fn_evals
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex: 'RHS fn evals\s+=\s+([0-9]+)'
+
+constraint:
+  metric: accuracy
+  source: stdout
+  regex: 'ACCURACY at the final time\s+=\s+([0-9.eE+-]+)'
+  group: 1
+  upper_bound: 1.0e-8

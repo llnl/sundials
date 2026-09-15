@@ -1,0 +1,56 @@
+# Tune the SSPRK method and safety factor for ark_analytic_ssprk.
+#
+# Why these parameters:
+# - The three choices are all SSP families compatible with this LSRKStep stack;
+#   they expose the principal order, stage-cost, and stability tradeoff.
+# - The safety factor range [0.8, 1.0] varies adaptive-step conservatism without
+#   changing the requested tolerances.
+# The number of SSP stages is intentionally not tuned here because its valid
+# values depend on the selected family: SSP-S(2) accepts any value >= 2,
+# SSP-S(3) requires a perfect square >= 4, and SSP(10,4) requires exactly 10.
+# Separate family-specific searches are preferable for tuning stage count.
+# RHS evaluations avoid noisy wall-time measurements for this short example;
+# the final-error constraint preserves accuracy. Results are workload-specific.
+#
+# Run from this directory:
+#   suntools tune --config ark_analytic_ssprk_tune.yaml
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 12
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-ark-analytic-ssprk-yaml
+
+executable:
+  command: $builddir/examples/arkode/C_serial/ark_analytic_ssprk
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: arkode.ssp_method_name
+    type: choice
+    values:
+      - "ARKODE_LSRK_SSP_S_2"
+      - "ARKODE_LSRK_SSP_S_3"
+      - "ARKODE_LSRK_SSP_10_4"
+  - name: arkode.safety_factor
+    type: float
+    bounds: [0.8, 1.0]
+
+objective:
+  metric: rhs_evals
+  direction: minimize
+  source: stdout
+  regex: 'RHS fn evals\s+=\s+([0-9]+)'
+
+constraint:
+  metric: accuracy
+  source: stdout
+  regex: 'ACCURACY at the final time = ([0-9.eE+-]+)'
+  upper_bound: 1.0e-7

@@ -1,0 +1,36 @@
+# Tune inexact-Newton forcing and preconditioner reuse for the fixed SPGMR food
+# web solve. eta_form/value trade Krylov accuracy against nonlinear progress;
+# max_setup_calls trades preconditioner setup cost against reuse. The nonlinear
+# strategy, Krylov solver, and preconditioner remain fixed.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 16
+  workers: 1
+  repetitions: 5
+  output_dir: /tmp/suntools-tune-kinsol-foodweb-kry-yaml
+
+executable:
+  command: $builddir/examples/kinsol/serial/kinFoodWeb_kry
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: kinsol.eta_form
+    type: int
+    bounds: [1, 3]
+  - name: kinsol.eta_const_value
+    type: float
+    bounds: [0.01, 0.5]
+  - name: kinsol.max_setup_calls
+    type: int
+    bounds: [1, 20]
+
+objective:
+  metric: wall_time
+  direction: minimize

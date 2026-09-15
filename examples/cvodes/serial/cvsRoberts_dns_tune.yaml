@@ -1,0 +1,43 @@
+# Tune the stiff Robertson CVODES solve: max_order explores the BDF
+# accuracy/stability/work tradeoff, lsetup_frequency balances matrix setup
+# reuse against nonlinear convergence, and jac_eval_frequency balances dense
+# Jacobian reuse against linearization freshness.  The stack and tolerances
+# stay fixed; a tighter-reference final-state check rejects inaccurate trials.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 32
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-cvodes-roberts-dns-yaml
+
+executable:
+  command: $builddir/examples/cvodes/serial/cvsRoberts_dns
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: cvodes.max_order
+    type: int
+    bounds: [2, 5]
+  - name: cvodes.lsetup_frequency
+    type: int
+    bounds: [5, 40]
+  - name: cvodes.jac_eval_frequency
+    type: int
+    bounds: [20, 100]
+
+objective:
+  metric: solver_work
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex:
+    - 'RHS fn evals\s+=\s+([0-9]+)'
+    - 'LS setups\s+=\s+([0-9]+)'
+    - 'Jac fn evals\s+=\s+([0-9]+)'

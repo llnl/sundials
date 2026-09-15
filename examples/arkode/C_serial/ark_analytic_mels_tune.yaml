@@ -1,0 +1,33 @@
+# Tune method order and adaptive-step conservatism for the fixed implicit
+# matrix-embedded ARKStep stack. Order explores the accuracy/work tradeoff;
+# the safety factor controls how aggressively accepted steps may grow without
+# changing the requested tolerances. Results are workload- and machine-specific.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 16
+  workers: 1
+  repetitions: 5
+  output_dir: /tmp/suntools-tune-ark-analytic-mels-new-yaml
+
+executable:
+  command: $builddir/examples/arkode/C_serial/ark_analytic_mels
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: arkode.order
+    type: int
+    bounds: [2, 5]
+  - name: arkode.safety_factor
+    type: float
+    bounds: [0.8, 0.99]
+
+objective:
+  metric: wall_time
+  direction: minimize

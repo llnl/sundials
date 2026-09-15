@@ -1,0 +1,37 @@
+# Tune the analytic IDA DAE: max_order explores the BDF accuracy, stability,
+# and step-work tradeoff, while nonlin_conv_coef trades tighter implicit solves
+# against nonlinear iteration work.  The matrix-embedded linear solver has no
+# reusable Jacobian/setup work.  The exact-solution check rejects excessive
+# tolerance-scaled final error.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 16
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-ida-analytic-mels-yaml
+
+executable:
+  command: $builddir/examples/ida/serial/idaAnalytic_mels
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: ida.max_order
+    type: int
+    bounds: [2, 5]
+  - name: ida.nonlin_conv_coef
+    type: float
+    bounds: [0.03, 0.5]
+    scale: log
+
+objective:
+  metric: residual_evals
+  direction: minimize
+  source: stdout
+  regex: 'Number of residual evaluations\s+=\s+([0-9]+)'

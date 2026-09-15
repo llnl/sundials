@@ -1,0 +1,39 @@
+# Tune Anderson acceleration for the analytic fixed-point solve.  m_aa trades
+# a deeper convergence history against storage and least-squares work;
+# delay_aa tests whether plain iterations should settle before acceleration;
+# and damping_aa trades aggressive updates against robustness.  The fixed-point
+# map stays fixed, and the analytic-error check rejects inaccurate trials.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 24
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-kinsol-analytic-fp-yaml
+
+executable:
+  command: $builddir/examples/kinsol/serial/kinAnalytic_fp
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: kinsol.m_aa
+    type: int
+    bounds: [1, 5]
+  - name: kinsol.delay_aa
+    type: int
+    bounds: [0, 3]
+  - name: kinsol.damping_aa
+    type: float
+    bounds: [0.5, 1.0]
+
+objective:
+  metric: function_evals
+  direction: minimize
+  source: stdout
+  regex: 'Number of function evaluations:\s+([0-9]+)'

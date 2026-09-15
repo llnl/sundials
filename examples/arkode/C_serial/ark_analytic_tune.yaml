@@ -1,4 +1,7 @@
-# Tune ark_analytic across valid implicit DIRK tables.
+# Compare compatible implicit DIRK tables while keeping the analytic problem,
+# nonlinear/linear solver stack, and tolerances fixed.  arkode.table_names
+# samples tables with different order, stage count, stability, and damping
+# properties, exposing their accuracy-versus-stage-work tradeoff on this solve.
 # Run from this directory:
 #   suntools tune --config ark_analytic_tune.yaml
 

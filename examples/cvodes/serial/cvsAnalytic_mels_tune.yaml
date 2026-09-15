@@ -1,0 +1,37 @@
+# Tune the BDF controls for the analytic CVODES example.  max_order explores
+# the accuracy, stability, and step-work tradeoff among BDF formulas, while
+# nonlin_conv_coef trades tighter implicit solves against nonlinear iteration
+# work.  The fixed custom linear solver has no Jacobian/setup work to tune.
+# The exact-solution check rejects excessive tolerance-scaled final error.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 16
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-cvodes-analytic-mels-yaml
+
+executable:
+  command: $builddir/examples/cvodes/serial/cvsAnalytic_mels
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: cvodes.max_order
+    type: int
+    bounds: [2, 5]
+  - name: cvodes.nonlin_conv_coef
+    type: float
+    bounds: [0.03, 0.3]
+    scale: log
+
+objective:
+  metric: rhs_evals
+  direction: minimize
+  source: stdout
+  regex: 'Total RHS evals = ([0-9]+)'

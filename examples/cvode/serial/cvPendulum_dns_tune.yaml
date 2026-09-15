@@ -1,0 +1,72 @@
+# Tune the default-tolerance projected and unprojected cvPendulum_dns solves.
+# The --no-tol-sweep option selects only the default rtol=atol=1e-5 pair.
+#
+# Why these parameters:
+# - BDF order compares the A-stable order range with higher-order formulas.
+# - Linear-setup and Jacobian frequencies trade setup/Jacobian reuse against
+#   nonlinear convergence while preserving the fixed dense Newton stack.
+# The objective sums RHS evaluations, linear-system RHS evaluations, setups,
+# and Jacobian evaluations across both solves. The constraint sums their ten
+# printed absolute state/constraint errors and permits only a small margin over
+# the baseline aggregate error of approximately 7.90.
+# Results are specific to this problem, build, and machine.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 40
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-cvode-pendulum-dns-yaml
+
+executable:
+  command: $builddir/examples/cvode/serial/cvPendulum_dns
+  args: [--no-tol-sweep]
+  cwd: .
+  env: {}
+
+parameters:
+  - name: cvode.max_order
+    type: int
+    bounds: [2, 5]
+  - name: cvode.lsetup_frequency
+    type: int
+    bounds: [5, 40]
+  - name: cvode.jac_eval_frequency
+    type: int
+    bounds: [20, 100]
+
+objective:
+  metric: solver_work
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex:
+    - '^\s+YES.*\|\s+[0-9]+\s+([0-9]+)\+[0-9]+'
+    - '^\s+YES.*\|\s+[0-9]+\s+[0-9]+\+([0-9]+)'
+    - '^\s+YES.*\|\s+[0-9]+\s+[0-9]+\+[0-9]+\s+([0-9]+)\s+\('
+    - '^\s+YES.*\|\s+[0-9]+\s+[0-9]+\+[0-9]+\s+[0-9]+\s+\(\s*([0-9]+)\)'
+    - '^\s+NO.*\|\s+[0-9]+\s+([0-9]+)\+[0-9]+'
+    - '^\s+NO.*\|\s+[0-9]+\s+[0-9]+\+([0-9]+)'
+    - '^\s+NO.*\|\s+[0-9]+\s+[0-9]+\+[0-9]+\s+([0-9]+)\s+\('
+    - '^\s+NO.*\|\s+[0-9]+\s+[0-9]+\+[0-9]+\s+[0-9]+\s+\(\s*([0-9]+)\)'
+
+constraint:
+  metric: aggregate_error
+  source: stdout
+  aggregation: sum
+  regex:
+    - '^\s+YES\s+([0-9.eE+-]+)'
+    - '^\s+YES\s+[0-9.eE+-]+\s+([0-9.eE+-]+)'
+    - '^\s+YES\s+(?:[0-9.eE+-]+\s+){2}([0-9.eE+-]+)'
+    - '^\s+YES\s+(?:[0-9.eE+-]+\s+){3}([0-9.eE+-]+)'
+    - '^\s+YES\s+(?:[0-9.eE+-]+\s+){4}\|\s+([0-9.eE+-]+)'
+    - '^\s+NO\s+([0-9.eE+-]+)'
+    - '^\s+NO\s+[0-9.eE+-]+\s+([0-9.eE+-]+)'
+    - '^\s+NO\s+(?:[0-9.eE+-]+\s+){2}([0-9.eE+-]+)'
+    - '^\s+NO\s+(?:[0-9.eE+-]+\s+){3}([0-9.eE+-]+)'
+    - '^\s+NO\s+(?:[0-9.eE+-]+\s+){4}\|\s+([0-9.eE+-]+)'
+  upper_bound: 8.0

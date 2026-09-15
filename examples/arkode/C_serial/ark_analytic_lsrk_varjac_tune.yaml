@@ -1,0 +1,34 @@
+# Tune spectral-radius handling for the fixed RKC LSRKStep stack.
+# The update frequency trades estimator calls against stale spectral data;
+# the safety factor trades extra stability margin against additional stages.
+# The ranges bracket the example defaults without changing its tolerances.
+# Results are workload-, build-, and machine-specific.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 16
+  workers: 1
+  repetitions: 5
+  output_dir: /tmp/suntools-tune-ark-analytic-lsrk-varjac-yaml
+
+executable:
+  command: $builddir/examples/arkode/C_serial/ark_analytic_lsrk_varjac
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: arkode.dom_eig_frequency
+    type: int
+    bounds: [10, 50]
+  - name: arkode.dom_eig_safety_factor
+    type: float
+    bounds: [1.0, 1.2]
+
+objective:
+  metric: wall_time
+  direction: minimize

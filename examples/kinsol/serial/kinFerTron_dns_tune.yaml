@@ -1,0 +1,33 @@
+# Tune KINSOL's inexact-Newton forcing-term policy across the example's fixed
+# dense-solver test cases. eta_form compares the supported forcing strategies;
+# eta_const_value controls the fixed forcing term when that strategy is active.
+# Initial guesses and globalization cases remain unchanged.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 16
+  workers: 1
+  repetitions: 5
+  output_dir: /tmp/suntools-tune-kinsol-fertron-yaml
+
+executable:
+  command: $builddir/examples/kinsol/serial/kinFerTron_dns
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: kinsol.eta_form
+    type: int
+    bounds: [1, 3]
+  - name: kinsol.eta_const_value
+    type: float
+    bounds: [0.01, 0.5]
+
+objective:
+  metric: wall_time
+  direction: minimize

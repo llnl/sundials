@@ -1,0 +1,67 @@
+# Tune the default-tolerance projected and unprojected cvsPendulum_dns solves.
+# The objective is deterministic solver work; the constraint preserves the
+# aggregate accuracy of both solves.  cvodes.max_order explores the BDF
+# accuracy/work tradeoff while avoiding order one; cvodes.lsetup_frequency
+# balances linear-system setup reuse against nonlinear convergence; and
+# cvodes.jac_eval_frequency balances Jacobian reuse against keeping the
+# linearization fresh.  The tolerances and solver stack remain fixed.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 40
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-cvodes-pendulum-dns-yaml
+
+executable:
+  command: $builddir/examples/cvodes/serial/cvsPendulum_dns
+  args: [--no-tol-sweep]
+  cwd: .
+  env: {}
+
+parameters:
+  - name: cvodes.max_order
+    type: int
+    bounds: [2, 5]
+  - name: cvodes.lsetup_frequency
+    type: int
+    bounds: [5, 40]
+  - name: cvodes.jac_eval_frequency
+    type: int
+    bounds: [20, 100]
+
+objective:
+  metric: solver_work
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex:
+    - '^\s+YES.*\|\s+[0-9]+\s+([0-9]+)\+[0-9]+'
+    - '^\s+YES.*\|\s+[0-9]+\s+[0-9]+\+([0-9]+)'
+    - '^\s+YES.*\|\s+[0-9]+\s+[0-9]+\+[0-9]+\s+([0-9]+)\s+\('
+    - '^\s+YES.*\|\s+[0-9]+\s+[0-9]+\+[0-9]+\s+[0-9]+\s+\(\s*([0-9]+)\)'
+    - '^\s+NO.*\|\s+[0-9]+\s+([0-9]+)\+[0-9]+'
+    - '^\s+NO.*\|\s+[0-9]+\s+[0-9]+\+([0-9]+)'
+    - '^\s+NO.*\|\s+[0-9]+\s+[0-9]+\+[0-9]+\s+([0-9]+)\s+\('
+    - '^\s+NO.*\|\s+[0-9]+\s+[0-9]+\+[0-9]+\s+[0-9]+\s+\(\s*([0-9]+)\)'
+
+constraint:
+  metric: aggregate_error
+  source: stdout
+  aggregation: sum
+  regex:
+    - '^\s+YES\s+([0-9.eE+-]+)'
+    - '^\s+YES\s+[0-9.eE+-]+\s+([0-9.eE+-]+)'
+    - '^\s+YES\s+(?:[0-9.eE+-]+\s+){2}([0-9.eE+-]+)'
+    - '^\s+YES\s+(?:[0-9.eE+-]+\s+){3}([0-9.eE+-]+)'
+    - '^\s+YES\s+(?:[0-9.eE+-]+\s+){4}\|\s+([0-9.eE+-]+)'
+    - '^\s+NO\s+([0-9.eE+-]+)'
+    - '^\s+NO\s+[0-9.eE+-]+\s+([0-9.eE+-]+)'
+    - '^\s+NO\s+(?:[0-9.eE+-]+\s+){2}([0-9.eE+-]+)'
+    - '^\s+NO\s+(?:[0-9.eE+-]+\s+){3}([0-9.eE+-]+)'
+    - '^\s+NO\s+(?:[0-9.eE+-]+\s+){4}\|\s+([0-9.eE+-]+)'
+  upper_bound: 8.0

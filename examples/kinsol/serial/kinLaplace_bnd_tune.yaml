@@ -1,0 +1,33 @@
+# Tune Jacobian/setup reuse for the fixed banded modified-Newton solve.
+# max_setup_calls limits iterations between full setups, while
+# max_sub_setup_calls controls how often KINSOL tests whether a new setup is
+# needed. The nonlinear strategy and band solver remain fixed.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 16
+  workers: 1
+  repetitions: 5
+  output_dir: /tmp/suntools-tune-kinsol-laplace-bnd-yaml
+
+executable:
+  command: $builddir/examples/kinsol/serial/kinLaplace_bnd
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: kinsol.max_setup_calls
+    type: int
+    bounds: [1, 100]
+  - name: kinsol.max_sub_setup_calls
+    type: int
+    bounds: [1, 10]
+
+objective:
+  metric: wall_time
+  direction: minimize

@@ -1,0 +1,44 @@
+# Tune the Robertson IDAS DAE: max_order explores the BDF
+# accuracy/stability/work tradeoff, delta_cj_lsetup controls when coefficient
+# changes invalidate a reused linear setup, and nonlin_conv_coef balances
+# nonlinear solve tightness against iterations.  The dense Newton stack stays
+# fixed, and a tighter-reference check rejects inaccurate trials.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 32
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-idas-roberts-dns-yaml
+
+executable:
+  command: $builddir/examples/idas/serial/idasRoberts_dns
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: idas.max_order
+    type: int
+    bounds: [2, 5]
+  - name: idas.delta_cj_lsetup
+    type: float
+    bounds: [0.1, 0.5]
+  - name: idas.nonlin_conv_coef
+    type: float
+    bounds: [0.03, 0.5]
+    scale: log
+
+objective:
+  metric: solver_work
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex:
+    - 'Residual fn evals\s+=\s+([0-9]+)'
+    - 'LS setups\s+=\s+([0-9]+)'
+    - 'Jac fn evals\s+=\s+([0-9]+)'

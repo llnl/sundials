@@ -1,0 +1,69 @@
+# Tune ark_analytic_lsrk_domeigest with the internal dominant eigenvalue
+# estimator.
+#
+# Why these parameters:
+# - Update frequency brackets the example default of 25 and trades estimator
+#   calls against the risk of using stale spectral information.
+# - Per-update preprocessing may improve the power iteration's starting vector
+#   but adds work to every estimate, so only a small range is considered.
+# - The eigenvalue safety factor trades stability margin for STS stage count.
+# - Power-iteration maximum iterations and relative tolerance directly balance
+#   estimator cost against convergence and eigenvalue accuracy; their ranges
+#   bracket the example defaults of 100 and 5e-3.
+# The objective includes both integration RHS evaluations and estimator RHS
+# calls. The final-error constraint rejects cheaper inaccurate estimates.
+# Results are specific to this problem, build, and machine.
+#
+# Run from this directory:
+#   suntools tune --config ark_analytic_lsrk_domeigest_tune.yaml
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 32
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-ark-analytic-lsrk-domeigest-yaml
+
+executable:
+  command: $builddir/examples/arkode/C_serial/ark_analytic_lsrk_domeigest
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: arkode.dom_eig_frequency
+    type: int
+    bounds: [5, 50]
+  - name: arkode.num_dom_eig_est_preprocess_iters
+    type: int
+    bounds: [0, 5]
+  - name: arkode.dom_eig_safety_factor
+    type: float
+    bounds: [1.0, 1.2]
+  - name: sundomeigestimator.max_iters
+    type: int
+    bounds: [25, 100]
+  - name: sundomeigestimator.rel_tol
+    type: float
+    bounds: [1.0e-3, 1.0e-2]
+    scale: log
+
+objective:
+  metric: rhs_and_dee_work
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex:
+    - 'RHS fn evals\s+=\s+([0-9]+)'
+    - 'Number of fe calls for DEE\s+=\s+([0-9]+)'
+
+constraint:
+  metric: accuracy
+  source: stdout
+  regex: 'ACCURACY at the final time\s+=\s+([0-9.eE+-]+)'
+  group: 1
+  upper_bound: 1.0e-8

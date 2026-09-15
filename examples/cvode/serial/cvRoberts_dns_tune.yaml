@@ -1,0 +1,55 @@
+# Tune BDF, linear-setup, and Jacobian-reuse controls for cvRoberts_dns.
+#
+# Why these parameters:
+# - BDF orders 2 through 5 compare the A-stable order range with CVODE's
+#   higher-order formulas on this stiff kinetics problem.
+# - Linear-setup frequency trades matrix/setup work against nonlinear
+#   convergence; the range surrounds the CVODE default of 20 steps.
+# - Jacobian evaluation frequency controls reuse of the user-supplied dense
+#   Jacobian and brackets the CVODE default of 51 steps.
+# The objective counts RHS evaluations, linear setups, and Jacobian evaluations
+# as a deterministic work proxy for this short example. The example compares
+# its final state with a tighter-tolerance reference and exits nonzero when its
+# tolerance-scaled error exceeds one, rejecting inaccurate trials. Results are
+# specific to this problem, build, and machine.
+#
+# Run from this directory:
+#   suntools tune --config cvRoberts_dns_tune.yaml
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 32
+  workers: 1
+  repetitions: 1
+  output_dir: /tmp/suntools-tune-cvode-roberts-dns-yaml
+
+executable:
+  command: $builddir/examples/cvode/serial/cvRoberts_dns
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: cvode.max_order
+    type: int
+    bounds: [2, 5]
+  - name: cvode.lsetup_frequency
+    type: int
+    bounds: [5, 40]
+  - name: cvode.jac_eval_frequency
+    type: int
+    bounds: [20, 100]
+
+objective:
+  metric: solver_work
+  direction: minimize
+  source: stdout
+  aggregation: sum
+  regex:
+    - 'RHS fn evals\s+=\s+([0-9]+)'
+    - 'LS setups\s+=\s+([0-9]+)'
+    - 'Jac fn evals\s+=\s+([0-9]+)'

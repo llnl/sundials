@@ -1,0 +1,36 @@
+# Tune the food-web DAE's BDF and nonlinear/setup controls. Order trades
+# accuracy against work; delta_cj controls when a changed Jacobian coefficient
+# forces setup; the nonlinear coefficient trades solve tightness against
+# iterations. The banded stack and IC procedure stay fixed.
+
+backend:
+  name: deephyper
+  options:
+    surrogate_model: DUMMY
+
+search:
+  max_evals: 16
+  workers: 1
+  repetitions: 5
+  output_dir: /tmp/suntools-tune-ida-foodweb-bnd-yaml
+
+executable:
+  command: $builddir/examples/ida/serial/idaFoodWeb_bnd
+  args: []
+  cwd: .
+  env: {}
+
+parameters:
+  - name: ida.max_order
+    type: int
+    bounds: [2, 5]
+  - name: ida.delta_cj_lsetup
+    type: float
+    bounds: [0.1, 0.5]
+  - name: ida.nonlin_conv_coef
+    type: float
+    bounds: [0.03, 0.3]
+
+objective:
+  metric: wall_time
+  direction: minimize
