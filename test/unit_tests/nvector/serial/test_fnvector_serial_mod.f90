@@ -36,9 +36,18 @@ contains
     integer(kind=myindextype) :: lenrw(1), leniw(1) ! real and int work space size
     integer(c_long)            :: ival               ! integer work value
     real(c_double)             :: rval               ! real work value
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex)  :: sval               ! scalar type work value
+    complex(c_double_complex)  :: Xdata(N)           ! vector data array
+    complex(c_double_complex), pointer :: xptr(:)    ! pointer to vector data array
+    complex(c_double_complex)  :: nvarr(nv)          ! array of nv scalartype constants to go with vector array
+#else
+    real(c_double)             :: sval               ! scalar type work value
     real(c_double)             :: xdata(N)           ! vector data array
     real(c_double), pointer    :: xptr(:)            ! pointer to vector data array
-    real(c_double)             :: nvarr(nv)          ! array of nv constants to go with vector array
+    real(c_double)             :: nvarr(nv)          ! array of nv scalartype constants to go with vector array
+#endif
+    real(c_double)             :: normarr(nv)        ! array of nv realtype constants to go with vector array
     type(N_Vector), pointer    :: x, y, z, tmp       ! N_Vectors
     type(c_ptr)                :: xvecs, zvecs       ! C pointer to array of C pointers to N_Vectors
 
@@ -52,6 +61,7 @@ contains
 
     xvecs = FN_VCloneVectorArray(nv, x)
     zvecs = FN_VCloneVectorArray(nv, z)
+    normarr = (/ONE, ONE, ONE/)
     nvarr = (/ONE, ONE, ONE/)
 
     !===== Test =====
@@ -84,14 +94,14 @@ contains
     call FN_VInv_Serial(x, z)
     call FN_VAddConst_Serial(x, ONE, z)
     rval = FN_VDotProd_Serial(x, y)
-    call FN_VDotProdComplex_Serial(x, y, rval)
+    rval = FN_VDotProdComplex_Serial(x, y, sval)
     rval = FN_VMaxNorm_Serial(x)
     rval = FN_VWrmsNorm_Serial(x, y)
     rval = FN_VWrmsNormMask_Serial(x, y, z)
     rval = FN_VMin_Serial(x)
     rval = FN_VWL2Norm_Serial(x, y)
     rval = FN_VL1Norm_Serial(x)
-    call FN_VCompare_Serial(ONE, x, y)
+    call FN_VCompare_Serial(1.d0, x, y)
     ival = FN_VInvTest_Serial(x, y)
     ival = FN_VConstrMask_Serial(z, x, y)
     rval = FN_VMinQuotient_Serial(x, y)
@@ -105,8 +115,8 @@ contains
     ival = FN_VLinearSumVectorArray_Serial(nv, ONE, xvecs, ONE, xvecs, zvecs)
     ival = FN_VScaleVectorArray_Serial(nv, nvarr, xvecs, zvecs)
     ival = FN_VConstVectorArray_Serial(nv, ONE, xvecs)
-    ival = FN_VWrmsNormVectorArray_Serial(nv, xvecs, xvecs, nvarr)
-    ival = FN_VWrmsNormMaskVectorArray_Serial(nv, xvecs, xvecs, x, nvarr)
+    ival = FN_VWrmsNormVectorArray_Serial(nv, xvecs, xvecs, normarr)
+    ival = FN_VWrmsNormMaskVectorArray_Serial(nv, xvecs, xvecs, x, normarr)
 
     !==== Cleanup =====
     call FN_VDestroy_Serial(x)
@@ -123,8 +133,12 @@ contains
     use test_fnvector
     implicit none
 
-    real(c_double)           :: xdata(N) ! vector data array
-    type(N_Vector), pointer  :: x        ! N_Vectors
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex) :: xdata(N) ! vector data array
+#else
+    real(c_double)            :: xdata(N) ! vector data array
+#endif
+    type(N_Vector), pointer   :: x        ! N_Vectors
 
     !===== Setup ====
     fails = 0
@@ -150,10 +164,18 @@ function check_ans(ans, X, local_length) result(failure)
   implicit none
 
   integer(kind=myindextype) :: failure
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(C_DOUBLE_COMPLEX)  :: ans
+#else
   real(C_DOUBLE)             :: ans
+#endif
   type(N_Vector)             :: X
-  integer(kind=myindextype) :: local_length, i
+  integer(kind=myindextype)  :: local_length, i
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(C_DOUBLE_COMPLEX), pointer :: Xdata(:)
+#else
   real(C_DOUBLE), pointer    :: Xdata(:)
+#endif
 
   failure = 0
 
