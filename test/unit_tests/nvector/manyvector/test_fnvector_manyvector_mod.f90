@@ -39,10 +39,17 @@ contains
 
     integer(kind=myindextype) :: ival                ! integer work value
     integer(kind=myindextype) :: lenrw(1), leniw(1)  ! real and int work space size
-    real(c_double)          :: rval                   ! real work value
+    real(c_double)          :: rval                  ! real work value
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex) :: x1data(N1), x2data(N2) ! vector data array
+    complex(c_double_complex), pointer :: xptr(:)       ! pointer to vector data array
+    complex(c_double_complex) :: nvarr(nv)              ! array of nv scalar constants to go with vector array
+#else
     real(c_double)          :: x1data(N1), x2data(N2) ! vector data array
     real(c_double), pointer :: xptr(:)                ! pointer to vector data array
-    real(c_double)          :: nvarr(nv)              ! array of nv constants to go with vector array
+    real(c_double)          :: nvarr(nv)              ! array of nv scalar constants to go with vector array
+#endif
+    real(c_double)          :: normarr(nv)            ! array of nv real constants to go with vector array
     type(N_Vector), pointer :: x, y, z, tmp           ! N_Vectors
     type(c_ptr)             :: subvecs                ! ManyVector subvectors
     type(c_ptr)             :: xvecs, zvecs           ! C pointer to array of ManyVectors
@@ -64,6 +71,7 @@ contains
     xvecs = FN_VCloneVectorArray(nv, x)
     zvecs = FN_VCloneVectorArray(nv, z)
     nvarr = (/ONE, ONE, ONE/)
+    normarr = (/1.d0, 1.d0, 1.d0/)
 
     !===== Test =====
 
@@ -89,7 +97,7 @@ contains
     rval = FN_VMinLocal_ManyVector(x)
     rval = FN_VWL2Norm_ManyVector(x, y)
     rval = FN_VL1NormLocal_ManyVector(x)
-    call FN_VCompare_ManyVector(ONE, x, y)
+    call FN_VCompare_ManyVector(1.d0, x, y)
     ival = FN_VInvTestLocal_ManyVector(x, y)
     ival = FN_VConstrMaskLocal_ManyVector(z, x, y)
     rval = FN_VMinQuotientLocal_ManyVector(x, y)
@@ -103,8 +111,8 @@ contains
     ival = FN_VLinearSumVectorArray_ManyVector(nv, ONE, xvecs, ONE, xvecs, zvecs)
     ival = FN_VScaleVectorArray_ManyVector(nv, nvarr, xvecs, zvecs)
     ival = FN_VConstVectorArray_ManyVector(nv, ONE, xvecs)
-    ival = FN_VWrmsNormVectorArray_ManyVector(nv, xvecs, xvecs, nvarr)
-    ival = FN_VWrmsNormMaskVectorArray_ManyVector(nv, xvecs, xvecs, x, nvarr)
+    ival = FN_VWrmsNormVectorArray_ManyVector(nv, xvecs, xvecs, normarr)
+    ival = FN_VWrmsNormMaskVectorArray_ManyVector(nv, xvecs, xvecs, x, normarr)
 
     ! test the ManyVector specific operations
     ival = FN_VGetNumSubvectors_ManyVector(x)
@@ -129,8 +137,13 @@ contains
     use test_fnvector
     implicit none
 
-    real(c_double)           :: x1data(N1)   ! vector data array
-    real(c_double)           :: x2data(N2)   ! vector data array
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    complex(c_double_complex) :: x1data(N1)   ! vector data array
+    complex(c_double_complex) :: x2data(N2)   ! vector data array
+#else
+    real(c_double)            :: x1data(N1)   ! vector data array
+    real(c_double)            :: x2data(N2)   ! vector data array
+#endif
     type(N_Vector), pointer  :: x, tmp       ! N_Vectors
     type(c_ptr)              :: subvecs      ! subvectors of the ManyVector
 
@@ -165,11 +178,16 @@ function check_ans(ans, X, local_length) result(failure)
   use test_utilities
   implicit none
 
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  complex(C_DOUBLE_COMPLEX)          :: ans
+  complex(C_DOUBLE_COMPLEX), pointer :: x0data(:), x1data(:)
+#else
   real(C_DOUBLE)             :: ans
+  real(C_DOUBLE), pointer    :: x0data(:), x1data(:)
+#endif
   type(N_Vector)             :: X
   type(N_Vector), pointer    :: X0, X1
   integer(kind=myindextype) :: failure, local_length, i, x0len, x1len
-  real(C_DOUBLE), pointer    :: x0data(:), x1data(:)
 
   failure = 0
 
