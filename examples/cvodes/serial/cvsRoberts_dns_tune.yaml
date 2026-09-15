@@ -6,14 +6,12 @@
 
 backend:
   name: deephyper
-  options:
-    surrogate_model: DUMMY
 
 search:
   max_evals: 32
   workers: 1
   repetitions: 1
-  output_dir: /tmp/suntools-tune-cvodes-roberts-dns-yaml
+  output_dir: /tmp/suntools-tune-cvodes-roberts-dns-yaml-default-surrogate
 
 executable:
   command: $builddir/examples/cvodes/serial/cvsRoberts_dns

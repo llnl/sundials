@@ -5,14 +5,12 @@
 
 backend:
   name: deephyper
-  options:
-    surrogate_model: DUMMY
 
 search:
   max_evals: 16
   workers: 1
   repetitions: 5
-  output_dir: /tmp/suntools-tune-ark-brusselator-lsrk-domeigest-yaml
+  output_dir: /tmp/suntools-tune-ark-brusselator-lsrk-domeigest-yaml-default-surrogate
 
 executable:
   command: $builddir/examples/arkode/C_serial/ark_brusselator_lsrk_domeigest

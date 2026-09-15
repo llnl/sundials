@@ -5,14 +5,12 @@
 
 backend:
   name: deephyper
-  options:
-    surrogate_model: DUMMY
 
 search:
   max_evals: 16
   workers: 1
   repetitions: 5
-  output_dir: /tmp/suntools-tune-idas-heat2d-bnd-yaml
+  output_dir: /tmp/suntools-tune-idas-heat2d-bnd-yaml-default-surrogate
 
 executable:
   command: $builddir/examples/idas/serial/idasHeat2D_bnd

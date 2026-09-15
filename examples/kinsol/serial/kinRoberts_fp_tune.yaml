@@ -6,14 +6,12 @@
 
 backend:
   name: deephyper
-  options:
-    surrogate_model: DUMMY
 
 search:
   max_evals: 24
   workers: 1
   repetitions: 1
-  output_dir: /tmp/suntools-tune-kinsol-roberts-fp-yaml
+  output_dir: /tmp/suntools-tune-kinsol-roberts-fp-yaml-default-surrogate
 
 executable:
   command: $builddir/examples/kinsol/serial/kinRoberts_fp

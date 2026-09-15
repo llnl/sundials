@@ -19,14 +19,12 @@
 
 backend:
   name: deephyper
-  options:
-    surrogate_model: DUMMY
 
 search:
   max_evals: 18
   workers: 1
   repetitions: 1
-  output_dir: /tmp/suntools-tune-ark-kpr-mri-yaml
+  output_dir: /tmp/suntools-tune-ark-kpr-mri-yaml-default-surrogate
 
 executable:
   command: $builddir/examples/arkode/C_serial/ark_kpr_mri

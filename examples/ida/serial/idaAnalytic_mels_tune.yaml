@@ -6,14 +6,12 @@
 
 backend:
   name: deephyper
-  options:
-    surrogate_model: DUMMY
 
 search:
   max_evals: 16
   workers: 1
   repetitions: 1
-  output_dir: /tmp/suntools-tune-ida-analytic-mels-yaml
+  output_dir: /tmp/suntools-tune-ida-analytic-mels-yaml-default-surrogate
 
 executable:
   command: $builddir/examples/ida/serial/idaAnalytic_mels
