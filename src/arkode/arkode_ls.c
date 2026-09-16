@@ -169,6 +169,10 @@ int ARKodeSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
   /* set SUNLinearSolver pointer */
   arkls_mem->LS = LS;
 
+  /* Sparse DQ Jacobian workspace is allocated on first use */
+  arkls_mem->sparseDQgroups   = NULL;
+  arkls_mem->sparseDQrowmarks = NULL;
+
   /* Linear solver type information */
   arkls_mem->iterative   = iterative;
   arkls_mem->matrixbased = matrixbased;
@@ -2617,6 +2621,11 @@ int arkLsDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   {
     retval = arkLsBandDQJac(t, y, fy, Jac, ark_mem, arkls_mem, fi, tmp1, tmp2);
   }
+  else if (SUNMatGetID(Jac) == SUNMATRIX_SPARSE)
+  {
+    retval = arkLsSparseDQJac(t, y, fy, Jac, ark_mem, arkls_mem, fi, tmp1, tmp2,
+                              tmp3);
+  }
   else
   {
     arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -2843,6 +2852,245 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
 }
 
 /*---------------------------------------------------------------
+  arkLsSparseDQJac:
+
+  This routine generates a sparse difference quotient approximation
+  to the Jacobian of f(t,y), retaining the input CSC SUNMatrix
+  sparsity pattern. Columns are grouped so that no two perturbed
+  columns in a group share a row index, allowing one RHS evaluation
+  per group.
+  ---------------------------------------------------------------*/
+int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
+                     ARKodeMem ark_mem, ARKLsMem arkls_mem, ARKRhsFn fi,
+                     N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
+{
+  N_Vector ftemp, ytemp;
+  sunbooleantype conflict;
+  sunrealtype fnorm, minInc, inc, inc_inv, srur, conj;
+  sunrealtype *data, *ewt_data, *fy_data, *ftemp_data, *y_data, *ytemp_data;
+  sunrealtype *inc_data, *cns_data;
+  sunindextype *colptrs, *rowvals, *groups, *rowmarks;
+  sunindextype group, groupsize, i, j, k, N, M, nnz, ngroups;
+  int retval = 0;
+
+  /* Sparse DQ currently operates on CSC matrices only */
+  if (SUNSparseMatrix_SparseType(Jac) != SUN_CSC_MAT)
+  {
+    arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "arkLsSparseDQJac requires a CSC SUNMatrix");
+    return (ARKLS_ILL_INPUT);
+  }
+
+  /* Access matrix data */
+  M       = SUNSparseMatrix_Rows(Jac);
+  N       = SUNSparseMatrix_Columns(Jac);
+  nnz     = SUNSparseMatrix_NNZ(Jac);
+  colptrs = SUNSparseMatrix_IndexPointers(Jac);
+  rowvals = SUNSparseMatrix_IndexValues(Jac);
+  data    = SUNSparseMatrix_Data(Jac);
+
+  if (colptrs == NULL || rowvals == NULL || data == NULL)
+  {
+    arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Sparse SUNMatrix has NULL data or index arrays");
+    return (ARKLS_ILL_INPUT);
+  }
+
+  if ((colptrs[0] != 0) || (colptrs[N] > nnz))
+  {
+    arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Sparse SUNMatrix has an invalid sparsity pattern");
+    return (ARKLS_ILL_INPUT);
+  }
+
+  for (j = 0; j < N; j++)
+  {
+    if (colptrs[j] > colptrs[j + 1])
+    {
+      arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "Sparse SUNMatrix has an invalid sparsity pattern");
+      return (ARKLS_ILL_INPUT);
+    }
+    for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+    {
+      if (rowvals[k] < 0 || rowvals[k] >= M)
+      {
+        arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                        "Sparse SUNMatrix has an invalid row index");
+        return (ARKLS_ILL_INPUT);
+      }
+    }
+  }
+
+  /* Rename work vectors for readability */
+  ftemp = tmp1;
+  ytemp = tmp2;
+
+  if (tmp3 == NULL)
+  {
+    arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "arkLsSparseDQJac requires three work vectors");
+    return (ARKLS_ILL_INPUT);
+  }
+
+  /* Obtain pointers to the vector data */
+  ewt_data   = N_VGetArrayPointer(ark_mem->ewt);
+  fy_data    = N_VGetArrayPointer(fy);
+  ftemp_data = N_VGetArrayPointer(ftemp);
+  y_data     = N_VGetArrayPointer(y);
+  ytemp_data = N_VGetArrayPointer(ytemp);
+  inc_data   = N_VGetArrayPointer(tmp3);
+  cns_data   = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
+                                      : NULL;
+
+  if ((arkls_mem->sparseDQgroups == NULL) ||
+      (arkls_mem->sparseDQrowmarks == NULL) || (arkls_mem->sparseDQM != M) ||
+      (arkls_mem->sparseDQN != N) || (arkls_mem->sparseDQnnz != colptrs[N]))
+  {
+    free(arkls_mem->sparseDQgroups);
+    free(arkls_mem->sparseDQrowmarks);
+    arkls_mem->sparseDQgroups   = NULL;
+    arkls_mem->sparseDQrowmarks = NULL;
+    arkls_mem->sparseDQngroups  = 0;
+    arkls_mem->sparseDQM        = 0;
+    arkls_mem->sparseDQN        = 0;
+    arkls_mem->sparseDQnnz      = 0;
+
+    /* Allocate workspace for column groups */
+    groups = (sunindextype*)malloc(N * sizeof(sunindextype));
+    if (groups == NULL)
+    {
+      arkProcessError(ark_mem, ARKLS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_LS_MEM_FAIL);
+      return (ARKLS_MEM_FAIL);
+    }
+
+    rowmarks = (sunindextype*)malloc(M * sizeof(sunindextype));
+    if (rowmarks == NULL)
+    {
+      free(groups);
+      arkProcessError(ark_mem, ARKLS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_LS_MEM_FAIL);
+      return (ARKLS_MEM_FAIL);
+    }
+
+    for (j = 0; j < N; j++)
+    {
+      groups[j] = (colptrs[j] < colptrs[j + 1]) ? -1 : -2;
+    }
+    for (i = 0; i < M; i++) { rowmarks[i] = -1; }
+
+    /* Greedily group structurally orthogonal columns */
+    ngroups = 0;
+    for (;;)
+    {
+      groupsize = 0;
+      for (j = 0; j < N; j++)
+      {
+        if (groups[j] != -1) { continue; }
+
+        conflict = SUNFALSE;
+        for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+        {
+          if (rowmarks[rowvals[k]] == ngroups)
+          {
+            conflict = SUNTRUE;
+            break;
+          }
+        }
+        if (conflict) { continue; }
+
+        groups[j] = ngroups;
+        groupsize++;
+        for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+        {
+          rowmarks[rowvals[k]] = ngroups;
+        }
+      }
+
+      if (groupsize == 0) { break; }
+      ngroups++;
+    }
+
+    arkls_mem->sparseDQgroups   = groups;
+    arkls_mem->sparseDQrowmarks = rowmarks;
+    arkls_mem->sparseDQngroups  = ngroups;
+    arkls_mem->sparseDQM        = M;
+    arkls_mem->sparseDQN        = N;
+    arkls_mem->sparseDQnnz      = colptrs[N];
+  }
+  else
+  {
+    groups  = arkls_mem->sparseDQgroups;
+    ngroups = arkls_mem->sparseDQngroups;
+  }
+
+  /* Load ytemp with y = predicted y vector */
+  N_VScale(ONE, y, ytemp);
+
+  /* Set minimum increment based on uround and norm of f */
+  srur   = SUNRsqrt(ark_mem->uround);
+  fnorm  = N_VWrmsNorm(fy, ark_mem->rwt);
+  minInc = (fnorm != ZERO)
+             ? (MIN_INC_MULT * SUNRabs(ark_mem->h) * ark_mem->uround * N * fnorm)
+             : ONE;
+
+  /* Loop over column groups */
+  for (group = 0; group < ngroups; group++)
+  {
+    /* Increment all y_j in group */
+    for (j = 0; j < N; j++)
+    {
+      if (groups[j] != group) { continue; }
+
+      inc = SUNMAX(srur * SUNRabs(y_data[j]), minInc / ewt_data[j]);
+
+      /* Adjust sign(inc) if y_j has an inequality constraint. */
+      if (ark_mem->constraints)
+      {
+        conj = cns_data[j];
+        if (SUNRabs(conj) == ONE)
+        {
+          if ((ytemp_data[j] + inc) * conj < ZERO) { inc = -inc; }
+        }
+        else if (SUNRabs(conj) == TWO)
+        {
+          if ((ytemp_data[j] + inc) * conj <= ZERO) { inc = -inc; }
+        }
+      }
+
+      inc_data[j] = inc;
+      ytemp_data[j] += inc;
+    }
+
+    /* call the user-supplied pre-RHS function (if supplied), then call RHS */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(t, ytemp, ark_mem->user_data);
+      if (retval != 0) { return (ARK_PRERHSFN_FAIL); }
+    }
+    retval = fi(t, ytemp, ftemp, ark_mem->user_data);
+    arkls_mem->nfeDQ++;
+    if (retval != 0) { break; }
+
+    /* Restore ytemp, then form and load difference quotients */
+    for (j = 0; j < N; j++)
+    {
+      if (groups[j] != group) { continue; }
+
+      ytemp_data[j] = y_data[j];
+      inc_inv       = ONE / inc_data[j];
+      for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+      {
+        data[k] = inc_inv * (ftemp_data[rowvals[k]] - fy_data[rowvals[k]]);
+      }
+    }
+  }
+
+  return (retval);
+}
+
+/*---------------------------------------------------------------
   arkLsDQJtimes:
 
   This routine generates a difference quotient approximation to
@@ -2937,7 +3185,11 @@ static int arkLsLinSys(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix A,
     /* Clear the linear system matrix if necessary (direct linear solvers) */
     if (!(arkls_mem->iterative))
     {
-      retval = SUNMatZero(A);
+      if (arkls_mem->jacDQ && (SUNMatGetID(A) == SUNMATRIX_SPARSE))
+      {
+        retval = SUNMatCopy(arkls_mem->savedJ, A);
+      }
+      else { retval = SUNMatZero(A); }
       if (retval)
       {
         arkProcessError(ark_mem, ARKLS_SUNMAT_FAIL, __LINE__, __func__,
@@ -3029,13 +3281,15 @@ int arkLsInitialize(ARKodeMem ark_mem)
       /* Check if an internal or user-supplied Jacobian function is used */
       if (arkls_mem->jacDQ)
       {
-        /* Internal difference quotient Jacobian. Check that A is dense or band,
-           otherwise return an error */
+        /* Internal difference quotient Jacobian. Check that A is dense, band,
+           or CSC sparse, otherwise return an error */
         retval = 0;
         if (arkls_mem->A->ops->getid)
         {
           if ((SUNMatGetID(arkls_mem->A) == SUNMATRIX_DENSE) ||
-              (SUNMatGetID(arkls_mem->A) == SUNMATRIX_BAND))
+              (SUNMatGetID(arkls_mem->A) == SUNMATRIX_BAND) ||
+              ((SUNMatGetID(arkls_mem->A) == SUNMATRIX_SPARSE) &&
+               (SUNSparseMatrix_SparseType(arkls_mem->A) == SUN_CSC_MAT)))
           {
             arkls_mem->jac    = arkLsDQJac;
             arkls_mem->J_data = ark_mem;
@@ -3062,6 +3316,19 @@ int arkLsInitialize(ARKodeMem ark_mem)
                           MSG_LS_MEM_FAIL);
           arkls_mem->last_flag = ARKLS_MEM_FAIL;
           return (ARKLS_MEM_FAIL);
+        }
+      }
+
+      /* Preserve the user-provided sparsity pattern for internal sparse DQ */
+      if (arkls_mem->jacDQ && (SUNMatGetID(arkls_mem->A) == SUNMATRIX_SPARSE))
+      {
+        retval = SUNMatCopy(arkls_mem->A, arkls_mem->savedJ);
+        if (retval)
+        {
+          arkProcessError(ark_mem, ARKLS_SUNMAT_FAIL, __LINE__, __func__,
+                          __FILE__, MSG_LS_SUNMAT_FAILED);
+          arkls_mem->last_flag = ARKLS_SUNMAT_FAIL;
+          return (arkls_mem->last_flag);
         }
       }
 
@@ -3568,6 +3835,12 @@ int arkLsFree(ARKodeMem ark_mem)
     SUNMatDestroy(arkls_mem->savedJ);
     arkls_mem->savedJ = NULL;
   }
+
+  /* Free sparse DQ Jacobian workspace */
+  free(arkls_mem->sparseDQgroups);
+  arkls_mem->sparseDQgroups = NULL;
+  free(arkls_mem->sparseDQrowmarks);
+  arkls_mem->sparseDQrowmarks = NULL;
 
   /* Nullify other N_Vector pointers */
   arkls_mem->ycur = NULL;

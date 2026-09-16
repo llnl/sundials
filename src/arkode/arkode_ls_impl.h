@@ -75,6 +75,14 @@ typedef struct ARKLsMemRec
   N_Vector ycur;      /* ptr to current y vector in ARKLs solve        */
   N_Vector fcur;      /* ptr to current fcur = fI(tcur, ycur)          */
 
+  /* Sparse difference-quotient Jacobian workspace */
+  sunindextype* sparseDQgroups;
+  sunindextype* sparseDQrowmarks;
+  sunindextype sparseDQngroups;
+  sunindextype sparseDQM;
+  sunindextype sparseDQN;
+  sunindextype sparseDQnnz;
+
   /* Statistics and associated parameters */
   long int msbj;     /* max num steps between jac/pset calls         */
   sunrealtype tcur;  /* 'time' for current ARKLs solve               */
@@ -219,6 +227,9 @@ int arkLsDenseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
 int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
                    ARKodeMem ark_mem, ARKLsMem arkls_mem, ARKRhsFn fi,
                    N_Vector tmp1, N_Vector tmp2);
+int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
+                     ARKodeMem ark_mem, ARKLsMem arkls_mem, ARKRhsFn fi,
+                     N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
 /* Generic linit/lsetup/lsolve/lfree interface routines for ARKODE to call */
 int arkLsInitialize(ARKodeMem ark_mem);

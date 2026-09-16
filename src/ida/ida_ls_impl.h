@@ -57,6 +57,14 @@ typedef struct IDALsMemRec
   N_Vector ypcur;     /* current yp vector in Newton iteration         */
   N_Vector rcur;      /* rcur = F(tn, ycur, ypcur)                     */
 
+  /* Sparse difference-quotient Jacobian workspace */
+  sunindextype* sparseDQgroups;
+  sunindextype* sparseDQrowmarks;
+  sunindextype sparseDQngroups;
+  sunindextype sparseDQM;
+  sunindextype sparseDQN;
+  sunindextype sparseDQnnz;
+
   /* Matrix-based solver, scale solution to account for change in cj */
   sunbooleantype scalesol;
 
@@ -134,6 +142,9 @@ int idaLsDenseDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
 int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
                    N_Vector rr, SUNMatrix Jac, IDAMem IDA_mem, N_Vector tmp1,
                    N_Vector tmp2, N_Vector tmp3);
+int idaLsSparseDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
+                     N_Vector rr, SUNMatrix Jac, IDAMem IDA_mem, N_Vector tmp1,
+                     N_Vector tmp2, N_Vector tmp3);
 
 /* Generic linit/lsetup/lsolve/lperf/lfree interface routines for IDA to call */
 int idaLsInitialize(IDAMem IDA_mem);

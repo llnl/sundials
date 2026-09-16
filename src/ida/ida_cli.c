@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,

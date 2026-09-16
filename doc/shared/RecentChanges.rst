@@ -5,6 +5,9 @@
 
 **New Features and Enhancements**
 
+Added support to compute internal difference-quotient approximations to sparse
+Jacobians (CSC format only) for all SUNDIALS packages.
+
 **Bug Fixes**
 
 **Deprecation Notices**
