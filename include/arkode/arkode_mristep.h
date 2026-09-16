@@ -28,6 +28,7 @@
 #include <arkode/arkode_lsrkstep.h>
 #include <arkode/arkode_mristep_deprecated.h>
 #include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
+#include <sundials/sundials_adjointstepper.h>
 #include <sundials/sundials_stepper.h>
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
@@ -150,6 +151,8 @@ struct MRIStepCouplingMem
 
 typedef _SUNDIALS_STRUCT_ MRIStepCouplingMem* MRIStepCoupling;
 
+typedef _SUNDIALS_STRUCT_ MRIStepInnerAdjointProblem_* MRIStepInnerAdjointProblem;
+
 /* Accessor routine to load built-in MRI table */
 SUNDIALS_EXPORT MRIStepCoupling MRIStepCoupling_LoadTable(ARKODE_MRITableID method);
 
@@ -199,6 +202,19 @@ SUNDIALS_EXPORT void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
 SUNDIALS_EXPORT int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd,
                                         ARKRhsFn fe, ARKRhsFn fi,
                                         sunrealtype t0, N_Vector y0);
+
+/* Inner adjoint problem functions */
+SUNDIALS_EXPORT int MRIStepInnerAdjointProblem_Create(
+  void* arkode_mem, SUNAdjRhsFn adj_f, N_Vector sf, void* user_data,
+  MRIStepInnerAdjointProblem* problem);
+SUNDIALS_EXPORT int MRIStepInnerAdjointProblem_GetAdjRhsFn(
+  MRIStepInnerAdjointProblem problem, SUNAdjRhsFn* adj_f);
+SUNDIALS_EXPORT int MRIStepInnerAdjointProblem_GetTerminalState(
+  MRIStepInnerAdjointProblem problem, N_Vector* sf);
+SUNDIALS_EXPORT int MRIStepInnerAdjointProblem_GetUserData(
+  MRIStepInnerAdjointProblem problem, void** user_data);
+SUNDIALS_EXPORT void MRIStepInnerAdjointProblem_Free(
+  MRIStepInnerAdjointProblem problem);
 
 /* Optional input functions -- must be called AFTER MRIStepCreate */
 SUNDIALS_EXPORT int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC);

@@ -188,6 +188,20 @@ typedef struct ARKodeMRIStepMemRec
 
 }* ARKodeMRIStepMem;
 
+struct MRIStepInnerAdjointProblem_
+{
+  SUNAdjRhsFn adj_f;
+  void* user_data;
+
+  N_Vector sf;
+  N_Vector sens_view;
+  N_Vector sens_dot_view;
+
+  sunrealtype tshift;
+  sunrealtype tscale;
+  int nforcing;
+};
+
 /*===============================================================
   MRI time step module private function prototypes
   ===============================================================*/
