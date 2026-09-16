@@ -36,13 +36,13 @@ from .stability import stability_magnitude
 
 # Each figure uses a fixed canvas with the axes box pinned to fixed margins, so all plots have
 # the same shape with the axes in the same place. Margins are in inches.
-_FIG_SIZE = (5.5, 6.5)
+_FIG_SIZE = (5.5, 5.5)
 _FIG_DPI = 150
 
-_MARGIN_LEFT = 0.78
+_MARGIN_LEFT = 0.82
 _MARGIN_RIGHT = 0.22
 _MARGIN_BOTTOM = 0.55
-_MARGIN_TOP = 0.45
+_MARGIN_TOP = 0.50
 
 _COLORBAR_STRIP = 1.30
 _COLORBAR_WIDTH = 0.20
@@ -461,7 +461,7 @@ def plot_stability_region(
         _region_magnitude(phi, Z, X, Y, options.suppress_tiny_islands),
         style=MAIN_REGION_STYLE,
         mode="shade" if options.shade else ("boundary" if shade_emb else "fill"),
-        label=None if options.shade else "main method",
+        label=None if options.shade else "method",
         cax=cax,
         font_size=options.font_size,
     )
@@ -477,7 +477,7 @@ def plot_stability_region(
             _region_magnitude(emb, Z, X, Y, options.suppress_tiny_islands),
             style=EMBEDDED_REGION_STYLE,
             mode="shade" if shade_emb else ("boundary" if options.shade else "fill"),
-            label="embedded method",
+            label="embedding",
             cax=cax,
             font_size=options.font_size,
         )
