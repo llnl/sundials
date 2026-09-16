@@ -153,3 +153,46 @@ jobs:
 
     - name: Run KLU example
       run: python examples/python/arkode/ark_brusselator1D_klu.py
+
+  sundials4py-test-superlumt:
+    name: Test sundials4py with SuperLU_MT
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        submodules: true
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y libblas-dev liblapack-dev
+
+    - name: Install SuperLU_MT
+      run: |
+        git clone https://github.com/xiaoyeli/superlu_mt.git /tmp/superlu_mt
+        mkdir /tmp/superlu_mt/build
+        cd /tmp/superlu_mt/build
+        cmake ..
+        make superlu_mt_PTHREAD
+
+    - name: Setup Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.14'
+
+    - name: Install build tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install build scikit-build-core nanobind numpy pytest
+
+    - name: Build wheel
+      env:
+        CMAKE_ARGS: "-DSUNDIALS_ENABLE_SUPERLUMT=ON -DSUNDIALS_INDEX_SIZE=32 -DSUPERLUMT_INCLUDE_DIR=/tmp/superlu_mt/SRC -DSUPERLUMT_LIBRARY_DIR=/tmp/superlu_mt/build/SRC -DSUPERLUMT_LIBRARIES=/usr/lib/x86_64-linux-gnu/libblas.so -DSUPERLUMT_THREAD_TYPE=PTHREAD"
+      run: python -m build -o wheelhouse
+
+    - name: Install wheel
+      run: pip install wheelhouse/*.whl --force-reinstall
+
+    - name: Run SuperLU_MT example
+      run: python examples/python/arkode/ark_brusselator1D_superlumt.py

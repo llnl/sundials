@@ -89,6 +89,28 @@ def test_create_klu_if_available(sunctx, nvec):
     assert SUNSparseMatrix_NNZ(A) == n
 
 
+def test_create_superlumt_if_available(sunctx, nvec):
+    if not hasattr(sys.modules[__name__], "SUNLinSol_SuperLUMT"):
+        pytest.skip("SUNLinSol_SuperLUMT is not enabled in this build")
+
+    n = N_VGetLength(nvec)
+    A = SUNSparseMatrix(n, n, n, SUN_CSR_MAT, sunctx)
+    data = SUNSparseMatrix_Data(A)
+    colinds = SUNSparseMatrix_IndexValues(A)
+    rowptrs = SUNSparseMatrix_IndexPointers(A)
+    data[:] = [1.0] * n
+    colinds[:] = list(range(n))
+    rowptrs[:] = list(range(n + 1))
+
+    LS = SUNLinSol_SuperLUMT(nvec, A, 1, sunctx)
+    assert LS is not None
+    assert SUNLinSolGetType(LS) == SUNLINEARSOLVER_DIRECT
+    assert SUNLinSolGetID(LS) == SUNLINEARSOLVER_SUPERLUMT
+    assert SUNLinSol_SuperLUMTSetOrdering(LS, 3) == SUN_SUCCESS
+    assert SUNLinSolInitialize(LS) == SUN_SUCCESS
+    assert SUNLinSolSetup(LS, A) == SUN_SUCCESS
+
+
 def test_get_type_and_id(sunctx, nvec):
     A = SUNDenseMatrix(N_VGetLength(nvec), N_VGetLength(nvec), sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
