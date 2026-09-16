@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -----------------------------------------------------------------------------
+# Programmer(s): David J. Gardner @ LLNL
+# -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
 # Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -14,15 +16,18 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
 
-"""
-This is a Python library of utilities SUNDIALS developer may find useful.
-Right now it consists of the following modules:
+"""Runge-Kutta utilities for suntools."""
 
-- `logs`: this module has functions for parsing logs produced by `SUNLogger`.
-- `table`: this module has functions for parsing stats output by SUNDIALS
-           integrators in the table format.
-- `csv`: this module has functions for parsing stats output by SUNDIALS
-          integrators in the CSV format.
-- `rk`: this namespace contains Runge-Kutta table parsing, stability, and
-       plotting utilities.
-"""
+from .butcher_table import ButcherTable
+from .plotting import PlotOptions, plot_stability_region
+from .stability import StabilityFunction, stability_magnitude
+from .table_parser import parse_butcher_tables
+
+__all__ = [
+    "ButcherTable",
+    "PlotOptions",
+    "StabilityFunction",
+    "parse_butcher_tables",
+    "plot_stability_region",
+    "stability_magnitude",
+]
