@@ -74,8 +74,7 @@ where
 For methods without an embedding (e.g., fixed-step methods) ``P`` is omitted so
 that methods follow the naming convention ``ARKODE_NAME_S_Q``. For SPRK methods,
 the naming convention is ``ARKODE_SPRK_NAME_S_Q``. These method IDs can be used
-to maybe used to load the desired method with the appropriate set function
-(listed below).
+to load the desired method with the appropriate set function (listed below).
 
 Additionally, for each method we provide a plot of the linear stability region
 in the complex plane. For the linear test equation, :math:`\dot{y} = \lambda y`,
@@ -1924,8 +1923,8 @@ The method is A-stable.
    :scale: 50 %
    :align: center
 
-   Linear stability region for the implicit trapezoidal method, shaded blue with
-   a solid outline.
+   Linear stability region for the trapezoidal method, shaded blue with a solid
+   outline.
 
 
 .. c:enumerator:: ARKODE_BILLINGTON_3_3_2
@@ -2160,9 +2159,10 @@ method and embedding are A-stable; additionally the method is L-stable
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the implicit ARK324L2SA-DIRK-4-2-3 method and its embedding.
-   The method's stability region is shaded blue with a solid outline; the
-   embedding's stability region is shaded red with a dashed outline.
+   Linear stability regions for the ARK324L2SA-DIRK-4-2-3 method and
+   its embedding.  The method's stability region is shaded blue with a solid
+   outline; the embedding's stability region is shaded red with a dashed
+   outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK436L2SA_6_3_4
@@ -2581,9 +2581,10 @@ Both the method and embedding are A-stable; additionally the method is L-stable
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the implicit ARK548L2SA-ESDIRK-8-4-5 method and its embedding.
-   The method's stability region is shaded blue with a solid outline; the
-   embedding's stability region is shaded red with a dashed outline.
+   Linear stability regions for the ARK548L2SA-ESDIRK-8-4-5 method and its
+   embedding.  The method's stability region is shaded blue with a solid
+   outline; the embedding's stability region is shaded red with a dashed
+   outline.
 
 
 .. c:enumerator:: ARKODE_ARK548L2SAb_DIRK_8_4_5
