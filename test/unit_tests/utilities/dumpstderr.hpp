@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef SUN_DUMPSTDERR_HPP_
-#define SUN_DUMPSTDERR_HPP_
+#ifndef SUNDIALS_DUMPSTDERR_HPP
+#define SUNDIALS_DUMPSTDERR_HPP
 
 #include <fstream>
 #include <string>

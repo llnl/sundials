@@ -18,8 +18,8 @@
  * module.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_ARKSTEP_IMPL_H
-#define _ARKODE_ARKSTEP_IMPL_H
+#ifndef SUNDIALS_ARKODE_ARKSTEP_IMPL_H
+#define SUNDIALS_ARKODE_ARKSTEP_IMPL_H
 
 #include <arkode/arkode_arkstep.h>
 #include <arkode/arkode_mristep.h>

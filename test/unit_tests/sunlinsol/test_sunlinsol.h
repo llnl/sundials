@@ -20,6 +20,9 @@
  * -----------------------------------------------------------------
  */
 
+#ifndef SUNDIALS_TEST_SUNLINSOL_H
+#define SUNDIALS_TEST_SUNLINSOL_H
+
 #include <math.h>
 #include <sundials/sundials_core.h>
 
@@ -62,3 +65,5 @@ void SetTiming(int onoff);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // SUNDIALS_TEST_SUNLINSOL_H

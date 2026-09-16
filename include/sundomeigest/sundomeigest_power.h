@@ -23,8 +23,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNDOMEIGEST_POWER_H
-#define _SUNDOMEIGEST_POWER_H
+#ifndef SUNDIALS_SUNDOMEIGEST_POWER_H
+#define SUNDIALS_SUNDOMEIGEST_POWER_H
 
 #include <sundials/sundials_domeigestimator.h>
 

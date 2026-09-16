@@ -17,8 +17,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _NVECTOR_CUDA_ARRAY_KERNELS_CUH_
-#define _NVECTOR_CUDA_ARRAY_KERNELS_CUH_
+#ifndef SUNDIALS_VECTORARRAYKERNELS_CUH
+#define SUNDIALS_VECTORARRAYKERNELS_CUH
 
 #include <cuda_runtime.h>
 #include <limits>
@@ -203,4 +203,4 @@ __global__ void linearCombinationVectorArrayKernel(int nv, int ns, T* c, T** xd,
 } // namespace cuda
 } // namespace sundials
 
-#endif // _NVECTOR_CUDA_ARRAY_KERNELS_CUH_
+#endif // SUNDIALS_VECTORARRAYKERNELS_CUH

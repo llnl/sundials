@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_LOGGER_HPP
-#define _SUNDIALS_LOGGER_HPP
+#ifndef SUNDIALS_SUNDIALS_LOGGER_HPP
+#define SUNDIALS_SUNDIALS_LOGGER_HPP
 
 #include <utility>
 
@@ -34,4 +34,4 @@ struct SUNLoggerDeleter
 } // namespace experimental
 } // namespace sundials
 
-#endif /* SUNDIALS_LOGGER_HPP */
+#endif /* SUNDIALS_SUNDIALS_LOGGER_HPP */

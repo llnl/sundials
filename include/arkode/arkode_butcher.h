@@ -17,8 +17,8 @@
  * This is the header file for ARKode Butcher table structures.
  * -----------------------------------------------------------------*/
 
-#ifndef _ARKODE_BUTCHER_H
-#define _ARKODE_BUTCHER_H
+#ifndef SUNDIALS_ARKODE_BUTCHER_H
+#define SUNDIALS_ARKODE_BUTCHER_H
 
 #include <stdio.h>
 #include <sundials/sundials_types.h>

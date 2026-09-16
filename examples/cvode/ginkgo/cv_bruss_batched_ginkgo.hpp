@@ -18,6 +18,9 @@
  * See cv_bruss_batched_ginkgo.cpp for more information.
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_CV_BRUSS_BATCHED_GINKGO_HPP
+#define SUNDIALS_CV_BRUSS_BATCHED_GINKGO_HPP
+
 #include <cstdio>
 #include <memory>
 #include <random>
@@ -90,3 +93,5 @@ struct UserData
   RealArray a, b;       /* chemical concentrations that are constant */
   RealArray ep;
 };
+
+#endif // SUNDIALS_CV_BRUSS_BATCHED_GINKGO_HPP

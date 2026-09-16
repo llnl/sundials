@@ -18,8 +18,8 @@
  * This is the header file for the ARKODE MRIStep module.
  * -----------------------------------------------------------------*/
 
-#ifndef _MRISTEP_H
-#define _MRISTEP_H
+#ifndef SUNDIALS_ARKODE_MRISTEP_H
+#define SUNDIALS_ARKODE_MRISTEP_H
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_butcher_dirk.h>

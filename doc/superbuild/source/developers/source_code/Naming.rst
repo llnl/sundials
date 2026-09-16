@@ -43,7 +43,16 @@ camelcase for private names (e.g. ``doSomething``).
 Macros/Constants
 ----------------
 
-Upper case should be used for macros and constants.
+Upper case should be used for macros and constants. All header files should
+contain an include guard defining a macro starting with ``SUNDIALS_`` followed
+by the file name in upper case. For example, ``my_header.h`` should contain
+
+.. code-block:: c
+
+   #ifndef SUNDIALS_MY_HEADER_H
+   #define SUNDIALS_MY_HEADER_H
+   // ...
+   #endif
 
 Variable names
 --------------
