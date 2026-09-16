@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -----------------------------------------------------------------------------
+# Programmer(s): David J. Gardner @ LLNL
+# -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
 # Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
