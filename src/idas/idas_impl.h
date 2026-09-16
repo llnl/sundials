@@ -955,11 +955,6 @@ int IDAEwtSet(N_Vector ycur, N_Vector weight, void* data);
 void IDAProcessError(IDAMem IDA_mem, int error_code, int line, const char* func,
                      const char* file, const char* msgfmt, ...);
 
-/* Prototype of internal errHandler function */
-
-void IDAErrHandler(int error_code, const char* module, const char* function,
-                   char* msg, void* data);
-
 /* Norm functions. Also used for IC, so they are global.*/
 
 sunrealtype IDAWrmsNorm(IDAMem IDA_mem, N_Vector x, N_Vector w,

@@ -163,9 +163,6 @@ SUNDIALS_EXPORT
 SUNErrCode SUNMatScaleAddI_OneMklDense(sunrealtype c, SUNMatrix A);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNMatMatvecSetup_OneMklDense(SUNMatrix A);
-
-SUNDIALS_EXPORT
 SUNErrCode SUNMatMatvec_OneMklDense(SUNMatrix A, N_Vector x, N_Vector y);
 
 SUNDIALS_DEPRECATED_EXPORT_MSG(

@@ -1145,11 +1145,6 @@ int cvEwtSet(N_Vector ycur, N_Vector weight, void* data);
 void cvProcessError(CVodeMem cv_mem, int error_code, int line, const char* func,
                     const char* file, const char* msgfmt, ...);
 
-/* Prototype of internal ErrHandler function */
-
-void cvErrHandler(int error_code, const char* module, const char* function,
-                  char* msg, void* data);
-
 /* Nonlinear solver initialization */
 
 int cvNlsInit(CVodeMem cv_mem);
