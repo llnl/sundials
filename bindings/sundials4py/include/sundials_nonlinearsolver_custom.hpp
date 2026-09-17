@@ -620,18 +620,21 @@ private:
   static SUNErrCode custom_nls_getnumiters(SUNNonlinearSolver NLS,
                                            long int* niters)
   {
-    return call_tuple_getter(NLS, "get_num_iters", niters);
+    return call_tuple_getter(NLS, "get_num_iters", niters,
+                             "CustomSUNNonlinearSolver.get_num_iters");
   }
 
   static SUNErrCode custom_nls_getcuriter(SUNNonlinearSolver NLS, int* iter)
   {
-    return call_tuple_getter(NLS, "get_cur_iter", iter);
+    return call_tuple_getter(NLS, "get_cur_iter", iter,
+                             "CustomSUNNonlinearSolver.get_cur_iter");
   }
 
   static SUNErrCode custom_nls_getnumconvfails(SUNNonlinearSolver NLS,
                                                long int* nconvfails)
   {
-    return call_tuple_getter(NLS, "get_num_conv_fails", nconvfails);
+    return call_tuple_getter(NLS, "get_num_conv_fails", nconvfails,
+                             "CustomSUNNonlinearSolver.get_num_conv_fails");
   }
 
   static SUNErrCode custom_nls_free(SUNNonlinearSolver NLS)
