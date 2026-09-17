@@ -1,0 +1,6 @@
+if(SUNDIALS_ENABLE_CXX_EXAMPLES)
+  add_subdirectory(cpp)
+  if(SUNDIALS_ENABLE_GINKGO)
+    add_subdirectory(cpp-ginkgo)
+  endif()
+endif()

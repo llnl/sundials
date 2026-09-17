@@ -1,0 +1,13 @@
+if(SUNDIALS_ENABLE_C_EXAMPLES)
+  add_subdirectory(c)
+  if(SUNDIALS_ENABLE_MPI)
+    add_subdirectory(c-mpi)
+    if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
+      add_subdirectory(c-mpi-mpimanyvector)
+    endif()
+  endif()
+endif()
+
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
+  add_subdirectory(fortran)
+endif()

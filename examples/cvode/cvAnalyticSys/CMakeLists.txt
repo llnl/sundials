@@ -1,0 +1,6 @@
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
+  add_subdirectory(fortran)
+  if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
+    add_subdirectory(fortran-klu)
+  endif()
+endif()
