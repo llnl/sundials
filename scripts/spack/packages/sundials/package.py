@@ -507,14 +507,14 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         smoke_tests = []
         if "+CVODE" in self.spec:
             smoke_tests.append(
-                ("cvode/c/cvAdvDiff_bnd/cvAdvDiff_bnd", [], "Test CVODE", True)
+                ("cvode/cvAdvDiff/c/cvAdvDiff_bnd", [], "Test CVODE", True)
             )
 
         if "+cuda" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
                     (
-                        "cvode/cuda/cvAdvDiff_kry_cuda/cvAdvDiff_kry_cuda",
+                        "cvode/cvAdvDiff/cuda/cvAdvDiff_kry_cuda",
                         [],
                         "Test CVODE with CUDA",
                         True,
@@ -525,7 +525,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             if "+CVODE" in self.spec:
                 smoke_tests.append(
                     (
-                        "cvode/hip/cvAdvDiff_kry_hip/cvAdvDiff_kry_hip",
+                        "cvode/cvAdvDiff/hip/cvAdvDiff_kry_hip",
                         [],
                         "Test CVODE with HIP",
                         True,
@@ -536,7 +536,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             if "+CVODE" in self.spec:
                 smoke_tests.append(
                     (
-                        "cvode/sycl/cvAdvDiff_kry_sycl/cvAdvDiff_kry_sycl",
+                        "cvode/cvAdvDiff/sycl/cvAdvDiff_kry_sycl",
                         [],
                         "Test CVODE with SYCL",
                         True,
@@ -578,10 +578,8 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         for smoke_test in self._smoke_tests:
             work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
-            if smoke_test[0].startswith(
-                ("cvode/c/", "cvode/cuda/", "cvode/hip/", "cvode/sycl/")
-            ):
-                work_dir = os.path.dirname(work_dir)
+            if smoke_test[0].startswith("cvode/"):
+                work_dir = join_path(self._smoke_tests_path, "cvode")
             with working_dir(work_dir):
                 if smoke_test[3]:  # use cmake
                     self.run_test(exe=cmake_bin, options=["."])
@@ -601,10 +599,8 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     def clean_smoke_tests(self):
         for smoke_test in self._smoke_tests:
             work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
-            if smoke_test[0].startswith(
-                ("cvode/c/", "cvode/cuda/", "cvode/hip/", "cvode/sycl/")
-            ):
-                work_dir = os.path.dirname(work_dir)
+            if smoke_test[0].startswith("cvode/"):
+                work_dir = join_path(self._smoke_tests_path, "cvode")
             with working_dir(work_dir):
                 self.run_test(exe="make", options=["clean"])
 
@@ -625,17 +621,17 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         )
         if "+cuda" in self.spec:
             self.run_test(
-                "examples/cvode/cuda/cvAdvDiff_kry_cuda/cvAdvDiff_kry_cuda",
+                "examples/cvode/cvAdvDiff/cuda/cvAdvDiff_kry_cuda",
                 work_dir=self._extra_tests_path,
             )
         if "+rocm" in self.spec:
             self.run_test(
-                "examples/cvode/hip/cvAdvDiff_kry_hip/cvAdvDiff_kry_hip",
+                "examples/cvode/cvAdvDiff/hip/cvAdvDiff_kry_hip",
                 work_dir=self._extra_tests_path,
             )
         if "+sycl" in self.spec:
             self.run_test(
-                "examples/cvode/sycl/cvAdvDiff_kry_sycl/cvAdvDiff_kry_sycl",
+                "examples/cvode/cvAdvDiff/sycl/cvAdvDiff_kry_sycl",
                 work_dir=self._extra_tests_path,
             )
         return
