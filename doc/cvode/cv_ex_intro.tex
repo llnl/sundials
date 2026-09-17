@@ -31,8 +31,8 @@ where
 The following lists summarize all examples distributed with {\cvode}.
 
 \vspace{0.2in}\noindent
-Supplied in individual directories under
-{\em srcdir}\id{/examples/cvode/c} are the following serial C examples
+Supplied in the C variants under the problem directories in
+{\em srcdir}\id{/examples/cvode} are the following serial C examples
 (using the {\nvecs} module):
 
 \begin{itemize}
@@ -149,8 +149,8 @@ Supplied in individual directories under
 \end{itemize}
 
 \vspace{0.2in}\noindent The following four parallel C examples (using the
-{\nvecp} module) are also supplied in individual directories under
-{\em srcdir}\id{/examples/cvode/c}:
+{\nvecp} module) are also supplied in the c-mpi variants under
+{\em srcdir}\id{/examples/cvode}:
 \begin{itemize}
 \item \id{cvAdvDiff\_non\_p} solves the semi-discrete form of a 1-D
   advection-diffusion equation.
@@ -169,23 +169,23 @@ Supplied in individual directories under
 \end{itemize}
 
 \vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/c/cvAdvDiff\_bnd\_omp} directory is an example
+{\em srcdir}\id{/examples/cvode/cvAdvDiff/c-openmp} directory is an example
 \id{cvAdvDiff\_bnd\_omp}, which solves the same problem as
 \id{cvAdvDiff\_bnd} but with the OpenMP {\nvector} module.
 
 \vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/c/cvDiurnal\_kry\_mpimanyvec} directory is an example
+{\em srcdir}\id{/examples/cvode/cvDiurnal/c-mpi-mpimanyvector} directory is an example
 \id{cvDiurnal\_kry\_mpimanyvec}, which solves the same problem as
 \id{cvDiurnal\_kry\_p}, but with the MPIManyVector module.
 
 \vspace{0.2in}\noindent Supplied in the
-{\em srcdir}\id{/examples/cvode/c/cvAdvDiff\_non\_ph} directory is an example
+{\em srcdir}\id{/examples/cvode/cvAdvDiff/c-mpi-hypre} directory is an example
 \id{cvAdvDiff\_non\_ph}, which solves the same problem as
 \id{cvAdvDiff\_non\_p} but with {\hypre} vectors instead of
 {\sundials} parallel vectors.
 
-\vspace{0.2in}\noindent Supplied in individual directories under
-{\em srcdir}\id{/examples/cvode/cuda} are the following examples, all using
+\vspace{0.2in}\noindent Supplied in the problem variants under
+{\em srcdir}\id{/examples/cvode/cvAdvDiff/cuda} are the following examples, all using
 the \id{cuda} {\nvector} module:
 \begin{itemize}
 \item \id{cvAdvDiff\_diag\_cuda} solves the same problem as
@@ -196,8 +196,8 @@ the \id{cuda} {\nvector} module:
   \id{cvAdvDiff\_kry\_cuda} but uses managed memory for the vector data.
 \end{itemize}
 
-\vspace{0.2in}\noindent Supplied in individual directories under
-{\em srcdir}\id{/examples/cvode/c} are the following examples using the
+\vspace{0.2in}\noindent Supplied in the problem variants under
+{\em srcdir}\id{/examples/cvode} are the following examples using the
 PETSc SNES module:
 \begin{itemize}
 \item \id{cvAdvDiff\_petsc} solves the same problem as
@@ -206,8 +206,8 @@ PETSc SNES module:
   nonlinear system derived from a time-dependent PDE in 2D.
 \end{itemize}
 
-\vspace{0.2in}\noindent Supplied in individual directories under
-{\em srcdir}\id{/examples/cvode/fortran} are the following serial examples,
+\vspace{0.2in}\noindent Supplied in the problem variants under
+{\em srcdir}\id{/examples/cvode} are the following serial examples,
 all in Fortran 2003 and using the {\sundials} Fortran interface modules:
 \begin{itemize}
 \item \id{cv\_analytic\_fp\_f2003} solves the same problem as
@@ -236,8 +236,8 @@ all in Fortran 2003 and using the {\sundials} Fortran interface modules:
   \id{cv\_roberts\_klu}.
 \end{itemize}
 
-\vspace{0.2in}\noindent The following examples are also supplied in individual
-directories under {\em srcdir}\id{/examples/cvode/fortran}. They are written
+\vspace{0.2in}\noindent The following examples are also supplied in variant
+directories under {\em srcdir}\id{/examples/cvode}. They are written
 in Fortran 2003 using the {\sundials} Fortran interface modules and are solved
 in parallel using MPI:
 \begin{itemize}
@@ -250,10 +250,8 @@ in parallel using MPI:
 \end{itemize}
 
 The following is a list of example names that are written in C++ or an
-accelerator programming model. Each example is supplied in its own directory
-under {\em srcdir}\id{/examples/cvode/cpp},
-{\em srcdir}\id{/examples/cvode/hip}, or
-{\em srcdir}\id{/examples/cvode/sycl}, as appropriate. Each is based on an
+accelerator programming model. Each example is supplied in its variant directory
+under {\em srcdir}\id{/examples/cvode}, as appropriate. Each is based on an
 example listed earlier, except where noted.
 
 \begin{itemize}
