@@ -32,6 +32,7 @@
 #include <exception>
 #include <type_traits>
 #include <utility>
+#include <cstdint>
 
 #include "sundials_adaptcontroller_custom.hpp"
 #include "sundials_linearsolver_custom.hpp"

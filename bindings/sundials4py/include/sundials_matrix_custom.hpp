@@ -219,7 +219,12 @@ private:
     }
   }
 
-  static SUNErrCode call_status_method(SUNMatrix A, const char* name,
+  // The method name is taken by reference to its array type rather than as a
+  // `const char*`: nanobind's attribute-name cache is keyed on the string's
+  // address and only fills for arguments with a known array bound, so a decayed
+  // pointer falls back to allocating a fresh, non-interned str on every call.
+  template<size_t N>
+  static SUNErrCode call_status_method(SUNMatrix A, const char (&name)[N],
                                        const char* operation)
   {
     try
@@ -231,7 +236,8 @@ private:
                                  SUN_ERR_EXT_FAIL)
   }
 
-  static int call_status_method(SUNMatrix A, const char* name, N_Vector x,
+  template<size_t N>
+  static int call_status_method(SUNMatrix A, const char (&name)[N], N_Vector x,
                                 N_Vector y, const char* operation)
   {
     try

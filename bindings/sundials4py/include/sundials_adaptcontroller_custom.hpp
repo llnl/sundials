@@ -260,25 +260,28 @@ private:
                                  SUN_ERR_EXT_FAIL)
   }
 
-  static SUNErrCode call_status(SUNAdaptController C, const char* name)
+  template<size_t N>
+  static SUNErrCode call_status(SUNAdaptController C, const char (&name)[N],
+                                const char* operation)
   {
     try
     {
       nb::gil_scoped_acquire gil;
       return static_cast<SUNErrCode>(nb::cast<int>(get_impl(C).attr(name)()));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr, operation,
                                  SUN_ERR_EXT_FAIL)
   }
 
   static SUNErrCode custom_controller_reset(SUNAdaptController C)
   {
-    return call_status(C, "reset");
+    return call_status(C, "reset", "CustomSUNAdaptController.reset");
   }
 
   static SUNErrCode custom_controller_setdefaults(SUNAdaptController C)
   {
-    return call_status(C, "set_defaults");
+    return call_status(C, "set_defaults",
+                       "CustomSUNAdaptController.set_defaults");
   }
 
   static SUNErrCode custom_controller_seterrorbias(SUNAdaptController C,

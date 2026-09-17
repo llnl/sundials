@@ -154,7 +154,12 @@ def test_nonlinear_output_exception_is_reported_and_python_state_is_cleared(sunc
     status, value = SUNNonlinSolGetNumIters(NLS)
     assert status == SUN_ERR_EXT_FAIL
     assert value == 0
-    assert_reported(sunctx, errors, "call_tuple_getter", "RuntimeError: nonlinear getter boom")
+    assert_reported(
+        sunctx,
+        errors,
+        "CustomSUNNonlinearSolver.get_num_iters",
+        "RuntimeError: nonlinear getter boom",
+    )
     assert SUNNonlinSolGetNumIters(NLS) == (SUN_SUCCESS, 7)
 
 

@@ -598,9 +598,10 @@ private:
                                  SUN_ERR_EXT_FAIL)
   }
 
-  template<typename Value>
-  static SUNErrCode call_tuple_getter(SUNNonlinearSolver NLS, const char* name,
-                                      Value* out)
+  template<typename Value, size_t N>
+  static SUNErrCode call_tuple_getter(SUNNonlinearSolver NLS,
+                                      const char (&name)[N], Value* out,
+                                      const char* operation)
   {
     // Getter wrappers return (status, value) in Python because the C API uses
     // an output pointer plus a status code.
@@ -612,7 +613,7 @@ private:
       *out = std::get<1>(result);
       return static_cast<SUNErrCode>(std::get<0>(result));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, operation,
                                  SUN_ERR_EXT_FAIL)
   }
 
