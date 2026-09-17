@@ -484,11 +484,11 @@ bool custom_method_overridden(nb::handle impl, const char* name)
  * empty; families with no native callbacks leave `callbacks` untouched.
  */
 #define SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS(TAG)                               \
-  static constexpr uint64_t tag_value = TAG;                                 \
+  static constexpr uint64_t tag_value = TAG;                                  \
                                                                               \
   /* Distinguishes this private payload from native content routed through  \
      the same wrapper type. Must stay first so the check is cheap. */ \
-  uint64_t tag{tag_value};                                                   \
+  uint64_t tag{tag_value};                                                    \
                                                                               \
   /* Set for handles the user owns: SUNDIALS must not keep the Python       \
      object alive, or attaching a solver would create an immortal cycle. */ \

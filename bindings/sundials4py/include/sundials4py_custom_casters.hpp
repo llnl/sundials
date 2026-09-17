@@ -29,10 +29,10 @@
 #ifndef _SUNDIALS4PY_CUSTOM_CASTERS_HPP
 #define _SUNDIALS4PY_CUSTOM_CASTERS_HPP
 
+#include <cstdint>
 #include <exception>
 #include <type_traits>
 #include <utility>
-#include <cstdint>
 
 #include "sundials_adaptcontroller_custom.hpp"
 #include "sundials_linearsolver_custom.hpp"
@@ -57,87 +57,87 @@ namespace nanobind::detail {
  * bit-for-bit identical to stock nanobind, so pre-existing wrapper objects are
  * unaffected; only the "not a native wrapper" case is new.
  */
-#define SUNDIALS4PY_DEFINE_CUSTOM_CASTER(GENERIC_TYPE, CUSTOM_CLASS, WHAT)       \
-  template<>                                                                     \
-  struct type_caster<GENERIC_TYPE> : type_caster_base_tag                        \
-  {                                                                              \
-    using Type                 = GENERIC_TYPE;                                   \
-    static constexpr auto Name = const_name<Type>();                             \
-    template<typename T>                                                         \
-    using Cast = precise_cast_t<T>;                                              \
-                                                                                 \
-    bool from_python(handle src, uint8_t flags, cleanup_list* cleanup) noexcept  \
-    {                                                                            \
+#define SUNDIALS4PY_DEFINE_CUSTOM_CASTER(GENERIC_TYPE, CUSTOM_CLASS, WHAT)         \
+  template<>                                                                       \
+  struct type_caster<GENERIC_TYPE> : type_caster_base_tag                          \
+  {                                                                                \
+    using Type                 = GENERIC_TYPE;                                     \
+    static constexpr auto Name = const_name<Type>();                               \
+    template<typename T>                                                           \
+    using Cast = precise_cast_t<T>;                                                \
+                                                                                   \
+    bool from_python(handle src, uint8_t flags, cleanup_list* cleanup) noexcept    \
+    {                                                                              \
       /* Prefer the stock nanobind conversion so existing native wrapper         \
-         objects keep their current behavior. */                                 \
-      type_caster_base<Type> native_caster;                                      \
-      if (native_caster.from_python(src, flags, cleanup))                        \
-      {                                                                          \
-        value = native_caster.operator Type*();                                  \
-        return true;                                                             \
-      }                                                                          \
-                                                                                 \
-      if (nb::isinstance<sundials4py::CUSTOM_CLASS>(src))                        \
-      {                                                                          \
-        try                                                                      \
-        {                                                                        \
+         objects keep their current behavior. */ \
+      type_caster_base<Type> native_caster;                                        \
+      if (native_caster.from_python(src, flags, cleanup))                          \
+      {                                                                            \
+        value = native_caster.operator Type*();                                    \
+        return true;                                                               \
+      }                                                                            \
+                                                                                   \
+      if (nb::isinstance<sundials4py::CUSTOM_CLASS>(src))                          \
+      {                                                                            \
+        try                                                                        \
+        {                                                                          \
           /* The returned raw pointer is owned by the Python object's            \
-             shared_ptr; nanobind only borrows it for this C++ call. */          \
-          auto* custom = nb::cast<sundials4py::CUSTOM_CLASS*>(src);              \
-          value        = custom->_get_sundials_handle(src).get();                \
-        }                                                                        \
-        catch (const std::exception& error)                                      \
-        {                                                                        \
+             shared_ptr; nanobind only borrows it for this C++ call. */ \
+          auto* custom = nb::cast<sundials4py::CUSTOM_CLASS*>(src);                \
+          value        = custom->_get_sundials_handle(src).get();                  \
+        }                                                                          \
+        catch (const std::exception& error)                                        \
+        {                                                                          \
           /* A false result means that this overload cannot accept src, and      \
              nanobind will report its normal argument-conversion TypeError.      \
              Report the real reason first: it distinguishes a missing required   \
              operation from an allocation failure. The Python error indicator    \
-             is left clear. */                                                   \
-          ::sundials4py::report_custom_exception(nullptr, WHAT, error);          \
-          return false;                                                          \
-        }                                                                        \
-        catch (...)                                                              \
-        {                                                                        \
-          return false;                                                          \
-        }                                                                        \
-        return value != nullptr;                                                 \
-      }                                                                          \
-                                                                                 \
-      return false;                                                              \
-    }                                                                            \
-                                                                                 \
-    template<typename T>                                                         \
-    static handle from_cpp(T&& value, rv_policy policy,                          \
-                           cleanup_list* cleanup) noexcept                       \
-    {                                                                            \
+             is left clear. */ \
+          ::sundials4py::report_custom_exception(nullptr, WHAT, error);            \
+          return false;                                                            \
+        }                                                                          \
+        catch (...)                                                                \
+        {                                                                          \
+          return false;                                                            \
+        }                                                                          \
+        return value != nullptr;                                                   \
+      }                                                                            \
+                                                                                   \
+      return false;                                                                \
+    }                                                                              \
+                                                                                   \
+    template<typename T>                                                           \
+    static handle from_cpp(T&& value, rv_policy policy,                            \
+                           cleanup_list* cleanup) noexcept                         \
+    {                                                                              \
       /* C++ to Python is unchanged: a raw handle always becomes the native      \
-         wrapper, never a custom subclass. */                                    \
-      return type_caster_base<Type>::from_cpp(std::forward<T>(value), policy,    \
-                                              cleanup);                          \
-    }                                                                            \
-                                                                                 \
-    template<typename T_>                                                        \
-    bool can_cast() const noexcept                                               \
-    {                                                                            \
-      return std::is_pointer_v<T_> || (value != nullptr);                        \
-    }                                                                            \
-                                                                                 \
-    operator Type*() { return value; }                                           \
-                                                                                 \
-    operator Type&()                                                             \
-    {                                                                            \
-      if (!value) { throw next_overload(); }                                     \
-      return *value;                                                             \
-    }                                                                            \
-                                                                                 \
-    operator Type&&()                                                            \
-    {                                                                            \
-      if (!value) { throw next_overload(); }                                     \
-      return (Type&&)*value;                                                     \
-    }                                                                            \
-                                                                                 \
-  private:                                                                       \
-    Type* value{nullptr};                                                        \
+         wrapper, never a custom subclass. */ \
+      return type_caster_base<Type>::from_cpp(std::forward<T>(value), policy,      \
+                                              cleanup);                            \
+    }                                                                              \
+                                                                                   \
+    template<typename T_>                                                          \
+    bool can_cast() const noexcept                                                 \
+    {                                                                              \
+      return std::is_pointer_v<T_> || (value != nullptr);                          \
+    }                                                                              \
+                                                                                   \
+    operator Type*() { return value; }                                             \
+                                                                                   \
+    operator Type&()                                                               \
+    {                                                                              \
+      if (!value) { throw next_overload(); }                                       \
+      return *value;                                                               \
+    }                                                                              \
+                                                                                   \
+    operator Type&&()                                                              \
+    {                                                                              \
+      if (!value) { throw next_overload(); }                                       \
+      return (Type&&)*value;                                                       \
+    }                                                                              \
+                                                                                   \
+  private:                                                                         \
+    Type* value{nullptr};                                                          \
   };
 
 SUNDIALS4PY_DEFINE_CUSTOM_CASTER(_generic_SUNMatrix, CustomSUNMatrix, "SUNMatrix")
