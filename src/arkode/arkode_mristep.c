@@ -33,6 +33,43 @@
 #include "arkode_ls_impl.h"
 #include "arkode_mristep_impl.h"
 
+static int mriStep_SaveCheckpoint(ARKodeMem ark_mem, suncountertype stage_num,
+                                  sunrealtype t, N_Vector y)
+{
+  sunbooleantype do_save;
+  SUNErrCode errcode;
+
+  if (!ark_mem->checkpoint_scheme) { return ARK_SUCCESS; }
+
+  errcode = SUNAdjointCheckpointScheme_NeedsSaving(ark_mem->checkpoint_scheme,
+                                                   ark_mem->checkpoint_step_idx,
+                                                   stage_num, t, &do_save);
+  if (errcode)
+  {
+    arkProcessError(ark_mem, ARK_ADJ_CHECKPOINT_FAIL, __LINE__, __func__,
+                    __FILE__,
+                    "SUNAdjointCheckpointScheme_NeedsSaving returned %d",
+                    errcode);
+    return ARK_ADJ_CHECKPOINT_FAIL;
+  }
+
+  if (!do_save) { return ARK_SUCCESS; }
+
+  errcode = SUNAdjointCheckpointScheme_InsertVector(ark_mem->checkpoint_scheme,
+                                                    ark_mem->checkpoint_step_idx,
+                                                    stage_num, t, y);
+  if (errcode)
+  {
+    arkProcessError(ark_mem, ARK_ADJ_CHECKPOINT_FAIL, __LINE__, __func__,
+                    __FILE__,
+                    "SUNAdjointCheckpointScheme_InsertVector returned %d",
+                    errcode);
+    return ARK_ADJ_CHECKPOINT_FAIL;
+  }
+
+  return ARK_SUCCESS;
+}
+
 /*===============================================================
   Exported functions
   ===============================================================*/
@@ -1966,6 +2003,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   }
   ark_mem->fn_is_current = SUNTRUE;
 
+  retval = mriStep_SaveCheckpoint(ark_mem, 0, ark_mem->tn, ark_mem->yn);
+  if (retval != ARK_SUCCESS) { return retval; }
+
   SUNLogExtraDebugVecIf(step_mem->explicit_rhs, ARK_LOGGER, "slow explicit RHS",
                         step_mem->Fse[0], "Fse_0(:) =");
   SUNLogExtraDebugVecIf(step_mem->implicit_rhs, ARK_LOGGER, "slow implicit RHS",
@@ -2062,6 +2102,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         }
       }
     }
+
+    retval = mriStep_SaveCheckpoint(ark_mem, is, ark_mem->tcur, ark_mem->ycur);
+    if (retval != ARK_SUCCESS) { return retval; }
 
     /* Compute updated slow RHS, except:
        1. if the stage is excluded from stage_map
@@ -2341,6 +2384,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       }
     }
 
+    retval = mriStep_SaveCheckpoint(ark_mem, is, ark_mem->tcur, ark_mem->ycur);
+    if (retval != ARK_SUCCESS) { return retval; }
+
     /* Compute temporal error estimate via difference between step
        solution and embedding, store in ark_mem->tempv1, and take norm. */
     if (do_embedding)
@@ -2348,6 +2394,10 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       N_VLinearSum(ONE, ark_mem->tempv4, -ONE, ark_mem->ycur, ark_mem->tempv1);
       *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
     }
+
+    retval = mriStep_SaveCheckpoint(ark_mem, step_mem->stages,
+                                    ark_mem->tn + ark_mem->h, ark_mem->ycur);
+    if (retval != ARK_SUCCESS) { return retval; }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
