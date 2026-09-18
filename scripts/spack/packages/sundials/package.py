@@ -506,41 +506,24 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         # smoke_tests tuple: exe, args, purpose, use cmake (true/false)
         smoke_tests = []
         if "+CVODE" in self.spec:
-            smoke_tests.append(
-                ("cvode/cvAdvDiff/c/cvAdvDiff_bnd", [], "Test CVODE", True)
-            )
+            smoke_tests.append(("cvode/cvAdvDiff/c/cvAdvDiff_bnd", [], "Test CVODE", True))
 
         if "+cuda" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    (
-                        "cvode/cvAdvDiff/cuda/cvAdvDiff_kry_cuda",
-                        [],
-                        "Test CVODE with CUDA",
-                        True,
-                    )
+                    ("cvode/cvAdvDiff/cuda/cvAdvDiff_kry_cuda", [], "Test CVODE with CUDA", True)
                 )
 
         if "+hip" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    (
-                        "cvode/cvAdvDiff/hip/cvAdvDiff_kry_hip",
-                        [],
-                        "Test CVODE with HIP",
-                        True,
-                    )
+                    ("cvode/cvAdvDiff/hip/cvAdvDiff_kry_hip", [], "Test CVODE with HIP", True)
                 )
 
         if "+sycl" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    (
-                        "cvode/cvAdvDiff/sycl/cvAdvDiff_kry_sycl",
-                        [],
-                        "Test CVODE with SYCL",
-                        True,
-                    )
+                    ("cvode/cvAdvDiff/sycl/cvAdvDiff_kry_sycl", [], "Test CVODE with SYCL", True)
                 )
 
         return smoke_tests
@@ -621,18 +604,15 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         )
         if "+cuda" in self.spec:
             self.run_test(
-                "examples/cvode/cvAdvDiff/cuda/cvAdvDiff_kry_cuda",
-                work_dir=self._extra_tests_path,
+                "examples/cvode/cvAdvDiff/cuda/cvAdvDiff_kry_cuda", work_dir=self._extra_tests_path
             )
         if "+rocm" in self.spec:
             self.run_test(
-                "examples/cvode/cvAdvDiff/hip/cvAdvDiff_kry_hip",
-                work_dir=self._extra_tests_path,
+                "examples/cvode/cvAdvDiff/hip/cvAdvDiff_kry_hip", work_dir=self._extra_tests_path
             )
         if "+sycl" in self.spec:
             self.run_test(
-                "examples/cvode/cvAdvDiff/sycl/cvAdvDiff_kry_sycl",
-                work_dir=self._extra_tests_path,
+                "examples/cvode/cvAdvDiff/sycl/cvAdvDiff_kry_sycl", work_dir=self._extra_tests_path
             )
         return
 
