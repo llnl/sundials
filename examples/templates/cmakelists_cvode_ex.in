@@ -1,0 +1,180 @@
+# -----------------------------------------------------------------
+# CMakeLists.txt for installed CVODE examples.
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+project(cvode_examples @CVODE_LANGUAGES_STRING@)
+
+include(CTest)
+
+set(SUNDIALS_DIR
+    "@CMAKE_INSTALL_PREFIX@/@SUNDIALS_INSTALL_CMAKEDIR@"
+    CACHE PATH "Location of SUNDIALSConfig.cmake")
+find_package(SUNDIALS REQUIRED HINTS "${SUNDIALS_DIR}" NO_DEFAULT_PATH)
+
+set(SUNDIALS_ENABLE_EXAMPLES_INSTALL OFF)
+set(SUNDIALS_ENABLE_C_EXAMPLES @SUNDIALS_ENABLE_C_EXAMPLES@)
+set(SUNDIALS_ENABLE_CXX_EXAMPLES @SUNDIALS_ENABLE_CXX_EXAMPLES@)
+set(SUNDIALS_ENABLE_FORTRAN_EXAMPLES @SUNDIALS_ENABLE_FORTRAN_EXAMPLES@)
+set(SUNDIALS_ENABLE_CUDA_EXAMPLES @SUNDIALS_ENABLE_CUDA_EXAMPLES@)
+set(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS @SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS@)
+set(SUNDIALS_ENABLE_CUDA @SUNDIALS_ENABLE_CUDA@)
+set(SUNDIALS_ENABLE_HIP @SUNDIALS_ENABLE_HIP@)
+set(SUNDIALS_ENABLE_MPI @SUNDIALS_ENABLE_MPI@)
+set(SUNDIALS_ENABLE_HYPRE @SUNDIALS_ENABLE_HYPRE@)
+set(SUNDIALS_ENABLE_PETSC @SUNDIALS_ENABLE_PETSC@)
+set(SUNDIALS_ENABLE_OPENMP @SUNDIALS_ENABLE_OPENMP@)
+set(SUNDIALS_ENABLE_OPENMP_DEVICE @SUNDIALS_ENABLE_OPENMP_DEVICE@)
+set(OPENMP_SUPPORTS_DEVICE_OFFLOADING @OPENMP_SUPPORTS_DEVICE_OFFLOADING@)
+set(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR @SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR@)
+set(SUNDIALS_ENABLE_NVECTOR_SYCL @SUNDIALS_ENABLE_NVECTOR_SYCL@)
+set(SUNDIALS_ENABLE_GINKGO @SUNDIALS_ENABLE_GINKGO@)
+set(SUNDIALS_ENABLE_MAGMA @SUNDIALS_ENABLE_MAGMA@)
+set(SUNDIALS_ENABLE_RAJA @SUNDIALS_ENABLE_RAJA@)
+set(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE @SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE@)
+set(SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE @SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE@)
+set(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND @SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND@)
+set(SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE @SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE@)
+set(SUNDIALS_ENABLE_SUNLINSOL_KLU @SUNDIALS_ENABLE_SUNLINSOL_KLU@)
+set(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT @SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT@)
+set(SUNDIALS_ENABLE_SUPERLUDIST @SUNDIALS_ENABLE_SUPERLUDIST@)
+set(SUNDIALS_INDEX_SIZE @SUNDIALS_INDEX_SIZE@)
+set(SUNDIALS_GINKGO_BACKENDS "@SUNDIALS_GINKGO_BACKENDS@")
+set(KOKKOS_EXAMPLES_BACKENDS "@KOKKOS_EXAMPLES_BACKENDS@")
+set(SUNDIALS_MAGMA_BACKENDS "@SUNDIALS_MAGMA_BACKENDS@")
+set(SUNDIALS_RAJA_BACKENDS "@SUNDIALS_RAJA_BACKENDS@")
+set(RAJA_BACKENDS "@RAJA_BACKENDS@")
+set(EXE_EXTRA_LINK_LIBS "@SUNDIALS_MATH_LIBRARY@")
+set(SUPERLUMT_LIBRARIES "")
+
+if(SUNDIALS_ENABLE_MPI)
+  find_package(MPI REQUIRED)
+endif()
+if(SUNDIALS_ENABLE_OPENMP)
+  find_package(OpenMP REQUIRED)
+endif()
+if(SUNDIALS_ENABLE_HIP)
+  find_package(HIP REQUIRED)
+endif()
+
+function(sundials_add_executable name)
+  add_executable(${name} ${ARGN})
+endfunction()
+
+function(sundials_add_test name executable)
+  set(options NODIFF)
+  set(oneValueArgs MPI_NPROCS FLOAT_PRECISION INTEGER_PRECISION ANSWER_DIR
+                   ANSWER_FILE EXAMPLE_TYPE)
+  set(multiValueArgs TEST_ARGS EXTRA_ARGS LABELS)
+  cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}"
+                        ${ARGN})
+  if(arg_MPI_NPROCS)
+    add_test(NAME ${name}
+             COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG}
+                     ${arg_MPI_NPROCS} $<TARGET_FILE:${executable}>
+                     ${arg_TEST_ARGS} ${arg_EXTRA_ARGS})
+  else()
+    add_test(NAME ${name} COMMAND $<TARGET_FILE:${executable}>
+             ${arg_TEST_ARGS} ${arg_EXTRA_ARGS})
+  endif()
+  if(arg_LABELS)
+    set_tests_properties(${name} PROPERTIES LABELS "${arg_LABELS}")
+  endif()
+endfunction()
+
+# The installed package exports namespaced targets. The in-tree example files
+# use the historical unnamespaced target names, so provide local aliases here.
+set(_cvode_targets
+    cvode cvode_fused_stubs cvode_fused_cuda cvode_fused_hip
+    fcvode_mod fnvecserial_mod fnvecparallel_mod
+    nvecserial nvecparallel nvecmpimanyvector nvecopenmp nvecopenmpdev
+    nvecparhyp nvecpetsc nveccuda nvechip nvecsycl nvecraja nveckokkos
+    sunlinsollapackband sunlinsollapackdense sunlinsolklu
+    sunlinsolsuperlumt sunlinsolsuperludist sunlinsolcusolversp
+    sunnonlinsolpetscsnes sunmatrixkokkosdense sunlinsolkokkosdense
+    sunlinsolonemkldense sunlinsolmagmadense fsunlinsolklu_mod
+    fsunlinsollapackdense_mod)
+foreach(_target IN LISTS _cvode_targets)
+  if(TARGET SUNDIALS::${_target})
+    add_library(sundials_${_target} ALIAS SUNDIALS::${_target})
+  endif()
+endforeach()
+
+macro(sundials_add_examples_ginkgo examples_var)
+  set(options UNIT_TEST)
+  set(oneValueArgs)
+  set(multiValueArgs TARGETS BACKENDS)
+  cmake_parse_arguments(ginkgo "${options}" "${oneValueArgs}"
+                        "${multiValueArgs}" ${ARGN})
+  foreach(example_tuple ${${examples_var}})
+    list(GET example_tuple 0 example)
+    list(GET example_tuple 1 example_args)
+    list(GET example_tuple 2 example_type)
+    foreach(backend ${ginkgo_BACKENDS})
+      if(NOT (SUNDIALS_GINKGO_BACKENDS MATCHES "${backend}"))
+        continue()
+      endif()
+      if(backend MATCHES "CUDA")
+        set(vector nveccuda)
+        set_source_files_properties(${example} PROPERTIES LANGUAGE CUDA)
+      elseif(backend MATCHES "HIP")
+        set(vector nvechip)
+      elseif(backend MATCHES "SYCL")
+        set(vector nvecsycl)
+      elseif(backend MATCHES "OMP")
+        set(vector nvecopenmp)
+      else()
+        set(vector nvecserial)
+      endif()
+      get_filename_component(example_target ${example} NAME_WE)
+      set(example_target "${example_target}.${backend}")
+      add_executable(${example_target} ${example})
+      target_compile_definitions(${example_target} PRIVATE USE_${backend})
+      target_include_directories(${example_target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+      target_link_libraries(${example_target} PRIVATE ${ginkgo_TARGETS}
+                            sundials_${vector} Ginkgo::ginkgo)
+      if(example_args STREQUAL "")
+        set(test_name ${example_target})
+      else()
+        string(REPLACE " " "_" test_name "${example_target}_${example_args}")
+      endif()
+      sundials_add_test(${test_name} ${example_target} TEST_ARGS ${example_args})
+    endforeach()
+  endforeach()
+endmacro()
+
+set(CVODE_C_LIBS sundials_cvode)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
+  list(APPEND CVODE_C_LIBS sundials_cvode_fused_stubs)
+endif()
+
+add_subdirectory(cvAdvDiff)
+add_subdirectory(cvAnalytic)
+add_subdirectory(cvAnalyticSys)
+add_subdirectory(cvBrusselator)
+add_subdirectory(cvDiag)
+add_subdirectory(cvDirectDemo)
+add_subdirectory(cvDisc)
+add_subdirectory(cvDiurnal)
+add_subdirectory(cvHeat2D)
+add_subdirectory(cvKPR)
+add_subdirectory(cvKrylovDemo)
+add_subdirectory(cvParticle)
+add_subdirectory(cvPendulum)
+add_subdirectory(cvPetsc)
+add_subdirectory(cvRoberts)
+add_subdirectory(cvRocket)
+add_subdirectory(cvVdp)

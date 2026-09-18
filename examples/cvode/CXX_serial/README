@@ -1,3 +1,0 @@
-List of serial CVODE C++ examples
-
-  cv_heat2D : 2-D heat equation (PCG with Jacobi preconditioner)
