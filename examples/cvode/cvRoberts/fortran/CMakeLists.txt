@@ -13,11 +13,17 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 set(example cv_roberts_dns_f2003)
-set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
+set(CMAKE_Fortran_MODULE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
 sundials_add_executable(${example} ${example}.f90)
 set_target_properties(${example} PROPERTIES FOLDER "Examples")
-sundials_add_test(${example} ${example} ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR} ANSWER_FILE ${example}.out EXAMPLE_TYPE develop)
-target_link_libraries(${example} sundials_cvode sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS})
+sundials_add_test(
+  ${example} ${example}
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE ${example}.out
+  EXAMPLE_TYPE develop)
+target_link_libraries(${example} sundials_cvode sundials_fcvode_mod
+                      ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(${example} sundials_cvode_fused_stubs)
 endif()
@@ -27,13 +33,17 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 endif()
 
 set(example cv_roberts_dns_constraints_f2003)
-set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
+set(CMAKE_Fortran_MODULE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
 sundials_add_executable(${example} ${example}.f90)
 set_target_properties(${example} PROPERTIES FOLDER "Examples")
-sundials_add_test(${example} ${example} ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                  ANSWER_FILE ${example}.out EXAMPLE_TYPE develop)
+sundials_add_test(
+  ${example} ${example}
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE ${example}.out
+  EXAMPLE_TYPE develop)
 target_link_libraries(${example} sundials_cvode sundials_fcvode_mod
-                       ${EXE_EXTRA_LINK_LIBS})
+                      ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(${example} sundials_cvode_fused_stubs)
 endif()
