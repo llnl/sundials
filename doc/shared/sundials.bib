@@ -30,7 +30,7 @@
 %
 @techreport{arkode_ug,
 author      = {Daniel R. Reynolds and David J. Gardner and Carol S. Woodward and Rujeko Chinomona and Cody J. Balos},
-title       = {{User Documentation for ARKODE v6.8.0}},
+title       = {{User Documentation for ARKODE v6.9.0}},
 institution = {LLNL},
 number      = {LLNL-SM-668082},
 year        = 2026
@@ -40,7 +40,7 @@ year        = 2026
 %
 @techreport{arkode_ex,
 author      = {Daniel R. Reynolds},
-title       = {{Example Programs for ARKODE v6.8.0}},
+title       = {{Example Programs for ARKODE v6.9.0}},
 institution = {Southern Methodist University},
 year        = 2026
 }
@@ -49,7 +49,7 @@ year        = 2026
 %
 @techreport{cvode_ug,
 author      = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-title       = {{User Documentation for CVODE v7.8.0}},
+title       = {{User Documentation for CVODE v7.9.0}},
 institution = {LLNL},
 number      = {UCRL-SM-208108},
 year        = 2026
@@ -59,7 +59,7 @@ year        = 2026
 %
 @techreport{cvode_ex,
 author      = {Alan C. Hindmarsh and Radu Serban},
-title       = {{Example Programs for CVODE v7.8.0}},
+title       = {{Example Programs for CVODE v7.9.0}},
 institution = {LLNL},
 note        = {UCRL-SM-208110},
 year        = 2026
@@ -69,7 +69,7 @@ year        = 2026
 %
 @techreport{cvodes_ug,
 author      = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-title       = {{User Documentation for CVODES v7.8.0}},
+title       = {{User Documentation for CVODES v7.9.0}},
 institution = {LLNL},
 note        = {UCRL-SM-208111},
 year        = 2026
@@ -79,7 +79,7 @@ year        = 2026
 %
 @techreport{cvodes_ex,
 author      = {Radu Serban and Alan C. Hindmarsh},
-title       = {{Example Programs for CVODES v7.8.0}},
+title       = {{Example Programs for CVODES v7.9.0}},
 institution = {LLNL},
 number      = {UCRL-SM-208115},
 year        = 2026
@@ -89,7 +89,7 @@ year        = 2026
 %
 @techreport{ida_ug,
 author      = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-title       = {{User Documentation for IDA v7.8.0}},
+title       = {{User Documentation for IDA v7.9.0}},
 institution = {LLNL},
 number      = {UCRL-SM-208112},
 year        = 2026
@@ -99,7 +99,7 @@ year        = 2026
 %
 @techreport{ida_ex,
 author      = {Alan C. Hindmarsh and Radu Serban and Aaron Collier},
-title       = {{Example Programs for IDA v7.8.0}},
+title       = {{Example Programs for IDA v7.9.0}},
 institution = {LLNL},
 number      = {UCRL-SM-208113},
 year        = 2026
@@ -109,7 +109,7 @@ year        = 2026
 %
 @techreport{idas_ug,
 author      = {Radu Serban and Cosmin Petra and Alan C. Hindmarsh and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-title       = {{User Documentation for IDAS v6.8.0}},
+title       = {{User Documentation for IDAS v6.9.0}},
 institution = {LLNL},
 number      = {UCRL-SM-234051},
 year        = 2026
@@ -119,7 +119,7 @@ year        = 2026
 %
 @techreport{idas_ex,
 author      = {Radu Serban and Alan C. Hindmarsh},
-title       = {{Example Programs for IDAS v6.8.0}},
+title       = {{Example Programs for IDAS v6.9.0}},
 institution = {LLNL},
 number      = {LLNL-TR-437091},
 year        = 2026
@@ -129,7 +129,7 @@ year        = 2026
 %
 @techreport{kinsol_ug,
 author      = {Alan C. Hindmarsh and Radu Serban and Cody J. Balos and David J. Gardner and Daniel R. Reynolds and Carol S. Woodward},
-title       = {{User Documentation for KINSOL v7.8.0}},
+title       = {{User Documentation for KINSOL v7.9.0}},
 institution = {LLNL},
 number      = {UCRL-SM-208116},
 year        = 2026
@@ -139,7 +139,7 @@ year        = 2026
 %
 @techreport{kinsol_ex,
 author      = {Aaron M. Collier and Radu Serban},
-title       = {{Example Programs for KINSOL v7.8.0}},
+title       = {{Example Programs for KINSOL v7.9.0}},
 institution = {LLNL},
 number      = {UCRL-SM-208114},
 year        = 2026
@@ -1139,6 +1139,7 @@ journal = {AIAA Paper 97-1850},
 volume  = {AIAA, New York},
 year    = 1997
 }
+
 @article{GJLPS:98,
 author  = {P. E. Gill and L. O. Jay and M. W. Leonard and L. R. Petzold and V. Sharma},
 title   = {{An SQP Method for the Optimal Control of Large-Scale Dynamical Systems}},
@@ -1147,8 +1148,6 @@ volume  = {20},
 pages   = {197-213},
 year    = 2000
 }
-
-
 
 @article{HMM:98,
 author  = {M. Hanke and E. I. Macana and R. M{\"a}rz},
@@ -1159,9 +1158,15 @@ pages   = {1326--1346},
 year    = 1998
 }
 
+@article{K:01,
+author  = {W. Kutta},
+title   = {{Beitrag zur n\"{a}herungsweisen Integration totaler Differentialgleichungen}},
+journal = {Zeitschrift f\"{u}r Mathematik und Physik},
+volume  = {46},
+pages   = {435--453},
+year    = 1901
+}
 
-%
-%
 @book{Kel:68,
 author    = {H. B. Keller},
 title     = {{Numerical methods for two-point boundary-value problems}},
@@ -1169,6 +1174,7 @@ publisher = {Blaisdel},
 address   = {Waltham, Ma},
 year      = 1968
 }
+
 @article{KBYPT:97,
 author  = {D. Knapp and V. Barocas and K. Yoo and L. R. Petzold and R. Tranquillo},
 title   = {{Rheology of Reconstituted Type I Collagen Gel in Confined Compression}},
@@ -2119,6 +2125,15 @@ doi     = {10.1109/MCSE.2019.2924204}
   year      = {1962},
   publisher = {American Mathematical Society},
   doi       = {10.1090/s0025-5718-1962-0150954-0}
+}
+
+@article{Reynolds:26,
+	title = {Implicit-explicit and split-explicit super-time-stepping methods},
+	doi = {10.48550/ARXIV.2608.02823},
+	author = {Reynolds, Daniel R. and Amihere, Sylvia and Aggul, Mustafa},
+	journal = {arXiv preprint arXiv:2608.02823},
+	month = aug,
+	year = {2026},
 }
 
 @article{Roberts:22,

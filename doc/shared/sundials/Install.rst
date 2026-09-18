@@ -511,6 +511,8 @@ Compiler Diagnostics
 
    Default: ``ON``
 
+   .. versionadded:: 7.9.0
+
 .. _Installation.Options.InstallLocation:
 
 Install Location

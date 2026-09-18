@@ -44,7 +44,7 @@ set(ARKODE_examples
     "ark_pendulum.cpp\;\;develop\;real")
 
 # Header files to install
-set(ARKODE_headers)
+set(ARKODE_headers "ark_adr1d_extsts.hpp")
 
 if(SUNDIALS_ENABLE_CVODE)
   list(APPEND ARKODE_examples "ark_advection_diffusion_reaction.cpp\;\;develop\;real")

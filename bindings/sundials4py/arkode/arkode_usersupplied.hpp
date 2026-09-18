@@ -88,8 +88,10 @@ struct arkode_user_supplied_fn_table
   nb::object lsrkstep_domeig;
 
   // mristep-specific user-supplied function pointers
+  nb::object mristep_fd;
   nb::object mristep_fse;
   nb::object mristep_fsi;
+  nb::object mristep_domeig;
   nb::object mristep_preinnerfn;
   nb::object mristep_postinnerfn;
 };
@@ -474,6 +476,14 @@ inline int lsrkstep_domeig_wrapper(sunrealtype t, N_Vector y, N_Vector fn,
 ///////////////////////////////////////////////////////////////////////////////
 // MRIStep user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
+
+inline int mristep_fd_wrapper(sunrealtype t, N_Vector y, N_Vector ydot,
+                              void* user_data)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
+    1>(&arkode_user_supplied_fn_table::mristep_fd, t, y, ydot, user_data);
+}
 
 inline int mristep_fse_wrapper(sunrealtype t, N_Vector y, N_Vector ydot,
                                void* user_data)

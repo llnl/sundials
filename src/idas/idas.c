@@ -7609,8 +7609,7 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
         else { action = RAISE; }
 
         SUNLogDebug(IDA_LOGGER, "order-selection-raise",
-                    "terr_k = " SUN_FORMAT_G ", terr_kp1 = " SUN_FORMAT_G,
-                    terr_k, terr_kp1);
+                    "terr_kp1 = " SUN_FORMAT_G, terr_kp1);
       }
       else
       {
@@ -7620,9 +7619,7 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
         else { action = RAISE; }
 
         SUNLogDebug(IDA_LOGGER, "order-selection-rasie-or-lower",
-                    "terr_km1 = " SUN_FORMAT_G ", terr_k = " SUN_FORMAT_G
-                    ", terr_kp1 = " SUN_FORMAT_G,
-                    terr_km1, terr_k, terr_kp1);
+                    "terr_kp1 = " SUN_FORMAT_G, terr_kp1);
       }
     }
 

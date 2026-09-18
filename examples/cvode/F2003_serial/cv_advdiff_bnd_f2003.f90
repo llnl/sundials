@@ -330,6 +330,7 @@ program main
   print *, ' ------------------------------'
 
   unorm = maxval(abs(u))
+  lnst = 0
   print '(2x,f6.2,2x,es14.6,2x,i5)', tcur, unorm, lnst
 
   tout = dtout

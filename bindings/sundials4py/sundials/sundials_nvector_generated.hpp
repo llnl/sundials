@@ -77,23 +77,6 @@ m.def(
   },
   nb::arg("w"));
 
-m.def(
-  "N_VSetDeviceArrayPointer",
-  [](sundials4py::Array1d d_vdata_1d, N_Vector v)
-  {
-    auto N_VSetDeviceArrayPointer_adapt_arr_ptr_to_std_vector =
-      [](sundials4py::Array1d d_vdata_1d, N_Vector v)
-    {
-      sunrealtype* d_vdata_1d_ptr = d_vdata_1d.size() == 0 ? nullptr
-                                                           : d_vdata_1d.data();
-
-      N_VSetDeviceArrayPointer(d_vdata_1d_ptr, v);
-    };
-
-    N_VSetDeviceArrayPointer_adapt_arr_ptr_to_std_vector(d_vdata_1d, v);
-  },
-  nb::arg("d_vdata_1d"), nb::arg("v"));
-
 m.def("N_VGetCommunicator", N_VGetCommunicator, nb::arg("v"));
 
 m.def("N_VGetLength", N_VGetLength, nb::arg("v"));

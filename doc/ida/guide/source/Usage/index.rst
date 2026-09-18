@@ -1092,7 +1092,7 @@ Main solver optional input functions
 
    **Notes:**
       By default, IDA estimates the initial step as the solution of
-      :math:`\|h \dot{y} \|_{{\scriptsize WRMS}} = 1/2`, with an added restriction
+      :math:`\|h \dot{y} \|_{\text{WRMS}} = 1/2`, with an added restriction
       that :math:`|h| \leq .001|t_{\text{out}} - t_0|`.
 
       This routine will be called by :c:func:`IDASetOptions`
@@ -1625,21 +1625,25 @@ global data in the program.
 
 
 Also, as described in :numref:`IDA.Mathematics.ivp_sol`, the IDALS interface
-requires that iterative linear solvers stop when the norm of the preconditioned
-residual satisfies
+targets a preconditioned residual satisfying
 
 .. math::
-   \|r\| \le \frac{\epsilon_L \epsilon}{10}
+   \|\tilde{r}\|_{2} \le tol.
 
-where :math:`\epsilon` is the nonlinear solver tolerance, and the default
-:math:`\epsilon_L = 0.05`; this value may be modified by the user through the
-:c:func:`IDASetEpsLin` function.
+where :math:`\tilde{r}` is the scaled linear residual. The tolerance is
+:math:`tol = C \epsilon_L \epsilon_N` where :math:`\epsilon_L` is the linear
+tolerance factor (the default is 0.05 and may be modified by calling
+:c:func:`IDASetEpsLin`), :math:`\epsilon_N` is the nonlinear solver tolerance,
+and :math:`C = \sqrt{N}` where :math:`N` is the vector length (but this factor
+may be modified with :c:func:`IDASetLSNormFactor` for other norms). If the
+solver does not support scaling, the tolerance is modified as described in
+:numref:`SUNLinSol.IDA.Iterative.Tolerance`.
 
 .. c:function:: int IDASetEpsLin(void * ida_mem, sunrealtype eplifac)
 
-   The function ``IDASetEpsLin`` specifies the factor by which the Krylov linear
-   solver's convergence test constant is reduced from the nonlinear iteration
-   test constant.
+   The function ``IDASetEpsLin`` specifies the factor :math:`\epsilon_L` by
+   which the Krylov linear solver's convergence test constant is reduced from
+   the nonlinear iteration test constant.
 
    **Arguments:**
       * ``ida_mem`` -- pointer to the IDA solver object.
@@ -1669,7 +1673,8 @@ where :math:`\epsilon` is the nonlinear solver tolerance, and the default
    The function ``IDASetLSNormFactor`` specifies the factor to use when
    converting from the integrator tolerance (WRMS norm) to the linear solver
    tolerance (L2 norm) for Newton linear system solves e.g.,
-   ``tol_L2 = fac * tol_WRMS``.
+   ``tol_L2 = fac * tol_WRMS``.  See :numref:`SUNLinSol.IDA.Iterative.Tolerance`
+   for how this tolerance is used in the linear solver convergence test.
 
    **Arguments:**
       * ``ida_mem`` -- pointer to the IDA solver object.
@@ -1677,10 +1682,10 @@ where :math:`\epsilon` is the nonlinear solver tolerance, and the default
 
         * If ``nrmfac > 0``, the provided value is used.
         * If ``nrmfac = 0`` then the conversion factor is computed using the
-          vector length i.e., ``nrmfac = N_VGetLength(y)`` (*default*).
+          vector length i.e., ``nrmfac = sqrt(N_VGetLength(y))`` (*default*).
         * If ``nrmfac < 0`` then the conversion factor is computed using the
-          vector dot product ``nrmfac = N_VDotProd(v,v)`` where all the entries of
-          ``v`` are one.
+          vector dot product ``nrmfac = sqrt(N_VDotProd(v,v))`` where all the
+          entries of ``v`` are one.
 
    **Return value:**
       * ``IDA_SUCCESS`` -- The optional value has been successfully set.
@@ -1766,8 +1771,9 @@ nonlinear solver.
 
 .. c:function:: int IDASetNonlinConvCoef(void * ida_mem, sunrealtype nlscoef)
 
-   The function ``IDASetNonlinConvCoef`` specifies the safety factor in the
-   nonlinear convergence test; see :eq:`IDA_DAE_nls_test`.
+   The function ``IDASetNonlinConvCoef`` specifies the safety factor
+   :math:`\epsilon_N` in the nonlinear convergence test; see
+   :eq:`IDA_DAE_nls_test`.
 
    **Arguments:**
       * ``ida_mem`` -- pointer to the IDA solver object.

@@ -34,6 +34,46 @@ void bind_arkode_arkstep(nb::module_& m)
 {
 #include "arkode_arkstep_generated.hpp"
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Manual attributes to capture static const int declarations that nanobind
+  // does not catch
+  /////////////////////////////////////////////////////////////////////////////
+
+  m.attr("ARKSTEP_DEFAULT_ERK_1")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_1);
+  m.attr("ARKSTEP_DEFAULT_ERK_2")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_2);
+  m.attr("ARKSTEP_DEFAULT_ERK_3")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_3);
+  m.attr("ARKSTEP_DEFAULT_ERK_4")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_4);
+  m.attr("ARKSTEP_DEFAULT_ERK_5")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_5);
+  m.attr("ARKSTEP_DEFAULT_ERK_6")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_6);
+  m.attr("ARKSTEP_DEFAULT_ERK_7")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_7);
+  m.attr("ARKSTEP_DEFAULT_ERK_8")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_8);
+  m.attr("ARKSTEP_DEFAULT_ERK_9")  = static_cast<int>(ARKSTEP_DEFAULT_ERK_9);
+  m.attr("ARKSTEP_DEFAULT_DIRK_1") = static_cast<int>(ARKSTEP_DEFAULT_DIRK_1);
+  m.attr("ARKSTEP_DEFAULT_DIRK_2") = static_cast<int>(ARKSTEP_DEFAULT_DIRK_2);
+  m.attr("ARKSTEP_DEFAULT_DIRK_3") = static_cast<int>(ARKSTEP_DEFAULT_DIRK_3);
+  m.attr("ARKSTEP_DEFAULT_DIRK_4") = static_cast<int>(ARKSTEP_DEFAULT_DIRK_4);
+  m.attr("ARKSTEP_DEFAULT_DIRK_5") = static_cast<int>(ARKSTEP_DEFAULT_DIRK_5);
+  m.attr("ARKSTEP_DEFAULT_ARK_ETABLE_2") =
+    static_cast<int>(ARKSTEP_DEFAULT_ARK_ETABLE_2);
+  m.attr("ARKSTEP_DEFAULT_ARK_ETABLE_3") =
+    static_cast<int>(ARKSTEP_DEFAULT_ARK_ETABLE_3);
+  m.attr("ARKSTEP_DEFAULT_ARK_ETABLE_4") =
+    static_cast<int>(ARKSTEP_DEFAULT_ARK_ETABLE_4);
+  m.attr("ARKSTEP_DEFAULT_ARK_ETABLE_5") =
+    static_cast<int>(ARKSTEP_DEFAULT_ARK_ETABLE_5);
+  m.attr("ARKSTEP_DEFAULT_ARK_ITABLE_2") =
+    static_cast<int>(ARKSTEP_DEFAULT_ARK_ITABLE_2);
+  m.attr("ARKSTEP_DEFAULT_ARK_ITABLE_3") =
+    static_cast<int>(ARKSTEP_DEFAULT_ARK_ITABLE_3);
+  m.attr("ARKSTEP_DEFAULT_ARK_ITABLE_4") =
+    static_cast<int>(ARKSTEP_DEFAULT_ARK_ITABLE_4);
+  m.attr("ARKSTEP_DEFAULT_ARK_ITABLE_5") =
+    static_cast<int>(ARKSTEP_DEFAULT_ARK_ITABLE_5);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // ARKStep user-supplied function setters
+  /////////////////////////////////////////////////////////////////////////////
+
   m.def(
     "ARKStepCreate",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> fe,

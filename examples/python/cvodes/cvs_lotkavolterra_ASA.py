@@ -29,7 +29,7 @@ class LotkaVolterraODE:
 
     def set_init_cond(self, yvec):
         # Set initial condition u0 = [1.0, 1.0]
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         y[0] = 1.0
         y[1] = 1.0
         return 0
@@ -37,8 +37,8 @@ class LotkaVolterraODE:
     def f(self, t, yvec, ydotvec, user_data):
         # Lotka-Volterra ODE right-hand side
         p = self.p
-        y = N_VGetArrayPointer(yvec)
-        ydot = N_VGetArrayPointer(ydotvec)
+        y = N_VGetNumpyArray(yvec)
+        ydot = N_VGetNumpyArray(ydotvec)
         ydot[0] = p[0] * y[0] - p[1] * y[0] * y[1]
         ydot[1] = -p[2] * y[1] + p[3] * y[0] * y[1]
         return 0
@@ -46,18 +46,18 @@ class LotkaVolterraODE:
     def vjp(self, vvec, Jvvec, t, yvec):
         # Jacobian-vector product v^T (df/du)
         p = self.p
-        v = N_VGetArrayPointer(vvec)
-        Jv = N_VGetArrayPointer(Jvvec)
-        y = N_VGetArrayPointer(yvec)
+        v = N_VGetNumpyArray(vvec)
+        Jv = N_VGetNumpyArray(Jvvec)
+        y = N_VGetNumpyArray(yvec)
         Jv[0] = (p[0] - p[1] * y[1]) * v[0] + p[3] * y[1] * v[1]
         Jv[1] = -p[1] * y[0] * v[0] + (-p[2] + p[3] * y[0]) * v[1]
         return 0
 
     def parameter_vjp(self, vvec, Jvvec, t, yvec):
         # Parameter Jacobian-vector product v^T (df/dp)
-        v = N_VGetArrayPointer(vvec)
-        Jv = N_VGetArrayPointer(Jvvec)
-        y = N_VGetArrayPointer(yvec)
+        v = N_VGetNumpyArray(vvec)
+        Jv = N_VGetNumpyArray(Jvvec)
+        y = N_VGetNumpyArray(yvec)
         # Derivatives w.r.t. each parameter
         Jv[0] = y[0] * v[0]
         Jv[1] = -y[0] * y[1] * v[0]
@@ -67,14 +67,14 @@ class LotkaVolterraODE:
 
     def dgdu(self, yvec):
         # Gradient of the cost function w.r.t. u
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetNumpyArray(yvec)
         # g(u) = 0.5 * ||1 - u||^2, so grad = u - 1
         return np.array([-1.0 + y[0], -1.0 + y[1]], dtype=sunrealtype)
 
     def adjoint_rhs(self, t, yvec, lvec, ldotvec, user_datas):
         # Adjoint ODE right-hand side: -mu^T (df/du)
         self.vjp(lvec, ldotvec, t, yvec)
-        ldot = N_VGetArrayPointer(ldotvec)
+        ldot = N_VGetNumpyArray(ldotvec)
         ldot *= -1.0
         return 0
 
@@ -138,7 +138,7 @@ def main():
     print(f"    reltol = {reltol}, abstol = {abstol}\n")
     print("        t           x           y")
     print("   ---------------------------------")
-    yarr = N_VGetArrayPointer(y)
+    yarr = N_VGetNumpyArray(y)
     print(f"  {T0:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}")
 
     # Forward integration
@@ -147,21 +147,21 @@ def main():
     status, tret, ncheck = CVodeF(cvode.get(), tout, y, CV_NORMAL)
     assert status == CV_SUCCESS
 
-    yarr = N_VGetArrayPointer(y)
+    yarr = N_VGetNumpyArray(y)
     print(f"  {tout:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}")
     print("   ---------------------------------")
 
     # Adjoint terminal condition
     uB = N_VNew_Serial(NEQ, sunctx)
     assert uB is not None
-    arr_uB = N_VGetArrayPointer(uB)
+    arr_uB = N_VGetNumpyArray(uB)
     arr_uB[:] = ode.dgdu(y)
     qB = N_VNew_Serial(NP, sunctx)
     assert qB is not None
     N_VConst(0.0, qB)
     print("Adjoint terminal condition:")
     print(arr_uB)
-    print(N_VGetArrayPointer(qB))
+    print(N_VGetNumpyArray(qB))
 
     # Create the CVODES object for the backward problem
     status, which = CVodeCreateB(cvode.get(), CV_BDF)
@@ -212,10 +212,10 @@ def main():
     assert status == CV_SUCCESS
 
     # dg/dp = -qB
-    arr_qB = N_VGetArrayPointer(qB)
+    arr_qB = N_VGetNumpyArray(qB)
     arr_qB *= -1.0
     print(f"Adjoint Solution at t = {t}:")
-    print(N_VGetArrayPointer(uB))
+    print(N_VGetNumpyArray(uB))
     print(arr_qB)
 
 

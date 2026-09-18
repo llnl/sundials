@@ -4,28 +4,69 @@ description: Frees up disk space on GitHub Actions Ubuntu VMs
 runs:
   using: composite
   steps:
-    - id: show-space
-      run: df -h
+    - id: disk-before
+      run: |
+        echo "=== Disk space before cleanup ==="
+        df -h /
+        echo "DISK_BEFORE=$(df / --output=avail | tail -1 | tr -d ' ')" >> "$GITHUB_ENV"
       shell: bash
+
     - id: free-up
       run: |
-        sudo rm -rf /usr/local/lib/android || true
-        sudo rm -rf /usr/share/dotnet || true
-        sudo rm -rf /opt/ghc || true
-        sudo rm -rf /usr/local/.ghcup || true
-        sudo apt-get remove -y '^aspnetcore-.*' || echo "::warning::The command [sudo apt-get remove -y '^aspnetcore-.*'] failed to complete successfully. Proceeding..."
-        sudo apt-get remove -y '^dotnet-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^dotnet-.*' --fix-missing] failed to complete successfully. Proceeding..."
-        sudo apt-get remove -y '^llvm-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^llvm-.*' --fix-missing] failed to complete successfully. Proceeding..."
-        sudo apt-get remove -y 'php.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y 'php.*' --fix-missing] failed to complete successfully. Proceeding..."
-        sudo apt-get remove -y '^mongodb-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^mongodb-.*' --fix-missing] failed to complete successfully. Proceeding..."
-        sudo apt-get remove -y '^mysql-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^mysql-.*' --fix-missing] failed to complete successfully. Proceeding..."
-        sudo apt-get remove -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing || echo "::warning::The command [sudo apt-get remove -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing] failed to complete successfully. Proceeding..."
-        sudo apt-get remove -y google-cloud-sdk --fix-missing || echo "::debug::The command [sudo apt-get remove -y google-cloud-sdk --fix-missing] failed to complete successfully. Proceeding..."
-        sudo apt-get remove -y google-cloud-cli --fix-missing || echo "::debug::The command [sudo apt-get remove -y google-cloud-cli --fix-missing] failed to complete successfully. Proceeding..."
-        sudo apt-get autoremove -y || echo "::warning::The command [sudo apt-get autoremove -y] failed to complete successfully. Proceeding..."
-        sudo apt-get clean || echo "::warning::The command [sudo apt-get clean] failed to complete successfully. Proceeding..."
-        sudo docker image prune --all --force || true
+        # Remove large directories in parallel using rm -rf directly
+        # (much faster than apt-get remove, which runs scripts and resolves deps)
+
+        # Android SDK
+        sudo rm -rf /usr/local/lib/android &
+        # .NET SDK and runtimes
+        sudo rm -rf /usr/share/dotnet &
+        # GHC / Haskell
+        sudo rm -rf /opt/ghc &
+        sudo rm -rf /usr/local/.ghcup &
+        # Swift
+        sudo rm -rf /usr/share/swift &
+        # GraalVM
+        sudo rm -rf /usr/local/graalvm &
+        # Boost
+        sudo rm -rf /usr/local/share/boost &
+        # PowerShell
+        sudo rm -rf /usr/local/share/powershell &
+        # Chromium
+        sudo rm -rf /usr/local/share/chromium &
+        # Miniconda
+        sudo rm -rf /usr/share/miniconda &
+        # Heroku
+        sudo rm -rf /usr/local/lib/heroku &
+        # Hosted tool cache - Python, Node, Go, CodeQL, etc.
+        # NOTE: remove this if we later need actions/setup-*
+        sudo rm -rf /opt/hostedtoolcache &
+        # LLVM
+        sudo rm -rf /usr/lib/llvm-* &
+        # Google Cloud CLI
+        sudo rm -rf /usr/lib/google-cloud-sdk &
+        # Microsoft packages (azure-cli, powershell, etc.)
+        sudo rm -rf /opt/microsoft &
+        # MySQL / MongoDB data
+        sudo rm -rf /var/lib/mysql &
+        sudo rm -rf /var/lib/mongodb &
+        # Docker images
+        sudo docker image prune --all --force &
+
+        # Wait for removals to finish
+        wait
+
+        # Final apt cleanup for any residual package metadata
+        sudo apt-get autoremove -y 2>/dev/null || true
+        sudo apt-get clean 2>/dev/null || true
       shell: bash
-    - id: show-space-again
-      run: df -h
+
+    - id: disk-after
+      run: |
+        echo "=== Disk space after cleanup ==="
+        df -h /
+        DISK_AFTER=$(df / --output=avail | tail -1 | tr -d ' ')
+        FREED_KB=$(( DISK_AFTER - DISK_BEFORE ))
+        FREED_GB=$(( FREED_KB / 1024 / 1024 ))
+        FREED_MB=$(( FREED_KB / 1024 ))
+        echo "::notice::Freed approximately ${FREED_GB} GB (${FREED_MB} MB) of disk space"
       shell: bash

@@ -1,0 +1,79 @@
+name: sundials4py test CPU array backends
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+concurrency:
+  group: sundials4py-cpu-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-backend:
+    name: Test ${{ matrix.backend }} on CPU
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [torch, jax]
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v7
+      with:
+        submodules: true
+
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.12'
+
+    - name: Install sundials4py
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -e ".[dev]"
+
+    - name: Install PyTorch
+      if: matrix.backend == 'torch'
+      run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+    - name: Install JAX
+      if: matrix.backend == 'jax'
+      run: python -m pip install jax
+
+    - name: Verify PyTorch CPU backend
+      if: matrix.backend == 'torch'
+      run: |
+        python - <<'PY'
+        import torch
+
+        assert not torch.cuda.is_available()
+        torch.ones(1)
+        PY
+
+    - name: Verify JAX CPU backend
+      if: matrix.backend == 'jax'
+      run: |
+        python - <<'PY'
+        import jax
+        import jax.numpy as jnp
+
+        assert all(device.platform == "cpu" for device in jax.devices())
+        jnp.ones(1).block_until_ready()
+        PY
+
+    - name: Test N_Vector backend support
+      run: python -m pytest -q bindings/sundials4py/test/test_nvector.py
+
+    - name: Archive build files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: sundials4py-cpu-build-${{ matrix.backend }}
+        path: |
+          ${{ github.workspace }}/build_sundials4py
+          !${{ github.workspace }}/build_sundials4py/**/CMakeFiles

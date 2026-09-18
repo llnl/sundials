@@ -349,8 +349,8 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
                     {"ARKODE_IMEX_MRI_GARK3a", false},
                     {"ARKODE_IMEX_MRI_GARK3b", false},
                     {"ARKODE_IMEX_MRI_GARK4", false},
-                    {"ARKODE_IMEX_MRI_GARK_ASCHER_ARK2", true},
-                    {"ARKODE_IMEX_MRI_GARK_ARK2", false}});
+                    {"ARKODE_IMEX_MRI_GARK_ARS222", true},
+                    {"ARKODE_IMEX_MRI_GARK_GKC21", false}});
   }
   else if (type == MRISTEP_SR)
   {

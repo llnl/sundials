@@ -21,6 +21,7 @@
 import os
 import importlib
 from sphinx.util import logging
+from sundials_vars import python_only_functions
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +90,8 @@ def generate_autofunctions_for_submodule(module_name: str):
             if type(obj).__name__ == "nb_func":
                 f.write(f".. autofunction:: sundials4py.{module_name}.{func_name}\n")
                 f.write("  :no-index:\n\n")
-                f.write(f"  See :c:func:`{func_name}`.\n\n")
+                if func_name not in python_only_functions:
+                    f.write(f"  See :c:func:`{func_name}`.\n\n")
 
 
 def generate_autofunctions_for_sundials4py():

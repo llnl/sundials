@@ -136,10 +136,10 @@ routines:
       the Arnoldi iteration begins. This avoids restarting Arnoldi repeatedly.
 
       Supplying ``rel_tol < 0`` disables preprocessing-to-tolerance behavior.
-      Inputs satisfying :math:`0 < \mathtt{rel\_tol} < 1`  
-      enable this behavior and are used directly. Values with  
-      :math:`\mathtt{rel\_tol} = 0` or  
-      :math:`\mathtt{rel\_tol} >= 1` reset to the default value  
+      Inputs satisfying :math:`0 < \mathtt{rel\_tol} < 1`
+      enable this behavior and are used directly. Values with
+      :math:`\mathtt{rel\_tol} = 0` or
+      :math:`\mathtt{rel\_tol} >= 1` reset to the default value
       ``0.005``.
 
 
@@ -186,7 +186,7 @@ information:
 
 * ``ATimes`` - function pointer to perform the product :math:`Av`,
 
-* ``ATData`` - pointer to structure for ``ATimes``,
+* ``ATdata`` - pointer to structure for ``ATimes``,
 
 * ``V, q, Fy, work``   - vectors used for workspace.
 
@@ -199,7 +199,7 @@ information:
 
 * ``warmup_to_tol`` - enable warmup iterations (default is ``SUNFALSE``)
 
-* ``tol_warmup`` - tolerance for preprocessing iterations (default is 0.005; 
+* ``tol_warmup`` - tolerance for preprocessing iterations (default is 0.005;
   only used if ``warmup_to_tol`` is ``SUNTRUE``),
 
 * ``rhs_linY`` - state vector for linearization point,
@@ -233,7 +233,11 @@ This estimator is constructed to perform the following operations:
   estimator parameters.
 
 * SUNDIALS packages will call :c:func:`SUNDomEigEstimator_SetATimes` to supply
-  the ``ATimes`` function pointer and the related data ``ATData``.
+  the ``ATimes`` function pointer and the related data ``ATdata``. Or, the user
+  may call :c:func:`SUNDomEigEstimator_SetRhs` to supply the RHS function and
+  related data. This approach internally constructs an ``ATimes`` function that
+  uses the RHS function to compute the matrix-vector product :math:`Av` for
+  the Jacobian of the RHS function.
 
 * In :c:func:`SUNDomEigEstimator_Initialize`, the estimator parameters are
   checked for validity and the remaining Arnoldi estimator memory such as LAPACK
@@ -258,7 +262,15 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_SetATimes_Arnoldi``
 
+*  ``SUNDomEigEstimator_SetRhs_Arnoldi``
+
+* ``SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi``
+
 * ``SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi``
+
+*  ``SUNDomEigEstimator_SetRelTol_Arnoldi``
+
+*  ``SUNDomEigEstimator_SetInitialGuess_Arnoldi``
 
 * ``SUNDomEigEstimator_Initialize_Arnoldi``
 

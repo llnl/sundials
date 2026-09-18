@@ -21,7 +21,6 @@ Using GMRES iterative linear solver
     [Post-stage processing (stage 3 of 7) at t = 3.45e-05 (tn = 0.00e+00 , tcur = 3.45e-05), ||y||_2 = 2.1213202874e+00]
     [Pre-RHS (stage 3 of 7) at t = 3.45e-05 (tn = 0.00e+00 , tcur = 3.45e-05), ||y||_2 = 2.1213202874e+00]
     [Pre-RHS (stage 4 of 7) at t = 7.72e-06 (tn = 0.00e+00 , tcur = 7.72e-06), ||y||_2 = 2.1213203436e+00]
-    [Pre-RHS (stage 4 of 7) at t = 7.72e-06 (tn = 0.00e+00 , tcur = 7.72e-06), ||y||_2 = 2.1213183409e+00]
     [Post-stage processing (stage 4 of 7) at t = 7.72e-06 (tn = 0.00e+00 , tcur = 7.72e-06), ||y||_2 = 2.1213203407e+00]
     [Pre-RHS (stage 4 of 7) at t = 7.72e-06 (tn = 0.00e+00 , tcur = 7.72e-06), ||y||_2 = 2.1213203407e+00]
     [Pre-RHS (stage 5 of 7) at t = 7.21e-05 (tn = 0.00e+00 , tcur = 7.21e-05), ||y||_2 = 2.1213203436e+00]
@@ -42,9 +41,9 @@ Using GMRES iterative linear solver
     [Pre-RHS (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1213198430e+00]
     [Pre-RHS (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1213179609e+00]
     [Pre-RHS (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1213210506e+00]
-    [Pre-RHS (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1212262228e+00]
-    [Post-stage processing (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1212262228e+00]
-    [Pre-RHS (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1212262228e+00]
+    [Pre-RHS (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1212262207e+00]
+    [Post-stage processing (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1212262207e+00]
+    [Pre-RHS (stage 1 of 7) at t = 8.73e-03 (tn = 1.03e-04 , tcur = 8.73e-03), ||y||_2 = 2.1212262207e+00]
     [Pre-RHS (stage 2 of 7) at t = 1.48e-02 (tn = 1.03e-04 , tcur = 1.48e-02), ||y||_2 = 2.1213198430e+00]
     [Pre-RHS (stage 2 of 7) at t = 1.48e-02 (tn = 1.03e-04 , tcur = 1.48e-02), ||y||_2 = 2.1213178446e+00]
     [Pre-RHS (stage 2 of 7) at t = 1.48e-02 (tn = 1.03e-04 , tcur = 1.48e-02), ||y||_2 = 2.1213208465e+00]
@@ -162,14 +161,14 @@ NLS fails                     = 0
 NLS iters per step            = 13
 LS setups                     = 0
 Jac fn evals                  = 0
-LS RHS fn evals               = 46
+LS RHS fn evals               = 43
 Prec setup evals              = 0
 Prec solves                   = 0
-LS iters                      = 46
+LS iters                      = 43
 LS fails                      = 0
 Jac-times setups              = 0
-Jac-times evals               = 46
-LS iters per NLS iter         = 1.17948717948718
+Jac-times evals               = 43
+LS iters per NLS iter         = 1.1025641025641
 Jac evals per NLS iter        = 0
 Prec evals per NLS iter       = 0
 End ARKStep StageInfo test

@@ -136,6 +136,7 @@ modules:
     - "^N_VGetArrayPointer$"
     - "^N_VSetArrayPointer$"
     - "^N_VGetDeviceArrayPointer$"
+    - "^N_VSetDeviceArrayPointer$"
     # these operations for supporting xbraid are not yet available via Python, we will have to evaluate if they are useful/needed
     - "^N_VBufPack$"
     - "^N_VBufUnpack$"
