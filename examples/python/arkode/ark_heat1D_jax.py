@@ -33,6 +33,8 @@ def exact_semidiscrete_solution(n, k, t):
     phi = np.sqrt(2.0 / (n - 1)) * np.sin(np.outer(i, m) * np.pi / (n - 1))
     lambdas = -4.0 * k / dx**2 * np.sin(0.5 * m * np.pi / (n - 1)) ** 2
 
+    # point source 0.01*delta(x-0.5): the finite-volume approximation
+    # of the Dirac delta divides its strength by the cell width dx
     source = np.zeros(n - 2)
     source[(n // 2) - 1] = 0.01 / dx
 
@@ -163,6 +165,9 @@ class JaxHeat1DProblem:
             result = result.at[1:-1].set(c1 * y[:-2] + c2 * y[1:-1] + c1 * y[2:])
             result = result.at[0].set(0.0)
             result = result.at[-1].set(0.0)
+            # point-source term: the finite-volume approximation of the Dirac
+            # delta 0.01*delta(x-0.5) spreads the source strength over a single
+            # cell of width dx, hence the division by dx
             return result.at[self.isource].add(0.01 / self.dx)
 
         def jtv(v):
