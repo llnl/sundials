@@ -99,6 +99,9 @@ modules:
     path: sundials/sundials_matrix_generated.hpp
     headers:
     - ../../include/sundials/sundials_matrix.h
+    fn_exclude_by_name__regex:
+    # The generated shared_ptr adapter does not handle a NULL clone result.
+    - "^SUNMatClone$"
   sundials_memory:
     path: sundials/sundials_memory_generated.hpp
     headers:

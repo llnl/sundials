@@ -105,17 +105,18 @@ SUNErrCode SUNMatCopyOps(SUNMatrix A, SUNMatrix B)
   SUNAssert(A && A->ops, SUN_ERR_ARG_CORRUPT);
   SUNAssert(B && B->ops, SUN_ERR_ARG_CORRUPT);
 
-  /* Copy ops from A to B */
-  B->ops->getid       = A->ops->getid;
-  B->ops->clone       = A->ops->clone;
-  B->ops->destroy     = A->ops->destroy;
-  B->ops->zero        = A->ops->zero;
-  B->ops->copy        = A->ops->copy;
-  B->ops->scaleadd    = A->ops->scaleadd;
-  B->ops->scaleaddi   = A->ops->scaleaddi;
-  B->ops->matvecsetup = A->ops->matvecsetup;
-  B->ops->matvec      = A->ops->matvec;
-  B->ops->space       = A->ops->space;
+  /* Copy the full operation table, including optional matrix-vector variants. */
+  B->ops->getid                    = A->ops->getid;
+  B->ops->clone                    = A->ops->clone;
+  B->ops->destroy                  = A->ops->destroy;
+  B->ops->zero                     = A->ops->zero;
+  B->ops->copy                     = A->ops->copy;
+  B->ops->scaleadd                 = A->ops->scaleadd;
+  B->ops->scaleaddi                = A->ops->scaleaddi;
+  B->ops->matvecsetup              = A->ops->matvecsetup;
+  B->ops->matvec                   = A->ops->matvec;
+  B->ops->mathermitiantransposevec = A->ops->mathermitiantransposevec;
+  B->ops->space                    = A->ops->space;
 
   return (0);
 }
@@ -135,8 +136,8 @@ SUNMatrix SUNMatClone(SUNMatrix A)
 {
   SUNMatrix B = NULL;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(A));
-  B         = A->ops->clone(A);
-  B->sunctx = A->sunctx;
+  B = A->ops->clone(A);
+  if (B) { B->sunctx = A->sunctx; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(A));
   return (B);
 }
