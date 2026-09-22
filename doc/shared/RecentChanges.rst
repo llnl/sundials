@@ -5,6 +5,8 @@
 
 **New Features and Enhancements**
 
+Added SuperLU_MT linear solver support in sundials4py.
+
 **Bug Fixes**
 
 **Deprecation Notices**

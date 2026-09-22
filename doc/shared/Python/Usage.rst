@@ -78,7 +78,7 @@ backends for CUDA N_Vectors:
 The required array framework must be installed separately. CPU-only builds
 continue to support NumPy and the CPU modes of PyTorch and JAX.
 
-KLU support
+TPL support
 ^^^^^^^^^^^
 
 To build sundials4py with KLU support enabled, pass CMake options for KLU (see :numref:`Installation.Options.KLU`) through ``CMAKE_ARGS`` when building from
@@ -88,6 +88,16 @@ source:
 
    export CMAKE_ARGS="-DSUNDIALS_ENABLE_KLU=ON -DKLU_ROOT=/path/to/suitesparse/installation"
    pip install sundials4py --no-binary=sundials4py
+
+To build sundials4py with SuperLU_MT support enabled, pass CMake options for
+SuperLU_MT (see :numref:`Installation.Options.SuperLU_MT`) through
+``CMAKE_ARGS`` when building from source:
+
+.. code-block:: bash
+
+   export CMAKE_ARGS="-DSUNDIALS_ENABLE_SUPERLUMT=ON -DSUPERLUMT_INCLUDE_DIR=/path/to/superlumt/installation/include/dir -DSUPERLUMT_LIBRARY_DIR=/path/to/superlumt/installation/library/dir -DSUPERLUMT_THREAD_TYPE=Pthread"
+   pip install sundials4py --no-binary=sundials4py
+
 
 .. _Python.Usage.Modules:
 
