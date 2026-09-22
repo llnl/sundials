@@ -45,29 +45,6 @@ void SUNLoggerFunctionTable_Destroy(void* ptr);
 
 #if SUNDIALS_LOGGING_LEVEL > 0
 
-/*
-  This function creates a log message payload string in the correct format.
-  It allocates the payload parameter, which must be freed by the caller.
-
-  :param rank: the MPI rank of the caller
-  :param txt: descriptive text for the log message in the form of a format string
-  :param args: format string substitutions
-  :param payload: on output this is an allocated string containing the log message
-
-  :return: void
-*/
-
-static void sunCreateLogPayload(int rank, const char* txt, va_list args,
-                                char** payload)
-{
-  int msg_length = sunvasnprintf(payload, txt, args);
-  if (msg_length < 0)
-  {
-    fprintf(stderr, "[ERROR][rank %d][%s:%d][%s] %s\n", rank, __FILE__,
-            __LINE__, __func__, "FATAL LOGGER ERROR: message size too large");
-  }
-}
-
 /* default number of files that we allocate space for */
 #define SUN_DEFAULT_LOGFILE_HANDLES_ 8
 
@@ -479,51 +456,45 @@ SUNErrCode SUNLogger_QueueMsg(SUNLogger logger, SUNLogLevel lvl,
                               const char* scope, const char* label,
                               const char* msg_txt, ...)
 {
-  SUNErrCode retval = SUN_SUCCESS;
-  if (!logger)
-  {
-    retval = SUN_ERR_ARG_CORRUPT;
-    return retval;
-  }
+  if (!logger) { return SUN_ERR_ARG_CORRUPT; }
 
 #if SUNDIALS_LOGGING_LEVEL > 0
+  static const char* const prefixes[] = {NULL, "ERROR", "WARNING", "INFO",
+                                         "DEBUG"};
+
+  if (logger->queue_msg == NULL) { return SUN_SUCCESS; }
+
+  int rank = 0;
+  if (!sunLoggerIsOutputRank(logger, &rank)) { return SUN_SUCCESS; }
+
+  FILE* fp;
+  SUNErrCode retval = sunLoggerGetFilePointer(logger, lvl, &fp);
+  if (retval != SUN_SUCCESS || fp == NULL) { return retval; }
+
+  char* payload = NULL;
+  va_list args;
+  va_start(args, msg_txt);
+  int msg_length = sunvasnprintf(&payload, msg_txt, args);
+  va_end(args);
+  if (msg_length < 0)
   {
-    if (logger->queue_msg == NULL) { return retval; }
-
-    int rank = 0;
-    if (!sunLoggerIsOutputRank(logger, &rank)) { return retval; }
-
-    FILE* fp;
-    retval = sunLoggerGetFilePointer(logger, lvl, &fp);
-    if (retval != SUN_SUCCESS || fp == NULL) { return retval; }
-
-    const char* prefix = NULL;
-    if (lvl == SUN_LOGLEVEL_DEBUG) { prefix = "DEBUG"; }
-    else if (lvl == SUN_LOGLEVEL_WARNING) { prefix = "WARNING"; }
-    else if (lvl == SUN_LOGLEVEL_INFO) { prefix = "INFO"; }
-    else if (lvl == SUN_LOGLEVEL_ERROR) { prefix = "ERROR"; }
-
-    char* payload = NULL;
-    va_list args;
-    va_start(args, msg_txt);
-    sunCreateLogPayload(rank, msg_txt, args, &payload);
-    va_end(args);
-
-    retval = logger->queue_msg(logger, lvl, prefix, rank, scope, label, payload,
-                               logger->content);
-
-    free(payload);
+    fprintf(stderr, "[ERROR][rank %d][%s:%d][%s] %s\n", rank, __FILE__,
+            __LINE__, __func__, "FATAL LOGGER ERROR: message size too large");
+    return SUN_ERR_MALLOC_FAIL;
   }
+
+  retval = logger->queue_msg(logger, lvl, prefixes[lvl], rank, scope, label,
+                             payload, logger->content);
+  free(payload);
+  return retval;
 #else
   /* silence warnings when all logging is disabled */
-  ((void)logger);
   ((void)lvl);
   ((void)scope);
   ((void)label);
   ((void)msg_txt);
+  return SUN_SUCCESS;
 #endif
-
-  return retval;
 }
 
 SUNErrCode SUNLogger_Flush(SUNLogger logger, SUNLogLevel lvl)
