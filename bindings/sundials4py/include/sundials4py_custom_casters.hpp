@@ -79,21 +79,26 @@ namespace nanobind::detail {
                                                                                    \
       if (nb::isinstance<sundials4py::CUSTOM_CLASS>(src))                          \
       {                                                                            \
+        sundials4py::CUSTOM_CLASS* custom = nullptr;                               \
         try                                                                        \
         {                                                                          \
-          /* The returned raw pointer is owned by the Python object's            \
-             shared_ptr; nanobind only borrows it for this C++ call. */ \
-          auto* custom = nb::cast<sundials4py::CUSTOM_CLASS*>(src);                \
-          value        = custom->_get_sundials_handle(src).get();                  \
+          /* The returned raw pointer is owned by the Python object's \
+             shared_ptr; nanobind only borrows it for this C++ call. */            \
+          custom = nb::cast<sundials4py::CUSTOM_CLASS*>(src);                      \
+          value  = custom->_get_sundials_handle(src).get();                        \
         }                                                                          \
         catch (const std::exception& error)                                        \
         {                                                                          \
-          /* A false result means that this overload cannot accept src, and      \
-             nanobind will report its normal argument-conversion TypeError.      \
-             Report the real reason first: it distinguishes a missing required   \
-             operation from an allocation failure. The Python error indicator    \
-             is left clear. */ \
-          ::sundials4py::report_custom_exception(nullptr, WHAT, error);            \
+          /* A false result means that this overload cannot accept src, and \
+             nanobind will report its normal argument-conversion TypeError. \
+             Report the real reason first: it distinguishes a missing required \
+             operation from an allocation failure. Route it through the \
+             object's own context so a handler installed there sees it; fall \
+             back to the global handler only if the cast itself failed. The \
+             Python error indicator is left clear. */      \
+          ::sundials4py::report_custom_exception(custom ? custom->sunctx().get()   \
+                                                        : nullptr,                 \
+                                                 WHAT, error);                     \
           return false;                                                            \
         }                                                                          \
         catch (...)                                                                \
