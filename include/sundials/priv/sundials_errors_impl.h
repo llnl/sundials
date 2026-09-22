@@ -152,7 +152,8 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
                                        const char* file, const char* msg,
                                        SUNErrCode code, SUNContext sunctx)
 {
-  if (!sunctx) {
+  if (!sunctx)
+  {
     SUNGlobalFallbackErrHandler(line, func, file, msg, code);
     return;
   }
@@ -211,15 +212,15 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
   false
 */
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
-#define SUNCheck(expr, code)                                              \
-  do {                                                                    \
-    if (SUNHintFalse(!(expr)))                                            \
-    {                                                                     \
+#define SUNCheck(expr, code)                                               \
+  do {                                                                     \
+    if (SUNHintFalse(!(expr)))                                             \
+    {                                                                      \
       SUNHandleErrWithMsg(__LINE__, __func__, __FILE__, "expected " #expr, \
-                          code, SUNCTX_);                                 \
-      return code;                                                        \
-    }                                                                     \
-  }                                                                       \
+                          code, SUNCTX_);                                  \
+      return code;                                                         \
+    }                                                                      \
+  }                                                                        \
   while (0)
 #else
 #define SUNCheck(expr, code)
@@ -236,14 +237,14 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 */
 
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
-#define SUNCheckNoRet(expr, code)                                         \
-  do {                                                                    \
-    if (SUNHintFalse(!(expr)))                                            \
-    {                                                                     \
+#define SUNCheckNoRet(expr, code)                                          \
+  do {                                                                     \
+    if (SUNHintFalse(!(expr)))                                             \
+    {                                                                      \
       SUNHandleErrWithMsg(__LINE__, __func__, __FILE__, "expected " #expr, \
-                          code, SUNCTX_);                                 \
-    }                                                                     \
-  }                                                                       \
+                          code, SUNCTX_);                                  \
+    }                                                                      \
+  }                                                                        \
   while (0)
 #else
 #define SUNCheckNoRet(expr, code)
@@ -260,15 +261,15 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 */
 
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
-#define SUNCheckNull(expr, code)                                          \
-  do {                                                                    \
-    if (SUNHintFalse(!(expr)))                                            \
-    {                                                                     \
+#define SUNCheckNull(expr, code)                                           \
+  do {                                                                     \
+    if (SUNHintFalse(!(expr)))                                             \
+    {                                                                      \
       SUNHandleErrWithMsg(__LINE__, __func__, __FILE__, "expected " #expr, \
-                          code, SUNCTX_);                                 \
-      return NULL;                                                        \
-    }                                                                     \
-  }                                                                       \
+                          code, SUNCTX_);                                  \
+      return NULL;                                                         \
+    }                                                                      \
+  }                                                                        \
   while (0)
 #else
 #define SUNCheckNull(expr, code)
@@ -285,15 +286,15 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 */
 
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
-#define SUNCheckVoid(expr, code)                                          \
-  do {                                                                    \
-    if (SUNHintFalse(!(expr)))                                            \
-    {                                                                     \
+#define SUNCheckVoid(expr, code)                                           \
+  do {                                                                     \
+    if (SUNHintFalse(!(expr)))                                             \
+    {                                                                      \
       SUNHandleErrWithMsg(__LINE__, __func__, __FILE__, "expected " #expr, \
-                          code, SUNCTX_);                                 \
-      return;                                                             \
-    }                                                                     \
-  }                                                                       \
+                          code, SUNCTX_);                                  \
+      return;                                                              \
+    }                                                                      \
+  }                                                                        \
   while (0)
 #else
 #define SUNCheckVoid(expr, code)
@@ -477,7 +478,7 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNAssert(expr, code) SUNCheck(expr, code)
 #else
-#define SUNAssert(expr, code)
+#define SUNAssert(expr, code) SUNAssume(expr)
 #endif
 
 /*
@@ -492,7 +493,7 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNAssertNoRet(expr, code) SUNCheckNoRet(expr, code)
 #else
-#define SUNAssertNoRet(expr, code)
+#define SUNAssertNoRet(expr, code) SUNAssume(expr)
 #endif
 
 /*
@@ -506,7 +507,7 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNAssertNull(expr, code) SUNCheckNull(expr, code)
 #else
-#define SUNAssertNull(expr, code)
+#define SUNAssertNull(expr, code) SUNAssume(expr)
 #endif
 
 /*
@@ -520,7 +521,7 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNAssertVoid(expr, code) SUNCheckVoid(expr, code)
 #else
-#define SUNAssertVoid(expr, code)
+#define SUNAssertVoid(expr, code) SUNAssume(expr)
 #endif
 
 #ifdef __cplusplus
