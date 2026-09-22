@@ -59,7 +59,6 @@ typedef struct IDALsMemRec
 
   /* Sparse difference-quotient Jacobian workspace */
   sunindextype* sparseDQgroups;
-  sunindextype* sparseDQrowmarks;
   sunindextype sparseDQngroups;
   sunindextype sparseDQM;
   sunindextype sparseDQN;

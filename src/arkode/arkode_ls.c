@@ -170,8 +170,7 @@ int ARKodeSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
   arkls_mem->LS = LS;
 
   /* Sparse DQ Jacobian workspace is allocated on first use */
-  arkls_mem->sparseDQgroups   = NULL;
-  arkls_mem->sparseDQrowmarks = NULL;
+  arkls_mem->sparseDQgroups = NULL;
 
   /* Linear solver type information */
   arkls_mem->iterative   = iterative;
@@ -2852,13 +2851,37 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
 }
 
 /*---------------------------------------------------------------
-  arkLsSparseDQJac:
+  arkLsSparseDQJac
 
-  This routine generates a sparse difference quotient approximation
-  to the Jacobian of f(t,y), retaining the input CSC SUNMatrix
-  sparsity pattern. Columns are grouped so that no two perturbed
-  columns in a group share a row index, allowing one RHS evaluation
-  per group.
+  This routine generates a sparse difference quotient approximation to
+  the Jacobian of f(t,y), retaining the input CSC SUNMatrix sparsity pattern.
+
+  Rather than perturbing one solution component at a time (as the dense
+  routine does, at a cost of N RHS evaluations), the columns of the
+  Jacobian are partitioned into "structurally orthogonal" groups by a
+  greedy Curtis-Powell-Reid coloring: no two columns in a group have a
+  nonzero in the same row. Every column in a group may then be perturbed
+  at once, since each row of the resulting difference receives a
+  contribution from at most one perturbed column. The cost is therefore
+  one RHS evaluation per group, which for a banded or otherwise
+  locally-coupled system is far fewer than N.
+
+  IMPORTANT: the sparsity pattern of the template matrix must be a
+  superset of the true Jacobian's nonzero structure. This is a
+  correctness requirement, not merely an accuracy one. If an entry that
+  is truly nonzero is absent from the pattern, then two columns that the
+  coloring believes are orthogonal may in fact both perturb the same row;
+  their contributions are summed into that row's difference, and the
+  values stored for entries that ARE in the pattern come out wrong. By
+  contrast, extra entries in the pattern are harmless -- they are simply
+  computed as (approximately) zero.
+
+  Structurally empty columns are never perturbed and are not assigned to
+  any group, so they neither cost an evaluation nor constrain the
+  coloring.
+
+  On return every entry of data[0 .. colptrs[N]-1] has been assigned; the
+  sparsity pattern itself is left untouched.
   ---------------------------------------------------------------*/
 int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
                      ARKodeMem ark_mem, ARKLsMem arkls_mem, ARKRhsFn fi,
@@ -2926,6 +2949,11 @@ int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   ftemp = tmp1;
   ytemp = tmp2;
 
+  /* Unlike the dense and band DQ routines, this routine needs a third work
+     vector: a whole group of increments is applied before the RHS is
+     evaluated, so each column's increment must be retained until that
+     group's difference quotients are formed. (IDA and KINSOL instead
+     recompute the increment, having no spare vector to store it in.) */
   if (tmp3 == NULL)
   {
     arkProcessError(ark_mem, ARKLS_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -2943,18 +2971,21 @@ int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   cns_data   = (ark_mem->constraints) ? N_VGetArrayPointer(ark_mem->constraints)
                                       : NULL;
 
-  if ((arkls_mem->sparseDQgroups == NULL) ||
-      (arkls_mem->sparseDQrowmarks == NULL) || (arkls_mem->sparseDQM != M) ||
+  /* Build the column partition on the first call and reuse it thereafter:
+     it depends only on the sparsity pattern, which is held fixed for the
+     internal DQ Jacobian, so recomputing it at every Jacobian evaluation
+     would be wasted work. Any grouping cached from a previous pattern is
+     discarded in the Initialize routine, and the cached (M, N, nnz) triple
+     is a further guard against the matrix being resized underneath us. */
+  if ((arkls_mem->sparseDQgroups == NULL) || (arkls_mem->sparseDQM != M) ||
       (arkls_mem->sparseDQN != N) || (arkls_mem->sparseDQnnz != colptrs[N]))
   {
     free(arkls_mem->sparseDQgroups);
-    free(arkls_mem->sparseDQrowmarks);
-    arkls_mem->sparseDQgroups   = NULL;
-    arkls_mem->sparseDQrowmarks = NULL;
-    arkls_mem->sparseDQngroups  = 0;
-    arkls_mem->sparseDQM        = 0;
-    arkls_mem->sparseDQN        = 0;
-    arkls_mem->sparseDQnnz      = 0;
+    arkls_mem->sparseDQgroups  = NULL;
+    arkls_mem->sparseDQngroups = 0;
+    arkls_mem->sparseDQM       = 0;
+    arkls_mem->sparseDQN       = 0;
+    arkls_mem->sparseDQnnz     = 0;
 
     /* Allocate workspace for column groups */
     groups = (sunindextype*)malloc(N * sizeof(sunindextype));
@@ -2974,13 +3005,36 @@ int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
       return (ARKLS_MEM_FAIL);
     }
 
+    /* Initialize the coloring state:
+         groups[j] == -1  column j is nonempty and not yet assigned
+         groups[j] == -2  column j is structurally empty; it is never
+                          perturbed and never joins a group
+         groups[j] >=  0  index of the group that column j belongs to
+       rowmarks[i] records the most recent group to claim row i, and starts
+       at -1 so that it cannot spuriously match group 0. */
     for (j = 0; j < N; j++)
     {
       groups[j] = (colptrs[j] < colptrs[j + 1]) ? -1 : -2;
     }
     for (i = 0; i < M; i++) { rowmarks[i] = -1; }
 
-    /* Greedily group structurally orthogonal columns */
+    /* Greedily partition the columns into structurally orthogonal groups.
+       Each pass builds one group by sweeping the columns in their natural
+       order, adding any still-unassigned column that does not collide with
+       a column already placed in this group.
+
+       The collision test reuses a single M-length array instead of a fresh
+       marker array per group: groups are numbered consecutively from zero
+       and rowmarks[i] is only ever overwritten with the current group index,
+       so "rowmarks[rowvals[k]] == ngroups" holds exactly when row rowvals[k]
+       was already claimed by a column in THIS group. Marks left behind by
+       earlier groups compare unequal and are ignored, so no clearing pass is
+       needed between groups.
+
+       Sweeping in natural column order is simple but not optimal; ordering
+       the columns by decreasing nonzero count (the classic DSM heuristic)
+       typically yields fewer groups. Note also that each pass rescans all N
+       columns, so construction costs O(ngroups*(N + nnz)). */
     ngroups = 0;
     for (;;)
     {
@@ -3008,16 +3062,21 @@ int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
         }
       }
 
+      /* A pass that places no column means every nonempty column has been
+         assigned, so the partition is complete. */
       if (groupsize == 0) { break; }
       ngroups++;
     }
 
-    arkls_mem->sparseDQgroups   = groups;
-    arkls_mem->sparseDQrowmarks = rowmarks;
-    arkls_mem->sparseDQngroups  = ngroups;
-    arkls_mem->sparseDQM        = M;
-    arkls_mem->sparseDQN        = N;
-    arkls_mem->sparseDQnnz      = colptrs[N];
+    /* The row marks are scratch space for the coloring only; release them
+       now and cache just the partition itself. */
+    free(rowmarks);
+
+    arkls_mem->sparseDQgroups  = groups;
+    arkls_mem->sparseDQngroups = ngroups;
+    arkls_mem->sparseDQM       = M;
+    arkls_mem->sparseDQN       = N;
+    arkls_mem->sparseDQnnz     = colptrs[N];
   }
   else
   {
@@ -3035,6 +3094,11 @@ int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
              ? (MIN_INC_MULT * SUNRabs(ark_mem->h) * ark_mem->uround * N * fnorm)
              : ONE;
 
+  /* Loop over the column groups, performing one evaluation per group. The
+     linear scan over all N columns to collect each group's members makes
+     this O(ngroups*N) overall; a group-to-columns index built during the
+     coloring would reduce it to O(N), but ngroups is small for the
+     locally-coupled systems this routine targets. */
   /* Loop over column groups */
   for (group = 0; group < ngroups; group++)
   {
@@ -3073,7 +3137,9 @@ int arkLsSparseDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
     arkls_mem->nfeDQ++;
     if (retval != 0) { break; }
 
-    /* Restore ytemp, then form and load difference quotients */
+    /* Restore ytemp, then form and load difference quotients. Within this
+       group every row touched by column j was claimed by column j alone, so
+       ftemp_data[row] - fy_data[row] isolates column j's contribution. */
     for (j = 0; j < N; j++)
     {
       if (groups[j] != group) { continue; }
@@ -3185,6 +3251,18 @@ static int arkLsLinSys(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix A,
     /* Clear the linear system matrix if necessary (direct linear solvers) */
     if (!(arkls_mem->iterative))
     {
+      /* For the internal sparse DQ Jacobian we restore the sparsity pattern
+         rather than zeroing it. Two things would otherwise destroy it:
+         SUNMatZero_Sparse erases indexvals/indexptrs along with the data,
+         and the SUNMatScaleAddI below may insert diagonal entries and
+         reallocate, so from the second setup onward A carries the pattern of
+         I - gamma*J rather than that of J. savedJ holds a copy of the user's
+         template pattern (see arkLsInitialize), and arkLsSparseDQJac
+         overwrites every stored value, so this copy both restores the
+         pattern and leaves no stale data behind.
+
+         A user-supplied sparse Jacobian function is expected to build the
+         pattern itself, so the zeroing path is kept for that case. */
       if (arkls_mem->jacDQ && (SUNMatGetID(A) == SUNMATRIX_SPARSE))
       {
         retval = SUNMatCopy(arkls_mem->savedJ, A);
@@ -3267,6 +3345,18 @@ int arkLsInitialize(ARKodeMem ark_mem)
     }
   }
 
+  /* Discard any cached sparse DQ column grouping. A grouping is valid only
+     for the sparsity pattern it was built from, and a reinitialization may
+     supply a template matrix with a different pattern; comparing dimensions
+     and nonzero counts cannot reliably detect that. The grouping is dropped
+     here and rebuilt lazily on the next sparse DQ Jacobian evaluation. */
+  free(arkls_mem->sparseDQgroups);
+  arkls_mem->sparseDQgroups  = NULL;
+  arkls_mem->sparseDQngroups = 0;
+  arkls_mem->sparseDQM       = 0;
+  arkls_mem->sparseDQN       = 0;
+  arkls_mem->sparseDQnnz     = 0;
+
   /* Test for valid combinations of matrix & Jacobian routines: */
   if (arkls_mem->A != NULL)
   {
@@ -3319,7 +3409,11 @@ int arkLsInitialize(ARKodeMem ark_mem)
         }
       }
 
-      /* Preserve the user-provided sparsity pattern for internal sparse DQ */
+      /* Preserve the user-provided sparsity pattern for the internal sparse
+         DQ Jacobian. arkLsSparseDQJac fills values into an existing pattern
+         and never creates one, but A's pattern does not survive the
+         SUNMatScaleAddI in arkLsLinSys; savedJ is the copy that arkLsLinSys
+         restores from ahead of each DQ evaluation. */
       if (arkls_mem->jacDQ && (SUNMatGetID(arkls_mem->A) == SUNMATRIX_SPARSE))
       {
         retval = SUNMatCopy(arkls_mem->A, arkls_mem->savedJ);
@@ -3839,8 +3933,6 @@ int arkLsFree(ARKodeMem ark_mem)
   /* Free sparse DQ Jacobian workspace */
   free(arkls_mem->sparseDQgroups);
   arkls_mem->sparseDQgroups = NULL;
-  free(arkls_mem->sparseDQrowmarks);
-  arkls_mem->sparseDQrowmarks = NULL;
 
   /* Nullify other N_Vector pointers */
   arkls_mem->ycur = NULL;

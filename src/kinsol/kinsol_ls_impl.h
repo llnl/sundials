@@ -58,12 +58,11 @@ typedef struct KINLsMemRec
   SUNMatrix J;        /* problem Jacobian                              */
 
   /* Sparse DQ Jacobian approximation workspace */
-  sunindextype* sparseDQgroups;   /* column group for each sparse column */
-  sunindextype* sparseDQrowmarks; /* workspace for sparse column grouping */
-  sunindextype sparseDQngroups;   /* number of sparse column groups       */
-  sunindextype sparseDQM;         /* sparse DQ matrix rows                */
-  sunindextype sparseDQN;         /* sparse DQ matrix columns             */
-  sunindextype sparseDQnnz;       /* sparse DQ active nonzeros            */
+  sunindextype* sparseDQgroups; /* column group for each sparse column */
+  sunindextype sparseDQngroups; /* number of sparse column groups       */
+  sunindextype sparseDQM;       /* sparse DQ matrix rows                */
+  sunindextype sparseDQN;       /* sparse DQ matrix columns             */
+  sunindextype sparseDQnnz;     /* sparse DQ active nonzeros            */
 
   /* Solver tolerance adjustment factor (if needed, see kinLsSolve)     */
   sunrealtype tol_fac;

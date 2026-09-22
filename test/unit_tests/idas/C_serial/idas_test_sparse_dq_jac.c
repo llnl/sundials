@@ -59,24 +59,23 @@ static SUNErrCode test_linsol_free(SUNLinearSolver S);
 
 int main(void)
 {
-  int fails              = 0;
-  int retval             = 0;
-  sunrealtype max_error  = ZERO;
-  sunrealtype cj         = SUN_RCONST(2.0);
-  SUNContext sunctx      = NULL;
-  N_Vector y             = NULL;
-  N_Vector yp            = NULL;
-  N_Vector rr            = NULL;
-  N_Vector tmp1          = NULL;
-  N_Vector tmp2          = NULL;
-  N_Vector tmp3          = NULL;
-  SUNMatrix Jac          = NULL;
-  SUNLinearSolver LS     = NULL;
-  void* ida_mem          = NULL;
-  IDAMem IDA_mem         = NULL;
-  IDALsMem idals_mem     = NULL;
-  sunindextype* groups   = NULL;
-  sunindextype* rowmarks = NULL;
+  int fails             = 0;
+  int retval            = 0;
+  sunrealtype max_error = ZERO;
+  sunrealtype cj        = SUN_RCONST(2.0);
+  SUNContext sunctx     = NULL;
+  N_Vector y            = NULL;
+  N_Vector yp           = NULL;
+  N_Vector rr           = NULL;
+  N_Vector tmp1         = NULL;
+  N_Vector tmp2         = NULL;
+  N_Vector tmp3         = NULL;
+  SUNMatrix Jac         = NULL;
+  SUNLinearSolver LS    = NULL;
+  void* ida_mem         = NULL;
+  IDAMem IDA_mem        = NULL;
+  IDALsMem idals_mem    = NULL;
+  sunindextype* groups  = NULL;
 
   struct UserData_ udata;
 
@@ -142,14 +141,12 @@ int main(void)
   retval = idaLsDQJac(ZERO, cj, y, yp, rr, Jac, ida_mem, tmp1, tmp2, tmp3);
   if (check_retval(&retval, "idaLsDQJac", 1)) return 1;
 
-  groups   = idals_mem->sparseDQgroups;
-  rowmarks = idals_mem->sparseDQrowmarks;
+  groups = idals_mem->sparseDQgroups;
 
   retval = idaLsDQJac(ZERO, cj, y, yp, rr, Jac, ida_mem, tmp1, tmp2, tmp3);
   if (check_retval(&retval, "idaLsDQJac", 1)) return 1;
 
-  if ((groups != idals_mem->sparseDQgroups) ||
-      (rowmarks != idals_mem->sparseDQrowmarks))
+  if (groups != idals_mem->sparseDQgroups)
   {
     fprintf(stderr, "Sparse DQ Jacobian grouping workspace was not reused\n");
     fails++;

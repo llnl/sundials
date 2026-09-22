@@ -53,22 +53,21 @@ static SUNErrCode test_linsol_free(SUNLinearSolver S);
 
 int main(void)
 {
-  int fails              = 0;
-  int retval             = 0;
-  sunrealtype max_error  = ZERO;
-  SUNContext sunctx      = NULL;
-  N_Vector y             = NULL;
-  N_Vector fy            = NULL;
-  N_Vector tmp1          = NULL;
-  N_Vector tmp2          = NULL;
-  N_Vector tmp3          = NULL;
-  SUNMatrix Jac          = NULL;
-  SUNLinearSolver LS     = NULL;
-  void* arkode_mem       = NULL;
-  ARKodeMem ark_mem      = NULL;
-  ARKLsMem arkls_mem     = NULL;
-  sunindextype* groups   = NULL;
-  sunindextype* rowmarks = NULL;
+  int fails             = 0;
+  int retval            = 0;
+  sunrealtype max_error = ZERO;
+  SUNContext sunctx     = NULL;
+  N_Vector y            = NULL;
+  N_Vector fy           = NULL;
+  N_Vector tmp1         = NULL;
+  N_Vector tmp2         = NULL;
+  N_Vector tmp3         = NULL;
+  SUNMatrix Jac         = NULL;
+  SUNLinearSolver LS    = NULL;
+  void* arkode_mem      = NULL;
+  ARKodeMem ark_mem     = NULL;
+  ARKLsMem arkls_mem    = NULL;
+  sunindextype* groups  = NULL;
 
   struct UserData_ udata;
 
@@ -125,14 +124,12 @@ int main(void)
   retval = arkLsDQJac(ZERO, y, fy, Jac, arkode_mem, tmp1, tmp2, tmp3);
   if (check_retval(&retval, "arkLsDQJac", 1)) return 1;
 
-  groups   = arkls_mem->sparseDQgroups;
-  rowmarks = arkls_mem->sparseDQrowmarks;
+  groups = arkls_mem->sparseDQgroups;
 
   retval = arkLsDQJac(ZERO, y, fy, Jac, arkode_mem, tmp1, tmp2, tmp3);
   if (check_retval(&retval, "arkLsDQJac", 1)) return 1;
 
-  if ((groups != arkls_mem->sparseDQgroups) ||
-      (rowmarks != arkls_mem->sparseDQrowmarks))
+  if (groups != arkls_mem->sparseDQgroups)
   {
     fprintf(stderr, "Sparse DQ Jacobian grouping workspace was not reused\n");
     fails++;
