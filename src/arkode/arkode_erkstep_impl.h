@@ -97,7 +97,6 @@ int erkStep_SetDefaults(ARKodeMem ark_mem);
 int erkStep_SetOrder(ARKodeMem ark_mem, int ord);
 int erkStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt);
 int erkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp);
-int erkStep_Reset(ARKodeMem ark_mem, sunrealtype tR, N_Vector yR);
 int erkStep_Resize(ARKodeMem ark_mem, N_Vector y0, sunrealtype hscale,
                    sunrealtype t0, ARKVecResizeFn resize, void* resize_data);
 void erkStep_Free(ARKodeMem ark_mem);

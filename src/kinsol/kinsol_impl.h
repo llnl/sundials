@@ -388,11 +388,6 @@ void KINProcessError(KINMem kin_mem, int error_code, int line, const char* func,
 void KINPrintInfo(KINMem kin_mem, int info_code, const char* module,
                   const char* fname, const char* msgfmt, ...);
 
-/* Prototype of internal infoHandler function */
-
-void KINInfoHandler(const char* module, const char* function, char* msg,
-                    void* user_data);
-
 /* Anderson acceleration utilities */
 int KINInitAA(KINMem kin_mem);
 void KINFreeAA(KINMem kin_mem);
