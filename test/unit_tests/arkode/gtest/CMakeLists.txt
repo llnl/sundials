@@ -31,6 +31,7 @@ target_link_libraries(
           sundials_sunmemsys_obj
           sundials_nvecserial_obj
           sundials_nvecmanyvector_obj
+          sundials_sunmatrixsparse_obj
           sundials_sunlinsolband_obj
           sundials_sunlinsoldense_obj
           # Use only the auto object files directly here since the auto object
