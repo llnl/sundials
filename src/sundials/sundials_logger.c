@@ -63,10 +63,8 @@ static void sunCreateLogPayload(int rank, const char* txt, va_list args,
   int msg_length = sunvasnprintf(payload, txt, args);
   if (msg_length < 0)
   {
-    char* fileAndLine = sunCombineFileAndLine(__LINE__ + 1, __FILE__);
-    fprintf(stderr, "[ERROR][rank %d][%s][%s] %s\n", rank, fileAndLine,
-            __func__, "FATAL LOGGER ERROR: message size too large");
-    free(fileAndLine);
+    fprintf(stderr, "[ERROR][rank %d][%s:%d][%s] %s\n", rank, __FILE__,
+            __LINE__, __func__, "FATAL LOGGER ERROR: message size too large");
   }
 }
 
