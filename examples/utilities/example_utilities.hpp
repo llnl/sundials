@@ -43,7 +43,7 @@ static int check_ptr(const void* ptr, const std::string funcname)
 }
 
 // Functions for parsing vectors of command line inputs
-inline void find_arg(std::vector<std::string>& args, const std::string key,
+inline bool find_arg(std::vector<std::string>& args, const std::string key,
                      float& dest)
 {
   auto it = std::find(args.cbegin(), args.cend(), key);
@@ -51,10 +51,12 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   {
     dest = stof(*(it + 1));
     args.erase(it, it + 2);
+    return true;
   }
+  return false;
 }
 
-inline void find_arg(std::vector<std::string>& args, const std::string key,
+inline bool find_arg(std::vector<std::string>& args, const std::string key,
                      double& dest)
 {
   auto it = std::find(args.cbegin(), args.cend(), key);
@@ -62,10 +64,12 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   {
     dest = stod(*(it + 1));
     args.erase(it, it + 2);
+    return true;
   }
+  return false;
 }
 
-inline void find_arg(std::vector<std::string>& args, const std::string key,
+inline bool find_arg(std::vector<std::string>& args, const std::string key,
                      long double& dest)
 {
   auto it = std::find(args.cbegin(), args.cend(), key);
@@ -73,10 +77,12 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   {
     dest = stold(*(it + 1));
     args.erase(it, it + 2);
+    return true;
   }
+  return false;
 }
 
-inline void find_arg(std::vector<std::string>& args, const std::string key,
+inline bool find_arg(std::vector<std::string>& args, const std::string key,
                      long long& dest)
 {
   auto it = std::find(args.cbegin(), args.cend(), key);
@@ -84,10 +90,12 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   {
     dest = stoll(*(it + 1));
     args.erase(it, it + 2);
+    return true;
   }
+  return false;
 }
 
-inline void find_arg(std::vector<std::string>& args, const std::string key,
+inline bool find_arg(std::vector<std::string>& args, const std::string key,
                      long int& dest)
 {
   auto it = std::find(args.cbegin(), args.cend(), key);
@@ -95,10 +103,12 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   {
     dest = stol(*(it + 1));
     args.erase(it, it + 2);
+    return true;
   }
+  return false;
 }
 
-inline void find_arg(std::vector<std::string>& args, const std::string key,
+inline bool find_arg(std::vector<std::string>& args, const std::string key,
                      int& dest)
 {
   auto it = std::find(args.cbegin(), args.cend(), key);
@@ -106,10 +116,12 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   {
     dest = stoi(*(it + 1));
     args.erase(it, it + 2);
+    return true;
   }
+  return false;
 }
 
-inline void find_arg(std::vector<std::string>& args, const std::string key,
+inline bool find_arg(std::vector<std::string>& args, const std::string key,
                      bool& dest, bool store = true)
 {
   auto it = std::find(args.cbegin(), args.cend(), key);
@@ -117,10 +129,12 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   {
     dest = store;
     args.erase(it);
+    return true;
   }
+  return false;
 }
 
-inline void find_arg(std::vector<std::string>& args, const std::string key,
+inline bool find_arg(std::vector<std::string>& args, const std::string key,
                      std::string& dest)
 {
   auto it = std::find(args.cbegin(), args.cend(), key);
@@ -128,5 +142,7 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
   {
     dest = std::move(*(it + 1));
     args.erase(it, it + 2);
+    return true;
   }
+  return false;
 }
