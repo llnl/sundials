@@ -1,0 +1,48 @@
+spack:
+  packages:
+    all:
+      target: [x86_64]
+      providers:
+        blas:
+        - openblas
+        mpi:
+        - openmpi
+  specs:
+  - adiak
+  - caliper +adiak
+  - cmake
+  - ginkgo
+  - hypre +int64 precision=single
+  - kokkos +serial +openmp
+  - kokkos-kernels +serial +openmp
+  - openblas +ilp64
+  - openmpi
+  - petsc ~double +int64 ~superlu-dist ~hypre
+  - suite-sparse ^openblas +ilp64 ^metis +int64
+  - superlu-dist +int64 ^parmetis +int64 ^metis +int64 ^netlib-lapack # needs 32-bit index blas
+  - superlu-mt +int64 ~blas
+  # Trilinos CMake configuration fails with:
+  # CMake Error at packages/tpetra/CMakeLists.txt:916 (MESSAGE):
+  # Tpetra: Tpetra_INST_FLOAT is ON (meaning that you want to instantiate
+  # and/or test Tpetra with Scalar = float), but HAVE_TEUCHOS_BLASFLOAT is OFF.
+  # This means that you are linking with a BLAS library that lacks float (S)
+  # support.  Tpetra needs a BLAS implementation that supports float.
+  #- trilinos +float +tpetra gotype=long_long
+  - xbraid
+  concretizer:
+    reuse: false
+    compiler_mixing: false
+    unify: when_possible # because superlu-dist needs 32-bit index blas
+  config:
+    install_tree:
+      root: /opt/software
+  mirrors:
+    local: /var/cache/spack-mirror
+  repos: []
+  upstreams: {}
+  view:
+    default:
+      root: /opt/view
+      projections:
+        superlu-mt: '{name}'
+        superlu-dist: '{name}'

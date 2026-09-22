@@ -46,6 +46,8 @@
      ARKODE_MRI_GARK_ERK33a            3       2          E       Y
      ARKODE_MRI_GARK_RALSTON3          3       2          E       Y
      ARKODE_MRI_GARK_ERK45a            4       3          E       Y
+     ARKODE_MRI_GARK_EXP_ARS222        2       1          E       Y
+     ARKODE_MRI_GARK_EXP_GKC21         2       1          E       Y
      ARKODE_MERK21                     2       1          ES      Y
      ARKODE_MERK32                     3       2          ES      Y
      ARKODE_MERK43                     4       3          ES      Y
@@ -55,8 +57,7 @@
      ARKODE_MRI_GARK_IMPLICIT_MIDPOINT 2       0          ID      Y
      ARKODE_MRI_GARK_ESDIRK34a         3       2          ID      Y
      ARKODE_MRI_GARK_ESDIRK46a         4       3          ID      Y
-     ARKODE_IMEX_MRI_GARK_ASCHER_ARK2       2       1          IED     Y
-     ARKODE_IMEX_MRI_GARK_ARK2      2       1          IED     Y
+     ARKODE_IMEX_MRI_GARK_GKC21        2       1          IED     Y
      ARKODE_IMEX_MRI_GARK_EULER        1       0          ID      Y
      ARKODE_IMEX_MRI_GARK_TRAPEZOIDAL  2       0          ID      Y
      ARKODE_IMEX_MRI_GARK_MIDPOINT     2       0          ID      Y
@@ -66,6 +67,7 @@
      ARKODE_IMEX_MRI_SR21              2       1          IEDS    Y
      ARKODE_IMEX_MRI_SR32              3       2          IEDS    Y
      ARKODE_IMEX_MRI_SR43              4       3          IEDS    Y
+     ARKODE_IMEX_MRI_GARK_ARS222       2       1          IED     Y
     ----------------------------------------------------------------
 */
 
@@ -396,38 +398,7 @@ ARK_MRI_TABLE(ARKODE_MRI_GARK_ESDIRK46a, { /* A. Sandu, SINUM 57:2300-2327, 2019
     return C;
   })
 
-ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ASCHER_ARK2, {
-    MRIStepCoupling C = MRIStepCoupling_Alloc(1, 5, MRISTEP_IMEX);
-
-    const sunrealtype gamma = ONE - ONE / SUNRsqrt(SUN_RCONST(2.0));
-    const sunrealtype delta = ONE - ONE / (SUN_RCONST(2.0)*gamma);
-    C->q = 2;
-    C->p = 1;
-
-    C->c[1] = gamma;
-    C->c[2] = gamma;
-    C->c[3] = ONE;
-    C->c[4] = ONE;
-
-    C->W[0][1][0] = gamma;
-    C->W[0][3][0] = delta - gamma;
-    C->W[0][3][2] = ONE - delta;
-    C->W[0][5][0] = -delta;
-    C->W[0][5][2] = delta - SUN_RCONST(0.4);
-    C->W[0][5][4] = SUN_RCONST(0.4);
-
-    C->G[0][1][0] =  gamma;
-    C->G[0][2][0] = -gamma;
-    C->G[0][2][2] =  gamma;
-    C->G[0][3][2] =  ONE - gamma;
-    C->G[0][4][2] = -gamma;
-    C->G[0][4][4] =  gamma;
-    C->G[0][5][2] = -SUN_RCONST(0.4);
-    C->G[0][5][4] =  SUN_RCONST(0.4);
-    return C;
-  })
-
-ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARK2, {
+ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_GKC21, {
     MRIStepCoupling C = MRIStepCoupling_Alloc(1, 6, MRISTEP_IMEX);
 
     C->q = 2;
@@ -1191,6 +1162,53 @@ ARK_MRI_TABLE(ARKODE_MERK54, { /* A.C. Fish, D.R. Reynolds, S.B. Roberts, JCAM 4
     C->W[3][11][4] =  g5;
     C->W[3][11][5] =  g6;
     C->W[3][11][6] =  g7;
+
+    return C;
+  })
+
+ARK_MRI_TABLE(ARKODE_MRI_GARK_EXP_ARS222, { /* custom */
+    ARKodeButcherTable B = ARKodeButcherTable_LoadERK(ARKODE_ARS222_ERK_3_1_2);
+    MRIStepCoupling C = MRIStepCoupling_MIStoMRI(B, B->q, B->p);
+    ARKodeButcherTable_Free(B);
+    return C;
+  })
+
+ARK_MRI_TABLE(ARKODE_MRI_GARK_EXP_GKC21, { /* custom */
+    ARKodeButcherTable B = ARKodeButcherTable_LoadERK(ARKODE_GKC21_ERK_3_1_2);
+    MRIStepCoupling C = MRIStepCoupling_MIStoMRI(B, B->q, B->p);
+    ARKodeButcherTable_Free(B);
+    return C;
+  })
+
+ARK_MRI_TABLE(ARKODE_IMEX_MRI_GARK_ARS222, { /* custom */
+    MRIStepCoupling C = MRIStepCoupling_Alloc(1, 5, MRISTEP_IMEX);
+    const sunrealtype one   = SUN_RCONST(1.0);
+    const sunrealtype gamma = one - one / SUNRsqrt(SUN_RCONST(2.0));
+    const sunrealtype delta = one - one / (SUN_RCONST(2.0) * gamma);
+
+    C->q = 2;
+    C->p = 1;
+
+    C->c[1] = gamma;
+    C->c[2] = gamma;
+    C->c[3] = one;
+    C->c[4] = one;
+
+    C->W[0][1][0] = gamma;
+    C->W[0][3][0] = delta - gamma;
+    C->W[0][3][2] = one - delta;
+    C->W[0][5][0] = -delta;
+    C->W[0][5][2] = delta - SUN_RCONST(0.4);
+    C->W[0][5][4] = SUN_RCONST(0.4);
+
+    C->G[0][1][0] =  gamma;
+    C->G[0][2][0] = -gamma;
+    C->G[0][2][2] =  gamma;
+    C->G[0][3][2] =  one - gamma;
+    C->G[0][4][2] = -gamma;
+    C->G[0][4][4] =  gamma;
+    C->G[0][5][2] = -SUN_RCONST(0.4);
+    C->G[0][5][4] =  SUN_RCONST(0.4);
 
     return C;
   })

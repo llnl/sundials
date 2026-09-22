@@ -1,0 +1,31 @@
+spack:
+  packages:
+    all:
+      target: [x86_64]
+      providers:
+        blas:
+        - openblas
+        mpi:
+        - openmpi
+  specs:
+  - adiak
+  - caliper +adiak
+  - cmake
+  - openmpi
+  concretizer:
+    reuse: false
+    compiler_mixing: false
+    unify: true
+  config:
+    install_tree:
+      root: /opt/software
+  mirrors:
+    local: /var/cache/spack-mirror
+  repos: []
+  upstreams: {}
+  view:
+    default:
+      root: /opt/view
+      projections:
+        superlu-mt: '{name}'
+        superlu-dist: '{name}'

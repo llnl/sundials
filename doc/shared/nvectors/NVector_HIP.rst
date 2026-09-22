@@ -82,6 +82,18 @@ accessor functions:
    This function returns pointer to the vector data on the device.
 
 
+.. c:function:: void N_VSetHostArrayPointer_Hip(sunrealtype* h_vdata, N_Vector v)
+
+   This function sets the vector data pointer on the host. It does not free the
+   existing pointer.
+
+
+.. c:function:: void N_VSetDeviceArrayPointer_Hip(sunrealtype* d_vdata, N_Vector v)
+
+   This function sets the vector data pointer on the device. It does not free
+   the existing pointer.
+
+
 .. c:function:: sunbooleantype N_VIsManagedMemory_Hip(N_Vector v)
 
    This function returns a boolean flag indicating if the vector

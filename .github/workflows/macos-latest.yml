@@ -36,8 +36,8 @@ jobs:
         -W error=dev \
         -B ${{github.workspace}}/build \
         -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-        -D ENABLE_ALL_WARNINGS=ON \
-        -D ENABLE_WARNINGS_AS_ERRORS=ON
+        -D SUNDIALS_ENABLE_ALL_WARNINGS=ON \
+        -D CMAKE_COMPILE_WARNING_AS_ERROR=ON
 
     - name: Build
       # Build your program with the given configuration

@@ -32,6 +32,23 @@ void bind_arkode_sprkstep(nb::module_& m)
 {
 #include "arkode_sprkstep_generated.hpp"
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Manual attributes to capture static const int declarations that nanobind does not catch
+  /////////////////////////////////////////////////////////////////////////////
+
+  m.attr("SPRKSTEP_DEFAULT_1")  = static_cast<int>(SPRKSTEP_DEFAULT_1);
+  m.attr("SPRKSTEP_DEFAULT_2")  = static_cast<int>(SPRKSTEP_DEFAULT_2);
+  m.attr("SPRKSTEP_DEFAULT_3")  = static_cast<int>(SPRKSTEP_DEFAULT_3);
+  m.attr("SPRKSTEP_DEFAULT_4")  = static_cast<int>(SPRKSTEP_DEFAULT_4);
+  m.attr("SPRKSTEP_DEFAULT_5")  = static_cast<int>(SPRKSTEP_DEFAULT_5);
+  m.attr("SPRKSTEP_DEFAULT_6")  = static_cast<int>(SPRKSTEP_DEFAULT_6);
+  m.attr("SPRKSTEP_DEFAULT_8")  = static_cast<int>(SPRKSTEP_DEFAULT_8);
+  m.attr("SPRKSTEP_DEFAULT_10") = static_cast<int>(SPRKSTEP_DEFAULT_10);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // SPRKStep user-supplied function setters
+  /////////////////////////////////////////////////////////////////////////////
+
   m.def(
     "SPRKStepCreate",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> f1,

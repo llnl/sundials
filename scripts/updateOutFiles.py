@@ -41,6 +41,22 @@ def print_error(msg):
     print(f"{colors.ERROR}{msg}{colors.END}")
 
 
+def prompt_yes_no(prompt):
+    while True:
+        try:
+            response = input(prompt)
+        except EOFError:
+            return False
+
+        answer = response.strip().lower()
+        if answer in ("", "n", "no"):
+            return False
+        if answer in ("y", "yes"):
+            return True
+
+        print_warning("  Please answer yes or no (y/n).")
+
+
 # -----------------------------------------------------------------------------
 # main routine
 # -----------------------------------------------------------------------------
@@ -57,6 +73,12 @@ def main():
     )
     parser.add_argument("--log", "-l", type=str, help="Alternative path to failed test log")
     parser.add_argument("--all", "-a", action="store_true", help="Update all output files")
+    parser.add_argument(
+        "--interactive",
+        "-i",
+        action="store_true",
+        help="Prompt before updating differing answer files",
+    )
     parser.add_argument(
         "--copy", "-c", action="store_true", help="Copy file to destination if not found"
     )
@@ -113,10 +135,11 @@ def main():
             args.destination,
         ]
         for idx, out_file in enumerate(output_files):
+            source_file = os.path.join(output, out_file)
             if args.verbose > 0:
                 print(f"[{idx + 1} of {num_output_files}] Test {out_file[:-4]}")
             # Some tests do not have an output file (e.g., unit tests)
-            if not os.path.isfile(os.path.join(output, out_file)):
+            if not os.path.isfile(source_file):
                 print_warning(f"  Warning: did not find the output file {out_file}")
                 continue
             if args.verbose > 1:
@@ -131,24 +154,38 @@ def main():
                     if args.verbose == 3:
                         print(f"  Looking in {root}")
                     if out_file in files:
+                        destination_file = os.path.join(root, out_file)
+                        found = True
                         if args.verbose == 1:
                             print(f"  Found file in {root}")
                         if args.verbose > 1:
                             print("  Found file")
-                        shutil.copy(os.path.join(output, out_file), os.path.join(root, out_file))
-                        found = True
-                        if args.verbose > 0:
-                            print_success(f"  Answer file updated")
+                        should_copy = True
+                        if args.interactive:
+                            should_copy = prompt_yes_no(
+                                f"  Update {destination_file} with {out_file}? [y/N]: "
+                            )
+                        if should_copy:
+                            shutil.copy(source_file, destination_file)
+                            if args.verbose > 0:
+                                print_success(f"  Answer file updated")
+                        else:
+                            if args.verbose > 0:
+                                print_success(f"  Answer file not updated")
                         break
                 if found:
                     break
             if not found:
                 print_warning(f"  Warning: did not find the answer file {out_file}")
-                if args.copy:
-                    print(f"  Copying {out_file} to {args.destination}")
-                    shutil.copy(
-                        os.path.join(output, out_file), os.path.join(args.destination, out_file)
+                should_copy = args.copy
+                destination_file = os.path.join(args.destination, out_file)
+                if args.interactive:
+                    should_copy = prompt_yes_no(
+                        f"  Copy {out_file} to {args.destination}? [y/N]: "
                     )
+                if should_copy:
+                    print(f"  Copying {out_file} to {args.destination}")
+                    shutil.copy(source_file, destination_file)
 
 
 # -----------------------------------------------------------------------------

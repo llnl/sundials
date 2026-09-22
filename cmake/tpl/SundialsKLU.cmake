@@ -50,8 +50,6 @@ if(SUNDIALS_ENABLE_KLU_CHECKS)
 
   message(CHECK_START "Testing KLU")
 
-  # Do any checks which don't require compilation first.
-
   if(SUNDIALS_INDEX_SIZE MATCHES "64")
     # Check size of SuiteSparse_long
     include(CheckTypeSize)
@@ -76,16 +74,26 @@ if(SUNDIALS_ENABLE_KLU_CHECKS)
   set(TEST_DIR ${PROJECT_BINARY_DIR}/KLU_TEST)
 
   # Create a C source file which calls a KLU function
-  file(WRITE ${TEST_DIR}/test.c
-       "\#include \"klu.h\"\n" "int main(void) {\n" "klu_common Common;\n"
-       "klu_defaults (&Common);\n" "return 0;\n" "}\n")
+  file(
+    WRITE ${TEST_DIR}/test.c
+    "#include <klu.h>\n" "int main(void) {\n"
+    "  klu_common Common; (void)Common;\n"
+    "  return klu_defaults(&Common) ? 0 : 1;\n" "}\n")
 
-  # Attempt to build and link the test executable, pass --debug-trycompile to
-  # the cmake command to save build files for debugging
+  # CMake versions supported by SUNDIALS cannot use an alias to an imported
+  # target in try_compile, so resolve the underlying target before linking.
+  get_target_property(_KLU_ALIASED_TARGET SUNDIALS::KLU ALIASED_TARGET)
+  if(_KLU_ALIASED_TARGET)
+    set(_KLU_TARGET "${_KLU_ALIASED_TARGET}")
+  else()
+    set(_KLU_TARGET SUNDIALS::KLU)
+  endif()
+
+  set(TEST_BINARY_DIR "${TEST_DIR}/build")
   try_compile(
-    COMPILE_OK ${TEST_DIR}
-    ${TEST_DIR}/test.c
-    LINK_LIBRARIES SUNDIALS::KLU
+    COMPILE_OK "${TEST_BINARY_DIR}"
+    "${TEST_DIR}/test.c"
+    LINK_LIBRARIES ${_KLU_TARGET}
     OUTPUT_VARIABLE COMPILE_OUTPUT)
 
   # Process test result

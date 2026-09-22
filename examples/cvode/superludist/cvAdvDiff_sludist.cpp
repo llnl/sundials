@@ -30,7 +30,8 @@
  * The PDE is discretized on a uniform grid of size MX+2 with
  * central differencing, and with boundary values eliminated,
  * leaving an ODE system of size NEQ = MX.
- * This program solves the problem with BDF and Newton Iteration.
+ * This program solves the problem with the Adams-Moulton methods and
+ * Newton iteration + SuplerLU_DIST sparse direct linear solver.
  * It uses scalar relative and absolute tolerances.
  * Output is printed at t = .5, 1.0, ..., 5.
  * Run statistics (optional outputs) are printed at the end.
@@ -52,7 +53,17 @@
 #include <sunlinsol/sunlinsol_superludist.h> /* access to the SuperLU-DIST SUNLinearSolver   */
 #include <sunmatrix/sunmatrix_slunrloc.h> /* access to the SuperLU SLU_NR_loc SUNMatrix   */
 
-#include "superlu_ddefs.h"
+#if defined(SUNDIALS_DOUBLE_PRECISION)
+#include <superlu_ddefs.h>
+#define SLU_X                          SLU_D
+#define xCreate_CompRowLoc_Matrix_dist dCreate_CompRowLoc_Matrix_dist
+#elif defined(SUNDIALS_SINGLE_PRECISION)
+#include <superlu_sdefs.h>
+#define SLU_X                          SLU_S
+#define xCreate_CompRowLoc_Matrix_dist sCreate_CompRowLoc_Matrix_dist
+#else
+#error "Incompatible sunrealtype for SuperLU_DIST"
+#endif
 
 /* Problem Constants */
 
@@ -78,7 +89,7 @@ typedef struct
   sunrealtype dx, hdcoef, hacoef;
   int npes, my_pe;
   MPI_Comm comm;
-  sunrealtype z[100];
+  sunrealtype* z; /* work array of length local_N + 2 (local values + 2 halo) */
 }* UserData;
 
 /* Private Helper Functions */
@@ -116,9 +127,9 @@ int main(int argc, char* argv[])
   long int nst;
 
   gridinfo_t grid;
-  dLUstruct_t LUstruct;
-  dScalePermstruct_t scaleperm;
-  dSOLVEstruct_t solve;
+  xLUstruct_t LUstruct;
+  xScalePermstruct_t scaleperm;
+  xSOLVEstruct_t solve;
   SuperLUStat_t stat;
   superlu_dist_options_t options;
   SuperMatrix Asuper;
@@ -147,7 +158,7 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "SUNContext_Create", 1, my_pe)) { return (1); }
 
   /* check for nprow and npcol arguments */
-  if (argc < 2)
+  if (argc < 3)
   {
     printf("ERROR: number of process rows and columns must be provided as "
            "arguments: ./cvAdvDiff <nprow> <npcol>\n");
@@ -183,6 +194,13 @@ int main(int argc, char* argv[])
   data->npes  = npes;
   data->my_pe = my_pe;
 
+  /* Work array holds the local segment of u plus one halo value at each end. */
+  data->z = (sunrealtype*)malloc((local_N + 2) * sizeof(sunrealtype));
+  if (check_retval((void*)data->z, "malloc", 2, my_pe))
+  {
+    MPI_Abort(grid.comm, 1);
+  }
+
   u = N_VNew_Parallel(grid.comm, local_N, NEQ, sunctx); /* Allocate u vector */
   if (check_retval((void*)u, "N_VNew", 0, my_pe)) { MPI_Abort(grid.comm, 1); }
 
@@ -196,15 +214,21 @@ int main(int argc, char* argv[])
 
   SetIC(u, dx, local_N, my_base); /* Initialize u vector */
 
-  if (!my_pe || (my_pe == (npes - 1))) { local_NNZ = 2 + 3 * (local_N - 1); }
-  else { local_NNZ = 3 * local_N; }
+  /* Count the nonzeros owned by this process. The first and last rows of the
+     tridiagonal system have two entries, every other row has three. */
+  local_NNZ = 0;
+  for (sunindextype i = 0; i < local_N; i++)
+  {
+    sunindextype j = my_base + i;
+    local_NNZ += (j == 0 || j == NEQ - 1) ? 2 : 3;
+  }
 
   /* Create the SuperLU-DIST SuperMatrix which will be wrapped as A */
   matdata = (sunrealtype*)malloc(local_NNZ * sizeof(sunrealtype));
   colind  = (sunindextype*)calloc(local_NNZ, sizeof(sunindextype));
   rowptr  = (sunindextype*)calloc((local_N + 1), sizeof(sunindextype));
-  dCreate_CompRowLoc_Matrix_dist(&Asuper, NEQ, NEQ, local_NNZ, local_N, my_base,
-                                 matdata, colind, rowptr, SLU_NR_loc, SLU_D,
+  xCreate_CompRowLoc_Matrix_dist(&Asuper, NEQ, NEQ, local_NNZ, local_N, my_base,
+                                 matdata, colind, rowptr, SLU_NR_loc, SLU_X,
                                  SLU_GE);
 
   /* Use the default SuperLU-DIST solver options */
@@ -212,8 +236,8 @@ int main(int argc, char* argv[])
   options.PrintStat = NO;
 
   /* Initialize SuperLU-DIST solver structures */
-  dScalePermstructInit(NEQ, NEQ, &scaleperm);
-  dLUstructInit(NEQ, &LUstruct);
+  xScalePermstructInit(NEQ, NEQ, &scaleperm);
+  xLUstructInit(NEQ, &LUstruct);
   PStatInit(&stat);
 
   /* Call CVodeCreate to create the solver memory and specify the Adams-Moulton LMM */
@@ -304,13 +328,14 @@ int main(int argc, char* argv[])
   SUNLinSolFree(LS);     /* Free the linear solver */
   SUNMatDestroy(A);      /* Free the A matrix */
   CVodeFree(&cvode_mem); /* Free the integrator memory */
+  free(data->z);         /* Free the work array */
   free(data);            /* Free user data */
   SUNContext_Free(&sunctx);
 
   /* Free the SuperLU_DIST structures */
   PStatFree(&stat);
-  dScalePermstructFree(&scaleperm);
-  dLUstructFree(&LUstruct);
+  xScalePermstructFree(&scaleperm);
+  xLUstructFree(&LUstruct);
   Destroy_CompRowLoc_Matrix_dist(&Asuper);
   superlu_gridexit(&grid);
 
@@ -326,7 +351,7 @@ int main(int argc, char* argv[])
 static void SetIC(N_Vector u, sunrealtype dx, sunindextype my_length,
                   sunindextype my_base)
 {
-  int i;
+  sunindextype i;
   sunindextype iglobal;
   sunrealtype x;
   sunrealtype* udata;
@@ -400,10 +425,11 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
 {
   sunrealtype ui, ult, urt, hordc, horac, hdiff, hadv;
   sunrealtype *udata, *dudata, *z;
-  int i;
-  int npes, my_pe, my_length, my_pe_m1, my_pe_p1, last_pe;
+  sunindextype i, my_length;
+  int npes, my_pe, my_pe_m1, my_pe_p1, last_pe;
   UserData data;
-  MPI_Status status;
+  MPI_Request request[4];
+  int nreq = 0;
   MPI_Comm comm;
 
   udata  = N_VGetArrayPointer(u);
@@ -429,24 +455,30 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   /* Store local segment of u in the working array z. */
   for (i = 1; i <= my_length; i++) { z[i] = udata[i - 1]; }
 
-  /* Pass needed data to processes before and after current process. */
-  if (my_pe != 0) { MPI_Send(&z[1], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm); }
-  if (my_pe != last_pe)
-  {
-    MPI_Send(&z[my_length], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm);
-  }
-
-  /* Receive needed data from processes before and after current process. */
+  /* Exchange halo values with the neighboring processes. */
   if (my_pe != 0)
   {
-    MPI_Recv(&z[0], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm, &status);
+    MPI_Irecv(&z[0], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm, &request[nreq++]);
   }
   else { z[0] = ZERO; }
+
   if (my_pe != last_pe)
   {
-    MPI_Recv(&z[my_length + 1], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm, &status);
+    MPI_Irecv(&z[my_length + 1], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm,
+              &request[nreq++]);
   }
-  else { z[my_length + 1] = ZERO; }
+
+  if (my_pe != 0)
+  {
+    MPI_Isend(&z[1], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm, &request[nreq++]);
+  }
+  if (my_pe != last_pe)
+  {
+    MPI_Isend(&z[my_length], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm,
+              &request[nreq++]);
+  }
+
+  MPI_Waitall(nreq, request, MPI_STATUSES_IGNORE);
 
   /* Loop over all grid points in current process. */
   for (i = 1; i <= my_length; i++)
@@ -497,25 +529,17 @@ static int Jac(sunrealtype t, N_Vector u, N_Vector fu, SUNMatrix J,
   /* set non-zero Jacobian entries */
   for (i = 0; i < Jstore->m_loc; i++)
   {
-    sunbooleantype first_local_row;
     sunbooleantype first_row, last_row;
 
     /* global row index */
     j = Jstore->fst_row + i;
 
-    first_local_row = (i == 0);
-    first_row       = (j == 0);
-    last_row        = (j == (Jsuper->nrow - 1));
+    first_row = (j == 0);
+    last_row  = (j == (Jsuper->nrow - 1));
 
-    if (first_local_row)
-    {
-      rowptr[i]     = 0;
-      rowptr[i + 1] = first_row ? 2 : 3;
-    }
-    else
-    {
-      rowptr[i + 1] = (Jstore->fst_row == 0 || last_row) ? 3 * i + 2 : 3 * i + 3;
-    }
+    /* Accumulate the row pointers from the per-row nonzero count. */
+    if (i == 0) { rowptr[0] = 0; }
+    rowptr[i + 1] = rowptr[i] + ((first_row || last_row) ? 2 : 3);
 
     /* local non-zero elements */
     if (first_row)

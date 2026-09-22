@@ -1100,7 +1100,7 @@ Main solver optional input functions
      * ``CV_MEM_NULL`` -- The CVODE memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
 
    **Notes:**
-      By default, CVODE estimates the initial step size to be the solution :math:`h` of the equation :math:`0.5 h^2 \ddot{y} = 1`,  where :math:`\ddot{y}` is an estimated second derivative of the solution at :math:`t_0`.
+      By default, CVODE estimates the initial step size to be the solution :math:`h` of the equation :math:`0.5 h^2 \|\ddot{y}\|_{\text{WRMS}} = 1`,  where :math:`\ddot{y}` is an estimated second derivative of the solution at :math:`t_0`.
 
       This routine will be called by :c:func:`CVodeSetOptions`
       when using the key "cvid.init_step".
@@ -1693,16 +1693,21 @@ problem data and access it during the execution of the user-supplied
 preconditioner functions without using global data in the program.
 
 Also, as described in :numref:`CVODE.Mathematics.ivp_sol`, the CVLS interface
-requires that iterative linear solvers stop when the norm of the
-preconditioned residual satisfies
+targets a preconditioned residual satisfying
 
 .. math::
+   \|\tilde{r}\|_{2} \le tol.
 
-   \|r\| \le \frac{\epsilon_L \epsilon}{10}
-
-where :math:`\epsilon` is the nonlinear solver tolerance, and the default
-:math:`\epsilon_L = 0.05`; this value may be modified by the user through
-the :c:func:`CVodeSetEpsLin` function.
+where :math:`\tilde{r}` is the scaled linear residual. The tolerance is
+:math:`tol = C \epsilon_L \epsilon_N \epsilon` where :math:`\epsilon_L` is the
+linear tolerance factor (the default is 0.05 and may be modified by calling
+:c:func:`CVodeSetEpsLin`), :math:`\epsilon_N` is the nonlinear solver tolerance,
+and :math:`\epsilon` is a constant relating the nonlinear solver error to
+CVODE's error estimate. The constant :math:`C = \sqrt{N}` where :math:`N` is the
+vector length (but this factor may be modified with
+:c:func:`CVodeSetLSNormFactor` for other norms). If the solver does not support
+scaling, the tolerance is modified as described in
+:numref:`SUNLinSol.CVODE.Iterative.Tolerance`.
 
 
 .. c:function:: int CVodeSetPreconditioner(void* cvode_mem, CVLsPrecSetupFn psetup, CVLsPrecSolveFn psolve)
@@ -1736,7 +1741,7 @@ the :c:func:`CVodeSetEpsLin` function.
 
 .. c:function:: int CVodeSetEpsLin(void* cvode_mem, sunrealtype eplifac)
 
-   The function ``CVodeSetEpsLin`` specifies the factor by  which the Krylov linear solver's convergence test constant is  reduced from the nonlinear solver test constant.
+   The function ``CVodeSetEpsLin`` specifies the factor :math:`\epsilon_L` by which the Krylov linear solver's convergence test constant is  reduced from the nonlinear solver test constant.
 
    **Arguments:**
      * ``cvode_mem`` -- pointer to the CVODE memory block.
@@ -1765,15 +1770,15 @@ the :c:func:`CVodeSetEpsLin` function.
 
 .. c:function:: int CVodeSetLSNormFactor(void* cvode_mem, sunrealtype nrmfac)
 
-   The function ``CVodeSetLSNormFactor`` specifies the factor to use when  converting from the integrator tolerance (WRMS norm) to the linear solver  tolerance (L2 norm) for Newton linear system solves e.g.,  ``tol_L2 = fac * tol_WRMS``.
+   The function ``CVodeSetLSNormFactor`` specifies the factor to use when converting from the integrator tolerance (WRMS norm) to the linear solver  tolerance (L2 norm) for Newton linear system solves e.g.,  ``tol_L2 = fac * tol_WRMS``.  See :numref:`SUNLinSol.CVODE.Iterative.Tolerance` for how this tolerance is used in the linear solver convergence test.
 
    **Arguments:**
      * ``cvode_mem`` -- pointer to the CVODE memory block.
      * ``nrmfac`` -- the norm conversion factor. If ``nrmfac`` is:
 
        - :math:`> 0` then the provided value is used.
-       - :math:`= 0` then the conversion factor is computed using the vector length, i.e., ``nrmfac = N_VGetLength(y)`` (*default*).
-       - :math:`< 0` then the conversion factor is computed using the vector dot product, i.e., ``nrmfac = N_VDotProd(v,v)`` where all the entries of ``v`` are one.
+       - :math:`= 0` then the conversion factor is computed using the vector length, i.e., ``nrmfac = sqrt(N_VGetLength(y))`` (*default*).
+       - :math:`< 0` then the conversion factor is computed using the vector dot product, i.e., ``nrmfac = sqrt(N_VDotProd(v,v))`` where all the entries of ``v`` are one.
 
    **Return value:**
      * ``CV_SUCCESS`` -- The optional value has been successfully set.
@@ -1782,7 +1787,7 @@ the :c:func:`CVodeSetEpsLin` function.
    **Notes:**
       This function must be called after the CVLS linear solver  interface has been initialized through a call to :c:func:`CVodeSetLinearSolver`.
 
-      Prior to the introduction of ``N_VGetLength`` in SUNDIALS v5.0.0  (CVODE v5.0.0) the value of ``nrmfac`` was computed using the vector  dot product i.e., the ``nrmfac < 0`` case.
+      Prior to the introduction of ``N_VGetLength`` in SUNDIALS v5.0.0 (CVODE v5.0.0) the value of ``nrmfac`` was computed using the vector  dot product i.e., the ``nrmfac < 0`` case.
 
       This routine will be called by :c:func:`CVodeSetOptions`
       when using the key "cvid.ls_norm_factor".
@@ -1855,7 +1860,7 @@ nonlinear solver.
 
 .. c:function:: int CVodeSetNonlinConvCoef(void* cvode_mem, sunrealtype nlscoef)
 
-   The function ``CVodeSetNonlinConvCoef`` specifies the safety factor used in the nonlinear convergence test (see :numref:`CVODE.Mathematics.ivp_sol`).
+   The function ``CVodeSetNonlinConvCoef`` specifies the safety factor :math:`\epsilon_N` used in the nonlinear convergence test (see :numref:`CVODE.Mathematics.ivp_sol`).
 
    **Arguments:**
      * ``cvode_mem`` -- pointer to the CVODE memory block.
@@ -3754,7 +3759,7 @@ weights in the WRMS norm
 
 .. math::
 
-   \|\ v \|_{\mbox{WRMS}} = \sqrt{\frac1N \sum_{i=1}^N (W_i \cdot v_i)^2}.
+   \|\ v \|_{\text{WRMS}} = \sqrt{\frac1N \sum_{i=1}^N (W_i \cdot v_i)^2}.
 
 These weights will be used in place of those defined by Eq.
 :eq:`CVODE_errwt`. The function type is defined as follows:

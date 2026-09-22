@@ -536,7 +536,7 @@ Fe RHS evals:
 --------------------
 
 ========================
-ARKODE_ARK2_ERK_3_1_2
+ARKODE_GKC21_ERK_3_1_2
   stages:             3
   order:              2
   explicit 1st stage: 1
@@ -1131,7 +1131,7 @@ Fe RHS evals:
 --------------------
 
 ========================
-ARKODE_ASCHER_ERK_3_1_2
+ARKODE_ARS222_ERK_3_1_2
   stages:             3
   order:              2
   explicit 1st stage: 1
@@ -1163,6 +1163,76 @@ Steps: 4
 Fe RHS evals:
   actual:   9
   expected: 9
+--------------------
+
+========================
+ARKODE_KUTTA_RK4a_4_4
+  stages:             4
+  order:              4
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   4
+  expected: 4
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   8
+  expected: 8
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   13
+  expected: 13
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   16
+  expected: 16
+--------------------
+
+========================
+ARKODE_KUTTA_RK4b_4_4
+  stages:             4
+  order:              4
+  explicit 1st stage: 1
+  stiffly accurate:   0
+  first same as last: 0
+========================
+--------------------
+Steps: 1
+Fe RHS evals:
+  actual:   4
+  expected: 4
+--------------------
+Steps: 2
+Fe RHS evals:
+  actual:   8
+  expected: 8
+--------------------
+Steps: 3
+Fe RHS evals:
+  actual:   12
+  expected: 12
+--------------------
+Dense Output
+Fe RHS evals:
+  actual:   13
+  expected: 13
+--------------------
+Steps: 4
+Fe RHS evals:
+  actual:   16
+  expected: 16
 --------------------
 
 

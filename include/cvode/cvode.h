@@ -142,9 +142,11 @@ SUNDIALS_EXPORT int CVodeSetMaxNumSteps(void* cvode_mem, long int mxsteps);
 SUNDIALS_EXPORT int CVodeSetMaxOrd(void* cvode_mem, int maxord);
 SUNDIALS_EXPORT int CVodeSetMaxStep(void* cvode_mem, sunrealtype hmax);
 SUNDIALS_EXPORT int CVodeSetMinStep(void* cvode_mem, sunrealtype hmin);
-SUNDIALS_DEPRECATED_EXPORT
+SUNDIALS_DEPRECATED_EXPORT_MSG(
+  "Monitoring functions will be removed in version 8.0.0")
 int CVodeSetMonitorFn(void* cvode_mem, CVMonitorFn fn);
-SUNDIALS_DEPRECATED_EXPORT
+SUNDIALS_DEPRECATED_EXPORT_MSG(
+  "Monitoring functions will be removed in version 8.0.0")
 int CVodeSetMonitorFrequency(void* cvode_mem, long int nst);
 SUNDIALS_EXPORT int CVodeSetNlsRhsFn(void* cvode_mem, CVRhsFn f);
 SUNDIALS_EXPORT int CVodeSetNonlinConvCoef(void* cvode_mem, sunrealtype nlscoef);

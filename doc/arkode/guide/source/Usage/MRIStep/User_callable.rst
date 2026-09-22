@@ -48,7 +48,6 @@ for additional details.
 MRIStep initialization and deallocation functions
 ------------------------------------------------------
 
-
 .. c:function:: void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0, MRIStepInnerStepper stepper, SUNContext sunctx)
 
    This function allocates and initializes memory for a problem to
@@ -106,6 +105,64 @@ MRIStep initialization and deallocation functions
       * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
       * ``examples/arkode/CXX_serial/ark_test_kpr_nestedmri.cpp``
         (uses MRIStep within itself)
+
+
+
+.. c:function:: void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0, SUNContext sunctx)
+
+   This function allocates and initializes memory for a problem to be solved
+   using an ExtSTS time-stepping method.
+
+   :param fd: the user-defined function for the diffusive dynamics (required).
+   :param fe: the user-defined function for the explicit dynamics
+      (may be ``NULL`` if no explicit dynamics are present).
+   :param fi: the user-defined function for the implicit dynamics
+      (may be ``NULL`` if no implicit dynamics are present).
+   :param t0: the initial value of :math:`t`.
+   :param y0: the initial condition vector :math:`y(t_0)`.
+   :param sunctx: the :c:type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`).
+
+   :return: If successful, a pointer to initialized problem memory of type
+      ``void*``, to be passed to all user-facing MRIStep or ARKODE routines.
+      If unsuccessful, a ``NULL`` pointer will be returned, and an error
+      message will be printed to ``stderr``.
+
+   .. warning::
+
+      Although ExtSTS methods are packaged within MRIStep, the inner STS solver
+      is not subcycled as with other MRI methods.  By default, the inner STS
+      solver is configured to be of Runge--Kutta--Chebyshev type, with a maximum
+      of 10000 stages per step.  Although users may request the STS solver to
+      change these defaults or configure other relevant options, they should never
+      change any LSRKStep settings related to time step adaptivity or
+      interpolated output, nor should they configure options that would
+      request the STS solver to stop a time step prematurely (e.g., through
+      calls to :c:func:`ARKodeRootInit` or :c:func:`ARKodeSetConstraints`).
+      Similarly, users should not employ "H-Tol" multirate time step
+      controllers on the object returned using :c:func:`MRIStepCreateExtSTS`.
+
+   .. versionadded:: 7.9.0 (ARKODE 6.9.0)
+
+   **Example usage:**
+
+      .. code-block:: C
+
+         /* create ExtSTS instantiation of MRIStep object */
+         void* extsts_mem = MRIStepCreateExtSTS(fd, fe, fi, t0, y0, sunctx);
+
+         /* access the inner STS stepper object */
+         void* sts_mem = NULL;
+         retval = MRIStepGetSTS(extsts_mem, &sts_mem);
+
+         /* configure ExtSTS integrator */
+         retval = MRIStepSet*(extsts_mem, ...);
+         retval = ARKodeSet*(extsts_mem, ...);
+
+         /* configure inner STS integrator */
+         retval = LSRKStepSet*(sts_mem, ...);
+
+   **Example codes:**
+      * ``examples/arkode/CXX_serial/ark_adr1d_extsts.cpp``
 
 
 .. c:function:: void MRIStepFree(void** arkode_mem)
@@ -745,7 +802,6 @@ Optional inputs for MRIStep
 
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory is ``NULL``
-
 
 
 
@@ -1413,7 +1469,9 @@ Optional inputs for iterative ``SUNLinearSolver`` modules
 
    Specifies the factor to use when converting from the integrator tolerance
    (WRMS norm) to the linear solver tolerance (L2 norm) for Newton linear system
-   solves e.g., ``tol_L2 = fac * tol_WRMS``.
+   solves e.g., ``tol_L2 = fac * tol_WRMS``. See
+   :numref:`SUNLinSol.Iterative.Tolerance` for how this tolerance is used in the
+   linear solver convergence test.
 
    :param arkode_mem: pointer to the MRIStep memory block.
    :param nrmfac: the norm conversion factor. If *nrmfac* is:
@@ -1569,6 +1627,31 @@ Main solver optional output functions
    :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
 
    .. versionadded:: 7.2.0 (ARKODE 6.2.0)
+
+
+
+.. c:function:: int MRIStepGetSTS(void* arkode_mem, void** stsptr)
+
+   Returns a pointer to the LSRKStep super-time-stepping object
+   used within the MRIStep module when performing ExtSTS time-stepping.
+
+   :param arkode_mem: pointer to the MRIStep memory block.
+   :param stsptr: pointer to the LSRKStep super-time-stepping object.
+
+   :retval ARK_SUCCESS: if successful
+   :retval ARK_MEM_NULL: if the MRIStep memory was ``NULL``
+
+   .. warning::
+
+      If the user wishes to set different ``user_data`` pointers for the
+      MRIStep and LSRKStep components of the ExtSTS solver, they should first
+      call :c:func:`ARKodeSetUserData` on the MRIStep object, and then call
+      :c:func:`ARKodeSetUserData` on the LSRKStep object returned from
+      :c:func:`MRIStepCreateExtSTS`.  By default, the LSRKStep object will
+      inherit the ``user_data`` pointer from the MRIStep object.
+
+   .. versionadded:: 7.9.0 (ARKODE 6.9.0)
+
 
 
 .. c:function:: int MRIStepGetWorkSpace(void* arkode_mem, long int* lenrw, long int* leniw)
@@ -2415,9 +2498,13 @@ MRIStep re-initialization function
 -------------------------------------
 
 To reinitialize the MRIStep module for the solution of a new problem,
-where a prior call to :c:func:`MRIStepCreate()` has been made, the
-user must call the function :c:func:`MRIStepReInit()`.  The new
-problem must have the same size as the previous one.  This routine
+where a prior call to :c:func:`MRIStepCreate()` or
+:c:func:`MRIStepCreateExtSTS()` has been made, the user must call the
+function :c:func:`MRIStepReInit()` or :c:func:`MRIStepReInitExtSTS()`, as
+appropriate.  Since instructions for both cases are the same, the next
+few paragraphs discuss only the case for general MRIStep methods, but
+apply to ExtSTS methods as well.
+The new problem must have the same size as the previous one.  This routine
 retains the current settings for all MRIStep module options and
 performs the same input checking and initializations that are done in
 :c:func:`MRIStepCreate()`, but it performs no memory allocation as is
@@ -2484,6 +2571,43 @@ vector.
       If an error occurred, :c:func:`MRIStepReInit()` also
       sends an error message to the error handler function.
 
+
+
+
+.. c:function:: int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0)
+
+   Provides required problem specifications and re-initializes
+   MRIStep for an Extended Super Time Stepping (ExtSTS) method.
+
+   :param arkode_mem: pointer to the MRIStep memory block.
+   :param fd: the user-defined function for the diffusive dynamics
+      of the problem-defining right-hand side function
+      :math:`\dot{y} = f^D(t,y) + f^E(t,y) + f^I(t,y)` (required).
+   :param fe: the user-defined function for the explicit dynamics
+      of the problem-defining right-hand side function
+      :math:`\dot{y} = f^D(t,y) + f^E(t,y) + f^I(t,y)`
+      (may be ``NULL`` if no explicit dynamics are present).
+   :param fi: the user-defined function for the implicit dynamics
+      of the problem-defining right-hand side function
+      :math:`\dot{y} = f^D(t,y) + f^E(t,y) + f^I(t,y)`
+      (may be ``NULL`` if no implicit dynamics are present).
+   :param t0: the initial value of :math:`t`.
+   :param y0: the initial condition vector :math:`y(t_0)`.
+
+   :retval ARK_SUCCESS: if successful
+   :retval ARK_MEM_NULL:  if the MRIStep memory was ``NULL``
+   :retval ARK_MEM_FAIL:  if a memory allocation failed
+   :retval ARK_ILL_INPUT: if an argument has an illegal value.
+
+   .. note::
+
+      All previously set options are retained but may be updated by calling
+      the appropriate "Set" functions.
+
+      If an error occurred, :c:func:`MRIStepReInitExtSTS()` also
+      sends an error message to the error handler function.
+
+   .. versionadded:: 7.9.0 (ARKODE 6.9.0)
 
 
 .. _ARKODE.Usage.MRIStep.Reset:

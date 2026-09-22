@@ -163,13 +163,15 @@ N_Vector N_VCloneEmpty_SensWrapper(N_Vector w)
     return (NULL);
   }
 
-  ops->nvgetvectorid     = w->ops->nvgetvectorid;
-  ops->nvclone           = w->ops->nvclone;
-  ops->nvcloneempty      = w->ops->nvcloneempty;
-  ops->nvdestroy         = w->ops->nvdestroy;
-  ops->nvspace           = w->ops->nvspace;
-  ops->nvgetarraypointer = w->ops->nvgetarraypointer;
-  ops->nvsetarraypointer = w->ops->nvsetarraypointer;
+  ops->nvgetvectorid           = w->ops->nvgetvectorid;
+  ops->nvclone                 = w->ops->nvclone;
+  ops->nvcloneempty            = w->ops->nvcloneempty;
+  ops->nvdestroy               = w->ops->nvdestroy;
+  ops->nvspace                 = w->ops->nvspace;
+  ops->nvgetarraypointer       = w->ops->nvgetarraypointer;
+  ops->nvgetdevicearraypointer = w->ops->nvgetdevicearraypointer;
+  ops->nvsetarraypointer       = w->ops->nvsetarraypointer;
+  ops->nvsetdevicearraypointer = w->ops->nvsetdevicearraypointer;
 
   /* standard vector operations */
   ops->nvlinearsum    = w->ops->nvlinearsum;

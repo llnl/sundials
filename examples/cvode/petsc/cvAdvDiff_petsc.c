@@ -75,7 +75,7 @@ typedef struct
   sunrealtype dx, hdcoef, hacoef;
   int npes, my_pe;
   MPI_Comm comm;
-  sunrealtype z[100];
+  sunrealtype* z; /* work array of length local_N + 2 (local values + 2 halo) */
 }* UserData;
 
 /* Private Helper Functions */
@@ -159,6 +159,10 @@ int main(int argc, char* argv[])
   data->comm  = comm;
   data->npes  = npes;
   data->my_pe = my_pe;
+
+  /* Work array holds the local segment of u plus one halo value at each end. */
+  data->z = (sunrealtype*)malloc((local_N + 2) * sizeof(sunrealtype));
+  if (check_retval((void*)data->z, "malloc", 2, my_pe)) { MPI_Abort(comm, 1); }
 
   /* Set grid coefficients */
   dx = data->dx = XMAX / ((sunrealtype)(MX + 1));
@@ -248,6 +252,7 @@ int main(int argc, char* argv[])
   N_VDestroy(u);            /* Free the sundials u vector */
   CVodeFree(&cvode_mem);    /* Free the cvode integrator memory */
   SUNNonlinSolFree(NLS);    /* Free the sundials nonlinear solver */
+  free(data->z);            /* Free the work array */
   free(data);               /* Free user data */
   SUNContext_Free(&sunctx); /* Free context */
 
@@ -335,7 +340,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   sunindextype my_length;
   int i, npes, my_pe, my_pe_m1, my_pe_p1, last_pe;
   UserData data;
-  MPI_Status status;
+  MPI_Request request[4];
+  int nreq = 0;
   MPI_Comm comm;
 
   ptcerr = VecGetArray(N_VGetVector_Petsc(u), &udata);
@@ -364,28 +370,33 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   /* Store local segment of u in the working array z. */
   for (i = 1; i <= my_length; i++) { z[i] = udata[i - 1]; }
 
-  /* Pass needed data to processes before and after current process. */
+  /* Exchange halo values with the neighboring processes. */
   if (my_pe != 0)
   {
-    (void)MPI_Send(&z[1], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm);
-  }
-  if (my_pe != last_pe)
-  {
-    (void)MPI_Send(&z[my_length], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm);
-  }
-
-  /* Receive needed data from processes before and after current process. */
-  if (my_pe != 0)
-  {
-    (void)MPI_Recv(&z[0], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm, &status);
+    (void)MPI_Irecv(&z[0], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm,
+                    &request[nreq++]);
   }
   else { z[0] = ZERO; }
+
   if (my_pe != last_pe)
   {
-    (void)MPI_Recv(&z[my_length + 1], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm,
-                   &status);
+    (void)MPI_Irecv(&z[my_length + 1], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm,
+                    &request[nreq++]);
   }
   else { z[my_length + 1] = ZERO; }
+
+  if (my_pe != 0)
+  {
+    (void)MPI_Isend(&z[1], 1, MPI_SUNREALTYPE, my_pe_m1, 0, comm,
+                    &request[nreq++]);
+  }
+  if (my_pe != last_pe)
+  {
+    (void)MPI_Isend(&z[my_length], 1, MPI_SUNREALTYPE, my_pe_p1, 0, comm,
+                    &request[nreq++]);
+  }
+
+  (void)MPI_Waitall(nreq, request, MPI_STATUSES_IGNORE);
 
   /* Loop over all grid points in current process. */
   for (i = 1; i <= my_length; i++)
