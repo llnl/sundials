@@ -68,34 +68,6 @@ static void sunCreateLogPayload(int rank, const char* txt, va_list args,
   }
 }
 
-/*
-  This function creates a log message string in the correct format.
-  It allocates the log_msg parameter, which must be freed by the caller.
-  The format of the log message is:
-
-    [ERROR][rank <rank>][<scope>][<label>] <payload>
-
-  :param prefix: the logging level (ERROR, WARNING, INFO, DEBUG)
-  :param rank: the MPI rank of the caller
-  :param scope: the scope part of the log message
-  :param label: the label part of the log message
-  :param payload: the formatted message
-  :param log_msg: on output, an allocated string containing the log message
-
-  :return: void
-*/
-
-static void sunCreateLogMessage(const char* prefix, int rank, const char* scope,
-                                const char* label, const char* payload,
-                                char** log_msg)
-{
-  int msg_length = snprintf(NULL, 0, "[%s][rank %d][%s][%s] %s\n", prefix, rank,
-                            scope, label, payload);
-  *log_msg       = (char*)malloc(msg_length + 1);
-  snprintf(*log_msg, msg_length + 1, "[%s][rank %d][%s][%s] %s\n", prefix, rank,
-           scope, label, payload);
-}
-
 /* default number of files that we allocate space for */
 #define SUN_DEFAULT_LOGFILE_HANDLES_ 8
 
@@ -176,10 +148,8 @@ static SUNErrCode sunQueueLogMessage(SUNLogger logger, SUNLogLevel lvl,
   // The caller already validates lvl and fp!=NULL, so this is a secondary check
   if (retval == SUN_SUCCESS && fp != NULL)
   {
-    char* log_msg = NULL;
-    sunCreateLogMessage(prefix, rank, scope, label, payload, &log_msg);
-    fprintf(fp, "%s", log_msg);
-    free(log_msg);
+    fprintf(fp, "[%s][rank %d][%s][%s] %s\n", prefix, rank, scope, label,
+            payload);
   }
 
   return retval;
