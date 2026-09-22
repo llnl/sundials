@@ -37,23 +37,6 @@ auto pyClass_generic_SUNMatrix =
 
 m.def("SUNMatGetID", SUNMatGetID, nb::arg("A"));
 
-m.def(
-  "SUNMatClone",
-  [](SUNMatrix A) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
-  {
-    auto SUNMatClone_adapt_return_type_to_shared_ptr =
-      [](SUNMatrix A) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
-    {
-      auto lambda_result = SUNMatClone(A);
-
-      return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
-        lambda_result);
-    };
-
-    return SUNMatClone_adapt_return_type_to_shared_ptr(A);
-  },
-  nb::arg("A"));
-
 m.def("SUNMatZero", SUNMatZero, nb::arg("A"));
 
 m.def("SUNMatCopy", SUNMatCopy, nb::arg("A"), nb::arg("B"));
