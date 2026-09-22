@@ -127,13 +127,13 @@ void SUNErrHandler_Destroy(SUNErrHandler* eh);
   :param func: the function in which the error occurred
   :param file: the file in which the error occurred
   :param msg: a message associated with the error
-  :param args: the arguments to be provided to the format message
+  :param code: the SUNErrCode for the error
 
   :return: void
 */
 SUNDIALS_EXPORT
 void SUNGlobalFallbackErrHandler(int line, const char* func, const char* file,
-                                 const char* msgfmt, SUNErrCode code, ...);
+                                 const char* msg, SUNErrCode code);
 
 /*
   This function calls the error handlers registered with the SUNContext
