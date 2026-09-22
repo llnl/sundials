@@ -1403,8 +1403,13 @@ int Test_N_VDotProd(N_Vector X, N_Vector Y, sunindextype local_length, int myid)
   global_length = N_VGetLength(X);
 
   /* fill vector data */
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  N_VConst(ONE + SUN_I, X);
+  N_VConst((ONE + SUN_I) * HALF, Y);
+#else
   N_VConst(TWO, X);
   N_VConst(HALF, Y);
+#endif
 
   start_time = get_time();
   ans        = N_VDotProd(X, Y);
@@ -1412,7 +1417,7 @@ int Test_N_VDotProd(N_Vector X, N_Vector Y, sunindextype local_length, int myid)
   stop_time = get_time();
 
   /* ans should equal global vector length */
-  failure = SUNRCompare(ans, (sunscalartype)global_length);
+  failure = SUNRCompare(SUN_REAL(ans), (sunscalartype)global_length);
 
   if (failure)
   {
@@ -1444,8 +1449,8 @@ int Test_N_VDotProdComplex(N_Vector X, N_Vector Y, sunindextype local_length,
 
   /* fill vector data */
 #if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-  N_VConst(TWO * SUN_I, X);
-  N_VConst(HALF * SUN_I, Y);
+  N_VConst(ONE + SUN_I, X);
+  N_VConst((ONE + SUN_I) * HALF, Y);
 #else
   N_VConst(TWO, X);
   N_VConst(HALF, Y);
@@ -1456,12 +1461,8 @@ int Test_N_VDotProdComplex(N_Vector X, N_Vector Y, sunindextype local_length,
   sync_device(X);
   stop_time = get_time();
 
-  /* ans should equal global vector length (possibly multiplied by -1) */
-#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-  failure = SUNCompare(ans, -(sunscalartype)global_length);
-#else
-  failure = SUNCompare(ans, (sunscalartype)global_length);
-#endif
+  /* ans should equal global vector length */
+  failure = SUNRCompare(SUN_REAL(ans), (sunscalartype)global_length);
 
   if (failure)
   {
