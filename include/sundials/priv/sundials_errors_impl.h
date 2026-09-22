@@ -478,7 +478,7 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNAssert(expr, code) SUNCheck(expr, code)
 #else
-#define SUNAssert(expr, code) SUNAssume(expr)
+#define SUNAssert(expr, code)
 #endif
 
 /*
@@ -493,7 +493,7 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNAssertNoRet(expr, code) SUNCheckNoRet(expr, code)
 #else
-#define SUNAssertNoRet(expr, code) SUNAssume(expr)
+#define SUNAssertNoRet(expr, code)
 #endif
 
 /*
@@ -507,7 +507,7 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNAssertNull(expr, code) SUNCheckNull(expr, code)
 #else
-#define SUNAssertNull(expr, code) SUNAssume(expr)
+#define SUNAssertNull(expr, code)
 #endif
 
 /*
@@ -521,7 +521,7 @@ static inline void SUNHandleErrWithMsg(int line, const char* func,
 #if defined(SUNDIALS_ENABLE_ERROR_CHECKS)
 #define SUNAssertVoid(expr, code) SUNCheckVoid(expr, code)
 #else
-#define SUNAssertVoid(expr, code) SUNAssume(expr)
+#define SUNAssertVoid(expr, code)
 #endif
 
 #ifdef __cplusplus
