@@ -13,9 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_core.h>
@@ -100,65 +99,15 @@ void SUNAbortErrHandlerFn(int line, const char* func, const char* file,
   abort();
 }
 
-static void sunCreateLogMessage(SUNLogLevel lvl, int rank, const char* scope,
-                                const char* label, const char* txt,
-                                va_list args, char** log_msg)
-{
-  const char* prefix;
-  char* formatted_txt;
-  int msg_length;
-
-  prefix        = NULL;
-  formatted_txt = NULL;
-  msg_length    = 0;
-  *log_msg      = NULL;
-
-  msg_length = sunvasnprintf(&formatted_txt, txt, args);
-  if (msg_length < 0)
-  {
-    char* fileAndLine = sunCombineFileAndLine(__LINE__ + 1, __FILE__);
-    fprintf(stderr, "[ERROR][rank %d][%s][%s] %s\n", rank, fileAndLine,
-            __func__, "FATAL LOGGER ERROR: message size too large");
-    free(fileAndLine);
-  }
-
-  if (lvl == SUN_LOGLEVEL_DEBUG) { prefix = "DEBUG"; }
-  else if (lvl == SUN_LOGLEVEL_WARNING) { prefix = "WARNING"; }
-  else if (lvl == SUN_LOGLEVEL_INFO) { prefix = "INFO"; }
-  else if (lvl == SUN_LOGLEVEL_ERROR) { prefix = "ERROR"; }
-
-  msg_length = snprintf(NULL, 0, "[%s][rank %d][%s][%s] %s\n", prefix, rank,
-                        scope, label, formatted_txt);
-  *log_msg   = (char*)malloc(msg_length + 1);
-  snprintf(*log_msg, msg_length + 1, "[%s][rank %d][%s][%s] %s\n", prefix, rank,
-           scope, label, formatted_txt);
-  free(formatted_txt);
-}
-
 void SUNGlobalFallbackErrHandler(int line, const char* func, const char* file,
-                                 const char* msgfmt, SUNErrCode err_code, ...)
+                                 const char* msg, SUNErrCode err_code)
 {
-  va_list ap;
-  char* log_msg       = NULL;
-  char* file_and_line = NULL;
+  fprintf(stderr,
+          "[ERROR][rank 0][%s:%d][%s] The SUNDIALS SUNContext was corrupt or "
+          "NULL when an error occurred. As such, error messages have been "
+          "printed to stderr.\n",
+          __FILE__, __LINE__, __func__);
 
-  file_and_line = sunCombineFileAndLine(__LINE__, __FILE__);
-  va_start(ap, err_code);
-  sunCreateLogMessage(SUN_LOGLEVEL_ERROR, 0, file_and_line,
-                      __func__, "The SUNDIALS SUNContext was corrupt or NULL when an error occurred. As such, error messages have been printed to stderr.",
-                      ap, &log_msg);
-  va_end(ap);
-  fprintf(stderr, "%s", log_msg);
-  free(log_msg);
-  free(file_and_line);
-
-  file_and_line = sunCombineFileAndLine(line, file);
-  if (msgfmt == NULL) { msgfmt = SUNGetErrMsg(err_code); }
-  va_start(ap, err_code);
-  sunCreateLogMessage(SUN_LOGLEVEL_ERROR, 0, file_and_line, func, msgfmt, ap,
-                      &log_msg);
-  va_end(ap);
-  fprintf(stderr, "%s", log_msg);
-  free(log_msg);
-  free(file_and_line);
+  if (msg == NULL) { msg = SUNGetErrMsg(err_code); }
+  fprintf(stderr, "[ERROR][rank 0][%s:%d][%s] %s\n", file, line, func, msg);
 }
