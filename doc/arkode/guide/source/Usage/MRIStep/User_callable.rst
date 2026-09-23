@@ -61,8 +61,7 @@ MRIStep initialization and deallocation functions
                :math:`\dot{y} = f^E(t,y) + f^I(t,y) + f^F(t,y)`.
    :param t0: the initial value of :math:`t`.
    :param y0: the initial condition vector :math:`y(t_0)`.
-   :param stepper: an :c:type:`SUNStepper` for integrating the fast
-                   time scale.
+   :param stepper: a :c:type:`SUNStepper` for integrating the fast time scale.
    :param sunctx: the :c:type:`SUNContext` object (see :numref:`SUNDIALS.SUNContext`)
 
    :returns: If successful, a pointer to initialized problem memory of type ``void*``, to

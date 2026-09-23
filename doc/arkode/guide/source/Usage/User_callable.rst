@@ -5730,7 +5730,7 @@ ARKODE memory block as a :c:type:`SUNStepper`.
 
 .. c:function:: int ARKodeCreateSUNStepper(void *inner_arkode_mem, SUNStepper *stepper)
 
-   Wraps an ARKODE integrator as an :c:type:`SUNStepper` for use with MRIStep.
+   Wraps an ARKODE integrator as a :c:type:`SUNStepper` for use with MRIStep.
 
    :param arkode_mem: pointer to the ARKODE memory block.
    :param stepper: the :c:type:`SUNStepper` object to create.
