@@ -2207,6 +2207,7 @@ static int idaLsJacBWrapper(sunrealtype tt, sunrealtype c_jB, N_Vector yyB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Forward solution from interpolation */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2247,6 +2248,7 @@ static int idaLsJacBSWrapper(sunrealtype tt, sunrealtype c_jB, N_Vector yyB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2296,6 +2298,7 @@ static int idaLsPrecSetupB(sunrealtype tt, N_Vector yyB, N_Vector ypB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2333,6 +2336,7 @@ static int idaLsPrecSetupBS(sunrealtype tt, N_Vector yyB, N_Vector ypB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2381,6 +2385,7 @@ static int idaLsPrecSolveB(sunrealtype tt, N_Vector yyB, N_Vector ypB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2420,6 +2425,7 @@ static int idaLsPrecSolveBS(sunrealtype tt, N_Vector yyB, N_Vector ypB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2468,6 +2474,7 @@ static int idaLsJacTimesSetupB(sunrealtype tt, N_Vector yyB, N_Vector ypB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2504,6 +2511,7 @@ static int idaLsJacTimesSetupBS(sunrealtype tt, N_Vector yyB, N_Vector ypB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2553,6 +2561,7 @@ static int idaLsJacTimesVecB(sunrealtype tt, N_Vector yyB, N_Vector ypB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
@@ -2593,6 +2602,7 @@ static int idaLsJacTimesVecBS(sunrealtype tt, N_Vector yyB, N_Vector ypB,
   IDAB_mem   = NULL;
   retval     = idaLs_AccessLMemBCur(ida_mem, __func__, &IDA_mem, &IDAADJ_mem,
                                     &IDAB_mem, &idalsB_mem);
+  if (retval != IDALS_SUCCESS) { return (retval); }
 
   /* Get forward solution from interpolation. */
   if (IDAADJ_mem->ia_noInterp == SUNFALSE)
