@@ -19,6 +19,7 @@
 #define SUNDIALS_SUNDIALS4PY_HELPERS_HPP
 
 #include "sundials4py.hpp"
+#include "sundials4py_types.hpp"
 
 namespace nb = nanobind;
 

@@ -27,7 +27,7 @@
 #include <nanobind/stl/tuple.h>
 #include <nanobind/stl/vector.h>
 
-#include "sundials4py_types.hpp"
 #include "sundials4py_helpers.hpp"
+#include "sundials4py_types.hpp"
 
 #endif // SUNDIALS_SUNDIALS4PY_HPP
