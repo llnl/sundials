@@ -9,7 +9,7 @@ Replaced the ARKODE ``MRIStepInnerStepper`` interface with :c:type:`SUNStepper`.
 :c:type:`SUNStepperEvolveFn` now return an integer status where zero is success,
 positive values are recoverable failures, and negative values are fatal
 failures. Added accumulated error get/reset and relative tolerance operations
-to `SUNStepper` to support `SUNAdaptController_MRIHTol`.
+to :c:type:`SUNStepper` to support :c:type:`SUNAdaptController_MRIHTol`.
 
 **New Features and Enhancements**
 
