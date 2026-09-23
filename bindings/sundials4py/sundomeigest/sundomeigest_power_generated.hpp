@@ -1,4 +1,4 @@
-// #ifndef _SUNDOMEIGEST_POWER_H
+// #ifndef SUNDIALS_SUNDOMEIGEST_POWER_H
 //
 // #ifdef __cplusplus
 // #endif

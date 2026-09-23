@@ -1,4 +1,4 @@
-// #ifndef _SUNLINSOL_KLU_H
+// #ifndef SUNDIALS_SUNLINSOL_KLU_H
 //
 // #ifndef _KLU_H
 //

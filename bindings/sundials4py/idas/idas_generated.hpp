@@ -1,4 +1,4 @@
-// #ifndef _IDAS_H
+// #ifndef SUNDIALS_IDAS_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1630,7 +1630,7 @@ m.def(
 //
 // #endif
 //
-// #ifndef _IDASLS_H
+// #ifndef SUNDIALS_IDAS_LS_H
 //
 // #ifdef __cplusplus
 // #endif

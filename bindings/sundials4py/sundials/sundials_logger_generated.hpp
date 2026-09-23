@@ -1,4 +1,4 @@
-// #ifndef _SUNDIALS_LOGGER_H
+// #ifndef SUNDIALS_SUNDIALS_LOGGER_H
 //
 // #ifdef __cplusplus
 // #endif
