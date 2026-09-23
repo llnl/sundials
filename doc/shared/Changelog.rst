@@ -963,8 +963,8 @@ procedure for IVPs. This is used by the :ref:`SplittingStep
 <ARKODE.Usage.SplittingStep>` and :ref:`ForcingStep <ARKODE.Usage.ForcingStep>`
 modules of ARKODE. A SUNStepper can be created from an ARKODE memory block with
 the new function :c:func:`ARKodeCreateSUNStepper`. To enable interoperability
-with :c:type:`MRIStepInnerStepper`, the function
-:c:func:`MRIStepInnerStepper_CreateFromSUNStepper` was added.
+with ``MRIStepInnerStepper``, the function
+``MRIStepInnerStepper_CreateFromSUNStepper`` was added.
 
 *ARKODE*
 
@@ -980,7 +980,7 @@ Added the function :c:func:`MRIStepGetNumInnerStepperFails` to retrieve the
 number of recoverable failures reported by the MRIStepInnerStepper.
 
 Added a utility routine to wrap any valid ARKODE integrator for use as an
-MRIStep inner stepper object, :c:func:`ARKodeCreateMRIStepInnerStepper`.
+MRIStep inner stepper object, ``ARKodeCreateMRIStepInnerStepper``.
 
 The following DIRK schemes now have coefficients accurate to quad precision:
 
@@ -1093,8 +1093,8 @@ Fixed a bug in the 32-bit ``sunindextype`` Fortran interfaces to
 
 Deprecated the ARKStep-specific utility routine for wrapping an ARKStep instance
 as an MRIStep inner stepper object,
-:c:func:`ARKStepCreateMRIStepInnerStepper`. Use
-:c:func:`ARKodeCreateMRIStepInnerStepper` instead.
+``ARKStepCreateMRIStepInnerStepper``. Use
+``ARKodeCreateMRIStepInnerStepper`` instead.
 
 The ARKODE stepper specific functions to retrieve the number of right-hand side
 function evaluations have been deprecated. Use :c:func:`ARKodeGetNumRhsEvals`
@@ -1507,8 +1507,8 @@ unnecessary right-hand side evaluation at the end of an integration. ARKStep was
 additionally updated to remove extra right-hand side evaluations when using an
 explicit method or an implicit method with an explicit first stage.
 
-The :c:type:`MRIStepInnerStepper` class in MRIStep was updated to make supplying
-an :c:type:`MRIStepInnerFullRhsFn` optional.
+The ``MRIStepInnerStepper`` class in MRIStep was updated to make supplying
+an ``MRIStepInnerFullRhsFn`` optional.
 
 **Bug Fixes**
 
@@ -1776,8 +1776,8 @@ Added a variety of embedded DIRK methods from :cite:p:`KenCarp:16` and
 :cite:p:`KenCarp:19b`.
 
 Updated :c:func:`MRIStepReset` to call the corresponding
-:c:type:`MRIStepInnerResetFn` with the same ``tR`` and ``yR`` arguments for the
-:c:type:`MRIStepInnerStepper` object that is used to evolve the MRI "fast" time
+``MRIStepInnerResetFn`` with the same ``tR`` and ``yR`` arguments for the
+``MRIStepInnerStepper`` object that is used to evolve the MRI "fast" time
 scale subproblems.
 
 Added a new example (``examples/cvode/serial/cvRocket_dns.c``) which
@@ -1975,7 +1975,7 @@ capabilities.
 
 Fixed exported ``SUNDIALSConfig.cmake``.
 
-Fixed Fortran interface to :c:type:`MRIStepInnerStepper` and
+Fixed Fortran interface to ``MRIStepInnerStepper`` and
 :c:type:`MRIStepCoupling` structures and functions.
 
 .. _Changelog.6.1.0:
@@ -2178,7 +2178,7 @@ functions as input. Codes using explicit or implicit MRI methods will need to
 update :c:func:`MRIStepCreate` and :c:func:`MRIStepReInit` calls to pass
 ``NULL`` for either the explicit or implicit right-hand side function as
 appropriate. If ARKStep is used as the fast time scale integrator, codes will
-need to call :c:func:`ARKStepCreateMRIStepInnerStepper` to wrap the ARKStep
+need to call ``ARKStepCreateMRIStepInnerStepper`` to wrap the ARKStep
 memory as an MRIStepInnerStepper object. Additionally,
 :c:func:`MRIStepGetNumRhsEvals` has been updated to return the number of slow
 implicit and explicit function evaluations. The coupling table,

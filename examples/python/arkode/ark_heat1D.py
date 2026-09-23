@@ -20,12 +20,19 @@
 #
 # The following test simulates a simple 1D heat equation,
 #    u_t = k*u_xx + f
-# for t in [0, 10], x in [0, 1], with initial conditions
+# for t in [0, 1], x in [0, 1], with initial conditions
 #    u(0,x) =  0
 # Dirichlet boundary conditions, i.e.
 #    u_t(t,0) = u_t(t,1) = 0,
-# and a point-source heating term,
-#    f = 0.01 for x=0.5.
+# and a point-source heating term of total strength 0.01, located at
+# the midpoint of the domain,
+#    f = 0.01*delta(x-0.5),
+# where delta denotes the Dirac delta distribution.  Since a Dirac delta
+# cannot be represented pointwise on a grid, the source is applied using
+# its finite-volume approximation, wherein its total strength is spread
+# over the grid cell of width dx surrounding x=0.5, giving the nodal
+# value 0.01/dx at that single node.  This division by dx is what keeps
+# the discrete integral of f equal to 0.01 under mesh refinement.
 #
 # The spatial derivatives are computed using second-order
 # centered differences, with the data distributed over N points
@@ -66,6 +73,8 @@ def exact_semidiscrete_solution(n, k, t):
     phi = np.sqrt(2.0 / (n - 1)) * np.sin(np.outer(i, m) * np.pi / (n - 1))
     lambdas = -4.0 * k / dx**2 * np.sin(0.5 * m * np.pi / (n - 1)) ** 2
 
+    # point source 0.01*delta(x-0.5): the finite-volume approximation
+    # of the Dirac delta divides its strength by the cell width dx
     source = np.zeros(n - 2)
     source[(n // 2) - 1] = 0.01 / dx
 
@@ -95,6 +104,9 @@ class Heat1DProblem:
         ydot[1:-1] = c1 * y[:-2] + c2 * y[1:-1] + c1 * y[2:]
         ydot[0] = 0.0
         ydot[-1] = 0.0
+        # point-source term: the finite-volume approximation of the Dirac
+        # delta 0.01*delta(x-0.5) spreads the source strength over a single
+        # cell of width dx, hence the division by dx
         ydot[self.isource] += 0.01 / self.dx
         return 0
 
