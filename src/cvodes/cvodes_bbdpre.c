@@ -793,7 +793,7 @@ int CVBBDPrecInitB(void* cvode_mem, int which, sunindextype NlocalB,
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CVLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGBBD_BAD_WHICH);
@@ -866,7 +866,7 @@ int CVBBDPrecReInitB(void* cvode_mem, int which, sunindextype mudqB,
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CVLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGBBD_BAD_WHICH);

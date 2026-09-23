@@ -1865,7 +1865,7 @@ int IDASetLinearSolverB(void* ida_mem, int which, SUNLinearSolver LS, SUNMatrix 
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_LS_BAD_WHICH);
@@ -2666,7 +2666,7 @@ int idaLs_AccessLMemB(void* ida_mem, int which, const char* fname,
   *IDAADJ_mem = (*IDA_mem)->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= (*IDAADJ_mem)->ia_nbckpbs)
+  if (which < 0 || which >= (*IDAADJ_mem)->ia_nbckpbs)
   {
     IDAProcessError(*IDA_mem, IDALS_ILL_INPUT, __LINE__, fname, __FILE__,
                     MSG_LS_BAD_WHICH);

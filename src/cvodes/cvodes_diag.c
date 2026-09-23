@@ -482,7 +482,7 @@ int CVDiagB(void* cvode_mem, int which)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CVDIAG_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGDG_BAD_WHICH);
