@@ -1,0 +1,209 @@
+cff-version: 1.2.0
+message: "If you use SUNDIALS, please cite the preferred article and relevant package documentation."
+title: "SUNDIALS"
+type: software
+version: 7.9.0
+license: BSD-3-Clause
+url: "https://computing.llnl.gov/projects/sundials"
+repository-code: "https://github.com/LLNL/sundials"
+authors:
+  - family-names: Roberts
+    given-names: Steven B.
+  - family-names: Aggul
+    given-names: Mustafa
+  - family-names: Reynolds
+    given-names: Daniel R.
+  - family-names: Balos
+    given-names: Cody J.
+  - family-names: Gardner
+    given-names: David J.
+  - family-names: Woodward
+    given-names: Carol S.
+preferred-citation:
+  type: article
+  title: "New Time Integrators and Capabilities in SUNDIALS Versions 6.2.0-7.4.0"
+  authors:
+    - family-names: Roberts
+      given-names: Steven B.
+    - family-names: Aggul
+      given-names: Mustafa
+    - family-names: Reynolds
+      given-names: Daniel R.
+    - family-names: Balos
+      given-names: Cody J.
+    - family-names: Gardner
+      given-names: David J.
+    - family-names: Woodward
+      given-names: Carol S.
+  journal: "ACM Transactions on Mathematical Software (TOMS)"
+  publisher: ACM
+  volume: 52
+  issue: 1
+  start: "8:1"
+  end: "8:14"
+  year: 2026
+  doi: "10.1145/3797888"
+references:
+  - type: article
+    title: "ARKODE: A flexible IVP solver infrastructure for one-step methods"
+    authors:
+      - family-names: Reynolds
+        given-names: Daniel R.
+      - family-names: Gardner
+        given-names: David J.
+      - family-names: Woodward
+        given-names: Carol S.
+      - family-names: Chinomona
+        given-names: Rujeko
+    journal: "ACM Transactions on Mathematical Software (TOMS)"
+    publisher: ACM
+    volume: 49
+    issue: 2
+    start: "1"
+    end: "26"
+    year: 2023
+    doi: "10.1145/3594632"
+  - type: article
+    title: "Enabling new flexibility in the SUNDIALS suite of nonlinear and differential/algebraic equation solvers"
+    authors:
+      - family-names: Gardner
+        given-names: David J.
+      - family-names: Reynolds
+        given-names: Daniel R.
+      - family-names: Woodward
+        given-names: Carol S.
+      - family-names: Balos
+        given-names: Cody J.
+    journal: "ACM Transactions on Mathematical Software (TOMS)"
+    publisher: ACM
+    volume: 48
+    issue: 3
+    start: "1"
+    end: "24"
+    year: 2022
+    doi: "10.1145/3539801"
+  - type: article
+    title: "SUNDIALS: Suite of nonlinear and differential/algebraic equation solvers"
+    authors:
+      - family-names: Hindmarsh
+        given-names: Alan C.
+      - family-names: Brown
+        given-names: Peter N.
+      - family-names: Grant
+        given-names: Keith E.
+      - family-names: Lee
+        given-names: Steven L.
+      - family-names: Serban
+        given-names: Radu
+      - family-names: Shumaker
+        given-names: Dan E.
+      - family-names: Woodward
+        given-names: Carol S.
+    journal: "ACM Transactions on Mathematical Software (TOMS)"
+    publisher: ACM
+    volume: 31
+    issue: 3
+    start: "363"
+    end: "396"
+    year: 2005
+    doi: "10.1145/1089014.1089020"
+  - type: manual
+    title: "User Documentation for ARKODE"
+    authors:
+      - family-names: Reynolds
+        given-names: Daniel R.
+      - family-names: Gardner
+        given-names: David J.
+      - family-names: Woodward
+        given-names: Carol S.
+      - family-names: Balos
+        given-names: Cody J.
+    year: 2026
+    version: 6.9.0
+  - type: manual
+    title: "User Documentation for CVODE"
+    authors:
+      - family-names: Hindmarsh
+        given-names: Alan C.
+      - family-names: Serban
+        given-names: Radu
+      - family-names: Balos
+        given-names: Cody J.
+      - family-names: Gardner
+        given-names: David J.
+      - family-names: Reynolds
+        given-names: Daniel R.
+      - family-names: Woodward
+        given-names: Carol S.
+    year: 2026
+    version: 7.9.0
+  - type: manual
+    title: "User Documentation for CVODES"
+    authors:
+      - family-names: Hindmarsh
+        given-names: Alan C.
+      - family-names: Serban
+        given-names: Radu
+      - family-names: Balos
+        given-names: Cody J.
+      - family-names: Gardner
+        given-names: David J.
+      - family-names: Reynolds
+        given-names: Daniel R.
+      - family-names: Woodward
+        given-names: Carol S.
+    year: 2026
+    version: 7.9.0
+  - type: manual
+    title: "User Documentation for IDA"
+    authors:
+      - family-names: Hindmarsh
+        given-names: Alan C.
+      - family-names: Serban
+        given-names: Radu
+      - family-names: Balos
+        given-names: Cody J.
+      - family-names: Gardner
+        given-names: David J.
+      - family-names: Reynolds
+        given-names: Daniel R.
+      - family-names: Woodward
+        given-names: Carol S.
+    year: 2026
+    version: 7.9.0
+  - type: manual
+    title: "User Documentation for IDAS"
+    authors:
+      - family-names: Serban
+        given-names: Radu
+      - family-names: Petra
+        given-names: Cosmin
+      - family-names: Hindmarsh
+        given-names: Alan C.
+      - family-names: Balos
+        given-names: Cody J.
+      - family-names: Gardner
+        given-names: David J.
+      - family-names: Reynolds
+        given-names: Daniel R.
+      - family-names: Woodward
+        given-names: Carol S.
+    year: 2026
+    version: 6.9.0
+  - type: manual
+    title: "User Documentation for KINSOL"
+    authors:
+      - family-names: Hindmarsh
+        given-names: Alan C.
+      - family-names: Serban
+        given-names: Radu
+      - family-names: Balos
+        given-names: Cody J.
+      - family-names: Gardner
+        given-names: David J.
+      - family-names: Reynolds
+        given-names: Daniel R.
+      - family-names: Woodward
+        given-names: Carol S.
+    year: 2026
+    version: 7.9.0
