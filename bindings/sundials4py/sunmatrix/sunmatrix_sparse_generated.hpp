@@ -1,4 +1,4 @@
-// #ifndef _SUNMATRIX_SPARSE_H
+// #ifndef SUNDIALS_SUNMATRIX_SPARSE_H
 //
 // #ifdef __cplusplus
 // #endif

@@ -1,4 +1,4 @@
-// #ifndef _SUNDIALS_CONTEXT_H
+// #ifndef SUNDIALS_SUNDIALS_CONTEXT_H
 //
 // #ifdef __cplusplus
 // #endif
