@@ -81,4 +81,4 @@ SUNErrCode SUNAdaptController_Space_ARKUserControl(SUNAdaptController C,
 }
 #endif
 
-#endif /* _ARK_USERCONTROL_H */
+#endif /* SUNDIALS_ARKODE_USER_CONTROLLER_H */

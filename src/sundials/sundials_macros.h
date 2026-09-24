@@ -41,4 +41,4 @@
 #define SUNDIALS_MAYBE_UNUSED
 #endif
 
-#endif /* _SUNDIALS_MACROS_H */
+#endif /* SUNDIALS_SUNDIALS_MACROS_H */

@@ -81,4 +81,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _SUNDIALS_SYCL_H */
+#endif /* SUNDIALS_SUNDIALS_SYCL_H */
