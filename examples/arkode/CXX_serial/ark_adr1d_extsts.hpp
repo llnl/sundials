@@ -91,7 +91,7 @@ struct UserData
   sunindextype neq = NSPECIES * nx;
 
   // Inner stepper memory
-  MRIStepInnerStepper sts_mem = nullptr;
+  SUNStepper sts_mem = nullptr;
 };
 
 // -----------------------------------------------------------------------------

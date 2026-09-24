@@ -228,9 +228,9 @@ int main(int argc, char* argv[])
   if (check_ptr(inner_arkode_mem, "ARKStepCreate")) { return 1; }
 
   // Create inner stepper
-  MRIStepInnerStepper inner_stepper;
-  flag = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-  if (check_flag(flag, "ARKodeCreateMRIStepInnerStepper")) { return 1; }
+  SUNStepper inner_stepper;
+  flag = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
+  if (check_flag(flag, "ARKodeCreateSUNStepper")) { return 1; }
 
   // Create MRIStep memory structure
   void* arkode_mem = MRIStepCreate(nullptr, f, ZERO, y, inner_stepper, sunctx);
@@ -327,7 +327,7 @@ int main(int argc, char* argv[])
   SUNMatDestroy(A);
   SUNMatDestroy(Jtrue);
   SUNLinSolFree(LS);
-  MRIStepInnerStepper_Free(&inner_stepper);
+  SUNStepper_Destroy(&inner_stepper);
   ARKodeFree(&inner_arkode_mem);
   ARKodeFree(&arkode_mem);
 

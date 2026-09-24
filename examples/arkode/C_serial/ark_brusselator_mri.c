@@ -76,11 +76,11 @@ int main(void)
   sunrealtype rdata[3];                      /* user data */
 
   /* general problem variables */
-  int retval;                    /* reusable error-checking flag */
-  N_Vector y             = NULL; /* empty vector for storing solution */
-  void* arkode_mem       = NULL; /* empty ARKode memory structure */
-  void* inner_arkode_mem = NULL; /* empty ARKode memory structure */
-  MRIStepInnerStepper inner_stepper = NULL; /* inner stepper */
+  int retval;                      /* reusable error-checking flag */
+  N_Vector y               = NULL; /* empty vector for storing solution */
+  void* arkode_mem         = NULL; /* empty ARKode memory structure */
+  void* inner_arkode_mem   = NULL; /* empty ARKode memory structure */
+  SUNStepper inner_stepper = NULL; /* inner stepper */
   FILE* UFID;
   sunrealtype t, tout;
   int iout;
@@ -150,8 +150,8 @@ int main(void)
   if (check_retval(&retval, "ARKodeSetFixedStep", 1)) { return 1; }
 
   /* Create inner stepper */
-  retval = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-  if (check_retval(&retval, "ARKodeCreateMRIStepInnerStepper", 1)) { return 1; }
+  retval = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
+  if (check_retval(&retval, "ARKodeCreateSUNStepper", 1)) { return 1; }
 
   /*
    * Create the slow integrator and set options
@@ -234,11 +234,11 @@ int main(void)
   printf("   Total RHS evals:  Fs = %li,  Ff = %li\n", nfse, nff);
 
   /* Clean up and return */
-  N_VDestroy(y);                            /* Free y vector */
-  ARKodeFree(&inner_arkode_mem);            /* Free integrator memory */
-  MRIStepInnerStepper_Free(&inner_stepper); /* Free inner stepper */
-  ARKodeFree(&arkode_mem);                  /* Free integrator memory */
-  SUNContext_Free(&ctx);                    /* Free context */
+  N_VDestroy(y);                      /* Free y vector */
+  ARKodeFree(&inner_arkode_mem);      /* Free integrator memory */
+  SUNStepper_Destroy(&inner_stepper); /* Free inner stepper */
+  ARKodeFree(&arkode_mem);            /* Free integrator memory */
+  SUNContext_Free(&ctx);              /* Free context */
 
   return 0;
 }

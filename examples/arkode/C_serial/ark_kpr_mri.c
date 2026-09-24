@@ -176,25 +176,25 @@ int main(int argc, char* argv[])
   sunrealtype abstol = SUN_RCONST(1.0e-11);
 
   /* general problem variables */
-  int retval;                               /* reusable error-checking flag */
-  N_Vector y                        = NULL; /* vector for the solution      */
-  void* arkode_mem                  = NULL; /* ARKode memory structure      */
-  void* inner_arkode_mem            = NULL; /* ARKode memory structure      */
-  MRIStepInnerStepper inner_stepper = NULL; /* inner stepper                */
-  ARKodeButcherTable B              = NULL; /* fast method Butcher table    */
-  MRIStepCoupling C                 = NULL; /* slow coupling coefficients   */
-  SUNMatrix Af                      = NULL; /* matrix for fast solver       */
-  SUNLinearSolver LSf               = NULL; /* fast linear solver object    */
-  SUNMatrix As                      = NULL; /* matrix for slow solver       */
-  SUNLinearSolver LSs               = NULL; /* slow linear solver object    */
-  sunbooleantype implicit_slow      = SUNFALSE;
-  sunbooleantype imex_slow          = SUNFALSE;
-  sunbooleantype explicit_slow      = SUNFALSE;
-  sunbooleantype no_slow            = SUNFALSE;
-  sunbooleantype implicit_fast      = SUNFALSE;
-  sunbooleantype explicit_fast      = SUNFALSE;
-  sunbooleantype no_fast            = SUNFALSE;
-  sunbooleantype deduce_rhs         = SUNFALSE;
+  int retval;                          /* reusable error-checking flag */
+  N_Vector y                   = NULL; /* vector for the solution      */
+  void* arkode_mem             = NULL; /* ARKode memory structure      */
+  void* inner_arkode_mem       = NULL; /* ARKode memory structure      */
+  SUNStepper inner_stepper     = NULL; /* inner stepper                */
+  ARKodeButcherTable B         = NULL; /* fast method Butcher table    */
+  MRIStepCoupling C            = NULL; /* slow coupling coefficients   */
+  SUNMatrix Af                 = NULL; /* matrix for fast solver       */
+  SUNLinearSolver LSf          = NULL; /* fast linear solver object    */
+  SUNMatrix As                 = NULL; /* matrix for slow solver       */
+  SUNLinearSolver LSs          = NULL; /* slow linear solver object    */
+  sunbooleantype implicit_slow = SUNFALSE;
+  sunbooleantype imex_slow     = SUNFALSE;
+  sunbooleantype explicit_slow = SUNFALSE;
+  sunbooleantype no_slow       = SUNFALSE;
+  sunbooleantype implicit_fast = SUNFALSE;
+  sunbooleantype explicit_fast = SUNFALSE;
+  sunbooleantype no_fast       = SUNFALSE;
+  sunbooleantype deduce_rhs    = SUNFALSE;
   FILE* UFID;
   sunrealtype hf, gamma, beta, t, tout, rpar[3];
   sunrealtype uerr, verr, uerrtot, verrtot, errtot;
@@ -559,8 +559,8 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "ARKodeSetOptions", 1)) { return 1; }
 
   /* Create inner stepper */
-  retval = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-  if (check_retval(&retval, "ARKodeCreateMRIStepInnerStepper", 1)) { return 1; }
+  retval = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
+  if (check_retval(&retval, "ARKodeCreateSUNStepper", 1)) { return 1; }
 
   /*
    * Create the slow integrator and set options
@@ -833,15 +833,15 @@ int main(int argc, char* argv[])
   }
 
   /* Clean up and return */
-  N_VDestroy(y);                            /* Free y vector */
-  SUNMatDestroy(Af);                        /* free fast matrix */
-  SUNLinSolFree(LSf);                       /* free fast linear solver */
-  SUNMatDestroy(As);                        /* free fast matrix */
-  SUNLinSolFree(LSs);                       /* free fast linear solver */
-  ARKodeFree(&inner_arkode_mem);            /* Free fast integrator memory */
-  MRIStepInnerStepper_Free(&inner_stepper); /* Free inner stepper */
-  ARKodeFree(&arkode_mem);                  /* Free slow integrator memory */
-  SUNContext_Free(&ctx);                    /* Free context */
+  N_VDestroy(y);                      /* Free y vector */
+  SUNMatDestroy(Af);                  /* free fast matrix */
+  SUNLinSolFree(LSf);                 /* free fast linear solver */
+  SUNMatDestroy(As);                  /* free fast matrix */
+  SUNLinSolFree(LSs);                 /* free fast linear solver */
+  ARKodeFree(&inner_arkode_mem);      /* Free fast integrator memory */
+  SUNStepper_Destroy(&inner_stepper); /* Free inner stepper */
+  ARKodeFree(&arkode_mem);            /* Free slow integrator memory */
+  SUNContext_Free(&ctx);              /* Free context */
 
   return 0;
 }

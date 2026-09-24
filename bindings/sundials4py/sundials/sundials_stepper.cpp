@@ -201,6 +201,57 @@ void bind_sunstepper(nb::module_& m)
       else { return SUNStepper_SetGetNumStepsFn(stepper, nullptr); }
     },
     nb::arg("stepper"), nb::arg("fn").none());
+
+  m.def(
+    "SUNStepper_SetGetAccumulatedErrorFn",
+    [](SUNStepper stepper,
+       std::function<SUNStepperGetAccumulatedErrorStdFn> fn) -> SUNErrCode
+    {
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
+      auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
+      fntable->get_accumulated_error = nb::cast(fn);
+      if (fn)
+      {
+        return SUNStepper_SetGetAccumulatedErrorFn(stepper,
+                                                   sunstepper_get_accumulated_error_wrapper);
+      }
+      else { return SUNStepper_SetGetAccumulatedErrorFn(stepper, nullptr); }
+    },
+    nb::arg("stepper"), nb::arg("fn").none());
+
+  m.def(
+    "SUNStepper_SetResetAccumulatedErrorFn",
+    [](SUNStepper stepper,
+       std::function<std::remove_pointer_t<SUNStepperResetAccumulatedErrorFn>> fn)
+      -> SUNErrCode
+    {
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
+      auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
+      fntable->reset_accumulated_error = nb::cast(fn);
+      if (fn)
+      {
+        return SUNStepper_SetResetAccumulatedErrorFn(stepper,
+                                                     sunstepper_reset_accumulated_error_wrapper);
+      }
+      else { return SUNStepper_SetResetAccumulatedErrorFn(stepper, nullptr); }
+    },
+    nb::arg("stepper"), nb::arg("fn").none());
+
+  m.def(
+    "SUNStepper_SetRTolFn",
+    [](SUNStepper stepper,
+       std::function<std::remove_pointer_t<SUNStepperSetRTolFn>> fn) -> SUNErrCode
+    {
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
+      auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
+      fntable->set_rtol = nb::cast(fn);
+      if (fn)
+      {
+        return SUNStepper_SetRTolFn(stepper, sunstepper_set_rtol_wrapper);
+      }
+      else { return SUNStepper_SetRTolFn(stepper, nullptr); }
+    },
+    nb::arg("stepper"), nb::arg("fn").none());
 }
 
 } // namespace sundials4py

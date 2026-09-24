@@ -114,41 +114,6 @@ m.def("ARKodeReset", ARKodeReset, nb::arg("arkode_mem"), nb::arg("tR"),
 m.def("ARKodeInit", ARKodeInit, nb::arg("arkode_mem"),
       "Optional data allocation function");
 
-m.def(
-  "ARKodeCreateMRIStepInnerStepper",
-  [](void* arkode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<MRIStepInnerStepper>>>
-  {
-    auto ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return =
-      [](void* arkode_mem) -> std::tuple<int, MRIStepInnerStepper>
-    {
-      MRIStepInnerStepper stepper_adapt_modifiable;
-
-      int r = ARKodeCreateMRIStepInnerStepper(arkode_mem,
-                                              &stepper_adapt_modifiable);
-      return std::make_tuple(r, stepper_adapt_modifiable);
-    };
-    auto ARKodeCreateMRIStepInnerStepper_adapt_return_type_to_shared_ptr =
-      [&ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return](
-        void* arkode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<MRIStepInnerStepper>>>
-    {
-      auto lambda_result =
-        ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return(
-          arkode_mem);
-
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
-                                             MRIStepInnerStepperDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return ARKodeCreateMRIStepInnerStepper_adapt_return_type_to_shared_ptr(
-      arkode_mem);
-  },
-  nb::arg("arkode_mem"), "Utility to wrap ARKODE as an MRIStepInnerStepper",
-  nb::rv_policy::reference);
-
 m.def("ARKodeSStolerances", ARKodeSStolerances, nb::arg("arkode_mem"),
       nb::arg("reltol"), nb::arg("abstol"));
 

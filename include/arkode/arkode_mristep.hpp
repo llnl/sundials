@@ -31,11 +31,6 @@ struct MRIStepCouplingDeleter
   void operator()(MRIStepCoupling t) { MRIStepCoupling_Free(t); }
 };
 
-struct MRIStepInnerStepperDeleter
-{
-  void operator()(MRIStepInnerStepper s) { MRIStepInnerStepper_Free(&s); }
-};
-
 } // namespace experimental
 } // namespace sundials
 

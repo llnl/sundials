@@ -103,7 +103,7 @@ from an ARKODE integrator.
 Stepping Functions
 ^^^^^^^^^^^^^^^^^^
 
-.. c:function:: SUNErrCode SUNStepper_Evolve(SUNStepper stepper, sunrealtype tout, N_Vector vret, sunrealtype* tret)
+.. c:function:: int SUNStepper_Evolve(SUNStepper stepper, sunrealtype tout, N_Vector vret, sunrealtype* tret)
 
    This function evolves the ODE :eq:`SUNStepper_IVP` towards the time ``tout``
    and stores the solution at time ``tret`` in ``vret``.
@@ -112,7 +112,13 @@ Stepping Functions
    :param tout: the time to evolve towards.
    :param vret: on output, the state at time ``tret``.
    :param tret: the time corresponding to the output value ``vret``.
-   :return: A :c:type:`SUNErrCode` indicating success or failure.
+   :retval 0: if successful.
+   :retval >0: if a recoverable failure occurred.
+   :retval <0: if a fatal failure occurred.
+
+   .. versionchanged:: X.Y.Z
+
+      The return type changed from :c:type:`SUNErrCode` to ``int``.
 
 .. c:function:: SUNErrCode SUNStepper_OneStep(SUNStepper stepper, sunrealtype tout, N_Vector vret, sunrealtype* tret)
 
@@ -221,6 +227,26 @@ Stepping Functions
       well as computing and applying the forcing term :eq:`SUNStepper_forcing`
       to obtain the full right-hand side of the ODE :eq:`SUNStepper_IVP`.
 
+.. c:function:: SUNErrCode SUNStepper_AddForcing(sunrealtype t, sunrealtype tshift, sunrealtype tscale, N_Vector* forcing, int nforcing, N_Vector f)
+
+   This function adds the polynomial forcing supplied to a
+   :c:type:`SUNStepper` to the vector ``f``. It is a stateless utility for
+   custom steppers; the caller remains responsible for retaining the forcing
+   data supplied through :c:func:`SUNStepper_SetForcing`.
+
+   :param t: the time at which to evaluate the forcing polynomial.
+   :param tshift: the forcing time normalization shift.
+   :param tscale: the forcing time normalization scaling. This may be zero when
+      ``nforcing`` is zero or one.
+   :param forcing: the array of polynomial coefficient vectors.
+   :param nforcing: the number of forcing vectors. A value of zero leaves ``f``
+      unchanged.
+   :param f: the vector to which the forcing is added. This vector and each
+      forcing vector must use compatible :c:type:`N_Vector` implementations.
+   :return: A :c:type:`SUNErrCode` indicating success or an invalid argument.
+
+   .. versionadded:: X.Y.Z
+
 .. c:function:: SUNErrCode SUNStepper_GetNumSteps(SUNStepper stepper, suncountertype* nst)
 
    This function gets the number of successful time steps taken by the stepper
@@ -231,6 +257,37 @@ Stepping Functions
    :return: A :c:type:`SUNErrCode` indicating success or failure.
 
    .. versionadded:: 7.3.0
+
+.. c:function:: SUNErrCode SUNStepper_GetAccumulatedError(SUNStepper stepper, sunrealtype* accum_error)
+
+   This function gets the estimate of the accumulated solution error arising
+   from the stepper.
+
+   :param stepper: the stepper object.
+   :param accum_error: on output, the accumulated error.
+   :return: A :c:type:`SUNErrCode` indicating success or failure.
+
+   .. versionadded:: X.Y.Z
+
+.. c:function:: SUNErrCode SUNStepper_ResetAccumulatedError(SUNStepper stepper)
+
+   This function resets the stepper's accumulated solution error to zero.
+
+   :param stepper: the stepper object.
+   :return: A :c:type:`SUNErrCode` indicating success or failure.
+
+   .. versionadded:: X.Y.Z
+
+.. c:function:: SUNErrCode SUNStepper_SetRTol(SUNStepper stepper, sunrealtype rtol)
+
+   This function accepts a relative tolerance for the stepper to use in its
+   upcoming adaptive solve.
+
+   :param stepper: the stepper object.
+   :param rtol: the relative tolerance.
+   :return: A :c:type:`SUNErrCode` indicating success or failure.
+
+   .. versionadded:: X.Y.Z
 
 
 .. _SUNStepper.Description.BaseMethods.RhsMode:
@@ -421,6 +478,39 @@ determined by the "consumer" of the :c:type:`SUNStepper`.
 
    .. versionadded:: 7.3.0
 
+.. c:function:: SUNErrCode SUNStepper_SetGetAccumulatedErrorFn(SUNStepper stepper, SUNStepperGetAccumulatedErrorFn fn)
+
+   This function attaches a :c:type:`SUNStepperGetAccumulatedErrorFn` function
+   to a :c:type:`SUNStepper` object.
+
+   :param stepper: a stepper object.
+   :param fn: the :c:type:`SUNStepperGetAccumulatedErrorFn` function to attach.
+   :return: A :c:type:`SUNErrCode` indicating success or failure.
+
+   .. versionadded:: X.Y.Z
+
+.. c:function:: SUNErrCode SUNStepper_SetResetAccumulatedErrorFn(SUNStepper stepper, SUNStepperResetAccumulatedErrorFn fn)
+
+   This function attaches a :c:type:`SUNStepperResetAccumulatedErrorFn` function
+   to a :c:type:`SUNStepper` object.
+
+   :param stepper: a stepper object.
+   :param fn: the :c:type:`SUNStepperResetAccumulatedErrorFn` function to attach.
+   :return: A :c:type:`SUNErrCode` indicating success or failure.
+
+   .. versionadded:: X.Y.Z
+
+.. c:function:: SUNErrCode SUNStepper_SetRTolFn(SUNStepper stepper, SUNStepperSetRTolFn fn)
+
+   This function attaches a :c:type:`SUNStepperSetRTolFn` function to a
+   :c:type:`SUNStepper` object.
+
+   :param stepper: a stepper object.
+   :param fn: the :c:type:`SUNStepperSetRTolFn` function to attach.
+   :return: A :c:type:`SUNErrCode` indicating success or failure.
+
+   .. versionadded:: X.Y.Z
+
 
 .. c:function:: SUNErrCode SUNStepper_SetDestroyFn(SUNStepper stepper, SUNStepperDestroyFn fn)
 
@@ -442,10 +532,14 @@ This section describes the virtual methods defined by the :c:type:`SUNStepper`
 abstract base class.
 
 
-.. c:type:: SUNErrCode (*SUNStepperEvolveFn)(SUNStepper stepper, sunrealtype tout, N_Vector vret, sunrealtype* tret)
+.. c:type:: int (*SUNStepperEvolveFn)(SUNStepper stepper, sunrealtype tout, N_Vector vret, sunrealtype* tret)
 
    This type represents a function with the signature of
    :c:func:`SUNStepper_Evolve`.
+
+   .. versionchanged:: X.Y.Z
+
+      The return type changed from :c:type:`SUNErrCode` to ``int``.
 
 
 .. c:type:: SUNErrCode (*SUNStepperOneStepFn)(SUNStepper stepper, sunrealtype tout, N_Vector vret, sunrealtype* tret)
@@ -511,3 +605,24 @@ abstract base class.
    :c:func:`SUNStepper_GetNumSteps`.
 
    .. versionadded:: 7.3.0
+
+.. c:type:: SUNErrCode (*SUNStepperGetAccumulatedErrorFn)(SUNStepper stepper, sunrealtype* accum_error)
+
+   This type represents a function with the signature of
+   :c:func:`SUNStepper_GetAccumulatedError`.
+
+   .. versionadded:: X.Y.Z
+
+.. c:type:: SUNErrCode (*SUNStepperResetAccumulatedErrorFn)(SUNStepper stepper)
+
+   This type represents a function with the signature of
+   :c:func:`SUNStepper_ResetAccumulatedError`.
+
+   .. versionadded:: X.Y.Z
+
+.. c:type:: SUNErrCode (*SUNStepperSetRTolFn)(SUNStepper stepper, sunrealtype rtol)
+
+   This type represents a function with the signature of
+   :c:func:`SUNStepper_SetRTol`.
+
+   .. versionadded:: X.Y.Z

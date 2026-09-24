@@ -623,11 +623,15 @@ module fsundials_core_mod
  public :: FSUNStepper_SetStopTime
  public :: FSUNStepper_SetStepDirection
  public :: FSUNStepper_SetForcing
+ public :: FSUNStepper_AddForcing
  public :: FSUNStepper_SetContent
  public :: FSUNStepper_GetContent
  public :: FSUNStepper_SetLastFlag
  public :: FSUNStepper_GetLastFlag
  public :: FSUNStepper_GetNumSteps
+ public :: FSUNStepper_GetAccumulatedError
+ public :: FSUNStepper_ResetAccumulatedError
+ public :: FSUNStepper_SetRTol
  public :: FSUNStepper_SetEvolveFn
  public :: FSUNStepper_SetOneStepFn
  public :: FSUNStepper_SetFullRhsFn
@@ -638,6 +642,9 @@ module fsundials_core_mod
  public :: FSUNStepper_SetStepDirectionFn
  public :: FSUNStepper_SetForcingFn
  public :: FSUNStepper_SetGetNumStepsFn
+ public :: FSUNStepper_SetGetAccumulatedErrorFn
+ public :: FSUNStepper_SetResetAccumulatedErrorFn
+ public :: FSUNStepper_SetRTolFn
  public :: FSUNStepper_SetDestroyFn
  ! enum SUNMemoryType
  enum, bind(c)
@@ -2541,6 +2548,19 @@ integer(C_INT), intent(in) :: farg5
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNStepper_AddForcing(farg1, farg2, farg3, farg4, farg5, farg6) &
+bind(C, name="_wrap_FSUNStepper_AddForcing") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), intent(in) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+real(C_DOUBLE), intent(in) :: farg3
+type(C_PTR), value :: farg4
+integer(C_INT), intent(in) :: farg5
+type(C_PTR), value :: farg6
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNStepper_SetContent(farg1, farg2) &
 bind(C, name="_wrap_FSUNStepper_SetContent") &
 result(fresult)
@@ -2583,6 +2603,32 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNStepper_GetAccumulatedError(farg1, farg2) &
+bind(C, name="_wrap_FSUNStepper_GetAccumulatedError") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNStepper_ResetAccumulatedError(farg1) &
+bind(C, name="_wrap_FSUNStepper_ResetAccumulatedError") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNStepper_SetRTol(farg1, farg2) &
+bind(C, name="_wrap_FSUNStepper_SetRTol") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -2669,6 +2715,33 @@ end function
 
 function swigc_FSUNStepper_SetGetNumStepsFn(farg1, farg2) &
 bind(C, name="_wrap_FSUNStepper_SetGetNumStepsFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNStepper_SetGetAccumulatedErrorFn(farg1, farg2) &
+bind(C, name="_wrap_FSUNStepper_SetGetAccumulatedErrorFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNStepper_SetResetAccumulatedErrorFn(farg1, farg2) &
+bind(C, name="_wrap_FSUNStepper_SetResetAccumulatedErrorFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNStepper_SetRTolFn(farg1, farg2) &
+bind(C, name="_wrap_FSUNStepper_SetRTolFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -6519,6 +6592,34 @@ fresult = swigc_FSUNStepper_SetForcing(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
 
+function FSUNStepper_AddForcing(t, tshift, tscale, forcing_1d, nforcing, f) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+real(C_DOUBLE), intent(in) :: t
+real(C_DOUBLE), intent(in) :: tshift
+real(C_DOUBLE), intent(in) :: tscale
+type(C_PTR) :: forcing_1d
+integer(C_INT), intent(in) :: nforcing
+type(N_Vector), target, intent(inout) :: f
+integer(C_INT) :: fresult 
+real(C_DOUBLE) :: farg1 
+real(C_DOUBLE) :: farg2 
+real(C_DOUBLE) :: farg3 
+type(C_PTR) :: farg4 
+integer(C_INT) :: farg5 
+type(C_PTR) :: farg6 
+
+farg1 = t
+farg2 = tshift
+farg3 = tscale
+farg4 = forcing_1d
+farg5 = nforcing
+farg6 = c_loc(f)
+fresult = swigc_FSUNStepper_AddForcing(farg1, farg2, farg3, farg4, farg5, farg6)
+swig_result = fresult
+end function
+
 function FSUNStepper_SetContent(stepper, content) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -6596,6 +6697,51 @@ type(C_PTR) :: farg2
 farg1 = stepper
 farg2 = c_loc(nst(1))
 fresult = swigc_FSUNStepper_GetNumSteps(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNStepper_GetAccumulatedError(stepper, accum_error) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: stepper
+real(C_DOUBLE), dimension(*), target, intent(inout) :: accum_error
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = stepper
+farg2 = c_loc(accum_error(1))
+fresult = swigc_FSUNStepper_GetAccumulatedError(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNStepper_ResetAccumulatedError(stepper) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: stepper
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+
+farg1 = stepper
+fresult = swigc_FSUNStepper_ResetAccumulatedError(farg1)
+swig_result = fresult
+end function
+
+function FSUNStepper_SetRTol(stepper, rtol) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: stepper
+real(C_DOUBLE), intent(in) :: rtol
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = stepper
+farg2 = rtol
+fresult = swigc_FSUNStepper_SetRTol(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -6756,6 +6902,54 @@ type(C_FUNPTR) :: farg2
 farg1 = stepper
 farg2 = fn
 fresult = swigc_FSUNStepper_SetGetNumStepsFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNStepper_SetGetAccumulatedErrorFn(stepper, fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: stepper
+type(C_FUNPTR), intent(in), value :: fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = stepper
+farg2 = fn
+fresult = swigc_FSUNStepper_SetGetAccumulatedErrorFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNStepper_SetResetAccumulatedErrorFn(stepper, fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: stepper
+type(C_FUNPTR), intent(in), value :: fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = stepper
+farg2 = fn
+fresult = swigc_FSUNStepper_SetResetAccumulatedErrorFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FSUNStepper_SetRTolFn(stepper, fn) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: stepper
+type(C_FUNPTR), intent(in), value :: fn
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = stepper
+farg2 = fn
+fresult = swigc_FSUNStepper_SetRTolFn(farg1, farg2)
 swig_result = fresult
 end function
 
