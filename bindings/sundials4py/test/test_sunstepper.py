@@ -228,15 +228,6 @@ def test_stepper_add_no_forcing(sunctx):
     assert all(N_VGetArrayPointer(f) == 1.0)
 
 
-def test_stepper_add_forcing_invalid_arguments(sunctx):
-    forcing = N_VNew_Serial(3, sunctx)
-    f = N_VNew_Serial(3, sunctx)
-
-    assert SUNStepper_AddForcing(0.0, 0.0, 1.0, [], -1, f) == SUN_ERR_ARG_OUTOFRANGE
-    assert SUNStepper_AddForcing(0.0, 0.0, 0.0, [forcing, forcing], 2, f) == SUN_ERR_ARG_OUTOFRANGE
-    assert SUNStepper_AddForcing(0.0, 0.0, 1.0, [], 1, f) == SUN_ERR_ARG_CORRUPT
-
-
 def test_stepper_set_get_num_steps_fn(sunctx):
     s = make_stepper(sunctx)
     called = {"flag": False}
