@@ -477,7 +477,6 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   int status;
 
   /* Initialize some variables */
-  l_plus_1 = 0;
   krydim   = 0;
 
   /* Make local shortcuts to solver variables. */
