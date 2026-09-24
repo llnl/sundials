@@ -1,4 +1,4 @@
-// #ifndef _SUNDIALS_SYSMEMORY_H
+// #ifndef SUNDIALS_SUNMEMORY_SYSTEM_H
 //
 // #ifdef __cplusplus
 // #endif

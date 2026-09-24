@@ -17,8 +17,8 @@
  * This is the header file for the SUNAdaptController_MRIHTol module.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNADAPTCONTROLLER_MRIHTOL_H
-#define _SUNADAPTCONTROLLER_MRIHTOL_H
+#ifndef SUNDIALS_SUNADAPTCONTROLLER_MRIHTOL_H
+#define SUNDIALS_SUNADAPTCONTROLLER_MRIHTOL_H
 
 #include <stdio.h>
 #include <sundials/sundials_adaptcontroller.h>
@@ -102,4 +102,4 @@ int SUNAdaptController_Space_MRIHTol(SUNAdaptController C, long int* lenrw,
 }
 #endif
 
-#endif /* _SUNADAPTCONTROLLER_MRIHTOL_H */
+#endif /* SUNDIALS_SUNADAPTCONTROLLER_MRIHTOL_H */

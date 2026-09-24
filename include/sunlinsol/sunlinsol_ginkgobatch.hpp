@@ -27,8 +27,8 @@
 #error "Ginkgo 1.9.0 or later is required."
 #endif
 
-#ifndef _SUNLINSOL_GINKGOBATCH_HPP
-#define _SUNLINSOL_GINKGOBATCH_HPP
+#ifndef SUNDIALS_SUNLINSOL_GINKGOBATCH_HPP
+#define SUNDIALS_SUNLINSOL_GINKGOBATCH_HPP
 
 namespace sundials {
 namespace ginkgo {
@@ -516,4 +516,4 @@ private:
 } // namespace ginkgo
 } // namespace sundials
 
-#endif // SUNLINSOL_GINKGOBATCH_HPP
+#endif // SUNDIALS_SUNLINSOL_GINKGOBATCH_HPP

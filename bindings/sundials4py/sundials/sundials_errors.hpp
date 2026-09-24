@@ -17,6 +17,9 @@
  * This file contains hand-written bindings for sundials_errors.h
  * -----------------------------------------------------------------*/
 
+#ifndef SUNDIALS_SUNDIALS_ERRORS_HPP
+#define SUNDIALS_SUNDIALS_ERRORS_HPP
+
 #include <sundials/sundials_errors.h>
 
 #include "sundials_errors_generated.hpp"
@@ -32,3 +35,5 @@ auto pyEnumSUNErrCode_ = nb::enum_<SUNErrCode_>(m, "SUNErrCode",
                            .value("SUN_ERR_MAXIMUM", SUN_ERR_MAXIMUM, "")
                            .value("SUN_SUCCESS", SUN_SUCCESS, "")
                            .export_values();
+
+#endif // SUNDIALS_SUNDIALS_ERRORS_HPP

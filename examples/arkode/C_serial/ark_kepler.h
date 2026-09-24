@@ -17,8 +17,8 @@
  * Utilities for the arkode_kepler example.
  * ---------------------------------------------------------------------------*/
 
-#ifndef ARK_KEPLER_H
-#define ARK_KEPLER_H
+#ifndef SUNDIALS_ARK_KEPLER_H
+#define SUNDIALS_ARK_KEPLER_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -225,4 +225,4 @@ static int check_retval(void* returnvalue, const char* funcname, int opt)
   return 0;
 }
 
-#endif /* ARK_KEPLER_H */
+#endif /* SUNDIALS_ARK_KEPLER_H */

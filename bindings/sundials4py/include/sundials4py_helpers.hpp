@@ -15,10 +15,11 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_HELPERS_HPP
-#define _SUNDIALS4PY_HELPERS_HPP
+#ifndef SUNDIALS_SUNDIALS4PY_HELPERS_HPP
+#define SUNDIALS_SUNDIALS4PY_HELPERS_HPP
 
 #include "sundials4py.hpp"
+#include "sundials4py_types.hpp"
 
 namespace nb = nanobind;
 

@@ -1,4 +1,4 @@
-// #ifndef _MRISTEP_H
+// #ifndef SUNDIALS_ARKODE_MRISTEP_H
 //
 // #ifdef __cplusplus
 // #endif

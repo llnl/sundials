@@ -17,8 +17,8 @@
  * This header file contains common utility functions.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_UTILS_H
-#define _SUNDIALS_UTILS_H
+#ifndef SUNDIALS_SUNDIALS_UTILS_H
+#define SUNDIALS_SUNDIALS_UTILS_H
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -143,4 +143,4 @@ static inline void sunfprintf_long_array(FILE* fp, SUNOutputFormat fmt,
   }
 }
 
-#endif /* _SUNDIALS_UTILS_H */
+#endif /* SUNDIALS_SUNDIALS_UTILS_H */

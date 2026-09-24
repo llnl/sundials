@@ -41,8 +41,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_PARHYP_H
-#define _NVECTOR_PARHYP_H
+#ifndef SUNDIALS_NVECTOR_PARHYP_H
+#define SUNDIALS_NVECTOR_PARHYP_H
 
 #include <mpi.h>
 #include <stdio.h>

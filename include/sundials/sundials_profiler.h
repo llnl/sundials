@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_PROFILER_H
-#define _SUNDIALS_PROFILER_H
+#ifndef SUNDIALS_SUNDIALS_PROFILER_H
+#define SUNDIALS_SUNDIALS_PROFILER_H
 
 #include <stdio.h>
 #include <sundials/sundials_config.h>
@@ -102,4 +102,4 @@ SUNErrCode SUNProfiler_Reset(SUNProfiler p);
 }
 
 #endif
-#endif /* SUNDIALS_PROFILER_H */
+#endif /* SUNDIALS_SUNDIALS_PROFILER_H */

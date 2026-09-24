@@ -48,8 +48,8 @@
  * literal constants only. It cannot be used for expressions.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_TYPES_H
-#define _SUNDIALS_TYPES_H
+#ifndef SUNDIALS_SUNDIALS_TYPES_H
+#define SUNDIALS_SUNDIALS_TYPES_H
 
 #include <float.h>
 #include <stddef.h>
@@ -281,4 +281,4 @@ enum SUNDataIOMode
 typedef enum SUNDataIOMode SUNDataIOMode;
 #endif
 
-#endif /* _SUNDIALS_TYPES_H */
+#endif /* SUNDIALS_SUNDIALS_TYPES_H */

@@ -17,8 +17,8 @@
  * Shared helpers for exposing N_Vector data to Python array backends.
  * -----------------------------------------------------------------*/
 
-#ifndef SUNDIALS4PY_NVECTOR_ARRAY_HELPERS_HPP
-#define SUNDIALS4PY_NVECTOR_ARRAY_HELPERS_HPP
+#ifndef SUNDIALS_NVECTOR_ARRAY_HELPERS_HPP
+#define SUNDIALS_NVECTOR_ARRAY_HELPERS_HPP
 
 #include "sundials4py.hpp"
 
@@ -258,9 +258,9 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
                                 ArrayDevice device, nanobind::object owner);
 void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
                                 ArrayDevice source_device);
-#endif
+#endif // SUNDIALS_NVECTOR_CUDA
 
 } // namespace nvector_detail
 } // namespace sundials4py
 
-#endif
+#endif // SUNDIALS_NVECTOR_ARRAY_HELPERS_HPP

@@ -15,6 +15,9 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
+#ifndef SUNDIALS_SUNDIALS4PY_HPP
+#define SUNDIALS_SUNDIALS4PY_HPP
+
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
 #include <nanobind/stl/function.h>
@@ -26,3 +29,5 @@
 
 #include "sundials4py_helpers.hpp"
 #include "sundials4py_types.hpp"
+
+#endif // SUNDIALS_SUNDIALS4PY_HPP

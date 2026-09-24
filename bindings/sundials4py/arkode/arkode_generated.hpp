@@ -1,4 +1,4 @@
-// #ifndef _ARKODE_H
+// #ifndef SUNDIALS_ARKODE_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1435,7 +1435,7 @@ m.def(
 //
 // #endif
 //
-// #ifndef _ARKLS_H
+// #ifndef SUNDIALS_ARKODE_LS_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1499,7 +1499,7 @@ m.def("ARKodeSetMassLSNormFactor", ARKodeSetMassLSNormFactor,
 //
 // #endif
 //
-// #ifndef _ARKODE_BUTCHER_H
+// #ifndef SUNDIALS_ARKODE_BUTCHER_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1583,7 +1583,7 @@ m.def(
 //
 // #endif
 //
-// #ifndef _ARKODE_ERK_TABLES_H
+// #ifndef SUNDIALS_ARKODE_BUTCHER_ERK_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1683,7 +1683,7 @@ m.def("ARKodeButcherTable_ERKIDToName", ARKodeButcherTable_ERKIDToName,
 //
 // #endif
 //
-// #ifndef _ARKODE_DIRK_TABLES_H
+// #ifndef SUNDIALS_ARKODE_BUTCHER_DIRK_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1778,7 +1778,7 @@ m.def("ARKodeButcherTable_DIRKIDToName", ARKodeButcherTable_DIRKIDToName,
 //
 // #endif
 //
-// #ifndef _ARKODE_SPRKTABLE_H
+// #ifndef SUNDIALS_ARKODE_SPRK_H
 //
 // #ifdef __cplusplus
 // #endif
