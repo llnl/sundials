@@ -65,4 +65,4 @@ inline sunbooleantype SUNDIALS_CUSPARSE_Assert(cusparseStatus_t status,
 }
 #endif
 
-#endif /* _SUNDIALS_CUSPARSE_H */
+#endif /* SUNDIALS_SUNDIALS_CUSPARSE_H */

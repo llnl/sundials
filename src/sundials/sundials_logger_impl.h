@@ -164,4 +164,4 @@ struct SUNLogger_
   SUNLoggerFlushMsgFn flush_msg;
 };
 
-#endif /* _SUNDIALS_LOGGER_IMPL_H */
+#endif /* SUNDIALS_SUNDIALS_LOGGER_IMPL_H */

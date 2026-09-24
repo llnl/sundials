@@ -60,4 +60,4 @@ struct SUNStepper_
 }
 #endif
 
-#endif /* _SUNDIALS_STEPPER_IMPL_H */
+#endif /* SUNDIALS_SUNDIALS_STEPPER_IMPL_H */

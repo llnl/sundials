@@ -121,4 +121,4 @@ SUNErrCode SUNAdjointCheckpointScheme_EnableDense(
 }
 #endif
 
-#endif /*_SUNADJOINT_CHECKPOINTSCHEME_H*/
+#endif /* SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_H */

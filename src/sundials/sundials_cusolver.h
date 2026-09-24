@@ -66,4 +66,4 @@ inline sunbooleantype SUNDIALS_CUSOLVER_Assert(cusolverStatus_t status,
 }
 #endif
 
-#endif /* _SUNDIALS_CUSOLVER_H */
+#endif /* SUNDIALS_SUNDIALS_CUSOLVER_H */

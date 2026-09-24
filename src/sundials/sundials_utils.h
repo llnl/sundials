@@ -143,4 +143,4 @@ static inline void sunfprintf_long_array(FILE* fp, SUNOutputFormat fmt,
   }
 }
 
-#endif /* _SUNDIALS_UTILS_H */
+#endif /* SUNDIALS_SUNDIALS_UTILS_H */

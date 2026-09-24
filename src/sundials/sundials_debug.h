@@ -51,4 +51,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _SUNDIALS_DEBUG_H */
+#endif /* SUNDIALS_SUNDIALS_DEBUG_H */

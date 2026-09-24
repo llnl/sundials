@@ -79,4 +79,4 @@ inline sunbooleantype SUNDIALS_CUDA_Assert(cudaError_t cuerr, const char* file,
 }
 #endif
 
-#endif /* _SUNDIALS_CUDA_H */
+#endif /* SUNDIALS_SUNDIALS_CUDA_H */

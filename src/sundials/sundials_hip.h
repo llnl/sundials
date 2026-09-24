@@ -74,4 +74,4 @@ inline sunbooleantype SUNDIALS_HIP_Assert(hipError_t hiperr, const char* file,
 }
 #endif
 
-#endif /* _SUNDIALS_HIP_H */
+#endif /* SUNDIALS_SUNDIALS_HIP_H */
