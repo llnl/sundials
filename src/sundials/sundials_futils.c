@@ -41,6 +41,12 @@ SUNErrCode SUNFileOpen(const char* filename, const char* mode, FILE** fp_out)
   return err;
 }
 
+/* Flush a file pointer's buffer. */
+SUNErrCode SUNFileFlush(FILE* fp)
+{
+  return (fflush(fp) == 0) ? SUN_SUCCESS : SUN_ERR_FILE_FLUSH;
+}
+
 SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp_out)
 {
   return SUNFileOpen(filename, mode, fp_out);

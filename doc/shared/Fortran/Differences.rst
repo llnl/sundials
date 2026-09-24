@@ -287,7 +287,7 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
         ``fopen`` for your system/compiler
 
    :param fp: The ``FILE*`` that will be open when the function returns.
-      This should be a `type(c_ptr)` in the Fortran.
+      This should be a ``type(c_ptr)`` in the Fortran.
 
    :return: A :c:type:`SUNErrCode`
 
@@ -307,8 +307,27 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
       ierr = FSUNDIALSFileClose(fp)
 
    .. versionadded:: 7.6.0
-   
+
       Replaces ``SUNDIALSFileOpen``
+
+
+.. c:function:: SUNErrCode SUNFileFlush(FILE* fp)
+
+   The function flushes a C ``FILE*`` by calling the C function ``fflush``
+   with the provided pointer.
+
+   :param fp: the C ``FILE*`` to flush. This should have the Fortran type
+      ``type(c_ptr)``.
+
+   :return: A :c:type:`SUNErrCode`
+
+   Usage example:
+
+   .. code-block:: Fortran
+
+      ierr = FSUNFileFlush(fp)
+
+   .. versionadded:: x.y.z
 
 
 .. c:function:: SUNErrCode SUNDIALSFileClose(FILE** fp)
@@ -328,7 +347,7 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
         ``stdout`` or ``stderr`` were opened using :c:func:`SUNFileOpen()`
 
    :return: A :c:type:`SUNErrCode`
-   
+
    .. versionadded:: 7.6.0
-   
+
       Replaces ``SUNDIALSFileClose``

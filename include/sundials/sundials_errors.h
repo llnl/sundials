@@ -42,6 +42,7 @@
   ENTRY(SUN_ERR_CORRUPT, "value is NULL or corrupt")                           \
   ENTRY(SUN_ERR_OUTOFRANGE, "Value is out of the expected range")              \
   ENTRY(SUN_ERR_FILE_OPEN, "Unable to open file")                              \
+  ENTRY(SUN_ERR_FILE_FLUSH, "Unable to flush file")                            \
   ENTRY(SUN_ERR_OP_FAIL, "an operation failed")                                \
   ENTRY(SUN_ERR_MEM_FAIL, "a memory operation failed")                         \
   ENTRY(SUN_ERR_MALLOC_FAIL, "malloc returned NULL")                           \
