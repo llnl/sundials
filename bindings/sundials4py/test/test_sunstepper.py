@@ -259,7 +259,7 @@ def test_stepper_accumulated_error_callbacks(sunctx):
 
     def set_rtol_fn(stepper, rtol):
         calls["rtol"] = True
-        assert rtol == 1e-4
+        assert rtol == 2**-8
         return SUN_SUCCESS
 
     assert SUNStepper_SetGetAccumulatedErrorFn(s, get_error_fn) == SUN_SUCCESS
@@ -270,5 +270,5 @@ def test_stepper_accumulated_error_callbacks(sunctx):
     assert status == SUN_SUCCESS
     assert error == 0.25
     assert SUNStepper_ResetAccumulatedError(s) == SUN_SUCCESS
-    assert SUNStepper_SetRTol(s, 1e-4) == SUN_SUCCESS
+    assert SUNStepper_SetRTol(s, 2**-8) == SUN_SUCCESS
     assert all(calls.values())
