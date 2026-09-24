@@ -92,8 +92,7 @@ TEST_F(IDAErrConditionTest, NegativeBackwardProblemIndex)
 
   ASSERT_EQ(IDAInit(IDA_mem, residual, 0.0, yy, yp), IDA_SUCCESS);
   ASSERT_EQ(IDAAdjInit(IDA_mem, 10, IDA_HERMITE), IDA_SUCCESS);
-  EXPECT_EQ(IDAInitB(IDA_mem, -1, nullptr, 0.0, nullptr, nullptr),
-            IDA_ILL_INPUT);
+  EXPECT_EQ(IDAInitB(IDA_mem, -1, nullptr, 0.0, nullptr, nullptr), IDA_ILL_INPUT);
 
   N_VDestroy(yp);
   N_VDestroy(yy);

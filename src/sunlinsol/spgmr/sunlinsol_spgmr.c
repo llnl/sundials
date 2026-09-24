@@ -477,7 +477,7 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   int status;
 
   /* Initialize some variables */
-  krydim   = 0;
+  krydim = 0;
 
   /* Make local shortcuts to solver variables. */
   l_max        = SPGMR_CONTENT(S)->maxl;
