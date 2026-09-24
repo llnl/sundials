@@ -3372,7 +3372,7 @@ int arkLsSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype tnow, N_Vector ynow,
   }
   else
   {
-    delta = bnorm = ZERO;
+    delta = ZERO;
 
     SUNLogInfo(ARK_LOGGER, "begin-linear-solve", "iterative = 0");
   }

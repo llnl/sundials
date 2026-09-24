@@ -34,7 +34,7 @@ SplittingStepCoefficients SplittingStepCoefficients_Alloc(
   if (sequential_methods < 1 || stages < 1 || partitions < 1) { return NULL; }
 
   SplittingStepCoefficients coefficients =
-    (SplittingStepCoefficients)malloc(sizeof(*coefficients));
+    (SplittingStepCoefficients)calloc(1, sizeof(*coefficients));
   if (coefficients == NULL) { return NULL; }
 
   coefficients->sequential_methods = sequential_methods;
@@ -55,8 +55,8 @@ SplittingStepCoefficients SplittingStepCoefficients_Alloc(
      i index requires allocating an array of pointers into that matrix. */
 
   /* Array of pointers for index i */
-  coefficients->beta =
-    (sunrealtype***)malloc(sequential_methods * sizeof(*coefficients->beta));
+  coefficients->beta = (sunrealtype***)calloc(sequential_methods,
+                                              sizeof(*coefficients->beta));
   if (coefficients->beta == NULL)
   {
     SplittingStepCoefficients_Destroy(&coefficients);
@@ -64,8 +64,8 @@ SplittingStepCoefficients SplittingStepCoefficients_Alloc(
   }
 
   /* Matrix of pointers for index j */
-  sunrealtype** beta_cols = (sunrealtype**)malloc(
-    sequential_methods * (stages + 1) * sizeof(*beta_cols));
+  sunrealtype** beta_cols =
+    (sunrealtype**)calloc(sequential_methods * (stages + 1), sizeof(*beta_cols));
   if (beta_cols == NULL)
   {
     SplittingStepCoefficients_Destroy(&coefficients);

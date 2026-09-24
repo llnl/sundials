@@ -117,7 +117,7 @@ int IDASetNonlinearSolverB(void* ida_mem, int which, SUNNonlinearSolver NLS)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -163,7 +163,7 @@ int IDASetUserDataB(void* ida_mem, int which, void* user_dataB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -211,7 +211,7 @@ int IDASetMaxOrdB(void* ida_mem, int which, int maxordB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -257,7 +257,7 @@ int IDASetMaxNumStepsB(void* ida_mem, int which, long int mxstepsB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -303,7 +303,7 @@ int IDASetInitStepB(void* ida_mem, int which, sunrealtype hinB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -349,7 +349,7 @@ int IDASetMaxStepB(void* ida_mem, int which, sunrealtype hmaxB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -395,7 +395,7 @@ int IDASetSuppressAlgB(void* ida_mem, int which, sunbooleantype suppressalgB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -441,7 +441,7 @@ int IDASetIdB(void* ida_mem, int which, N_Vector idB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -487,7 +487,7 @@ int IDASetConstraintsB(void* ida_mem, int which, N_Vector constraintsB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -539,7 +539,7 @@ int IDASetQuadErrConB(void* ida_mem, int which, int errconQB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -598,7 +598,7 @@ void* IDAGetAdjIDABmem(void* ida_mem, int which)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, 0, __LINE__, __func__, __FILE__, MSGAM_BAD_WHICH);
     return (NULL);
@@ -707,7 +707,7 @@ int IDAGetConsistentICB(void* ida_mem, int which, N_Vector yyB0_mod,
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -756,7 +756,7 @@ int IDAGetUserDataB(void* ida_mem, int which, void** user_dataB)
   IDAa_mem = IDA_mem->ida_adj_mem;
 
   /* Check which */
-  if (which >= IDAa_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAa_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
