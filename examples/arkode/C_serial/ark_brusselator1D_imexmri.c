@@ -671,28 +671,13 @@ int main(int argc, char* argv[])
   fclose(FID);
 
   /* Open output stream for results, access data arrays */
-  strcpy(ofname, "bruss1D_");
-  strcat(ofname, "u_");
-  strcat(ofname, argv[1]);
-  strcat(ofname, "_");
-  strcat(ofname, argv[2]);
-  strcat(ofname, ".txt");
+  snprintf(ofname, sizeof(ofname), "bruss1D_u_%s_%s.txt", argv[1], argv[2]);
   UFID = fopen(ofname, "w");
 
-  strcpy(ofname, "bruss1D_");
-  strcat(ofname, "v_");
-  strcat(ofname, argv[1]);
-  strcat(ofname, "_");
-  strcat(ofname, argv[2]);
-  strcat(ofname, ".txt");
+  snprintf(ofname, sizeof(ofname), "bruss1D_v_%s_%s.txt", argv[1], argv[2]);
   VFID = fopen(ofname, "w");
 
-  strcpy(ofname, "bruss1D_");
-  strcat(ofname, "w_");
-  strcat(ofname, argv[1]);
-  strcat(ofname, "_");
-  strcat(ofname, argv[2]);
-  strcat(ofname, ".txt");
+  snprintf(ofname, sizeof(ofname), "bruss1D_w_%s_%s.txt", argv[1], argv[2]);
   WFID = fopen(ofname, "w");
 
   /* output initial condition to disk */
