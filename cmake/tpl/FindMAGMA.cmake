@@ -55,14 +55,9 @@ if(MAGMA_LIBRARY AND MAGMA_INCLUDE_DIR)
   if(MAGMA_PKG_CONFIG_PATH)
 
     file(STRINGS ${MAGMA_PKG_CONFIG_PATH} _version_string
-         REGEX "Version: [0-9].[0-9].[0-9]")
-    string(REGEX MATCHALL "[0-9]" _version_full "${_version_string}")
-
-    list(GET _version_full 0 _version_major)
-    list(GET _version_full 1 _version_minor)
-    list(GET _version_full 2 _version_patch)
-
-    set(MAGMA_VERSION "${_version_major}.${_version_minor}.${_version_patch}")
+         REGEX "^Version:[ \t]*[0-9]+\\.[0-9]+\\.[0-9]+$")
+    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" MAGMA_VERSION
+           "${_version_string}")
 
     file(STRINGS ${MAGMA_PKG_CONFIG_PATH} _libraries_string REGEX "Libs:.*")
     string(REPLACE " " ";" _libraries_list ${_libraries_string})
