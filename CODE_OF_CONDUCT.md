@@ -60,8 +60,9 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at
-sundials-devs@llnl.gov. All complaints will be reviewed and investigated
-promptly and fairly.
+sundials-devs@llnl.gov, or to one of woodward6@llnl.gov, balos1@llnl.gov, 
+gardner48@llnl.gov, or dreynolds@umbc.edu. All complaints will be reviewed 
+and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
 reporter of any incident. Anyone involved in the reported behavior will recuse
@@ -117,8 +118,8 @@ community.
 ## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage],
-version 2.1, available at
-[https://www.contributor-covenant.org/version/2/1/code_of_conduct.html][v2.1].
+version 3.0, available at
+[https://www.contributor-covenant.org/version/3/0/code_of_conduct/][v3.0].
 
 Community Impact Guidelines were inspired by
 [Mozilla's code of conduct enforcement ladder][Mozilla CoC].
@@ -128,7 +129,7 @@ For answers to common questions about this code of conduct, see the FAQ at
 [https://www.contributor-covenant.org/translations][translations].
 
 [homepage]: https://www.contributor-covenant.org
-[v2.1]: https://www.contributor-covenant.org/version/2/1/code_of_conduct.html
+[v3.0]: https://www.contributor-covenant.org/version/3/0/code_of_conduct/
 [Mozilla CoC]: https://github.com/mozilla/diversity
 [FAQ]: https://www.contributor-covenant.org/faq
 [translations]: https://www.contributor-covenant.org/translations
