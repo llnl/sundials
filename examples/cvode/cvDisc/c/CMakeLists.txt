@@ -12,13 +12,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_executable(cvDisc_dns cvDisc_dns.c)
-set_target_properties(cvDisc_dns PROPERTIES FOLDER "Examples")
-target_link_libraries(cvDisc_dns PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+sundials_add_executable(cv_disc_dns cv_disc_dns.c)
+set_target_properties(cv_disc_dns PROPERTIES FOLDER "Examples")
+target_link_libraries(cv_disc_dns PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                       ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(cvDisc_dns cvDisc_dns ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                  ANSWER_FILE cvDisc_dns.out EXAMPLE_TYPE develop)
+sundials_add_test(cv_disc_dns cv_disc_dns ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+                  ANSWER_FILE cv_disc_dns.out EXAMPLE_TYPE develop)
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cvDisc_dns.c cvDisc_dns.out
+  install(FILES cv_disc_dns.c cv_disc_dns.out
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cvDisc/c)
 endif()

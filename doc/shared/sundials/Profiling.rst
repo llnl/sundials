@@ -214,7 +214,7 @@ Example Usage
 -------------
 
 The following is an excerpt from the CVODE example code
-``examples/cvode/cvAdvDiff/c/cvAdvDiff_bnd.c``.
+``examples/cvode/cvAdvDiff/c/cv_adv_diff_bnd.c``.
 It is applicable to any of the SUNDIALS solver packages.
 
 .. code-block:: c
