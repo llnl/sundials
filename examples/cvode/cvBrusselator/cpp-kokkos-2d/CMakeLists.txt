@@ -13,11 +13,11 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE Kokkos two-dimensional batched Brusselator example
-set(examples_list "cv_bruss_batched_kokkos_2D.cpp\;\;develop")
+set(examples_list "cv_bruss_batched_kokkos_2d.cpp\;\;develop")
 foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
-  set(example_target cv_bruss_batched_kokkos_2D.${backend})
+  set(example_target cv_bruss_batched_kokkos_2d.${backend})
   if(NOT TARGET ${example_target})
-    sundials_add_executable(${example_target} cv_bruss_batched_kokkos_2D.cpp)
+    sundials_add_executable(${example_target} cv_bruss_batched_kokkos_2d.cpp)
     set_target_properties(${example_target} PROPERTIES FOLDER "Examples")
     target_compile_definitions(${example_target} PRIVATE USE_${backend})
     if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
@@ -39,8 +39,8 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
 endforeach()
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  file(GLOB example_out cv_bruss_batched_kokkos_2D*.out)
-  install(FILES cv_bruss_batched_kokkos_2D.cpp ${example_out}
+  file(GLOB example_out cv_bruss_batched_kokkos_2d*.out)
+  install(FILES cv_bruss_batched_kokkos_2d.cpp ${example_out}
           "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cvBrusselator/cpp-kokkos-2d)
 endif()

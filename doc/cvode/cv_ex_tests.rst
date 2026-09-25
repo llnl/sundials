@@ -1,8 +1,8 @@
 Parallel tests
 ==============
 
-The stiff example problem ``cvDiurnal_kry`` described above, or rather its parallel
-version ``cvDiurnal_kry_p``, has been modified and expanded to form a test problem for
+The stiff example problem ``cv_diurnal_kry`` described above, or rather its parallel
+version ``cv_diurnal_kry_p``, has been modified and expanded to form a test problem for
 the parallel version of CVODE. This work was largely carried out by M. Wittman and
 reported in [Wit:96]_.
 

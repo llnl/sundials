@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(example cvAdvDiff_kry_sycl)
+set(example cv_adv_diff_kry_sycl)
 sundials_add_executable(${example} ${example}.cpp)
 set_target_properties(${example} PROPERTIES FOLDER "Examples")
 target_link_libraries(${example} PRIVATE sundials_cvode sundials_nvecsycl

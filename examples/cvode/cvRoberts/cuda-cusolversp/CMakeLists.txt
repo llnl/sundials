@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(example cvRoberts_block_cusolversp_batchqr)
+set(example cv_roberts_block_cusolversp_batchqr)
 
 set_source_files_properties(${example}.cu PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT
                                                      OBJ)

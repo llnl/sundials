@@ -12,14 +12,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_executable(cvAdvDiff_petsc cvAdvDiff_petsc.c)
-set_target_properties(cvAdvDiff_petsc PROPERTIES FOLDER "Examples")
-target_link_libraries(cvAdvDiff_petsc PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecpetsc
+sundials_add_executable(cv_adv_diff_petsc cv_adv_diff_petsc.c)
+set_target_properties(cv_adv_diff_petsc PROPERTIES FOLDER "Examples")
+target_link_libraries(cv_adv_diff_petsc PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecpetsc
                       sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(cvAdvDiff_petsc cvAdvDiff_petsc MPI_NPROCS 4
+sundials_add_test(cv_adv_diff_petsc cv_adv_diff_petsc MPI_NPROCS 4
                   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                  ANSWER_FILE cvAdvDiff_petsc.out EXAMPLE_TYPE develop)
+                  ANSWER_FILE cv_adv_diff_petsc.out EXAMPLE_TYPE develop)
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cvAdvDiff_petsc.c cvAdvDiff_petsc.out
+  install(FILES cv_adv_diff_petsc.c cv_adv_diff_petsc.out
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cvAdvDiff/c-mpi-petsc)
 endif()

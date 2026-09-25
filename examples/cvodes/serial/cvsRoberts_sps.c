@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * Programmer(s): Carol Woodward.
- *      Based on cvRoberts_dns.c and modified to use SUPERLU_MT.
+ *      Based on cv_roberts_dns.c and modified to use SUPERLU_MT.
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
