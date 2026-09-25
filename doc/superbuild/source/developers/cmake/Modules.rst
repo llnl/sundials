@@ -24,3 +24,5 @@ SUNDIALS defines several custom CMake functions and macros to simplify common
 tasks in the build system, such as adding options or creating libraries.
 
 .. cmake-module:: ../../../../../cmake/macros/SundialsOption.cmake
+
+.. cmake-module:: ../../../../../cmake/macros/SundialsAddWarningFlags.cmake
