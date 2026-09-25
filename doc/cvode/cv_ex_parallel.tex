@@ -104,7 +104,7 @@ high value of \id{ncfn} indicates that this problem is on the borderline
 of being stiff.
 
 %%
-\includeOutput{cv_adv_diff\_non\_p}{../../examples/cvode/cvAdvDiff/c-mpi/cv_adv_diff_non_p.out}
+\includeOutput{cv_adv_diff\_non\_p}{../../examples/cvode/cv_adv_diff/c-mpi/cv_adv_diff_non_p.out}
 %%
 
 %-------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ As an example of using {\cvode} with the Krylov linear solver
 the parallel MPI {\nvecp} module, we describe a test problem based on
 the system PDEs given above for the \id{cv_diurnal\_kry} example.
 As before, we discretize the PDE system with central differencing, to
-obtain an ODE system $\dot{u} = f(t,u)$ representing (\ref{cvDiurnalpde}).
+obtain an ODE system $\dot{u} = f(t,u)$ representing (\ref{cv_diurnalpde}).
 But in this case, the discrete solution vector is distributed over
 many processors.  Specifically, we may think of the processors as
 being laid out in a rectangle, and each processor being assigned a
@@ -170,7 +170,7 @@ The following is a sample output from \id{cv_diurnal\_kry\_p}, for four processo
 The output will vary slightly if the number of processors is changed.
 
 %%
-\includeOutput{cv_diurnal\_kry\_p}{../../examples/cvode/cvDiurnal/c-mpi/cv_diurnal_kry_p.out}
+\includeOutput{cv_diurnal\_kry\_p}{../../examples/cvode/cv_diurnal/c-mpi/cv_diurnal_kry_p.out}
 %%
 
 %-------------------------------------------------------------------------------
@@ -212,7 +212,7 @@ as measured by the number of Krylov iterations per Newton iteration,
 the left, but slightly poorer when it is on the right.
 
 %%
-\includeOutput{cv_diurnal\_kry\_bbd\_p}{../../examples/cvode/cvDiurnal/c-mpi/cv_diurnal_kry_bbd_p.out}
+\includeOutput{cv_diurnal\_kry\_bbd\_p}{../../examples/cvode/cv_diurnal/c-mpi/cv_diurnal_kry_bbd_p.out}
 %%
 
 %-------------------------------------------------------------------------------
