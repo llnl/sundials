@@ -2,7 +2,7 @@
 
 Examples are grouped by problem. Each problem directory contains one or more
 variants named for their implementation language and optional TPLs. For
-example, `cvAdvDiff/c-mpi-hypre` is the MPI/HYPRE C variant of the
+example, `cv_adv_diff/c-mpi-hypre` is the MPI/HYPRE C variant of the
 advection-diffusion example. Each variant contains its source files, reference
 output, input data, supporting scripts, and `CMakeLists.txt`.
 

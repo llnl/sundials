@@ -2,15 +2,15 @@
 \section{Parallel tests}\label{s:ex_tests}
 %===============================================================================
 
-The stiff example problem \id{cvDiurnal\_kry} described above, or rather its parallel
-version \id{cvDiurnal\_kry\_p}, has been modified and expanded to form a test problem for
+The stiff example problem \id{cv_diurnal\_kry} described above, or rather its parallel
+version \id{cv_diurnal\_kry\_p}, has been modified and expanded to form a test problem for
 the parallel version of {\cvode}.  This work was largely carried out
 by M. Wittman and reported in \cite{Wit:96}.
 
 To start with, in order to add realistic complexity to the solution, the
 initial profile for this problem was altered to include a rather steep front
 in the vertical direction. Specifically, the function $\beta(y)$ in
-Eq. (\ref{cvDiurnalic}) has been replaced by: 
+Eq. (\ref{cv_diurnalic}) has been replaced by:
 \begin{equation}
 \beta(y) = .75 + .25 \tanh(10 y - 400) ~.
 \end{equation}
@@ -110,4 +110,3 @@ counts. The run times for EPCC are 947, 494, and 278, showing speedups of
 runs, the times were slightly lower and the ratios were 1.98 and 1.91. For
 MPICH, consistent with the earlier runs, the run times were considerably
 higher, and in fact show speedup ratios of only 1.54 and 1.03.
-

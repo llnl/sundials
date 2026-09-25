@@ -9,8 +9,8 @@ make sure that the {\F} data types for real and integer variables
 appropriately match the {\CC} types.  See \S\ref{ss:fcdata} in the
 {\cvode} User Document for details.
 
-\subsection{A serial example: fcvDiurnal\_kry}\label{ss:fcvDiurnal} 
-The \id{fcvDiurnal\_kry} example is a {\F} equivalent of the \id{cvDiurnal\_kry} problem.
+\subsection{A serial example: fcv_diurnal\_kry}\label{ss:fcv_diurnal}
+The \id{fcv_diurnal\_kry} example is a {\F} equivalent of the \id{cv_diurnal\_kry} problem.
 (In fact, it was derived from an earlier {\F} example program for VODPK.)
 
 The main program begins with a call to \id{INITKX}, which sets problem
@@ -26,8 +26,8 @@ selected solution values and performance data (from the \id{IOUT}  and \id{ROUT}
 arrays).  At the end, it prints a number of performance counters, and
 frees memory with calls to \id{FCVFREE}.
 
-In \id{fcvDiurnal\_kry.f}, the \id{FCVFUN} routine is a straghtforward implementation
-of the discretized form of Eqns. (\ref{cvDiurnalpde}).  In \id{FCVPSET}, the
+In \id{fcv_diurnal\_kry.f}, the \id{FCVFUN} routine is a straghtforward implementation
+of the discretized form of Eqns. (\ref{cv_diurnalpde}).  In \id{FCVPSET}, the
 block-diagonal part of the Jacobian, $J_{bd}$, is computed (and copied to
 \id{P}) if \id{JOK} = 0, but is simply copied from \id{BD} to \id{P} if
 \id{JOK} = 1.  In both cases, the preconditioner matrix $P$ is formed from 
@@ -35,15 +35,15 @@ $J_{bd}$ and its $2 \times 2$ blocks are LU-factored.  In \id{FCVPSOL},
 the solution of a linear system $Px = z$ is solved by doing backsolve
 operations on the blocks.  Subordinate routines are used to isolate
 these evaluation, factorization, and backsolve operations.
-The remainder of \id{fcvDiurnal\_kry.f} consists of
+The remainder of \id{fcv_diurnal\_kry.f} consists of
 routines from LINPACK and the BLAS needed for matrix and vector operations.
 
-The following is sample output from \id{fcvDiurnal\_kry}, using a $10 \times 10$ mesh.
+The following is sample output from \id{fcv_diurnal\_kry}, using a $10 \times 10$ mesh.
 The performance of {\fcvode} here is quite similar to that of {\cvode} on
-the \id{cvDiurnal\_kry} problem, as expected.
+the \id{cv_diurnal\_kry} problem, as expected.
 
 %%
-\includeOutput{fcvDiurnal\_kry}{../../examples/cvode/cvDiurnal/fortran/cv_diurnal_kry_f2003.out}
+\includeOutput{fcv_diurnal\_kry}{../../examples/cvode/cv_diurnal/fortran/cv_diurnal_kry_f2003.out}
 %%
 
 %-----------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ The following is a sample output from \id{fcvDiag\_kry\_bbd\_p}, with \id{NPES} 
 As expected, the performance is identical for left vs right preconditioning.
 
 %%
-\includeOutput{fcvDiag\_kry\_bbd\_p}{../../examples/cvode/cvDiag/fortran-mpi/cv_diag_kry_bbd_f2003.out}
+\includeOutput{fcvDiag\_kry\_bbd\_p}{../../examples/cvode/cv_diag/fortran-mpi/cv_diag_kry_bbd_f2003.out}
 %%
 
 %-----------------------------------------------------------------------------------
