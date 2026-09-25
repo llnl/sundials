@@ -6,6 +6,10 @@
 
 ### New Features and Enhancements
 
+Reorganized the CVODE examples by implementation language and placed each
+example in its own directory with its input files, scripts, and reference
+output.
+
 ### Bug Fixes
 
 ### Deprecation Notices
@@ -111,7 +115,7 @@ Improved the performance of logging when enabled but no file pointer was set.
 Added the function `SUNLogger_SetQueueAndFlushMsgFns` to allow for user-defined
 functions to queue and flush log messages.
 
-Updated `examples/cvode/petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
+Updated `examples/cvode/cv_petsc/c-mpi-petsc/cv_petsc_ex7.c` to support PETSc 3.25.0.
 
 ### Bug Fixes
 
@@ -1499,7 +1503,7 @@ Updated `MRIStepReset` to call the corresponding `MRIStepInnerResetFn` with the 
 (*tR*,*yR*) arguments for the `MRIStepInnerStepper` object that is used to evolve the
 MRI "fast" time scale subproblems.
 
-Added a new [example](examples/cvode/serial/cvRocket_dns.c) which
+Added a new [example](examples/cvode/cv_rocket/c/cv_rocket_dns.c) which
 demonstrates using CVODE with a discontinuous right-hand-side function
 and rootfinding.
 
@@ -3191,12 +3195,12 @@ routine allocates storage for the sum `M + gamma J` or `M + gamma J` manually
 The following examples from the usage notes page of the SUNDIALS website, and
 updated them to work with SUNDIALS 3.x:
 
-* `cvDisc_dns.c` demonstrates using CVODE with discontinuous solutions or RHS.
+* `cv_disc_dns.c` demonstrates using CVODE with discontinuous solutions or RHS.
 
-* `cvRoberts_dns_negsol.c` illustrates the use of the RHS function return
+* `cv_roberts_dns_negsol.c` illustrates the use of the RHS function return
   value to control unphysical negative concentrations.
 
-* `cvRoberts_FSA_dns_Switch.c` demonstrates switching on/off forward
+* `cv_roberts_FSA_dns_Switch.c` demonstrates switching on/off forward
   sensitivity computations. This example came from the usage notes page of the
   SUNDIALS website.
 
@@ -3664,7 +3668,7 @@ Two minor bugs were fixed regarding the testing of input on the first call to
 `CVode` -- one involving `tstop` and one involving the initialization of
 `*tret`.
 
-The example program `cvAdvDiff_diag_p` was added to illustrate the use of in
+The example program `cv_adv_diff_diag_p` was added to illustrate the use of in
 parallel.
 
 In the FCVODE optional input routines `FCVSETIIN` and `FCVSETRIN`, the

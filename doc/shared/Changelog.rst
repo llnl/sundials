@@ -150,7 +150,7 @@ Improved the performance of logging when enabled but no file pointer was set.
 Added the function :c:func:`SUNLogger_SetQueueAndFlushMsgFns` to allow for
 user-defined functions to queue and flush log messages.
 
-Updated ``examples/cvode/petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
+Updated ``examples/cvode/cvPetsc/c-mpi-petsc/cv_petsc_ex7.c`` to support PETSc 3.25.0.
 
 **Bug Fixes**
 
@@ -1780,7 +1780,7 @@ Updated :c:func:`MRIStepReset` to call the corresponding
 :c:type:`MRIStepInnerStepper` object that is used to evolve the MRI "fast" time
 scale subproblems.
 
-Added a new example (``examples/cvode/serial/cvRocket_dns.c``) which
+Added a new example (``examples/cvode/cvRocket/c/cvRocket_dns.c``) which
 demonstrates using CVODE with a discontinuous right-hand-side function and
 rootfinding.
 

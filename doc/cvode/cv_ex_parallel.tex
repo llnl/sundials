@@ -2,7 +2,7 @@
 \section{Parallel example problems}\label{s:ex_parallel}
 %===============================================================================
 
-\subsection{A nonstiff example: cvAdvDiff\_non\_p}\label{ss:cvAdvDiff_p}
+\subsection{A nonstiff example: cv_adv_diff\_non\_p}\label{ss:cv_adv_diff_p}
 
 This problem begins with a simple diffusion-advection equation
 for $u=u(t,x)$
@@ -25,7 +25,7 @@ $x_{i} = i(\Delta x)$, and $\Delta x = 2/($\id{MX}$+1)$, the resulting system of
 ODEs, $\dot{u} = f(t,u)$, can now be written:
 \begin{equation}
 \dot{u}_i=\frac{u_{i+1}-2u_{i}+u_{i-1}}{(\Delta x)^{2}}
-  + 0.5 \frac{u_{i+1}-u_{i-1}}{2(\Delta x)} ~. \label{cvAdvDiff_pode}
+  + 0.5 \frac{u_{i+1}-u_{i-1}}{2(\Delta x)} ~. \label{cv_adv_diff_pode}
 \end{equation}
 This equation holds for $i=1,2,\ldots ,$ \id{MX}, with the understanding
 that $u_{0} = u_{\id{MX}+1}=0.$
@@ -33,7 +33,7 @@ that $u_{0} = u_{\id{MX}+1}=0.$
 In the parallel processing environment, we may think of the several
 processors as being laid out on a straight line with each processor to
 compute its contiguous subset of the solution vector.  Consequently
-the computation of the right hand side of Eq. (\ref{cvAdvDiff_pode}) requires
+the computation of the right hand side of Eq. (\ref{cv_adv_diff_pode}) requires
 that each interior processor must pass the first component of its block of
 the solution vector to its left-hand neighbor, acquire the last component of
 that neighbor's block, pass the last component of its block of the solution
@@ -45,7 +45,7 @@ This problem uses the Adams (non-stiff) integration formula and fixed-point
 nonlinear solver.  It is unrealistically simple, but serves to illustrate
 use of the parallel version of CVODE.
 
-The \id{cvAdvDiff\_non\_p.c} file begins with \id{\#include} declarations for
+The \id{cv_adv_diff\_non\_p.c} file begins with \id{\#include} declarations for
 various required header files, including lines for
 \id{nvector\_parallel} to access the parallel \id{N\_Vector} type and related
 macros, and for \id{mpi.h} to access MPI types and constants. Following
@@ -82,7 +82,7 @@ The counters are: \id{nst} (number of steps), \id{nfe} (number of
 nonlinear convergence failures).  This routine is suitable for general use
 with {\cvode} applications to nonstiff problems.
 
-The \id{f} function is an implementation of Eq. (\ref{cvAdvDiff_pode}), but preceded
+The \id{f} function is an implementation of Eq. (\ref{cv_adv_diff_pode}), but preceded
 by communication operations appropriate for the parallel setting.
 It copies the local vector \id{u} into a larger array \id{z}, shifted by 1
 to allow for the storage of immediate neighbor components.  The first and last
@@ -93,30 +93,30 @@ or \id{z[my\_length+1]} instead if at the actual boundary.  Then the central
 difference expressions are easily formed from the \id{z} array, and loaded into
 the data array of the \id{udot} vector.
 
-The \id{cvAdvDiff\_non\_p.c} file includes a routine \id{check\_flag} that checks the
+The \id{cv_adv_diff\_non\_p.c} file includes a routine \id{check\_flag} that checks the
 return values from calls in \id{main}.  This routine was written to be used
 by any parallel {\sundials} application.
 
-The output below is for \id{cvAdvDiff\_non\_p} with \id{MX} = 10 and four processors.
+The output below is for \id{cv_adv_diff\_non\_p} with \id{MX} = 10 and four processors.
 Varying the number of processors will alter the output, only because
 of roundoff-level differences in various vector operations.  The fairly
 high value of \id{ncfn} indicates that this problem is on the borderline
 of being stiff.
 
 %%
-\includeOutput{cvAdvDiff\_non\_p}{../../examples/cvode/parallel/cvAdvDiff_non_p.out}
+\includeOutput{cv_adv_diff\_non\_p}{../../examples/cvode/cv_adv_diff/c-mpi/cv_adv_diff_non_p.out}
 %%
 
 %-------------------------------------------------------------------------------
 
-\subsection{A user preconditioner example: cvDiurnal\_kry\_p}\label{ss:cvDiurnal_p}
+\subsection{A user preconditioner example: cv_diurnal\_kry\_p}\label{ss:cv_diurnal_p}
 
 As an example of using {\cvode} with the Krylov linear solver
 {\sunlinsolspgmr}, {\cvls} linear solver interface, and
 the parallel MPI {\nvecp} module, we describe a test problem based on
-the system PDEs given above for the \id{cvDiurnal\_kry} example.
+the system PDEs given above for the \id{cv_diurnal\_kry} example.
 As before, we discretize the PDE system with central differencing, to
-obtain an ODE system $\dot{u} = f(t,u)$ representing (\ref{cvDiurnalpde}).
+obtain an ODE system $\dot{u} = f(t,u)$ representing (\ref{cv_diurnalpde}).
 But in this case, the discrete solution vector is distributed over
 many processors.  Specifically, we may think of the processors as
 being laid out in a rectangle, and each processor being assigned a
@@ -144,14 +144,14 @@ particular direction, then message passing and receiving are bypassed
 for that direction.
 
 This code is intended to provide a more realistic example than that in
-\id{cvAdvDiff\_non\_p}, and to provide a template for a stiff ODE system
+\id{cv_adv_diff\_non\_p}, and to provide a template for a stiff ODE system
 arising from a PDE system. The solution method is BDF with Newton
 iteration and {\spgmr}. The left preconditioner is the block-diagonal
 part of the Newton matrix, with $2 \times 2$ blocks, and the
 corresponding diagonal blocks of the Jacobian are saved each time the
 preconditioner is generated, for reuse later under certain conditions.
 
-The organization of the \id{cvDiurnal\_kry\_p} program deserves some comments. The
+The organization of the \id{cv_diurnal\_kry\_p} program deserves some comments. The
 right-hand side routine \id{f} calls two other routines: \id{ucomm}, which
 carries out inter-processor communication; and \id{fcalc}, which operates on
 local data only and contains the actual calculation of $f(t,u)$. The
@@ -161,24 +161,24 @@ receive-waiting. All three use MPI, and transmit data from the local \id{u}
 vector into a local working array \id{uext}, an extended copy of \id{u}.
 The \id{fcalc} function copies \id{u} into \id{uext}, so that the
 calculation of $f(t,u)$ can be done conveniently by operations on
-\id{uext} only.  Most other features of \id{cvDiurnal\_kry\_p.c} are the same as
-in \id{cvDiurnal\_kry.c}, except for extra logic involved with distributed
+\id{uext} only.  Most other features of \id{cv_diurnal\_kry\_p.c} are the same as
+in \id{cv_diurnal\_kry.c}, except for extra logic involved with distributed
 vectors.
 
-The following is a sample output from \id{cvDiurnal\_kry\_p}, for four processors
+The following is a sample output from \id{cv_diurnal\_kry\_p}, for four processors
 (in a $2 \times 2$ array) with a $5 \times 5$ subgrid on each.
 The output will vary slightly if the number of processors is changed.
 
 %%
-\includeOutput{cvDiurnal\_kry\_p}{../../examples/cvode/parallel/cvDiurnal_kry_p.out}
+\includeOutput{cv_diurnal\_kry\_p}{../../examples/cvode/cv_diurnal/c-mpi/cv_diurnal_kry_p.out}
 %%
 
 %-------------------------------------------------------------------------------
 
-\subsection{A CVBBDPRE preconditioner example: cvDiurnal\_kry\_bbd\_p}\label{ss:cvDiurnal_bbd_p}
+\subsection{A CVBBDPRE preconditioner example: cv_diurnal\_kry\_bbd\_p}\label{ss:cv_diurnal_bbd_p}
 
-In this example, \id{cvDiurnal\_kry\_bbd\_p}, we solve the same
-problem as in \id{cvDiurnal\_kry\_p}
+In this example, \id{cv_diurnal\_kry\_bbd\_p}, we solve the same
+problem as in \id{cv_diurnal\_kry\_p}
 above, but instead of supplying the preconditioner, we use the {\cvbbdpre} module,
 which generates and uses a band-block-diagonal preconditioner.  The
 half-bandwidths of the Jacobian block on each processor are both equal to
@@ -190,7 +190,7 @@ This means that the Jacobian elements are computed with a difference quotient
 scheme using the true bandwidth of the block, but only a narrow band matrix
 (bandwidth 5) is kept as the preconditioner.
 
-As in \id{cvDiurnal\_kry\_p.c}, the \id{f} routine in \id{cvDiurnal\_kry\_bbd\_p.c} simply calls a
+As in \id{cv_diurnal\_kry\_p.c}, the \id{f} routine in \id{cv_diurnal\_kry\_bbd\_p.c} simply calls a
 communication routine, \id{fucomm}, and then a strictly computational routine,
 \id{flocal}.  However, the call to \id{CVBBDPrecInit} specifies the pair of
 routines to be called as \id{ucomm} and \id{flocal}, where \id{ucomm} is NULL.
@@ -199,20 +199,20 @@ preceded by a call to \id{f} with the same \id{(t,u)} arguments, and therefore t
 communication needed for \id{flocal} in the solver's calls to it have already been
 done.
 
-In \id{cvDiurnal\_kry\_bbd\_p.c}, the problem is solved twice --- first with preconditioning
+In \id{cv_diurnal\_kry\_bbd\_p.c}, the problem is solved twice --- first with preconditioning
 on the left, and then on the right.  Thus prior to the second solution, calls
 are made to reset the initial values (\id{SetInitialProfiles}), the main solver
 memory (\id{CVodeReInit}), the {\cvbbdpre} memory (\id{CVBBDPrecReInit}),
 as well as the preconditioner type (\id{SUNLinSol\_SPGMRSetPrecType}).
 
-Sample output from \id{cvDiurnal\_kry\_bbd\_p} follows, again using $5 \times 5$ subgrids
+Sample output from \id{cv_diurnal\_kry\_bbd\_p} follows, again using $5 \times 5$ subgrids
 on a $2 \times 2$ processor grid.  The performance of the preconditioner,
 as measured by the number of Krylov iterations per Newton iteration,
-\id{nli/nni}, is very close to that of \id{cvDiurnal\_kry\_p} when preconditioning is on
+\id{nli/nni}, is very close to that of \id{cv_diurnal\_kry\_p} when preconditioning is on
 the left, but slightly poorer when it is on the right.
 
 %%
-\includeOutput{cvDiurnal\_kry\_bbd\_p}{../../examples/cvode/parallel/cvDiurnal_kry_bbd_p.out}
+\includeOutput{cv_diurnal\_kry\_bbd\_p}{../../examples/cvode/cv_diurnal/c-mpi/cv_diurnal_kry_bbd_p.out}
 %%
 
 %-------------------------------------------------------------------------------
