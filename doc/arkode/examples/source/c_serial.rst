@@ -664,19 +664,21 @@ consider the heat equation,
 
    \frac{\partial u}{\partial t} = k \frac{\partial^2 u}{\partial x^2} + f,
 
-for :math:`t \in [0, 10]`, and :math:`x \in [0, 1]`, with initial
+for :math:`t \in [0, 1]`, and :math:`x \in [0, 1]`, with initial
 condition :math:`u(0,x) = 0`, stationary boundary conditions,
 
 .. math::
 
    \frac{\partial u}{\partial t}(t,0) = \frac{\partial u}{\partial t}(t,1) = 0,
 
-and a point-source heating term,
+and a point-source heating term of total strength :math:`0.01`,
+located at the midpoint of the domain,
 
 .. math::
 
-   f(t,x) = \begin{cases} 1 & \text{if}\;\; x=1/2, \\
-                          0 & \text{otherwise}. \end{cases}
+   f(t,x) = 0.01\, \delta(x - 1/2),
+
+where :math:`\delta` denotes the Dirac delta distribution.
 
 
 
@@ -686,6 +688,16 @@ Numerical method
 As with the :ref:`ark_brusselator1D` test problem, this test computes
 spatial derivatives using second-order centered differences, with the
 data distributed over :math:`N` points on a uniform spatial grid.
+
+Since a Dirac delta cannot be represented pointwise on a grid, the
+heating term is applied using its finite-volume approximation, wherein
+the total source strength is spread over the grid cell of width
+:math:`\Delta x` surrounding :math:`x=1/2`, giving the nodal value
+:math:`0.01/\Delta x` at that single node.  This division by
+:math:`\Delta x` is what keeps the discrete integral of :math:`f` equal
+to :math:`0.01` under mesh refinement; without it the effective source
+strength would be :math:`0.01\,\Delta x`, and would vanish as
+:math:`\Delta x \to 0`.
 
 In this example, we use :math:`N=201` spatial points, with heat
 conductivity parameter :math:`k=0.5`, and discretize the equation
@@ -723,28 +735,29 @@ center is at time :math:`t=0.13`, right is at time :math:`t=1.0`.
 ark_heat1D_adapt
 ===================================================
 
-This problem is mathematically identical to the :ref:`ark_heat1D` test
-problem.  However, instead of using a uniform spatial grid, this test
-problem utilizes a dynamically-evolving spatial mesh.  The PDE under
-consideration is a simple one-dimensional heat equation,
+This problem is closely related to the :ref:`ark_heat1D` test problem,
+differing in two respects: instead of using a uniform spatial grid, this
+test problem utilizes a dynamically-evolving spatial mesh, and instead
+of a point source it employs a smooth, spatially-varying heating term.
+The PDE under consideration is a simple one-dimensional heat equation,
 
 .. math::
 
    \frac{\partial u}{\partial t} = k \frac{\partial^2 u}{\partial x^2} + f,
 
-for :math:`t \in [0, 10]`, and :math:`x \in [0, 1]`, with initial
+for :math:`t \in [0, 1]`, and :math:`x \in [0, 1]`, with initial
 condition :math:`u(0,x) = 0`, stationary boundary conditions,
 
 .. math::
 
    \frac{\partial u}{\partial t}(t,0) = \frac{\partial u}{\partial t}(t,1) = 0,
 
-and a point-source heating term,
+and a heating term given by a smooth sum of Gaussians,
 
 .. math::
 
-   f(t,x) = \begin{cases} 1 & \text{if}\;\; x=1/2, \\
-                          0 & \text{otherwise}. \end{cases}
+   f(t,x) &= 2 e^{-200(x-0.25)^2} - e^{-400(x-0.7)^2} \\
+          &\quad + e^{-500(x-0.4)^2} - 2 e^{-600(x-0.55)^2}.
 
 
 

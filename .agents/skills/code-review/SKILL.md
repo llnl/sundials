@@ -48,6 +48,7 @@ nits while a functional concern is unresolved.
   reset/reuse behavior remain coherent.
 - Use `SUNAssert` for programmer-error checks and preserve the documented
   release/debug semantics of assertions and error checking.
+- Ensure files are placed in the paths consistent with existing practices.
 
 ### Numerical and integrator behavior
 
