@@ -1,6 +1,6 @@
 ! ------------------------------------------------------------------
 ! Programmer(s): Ting Yan @ UMBC
-!                Based on cvRoberts_klu.c and modified to Fortran 77
+!                Based on cv_roberts_klu.c and modified to Fortran 77
 !                modified by Daniel M. Margolis @ UMBC
 ! ------------------------------------------------------------------
 ! SUNDIALS Copyright Start

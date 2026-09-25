@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(example cv_roberts_dnsL_f2003)
+set(example cv_roberts_dns_l_f2003)
 set(CMAKE_Fortran_MODULE_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
 sundials_add_executable(${example} ${example}.f90)

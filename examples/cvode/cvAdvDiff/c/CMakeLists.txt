@@ -12,13 +12,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_executable(cvAdvDiff_bnd cvAdvDiff_bnd.c)
-set_target_properties(cvAdvDiff_bnd PROPERTIES FOLDER "Examples")
-target_link_libraries(cvAdvDiff_bnd PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+sundials_add_executable(cv_adv_diff_bnd cv_adv_diff_bnd.c)
+set_target_properties(cv_adv_diff_bnd PROPERTIES FOLDER "Examples")
+target_link_libraries(cv_adv_diff_bnd PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                       ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(cvAdvDiff_bnd cvAdvDiff_bnd ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                  ANSWER_FILE cvAdvDiff_bnd.out EXAMPLE_TYPE develop)
+sundials_add_test(cv_adv_diff_bnd cv_adv_diff_bnd ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+                  ANSWER_FILE cv_adv_diff_bnd.out EXAMPLE_TYPE develop)
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cvAdvDiff_bnd.c cvAdvDiff_bnd.out
+  install(FILES cv_adv_diff_bnd.c cv_adv_diff_bnd.out
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cvAdvDiff/c)
 endif()

@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(example cvAdvDiff_kry_cuda_managed)
+set(example cv_adv_diff_kry_cuda_managed)
 
 set_source_files_properties(${example}.cu PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_executable(${example} ${example}.cu)
