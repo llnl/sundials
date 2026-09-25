@@ -110,61 +110,14 @@ endif()
 
 if(SUNDIALS_ENABLE_ALL_WARNINGS)
   message(STATUS "Enabling all compiler warnings")
-
-  # Some warning flags are not supported by all compilers so ignore unknown
-  # flags with -Wno-unknown-warning-option. Ironically, this is not supported by
-  # some compilers.
-  set(WARNING_FLAGS
-      "-Wno-unknown-warning-option -Wall -Wpedantic -Wextra -Wshadow \
--Wwrite-strings -Wcast-align -Wdisabled-optimization -Wvla -Walloca \
--Wduplicated-cond -Wduplicated-branches -Wunused-macros \
--Wunused-local-typedefs -Wundef")
-  # TODO(SBR): Try to add -Wredundant-decls once SuperLU version is updated in
-  # CI tests
-
-  # Avoid numerous warnings from printf
-  if(SUNDIALS_PRECISION MATCHES "EXTENDED")
-    set(WARNING_FLAGS "-Wdouble-promotion ${WARNING_FLAGS}")
-  endif()
-
-  if((SUNDIALS_PRECISION MATCHES "DOUBLE") AND (SUNDIALS_INDEX_SIZE MATCHES "32"
-                                               ))
-    set(WARNING_FLAGS "-Wconversion -Wno-sign-conversion ${WARNING_FLAGS}")
-  endif()
-
-  # Avoid numerous warnings from SWIG generated functions
-  if(NOT SUNDIALS_ENABLE_FORTRAN)
-    set(WARNING_FLAGS "-Wmissing-declarations -Wcast-qual ${WARNING_FLAGS}")
-  endif()
-
-  set(CMAKE_C_FLAGS "${WARNING_FLAGS} ${CMAKE_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${WARNING_FLAGS} ${CMAKE_CXX_FLAGS}")
-
-  # TODO(DJG): Add -fcheck=all,no-pointer,no-recursion once Jenkins is updated
-  # to use gfortran > 5.5 which segfaults with -fcheck=array-temps,bounds,do,mem
-  # no- options were added in gfortran 6
-  #
-  # Exclude run-time pointer checks (no-pointer) because passing null objects to
-  # SUNDIALS functions (e.g., sunmat => null() to SetLinearSolver) causes a
-  # run-time error with this check
-  #
-  # Exclude checks for subroutines and functions not marked as recursive
-  # (no-recursion) e.g., ark_brusselator1D_task_local_nls_f2003 calls
-  # SUNNonlinsolFree from within a custom nonlinear solver implementation of
-  # SUNNonlinsolFree which causes a run-time error with this check
-  set(CMAKE_Fortran_FLAGS
-      "-Wall -Wpedantic -Wno-unused-dummy-argument -Wno-c-binding-type -ffpe-summary=none ${CMAKE_Fortran_FLAGS}"
-  )
 endif()
 
 if(CMAKE_COMPILE_WARNING_AS_ERROR)
   message(STATUS "Enabling compiler warnings as errors")
-
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Werror")
-  set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --Werror all-warnings") # CUDA 10.2+
 endif()
+
+# Other languages are handled after they are enabled below
+sundials_add_warning_flags(C)
 
 # With clang it is not possible to combine the -fsanitize=address and
 # -fsanitize=memory checkers.
@@ -337,11 +290,13 @@ else()
       "__attribute__ ((__deprecated__(msg)))"
       CACHE INTERNAL "")
 endif()
+# Only declare the function, calling it would emit a deprecation warning and
+# fail the check when warnings are treated as errors
 check_c_source_compiles(
   "
   #define msg \"test\"
-  ${COMPILER_DEPRECATED_MSG_ATTRIBUTE} int somefunc(void) { return 0; }
-  int main(void) { return somefunc();}"
+  ${COMPILER_DEPRECATED_MSG_ATTRIBUTE} int somefunc(void);
+  int main(void) { return 0; }"
   COMPILER_HAS_DEPRECATED_MSG)
 
 # ===============================================================
@@ -448,6 +403,7 @@ endif()
 # Do we need a Fortran compiler?
 if(SUNDIALS_ENABLE_FORTRAN OR NEED_FORTRAN_NAME_MANGLING)
   include(SundialsSetupFortran)
+  sundials_add_warning_flags(Fortran)
 endif()
 
 # ===============================================================
@@ -469,6 +425,7 @@ if(SUNDIALS_ENABLE_BENCHMARKS
    OR SUNDIALS_ENABLE_KOKKOS
    OR SUNDIALS_ENABLE_ADIAK)
   include(SundialsSetupCXX)
+  sundials_add_warning_flags(CXX)
 endif()
 
 # ===============================================================
@@ -477,6 +434,7 @@ endif()
 
 if(SUNDIALS_ENABLE_CUDA)
   include(SundialsSetupCuda)
+  sundials_add_warning_flags(CUDA)
   # we treat CUDA as both a TPL and a language
   list(APPEND SUNDIALS_TPL_LIST "CUDA")
 endif()
