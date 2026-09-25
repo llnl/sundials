@@ -46,6 +46,10 @@ iteration.
 Fixed duplicate keys in IDA and IDAS logging output from consistent initial
 condition solves and order selection diagnostics.
 
+Fixed a segmentation fault in the CVODES and IDAS adjoint interfaces when a
+negative backward problem identifier was passed to a function taking ``which``.
+Those functions now return ``CV_ILL_INPUT`` or ``IDA_ILL_INPUT`` as documented.
+
 **Deprecation Notices**
 
 Renamed the ``ARKODE_ARK2_ERK_3_1_2``, ``ARKODE_ARK2_DIRK_3_1_2``,

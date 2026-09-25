@@ -784,7 +784,7 @@ int IDAInitB(void* ida_mem, int which, IDAResFnB resB, sunrealtype tB0,
   }
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -877,7 +877,7 @@ int IDAInitBS(void* ida_mem, int which, IDAResFnBS resS, sunrealtype tB0,
   }
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -960,7 +960,7 @@ int IDAReInitB(void* ida_mem, int which, sunrealtype tB0, N_Vector yyB0,
   }
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1014,7 +1014,7 @@ int IDASStolerancesB(void* ida_mem, int which, sunrealtype relTolB,
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1064,7 +1064,7 @@ int IDASVtolerancesB(void* ida_mem, int which, sunrealtype relTolB,
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1114,7 +1114,7 @@ int IDAQuadSStolerancesB(void* ida_mem, int which, sunrealtype reltolQB,
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1161,7 +1161,7 @@ int IDAQuadSVtolerancesB(void* ida_mem, int which, sunrealtype reltolQB,
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1211,7 +1211,7 @@ int IDAQuadInitB(void* ida_mem, int which, IDAQuadRhsFnB rhsQB, N_Vector yQB0)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1272,7 +1272,7 @@ int IDAQuadInitBS(void* ida_mem, int which, IDAQuadRhsFnBS rhsQS, N_Vector yQB0)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1339,7 +1339,7 @@ int IDAQuadReInitB(void* ida_mem, int which, N_Vector yQB0)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1407,7 +1407,7 @@ int IDACalcICB(void* ida_mem, int which, sunrealtype tout1, N_Vector yy0,
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1498,7 +1498,7 @@ int IDACalcICBS(void* ida_mem, int which, sunrealtype tout1, N_Vector yy0,
   }
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1883,7 +1883,7 @@ int IDAGetB(void* ida_mem, int which, sunrealtype* tret, N_Vector yy, N_Vector y
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
@@ -1942,7 +1942,7 @@ int IDAGetQuadB(void* ida_mem, int which, sunrealtype* tret, N_Vector qB)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSGAM_BAD_WHICH);
