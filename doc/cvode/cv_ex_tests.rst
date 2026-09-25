@@ -8,7 +8,7 @@ reported in [Wit:96]_.
 
 To start with, in order to add realistic complexity to the solution, the initial profile
 for this problem was altered to include a rather steep front in the vertical direction.
-Specifically, the function :math:`\beta(y)` in Eq. (``cvDiurnalic``) has been replaced by:
+Specifically, the function :math:`\beta(y)` in Eq. (``cv_diurnalic``) has been replaced by:
 
 .. math::
 
