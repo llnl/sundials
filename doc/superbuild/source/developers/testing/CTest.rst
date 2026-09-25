@@ -133,8 +133,10 @@ Compiler Flags
 The CI suites discussed later build SUNDIALS with additional compiler warnings
 enabled using the following CMake options. The specific flags used depend on the
 real type precision, index size, and if the Fortran interfaces are enabled. See
-``cmake/SundialsSetupCompilers.cmake`` for the exact set of flags. The current
-set of flags is compatible with with GNU and Clang compilers.
+:cmake:command:`sundials_add_warning_flags` in
+``cmake/macros/SundialsAddWarningFlags.cmake`` for the exact set of flags. The
+current set of flags is compatible with GNU, Clang-based, and MSVC-like
+compilers.
 
 .. cmakeoption:: SUNDIALS_ENABLE_ALL_WARNINGS
 
