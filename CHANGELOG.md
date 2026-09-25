@@ -8,7 +8,7 @@
 
 ### Bug Fixes
 
-Fixed a bug in the FindMAGMA.cmake which didn't allow use of MAGMA versions with 
+Fixed a bug in `FindMAGMA.cmake` which didn't allow use of MAGMA versions with 
 multiple digits in an identifier.
 
 ### Deprecation Notices
