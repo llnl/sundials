@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(example cvAdvDiff_diag_cuda)
+set(example cv_adv_diff_diag_cuda)
 
 set_source_files_properties(${example}.cu PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_executable(${example} ${example}.cu)
@@ -36,7 +36,7 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cvAdvDiff/cuda)
 endif()
 
-set(example cvAdvDiff_kry_cuda)
+set(example cv_adv_diff_kry_cuda)
 set_source_files_properties(${example}.cu PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_executable(${example} ${example}.cu)
 set_target_properties(${example} PROPERTIES FOLDER "Examples")
