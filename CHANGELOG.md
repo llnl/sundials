@@ -8,6 +8,9 @@
 
 ### Bug Fixes
 
+Fixed a bug in the FindMAGMA.cmake which didn't allow use of MAGMA versions with 
+multiple digits in an identifier.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.9.0
