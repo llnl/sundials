@@ -82,30 +82,6 @@ operations below.
 
       N_VDestroy(v);
 
-
-.. c:function:: void N_VSpace(N_Vector v, sunindextype* lrw, sunindextype* liw)
-
-   Returns storage requirements for the ``N_Vector`` *v*:
-
-   * *lrw* contains the number of ``sunrealtype`` words
-   * *liw* contains the number of integer words.
-
-   This function is advisory only, for use in
-   determining a user's total space requirements; it could be a dummy
-   function in a user-supplied NVECTOR module if that information is
-   not of interest.
-
-   Usage:
-
-   .. code-block:: c
-
-      N_VSpace(nvSpec, &lrw, &liw);
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
-
 .. c:function:: sunrealtype* N_VGetArrayPointer(N_Vector v)
 
    Returns a pointer to a ``sunrealtype`` array from the ``N_Vector``
@@ -532,7 +508,6 @@ operations below.
    .. code-block:: c
 
       minq = N_VMinQuotient(num, denom);
-
 
 
 .. _NVectors.Ops.Fused:
@@ -1026,7 +1001,6 @@ description of the expected behavior, and an example of the function
 usage.
 
 
-
 .. c:function:: SUNErrCode N_VBufSize(N_Vector x, sunindextype *size)
 
    This routine returns the buffer size need to exchange in the data in the
@@ -1037,7 +1011,6 @@ usage.
    .. code-block:: c
 
       flag = N_VBufSize(x, &buf_size)
-
 
 
 .. c:function:: SUNErrCode N_VBufPack(N_Vector x, void *buf)

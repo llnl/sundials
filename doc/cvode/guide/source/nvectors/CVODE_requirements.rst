@@ -41,15 +41,13 @@ interested reader.
    +================================+=============+============+==============+=================+================+
    | :c:func:`N_VGetVectorID`       |             |            |              |                 |                |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
-   | :c:func:`N_VGetLength`         |             | 4          |              |                 |                |
+   | :c:func:`N_VGetLength`         |             | 3          |              |                 |                |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
    | :c:func:`N_VClone`             | x           | x          | x            |                 |                |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
    | :c:func:`N_VCloneEmpty`        |             | 1          |              |                 |                |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
    | :c:func:`N_VDestroy`           | x           | x          | x            |                 |                |
-   +--------------------------------+-------------+------------+--------------+-----------------+----------------+
-   | :c:func:`N_VSpace`             | x           | 2          |              |                 |                |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
    | :c:func:`N_VGetArrayPointer`   |             | 1          |              | x               | x              |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
@@ -89,11 +87,10 @@ interested reader.
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
    | :c:func:`N_VScaleAddMulti`     | x           |            |              |                 |                |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
-   | :c:func:`N_VDotProdMulti`      | 3           | 3          |              |                 |                |
+   | :c:func:`N_VDotProdMulti`      | 2           | 2          |              |                 |                |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
    | :c:func:`N_VScaleVectorArray`  | x           |            |              |                 |                |
    +--------------------------------+-------------+------------+--------------+-----------------+----------------+
-
 
 Special cases (numbers match markings in table):
 
@@ -101,17 +98,14 @@ Special cases (numbers match markings in table):
    difference-quotient routine for constructing :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
    or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` Jacobian matrices is used.
 
-2. This routine is optional, and is only used in estimating
-   space requirements for CVODE modules for user feedback.
-
-3. The optional function ``N_VDotProdMulti`` is only used in the
+2. The optional function ``N_VDotProdMulti`` is only used in the
    SUNNONLINSOL_FIXEDPOINT module, or when Classical Gram-Schmidt is
    enabled with SPGMR or SPFGMR. The remaining operations from
    :numref:`NVectors.Ops.Fused` -- :numref:`NVectors.Ops.Array` not listed above
    are unused and a user-supplied NVECTOR module for CVODE could
    omit these operations.
 
-4. This routine is only used when an iterative or matrix iterative
+3. This routine is only used when an iterative or matrix iterative
    SUNLINSOL module is supplied to CVODE.
 
 Each SUNLINSOL object may require additional NVECTOR routines

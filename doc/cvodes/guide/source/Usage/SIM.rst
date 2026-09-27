@@ -20,7 +20,7 @@ Using CVODES for IVP Solution
 
 This chapter is concerned with the use of CVODES for the solution of initial
 value problems (IVPs). The following sections treat the header files and the
-layout of the user’s main program, and provide descriptions of the CVODES
+layout of the user's main program, and provide descriptions of the CVODES
 user-callable functions and user-supplied functions.
 
 The sample programs described in the companion document :cite:p:`cvodes_ex` may
@@ -128,10 +128,10 @@ arithmetic routines.
 
 .. _CVODES.Usage.SIM.skeleton_sim:
 
-A skeleton of the user’s main program
+A skeleton of the user's main program
 -------------------------------------
 
-The following is a skeleton of the user’s main program (or calling
+The following is a skeleton of the user's main program (or calling
 program) for the integration of an ODE IVP. Most of the steps are
 independent of the ``N_Vector``, ``SUNMatrix``, ``SUNLinearSolver``, and
 ``SUNNonlinearSolver`` implementations used. For the steps that are not, refer
@@ -205,7 +205,7 @@ function to be called or macro to be referenced.
       For any of the SUNDIALS-supplied ``SUNLinearSolver`` implementations,
       the linear solver object may be created using a call of the form
       ``SUNLinearSolver LS = SUNLinSol_*(...);``
-      where ``*`` can be replaced with “Dense”, “SPGMR”, or other options, as
+      where ``*`` can be replaced with "Dense", "SPGMR", or other options, as
       discussed in :numref:`CVODES.Usage.SIM.user_callable.lin_solv_init` and
       :numref:`SUNLinSol`.
 
@@ -489,7 +489,7 @@ unaffected. Remember that a small negative value in ``y`` returned by CVODES, wi
 magnitude comparable to ``abstol`` or less, is equivalent to zero as far as the computation
 is concerned.
 
-(3) The user’s right-hand side routine ``f`` should never change a negative value in
+(3) The user's right-hand side routine ``f`` should never change a negative value in
 the solution vector ``y`` to a non-negative value, as a "solution" to this problem.
 This can cause instability. If the ``f`` routine cannot tolerate a zero or negative
 value (e.g. because there is a square root or log of it), then the offending
@@ -538,7 +538,7 @@ The CVDIAG linear solver interface supports a direct linear solver,
 that uses only a diagonal approximation to :math:`J`.
 
 To specify a generic linear solver to CVODES, after the call to :c:func:`CVodeCreate` but
-before any calls to :c:func:`CVode`, the user’s program must create the appropriate
+before any calls to :c:func:`CVode`, the user's program must create the appropriate
 :c:type:`SUNLinearSolver` object and call the function :c:func:`CVodeSetLinearSolver`, as documented below. To create the
 :c:type:`SUNLinearSolver` object, the user may call one of the SUNDIALS-packaged ``SUNLinearSolver``
 module constructor routines via a call of the form ``SUNLinearSolver LS = SUNLinSol_*(...);``
@@ -563,7 +563,7 @@ integrator, and allows the user to specify additional parameters and
 routines pertinent to their choice of linear solver.
 
 To instead specify the CVODES-specific diagonal linear solver
-interface, the user’s program must call :c:func:`CVDiag`, as documented below. The first
+interface, the user's program must call :c:func:`CVDiag`, as documented below. The first
 argument passed to this function is the CVODES memory pointer
 returned by :c:func:`CVodeCreate`.
 
@@ -614,9 +614,9 @@ returned by :c:func:`CVodeCreate`.
 Nonlinear solver interface function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default CVODES uses the ``SUNNonlinearSolver`` implementation of Newton’s
+By default CVODES uses the ``SUNNonlinearSolver`` implementation of Newton's
 method defined by the :ref:`SUNNONLINSOL_NEWTON <SUNNonlinSol.Newton>` module.
-To specify a different nonlinear solver in CVODES, the user’s program must create
+To specify a different nonlinear solver in CVODES, the user's program must create
 a ``SUNNonlinearSolver`` object by calling the appropriate constructor routine.
 The user must then attach the ``SUNNonlinearSolver`` object by calling
 :c:func:`CVodeSetNonlinearSolver`, as documented below.
@@ -726,7 +726,7 @@ user-defined projection function, call the following set function:
 CVODES solver function
 ~~~~~~~~~~~~~~~~~~~~~~
 
-This is the central step in the solution process — the call to perform
+This is the central step in the solution process -- the call to perform
 the integration of the IVP. One of the input arguments (``itask``) specifies one
 of two modes as to where CVODES is to return a solution. But these
 modes are modified if the user has set a stop time (with :c:func:`CVodeSetStopTime`) or requested
@@ -969,51 +969,6 @@ Main solver optional input functions
     .. warning::
 
       If ``user_data`` is needed in user linear solver or preconditioner functions, the call to ``CVodeSetUserData`` must be made before the call to specify the linear solver.
-
-.. c:function:: int CVodeSetMonitorFn(void* cvode_mem, CVMonitorFn monitorfn)
-
-   The function ``CVodeSetMonitorFn`` specifies a user function,  ``monitorfn``, to be called at some interval of successfully  completed CVODES time steps.
-
-   **Arguments:**
-     * ``cvode_mem`` -- pointer to the CVODES memory block.
-     * ``monitorfn`` -- user-supplied monitor function (``NULL`` by default); a ``NULL`` input will turn off monitoring.
-
-   **Return value:**
-     * ``CV_SUCCESS`` -- The optional value has been successfully set.
-     * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
-
-   **Notes:**
-      The frequency with which the monitor function is called can be  set with the function ``CVodeSetMonitorFrequency``.
-
-      .. warning::
-
-         Modifying the solution in this function will result in  undefined behavior. This function is only intended to be used  for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_ENABLE_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
-
-   .. deprecated:: 7.7.0
-
-.. c:function:: int CVodeSetMonitorFrequency(void* cvode_mem, long int nst)
-
-   The function ``CVodeSetMonitorFrequency`` specifies the  interval, measured in successfully completed CVODES time-steps,  at which the monitor function should be called.
-
-   **Arguments:**
-     * ``cvode_mem`` -- pointer to the CVODES memory block.
-     * ``nst`` -- number of successful steps in between calls to the monitor function 0 by default;    a 0 input will turn off monitoring.
-
-   **Return value:**
-     * ``CV_SUCCESS`` -- The optional value has been successfully set.
-     * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized :c:func:`CVodeCreate`.
-
-   **Notes:**
-      The monitor function that will be called can be set with  ``CVodeSetMonitorFn``.
-
-      This routine will be called by :c:func:`CVodeSetOptions`
-      when using the key "cvid.monitor_frequency".
-
-      .. warning::
-
-         Modifying the solution in this function will result in undefined behavior. This function is only intended to be used for monitoring the integrator.  SUNDIALS must be built with the CMake option  ``SUNDIALS_ENABLE_MONITORING``, to utilize this function.  See :numref:`Installation` for more information.
-
-   .. deprecated:: 7.7.0
 
 .. c:function:: int CVodeSetMaxOrd(void* cvode_mem, int maxord)
 
@@ -1337,7 +1292,7 @@ the overall CVLS linear solver interface, optional inputs for
 matrix-based linear solvers, optional inputs for matrix-free linear
 solvers, and optional inputs for iterative linear solvers. We note that
 the matrix-based and matrix-free groups are mutually exclusive, whereas
-the “iterative” tag can apply to either case.
+the "iterative" tag can apply to either case.
 
 As discussed in :numref:`CVODES.Mathematics.ivp_sol`, CVODES strives to
 reuse matrix and preconditioner data for as many solves as possible to
@@ -1348,7 +1303,7 @@ behavior. Recall that the Newton system matrices are
 has Jacobian matrix :math:`J(t,y) = \dfrac{\partial f(t,y)}{\partial y}`.
 
 The matrix or preconditioner for :math:`M` can only be updated within a
-call to the linear solver ‘setup’ routine. In general, the frequency
+call to the linear solver 'setup' routine. In general, the frequency
 with which this setup routine is called may be controlled with the ``msbp``
 argument to :c:func:`CVodeSetLSetupFrequency`. When this occurs, the validity of :math:`M` for successive
 time steps intimately depends on whether the corresponding
@@ -2485,8 +2440,6 @@ the preconditioner.
    +=================================================+============================================+
    | **CVODES main solver**                          |                                            |
    +-------------------------------------------------+--------------------------------------------+
-   | Size of CVODES real and integer workspaces      | :c:func:`CVodeGetWorkSpace`                |
-   +-------------------------------------------------+--------------------------------------------+
    | Cumulative number of internal steps             | :c:func:`CVodeGetNumSteps`                 |
    +-------------------------------------------------+--------------------------------------------+
    | No. of calls to r.h.s. function                 | :c:func:`CVodeGetNumRhsEvals`              |
@@ -2552,8 +2505,6 @@ the preconditioner.
    +-------------------------------------------------+--------------------------------------------+
    | Step number at which the Jacobian was evaluated | :c:func:`CVodeGetJacNumSteps`              |
    +-------------------------------------------------+--------------------------------------------+
-   | Size of real and integer workspaces             | :c:func:`CVodeGetLinWorkSpace`             |
-   +-------------------------------------------------+--------------------------------------------+
    | No. of Jacobian evaluations                     | :c:func:`CVodeGetNumJacEvals`              |
    +-------------------------------------------------+--------------------------------------------+
    | No. of r.h.s. calls for finite diff.            | :c:func:`CVodeGetNumLinRhsEvals`           |
@@ -2580,8 +2531,6 @@ the preconditioner.
    +-------------------------------------------------+--------------------------------------------+
    | **CVDIAG linear solver interface**              |                                            |
    +-------------------------------------------------+--------------------------------------------+
-   | Size of CVDIAG real and integer workspaces      | :c:func:`CVDiagGetWorkSpace`               |
-   +-------------------------------------------------+--------------------------------------------+
    | No. of r.h.s. calls for finite diff. Jacobian   | :c:func:`CVDiagGetNumRhsEvals`             |
    | evals.                                          |                                            |
    +-------------------------------------------------+--------------------------------------------+
@@ -2597,63 +2546,13 @@ Main solver optional output functions
 
 CVODES provides several user-callable functions that can be used to
 obtain different quantities that may be of interest to the user, such as
-solver workspace requirements, solver performance statistics, as well as
-additional data from the CVODES memory block (a suggested tolerance
-scaling factor, the error weight vector, and the vector of estimated
-local errors). Functions are also provided to extract statistics related
-to the performance of the CVODES nonlinear solver used. As a
-convenience, additional information extraction functions provide the
-optional outputs in groups. These optional output functions are
-described next.
-
-.. c:function:: int CVodeGetWorkSpace(void* cvode_mem, long int *lenrw, long int *leniw)
-
-   The function ``CVodeGetWorkSpace`` returns the  CVODES real and integer workspace sizes.
-
-   **Arguments:**
-     * ``cvode_mem`` -- pointer to the CVODES memory block.
-     * ``lenrw`` -- the number of ``sunrealtype`` values in the CVODES workspace.
-     * ``leniw`` -- the number of integer values in the CVODES workspace.
-
-   **Return value:**
-     * ``CV_SUCCESS`` -- The optional output values have been successfully set.
-     * ``CV_MEM_NULL`` -- The CVODES memory block was not initialized through a previous call to :c:func:`CVodeCreate`.
-
-   **Notes:**
-      In terms of the problem size :math:`N`, the maximum method order :math:`\texttt{maxord}`, and the number :math:`\texttt{nrtfn}` of root functions (see :numref:`CVODES.Usage.SIM.cvrootinit`) the actual size of the real workspace, in ``sunrealtype`` words, is  given by the following:
-
-      * base value: :math:`\texttt{lenrw} = 96 + ( \texttt{maxord} + 5) N_r + 3\texttt{nrtfn}`;
-
-      * using :c:func:`CVodeSVtolerances`: :math:`\texttt{lenrw} = \texttt{lenrw} + N_r`;
-
-      * with constraint checking (see :c:func:`CVodeSetConstraints`):  :math:`\texttt{lenrw} = \texttt{lenrw} + N_r`;
-
-      where :math:`N_r` is the number of real words in one ``N_Vector`` (:math:`\approx N`).
-
-      The size of the integer workspace (without distinction between ``int``  and ``long int`` words) is given by:
-
-      * base value: :math:`\texttt{leniw} = 40 + ( \texttt{maxord} + 5)N_i + \texttt{nrtfn}`;
-
-      * using :c:func:`CVodeSVtolerances`: :math:`\texttt{leniw} = \texttt{leniw} + N_i`;
-
-      * with constraint checking: :math:`\texttt{lenrw} = \texttt{lenrw} + N_i`;
-
-      where :math:`N_i` is the number of integer words in one ``N_Vector``  (= 1 for ``NVECTOR_SERIAL`` and ``2*npes`` for ``NVECTOR_PARALLEL`` and ``npes`` processors).
-
-      For the default value of :math:`\texttt{maxord}`, no rootfinding, no constraints, and  without using :c:func:`CVodeSVtolerances`, these lengths are given roughly by:
-
-      * For the Adams method: :math:`\texttt{lenrw} = 96 + 17N` and :math:`\texttt{leniw} = 57`
-
-      * For the BDF method: :math:`\texttt{lenrw} = 96 + 10N` and :math:`\texttt{leniw} = 50`
-
-      Note that additional memory is allocated if quadratures and/or forward sensitivity
-      integration is enabled. See :numref:`CVODES.Usage.purequad.quad_malloc` and :numref:`CVODES.Usage.FSA.user_callable.sensi_malloc`
-      for more details.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
+solver performance statistics, as well as additional data from the CVODES
+memory block (a suggested tolerance scaling factor, the error weight
+vector, and the vector of estimated local errors). Functions are also
+provided to extract statistics related to the performance of the CVODES
+nonlinear solver used. As a convenience, additional information
+extraction functions provide the optional outputs in groups. These
+optional output functions are described next.
 
 .. c:function:: int CVodeGetNumSteps(void* cvode_mem, long int *nsteps)
 
@@ -3193,33 +3092,6 @@ solver, a suffix (for Linear Solver) has been added (e.g. ``lenrwLS``).
    :retval CVLS_MEM_NULL: ``cvode_mem`` was ``NULL``
    :retval CVLS_LMEM_NULL: the linear solver interface has not been initialized
 
-.. c:function:: int CVodeGetLinWorkSpace(void* cvode_mem, long int *lenrwLS, long int *leniwLS)
-
-   The function ``CVodeGetLinWorkSpace`` returns the sizes of the real and  integer workspaces used by the CVLS linear solver interface.
-
-   **Arguments:**
-     * ``cvode_mem`` -- pointer to the CVODES memory block.
-     * ``lenrwLS`` -- the number of ``sunrealtype`` values in the CVLS workspace.
-     * ``leniwLS`` -- the number of integer values in the CVLS workspace.
-
-   **Return value:**
-     * ``CVLS_SUCCESS`` -- The optional output values have been successfully set.
-     * ``CVLS_MEM_NULL`` --  The ``cvode_mem`` pointer is ``NULL``.
-     * ``CVLS_LMEM_NULL`` -- The CVLS linear solver has not been initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only  to memory allocated within this interface and to memory allocated by  the ``SUNLinearSolver`` object attached to it.  The template Jacobian  matrix allocated by the user outside of CVLS is not included in  this report.
-
-   .. versionadded:: 4.0.0
-
-      Replaces the deprecated functions ``CVDlsGetWorkspace`` and
-      ``CVSpilsGetWorkspace``.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
-
 .. c:function:: int CVodeGetNumJacEvals(void* cvode_mem, long int *njevals)
 
    The function ``CVodeGetNumJacEvals`` returns the  number of calls made to the CVLS Jacobian approximation  function.
@@ -3435,27 +3307,6 @@ a CVDIAG function. Note that, where the name of an output would
 otherwise conflict with the name of an optional output from the main
 solver, a suffix (for Linear Solver) has been added here (e.g. ``lenrwLS``).
 
-
-.. c:function:: int CVDiagGetWorkSpace(void* cvode_mem, long int *lenrwLS, long int *leniwLS)
-
-   The function ``CVDiagGetWorkSpace`` returns the  CVDIAG real and integer workspace sizes.
-
-   **Arguments:**
-     * ``cvode_mem`` -- pointer to the CVODES memory block.
-     * ``lenrwLS`` -- the number of ``sunrealtype`` values in the CVDIAG workspace.
-     * ``leniwLS`` -- the number of integer values in the CVDIAG workspace.
-
-   **Return value:**
-     * ``CVDIAG_SUCCESS`` -- The optional output values have been successfully set.
-     * ``CVDIAG_MEM_NULL`` -- The ``cvode_mem`` pointer is ``NULL``.
-     * ``CVDIAG_LMEM_NULL`` -- The CVDIAG linear solver has not been initialized.
-
-   **Notes:**
-      In terms of the problem size :math:`N`, the actual size of the real workspace  is roughly :math:`3 N` ``sunrealtype`` words.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int CVDiagGetNumRhsEvals(void* cvode_mem, long int *nfevalsLS)
 
@@ -3734,31 +3585,6 @@ The user must provide a function of type defined as follows:
       equal to 1 (in which case CVODES returns ``CV_UNREC_RHSFUNC_ERR``).
 
 
-.. _CVODES.Usage.SIM.user_supplied.monitorfn:
-
-Monitor function
-~~~~~~~~~~~~~~~~
-
-A user may provide a function of type ``CVMonitorFn`` to monitor the integrator progress
-throughout a simulation. For example, a user may want to check
-integrator statistics as a simulation progresses.
-
-.. c:type:: void (*CVMonitorFn)(void* cvode_mem, void* user_data);
-
-   This function is used to monitor the CVODES integrator throughout a simulation.
-
-   **Arguments:**
-      * ``cvode_mem`` -- the CVODES memory pointer.
-      * ``user_data`` -- a pointer to user data, the same as the ``user_data`` parameter passed to :c:func:`CVodeSetUserData`.
-
-   **Return value:**
-      Should return 0 if successful, or a negative value if unsuccessful.
-
-   .. warning::
-
-      This function should only be utilized for monitoring the integrator progress (i.e., for debugging).
-
-
 .. _CVODES.Usage.SIM.user_supplied.ewtsetFn:
 
 Error weight function
@@ -3900,14 +3726,14 @@ side function (or an approximation of it). ``CVLsJacFn`` is defined as follows:
       loaded into ``Jac``.
 
       With the default nonlinear solver (the native SUNDIALS Newton
-      method), each call to the user’s ``CVLsJacFn`` function is preceded by a call to the
+      method), each call to the user's ``CVLsJacFn`` function is preceded by a call to the
       ``CVRhsFn`` user function with the same ``(t,y)`` arguments. Thus, the Jacobian function can
       use any auxiliary data that is computed and saved during the evaluation
       of the ODE right-hand side. In the case of a user-supplied or external
       nonlinear solver, this is also true if the nonlinear system function is
       evaluated prior to calling the :ref:`linear solver setup function <CVODES.Usage.SIM.user_supplied>`.
 
-      If the user’s ``CVLsJacFn`` function uses difference quotient approximations, then it
+      If the user's ``CVLsJacFn`` function uses difference quotient approximations, then it
       may need to access quantities not in the argument list. These include
       the current step size, the error weights, etc. To obtain these, the user
       will need to add a pointer to ``cv_mem`` in ``user_data`` and then use the
@@ -4069,7 +3895,7 @@ the default is a difference quotient approximation to these products.
 Jacobian-vector product setup (matrix-free linear solvers)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the user’s Jacobian-times-vector routine requires that any
+If the user's Jacobian-times-vector routine requires that any
 Jacobian-related data be preprocessed or evaluated, then this needs to
 be done in a user-supplied function of type :c:type:`CVLsJacTimesSetupFn`, defined as follows:
 
@@ -4153,7 +3979,7 @@ sides, the product of the two preconditioner matrices should approximate
 Preconditioner setup (iterative linear solvers)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the user’s preconditioner requires that any Jacobian-related data be
+If the user's preconditioner requires that any Jacobian-related data be
 preprocessed or evaluated, then this needs to be done in a user-supplied
 function of type , defined as follows:
 
@@ -4219,7 +4045,7 @@ variables from the vector ``y`` and excluding the quadrature equations from
 within ``res``. Thus a separate vector ``yQ`` of quadrature variables is to
 satisfy :math:`(d/dt)`\ ``yQ`` = :math:`f_Q(t,y)`.
 
-The following is an overview of the sequence of calls in a user’s main program
+The following is an overview of the sequence of calls in a user's main program
 in this situation. Steps that are unchanged from the skeleton presented in
 :numref:`CVODES.Usage.SIM.skeleton_sim` are grayed out and new or modified steps
 are in bold.
@@ -4616,7 +4442,7 @@ must be of type :c:type:`CVQuadRhsFn` defined as follows:
       Allocation of memory for ``yQdot`` is automatically handled within CVODES.
 
       Both ``y`` and ``yQdot`` are of type ``N_Vector``, but they typically have
-      different internal representations. It is the user’s responsibility to
+      different internal representations. It is the user's responsibility to
       access the vector data consistently (including the use of the correct
       accessor macros from each ``N_Vector`` implementation). For the sake of
       computational efficiency, the vector functions in the two ``N_Vector``
@@ -4725,7 +4551,7 @@ grayed out and new steps are in bold.
 
 #. **Get optional outputs**
 
-   Additional optional outputs associated with CVBANDPRE are available by way of two routines described below, :c:func:`CVBandPrecGetWorkSpace` and :c:func:`CVBandPrecGetNumRhsEvals`.
+   Additional optional outputs associated with CVBANDPRE are available by way of the routine described below, :c:func:`CVBandPrecGetNumRhsEvals`.
 
 #. :silver:`Destroy objects`
 
@@ -4755,28 +4581,6 @@ calling the following function:
 
 The following two optional output functions are available for use with
 the CVBANDPRE module:
-
-.. c:function:: int CVBandPrecGetWorkSpace(void* cvode_mem, long int *lenrwBP, long int *leniwBP)
-
-   The function ``CVBandPrecGetWorkSpace`` returns the sizes of  the CVBANDPRE real and integer workspaces.
-
-   **Arguments:**
-     * ``cvode_mem`` -- pointer to the CVODES memory block.
-     * ``lenrwBP`` -- the number of ``sunrealtype`` values in the CVBANDPRE workspace.
-     * ``leniwBP`` -- the number of integer values in the CVBANDPRE workspace.
-
-   **Return value:**
-     * ``CVLS_SUCCESS`` -- The optional output values have been successfully set.
-     * ``CVLS_PMEM_NULL`` -- The CVBANDPRE preconditioner has not been initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only  to memory allocated within the CVBANDPRE module (the banded  matrix approximation, banded ``SUNLinearSolver`` object, and temporary vectors).
-
-      The workspaces referred to here exist in addition to those given by the  corresponding function :c:func:`CVodeGetLinWorkSpace`.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int CVBandPrecGetNumRhsEvals(void* cvode_mem, long int *nfevalsBP)
 
@@ -5013,8 +4817,7 @@ grayed out and new or modified steps are in bold.
   #. **Get optional outputs**
 
      Additional optional outputs associated with CVBBDPRE are available by
-     way of two routines described below, :c:func:`CVBBDPrecGetWorkSpace`
-     and :c:func:`CVBBDPrecGetNumGfnEvals`.
+     way of the routine described below, :c:func:`CVBBDPrecGetNumGfnEvals`.
 
   #. :silver:`Destroy objects`
 
@@ -5103,27 +4906,6 @@ also be made (in the proper order).
 The following two optional output functions are available for use with
 the CVBBDPRE module:
 
-
-.. c:function:: int CVBBDPrecGetWorkSpace(void* cvode_mem, long int *lenrwBBDP, long int *leniwBBDP)
-
-   The function ``CVBBDPrecGetWorkSpace`` returns the local  CVBBDPRE real and integer workspace sizes.
-
-   **Arguments:**
-      * ``cvode_mem`` -- pointer to the CVODES memory block.
-      * ``lenrwBBDP`` -- local number of ``sunrealtype`` values in the CVBBDPRE workspace.
-      * ``leniwBBDP`` -- local number of integer values in the CVBBDPRE workspace.
-
-   **Return value:**
-      * ``CVLS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``CVLS_MEM_NULL`` --  The ``cvode_mem`` pointer was ``NULL``.
-      * ``CVLS_PMEM_NULL`` -- The CVBBDPRE preconditioner has not been initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only  to memory allocated within the CVBBDPRE module (the banded  matrix approximation, banded ``SUNLinearSolver`` object, temporary vectors).  These values are local to each process.  The workspaces referred to here exist in addition to those given by the  corresponding function ``CVodeGetLinWorkSpace``.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int CVBBDPrecGetNumGfnEvals(void* cvode_mem, long int *ngevalsBBDP)
 

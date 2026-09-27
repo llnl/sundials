@@ -31,5 +31,4 @@ are specific to ARKStep.
    :maxdepth: 1
 
    User_callable
-   Relaxation
    XBraid

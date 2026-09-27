@@ -43,8 +43,6 @@ contains
     type(N_Vector), pointer            :: x, y               ! NVectors
     real(c_double), pointer            :: matdat(:)          ! matrix data pointer
     integer(kind=myindextype), pointer :: inddat(:)          ! indices pointer
-    integer(c_long)                     :: lenrw(1), leniw(1) ! matrix real and int work space size
-
     integer(kind=myindextype) :: tmp1
     integer(c_int)             :: tmp2
 
@@ -84,7 +82,6 @@ contains
     fails = fails + FSUNMatScaleAdd_Sparse(ONE, A, B)
     fails = fails + FSUNMatScaleAddI_Sparse(ONE, A)
     fails = fails + FSUNMatMatvec_Sparse(A, x, y)
-    fails = fails + FSUNMatSpace_Sparse(A, lenrw, leniw)
 
     !======= Cleanup ===========
     call FSUNMatDestroy(A)
@@ -158,7 +155,6 @@ contains
     fails = fails + Test_FSUNMatScaleAdd(A, I, 0)
     fails = fails + Test_FSUNMatScaleAddI(A, I, 0)
     fails = fails + Test_FSUNMatMatvec(A, x, y, 0)
-    fails = fails + Test_FSUNMatSpace(A, 0)
 
     ! cleanup
     call FSUNMatDestroy(DA)
@@ -170,7 +166,7 @@ contains
 
   end function unit_tests
 
-end module
+end module test_fsunmatrix_sparse
 
 program main
   !======== Inclusions ==========

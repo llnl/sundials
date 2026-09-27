@@ -15,7 +15,7 @@ Open these files as references when needed:
 - `doc/shared/sundials/Install.rst` (user-visible options / CMake targets)
 - `test/unit_tests/<category>/` (how unit tests are wired)
 
-## 1) Decide what “module” means
+## 1) Decide what "module" means
 
 Pick one of these patterns; it determines naming, options, and wiring:
 
@@ -24,7 +24,7 @@ Pick one of these patterns; it determines naming, options, and wiring:
 - **Header-only / interface-only module** (rare): uses an `INTERFACE` library; you must manually register it as an installed component.
 - **Internal-only helper**: can be `OBJECT_LIB_ONLY` (no installed component/target intended for end users).
 
-If the module is user-visible, prefer “optional module” (with a CMake option) over ad-hoc logic.
+If the module is user-visible, prefer "optional module" (with a CMake option) over ad-hoc logic.
 
 ## 2) Choose names (directory, library, headers, CMake target)
 
@@ -49,7 +49,7 @@ Create:
 - `include/<category>/<category>_<name>.h` (public API; installable)
 - `src/<category>/<name>/CMakeLists.txt` (module build rules)
 
-Avoid installing “private” headers. If a header is only for the module implementation, keep it under `src/<category>/<name>/` and do not list it in `HEADERS`.
+Avoid installing "private" headers. If a header is only for the module implementation, keep it under `src/<category>/<name>/` and do not list it in `HEADERS`.
 
 ## 4) Add the module CMakeLists.txt
 
@@ -60,7 +60,7 @@ For standard compiled modules, use `sundials_add_library` (preferred):
 - `INCLUDE_SUBDIR <category>`
 - `LINK_LIBRARIES PUBLIC sundials_core` (+ any TPL targets)
 - `OUTPUT_NAME sundials_<category><name>`
-- `VERSION`/`SOVERSION` using the category’s variables (see neighboring modules)
+- `VERSION`/`SOVERSION` using the category's variables (see neighboring modules)
 
 Reference examples:
 
@@ -105,7 +105,7 @@ set(SUNDIALS_ENABLE_<CATEGORY>_<NAME> TRUE)
 list(APPEND SUNDIALS_BUILD_LIST "SUNDIALS_ENABLE_<CATEGORY>_<NAME>")
 ```
 
-## 7) Handle “installed components” for INTERFACE-only modules
+## 7) Handle "installed components" for INTERFACE-only modules
 
 If you implement a module as an `INTERFACE` library (no `sundials_add_library`), you must manually add it to `_SUNDIALS_INSTALLED_COMPONENTS` so that `find_package(SUNDIALS COMPONENTS ...)` can work.
 
@@ -122,7 +122,7 @@ Do the smallest set that proves correctness and prevents regressions:
 - **Examples**: add under `examples/<package>/<lang>_<backend>/...` only if it materially helps users.
 - **Docs**:
   - If users must know about a new option/target, update `doc/shared/sundials/Install.rst`.
-  - If it’s a user-visible feature, also update `doc/shared/RecentChanges.rst` and/or `CHANGELOG.md` per repo conventions.
+  - If it's a user-visible feature, also update `doc/shared/RecentChanges.rst` and/or `CHANGELOG.md` per repo conventions.
 
 ## 9) Local validation commands
 
@@ -141,7 +141,7 @@ If you added a new enable option, confirm it shows up in `build-dev/include/sund
 Only add language bindings when they are applicable:
 
 - The module is user-visible (i.e., part of the public API users are expected to call), and
-- The module’s category already has existing Fortran and/or Python bindings.
+- The module's category already has existing Fortran and/or Python bindings.
 
 If Fortran bindings are applicable:
 

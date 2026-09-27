@@ -240,12 +240,13 @@ program main
   !======= Inclusions ===========
   use, intrinsic :: iso_c_binding
 
-  use farkode_mod                ! Fortran interface to the ARKODE module
-  use farkode_arkstep_mod        ! Fortran interface to the ARKStep module
-  use fnvector_serial_mod        ! Fortran interface to serial N_Vector
-  use fsunmatrix_dense_mod       ! Fortran interface to dense SUNMatrix
-  use fsunlinsol_dense_mod       ! Fortran interface to dense SUNLinearSolver
-  use bruss_mod                  ! ODE functions
+  use farkode_mod                       ! Fortran interface to the ARKODE module
+  use farkode_arkstep_mod               ! Fortran interface to the ARKStep module
+  use fnvector_serial_mod               ! Fortran interface to serial N_Vector
+  use fsunmatrix_dense_mod              ! Fortran interface to dense SUNMatrix
+  use fsunlinsol_dense_mod              ! Fortran interface to dense SUNLinearSolver
+  use fsunadaptcontroller_soderlind_mod ! Fortran interface to Soderlind controller
+  use bruss_mod                         ! ODE functions
 
   !======= Declarations =========
   implicit none
@@ -258,8 +259,6 @@ program main
   real(c_double)  :: dtout                  ! output time interval
   real(c_double)  :: tout                   ! output time
   real(c_double)  :: tcur(1)                ! current time
-  integer(c_int)  :: imethod, idefault, pq  ! time step adaptivity parameters
-  real(c_double)  :: adapt_params(3)        ! time step adaptivity parameters
   integer(c_int)  :: ierr                   ! error flag from C functions
   integer(c_int)  :: nout                   ! number of outputs
   integer(c_int)  :: outstep                ! output loop counter
@@ -267,10 +266,11 @@ program main
   real(c_double), parameter :: nlscoef = 1.d-2  ! non-linear solver coefficient
   integer(c_int), parameter :: order = 3        ! method order
 
-  type(N_Vector), pointer :: sunvec_y    ! sundials vector
-  type(SUNMatrix), pointer :: sunmat_A    ! sundials matrix
+  type(N_Vector), pointer :: sunvec_y           ! sundials vector
+  type(SUNMatrix), pointer :: sunmat_A          ! sundials matrix
   type(SUNLinearSolver), pointer :: sunls       ! sundials linear solver
-  type(c_ptr)                    :: arkode_mem  ! ARKODE memory
+  type(SUNAdaptController), pointer :: sunctrl  ! sundials controller
+  type(c_ptr) :: arkode_mem                     ! ARKODE memory
   real(c_double), pointer, dimension(neq) :: yvec(:) ! underlying vector
 
   !======= Internals ============
@@ -349,13 +349,15 @@ program main
     stop 1
   end if
 
-  imethod = 0
-  idefault = 1
-  pq = 0
-  adapt_params = 0.d0
-  ierr = FARKStepSetAdaptivityMethod(arkode_mem, imethod, idefault, pq, adapt_params)
+  sunctrl => FSUNAdaptController_PID(sunctx)
   if (ierr /= 0) then
-    print *, 'Error in FARKStepSetAdaptivityMethod, ierr = ', ierr, '; halting'
+    print *, 'Error in FSUNAdaptController_PID, ierr = ', ierr, '; halting'
+    stop 1
+  end if
+
+  ierr = FARKodeSetAdaptController(arkode_mem, sunctrl)
+  if (ierr /= 0) then
+    print *, 'Error in FARKodeSetAdaptController, ierr = ', ierr, '; halting'
     stop 1
   end if
 
@@ -399,6 +401,7 @@ program main
   call FN_VDestroy(sunvec_y)
   call FSUNMatDestroy(sunmat_A)
   ierr = FSUNLinSolFree(sunls)
+  ierr = FSUNAdaptController_Destroy(sunctrl)
   ierr = FSUNContext_Free(sunctx)
 
 end program main

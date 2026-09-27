@@ -86,9 +86,6 @@ SUNDIALS_EXPORT int KINSetJacTimesVecFn(void* kinmem, KINLsJacTimesVecFn jtv);
 SUNDIALS_EXPORT int KINGetJac(void* kinmem,
                               SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int KINGetJacNumIters(void* kinmem, long int* nni_J);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int KINGetLinWorkSpace(void* kinmem, long int* lenrwLS, long int* leniwLS);
 SUNDIALS_EXPORT int KINGetNumJacEvals(void* kinmem, long int* njevals);
 SUNDIALS_EXPORT int KINGetNumLinFuncEvals(void* kinmem, long int* nfevals);
 SUNDIALS_EXPORT int KINGetNumPrecEvals(void* kinmem, long int* npevals);

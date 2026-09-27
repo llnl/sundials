@@ -409,47 +409,6 @@ int KINGetJacNumIters(void* kinmem, long int* nni_J)
 }
 
 /*------------------------------------------------------------------
-  KINGetLinWorkSpace returns the integer and real workspace size
-  ------------------------------------------------------------------*/
-int KINGetLinWorkSpace(void* kinmem, long int* lenrwLS, long int* leniwLS)
-{
-  KINMem kin_mem;
-  KINLsMem kinls_mem;
-  sunindextype lrw1, liw1;
-  long int lrw, liw;
-  int retval;
-
-  /* access KINLsMem structure */
-  retval = kinLs_AccessLMem(kinmem, __func__, &kin_mem, &kinls_mem);
-  if (retval != KIN_SUCCESS) { return (retval); }
-
-  /* start with fixed sizes plus vector/matrix pointers */
-  *lenrwLS = 1;
-  *leniwLS = 21;
-
-  /* add N_Vector sizes */
-  if (kin_mem->kin_vtemp1->ops->nvspace)
-  {
-    N_VSpace(kin_mem->kin_vtemp1, &lrw1, &liw1);
-    *lenrwLS += lrw1;
-    *leniwLS += liw1;
-  }
-
-  /* add LS sizes */
-  if (kinls_mem->LS->ops->space)
-  {
-    retval = SUNLinSolSpace(kinls_mem->LS, &lrw, &liw);
-    if (retval == 0)
-    {
-      *lenrwLS += lrw;
-      *leniwLS += liw;
-    }
-  }
-
-  return (KINLS_SUCCESS);
-}
-
-/*------------------------------------------------------------------
   KINGetNumJacEvals returns the number of Jacobian evaluations
   ------------------------------------------------------------------*/
 int KINGetNumJacEvals(void* kinmem, long int* njevals)

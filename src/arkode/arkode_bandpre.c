@@ -156,7 +156,7 @@ int ARKBandPrecInit(void* arkode_mem, sunindextype N, sunindextype mu,
     SUNLinSolFree(pdata->LS);
     SUNMatDestroy(pdata->savedP);
     SUNMatDestroy(pdata->savedJ);
-    arkFreeVec(ark_mem, &(pdata->tmp1));
+    arkFreeVec(&(pdata->tmp1));
     free(pdata);
     pdata = NULL;
     arkProcessError(ark_mem, ARKLS_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -171,8 +171,8 @@ int ARKBandPrecInit(void* arkode_mem, sunindextype N, sunindextype mu,
     SUNLinSolFree(pdata->LS);
     SUNMatDestroy(pdata->savedP);
     SUNMatDestroy(pdata->savedJ);
-    arkFreeVec(ark_mem, &(pdata->tmp1));
-    arkFreeVec(ark_mem, &(pdata->tmp2));
+    arkFreeVec(&(pdata->tmp1));
+    arkFreeVec(&(pdata->tmp2));
     free(pdata);
     pdata = NULL;
     arkProcessError(ark_mem, ARKLS_SUNLS_FAIL, __LINE__, __func__, __FILE__,
@@ -193,68 +193,6 @@ int ARKBandPrecInit(void* arkode_mem, sunindextype N, sunindextype mu,
   retval = ARKodeSetPreconditioner(arkode_mem, ARKBandPrecSetup,
                                    ARKBandPrecSolve);
   return (retval);
-}
-
-int ARKBandPrecGetWorkSpace(void* arkode_mem, long int* lenrwBP, long int* leniwBP)
-{
-  ARKodeMem ark_mem;
-  ARKLsMem arkls_mem;
-  ARKBandPrecData pdata;
-  sunindextype lrw1, liw1;
-  long int lrw, liw;
-  int retval;
-
-  /* access ARKodeMem and ARKLsMem structures */
-  retval = arkLs_AccessARKODELMem(arkode_mem, __func__, &ark_mem, &arkls_mem);
-  if (retval != ARK_SUCCESS) { return (retval); }
-
-  /* Return immediately if ARKBandPrecData is NULL */
-  if (arkls_mem->P_data == NULL)
-  {
-    arkProcessError(ark_mem, ARKLS_PMEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_BP_PMEM_NULL);
-    return (ARKLS_PMEM_NULL);
-  }
-  pdata = (ARKBandPrecData)arkls_mem->P_data;
-
-  /* sum space requirements for all objects in pdata */
-  *leniwBP = 4;
-  *lenrwBP = 0;
-  if (ark_mem->tempv1->ops->nvspace)
-  {
-    N_VSpace(ark_mem->tempv1, &lrw1, &liw1);
-    *leniwBP += 2 * liw1;
-    *lenrwBP += 2 * lrw1;
-  }
-  if (pdata->savedJ->ops->space)
-  {
-    retval = SUNMatSpace(pdata->savedJ, &lrw, &liw);
-    if (retval == 0)
-    {
-      *leniwBP += liw;
-      *lenrwBP += lrw;
-    }
-  }
-  if (pdata->savedP->ops->space)
-  {
-    retval = SUNMatSpace(pdata->savedP, &lrw, &liw);
-    if (retval == 0)
-    {
-      *leniwBP += liw;
-      *lenrwBP += lrw;
-    }
-  }
-  if (pdata->LS->ops->space)
-  {
-    retval = SUNLinSolSpace(pdata->LS, &lrw, &liw);
-    if (retval == SUN_SUCCESS)
-    {
-      *leniwBP += liw;
-      *lenrwBP += lrw;
-    }
-  }
-
-  return (ARKLS_SUCCESS);
 }
 
 int ARKBandPrecGetNumRhsEvals(void* arkode_mem, long int* nfevalsBP)
@@ -453,8 +391,8 @@ static int ARKBandPrecFree(ARKodeMem ark_mem)
   SUNLinSolFree(pdata->LS);
   SUNMatDestroy(pdata->savedP);
   SUNMatDestroy(pdata->savedJ);
-  arkFreeVec(ark_mem, &(pdata->tmp1));
-  arkFreeVec(ark_mem, &(pdata->tmp2));
+  arkFreeVec(&(pdata->tmp1));
+  arkFreeVec(&(pdata->tmp2));
 
   free(pdata);
   pdata = NULL;

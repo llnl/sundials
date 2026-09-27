@@ -15,7 +15,6 @@
    SUNDIALS Copyright End
    -----------------------------------------------------------------------------
 
-
 .. _SUNMatrix.OneMklDense:
 
 The SUNMATRIX_ONEMKLDENSE Module
@@ -49,7 +48,6 @@ shared libraries and ``.a`` for static libraries.
 
    The SUNMATRIX_ONEMKLDENSE class is experimental and subject to change.
 
-
 SUNMATRIX_ONEMKLDENSE Functions
 -------------------------------
 
@@ -64,15 +62,12 @@ operations listed in :numref:`SUNMatrix.Ops`.
 * ``SUNMatScaleAdd_OneMklDense``
 * ``SUNMatScaleAddI_OneMklDense``
 * ``SUNMatMatvec_OneMklDense``
-* ``SUNMatSpace_OneMklDense``
 
 In addition, the SUNMATRIX_ONEMKLDENSE class defines the following
 implementation specific functions.
 
-
 Constructors
 ^^^^^^^^^^^^
-
 
 .. cpp:function:: SUNMatrix SUNMatrix_OneMklDense(sunindextype M, sunindextype N, SUNMemoryType memtype, SUNMemoryHelper memhelper, sycl::queue* queue, SUNContext sunctx)
 
@@ -90,7 +85,6 @@ Constructors
 
    **Return value:**
       If successful, a ``SUNMatrix`` object otherwise ``NULL``.
-
 
 .. cpp:function:: SUNMatrix SUNMatrix_OneMklDenseBlock(sunindextype nblocks, sunindextype M_block, sunindextype N_block, SUNMemoryType memtype, SUNMemoryHelper memhelper, sycl::queue* queue, SUNContext sunctx)
 
@@ -111,10 +105,8 @@ Constructors
    **Return value:**
       If successful, a ``SUNMatrix`` object otherwise ``NULL``.
 
-
 Access Matrix Dimensions
 ^^^^^^^^^^^^^^^^^^^^^^^^
-
 
 .. c:function:: sunindextype SUNMatrix_OneMklDense_Rows(SUNMatrix A)
 
@@ -129,7 +121,6 @@ Access Matrix Dimensions
       If successful, the number of rows in the ``SUNMatrix`` object otherwise
       ``SUNMATRIX_ILL_INPUT``.
 
-
 .. c:function:: sunindextype SUNMatrix_OneMklDense_Columns(SUNMatrix A)
 
    This function returns the number of columns in the ``SUNMatrix`` object. For
@@ -143,10 +134,8 @@ Access Matrix Dimensions
       If successful, the number of columns in the ``SUNMatrix`` object otherwise
       ``SUNMATRIX_ILL_INPUT``.
 
-
 Access Matrix Block Dimensions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 
 .. c:function:: sunindextype SUNMatrix_OneMklDense_NumBlocks(SUNMatrix A)
 
@@ -158,7 +147,6 @@ Access Matrix Block Dimensions
    **Return value:**
       If successful, the number of blocks in the ``SUNMatrix`` object otherwise
       ``SUNMATRIX_ILL_INPUT``.
-
 
 .. c:function:: sunindextype SUNMatrix_OneMklDense_BlockRows(SUNMatrix A)
 
@@ -172,7 +160,6 @@ Access Matrix Block Dimensions
       If successful, the number of rows in a block of the ``SUNMatrix`` object
       otherwise ``SUNMATRIX_ILL_INPUT``.
 
-
 .. c:function:: sunindextype SUNMatrix_OneMklDense_BlockColumns(SUNMatrix A)
 
    This function returns the number of columns in a block of the ``SUNMatrix``
@@ -185,10 +172,8 @@ Access Matrix Block Dimensions
       If successful, the number of columns in a block of the ``SUNMatrix``
       object otherwise ``SUNMATRIX_ILL_INPUT``.
 
-
 Access Matrix Data
 ^^^^^^^^^^^^^^^^^^
-
 
 .. c:function:: sunindextype SUNMatrix_OneMklDense_LData(SUNMatrix A)
 
@@ -201,7 +186,6 @@ Access Matrix Data
       If successful, the length of the ``SUNMatrix`` data array otherwise
       ``SUNMATRIX_ILL_INPUT``.
 
-
 .. c:function:: sunrealtype* SUNMatrix_OneMklDense_Data(SUNMatrix A)
 
    This function returns the ``SUNMatrix`` data array.
@@ -211,7 +195,6 @@ Access Matrix Data
 
    **Return value:**
       If successful, the ``SUNMatrix`` data array otherwise ``NULL``.
-
 
 .. c:function:: sunrealtype* SUNMatrix_OneMklDense_Column(SUNMatrix A, sunindextype j)
 
@@ -231,10 +214,8 @@ Access Matrix Data
       No bounds-checking is performed by this function, *j* should be strictly
       less than :math:`nblocks * N_{\text{block}}`.
 
-
 Access Matrix Block Data
 ^^^^^^^^^^^^^^^^^^^^^^^^
-
 
 .. c:function:: sunindextype SUNMatrix_OneMklDense_BlockLData(SUNMatrix A)
 
@@ -248,7 +229,6 @@ Access Matrix Block Data
       If successful, the length of the ``SUNMatrix`` data array for each block
       otherwise ``SUNMATRIX_ILL_INPUT``.
 
-
 .. c:function:: sunrealtype** SUNMatrix_OneMklDense_BlockData(SUNMatrix A)
 
    This function returns an array of pointers that point to the start of the
@@ -260,7 +240,6 @@ Access Matrix Block Data
    **Return value:**
       If successful, an array of data pointers to each of the ``SUNMatrix``
       blocks otherwise ``NULL``.
-
 
 .. c:function:: sunrealtype* SUNMatrix_OneMklDense_Block(SUNMatrix A, sunindextype k)
 
@@ -279,7 +258,6 @@ Access Matrix Block Data
 
       No bounds-checking is performed by this function, *j* should be strictly
       less than *nblocks*.
-
 
 .. c:function:: sunrealtype* SUNMatrix_OneMklDense_BlockColumn(SUNMatrix A, sunindextype k, sunindextype j)
 
@@ -301,10 +279,8 @@ Access Matrix Block Data
       less than *nblocks* and *j* should be strictly less than
       :math:`N_{\text{block}}`.
 
-
 Copy Data
 ^^^^^^^^^
-
 
 .. c:function:: SUNErrCode SUNMatrix_OneMklDense_CopyToDevice(SUNMatrix A, sunrealtype* h_data)
 
@@ -321,7 +297,6 @@ Copy Data
         ``SUNMATRIX_ONEMKLDENSE`` matrix.
       * ``SUN_ERR_MEM_FAIL`` -- if the copy fails.
 
-
 .. c:function:: SUNErrCode SUNMatrix_OneMklDense_CopyFromDevice(SUNMatrix A, sunrealtype* h_data)
 
    This function copies the matrix data from the GPU device to the provided host
@@ -336,7 +311,6 @@ Copy Data
       * ``SUN_ERR_ARG_INCOMPATIBLE`` -- if the ``SUNMatrix`` is not a
         ``SUNMATRIX_ONEMKLDENSE`` matrix.
       * ``SUN_ERR_MEM_FAIL`` -- if the copy fails.
-
 
 SUNMATRIX_ONEMKLDENSE Usage Notes
 ---------------------------------

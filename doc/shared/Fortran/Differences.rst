@@ -74,7 +74,6 @@ C code:
 
    N_Vector x;
    sunrealtype* xdata;
-   long int leniw, lenrw;
 
    /* create a new serial vector */
    x = N_VNew_Serial(N, sunctx);
@@ -85,10 +84,6 @@ C code:
    /* passing array/pointer to a function */
    N_VSetArrayPointer(xdata, x)
 
-   /* pointers that are out-parameters */
-   N_VSpace(x, &leniw, &lenrw);
-
-
 Fortran code:
 
 .. sourcecode:: Fortran
@@ -96,7 +91,6 @@ Fortran code:
    type(N_Vector), pointer :: x
    real(c_double), pointer :: xdataptr(:)
    real(c_double)          :: xdata(N)
-   integer(c_long)         :: leniw(1), lenrw(1)
 
    ! create a new serial vector
    x => FN_VNew_Serial(x, sunctx)
@@ -106,10 +100,6 @@ Fortran code:
 
    ! passing array/pointer to a function
    call FN_VSetArrayPointer(xdata, x)
-
-   ! pointers that are out-parameters
-   call FN_VSpace(x, leniw, lenrw)
-
 
 .. _Fortran.Differences.ProcedurePointers:
 
@@ -255,13 +245,6 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
 ``FILE*`` and destroying it. These functions are defined in the module
 ``fsundials_core_mod``.
 
-.. c:function:: SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp)
-
-   .. deprecated:: 7.6.0
-
-      See :c:func:`SUNFileOpen`.
-
-
 .. c:function:: SUNErrCode SUNFileOpen(const char* filename, const char* mode, FILE** fp)
 
    The function allocates a ``FILE*`` by calling the C function ``fopen`` with
@@ -300,11 +283,11 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
       ! Open up the file output.log for writing
       ierr = FSUNFileOpen("output.log", "w+", fp)
 
-      ! The C function ARKStepPrintMem takes void* arkode_mem and FILE* fp as arguments
-      call FARKStepPrintMem(arkode_mem, fp)
+      ! The C function ARKodePrintMem takes void* arkode_mem and FILE* fp as arguments
+      call FARKodePrintMem(arkode_mem, fp)
 
       ! Close the file
-      ierr = FSUNDIALSFileClose(fp)
+      ierr = FSUNFileClose(fp)
 
    .. versionadded:: 7.6.0
 
@@ -328,13 +311,6 @@ a C file pointer, SUNDIALS provides two utility functions for creating a
       ierr = FSUNFileFlush(fp)
 
    .. versionadded:: x.y.z
-
-
-.. c:function:: SUNErrCode SUNDIALSFileClose(FILE** fp)
-
-   .. deprecated:: 7.6.0
-
-      See :c:func:`SUNFileClose`
 
 
 .. c:function:: SUNErrCode SUNFileClose(FILE** fp)

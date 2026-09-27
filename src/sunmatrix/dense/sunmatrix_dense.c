@@ -73,7 +73,6 @@ SUNMatrix SUNDenseMatrix(sunindextype M, sunindextype N, SUNContext sunctx)
   A->ops->scaleaddi                = SUNMatScaleAddI_Dense;
   A->ops->matvec                   = SUNMatMatvec_Dense;
   A->ops->mathermitiantransposevec = SUNMatHermitianTransposeVec_Dense;
-  A->ops->space                    = SUNMatSpace_Dense;
 
   /* Create content */
   content = NULL;
@@ -361,17 +360,6 @@ SUNErrCode SUNMatHermitianTransposeVec_Dense(SUNMatrix A, N_Vector x, N_Vector y
       yd[i] += row_i[j] * xd[j];
     }
   }
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNMatSpace_Dense(SUNMatrix A, long int* lenrw, long int* leniw)
-{
-  SUNFunctionBegin(A->sunctx);
-  SUNAssert(SUNMatGetID(A) == SUNMATRIX_DENSE, SUN_ERR_ARG_WRONGTYPE);
-  SUNAssert(lenrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(leniw, SUN_ERR_ARG_CORRUPT);
-  *lenrw = SM_LDATA_D(A);
-  *leniw = 3 + SM_COLUMNS_D(A);
   return SUN_SUCCESS;
 }
 

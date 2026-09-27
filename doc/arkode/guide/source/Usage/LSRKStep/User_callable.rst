@@ -36,7 +36,7 @@ LSRKStep supports the following categories:
 
 LSRKStep does not have forcing function support when converted to a
 :c:type:`SUNStepper` or :c:type:`MRIStepInnerStepper`. See
-:c:func:`ARKodeCreateSUNStepper` and :c:func:`ARKStepCreateMRIStepInnerStepper`
+:c:func:`ARKodeCreateSUNStepper` and :c:func:`ARKodeCreateMRIStepInnerStepper`
 for additional details.
 
 

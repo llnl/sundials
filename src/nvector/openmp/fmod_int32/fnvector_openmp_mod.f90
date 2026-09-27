@@ -38,7 +38,6 @@ module fnvector_openmp_mod
  public :: FN_VCloneEmpty_OpenMP
  public :: FN_VClone_OpenMP
  public :: FN_VDestroy_OpenMP
- public :: FN_VSpace_OpenMP
  public :: FN_VSetArrayPointer_OpenMP
  public :: FN_VLinearSum_OpenMP
  public :: FN_VConst_OpenMP
@@ -167,14 +166,6 @@ subroutine swigc_FN_VDestroy_OpenMP(farg1) &
 bind(C, name="_wrap_FN_VDestroy_OpenMP")
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
-end subroutine
-
-subroutine swigc_FN_VSpace_OpenMP(farg1, farg2, farg3) &
-bind(C, name="_wrap_FN_VSpace_OpenMP")
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 end subroutine
 
 subroutine swigc_FN_VSetArrayPointer_OpenMP(farg1, farg2) &
@@ -716,21 +707,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(v)
 call swigc_FN_VDestroy_OpenMP(farg1)
-end subroutine
-
-subroutine FN_VSpace_OpenMP(v, lrw, liw)
-use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: v
-integer(C_INT32_T), dimension(*), target, intent(inout) :: lrw
-integer(C_INT32_T), dimension(*), target, intent(inout) :: liw
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(v)
-farg2 = c_loc(lrw(1))
-farg3 = c_loc(liw(1))
-call swigc_FN_VSpace_OpenMP(farg1, farg2, farg3)
 end subroutine
 
 subroutine FN_VSetArrayPointer_OpenMP(v_data, v)

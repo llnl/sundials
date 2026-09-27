@@ -144,13 +144,13 @@ KINSOL output constants
   |                              |       | recoverably, but the preconditioner |
   |                              |       | is already current.                 |
   +------------------------------+-------+-------------------------------------+
-  | ``KIN_LINIT_FAIL``           | -10   | The linear solver’s initialization  |
+  | ``KIN_LINIT_FAIL``           | -10   | The linear solver's initialization  |
   |                              |       | function failed.                    |
   +------------------------------+-------+-------------------------------------+
-  | ``KIN_LSETUP_FAIL``          | -11   | The linear solver’s setup function  |
+  | ``KIN_LSETUP_FAIL``          | -11   | The linear solver's setup function  |
   |                              |       | failed in an unrecoverable manner.  |
   +------------------------------+-------+-------------------------------------+
-  | ``KIN_LSOLVE_FAIL``          | -12   | The linear solver’s solve function  |
+  | ``KIN_LSOLVE_FAIL``          | -12   | The linear solver's solve function  |
   |                              |       | failed in an unrecoverable manner.  |
   +------------------------------+-------+-------------------------------------+
   | ``KIN_SYSFUNC_FAIL``         | -13   | The system function failed in an    |

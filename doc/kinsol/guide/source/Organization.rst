@@ -28,7 +28,7 @@ for its use.
    :align: center
 
    Overall structure diagram of the KINSOL package. Components specific to KINSOL
-   begin with “KINSOL” (KINLS and KINSOLBBDPRE), all other items correspond
+   begin with "KINSOL" (KINLS and KINSOLBBDPRE), all other items correspond
    to generic SUNDIALS vector, matrix, and solver interfaces.
 
 The overall organization of the KINSOL package is shown in
@@ -67,7 +67,7 @@ direct case, the references :cite:p:`BrHi:89,Byr:92`, together with the example
 and demonstration programs included with KINSOL, offer considerable assistance in
 building preconditioners.
 
-KINSOL’s linear solver interface consists of four primary phases, devoted to (1)
+KINSOL's linear solver interface consists of four primary phases, devoted to (1)
 memory allocation and initialization, (2) setup of the matrix data involved, (3)
 solution of the system, and (4) freeing of memory. The setup and solution phases
 are separate because the evaluation of Jacobians and preconditioners is done

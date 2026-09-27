@@ -20,7 +20,7 @@ Using IDAS for IVP Solution
 
 This chapter is concerned with the use of IDAS for the integration of DAEs.
 
-The following sections treat the header files and the layout of the user’s main
+The following sections treat the header files and the layout of the user's main
 program, and provide descriptions of the IDAS user-callable functions and
 user-supplied functions. The sample programs described in the companion document
 :cite:p:`ida_ex` may also be helpful. Those codes may be used as templates (with
@@ -112,10 +112,10 @@ dense matrix arithmetic routines.
 
 .. _IDAS.Usage.SIM.skeleton_sim:
 
-A skeleton of the user’s main program
+A skeleton of the user's main program
 -------------------------------------
 
-The following is a skeleton of the user’s main program (or calling program) for
+The following is a skeleton of the user's main program (or calling program) for
 the integration of a DAE IVP. Most of the steps are independent of the
 ``N_Vector``, ``SUNMatrix``, ``SUNLinearSolver``, and
 ``SUNNonlinearSolver`` implementations used. For the steps that are not,
@@ -493,7 +493,7 @@ following pieces of advice are relevant.
    IDAS, with magnitude comparable to ``abstol`` or less, is equivalent to zero
    as far as the computation is concerned.
 
-#. The user’s residual function ``res`` should never change a negative value in
+#. The user's residual function ``res`` should never change a negative value in
    the solution vector ``yy`` to a non-negative value, as a "solution" to this
    problem. This can cause instability. If the ``res`` routine cannot tolerate a
    zero or negative value (e.g., because there is a square root or log of it),
@@ -534,7 +534,7 @@ iterative linear solver sections in :numref:`IDAS.Usage.SIM.user_callable.option
 approximate the Jacobian :math:`J`, at least crudely.
 
 To attach a generic linear solver to IDAS, after the call to :c:func:`IDACreate`
-but before any calls to :c:func:`IDASolve`, the user’s program must create the
+but before any calls to :c:func:`IDASolve`, the user's program must create the
 appropriate ``SUNLinearSolver`` object and call the function
 :c:func:`IDASetLinearSolver`. To create the ``SUNLinearSolver`` object,
 the user may call one of the SUNDIALS-packaged ``SUNLinearSolver``
@@ -603,9 +603,9 @@ pertinent to their choice of linear solver.
 Nonlinear solver interface function
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default IDAS uses the ``SUNNonlinearSolver`` implementation of Newton’s method
+By default IDAS uses the ``SUNNonlinearSolver`` implementation of Newton's method
 (see :numref:`SUNNonlinSol.Newton`). To attach a different nonlinear solver in
-IDAS, the user’s program must create a ``SUNNonlinearSolver`` object by calling
+IDAS, the user's program must create a ``SUNNonlinearSolver`` object by calling
 the appropriate constructor routine. The user must then attach the
 ``SUNNonlinearSolver`` object to IDAS by calling :c:func:`IDASetNonlinearSolver`.
 
@@ -902,7 +902,7 @@ negative, so the test ``flag < 0`` will catch all errors.
 
 The optional input calls can, unless otherwise noted, be executed in any order.
 Finally, a call to an ``IDASet***`` function can, unless otherwise noted, be
-made at any time from the user’s calling program and, if successful, takes
+made at any time from the user's calling program and, if successful, takes
 effect immediately.
 
 
@@ -1349,7 +1349,7 @@ into four categories: general routines concerning the overall IDALS linear
 solver interface, optional inputs for matrix-based linear solvers, optional
 inputs for matrix-free linear solvers, and optional inputs for iterative linear
 solvers. We note that the matrix-based and matrix-free groups are mutually
-exclusive, whereas the “iterative” tag can apply to either case.
+exclusive, whereas the "iterative" tag can apply to either case.
 
 When using matrix-based linear solver modules, the IDALS solver interface needs
 a function to compute an approximation to the Jacobian matrix
@@ -1465,7 +1465,7 @@ interface.
 A user-defined Jacobian-vector product function must be of type
 :c:type:`IDALsJacTimesVecFn` and can be specified through a call to
 :c:func:`IDASetJacTimes`. The evaluation and processing of any Jacobian-related
-data needed by the user’s Jacobian-vector product function may be done in the
+data needed by the user's Jacobian-vector product function may be done in the
 optional user-supplied function ``jtsetup`` (see
 :numref:`IDAS.Usage.SIM.user_supplied.jtsetupFn` for specification details). The
 pointer ``user_data`` received through :c:func:`IDASetUserData` (or a pointer to
@@ -1594,7 +1594,7 @@ operator to aid in solution of the system. This operator consists of two
 user-supplied functions, ``psetup`` and ``psolve``, that are supplied to IDAS
 using the function :c:func:`IDASetPreconditioner`. The ``psetup`` function
 supplied to this routine should handle evaluation and preprocessing of any
-Jacobian data needed by the user’s preconditioner solve function,
+Jacobian data needed by the user's preconditioner solve function,
 ``psolve``. Both of these functions are fully specified in
 :numref:`IDAS.Usage.SIM.user_supplied.psolveFn` and
 :numref:`IDAS.Usage.SIM.user_supplied.precondFn`).  The user data pointer received
@@ -2322,7 +2322,6 @@ derivatives of order up to the last internal order used for any value of
       :math:`t_n`, :math:`h_u`, and :math:`k_{\text{last}}`.
 
 
-
 .. _IDAS.Usage.SIM.user_callable.optional_output:
 
 Optional output functions
@@ -2357,8 +2356,6 @@ preconditioner.
   +--------------------------------------------------------------------+------------------------------------------+
   | **Optional output**                                                | **Function name**                        |
   +====================================================================+==========================================+
-  | Size of IDAS real and integer workspace                            | :c:func:`IDAGetWorkSpace`                |
-  +--------------------------------------------------------------------+------------------------------------------+
   | Cumulative number of internal steps                                | :c:func:`IDAGetNumSteps`                 |
   +--------------------------------------------------------------------+------------------------------------------+
   | No. of calls to residual function                                  | :c:func:`IDAGetNumResEvals`              |
@@ -2421,8 +2418,6 @@ preconditioner.
   +--------------------------------------------------------------------+------------------------------------------+
   | Step number at which the Jacobian was evaluated                    | :c:func:`IDAGetJacNumSteps`              |
   +--------------------------------------------------------------------+------------------------------------------+
-  | Size of real and integer workspace                                 | :c:func:`IDAGetLinWorkSpace`             |
-  +--------------------------------------------------------------------+------------------------------------------+
   | No. of Jacobian evaluations                                        | :c:func:`IDAGetNumJacEvals`              |
   +--------------------------------------------------------------------+------------------------------------------+
   | No. of residual calls for finite diff. Jacobian-vector evals.      | :c:func:`IDAGetNumLinResEvals`           |
@@ -2459,63 +2454,6 @@ functions to extract statistics related to the performance of the
 nonlinear solver being used. As a convenience, additional extraction functions
 provide the optional outputs in groups. These optional output functions are
 described next.
-
-.. c:function:: int IDAGetWorkSpace(void * ida_mem, long int * lenrw, long int * leniw)
-
-   The function :c:func:`IDAGetWorkSpace` returns the IDAS real and integer workspace
-   sizes.
-
-   **Arguments:**
-      * ``ida_mem`` -- pointer to the IDAS solver object.
-      * ``lenrw`` -- number of real values in the IDAS workspace.
-      * ``leniw`` -- number of integer values in the IDAS workspace.
-
-   **Return value:**
-      * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
-      * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
-
-   **Notes:**
-      In terms of the problem size :math:`N`, the maximum method order
-      ``maxord``, and the number of root functions ``nrtfn`` (see
-      :numref:`IDAS.Usage.SIM.user_callable.idarootinit`), the actual size of the real workspace, in
-      :c:type:`sunrealtype` words, is given by the following:
-
-      * base value:
-        :math:`\mathtt{lenrw} = 55 + (m + 6) * N_r + 3 * \mathtt{nrtfn}`;
-      * with :c:func:`IDASVtolerances`:
-        :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_r`;
-      * with constraint checking (see :c:func:`IDASetConstraints`):
-        :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_r`;
-      * with ``id`` specified (see :c:func:`IDASetId`):
-        :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_r`;
-
-      where :math:`m = \max(\mathtt{maxord}, 3)`, and :math:`N_r` is the number
-      of real words in one ``N_Vector`` :math:`(\approx N)`.
-
-      The size of the integer workspace (without distinction between ``int`` and
-      ``long int`` words) is  given by:
-
-      * base value: :math:`\mathtt{leniw} = 38 + (m + 6) * N_i + \mathtt{nrtfn}`;
-      * with :c:func:`IDASVtolerances`:
-        :math:`\mathtt{leniw} = \mathtt{leniw} + N_i`;
-      * with constraint checking: :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_i`;
-      * with ``id`` specified (see :c:func:`IDASetId`):
-        :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_i`;
-
-      where :math:`N_i` is the number of integer words in one ``N_Vector`` (= 1
-      for the serial ``N_Vector`` and ``2 * npes`` for the parallel ``N_Vector``
-      on ``npes`` processors). For the default value of ``maxord``, with no
-      rootfinding, no ``id``, no constraints, and with no call to
-      :c:func:`IDASVtolerances`, these lengths are given roughly by
-      :math:`\mathtt{lenrw} = 55 + 11 * N` and :math:`\mathtt{leniw} = 49`.
-
-      Note that additional memory is allocated if quadratures and/or forward
-      sensitivity integration is enabled. See :numref:`IDAS.Usage.Purequad.quad_init`
-      and :numref:`IDAS.Usage.FSA.user_callable.sensi_init` for more details.
-
-   .. deprecated:: 7.3.0 (IDAS 6.3.0)
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int IDAGetNumSteps(void * ida_mem, long int * nsteps)
 
@@ -2939,7 +2877,6 @@ Initial condition calculation optional output functions
       ``NULL``).
 
 
-
 .. _IDAS.Usage.SIM.user_callable.optional_output.rootfinding:
 
 Rootfinding optional output functions
@@ -3054,36 +2991,6 @@ The following optional outputs are available from the IDALS modules:
    :retval IDALS_SUCCESS: the output value has been successfully set
    :retval IDALS_MEM_NULL: ``ida_mem`` was ``NULL``
    :retval IDALS_LMEM_NULL: the linear solver interface has not been initialized
-
-.. c:function:: int IDAGetLinWorkSpace(void * ida_mem, long int * lenrwLS, long int * leniwLS)
-
-   The function :c:func:`IDAGetLinWorkSpace` returns the sizes of the real and integer
-   workspaces used by the IDALS linear solver interface.
-
-   **Arguments:**
-      * ``ida_mem`` -- pointer to the IDAS solver object.
-      * ``lenrwLS`` -- the number of real values in the IDALS workspace.
-      * ``leniwLS`` -- the number of integer values in the IDALS workspace.
-
-   **Return value:**
-      * ``IDALS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
-      * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only to memory
-      allocated within this interface and to memory allocated by the
-      ``SUNLinearSolver`` object attached to it.  The template Jacobian
-      matrix allocated by the user outside of IDALS is not included in this report.
-
-   .. versionadded:: 4.0.0 (IDAS 3.0.0)
-
-      Replaces the deprecated functions ``IDADlsGetWorkspace`` and
-      ``IDASpilsGetWorkspace``.
-
-   .. deprecated:: 7.3.0 (IDAS 6.3.0)
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int IDAGetNumJacEvals(void * ida_mem, long int * njevals)
 
@@ -3438,7 +3345,6 @@ The user must provide a function of type :c:type:`IDAResFn` defined as follows:
       can be flagged, and IDAS will then try to correct it.
 
 
-
 .. _IDAS.Usage.SIM.user_supplied.ewtsetFn:
 
 Error weight function
@@ -3556,7 +3462,7 @@ user may provide a function of type :c:type:`IDALsJacFn` defined as follows:
       nonzero elements need to be loaded into ``Jac``.
 
       With the default nonlinear solver (the native SUNDIALS Newton method), each
-      call to the user’s :c:func:`IDALsJacFn` function is preceded by a call to the
+      call to the user's :c:func:`IDALsJacFn` function is preceded by a call to the
       :c:func:`IDAResFn` user function with the same :math:`(t, y, \dot{y})`
       arguments. Thus the Jacobian function can use any auxiliary data that is
       computed and saved during the evaluation of the DAE residual.  In the case of
@@ -3564,7 +3470,7 @@ user may provide a function of type :c:type:`IDALsJacFn` defined as follows:
       residual function is evaluated prior to calling the linear solver setup
       function (see :numref:`SUNNonlinSol.API.SUNSuppliedFn` for more information).
 
-      If the user’s :c:type:`IDALsJacFn` function uses difference quotient
+      If the user's :c:type:`IDALsJacFn` function uses difference quotient
       approximations, it may need to access quantities not in the call list. These
       quantities may include the current stepsize, the error weights, etc. To
       obtain these, the user will need to add a pointer to ``ida_mem`` to
@@ -3691,7 +3597,7 @@ the default is a difference quotient approximation to these products.
       to the **current** value of :math:`J`, i.e. as evaluated at the current
       :math:`(t,y,\dot{y})`.
 
-      If the user’s :c:func:`IDALsJacTimesVecFn` function uses difference quotient
+      If the user's :c:func:`IDALsJacTimesVecFn` function uses difference quotient
       approximations, it may need to access quantities not in the call list. These
       include the current stepsize, the error weights, etc. To obtain these, the
       user will need to add a pointer to ``ida_mem`` to ``user_data`` and then use
@@ -3743,7 +3649,7 @@ follows:
       arguments. Thus, the setup function can use any auxiliary data that is
       computed and saved during the evaluation of the DAE residual.
 
-      If the user’s :c:type:`IDALsJacTimesVecFn` function uses difference quotient
+      If the user's :c:type:`IDALsJacTimesVecFn` function uses difference quotient
       approximations, it may need to access quantities not in the call list. These
       include the current stepsize, the error weights, etc. To obtain these, the
       user will need to add a pointer to ``ida_mem`` to ``user_data`` and then use
@@ -3806,7 +3712,7 @@ must be of type :c:type:`IDALsPrecSolveFn`, defined as follows:
 Preconditioner setup (iterative linear solvers)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the user’s preconditioner requires that any Jacobian-related data be
+If the user's preconditioner requires that any Jacobian-related data be
 evaluated or preprocessed, then this needs to be done in a user-supplied
 function of type :c:type:`IDALsPrecSetupFn`, defined as follows:
 
@@ -3846,7 +3752,7 @@ function of type :c:type:`IDALsPrecSetupFn`, defined as follows:
       solve function, but rather is called only as often as needed to achieve
       convergence in the nonlinear solver.
 
-      If the user’s :c:type:`IDALsPrecSetupFn` function uses difference quotient
+      If the user's :c:type:`IDALsPrecSetupFn` function uses difference quotient
       approximations, it may need to access quantities not in the call list. These
       include the current stepsize, the error weights, etc. To obtain these, the
       user will need to add a pointer to ``ida_mem`` to ``user_data`` and then use
@@ -3867,7 +3773,7 @@ variables from the vectors ``yy`` and ``yp`` and the quadrature equations from
 within ``res``. Thus a separate vector ``yQ`` of quadrature variables is to
 satisfy :math:`(\mathrm d/\mathrm dt)\texttt{yQ} = f_Q(t,y,\dot{y})`.
 
-The following is an overview of the sequence of calls in a user’s main program
+The following is an overview of the sequence of calls in a user's main program
 in this situation. Steps that are unchanged from the skeleton program presented
 in :numref:`IDAS.Usage.SIM.skeleton_sim` are grayed out and new or modified
 steps are in bold.
@@ -4390,7 +4296,7 @@ computed locally, and an optional function ``Gcomm`` (of type
 to evaluate the approximate residual :math:`G`. These are in addition to the
 user-supplied residual function ``res``. Both functions take as input the same
 pointer ``user_data`` as passed by the user to :c:func:`IDASetUserData` and
-passed to the user’s function ``res``. The user is responsible for providing
+passed to the user's function ``res``. The user is responsible for providing
 space (presumably within ``user_data``) for components of ``yy`` and ``yp`` that
 are communicated by ``Gcomm`` from the other processors, and that are then used
 by ``Gres``, which should not do any communication.
@@ -4508,8 +4414,7 @@ out and new or modified steps are in bold.
 #. **Get optional outputs**
 
    Additional optional outputs associated with IDABBDPRE are available by way of
-   two routines described below, :c:func:`IDABBDPrecGetWorkSpace` and
-   :c:func:`IDABBDPrecGetNumGfnEvals`.
+    the routine described below, :c:func:`IDABBDPrecGetNumGfnEvals`.
 
 #. :silver:`Destroy objects`
 
@@ -4580,7 +4485,7 @@ change any of the following: the half-bandwidths ``mudq`` and ``mldq`` used in
 the difference-quotient Jacobian approximations, the relative increment
 ``dq_rel_yy``, or one of the user-supplied functions ``Gres`` and ``Gcomm``. If
 there is a change in any of the linear solver inputs, an additional call to the
-“Set”routines provided by the ``SUNLinearSolver`` object, and/or one or more of
+"Set"routines provided by the ``SUNLinearSolver`` object, and/or one or more of
 the corresponding ``IDASet***`` functions, must also be made (in the proper
 order).
 
@@ -4613,33 +4518,6 @@ order).
 
 The following two optional output functions are available for use with the
 IDABBDPRE module:
-
-.. c:function:: int IDABBDPrecGetWorkSpace(void * ida_mem, long int * lenrwBBDP, long int * leniwBBDP)
-
-   The function :c:func:`IDABBDPrecGetWorkSpace` returns the local sizes of the
-   IDABBDPRE real and integer workspaces.
-
-   **Arguments:**
-      * ``ida_mem`` -- pointer to the IDAS solver object.
-      * ``lenrwBBDP`` -- local number of real values in the IDABBDPRE workspace.
-      * ``leniwBBDP`` -- local number of integer values in the IDABBDPRE workspace.
-
-   **Return value:**
-      * ``IDALS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer was ``NULL``.
-      * ``IDALS_PMEM_NULL`` -- The IDABBDPRE preconditioner has not been
-        initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only to memory
-      allocated within the IDABBDPRE module (the banded matrix approximation,
-      banded ``SUNLinearSolver`` object, temporary vectors).  These values
-      are local to each process.  The workspaces referred to here exist in addition
-      to those given by the corresponding function :c:func:`IDAGetLinWorkSpace`.
-
-   .. deprecated:: 7.3.0 (IDAS 6.3.0)
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int IDABBDPrecGetNumGfnEvals(void * ida_mem, long int * ngevalsBBDP)
 

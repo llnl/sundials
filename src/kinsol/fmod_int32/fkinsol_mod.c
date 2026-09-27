@@ -668,22 +668,6 @@ SWIGEXPORT int _wrap_FKINSetSysFunc(void *farg1, KINSysFn farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FKINGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)KINGetWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FKINGetNumNonlinSolvIters(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -861,22 +845,6 @@ SWIGEXPORT int _wrap_FKINBBDPrecInit(void *farg1, int32_t const *farg2, int32_t 
 }
 
 
-SWIGEXPORT int _wrap_FKINBBDPrecGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)KINBBDPrecGetWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FKINBBDPrecGetNumGfnEvals(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -974,22 +942,6 @@ SWIGEXPORT int _wrap_FKINGetJacNumIters(void *farg1, long *farg2) {
   arg1 = (void *)(farg1);
   arg2 = (long *)(farg2);
   result = (int)KINGetJacNumIters(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FKINGetLinWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)KINGetLinWorkSpace(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }

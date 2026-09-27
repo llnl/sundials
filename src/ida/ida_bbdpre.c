@@ -65,8 +65,7 @@ int IDABBDPrecInit(void* ida_mem, sunindextype Nlocal, sunindextype mudq,
   IDAMem IDA_mem;
   IDALsMem idals_mem;
   IBBDPrecData pdata;
-  sunindextype muk, mlk, storage_mu, lrw1, liw1;
-  long int lrw, liw;
+  sunindextype muk, mlk, storage_mu;
   int flag;
 
   if (ida_mem == NULL)
@@ -261,31 +260,7 @@ int IDABBDPrecInit(void* ida_mem, sunindextype Nlocal, sunindextype mudq,
   /* Set work space sizes and initialize nge. */
   pdata->rpwsize = 0;
   pdata->ipwsize = 0;
-  if (IDA_mem->ida_tempv1->ops->nvspace)
-  {
-    N_VSpace(IDA_mem->ida_tempv1, &lrw1, &liw1);
-    pdata->rpwsize += 4 * lrw1;
-    pdata->ipwsize += 4 * liw1;
-  }
-  if (pdata->rlocal->ops->nvspace)
-  {
-    N_VSpace(pdata->rlocal, &lrw1, &liw1);
-    pdata->rpwsize += 2 * lrw1;
-    pdata->ipwsize += 2 * liw1;
-  }
-  if (pdata->PP->ops->space)
-  {
-    flag = SUNMatSpace(pdata->PP, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  if (pdata->LS->ops->space)
-  {
-    flag = SUNLinSolSpace(pdata->LS, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  pdata->nge = 0;
+  pdata->nge     = 0;
 
   /* make sure pdata is free from any previous allocations */
   if (idals_mem->pfree) { idals_mem->pfree(IDA_mem); }
@@ -352,42 +327,6 @@ int IDABBDPrecReInit(void* ida_mem, sunindextype mudq, sunindextype mldq,
 }
 
 /*-------------------------------------------------------------*/
-int IDABBDPrecGetWorkSpace(void* ida_mem, long int* lenrwBBDP, long int* leniwBBDP)
-{
-  IDAMem IDA_mem;
-  IDALsMem idals_mem;
-  IBBDPrecData pdata;
-
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDALS_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGBBD_MEM_NULL);
-    return (IDALS_MEM_NULL);
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  if (IDA_mem->ida_lmem == NULL)
-  {
-    IDAProcessError(IDA_mem, IDALS_LMEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGBBD_LMEM_NULL);
-    return (IDALS_LMEM_NULL);
-  }
-  idals_mem = (IDALsMem)IDA_mem->ida_lmem;
-
-  if (idals_mem->pdata == NULL)
-  {
-    IDAProcessError(IDA_mem, IDALS_PMEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGBBD_PMEM_NULL);
-    return (IDALS_PMEM_NULL);
-  }
-  pdata = (IBBDPrecData)idals_mem->pdata;
-
-  *lenrwBBDP = pdata->rpwsize;
-  *leniwBBDP = pdata->ipwsize;
-
-  return (IDALS_SUCCESS);
-}
-
 /*-------------------------------------------------------------*/
 int IDABBDPrecGetNumGfnEvals(void* ida_mem, long int* ngevalsBBDP)
 {

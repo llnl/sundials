@@ -613,34 +613,6 @@ SWIGEXPORT int _wrap_FCVodeSetMinStep(void *farg1, double const *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FCVodeSetMonitorFn(void *farg1, CVMonitorFn farg2) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  CVMonitorFn arg2 = (CVMonitorFn) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (CVMonitorFn)(farg2);
-  result = (int)CVodeSetMonitorFn(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FCVodeSetMonitorFrequency(void *farg1, long const *farg2) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long arg2 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long)(*farg2);
-  result = (int)CVodeSetMonitorFrequency(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FCVodeSetNlsRhsFn(void *farg1, CVRhsFn farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -1018,22 +990,6 @@ SWIGEXPORT int _wrap_FCVodeGetDky(void *farg1, double const *farg2, int const *f
   arg3 = (int)(*farg3);
   arg4 = (N_Vector)(farg4);
   result = (int)CVodeGetDky(arg1,arg2,arg3,arg4);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FCVodeGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)CVodeGetWorkSpace(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
@@ -3288,22 +3244,6 @@ SWIGEXPORT int _wrap_FCVBandPrecInit(void *farg1, int32_t const *farg2, int32_t 
 }
 
 
-SWIGEXPORT int _wrap_FCVBandPrecGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)CVBandPrecGetWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FCVBandPrecGetNumRhsEvals(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -3384,22 +3324,6 @@ SWIGEXPORT int _wrap_FCVBBDPrecReInit(void *farg1, int32_t const *farg2, int32_t
 }
 
 
-SWIGEXPORT int _wrap_FCVBBDPrecGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)CVBBDPrecGetWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FCVBBDPrecGetNumGfnEvals(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -3471,22 +3395,6 @@ SWIGEXPORT int _wrap_FCVDiag(void *farg1) {
   
   arg1 = (void *)(farg1);
   result = (int)CVDiag(arg1);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FCVDiagGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)CVDiagGetWorkSpace(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
@@ -3730,22 +3638,6 @@ SWIGEXPORT int _wrap_FCVodeGetJacNumSteps(void *farg1, long *farg2) {
   arg1 = (void *)(farg1);
   arg2 = (long *)(farg2);
   result = (int)CVodeGetJacNumSteps(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FCVodeGetLinWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)CVodeGetLinWorkSpace(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }

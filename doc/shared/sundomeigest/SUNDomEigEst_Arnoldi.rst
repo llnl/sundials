@@ -103,7 +103,7 @@ routines:
       result of the most recent preprocessing iterations (see
       :c:func:`SUNDomEigEstimator_SetNumPreprocessIters`). As an initial guess
       too close to the dominant eigenvector may cause a breakdown in the
-      Gram–Schmidt process within the Arnoldi iteration, users should account
+      Gram-Schmidt process within the Arnoldi iteration, users should account
       for this when setting the number of initial and subsequent preprocessing
       iterations (e.g., with LSRKStep see
       :c:func:`LSRKStepSetNumDomEigEstInitPreprocessIters` and

@@ -22,7 +22,7 @@ Using KINSOL for the Solution of Nonlinear Systems
 This section is concerned with the use of KINSOL for the solution of nonlinear
 systems.
 
-The following sections treat the header files and the layout of the user’s main
+The following sections treat the header files and the layout of the user's main
 program, and provide descriptions of the KINSOL user-callable functions and
 user-supplied functions. The sample programs described in the companion document
 :cite:p:`kinsol_ex` may also be helpful. Those codes may be used as templates (with
@@ -108,10 +108,10 @@ dense matrix arithmetic routines.
 
 .. _KINSOL.Usage.CC.skeleton_sim:
 
-A skeleton of the user’s main program
+A skeleton of the user's main program
 -------------------------------------
 
-The following is a skeleton of the user’s main program (or calling program) for
+The following is a skeleton of the user's main program (or calling program) for
 the solution of a nonlinear system problem.. Most of the steps are independent
 of the ``N_Vector``, ``SUNMatrix``, and ``SUNLinearSolver`` implementations
 used. For the steps that are not, refer to :numref:`NVectors`,
@@ -319,7 +319,7 @@ preconditioner matrix :math:`P` must approximate the Jacobian :math:`J`, at
 least crudely.
 
 To specify a generic linear solver to KINSOL, after the call to :c:func:`KINCreate`
-but before any calls to :c:func:`KINSol`, the user’s program must create the
+but before any calls to :c:func:`KINSol`, the user's program must create the
 appropriate ``SUNLinearSolver`` object and call the function
 :c:func:`KINSetLinearSolver`, as documented below. To create the ``SUNLinearSolver``
 object, the user may call one of the SUNDIALS-packaged ``SUNLinearSolver``
@@ -1087,7 +1087,7 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
 
    **Arguments:**
      * ``kin_mem`` -- pointer to the KINSOL memory block.
-     * ``ret_newest`` --  ``SUNTRUE`` – return the newest iteration. ``SUNFALSE`` – return the iteration consistent with the last function evaluation.
+     * ``ret_newest`` --  ``SUNTRUE`` - return the newest iteration. ``SUNFALSE`` - return the iteration consistent with the last function evaluation.
 
    **Return value:**
      * ``KIN_SUCCESS`` -- The optional value has been successfully set.
@@ -1420,7 +1420,7 @@ operator to aid in solution of the system. This operator consists of two
 user-supplied functions, ``psetup`` and ``psolve``, that are supplied to KINLS
 using the function :c:func:`KINSetPreconditioner`. The ``psetup`` function
 supplied to this routine should handle evaluation and preprocessing of any
-Jacobian data needed by the user’s preconditioner solve function, ``psolve``.
+Jacobian data needed by the user's preconditioner solve function, ``psolve``.
 Both of these functions are fully specified in :numref:`KINSOL.Usage.CC.user_fct_sim`.
 The user data pointer received through
 :c:func:`KINSetUserData` (or a pointer to ``NULL`` if user data was not
@@ -1480,7 +1480,6 @@ Linear Solver) has been added here (e.g., ``lenrwLS``).
   **Optional output**                                             **Function name**
   ==============================================================  ==================================
   **KINSOL main solver**
-  Size of KINSOL real and integer workspaces                      :c:func:`KINGetWorkSpace`
   Number of function evaluations                                  :c:func:`KINGetNumFuncEvals`
   Number of nonlinear iterations                                  :c:func:`KINGetNumNonlinSolvIters`
   Number of :math:`\beta`-condition failures                      :c:func:`KINGetNumBetaCondFails`
@@ -1493,7 +1492,6 @@ Linear Solver) has been added here (e.g., ``lenrwLS``).
   **KINLS linear solver interface**
   Stored Jacobian of the nonlinear system                         :c:func:`KINGetJac`
   Nonlinear iteration number at which the Jacobian was evaluated  :c:func:`KINGetJacNumIters`
-  Size of real and integer workspaces                             :c:func:`KINGetLinWorkSpace`
   No. of Jacobian evaluations                                     :c:func:`KINGetNumJacEvals`
   No. of :math:`F` calls for D.Q. Jacobian[-vector] evals.        :c:func:`KINGetNumLinFuncEvals`
   No. of linear iterations                                        :c:func:`KINGetNumLinIters`
@@ -1515,35 +1513,6 @@ KINSOL provides several user-callable functions that can be used to obtain
 different quantities that may be of interest to the user, such as solver
 workspace requirements and solver performance statistics. These optional output
 functions are described next.
-
-.. c:function:: int KINGetWorkSpace(void * kin_mem, long int * lenrw, long int * leniw)
-
-   The function :c:func:`KINGetWorkSpace` returns the  KINSOL integer and real
-   workspace sizes.
-
-   **Arguments:**
-     * ``kin_mem`` -- pointer to the KINSOL memory block.
-     * ``lenrw`` -- the number of ``sunrealtype`` values in the KINSOL workspace.
-     * ``leniw`` -- the number of integer values in the KINSOL workspace.
-
-   **Return value:**
-     * ``KIN_SUCCESS`` -- The optional output values have been successfully set.
-     * ``KIN_MEM_NULL`` -- The ``kin_mem`` pointer is ``NULL``.
-
-   **Notes:**
-      KINSOL solver  In terms of the problem size :math:`N`, the actual size of
-      the real workspace  is :math:`17 + 5 N` ``sunrealtype`` words. The real workspace
-      is increased by  an additional :math:`N` words if constraint checking is
-      enabled (see :c:func:`KINSetConstraints`).
-
-      The actual size of the integer
-      workspace (without distinction between ``int``  and ``long int``) is
-      :math:`22 + 5 N` (increased by :math:`N` if constraint checking is enabled).
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
 
 .. c:function:: int KINGetNumFuncEvals(void * kin_mem, long int * nfevals)
 
@@ -1731,37 +1700,6 @@ The following optional outputs are available from the KINLS modules:
    :retval KINLS_SUCCESS: the output value has been successfully set
    :retval KINLS_MEM_NULL: ``kin_mem`` was ``NULL``
    :retval KINLS_LMEM_NULL: the linear solver interface has not been initialized
-
-.. c:function:: int KINGetLinWorkSpace(void * kin_mem, long int * lenrwLS, long int * leniwLS)
-
-   The function :c:func:`KINGetLinWorkSpace` returns the sizes of the real and
-   integer workspaces used by the KINLS linear solver interface.
-
-   **Arguments:**
-      * ``kin_mem`` -- pointer to the KINSOL solver object.
-      * ``lenrwLS`` -- the number of real values in the KINLS workspace.
-      * ``leniwLS`` -- the number of integer values in the KINLS workspace.
-
-   **Return value:**
-      * ``KINLS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``KINLS_MEM_NULL`` -- The ``kin_mem`` pointer is ``NULL``.
-      * ``KINLS_LMEM_NULL`` -- The KINLS linear solver has not been initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only to memory
-      allocated within this interface and to memory allocated by the
-      ``SUNLinearSolver`` object attached to it.  The template Jacobian
-      matrix allocated by the user outside of KINLS is not included in this report.
-
-   .. versionadded:: 4.0.0
-
-      Replaces the deprecated function ``KINDlsGetWorkspace`` and
-      ``KINSpilsGetWorkspace``.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
 
 .. c:function:: int KINGetNumJacEvals(void * kin_mem, long int * njevals)
 
@@ -2049,7 +1987,7 @@ provide a function of type :c:type:`KINLsJacFn` defined as follows:
 
    **Notes:**
       Information regarding the structure of the specific ``SUNMatrix``
-      structure (e.g. number of rows, upper/lower bandwidth, sparsity type) may
+      structure (e.g. number of rows, upper/lower bandwidth, sparsity type) may
       be obtained through using the implementation-specific ``SUNMatrix``
       interface functions (see Chapter :numref:`SUNMatrix` for
       details).
@@ -2059,7 +1997,7 @@ provide a function of type :c:type:`KINLsJacFn` defined as follows:
       out prior to calling the user-supplied Jacobian function so only nonzero
       elements need to be loaded into ``J``.
 
-      If the user’s :c:type:`KINLsJacFn` function uses difference quotient
+      If the user's :c:type:`KINLsJacFn` function uses difference quotient
       approximations, it may need to access quantities not in the call list.
       These quantities may include the scale vectors and the unit roundoff. To
       obtain the scale vectors, the user will need to add to ``user_data``
@@ -2188,7 +2126,7 @@ supplied, the default is a difference quotient approximation to these products.
       This function must return a value of :math:`J*v` that uses the *current* value
       of :math:`J`, i.e. as evaluated at the current :math:`u`.
 
-      If the user’s :c:type:`KINLsJacTimesVecFn` function uses difference quotient
+      If the user's :c:type:`KINLsJacTimesVecFn` function uses difference quotient
       approximations, it may need to access quantities not in the call list. These
       might include the scale vectors and the unit roundoff. To obtain the scale
       vectors, the user will need to add to ``user_data`` pointers to ``u_scale``
@@ -2241,7 +2179,7 @@ of type :c:type:`KINLsPrecSolveFn`, defined as follows:
 Preconditioner setup (iterative linear solvers)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the user’s preconditioner requires that any Jacobian-related data be
+If the user's preconditioner requires that any Jacobian-related data be
 evaluated or preprocessed, then this needs to be done in a user-supplied
 function of type :c:type:`KINLsPrecSetupFn`, defined as follows:
 
@@ -2279,7 +2217,7 @@ function of type :c:type:`KINLsPrecSetupFn`, defined as follows:
       to the preconditioner solve function, but will instead be called only as
       often as necessary to achieve convergence of the Newton iteration.
 
-      If the user’s :c:type:`KINLsPrecSetupFn` function uses difference quotient
+      If the user's :c:type:`KINLsPrecSetupFn` function uses difference quotient
       approximations, it may need to access quantities not in the call list. These
       might include the scale vectors and the unit roundoff. To obtain the scale
       vectors, the user will need to add to ``user_data`` pointers to ``u_scale``
@@ -2423,7 +2361,7 @@ performs all interprocess communication necessary to evaluate the approximate
 function :math:`G`. These are in addition to the user-supplied nonlinear system
 function that evaluates :math:`F(u)`. Both functions take as input the same
 pointer ``user_data`` as that passed by the user to :c:func:`KINSetUserData` and
-passed to the user’s function ``func``, and neither function has a return value.
+passed to the user's function ``func``, and neither function has a return value.
 The user is responsible for providing space (presumably within ``user_data``)
 for components of ``u`` that are communicated by ``Gcomm`` from the other
 processes, and that are then used by ``Gloc``, which should not do any
@@ -2531,8 +2469,7 @@ user main program presented in :numref:`KINSOL.Usage.CC.skeleton_sim` are not bo
 #. **Get optional outputs**
 
    Additional optional outputs associated with KINBBDPRE are available by way of
-   two routines described below, :c:func:`KINBBDPrecGetWorkSpace` and
-   :c:func:`KINBBDPrecGetNumGfnEvals`.
+   the routine described below, :c:func:`KINBBDPrecGetNumGfnEvals`.
 
 #. Deallocate memory
 
@@ -2583,38 +2520,8 @@ preconditioner module are described next.
      every process.
 
 
-
 The following two optional output functions are available for use with the
 KINBBDPRE module:
-
-.. c:function:: int KINBBDPrecGetWorkSpace(void * kin_mem, long int * lenrwBBDP, long int * leniwBBDP)
-
-   The function :c:func:`KINBBDPrecGetWorkSpace` returns the local sizes of the
-   KINBBDPRE real and integer workspaces.
-
-   **Arguments:**
-      * ``kin_mem`` -- pointer to the KINSOL solver object.
-      * ``lenrwBBDP`` -- local number of real values in the KINBBDPRE workspace.
-      * ``leniwBBDP`` -- local number of integer values in the KINBBDPRE workspace.
-
-   **Return value:**
-      * ``KINLS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``KINLS_MEM_NULL`` -- The ``kin_mem`` pointer was ``NULL``.
-      * ``KINLS_PMEM_NULL`` -- The KINBBDPRE preconditioner has not been
-        initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only to memory
-      allocated within the KINBBDPRE module (the banded matrix approximation,
-      banded ``SUNLinearSolver`` object, temporary vectors).  These values
-      are local to each process.
-
-      The workspaces referred to here exist in addition
-      to those given by the corresponding :c:func:`KINGetLinWorkSpace` function.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int KINBBDPrecGetNumGfnEvals(void * kin_mem, long int * ngevalsBBDP)
 
@@ -2690,7 +2597,7 @@ The solution of the ODE may be made easier by solving instead the equivalent
 DAE, :math:`M du/dt + F(u) = 0`. Applying IDA to this system requires solutions
 to linear systems whose matrix is the DAE system Jacobian, :math:`J = F_u +
 \alpha M`, where :math:`\alpha` is the scalar coefficient :math:`c_j` supplied
-to the user’s Jacobian or preconditioner routine. Selecting a preconditioned
+to the user's Jacobian or preconditioner routine. Selecting a preconditioned
 Krylov method requires an approximation to this Jacobian as preconditioner
 :math:`P`. Given that :math:`M` approximates :math:`F_u` (possibly crudely), the
 appropriate approximation to :math:`J` is :math:`P = M + \alpha M = (1 +

@@ -37,8 +37,6 @@ Max. absolute error is   1.46E-08
    Total Convergence Failures - Nonlinear =      0
                               - Linear    =      0
    Total number of error test failures =      5
-   Main solver real/int workspace sizes =    609   144
-   Linear solver real/int workspace sizes =    534   126
     
     
     
@@ -69,8 +67,6 @@ Max. absolute error is   2.09E-09
    Total Convergence Failures - Nonlinear =      0
                               - Linear    =      0
    Total number of error test failures =      5
-   Main solver real/int workspace sizes =    609   144
-   Linear solver real/int workspace sizes =    534   126
     
     
     

@@ -553,21 +553,14 @@ int IDASetId(void* ida_mem, N_Vector id)
 
   if (id == NULL)
   {
-    if (IDA_mem->ida_idMallocDone)
-    {
-      N_VDestroy(IDA_mem->ida_id);
-      IDA_mem->ida_lrw -= IDA_mem->ida_lrw1;
-      IDA_mem->ida_liw -= IDA_mem->ida_liw1;
-    }
+    if (IDA_mem->ida_idMallocDone) { N_VDestroy(IDA_mem->ida_id); }
     IDA_mem->ida_idMallocDone = SUNFALSE;
     return (IDA_SUCCESS);
   }
 
   if (!(IDA_mem->ida_idMallocDone))
   {
-    IDA_mem->ida_id = N_VClone(id);
-    IDA_mem->ida_lrw += IDA_mem->ida_lrw1;
-    IDA_mem->ida_liw += IDA_mem->ida_liw1;
+    IDA_mem->ida_id           = N_VClone(id);
     IDA_mem->ida_idMallocDone = SUNTRUE;
   }
 
@@ -595,12 +588,7 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
 
   if (constraints == NULL)
   {
-    if (IDA_mem->ida_constraints)
-    {
-      N_VDestroy(IDA_mem->ida_constraints);
-      IDA_mem->ida_lrw -= IDA_mem->ida_lrw1;
-      IDA_mem->ida_liw -= IDA_mem->ida_liw1;
-    }
+    if (IDA_mem->ida_constraints) { N_VDestroy(IDA_mem->ida_constraints); }
     return (IDA_SUCCESS);
   }
 
@@ -635,8 +623,6 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
                       MSG_MEM_FAIL);
       return (IDA_MEM_NULL);
     }
-    IDA_mem->ida_lrw += IDA_mem->ida_lrw1;
-    IDA_mem->ida_liw += IDA_mem->ida_liw1;
   }
 
   /* Load the constraints vector */
@@ -1554,26 +1540,6 @@ int IDAGetEstLocalErrors(void* ida_mem, N_Vector ele)
   IDA_mem = (IDAMem)ida_mem;
 
   N_VScale(ONE, IDA_mem->ida_ee, ele);
-
-  return (IDA_SUCCESS);
-}
-
-/*-----------------------------------------------------------------*/
-
-int IDAGetWorkSpace(void* ida_mem, long int* lenrw, long int* leniw)
-{
-  IDAMem IDA_mem;
-
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
-    return (IDA_MEM_NULL);
-  }
-
-  IDA_mem = (IDAMem)ida_mem;
-
-  *leniw = IDA_mem->ida_liw;
-  *lenrw = IDA_mem->ida_lrw;
 
   return (IDA_SUCCESS);
 }

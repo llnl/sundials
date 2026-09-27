@@ -78,7 +78,6 @@ void arkPrintAdaptMem(ARKodeHAdaptMem hadapt_mem, FILE* outfile)
             hadapt_mem->ubound);
     fprintf(outfile, "ark_hadapt: nst_acc = %li\n", hadapt_mem->nst_acc);
     fprintf(outfile, "ark_hadapt: nst_exp = %li\n", hadapt_mem->nst_exp);
-    fprintf(outfile, "ark_hadapt: pq = %i\n", hadapt_mem->pq);
     fprintf(outfile, "ark_hadapt: p = %i\n", hadapt_mem->p);
     fprintf(outfile, "ark_hadapt: q = %i\n", hadapt_mem->q);
     fprintf(outfile, "ark_hadapt: adjust = %i\n", hadapt_mem->adjust);
@@ -121,18 +120,8 @@ int arkAdapt(ARKodeMem ark_mem, ARKodeHAdaptMem hadapt_mem, N_Vector ycur,
   }
 
   /* Request error-based step size from adaptivity controller */
-  if (hadapt_mem->pq == 0)
-  {
-    controller_order = hadapt_mem->p + hadapt_mem->adjust;
-  }
-  else if (hadapt_mem->pq == 1)
-  {
-    controller_order = hadapt_mem->q + hadapt_mem->adjust;
-  }
-  else
-  {
-    controller_order = SUNMIN(hadapt_mem->p, hadapt_mem->q) + hadapt_mem->adjust;
-  }
+  controller_order = SUNMIN(hadapt_mem->p, hadapt_mem->q) + hadapt_mem->adjust;
+
   retval = SUNAdaptController_EstimateStep(hadapt_mem->hcontroller, hcur,
                                            controller_order, dsm, &h_acc);
   if (retval != SUN_SUCCESS)

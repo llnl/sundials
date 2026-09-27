@@ -21,7 +21,7 @@ Mathematical Considerations
 
 KINSOL solves nonlinear algebraic systems in real :math:`N`-space.
 
-Using Newton’s method, or the Picard iteration, one can solve
+Using Newton's method, or the Picard iteration, one can solve
 
 .. math::
   F(u) = 0 \, , \quad F:\mathbb{R}^N \rightarrow \mathbb{R}^N \, ,
@@ -177,7 +177,7 @@ KINSOL implements a backtracking algorithm to first find a value :math:`\lambda`
 .. math:: F(u_n + \lambda\delta_n) \le F(u_n) + \alpha \nabla F(u_n)^T \lambda\delta_n \, ,
 
 where :math:`\alpha = 10^{-4}`. Although backtracking in itself guarantees that the step is not too small, KINSOL
-secondly relaxes :math:`\lambda` to satisfy the so-called :math:`\beta`-condition (equivalent to Wolfe’s curvature
+secondly relaxes :math:`\lambda` to satisfy the so-called :math:`\beta`-condition (equivalent to Wolfe's curvature
 condition):
 
 .. math:: F(u_n + \lambda\delta_n) \ge F(u_n) + \beta \nabla F(u_n)^T \lambda\delta_n \, ,
@@ -288,14 +288,14 @@ Constant :math:`\eta`
    with 0.1 as the default.
 
 The default strategy is "Eisenstat and Walker Choice 1". For both options 1 and 2, appropriate safeguards are
-incorporated to ensure that :math:`\eta` does not decrease too quickly :cite:p:`EiWa:96`.
+incorporated to ensure that :math:`\eta` does not decrease too quickly :cite:p:`EiWa:96`.
 
 Difference quotient Jacobian approximations
 -------------------------------------------
 
 With the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>` and :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix modules,
 the Jacobian may be supplied by a user routine, or approximated
-by difference quotients, at the user’s option. In the latter case, we use the usual approximation
+by difference quotients, at the user's option. In the latter case, we use the usual approximation
 
 .. math::
    J^{ij} = [F^i(u+\sigma_j e^j) - F^i(u)]/\sigma_j \, .
@@ -335,7 +335,7 @@ where :math:`u_{typ}` is a vector of typical values for the absolute values of t
 inverses of the scale factors given for :math:`u` as described below). This formula is suitable for *scaled* vectors
 :math:`u` and :math:`v`, and so is applied to :math:`D_u u` and :math:`D_u v`. The parameter :math:`U` above can
 (optionally) be replaced by a user-specified value, ``relfunc``. Convergence of the Newton method is maintained as long
-as the value of :math:`\sigma` remains appropriately small, as shown in :cite:p:`Bro:87`.
+as the value of :math:`\sigma` remains appropriately small, as shown in :cite:p:`Bro:87`.
 
 .. _KINSOL.Mathematics.FixedPoint:
 
@@ -381,7 +381,7 @@ see page 182 of :cite:p:`Ortega-Rheinbolt00`.
 Anderson Acceleration
 ---------------------
 
-The Picard and fixed point methods can be significantly accelerated using Anderson’s method
+The Picard and fixed point methods can be significantly accelerated using Anderson's method
 :cite:p:`Anderson65, Walker-Ni09, Fang-Saad09, LWWY11`. Anderson acceleration can be formulated as follows:
 
 1. Set :math:`u_0 =` an initial guess, :math:`m \ge 1`, and :math:`m_0 = 0`

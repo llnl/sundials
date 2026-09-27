@@ -106,7 +106,7 @@ namely
    :label: CVODE_errwt
 
 Because :math:`1/W_i` represents a tolerance in the component
-:math:`y_i`, a vector whose WRMS norm is 1 is regarded as “small.”
+:math:`y_i`, a vector whose WRMS norm is 1 is regarded as "small."
 
 .. _CVODE.Mathematics.nls:
 
@@ -136,7 +136,7 @@ solver and is discussed below and in :numref:`SUNNonlinSol.Newton`. For nonstiff
 systems, a *fixed-point iteration* (previously referred to as a functional
 iteration in this guide) solving :eq:`CVODE_nonlinear_fixedpoint` is also
 available. This involves evaluations of :math:`f` only and can (optionally) use
-Anderson’s method :cite:p:`Anderson65, Walker-Ni09, Fang-Saad09, LWWY11` to
+Anderson's method :cite:p:`Anderson65, Walker-Ni09, Fang-Saad09, LWWY11` to
 accelerate convergence (see :numref:`SUNNonlinSol.FixedPoint` for more details).
 For any nonlinear solver, the initial guess for the iteration is a predicted
 value :math:`y^{n(0)}` computed explicitly from the available history data.
@@ -293,7 +293,7 @@ a vector of ones.
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix
 objects, the Jacobian may be supplied by a user routine, or approximated
-by difference quotients, at the user’s option. In the latter case, we
+by difference quotients, at the user's option. In the latter case, we
 use the usual approximation
 
 .. math:: J_{ij} = [f_i(t,y+\sigma_j e_j) - f_i(t,y)]/\sigma_j \, .
@@ -331,7 +331,7 @@ The increment :math:`\sigma` is :math:`1/\|v\|_{\text{WRMS}}`, so that
 Local Error Test
 ----------------
 
-A critical part of CVODE — making it an ODE “solver” rather than
+A critical part of CVODE -- making it an ODE "solver" rather than
 just an ODE method, is its control of local error. At every step, the
 local error is estimated and required to satisfy tolerance conditions,
 and the step is redone with reduced step size whenever that error test
@@ -418,7 +418,7 @@ summarized in :cite:p:`HBGLSSW:05`.
 Normally, CVODE takes steps until a user-defined output value
 :math:`t = t_{\text{out}}` is overtaken, and then it
 computes :math:`y(t_{\text{out}})` by interpolation.
-However, a “one step” mode option is available, where control returns to
+However, a "one step" mode option is available, where control returns to
 the calling program after each step. There are also options to force
 CVODE not to integrate past a given stopping point
 :math:`t = t_{\text{stop}}`.
@@ -551,7 +551,7 @@ for preconditioning either side, or on both sides, although we know of
 no situation where preconditioning on both sides is clearly superior to
 preconditioning on one side only (with the product :math:`P_L P_R`).
 Moreover, for a given preconditioner matrix, the merits of left
-vs. right preconditioning are unclear in general, and the user should
+vs. right preconditioning are unclear in general, and the user should
 experiment with both choices. Performance will differ because the
 inverse of the left preconditioner is included in the linear system
 residual whose norm is being tested in the Krylov algorithm. As a rule,
@@ -650,7 +650,7 @@ to the CVODE solution. (In timing tests, these overhead costs have
 ranged from 2% to 7% of the total, depending on the size and complexity
 of the problem, with lower relative costs for larger problems.)
 Therefore, it should be activated only when there is reasonable
-expectation of modes in the user’s system for which it is appropriate.
+expectation of modes in the user's system for which it is appropriate.
 In particular, if a CVODE solution with this option turned off
 appears to take an inordinately large number of steps at orders 3-5 for
 no apparent reason in terms of the solution time scale, then there is a

@@ -82,7 +82,6 @@ int Test_SUNMatMatvecSetup(SUNMatrix A, int myid);
 int Test_SUNMatMatvec(SUNMatrix A, N_Vector x, N_Vector y, int myid);
 int Test_SUNMatHermitianTransposeVec(SUNMatrix A, SUNMatrix AT, N_Vector x,
                                      N_Vector y, int myid);
-int Test_SUNMatSpace(SUNMatrix A, int myid);
 
 /* Timing function */
 void SetTiming(int onoff);

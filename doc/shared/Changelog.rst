@@ -621,7 +621,7 @@ method after :c:func:`KINInit`. Additionally, :c:func:`KINSetMAA` and
 
 Fixed a bug in how MRIStep interacts with an MRIHTol SUNAdaptController object
 (the previous version essentially just reverted to a decoupled multirate
-controller). Removed the upper limit on `inner_max_tolfac` in
+controller). Removed the upper limit on ``inner_max_tolfac`` in
 :c:func:`SUNAdaptController_SetParams_MRIHTol`.
 
 The shared library version numbers for the oneMKL dense linear solver and
@@ -698,7 +698,7 @@ the number of "recompute passes" and has been fixed.
 
 **Deprecation Notices**
 
-The :c:func:`SPRKStepSetUseCompensatedSums` function has been deprecated. Use
+The ``SPRKStepSetUseCompensatedSums`` function has been deprecated. Use
 the :c:func:`ARKodeSetUseCompensatedSums` function instead.
 
 .. _Changelog.7.3.0:
@@ -980,7 +980,7 @@ Added the function :c:func:`MRIStepGetNumInnerStepperFails` to retrieve the
 number of recoverable failures reported by the MRIStepInnerStepper.
 
 Added a utility routine to wrap any valid ARKODE integrator for use as an
-MRIStep inner stepper object, :c:func:`ARKodeCreateMRIStepInnerStepper`.
+MRIStep inner stepper object, ``ARKodeCreateMRIStepInnerStepper``.
 
 The following DIRK schemes now have coefficients accurate to quad precision:
 
@@ -1078,7 +1078,7 @@ was not initialized to zero.
 
 *CVODE(S)*
 
-Fixed a bug where :c:func:`CVodeSetProjFailEta` would ignore the `eta`
+Fixed a bug where :c:func:`CVodeSetProjFailEta` would ignore the ``eta``
 parameter.
 
 *Fortran Interfaces*
@@ -1093,7 +1093,7 @@ Fixed a bug in the 32-bit ``sunindextype`` Fortran interfaces to
 
 Deprecated the ARKStep-specific utility routine for wrapping an ARKStep instance
 as an MRIStep inner stepper object,
-:c:func:`ARKStepCreateMRIStepInnerStepper`. Use
+``ARKStepCreateMRIStepInnerStepper``. Use
 :c:func:`ARKodeCreateMRIStepInnerStepper` instead.
 
 The ARKODE stepper specific functions to retrieve the number of right-hand side
@@ -1218,7 +1218,7 @@ Fixed a memory leak when an error handler was added to a
 :c:type:`SUNContext`. Fixes `GitHub Issue #466
 <https://github.com/LLNL/sundials/issues/466>`__.
 
-Fixed a bug where :c:func:`MRIStepEvolve` would not handle a recoverable error
+Fixed a bug where ``MRIStepEvolve`` would not handle a recoverable error
 produced from evolving the inner stepper.
 
 Added missing ``SetRootDirection`` and ``SetNoInactiveRootWarn`` functions to
@@ -1240,7 +1240,7 @@ Fixed several build errors with the Fortran interfaces on Windows systems.
 Numerous ARKODE stepper-specific functions are now deprecated in favor of
 ARKODE-wide functions.
 
-Deprecated the `ARKStepSetOptimalParams` function. Since this function does not have an
+Deprecated the ``ARKStepSetOptimalParams`` function. Since this function does not have an
 ARKODE-wide equivalent, instructions have been added to the user guide for how
 to retain the current functionality using other user-callable functions.
 
@@ -1338,8 +1338,8 @@ leverage the new SUNDIALS error handling capabilities.
 
 * From ``sundials_futils.h``
 
-  * :c:func:`SUNDIALSFileOpen`
-  * :c:func:`SUNDIALSFileClose`
+  * ``SUNDIALSFileOpen``
+  * ``SUNDIALSFileClose``
 
 * From ``sundials_memory.h``
 
@@ -1477,7 +1477,7 @@ Changes to SUNDIALS in release 6.7.0
 Added the :c:type:`SUNAdaptController` base class, ported ARKODE's internal
 implementations of time step controllers to implementations of this class, and
 updated ARKODE to use these objects instead of its own implementations. Added
-:c:func:`ARKStepSetAdaptController` and :c:func:`ERKStepSetAdaptController`
+``ARKStepSetAdaptController`` and ``ERKStepSetAdaptController``
 routines so that users can modify controller parameters, or even provide custom
 implementations.
 
@@ -1488,8 +1488,8 @@ function from :math:`\mathcal{O}(M * N)` to :math:`\mathcal{O}(\mathrm{NNZ})`.
 
 Added Fortran support for the LAPACK dense linear solver implementation.
 
-Added the routines :c:func:`ARKStepSetAdaptivityAdjustment` and
-:c:func:`ERKStepSetAdaptivityAdjustment`, that allow users to adjust the
+Added the routines ``ARKStepSetAdaptivityAdjustment`` and
+``ERKStepSetAdaptivityAdjustment``, that allow users to adjust the
 value for the method order supplied to the temporal adaptivity controllers.
 The ARKODE default for this adjustment has been :math:`-1` since its initial
 release, but for some applications a value of :math:`0` is more appropriate.
@@ -1526,7 +1526,7 @@ Fixed a bug in ERKStep where methods with :math:`c_s = 1` but
 :math:`a_{s,j} \neq b_j` were incorrectly treated as having the first same as
 last (FSAL) property.
 
-Fixed a bug in ARKODE where :c:func:`ARKStepSetInterpolateStopTime` would return
+Fixed a bug in ARKODE where ``ARKStepSetInterpolateStopTime`` would return
 an interpolated solution at the stop time in some cases when interpolation was
 disabled.
 
@@ -1583,8 +1583,8 @@ added to ARKODE. This time-stepper provides explicit symplectic partitioned
 Runge-Kutta methods up to order 10 for separable Hamiltonian systems.
 
 Added support for relaxation Runge-Kutta methods in ERKStep and ARKStep, see
-:ref:`ARKODE.Mathematics.Relaxation`, :ref:`ARKODE.Usage.ERKStep.Relaxation`,
-and :ref:`ARKODE.Usage.ARKStep.Relaxation` for more information.
+:ref:`ARKODE.Mathematics.Relaxation` and :ref:`ARKODE.Usage.Relaxation` for more
+information.
 
 **New Features**
 
@@ -1593,24 +1593,24 @@ solution when the internal time has reached a user-specified stop time.
 Previously, the output solution was interpolated to the value of ``tstop``; the
 default is now to copy the internal solution vector. Users who wish to revert to
 interpolation may call a new routine :c:func:`CVodeSetInterpolateStopTime`,
-:c:func:`ARKStepSetInterpolateStopTime`, :c:func:`ERKStepSetInterpolateStopTime`,
-or :c:func:`MRIStepSetInterpolateStopTime`.
+``ARKStepSetInterpolateStopTime``, ``ERKStepSetInterpolateStopTime``,
+``MRIStepSetInterpolateStopTime``.
 
 Added the second order IMEX method from :cite:p:`giraldo2013implicit` as the
 default second order IMEX method in ARKStep. The explicit table is given by
 ``ARKODE_ARK2_ERK_3_1_2`` and the implicit table by ``ARKODE_ARK2_DIRK_3_1_2``.
 
-Updated the F2003 utility routines :c:func:`SUNDIALSFileOpen` and
-:c:func:`SUNDIALSFileClose` to support user specification of ``stdout`` and
+Updated the F2003 utility routines ``SUNDIALSFileOpen`` and
+``SUNDIALSFileClose`` to support user specification of ``stdout`` and
 ``stderr`` strings for the output file names.
 
 **Bug Fixes**
 
 A potential bug was fixed when using inequality constraint handling and
-calling :c:func:`ARKStepGetEstLocalErrors` or :c:func:`ERKStepGetEstLocalErrors`
+calling ``ARKStepGetEstLocalErrors`` or ``ERKStepGetEstLocalErrors``
 after a failed step in which an inequality constraint violation occurred. In
-this case, the values returned by :c:func:`ARKStepGetEstLocalErrors` or
-:c:func:`ERKStepGetEstLocalErrors` may have been invalid.
+this case, the values returned by ``ARKStepGetEstLocalErrors`` or
+``ERKStepGetEstLocalErrors`` may have been invalid.
 
 .. _Changelog.6.5.1:
 
@@ -1621,17 +1621,17 @@ Changes to SUNDIALS in release 6.5.1
 
 Added the following functions to disable a previously set stop time:
 
-* :c:func:`ARKStepClearStopTime`
-* :c:func:`ERKStepClearStopTime`
-* :c:func:`MRIStepClearStopTime`
+* ``ARKStepClearStopTime``
+* ``ERKStepClearStopTime``
+* ``MRIStepClearStopTime``
 * :c:func:`CVodeClearStopTime`
 * :c:func:`IDAClearStopTime`
 
 The default interpolant in ARKODE when using a first order method has been
 updated to a linear interpolant to ensure values obtained by the integrator are
 returned at the ends of the time interval. To restore the previous behavior of
-using a constant interpolant call :c:func:`ARKStepSetInterpolantDegree`,
-:c:func:`ERKStepSetInterpolantDegree`, or :c:func:`MRIStepSetInterpolantDegree`
+using a constant interpolant call ``ARKStepSetInterpolantDegree``,
+``ERKStepSetInterpolantDegree``, or ``MRIStepSetInterpolantDegree``
 and set the interpolant degree to zero before evolving the problem.
 
 **Bug Fixes**
@@ -1655,12 +1655,12 @@ accessed through the :c:func:`SUNMemoryHelper_GetAllocStats` function. See
 Added the following functions to assist in debugging simulations utilizing
 matrix-based linear solvers:
 
-* :c:func:`ARKStepGetJac`
-* :c:func:`ARKStepGetJacTime`
-* :c:func:`ARKStepGetJacNumSteps`
-* :c:func:`MRIStepGetJac`
-* :c:func:`MRIStepGetJacTime`
-* :c:func:`MRIStepGetJacNumSteps`
+* ``ARKStepGetJac``
+* ``ARKStepGetJacTime``
+* ``ARKStepGetJacNumSteps``
+* ``MRIStepGetJac``
+* ``MRIStepGetJacTime``
+* ``MRIStepGetJacNumSteps``
 * :c:func:`CVodeGetJac`
 * :c:func:`CVodeGetJacTime`
 * :c:func:`CVodeGetJacNumSteps`
@@ -1765,9 +1765,9 @@ Changes to SUNDIALS in release 6.3.0
 Added the following functions to retrieve the user data pointer provided with
 ``SetUserData`` functions:
 
-* :c:func:`ARKStepGetUserData`
-* :c:func:`ERKStepGetUserData`
-* :c:func:`MRIStepGetUserData`
+* ``ARKStepGetUserData``
+* ``ERKStepGetUserData``
+* ``MRIStepGetUserData``
 * :c:func:`CVodeGetUserData`
 * :c:func:`IDAGetUserData`
 * :c:func:`KINGetUserData`
@@ -1775,7 +1775,7 @@ Added the following functions to retrieve the user data pointer provided with
 Added a variety of embedded DIRK methods from :cite:p:`KenCarp:16` and
 :cite:p:`KenCarp:19b`.
 
-Updated :c:func:`MRIStepReset` to call the corresponding
+Updated ``MRIStepReset`` to call the corresponding
 :c:type:`MRIStepInnerResetFn` with the same ``tR`` and ``yR`` arguments for the
 :c:type:`MRIStepInnerStepper` object that is used to evolve the MRI "fast" time
 scale subproblems.
@@ -1786,11 +1786,11 @@ rootfinding.
 
 **Bug Fixes**
 
-Fixed a bug in :c:func:`ERKStepReset`, :c:func:`ERKStepReInit`,
-:c:func:`ARKStepReset`, :c:func:`ARKStepReInit`, :c:func:`MRIStepReset`, and
+Fixed a bug in ``ERKStepReset``, :c:func:`ERKStepReInit`,
+``ARKStepReset``, :c:func:`ARKStepReInit`, ``MRIStepReset``, and
 :c:func:`MRIStepReInit` where a previously-set value of ``tstop`` (from
-a call to :c:func:`ERKStepSetStopTime`, :c:func:`ARKStepSetStopTime`, or
-:c:func:`MRIStepSetStopTime`, respectively) would not be cleared.
+a call to ``ERKStepSetStopTime``, ``ARKStepSetStopTime``, or
+``MRIStepSetStopTime``, respectively) would not be cleared.
 
 Fixed the unituitive behavior of the ``USE_GENERIC_MATH`` CMake option which
 caused the double precision math functions to be used regardless of the value of
@@ -1824,9 +1824,9 @@ counters to zero.
 Added the following functions to output all of the integrator, nonlinear solver,
 linear solver, and other statistics in one call:
 
-* :c:func:`ARKStepPrintAllStats`
-* :c:func:`ERKStepPrintAllStats`
-* :c:func:`MRIStepPrintAllStats`
+* ``ARKStepPrintAllStats``
+* ``ERKStepPrintAllStats``
+* ``MRIStepPrintAllStats``
 * :c:func:`CVodePrintAllStats`
 * :c:func:`IDAPrintAllStats`
 * :c:func:`KINPrintAllStats`
@@ -1854,13 +1854,13 @@ adaptivity parameters. For more information see the documentation for:
 * :c:func:`IDASetEtaMinErrFail`
 * :c:func:`IDASetEtaConvFail`
 
-Added the functions :c:func:`ARKStepSetDeduceImplicitRhs` and
-:c:func:`MRIStepSetDeduceImplicitRhs` to optionally remove an evaluation of the
+Added the functions ``ARKStepSetDeduceImplicitRhs`` and
+``MRIStepSetDeduceImplicitRhs`` to optionally remove an evaluation of the
 implicit right-hand side function after nonlinear solves. See
 :ref:`ARKODE.Mathematics.Nonlinear`, for considerations on using this
 optimization.
 
-Added the function :c:func:`MRIStepSetOrder` to select the default MRI method of
+Added the function ``MRIStepSetOrder`` to select the default MRI method of
 a given order.
 
 Added the functions :c:func:`CVodeSetDeltaGammaMaxLSetup` and
@@ -1901,10 +1901,10 @@ Jacobian or preconditioner, the initial failure was not included in the
 nonlinear solver failure count. The following functions have been updated to
 return the total number of nonlinear solver failures:
 
-* :c:func:`ARKStepGetNumNonlinSolvConvFails`
-* :c:func:`ARKStepGetNonlinSolvStats`
-* :c:func:`MRIStepGetNumNonlinSolvConvFails`
-* :c:func:`MRIStepGetNonlinSolvStats`
+* ``ARKStepGetNumNonlinSolvConvFails``
+* ``ARKStepGetNonlinSolvStats``
+* ``MRIStepGetNumNonlinSolvConvFails``
+* ``MRIStepGetNonlinSolvStats``
 * :c:func:`CVodeGetNumNonlinSolvConvFails`
 * :c:func:`CVodeGetNonlinSolvStats`
 * :c:func:`CVodeGetSensNumNonlinSolvConvFails`
@@ -1921,8 +1921,8 @@ reported from the above functions. The following functions have been added to
 retrieve the number of failed steps due to a nonlinear solver failure i.e., the
 counts previously returned by the above functions:
 
-* :c:func:`ARKStepGetNumStepSolveFails`
-* :c:func:`MRIStepGetNumStepSolveFails`
+* ``ARKStepGetNumStepSolveFails``
+* ``MRIStepGetNumStepSolveFails``
 * :c:func:`CVodeGetNumStepSolveFails`
 * :c:func:`CVodeGetNumStepSensSolveFails`
 * :c:func:`CVodeGetNumStepStgrSensSolveFails`
@@ -2129,7 +2129,7 @@ create the corresponding MRI coupling table and attach it with
 
 The previously deprecated functions ``ARKStepSetMaxStepsBetweenLSet`` and
 ``ARKStepSetMaxStepsBetweenJac`` have been removed and replaced with
-:c:func:`ARKStepSetLSetupFrequency` and :c:func:`ARKStepSetJacEvalFrequency`
+``ARKStepSetLSetupFrequency`` and ``ARKStepSetJacEvalFrequency``
 respectively.
 
 The previously deprecated function ``CVodeSetMaxStepsBetweenJac`` has been
@@ -2178,9 +2178,9 @@ functions as input. Codes using explicit or implicit MRI methods will need to
 update :c:func:`MRIStepCreate` and :c:func:`MRIStepReInit` calls to pass
 ``NULL`` for either the explicit or implicit right-hand side function as
 appropriate. If ARKStep is used as the fast time scale integrator, codes will
-need to call :c:func:`ARKStepCreateMRIStepInnerStepper` to wrap the ARKStep
+need to call ``ARKStepCreateMRIStepInnerStepper`` to wrap the ARKStep
 memory as an MRIStepInnerStepper object. Additionally,
-:c:func:`MRIStepGetNumRhsEvals` has been updated to return the number of slow
+``MRIStepGetNumRhsEvals`` has been updated to return the number of slow
 implicit and explicit function evaluations. The coupling table,
 :c:type:`MRIStepCoupling`, and the functions :c:func:`MRIStepCoupling_Alloc`
 and :c:func:`MRIStepCoupling_Create` have also been updated to support
@@ -2199,7 +2199,7 @@ requirements.
 Added a new function :c:func:`CVodeGetLinSolveStats` to get the CVODES linear
 solver statistics as a group.
 
-Added a new function, :c:func:`CVodeSetMonitorFn`, that takes a user-function
+Added a new function, ``CVodeSetMonitorFn``, that takes a user-function
 to be called by CVODES after every ``nst`` successfully completed time-steps.
 This is intended to provide a way of monitoring the CVODES statistics
 throughout the simulation.
@@ -2529,8 +2529,8 @@ removal in SUNDIALS v7.0.0. Note, this header file is not needed to use the
 SUNDIALS LAPACK linear solvers.
 
 Deprecated "bootstrap" and "minimum correction" predictors in ARKStep (options 4
-and 5 to :c:func:`ARKStepSetPredictorMethod`) and the "bootstrap" predictor in
-MRIStep (option 4 to :c:func:`MRIStepSetPredictorMethod`). These functions will
+and 5 to ``ARKStepSetPredictorMethod``) and the "bootstrap" predictor in
+MRIStep (option 4 to ``MRIStepSetPredictorMethod``). These functions will
 output a deprecation warning message and will be removed in a future release.
 
 .. _Changelog.5.8.0:
@@ -2573,8 +2573,8 @@ Added functions to ARKODE and CVODE(S) for supplying an alternative right-hand
 side function and to IDA(S) for supplying an alternative residual for use within
 nonlinear system function evaluations:
 
-* :c:func:`ARKStepSetNlsRhsFn`
-* :c:func:`MRIStepSetNlsRhsFn`
+* ``ARKStepSetNlsRhsFn``
+* ``MRIStepSetNlsRhsFn``
 * :c:func:`CVodeSetNlsRhsFn`
 * :c:func:`IDASetNlsResFn`
 
@@ -2730,12 +2730,12 @@ respectively. The API documentation and SUNDIALS provided
 before, the cumulative number of nonlinear iterations and failures may be
 retrieved with the following functions:
 
-* :c:func:`ARKStepGetNumNonlinSolvIters`
-* :c:func:`ARKStepGetNumNonlinSolvConvFails`
-* :c:func:`ARKStepGetNonlinSolvStats`
-* :c:func:`MRIStepGetNumNonlinSolvIters`
-* :c:func:`MRIStepGetNumNonlinSolvConvFails`
-* :c:func:`MRIStepGetNonlinSolvStats`
+* ``ARKStepGetNumNonlinSolvIters``
+* ``ARKStepGetNumNonlinSolvConvFails``
+* ``ARKStepGetNonlinSolvStats``
+* ``MRIStepGetNumNonlinSolvIters``
+* ``MRIStepGetNumNonlinSolvConvFails``
+* ``MRIStepGetNonlinSolvStats``
 * :c:func:`CVodeGetNumNonlinSolvIters`
 * :c:func:`CVodeGetNumNonlinSolvConvFails`
 * :c:func:`CVodeGetNonlinSolvStats`
@@ -2746,10 +2746,10 @@ retrieved with the following functions:
 Added the following the following functions that advanced users might find
 useful when providing a custom :c:func:`SUNNonlinSolSysFn`:
 
-* :c:func:`ARKStepComputeState`
-* :c:func:`ARKStepGetNonlinearSystemData`
-* :c:func:`MRIStepComputeState`
-* :c:func:`MRIStepGetNonlinearSystemData`
+* ``ARKStepComputeState``
+* ``ARKStepGetNonlinearSystemData``
+* ``MRIStepComputeState``
+* ``MRIStepGetNonlinearSystemData``
 * :c:func:`CVodeComputeState`
 * :c:func:`CVodeGetNonlinearSystemData`
 * :c:func:`IDAGetNonlinearSystemData`
@@ -2758,14 +2758,14 @@ Added new functions to CVODE(S), ARKODE, and IDA(S) to to specify the factor for
 converting between integrator tolerances (WRMS norm) and linear solver tolerances
 (L2 norm) i.e., ``tol_L2 = nrmfac * tol_WRMS``:
 
-* :c:func:`ARKStepSetLSNormFactor`
-* :c:func:`ARKStepSetMassLSNormFactor`
-* :c:func:`MRIStepSetLSNormFactor`
+* ``ARKStepSetLSNormFactor``
+* ``ARKStepSetMassLSNormFactor``
+* ``MRIStepSetLSNormFactor``
 * :c:func:`CVodeSetLSNormFactor`
 * :c:func:`IDASetLSNormFactor`
 
-Added new reset functions :c:func:`ARKStepReset`, :c:func:`ERKStepReset`,
-and :c:func:`MRIStepReset` to reset the stepper time and state vector to
+Added new reset functions ``ARKStepReset``, ``ERKStepReset``,
+and ``MRIStepReset`` to reset the stepper time and state vector to
 user-provided values for continuing the integration from that point while
 retaining the integration history. These function complement the
 reinitialization functions :c:func:`ARKStepReInit`, :c:func:`ERKStepReInit`,
@@ -2816,8 +2816,8 @@ For greater clarity the following functions have been deprecated:
 The following functions should be used instead:
 
 * :c:func:`CVodeSetJacEvalFrequency`
-* :c:func:`ARKStepSetJacEvalFrequency`
-* :c:func:`ARKStepSetLSetupFrequency`
+* ``ARKStepSetJacEvalFrequency``
+* ``ARKStepSetLSetupFrequency``
 
 .. _Changelog.5.3.0:
 
@@ -2853,7 +2853,7 @@ input function :c:func:`CVodeSetUseIntegratorFusedKernels` for more
 information. As with other SUNDIALS CUDA features, this is feature is
 experimental and may change from version to version.
 
-Added a new function, :c:func:`CVodeSetMonitorFn`, that takes a user-function
+Added a new function, ``CVodeSetMonitorFn``, that takes a user-function
 to be called by CVODE after every ``nst`` successfully completed time-steps.
 This is intended to provide a way of monitoring the CVODE statistics
 throughout the simulation.
@@ -2866,7 +2866,7 @@ side function (ARKODE and CVODE(S)), DAE residual function (IDA(S)), or nonlinea
 system function (KINSOL) for use when computing Jacobian-vector products with
 the internal difference quotient approximation:
 
-* :c:func:`ARKStepSetJacTimesRhsFn`
+* ``ARKStepSetJacTimesRhsFn``
 * :c:func:`CVodeSetJacTimesRhsFn`
 * :c:func:`CVodeSetJacTimesRhsFnB`
 * :c:func:`IDASetJacTimesResFn`
@@ -2879,14 +2879,14 @@ Fixed a bug in the iterative linear solvers where an error is not returned if
 the ``Atimes`` function is ``NULL`` or, if preconditioning is enabled, the
 ``PSolve`` function is ``NULL``.
 
-Fixed a bug in ARKODE where the prototypes for :c:func:`ERKStepSetMinReduction`
-and :c:func:`ARKStepSetMinReduction` were not included in ``arkode_erkstep.h``
+Fixed a bug in ARKODE where the prototypes for ``ERKStepSetMinReduction``
+and ``ARKStepSetMinReduction`` were not included in ``arkode_erkstep.h``
 and ``arkode_arkstep.h`` respectively.
 
 Fixed a bug in ARKODE where inequality constraint checking would need to be
 disabled and then re-enabled to update the inequality constraint values after
 resizing a problem. Resizing a problem will now disable constraints and a call
-to :c:func:`ARKStepSetConstraints` or :c:func:`ERKStepSetConstraints` is
+to ``ARKStepSetConstraints`` or ``ERKStepSetConstraints`` is
 required to re-enable constraint checking for the new problem size.
 
 .. _Changelog.5.2.0:
@@ -2900,7 +2900,7 @@ The following functions were added to each of the time integration packages to
 enable or disable the scaling applied to linear system solutions with
 matrix-based linear solvers to account for lagged matrix information:
 
-* :c:func:`ARKStepSetLinearSolutionScaling`
+* ``ARKStepSetLinearSolutionScaling``
 * :c:func:`CVodeSetLinearSolutionScaling`
 * :c:func:`CVodeSetLinearSolutionScalingB`
 * :c:func:`IDASetLinearSolutionScaling`
@@ -2924,15 +2924,15 @@ interpolation accuracy when integrating stiff problems, as opposed to the
 ARKODE-standard Hermite interpolation module that can suffer when the IVP
 right-hand side has large Lipschitz constant. While the Hermite module remains
 the default, the new Lagrange module may be enabled using one of the routines
-:c:func:`ARKStepSetInterpolantType`, :c:func:`ERKStepSetInterpolantType`, or
-:c:func:`MRIStepSetInterpolantType`. The serial example problem
+``ARKStepSetInterpolantType``, ``ERKStepSetInterpolantType``, or
+``MRIStepSetInterpolantType``. The serial example problem
 ``ark_brusselator.c`` has been converted to use this Lagrange interpolation
-module. Created accompanying routines :c:func:`ARKStepSetInterpolantDegree`,
-:c:func:`ARKStepSetInterpolantDegree` and :c:func:`ARKStepSetInterpolantDegree`
+module. Created accompanying routines ``ARKStepSetInterpolantDegree``,
+``ARKStepSetInterpolantDegree`` and ``ARKStepSetInterpolantDegree``
 to provide user control over these interpolating polynomials.
 
-Added two new functions, :c:func:`ARKStepSetMinReduction` and
-:c:func:`ERKStepSetMinReduction`, to change the minimum allowed step size
+Added two new functions, ``ARKStepSetMinReduction`` and
+``ERKStepSetMinReduction``, to change the minimum allowed step size
 reduction factor after an error test failure.
 
 **Bug Fixes**
@@ -2960,10 +2960,10 @@ after the first step would be ignored.
 
 **Deprecation Notice**
 
-The routines :c:func:`ARKStepSetDenseOrder`,  :c:func:`ARKStepSetDenseOrder` and
-:c:func:`ARKStepSetDenseOrder` have been deprecated and will be removed in a
-future release. The new functions :c:func:`ARKStepSetInterpolantDegree`,
-:c:func:`ARKStepSetInterpolantDegree`, and :c:func:`ARKStepSetInterpolantDegree`
+The routines ``ARKStepSetDenseOrder``,  ``ERKStepSetDenseOrder`` and
+``MRIStepSetDenseOrder`` have been deprecated and will be removed in a
+future release. The new functions ``ARKStepSetInterpolantDegree``,
+``ERKStepSetInterpolantDegree``, and ``MRIStepSetInterpolantDegree``
 should be used instead.
 
 .. _Changelog.5.1.0:
@@ -2978,12 +2978,12 @@ implicit stage solution in ARKStep. If supplied, this routine will be called
 *after* any existing ARKStep predictor algorithm completes, so that the
 predictor may be modified by the user as desired. The new user-supplied routine
 has type :c:type:`ARKStagePredictFn`, and may be set by calling
-:c:func:`ARKStepSetStagePredictFn`.
+``ARKStepSetStagePredictFn``.
 
 The MRIStep module has been updated to support attaching different user data
 pointers to the inner and outer integrators. If applicable, user codes will need
-to add a call to :c:func:`ARKStepSetUserData` to attach their user data pointer
-to the inner integrator memory as :c:func:`MRIStepSetUserData` will not set the
+to add a call to ``ARKStepSetUserData`` to attach their user data pointer
+to the inner integrator memory as ``MRIStepSetUserData`` will not set the
 pointer for both the inner and outer integrators. The MRIStep examples have been
 updated to reflect this change.
 
@@ -2996,8 +2996,8 @@ Added support for constant damping to the fixed-point
 :ref:`SUNNonlinSol.FixedPoint.Math` and the
 :c:func:`SUNNonlinSolSetDamping_FixedPoint` for more details.
 
-Added two utility functions, :c:func:`SUNDIALSFileOpen` and
-:c:func:`SUNDIALSFileClose` for creating/destroying file pointers. These are
+Added two utility functions, ``SUNDIALSFileOpen`` and
+``SUNDIALSFileClose`` for creating/destroying file pointers. These are
 useful when using the Fortran 2003 interfaces.
 
 Added a new build system option, ``CUDA_ARCH``, to specify the CUDA
@@ -3201,8 +3201,8 @@ Added the following functions to get the current state and gamma value to
 ARKStep, CVODE and CVODES that may be useful to users who choose to provide
 their own nonlinear solver implementation:
 
-* :c:func:`ARKStepGetCurrentState`
-* :c:func:`ARKStepGetCurrentGamma`
+* ``ARKStepGetCurrentState``
+* ``ARKStepGetCurrentGamma``
 * :c:func:`CVodeGetCurrentGamma`
 * :c:func:`CVodeGetCurrentState`
 * :c:func:`CVodeGetCurrentGamma`
@@ -3246,8 +3246,8 @@ Added two new embedded ARK methods of orders 4 and 5 to ARKODE (from
 
 Support for optional inequality constraints on individual components of the
 solution vector has been added the ARKODE ERKStep and ARKStep modules. See the
-descriptions of :c:func:`ERKStepSetConstraints` and
-:c:func:`ARKStepSetConstraints` for more details. Note that enabling constraint
+descriptions of ``ERKStepSetConstraints`` and
+``ARKStepSetConstraints`` for more details. Note that enabling constraint
 handling requires the :c:type:`N_Vector` operations :c:func:`N_VMinQuotient`,
 :c:func:`N_VConstrMask`, and :c:func:`N_VCompare` that were not previously
 required by ARKODE.
@@ -3431,7 +3431,7 @@ Users that wish to use the :ref:`fixed-point <SUNNonlinSol.FixedPoint>`
 :c:type:`SUNNonlinearSolver` will need to create the corresponding nonlinear
 solver object and attach it to the integrator with the appropriate set function:
 
-* :c:func:`ARKStepSetNonlinearSolver`
+* ``ARKStepSetNonlinearSolver``
 * :c:func:`CVodeSetNonlinearSolver`
 * :c:func:`IDASetNonlinearSolver`
 

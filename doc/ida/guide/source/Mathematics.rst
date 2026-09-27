@@ -41,12 +41,12 @@ Prior to integrating a DAE initial-value problem, an important requirement is
 that the pair of vectors :math:`y_0` and :math:`\dot{y}_0` are both initialized
 to satisfy the DAE residual :math:`F(t_0,y_0, \dot{y}_0) = 0`.  For a class of
 problems that includes so-called semi-explicit index-one systems, IDA provides a
-routine that computes consistent initial conditions from a user’s initial guess
+routine that computes consistent initial conditions from a user's initial guess
 :cite:p:`BHP:98`.  For this, the user must identify sub-vectors of :math:`y`
 (not necessarily contiguous), denoted :math:`y_d` and :math:`y_a`, which are its
 differential and algebraic parts, respectively, such that :math:`F` depends on
 :math:`\dot{y}_d` but not on any components of :math:`\dot{y}_a`. The assumption
-that the system is “index one” means that for a given :math:`t` and :math:`y_d`,
+that the system is "index one" means that for a given :math:`t` and :math:`y_d`,
 the system :math:`F(t,y,\dot{y}) = 0` defines :math:`y_a` uniquely. In this
 case, a solver within IDA computes :math:`y_a` and :math:`\dot{y}_d` at :math:`t
 = t_0`, given :math:`y_d` and an initial guess for :math:`y_a`. A second
@@ -99,7 +99,7 @@ solution and on the relative and absolute tolerances input by the user, namely
    :label: IDA_errwt
 
 Because :math:`1/W_i` represents a tolerance in the component :math:`y_i`, a
-vector whose WRMS norm is 1 is regarded as “small.”
+vector whose WRMS norm is 1 is regarded as "small."
 
 .. _IDA.Mathematics.nls:
 
@@ -412,7 +412,7 @@ to :math:`h_{\text{min}} \leq |h| \leq h_{\text{max}}` with the defaults
 
 Normally, IDA takes steps until a user-defined output value :math:`t =
 t_{\text{out}}` is overtaken, and then computes :math:`y(t_{\text{out}})` by
-interpolation. However, a “one step” mode option is available, where control
+interpolation. However, a "one step" mode option is available, where control
 returns to the calling program after each step. There are also options to force
 IDA not to integrate past a given stopping point :math:`t = t_{\text{stop}}`.
 
