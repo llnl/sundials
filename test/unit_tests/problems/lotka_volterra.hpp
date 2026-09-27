@@ -18,7 +18,9 @@
  *     u = [dx/dt] = [ p_0*x - p_1*x*y  ]
  *         [dy/dt]   [ -p_2*y + p_3*x*y ].
  *
- * with parameters p.
+ * with parameters p. It also provides component partitioned verions of the
+ * functions which end in _1 or _2 for the first and second component,
+ * respectively.
  * ---------------------------------------------------------------------------*/
 
 #ifndef _LOTKA_VOLTERRA_HPP
@@ -42,6 +44,32 @@ inline int ode_rhs(sunrealtype t, N_Vector uvec, N_Vector udotvec, void* user_da
   return 0;
 }
 
+inline int ode_rhs_1(sunrealtype t, N_Vector uvec, N_Vector udotvec,
+                     void* user_data)
+{
+  sunrealtype* p    = (sunrealtype*)user_data;
+  sunrealtype* u    = N_VGetArrayPointer(uvec);
+  sunrealtype* udot = N_VGetArrayPointer(udotvec);
+
+  udot[0] = p[0] * u[0] - p[1] * u[0] * u[1];
+  udot[1] = SUN_RCONST(0.0);
+
+  return 0;
+}
+
+inline int ode_rhs_2(sunrealtype t, N_Vector uvec, N_Vector udotvec,
+                     void* user_data)
+{
+  sunrealtype* p    = (sunrealtype*)user_data;
+  sunrealtype* u    = N_VGetArrayPointer(uvec);
+  sunrealtype* udot = N_VGetArrayPointer(udotvec);
+
+  udot[0] = SUN_RCONST(0.0);
+  udot[1] = -p[2] * u[1] + p[3] * u[0] * u[1];
+
+  return 0;
+}
+
 inline int ode_jac(sunrealtype t, N_Vector uvec, N_Vector udotvec, SUNMatrix Jac,
                    void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
@@ -57,6 +85,38 @@ inline int ode_jac(sunrealtype t, N_Vector uvec, N_Vector udotvec, SUNMatrix Jac
   return 0;
 }
 
+inline int ode_jac_1(sunrealtype t, N_Vector uvec, N_Vector udotvec,
+                     SUNMatrix Jac, void* user_data, N_Vector tmp1,
+                     N_Vector tmp2, N_Vector tmp3)
+{
+  sunrealtype* p = (sunrealtype*)user_data;
+  sunrealtype* u = N_VGetArrayPointer(uvec);
+  sunrealtype* J = SUNDenseMatrix_Data(Jac);
+
+  J[0] = p[0] - p[1] * u[1];
+  J[1] = SUN_RCONST(0.0);
+  J[2] = -p[1] * u[0];
+  J[3] = SUN_RCONST(0.0);
+
+  return 0;
+}
+
+inline int ode_jac_2(sunrealtype t, N_Vector uvec, N_Vector udotvec,
+                     SUNMatrix Jac, void* user_data, N_Vector tmp1,
+                     N_Vector tmp2, N_Vector tmp3)
+{
+  sunrealtype* p = (sunrealtype*)user_data;
+  sunrealtype* u = N_VGetArrayPointer(uvec);
+  sunrealtype* J = SUNDenseMatrix_Data(Jac);
+
+  J[0] = SUN_RCONST(0.0);
+  J[1] = p[3] * u[1];
+  J[2] = SUN_RCONST(0.0);
+  J[3] = p[3] * u[0] - p[2];
+
+  return 0;
+}
+
 inline int ode_vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t, N_Vector uvec,
                    N_Vector udotvec, void* user_data, N_Vector tmp)
 {
@@ -67,6 +127,34 @@ inline int ode_vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t, N_Vector uvec,
 
   Jv[0] = (p[0] - p[1] * u[1]) * v[0] + p[3] * u[1] * v[1];
   Jv[1] = -p[1] * u[0] * v[0] + (-p[2] + p[3] * u[0]) * v[1];
+
+  return 0;
+}
+
+inline int ode_vjp_1(N_Vector vvec, N_Vector Jvvec, sunrealtype t, N_Vector uvec,
+                     N_Vector udotvec, void* user_data, N_Vector tmp)
+{
+  sunrealtype* p  = (sunrealtype*)user_data;
+  sunrealtype* u  = N_VGetArrayPointer(uvec);
+  sunrealtype* v  = N_VGetArrayPointer(vvec);
+  sunrealtype* Jv = N_VGetArrayPointer(Jvvec);
+
+  Jv[0] = (p[0] - p[1] * u[1]) * v[0];
+  Jv[1] = -p[1] * u[0] * v[0];
+
+  return 0;
+}
+
+inline int ode_vjp_2(N_Vector vvec, N_Vector Jvvec, sunrealtype t, N_Vector uvec,
+                     N_Vector udotvec, void* user_data, N_Vector tmp)
+{
+  sunrealtype* p  = (sunrealtype*)user_data;
+  sunrealtype* u  = N_VGetArrayPointer(uvec);
+  sunrealtype* v  = N_VGetArrayPointer(vvec);
+  sunrealtype* Jv = N_VGetArrayPointer(Jvvec);
+
+  Jv[0] = p[3] * u[1] * v[1];
+  Jv[1] = (-p[2] + p[3] * u[0]) * v[1];
 
   return 0;
 }
@@ -90,6 +178,44 @@ inline int parameter_jacobian(sunrealtype t, N_Vector uvec, N_Vector udotvec,
   return 0;
 }
 
+inline int parameter_jacobian_1(sunrealtype t, N_Vector uvec, N_Vector udotvec,
+                                SUNMatrix Jac, void* user_data, N_Vector tmp1,
+                                N_Vector tmp2, N_Vector tmp3)
+{
+  sunrealtype* u = N_VGetArrayPointer(uvec);
+  sunrealtype* J = SUNDenseMatrix_Data(Jac);
+
+  J[0] = u[0];
+  J[1] = SUN_RCONST(0.0);
+  J[2] = -u[0] * u[1];
+  J[3] = SUN_RCONST(0.0);
+  J[4] = SUN_RCONST(0.0);
+  J[5] = SUN_RCONST(0.0);
+  J[6] = SUN_RCONST(0.0);
+  J[7] = SUN_RCONST(0.0);
+
+  return 0;
+}
+
+inline int parameter_jacobian_2(sunrealtype t, N_Vector uvec, N_Vector udotvec,
+                                SUNMatrix Jac, void* user_data, N_Vector tmp1,
+                                N_Vector tmp2, N_Vector tmp3)
+{
+  sunrealtype* u = N_VGetArrayPointer(uvec);
+  sunrealtype* J = SUNDenseMatrix_Data(Jac);
+
+  J[0] = SUN_RCONST(0.0);
+  J[1] = SUN_RCONST(0.0);
+  J[2] = SUN_RCONST(0.0);
+  J[3] = SUN_RCONST(0.0);
+  J[4] = SUN_RCONST(0.0);
+  J[5] = -u[1];
+  J[6] = SUN_RCONST(0.0);
+  J[7] = u[0] * u[1];
+
+  return 0;
+}
+
 inline int parameter_vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t,
                          N_Vector uvec, N_Vector udotvec, void* user_data,
                          N_Vector tmp)
@@ -100,6 +226,38 @@ inline int parameter_vjp(N_Vector vvec, N_Vector Jvvec, sunrealtype t,
 
   Jv[0] = u[0] * v[0];
   Jv[1] = -u[0] * u[1] * v[0];
+  Jv[2] = -u[1] * v[1];
+  Jv[3] = u[0] * u[1] * v[1];
+
+  return 0;
+}
+
+inline int parameter_vjp_1(N_Vector vvec, N_Vector Jvvec, sunrealtype t,
+                           N_Vector uvec, N_Vector udotvec, void* user_data,
+                           N_Vector tmp)
+{
+  sunrealtype* u  = N_VGetArrayPointer(uvec);
+  sunrealtype* v  = N_VGetArrayPointer(vvec);
+  sunrealtype* Jv = N_VGetArrayPointer(Jvvec);
+
+  Jv[0] = u[0] * v[0];
+  Jv[1] = -u[0] * u[1] * v[0];
+  Jv[2] = SUN_RCONST(0.0);
+  Jv[3] = SUN_RCONST(0.0);
+
+  return 0;
+}
+
+inline int parameter_vjp_2(N_Vector vvec, N_Vector Jvvec, sunrealtype t,
+                           N_Vector uvec, N_Vector udotvec, void* user_data,
+                           N_Vector tmp)
+{
+  sunrealtype* u  = N_VGetArrayPointer(uvec);
+  sunrealtype* v  = N_VGetArrayPointer(vvec);
+  sunrealtype* Jv = N_VGetArrayPointer(Jvvec);
+
+  Jv[0] = SUN_RCONST(0.0);
+  Jv[1] = SUN_RCONST(0.0);
   Jv[2] = -u[1] * v[1];
   Jv[3] = u[0] * u[1] * v[1];
 
