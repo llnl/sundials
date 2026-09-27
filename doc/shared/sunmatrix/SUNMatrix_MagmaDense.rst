@@ -50,12 +50,10 @@ shared libraries and ``.a`` for static libraries.
 
    The SUNMATRIX_MAGMADENSE module is experimental and subject to change.
 
-
 .. _SUNMatrix.MagmaDense.functions:
 
 SUNMATRIX_MAGMADENSE Functions
 -----------------------------------
-
 
 The SUNMATRIX_MAGMADENSE module defines GPU-enabled implementations of all
 matrix operations listed in :numref:`SUNMatrix.Ops`.
@@ -69,8 +67,6 @@ matrix operations listed in :numref:`SUNMatrix.Ops`.
 * ``SUNMatScaleAddI_MagmaDense``
 * ``SUNMatMatvecSetup_MagmaDense``
 * ``SUNMatMatvec_MagmaDense``
-* ``SUNMatSpace_MagmaDense``
-
 In addition, the SUNMATRIX_MAGMADENSE module defines the following
 implementation specific functions:
 
@@ -92,7 +88,6 @@ implementation specific functions:
    **Return value:**
       If successful, a ``SUNMatrix`` object otherwise ``NULL``.
 
-
 .. c:function:: SUNMatrix SUNMatrix_MagmaDenseBlock(sunindextype nblocks, sunindextype M_block, sunindextype N_block, SUNMemoryType memtype, SUNMemoryHelper memhelper, void* queue, SUNContext sunctx)
 
    This constructor function creates and allocates memory for a block diagonal
@@ -112,7 +107,6 @@ implementation specific functions:
    **Return value:**
       If successful, a ``SUNMatrix`` object otherwise ``NULL``.
 
-
 .. c:function:: sunindextype SUNMatrix_MagmaDense_Rows(SUNMatrix A)
 
    This function returns the number of rows in the ``SUNMatrix`` object. For
@@ -125,7 +119,6 @@ implementation specific functions:
    **Return value:**
       If successful, the number of rows in the ``SUNMatrix`` object otherwise
       ``SUNMATRIX_ILL_INPUT``.
-
 
 .. c:function:: sunindextype SUNMatrix_MagmaDense_Columns(SUNMatrix A)
 
@@ -140,7 +133,6 @@ implementation specific functions:
       If successful, the number of columns in the ``SUNMatrix`` object otherwise
       ``SUNMATRIX_ILL_INPUT``.
 
-
 .. c:function:: sunindextype SUNMatrix_MagmaDense_BlockRows(SUNMatrix A)
 
    This function returns the number of rows in a block of the ``SUNMatrix``
@@ -152,7 +144,6 @@ implementation specific functions:
    **Return value:**
       If successful, the number of rows in a block of the ``SUNMatrix`` object
       otherwise ``SUNMATRIX_ILL_INPUT``.
-
 
 .. c:function:: sunindextype SUNMatrix_MagmaDense_BlockColumns(SUNMatrix A)
 
@@ -166,7 +157,6 @@ implementation specific functions:
       If successful, the number of columns in a block of the ``SUNMatrix``
       object otherwise ``SUNMATRIX_ILL_INPUT``.
 
-
 .. c:function:: sunindextype SUNMatrix_MagmaDense_LData(SUNMatrix A)
 
    This function returns the length of the ``SUNMatrix`` data array.
@@ -177,7 +167,6 @@ implementation specific functions:
    **Return value:**
       If successful, the length of the ``SUNMatrix`` data array otherwise
       ``SUNMATRIX_ILL_INPUT``.
-
 
 .. c:function:: sunindextype SUNMatrix_MagmaDense_NumBlocks(SUNMatrix A)
 
@@ -191,7 +180,6 @@ implementation specific functions:
       If successful, the number of blocks in the ``SUNMatrix`` object otherwise
       ``SUNMATRIX_ILL_INPUT``.
 
-
 .. c:function:: sunrealtype* SUNMatrix_MagmaDense_Data(SUNMatrix A)
 
    This function returns the ``SUNMatrix`` data array.
@@ -201,7 +189,6 @@ implementation specific functions:
 
    **Return value:**
       If successful, the ``SUNMatrix`` data array otherwise ``NULL``.
-
 
 .. c:function:: sunrealtype** SUNMatrix_MagmaDense_BlockData(SUNMatrix A)
 
@@ -214,7 +201,6 @@ implementation specific functions:
    **Return value:**
       If successful, an array of data pointers to each of the ``SUNMatrix``
       blocks otherwise ``NULL``.
-
 
 .. c:function:: sunrealtype* SUNMatrix_MagmaDense_Block(SUNMatrix A, sunindextype k)
 
@@ -234,7 +220,6 @@ implementation specific functions:
       No bounds-checking is performed by this function, *j* should be strictly
       less than *nblocks*.
 
-
 .. c:function:: sunrealtype* SUNMatrix_MagmaDense_Column(SUNMatrix A, sunindextype j)
 
    This function returns a pointer to the data array for column *j* in the
@@ -252,7 +237,6 @@ implementation specific functions:
 
       No bounds-checking is performed by this function, *j* should be strictly
       less than :math:`nblocks * N_{\text{block}}`.
-
 
 .. c:function:: sunrealtype* SUNMatrix_MagmaDense_BlockColumn(SUNMatrix A, sunindextype k, sunindextype j)
 
@@ -274,8 +258,6 @@ implementation specific functions:
       less than *nblocks* and *j* should be strictly less than
       :math:`N_{\text{block}}`.
 
-
-
 .. c:function:: SUNErrCode SUNMatrix_MagmaDense_CopyToDevice(SUNMatrix A, sunrealtype* h_data)
 
    This function copies the matrix data to the GPU device from the provided host
@@ -291,7 +273,6 @@ implementation specific functions:
         ``SUNMATRIX_MAGMADENSE`` matrix.
       * ``SUN_ERR_MEM_FAIL`` -- if the copy fails.
 
-
 .. c:function:: SUNErrCode SUNMatrix_MagmaDense_CopyFromDevice(SUNMatrix A, sunrealtype* h_data)
 
    This function copies the matrix data from the GPU device to the provided host
@@ -306,7 +287,6 @@ implementation specific functions:
       * ``SUN_ERR_ARG_INCOMPATIBLE`` -- if the ``SUNMatrix`` is not a
         ``SUNMATRIX_MAGMADENSE`` matrix.
       * ``SUN_ERR_MEM_FAIL`` -- if the copy fails.
-
 
 SUNMATRIX_MAGMADENSE Usage Notes
 -----------------------------------

@@ -64,8 +64,6 @@ SUNMATRIX_CUSPARSE Functions
 ----------------------------------
 
 The SUNMATRIX_CUSPARSE module defines GPU-enabled sparse implementations of all matrix
-operations listed in :numref:`SUNMatrix.Ops` except for the :c:func:`SUNMatSpace`
-and :c:func:`SUNMatMatvecSetup` operations:
 
 * ``SUNMatGetID_cuSparse`` -- returns ``SUNMATRIX_CUSPARSE``
 
@@ -85,7 +83,6 @@ and :c:func:`SUNMatMatvecSetup` operations:
 
 * ``SUNMatMatvec_cuSparse``
 
-
 In addition, the SUNMATRIX_CUSPARSE module defines the following implementation specific
 functions:
 
@@ -95,7 +92,6 @@ functions:
    ``SUNMatrix`` that uses the CSR storage format. Its arguments are the
    number of rows and columns of the matrix, ``M`` and ``N``, the number of
    nonzeros to be stored in the matrix, ``NNZ``, and a valid ``cusparseHandle_t``.
-
 
 .. c:function:: SUNMatrix SUNMatrix_cuSparse_NewBlockCSR(int nblocks, int blockrows, int blockcols, int blocknnz, cusparseHandle_t cusp, SUNContext sunctx)
 
@@ -112,7 +108,6 @@ functions:
       The ``SUNMAT_CUSPARSE_BCSR`` format currently only supports square matrices, i.e.,
       ``blockrows == blockcols``.
 
-
 .. c:function:: SUNMatrix SUNMatrix_cuSparse_MakeCSR(cusparseMatDescr_t mat_descr, int M, int N, int NNZ, int *rowptrs , int *colind , sunrealtype *data, cusparseHandle_t cusp, SUNContext sunctx)
 
    This constructor function creates a SUNMATRIX_CUSPARSE ``SUNMatrix``
@@ -121,34 +116,28 @@ functions:
    and columns of the matrix, ``M`` and ``N``, the number of nonzeros to be stored
    in the matrix, ``NNZ``, and a valid ``cusparseHandle_t``.
 
-
 .. c:function:: int SUNMatrix_cuSparse_Rows(SUNMatrix A)
 
    This function returns the number of rows in the sparse ``SUNMatrix``.
 
-
 .. c:function:: int SUNMatrix_cuSparse_Columns(SUNMatrix A)
 
    This function returns the number of columns in the sparse ``SUNMatrix``.
-
 
 .. c:function:: int SUNMatrix_cuSparse_NNZ(SUNMatrix A)
 
    This function returns the number of entries allocated for nonzero
    storage for the sparse ``SUNMatrix``.
 
-
 .. c:function:: int SUNMatrix_cuSparse_SparseType(SUNMatrix A)
 
    This function returns the storage type (``SUNMAT_CUSPARSE_CSR``
    or ``SUNMAT_CUSPARSE_BCSR``) for the sparse ``SUNMatrix``.
 
-
 .. c:function:: sunrealtype* SUNMatrix_cuSparse_Data(SUNMatrix A)
 
    This function returns a pointer to the data array for the
    sparse ``SUNMatrix``.
-
 
 .. c:function:: int* SUNMatrix_cuSparse_IndexValues(SUNMatrix A)
 
@@ -156,7 +145,6 @@ functions:
    ``SUNMatrix`` -- for the CSR format this is an array of column indices for
    each nonzero entry. For the BCSR format this is an array of the column indices
    for each nonzero entry in the first block only.
-
 
 .. c:function:: int* SUNMatrix_cuSparse_IndexPointers(SUNMatrix A)
 
@@ -166,27 +154,22 @@ functions:
    for the BCSR format this is an array of the locations of each row in the
    ``data`` and ``indexvalues`` arrays in the first block only.
 
-
 .. c:function:: int SUNMatrix_cuSparse_NumBlocks(SUNMatrix A)
 
    This function returns the number of matrix blocks.
-
 
 .. c:function:: int SUNMatrix_cuSparse_BlockRows(SUNMatrix A)
 
    This function returns the number of rows in a matrix block.
 
-
 .. c:function:: int SUNMatrix_cuSparse_BlockColumns(SUNMatrix A)
 
    This function returns the number of columns in a matrix block.
-
 
 .. c:function:: int SUNMatrix_cuSparse_BlockNNZ(SUNMatrix A)
 
    This function returns the number of nonzeros in each
    matrix block.
-
 
 .. c:function:: sunrealtype* SUNMatrix_cuSparse_BlockData(SUNMatrix A, int blockidx)
 
@@ -195,12 +178,10 @@ functions:
    must be less than ``SUNMatrix_cuSparse_NumBlocks(A)``. The first block
    in the SUNMatrix is index 0, the second block is index 1, and so on.
 
-
 .. c:function:: cusparseMatDescr_t SUNMatrix_cuSparse_MatDescr(SUNMatrix A)
 
    This function returns the ``cusparseMatDescr_t`` object associated with
    the matrix.
-
 
 .. c:function:: SUNErrCode SUNMatrix_cuSparse_CopyToDevice(SUNMatrix A, sunrealtype* h_data, int* h_idxptrs, int* h_idxvals)
 
@@ -229,7 +210,6 @@ functions:
    The function returns ``SUN_SUCCESS`` if the copy operation(s) were successful,
    or a nonzero error code otherwise.
 
-
 .. c:function:: SUNErrCode SUNMatrix_cuSparse_SetFixedPattern(SUNMatrix A, sunbooleantype yesno)
 
    This function changes the behavior of the the ``SUNMatZero`` operation on the object
@@ -248,7 +228,6 @@ functions:
    a policy which tries to leverage the structure of the matrix. See
    :numref:`NVectors.CUDA.SUNCudaExecPolicy` for more information about the
    :cpp:type:`SUNCudaExecPolicy` class.
-
 
 .. _SUNMatrix.cuSparse.Notes:
 

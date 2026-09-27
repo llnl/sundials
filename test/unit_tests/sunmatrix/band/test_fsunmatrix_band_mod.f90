@@ -44,7 +44,6 @@ contains
     type(SUNMatrix), pointer :: A, B               ! SUNMatrix
     type(N_Vector), pointer :: x, y               ! NVectors
     real(c_double), pointer :: matdat(:)          ! matrix data pointer
-    integer(c_long)          :: lenrw(1), leniw(1) ! matrix real and int work space size
     integer(c_long)          :: val
     type(c_ptr), pointer :: cptr
 
@@ -86,8 +85,6 @@ contains
     fails = fails + FSUNMatScaleAdd_Band(ONE, A, B)
     fails = fails + FSUNMatScaleAddI_Band(ONE, A)
     fails = fails + FSUNMatMatvec_Band(A, x, y)
-    fails = fails + FSUNMatSpace_Band(A, lenrw, leniw)
-
     !======= Cleanup ===========
     call FSUNMatDestroy_Band(A)
     call FSUNMatDestroy_Band(B)
@@ -159,8 +156,6 @@ contains
     fails = fails + Test_FSUNMatScaleAdd(A, I, 0)
     fails = fails + Test_FSUNMatScaleAddI(A, I, 0)
     fails = fails + Test_FSUNMatMatvec(A, x, y, 0)
-    fails = fails + Test_FSUNMatSpace(A, 0)
-
     ! cleanup
     call FSUNMatDestroy(A)
     call FSUNMatDestroy(I)

@@ -31,7 +31,6 @@ Krylov iterative linear solvers supplied with SUNDIALS, FGMRES is
 specifically designed to work with a changing preconditioner
 (e.g. from an iterative method).
 
-
 .. _SUNLinSol.SPFGMR.Usage:
 
 SUNLinSol_SPFGMR Usage
@@ -42,10 +41,8 @@ is ``sunlinsol/sunlinsol_spfgmr.h``.  The SUNLinSol_SPFGMR module is
 accessible from all SUNDIALS solvers *without*
 linking to the ``libsundials_sunlinsolspfgmr`` module library.
 
-
 The module SUNLinSol_SPFGMR provides the following
 user-callable routines:
-
 
 .. c:function:: SUNLinearSolver SUNLinSol_SPFGMR(N_Vector y, int pretype, int maxl, SUNContext sunctx)
 
@@ -87,7 +84,6 @@ user-callable routines:
       these packages, this use mode is not supported and may result in
       inferior performance.
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPFGMRSetPrecType(SUNLinearSolver S, int pretype)
 
    This function updates the flag indicating use of preconditioning.
@@ -114,7 +110,6 @@ user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.prec_type".
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPFGMRSetGSType(SUNLinearSolver S, int gstype)
 
    This function sets the type of Gram-Schmidt orthogonalization to use.
@@ -134,7 +129,6 @@ user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.gs_type".
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPFGMRSetMaxRestarts(SUNLinearSolver S, int maxrs)
 
    This function sets the number of FGMRES restarts to allow.
@@ -152,13 +146,10 @@ user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.max_restarts".
 
-
-
 .. _SUNLinSol.SPFGMR.Description:
 
 SUNLinSol_SPFGMR Description
 ---------------------------------
-
 
 The SUNLinSol_SPFGMR module defines the *content* field of a
 ``SUNLinearSolver`` to be the following structure:
@@ -268,9 +259,6 @@ information:
 
 * ``vtemp`` - temporary vector storage.
 
-
-
-
 This solver is constructed to perform the following operations:
 
 * During construction, the ``xcor`` and ``vtemp`` arrays are cloned
@@ -326,7 +314,5 @@ The SUNLinSol_SPFGMR module defines implementations of all
 * ``SUNLinSolResid_SPFGMR``
 
 * ``SUNLinSolLastFlag_SPFGMR``
-
-* ``SUNLinSolSpace_SPFGMR``
 
 * ``SUNLinSolFree_SPFGMR``

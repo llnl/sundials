@@ -30,20 +30,6 @@ public:
   virtual T get() noexcept       = 0;
   virtual T get() const noexcept = 0;
 
-  [[deprecated("This function will be removed in the next major release, use "
-               "get() instead.")]] T
-  Convert() noexcept
-  {
-    return get();
-  }
-
-  [[deprecated("This function will be removed in the next major release, use "
-               "get() instead.")]] T
-  Convert() const noexcept
-  {
-    return get();
-  }
-
   // Implicit conversion to the underlying type
   virtual operator T()       = 0;
   virtual operator T() const = 0;

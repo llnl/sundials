@@ -104,8 +104,6 @@ SUNAdaptController SUNAdaptController_MRIHTol(SUNAdaptController HControl,
   C->ops->write           = SUNAdaptController_Write_MRIHTol;
   C->ops->seterrorbias    = SUNAdaptController_SetErrorBias_MRIHTol;
   C->ops->updatemrihtol   = SUNAdaptController_UpdateMRIHTol_MRIHTol;
-  C->ops->space           = SUNAdaptController_Space_MRIHTol;
-
   /* Create content */
   content = NULL;
   content = (SUNAdaptControllerContent_MRIHTol)malloc(sizeof *content);
@@ -365,19 +363,5 @@ SUNErrCode SUNAdaptController_UpdateMRIHTol_MRIHTol(SUNAdaptController C,
   SUNFunctionBegin(C->sunctx);
   SUNCheckCall(SUNAdaptController_UpdateH(MRIHTOL_CSLOW(C), H, DSM));
   SUNCheckCall(SUNAdaptController_UpdateH(MRIHTOL_CFAST(C), tolfac, dsm));
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNAdaptController_Space_MRIHTol(SUNAdaptController C,
-                                            long int* lenrw, long int* leniw)
-{
-  SUNFunctionBegin(C->sunctx);
-  SUNAssert(lenrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(leniw, SUN_ERR_ARG_CORRUPT);
-  long int lrw, liw;
-  SUNCheckCall(SUNAdaptController_Space(MRIHTOL_CSLOW(C), lenrw, leniw));
-  SUNCheckCall(SUNAdaptController_Space(MRIHTOL_CFAST(C), &lrw, &liw));
-  *lenrw += lrw;
-  *leniw += liw;
   return SUN_SUCCESS;
 }

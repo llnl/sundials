@@ -148,7 +148,6 @@ int main(int argc, char* argv[])
   }
   fails += Test_SUNMatMatvec(A, x, y, 0);
   fails += Test_SUNMatHermitianTransposeVec(A, AT, x, y, 0);
-  fails += Test_SUNMatSpace(A, 0);
 
   /* Print result */
   if (fails)

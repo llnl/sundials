@@ -172,9 +172,7 @@ module fsundials_core_mod
  public :: FSUNLogger_Destroy
  public :: FSUNFileOpen
  public :: FSUNFileFlush
- public :: FSUNDIALSFileOpen
  public :: FSUNFileClose
- public :: FSUNDIALSFileClose
  ! enum N_Vector_ID
  enum, bind(c)
   enumerator :: SUNDIALS_NVEC_SERIAL
@@ -206,7 +204,6 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: nvclone
   type(C_FUNPTR), public :: nvcloneempty
   type(C_FUNPTR), public :: nvdestroy
-  type(C_FUNPTR), public :: nvspace
   type(C_FUNPTR), public :: nvgetarraypointer
   type(C_FUNPTR), public :: nvgetdevicearraypointer
   type(C_FUNPTR), public :: nvsetarraypointer
@@ -273,7 +270,6 @@ module fsundials_core_mod
  public :: FN_VClone
  public :: FN_VCloneEmpty
  public :: FN_VDestroy
- public :: FN_VSpace
  public :: FN_VSetArrayPointer
  public :: FN_VSetDeviceArrayPointer
  public :: FN_VGetCommunicator
@@ -361,7 +357,6 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: matvecsetup
   type(C_FUNPTR), public :: matvec
   type(C_FUNPTR), public :: mathermitiantransposevec
-  type(C_FUNPTR), public :: space
  end type SUNMatrix_Ops
  ! struct struct _generic_SUNMatrix
  type, bind(C), public :: SUNMatrix
@@ -382,7 +377,6 @@ module fsundials_core_mod
  public :: FSUNMatMatvecSetup
  public :: FSUNMatMatvec
  public :: FSUNMatHermitianTransposeVec
- public :: FSUNMatSpace
  ! enum SUNPrecType
  enum, bind(c)
   enumerator :: SUN_PREC_NONE
@@ -462,7 +456,6 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: numiters
   type(C_FUNPTR), public :: resnorm
   type(C_FUNPTR), public :: lastflag
-  type(C_FUNPTR), public :: space
   type(C_FUNPTR), public :: resid
   type(C_FUNPTR), public :: free
  end type SUNLinearSolver_Ops
@@ -488,7 +481,6 @@ module fsundials_core_mod
  public :: FSUNLinSolResNorm
  public :: FSUNLinSolResid
  public :: FSUNLinSolLastFlag
- public :: FSUNLinSolSpace
  public :: FSUNLinSolFree
  integer(C_INT), parameter, public :: SUNLS_ATIMES_NULL = -804_C_INT
  integer(C_INT), parameter, public :: SUNLS_ATIMES_FAIL_UNREC = -805_C_INT
@@ -585,7 +577,6 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: seterrorbias
   type(C_FUNPTR), public :: updateh
   type(C_FUNPTR), public :: updatemrihtol
-  type(C_FUNPTR), public :: space
  end type SUNAdaptController_Ops
  ! struct struct _generic_SUNAdaptController
  type, bind(C), public :: SUNAdaptController
@@ -605,7 +596,6 @@ module fsundials_core_mod
  public :: FSUNAdaptController_SetErrorBias
  public :: FSUNAdaptController_UpdateH
  public :: FSUNAdaptController_UpdateMRIHTol
- public :: FSUNAdaptController_Space
  ! enum SUNFullRhsMode
  enum, bind(c)
   enumerator :: SUN_FULLRHS_START
@@ -1163,27 +1153,8 @@ type(C_PTR), value :: farg1
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNDIALSFileOpen(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNDIALSFileOpen") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-import :: swigarraywrapper
-type(SwigArrayWrapper) :: farg1
-type(SwigArrayWrapper) :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FSUNFileClose(farg1) &
 bind(C, name="_wrap_FSUNFileClose") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNDIALSFileClose(farg1) &
-bind(C, name="_wrap_FSUNDIALSFileClose") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -1241,14 +1212,6 @@ subroutine swigc_FN_VDestroy(farg1) &
 bind(C, name="_wrap_FN_VDestroy")
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
-end subroutine
-
-subroutine swigc_FN_VSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FN_VSpace")
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 end subroutine
 
 subroutine swigc_FN_VSetArrayPointer(farg1, farg2) &
@@ -1858,16 +1821,6 @@ type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNMatSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNMatSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FSUNModifiedGS(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSUNModifiedGS") &
 result(fresult)
@@ -2123,16 +2076,6 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 integer(C_INT64_T) :: fresult
-end function
-
-function swigc_FSUNLinSolSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNLinSolSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
 end function
 
 function swigc_FSUNLinSolFree(farg1) &
@@ -2428,16 +2371,6 @@ real(C_DOUBLE), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
 real(C_DOUBLE), intent(in) :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_Space(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNAdaptController_Space") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -3996,27 +3929,6 @@ fresult = swigc_FSUNFileFlush(farg1)
 swig_result = fresult
 end function
 
-function FSUNDIALSFileOpen(filename, modes, fp) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-character(kind=C_CHAR, len=*), target :: filename
-character(kind=C_CHAR), dimension(:), allocatable, target :: farg1_chars
-character(kind=C_CHAR, len=*), target :: modes
-character(kind=C_CHAR), dimension(:), allocatable, target :: farg2_chars
-type(C_PTR), target, intent(inout) :: fp
-integer(C_INT) :: fresult 
-type(SwigArrayWrapper) :: farg1 
-type(SwigArrayWrapper) :: farg2 
-type(C_PTR) :: farg3 
-
-call SWIG_string_to_chararray(filename, farg1_chars, farg1)
-call SWIG_string_to_chararray(modes, farg2_chars, farg2)
-farg3 = c_loc(fp)
-fresult = swigc_FSUNDIALSFileOpen(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FSUNFileClose(fp) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -4027,19 +3939,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(fp)
 fresult = swigc_FSUNFileClose(farg1)
-swig_result = fresult
-end function
-
-function FSUNDIALSFileClose(fp) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR), target, intent(inout) :: fp
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(fp)
-fresult = swigc_FSUNDIALSFileClose(farg1)
 swig_result = fresult
 end function
 
@@ -4127,21 +4026,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(v)
 call swigc_FN_VDestroy(farg1)
-end subroutine
-
-subroutine FN_VSpace(v, lrw, liw)
-use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: v
-integer(C_INT64_T), dimension(*), target, intent(inout) :: lrw
-integer(C_INT64_T), dimension(*), target, intent(inout) :: liw
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(v)
-farg2 = c_loc(lrw(1))
-farg3 = c_loc(liw(1))
-call swigc_FN_VSpace(farg1, farg2, farg3)
 end subroutine
 
 subroutine FN_VSetArrayPointer(v_data_1d, v)
@@ -5238,25 +5122,6 @@ fresult = swigc_FSUNMatHermitianTransposeVec(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
-function FSUNMatSpace(a, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(a)
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FSUNMatSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FSUNModifiedGS(v_1d, h_2d, k, p, new_vk_norm) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -5752,25 +5617,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(s)
 fresult = swigc_FSUNLinSolLastFlag(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolSpace(s, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(s)
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FSUNLinSolSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
@@ -6311,25 +6157,6 @@ farg3 = tolfac
 farg4 = dsm
 farg5 = dsm4
 fresult = swigc_FSUNAdaptController_UpdateMRIHTol(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_Space(c, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(c)
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FSUNAdaptController_Space(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

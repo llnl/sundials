@@ -148,7 +148,6 @@ are defined ``arkode/arkode_mristep.h``.
    +-------------------------------------------+--------------------------------------------------------------------+
    | :c:func:`MRIStepCoupling_Copy`            | Create a copy of a MRIStepCoupling table                           |
    +-------------------------------------------+--------------------------------------------------------------------+
-   | :c:func:`MRIStepCoupling_Space`           | Get the MRIStepCoupling table real and integer workspace sizes     |
    +-------------------------------------------+--------------------------------------------------------------------+
    | :c:func:`MRIStepCoupling_Free`            | Deallocate a MRIStepCoupling table                                 |
    +-------------------------------------------+--------------------------------------------------------------------+
@@ -233,7 +232,6 @@ are defined ``arkode/arkode_mristep.h``.
    .. versionchanged:: 7.2.0 (ARKODE 6.2.0)
 
       This function now supports a broader range of MRI method types.
-
 
 
 .. c:function:: MRIStepCoupling MRIStepCoupling_Create(int nmat, int stages, int q, int p, sunrealtype *W, sunrealtype *G, sunrealtype *c)
@@ -344,24 +342,6 @@ are defined ``arkode/arkode_mristep.h``.
    :returns: An :c:type:`MRIStepCoupling` structure if successful.
              A ``NULL`` pointer if an allocation error occurred.
 
-
-.. c:function:: void MRIStepCoupling_Space(MRIStepCoupling C, sunindextype *liw, sunindextype *lrw)
-
-   Get the real and integer workspace size for a coupling table.
-
-   :param C: the coupling table.
-   :param lenrw: the number of ``sunrealtype`` values in the coupling table
-                 workspace.
-   :param leniw: the number of integer values in the coupling table workspace.
-
-   :retval ARK_SUCCESS: if successful.
-   :retval ARK_MEM_NULL: if the Butcher table memory was ``NULL``.
-
-   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
-
-      Work space functions will be removed in version 8.0.0.
-
-
 .. c:function:: void MRIStepCoupling_Free(MRIStepCoupling C)
 
    Deallocate the coupling table memory.
@@ -380,9 +360,6 @@ are defined ``arkode/arkode_mristep.h``.
 
       The *outfile* argument can be ``stdout`` or ``stderr``, or it may point to
       a specific file created using ``fopen``.
-
-
-
 
 
 .. _ARKODE.Usage.MRIStep.MRIStepCoupling.Tables:
@@ -411,7 +388,6 @@ with values specified for each method below (e.g., ``ARKODE_MIS_KW3``).
    When using any of the following methods that do not include embeddings
    (marked with "Embedding Order" shown as "--"), users must specify the
    time step by calling :c:func:`ARKodeSetFixedStep`.
-
 
 
 .. table:: Explicit MRIStep coupling tables.

@@ -447,7 +447,6 @@ int main(int argc, char* argv[])
   fails += Test_SUNLinSolGetType(LS, SUNLINEARSOLVER_DIRECT, grid.iam);
   fails += Test_SUNLinSolGetID(LS, SUNLINEARSOLVER_SUPERLUDIST, grid.iam);
   fails += Test_SUNLinSolLastFlag(LS, grid.iam);
-  fails += Test_SUNLinSolSpace(LS, grid.iam);
 
   /* Print result */
   if (fails)

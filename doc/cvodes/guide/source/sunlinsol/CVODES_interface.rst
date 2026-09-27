@@ -68,8 +68,6 @@ implementation that is being used. Note:
    +----------------------------------------+-----------------+-----------------+------------------+
    | :math:`^3` :c:func:`SUNLinSolFree`     |                 |                 |                  |
    +----------------------------------------+-----------------+-----------------+------------------+
-   | :c:func:`SUNLinSolSpace`               | :math:`\dagger` | :math:`\dagger` | :math:`\dagger`  |
-   +----------------------------------------+-----------------+-----------------+------------------+
 
 Since there are a wide range of potential ``SUNLinearSolver`` use cases, the following
 subsections describe some details of the CVLS interface, in the case that

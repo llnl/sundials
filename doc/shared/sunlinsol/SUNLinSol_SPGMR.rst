@@ -28,8 +28,6 @@ this is an iterative linear solver that is designed to be compatible with any
 :c:func:`N_VLinearSum()`, :c:func:`N_VProd()`, :c:func:`N_VConst()`,
 :c:func:`N_VDiv()`, and :c:func:`N_VDestroy()`).
 
-
-
 .. _SUNLinSol.SPGMR.Usage:
 
 SUNLinSol_SPGMR Usage
@@ -40,10 +38,8 @@ is ``sunlinsol/sunlinsol_spgmr.h``.  The SUNinSol_SPGMR module
 is accessible from all SUNDIALS solvers *without*
 linking to the ``libsundials_sunlinsolspgmr`` module library.
 
-
 The module SUNLinSol_SPGMR provides the following
 user-callable routines:
-
 
 .. c:function:: SUNLinearSolver SUNLinSol_SPGMR(N_Vector y, int pretype, int maxl, SUNContext sunctx)
 
@@ -80,7 +76,6 @@ user-callable routines:
       with these solvers, this use mode is not supported and may result
       in inferior performance.
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPGMRSetPrecType(SUNLinearSolver S, int pretype)
 
    This function updates the flag indicating use of preconditioning.
@@ -102,7 +97,6 @@ user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.prec_type".
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPGMRSetGSType(SUNLinearSolver S, int gstype)
 
    This function sets the type of Gram-Schmidt orthogonalization to use.
@@ -122,7 +116,6 @@ user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.gs_type".
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPGMRSetMaxRestarts(SUNLinearSolver S, int maxrs)
 
    This function sets the number of GMRES restarts to allow.
@@ -140,12 +133,10 @@ user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.max_restarts".
 
-
 .. _SUNLinSol.SPGMR.Description:
 
 SUNLinSol_SPGMR Description
 -----------------------------
-
 
 The SUNLinSol_SPGMR module defines the *content* field of a
 ``SUNLinearSolver`` to be the following structure:
@@ -252,9 +243,6 @@ information:
 
 * ``vtemp`` - temporary vector storage.
 
-
-
-
 This solver is constructed to perform the following operations:
 
 * During construction, the ``xcor`` and ``vtemp`` arrays are
@@ -311,7 +299,5 @@ The SUNLinSol_SPGMR module defines implementations of all
 * ``SUNLinSolResid_SPGMR``
 
 * ``SUNLinSolLastFlag_SPGMR``
-
-* ``SUNLinSolSpace_SPGMR``
 
 * ``SUNLinSolFree_SPGMR``

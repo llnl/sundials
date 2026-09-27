@@ -139,7 +139,6 @@ SUNLinearSolver SUNLinSol_OneMklDense(N_Vector y, SUNMatrix Amat,
   S->ops->setup      = SUNLinSolSetup_OneMklDense;
   S->ops->solve      = SUNLinSolSolve_OneMklDense;
   S->ops->lastflag   = SUNLinSolLastFlag_OneMklDense;
-  S->ops->space      = SUNLinSolSpace_OneMklDense;
   S->ops->free       = SUNLinSolFree_OneMklDense;
 
   // Create content
@@ -590,22 +589,6 @@ int SUNLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 sunindextype SUNLinSolLastFlag_OneMklDense(SUNLinearSolver S)
 {
   return LS_LASTFLAG(S);
-}
-
-SUNErrCode SUNLinSolSpace_OneMklDense(SUNLinearSolver S, long int* lenrwLS,
-                                      long int* leniwLS)
-{
-  if (!S)
-  {
-    SUNDIALS_DEBUG_ERROR("Linear solver is NULL\n");
-    return SUN_ERR_ARG_CORRUPT;
-  }
-
-  *lenrwLS = 0;
-  *leniwLS = 2 + LS_CONTENT(S)->rows;
-
-  LS_LASTFLAG(S) = SUN_SUCCESS;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_OneMklDense(SUNLinearSolver S)

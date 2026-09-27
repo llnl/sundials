@@ -189,10 +189,6 @@ void* ARKStepCreate(ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0,
   step_mem->fe = fe;
   step_mem->fi = fi;
 
-  /* Update the ARKODE workspace requirements */
-  ark_mem->liw += 41; /* fcn/data ptr, int, long int, sunindextype, sunbooleantype */
-  ark_mem->lrw += 10;
-
   /* If an implicit component is to be solved, create default Newton NLS object */
   step_mem->ownNLS = SUNFALSE;
   if (step_mem->implicit)
@@ -359,40 +355,28 @@ int arkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
 {
   ARKodeARKStepMem step_mem;
   SUNNonlinearSolver NLS;
-  sunindextype lrw1, liw1, lrw_diff, liw_diff;
   int i, retval;
 
   /* access ARKodeARKStepMem structure */
   retval = arkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* Determine change in vector sizes */
-  lrw1 = liw1 = 0;
-  if (y0->ops->nvspace != NULL) { N_VSpace(y0, &lrw1, &liw1); }
-  lrw_diff      = lrw1 - ark_mem->lrw1;
-  liw_diff      = liw1 - ark_mem->liw1;
-  ark_mem->lrw1 = lrw1;
-  ark_mem->liw1 = liw1;
-
   /* Resize the sdata, zpred and zcor vectors */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                    &step_mem->sdata))
+  if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->sdata))
   {
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                     "Unable to resize vector");
     return (ARK_MEM_FAIL);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                    &step_mem->zpred))
+  if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->zpred))
   {
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                     "Unable to resize vector");
     return (ARK_MEM_FAIL);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                    &step_mem->zcor))
+  if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->zcor))
   {
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                     "Unable to resize vector");
@@ -405,8 +389,7 @@ int arkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   {
     for (i = 0; i < step_mem->stages; i++)
     {
-      if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                        &step_mem->Fe[i]))
+      if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->Fe[i]))
       {
         arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                         "Unable to resize vector");
@@ -419,8 +402,7 @@ int arkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   {
     for (i = 0; i < step_mem->stages; i++)
     {
-      if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                        &step_mem->Fi[i]))
+      if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->Fi[i]))
       {
         arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                         "Unable to resize vector");
@@ -490,7 +472,6 @@ int arkStep_ComputeState(ARKodeMem ark_mem, N_Vector zcor, N_Vector z)
 void arkStep_Free(ARKodeMem ark_mem)
 {
   int j;
-  sunindextype Bliw, Blrw;
   ARKodeARKStepMem step_mem;
 
   /* nothing to do if ark_mem is already NULL */
@@ -504,19 +485,13 @@ void arkStep_Free(ARKodeMem ark_mem)
     /* free the Butcher tables */
     if (step_mem->Be != NULL)
     {
-      ARKodeButcherTable_Space(step_mem->Be, &Bliw, &Blrw);
       ARKodeButcherTable_Free(step_mem->Be);
       step_mem->Be = NULL;
-      ark_mem->liw -= Bliw;
-      ark_mem->lrw -= Blrw;
     }
     if (step_mem->Bi != NULL)
     {
-      ARKodeButcherTable_Space(step_mem->Bi, &Bliw, &Blrw);
       ARKodeButcherTable_Free(step_mem->Bi);
       step_mem->Bi = NULL;
-      ark_mem->liw -= Bliw;
-      ark_mem->lrw -= Blrw;
     }
 
     /* free the nonlinear solver memory (if applicable) */
@@ -544,52 +519,40 @@ void arkStep_Free(ARKodeMem ark_mem)
     /* free the sdata, zpred and zcor vectors */
     if (step_mem->sdata != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->sdata);
+      arkFreeVec(&step_mem->sdata);
       step_mem->sdata = NULL;
     }
     if (step_mem->zpred != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->zpred);
+      arkFreeVec(&step_mem->zpred);
       step_mem->zpred = NULL;
     }
     if (step_mem->zcor != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->zcor);
+      arkFreeVec(&step_mem->zcor);
       step_mem->zcor = NULL;
     }
 
     /* free the RHS vectors */
     if (step_mem->Fe != NULL)
     {
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        arkFreeVec(ark_mem, &step_mem->Fe[j]);
-      }
+      for (j = 0; j < step_mem->stages; j++) { arkFreeVec(&step_mem->Fe[j]); }
       free(step_mem->Fe);
       step_mem->Fe = NULL;
-      ark_mem->liw -= step_mem->stages;
     }
     if (step_mem->Fi != NULL)
     {
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        arkFreeVec(ark_mem, &step_mem->Fi[j]);
-      }
+      for (j = 0; j < step_mem->stages; j++) { arkFreeVec(&step_mem->Fi[j]); }
       free(step_mem->Fi);
       step_mem->Fi = NULL;
-      ark_mem->liw -= step_mem->stages;
     }
 
     /* free stage vectors */
     if (step_mem->z != NULL)
     {
-      for (j = 0; j < step_mem->stages; j++)
-      {
-        arkFreeVec(ark_mem, &step_mem->z[j]);
-      }
+      for (j = 0; j < step_mem->stages; j++) { arkFreeVec(&step_mem->z[j]); }
       free(step_mem->z);
       step_mem->z = NULL;
-      ark_mem->liw -= step_mem->stages;
     }
 
     /* free the reusable arrays for fused vector interface */
@@ -597,13 +560,11 @@ void arkStep_Free(ARKodeMem ark_mem)
     {
       free(step_mem->cvals);
       step_mem->cvals = NULL;
-      ark_mem->lrw -= step_mem->nfusedopvecs;
     }
     if (step_mem->Xvecs != NULL)
     {
       free(step_mem->Xvecs);
       step_mem->Xvecs = NULL;
-      ark_mem->liw -= step_mem->nfusedopvecs;
     }
     step_mem->nfusedopvecs = 0;
 
@@ -612,14 +573,12 @@ void arkStep_Free(ARKodeMem ark_mem)
     {
       free(step_mem->stage_times);
       step_mem->stage_times = NULL;
-      ark_mem->lrw -= step_mem->stages;
     }
 
     if (step_mem->stage_coefs)
     {
       free(step_mem->stage_coefs);
       step_mem->stage_coefs = NULL;
-      ark_mem->lrw -= step_mem->stages;
     }
 
     /* free the time stepper module itself */
@@ -1035,9 +994,7 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     /*   Allocate Fe[0] ... Fe[stages-1] if needed */
     if (step_mem->explicit)
     {
-      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fe),
-                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                            &(ark_mem->liw)))
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fe)))
       {
         return (ARK_MEM_FAIL);
       }
@@ -1046,9 +1003,7 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     /*   Allocate Fi[0] ... Fi[stages-1] if needed */
     if (step_mem->implicit)
     {
-      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fi),
-                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                            &(ark_mem->liw)))
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->Fi)))
       {
         return (ARK_MEM_FAIL);
       }
@@ -1059,9 +1014,7 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     if (ark_mem->relax_enabled &&
         (step_mem->implicit || step_mem->mass_type == MASS_FIXED))
     {
-      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->z),
-                            ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                            &(ark_mem->liw)))
+      if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->z)))
       {
         return (ARK_MEM_FAIL);
       }
@@ -1074,14 +1027,12 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
       step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
                                              sizeof(sunrealtype));
       if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
-      ark_mem->lrw += step_mem->nfusedopvecs;
     }
     if (step_mem->Xvecs == NULL)
     {
       step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
                                           sizeof(N_Vector));
       if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
-      ark_mem->liw += step_mem->nfusedopvecs; /* pointers */
     }
 
     /* Allocate workspace for MRI forcing -- need to allocate here as the
@@ -1090,14 +1041,12 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     {
       step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
                                                    sizeof(sunrealtype));
-      ark_mem->lrw += step_mem->stages;
     }
 
     if (!(step_mem->stage_coefs))
     {
       step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
                                                    sizeof(sunrealtype));
-      ark_mem->lrw += step_mem->stages;
     }
 
     /* Override the interpolant degree (if needed), used in arkInitialSetup */
@@ -2546,7 +2495,6 @@ int arkStep_SetButcherTables(ARKodeMem ark_mem)
 {
   int etable, itable;
   ARKodeARKStepMem step_mem;
-  sunindextype Blrw, Bliw;
 
   /* access ARKodeARKStepMem structure */
   if (ark_mem->step_mem == NULL)
@@ -2638,15 +2586,6 @@ int arkStep_SetButcherTables(ARKodeMem ark_mem)
 
   if (etable > -1) { step_mem->Be = ARKodeButcherTable_LoadERK(etable); }
   if (itable > -1) { step_mem->Bi = ARKodeButcherTable_LoadDIRK(itable); }
-
-  /* note Butcher table space requirements */
-  ARKodeButcherTable_Space(step_mem->Be, &Bliw, &Blrw);
-  ark_mem->liw += Bliw;
-  ark_mem->lrw += Blrw;
-
-  ARKodeButcherTable_Space(step_mem->Bi, &Bliw, &Blrw);
-  ark_mem->liw += Bliw;
-  ark_mem->lrw += Blrw;
 
   /* set [redundant] ARK stored values for stage numbers and method orders */
   if (step_mem->Be != NULL)
@@ -3970,16 +3909,8 @@ int arkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
       if ((step_mem->nfusedopvecs - nvecs) < (2 * step_mem->stages + 2))
       {
         /* free current work space */
-        if (step_mem->cvals != NULL)
-        {
-          free(step_mem->cvals);
-          ark_mem->lrw -= step_mem->nfusedopvecs;
-        }
-        if (step_mem->Xvecs != NULL)
-        {
-          free(step_mem->Xvecs);
-          ark_mem->liw -= step_mem->nfusedopvecs;
-        }
+        if (step_mem->cvals != NULL) { free(step_mem->cvals); }
+        if (step_mem->Xvecs != NULL) { free(step_mem->Xvecs); }
 
         /* allocate reusable arrays for fused vector operations */
         step_mem->nfusedopvecs = 2 * step_mem->stages + 2 + nvecs;
@@ -3988,13 +3919,11 @@ int arkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
         step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
                                                sizeof(sunrealtype));
         if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
-        ark_mem->lrw += step_mem->nfusedopvecs;
 
         step_mem->Xvecs = NULL;
         step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
                                             sizeof(N_Vector));
         if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
-        ark_mem->liw += step_mem->nfusedopvecs;
       }
     }
   }

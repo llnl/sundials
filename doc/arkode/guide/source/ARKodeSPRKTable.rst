@@ -111,7 +111,6 @@ ARKodeSPRKTable functions
    +----------------------------------------------+------------------------------------------------------------+
    | :c:func:`ARKodeSPRKTable_Copy()`             | Create a copy of a table                                   |
    +----------------------------------------------+------------------------------------------------------------+
-   | :c:func:`ARKodeSPRKTable_Space()`            | Get the table real and integer workspace size              |
    +----------------------------------------------+------------------------------------------------------------+
    | :c:func:`ARKodeSPRKTable_Free()`             | Deallocate a table                                         |
    +----------------------------------------------+------------------------------------------------------------+
@@ -163,18 +162,6 @@ ARKodeSPRKTable functions
 
    :param sprk_table: The :c:type:`ARKodeSPRKTable` to write.
    :param outfile: The FILE that will be written to.
-
-.. c:function:: void ARKodeSPRKTable_Space(ARKodeSPRKTable sprk_table, sunindextype* liw, sunindextype* lrw)
-
-   Get the workspace sizes required for the :c:type:`ARKodeSPRKTable`.
-
-   :param sprk_table: The :c:type:`ARKodeSPRKTable`.
-   :param liw: Pointer to store the integer workspace size.
-   :param lrw: Pointer to store the real workspace size.
-
-   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: void ARKodeSPRKTable_Free(ARKodeSPRKTable sprk_table)
 

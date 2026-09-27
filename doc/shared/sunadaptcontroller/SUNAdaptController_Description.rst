@@ -124,11 +124,6 @@ The virtual table structure is defined as
 
       .. versionadded:: 7.2.0
 
-   .. c:member:: SUNErrCode (*space)(SUNAdaptController C, long int *lenrw, long int *leniw)
-
-      The function implementing :c:func:`SUNAdaptController_Space`
-
-
 .. _SUNAdaptController.Description.controllerTypes:
 
 SUNAdaptController Types
@@ -159,8 +154,6 @@ following set of SUNAdaptController types:
    time scale within a multirate simulation that has an arbitrary number of time scales.
 
    .. versionadded:: 7.2.0
-
-
 
 .. _SUNAdaptController.Description.operations:
 
@@ -200,7 +193,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
   :param C: the :c:type:`SUNAdaptController` object.
   :return: :c:type:`SUNErrCode` indicating success or failure.
 
-
 .. c:function:: SUNAdaptController_Type SUNAdaptController_GetType(SUNAdaptController C)
 
    Returns the type identifier for the controller *C*. Returned values
@@ -208,7 +200,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
 
    :param C: the :c:type:`SUNAdaptController` object.
    :return: :c:type:`SUNAdaptController_Type` type identifier.
-
 
 .. c:function:: SUNErrCode SUNAdaptController_Destroy(SUNAdaptController C)
 
@@ -222,7 +213,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
    :param C: the :c:type:`SUNAdaptController` object.
    :return: :c:type:`SUNErrCode` indicating success or failure.
 
-
 .. c:function:: SUNErrCode SUNAdaptController_EstimateStep(SUNAdaptController C, sunrealtype h, int p, sunrealtype dsm, sunrealtype* hnew)
 
    Estimates a single-rate step size. This routine is required for controllers
@@ -235,7 +225,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
    :param dsm: the local temporal estimate from the previous step attempt.
    :param hnew: (output) the estimated step size.
    :return: :c:type:`SUNErrCode` indicating success or failure.
-
 
 .. c:function:: SUNErrCode SUNAdaptController_EstimateStepTol(SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P, sunrealtype DSM, sunrealtype dsm, sunrealtype* Hnew, sunrealtype* tolfacnew)
 
@@ -260,7 +249,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
 
    .. versionadded:: 7.2.0
 
-
 .. c:function:: SUNErrCode SUNAdaptController_Reset(SUNAdaptController C)
 
    Resets the controller to its initial state, e.g., if it stores a small number
@@ -268,7 +256,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
 
    :param C:  the :c:type:`SUNAdaptController` object.
    :return: :c:type:`SUNErrCode` indicating success or failure.
-
 
 .. c:function:: SUNErrCode SUNAdaptController_SetOptions(SUNAdaptController C, const char* Cid, const char* file_name, int argc, char* argv[])
 
@@ -317,7 +304,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
 
    .. versionadded:: 7.5.0
 
-
 .. c:function:: SUNErrCode SUNAdaptController_SetDefaults(SUNAdaptController C)
 
    Sets the controller parameters to their default values.
@@ -329,7 +315,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
 
       This routine will be called by :c:func:`SUNAdaptController_SetOptions`
       when using the key "Cid.defaults".
-
 
 .. c:function:: SUNErrCode SUNAdaptController_Write(SUNAdaptController C, FILE* fptr)
 
@@ -343,7 +328,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
 
       This routine will be called by :c:func:`SUNAdaptController_SetOptions`
       when using the key "Cid.write_parameters".
-
 
 .. c:function:: SUNErrCode SUNAdaptController_SetErrorBias(SUNAdaptController C, sunrealtype bias)
 
@@ -361,7 +345,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
       This routine will be called by :c:func:`SUNAdaptController_SetOptions`
       when using the key "Cid.error_bias".
 
-
 .. c:function:: SUNErrCode SUNAdaptController_UpdateH(SUNAdaptController C, sunrealtype h, sunrealtype dsm)
 
    Notifies a controller of type ``SUN_ADAPTCONTROLLER_H`` that a successful time step
@@ -374,7 +357,6 @@ note these requirements below. Additionally, we note the behavior of the base SU
    :param h:  the successful step size.
    :param dsm:  the successful temporal error estimate.
    :return: :c:type:`SUNErrCode` indicating success or failure.
-
 
 .. c:function:: SUNErrCode SUNAdaptController_UpdateMRIHTol(SUNAdaptController C, sunrealtype H, sunrealtype tolfac, sunrealtype DSM, sunrealtype dsm)
 
@@ -393,55 +375,3 @@ note these requirements below. Additionally, we note the behavior of the base SU
 
    .. versionadded:: 7.2.0
 
-
-.. c:function:: SUNErrCode SUNAdaptController_Space(SUNAdaptController C, long int *lenrw, long int *leniw)
-
-   Informative routine that returns the memory requirements of the
-   :c:type:`SUNAdaptController` object.
-
-   :param C:  the :c:type:`SUNAdaptController` object..
-   :param lenrw: (output)  number of ``sunsunrealtype`` words stored in the
-                 controller.
-   :param leniw: (output)  number of ``sunindextype`` words stored in the
-                 controller. This may also include pointers, `int` and
-                 `long int` words.
-   :return: :c:type:`SUNErrCode` indicating success or failure.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
-
-
-C/C++ API Usage
----------------
-
-Specific SUNDIALS adaptivity controller modules can be used in C and C++ programs by including
-the corresponding header file for that module, e.g. ``sunadaptcontroller/sunadaptcontroller_XYZ.h``.
-
-Example usage (here ``SUNAdaptController_XYZ`` is a placeholder for an actual SUNAdaptController
-constructor):
-
-.. code-block:: c
-
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <sundials/sundials_context.h>
-    #include <sundials/sundials_types.h>
-    #include <sunadaptcontroller/sunadaptcontroller_XYZ.h>
-
-    int main()
-    {
-        /* Create a SUNContext object */
-        SUNContext sunctx = ...;
-
-        /* Create a SUNAdaptController object */
-        SUNAdaptController C = SUNAdaptController_XYZ(sunctx);
-
-        /* Use the control object */
-
-        /* Destroy the control object */
-        retval = SUNAdaptController_Destroy(C);
-
-        return 0;
-    }

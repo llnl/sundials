@@ -315,9 +315,8 @@ typedef struct _generic_ARKInterp* ARKInterp;
 struct _generic_ARKInterpOps
 {
   int (*resize)(ARKodeMem ark_mem, ARKInterp interp, ARKVecResizeFn resize,
-                void* resize_data, sunindextype lrw_diff, sunindextype liw_diff,
-                N_Vector tmpl);
-  void (*free)(ARKodeMem ark_mem, ARKInterp interp);
+                void* resize_data, N_Vector tmpl);
+  void (*free)(ARKInterp interp);
   void (*print)(ARKInterp interp, FILE* outfile);
   int (*setdegree)(ARKodeMem ark_mem, ARKInterp interp, int degree);
   int (*init)(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew);
@@ -336,9 +335,8 @@ struct _generic_ARKInterp
 
 /* ARKInterp module functions */
 int arkInterpResize(ARKodeMem ark_mem, ARKInterp interp, ARKVecResizeFn resize,
-                    void* resize_data, sunindextype lrw_diff,
-                    sunindextype liw_diff, N_Vector tmpl);
-void arkInterpFree(ARKodeMem ark_mem, ARKInterp interp);
+                    void* resize_data, N_Vector tmpl);
+void arkInterpFree(ARKInterp interp);
 void arkInterpPrintMem(ARKInterp interp, FILE* outfile);
 int arkInterpSetDegree(ARKodeMem ark_mem, ARKInterp interp, int degree);
 int arkInterpInit(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew);
@@ -535,12 +533,6 @@ struct ARKodeMemRec
   long int ncfn;         /* num corrector convergence failures         */
   long int netf;         /* num error test failures                    */
 
-  /* Space requirements for ARKODE */
-  sunindextype lrw1; /* no. of sunrealtype words in 1 N_Vector          */
-  sunindextype liw1; /* no. of integer words in 1 N_Vector           */
-  long int lrw;      /* no. of sunrealtype words in ARKODE work vectors */
-  long int liw;      /* no. of integer words in ARKODE work vectors  */
-
   /* Saved Values */
   sunrealtype h0u;   /* actual initial stepsize                     */
   sunrealtype tn;    /* time of last successful step                */
@@ -634,23 +626,16 @@ void arkProcessError(ARKodeMem ark_mem, int error_code, int line,
 ARKodeMem arkCreate(SUNContext sunctx);
 int arkInit(ARKodeMem ark_mem, sunrealtype t0, N_Vector y0, int init_type);
 sunbooleantype arkAllocVec(ARKodeMem ark_mem, N_Vector tmpl, N_Vector* v);
-sunbooleantype arkAllocVecArray(int count, N_Vector tmpl, N_Vector** v,
-                                sunindextype lrw1, long int* lrw,
-                                sunindextype liw1, long int* liw);
+sunbooleantype arkAllocVecArray(int count, N_Vector tmpl, N_Vector** v);
 sunbooleantype arkAllocVectors(ARKodeMem ark_mem, N_Vector tmpl);
 sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
-                                void* resize_data, sunindextype lrw_diff,
-                                sunindextype liw_diff, N_Vector tmpl);
+                                void* resize_data, N_Vector tmpl);
 sunbooleantype arkResizeVec(ARKodeMem ark_mem, ARKVecResizeFn resize,
-                            void* resize_data, sunindextype lrw_diff,
-                            sunindextype liw_diff, N_Vector tmpl, N_Vector* v);
+                            void* resize_data, N_Vector tmpl, N_Vector* v);
 sunbooleantype arkResizeVecArray(ARKVecResizeFn resize, void* resize_data,
-                                 int count, N_Vector tmpl, N_Vector** v,
-                                 sunindextype lrw_diff, long int* lrw,
-                                 sunindextype liw_diff, long int* liw);
-void arkFreeVec(ARKodeMem ark_mem, N_Vector* v);
-void arkFreeVecArray(int count, N_Vector** v, sunindextype lrw1, long int* lrw,
-                     sunindextype liw1, long int* liw);
+                                 int count, N_Vector tmpl, N_Vector** v);
+void arkFreeVec(N_Vector* v);
+void arkFreeVecArray(int count, N_Vector** v);
 void arkFreeVectors(ARKodeMem ark_mem);
 sunbooleantype arkCheckTimestepper(ARKodeMem ark_mem);
 sunbooleantype arkCheckNvectorRequired(N_Vector tmpl);
@@ -687,9 +672,6 @@ int arkAccessHAdaptMem(void* arkode_mem, const char* fname, ARKodeMem* ark_mem,
 
 int arkReplaceAdaptController(ARKodeMem ark_mem, SUNAdaptController C,
                               sunbooleantype take_ownership);
-int arkSetAdaptivityMethod(void* arkode_mem, int imethod, int idefault, int pq,
-                           sunrealtype adapt_params[3]);
-int arkSetAdaptivityFn(void* arkode_mem, ARKAdaptFn hfun, void* h_data);
 
 ARKODE_DIRKTableID arkButcherTableDIRKNameToID(const char* imethod);
 ARKODE_ERKTableID arkButcherTableERKNameToID(const char* emethod);

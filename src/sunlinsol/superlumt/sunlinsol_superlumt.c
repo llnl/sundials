@@ -118,7 +118,6 @@ SUNLinearSolver SUNLinSol_SuperLUMT(N_Vector y, SUNMatrix A, int num_threads,
   S->ops->setup      = SUNLinSolSetup_SuperLUMT;
   S->ops->solve      = SUNLinSolSolve_SuperLUMT;
   S->ops->lastflag   = SUNLinSolLastFlag_SuperLUMT;
-  S->ops->space      = SUNLinSolSpace_SuperLUMT;
   S->ops->free       = SUNLinSolFree_SuperLUMT;
 
   /* Create content */
@@ -446,16 +445,6 @@ int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 sunindextype SUNLinSolLastFlag_SuperLUMT(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
-}
-
-SUNErrCode SUNLinSolSpace_SuperLUMT(SUNLinearSolver S, long int* lenrwLS,
-                                    long int* leniwLS)
-{
-  /* since the SuperLU_MT structures are opaque objects, we
-     omit those from these results */
-  *leniwLS = 5 + 2 * SIZE(S);
-  *lenrwLS = 1;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_SuperLUMT(SUNLinearSolver S)

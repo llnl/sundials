@@ -99,9 +99,6 @@ SUNDIALS_EXPORT N_Vector_ID N_VGetVectorID_Trilinos(N_Vector v);
 SUNDIALS_EXPORT N_Vector N_VCloneEmpty_Trilinos(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VClone_Trilinos(N_Vector w);
 SUNDIALS_EXPORT void N_VDestroy_Trilinos(N_Vector v);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-void N_VSpace_Trilinos(N_Vector v, sunindextype* lrw, sunindextype* liw);
 SUNDIALS_EXPORT SUNComm N_VGetCommunicator_Trilinos(N_Vector v);
 SUNDIALS_EXPORT sunindextype N_VGetLength_Trilinos(N_Vector v);
 SUNDIALS_EXPORT void N_VLinearSum_Trilinos(sunrealtype a, N_Vector x,

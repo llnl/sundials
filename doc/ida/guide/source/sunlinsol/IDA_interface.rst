@@ -65,8 +65,6 @@ implementation that is being used. Note:
    +----------------------------------------+-----------------+-----------------+------------------+
    | :math:`^2`\ :c:func:`SUNLinSolFree`    |                 |                 |                  |
    +----------------------------------------+-----------------+-----------------+------------------+
-   | :c:func:`SUNLinSolSpace`               | :math:`\dagger` | :math:`\dagger` | :math:`\dagger`  |
-   +----------------------------------------+-----------------+-----------------+------------------+
 
 Since there are a wide range of potential ``SUNLinearSolver`` use cases, the following
 subsections describe some details of the IDALS interface, in the case that

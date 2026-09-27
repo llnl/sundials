@@ -359,18 +359,6 @@ SWIGEXPORT void _wrap_FN_VDestroy_MPIManyVector(N_Vector farg1) {
 }
 
 
-SWIGEXPORT void _wrap_FN_VSpace_MPIManyVector(N_Vector farg1, int32_t *farg2, int32_t *farg3) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunindextype *arg2 = (sunindextype *) 0 ;
-  sunindextype *arg3 = (sunindextype *) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (sunindextype *)(farg2);
-  arg3 = (sunindextype *)(farg3);
-  N_VSpace_MPIManyVector(arg1,arg2,arg3);
-}
-
-
 SWIGEXPORT int _wrap_FN_VGetCommunicator_MPIManyVector(N_Vector farg1) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;

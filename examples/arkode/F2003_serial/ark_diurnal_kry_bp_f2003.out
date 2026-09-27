@@ -43,8 +43,5 @@
     Avg Krylov subspace dim         =  2.730479E+00
     Num nonlinear solver fails      =        0
     Num linear solver fails         =      145
-    main solver real/int workspace sizes   =     3930         144
-    linear solver real/int workspace sizes =     2455          42
-    ARKBandPre real/int workspace sizes    =     2800         622
     ARKBandPre number of f evaluations     =       20
   

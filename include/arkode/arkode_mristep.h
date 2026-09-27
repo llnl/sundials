@@ -26,7 +26,6 @@
 #include <arkode/arkode_butcher_erk.h>
 #include <arkode/arkode_ls.h>
 #include <arkode/arkode_lsrkstep.h>
-#include <arkode/arkode_mristep_deprecated.h>
 #include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
 #include <sundials/sundials_stepper.h>
 
@@ -99,10 +98,6 @@ enum ARKODE_MRITableID
 #ifndef SWIG
 typedef enum ARKODE_MRITableID ARKODE_MRITableID;
 #endif
-
-/* deprecated names */
-static const int ARKODE_IMEX_MRI_GARK_ARK2        = ARKODE_IMEX_MRI_GARK_GKC21;
-static const int ARKODE_IMEX_MRI_GARK_ASCHER_ARK2 = ARKODE_IMEX_MRI_GARK_ARS222;
 
 /* Default MRI coupling tables for each order and type */
 static const int MRISTEP_DEFAULT_EXPL_1 = ARKODE_MRI_GARK_FORWARD_EULER;
@@ -187,10 +182,6 @@ SUNDIALS_EXPORT MRIStepCoupling MRIStepCoupling_Create(int nmat, int stages,
 SUNDIALS_EXPORT MRIStepCoupling MRIStepCoupling_MIStoMRI(ARKodeButcherTable B,
                                                          int q, int p);
 SUNDIALS_EXPORT MRIStepCoupling MRIStepCoupling_Copy(MRIStepCoupling MRIC);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-void MRIStepCoupling_Space(MRIStepCoupling MRIC, sunindextype* liw,
-                           sunindextype* lrw);
 SUNDIALS_EXPORT void MRIStepCoupling_Free(MRIStepCoupling MRIC);
 SUNDIALS_EXPORT void MRIStepCoupling_Write(MRIStepCoupling MRIC, FILE* outfile);
 
