@@ -38,7 +38,6 @@ module fnvector_manyvector_mod
  public :: FN_VCloneEmpty_ManyVector
  public :: FN_VClone_ManyVector
  public :: FN_VDestroy_ManyVector
- public :: FN_VSpace_ManyVector
  public :: FN_VGetLength_ManyVector
  public :: FN_VGetSubvectorLocalLength_ManyVector
  public :: FN_VLinearSum_ManyVector
@@ -168,14 +167,6 @@ subroutine swigc_FN_VDestroy_ManyVector(farg1) &
 bind(C, name="_wrap_FN_VDestroy_ManyVector")
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
-end subroutine
-
-subroutine swigc_FN_VSpace_ManyVector(farg1, farg2, farg3) &
-bind(C, name="_wrap_FN_VSpace_ManyVector")
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 end subroutine
 
 function swigc_FN_VGetLength_ManyVector(farg1) &
@@ -746,21 +737,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(v)
 call swigc_FN_VDestroy_ManyVector(farg1)
-end subroutine
-
-subroutine FN_VSpace_ManyVector(v, lrw, liw)
-use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: v
-integer(C_INT64_T), dimension(*), target, intent(inout) :: lrw
-integer(C_INT64_T), dimension(*), target, intent(inout) :: liw
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(v)
-farg2 = c_loc(lrw(1))
-farg3 = c_loc(liw(1))
-call swigc_FN_VSpace_ManyVector(farg1, farg2, farg3)
 end subroutine
 
 function FN_VGetLength_ManyVector(v) &

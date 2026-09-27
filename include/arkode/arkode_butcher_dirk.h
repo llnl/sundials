@@ -69,10 +69,6 @@ enum ARKODE_DIRKTableID
   ARKODE_MAX_DIRK_NUM = ARKODE_ARS222_ESDIRK_3_1_2
 };
 
-/* deprecated names */
-static const int ARKODE_ARK2_DIRK_3_1_2    = ARKODE_GKC21_ESDIRK_3_1_2;
-static const int ARKODE_ASCHER_SDIRK_3_1_2 = ARKODE_ARS222_ESDIRK_3_1_2;
-
 #ifndef SWIG
 typedef enum ARKODE_DIRKTableID ARKODE_DIRKTableID;
 #endif

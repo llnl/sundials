@@ -35,7 +35,7 @@ system.
    :align: center
 
    Overall structure diagram of the CVODES package. Modules
-   specific to CVODES begin with “CV” (CVLS, CVNLS, CVDIAG,
+   specific to CVODES begin with "CV" (CVLS, CVNLS, CVDIAG,
    CVBBDPRE, and CVBANDPRE), all other items correspond to generic
    SUNDIALS vector, matrix, and solver modules.
 
@@ -105,7 +105,7 @@ direct case, the references :cite:p:`BrHi:89,Byr:92`, together with the example
 and demonstration programs included with CVODES, offer considerable assistance
 in building preconditioners.
 
-CVODES’ linear solver interface consists of four primary phases, devoted to (1)
+CVODES' linear solver interface consists of four primary phases, devoted to (1)
 memory allocation and initialization, (2) setup of the matrix data involved, (3)
 solution of the system, and (4) freeing of memory. The setup and solution phases
 are separate because the evaluation of Jacobians and preconditioners is done

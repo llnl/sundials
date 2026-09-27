@@ -1,7 +1,7 @@
 # Historical SUNDIALS reviewer patterns
 
 This reference calibrates the `code-review` skill. It is evidence about the
-repository’s historical review behavior, not a set of mandatory labels or a
+repository's historical review behavior, not a set of mandatory labels or a
 substitute for reading the current developer guides.
 
 ## Audit scope
@@ -38,7 +38,7 @@ is valid.
 
 ### Correctness and contracts
 
-Reviewers trace return values and ask whether a setter’s success or failure is
+Reviewers trace return values and ask whether a setter's success or failure is
 being ignored, whether an error is translated consistently, and whether a
 cached value becomes stale after its inputs change. They pay close attention to
 null-safe cleanup, partially initialized objects, allocation ownership, and

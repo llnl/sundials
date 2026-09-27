@@ -74,7 +74,6 @@ N_Vector N_VNewEmpty(SUNContext sunctx)
   ops->nvclone                 = NULL;
   ops->nvcloneempty            = NULL;
   ops->nvdestroy               = NULL;
-  ops->nvspace                 = NULL;
   ops->nvgetarraypointer       = NULL;
   ops->nvgetdevicearraypointer = NULL;
   ops->nvsetarraypointer       = NULL;
@@ -198,7 +197,6 @@ SUNErrCode N_VCopyOps(N_Vector w, N_Vector v)
   v->ops->nvclone                 = w->ops->nvclone;
   v->ops->nvcloneempty            = w->ops->nvcloneempty;
   v->ops->nvdestroy               = w->ops->nvdestroy;
-  v->ops->nvspace                 = w->ops->nvspace;
   v->ops->nvgetarraypointer       = w->ops->nvgetarraypointer;
   v->ops->nvgetdevicearraypointer = w->ops->nvgetdevicearraypointer;
   v->ops->nvsetarraypointer       = w->ops->nvsetarraypointer;
@@ -329,12 +327,6 @@ void N_VDestroy(N_Vector v)
     v = NULL;
   }
 
-  return;
-}
-
-void N_VSpace(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  v->ops->nvspace(v, lrw, liw);
   return;
 }
 

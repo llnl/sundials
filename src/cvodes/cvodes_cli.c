@@ -96,7 +96,6 @@ static int cvSetFromCommandLine(void* cvode_mem, const char* cvid, int argc,
     {{"lsetup_frequency", CVodeSetLSetupFrequency},
      {"max_num_steps", CVodeSetMaxNumSteps},
      {"num_steps_eta_max_early_step", CVodeSetNumStepsEtaMaxEarlyStep},
-     {"monitor_frequency", CVodeSetMonitorFrequency},
      {"jac_eval_frequency", CVodeSetJacEvalFrequency},
      {"proj_frequency", CVodeSetProjFrequency}};
   static const int num_long_keys = sizeof(long_pairs) / sizeof(*long_pairs);

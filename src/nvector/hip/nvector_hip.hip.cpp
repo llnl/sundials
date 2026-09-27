@@ -120,7 +120,6 @@ N_Vector N_VNewEmpty_Hip(SUNContext sunctx)
   v->ops->nvclone                 = N_VClone_Hip;
   v->ops->nvcloneempty            = N_VCloneEmpty_Hip;
   v->ops->nvdestroy               = N_VDestroy_Hip;
-  v->ops->nvspace                 = N_VSpace_Hip;
   v->ops->nvgetlength             = N_VGetLength_Hip;
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Hip;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Hip;
@@ -711,12 +710,6 @@ void N_VDestroy_Hip(N_Vector v)
   free(v);
 
   return;
-}
-
-void N_VSpace_Hip(N_Vector X, sunindextype* lrw, sunindextype* liw)
-{
-  *lrw = NVEC_HIP_CONTENT(X)->length;
-  *liw = 2;
 }
 
 void N_VConst_Hip(sunrealtype a, N_Vector X)

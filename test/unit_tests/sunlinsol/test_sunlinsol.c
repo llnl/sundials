@@ -133,37 +133,6 @@ int Test_SUNLinSolLastFlag(SUNLinearSolver S, int myid)
 }
 
 /* ----------------------------------------------------------------------
- * Test_SUNLinSolSpace Test
- * --------------------------------------------------------------------*/
-int Test_SUNLinSolSpace(SUNLinearSolver S, int myid)
-{
-  int failure;
-  double start_time, stop_time;
-  long int lenrw, leniw;
-
-  /* call SUNLinSolSpace (failure based on output flag) */
-  start_time = get_time();
-  failure    = SUNLinSolSpace(S, &lenrw, &leniw);
-  sync_device();
-  stop_time = get_time();
-
-  if (failure)
-  {
-    printf(">>> FAILED test -- SUNLinSolSpace, Proc %d \n", myid);
-    PRINT_TIME("    SUNLinSolSpace Time: %22.15e \n \n", stop_time - start_time);
-    return (1);
-  }
-  else if (myid == 0)
-  {
-    printf("    PASSED test -- SUNLinSolSpace, lenrw = %li, leniw = %li\n",
-           lenrw, leniw);
-    PRINT_TIME("    SUNLinSolSpace Time: %22.15e \n \n", stop_time - start_time);
-  }
-
-  return (0);
-}
-
-/* ----------------------------------------------------------------------
  * SUNLinSolNumIters Test
  * --------------------------------------------------------------------*/
 int Test_SUNLinSolNumIters(SUNLinearSolver S, int myid)

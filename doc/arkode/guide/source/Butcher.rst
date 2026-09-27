@@ -279,7 +279,7 @@ Accessible via the string ``"ARKODE_HEUN_EULER_2_1_2"`` to
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Heun-Euler method and its embedding.
+   Linear stability regions for the Heun--Euler method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -309,7 +309,7 @@ Accessible via the string ``"ARKODE_RALSTON_EULER_2_1_2"`` to
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Ralston-Euler method and its embedding.
+   Linear stability regions for the Ralston--Euler method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -339,7 +339,7 @@ Accessible via the string ``"ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2"`` to
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Explicit-Midpoint-Euler method and its embedding.
+   Linear stability regions for the explicit Midpoint--Euler method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -558,7 +558,7 @@ explicit method (from :cite:p:`Bogacki:89`).
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Bogacki-Shampine method and its embedding.
+   Linear stability regions for the Bogacki--Shampine method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -623,7 +623,7 @@ Accessible via the string ``"ARKODE_SHU_OSHER_3_2_3"`` to
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Shu-Osher method and its embedding.
+   Linear stability regions for the Shu--Osher method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -659,7 +659,7 @@ This is the default 3th order slow and fast MRIStep method (from
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Knoth-Wolke method, shaded blue with a solid
+   Linear stability region for the Knoth--Wolke method, shaded blue with a solid
    outline.
 
 
@@ -843,7 +843,7 @@ This is the default 4th order explicit method.
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Sofroniou-Spaletta method and its embedding.
+   Linear stability regions for the Sofroniou--Spaletta method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -999,7 +999,7 @@ Accessible via the string ``"ARKODE_SAYFY_ABURUB_6_3_4"`` to
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Sayfy-Aburub-6-3-4 method and its embedding.
+   Linear stability regions for the Sayfy--Aburub-6-3-4 method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -1091,7 +1091,7 @@ Accessible via the string ``"ARKODE_CASH_KARP_6_4_5"`` to
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Cash-Karp method and its embedding.
+   Linear stability regions for the Cash--Karp method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -1160,7 +1160,7 @@ Accessible via the string ``"ARKODE_DORMAND_PRINCE_7_4_5"`` to
    :scale: 50 %
    :align: center
 
-   Linear stability regions for the Dormand-Prince method and its embedding.
+   Linear stability regions for the Dormand--Prince method and its embedding.
    The method's stability region is shaded blue with a solid outline; the
    embedding's stability region is shaded red with a dashed outline.
 
@@ -2942,7 +2942,7 @@ ARKODE_ARK548L2SAb_ARK_8_4_5
 Symplectic Partitioned Butcher tables
 -------------------------------------
 
-In the category of symplectic partitioned Runge-Kutta (SPRK) methods, ARKODE
+In the category of symplectic partitioned Runge--Kutta (SPRK) methods, ARKODE
 includes methods that have orders :math:`q = \{1,2,3,4,5,6,8,10\}`. ARKODE's
 symplectic partitioned Butcher tables are provided in the enumeration
 

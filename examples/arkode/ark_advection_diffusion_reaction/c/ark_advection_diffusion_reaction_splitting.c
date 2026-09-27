@@ -129,7 +129,7 @@ int main(void)
   if (check_flag(&flag, "ARKodeSetUserData", 1)) { return 1; }
 
   flag = ARKodeSetOrder(diffusion_mem, 3);
-  if (check_flag(&flag, "ARKStepSetOrder", 1)) { return 1; }
+  if (check_flag(&flag, "ARKodeSetOrder", 1)) { return 1; }
 
   SUNMatrix jac_mat = SUNBandMatrix(udata.N, 1, 1, ctx);
   if (check_flag(jac_mat, "SUNBandMatrix", 0)) { return 1; }
@@ -138,7 +138,7 @@ int main(void)
   if (check_flag(ls, "SUNLinSol_Band", 0)) { return 1; }
 
   flag = ARKodeSetLinearSolver(diffusion_mem, ls, jac_mat);
-  if (check_flag(&flag, "ARKStepSetOrder", 1)) { return 1; }
+  if (check_flag(&flag, "ARKodeSetLinearSolver", 1)) { return 1; }
 
   flag = ARKodeSetJacFn(diffusion_mem, jac_diffusion);
   if (check_flag(&flag, "ARKodeSetJacFn", 1)) { return 1; }

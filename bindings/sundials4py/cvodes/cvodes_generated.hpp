@@ -146,9 +146,6 @@ m.def("CVodeSetMaxStep", CVodeSetMaxStep, nb::arg("cvode_mem"), nb::arg("hmax"))
 
 m.def("CVodeSetMinStep", CVodeSetMinStep, nb::arg("cvode_mem"), nb::arg("hmin"));
 
-m.def("CVodeSetMonitorFrequency", CVodeSetMonitorFrequency,
-      nb::arg("cvode_mem"), nb::arg("nst"));
-
 m.def("CVodeSetNonlinConvCoef", CVodeSetNonlinConvCoef, nb::arg("cvode_mem"),
       nb::arg("nlscoef"));
 

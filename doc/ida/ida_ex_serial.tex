@@ -363,7 +363,7 @@ After various initializations (including a vector of constraints with
 all components set to $1$, imposing all solution components to be
 non-negative), the main program creates and initializes the {\ida}
 memory block.  It then creates the {\sunlinsolspgmr} linear solver
-using the default \id{MODIFIED\_GS} Gram-Scmidt orthogonalization
+using the default \id{MODIFIED\_GS} Gram--Schmidt orthogonalization
 algorithm, and updates the number of allowed {\spgmr} restarts to 5.
 It then attaches this linear solver module to {\ida} with a call to
 \id{IDASetLinearSolver}.
@@ -378,7 +378,7 @@ Following this, three more counters are printed.
 
 The \id{main} program then re-initializes the {\ida} solver and the
 {\sunlinsolspgmr} linear solver and solves the problem again, this time
-using the \id{CLASSICAL\_GS} Gramm-Schmidt orthogonalization algorithm.
+using the \id{CLASSICAL\_GS} Gram--Schmidt orthogonalization algorithm.
 %%
 Finally, memory for the {\ida} solver and for the various vectors used is deallocated.
 

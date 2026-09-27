@@ -39,7 +39,6 @@ where *.lib* is typically ``.so`` for shared libraries and
 The module SUNLinSol_KLU provides the following additional
 user-callable routines:
 
-
 .. c:function:: SUNLinearSolver SUNLinSol_KLU(N_Vector y, SUNMatrix A, SUNContext sunctx)
 
    This constructor function creates and allocates memory for a SUNLinSol_KLU
@@ -62,7 +61,6 @@ user-callable routines:
       compatible matrix and vector implementations are added to
       SUNDIALS, these will be included within this compatibility
       check.
-
 
 .. c:function:: SUNErrCode SUNLinSol_KLUReInit(SUNLinearSolver S, SUNMatrix A, sunindextype nnz, int reinit_type)
 
@@ -96,7 +94,6 @@ user-callable routines:
    **Notes:**
       This routine assumes no other changes to solver use are necessary.
 
-
 .. c:function:: SUNErrCode SUNLinSol_KLUSetOrdering(SUNLinearSolver S, int ordering_choice)
 
    This function sets the ordering used by KLU for reducing fill in
@@ -122,7 +119,6 @@ user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.ordering".
 
-
 .. c:function:: sun_klu_symbolic* SUNLinSol_KLUGetSymbolic(SUNLinearSolver S)
 
    This function returns a pointer to the KLU symbolic factorization
@@ -137,7 +133,6 @@ user-callable routines:
       * ``klu_symbolic`` when SUNDIALS is compiled with 32-bit indices
 
       * ``klu_l_symbolic`` when SUNDIALS is compiled with 64-bit indices
-
 
 .. c:function:: sun_klu_numeric* SUNLinSol_KLUGetNumeric(SUNLinearSolver S)
 
@@ -154,7 +149,6 @@ user-callable routines:
 
       * ``klu_l_numeric``  when SUNDIALS is compiled with 64-bit indices
 
-
 .. c:function:: sun_klu_common* SUNLinSol_KLUGetCommon(SUNLinearSolver S)
 
    This function returns a pointer to the KLU common structure
@@ -170,12 +164,10 @@ user-callable routines:
 
       * ``klu_l_common``  when SUNDIALS is compiled with 64-bit indices
 
-
 .. _SUNLinSol.KLU.Description:
 
 SUNLinSol_KLU Description
 --------------------------
-
 
 The SUNLinSol_KLU module defines the *content*
 field of a ``SUNLinearSolver`` to be the following structure:
@@ -220,7 +212,6 @@ information:
 * ``klu_solver`` -- pointer to the appropriate KLU solver function
   (depending on whether it is using a CSR or CSC sparse matrix, and
   on whether SUNDIALS was installed with 32-bit or 64-bit indices).
-
 
 The SUNLinSol_KLU module is a ``SUNLinearSolver`` wrapper for
 the KLU sparse matrix factorization and solver library written by Tim
@@ -281,7 +272,6 @@ following operations:
   for the right-hand side and solution vectors, without requiring
   costly data copies.
 
-
 The SUNLinSol_KLU module defines implementations of all
 "direct" linear solver operations listed in
 :numref:`SUNLinSol.API`:
@@ -300,10 +290,5 @@ The SUNLinSol_KLU module defines implementations of all
   system.
 
 * ``SUNLinSolLastFlag_KLU``
-
-* ``SUNLinSolSpace_KLU`` -- this only returns information for
-  the storage within the solver *interface*, i.e. storage for the
-  integers ``last_flag`` and ``first_factorize``.  For additional
-  space requirements, see the KLU documentation.
 
 * ``SUNLinSolFree_KLU``

@@ -56,7 +56,7 @@ Numerical method
 Since this driver and utility functions are written in Fortran-90,
 this example demonstrates the use of the FARKODE interface for the
 ARKODE solver.  For time integration, this example uses the
-fourth-order additive Runge-Kutta IMEX method, where the right-hand
+fourth-order additive Runge--Kutta IMEX method, where the right-hand
 sides are broken up as
 
 .. math::

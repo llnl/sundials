@@ -475,22 +475,6 @@ SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec_Band(SUNMatrix farg1, N_Vector
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatSpace_Band(SUNMatrix farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNMatrix arg1 = (SUNMatrix) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (SUNErrCode)SUNMatSpace_Band(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 
 SWIGEXPORT double * _wrap_FSUNBandMatrix_Data(SUNMatrix farg1) {
   double * fresult ;

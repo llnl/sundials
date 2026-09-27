@@ -26,7 +26,6 @@ SUNMatrix_SLUNRloc :c:type:`SUNMatrix`, and one of the serial, threaded or paral
 N_Vector implementations (NVECTOR_SERIAL, NVECTOR_OPENMP, NVECTOR_PTHREADS,
 NVECTOR_PARALLEL, NVECTOR_PARHYP).
 
-
 .. _SUNLinSol.SuperLUDIST.Usage:
 
 SUNLinSol_SuperLUDIST Usage
@@ -49,7 +48,6 @@ The module SUNLinSol_SuperLUDIST provides the following user-callable routines:
   'x' prefix that expand to the correct prefix. E.g., the SUNDIALS macro
   ``xLUstruct_t`` expands to ``dLUstruct_t`` or ``LUstruct_t`` based on the
   SuperLU_DIST version.
-
 
 .. c:function:: SUNLinearSolver SUNLinSol_SuperLUDIST(N_Vector y, SuperMatrix *A, gridinfo_t *grid, xLUstruct_t *lu, xScalePermstruct_t *scaleperm, xSOLVEstruct_t *solve, SuperLUStat_t *stat, superlu_dist_options_t *options, SUNContext sunctx)
 
@@ -83,13 +81,11 @@ The module SUNLinSol_SuperLUDIST provides the following user-callable routines:
       the SUNLinSol_SuperLUDIST solver. Specifically, the member ``Fact``
       is modified in the setup and solve routines.
 
-
 .. c:function:: sunrealtype SUNLinSol_SuperLUDIST_GetBerr(SUNLinearSolver LS)
 
    This function returns the componentwise relative backward error of the
    computed solution.   It takes one argument, the ``SUNLinearSolver`` object.
    The return type is ``sunrealtype``.
-
 
 .. c:function:: gridinfo_t* SUNLinSol_SuperLUDIST_GetGridinfo(SUNLinearSolver LS)
 
@@ -97,13 +93,11 @@ The module SUNLinSol_SuperLUDIST provides the following user-callable routines:
    contains the 2D process grid. It takes one argument, the ``SUNLinearSolver``
    object.
 
-
 .. c:function:: xLUstruct_t* SUNLinSol_SuperLUDIST_GetLUstruct(SUNLinearSolver LS)
 
    This function returns a pointer to the SuperLU_DIST structure that contains
    the distributed ``L`` and ``U`` structures. It takes one argument, the
    ``SUNLinearSolver`` object.
-
 
 .. c:function:: superlu_dist_options_t* SUNLinSol_SuperLUDIST_GetSuperLUOptions(SUNLinearSolver LS)
 
@@ -111,13 +105,11 @@ The module SUNLinSol_SuperLUDIST provides the following user-callable routines:
    options which control how the linear system is factorized and solved. It takes
    one argument, the ``SUNLinearSolver`` object.
 
-
 .. c:function:: xScalePermstruct_t* SUNLinSol_SuperLUDIST_GetScalePermstruct(SUNLinearSolver LS)
 
    This function returns a pointer to the SuperLU_DIST structure that contains
    the vectors that describe the transformations done to the matrix ``A``. It
    takes one argument, the ``SUNLinearSolver`` object.
-
 
 .. c:function:: xSOLVEstruct_t* SUNLinSol_SuperLUDIST_GetSOLVEstruct(SUNLinearSolver LS)
 
@@ -130,8 +122,6 @@ The module SUNLinSol_SuperLUDIST provides the following user-callable routines:
    This function returns a pointer to the SuperLU_DIST structure that stores
    information about runtime and flop count. It takes one argument, the
    ``SUNLinearSolver`` object.
-
-
 
 .. _SUNLinSol.SuperLUDIST.Description:
 
@@ -185,7 +175,6 @@ information:
 
 * ``N`` -- the number of equations in the system.
 
-
 The SUNLinSol_SuperLUDIST module is a SUNLinearSolver adapter for the
 SuperLU_DIST sparse matrix factorization and solver library written by
 X. Sherry Li and collaborators :cite:p:`SuperLUDIST_site,GDL:07,LD:03,SLUUG:99`.
@@ -235,7 +224,6 @@ constructed to perform the following operations:
   note that in this solve SuperLU_DIST operates on the native data arrays
   for the right-hand side and solution vectors, without requiring costly data copies.
 
-
 The SUNLinSol_SuperLUDIST module defines implementations of all
 "direct" linear solver operations listed in
 :numref:`SUNLinSol.API`:
@@ -257,10 +245,5 @@ The SUNLinSol_SuperLUDIST module defines implementations of all
   linear system.
 
 * ``SUNLinSolLastFlag_SuperLUDIST``
-
-* ``SUNLinSolSpace_SuperLUDIST`` -- this only returns information for
-  the storage within the solver *interface*, i.e. storage for the
-  integers ``last_flag`` and ``first_factorize``.  For additional
-  space requirements, see the SuperLU_DIST documentation.
 
 * ``SUNLinSolFree_SuperLUDIST``

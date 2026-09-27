@@ -93,11 +93,6 @@ int SUNAdaptController_UpdateMRIHTol_MRIHTol(SUNAdaptController C,
                                              sunrealtype H, sunrealtype tolfac,
                                              sunrealtype DSM, sunrealtype dsm);
 
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int SUNAdaptController_Space_MRIHTol(SUNAdaptController C, long int* lenrw,
-                                     long int* leniw);
-
 #ifdef __cplusplus
 }
 #endif

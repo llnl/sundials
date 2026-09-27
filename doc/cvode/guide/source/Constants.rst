@@ -30,7 +30,7 @@ the CVODE output constants.
 .. table:: CVODE input constants
 
    +----------------------+-----+-------------------------------------------------+
-   | ``CV_ADAMS``         | 1   | Adams-Moulton linear multistep method.          |
+   | ``CV_ADAMS``         | 1   | Adams--Moulton linear multistep method.         |
    +----------------------+-----+-------------------------------------------------+
    | ``CV_BDF``           | 2   | BDF linear multistep method.                    |
    +----------------------+-----+-------------------------------------------------+
@@ -46,9 +46,9 @@ the CVODE output constants.
    +----------------------+-----+-------------------------------------------------+
    | ``SUN_PREC_BOTH``    | 3   | Preconditioning on both the left and the right. |
    +----------------------+-----+-------------------------------------------------+
-   | ``SUN_MODIFIED_GS``  | 1   | Use modified Gram-Schmidt procedure.            |
+   | ``SUN_MODIFIED_GS``  | 1   | Use modified Gram--Schmidt procedure.           |
    +----------------------+-----+-------------------------------------------------+
-   | ``SUN_CLASSICAL_GS`` | 2   | Use classical Gram-Schmidt procedure.           |
+   | ``SUN_CLASSICAL_GS`` | 2   | Use classical Gram--Schmidt procedure.          |
    +----------------------+-----+-------------------------------------------------+
 
 

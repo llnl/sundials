@@ -75,7 +75,6 @@ contains
     ops%scaleadd = c_funloc(FSUNMatScaleAdd_Fortran)
     ops%scaleaddi = c_funloc(FSUNMatScaleAddI_Fortran)
     ops%matvec = c_funloc(FSUNMatMatvec_Fortran)
-    ops%space = c_funloc(FSUNMatSpace_Fortran)
 
   end function FSUNMatNew_Fortran
 
@@ -287,25 +286,6 @@ contains
     return
 
   end function FSUNMatMatvec_Fortran
-
-  ! ----------------------------------------------------------------
-  subroutine FSUNMatSpace_Fortran(sunmat_A, lrw, liw) bind(C)
-
-    implicit none
-    type(SUNMatrix)     :: sunmat_A
-    integer(c_int64_t)  :: lrw(1)
-    integer(c_int64_t)  :: liw(1)
-    type(FMat), pointer :: A
-
-    ! extract Fortran matrix structure to work with
-    A => FSUNMatGetFMat(sunmat_A)
-
-    ! set output arguments and return
-    lrw(1) = (A%Nvar)*(A%Nvar)*(A%N)
-    liw(1) = 3
-    return
-
-  end subroutine FSUNMatSpace_Fortran
 
 end module fsunmatrix_fortran_mod
 ! ------------------------------------------------------------------

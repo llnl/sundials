@@ -139,7 +139,6 @@ int main(int argc, char* argv[])
   fails += Test_SUNLinSolGetType(LS, SUNLINEARSOLVER_DIRECT, 0);
   fails += Test_SUNLinSolGetID(LS, SUNLINEARSOLVER_KLU, 0);
   fails += Test_SUNLinSolLastFlag(LS, 0);
-  fails += Test_SUNLinSolSpace(LS, 0);
 
   /* Test 'Get' routines */
   symbolic = SUNLinSol_KLUGetSymbolic(LS);

@@ -97,7 +97,6 @@ N_Vector N_VNewEmpty_Serial(sunindextype length, SUNContext sunctx)
   v->ops->nvclone           = N_VClone_Serial;
   v->ops->nvcloneempty      = N_VCloneEmpty_Serial;
   v->ops->nvdestroy         = N_VDestroy_Serial;
-  v->ops->nvspace           = N_VSpace_Serial;
   v->ops->nvgetarraypointer = N_VGetArrayPointer_Serial;
   v->ops->nvsetarraypointer = N_VSetArrayPointer_Serial;
   v->ops->nvgetlength       = N_VGetLength_Serial;
@@ -355,19 +354,6 @@ void N_VDestroy_Serial(N_Vector v)
   }
   free(v);
   v = NULL;
-
-  return;
-}
-
-void N_VSpace_Serial(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  SUNFunctionBegin(v->sunctx);
-
-  SUNAssertVoid(lrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssertVoid(liw, SUN_ERR_ARG_CORRUPT);
-
-  *lrw = NV_LENGTH_S(v);
-  *liw = 1;
 
   return;
 }

@@ -188,7 +188,6 @@ N_Vector N_VNewEmpty_Pthreads(sunindextype length, int num_threads,
   v->ops->nvclone           = N_VClone_Pthreads;
   v->ops->nvcloneempty      = N_VCloneEmpty_Pthreads;
   v->ops->nvdestroy         = N_VDestroy_Pthreads;
-  v->ops->nvspace           = N_VSpace_Pthreads;
   v->ops->nvgetarraypointer = N_VGetArrayPointer_Pthreads;
   v->ops->nvsetarraypointer = N_VSetArrayPointer_Pthreads;
   v->ops->nvgetlength       = N_VGetLength_Pthreads;
@@ -459,19 +458,6 @@ void N_VDestroy_Pthreads(N_Vector v)
 /* ----------------------------------------------------------------------------
  * Get storage requirement for vector
  */
-
-void N_VSpace_Pthreads(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  SUNFunctionBegin(v->sunctx);
-
-  SUNAssertVoid(lrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssertVoid(liw, SUN_ERR_ARG_CORRUPT);
-
-  *lrw = NV_LENGTH_PT(v);
-  *liw = 1;
-
-  return;
-}
 
 /* ----------------------------------------------------------------------------
  * Get vector data pointer

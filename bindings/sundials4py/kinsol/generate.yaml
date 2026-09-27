@@ -24,9 +24,8 @@ modules:
     fn_exclude_by_name__regex:
     - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII objects
     - "Destroy"
-    - "Space" # Space functions are deprecated, so dont expose them in Python
     # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
-    - "SetOptions" 
+    - "SetOptions"
     macro_define_include_by_name__regex:
     - "^SUN_"
     - "^KIN_"
@@ -48,7 +47,7 @@ modules:
     - "^KINGetUserData$"
     # generator cannot handle setting of function pointers, so we do something custom
     - "KINInit.*"
-    - "KINSet.*Fn" 
+    - "KINSet.*Fn"
     - "KINSet.*Preconditioner"
     - "KINSetJacTimes.*"
     - "KINSetSysFunc"

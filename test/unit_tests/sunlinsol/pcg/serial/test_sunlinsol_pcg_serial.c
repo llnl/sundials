@@ -181,7 +181,6 @@ int main(int argc, char* argv[])
   fails += Test_SUNLinSolSetScalingVectors(LS, ProbData.s, NULL, 0);
   fails += Test_SUNLinSolSetZeroGuess(LS, 0);
   fails += Test_SUNLinSolInitialize(LS, 0);
-  fails += Test_SUNLinSolSpace(LS, 0);
   if (fails)
   {
     printf("FAIL: SUNLinSol_PCG module failed %i initialization tests\n\n",
