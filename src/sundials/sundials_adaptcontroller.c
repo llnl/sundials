@@ -67,8 +67,6 @@ SUNAdaptController SUNAdaptController_NewEmpty(SUNContext sunctx)
   ops->seterrorbias    = NULL;
   ops->updateh         = NULL;
   ops->updatemrihtol   = NULL;
-  ops->space           = NULL;
-
   /* attach ops and initialize content to NULL */
   C->ops     = ops;
   C->content = NULL;
@@ -317,19 +315,5 @@ SUNErrCode SUNAdaptController_UpdateMRIHTol(SUNAdaptController C, sunrealtype H,
   {
     ier = C->ops->updatemrihtol(C, H, tolfac, DSM, dsm);
   }
-  return (ier);
-}
-
-SUNErrCode SUNAdaptController_Space(SUNAdaptController C, long int* lenrw,
-                                    long int* leniw)
-{
-  SUNErrCode ier = SUN_SUCCESS;
-  if (C == NULL) { return SUN_ERR_ARG_CORRUPT; }
-  SUNFunctionBegin(C->sunctx);
-  SUNAssert(lenrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(leniw, SUN_ERR_ARG_CORRUPT);
-  *lenrw = 0; /* initialize outputs with identity */
-  *leniw = 0;
-  if (C->ops->space) { ier = C->ops->space(C, lenrw, leniw); }
   return (ier);
 }

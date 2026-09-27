@@ -242,6 +242,7 @@ program main
 
   use farkode_mod                ! Fortran interface to the ARKODE module
   use farkode_arkstep_mod        ! Fortran interface to the ARKStep module
+  use fsunadaptcontroller_imexgus_mod ! Fortran interface to the ImEx Gustafsson controller
   use fnvector_serial_mod        ! Fortran interface to serial N_Vector
   use fsunmatrix_dense_mod       ! Fortran interface to dense SUNMatrix
   use fsunlinsol_dense_mod       ! Fortran interface to dense SUNLinearSolver
@@ -258,8 +259,6 @@ program main
   real(c_double)  :: dtout                  ! output time interval
   real(c_double)  :: tout                   ! output time
   real(c_double)  :: tcur(1)                ! current time
-  integer(c_int)  :: imethod, idefault, pq  ! time step adaptivity parameters
-  real(c_double)  :: adapt_params(3)        ! time step adaptivity parameters
   integer(c_int)  :: ierr                   ! error flag from C functions
   integer(c_int)  :: nout                   ! number of outputs
   integer(c_int)  :: outstep                ! output loop counter
@@ -270,6 +269,7 @@ program main
   type(N_Vector), pointer :: sunvec_y    ! sundials vector
   type(SUNMatrix), pointer :: sunmat_A    ! sundials matrix
   type(SUNLinearSolver), pointer :: sunls       ! sundials linear solver
+  type(SUNAdaptController), pointer :: sunCtrl   ! time step controller
   type(c_ptr)                    :: arkode_mem  ! ARKODE memory
   real(c_double), pointer, dimension(neq) :: yvec(:) ! underlying vector
 
@@ -349,13 +349,15 @@ program main
     stop 1
   end if
 
-  imethod = 0
-  idefault = 1
-  pq = 0
-  adapt_params = 0.d0
-  ierr = FARKStepSetAdaptivityMethod(arkode_mem, imethod, idefault, pq, adapt_params)
+  sunCtrl => FSUNAdaptController_ImExGus(sunctx)
+  if (.not. associated(sunCtrl)) then
+    print *, 'ERROR: sunCtrl = NULL'
+    stop 1
+  end if
+
+  ierr = FARKodeSetAdaptController(arkode_mem, sunCtrl)
   if (ierr /= 0) then
-    print *, 'Error in FARKStepSetAdaptivityMethod, ierr = ', ierr, '; halting'
+    print *, 'Error in FARKodeSetAdaptController, ierr = ', ierr, '; halting'
     stop 1
   end if
 
@@ -399,6 +401,7 @@ program main
   call FN_VDestroy(sunvec_y)
   call FSUNMatDestroy(sunmat_A)
   ierr = FSUNLinSolFree(sunls)
+  ierr = FSUNAdaptController_Destroy(sunCtrl)
   ierr = FSUNContext_Free(sunctx)
 
 end program main

@@ -2304,7 +2304,6 @@ derivatives of order up to the last internal order used for any value of
       :math:`t_n`, :math:`h_u`, and :math:`k_{\text{last}}`.
 
 
-
 .. _IDA.Usage.CC.optional_output:
 
 Optional output functions
@@ -2339,8 +2338,6 @@ preconditioner.
   +--------------------------------------------------------------------+------------------------------------------+
   | **Optional output**                                                | **Function name**                        |
   +====================================================================+==========================================+
-  | Size of IDA real and integer workspace                             | :c:func:`IDAGetWorkSpace`                |
-  +--------------------------------------------------------------------+------------------------------------------+
   | Cumulative number of internal steps                                | :c:func:`IDAGetNumSteps`                 |
   +--------------------------------------------------------------------+------------------------------------------+
   | No. of calls to residual function                                  | :c:func:`IDAGetNumResEvals`              |
@@ -2403,8 +2400,6 @@ preconditioner.
   +--------------------------------------------------------------------+------------------------------------------+
   | Step number at which the Jacobian was evaluated                    | :c:func:`IDAGetJacNumSteps`              |
   +--------------------------------------------------------------------+------------------------------------------+
-  | Size of real and integer workspace                                 | :c:func:`IDAGetLinWorkSpace`             |
-  +--------------------------------------------------------------------+------------------------------------------+
   | No. of Jacobian evaluations                                        | :c:func:`IDAGetNumJacEvals`              |
   +--------------------------------------------------------------------+------------------------------------------+
   | No. of residual calls for finite diff. Jacobian-vector evals.      | :c:func:`IDAGetNumLinResEvals`           |
@@ -2441,59 +2436,6 @@ functions to extract statistics related to the performance of the
 nonlinear solver being used. As a convenience, additional extraction functions
 provide the optional outputs in groups. These optional output functions are
 described next.
-
-.. c:function:: int IDAGetWorkSpace(void * ida_mem, long int lenrw, long int leniw)
-
-   The function ``IDAGetWorkSpace`` returns the IDA real and integer workspace
-   sizes.
-
-   **Arguments:**
-      * ``ida_mem`` -- pointer to the IDA solver object.
-      * ``lenrw`` -- number of real values in the IDA workspace.
-      * ``leniw`` -- number of integer values in the IDA workspace.
-
-   **Return value:**
-      * ``IDA_SUCCESS`` -- The optional output value has been successfully set.
-      * ``IDA_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
-
-   **Notes:**
-      In terms of the problem size :math:`N`, the maximum method order
-      ``maxord``, and the number of root functions ``nrtfn`` (see
-      :numref:`IDA.Usage.CC.idarootinit`), the actual size of the real workspace, in
-      :c:type:`sunrealtype` words, is given by the following:
-
-      * base value:
-        :math:`\mathtt{lenrw} = 55 + (m + 6) * N_r + 3 * \mathtt{nrtfn}`;
-      * with :c:func:`IDASVtolerances`:
-        :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_r`;
-      * with constraint checking (see :c:func:`IDASetConstraints`):
-        :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_r`;
-      * with ``id`` specified (see :c:func:`IDASetId`):
-        :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_r`;
-
-      where :math:`m = \max(\mathtt{maxord}, 3)`, and :math:`N_r` is the number
-      of real words in one ``N_Vector`` :math:`(\approx N)`.
-
-      The size of the integer workspace (without distinction between ``int`` and
-      ``long int`` words) is  given by:
-
-      * base value: :math:`\mathtt{leniw} = 38 + (m + 6) * N_i + \mathtt{nrtfn}`;
-      * with :c:func:`IDASVtolerances`:
-        :math:`\mathtt{leniw} = \mathtt{leniw} + N_i`;
-      * with constraint checking: :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_i`;
-      * with ``id`` specified (see :c:func:`IDASetId`):
-        :math:`\mathtt{lenrw} = \mathtt{lenrw} + N_i`;
-
-      where :math:`N_i` is the number of integer words in one ``N_Vector`` (= 1
-      for the serial ``N_Vector`` and ``2 * npes`` for the parallel ``N_Vector``
-      on ``npes`` processors). For the default value of ``maxord``, with no
-      rootfinding, no ``id``, no constraints, and with no call to
-      :c:func:`IDASVtolerances`, these lengths are given roughly by
-      :math:`\mathtt{lenrw} = 55 + 11 * N` and :math:`\mathtt{leniw} = 49`.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int IDAGetNumSteps(void * ida_mem, long int * nsteps)
 
@@ -2914,7 +2856,6 @@ Initial condition calculation optional output functions
       ``NULL``).
 
 
-
 .. _IDA.Usage.CC.optional_output.optout_root:
 
 Rootfinding optional output functions
@@ -3029,36 +2970,6 @@ The following optional outputs are available from the IDALS modules:
    :retval IDALS_SUCCESS: the output value has been successfully set
    :retval IDALS_MEM_NULL: ``ida_mem`` was ``NULL``
    :retval IDALS_LMEM_NULL: the linear solver interface has not been initialized
-
-.. c:function:: int IDAGetLinWorkSpace(void * ida_mem, long int * lenrwLS, long int * leniwLS)
-
-   The function ``IDAGetLinWorkSpace`` returns the sizes of the real and integer
-   workspaces used by the IDALS linear solver interface.
-
-   **Arguments:**
-      * ``ida_mem`` -- pointer to the IDA solver object.
-      * ``lenrwLS`` -- the number of real values in the IDALS workspace.
-      * ``leniwLS`` -- the number of integer values in the IDALS workspace.
-
-   **Return value:**
-      * ``IDALS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer is ``NULL``.
-      * ``IDALS_LMEM_NULL`` -- The IDALS linear solver has not been initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only to memory
-      allocated within this interface and to memory allocated by the
-      ``SUNLinearSolver`` object attached to it.  The template Jacobian
-      matrix allocated by the user outside of IDALS is not included in this report.
-
-   .. versionadded:: 4.0.0
-
-      Replaces the deprecated functions ``IDADlsGetWorkspace`` and
-      ``IDASpilsGetWorkspace``.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int IDAGetNumJacEvals(void * ida_mem, long int * njevals)
 
@@ -3721,7 +3632,6 @@ follows:
       Replaces the deprecated type ``IDASpilsJacTimesSetupFn``.
 
 
-
 .. _IDA.Usage.CC.user_fct_sim.psolveFn:
 
 Preconditioner solve (iterative linear solvers)
@@ -4044,8 +3954,7 @@ user main program presented in :numref:`IDA.Usage.CC.skeleton_sim` are not bold.
 #. **Get optional outputs**
 
    Additional optional outputs associated with IDABBDPRE are available by way of
-   two routines described below, :c:func:`IDABBDPrecGetWorkSpace` and
-   :c:func:`IDABBDPrecGetNumGfnEvals`.
+    the routine described below, :c:func:`IDABBDPrecGetNumGfnEvals`.
 
 #. Deallocate memory
 
@@ -4149,33 +4058,6 @@ order).
 
 The following two optional output functions are available for use with the
 IDABBDPRE module:
-
-.. c:function:: int IDABBDPrecGetWorkSpace(void * ida_mem, long int * lenrwBBDP, long int * leniwBBDP)
-
-   The function ``IDABBDPrecGetWorkSpace`` returns the local sizes of the
-   IDABBDPRE real and integer workspaces.
-
-   **Arguments:**
-      * ``ida_mem`` -- pointer to the IDA solver object.
-      * ``lenrwBBDP`` -- local number of real values in the IDABBDPRE workspace.
-      * ``leniwBBDP`` -- local number of integer values in the IDABBDPRE workspace.
-
-   **Return value:**
-      * ``IDALS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``IDALS_MEM_NULL`` -- The ``ida_mem`` pointer was ``NULL``.
-      * ``IDALS_PMEM_NULL`` -- The IDABBDPRE preconditioner has not been
-        initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only to memory
-      allocated within the IDABBDPRE module (the banded matrix approximation,
-      banded ``SUNLinearSolver`` object, temporary vectors).  These values
-      are local to each process.  The workspaces referred to here exist in addition
-      to those given by the corresponding function :c:func:`IDAGetLinWorkSpace`.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int IDABBDPrecGetNumGfnEvals(void * ida_mem, long int * ngevalsBBDP)
 

@@ -46,7 +46,6 @@ interested reader.
   :c:func:`N_VDestroy`                        x      x    x                         x
   :c:func:`N_VCloneVectorArray`               x                                     x
   :c:func:`N_VDestroyVectorArray`             x                                     x
-  :c:func:`N_VSpace`                          x      2
   :c:func:`N_VGetArrayPointer`                       1           x         x
   :c:func:`N_VSetArrayPointer`                       1
   :c:func:`N_VLinearSum`                      x      x    x                         x
@@ -74,7 +73,6 @@ interested reader.
   :c:func:`N_VScaleAddMultiVectorArray`       x
   :c:func:`N_VLinearCombinationVectorArray`   x
   ========================================= ====== ==== ====== ========= ======== ======
-
 
 Special cases (numbers match markings in table):
 

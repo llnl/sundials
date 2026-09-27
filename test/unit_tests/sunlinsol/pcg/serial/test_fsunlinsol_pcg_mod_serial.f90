@@ -99,8 +99,6 @@ contains
     fails = fails + Test_FSUNLinSolSetScalingVectors(LS, probdata%s, &
                                                      s2, 0)
     fails = fails + Test_FSUNLinSolInitialize(LS, 0)
-    fails = fails + Test_FSUNLinSolSpace(LS, 0)
-
     if (fails /= 0) then
       print *, 'FAIL: FSUNLinSol_PCG module, initialization'
     else

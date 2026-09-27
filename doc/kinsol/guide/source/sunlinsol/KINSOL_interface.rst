@@ -60,9 +60,7 @@ used. Note:
       :math:`^2`\ ``SUNLinSolResNorm``                  :math:`\dagger` :math:`\dagger`
       :math:`^3`\ ``SUNLinSolLastFlag``
       :math:`^4`\ ``SUNLinSolFree``
-      ``SUNLinSolSpace``                :math:`\dagger` :math:`\dagger` :math:`\dagger`
       ================================= =============== =============== ================
-
 
 Since there are a wide range of potential ``SUNLinearSolver`` use cases, the following subsections describe some details of
 the KINLS interface, in the case that interested users wish to develop custom ``SUNLinearSolver`` modules.

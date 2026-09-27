@@ -39,7 +39,6 @@ implementation detail for the interested reader.
    :c:func:`N_VClone`              x       x
    :c:func:`N_VCloneEmpty`
    :c:func:`N_VDestroy`            x       x
-   :c:func:`N_VSpace`              x       2
    :c:func:`N_VGetArrayPointer`    1       x
    :c:func:`N_VSetArrayPointer`    1
    :c:func:`N_VLinearSum`          x       x

@@ -89,8 +89,6 @@ SUNMatrix SUNBandMatrixStorage(sunindextype N, sunindextype mu, sunindextype ml,
   A->ops->scaleaddi                = SUNMatScaleAddI_Band;
   A->ops->matvec                   = SUNMatMatvec_Band;
   A->ops->mathermitiantransposevec = SUNMatHermitianTransposeVec_Band;
-  A->ops->space                    = SUNMatSpace_Band;
-
   /* Create content */
   content = NULL;
   content = (SUNMatrixContent_Band)malloc(sizeof *content);
@@ -439,17 +437,6 @@ SUNErrCode SUNMatHermitianTransposeVec_Band(SUNMatrix A, N_Vector x, N_Vector y)
     ie    = SUNMIN(SM_ROWS_B(A) - 1, j + SM_LBAND_B(A));
     for (i = is; i <= ie; i++) { yd[j] += col_j[i - j] * xd[i]; }
   }
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNMatSpace_Band(SUNMatrix A, long int* lenrw, long int* leniw)
-{
-  SUNFunctionBegin(A->sunctx);
-  SUNAssert(SUNMatGetID(A) == SUNMATRIX_BAND, SUN_ERR_ARG_WRONGTYPE);
-  SUNAssert(lenrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(leniw, SUN_ERR_ARG_CORRUPT);
-  *lenrw = SM_COLUMNS_B(A) * (SM_SUBAND_B(A) + SM_LBAND_B(A) + 1);
-  *leniw = 7 + SM_COLUMNS_B(A);
   return SUN_SUCCESS;
 }
 

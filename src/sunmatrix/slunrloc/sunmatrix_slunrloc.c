@@ -44,6 +44,7 @@
 #define xScaleAddId_CompRowLoc_Matrix_dist dScaleAddId_CompRowLoc_Matrix_dist
 #elif defined(SUNDIALS_SINGLE_PRECISION)
 #include <superlu_sdefs.h>
+
 #define SLU_X                              SLU_S
 #define pxgsmv_init                        psgsmv_init
 #define pxgsmv_finalize                    psgsmv_finalize
@@ -131,8 +132,6 @@ SUNMatrix SUNMatrix_SLUNRloc(SuperMatrix* A_super, gridinfo_t* grid,
   A->ops->scaleaddi   = SUNMatScaleAddI_SLUNRloc;
   A->ops->matvecsetup = SUNMatMatvecSetup_SLUNRloc;
   A->ops->matvec      = SUNMatMatvec_SLUNRloc;
-  A->ops->space       = SUNMatSpace_SLUNRloc;
-
   /* Create content */
   content = NULL;
   content =
@@ -411,17 +410,6 @@ SUNErrCode SUNMatMatvecSetup_SLUNRloc(SUNMatrix A)
      with colind permuted to [internal, external]. */
   pxgsmv_init(ACS, SM_ROWTOPROC_SLUNRLOC(A), SM_GRID_SLUNRLOC(A),
               SM_COMMPATTERN_SLUNRLOC(A));
-
-  return (SUN_SUCCESS);
-}
-
-SUNErrCode SUNMatSpace_SLUNRloc(SUNMatrix A, long int* lenrw, long int* leniw)
-{
-  /* since the SuperLU_DIST structures are opaque objects, we omit those
-     from these results */
-
-  *leniw = SM_GLOBALROWS_SLUNRLOC(A); /* length(row_to_proc) */
-  *lenrw = 0;
 
   return (SUN_SUCCESS);
 }

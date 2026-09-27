@@ -54,11 +54,6 @@ SUNDIALS_EXPORT int CVBBDPrecReInit(void* cvode_mem, sunindextype mudq,
 
 /* Optional output functions */
 
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int CVBBDPrecGetWorkSpace(void* cvode_mem, long int* lenrwBBDP,
-                          long int* leniwBBDP);
-
 SUNDIALS_EXPORT int CVBBDPrecGetNumGfnEvals(void* cvode_mem,
                                             long int* ngevalsBBDP);
 

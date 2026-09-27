@@ -54,7 +54,6 @@ banded approximation generated for the preconditioner is sufficiently
 accurate, it may speed convergence of the Krylov iteration.
 
 
-
 ARKBANDPRE usage
 """""""""""""""""""""
 
@@ -118,8 +117,7 @@ skeleton program presented in :numref:`ARKODE.Usage.Skeleton` are
 #. Get optional outputs
 
    Additional optional outputs associated with ARKBANDPRE are
-   available by way of the two routines described below,
-   :c:func:`ARKBandPrecGetWorkSpace()` and
+   available by way of the routine described below,
    :c:func:`ARKBandPrecGetNumRhsEvals()`.
 
 #. *Deallocate memory for solution vector*
@@ -131,15 +129,11 @@ skeleton program presented in :numref:`ARKODE.Usage.Skeleton` are
 #. *Free nonlinear solver memory*
 
 
-
-
-
 ARKBANDPRE user-callable functions
 """""""""""""""""""""""""""""""""""""
 
 The ARKBANDPRE preconditioner module is initialized and attached
 by calling the following function:
-
 
 
 .. c:function:: int ARKBandPrecInit(void* arkode_mem, sunindextype N, sunindextype mu, sunindextype ml)
@@ -164,42 +158,8 @@ by calling the following function:
       only in locations :math:`(i,j)` with *ml* :math:`\le j-i \le` *mu*.
 
 
-
 The following two optional output functions are available for use with
 the ARKBANDPRE module:
-
-
-
-.. c:function:: int ARKBandPrecGetWorkSpace(void* arkode_mem, long int* lenrwLS, long int* leniwLS)
-
-   Returns the sizes of the ARKBANDPRE real and integer
-   workspaces.
-
-   :param arkode_mem: pointer to the ARKODE memory block.
-   :param lenrwLS: the number of ``sunrealtype`` values in the
-                   ARKBANDPRE workspace.
-   :param leniwLS: the number of integer values in the  ARKBANDPRE workspace.
-
-   :retval ARKLS_SUCCESS: the function exited successfully.
-   :retval ARKLS_MEM_NULL: ``arkode_mem`` was ``NULL``.
-   :retval ARKLS_LMEM_NULL: the linear solver memory was ``NULL``.
-   :retval ARKLS_PMEM_NULL: the preconditioner memory was ``NULL``.
-
-   .. note::
-
-      The workspace requirements reported by this routine
-      correspond only to memory allocated within the ARKBANDPRE module
-      (the banded matrix approximation, banded ``SUNLinearSolver``
-      object, and temporary vectors).
-
-      The workspaces referred to here exist in addition to those given by
-      the corresponding function :c:func:`ARKodeGetLinWorkSpace()`.
-
-   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
-
-      Work space functions will be removed in version 8.0.0.
-
-
 
 .. c:function:: int ARKBandPrecGetNumRhsEvals(void* arkode_mem, long int* nfevalsBP)
 
@@ -221,13 +181,10 @@ the ARKBANDPRE module:
       The counter *nfevalsBP* is distinct from the counter
       *nfevalsLS* returned by the corresponding function
       :c:func:`ARKodeGetNumLinRhsEvals()` and also from the number of
-      evaluations returned by the time-stepping module (e.g., *nfi_evals*
-      returned by :c:func:`ARKStepGetNumRhsEvals()`).  The total number of
+       evaluations returned by the time-stepping module (e.g., *nfi_evals*
+       returned by :c:func:`ARKodeGetNumRhsEvals()`).  The total number of
       right-hand side function evaluations is the sum of all three of these
       counters.
-
-
-
 
 
 .. _ARKODE.Usage.BBDPre:
@@ -332,7 +289,6 @@ incomplete LU factorization or an iterative method could be used
 instead of banded LU factorization.
 
 
-
 ARKBBDPRE user-supplied functions
 """"""""""""""""""""""""""""""""""
 
@@ -350,7 +306,6 @@ function :math:`f^I`. The user is responsible for providing space
 (presumably within *user_data*) for components of :math:`y` that are
 communicated between processes by *cfn*, and that are then used by
 *gloc*, which should not do any communication.
-
 
 
 .. c:type:: int (*ARKLocalFn)(sunindextype Nlocal, sunrealtype t, N_Vector y, N_Vector glocal, void* user_data)
@@ -379,7 +334,6 @@ communicated between processes by *cfn*, and that are then used by
 
       The case where :math:`g` is mathematically identical to :math:`f^I`
       is allowed.
-
 
 
 .. c:type:: int (*ARKCommFn)(sunindextype Nlocal, sunrealtype t, N_Vector y, void* user_data)
@@ -412,8 +366,6 @@ communicated between processes by *cfn*, and that are then used by
       necessary communication was done in :math:`f^I`, then *cfn* =
       ``NULL`` can be passed in the call to :c:func:`ARKBBDPrecInit()`
       (see below).
-
-
 
 
 ARKBBDPRE usage
@@ -481,8 +433,7 @@ that are unchanged from the skeleton program presented in
 #. *Get optional outputs*
 
    Additional optional outputs associated with ARKBBDPRE are
-   available through the routines
-   :c:func:`ARKBBDPrecGetWorkSpace()` and
+   available through the routine
    :c:func:`ARKBBDPrecGetNumGfnEvals()`.
 
 #. *Deallocate memory for solution vector*
@@ -494,9 +445,6 @@ that are unchanged from the skeleton program presented in
 #. *Free nonlinear solver memory*
 
 #. *Finalize MPI*
-
-
-
 
 
 ARKBBDPRE user-callable functions
@@ -556,7 +504,6 @@ and attached to the integrator by calling the following functions:
       every processor.
 
 
-
 The ARKBBDPRE module also provides a re-initialization function to
 allow solving a sequence of problems of the same size, with the same
 linear solver choice, provided there is no change in *Nlocal*,
@@ -600,38 +547,6 @@ SUNLINSOL module, and/or one or more of the corresponding
 
 The following two optional output functions are available for use with
 the ARKBBDPRE module:
-
-
-.. c:function:: int ARKBBDPrecGetWorkSpace(void* arkode_mem, long int* lenrwBBDP, long int* leniwBBDP)
-
-   Returns the processor-local ARKBBDPRE real and
-   integer workspace sizes.
-
-   :param arkode_mem: pointer to the ARKODE memory block.
-   :param lenrwBBDP: the number of ``sunrealtype`` values in the
-                     ARKBBDPRE workspace.
-   :param leniwBBDP: the number of integer values in the  ARKBBDPRE workspace.
-
-   :retval ARKLS_SUCCESS: the function exited successfully.
-   :retval ARKLS_MEM_NULL: ``arkode_mem`` was ``NULL``.
-   :retval ARKLS_LMEM_NULL: the linear solver memory was ``NULL``.
-   :retval ARKLS_PMEM_NULL: the preconditioner memory was ``NULL``.
-
-   .. note::
-
-      The workspace requirements reported by this routine
-      correspond only to memory allocated within the ARKBBDPRE module
-      (the banded matrix approximation, banded ``SUNLinearSolver``
-      object, temporary vectors). These values are local to each process.
-
-      The workspaces referred to here exist in addition to those given by
-      the corresponding function :c:func:`ARKodeGetLinWorkSpace()`.
-
-   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
-
-      Work space functions will be removed in version 8.0.0.
-
-
 
 .. c:function:: int ARKBBDPrecGetNumGfnEvals(void* arkode_mem, long int* ngevalsBBDP)
 

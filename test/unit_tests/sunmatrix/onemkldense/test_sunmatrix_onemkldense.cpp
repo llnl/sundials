@@ -271,7 +271,6 @@ int main(int argc, char* argv[])
   }
   fails += Test_SUNMatMatvecSetup(A, 0);
   fails += Test_SUNMatMatvec(A, x, y, 0);
-  fails += Test_SUNMatSpace(A, 0);
 
   // Print result
   if (fails) { printf("FAIL: SUNMatrix module failed %i tests \n \n", fails); }

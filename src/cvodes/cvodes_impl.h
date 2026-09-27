@@ -500,17 +500,6 @@ typedef struct CVodeMemRec
   sunrealtype cv_etaq;   /* ratio of new to old h for order q               */
   sunrealtype cv_etaqp1; /* ratio of new to old h for order q+1             */
 
-  /*------------------
-    Space requirements
-    ------------------*/
-
-  sunindextype cv_lrw1; /* no. of sunrealtype words in 1 N_Vector y           */
-  sunindextype cv_liw1; /* no. of integer words in 1 N_Vector y            */
-  sunindextype cv_lrw1Q; /* no. of sunrealtype words in 1 N_Vector yQ          */
-  sunindextype cv_liw1Q; /* no. of integer words in 1 N_Vector yQ           */
-  long int cv_lrw; /* no. of sunrealtype words in CVODE work vectors     */
-  long int cv_liw; /* no. of integer words in CVODE work vectors      */
-
   /*---------------------
     Nonlinear Solver Data
     ---------------------*/
@@ -618,12 +607,6 @@ typedef struct CVodeMemRec
   sunbooleantype cv_VabstolQSMallocDone;
   sunbooleantype cv_SabstolQSMallocDone;
   sunbooleantype cv_QuadSensMallocDone;
-
-  /*-------------------------------------------
-    User access function
-    -------------------------------------------*/
-  CVMonitorFn cv_monitorfun;    /* func called with CVODE mem and user data  */
-  long int cv_monitor_interval; /* step interval to call cv_monitorfun       */
 
   /*-------------------------
     Stability Limit Detection

@@ -43,7 +43,6 @@ module fsunmatrix_dense_mod
  public :: FSUNMatScaleAddI_Dense
  public :: FSUNMatMatvec_Dense
  public :: FSUNMatHermitianTransposeVec_Dense
- public :: FSUNMatSpace_Dense
 
  public :: FSUNDenseMatrix_Data
  public :: FSUNDenseMatrix_Column
@@ -170,16 +169,6 @@ end function
 
 function swigc_FSUNMatHermitianTransposeVec_Dense(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatHermitianTransposeVec_Dense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNMatSpace_Dense(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNMatSpace_Dense") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -432,25 +421,6 @@ farg1 = c_loc(a)
 farg2 = c_loc(x)
 farg3 = c_loc(y)
 fresult = swigc_FSUNMatHermitianTransposeVec_Dense(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNMatSpace_Dense(a, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(a)
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FSUNMatSpace_Dense(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

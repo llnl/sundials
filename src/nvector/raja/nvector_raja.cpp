@@ -138,7 +138,6 @@ N_Vector N_VNewEmpty_Raja(SUNContext sunctx)
   v->ops->nvclone                 = N_VClone_Raja;
   v->ops->nvcloneempty            = N_VCloneEmpty_Raja;
   v->ops->nvdestroy               = N_VDestroy_Raja;
-  v->ops->nvspace                 = N_VSpace_Raja;
   v->ops->nvgetlength             = N_VGetLength_Raja;
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Raja;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Raja;
@@ -743,12 +742,6 @@ void N_VDestroy_Raja(N_Vector v)
   free(v);
 
   return;
-}
-
-void N_VSpace_Raja(N_Vector X, sunindextype* lrw, sunindextype* liw)
-{
-  *lrw = NVEC_RAJA_CONTENT(X)->length;
-  *liw = 2;
 }
 
 void N_VConst_Raja(sunrealtype c, N_Vector Z)

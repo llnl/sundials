@@ -63,10 +63,6 @@ SUNDIALS_EXPORT int SUNLinSolSolve_LapackDense(SUNLinearSolver S, SUNMatrix A,
                                                N_Vector x, N_Vector b,
                                                sunrealtype tol);
 SUNDIALS_EXPORT sunindextype SUNLinSolLastFlag_LapackDense(SUNLinearSolver S);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-SUNErrCode SUNLinSolSpace_LapackDense(SUNLinearSolver S, long int* lenrwLS,
-                                      long int* leniwLS);
 SUNDIALS_EXPORT SUNErrCode SUNLinSolFree_LapackDense(SUNLinearSolver S);
 
 #ifdef __cplusplus

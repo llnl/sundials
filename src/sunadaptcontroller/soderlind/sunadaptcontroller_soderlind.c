@@ -110,8 +110,6 @@ SUNAdaptController SUNAdaptController_Soderlind(SUNContext sunctx)
   C->ops->write        = SUNAdaptController_Write_Soderlind;
   C->ops->seterrorbias = SUNAdaptController_SetErrorBias_Soderlind;
   C->ops->updateh      = SUNAdaptController_UpdateH_Soderlind;
-  C->ops->space        = SUNAdaptController_Space_Soderlind;
-
   /* Create content */
   content = (SUNAdaptControllerContent_Soderlind)malloc(sizeof(*content));
   SUNAssertNull(content, SUN_ERR_MALLOC_FAIL);
@@ -674,16 +672,5 @@ SUNErrCode SUNAdaptController_UpdateH_Soderlind(SUNAdaptController C,
   {
     SODERLIND_FIRSTSTEPS(C) += 1;
   }
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNAdaptController_Space_Soderlind(SUNAdaptController C,
-                                              long int* lenrw, long int* leniw)
-{
-  SUNFunctionBegin(C->sunctx);
-  SUNAssert(lenrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(leniw, SUN_ERR_ARG_CORRUPT);
-  *lenrw = 10;
-  *leniw = 2;
   return SUN_SUCCESS;
 }

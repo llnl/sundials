@@ -47,11 +47,6 @@ SUNErrCode SUNFileFlush(FILE* fp)
   return (fflush(fp) == 0) ? SUN_SUCCESS : SUN_ERR_FILE_FLUSH;
 }
 
-SUNErrCode SUNDIALSFileOpen(const char* filename, const char* mode, FILE** fp_out)
-{
-  return SUNFileOpen(filename, mode, fp_out);
-}
-
 /* Close a file pointer with the given file name. */
 SUNErrCode SUNFileClose(FILE** fp_ptr)
 {
@@ -60,5 +55,3 @@ SUNErrCode SUNFileClose(FILE** fp_ptr)
   if (fp && (fp != stdout) && (fp != stderr)) { fclose(fp); }
   return SUN_SUCCESS;
 }
-
-SUNErrCode SUNDIALSFileClose(FILE** fp_ptr) { return SUNFileClose(fp_ptr); }
