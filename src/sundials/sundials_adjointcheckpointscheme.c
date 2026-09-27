@@ -122,21 +122,24 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector(SUNAdjointCheckpointScheme self
 SUNErrCode SUNAdjointCheckpointScheme_Destroy(
   SUNAdjointCheckpointScheme* check_scheme_ptr)
 {
-  SUNFunctionBegin((*check_scheme_ptr)->sunctx);
-  SUNDIALS_MARK_FUNCTION_BEGIN(SUNCTX_->profiler);
-  if ((*check_scheme_ptr)->ops->destroy)
+  if (check_scheme_ptr == NULL) { return SUN_SUCCESS; }
+
+  SUNErrCode err = SUN_SUCCESS;
+  if (*check_scheme_ptr != NULL)
   {
-    SUNErrCode err = (*check_scheme_ptr)->ops->destroy(check_scheme_ptr);
-    SUNDIALS_MARK_FUNCTION_END(SUNCTX_->profiler);
-    return err;
-  }
-  else if (*check_scheme_ptr)
-  {
+    SUNFunctionBegin((*check_scheme_ptr)->sunctx);
+    SUNDIALS_MARK_FUNCTION_BEGIN(SUNCTX_->profiler);
+    if ((*check_scheme_ptr)->ops->destroy)
+    {
+      err = (*check_scheme_ptr)->ops->destroy(*check_scheme_ptr);
+    }
+
     free((*check_scheme_ptr)->ops);
     free(*check_scheme_ptr);
+    SUNDIALS_MARK_FUNCTION_END(SUNCTX_->profiler);
   }
-  SUNDIALS_MARK_FUNCTION_END(SUNCTX_->profiler);
-  return SUN_SUCCESS;
+  *check_scheme_ptr = NULL;
+  return err;
 }
 
 SUNErrCode SUNAdjointCheckpointScheme_Enable(SUNAdjointCheckpointScheme self,

@@ -21,6 +21,11 @@ initial time and state arguments and add the final forward step index. This is
 a breaking API change; callers must now reinitialize and evolve the forward
 stepper before calling :c:func:`SUNAdjointStepper_ReInit`.
 
+Changed the argument of :c:type:`SUNAdjointCheckpointSchemeDestroyFn` from
+``SUNAdjointCheckpointScheme*`` to ``SUNAdjointCheckpointScheme``.
+Implementations of this function only need to free content associated with the
+derived c:type:`SUNAdjointCheckpointScheme`.
+
 **Bug Fixes**
 
 **Deprecation Notices**

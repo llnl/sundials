@@ -159,9 +159,11 @@ abstract base class.
    This type represents a function with the signature of
    :c:func:`SUNAdjointCheckpointScheme_EnableDense`.
 
-.. c:type:: SUNErrCode (*SUNAdjointCheckpointSchemeDestroyFn)(SUNAdjointCheckpointScheme* check_scheme_ptr)
+.. c:type:: SUNErrCode (*SUNAdjointCheckpointSchemeDestroyFn)(SUNAdjointCheckpointScheme check_scheme)
 
-   This type represents a function with the signature of
+   Destroys (deallocates) the implementation-specific content of the
+   :c:type:`SUNAdjointCheckpointScheme` object. It should not free the
+   :c:type:`SUNAdjointCheckpointScheme` object itself, as that is handled by
    :c:func:`SUNAdjointCheckpointScheme_Destroy`.
 
 
