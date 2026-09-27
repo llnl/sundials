@@ -188,14 +188,8 @@ program driver
   integer(c_long) :: nli(1)      ! number of linear iters
   integer(c_long) :: npre(1)     ! number of preconditioner setups
   integer(c_long) :: npsol(1)    ! number of preconditioner solves
-  integer(c_long) :: lenrw(1)    ! main solver real/int workspace size
-  integer(c_long) :: leniw(1)
-  integer(c_long) :: lenrwls(1)  ! linear solver real/int workspace size
-  integer(c_long) :: leniwls(1)
   integer(c_long) :: ngebbd(1)   ! num g evaluations
   real(c_double)  :: avdim(1)    ! avg Krylov subspace dim (NLI/NNI)
-  integer(c_long) :: lenrwbbd(1) ! band preconditioner real/int workspace size
-  integer(c_long) :: leniwbbd(1)
   integer :: i, ioutput
   real(c_double) :: errmax, erri, gerrmax
 
@@ -471,24 +465,6 @@ program driver
       call MPI_Abort(comm, 1, ierr)
     end if
 
-    retval = FARKodeGetWorkSpace(arkode_mem, lenrw, leniw)
-    if (retval /= 0) then
-      print *, "Error: FARKodeGetWorkSpace returned ", retval
-      call MPI_Abort(comm, 1, ierr)
-    end if
-
-    retval = FARKodeGetLinWorkSpace(arkode_mem, lenrwls, leniwls)
-    if (retval /= 0) then
-      print *, "Error: FARKodeGetLinWorkSpace returned ", retval
-      call MPI_Abort(comm, 1, ierr)
-    end if
-
-    retval = FARKBBDPrecGetWorkSpace(arkode_mem, lenrwbbd, leniwbbd)
-    if (retval /= 0) then
-      print *, "Error: FARKBBDPrecGetWorkSpace returned ", retval
-      call MPI_Abort(comm, 1, ierr)
-    end if
-
     retval = FARKBBDPrecGetNumGfnEvals(arkode_mem, ngebbd)
     if (retval /= 0) then
       print *, "Error: FARKBBDPrecGetNumGfnEvals returned ", retval
@@ -511,9 +487,6 @@ program driver
       write (6, '(A,i6)') "   Total Convergence Failures - Nonlinear = ", ncfn
       write (6, '(A,i6)') "                              - Linear    = ", ncfl
       write (6, '(A,i6)') "   Total number of error test failures = ", netf
-      write (6, '(A,2i6)') "   Main solver real/int workspace sizes = ", lenrw, leniw
-      write (6, '(A,2i6)') "   Linear solver real/int workspace sizes = ", lenrwls, leniwls
-      write (6, '(A,2i6)') "   BBD preconditioner real/int workspace sizes = ", lenrwbbd, leniwbbd
       write (6, '(A,i6)') "   Total number of g evals = ", ngebbd
       write (6, '(A)') "    "
       write (6, '(A)') "    "

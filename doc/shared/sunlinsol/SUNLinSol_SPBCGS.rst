@@ -30,7 +30,6 @@ this is an iterative linear solver that is designed to be compatible with any
 SPBCGS requires a fixed amount of memory that does not increase with
 the number of allowed iterations.
 
-
 .. _SUNLinSol.SPBCGS.Usage:
 
 SUNLinSol_SPBCGS Usage
@@ -41,10 +40,8 @@ is ``sunlinsol/sunlinsol_spbcgs.h``.  The SUNLinSol_SPBCGS module
 is accessible from all SUNDIALS solvers *without*
 linking to the ``libsundials_sunlinsolspbcgs`` module library.
 
-
 The module SUNLinSol_SPBCGS provides the following
 user-callable routines:
-
 
 .. c:function:: SUNLinearSolver SUNLinSol_SPBCGS(N_Vector y, int pretype, int maxl, SUNContext sunctx)
 
@@ -85,7 +82,6 @@ user-callable routines:
       With ``SUN_PREC_RIGHT`` or ``SUN_PREC_BOTH`` the initial guess must be zero (use
       :c:func:`SUNLinSolSetZeroGuess` to indicate the initial guess is zero).
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPBCGSSetPrecType(SUNLinearSolver S, int pretype)
 
    This function updates the flag indicating use of preconditioning.
@@ -107,7 +103,6 @@ user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.prec_type".
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPBCGSSetMaxl(SUNLinearSolver S, int maxl)
 
    This function updates the number of linear solver iterations to allow.
@@ -124,8 +119,6 @@ user-callable routines:
 
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.maxl".
-
-
 
 .. _SUNLinSol.SPBCGS.Description:
 
@@ -198,9 +191,6 @@ information:
 * ``p, q, u, Ap, vtemp`` - ``N_Vector`` used for workspace by the
   SPBCGS algorithm.
 
-
-
-
 This solver is constructed to perform the following operations:
 
 * During construction all ``N_Vector`` solver data is allocated, with
@@ -256,7 +246,5 @@ The SUNLinSol_SPBCGS module defines implementations of all
 * ``SUNLinSolResid_SPBCGS``
 
 * ``SUNLinSolLastFlag_SPBCGS``
-
-* ``SUNLinSolSpace_SPBCGS``
 
 * ``SUNLinSolFree_SPBCGS``

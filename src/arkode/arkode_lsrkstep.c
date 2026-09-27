@@ -405,13 +405,11 @@ int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
     step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
                                            sizeof(sunrealtype));
     if (step_mem->cvals == NULL) { return ARK_MEM_FAIL; }
-    ark_mem->lrw += step_mem->nfusedopvecs;
   }
   if (step_mem->Xvecs == NULL)
   {
     step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs, sizeof(N_Vector));
     if (step_mem->Xvecs == NULL) { return ARK_MEM_FAIL; }
-    ark_mem->liw += step_mem->nfusedopvecs; /* pointers */
   }
 
   /* While LSRKStep does not currently call the full RHS function directly (later
@@ -2696,13 +2694,11 @@ void lsrkStep_Free(ARKodeMem ark_mem)
     {
       free(step_mem->cvals);
       step_mem->cvals = NULL;
-      ark_mem->lrw -= step_mem->nfusedopvecs;
     }
     if (step_mem->Xvecs != NULL)
     {
       free(step_mem->Xvecs);
       step_mem->Xvecs = NULL;
-      ark_mem->liw -= step_mem->nfusedopvecs;
     }
 
     /* free the time stepper module itself */

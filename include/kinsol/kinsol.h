@@ -142,9 +142,6 @@ SUNDIALS_EXPORT int KINSetConstraints(void* kinmem, N_Vector constraints);
 SUNDIALS_EXPORT int KINSetSysFunc(void* kinmem, KINSysFn func);
 
 /* Optional output functions */
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int KINGetWorkSpace(void* kinmem, long int* lenrw, long int* leniw);
 SUNDIALS_EXPORT int KINGetNumNonlinSolvIters(void* kinmem, long int* nniters);
 SUNDIALS_EXPORT int KINGetNumFuncEvals(void* kinmem, long int* nfevals);
 SUNDIALS_EXPORT int KINGetNumBetaCondFails(void* kinmem, long int* nbcfails);

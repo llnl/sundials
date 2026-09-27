@@ -157,7 +157,7 @@ CVODE(S) / IDA(S) / ARKODE
    magnitude comparable to ``abstol`` or less, is equivalent to zero as far as the computation
    is concerned.
 
-   3. The user’s right-hand side routine ``f`` (or residual ``F``) should never change a negative value in
+   3. The user's right-hand side routine ``f`` (or residual ``F``) should never change a negative value in
    the solution vector ``y`` to a non-negative value, as a "solution" to this problem.
    This can cause instability. If the ``f`` (or ``F``) routine cannot tolerate a zero or negative
    value (e.g. because there is a square root or log of it), then the offending

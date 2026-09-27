@@ -27,7 +27,7 @@
  *
  * This is example 7.2 from:
  * Struckmeier, J., & Riedel, C. (2002). Canonical transformations and exact
- * invariants for time‐dependent Hamiltonian systems. Annalen der Physik, 11(1),
+ * invariants for time-dependent Hamiltonian systems. Annalen der Physik, 11(1),
  * 15-38.
  *
  * The example has the following command line arguments:

@@ -24,9 +24,8 @@ modules:
     fn_exclude_by_name__regex:
     - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII
     - "Destroy"
-    - "Space" # Space functions are deprecated, so dont expose them in Python
     # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
-    - "SetOptions" 
+    - "SetOptions"
     macro_define_include_by_name__regex:
     - "^SUN_"
     - "^CV_"
@@ -41,7 +40,7 @@ modules:
     # i.e., one where you could provide NULL
     fn_params_optional_with_default_null:
       "CVodeSetLinearSolver":
-      - "A" 
+      - "A"
       "CVodeGetAdjDataPointHermite":
       - "y"
       - "yd"
@@ -51,19 +50,17 @@ modules:
     # We do custom handling of Create so we can wrap the void* in a CVodeView
     - "^CVodeCreate$"
     # we use user_data for sneaking in python contexts, so we don't interface these
-    - "^CVodeGetUserData$" 
-    - "^CVodeSetUserData$" 
-    - "^CVodeGetUserDataB$" 
+    - "^CVodeGetUserData$"
+    - "^CVodeSetUserData$"
+    - "^CVodeGetUserDataB$"
     - "^CVodeSetUserDataB$"
-    # this function should be deprecated, so we don't interface it
-    - "^CVodeSetMonitorFn$"
     # generator cannot handle setting of function pointers, so we do something custom
     - "CVodeInit.*"
     - "^CVodeSensInit$"
     - "^CVodeSensInit1$"
     - "CVodeQuadInit.*"
     - "CVodeQuadSensInit.*"
-    - "CVodeSet.*Fn" 
+    - "CVodeSet.*Fn"
     - "CVodeSet.*Preconditioner"
     - "CVodeSetJacTimes.*"
     - "^CVodeRootInit$"

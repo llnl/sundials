@@ -966,22 +966,6 @@ SWIGEXPORT int _wrap_FSUNFileFlush(void *farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FSUNDIALSFileOpen(SwigArrayWrapper *farg1, SwigArrayWrapper *farg2, void *farg3) {
-  int fresult ;
-  char *arg1 = (char *) 0 ;
-  char *arg2 = (char *) 0 ;
-  FILE **arg3 = (FILE **) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (char *)(farg1->data);
-  arg2 = (char *)(farg2->data);
-  arg3 = (FILE **)(farg3);
-  result = (SUNErrCode)SUNDIALSFileOpen((char const *)arg1,(char const *)arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FSUNFileClose(void *farg1) {
   int fresult ;
   FILE **arg1 = (FILE **) 0 ;
@@ -989,18 +973,6 @@ SWIGEXPORT int _wrap_FSUNFileClose(void *farg1) {
   
   arg1 = (FILE **)(farg1);
   result = (SUNErrCode)SUNFileClose(arg1);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNDIALSFileClose(void *farg1) {
-  int fresult ;
-  FILE **arg1 = (FILE **) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (FILE **)(farg1);
-  result = (SUNErrCode)SUNDIALSFileClose(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -1081,18 +1053,6 @@ SWIGEXPORT void _wrap_FN_VDestroy(N_Vector farg1) {
   
   arg1 = (N_Vector)(farg1);
   N_VDestroy(arg1);
-}
-
-
-SWIGEXPORT void _wrap_FN_VSpace(N_Vector farg1, int32_t *farg2, int32_t *farg3) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunindextype *arg2 = (sunindextype *) 0 ;
-  sunindextype *arg3 = (sunindextype *) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (sunindextype *)(farg2);
-  arg3 = (sunindextype *)(farg3);
-  N_VSpace(arg1,arg2,arg3);
 }
 
 
@@ -2040,22 +2000,6 @@ SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec(SUNMatrix farg1, N_Vector farg
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatSpace(SUNMatrix farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNMatrix arg1 = (SUNMatrix) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (SUNErrCode)SUNMatSpace(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FSUNModifiedGS(void *farg1, void *farg2, int const *farg3, int const *farg4, double *farg5) {
   int fresult ;
   N_Vector *arg1 = (N_Vector *) 0 ;
@@ -2466,22 +2410,6 @@ SWIGEXPORT int32_t _wrap_FSUNLinSolLastFlag(SUNLinearSolver farg1) {
   arg1 = (SUNLinearSolver)(farg1);
   result = SUNLinSolLastFlag(arg1);
   fresult = (sunindextype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNLinSolSpace(SUNLinearSolver farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNLinearSolver)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (SUNErrCode)SUNLinSolSpace(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
   return fresult;
 }
 
@@ -2945,22 +2873,6 @@ SWIGEXPORT int _wrap_FSUNAdaptController_UpdateMRIHTol(SUNAdaptController farg1,
   arg4 = (sunrealtype)(*farg4);
   arg5 = (sunrealtype)(*farg5);
   result = (SUNErrCode)SUNAdaptController_UpdateMRIHTol(arg1,arg2,arg3,arg4,arg5);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNAdaptController_Space(SUNAdaptController farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (SUNErrCode)SUNAdaptController_Space(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }

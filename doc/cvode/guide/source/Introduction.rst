@@ -70,7 +70,7 @@ with GMRES. Bi-CGStab and TFQMR have an advantage in storage
 requirements, in that the number of workspace vectors they require is
 fixed, while that number for GMRES depends on the desired Krylov
 subspace size. FGMRES has an advantage in that it is designed to support
-preconditioners that vary between iterations (e.g. iterative methods).
+preconditioners that vary between iterations (e.g. iterative methods).
 PCG exhibits rapid convergence and minimal workspace vectors, but only
 works for symmetric linear systems.
 

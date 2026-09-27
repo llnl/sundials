@@ -35,9 +35,7 @@ The header file to be included when using this module is
 accessible from all SUNDIALS solvers *without*
 linking to the ``libsundials_sunlinsoldense`` module library.
 
-
 The module SUNLinSol_Dense provides the following user-callable constructor routine:
-
 
 .. c:function:: SUNLinearSolver SUNLinSol_Dense(N_Vector y, SUNMatrix A, SUNContext sunctx)
 
@@ -59,13 +57,10 @@ The module SUNLinSol_Dense provides the following user-callable constructor rout
       additional compatible matrix and vector implementations are added to
       SUNDIALS, these will be included within this compatibility check.
 
-
-
 .. _SUNLinSol_Dense.Description:
 
 SUNLinSol_Dense Description
 -----------------------------
-
 
 The SUNLinSol_Dense module defines the *content*
 field of a ``SUNLinearSolver`` to be the following structure:
@@ -87,7 +82,6 @@ information:
 
 * ``last_flag`` - last error return flag from internal function evaluations.
 
-
 This solver is constructed to perform the following operations:
 
 * The "setup" call performs an :math:`LU` factorization with
@@ -102,7 +96,6 @@ This solver is constructed to perform the following operations:
   backward substitution using the stored ``pivots`` array and the
   :math:`LU` factors held in the SUNMATRIX_DENSE object
   (:math:`\mathcal O(N^2)` cost).
-
 
 The SUNLinSol_Dense module defines dense implementations of all
 "direct" linear solver operations listed in
@@ -119,9 +112,5 @@ The SUNLinSol_Dense module defines dense implementations of all
   and ``pivots`` array to perform the solve.
 
 * ``SUNLinSolLastFlag_Dense``
-
-* ``SUNLinSolSpace_Dense`` -- this only returns information for
-  the storage *within* the solver object, i.e. storage
-  for ``N``, ``last_flag``, and ``pivots``.
 
 * ``SUNLinSolFree_Dense``

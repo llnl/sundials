@@ -18,7 +18,7 @@
  *    y' + lambda*y = y^2, y(0) = 1
  * proposed in 
  * 
- * Estep, D., et al. "An a posteriori–a priori analysis of multiscale operator
+ * Estep, D., et al. "An a posteriori-a priori analysis of multiscale operator
  * splitting." SIAM Journal on Numerical Analysis 46.3 (2008): 1116-1146.
  *
  * The parameter lambda is positive, t is in [0, 1], and the exact solution is

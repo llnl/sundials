@@ -72,10 +72,6 @@ SUNDIALS_EXPORT
 SUNErrCode SUNAdaptController_UpdateH_ARKUserControl(SUNAdaptController C,
                                                      sunrealtype h,
                                                      sunrealtype dsm);
-SUNDIALS_EXPORT
-SUNErrCode SUNAdaptController_Space_ARKUserControl(SUNAdaptController C,
-                                                   long int* lenrw,
-                                                   long int* leniw);
 
 #ifdef __cplusplus
 }

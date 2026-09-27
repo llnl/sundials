@@ -104,7 +104,6 @@ SUNLinearSolver SUNLinSol_KLU(N_Vector y, SUNMatrix A, SUNContext sunctx)
   S->ops->setup      = SUNLinSolSetup_KLU;
   S->ops->solve      = SUNLinSolSolve_KLU;
   S->ops->lastflag   = SUNLinSolLastFlag_KLU;
-  S->ops->space      = SUNLinSolSpace_KLU;
   S->ops->free       = SUNLinSolFree_KLU;
 
   /* Create content */
@@ -459,16 +458,6 @@ int SUNLinSolSolve_KLU(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
 }
 
 sunindextype SUNLinSolLastFlag_KLU(SUNLinearSolver S) { return (LASTFLAG(S)); }
-
-SUNErrCode SUNLinSolSpace_KLU(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S,
-                              long int* lenrwLS, long int* leniwLS)
-{
-  /* since the klu structures are opaque objects, we
-     omit those from these results */
-  *leniwLS = 2;
-  *lenrwLS = 0;
-  return SUN_SUCCESS;
-}
 
 SUNErrCode SUNLinSolFree_KLU(SUNLinearSolver S)
 {

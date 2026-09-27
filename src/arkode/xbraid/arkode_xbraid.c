@@ -125,7 +125,7 @@ int ARKBraid_Free(braid_App* app)
 
     if (content->yout != NULL)
     {
-      arkFreeVec(content->ark_mem, &(content->yout));
+      arkFreeVec(&(content->yout));
       content->yout = NULL;
     }
     free((*app)->content);
@@ -217,11 +217,6 @@ int ARKBraid_GetVecTmpl(braid_App app, N_Vector* tmpl)
   return SUNBRAID_SUCCESS;
 }
 
-int ARKBraid_GetARKStepMem(braid_App app, void** arkode_mem)
-{
-  return (ARKBraid_GetARKodeMem(app, arkode_mem));
-}
-
 int ARKBraid_GetARKodeMem(braid_App app, void** arkode_mem)
 {
   ARKBraidContent content;
@@ -252,11 +247,6 @@ int ARKBraid_GetLastBraidFlag(braid_App app, int* last_flag)
   content    = (ARKBraidContent)app->content;
   *last_flag = content->last_flag_braid;
   return SUNBRAID_SUCCESS;
-}
-
-int ARKBraid_GetLastARKStepFlag(braid_App app, int* last_flag)
-{
-  return (ARKBraid_GetLastARKodeFlag(app, last_flag));
 }
 
 int ARKBraid_GetLastARKodeFlag(braid_App app, int* last_flag)

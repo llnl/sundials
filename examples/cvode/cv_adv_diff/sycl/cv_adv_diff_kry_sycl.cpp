@@ -328,14 +328,10 @@ static void PrintOutput(sunrealtype t, sunrealtype umax, long int nst)
 // Get and print some final statistics
 static void PrintFinalStats(void* cvode_mem)
 {
-  long lenrw, leniw;
-  long lenrwLS, leniwLS;
   long int nst, nfe, nsetups, nni, ncfn, netf;
   long int nli, npe, nps, ncfl, nfeLS;
   int retval;
 
-  retval = CVodeGetWorkSpace(cvode_mem, &lenrw, &leniw);
-  check_retval(&retval, "CVodeGetWorkSpace", 1);
   retval = CVodeGetNumSteps(cvode_mem, &nst);
   check_retval(&retval, "CVodeGetNumSteps", 1);
   retval = CVodeGetNumRhsEvals(cvode_mem, &nfe);
@@ -349,8 +345,6 @@ static void PrintFinalStats(void* cvode_mem)
   retval = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
   check_retval(&retval, "CVodeGetNumNonlinSolvConvFails", 1);
 
-  retval = CVodeGetLinWorkSpace(cvode_mem, &lenrwLS, &leniwLS);
-  check_retval(&retval, "CVodeGetLinWorkSpace", 1);
   retval = CVodeGetNumLinIters(cvode_mem, &nli);
   check_retval(&retval, "CVodeGetNumLinIters", 1);
   retval = CVodeGetNumPrecEvals(cvode_mem, &npe);
@@ -363,8 +357,6 @@ static void PrintFinalStats(void* cvode_mem)
   check_retval(&retval, "CVodeGetNumLinRhsEvals", 1);
 
   std::cout << "\nFinal Statistics.. \n\n";
-  std::cout << "lenrw   = " << lenrw << "     leniw   = " << leniw << "\n";
-  std::cout << "lenrwLS = " << lenrwLS << "     leniwLS = " << leniwLS << "\n";
   std::cout << "nst     = " << nst << "\n";
   std::cout << "nfe     = " << nfe << "     nfeLS   = " << nfeLS << "\n";
   std::cout << "nni     = " << nni << "     nli     = " << nli << "\n";

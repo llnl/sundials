@@ -97,7 +97,6 @@ contains
     fails = fails + Test_FSUNLinSolSetScalingVectors(LS, probdata%s1, &
                                                      probdata%s2, 0)
     fails = fails + Test_FSUNLinSolInitialize(LS, 0)
-    fails = fails + Test_FSUNLinSolSpace(LS, 0)
     fails = fails + FSUNLinSol_SPGMRSetGSType(LS, gstype)
 
     if (fails /= 0) then

@@ -95,9 +95,6 @@ int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g)
     ark_mem->root_mem->gactive   = NULL;
     ark_mem->root_mem->mxgnull   = 1;
     ark_mem->root_mem->root_data = ark_mem->user_data;
-
-    ark_mem->lrw += ARK_ROOT_LRW;
-    ark_mem->liw += ARK_ROOT_LIW;
   }
 
   /* If rerunning ARKodeRootInit() with a different number of root
@@ -117,9 +114,6 @@ int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g)
     ark_mem->root_mem->rootdir = NULL;
     free(ark_mem->root_mem->gactive);
     ark_mem->root_mem->gactive = NULL;
-
-    ark_mem->lrw -= 3 * (ark_mem->root_mem->nrtfn);
-    ark_mem->liw -= 3 * (ark_mem->root_mem->nrtfn);
   }
 
   /* If ARKodeRootInit() was called with nrtfn == 0, then set
@@ -154,9 +148,6 @@ int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g)
         ark_mem->root_mem->rootdir = NULL;
         free(ark_mem->root_mem->gactive);
         ark_mem->root_mem->gactive = NULL;
-
-        ark_mem->lrw -= 3 * nrt;
-        ark_mem->liw -= 3 * nrt;
 
         arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
                         MSG_ARK_NULL_G);
@@ -268,9 +259,6 @@ int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g)
   /* Set default values for gactive (all active) */
   for (i = 0; i < nrt; i++) { ark_mem->root_mem->gactive[i] = SUNTRUE; }
 
-  ark_mem->lrw += 3 * nrt;
-  ark_mem->liw += 3 * nrt;
-
   return (ARK_SUCCESS);
 }
 
@@ -310,12 +298,8 @@ int arkRootFree(void* arkode_mem)
       ark_mem->root_mem->rootdir = NULL;
       free(ark_mem->root_mem->gactive);
       ark_mem->root_mem->gactive = NULL;
-      ark_mem->lrw -= 3 * ark_mem->root_mem->nrtfn;
-      ark_mem->liw -= 3 * ark_mem->root_mem->nrtfn;
     }
     free(ark_mem->root_mem);
-    ark_mem->lrw -= ARK_ROOT_LRW;
-    ark_mem->liw -= ARK_ROOT_LIW;
   }
   return (ARK_SUCCESS);
 }

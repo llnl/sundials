@@ -117,8 +117,6 @@ module fcvodes_mod
  public :: FCVodeSetMaxOrd
  public :: FCVodeSetMaxStep
  public :: FCVodeSetMinStep
- public :: FCVodeSetMonitorFn
- public :: FCVodeSetMonitorFrequency
  public :: FCVodeSetNlsRhsFn
  public :: FCVodeSetNonlinConvCoef
  public :: FCVodeSetNonlinearSolver
@@ -145,7 +143,6 @@ module fcvodes_mod
  public :: FCVodeComputeStateSens
  public :: FCVodeComputeStateSens1
  public :: FCVodeGetDky
- public :: FCVodeGetWorkSpace
  public :: FCVodeGetNumSteps
  public :: FCVodeGetNumRhsEvals
  public :: FCVodeGetNumLinSolvSetups
@@ -315,12 +312,10 @@ module fcvodes_mod
  public :: FCVodeGetAdjDataPointPolynomial
  public :: FCVodeGetAdjCurrentCheckPoint
  public :: FCVBandPrecInit
- public :: FCVBandPrecGetWorkSpace
  public :: FCVBandPrecGetNumRhsEvals
  public :: FCVBandPrecInitB
  public :: FCVBBDPrecInit
  public :: FCVBBDPrecReInit
- public :: FCVBBDPrecGetWorkSpace
  public :: FCVBBDPrecGetNumGfnEvals
  public :: FCVBBDPrecInitB
  public :: FCVBBDPrecReInitB
@@ -334,7 +329,6 @@ module fcvodes_mod
  integer(C_INT), parameter, public :: CVDIAG_RHSFUNC_RECVR = -7_C_INT
  integer(C_INT), parameter, public :: CVDIAG_NO_ADJ = -101_C_INT
  public :: FCVDiag
- public :: FCVDiagGetWorkSpace
  public :: FCVDiagGetNumRhsEvals
  public :: FCVDiagGetLastFlag
  public :: FCVDiagGetReturnFlagName
@@ -364,7 +358,6 @@ module fcvodes_mod
  public :: FCVodeGetJac
  public :: FCVodeGetJacTime
  public :: FCVodeGetJacNumSteps
- public :: FCVodeGetLinWorkSpace
  public :: FCVodeGetNumJacEvals
  public :: FCVodeGetNumPrecEvals
  public :: FCVodeGetNumPrecSolves
@@ -577,24 +570,6 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FCVodeSetMonitorFn(farg1, farg2) &
-bind(C, name="_wrap_FCVodeSetMonitorFn") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FCVodeSetMonitorFrequency(farg1, farg2) &
-bind(C, name="_wrap_FCVodeSetMonitorFrequency") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_LONG), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -838,16 +813,6 @@ type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT), intent(in) :: farg3
 type(C_PTR), value :: farg4
-integer(C_INT) :: fresult
-end function
-
-function swigc_FCVodeGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FCVodeGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -2288,16 +2253,6 @@ integer(C_INT64_T), intent(in) :: farg4
 integer(C_INT) :: fresult
 end function
 
-function swigc_FCVBandPrecGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FCVBandPrecGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FCVBandPrecGetNumRhsEvals(farg1, farg2) &
 bind(C, name="_wrap_FCVBandPrecGetNumRhsEvals") &
 result(fresult)
@@ -2346,16 +2301,6 @@ real(C_DOUBLE), intent(in) :: farg4
 integer(C_INT) :: fresult
 end function
 
-function swigc_FCVBBDPrecGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FCVBBDPrecGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FCVBBDPrecGetNumGfnEvals(farg1, farg2) &
 bind(C, name="_wrap_FCVBBDPrecGetNumGfnEvals") &
 result(fresult)
@@ -2399,16 +2344,6 @@ bind(C, name="_wrap_FCVDiag") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FCVDiagGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FCVDiagGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -2565,16 +2500,6 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FCVodeGetLinWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FCVodeGetLinWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -3161,38 +3086,6 @@ fresult = swigc_FCVodeSetMinStep(farg1, farg2)
 swig_result = fresult
 end function
 
-function FCVodeSetMonitorFn(cvode_mem, fn) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: cvode_mem
-type(C_FUNPTR), intent(in), value :: fn
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-
-farg1 = cvode_mem
-farg2 = fn
-fresult = swigc_FCVodeSetMonitorFn(farg1, farg2)
-swig_result = fresult
-end function
-
-function FCVodeSetMonitorFrequency(cvode_mem, nst) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: cvode_mem
-integer(C_LONG), intent(in) :: nst
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_LONG) :: farg2 
-
-farg1 = cvode_mem
-farg2 = nst
-fresult = swigc_FCVodeSetMonitorFrequency(farg1, farg2)
-swig_result = fresult
-end function
-
 function FCVodeSetNlsRhsFn(cvode_mem, f) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -3633,25 +3526,6 @@ farg2 = t
 farg3 = k
 farg4 = c_loc(dky)
 fresult = swigc_FCVodeGetDky(farg1, farg2, farg3, farg4)
-swig_result = fresult
-end function
-
-function FCVodeGetWorkSpace(cvode_mem, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = cvode_mem
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FCVodeGetWorkSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
@@ -6304,25 +6178,6 @@ fresult = swigc_FCVBandPrecInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FCVBandPrecGetWorkSpace(cvode_mem, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = cvode_mem
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FCVBandPrecGetWorkSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FCVBandPrecGetNumRhsEvals(cvode_mem, nfevalsbp) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -6423,25 +6278,6 @@ fresult = swigc_FCVBBDPrecReInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FCVBBDPrecGetWorkSpace(cvode_mem, lenrwbbdp, leniwbbdp) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwbbdp
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwbbdp
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = cvode_mem
-farg2 = c_loc(lenrwbbdp(1))
-farg3 = c_loc(leniwbbdp(1))
-fresult = swigc_FCVBBDPrecGetWorkSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FCVBBDPrecGetNumGfnEvals(cvode_mem, ngevalsbbdp) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -6533,25 +6369,6 @@ type(C_PTR) :: farg1
 
 farg1 = cvode_mem
 fresult = swigc_FCVDiag(farg1)
-swig_result = fresult
-end function
-
-function FCVDiagGetWorkSpace(cvode_mem, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = cvode_mem
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FCVDiagGetWorkSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
@@ -6831,25 +6648,6 @@ type(C_PTR) :: farg2
 farg1 = cvode_mem
 farg2 = c_loc(nst_j(1))
 fresult = swigc_FCVodeGetJacNumSteps(farg1, farg2)
-swig_result = fresult
-end function
-
-function FCVodeGetLinWorkSpace(cvode_mem, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: cvode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = cvode_mem
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FCVodeGetLinWorkSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

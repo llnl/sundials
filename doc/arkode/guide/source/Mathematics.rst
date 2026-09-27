@@ -544,7 +544,7 @@ LSRK methods of STS type are designed for stiff problems characterized by
 having Jacobians with eigenvalues that have large real and small imaginary parts.
 While those problems are traditionally treated using implicit methods, STS methods
 are explicit.  To achieve stability for these stiff problems, STS methods use more stages than
-conventional Runge-Kutta methods to extend the stability region along the negative
+conventional Runge--Kutta methods to extend the stability region along the negative
 real axis. The extent of this stability region is proportional to the square of the number
 of stages used.
 
@@ -899,7 +899,7 @@ separately, possibly with different numerical integrators or exact solution
 procedures. Coupling is only performed through initial conditions which are
 passed from the flow of one partition to the next.
 
-The following algorithmic procedure is used in the Splitting-Step module:
+The following algorithmic procedure is used in the SplittingStep module:
 
 #. For :math:`i = 1, \dots, r` do:
 
@@ -1046,7 +1046,7 @@ non-autonomous *H*, the invariants are no longer directly obtainable from the
 Hamiltonian :cite:p:`Struckmeier:02`.
 
 In practice, the ordering of the variables does not matter and is determined by the user.
-SPRKStep utilizes Symplectic Partitioned Runge-Kutta (SPRK) methods represented by the pair
+SPRKStep utilizes Symplectic Partitioned Runge--Kutta (SPRK) methods represented by the pair
 of explicit and diagonally implicit Butcher tableaux,
 
 .. math::
@@ -1585,7 +1585,7 @@ of the problem itself, e.g. in an advection-diffusion calculation
 :math:`f^I` may contain the stiff diffusive components and
 :math:`f^E` may contain the comparably nonstiff advection terms.  In
 this scenario, an explicitly stable step :math:`h_\text{exp}` would be
-predicted as one satisfying the Courant-Friedrichs-Lewy (CFL)
+predicted as one satisfying the Courant--Friedrichs--Lewy (CFL)
 stability condition for the advective portion of the problem,
 
 .. math::
@@ -1942,7 +1942,7 @@ dimensionless value, and :math:`w_j` is the error weight defined in
 :eq:`ARKODE_EWT`.  In the dense case, this approach requires :math:`N`
 evaluations of :math:`f^I`, one for each column of :math:`J`.  In the
 band case, the columns of :math:`J` are computed in groups, using the
-Curtis-Powell-Reid algorithm, with the number of :math:`f^I`
+Curtis--Powell--Reid algorithm, with the number of :math:`f^I`
 evaluations equal to the matrix bandwidth.
 
 We note that with sparse and user-supplied SUNMatrix objects, the
@@ -2218,11 +2218,11 @@ Newton iteration and further also within a time integration, and since
 each of these iterations has its own test for convergence, the
 preconditioner may use a very crude approximation, as long as it
 captures the dominant numerical features of the system.  We have
-found that the combination of a preconditioner with the Newton-Krylov
+found that the combination of a preconditioner with the Newton--Krylov
 iteration, using even a relatively poor approximation to the Jacobian,
 can be surprisingly superior to using the same matrix without Krylov
 acceleration (i.e., a modified Newton iteration), as well as to using
-the Newton-Krylov method with no preconditioning.
+the Newton--Krylov method with no preconditioning.
 
 
 

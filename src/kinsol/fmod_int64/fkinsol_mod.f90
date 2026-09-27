@@ -92,7 +92,6 @@ module fkinsol_mod
  public :: FKINSetScaledStepTol
  public :: FKINSetConstraints
  public :: FKINSetSysFunc
- public :: FKINGetWorkSpace
  public :: FKINGetNumNonlinSolvIters
  public :: FKINGetNumFuncEvals
  public :: FKINGetNumBetaCondFails
@@ -112,7 +111,6 @@ module fkinsol_mod
  integer(C_INT), parameter, public :: KINBBDPRE_PDATA_NULL = -11_C_INT
  integer(C_INT), parameter, public :: KINBBDPRE_FUNC_UNRECVR = -12_C_INT
  public :: FKINBBDPrecInit
- public :: FKINBBDPrecGetWorkSpace
  public :: FKINBBDPrecGetNumGfnEvals
  integer(C_INT), parameter, public :: KINLS_SUCCESS = 0_C_INT
  integer(C_INT), parameter, public :: KINLS_MEM_NULL = -1_C_INT
@@ -129,7 +127,6 @@ module fkinsol_mod
  public :: FKINSetJacTimesVecFn
  public :: FKINGetJac
  public :: FKINGetJacNumIters
- public :: FKINGetLinWorkSpace
  public :: FKINGetNumJacEvals
  public :: FKINGetNumLinFuncEvals
  public :: FKINGetNumPrecEvals
@@ -417,16 +414,6 @@ type(C_FUNPTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FKINGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FKINGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FKINGetNumNonlinSolvIters(farg1, farg2) &
 bind(C, name="_wrap_FKINGetNumNonlinSolvIters") &
 result(fresult)
@@ -545,16 +532,6 @@ type(C_FUNPTR), value :: farg9
 integer(C_INT) :: fresult
 end function
 
-function swigc_FKINBBDPrecGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FKINBBDPrecGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FKINBBDPrecGetNumGfnEvals(farg1, farg2) &
 bind(C, name="_wrap_FKINBBDPrecGetNumGfnEvals") &
 result(fresult)
@@ -617,16 +594,6 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FKINGetLinWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FKINGetLinWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1211,25 +1178,6 @@ fresult = swigc_FKINSetSysFunc(farg1, farg2)
 swig_result = fresult
 end function
 
-function FKINGetWorkSpace(kinmem, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: kinmem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = kinmem
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FKINGetWorkSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FKINGetNumNonlinSolvIters(kinmem, nniters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -1451,25 +1399,6 @@ fresult = swigc_FKINBBDPrecInit(farg1, farg2, farg3, farg4, farg5, farg6, farg7,
 swig_result = fresult
 end function
 
-function FKINBBDPrecGetWorkSpace(kinmem, lenrwbbdp, leniwbbdp) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: kinmem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwbbdp
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwbbdp
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = kinmem
-farg2 = c_loc(lenrwbbdp(1))
-farg3 = c_loc(leniwbbdp(1))
-fresult = swigc_FKINBBDPrecGetWorkSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FKINBBDPrecGetNumGfnEvals(kinmem, ngevalsbbdp) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -1585,25 +1514,6 @@ type(C_PTR) :: farg2
 farg1 = kinmem
 farg2 = c_loc(nni_j(1))
 fresult = swigc_FKINGetJacNumIters(farg1, farg2)
-swig_result = fresult
-end function
-
-function FKINGetLinWorkSpace(kinmem, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: kinmem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = kinmem
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FKINGetLinWorkSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
