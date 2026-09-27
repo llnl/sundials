@@ -21,8 +21,8 @@
 # examples excluded from 'make test' in releases
 
 # Examples using SUNDIALS manyvector nvector
-set(nvector_manyvector_examples "test_nvector_manyvector\;1000 100\;"
-                                "test_nvector_manyvector\;100 1000\;")
+set(nvector_manyvector_examples "test_nvector_manyvector\;1000 100 0\;"
+                                "test_nvector_manyvector\;100 1000 0\;")
 
 # Dependencies for nvector examples
 set(nvector_examples_dependencies test_nvector)

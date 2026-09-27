@@ -5084,6 +5084,50 @@ int Test_N_VDotProdLocal(N_Vector X, N_Vector Y, sunindextype local_length,
 }
 
 /* ----------------------------------------------------------------------
+ * N_VDotProdLocalComplex test
+ * --------------------------------------------------------------------*/
+int Test_N_VDotProdLocalComplex(N_Vector X, N_Vector Y,
+                                sunindextype local_length, int myid)
+{
+  int fails = 0, failure = 0;
+  double start_time, stop_time, maxt;
+  sunscalartype ans, rmyid, locleninv;
+
+  /* fill vector data */
+  rmyid     = (sunscalartype)myid;
+  locleninv = ONE / local_length;
+  set_element_range(X, 0, local_length - 1, rmyid);
+  set_element_range(Y, 0, local_length - 1, locleninv);
+
+  start_time = get_time();
+  N_VDotProdLocalComplex(X, Y, &ans);
+  sync_device(X);
+  stop_time = get_time();
+
+  /* ans should equal rmyid */
+  failure = SUNRCompareTol(ans, rmyid, SUNRsqrt(SUN_UNIT_ROUNDOFF));
+
+  if (failure)
+  {
+    printf(">>> FAILED test -- N_VDotProdLocalComplex, Proc %d\n", myid);
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    printf("ans = %" FSYM " + %" FSYM "i expected = %" FSYM " + %" FSYM "i\n",
+           SUN_REAL(ans), SUN_IMAG(ans), SUN_REAL(rmyid), SUN_IMAG(rmyid));
+#else
+    printf("ans = %" FSYM " expected = %" FSYM "\n", ans, rmyid);
+#endif
+    fails++;
+  }
+  else if (myid == 0) { printf("PASSED test -- N_VDotProdLocalComplex\n"); }
+
+  /* find max time across all processes */
+  maxt = max_time(X, stop_time - start_time);
+  PRINT_TIME("N_VDotProdLocalComplex", maxt);
+
+  return (fails);
+}
+
+/* ----------------------------------------------------------------------
  * N_VMaxNormLocal test
  * --------------------------------------------------------------------*/
 int Test_N_VMaxNormLocal(N_Vector X, sunindextype local_length, int myid)

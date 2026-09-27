@@ -133,6 +133,8 @@ int Test_N_VLinearCombinationVectorArray(N_Vector X, sunindextype local_length,
 /* Local reduction operation tests */
 int Test_N_VDotProdLocal(N_Vector X, N_Vector Y, sunindextype local_length,
                          int myid);
+int Test_N_VDotProdLocalComplex(N_Vector X, N_Vector Y,
+                                sunindextype local_length, int myid);
 int Test_N_VMaxNormLocal(N_Vector X, sunindextype local_length, int myid);
 int Test_N_VMinLocal(N_Vector X, sunindextype local_length, int myid);
 int Test_N_VL1NormLocal(N_Vector X, sunindextype local_length, int myid);

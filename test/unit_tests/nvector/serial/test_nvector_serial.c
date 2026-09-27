@@ -211,6 +211,7 @@ int main(int argc, char* argv[])
   printf("\nTesting local reduction operations:\n\n");
 
   fails += Test_N_VDotProdLocal(X, Y, length, 0);
+  fails += Test_N_VDotProdLocalComplex(X, Y, length, 0);
   fails += Test_N_VMaxNormLocal(X, length, 0);
   fails += Test_N_VMinLocal(X, length, 0);
   fails += Test_N_VL1NormLocal(X, length, 0);
