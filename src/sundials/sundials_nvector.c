@@ -256,15 +256,16 @@ SUNErrCode N_VCopyOps(N_Vector w, N_Vector v)
    */
 
   /* local reduction operations */
-  v->ops->nvdotprodlocal     = w->ops->nvdotprodlocal;
-  v->ops->nvmaxnormlocal     = w->ops->nvmaxnormlocal;
-  v->ops->nvminlocal         = w->ops->nvminlocal;
-  v->ops->nvl1normlocal      = w->ops->nvl1normlocal;
-  v->ops->nvinvtestlocal     = w->ops->nvinvtestlocal;
-  v->ops->nvconstrmasklocal  = w->ops->nvconstrmasklocal;
-  v->ops->nvminquotientlocal = w->ops->nvminquotientlocal;
-  v->ops->nvwsqrsumlocal     = w->ops->nvwsqrsumlocal;
-  v->ops->nvwsqrsummasklocal = w->ops->nvwsqrsummasklocal;
+  v->ops->nvdotprodlocal        = w->ops->nvdotprodlocal;
+  v->ops->nvdotprodlocalcomplex = w->ops->nvdotprodlocalcomplex;
+  v->ops->nvmaxnormlocal        = w->ops->nvmaxnormlocal;
+  v->ops->nvminlocal            = w->ops->nvminlocal;
+  v->ops->nvl1normlocal         = w->ops->nvl1normlocal;
+  v->ops->nvinvtestlocal        = w->ops->nvinvtestlocal;
+  v->ops->nvconstrmasklocal     = w->ops->nvconstrmasklocal;
+  v->ops->nvminquotientlocal    = w->ops->nvminquotientlocal;
+  v->ops->nvwsqrsumlocal        = w->ops->nvwsqrsumlocal;
+  v->ops->nvwsqrsummasklocal    = w->ops->nvwsqrsummasklocal;
 
   /* single buffer reduction operations */
   v->ops->nvdotprodmultilocal     = w->ops->nvdotprodmultilocal;
