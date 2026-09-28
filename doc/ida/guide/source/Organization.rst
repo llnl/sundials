@@ -53,7 +53,7 @@ For users employing :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>` or
 algorithms for their approximation through difference quotients, although the
 user also has the option of supplying a routine to compute the Jacobian (or an
 approximation to it) directly. For users employing
-:ref:`SUNMATRIX_SPARSE <SUNMatrix.Sparse>` Jacobian matrices in ``SUN_CSC_MAT``,
+:ref:`SUNMATRIX_SPARSE <SUNMatrix.Sparse>` Jacobian matrices in ``SUN_CSC_MAT`` format,
 IDA includes an algorithm for approximating the Jacobian through difference
 quotients, although the user also has the option of supplying a routine to
 compute the Jacobian (or an approximation to it) directly.  When the CSC sparse
