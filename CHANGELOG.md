@@ -6,6 +6,9 @@
 
 ### New Features and Enhancements
 
+Added the utility function, `SUNFileFlush` for flushing file pointers. This is
+useful when using the Fortran 2003 interfaces.
+
 Added support to compute internal difference-quotient approximations to sparse
 Jacobians (CSC format only) for all SUNDIALS packages.
 
