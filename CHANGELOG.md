@@ -6,6 +6,9 @@
 
 ### New Features and Enhancements
 
+Added the utility function, `SUNFileFlush` for flushing file pointers. This is
+useful when using the Fortran 2003 interfaces.
+
 sundials4py now supports implementing SUNDIALS classes in Python. The new
 `CustomSUNMatrix`, `CustomSUNLinearSolver`, `CustomSUNNonlinearSolver`,
 `CustomSUNHController`, and `CustomSUNMRIController` base classes may be
