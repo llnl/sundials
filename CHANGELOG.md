@@ -11,6 +11,9 @@ useful when using the Fortran 2003 interfaces.
 
 ### Bug Fixes
 
+Fixed a segfault that could occur when handling errors without a `SUNContext`
+provided.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.9.0
