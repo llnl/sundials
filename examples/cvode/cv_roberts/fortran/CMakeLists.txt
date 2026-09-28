@@ -28,8 +28,9 @@ if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(${example} sundials_cvode_fused_stubs)
 endif()
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES ${example}.f90 ${example}.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/fortran)
+  install(
+    FILES ${example}.f90 ${example}.out
+    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/fortran)
 endif()
 
 set(example cv_roberts_dns_constraints_f2003)
@@ -48,6 +49,7 @@ if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(${example} sundials_cvode_fused_stubs)
 endif()
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES ${example}.f90 ${example}.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/fortran)
+  install(
+    FILES ${example}.f90 ${example}.out
+    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/fortran)
 endif()
