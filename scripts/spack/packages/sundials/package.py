@@ -511,7 +511,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "+cuda" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    ("cvode/cv_adv_diff/cuda/cv_adv_diff_kry_cuda", [], "Test CVODE with CUDA", True)
+                    (
+                        "cvode/cv_adv_diff/cuda/cv_adv_diff_kry_cuda",
+                        [],
+                        "Test CVODE with CUDA",
+                        True,
+                    )
                 )
 
         if "+hip" in self.spec:
@@ -523,7 +528,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "+sycl" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    ("cvode/cv_adv_diff/sycl/cv_adv_diff_kry_sycl", [], "Test CVODE with SYCL", True)
+                    (
+                        "cvode/cv_adv_diff/sycl/cv_adv_diff_kry_sycl",
+                        [],
+                        "Test CVODE with SYCL",
+                        True,
+                    )
                 )
 
         return smoke_tests
@@ -604,15 +614,18 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         )
         if "+cuda" in self.spec:
             self.run_test(
-                "examples/cvode/cv_adv_diff/cuda/cv_adv_diff_kry_cuda", work_dir=self._extra_tests_path
+                "examples/cvode/cv_adv_diff/cuda/cv_adv_diff_kry_cuda",
+                work_dir=self._extra_tests_path,
             )
         if "+rocm" in self.spec:
             self.run_test(
-                "examples/cvode/cv_adv_diff/hip/cv_adv_diff_kry_hip", work_dir=self._extra_tests_path
+                "examples/cvode/cv_adv_diff/hip/cv_adv_diff_kry_hip",
+                work_dir=self._extra_tests_path,
             )
         if "+sycl" in self.spec:
             self.run_test(
-                "examples/cvode/cv_adv_diff/sycl/cv_adv_diff_kry_sycl", work_dir=self._extra_tests_path
+                "examples/cvode/cv_adv_diff/sycl/cv_adv_diff_kry_sycl",
+                work_dir=self._extra_tests_path,
             )
         return
 
