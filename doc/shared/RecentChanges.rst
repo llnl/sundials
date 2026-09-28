@@ -10,4 +10,7 @@ pointers. This is useful when using the Fortran 2003 interfaces.
 
 **Bug Fixes**
 
+Fixed a segfault that could occur when handling errors without a ``SUNContext``
+provided.
+
 **Deprecation Notices**
