@@ -44,12 +44,19 @@ foreach(test_tuple ${unit_tests})
 
     if("${test}" STREQUAL "cv_test_sparse_dq_jac")
 
+      # When fused kernels are enabled, the cvode objects reference the fused
+      # routines, so link the stubs (as is done for the installed library).
+      if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
+        set(_fused_link_lib sundials_cvode_fused_stubs_obj)
+      endif()
+
       # We explicitly choose which object libraries to link to and link in the
       # cvode objects so that we have access to private functions w/o changing
       # their visibility in the installed libraries.
       target_link_libraries(
         ${test}
         PRIVATE $<TARGET_OBJECTS:sundials_cvode_obj>
+                ${_fused_link_lib}
                 sundials_sunmemsys_obj
                 sundials_nvecserial_obj
                 sundials_sunmatrixband_obj
