@@ -12,12 +12,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_executable(cv_adv_diff_bnd_l cv_adv_diff_bnd_l.c)
-set_target_properties(cv_adv_diff_bnd_l PROPERTIES FOLDER "Examples")
-target_link_libraries(
-  cv_adv_diff_bnd_l
+sundials_add_executable(
+  cv_adv_diff_bnd_l cv_adv_diff_bnd_l.c
+  LINK_LIBRARIES
   PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsollapackband
-          sundials_sunlinsollapackdense ${EXE_EXTRA_LINK_LIBS})
+          sundials_sunlinsollapackdense ${EXE_EXTRA_LINK_LIBS}
+  PROPERTIES
+  FOLDER "Examples")
 sundials_add_test(
   cv_adv_diff_bnd_l cv_adv_diff_bnd_l
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
