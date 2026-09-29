@@ -12,22 +12,22 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(example cv_adv_diff_diag_cuda)
-
-set_source_files_properties(${example}.cu PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT
-                                                     OBJ)
-sundials_add_executable(${example} ${example}.cu)
-set_target_properties(${example} PROPERTIES FOLDER "Examples")
-target_link_libraries(${example} PRIVATE sundials_cvode sundials_nveccuda
-                                         ${EXE_EXTRA_LINK_LIBS})
+set_source_files_properties(cv_adv_diff_diag_cuda.cu
+                            PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+sundials_add_executable(cv_adv_diff_diag_cuda cv_adv_diff_diag_cuda.cu)
+set_target_properties(cv_adv_diff_diag_cuda PROPERTIES FOLDER "Examples")
+target_link_libraries(cv_adv_diff_diag_cuda PRIVATE sundials_cvode
+                                                sundials_nveccuda
+                                                ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(${example} PRIVATE sundials_cvode_fused_cuda)
+  target_link_libraries(cv_adv_diff_diag_cuda PRIVATE sundials_cvode_fused_cuda)
 endif()
 
 foreach(example_args "0 0" "0 1" "1 1")
-  string(REGEX REPLACE " " "_" test_name ${example}_${example_args})
+  string(REGEX REPLACE " " "_" test_name
+                       cv_adv_diff_diag_cuda_${example_args})
   sundials_add_test(
-    ${test_name} ${example}
+    ${test_name} cv_adv_diff_diag_cuda
     TEST_ARGS ${example_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     ANSWER_FILE ${test_name}.out
@@ -35,27 +35,27 @@ foreach(example_args "0 0" "0 1" "1 1")
 endforeach()
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  file(GLOB example_out ${example}*.out)
-  install(FILES ${example}.cu ${example_out}
+  file(GLOB example_out cv_adv_diff_diag_cuda*.out)
+  install(FILES cv_adv_diff_diag_cuda.cu ${example_out}
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/cuda)
 endif()
 
-set(example cv_adv_diff_kry_cuda)
-set_source_files_properties(${example}.cu PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT
-                                                     OBJ)
-sundials_add_executable(${example} ${example}.cu)
-set_target_properties(${example} PROPERTIES FOLDER "Examples")
-target_link_libraries(${example} PRIVATE sundials_cvode sundials_nveccuda
-                                         ${EXE_EXTRA_LINK_LIBS})
+set_source_files_properties(cv_adv_diff_kry_cuda.cu
+                            PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+sundials_add_executable(cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda.cu)
+set_target_properties(cv_adv_diff_kry_cuda PROPERTIES FOLDER "Examples")
+target_link_libraries(cv_adv_diff_kry_cuda PRIVATE sundials_cvode
+                                               sundials_nveccuda
+                                               ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(${example} PRIVATE sundials_cvode_fused_cuda)
+  target_link_libraries(cv_adv_diff_kry_cuda PRIVATE sundials_cvode_fused_cuda)
 endif()
 sundials_add_test(
-  ${example} ${example}
+  cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE ${example}.out
+  ANSWER_FILE cv_adv_diff_kry_cuda.out
   EXAMPLE_TYPE develop)
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES ${example}.cu ${example}.out
+  install(FILES cv_adv_diff_kry_cuda.cu cv_adv_diff_kry_cuda.out
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/cuda)
 endif()

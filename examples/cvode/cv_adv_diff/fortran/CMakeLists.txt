@@ -12,23 +12,20 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(example cv_advdiff_bnd_f2003)
-set(CMAKE_Fortran_MODULE_DIRECTORY
-    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
-sundials_add_executable(${example} ${example}.f90)
-set_target_properties(${example} PROPERTIES FOLDER "Examples")
+sundials_add_executable(
+  cv_advdiff_bnd_f2003 cv_advdiff_bnd_f2003.f90
+  LINK_LIBRARIES
+  ${CVODE_C_LIBS} sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS}
+  PROPERTIES
+  FOLDER "Examples" Fortran_MODULE_DIRECTORY
+  ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_advdiff_bnd_f2003.dir)
 sundials_add_test(
-  ${example} ${example}
+  cv_advdiff_bnd_f2003 cv_advdiff_bnd_f2003
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE ${example}.out
+  ANSWER_FILE cv_advdiff_bnd_f2003.out
   EXAMPLE_TYPE develop)
-target_link_libraries(${example} sundials_cvode sundials_fcvode_mod
-                      ${EXE_EXTRA_LINK_LIBS})
-if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(${example} sundials_cvode_fused_stubs)
-endif()
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   install(
-    FILES ${example}.f90 ${example}.out
+    FILES cv_advdiff_bnd_f2003.f90 cv_advdiff_bnd_f2003.out
     DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/fortran)
 endif()

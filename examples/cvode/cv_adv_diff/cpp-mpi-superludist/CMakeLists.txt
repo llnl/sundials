@@ -13,16 +13,12 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE SuperLU_DIST C++ example
-set(CVODE_examples "cv_adv_diff_sludist.cpp\;2 1\;2\;develop")
-if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  set(_fused_lib sundials_cvode_fused_stubs)
-endif()
 sundials_add_executable(cv_adv_diff_sludist cv_adv_diff_sludist.cpp)
 set_target_properties(cv_adv_diff_sludist PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_adv_diff_sludist
-  PRIVATE MPI::MPI_CXX sundials_cvode sundials_nvecparallel
-          sundials_sunlinsolsuperludist ${_fused_lib} ${EXE_EXTRA_LINK_LIBS})
+  PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
+          sundials_sunlinsolsuperludist ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_INDEX_SIZE STREQUAL "32")
   set(_integer_precision 15)
   set(_float_precision 3)
