@@ -145,13 +145,13 @@ foreach(example ${examples})
   add_executable(${example_target} ${example}.cu ${examples_dependencies})
 
   # set c++11
-  target_compile_features(${example} PRIVATE cxx_std_14)
+  target_compile_features(${example_target} PRIVATE cxx_std_14)
 
   # directories to include
-  target_include_directories(${example} PRIVATE ${SUNDIALS_INCLUDE_DIR})
+  target_include_directories(${example_target} PRIVATE ${SUNDIALS_INCLUDE_DIR})
 
   # libraries to link against
-  target_link_libraries(${example} ${SUNDIALS_LIBRARIES})
+  target_link_libraries(${example_target} ${SUNDIALS_LIBRARIES})
 
   # add the example to ctest
   add_test(NAME ${example_target} COMMAND ${example_target})
@@ -185,15 +185,15 @@ foreach(example ${examples_cusolver})
   add_executable(${example_target} ${example}.cu ${examples_dependencies})
 
   # set c++11
-  target_compile_features(${example} PRIVATE cxx_std_14)
+  target_compile_features(${example_target} PRIVATE cxx_std_14)
 
   # directories to include
-  target_include_directories(${example} PRIVATE ${SUNDIALS_INCLUDE_DIR})
+  target_include_directories(${example_target} PRIVATE ${SUNDIALS_INCLUDE_DIR})
 
   # libraries to link against
-  target_link_libraries(${example} ${SUNDIALS_LIBRARIES})
-  target_link_libraries(${example} ${CUDA_cusolver_LIBRARY})
-  target_link_libraries(${example} ${CUDA_cusparse_LIBRARY})
+  target_link_libraries(${example_target} ${SUNDIALS_LIBRARIES})
+  target_link_libraries(${example_target} ${CUDA_cusolver_LIBRARY})
+  target_link_libraries(${example_target} ${CUDA_cusparse_LIBRARY})
 
   # add the example to ctest
   add_test(NAME ${example_target} COMMAND ${example_target})
