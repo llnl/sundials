@@ -49,12 +49,15 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   # CMakeLists.txt. The installed root provides the small wrappers needed by
   # these in-tree files and selects variants using the configured SUNDIALS
   # options.
-  file(GLOB_RECURSE _cvode_cmakelists RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-       "cv*/CMakeLists.txt")
+  file(
+    GLOB_RECURSE _cvode_cmakelists
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    "cv*/CMakeLists.txt")
   foreach(_cmakelist ${_cvode_cmakelists})
     get_filename_component(_cmakelist_dir ${_cmakelist} DIRECTORY)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${_cmakelist}
-            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_cmakelist_dir})
+    install(
+      FILES ${CMAKE_CURRENT_SOURCE_DIR}/${_cmakelist}
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_cmakelist_dir})
   endforeach()
 
   set(CVODE_LANGUAGES C)
@@ -69,9 +72,8 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   endif()
   list2string(CVODE_LANGUAGES CVODE_LANGUAGES_STRING)
 
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_cvode_ex.in
-    ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.txt @ONLY)
+  configure_file(${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_cvode_ex.in
+                 ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.txt @ONLY)
   install(FILES ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.txt
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode)
 
