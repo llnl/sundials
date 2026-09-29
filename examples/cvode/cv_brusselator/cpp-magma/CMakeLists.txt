@@ -13,7 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE MAGMA C++ example
-set(CVODE_examples "cv_bruss_batched_magma.cpp\;\;develop")
 if(SUNDIALS_MAGMA_BACKENDS MATCHES "CUDA")
   set(vector nveccuda)
   set(cuda_or_hip CUDA)
