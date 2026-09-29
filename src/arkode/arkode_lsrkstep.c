@@ -1413,9 +1413,8 @@ Ellipse:  ((zR + a)/a)^2 + (zI/b)^2 <= 1
   p_s = 1.2434 - 25.2 /(s+2.23)^2, for s even
   p_s = 1.0138 - 15.48/(s+2.29)^2, for s odd
 
-  These constants are chosen so the formula never oversestimates or 
-  underestimate p_s, i.e., the ellipse is never taller than the 
-  bisection value.
+  These constants are chosen so the formula never overestimates p_s, 
+  i.e., the ellipse is never taller than the bisection value.
 ------------------------------------------------------------------*/
 // for s<10, store the exact p-values
 
@@ -1701,7 +1700,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           ark_mem->hadapt_mem->nst_exp++;
           return ARK_RETRY_STEP;
         }
-        else                                                 /* [U27] */
+        else                                                 
         {
           arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
                           __FILE__,
