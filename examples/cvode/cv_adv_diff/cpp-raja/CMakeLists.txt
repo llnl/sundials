@@ -24,12 +24,17 @@ endif()
 set_source_files_properties(cv_adv_diff_kry_raja.cpp PROPERTIES LANGUAGE
                                                                 ${_lang})
 sundials_add_executable(
-  cv_adv_diff_kry_raja cv_adv_diff_kry_raja.cpp
+  cv_adv_diff_kry_raja
+  cv_adv_diff_kry_raja.cpp
   LINK_LIBRARIES
-  PRIVATE ${CVODE_C_LIBS} sundials_nvecraja ${EXE_EXTRA_LINK_LIBS}
-          ${_other_libs}
+  PRIVATE
+  ${CVODE_C_LIBS}
+  sundials_nvecraja
+  ${EXE_EXTRA_LINK_LIBS}
+  ${_other_libs}
   PROPERTIES
-  FOLDER "Examples")
+  FOLDER
+  "Examples")
 sundials_add_test(
   cv_adv_diff_kry_raja cv_adv_diff_kry_raja
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}

@@ -13,12 +13,17 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_executable(
-  cv_roberts_klu_f2003 cv_roberts_klu_f2003.f90
+  cv_roberts_klu_f2003
+  cv_roberts_klu_f2003.f90
   LINK_LIBRARIES
-  ${CVODE_C_LIBS} sundials_fcvode_mod sundials_fsunlinsolklu_mod
+  ${CVODE_C_LIBS}
+  sundials_fcvode_mod
+  sundials_fsunlinsolklu_mod
   ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
-  FOLDER "Examples" Fortran_MODULE_DIRECTORY
+  FOLDER
+  "Examples"
+  Fortran_MODULE_DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_roberts_klu_f2003.dir)
 sundials_add_test(
   cv_roberts_klu_f2003 cv_roberts_klu_f2003

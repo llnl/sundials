@@ -13,11 +13,16 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_executable(
-  cv_brusselator_dns_f2003 cv_brusselator_dns_f2003.f90
+  cv_brusselator_dns_f2003
+  cv_brusselator_dns_f2003.f90
   LINK_LIBRARIES
-  ${CVODE_C_LIBS} sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS}
+  ${CVODE_C_LIBS}
+  sundials_fcvode_mod
+  ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
-  FOLDER "Examples" Fortran_MODULE_DIRECTORY
+  FOLDER
+  "Examples"
+  Fortran_MODULE_DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_brusselator_dns_f2003.dir)
 sundials_add_test(
   cv_brusselator_dns_f2003 cv_brusselator_dns_f2003

@@ -22,15 +22,22 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
                        ${PROJECT_SOURCE_DIR}/examples/utilities)
     endif()
     sundials_add_executable(
-      ${example_target} cv_bruss_batched_kokkos_2d.cpp
+      ${example_target}
+      cv_bruss_batched_kokkos_2d.cpp
       LINK_LIBRARIES
-      PRIVATE ${CVODE_C_LIBS} sundials_nveckokkos sundials_sunmatrixkokkosdense
-              sundials_sunlinsolkokkosdense ${EXE_EXTRA_LINK_LIBS}
+      PRIVATE
+      ${CVODE_C_LIBS}
+      sundials_nveckokkos
+      sundials_sunmatrixkokkosdense
+      sundials_sunlinsolkokkosdense
+      ${EXE_EXTRA_LINK_LIBS}
       ${include_args}
       COMPILE_DEFINITIONS
-      PRIVATE USE_${backend}
+      PRIVATE
+      USE_${backend}
       PROPERTIES
-      FOLDER "Examples")
+      FOLDER
+      "Examples")
   endif()
   sundials_add_test(
     ${example_target} ${example_target}
