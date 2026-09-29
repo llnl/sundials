@@ -18,6 +18,8 @@
 cmake_minimum_required(VERSION @CMAKE_VERSION@)
 project(cvode_examples @CVODE_LANGUAGES_STRING@)
 
+set(CMAKE_Fortran_PREPROCESS ON)
+
 include(CTest)
 
 set(SUNDIALS_DIR
