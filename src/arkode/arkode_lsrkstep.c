@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------
- * Programmer(s): Mustafa Aggul @ UMBC
+ * Programmer(s): Mustafa Aggul, Sylvia Amihere @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -1417,7 +1417,6 @@ Ellipse:  ((zR + a)/a)^2 + (zI/b)^2 <= 1
   i.e., the ellipse is never taller than the bisection value.
 ------------------------------------------------------------------*/
 // for s<10, store the exact p-values
-
 static const sunrealtype RKG_pVAL_SMALL[8] = {
   1.50000004939358,  /* s=2 */
   0.500000059075271, /* s=3 */
@@ -1766,7 +1765,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Initialize constants */
   w1   = SIX / ((step_mem->req_stages + FOUR) * (step_mem->req_stages - ONE));
   bjm2 = ONE;
-  bjm1 = ONE / THREE;;
+  bjm1 = ONE / THREE;
   mus  = w1;
 
   /* Begin stage 1 (store in tmp2) and initialize embedding */
@@ -1820,11 +1819,11 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Begin stage j (store in ycur) */
-    temj             = (j + TWO) * (j - ONE);
-    bj               = temj / (TWO * j * (j + ONE));
-    ajm1             = ONE - bjm1;
-    mu               = (TWO * j - ONE) / j * (bj / bjm1);
-    nu               = -(j - ONE) / j * (bj / bjm2);
+    temj             = (j - ONE) * (j + FOUR);
+    bj               = FOUR * temj / (THREE * j * (j + ONE) * (j + TWO) * (j + THREE) );
+    ajm1             = ONE - (j * (j + ONE) / TWO) * bjm1;
+    mu               = (TWO * j + ONE) / j * (bj / bjm1);
+    nu               = -(j + ONE) / j * (bj / bjm2);
     mus              = w1 * mu;
     cj               = temj * w1 / FOUR;
     ark_mem->tcur    = ark_mem->tn + ark_mem->h * cj;
