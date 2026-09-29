@@ -9,6 +9,9 @@ Reorganized the CVODE examples by implementation language and placed each
 example in its own directory with its input files, scripts, and reference
 output.
 
+Added the utility function, :c:func:`SUNFileFlush` for flushing file
+pointers. This is useful when using the Fortran 2003 interfaces.
+
 **Bug Fixes**
 
 **Deprecation Notices**
