@@ -39,6 +39,8 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
   cmake_parse_arguments(SUNDIALS_ADD_TEST_INSTALL "${options}"
                         "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  string(REPLACE "/" "_" _test_install_target "${PACKAGE}_${TESTDIR}")
+
   if(SUNDIALS_ADD_TEST_INSTALL_EXECUTABLE)
 
     # create testing directory if necessary
@@ -48,7 +50,7 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
 
     # build and run only the desired install test
     add_custom_target(
-      test_install_${PACKAGE}_${TESTDIR}
+      test_install_${_test_install_target}
       COMMENT "Running ${PACKAGE} installation tests"
       WORKING_DIRECTORY ${TEST_INSTALL_DIR}/${PACKAGE}/${TESTDIR}
       VERBATIM
@@ -61,7 +63,7 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
               ^${SUNDIALS_ADD_TEST_INSTALL_EXECUTABLE}$)
 
     # make test_install depend on test_install_package
-    add_dependencies(test_install test_install_${PACKAGE}_${TESTDIR})
+    add_dependencies(test_install test_install_${_test_install_target})
 
   endif()
 
@@ -76,7 +78,7 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
 
   # build and run all install tests
   add_custom_target(
-    test_install_all_${PACKAGE}_${TESTDIR}
+    test_install_all_${_test_install_target}
     COMMENT "Running ${PACKAGE} installation tests"
     WORKING_DIRECTORY ${TEST_INSTALL_ALL_DIR}/${PACKAGE}/${TESTDIR}
     VERBATIM
@@ -89,6 +91,6 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
   # with a specific number of MPI tasks.
 
   # make test_install_all depend on test_install_all_package
-  add_dependencies(test_install_all test_install_all_${PACKAGE}_${TESTDIR})
+  add_dependencies(test_install_all test_install_all_${_test_install_target})
 
 endmacro()

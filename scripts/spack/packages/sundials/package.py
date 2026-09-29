@@ -403,7 +403,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         cxx_files = [
             "arkode/CXX_parallel/Makefile",
             "arkode/CXX_serial/Makefile",
-            "cvode/cuda/Makefile",
             "nvector/cuda/Makefile",
             "nvector/raja/Makefile",
         ]
@@ -425,7 +424,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         f2003_files = [
             "arkode/F2003_serial/Makefile",
-            "cvode/fortran/Makefile",
             "cvodes/F2003_serial/Makefike",
             "ida/F2003_serial/Makefile",
             "idas/F2003_serial/Makefile",
@@ -571,8 +569,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         for smoke_test in self._smoke_tests:
             work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
-            if smoke_test[0].startswith("cvode/"):
-                work_dir = join_path(self._smoke_tests_path, "cvode")
             with working_dir(work_dir):
                 if smoke_test[3]:  # use cmake
                     self.run_test(exe=cmake_bin, options=["."])
@@ -592,8 +588,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     def clean_smoke_tests(self):
         for smoke_test in self._smoke_tests:
             work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
-            if smoke_test[0].startswith("cvode/"):
-                work_dir = join_path(self._smoke_tests_path, "cvode")
             with working_dir(work_dir):
                 self.run_test(exe="make", options=["clean"])
 
