@@ -21,16 +21,25 @@
  *
  * The following test simulates a simple 1D heat equation,
  *    u_t = k*u_xx + f
- * for t in [0, 10], x in [0, 1], with initial conditions
+ * for t in [0, 1], x in [0, 1], with initial conditions
  *    u(0,x) =  0
  * Dirichlet boundary conditions, i.e.
  *    u_t(t,0) = u_t(t,1) = 0,
- * and a point-source heating term,
- *    f = 1 for x=0.5.
+ * and a point-source heating term of total strength 0.01, located at
+ * the midpoint of the domain,
+ *    f = 0.01*delta(x-0.5),
+ * where delta denotes the Dirac delta distribution.
  *
  * The spatial derivatives are computed using second-order
  * centered differences, with the data distributed over N points
- * on a uniform spatial grid.
+ * on a uniform spatial grid.  Since a Dirac delta cannot be
+ * represented pointwise on a grid, the source is applied using its
+ * finite-volume approximation, wherein its total strength is spread
+ * over the grid cell of width dx surrounding x=0.5, giving the nodal
+ * value 0.01/dx at that single node.  This division by dx is what
+ * keeps the discrete integral of f equal to 0.01 under mesh
+ * refinement; without it the effective source strength would be
+ * 0.01*dx, and would vanish as dx -> 0.
  *
  * This program solves the problem with either an ERK or DIRK
  * method.  For the DIRK method, we use a Newton iteration with
@@ -300,7 +309,10 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
 #pragma omp target is_device_ptr(Ydot) device(dev)
   {
-    Ydot[isource] += 0.01 / dx; /* source term */
+    /* point-source term: the finite-volume approximation of the Dirac
+       delta 0.01*delta(x-0.5) spreads the source strength over a single
+       cell of width dx, hence the division by dx */
+    Ydot[isource] += 0.01 / dx;
   }
 
   return 0; /* Return with success */

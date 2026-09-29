@@ -20,6 +20,12 @@
 
 """Small helpers shared by the :mod:`suntools` parsers."""
 
+from __future__ import annotations
+
+import numpy as np
+
+EPS = float(np.finfo(float).eps)
+
 
 def str2num(s):
     """Convert a numeric string to an integer or floating-point value.
@@ -37,3 +43,15 @@ def str2num(s):
             return float(s)
         except ValueError:
             return s
+
+
+def resolved(values, bounds, factor=8.0) -> np.ndarray:
+    """Which entries are distinguishable from their error bound; scalar or array."""
+    return np.abs(values) > factor * np.asarray(bounds, float)
+
+
+def roundoff_tol(values, factor: float = 256.0) -> float:
+    """Magnitude below which an entry of *values* is indistinguishable from zero."""
+    values = np.asarray(values)
+    scale = max(1.0, float(np.max(np.abs(values)))) if values.size else 1.0
+    return factor * EPS * scale

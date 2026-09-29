@@ -18,13 +18,15 @@
 
 The package contains the following modules:
 
-``logs``
+- ``logs``
    Functions for parsing and filtering logs produced by :c:type:`SUNLogger`.
-``table``
+- ``table``
    Functions for parsing statistics written in SUNDIALS table format.
-``csv``
+- ``csv``
    Functions for parsing statistics written in SUNDIALS CSV format.
-``tune``
+- ``tune``
    Configuration models and runners for tuning SUNDIALS applications by
    appending ``SetOptions`` parameters to an executable command.
+- `rk`: this namespace contains Runge-Kutta table parsing, stability, and
+       plotting utilities.
 """
