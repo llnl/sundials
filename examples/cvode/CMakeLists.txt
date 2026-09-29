@@ -45,20 +45,13 @@ add_subdirectory(cv_rocket)
 add_subdirectory(cv_vdp)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  # Install the reorganized source CMake files below the generated CVODE root
-  # CMakeLists.txt. The installed root provides the small wrappers needed by
-  # these in-tree files and selects variants using the configured SUNDIALS
-  # options.
+  # Install each variant as an independent CMake project. The configured
+  # CMakeLists.txt supplies the installed-package setup and then includes the
+  # variant-specific build rules.
   file(
     GLOB_RECURSE _cvode_cmakelists
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "cv*/CMakeLists.txt")
-  foreach(_cmakelist ${_cvode_cmakelists})
-    get_filename_component(_cmakelist_dir ${_cmakelist} DIRECTORY)
-    install(
-      FILES ${CMAKE_CURRENT_SOURCE_DIR}/${_cmakelist}
-      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_cmakelist_dir})
-  endforeach()
+    "cv*/*/CMakeLists.txt")
 
   set(CVODE_LANGUAGES C)
   if(SUNDIALS_ENABLE_CXX_EXAMPLES)
@@ -72,14 +65,21 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   endif()
   list2string(CVODE_LANGUAGES CVODE_LANGUAGES_STRING)
 
-  configure_file(${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_cvode_ex.in
-                 ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.txt @ONLY)
-  install(FILES ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.txt
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode)
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_cvode_ex.in
+    ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.installed.txt @ONLY)
 
-  # The installed CVODE tree is one project rooted at cvode/, so use the
-  # installation smoke-test helper with the root directory as its test path.
-  sundials_add_test_install(cvode .)
+  foreach(_cmakelist ${_cvode_cmakelists})
+    get_filename_component(_cmakelist_dir ${_cmakelist} DIRECTORY)
+    install(
+      FILES ${CMAKE_CURRENT_SOURCE_DIR}/${_cmakelist}
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_cmakelist_dir}
+      RENAME cvode-example.cmake)
+    install(
+      FILES ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.installed.txt
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_cmakelist_dir}
+      RENAME CMakeLists.txt)
+  endforeach()
 
-  install(FILES README.md DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode)
+  sundials_add_test_install(cvode cv_adv_diff/c EXECUTABLE cv_adv_diff_bnd)
 endif()
