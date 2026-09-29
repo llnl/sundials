@@ -1399,6 +1399,558 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   return ARK_SUCCESS;
 }
 
+/*-----------------------------------------------------------------
+RKG2 inscribed-ellipse data (used only by lsrkStep_TakeStepRKG)
+
+Ellipse:  ((zR + a)/a)^2 + (zI/b)^2 <= 1
+  a = beta_s/2 = (s+4)(s-1)/6                (semi-major axis)
+  b = alpha_s = a/aspect_ratio               (semi-minor axis)
+  aspect_ratio = coefficient * s
+  coefficient = 0.5 * sqrt(beta_s/p_s)/s
+
+  p_s = alpha_s^2 / beta_s comes from a bisection scheme. For s < 10,
+  the coefficients are stored exactly. For s >= 10, p_s follows
+  p_s = 1.2434 - 25.2 /(s+2.23)^2, for s even
+  p_s = 1.0138 - 15.48/(s+2.29)^2, for s odd
+
+  These constants are chosen so the formula never oversestimates or 
+  underestimate p_s, i.e., the ellipse is never taller than the 
+  bisection value.
+------------------------------------------------------------------*/
+// for s<10, store the exact p-values
+
+static const sunrealtype RKG_pVAL_SMALL[8] = {
+  1.50000004939358,  /* s=2 */
+  0.500000059075271, /* s=3 */
+  0.666666862117036, /* s=4 */
+  0.726088448783156, /* s=5 */
+  0.886356042378929, /* s=6 */
+  0.834350823849742, /* s=7 */
+  1.00591707469166,  /* s=8 */
+  0.892335595168941  /* s=9 */
+};
+
+// for large s even values, p converged to 1.243
+#define RKG_P_MAX SUN_RCONST(1.243)
+
+//compute p_s for a given s
+static sunrealtype lsrkStep_RKG_P(int s)
+{
+  sunrealtype d;
+  if (s < 10) {return RKG_pVal_SMALL[s-2];}
+
+  //even stages >= 10
+  if (s % 2 == 0)
+  {
+    d = (sunrealtype)s + SUN_RCONST(2.23);
+    return SUN_RCONST(1.2434) - SUN_RCONST(25.20) / (d * d);
+  }
+
+  //odd stages >= 10
+  else
+  {
+    d = (sunrealtype)s + SUN_RCONST(2.29);
+    return SUN_RCONST(1.0138) - SUN_RCONST(15.48) / (d * d);
+  }
+}
+
+//compute the semi-major and semi-minor axes of the inscribed ellipse for a given s
+static void lsrkStep_RKG_EllipseAxes(int s, sunrealtype*a, sunrealtype* b)
+{
+ sunrealtype betaS = (sunrealtype(s) + 4) * (sunrealtype(s) + 4) / THREE;
+ *a = betaS / TWO;
+ *b = SUNRsqrt(lsrkStep_RKG_P(s) * betaS);
+}
+
+//compute the ellipse condition
+static sunrealtype lsrkStep_RKG_EllipseCondition(int s, sunrealtype zR, sunrealtype zI)
+{
+  sunrealtype a, b;
+  lsrkStep_RKG_EllipseAxes(s, &a, &b);
+  return SUNRSQR(zR/a + 1) + SUNRSQR(zI / b);
+}
+
+
+/*---------------------------------------------------------------
+  lsrkStep_TakeStepRKG:
+
+  This routine serves the primary purpose of the LSRKStepRKG module:
+  it performs a single RKL step (with embedding, if possible).
+
+  The output variable dsmPtr should contain estimate of the
+  weighted local error if an embedding is present; otherwise it
+  should be 0.
+
+  The variables (ark_mem->tcur, ark_mem->ycur) should
+  contain the current time and solution at the end of this time step.
+
+  The input/output variable nflagPtr is generally used in ARKODE
+  to gauge the convergence of any algebraic solvers. However, since
+  the STS step routines do not involve an algebraic solve, this variable
+  instead serves to identify possible ARK_RETRY_STEP returns within this
+  routine.
+
+  The return value from this routine is:
+            0 => step completed successfully
+           >0 => step encountered recoverable failure;
+                 reduce step and retry (if possible)
+                 ARK_RETRY_STEP indicates that the required stage
+                 number has reached the stage_max_limit with the
+                 current value of h. The step is then returned to
+                 adjust the step size.
+           <0 => step encountered unrecoverable failure
+  ---------------------------------------------------------------*/
+int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
+{
+  int retval;
+  sunrealtype hmax, w1, bjm1, bjm2, mus, bj, ajm1, temj, cj, mu, nu;
+  const sunrealtype p8 = SUN_RCONST(0.8), p4 = SUN_RCONST(0.4);
+  // sunrealtype stability_norm; //SA: not needed for RKG
+  ARKodeLSRKStepMem step_mem;
+
+  /* initialize algebraic solver convergence flag to success,
+     temporal error estimate to zero */
+  *nflagPtr = ARK_SUCCESS;
+  *dsmPtr   = ZERO;
+
+  /* access ARKodeLSRKStepMem structure */
+  retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  sunrealtype* cvals = step_mem->cvals;
+  N_Vector* Xvecs    = step_mem->Xvecs;
+  N_Vector tmp1      = ark_mem->tempv1;
+  N_Vector tmp2      = ark_mem->tempv2;
+
+  /* Initialize the current stage index */
+  step_mem->istage     = 0;
+  step_mem->req_stages = step_mem->stage_max_limit;
+
+  /* Compute dominant eigenvalue and update stats */
+  if (step_mem->dom_eig_update)
+  {
+    retval = lsrkStep_ComputeNewDomEig(ark_mem, step_mem);
+    if (retval != ARK_SUCCESS) { return retval; }
+  }
+
+  /* Compute the number of stages based on the current step size and dominant
+     eigenvalue using Eq. 19 in Meyer et al. (2014)
+     https://doi.org/10.1016/j.jcp.2013.08.021
+
+     Using delta t_expl = 2 / lambda_max, note tau_max * lambda_max in Eq. 19 is
+     positive (i.e., tau_max * lambda_max = -zR = h * lambdaR assuming that
+     h * lambdaR < 0) and we have incorporated the minus sign on zR below. We
+     use the minimum number of stages (ss = 2) for zR > 0. */
+  sunrealtype zR    = ark_mem->h * step_mem->lambdaR;
+  sunrealtype zI    = ark_mem->h * step_mem->lambdaI;
+  sunrealtype zRabs = SUNRabs(zR);
+  // int ss =
+  //   zR > ZERO
+  //     ? 2
+  //     : (int)SUNRceil(
+  //         (SUNRsqrt(SUN_RCONST(9.0) + SUN_RCONST(8.0) * zRabs) - ONE) / TWO);
+  int ss = 2;
+
+  if (zR < ZERO)                                  /*  x_val < 0 case  */
+  {
+    /* beta denominator (4 zR + zI^2/p_max) must be negative */
+    if (SUNSQR(zI) + FOUR * RKG_P_MAX * zR >= ZERO)
+    {
+      if (!ark_mem->fixedstep)
+      {
+        /* dt = 0.9*dt_limit  ->  eta = 0.9*dt_limit/h */
+        ark_mem->eta = SUN_RCONST(0.9) * (-FOUR * RKG_P_MAX * zR) / SUNSQR(zI);
+        *nflagPtr    = ARK_RETRY_STEP;
+        ark_mem->hadapt_mem->nst_exp++;
+        return ARK_RETRY_STEP;
+      }
+      else
+      {
+        /* fixed step: cannot reduce h */
+        arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                        __FILE__,
+                        "Unable to achieve stable results: the step size is too "
+                        "large for RKG given the imaginary part of the dominant "
+                        "eigenvalue. Hence, reduce the step size.");
+        return ARK_MAX_STAGE_LIMIT_FAIL;
+      }
+    }
+ 
+    /* initial beta estimate */
+    sunrealtype betaVal = (-FOUR * zR * zR) / (FOUR * zR + SUNSQR(zI) / RKG_P_MAX);
+ 
+    /* solve (s+4)(s-1)/3 = betaVal for s */
+    ss = (int)SUNRceil(SUN_RCONST(0.5) *
+                       (-THREE + SUNRsqrt(SUN_RCONST(25.0) + SUN_RCONST(12.0) * betaVal)));
+  }
+
+  ss = SUNMAX(ss, 2);
+
+  /* Check if number of stages exceeds maximum allowed. */
+    //  If so, and if adaptive stepping is enabled, reduce step size
+    //  and return ARK_RETRY_STEP. If fixed step size, return
+    //  ARK_MAX_STAGE_LIMIT_FAIL error. *
+  if (ss > step_mem->stage_max_limit)
+  {
+    SUNLogInfo(ARK_LOGGER, "compute-num-stages",
+               "spectral radius = " SUN_FORMAT_G ", num stages = %i"
+               ", max stages = %i, max stage limit = %i",
+               step_mem->spectral_radius, ss, step_mem->stage_max,
+               step_mem->stage_max_limit);
+
+    if (!ark_mem->fixedstep)
+    {
+      // hmax =
+      //   ark_mem->hadapt_mem->safety *
+      //   (SUNSQR(step_mem->stage_max_limit) + step_mem->stage_max_limit - TWO) /
+      //   (TWO * SUNRabs(step_mem->lambdaR));
+      hmax = ark_mem->hadapt_mem->safety *
+            ((step_mem->stage_max_limit + FOUR) *
+            (step_mem->stage_max_limit - ONE) / THREE) /
+            SUNRabs(step_mem->lambdaR);
+      ark_mem->eta = hmax / SUNRabs(ark_mem->h);
+      *nflagPtr    = ARK_RETRY_STEP;
+      ark_mem->hadapt_mem->nst_exp++;
+      return ARK_RETRY_STEP;
+    }
+    else
+    {
+      arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                      __FILE__,
+                      "Unable to achieve stable results: Either reduce the "
+                      "step size or increase the stage_max_limit");
+      return ARK_MAX_STAGE_LIMIT_FAIL;
+    }
+  }
+
+  /* Copy ss in case it is needed for falling back to step size adaptivity below */
+  int req_stages = ss;
+
+  if (zR < -SUN_UNIT_ROUNDOFF)                    
+  {
+    /* Check stability with the RKG ellipse */
+    // retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
+    //                                          &stability_norm);   
+    // if (retval != ARK_SUCCESS) { return retval; }                
+    stability_norm = lsrkStep_RKG_EllipseNorm(req_stages, zR, zI);   
+ 
+    if (stability_norm > ONE - SUN_UNIT_ROUNDOFF) 
+    {
+      sunrealtype initial_stability_norm = stability_norm; 
+      sunbooleantype max_stage_is_stable = SUNFALSE;       
+ 
+      if (req_stages < step_mem->stage_max_limit)          
+      {
+        // retval = lsrkStep_RKL_CheckStabilityNorm(step_mem,
+        //                                          step_mem->stage_max_limit,
+        //                                          ark_mem->h, &stability_norm);
+        //                                                    
+        // if (retval != ARK_SUCCESS) { return retval; }      
+        stability_norm = lsrkStep_RKG_EllipseNorm(step_mem->stage_max_limit,
+                                                  zR, zI);    
+ 
+        max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF); 
+        stability_norm      = initial_stability_norm;                      
+      }
+ 
+      if (max_stage_is_stable)                               
+      {
+        /* while (ellispe_cond > 1) s = s + 1, in MATLAB */
+        while ((stability_norm > ONE - SUN_UNIT_ROUNDOFF) &&
+               (req_stages < step_mem->stage_max_limit))
+        {
+          req_stages += 1;                                  
+          // retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages,
+          //                                          ark_mem->h, &stability_norm);
+          //                                                  
+          // if (retval != ARK_SUCCESS) { return retval; }    
+          stability_norm = lsrkStep_RKG_EllipseNorm(req_stages, zR, zI); 
+        }
+      }
+ 
+      if (stability_norm > ONE - SUN_UNIT_ROUNDOFF)          
+      {
+        if (!ark_mem->fixedstep)                             
+        {
+          // const sunrealtype aspect_ratio[7] = {
+          //   SUN_RCONST(0.3) * ss,   /* s = 2 */
+          //   SUN_RCONST(0.75) * ss,  /* s = 3 */
+          //   SUN_RCONST(0.665) * ss, /* s = 4 */
+          //   SUN_RCONST(0.665) * ss, /* s = 5 */
+          //   SUN_RCONST(0.635) * ss, /* s = 6 to 20 */
+          //   SUN_RCONST(0.6) * ss,   /* s >= 20 and odd */
+          //   SUN_RCONST(0.53) * ss   /* s >= 20 and even */
+          // };                                            
+          // const sunrealtype a =
+          //   (((TWO * ss + ONE) * (TWO * ss + ONE)) - SUN_RCONST(9.0)) /
+          //   SUN_RCONST(16.0);                           
+          // sunrealtype b;                                
+          //
+          // if (ss < 7) { b = a / aspect_ratio[req_stages - 2]; }
+          // else if (ss <= 20) { b = a / aspect_ratio[4]; }
+          // else { b = a / aspect_ratio[6 - req_stages % 2]; } 
+ 
+          /* RKG ellipse axes at the largest allowed stage count:
+             a = betaS/2, b = sqrt(p*betaS) */
+          sunrealtype a, b;
+          lsrkStep_RKG_EllipseAxes(step_mem->stage_max_limit, &a, &b);
+ 
+          ark_mem->eta = ark_mem->hadapt_mem->safety * (-TWO * a * b * b * zR) /
+                         (SUNSQR(b * zR) + SUNSQR(a * zI));
+          *nflagPtr = ARK_RETRY_STEP;
+          ark_mem->hadapt_mem->nst_exp++;
+          return ARK_RETRY_STEP;
+        }
+        else                                                 /* [U27] */
+        {
+          arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
+                          __FILE__,
+                          "Unable to achieve stable results: Either reduce the "
+                          "step size or increase the stage_max_limit");
+          return ARK_MAX_STAGE_LIMIT_FAIL;
+        }
+      }
+    }
+  }
+
+
+
+  
+  /* RKG recurrence */
+  step_mem->req_stages = req_stages;
+
+  step_mem->stage_max = SUNMAX(step_mem->req_stages, step_mem->stage_max);
+
+  SUNLogInfo(ARK_LOGGER, "compute-num-stages",
+             "spectral radius = " SUN_FORMAT_G
+             ", num stages = %i, max stages = %i, max stage limit = %i",
+             step_mem->spectral_radius, step_mem->req_stages,
+             step_mem->stage_max, step_mem->stage_max_limit);
+  SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+             "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
+  SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
+
+  /* Compute RHS function for the start of the step, if necessary. */
+  if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
+      (step_mem->step_nst != ark_mem->nst))
+  {
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(ark_mem->tn, ark_mem->yn, ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed preprocess rhs, retval = %i", retval);
+        return ARK_PRERHSFN_FAIL;
+      }
+    }
+    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+                          ark_mem->user_data);
+    step_mem->nfe++;
+    if (retval != ARK_SUCCESS)
+    {
+      SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                 "status = failed rhs eval, retval = %i", retval);
+      return (ARK_RHSFUNC_FAIL);
+    }
+    ark_mem->fn_is_current = SUNTRUE;
+  }
+
+  SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
+  SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
+
+  /* Track the number of successful steps to determine if the previous step failed. */
+  step_mem->step_nst = ark_mem->nst + 1;
+
+  /* Initialize constants */
+  w1   = SIX / ((step_mem->req_stages + FOUR) * (step_mem->req_stages - ONE));
+  bjm2 = ONE;
+  bjm1 = ONE / THREE;;
+  mus  = w1;
+
+  /* Begin stage 1 (store in tmp2) and initialize embedding */
+  ark_mem->tcur    = ark_mem->tn + ark_mem->h * mus;
+  step_mem->istage = 1;
+  SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+             "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
+  N_VLinearSum(ONE, ark_mem->yn, ark_mem->h * mus, ark_mem->fn, tmp2);
+  N_VScale(ONE, ark_mem->yn, tmp1);
+
+  /* apply user-supplied stage postprocessing function (if supplied) */
+  if (ark_mem->PostProcessStageFn)
+  {
+    retval = ark_mem->PostProcessStageFn(ark_mem->tcur, tmp2, ark_mem->user_data);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                 "status = failed postprocess stage, retval = %i", retval);
+      return ARK_POSTPROCESS_STAGE_FAIL;
+    }
+  }
+
+  /* Evaluate stages j = 2,...,step_mem->req_stages */
+  for (int j = 2; j <= step_mem->req_stages; j++)
+  {
+    /* Complete the previous stage (evaluate the RHS and store it in ycur) */
+
+    /* call the user-supplied pre-RHS function (if supplied) */
+    if (ark_mem->PreRhsFn)
+    {
+      retval = ark_mem->PreRhsFn(ark_mem->tcur, tmp2, ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed preprocess rhs, retval = %i", retval);
+        return ARK_PRERHSFN_FAIL;
+      }
+    }
+
+    retval = step_mem->fe(ark_mem->tcur, tmp2, ark_mem->ycur, ark_mem->user_data);
+    step_mem->nfe++;
+
+    SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->ycur,
+                        "F_%i(:) =", j - 1);
+    SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
+                 "status = failed rhs eval, retval = %i", retval);
+
+    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+    if (retval > 0) { return RHSFUNC_RECVR; }
+
+    SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
+
+    /* Begin stage j (store in ycur) */
+    temj             = (j + TWO) * (j - ONE);
+    bj               = temj / (TWO * j * (j + ONE));
+    ajm1             = ONE - bjm1;
+    mu               = (TWO * j - ONE) / j * (bj / bjm1);
+    nu               = -(j - ONE) / j * (bj / bjm2);
+    mus              = w1 * mu;
+    cj               = temj * w1 / FOUR;
+    ark_mem->tcur    = ark_mem->tn + ark_mem->h * cj;
+    step_mem->istage = j;
+    SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+               "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
+    cvals[0] = mus * ark_mem->h;
+    Xvecs[0] = ark_mem->ycur;
+    cvals[1] = nu;
+    Xvecs[1] = tmp1;
+    cvals[2] = ONE - mu - nu;
+    Xvecs[2] = ark_mem->yn;
+    cvals[3] = mu;
+    Xvecs[3] = tmp2;
+    cvals[4] = -mus * ajm1 * ark_mem->h;
+    Xvecs[4] = ark_mem->fn;
+    retval   = N_VLinearCombination(5, cvals, Xvecs, ark_mem->ycur);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                 "status = failed vector op, retval = %i", retval);
+      return ARK_VECTOROP_ERR;
+    }
+
+    /* apply user-supplied stage or step postprocessing function (if supplied) */
+    if (j < step_mem->req_stages && ark_mem->PostProcessStageFn)
+    {
+      retval = ark_mem->PostProcessStageFn(ark_mem->tcur, ark_mem->ycur,
+                                           ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed postprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+    else if (j == step_mem->req_stages && ark_mem->PostProcessStepFn)
+    {
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur + ark_mem->h * cj,
+                                          ark_mem->ycur, ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed postprocess step, retval = %i", retval);
+        return ARK_POSTPROCESS_STEP_FAIL;
+      }
+    }
+
+    /* Shift the data for the next stage */
+    if (j < step_mem->req_stages)
+    {
+      /* To avoid two data copies we swap ARKODE's tempv1 and tempv2 pointers*/
+      N_Vector temp = tmp1;
+      tmp1          = tmp2;
+      tmp2          = temp;
+
+      N_VScale(ONE, ark_mem->ycur, tmp2);
+
+      bjm2 = bjm1;
+      bjm1 = bj;
+    }
+  }
+
+  SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
+  SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
+
+  /* final stage processing */
+  SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
+  ark_mem->tcur = ark_mem->tn + ark_mem->h;
+
+  /* call the user-supplied pre-RHS function (if supplied) */
+  if (ark_mem->PreRhsFn)
+  {
+    retval = ark_mem->PreRhsFn(ark_mem->tcur, ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-compute-embedding",
+                 "status = failed preprocess rhs, retval = %i", retval);
+      return ARK_PRERHSFN_FAIL;
+    }
+  }
+  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
+                        ark_mem->user_data);
+  step_mem->nfe++;
+
+  SUNLogExtraDebugVec(ARK_LOGGER, "solution RHS", ark_mem->tempv2, "F_n(:) =");
+  SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-compute-embedding",
+               "status = failed rhs eval, retval = %i", retval);
+
+  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+  if (retval > 0) { return RHSFUNC_RECVR; }
+
+  /* Compute yerr (if step adaptivity enabled) */
+  if (!ark_mem->fixedstep)
+  {
+    /* Estimate the local error and compute its weighted RMS norm */
+    cvals[0] = p8;
+    Xvecs[0] = ark_mem->yn;
+    cvals[1] = -p8;
+    Xvecs[1] = ark_mem->ycur;
+    cvals[2] = p4 * ark_mem->h;
+    Xvecs[2] = ark_mem->fn;
+    cvals[3] = p4 * ark_mem->h;
+    Xvecs[3] = ark_mem->tempv2;
+    retval   = N_VLinearCombination(4, cvals, Xvecs, ark_mem->tempv1);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-compute-embedding",
+                 "status = failed vector op, retval = %i", retval);
+      return ARK_VECTOROP_ERR;
+    }
+    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv2);
+  }
+  else
+  {
+    lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv2);
+  }
+
+  SUNLogInfo(ARK_LOGGER, "end-compute-embedding", "status = success");
+
+  return ARK_SUCCESS;
+}
+
+
 /*---------------------------------------------------------------
   lsrkStep_TakeStepSSPs2:
 
