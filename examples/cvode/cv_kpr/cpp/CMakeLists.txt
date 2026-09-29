@@ -13,18 +13,19 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE serial C++ KPR example
-set(CVODE_examples
-    "cv_kpr.cpp\;\;\;\;develop"
-    "cv_kpr.cpp\;cvode.init_step 0.01\;\;\;develop")
+set(CVODE_examples "cv_kpr.cpp\;\;\;\;develop"
+                   "cv_kpr.cpp\;cvode.init_step 0.01\;\;\;develop")
 
 sundials_add_executable(cv_kpr cv_kpr.cpp)
 set_target_properties(cv_kpr PROPERTIES FOLDER "Examples")
 if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
-  target_include_directories(cv_kpr PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)
+  target_include_directories(cv_kpr
+                             PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)
 else()
   target_include_directories(cv_kpr PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
-target_link_libraries(cv_kpr PRIVATE sundials_cvode sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
+target_link_libraries(cv_kpr PRIVATE sundials_cvode sundials_nvecserial
+                                     ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(cv_kpr PRIVATE sundials_cvode_fused_stubs)
 endif()
@@ -36,9 +37,12 @@ foreach(_tuple ${CVODE_examples})
   else()
     string(REPLACE " " "_" _test "cv_kpr_${_args}")
   endif()
-  sundials_add_test(${_test} cv_kpr TEST_ARGS ${_args}
-                    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                    ANSWER_FILE ${_test}.out EXAMPLE_TYPE ${_type})
+  sundials_add_test(
+    ${_test} cv_kpr
+    TEST_ARGS ${_args}
+    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+    ANSWER_FILE ${_test}.out
+    EXAMPLE_TYPE ${_type})
 endforeach()
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)

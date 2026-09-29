@@ -14,10 +14,14 @@
 # -----------------------------------------------------------------
 sundials_add_executable(cv_direct_demo_ls cv_direct_demo_ls.c)
 set_target_properties(cv_direct_demo_ls PROPERTIES FOLDER "Examples")
-target_link_libraries(cv_direct_demo_ls PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                      ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(cv_direct_demo_ls cv_direct_demo_ls ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                  ANSWER_FILE cv_direct_demo_ls.out EXAMPLE_TYPE develop)
+target_link_libraries(
+  cv_direct_demo_ls PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+                            ${EXE_EXTRA_LINK_LIBS})
+sundials_add_test(
+  cv_direct_demo_ls cv_direct_demo_ls
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_direct_demo_ls.out
+  EXAMPLE_TYPE develop)
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   install(FILES cv_direct_demo_ls.c cv_direct_demo_ls.out
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_direct_demo/c)
