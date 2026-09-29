@@ -13,15 +13,12 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE parallel C++ heat equation example with a user HYPRE linear solver
-set(CVODE_examples "cv_heat_2d_hypre_ls.cpp\;--np 2 2\;1\;4\;develop")
 sundials_add_executable(cv_heat_2d_hypre_ls cv_heat_2d_hypre_ls.cpp)
 set_target_properties(cv_heat_2d_hypre_ls PROPERTIES FOLDER "Examples")
 target_link_libraries(
-  cv_heat_2d_hypre_ls PRIVATE MPI::MPI_CXX sundials_cvode sundials_nvecparallel
+  cv_heat_2d_hypre_ls PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS}
+                              sundials_nvecparallel
                               ${EXE_EXTRA_LINK_LIBS} SUNDIALS::HYPRE)
-if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(cv_heat_2d_hypre_ls PRIVATE sundials_cvode_fused_stubs)
-endif()
 sundials_add_test(
   cv_heat_2d_hypre_ls_--np_2_2 cv_heat_2d_hypre_ls
   TEST_ARGS --np 2 2
@@ -42,12 +39,8 @@ sundials_add_executable(cv_heat_2d_hypre_pfmg cv_heat_2d_hypre_pfmg.cpp)
 set_target_properties(cv_heat_2d_hypre_pfmg PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_heat_2d_hypre_pfmg
-  PRIVATE MPI::MPI_CXX sundials_cvode sundials_nvecparallel
+  PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
           ${EXE_EXTRA_LINK_LIBS} SUNDIALS::HYPRE)
-if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(cv_heat_2d_hypre_pfmg
-                        PRIVATE sundials_cvode_fused_stubs)
-endif()
 sundials_add_test(
   cv_heat_2d_hypre_pfmg_--np_2_2 cv_heat_2d_hypre_pfmg
   TEST_ARGS --np 2 2

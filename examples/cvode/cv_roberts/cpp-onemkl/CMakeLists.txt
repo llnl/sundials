@@ -13,7 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE oneMKL C++ example
-set(CVODE_examples "cv_roberts_blockdiag_onemkl.cpp\;\;develop")
 sundials_add_executable(cv_roberts_blockdiag_onemkl
                         cv_roberts_blockdiag_onemkl.cpp)
 set_target_properties(cv_roberts_blockdiag_onemkl PROPERTIES FOLDER "Examples")

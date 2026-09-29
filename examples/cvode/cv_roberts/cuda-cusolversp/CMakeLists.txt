@@ -12,28 +12,31 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(example cv_roberts_block_cusolversp_batchqr)
-
-set_source_files_properties(${example}.cu PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT
-                                                     OBJ)
-sundials_add_executable(${example} ${example}.cu)
-set_target_properties(${example} PROPERTIES FOLDER "Examples")
+set_source_files_properties(cv_roberts_block_cusolversp_batchqr.cu
+                            PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+sundials_add_executable(cv_roberts_block_cusolversp_batchqr
+                        cv_roberts_block_cusolversp_batchqr.cu)
+set_target_properties(cv_roberts_block_cusolversp_batchqr
+                      PROPERTIES FOLDER "Examples")
 target_link_libraries(
-  ${example} PRIVATE sundials_sunlinsolcusolversp sundials_cvode
-                     sundials_nveccuda ${EXE_EXTRA_LINK_LIBS})
+  cv_roberts_block_cusolversp_batchqr
+  PRIVATE sundials_sunlinsolcusolversp sundials_cvode sundials_nveccuda
+          ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(${example} PRIVATE sundials_cvode_fused_cuda)
+  target_link_libraries(cv_roberts_block_cusolversp_batchqr
+                        PRIVATE sundials_cvode_fused_cuda)
 endif()
 
 sundials_add_test(
-  ${example} ${example}
+  cv_roberts_block_cusolversp_batchqr cv_roberts_block_cusolversp_batchqr
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE ${example}.out
+  ANSWER_FILE cv_roberts_block_cusolversp_batchqr.out
   EXAMPLE_TYPE develop)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   install(
-    FILES ${example}.cu ${example}.out
+    FILES cv_roberts_block_cusolversp_batchqr.cu
+          cv_roberts_block_cusolversp_batchqr.out
     DESTINATION
       ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/cuda-cusolversp)
 endif()

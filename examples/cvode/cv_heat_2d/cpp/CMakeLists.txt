@@ -13,8 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE serial C++ heat equation example
-set(CVODE_examples "cv_heat_2d.cpp\;\;\;\;exclude-single")
-
 sundials_add_executable(cv_heat_2d cv_heat_2d.cpp)
 set_target_properties(cv_heat_2d PROPERTIES FOLDER "Examples")
 if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
@@ -23,11 +21,8 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
 else()
   target_include_directories(cv_heat_2d PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
-target_link_libraries(cv_heat_2d PRIVATE sundials_cvode sundials_nvecserial
+target_link_libraries(cv_heat_2d PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                                          ${EXE_EXTRA_LINK_LIBS})
-if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(cv_heat_2d PRIVATE sundials_cvode_fused_stubs)
-endif()
 sundials_add_test(
   cv_heat_2d cv_heat_2d
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
