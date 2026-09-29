@@ -16,8 +16,8 @@ set_source_files_properties(cv_roberts_block_cusolversp_batchqr.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_executable(cv_roberts_block_cusolversp_batchqr
                         cv_roberts_block_cusolversp_batchqr.cu)
-set_target_properties(cv_roberts_block_cusolversp_batchqr
-                      PROPERTIES FOLDER "Examples")
+set_target_properties(cv_roberts_block_cusolversp_batchqr PROPERTIES FOLDER
+                                                                     "Examples")
 target_link_libraries(
   cv_roberts_block_cusolversp_batchqr
   PRIVATE sundials_sunlinsolcusolversp sundials_cvode sundials_nveccuda

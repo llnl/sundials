@@ -16,16 +16,15 @@ set_source_files_properties(cv_adv_diff_diag_cuda.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_executable(cv_adv_diff_diag_cuda cv_adv_diff_diag_cuda.cu)
 set_target_properties(cv_adv_diff_diag_cuda PROPERTIES FOLDER "Examples")
-target_link_libraries(cv_adv_diff_diag_cuda PRIVATE sundials_cvode
-                                                sundials_nveccuda
-                                                ${EXE_EXTRA_LINK_LIBS})
+target_link_libraries(
+  cv_adv_diff_diag_cuda PRIVATE sundials_cvode sundials_nveccuda
+                                ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(cv_adv_diff_diag_cuda PRIVATE sundials_cvode_fused_cuda)
 endif()
 
 foreach(example_args "0 0" "0 1" "1 1")
-  string(REGEX REPLACE " " "_" test_name
-                       cv_adv_diff_diag_cuda_${example_args})
+  string(REGEX REPLACE " " "_" test_name cv_adv_diff_diag_cuda_${example_args})
   sundials_add_test(
     ${test_name} cv_adv_diff_diag_cuda
     TEST_ARGS ${example_args}
@@ -44,9 +43,9 @@ set_source_files_properties(cv_adv_diff_kry_cuda.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_executable(cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda.cu)
 set_target_properties(cv_adv_diff_kry_cuda PROPERTIES FOLDER "Examples")
-target_link_libraries(cv_adv_diff_kry_cuda PRIVATE sundials_cvode
-                                               sundials_nveccuda
-                                               ${EXE_EXTRA_LINK_LIBS})
+target_link_libraries(
+  cv_adv_diff_kry_cuda PRIVATE sundials_cvode sundials_nveccuda
+                               ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(cv_adv_diff_kry_cuda PRIVATE sundials_cvode_fused_cuda)
 endif()

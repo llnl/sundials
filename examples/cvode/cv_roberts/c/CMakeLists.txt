@@ -32,9 +32,14 @@ endforeach()
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   install(
-    FILES cv_roberts_dns.c cv_roberts_dns.out cv_roberts_dns_stats.csv
-          cv_roberts_dns_constraints.c cv_roberts_dns_constraints.out
-          cv_roberts_dns_negsol.c cv_roberts_dns_negsol.out cv_roberts_dns_uw.c
+    FILES cv_roberts_dns.c
+          cv_roberts_dns.out
+          cv_roberts_dns_stats.csv
+          cv_roberts_dns_constraints.c
+          cv_roberts_dns_constraints.out
+          cv_roberts_dns_negsol.c
+          cv_roberts_dns_negsol.out
+          cv_roberts_dns_uw.c
           cv_roberts_dns_uw.out
     DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/c)
 endif()

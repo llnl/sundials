@@ -32,7 +32,8 @@ set(SUNDIALS_ENABLE_C_EXAMPLES @SUNDIALS_ENABLE_C_EXAMPLES@)
 set(SUNDIALS_ENABLE_CXX_EXAMPLES @SUNDIALS_ENABLE_CXX_EXAMPLES@)
 set(SUNDIALS_ENABLE_FORTRAN_EXAMPLES @SUNDIALS_ENABLE_FORTRAN_EXAMPLES@)
 set(SUNDIALS_ENABLE_CUDA_EXAMPLES @SUNDIALS_ENABLE_CUDA_EXAMPLES@)
-set(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS @SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS@)
+set(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
+    @SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS@)
 set(SUNDIALS_ENABLE_CUDA @SUNDIALS_ENABLE_CUDA@)
 set(SUNDIALS_ENABLE_HIP @SUNDIALS_ENABLE_HIP@)
 set(SUNDIALS_ENABLE_MPI @SUNDIALS_ENABLE_MPI@)
@@ -41,15 +42,19 @@ set(SUNDIALS_ENABLE_PETSC @SUNDIALS_ENABLE_PETSC@)
 set(SUNDIALS_ENABLE_OPENMP @SUNDIALS_ENABLE_OPENMP@)
 set(SUNDIALS_ENABLE_OPENMP_DEVICE @SUNDIALS_ENABLE_OPENMP_DEVICE@)
 set(OPENMP_SUPPORTS_DEVICE_OFFLOADING @OPENMP_SUPPORTS_DEVICE_OFFLOADING@)
-set(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR @SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR@)
+set(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR
+    @SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR@)
 set(SUNDIALS_ENABLE_NVECTOR_SYCL @SUNDIALS_ENABLE_NVECTOR_SYCL@)
 set(SUNDIALS_ENABLE_GINKGO @SUNDIALS_ENABLE_GINKGO@)
 set(SUNDIALS_ENABLE_MAGMA @SUNDIALS_ENABLE_MAGMA@)
 set(SUNDIALS_ENABLE_RAJA @SUNDIALS_ENABLE_RAJA@)
-set(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE @SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE@)
-set(SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE @SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE@)
+set(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE
+    @SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE@)
+set(SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE
+    @SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE@)
 set(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND @SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND@)
-set(SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE @SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE@)
+set(SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE
+    @SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE@)
 set(SUNDIALS_ENABLE_SUNLINSOL_KLU @SUNDIALS_ENABLE_SUNLINSOL_KLU@)
 set(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT @SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT@)
 set(SUNDIALS_ENABLE_SUPERLUDIST @SUNDIALS_ENABLE_SUPERLUDIST@)
@@ -75,11 +80,8 @@ endif()
 function(sundials_add_executable name)
   set(options)
   set(single_value_args SCALAR_TYPE)
-  set(multi_value_args
-      LINK_LIBRARIES
-      INCLUDE_DIRECTORIES
-      COMPILE_DEFINITIONS
-      PROPERTIES)
+  set(multi_value_args LINK_LIBRARIES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
+                       PROPERTIES)
   cmake_parse_arguments(arg "${options}" "${single_value_args}"
                         "${multi_value_args}" ${ARGN})
 
@@ -107,13 +109,13 @@ function(sundials_add_test name executable)
   cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}"
                         ${ARGN})
   if(arg_MPI_NPROCS)
-    add_test(NAME ${name}
-             COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG}
-                     ${arg_MPI_NPROCS} $<TARGET_FILE:${executable}>
-                     ${arg_TEST_ARGS} ${arg_EXTRA_ARGS})
+    add_test(
+      NAME ${name}
+      COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${arg_MPI_NPROCS}
+              $<TARGET_FILE:${executable}> ${arg_TEST_ARGS} ${arg_EXTRA_ARGS})
   else()
-    add_test(NAME ${name} COMMAND $<TARGET_FILE:${executable}>
-             ${arg_TEST_ARGS} ${arg_EXTRA_ARGS})
+    add_test(NAME ${name} COMMAND $<TARGET_FILE:${executable}> ${arg_TEST_ARGS}
+                                  ${arg_EXTRA_ARGS})
   endif()
   if(arg_LABELS)
     set_tests_properties(${name} PROPERTIES LABELS "${arg_LABELS}")
@@ -123,14 +125,37 @@ endfunction()
 # The installed package exports namespaced targets. The in-tree example files
 # use the historical unnamespaced target names, so provide local aliases here.
 set(_cvode_targets
-    cvode cvode_fused_stubs cvode_fused_cuda cvode_fused_hip
-    fcvode_mod fnvecserial_mod fnvecparallel_mod
-    nvecserial nvecparallel nvecmpimanyvector nvecopenmp nvecopenmpdev
-    nvecparhyp nvecpetsc nveccuda nvechip nvecsycl nvecraja nveckokkos
-    sunlinsollapackband sunlinsollapackdense sunlinsolklu
-    sunlinsolsuperlumt sunlinsolsuperludist sunlinsolcusolversp
-    sunnonlinsolpetscsnes sunmatrixkokkosdense sunlinsolkokkosdense
-    sunlinsolonemkldense sunlinsolmagmadense fsunlinsolklu_mod
+    cvode
+    cvode_fused_stubs
+    cvode_fused_cuda
+    cvode_fused_hip
+    fcvode_mod
+    fnvecserial_mod
+    fnvecparallel_mod
+    nvecserial
+    nvecparallel
+    nvecmpimanyvector
+    nvecopenmp
+    nvecopenmpdev
+    nvecparhyp
+    nvecpetsc
+    nveccuda
+    nvechip
+    nvecsycl
+    nvecraja
+    nveckokkos
+    sunlinsollapackband
+    sunlinsollapackdense
+    sunlinsolklu
+    sunlinsolsuperlumt
+    sunlinsolsuperludist
+    sunlinsolcusolversp
+    sunnonlinsolpetscsnes
+    sunmatrixkokkosdense
+    sunlinsolkokkosdense
+    sunlinsolonemkldense
+    sunlinsolmagmadense
+    fsunlinsolklu_mod
     fsunlinsollapackdense_mod)
 foreach(_target IN LISTS _cvode_targets)
   if(TARGET SUNDIALS::${_target})
@@ -168,15 +193,18 @@ macro(sundials_add_examples_ginkgo examples_var)
       set(example_target "${example_target}.${backend}")
       add_executable(${example_target} ${example})
       target_compile_definitions(${example_target} PRIVATE USE_${backend})
-      target_include_directories(${example_target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-      target_link_libraries(${example_target} PRIVATE ${ginkgo_TARGETS}
-                            sundials_${vector} Ginkgo::ginkgo)
+      target_include_directories(${example_target}
+                                 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+      target_link_libraries(
+        ${example_target} PRIVATE ${ginkgo_TARGETS} sundials_${vector}
+                                  Ginkgo::ginkgo)
       if(example_args STREQUAL "")
         set(test_name ${example_target})
       else()
         string(REPLACE " " "_" test_name "${example_target}_${example_args}")
       endif()
-      sundials_add_test(${test_name} ${example_target} TEST_ARGS ${example_args})
+      sundials_add_test(${test_name} ${example_target}
+                        TEST_ARGS ${example_args})
     endforeach()
   endforeach()
 endmacro()

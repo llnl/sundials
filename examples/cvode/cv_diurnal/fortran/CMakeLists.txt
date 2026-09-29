@@ -13,11 +13,16 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_executable(
-  cv_diurnal_kry_f2003 cv_diurnal_kry_f2003.f90
+  cv_diurnal_kry_f2003
+  cv_diurnal_kry_f2003.f90
   LINK_LIBRARIES
-  ${CVODE_C_LIBS} sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS}
+  ${CVODE_C_LIBS}
+  sundials_fcvode_mod
+  ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
-  FOLDER "Examples" Fortran_MODULE_DIRECTORY
+  FOLDER
+  "Examples"
+  Fortran_MODULE_DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_diurnal_kry_f2003.dir)
 sundials_add_test(
   cv_diurnal_kry_f2003 cv_diurnal_kry_f2003
@@ -31,11 +36,16 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 endif()
 
 sundials_add_executable(
-  cv_diurnal_kry_bp_f2003 cv_diurnal_kry_bp_f2003.f90
+  cv_diurnal_kry_bp_f2003
+  cv_diurnal_kry_bp_f2003.f90
   LINK_LIBRARIES
-  ${CVODE_C_LIBS} sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS}
+  ${CVODE_C_LIBS}
+  sundials_fcvode_mod
+  ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
-  FOLDER "Examples" Fortran_MODULE_DIRECTORY
+  FOLDER
+  "Examples"
+  Fortran_MODULE_DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_diurnal_kry_bp_f2003.dir)
 sundials_add_test(
   cv_diurnal_kry_bp_f2003 cv_diurnal_kry_bp_f2003

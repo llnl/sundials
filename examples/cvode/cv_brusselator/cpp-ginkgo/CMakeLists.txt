@@ -46,15 +46,21 @@ foreach(backend REF OMP CUDA HIP SYCL)
                      ${PROJECT_SOURCE_DIR}/examples/utilities)
   endif()
   sundials_add_executable(
-    ${example_target} cv_bruss_batched_ginkgo.cpp
+    ${example_target}
+    cv_bruss_batched_ginkgo.cpp
     LINK_LIBRARIES
-    PRIVATE ${CVODE_C_LIBS} sundials_${vector} Ginkgo::ginkgo
-            ${EXE_EXTRA_LINK_LIBS}
+    PRIVATE
+    ${CVODE_C_LIBS}
+    sundials_${vector}
+    Ginkgo::ginkgo
+    ${EXE_EXTRA_LINK_LIBS}
     ${include_args}
     COMPILE_DEFINITIONS
-    PRIVATE USE_${backend}
+    PRIVATE
+    USE_${backend}
     PROPERTIES
-    FOLDER "Examples")
+    FOLDER
+    "Examples")
   sundials_add_test(
     ${example_target} ${example_target}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
