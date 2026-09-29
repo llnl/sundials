@@ -16,9 +16,9 @@
 sundials_add_executable(cv_heat_2d_hypre_ls cv_heat_2d_hypre_ls.cpp)
 set_target_properties(cv_heat_2d_hypre_ls PROPERTIES FOLDER "Examples")
 target_link_libraries(
-  cv_heat_2d_hypre_ls PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS}
-                              sundials_nvecparallel
-                              ${EXE_EXTRA_LINK_LIBS} SUNDIALS::HYPRE)
+  cv_heat_2d_hypre_ls
+  PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
+          ${EXE_EXTRA_LINK_LIBS} SUNDIALS::HYPRE)
 sundials_add_test(
   cv_heat_2d_hypre_ls_--np_2_2 cv_heat_2d_hypre_ls
   TEST_ARGS --np 2 2
