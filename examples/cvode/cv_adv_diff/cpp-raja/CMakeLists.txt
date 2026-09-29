@@ -25,18 +25,22 @@ endif()
 if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"))
   set(_other_libs OpenMP::OpenMP_CXX)
 endif()
-set_source_files_properties(cv_adv_diff_kry_raja.cpp PROPERTIES LANGUAGE ${_lang})
+set_source_files_properties(cv_adv_diff_kry_raja.cpp PROPERTIES LANGUAGE
+                                                                ${_lang})
 sundials_add_executable(cv_adv_diff_kry_raja cv_adv_diff_kry_raja.cpp)
 set_target_properties(cv_adv_diff_kry_raja PROPERTIES FOLDER "Examples")
 target_include_directories(cv_adv_diff_kry_raja PRIVATE .)
-target_link_libraries(cv_adv_diff_kry_raja
-  PRIVATE sundials_cvode sundials_nvecraja ${_fused_stubs} ${EXE_EXTRA_LINK_LIBS}
-          ${_other_libs})
-sundials_add_test(cv_adv_diff_kry_raja cv_adv_diff_kry_raja
-                  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                  ANSWER_FILE cv_adv_diff_kry_raja.out EXAMPLE_TYPE develop)
+target_link_libraries(
+  cv_adv_diff_kry_raja PRIVATE sundials_cvode sundials_nvecraja ${_fused_stubs}
+                               ${EXE_EXTRA_LINK_LIBS} ${_other_libs})
+sundials_add_test(
+  cv_adv_diff_kry_raja cv_adv_diff_kry_raja
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_adv_diff_kry_raja.out
+  EXAMPLE_TYPE develop)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cv_adv_diff_kry_raja.cpp cv_adv_diff_kry_raja.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/cpp-raja)
+  install(
+    FILES cv_adv_diff_kry_raja.cpp cv_adv_diff_kry_raja.out
+    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/cpp-raja)
 endif()

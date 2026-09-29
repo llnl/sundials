@@ -12,7 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64"
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES
+   AND SUNDIALS_INDEX_SIZE MATCHES "64"
    AND SUNDIALS_ENABLE_MPI)
   add_subdirectory(fortran-mpi)
 endif()
