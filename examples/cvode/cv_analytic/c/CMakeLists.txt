@@ -14,10 +14,14 @@
 # -----------------------------------------------------------------
 sundials_add_executable(cv_analytic_mels cv_analytic_mels.c)
 set_target_properties(cv_analytic_mels PROPERTIES FOLDER "Examples")
-target_link_libraries(cv_analytic_mels PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                      ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(cv_analytic_mels cv_analytic_mels ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                  ANSWER_FILE cv_analytic_mels.out EXAMPLE_TYPE develop)
+target_link_libraries(
+  cv_analytic_mels PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+                           ${EXE_EXTRA_LINK_LIBS})
+sundials_add_test(
+  cv_analytic_mels cv_analytic_mels
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_analytic_mels.out
+  EXAMPLE_TYPE develop)
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   install(FILES cv_analytic_mels.c cv_analytic_mels.out
           DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_analytic/c)

@@ -31,6 +31,6 @@ endif()
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   install(
     FILES ${example}.f90 ${example}.out
-    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/fortran-lapack
-  )
+    DESTINATION
+      ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/fortran-lapack)
 endif()

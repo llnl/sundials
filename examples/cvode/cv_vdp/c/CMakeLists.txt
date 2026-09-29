@@ -16,7 +16,7 @@ sundials_add_executable(cv_vdp_auto_nls cv_vdp_auto_nls.c)
 set_target_properties(cv_vdp_auto_nls PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_vdp_auto_nls PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                         ${EXE_EXTRA_LINK_LIBS})
+                          ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_test(
   cv_vdp_auto_nls cv_vdp_auto_nls

@@ -15,7 +15,7 @@
 sundials_add_executable(cv_rocket_dns cv_rocket_dns.c)
 set_target_properties(cv_rocket_dns PROPERTIES FOLDER "Examples")
 target_link_libraries(cv_rocket_dns PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                                           ${EXE_EXTRA_LINK_LIBS})
+                                            ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
   cv_rocket_dns cv_rocket_dns
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
