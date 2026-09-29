@@ -1711,9 +1711,6 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
   }
 
-
-
-  
   /* RKG recurrence */
   step_mem->req_stages = req_stages;
 
@@ -1763,7 +1760,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   step_mem->step_nst = ark_mem->nst + 1;
 
   /* Initialize constants */
-  w1   = SIX / ((step_mem->req_stages + FOUR) * (step_mem->req_stages - ONE));
+  w1   = SUN_RCONST(6.0) / ((step_mem->req_stages + FOUR) * (step_mem->req_stages - ONE));
   bjm2 = ONE;
   bjm1 = ONE / THREE;
   mus  = w1;
@@ -1825,7 +1822,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     mu               = (TWO * j + ONE) / j * (bj / bjm1);
     nu               = -(j + ONE) / j * (bj / bjm2);
     mus              = w1 * mu;
-    cj               = temj * w1 / FOUR;
+    cj               = temj * w1 / SUN_RCONST(6.0);
     ark_mem->tcur    = ark_mem->tn + ark_mem->h * cj;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
