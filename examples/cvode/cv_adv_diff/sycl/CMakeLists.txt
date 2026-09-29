@@ -14,9 +14,9 @@
 # -----------------------------------------------------------------
 sundials_add_executable(cv_adv_diff_kry_sycl cv_adv_diff_kry_sycl.cpp)
 set_target_properties(cv_adv_diff_kry_sycl PROPERTIES FOLDER "Examples")
-target_link_libraries(cv_adv_diff_kry_sycl PRIVATE sundials_cvode
-                                               sundials_nvecsycl
-                                               ${EXE_EXTRA_LINK_LIBS})
+target_link_libraries(
+  cv_adv_diff_kry_sycl PRIVATE sundials_cvode sundials_nvecsycl
+                               ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
   cv_adv_diff_kry_sycl cv_adv_diff_kry_sycl
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}

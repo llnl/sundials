@@ -26,11 +26,8 @@ function(sundials_add_executable NAME)
 
   set(options)
   set(singleValueArgs SCALAR_TYPE)
-  set(multiValueArgs
-      LINK_LIBRARIES
-      INCLUDE_DIRECTORIES
-      COMPILE_DEFINITIONS
-      PROPERTIES)
+  set(multiValueArgs LINK_LIBRARIES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
+                     PROPERTIES)
 
   cmake_parse_arguments(arg "${options}" "${singleValueArgs}"
                         "${multiValueArgs}" ${ARGN})
