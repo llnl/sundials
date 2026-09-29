@@ -13,28 +13,24 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE Kokkos two-dimensional batched Brusselator example
-set(examples_list "cv_bruss_batched_kokkos_2d.cpp\;\;develop")
 foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
   set(example_target cv_bruss_batched_kokkos_2d.${backend})
   if(NOT TARGET ${example_target})
-    sundials_add_executable(${example_target} cv_bruss_batched_kokkos_2d.cpp)
-    set_target_properties(${example_target} PROPERTIES FOLDER "Examples")
-    target_compile_definitions(${example_target} PRIVATE USE_${backend})
+    set(include_args)
     if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
-      target_include_directories(
-        ${example_target} PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)
-    else()
-      target_include_directories(${example_target}
-                                 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+      set(include_args INCLUDE_DIRECTORIES PRIVATE
+                       ${PROJECT_SOURCE_DIR}/examples/utilities)
     endif()
-    target_link_libraries(
-      ${example_target}
-      PRIVATE sundials_cvode sundials_nveckokkos sundials_sunmatrixkokkosdense
-              sundials_sunlinsolkokkosdense ${EXE_EXTRA_LINK_LIBS})
-    if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-      target_link_libraries(${example_target}
-                            PRIVATE sundials_cvode_fused_stubs)
-    endif()
+    sundials_add_executable(
+      ${example_target} cv_bruss_batched_kokkos_2d.cpp
+      LINK_LIBRARIES
+      PRIVATE ${CVODE_C_LIBS} sundials_nveckokkos sundials_sunmatrixkokkosdense
+              sundials_sunlinsolkokkosdense ${EXE_EXTRA_LINK_LIBS}
+      ${include_args}
+      COMPILE_DEFINITIONS
+      PRIVATE USE_${backend}
+      PROPERTIES
+      FOLDER "Examples")
   endif()
   sundials_add_test(
     ${example_target} ${example_target}
