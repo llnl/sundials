@@ -1418,14 +1418,14 @@ Ellipse:  ((zR + a)/a)^2 + (zI/b)^2 <= 1
 ------------------------------------------------------------------*/
 // for s<10, store the exact p-values
 static const sunrealtype RKG_pVAL_SMALL[8] = {
-  1.50000004939358,  /* s=2 */
-  0.500000059075271, /* s=3 */
-  0.666666862117036, /* s=4 */
-  0.726088448783156, /* s=5 */
-  0.886356042378929, /* s=6 */
-  0.834350823849742, /* s=7 */
-  1.00591707469166,  /* s=8 */
-  0.892335595168941  /* s=9 */
+  SUN_RCONST(1.50000004939358),  /* s=2 */
+  SUN_RCONST(0.500000059075271), /* s=3 */
+  SUN_RCONST(0.666666862117036), /* s=4 */
+  SUN_RCONST(0.726088448783156), /* s=5 */
+  SUN_RCONST(0.886356042378929), /* s=6 */
+  SUN_RCONST(0.834350823849742), /* s=7 */
+  SUN_RCONST(1.00591707469166),  /* s=8 */
+  SUN_RCONST(0.892335595168941)  /* s=9 */
 };
 
 // for large s even values, p converged to 1.243
@@ -1435,7 +1435,7 @@ static const sunrealtype RKG_pVAL_SMALL[8] = {
 static sunrealtype lsrkStep_RKG_P(int s)
 {
   sunrealtype d;
-  if (s < 10) {return RKG_pVal_SMALL[s-2];}
+  if (s < 10) {return RKG_pVAL_SMALL[s-2];}
 
   //even stages >= 10
   if (s % 2 == 0)
@@ -1455,7 +1455,7 @@ static sunrealtype lsrkStep_RKG_P(int s)
 //compute the semi-major and semi-minor axes of the inscribed ellipse for a given s
 static void lsrkStep_RKG_EllipseAxes(int s, sunrealtype*a, sunrealtype* b)
 {
- sunrealtype betaS = (sunrealtype(s) + 4) * (sunrealtype(s) + 4) / THREE;
+ sunrealtype betaS = ((sunrealtype)s + FOUR) * ((sunrealtype)s  - ONE) / THREE;
  *a = betaS / TWO;
  *b = SUNRsqrt(lsrkStep_RKG_P(s) * betaS);
 }
@@ -1465,7 +1465,7 @@ static sunrealtype lsrkStep_RKG_EllipseCondition(int s, sunrealtype zR, sunrealt
 {
   sunrealtype a, b;
   lsrkStep_RKG_EllipseAxes(s, &a, &b);
-  return SUNRSQR(zR/a + 1) + SUNRSQR(zI / b);
+  return SUNSQR(zR/a + ONE) + SUNSQR(zI / b);
 }
 
 
@@ -1473,7 +1473,7 @@ static sunrealtype lsrkStep_RKG_EllipseCondition(int s, sunrealtype zR, sunrealt
   lsrkStep_TakeStepRKG:
 
   This routine serves the primary purpose of the LSRKStepRKG module:
-  it performs a single RKL step (with embedding, if possible).
+  it performs a single RKG step (with embedding, if possible).
 
   The output variable dsmPtr should contain estimate of the
   weighted local error if an embedding is present; otherwise it
@@ -1503,7 +1503,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   int retval;
   sunrealtype hmax, w1, bjm1, bjm2, mus, bj, ajm1, temj, cj, mu, nu;
   const sunrealtype p8 = SUN_RCONST(0.8), p4 = SUN_RCONST(0.4);
-  // sunrealtype stability_norm; //SA: not needed for RKG
+  sunrealtype stability_norm; 
   ARKodeLSRKStepMem step_mem;
 
   /* initialize algebraic solver convergence flag to success,
@@ -1532,8 +1532,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
 
   /* Compute the number of stages based on the current step size and dominant
-     eigenvalue using Eq. 19 in Meyer et al. (2014)
-     https://doi.org/10.1016/j.jcp.2013.08.021
+     eigenvalue
 
      Using delta t_expl = 2 / lambda_max, note tau_max * lambda_max in Eq. 19 is
      positive (i.e., tau_max * lambda_max = -zR = h * lambdaR assuming that
@@ -1630,7 +1629,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     // retval = lsrkStep_RKL_CheckStabilityNorm(step_mem, req_stages, ark_mem->h,
     //                                          &stability_norm);   
     // if (retval != ARK_SUCCESS) { return retval; }                
-    stability_norm = lsrkStep_RKG_EllipseNorm(req_stages, zR, zI);   
+    stability_norm = lsrkStep_RKG_EllipseCondition(req_stages, zR, zI);   
  
     if (stability_norm > ONE - SUN_UNIT_ROUNDOFF) 
     {
@@ -1644,7 +1643,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         //                                          ark_mem->h, &stability_norm);
         //                                                    
         // if (retval != ARK_SUCCESS) { return retval; }      
-        stability_norm = lsrkStep_RKG_EllipseNorm(step_mem->stage_max_limit,
+        stability_norm = lsrkStep_RKG_EllipseCondition(step_mem->stage_max_limit,
                                                   zR, zI);    
  
         max_stage_is_stable = (stability_norm <= ONE - SUN_UNIT_ROUNDOFF); 
@@ -1662,7 +1661,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
           //                                          ark_mem->h, &stability_norm);
           //                                                  
           // if (retval != ARK_SUCCESS) { return retval; }    
-          stability_norm = lsrkStep_RKG_EllipseNorm(req_stages, zR, zI); 
+          stability_norm = lsrkStep_RKG_EllipseCondition(req_stages, zR, zI); 
         }
       }
  
@@ -3250,6 +3249,9 @@ void lsrkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
     break;
   case ARKODE_LSRK_RKL_2:
     fprintf(outfile, "LSRKStep RKL time step module memory:\n");
+    break;
+  case ARKODE_LSRK_RKG_2:
+    fprintf(outfile, "LSRKStep RKG time step module memory:\n");
     break;
   case ARKODE_LSRK_SSP_S_2:
     fprintf(outfile, "LSRKStep SSP(s,2) time step module memory:\n");
