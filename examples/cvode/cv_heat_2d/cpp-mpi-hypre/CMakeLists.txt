@@ -12,6 +12,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  cmake_minimum_required(VERSION 3.18)
+  project(cvode_example LANGUAGES NONE)
+endif()
+include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 # CVODE parallel C++ heat equation example with a user HYPRE linear solver
 sundials_add_executable(cv_heat_2d_hypre_ls cv_heat_2d_hypre_ls.cpp)
 set_target_properties(cv_heat_2d_hypre_ls PROPERTIES FOLDER "Examples")

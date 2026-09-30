@@ -12,6 +12,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  cmake_minimum_required(VERSION 3.18)
+  project(cvode_example LANGUAGES NONE)
+endif()
+include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 # CVODE SuperLU_DIST C++ example
 sundials_add_executable(cv_adv_diff_sludist cv_adv_diff_sludist.cpp)
 set_target_properties(cv_adv_diff_sludist PROPERTIES FOLDER "Examples")

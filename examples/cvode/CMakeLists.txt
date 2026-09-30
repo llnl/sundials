@@ -45,41 +45,19 @@ add_subdirectory(cv_rocket)
 add_subdirectory(cv_vdp)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  # Install each variant as an independent CMake project. The configured
-  # CMakeLists.txt supplies the installed-package setup and then includes the
-  # variant-specific build rules.
-  file(
-    GLOB_RECURSE _cvode_cmakelists
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "cv*/*/CMakeLists.txt")
+  # Install each variant as an independent CMake project.
+  get_property(_cvode_example_directories GLOBAL
+               PROPERTY SUNDIALS_CVODE_EXAMPLE_DIRECTORIES)
 
-  set(CVODE_LANGUAGES C)
-  if(SUNDIALS_ENABLE_CXX_EXAMPLES)
-    list(APPEND CVODE_LANGUAGES CXX)
-  endif()
-  if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
-    list(APPEND CVODE_LANGUAGES Fortran)
-  endif()
-  if(SUNDIALS_ENABLE_CUDA_EXAMPLES AND SUNDIALS_ENABLE_CUDA)
-    list(APPEND CVODE_LANGUAGES CUDA)
-  endif()
-  list2string(CVODE_LANGUAGES CVODE_LANGUAGES_STRING)
-
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_cvode_ex.in
-    ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.installed.txt @ONLY)
-
-  foreach(_cmakelist ${_cvode_cmakelists})
-    get_filename_component(_cmakelist_dir ${_cmakelist} DIRECTORY)
+  foreach(_example_dir ${_cvode_example_directories})
+    file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
+         ${_example_dir})
     install(
-      FILES ${CMAKE_CURRENT_SOURCE_DIR}/${_cmakelist}
-      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_cmakelist_dir}
-      RENAME cvode-example.cmake)
-    install(
-      FILES ${PROJECT_BINARY_DIR}/examples/cvode/CMakeLists.installed.txt
-      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_cmakelist_dir}
-      RENAME CMakeLists.txt)
+      FILES ${_example_dir}/CMakeLists.txt
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir})
   endforeach()
+  install(FILES SundialsCVODEExample.cmake
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode)
 
   sundials_add_test_install(cvode cv_adv_diff/c EXECUTABLE cv_adv_diff_bnd)
 endif()

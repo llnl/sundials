@@ -12,6 +12,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  cmake_minimum_required(VERSION 3.18)
+  project(cvode_example LANGUAGES NONE)
+endif()
+include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 foreach(example cv_roberts_dns cv_roberts_dns_constraints cv_roberts_dns_negsol
                 cv_roberts_dns_uw)
   sundials_add_executable(${example} ${example}.c)

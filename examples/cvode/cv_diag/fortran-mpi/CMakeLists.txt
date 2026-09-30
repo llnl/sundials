@@ -12,6 +12,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  cmake_minimum_required(VERSION 3.18)
+  project(cvode_example LANGUAGES NONE)
+endif()
+include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 foreach(example cv_diag_kry_bbd_f2003 cv_diag_kry_f2003 cv_diag_non_p_f2003)
   set(CMAKE_Fortran_MODULE_DIRECTORY
       ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
