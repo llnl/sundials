@@ -23,6 +23,9 @@ export CMAKE_BUILD_TYPE="${BUILD_TYPE:-RelWithDebInfo}"
 # errors (e.g., CUDA unused-variable and ROCm deprecation warnings).
 export CMAKE_COMPILE_WARNING_AS_ERROR=OFF
 
+# The Oregon runners do not currently have platform-specific answer files.
+unset SUNDIALS_TEST_ANSWER_DIR
+
 # Disable TPLs by default. GPU jobs selectively enable CUDA, HIP, or SYCL in
 # the GitLab configuration before this file is sourced.
 export SUNDIALS_PTHREAD=OFF

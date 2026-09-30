@@ -84,7 +84,7 @@ NVIDIA-RTX5080:
     - cd ${CI_PROJECT_DIR}/test
     - >-
       ./test_driver.sh --testtype CUSTOM --env env/uoregon.sh --tpls ON
-      --sunrealtype double --indexsize 64 --phase TEST --buildjobs 4
+      --sunrealtype double --indexsize 64 --suntesttype STD --phase TEST --buildjobs 4
       --testjobs 1
 
 NVIDIA-GH200:
@@ -99,7 +99,7 @@ NVIDIA-GH200:
     - cd ${CI_PROJECT_DIR}/test
     - >-
       ./test_driver.sh --testtype CUSTOM --env env/uoregon.sh --tpls ON
-      --sunrealtype double --indexsize 64 --phase TEST --buildjobs 8
+      --sunrealtype double --indexsize 64 --suntesttype STD --phase TEST --buildjobs 8
       --testjobs 1
 
 NVIDIA-GRACE-GRACE:
@@ -112,7 +112,7 @@ NVIDIA-GRACE-GRACE:
     - cd ${CI_PROJECT_DIR}/test
     - >-
       ./test_driver.sh --testtype CUSTOM --env env/uoregon.sh --tpls OFF
-      --sunrealtype double --indexsize 64 --phase TEST --buildjobs 8
+      --sunrealtype double --indexsize 64 --suntesttype STD --phase TEST --buildjobs 8
       --testjobs 1
 
 NVIDIA-DGX-SPARK:
@@ -127,7 +127,7 @@ NVIDIA-DGX-SPARK:
     - cd ${CI_PROJECT_DIR}/test
     - >-
       ./test_driver.sh --testtype CUSTOM --env env/uoregon.sh --tpls ON
-      --sunrealtype double --indexsize 64 --phase TEST --buildjobs 8
+      --sunrealtype double --indexsize 64 --suntesttype STD --phase TEST --buildjobs 8
       --testjobs 1
 
 INTEL-DATA-CENTER-MAX-1100:
@@ -146,7 +146,7 @@ INTEL-DATA-CENTER-MAX-1100:
     - cd ${CI_PROJECT_DIR}/test
     - >-
       ./test_driver.sh --testtype CUSTOM --env env/uoregon.sh --tpls ON
-      --sunrealtype double --indexsize 64 --phase TEST --buildjobs 8
+      --sunrealtype double --indexsize 64 --suntesttype STD --phase TEST --buildjobs 8
       --testjobs 1
 
 AMD-MI300A:
@@ -164,5 +164,5 @@ AMD-MI300A:
     - cd ${CI_PROJECT_DIR}/test
     - >-
       ./test_driver.sh --testtype CUSTOM --env env/uoregon.sh --tpls ON
-      --sunrealtype double --indexsize 64 --phase TEST --buildjobs 8
+      --sunrealtype double --indexsize 64 --suntesttype STD --phase TEST --buildjobs 8
       --testjobs 1
