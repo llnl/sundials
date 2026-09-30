@@ -12,7 +12,7 @@ positive values are recoverable failures, and negative values are fatal
 failures. Added accumulated error get/reset and relative tolerance operations
 to `SUNStepper` to support `SUNAdaptController_MRIHTol`.
 
-Added discrete adjoint support for MRIStep with the
+Added discrete adjoint support for explicit MRI-GARK methods in MRIStep with the
 `MRIStepCreateAdjointStepper` function which enables sensitivity analysis
 capabilities for ODEs with disparate time scales. This uses a new
 `MRIStepInnerAdjointProblem` object which augments the terminal state,
