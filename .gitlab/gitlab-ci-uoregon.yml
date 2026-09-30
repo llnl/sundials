@@ -87,6 +87,32 @@ NVIDIA-RTX5080:
       --sunrealtype double --indexsize 64 --suntesttype STD --phase TEST --buildjobs 4
       --testjobs 1
 
+NVIDIA-RTX5080-SUNDIALS4PY:
+  extends: [.common-setup, .test-artifacts]
+  tags: [uo-gpu, nvidia-rtx5080, x86_64-nvidiagpu]
+  image: nvcr.io/nvidia/cuda:13.3.0-devel-ubuntu26.04
+  timeout: 2h
+  script:
+    - apt-get update && apt-get install -y build-essential git python3 python3-dev python3-pip
+    - export CUDACXX=$(command -v nvcc)
+    - export CMAKE_ARGS="-DSUNDIALS_ENABLE_CUDA=ON"
+    - python3 -m pip install --break-system-packages --upgrade pip
+    - python3 -m pip install --break-system-packages "cupy-cuda13x" "jax[cuda13]" "pytest" ".[dev]"
+    - python3 -m pip install --break-system-packages torch --index-url https://download.pytorch.org/whl/cu128
+    - python3 - <<'PY'
+      import cupy
+      import jax
+      import jax.numpy as jnp
+      import torch
+
+      cupy.arange(1).get()
+      assert any(device.platform in ("cuda", "gpu") for device in jax.devices())
+      jnp.ones(1).block_until_ready()
+      assert torch.cuda.is_available()
+      torch.ones(1, device="cuda")
+      PY
+    - python3 -m pytest -q bindings/sundials4py/test
+
 NVIDIA-GH200:
   extends: [.common-setup, .test-artifacts]
   tags: [uo-gpu, nvidia-gh200, arm64-nvidiagpu]
