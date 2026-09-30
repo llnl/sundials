@@ -104,6 +104,15 @@ sundials_option(SUNDIALS_ENABLE_HIP BOOL "Enable HIP support" OFF
                 DEPRECATED_NAMES ENABLE_HIP)
 
 # -------------------------------------------------------------
+# Enable Thrust based reductions?
+# -------------------------------------------------------------
+
+sundials_option(
+  SUNDIALS_ENABLE_THRUST_REDUCTIONS BOOL
+  "Enable Thrust based N_Vector reduction implementations" OFF
+  DEPENDS_ON SUNDIALS_ENABLE_HIP)
+
+# -------------------------------------------------------------
 # Enable SYCL support?
 # -------------------------------------------------------------
 

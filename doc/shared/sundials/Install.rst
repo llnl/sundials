@@ -1237,6 +1237,22 @@ configure SUNDIALS with HIP support for a system with an MI250X GPU:
 
    Default: None
 
+.. cmakeoption:: SUNDIALS_ENABLE_THRUST_REDUCTIONS
+
+   Enable Thrust based ``N_Vector`` reduction implementations
+
+   Default: ``OFF``
+
+   This option requires :cmakeop:`SUNDIALS_ENABLE_HIP` to be ``ON`` and
+   :cmakeop:`CMAKE_CXX_STANDARD` to be ``17`` or greater, since rocThrust and
+   rocPRIM require C++17. When enabled, the
+   :cpp:func:`SUNHipThrustExecPolicy` reduction execution policy becomes
+   available; see :numref:`NVectors.HIP.SUNHipExecPolicy`. Enabling this option
+   does not change the default execution policies, so the Thrust
+   implementations are only used if that policy is selected.
+
+   .. versionadded:: X.Y.Z
+
 .. _Installation.Options.hypre:
 
 Building with *hypre*
