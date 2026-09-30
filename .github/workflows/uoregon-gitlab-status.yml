@@ -18,8 +18,8 @@ concurrency:
 jobs:
   gitlab-pipeline:
     runs-on: ubuntu-latest
-    environment: delayed-90-minutes 
-    timeout-minutes: 180
+    environment: delayed-30-minutes 
+    timeout-minutes: 120
 
     steps:
       - name: Wait for GitLab pipeline
