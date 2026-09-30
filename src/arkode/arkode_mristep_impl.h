@@ -68,6 +68,17 @@ int extSTSInnerStepper_Evolve(SUNStepper stepper, sunrealtype tout, N_Vector y,
   MRI time step module data structure
   ===============================================================*/
 
+typedef struct MRIStepAdjointData_
+{
+  SUNAdjRhsFn fse;
+  SUNAdjointStepper inner_stepper;
+  N_Vector* stage_states;
+  N_Vector* slow_accum;
+  sunrealtype* stage_times;
+  N_Vector inner_state;
+  suncountertype inner_checkpoint_idx;
+}* MRIStepAdjointData;
+
 /*---------------------------------------------------------------
   The type ARKodeMRIStepMem is type pointer to struct
   ARKodeMRIStepMemRec. This structure contains fields to
@@ -186,6 +197,9 @@ typedef struct ARKodeMRIStepMemRec
   /* flag indicating that MRIStep implements an ExtSTS method */
   sunbooleantype extsts_method;
 
+  /* Data for an MRIStep discrete adjoint */
+  MRIStepAdjointData adj_data;
+
 }* ARKodeMRIStepMem;
 
 struct MRIStepInnerAdjointProblem_
@@ -223,6 +237,11 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
                      sunrealtype t, N_Vector y, int mode);
 int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr,
                             int* nflagPtr);
+int mriStep_TakeStep_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr,
+                             int* nflagPtr);
+void mriStep_FreeAdjointData(ARKodeMRIStepMem step_mem);
+sunbooleantype mriStep_AdjointNeedsRhsCheckpoint(ARKodeMRIStepMem step_mem,
+                                                 int stage);
 int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
 int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr);
 int mriStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],

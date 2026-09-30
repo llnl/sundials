@@ -216,6 +216,11 @@ SUNDIALS_EXPORT int MRIStepInnerAdjointProblem_GetUserData(
 SUNDIALS_EXPORT void MRIStepInnerAdjointProblem_Free(
   MRIStepInnerAdjointProblem problem);
 
+SUNDIALS_EXPORT int MRIStepCreateAdjointStepper(
+  void* arkode_mem, SUNAdjointStepper inner_stepper, SUNAdjRhsFn fse,
+  SUNAdjRhsFn fsi, MRIStepInnerAdjointProblem inner_problem, sunrealtype tf,
+  N_Vector sf, SUNContext sunctx, SUNAdjointStepper* adj_stepper_ptr);
+
 /* Optional input functions -- must be called AFTER MRIStepCreate */
 SUNDIALS_EXPORT int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC);
 SUNDIALS_EXPORT int MRIStepSetPreInnerFn(void* arkode_mem,

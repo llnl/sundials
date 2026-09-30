@@ -33,6 +33,13 @@
 #include "arkode_ls_impl.h"
 #include "arkode_mristep_impl.h"
 
+sunbooleantype mriStep_AdjointNeedsRhsCheckpoint(ARKodeMRIStepMem step_mem,
+                                                 int stage)
+{
+  return step_mem->explicit_rhs && stage >= 0 && stage < step_mem->stages - 1 &&
+         step_mem->stage_map[stage] >= 0;
+}
+
 static int mriStep_SaveCheckpoint(ARKodeMem ark_mem, suncountertype stage_num,
                                   sunrealtype t, N_Vector y)
 {
@@ -717,6 +724,9 @@ void mriStep_Free(ARKodeMem ark_mem)
     /* free the inner forcing vectors owned by MRIStep */
     mriStepInnerStepper_FreeVecs(ark_mem, step_mem);
 
+    /* free discrete adjoint work vectors */
+    mriStep_FreeAdjointData(step_mem);
+
     /* free the reusable arrays for fused vector interface */
     if (step_mem->cvals != NULL)
     {
@@ -1049,17 +1059,21 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     }
 
     /* Attach correct TakeStep routine for this coupling table */
-    switch (step_mem->MRIC->type)
+    if (ark_mem->do_adjoint) { ark_mem->step = mriStep_TakeStep_Adjoint; }
+    else
     {
-    case MRISTEP_EXPLICIT: ark_mem->step = mriStep_TakeStepMRIGARK; break;
-    case MRISTEP_IMPLICIT: ark_mem->step = mriStep_TakeStepMRIGARK; break;
-    case MRISTEP_IMEX: ark_mem->step = mriStep_TakeStepMRIGARK; break;
-    case MRISTEP_MERK: ark_mem->step = mriStep_TakeStepMERK; break;
-    case MRISTEP_SR: ark_mem->step = mriStep_TakeStepMRISR; break;
-    default:
-      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                      "Unknown method type");
-      return (ARK_ILL_INPUT);
+      switch (step_mem->MRIC->type)
+      {
+      case MRISTEP_EXPLICIT: ark_mem->step = mriStep_TakeStepMRIGARK; break;
+      case MRISTEP_IMPLICIT: ark_mem->step = mriStep_TakeStepMRIGARK; break;
+      case MRISTEP_IMEX: ark_mem->step = mriStep_TakeStepMRIGARK; break;
+      case MRISTEP_MERK: ark_mem->step = mriStep_TakeStepMERK; break;
+      case MRISTEP_SR: ark_mem->step = mriStep_TakeStepMRISR; break;
+      default:
+        arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                        "Unknown method type");
+        return (ARK_ILL_INPUT);
+      }
     }
 
     /* Request arkode ensure that ycur==yn upon entry to TakeStep function */
@@ -1886,6 +1900,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   sunbooleantype need_inner_dsm;
   sunbooleantype do_embedding;
   sunbooleantype nested_mri;
+  suncountertype checkpoint_slot = 0;
   int nvec;
 
   /* access the MRIStep mem structure */
@@ -2003,8 +2018,16 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   }
   ark_mem->fn_is_current = SUNTRUE;
 
-  retval = mriStep_SaveCheckpoint(ark_mem, 0, ark_mem->tn, ark_mem->yn);
+  retval = mriStep_SaveCheckpoint(ark_mem, checkpoint_slot++, ark_mem->tn,
+                                  ark_mem->yn);
   if (retval != ARK_SUCCESS) { return retval; }
+
+  if (mriStep_AdjointNeedsRhsCheckpoint(step_mem, 0))
+  {
+    retval = mriStep_SaveCheckpoint(ark_mem, checkpoint_slot++, ark_mem->tn,
+                                    step_mem->Fse[step_mem->stage_map[0]]);
+    if (retval != ARK_SUCCESS) { return retval; }
+  }
 
   SUNLogExtraDebugVecIf(step_mem->explicit_rhs, ARK_LOGGER, "slow explicit RHS",
                         step_mem->Fse[0], "Fse_0(:) =");
@@ -2103,7 +2126,8 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       }
     }
 
-    retval = mriStep_SaveCheckpoint(ark_mem, is, ark_mem->tcur, ark_mem->ycur);
+    retval = mriStep_SaveCheckpoint(ark_mem, checkpoint_slot++, ark_mem->tcur,
+                                    ark_mem->ycur);
     if (retval != ARK_SUCCESS) { return retval; }
 
     /* Compute updated slow RHS, except:
@@ -2208,6 +2232,14 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         }
       }
     } /* compute slow RHS */
+
+    if (mriStep_AdjointNeedsRhsCheckpoint(step_mem, is))
+    {
+      retval = mriStep_SaveCheckpoint(
+        ark_mem, checkpoint_slot++, ark_mem->tcur,
+        step_mem->Fse[step_mem->stage_map[is]]);
+      if (retval != ARK_SUCCESS) { return retval; }
+    }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2384,7 +2416,8 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       }
     }
 
-    retval = mriStep_SaveCheckpoint(ark_mem, is, ark_mem->tcur, ark_mem->ycur);
+    retval = mriStep_SaveCheckpoint(ark_mem, checkpoint_slot++, ark_mem->tcur,
+                                    ark_mem->ycur);
     if (retval != ARK_SUCCESS) { return retval; }
 
     /* Compute temporal error estimate via difference between step
@@ -2395,7 +2428,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
     }
 
-    retval = mriStep_SaveCheckpoint(ark_mem, step_mem->stages,
+    retval = mriStep_SaveCheckpoint(ark_mem, checkpoint_slot,
                                     ark_mem->tn + ark_mem->h, ark_mem->ycur);
     if (retval != ARK_SUCCESS) { return retval; }
 

@@ -61,17 +61,8 @@
   ENTRY(SUN_ERR_PROFILER_MAPKEYNOTFOUND, "timer was not found in SUNProfiler") \
   ENTRY(SUN_ERR_PROFILER_MAPSORT, "error sorting SUNProfiler map")             \
                                                                                \
-  ENTRY(SUN_ERR_ADJOINT_STEPPERFAILED,                                         \
-        "SUNStepper stopped without successfully reaching the requested "      \
-        "output time when solving the adjoint system")                         \
-  ENTRY(SUN_ERR_ADJOINT_STEPPERINVALIDSTOP,                                    \
-        "SUNStepper stopped with a flag not supported by the "                 \
-        "adjoint solver")                                                      \
-                                                                               \
   ENTRY(SUN_ERR_CHECKPOINT_NOT_FOUND,                                          \
         "the requested checkpoint was not found")                              \
-  ENTRY(SUN_ERR_CHECKPOINT_MISMATCH, "the expected time for the checkpoint "   \
-                                     "and the stored time do not match")       \
                                                                                \
   ENTRY(SUN_ERR_SUNCTX_CORRUPT, "SUNContext is NULL or corrupt")               \
                                                                                \
