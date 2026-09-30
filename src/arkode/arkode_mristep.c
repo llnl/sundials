@@ -2235,9 +2235,8 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
     if (mriStep_AdjointNeedsRhsCheckpoint(step_mem, is))
     {
-      retval = mriStep_SaveCheckpoint(
-        ark_mem, checkpoint_slot++, ark_mem->tcur,
-        step_mem->Fse[step_mem->stage_map[is]]);
+      retval = mriStep_SaveCheckpoint(ark_mem, checkpoint_slot++, ark_mem->tcur,
+                                      step_mem->Fse[step_mem->stage_map[is]]);
       if (retval != ARK_SUCCESS) { return retval; }
     }
 

@@ -404,7 +404,7 @@ void mriStep_FreeAdjointData(ARKodeMRIStepMem step_mem)
   if (!step_mem || !step_mem->adj_data) { return; }
 
   MRIStepAdjointData adj_data = step_mem->adj_data;
-  int nstages                  = step_mem->stages + 1;
+  int nstages                 = step_mem->stages + 1;
 
   N_VDestroyVectorArray(adj_data->stage_states, nstages);
   N_VDestroyVectorArray(adj_data->slow_accum, nstages);
@@ -464,14 +464,14 @@ static int mriStepAdjointLoadStages(ARKodeMem ark_mem,
                                     sunbooleantype* missing)
 {
   ARKodeMRIStepMem step_mem = (ARKodeMRIStepMem)ark_mem->step_mem;
-  suncountertype slot        = 0;
+  suncountertype slot       = 0;
 
   *missing = SUNFALSE;
   for (int stage = 0; stage < step_mem->stages; stage++)
   {
     SUNErrCode err =
-      SUNAdjointCheckpointScheme_LoadVector(ark_mem->checkpoint_scheme, step_idx,
-                                            slot++, SUNTRUE,
+      SUNAdjointCheckpointScheme_LoadVector(ark_mem->checkpoint_scheme,
+                                            step_idx, slot++, SUNTRUE,
                                             &adj_data->stage_states[stage],
                                             &adj_data->stage_times[stage]);
     if (err == SUN_ERR_CHECKPOINT_NOT_FOUND)
@@ -485,11 +485,10 @@ static int mriStepAdjointLoadStages(ARKodeMem ark_mem,
     {
       sunrealtype rhs_time;
       int map = fwd_step_mem->stage_map[stage];
-      err =
-        SUNAdjointCheckpointScheme_LoadVector(ark_mem->checkpoint_scheme,
-                                              step_idx, slot++,
-                                              SUNTRUE, &fwd_step_mem->Fse[map],
-                                              &rhs_time);
+      err = SUNAdjointCheckpointScheme_LoadVector(ark_mem->checkpoint_scheme,
+                                                  step_idx, slot++, SUNTRUE,
+                                                  &fwd_step_mem->Fse[map],
+                                                  &rhs_time);
       if (err == SUN_ERR_CHECKPOINT_NOT_FOUND)
       {
         *missing = SUNTRUE;
@@ -536,8 +535,8 @@ static int mriStepAdjointRecomputeOuter(ARKodeMem ark_mem,
     sunrealtype checkpoint_t = SUN_RCONST(0.0);
     SUNErrCode err =
       SUNAdjointCheckpointScheme_LoadVector(ark_mem->checkpoint_scheme,
-                                            start_step, terminal_slot,
-                                            SUNTRUE, &checkpoint, &checkpoint_t);
+                                            start_step, terminal_slot, SUNTRUE,
+                                            &checkpoint, &checkpoint_t);
     if (err == SUN_ERR_CHECKPOINT_NOT_FOUND) { continue; }
     if (err != SUN_SUCCESS) { return ARK_ADJ_CHECKPOINT_FAIL; }
 

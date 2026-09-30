@@ -1124,10 +1124,7 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
 
   /* set appropriate TakeStep routine based on problem configuration */
   if (ark_mem->do_adjoint) { ark_mem->step = arkStep_TakeStep_ERK_Adjoint; }
-  else
-  {
-    ark_mem->step = arkStep_TakeStep_Z;
-  }
+  else { ark_mem->step = arkStep_TakeStep_Z; }
 
   /* Check for consistency between mass system and system linear system modules
      (e.g., if lsolve is direct, msolve needs to match) */
@@ -1604,8 +1601,10 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     { /* ImEx */
       N_VLinearSum(ONE, step_mem->sdata, ONE, ark_mem->tempv2, f);
     }
-    else if (step_mem->implicit) { /* implicit */
-                                   N_VScale(ONE, step_mem->sdata, f); }
+    else if (step_mem->implicit)
+    { /* implicit */
+      N_VScale(ONE, step_mem->sdata, f);
+    }
     else
     { /* explicit */
       N_VScale(ONE, ark_mem->tempv2, f);
@@ -1933,10 +1932,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       ark_mem->tcur = ark_mem->tn + step_mem->Bi->c[is] * ark_mem->h;
     }
-    else
-    {
-      ark_mem->tcur = ark_mem->tn + step_mem->Be->c[is] * ark_mem->h;
-    }
+    else { ark_mem->tcur = ark_mem->tn + step_mem->Be->c[is] * ark_mem->h; }
 
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, implicit = %i, tcur = " SUN_FORMAT_G, is,
@@ -2235,10 +2231,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   {
     *nflagPtr = arkStep_ComputeSolutions_MassFixed(ark_mem, dsmPtr);
   }
-  else
-  {
-    *nflagPtr = arkStep_ComputeSolutions(ark_mem, dsmPtr);
-  }
+  else { *nflagPtr = arkStep_ComputeSolutions(ark_mem, dsmPtr); }
 
   SUNLogInfoIf(*nflagPtr != ARK_SUCCESS, ARK_LOGGER, "end-compute-solution",
                "status = failed compute solution, retval = %i", *nflagPtr);
@@ -4118,10 +4111,7 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
       {
         N_VScale(ONE, step_mem->Fe[i], rhs_tmp);
       }
-      else
-      {
-        rhs_tmp = step_mem->Fe[i];
-      }
+      else { rhs_tmp = step_mem->Fe[i]; }
       bi = step_mem->Be->b[i];
     }
     else
@@ -4130,10 +4120,7 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
       {
         N_VScale(ONE, step_mem->Fi[i], rhs_tmp);
       }
-      else
-      {
-        rhs_tmp = step_mem->Fi[i];
-      }
+      else { rhs_tmp = step_mem->Fi[i]; }
       bi = step_mem->Bi->b[i];
     }
 
@@ -4148,10 +4135,7 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
     {
       *delta_e_out += bi * N_VDotProdLocal(J_relax, rhs_tmp);
     }
-    else
-    {
-      *delta_e_out += bi * N_VDotProd(J_relax, rhs_tmp);
-    }
+    else { *delta_e_out += bi * N_VDotProd(J_relax, rhs_tmp); }
   }
 
   if (J_relax->ops->nvdotprodlocal && J_relax->ops->nvdotprodmultiallreduce)

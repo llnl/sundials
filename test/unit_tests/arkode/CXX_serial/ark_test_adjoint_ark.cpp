@@ -345,8 +345,7 @@ int main(int argc, char* argv[])
   }
   dgdu(u, sensu0, params, tf);
   dgdp(u, sensp, params, tf);
-  if (SUNAdjointStepper_ReInit(adj_stepper, tf, sf, final_step_idx) !=
-      SUN_SUCCESS)
+  if (SUNAdjointStepper_ReInit(adj_stepper, tf, sf, final_step_idx) != SUN_SUCCESS)
   {
     return 1;
   }

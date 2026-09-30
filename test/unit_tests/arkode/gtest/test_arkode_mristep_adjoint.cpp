@@ -309,10 +309,7 @@ static void run_mristep(const TestConfig& config, bool zero_fast, Result& result
     coupling = MRIStepCoupling_MIStoMRI(table, table->q, 0);
     ARKodeButcherTable_Free(table);
   }
-  else
-  {
-    coupling = MRIStepCoupling_LoadTable(ARKODE_MRI_GARK_ERK33a);
-  }
+  else { coupling = MRIStepCoupling_LoadTable(ARKODE_MRI_GARK_ERK33a); }
   ASSERT_NE(coupling, nullptr);
   ASSERT_EQ(MRIStepSetCoupling(resources.outer_mem, coupling), ARK_SUCCESS);
   MRIStepCoupling_Free(coupling);
