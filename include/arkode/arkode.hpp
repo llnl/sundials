@@ -23,6 +23,8 @@
 #include <sundials/sundials_classview.hpp>
 
 #include <arkode/arkode.h>
+#include <arkode/arkode_butcher_dirk.h>
+#include <arkode/arkode_butcher_erk.h>
 
 namespace sundials {
 namespace experimental {
@@ -33,6 +35,24 @@ struct ARKodeDeleter
 };
 
 using ARKodeView = ClassView<void*, ARKodeDeleter>;
+
+class ARKodeBorrowedView : public sundials::ConvertibleTo<void*>
+{
+public:
+  explicit ARKodeBorrowedView(void* object = nullptr) noexcept : object_(object)
+  {}
+
+  void* get() noexcept override { return object_; }
+
+  void* get() const noexcept override { return object_; }
+
+  operator void*() noexcept override { return object_; }
+
+  operator void*() const noexcept override { return object_; }
+
+private:
+  void* object_;
+};
 
 struct ARKodeButcherTableDeleter
 {

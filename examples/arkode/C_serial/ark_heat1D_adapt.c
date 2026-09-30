@@ -18,11 +18,11 @@
  *
  * The following test simulates a simple 1D heat equation,
  *    u_t = k*u_xx + f
- * for t in [0, 10], x in [0, 1], with initial conditions
+ * for t in [0, 1], x in [0, 1], with initial conditions
  *    u(0,x) =  0
  * Dirichlet boundary conditions, i.e.
  *    u_t(t,0) = u_t(t,1) = 0,
- * and a heating term of the form
+ * and a heating term given by a smooth sum of Gaussians,
  *    f = 2*exp(-200*(x-0.25)*(x-0.25))
  *        - exp(-400*(x-0.7)*(x-0.7))
  *        + exp(-500*(x-0.4)*(x-0.4))

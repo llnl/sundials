@@ -20,7 +20,7 @@ spack:
   - petsc +double ~int64 ~superlu-dist ~hypre
   - suite-sparse ^openblas ~ilp64 ^metis ~int64
   - superlu-dist ~int64 ^parmetis ~int64 ^metis ~int64
-  - superlu-mt@master ~int64 ~blas # TODO(DJG): remove @master when 4.0.2 is available
+  - superlu-mt ~int64 ~blas
   - trilinos ~float +tpetra gotype=int
   - xbraid
   concretizer:

@@ -85,3 +85,7 @@ Notes:
 - **Changed options not taking effect**: start from a fresh build directory or clear cache (`rm -rf build-dev`).
 - **Wrong compiler/MPI wrapper**: set `CC`, `CXX`, `FC` env vars before configuring, or pass `-DCMAKE_<LANG>_COMPILER=...`.
 - **Link errors after enabling a backend/TPL**: confirm that the corresponding `SUNDIALS_ENABLE_*` option is ON and that required dependencies are discoverable (use `CMAKE_PREFIX_PATH`).
+
+## Gotchas
+
+- When building with CUDA, HIP, or SYCL, if the runtime (e.g., nvidia-smi) reports a driver mismatch or the libraries are missing, stop. These require installation by the user.

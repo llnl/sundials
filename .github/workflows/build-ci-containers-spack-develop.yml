@@ -1,15 +1,23 @@
 name: CI Containers - spack@develop
 
 on:
+  # Allows manual triggering
   workflow_dispatch:
+    inputs:
+      run_tests:
+        description: 'Also run the Ubuntu test suite against the new containers'
+        type: boolean
+        default: false
+  # 22:30 PST / 23:30 PDT on the 1st and 15th (06:30 UTC on the 2nd and 16th)
   schedule:
-  - cron: '30 23 * * 6'
+  - cron: '30 6 2,16 * *'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 permissions:
+  contents: read
   packages: write
 
 env:
@@ -22,13 +30,13 @@ jobs:
       fail-fast: false
       matrix:
         indexsize: [32, 64]
-        precision: ['double']
+        precision: ['single', 'double', 'extended']
     steps:
     - name: VM Hardware Info
       run: cat /proc/cpuinfo
 
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Free up disk space
       uses: ./.github/actions/free-space-ubuntu
@@ -44,7 +52,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and push Docker images
-      uses: docker/build-push-action@v7.2.0
+      uses: docker/build-push-action@v7.4.0
       with:
         context: "./scripts/docker"
         build-args: |
@@ -54,3 +62,10 @@ jobs:
         push: true
         tags: >-
           ${{ env.REGISTRY }}/llnl/sundials-ci-int${{ matrix.indexsize }}-${{ matrix.precision }}:spack-develop
+
+  test_ci_containers:
+    needs: build_ci_containers
+    if: github.event_name == 'schedule' || inputs.run_tests
+    uses: ./.github/workflows/ubuntu-latest.yml
+    with:
+      container_tag: spack-develop

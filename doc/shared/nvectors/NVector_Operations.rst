@@ -170,6 +170,8 @@ operations below.
    implementations that manage data in a device memory space. If the vector
    implementation does not define this operation, this routine has no effect.
 
+   .. versionadded:: 7.9.0
+
    Usage:
 
    .. code-block:: c

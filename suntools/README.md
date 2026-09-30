@@ -4,6 +4,7 @@ This directory contains the `suntools` Python package which provides utilities f
 
 - parsing and filtering SUNDIALS log files
 - parsing table and CSV statistics output
+- Runge-Kutta Butcher-table parsing and stability-region plotting under `suntools.rk`
 
 ## Install
 

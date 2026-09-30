@@ -80,6 +80,7 @@ module fsundials_core_mod
   enumerator :: SUN_ERR_CORRUPT
   enumerator :: SUN_ERR_OUTOFRANGE
   enumerator :: SUN_ERR_FILE_OPEN
+  enumerator :: SUN_ERR_FILE_FLUSH
   enumerator :: SUN_ERR_OP_FAIL
   enumerator :: SUN_ERR_MEM_FAIL
   enumerator :: SUN_ERR_MALLOC_FAIL
@@ -106,8 +107,8 @@ module fsundials_core_mod
  end enum
  integer, parameter, public :: SUNErrCode_ = kind(SUN_ERR_MINIMUM)
  public :: SUN_ERR_MINIMUM, SUN_ERR_ARG_CORRUPT, SUN_ERR_ARG_INCOMPATIBLE, SUN_ERR_ARG_OUTOFRANGE, SUN_ERR_ARG_WRONGTYPE, &
-    SUN_ERR_ARG_DIMSMISMATCH, SUN_ERR_GENERIC, SUN_ERR_CORRUPT, SUN_ERR_OUTOFRANGE, SUN_ERR_FILE_OPEN, SUN_ERR_OP_FAIL, &
-    SUN_ERR_MEM_FAIL, SUN_ERR_MALLOC_FAIL, SUN_ERR_EXT_FAIL, SUN_ERR_DESTROY_FAIL, SUN_ERR_NOT_IMPLEMENTED, &
+    SUN_ERR_ARG_DIMSMISMATCH, SUN_ERR_GENERIC, SUN_ERR_CORRUPT, SUN_ERR_OUTOFRANGE, SUN_ERR_FILE_OPEN, SUN_ERR_FILE_FLUSH, &
+    SUN_ERR_OP_FAIL, SUN_ERR_MEM_FAIL, SUN_ERR_MALLOC_FAIL, SUN_ERR_EXT_FAIL, SUN_ERR_DESTROY_FAIL, SUN_ERR_NOT_IMPLEMENTED, &
     SUN_ERR_USER_FCN_FAIL, SUN_ERR_DATANODE_NODENOTFOUND, SUN_ERR_PROFILER_MAPFULL, SUN_ERR_PROFILER_MAPGET, &
     SUN_ERR_PROFILER_MAPINSERT, SUN_ERR_PROFILER_MAPKEYNOTFOUND, SUN_ERR_PROFILER_MAPSORT, SUN_ERR_ADJOINT_STEPPERFAILED, &
     SUN_ERR_ADJOINT_STEPPERINVALIDSTOP, SUN_ERR_CHECKPOINT_NOT_FOUND, SUN_ERR_CHECKPOINT_MISMATCH, SUN_ERR_SUNCTX_CORRUPT, &
@@ -170,6 +171,7 @@ module fsundials_core_mod
  public :: FSUNLogger_GetOutputRank
  public :: FSUNLogger_Destroy
  public :: FSUNFileOpen
+ public :: FSUNFileFlush
  public :: FSUNDIALSFileOpen
  public :: FSUNFileClose
  public :: FSUNDIALSFileClose
@@ -1150,6 +1152,14 @@ import :: swigarraywrapper
 type(SwigArrayWrapper) :: farg1
 type(SwigArrayWrapper) :: farg2
 type(C_PTR), value :: farg3
+integer(C_INT) :: fresult
+end function
+
+function swigc_FSUNFileFlush(farg1) &
+bind(C, name="_wrap_FSUNFileFlush") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -3970,6 +3980,19 @@ call SWIG_string_to_chararray(filename, farg1_chars, farg1)
 call SWIG_string_to_chararray(modes, farg2_chars, farg2)
 farg3 = c_loc(fp)
 fresult = swigc_FSUNFileOpen(farg1, farg2, farg3)
+swig_result = fresult
+end function
+
+function FSUNFileFlush(fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+
+farg1 = fp
+fresult = swigc_FSUNFileFlush(farg1)
 swig_result = fresult
 end function
 

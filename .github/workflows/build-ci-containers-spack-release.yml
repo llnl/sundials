@@ -8,10 +8,11 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
+  contents: read
   packages: write
 
 env:
-  SPACK_RELEASE: 1.1.1
+  SPACK_RELEASE: 1.2.2
   REGISTRY: ghcr.io
 
 jobs:
@@ -27,7 +28,7 @@ jobs:
       run: cat /proc/cpuinfo
 
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Free up disk space
       uses: ./.github/actions/free-space-ubuntu
@@ -43,7 +44,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and push Docker images
-      uses: docker/build-push-action@v7.2.0
+      uses: docker/build-push-action@v7.4.0
       with:
         context: "./scripts/docker"
         build-args: |

@@ -273,7 +273,13 @@ fi
 # SuperLU_DIST
 # ------------
 
-if [ "$SUNDIALS_PRECISION" == "double" ]; then
+if [ "$SUNDIALS_PRECISION" == "extended" ]; then
+    export SUNDIALS_SUPERLU_DIST=OFF
+    unset SUPERLU_DIST_INCLUDE_DIR
+    unset SUPERLU_DIST_LIBRARY_DIR
+    unset SUPERLU_DIST_LIBRARIES
+    unset SUPERLU_DIST_OPENMP
+else
     export SUNDIALS_SUPERLU_DIST=ON
     export SUPERLU_DIST_ROOT=/opt/view/superlu-dist
     export SUPERLU_DIST_INCLUDE_DIR="${SUPERLU_DIST_ROOT}/include"
@@ -307,12 +313,6 @@ if [ "$SUNDIALS_PRECISION" == "double" ]; then
     else
         export SUNDIALS_SUPERLU_DIST=ON
     fi
-else
-    export SUNDIALS_SUPERLU_DIST=OFF
-    unset SUPERLU_DIST_INCLUDE_DIR
-    unset SUPERLU_DIST_LIBRARY_DIR
-    unset SUPERLU_DIST_LIBRARIES
-    unset SUPERLU_DIST_OPENMP
 fi
 
 # -----
