@@ -23,6 +23,27 @@ with section("parse"):
             "kwargs": {"BACKENDS": "+", "TARGETS": "+"},
             "pargs": {"flags": ["UNIT_TEST"], "nargs": "1+"},
         },
+        "sundials_add_example": {
+            "kwargs": {
+                "ANSWER_DIR": 1,
+                "ANSWER_FILE": 1,
+                "COMPILE_DEFINITIONS": "+",
+                "EXAMPLE_TYPE": 1,
+                "EXTRA_ARGS": "+",
+                "FLOAT_PRECISION": 1,
+                "INCLUDE_DIRECTORIES": "+",
+                "INSTALL_FILES": "+",
+                "INTEGER_PRECISION": 1,
+                "LABELS": "+",
+                "LINK_LIBRARIES": "+",
+                "MPI_NPROCS": 1,
+                "PROPERTIES": "+",
+                "SCALAR_TYPE": 1,
+                "TEST_ARGS": "+",
+                "TEST_NAME": 1,
+            },
+            "pargs": {"flags": ["ADD_TEST", "INSTALL", "NODIFF"], "nargs": "2+"},
+        },
         "sundials_add_f2003_library": {
             "kwargs": {
                 "COMPILE_DEFINITIONS": "+",

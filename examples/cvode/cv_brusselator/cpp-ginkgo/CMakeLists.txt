@@ -12,11 +12,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 # CVODE Ginkgo batched Brusselator example
 foreach(backend REF OMP CUDA HIP SYCL)
   if(NOT SUNDIALS_GINKGO_BACKENDS MATCHES "${backend}")
@@ -50,9 +45,22 @@ foreach(backend REF OMP CUDA HIP SYCL)
     set(include_args INCLUDE_DIRECTORIES PRIVATE
                      ${PROJECT_SOURCE_DIR}/examples/utilities)
   endif()
-  sundials_add_executable(
+  sundials_add_example(
     ${example_target}
     cv_bruss_batched_ginkgo.cpp
+    ADD_TEST
+    ANSWER_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ANSWER_FILE
+    ${example_target}.out
+    EXAMPLE_TYPE
+    develop
+    FLOAT_PRECISION
+    ${float_precision}
+    INSTALL_FILES
+    cv_bruss_batched_ginkgo.hpp
+    ${example_target}.out
+    "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
     LINK_LIBRARIES
     PRIVATE
     ${CVODE_C_LIBS}
@@ -66,19 +74,4 @@ foreach(backend REF OMP CUDA HIP SYCL)
     PROPERTIES
     FOLDER
     "Examples")
-  sundials_add_test(
-    ${example_target} ${example_target}
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ${example_target}.out
-    EXAMPLE_TYPE develop
-    FLOAT_PRECISION ${float_precision})
 endforeach()
-
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  file(GLOB example_out cv_bruss_batched_ginkgo*.out)
-  install(
-    FILES cv_bruss_batched_ginkgo.cpp cv_bruss_batched_ginkgo.hpp ${example_out}
-          "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
-    DESTINATION
-      ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_brusselator/cpp-ginkgo)
-endif()

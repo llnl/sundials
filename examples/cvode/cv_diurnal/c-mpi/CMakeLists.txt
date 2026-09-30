@@ -12,39 +12,26 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
-sundials_add_executable(cv_diurnal_kry_bbd_p cv_diurnal_kry_bbd_p.c)
+sundials_add_example(
+  cv_diurnal_kry_bbd_p cv_diurnal_kry_bbd_p.c ADD_TEST
+  MPI_NPROCS 4
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_diurnal_kry_bbd_p.out
+  EXAMPLE_TYPE exclude-sigle
+  INSTALL_FILES cv_diurnal_kry_bbd_p.out)
 set_target_properties(cv_diurnal_kry_bbd_p PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_diurnal_kry_bbd_p PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
                                ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cv_diurnal_kry_bbd_p cv_diurnal_kry_bbd_p
+
+sundials_add_example(
+  cv_diurnal_kry_p cv_diurnal_kry_p.c ADD_TEST
   MPI_NPROCS 4
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry_bbd_p.out
-  EXAMPLE_TYPE exclude-sigle)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cv_diurnal_kry_bbd_p.c cv_diurnal_kry_bbd_p.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_diurnal/c-mpi)
-endif()
-
-sundials_add_executable(cv_diurnal_kry_p cv_diurnal_kry_p.c)
+  ANSWER_FILE cv_diurnal_kry_p.out
+  EXAMPLE_TYPE exclude-single
+  INSTALL_FILES cv_diurnal_kry_p.out)
 set_target_properties(cv_diurnal_kry_p PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_diurnal_kry_p PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
                            ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cv_diurnal_kry_p cv_diurnal_kry_p
-  MPI_NPROCS 4
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry_p.out
-  EXAMPLE_TYPE exclude-single)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cv_diurnal_kry_p.c cv_diurnal_kry_p.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_diurnal/c-mpi)
-endif()

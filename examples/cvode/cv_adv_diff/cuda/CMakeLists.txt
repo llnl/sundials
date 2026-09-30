@@ -12,14 +12,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 set_source_files_properties(cv_adv_diff_diag_cuda.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-sundials_add_executable(cv_adv_diff_diag_cuda cv_adv_diff_diag_cuda.cu)
+sundials_add_example(
+  cv_adv_diff_diag_cuda cv_adv_diff_diag_cuda.cu
+  INSTALL_FILES cv_adv_diff_diag_cuda_0_0.out cv_adv_diff_diag_cuda_0_1.out
+                cv_adv_diff_diag_cuda_1_1.out)
 set_target_properties(cv_adv_diff_diag_cuda PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_adv_diff_diag_cuda PRIVATE sundials_cvode sundials_nveccuda
@@ -38,28 +36,18 @@ foreach(example_args "0 0" "0 1" "1 1")
     EXAMPLE_TYPE develop)
 endforeach()
 
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  file(GLOB example_out cv_adv_diff_diag_cuda*.out)
-  install(FILES cv_adv_diff_diag_cuda.cu ${example_out}
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/cuda)
-endif()
-
 set_source_files_properties(cv_adv_diff_kry_cuda.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-sundials_add_executable(cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda.cu)
+sundials_add_example(
+  cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda.cu ADD_TEST
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_adv_diff_kry_cuda.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_adv_diff_kry_cuda.out)
 set_target_properties(cv_adv_diff_kry_cuda PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_adv_diff_kry_cuda PRIVATE sundials_cvode sundials_nveccuda
                                ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(cv_adv_diff_kry_cuda PRIVATE sundials_cvode_fused_cuda)
-endif()
-sundials_add_test(
-  cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_kry_cuda.out
-  EXAMPLE_TYPE develop)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cv_adv_diff_kry_cuda.cu cv_adv_diff_kry_cuda.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/cuda)
 endif()
