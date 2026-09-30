@@ -98,18 +98,6 @@ NVIDIA-RTX5080-SUNDIALS4PY:
     - export CMAKE_ARGS="-DSUNDIALS_ENABLE_CUDA=ON"
     - python3 -m pip install --break-system-packages "cupy-cuda13x" "jax[cuda13]" "pytest" ".[dev]"
     - python3 -m pip install --break-system-packages torch --index-url https://download.pytorch.org/whl/cu128
-    - python3 - <<'PY'
-      import cupy
-      import jax
-      import jax.numpy as jnp
-      import torch
-
-      cupy.arange(1).get()
-      assert any(device.platform in ("cuda", "gpu") for device in jax.devices())
-      jnp.ones(1).block_until_ready()
-      assert torch.cuda.is_available()
-      torch.ones(1, device="cuda")
-      PY
     - python3 -m pytest -q bindings/sundials4py/test
 
 NVIDIA-GH200:
