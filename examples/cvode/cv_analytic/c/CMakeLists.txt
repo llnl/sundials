@@ -12,13 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_analytic_mels cv_analytic_mels.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_analytic_mels.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_analytic_mels.c cv_analytic_mels.out)
-set_target_properties(cv_analytic_mels PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_analytic_mels cv_analytic_mels.c)
 target_link_libraries(
   cv_analytic_mels PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                            ${EXE_EXTRA_LINK_LIBS})

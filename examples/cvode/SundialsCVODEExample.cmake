@@ -15,9 +15,6 @@
 # Standalone CMake project shared by installed CVODE example variants.
 # -----------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.18)
-project(cvode_example LANGUAGES NONE)
-
 file(
   GLOB
   _cvode_example_sources
@@ -106,8 +103,8 @@ function(sundials_add_test name executable)
   endif()
 endfunction()
 
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsAddExample.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsAddExamplesGinkgo.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/SundialsAddExample.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/SundialsAddExamplesGinkgo.cmake)
 
 # The build tree and installed package use unnamespaced and namespaced target
 # names, respectively. Provide the former locally so the same example files work
@@ -156,4 +153,4 @@ if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   list(APPEND CVODE_C_LIBS sundials_cvode_fused_stubs)
 endif()
 
-include(cvode-example.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cvode-example.cmake)

@@ -12,24 +12,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_roberts_block_klu cv_roberts_block_klu.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_block_klu.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_roberts_block_klu.out)
-set_target_properties(cv_roberts_block_klu PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_roberts_block_klu cv_roberts_block_klu.c)
 target_link_libraries(
   cv_roberts_block_klu PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                                sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
 
-sundials_add_example(
-  cv_roberts_klu cv_roberts_klu.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_klu.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_roberts_klu.out)
-set_target_properties(cv_roberts_klu PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_roberts_klu cv_roberts_klu.c)
 target_link_libraries(
   cv_roberts_klu PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                          sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})

@@ -15,10 +15,4 @@
 sundials_add_example(
   cv_adv_diff_bnd cv_adv_diff_bnd.c
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                 ${EXE_EXTRA_LINK_LIBS}
-  PROPERTIES FOLDER "Examples"
-  ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_bnd.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_bnd.out)
+                 ${EXE_EXTRA_LINK_LIBS})

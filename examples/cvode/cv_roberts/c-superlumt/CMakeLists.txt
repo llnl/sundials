@@ -12,13 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_roberts_sps cv_roberts_sps.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_sps.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_roberts_sps.c cv_roberts_sps.out)
-set_target_properties(cv_roberts_sps PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_roberts_sps cv_roberts_sps.c)
 target_link_libraries(
   cv_roberts_sps
   PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt

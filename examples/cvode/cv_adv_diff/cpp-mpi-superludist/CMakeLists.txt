@@ -14,17 +14,13 @@
 # -----------------------------------------------------------------
 # CVODE SuperLU_DIST C++ example
 sundials_add_example(
-  cv_adv_diff_sludist cv_adv_diff_sludist.cpp ADD_TEST
+  cv_adv_diff_sludist cv_adv_diff_sludist.cpp
   TEST_ARGS 2 1
   MPI_NPROCS 2
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   ANSWER_FILE cv_adv_diff_sludist_${SUNDIALS_INDEX_SIZE}.out
-  EXAMPLE_TYPE develop
   INTEGER_PRECISION ${_integer_precision}
   FLOAT_PRECISION ${_float_precision}
-  INSTALL_FILES cv_adv_diff_sludist.cpp cv_adv_diff_sludist_32.out
-                cv_adv_diff_sludist_64.out)
-set_target_properties(cv_adv_diff_sludist PROPERTIES FOLDER "Examples")
+  INSTALL_FILES cv_adv_diff_sludist_32.out cv_adv_diff_sludist_64.out)
 target_link_libraries(
   cv_adv_diff_sludist
   PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel

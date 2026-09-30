@@ -15,10 +15,9 @@
 set_source_files_properties(cv_adv_diff_diag_cuda.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_example(
-  cv_adv_diff_diag_cuda cv_adv_diff_diag_cuda.cu
+  cv_adv_diff_diag_cuda cv_adv_diff_diag_cuda.cu NO_TEST
   INSTALL_FILES cv_adv_diff_diag_cuda_0_0.out cv_adv_diff_diag_cuda_0_1.out
                 cv_adv_diff_diag_cuda_1_1.out)
-set_target_properties(cv_adv_diff_diag_cuda PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_adv_diff_diag_cuda PRIVATE sundials_cvode sundials_nveccuda
                                 ${EXE_EXTRA_LINK_LIBS})
@@ -38,13 +37,7 @@ endforeach()
 
 set_source_files_properties(cv_adv_diff_kry_cuda.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-sundials_add_example(
-  cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda.cu ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_kry_cuda.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_kry_cuda.out)
-set_target_properties(cv_adv_diff_kry_cuda PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda.cu)
 target_link_libraries(
   cv_adv_diff_kry_cuda PRIVATE sundials_cvode sundials_nveccuda
                                ${EXE_EXTRA_LINK_LIBS})

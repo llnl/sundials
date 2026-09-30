@@ -14,16 +14,8 @@
 # -----------------------------------------------------------------
 set_source_files_properties(cv_roberts_block_cusolversp_batchqr.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-sundials_add_example(
-  cv_roberts_block_cusolversp_batchqr cv_roberts_block_cusolversp_batchqr.cu
-  ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_block_cusolversp_batchqr.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_roberts_block_cusolversp_batchqr.cu
-                cv_roberts_block_cusolversp_batchqr.out)
-set_target_properties(cv_roberts_block_cusolversp_batchqr PROPERTIES FOLDER
-                                                                     "Examples")
+sundials_add_example(cv_roberts_block_cusolversp_batchqr
+                     cv_roberts_block_cusolversp_batchqr.cu)
 target_link_libraries(
   cv_roberts_block_cusolversp_batchqr
   PRIVATE sundials_sunlinsolcusolversp sundials_cvode sundials_nveccuda

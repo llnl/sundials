@@ -14,14 +14,8 @@
 # -----------------------------------------------------------------
 set_source_files_properties(cv_adv_diff_kry_cuda_managed.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-sundials_add_example(
-  cv_adv_diff_kry_cuda_managed cv_adv_diff_kry_cuda_managed.cu ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_kry_cuda_managed.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_kry_cuda_managed.cu
-                cv_adv_diff_kry_cuda_managed.out)
-set_target_properties(cv_adv_diff_kry_cuda_managed PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_adv_diff_kry_cuda_managed
+                     cv_adv_diff_kry_cuda_managed.cu)
 target_link_libraries(
   cv_adv_diff_kry_cuda_managed PRIVATE sundials_cvode sundials_nveccuda
                                        ${EXE_EXTRA_LINK_LIBS})

@@ -13,25 +13,17 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_diurnal_kry_bbd_p cv_diurnal_kry_bbd_p.c ADD_TEST
+  cv_diurnal_kry_bbd_p cv_diurnal_kry_bbd_p.c
   MPI_NPROCS 4
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry_bbd_p.out
-  EXAMPLE_TYPE exclude-sigle
-  INSTALL_FILES cv_diurnal_kry_bbd_p.out)
-set_target_properties(cv_diurnal_kry_bbd_p PROPERTIES FOLDER "Examples")
+  EXAMPLE_TYPE exclude-sigle)
 target_link_libraries(
   cv_diurnal_kry_bbd_p PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
                                ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  cv_diurnal_kry_p cv_diurnal_kry_p.c ADD_TEST
+  cv_diurnal_kry_p cv_diurnal_kry_p.c
   MPI_NPROCS 4
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry_p.out
-  EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cv_diurnal_kry_p.out)
-set_target_properties(cv_diurnal_kry_p PROPERTIES FOLDER "Examples")
+  EXAMPLE_TYPE exclude-single)
 target_link_libraries(
   cv_diurnal_kry_p PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
                            ${EXE_EXTRA_LINK_LIBS})

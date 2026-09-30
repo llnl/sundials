@@ -14,30 +14,22 @@
 # -----------------------------------------------------------------
 # CVODE parallel C++ heat equation example with a user HYPRE linear solver
 sundials_add_example(
-  cv_heat_2d_hypre_ls cv_heat_2d_hypre_ls.cpp ADD_TEST
+  cv_heat_2d_hypre_ls cv_heat_2d_hypre_ls.cpp
   TEST_NAME cv_heat_2d_hypre_ls_--np_2_2
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   ANSWER_FILE cv_heat_2d_hypre_ls_--np_2_2.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_heat_2d_hypre_ls_--np_2_2.out plot_heat_2d_p.py
-                plot_heat_2d_p_pfmg.py)
-set_target_properties(cv_heat_2d_hypre_ls PROPERTIES FOLDER "Examples")
+  INSTALL_FILES plot_heat_2d_p.py plot_heat_2d_p_pfmg.py)
 target_link_libraries(
   cv_heat_2d_hypre_ls
   PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
           ${EXE_EXTRA_LINK_LIBS} SUNDIALS::HYPRE)
 sundials_add_example(
-  cv_heat_2d_hypre_pfmg cv_heat_2d_hypre_pfmg.cpp ADD_TEST
+  cv_heat_2d_hypre_pfmg cv_heat_2d_hypre_pfmg.cpp
   TEST_NAME cv_heat_2d_hypre_pfmg_--np_2_2
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_heat_2d_hypre_pfmg_--np_2_2.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_heat_2d_hypre_pfmg_--np_2_2.out)
-set_target_properties(cv_heat_2d_hypre_pfmg PROPERTIES FOLDER "Examples")
+  ANSWER_FILE cv_heat_2d_hypre_pfmg_--np_2_2.out)
 target_link_libraries(
   cv_heat_2d_hypre_pfmg
   PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel

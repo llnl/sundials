@@ -12,13 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_particle_dns cv_particle_dns.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_particle_dns.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_particle_dns.c cv_particle_dns.out plot_cv_particle.py)
-set_target_properties(cv_particle_dns PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_particle_dns cv_particle_dns.c
+                     INSTALL_FILES plot_cv_particle.py)
 target_link_libraries(
   cv_particle_dns PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                           ${EXE_EXTRA_LINK_LIBS})
