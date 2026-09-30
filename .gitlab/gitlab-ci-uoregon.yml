@@ -141,6 +141,7 @@ INTEL-DATA-CENTER-MAX-1100:
     - export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
     - export CC=$(command -v icx)
     - export CXX=$(command -v icpx)
+    - export CXXFLAGS=-fsycl
     - export SUNDIALS_SYCL=ON
     - cd ${CI_PROJECT_DIR}/test
     - >-
