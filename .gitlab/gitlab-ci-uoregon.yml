@@ -96,7 +96,6 @@ NVIDIA-RTX5080-SUNDIALS4PY:
     - apt-get update && apt-get install -y build-essential git python3 python3-dev python3-pip
     - export CUDACXX=$(command -v nvcc)
     - export CMAKE_ARGS="-DSUNDIALS_ENABLE_CUDA=ON"
-    - python3 -m pip install --break-system-packages --upgrade pip
     - python3 -m pip install --break-system-packages "cupy-cuda13x" "jax[cuda13]" "pytest" ".[dev]"
     - python3 -m pip install --break-system-packages torch --index-url https://download.pytorch.org/whl/cu128
     - python3 - <<'PY'
