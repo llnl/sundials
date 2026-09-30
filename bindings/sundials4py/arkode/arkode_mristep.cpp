@@ -23,6 +23,7 @@
 #include <sundials/sundials_core.hpp>
 
 #include "arkode_usersupplied.hpp"
+#include "sundials_adjointstepper_impl.h"
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
