@@ -12,24 +12,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
-sundials_add_executable(cv_adv_diff_non_ph cv_adv_diff_non_ph.c)
+sundials_add_example(
+  cv_adv_diff_non_ph cv_adv_diff_non_ph.c ADD_TEST
+  MPI_NPROCS 2
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_adv_diff_non_ph.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_adv_diff_non_ph.c cv_adv_diff_non_ph.out)
 set_target_properties(cv_adv_diff_non_ph PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_adv_diff_non_ph PRIVATE ${CVODE_C_LIBS} sundials_nvecparhyp
                              ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cv_adv_diff_non_ph cv_adv_diff_non_ph
-  MPI_NPROCS 2
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_non_ph.out
-  EXAMPLE_TYPE develop)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_adv_diff_non_ph.c cv_adv_diff_non_ph.out
-    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/c-mpi-hypre)
-endif()
