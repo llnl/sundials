@@ -20,10 +20,6 @@ job_unique_id=${CI_JOB_ID:-""}
 sys_type=${SYS_TYPE:-""}
 py_env_path=${PYTHON_ENVIRONMENT_PATH:-""}
 
-buildcache=${BUILDCACHE_ROOT:-""}
-gpg_key_path=${GPG_KEY_PREFIX:-""}
-temp_prefix=${TEMP_PREFIX:-""}
-
 # Dependencies
 date
 
@@ -63,9 +59,9 @@ then
 
     prefix_opt=""
 
-    if [[ -d ${TEMP_PREFIX} ]]
+    if [[ -d /dev/shm ]]
     then
-        prefix="${TEMP_PREFIX}/${hostname}"
+        prefix="/dev/shm/${hostname}"
         if [[ -z ${job_unique_id} ]]; then
           job_unique_id=manual_job_$(date +%s)
           while [[ -d ${prefix}/${job_unique_id} ]] ; do
@@ -88,30 +84,20 @@ then
     fi
 
     mirror_opt=""
+    buildcache="/usr/workspace/sundials/ci/spack_stuff/build_caches/${SPACK_REF}"
 
-    if [[ -z "${buildcache}" ]]
+    if [[ ! -d "${buildcache}" ]]
     then
-        echo "BUILDCACHE_ROOT is undefined, not using spack buildcache."
-    else
-        mirror_opt=("--mirror=${buildcache}" "--mirror-autopush")
-        key_opt=("--trust-key ${gpg_key_path}/pubring.gpg" "--trust-key ${gpg_key_path}/secring.gpg")
-    
-        if [[ ! -d "${buildcache}" ]]
-        then
-            mkdir "${buildcache}"
-        fi
+        mkdir "${buildcache}"
     fi
 
-    if [[ ! -z "${SPACK_YAML}" ]]
-    then
-        spack_yaml_opt="--spack-yaml=${SPACK_YAML}"
-    else
-        spack_yaml_opt=""
-    fi
+    mirror_opt=("--mirror=${buildcache}" "--mirror-autopush")
 
+    key_path=/usr/workspace/sundials/ci/spack_stuff/gpg_backup
     python3 .gitlab/uberenv/uberenv.py \
-        --spec="${spec}" --spack-commit="${SPACK_REF}"  \
-         "${prefix_opt}" "${spack_yaml_opt}" "${mirror_opt[@]}" "${key_opt[@]}" 
+        --trust-key ${key_path}/pubring.gpg --trust-key ${key_path}/secring.gpg \
+        --spec="${spec}" "${mirror_opt[@]}" "${prefix_opt}" \
+        --spack-commit="${SPACK_REF}"
 fi
 
 date
