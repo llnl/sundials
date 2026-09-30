@@ -12,6 +12,14 @@ positive values are recoverable failures, and negative values are fatal
 failures. Added accumulated error get/reset and relative tolerance operations
 to `SUNStepper` to support `SUNAdaptController_MRIHTol`.
 
+Added discrete adjoint support for MRIStep with the
+`MRIStepCreateAdjointStepper` function which enables sensitivity analysis
+capabilities for ODEs with disparate time scales. This uses a new
+`MRIStepInnerAdjointProblem` object which augments the terminal state,
+right-hand side function, and user data of the inner adjoint integrator to
+include terms need to account for the forcing MRIStep applies during the forward
+integration.
+
 ### New Features and Enhancements
 
 Added `SUNAdjointCheckpointScheme_Enable` to temporarily disable and re-enable
@@ -28,6 +36,10 @@ of this function only need to free content associated with the derived
 `SUNAdjointCheckpointScheme`.
 
 ### Bug Fixes
+
+Fixed a bug in the ERKStep and ARKStep discrete adjoints where it would take an
+extra backward step when the last forward step was slightly truncated to align
+with the end time.
 
 ### Deprecation Notices
 
