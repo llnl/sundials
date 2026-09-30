@@ -14,14 +14,11 @@
 # -----------------------------------------------------------------
 # CVODE serial C++ heat equation example
 sundials_add_example(
-  cv_heat_2d cv_heat_2d.cpp ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_heat_2d.out
+  cv_heat_2d cv_heat_2d.cpp
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cv_heat_2d.cpp cv_heat_2d.hpp cv_heat_2d.out plot_heat_2d.py
+  INSTALL_FILES cv_heat_2d.hpp plot_heat_2d.py
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
 )
-set_target_properties(cv_heat_2d PROPERTIES FOLDER "Examples")
 if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
   target_include_directories(cv_heat_2d
                              PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)

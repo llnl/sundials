@@ -93,28 +93,13 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
       endif()
 
       if(NOT TARGET ${example_target})
-        set(test_args
-            ADD_TEST
-            TEST_NAME
-            ${test_name}
-            EXAMPLE_TYPE
-            ${example_type}
-            TEST_ARGS
-            ${example_args})
+        set(test_args TEST_NAME ${test_name} EXAMPLE_TYPE ${example_type}
+                      TEST_ARGS ${example_args})
         set(install_files ${arg_INSTALL_FILES})
         if(${arg_UNIT_TEST})
           list(APPEND test_args NODIFF)
         else()
-          list(
-            APPEND
-            test_args
-            ANSWER_DIR
-            ${CMAKE_CURRENT_SOURCE_DIR}
-            ANSWER_FILE
-            ${test_name}.out
-            FLOAT_PRECISION
-            ${float_precision})
-          list(APPEND install_files ${test_name}.out)
+          list(APPEND test_args FLOAT_PRECISION ${float_precision})
         endif()
         if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
           set(example_utilities_dir "${PROJECT_SOURCE_DIR}/examples/utilities")
@@ -122,13 +107,12 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
           set(example_utilities_dir "${CMAKE_CURRENT_SOURCE_DIR}")
         endif()
         sundials_add_example(
-          ${example_target} ${example} ${test_args} INSTALL
+          ${example_target} ${example} ${test_args}
           INSTALL_FILES ${install_files}
           LINK_LIBRARIES PRIVATE ${arg_TARGETS} sundials_${vector}
                          Ginkgo::ginkgo ${EXTRA_LINK_LIBS}
           INCLUDE_DIRECTORIES PRIVATE "${example_utilities_dir}"
-          COMPILE_DEFINITIONS PRIVATE USE_${backend}
-          PROPERTIES FOLDER "Examples")
+          COMPILE_DEFINITIONS PRIVATE USE_${backend})
       elseif(${arg_UNIT_TEST})
         sundials_add_test(
           ${test_name} ${example_target}

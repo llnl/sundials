@@ -13,13 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_krylov_demo_ls cv_krylov_demo_ls.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_krylov_demo_ls.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_krylov_demo_ls.out cv_krylov_demo_ls_0_1.out
-                cv_krylov_demo_ls_1.out cv_krylov_demo_ls_2.out)
-set_target_properties(cv_krylov_demo_ls PROPERTIES FOLDER "Examples")
+  cv_krylov_demo_ls cv_krylov_demo_ls.c
+  INSTALL_FILES cv_krylov_demo_ls_0_1.out cv_krylov_demo_ls_1.out
+                cv_krylov_demo_ls_2.out)
 target_link_libraries(
   cv_krylov_demo_ls PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                             ${EXE_EXTRA_LINK_LIBS})
@@ -44,13 +40,7 @@ if(SUNDIALS_ENABLE_MONITORING)
     ANSWER_FILE cv_krylov_demo_ls_0_1.out
     EXAMPLE_TYPE develop)
 endif()
-sundials_add_example(
-  cv_krylov_demo_prec cv_krylov_demo_prec.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_krylov_demo_prec.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_krylov_demo_prec.out)
-set_target_properties(cv_krylov_demo_prec PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_krylov_demo_prec cv_krylov_demo_prec.c)
 target_link_libraries(
   cv_krylov_demo_prec PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                               ${EXE_EXTRA_LINK_LIBS})

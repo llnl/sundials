@@ -13,12 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_pendulum_dns cv_pendulum_dns.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_pendulum_dns.out
+  cv_pendulum_dns cv_pendulum_dns.c
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cv_pendulum_dns.c cv_pendulum_dns.out plot_cv_pendulum.py)
-set_target_properties(cv_pendulum_dns PROPERTIES FOLDER "Examples")
+  INSTALL_FILES plot_cv_pendulum.py)
 target_link_libraries(
   cv_pendulum_dns PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                           ${EXE_EXTRA_LINK_LIBS})

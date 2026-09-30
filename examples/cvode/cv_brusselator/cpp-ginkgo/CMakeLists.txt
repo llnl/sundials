@@ -46,32 +46,12 @@ foreach(backend REF OMP CUDA HIP SYCL)
                      ${PROJECT_SOURCE_DIR}/examples/utilities)
   endif()
   sundials_add_example(
-    ${example_target}
-    cv_bruss_batched_ginkgo.cpp
-    ADD_TEST
-    ANSWER_DIR
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE
-    ${example_target}.out
-    EXAMPLE_TYPE
-    develop
-    FLOAT_PRECISION
-    ${float_precision}
+    ${example_target} cv_bruss_batched_ginkgo.cpp
+    FLOAT_PRECISION ${float_precision}
     INSTALL_FILES
-    cv_bruss_batched_ginkgo.hpp
-    ${example_target}.out
-    "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
-    LINK_LIBRARIES
-    PRIVATE
-    ${CVODE_C_LIBS}
-    sundials_${vector}
-    Ginkgo::ginkgo
-    ${EXE_EXTRA_LINK_LIBS}
-    ${include_args}
-    COMPILE_DEFINITIONS
-    PRIVATE
-    USE_${backend}
-    PROPERTIES
-    FOLDER
-    "Examples")
+      cv_bruss_batched_ginkgo.hpp
+      "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
+    LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_${vector} Ginkgo::ginkgo
+                   ${EXE_EXTRA_LINK_LIBS} ${include_args}
+    COMPILE_DEFINITIONS PRIVATE USE_${backend})
 endforeach()

@@ -12,12 +12,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_rocket_dns cv_rocket_dns.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_rocket_dns.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_rocket_dns.c cv_rocket_dns.out)
-set_target_properties(cv_rocket_dns PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_rocket_dns cv_rocket_dns.c)
 target_link_libraries(cv_rocket_dns PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                                             ${EXE_EXTRA_LINK_LIBS})

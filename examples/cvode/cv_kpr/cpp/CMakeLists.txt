@@ -14,13 +14,10 @@
 # -----------------------------------------------------------------
 # CVODE serial C++ KPR example
 sundials_add_example(
-  cv_kpr cv_kpr.cpp ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_kpr.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_kpr.hpp cv_kpr.out cv_kpr_cvode.init_step_0.01.out
-                "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp")
-set_target_properties(cv_kpr PROPERTIES FOLDER "Examples")
+  cv_kpr cv_kpr.cpp
+  INSTALL_FILES cv_kpr.hpp cv_kpr_cvode.init_step_0.01.out
+                "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
+)
 if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
   target_include_directories(cv_kpr
                              PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)

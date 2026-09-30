@@ -13,10 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_adv_diff_diag_hip cv_adv_diff_diag_hip.cpp
+  cv_adv_diff_diag_hip cv_adv_diff_diag_hip.cpp NO_TEST
   INSTALL_FILES cv_adv_diff_diag_hip_0_0.out cv_adv_diff_diag_hip_0_1.out
                 cv_adv_diff_diag_hip_1_1.out)
-set_target_properties(cv_adv_diff_diag_hip PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_adv_diff_diag_hip PRIVATE hip::device sundials_cvode sundials_nvechip
                                ${EXE_EXTRA_LINK_LIBS})
@@ -32,13 +31,7 @@ foreach(example_args "0 0" "0 1" "1 1")
     ANSWER_FILE ${test_name}.out
     EXAMPLE_TYPE develop)
 endforeach()
-sundials_add_example(
-  cv_adv_diff_kry_hip cv_adv_diff_kry_hip.cpp ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_kry_hip.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_kry_hip.out)
-set_target_properties(cv_adv_diff_kry_hip PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_adv_diff_kry_hip cv_adv_diff_kry_hip.cpp)
 target_link_libraries(
   cv_adv_diff_kry_hip PRIVATE hip::device sundials_cvode sundials_nvechip
                               ${EXE_EXTRA_LINK_LIBS})
