@@ -12,14 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_diurnal_kry_mpimanyvec cv_diurnal_kry_mpimanyvec.c ADD_TEST
-  MPI_NPROCS 4
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry_mpimanyvec.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_diurnal_kry_mpimanyvec.c cv_diurnal_kry_mpimanyvec.out)
-set_target_properties(cv_diurnal_kry_mpimanyvec PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_diurnal_kry_mpimanyvec cv_diurnal_kry_mpimanyvec.c
+                     MPI_NPROCS 4)
 target_link_libraries(
   cv_diurnal_kry_mpimanyvec
   PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecmpimanyvector

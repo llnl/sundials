@@ -12,13 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_roberts_dns_l cv_roberts_dns_l.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_dns_l.out
-  EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cv_roberts_dns_l.c cv_roberts_dns_l.out)
-set_target_properties(cv_roberts_dns_l PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_roberts_dns_l cv_roberts_dns_l.c
+                     EXAMPLE_TYPE exclude-single)
 target_link_libraries(
   cv_roberts_dns_l
   PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsollapackband

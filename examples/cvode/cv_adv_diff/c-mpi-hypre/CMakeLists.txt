@@ -12,14 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_adv_diff_non_ph cv_adv_diff_non_ph.c ADD_TEST
-  MPI_NPROCS 2
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_non_ph.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_non_ph.c cv_adv_diff_non_ph.out)
-set_target_properties(cv_adv_diff_non_ph PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_adv_diff_non_ph cv_adv_diff_non_ph.c MPI_NPROCS 2)
 target_link_libraries(
   cv_adv_diff_non_ph PRIVATE ${CVODE_C_LIBS} sundials_nvecparhyp
                              ${EXE_EXTRA_LINK_LIBS})

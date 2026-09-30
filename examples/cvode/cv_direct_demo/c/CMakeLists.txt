@@ -12,13 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_direct_demo_ls cv_direct_demo_ls.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_direct_demo_ls.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_direct_demo_ls.c cv_direct_demo_ls.out)
-set_target_properties(cv_direct_demo_ls PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_direct_demo_ls cv_direct_demo_ls.c)
 target_link_libraries(
   cv_direct_demo_ls PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                             ${EXE_EXTRA_LINK_LIBS})

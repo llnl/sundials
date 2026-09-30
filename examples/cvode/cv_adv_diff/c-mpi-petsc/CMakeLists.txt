@@ -12,14 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_adv_diff_petsc cv_adv_diff_petsc.c ADD_TEST
-  MPI_NPROCS 4
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_petsc.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_petsc.c cv_adv_diff_petsc.out)
-set_target_properties(cv_adv_diff_petsc PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_adv_diff_petsc cv_adv_diff_petsc.c MPI_NPROCS 4)
 target_link_libraries(
   cv_adv_diff_petsc
   PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecpetsc

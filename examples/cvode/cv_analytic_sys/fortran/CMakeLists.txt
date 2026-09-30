@@ -13,45 +13,15 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_analytic_sys_dns_f2003
-  cv_analytic_sys_dns_f2003.f90
-  ADD_TEST
-  ANSWER_DIR
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE
-  cv_analytic_sys_dns_f2003.out
-  EXAMPLE_TYPE
-  develop
-  INSTALL_FILES
-  cv_analytic_sys_dns_f2003.out
-  LINK_LIBRARIES
-  ${CVODE_C_LIBS}
-  sundials_fcvode_mod
-  ${EXE_EXTRA_LINK_LIBS}
+  cv_analytic_sys_dns_f2003 cv_analytic_sys_dns_f2003.f90
+  LINK_LIBRARIES ${CVODE_C_LIBS} sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
-  FOLDER
-  "Examples"
-  Fortran_MODULE_DIRECTORY
-  ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_analytic_sys_dns_f2003.dir)
+    Fortran_MODULE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_analytic_sys_dns_f2003.dir)
 
 sundials_add_example(
-  cv_analytic_sys_dns_jac_f2003
-  cv_analytic_sys_dns_jac_f2003.f90
-  ADD_TEST
-  ANSWER_DIR
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE
-  cv_analytic_sys_dns_jac_f2003.out
-  EXAMPLE_TYPE
-  develop
-  INSTALL_FILES
-  cv_analytic_sys_dns_jac_f2003.out
-  LINK_LIBRARIES
-  ${CVODE_C_LIBS}
-  sundials_fcvode_mod
-  ${EXE_EXTRA_LINK_LIBS}
+  cv_analytic_sys_dns_jac_f2003 cv_analytic_sys_dns_jac_f2003.f90
+  LINK_LIBRARIES ${CVODE_C_LIBS} sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
-  FOLDER
-  "Examples"
-  Fortran_MODULE_DIRECTORY
-  ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_analytic_sys_dns_jac_f2003.dir)
+    Fortran_MODULE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_analytic_sys_dns_jac_f2003.dir)

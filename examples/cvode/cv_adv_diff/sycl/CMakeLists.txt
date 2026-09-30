@@ -12,13 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_adv_diff_kry_sycl cv_adv_diff_kry_sycl.cpp ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_kry_sycl.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_kry_sycl.cpp cv_adv_diff_kry_sycl.out)
-set_target_properties(cv_adv_diff_kry_sycl PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_adv_diff_kry_sycl cv_adv_diff_kry_sycl.cpp)
 target_link_libraries(
   cv_adv_diff_kry_sycl PRIVATE sundials_cvode sundials_nvecsycl
                                ${EXE_EXTRA_LINK_LIBS})

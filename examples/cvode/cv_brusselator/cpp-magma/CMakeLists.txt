@@ -22,13 +22,7 @@ elseif(SUNDIALS_MAGMA_BACKENDS MATCHES "HIP")
 endif()
 set_source_files_properties(cv_bruss_batched_magma.cpp
                             PROPERTIES LANGUAGE ${cuda_or_hip})
-sundials_add_example(
-  cv_bruss_batched_magma cv_bruss_batched_magma.cpp ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_bruss_batched_magma.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_bruss_batched_magma.cpp cv_bruss_batched_magma.out)
-set_target_properties(cv_bruss_batched_magma PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_bruss_batched_magma cv_bruss_batched_magma.cpp)
 target_link_libraries(
   cv_bruss_batched_magma
   PRIVATE sundials_cvode sundials_${vector} sundials_sunlinsolmagmadense

@@ -26,10 +26,4 @@ set_source_files_properties(cv_adv_diff_kry_raja.cpp PROPERTIES LANGUAGE
 sundials_add_example(
   cv_adv_diff_kry_raja cv_adv_diff_kry_raja.cpp
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecraja
-                 ${EXE_EXTRA_LINK_LIBS} ${_other_libs}
-  PROPERTIES FOLDER "Examples"
-  ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_kry_raja.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_kry_raja.cpp cv_adv_diff_kry_raja.out)
+                 ${EXE_EXTRA_LINK_LIBS} ${_other_libs})

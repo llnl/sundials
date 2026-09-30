@@ -13,13 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE oneMKL C++ example
-sundials_add_example(
-  cv_roberts_blockdiag_onemkl cv_roberts_blockdiag_onemkl.cpp ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_blockdiag_onemkl.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_roberts_blockdiag_onemkl.cpp cv_roberts_blockdiag_onemkl.out)
-set_target_properties(cv_roberts_blockdiag_onemkl PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_roberts_blockdiag_onemkl
+                     cv_roberts_blockdiag_onemkl.cpp)
 target_link_libraries(
   cv_roberts_blockdiag_onemkl
   PRIVATE sundials_cvode sundials_nvecsycl sundials_sunlinsolonemkldense

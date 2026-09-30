@@ -12,14 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_adv_diff_bnd_omp cv_adv_diff_bnd_omp.c ADD_TEST
-  TEST_ARGS 4
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_bnd_omp.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_adv_diff_bnd_omp.c cv_adv_diff_bnd_omp.out)
-set_target_properties(cv_adv_diff_bnd_omp PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_adv_diff_bnd_omp cv_adv_diff_bnd_omp.c TEST_ARGS 4)
 target_link_libraries(
   cv_adv_diff_bnd_omp PRIVATE ${CVODE_C_LIBS} sundials_nvecopenmp
                               ${EXE_EXTRA_LINK_LIBS})

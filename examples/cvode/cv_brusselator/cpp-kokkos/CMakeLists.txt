@@ -22,33 +22,18 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
                        ${PROJECT_SOURCE_DIR}/examples/utilities)
     endif()
     sundials_add_example(
-      ${example_target}
-      cv_bruss_batched_kokkos.cpp
-      ADD_TEST
-      EXTRA_ARGS
-      --kokkos-disable-warnings
-      ANSWER_DIR
-      ${CMAKE_CURRENT_SOURCE_DIR}
-      ANSWER_FILE
-      ${example_target}.out
-      EXAMPLE_TYPE
-      develop
+      ${example_target} cv_bruss_batched_kokkos.cpp
+      EXTRA_ARGS --kokkos-disable-warnings
       INSTALL_FILES
-      ${example_target}.out
-      "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
+        "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
       LINK_LIBRARIES
-      PRIVATE
-      ${CVODE_C_LIBS}
-      sundials_nveckokkos
-      sundials_sunmatrixkokkosdense
-      sundials_sunlinsolkokkosdense
-      ${EXE_EXTRA_LINK_LIBS}
-      ${include_args}
-      COMPILE_DEFINITIONS
-      PRIVATE
-      USE_${backend}
-      PROPERTIES
-      FOLDER
-      "Examples")
+        PRIVATE
+        ${CVODE_C_LIBS}
+        sundials_nveckokkos
+        sundials_sunmatrixkokkosdense
+        sundials_sunlinsolkokkosdense
+        ${EXE_EXTRA_LINK_LIBS}
+        ${include_args}
+      COMPILE_DEFINITIONS PRIVATE USE_${backend})
   endif()
 endforeach()

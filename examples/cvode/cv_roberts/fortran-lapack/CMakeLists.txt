@@ -17,10 +17,5 @@ sundials_add_example(
   LINK_LIBRARIES
     ${CVODE_C_LIBS} sundials_fcvode_mod sundials_sunlinsollapackdense
     sundials_fsunlinsollapackdense_mod ${EXE_EXTRA_LINK_LIBS}
-  PROPERTIES FOLDER "Examples" Fortran_MODULE_DIRECTORY
-             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_roberts_dns_l_f2003.dir
-  ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_dns_l_f2003.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_roberts_dns_l_f2003.f90 cv_roberts_dns_l_f2003.out)
+  PROPERTIES Fortran_MODULE_DIRECTORY
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_roberts_dns_l_f2003.dir)
