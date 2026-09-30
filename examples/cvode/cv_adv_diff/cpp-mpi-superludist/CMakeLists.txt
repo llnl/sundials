@@ -12,13 +12,18 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 # CVODE SuperLU_DIST C++ example
-sundials_add_executable(cv_adv_diff_sludist cv_adv_diff_sludist.cpp)
+sundials_add_example(
+  cv_adv_diff_sludist cv_adv_diff_sludist.cpp ADD_TEST
+  TEST_ARGS 2 1
+  MPI_NPROCS 2
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_adv_diff_sludist_${SUNDIALS_INDEX_SIZE}.out
+  EXAMPLE_TYPE develop
+  INTEGER_PRECISION ${_integer_precision}
+  FLOAT_PRECISION ${_float_precision}
+  INSTALL_FILES cv_adv_diff_sludist.cpp cv_adv_diff_sludist_32.out
+                cv_adv_diff_sludist_64.out)
 set_target_properties(cv_adv_diff_sludist PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_adv_diff_sludist
@@ -30,21 +35,4 @@ if(SUNDIALS_INDEX_SIZE STREQUAL "32")
 else()
   set(_integer_precision default)
   set(_float_precision default)
-endif()
-sundials_add_test(
-  cv_adv_diff_sludist cv_adv_diff_sludist
-  TEST_ARGS 2 1
-  MPI_NPROCS 2
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_sludist_${SUNDIALS_INDEX_SIZE}.out
-  EXAMPLE_TYPE develop
-  INTEGER_PRECISION ${_integer_precision}
-  FLOAT_PRECISION ${_float_precision})
-
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_adv_diff_sludist.cpp cv_adv_diff_sludist_32.out
-          cv_adv_diff_sludist_64.out
-    DESTINATION
-      ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/cpp-mpi-superludist)
 endif()

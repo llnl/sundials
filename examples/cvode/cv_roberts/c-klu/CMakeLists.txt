@@ -12,37 +12,24 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
-sundials_add_executable(cv_roberts_block_klu cv_roberts_block_klu.c)
+sundials_add_example(
+  cv_roberts_block_klu cv_roberts_block_klu.c ADD_TEST
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_roberts_block_klu.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_roberts_block_klu.out)
 set_target_properties(cv_roberts_block_klu PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_roberts_block_klu PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                                sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cv_roberts_block_klu cv_roberts_block_klu
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_block_klu.out
-  EXAMPLE_TYPE develop)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cv_roberts_block_klu.c cv_roberts_block_klu.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/c-klu)
-endif()
 
-sundials_add_executable(cv_roberts_klu cv_roberts_klu.c)
+sundials_add_example(
+  cv_roberts_klu cv_roberts_klu.c ADD_TEST
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_roberts_klu.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_roberts_klu.out)
 set_target_properties(cv_roberts_klu PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_roberts_klu PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                          sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cv_roberts_klu cv_roberts_klu
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_klu.out
-  EXAMPLE_TYPE develop)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cv_roberts_klu.c cv_roberts_klu.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/c-klu)
-endif()

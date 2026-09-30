@@ -46,18 +46,35 @@ add_subdirectory(cv_vdp)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   # Install each variant as an independent CMake project.
-  get_property(_cvode_example_directories GLOBAL
-               PROPERTY SUNDIALS_CVODE_EXAMPLE_DIRECTORIES)
+  get_property(
+    _cvode_problem_directories
+    DIRECTORY
+    PROPERTY SUBDIRECTORIES)
+  set(_cvode_example_directories)
+  foreach(_problem_dir ${_cvode_problem_directories})
+    get_property(
+      _variant_dirs
+      DIRECTORY ${_problem_dir}
+      PROPERTY SUBDIRECTORIES)
+    list(APPEND _cvode_example_directories ${_variant_dirs})
+  endforeach()
 
   foreach(_example_dir ${_cvode_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
     install(
       FILES ${_example_dir}/CMakeLists.txt
-      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir})
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}
+      RENAME cvode-example.cmake)
+    install(
+      FILES SundialsCVODEExample.cmake
+      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}
+      RENAME CMakeLists.txt)
   endforeach()
-  install(FILES SundialsCVODEExample.cmake
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode)
+  install(
+    FILES ${PROJECT_SOURCE_DIR}/cmake/macros/SundialsAddExample.cmake
+          ${PROJECT_SOURCE_DIR}/cmake/macros/SundialsAddExamplesGinkgo.cmake
+    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode)
 
   sundials_add_test_install(cvode cv_adv_diff/c EXECUTABLE cv_adv_diff_bnd)
 endif()

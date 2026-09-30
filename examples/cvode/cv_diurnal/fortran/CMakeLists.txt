@@ -12,14 +12,18 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
-sundials_add_executable(
+sundials_add_example(
   cv_diurnal_kry_f2003
   cv_diurnal_kry_f2003.f90
+  ADD_TEST
+  ANSWER_DIR
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE
+  cv_diurnal_kry_f2003.out
+  EXAMPLE_TYPE
+  develop
+  INSTALL_FILES
+  cv_diurnal_kry_f2003.out
   LINK_LIBRARIES
   ${CVODE_C_LIBS}
   sundials_fcvode_mod
@@ -29,20 +33,19 @@ sundials_add_executable(
   "Examples"
   Fortran_MODULE_DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_diurnal_kry_f2003.dir)
-sundials_add_test(
-  cv_diurnal_kry_f2003 cv_diurnal_kry_f2003
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry_f2003.out
-  EXAMPLE_TYPE develop)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_diurnal_kry_f2003.f90 cv_diurnal_kry_f2003.out
-    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_diurnal/fortran)
-endif()
 
-sundials_add_executable(
+sundials_add_example(
   cv_diurnal_kry_bp_f2003
   cv_diurnal_kry_bp_f2003.f90
+  ADD_TEST
+  ANSWER_DIR
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE
+  cv_diurnal_kry_bp_f2003.out
+  EXAMPLE_TYPE
+  develop
+  INSTALL_FILES
+  cv_diurnal_kry_bp_f2003.out
   LINK_LIBRARIES
   ${CVODE_C_LIBS}
   sundials_fcvode_mod
@@ -52,13 +55,3 @@ sundials_add_executable(
   "Examples"
   Fortran_MODULE_DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_diurnal_kry_bp_f2003.dir)
-sundials_add_test(
-  cv_diurnal_kry_bp_f2003 cv_diurnal_kry_bp_f2003
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry_bp_f2003.out
-  EXAMPLE_TYPE develop)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_diurnal_kry_bp_f2003.f90 cv_diurnal_kry_bp_f2003.out
-    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_diurnal/fortran)
-endif()

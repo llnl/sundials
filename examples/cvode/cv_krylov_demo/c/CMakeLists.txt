@@ -12,22 +12,18 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
-sundials_add_executable(cv_krylov_demo_ls cv_krylov_demo_ls.c)
+sundials_add_example(
+  cv_krylov_demo_ls cv_krylov_demo_ls.c ADD_TEST
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_krylov_demo_ls.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_krylov_demo_ls.out cv_krylov_demo_ls_0_1.out
+                cv_krylov_demo_ls_1.out cv_krylov_demo_ls_2.out)
 set_target_properties(cv_krylov_demo_ls PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_krylov_demo_ls PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                             ${EXE_EXTRA_LINK_LIBS})
 
-sundials_add_test(
-  cv_krylov_demo_ls cv_krylov_demo_ls
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_krylov_demo_ls.out
-  EXAMPLE_TYPE develop)
 sundials_add_test(
   cv_krylov_demo_ls_1 cv_krylov_demo_ls
   TEST_ARGS 1
@@ -48,24 +44,13 @@ if(SUNDIALS_ENABLE_MONITORING)
     ANSWER_FILE cv_krylov_demo_ls_0_1.out
     EXAMPLE_TYPE develop)
 endif()
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_krylov_demo_ls.c cv_krylov_demo_ls.out cv_krylov_demo_ls_0_1.out
-          cv_krylov_demo_ls_1.out cv_krylov_demo_ls_2.out
-    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_krylov_demo/c)
-endif()
-
-sundials_add_executable(cv_krylov_demo_prec cv_krylov_demo_prec.c)
+sundials_add_example(
+  cv_krylov_demo_prec cv_krylov_demo_prec.c ADD_TEST
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_krylov_demo_prec.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_krylov_demo_prec.out)
 set_target_properties(cv_krylov_demo_prec PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_krylov_demo_prec PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                               ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cv_krylov_demo_prec cv_krylov_demo_prec
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_krylov_demo_prec.out
-  EXAMPLE_TYPE develop)
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(FILES cv_krylov_demo_prec.c cv_krylov_demo_prec.out
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_krylov_demo/c)
-endif()
