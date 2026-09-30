@@ -2799,7 +2799,7 @@ the original ODE :eq:`ARKODE_IVP_simple_explicit_with_parameters`. In the contex
 done with a one-step time integration scheme :math:`\varphi` so that
 
 .. math::
-   y_0 = y(t_0),\quad y_n = \varphi(y_{n-1}).
+   y_0 = y(t_0),\quad y_n = \varphi_n(y_{n-1},p), \quad n = 1, \ldots, N.
    :label: ARKODE_DISCRETE_ODE
 
 Reformulating the optimization problem for the discrete case, we have
@@ -2814,9 +2814,11 @@ rule backwards in time to obtain the discete adjoint variables :math:`\lambda_N,
 and :math:`\mu_N, \mu_{N-1}, \cdots, \mu_0`, where
 
 .. math::
-   \lambda_N &= g_y^*(t_N, y_N, p), \quad \lambda_n = \left(\frac{\partial \varphi}{\partial y_k}(y_n, p)\right)^* \lambda_{n+1} \\
-   \mu_N     &= g_p^*(t_N, y_N, p), \quad \mu_n     = \left(\frac{\partial \varphi}{\partial p}(y_n, p)\right)^* \lambda_{n+1},
-    \quad n = N - 1, \cdots, 0.
+   \lambda_N &= g_y(t_N, y_N, p)^*, \quad
+   \lambda_{n-1} = \left(\frac{\partial \varphi_n}{\partial y}(y_{n-1}, p)\right)^* \lambda_n, \\
+   \mu_N     &= g_p(t_N, y_N, p)^*, \quad
+   \mu_{n-1} = \mu_n + \left(\frac{\partial \varphi_n}{\partial p}(y_{n-1}, p)\right)^* \lambda_n,
+    \quad n = N, \cdots, 1.
    :label: ARKODE_DISCRETE_ADJOINT
 
 .. warning::
@@ -2831,20 +2833,96 @@ The discrete adjoint variables represent the gradients of the discrete cost func
    \frac{dg}{dy_0} = \lambda_0^* , \quad \frac{dg}{dp} = \mu_0^* + \lambda_0^* \left(\frac{\partial y_0}{\partial p} \right).
    :label: ARKODE_DISCRETE_ADJOINT_GRADIENTS
 
-
-Given an s-stage explicit Runge--Kutta method (as in :eq:`ARKODE_ERK`, but without the embedding), the discrete adjoint
-to compute :math:`\lambda_n` and :math:`\mu_n` starting from :math:`\lambda_{n+1}` and
-:math:`\mu_{n+1}` is given by
-
-.. math::
-   \Lambda_i &= h_n f_y^*(t_{n,i}, z_i, p) \left(b_i \lambda_{n+1} + \sum_{j=i+1}^s a_{j,i} \Lambda_j \right), \quad \quad i = s, \dots, 1,\\
-   \lambda_n &= \lambda_{n+1} + \sum_{j=1}^{s} \Lambda_j, \\
-   \nu_i     &= h_n f_p^*(t_{n,i}, z_i, p) \left(b_i \lambda_{n+1} + \sum_{j=i+1}^{s} a_{j,i} \Lambda_j \right), \\
-   \mu_n     &= \mu_{n+1} + \sum_{j=1}^{s} \nu_j.
-   :label: ARKODE_ERK_ADJOINT
-
 For more information on performing discrete adjoint sensitivity analysis using ARKODE see,
 :numref:`ARKODE.Usage.ASA`. For a detailed derivation of the discrete adjoint methods see
 :cite:p:`hager2000runge,sanduDiscrete2006`. See :numref:`SUNAdjoint.DiscreteContinuous` for a brief
 discussion about the differences between the contninuous and discrete adjoint methods, and why one
 would choose one over the other.
+
+.. _ARKODE.Mathematics.ASA.ERK:
+
+Discrete adjoint for explicit Runge--Kutta methods
+--------------------------------------------------
+
+Given an s-stage explicit Runge--Kutta method (as in :eq:`ARKODE_ERK`, but without the embedding), the discrete adjoint
+for the step from :math:`t_{n-1}` to :math:`t_n` computes :math:`\lambda_{n-1}`
+and :math:`\mu_{n-1}` starting from :math:`\lambda_n` and :math:`\mu_n` as
+
+.. math::
+   \Lambda_i &= h_n f_y(t_{n,i}, z_i, p)^* \left(b_i \lambda_n + \sum_{j=i+1}^s a_{j,i} \Lambda_j \right), \quad \quad i = s, \dots, 1,\\
+   \lambda_{n-1} &= \lambda_n + \sum_{j=1}^{s} \Lambda_j, \\
+   \nu_i     &= h_n f_p(t_{n,i}, z_i, p)^* \left(b_i \lambda_n + \sum_{j=i+1}^{s} a_{j,i} \Lambda_j \right), \\
+   \mu_{n-1} &= \mu_n + \sum_{j=1}^{s} \nu_j.
+   :label: ARKODE_ERK_ADJOINT
+
+.. _ARKODE.Mathematics.ASA.MRIGARK:
+
+Discrete adjoint for MRI-GARK methods
+-------------------------------------
+
+The discrete adjoint of an explicit MRI-GARK method reverses both the sequence
+of slow stages and the numerical integrations used to solve the fast stage
+IVPs. For the forward step from :math:`t_{n-1}` to :math:`t_n`, the stages
+satisfy :math:`z_1=y_{n-1}` and :math:`z_s=y_n`. For
+:math:`i=2,\ldots,s`, the :math:`i`-th fast forward IVP is
+
+.. math::
+   v_i(t^S_{n,i-1}) &= z_{i-1}, \\
+   v_i'(t) &= f^F(t, v_i(t), p) + \frac{1}{\Delta c^S_i} \sum_{j=1}^{i-1} \omega_{i,j}(\tau_i(t)) f^E(t_{n,j}^S, z_j, p), \\
+   z_{i} &= v_i(t^S_{n,i}).
+   :label: ARKODE_MRIGARK_ADJOINT_FORWARD_STAGE
+
+Here :math:`\tau_i(t)=(t-t^S_{n,i-1})/(h_n^S\Delta c_i^S)` is the normalized
+time for fast interval :math:`i`.
+
+When differentiating through an explicit MRI-GARK method and applying the chain
+rule, we need to compute derivatives of :math:`z_{i}` in
+:eq:`ARKODE_MRIGARK_ADJOINT_FORWARD_STAGE` with respect to :math:`p` and
+:math:`z_j` for :math:`j = 1, \dots, i-1`. By exploiting properties of linear
+dependence, this can be done by first solving the following IVPs:
+
+.. math::
+   \kappa_i(t^S_{n,i}) &= \Lambda_{i}, & \quad
+   \kappa_i'(t) &= f_y^{F}(t, v_i(t), p)^* \kappa_i(t), \\
+   \xi_i(t^S_{n,i}) &= \nu_{i}, & \quad
+   \xi_i'(t) &= f_p^{F}(t, v_i(t), p)^* \kappa_i(t), \\
+   \chi_{i,\ell}(t^S_{n,i}) &= 0, & \quad
+   \chi_{i,\ell}'(t) &= -\tau_i(t)^{\ell} \kappa_i(t),
+   \quad \ell = 0, \ldots, d, \quad i=2,\ldots,s.
+   :label: ARKODE_MRIGARK_ADJOINT_IVPS
+
+Define the accumulated forcing sensitivity associated with slow stage
+:math:`i=1,\ldots,s-1` by
+
+.. math::
+   G_i = \sum_{j=i+1}^{s} \frac{1}{\Delta c_j^S}
+      \sum_{\ell=0}^{d} \Omega_{j,i,\ell+1}
+      \chi_{j,\ell}(t^S_{n,j-1}).
+
+Each moment :math:`\chi_{j,\ell}` is evaluated at the beginning of its own fast
+interval. Then the reverse stage recursion and adjoint step are
+
+.. math::
+   \Lambda_s &= \lambda_{n}, \\
+   \nu_s &= \mu_{n}, \\
+   \Lambda_i &= \kappa_{i+1}(t^S_{n,i})
+      + f_y^{E}(t^S_{n,i}, z_i, p)^* G_i, \\
+   \nu_i &= \xi_{i+1}(t^S_{n,i})
+      + f_p^{E}(t^S_{n,i}, z_i, p)^* G_i,
+      \qquad i = s-1, \dots, 1, \\
+   \lambda_{n-1} &= \Lambda_1, \\
+   \mu_{n-1} &= \nu_1.
+
+Equation :eq:`ARKODE_MRIGARK_ADJOINT_IVPS` gives a continuous description of each
+inner adjoint problem. In practice, MRIStep applies the discrete adjoint of the
+selected inner integrator which needs Jacobians of the inner RHS with respect to
+state and parameters. To account for the extra :math:`\chi` variables, the
+Jacobian taken with respect to parameters is augmented as follows:
+
+.. math::
+   \begin{bmatrix}
+      I & \tau_i(t) I & \cdots & \tau_i(t)^d I & \frac{\partial f^F(t, y, p)}{\partial p}
+   \end{bmatrix}.
+
+The Jacobian taken with respect to state, :math:`\partial f^F/\partial y`, does
+not need to be augmented and can be used directly by the inner integrator.
