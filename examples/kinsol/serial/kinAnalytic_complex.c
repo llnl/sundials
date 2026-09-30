@@ -54,8 +54,12 @@
 /* precision specific formatting macros */
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
+#define ESYM "Le"
+#define FSYM "Lf"
 #else
 #define GSYM "g"
+#define ESYM "e"
+#define FSYM "f"
 #endif
 
 /* precision specific math function macros */
@@ -167,9 +171,9 @@ int main(int argc, char* argv[])
   printf("   -x^2   + 5y     - cos(z) - 2i = 0\n");
   printf("   -e^-x  - y      + 6z     - 3  = 0\n");
   printf("Analytic solution in each bin:\n");
-  printf("    x = %f  + %fI\n", SUN_CREAL(XTRUE), SUN_CIMAG(XTRUE));
-  printf("    y = %f  + %fI\n", SUN_CREAL(YTRUE), SUN_CIMAG(YTRUE));
-  printf("    z = %f  + %fI\n", SUN_CREAL(ZTRUE), SUN_CIMAG(ZTRUE));
+  printf("    x = %" FSYM "  + %" FSYM "I\n", SUN_CREAL(XTRUE), SUN_CIMAG(XTRUE));
+  printf("    y = %" FSYM "  + %" FSYM "I\n", SUN_CREAL(YTRUE), SUN_CIMAG(YTRUE));
+  printf("    z = %" FSYM "  + %" FSYM "I\n", SUN_CREAL(ZTRUE), SUN_CIMAG(ZTRUE));
   printf("Solution method: Newton\n");
   printf("    tolerance     = %" GSYM "\n", uopt->tol);
   printf("    max iters     = %ld\n", uopt->maxiter);
@@ -397,14 +401,14 @@ static int check_ans(N_Vector u, sunrealtype tol)
     if (j == 0)
     {
       printf("Computed solution (first cell):\n");
-      printf("    x = %f + %fI\n", SUN_CREAL(data[0]), SUN_CIMAG(data[0]));
-      printf("    y = %f + %fI\n", SUN_CREAL(data[1]), SUN_CIMAG(data[1]));
-      printf("    z = %f + %fI\n", SUN_CREAL(data[2]), SUN_CIMAG(data[2]));
+      printf("    x = %" FSYM " + %" FSYM "I\n", SUN_CREAL(data[0]), SUN_CIMAG(data[0]));
+      printf("    y = %" FSYM " + %" FSYM "I\n", SUN_CREAL(data[1]), SUN_CIMAG(data[1]));
+      printf("    z = %" FSYM " + %" FSYM "I\n", SUN_CREAL(data[2]), SUN_CIMAG(data[2]));
 
       printf("Solution error (first cell):\n");
-      printf("    ex = %e + %eI\n", exR, exI);
-      printf("    ey = %e + %eI\n", eyR, eyI);
-      printf("    ez = %e + %eI\n", ezR, ezI);
+      printf("    ex = %" ESYM " + %" ESYM "I\n", exR, exI);
+      printf("    ey = %" ESYM " + %" ESYM "I\n", eyR, eyI);
+      printf("    ez = %" ESYM " + %" ESYM "I\n", ezR, ezI);
     }
 
     tol *= TEN;

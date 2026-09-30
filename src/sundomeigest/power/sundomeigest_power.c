@@ -462,7 +462,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     /* Rayleigh quotient */
     SUNCheckCall(N_VDotProdComplex(V, Av, &newlambdaR));
 
-    *res      = SUNCabs(newlambdaR - oldlambdaR) / SUNCabs(newlambdaR);
+    *res      = SUNabs(newlambdaR - oldlambdaR) / SUNabs(newlambdaR);
     converged = (*res < rel_tol);
 
 #if defined(SUNDIALS_SCALAR_TYPE_REAL)
@@ -796,7 +796,7 @@ int dee_DQJtimes_Power(void* voidstarDEE, N_Vector v, N_Vector Jv)
   sunrealtype sq1norm = N_VL1Norm(v);
   sunrealtype sign    = (SUN_REAL(ydotv) >= RZERO) ? RONE : -RONE;
   sunrealtype sqrteps = SUNRsqrt(SUN_UNIT_ROUNDOFF);
-  sig = sign * sqrteps * SUNMAX(SUNCabs(ydotv), sq1norm) / vdotv;
+  sig = sign * sqrteps * SUNMAX(SUNabs(ydotv), sq1norm) / vdotv;
 
   for (iter = 0; iter < MAX_DQITERS; iter++)
   {

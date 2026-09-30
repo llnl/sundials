@@ -45,7 +45,7 @@ extern "C" {
  */
 
 #ifndef SUN_COMPLEX
-#define SUN_COMPLEX(real, imag) (real + imag * SUN_I)
+#define SUN_COMPLEX(real, imag) ((real) + (imag) * SUN_I)
 #endif
 
 /*
@@ -58,14 +58,14 @@ extern "C" {
  *         real_z = SUN_CREAL(z);
  *         imag_z = SUN_CIMAG(z);
  *         real_x = SUN_REAL(x);
- *         real_x = SUN_REAL(x);
+ *         imag_x = SUN_IMAG(x);
  * -----------------------------------------------------------------
- * SUNCREAL and SUNCIMAG return the real and imaginary components of
+ * SUN_CREAL and SUN_CIMAG return the real and imaginary components of
  *   their suncomplextype arguments, respectively.
- * If sunscalartype is complex, then SUNREAL and SUNIMAG just call
- *   SUNCREAL and SUNCIMAG.
- * If sunscalartype is real, then SUNREAL just returns its argument
- *   and SUNIMAG returns zero.
+ * If sunscalartype is complex, then SUN_REAL and SUN_IMAG just call
+ *   SUN_CREAL and SUN_CIMAG.
+ * If sunscalartype is real, then SUN_REAL just returns its argument
+ *   and SUN_IMAG returns zero.
  * -----------------------------------------------------------------
  */
 
@@ -182,15 +182,15 @@ extern "C" {
  *
  * SUNRsqrt calls the appropriate version of sqrt (real numbers)
  * SUNCsqrt calls the appropriate version of csqrt
- * SUNsqrt uses whichever of the above is mapped to sunrealtype
+ * SUNsqrt uses whichever of the above is mapped to sunscalartype
  *
  * SUNRabs calls the appropriate version of abs (real numbers)
  * SUNCabs calls the appropriate version of cabs
- * SUNabs uses whichever of the above is mapped to sunrealtype
+ * SUNabs uses whichever of the above is mapped to sunscalartype
  *
  * SUNRexp calls the appropriate version of exp (real numbers)
  * SUNCexp calls the appropriate version of cexp
- * SUNexp uses whichever of the above is mapped to sunrealtype
+ * SUNexp uses whichever of the above is mapped to sunscalartype
  *
  * SUNRceil calls the appropriate version of ceil (real numbers)
  *
@@ -472,10 +472,12 @@ extern "C" {
  * SUNRsamesign(x, y) returns true if x and y share the same sign,
  * false otherwise
  * -----------------------------------------------------------------
+ * !! is used to convert the result of signbit to a boolean value (0 or 1),
+ * instead of 0 vs nonzero.
  */
 
 #ifndef SUNRsamesign
-#define SUNRsamesign(x, y) (signbit((x)) == signbit((y)))
+#define SUNRsamesign(x, y) (!!signbit((x)) == !!signbit((y)))
 #endif
 
 /*
@@ -485,7 +487,7 @@ extern "C" {
  * Usage : sunrealtype z;
  *         z = SUNRdifferentsign(x, y);
  * -----------------------------------------------------------------
- * SUNRdifferentsign(x) returns true if x and y have different
+ * SUNRdifferentsign(x, y) returns true if x and y have different
  * signs, false otherwise
  * -----------------------------------------------------------------
  */
@@ -501,7 +503,8 @@ extern "C" {
  * Usage : sunrealtype round_x;
  *         round_x = SUNRround(x);
  * -----------------------------------------------------------------
- * SUNRround(x) returns the smallest integer value not less than x.
+ * SUNRround(x) returns the nearest integer value in floating-point
+ * format, rounding halfway cases away from zero.
  * -----------------------------------------------------------------
  */
 
@@ -554,7 +557,7 @@ SUNDIALS_EXPORT sunrealtype SUNRpowerI(sunrealtype base, int exponent);
  * Usage : sunrealtype rbase, rexponent, rans;
  *         rans = SUNRpowerR(rbase,rexponent);
  *         suncomplextype cbase, cexponent, cans;
- *         cans = SUNRpowerR(cbase,cexponent);
+ *         cans = SUNCpowerC(cbase,cexponent);
  *         sunscalartype base, exponent, ans;
  *         ans = SUNpower(base,exponent);
  * -----------------------------------------------------------------
@@ -641,14 +644,14 @@ SUNDIALS_EXPORT sunbooleantype SUNCCompare(suncomplextype a, suncomplextype b);
 
 /*
  * -----------------------------------------------------------------
- * Function : SUNRCompareTol, SUNCompareTol, SUNCompareTol
+ * Function : SUNRCompareTol, SUNCCompareTol, SUNCompareTol
  * -----------------------------------------------------------------
  * Usage : int isNotEqual;
  *         sunrealtype tol;
  *         sunrealtype ra, rb;
  *         isNotEqual = SUNRCompareTol(ra, rb, tol);
  *         suncomplextype ca, cb;
- *         isNotEqual = SUNRCompareTol(ca, cb, tol);
+ *         isNotEqual = SUNCCompareTol(ca, cb, tol);
  *         sunscalartype a, b;
  *         isNotEqual = SUNCompareTol(a, b, tol);
  * -----------------------------------------------------------------

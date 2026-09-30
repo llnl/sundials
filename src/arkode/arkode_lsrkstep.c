@@ -3447,8 +3447,8 @@ int lsrkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
       /* allocate reusable arrays for fused vector operations */
       step_mem->nfusedopvecs = nvecs + 1;
 
-      step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
-                                             sizeof(sunrealtype));
+      step_mem->cvals = (sunscalartype*)calloc(step_mem->nfusedopvecs,
+                                             sizeof(sunscalartype));
       if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
       step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
                                           sizeof(N_Vector));

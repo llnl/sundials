@@ -475,9 +475,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
 
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
-      res        = SUNCabs(new_lambda - old_lambda);
+      res        = SUNabs(new_lambda - old_lambda);
       old_lambda = new_lambda;
-      if (res <= Arnoldi_CONTENT(DEE)->tol_warmup * SUNCabs(new_lambda))
+      if (res <= Arnoldi_CONTENT(DEE)->tol_warmup * SUNabs(new_lambda))
       {
         break;
       }
@@ -841,7 +841,7 @@ int dee_DQJtimes_Arnoldi(void* voidstarDEE, N_Vector v, N_Vector Jv)
   sunrealtype sq1norm = N_VL1Norm(v);
   sunrealtype sign    = (SUN_REAL(ydotv) >= RZERO) ? RONE : -RONE;
   sunrealtype sqrteps = SUNRsqrt(SUN_UNIT_ROUNDOFF);
-  sig = sign * sqrteps * SUNMAX(SUNCabs(ydotv), sq1norm) / vdotv;
+  sig = sign * sqrteps * SUNMAX(SUNabs(ydotv), sq1norm) / vdotv;
 
   for (iter = 0; iter < MAX_DQITERS; iter++)
   {

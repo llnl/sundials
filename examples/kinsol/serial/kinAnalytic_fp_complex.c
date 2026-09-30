@@ -40,8 +40,12 @@
 /* precision specific formatting macros */
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
+#define ESYM "Le"
+#define FSYM "Lf"
 #else
 #define GSYM "g"
+#define ESYM "e"
+#define FSYM "f"
 #endif
 
 /* precision specific math function macros */
@@ -102,11 +106,11 @@ typedef struct
 static int FPFunction(N_Vector u, N_Vector f, void* user_data);
 
 static int DampingFn(long int iter, N_Vector u_val, N_Vector g_val,
-                     sunrealtype* qt_fn, long int depth, void* user_data,
+                     sunscalartype* qt_fn, long int depth, void* user_data,
                      sunrealtype* damping_factor);
 
 static int DepthFn(long int iter, N_Vector u_val, N_Vector g_val,
-                   N_Vector f_val, N_Vector* df, sunrealtype* R_mat,
+                   N_Vector f_val, N_Vector* df, sunscalartype* R_mat,
                    long int depth, void* user_data, long int* new_depth,
                    sunbooleantype* remove_index);
 
@@ -160,9 +164,9 @@ int main(int argc, char* argv[])
   printf("   -x^2   + 5y     - cos(z) - 2i = 0\n");
   printf("   -e^-x  - y      + 6z     - 3  = 0\n");
   printf("Analytic solution:\n");
-  printf("    x = %f  + %fI\n", SUN_CREAL(XTRUE), SUN_CIMAG(XTRUE));
-  printf("    y = %f  + %fI\n", SUN_CREAL(YTRUE), SUN_CIMAG(YTRUE));
-  printf("    z = %f  + %fI\n", SUN_CREAL(ZTRUE), SUN_CIMAG(ZTRUE));
+  printf("    x = %" FSYM "  + %" FSYM "I\n", SUN_CREAL(XTRUE), SUN_CIMAG(XTRUE));
+  printf("    y = %" FSYM "  + %" FSYM "I\n", SUN_CREAL(YTRUE), SUN_CIMAG(YTRUE));
+  printf("    z = %" FSYM "  + %" FSYM "I\n", SUN_CREAL(ZTRUE), SUN_CIMAG(ZTRUE));
   printf("Solution method: Anderson accelerated fixed point iteration.\n");
   printf("    tolerance    = %" GSYM "\n", uopt->tol);
   printf("    max iters    = %ld\n", uopt->maxiter);
@@ -359,7 +363,7 @@ int FPFunction(N_Vector u, N_Vector g, void* user_data)
 }
 
 static int DampingFn(long int iter, N_Vector u_val, N_Vector g_val,
-                     sunrealtype* qt_fn, long int depth, void* user_data,
+                     sunscalartype* qt_fn, long int depth, void* user_data,
                      sunrealtype* damping_factor)
 {
   if (depth == 0) { *damping_factor = 0.5; }
@@ -390,7 +394,7 @@ static int DampingFn(long int iter, N_Vector u_val, N_Vector g_val,
 }
 
 static int DepthFn(long int iter, N_Vector u_val, N_Vector g_val,
-                   N_Vector f_val, N_Vector* df, sunrealtype* R_mat,
+                   N_Vector f_val, N_Vector* df, sunscalartype* R_mat,
                    long int depth, void* user_data, long int* new_depth,
                    sunbooleantype* remove_index)
 {
@@ -414,9 +418,9 @@ static int check_ans(N_Vector u, sunrealtype tol)
 
   /* print the solution */
   printf("Computed solution:\n");
-  printf("    x = %f + %fI\n", SUN_CREAL(data[0]), SUN_CIMAG(data[0]));
-  printf("    y = %f + %fI\n", SUN_CREAL(data[1]), SUN_CIMAG(data[1]));
-  printf("    z = %f + %fI\n", SUN_CREAL(data[2]), SUN_CIMAG(data[2]));
+  printf("    x = %" FSYM " + %" FSYM "I\n", SUN_CREAL(data[0]), SUN_CIMAG(data[0]));
+  printf("    y = %" FSYM " + %" FSYM "I\n", SUN_CREAL(data[1]), SUN_CIMAG(data[1]));
+  printf("    z = %" FSYM " + %" FSYM "I\n", SUN_CREAL(data[2]), SUN_CIMAG(data[2]));
 
   /* solution error */
   exR = ABS(SUN_CREAL(data[0]) - SUN_CREAL(XTRUE));
@@ -429,9 +433,9 @@ static int check_ans(N_Vector u, sunrealtype tol)
 
   /* print the solution error */
   printf("Solution error:\n");
-  printf("    ex = %e + %eI\n", exR, exI);
-  printf("    ey = %e + %eI\n", eyR, eyI);
-  printf("    ez = %e + %eI\n", ezR, ezI);
+  printf("    ex = %" ESYM " + %" ESYM "I\n", exR, exI);
+  printf("    ey = %" ESYM " + %" ESYM "I\n", eyR, eyI);
+  printf("    ez = %" ESYM " + %" ESYM "I\n", ezR, ezI);
 
   tol *= TEN;
   if (exR > tol || eyR > tol || ezR > tol || exI > tol || eyI > tol || ezI > tol)

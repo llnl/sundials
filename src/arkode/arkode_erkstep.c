@@ -1053,7 +1053,7 @@ int erkStep_TakeStep_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagP
 
   /* local shortcuts for readability */
   SUNAdjointStepper adj_stepper = (SUNAdjointStepper)ark_mem->user_data;
-  sunrealtype* cvals            = step_mem->cvals;
+  sunscalartype* cvals          = step_mem->cvals;
   N_Vector* Xvecs               = step_mem->Xvecs;
   N_Vector sens_np1             = ark_mem->yn;
   N_Vector sens_n               = ark_mem->ycur;
