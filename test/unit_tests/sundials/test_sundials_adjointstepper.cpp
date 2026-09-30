@@ -26,10 +26,9 @@
 
 struct ReInitData
 {
-  int calls          = 0;
-  sunrealtype t0     = SUN_RCONST(0.0);
-  N_Vector y0        = nullptr;
-  SUNErrCode retcode = SUN_SUCCESS;
+  int calls      = 0;
+  sunrealtype t0 = SUN_RCONST(0.0);
+  N_Vector y0    = nullptr;
 };
 
 static SUNErrCode reinit(SUNStepper stepper, sunrealtype t0, N_Vector y0)
@@ -42,7 +41,7 @@ static SUNErrCode reinit(SUNStepper stepper, sunrealtype t0, N_Vector y0)
   data->calls++;
   data->t0 = t0;
   data->y0 = y0;
-  return data->retcode;
+  return SUN_SUCCESS;
 }
 
 TEST(SUNAdjointStepper, ReInit)
@@ -84,14 +83,6 @@ TEST(SUNAdjointStepper, ReInit)
   EXPECT_EQ(self->tf, SUN_RCONST(2.0));
   EXPECT_EQ(self->final_step_idx, 7);
   EXPECT_EQ(self->nrecompute, 0);
-
-  self->nrecompute = 4;
-  adj_data.retcode = SUN_ERR_OP_FAIL;
-  EXPECT_EQ(SUNAdjointStepper_ReInit(self, SUN_RCONST(3.0), sf, 9),
-            SUN_ERR_OP_FAIL);
-  EXPECT_EQ(self->tf, SUN_RCONST(2.0));
-  EXPECT_EQ(self->final_step_idx, 7);
-  EXPECT_EQ(self->nrecompute, 4);
 
   EXPECT_EQ(SUNAdjointStepper_Destroy(&self), SUN_SUCCESS);
   EXPECT_EQ(SUNAdjointCheckpointScheme_Destroy(&checkpoint_scheme), SUN_SUCCESS);

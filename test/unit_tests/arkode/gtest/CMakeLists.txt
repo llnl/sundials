@@ -50,3 +50,32 @@ target_link_libraries(test_arkode_error_handling PRIVATE GTest::gtest_main
                                                          GTest::gmock)
 
 gtest_discover_tests(test_arkode_error_handling)
+
+sundials_add_executable(test_arkode_mristep_adjoint
+                        test_arkode_mristep_adjoint.cpp)
+target_include_directories(
+  test_arkode_mristep_adjoint
+  PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+          ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src
+          ${CMAKE_SOURCE_DIR}/test/unit_tests)
+target_link_libraries(
+  test_arkode_mristep_adjoint
+  PRIVATE $<TARGET_OBJECTS:sundials_arkode_obj>
+          sundials_sunmemsys_obj
+          sundials_nvecserial_obj
+          sundials_nvecmanyvector_obj
+          sundials_sunlinsolband_obj
+          sundials_sunlinsoldense_obj
+          sundials_sunlinsolspgmr_obj
+          $<TARGET_OBJECTS:sundials_sunnonlinsolauto_obj>
+          sundials_sunnonlinsolnewton_obj
+          sundials_sunnonlinsolfixedpoint_obj
+          sundials_sunadaptcontrollerimexgus_obj
+          sundials_sunadaptcontrollersoderlind_obj
+          sundials_sunadaptcontrollermrihtol_obj
+          sundials_adjointcheckpointscheme_fixed_obj
+          GTest::gtest_main
+          GTest::gmock
+          ${EXE_EXTRA_LINK_LIBS})
+add_dependencies(test_arkode_mristep_adjoint sundials_arkode_obj)
+gtest_discover_tests(test_arkode_mristep_adjoint)
