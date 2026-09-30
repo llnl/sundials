@@ -16,10 +16,4 @@ sundials_add_example(
   cv_petsc_ex7 cv_petsc_ex7.c
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecpetsc
                  sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS}
-  PROPERTIES FOLDER "Examples"
-  ADD_TEST
-  MPI_NPROCS 1
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_petsc_ex7.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_petsc_ex7.out)
+  MPI_NPROCS 1)

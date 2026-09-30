@@ -14,22 +14,14 @@
 # -----------------------------------------------------------------
 foreach(example cv_roberts_dns cv_roberts_dns_constraints cv_roberts_dns_negsol
                 cv_roberts_dns_uw)
+  set(example_options)
   if(example STREQUAL "cv_roberts_dns_negsol")
-    set(example_type exclude-single)
-  else()
-    set(example_type develop)
+    list(APPEND example_options EXAMPLE_TYPE exclude-single)
   endif()
-  set(install_files ${example}.out)
   if(example STREQUAL "cv_roberts_dns")
-    list(APPEND install_files cv_roberts_dns_stats.csv)
+    list(APPEND example_options INSTALL_FILES cv_roberts_dns_stats.csv)
   endif()
-  sundials_add_example(
-    ${example} ${example}.c ADD_TEST
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ${example}.out
-    EXAMPLE_TYPE ${example_type}
-    INSTALL_FILES ${install_files})
-  set_target_properties(${example} PROPERTIES FOLDER "Examples")
+  sundials_add_example(${example} ${example}.c ${example_options})
   target_link_libraries(${example} PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                                            ${EXE_EXTRA_LINK_LIBS})
 endforeach()

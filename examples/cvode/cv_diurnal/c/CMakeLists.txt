@@ -12,24 +12,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(
-  cv_diurnal_kry cv_diurnal_kry.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_diurnal_kry.out)
-set_target_properties(cv_diurnal_kry PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_diurnal_kry cv_diurnal_kry.c)
 target_link_libraries(
   cv_diurnal_kry PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                          ${EXE_EXTRA_LINK_LIBS})
 
-sundials_add_example(
-  cv_diurnal_kry_bp cv_diurnal_kry_bp.c ADD_TEST
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_diurnal_kry_bp.out
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cv_diurnal_kry_bp.out)
-set_target_properties(cv_diurnal_kry_bp PROPERTIES FOLDER "Examples")
+sundials_add_example(cv_diurnal_kry_bp cv_diurnal_kry_bp.c)
 target_link_libraries(
   cv_diurnal_kry_bp PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                             ${EXE_EXTRA_LINK_LIBS})

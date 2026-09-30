@@ -16,14 +16,9 @@ foreach(example cv_diag_kry_bbd_f2003 cv_diag_kry_f2003 cv_diag_non_p_f2003)
   set(CMAKE_Fortran_MODULE_DIRECTORY
       ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
   sundials_add_example(
-    ${example} ${example}.f90 ADD_TEST
+    ${example} ${example}.f90
     MPI_NPROCS 4
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ${example}.out
-    EXAMPLE_TYPE develop
-    FLOAT_PRECISION 2
-    INSTALL_FILES ${example}.out)
-  set_target_properties(${example} PROPERTIES FOLDER "Examples")
+    FLOAT_PRECISION 2)
   target_link_libraries(
     ${example}
     MPI::MPI_Fortran

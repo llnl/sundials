@@ -66,14 +66,25 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
       FILES ${_example_dir}/CMakeLists.txt
       DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}
       RENAME cvode-example.cmake)
+    set(_example_project_file
+        ${CMAKE_CURRENT_BINARY_DIR}/${_example_rel_dir}/CMakeLists.txt)
+    file(
+      GENERATE
+      OUTPUT ${_example_project_file}
+      CONTENT
+        [=[cmake_minimum_required(VERSION 3.18)
+project(cvode_example LANGUAGES NONE)
+include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
+]=])
     install(
-      FILES SundialsCVODEExample.cmake
+      FILES ${_example_project_file}
       DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}
       RENAME CMakeLists.txt)
   endforeach()
   install(
     FILES ${PROJECT_SOURCE_DIR}/cmake/macros/SundialsAddExample.cmake
           ${PROJECT_SOURCE_DIR}/cmake/macros/SundialsAddExamplesGinkgo.cmake
+          SundialsCVODEExample.cmake
     DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode)
 
   sundials_add_test_install(cvode cv_adv_diff/c EXECUTABLE cv_adv_diff_bnd)
