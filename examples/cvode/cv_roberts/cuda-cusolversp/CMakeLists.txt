@@ -12,15 +12,16 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 set_source_files_properties(cv_roberts_block_cusolversp_batchqr.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-sundials_add_executable(cv_roberts_block_cusolversp_batchqr
-                        cv_roberts_block_cusolversp_batchqr.cu)
+sundials_add_example(
+  cv_roberts_block_cusolversp_batchqr cv_roberts_block_cusolversp_batchqr.cu
+  ADD_TEST
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_roberts_block_cusolversp_batchqr.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_roberts_block_cusolversp_batchqr.cu
+                cv_roberts_block_cusolversp_batchqr.out)
 set_target_properties(cv_roberts_block_cusolversp_batchqr PROPERTIES FOLDER
                                                                      "Examples")
 target_link_libraries(
@@ -30,18 +31,4 @@ target_link_libraries(
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(cv_roberts_block_cusolversp_batchqr
                         PRIVATE sundials_cvode_fused_cuda)
-endif()
-
-sundials_add_test(
-  cv_roberts_block_cusolversp_batchqr cv_roberts_block_cusolversp_batchqr
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_block_cusolversp_batchqr.out
-  EXAMPLE_TYPE develop)
-
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_roberts_block_cusolversp_batchqr.cu
-          cv_roberts_block_cusolversp_batchqr.out
-    DESTINATION
-      ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_roberts/cuda-cusolversp)
 endif()

@@ -12,27 +12,16 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 # CVODE parallel C++ heat equation example
-sundials_add_executable(cv_heat_2d_p cv_heat_2d_p.cpp)
-set_target_properties(cv_heat_2d_p PROPERTIES FOLDER "Examples")
-target_link_libraries(
-  cv_heat_2d_p PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
-                       ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cv_heat_2d_p_--np_2_2 cv_heat_2d_p
+sundials_add_example(
+  cv_heat_2d_p cv_heat_2d_p.cpp ADD_TEST
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   ANSWER_FILE cv_heat_2d_p_--np_2_2.out
-  EXAMPLE_TYPE develop)
-
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_heat_2d_p.cpp cv_heat_2d_p_--np_2_2.out plot_heat_2d_p.py
-    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_heat_2d/cpp-mpi)
-endif()
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_heat_2d_p.cpp cv_heat_2d_p_--np_2_2.out plot_heat_2d_p.py)
+set_target_properties(cv_heat_2d_p PROPERTIES FOLDER "Examples")
+target_link_libraries(
+  cv_heat_2d_p PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
+                       ${EXE_EXTRA_LINK_LIBS})

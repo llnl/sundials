@@ -12,17 +12,20 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-# Standalone setup shared by installed CVODE example variants.
+# Standalone CMake project shared by installed CVODE example variants.
 # -----------------------------------------------------------------
 
-if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  set_property(GLOBAL APPEND PROPERTY SUNDIALS_CVODE_EXAMPLE_DIRECTORIES
-                                      ${CMAKE_CURRENT_SOURCE_DIR})
-  return()
-endif()
+cmake_minimum_required(VERSION 3.18)
+project(cvode_example LANGUAGES NONE)
 
-file(GLOB _cvode_example_sources CONFIGURE_DEPENDS "*.c" "*.cpp" "*.cu"
-     "*.f90")
+file(
+  GLOB
+  _cvode_example_sources
+  CONFIGURE_DEPENDS
+  "*.c"
+  "*.cpp"
+  "*.cu"
+  "*.f90")
 foreach(_source IN LISTS _cvode_example_sources)
   if(_source MATCHES "\\.cu$")
     enable_language(CUDA)
@@ -42,10 +45,10 @@ find_package(SUNDIALS REQUIRED)
 if(SUNDIALS_ENABLE_HIP)
   find_package(HIP REQUIRED)
 endif()
-if((CMAKE_CURRENT_SOURCE_DIR MATCHES "/cpp-magma$"
-    AND SUNDIALS_MAGMA_BACKENDS MATCHES "CUDA")
-   OR (CMAKE_CURRENT_SOURCE_DIR MATCHES "/cpp-raja$"
-       AND SUNDIALS_RAJA_BACKENDS MATCHES "CUDA")
+if((CMAKE_CURRENT_SOURCE_DIR MATCHES "/cpp-magma$" AND SUNDIALS_MAGMA_BACKENDS
+                                                       MATCHES "CUDA")
+   OR (CMAKE_CURRENT_SOURCE_DIR MATCHES "/cpp-raja$" AND SUNDIALS_RAJA_BACKENDS
+                                                         MATCHES "CUDA")
    OR (CMAKE_CURRENT_SOURCE_DIR MATCHES "/cpp-ginkgo$"
        AND SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA"))
   enable_language(CUDA)
@@ -103,9 +106,12 @@ function(sundials_add_test name executable)
   endif()
 endfunction()
 
+include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsAddExample.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsAddExamplesGinkgo.cmake)
+
 # The build tree and installed package use unnamespaced and namespaced target
-# names, respectively. Provide the former locally so the same example files
-# work in both contexts.
+# names, respectively. Provide the former locally so the same example files work
+# in both contexts.
 set(_cvode_targets
     cvode
     cvode_fused_stubs
@@ -149,3 +155,5 @@ set(CVODE_C_LIBS sundials_cvode)
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   list(APPEND CVODE_C_LIBS sundials_cvode_fused_stubs)
 endif()
+
+include(cvode-example.cmake)

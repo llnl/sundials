@@ -12,20 +12,10 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 # CVODE Ginkgo KPR example
 set(cpu_examples "cv_kpr_ginkgo.cpp\;\;develop")
 sundials_add_examples_ginkgo(
   cpu_examples
   TARGETS sundials_cvode
-  BACKENDS REF OMP)
-
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  file(GLOB example_out cv_kpr_ginkgo*.out)
-  install(FILES cv_kpr_ginkgo.cpp cv_kpr_ginkgo.hpp ${example_out}
-          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_kpr/cpp-ginkgo)
-endif()
+  BACKENDS REF OMP
+  INSTALL_FILES cv_kpr_ginkgo.hpp)

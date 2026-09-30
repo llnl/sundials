@@ -12,15 +12,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 set_source_files_properties(cv_adv_diff_kry_cuda_managed.cu
                             PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-sundials_add_executable(cv_adv_diff_kry_cuda_managed
-                        cv_adv_diff_kry_cuda_managed.cu)
+sundials_add_example(
+  cv_adv_diff_kry_cuda_managed cv_adv_diff_kry_cuda_managed.cu ADD_TEST
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_adv_diff_kry_cuda_managed.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES cv_adv_diff_kry_cuda_managed.cu
+                cv_adv_diff_kry_cuda_managed.out)
 set_target_properties(cv_adv_diff_kry_cuda_managed PROPERTIES FOLDER "Examples")
 target_link_libraries(
   cv_adv_diff_kry_cuda_managed PRIVATE sundials_cvode sundials_nveccuda
@@ -28,17 +28,4 @@ target_link_libraries(
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(cv_adv_diff_kry_cuda_managed
                         PRIVATE sundials_cvode_fused_cuda)
-endif()
-
-sundials_add_test(
-  cv_adv_diff_kry_cuda_managed cv_adv_diff_kry_cuda_managed
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_adv_diff_kry_cuda_managed.out
-  EXAMPLE_TYPE develop)
-
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_adv_diff_kry_cuda_managed.cu cv_adv_diff_kry_cuda_managed.out
-    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_adv_diff/cuda-managed
-  )
 endif()

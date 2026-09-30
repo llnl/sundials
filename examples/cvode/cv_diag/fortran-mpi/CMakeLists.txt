@@ -12,15 +12,17 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.18)
-  project(cvode_example LANGUAGES NONE)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
 foreach(example cv_diag_kry_bbd_f2003 cv_diag_kry_f2003 cv_diag_non_p_f2003)
   set(CMAKE_Fortran_MODULE_DIRECTORY
       ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
-  sundials_add_executable(${example} ${example}.f90)
+  sundials_add_example(
+    ${example} ${example}.f90 ADD_TEST
+    MPI_NPROCS 4
+    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+    ANSWER_FILE ${example}.out
+    EXAMPLE_TYPE develop
+    FLOAT_PRECISION 2
+    INSTALL_FILES ${example}.out)
   set_target_properties(${example} PROPERTIES FOLDER "Examples")
   target_link_libraries(
     ${example}
@@ -30,18 +32,4 @@ foreach(example cv_diag_kry_bbd_f2003 cv_diag_kry_f2003 cv_diag_non_p_f2003)
     sundials_nvecparallel
     sundials_fnvecparallel_mod
     ${EXE_EXTRA_LINK_LIBS})
-  sundials_add_test(
-    ${example} ${example}
-    MPI_NPROCS 4
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ${example}.out
-    EXAMPLE_TYPE develop
-    FLOAT_PRECISION 2)
 endforeach()
-if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  install(
-    FILES cv_diag_kry_bbd_f2003.f90 cv_diag_kry_bbd_f2003.out
-          cv_diag_kry_f2003.f90 cv_diag_kry_f2003.out cv_diag_non_p_f2003.f90
-          cv_diag_non_p_f2003.out
-    DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/cv_diag/fortran-mpi)
-endif()
