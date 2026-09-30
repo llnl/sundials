@@ -126,6 +126,8 @@ modules:
     # we do custom handling of Create routines
     - "^MRIStepCreate$"
     - "^MRIStepCreateExtSTS$"
+    - "^MRIStepCreateAdjointStepper$"
+    - "^MRIStepInnerAdjointProblem_.*$"
     # reinit also requires custom handling due to function pointers
     - "^MRIStepReInit$"
     - "^MRIStepReInitExtSTS$"

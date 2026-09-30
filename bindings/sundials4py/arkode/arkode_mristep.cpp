@@ -65,6 +65,8 @@ void bind_arkode_mristep(nb::module_& m)
 {
 #include "arkode_mristep_generated.hpp"
 
+  nb::class_<MRIStepInnerAdjointProblem_>(m, "MRIStepInnerAdjointProblem_");
+
   /////////////////////////////////////////////////////////////////////////////
   // Manual attributes to capture static const int declarations that nanobind
   // does not catch
@@ -114,6 +116,94 @@ void bind_arkode_mristep(nb::module_& m)
   /////////////////////////////////////////////////////////////////////////////
   // MRIStep user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
+
+  m.def(
+    "MRIStepInnerAdjointProblem_Create",
+    [](void* arkode_mem, std::function<std::remove_pointer_t<SUNAdjRhsFn>> adj_f,
+       N_Vector sf) -> std::tuple<int, std::shared_ptr<MRIStepInnerAdjointProblem_>>
+    {
+      if (!adj_f) { throw sundials4py::illegal_value("adj_f was null"); }
+
+      auto fn_table           = get_arkode_fn_table(arkode_mem);
+      fn_table->mristep_adjff = nb::cast(adj_f);
+
+      MRIStepInnerAdjointProblem problem = nullptr;
+      int status = MRIStepInnerAdjointProblem_Create(arkode_mem,
+                                                     mristep_adjff_wrapper, sf,
+                                                     arkode_mem, &problem);
+
+      std::shared_ptr<MRIStepInnerAdjointProblem_> problem_ptr;
+      if (status == ARK_SUCCESS)
+      {
+        problem_ptr = our_make_shared<MRIStepInnerAdjointProblem_,
+                                      MRIStepInnerAdjointProblemDeleter>(problem);
+      }
+      return std::make_tuple(status, problem_ptr);
+    },
+    nb::arg("arkode_mem"), nb::arg("adj_f").none(), nb::arg("sf"));
+
+  m.def(
+    "MRIStepInnerAdjointProblem_GetAdjRhsFn",
+    [](std::shared_ptr<MRIStepInnerAdjointProblem_> problem)
+      -> std::tuple<int, std::function<std::remove_pointer_t<SUNAdjRhsFn>>>
+    {
+      SUNAdjRhsFn adj_f = nullptr;
+      void* user_data   = nullptr;
+      int status = MRIStepInnerAdjointProblem_GetAdjRhsFn(problem.get(), &adj_f);
+      if (status == ARK_SUCCESS)
+      {
+        status = MRIStepInnerAdjointProblem_GetUserData(problem.get(),
+                                                        &user_data);
+      }
+
+      std::function<std::remove_pointer_t<SUNAdjRhsFn>> fn;
+      if (status == ARK_SUCCESS)
+      {
+        fn = [problem, adj_f, user_data](sunrealtype t, N_Vector y,
+                                         N_Vector sens, N_Vector sens_dot, void*)
+        { return adj_f(t, y, sens, sens_dot, user_data); };
+      }
+      return std::make_tuple(status, fn);
+    },
+    nb::arg("problem"));
+
+  m.def(
+    "MRIStepInnerAdjointProblem_GetTerminalState",
+    [](MRIStepInnerAdjointProblem problem) -> std::tuple<int, N_Vector>
+    {
+      N_Vector sf = nullptr;
+      int status  = MRIStepInnerAdjointProblem_GetTerminalState(problem, &sf);
+      return std::make_tuple(status, sf);
+    },
+    nb::arg("problem"), nb::rv_policy::reference);
+
+  m.def(
+    "MRIStepCreateAdjointStepper",
+    [](void* arkode_mem, SUNAdjointStepper inner_stepper,
+       std::function<std::remove_pointer_t<SUNAdjRhsFn>> adj_fse,
+       std::function<std::remove_pointer_t<SUNAdjRhsFn>> adj_fsi,
+       MRIStepInnerAdjointProblem inner_problem, sunrealtype tf, N_Vector sf,
+       SUNContext sunctx) -> std::tuple<int, SUNAdjointStepper>
+    {
+      auto fse_wrapper = adj_fse ? mristep_adjfse_wrapper : nullptr;
+      auto fsi_wrapper = adj_fsi ? mristep_adjfsi_wrapper : nullptr;
+
+      SUNAdjointStepper adj_stepper = nullptr;
+      int status = MRIStepCreateAdjointStepper(arkode_mem, inner_stepper,
+                                               fse_wrapper, fsi_wrapper,
+                                               inner_problem, tf, sf, sunctx,
+                                               &adj_stepper);
+      if (status == ARK_SUCCESS)
+      {
+        auto fn_table            = get_arkode_fn_table(arkode_mem);
+        fn_table->mristep_adjfse = nb::cast(adj_fse);
+        fn_table->mristep_adjfsi = nb::cast(adj_fsi);
+      }
+      return std::make_tuple(status, adj_stepper);
+    },
+    nb::arg("arkode_mem"), nb::arg("inner_stepper"), nb::arg("adj_fse").none(),
+    nb::arg("adj_fsi").none(), nb::arg("inner_problem"), nb::arg("tf"),
+    nb::arg("sf"), nb::arg("sunctx"));
 
   m.def(
     "MRIStepCreate",
