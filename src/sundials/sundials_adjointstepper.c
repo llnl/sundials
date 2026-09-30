@@ -122,10 +122,14 @@ SUNErrCode SUNAdjointStepper_RecomputeFwd(SUNAdjointStepper self,
 
 SUNErrCode SUNAdjointStepper_Destroy(SUNAdjointStepper* self_ptr)
 {
+  if (self_ptr == NULL) { return SUN_SUCCESS; }
   SUNAdjointStepper self = *self_ptr;
-  if (self->own_fwd_sunstepper) { SUNStepper_Destroy(&self->fwd_sunstepper); }
-  if (self->own_adj_sunstepper) { SUNStepper_Destroy(&self->adj_sunstepper); }
-  free(self);
+  if (self != NULL)
+  {
+    if (self->own_fwd_sunstepper) { SUNStepper_Destroy(&self->fwd_sunstepper); }
+    if (self->own_adj_sunstepper) { SUNStepper_Destroy(&self->adj_sunstepper); }
+    free(self);
+  }
   *self_ptr = NULL;
   return SUN_SUCCESS;
 }

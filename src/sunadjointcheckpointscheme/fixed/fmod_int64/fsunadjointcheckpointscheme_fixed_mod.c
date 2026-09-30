@@ -299,10 +299,10 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_LoadVector_Fixed(void *farg1, l
 
 SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_Destroy_Fixed(void *farg1) {
   int fresult ;
-  SUNAdjointCheckpointScheme *arg1 = (SUNAdjointCheckpointScheme *) 0 ;
+  SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdjointCheckpointScheme *)(farg1);
+  arg1 = (SUNAdjointCheckpointScheme)(farg1);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_Destroy_Fixed(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;

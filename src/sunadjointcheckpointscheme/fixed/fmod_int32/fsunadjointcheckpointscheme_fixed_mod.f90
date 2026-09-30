@@ -219,15 +219,15 @@ fresult = swigc_FSUNAdjointCheckpointScheme_LoadVector_Fixed(farg1, farg2, farg3
 swig_result = fresult
 end function
 
-function FSUNAdjointCheckpointScheme_Destroy_Fixed(check_scheme_ptr) &
+function FSUNAdjointCheckpointScheme_Destroy_Fixed(check_scheme) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(C_PTR), target, intent(inout) :: check_scheme_ptr
+type(C_PTR) :: check_scheme
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 
-farg1 = c_loc(check_scheme_ptr)
+farg1 = check_scheme
 fresult = swigc_FSUNAdjointCheckpointScheme_Destroy_Fixed(farg1)
 swig_result = fresult
 end function

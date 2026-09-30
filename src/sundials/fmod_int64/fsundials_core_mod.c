@@ -3715,7 +3715,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_SetNeedsSavingFn(void *farg1, S
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   SUNAdjointCheckpointSchemeNeedsSavingFn arg2 = (SUNAdjointCheckpointSchemeNeedsSavingFn) 0 ;
   SUNErrCode result;
-  
+
   arg1 = (SUNAdjointCheckpointScheme)(farg1);
   arg2 = (SUNAdjointCheckpointSchemeNeedsSavingFn)(farg2);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_SetNeedsSavingFn(arg1,arg2);
@@ -3882,6 +3882,20 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_Destroy(void *farg1) {
 }
 
 
+SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_Enable(void *farg1, int const *farg2) {
+  int fresult ;
+  SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
+  int arg2 ;
+  SUNErrCode result;
+
+  arg1 = (SUNAdjointCheckpointScheme)(farg1);
+  arg2 = (int)(*farg2);
+  result = (SUNErrCode)SUNAdjointCheckpointScheme_Enable(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_EnableDense(void *farg1, int const *farg2) {
   int fresult ;
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
@@ -3926,21 +3940,19 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_Create(void *farg1, int const *farg2, vo
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdjointStepper_ReInit(void *farg1, double const *farg2, N_Vector farg3, double const *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FSUNAdjointStepper_ReInit(void *farg1, double const *farg2, N_Vector farg3, long const *farg4) {
   int fresult ;
   SUNAdjointStepper arg1 = (SUNAdjointStepper) 0 ;
   sunrealtype arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
-  sunrealtype arg4 ;
-  N_Vector arg5 = (N_Vector) 0 ;
+  suncountertype arg4 ;
   SUNErrCode result;
   
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (N_Vector)(farg3);
-  arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
-  result = (SUNErrCode)SUNAdjointStepper_ReInit(arg1,arg2,arg3,arg4,arg5);
+  arg4 = (suncountertype)(*farg4);
+  result = (SUNErrCode)SUNAdjointStepper_ReInit(arg1,arg2,arg3,arg4);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
@@ -4304,6 +4316,4 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_Destroy(void *farg1) {
   fresult = (SUNErrCode)(result);
   return fresult;
 }
-
-
 

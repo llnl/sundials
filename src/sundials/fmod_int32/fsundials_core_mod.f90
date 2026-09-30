@@ -93,10 +93,7 @@ module fsundials_core_mod
   enumerator :: SUN_ERR_PROFILER_MAPINSERT
   enumerator :: SUN_ERR_PROFILER_MAPKEYNOTFOUND
   enumerator :: SUN_ERR_PROFILER_MAPSORT
-  enumerator :: SUN_ERR_ADJOINT_STEPPERFAILED
-  enumerator :: SUN_ERR_ADJOINT_STEPPERINVALIDSTOP
   enumerator :: SUN_ERR_CHECKPOINT_NOT_FOUND
-  enumerator :: SUN_ERR_CHECKPOINT_MISMATCH
   enumerator :: SUN_ERR_SUNCTX_CORRUPT
   enumerator :: SUN_ERR_MPI_FAIL
   enumerator :: SUN_ERR_UNREACHABLE
@@ -109,9 +106,8 @@ module fsundials_core_mod
     SUN_ERR_ARG_DIMSMISMATCH, SUN_ERR_GENERIC, SUN_ERR_CORRUPT, SUN_ERR_OUTOFRANGE, SUN_ERR_FILE_OPEN, SUN_ERR_OP_FAIL, &
     SUN_ERR_MEM_FAIL, SUN_ERR_MALLOC_FAIL, SUN_ERR_EXT_FAIL, SUN_ERR_DESTROY_FAIL, SUN_ERR_NOT_IMPLEMENTED, &
     SUN_ERR_USER_FCN_FAIL, SUN_ERR_DATANODE_NODENOTFOUND, SUN_ERR_PROFILER_MAPFULL, SUN_ERR_PROFILER_MAPGET, &
-    SUN_ERR_PROFILER_MAPINSERT, SUN_ERR_PROFILER_MAPKEYNOTFOUND, SUN_ERR_PROFILER_MAPSORT, SUN_ERR_ADJOINT_STEPPERFAILED, &
-    SUN_ERR_ADJOINT_STEPPERINVALIDSTOP, SUN_ERR_CHECKPOINT_NOT_FOUND, SUN_ERR_CHECKPOINT_MISMATCH, SUN_ERR_SUNCTX_CORRUPT, &
-    SUN_ERR_MPI_FAIL, SUN_ERR_UNREACHABLE, SUN_ERR_UNKNOWN, SUN_ERR_MAXIMUM, SUN_SUCCESS
+    SUN_ERR_PROFILER_MAPINSERT, SUN_ERR_PROFILER_MAPKEYNOTFOUND, SUN_ERR_PROFILER_MAPSORT, SUN_ERR_CHECKPOINT_NOT_FOUND, &
+    SUN_ERR_SUNCTX_CORRUPT, SUN_ERR_MPI_FAIL, SUN_ERR_UNREACHABLE, SUN_ERR_UNKNOWN, SUN_ERR_MAXIMUM, SUN_SUCCESS
  type, bind(C) :: SwigArrayWrapper
   type(C_PTR), public :: data = C_NULL_PTR
   integer(C_SIZE_T), public :: size = 0
@@ -700,6 +696,7 @@ module fsundials_core_mod
  public :: FSUNAdjointCheckpointScheme_InsertVector
  public :: FSUNAdjointCheckpointScheme_LoadVector
  public :: FSUNAdjointCheckpointScheme_Destroy
+ public :: FSUNAdjointCheckpointScheme_Enable
  public :: FSUNAdjointCheckpointScheme_EnableDense
  public :: FSUNAdjointStepper_Create
  public :: FSUNAdjointStepper_ReInit
@@ -3024,6 +3021,15 @@ type(C_PTR), value :: farg1
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNAdjointCheckpointScheme_Enable(farg1, farg2) &
+bind(C, name="_wrap_FSUNAdjointCheckpointScheme_Enable") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT), intent(in) :: farg2
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNAdjointCheckpointScheme_EnableDense(farg1, farg2) &
 bind(C, name="_wrap_FSUNAdjointCheckpointScheme_EnableDense") &
 result(fresult)
@@ -3050,15 +3056,14 @@ type(C_PTR), value :: farg10
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNAdjointStepper_ReInit(farg1, farg2, farg3, farg4, farg5) &
+function swigc_FSUNAdjointStepper_ReInit(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNAdjointStepper_ReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 type(C_PTR), value :: farg3
-real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
+integer(C_LONG), intent(in) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -7471,6 +7476,22 @@ fresult = swigc_FSUNAdjointCheckpointScheme_Destroy(farg1)
 swig_result = fresult
 end function
 
+function FSUNAdjointCheckpointScheme_Enable(check_scheme, enable_or_disable) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: check_scheme
+integer(C_INT), intent(in) :: enable_or_disable
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+integer(C_INT) :: farg2
+
+farg1 = check_scheme
+farg2 = enable_or_disable
+fresult = swigc_FSUNAdjointCheckpointScheme_Enable(farg1, farg2)
+swig_result = fresult
+end function
+
 function FSUNAdjointCheckpointScheme_EnableDense(check_scheme, on_or_off) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -7528,28 +7549,25 @@ fresult = swigc_FSUNAdjointStepper_Create(farg1, farg2, farg3, farg4, farg5, far
 swig_result = fresult
 end function
 
-function FSUNAdjointStepper_ReInit(adj, t0, y0, tf, sf) &
+function FSUNAdjointStepper_ReInit(adj, tf, sf, final_step_idx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: adj
-real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
 real(C_DOUBLE), intent(in) :: tf
 type(N_Vector), target, intent(inout) :: sf
+integer(C_LONG), intent(in) :: final_step_idx
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
 type(C_PTR) :: farg3 
-real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
+integer(C_LONG) :: farg4
 
 farg1 = adj
-farg2 = t0
-farg3 = c_loc(y0)
-farg4 = tf
-farg5 = c_loc(sf)
-fresult = swigc_FSUNAdjointStepper_ReInit(farg1, farg2, farg3, farg4, farg5)
+farg2 = tf
+farg3 = c_loc(sf)
+farg4 = final_step_idx
+fresult = swigc_FSUNAdjointStepper_ReInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
