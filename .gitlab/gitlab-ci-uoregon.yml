@@ -35,6 +35,7 @@ stages:
 
 .common-setup:
   stage: build-and-test
+  interruptible: true # Allows jobs to be canceled if a newer commit is pushed
   rules:
     # Direct pushes to the mirrored develop branch.
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"'
