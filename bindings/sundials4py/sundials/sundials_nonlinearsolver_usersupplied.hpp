@@ -1,4 +1,7 @@
 /* -----------------------------------------------------------------
+ * Programmer(s): Cody J. Balos @ LLNL
+ *                Daniel R. Reynolds @ UMBC
+ * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -40,7 +43,71 @@ struct SUNNonlinearSolverFunctionTable
   nb::object normfn;
   nb::object getupdatenormfn;
   nb::object getconvratefn;
+
+  /* The solver's own free operation, displaced by the interposed one below.
+     NULL means the solver had no free operation at all. */
+  SUNErrCode (*original_free)(SUNNonlinearSolver){nullptr};
 };
+
+/*
+ * Free operation installed in place of a solver's own whenever a Python function
+ * table is attached to it.
+ *
+ * SUNNonlinSolFree() delegates to ops->free and returns immediately; only its
+ * fallback path (used when there is no free operation) destroys NLS->python. No
+ * native SUNDIALS solver's free operation knows anything about NLS->python, so
+ * without this interposition every function table attached to a native solver
+ * would leak, along with every Python callable it holds.
+ */
+inline SUNErrCode sunnonlinearsolver_interposed_free(SUNNonlinearSolver NLS)
+{
+  if (NLS == nullptr) { return SUN_SUCCESS; }
+
+  auto* table = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
+  SUNErrCode (*original)(SUNNonlinearSolver) = table ? table->original_free
+                                                     : nullptr;
+
+  /* Detach and destroy the table, and put the displaced operation back, before
+     doing anything else. Whatever runs below then sees a solver with no Python
+     state, so a nested FunctionTable_Destroy(NULL) is a harmless no-op. */
+  NLS->python = nullptr;
+  sundials4py::shutdown_safe_delete(table);
+  if (NLS->ops != nullptr) { NLS->ops->free = original; }
+
+  if (original != nullptr) { return original(NLS); }
+
+  /* The solver had no free operation of its own, so SUNNonlinSolFree() would
+     have taken its generic fallback path. Since interposing replaced the branch
+     that selects that path, reproduce it here. Note that SUNNonlinSolFreeEmpty
+     frees ops and the solver but not content. */
+  free(NLS->content);
+  NLS->content = nullptr;
+  SUNNonlinSolFreeEmpty(NLS);
+  return SUN_SUCCESS;
+}
+
+/*
+ * Return the solver's Python function table, creating and attaching it (with the
+ * free interposition above) on first use.
+ *
+ * Every hand-written setter that stores a Python callable goes through this, so
+ * the attach-and-interpose policy is stated exactly once.
+ */
+inline SUNNonlinearSolverFunctionTable* sunnonlinearsolver_function_table(
+  SUNNonlinearSolver NLS)
+{
+  if (NLS->python == nullptr)
+  {
+    auto* table = new SUNNonlinearSolverFunctionTable;
+    if (NLS->ops != nullptr)
+    {
+      table->original_free = NLS->ops->free;
+      NLS->ops->free       = sunnonlinearsolver_interposed_free;
+    }
+    NLS->python = table;
+  }
+  return static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
+}
 
 template<typename... Args>
 inline int sunnonlinearsolver_sysfn_wrapper(Args... args)
