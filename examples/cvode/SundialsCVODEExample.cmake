@@ -152,5 +152,3 @@ set(CVODE_C_LIBS sundials_cvode)
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   list(APPEND CVODE_C_LIBS sundials_cvode_fused_stubs)
 endif()
-
-include(${CMAKE_CURRENT_SOURCE_DIR}/cvode-example.cmake)
