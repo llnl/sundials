@@ -6,6 +6,9 @@
 
 ### New Features and Enhancements
 
+Added the utility function, `SUNFileFlush` for flushing file pointers. This is
+useful when using the Fortran 2003 interfaces.
+
 ### Bug Fixes
 
 Fixed a bug in `FindMAGMA.cmake` which didn't allow use of MAGMA versions with 
