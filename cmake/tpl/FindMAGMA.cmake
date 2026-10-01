@@ -57,7 +57,7 @@ if(MAGMA_LIBRARY AND MAGMA_INCLUDE_DIR)
     file(STRINGS ${MAGMA_PKG_CONFIG_PATH} _version_string
          REGEX "^Version:[ \t]*[0-9]+\\.[0-9]+\\.[0-9]+$")
     string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" MAGMA_VERSION
-           "${_version_string}")
+                 "${_version_string}")
 
     file(STRINGS ${MAGMA_PKG_CONFIG_PATH} _libraries_string REGEX "Libs:.*")
     string(REPLACE " " ";" _libraries_list ${_libraries_string})
