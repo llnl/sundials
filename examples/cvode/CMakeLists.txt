@@ -62,20 +62,17 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_cvode_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    install(
-      FILES ${_example_dir}/CMakeLists.txt
-      DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}
-      RENAME cvode-example.cmake)
+    file(READ "${_example_dir}/CMakeLists.txt" _example_contents)
     set(_example_project_file
         ${CMAKE_CURRENT_BINARY_DIR}/${_example_rel_dir}/CMakeLists.txt)
     file(
-      GENERATE
-      OUTPUT ${_example_project_file}
-      CONTENT
-        [=[cmake_minimum_required(VERSION 3.18)
+      WRITE ${_example_project_file}
+      [=[cmake_minimum_required(VERSION 3.18)
 project(cvode_example LANGUAGES NONE)
 include(${CMAKE_CURRENT_LIST_DIR}/../../SundialsCVODEExample.cmake)
-]=])
+
+]=]
+      "${_example_contents}")
     install(
       FILES ${_example_project_file}
       DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}
