@@ -1441,19 +1441,19 @@ static sunrealtype lsrkStep_RKG_P(int s)
   if (s % 2 == 0)
   {
     d = (sunrealtype)s + SUN_RCONST(2.23);
-    return SUN_RCONST(1.2434) - SUN_RCONST(25.20) / (d * d);
+    return SUN_RCONST(1.2437) - SUN_RCONST(25.20) / (d * d);
   }
 
   //odd stages >= 10
   else
   {
     d = (sunrealtype)s + SUN_RCONST(2.29);
-    return SUN_RCONST(1.0138) - SUN_RCONST(15.48) / (d * d);
+    return SUN_RCONST(1.0144) - SUN_RCONST(15.48) / (d * d);
   }
 }
 
 //compute the semi-major and semi-minor axes of the inscribed ellipse for a given s
-static void lsrkStep_RKG_EllipseAxes(int s, sunrealtype*a, sunrealtype* b)
+static void lsrkStep_RKG_EllipseAxes(int s, sunrealtype* a, sunrealtype* b)
 {
  sunrealtype betaS = ((sunrealtype)s + FOUR) * ((sunrealtype)s  - ONE) / THREE;
  *a = betaS / TWO;
@@ -1759,7 +1759,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   step_mem->step_nst = ark_mem->nst + 1;
 
   /* Initialize constants */
-  w1   = SUN_RCONST(6.0) / ((step_mem->req_stages + FOUR) * (step_mem->req_stages - ONE));
+  w1   = SIX / ((step_mem->req_stages + FOUR) * (step_mem->req_stages - ONE));
   bjm2 = ONE;
   bjm1 = ONE / THREE;
   mus  = w1;
@@ -1821,7 +1821,7 @@ int lsrkStep_TakeStepRKG(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     mu               = (TWO * j + ONE) / j * (bj / bjm1);
     nu               = -(j + ONE) / j * (bj / bjm2);
     mus              = w1 * mu;
-    cj               = temj * w1 / SUN_RCONST(6.0);
+    cj               = temj * w1 / SIX;
     ark_mem->tcur    = ark_mem->tn + ark_mem->h * cj;
     step_mem->istage = j;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
