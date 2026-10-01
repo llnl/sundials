@@ -275,15 +275,15 @@ static int splittingStep_SequentialMethod(ARKodeMem ark_mem,
       }
 
       sunrealtype tret = ZERO;
-      err              = SUNStepper_Evolve(stepper, t_end, y, &tret);
+      int retval       = SUNStepper_Evolve(stepper, t_end, y, &tret);
       SUNLogExtraDebugVec(ARK_LOGGER, "partition state", y, "y_par(:) =");
-      if (err != SUN_SUCCESS)
+      if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-partitions-list",
-                   "status = failed evolve, err = %i", err);
+                   "status = failed evolve, err = %i", retval);
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                   "status = failed partition, err = %i", err);
-        return ARK_SUNSTEPPER_ERR;
+                   "status = failed partition, err = %i", retval);
+        return retval;
       }
       step_mem->n_stepper_evolves[k]++;
 
