@@ -17,8 +17,8 @@
  * C++ specific CVODES definitions.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _CVODES_HPP
-#define _CVODES_HPP
+#ifndef SUNDIALS_CVODES_HPP
+#define SUNDIALS_CVODES_HPP
 
 #include <sundials/sundials_classview.hpp>
 

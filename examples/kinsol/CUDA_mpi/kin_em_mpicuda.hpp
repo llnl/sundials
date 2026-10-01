@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------*/
 
-#ifndef KIN_EM_MPICUDA_H
-#define KIN_EM_MPICUDA_H
+#ifndef SUNDIALS_KIN_EM_MPICUDA_HPP
+#define SUNDIALS_KIN_EM_MPICUDA_HPP
 
 #include <algorithm>
 #include <cmath>

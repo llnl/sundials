@@ -18,8 +18,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _IDAS_IMPL_H
-#define _IDAS_IMPL_H
+#ifndef SUNDIALS_IDAS_IMPL_H
+#define SUNDIALS_IDAS_IMPL_H
 
 #include <stdarg.h>
 

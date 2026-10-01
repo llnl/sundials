@@ -20,8 +20,8 @@
  * accuracy.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ADAPTCONTROLLER_H
-#define _SUNDIALS_ADAPTCONTROLLER_H
+#ifndef SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H
+#define SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -203,4 +203,4 @@ SUNErrCode SUNAdaptController_Space(SUNAdaptController C, long int* lenrw,
 }
 #endif
 
-#endif /* _SUNDIALS_ADAPTCONTROLLER_H */
+#endif /* SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H */

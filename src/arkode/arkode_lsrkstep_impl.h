@@ -18,8 +18,8 @@
  * module.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_LSRKSTEP_IMPL_H
-#define _ARKODE_LSRKSTEP_IMPL_H
+#ifndef SUNDIALS_ARKODE_LSRKSTEP_IMPL_H
+#define SUNDIALS_ARKODE_LSRKSTEP_IMPL_H
 
 #include <arkode/arkode_lsrkstep.h>
 #include <sundials/sundials_domeigestimator.h>

@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_STEPPER_IMPL_H
-#define _SUNDIALS_STEPPER_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_STEPPER_IMPL_H
+#define SUNDIALS_SUNDIALS_STEPPER_IMPL_H
 
 #include <sundials/sundials_core.h>
 #include <sundials/sundials_stepper.h>
@@ -60,4 +60,4 @@ struct SUNStepper_
 }
 #endif
 
-#endif /* _SUNDIALS_STEPPER_IMPL_H */
+#endif /* SUNDIALS_SUNDIALS_STEPPER_IMPL_H */

@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_IDAS_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_IDAS_USERSUPPLIED_HPP
+#ifndef SUNDIALS_IDAS_USERSUPPLIED_HPP
+#define SUNDIALS_IDAS_USERSUPPLIED_HPP
 
 #include <idas/idas.h>
 #include <idas/idas_ls.h>

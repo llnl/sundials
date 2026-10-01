@@ -42,8 +42,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_OPENMPDEV_H
-#define _NVECTOR_OPENMPDEV_H
+#ifndef SUNDIALS_NVECTOR_OPENMPDEV_H
+#define SUNDIALS_NVECTOR_OPENMPDEV_H
 
 #include <stdio.h>
 #include <sundials/sundials_nvector.h>

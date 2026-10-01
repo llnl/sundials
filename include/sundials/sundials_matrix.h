@@ -44,8 +44,8 @@
  *   - a routine to print the content of a SUNMatrix
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNMATRIX_H
-#define _SUNMATRIX_H
+#ifndef SUNDIALS_SUNDIALS_MATRIX_H
+#define SUNDIALS_SUNDIALS_MATRIX_H
 
 #include <sundials/sundials_config.h>
 #include <sundials/sundials_context.h>
@@ -166,4 +166,4 @@ SUNErrCode SUNMatSpace(SUNMatrix A, long int* lenrw, long int* leniw);
 }
 #endif
 
-#endif /* _SUNMATRIX_H */
+#endif /* SUNDIALS_SUNDIALS_MATRIX_H */

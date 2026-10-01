@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_PROFILER_HPP
-#define _SUNDIALS_PROFILER_HPP
+#ifndef SUNDIALS_SUNDIALS_PROFILER_HPP
+#define SUNDIALS_SUNDIALS_PROFILER_HPP
 
 #include <cstring>
 #include <utility>
@@ -64,4 +64,4 @@ struct SUNProfilerDeleter
 } // namespace experimental
 } // namespace sundials
 
-#endif /* SUNDIALS_PROFILER_HPP */
+#endif /* SUNDIALS_SUNDIALS_PROFILER_HPP */

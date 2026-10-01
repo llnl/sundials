@@ -37,8 +37,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_PETSC_H
-#define _NVECTOR_PETSC_H
+#ifndef SUNDIALS_NVECTOR_PETSC_H
+#define SUNDIALS_NVECTOR_PETSC_H
 
 #include <mpi.h>
 #include <petscvec.h>
@@ -219,4 +219,4 @@ void N_VSetArrayPointer_Petsc(sunrealtype* v_data, N_Vector v);
 }
 #endif
 
-#endif /* _NVECTOR_PETSC_H */
+#endif /* SUNDIALS_NVECTOR_PETSC_H */
