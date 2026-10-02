@@ -131,7 +131,7 @@ function(sundials_add_warning_flags lang)
         endif()
 
         list(APPEND _swig_flags -Wno-cast-qual -Wno-missing-declarations
-             -Wno-unused-macros)
+             -Wno-unused-macros -Wno-strict-prototypes)
       endif()
 
       # Clang-based compilers: ignore unsupported flags (GCC-only or newer than
