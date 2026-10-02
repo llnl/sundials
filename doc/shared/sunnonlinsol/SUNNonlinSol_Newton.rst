@@ -195,7 +195,7 @@ following structure.
 
 .. code-block:: c
 
-   struct _SUNNonlinearSolverContent_Newton {
+   struct SUNNonlinearSolverContent_Newton_ {
 
      SUNNonlinSolSysFn      Sys;
      SUNNonlinSolLSetupFn   LSetup;
