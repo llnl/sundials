@@ -185,9 +185,9 @@ typedef struct ARKodeMRIStepMemRec
   MRI innter time stepper data structure
   ===============================================================*/
 
-typedef struct _MRIStepInnerStepper_Ops* MRIStepInnerStepper_Ops;
+typedef struct MRIStepInnerStepper_Ops_* MRIStepInnerStepper_Ops;
 
-struct _MRIStepInnerStepper_Ops
+struct MRIStepInnerStepper_Ops_
 {
   MRIStepInnerEvolveFn evolve;
   MRIStepInnerFullRhsFn fullrhs;
@@ -197,7 +197,7 @@ struct _MRIStepInnerStepper_Ops
   MRIStepInnerSetRTol setrtol;
 };
 
-struct _MRIStepInnerStepper
+struct MRIStepInnerStepper_
 {
   /* stepper specific content and operations */
   void* content;
