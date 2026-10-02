@@ -5,7 +5,7 @@
 //
 
 auto pyClass_SUNNonlinearSolverContent_FixedPoint =
-  nb::class_<_SUNNonlinearSolverContent_FixedPoint>(m, "_SUNNonlinearSolverContent_FixedPoint",
+  nb::class_<SUNNonlinearSolverContent_FixedPoint_>(m, "SUNNonlinearSolverContent_FixedPoint_",
                                                     "")
     .def(nb::init<>()) // implicit default constructor
   ;
