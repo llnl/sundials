@@ -30,7 +30,7 @@
 
 namespace sundials {
 namespace impl {
-using BaseNVector = BaseObject<_generic_N_Vector, _generic_N_Vector_Ops>;
+using BaseNVector = BaseObject<N_Vector_, N_Vector_Ops_>;
 } // namespace impl
 
 namespace experimental {
