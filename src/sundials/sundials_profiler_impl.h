@@ -64,7 +64,7 @@ typedef struct _sunTimespec
   A private structure holding timing information.
  */
 
-struct _sunTimerStruct
+struct sunTimerStruct_
 {
   sunTimespec* tic;
   sunTimespec* toc;
@@ -74,7 +74,7 @@ struct _sunTimerStruct
   long count;
 };
 
-typedef struct _sunTimerStruct sunTimerStruct;
+typedef struct sunTimerStruct_ sunTimerStruct;
 
 struct SUNProfiler_
 {
