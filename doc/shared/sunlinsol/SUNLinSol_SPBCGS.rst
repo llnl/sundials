@@ -130,7 +130,7 @@ The SUNLinSol_SPBCGS module defines the *content* field of a
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_SPBCGS {
+   struct SUNLinearSolverContent_SPBCGS_ {
      int maxl;
      int pretype;
      sunbooleantype zeroguess;

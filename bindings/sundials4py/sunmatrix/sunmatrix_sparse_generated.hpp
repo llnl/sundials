@@ -6,8 +6,8 @@
 m.attr("SUN_CSC_MAT") = 0;
 m.attr("SUN_CSR_MAT") = 1;
 
-auto pyClass_SUNMatrixContent_Sparse =
-  nb::class_<_SUNMatrixContent_Sparse>(m, "_SUNMatrixContent_Sparse", "")
+auto pyClassSUNMatrixContent_Sparse_ =
+  nb::class_<SUNMatrixContent_Sparse_>(m, "SUNMatrixContent_Sparse_", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 

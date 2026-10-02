@@ -4,8 +4,8 @@
 // #endif
 //
 
-auto pyClass_SUNLinearSolverContent_Band =
-  nb::class_<_SUNLinearSolverContent_Band>(m, "_SUNLinearSolverContent_Band", "")
+auto pyClassSUNLinearSolverContent_Band_ =
+  nb::class_<SUNLinearSolverContent_Band_>(m, "SUNLinearSolverContent_Band_", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 

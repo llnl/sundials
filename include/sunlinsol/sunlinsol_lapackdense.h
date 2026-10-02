@@ -40,14 +40,14 @@ extern "C" {
  * LAPACK dense implementation of SUNLinearSolver
  * ----------------------------------------------- */
 
-struct _SUNLinearSolverContent_LapackDense
+struct SUNLinearSolverContent_LapackDense_
 {
   sunindextype N;
   sunindextype* pivots;
   sunindextype last_flag;
 };
 
-typedef struct _SUNLinearSolverContent_LapackDense* SUNLinearSolverContent_LapackDense;
+typedef struct SUNLinearSolverContent_LapackDense_* SUNLinearSolverContent_LapackDense;
 
 /* ---------------------------------------------
  * Exported Functions for SUNLINSOL_LAPACKDENSE

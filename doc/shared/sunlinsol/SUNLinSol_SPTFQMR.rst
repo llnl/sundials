@@ -129,7 +129,7 @@ The SUNLinSol_SPTFQMR module defines the *content* field of a
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_SPTFQMR {
+   struct SUNLinearSolverContent_SPTFQMR_ {
      int maxl;
      int pretype;
      sunbooleantype zeroguess;

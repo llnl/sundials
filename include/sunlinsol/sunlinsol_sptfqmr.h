@@ -45,7 +45,7 @@ extern "C" {
  * SPTFQMR Implementation of SUNLinearSolver
  * ------------------------------------------ */
 
-struct _SUNLinearSolverContent_SPTFQMR
+struct SUNLinearSolverContent_SPTFQMR_
 {
   int maxl;
   int pretype;
@@ -74,7 +74,7 @@ struct _SUNLinearSolverContent_SPTFQMR
   N_Vector vtemp3;
 };
 
-typedef struct _SUNLinearSolverContent_SPTFQMR* SUNLinearSolverContent_SPTFQMR;
+typedef struct SUNLinearSolverContent_SPTFQMR_* SUNLinearSolverContent_SPTFQMR;
 
 /* -------------------------------------
  * Exported Functions SUNLINSOL_SPTFQMR
