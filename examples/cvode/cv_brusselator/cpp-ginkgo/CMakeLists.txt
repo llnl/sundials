@@ -49,8 +49,7 @@ foreach(backend REF OMP CUDA HIP SYCL)
     list(APPEND example_options NODIFF)
   endif()
   sundials_add_example(
-    ${example_target} cv_bruss_batched_ginkgo.cpp
-    ${example_options}
+    ${example_target} cv_bruss_batched_ginkgo.cpp ${example_options}
     FLOAT_PRECISION ${float_precision}
     INSTALL_FILES
       cv_bruss_batched_ginkgo.hpp

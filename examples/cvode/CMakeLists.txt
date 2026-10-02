@@ -65,8 +65,7 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
     sundials_install_example_cmake(
-      cvode
-      "${_example_dir}"
+      cvode "${_example_dir}"
       "${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}")
 
     if(_example_rel_dir STREQUAL "cv_adv_diff/c")
