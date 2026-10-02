@@ -12,7 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_roberts_sps cv_roberts_sps.c NO_TEST)
+sundials_add_example(cv_roberts_sps cv_roberts_sps.c NO_TEST
+                     INSTALL_FILES cv_roberts_sps.out)
 target_link_libraries(
   cv_roberts_sps
   PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
