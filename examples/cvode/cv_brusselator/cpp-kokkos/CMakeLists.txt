@@ -25,17 +25,13 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
       list(APPEND example_options NODIFF)
     endif()
     sundials_add_example(
-      ${example_target} cv_bruss_batched_kokkos.cpp
-      ${example_options}
+      ${example_target} cv_bruss_batched_kokkos.cpp ${example_options}
       EXTRA_ARGS --kokkos-disable-warnings
       INSTALL_FILES
         "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
       LINK_LIBRARIES
-        PRIVATE
-        ${CVODE_C_LIBS}
-        sundials_nveckokkos
-        sundials_sunmatrixkokkosdense
-        sundials_sunlinsolkokkosdense
+        PRIVATE ${CVODE_C_LIBS} sundials_nveckokkos
+        sundials_sunmatrixkokkosdense sundials_sunlinsolkokkosdense
         ${EXE_EXTRA_LINK_LIBS}
       INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
       COMPILE_DEFINITIONS PRIVATE USE_${backend})

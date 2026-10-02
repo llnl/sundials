@@ -20,5 +20,4 @@ sundials_add_example(
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
   INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                 ${EXE_EXTRA_LINK_LIBS}
-)
+                 ${EXE_EXTRA_LINK_LIBS})
