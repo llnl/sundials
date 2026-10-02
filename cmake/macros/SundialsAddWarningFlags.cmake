@@ -111,12 +111,27 @@ function(sundials_add_warning_flags lang)
           -Walloca
           -Wduplicated-cond
           -Wduplicated-branches
+          -Wlogical-op
           -Wmissing-declarations
+          -Wpointer-arith
           -Wunused-macros
           -Wunused-local-typedefs
-          -Wundef)
-        # TODO(SBR): Try to add -Wredundant-decls once SuperLU version is
-        # updated in CI tests
+          -Wundef
+          -Wredundant-decls)
+
+        if(lang STREQUAL "C")
+          list(
+            APPEND
+            _flags
+            -Wjump-misses-init
+            -Wmissing-prototypes
+            -Wnested-externs
+            -Wold-style-definition
+            -Wstrict-prototypes)
+        else()
+          list(APPEND _flags -Wnon-virtual-dtor -Woverloaded-virtual
+               -Wsuggest-override -Wzero-as-null-pointer-constant)
+        endif()
 
         # Avoid numerous warnings from printf
         if(SUNDIALS_PRECISION MATCHES "EXTENDED")
@@ -130,22 +145,35 @@ function(sundials_add_warning_flags lang)
           list(APPEND _flags -Wconversion -Wno-sign-conversion)
         endif()
 
-        list(APPEND _swig_flags -Wno-cast-qual -Wno-missing-declarations
-             -Wno-unused-macros -Wno-strict-prototypes)
+        list(
+          APPEND
+          _swig_flags
+          -Wno-cast-qual
+          -Wno-missing-declarations
+          -Wno-missing-prototypes
+          -Wno-old-style-definition
+          -Wno-strict-prototypes
+          -Wno-unused-macros)
       endif()
 
       # Clang-based compilers: ignore unsupported flags (GCC-only or newer than
       # the compiler) and add Clang-only warnings. GCC rejects unknown -W flags,
       # so these are not added for other compilers.
       if(_id IN_LIST _clang_ids)
-        list(APPEND _flags -Wno-unknown-warning-option -Wreserved-identifier)
-        list(APPEND _swig_flags -Wno-reserved-identifier)
+        list(
+          APPEND
+          _flags
+          -Wno-unknown-warning-option
+          -Wdocumentation
+          -Wimplicit-fallthrough
+          -Wloop-analysis
+          -Wmissing-variable-declarations
+          -Wnull-dereference
+          -Wreserved-identifier
+          -Wunreachable-code)
+        list(APPEND _swig_flags -Wno-reserved-identifier -Wno-unreachable-code)
       endif()
     elseif(lang STREQUAL "Fortran" AND _id STREQUAL "GNU")
-      # TODO(DJG): Add -fcheck=all,no-pointer,no-recursion once Jenkins is
-      # updated to use gfortran > 5.5 which segfaults with
-      # -fcheck=array-temps,bounds,do,mem no- options were added in gfortran 6
-      #
       # Exclude run-time pointer checks (no-pointer) because passing null
       # objects to SUNDIALS functions (e.g., sunmat => null() to
       # SetLinearSolver) causes a run-time error with this check
@@ -161,7 +189,8 @@ function(sundials_add_warning_flags lang)
         -Wpedantic
         -Wno-unused-dummy-argument
         -Wno-c-binding-type
-        -ffpe-summary=none)
+        -ffpe-summary=none
+        -fcheck=all,no-pointer,no-recursion)
     endif()
   endif()
 
