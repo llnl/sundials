@@ -28,7 +28,7 @@ flag *own_data* which specifies the ownership of data.
 
 .. code-block:: c
 
-   struct _N_VectorContent_Serial {
+   struct N_VectorContent_Serial_ {
       sunindextype length;
       sunbooleantype own_data;
       sunrealtype *data;

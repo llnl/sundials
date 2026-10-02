@@ -187,7 +187,7 @@ N_Vector N_VNewEmpty_Sycl(SUNContext sunctx)
   v->ops->nvprintfile = N_VPrintFile_Sycl;
 
   /* Allocate content structure */
-  v->content = (N_VectorContent_Sycl)malloc(sizeof(_N_VectorContent_Sycl));
+  v->content = (N_VectorContent_Sycl)malloc(sizeof(N_VectorContent_Sycl_));
   if (v->content == NULL)
   {
     SUNDIALS_DEBUG_PRINT(

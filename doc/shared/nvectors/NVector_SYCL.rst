@@ -30,7 +30,7 @@ The vector content layout is as follows:
 
 .. code-block:: c++
 
-   struct _N_VectorContent_Sycl
+   struct N_VectorContent_Sycl_
    {
       sunindextype       length;
       sunbooleantype     own_helper;
@@ -43,7 +43,7 @@ The vector content layout is as follows:
       void*              priv; /* 'private' data */
    };
 
-   typedef struct _N_VectorContent_Sycl *N_VectorContent_Sycl;
+   typedef struct N_VectorContent_Sycl_ *N_VectorContent_Sycl;
 
 
 The content members are the vector length (size), boolean flags that indicate

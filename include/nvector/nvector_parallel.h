@@ -57,7 +57,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-struct _N_VectorContent_Parallel
+struct N_VectorContent_Parallel_
 {
   sunindextype local_length;  /* local vector length         */
   sunindextype global_length; /* global vector length        */
@@ -66,7 +66,7 @@ struct _N_VectorContent_Parallel
   MPI_Comm comm;              /* pointer to MPI communicator */
 };
 
-typedef struct _N_VectorContent_Parallel* N_VectorContent_Parallel;
+typedef struct N_VectorContent_Parallel_* N_VectorContent_Parallel;
 
 /*
  * -----------------------------------------------------------------

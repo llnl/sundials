@@ -187,7 +187,7 @@ N_Vector N_VNewEmpty_Raja(SUNContext sunctx)
   v->ops->nvprint     = N_VPrint_Raja;
   v->ops->nvprintfile = N_VPrintFile_Raja;
 
-  v->content = (N_VectorContent_Raja)malloc(sizeof(_N_VectorContent_Raja));
+  v->content = (N_VectorContent_Raja)malloc(sizeof(N_VectorContent_Raja_));
   if (v->content == NULL)
   {
     N_VDestroy(v);

@@ -28,7 +28,7 @@ is as follows:
 
 .. code-block:: c++
 
-   struct _N_VectorContent_Cuda
+   struct N_VectorContent_Cuda_
    {
       sunindextype       length;
       sunbooleantype     own_helper;
@@ -40,7 +40,7 @@ is as follows:
       void*              priv; /* 'private' data */
    };
 
-   typedef struct _N_VectorContent_Cuda *N_VectorContent_Cuda;
+   typedef struct N_VectorContent_Cuda_ *N_VectorContent_Cuda;
 
 
 The content members are the vector length (size), boolean flags that indicate

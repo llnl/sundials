@@ -198,7 +198,7 @@ N_Vector N_VNewEmpty_Cuda(SUNContext sunctx)
 
   /* Create content */
 
-  v->content = (N_VectorContent_Cuda)malloc(sizeof(_N_VectorContent_Cuda));
+  v->content = (N_VectorContent_Cuda)malloc(sizeof(N_VectorContent_Cuda_));
   if (v->content == NULL)
   {
     N_VDestroy(v);

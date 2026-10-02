@@ -38,7 +38,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-struct _N_VectorContent_Hip
+struct N_VectorContent_Hip_
 {
   sunindextype length;
   sunbooleantype own_helper;
@@ -50,7 +50,7 @@ struct _N_VectorContent_Hip
   void* priv; /* 'private' data */
 };
 
-typedef struct _N_VectorContent_Hip* N_VectorContent_Hip;
+typedef struct N_VectorContent_Hip_* N_VectorContent_Hip;
 
 /*
  * -----------------------------------------------------------------

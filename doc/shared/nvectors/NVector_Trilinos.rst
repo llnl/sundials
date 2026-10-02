@@ -29,7 +29,7 @@ an empty structure
 
 .. code-block:: c
 
-   struct _N_VectorContent_Trilinos {};
+   struct N_VectorContent_Trilinos_ {};
 
 to interface the C++ class with the NVECTOR C code.
 A pointer to an instance of this class is kept in the *content* field

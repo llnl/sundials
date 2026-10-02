@@ -28,7 +28,7 @@ indicating ownership of the wrapped PETSc vector.
 
 .. code-block:: c
 
-   struct _N_VectorContent_Petsc {
+   struct N_VectorContent_Petsc_ {
       sunindextype local_length;
       sunindextype global_length;
       sunbooleantype own_data;
