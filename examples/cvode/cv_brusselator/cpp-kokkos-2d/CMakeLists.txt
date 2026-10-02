@@ -16,10 +16,9 @@
 foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
   set(example_target cv_bruss_batched_kokkos_2d.${backend})
   if(NOT TARGET ${example_target})
-    set(include_args)
-    if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
-      set(include_args INCLUDE_DIRECTORIES PRIVATE
-                       ${PROJECT_SOURCE_DIR}/examples/utilities)
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${example_target}.out")
+      message(STATUS "Skipping ${example_target}: no answer file is available")
+      continue()
     endif()
     sundials_add_example(
       ${example_target} cv_bruss_batched_kokkos_2d.cpp
@@ -33,7 +32,7 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
         sundials_sunmatrixkokkosdense
         sundials_sunlinsolkokkosdense
         ${EXE_EXTRA_LINK_LIBS}
-        ${include_args}
+      INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
       COMPILE_DEFINITIONS PRIVATE USE_${backend})
   endif()
 endforeach()

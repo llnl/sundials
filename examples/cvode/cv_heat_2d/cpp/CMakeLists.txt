@@ -18,12 +18,7 @@ sundials_add_example(
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES cv_heat_2d.hpp plot_heat_2d.py
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
+  INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
+  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS}
 )
-if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
-  target_include_directories(cv_heat_2d
-                             PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)
-else()
-  target_include_directories(cv_heat_2d PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-endif()
-target_link_libraries(cv_heat_2d PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                                         ${EXE_EXTRA_LINK_LIBS})

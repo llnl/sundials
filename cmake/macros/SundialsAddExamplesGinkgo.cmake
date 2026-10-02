@@ -101,11 +101,7 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
         else()
           list(APPEND test_args FLOAT_PRECISION ${float_precision})
         endif()
-        if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
-          set(example_utilities_dir "${PROJECT_SOURCE_DIR}/examples/utilities")
-        else()
-          set(example_utilities_dir "${CMAKE_CURRENT_SOURCE_DIR}")
-        endif()
+        set(example_utilities_dir "${PROJECT_SOURCE_DIR}/examples/utilities")
         sundials_add_example(
           ${example_target} ${example} ${test_args}
           INSTALL_FILES ${install_files}
