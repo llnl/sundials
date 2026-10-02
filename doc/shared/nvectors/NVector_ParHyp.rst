@@ -64,7 +64,7 @@ low-level HYPRE functions.  As such, this vector is not available for use with
 SUNDIALS Fortran interfaces.  When access to raw vector data is needed, one
 should extract the HYPRE vector first, and then use HYPRE methods to access the
 data.  Usage examples of NVECTOR_PARHYP are provided in the
-``cvAdvDiff_non_ph.c`` example programs for CVODE and the
+``cv_adv_diff_non_ph.c`` example programs for CVODE and the
 ``ark_diurnal_kry_ph.c`` example program for ARKODE.
 
 The names of parhyp methods are obtained from those in

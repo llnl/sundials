@@ -1,3 +1,0 @@
-List of parallel CVODE examples
-
-  cvAdvDiff_sludist: advection-diffusion example using the SuperLU_DIST linear solver
