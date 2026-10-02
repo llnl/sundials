@@ -16,12 +16,17 @@
 foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
   set(example_target cv_bruss_batched_kokkos.${backend})
   if(NOT TARGET ${example_target})
+    set(example_options)
     if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${example_target}.out")
-      message(STATUS "Skipping ${example_target}: no answer file is available")
-      continue()
+      message(
+        STATUS
+          "No answer file for ${example_target}; running without output comparison"
+      )
+      list(APPEND example_options NODIFF)
     endif()
     sundials_add_example(
       ${example_target} cv_bruss_batched_kokkos.cpp
+      ${example_options}
       EXTRA_ARGS --kokkos-disable-warnings
       INSTALL_FILES
         "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
