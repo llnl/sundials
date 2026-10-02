@@ -28,7 +28,7 @@
 
 namespace sundials {
 namespace impl {
-using BaseMatrix = BaseObject<_generic_SUNMatrix, _generic_SUNMatrix_Ops>;
+using BaseMatrix = BaseObject<SUNMatrix_, SUNMatrix_Ops_>;
 } // namespace impl
 
 namespace experimental {
