@@ -208,7 +208,7 @@ typedef int (*ARKRelaxJacFn)(N_Vector y, N_Vector J, void* user_data);
  * MRIStep Inner Stepper Type (forward declaration)
  * ------------------------------------------------ */
 
-typedef SUNDIALS_STRUCT _MRIStepInnerStepper* MRIStepInnerStepper;
+typedef SUNDIALS_STRUCT MRIStepInnerStepper_* MRIStepInnerStepper;
 
 /* --------------------------
  * Relaxation Solver Options
