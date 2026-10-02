@@ -40,10 +40,9 @@ foreach(backend REF OMP CUDA HIP SYCL)
   set_source_files_properties(cv_bruss_batched_ginkgo.cpp
                               PROPERTIES LANGUAGE ${language})
   set(example_target cv_bruss_batched_ginkgo.${backend})
-  set(include_args)
-  if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
-    set(include_args INCLUDE_DIRECTORIES PRIVATE
-                     ${PROJECT_SOURCE_DIR}/examples/utilities)
+  if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${example_target}.out")
+    message(STATUS "Skipping ${example_target}: no answer file is available")
+    continue()
   endif()
   sundials_add_example(
     ${example_target} cv_bruss_batched_ginkgo.cpp
@@ -52,6 +51,7 @@ foreach(backend REF OMP CUDA HIP SYCL)
       cv_bruss_batched_ginkgo.hpp
       "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
     LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_${vector} Ginkgo::ginkgo
-                   ${EXE_EXTRA_LINK_LIBS} ${include_args}
+                   ${EXE_EXTRA_LINK_LIBS}
+    INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
     COMPILE_DEFINITIONS PRIVATE USE_${backend})
 endforeach()

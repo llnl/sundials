@@ -15,15 +15,13 @@
 sundials_add_example(
   cv_diurnal_kry_bbd_p cv_diurnal_kry_bbd_p.c
   MPI_NPROCS 4
-  EXAMPLE_TYPE exclude-sigle)
-target_link_libraries(
-  cv_diurnal_kry_bbd_p PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
-                               ${EXE_EXTRA_LINK_LIBS})
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
+                 ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
   cv_diurnal_kry_p cv_diurnal_kry_p.c
   MPI_NPROCS 4
-  EXAMPLE_TYPE exclude-single)
-target_link_libraries(
-  cv_diurnal_kry_p PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
-                           ${EXE_EXTRA_LINK_LIBS})
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
+                 ${EXE_EXTRA_LINK_LIBS})

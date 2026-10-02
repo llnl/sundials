@@ -15,10 +15,9 @@
 sundials_add_example(
   cv_adv_diff_diag_hip cv_adv_diff_diag_hip.cpp NO_TEST
   INSTALL_FILES cv_adv_diff_diag_hip_0_0.out cv_adv_diff_diag_hip_0_1.out
-                cv_adv_diff_diag_hip_1_1.out)
-target_link_libraries(
-  cv_adv_diff_diag_hip PRIVATE hip::device sundials_cvode sundials_nvechip
-                               ${EXE_EXTRA_LINK_LIBS})
+                cv_adv_diff_diag_hip_1_1.out
+  LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
+                 ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(cv_adv_diff_diag_hip PRIVATE sundials_cvode_fused_hip)
 endif()
@@ -31,10 +30,10 @@ foreach(example_args "0 0" "0 1" "1 1")
     ANSWER_FILE ${test_name}.out
     EXAMPLE_TYPE develop)
 endforeach()
-sundials_add_example(cv_adv_diff_kry_hip cv_adv_diff_kry_hip.cpp)
-target_link_libraries(
-  cv_adv_diff_kry_hip PRIVATE hip::device sundials_cvode sundials_nvechip
-                              ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  cv_adv_diff_kry_hip cv_adv_diff_kry_hip.cpp
+  LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
+                 ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   target_link_libraries(cv_adv_diff_kry_hip PRIVATE sundials_cvode_fused_hip)
 endif()
