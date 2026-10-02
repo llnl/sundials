@@ -76,7 +76,7 @@ typedef struct N_VectorContent_Pthreads_* N_VectorContent_Pthreads;
    sunrealtype variables are the same for each thread, and the mutex
    variable is used to lock variables in reductions. */
 
-struct _Pthreads_Data
+struct Pthreads_Data_
 {
   sunindextype start;            /* starting index for loop  */
   sunindextype end;              /* ending index for loop    */
@@ -102,7 +102,7 @@ struct _Pthreads_Data
   N_Vector** ZZ2; /* array of vector arrays in fused op */
 };
 
-typedef struct _Pthreads_Data Pthreads_Data;
+typedef struct Pthreads_Data_ Pthreads_Data;
 
 /*
  * -----------------------------------------------------------------
