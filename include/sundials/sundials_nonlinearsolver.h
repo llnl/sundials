@@ -65,10 +65,10 @@ extern "C" {
  * ---------------------------------------------------------------------------*/
 
 /* Forward reference for pointer to SUNNonlinearSolver_Ops object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNNonlinearSolver_Ops* SUNNonlinearSolver_Ops;
+typedef SUNDIALS_STRUCT _generic_SUNNonlinearSolver_Ops* SUNNonlinearSolver_Ops;
 
 /* Forward reference for pointer to SUNNonlinearSolver object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNNonlinearSolver* SUNNonlinearSolver;
+typedef SUNDIALS_STRUCT _generic_SUNNonlinearSolver* SUNNonlinearSolver;
 
 /* -----------------------------------------------------------------------------
  * Integrator supplied function types

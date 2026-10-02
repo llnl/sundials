@@ -163,7 +163,7 @@ struct MRIStepCouplingMem
   int** group; /* stages to integrate together (MERK-specific)        */
 };
 
-typedef _SUNDIALS_STRUCT_ MRIStepCouplingMem* MRIStepCoupling;
+typedef SUNDIALS_STRUCT MRIStepCouplingMem* MRIStepCoupling;
 
 /* Accessor routine to load built-in MRI table */
 SUNDIALS_EXPORT MRIStepCoupling MRIStepCoupling_LoadTable(ARKODE_MRITableID method);
