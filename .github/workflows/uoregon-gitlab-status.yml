@@ -1,0 +1,284 @@
+name: GitLab UOregon CI
+
+on:
+  push:
+    # TODO(CJB): remove feature/uoregon-gitlab-ci from the list of branches after merging
+    branches: [develop, feature/uoregon-gitlab-ci]
+  pull_request_target:
+    branches: [develop]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  statuses: write
+
+concurrency:
+  group: gitlab-uoregon-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gitlab-pipeline:
+    runs-on: ubuntu-latest
+    environment: delayed-30-minutes 
+    timeout-minutes: 120
+
+    steps:
+      - name: Wait for GitLab pipeline
+        shell: bash
+        env:
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number || '' }}
+
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+
+          GITLAB_PROJECT_ID: "85"
+          GITLAB_URL: https://gitlab.spack.io
+          GITLAB_PIPELINE_SOURCE: push
+
+          STATUS_CONTEXT: gitlab/uoregon
+          POLL_TIMEOUT_SECONDS: "7200"
+          POLL_INTERVAL_SECONDS: "30"
+
+        run: |
+          set -Eeuo pipefail
+
+          target_url="${GITLAB_URL}/SUNDIALS/sundials/-/pipelines?sha=${COMMIT_SHA}"
+          pipeline_id=""
+          finalized=false
+          last_status=""
+
+          post_status() {
+            local state="$1"
+            local description="$2"
+            local payload
+
+            # GitHub limits status descriptions; keep unexpected text bounded.
+            description="${description:0:140}"
+
+            payload="$(
+              jq -n \
+                --arg state "${state}" \
+                --arg target_url "${target_url}" \
+                --arg description "${description}" \
+                --arg context "${STATUS_CONTEXT}" \
+                '{
+                  state: $state,
+                  target_url: $target_url,
+                  description: $description,
+                  context: $context
+                }'
+            )"
+
+            curl \
+              --fail \
+              --silent \
+              --show-error \
+              --retry 2 \
+              --retry-delay 2 \
+              --retry-max-time 60 \
+              --retry-all-errors \
+              --connect-timeout 10 \
+              --max-time 30 \
+              --request POST \
+              --header "Accept: application/vnd.github+json" \
+              --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+              --header "Content-Type: application/json" \
+              --header "X-GitHub-Api-Version: 2026-03-10" \
+              --data-binary "${payload}" \
+              --output /dev/null \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${COMMIT_SHA}"
+          }
+
+          gitlab_get() {
+            curl \
+              --fail \
+              --silent \
+              --show-error \
+              --retry 2 \
+              --retry-delay 2 \
+              --retry-max-time 60 \
+              --retry-all-errors \
+              --connect-timeout 10 \
+              --max-time 30 \
+              --header "Accept: application/json" \
+              "$@"
+          }
+
+          finish() {
+            local state="$1"
+            local description="$2"
+            local exit_code="$3"
+
+            post_status "${state}" "${description}"
+            finalized=true
+            exit "${exit_code}"
+          }
+
+          on_exit() {
+            rc=$?
+
+            # Avoid recursively invoking this trap.
+            trap - EXIT INT TERM
+
+            if [[ "${finalized}" != "true" ]]; then
+              post_status \
+                error \
+                "GitLab UOregon status bridge failed unexpectedly" || true
+
+              if (( rc == 0 )); then
+                rc=1
+              fi
+            fi
+
+            exit "${rc}"
+          }
+
+          trap on_exit EXIT
+          trap 'exit 130' INT
+          trap 'exit 143' TERM
+
+          post_status pending "Waiting for the GitLab UOregon pipeline"
+
+          if [[ -n "${PR_NUMBER}" ]]; then
+            ref_prefix="pr${PR_NUMBER}_"
+          else
+            ref_prefix=""
+          fi
+
+          deadline=$((SECONDS + POLL_TIMEOUT_SECONDS))
+
+          while (( SECONDS < deadline )); do
+            if [[ -z "${pipeline_id}" ]]; then
+              query_args=(
+                --get
+                --data-urlencode "sha=${COMMIT_SHA}"
+                --data-urlencode "source=${GITLAB_PIPELINE_SOURCE}"
+                --data-urlencode "order_by=id"
+                --data-urlencode "sort=desc"
+                --data-urlencode "per_page=100"
+              )
+
+              # The develop ref is exact and can be filtered server-side.
+              if [[ "${GITHUB_BRANCH}" == "develop" ]]; then
+                query_args+=(--data-urlencode "ref=develop")
+              fi
+
+              if ! pipelines="$(
+                gitlab_get \
+                  "${query_args[@]}" \
+                  "${GITLAB_URL}/api/v4/projects/${GITLAB_PROJECT_ID}/pipelines"
+              )"; then
+                sleep "${POLL_INTERVAL_SECONDS}"
+                continue
+              fi
+
+              if ! pipeline="$(
+                jq -c \
+                  --arg sha "${COMMIT_SHA}" \
+                  --arg source "${GITLAB_PIPELINE_SOURCE}" \
+                  --arg branch "${GITHUB_BRANCH}" \
+                  --arg prefix "${ref_prefix}" '
+                    if type != "array" then
+                      error("GitLab pipelines response is not an array")
+                    else
+                      [
+                        .[]
+                        | select(
+                            .sha == $sha
+                            and .source == $source
+                          )
+                        | if $branch == "develop" then
+                            select(.ref == "develop")
+                          else
+                            select(
+                              .ref == $branch
+                              or ((.ref // "") | startswith($prefix))
+                            )
+                          end
+                      ]
+                      | sort_by(.id)
+                      | last // empty
+                    end
+                  ' <<< "${pipelines}"
+              )"; then
+                sleep "${POLL_INTERVAL_SECONDS}"
+                continue
+              fi
+
+              if [[ -z "${pipeline}" ]]; then
+                sleep "${POLL_INTERVAL_SECONDS}"
+                continue
+              fi
+
+              pipeline_id="$(
+                jq -er \
+                  '.id | select(. != null) | tostring' \
+                  <<< "${pipeline}"
+              )"
+
+              echo "Monitoring GitLab pipeline ${pipeline_id}"
+            else
+              if ! pipeline="$(
+                gitlab_get \
+                  "${GITLAB_URL}/api/v4/projects/${GITLAB_PROJECT_ID}/pipelines/${pipeline_id}"
+              )"; then
+                sleep "${POLL_INTERVAL_SECONDS}"
+                continue
+              fi
+            fi
+
+            status="$(
+              jq -er \
+                '.status | select(type == "string")' \
+                <<< "${pipeline}"
+            )"
+
+            pipeline_url="$(
+              jq -r '.web_url // empty' <<< "${pipeline}"
+            )"
+
+            # Do not allow an unexpected API response to place an arbitrary
+            # external URL into the GitHub status.
+            if [[ -n "${pipeline_url}" &&
+                  "${pipeline_url}" == "${GITLAB_URL}/"* ]]; then
+              target_url="${pipeline_url}"
+            fi
+
+            if [[ "${status}" != "${last_status}" ]]; then
+              echo "GitLab pipeline ${pipeline_id} status: ${status}"
+              last_status="${status}"
+            fi
+
+            case "${status}" in
+              success)
+                finish \
+                  success \
+                  "GitLab UOregon pipeline passed" \
+                  0
+                ;;
+
+              failed|canceled|skipped|manual)
+                finish \
+                  failure \
+                  "GitLab UOregon pipeline: ${status}" \
+                  1
+                ;;
+
+              created|waiting_for_resource|preparing|waiting_for_callback|pending|running|scheduled|canceling)
+                sleep "${POLL_INTERVAL_SECONDS}"
+                ;;
+
+              *)
+                finish \
+                  error \
+                  "Unknown GitLab pipeline status: ${status}" \
+                  1
+                ;;
+            esac
+          done
+
+          finish \
+            error \
+            "Timed out waiting for the GitLab UOregon pipeline" \
+            1
