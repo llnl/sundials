@@ -18,4 +18,6 @@ examples/
 Browse the package and problem directories to find an example, then choose a
 variant based on its implementation language and optional dependencies. Each
 variant contains its source files, reference output, input data, supporting
-scripts, and a `CMakeLists.txt` for building it against an installed SUNDIALS.
+scripts, and a `CMakeLists.txt` for building it as part of the SUNDIALS tree.
+When examples are installed, the generated `CMakeLists.txt` in each variant can
+be used to build it against the installed SUNDIALS.
