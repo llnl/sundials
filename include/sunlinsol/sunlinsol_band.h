@@ -41,14 +41,14 @@ extern "C" {
  * Band Implementation of SUNLinearSolver
  * --------------------------------------- */
 
-struct _SUNLinearSolverContent_Band
+struct SUNLinearSolverContent_Band_
 {
   sunindextype N;
   sunindextype* pivots;
   sunindextype last_flag;
 };
 
-typedef struct _SUNLinearSolverContent_Band* SUNLinearSolverContent_Band;
+typedef struct SUNLinearSolverContent_Band_* SUNLinearSolverContent_Band;
 
 /* --------------------------------------
  * Exported Functions for SUNLINSOL_BAND
