@@ -188,7 +188,7 @@ The SUNLinSol_PCG module defines the *content* field of a
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_PCG {
+   struct SUNLinearSolverContent_PCG_ {
      int maxl;
      int pretype;
      sunbooleantype zeroguess;

@@ -143,7 +143,7 @@ The SUNLinSol_SPGMR module defines the *content* field of a
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_SPGMR {
+   struct SUNLinearSolverContent_SPGMR_ {
      int maxl;
      int pretype;
      int gstype;

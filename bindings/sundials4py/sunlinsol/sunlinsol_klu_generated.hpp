@@ -12,7 +12,7 @@ m.attr("SUNKLU_REINIT_FULL")      = 1;
 m.attr("SUNKLU_REINIT_PARTIAL")   = 2;
 
 auto pyClass_SUNLinearSolverContent_KLU =
-  nb::class_<_SUNLinearSolverContent_KLU>(m, "_SUNLinearSolverContent_KLU", "")
+  nb::class_<SUNLinearSolverContent_KLU_>(m, "SUNLinearSolverContent_KLU_", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 
