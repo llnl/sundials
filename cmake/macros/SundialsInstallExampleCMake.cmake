@@ -128,8 +128,8 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
                  "${_include_dir}")
             file(RELATIVE_PATH _binary_relative "${PROJECT_BINARY_DIR}"
                  "${_include_dir}")
-            if(NOT _source_relative MATCHES "^\\.\\."
-               OR NOT _binary_relative MATCHES "^\\.\\.")
+            if(NOT _source_relative MATCHES "^\\.\\." OR NOT _binary_relative
+                                                         MATCHES "^\\.\\.")
               message(
                 WARNING
                   "Skipping build-tree include directory '${_include_dir}' when generating the installed ${package} example at '${destination}'."
@@ -144,8 +144,7 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
         set(_include_list)
         foreach(_include_dir IN LISTS _installed_include_dirs)
           string(REPLACE "\\" "\\\\" _escaped_include "${_include_dir}")
-          string(REPLACE "\"" "\\\"" _escaped_include
-                         "${_escaped_include}")
+          string(REPLACE "\"" "\\\"" _escaped_include "${_escaped_include}")
           list(APPEND _include_list "\"${_escaped_include}\"")
         endforeach()
         string(JOIN " " _include_list ${_include_list})
@@ -160,8 +159,7 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
       set(_definition_list)
       foreach(_definition IN LISTS _definitions)
         string(REPLACE "\\" "\\\\" _escaped_definition "${_definition}")
-        string(REPLACE "\"" "\\\"" _escaped_definition
-                       "${_escaped_definition}")
+        string(REPLACE "\"" "\\\"" _escaped_definition "${_escaped_definition}")
         list(APPEND _definition_list "\"${_escaped_definition}\"")
       endforeach()
       string(JOIN " " _definition_list ${_definition_list})
@@ -189,8 +187,7 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
       set(_library_list)
       foreach(_library IN LISTS _installed_link_libraries)
         string(REPLACE "\\" "\\\\" _escaped_library "${_library}")
-        string(REPLACE "\"" "\\\"" _escaped_library
-                       "${_escaped_library}")
+        string(REPLACE "\"" "\\\"" _escaped_library "${_escaped_library}")
         list(APPEND _library_list "\"${_escaped_library}\"")
       endforeach()
       string(JOIN " " _library_list ${_library_list})
@@ -224,8 +221,11 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
       set(_value "${${_variable}}")
       string(REPLACE "\\" "\\\\" _value "${_value}")
       string(REPLACE "\"" "\\\"" _value "${_value}")
-      string(APPEND _compiler_settings
-             "set(${_variable}\n  \"${_value}\"\n  CACHE FILEPATH \"${_language} compiler\")\n\n")
+      string(
+        APPEND
+        _compiler_settings
+        "set(${_variable}\n  \"${_value}\"\n  CACHE FILEPATH \"${_language} compiler\")\n\n"
+      )
     endif()
 
     set(_variable CMAKE_${_language}_FLAGS)
@@ -233,8 +233,11 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
       set(_value "${${_variable}}")
       string(REPLACE "\\" "\\\\" _value "${_value}")
       string(REPLACE "\"" "\\\"" _value "${_value}")
-      string(APPEND _compiler_settings
-             "set(${_variable}\n  \"${_value}\"\n  CACHE STRING \"${_language} compiler flags\")\n\n")
+      string(
+        APPEND
+        _compiler_settings
+        "set(${_variable}\n  \"${_value}\"\n  CACHE STRING \"${_language} compiler flags\")\n\n"
+      )
     endif()
 
     set(_variable CMAKE_${_language}_STANDARD)
@@ -242,18 +245,25 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
       set(_value "${${_variable}}")
       string(REPLACE "\\" "\\\\" _value "${_value}")
       string(REPLACE "\"" "\\\"" _value "${_value}")
-      string(APPEND _compiler_settings
-             "set(${_variable}\n  \"${_value}\"\n  CACHE STRING \"${_language} standard\")\n\n")
+      string(
+        APPEND
+        _compiler_settings
+        "set(${_variable}\n  \"${_value}\"\n  CACHE STRING \"${_language} standard\")\n\n"
+      )
     endif()
   endforeach()
 
-  if(CUDA IN_LIST _languages AND DEFINED CMAKE_CUDA_HOST_COMPILER
+  if(CUDA IN_LIST _languages
+     AND DEFINED CMAKE_CUDA_HOST_COMPILER
      AND NOT "${CMAKE_CUDA_HOST_COMPILER}" STREQUAL "")
     set(_value "${CMAKE_CUDA_HOST_COMPILER}")
     string(REPLACE "\\" "\\\\" _value "${_value}")
     string(REPLACE "\"" "\\\"" _value "${_value}")
-    string(APPEND _compiler_settings
-           "set(CMAKE_CUDA_HOST_COMPILER\n  \"${_value}\"\n  CACHE FILEPATH \"CUDA host compiler\")\n\n")
+    string(
+      APPEND
+      _compiler_settings
+      "set(CMAKE_CUDA_HOST_COMPILER\n  \"${_value}\"\n  CACHE FILEPATH \"CUDA host compiler\")\n\n"
+    )
   endif()
 
   if(_requires_mpi)
@@ -264,8 +274,11 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
         set(_value "${${_variable}}")
         string(REPLACE "\\" "\\\\" _value "${_value}")
         string(REPLACE "\"" "\\\"" _value "${_value}")
-        string(APPEND _compiler_settings
-               "set(${_variable}\n  \"${_value}\"\n  CACHE FILEPATH \"MPI ${_mpi_language} compiler\")\n\n")
+        string(
+          APPEND
+          _compiler_settings
+          "set(${_variable}\n  \"${_value}\"\n  CACHE FILEPATH \"MPI ${_mpi_language} compiler\")\n\n"
+        )
       endif()
     endforeach()
   endif()
@@ -281,10 +294,9 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
   string(REPLACE "@DEPENDENCY_SETTINGS@" "${_dependency_settings}" _contents
                  "${_contents}")
   string(REPLACE "@LANGUAGES@" "${_language_list}" _contents "${_contents}")
-  string(
-    REPLACE "@SUNDIALS_CMAKE_DIR@"
-            "${CMAKE_INSTALL_PREFIX}/${SUNDIALS_INSTALL_CMAKEDIR}"
-            _contents "${_contents}")
+  string(REPLACE "@SUNDIALS_CMAKE_DIR@"
+                 "${CMAKE_INSTALL_PREFIX}/${SUNDIALS_INSTALL_CMAKEDIR}"
+                 _contents "${_contents}")
   if(Fortran IN_LIST _languages)
     string(APPEND _contents "set(CMAKE_Fortran_PREPROCESS ON)\n\n")
   endif()
