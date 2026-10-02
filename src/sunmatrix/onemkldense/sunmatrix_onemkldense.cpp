@@ -115,7 +115,7 @@ SUNMatrix SUNMatrix_OneMklDenseBlock(sunindextype num_blocks, sunindextype M,
 
   // Create content
   A->content =
-    (SUNMatrixContent_OneMklDense)malloc(sizeof(_SUNMatrixContent_OneMklDense));
+    (SUNMatrixContent_OneMklDense)malloc(sizeof(SUNMatrixContent_OneMklDense_));
   if (!(A->content))
   {
     SUNDIALS_DEBUG_ERROR("Content allocation failed\n");

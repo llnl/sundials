@@ -38,7 +38,7 @@
 extern "C" {
 #endif
 
-struct _SUNMatrixContent_MagmaDense
+struct SUNMatrixContent_MagmaDense_
 {
   int last_flag;           /* last error code returned by magma  */
   int device_id;           /* device ID used by magma            */
@@ -54,7 +54,7 @@ struct _SUNMatrixContent_MagmaDense
   magma_queue_t q;         /* operation queue (i.e. stream)      */
 };
 
-typedef struct _SUNMatrixContent_MagmaDense* SUNMatrixContent_MagmaDense;
+typedef struct SUNMatrixContent_MagmaDense_* SUNMatrixContent_MagmaDense;
 
 /* ---------------------------------------
  * Implementation specific functions

@@ -45,7 +45,7 @@ extern "C" {
  *          CSR format.
  * ---------------------------------------------------------------------------*/
 
-struct _SUNMatrixContent_SLUNRloc
+struct SUNMatrixContent_SLUNRloc_
 {
   sunbooleantype own_data;
   gridinfo_t* grid;
@@ -55,7 +55,7 @@ struct _SUNMatrixContent_SLUNRloc
   SuperMatrix* ACS_super;
 };
 
-typedef struct _SUNMatrixContent_SLUNRloc* SUNMatrixContent_SLUNRloc;
+typedef struct SUNMatrixContent_SLUNRloc_* SUNMatrixContent_SLUNRloc;
 
 /* ----------------------------------------------------------------------------
  * PART 2: Functions exported by SUNMatrix_SLUNRloc:

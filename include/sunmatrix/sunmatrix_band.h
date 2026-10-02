@@ -45,7 +45,7 @@ extern "C" {
  * Band implementation of SUNMatrix
  * --------------------------------- */
 
-struct _SUNMatrixContent_Band
+struct SUNMatrixContent_Band_
 {
   sunindextype M;
   sunindextype N;
@@ -58,7 +58,7 @@ struct _SUNMatrixContent_Band
   sunrealtype** cols;
 };
 
-typedef struct _SUNMatrixContent_Band* SUNMatrixContent_Band;
+typedef struct SUNMatrixContent_Band_* SUNMatrixContent_Band;
 
 /* ------------------------------------
  * Macros for access to SUNMATRIX_BAND
