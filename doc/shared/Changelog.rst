@@ -31,11 +31,6 @@ Changes to SUNDIALS in release X.Y.Z
 
 .. include:: RecentChanges_link.rst
 
-**Bug Fixes**
-
-Fixed a bug in the LSRKStep module where the step post-processing function for
-the RKL step was called with an incorrect time argument.
-
 .. _Changelog.7.9.0:
 
 Changes to SUNDIALS in release 7.9.0

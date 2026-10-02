@@ -13,4 +13,7 @@ pointers. This is useful when using the Fortran 2003 interfaces.
 Fixed a bug in ``FindMAGMA.cmake`` which didn't allow use of MAGMA versions with 
 multiple digits in an identifier.
 
+Fixed a bug in the LSRKStep module where the step post-processing function for
+the RKL step was called with an incorrect time argument.
+
 **Deprecation Notices**
