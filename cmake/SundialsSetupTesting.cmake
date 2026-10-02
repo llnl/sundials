@@ -179,7 +179,33 @@ if(SUNDIALS_TEST_ENABLE_GTEST)
           ON
           CACHE BOOL "" FORCE)
     endif()
+    # Build googletest without the SUNDIALS warning flags or warnings as errors
+    set(_sundials_c_flags "${CMAKE_C_FLAGS}")
+    set(_sundials_cxx_flags "${CMAKE_CXX_FLAGS}")
+    set(_sundials_warning_as_error "${CMAKE_COMPILE_WARNING_AS_ERROR}")
+    set(CMAKE_C_FLAGS "${SUNDIALS_C_FLAGS_WITHOUT_WARNINGS}")
+    set(CMAKE_CXX_FLAGS "${SUNDIALS_CXX_FLAGS_WITHOUT_WARNINGS}")
+    set(CMAKE_COMPILE_WARNING_AS_ERROR OFF)
+
     FetchContent_MakeAvailable(googletest)
+
+    set(CMAKE_C_FLAGS "${_sundials_c_flags}")
+    set(CMAKE_CXX_FLAGS "${_sundials_cxx_flags}")
+    set(CMAKE_COMPILE_WARNING_AS_ERROR "${_sundials_warning_as_error}")
+
+    # Treat googletest headers as system headers so the SUNDIALS warning flags
+    # do not apply to them when compiling SUNDIALS tests
+    foreach(_target gtest gtest_main gmock gmock_main)
+      if(TARGET ${_target})
+        get_target_property(_dirs ${_target} INTERFACE_INCLUDE_DIRECTORIES)
+        if(_dirs)
+          set_target_properties(
+            ${_target} PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
+                                  "${_dirs}")
+        endif()
+      endif()
+    endforeach()
+
     include(GoogleTest)
   endif()
 endif()
