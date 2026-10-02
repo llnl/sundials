@@ -87,7 +87,7 @@ static void PostKernelLaunch();
  * Private structure definition
  */
 
-struct _N_PrivateVectorContent_Hip
+struct N_PrivateVectorContent_Hip_
 {
   sunbooleantype use_managed_mem; /* indicates if the data pointers and buffer pointers are managed memory */
   size_t reduce_buffer_allocated_bytes; /* current size of the reduction buffer */
@@ -96,7 +96,7 @@ struct _N_PrivateVectorContent_Hip
   SUNMemory device_counter; /* device memory for a counter (used in LDS reductions) */
 };
 
-typedef struct _N_PrivateVectorContent_Hip* N_PrivateVectorContent_Hip;
+typedef struct N_PrivateVectorContent_Hip_* N_PrivateVectorContent_Hip;
 
 /* Default policies to clone */
 ThreadDirectExecPolicy DEFAULT_STREAMING_EXECPOLICY(512);
@@ -181,7 +181,7 @@ N_Vector N_VNewEmpty_Hip(SUNContext sunctx)
     return (NULL);
   }
 
-  NVEC_HIP_CONTENT(v)->priv = malloc(sizeof(_N_PrivateVectorContent_Hip));
+  NVEC_HIP_CONTENT(v)->priv = malloc(sizeof(N_PrivateVectorContent_Hip_));
   if (NVEC_HIP_CONTENT(v)->priv == NULL)
   {
     N_VDestroy(v);

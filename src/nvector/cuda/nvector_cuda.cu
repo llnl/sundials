@@ -103,7 +103,7 @@ static void PostKernelLaunch();
  * Private structure definition
  */
 
-struct _N_PrivateVectorContent_Cuda
+struct N_PrivateVectorContent_Cuda_
 {
   sunbooleantype use_managed_mem; /* do data pointers use managed memory */
 
@@ -120,7 +120,7 @@ struct _N_PrivateVectorContent_Cuda
   size_t fused_buffer_offset;  // current offset into the buffer
 };
 
-typedef struct _N_PrivateVectorContent_Cuda* N_PrivateVectorContent_Cuda;
+typedef struct N_PrivateVectorContent_Cuda_* N_PrivateVectorContent_Cuda;
 
 /* Default policies to clone */
 ThreadDirectExecPolicy DEFAULT_STREAMING_EXECPOLICY(256);
@@ -205,7 +205,7 @@ N_Vector N_VNewEmpty_Cuda(SUNContext sunctx)
     return (NULL);
   }
 
-  NVEC_CUDA_CONTENT(v)->priv = malloc(sizeof(_N_PrivateVectorContent_Cuda));
+  NVEC_CUDA_CONTENT(v)->priv = malloc(sizeof(N_PrivateVectorContent_Cuda_));
   if (NVEC_CUDA_CONTENT(v)->priv == NULL)
   {
     N_VDestroy(v);
