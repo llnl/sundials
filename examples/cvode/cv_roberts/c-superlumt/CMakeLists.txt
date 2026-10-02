@@ -12,11 +12,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_roberts_sps cv_roberts_sps.c)
+sundials_add_example(cv_roberts_sps cv_roberts_sps.c NO_TEST)
 target_link_libraries(
   cv_roberts_sps
   PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
           ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_INDEX_SIZE MATCHES "32")
-
+  sundials_add_test(
+    cv_roberts_sps cv_roberts_sps
+    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+    ANSWER_FILE cv_roberts_sps.out
+    EXAMPLE_TYPE develop)
 endif()
