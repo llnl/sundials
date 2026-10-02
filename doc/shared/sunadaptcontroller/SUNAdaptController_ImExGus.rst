@@ -57,7 +57,7 @@ class, and defines its *content* field as:
 
 .. code-block:: c
 
-   struct _SUNAdaptControllerContent_ImExGus {
+   struct SUNAdaptControllerContent_ImExGus_ {
      sunrealtype k1e;
      sunrealtype k2e;
      sunrealtype k1i;
