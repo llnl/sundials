@@ -17,6 +17,5 @@ set(cpu_examples "cv_kpr_ginkgo.cpp\;\;develop")
 sundials_add_examples_ginkgo(
   cpu_examples
   TARGETS sundials_cvode
-  BACKENDS REF OMP
-  INSTALL_FILES cv_kpr_ginkgo.hpp
-                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp")
+  BACKENDS REF OMP INSTALL_FILES cv_kpr_ginkgo.hpp
+           "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp")
