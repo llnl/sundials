@@ -110,7 +110,6 @@ static void sunCreateLogMessage(SUNLogLevel lvl, int rank, const char* scope,
 
   prefix        = NULL;
   formatted_txt = NULL;
-  msg_length    = 0;
   *log_msg      = NULL;
 
   msg_length = sunvasnprintf(&formatted_txt, txt, args);

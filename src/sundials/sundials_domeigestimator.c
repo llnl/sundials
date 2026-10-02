@@ -19,6 +19,7 @@
  * operations listed in sundials_domeigestimator.h
  * -----------------------------------------------------------------*/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sundials/priv/sundials_errors_impl.h>
@@ -123,12 +124,10 @@ SUNErrCode sunDEESetFromCommandLine(SUNDomEigEstimator DEE, const char* Did,
 
   /* Prefix for options to set */
   const char* default_id = "sundomeigestimator";
-  size_t offset          = strlen(default_id) + 1;
-  if (Did != NULL && strlen(Did) > 0) { offset = strlen(Did) + 1; }
-  char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
-  if (Did != NULL && strlen(Did) > 0) { strcpy(prefix, Did); }
-  else { strcpy(prefix, default_id); }
-  strcat(prefix, ".");
+  const char* id         = (Did != NULL && Did[0] != '\0') ? Did : default_id;
+  size_t offset          = strlen(id) + 1;
+  char* prefix           = (char*)malloc(sizeof(char) * (offset + 1));
+  snprintf(prefix, offset + 1, "%s.", id);
 
   SUNErrCode retval;
   for (int idx = 1; idx < argc; idx++)

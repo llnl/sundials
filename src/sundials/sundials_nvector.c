@@ -750,9 +750,10 @@ SUNErrCode N_VWrmsNormMaskVectorArray(int nvec, N_Vector* X, N_Vector* W,
 SUNErrCode N_VScaleAddMultiVectorArray(int nvec, int nsum, sunrealtype* a,
                                        N_Vector* X, N_Vector** Y, N_Vector** Z)
 {
-  int i, j, ier;
-  N_Vector* YY = NULL;
-  N_Vector* ZZ = NULL;
+  int i, j;
+  SUNErrCode ier = SUN_SUCCESS;
+  N_Vector* YY   = NULL;
+  N_Vector* ZZ   = NULL;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(X[0]));
 
   if (X[0]->ops->nvscaleaddmultivectorarray != NULL)
@@ -800,8 +801,9 @@ SUNErrCode N_VScaleAddMultiVectorArray(int nvec, int nsum, sunrealtype* a,
 SUNErrCode N_VLinearCombinationVectorArray(int nvec, int nsum, sunrealtype* c,
                                            N_Vector** X, N_Vector* Z)
 {
-  int i, j, ier;
-  N_Vector* Y = NULL;
+  int i, j;
+  SUNErrCode ier = SUN_SUCCESS;
+  N_Vector* Y    = NULL;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(X[0][0]));
 
   if (Z[0]->ops->nvlinearcombinationvectorarray != NULL)

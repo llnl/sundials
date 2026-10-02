@@ -322,16 +322,17 @@ int main(int argc, char* argv[])
   retval = CVodePrintAllStats(cvode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
 
   /* Print final statistics to a file in CSV format */
-  strcpy(fname, "cvsRoberts_FSA_dns_stats");
+  const char* sensi_suffix = "";
+  const char* err_suffix   = "";
   if (sensi)
   {
-    if (sensi_meth == CV_SIMULTANEOUS) { strcat(fname, "_-sensi_sim"); }
-    else if (sensi_meth == CV_STAGGERED) { strcat(fname, "_-sensi_stg"); }
-    else { strcat(fname, "_-sensi_stg1"); }
-    if (err_con) { strcat(fname, "_t"); }
-    else { strcat(fname, "_f"); }
+    sensi_suffix = (sensi_meth == CV_SIMULTANEOUS) ? "_-sensi_sim"
+                   : (sensi_meth == CV_STAGGERED)  ? "_-sensi_stg"
+                                                   : "_-sensi_stg1";
+    err_suffix   = err_con ? "_t" : "_f";
   }
-  strcat(fname, ".csv");
+  snprintf(fname, sizeof(fname), "cvsRoberts_FSA_dns_stats%s%s.csv",
+           sensi_suffix, err_suffix);
   FID    = fopen(fname, "w");
   retval = CVodePrintAllStats(cvode_mem, FID, SUN_OUTPUTFORMAT_CSV);
   fclose(FID);

@@ -16,6 +16,7 @@
 #include <cvodes/cvodes.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <nvector/nvector_serial.h>
 #include <sundials/sundials_core.hpp>
 
 #include "../../utilities/dumpstderr.hpp"
@@ -23,6 +24,8 @@
 #include "sundials/sundials_context.hpp"
 
 static const std::string errfile{"test_error_handling.err"};
+
+static int rhs(sunrealtype, N_Vector, N_Vector, void*) { return 0; }
 
 class CVodeErrConditionTest : public testing::Test
 {
@@ -75,4 +78,16 @@ TEST_F(CVodeErrConditionTest, ErrorIsPrinted)
 #else
   EXPECT_EQ(output, "");
 #endif
+}
+
+TEST_F(CVodeErrConditionTest, NegativeBackwardProblemIndex)
+{
+  N_Vector y = N_VNew_Serial(1, sunctx);
+  ASSERT_NE(y, nullptr);
+
+  ASSERT_EQ(CVodeInit(cvode_mem, rhs, 0.0, y), CV_SUCCESS);
+  ASSERT_EQ(CVodeAdjInit(cvode_mem, 10, CV_HERMITE), CV_SUCCESS);
+  EXPECT_EQ(CVodeInitB(cvode_mem, -1, nullptr, 0.0, nullptr), CV_ILL_INPUT);
+
+  N_VDestroy(y);
 }

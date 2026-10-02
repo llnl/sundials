@@ -794,7 +794,7 @@ int CVodeInitB(void* cvode_mem, int which, CVRhsFnB fB, sunrealtype tB0,
 
   /* Check the value of which */
 
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -870,7 +870,7 @@ int CVodeInitBS(void* cvode_mem, int which, CVRhsFnBS fBs, sunrealtype tB0,
 
   /* Check the value of which */
 
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -942,7 +942,7 @@ int CVodeReInitB(void* cvode_mem, int which, sunrealtype tB0, N_Vector yB0)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -997,7 +997,7 @@ int CVodeSStolerancesB(void* cvode_mem, int which, sunrealtype reltolB,
 
   /* Check the value of which */
 
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -1051,7 +1051,7 @@ int CVodeSVtolerancesB(void* cvode_mem, int which, sunrealtype reltolB,
 
   /* Check the value of which */
 
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -1104,7 +1104,7 @@ int CVodeQuadInitB(void* cvode_mem, int which, CVQuadRhsFnB fQB, N_Vector yQB0)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -1164,7 +1164,7 @@ int CVodeQuadInitBS(void* cvode_mem, int which, CVQuadRhsFnBS fQBs, N_Vector yQB
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -1224,7 +1224,7 @@ int CVodeQuadReInitB(void* cvode_mem, int which, N_Vector yQB0)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -1282,7 +1282,7 @@ int CVodeQuadSStolerancesB(void* cvode_mem, int which, sunrealtype reltolQB,
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -1332,7 +1332,7 @@ int CVodeQuadSVtolerancesB(void* cvode_mem, int which, sunrealtype reltolQB,
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -1672,7 +1672,7 @@ int CVodeGetB(void* cvode_mem, int which, sunrealtype* tret, N_Vector yB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -1724,7 +1724,7 @@ int CVodeGetQuadB(void* cvode_mem, int which, sunrealtype* tret, N_Vector qB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
