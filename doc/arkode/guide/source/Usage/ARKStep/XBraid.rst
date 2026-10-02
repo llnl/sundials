@@ -115,13 +115,13 @@ Here, the SUNBraidOps structure is defined as
 .. code-block:: C
 
    /* Structure containing function pointers to operations */
-   struct _SUNBraidOps
+   struct SUNBraidOps_
    {
      int (*getvectmpl)(braid_App app, N_Vector *tmpl);
    };
 
    /* Pointer to operations structure */
-   typedef struct _SUNBraidOps *SUNBraidOps;
+   typedef struct SUNBraidOps_ *SUNBraidOps;
 
 The generic SUNBraidApp defines and implements the generic operations acting on
 a SUNBraidApp object. These generic functions are nothing but wrappers to access
