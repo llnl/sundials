@@ -42,7 +42,7 @@ struct SplittingStepCoefficientsMem
   int order;      /* order of convergence */
 };
 
-typedef _SUNDIALS_STRUCT_ SplittingStepCoefficientsMem* SplittingStepCoefficients;
+typedef SUNDIALS_STRUCT SplittingStepCoefficientsMem* SplittingStepCoefficients;
 
 /* Splitting names use the convention
  * ARKODE_SPLITTING_<name>_<stages>_<order>_<partitions> */

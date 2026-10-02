@@ -56,10 +56,10 @@ typedef enum SUNAdaptController_Type SUNAdaptController_Type;
  * ----------------------------------------------------------------- */
 
 /* Forward reference for pointer to SUNAdaptController_Ops object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNAdaptController_Ops* SUNAdaptController_Ops;
+typedef SUNDIALS_STRUCT _generic_SUNAdaptController_Ops* SUNAdaptController_Ops;
 
 /* Forward reference for pointer to SUNAdaptController object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNAdaptController* SUNAdaptController;
+typedef SUNDIALS_STRUCT _generic_SUNAdaptController* SUNAdaptController;
 
 /* Structure containing function pointers to controller operations  */
 struct _generic_SUNAdaptController_Ops
