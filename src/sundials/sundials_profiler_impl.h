@@ -52,7 +52,7 @@
 #if defined(SUNDIALS_HAVE_POSIX_TIMERS)
 typedef struct timespec sunTimespec;
 #else
-typedef struct _sunTimespec
+typedef struct sunTimespec_
 {
   long int tv_sec;
   long int tv_nsec;
