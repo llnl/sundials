@@ -47,11 +47,11 @@ classes, in that this class contains a pointer to an implementation-specific
 :c:type:`SUNContext` object.
 
 A :c:type:`SUNAdaptController` is a pointer to the
-:c:struct:`_generic_SUNAdaptController` structure:
+:c:struct:`SUNAdaptController_` structure:
 
-.. c:type:: struct _generic_SUNAdaptController *SUNAdaptController
+.. c:type:: struct SUNAdaptController_ *SUNAdaptController
 
-.. c:struct:: _generic_SUNAdaptController
+.. c:struct:: SUNAdaptController_
 
    .. c:member:: void* content
 
@@ -68,9 +68,9 @@ A :c:type:`SUNAdaptController` is a pointer to the
 
 The virtual table structure is defined as
 
-.. c:type:: struct _generic_SUNAdaptController_Ops *SUNAdaptController_Ops
+.. c:type:: struct SUNAdaptController_Ops_ *SUNAdaptController_Ops
 
-.. c:struct:: _generic_SUNAdaptController_Ops
+.. c:struct:: SUNAdaptController_Ops_
 
    The structure defining :c:type:`SUNAdaptController` operations.
 
