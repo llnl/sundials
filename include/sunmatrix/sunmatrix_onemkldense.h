@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-struct _SUNMatrixContent_OneMklDense
+struct SUNMatrixContent_OneMklDense_
 {
   int last_flag;                  /* last error code returned       */
   sunindextype block_rows;        /* number of rows in a block      */
@@ -48,7 +48,7 @@ struct _SUNMatrixContent_OneMklDense
   ::sycl::queue* queue;           /* operation queue                */
 };
 
-typedef struct _SUNMatrixContent_OneMklDense* SUNMatrixContent_OneMklDense;
+typedef struct SUNMatrixContent_OneMklDense_* SUNMatrixContent_OneMklDense;
 
 /* ---------------------------------------------------------------------------
  * Implementation specific functions
