@@ -378,7 +378,7 @@ void mristepinnerstepper_user_supplied_fn_table_destroy(void* ptr);
   controller.
   ===============================================================*/
 
-typedef struct _mriStepControlContent
+typedef struct mriStepControlContent_
 {
   ARKodeMem ark_mem;         /* ARKODE memory pointer */
   ARKodeMRIStepMem step_mem; /* MRIStep memory pointer */
