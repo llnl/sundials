@@ -15,7 +15,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
  * This is the header file for a generic nonlinear solver package. It defines
- * the SUNNonlinearSolver structure (_generic_SUNNonlinearSolver) which contains
+ * the SUNNonlinearSolver structure (SUNNonlinearSolver_) which contains
  * the following fields:
  *   - an implementation-dependent 'content' field which contains any internal
  *     data required by the solver
@@ -29,8 +29,8 @@
  * This header file contains:
  *   - function types supplied to a SUNNonlinearSolver,
  *   - enumeration constants for SUNDIALS-defined nonlinear solver types,
- *   - type declarations for the _generic_SUNNonlinearSolver and
- *     _generic_SUNNonlinearSolver_Ops structures, as well as references to
+ *   - type declarations for the SUNNonlinearSolver_ and
+ *     SUNNonlinearSolver_Ops_ structures, as well as references to
  *     pointers to such structures (SUNNonlinearSolver),
  *   - prototypes for the nonlinear solver functions which operate
  *     on/by SUNNonlinearSolver objects, and
@@ -65,10 +65,10 @@ extern "C" {
  * ---------------------------------------------------------------------------*/
 
 /* Forward reference for pointer to SUNNonlinearSolver_Ops object */
-typedef SUNDIALS_STRUCT _generic_SUNNonlinearSolver_Ops* SUNNonlinearSolver_Ops;
+typedef SUNDIALS_STRUCT SUNNonlinearSolver_Ops_* SUNNonlinearSolver_Ops;
 
 /* Forward reference for pointer to SUNNonlinearSolver object */
-typedef SUNDIALS_STRUCT _generic_SUNNonlinearSolver* SUNNonlinearSolver;
+typedef SUNDIALS_STRUCT SUNNonlinearSolver_* SUNNonlinearSolver;
 
 /* -----------------------------------------------------------------------------
  * Integrator supplied function types
@@ -112,7 +112,7 @@ typedef enum SUNNonlinearSolver_Type SUNNonlinearSolver_Type;
  * ---------------------------------------------------------------------------*/
 
 /* Structure containing function pointers to nonlinear solver operations */
-struct _generic_SUNNonlinearSolver_Ops
+struct SUNNonlinearSolver_Ops_
 {
   SUNNonlinearSolver_Type (*gettype)(SUNNonlinearSolver);
   SUNErrCode (*initialize)(SUNNonlinearSolver);
@@ -142,7 +142,7 @@ struct _generic_SUNNonlinearSolver_Ops
 /* A nonlinear solver is a structure with an implementation-dependent 'content'
    field, and a pointer to a structure of solver nonlinear solver operations
    corresponding to that implementation. */
-struct _generic_SUNNonlinearSolver
+struct SUNNonlinearSolver_
 {
   void* content;
   void* python;
