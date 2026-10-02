@@ -84,6 +84,11 @@ function(sundials_add_example name)
   list(APPEND _executable_args PROPERTIES ${_properties})
   sundials_add_executable(${name} ${_executable_args})
 
+  # A scalar-type mismatch intentionally does not create a target.
+  if(NOT TARGET ${name})
+    return()
+  endif()
+
   if(arg_TEST_NAME)
     set(_test_name ${arg_TEST_NAME})
   else()
