@@ -128,8 +128,8 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
                  "${_include_dir}")
             file(RELATIVE_PATH _binary_relative "${PROJECT_BINARY_DIR}"
                  "${_include_dir}")
-            if(NOT _source_relative MATCHES "^\.\."
-               OR NOT _binary_relative MATCHES "^\.\.")
+            if(NOT _source_relative MATCHES "^\\.\\."
+               OR NOT _binary_relative MATCHES "^\\.\\.")
               message(
                 WARNING
                   "Skipping build-tree include directory '${_include_dir}' when generating the installed ${package} example at '${destination}'."

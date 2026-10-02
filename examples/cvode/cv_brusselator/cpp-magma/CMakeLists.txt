@@ -15,13 +15,13 @@
 # CVODE MAGMA C++ example
 if(SUNDIALS_MAGMA_BACKENDS MATCHES "CUDA")
   set(vector nveccuda)
-  set(cuda_or_hip CUDA)
+  set(language CUDA)
 elseif(SUNDIALS_MAGMA_BACKENDS MATCHES "HIP")
   set(vector nvechip)
-  set(cuda_or_hip HIP)
+  set(language CXX)
 endif()
 set_source_files_properties(cv_bruss_batched_magma.cpp
-                            PROPERTIES LANGUAGE ${cuda_or_hip})
+                            PROPERTIES LANGUAGE ${language})
 sundials_add_example(cv_bruss_batched_magma cv_bruss_batched_magma.cpp)
 target_link_libraries(
   cv_bruss_batched_magma

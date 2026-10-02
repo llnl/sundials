@@ -40,12 +40,17 @@ foreach(backend REF OMP CUDA HIP SYCL)
   set_source_files_properties(cv_bruss_batched_ginkgo.cpp
                               PROPERTIES LANGUAGE ${language})
   set(example_target cv_bruss_batched_ginkgo.${backend})
+  set(example_options)
   if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${example_target}.out")
-    message(STATUS "Skipping ${example_target}: no answer file is available")
-    continue()
+    message(
+      STATUS
+        "No answer file for ${example_target}; running without output comparison"
+    )
+    list(APPEND example_options NODIFF)
   endif()
   sundials_add_example(
     ${example_target} cv_bruss_batched_ginkgo.cpp
+    ${example_options}
     FLOAT_PRECISION ${float_precision}
     INSTALL_FILES
       cv_bruss_batched_ginkgo.hpp
