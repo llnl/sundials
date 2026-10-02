@@ -51,7 +51,7 @@ extern "C" {
    ManyVector implementation of N_Vector
    ----------------------------------------------------------------- */
 
-struct _N_VectorContent_ManyVector
+struct N_VectorContent_ManyVector_
 {
   sunindextype num_subvectors; /* number of vectors attached       */
   sunindextype global_length;  /* overall global manyvector length */
@@ -59,7 +59,7 @@ struct _N_VectorContent_ManyVector
   sunbooleantype own_data;     /* flag indicating data ownership   */
 };
 
-typedef struct _N_VectorContent_ManyVector* N_VectorContent_ManyVector;
+typedef struct N_VectorContent_ManyVector_* N_VectorContent_ManyVector;
 
 /* -----------------------------------------------------------------
    functions exported by ManyVector
