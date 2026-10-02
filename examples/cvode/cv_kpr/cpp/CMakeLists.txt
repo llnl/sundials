@@ -17,15 +17,10 @@ sundials_add_example(
   cv_kpr cv_kpr.cpp
   INSTALL_FILES cv_kpr.hpp cv_kpr_cvode.init_step_0.01.out
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
+  INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
+  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS}
 )
-if(EXISTS "${PROJECT_SOURCE_DIR}/examples/utilities")
-  target_include_directories(cv_kpr
-                             PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)
-else()
-  target_include_directories(cv_kpr PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-endif()
-target_link_libraries(cv_kpr PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                                     ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
   cv_kpr_cvode.init_step_0.01 cv_kpr
   TEST_ARGS cvode.init_step 0.01
