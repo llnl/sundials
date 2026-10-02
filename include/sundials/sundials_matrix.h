@@ -84,10 +84,10 @@ typedef enum SUNMatrix_ID SUNMatrix_ID;
  * ----------------------------------------------------------------- */
 
 /* Forward reference for pointer to SUNMatrix_Ops object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNMatrix_Ops* SUNMatrix_Ops;
+typedef SUNDIALS_STRUCT _generic_SUNMatrix_Ops* SUNMatrix_Ops;
 
 /* Forward reference for pointer to SUNMatrix object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNMatrix* SUNMatrix;
+typedef SUNDIALS_STRUCT _generic_SUNMatrix* SUNMatrix;
 
 /* Structure containing function pointers to matrix operations  */
 struct _generic_SUNMatrix_Ops

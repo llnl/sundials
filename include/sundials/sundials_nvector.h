@@ -93,10 +93,10 @@ typedef enum N_Vector_ID N_Vector_ID;
  * ----------------------------------------------------------------- */
 
 /* Forward reference for pointer to N_Vector_Ops object */
-typedef _SUNDIALS_STRUCT_ _generic_N_Vector_Ops* N_Vector_Ops;
+typedef SUNDIALS_STRUCT _generic_N_Vector_Ops* N_Vector_Ops;
 
 /* Forward reference for pointer to N_Vector object */
-typedef _SUNDIALS_STRUCT_ _generic_N_Vector* N_Vector;
+typedef SUNDIALS_STRUCT _generic_N_Vector* N_Vector;
 
 /* Define array of N_Vectors */
 /* DEPRECATION NOTICE: N_Vector_S will be removed in the next major release */
