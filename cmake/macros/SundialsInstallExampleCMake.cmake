@@ -42,7 +42,9 @@ function(sundials_install_example_cmake source_dir destination)
 cmake_minimum_required(VERSION 3.18)
 project(cvode_example LANGUAGES @LANGUAGES@)
 
-find_package(SUNDIALS REQUIRED)
+set(SUNDIALS_DIR "@SUNDIALS_CMAKE_DIR@"
+    CACHE PATH "Location of SUNDIALSConfig.cmake")
+find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
 
 ]=])
 
@@ -168,6 +170,10 @@ find_package(SUNDIALS REQUIRED)
   list(REMOVE_DUPLICATES _languages)
   string(JOIN " " _language_list ${_languages})
   string(REPLACE "@LANGUAGES@" "${_language_list}" _contents "${_contents}")
+  string(
+    REPLACE "@SUNDIALS_CMAKE_DIR@"
+            "${CMAKE_INSTALL_PREFIX}/${SUNDIALS_INSTALL_CMAKEDIR}"
+            _contents "${_contents}")
   if(Fortran IN_LIST _languages)
     string(APPEND _contents "set(CMAKE_Fortran_PREPROCESS ON)\n\n")
   endif()
