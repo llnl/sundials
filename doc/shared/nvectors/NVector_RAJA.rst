@@ -39,7 +39,7 @@ The vector content layout is as follows:
 
 .. code-block:: c++
 
-   struct _N_VectorContent_Raja
+   struct N_VectorContent_Raja_
    {
       sunindextype length;
       sunbooleantype  own_data;

@@ -58,7 +58,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-struct _N_VectorContent_OpenMP
+struct N_VectorContent_OpenMP_
 {
   sunindextype length;     /* vector length            */
   sunbooleantype own_data; /* data ownership flag      */
@@ -66,7 +66,7 @@ struct _N_VectorContent_OpenMP
   int num_threads;         /* number of OpenMP threads */
 };
 
-typedef struct _N_VectorContent_OpenMP* N_VectorContent_OpenMP;
+typedef struct N_VectorContent_OpenMP_* N_VectorContent_OpenMP;
 
 /*
  * -----------------------------------------------------------------

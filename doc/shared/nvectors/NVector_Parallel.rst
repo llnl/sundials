@@ -29,7 +29,7 @@ ownership of the data array *data*.
 
 .. code-block:: c
 
-   struct _N_VectorContent_Parallel {
+   struct N_VectorContent_Parallel_ {
       sunindextype local_length;
       sunindextype global_length;
       sunbooleantype own_data;

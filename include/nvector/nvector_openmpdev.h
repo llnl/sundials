@@ -58,7 +58,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-struct _N_VectorContent_OpenMPDEV
+struct N_VectorContent_OpenMPDEV_
 {
   sunindextype length;     /* vector length       */
   sunbooleantype own_data; /* data ownership flag */
@@ -66,7 +66,7 @@ struct _N_VectorContent_OpenMPDEV
   sunrealtype* dev_data;   /* device data array   */
 };
 
-typedef struct _N_VectorContent_OpenMPDEV* N_VectorContent_OpenMPDEV;
+typedef struct N_VectorContent_OpenMPDEV_* N_VectorContent_OpenMPDEV;
 
 /*
  * -----------------------------------------------------------------
