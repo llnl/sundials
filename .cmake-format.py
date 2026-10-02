@@ -42,7 +42,7 @@ with section("parse"):
                 "TEST_ARGS": "+",
                 "TEST_NAME": 1,
             },
-            "pargs": {"flags": ["ADD_TEST", "INSTALL", "NODIFF"], "nargs": "2+"},
+            "pargs": {"flags": ["NO_INSTALL", "NO_TEST", "NODIFF"], "nargs": "1+"},
         },
         "sundials_add_f2003_library": {
             "kwargs": {

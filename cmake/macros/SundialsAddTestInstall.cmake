@@ -59,7 +59,7 @@ macro(SUNDIALS_ADD_TEST_INSTALL PACKAGE TESTDIR)
         > cmake.out
       COMMAND ${CMAKE_COMMAND} --build ${TEST_INSTALL_DIR}/${PACKAGE}/${TESTDIR}
               --target ${SUNDIALS_ADD_TEST_INSTALL_EXECUTABLE} > make.out
-      COMMAND ${CMAKE_CTEST_COMMAND} -R
+      COMMAND ${CMAKE_CTEST_COMMAND} --no-tests=error -R
               ^${SUNDIALS_ADD_TEST_INSTALL_EXECUTABLE}$)
 
     # make test_install depend on test_install_package
