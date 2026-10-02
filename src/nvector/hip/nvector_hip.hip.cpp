@@ -174,7 +174,7 @@ N_Vector N_VNewEmpty_Hip(SUNContext sunctx)
 
   /* Create content */
 
-  v->content = (N_VectorContent_Hip)malloc(sizeof(_N_VectorContent_Hip));
+  v->content = (N_VectorContent_Hip)malloc(sizeof(N_VectorContent_Hip_));
   if (v->content == NULL)
   {
     N_VDestroy(v);

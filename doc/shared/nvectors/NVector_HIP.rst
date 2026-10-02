@@ -28,7 +28,7 @@ the HIP-clang compiler. The vector content layout is as follows:
 
 .. code-block:: c++
 
-   struct _N_VectorContent_Hip
+   struct N_VectorContent_Hip_
    {
       sunindextype       length;
       sunbooleantype     own_helper;
@@ -40,7 +40,7 @@ the HIP-clang compiler. The vector content layout is as follows:
       void*              priv; /* 'private' data */
    };
 
-   typedef struct _N_VectorContent_Hip *N_VectorContent_Hip;
+   typedef struct N_VectorContent_Hip_ *N_VectorContent_Hip;
 
 
 The content members are the vector length (size), a boolean flag that signals if
