@@ -4,7 +4,7 @@
 // #endif
 //
 
-auto pyClass_SUNLinearSolverContent_SPTFQMR =
+auto pyClassSUNLinearSolverContent_SPTFQMR_ =
   nb::class_<SUNLinearSolverContent_SPTFQMR_>(m,
                                               "SUNLinearSolverContent_SPTFQMR_",
                                               "")
