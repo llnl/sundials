@@ -17,12 +17,6 @@
 # CMakeLists.txt file for the F2003 SUNDIALS object library
 # ---------------------------------------------------------------
 
-# Disable warnings from unused SWIG macros which we can't control
-if(SUNDIALS_ENABLE_ALL_WARNINGS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-macros")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-macros")
-endif()
-
 set(sundials_SOURCES fsundials_core_mod.c fsundials_core_mod.f90)
 
 sundials_add_f2003_library(sundials_fcore_mod SOURCES ${sundials_SOURCES})

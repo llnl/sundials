@@ -198,7 +198,7 @@ module fsundials_core_mod
     SUNDIALS_NVEC_PETSC, SUNDIALS_NVEC_CUDA, SUNDIALS_NVEC_HIP, SUNDIALS_NVEC_SYCL, SUNDIALS_NVEC_RAJA, SUNDIALS_NVEC_KOKKOS, &
     SUNDIALS_NVEC_OPENMPDEV, SUNDIALS_NVEC_TRILINOS, SUNDIALS_NVEC_MANYVECTOR, SUNDIALS_NVEC_MPIMANYVECTOR, &
     SUNDIALS_NVEC_MPIPLUSX, SUNDIALS_NVEC_CUSTOM
- ! struct struct _generic_N_Vector_Ops
+ ! struct struct N_Vector_Ops_
  type, bind(C), public :: N_Vector_Ops
   type(C_FUNPTR), public :: nvgetvectorid
   type(C_FUNPTR), public :: nvclone
@@ -257,7 +257,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: nvprint
   type(C_FUNPTR), public :: nvprintfile
  end type N_Vector_Ops
- ! struct struct _generic_N_Vector
+ ! struct struct N_Vector_
  type, bind(C), public :: N_Vector
   type(C_PTR), public :: content
   type(C_PTR), public :: ops
@@ -345,7 +345,7 @@ module fsundials_core_mod
  integer, parameter, public :: SUNMatrix_ID = kind(SUNMATRIX_DENSE)
  public :: SUNMATRIX_DENSE, SUNMATRIX_MAGMADENSE, SUNMATRIX_ONEMKLDENSE, SUNMATRIX_BAND, SUNMATRIX_SPARSE, SUNMATRIX_SLUNRLOC, &
     SUNMATRIX_CUSPARSE, SUNMATRIX_GINKGO, SUNMATRIX_GINKGOBATCH, SUNMATRIX_KOKKOSDENSE, SUNMATRIX_CUSTOM
- ! struct struct _generic_SUNMatrix_Ops
+ ! struct struct SUNMatrix_Ops_
  type, bind(C), public :: SUNMatrix_Ops
   type(C_FUNPTR), public :: getid
   type(C_FUNPTR), public :: clone
@@ -358,7 +358,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: matvec
   type(C_FUNPTR), public :: mathermitiantransposevec
  end type SUNMatrix_Ops
- ! struct struct _generic_SUNMatrix
+ ! struct struct SUNMatrix_
  type, bind(C), public :: SUNMatrix
   type(C_PTR), public :: content
   type(C_PTR), public :: ops
@@ -441,7 +441,7 @@ module fsundials_core_mod
     SUNLINEARSOLVER_SPTFQMR, SUNLINEARSOLVER_SUPERLUDIST, SUNLINEARSOLVER_SUPERLUMT, SUNLINEARSOLVER_CUSOLVERSP_BATCHQR, &
     SUNLINEARSOLVER_MAGMADENSE, SUNLINEARSOLVER_ONEMKLDENSE, SUNLINEARSOLVER_GINKGO, SUNLINEARSOLVER_GINKGOBATCH, &
     SUNLINEARSOLVER_KOKKOSDENSE, SUNLINEARSOLVER_CUSTOM
- ! struct struct _generic_SUNLinearSolver_Ops
+ ! struct struct SUNLinearSolver_Ops_
  type, bind(C), public :: SUNLinearSolver_Ops
   type(C_FUNPTR), public :: gettype
   type(C_FUNPTR), public :: getid
@@ -459,7 +459,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: resid
   type(C_FUNPTR), public :: free
  end type SUNLinearSolver_Ops
- ! struct struct _generic_SUNLinearSolver
+ ! struct struct SUNLinearSolver_
  type, bind(C), public :: SUNLinearSolver
   type(C_PTR), public :: content
   type(C_PTR), public :: python
@@ -506,7 +506,7 @@ module fsundials_core_mod
  end enum
  integer, parameter, public :: SUNNonlinearSolver_Type = kind(SUNNONLINEARSOLVER_ROOTFIND)
  public :: SUNNONLINEARSOLVER_ROOTFIND, SUNNONLINEARSOLVER_FIXEDPOINT, SUNNONLINEARSOLVER_HYBRID
- ! struct struct _generic_SUNNonlinearSolver_Ops
+ ! struct struct SUNNonlinearSolver_Ops_
  type, bind(C), public :: SUNNonlinearSolver_Ops
   type(C_FUNPTR), public :: gettype
   type(C_FUNPTR), public :: initialize
@@ -527,7 +527,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: getcuriter
   type(C_FUNPTR), public :: getnumconvfails
  end type SUNNonlinearSolver_Ops
- ! struct struct _generic_SUNNonlinearSolver
+ ! struct struct SUNNonlinearSolver_
  type, bind(C), public :: SUNNonlinearSolver
   type(C_PTR), public :: content
   type(C_PTR), public :: python
@@ -564,7 +564,7 @@ module fsundials_core_mod
  end enum
  integer, parameter, public :: SUNAdaptController_Type = kind(SUN_ADAPTCONTROLLER_NONE)
  public :: SUN_ADAPTCONTROLLER_NONE, SUN_ADAPTCONTROLLER_H, SUN_ADAPTCONTROLLER_MRI_H_TOL
- ! struct struct _generic_SUNAdaptController_Ops
+ ! struct struct SUNAdaptController_Ops_
  type, bind(C), public :: SUNAdaptController_Ops
   type(C_FUNPTR), public :: gettype
   type(C_FUNPTR), public :: estimatestep
@@ -578,7 +578,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: updateh
   type(C_FUNPTR), public :: updatemrihtol
  end type SUNAdaptController_Ops
- ! struct struct _generic_SUNAdaptController
+ ! struct struct SUNAdaptController_
  type, bind(C), public :: SUNAdaptController
   type(C_PTR), public :: content
   type(C_PTR), public :: ops

@@ -564,11 +564,11 @@ The generic SUNLinearSolver module
 
 SUNDIALS packages interact with linear solver implementations through the
 :c:type:`SUNLinearSolver` class. A :c:type:`SUNLinearSolver` is a pointer to the
-:c:struct:`_generic_SUNLinearSolver` structure:
+:c:struct:`SUNLinearSolver_` structure:
 
-.. c:type:: struct _generic_SUNLinearSolver *SUNLinearSolver
+.. c:type:: struct SUNLinearSolver_ *SUNLinearSolver
 
-.. c:struct:: _generic_SUNLinearSolver
+.. c:struct:: SUNLinearSolver_
 
    The structure defining the SUNDIALS linear solver class.
 
@@ -587,9 +587,9 @@ SUNDIALS packages interact with linear solver implementations through the
 
 The virtual table structure is defined as
 
-.. c:type:: struct _generic_SUNLinearSolver_Ops *SUNLinearSolver_Ops
+.. c:type:: struct SUNLinearSolver_Ops_ *SUNLinearSolver_Ops
 
-.. c:struct:: _generic_SUNLinearSolver_Ops
+.. c:struct:: SUNLinearSolver_Ops_
 
    The structure defining :c:type:`SUNLinearSolver` operations.
 

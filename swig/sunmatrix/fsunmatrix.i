@@ -29,6 +29,5 @@
 
 // Macro for creating an interface to an N_Vector
 %define %sunmatrix_impl(TYPE)
-  %ignore _SUNMatrixContent_## TYPE ##;
+  %ignore SUNMatrixContent_## TYPE ##_;
 %enddef
-

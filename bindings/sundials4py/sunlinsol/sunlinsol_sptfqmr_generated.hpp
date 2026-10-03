@@ -4,9 +4,9 @@
 // #endif
 //
 
-auto pyClass_SUNLinearSolverContent_SPTFQMR =
-  nb::class_<_SUNLinearSolverContent_SPTFQMR>(m,
-                                              "_SUNLinearSolverContent_SPTFQMR",
+auto pyClassSUNLinearSolverContent_SPTFQMR_ =
+  nb::class_<SUNLinearSolverContent_SPTFQMR_>(m,
+                                              "SUNLinearSolverContent_SPTFQMR_",
                                               "")
     .def(nb::init<>()) // implicit default constructor
   ;

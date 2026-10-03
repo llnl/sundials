@@ -4,8 +4,8 @@
 // #endif
 //
 
-auto pyClass_N_VectorContent_Cuda =
-  nb::class_<_N_VectorContent_Cuda>(m, "_N_VectorContent_Cuda", "")
+auto pyClassN_VectorContent_Cuda_ =
+  nb::class_<N_VectorContent_Cuda_>(m, "N_VectorContent_Cuda_", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 

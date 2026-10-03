@@ -46,13 +46,13 @@ typedef struct _braid_Vector_struct* SUNBraidVector;
  * ----------------------------- */
 
 /* Structure containing function pointers to operations */
-struct _SUNBraidOps
+struct SUNBraidOps_
 {
   int (*getvectmpl)(braid_App app, N_Vector* tmpl);
 };
 
 /* Pointer to operations structure */
-typedef struct _SUNBraidOps* SUNBraidOps;
+typedef struct SUNBraidOps_* SUNBraidOps;
 
 /* Define XBraid App structure */
 struct _braid_App_struct
