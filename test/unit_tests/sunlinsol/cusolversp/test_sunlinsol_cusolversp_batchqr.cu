@@ -116,8 +116,8 @@ int main(int argc, char* argv[])
   d_x    = N_VNew_Cuda(N, sunctx);
   d_xref = N_VNew_Cuda(N, sunctx);
   d_b    = N_VNew_Cuda(N, sunctx);
-  x      = N_VMake_Serial(N, N_VGetHostArrayPointer_Cuda(d_x), sunctx);
-  b      = N_VMake_Serial(N, N_VGetHostArrayPointer_Cuda(d_b), sunctx);
+  x      = N_VMake_Serial(N, N_VGetArrayPointer(d_x), sunctx);
+  b      = N_VMake_Serial(N, N_VGetArrayPointer(d_b), sunctx);
 
   /* Zero the matrix */
   fails = SUNMatZero(B);
@@ -178,8 +178,8 @@ int main(int argc, char* argv[])
   }
 
   /* Fill x vector with uniform random data in [0,1] */
-  xdata    = N_VGetHostArrayPointer_Cuda(d_x);
-  xrefdata = N_VGetHostArrayPointer_Cuda(d_xref);
+  xdata    = N_VGetArrayPointer(d_x);
+  xrefdata = N_VGetArrayPointer(d_xref);
   for (i = 0; i < N; i++)
   {
     sunrealtype tmp = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
@@ -233,15 +233,15 @@ int main(int argc, char* argv[])
 
     N_VCopyFromDevice_Cuda(d_xref);
     printf("x (reference)\n");
-    N_VPrint_Cuda(d_xref);
+    N_VPrint(d_xref);
 
     N_VCopyFromDevice_Cuda(d_x); /* copy solution from device */
     printf("x (computed)\n");
-    N_VPrint_Cuda(d_x);
+    N_VPrint(d_x);
 
     N_VCopyFromDevice_Cuda(d_b);
     printf("\nb = Ax (reference)\n");
-    N_VPrint_Cuda(d_b);
+    N_VPrint(d_b);
   }
   else { printf("SUCCESS: SUNLinSol module passed all tests \n \n"); }
 
@@ -278,8 +278,8 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
   N_VCopyFromDevice_Cuda(X);
   N_VCopyFromDevice_Cuda(Y);
 
-  Xdata        = N_VGetHostArrayPointer_Cuda(X);
-  Ydata        = N_VGetHostArrayPointer_Cuda(Y);
+  Xdata        = N_VGetArrayPointer(X);
+  Ydata        = N_VGetArrayPointer(Y);
   local_length = N_VGetLength(X);
 
   /* check vector data */

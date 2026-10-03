@@ -29,13 +29,6 @@ module fsunlinsol_lapackdense_mod
 
  ! DECLARATION CONSTRUCTS
  public :: FSUNLinSol_LapackDense
- public :: FSUNLinSolGetType_LapackDense
- public :: FSUNLinSolGetID_LapackDense
- public :: FSUNLinSolInitialize_LapackDense
- public :: FSUNLinSolSetup_LapackDense
- public :: FSUNLinSolSolve_LapackDense
- public :: FSUNLinSolLastFlag_LapackDense
- public :: FSUNLinSolFree_LapackDense
 
 ! WRAPPER DECLARATIONS
 interface
@@ -47,67 +40,6 @@ type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 type(C_PTR) :: fresult
-end function
-
-function swigc_FSUNLinSolGetType_LapackDense(farg1) &
-bind(C, name="_wrap_FSUNLinSolGetType_LapackDense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolGetID_LapackDense(farg1) &
-bind(C, name="_wrap_FSUNLinSolGetID_LapackDense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolInitialize_LapackDense(farg1) &
-bind(C, name="_wrap_FSUNLinSolInitialize_LapackDense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolSetup_LapackDense(farg1, farg2) &
-bind(C, name="_wrap_FSUNLinSolSetup_LapackDense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolSolve_LapackDense(farg1, farg2, farg3, farg4, farg5) &
-bind(C, name="_wrap_FSUNLinSolSolve_LapackDense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
-real(C_DOUBLE), intent(in) :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolLastFlag_LapackDense(farg1) &
-bind(C, name="_wrap_FSUNLinSolLastFlag_LapackDense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT32_T) :: fresult
-end function
-
-function swigc_FSUNLinSolFree_LapackDense(farg1) &
-bind(C, name="_wrap_FSUNLinSolFree_LapackDense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
 end function
 
 end interface
@@ -132,112 +64,6 @@ farg2 = c_loc(a)
 farg3 = sunctx
 fresult = swigc_FSUNLinSol_LapackDense(farg1, farg2, farg3)
 call c_f_pointer(fresult, swig_result)
-end function
-
-function FSUNLinSolGetType_LapackDense(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNLinearSolver_Type) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolGetType_LapackDense(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolGetID_LapackDense(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNLinearSolver_ID) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolGetID_LapackDense(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolInitialize_LapackDense(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolInitialize_LapackDense(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolSetup_LapackDense(s, a) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(s)
-farg2 = c_loc(a)
-fresult = swigc_FSUNLinSolSetup_LapackDense(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNLinSolSolve_LapackDense(s, a, x, b, tol) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: b
-real(C_DOUBLE), intent(in) :: tol
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
-real(C_DOUBLE) :: farg5 
-
-farg1 = c_loc(s)
-farg2 = c_loc(a)
-farg3 = c_loc(x)
-farg4 = c_loc(b)
-farg5 = tol
-fresult = swigc_FSUNLinSolSolve_LapackDense(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSUNLinSolLastFlag_LapackDense(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT32_T) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolLastFlag_LapackDense(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolFree_LapackDense(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolFree_LapackDense(farg1)
-swig_result = fresult
 end function
 
 

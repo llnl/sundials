@@ -44,9 +44,9 @@ contains
     !===== Setup ====
     x => FN_VMake_Pthreads(N, 2, xdata, sunctx)
     call FN_VConst(ONE, x)
-    y => FN_VClone_Pthreads(x)
+    y => FN_VClone(x)
     call FN_VConst(ONE, y)
-    z => FN_VClone_Pthreads(x)
+    z => FN_VClone(x)
     call FN_VConst(ONE, z)
 
     xvecs = FN_VCloneVectorArray(nv, x)
@@ -57,58 +57,58 @@ contains
 
     ! test constructors
     tmp => FN_VNewEmpty_Pthreads(N, 2, sunctx)
-    call FN_VDestroy_Pthreads(tmp)
+    call FN_VDestroy(tmp)
     tmp => FN_VMake_Pthreads(N, 2, xdata, sunctx)
-    call FN_VDestroy_Pthreads(tmp)
+    call FN_VDestroy(tmp)
     tmp => FN_VNew_Pthreads(N, 2, sunctx)
-    call FN_VDestroy_Pthreads(tmp)
-    tmp => FN_VCloneEmpty_Pthreads(x)
-    call FN_VDestroy_Pthreads(tmp)
+    call FN_VDestroy(tmp)
+    tmp => FN_VCloneEmpty(x)
+    call FN_VDestroy(tmp)
 
     ! test generic vector functions
-    ival = FN_VGetVectorID_Pthreads(x)
-    xptr => FN_VGetArrayPointer_Pthreads(x)
-    call FN_VSetArrayPointer_Pthreads(xdata, x)
+    ival = FN_VGetVectorID(x)
+    xptr => FN_VGetArrayPointer(x)
+    call FN_VSetArrayPointer(xdata, x)
     ival = FN_VGetCommunicator(x)
-    ival = FN_VGetLength_Pthreads(x)
+    ival = FN_VGetLength(x)
 
     ! test standard vector operations
-    call FN_VLinearSum_Pthreads(ONE, x, ONE, y, z)
-    call FN_VConst_Pthreads(ONE, z)
-    call FN_VProd_Pthreads(x, y, z)
-    call FN_VDiv_Pthreads(x, y, z)
-    call FN_VScale_Pthreads(ONE, x, y)
-    call FN_VAbs_Pthreads(x, y)
-    call FN_VInv_Pthreads(x, z)
-    call FN_VAddConst_Pthreads(x, ONE, z)
-    rval = FN_VDotProd_Pthreads(x, y)
-    rval = FN_VMaxNorm_Pthreads(x)
-    rval = FN_VWrmsNorm_Pthreads(x, y)
-    rval = FN_VWrmsNormMask_Pthreads(x, y, z)
-    rval = FN_VMin_Pthreads(x)
-    rval = FN_VWL2Norm_Pthreads(x, y)
-    rval = FN_VL1Norm_Pthreads(x)
-    call FN_VCompare_Pthreads(ONE, x, y)
-    ival = FN_VInvTest_Pthreads(x, y)
-    ival = FN_VConstrMask_Pthreads(z, x, y)
-    rval = FN_VMinQuotient_Pthreads(x, y)
+    call FN_VLinearSum(ONE, x, ONE, y, z)
+    call FN_VConst(ONE, z)
+    call FN_VProd(x, y, z)
+    call FN_VDiv(x, y, z)
+    call FN_VScale(ONE, x, y)
+    call FN_VAbs(x, y)
+    call FN_VInv(x, z)
+    call FN_VAddConst(x, ONE, z)
+    rval = FN_VDotProd(x, y)
+    rval = FN_VMaxNorm(x)
+    rval = FN_VWrmsNorm(x, y)
+    rval = FN_VWrmsNormMask(x, y, z)
+    rval = FN_VMin(x)
+    rval = FN_VWL2Norm(x, y)
+    rval = FN_VL1Norm(x)
+    call FN_VCompare(ONE, x, y)
+    ival = FN_VInvTest(x, y)
+    ival = FN_VConstrMask(z, x, y)
+    rval = FN_VMinQuotient(x, y)
 
     ! test fused vector operations
-    ival = FN_VLinearCombination_Pthreads(int(nv, 4), nvarr, xvecs, x)
-    ival = FN_VScaleAddMulti_Pthreads(int(nv, 4), nvarr, x, xvecs, zvecs)
-    ival = FN_VDotProdMulti_Pthreads(int(nv, 4), x, xvecs, nvarr)
+    ival = FN_VLinearCombination(int(nv, 4), nvarr, xvecs, x)
+    ival = FN_VScaleAddMulti(int(nv, 4), nvarr, x, xvecs, zvecs)
+    ival = FN_VDotProdMulti(int(nv, 4), x, xvecs, nvarr)
 
     ! test vector array operations
-    ival = FN_VLinearSumVectorArray_Pthreads(int(nv, 4), ONE, xvecs, ONE, xvecs, zvecs)
-    ival = FN_VScaleVectorArray_Pthreads(int(nv, 4), nvarr, xvecs, zvecs)
-    ival = FN_VConstVectorArray_Pthreads(int(nv, 4), ONE, xvecs)
-    ival = FN_VWrmsNormVectorArray_Pthreads(int(nv, 4), xvecs, xvecs, nvarr)
-    ival = FN_VWrmsNormMaskVectorArray_Pthreads(int(nv, 4), xvecs, xvecs, x, nvarr)
+    ival = FN_VLinearSumVectorArray(int(nv, 4), ONE, xvecs, ONE, xvecs, zvecs)
+    ival = FN_VScaleVectorArray(int(nv, 4), nvarr, xvecs, zvecs)
+    ival = FN_VConstVectorArray(int(nv, 4), ONE, xvecs)
+    ival = FN_VWrmsNormVectorArray(int(nv, 4), xvecs, xvecs, nvarr)
+    ival = FN_VWrmsNormMaskVectorArray(int(nv, 4), xvecs, xvecs, x, nvarr)
 
     !==== Cleanup =====
-    call FN_VDestroy_Pthreads(x)
-    call FN_VDestroy_Pthreads(y)
-    call FN_VDestroy_Pthreads(z)
+    call FN_VDestroy(x)
+    call FN_VDestroy(y)
+    call FN_VDestroy(z)
     call FN_VDestroyVectorArray(xvecs, nv)
     call FN_VDestroyVectorArray(zvecs, nv)
 
@@ -135,7 +135,7 @@ contains
     fails = Test_FN_VLinearCombination(x, N, 0)
 
     !=== cleanup ====
-    call FN_VDestroy_Pthreads(x)
+    call FN_VDestroy(x)
 
   end function unit_tests
 

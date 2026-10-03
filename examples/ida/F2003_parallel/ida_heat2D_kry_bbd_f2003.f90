@@ -1025,11 +1025,11 @@ program driver
 
   ! Clean up and return with successful completion
   call FIDAFree(ida_mem)           ! free integrator memory
-  call FN_VDestroy_Parallel(sunvec_y)          ! free vector memory
-  call FN_VDestroy_Parallel(sunvec_f)
-  call FN_VDestroy_Parallel(sunvec_id)
-  call FN_VDestroy_Parallel(sunvec_res)
-  call FN_VDestroy_Parallel(sunvec_c)
+  call FN_VDestroy(sunvec_y)          ! free vector memory
+  call FN_VDestroy(sunvec_f)
+  call FN_VDestroy(sunvec_id)
+  call FN_VDestroy(sunvec_res)
+  call FN_VDestroy(sunvec_c)
   retval = FSUNLinSolFree(sun_LS)     ! free linear solver
   call FreeHeat2DData(ierr)           ! free user data
   call MPI_Barrier(comm, ierr)

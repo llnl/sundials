@@ -125,20 +125,4 @@ This solver is constructed to perform the following operations:
 
 The SUNLinSol_LapackDense module defines dense implementations of all
 "direct" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_LapackDense``
-
-* ``SUNLinSolInitialize_LapackDense`` -- this does nothing, since all
-  consistency checks are performed at solver creation.
-
-* ``SUNLinSolSetup_LapackDense`` -- this calls either
-  ``DGETRF`` or ``SGETRF`` to perform the :math:`LU` factorization.
-
-* ``SUNLinSolSolve_LapackDense`` -- this calls either
-  ``DGETRS`` or ``SGETRS`` to use the :math:`LU` factors and
-  ``pivots`` array to perform the solve.
-
-* ``SUNLinSolLastFlag_LapackDense``
-
-* ``SUNLinSolFree_LapackDense``
+:numref:`SUNLinSol.API`.

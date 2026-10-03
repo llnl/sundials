@@ -156,11 +156,10 @@ distributed memory parallel version.
 NVECTOR_PARALLEL functions
 -----------------------------------
 
-The NVECTOR_PARALLEL module defines parallel implementations of all
-vector operations listed in :numref:`NVectors.Ops`.  Their names are
-obtained from the generic names by appending the suffix ``_Parallel``
-(e.g. ``N_VDestroy_Parallel``).   The module NVECTOR_PARALLEL provides
-the following additional user-callable routines:
+The NVECTOR_PARALLEL module defines parallel implementations of all vector
+operations listed in :numref:`NVectors.Ops`. These operations are invoked
+through the generic functions in that section. The module NVECTOR_PARALLEL
+provides the following additional user-callable routines:
 
 
 .. c:function:: N_Vector N_VNew_Parallel(MPI_Comm comm, sunindextype local_length, sunindextype global_length, SUNContext sunctx)
@@ -182,21 +181,6 @@ the following additional user-callable routines:
    with user-provided data array.
 
    (This function does *not* allocate memory for ``v_data`` itself.)
-
-
-.. c:function:: sunindextype N_VGetLocalLength_Parallel(N_Vector v)
-
-   This function returns the local vector length.
-
-
-.. c:function:: void N_VPrint_Parallel(N_Vector v)
-
-   This function prints the local content of a parallel vector to ``stdout``.
-
-
-.. c:function:: void N_VPrintFile_Parallel(N_Vector v, FILE *outfile)
-
-   This function prints the local content of a parallel vector to ``outfile``.
 
 
 By default all fused and vector array operations are disabled in the NVECTOR_PARALLEL

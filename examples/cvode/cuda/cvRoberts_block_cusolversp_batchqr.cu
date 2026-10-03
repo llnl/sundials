@@ -148,8 +148,8 @@ int main(int argc, char* argv[])
   abstol = N_VNew_Cuda(neq, sunctx);
   if (check_retval((void*)abstol, "N_VNew_Cuda", 0)) { return (1); }
 
-  ydata       = N_VGetHostArrayPointer_Cuda(y);
-  abstol_data = N_VGetHostArrayPointer_Cuda(abstol);
+  ydata       = N_VGetArrayPointer(y);
+  abstol_data = N_VGetArrayPointer(abstol);
 
   /* Initialize y */
   for (groupj = 0; groupj < neq; groupj += GROUPSIZE)
@@ -292,8 +292,8 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype *ydata, *ydotdata;
 
   udata    = (UserData*)user_data;
-  ydata    = N_VGetDeviceArrayPointer_Cuda(y);
-  ydotdata = N_VGetDeviceArrayPointer_Cuda(ydot);
+  ydata    = N_VGetDeviceArrayPointer(y);
+  ydotdata = N_VGetDeviceArrayPointer(ydot);
 
   unsigned block_size = 32;
   unsigned grid_size  = (udata->neq + block_size - 1) / block_size;
@@ -388,7 +388,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 
   nnzper = GROUPSIZE * GROUPSIZE;
   Jdata  = SUNMatrix_cuSparse_Data(J);
-  ydata  = N_VGetDeviceArrayPointer_Cuda(y);
+  ydata  = N_VGetDeviceArrayPointer(y);
 
   block_size = 32;
   grid_size  = (udata->neq + block_size - 1) / block_size;

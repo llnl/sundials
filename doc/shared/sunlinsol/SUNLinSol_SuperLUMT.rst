@@ -197,21 +197,4 @@ following operations:
 
 The SUNLinSol_SuperLUMT module defines implementations of all
 "direct" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_SuperLUMT``
-
-* ``SUNLinSolInitialize_SuperLUMT`` -- this sets the
-  ``first_factorize`` flag to 1 and resets the internal SuperLU_MT
-  statistics variables.
-
-* ``SUNLinSolSetup_SuperLUMT`` -- this performs either a :math:`LU`
-  factorization or refactorization of the input matrix.
-
-* ``SUNLinSolSolve_SuperLUMT`` -- this calls the appropriate
-  SuperLU_MT solve routine to utilize the :math:`LU` factors to solve the
-  linear system.
-
-* ``SUNLinSolLastFlag_SuperLUMT``
-
-* ``SUNLinSolFree_SuperLUMT``
+:numref:`SUNLinSol.API`.

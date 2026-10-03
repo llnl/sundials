@@ -21,7 +21,7 @@
 
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_magmadense.h>
+#include <sunlinsol/sunlinsol_magmadense_deprecated.h>
 #include <sunmatrix/sunmatrix_magmadense.h>
 
 #include "sundials_cli.h"
@@ -68,6 +68,21 @@
  * Un-exported implementation specific routines
  * ----------------------------------------------------------------------------
  */
+
+static SUNErrCode sunLinSolFree_MagmaDense(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_MagmaDense(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_MagmaDense(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_MagmaDense(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_MagmaDense(SUNLinearSolver S);
+
+static int sunLinSolSetup_MagmaDense(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_MagmaDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                                     N_Vector b, sunrealtype tol);
 
 static SUNErrCode setFromCommandLine_MagmaDense(SUNLinearSolver S,
                                                 const char* LSid, int argc,
@@ -128,14 +143,14 @@ SUNLinearSolver SUNLinSol_MagmaDense(N_Vector y, SUNMatrix Amat, SUNContext sunc
   if (S == NULL) { return (NULL); }
 
   /* Attach operations */
-  S->ops->gettype    = SUNLinSolGetType_MagmaDense;
-  S->ops->getid      = SUNLinSolGetID_MagmaDense;
-  S->ops->initialize = SUNLinSolInitialize_MagmaDense;
+  S->ops->gettype    = sunLinSolGetType_MagmaDense;
+  S->ops->getid      = sunLinSolGetID_MagmaDense;
+  S->ops->initialize = sunLinSolInitialize_MagmaDense;
   S->ops->setoptions = SUNLinSolSetOptions_MagmaDense;
-  S->ops->setup      = SUNLinSolSetup_MagmaDense;
-  S->ops->solve      = SUNLinSolSolve_MagmaDense;
-  S->ops->lastflag   = SUNLinSolLastFlag_MagmaDense;
-  S->ops->free       = SUNLinSolFree_MagmaDense;
+  S->ops->setup      = sunLinSolSetup_MagmaDense;
+  S->ops->solve      = sunLinSolSolve_MagmaDense;
+  S->ops->lastflag   = sunLinSolLastFlag_MagmaDense;
+  S->ops->free       = sunLinSolFree_MagmaDense;
 
   /* Create content */
   content = NULL;
@@ -237,17 +252,17 @@ SUNErrCode SUNLinSol_MagmaDense_SetAsync(SUNLinearSolver S, sunbooleantype onoff
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_MagmaDense(SUNLinearSolver S)
+SUNLinearSolver_Type sunLinSolGetType_MagmaDense(SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_DIRECT);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_MagmaDense(SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_MagmaDense(SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_MAGMADENSE);
 }
 
-SUNErrCode SUNLinSolInitialize_MagmaDense(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_MagmaDense(SUNLinearSolver S)
 {
   /* All solver-specific memory has already been allocated */
   LASTFLAG(S) = SUN_SUCCESS;
@@ -310,7 +325,7 @@ static SUNErrCode setFromCommandLine_MagmaDense(SUNLinearSolver S,
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_MagmaDense(SUNLinearSolver S, SUNMatrix A)
+int sunLinSolSetup_MagmaDense(SUNLinearSolver S, SUNMatrix A)
 {
   /* Check for valid inputs */
 
@@ -381,7 +396,7 @@ int SUNLinSolSetup_MagmaDense(SUNLinearSolver S, SUNMatrix A)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSolve_MagmaDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+int sunLinSolSolve_MagmaDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                               N_Vector b, sunrealtype tol)
 {
   /* Check for valid inputs */
@@ -452,12 +467,12 @@ int SUNLinSolSolve_MagmaDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   return ((ier < 0) ? SUN_ERR_EXT_FAIL : SUN_SUCCESS);
 }
 
-sunindextype SUNLinSolLastFlag_MagmaDense(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_MagmaDense(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
 }
 
-SUNErrCode SUNLinSolFree_MagmaDense(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_MagmaDense(SUNLinearSolver S)
 {
   /* return if S is already free */
   if (S == NULL) { return SUN_SUCCESS; }
@@ -494,3 +509,45 @@ SUNErrCode SUNLinSolFree_MagmaDense(SUNLinearSolver S)
   S = NULL;
   return SUN_SUCCESS;
 }
+
+/* Deprecated concrete operation wrappers */
+
+extern "C" {
+
+SUNErrCode SUNLinSolFree_MagmaDense(SUNLinearSolver S)
+{
+  return sunLinSolFree_MagmaDense(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_MagmaDense(SUNLinearSolver S)
+{
+  return sunLinSolGetID_MagmaDense(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_MagmaDense(SUNLinearSolver S)
+{
+  return sunLinSolGetType_MagmaDense(S);
+}
+
+SUNErrCode SUNLinSolInitialize_MagmaDense(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_MagmaDense(S);
+}
+
+sunindextype SUNLinSolLastFlag_MagmaDense(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_MagmaDense(S);
+}
+
+int SUNLinSolSetup_MagmaDense(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_MagmaDense(S, A);
+}
+
+int SUNLinSolSolve_MagmaDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                              N_Vector b, sunrealtype tol)
+{
+  return sunLinSolSolve_MagmaDense(S, A, x, b, tol);
+}
+
+} // extern "C"

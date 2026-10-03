@@ -29,13 +29,6 @@ module fsunlinsol_band_mod
 
  ! DECLARATION CONSTRUCTS
  public :: FSUNLinSol_Band
- public :: FSUNLinSolGetType_Band
- public :: FSUNLinSolGetID_Band
- public :: FSUNLinSolInitialize_Band
- public :: FSUNLinSolSetup_Band
- public :: FSUNLinSolSolve_Band
- public :: FSUNLinSolLastFlag_Band
- public :: FSUNLinSolFree_Band
 
 ! WRAPPER DECLARATIONS
 interface
@@ -47,67 +40,6 @@ type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 type(C_PTR) :: fresult
-end function
-
-function swigc_FSUNLinSolGetType_Band(farg1) &
-bind(C, name="_wrap_FSUNLinSolGetType_Band") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolGetID_Band(farg1) &
-bind(C, name="_wrap_FSUNLinSolGetID_Band") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolInitialize_Band(farg1) &
-bind(C, name="_wrap_FSUNLinSolInitialize_Band") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolSetup_Band(farg1, farg2) &
-bind(C, name="_wrap_FSUNLinSolSetup_Band") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolSolve_Band(farg1, farg2, farg3, farg4, farg5) &
-bind(C, name="_wrap_FSUNLinSolSolve_Band") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
-real(C_DOUBLE), intent(in) :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolLastFlag_Band(farg1) &
-bind(C, name="_wrap_FSUNLinSolLastFlag_Band") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT32_T) :: fresult
-end function
-
-function swigc_FSUNLinSolFree_Band(farg1) &
-bind(C, name="_wrap_FSUNLinSolFree_Band") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
 end function
 
 end interface
@@ -132,112 +64,6 @@ farg2 = c_loc(a)
 farg3 = sunctx
 fresult = swigc_FSUNLinSol_Band(farg1, farg2, farg3)
 call c_f_pointer(fresult, swig_result)
-end function
-
-function FSUNLinSolGetType_Band(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNLinearSolver_Type) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolGetType_Band(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolGetID_Band(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNLinearSolver_ID) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolGetID_Band(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolInitialize_Band(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolInitialize_Band(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolSetup_Band(s, a) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(s)
-farg2 = c_loc(a)
-fresult = swigc_FSUNLinSolSetup_Band(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNLinSolSolve_Band(s, a, x, b, tol) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: b
-real(C_DOUBLE), intent(in) :: tol
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
-real(C_DOUBLE) :: farg5 
-
-farg1 = c_loc(s)
-farg2 = c_loc(a)
-farg3 = c_loc(x)
-farg4 = c_loc(b)
-farg5 = tol
-fresult = swigc_FSUNLinSolSolve_Band(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSUNLinSolLastFlag_Band(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT32_T) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolLastFlag_Band(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolFree_Band(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolFree_Band(farg1)
-swig_result = fresult
 end function
 
 

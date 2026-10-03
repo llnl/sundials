@@ -226,24 +226,4 @@ constructed to perform the following operations:
 
 The SUNLinSol_SuperLUDIST module defines implementations of all
 "direct" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_SuperLUDIST``
-
-* ``SUNLinSolInitialize_SuperLUDIST`` -- this sets the
-  ``first_factorize`` flag to 1 and resets the internal SuperLU_DIST
-  statistics variables.
-
-* ``SUNLinSolSetup_SuperLUDIST`` -- this sets the appropriate
-  SuperLU_DIST options so that a subsequent solve will perform a
-  symbolic and numerical factorization before proceeding with the
-  triangular solves
-
-* ``SUNLinSolSolve_SuperLUDIST`` -- this calls the SuperLU_DIST
-  solve routine to perform factorization (if the setup routine
-  was called prior) and then use the $LU$ factors to solve the
-  linear system.
-
-* ``SUNLinSolLastFlag_SuperLUDIST``
-
-* ``SUNLinSolFree_SuperLUDIST``
+:numref:`SUNLinSol.API`.

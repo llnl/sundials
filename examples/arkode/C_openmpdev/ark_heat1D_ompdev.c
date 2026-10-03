@@ -177,7 +177,7 @@ int main(void)
 
   /* Open output stream for results, access data array */
   UFID = fopen("heat1D.txt", "w");
-  data = N_VGetHostArrayPointer_OpenMPDEV(y);
+  data = N_VGetArrayPointer(y);
   N_VCopyFromDevice_OpenMPDEV(y); /* always copy back from device before printing */
 
   /* output initial condition to disk */
@@ -282,16 +282,10 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
   dev = omp_get_default_device();
 
-  Y = N_VGetDeviceArrayPointer_OpenMPDEV(y); /* access data arrays */
-  if (check_flag((void*)Y, "N_VGetDeviceArrayPointer_OpenMPDEV", 0))
-  {
-    return 1;
-  }
-  Ydot = N_VGetDeviceArrayPointer_OpenMPDEV(ydot);
-  if (check_flag((void*)Ydot, "N_VGetDeviceArrayPointer_OpenMPDEV", 0))
-  {
-    return 1;
-  }
+  Y = N_VGetDeviceArrayPointer(y); /* access data arrays */
+  if (check_flag((void*)Y, "N_VGetDeviceArrayPointer", 0)) { return 1; }
+  Ydot = N_VGetDeviceArrayPointer(ydot);
+  if (check_flag((void*)Ydot, "N_VGetDeviceArrayPointer", 0)) { return 1; }
   N_VConst(0.0, ydot); /* Initialize ydot to zero */
 
   /* iterate over domain, computing all equations */
@@ -333,16 +327,10 @@ static int Jac(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y, N_Vector fy,
 
   dev = omp_get_default_device();
 
-  V = N_VGetDeviceArrayPointer_OpenMPDEV(v); /* access data arrays */
-  if (check_flag((void*)V, "N_VGetDeviceArrayPointer_OpenMPDEV", 0))
-  {
-    return 1;
-  }
-  JV = N_VGetDeviceArrayPointer_OpenMPDEV(Jv);
-  if (check_flag((void*)JV, "N_VGetDeviceArrayPointer_OpenMPDEV", 0))
-  {
-    return 1;
-  }
+  V = N_VGetDeviceArrayPointer(v); /* access data arrays */
+  if (check_flag((void*)V, "N_VGetDeviceArrayPointer", 0)) { return 1; }
+  JV = N_VGetDeviceArrayPointer(Jv);
+  if (check_flag((void*)JV, "N_VGetDeviceArrayPointer", 0)) { return 1; }
   N_VConst(0.0, Jv); /* initialize Jv product to zero */
 
   /* iterate over domain, computing all Jacobian-vector products */

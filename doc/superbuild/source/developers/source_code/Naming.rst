@@ -148,8 +148,9 @@ each component of the name uses Pascal case. See
    | ``SUNNonlinarSolver`` | ``SUNNonlinSol`` | Solve      | ``SUNNonlinSolSolve`` |
    +-----------------------+------------------+------------+-----------------------+
 
-Derived class implementations of the base class methods should follow the naming
-convention ``<short class name><method>_<implementation>``. See
+Private derived class implementations of base class methods should use camel
+case and follow the naming convention
+``<short class name><method>_<implementation>``. See
 :numref:`SourceCode.Naming.Table.OldDerivedClassMethodNaming` for examples.
 
 .. _SourceCode.Naming.Table.OldDerivedClassMethodNaming:
@@ -160,13 +161,13 @@ convention ``<short class name><method>_<implementation>``. See
    +---------------+-----------------------+------------------------------+
    | Derived Class | Base Class Method     | Method Implementation        |
    +---------------+-----------------------+------------------------------+
-   | Serial        | ``N_VLinearSum``      | ``N_VLinearSum_Serial``      |
+   | Serial        | ``N_VLinearSum``      | ``nvLinearSum_Serial``       |
    +---------------+-----------------------+------------------------------+
-   | Dense         | ``SUNMatZero``        | ``SUNMatZero_Dense``         |
+   | Dense         | ``SUNMatZero``        | ``sunMatZero_Dense``         |
    +---------------+-----------------------+------------------------------+
-   | SPGMR         | ``SUNLinSolSetup``    | ``SUNLinSolSetup_SPGMR``     |
+   | SPGMR         | ``SUNLinSolSetup``    | ``sunLinSolSetup_SPGMR``     |
    +---------------+-----------------------+------------------------------+
-   | Newton        | ``SUNNonlinSolSolve`` | ``SUNNonlinSolSolve_Newton`` |
+   | Newton        | ``SUNNonlinSolSolve`` | ``sunNonlinSolSolve_Newton`` |
    +---------------+-----------------------+------------------------------+
 
 Implementation specific methods do not currently have a consistent naming

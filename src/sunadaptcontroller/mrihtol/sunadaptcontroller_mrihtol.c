@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <sunadaptcontroller/sunadaptcontroller_mrihtol.h>
+#include <sunadaptcontroller/sunadaptcontroller_mrihtol_deprecated.h>
 #include <sundials/sundials_core.h>
 #include "sundials/priv/sundials_errors_impl.h"
 #include "sundials/sundials_errors.h"
@@ -57,6 +57,28 @@
  * Un-exported implementation specific routines
  * ----------------------------------------------------------------------------
  */
+
+static int sunAdaptControllerEstimateStepTol_MRIHTol(
+  SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,
+  sunrealtype DSM, sunrealtype dsm, sunrealtype* Hnew, sunrealtype* tolfacnew);
+
+static SUNAdaptController_Type sunAdaptControllerGetType_MRIHTol(
+  SUNAdaptController C);
+
+static int sunAdaptControllerReset_MRIHTol(SUNAdaptController C);
+
+static int sunAdaptControllerSetDefaults_MRIHTol(SUNAdaptController C);
+
+static int sunAdaptControllerSetErrorBias_MRIHTol(SUNAdaptController C,
+                                                  sunrealtype bias);
+
+static int sunAdaptControllerUpdateMRIHTol_MRIHTol(SUNAdaptController C,
+                                                   sunrealtype H,
+                                                   sunrealtype tolfac,
+                                                   sunrealtype DSM,
+                                                   sunrealtype dsm);
+
+static int sunAdaptControllerWrite_MRIHTol(SUNAdaptController C, FILE* fptr);
 
 static SUNErrCode setFromCommandLine_MRIHTol(SUNAdaptController C,
                                              const char* Cid, int argc,
@@ -96,14 +118,14 @@ SUNAdaptController SUNAdaptController_MRIHTol(SUNAdaptController HControl,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  C->ops->gettype         = SUNAdaptController_GetType_MRIHTol;
-  C->ops->estimatesteptol = SUNAdaptController_EstimateStepTol_MRIHTol;
-  C->ops->reset           = SUNAdaptController_Reset_MRIHTol;
+  C->ops->gettype         = sunAdaptControllerGetType_MRIHTol;
+  C->ops->estimatesteptol = sunAdaptControllerEstimateStepTol_MRIHTol;
+  C->ops->reset           = sunAdaptControllerReset_MRIHTol;
   C->ops->setoptions      = SUNAdaptController_SetOptions_MRIHTol;
-  C->ops->setdefaults     = SUNAdaptController_SetDefaults_MRIHTol;
-  C->ops->write           = SUNAdaptController_Write_MRIHTol;
-  C->ops->seterrorbias    = SUNAdaptController_SetErrorBias_MRIHTol;
-  C->ops->updatemrihtol   = SUNAdaptController_UpdateMRIHTol_MRIHTol;
+  C->ops->setdefaults     = sunAdaptControllerSetDefaults_MRIHTol;
+  C->ops->write           = sunAdaptControllerWrite_MRIHTol;
+  C->ops->seterrorbias    = sunAdaptControllerSetErrorBias_MRIHTol;
+  C->ops->updatemrihtol   = sunAdaptControllerUpdateMRIHTol_MRIHTol;
   /* Create content */
   content = NULL;
   content = (SUNAdaptControllerContent_MRIHTol)malloc(sizeof *content);
@@ -271,13 +293,13 @@ SUNErrCode SUNAdaptController_GetFastController_MRIHTol(SUNAdaptController C,
  * implementation of controller operations
  * ----------------------------------------------------------------- */
 
-SUNAdaptController_Type SUNAdaptController_GetType_MRIHTol(
+SUNAdaptController_Type sunAdaptControllerGetType_MRIHTol(
   SUNDIALS_MAYBE_UNUSED SUNAdaptController C)
 {
   return SUN_ADAPTCONTROLLER_MRI_H_TOL;
 }
 
-SUNErrCode SUNAdaptController_EstimateStepTol_MRIHTol(
+SUNErrCode sunAdaptControllerEstimateStepTol_MRIHTol(
   SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,
   sunrealtype DSM, sunrealtype dsm, sunrealtype* Hnew, sunrealtype* tolfacnew)
 {
@@ -308,7 +330,7 @@ SUNErrCode SUNAdaptController_EstimateStepTol_MRIHTol(
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_Reset_MRIHTol(SUNAdaptController C)
+SUNErrCode sunAdaptControllerReset_MRIHTol(SUNAdaptController C)
 {
   SUNFunctionBegin(C->sunctx);
   SUNCheckCall(SUNAdaptController_Reset(MRIHTOL_CSLOW(C)));
@@ -316,7 +338,7 @@ SUNErrCode SUNAdaptController_Reset_MRIHTol(SUNAdaptController C)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_SetDefaults_MRIHTol(SUNAdaptController C)
+SUNErrCode sunAdaptControllerSetDefaults_MRIHTol(SUNAdaptController C)
 {
   SUNFunctionBegin(C->sunctx);
   SUNCheckCall(SUNAdaptController_SetDefaults(MRIHTOL_CSLOW(C)));
@@ -327,7 +349,7 @@ SUNErrCode SUNAdaptController_SetDefaults_MRIHTol(SUNAdaptController C)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_Write_MRIHTol(SUNAdaptController C, FILE* fptr)
+SUNErrCode sunAdaptControllerWrite_MRIHTol(SUNAdaptController C, FILE* fptr)
 {
   SUNFunctionBegin(C->sunctx);
   SUNAssert(fptr, SUN_ERR_ARG_CORRUPT);
@@ -345,8 +367,8 @@ SUNErrCode SUNAdaptController_Write_MRIHTol(SUNAdaptController C, FILE* fptr)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_SetErrorBias_MRIHTol(SUNAdaptController C,
-                                                   sunrealtype bias)
+SUNErrCode sunAdaptControllerSetErrorBias_MRIHTol(SUNAdaptController C,
+                                                  sunrealtype bias)
 {
   SUNFunctionBegin(C->sunctx);
   SUNCheckCall(SUNAdaptController_SetErrorBias(MRIHTOL_CSLOW(C), bias));
@@ -354,14 +376,56 @@ SUNErrCode SUNAdaptController_SetErrorBias_MRIHTol(SUNAdaptController C,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_UpdateMRIHTol_MRIHTol(SUNAdaptController C,
-                                                    sunrealtype H,
-                                                    sunrealtype tolfac,
-                                                    sunrealtype DSM,
-                                                    sunrealtype dsm)
+SUNErrCode sunAdaptControllerUpdateMRIHTol_MRIHTol(SUNAdaptController C,
+                                                   sunrealtype H,
+                                                   sunrealtype tolfac,
+                                                   sunrealtype DSM,
+                                                   sunrealtype dsm)
 {
   SUNFunctionBegin(C->sunctx);
   SUNCheckCall(SUNAdaptController_UpdateH(MRIHTOL_CSLOW(C), H, DSM));
   SUNCheckCall(SUNAdaptController_UpdateH(MRIHTOL_CFAST(C), tolfac, dsm));
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+int SUNAdaptController_EstimateStepTol_MRIHTol(
+  SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,
+  sunrealtype DSM, sunrealtype dsm, sunrealtype* Hnew, sunrealtype* tolfacnew)
+{
+  return sunAdaptControllerEstimateStepTol_MRIHTol(C, H, tolfac, P, DSM, dsm,
+                                                   Hnew, tolfacnew);
+}
+
+SUNAdaptController_Type SUNAdaptController_GetType_MRIHTol(SUNAdaptController C)
+{
+  return sunAdaptControllerGetType_MRIHTol(C);
+}
+
+int SUNAdaptController_Reset_MRIHTol(SUNAdaptController C)
+{
+  return sunAdaptControllerReset_MRIHTol(C);
+}
+
+int SUNAdaptController_SetDefaults_MRIHTol(SUNAdaptController C)
+{
+  return sunAdaptControllerSetDefaults_MRIHTol(C);
+}
+
+int SUNAdaptController_SetErrorBias_MRIHTol(SUNAdaptController C, sunrealtype bias)
+{
+  return sunAdaptControllerSetErrorBias_MRIHTol(C, bias);
+}
+
+int SUNAdaptController_UpdateMRIHTol_MRIHTol(SUNAdaptController C,
+                                             sunrealtype H, sunrealtype tolfac,
+                                             sunrealtype DSM, sunrealtype dsm)
+{
+  return sunAdaptControllerUpdateMRIHTol_MRIHTol(C, H, tolfac, DSM, dsm);
+}
+
+int SUNAdaptController_Write_MRIHTol(SUNAdaptController C, FILE* fptr)
+{
+  return sunAdaptControllerWrite_MRIHTol(C, fptr);
 }

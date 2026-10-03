@@ -57,28 +57,6 @@ typedef struct _SUNLinearSolverContent_Band* SUNLinearSolverContent_Band;
 SUNDIALS_EXPORT
 SUNLinearSolver SUNLinSol_Band(N_Vector y, SUNMatrix A, SUNContext sunctx);
 
-SUNDIALS_EXPORT
-SUNLinearSolver_Type SUNLinSolGetType_Band(SUNLinearSolver S);
-
-SUNDIALS_EXPORT
-SUNLinearSolver_ID SUNLinSolGetID_Band(SUNLinearSolver S);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNLinSolInitialize_Band(SUNLinearSolver S);
-
-SUNDIALS_EXPORT
-int SUNLinSolSetup_Band(SUNLinearSolver S, SUNMatrix A);
-
-SUNDIALS_EXPORT
-int SUNLinSolSolve_Band(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
-                        sunrealtype tol);
-
-SUNDIALS_EXPORT
-sunindextype SUNLinSolLastFlag_Band(SUNLinearSolver S);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNLinSolFree_Band(SUNLinearSolver S);
-
 #ifdef __cplusplus
 }
 #endif

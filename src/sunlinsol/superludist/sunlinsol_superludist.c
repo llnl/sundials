@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_superludist.h>
+#include <sunlinsol/sunlinsol_superludist_deprecated.h>
 #include <sunmatrix/sunmatrix_slunrloc.h>
 
 #include "sundials_macros.h"
@@ -60,6 +60,27 @@
 #define SLU_SOLVESTRUCT(S)    (SLUDIST_CONTENT(S)->solve)
 #define SLU_STAT(S)           (SLUDIST_CONTENT(S)->stat)
 #define SLU_SIZE(S)           (SLUDIST_CONTENT(S)->N)
+
+/*
+ * ----------------------------------------------------------------------------
+ * Un-exported implementation specific routines
+ * ----------------------------------------------------------------------------
+ */
+
+static SUNErrCode sunLinSolFree_SuperLUDIST(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_SuperLUDIST(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_SuperLUDIST(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_SuperLUDIST(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_SuperLUDIST(SUNLinearSolver S);
+
+static int sunLinSolSetup_SuperLUDIST(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_SuperLUDIST(SUNLinearSolver S, SUNMatrix A,
+                                      N_Vector x, N_Vector b, sunrealtype tol);
 
 /*
  * ----------------------------------------------------------------------------
@@ -101,13 +122,13 @@ SUNLinearSolver SUNLinSol_SuperLUDIST(N_Vector y, SUNMatrix A, gridinfo_t* grid,
   if (S == NULL) { return (NULL); }
 
   /* Attach operations */
-  S->ops->gettype    = SUNLinSolGetType_SuperLUDIST;
-  S->ops->getid      = SUNLinSolGetID_SuperLUDIST;
-  S->ops->initialize = SUNLinSolInitialize_SuperLUDIST;
-  S->ops->setup      = SUNLinSolSetup_SuperLUDIST;
-  S->ops->solve      = SUNLinSolSolve_SuperLUDIST;
-  S->ops->lastflag   = SUNLinSolLastFlag_SuperLUDIST;
-  S->ops->free       = SUNLinSolFree_SuperLUDIST;
+  S->ops->gettype    = sunLinSolGetType_SuperLUDIST;
+  S->ops->getid      = sunLinSolGetID_SuperLUDIST;
+  S->ops->initialize = sunLinSolInitialize_SuperLUDIST;
+  S->ops->setup      = sunLinSolSetup_SuperLUDIST;
+  S->ops->solve      = sunLinSolSolve_SuperLUDIST;
+  S->ops->lastflag   = sunLinSolLastFlag_SuperLUDIST;
+  S->ops->free       = sunLinSolFree_SuperLUDIST;
 
   /* Create content */
   content = NULL;
@@ -182,18 +203,18 @@ SuperLUStat_t* SUNLinSol_SuperLUDIST_GetSuperLUStat(SUNLinearSolver LS)
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_SuperLUDIST(
+SUNLinearSolver_Type sunLinSolGetType_SuperLUDIST(
   SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_DIRECT);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_SuperLUDIST(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_SuperLUDIST(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_SUPERLUDIST);
 }
 
-SUNErrCode SUNLinSolInitialize_SuperLUDIST(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_SuperLUDIST(SUNLinearSolver S)
 {
   SLU_FIRSTFACTORIZE(S) = SUNTRUE;
 
@@ -201,7 +222,7 @@ SUNErrCode SUNLinSolInitialize_SuperLUDIST(SUNLinearSolver S)
   return (SLU_LASTFLAG(S));
 }
 
-int SUNLinSolSetup_SuperLUDIST(SUNLinearSolver S,
+int sunLinSolSetup_SuperLUDIST(SUNLinearSolver S,
                                SUNDIALS_MAYBE_UNUSED SUNMatrix A)
 {
   if (SLU_FIRSTFACTORIZE(S))
@@ -227,7 +248,7 @@ int SUNLinSolSetup_SuperLUDIST(SUNLinearSolver S,
   return (SLU_LASTFLAG(S));
 }
 
-int SUNLinSolSolve_SuperLUDIST(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+int sunLinSolSolve_SuperLUDIST(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                                N_Vector b, SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
   int retval;
@@ -278,12 +299,12 @@ int SUNLinSolSolve_SuperLUDIST(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   return (SLU_LASTFLAG(S));
 }
 
-sunindextype SUNLinSolLastFlag_SuperLUDIST(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_SuperLUDIST(SUNLinearSolver S)
 {
   return (SLU_LASTFLAG(S));
 }
 
-SUNErrCode SUNLinSolFree_SuperLUDIST(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_SuperLUDIST(SUNLinearSolver S)
 {
   /* return with success if already freed */
   if (S == NULL) { return SUN_SUCCESS; }
@@ -312,4 +333,42 @@ SUNErrCode SUNLinSolFree_SuperLUDIST(SUNLinearSolver S)
   S = NULL;
 
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_SuperLUDIST(SUNLinearSolver S)
+{
+  return sunLinSolFree_SuperLUDIST(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_SuperLUDIST(SUNLinearSolver S)
+{
+  return sunLinSolGetID_SuperLUDIST(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_SuperLUDIST(SUNLinearSolver S)
+{
+  return sunLinSolGetType_SuperLUDIST(S);
+}
+
+SUNErrCode SUNLinSolInitialize_SuperLUDIST(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_SuperLUDIST(S);
+}
+
+sunindextype SUNLinSolLastFlag_SuperLUDIST(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_SuperLUDIST(S);
+}
+
+int SUNLinSolSetup_SuperLUDIST(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_SuperLUDIST(S, A);
+}
+
+int SUNLinSolSolve_SuperLUDIST(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                               N_Vector b, sunrealtype tol)
+{
+  return sunLinSolSolve_SuperLUDIST(S, A, x, b, tol);
 }

@@ -67,32 +67,6 @@ SUNNonlinearSolver SUNNonlinSol_PetscSNES(N_Vector y, SNES snes,
 
 /* SUNNonlinearSolver API functions */
 
-SUNDIALS_EXPORT
-SUNNonlinearSolver_Type SUNNonlinSolGetType_PetscSNES(SUNNonlinearSolver NLS);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolInitialize_PetscSNES(SUNNonlinearSolver NLS);
-
-SUNDIALS_EXPORT
-int SUNNonlinSolSolve_PetscSNES(SUNNonlinearSolver NLS, N_Vector y0, N_Vector y,
-                                N_Vector w, sunrealtype tol,
-                                sunbooleantype callLSetup, void* mem);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetSysFn_PetscSNES(SUNNonlinearSolver NLS,
-                                          SUNNonlinSolSysFn SysFn);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNumIters_PetscSNES(SUNNonlinearSolver NLS,
-                                             long int* nni);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNumConvFails_PetscSNES(SUNNonlinearSolver NLS,
-                                                 long int* nconvfails);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolFree_PetscSNES(SUNNonlinearSolver NLS);
-
 /* Implementation specific functions */
 
 SUNDIALS_EXPORT

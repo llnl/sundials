@@ -138,10 +138,10 @@ int main(int argc, char* argv[])
     fails += 1;
   }
 
-  loclen = N_VGetLocalLength_MPIPlusX(X);
+  loclen = N_VGetLocalLength(X);
   if (N_VGetLength(U) != loclen)
   {
-    printf(">>> FAILED test -- N_VGetLocalLength_MPIPlusX, Proc %d\n\n", myid);
+    printf(">>> FAILED test -- N_VGetLocalLength, Proc %d\n\n", myid);
     fails += 1;
   }
 
@@ -331,7 +331,7 @@ int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
   sunrealtype* x0;
   sunindextype x0len;
 
-  x0len = N_VGetLocalLength_MPIPlusX(X);
+  x0len = N_VGetLocalLength(X);
   x0    = N_VGetArrayPointer(X);
 
   /* ensure that local_length = x0len + x1len */
@@ -366,7 +366,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
   sunrealtype* data;
 
   data  = N_VGetArrayPointer(X);
-  x0len = N_VGetLocalLength_MPIPlusX(X);
+  x0len = N_VGetLocalLength(X);
 
   /* set i-th element of data array */
   for (i = is; i < x0len; i++) { data[i] = val; }

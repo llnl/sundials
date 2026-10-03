@@ -25,7 +25,9 @@ if(SUNDIALS_ENABLE_NVECTOR_MANYVECTOR)
   sundials_add_library(
     sundials_nvecmanyvector
     SOURCES nvector_manyvector.c
-    HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_manyvector.h
+    HEADERS
+      ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_manyvector.h
+      ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_manyvector_deprecated.h
     INCLUDE_SUBDIR nvector
     LINK_LIBRARIES PUBLIC sundials_core
     OUTPUT_NAME sundials_nvecmanyvector
@@ -51,7 +53,9 @@ if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
   sundials_add_library(
     sundials_nvecmpimanyvector
     SOURCES nvector_manyvector.c
-    HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_mpimanyvector.h
+    HEADERS
+      ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_mpimanyvector.h
+      ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_mpimanyvector_deprecated.h
     INCLUDE_SUBDIR nvector
     LINK_LIBRARIES PUBLIC sundials_core
     COMPILE_DEFINITIONS PRIVATE MANYVECTOR_BUILD_WITH_MPI

@@ -269,34 +269,4 @@ This solver is constructed to perform the following operations:
 
 The SUNLinSol_PCG module defines implementations of all
 "iterative" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_PCG``
-
-* ``SUNLinSolInitialize_PCG``
-
-* ``SUNLinSolSetATimes_PCG``
-
-* ``SUNLinSolSetPreconditioner_PCG``
-
-* ``SUNLinSolSetScalingVectors_PCG`` -- since PCG only supports
-  symmetric scaling, the second ``N_Vector`` argument to this function
-  is ignored.
-
-* ``SUNLinSolSetZeroGuess_PCG`` -- note the solver assumes a non-zero guess by
-  default and the zero guess flag is reset to ``SUNFALSE`` after each call to
-  ``SUNLinSolSolve_PCG``.
-
-* ``SUNLinSolSetup_PCG``
-
-* ``SUNLinSolSolve_PCG``
-
-* ``SUNLinSolNumIters_PCG``
-
-* ``SUNLinSolResNorm_PCG``
-
-* ``SUNLinSolResid_PCG``
-
-* ``SUNLinSolLastFlag_PCG``
-
-* ``SUNLinSolFree_PCG``
+:numref:`SUNLinSol.API`.

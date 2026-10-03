@@ -20,7 +20,7 @@
  * ---------------------------------------------------------------------------*/
 
 #include <RAJA/RAJA.hpp>
-#include <nvector/nvector_raja.h>
+#include <nvector/nvector_raja_deprecated.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -108,6 +108,60 @@ typedef struct _N_PrivateVectorContent_Raja* N_PrivateVectorContent_Raja;
  * Utility functions
  */
 
+/* Functions attached to the N_Vector */
+static void nvAbs_Raja(N_Vector x, N_Vector z);
+static void nvAddConst_Raja(N_Vector x, sunrealtype b, N_Vector z);
+static SUNErrCode nvBufPack_Raja(N_Vector x, void* buf);
+static SUNErrCode nvBufSize_Raja(N_Vector x, sunindextype* size);
+static SUNErrCode nvBufUnpack_Raja(N_Vector x, void* buf);
+static N_Vector nvCloneEmpty_Raja(N_Vector w);
+static N_Vector nvClone_Raja(N_Vector w);
+static void nvCompare_Raja(sunrealtype c, N_Vector x, N_Vector z);
+static SUNErrCode nvConstVectorArray_Raja(int nvec, sunrealtype c, N_Vector* Z);
+static void nvConst_Raja(sunrealtype c, N_Vector z);
+static sunbooleantype nvConstrMask_Raja(N_Vector c, N_Vector x, N_Vector m);
+static void nvDestroy_Raja(N_Vector v);
+static void nvDiv_Raja(N_Vector x, N_Vector y, N_Vector z);
+static sunrealtype nvDotProd_Raja(N_Vector x, N_Vector y);
+static sunrealtype* nvGetDeviceArrayPointer_Raja(N_Vector x);
+static sunrealtype* nvGetHostArrayPointer_Raja(N_Vector x);
+static sunindextype nvGetLength_Raja(N_Vector x);
+static N_Vector_ID nvGetVectorID_Raja(N_Vector v);
+static sunbooleantype nvInvTest_Raja(N_Vector x, N_Vector z);
+static void nvInv_Raja(N_Vector x, N_Vector z);
+static sunrealtype nvL1Norm_Raja(N_Vector x);
+static SUNErrCode nvLinearCombinationVectorArray_Raja(int nvec, int nsum,
+                                                      sunrealtype* c,
+                                                      N_Vector** X, N_Vector* Z);
+static SUNErrCode nvLinearCombination_Raja(int nvec, sunrealtype* c,
+                                           N_Vector* X, N_Vector z);
+static SUNErrCode nvLinearSumVectorArray_Raja(int nvec, sunrealtype a,
+                                              N_Vector* X, sunrealtype b,
+                                              N_Vector* Y, N_Vector* Z);
+static void nvLinearSum_Raja(sunrealtype a, N_Vector x, sunrealtype b,
+                             N_Vector y, N_Vector z);
+static sunrealtype nvMaxNorm_Raja(N_Vector x);
+static sunrealtype nvMinQuotient_Raja(N_Vector num, N_Vector denom);
+static sunrealtype nvMin_Raja(N_Vector x);
+static void nvPrintFile_Raja(N_Vector v, FILE* outfile);
+static void nvPrint_Raja(N_Vector v);
+static void nvProd_Raja(N_Vector x, N_Vector y, N_Vector z);
+static SUNErrCode nvScaleAddMultiVectorArray_Raja(int nvec, int nsum,
+                                                  sunrealtype* a, N_Vector* X,
+                                                  N_Vector** Y, N_Vector** Z);
+static SUNErrCode nvScaleAddMulti_Raja(int nvec, sunrealtype* c, N_Vector x,
+                                       N_Vector* Y, N_Vector* Z);
+static SUNErrCode nvScaleVectorArray_Raja(int nvec, sunrealtype* c, N_Vector* X,
+                                          N_Vector* Z);
+static void nvScale_Raja(sunrealtype c, N_Vector x, N_Vector z);
+static void nvSetDeviceArrayPointer_Raja(sunrealtype* d_vdata_1d, N_Vector v);
+static void nvSetHostArrayPointer_Raja(sunrealtype* h_vdata_1d, N_Vector v);
+static sunrealtype nvWL2Norm_Raja(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumLocal_Raja(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumMaskLocal_Raja(N_Vector x, N_Vector w, N_Vector id);
+static sunrealtype nvWrmsNormMask_Raja(N_Vector x, N_Vector w, N_Vector id);
+static sunrealtype nvWrmsNorm_Raja(N_Vector x, N_Vector w);
+
 // Allocate vector data
 static int AllocateData(N_Vector v);
 
@@ -134,58 +188,58 @@ N_Vector N_VNewEmpty_Raja(SUNContext sunctx)
   /* Attach operations */
 
   /* constructors, destructors, and utility operations */
-  v->ops->nvgetvectorid           = N_VGetVectorID_Raja;
-  v->ops->nvclone                 = N_VClone_Raja;
-  v->ops->nvcloneempty            = N_VCloneEmpty_Raja;
-  v->ops->nvdestroy               = N_VDestroy_Raja;
-  v->ops->nvgetlength             = N_VGetLength_Raja;
-  v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Raja;
-  v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Raja;
-  v->ops->nvsetarraypointer       = N_VSetHostArrayPointer_Raja;
-  v->ops->nvsetdevicearraypointer = N_VSetDeviceArrayPointer_Raja;
+  v->ops->nvgetvectorid           = nvGetVectorID_Raja;
+  v->ops->nvclone                 = nvClone_Raja;
+  v->ops->nvcloneempty            = nvCloneEmpty_Raja;
+  v->ops->nvdestroy               = nvDestroy_Raja;
+  v->ops->nvgetlength             = nvGetLength_Raja;
+  v->ops->nvgetarraypointer       = nvGetHostArrayPointer_Raja;
+  v->ops->nvgetdevicearraypointer = nvGetDeviceArrayPointer_Raja;
+  v->ops->nvsetarraypointer       = nvSetHostArrayPointer_Raja;
+  v->ops->nvsetdevicearraypointer = nvSetDeviceArrayPointer_Raja;
 
   /* standard vector operations */
-  v->ops->nvlinearsum    = N_VLinearSum_Raja;
-  v->ops->nvconst        = N_VConst_Raja;
-  v->ops->nvprod         = N_VProd_Raja;
-  v->ops->nvdiv          = N_VDiv_Raja;
-  v->ops->nvscale        = N_VScale_Raja;
-  v->ops->nvabs          = N_VAbs_Raja;
-  v->ops->nvinv          = N_VInv_Raja;
-  v->ops->nvaddconst     = N_VAddConst_Raja;
-  v->ops->nvdotprod      = N_VDotProd_Raja;
-  v->ops->nvmaxnorm      = N_VMaxNorm_Raja;
-  v->ops->nvmin          = N_VMin_Raja;
-  v->ops->nvl1norm       = N_VL1Norm_Raja;
-  v->ops->nvinvtest      = N_VInvTest_Raja;
-  v->ops->nvconstrmask   = N_VConstrMask_Raja;
-  v->ops->nvminquotient  = N_VMinQuotient_Raja;
-  v->ops->nvwrmsnormmask = N_VWrmsNormMask_Raja;
-  v->ops->nvwrmsnorm     = N_VWrmsNorm_Raja;
-  v->ops->nvwl2norm      = N_VWL2Norm_Raja;
-  v->ops->nvcompare      = N_VCompare_Raja;
+  v->ops->nvlinearsum    = nvLinearSum_Raja;
+  v->ops->nvconst        = nvConst_Raja;
+  v->ops->nvprod         = nvProd_Raja;
+  v->ops->nvdiv          = nvDiv_Raja;
+  v->ops->nvscale        = nvScale_Raja;
+  v->ops->nvabs          = nvAbs_Raja;
+  v->ops->nvinv          = nvInv_Raja;
+  v->ops->nvaddconst     = nvAddConst_Raja;
+  v->ops->nvdotprod      = nvDotProd_Raja;
+  v->ops->nvmaxnorm      = nvMaxNorm_Raja;
+  v->ops->nvmin          = nvMin_Raja;
+  v->ops->nvl1norm       = nvL1Norm_Raja;
+  v->ops->nvinvtest      = nvInvTest_Raja;
+  v->ops->nvconstrmask   = nvConstrMask_Raja;
+  v->ops->nvminquotient  = nvMinQuotient_Raja;
+  v->ops->nvwrmsnormmask = nvWrmsNormMask_Raja;
+  v->ops->nvwrmsnorm     = nvWrmsNorm_Raja;
+  v->ops->nvwl2norm      = nvWL2Norm_Raja;
+  v->ops->nvcompare      = nvCompare_Raja;
 
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
-  v->ops->nvwsqrsumlocal     = N_VWSqrSumLocal_Raja;
-  v->ops->nvwsqrsummasklocal = N_VWSqrSumMaskLocal_Raja;
-  v->ops->nvdotprodlocal     = N_VDotProd_Raja;
-  v->ops->nvmaxnormlocal     = N_VMaxNorm_Raja;
-  v->ops->nvminlocal         = N_VMin_Raja;
-  v->ops->nvl1normlocal      = N_VL1Norm_Raja;
-  v->ops->nvinvtestlocal     = N_VInvTest_Raja;
-  v->ops->nvconstrmasklocal  = N_VConstrMask_Raja;
-  v->ops->nvminquotientlocal = N_VMinQuotient_Raja;
+  v->ops->nvwsqrsumlocal     = nvWSqrSumLocal_Raja;
+  v->ops->nvwsqrsummasklocal = nvWSqrSumMaskLocal_Raja;
+  v->ops->nvdotprodlocal     = nvDotProd_Raja;
+  v->ops->nvmaxnormlocal     = nvMaxNorm_Raja;
+  v->ops->nvminlocal         = nvMin_Raja;
+  v->ops->nvl1normlocal      = nvL1Norm_Raja;
+  v->ops->nvinvtestlocal     = nvInvTest_Raja;
+  v->ops->nvconstrmasklocal  = nvConstrMask_Raja;
+  v->ops->nvminquotientlocal = nvMinQuotient_Raja;
 
   /* XBraid interface operations */
-  v->ops->nvbufsize   = N_VBufSize_Raja;
-  v->ops->nvbufpack   = N_VBufPack_Raja;
-  v->ops->nvbufunpack = N_VBufUnpack_Raja;
+  v->ops->nvbufsize   = nvBufSize_Raja;
+  v->ops->nvbufpack   = nvBufPack_Raja;
+  v->ops->nvbufunpack = nvBufUnpack_Raja;
 
   /* print operation for debugging */
-  v->ops->nvprint     = N_VPrint_Raja;
-  v->ops->nvprintfile = N_VPrintFile_Raja;
+  v->ops->nvprint     = nvPrint_Raja;
+  v->ops->nvprintfile = nvPrintFile_Raja;
 
   v->content = (N_VectorContent_Raja)malloc(sizeof(_N_VectorContent_Raja));
   if (v->content == NULL)
@@ -429,33 +483,47 @@ N_Vector N_VMakeManaged_Raja(sunindextype length, sunrealtype* vdata,
 }
 
 /* -----------------------------------------------------------------
- * Function to return the global length of the vector.
- * This is defined as an inline function in nvector_raja.h, so
- * we just mark it as extern here.
+ * Function to return the vector ID.
  */
-extern sunindextype N_VGetLength_Raja(N_Vector v);
+N_Vector_ID nvGetVectorID_Raja(SUNDIALS_MAYBE_UNUSED N_Vector v)
+{
+  return SUNDIALS_NVEC_RAJA;
+}
+
+/* -----------------------------------------------------------------
+ * Function to return the global length of the vector.
+ */
+sunindextype nvGetLength_Raja(N_Vector x)
+{
+  N_VectorContent_Raja content = (N_VectorContent_Raja)x->content;
+  return content->length;
+}
 
 /* ----------------------------------------------------------------------------
  * Return pointer to the raw host data.
- * This is defined as an inline function in nvector_raja.h, so
- * we just mark it as extern here.
  */
-
-extern sunrealtype* N_VGetHostArrayPointer_Raja(N_Vector x);
+sunrealtype* nvGetHostArrayPointer_Raja(N_Vector x)
+{
+  N_VectorContent_Raja content = (N_VectorContent_Raja)x->content;
+  return (content->host_data == NULL ? NULL
+                                     : (sunrealtype*)content->host_data->ptr);
+}
 
 /* ----------------------------------------------------------------------------
  * Return pointer to the raw device data.
- * This is defined as an inline function in nvector_raja.h, so
- * we just mark it as extern here.
  */
-
-extern sunrealtype* N_VGetDeviceArrayPointer_Raja(N_Vector x);
+sunrealtype* nvGetDeviceArrayPointer_Raja(N_Vector x)
+{
+  N_VectorContent_Raja content = (N_VectorContent_Raja)x->content;
+  return (content->device_data == NULL ? NULL
+                                       : (sunrealtype*)content->device_data->ptr);
+}
 
 /* ----------------------------------------------------------------------------
  * Set pointer to the raw host data. Does not free the existing pointer.
  */
 
-void N_VSetHostArrayPointer_Raja(sunrealtype* h_vdata, N_Vector v)
+void nvSetHostArrayPointer_Raja(sunrealtype* h_vdata, N_Vector v)
 {
   if (N_VIsManagedMemory_Raja(v))
   {
@@ -493,7 +561,7 @@ void N_VSetHostArrayPointer_Raja(sunrealtype* h_vdata, N_Vector v)
  * Set pointer to the raw device data
  */
 
-void N_VSetDeviceArrayPointer_Raja(sunrealtype* d_vdata, N_Vector v)
+void nvSetDeviceArrayPointer_Raja(sunrealtype* d_vdata, N_Vector v)
 {
   if (N_VIsManagedMemory_Raja(v))
   {
@@ -607,13 +675,13 @@ void N_VCopyFromDevice_Raja(N_Vector x)
  * Function to print the a serial vector to stdout
  */
 
-void N_VPrint_Raja(N_Vector X) { N_VPrintFile_Raja(X, stdout); }
+void nvPrint_Raja(N_Vector X) { nvPrintFile_Raja(X, stdout); }
 
 /* ----------------------------------------------------------------------------
  * Function to print the a serial vector to outfile
  */
 
-void N_VPrintFile_Raja(N_Vector X, FILE* outfile)
+void nvPrintFile_Raja(N_Vector X, FILE* outfile)
 {
   sunindextype i;
 
@@ -631,7 +699,7 @@ void N_VPrintFile_Raja(N_Vector X, FILE* outfile)
  * -----------------------------------------------------------------
  */
 
-N_Vector N_VCloneEmpty_Raja(N_Vector w)
+N_Vector nvCloneEmpty_Raja(N_Vector w)
 {
   N_Vector v;
 
@@ -658,11 +726,11 @@ N_Vector N_VCloneEmpty_Raja(N_Vector w)
   return (v);
 }
 
-N_Vector N_VClone_Raja(N_Vector w)
+N_Vector nvClone_Raja(N_Vector w)
 {
   N_Vector v;
   v = NULL;
-  v = N_VCloneEmpty_Raja(w);
+  v = nvCloneEmpty_Raja(w);
   if (v == NULL) { return (NULL); }
 
   NVEC_RAJA_CONTENT(v)->mem_helper = SUNMemoryHelper_Clone(NVEC_RAJA_MEMHELP(w));
@@ -671,7 +739,7 @@ N_Vector N_VClone_Raja(N_Vector w)
   if (AllocateData(v))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VClone_Raja: AllocateData returned nonzero\n");
+      "ERROR in nvClone_Raja: AllocateData returned nonzero\n");
     N_VDestroy(v);
     return NULL;
   }
@@ -679,7 +747,7 @@ N_Vector N_VClone_Raja(N_Vector w)
   return (v);
 }
 
-void N_VDestroy_Raja(N_Vector v)
+void nvDestroy_Raja(N_Vector v)
 {
   N_VectorContent_Raja vc;
   N_PrivateVectorContent_Raja vcp;
@@ -731,7 +799,7 @@ void N_VDestroy_Raja(N_Vector v)
   else
   {
     SUNDIALS_DEBUG_PRINT(
-      "WARNING in N_VDestroy_Raja: mem_helper was NULL when trying to dealloc "
+      "WARNING in nvDestroy_Raja: mem_helper was NULL when trying to dealloc "
       "data, this could result in a memory leak\n");
   }
 
@@ -744,7 +812,7 @@ void N_VDestroy_Raja(N_Vector v)
   return;
 }
 
-void N_VConst_Raja(sunrealtype c, N_Vector Z)
+void nvConst_Raja(sunrealtype c, N_Vector Z)
 {
   const sunindextype N = NVEC_RAJA_CONTENT(Z)->length;
   sunrealtype* zdata   = NVEC_RAJA_DDATAp(Z);
@@ -754,8 +822,8 @@ void N_VConst_Raja(sunrealtype c, N_Vector Z)
                                           { zdata[i] = c; });
 }
 
-void N_VLinearSum_Raja(sunrealtype a, N_Vector X, sunrealtype b, N_Vector Y,
-                       N_Vector Z)
+void nvLinearSum_Raja(sunrealtype a, N_Vector X, sunrealtype b, N_Vector Y,
+                      N_Vector Z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunrealtype* ydata = NVEC_RAJA_DDATAp(Y);
@@ -769,7 +837,7 @@ void N_VLinearSum_Raja(sunrealtype a, N_Vector X, sunrealtype b, N_Vector Y,
                                           });
 }
 
-void N_VProd_Raja(N_Vector X, N_Vector Y, N_Vector Z)
+void nvProd_Raja(N_Vector X, N_Vector Y, N_Vector Z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunrealtype* ydata = NVEC_RAJA_DDATAp(Y);
@@ -781,7 +849,7 @@ void N_VProd_Raja(N_Vector X, N_Vector Y, N_Vector Z)
                                           { zdata[i] = xdata[i] * ydata[i]; });
 }
 
-void N_VDiv_Raja(N_Vector X, N_Vector Y, N_Vector Z)
+void nvDiv_Raja(N_Vector X, N_Vector Y, N_Vector Z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunrealtype* ydata = NVEC_RAJA_DDATAp(Y);
@@ -793,7 +861,7 @@ void N_VDiv_Raja(N_Vector X, N_Vector Y, N_Vector Z)
                                           { zdata[i] = xdata[i] / ydata[i]; });
 }
 
-void N_VScale_Raja(sunrealtype c, N_Vector X, N_Vector Z)
+void nvScale_Raja(sunrealtype c, N_Vector X, N_Vector Z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
@@ -804,7 +872,7 @@ void N_VScale_Raja(sunrealtype c, N_Vector X, N_Vector Z)
                                           { zdata[i] = c * xdata[i]; });
 }
 
-void N_VAbs_Raja(N_Vector X, N_Vector Z)
+void nvAbs_Raja(N_Vector X, N_Vector Z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
@@ -815,7 +883,7 @@ void N_VAbs_Raja(N_Vector X, N_Vector Z)
                                           { zdata[i] = abs(xdata[i]); });
 }
 
-void N_VInv_Raja(N_Vector X, N_Vector Z)
+void nvInv_Raja(N_Vector X, N_Vector Z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
@@ -826,7 +894,7 @@ void N_VInv_Raja(N_Vector X, N_Vector Z)
                                           { zdata[i] = ONE / xdata[i]; });
 }
 
-void N_VAddConst_Raja(N_Vector X, sunrealtype b, N_Vector Z)
+void nvAddConst_Raja(N_Vector X, sunrealtype b, N_Vector Z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
@@ -837,7 +905,7 @@ void N_VAddConst_Raja(N_Vector X, sunrealtype b, N_Vector Z)
                                           { zdata[i] = xdata[i] + b; });
 }
 
-sunrealtype N_VDotProd_Raja(N_Vector X, N_Vector Y)
+sunrealtype nvDotProd_Raja(N_Vector X, N_Vector Y)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunrealtype* ydata = NVEC_RAJA_DDATAp(Y);
@@ -851,7 +919,7 @@ sunrealtype N_VDotProd_Raja(N_Vector X, N_Vector Y)
   return (static_cast<sunrealtype>(gpu_result));
 }
 
-sunrealtype N_VMaxNorm_Raja(N_Vector X)
+sunrealtype nvMaxNorm_Raja(N_Vector X)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
@@ -864,7 +932,7 @@ sunrealtype N_VMaxNorm_Raja(N_Vector X)
   return (static_cast<sunrealtype>(gpu_result));
 }
 
-sunrealtype N_VWSqrSumLocal_Raja(N_Vector X, N_Vector W)
+sunrealtype nvWSqrSumLocal_Raja(N_Vector X, N_Vector W)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunrealtype* wdata = NVEC_RAJA_DDATAp(W);
@@ -880,14 +948,14 @@ sunrealtype N_VWSqrSumLocal_Raja(N_Vector X, N_Vector W)
   return (static_cast<sunrealtype>(gpu_result));
 }
 
-sunrealtype N_VWrmsNorm_Raja(N_Vector X, N_Vector W)
+sunrealtype nvWrmsNorm_Raja(N_Vector X, N_Vector W)
 {
-  const sunrealtype sum = N_VWSqrSumLocal_Raja(X, W);
+  const sunrealtype sum = nvWSqrSumLocal_Raja(X, W);
   const sunindextype N  = NVEC_RAJA_CONTENT(X)->length;
   return std::sqrt(sum / N);
 }
 
-sunrealtype N_VWSqrSumMaskLocal_Raja(N_Vector X, N_Vector W, N_Vector ID)
+sunrealtype nvWSqrSumMaskLocal_Raja(N_Vector X, N_Vector W, N_Vector ID)
 {
   const sunrealtype* xdata  = NVEC_RAJA_DDATAp(X);
   const sunrealtype* wdata  = NVEC_RAJA_DDATAp(W);
@@ -906,14 +974,14 @@ sunrealtype N_VWSqrSumMaskLocal_Raja(N_Vector X, N_Vector W, N_Vector ID)
   return (static_cast<sunrealtype>(gpu_result));
 }
 
-sunrealtype N_VWrmsNormMask_Raja(N_Vector X, N_Vector W, N_Vector ID)
+sunrealtype nvWrmsNormMask_Raja(N_Vector X, N_Vector W, N_Vector ID)
 {
-  const sunrealtype sum = N_VWSqrSumMaskLocal_Raja(X, W, ID);
+  const sunrealtype sum = nvWSqrSumMaskLocal_Raja(X, W, ID);
   const sunindextype N  = NVEC_RAJA_CONTENT(X)->length;
   return std::sqrt(sum / N);
 }
 
-sunrealtype N_VMin_Raja(N_Vector X)
+sunrealtype nvMin_Raja(N_Vector X)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
@@ -927,12 +995,12 @@ sunrealtype N_VMin_Raja(N_Vector X)
   return (static_cast<sunrealtype>(gpu_result));
 }
 
-sunrealtype N_VWL2Norm_Raja(N_Vector X, N_Vector W)
+sunrealtype nvWL2Norm_Raja(N_Vector X, N_Vector W)
 {
-  return std::sqrt(N_VWSqrSumLocal_Raja(X, W));
+  return std::sqrt(nvWSqrSumLocal_Raja(X, W));
 }
 
-sunrealtype N_VL1Norm_Raja(N_Vector X)
+sunrealtype nvL1Norm_Raja(N_Vector X)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
@@ -945,7 +1013,7 @@ sunrealtype N_VL1Norm_Raja(N_Vector X)
   return (static_cast<sunrealtype>(gpu_result));
 }
 
-void N_VCompare_Raja(sunrealtype c, N_Vector X, N_Vector Z)
+void nvCompare_Raja(sunrealtype c, N_Vector X, N_Vector Z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
   const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
@@ -958,7 +1026,7 @@ void N_VCompare_Raja(sunrealtype c, N_Vector X, N_Vector Z)
                                           });
 }
 
-sunbooleantype N_VInvTest_Raja(N_Vector x, N_Vector z)
+sunbooleantype nvInvTest_Raja(N_Vector x, N_Vector z)
 {
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(x);
   const sunindextype N     = NVEC_RAJA_CONTENT(x)->length;
@@ -978,7 +1046,7 @@ sunbooleantype N_VInvTest_Raja(N_Vector x, N_Vector z)
   return (minimum < HALF);
 }
 
-sunbooleantype N_VConstrMask_Raja(N_Vector c, N_Vector x, N_Vector m)
+sunbooleantype nvConstrMask_Raja(N_Vector c, N_Vector x, N_Vector m)
 {
   const sunrealtype* cdata = NVEC_RAJA_DDATAp(c);
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(x);
@@ -1002,7 +1070,7 @@ sunbooleantype N_VConstrMask_Raja(N_Vector c, N_Vector x, N_Vector m)
   return (sum < HALF);
 }
 
-sunrealtype N_VMinQuotient_Raja(N_Vector num, N_Vector denom)
+sunrealtype nvMinQuotient_Raja(N_Vector num, N_Vector denom)
 {
   const sunrealtype* ndata = NVEC_RAJA_DDATAp(num);
   const sunrealtype* ddata = NVEC_RAJA_DDATAp(denom);
@@ -1025,8 +1093,8 @@ sunrealtype N_VMinQuotient_Raja(N_Vector num, N_Vector denom)
  * -----------------------------------------------------------------------------
  */
 
-SUNErrCode N_VLinearCombination_Raja(int nvec, sunrealtype* c, N_Vector* X,
-                                     N_Vector z)
+SUNErrCode nvLinearCombination_Raja(int nvec, sunrealtype* c, N_Vector* X,
+                                    N_Vector z)
 {
   const sunindextype N = NVEC_RAJA_CONTENT(z)->length;
   sunrealtype* zdata   = NVEC_RAJA_DDATAp(z);
@@ -1038,28 +1106,28 @@ SUNErrCode N_VLinearCombination_Raja(int nvec, sunrealtype* c, N_Vector* X,
   // Setup the fused op workspace
   if (FusedBuffer_Init(z, nvec, nvec))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Raja: FusedBuffer_Init "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Raja: FusedBuffer_Init "
                          "returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyRealArray(z, c, nvec, &cdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Raja: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Raja: "
                          "FusedBuffer_CopyRealArray returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(z, X, nvec, &xdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Raja: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Raja: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyToDevice(z))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Raja: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Raja: "
                          "FusedBuffer_CopyToDevice returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1075,8 +1143,8 @@ SUNErrCode N_VLinearCombination_Raja(int nvec, sunrealtype* c, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleAddMulti_Raja(int nvec, sunrealtype* c, N_Vector x,
-                                 N_Vector* Y, N_Vector* Z)
+SUNErrCode nvScaleAddMulti_Raja(int nvec, sunrealtype* c, N_Vector x,
+                                N_Vector* Y, N_Vector* Z)
 {
   const sunindextype N     = NVEC_RAJA_CONTENT(x)->length;
   const sunrealtype* xdata = NVEC_RAJA_DDATAp(x);
@@ -1090,34 +1158,34 @@ SUNErrCode N_VScaleAddMulti_Raja(int nvec, sunrealtype* c, N_Vector x,
   if (FusedBuffer_Init(x, nvec, 2 * nvec))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VScaleAddMulti_Raja: FusedBuffer_Init returned nonzero\n");
+      "ERROR in nvScaleAddMulti_Raja: FusedBuffer_Init returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyRealArray(x, c, nvec, &cdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMulti_Raja: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMulti_Raja: "
                          "FusedBuffer_CopyRealArray returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(x, Y, nvec, &ydata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMulti_Raja: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMulti_Raja: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(x, Z, nvec, &zdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMulti_Raja: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMulti_Raja: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyToDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMulti_Raja: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMulti_Raja: "
                          "FusedBuffer_CopyToDevice returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1139,8 +1207,8 @@ SUNErrCode N_VScaleAddMulti_Raja(int nvec, sunrealtype* c, N_Vector x,
  * -----------------------------------------------------------------------------
  */
 
-SUNErrCode N_VLinearSumVectorArray_Raja(int nvec, sunrealtype a, N_Vector* X,
-                                        sunrealtype b, N_Vector* Y, N_Vector* Z)
+SUNErrCode nvLinearSumVectorArray_Raja(int nvec, sunrealtype a, N_Vector* X,
+                                       sunrealtype b, N_Vector* Y, N_Vector* Z)
 {
   const sunindextype N = NVEC_RAJA_CONTENT(Z[0])->length;
 
@@ -1196,8 +1264,8 @@ SUNErrCode N_VLinearSumVectorArray_Raja(int nvec, sunrealtype a, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleVectorArray_Raja(int nvec, sunrealtype* c, N_Vector* X,
-                                    N_Vector* Z)
+SUNErrCode nvScaleVectorArray_Raja(int nvec, sunrealtype* c, N_Vector* X,
+                                   N_Vector* Z)
 {
   const sunindextype N = NVEC_RAJA_CONTENT(Z[0])->length;
 
@@ -1253,7 +1321,7 @@ SUNErrCode N_VScaleVectorArray_Raja(int nvec, sunrealtype* c, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VConstVectorArray_Raja(int nvec, sunrealtype c, N_Vector* Z)
+SUNErrCode nvConstVectorArray_Raja(int nvec, sunrealtype c, N_Vector* Z)
 {
   const sunindextype N = NVEC_RAJA_CONTENT(Z[0])->length;
 
@@ -1292,9 +1360,9 @@ SUNErrCode N_VConstVectorArray_Raja(int nvec, sunrealtype c, N_Vector* Z)
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleAddMultiVectorArray_Raja(int nvec, int nsum, sunrealtype* c,
-                                            N_Vector* X, N_Vector** Y,
-                                            N_Vector** Z)
+SUNErrCode nvScaleAddMultiVectorArray_Raja(int nvec, int nsum, sunrealtype* c,
+                                           N_Vector* X, N_Vector** Y,
+                                           N_Vector** Z)
 {
   const sunindextype N = NVEC_RAJA_CONTENT(X[0])->length;
 
@@ -1360,9 +1428,8 @@ SUNErrCode N_VScaleAddMultiVectorArray_Raja(int nvec, int nsum, sunrealtype* c,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VLinearCombinationVectorArray_Raja(int nvec, int nsum,
-                                                sunrealtype* c, N_Vector** X,
-                                                N_Vector* Z)
+SUNErrCode nvLinearCombinationVectorArray_Raja(int nvec, int nsum, sunrealtype* c,
+                                               N_Vector** X, N_Vector* Z)
 {
   const sunindextype N = NVEC_RAJA_CONTENT(Z[0])->length;
 
@@ -1432,14 +1499,14 @@ SUNErrCode N_VLinearCombinationVectorArray_Raja(int nvec, int nsum,
  * -----------------------------------------------------------------
  */
 
-SUNErrCode N_VBufSize_Raja(N_Vector x, sunindextype* size)
+SUNErrCode nvBufSize_Raja(N_Vector x, sunindextype* size)
 {
   if (x == NULL) { return SUN_ERR_GENERIC; }
   *size = (sunindextype)NVEC_RAJA_MEMSIZE(x);
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VBufPack_Raja(N_Vector x, void* buf)
+SUNErrCode nvBufPack_Raja(N_Vector x, void* buf)
 {
   int copy_fail = 0;
 #if !defined(SUNDIALS_RAJA_BACKENDS_SYCL)
@@ -1480,7 +1547,7 @@ SUNErrCode N_VBufPack_Raja(N_Vector x, void* buf)
 #endif
 }
 
-SUNErrCode N_VBufUnpack_Raja(N_Vector x, void* buf)
+SUNErrCode nvBufUnpack_Raja(N_Vector x, void* buf)
 {
   int copy_fail = 0;
 #if !defined(SUNDIALS_RAJA_BACKENDS_SYCL)
@@ -1538,17 +1605,17 @@ SUNErrCode N_VEnableFusedOps_Raja(N_Vector v, sunbooleantype tf)
   if (tf)
   {
     /* enable all fused vector operations */
-    v->ops->nvlinearcombination = N_VLinearCombination_Raja;
-    v->ops->nvscaleaddmulti     = N_VScaleAddMulti_Raja;
+    v->ops->nvlinearcombination = nvLinearCombination_Raja;
+    v->ops->nvscaleaddmulti     = nvScaleAddMulti_Raja;
     v->ops->nvdotprodmulti      = NULL;
     /* enable all vector array operations */
-    v->ops->nvlinearsumvectorarray     = N_VLinearSumVectorArray_Raja;
-    v->ops->nvscalevectorarray         = N_VScaleVectorArray_Raja;
-    v->ops->nvconstvectorarray         = N_VConstVectorArray_Raja;
+    v->ops->nvlinearsumvectorarray     = nvLinearSumVectorArray_Raja;
+    v->ops->nvscalevectorarray         = nvScaleVectorArray_Raja;
+    v->ops->nvconstvectorarray         = nvConstVectorArray_Raja;
     v->ops->nvwrmsnormvectorarray      = NULL;
     v->ops->nvwrmsnormmaskvectorarray  = NULL;
-    v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Raja;
-    v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Raja;
+    v->ops->nvscaleaddmultivectorarray = nvScaleAddMultiVectorArray_Raja;
+    v->ops->nvlinearcombinationvectorarray = nvLinearCombinationVectorArray_Raja;
   }
   else
   {
@@ -1579,7 +1646,7 @@ SUNErrCode N_VEnableLinearCombination_Raja(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvlinearcombination = N_VLinearCombination_Raja; }
+  if (tf) { v->ops->nvlinearcombination = nvLinearCombination_Raja; }
   else { v->ops->nvlinearcombination = NULL; }
 
   /* return success */
@@ -1595,7 +1662,7 @@ SUNErrCode N_VEnableScaleAddMulti_Raja(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvscaleaddmulti = N_VScaleAddMulti_Raja; }
+  if (tf) { v->ops->nvscaleaddmulti = nvScaleAddMulti_Raja; }
   else { v->ops->nvscaleaddmulti = NULL; }
 
   /* return success */
@@ -1611,7 +1678,7 @@ SUNErrCode N_VEnableLinearSumVectorArray_Raja(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvlinearsumvectorarray = N_VLinearSumVectorArray_Raja; }
+  if (tf) { v->ops->nvlinearsumvectorarray = nvLinearSumVectorArray_Raja; }
   else { v->ops->nvlinearsumvectorarray = NULL; }
 
   /* return success */
@@ -1627,7 +1694,7 @@ SUNErrCode N_VEnableScaleVectorArray_Raja(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvscalevectorarray = N_VScaleVectorArray_Raja; }
+  if (tf) { v->ops->nvscalevectorarray = nvScaleVectorArray_Raja; }
   else { v->ops->nvscalevectorarray = NULL; }
 
   /* return success */
@@ -1643,7 +1710,7 @@ SUNErrCode N_VEnableConstVectorArray_Raja(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvconstvectorarray = N_VConstVectorArray_Raja; }
+  if (tf) { v->ops->nvconstvectorarray = nvConstVectorArray_Raja; }
   else { v->ops->nvconstvectorarray = NULL; }
 
   /* return success */
@@ -1661,7 +1728,7 @@ SUNErrCode N_VEnableScaleAddMultiVectorArray_Raja(N_Vector v, sunbooleantype tf)
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Raja;
+    v->ops->nvscaleaddmultivectorarray = nvScaleAddMultiVectorArray_Raja;
   }
   else { v->ops->nvscaleaddmultivectorarray = NULL; }
 
@@ -1681,7 +1748,7 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Raja(N_Vector v,
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Raja;
+    v->ops->nvlinearcombinationvectorarray = nvLinearCombinationVectorArray_Raja;
   }
   else { v->ops->nvlinearcombinationvectorarray = NULL; }
 
@@ -1701,7 +1768,7 @@ int AllocateData(N_Vector v)
   N_VectorContent_Raja vc         = NVEC_RAJA_CONTENT(v);
   N_PrivateVectorContent_Raja vcp = NVEC_RAJA_PRIVATE(v);
 
-  if (N_VGetLength_Raja(v) == 0) { return SUN_SUCCESS; }
+  if (nvGetLength_Raja(v) == 0) { return SUN_SUCCESS; }
 
 #if defined(SUNDIALS_RAJA_BACKENDS_SYCL)
   void* queue = static_cast<void*>(::RAJA::sycl::detail::getQueue());
@@ -1957,6 +2024,175 @@ static int FusedBuffer_Free(N_Vector v)
   vcp->fused_buffer_offset = 0;
 
   return SUN_SUCCESS;
+}
+
+} // extern "C"
+
+/* Deprecated concrete operation wrappers */
+
+extern "C" {
+
+void N_VAbs_Raja(N_Vector x, N_Vector z) { nvAbs_Raja(x, z); }
+
+void N_VAddConst_Raja(N_Vector x, sunrealtype b, N_Vector z)
+{
+  nvAddConst_Raja(x, b, z);
+}
+
+SUNErrCode N_VBufPack_Raja(N_Vector x, void* buf)
+{
+  return nvBufPack_Raja(x, buf);
+}
+
+SUNErrCode N_VBufSize_Raja(N_Vector x, sunindextype* size)
+{
+  return nvBufSize_Raja(x, size);
+}
+
+SUNErrCode N_VBufUnpack_Raja(N_Vector x, void* buf)
+{
+  return nvBufUnpack_Raja(x, buf);
+}
+
+N_Vector N_VCloneEmpty_Raja(N_Vector w) { return nvCloneEmpty_Raja(w); }
+
+N_Vector N_VClone_Raja(N_Vector w) { return nvClone_Raja(w); }
+
+void N_VCompare_Raja(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvCompare_Raja(c, x, z);
+}
+
+SUNErrCode N_VConstVectorArray_Raja(int nvec, sunrealtype c, N_Vector* Z)
+{
+  return nvConstVectorArray_Raja(nvec, c, Z);
+}
+
+void N_VConst_Raja(sunrealtype c, N_Vector z) { nvConst_Raja(c, z); }
+
+sunbooleantype N_VConstrMask_Raja(N_Vector c, N_Vector x, N_Vector m)
+{
+  return nvConstrMask_Raja(c, x, m);
+}
+
+void N_VDestroy_Raja(N_Vector v) { nvDestroy_Raja(v); }
+
+void N_VDiv_Raja(N_Vector x, N_Vector y, N_Vector z) { nvDiv_Raja(x, y, z); }
+
+sunrealtype N_VDotProd_Raja(N_Vector x, N_Vector y)
+{
+  return nvDotProd_Raja(x, y);
+}
+
+sunbooleantype N_VInvTest_Raja(N_Vector x, N_Vector z)
+{
+  return nvInvTest_Raja(x, z);
+}
+
+void N_VInv_Raja(N_Vector x, N_Vector z) { nvInv_Raja(x, z); }
+
+sunrealtype N_VL1Norm_Raja(N_Vector x) { return nvL1Norm_Raja(x); }
+
+SUNErrCode N_VLinearCombinationVectorArray_Raja(int nvec, int nsum,
+                                                sunrealtype* c, N_Vector** X,
+                                                N_Vector* Z)
+{
+  return nvLinearCombinationVectorArray_Raja(nvec, nsum, c, X, Z);
+}
+
+SUNErrCode N_VLinearCombination_Raja(int nvec, sunrealtype* c, N_Vector* X,
+                                     N_Vector z)
+{
+  return nvLinearCombination_Raja(nvec, c, X, z);
+}
+
+SUNErrCode N_VLinearSumVectorArray_Raja(int nvec, sunrealtype a, N_Vector* X,
+                                        sunrealtype b, N_Vector* Y, N_Vector* Z)
+{
+  return nvLinearSumVectorArray_Raja(nvec, a, X, b, Y, Z);
+}
+
+void N_VLinearSum_Raja(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                       N_Vector z)
+{
+  nvLinearSum_Raja(a, x, b, y, z);
+}
+
+sunrealtype N_VMaxNorm_Raja(N_Vector x) { return nvMaxNorm_Raja(x); }
+
+sunrealtype N_VMinQuotient_Raja(N_Vector num, N_Vector denom)
+{
+  return nvMinQuotient_Raja(num, denom);
+}
+
+sunrealtype N_VMin_Raja(N_Vector x) { return nvMin_Raja(x); }
+
+void N_VPrintFile_Raja(N_Vector v, FILE* outfile)
+{
+  nvPrintFile_Raja(v, outfile);
+}
+
+void N_VPrint_Raja(N_Vector v) { nvPrint_Raja(v); }
+
+void N_VProd_Raja(N_Vector x, N_Vector y, N_Vector z) { nvProd_Raja(x, y, z); }
+
+SUNErrCode N_VScaleAddMultiVectorArray_Raja(int nvec, int nsum, sunrealtype* a,
+                                            N_Vector* X, N_Vector** Y,
+                                            N_Vector** Z)
+{
+  return nvScaleAddMultiVectorArray_Raja(nvec, nsum, a, X, Y, Z);
+}
+
+SUNErrCode N_VScaleAddMulti_Raja(int nvec, sunrealtype* c, N_Vector x,
+                                 N_Vector* Y, N_Vector* Z)
+{
+  return nvScaleAddMulti_Raja(nvec, c, x, Y, Z);
+}
+
+SUNErrCode N_VScaleVectorArray_Raja(int nvec, sunrealtype* c, N_Vector* X,
+                                    N_Vector* Z)
+{
+  return nvScaleVectorArray_Raja(nvec, c, X, Z);
+}
+
+void N_VScale_Raja(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvScale_Raja(c, x, z);
+}
+
+void N_VSetDeviceArrayPointer_Raja(sunrealtype* d_vdata_1d, N_Vector v)
+{
+  nvSetDeviceArrayPointer_Raja(d_vdata_1d, v);
+}
+
+void N_VSetHostArrayPointer_Raja(sunrealtype* h_vdata_1d, N_Vector v)
+{
+  nvSetHostArrayPointer_Raja(h_vdata_1d, v);
+}
+
+sunrealtype N_VWL2Norm_Raja(N_Vector x, N_Vector w)
+{
+  return nvWL2Norm_Raja(x, w);
+}
+
+sunrealtype N_VWSqrSumLocal_Raja(N_Vector x, N_Vector w)
+{
+  return nvWSqrSumLocal_Raja(x, w);
+}
+
+sunrealtype N_VWSqrSumMaskLocal_Raja(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWSqrSumMaskLocal_Raja(x, w, id);
+}
+
+sunrealtype N_VWrmsNormMask_Raja(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWrmsNormMask_Raja(x, w, id);
+}
+
+sunrealtype N_VWrmsNorm_Raja(N_Vector x, N_Vector w)
+{
+  return nvWrmsNorm_Raja(x, w);
 }
 
 } // extern "C"

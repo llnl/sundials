@@ -91,35 +91,12 @@ module fsunnonlinsol_auto_mod
   module procedure swigf_create_SUNNonlinearSolverContent_Auto_
  end interface
  public :: FSUNNonlinSol_Auto
- public :: FSUNNonlinSolGetType_Auto
- public :: FSUNNonlinSolInitialize_Auto
- public :: FSUNNonlinSolSolve_Auto
- public :: FSUNNonlinSolFree_Auto
- public :: FSUNNonlinSolSetSysFns_Auto
- public :: FSUNNonlinSolSetConvTestFn_Auto
- public :: FSUNNonlinSolSetLSetupFn_Auto
- public :: FSUNNonlinSolSetLSolveFn_Auto
- type, public :: SWIGTYPE_p_p_char
-  type(SwigClassWrapper), public :: swigdata
- end type
- type, bind(C) :: SwigArrayWrapper
-  type(C_PTR), public :: data = C_NULL_PTR
-  integer(C_SIZE_T), public :: size = 0
- end type
- public :: FSUNNonlinSolSetOptions_Auto
- public :: FSUNNonlinSolSetNormFn_Auto
- public :: FSUNNonlinSolSetMaxIters_Auto
- public :: FSUNNonlinSolSetGetConvRateFn_Auto
- public :: FSUNNonlinSolSetGetUpdateNormFn_Auto
  public :: FSUNNonlinSolSetSwitchingParameters_Auto
  public :: FSUNNonlinSolGetFixedPointSolver_Auto
  public :: FSUNNonlinSolGetNewtonSolver_Auto
  public :: FSUNNonlinSolGetActiveSolverType_Auto
  public :: FSUNNonlinSolGetSwitchCount_Auto
- public :: FSUNNonlinSolGetNumIters_Auto
  public :: FSUNNonlinSolGetTotalNumItersByType_Auto
- public :: FSUNNonlinSolGetCurIter_Auto
- public :: FSUNNonlinSolGetNumConvFails_Auto
  public :: FSUNNonlinSolGetTotalNumConvFailsByType_Auto
 
 ! WRAPPER DECLARATIONS
@@ -464,135 +441,6 @@ type(C_PTR), value :: farg4
 type(C_PTR) :: fresult
 end function
 
-function swigc_FSUNNonlinSolGetType_Auto(farg1) &
-bind(C, name="_wrap_FSUNNonlinSolGetType_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolInitialize_Auto(farg1) &
-bind(C, name="_wrap_FSUNNonlinSolInitialize_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSolve_Auto(farg1, farg2, farg3, farg4, farg5, farg6, farg7) &
-bind(C, name="_wrap_FSUNNonlinSolSolve_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
-real(C_DOUBLE), intent(in) :: farg5
-integer(C_INT), intent(in) :: farg6
-type(C_PTR), value :: farg7
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolFree_Auto(farg1) &
-bind(C, name="_wrap_FSUNNonlinSolFree_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetSysFns_Auto(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetSysFns_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_FUNPTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetConvTestFn_Auto(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetConvTestFn_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetLSetupFn_Auto(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetLSetupFn_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetLSolveFn_Auto(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetLSolveFn_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetOptions_Auto(farg1, farg2, farg3, farg4, farg5) &
-bind(C, name="_wrap_FSUNNonlinSolSetOptions_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-import :: swigarraywrapper
-import :: swigclasswrapper
-type(C_PTR), value :: farg1
-type(SwigArrayWrapper) :: farg2
-type(SwigArrayWrapper) :: farg3
-integer(C_INT), intent(in) :: farg4
-type(SwigClassWrapper) :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetNormFn_Auto(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetNormFn_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetMaxIters_Auto(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetMaxIters_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT), intent(in) :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetGetConvRateFn_Auto(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetGetConvRateFn_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetGetUpdateNormFn_Auto(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetGetUpdateNormFn_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FSUNNonlinSolSetSwitchingParameters_Auto(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSUNNonlinSolSetSwitchingParameters_Auto") &
 result(fresult)
@@ -641,15 +489,6 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FSUNNonlinSolGetNumIters_Auto(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetNumIters_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
 function swigc_FSUNNonlinSolGetTotalNumItersByType_Auto(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolGetTotalNumItersByType_Auto") &
 result(fresult)
@@ -657,24 +496,6 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetCurIter_Auto(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetCurIter_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetNumConvFails_Auto(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetNumConvFails_Auto") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1202,264 +1023,6 @@ fresult = swigc_FSUNNonlinSol_Auto(farg1, farg2, farg3, farg4)
 call c_f_pointer(fresult, swig_result)
 end function
 
-function FSUNNonlinSolGetType_Auto(nls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNNonlinearSolver_Type) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(nls)
-fresult = swigc_FSUNNonlinSolGetType_Auto(farg1)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolInitialize_Auto(nls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(nls)
-fresult = swigc_FSUNNonlinSolInitialize_Auto(farg1)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSolve_Auto(nls, y0, ycor, w, tol, callsetup, mem) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(N_Vector), target, intent(inout) :: y0
-type(N_Vector), target, intent(inout) :: ycor
-type(N_Vector), target, intent(inout) :: w
-real(C_DOUBLE), intent(in) :: tol
-integer(C_INT), intent(in) :: callsetup
-type(C_PTR) :: mem
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
-real(C_DOUBLE) :: farg5 
-integer(C_INT) :: farg6 
-type(C_PTR) :: farg7 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(y0)
-farg3 = c_loc(ycor)
-farg4 = c_loc(w)
-farg5 = tol
-farg6 = callsetup
-farg7 = mem
-fresult = swigc_FSUNNonlinSolSolve_Auto(farg1, farg2, farg3, farg4, farg5, farg6, farg7)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolFree_Auto(nls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(nls)
-fresult = swigc_FSUNNonlinSolFree_Auto(farg1)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetSysFns_Auto(nls, root_fn, fixed_point_fn) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: root_fn
-type(C_FUNPTR), intent(in), value :: fixed_point_fn
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_FUNPTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = root_fn
-farg3 = fixed_point_fn
-fresult = swigc_FSUNNonlinSolSetSysFns_Auto(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetConvTestFn_Auto(nls, ctestfn, ctest_data) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: ctestfn
-type(C_PTR) :: ctest_data
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = ctestfn
-farg3 = ctest_data
-fresult = swigc_FSUNNonlinSolSetConvTestFn_Auto(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetLSetupFn_Auto(nls, lsetupfn) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: lsetupfn
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = lsetupfn
-fresult = swigc_FSUNNonlinSolSetLSetupFn_Auto(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetLSolveFn_Auto(nls, lsolvefn) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: lsolvefn
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = lsolvefn
-fresult = swigc_FSUNNonlinSolSetLSolveFn_Auto(farg1, farg2)
-swig_result = fresult
-end function
-
-
-subroutine SWIG_string_to_chararray(string, chars, wrap)
-  use, intrinsic :: ISO_C_BINDING
-  character(kind=C_CHAR, len=*), intent(IN) :: string
-  character(kind=C_CHAR), dimension(:), target, allocatable, intent(OUT) :: chars
-  type(SwigArrayWrapper), intent(OUT) :: wrap
-  integer :: i
-
-  allocate(character(kind=C_CHAR) :: chars(len(string) + 1))
-  do i=1,len(string)
-    chars(i) = string(i:i)
-  end do
-  i = len(string) + 1
-  chars(i) = C_NULL_CHAR ! C string compatibility
-  wrap%data = c_loc(chars)
-  wrap%size = len(string)
-end subroutine
-
-function FSUNNonlinSolSetOptions_Auto(nls, nlsid, file_name, argc, argv) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-character(kind=C_CHAR, len=*), target :: nlsid
-character(kind=C_CHAR), dimension(:), allocatable, target :: farg2_chars
-character(kind=C_CHAR, len=*), target :: file_name
-character(kind=C_CHAR), dimension(:), allocatable, target :: farg3_chars
-integer(C_INT), intent(in) :: argc
-class(SWIGTYPE_p_p_char), intent(in) :: argv
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(SwigArrayWrapper) :: farg2 
-type(SwigArrayWrapper) :: farg3 
-integer(C_INT) :: farg4 
-type(SwigClassWrapper) :: farg5 
-
-farg1 = c_loc(nls)
-call SWIG_string_to_chararray(nlsid, farg2_chars, farg2)
-call SWIG_string_to_chararray(file_name, farg3_chars, farg3)
-farg4 = argc
-farg5 = argv%swigdata
-fresult = swigc_FSUNNonlinSolSetOptions_Auto(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetNormFn_Auto(nls, normfn, norm_fn_data) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: normfn
-type(C_PTR) :: norm_fn_data
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = normfn
-farg3 = norm_fn_data
-fresult = swigc_FSUNNonlinSolSetNormFn_Auto(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetMaxIters_Auto(nls, maxiters) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT), intent(in) :: maxiters
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = maxiters
-fresult = swigc_FSUNNonlinSolSetMaxIters_Auto(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetGetConvRateFn_Auto(nls, getconvratefn, getconvrate_data) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: getconvratefn
-type(C_PTR) :: getconvrate_data
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = getconvratefn
-farg3 = getconvrate_data
-fresult = swigc_FSUNNonlinSolSetGetConvRateFn_Auto(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetGetUpdateNormFn_Auto(nls, getupdatenormfn, getupdatenorm_data) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: getupdatenormfn
-type(C_PTR) :: getupdatenorm_data
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = getupdatenormfn
-farg3 = getupdatenorm_data
-fresult = swigc_FSUNNonlinSolSetGetUpdateNormFn_Auto(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FSUNNonlinSolSetSwitchingParameters_Auto(nls, newt_to_fp_threshold, newt_to_fp_delay, fp_to_newt_threshold, &
   fp_to_newt_delay) &
 result(swig_result)
@@ -1550,22 +1113,6 @@ fresult = swigc_FSUNNonlinSolGetSwitchCount_Auto(farg1, farg2)
 swig_result = fresult
 end function
 
-function FSUNNonlinSolGetNumIters_Auto(nls, niters) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_LONG), dimension(*), target, intent(inout) :: niters
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(niters(1))
-fresult = swigc_FSUNNonlinSolGetNumIters_Auto(farg1, farg2)
-swig_result = fresult
-end function
-
 function FSUNNonlinSolGetTotalNumItersByType_Auto(nls, fp_iters, newt_iters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -1582,38 +1129,6 @@ farg1 = c_loc(nls)
 farg2 = c_loc(fp_iters(1))
 farg3 = c_loc(newt_iters(1))
 fresult = swigc_FSUNNonlinSolGetTotalNumItersByType_Auto(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetCurIter_Auto(nls, iter) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT), dimension(*), target, intent(inout) :: iter
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(iter(1))
-fresult = swigc_FSUNNonlinSolGetCurIter_Auto(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetNumConvFails_Auto(nls, nconvfails) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_LONG), dimension(*), target, intent(inout) :: nconvfails
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(nconvfails(1))
-fresult = swigc_FSUNNonlinSolGetNumConvFails_Auto(farg1, farg2)
 swig_result = fresult
 end function
 

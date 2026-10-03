@@ -71,11 +71,10 @@ Tpetra vector first, and then use Tpetra vector methods to access the
 data.  Usage examples of NVECTOR_TRILINOS are provided in example
 programs for IDA.
 
-The names of vector operations are obtained from those in
-:numref:`NVectors.Ops` by appending the suffice ``_Trilinos``
-(e.g. ``N_VDestroy_Trilinos``).  Vector operations call existing
-``Tpetra::Vector`` methods when available. Vector operations specific
-to SUNDIALS are implemented as standalone functions in the namespace
+The operations are invoked through the generic functions listed in
+:numref:`NVectors.Ops`. Vector operations call existing ``Tpetra::Vector``
+methods when available. Vector operations specific to SUNDIALS are implemented
+as standalone functions in the namespace
 ``sundials::trilinos::nvector_tpetra::TpetraVector``, located in the file ``SundialsTpetraVectorKernels.hpp``.
 The module NVECTOR_TRILINOS provides the following additional user-callable routines:
 
@@ -111,6 +110,6 @@ The module NVECTOR_TRILINOS provides the following additional user-callable rout
   N_VGetVector_Trilinos(v)`` and then access components using the
   appropriate Trilinos functions.
 
-* The function ``N_VDestroy_Trilinos`` only deletes the ``N_Vector``
+* The function :c:func:`N_VDestroy` only deletes the ``N_Vector``
   wrapper. The underlying Tpetra vector object will exist for as long
   as there is at least one reference to it.

@@ -30,7 +30,9 @@ endif()
 sundials_add_library(
   sundials_sunlinsolsuperlumt
   SOURCES sunlinsol_superlumt.c
-  HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_superlumt.h
+  HEADERS
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_superlumt.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_superlumt_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

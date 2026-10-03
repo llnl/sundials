@@ -25,6 +25,7 @@ sundials_add_library(
   sundials_sunlinsolband
   SOURCES sunlinsol_band.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_band.h
+          ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_band_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

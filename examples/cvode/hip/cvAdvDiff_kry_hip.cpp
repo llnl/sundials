@@ -330,7 +330,7 @@ static void SetIC(N_Vector u, UserData data)
   const sunindextype NEQ = data->NEQ;
 
   /* Extract pointer to solution vector data on the host */
-  sunrealtype* udata = N_VGetHostArrayPointer_Hip(u);
+  sunrealtype* udata = N_VGetArrayPointer(u);
 
   sunindextype i, j, tid;
   sunrealtype x, y;
@@ -370,8 +370,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   const sunrealtype verdc = data->vdcoef;
 
   /* Extract pointers to vector data */
-  const sunrealtype* udata = N_VGetDeviceArrayPointer_Hip(u);
-  sunrealtype* dudata      = N_VGetDeviceArrayPointer_Hip(udot);
+  const sunrealtype* udata = N_VGetDeviceArrayPointer(u);
+  sunrealtype* dudata      = N_VGetDeviceArrayPointer(udot);
 
   unsigned block = 256;
   unsigned grid  = (MX * MY + block - 1) / block;
@@ -396,8 +396,8 @@ static int jtv(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector u, N_Vector fu,
   const sunrealtype verdc = data->vdcoef;
 
   /* Extract pointers to vector data */
-  const sunrealtype* vdata = N_VGetDeviceArrayPointer_Hip(v);
-  sunrealtype* Jvdata      = N_VGetDeviceArrayPointer_Hip(Jv);
+  const sunrealtype* vdata = N_VGetDeviceArrayPointer(v);
+  sunrealtype* Jvdata      = N_VGetDeviceArrayPointer(Jv);
 
   unsigned block = 256;
   unsigned grid  = (MX * MY + block - 1) / block;

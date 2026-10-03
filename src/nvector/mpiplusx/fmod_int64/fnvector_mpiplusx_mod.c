@@ -237,28 +237,6 @@ SWIGEXPORT N_Vector _wrap_FN_VMake_MPIPlusX(int const *farg1, N_Vector farg2, vo
 }
 
 
-SWIGEXPORT int _wrap_FN_VGetVectorID_MPIPlusX(N_Vector farg1) {
-  int fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector_ID result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = (N_Vector_ID)N_VGetVectorID_MPIPlusX(arg1);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT void _wrap_FN_VSetArrayPointer_MPIPlusX(double *farg1, N_Vector farg2) {
-  sunrealtype *arg1 = (sunrealtype *) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  
-  arg1 = (sunrealtype *)(farg1);
-  arg2 = (N_Vector)(farg2);
-  N_VSetArrayPointer_MPIPlusX(arg1,arg2);
-}
-
-
 SWIGEXPORT N_Vector _wrap_FN_VGetLocalVector_MPIPlusX(N_Vector farg1) {
   N_Vector fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
@@ -267,18 +245,6 @@ SWIGEXPORT N_Vector _wrap_FN_VGetLocalVector_MPIPlusX(N_Vector farg1) {
   arg1 = (N_Vector)(farg1);
   result = (N_Vector)N_VGetLocalVector_MPIPlusX(arg1);
   fresult = result;
-  return fresult;
-}
-
-
-SWIGEXPORT int64_t _wrap_FN_VGetLocalLength_MPIPlusX(N_Vector farg1) {
-  int64_t fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunindextype result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = N_VGetLocalLength_MPIPlusX(arg1);
-  fresult = (sunindextype)(result);
   return fresult;
 }
 
@@ -294,24 +260,6 @@ SWIGEXPORT int _wrap_FN_VEnableFusedOps_MPIPlusX(N_Vector farg1, int const *farg
   result = (SUNErrCode)N_VEnableFusedOps_MPIPlusX(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
-}
-
-
-SWIGEXPORT void _wrap_FN_VPrint_MPIPlusX(N_Vector farg1) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  N_VPrint_MPIPlusX(arg1);
-}
-
-
-SWIGEXPORT void _wrap_FN_VPrintFile_MPIPlusX(N_Vector farg1, void *farg2) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  FILE *arg2 = (FILE *) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (FILE *)(farg2);
-  N_VPrintFile_MPIPlusX(arg1,arg2);
 }
 
 

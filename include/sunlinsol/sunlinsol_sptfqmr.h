@@ -85,30 +85,6 @@ SUNDIALS_EXPORT SUNLinearSolver SUNLinSol_SPTFQMR(N_Vector y, int pretype,
 SUNDIALS_EXPORT SUNErrCode SUNLinSol_SPTFQMRSetPrecType(SUNLinearSolver S,
                                                         int pretype);
 SUNDIALS_EXPORT SUNErrCode SUNLinSol_SPTFQMRSetMaxl(SUNLinearSolver S, int maxl);
-SUNDIALS_EXPORT SUNLinearSolver_Type SUNLinSolGetType_SPTFQMR(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNLinearSolver_ID SUNLinSolGetID_SPTFQMR(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolInitialize_SPTFQMR(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolSetATimes_SPTFQMR(SUNLinearSolver S,
-                                                      void* A_data,
-                                                      SUNATimesFn ATimes);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolSetPreconditioner_SPTFQMR(SUNLinearSolver S,
-                                                              void* P_data,
-                                                              SUNPSetupFn Pset,
-                                                              SUNPSolveFn Psol);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolSetScalingVectors_SPTFQMR(SUNLinearSolver S,
-                                                              N_Vector s1,
-                                                              N_Vector s2);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolSetZeroGuess_SPTFQMR(SUNLinearSolver S,
-                                                         sunbooleantype onoff);
-SUNDIALS_EXPORT int SUNLinSolSetup_SPTFQMR(SUNLinearSolver S, SUNMatrix A);
-SUNDIALS_EXPORT int SUNLinSolSolve_SPTFQMR(SUNLinearSolver S, SUNMatrix A,
-                                           N_Vector x, N_Vector b,
-                                           sunrealtype tol);
-SUNDIALS_EXPORT int SUNLinSolNumIters_SPTFQMR(SUNLinearSolver S);
-SUNDIALS_EXPORT sunrealtype SUNLinSolResNorm_SPTFQMR(SUNLinearSolver S);
-SUNDIALS_EXPORT N_Vector SUNLinSolResid_SPTFQMR(SUNLinearSolver S);
-SUNDIALS_EXPORT sunindextype SUNLinSolLastFlag_SPTFQMR(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolFree_SPTFQMR(SUNLinearSolver S);
 
 #ifdef __cplusplus
 }

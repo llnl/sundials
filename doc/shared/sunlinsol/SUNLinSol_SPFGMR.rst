@@ -287,32 +287,4 @@ This solver is constructed to perform the following operations:
 
 The SUNLinSol_SPFGMR module defines implementations of all
 "iterative" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_SPFGMR``
-
-* ``SUNLinSolInitialize_SPFGMR``
-
-* ``SUNLinSolSetATimes_SPFGMR``
-
-* ``SUNLinSolSetPreconditioner_SPFGMR``
-
-* ``SUNLinSolSetScalingVectors_SPFGMR``
-
-* ``SUNLinSolSetZeroGuess_SPFGMR`` -- note the solver assumes a non-zero guess
-  by default and the zero guess flag is reset to ``SUNFALSE`` after each call to
-  ``SUNLinSolSolve_SPFGMR``.
-
-* ``SUNLinSolSetup_SPFGMR``
-
-* ``SUNLinSolSolve_SPFGMR``
-
-* ``SUNLinSolNumIters_SPFGMR``
-
-* ``SUNLinSolResNorm_SPFGMR``
-
-* ``SUNLinSolResid_SPFGMR``
-
-* ``SUNLinSolLastFlag_SPFGMR``
-
-* ``SUNLinSolFree_SPFGMR``
+:numref:`SUNLinSol.API`.
