@@ -46,9 +46,9 @@ typedef struct
   PetscScalar u, v;
 } Field;
 
-typedef struct _User* User;
+typedef struct User_* User;
 
-struct _User
+struct User_
 {
   PetscReal A, B;          /* Reaction coefficients */
   PetscReal alpha;         /* Diffusion coefficient */
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
   PetscErrorCode ierr;
   PetscReal T0, t, tstop, dtout, ftime, hx, dt;
   PetscReal rtol, atol;
-  struct _User user; /* user-defined work context */
+  struct User_ user; /* user-defined work context */
 
   /* Initialize PETSc */
   ierr = PetscInitialize(&argc, &argv, (char*)0, help);
