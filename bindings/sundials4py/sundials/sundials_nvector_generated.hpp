@@ -31,13 +31,16 @@ auto pyEnumN_Vector_ID =
 
 auto pyClassN_Vector_Ops_ =
   nb::class_<N_Vector_Ops_>(m,
-                                    "N_Vector_Ops_", "Structure containing function pointers to vector operations")
+                            "N_Vector_Ops_", "Structure containing function pointers to vector operations")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyClassN_Vector_ =
-  nb::class_<N_Vector_>(m,
-                                "N_Vector_", " A vector is a structure with an implementation-dependent\n   'content' field, and a pointer to a structure of vector\n   operations corresponding to that implementation.")
+  nb::class_<
+    N_Vector_>(m, "N_Vector_",
+               " A vector is a structure with an implementation-dependent\n   "
+               "'content' field, and a pointer to a structure of vector\n   "
+               "operations corresponding to that implementation.")
     .def(nb::init<>()) // implicit default constructor
   ;
 
